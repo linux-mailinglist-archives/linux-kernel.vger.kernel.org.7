@@ -1,172 +1,420 @@
-Return-Path: <linux-kernel+bounces-780173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3279EB2FE88
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:36:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 553D7B2FE7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C73C6727F9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:28:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CBBE1CE75F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FFB296BC2;
-	Thu, 21 Aug 2025 15:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5848A29BDBA;
+	Thu, 21 Aug 2025 15:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ONYFbl0e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HanrNcOX"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8FB27A45C
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B31292910
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755789803; cv=none; b=M4jNk/qyJV3X7qNRj1IkD6kvLynjPK7kzzkxfOnhTWY03ZFPchey92EZCoM9ztT5X+l6rmWz2peRp9jG9Eo2NIIMDKaMLck85Zz2zWZf5K9FTDHYIHQFxYLdV0sMnAe2+XpIdiEUfLayAbF0ruymQJN6C4AuBI1sdrYeNKfQkYQ=
+	t=1755789839; cv=none; b=hbToR4h+rjMhomgK81Jg5p/paPPXo7vQ+kMa03j54LDXEzzgO+n+5bniwfCze4u7GXaLJQ2FU6rDUAqdMtKNX/i5a9Hobvl45WcWtcYrTaWBXAmUmZqPEZMLC9Ch/QCxxYJVSmVtVXRWgQeKO80DXkIech+/8qs9oYByNCESUm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755789803; c=relaxed/simple;
-	bh=phOEOrcbb6XWP/f68JJcZtVW5Y1qLoFhmz5f49cY/fc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lX3EY8RwNdPU0Xf5xW1Z2ACnpGcpA89mQj4G3Y64Dlxi7To5qCNpHXmaYI42l1E/fAnELW3ly2yE80DUviequYvOX0i14ZWRmYCJ/gCYPG4PbNEFUGhmwDwtHZqxSSpADjQ73fAU2zne4DGeFLA7aOce60KjKjjBhrLhhmyJ0+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ONYFbl0e; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755789800;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Pp2QMqSmglzTl9N5ktKXe1fiz3QOWjTH6/o2x2dsayc=;
-	b=ONYFbl0eIr03dPdTdjI00XhGu+tUVwBv4jNUVh5fMqW2mRKU5vtqwUSJRqyPxlVjVhSzeZ
-	Kxk5sh23XggI3IN77ctGB5Zc1URjVydJXLEjvOWNt4kYk3ObMYdnlEhHKeAKfHdeXjR0IP
-	t1FpYRlqTBwOmj5Jx8A4cuO+WZEx3xA=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-miNiIWGfMPeJx_avnRzFLA-1; Thu,
- 21 Aug 2025 11:23:17 -0400
-X-MC-Unique: miNiIWGfMPeJx_avnRzFLA-1
-X-Mimecast-MFC-AGG-ID: miNiIWGfMPeJx_avnRzFLA_1755789795
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7240019560A5;
-	Thu, 21 Aug 2025 15:23:15 +0000 (UTC)
-Received: from thuth-p1g4.redhat.com (unknown [10.45.226.28])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AD86919560B0;
-	Thu, 21 Aug 2025 15:23:10 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	kvm@vger.kernel.org
-Cc: Peter Xu <peterx@redhat.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: s390: Fix access to unavailable adapter indicator pages during postcopy
-Date: Thu, 21 Aug 2025 17:23:09 +0200
-Message-ID: <20250821152309.847187-1-thuth@redhat.com>
+	s=arc-20240116; t=1755789839; c=relaxed/simple;
+	bh=UpTeEvUXde2h/y0MlnHYEKbLGSvOfX1ukwlLXrY6NaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C4rwXgITD1rR/456VSjtegvkj06dICKJZUkN6dTrH9YBsF92mC2AbF6m8TQyBBDbBRlaqoOtuYJhfRtHNwk0fcse+1sBsmbkct0Druq6LZ2/MzwFrzuW8yFmkXqOOTzbxds3OwJOm9X0+5WxpuYQOCdoTCw6C4vZ0r/RvpOdpKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HanrNcOX; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b04f8b5so6672625e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:23:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755789835; x=1756394635; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QEUJcXv9UThk/7nFPP7IYyDbZugqau7Nfg+gBaYyVKo=;
+        b=HanrNcOXNLp8pzZnEMU2FzTF55Ju5EUz2Qj5N6kXq1+IYSIyM5DHzr09wlneMPjS0D
+         sIpxhFgOsJpVMWjRixfQmPxsj768rr/HYL9Bgws+zC44qTrqRrxnMM+Xlh6igl73Zhjf
+         W9XLhSc1tYtBP0WJ9jlbKnp0uI71d+y8EiffC0d3In2F/jaOfm5y0E7C/h/5zVjn1JxG
+         zFz4ivQjyqbPddIsnDWUOyhf60A6T+qfy1hvSxy/OsjnJU56sFeZWOAJE45P1zGttdPP
+         gsWui3wuwkJrmIh5eCEwf35FR+MtQBoiJQudExooA1gI/Xo7EFXDs+icAthVjSPCBs/U
+         7GGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755789835; x=1756394635;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QEUJcXv9UThk/7nFPP7IYyDbZugqau7Nfg+gBaYyVKo=;
+        b=SprFEN30dai+8f25s+uDiZ1gRTVbmX/tPz8YZSfGqnXemJQM1Jb5Yhze4cHfWCXoX8
+         1EnvSY2VmbR1ibI5ibHHowDPnLRNaZZXobEscNLsR7pUyPcVT/bllKCCm+E2ijP1d/TI
+         wiQxZ+d8z0rrL+wrtxzEG2fd2rB2fmPpiv8J+FqJDpT9cIyVfwzuzKfNeX3nzKh7tBN5
+         Z4KIVFPpaMxc+y8vwlhcajbsPQDGk0PyD7eYbfPdAY940/ebJV1fNJLmhmOi1MpM25xv
+         T4nV6VfJRE9jJX+24eGhmWG/EOrf2INeV1KW7lz/eVlT08Jn05+XT5uktnPuluisEZpp
+         Rigw==
+X-Forwarded-Encrypted: i=1; AJvYcCUczPtkuQAhBxr6FiFzqmq8W0wrdBghwSa7W882s1mvxPWm08w9Gi3ewZIdQzuEuvzlNq6T39Z8Qpkoc4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuYskouLLn5taiHsCQu56+iG4EZoWyqD2ixHa8Gn/Vd9UhkOud
+	ehtvQul/V47xURygEwI41kvPW56nFwToL+gSdeacw4PYwJ/po1TBk8MH9huTFMK74eU=
+X-Gm-Gg: ASbGncu4Rldo6c3BRw/W1ces/LmqMXzQ6ybOJHk7ZC8Q1vSbwzMg8LC2O5txLw8pATc
+	zgAJOPiFTSJLVziSJLhT2lajwC237BX4yKXiYw1m8jRYsRrHHwFOIQBASIaSmuRQFBa0z+i60yi
+	VAwgw6Z+ycxdVhXoGpFpyI0c58XpPATiOWrfHn+ZajQGhMrft6ambwe1bmf+Ubee2sE+YVcjX/p
+	tkPk3teXL/oHBOeMI3+I6shKd28zc1a8LUSxuesg9fS2Bqtk38vDGhOq3B2KkFERJswumXA8D1A
+	/legAZknpI5H5yOhhSLsh/rTVS5j7MqxCCmV/QOJqru+chmrE8ea+EHt6K4r6YBxmyg4ma/kbAZ
+	T0RDq7xvsz/K1rl5zoAGh+KCVVkl5UyLCJyBmYmFPGwywLVx5e395EOOHWWPvSB0=
+X-Google-Smtp-Source: AGHT+IEAPnZCQDkPxSmOQov4pdPzH4Z/tAtdFg/6SCypTbPD1PCqkc15LUvKOSl6OYscew3c8+ILrg==
+X-Received: by 2002:a05:600c:1f0e:b0:456:1b6f:c888 with SMTP id 5b1f17b1804b1-45b4d84bbd4mr29561495e9.23.1755789835209;
+        Thu, 21 Aug 2025 08:23:55 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c07487986fsm13207272f8f.1.2025.08.21.08.23.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 08:23:54 -0700 (PDT)
+Message-ID: <de4b4872-061c-4f03-ae1d-1ad93b35ed71@linaro.org>
+Date: Thu, 21 Aug 2025 16:23:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/11] firmware: qcom_scm: Add shmbridge support to
+ pas_init/release function
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <20250819165447.4149674-6-mukesh.ojha@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250819165447.4149674-6-mukesh.ojha@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-From: Thomas Huth <thuth@redhat.com>
+On 19/08/2025 17:54, Mukesh Ojha wrote:
+> Qualcomm SoCs running with QHEE (Qualcomm Hypervisor Execution
+> Environment—a library present in the Gunyah hypervisor) utilize the
+> Peripheral Authentication Service (PAS) from Qualcomm TrustZone (TZ)
+> also called QTEE(Qualcomm Trusted Execution Environment firmware)
+> to securely authenticate and reset remote processors via a sequence
+> of SMC calls such as qcom_scm_pas_init_image(), qcom_scm_pas_mem_setup(),
+> and qcom_scm_pas_auth_and_reset().
+> 
+> For memory passed to Qualcomm TrustZone, it must either be part of a
+> pool registered with TZ or be directly registered via SHMbridge SMC
+> calls.
+> 
+> When QHEE is present, PAS SMC calls from Linux running at EL1 are
+> trapped by QHEE (running at EL2), which then creates or retrieves memory
+> from the SHM bridge for both metadata and remoteproc carveout memory
+> before passing them to TZ. However, when the SoC runs with a
+> non-QHEE-based hypervisor, Linux must create the SHM bridge for both
+> metadata (before it is passed to TZ in qcom_scm_pas_init_image()) and
+> for remoteproc memory (before the call is made to TZ in
+> qcom_scm_pas_auth_and_reset()).
+> 
+> For the qcom_scm_pas_init_image() call, metadata content must be copied
+> to a buffer allocated from the SHM bridge before making the SMC call.
+> This buffer should be freed either immediately after the call or during
+> the qcom_scm_pas_metadata_release() function, depending on the context
+> parameter passed to qcom_scm_pas_init_image(). Convert the metadata
+> context parameter to use PAS context data structure so that it will also
+> be possible to decide whether to get memory from SHMbridge pool or not.
+> 
+> When QHEE is present, it manages the IOMMU translation context so, in
+> absence of it device driver will be aware through device tree that its
+> translation context is managed by Linux and it need to create SHMbridge
+> before passing any buffer to TZ, So, remote processor driver should
+> appropriately set ctx->has_iommu to let PAS SMC function to take care of
+> everything ready for the call to work.
+> 
+> Lets convert qcom_scm_pas_init_image() and qcom_scm_pas_metadata_release()
+> to have these awareness.
 
-When you run a KVM guest with vhost-net and migrate that guest to
-another host, and you immediately enable postcopy after starting the
-migration, there is a big chance that the network connection of the
-guest won't work anymore on the destination side after the migration.
+I like the effort in the commit log here but its also a bit too long.
 
-With a debug kernel v6.16.0, there is also a call trace that looks
-like this:
+Please go through these paragraphs and try to reduce down the amount of 
+text you are generating.
 
- FAULT_FLAG_ALLOW_RETRY missing 881
- CPU: 6 UID: 0 PID: 549 Comm: kworker/6:2 Kdump: loaded Not tainted 6.16.0 #56 NONE
- Hardware name: IBM 3931 LA1 400 (LPAR)
- Workqueue: events irqfd_inject [kvm]
- Call Trace:
-  [<00003173cbecc634>] dump_stack_lvl+0x104/0x168
-  [<00003173cca69588>] handle_userfault+0xde8/0x1310
-  [<00003173cc756f0c>] handle_pte_fault+0x4fc/0x760
-  [<00003173cc759212>] __handle_mm_fault+0x452/0xa00
-  [<00003173cc7599ba>] handle_mm_fault+0x1fa/0x6a0
-  [<00003173cc73409a>] __get_user_pages+0x4aa/0xba0
-  [<00003173cc7349e8>] get_user_pages_remote+0x258/0x770
-  [<000031734be6f052>] get_map_page+0xe2/0x190 [kvm]
-  [<000031734be6f910>] adapter_indicators_set+0x50/0x4a0 [kvm]
-  [<000031734be7f674>] set_adapter_int+0xc4/0x170 [kvm]
-  [<000031734be2f268>] kvm_set_irq+0x228/0x3f0 [kvm]
-  [<000031734be27000>] irqfd_inject+0xd0/0x150 [kvm]
-  [<00003173cc00c9ec>] process_one_work+0x87c/0x1490
-  [<00003173cc00dda6>] worker_thread+0x7a6/0x1010
-  [<00003173cc02dc36>] kthread+0x3b6/0x710
-  [<00003173cbed2f0c>] __ret_from_fork+0xdc/0x7f0
-  [<00003173cdd737ca>] ret_from_fork+0xa/0x30
- 3 locks held by kworker/6:2/549:
-  #0: 00000000800bc958 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x7ee/0x1490
-  #1: 000030f3d527fbd0 ((work_completion)(&irqfd->inject)){+.+.}-{0:0}, at: process_one_work+0x81c/0x1490
-  #2: 00000000f99862b0 (&mm->mmap_lock){++++}-{3:3}, at: get_map_page+0xa8/0x190 [kvm]
+> 
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> ---
+>   drivers/firmware/qcom/qcom_scm.c       | 71 +++++++++++++++++++++-----
+>   drivers/remoteproc/qcom_q6v5_pas.c     | 14 ++---
+>   drivers/soc/qcom/mdt_loader.c          |  4 +-
+>   include/linux/firmware/qcom/qcom_scm.h |  9 ++--
+>   4 files changed, 73 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> index 7827699e277c..301d440f62f3 100644
+> --- a/drivers/firmware/qcom/qcom_scm.c
+> +++ b/drivers/firmware/qcom/qcom_scm.c
+> @@ -616,6 +616,35 @@ static int __qcom_scm_pas_init_image(u32 peripheral, dma_addr_t mdata_phys,
+>   	return ret;
+>   }
+>   
+> +static int qcom_scm_pas_prep_and_init_image(struct qcom_scm_pas_ctx *ctx,
+> +					    const void *metadata, size_t size)
+> +{
+> +	struct qcom_scm_pas_metadata *mdt_ctx;
+> +	struct qcom_scm_res res;
+> +	phys_addr_t mdata_phys;
+> +	void *mdata_buf;
+> +	int ret;
+> +
+> +	mdt_ctx = ctx->metadata;
+> +	mdata_buf = qcom_tzmem_alloc(__scm->mempool, size, GFP_KERNEL);
+> +	if (!mdata_buf)
+> +		return -ENOMEM;
+> +
+> +	memcpy(mdata_buf, metadata, size);
+> +	mdata_phys = qcom_tzmem_to_phys(mdata_buf);
+> +
+> +	ret = __qcom_scm_pas_init_image(ctx->peripheral, mdata_phys, mdata_buf, size, &res);
+> +	if (ret < 0 || !mdt_ctx) {
 
-The "FAULT_FLAG_ALLOW_RETRY missing" indicates that handle_userfaultfd()
-saw a page fault request without ALLOW_RETRY flag set, hence userfaultfd
-cannot remotely resolve it (because the caller was asking for an immediate
-resolution, aka, FAULT_FLAG_NOWAIT, while remote faults can take time).
-With that, get_map_page() failed and the irq was lost.
+if ret is an error or mdt_ctx is null free the memory
 
-We should not be strictly in an atomic environment here and the worker
-should be sleepable (the call is done during an ioctl from userspace),
-so we can allow adapter_indicators_set() to just sleep waiting for the
-remote fault instead.
+> +		qcom_tzmem_free(mdata_buf);
+> +	} else if (mdt_ctx) {
 
-Link: https://issues.redhat.com/browse/RHEL-42486
-Signed-off-by: Peter Xu <peterx@redhat.com>
-[thuth: Assembled patch description and fixed some cosmetical issues]
-Signed-off-by: Thomas Huth <thuth@redhat.com>
+if mdt_ctx is valid do this
+
+> +		mdt_ctx->ptr = mdata_buf;
+> +		mdt_ctx->addr.phys_addr = mdata_phys;
+> +		mdt_ctx->size = size;
+> +	}
+> +
+> +	return ret ? : res.result[0];
+
+so we can have ctx_mtd valid but return the value at ret but also mtd 
+valid and return the res.result[0]
+
+That seems like an odd choice - surely if you are enumerating the 
+data-structure the result code we care about is res.result[0] instead of 
+ret ?
+
+OK I see this return logic comes from below..
+
+But
+
+drivers/soc/qcom/mdt_loader.c::qcom_mdt_pas_init
+
+ret = qcom_scm_pas_init_image(pas_id, metadata, metadata_len, ctx);
+kfree(metadata);
+if (ret) {
+     /* Invalid firmware metadata */
+     dev_err(dev, "error %d initializing firmware %s\n", ret, fw_name);
+     goto out;
+}
+
+So if ret as returned from your function is > 0 you will leak the memory 
+allocated @ mdata_buf ..
+
+Do you expect something else to come along and call 
+qcom_scm_pas_metadata_release() ?
+
+> +}
+> +
+>   /**
+>    * qcom_scm_pas_init_image() - Initialize peripheral authentication service
+>    *			       state machine for a given peripheral, using the
+> @@ -625,7 +654,7 @@ static int __qcom_scm_pas_init_image(u32 peripheral, dma_addr_t mdata_phys,
+>    *		and optional blob of data used for authenticating the metadata
+>    *		and the rest of the firmware
+>    * @size:	size of the metadata
+> - * @ctx:	optional metadata context
+> + * @ctx:	optional pas context
+>    *
+>    * Return: 0 on success.
+>    *
+> @@ -634,13 +663,19 @@ static int __qcom_scm_pas_init_image(u32 peripheral, dma_addr_t mdata_phys,
+>    * qcom_scm_pas_metadata_release() by the caller.
+>    */
+>   int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
+> -			    struct qcom_scm_pas_metadata *ctx)
+> +			    struct qcom_scm_pas_ctx *ctx)
+>   {
+> +	struct qcom_scm_pas_metadata *mdt_ctx;
+>   	struct qcom_scm_res res;
+>   	dma_addr_t mdata_phys;
+>   	void *mdata_buf;
+>   	int ret;
+>   
+> +	if (ctx && ctx->has_iommu) {
+> +		ret = qcom_scm_pas_prep_and_init_image(ctx, metadata, size);
+> +		return ret;
+> +	}
+> +
+>   	/*
+>   	 * During the scm call memory protection will be enabled for the meta
+>   	 * data blob, so make sure it's physically contiguous, 4K aligned and
+> @@ -663,10 +698,11 @@ int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
+>   	ret = __qcom_scm_pas_init_image(peripheral, mdata_phys, mdata_buf, size, &res);
+>   	if (ret < 0 || !ctx) {
+>   		dma_free_coherent(__scm->dev, size, mdata_buf, mdata_phys);
+> -	} else if (ctx) {
+> -		ctx->ptr = mdata_buf;
+> -		ctx->phys = mdata_phys;
+> -		ctx->size = size;
+> +	} else if (ctx->metadata) {
+> +		mdt_ctx = ctx->metadata;
+> +		mdt_ctx->ptr = mdata_buf;
+> +		mdt_ctx->addr.dma_addr = mdata_phys;
+> +		mdt_ctx->size = size;
+>   	}
+>   
+>   	return ret ? : res.result[0];
+
+is this return path still valid now that you've functionally decomposed 
+into qcom_sm_pas_prep_and_init ?
+
+> @@ -675,18 +711,27 @@ EXPORT_SYMBOL_GPL(qcom_scm_pas_init_image);
+>   
+>   /**
+>    * qcom_scm_pas_metadata_release() - release metadata context
+> - * @ctx:	metadata context
+> + * @ctx:	pas context
+>    */
+> -void qcom_scm_pas_metadata_release(struct qcom_scm_pas_metadata *ctx)
+> +void qcom_scm_pas_metadata_release(struct qcom_scm_pas_ctx *ctx)
+>   {
+> -	if (!ctx->ptr)
+> +	struct qcom_scm_pas_metadata *mdt_ctx;
+> +
+> +	mdt_ctx = ctx->metadata;
+> +	if (!mdt_ctx->ptr)
+>   		return;
+>   
+> -	dma_free_coherent(__scm->dev, ctx->size, ctx->ptr, ctx->phys);
+> +	if (ctx->has_iommu) {
+> +		qcom_tzmem_free(mdt_ctx->ptr);
+> +		mdt_ctx->addr.phys_addr = 0;
+> +	} else {
+> +		dma_free_coherent(__scm->dev, mdt_ctx->size, mdt_ctx->ptr,
+> +				  mdt_ctx->addr.dma_addr);
+> +		mdt_ctx->addr.dma_addr = 0;
+> +	}
+>   
+> -	ctx->ptr = NULL;
+> -	ctx->phys = 0;
+> -	ctx->size = 0;
+> +	mdt_ctx->ptr = NULL;
+> +	mdt_ctx->size = 0;
+>   }
+>   EXPORT_SYMBOL_GPL(qcom_scm_pas_metadata_release);
+>   
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index e376c0338576..09cada92dfd5 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -209,9 +209,9 @@ static int qcom_pas_unprepare(struct rproc *rproc)
+>   	 * auth_and_reset() was successful, but in other cases clean it up
+>   	 * here.
+>   	 */
+> -	qcom_scm_pas_metadata_release(pas->pas_ctx->metadata);
+> +	qcom_scm_pas_metadata_release(pas->pas_ctx);
+>   	if (pas->dtb_pas_id)
+> -		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx->metadata);
+> +		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
+>   
+>   	return 0;
+>   }
+> @@ -244,7 +244,7 @@ static int qcom_pas_load(struct rproc *rproc, const struct firmware *fw)
+>   	return 0;
+>   
+>   release_dtb_metadata:
+> -	qcom_scm_pas_metadata_release(pas->dtb_pas_ctx->metadata);
+> +	qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
+>   	release_firmware(pas->dtb_firmware);
+>   
+>   	return ret;
+> @@ -313,9 +313,9 @@ static int qcom_pas_start(struct rproc *rproc)
+>   		goto release_pas_metadata;
+>   	}
+>   
+> -	qcom_scm_pas_metadata_release(pas->pas_ctx->metadata);
+> +	qcom_scm_pas_metadata_release(pas->pas_ctx);
+>   	if (pas->dtb_pas_id)
+> -		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx->metadata);
+> +		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
+>   
+>   	/* firmware is used to pass reference from qcom_pas_start(), drop it now */
+>   	pas->firmware = NULL;
+> @@ -323,9 +323,9 @@ static int qcom_pas_start(struct rproc *rproc)
+>   	return 0;
+>   
+>   release_pas_metadata:
+> -	qcom_scm_pas_metadata_release(pas->pas_ctx->metadata);
+> +	qcom_scm_pas_metadata_release(pas->pas_ctx);
+>   	if (pas->dtb_pas_id)
+> -		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx->metadata);
+> +		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
+>   disable_px_supply:
+>   	if (pas->px_supply)
+>   		regulator_disable(pas->px_supply);
+> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+> index 509ff85d9bf6..a1718db91b3e 100644
+> --- a/drivers/soc/qcom/mdt_loader.c
+> +++ b/drivers/soc/qcom/mdt_loader.c
+> @@ -240,7 +240,7 @@ EXPORT_SYMBOL_GPL(qcom_mdt_read_metadata);
+>    */
+>   static int __qcom_mdt_pas_init(struct device *dev, const struct firmware *fw,
+>   			       const char *fw_name, int pas_id, phys_addr_t mem_phys,
+> -			       struct qcom_scm_pas_metadata *ctx)
+> +			       struct qcom_scm_pas_ctx *ctx)
+>   {
+>   	const struct elf32_phdr *phdrs;
+>   	const struct elf32_phdr *phdr;
+> @@ -491,7 +491,7 @@ int qcom_mdt_pas_load(struct qcom_scm_pas_ctx *ctx, const struct firmware *fw,
+>   	int ret;
+>   
+>   	ret = __qcom_mdt_pas_init(ctx->dev, fw, firmware, ctx->peripheral,
+> -				  ctx->mem_phys, ctx->metadata);
+> +				  ctx->mem_phys, ctx);
+>   	if (ret)
+>   		return ret;
+>   
+> diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
+> index a31006fe49a9..bd3417d9c3f9 100644
+> --- a/include/linux/firmware/qcom/qcom_scm.h
+> +++ b/include/linux/firmware/qcom/qcom_scm.h
+> @@ -68,7 +68,10 @@ int qcom_scm_set_remote_state(u32 state, u32 id);
+>   
+>   struct qcom_scm_pas_metadata {
+>   	void *ptr;
+> -	dma_addr_t phys;
+> +	union {
+> +		dma_addr_t dma_addr;
+> +		phys_addr_t phys_addr;
+> +	} addr;
+>   	ssize_t size;
+>   };
+>   
+> @@ -85,8 +88,8 @@ struct qcom_scm_pas_ctx {
+>   void *qcom_scm_pas_ctx_init(struct device *dev, u32 peripheral, phys_addr_t mem_phys,
+>   			    size_t mem_size, bool save_mdt_ctx);
+>   int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
+> -			    struct qcom_scm_pas_metadata *ctx);
+> -void qcom_scm_pas_metadata_release(struct qcom_scm_pas_metadata *ctx);
+> +			    struct qcom_scm_pas_ctx *ctx);
+> +void qcom_scm_pas_metadata_release(struct qcom_scm_pas_ctx *ctx);
+>   int qcom_scm_pas_mem_setup(u32 peripheral, phys_addr_t addr, phys_addr_t size);
+>   int qcom_scm_pas_prepare_and_auth_reset(struct qcom_scm_pas_ctx *ctx);
+>   int qcom_scm_pas_auth_and_reset(u32 peripheral);
+
+Please review the error paths here especially WRT to qcom_mdt_pas_init();
+
 ---
- Note: Instructions for reproducing the bug can be found in the ticket here:
- https://issues.redhat.com/browse/RHEL-42486?focusedId=26661116#comment-26661116
-
- arch/s390/kvm/interrupt.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
-index 60c360c18690f..dcce826ae9875 100644
---- a/arch/s390/kvm/interrupt.c
-+++ b/arch/s390/kvm/interrupt.c
-@@ -2777,12 +2777,19 @@ static unsigned long get_ind_bit(__u64 addr, unsigned long bit_nr, bool swap)
- 
- static struct page *get_map_page(struct kvm *kvm, u64 uaddr)
- {
-+	struct mm_struct *mm = kvm->mm;
- 	struct page *page = NULL;
-+	int locked = 1;
-+
-+	if (mmget_not_zero(mm)) {
-+		mmap_read_lock(mm);
-+		get_user_pages_remote(mm, uaddr, 1, FOLL_WRITE,
-+				      &page, &locked);
-+		if (locked)
-+			mmap_read_unlock(mm);
-+		mmput(mm);
-+	}
- 
--	mmap_read_lock(kvm->mm);
--	get_user_pages_remote(kvm->mm, uaddr, 1, FOLL_WRITE,
--			      &page, NULL);
--	mmap_read_unlock(kvm->mm);
- 	return page;
- }
- 
--- 
-2.50.1
-
+bod
 
