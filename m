@@ -1,145 +1,120 @@
-Return-Path: <linux-kernel+bounces-779101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C32FCB2EF1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:11:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42FBEB2EF1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D4FC1BC5B1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:11:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 038C63AB190
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8013E27E041;
-	Thu, 21 Aug 2025 07:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e5ezfTYU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16EA027B352;
+	Thu, 21 Aug 2025 07:11:47 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA431E7C12;
-	Thu, 21 Aug 2025 07:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48F71EA7D2
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755760271; cv=none; b=mXCVniVZV+XhvUksrVHSYgeOxiOuh878yuGsHJyrpImzGoo2YeKIenJypSW6eLjQtZJ8BtS3haX3+RKAiyrCJPjYWob+MVkFNk1BVKb6eT/az30sDEfsOrTQ384IXLL3UqO1mvtF8aWZa+yuIEMUI2iDoY2ii2iTFAclhfOzXbQ=
+	t=1755760306; cv=none; b=FRk0FVyOILlALhPAuOUDGTm4rmXAL2mvMBwkLrGcE/G2D83mr56SioOWotbCwKHeGiikqDIipAJcowzpNVeVnKz7NRlcGL2a584qaqXCKNMEJrEd+BtDq37TegvzG4UNXRVWK4wDeA4TdAlr6E6BgIWgZhaQu9PFF1t13XxWBMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755760271; c=relaxed/simple;
-	bh=OUn2H5750HvrMtA7wkc7vbkYR2d2MeCJuYsZZvXJOB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQV/QE586pBB9fM3+BUplLLwVd00ORQzzits/jfD2/Fhp0p0QisfB/6iZqIglIvABHfGcJbmgjB0yfqQOasugyQVd2JB/fyAjWsmm1qpRl1dl2JLQ6r1jJiFPR5RrCJ4mADjxQu2NaWNPe5YJZoZCUz7PPuhLlyzw9vBxirg3gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e5ezfTYU; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755760270; x=1787296270;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OUn2H5750HvrMtA7wkc7vbkYR2d2MeCJuYsZZvXJOB4=;
-  b=e5ezfTYUq27U/PzS1XPEvel5waeBuv78OgCHwS7Om1lA7BG4odnCDZCa
-   jgmPqtGKdtwHXb1D4SwfR3K46tgnSKecbJxx6wIkHEuDwKNYbejOD/Wzn
-   WbUBq8QnVJWt/oCIStRPvtSKs7Fe9ZnHlg0vanSq8zZ7Sh8nLJl9qzP0J
-   d36z9GLWhGDbGcuJgyQ5ksx8BfcC9bIj4wWUkiRjGCrEi8C69oi7rZhx0
-   mT2bRwg2XPQ3tuTQqyRJupW/2HMmzACbM2q3ZSDAibIU1VOeaqbz9cabK
-   cy5pbDQNVyYN+/Wkm01nxkTiGuic94HPvawbTjG+ECV9TcdbeeDsyMhYT
-   A==;
-X-CSE-ConnectionGUID: BNAVKzZARiWgt1d2WXZ6dg==
-X-CSE-MsgGUID: BE/5ZXugRd+t4+Pei8qQQg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="61678741"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="61678741"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 00:11:10 -0700
-X-CSE-ConnectionGUID: OlO3aYLHTdOuly0hquwMZg==
-X-CSE-MsgGUID: wmLH5BeDSTiVvUVSelVnwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="168591804"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa008.jf.intel.com with SMTP; 21 Aug 2025 00:11:06 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 21 Aug 2025 10:11:04 +0300
-Date: Thu, 21 Aug 2025 10:11:04 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: amitsd@google.com
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Badhri Jagan Sridharan <badhri@google.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: Re: [PATCH v2 1/2] usb: typec: maxim_contaminant: disable low power
- mode when reading comparator values
-Message-ID: <aKbGiLh2FrCM4dLk@kuha.fi.intel.com>
-References: <20250815-fix-upstream-contaminant-v2-0-6c8d6c3adafb@google.com>
- <20250815-fix-upstream-contaminant-v2-1-6c8d6c3adafb@google.com>
+	s=arc-20240116; t=1755760306; c=relaxed/simple;
+	bh=58RBQM6omo2HhKg7GdZdZPgexggqYZ+7Ei3/6hWVjfo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NyZAH8/VJ+8+2AuFKGoeurjC+96bBV73AxM4XRGIa7ZBeJMZFSi3RGDH+PwIjifHb0lezsBKG2TO4/wbgYw2+xPXttTRRSskJQ/Jm+pBP+pdlM25MDc1f9ptuFQholrFane0Ps9xnrL1zb7qGaFxokOZzS47I5SJ1NBd8jTmOh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c6vX559whz2Cg8n;
+	Thu, 21 Aug 2025 15:07:17 +0800 (CST)
+Received: from dggpemf500011.china.huawei.com (unknown [7.185.36.131])
+	by mail.maildlp.com (Postfix) with ESMTPS id DE6A41401F2;
+	Thu, 21 Aug 2025 15:11:40 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ dggpemf500011.china.huawei.com (7.185.36.131) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 21 Aug 2025 15:11:40 +0800
+Message-ID: <aaf975a9-db4a-5b61-4e07-5d667db47172@huawei.com>
+Date: Thu, 21 Aug 2025 15:11:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815-fix-upstream-contaminant-v2-1-6c8d6c3adafb@google.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH] irqchip/gic-v5: Fix kmemleak L2 IST table entries false
+ positives
+Content-Language: en-US
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, Thomas Gleixner
+	<tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>
+References: <20250811135001.1333684-1-lpieralisi@kernel.org>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20250811135001.1333684-1-lpieralisi@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ dggpemf500011.china.huawei.com (7.185.36.131)
 
-On Fri, Aug 15, 2025 at 11:31:51AM -0700, Amit Sunil Dhamne via B4 Relay wrote:
-> From: Amit Sunil Dhamne <amitsd@google.com>
+
+
+On 2025/8/11 21:50, Lorenzo Pieralisi wrote:
+> L2 IST table entries are allocated with the kmalloc interface
+> and their physical addresses are programmed in the GIC (either
+> IST base address register or L1 IST table entries) but their
+> virtual addresses are not stored in any kernel data structure
+> because they are not needed at runtime - the L2 IST table entries
+> are managed through system instructions but never dereferenced
+> directly by the driver.
 > 
-> Low power mode is enabled when reading CC resistance as part of
-> `max_contaminant_read_resistance_kohm()` and left in that state.
-> However, it's supposed to work with 1uA current source. To read CC
-> comparator values current source is changed to 80uA. This causes a storm
-> of CC interrupts as it (falsely) detects a potential contaminant. To
-> prevent this, disable low power mode current sourcing before reading
-> comparator values.
+
+[...]
+
 > 
-> Fixes: 02b332a06397 ("usb: typec: maxim_contaminant: Implement check_contaminant callback")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-> Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
-
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
+> Reported-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Closes: https://lore.kernel.org/lkml/cc611dda-d1e4-4793-9bb2-0eaa47277584@huawei.com/
+> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Marc Zyngier <maz@kernel.org>
 > ---
->  drivers/usb/typec/tcpm/maxim_contaminant.c | 5 +++++
->  drivers/usb/typec/tcpm/tcpci_maxim.h       | 1 +
->  2 files changed, 6 insertions(+)
+>  drivers/irqchip/irq-gic-v5-irs.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/drivers/usb/typec/tcpm/maxim_contaminant.c b/drivers/usb/typec/tcpm/maxim_contaminant.c
-> index 0cdda06592fd3cc34e2179ccd49ef677f8ec9792..818cfe226ac7716de2fcbce205c67ea16acba592 100644
-> --- a/drivers/usb/typec/tcpm/maxim_contaminant.c
-> +++ b/drivers/usb/typec/tcpm/maxim_contaminant.c
-> @@ -188,6 +188,11 @@ static int max_contaminant_read_comparators(struct max_tcpci_chip *chip, u8 *ven
->  	if (ret < 0)
->  		return ret;
+> diff --git a/drivers/irqchip/irq-gic-v5-irs.c b/drivers/irqchip/irq-gic-v5-irs.c
+> index ad1435a858a4..e8a576f66366 100644
+> --- a/drivers/irqchip/irq-gic-v5-irs.c
+> +++ b/drivers/irqchip/irq-gic-v5-irs.c
+> @@ -5,6 +5,7 @@
 >  
-> +	/* Disable low power mode */
-> +	ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCLPMODESEL,
-> +				 FIELD_PREP(CCLPMODESEL,
-> +					    LOW_POWER_MODE_DISABLE));
-> +
->  	/* Sleep to allow comparators settle */
->  	usleep_range(5000, 6000);
->  	ret = regmap_update_bits(regmap, TCPC_TCPC_CTRL, TCPC_TCPC_CTRL_ORIENTATION, PLUG_ORNT_CC1);
-> diff --git a/drivers/usb/typec/tcpm/tcpci_maxim.h b/drivers/usb/typec/tcpm/tcpci_maxim.h
-> index 76270d5c283880dc49b13cabe7d682f2c2bf15fe..b33540a42a953dc6d8197790ee4af3b6f52791ce 100644
-> --- a/drivers/usb/typec/tcpm/tcpci_maxim.h
-> +++ b/drivers/usb/typec/tcpm/tcpci_maxim.h
-> @@ -21,6 +21,7 @@
->  #define CCOVPDIS                                BIT(6)
->  #define SBURPCTRL                               BIT(5)
->  #define CCLPMODESEL                             GENMASK(4, 3)
-> +#define LOW_POWER_MODE_DISABLE                  0
->  #define ULTRA_LOW_POWER_MODE                    1
->  #define CCRPCTRL                                GENMASK(2, 0)
->  #define UA_1_SRC                                1
-> 
-> -- 
-> 2.51.0.rc1.167.g924127e9c0-goog
-> 
+>  #define pr_fmt(fmt)	"GICv5 IRS: " fmt
+>  
+> +#include <linux/kmemleak.h>
+>  #include <linux/log2.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> @@ -117,6 +118,7 @@ static int __init gicv5_irs_init_ist_linear(struct gicv5_irs_chip_data *irs_data
+>  		kfree(ist);
+>  		return ret;
+>  	}
+> +	kmemleak_ignore(ist);
+>  
+>  	return 0;
+>  }
+> @@ -232,6 +234,7 @@ int gicv5_irs_iste_alloc(const u32 lpi)
+>  		kfree(l2ist);
+>  		return ret;
+>  	}
+> +	kmemleak_ignore(l2ist);
 
--- 
-heikki
+Reviewed-by: Jinjie Ruan <ruanjinjie@huawei.com>
+
+>  
+>  	/*
+>  	 * Make sure we invalidate the cache line pulled before the IRS
 
