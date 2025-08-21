@@ -1,152 +1,166 @@
-Return-Path: <linux-kernel+bounces-778793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FEF9B2EB21
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:13:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B621B2EB22
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A7461758E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:11:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63B03188168A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677522D94AD;
-	Thu, 21 Aug 2025 02:11:37 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26C22D979E;
+	Thu, 21 Aug 2025 02:14:34 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC4C194124;
-	Thu, 21 Aug 2025 02:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70591DD543
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755742297; cv=none; b=moZ4BNU3mx65KA39UFc4ud+uFEAVDCm+53rNMbCiAhk+247lwXPRtAxP+HldKzUQl4O+hAln7YVEQnR6g/6UyuwHQTVhtBoinJXYk3GnuXmnEylpdCdVXr1KG6eYpxuVg2Bc/NWhR8cmVK6h5rvyDA+MN2n+C2VpKTGjD0M6oHs=
+	t=1755742474; cv=none; b=QTPt3NrwvGyUeaBqgLwtd0+YoeSTBsJ12lTyMnKKu1GZ57lCrcL2AgSbGd0sNO+ZZP/JGJGDiQtVgescAzx9d0rkqRUtW3v9QemsZJAOVhFkSta/+Nklrc8fxDV31g1mBkd/42ifhXvBrPqbv8LPtAq2HvPRow+yajDgqyvc1xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755742297; c=relaxed/simple;
-	bh=KfoDvDxYcogeLGEPuoMCFKFWUu0e1tr8+QbKzrTi+Ug=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K8w2VdgIZuXf9WMcoVxaPsTZO+5saA39GHnhUz8f+9EyqQhC7aKTt7OBhgvzsSHCyP9N4gIRCsHffU3wTCOz9KxOCyUWP0m2gt33c03Hxi0hA9eWeMzkdccJo05s+9yGDtmsgFnrVrIiarrwlkI7BkUE4lEGnWBQm+8AMiXzlUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c6myq4cxKzKHMhh;
-	Thu, 21 Aug 2025 10:11:31 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 1C4841A0AD8;
-	Thu, 21 Aug 2025 10:11:31 +0800 (CST)
-Received: from huawei.com (unknown [10.67.174.45])
-	by APP4 (Coremail) with SMTP id gCh0CgB38hJLgKZo7P6NEQ--.63669S2;
-	Thu, 21 Aug 2025 10:11:30 +0800 (CST)
-From: Tengda Wu <wutengda@huaweicloud.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Ingo Molnar <mingo@elte.hu>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tengda Wu <wutengda@huaweicloud.com>
-Subject: [PATCH -next v2] ftrace: Fix potential warning in trace_printk_seq during ftrace_dump
-Date: Thu, 21 Aug 2025 02:11:20 +0000
-Message-Id: <20250821021120.2986553-1-wutengda@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755742474; c=relaxed/simple;
+	bh=c1JzjzcqhHeqb50RUyDDT9Y98mtiHK/L6+DIp7oHAW8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=e32VpbwiUAdgftwRcxfP+hE0kgL2gc8T0clBhs/d0Va/Q5jC/jm74AHDow2gX8PVXwXEqBvX9huxptIiFz8NLaybn5XuSipycrrB+QclQ64jfNe9umh917qol4doWytZ2D+kXyIThkhzjhc7mGnRCPNVvCZZmdzqF4JBc798FEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3e6e61caf71so5957685ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 19:14:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755742472; x=1756347272;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aQxHRgeChNTxbLV3131Rwb52VhDI/1dYJc8+5cwgx30=;
+        b=Sz/RN2GpzagDFOcQUnudi4eh2ctYt/WVfbCAHlU4+UMa4eld2TqUcAVbLgAi7SNaOc
+         kBm4PvmJjTmXU4frxi+BV9aTxz38ZG6XC0WwSQJa4J9L2ZvoYNEZLoFqt4ii1JGR1E/O
+         d7GUwgrzVmIlVnE2olto1ee+Vh+P0985zkLa9asjV9ZsdSoSdQ+RLruo0xMjNjf0CWhz
+         x7PnHCfXCpSnD6MY+foNhrXxOts48ItQjcfSZkjta1X7MJdbB/NT8PD3nYPRuXAlOHWn
+         nIeONksRCyYsZG3qoRzrYHJOiGZ6FRhV+QwiPSIT5Z1i2+9UYky26fzKMY0qid+FADF0
+         uTWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVavxT/D/TfjRBgBWdAQC1WDARy/YjpnuEMLr8wp3dTxzI49QcmHhBm+GmS/hBEmrZr7yiCUpVnyz4/k8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz73HlpJha8H5v0mCwo9ffDC5kJuOUkpRQuH7Z35QUKE/2dtJUz
+	2J8526JHsiEZHBFoCSkj7u+54NvQyhgXztcc6LZSRdY3Yd7ABcfptklqQoGlprb8YEgmcLrxHE0
+	nsGz408+yWsWWCypGrnJ7ofoAzcrRlfmNLKpLhn3JPfLJgLNIheyG3Wmu56w=
+X-Google-Smtp-Source: AGHT+IHGC44FrRLwYHhyTjthukMc8igcR3mKads8/zioUjdqWD2TAcdwPDOGULm4I7iJqaRzfo/oKWobKAXoZpW4bMxv5gyafIMf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB38hJLgKZo7P6NEQ--.63669S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kw13WFy7Kw4fJFyDCFyfJFb_yoW8Kr1rpF
-	y3K3srJrs5AFsrtF1UuF4xCr1xX3y0gry7WrsrJw1rJan8Ar1jvrnrt3ZaqFyfA3yDW3sI
-	yrWYy348Cw129FJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUonmRUU
-	UUU
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
+X-Received: by 2002:a05:6e02:158b:b0:3e5:8249:e973 with SMTP id
+ e9e14a558f8ab-3e6d7b4aa01mr14110555ab.16.1755742471892; Wed, 20 Aug 2025
+ 19:14:31 -0700 (PDT)
+Date: Wed, 20 Aug 2025 19:14:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a68107.050a0220.1f0557.0000.GAE@google.com>
+Subject: [syzbot] [mm?] INFO: rcu detected stall in hub_event (2)
+From: syzbot <syzbot+039eab266c6321a174bd@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, pasha.tatashin@soleen.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-When calling ftrace_dump_one() concurrently with reading trace_pipe,
-a WARN_ON_ONCE() in trace_printk_seq() can be triggered due to a race
-condition.
+Hello,
 
-The issue occurs because:
+syzbot found the following issue on:
 
-CPU0 (ftrace_dump)                              CPU1 (reader)
-echo z > /proc/sysrq-trigger
+HEAD commit:    90d970cade8e Merge tag 'ata-ata-6.17-rc2' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1193b3a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c5d01e11121d45
+dashboard link: https://syzkaller.appspot.com/bug?extid=039eab266c6321a174bd
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-!trace_empty(&iter)
-trace_iterator_reset(&iter) <- len = size = 0
-                                                cat /sys/kernel/tracing/trace_pipe
-trace_find_next_entry_inc(&iter)
-  __find_next_entry
-    ring_buffer_empty_cpu <- all empty
-  return NULL
+Unfortunately, I don't have any reproducer for this issue yet.
 
-trace_printk_seq(&iter.seq)
-  WARN_ON_ONCE(s->seq.len >= s->seq.size)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/104fc9d3de89/disk-90d970ca.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/59eb5344d41f/vmlinux-90d970ca.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e0bed540b10c/bzImage-90d970ca.xz
 
-In the context between trace_empty() and trace_find_next_entry_inc()
-during ftrace_dump, the ring buffer data was consumed by other readers.
-This caused trace_find_next_entry_inc to return NULL, failing to populate
-`iter.seq`. At this point, due to the prior trace_iterator_reset, both
-`iter.seq.len` and `iter.seq.size` were set to 0. Since they are equal,
-the WARN_ON_ONCE condition is triggered.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+039eab266c6321a174bd@syzkaller.appspotmail.com
 
-Add a non-NULL check on the return value of trace_find_next_entry_inc
-prior to invoking trace_printk_seq, ensuring the `iter.seq` is properly
-populated before subsequent operations.
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P9643/1:b..l
+rcu: 	(detected by 1, t=10503 jiffies, g=87629, q=1145 ncpus=2)
+task:kworker/1:13    state:R  running task     stack:22384 pid:9643  tgid:9643  ppid:2      task_flags:0x4288060 flags:0x00004000
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
+ preempt_schedule_irq+0x51/0x90 kernel/sched/core.c:7288
+ irqentry_exit+0x36/0x90 kernel/entry/common.c:197
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:check_kcov_mode kernel/kcov.c:185 [inline]
+RIP: 0010:write_comp_data+0x3c/0x90 kernel/kcov.c:246
+Code: 8b 05 58 b3 1a 12 a9 00 01 ff 00 74 1d f6 c4 01 74 67 a9 00 00 0f 00 75 60 a9 00 00 f0 00 75 59 8b 82 3c 16 00 00 85 c0 74 4f <8b> 82 18 16 00 00 83 f8 03 75 44 48 8b 82 20 16 00 00 8b 92 1c 16
+RSP: 0000:ffffc90004fdf430 EFLAGS: 00000246
+RAX: 0000000080000000 RBX: 0000000000000004 RCX: ffffffff822dbf07
+RDX: ffff88802883a440 RSI: 0000000000000004 RDI: 0000000000000006
+RBP: 0000000000000003 R08: 0000000000000006 R09: 0000000000000004
+R10: 0000000000000003 R11: 00000000000082fe R12: ffff8880200096f0
+R13: ffff8880200096ec R14: 0000000000000002 R15: dffffc0000000000
+ __page_table_check_zero+0x207/0x5d0 mm/page_table_check.c:139
+ page_table_check_free include/linux/page_table_check.h:43 [inline]
+ free_pages_prepare mm/page_alloc.c:1396 [inline]
+ __free_frozen_pages+0x7b7/0x10f0 mm/page_alloc.c:2895
+ discard_slab mm/slub.c:2753 [inline]
+ __put_partials+0x165/0x1c0 mm/slub.c:3218
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x4d/0x120 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:340
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4180 [inline]
+ slab_alloc_node mm/slub.c:4229 [inline]
+ kmem_cache_alloc_node_noprof+0x1d5/0x3b0 mm/slub.c:4281
+ __alloc_skb+0x2b2/0x380 net/core/skbuff.c:659
+ alloc_skb include/linux/skbuff.h:1336 [inline]
+ alloc_uevent_skb+0x7d/0x210 lib/kobject_uevent.c:289
+ uevent_net_broadcast_untagged lib/kobject_uevent.c:326 [inline]
+ kobject_uevent_net_broadcast lib/kobject_uevent.c:410 [inline]
+ kobject_uevent_env+0xca4/0x1870 lib/kobject_uevent.c:608
+ device_del+0x623/0x9f0 drivers/base/core.c:3896
+ usb_disable_device+0x355/0x7d0 drivers/usb/core/message.c:1418
+ usb_disconnect+0x2e1/0x9c0 drivers/usb/core/hub.c:2344
+ hub_port_connect drivers/usb/core/hub.c:5406 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
+ port_event drivers/usb/core/hub.c:5870 [inline]
+ hub_event+0x1c81/0x4fe0 drivers/usb/core/hub.c:5952
+ process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+ kthread+0x3c5/0x780 kernel/kthread.c:463
+ ret_from_fork+0x5d7/0x6f0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
-Fixes: d769041f8653 ("ring_buffer: implement new locking")
-Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
+
 ---
- kernel/trace/trace.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 4283ed4e8f59..b4cec22753ea 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -10617,6 +10617,7 @@ static void ftrace_dump_one(struct trace_array *tr, enum ftrace_dump_mode dump_m
- 	 */
- 
- 	while (!trace_empty(&iter)) {
-+		void *ent;
- 
- 		if (!cnt)
- 			printk(KERN_TRACE "---------------------------------\n");
-@@ -10625,17 +10626,18 @@ static void ftrace_dump_one(struct trace_array *tr, enum ftrace_dump_mode dump_m
- 
- 		trace_iterator_reset(&iter);
- 		iter.iter_flags |= TRACE_FILE_LAT_FMT;
-+		ent = trace_find_next_entry_inc(&iter);
- 
--		if (trace_find_next_entry_inc(&iter) != NULL) {
-+		if (ent) {
- 			int ret;
- 
- 			ret = print_trace_line(&iter);
- 			if (ret != TRACE_TYPE_NO_CONSUME)
- 				trace_consume(&iter);
-+
-+			trace_printk_seq(&iter.seq);
- 		}
- 		touch_nmi_watchdog();
--
--		trace_printk_seq(&iter.seq);
- 	}
- 
- 	if (!cnt)
--- 
-2.34.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
