@@ -1,126 +1,106 @@
-Return-Path: <linux-kernel+bounces-780827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE5DEB309D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:10:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8FB2B309DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB69F622859
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:10:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092D51D001CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61E92D7809;
-	Thu, 21 Aug 2025 23:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BF428136B;
+	Thu, 21 Aug 2025 23:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sm33ZgU8"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FoDWQDRV"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C333822CBD9;
-	Thu, 21 Aug 2025 23:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A5926F476
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 23:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755817841; cv=none; b=Osx29WEo5de2dDE5HArVMqM4TNta9utdsXRTnbpi9Vp6mhHIlrvz5nJqCTGSIfE2g6CSKg4Smsoowk/CTpCCxRQ5/0hX7SmuPCHx6x7n4lvMfBp4kafi6wCLl6lSrwxEw8zXuclU9lLOiJl43RHxny5tVPARbYMDMAERytAMHcM=
+	t=1755817870; cv=none; b=PZmOOrb6CgKsogMMqw9bzMFRonMI8q7+oVo34ZsvWLD2JJnvkhNnDOtoC6jtbmddkurHDmSWdibbvSMnc0wg6D4SQ8j0FZucYJ+Fo2dfxn65iURYgKRmG582RQVYu8aUuIDcGH8QJeHaK5NponeK7awt+7QDex0s2jUv6t5bqhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755817841; c=relaxed/simple;
-	bh=T+twVHAZTPt6Lz2FfIrAVcjH0TfwKvyAJmMhvulNTZI=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=kX+LoOg/KpzEag6z2Llq99IKCOrzZJIEdDJYkoMaX5UM8F9Qhs5db8BqCc1u+TKmd/N4R2OAI6CXWSC0hE4tcsldIuKgj9jqucdQ8ypTK2Kn5uqP/IgNKlp8cHWsCbr3+Ra3++rdxIftc8GQ7bYb5/WhpjGvaAZrkPbRm5hcP/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sm33ZgU8; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-245f3784edcso14833455ad.1;
-        Thu, 21 Aug 2025 16:10:39 -0700 (PDT)
+	s=arc-20240116; t=1755817870; c=relaxed/simple;
+	bh=oyKY07/INwHK5W8rJvhyC42nOS23W04zRzQQa6+Y5HA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C1/0tKD4cIK3Vn5U2Qu1e/oZejRbFrABvAu5LvxN42BjYMgmSFOIjpzBXdUPUv2mA6IKOc0XGb7lPn1jskH8L8hN44IIZASa0LRt7IoFQ86+1zebzeoqBPx/WXscEIpn3Bwkxx+1A+QJYQE+nesUgrEHtg/k+gsZLWnmjKmcfUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FoDWQDRV; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-246257e49c8so83025ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 16:11:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755817839; x=1756422639; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3nsLXogIrl8xrd3K0Af1S+3Ycr+ymK1uf5MIM01cw/c=;
-        b=Sm33ZgU8gOVd6YL/ujxVDZHezb7gJ5XoQU+JDcECe1G++Y/6nyfAZXyYTgEe0zkphI
-         EG9dpCqs4tZbJmdRCVit/8+t+XoZf8OhaIK0jsFie0uiYV9M4vscqnlvEtzTDOUf2bdQ
-         rhNaqQrQWRkt8SJX5jtUD0qldbf+op3xbmu76qdhwmzyb2y9s+wGUvgsbeVm33M+4CsY
-         VWqV7ks6Vgy5LuhDFwhpvfcTM0i7lMnNbI231PnAh+F9dIwUgKTBsTwbkihD3NdIX29F
-         JZCCNb+PW6U0W11mG+RgM52kSiRnIQgUeNpTPrKLjPPdKHMVZI/9hjynhG1lPF/seUXI
-         AcSA==
+        d=google.com; s=20230601; t=1755817868; x=1756422668; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oyKY07/INwHK5W8rJvhyC42nOS23W04zRzQQa6+Y5HA=;
+        b=FoDWQDRVJdAAy/6b2n/cI05N9Kz0auaOdpSOMm6BjTMuWsuh35Qxqr0IJRnIAWwyb2
+         v49M/SvajLhGEy/gNuJixKIt0XMs+NmeKf1lnZv8+yV5bpDMheBB5eq5AarB/zctIJw8
+         LVhHcXy1UTtiMqFGiWyIdAycNDXhN2JYM0f5iYUPEY0ol1rnYpMv9TMa7ELe0LA1jgiL
+         +fFaKW+KNloi8GuoLo9CrPqLm8/SqMR0XmM9wXbGpIDTSC/NYFyXryoTd0DKYsAPPGsJ
+         l0uLHnf/GrWm972CnEJXM2mPv8JwMdVrY1Mn3mouBvkPP7IEyDMQ9ov/lR8Z/oSRpaNp
+         reKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755817839; x=1756422639;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3nsLXogIrl8xrd3K0Af1S+3Ycr+ymK1uf5MIM01cw/c=;
-        b=sQx18CrJNgi0GdCDG7LbmxwaeqnOhYNdFgMYF3K28zSG1UalDULGJLR4qq0UGfKmof
-         JJ0nHQbos9QV/Ngvtino8AVz/p3dKyKIYuzpLNEqSxXZlj2hRZ2tZtfS79XBNZ8ZN25z
-         Zo7fJ/AMXZ1xXYijiuAFXldx4EbxcSZ1YBE9PuDqW5inCjr5dxc6HS7kPi2+9vp4wePy
-         hIztjA1WpsavKjlAhPGi76NYCwK0cQptBI7IO+FkTcCFf/28cCGulW+ZRTk2+XDVZ0W5
-         2D1o7LLzZELuZiRH9qSDHP4ksiC3Jrt+5vYr4JLRz9+nAvaeYRDPHOz3cHbGJIUwHJ/c
-         KTzA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8KS4lBlgBCoN2ANyTneoRS7yfaZtWhHZ2FmGGndGRenc8XG4/U9+x3D3rcrbfTTWAN27C7Fj1gNHoDi1Hnz0=@vger.kernel.org, AJvYcCX6xqoxsQ2kIYo2Xw+imFRqqcQuQEIx9v3BDBhwhi2U5bOZbOLqhPJcuJloBxyZuW1z3a9GLuqfjTkdZso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRfdi07yWQl6OuH/fFWFLrfx8gPB/eusX0UHmK8HtF7wLNFxdv
-	0GD/mvEj7bsreFffUmjzD6JtYayjpKcctF5mv7+FrqZXRxfqvwePNMPe
-X-Gm-Gg: ASbGncsMlQ1sIqL/fSSQT41/a0h6ca08k63FVMzRROyuu6H5qury9F7752HCE7HHF0u
-	ASGSejmE0XybV6YdfOQfCg5tUhTBNGqZCzmcJiPBknNqZZ2tWijpTR2HmLmdDx/xgwpEkkPqSpk
-	pkvPXz5rZYwzRNm1bdo6ujGmzzr2kYWB+ilS21NdDKZQL+pKHA4sfqcKuwq73AgeEUqfn5y7unp
-	PdOupJ/KSXnJKXe6RZkoj2zNHUu9s1owegrsuLSg8lCn/haDSDiwhGQSGc1AwFf7+ANGFxuYLsS
-	bs/m1JukC1AM/c/B5KOhp1OKMANvT5eJQkUfgu6fCxuxIke/Hs2e7C2ATVp2nS6sRvf4vIjf6Yv
-	rjGP8rUNWyOyXLB12k2yvavLET/Lstd8I/KY9lCLas7NLNwSbI+sh2baC98GzcInNrPYqlBe9BO
-	OqiqW3PD5NvG0=
-X-Google-Smtp-Source: AGHT+IFAGx9GKx5UE5Qz8TKBOnSw+oarRozQQe6UFlnVDqopLmWMDq/InLWY1E88OwmeCC9qNsteXQ==
-X-Received: by 2002:a17:902:d48b:b0:242:e38c:89db with SMTP id d9443c01a7336-2462ef1d442mr14182155ad.35.1755817838927;
-        Thu, 21 Aug 2025 16:10:38 -0700 (PDT)
-Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4ebf7dsm65559555ad.120.2025.08.21.16.10.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 16:10:38 -0700 (PDT)
-Date: Fri, 22 Aug 2025 08:10:23 +0900 (JST)
-Message-Id: <20250822.081023.1458109299973034275.fujita.tomonori@gmail.com>
-To: lyude@redhat.com
-Cc: a.hindborg@kernel.org, boqun.feng@gmail.com, fujita.tomonori@gmail.com,
- frederic@kernel.org, tglx@linutronix.de, anna-maria@linutronix.de,
- jstultz@google.com, sboyd@kernel.org, ojeda@kernel.org,
- alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
- lossin@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
- dakr@kernel.org, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 6/7] rust: time: Add Instant::from_ktime()
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <20250821193259.964504-7-lyude@redhat.com>
-References: <20250821193259.964504-1-lyude@redhat.com>
-	<20250821193259.964504-7-lyude@redhat.com>
+        d=1e100.net; s=20230601; t=1755817868; x=1756422668;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oyKY07/INwHK5W8rJvhyC42nOS23W04zRzQQa6+Y5HA=;
+        b=eCC+BnlscycExX/wWb+tTw8tAUYmp9ptbgb/aoDwjpSzLKclLeceKRAX9zM2VjpAJV
+         87Th2Mb3OHN6rd6bkcJShIYwyoGB9IXSgfe/KMut/jvuy83MhnVS2oyKaw8RzNorYzrr
+         sb3dQSduRpM57aZM+9G5vM1gA+/LoPgGks8jo7ulClYV8qDNKJoCBrYOMBI98FfUfNLC
+         VLPHbP7qbTGjjN+dnxlFu9B73nx/WgjpL+wozBQTJEr40LvaL13/rfWG0r9FQYobd7dV
+         1laLi1tO08G6pP/I6nRDmBMch/xW17pv0DRdPmjyFO6EngZnRUzuzkY0fb8AKQAmMj5m
+         Biqg==
+X-Forwarded-Encrypted: i=1; AJvYcCWg5DRqv9VxABChMOwUGFcgo1glo1F4npep116TTHSbYXyoSi9Xew6PF230Wj5mYXd76GbZi3bg+2LDl+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGiXQ7WGzqz1TXPZDhA78vNTd2Qe65IKyd1WpleRDVVCiCpwlz
+	WB28CPJlkiSP6VR1E4MDAk4DWvRsHW3K8D+/qRa/XoNe+aIHC4Gjxevc7ETyIYuc9jiVXoRRsiT
+	YpDZ9VFobCaInzXKIabHGz47lcbbvT8n7fD3NX6yK
+X-Gm-Gg: ASbGncscSNkOxRWEVpnJT7dkmpbB1E7t7lRiNhGrWqWmZ36nCYGIEoaV7Eo5bW4FFH2
+	TxYuk1pXXV9Z5ZIRhGk7sYqIHoZ629KPW2+NdzBaWMv5mgrifc0b03SJ3aP6elHKzAz3/EVrpL4
+	RY+O5dtxNRfQJJPcckm1AWN8c0yFQ7I9VV9a08WiUuYBOTg8wu2RhvaUTX8zdNcSpOx0IjvGWdd
+	QLb6cbigtk=
+X-Google-Smtp-Source: AGHT+IHMkq+K12+g+sEPaH5nrWLu2Vc9mkfwX/OMztYDbNCV9MMh6/uJ9JXM5YbjnlbFQzgQhGYYxAZQd1a2jF+Uodg=
+X-Received: by 2002:a17:902:e809:b0:243:597:a301 with SMTP id
+ d9443c01a7336-246327944afmr1835075ad.2.1755817868075; Thu, 21 Aug 2025
+ 16:11:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250819121248.460105-1-petr.pavlu@suse.com>
+In-Reply-To: <20250819121248.460105-1-petr.pavlu@suse.com>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Thu, 21 Aug 2025 16:10:31 -0700
+X-Gm-Features: Ac12FXwQzn6UYBxjGSTs2pNIL46Ww1C8DAoY0lOp82FnSFRz3SdaQdQtgKNLjWI
+Message-ID: <CABCJKucZ1WxDzROye-7cN3wFujV7k7pLsLXLd3Uk_fpgn0XVfw@mail.gmail.com>
+Subject: Re: [PATCH] params: Replace __modinit with __init_or_module
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@kernel.org>, 
+	Shyam Saini <shyamsaini@linux.microsoft.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-modules@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 21 Aug 2025 15:32:46 -0400
-Lyude Paul <lyude@redhat.com> wrote:
+On Tue, Aug 19, 2025 at 5:13=E2=80=AFAM Petr Pavlu <petr.pavlu@suse.com> wr=
+ote:
+>
+> Remove the custom __modinit macro from kernel/params.c and instead use th=
+e
+> common __init_or_module macro from include/linux/module.h. Both provide t=
+he
+> same functionality.
+>
+> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
 
-> For implementing Rust bindings which can return a point in time.
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> 
-> ---
-> V4:
-> * Turn from_nanos() into an unsafe function in order to ensure that we
->   uphold the invariants of Instant
-> V5:
-> * Add debug_assert!() to from_nanos
-> V8:
-> * Change name of function from Instant::from_nanos() to
->   Instant::from_ktime()
-> V9:
-> * Fix outdated comments in from_ktime (nanos -> ktime)
-> 
->  rust/kernel/time.rs | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
+Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
 
-Reviewed-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
-
-
-Thanks!
+Sami
 
