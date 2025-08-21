@@ -1,106 +1,58 @@
-Return-Path: <linux-kernel+bounces-778869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCDF3B2EC3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:42:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D53FDB2EC41
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C46F83A64E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:42:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA4725A821E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FE22E2F16;
-	Thu, 21 Aug 2025 03:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEMdT9DK"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A6325D1FC;
+	Thu, 21 Aug 2025 03:44:36 +0000 (UTC)
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7291FBEA6;
-	Thu, 21 Aug 2025 03:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F3A1A2C0B;
+	Thu, 21 Aug 2025 03:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755747718; cv=none; b=VBjOXiGc5SUjxQIeWRr2oTbe9DbzLd0y6y+dqG+/1/yTDD5ln14P6X/0w2cbrKZMMFwTEzaWK8CY70H+kVzQvmVTSimisdt/PO2TAUU7If8OFCzRHMTbUDW135lfJ5C/iy8UHPgSqJNowsjSHlhOVp5/mr+XvoMX2JZRrz/YzMY=
+	t=1755747876; cv=none; b=GfJuCueAmon7RHGYGY94BT/WNA7Znh3AR4bL4O5nKwmYaPGxaI6ljwPC8S3mvRL8/AWtHGqg/3lbMWZU+c+Wo0i98EaS6J1qoExz2WegS9koXJml01HMIVdCypEsCUSfeBOKWiqUlYH4J2rNX6R50xu01h19GyzosvdeYXXBbQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755747718; c=relaxed/simple;
-	bh=X+MusV7/pRuzSWK84Guko9Sj7ekebKWsuoI3ckFV02k=;
+	s=arc-20240116; t=1755747876; c=relaxed/simple;
+	bh=RyXJIjGQgBc3po6jjxW8jkV5efFNpfWOL8tbG5Mu6uo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yv+ThHgazDQZ7/63QA2mh9seUZehGiVzUpqm0hpuFab4YfuuvepxSNwvP3vwdlWnicGQdUIrW5QY6EOqHXvlDOsCZYuFsGBFbHsNY0JVDQyEHEOVOSWu4+DL9cc9xKMLKIXNRIhCNoASLzqfekX8ov+5nX+Z0kl9WewhbS6dKiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZEMdT9DK; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb73394b4so81144966b.0;
-        Wed, 20 Aug 2025 20:41:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755747715; x=1756352515; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ly8HhEQvY9JxMVhrYHzoh/hAff3HjFqcoEOj5b7KCq4=;
-        b=ZEMdT9DKGVPUePaus5FFyXbk3eLDWC8B6ohc3qetL7MdDsWjxA3kT5ey1D9i7Nu3T+
-         lTTC9S+mPBPbF1bdBcI5kLy/QHns9OFTc2p3MxwOhucGUJbWCNW8TD01uoyWZNF6UgKG
-         O9PeKfqJICWpp6Cw9CeZngFxE9nA4Q0gAx2B/SoMSwrOdaJrrOI6BjZ06fkszz9mourR
-         DkGMXe+YQ/KeAHu++P4yMqFBWadA9CyCjLarGklfhSQdx4GmCY/FFJcf0L+mWFGwmo8w
-         AVZBHNHs9z06ewFE96wpAVNMXJu+APjVECh0E/lsPK41T2tNPeyQg8mYRYBIGqX8HuPk
-         kN3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755747715; x=1756352515;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ly8HhEQvY9JxMVhrYHzoh/hAff3HjFqcoEOj5b7KCq4=;
-        b=cgJExGWyBzlUXk7CDAiYAGKkJl+oOF/8M0qYwaGjH2lj1EhyEQ1VZLj7cU9DqpJWmx
-         G/VmKTJ5s2lkhEkfLHa8kYWu363NfpxIvK7hvugx4VPJYeIYmnvn/XTAHntX69++RMy6
-         78VH+3e4juFJP+KXZHcq2doUry0XKmhlUHkMuY/3Lqb4bbGAB63RZi4bdsSErmF9q22R
-         pm/GFZYO//MGt5UbL1hMxCCGusQ3Yer8mjRnvVSzBXK+E3cKPy5jjw8hvmfnZ1AvcqkI
-         IclBPOBn6sf1+pvbxgbP40gNusDgy41RX6PwPz3xyKGMWkpGjHzpDqEiIIA/C2GKTPGN
-         6dYA==
-X-Forwarded-Encrypted: i=1; AJvYcCW78S5+yZ2JacgKY4ce0EoEqjMXnGSOCcwkFTNscxEMkFDcj5h/dHkCSuBPuYG6L6YQFoEwFynuNxwl0okQ@vger.kernel.org, AJvYcCW88HcGYAHvdY9BCLNNFquzmWKyzERn53YaHot8qIog27vTm0dRYxDgXz5j0YIv4pPifGIr4xEPPvM=@vger.kernel.org, AJvYcCX0f0T2kQ20kUvdrH9IOfrVE7wVT5vPIwx83K6mMNigOfZjJLinQuWiHPTRdl34ECBO6zh62DQCIfuVYXkBeakshhu7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy050G6Yvky7ECqvi9I5ZkMq7XFflsBiZZAM9EqZi5D855WvImZ
-	N8XjUJ6wQeRblfIyOVVGuBhdoL22L4PRqxNB7nUNVSn4rzVkE2DiviF4
-X-Gm-Gg: ASbGncv7WyuS9Prxf0OsIuqe/qfwCeMbhNbmpvLcaXpr7X9nXFCyo5Q7FyiQP5cg7A0
-	i8/RPYV1395JrCPLyVAGjzFVDDbn4NnHgBob+k2L/gz9tH2Ze2oAH3EFpHGto8s9qiaMcnyfIcR
-	hJ+aDYpUFFBuG3XNY+v1bJ/A725OvCpqlVVaNUrTZJSoYqXaQzKkETa/PmtkaxmrdOgtP52Pt9f
-	8W31MklQhFIfgHhb2d1PRt95lKbRTj6ls2/pf3C3P72QHXfn/TwHTCJxrVmUK1w9s+cuRDEdSjs
-	v2DtF/POZHo/DQTSLJT+7KJhmIyfJ6Sh6MgnCPSz532cBAgQdAMFAKscHO5CMRXZeB/oLnpMJWR
-	jwn9p38wnce1Pyd7L4zs1rQ==
-X-Google-Smtp-Source: AGHT+IGaJqB8Du4nZbwZH6+ZZ1UR1jsjKqH51Z9VenWWYM+Y2riY0qwNibopPt1+EA0CWK1IUnGClQ==
-X-Received: by 2002:a17:907:3e8d:b0:af2:5a26:b32a with SMTP id a640c23a62f3a-afe07c154d7mr97515766b.30.1755747714772;
-        Wed, 20 Aug 2025 20:41:54 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded2ba31dsm299249166b.12.2025.08.20.20.41.54
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Aug 2025 20:41:54 -0700 (PDT)
-Date: Thu, 21 Aug 2025 03:41:53 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Nico Pache <npache@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, david@redhat.com,
-	ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-	Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
-	corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
-	baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
-	wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
-	sunnanyong@huawei.com, vishal.moola@gmail.com,
-	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
-	kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-	raquini@redhat.com, anshuman.khandual@arm.com,
-	catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
-	dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
-	jglisse@google.com, surenb@google.com, zokeefe@google.com,
-	hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
-	rdunlap@infradead.org, hughd@google.com
-Subject: Re: [PATCH v10 03/13] khugepaged: generalize hugepage_vma_revalidate
- for mTHP support
-Message-ID: <20250821034153.uyxjy5yvxx5no5sf@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250819134205.622806-1-npache@redhat.com>
- <20250819134205.622806-4-npache@redhat.com>
- <cd4dd743-679f-4c55-9635-6d32e6fa5ff7@lucifer.local>
- <CAA1CXcDORXqm4JoHn4ZSEhT3ajsuY2MAPwefMXk3+YMXcpvqkw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hjpaMavw5AjkMzl7HIlhfHj5TWBRIfVOzGNp6CGGkRe0ZI3aTtL8pGizXxNUvMUjfZoagCPcEVxqrEGSWKg9sRPg65upQK3LHhWmQcNGjcc1zCAM0oZrVwjWc1WFkBp/uTmbJIoiaBdQRtoI74fQjLO3mRNDBSYa7cZfjSlOmfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.204.34.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpsz17t1755747812t3cdede6a
+X-QQ-Originating-IP: /PIIUZV9tLa4lzulq/S6d4ZgXhpMQyylT/75u3kv3Hs=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 21 Aug 2025 11:43:30 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 17795680503353605927
+Date: Thu, 21 Aug 2025 11:43:31 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 5/5] net: rnpgbe: Add register_netdev
+Message-ID: <7F14A04FE9C40F1A+20250821034331.GB1754449@nic-Precision-5820-Tower>
+References: <20250818112856.1446278-1-dong100@mucse.com>
+ <20250818112856.1446278-6-dong100@mucse.com>
+ <c37ee9e7-53de-4c21-b0cb-4cfb0936bc1e@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,65 +61,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAA1CXcDORXqm4JoHn4ZSEhT3ajsuY2MAPwefMXk3+YMXcpvqkw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <c37ee9e7-53de-4c21-b0cb-4cfb0936bc1e@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: N1GwrkiB7FDZQmygpdP7EBd9LEZPjkl6RclOexlIjBJqFnRM0dfFYdqK
+	hiG/17M1CV3rhVEpnNYyR9rQGt+TpbBH9KYM1Y26VOn0jhGaVxj1UlB9Wa+wcf/mgHT4fXy
+	2LOzDtYBpOjgzEPQg9SBP9cci+YSxCeIhZJFUVzBuzReob0ciiauHb9As/qcUtbaIBUEuGt
+	5samx0uPif+I2ZT9mqEROzCjmzW2fRukOMqsNydAvvO0O+vi56fErNZmtL30b1NjJI+voAC
+	3e8X/uwe/XBPsAwtN12ZSTrzHG0S/8NKqUZErtlG7nIe2HzRumqh7VXuP1h/TEM15+ryYOS
+	LAkuEPbz9ZAvQcU809w7BT4yU1SMfPXBhsKPtte/mhu59ZX3IowTCU6HFUOhfnDJcDKh+v9
+	Rh0hnLRJe+/LJjyywnwKmJG+v4AHrpcx2jrYuYICOCUpvK39QFkM/kuaaEFpSxdUCwNf5zm
+	GayNLkw+9tHvvxQE07z/984wez5vFg5rnKjTLihZyPIRl87DYzL27cdqKINCXSf6YdpRl/+
+	SzsaVnhXMP+S2xl6fJCoV80L1s3VMpcxTez3DWJWt3b22/J07qnqJ7Pa20fG7ggffJAiL18
+	6dBOxTePLVTQd9fOEcLWCPBy/psYd2SDNc7QMZEnqZtmKgixc7nPqJejC5Ngb65YeTJwU5B
+	cAAPzSLlAci9Q2FFG6WxImrkwQ2ggCiTmB/OZPMMar4PLqm9+yK5g8ybLDPyo6y8Li+pAsD
+	fHQMB3ZGef5I860OuDGhLIF623Kyk6bAZ974hI/uBIcvgqpgwi2kRbUrA7x37o5pdGA/vXf
+	BSG38NoCHu7shajnBYnWRO5XDMafKUK/EcnLvPE7J1kkKJ5A3BFyR2/0Z3a1JaJfXobRcKV
+	esT7YfN0fRFc/DgR3kbI0DoiFaWwDFp91a9BCPrYzAuig+OCKpFAYzltQhXoBrz5rQMaFAW
+	pDY1vvP3mL79EHD5jAuRmfHg4q68O4mwtx4VUIVx87goxd6MJQ5/fSsKtNJyo5UOHxfhiE5
+	0EhZhwJcg141XjKXYiUym5DUsHS6wstUhy3puyK++/XEwuovHk
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-On Wed, Aug 20, 2025 at 09:40:40AM -0600, Nico Pache wrote:
-[...]
->>
->> >       if (!thp_vma_suitable_order(vma, address, PMD_ORDER))
->> >               return SCAN_ADDRESS_RANGE;
->> > -     if (!thp_vma_allowable_order(vma, vma->vm_flags, type, PMD_ORDER))
->> > +     if (!thp_vma_allowable_orders(vma, vma->vm_flags, type, orders))
->> >               return SCAN_VMA_CHECK;
->> >       /*
->> >        * Anon VMA expected, the address may be unmapped then
->> > @@ -1134,7 +1135,8 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->> >               goto out_nolock;
->> >
->> >       mmap_read_lock(mm);
->> > -     result = hugepage_vma_revalidate(mm, address, true, &vma, cc);
->> > +     result = hugepage_vma_revalidate(mm, address, true, &vma, cc,
->> > +                                      BIT(HPAGE_PMD_ORDER));
->>
->> Shouldn't this be PMD order? Seems equivalent.
->Yeah i'm actually not sure why we have both... they seem to be the
->same thing, but perhaps there is some reason for having two...
+On Wed, Aug 20, 2025 at 10:42:47PM +0200, Andrew Lunn wrote:
+> > +static int rnpgbe_get_permanent_mac(struct mucse_hw *hw,
+> > +				    u8 *mac_addr)
+> > +{
+> > +	struct device *dev = &hw->pdev->dev;
+> > +
+> > +	if (mucse_fw_get_macaddr(hw, hw->pfvfnum, mac_addr, hw->port) ||
+> > +	    !is_valid_ether_addr(mac_addr)) {
+> > +		dev_err(dev, "Failed to get valid MAC from FW\n");
+> > +		return -EINVAL;
+> 
+> I _think_ mucse_fw_get_macaddr() can return -EINTR, because deep down,
+> it has a call to mutex_lock_interruptible(). If that happens, you
+> should not return iEINVAL, it is not an invalid value, its just an
+> interrupted system call.
+> 
+> This is what i'm talking about needing careful review...
+> 
+>     Andrew
+> 
+> ---
+> pw-bot: cr
+> 
+> 
 
-I am confused with these two, PMD_ORDER above and HPAGE_PMD_ORDER from here.
+Ok, Maybe like This?
+Just return function return if mucse_fw_get_macaddr failed, and return
+-EINVAL if not a valid mac.
 
-Do we have a guide on when to use which?
+static int rnpgbe_get_permanent_mac(struct mucse_hw *hw,
+				    u8 *mac_addr)
+{
+	struct device *dev = &hw->pdev->dev;
+	int ret;
 
->>
->> >       if (result != SCAN_SUCCEED) {
->> >               mmap_read_unlock(mm);
->> >               goto out_nolock;
->> > @@ -1168,7 +1170,8 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->> >        * mmap_lock.
->> >        */
->> >       mmap_write_lock(mm);
->> > -     result = hugepage_vma_revalidate(mm, address, true, &vma, cc);
->> > +     result = hugepage_vma_revalidate(mm, address, true, &vma, cc,
->> > +                                      BIT(HPAGE_PMD_ORDER));
->> >       if (result != SCAN_SUCCEED)
->> >               goto out_up_write;
->> >       /* check if the pmd is still valid */
->> > @@ -2807,7 +2810,7 @@ int madvise_collapse(struct vm_area_struct *vma, unsigned long start,
->> >                       mmap_read_lock(mm);
->> >                       mmap_locked = true;
->> >                       result = hugepage_vma_revalidate(mm, addr, false, &vma,
->> > -                                                      cc);
->> > +                                                      cc, BIT(HPAGE_PMD_ORDER));
->> >                       if (result  != SCAN_SUCCEED) {
->> >                               last_fail = result;
->> >                               goto out_nolock;
->> > --
->> > 2.50.1
->> >
->>
->
+	ret = mucse_fw_get_macaddr(hw, hw->pfvfnum, mac_addr, hw->port); 
+	if (ret) {
+		dev_err(dev, "Failed to get MAC from FW\n");
+		return ret;
+	}
 
--- 
-Wei Yang
-Help you, Help me
+	if (!is_valid_ether_addr(mac_addr)) {
+		dev_err(dev, "MAC from FW is not valid\n");
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+Thanks for your feedback.
+
 
