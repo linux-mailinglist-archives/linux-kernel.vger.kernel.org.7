@@ -1,172 +1,182 @@
-Return-Path: <linux-kernel+bounces-778795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE37B2EB2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:24:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E14CEB2EB2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5E833B48B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:22:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EE755E442B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B7F22A4F1;
-	Thu, 21 Aug 2025 02:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D5223E346;
+	Thu, 21 Aug 2025 02:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mx8Xv+UK"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aRzMV5FV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F0521D5AA
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EF623BD0F;
+	Thu, 21 Aug 2025 02:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755742939; cv=none; b=NCgxUgRp2WTQJ74u0Atg7LBVVLU+G5YiU9YNIaCzAn7mZDrxsXGg7NyECIf/Za+FX5riMVbJnu8jLuhzKH6Vef9uUCEQ++CbxYo4APt3x5hpkHoOax4u+Ird3hIrEyfStXeCsS5q1QyYA8BgcoPz7M7zouRu8usF9th4h3O5qc0=
+	t=1755742966; cv=none; b=Gx0CA1EagEm//VS7L6AGryXBt+Zq15FJQTI2I7iEiWD2KTEAmKAqgxzuRP9Uc44lgnrqQGXN2pRdp9AWPYtm2Qcj7ZKST5CCxA1mvJL9gXM00IiJgaUEx02y8p9BP18qlrrMz+xgCy4ItaYKnZm97Kbll4vbnHrr7XnfFRcLLsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755742939; c=relaxed/simple;
-	bh=M+Tt7lOyvwNBEVxje7vB5+qnUcdtvBNxt4rOINYoqf0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d/d3jiISJdK5eJmezLdBYtLFZITu3iBtCNPCTk1lKj+QJIot+z91h3Hzy6C5PYYz95fHOHjLv7eHfP0DanTVgGOuQgLnY0HM80iS+gCnuOZrrLWnlGEYs0Q2duSmmlTPru+4oTJ1tiH8fYM6oXUFov2mv7G1Fto6kPUrY6Uh8xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mx8Xv+UK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KGnGrm001621
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:22:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fhuQQAYtkFz1+EMzbo9h41xY8JijUtMlK2wIkAFemmg=; b=mx8Xv+UKFekjgIea
-	zpwoOjBGpC8vG24HybBj9dFPUt5QlmnxYQI1nLF8qREnKjpKlPZWWhwvbIQSm75g
-	AcfvH8kA10kv7f/86IZhqHh0uayUClUfBvRuLXE/AJBKZPrNY2mJlOufKoHv0fVy
-	c0OBFnzpDknd9ZbpLkJ98UFg9FM+oxyx+q7o3t19K0C754pSN2QwlwdVhOeGq05S
-	wyA/ACFZPVgH4tfzv/wZNXwBN7MwYWzXTMeO+citUmkwfWKIixxOuoUwhJzeacWI
-	NaBtSrWeTcKHyU4ig+xdplvCIu80jwleequB4k36qWtceMtk4klLI/tzwrWQemCl
-	SJD2FQ==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52dkkqe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:22:17 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32326e2f184so1136645a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 19:22:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755742936; x=1756347736;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fhuQQAYtkFz1+EMzbo9h41xY8JijUtMlK2wIkAFemmg=;
-        b=k3BZCfbElyTga7wlEEf+SRouqV1CfbZAaLwRJiOPVST3G5ROQIkO6p+yL7sVQBadNj
-         Yh6THFEzFjcA6qs07LLOC3wHcdvbU9xeKHrVtWxeIP6YXXNI2Rauwvft7r83jx9tquBb
-         4uNs6DW+WerayWWkxCLlXMOc1sB+kSuOomIDNj/Hr2Ile+P7bawRktvnAlF/OWIxMjO1
-         W/EMKL12gg5KB1+HmjKeyhDmzaGiatZjar5MUrP+t4uZ8stJyhqmOrfr+/u+glwBisId
-         64ueB3ag17OIXyLv+YeHRyD/vFJvhG98Skhtoy1Nbuxino++DNrs8/rXkRtjRBNbEDzd
-         UO4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWmRqZgAbEJ7mJ20kBTsVoA8v0Ui6RfuHYZHEK7JYwi8HE/DBYLBjzQ8pFze9MNdi/E/HDvKWAHo+ISuTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+3y7zwFB0zCMK4H8BC9WwO0eTVuTDwJgdctOUhiA29slgXvE2
-	aW/Fdf4xL2M0aY1z64Qxdg1HX4x3d/ui3gVLeFy2mwX8o3/cIDHyWR3kF+ek/102pdwsQfMvxfK
-	e90vkbXQFaSoT2i6gz+hfO/5lwlEcDmWoOS2YzHBRTkxY/mfnndIwMDfb5kbWxWIe9Po=
-X-Gm-Gg: ASbGncvPZL3Wn8fiLt8BlPpQozlGNjMkd0muMgeu4ASdCwh7nnThEP1pr1NYAu5cLw+
-	mcWi05jj5l2VcQRXOtnEunSfpJmmkTn+/ys6pgyXTJIglRhtfPepksBpWcmQ1CdyW4Ay195tTkr
-	s1NDGm2RwHpk0ckcw/Mz64/Ocy1j33W/Q7+3er2abvOtcaZCvb7b2Rx55xkFEz9qQa70XtLtmxC
-	EB4IsCP1w9dA2TWontrf8tctoRqgkar2RTMakPJgqsBDc6qkiV7F8j6xmRWZMw7wkquOD2hvjKC
-	fcPuqusuTY3i6ISSJnYCqbB+szjd2yKBDgCXPVIlrAdiAx0efz40yoElvsgZXrJqr87g05sqT8K
-	AFu2ipv6CrNcn7aPtZmYXwQuZp9AQDQyj
-X-Received: by 2002:a17:90b:53c4:b0:324:e642:b5ca with SMTP id 98e67ed59e1d1-324ed13a72dmr1379004a91.29.1755742935703;
-        Wed, 20 Aug 2025 19:22:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEJRz4sysTqGhrRLL4dSQy2QlK07feYrDXxAVKB+n79aOM7MsuZWRLWFY/xgGqdwpBUmHYgnw==
-X-Received: by 2002:a17:90b:53c4:b0:324:e642:b5ca with SMTP id 98e67ed59e1d1-324ed13a72dmr1378979a91.29.1755742935196;
-        Wed, 20 Aug 2025 19:22:15 -0700 (PDT)
-Received: from [10.133.33.88] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324f23d745csm356703a91.4.2025.08.20.19.22.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 19:22:14 -0700 (PDT)
-Message-ID: <f467aade-e604-448d-b23e-9b169c30ff2e@oss.qualcomm.com>
-Date: Thu, 21 Aug 2025 10:22:05 +0800
+	s=arc-20240116; t=1755742966; c=relaxed/simple;
+	bh=uy3s5KuQl2CRGkvYWxUUIoDsD3XKo8NzwvJ3oGQXudo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pMnxlneUJgmj3YgLcfSCWAmv2qgHA1OtiDwF6HoElC8lFLTkW9vutb1LDjpshxj9lqtTMcpHq5hlC3wW1LTQ9wCqPbSZGj9M6n7OQ/QhtcP/salv8rWBKR8V7GprFucWjY5LGy6w8Mnz/smMAGsZ+U+AwRNOpjbr+gOKHLqjd4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aRzMV5FV; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755742965; x=1787278965;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uy3s5KuQl2CRGkvYWxUUIoDsD3XKo8NzwvJ3oGQXudo=;
+  b=aRzMV5FVHZFq54OpTGsCbyufL91/qRTjjtHaZ80VQH+wH02Kxdw/39My
+   fq/UvzWD4eblVchVlH8hbufXfIRK3XbZRagDIx3/5Uoqz26RTU2lF+Es/
+   /c+Ewbl1IymTii8mHcpMTKm0dF39rXD+aEJY1JJm2nytR0YgZuIAxtGGA
+   tAFrGO4F5dBZQy2k3fIDgtF9HCna7pc2yrTNi7WnD4NYr2aQpFj1CkP8D
+   7j4flSlgJeusxePmjk1SYBuqWiZrvVdH3wMi8SQ2eEMwl8/PoSr6qGhHT
+   rsXVaBbgbzuN3cmdxHDEMcY9mWqEje2iF3ISsPqL1LavoMWaNAlM9oODR
+   w==;
+X-CSE-ConnectionGUID: IrKqjMLrT+SjBc6nOeCoxg==
+X-CSE-MsgGUID: syorwwsSTwOhy1cq9ISYDQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="60649577"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="60649577"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 19:22:44 -0700
+X-CSE-ConnectionGUID: UW+oQu99SU6U/fvB/Xz6mw==
+X-CSE-MsgGUID: +4lHtu5+RB+tu5lWBtAVCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="172706776"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 20 Aug 2025 19:22:40 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uouwb-000Jqx-1Q;
+	Thu, 21 Aug 2025 02:22:30 +0000
+Date: Thu, 21 Aug 2025 10:22:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Haixu Cui <quic_haixcui@quicinc.com>, andriy.shevchenko@intel.com,
+	harald.mommer@oss.qualcomm.com, quic_msavaliy@quicinc.com,
+	broonie@kernel.org, virtio-dev@lists.linux.dev,
+	viresh.kumar@linaro.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hdanton@sina.com,
+	qiang4.zhang@linux.intel.com, alex.bennee@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev, quic_ztu@quicinc.com
+Subject: Re: [PATCH v4 3/3] SPI: Add virtio SPI driver
+Message-ID: <202508211051.cuOjaH00-lkp@intel.com>
+References: <20250820084944.84505-4-quic_haixcui@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/6] net: stmmac: Inverse the phy-mode definition
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Vinod Koul <vkoul@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, stable+noautosel@kernel.org
-References: <20250819-qcs615_eth-v4-0-5050ed3402cb@oss.qualcomm.com>
- <20250819-qcs615_eth-v4-2-5050ed3402cb@oss.qualcomm.com>
- <80a60564-3174-4edd-a57c-706431f2ad91@lunn.ch>
-Content-Language: en-US
-From: Yijie Yang <yijie.yang@oss.qualcomm.com>
-In-Reply-To: <80a60564-3174-4edd-a57c-706431f2ad91@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX47F64QkyO+RN
- zKubxbnGWi8H+jYU0yiA0pDTlVpUdds38qsD357pssEho/F16oRyOpczLHDeUa+sKFDiFqlCpZx
- j0pFNJ3zJFlQ8X6pyU1vmrzijI9ykjlaB8HmYFfkDGWYJ13c09cY1AWrLJ0WqCgurfPS2stPRqk
- vo8FyUsexqB317wa0L3/y4xV5JEqR/pEbCzKLjatN8RJlMaG+dW/e0xSmyUHnanXLYmwiqTHtUP
- DYPF6VNVYfMaGhjA8Cq5veqrSRc5OQ/SKhPr+KE6KZdQ8dXhd/4EhOZNZi0yK1dphjScenjmXMU
- t5FPC00ad269zIOXDAXzttVd5KcsM9Unbau9pAJnSqB5iWBmMSULjQLdbzVFz8HYI+p+Eh2gCfC
- XTF+djg8jGKmY354i8ikCzBOfnOFcg==
-X-Proofpoint-ORIG-GUID: GswC_VCunnNU5lP60oO9RIOsh2hoXMn6
-X-Proofpoint-GUID: GswC_VCunnNU5lP60oO9RIOsh2hoXMn6
-X-Authority-Analysis: v=2.4 cv=SoXJKPO0 c=1 sm=1 tr=0 ts=68a682d9 cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=uddfqdTxQVX4ueY0IN0A:9
- a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-20_06,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
- priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820084944.84505-4-quic_haixcui@quicinc.com>
+
+Hi Haixu,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on broonie-spi/for-next]
+[also build test WARNING on linus/master v6.17-rc2 next-20250820]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Haixu-Cui/virtio-Add-ID-for-virtio-SPI/20250820-165441
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+patch link:    https://lore.kernel.org/r/20250820084944.84505-4-quic_haixcui%40quicinc.com
+patch subject: [PATCH v4 3/3] SPI: Add virtio SPI driver
+config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250821/202508211051.cuOjaH00-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250821/202508211051.cuOjaH00-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508211051.cuOjaH00-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/spi/spi-virtio.c:373:45: warning: cast from 'void (*)(struct virtio_device *)' to 'void (*)(void *)' converts to incompatible function type [-Wcast-function-type-strict]
+     373 |         err = devm_add_action_or_reset(&vdev->dev, (void (*)(void *))virtio_spi_del_vq, vdev);
+         |                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/device/devres.h:166:34: note: expanded from macro 'devm_add_action_or_reset'
+     166 |         __devm_add_action_or_reset(dev, action, data, #action)
+         |                                         ^~~~~~
+   1 warning generated.
 
 
+vim +373 drivers/spi/spi-virtio.c
 
-On 2025-08-20 00:20, Andrew Lunn wrote:
->>   static int ethqos_rgmii_macro_init(struct qcom_ethqos *ethqos, int speed)
->>   {
->>   	struct device *dev = &ethqos->pdev->dev;
->> -	int phase_shift;
->> +	int phase_shift = 0;
->>   	int loopback;
->>   
->>   	/* Determine if the PHY adds a 2 ns TX delay or the MAC handles it */
->> -	if (ethqos->phy_mode == PHY_INTERFACE_MODE_RGMII_ID ||
->> -	    ethqos->phy_mode == PHY_INTERFACE_MODE_RGMII_TXID)
->> -		phase_shift = 0;
->> -	else
->> +	if (ethqos->phy_mode == PHY_INTERFACE_MODE_RGMII_ID)
->>   		phase_shift = RGMII_CONFIG2_TX_CLK_PHASE_SHIFT_EN;
-> 
-> Does this one setting control both RX and TX delays? The hardware
-> cannot support 2ns delay on TX, but 0ns on RX? Or 2ns on RX but 0ns on
-> TX?
-> 
-
-This setting is only for Tx delay. Rx delays are taken care separately 
-with DLL delays.
-
-> 	Andrew
+   333	
+   334	static int virtio_spi_probe(struct virtio_device *vdev)
+   335	{
+   336		struct virtio_spi_priv *priv;
+   337		struct spi_controller *ctrl;
+   338		int err;
+   339		u32 bus_num;
+   340	
+   341		ctrl = devm_spi_alloc_host(&vdev->dev, sizeof(*priv));
+   342		if (!ctrl)
+   343			return -ENOMEM;
+   344	
+   345		priv = spi_controller_get_devdata(ctrl);
+   346		priv->vdev = vdev;
+   347		vdev->priv = priv;
+   348	
+   349		device_set_node(&ctrl->dev, dev_fwnode(&vdev->dev));
+   350	
+   351		/* Setup ACPI node for controlled devices which will be probed through ACPI. */
+   352		ACPI_COMPANION_SET(&vdev->dev, ACPI_COMPANION(vdev->dev.parent));
+   353	
+   354		dev_set_drvdata(&vdev->dev, ctrl);
+   355	
+   356		err = device_property_read_u32(&vdev->dev, "spi,bus-num", &bus_num);
+   357		if (!err && bus_num <= S16_MAX)
+   358			ctrl->bus_num = bus_num;
+   359		else
+   360			ctrl->bus_num = -1;
+   361	
+   362		virtio_spi_read_config(vdev);
+   363	
+   364		ctrl->transfer_one = virtio_spi_transfer_one;
+   365	
+   366		err = virtio_spi_find_vqs(priv);
+   367		if (err) {
+   368			dev_err_probe(&vdev->dev, err, "Cannot setup virtqueues\n");
+   369			return err;
+   370		}
+   371	
+   372		/* Register cleanup for virtqueues using devm */
+ > 373		err = devm_add_action_or_reset(&vdev->dev, (void (*)(void *))virtio_spi_del_vq, vdev);
+   374		if (err) {
+   375			dev_err_probe(&vdev->dev, err, "Cannot register virtqueue cleanup\n");
+   376			return err;
+   377		}
+   378	
+   379		/* Use devm version to register controller */
+   380		err = devm_spi_register_controller(&vdev->dev, ctrl);
+   381		if (err) {
+   382			dev_err_probe(&vdev->dev, err, "Cannot register controller\n");
+   383			return err;
+   384		}
+   385	
+   386		return 0;
+   387	}
+   388	
 
 -- 
-Best Regards,
-Yijie
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
