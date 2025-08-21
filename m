@@ -1,100 +1,130 @@
-Return-Path: <linux-kernel+bounces-780105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8127DB2FDB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:04:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B34B2FDAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85EEC3B43A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:57:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DE96189E7E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122F12EDD51;
-	Thu, 21 Aug 2025 14:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MwBekYe2"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3F52EDD5A;
+	Thu, 21 Aug 2025 14:57:38 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB76D2C11CD;
-	Thu, 21 Aug 2025 14:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F218F2E716A;
+	Thu, 21 Aug 2025 14:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755788237; cv=none; b=MVd4hgk74OqT8m5Oq8eKdeJk7zX4OclpFHq6hi3d/H/4JvrUAGYWO0qjgDlyqnN+tkKYfPMgx0w4+BuIZGrZ9LO7mziwmf6d6EP8LJTXY0BXdB4KHQ/KDK1wO3NzpPwI9DB83afq8uwTKLm/+Kcqv1vSoIZzBSxd+Iy4VzckuDo=
+	t=1755788258; cv=none; b=rFidQ38b39oK/rbHL7atuCUUEwubSGfU975sfaRzYwMK0yo5Zoib49Cu2WAJrXspRgH8rCizO376TeAQldJNPeBQgRdM9wuDZ1Jt5j6IOdQMnPnI4fFjcIiCT1hMbx7odsl2/WzHZPKdW8pW2ByYGzPevF/UUJAhGsGIQOjmEcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755788237; c=relaxed/simple;
-	bh=U8zBVgJT1MBW3uhX5im+ul+S/iSiCa3gtZJewr5z4Hs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ABs6llcY+eimRifKWaPleAAwWW80YU8UugY7Xbu94XheBDnI854b2YXqEiuai9gIimX8pHYhkeh2fhlopyRCayeZhdI/h9PKM//+WpaxoGP/4JkCw9fRdKJo33AFyYhT0wNPyabsMaBoeRLYXCL60hFwzkFL5t0FeAbM+6XJiKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MwBekYe2; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-244581eab34so2205565ad.2;
-        Thu, 21 Aug 2025 07:57:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755788235; x=1756393035; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U8zBVgJT1MBW3uhX5im+ul+S/iSiCa3gtZJewr5z4Hs=;
-        b=MwBekYe2sHSczdYc/QHeqPH+aumTueYA/6qr8zN6b039rrTfcUW+WInlLCeS7BLUMq
-         tUc4rKSvMOkq+6QLs+98s9wuqZyhWh2IqT2JzgoGV+1GlQkzGcLJb6cxx7eDSViyTTIc
-         oROwuure5pH36BY8q0H8pgXRl8DZM3WAIYSFVkjuNHcnwo6upIIAYsf7bT+c1tkqJReN
-         ukpJYqaDzO11aasjo9YsF8ul6j/xvCpWvWw5XoVAq34Ee/h3F15UJQ6IN7W4lYFtFKEA
-         u5kJQASDMzU6bxwk7VF3WlP7OMFgGdxN4REYcU+pGfmuw0QylKnLbUh6caRZlKiLkqmp
-         o2sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755788235; x=1756393035;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U8zBVgJT1MBW3uhX5im+ul+S/iSiCa3gtZJewr5z4Hs=;
-        b=sYlKBRbDKvp5QowP05V++T4T+6Nv21kw7D/ZBEgR+6AT325cP3BYgJBTA0I18Jcfzs
-         LIykLMiWCbddHpNbEZ+QcMDKtLJnthJPYFsbbC8aERpMuBtMGwuFWnmn2W2Mc9JlTyKU
-         sZOUaRDFshQuNhDdVz6YZHZZGwMC39gnXUpkcFsB/CJtL6L2/W6yI8UzMUuON/Kijr3K
-         S9A54C7VJkf6Sw5h+MDvJkp2NC49fEHbjSf95pc+wTPcuQeOvmaUch3kvPygomfrR4jI
-         gqFGO+YqQK5y9B1hH2k9sXjOBihZrbQMGDQaXgv5Y+3WW/VBdanzJS6twi+ifGwhtT3x
-         w7rw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYaTsLO7l+bScseZYkSdSibzE5gTwR9LgQzVsJgHY/s8UCKFNVDAX7PxxfrzSjfZg7xkBF7NICv/hHKVY=@vger.kernel.org, AJvYcCVNDvmBbQ7wabJwGG+sJeFR0D6wojhJmbIAmWRtCxWD/FAx8l06x+FOiJoh9g/VL8rQHptGU34pzOWjVQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxqv+3/ltEyDZzT4cl00h2kGA3PAWFl5sp0ohM43LKXU+NShn3
-	x7Y5a1zWqwMcW+UwM5UAFwLAHP1wfPLLmaGU+m+SWxm1C0XNaZcyInh10N5/OuIi2WRCN6Ypdh3
-	Vt5+gMKZ6Qnskn55yB+HTo5YtJ9Bjmgs=
-X-Gm-Gg: ASbGncsIwtLvf2T2Jc/YmP/hi1I4cYt7FwPXRccfoK+NXNUNUbbLYATPj3HPuh+o8T5
-	uvs/ElIavb8nCPCEty06EBBX1Xnv8NYAyK+u4F06+wZB5c5g90PqdMRxpEjFxUcnAQg1fsPNZac
-	7jQqc+GW/G+3VZ3oSvWKt3/KHjHW+l1gSH0oXWeVqKPLYVWNGQBx8HmyUxtQPh2xx4WfU9OCkl1
-	AcXQHJ7P4nYsB4gDcg=
-X-Google-Smtp-Source: AGHT+IHFTuHF/h6I4XoItrkELxafG29TELxPRz8Z2qqXKS7BMlwb5mmzLCZh2G7JQPEp/8XnUu21KIhTcH7eRCIuyxc=
-X-Received: by 2002:a17:902:f547:b0:240:9ab5:4cae with SMTP id
- d9443c01a7336-245fed5a1ecmr23497815ad.1.1755788234965; Thu, 21 Aug 2025
- 07:57:14 -0700 (PDT)
+	s=arc-20240116; t=1755788258; c=relaxed/simple;
+	bh=laPGmDl41JZKz3BhEeXIHr2uUQRH9LH4+PgrYEbfBKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S9zvUYH1AgSZTbaMZWX6h+JDJBeAfY+pOxM/wjcbr3c1TQjYUI0SBeSVOTFlbpzTKyEWftlA5ynBe/hSmvKZrY9lZ5v8gMwmcZnaA0ARYhNadFERrqOJY3Q1mW+WgZitQygosAfDiziMlanas7UbYuGbToP4wfTmYd87mKGY4L8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c75yf5dx7zKHN8n;
+	Thu, 21 Aug 2025 22:57:30 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 45A011A13D1;
+	Thu, 21 Aug 2025 22:57:30 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgAHzw_YM6dolcvKEQ--.41858S3;
+	Thu, 21 Aug 2025 22:57:30 +0800 (CST)
+Message-ID: <651105d2-b87e-4558-d2b7-b5d47c72d29b@huaweicloud.com>
+Date: Thu, 21 Aug 2025 22:57:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820113720.25631f7f@canb.auug.org.au>
-In-Reply-To: <20250820113720.25631f7f@canb.auug.org.au>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 21 Aug 2025 16:57:02 +0200
-X-Gm-Features: Ac12FXwypKnMx-2s_f_5w4LhU2sAdH7h-NK8CpDZKC0iHptS886h1LJcufTypcs
-Message-ID: <CANiq72niVeL0CXmQndsO4QWDn3LO5vo66DmmTC+=f+MzM=DRNw@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the input tree with Linus' tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Liao Yuanhong <liaoyuanhong@vivo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v3 1/2] blk-mq: fix elevator depth_updated method
+To: Yu Kuai <yukuai1@huaweicloud.com>, yukuai3@huawei.com, axboe@kernel.dk,
+ bvanassche@acm.org, ming.lei@redhat.com, nilay@linux.ibm.com, hare@suse.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250821060612.1729939-1-yukuai1@huaweicloud.com>
+ <20250821060612.1729939-2-yukuai1@huaweicloud.com>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <20250821060612.1729939-2-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAHzw_YM6dolcvKEQ--.41858S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF48uF1DZrW5uFW3Ar47urg_yoW8Cry5pr
+	WakF43tw1Utw1xuF1fZ3W3Xw4rJws5Zr12yFsxtryft34qvanaqF1rG3W8WFZ2vrWrAr47
+	Gr1DG3s5Gr18ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUP214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIF
+	xwACI402YVCY1x02628vn2kIc2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14
+	v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
+	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8Zw
+	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
+	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQV
+	y7UUUUU==
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-On Wed, Aug 20, 2025 at 3:37=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
-.au> wrote:
->
-> I fixed it up (I applied the following merge fix patch) and can carry the
 
-Looks good in next-20250821, thanks!
 
-Cheers,
-Miguel
+在 2025/8/21 14:06, Yu Kuai 写道:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Current depth_updated has some problems:
+> 
+> 1) depth_updated() will be called for each hctx, while all elevators
+> will update async_depth for the disk level, this is not related to hctx;
+> 2) In blk_mq_update_nr_requests(), if previous hctx update succeed and
+> this hctx update failed, q->nr_requests will not be updated, while
+> async_depth is already updated with new nr_reqeuests in previous
+> depth_updated();
+> 3) All elevators are using q->nr_requests to calculate async_depth now,
+> however, q->nr_requests is still the old value when depth_updated() is
+> called from blk_mq_update_nr_requests();
+> 
+> Those problems are first from error path, then mq-deadline, and recently
+> for bfq and kyber, fix those problems by:
+> 
+> - pass in request_queue instead of hctx;
+> - move depth_updated() after q->nr_requests is updated in
+>    blk_mq_update_nr_requests();
+> - add depth_updated() call inside init_sched() method to initialize
+>    async_depth;
+> - remove init_hctx() method for mq-deadline and bfq that is useless now;
+> 
+> Fixes: 77f1e0a52d26 ("bfq: update internal depth state when queue depth changes")
+> Fixes: 39823b47bbd4 ("block/mq-deadline: Fix the tag reservation code")
+> Fixes: 42e6c6ce03fd ("lib/sbitmap: convert shallow_depth from one word to the whole sbitmap")
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>   block/bfq-iosched.c   | 22 +++++-----------------
+>   block/blk-mq-sched.h  | 11 +++++++++++
+>   block/blk-mq.c        | 23 ++++++++++++-----------
+>   block/elevator.h      |  2 +-
+>   block/kyber-iosched.c | 19 +++++++++----------
+>   block/mq-deadline.c   | 16 +++-------------
+>   6 files changed, 41 insertions(+), 52 deletions(-)
+> 
+
+LGTM
+
+Reviewed-by: Li Nan <linan122@huawei.com>
+
+-- 
+Thanks,
+Nan
+
 
