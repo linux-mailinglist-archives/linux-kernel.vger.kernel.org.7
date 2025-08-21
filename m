@@ -1,117 +1,111 @@
-Return-Path: <linux-kernel+bounces-778769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54036B2EAC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:37:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48505B2EAC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 047601C2806E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:37:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E0E81C28108
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15A92441B8;
-	Thu, 21 Aug 2025 01:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241682459CD;
+	Thu, 21 Aug 2025 01:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TBCnFIAu"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S112F9kW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBFF24167A
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772B924167A;
+	Thu, 21 Aug 2025 01:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755740240; cv=none; b=jZMF/rBe0PnCP+umDZtaH71O1lK6pieyFRCH7u3DInZvnpniJ4oXxerzwos9/u8VUlteHNpgkIo2DdfvaxgANA4bC6s66RYB738UVrsMresSMZAz2DMewkWwkhUpRHUF5nPGfPrkHv8QpBRasyxE3nCq496q1F6MZ0ZmhDmfag8=
+	t=1755740233; cv=none; b=G3qXyZf1d5q10/PAhwzwpey7yX9vFZEOeqbPyYiuPS6kPFpXygFfGWXaI8IHjcMZU1ZL6IZsC03EiNA11szsIsp5evV46dX0KDz8HhJNTqR2R4b9Rw6vlqroUI0pqz8xazZyLSLptUgJixRXnAdngHogQ6WwNAcQWQ3U5/hY4p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755740240; c=relaxed/simple;
-	bh=cFg6Ft4wWu0jnW8UIk/usiAkGGyiMduu/honmbJjoTg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kRgDnwj3HWp97JhS/JW349OymbSyPLIF+hCMnsdHSeOPPaYt1+/O0pVGEN2gdTK7cDzgASCBzGZd7F1NJ+5RzX70gXs80HLk6TpDjwmc4RyC7wkr2ciHE4ynp1dkeKGZkiWHN6PDtKwYx7D3a5A6z4E3x6fvDj1ENQTjxYOwb44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TBCnFIAu; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <65263090-79a9-4d18-a016-c8f08dcfff8d@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755740235;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=75+8cTaUWk1uklVVN6F+RONMTl3pG47VWO/D9dtV4/M=;
-	b=TBCnFIAu1PLgJoeXwQrNHUVpHUlTNud0dY3FaEv5oSA0S1cjvkpMChiG7plAF289VMem4C
-	N9dhNnRIE8T0H1rfSDTQ98t/Hs5CgLNF8dJ//tFT2JlFb8FnKndFEPwgJNkI/SJVzgEcEH
-	1qwU/IW9XXb3ucGKI3i+KACQZxfDCKE=
-Date: Thu, 21 Aug 2025 09:36:42 +0800
+	s=arc-20240116; t=1755740233; c=relaxed/simple;
+	bh=N0XCA6eoElM2GHMVUFBlv8c3qmMMno3R+pQmAkikF+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Aeq7Af4F68eZjUfgvquLsksbd7rwguuMwjJ30WRx3zqIojPqt+jvmQ76Js0eTWMR4GWdy5rngeEaDbiiTtJ8c3hVX1ZkS/hjIacGfInnubX6IzoYlU/P4r7HNrVZlSVBBG5+ohX6DN1IdYAnNCfiet2JfJYTpUFevG2so4tziSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S112F9kW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83FC5C4CEE7;
+	Thu, 21 Aug 2025 01:37:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755740233;
+	bh=N0XCA6eoElM2GHMVUFBlv8c3qmMMno3R+pQmAkikF+w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=S112F9kWmHQjxzdAGtwDE/fZztkPFSeFLm1rc7m/vWoyfx0BeZRY8iFX/f3k5AA4r
+	 kDtWmqtoVZs7yyvBi+qvmaKcqqgXBCiRJespZJwQexiU+Tllp7NTUB6D1s8Xahp4Gt
+	 J4vM6TG6xeQMCKXWgHq+DFP1CpmeQ36+e3HCdXMUsEHI3ovALMFWZ2LiN360TtDZxs
+	 LIrBfycDQLW7OGoMhWBkePdPNcSDudGDIrylahQuFqxU5KMM3is2mvA1niFJMwVyR1
+	 2HRUvhkiOjz88HUFDrqtScrUWmF4DC4JOSeXdlARpe01kbV6gfInZcPIcvoI7MoHtD
+	 uleXau7kG14OQ==
+Date: Wed, 20 Aug 2025 18:37:11 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>, Willem de
+ Bruijn <willemb@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ andrew+netdev@lunn.ch, horms@kernel.org, davem@davemloft.net,
+ sdf@fomichev.me, almasrymina@google.com, dw@davidwei.uk,
+ michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH net-next v3 00/23][pull request] Queue configs and large
+ buffer providers
+Message-ID: <20250820183711.6586c1c6@kernel.org>
+In-Reply-To: <fb85866c-3890-41d2-9d5c-27549c4b7aa3@gmail.com>
+References: <cover.1755499375.git.asml.silence@gmail.com>
+	<20250819193126.2a4af62b@kernel.org>
+	<fb85866c-3890-41d2-9d5c-27549c4b7aa3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] mm/zswap: reduce the size of the compression buffer to a
- single page
-To: Nhat Pham <nphamcs@gmail.com>, SeongJae Park <sj@kernel.org>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, yosry.ahmed@linux.dev,
- herbert@gondor.apana.org.au, linux-mm@kvack.org, kernel-team@meta.com,
- linux-kernel@vger.kernel.org
-References: <20250820181547.3794167-1-nphamcs@gmail.com>
- <20250820224659.88528-1-sj@kernel.org>
- <CAKEwX=NLvQyZTqv15kACZP2wErO9hyv9W+0j-BWrgOh5ZX1LJA@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <CAKEwX=NLvQyZTqv15kACZP2wErO9hyv9W+0j-BWrgOh5ZX1LJA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2025/8/21 06:56, Nhat Pham wrote:
-> On Wed, Aug 20, 2025 at 3:47 PM SeongJae Park <sj@kernel.org> wrote:
->>
->> On Wed, 20 Aug 2025 11:15:47 -0700 Nhat Pham <nphamcs@gmail.com> wrote:
->>
->>> Reduce the compression buffer size from 2 * PAGE_SIZE to only one page,
->>> as the compression output (in the success case) should not exceed the
->>> length of the input.
->>>
->>> In the past, Chengming tried to reduce the compression buffer size, but
+On Wed, 20 Aug 2025 14:39:51 +0100 Pavel Begunkov wrote:
+> On 8/20/25 03:31, Jakub Kicinski wrote:
+> > On Mon, 18 Aug 2025 14:57:16 +0100 Pavel Begunkov wrote:  
+> >> Jakub Kicinski (20):  
+> > 
+> > I think we need to revisit how we operate.
+> > When we started the ZC work w/ io-uring I suggested a permanent shared
+> > branch. That's perhaps an overkill. What I did not expect is that you
+> > will not even CC netdev@ on changes to io_uring/zcrx.*
+> > 
+> > I don't mean to assert any sort of ownership of that code, but you're
+> > not meeting basic collaboration standards for the kernel. This needs
+> > to change first.  
 > 
-> Yeah, this should include the reference below. My bad. So it should be:
-> 
-> In the past, Chengming tried to reduce the compression buffer size
-> (see [1]), but
-> 
-> Andrew, would it be OK if you fix it for me when you put this patch in
-> your tree :) Or I can also send a new version if that's better. Thank
-> you!
-> 
->>> ran into issues with the LZO algorithm (see [2]). Herbert Xu reported
->>> that the issue has been fixed (see [3]). Now we should have the
->>> guarantee that compressors' output should not exceed one page in the
->>> success case, and the algorithm will just report failure otherwise.
+> You're throwing quite allegations. Basic collaboration standards don't
+> include spamming people with unrelated changes via an already busy list.
+> I cc'ed netdev on patches that meaningfully change how it interacts
+> (incl indirectly) with netdev and/or might be of interest, which is
+> beyond of the usual standard expected of a project using infrastructure
+> provided by a subsystem.
 
-Great!
+To me iouring is a fancy syscall layer. It's good at its job, sure,
+but saying that netdev provides infrastructure to a syscall layer is
+laughable.
 
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+> There are pieces that don't touch netdev, like
+> how io_uring pins pages, accounts memory, sets up rings, etc. In the
+> very same way generic io_uring patches are not normally posted to
+> netdev, and netdev patches are not redirected to mm because there
+> are kmalloc calls, even though, it's not even the standard used here.
 
-Thank you!
+I'm asking you to CC netdev, and people who work on ZC like Mina.
+Normal reaction to someone asking to be CCed on patches is "Sure."
+I don't understand what you're afraid of.
 
->>>
->>> With this patch, we save one page per cpu (per compression algorithm).
->>>
->>> [1]: https://lore.kernel.org/linux-mm/20231213-zswap-dstmem-v4-1-f228b059dd89@bytedance.com/
->>
->> This is not mentioned anywhere.  Probably you added this as a reference for the
->> past work from Chengming?
-> 
-> Thanks for taking a look, SJ!
-> 
->>
->>> [2]: https://lore.kernel.org/lkml/0000000000000b05cd060d6b5511@google.com/
->>> [3]: https://lore.kernel.org/linux-mm/aKUmyl5gUFCdXGn-@gondor.apana.org.au/
->>>
->>> Co-developed-by: Chengming Zhou <chengming.zhou@linux.dev>
->>> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
->>> Signed-off-by: Nhat Pham <nphamcs@gmail.com>
->>
->> Acked-by: SeongJae Park <sj@kernel.org>
+> If you have some way you want to work, I'd appreciate a clear
+> indication of that, because that message you mentioned was answered
+> and I've never heard any objection, or anything else really.
+
+It honestly didn't cross my mind that you'd only CC netdev on patches
+which touch code under net/. I'd have let you know sooner but it's hard
+to reply to messages one doesn't see. I found out that there's whole
+bunch of ZC work that landed in iouring from talking to David Wei.
 
