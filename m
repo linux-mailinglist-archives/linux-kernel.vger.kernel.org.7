@@ -1,118 +1,126 @@
-Return-Path: <linux-kernel+bounces-779787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B73AB2F8F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:54:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0488CB2F8DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 082031CE4884
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:50:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1C77607A7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A658B3101AF;
-	Thu, 21 Aug 2025 12:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F07F31B112;
+	Thu, 21 Aug 2025 12:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATcVbSpD"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e1UB2SAB"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B59E3112DA;
-	Thu, 21 Aug 2025 12:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC4431A049
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755780442; cv=none; b=PNJMHqTeeOzf81hjOhDFDYS7eIQiLS6fJWTWIirsyiGeGMcUun7lv9ccB6AQLUGDp9kavEhIlTkR5CHcVwpWru4BqXABRzmcswbnaEVTNNF+R6XUmdg2ifwHhUrnWOK8stt3tl8eNZW8m9tZ3IRcbn2/18KyYi0bKERAKdtXxbw=
+	t=1755780431; cv=none; b=CFjN60RknUOtt4JddLknTRAp0LX9IJB8N99blL2giXvwtqI2Nm5ea1xs0X720SO4ZivIqrUMmmnaMYsZBHU4UPmkJkOtgyWjfuCK5b+bstlnXZRJTXKe+5ALrVVjjlnhTSUjPv5pAoSTBZtZezz7kgGzo6t+zMSF512P52oZXdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755780442; c=relaxed/simple;
-	bh=iAlqtw/ekplPI7hAlw85q9BkNYl69V2XA6PQmsBcWjQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sQ0eaP/24NzoFE7joRIcu1A5tcJd9ng0ZFZ3kOBunrqhPfblm0uHMfgKTShzZUYBqSXTZ3C3+p6/UWkLFQmo6G6a/TIq1oZVDMcJgSAROc9jD4qklzjeSInpx2wcBV02dhKPzOzEGVnl7DFJkk8aD5yMaSgp6nopTnNHv/gFNbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATcVbSpD; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-619487c8865so3479934a12.1;
-        Thu, 21 Aug 2025 05:47:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755780439; x=1756385239; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iAlqtw/ekplPI7hAlw85q9BkNYl69V2XA6PQmsBcWjQ=;
-        b=ATcVbSpDOO2fkPpxYLOdAVmUPOnslyGA99P3FBm6zwtJFnOUrOk7TWfPYt4WrpNHyO
-         vN7YrLiIaBBRhHlukCcQVRtB9GCTVSs6a+cgtZQbar9YMHeqQaIQHtch9NAycIKR6b3x
-         1tvfaz0X8wOvtiFo2pkqEphjYsMHegoPkiGOeHOclCpcuATG5CJX+kkBAVXckg4lhK6e
-         SJCk8vpqt7ggXq01yT5wWBPEHz9oGus34d6b4HS9O3yGwwcNMm5ZVShnlOf7qqbZPaOf
-         e+2bEycpIkg3B4Cfq/K1nfUNyyXnrPUXvMmpiWoxhEovsNqiYMoEP5QQq9A7BW+mMdFI
-         OeGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755780439; x=1756385239;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iAlqtw/ekplPI7hAlw85q9BkNYl69V2XA6PQmsBcWjQ=;
-        b=oSeYL+5GGHGXYSfVwvGwpJDrmM9uaCJR0t5EvzwslPoV3agftITthuph7+Qze3xYC0
-         u7CZbNZzYTClPICxEAv8cu8TbD1sZWSDTndy4tzBR6WRzEjQlr2kNfhS9cXarOyKHrkQ
-         YmkyvaIBDPo+A6/khl5FTtINeAGtbWZufDdCDu/XvJjZGo/kIiGNvJevCw9aPr9u9tFm
-         HY6X8leUzDVhXYlRp3r4L5EJnNPS+rczFzH2u6Cmk/gGRHZ3Yhb3XObqHUZ8N5gqqT8k
-         Ea71C6Z/Y5vEKe81nQeQ6lB8Io0UIyT9j7yhg3viI68XywIL4XgnEQfvsGKH1AhfyXle
-         JKLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKHDsZsCplbi2skFRkRfYurlG7jbqxvCXK24WosqiUg3vF0RFYVVTAOYz+sPgdSXpmgjJDxGAQ6eLGVD+Z@vger.kernel.org, AJvYcCWL3QvaP7wq2ad5RenUqbMkdnFSvrSkL3ZnVlFrGN5Hl/z7LrdwHwinBA1CPc1d6KhLgSBBqTRCzd4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX3RaD6xibZ+yem4OhqeSL2mNh5vAxR5fJkJVOL7Vdcp4raNiM
-	4KMRJjGG1Zay+I9V9yjpgSRqcWLT2cWLrwIi3KCjjcwbt8CqNbgjin3B2vTGAI5tbv0er9HliHC
-	2vexVkxo0kNBuqxwn8ZF3hw0LGiTkgS+7k3HePls=
-X-Gm-Gg: ASbGncucnB5cVVwf0D7gwStD0c9EiwXCE6JUGlGZ5SFFEz5f4yVXbAEfoiqSW03wKn3
-	YJLIipSQByKxM4cabuQeyv3BLlH5LEmAXkbXY6Or82ALlP6gD57sRkUwth2p0cVAnQHYkrYDDTi
-	PAe7DxbgrspTUTSYRQo5Za4bg1tbSYIt2F9HBVeX+x9748L8wwnUsk+WVjc9G6mYyvXEevTzqCy
-	QkhMeqKLA==
-X-Google-Smtp-Source: AGHT+IHmiqDKBL7inkU4c3NcsKqH46gJn0QZkqcBffSyda0YXauQGNFGKIsY7HXjFWaEH1OqWzaISPFXjLgD6k580zk=
-X-Received: by 2002:a17:906:730d:b0:ad2:e08:e9e2 with SMTP id
- a640c23a62f3a-afe0bb11421mr194028866b.27.1755780438529; Thu, 21 Aug 2025
- 05:47:18 -0700 (PDT)
+	s=arc-20240116; t=1755780431; c=relaxed/simple;
+	bh=kOg13v+onhuGuxW4803UZ6u3K33G+5yvxevRUzFVDpc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PA11SK24X9okNmeqZRMAkMM/RdlhQrOsJHdSedap1gII+D3SyMnhlMcGDbzeUeKaZ6c+VPG2DmLd8uBUPkdMgpq+st91S/soZCOksyFRdkEBnhm7RbxP5kflZruCsXittIsD8SK1BTuFnVUZ6F4aayt7AHCOLEfdEqsa6e7Xj2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e1UB2SAB; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=m2HSFc8Nh7kp8IpGRpCETSqySyj+cxKt6+J+l+bvbEM=; b=e1UB2SABn+kbINgZd7o1CPs/HZ
+	RzgtHNWwfjE5KM7fieXBrDZCYp2o2pq19JBVB1CvlU4ZAmXHUaGQLGtka41ob07fBI/60nIwNfYU2
+	XAeXNokzo6LMzpK6CFGAtTbSjHM+aueQq8Larm7dgT/xpDzsFcarkNNJJ7/hivCX42NhNWmwgTxGU
+	S//JbWKdjTxNALlbAQU/5pb6qiRD+3AHqNAhWcBKxz9YXQER0XoimEQJFy9DbqNM0IKtdy2Yq6skz
+	zRHu5BcqUDy2OcXVSLrPv1wldSTE6UIMD9aH87LiMY/85IgAZNI6MnwTZyvyCavLqaYt2DSLd0WUI
+	jZQbtJVQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1up4h0-00000007BD8-3iRD;
+	Thu, 21 Aug 2025 12:46:59 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0B3413002ED; Thu, 21 Aug 2025 14:46:59 +0200 (CEST)
+Date: Thu, 21 Aug 2025 14:46:59 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Marcos Del Sol Vives <marcos@orca.pet>, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Brian Gerst <brgerst@gmail.com>,
+	Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	David Kaplan <david.kaplan@amd.com>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>,
+	Kees Cook <kees@kernel.org>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Oleg Nesterov <oleg@redhat.com>, "Xin Li (Intel)" <xin@zytor.com>,
+	Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Subject: Re: [PATCH] x86: add hintable NOPs emulation
+Message-ID: <20250821124659.GO3289052@noisy.programming.kicks-ass.net>
+References: <20250820013452.495481-1-marcos@orca.pet>
+ <20250820090733.GJ3245006@noisy.programming.kicks-ass.net>
+ <20250821132807.0a898dfa@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821080723.525379-1-zhao.xichao@vivo.com> <20250821080723.525379-8-zhao.xichao@vivo.com>
- <CAKv63usy7FsiUCjrqibcr196kVGb5_FDeU__OwLWJxasb3MgZg@mail.gmail.com>
-In-Reply-To: <CAKv63usy7FsiUCjrqibcr196kVGb5_FDeU__OwLWJxasb3MgZg@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 21 Aug 2025 15:46:42 +0300
-X-Gm-Features: Ac12FXzTrV-5gedpLziAcDDxaeMEe5HasNPwVIZs576dMifd7PgzqQZBBbd_MGw
-Message-ID: <CAHp75Vd+p1kPPZyrkOsE7EUpCEjd0ii+uHR69EvGNbbDOFuA6w@mail.gmail.com>
-Subject: Re: [PATCH 7/7] iio: temperature: mlx90635: Remove dev_err_probe() if
- error is -ENOMEM
-To: Crt Mori <cmo@melexis.com>
-Cc: Xichao Zhao <zhao.xichao@vivo.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, 
-	"open list:MELEXIS MLX90635 DRIVER" <linux-iio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821132807.0a898dfa@pumpkin>
 
-On Thu, Aug 21, 2025 at 2:47=E2=80=AFPM Crt Mori <cmo@melexis.com> wrote:
->
-> I am not sure I agree with this. It provides an error message with
-> reason and I understand we want as few as possible, but this would be
-> a valid remark inside the logs?
+On Thu, Aug 21, 2025 at 01:28:07PM +0100, David Laight wrote:
+> On Wed, 20 Aug 2025 11:07:33 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > On Wed, Aug 20, 2025 at 03:34:46AM +0200, Marcos Del Sol Vives wrote:
+> > > Hintable NOPs are a series of instructions introduced by Intel with the
+> > > Pentium Pro (i686), and described in US patent US5701442A.
+> > > 
+> > > These instructions were reserved to allow backwards-compatible changes
+> > > in the instruction set possible, by having old processors treat them as
+> > > variable-length NOPs, while having other semantics in modern processors.
+> > > 
+> > > Some modern uses are:
+> > >  - Multi-byte/long NOPs
+> > >  - Indirect Branch Tracking (ENDBR32)
+> > >  - Shadow Stack (part of CET)
+> > > 
+> > > Some processors advertising i686 compatibility lack full support for
+> > > them, which may cause #UD to be incorrectly triggered, crashing software
+> > > that uses then with an unexpected SIGILL.
+> > > 
+> > > One such software is sudo in Debian bookworm, which is compiled with
+> > > GCC -fcf-protection=branch and contains ENDBR32 instructions. It crashes
+> > > on my Vortex86DX3 processor and VIA C3 Nehalem processors [1].
+> > > 
+> > > This patch is a much simplified version of my previous patch for x86
+> > > instruction emulation [2], that only emulates hintable NOPs.
+> > > 
+> > > When #UD is raised, it checks if the opcode corresponds to a hintable NOP
+> > > in user space. If true, it warns the user via the dmesg and advances the
+> > > instruction pointer, thus emulating its expected NOP behaviour.
+> > > 
+> > > [1]: https://lists.debian.org/debian-devel/2023/10/msg00118.html
+> > > [2]: https://lore.kernel.org/all/20210626130313.1283485-1-marcos@orca.pet/
+> > > 
+> > > Signed-off-by: Marcos Del Sol Vives <marcos@orca.pet>  
+> > 
+> > This is going to be terribly slow if there's a significant number of
+> > traps (like with endbr32), but yeah, this ought to work.
+> 
+> Could you patch the memory resident page to contain a supported nop?
+> (without marking it 'dirty')
+> Then the same function wouldn't trap until the code page was reloaded
+> from the source file.
 
-How? dev_err_probe() is no-op for ENOMEM.
-
-Also there is an agreement inside the kernel community that ENOMEM
-errors need no log, as if it's the case, we have much bigger issues
-than that.
-
-> On Thu, 21 Aug 2025 at 10:08, Xichao Zhao <zhao.xichao@vivo.com> wrote:
-> >
-> > The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
-> > Therefore, remove the useless call to dev_err_probe(), and just
-> > return the value instead.
-
-With all that said, the series is correct and good to go. I don't see
-obstacles otherwise.
-
---=20
-With Best Regards,
-Andy Shevchenko
+It would mean cloning the page as private. Yes you can do it, uprobes
+has all the code for this. But it has non-trivial memory overhead.
 
