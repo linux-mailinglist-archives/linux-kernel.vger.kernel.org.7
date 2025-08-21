@@ -1,109 +1,96 @@
-Return-Path: <linux-kernel+bounces-780346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 634B7B300BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:05:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 079F7B300BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C4415C6260
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:05:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43B2D5E14A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57B82FB62D;
-	Thu, 21 Aug 2025 17:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691642FB62F;
+	Thu, 21 Aug 2025 17:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="gT47ww/W"
-Received: from smtpout9.mo534.mail-out.ovh.net (smtpout9.mo534.mail-out.ovh.net [178.33.251.187])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zx7KcmwH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF13B27A108
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 17:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.33.251.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C055B2FAC12;
+	Thu, 21 Aug 2025 17:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755795923; cv=none; b=XNvKgJawsuNm4LQAyMLU9iE6AxfUtzSV5oRSwKAU5kpEMHUys/ICQPP4hYJb1R0wR50+rWt3YZA2gxKYfXS0SMyEYxX29Cl2d1wP3gQmouvFMO+haYXW3b/4DnA00tqQLush5LFA/ObS5Olv2u5NaAQmKVr5cW+rxhF7MvZLnpY=
+	t=1755796098; cv=none; b=d1virllfsxIO88lAQbP5or+Z6xiSx94OK6IgYBon3j9kPwmVP2gh16wlNJcAwyiY5EBMH424YlbCinNIYRgycgezXrlYOHd+6ARJ/2JXsSwI34ppZhIa3AkeJCsVc33FDFhw1f8PkPNbGH1HqCX6yyJNCF6bUTII3a5WxR2dCnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755795923; c=relaxed/simple;
-	bh=QgU9tu/W2io/RCY4ppncl3O2EgTk2wEYw1UC+4Z8TSk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NJM0VZST3d6KyBlUu/9+Jj8K7Swa6vi+/9O1aulSkw70oOxTo3TZIMwYXbookvD4aDhNOb8hDcUHzhvjij7pvgGvyFo16CkWeoBTxzQruxHS6/3YmMDqceSk3Q3TFuRXaYo3IR1FfNVyaa4ALvrHKC5ElqjaY1EDnPdC3dd7tgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=gT47ww/W; arc=none smtp.client-ip=178.33.251.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
-Received: from director4.derp.mail-out.ovh.net (director4.derp.mail-out.ovh.net [79.137.60.37])
-	by mo534.mail-out.ovh.net (Postfix) with ESMTPS id 4c78p55kQpz6Fxs;
-	Thu, 21 Aug 2025 17:05:17 +0000 (UTC)
-Received: from director4.derp.mail-out.ovh.net (director4.derp.mail-out.ovh.net. [127.0.0.1])
-        by director4.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <brgl@bgdev.pl>; Thu, 21 Aug 2025 17:05:17 +0000 (UTC)
-Received: from mta11.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.0.156])
-	by director4.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4c78p53dvWz1xq5;
-	Thu, 21 Aug 2025 17:05:17 +0000 (UTC)
-Received: from orca.pet (unknown [10.1.6.7])
-	by mta11.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id 23CD09A32E5;
-	Thu, 21 Aug 2025 17:05:15 +0000 (UTC)
-Authentication-Results:garm.ovh; auth=pass (GARM-96R0019a5e68ea-a039-46b1-a0f6-7359794a6edd,
-                    684E78C7C579463DAB27E2CA1F9C4E28A39E1181) smtp.auth=marcos@orca.pet
-X-OVh-ClientIp:79.117.22.109
-Message-ID: <87f12a9e-df99-4308-9d4b-6dd28911bd00@orca.pet>
-Date: Thu, 21 Aug 2025 19:05:16 +0200
+	s=arc-20240116; t=1755796098; c=relaxed/simple;
+	bh=31gOTHz/ebGa3W3r+33yR1DrojtjP2REs9LRBXLJK8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=My24CyOI+ULmyLYgO6Yeyobl5CYZk82aQzuW3c61MZe5nM5lKchsh1luin+YC2L3Fqck+3KgaNvhraTkxETvYrZJNl1s5L+weHrSbDi3J8b8ChTY8uhV0vp8ux2rvCPnG6wEbbBcgvj/Q9yqcQDnn5fnZqVlvaWLcyUFDGUt8Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zx7KcmwH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62C03C4CEEB;
+	Thu, 21 Aug 2025 17:08:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755796098;
+	bh=31gOTHz/ebGa3W3r+33yR1DrojtjP2REs9LRBXLJK8I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zx7KcmwHGYzBB8Wz7/IqA9JoUmOMKz9o4IlC+Nr+VFleqUDYHw3uR8Aoz6xwmCPr6
+	 MWSfdqeoXvoR2UgCXiW633WgJQF+Bc7Wfc0EkBTEqigegYs2sdLncthO3zpl5fTxnR
+	 JQcf3jma81dBP3NG3WSSvN+QZBJPAEsB/DE7eOmFFhuUdyIJxOTUBfnc8FeZ/BYGh0
+	 U9BnNfrcR32om/UNtBADGLtDYbdEQ7DUzthFyuSgcz4G2Jp/ogX6lDOS1NfPrLVFFw
+	 KYKfQwFwv/fo9hzyq73OfCkXgwApXs2leHC5MqosKILQ/AuuyJd46OGQ3hlLw0++3G
+	 jJ72zB0iC90ow==
+Date: Thu, 21 Aug 2025 18:08:13 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] kselftest/arm64/gcs: Correctly check return value
+ when disabling GCS
+Message-ID: <24a68b5d-2c24-46ec-aee2-74b45b45deea@sirena.org.uk>
+References: <20250821-nolibc-gcs-fixes-v1-0-88519836c915@weissschuh.net>
+ <20250821-nolibc-gcs-fixes-v1-1-88519836c915@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] gpio: vortex: add new GPIO device driver
-To: linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Michael Walle <mwalle@kernel.org>,
- Lee Jones <lee@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- linux-gpio@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20250821101902.626329-1-marcos@orca.pet>
- <20250821101902.626329-3-marcos@orca.pet>
-Content-Language: es-ES
-From: Marcos Del Sol Vives <marcos@orca.pet>
-In-Reply-To: <20250821101902.626329-3-marcos@orca.pet>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 5894367491258930790
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedujeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpedtgedugfeiudfgkeduhfelgfejgfeuvdejffeiveegteejvddviefhiedujedvheenucfkphepuddvjedrtddrtddruddpjeelrdduudejrddvvddruddtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepkedprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmfigrlhhlvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
- hlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheefgegmpdhmohguvgepshhmthhpohhuth
-DKIM-Signature: a=rsa-sha256; bh=QgU9tu/W2io/RCY4ppncl3O2EgTk2wEYw1UC+4Z8TSk=;
- c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1755795918;
- v=1;
- b=gT47ww/WK/fMjYX2DlJdT3n7yhOSJ9EFYWvYDemT+pQ2ZhuTRnb1mTISXHLkkK7TOsucCgjA
- 07BK+CbDCs3rfE3AUX8wUMKMNysv9qAmaYEs8G2EQHRBunofa8qApqbjOgt1mb5arLh24QkeAVM
- 4rTVzYvJZO/31DDD3IUZtEWW1naZQ39trZ6F6dTYN2LPoHwD5ebpgVgZ8DciaQYe+hCO94YYInj
- CAqrDVfMqXRnf/0QKk6FO9TqBEWFJTEJHRqeop0nvDoDPFfjCpdEFlQthA7656xraUxR6KrIVxI
- x1h2vbunQ4M+wsUb5qvUWRGd5WROetqtwnbOqEdZ7JBJg==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="DVFZaVUj4cP8FPoR"
+Content-Disposition: inline
+In-Reply-To: <20250821-nolibc-gcs-fixes-v1-1-88519836c915@weissschuh.net>
+X-Cookie: Warp 7 -- It's a law we can live with.
 
-El 21/08/2025 a las 12:18, Marcos Del Sol Vives escribió:
-> +#include <linux/types.h>
-> +#include <linux/errno.h>
-> +#include <linux/module.h>
-> +#include <linux/ioport.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/gpio/regmap.h>
-> +#include <linux/regmap.h>
-> +#include <linux/ioport.h>
-> +#include <linux/types.h>
-> +#include <linux/platform_device.h>
 
-I realized now that, despite checking over and over the patches before
-sending to the mailing list, I forgot to clean up leftover includes from
-previous versions of the driver.
+--DVFZaVUj4cP8FPoR
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I am fairly new to this procedure of merging patches. Should I later, after
-a send a sensible amount of time has passed to let everyone voice their
-opinion, send a new v4 version of the patch to fix these (and also clarify
-the commit message on the regmap-gpio, as requested in another email),
-or if accepted would maybe the person merging it sort this out?
+On Thu, Aug 21, 2025 at 05:13:02PM +0200, Thomas Wei=DFschuh wrote:
+> The return value was not assigned to 'ret', so the check afterwards
+> does not do anything.
 
-Sorry for the mess,
-Marcos
+Reviewed-by: Mark Brown <broonie@kernel.org>
+
+--DVFZaVUj4cP8FPoR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAminUnwACgkQJNaLcl1U
+h9AaNwf/dx/DkunGpnhn2H/7SWaWs67mqHdnj5v38faOVHnQsUi5f48labTyAYNQ
+kB8icvE9A8Z/KCxsc92S2lwv5bshWE8ZvbWyFyytJbFEXGpI5XGlPRagdL6UzJr+
+BmZIcMpbVd+DG2g4DY4yqiqBOpaCVEPneOOi3mC1ZC5BGNMExvhGCQ2XPhpFDpKL
+cydo41hLLhbq3OcuPnuhwc2vqAX3dzDVU/QsYacFYA7rN5ZjsJk7GQLrtmZecXiq
+IU1bx1FOwi+5oHHG9b7QS0OLSbftM+gO16Q3yeXxfU3BxR8iHsF4Jv11Fn/Qt7e9
+aNZxz1s6oz8GKK2Oh8DqAvZuOtqxCw==
+=Auzd
+-----END PGP SIGNATURE-----
+
+--DVFZaVUj4cP8FPoR--
 
