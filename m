@@ -1,435 +1,143 @@
-Return-Path: <linux-kernel+bounces-781968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7191DB3194C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:22:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4313EB3196A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BED40B67C39
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:20:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5747CA01928
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C7D2FF147;
-	Fri, 22 Aug 2025 13:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C302FFDDB;
+	Fri, 22 Aug 2025 13:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Khpn4c1Y"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134912FDC31;
-	Fri, 22 Aug 2025 13:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bhsZ5zAm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3BA2FC021
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755868897; cv=none; b=t0CeBSBloNHO8XcnmsVb3m2JvKRXiUu2ZamX3wwmlFgl5bbEPQjjCXA4z6EDd4BCCYuWVixaFykIsUc0QyABA6hy/hq/OOUtcX1f3kYSmiX0HAZ6AJ5Gg+lV3NiyZoHd6COdm+gRBvdnpcN15pDuUsriD0ssXCxlHlXPg78Qe3E=
+	t=1755868861; cv=none; b=C/MacaIjpAQEt5phOGwtIA3y7r0zmBQXrQdSnyLta9zfmxeAO8xY3qHp1zcw8VD7ZYX60052k3kgiqOOASQkB3XENjJF1jynUXfzGaRmt174KgUE5zqiD/H130q1ZQ/DMqQGIjK8vR7ZnqRpYwPQdygWVE/Uyix6x1A7yYSru/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755868897; c=relaxed/simple;
-	bh=PWTMMGR2MjK+6b7GVya2OvT/tYdy1uYiKUY6Ty1OG7Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=kXN64RKkedKDMzLkE1VkqnJOumusmRWrJEVaoEGSyxac1DT40Yz1+AwR+rYIELIIYR/G/8EQK/QLi3UaCritARLuKM0V4LX91Ds1mE7iVvc2wD2y7vLQZUEXi3tNCp7A80KJB56EfpBuoM7WkebQhyH9WJ6ma7jjXGbyhZm8oKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Khpn4c1Y; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=AcfUi9/+Cv+r0AzKkBfbFcLAf2C1x1UuQnrSxezq+5k=;
-	b=Khpn4c1YpRgfMKKn7ItcdOPl074ON3YrF/0KvQBQjrRGStbpcS3RZHj0/k+x4p
-	2+B/F3fPzbGwrptMHQ5d6VZKBrhfXbN6Gwfbb+ezRfLPQYdlCX+fA5HPFJk/uKsF
-	X92/dU/2Y924MxU6DtjXh8eyJfW3oZkLBIqs2vDYOdns0=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wD3PFi1bqhojcT1Dg--.42185S2;
-	Fri, 22 Aug 2025 21:20:54 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: willemdebruijn.kernel@gmail.com,
-	edumazet@google.com,
-	ferenc@fejes.dev
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xin Zhao <jackzxcui1989@163.com>
-Subject: [PATCH net-next v7] net: af_packet: Use hrtimer to do the retire operation
-Date: Fri, 22 Aug 2025 21:20:51 +0800
-Message-Id: <20250822132051.266787-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755868861; c=relaxed/simple;
+	bh=RLk4D4vD/TDD8BadjDyMjnwONRBMR+yTQwbOQuHgP3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PhhNrT3+13Kp3TMWAkWHgmbKZgdPnROP38qvaV9lO0c8JUy+fTDG6an2dtC2ARrel9dyJLbStZBefb0GwlgWKFxQPALXT55avoM3b4L4Wp/R/uwLhdfm+aBE4ql95BUsMdBTa/MVdoHKRI0N1MHr9grwmwv0LEDZ6aHm0ETPZ9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bhsZ5zAm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755868858;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3leSXfueIJ7OjI6bMt9yYc6dreSLbCTLjK5B3khIUcw=;
+	b=bhsZ5zAmphH9jEZxu8LDouEg0FD4M8zdTt1JfhtbwuUES7adCAm/wwgq/vB96MMQkXqkdm
+	i9UVcq3ciUf5MhkhAVaW3IofTPlpsgEDc4SxQwSAoHzxVS/OWQC+sdzi5HIWsgmoV/uI2U
+	Dl2d+kj/YcJUX4CfTTc9cZ5VzUhv9yo=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-588-iBoK4V0wOQCaZZasORBlhg-1; Fri, 22 Aug 2025 09:20:57 -0400
+X-MC-Unique: iBoK4V0wOQCaZZasORBlhg-1
+X-Mimecast-MFC-AGG-ID: iBoK4V0wOQCaZZasORBlhg_1755868857
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e8706c668cso545437785a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:20:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755868856; x=1756473656;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3leSXfueIJ7OjI6bMt9yYc6dreSLbCTLjK5B3khIUcw=;
+        b=DJ+9qh85CVPDw8qaKaTB3urgYxydeOOU94EVEog47Rn0i4tTuM4sftblPYx13dONXi
+         auycQLTGquwoJz9imx/r/FxSqq8omKC8GlbPJbb4t7t9wQxU1VLPF8c5/8PDQ++8rCUX
+         YYHnSkCcIa+kAjwRK0jX/urkVZYGvP0qoKcLsibopRwivafRZt78tVbbRn6WqZHQK/jV
+         AifmnZjvz9OKseNqzoO6UOy7Wg8vqnfjsT7D9ai6SxQRES5Kb+/AjFj3w//A7Ox2p9fV
+         DTXAu2TD8ve6siLBTT/1aTe6FQicZ1hgNqCUO49S8UvGwGB4Q5/LrkQtf2FBWdDWzCTx
+         GZEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWW1LPvynJTWTs3EQIPNuQJtzV0lPuOxjUZv+QvnlSxTtdPw7YH7mweb2Wm1wZKmGIMor01Lykb3MYZ13w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyD69bFePesT9CpG4iX1zkF7QdQ4kblgujaYj9sGKhaKSjmknN
+	FsV5QRAQRmNROomYEjmg6KKmBbnlzFzGqF5Eyo/Zl6i8y0vBm1w4PNPExR4/wOfMw9DVZy41Nyt
+	4uadPhO6gFkeN4cWxhq2WZzmfkI01s8F402wBnFUr/jiGVtg6ZoasOI4MKOJiSQSPYg==
+X-Gm-Gg: ASbGncvO6vXk+qwa6Bt0N7p8+wWQULIUdeFho1OXjFFotCWpXow3OGfXmUfaan5Gl/8
+	JEjkF+1HnbWz91vuRqxUKBDSz0rrg4si2lp19bU0q9BRhni21F/WwP6k7l2xNpbY0fVOay40Xdg
+	nl6xCvIALYrMwC7o1MRkg5G1gEv6iz/0CgouDpwFADnLl8UeP9kUvbgQtixqeEF/nLZuc6P6ENi
+	1Xft/KGhPHeJbf3r520MCdXIEIW8lb3xkp/xd6cw1lm3IyFV8Nx9o3Kev8V4zpg2+Zm0Oc3kBM+
+	Utj5SURb6c1RxQQAKMxiBU46lB4O5SvBUxtkL4bUpAt8T2kOQC3xsmihJ4HI82xKQsj1peRMBET
+	45J0lyPdGVnFXi2I5hg0=
+X-Received: by 2002:a05:620a:4723:b0:7d4:3bcc:85bf with SMTP id af79cd13be357-7ea10f96d7bmr350319585a.12.1755868856646;
+        Fri, 22 Aug 2025 06:20:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJT6pAPKYEy5K11CQ9yMu+8+XejnwBM/iicip7wZSgoCGQVpWGHpC8P6vRS4lRcd6AamSOvw==
+X-Received: by 2002:a05:620a:4723:b0:7d4:3bcc:85bf with SMTP id af79cd13be357-7ea10f96d7bmr350315285a.12.1755868856078;
+        Fri, 22 Aug 2025 06:20:56 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e19211asm1338828085a.51.2025.08.22.06.20.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 06:20:55 -0700 (PDT)
+Date: Fri, 22 Aug 2025 09:20:53 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] clk: Use hashtable for global clk lookups
+Message-ID: <aKhutc0IVWun83qF@x1>
+References: <20250814035317.4112336-1-wenst@chromium.org>
+ <20250814035317.4112336-2-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3PFi1bqhojcT1Dg--.42185S2
-X-Coremail-Antispam: 1Uf129KBjvAXoWfGryfKw17WFWUXr13AF43Wrg_yoW8WryxAo
-	Z3XrZ8Cr4ktF97A3ykCF10kFy3W3yDXr15XrsY9ryku3ZIvw15Wr12yay3Z3yfCw1Sywna
-	yF18Ww1UXF1DKr1rn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvj4RvhFcUUUUU
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbibh2xCmioQp0WNAABs0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814035317.4112336-2-wenst@chromium.org>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-In a system with high real-time requirements, the timeout mechanism of
-ordinary timers with jiffies granularity is insufficient to meet the
-demands for real-time performance. Meanwhile, the optimization of CPU
-usage with af_packet is quite significant. Use hrtimer instead of timer
-to help compensate for the shortcomings in real-time performance.
-In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
-enough, with fluctuations reaching over 8ms (on a system with HZ=250).
-This is unacceptable in some high real-time systems that require timely
-processing of network packets. By replacing it with hrtimer, if a timeout
-of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
-3 ms.
+On Thu, Aug 14, 2025 at 11:53:16AM +0800, Chen-Yu Tsai wrote:
+> A clk lookup using clk_core_lookup() is currently somewhat expensive
+> since it has to walk the whole clk tree to find a match. This is
+> extremely bad in the clk_core_init() function where it is used to look
+> for clk name conflicts, which is always the worst case of walking the
+> whole tree. Moreover, the number of clks checked increases as more
+> clks are registered, causing each subsequent clk registration becoming
+> slower.
+> 
+> Add a hashtable for doing clk lookups to replace the tree walk method.
+> On arm64 this increases kernel memory usage by 4 KB for the hashtable,
+> and 16 bytes (2 pointers) for |struct hlist_node| in each clk. On a
+> platform with around 800 clks, this reduces the time spent in
+> clk_core_lookup() significantly:
+> 
+>           |      PID 0      |     kworker     |
+>           | before |  after | before |  after |
+>     -------------------------------------------
+>     avg   | 203 us | 2.7 us | 123 us | 1.5 us |
+>     -------------------------------------------
+>     min   | 4.7 us | 2.3 us | 102 us | 0.9 us |
+>     -------------------------------------------
+>     max   | 867 us | 4.8 us | 237 us | 3.5 us |
+>     -------------------------------------------
+>     culm  | 109 ms | 1.5 ms |  21 ms | 0.3 ms |
+> 
+> This in turn reduces the time spent in clk_hw_register(), and
+> ultimately, boot time. On a different system with close to 700 clks,
+> This reduces boot time by around 110 ms. While this doesn't seem like
+> a lot, this helps in cases where minimizing boot time is important.
+> 
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
+Reviewed-by: Brian Masney <bmasney@redhat.com>
+Tested-by: Brian Masney <bmasney@redhat.com>
 
----
-Changes in v7:
-- Only update the hrtimer expire time within the hrtimer callback.
-  When the callback return, without sk_buff_head lock protection, __run_hrtimer will
-  enqueue the timer if return HRTIMER_RESTART. Setting the hrtimer expires while
-  enqueuing a timer may cause chaos in the hrtimer red-black tree.
-  The setting expire time is monotonic, so if we do not update the expire time to the
-  retire_blk_timer when it is not in callback, it will not cause problem if we skip
-  the timeout event and update it when find out that expire_ktime is bigger than the
-  expire time of retire_blk_timer.
-- Use hrtimer_set_expires here instead of hrtimer_forward_now.
-  The end time for retiring each block is not fixed because when network packets are
-  received quickly, blocks are retired rapidly, and the new block retire time needs
-  to be recalculated. However, hrtimer_forward_now increments the previous timeout
-  by an interval, which is not correct.
-- The expire time is monotonic, so if we do not update the expire time to the
-  retire_blk_timer when it is not in callback, it will not cause problem if we skip
-  the timeout event and update it when find out that expire_ktime is bigger than the
-  expire time of retire_blk_timer.
-- Adding the 'bool callback' parameter back is intended to more accurately determine
-  whether we are inside the hrtimer callback when executing
-  _prb_refresh_rx_retire_blk_timer. This ensures that we only update the hrtimer's
-  timeout value within the hrtimer callback.
+I tested this on my Thinkpad x13s laptop, and clk_core_lookup() is
+called 684 times on normal boot up of my system. Only 4 of those are
+duplicate lookups.
 
-Changes in v6:
-- Use hrtimer_is_queued instead to check whether it is within the callback function.
-  So do not need to add 'bool callback' parameter to _prb_refresh_rx_retire_blk_timer
-  as suggested by Willem de Bruijn;
-- Do not need local_irq_save and local_irq_restore to protect the race of the timer
-  callback running in softirq context or the open_block from tpacket_rcv in process
-  context
-  as suggested by Willem de Bruijn;
-- Link to v6: https://lore.kernel.org/all/20250820092925.2115372-1-jackzxcui1989@163.com/
-
-Changes in v5:
-- Remove the unnecessary comments at the top of the _prb_refresh_rx_retire_blk_timer,
-  branch is self-explanatory enough
-  as suggested by Willem de Bruijn;
-- Indentation of _prb_refresh_rx_retire_blk_timer, align with first argument on
-  previous line
-  as suggested by Willem de Bruijn;
-- Do not call hrtimer_start within the hrtimer callback
-  as suggested by Willem de Bruijn
-  So add 'bool callback' parameter to _prb_refresh_rx_retire_blk_timer to indicate
-  whether it is within the callback function. Use hrtimer_forward_now instead of
-  hrtimer_start when it is in the callback function and is doing prb_open_block.
-- Link to v5: https://lore.kernel.org/all/20250819091447.1199980-1-jackzxcui1989@163.com/
-
-Changes in v4:
-- Add 'bool start' to distinguish whether the call to _prb_refresh_rx_retire_blk_timer
-  is for prb_open_block. When it is for prb_open_block, execute hrtimer_start to
-  (re)start the hrtimer; otherwise, use hrtimer_forward_now to set the expiration
-  time as it is more commonly used compared to hrtimer_set_expires.
-  as suggested by Willem de Bruijn;
-- Delete the comments to explain why hrtimer_set_expires(not hrtimer_forward_now)
-  is used, as we do not use hrtimer_set_expires any more;
-- Link to v4: https://lore.kernel.org/all/20250818050233.155344-1-jackzxcui1989@163.com/
-
-Changes in v3:
-- return HRTIMER_NORESTART when pkc->delete_blk_timer is true
-  as suggested by Willem de Bruijn;
-- Drop the retire_blk_tov field of tpacket_kbdq_core, add interval_ktime instead
-  as suggested by Willem de Bruijn;
-- Add comments to explain why hrtimer_set_expires(not hrtimer_forward_now) is used in
-  _prb_refresh_rx_retire_blk_timer
-  as suggested by Willem de Bruijn;
-- Link to v3: https://lore.kernel.org/all/20250816170130.3969354-1-jackzxcui1989@163.com/
-
-Changes in v2:
-- Drop the tov_in_msecs field of tpacket_kbdq_core added by the patch
-  as suggested by Willem de Bruijn;
-- Link to v2: https://lore.kernel.org/all/20250815044141.1374446-1-jackzxcui1989@163.com/
-
-Changes in v1:
-- Do not add another config for the current changes
-  as suggested by Eric Dumazet;
-- Mention the beneficial cases 'HZ=100 or HZ=250' in the changelog
-  as suggested by Eric Dumazet;
-- Add some performance details to the changelog
-  as suggested by Ferenc Fejes;
-- Delete the 'pkc->tov_in_msecs == 0' bounds check which is not necessary
-  as suggested by Willem de Bruijn;
-- Use hrtimer_set_expires instead of hrtimer_start_range_ns when retire timer needs update
-  as suggested by Willem de Bruijn. Start the hrtimer in prb_setup_retire_blk_timer;
-- Just return HRTIMER_RESTART directly as all cases return the same value
-  as suggested by Willem de Bruijn;
-- Link to v1: https://lore.kernel.org/all/20250813165201.1492779-1-jackzxcui1989@163.com/
-- Link to v0: https://lore.kernel.org/all/20250806055210.1530081-1-jackzxcui1989@163.com/
----
- net/packet/af_packet.c | 93 +++++++++++++++++++++++++++++-------------
- net/packet/diag.c      |  2 +-
- net/packet/internal.h  |  6 +--
- 3 files changed, 69 insertions(+), 32 deletions(-)
-
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index a7017d7f0..654ae65ea 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -197,14 +197,14 @@ static void *packet_previous_frame(struct packet_sock *po,
- static void packet_increment_head(struct packet_ring_buffer *buff);
- static int prb_curr_blk_in_use(struct tpacket_block_desc *);
- static void *prb_dispatch_next_block(struct tpacket_kbdq_core *,
--			struct packet_sock *);
-+			struct packet_sock *, bool);
- static void prb_retire_current_block(struct tpacket_kbdq_core *,
- 		struct packet_sock *, unsigned int status);
- static int prb_queue_frozen(struct tpacket_kbdq_core *);
- static void prb_open_block(struct tpacket_kbdq_core *,
--		struct tpacket_block_desc *);
--static void prb_retire_rx_blk_timer_expired(struct timer_list *);
--static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *);
-+		struct tpacket_block_desc *, bool);
-+static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *);
-+static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *, bool);
- static void prb_fill_rxhash(struct tpacket_kbdq_core *, struct tpacket3_hdr *);
- static void prb_clear_rxhash(struct tpacket_kbdq_core *,
- 		struct tpacket3_hdr *);
-@@ -581,7 +581,7 @@ static __be16 vlan_get_protocol_dgram(const struct sk_buff *skb)
- 
- static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
- {
--	timer_delete_sync(&pkc->retire_blk_timer);
-+	hrtimer_cancel(&pkc->retire_blk_timer);
- }
- 
- static void prb_shutdown_retire_blk_timer(struct packet_sock *po,
-@@ -603,9 +603,10 @@ static void prb_setup_retire_blk_timer(struct packet_sock *po)
- 	struct tpacket_kbdq_core *pkc;
- 
- 	pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
--	timer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
--		    0);
--	pkc->retire_blk_timer.expires = jiffies;
-+	hrtimer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
-+		      CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
-+	hrtimer_start(&pkc->retire_blk_timer, pkc->interval_ktime,
-+		      HRTIMER_MODE_REL_SOFT);
- }
- 
- static int prb_calc_retire_blk_tmo(struct packet_sock *po,
-@@ -672,27 +673,52 @@ static void init_prb_bdqc(struct packet_sock *po,
- 	p1->last_kactive_blk_num = 0;
- 	po->stats.stats3.tp_freeze_q_cnt = 0;
- 	if (req_u->req3.tp_retire_blk_tov)
--		p1->retire_blk_tov = req_u->req3.tp_retire_blk_tov;
-+		p1->interval_ktime = ms_to_ktime(req_u->req3.tp_retire_blk_tov);
- 	else
--		p1->retire_blk_tov = prb_calc_retire_blk_tmo(po,
--						req_u->req3.tp_block_size);
--	p1->tov_in_jiffies = msecs_to_jiffies(p1->retire_blk_tov);
-+		p1->interval_ktime = ms_to_ktime(prb_calc_retire_blk_tmo(po,
-+						req_u->req3.tp_block_size));
- 	p1->blk_sizeof_priv = req_u->req3.tp_sizeof_priv;
- 	rwlock_init(&p1->blk_fill_in_prog_lock);
- 
- 	p1->max_frame_len = p1->kblk_size - BLK_PLUS_PRIV(p1->blk_sizeof_priv);
- 	prb_init_ft_ops(p1, req_u);
- 	prb_setup_retire_blk_timer(po);
--	prb_open_block(p1, pbd);
-+	prb_open_block(p1, pbd, false);
- }
- 
- /*  Do NOT update the last_blk_num first.
-  *  Assumes sk_buff_head lock is held.
-  */
--static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
--{
--	mod_timer(&pkc->retire_blk_timer,
--			jiffies + pkc->tov_in_jiffies);
-+static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc,
-+					     bool callback)
-+{
-+	if (likely(ktime_to_ns(pkc->expire_ktime))) {
-+		pkc->expire_ktime = ktime_add_safe(ktime_get(), pkc->interval_ktime);
-+		if (callback) {
-+			/* Three tips:
-+			 * 1) Only update the hrtimer expire time within the callback.
-+			 * When the callback return, without sk_buff_head lock protection,
-+			 * __run_hrtimer will enqueue the timer if return HRTIMER_RESTART.
-+			 * Setting the hrtimer expires while enqueuing a timer may cause
-+			 * chaos in the hrtimer red-black tree.
-+			 * 2) Use hrtimer_set_expires here instead of hrtimer_forward_now,
-+			 * because the end time for retiring each block is not fixed
-+			 * because when network packets are received quickly, blocks are
-+			 * retired rapidly, and the new block retire time needs to be
-+			 * recalculated. However, hrtimer_forward_now increments the
-+			 * previous timeout by an interval, which is not correct.
-+			 * 3）The expire time is monotonic, so if we do not update the
-+			 * expire time to the retire_blk_timer when it is not in callback,
-+			 * it will not cause problem if we skip the timeout event and
-+			 * update it when find out that expire_ktime is bigger than the
-+			 * expire time of retire_blk_timer.
-+			 */
-+			hrtimer_set_expires(&pkc->retire_blk_timer, pkc->expire_ktime);
-+		}
-+	} else {
-+		/* Just after prb_setup_retire_blk_timer. */
-+		pkc->expire_ktime = hrtimer_get_expires(&pkc->retire_blk_timer);
-+	}
- 	pkc->last_kactive_blk_num = pkc->kactive_blk_num;
- }
- 
-@@ -719,8 +745,9 @@ static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
-  * prb_calc_retire_blk_tmo() calculates the tmo.
-  *
-  */
--static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
-+static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *t)
- {
-+	enum hrtimer_restart ret = HRTIMER_RESTART;
- 	struct packet_sock *po =
- 		timer_container_of(po, t, rx_ring.prb_bdqc.retire_blk_timer);
- 	struct tpacket_kbdq_core *pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
-@@ -732,8 +759,17 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
- 	frozen = prb_queue_frozen(pkc);
- 	pbd = GET_CURR_PBLOCK_DESC_FROM_CORE(pkc);
- 
--	if (unlikely(pkc->delete_blk_timer))
-+	if (unlikely(pkc->delete_blk_timer)) {
-+		ret = HRTIMER_NORESTART;
- 		goto out;
-+	}
-+
-+	/* See comments in _prb_refresh_rx_retire_blk_timer. */
-+	if (ktime_compare(pkc->expire_ktime,
-+			  hrtimer_get_expires(&pkc->retire_blk_timer)) > 0) {
-+		hrtimer_set_expires(&pkc->retire_blk_timer, pkc->expire_ktime);
-+		goto out;
-+	}
- 
- 	/* We only need to plug the race when the block is partially filled.
- 	 * tpacket_rcv:
-@@ -757,7 +793,7 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
- 				goto refresh_timer;
- 			}
- 			prb_retire_current_block(pkc, po, TP_STATUS_BLK_TMO);
--			if (!prb_dispatch_next_block(pkc, po))
-+			if (!prb_dispatch_next_block(pkc, po, true))
- 				goto refresh_timer;
- 			else
- 				goto out;
-@@ -779,17 +815,18 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
- 				* opening a block thaws the queue,restarts timer
- 				* Thawing/timer-refresh is a side effect.
- 				*/
--				prb_open_block(pkc, pbd);
-+				prb_open_block(pkc, pbd, true);
- 				goto out;
- 			}
- 		}
- 	}
- 
- refresh_timer:
--	_prb_refresh_rx_retire_blk_timer(pkc);
-+	_prb_refresh_rx_retire_blk_timer(pkc, true);
- 
- out:
- 	spin_unlock(&po->sk.sk_receive_queue.lock);
-+	return ret;
- }
- 
- static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
-@@ -890,7 +927,7 @@ static void prb_thaw_queue(struct tpacket_kbdq_core *pkc)
-  *
-  */
- static void prb_open_block(struct tpacket_kbdq_core *pkc1,
--	struct tpacket_block_desc *pbd1)
-+	struct tpacket_block_desc *pbd1, bool callback)
- {
- 	struct timespec64 ts;
- 	struct tpacket_hdr_v1 *h1 = &pbd1->hdr.bh1;
-@@ -921,7 +958,7 @@ static void prb_open_block(struct tpacket_kbdq_core *pkc1,
- 	pkc1->pkblk_end = pkc1->pkblk_start + pkc1->kblk_size;
- 
- 	prb_thaw_queue(pkc1);
--	_prb_refresh_rx_retire_blk_timer(pkc1);
-+	_prb_refresh_rx_retire_blk_timer(pkc1, callback);
- 
- 	smp_wmb();
- }
-@@ -965,7 +1002,7 @@ static void prb_freeze_queue(struct tpacket_kbdq_core *pkc,
-  * So, caller must check the return value.
-  */
- static void *prb_dispatch_next_block(struct tpacket_kbdq_core *pkc,
--		struct packet_sock *po)
-+		struct packet_sock *po, bool callback)
- {
- 	struct tpacket_block_desc *pbd;
- 
-@@ -985,7 +1022,7 @@ static void *prb_dispatch_next_block(struct tpacket_kbdq_core *pkc,
- 	 * open this block and return the offset where the first packet
- 	 * needs to get stored.
- 	 */
--	prb_open_block(pkc, pbd);
-+	prb_open_block(pkc, pbd, callback);
- 	return (void *)pkc->nxt_offset;
- }
- 
-@@ -1124,7 +1161,7 @@ static void *__packet_lookup_frame_in_block(struct packet_sock *po,
- 			 * opening a block also thaws the queue.
- 			 * Thawing is a side effect.
- 			 */
--			prb_open_block(pkc, pbd);
-+			prb_open_block(pkc, pbd, false);
- 		}
- 	}
- 
-@@ -1143,7 +1180,7 @@ static void *__packet_lookup_frame_in_block(struct packet_sock *po,
- 	prb_retire_current_block(pkc, po, 0);
- 
- 	/* Now, try to dispatch the next block */
--	curr = (char *)prb_dispatch_next_block(pkc, po);
-+	curr = (char *)prb_dispatch_next_block(pkc, po, false);
- 	if (curr) {
- 		pbd = GET_CURR_PBLOCK_DESC_FROM_CORE(pkc);
- 		prb_fill_curr_block(curr, pkc, pbd, len);
-diff --git a/net/packet/diag.c b/net/packet/diag.c
-index 6ce1dcc28..c8f43e0c1 100644
---- a/net/packet/diag.c
-+++ b/net/packet/diag.c
-@@ -83,7 +83,7 @@ static int pdiag_put_ring(struct packet_ring_buffer *ring, int ver, int nl_type,
- 	pdr.pdr_frame_nr = ring->frame_max + 1;
- 
- 	if (ver > TPACKET_V2) {
--		pdr.pdr_retire_tmo = ring->prb_bdqc.retire_blk_tov;
-+		pdr.pdr_retire_tmo = ktime_to_ms(ring->prb_bdqc.interval_ktime);
- 		pdr.pdr_sizeof_priv = ring->prb_bdqc.blk_sizeof_priv;
- 		pdr.pdr_features = ring->prb_bdqc.feature_req_word;
- 	} else {
-diff --git a/net/packet/internal.h b/net/packet/internal.h
-index 1e743d031..f2df563c7 100644
---- a/net/packet/internal.h
-+++ b/net/packet/internal.h
-@@ -45,12 +45,12 @@ struct tpacket_kbdq_core {
- 	/* Default is set to 8ms */
- #define DEFAULT_PRB_RETIRE_TOV	(8)
- 
--	unsigned short  retire_blk_tov;
-+	ktime_t		interval_ktime;
- 	unsigned short  version;
--	unsigned long	tov_in_jiffies;
- 
- 	/* timer to retire an outstanding block */
--	struct timer_list retire_blk_timer;
-+	struct hrtimer  retire_blk_timer;
-+	ktime_t		expire_ktime;
- };
- 
- struct pgv {
--- 
-2.34.1
+Brian
 
 
