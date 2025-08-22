@@ -1,124 +1,153 @@
-Return-Path: <linux-kernel+bounces-781769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8223B3167E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:42:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC99DB31684
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78E673A66CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:42:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E3201C8183C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653C22F90DC;
-	Fri, 22 Aug 2025 11:41:58 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BD72EF657;
+	Fri, 22 Aug 2025 11:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OiaUG0Bt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66ECD1624C0;
-	Fri, 22 Aug 2025 11:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029F12F49FF
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755862918; cv=none; b=m4kjKHN9VtfQ+hsftaMlaLpptHX3ZqCFvO32pUj4lxv/YX9wF8ktS+/B38ts7xhylu6EjtasOjN0E/A9cqKQ3GRXo8lyQcrEZjmTG8Wy2Jf9WRFwk1W2Fe4QNvCem7HI/E3lWBO1wHjs9it0RK0eaGEBUakj5bU95jv8ZnRzzMg=
+	t=1755862950; cv=none; b=TUS44sNF9U04+rCymKsqSZ6zUIiYcVQI7KYmPXgyJZBXJSPHhpr/3+MTsBCSpTzbaZ0udVeEQ4aA1CPz+a4o0anOo19ANO/eoVGLPiu8LjPw+PWh332hr9jIWSfQlzLpdF97jqKM8mqSspmR0Ka3fk5GGqIooBKd8ZdhlbZB0TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755862918; c=relaxed/simple;
-	bh=7zTVKcxNznwCQ46UxTYNZttYWk+v2ssfAQ+Drun7lgI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SYedbPCpQPwuW/PzyZtu6FK1iSCpgqOHXDRk+Iv1atoa2kSDqA1VV47oqt+m2itDFqKz2h0Y3YTzVSnVD1Pr8AQoXmTemxvGHjZjmg+Gwu9Da4Dui+XXJ4t4dxzTkZ62qKubwdZV4VPW8HSsZT4qjyv/q9MmgCqiwei9dwqrHIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.42] (g42.guest.molgen.mpg.de [141.14.220.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id ABD4461E647BB;
-	Fri, 22 Aug 2025 13:41:41 +0200 (CEST)
-Message-ID: <06787d51-5d5e-4f74-bda6-b80cead5ed6d@molgen.mpg.de>
-Date: Fri, 22 Aug 2025 13:41:41 +0200
+	s=arc-20240116; t=1755862950; c=relaxed/simple;
+	bh=3o+FmQxfh3Vqu+734KWY67K1eSRB0PrsBChmW5BJDQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fbRQayXFvjuFWtL/QtMHVehwxTEHiP5iRZ9LRD+CpxtNBtXdDCPhZWQfantlrtKkOJG/WTgrbP3gkPm9mhWwuyqlbkq44mHoD2U63HdPnI1SWMr8wajybweVy8jljuSaCwP9b3cp056KkDPLVwGE0o0G4h0OM4zAgxr68ihvcTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OiaUG0Bt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57M8UWBT021853
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:42:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=KAhSD2vjv/ePHUmD+gzyEEp4
+	2L2WxYKoMwQm05Sn2Yc=; b=OiaUG0Btg4yL0nRWgSNlhwZClARkvbc61cx7zd60
+	ACHg8wc7y11jD3eOM/32pUXH+TVk8km+31XcXZjI9FSulMPjp+t2vo5CuE1EPTc/
+	XJVsEUCoRTaafNgdnv/eSPRvzLpVkMczXOoMoj4hZARV8yJOGV/AZL8F63otkVpA
+	z0DppPkqHX413v8iMPvxF2ZqVDGWZ9nwDGzC1E5Zm20V4bz8r113YK4RrDj7VChB
+	jpte2SnZs5FytqPkJObC0CkPcLRz30JurOImTJv4Bz0bwS2OcshjVku77l+H8s5s
+	RXbqlJ4FYde8yKvsJ7zOnzJCullQPwo+FJdEU03xA+rPDw==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52a938j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:42:28 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b109bc5ecaso57460741cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 04:42:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755862947; x=1756467747;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KAhSD2vjv/ePHUmD+gzyEEp42L2WxYKoMwQm05Sn2Yc=;
+        b=tyeh/1mTkIccCoZn+7zCh4Fu+zkZw6zWbvpLMlKQtoDQNJe4SnmmJ7OxwiSQndDhi/
+         UnvetMFhenILnAfSYgPFsL0aOL5lDrNJXa2zuKW6fD+grg2Ken4OT9/oMTmvyAPuNCKe
+         0YHZnWl7CssNA2e+0bWgOou6/u6gFe7/jLPSav7hgtSqtNGEz6LnfP302gn4xE/z8QRy
+         gFB/RFpvC000hpCnu6rotE3A4fdjx5FlOXe7axt9uEgn2MtN7okst30BAmMSO+mgdlSD
+         o5wrLEfj4VC1yb78v5IORa/OMm75Z24J0l3jtSWM4apev3mbQroDzwDCHqrAQHGT71ML
+         g6eA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/gxknyVWzexkF1LYJ1x4goF5tW9yWOQHgaDoqTVNtumnlg2I93VF9SypwQ2fpaHxUoAdhmi6mwwrraHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNN82plIBuBH+eMLJ2SPdSm4KcYquuIYltTRE66Nl0IZwwkrOc
+	cW4cR2goGTgFAFjVXmpNtcd8J7bWWDPbDjbVbEET5UZ8sU4h09K4Rz4Uk7oxKivfJoskm5KFDFK
+	CoRR7Nu3RoRw5sl/a/L2/l+ei2u4k+dFbbKlAj+eQ50+pa+p2IZvYYASb9oyYGL8N0eWRajjqfj
+	E=
+X-Gm-Gg: ASbGnctd6kIs/+DnSyEm01C+4qblTOWooXMlCDUVrqjvW2XWvM5VIJFW06Phju946Fz
+	+0c6q03sSeRCSpjqu0xFVn0YPN2LFAOUQFtP2J5+Wbha4cCeCHMzCZw64/vtlmr3oYYSofn9U21
+	+7ZDAT9PgizLgT6qWR45MaGEB2bRDu7FC3rJForYPRVG42jlmI1XpEg/V5zdyrgI1rF0ko2TxtB
+	MJaslWXXYg/sYw6AwXYFPexMkiIb/O+kkYDPq1IHr8CNkhYIOQnDoL9243onpeQ2iqvKX3FtfJL
+	+CfzAaxPrHMFk/CHLYWB+z2ozbRdfVZIjFBrQbCkLEqWoVacJtzlp/TTmhkQHhWvq6XgEYq95aD
+	IR/gZEk7E9suAUjvr9NHusmjYfX4tivUUySx68ZZaC5nH2wU7NbM4
+X-Received: by 2002:a05:6214:628:b0:70d:47a7:72cf with SMTP id 6a1803df08f44-70d97124af1mr30644876d6.24.1755862946599;
+        Fri, 22 Aug 2025 04:42:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEDtB7Zynj/rf/xXI0GvnluKkqYde7D50ORiC0miS2xPMWbtzXkTpNJzvnsT5Gfpb6b73VP8g==
+X-Received: by 2002:a05:6214:628:b0:70d:47a7:72cf with SMTP id 6a1803df08f44-70d97124af1mr30644576d6.24.1755862946133;
+        Fri, 22 Aug 2025 04:42:26 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55e033fc2e8sm1537277e87.59.2025.08.22.04.42.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 04:42:25 -0700 (PDT)
+Date: Fri, 22 Aug 2025 14:42:23 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Connor Abbott <cwabbott0@gmail.com>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Gaurav Kohli <quic_gkohli@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] drm/msm/adreno: Add speedbins for A663 GPU
+Message-ID: <atomptaspsr7cfmqs4v3lr4lgeufbwq7jqz3lf72r2rxhv6emg@uhx443xvylz7>
+References: <20250822-a663-gpu-support-v4-0-97d26bb2144e@oss.qualcomm.com>
+ <20250822-a663-gpu-support-v4-1-97d26bb2144e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: hci_h5: avoid sending two SYNC messages
-To: Javier Nieto <jgnieto@cs.stanford.edu>
-Cc: luiz.dentz@gmail.com, marcel@holtmann.org,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250822003912.41754-1-jgnieto@cs.stanford.edu>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250822003912.41754-1-jgnieto@cs.stanford.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822-a663-gpu-support-v4-1-97d26bb2144e@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=feD0C0QF c=1 sm=1 tr=0 ts=68a857a4 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=EbwLtv1J8F1BF5yYxN8A:9 a=CjuIK1q_8ugA:10
+ a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-ORIG-GUID: LvUkVPCm4zMRegnaZlcItDBs-6qxD6AN
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX8z2jgRWje0XY
+ lul8czwNo0svK35g9YEU0/K5fjcCaoZbnONqs86gJ2VWLD+2nhpTY2NGMdbFFbyAP6wflxV70/F
+ cWV9kk4x9Zbwq8m9WgCHakkxmTlLZjMM7EbP+hNGMux4BCzoTb3mYqRg+UT/WRpQ/bVp2P5Z1yj
+ R2H+EJOQkOO92wluCTgKPEHg04Zy1mcxUHH9D3OivzJiwEY9Pb1FtXeD5709qH0Wic5jwh0QU4m
+ zB4tIORXhCVqkdjD0l08RaMggAASR8QZEJKwVqdupF++pXtyScnI4pB/Z0kVGaXEkYOZcjeqF3a
+ hGDRC+Dj5sUkSh0hebtbi4Jadn1mAuzeq6XRWqOX0mjard5mrp80knfS8UnG8RtQhcgexsI7mlN
+ VsxoHHmArrF88sDEK1v/ifGCWC0b3g==
+X-Proofpoint-GUID: LvUkVPCm4zMRegnaZlcItDBs-6qxD6AN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 adultscore=0 malwarescore=0 bulkscore=0
+ lowpriorityscore=0 spamscore=0 impostorscore=0 suspectscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-Dear Javier,
-
-
-Thank you for your patch.
-
-
-Am 22.08.25 um 02:39 schrieb Javier Nieto:
-> Previously, h5_open() called h5_link_control() to send a SYNC message.
-> But h5_link_control() only enqueues the packet and requires the caller
-> to call hci_uart_tx_wakeup(). Thus, after H5_SYNC_TIMEOUT ran out
-> (100ms), h5_timed_event() would be called and, realizing that the state
-> was still H5_UNINITIALIZED, it would re-enqueue the SYNC and call
-> hci_uart_tx_wakeup(). Consequently, two SYNC packets would be sent and
-> initialization would unnecessarily wait for 100ms.
+On Fri, Aug 22, 2025 at 12:25:26AM +0530, Akhil P Oommen wrote:
+> Add speedbin mappings for A663 GPU.
 > 
-> The naive solution of calling hci_uart_tx_wakeup() in h5_open() does not
-> work because it will only schedule tx work if the HCI_PROTO_READY bit is
-> set and hci_serdev only sets it after h5_open() returns. This patch
-> removes the extraneous SYNC being enqueued and makes h5_timed_event()
-> wake up on the next jiffy.
-
-Great commit message, thank you. I’d appreciate it if you documented 
-your test environment, and maybe paste the logs (for the timestamps) 
-before and after, so others could easily reproduce the issue.
-
-> Signed-off-by: Javier Nieto <jgnieto@cs.stanford.edu>
+> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
 > ---
->   drivers/bluetooth/hci_h5.c | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
+>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> diff --git a/drivers/bluetooth/hci_h5.c b/drivers/bluetooth/hci_h5.c
-> index d0d4420c1a0f..863ee93dd8a8 100644
-> --- a/drivers/bluetooth/hci_h5.c
-> +++ b/drivers/bluetooth/hci_h5.c
-> @@ -213,7 +213,6 @@ static void h5_peer_reset(struct hci_uart *hu)
->   static int h5_open(struct hci_uart *hu)
->   {
->   	struct h5 *h5;
-> -	const unsigned char sync[] = { 0x01, 0x7e };
->   
->   	BT_DBG("hu %p", hu);
->   
-> @@ -243,9 +242,11 @@ static int h5_open(struct hci_uart *hu)
->   
->   	set_bit(HCI_UART_INIT_PENDING, &hu->hdev_flags);
->   
-> -	/* Send initial sync request */
-> -	h5_link_control(hu, sync, sizeof(sync));
-> -	mod_timer(&h5->timer, jiffies + H5_SYNC_TIMEOUT);
-> +	/*
-> +	 * Wait one jiffy because the UART layer won't set HCI_UART_PROTO_READY,
-> +	 * which allows us to send link packets, until this function returns.
-> +	 */
-> +	mod_timer(&h5->timer, jiffies + 1);
->   
->   	return 0;
->   }
 
-Makes sense.
-
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 
-Kind regards,
-
-Paul
+-- 
+With best wishes
+Dmitry
 
