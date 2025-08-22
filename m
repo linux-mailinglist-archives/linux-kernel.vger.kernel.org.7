@@ -1,58 +1,87 @@
-Return-Path: <linux-kernel+bounces-781260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64FA1B31009
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:14:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14514B31016
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 440BB5E1CD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:14:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21F971CE1246
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111792E764C;
-	Fri, 22 Aug 2025 07:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3E32E7646;
+	Fri, 22 Aug 2025 07:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="dHfgWtgJ"
-Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FKnvPTdr"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7C9212FB3
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 07:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC137261B
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 07:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755846874; cv=none; b=j35knSd2+wie+OGDrKUeUr5JgrvAd5LMgH2uhC06/uwWr+n5nkk48/AeZPNUb2JVBD6xg64CMEXjpcGCgkwjGbf8zcDRFselNgHIjyTsMqy3p2eyk8Q8euWpchl5ei5MFDZvdFj+1wNsjsgV9aCMl2/HhZEwsxIAiGihcwQBDxE=
+	t=1755846999; cv=none; b=QLKS9GAw+1AOV2OWGjvL0DoVejlJgIQg4dfRLzwVUD3iFkqV8KGZzEwg1Ul+pWnLGreQSLpjcQgjmUIs1VPIRLy3aBiaUD/5c6UUiyFo/F0FOXYL8SY7zWvkoMl+SthbV6+TViAbxV247kLEvGjRm8RnVSRpANQkjphH9LBGJsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755846874; c=relaxed/simple;
-	bh=K3JGXfg5ueJ9Trt7ntIKgcOSsX63ZzfBfJETVGNzTvE=;
+	s=arc-20240116; t=1755846999; c=relaxed/simple;
+	bh=cDIzX2IA4iCvUt9uoFiM/dYZHQNcGBqjkXSrXhdyemw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=batckDzTXvzjDE+PevoumwKNF5CoStQt6dQrFc2jnt4hqxD6WDVfGcRbpCJjwMzLBq3wzUn3a1MlqdL16JOluEj/fG2yynu9Fjtk5QBXHInauWM352/+wFgaAD9RiPGpdXJlF/rp5qmTS0kcMe1sWE9M9duXr6xLATjyTNHUCqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=dHfgWtgJ; arc=none smtp.client-ip=212.77.101.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 44574 invoked from network); 22 Aug 2025 09:14:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1755846860; bh=LqtWAHV/ZOPkZ5sTWV89Ib8PULJOZ58k/apc29IXCpY=;
-          h=From:To:Cc:Subject;
-          b=dHfgWtgJ9z8ShrsdQfUMjCHhjtGJ+Nx7P1/FPK3Wlip7ptGw2tO+KMw/dkO5k1gae
-           tyyDY7DBM0IwfzL36Odt47iM7hjLUAtpmMEZ87vYykM1Rn2EOgcXZFClSYVKitUEo+
-           99wpF/VBAr9cQu1BvDxZWijaSqgovPZdT4F4PAgDjQ5SUVo3scgsd8bJ+QfpobAFnz
-           ertwy404fN3wTbrRz4Z1Onem52GBeebj2TVC0FJkmi3Bn5CytRJnGtYzkta0Rn0oLH
-           DQEYW+kHC7XcKj+hYIBQ7c+W8yq8Leo1Fp/SFoios6DcyA6DGp8c2J34HJAYlE8Ihy
-           RiTZ2Fl/2zVEA==
-Received: from 89-64-9-131.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.9.131])
-          (envelope-sender <stf_xl@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <gustavoars@kernel.org>; 22 Aug 2025 09:14:20 +0200
-Date: Fri, 22 Aug 2025 09:14:20 +0200
-From: Stanislaw Gruszka <stf_xl@wp.pl>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] iwlegacy: Remove unused structs and avoid
- -Wflex-array-member-not-at-end warnings
-Message-ID: <20250822071420.GA46129@wp.pl>
-References: <aJl7TxeWgLdEKWhg@kspp>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jTv52A/LKj691PF38w8JPzgeOx871k2cYmEdoWCpkp+rwtj4ppD0aeyaRyRqTvvds6+M+mkYCognXZxkXCfY+c1Xmp7Fq49rYAn4wfa2NraMDabDM2fjkvf8A4yaBYsOLC+gkDn78jC+nY6BedIgf2KxvOL6mIuBNmJq/URthRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FKnvPTdr; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e34c4ce54so1678016b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 00:16:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755846997; x=1756451797; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ja7wvVZV81xXr8Zz3s/sGO5DAQWfSLxex83XaeAoBcA=;
+        b=FKnvPTdrQ/HP7l/t98sdn0Rk7QbBzW1emUYpqs4k5fs+aMv82jWE/YCoGX/SPRwzGl
+         fy4I5QKx48QOdDw5zYoJqudfIldbwu3c6nfvNW9FkzMdsBR7qoAdDcqgt410JRnQR+mi
+         l5N7s6HPja/fgcT6GQzOU/lNrxDvGsBIB3Zi2jqkSdY3OJVH3wKgS0WqAaDMKJ/Wx0+f
+         4IUWVdmKW84b24zMzAClVBWTtxji4nzvW61xnFoM0Ot6SYg+CWWbED5QB8kRSkGjtM5L
+         Jw5rOd2ooWM2Z7suxG5xqH/WY9zJr3KPBWIygDZ6ii9lkU/H+0Tm5CEMu6iVYkqcbYUA
+         Ftkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755846997; x=1756451797;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ja7wvVZV81xXr8Zz3s/sGO5DAQWfSLxex83XaeAoBcA=;
+        b=p+TWzz24n1+bBTl6ll/wFXGuPoiDjswKgAMak1eM3+VOOs6nj5QmmcWY/Sjw1NFjPA
+         jxx/zVc95hiYCJfGYuS9M6iscCvcdaJ3SVNcUlYE8ONA+g/SP0hqkI4K79WtxxlGSi1z
+         s36gl9kblnR5PDHWDWqmWHMlQ427P75BfzK7LVbCWow33Dt9Dw/aHpLQfdP+gebSi7hY
+         EhV0ziVG6QXxsF0kcWCdgFZKNNR5W11UcZq5H8MrAlsNzcElQMA2R2+nG7NA6mzZSQQV
+         7IElCrbd7h7UaZnuBv94pPVsQg4tLLo0IJllsEx9HimET/G/cRgwzSvgFNPUOmmwrL5+
+         Q9Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWpUSOo/Q6vv1TLKR5jCwjLKj7rpmP9CNbzSj/mclUxAqvByC0Hao0zy4rCljSyzbpiEIPSUNTA7ktVxgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw266J+OGzVs5UGBsXZpCSk+ea2cd5Cim7Pev66YgUZo6sMuFID
+	Yfdw2GgqAWr4q0z0cuVQGW1P4gk1A7XYnuJjxc1m7yyWemAWjQP2o1btqMdC6XDwOrY=
+X-Gm-Gg: ASbGncszRH1HT9HGaxRmcyyi0lhHyzlFoNDCIhDQgP2B8tely8UG4M8siTLpUZ2mu6j
+	j1nYfTMQEXQCMdaaTUR8qM9eyLRLHo2Y/apsPLkNt879x3kKRR4IZNfN39CwWkHfTmPLWCO/YLy
+	I6iYlUEp2bbS89adXoo/tI7EjIKeFgToJ+MDEVbXz2cLohzB70lNuMhrWSafdhPRK75phe5+LLI
+	aCVYXbjjo9Kdw58Ps6cC5SUJm5VjD7bT0FiPXeDvjuMcEjNmA3ErN46KzHjxwXINwCJGLcJJhSp
+	IiMEYgAv4CNCwecEHqLrrLQdqD/ENwvxaQuah/WAyTWP7DLIaffyYURs6w17+gplObWDnbcA82D
+	wI6vARWN/NFE/9SC1udhkwCDBSnOf8o/ISNQ=
+X-Google-Smtp-Source: AGHT+IGS7GxI+46a344dMZve29EjbWYSjTDmdGR6AlyUm74ISA0tlK6mXmcup9whsfYIjr+Qux5ILw==
+X-Received: by 2002:a05:6a20:9188:b0:23f:f712:4103 with SMTP id adf61e73a8af0-2433028c04cmr8907124637.18.1755846996745;
+        Fri, 22 Aug 2025 00:16:36 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b47640908e4sm6331466a12.26.2025.08.22.00.16.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 00:16:36 -0700 (PDT)
+Date: Fri, 22 Aug 2025 12:46:34 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "rafael J . wysocki" <rafael@kernel.org>,
+	zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] cpufreq: simplify setpolicy/target check in
+ driver verification
+Message-ID: <20250822071634.r4hxnfy7ofgi33az@vireshk-i7>
+References: <20250822070424.166795-1-zhangzihuan@kylinos.cn>
+ <20250822070424.166795-3-zhangzihuan@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,59 +90,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aJl7TxeWgLdEKWhg@kspp>
-X-WP-MailID: aa1691429c86c2fecbca16863494ab9c
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000001 [ETJx]                               
+In-Reply-To: <20250822070424.166795-3-zhangzihuan@kylinos.cn>
 
-On Mon, Aug 11, 2025 at 02:10:39PM +0900, Gustavo A. R. Silva wrote:
-> Remove unused structures and avoid the following
-> -Wflex-array-member-not-at-end warnings:
+On 22-08-25, 15:04, Zihuan Zhang wrote:
+> Cpufreq drivers are supposed to use either ->setpolicy or
+> ->target/->target_index. This patch simplifies the existing check by
+> collapsing it into a single boolean expression:
 > 
-> drivers/net/wireless/intel/iwlegacy/iwl-spectrum.h:68:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/intel/iwlegacy/iwl-spectrum.h:60:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>     (!!driver->setpolicy == (driver->target_index || driver->target))
 > 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
-
+> This is a readability/maintainability cleanup and keeps the semantics
+> unchanged.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
 > ---
->  .../wireless/intel/iwlegacy/iwl-spectrum.h    | 24 -------------------
->  1 file changed, 24 deletions(-)
+>  drivers/cpufreq/cpufreq.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 > 
-> diff --git a/drivers/net/wireless/intel/iwlegacy/iwl-spectrum.h b/drivers/net/wireless/intel/iwlegacy/iwl-spectrum.h
-> index 1e8ab704dbfb..f00eb878b94b 100644
-> --- a/drivers/net/wireless/intel/iwlegacy/iwl-spectrum.h
-> +++ b/drivers/net/wireless/intel/iwlegacy/iwl-spectrum.h
-> @@ -50,28 +50,4 @@ struct ieee80211_measurement_params {
->  	__le16 duration;
->  } __packed;
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index a067b5447fe8..633be16297d6 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -2921,10 +2921,7 @@ int cpufreq_register_driver(struct cpufreq_driver *driver_data)
+>  		return -EPROBE_DEFER;
 >  
-> -struct ieee80211_info_element {
-> -	u8 id;
-> -	u8 len;
-> -	u8 data[];
-> -} __packed;
-> -
-> -struct ieee80211_measurement_request {
-> -	struct ieee80211_info_element ie;
-> -	u8 token;
-> -	u8 mode;
-> -	u8 type;
-> -	struct ieee80211_measurement_params params[];
-> -} __packed;
-> -
-> -struct ieee80211_measurement_report {
-> -	struct ieee80211_info_element ie;
-> -	u8 token;
-> -	u8 mode;
-> -	u8 type;
-> -	union {
-> -		struct ieee80211_basic_report basic[0];
-> -	} u;
-> -} __packed;
-> -
->  #endif
-> -- 
-> 2.43.0
-> 
+>  	if (!driver_data || !driver_data->verify || !driver_data->init ||
+> -	    !(driver_data->setpolicy || driver_data->target_index ||
+> -		    driver_data->target) ||
+> -	     (driver_data->setpolicy && (driver_data->target_index ||
+> -		    driver_data->target)) ||
+> +	     (!!driver_data->setpolicy == (driver_data->target_index || driver_data->target)) ||
+>  	     (!driver_data->get_intermediate != !driver_data->target_intermediate) ||
+>  	     (!driver_data->online != !driver_data->offline) ||
+>  		 (driver_data->adjust_perf && !driver_data->fast_switch))
+
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+-- 
+viresh
 
