@@ -1,236 +1,132 @@
-Return-Path: <linux-kernel+bounces-781120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D11B30DBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:54:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C73B7B30DBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3687A3B7021
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:52:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FC9356789D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C321275B0D;
-	Fri, 22 Aug 2025 04:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF239270EA5;
+	Fri, 22 Aug 2025 04:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E5AE4X8a"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHcvRGL0"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2981FECAD;
-	Fri, 22 Aug 2025 04:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B650A17F4F6;
+	Fri, 22 Aug 2025 04:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755838337; cv=none; b=Zqnhh3l2THGYqG7nupkUgtOr8xgTwzukl1SSeJa2cyAOEhTbpVczXpJ107eTrVwAbEmAx72630gRTNv3Qdsu9dVT3w1vjcxlKB934TZgq+4hd7LRMBAZmrkT/EX1wOGWgyZnipBnxhn+m93/eFK323hwqrztWj+BKzCBTuuzARY=
+	t=1755838411; cv=none; b=NszrCEOpVF5MaLGiTzPZcs4Kdf9Eb6ZxlxygELoGS7YvQovDPqIyIZg9nFKY+kTVaR1IIOU0aLcMqkDPCuGLK96QWdw8BJg6uWwh4x4rT7tDqNpOkLaqQKqZ/0swFXM3avp36NYJyXN70BdlQnhTH9DXaXiMXZWWSLjVmA9Tvkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755838337; c=relaxed/simple;
-	bh=+R8nj+3x8K/Ut/4FayZ+IQKFiZDBedtKBHySn+2Kpm0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=j7s+5r9Y5DXzeaeCFd/WqFwm/LGJl8BmylT0Z1dWwt3vL9ElH6xkUyvtGOJ+KJ9iYWzqaNwSwGpoJel3YYJQyxSkIHJbHp1htEBXXfQFT7sGM65RgYwhvhPiqxB7BI6B3Lp5DCPnTpItmmXc0tPbhICHrXoP8jArtMW7WSGa84E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E5AE4X8a; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LI936q010518;
-	Fri, 22 Aug 2025 04:52:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=ebTaIP0/FT3mZgpVGuhuvu
-	AHCYJeQHUzfan7ZQTqUG0=; b=E5AE4X8a6Qm8ZEU4Yo/sXXYLxM961GM2X6ISTl
-	2iWiGd4YLc07+FR9EJNjJq+G+izFJ6jgW+eoZxd1eGZnWQ1fKuCRJGYin3/x9MKL
-	f9QQgSJSJkATjamP6Uq3EyopdqwZTF5xxRjYGINkeluN5E2tZUf4TNuaIeioABfb
-	PNOtxcOtg2GkuvVsJk53AUtaUDVhmP3Q1CqsBJBC7X/+KT0CRLkGwWirkgV9LIan
-	G4BimyoWIBHsJ/p5t/BlOsUp8WdUk6VsqxGttxKdKAUGVJq6iGKlnUJfp7pxgvEK
-	cRNmZnOaoTfs0UXrsbqRD+vAUYIkDdA005WkPKd2As/4Xhyg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ngt8dmpt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Aug 2025 04:52:12 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57M4qBM9023101
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Aug 2025 04:52:11 GMT
-Received: from hu-vpernami-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 21 Aug 2025 21:52:09 -0700
-From: Vivek.Pernamitta@quicinc.com
-Date: Fri, 22 Aug 2025 10:22:03 +0530
-Subject: [PATCH] bus: mhi: host: Add uevent support in MHI driver
+	s=arc-20240116; t=1755838411; c=relaxed/simple;
+	bh=WpEvVOdRTcvaF4LSv4kVn0QHVVnO+lhQ4DgcdibW3mQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FQlpVbnHQXB62gT+1ErGAqLinn8fzoobL8Df22chH76SVtwmJtypTMsk+avNO5nb0EGTyN56aBcnjo0aKMKo84LASxv85OVvXm4hz9pCICQk9NcvlN/SLMpYNDgWoMUYx7/2bEm8G06+7xVlmmcQtNJC/AWR+dppf85EIoqBij8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DHcvRGL0; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2463d8a4235so1602675ad.0;
+        Thu, 21 Aug 2025 21:53:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755838409; x=1756443209; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UkOfY2Vc2mQA4/qf0NhvJ/W8ykcnBxlMav1OYvf5kKc=;
+        b=DHcvRGL0rL3/CXlooAyS0L65D2TJoEvYMKLjEYXTuX4a75DgSJIBLaXUMOmDOLDxyh
+         qq2fPefrT8JLsEM3u6AReblIR+UWYu1rpvc0XncCoy+1db1BrbFWF2+FmGCeV76pSpdq
+         TektAbkpW7x+xRZq7tODEaJeIlEeG9DbzdbQGBmyiTO8O7oH2BfsM2zke1oYdqJuL1Er
+         6uoICz8q2X6rF/UYDugU50lJVTyJiD/tjJRz9ko98wL8J8AY4essPoNIZrMJAqOvFcX5
+         wDanozpqL0PoqnWqZzJIwq23MEzfHGG+JoAoeZlQfaq8SJFxM1rD10+GJeuAdVWtvbPQ
+         5XVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755838409; x=1756443209;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UkOfY2Vc2mQA4/qf0NhvJ/W8ykcnBxlMav1OYvf5kKc=;
+        b=wdAxjemTb+RmJS4b3TDBT8tDqtmZW7utwsjT11X9393weWu9uIHwgc6t4QA0tuodRt
+         y8wTTrvYgmG/PR9DQQuG4dzJxeJkYCNEMGCKYbqfFVPZnLaFItMxknJo2lw5KdNc12Ri
+         FGrfQsjuuOvOE9w0w7DAReUmRdf4TKXaaSoVK0eMS3sURKil1I6RAQ0d1d7PsW85jFGJ
+         Xb5ay4uAEOiXxM+7vL6zgdJgIwK4WWSxwYlQU5mPPdFrXoel5cPwXBVPl4j41K1NG142
+         ShqFcIHg1AIzjW0qANo8AiTWAySOXxqpEAze9VIAiXwiF3zaA8r2KSVDS62v2sVsF/Fe
+         tDiw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3KMkctxjUdwSmZwOOiU6HfaGLJdYhscHVnyz7Onw3+xhec8rRpB93vSvbMPT5hwPLmUkbDNCbL8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN+VkbZ/bCvU2EciV3YYikHAeMKexlWyHSp5wAyM2RQ5aGfamt
+	oARYLrnAtKnDGYAQXcAh0j7Yu4wshbfDwCOIH9DgCZr0mm2yss3P+7lC
+X-Gm-Gg: ASbGncvyAFFJUX0JKid/TOzHbgbh8G6stS/h2ucKM3g2EINoUKrmSn5NeNUXPWBZ9xr
+	wUSqDkl8wbTkm0VEW+4t0i0lZJS3Qi94PkEfGlcUMBOHgdCKqYxGw6RW+er0/koiPusn145VDii
+	6rTsOKVZAH1lrLe0fd7MLLibYzpBCYNAqxTQR5w+T0qbJHvZYrkRmstnRr/sxJbnenSSqn618ya
+	CXmhkHHDvcjVCAKb61Nv6WuhzM9PYDXVHgvjDDJSVXCSdaoQ3M9cn2UU1sVPHee+l7tnmH6wlTf
+	bRScRV45yuao4u2tPYnxtBLYkmHSwi/yHlPf4/gJ5Ks2r3ZNP3gl2EYys4YKb5syvmkDPevAkH9
+	mltfXwj6+fVxiUU5H94fbtCDspb8kLzlNdbFlofRKyEVtyak=
+X-Google-Smtp-Source: AGHT+IEaCyaG1Ji7jaAOLne9b6lBfbfYTNKKXnUdPEF8NB5oS/DCActGE8hW4Okwt/Qxd9RV4fQcrw==
+X-Received: by 2002:a17:902:e54b:b0:234:ba37:879e with SMTP id d9443c01a7336-2462ef1f310mr23899795ad.38.1755838408997;
+        Thu, 21 Aug 2025 21:53:28 -0700 (PDT)
+Received: from paradiselost.local (lohr.com.br. [187.58.145.178])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b47640d0be0sm6140074a12.51.2025.08.21.21.53.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 21:53:28 -0700 (PDT)
+From: "Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
+To: rafael.v.volkmer@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	ukleinek@kernel.org
+Subject: [PATCH v5 6/6] pwm: tiehrpwm: tidy prescale calculation style
+Date: Fri, 22 Aug 2025 01:52:23 -0300
+Message-ID: <20250822045223.4150-1-rafael.v.volkmer@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250822045005.4127-1-rafael.v.volkmer@gmail.com>
+References: <20250822045005.4127-1-rafael.v.volkmer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250822-uevent_vdev_next-20250821-v1-1-9ed3a8162194@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAHL3p2gC/y2M0QpAQBQFf0X32da6iPyKJOzBfVnaZVPy7zZ5n
- KaZmzycwFOT3OQQxMtmI2RpQtM62AVKTGRizaWumdWJAHv0wSD0FtehfpMpgykvRj1UJTPFfne
- Y5frebfc8L6FJ0JlrAAAA
-X-Change-ID: 20250822-uevent_vdev_next-20250821-dec34b0a7522
-To: Manivannan Sadhasivam <mani@kernel.org>
-CC: <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Vivek Pernamitta <quic_vpernami@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755838329; l=4907;
- i=<quic_vpernami@quicinc.com>; s=20241114; h=from:subject:message-id;
- bh=STkvCusmiOpM6Yhb7DF2ssrgL0ORFfvkMePsVhEQb2E=;
- b=rJ+E6nOKOxJ8tet+rh1lGxlgVdN8IZRmnFfMW7IWLNdkHLrsiu5WVYEn4paSkkmwszNRK2PNr
- W84vJq6B3w4C3ce5E8KUjflHhUKOF1F0T8x2tgAPBzN6inbaCqYA96e
-X-Developer-Key: i=<quic_vpernami@quicinc.com>; a=ed25519;
- pk=HDwn8xReb8K52LA6/CJc6S9Zik8gDCZ5LO4Cypff71Y=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDEzNCBTYWx0ZWRfX9sItxnHmzw6T
- rORwoKajAK4UPEWmGEK70+FZeA5qFHiqzUQXvpfQPfe/5FWfD1utRYG+uqtrfBwaAc6tnoLO5pY
- bYhwh50cQCyJ9Ay+RxE2bh6+UnUapZAFXdzrw3h6qJ6At+q6DeeR9j7+A/tU3kb4jMEV+ln0vUC
- qr92ituf19Vrx6gawxplC1BGH+ySYXaEJfgOFkk7ieDyWitBHdsOMSZlNswvo10osRNpngAb/Be
- n5yD7F8W66GVJCuG9OishGwRcLypTxB6PqDjemYBsNUDfP5qM/tkF7XF5Oy73V2n3zQIPuDGreH
- 5xruRuH1giw8WI9U6o5obyC/z3JrVxKd/W4nkKjPx1DXFxgcORvfszPZwlr+OAvr0YpTvrj7e+j
- /bQxy6nVF4UNcU+gIBec6J6lnNV0eg==
-X-Authority-Analysis: v=2.4 cv=c/fygR9l c=1 sm=1 tr=0 ts=68a7f77c cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=ok3_zkLAggRPmFeU4moA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: qddB0PnQczr58LR_3VeqwBxka7HiB8B-
-X-Proofpoint-ORIG-GUID: qddB0PnQczr58LR_3VeqwBxka7HiB8B-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-22_01,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0 lowpriorityscore=0
- phishscore=0 spamscore=0 impostorscore=0 clxscore=1015 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200134
+Content-Transfer-Encoding: 8bit
 
-From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+Tidy ehrpwm_pwm_config(): drop redundant parentheses, keep the condition
+on a single line, and add spacing around the division operator to follow
+kernel style.
 
-Notify the MHI device's Execution Environment (EE) state via uevent,
-enabling applications to receive real-time updates and take appropriate
-actions based on the current state of MHI.
+This change addresses a style warning reported by checkpatch.pl.
+No functional change intended.
 
-Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+Signed-off-by: Rafael V. Volkmer <rafael.v.volkmer@gmail.com>
 ---
-Notify the MHI device's Execution Environment (EE) state via uevent,
-enabling applications to receive real-time updates and take appropriate
-actions based on the current state.
+ drivers/pwm/pwm-tiehrpwm.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Signed-off-by:
----
-Usage:
-
-Enabling 16 virtual fucntions for SRIOV device QDU100 once device reached
-mission mode from systemd service file
-
-SUBSYSTEM=="mhi", ENV{EXEC_ENV}=="MISSION MODE", SUBSYSTEMS=="pci", ATTRS{device}=="0x0601",ATTR{../sriov_numvfs}="16"
----
-
----
- drivers/bus/mhi/host/internal.h |  1 +
- drivers/bus/mhi/host/main.c     |  1 +
- drivers/bus/mhi/host/pm.c       | 22 ++++++++++++++++++++++
- 3 files changed, 24 insertions(+)
-
-diff --git a/drivers/bus/mhi/host/internal.h b/drivers/bus/mhi/host/internal.h
-index 034be33565b78eff9bdefd93faa4f3ce93825bad..d455f0bf00133775fa23882a727782275640e43b 100644
---- a/drivers/bus/mhi/host/internal.h
-+++ b/drivers/bus/mhi/host/internal.h
-@@ -403,6 +403,7 @@ int mhi_process_data_event_ring(struct mhi_controller *mhi_cntrl,
- 				struct mhi_event *mhi_event, u32 event_quota);
- int mhi_process_ctrl_ev_ring(struct mhi_controller *mhi_cntrl,
- 			     struct mhi_event *mhi_event, u32 event_quota);
-+void mhi_uevent_notify(struct mhi_controller *mhi_cntrl, enum mhi_ee_type ee);
+diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
+index a801912be..35c7ee801 100644
+--- a/drivers/pwm/pwm-tiehrpwm.c
++++ b/drivers/pwm/pwm-tiehrpwm.c
+@@ -277,8 +277,7 @@ static int ehrpwm_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	 * same period register for multiple channels.
+ 	 */
+ 	for (i = 0; i < NUM_PWM_CHANNEL; i++) {
+-		if (pc->period_cycles[i] &&
+-				(pc->period_cycles[i] != period_cycles)) {
++		if (pc->period_cycles[i] && pc->period_cycles[i] != period_cycles) {
+ 			/*
+ 			 * Allow channel to reconfigure period if no other
+ 			 * channels being configured.
+@@ -296,7 +295,7 @@ static int ehrpwm_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	pc->period_cycles[pwm->hwpwm] = period_cycles;
  
- /* ISR handlers */
- irqreturn_t mhi_irq_handler(int irq_number, void *dev);
-diff --git a/drivers/bus/mhi/host/main.c b/drivers/bus/mhi/host/main.c
-index 52bef663e182de157e50f64c1764a52545c70865..8615512743199a59a58c3756d9cc3407079cee7e 100644
---- a/drivers/bus/mhi/host/main.c
-+++ b/drivers/bus/mhi/host/main.c
-@@ -512,6 +512,7 @@ irqreturn_t mhi_intvec_threaded_handler(int irq_number, void *priv)
- 		if (mhi_cntrl->rddm_image && mhi_is_active(mhi_cntrl)) {
- 			mhi_cntrl->status_cb(mhi_cntrl, MHI_CB_EE_RDDM);
- 			mhi_cntrl->ee = ee;
-+			mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
- 			wake_up_all(&mhi_cntrl->state_event);
- 		}
- 		break;
-diff --git a/drivers/bus/mhi/host/pm.c b/drivers/bus/mhi/host/pm.c
-index 33d92bf2fc3ed48db5f7fe80e4f0ef9fe2d2f2ab..1b849f334c49e52636821ed7587865a9254e9118 100644
---- a/drivers/bus/mhi/host/pm.c
-+++ b/drivers/bus/mhi/host/pm.c
-@@ -418,6 +418,7 @@ static int mhi_pm_mission_mode_transition(struct mhi_controller *mhi_cntrl)
- 	device_for_each_child(&mhi_cntrl->mhi_dev->dev, &current_ee,
- 			      mhi_destroy_device);
- 	mhi_cntrl->status_cb(mhi_cntrl, MHI_CB_EE_MISSION_MODE);
-+	mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
- 
- 	/* Force MHI to be in M0 state before continuing */
- 	ret = __mhi_device_get_sync(mhi_cntrl);
-@@ -631,6 +632,8 @@ static void mhi_pm_sys_error_transition(struct mhi_controller *mhi_cntrl)
- 	/* Wake up threads waiting for state transition */
- 	wake_up_all(&mhi_cntrl->state_event);
- 
-+	mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
-+
- 	if (MHI_REG_ACCESS_VALID(prev_state)) {
- 		/*
- 		 * If the device is in PBL or SBL, it will only respond to
-@@ -829,6 +832,8 @@ void mhi_pm_st_worker(struct work_struct *work)
- 			mhi_create_devices(mhi_cntrl);
- 			if (mhi_cntrl->fbc_download)
- 				mhi_download_amss_image(mhi_cntrl);
-+
-+			mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
- 			break;
- 		case DEV_ST_TRANSITION_MISSION_MODE:
- 			mhi_pm_mission_mode_transition(mhi_cntrl);
-@@ -838,6 +843,7 @@ void mhi_pm_st_worker(struct work_struct *work)
- 			mhi_cntrl->ee = MHI_EE_FP;
- 			write_unlock_irq(&mhi_cntrl->pm_lock);
- 			mhi_create_devices(mhi_cntrl);
-+			mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
- 			break;
- 		case DEV_ST_TRANSITION_READY:
- 			mhi_ready_state_transition(mhi_cntrl);
-@@ -1240,6 +1246,8 @@ static void __mhi_power_down(struct mhi_controller *mhi_cntrl, bool graceful,
- 	write_unlock_irq(&mhi_cntrl->pm_lock);
- 	mutex_unlock(&mhi_cntrl->pm_mutex);
- 
-+	mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
-+
- 	if (destroy_device)
- 		mhi_queue_state_transition(mhi_cntrl,
- 					   DEV_ST_TRANSITION_DISABLE_DESTROY_DEVICE);
-@@ -1338,3 +1346,17 @@ void mhi_device_put(struct mhi_device *mhi_dev)
- 	read_unlock_bh(&mhi_cntrl->pm_lock);
- }
- EXPORT_SYMBOL_GPL(mhi_device_put);
-+
-+void mhi_uevent_notify(struct mhi_controller *mhi_cntrl, enum mhi_ee_type ee)
-+{
-+	struct device *dev = &mhi_cntrl->mhi_dev->dev;
-+	char *buf[2];
-+	int ret;
-+
-+	buf[0] = kasprintf(GFP_KERNEL, "EXEC_ENV=%s", TO_MHI_EXEC_STR(ee));
-+	buf[1] = NULL;
-+
-+	ret = kobject_uevent_env(&dev->kobj, KOBJ_CHANGE, buf);
-+	if (ret)
-+		dev_err(dev, "Failed to send %s uevent\n", TO_MHI_EXEC_STR(ee));
-+}
-
----
-base-commit: 7fa4d8dc380fbd81a9d702a855c50690c9c6442c
-change-id: 20250822-uevent_vdev_next-20250821-dec34b0a7522
-
-Best regards,
+ 	/* Configure clock prescaler to support Low frequency PWM wave */
+-	if (set_prescale_div(period_cycles/PERIOD_MAX, &ps_divval,
++	if (set_prescale_div(period_cycles / PERIOD_MAX, &ps_divval,
+ 			     &tb_divval)) {
+ 		dev_err(pwmchip_parent(chip), "Unsupported values\n");
+ 		return -EINVAL;
 -- 
-Vivek Pernamitta <<quic_vpernami@quicinc.com>>
+2.43.0
 
 
