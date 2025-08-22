@@ -1,251 +1,357 @@
-Return-Path: <linux-kernel+bounces-782683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49177B32390
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:26:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B59D0B3238F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:26:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4E08682C8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:25:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 815771D62CC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220442D7DF1;
-	Fri, 22 Aug 2025 20:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7463C2D73B1;
+	Fri, 22 Aug 2025 20:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yylgeXSC"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jN8w/L6/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5E92D7817
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 20:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755894345; cv=none; b=Ymxki2jHpBwtxj78NbQY0EnjcUEGuo8e5hN6M47IcFMLaRRsxBIFIDGDjC5yc6+YY+UyS2IEZOe9mtSbOwJgSmae2KUY6DnJ8uJfZnCVNbxU1JDyGl/UAdsv/T3LpdreMb7muDIoBl6VjUOpeyNGXo4PYdV9b8rUBWVewCT4bQc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755894345; c=relaxed/simple;
-	bh=VAV7N4y5pNAS0jZ5TBhEfldqKhwyq7wrJhDdA6aeLjM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UJkgtQCBUfjVU9Soja2Lb84ER608Z2wd4ga0YEsOU5Zd6hLNBjekR/hKTeAtjwaAkZ3o1y7DSj+t5gjsaxfx/pYp/Pt/VYH1WTCOmaVyYlRMUf0yoQrxTVfriM+h/2pllocsXh2rLpTri3jV+SJg24HLpqbuU972praJKwjLlbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yylgeXSC; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b0bd88ab8fso67881cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:25:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755894342; x=1756499142; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lnLeUyDCv69RBYB1LT6B3iM9eFzgxTxAmCOD+3zz5xw=;
-        b=yylgeXSCBGiER90ZvH4GURxtNZjKy/IEKDb27fUneh1VBK9R6jUdTVoIQkpDJ9qx18
-         Nm81zyWuzPZXbVQnVrp+kbIyKB8gFMiGAiD5TFCcjpsbebYRtZC8Ss0ieNTppzxyA+Zg
-         +IaG+FH8lOB79qJeee8KLn2sjpuXCmBFbK24vc1+ZCaBFQVErCT06rmVwOcd54Ml/gL6
-         ot3TanAJNi+D89F3EkRS0IKo6k7EZsIiQrgHMUQtoWYNLJiTqKMnWgEqbIQturnw7kA0
-         7r3MfseguCwIy0kxatEOKNPgq6zENec+lNMtOWVcBaXlTyzZMEufLnB2XL+ESsPW6FlM
-         klMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755894342; x=1756499142;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lnLeUyDCv69RBYB1LT6B3iM9eFzgxTxAmCOD+3zz5xw=;
-        b=iu1XdJxm+4gj9OBtCTcHd2SbNJvtIdrkuQRkRpguDGBVbEGjtoTyAMcPD4obGcTAQB
-         KFvLMnULWnSLkhplmY5CfGtOuloZIJgQNrHIBN5KN0eZisZjb/Dy+8Nb8HkAgRFgAeCX
-         78TTKkqx0T+E0Bl169KdZNKzGapPA2PkzW9JO9JKckusdvwCfr5octaklZiYepD/vyR4
-         3ykBVjiEMc93tXc1zwH32F4yyf3bt7JaRMwNYlEFoXKzucLz3jUKN9K3M7mkGbLSSxoa
-         pn5PEay+zWGQtgGT3v5HNe1RqlpNBK6u8NrXx9QSbmWnDOOFBvpDsvAdzqk8AXEk1IBk
-         4DMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUX3QWsfZyRmcE4wwFD8JELIL7NaP38EGTrQKAXjWkYAccsxeR0I/POFFaQVxB4G6f9DjZBJ8cJyBUMO3c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUI1BAoy/sPWZC0syfEdKAicttRfbOoyFYLqgQPkz2Bmbhl61a
-	G3YSjaOZZhhclKpyoOFcV/Xc00DOzsmh0MY/a3wQoVr53CN6TftlvnopOOiXe4m4C2O6GAS88Xh
-	rrybNHo+PQVEZAxm13SD7mYVkVN6/3WGX6QM8M8qx
-X-Gm-Gg: ASbGncuffQFLrEvgJhCMH03MXgnPSlxzjjSZD80eweZguH9C528Nqwgtega9BkGAz6D
-	4nTDNKjJolWRmNmMC6/4QawSf2LgqCovs5mVHjakhxaza4si3LQOEqT13G+/CMP3hABm7OTmp5k
-	8d5mtQi1Hh1P7PU0d7HFwpaW80dhQIugS/cNWk6q7ZzrpumhoXGw6iB4P7+FVDfBMONlQ/I0oVT
-	DroSCtsgJQa
-X-Google-Smtp-Source: AGHT+IHpcbSNYEbG4dMf2Ur+EvgyoAGIN6Q8D39CISAhHgiGDM6Pv/YSxa4huZIle8BMgUbZsNIx8jQJ2T56bctuf1U=
-X-Received: by 2002:ac8:5885:0:b0:4b2:9b79:e700 with SMTP id
- d75a77b69052e-4b2ba6f09bdmr904771cf.4.1755894342112; Fri, 22 Aug 2025
- 13:25:42 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5691DED5B;
+	Fri, 22 Aug 2025 20:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755894339; cv=fail; b=VUEE4wWZUXyxLwEuahKt9vxQmMdOVvXE+d+3/BR8yOCtr66leMtiRkr4AH8hrS2Zvh7573niSgxclgjcRY+9KUrKYhalR5AOxjmW6dNdLZPh/2LUdFsspJMrhlW3K0mqE4+jWvgyi+798eRnZKSHpnvhwoeQAMGl5HgdJn+00T4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755894339; c=relaxed/simple;
+	bh=xsk5FP3KlqqIfdTiGYcfN8yoouxDGThn0QtllUX/gDE=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Nueu0Ru2ifQsofY5jWQ/YOA+S4tjPZaaFcMqubOO8I4ReF4tSkAMBSuJgpkuf6mZpGCIMvRrCZsJJYKgHRdGBMi6mNW2BoycNm7AXKw9DWQ0/XWuFswprwqu8sTACvozc1cQpt1oHmX4h1XQ9JcEqcTO2GGdDVWMF5R8wLoYkAw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jN8w/L6/; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755894338; x=1787430338;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:mime-version;
+  bh=xsk5FP3KlqqIfdTiGYcfN8yoouxDGThn0QtllUX/gDE=;
+  b=jN8w/L6/3Z4MtrL5bPLaooTvXxVCft8ds8LograaESA/UdLHXFUsM8+V
+   NgI8mKYguapmsI/OIBCFkWk3a+Al9Nzd3VwVCIqkqiGW25G4lv6ydOqkj
+   dY3E9oN90uv5i0VMFFKmUXg/Qi43EXP9flCDms1+lRIijqtWLVhVOkSmt
+   TiFYSNljZ6hHjPKI+HWYi8LW5XA/XnCkLmAbFLhyZIqITKERrRHOOQUQ9
+   te2PyGwqieeSqM7PSRWLPcC/MfoEmxpufhWA9Jue89Rkr2d6BDqYwu8m9
+   RvdmOejIZKz/ixBavj6/zZGvsbWNfCPPIzCFTqZ6+cbcBrFiklxv+L4k6
+   Q==;
+X-CSE-ConnectionGUID: 9ILp8Tc0Qp6/Ed58JyrsVg==
+X-CSE-MsgGUID: 2r/1doyPSNmfDbhy/lblkw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58130443"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="asc'?scan'208";a="58130443"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 13:25:37 -0700
+X-CSE-ConnectionGUID: /18GVWKUSNe+7i0mtP1sNg==
+X-CSE-MsgGUID: 93OfLc23SSK0ygKTI++b5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="asc'?scan'208";a="169605983"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 13:25:36 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 22 Aug 2025 13:25:36 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Fri, 22 Aug 2025 13:25:36 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.47) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 22 Aug 2025 13:25:35 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NnmgW/InXrNGDyfo4HeYIwqkr6bKeCGKAQ+eZoJnTFWuHp/xpiF2dipB15+Bm/7KgWlInrZl1bo95gJj2bTKbAfepfnkQHPnXkiiYZEex40AKL5xONGhciGtwZW5xcRSxhignjPqvnrpl2hwYfejBLSnfPL9paVmCoShzaSFl+IqeiLyXhKqSha+01Hrwb9XqFstzvQevfhOvGyRedTa+9oyYLqPYVW8rPgHiRJOAgIhD2P7f9alvLRS46WxWhu1Ap0JwplDdOGbIIu01Yxh3LbPNJZ+Y0wl+b4bprMWWJVniOyGT+FWnmhrRx/tQsFM3NlRUAhzKIw5FrxbREz8sw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pD7FEhHPKLx+LQVP1vDgzzIq/OW8TePWPF1cYQv7pRM=;
+ b=vH9yLP3bDljjlBuj40A0BCU8MxeTwf5XJcFTXb57MmL0r67ajzWTOJG2wha9pGRoZ0isRgq86buJiZdKc9dZRh+YGTKi50vvEhUCT+HSlmmaLPpXRjdbU/qb2yqhAUi3OmYdmEbqNFjaRE7m4lvs3kocnnEAX6xkN2eCE0FqVIwoOUxpLBKH4MzgKa9VceBsvo1H7TYsQjpEp5Zj3gy1A3e68iKsco5pc9UEnE9+Dhad3EaKu2TtfKCGflakRq5r+D3dFY+9nN9rikEDhioAeugnHlqb+yiUOA9sNoid8pngPkq0WCMULksqnMjuwsghuX5BBuqy6csodY+4KaD3+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by DM4PR11MB8226.namprd11.prod.outlook.com (2603:10b6:8:182::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.17; Fri, 22 Aug
+ 2025 20:25:33 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::81f7:c6c0:ca43:11c3]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::81f7:c6c0:ca43:11c3%5]) with mapi id 15.20.9052.014; Fri, 22 Aug 2025
+ 20:25:32 +0000
+Message-ID: <68ac693b-57f9-4403-85e9-8ce90d50aeb1@intel.com>
+Date: Fri, 22 Aug 2025 13:25:31 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH net] i40e: Prevent unwanted interface
+ name changes
+To: Jakub Kicinski <kuba@kernel.org>, Calvin Owens <calvin@wbinvd.org>
+CC: Ivan Vecera <ivecera@redhat.com>, Przemek Kitszel
+	<przemyslaw.kitszel@intel.com>, <linux-kernel@vger.kernel.org>, "Jedrzej
+ Jagielski" <jedrzej.jagielski@intel.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, Eric Dumazet <edumazet@google.com>, Tony Nguyen
+	<anthony.l.nguyen@intel.com>, <netdev@vger.kernel.org>,
+	<intel-wired-lan@lists.osuosl.org>, Paolo Abeni <pabeni@redhat.com>, "David
+ S. Miller" <davem@davemloft.net>
+References: <94d7d5c0bb4fc171154ccff36e85261a9f186923.1755661118.git.calvin@wbinvd.org>
+ <CADEbmW100menFu3KACm4p72yPSjbnQwnYumDCGRw+GxpgXeMJA@mail.gmail.com>
+ <aKXqVqj_bUefe1Nj@mozart.vkv.me> <aKYI5wXcEqSjunfk@mozart.vkv.me>
+ <e71fe3bf-ec97-431e-b60c-634c5263ad82@intel.com>
+ <aKcr7FCOHZycDrsC@mozart.vkv.me>
+ <8f077022-e98a-4e30-901b-7e014fe5d5b2@intel.com>
+ <aKfwuFXnvOzWx5De@mozart.vkv.me> <20250822072326.725475ef@kernel.org>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+Autocrypt: addr=jacob.e.keller@intel.com; keydata=
+ xjMEaFx9ShYJKwYBBAHaRw8BAQdAE+TQsi9s60VNWijGeBIKU6hsXLwMt/JY9ni1wnsVd7nN
+ J0phY29iIEtlbGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPsKTBBMWCgA7FiEEIEBU
+ qdczkFYq7EMeapZdPm8PKOgFAmhcfUoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AA
+ CgkQapZdPm8PKOiZAAEA4UV0uM2PhFAw+tlK81gP+fgRqBVYlhmMyroXadv0lH4BAIf4jLxI
+ UPEL4+zzp4ekaw8IyFz+mRMUBaS2l+cpoBUBzjgEaFx9ShIKKwYBBAGXVQEFAQEHQF386lYe
+ MPZBiQHGXwjbBWS5OMBems5rgajcBMKc4W4aAwEIB8J4BBgWCgAgFiEEIEBUqdczkFYq7EMe
+ apZdPm8PKOgFAmhcfUoCGwwACgkQapZdPm8PKOjbUQD+MsPBANqBUiNt+7w0dC73R6UcQzbg
+ cFx4Yvms6cJjeD4BAKf193xbq7W3T7r9BdfTw6HRFYDiHXgkyoc/2Q4/T+8H
+In-Reply-To: <20250822072326.725475ef@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="------------hfpDXnSIPbOLhor0a8RG205G"
+X-ClientProxiedBy: MW4PR04CA0110.namprd04.prod.outlook.com
+ (2603:10b6:303:83::25) To CO1PR11MB5089.namprd11.prod.outlook.com
+ (2603:10b6:303:9b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz> <20250723-slub-percpu-caches-v5-13-b792cd830f5d@suse.cz>
-In-Reply-To: <20250723-slub-percpu-caches-v5-13-b792cd830f5d@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 22 Aug 2025 13:25:31 -0700
-X-Gm-Features: Ac12FXwIfUzsXFwXr2_zQQKQgHFazg_c-46Y0QfxCWOo6vu0LHzTb5q0mxFp2Dg
-Message-ID: <CAJuCfpEjaw+4Ay-Yx=unHev+M4M9FmNmz_PSYmtsFn3EToLBxg@mail.gmail.com>
-Subject: Re: [PATCH v5 13/14] maple_tree: Add single node allocation support
- to maple state
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter <cl@gentwo.org>, 
-	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
-	maple-tree@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|DM4PR11MB8226:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3c37ea44-9632-4115-9f2e-08dde1ba0b3a
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?QWgvR3VMZStlYlU0eG5SRjRoUHBUdlRZM3dkaTZiNjlxNklUSStuaWI4YlRs?=
+ =?utf-8?B?OGRLSWxyV2lIR3E5bTRNMHhDbWZaQXc3NkE1eC9mMWRxTnNhY09hdUxZTGJw?=
+ =?utf-8?B?QjlVQ2tKUFVQU2cweDNiS2JveU45SFpNTXVqbHMwRHhia1BUN05xWmxXMnRW?=
+ =?utf-8?B?Q3BrWlkzcjQ1S1NWUWlDOHFXSzY2N1duVmx1VE5mVU5HVTZXMC94R2E5QzVB?=
+ =?utf-8?B?QlpDbkZxeUprYzd2a210UjREdVFReHBvZ0hWcHFwcEY0MjRPTHlaUmtFYU9N?=
+ =?utf-8?B?UFFuOUQvaGxnN2x3cmRZU25qY2R1VW5TUTV3Y2RvRkVNSWNlRTJtS1JvT3cy?=
+ =?utf-8?B?Um9jWXA1SnFpa210MThIdnQvU2VldnI3R09SSjhPN3I2ejlad2pMWTNMOCtk?=
+ =?utf-8?B?a0loYlR6ZDFIMVpGckxYbWhqTTlMRFV3TGhZbVA4dVh2TkpVeERua2ZudWR6?=
+ =?utf-8?B?VzBBS1BRNHhLZ0dEM25pb3BTNDZsTDhES1lXUWNkV2xhMVl1SDhkdmx2dWtt?=
+ =?utf-8?B?clV5RUJkcFR5cUI3MVZpcVpFQmgxOE1CRVE1YlM2OEVJdUxTQjM4OEJnNnRh?=
+ =?utf-8?B?K3YrcGlZTlZFY3MvNnlhZWx6RVhZcGsxM0R4NGtERVVmUzNBRUFuMENHYm9a?=
+ =?utf-8?B?R0E1TW10dFhoc1FQMjNHUGQyTGExbG5DemJnRVV0aStkWDRtaEkvQlRwNWkz?=
+ =?utf-8?B?S1gybU9odk1mRjlYWHRaZ2RIKzUwL3BZa0gyZndDNG1RT0Z2UmNrTGxwSmFK?=
+ =?utf-8?B?b0I2ZHIxNWt0UE5pU1BSdVRjTVhCMForZWdzdHVXVjByZVpyUnBKSkRMTmxP?=
+ =?utf-8?B?dG9WellkbTlkZkdLMnU1RXVqRmlnSG9OMFRqVkZSMi9mbXZFeWNLeFFpVHRZ?=
+ =?utf-8?B?U0c4aFlTbklEazRKQzJNNmRPKzVNME5kVnhPL0JuWm82TzRTUVFudUZNMVJ6?=
+ =?utf-8?B?RTBaalpSNTFuQ0VGd0J3WWZ4R0ZTNm04UXNtRk16NUZTYlFjVzBuVlZnenFj?=
+ =?utf-8?B?YUp5VzJnSkt6cjlNTHBla2FqTm9TdjVJQ1ArSWo5dkFRL0ZZdjFYY0JuZFFw?=
+ =?utf-8?B?VGVWdEVGUGY2NC8ySlQxK0l6VGRuN0RDYzd2K3NKeno0MGVyeURxNThJVDFP?=
+ =?utf-8?B?Z3hCbS9DRUtZcERzazczNmk5bDRBOWpYMGpoN25TbFFtRXEzOEM5WmlPa3J3?=
+ =?utf-8?B?eE1BcGdBRktOaUFMK0NZRmNsb2JMTnFQb3B4bUJ1TTFseC85a3U3ZU4xUUV3?=
+ =?utf-8?B?SkIvaVhiSFFIOHBqUVhEd2tjM0F5aUpRNm1PYUYyQ0NKdVE3T3pOVzR6NTUy?=
+ =?utf-8?B?UWlyRHZ4UlZrTTBCZHRTVERJQU82UnJnM2tpQmhVY2xiYXNVNWxpUGdhZ1Fp?=
+ =?utf-8?B?OTNUNUlERldBMzZvcm9lV21KaEtqYW9kRWswMVRsMHVSVUljQUVFeUlRSU8z?=
+ =?utf-8?B?QTkycUo2S3BaeE04a29KeGJsalJYcHkwZnFWdG9MZHRXOTJPM1pGUjI5Qkpt?=
+ =?utf-8?B?ckp6RXJCK2l0bnB0VXVnVUwvQzVNOVU3QjBKTWc5VkszZHlEZkJGS0JnL05L?=
+ =?utf-8?B?TXQxZ0k0Tkd4NFVObXQxdmxYSytxbTBOdWFKTWtvdnRsOXF0SFE5N0VWL2pn?=
+ =?utf-8?B?Tk9PYUw5a3RUNnBQRWVzdENwTHo5OVIyVmd4d1lILzJBRkRyeDRrQ0k4cmhJ?=
+ =?utf-8?B?TEpqdVN2UTVxOHFTeS8ra0Q1eURETUw0ZnBWZDBWZXd5M0N1TmUzVmY3dHJR?=
+ =?utf-8?B?a2IvbGk5YVprN09aQWhPM2crYTJsc0FOSTUzcHFrbWhRN2xCakkreFBNcDFH?=
+ =?utf-8?B?aG9BZmV1UEJzRHRBS213NmlRbGxQZVV6Q2JUcU1Pc3VEcTNkbklPTkEzbTU1?=
+ =?utf-8?B?MDFlanMydFF3YW8xT1ZhRE9hVzJYWG9MWWpMQUF4Q2FpT1h1ZVhqdzFxanJs?=
+ =?utf-8?Q?lky9j9IsXCI=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?U3lkNy82emFDSlRhU1kwT0xWNTdDbGk5U0ZGUW1YYlcrWnNHbnFDb3JSUHJT?=
+ =?utf-8?B?TndvYWtGLzRNbFEwc05yRzdmNjJ0RFdZbVRIOCtiaU8vVjNRWE04NDJFWkxu?=
+ =?utf-8?B?aXd3elhsNkw2UTdKb0prbE9CTnIyTGltNGpPa3JjNytLVTBjcUNmenBnckc3?=
+ =?utf-8?B?L1BoSTR3aU5xZTJBanhBUllxeEFzaHVyMXZzbjkrMUpvQ1NmRGtWL0xGSmRq?=
+ =?utf-8?B?UkdXaU40SFFnV2VYUXdPaFpMODNrOEt3SWovQXlQcHlMSFUwci8zN1ZxUGpQ?=
+ =?utf-8?B?M3NjekRiZDdMN1dvVlJkWGtWYlk2cGtBdGwrOEk4eUwyQTZzeE9jM29jSG9F?=
+ =?utf-8?B?SWVDRURlOWQ1RFQ5S2JROU96d2hMb01vbVdMcE1SNnl5WFdoc1VkL1pDMFBP?=
+ =?utf-8?B?MXhUakFRNXZjRTNEU2FrWEMwOTA5T29hTEI1VENIT1p1eTdTZzR0SklnS1RH?=
+ =?utf-8?B?aGN2aUxZbG40Vnl5ckw0dVZqS0RyU3pvNnhmWklvczJGYnRZbDBESEdQZERn?=
+ =?utf-8?B?MFZkVSs2Tlhha01oZHQ4ZWFpNUp6L3FzV3Y1eXJxVTNKVU1sTjNSdTg4SE8x?=
+ =?utf-8?B?dEhkaUVMckR1WnQ4YUl2ZFVWYUp0cDFvdUo4YzM0bHpXK1FVNnMwMUlXRmJO?=
+ =?utf-8?B?dHZGUEpqZXJQb1J3N0RCcnlMSWhWSHlOcnBpcmR2RGQ5bFo1N096ckxXNWdQ?=
+ =?utf-8?B?S1RINHRmK1I1dnVXTGtpUFJvbXQ3WGVNMEtWR2tuQ1pvS2d5NlR6NG1iWVZa?=
+ =?utf-8?B?cDRGYmNsRWY2N3ZVcEFmSTVDT2RXTHpiOGg1TEJ1UlZZQk5UTmZ2SnFLdStS?=
+ =?utf-8?B?Y2RSSHJTZWJvSVBubm1aK2ZuWHAyLzdMd0IwT2p6b3pTLy9ScVBQVEpwUnQ4?=
+ =?utf-8?B?dXZCZnZVNS9UNjBxNndPUHNWaGs3NDZQV2UvTU9wRVdnQklTMU1tcERiWjY2?=
+ =?utf-8?B?ay9YYWxjbzJ4Tlkza0JCMXdwT2M2a1NaaFRtR0lmQnRvZkoySnhwaFFVRmx5?=
+ =?utf-8?B?UDhVT0ZCelhidWZzRUw4UjBBVWp4aDJrTTVJZ01sRUNLTzFYd3M5RmNoOVBv?=
+ =?utf-8?B?NUoyNUtabndObHJGTUU0MG55REhhTHpOUXNiU1RTbjBQZDU0KzNVaElTc28r?=
+ =?utf-8?B?NkxNMTlTQUZmRTRKZG9OY3o1K0tZN2RnWGc0c1djZ3Nia0dIUnl0MVVieWVx?=
+ =?utf-8?B?V2g5K05nUWFZUzEyb3I5RWlSUzlFZnN6KytibnUyYzBqY1RjeEJZejFMdUwv?=
+ =?utf-8?B?VjBVTXUrcG1OTDFMT0ZPWGo0MHVwYm9ZSVI3U2pjSzlHc3hYTEdsa0JFS0tK?=
+ =?utf-8?B?Q2NTdDZyZi9pYVpkRXpiL1JzNU9kYzhRakZvK28zeE5Ic0Z6WGtKUVVQWlNx?=
+ =?utf-8?B?TW5lbFhOYTR5MkF1V2k5TVp1N2c4emxPczlUczFmQUhnUW84NVZGQnRRZnNJ?=
+ =?utf-8?B?NjFBeUE3bHlEbEV1bVRtQm9Nb05VQmRJVithMTZmb0pmMStvdGR0VDRoN0c4?=
+ =?utf-8?B?RmVGN3c0cWNqdzZZT1A4dzQ1aG9RckExZ0hhSE13U3Mxa3NXUmFlSVl4TGxp?=
+ =?utf-8?B?ZkJNekhNK0JkRVZPeHIxam85N015aFVKdERGbXNhYkNWNzFKQUhlUllrY09G?=
+ =?utf-8?B?anVOdVBsaS8wZUsxVnYyalVrV1FVc29aQ0pnNGF2OGw0b0NpMEZoWHBUWm9Z?=
+ =?utf-8?B?aWZHQ1M0ZTFPRm5UWnR6QVdWdDRCMDBJOExyV3pnaUNraU52TjdZNXdmUkxt?=
+ =?utf-8?B?T1hDNnZwTjlVNDhXMlgveW0xdStnUjl1c3NtK0UxK0lrTHJiM0Nyb2doR0JH?=
+ =?utf-8?B?dWVyQUFBcEdFb21zUktSa2Y0QjlBMlFDZ3RDR0tkUm9hQTQ2aU5qUzFXdmJk?=
+ =?utf-8?B?cU5kYTdHZSt1Zkk1a0t1cVFBVVVLakwwQzdIWGM2Y2t6YjZkSkQ5bmdJT3Ew?=
+ =?utf-8?B?UHg4dGVVVG9OdmRhWTZqQkNLSWJNdUF0S3grVlh3TEgxRmtKeTJsUlEyZ282?=
+ =?utf-8?B?UWwyZ2FocnRQNE9wKzZnOTNVSWMvdmpad24rQjhONHhOa1VOVE9XaVR5aVdp?=
+ =?utf-8?B?ZTEyRW55MXEzbjltallNN1V6STJBL21QQWNQeS8xTGhEVVl0WEI2YmVyUzR0?=
+ =?utf-8?B?eEttcEIySEgwR1lEZnFrbmNTMkdRR3hlTnF6SGJuOUk1eGliVEJXeWRlM21k?=
+ =?utf-8?B?OFE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3c37ea44-9632-4115-9f2e-08dde1ba0b3a
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 20:25:32.9005
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RBgurGGh/a6zTNzaHRIZLo1oh6ZmI6v7bxp6Ecf7JUFcYOCHskU/HWHSwdBykj9RznVYoXkpNCPLIm5SpKSFs5cVyyHFLdJWqjG90OjZJcE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8226
+X-OriginatorOrg: intel.com
+
+--------------hfpDXnSIPbOLhor0a8RG205G
+Content-Type: multipart/mixed; boundary="------------YStY08v28PXaTJcAoZnxHd4K";
+ protected-headers="v1"
+From: Jacob Keller <jacob.e.keller@intel.com>
+To: Jakub Kicinski <kuba@kernel.org>, Calvin Owens <calvin@wbinvd.org>
+Cc: Ivan Vecera <ivecera@redhat.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ linux-kernel@vger.kernel.org, Jedrzej Jagielski
+ <jedrzej.jagielski@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Eric Dumazet <edumazet@google.com>, Tony Nguyen
+ <anthony.l.nguyen@intel.com>, netdev@vger.kernel.org,
+ intel-wired-lan@lists.osuosl.org, Paolo Abeni <pabeni@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>
+Message-ID: <68ac693b-57f9-4403-85e9-8ce90d50aeb1@intel.com>
+Subject: Re: [Intel-wired-lan] [PATCH net] i40e: Prevent unwanted interface
+ name changes
+References: <94d7d5c0bb4fc171154ccff36e85261a9f186923.1755661118.git.calvin@wbinvd.org>
+ <CADEbmW100menFu3KACm4p72yPSjbnQwnYumDCGRw+GxpgXeMJA@mail.gmail.com>
+ <aKXqVqj_bUefe1Nj@mozart.vkv.me> <aKYI5wXcEqSjunfk@mozart.vkv.me>
+ <e71fe3bf-ec97-431e-b60c-634c5263ad82@intel.com>
+ <aKcr7FCOHZycDrsC@mozart.vkv.me>
+ <8f077022-e98a-4e30-901b-7e014fe5d5b2@intel.com>
+ <aKfwuFXnvOzWx5De@mozart.vkv.me> <20250822072326.725475ef@kernel.org>
+In-Reply-To: <20250822072326.725475ef@kernel.org>
+
+--------------YStY08v28PXaTJcAoZnxHd4K
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 23, 2025 at 6:35=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
->
-> The fast path through a write will require replacing a single node in
-> the tree.  Using a sheaf (32 nodes) is too heavy for the fast path, so
-> special case the node store operation by just allocating one node in the
-> maple state.
->
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  include/linux/maple_tree.h |  4 +++-
->  lib/maple_tree.c           | 47 ++++++++++++++++++++++++++++++++++++++++=
-------
->  2 files changed, 44 insertions(+), 7 deletions(-)
->
-> diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
-> index 3cf1ae9dde7ce43fa20ae400c01fefad048c302e..61eb5e7d09ad0133978e3ac4b=
-2af66710421e769 100644
-> --- a/include/linux/maple_tree.h
-> +++ b/include/linux/maple_tree.h
-> @@ -443,6 +443,7 @@ struct ma_state {
->         unsigned long min;              /* The minimum index of this node=
- - implied pivot min */
->         unsigned long max;              /* The maximum index of this node=
- - implied pivot max */
->         struct slab_sheaf *sheaf;       /* Allocated nodes for this opera=
-tion */
-> +       struct maple_node *alloc;       /* allocated nodes */
->         unsigned long node_request;
->         enum maple_status status;       /* The status of the state (activ=
-e, start, none, etc) */
->         unsigned char depth;            /* depth of tree descent during w=
-rite */
-> @@ -491,8 +492,9 @@ struct ma_wr_state {
->                 .status =3D ma_start,                                    =
- \
->                 .min =3D 0,                                              =
- \
->                 .max =3D ULONG_MAX,                                      =
- \
-> -               .node_request=3D 0,                                      =
- \
->                 .sheaf =3D NULL,                                         =
- \
-> +               .alloc =3D NULL,                                         =
- \
-> +               .node_request=3D 0,                                      =
- \
->                 .mas_flags =3D 0,                                        =
- \
->                 .store_type =3D wr_invalid,                              =
- \
->         }
-> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-> index 3c3c14a76d98ded3b619c178d64099b464a2ca23..9aa782b1497f224e7366ebbd6=
-5f997523ee0c8ab 100644
-> --- a/lib/maple_tree.c
-> +++ b/lib/maple_tree.c
-> @@ -1101,16 +1101,23 @@ static int mas_ascend(struct ma_state *mas)
->   *
->   * Return: A pointer to a maple node.
->   */
-> -static inline struct maple_node *mas_pop_node(struct ma_state *mas)
-> +static __always_inline struct maple_node *mas_pop_node(struct ma_state *=
-mas)
->  {
->         struct maple_node *ret;
->
-> +       if (mas->alloc) {
-> +               ret =3D mas->alloc;
-> +               mas->alloc =3D NULL;
-> +               goto out;
-> +       }
-> +
->         if (WARN_ON_ONCE(!mas->sheaf))
->                 return NULL;
->
->         ret =3D kmem_cache_alloc_from_sheaf(maple_node_cache, GFP_NOWAIT,=
- mas->sheaf);
-> -       memset(ret, 0, sizeof(*ret));
->
-> +out:
-> +       memset(ret, 0, sizeof(*ret));
->         return ret;
->  }
->
-> @@ -1121,9 +1128,34 @@ static inline struct maple_node *mas_pop_node(stru=
-ct ma_state *mas)
->   */
->  static inline void mas_alloc_nodes(struct ma_state *mas, gfp_t gfp)
->  {
-> -       if (unlikely(mas->sheaf)) {
-> -               unsigned long refill =3D mas->node_request;
-> +       if (!mas->node_request)
-> +               return;
-> +
-> +       if (mas->node_request =3D=3D 1) {
-> +               if (mas->sheaf)
-> +                       goto use_sheaf;
-> +
-> +               if (mas->alloc)
-> +                       return;
->
-> +               mas->alloc =3D mt_alloc_one(gfp);
-> +               if (!mas->alloc)
-> +                       goto error;
-> +
-> +               mas->node_request =3D 0;
-> +               return;
-> +       }
-> +
-> +use_sheaf:
-> +       if (unlikely(mas->alloc)) {
 
-When would this condition happen? Do we really need to free mas->alloc
-here or it can be reused for the next 1-node allocation?
 
-> +               mt_free_one(mas->alloc);
-> +               mas->alloc =3D NULL;
-> +       }
-> +
-> +       if (mas->sheaf) {
-> +               unsigned long refill;
-> +
-> +               refill =3D mas->node_request;
->                 if(kmem_cache_sheaf_size(mas->sheaf) >=3D refill) {
->                         mas->node_request =3D 0;
->                         return;
-> @@ -5386,8 +5418,11 @@ void mas_destroy(struct ma_state *mas)
->         mas->node_request =3D 0;
->         if (mas->sheaf)
->                 mt_return_sheaf(mas->sheaf);
-> -
->         mas->sheaf =3D NULL;
-> +
-> +       if (mas->alloc)
-> +               mt_free_one(mas->alloc);
-> +       mas->alloc =3D NULL;
->  }
->  EXPORT_SYMBOL_GPL(mas_destroy);
->
-> @@ -6074,7 +6109,7 @@ bool mas_nomem(struct ma_state *mas, gfp_t gfp)
->                 mas_alloc_nodes(mas, gfp);
->         }
->
-> -       if (!mas->sheaf)
-> +       if (!mas->sheaf && !mas->alloc)
->                 return false;
->
->         mas->status =3D ma_start;
->
-> --
-> 2.50.1
->
+On 8/22/2025 7:23 AM, Jakub Kicinski wrote:
+> On Thu, 21 Aug 2025 21:23:20 -0700 Calvin Owens wrote:
+>>>> If you actually have data on that, obviously that's different. But i=
+t
+>>>> sounds like you're guessing just like I am. =20
+>>>
+>>> I could only guess about other OS Vendors, one could check it also
+>>> for Ubuntu in their public git, but I don't think we need more data, =
+as
+>>> ultimate judge here are Stable Maintainers =20
+>>
+>> Maybe I'm barking up the wrong tree, it's udev after all that decides =
+to
+>> read the thing in /sys and name the interfaces differently because it'=
+s
+>> there...
+>=20
+> Yeah, that's my feeling. Ideally there should be a systemd-networkd
+> setting that let's user opt out of adding the phys_port_name on
+> interfaces. 99% of users will not benefit from these, new drivers or
+> old. We're kinda making everyone suffer for the 1% :(
+
+There already is, see my thread here:
+
+From
+https://lore.kernel.org/netdev/883ee734-b9bd-42be-b072-23640fd34fdb@intel=
+=2Ecom/
+
+> If you want to stop including the "np<N>" to the device names, I believ=
+e
+> you can set the ID_NET_NAME_ALLOW_PHYS_PORT_NAME=3D0 via udev propertie=
+s.
+>=20
+> From what I can tell searching online, this can be done by setting an
+> appropriate entry in /etc/udev/hwdb.d/ .. i.e. adding this file:
+>=20
+> /etc/udev/hwdb.d/50-net-naming-disable-phys-port-name.hwdb
+> net:naming:*
+>   ID_NET_NAME_ALLOW_PHYS_PORT_NAME=3D0
+>=20
+> after adding this file, you also need to update the hardware database w=
+ith
+>=20
+> $ systemd-hwdb update
+>=20
+> From here, you should be able to reboot and the physical port name woul=
+d
+> be removed from all devices which have it.
+>=20
+> It appears to work on my test system running Fedora with systemd v256.
+>=20
+> At any rate, this is fully an artifact of how systemd renames things an=
+d
+> I do not believe we should be working around that by modifying our driv=
+ers.
+>=20
+
+I still stand by this, but I can understand the motivations and accept
+the changes to allow opting out of physical port names for the older
+devices.
+
+> You're unlikely to convince systemd folks to change defaults, but you
+> might be able to convince some distributions to change their defaults.
+> Either way, you are best to work around this on your system in whicheve=
+r
+> ways you see fit.
+
+I don't know why systemd changed the default, but that change has been
+there for sometime. At least a year or two in Fedora if my memory is
+accurate. The fact that the default has changed but gone unnoticed
+because it is only triggered by a kernel update is I think part of the
+challenge.
+
+We can keep applying this workaround to "legacy" devices so that at
+least those ones don't get changed randomly when we add devlink
+support... but I think the real problem is ultimately outside of our
+control in the hands of the systemd and userspace folks who chose to
+change the persistent naming scheme default.
+
+Personally, I agree the extra part of the name is useless for my setups,
+and I have since configured all my systems to exclude it.
+
+--------------YStY08v28PXaTJcAoZnxHd4K--
+
+--------------hfpDXnSIPbOLhor0a8RG205G
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQQgQFSp1zOQVirsQx5qll0+bw8o6AUCaKjSOwUDAAAAAAAKCRBqll0+bw8o6ISe
+AQDQkqB4xmZsxxxBHUxlfWtzpU4bFDgbZKzeUahflFzE+gEAuR01rl/sOppqmolgQkdIQ+TOu23J
+i6opX1CWD9HSXgg=
+=mIUe
+-----END PGP SIGNATURE-----
+
+--------------hfpDXnSIPbOLhor0a8RG205G--
 
