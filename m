@@ -1,139 +1,99 @@
-Return-Path: <linux-kernel+bounces-781393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4EE2B311EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:35:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A122DB311F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:37:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 806E9AC0F31
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:35:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 748B4189B413
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B397D2EBBB7;
-	Fri, 22 Aug 2025 08:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D962EB86C;
+	Fri, 22 Aug 2025 08:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ap9Qbd7d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JxdVYRkB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF062E62B9;
-	Fri, 22 Aug 2025 08:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBCA17BA3
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 08:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755851748; cv=none; b=tzv8ZpnAIoeHxrDZs+3nsfhpr7/WGMGCvxbg2qEO8uXlDkN7u386w55/il6B5HSja2xBjRSJ9D/iBj8iEZQV8czhrrQiemBsUnyATvI3XPli7HsX31OFWYM1c1UAKAPRXJcmZ2ugHv6AM+xPazqrUiVIkNiFX5Yo5LXH3yAIKU8=
+	t=1755851833; cv=none; b=Gso1G/fSi8HiEGmntJZierTAe4p3XNlSjSDzQ6PLEPnmUqV1Zq0PI/0lKMSH9P/ZMPXEa1x/KkZoI+44HbbNC9EiJwb92XIWCUqi1vsM5f+jAYKdkYMs772lokzwP/tuadArExzJeNgxKcmEx0mp2thkEriJ72RIUdfAmVOB7iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755851748; c=relaxed/simple;
-	bh=H9lu8IIKIr/d/6s4w/r7KFXClzR6cx39yR+Lr1+/eqI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qXMYILWAIyjSc6z/uUlYfGaSw6w64u4IbZpoiv4oYa0xtcIIcGU4YNSpcoi+b2hJXny9SkpGPtcaxvJiOTgeUa3n9OKDKS9wEFltSGZnvUeB6TfTeAGTvp5lwBzhe0MUUazJMSo+XZOlY8bxUWM1BalI0Gc4eRkH6wnsU0ZDLZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ap9Qbd7d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34505C4CEF1;
-	Fri, 22 Aug 2025 08:35:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755851747;
-	bh=H9lu8IIKIr/d/6s4w/r7KFXClzR6cx39yR+Lr1+/eqI=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Ap9Qbd7dFK1GsRdJNaKHBEss6cyFnT5snS7UzKrox32sHiN7i7ib8ZF4YPk6+shXZ
-	 rglrjCuBY8tpvs2hYZ2OsikjvEHBgwPKcGMn7jS3tWAs8lQdL7HtRASihxzVnfiMM3
-	 aymY6KzRZ3A4sEEcevXncE3q3Iz/IVHSgXC6VZp2itW6p6DVVrOlvThQOIbV4CeeuR
-	 Q90iPSPDzpBckVIV8Hpyiq9FjEOAA5PU2XQ0ISQGmeqxRaSsDCSDzLVPx1oI4iCspN
-	 nQoKXJooSjNJJXRYuH4z/2zvt4tRh9YnrJva2i7bWyCVBS7Rs7668wzizUz23hLGrP
-	 Y638UglPokXvw==
-Message-ID: <a59da8d7-4e35-4af5-8b9c-96aaf1597271@kernel.org>
-Date: Fri, 22 Aug 2025 10:35:42 +0200
+	s=arc-20240116; t=1755851833; c=relaxed/simple;
+	bh=eVTZyiZvgqa682S9nJU3vD53mTkSTA+NUYHYOx/YAOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=c77Ql/wVtivkGrYKp7JZSxxcueb3eRhWh0lCZ5goTVtedFhuI0BUSqbVgULBNZ7bj8S5JOQR22qWgmmcdxUUABP41mkq0Fo1llzLTltqoyuPHoeVlaDhsQNTTdt9m56RexFbuh8DK5B940WvCYrg82cEhrpLQzuqG0CTk2IjPZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JxdVYRkB; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755851833; x=1787387833;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=eVTZyiZvgqa682S9nJU3vD53mTkSTA+NUYHYOx/YAOg=;
+  b=JxdVYRkB5NWuzr2s98oOjwCFDna28lM6woDmBmXWoZUwA3jaxjepgr90
+   QqSG+bqRE3x9DvvNRokghNL6uNwvxPYR51WBctHuAcPjydJXJDKR5/UlO
+   ZNZzzXh0t7klVMi4gCPYLwHDX/8u6wM1YyU9jhmpLAEM7d0oQipxdsvmF
+   b4wqhBdi/xVF6y7y8dYnE1XuRtCmnZiKW1CNPxU2VXyJrWwbRaVVp+Fc8
+   EzVh0glosm+u2i4y9Ebjp/IfT6Otvx1iTrjR7BkHDiDHZ4XrfYP0tvA6j
+   J2/Fkug3L3ZvIhIdGvx2bXSY1Q5OCFm6EouWI2rVGC9Ja6sjbEgktnv1X
+   g==;
+X-CSE-ConnectionGUID: g04Q4VtNT+yeQZfWycFbvQ==
+X-CSE-MsgGUID: gj/g/T+ZQHGC83k+pUq0jA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58080538"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="58080538"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 01:37:12 -0700
+X-CSE-ConnectionGUID: KTQIfo8ZQ6iQkd9L1JMxkQ==
+X-CSE-MsgGUID: ryAUjIpNQ5KD8eRUby/dLg==
+X-ExtLoop1: 1
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 22 Aug 2025 01:37:11 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1upNGg-000L4V-0s;
+	Fri, 22 Aug 2025 08:37:06 +0000
+Date: Fri, 22 Aug 2025 16:36:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Song Liu <song@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>
+Subject: {standard input}:27156: Error: operands mismatch -- statement `sub.l
+ -228(%fp),-184(%fp)' ignored
+Message-ID: <202508221639.OF7OHpcE-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/11] remoteproc: Move resource table data structure
- to its own header
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <20250819165447.4149674-7-mukesh.ojha@oss.qualcomm.com>
- <aKWDXySSt57tXHVP@linaro.org>
- <20250820151822.6cmowxfsheqxfrnb@hu-mojha-hyd.qualcomm.com>
- <20250820163250.hszey3i2gtd3o2i6@hu-mojha-hyd.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250820163250.hszey3i2gtd3o2i6@hu-mojha-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 20/08/2025 18:32, Mukesh Ojha wrote:
->>
->> -- 
->> -Mukesh Ojha
-> 
-> Since I am not subscribed to any of the mailing lists to which this
-> series was sent, I am not receiving emails from the list. As a result,
-> your recent messages did not reach my inbox. Additionally, it seems your
-> reply inadvertently removed me from the To-list.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   3957a5720157264dcc41415fbec7c51c4000fc2d
+commit: aced132599b3c8884c050218d4c48eef203678f6 bpf: Add range tracking for BPF_NEG
+date:   8 weeks ago
+config: m68k-randconfig-r133-20250822 (https://download.01.org/0day-ci/archive/20250822/202508221639.OF7OHpcE-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 11.5.0
+reproduce: (https://download.01.org/0day-ci/archive/20250822/202508221639.OF7OHpcE-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508221639.OF7OHpcE-lkp@intel.com/
 
-You decided to remove your address from replies via "Mail-Followup-To:"
-header you introduced. It's on your email client.
+All errors (new ones prefixed by >>):
 
-Just like you will not receive this email (surprise!)...
+   {standard input}: Assembler messages:
+>> {standard input}:27156: Error: operands mismatch -- statement `sub.l -228(%fp),-184(%fp)' ignored
 
-
-Best regards,
-Krzysztof
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
