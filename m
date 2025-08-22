@@ -1,100 +1,173 @@
-Return-Path: <linux-kernel+bounces-782467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98235B320B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:46:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB50B320B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:47:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D985C1D270BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:47:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32DE91D27138
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A3C307AF0;
-	Fri, 22 Aug 2025 16:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67F130AADA;
+	Fri, 22 Aug 2025 16:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ITh/XnKa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="BF1IZwiB"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1245121858D;
-	Fri, 22 Aug 2025 16:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848BF289E0F;
+	Fri, 22 Aug 2025 16:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755881201; cv=none; b=RkImi+FBmgIjXtgfU0uGIcLQn9L7HkGVaBNbaaqUmHge42QDeTto3xx177CI8pzMrsDXAKNy8ZXd1wLYY8SBU5NKo3bV0ScR+JdQzruYa46CbPRyu+ANx+iHeAA9mX0I8vX1bkKaABzE0s6uAOIDscXg/qShAxHqMFUI2o+Gwk0=
+	t=1755881252; cv=none; b=bxXyH4c4rapIedwQPBeQkutElgHYNzi1TwCf/N5q3QitsDpfC8YKkWMIiagmQtB2NPuvcV+sYr9b9uHsalOZcwYUDBAXZMkQODa7SD7e7kwTemSJO0aggDJmXtzXh5ZTaF7MZd+YP1PWsYXUYMxR9jJDgsgplr0Or80nMdBZR+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755881201; c=relaxed/simple;
-	bh=dPxj/m4CZ5Tj5I+499kIt/zRVHwkfdttODzZjZjbop0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=JnfdqOg97IReyPnmA3zHgnI9v6wHDao9WG5kHT5bPDGqpxeAinOKUIUqE4nK3oDNBEgBJ+YXAc9WG7Bs8mxQzRNSbz6wzoskoyKF4Cx9TCR2Gz0HVUTB3fBfpy01gGfSF//i5x5vdUiG4uRy1175VWHg8ALJod0E6/dDyLsbSag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ITh/XnKa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63763C4CEED;
-	Fri, 22 Aug 2025 16:46:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755881200;
-	bh=dPxj/m4CZ5Tj5I+499kIt/zRVHwkfdttODzZjZjbop0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ITh/XnKaeS2UpNYSnqVV1/mAJPnzHT2RTwOpKQj7KPzwefdqyxSExAwrOCmvLUDTQ
-	 /MGYLQcBCta9hcsfd3XbIDoPrgbVnWz/WVY0qzAYNkNFPmHYzMZsrmGyxSg+iL27LM
-	 SE8OYZBeoZkireZdjlNrxkw1JaDYWiESlLdQ9Bw9NSS24X1YonMPACKRtDPNm/KOw3
-	 WRdKdzowVUapWvs6XAlwopRdZfrtG1FSV3SvFwOm+TDk/4lb+yU8jKiWi2CotCn2YC
-	 dZySaUBJuS4A9atNiUN+9VeI4oTvJGyMBqELRhN77Oc7HUGQpNoq9x0CC9SVAm6Abt
-	 TNCSoNnLrhFjA==
-Date: Fri, 22 Aug 2025 11:46:38 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] PCI: Replace short msleep() calls with more
- precise delay functions
-Message-ID: <20250822164638.GA687302@bhelgaas>
+	s=arc-20240116; t=1755881252; c=relaxed/simple;
+	bh=Cg0YOGc3/tSEhmSX9Qz0lgdsx5463Om2fx6dxhxRkmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KAAUadasrv/lFy7tQgBkf6n0cMwNT2sMI9DX4E+/lBL38KAGkuYJ6yQin0UBaMbb5lYGHv7EGFrfL+Vf6ay7VL0esS5V2G6+LqfDXWL0dTvuC/KlwdRNlBcDwl0Wwh00i1KE4rWiHfTIBk7ueU8W4NzynqVTJdFDu8XBfCqClTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=BF1IZwiB; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=zQ0lOQ0oHKrpLxM/oUwMClZCb0nI9Ag0xuepWkH2Aes=; b=BF1IZwiBMkZ+9EHvqxHaA3KHBC
+	qWU97F/uJ3c1nopKAduatmf9c5rPgVw7HKDd1xhDDuGAlwlHvzesAZ373BiI24UPvVkFS67mFWbzI
+	K69svKvuMtLocx6NiENiZg37AhvSG0/6rg6deqT65La5ioCcWIX4nDzuP3e45zMhD1LYhTqPpYjNR
+	+IHRLF1FgKqHSVW1vC0EWb3pmX8Hh2yy+c9RVSmONXNE4N98JpL/D2gZ3Pn4jA9CHrKk460hhT4Ss
+	jMsN/6egr7MQPLUDybuu/g3liNp5k5b9P9HLMdVXtAcGbuHyrnTIZgfZwW46shtUmCu0fRfbXQnFq
+	KR+T7gEQ==;
+Received: from [152.250.7.37] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1upUv8-000BiJ-BN; Fri, 22 Aug 2025 18:47:18 +0200
+Message-ID: <62e60933-1c43-40c2-a166-91dd27b0e581@igalia.com>
+Date: Fri, 22 Aug 2025 13:47:14 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822155908.625553-1-18255117159@163.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 9/9] ovl: Support mounting case-insensitive enabled
+ layers
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>,
+ Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ kernel-dev@igalia.com
+References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
+ <20250822-tonyk-overlayfs-v6-9-8b6e9e604fa2@igalia.com>
+ <CAOQ4uxhWE=5_+DBx7OJ94NVCZXztxf1d4sxyMuakDGKUmbNyTg@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <CAOQ4uxhWE=5_+DBx7OJ94NVCZXztxf1d4sxyMuakDGKUmbNyTg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 22, 2025 at 11:59:01PM +0800, Hans Zhang wrote:
-> This series replaces short msleep() calls (less than 20ms) with more
-> precise delay functions (fsleep() and usleep_range()) throughout the
-> PCI subsystem.
+Em 22/08/2025 13:34, Amir Goldstein escreveu:
+> On Fri, Aug 22, 2025 at 4:17 PM André Almeida <andrealmeid@igalia.com> wrote:
+>>
+>> Drop the restriction for casefold dentries lookup to enable support for
+>> case-insensitive layers in overlayfs.
+>>
+>> Support case-insensitive layers with the condition that they should be
+>> uniformly enabled across the stack and (i.e. if the root mount dir has
+>> casefold enabled, so should all the dirs bellow for every layer).
+>>
+>> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+>> Signed-off-by: André Almeida <andrealmeid@igalia.com>
+>> ---
+>> Changes from v5:
+>> - Fix mounting layers without casefold flag
+>> ---
+>>   fs/overlayfs/namei.c | 17 +++++++++--------
+>>   fs/overlayfs/util.c  | 10 ++++++----
+>>   2 files changed, 15 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+>> index 76d6248b625e7c58e09685e421aef616aadea40a..e93bcc5727bcafdc18a499b47a7609fd41ecaec8 100644
+>> --- a/fs/overlayfs/namei.c
+>> +++ b/fs/overlayfs/namei.c
+>> @@ -239,13 +239,14 @@ static int ovl_lookup_single(struct dentry *base, struct ovl_lookup_data *d,
+>>          char val;
+>>
+>>          /*
+>> -        * We allow filesystems that are case-folding capable but deny composing
+>> -        * ovl stack from case-folded directories. If someone has enabled case
+>> -        * folding on a directory on underlying layer, the warranty of the ovl
+>> -        * stack is voided.
+>> +        * We allow filesystems that are case-folding capable as long as the
+>> +        * layers are consistently enabled in the stack, enabled for every dir
+>> +        * or disabled in all dirs. If someone has modified case folding on a
+>> +        * directory on underlying layer, the warranty of the ovl stack is
+>> +        * voided.
+>>           */
+>> -       if (ovl_dentry_casefolded(base)) {
+>> -               warn = "case folded parent";
+>> +       if (ofs->casefold != ovl_dentry_casefolded(base)) {
+>> +               warn = "parent wrong casefold";
+>>                  err = -ESTALE;
+>>                  goto out_warn;
+>>          }
+>> @@ -259,8 +260,8 @@ static int ovl_lookup_single(struct dentry *base, struct ovl_lookup_data *d,
+>>                  goto out_err;
+>>          }
+>>
+>> -       if (ovl_dentry_casefolded(this)) {
+>> -               warn = "case folded child";
+>> +       if (ofs->casefold != ovl_dentry_casefolded(this)) {
+>> +               warn = "child wrong casefold";
+>>                  err = -EREMOTE;
+>>                  goto out_warn;
+>>          }
+>> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+>> index a33115e7384c129c543746326642813add63f060..52582b1da52598fbb14866f8c33eb27e36adda36 100644
+>> --- a/fs/overlayfs/util.c
+>> +++ b/fs/overlayfs/util.c
+>> @@ -203,6 +203,8 @@ void ovl_dentry_init_flags(struct dentry *dentry, struct dentry *upperdentry,
+>>
+>>   bool ovl_dentry_weird(struct dentry *dentry)
+>>   {
+>> +       struct ovl_fs *ofs = OVL_FS(dentry->d_sb);
+>> +
+>>          if (!d_can_lookup(dentry) && !d_is_file(dentry) && !d_is_symlink(dentry))
+>>                  return true;
+>>
+>> @@ -210,11 +212,11 @@ bool ovl_dentry_weird(struct dentry *dentry)
+>>                  return true;
+>>
+>>          /*
+>> -        * Allow filesystems that are case-folding capable but deny composing
+>> -        * ovl stack from case-folded directories.
+>> +        * Exceptionally for layers with casefold, we accept that they have
+>> +        * their own hash and compare operations
+>>           */
+>> -       if (sb_has_encoding(dentry->d_sb))
+>> -               return IS_CASEFOLDED(d_inode(dentry));
+>> +       if (ofs->casefold)
+>> +               return false;
 > 
-> The msleep() function with small values can sleep longer than intended
-> due to timer granularity, which can cause unnecessary delays in PCI
-> operations such as link status checking, reset handling, and hotplug
-> operations.
+> I think this is better as:
+>          if (sb_has_encoding(dentry->d_sb))
+>                  return false;
 > 
-> These changes:
-> - Use fsleep() for delays that require precise timing (1-2ms).
-> - Use usleep_range() for delays that can benefit from a small range.
-> - Add #defines for all delay values with references to PCIe specifications.
-> - Update comments to reference the latest PCIe r7.0 specification.
+> I don't think there is a reason to test ofs->casefold here.
+> a "weird" dentry is one that overlayfs doesn't know how to
+> handle. Now it known how to handle dentries with hash()/compare()
+> on casefolding capable filesysytems.
 > 
-> This improves the responsiveness of PCI operations while maintaining
-> compliance with PCIe specifications.
+> Can you please push v6 after this fix to your gitlab branch?
+> 
 
-I would split this a little differently:
+Ok, it's done
 
-  - Add #defines for values from PCIe base spec.  Make the #define
-    value match the spec value.  If there's adjustment, e.g.,
-    doubling, do it at the sleep site.  Adjustment like this seems a
-    little paranoid since the spec should already have some margin
-    built into it.
-
-  - Change to fsleep() (or usleep_range()) in separate patch.  There
-    might be discussion about these changes, but the #defines are
-    desirable regardless.
-
-I'm personally dubious about the places you used usleep_range().
-These are low-frequency paths (rcar PHY ready, brcmstb link up,
-hotplug command completion, DPC recover) that don't seem critical.  I
-think they're all using made-up delays that don't come from any spec
-or hardware requirement anyway.  I think it's hard to make an argument
-for precision here.
-
-Bjorn
 
