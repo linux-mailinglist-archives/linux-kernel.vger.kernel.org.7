@@ -1,198 +1,132 @@
-Return-Path: <linux-kernel+bounces-781232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE9DFB30F91
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:51:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85935B30F98
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46CD33B5A4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:51:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DEA11C25F22
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27622E5B13;
-	Fri, 22 Aug 2025 06:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C1A2E54DA;
+	Fri, 22 Aug 2025 06:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j17RBcsD"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EksWfMZl"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CADC15E90;
-	Fri, 22 Aug 2025 06:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1832E54D0
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755845473; cv=none; b=LsoRSjLzEZLXrJRQZIaqCM0BIPwF1HyHIX98x2Tmk/hGeG0iJ/vpwBPkmi4ujAKiE5qyCi74sai0KgGgLz2uo6CVKKazaav3ZeoB/BSZxcH6NuAA3L31otDorGP0QQadlJQUDlp2cvhxFNLjjoS2+IeGaGWITAqWGun2vci2vGc=
+	t=1755845483; cv=none; b=Yyn8a29IYdkufhXOjXU1NOkhY7Bqtbk9/ynVfBi9/SChmomZpwwDpBBvQbQ6U2c85XQ/+kbmR0UTgDuUgeLwXOQ01VefYKonKKwdYTf0/4f6AlK++oQDwklbJ9s/d7UAEnAWjLdC6RdOfAnKaiw3C36EHyvonLPy+Y90sIPKDNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755845473; c=relaxed/simple;
-	bh=JCJe22NBnh/Ohku/c/jURhYMPWhOcCrL/i6Ia6jiF3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GpN0xA4zEg4CpMkbGI/HOvMaiHfHeE8ImFiAcNUPv+nYboozqpABuID7686LcvtkVc8ZQkhSPuTlrFiGcFryVZiyDBAEeU5alXKN9xLrzneAJ9HwhJvc6xFdYSLrPyz9FLUcaiWf0MVaDtkuzErUUGuvbwNoKSqK3Nr/Zx6grNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j17RBcsD; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=IrjTn5lxjgH6PT63JNA+B4QI+udrzjtftEznNof8LA0=; b=j17RBcsD4qSuOv6w/CU/WxHpFF
-	IUY594dwVhdfBDbQGOv/tKSfMsm0NAXG1Md63nkJNodbRDDk8nW85G6B2OB7xQTA4CYrfAHA3MtQJ
-	6fR1Ko1vfc8+DXbMEJWnMc+JPvB3m9SyDhWLFY94FS9FNO+CVHBVhJfjMdLlt2k5wPS3ZmXInAlMo
-	Yd/DMzJdv4+lN7VYpp0Kveb9yEnELMp1djT3fv3kLMnXUFlH6Ba9vdZOXO0xIvUuhyD3CJDAY0+1R
-	bC6jGsswDCYcR+XRRagP4v+i5j6hl4KC1BjvFwfFUO80GQLv5SLQ6ntdvHQ7Lrjwoa8/ZmJMX1pTo
-	lADwTdoA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1upLc4-00000001kK4-2FVr;
-	Fri, 22 Aug 2025 06:51:00 +0000
-Message-ID: <f87145e5-5a86-4ccf-96ac-61e16e894b81@infradead.org>
-Date: Thu, 21 Aug 2025 23:50:58 -0700
+	s=arc-20240116; t=1755845483; c=relaxed/simple;
+	bh=w+fF5jilwCss3OzaglG2MI9XKzVq/OKDUeZWYv3d5Qs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ePE9+EQvsAkuEccrr1pRecMeZLXvLJ56hH5rzxJLC2erDM41OlimpBKG9/hkKaum3i7U88lgn74znQYmd1R0Q28PS4rhAWRLsptBCT21JDu17GzvqKbx+E5h/wBmVEqBpx5BcDmNNyOBzww1oqnhQO1v5EvVevNx40Bwl8uEUsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EksWfMZl; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b49c622e598so59107a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 23:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755845481; x=1756450281; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wnWlGVKFdFIBt1j22TCSqfwegODnyLKYBcy7SHn/za4=;
+        b=EksWfMZlgr4e5ZZThYERWiBQ7aMeSuPlEUg2Lbwog/Po0WjlUTyewqcU0wAuE23gS0
+         YaXbNNe3hoGrMgH9pE+x98EThdmcpXDbf4ZKlyClWmW7va0ThDh4ljLFhIyyGSl/lKkS
+         okjFw0PmAnlvexeq6aeqFl5r5euYi+8FL20H9JAP4SD/M2pJQEXDaqVPo2UQMf0DyBaB
+         shYCg8xsZn0xEyiqn3ZcbD8GQvp5GFvrnVuHcebM7j+Dow10jOmvA6zv7s0HHes3fKmn
+         mFNNHJKJaCxP4txRNdhaGi5RyK/6O+P0K+CB0f0blNOnb96aSHRRerAq55B6tjUMPYt3
+         x95Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755845481; x=1756450281;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wnWlGVKFdFIBt1j22TCSqfwegODnyLKYBcy7SHn/za4=;
+        b=MsX3dtbP+4FqWeEJBb1z797qfApu3jmEY7o4dUyJNLEOkUUzXgHbUV64jaoupxJi+S
+         Qhzmuf+ZmICIyxlJ/A+KOqu04guhpkvwLfTwXCPlgcE8bfJGqwaipYWy322GBnS3xp7j
+         Z6R7IGfGYQzLxYCubAc3bo/L9Hx/boYZXGykHoIVNGA3whki7c3R3Bq4Dc06JdRP5W4+
+         y4oVmsAlkhCzxTQkN1MCi9zEvUbKqgzSC9hQP56a7f3WrWcQ0rYCbGVVXdr6dCF865S8
+         2lqpkF9EKA2CEStgwkDRU/3vXHKvuTrkRmLzqQxH0Q+hv4c9K9QvPICWnkJ7yWamVXOd
+         hmWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGJhCsUhnkAyaaPymOypmVqLpzen9TMuLkuXBOW+7v4Ke49CY4cCu9Tyxd0C0WbHnOp91Nr0aYgpQiw4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCUZoaSecbtWmcC8VQnsUSN8UZb46T5tbC2IIuXQDW7xO8scNW
+	Kav8cfGZ+pluJPH/YStNAQ1HsQEcwOeaEb6QWWq19ZAiiqgu5yVkbbO7+TRbLnoRJCM=
+X-Gm-Gg: ASbGncv6yKY+HBRK1+miI+bFNmt5aU1G8IHyE0VokeGsGVdFtduK18gjmh+/UAPjFKj
+	4EJXhLwkDqEHkT90Ou1M4T4Iq+3ntvsxV/uA8PY41VBsqpIc28CM30lUUgAYp5gNGccpIBeKxNA
+	LoG3Vsyq4N6rlawiILYNyctkQIUPtDUu9jtlbhAT4bP65AvuNgrPYFqID2U3xS4YaCnXbFMnXUC
+	GohGcK8miI015lwxmKi8VOmX8Fe6kEPI8alA8w6sxxUE/pUfISFokUYtvm8Yxx/+8Zq3rifB12r
+	a+UqYCwQMg+YwX32cFFMvXfPdUIODJgjpg0dr9JsBRsLkkVx8D0DK8MaOirK9ru6SWVuLV8je32
+	Oc5yvlqAf+FnkGumZlMAJL4Za
+X-Google-Smtp-Source: AGHT+IFuWz2fYkZGwCki5RHEZnzuVzd/HPxt47eh+hbJsFpZ62hbUXT2LVNh+1RDFwpb0mmLfChYMw==
+X-Received: by 2002:a17:902:d607:b0:246:441f:f111 with SMTP id d9443c01a7336-246441ff47cmr14160665ad.43.1755845480880;
+        Thu, 21 Aug 2025 23:51:20 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4c7489sm74182225ad.70.2025.08.21.23.51.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 23:51:20 -0700 (PDT)
+Date: Fri, 22 Aug 2025 12:21:18 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 2/7] OPP: Move refcount and key update for readability
+ in _opp_table_find_key()
+Message-ID: <20250822065118.qktpqaudc2uhgzdm@vireshk-i7>
+References: <20250820-opp_pcie-v4-0-273b8944eed0@oss.qualcomm.com>
+ <20250820-opp_pcie-v4-2-273b8944eed0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 11/29] KVM: arm64: Document the KVM ABI for SME
-To: Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Will Deacon <will@kernel.org>,
- Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <shuah@kernel.org>
-Cc: Dave Martin <Dave.Martin@arm.com>, Fuad Tabba <tabba@google.com>,
- Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org,
- kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20250822-kvm-arm64-sme-v7-0-7a65d82b8b10@kernel.org>
- <20250822-kvm-arm64-sme-v7-11-7a65d82b8b10@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250822-kvm-arm64-sme-v7-11-7a65d82b8b10@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820-opp_pcie-v4-2-273b8944eed0@oss.qualcomm.com>
 
-
-
-On 8/21/25 6:53 PM, Mark Brown wrote:
-> SME, the Scalable Matrix Extension, is an arm64 extension which adds
-> support for matrix operations, with core concepts patterned after SVE.
+On 20-08-25, 13:58, Krishna Chaitanya Chundru wrote:
+> Refactor _opp_table_find_key() to improve readability by moving the
+> reference count increment and key update inside the match condition block.
 > 
-> SVE introduced some complication in the ABI since it adds new vector
-> floating point registers with runtime configurable size, the size being
-> controlled by a prameter called the vector length (VL). To provide control
-
-                  parameter
-
-> of this to VMMs we offer two phase configuration of SVE, SVE must first be
-> enabled for the vCPU with KVM_ARM_VCPU_INIT(KVM_ARM_VCPU_SVE), after which
-> vector length may then be configured but the configurably sized floating
-> point registers are inaccessible until finalized with a call to
-> KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_SVE) after which the configurably sized
-> registers can be accessed.
+> Also make the 'assert' check mandatory instead of treating it as optional.
 > 
-...
-> 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
 > ---
->  Documentation/virt/kvm/api.rst | 117 +++++++++++++++++++++++++++++------------
->  1 file changed, 82 insertions(+), 35 deletions(-)
-> 
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index 6aa40ee05a4a..71f46b342641 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
+>  drivers/opp/core.c | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
 
-> @@ -2600,12 +2600,12 @@ Specifically:
->    0x6020 0000 0010 00d5 FPCR        32  fp_regs.fpcr
->  ======================= ========= ===== =======================================
->  
-> -.. [1] These encodings are not accepted for SVE-enabled vcpus.  See
-> -       :ref:`KVM_ARM_VCPU_INIT`.
-> +.. [1] These encodings are not accepted for SVE enabled vcpus.  See
+Applied with:
 
-                                               SVE-enabled
-was good.
-
-> +       :ref:`KVM_ARM_VCPU_INIT`.  They are also not accepted when SME is
-> +       enabled without SVE and the vcpu is in streaming mode.
->  
-
-> @@ -2665,19 +2675,25 @@ follows::
->  	/* Vector length vq * 16 bytes not supported */
->  
->  .. [2] The maximum value vq for which the above condition is true is
-> -       max_vq.  This is the maximum vector length available to the guest on
-> -       this vcpu, and determines which register slices are visible through
-> -       this ioctl interface.
-> +       max_vq.  This is the maximum vector length currently available to
-> +       the guest on this vcpu, and determines which register slices are
-> +       visible through this ioctl interface.
-> +
-> +       If SME is supported then the max_vq used for the Z and P registers
-> +       then while SVCR.SM is 1 this vector length will be the maximum SME
-
-I'm having trouble parsing the 2 lines above.
-
-> +       vector length available for the guest, otherwise it will be the
-> +       maximum SVE vector length available.
->  
->  (See Documentation/arch/arm64/sve.rst for an explanation of the "vq"
->  nomenclature.)
->  
-
-> @@ -3520,7 +3537,7 @@ Possible features:
->  	        initial value of this pseudo-register indicates the best set of
->  	        vector lengths possible for a vcpu on this host.
->  
-> -	   * Before KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_SVE):
-> +	   * Before KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_VEC}):
-
-		Why the inserted '}', please?
-
->  
->  	      - KVM_RUN and KVM_GET_REG_LIST are not available;
->  
-> @@ -3533,11 +3550,40 @@ Possible features:
->  	        KVM_SET_ONE_REG, to modify the set of vector lengths available
->  	        for the vcpu.
->  
-> -	   * After KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_SVE):
-> +	   * After KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_VEC):
->  
->  	      - the KVM_REG_ARM64_SVE_VLS pseudo-register is immutable, and can
->  	        no longer be written using KVM_SET_ONE_REG.
->  
-> +	- KVM_ARM_VCPU_SME: Enables SME for the CPU (arm64 only).
-> +	  Depends on KVM_CAP_ARM_SME.
-> +	  Requires KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_VEC):
-> +
-> +	   * After KVM_ARM_VCPU_INIT:
-> +
-> +	      - KVM_REG_ARM64_SME_VLS may be read using KVM_GET_ONE_REG: the
-> +	        initial value of this pseudo-register indicates the best set of
-> +	        vector lengths possible for a vcpu on this host.
-> +
-> +	   * Before KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_VEC}):
-
-	ditto: inserted '}'
-
-> +
-> +	      - KVM_RUN and KVM_GET_REG_LIST are not available;
-> +
-> +	      - KVM_GET_ONE_REG and KVM_SET_ONE_REG cannot be used to access
-> +	        the scalable architectural SVE registers
-> +	        KVM_REG_ARM64_SVE_ZREG(), KVM_REG_ARM64_SVE_PREG() or
-> +	        KVM_REG_ARM64_SVE_FFR, the matrix register
-> +		KVM_REG_ARM64_SME_ZA() or the LUT register KVM_REG_ARM64_ZT();
-> +
-> +	      - KVM_REG_ARM64_SME_VLS may optionally be written using
-> +	        KVM_SET_ONE_REG, to modify the set of vector lengths available
-> +	        for the vcpu.
-> +
-> +	   * After KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_VEC):
+@@ -554,8 +554,9 @@ static struct dev_pm_opp *_opp_table_find_key(struct opp_table *opp_table,
+        list_for_each_entry(temp_opp, &opp_table->opp_list, node) {
+                if (temp_opp->available == available) {
+                        if (compare(&opp, temp_opp, read(temp_opp, index), *key)) {
+-                               /* Increment the reference count of OPP */
+                                *key = read(opp, index);
++
++                               /* Increment the reference count of OPP */
+                                dev_pm_opp_get(opp);
+                                break;
+                        }
 
 -- 
-~Randy
-
+viresh
 
