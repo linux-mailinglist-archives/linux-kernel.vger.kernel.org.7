@@ -1,114 +1,116 @@
-Return-Path: <linux-kernel+bounces-781939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC45B318F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:13:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49102B318F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:14:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06D1A6835BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:07:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD6C16512E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992EB2FC033;
-	Fri, 22 Aug 2025 13:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F5A2FC033;
+	Fri, 22 Aug 2025 13:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="b1Vq6JAQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ReiU5eCr"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFE52E6114;
-	Fri, 22 Aug 2025 13:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E3A33DF;
+	Fri, 22 Aug 2025 13:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755868056; cv=none; b=ZG8k5HMA8lTFN0jniKAkJ0ZU5/2X2HuWSjRBdcOfHou6NxIr9wK7el6Xnq22YtpOFUhCCeTzrGDPO+52N0kH7ndDOUZmegdBFJvM9mkdL/llTYeCE9MYkbHBPhIRpBYSGqBpK3m0OlEz3D2iNjfunbYpegInxhbryKUDWjn2ITQ=
+	t=1755868116; cv=none; b=jQ+n2Rvxu0sDEXzV7GN4VuGcrEIz9/N/djirWo9CusPYQ0T4ZKO8OgkdlMGBacPMCYQd2KG5ga1WmqaLjcWRzHty+GNvzPl99ttAdUHlfz9qZTMiowcIgskxX6oIB8VcnYsJuQdf1+HdjJTMMQoAavt+BVHHzoZGdCFS1Cl5nFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755868056; c=relaxed/simple;
-	bh=I1vnQdWoQ3da9zwNugFK9yS/sak81xz7G7nlJDyiBeo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WJjykYA9oqpXgBG5ifcfLHnMVQ0t/JaJG+aUiQAKhbv6IORYWZZBYESnUsvpX2f4WAFrPG5+5QeA1yWX+r8VbUfvMlbt6SGQCRP/tLwGsuhBRgc5/Sc1twWD/tTNBAn+wvjij363L6bgCk7mOFMxb7U1Cqi+/LeAaGIAexOcLFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=b1Vq6JAQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA726C4CEED;
-	Fri, 22 Aug 2025 13:07:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755868055;
-	bh=I1vnQdWoQ3da9zwNugFK9yS/sak81xz7G7nlJDyiBeo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b1Vq6JAQuvvYPjy3NLd+Zc0cKD6v4zj7BDiT3YiYnx/jPqw/ZNUOAM7c9XqhYd/LK
-	 oqYOjigGO508K0nHIROPC7OtRhegzMoOM7xO454jJsMWtcO5yZviV2qONvrLqZMa/9
-	 ZPxMiq1GmVKjz0q8fOrgsKvB/Ym0MSG5EEl4W+88=
-Date: Fri, 22 Aug 2025 15:07:32 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Sumanth Gavini <sumanth.gavini@yahoo.com>
-Cc: rostedt@goodmis.org, mhiramat@kernel.org, tglx@linutronix.de,
-	jstultz@google.com, clingutla@codeaurora.org, mingo@kernel.org,
-	sashal@kernel.org, boqun.feng@gmail.com, ryotkkr98@gmail.com,
-	kprateek.nayak@amd.com, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, "J . Avila" <elavila@google.com>
-Subject: Re: [PATCH 6.1] softirq: Add trace points for tasklet entry/exit
-Message-ID: <2025082257-smirk-backside-6d93@gregkh>
-References: <20250812161755.609600-1-sumanth.gavini.ref@yahoo.com>
- <20250812161755.609600-1-sumanth.gavini@yahoo.com>
+	s=arc-20240116; t=1755868116; c=relaxed/simple;
+	bh=ysoPoAFRDVKq0f4D11s0wRv5ifl1MVlLMdOkK0JD6nY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XFHhjo92hSXOYNmo/Fa/hfoTvXHH2xAtugNbf8kqXnfmekoncjnNI7ho/3dPd+FBPNWn0zeCk9rHifZeEs7SawXi2zEnFIm+lOgjM3qoJisdQRi3UFJoquRK3KAGfd8kqXWnrmx1nLHhjDqTkZPipRRpQNIOEcJdpEt05Grmkk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ReiU5eCr; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id AAAA2C6B3A2;
+	Fri, 22 Aug 2025 13:08:17 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 59FFF604AD;
+	Fri, 22 Aug 2025 13:08:31 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0FDCD1C22D316;
+	Fri, 22 Aug 2025 15:08:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1755868110; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=TqNbHZRcfPtenRRmClNSaYPPGu0G5xAMA+3q9ZY42u4=;
+	b=ReiU5eCrKGWkEjja6xxkaTwPoRvb7IVY0ojhE7MBOmIAMAe0jRB8jF7uadLQ4vVaBIqu3R
+	J5eeeEDBa0ZJfrPrQZ3TbzN3xPInorEsLyz1M5N9w5lD2wr3pxtQieJTwjEa9lGKfwVuPp
+	DQcf73EDIYm8OpWrTRmS1IJYA+7XzaHNV4c3pzCAO2GenFFcTZJx/JKYstO/bw4yozpYsS
+	0azze71VcN24gvOTme/q1KZuh5/jpv6ynZIxsEl5BO3OHGLhwrom6oKBa2WVEIUSbXc0up
+	HlN3CP0R1dwC+iSTchpcBUEiXlrOEl/u/faXfEGeLKc1SRo+agPRwhAJ08ol/Q==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>, andrew@lunn.ch,
+ sebastian.hesselbarth@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jihed.chaibi.dev@gmail.com
+Subject: Re: [PATCH] ARM: dts: armada-370-db: Fix stereo audio input routing
+ on Armada 370
+In-Reply-To: <20250723224504.70862-1-jihed.chaibi.dev@gmail.com>
+References: <20250723224504.70862-1-jihed.chaibi.dev@gmail.com>
+Date: Fri, 22 Aug 2025 15:08:25 +0200
+Message-ID: <87v7mf5ws6.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812161755.609600-1-sumanth.gavini@yahoo.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Aug 12, 2025 at 11:17:54AM -0500, Sumanth Gavini wrote:
-> commit f4bf3ca2e5cba655824b6e0893a98dfb33ed24e5 upstream.
-> 
-> Tasklets are supposed to finish their work quickly and should not block the
-> current running process, but it is not guaranteed that they do so.
-> 
-> Currently softirq_entry/exit can be used to analyse the total tasklets
-> execution time, but that's not helpful to track individual tasklets
-> execution time. That makes it hard to identify tasklet functions, which
-> take more time than expected.
-> 
-> Add tasklet_entry/exit trace point support to track individual tasklet
-> execution.
-> 
-> Trivial usage example:
->    # echo 1 > /sys/kernel/debug/tracing/events/irq/tasklet_entry/enable
->    # echo 1 > /sys/kernel/debug/tracing/events/irq/tasklet_exit/enable
->    # cat /sys/kernel/debug/tracing/trace
->  # tracer: nop
->  #
->  # entries-in-buffer/entries-written: 4/4   #P:4
->  #
->  #                                _-----=> irqs-off/BH-disabled
->  #                               / _----=> need-resched
->  #                              | / _---=> hardirq/softirq
->  #                              || / _--=> preempt-depth
->  #                              ||| / _-=> migrate-disable
->  #                              |||| /     delay
->  #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
->  #              | |         |   |||||     |         |
->            <idle>-0       [003] ..s1.   314.011428: tasklet_entry: tasklet=0xffffa01ef8db2740 function=tcp_tasklet_func
->            <idle>-0       [003] ..s1.   314.011432: tasklet_exit: tasklet=0xffffa01ef8db2740 function=tcp_tasklet_func
->            <idle>-0       [003] ..s1.   314.017369: tasklet_entry: tasklet=0xffffa01ef8db2740 function=tcp_tasklet_func
->            <idle>-0       [003] ..s1.   314.017371: tasklet_exit: tasklet=0xffffa01ef8db2740 function=tcp_tasklet_func
-> 
-> Signed-off-by: Lingutla Chandrasekhar <clingutla@codeaurora.org>
-> Signed-off-by: J. Avila <elavila@google.com>
-> Signed-off-by: John Stultz <jstultz@google.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> Link: https://lore.kernel.org/r/20230407230526.1685443-1-jstultz@google.com
-> 
-> [elavila: Port to android-mainline]
+Jihed Chaibi <jihed.chaibi.dev@gmail.com> writes:
 
-This is not android-mainline, this is the normal stable tree.
+> The simple-audio-card configuration for the Armada 370 development
+> board incorrectly routed the left channel signal ("AIN1L") to both
+> sides of the stereo "In Jack".
+>
+> This commit corrects the typo for the right channel, changing the
+> second "AIN1L" entry to "AIN1R" to enable proper stereo input
+> recording.
+>
+> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
 
-And I'm with John, this makes no sense as to why you need/want these.  I
-think that the syzbot report is bogus, sorry.  Please prove me wrong :)
+Applied on mvebu/fixes
 
-thanks,
+Thanks,
 
-greg k-h
+Gregory
+
+> ---
+>  arch/arm/boot/dts/marvell/armada-370-db.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/boot/dts/marvell/armada-370-db.dts b/arch/arm/boot/=
+dts/marvell/armada-370-db.dts
+> index a7dc4c04d..a9a05d826 100644
+> --- a/arch/arm/boot/dts/marvell/armada-370-db.dts
+> +++ b/arch/arm/boot/dts/marvell/armada-370-db.dts
+> @@ -119,7 +119,7 @@ sound {
+>  			"Out Jack", "HPL",
+>  			"Out Jack", "HPR",
+>  			"AIN1L", "In Jack",
+> -			"AIN1L", "In Jack";
+> +			"AIN1R", "In Jack";
+>  		status =3D "okay";
+>=20=20
+>  		simple-audio-card,dai-link@0 {
+> --=20
+> 2.39.5
+>
+
+--=20
+Gr=C3=A9gory CLEMENT, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
