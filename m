@@ -1,89 +1,83 @@
-Return-Path: <linux-kernel+bounces-782159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A1A6B31BCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:36:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B050FB31B99
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:31:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A52FB40852
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:30:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 709094E01ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D134631CA68;
-	Fri, 22 Aug 2025 14:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141603218CD;
+	Fri, 22 Aug 2025 14:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKwv2MBG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQhLwhwK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DC830BF6B;
-	Fri, 22 Aug 2025 14:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5467D3101DA;
+	Fri, 22 Aug 2025 14:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755872608; cv=none; b=iEsle9sNGCO/R91+sSBG59So8NI+X3MNYxmVkBUUGtuyDcyFD73ZDDcuUeyQl0L7TkkHfgfrOVFAVtxtLvzZu0ySh1Xm/LqCB+uGCosENPaWoh6gQGUaZ55xoXwoiapI2ijkgvkePyuWOzXhf8gYJtWfYRJTRP5qusz7fXX9X6E=
+	t=1755872661; cv=none; b=aJ0eOQ6bZEwiw1Na1u/YmkDcCiuErJ4UXz49KMnPjyiJ54sx8CLC+L1g4ZgnDnkKYksBdHU24sDKQn9m9xTQ85W3eTZyKZeOYyD1YpGBLErCiVS+H3onE0JahN7WDfimKuZ7WtnvJWdb37EiLyGjJEQMWHYjw7/cbQocNYAOrTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755872608; c=relaxed/simple;
-	bh=NRmbokerOkaoNwUm/ECSYcST0Xx0kquTkzlGfTjqUAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ei87yKKi9K+a34nkzNK9szqxOW+5l99IhgySSLXPLTb9hoJuDzoVZ0vo7/uXiKVuE+XdnM4bagu51UOY0cO9bCis2/7UUKR71Sfb+OzinQKyNYdWUmIZM1lvZs1nb+h1r1QUobbFaN1dC1QBrjQtpoI5Qn6/R1jN1HuuARV5gYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKwv2MBG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77710C4CEED;
-	Fri, 22 Aug 2025 14:23:27 +0000 (UTC)
+	s=arc-20240116; t=1755872661; c=relaxed/simple;
+	bh=GHecUB/f6hF+l9nChS4AFiY+XY/E6xx0si6J6vs4S50=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OFnINe2/C3VT9ynd+e7Jld/rlQSSR/ENLWZjoIFkkG/AJ0x7EUZlWgYk6sOcZkheNTEM8hap76gRRhlPDw3vXR/cADJmwDWEmg+SECLBY+jx1tc/nXDKCvf5Ly0seO/v18QX8fempamLc+jt3sMRdLckmbl8Tkncrg2o6nclBn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dQhLwhwK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE016C4CEED;
+	Fri, 22 Aug 2025 14:24:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755872607;
-	bh=NRmbokerOkaoNwUm/ECSYcST0Xx0kquTkzlGfTjqUAo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qKwv2MBGVd60tTdMjme/4HLd0iQIXLtwZmOtuD2UVfs5ZQEvImFR6TMHfvyxbnsFg
-	 B4CM5hMy0a4F2JmlzB2iTbhE3hTp0QgAareINSGbG8HzmMArh9KJxfigR197iBtoyr
-	 SUQdMXSaY2xt/JiVqShNh7EYBSMVASHgTEpiZmLa1EMiAmi1TXe82jp4zRkxh2tqaN
-	 Y9lOoCsTcUnwSh/j8iwN58YjrKBbNppGWw4IaERnrzbZCK/R8jqvCI9P7U/XeYGDmA
-	 E2C7RBa3YXRNlVFQOrbrfnjoCyXsgngRIvtX4m4r+LlgmwQTY0FCJXDkOCvn29HvZ3
-	 RRO9yeZQfePhw==
-Date: Fri, 22 Aug 2025 07:23:26 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Calvin Owens <calvin@wbinvd.org>
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>, Michal Schmidt
- <mschmidt@redhat.com>, netdev@vger.kernel.org, Tony Nguyen
- <anthony.l.nguyen@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Jedrzej Jagielski <jedrzej.jagielski@intel.com>,
- Ivan Vecera <ivecera@redhat.com>, intel-wired-lan@lists.osuosl.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] i40e: Prevent unwanted interface name changes
-Message-ID: <20250822072326.725475ef@kernel.org>
-In-Reply-To: <aKfwuFXnvOzWx5De@mozart.vkv.me>
-References: <94d7d5c0bb4fc171154ccff36e85261a9f186923.1755661118.git.calvin@wbinvd.org>
-	<CADEbmW100menFu3KACm4p72yPSjbnQwnYumDCGRw+GxpgXeMJA@mail.gmail.com>
-	<aKXqVqj_bUefe1Nj@mozart.vkv.me>
-	<aKYI5wXcEqSjunfk@mozart.vkv.me>
-	<e71fe3bf-ec97-431e-b60c-634c5263ad82@intel.com>
-	<aKcr7FCOHZycDrsC@mozart.vkv.me>
-	<8f077022-e98a-4e30-901b-7e014fe5d5b2@intel.com>
-	<aKfwuFXnvOzWx5De@mozart.vkv.me>
+	s=k20201202; t=1755872660;
+	bh=GHecUB/f6hF+l9nChS4AFiY+XY/E6xx0si6J6vs4S50=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dQhLwhwK9qrnQh0flYJggQka8E9ZJzmwlNyAz3bfl0zQfiwan5NF/9FvEXCkpfzG2
+	 UupBjYLXpTAxzPNfowHY8wR7FevmagLt8My5R2DRDtbh89GRxOWNmxWxoSHxRiuWRq
+	 Vo/k7FSAsf6Pk+xGvOF41pl0MkbnNsWqEZ49JWls1wxcthZveWEQhM+OaCijUyK06P
+	 /r7MpjTSsCvyJue9PKF6SCPgoLB5ah9QXKItaB0BZDPD7hOrkaYbN0la8fsaShRnmc
+	 DZsqAb946JMkf8qu9xNWWPGOST3sTqIf3kVJkrsUoqXnFEUqqZtInP5MYOnlZPXwnV
+	 Ee7I6aPWCj55Q==
+Date: Fri, 22 Aug 2025 09:24:20 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>,
+	jose.abreu@synopsys.com, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	kernel@collabora.com, nicolas.dufresne@collabora.com,
+	Heiko Stuebner <heiko@sntech.de>, nelson.costa@synopsys.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	shawn.wen@rock-chips.com, Hans Verkuil <hverkuil@xs4all.nl>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] media: dt-bindings: snps,dw-hdmi-rx.yaml: Updated
+ maintainers entry
+Message-ID: <175587265951.3629173.15028167331028929815.robh@kernel.org>
+References: <20250820103059.342850-1-dmitry.osipenko@collabora.com>
+ <20250820103059.342850-2-dmitry.osipenko@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820103059.342850-2-dmitry.osipenko@collabora.com>
 
-On Thu, 21 Aug 2025 21:23:20 -0700 Calvin Owens wrote:
-> > > If you actually have data on that, obviously that's different. But it
-> > > sounds like you're guessing just like I am.  
-> > 
-> > I could only guess about other OS Vendors, one could check it also
-> > for Ubuntu in their public git, but I don't think we need more data, as
-> > ultimate judge here are Stable Maintainers  
+
+On Wed, 20 Aug 2025 13:30:59 +0300, Dmitry Osipenko wrote:
+> Shreeya no longer works at Collabora, set Dmitry as maintainer of
+> the Synopsys HDMI RX binding.
 > 
-> Maybe I'm barking up the wrong tree, it's udev after all that decides to
-> read the thing in /sys and name the interfaces differently because it's
-> there...
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> ---
+>  Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Yeah, that's my feeling. Ideally there should be a systemd-networkd
-setting that let's user opt out of adding the phys_port_name on
-interfaces. 99% of users will not benefit from these, new drivers or
-old. We're kinda making everyone suffer for the 1% :(
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
 
