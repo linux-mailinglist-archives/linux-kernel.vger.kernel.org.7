@@ -1,418 +1,171 @@
-Return-Path: <linux-kernel+bounces-782477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EE89B320E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:57:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68EF2B320D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F203EAE51F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:53:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D0DD1BA2272
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBBB3126CB;
-	Fri, 22 Aug 2025 16:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52069312806;
+	Fri, 22 Aug 2025 16:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LYr25e8t"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PpQVvFD+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DBC23D7D4;
-	Fri, 22 Aug 2025 16:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D72E23D7D4;
+	Fri, 22 Aug 2025 16:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755881616; cv=none; b=eZkOJOQ91sfrg1GGwgBG1027rgISdkXxe99CfK/2bNLOU2lTwK56r2bjDPtODyXo0qXP35XXGm59r58W8+xeL7SpTWvUSGz+SIZADKVnjPMYsez7LrL5HoL4oEcoGGYo9XI+fL1eA5TobptPNPPiry9bEZcohx3KLl7Kq+yvN6I=
+	t=1755881628; cv=none; b=GzoCIUYUV2XBJ41eWh3+k3XO6Pr3k7fhYPh66ORdm3Iy2OvmGMa5ncLbqE8qUCTdeOyrvQRTNiwWkx1qwRrAWSSEBIS9WRBalks3aocsIvDgc8cGXoIFhar+foyd/qh3p4cUK6rj0sAcJdfmUxH0Fssn6F0Wwc16DahMVIZfR5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755881616; c=relaxed/simple;
-	bh=v0KLKGk6Owdd8Zj574QjQel3qf53+K5W14mGX5GjALE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K6KyK1nIOB+P6vaMXxJ8NMbxmkAigDlioXwqsRUtaEK7CC0WpO895TaUwi81EmsBBAPKcTbP3S2ClnEtUzECVny1WyJZl+g8zSsrEBUnDlTTPRvdQTdNs6p6CJ24qmWJBO8gEprrHPvNHilKOYg3k2yWlI33vQMOxPQSk5OQ3O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LYr25e8t; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad681so3212636a12.0;
-        Fri, 22 Aug 2025 09:53:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755881613; x=1756486413; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=slgHuffTEn7c1vy4b+fQXSvlwJ7sYn0p5p9oEVi/KlE=;
-        b=LYr25e8t/DEQQVNUAL00bux0/nIfTR0/UR4juu5zhxzSQrXI3KtJX/F50VEckPEw1y
-         WRyKC3I4rMOfRN4q5IhlwoCjtx5+x7adyKx5OJncHxxFOJn7PeqluSmB5uVj4KA5NFCp
-         7oGOGQ8pbV+IKNnoMLvtKHyCRoyDntxnFXv64s62XMkfOG/9dAa4PyPJkM/Yx6Ebjct1
-         zmLFFQtH4uOVqrwV7GEFQhP06tnenHTGAx7/L0/71GByAGxRcxPKLa1K4FU+NKmBm0C1
-         Ro0C/Bju5/CZ5Il8tmgW1dQs2ustm9UXq83gFwUU1wjw+MFn7gDZeVHcEorpTFljxSfE
-         riJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755881613; x=1756486413;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=slgHuffTEn7c1vy4b+fQXSvlwJ7sYn0p5p9oEVi/KlE=;
-        b=ustzsE8fA/hWaR2RPhffF52AA5Ie3xl7WxvRBNWhHNUJGsjlPziVzF7VfE//qvTgAK
-         fWk/S8oRLwnpKrJZtS8c+TPTmvvGSc+0OIjXqdCyH3EsUp0ms9znWQvi/xozHtf2aXGy
-         QrVw1TjxRIZ3thZrKzS/HtLEf+HrJEb6U8JZakPxwypu2xuYA+IU3mz5T3XuFj2bj7tu
-         AsEYhR/hHXd9rixAGYOIckr8/QrXk3Q+T5N3KBTpZdoAx2E4KuXrH7BlD0OkuI2Wx7ql
-         hbi+7yeq4Pmi3x2Pxqs3zppjthxJx5kPjvubt+HG+nz53xA2KnN5563YmsEpHtOwqfHA
-         xjMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAHOIx3+OmLMWlDZsFOWUrpWvQ+sS709RvokOEB8x250TEBi3OXrT0IX6Jo9y5EyGIK3m4sPDpx3vr5G1m@vger.kernel.org, AJvYcCVkVxg6rH39mrqNs9i7h/fPuXoMvFMRHYwPvAR0iL9224/6DV++QZnYalFS9eRKlpl3sJAWFlaZ7RSOmQLQ@vger.kernel.org, AJvYcCWrEw43yuYq+Rat72bmDr3LQMvfjeUTMlRektassGEDHJ7TfvaZSzIw65afLxmktBz6LV8jEJvr4gijZcJEog==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/zTCYWPo7IXD1YxEzDNMrxsUou4kDLUoKMaTtoijo/OHneTVp
-	ZFCHqZ5iAlbpZwunUSYi8ah6zMW50XeLm2l+uht1/RTt/aM+jZtgQIf4qH0e7u7Zux2FWqjOiHm
-	84eYjEjOAbvgsiS/4ZMXIfBkejGGuXr0=
-X-Gm-Gg: ASbGncvWSaGDLYTBVkQUh/smqam8CWeKmzvJIlp6gNzNKLOvK0ycGZ6oqwazMvf2LEF
-	5PtiZyMA3SekT6vL/D+VtXbY1gPbGW6NoWlH0YSR575sj8TxBRC5U+l2D6VasB97f+CJ0wGZ+/V
-	q8CPZpLR2kbsNjcpwfhtAfBS/WuWb7sdQl2e5Cn93ZNkTYOjevtGQE6/9qKv6DQzmYddPrEceCP
-	XyiZRU=
-X-Google-Smtp-Source: AGHT+IGNyPZYASwO0sJmnQ76GoCBnN67oQPWQ8NwlDT36KIeh5FKychF9EVlou+eUSe6VobY/qd6SfpUclxbp9jxybg=
-X-Received: by 2002:a05:6402:210c:b0:615:5563:548e with SMTP id
- 4fb4d7f45d1cf-61c1b45bd8dmr2990524a12.7.1755881612890; Fri, 22 Aug 2025
- 09:53:32 -0700 (PDT)
+	s=arc-20240116; t=1755881628; c=relaxed/simple;
+	bh=fSKpZxrAUH5S2jh0u5H0ibv22kQo0WxF3PYjMwb966Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tk66NVUHlgdwXFkqTNqouA4pl5NSxB/E0WJ2RkWceiT2dgDvJANABWhLSdzMvYTm5svGC+zU/JDGnmpFH1cDZbATj102VWb6gMJUupFMCCnu9SNUATmOy9hcy/8nXQA+e2XdPG1z9pFB9BXI2AM34HxW+mAMg7aAoGAda4K/MHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PpQVvFD+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 880D3C4CEED;
+	Fri, 22 Aug 2025 16:53:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755881628;
+	bh=fSKpZxrAUH5S2jh0u5H0ibv22kQo0WxF3PYjMwb966Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PpQVvFD+F6E0UKrJ6ehkMxp4IyY7XatD9wAQHe/unogmeRQKwFGJ1XE5lKLeY6+Bl
+	 jb2txgiMTJVzdVU7FTUaJD32l3P/x35LOariGdk7mG+gPzgMYsL1NTD434l1M4LD2O
+	 Sn6ruuo8QX0E16I3+dEtmmU/sngRRmpxGU6LuPwLkAlUarSdso6mCwqFcjjfC7gx61
+	 NMgYIy7BQotwkmzw4PS+8KLZFRhUJX1HEwlwoimAyoboCPt84wO/zPOQGFs7JlqELx
+	 lihtsoVgOoSoxLbx0jItfUTXFqjB88C0qkZdD79CDeOIHaVpKLVop7RO+8tHZL5Ai8
+	 6rIpwy60DdI5g==
+Date: Fri, 22 Aug 2025 22:23:34 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: "David E. Box" <david.e.box@linux.intel.com>
+Cc: rafael@kernel.org, bhelgaas@google.com, vicamo.yang@canonical.com, 
+	kenny@panix.com, ilpo.jarvinen@linux.intel.com, nirmal.patel@linux.intel.com, 
+	linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 2/2] PCI: vmd: Use
+ pci_host_set_default_pcie_link_state() to set ASPM defaults
+Message-ID: <rwcoocpr4t47pxvuly7qsiszycf2nwl25vaabyb4ntrwfeofdv@qoc2knuv253c>
+References: <20250822031159.4005529-1-david.e.box@linux.intel.com>
+ <20250822031159.4005529-2-david.e.box@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com> <20250822-tonyk-overlayfs-v6-4-8b6e9e604fa2@igalia.com>
-In-Reply-To: <20250822-tonyk-overlayfs-v6-4-8b6e9e604fa2@igalia.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 22 Aug 2025 18:53:21 +0200
-X-Gm-Features: Ac12FXw_k3EzAsjyfkTL5NnteB1vrgP3nwburCZTGBRF4TdolD0utomj-QglgVs
-Message-ID: <CAOQ4uxjG9+Vwpn6n=j2-PrK8u5DMA_oVmnZvbSpstWAMVBOsPg@mail.gmail.com>
-Subject: Re: [PATCH v6 4/9] ovl: Create ovl_casefold() to support casefolded strncmp()
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
-	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	kernel-dev@igalia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250822031159.4005529-2-david.e.box@linux.intel.com>
 
-On Fri, Aug 22, 2025 at 4:17=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
-lia.com> wrote:
->
-> To add overlayfs support casefold layers, create a new function
-> ovl_casefold(), to be able to do case-insensitive strncmp().
->
-> ovl_casefold() allocates a new buffer and stores the casefolded version
-> of the string on it. If the allocation or the casefold operation fails,
-> fallback to use the original string.
->
-> The case-insentive name is then used in the rb-tree search/insertion
-> operation. If the name is found in the rb-tree, the name can be
-> discarded and the buffer is freed. If the name isn't found, it's then
-> stored at struct ovl_cache_entry to be used later.
->
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+On Thu, Aug 21, 2025 at 08:11:58PM GMT, David E. Box wrote:
+> Now that pci_host_set_default_pcie_link_state() exists, set the VMD child
+> domain with PCIE_LINK_STATE_ALL at bridge creation so core ASPM uses those
+> defaults during ASPM and CLKPM capability init.
+> 
+> Also remove the unneeded pci_set_power_state_locked(pdev, PCI_D0) and
+> pci_enable_link_state_locked() calls now that the links are configured
+> during enumeration.
+> 
+> This aligns VMD behavior with platform expectations without per-controller
+> ASPM tweaks at runtime.
+> 
+> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+
+
+Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+
+- Mani
+
+
 > ---
-> Changes from v6:
->  - Last version was using `strncmp(... tmp->len)` which was causing
->    regressions. It should be `strncmp(... len)`.
->  - Rename cf_len to c_len
->  - Use c_len for tree operation: (cmp < 0 || len < tmp->c_len)
->  - Remove needless kfree(cf_name)
-> ---
->  fs/overlayfs/readdir.c | 113 ++++++++++++++++++++++++++++++++++++++++---=
-------
->  1 file changed, 94 insertions(+), 19 deletions(-)
->
-> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> index b65cdfce31ce27172d28d879559f1008b9c87320..dfc661b7bc3f87efbf14991e9=
-7cee169400d823b 100644
-> --- a/fs/overlayfs/readdir.c
-> +++ b/fs/overlayfs/readdir.c
-> @@ -27,6 +27,8 @@ struct ovl_cache_entry {
->         bool is_upper;
->         bool is_whiteout;
->         bool check_xwhiteout;
-> +       const char *c_name;
-> +       int c_len;
->         char name[];
+> Changes in V2:
+> 
+>   -- Separated VMD changes into new patch.
+>   -- Changed comment for VMD_FEAT_BIOS_PM_QUIRK to remove ASPM
+>   -- Removed pci_set_power_state() and pci_enable_link_state_locked()
+>      calls in vmd_pm_enable_quirk()
+>   -- Use pci_host_set_default_pcie_link_state()
+> 
+>  drivers/pci/controller/vmd.c | 22 ++++++++--------------
+>  1 file changed, 8 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+> index b679c7f28f51..b99e01a57ddb 100644
+> --- a/drivers/pci/controller/vmd.c
+> +++ b/drivers/pci/controller/vmd.c
+> @@ -71,10 +71,9 @@ enum vmd_features {
+>  	VMD_FEAT_CAN_BYPASS_MSI_REMAP		= (1 << 4),
+>  
+>  	/*
+> -	 * Enable ASPM on the PCIE root ports and set the default LTR of the
+> -	 * storage devices on platforms where these values are not configured by
+> -	 * BIOS. This is needed for laptops, which require these settings for
+> -	 * proper power management of the SoC.
+> +	 * Program default LTR values for storage devices on platforms where
+> +	 * firmware did not. Required on many laptops for proper SoC power
+> +	 * management.
+>  	 */
+>  	VMD_FEAT_BIOS_PM_QUIRK		= (1 << 5),
 >  };
->
-> @@ -45,6 +47,7 @@ struct ovl_readdir_data {
->         struct list_head *list;
->         struct list_head middle;
->         struct ovl_cache_entry *first_maybe_whiteout;
-> +       struct unicode_map *map;
->         int count;
->         int err;
->         bool is_upper;
-> @@ -66,6 +69,27 @@ static struct ovl_cache_entry *ovl_cache_entry_from_no=
-de(struct rb_node *n)
->         return rb_entry(n, struct ovl_cache_entry, node);
+> @@ -733,7 +732,7 @@ static void vmd_copy_host_bridge_flags(struct pci_host_bridge *root_bridge,
 >  }
->
-> +static int ovl_casefold(struct unicode_map *map, const char *str, int le=
-n, char **dst)
-> +{
-> +       const struct qstr qstr =3D { .name =3D str, .len =3D len };
-> +       int cf_len;
-> +
-> +       if (!IS_ENABLED(CONFIG_UNICODE) || !map || is_dot_dotdot(str, len=
-))
-> +               return 0;
-> +
-> +       *dst =3D kmalloc(NAME_MAX, GFP_KERNEL);
-> +
-> +       if (dst) {
-> +               cf_len =3D utf8_casefold(map, &qstr, *dst, NAME_MAX);
-> +
-> +               if (cf_len > 0)
-> +                       return cf_len;
-> +       }
-> +
-> +       kfree(*dst);
-> +       return 0;
-> +}
-> +
->  static bool ovl_cache_entry_find_link(const char *name, int len,
->                                       struct rb_node ***link,
->                                       struct rb_node **parent)
-> @@ -79,10 +103,10 @@ static bool ovl_cache_entry_find_link(const char *na=
-me, int len,
->
->                 *parent =3D *newp;
->                 tmp =3D ovl_cache_entry_from_node(*newp);
-> -               cmp =3D strncmp(name, tmp->name, len);
-> +               cmp =3D strncmp(name, tmp->c_name, len);
->                 if (cmp > 0)
->                         newp =3D &tmp->node.rb_right;
-> -               else if (cmp < 0 || len < tmp->len)
-> +               else if (cmp < 0 || len < tmp->c_len)
->                         newp =3D &tmp->node.rb_left;
->                 else
->                         found =3D true;
-> @@ -101,10 +125,10 @@ static struct ovl_cache_entry *ovl_cache_entry_find=
-(struct rb_root *root,
->         while (node) {
->                 struct ovl_cache_entry *p =3D ovl_cache_entry_from_node(n=
-ode);
->
-> -               cmp =3D strncmp(name, p->name, len);
-> +               cmp =3D strncmp(name, p->c_name, len);
->                 if (cmp > 0)
->                         node =3D p->node.rb_right;
-> -               else if (cmp < 0 || len < p->len)
-> +               else if (cmp < 0 || len < p->c_len)
->                         node =3D p->node.rb_left;
->                 else
->                         return p;
-> @@ -145,6 +169,7 @@ static bool ovl_calc_d_ino(struct ovl_readdir_data *r=
-dd,
->
->  static struct ovl_cache_entry *ovl_cache_entry_new(struct ovl_readdir_da=
-ta *rdd,
->                                                    const char *name, int =
-len,
-> +                                                  const char *c_name, in=
-t c_len,
->                                                    u64 ino, unsigned int =
-d_type)
+>  
+>  /*
+> - * Enable ASPM and LTR settings on devices that aren't configured by BIOS.
+> + * Enable LTR settings on devices that aren't configured by BIOS.
+>   */
+>  static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *userdata)
 >  {
->         struct ovl_cache_entry *p;
-> @@ -167,6 +192,14 @@ static struct ovl_cache_entry *ovl_cache_entry_new(s=
-truct ovl_readdir_data *rdd,
->         /* Defer check for overlay.whiteout to ovl_iterate() */
->         p->check_xwhiteout =3D rdd->in_xwhiteouts_dir && d_type =3D=3D DT=
-_REG;
->
-> +       if (c_name && c_name !=3D name) {
-> +               p->c_name =3D c_name;
-> +               p->c_len =3D c_len;
-> +       } else {
-> +               p->c_name =3D p->name;
-> +               p->c_len =3D len;
-> +       }
-> +
->         if (d_type =3D=3D DT_CHR) {
->                 p->next_maybe_whiteout =3D rdd->first_maybe_whiteout;
->                 rdd->first_maybe_whiteout =3D p;
-> @@ -174,48 +207,55 @@ static struct ovl_cache_entry *ovl_cache_entry_new(=
-struct ovl_readdir_data *rdd,
->         return p;
+> @@ -747,7 +746,7 @@ static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *userdata)
+>  
+>  	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_LTR);
+>  	if (!pos)
+> -		goto out_state_change;
+> +		return 0;
+>  
+>  	/*
+>  	 * Skip if the max snoop LTR is non-zero, indicating BIOS has set it
+> @@ -755,7 +754,7 @@ static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *userdata)
+>  	 */
+>  	pci_read_config_dword(pdev, pos + PCI_LTR_MAX_SNOOP_LAT, &ltr_reg);
+>  	if (!!(ltr_reg & (PCI_LTR_VALUE_MASK | PCI_LTR_SCALE_MASK)))
+> -		goto out_state_change;
+> +		return 0;
+>  
+>  	/*
+>  	 * Set the default values to the maximum required by the platform to
+> @@ -767,13 +766,6 @@ static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *userdata)
+>  	pci_write_config_dword(pdev, pos + PCI_LTR_MAX_SNOOP_LAT, ltr_reg);
+>  	pci_info(pdev, "VMD: Default LTR value set by driver\n");
+>  
+> -out_state_change:
+> -	/*
+> -	 * Ensure devices are in D0 before enabling PCI-PM L1 PM Substates, per
+> -	 * PCIe r6.0, sec 5.5.4.
+> -	 */
+> -	pci_set_power_state_locked(pdev, PCI_D0);
+> -	pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
+>  	return 0;
 >  }
->
-> -static bool ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
-> -                                 const char *name, int len, u64 ino,
-> +/* Return 0 for found, 1 for added, <0 for error */
-> +static int ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
-> +                                 const char *name, int len,
-> +                                 const char *c_name, int c_len,
-> +                                 u64 ino,
->                                   unsigned int d_type)
->  {
->         struct rb_node **newp =3D &rdd->root->rb_node;
->         struct rb_node *parent =3D NULL;
->         struct ovl_cache_entry *p;
->
-> -       if (ovl_cache_entry_find_link(name, len, &newp, &parent))
-> -               return true;
-> +       if (ovl_cache_entry_find_link(c_name, c_len, &newp, &parent))
-> +               return 0;
->
-> -       p =3D ovl_cache_entry_new(rdd, name, len, ino, d_type);
-> +       p =3D ovl_cache_entry_new(rdd, name, len, c_name, c_len, ino, d_t=
-ype);
->         if (p =3D=3D NULL) {
->                 rdd->err =3D -ENOMEM;
-> -               return false;
-> +               return -ENOMEM;
->         }
->
->         list_add_tail(&p->l_node, rdd->list);
->         rb_link_node(&p->node, parent, newp);
->         rb_insert_color(&p->node, rdd->root);
->
-> -       return true;
-> +       return 1;
->  }
->
-> -static bool ovl_fill_lowest(struct ovl_readdir_data *rdd,
-> +/* Return 0 for found, 1 for added, <0 for error */
-> +static int ovl_fill_lowest(struct ovl_readdir_data *rdd,
->                            const char *name, int namelen,
-> +                          const char *c_name, int c_len,
->                            loff_t offset, u64 ino, unsigned int d_type)
->  {
->         struct ovl_cache_entry *p;
->
-> -       p =3D ovl_cache_entry_find(rdd->root, name, namelen);
-> +       p =3D ovl_cache_entry_find(rdd->root, c_name, c_len);
->         if (p) {
->                 list_move_tail(&p->l_node, &rdd->middle);
-> +               return 0;
->         } else {
-> -               p =3D ovl_cache_entry_new(rdd, name, namelen, ino, d_type=
-);
-> +               p =3D ovl_cache_entry_new(rdd, name, namelen, c_name, c_l=
-en,
-> +                                       ino, d_type);
->                 if (p =3D=3D NULL)
->                         rdd->err =3D -ENOMEM;
->                 else
->                         list_add_tail(&p->l_node, &rdd->middle);
->         }
->
-> -       return rdd->err =3D=3D 0;
-> +       return rdd->err ?: 1;
->  }
->
->  void ovl_cache_free(struct list_head *list)
-> @@ -223,8 +263,11 @@ void ovl_cache_free(struct list_head *list)
->         struct ovl_cache_entry *p;
->         struct ovl_cache_entry *n;
->
-> -       list_for_each_entry_safe(p, n, list, l_node)
-> +       list_for_each_entry_safe(p, n, list, l_node) {
-> +               if (p->c_name !=3D p->name)
-> +                       kfree(p->c_name);
->                 kfree(p);
-> +       }
->
->         INIT_LIST_HEAD(list);
->  }
-> @@ -260,12 +303,36 @@ static bool ovl_fill_merge(struct dir_context *ctx,=
- const char *name,
->  {
->         struct ovl_readdir_data *rdd =3D
->                 container_of(ctx, struct ovl_readdir_data, ctx);
-> +       struct ovl_fs *ofs =3D OVL_FS(rdd->dentry->d_sb);
-> +       const char *c_name =3D NULL;
-> +       char *cf_name =3D NULL;
-> +       int c_len =3D 0, ret;
-> +
-> +       if (ofs->casefold)
-> +               c_len =3D ovl_casefold(rdd->map, name, namelen, &cf_name)=
-;
-> +
-> +       if (c_len <=3D 0) {
-> +               c_name =3D name;
-> +               c_len =3D namelen;
-> +       } else {
-> +               c_name =3D cf_name;
-> +       }
->
->         rdd->count++;
->         if (!rdd->is_lowest)
-> -               return ovl_cache_entry_add_rb(rdd, name, namelen, ino, d_=
-type);
-> +               ret =3D ovl_cache_entry_add_rb(rdd, name, namelen, c_name=
-, c_len, ino, d_type);
->         else
-> -               return ovl_fill_lowest(rdd, name, namelen, offset, ino, d=
-_type);
-> +               ret =3D ovl_fill_lowest(rdd, name, namelen, c_name, c_len=
-, offset, ino, d_type);
-> +
-> +       /*
-> +        * If ret =3D=3D 1, that means that c_name is being used as part =
-of struct
-> +        * ovl_cache_entry and will be freed at ovl_cache_free(). Otherwi=
-se,
-> +        * c_name was found in the rb-tree so we can free it here.
-> +        */
-> +       if (ret !=3D 1 && c_name !=3D name)
-> +               kfree(c_name);
-> +
-> +       return ret >=3D 0;
->  }
->
->  static int ovl_check_whiteouts(const struct path *path, struct ovl_readd=
-ir_data *rdd)
-> @@ -357,12 +424,18 @@ static int ovl_dir_read_merged(struct dentry *dentr=
-y, struct list_head *list,
->                 .list =3D list,
->                 .root =3D root,
->                 .is_lowest =3D false,
-> +               .map =3D NULL,
->         };
->         int idx, next;
->         const struct ovl_layer *layer;
-> +       struct ovl_fs *ofs =3D OVL_FS(dentry->d_sb);
->
->         for (idx =3D 0; idx !=3D -1; idx =3D next) {
->                 next =3D ovl_path_next(idx, dentry, &realpath, &layer);
-> +
-> +               if (ofs->casefold)
-> +                       rdd.map =3D sb_encoding(realpath.dentry->d_sb);
-> +
->                 rdd.is_upper =3D ovl_dentry_upper(dentry) =3D=3D realpath=
-.dentry;
->                 rdd.in_xwhiteouts_dir =3D layer->has_xwhiteouts &&
->                                         ovl_dentry_has_xwhiteouts(dentry)=
-;
-> @@ -555,7 +628,7 @@ static bool ovl_fill_plain(struct dir_context *ctx, c=
-onst char *name,
->                 container_of(ctx, struct ovl_readdir_data, ctx);
->
->         rdd->count++;
-> -       p =3D ovl_cache_entry_new(rdd, name, namelen, ino, d_type);
-> +       p =3D ovl_cache_entry_new(rdd, name, namelen, NULL, 0, ino, d_typ=
-e);
->         if (p =3D=3D NULL) {
->                 rdd->err =3D -ENOMEM;
->                 return false;
-> @@ -1023,6 +1096,8 @@ int ovl_check_empty_dir(struct dentry *dentry, stru=
-ct list_head *list)
->
->  del_entry:
->                 list_del(&p->l_node);
-> +               if (p->c_name !=3D p->name)
-> +                       kfree(p->c_name);
->                 kfree(p);
+>  
+> @@ -921,6 +913,8 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
+>  	WARN(sysfs_create_link(&vmd->dev->dev.kobj, &vmd->bus->dev.kobj,
+>  			       "domain"), "Can't create symlink to domain\n");
+>  
+> +	pci_host_set_default_pcie_link_state(to_pci_host_bridge(vmd->bus->bridge),
+> +					     PCIE_LINK_STATE_ALL);
+>  	vmd_acpi_begin();
+>  
+>  	pci_scan_child_bus(vmd->bus);
+> -- 
+> 2.43.0
+> 
 
-OK I thought this was contained in ovl_cache_free().
-If we need to repeat this check, we need a helper
-ovl_cache_entry_free() to use instead of kfree(p)
-everywhere even in ovl_dir_read_impure() when it won't
-actually be needed.
-
-I can make this change on commit no need to repost.
-
-Thanks,
-Amir.
+-- 
+மணிவண்ணன் சதாசிவம்
 
