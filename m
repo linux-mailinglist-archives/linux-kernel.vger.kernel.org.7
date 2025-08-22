@@ -1,209 +1,141 @@
-Return-Path: <linux-kernel+bounces-781909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD593B3188C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:58:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67152B318A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4D641C81B53
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:56:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19786624B20
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C419302766;
-	Fri, 22 Aug 2025 12:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818A52FE58B;
+	Fri, 22 Aug 2025 12:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Qizcvcax"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="O9i05IB8";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QJf9FCrO"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA18301465;
-	Fri, 22 Aug 2025 12:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4892FD1BB;
+	Fri, 22 Aug 2025 12:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755867242; cv=none; b=DoFIQVGc6iToSZ9OhYTxawT2p6NF2YV5cADLX8h/LNCIKW67IN6mYzoT5/YKatI/fOZ0yX4dgizHuIEzmXr0N8NnsvgLq7V5fmRypP1uNI0D02lofEGCadh74PWc+g7dTyOupu4380G52wn4X/w541IXUYz6oEfAQ7BhBLqY+tM=
+	t=1755867286; cv=none; b=qbI0r/cMbLqPeQsq4TqMv5jsP2356oBgSuE1C0lhS5NiVwBK8OMy1N6BjRbTyOjg8cG5wJ6zHeU4z7Ks19vjLYxhuqEN5YQboeN/5VGBS0jE2k0jrJI8jvlu7x+cFrBhCQT1Or/Spu//dMloys4/PYpw7VJn20I3EtNVUdljy60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755867242; c=relaxed/simple;
-	bh=Te0ho3pz2NfR8BqN8aLJYQorQGC7EvtxapDMAw+KjH0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mAnZN8D8jXtr58KoBO51APgyQ5lC83dwmnjdj2v1JKSCc17Av3Nz4NG4T8awUf97R27FxPd6TexFcWlfWrDdPE6L+3leBZ/e17/FFrljrozOsP34rDrAxDnk3qWOgNH0+i/k2qm/Goa7jfxCxmanmeAaW6yh7hQddADHpGM3X7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Qizcvcax; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 0e92678e7f5711f0b33aeb1e7f16c2b6-20250822
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=/QiMgaVLOAOBbB0zzFeIJKagsHQm6FFy1ZPWjVMcc5A=;
-	b=QizcvcaxRbwp8JlC7zS9662BtIco5FcdvkdqDNLXyFQWVu62/r6+SHUzfDycesiwds5GgqffE1N7JmZQEAWRoaVDJTEB4xz9ztQcInIqRTwVhOXG8TWIT/WbPl/QLEZ/dzHfe9wQzbQjuJbQg477CGBO1GuMSXFz9MtWPLC4euw=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:51cfd86a-410d-4a01-97ca-40631e6bf5ea,IP:0,UR
-	L:25,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:25
-X-CID-META: VersionHash:f1326cf,CLOUDID:a1f7c344-18c5-4075-a135-4c0afe29f9d6,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:-5,Content:0|15|50,EDM:
-	-3,IP:nil,URL:11|97|99|83|106|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,CO
-	L:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 0e92678e7f5711f0b33aeb1e7f16c2b6-20250822
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
-	(envelope-from <darren.ye@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1534367532; Fri, 22 Aug 2025 20:53:53 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 22 Aug 2025 20:53:51 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 22 Aug 2025 20:53:49 +0800
-From: Darren.Ye <darren.ye@mediatek.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "Rob
- Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>, Darren Ye
-	<darren.ye@mediatek.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v7 10/10] ASoC: dt-bindings: mediatek,mt8196-nau8825: Add audio sound card
-Date: Fri, 22 Aug 2025 20:52:39 +0800
-Message-ID: <20250822125301.12333-11-darren.ye@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250822125301.12333-1-darren.ye@mediatek.com>
-References: <20250822125301.12333-1-darren.ye@mediatek.com>
+	s=arc-20240116; t=1755867286; c=relaxed/simple;
+	bh=9WM5jNaY2Wf4YG1NJEB50AfU0AlRHyDxQ+QQLN1yREI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=O+tBeuzD13nskyzvn+eHvAwfe2VzPQTnEiHnwxAeGUefnLD0vH+0cT9beLi0jUwEtW+gDyTP6GKJhKSIqaxHRrb2XD/w/K8G4dw387xYdXWV4vfgSO7flyKGFV4Sc4U1yArJk/nPEOk9B/XStm4pmW/w5hcFiOvJbgFAfGiDn5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=O9i05IB8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QJf9FCrO; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfout.stl.internal (Postfix) with ESMTP id 1E5251D00234;
+	Fri, 22 Aug 2025 08:54:43 -0400 (EDT)
+Received: from phl-imap-08 ([10.202.2.84])
+  by phl-compute-12.internal (MEProxy); Fri, 22 Aug 2025 08:54:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1755867282;
+	 x=1755953682; bh=aRZ2w4aRXo6qUfdO68AWObxskrE0DCs20pt2DafQLDY=; b=
+	O9i05IB8zSotgJBhPcH917nbpHH/qgqfnnFgsj4vfqka64s9qF4kPKS/O6VC0ic6
+	AAe8nf4dUWW27Kr3n8WQlNPVBvEYxNHOtY3RCaVxX28xivHTuWlMl6orHvowzh6n
+	G2CXDCjtp50AojrgnWYvQOINiw8LfWeWlUWP4OxSEs5Xo6u+6PFtXi63/tRXPPR6
+	laCFNlrTbwwOxKXFI5YGdH5zQwGuCMlQIS+NuEylXhUcsb2sIZP7XyvCCfcYEChh
+	Hhf03wja9RAShRYoojScQG6Ltgl0UeoEJfHGip7aHX2wbBxpDYwuJF4RG1mmQE2Q
+	EE/g/Xv66RnZ6VWazcUFgg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755867282; x=
+	1755953682; bh=aRZ2w4aRXo6qUfdO68AWObxskrE0DCs20pt2DafQLDY=; b=Q
+	Jf9FCrO4swUngwR9t6qnHdFLxYD9lJFCVeDsnmwr742WBgL0im5dWqXN6q/ETZ+r
+	wL16Uo4/slFz6TFJB8U6br4Ep5OVchTB5AwtR9Jjk77FaEmzbi6rMK3kwbpiHW0N
+	1Xhe/+PCFsv25DNN1+ToDWxINJP75qqAcz3ICMGbqSItW6yTt2FWyfZVz4Kv4DE6
+	PL0bblRMbtrHHIeYO58mroytKXUw6FN8+Z4trhqvZXaiYp9gOI/Ee417BunzNE7Q
+	OQx5A4O0JTCkQLdbg0wqEYnlZeUaNR1iY6Gx6ZoH8jnvioCoR9aXQ/q2rYwU0cCt
+	72gLWFn8zKMR7MZ8pP7SA==
+X-ME-Sender: <xms:kmioaP9U_Se6dGPj_PDiMrw-8NA6u4uQNknJv8YXUJOue_N3gtzphg>
+    <xme:kmioaLtmRGYTzVwkqVZm96sK0Odoj3ClLMOCCjQ2fJd-8gEMlqZUAL2kwfBODM1yQ
+    DKqP7JD7GGcyj1Ku0Y>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieefkeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfofgrrhhk
+    ucfrvggrrhhsohhnfdcuoehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtg
+    grqeenucggtffrrghtthgvrhhnpefhuedvheetgeehtdehtdevheduvdejjefggfeijedv
+    geekhfefleehkeehvdffheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrpdhn
+    sggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehhvghikh
+    hkihdrkhhrohhgvghruhhssehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohep
+    ghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidquhhssgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:kmioaL_aU2PGTjjy-D1D4lKNo8mtFcZ1nvqwKg5mvTYTLrGW9Q0_Iw>
+    <xmx:kmioaDNQYo5OiBu3lKEa22pxYQ2N3rWNrp_f6IpNTAwbjPqeXJpj-Q>
+    <xmx:kmioaPchj6JjjIYTl54JF72vc07_LFJhb7QNkhX0qLZl-QMsheQpWw>
+    <xmx:kmioaCUdP4ZzuX0-vhC1NZnY5-36TCMDhYNrT_Sjj81erVPnq2wAoA>
+    <xmx:kmioaJvfIWkvGDTph2iSPqb6xKTpUMSNtN6EGAM93zOJ6Uam9RKCOkEu>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 501182CE0071; Fri, 22 Aug 2025 08:54:42 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: ADpVV-8_W703
+Date: Fri, 22 Aug 2025 08:54:22 -0400
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Greg KH" <gregkh@linuxfoundation.org>
+Cc: "Heikki Krogerus" <heikki.krogerus@linux.intel.com>,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <0ac78125-a028-4d99-b106-d792d8660d0f@app.fastmail.com>
+In-Reply-To: <2025082213-antacid-correct-53b1@gregkh>
+References: <mpearson-lenovo@squebb.ca>
+ <20250821185319.2585023-1-mpearson-lenovo@squebb.ca>
+ <2025082213-antacid-correct-53b1@gregkh>
+Subject: Re: [PATCH] usb: typec: ucsi: Handle incorrect num_connectors capability
 Content-Type: text/plain
-X-MTK: N
+Content-Transfer-Encoding: 7bit
 
-From: Darren Ye <darren.ye@mediatek.com>
+Hi Greg,
 
-Add soundcard bindings for the MT8196 SoC with the NAU8825 audio codec.
+On Fri, Aug 22, 2025, at 12:51 AM, Greg KH wrote:
+> On Thu, Aug 21, 2025 at 02:53:07PM -0400, Mark Pearson wrote:
+>> The UCSI spec states that the num_connectors field is 7 bits, and the
+>> 8th bit is reserved and should be set to zero.
+>> Some buggy FW has been known to set this bit, and it can lead to a
+>> system not booting.
+>> Flag that the FW is not behaving correctly, and auto-fix the value
+>> so that the system boots correctly.
+>> 
+>> Found on Lenovo P1 G8 during Linux enablement program. The FW will
+>> be fixed, but seemed worth addressing in case it hit platforms that
+>> aren't officially Linux supported.
+>> 
+>> Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+>
+> Any hints as to what commit id this fixes?
+>
+> thanks,
+>
+> greg k-h
 
-Signed-off-by: Darren Ye <darren.ye@mediatek.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../sound/mediatek,mt8196-nau8825.yaml        | 100 ++++++++++++++++++
- 1 file changed, 100 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/mediatek,mt8196-nau8825.yaml
+Maybe 3cf657f ('Remove all bit-fields')?
 
-diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8196-nau8825.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8196-nau8825.yaml
-new file mode 100644
-index 000000000000..83350faa1e29
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/mediatek,mt8196-nau8825.yaml
-@@ -0,0 +1,100 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/mediatek,mt8196-nau8825.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MediaTek MT8196 ASoC sound card
-+
-+maintainers:
-+  - Darren Ye <darren.ye@mediatek.com>
-+
-+allOf:
-+  - $ref: sound-card-common.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - mediatek,mt8196-nau8825-sound
-+      - mediatek,mt8196-rt5682s-sound
-+      - mediatek,mt8196-rt5650-sound
-+
-+  mediatek,platform:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: The phandle of MT8188 ASoC platform.
-+
-+patternProperties:
-+  "^dai-link-[0-9]+$":
-+    type: object
-+    description:
-+      Container for dai-link level properties and CODEC sub-nodes.
-+
-+    properties:
-+      link-name:
-+        description:
-+          This property corresponds to the name of the BE dai-link to which
-+          we are going to update parameters in this node.
-+        items:
-+          enum:
-+            - TDM_DPTX_BE
-+            - I2SOUT6_BE
-+            - I2SIN6_BE
-+            - I2SOUT4_BE
-+            - I2SOUT3_BE
-+
-+      codec:
-+        description: Holds subnode which indicates codec dai.
-+        type: object
-+        additionalProperties: false
-+        properties:
-+          sound-dai:
-+            minItems: 1
-+            maxItems: 2
-+        required:
-+          - sound-dai
-+
-+      dai-format:
-+        description: audio format.
-+        items:
-+          enum:
-+            - i2s
-+            - right_j
-+            - left_j
-+            - dsp_a
-+            - dsp_b
-+
-+      mediatek,clk-provider:
-+        $ref: /schemas/types.yaml#/definitions/string
-+        description: Indicates dai-link clock master.
-+        enum:
-+          - cpu
-+          - codec
-+
-+    additionalProperties: false
-+
-+    required:
-+      - link-name
-+
-+required:
-+  - compatible
-+  - mediatek,platform
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    sound {
-+        compatible = "mediatek,mt8196-nau8825-sound";
-+        model = "mt8196-nau8825";
-+        mediatek,platform = <&afe>;
-+        dai-link-0 {
-+            link-name = "I2SOUT6_BE";
-+            dai-format = "i2s";
-+            mediatek,clk-provider = "cpu";
-+            codec {
-+                sound-dai = <&nau8825>;
-+            };
-+        };
-+    };
-+
-+...
--- 
-2.45.2
+The commit there states that 'We can't use bit fields with data that is received or send
+to/from the device.'
+Not sure why that is, but I assumed this means we shouldn't change the structure to use 7 bits for num_connectors, which was my original plan.
 
+After that, we go all the way back to the file creation (c1b0bc2) where it was defined as 8 bit.
+
+Mark
 
