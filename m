@@ -1,233 +1,155 @@
-Return-Path: <linux-kernel+bounces-782594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63941B32289
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:01:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D628B32292
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBFF8189D0FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:01:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08C8F5814BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E568B2C3265;
-	Fri, 22 Aug 2025 19:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697E72D1F64;
+	Fri, 22 Aug 2025 19:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHGCFvCM"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NsPKLLKW"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3182C21D4;
-	Fri, 22 Aug 2025 19:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD9C2D12EE
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 19:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755889280; cv=none; b=bJEqL71dHZgw07HrSUeBwM/rE8odDBzs348PUSP2KBgah7LetkhRJMzdPkggg+VGb6fFu089XrqKGlU1UUrRpDRK5l+4PHrm239H3oIStjIMharyP7Ba711c/wTUgEHDItKJbuGCf/lAQQTfnbu+2zFJOWD2Cb5XNiWZthuhexA=
+	t=1755889317; cv=none; b=E3SLyes87Q/VXULjszPLkJtD+OYhGhOnx0Xb0ALWCAosPI8Jus/UrBhc2mGa4hCpffTuxktROHkd7XElN93P+ZRd0x8Xji1Fjqb/fR9JDAXZLbzuRorpDDi7k2s85mW4e6RRUezweCOBRC8FPTv5ENy0Bnq00t0kidX1hkmJgzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755889280; c=relaxed/simple;
-	bh=MmmXQmiYtuiUZvLDCzhyQq0oQAsG8MaMCnLc2t8LIuA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nvMkk3qivvVJkaUByMKzlFE7cSuYuCTj+mEy55kH3qvAKlx0L66OIYf91U1rOjBAC2SkCJYvjF7zrTrvN9bsRM/XGQcimAbqstHDdVDU7IaDT1DsACuRIRPR4h/9pTRQzwdrlO4nE5T5tEZD9uXrlGYudQgMyw+yGxjquLiAr9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fHGCFvCM; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32326e5f0bfso2025794a91.3;
-        Fri, 22 Aug 2025 12:00:53 -0700 (PDT)
+	s=arc-20240116; t=1755889317; c=relaxed/simple;
+	bh=F6CyFhck5m8cKEPXXRbIJbXQPp2uCDn9sqFms57kv6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qpyvRCdbCGnFqYb8TE1TCUs4Pq53+N2H7Stk0edZRFdRvAOyLB7Xh3C+hM3y5gryX9oPcUggbytPVWkNUAAmEHgqu2L7zVjGYk1FIY2bVNZHc6CP806m9KPYdwIEDCPPvbVymrdX17rvalhLkSDOfbDvP3EqgOoRq/RCvXpgADs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NsPKLLKW; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e2e6038cfso2843259b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:01:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755889253; x=1756494053; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2G4uVOcBa/iivnMpGsqEmtusc+mONUzr/xNCqDruNEw=;
-        b=fHGCFvCMqISo+AyWNyNg9B/4Wo7Ml5UIt0KXLjgy2BB2subAYmvnWHcXX58UwAMyft
-         pV5KfEavIJJMdiF1iThezpkne0PxyOSwJqGaxdFnkc8pLHDpGFY6db9Ao4s+7HHV0mzO
-         LPFsXG31zP+VjS769+6fIVPTQ3/ZaAG39KNSfCy6zsAGCjyewk3tLw1ylkYXW94RlWZY
-         WSDQPxjkQqoJYDrGd6oCqdDYJajFU5wzBeZqoXeedaSEef6eHqkEN+3EaOhAVGgPK2zk
-         rvgjNZMbXngGO/cupjILQqeaYmFat72uMxChHUcP13tjXm2o2UQ+IScqE3famS9+KDYK
-         4Jlw==
+        d=chromium.org; s=google; t=1755889315; x=1756494115; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7qRfJ1efwUt5qzWhi/EksrwXOERx/hksi00iK1a2Is0=;
+        b=NsPKLLKW9A9BeXy7JJeLoIg0ypeA1T44gktEsHtDMCp1zCer9zEMjHXNPkzcbTI68l
+         MXpgClGCAI61FZ+7tDSea19X8cq7ZratyClDgmQynNmf1bGYzr6HwvKkmaKoJ9eNX22a
+         DsKJMMxzCMloR4lRgsKnZdNuMgf2ZKCWM3XAQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755889253; x=1756494053;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2G4uVOcBa/iivnMpGsqEmtusc+mONUzr/xNCqDruNEw=;
-        b=lDC+CRYLlLmNV8U6YNHVq0vDH0689PdPy6OMLLo8Tza8Kg7md2rFrrAQfCv6aGcryh
-         kjDvu9qdjDJRdMuaJ+Xo/tGbs+6Iabb+5lVItCWB3mfszlrl8ZK6zuMprm770DwoKKt/
-         Ar3g6OyX1RDQ0hcn69SE69UwkAT0TURH3oONJOQyEaNgqPUUjC7cUj87/xgwLqVUgvt4
-         sHANRuaihP/p31Q0joz/m1unV7nTiKZGBnWapG/EQmEIn16jH8r2JOJCh+78OIu1j+qe
-         z0m5X8mxqSqdB4DLeSfPCpJw+0o9dGyoWMyPkWpk0Miut7J00ZGfOkO5Myx4SDTyeEzv
-         r9fw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUu+5Mk5tIoophRpri4YLsvTtJ481jM0XJZz6wF0vqr60FdnIvopWzy5DHTc181cjWay7JmSS3ToNzoUsv@vger.kernel.org, AJvYcCX5yulaBmljrTYc4/F7d1TSKCidA22Qa4KscsPBqAiqOtscqNbEmY4XlWVk6y8j54BZTzg=@vger.kernel.org, AJvYcCXDW+MQRfGOaoc0pFABV+DKN3NsdC6S2VaQC6IjjpUZ94WD+o+hrZtQGTFKbjCFDHwiYUdvEJBj@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzPh1z2pm980NDJP1IwvvGkLURHxpkw98VfDUjf1P14bGCt25a
-	8ozgWuDfAR/VzTZ900h/f30jv3BDXOcCw9rysPeqTYwYTXgAsGeuNJf0AgoJyGdANTcR8t+wQSL
-	pNL/yuBGjByyVnOMmyqMLsrMOSyPdZvE=
-X-Gm-Gg: ASbGncuVJ0vMGfeXy3qPj/RYeD1/ScN8KHCYdzvBm0AaS7mmdvIu0s29aQE2+kI+bj7
-	cX7eAZ92NS+s9rMCiD0JX3cFZmqblVTbIi78SDwyKQK/GNMww+yC0XCUZPz2ArkY+uol+C8OsIr
-	/1qlAszrwqTKosa/iFF9S3by8KT3HYrkPj9jrZa+uPaj6OF9CiYS/FwPGF/6FlvAmT8PXXpsSFI
-	bCgFA8yMybF6s6uZaxzf9wHlimdtiGmFg==
-X-Google-Smtp-Source: AGHT+IFqeDt4xyP9+GIOv8ChYUNwdA+7nFMivdwPnGvNMZIkoKl9VMhe4tBx9FuuBlBI10NSV6shvJM3cPBvU7ZmrYU=
-X-Received: by 2002:a17:90b:3c47:b0:324:fbbe:a457 with SMTP id
- 98e67ed59e1d1-32517748ee5mr5102753a91.21.1755889252885; Fri, 22 Aug 2025
- 12:00:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755889315; x=1756494115;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7qRfJ1efwUt5qzWhi/EksrwXOERx/hksi00iK1a2Is0=;
+        b=i7gCqiK/INkT68L7DNT/ZD627baL1G3kFcwQvHeRkBX8cvtzqenMXbaF69KrDjEp3W
+         nEivHgCTUXwriA7K28ljUrGCFgAUbjO4MyeDHzznEJthz4WhFj9X4dTVLC31apCsJUNx
+         GDLCdpisk+A/PBK0Cor0+eLVWdSHBS/HhRVTiO387red7YfVfc4EF5ATAT2RJ39x4q4b
+         QnVm5HlYxLJEtqbU2EyX4v876g9tl/ztcXgSLKtk4FsOJ0faRxQTHS4wdhd78k4UwGby
+         8RdPX3uu3FGY+J+6vNDPVvSoGEKc4ESaF5OfzRRtveM2OBZkpggE0P5JHMFWlzmgIkqc
+         X8BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFzM/DmH4q8V5wSAz0BRDzDYHr0pAykHBxCuZM7/3FD0H1+xeDsLQ14e0+q8eXhWFZ6cjrE9DmVeO0EsI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf7muPF8z83hunOlA4Lprts2ZvRSERJKoZLh1szYWC28Qp+gGr
+	S9c4CCO8eT8sLIvOy2XJZ1hKn1UtF1b+TkoHsq2WVJnNpqtbrdWwzQ++n62Q7K5zMA==
+X-Gm-Gg: ASbGncsJ5zxuqGVZHCzMkUGCD7G5ywkgoUOFO8GVUVT3RcUi2djlmin/ljA5GdH3rk0
+	fzM7xPVr3nrc2Dc+CU1U/B8LX5RtemlwkNu9hhyazAtl3J9bk2UDDKOom90qUhB0UcsQgV6F8HH
+	hfnfd9FUUrILeukFNFeqR8sYVhaEsw9rSeHIU+sQr/441mv2oQ9Mv+tm6/LdOC/KzjtoIrgrviA
+	YhDw4FF3e31hHbEkJvN8kGz6uuETEMj+dJ8r7WQel6cIjv7h0EuhoniW2Sf1OrqFdVxghHCpH3B
+	aJTQgV4NuON8BnnBtPBnhWevXmjZa7aVk1i7DAJ+VhLP2hXDOBMn0qF0xBQopzB13n8/dzNHW/h
+	FtAI2XLoRoxAjZzEqCzKvl8XX/cycMJ8pjrrJ6BafUkzWIx2vBdD7ZMftc1Iy+2cO2KrfCw==
+X-Google-Smtp-Source: AGHT+IERU1thLXYMzICfViuGk8kImPkUJS7xK6VrYeodDoNR/f9WswSi/cDfGBjhN7V5j2ahaOqNhQ==
+X-Received: by 2002:a05:6a00:2309:b0:76e:99ff:c9f7 with SMTP id d2e1a72fcca58-7702fc0267bmr5221220b3a.22.1755889315318;
+        Fri, 22 Aug 2025 12:01:55 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:154c:8cf:f7d0:c083])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7703ffb48a0sm617048b3a.8.2025.08.22.12.01.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Aug 2025 12:01:54 -0700 (PDT)
+Date: Fri, 22 Aug 2025 12:01:53 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>, David Gow <davidgow@google.com>,
+	linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com
+Subject: Re: [PATCH 0/6] genirq/test: Platform/architecture fixes
+Message-ID: <aKi-oXTf0RphLLgn@google.com>
+References: <20250818192800.621408-1-briannorris@chromium.org>
+ <9bfdbbed-52c1-4c5d-bdc3-963a902f2b4b@roeck-us.net>
+ <aKduHcYINJvMsB58@google.com>
+ <2143e074-c82f-4f38-84c7-6a39c6c6ecd3@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813073955.1775315-1-maze@google.com> <6df59861-8334-49ac-8dca-2b0bac82f2d7@linux.dev>
- <CANP3RGcJ06uRUBF=RR6bjqNnxdaSdpBpynGzNTSms0jA-ZpW6w@mail.gmail.com> <a3d437ce-c91d-47c6-9590-88b716fb6690@linux.dev>
-In-Reply-To: <a3d437ce-c91d-47c6-9590-88b716fb6690@linux.dev>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 22 Aug 2025 12:00:36 -0700
-X-Gm-Features: Ac12FXxmgU6oECat9fB9U_9F3fWqtrlWLu_VfkCnOaPfi02VDFbJguKrIT9_vYY
-Message-ID: <CAEf4BzabChgVsFBJPp6oKENJK=WAKPQahH8HO3fSBz_xWDH54Q@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: hashtab - allow BPF_MAP_LOOKUP{,_AND_DELETE}_BATCH
- with NULL keys/values.
-To: Yonghong Song <yonghong.song@linux.dev>
-Cc: =?UTF-8?Q?Maciej_=C5=BBenczykowski?= <maze@google.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Linux Network Development Mailing List <netdev@vger.kernel.org>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, BPF Mailing List <bpf@vger.kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2143e074-c82f-4f38-84c7-6a39c6c6ecd3@roeck-us.net>
 
-On Thu, Aug 21, 2025 at 2:49=E2=80=AFPM Yonghong Song <yonghong.song@linux.=
-dev> wrote:
->
->
->
-> On 8/20/25 7:23 PM, Maciej =C5=BBenczykowski wrote:
-> > On Mon, Aug 18, 2025 at 1:58=E2=80=AFPM Yonghong Song
-> > <yonghong.song@linux.dev> wrote:
-> > > On 8/13/25 12:39 AM, Maciej =C5=BBenczykowski wrote:
-> > > > BPF_MAP_LOOKUP_AND_DELETE_BATCH keys & values =3D=3D NULL
-> > > > seems like a nice way to simply quickly clear a map.
-> > >
-> > > This will change existing API as users will expect
-> > > some error (e.g., -EFAULT) return when keys or values is NULL.
-> >
-> > No reasonable user will call the current api with NULLs.
->
-> I do agree it is really unlikely users will have NULL keys or values.
->
-> >
-> > This is a similar API change to adding a new system call
-> > (where previously it returned -ENOSYS) - which *is* also a UAPI
-> > change, but obviously allowed.
-> >
-> > Or adding support for a new address family / protocol (where
-> > previously it -EAFNOSUPPORT)
-> > Or adding support for a new flag (where previously it returned -EINVAL)
-> >
-> > Consider why userspace would ever pass in NULL, two possibilities:
-> > (a) explicit NULL - you'd never do this since it would (till now)
-> > always -EFAULT,
-> >   so this would only possibly show up in a very thorough test suite
-> > (b) you're using dynamically allocated memory and it failed allocation.
-> >   that's already a program bug, you should catch that before you call
-> > bpf().
->
-> Okay. What you describes make sense.
+On Fri, Aug 22, 2025 at 11:34:04AM -0700, Guenter Roeck wrote:
+> On 8/21/25 12:06, Brian Norris wrote:
+> > On Thu, Aug 21, 2025 at 10:02:52AM -0700, Guenter Roeck wrote:
+> > > Build results:
+> > > 	total: 162 pass: 162 fail: 0
+> > > Qemu test results:
+> > > 	total: 637 pass: 637 fail: 0
+> > > Unit test results:
+> > > 	pass: 640616 fail: 13
+> > > Failed unit tests:
+> > > 	arm64:imx8mp-evk:irq_cpuhotplug_test
+> > > 	arm64:imx8mp-evk:irq_test_cases
+> > > 	m68k:q800:irq_test_cases
+> > > 	m68k:virt:irq_test_cases
+> > > 
+> > > Individual failures:
+> > > 
+> > > [   32.613761]     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:210
+> > > [   32.613761]     Expected remove_cpu(1) == 0, but
+> > > [   32.613761]         remove_cpu(1) == -16 (0xfffffffffffffff0)
+> > > [   32.621522]     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:212
+> > > [   32.621522]     Expected add_cpu(1) == 0, but
+> > > [   32.621522]         add_cpu(1) == 1 (0x1)
+> > > [   32.630930]     # irq_cpuhotplug_test: pass:0 fail:1 skip:0 total:1
+> > 
+> > I managed to get an imx8mp-evk setup running (both little and big
+> > endian) and couldn't reproduce. But I'm guessing based on the logs that
+> > we're racing with pci_call_probe(), which disables CPU hotplug
+> > (cpu_hotplug_disable()) for its duration.
+> > 
+> > I'm not sure how to handle that.
+> > 
+> > 1. I could just SKIP the test on EBUSY. But that'd make for flaky test
+> >     coverage.
+> > 2. Expose some method to block cpu_hotplug_disable() users temporarily.
+> > 3. Stop trying to do CPU hotplug in a unit test. (It's bordering on
+> >     "integration test"; but it's still useful IMO...)
+> > 4. Add an EBUSY retry loop? Or some other similar polling (if we had,
+> >     say, a cpu_hotplug_disabled() API).
 
-+1, I think there is no backwards compat concern with this extension.
+Ah, I see that add_cpu() (cpu_subsys_online()) already has an -EBUSY
+retry loop, but remove_cpu() doesn't. So #4 seems like a good solution.
+It might even make sense to retry in cpu_subsys_offline(), rather than
+just in the test.
 
-> Could you add a selftest for this?
+I'll give this some thought for later though.
 
-yes, please
+> Here is an additional data point: It only happens with big endian tests.
+> This always happens in my setup, and it only happens when booting from
+> virtio-pci but not when booting from other devices.
+> 
+> I just re-ran the test and it passed this time, so this is apparently
+> a flake. I'd suggest to ignore it for now. If I see it again and find
+> a clean way to reproduce it we can have another look. The emulated PCIe
+> controller for imx8mp-evk isn't exactly stable, so this may just be a side
+> effect of emulation problems.
 
-> Could you add some comments in below uapi bpf.h header to new functionali=
-ty?
+This furthers my suspicion that it's a race with PCIe probing. On the
+failure case, the test is running right after some PCI scan logs.
 
-+1, I'd also appreciate if you can incorporate that into libbpf API
-doc comments in tools/lib/bpf/bpf.h, as we already have a decent
-description of this rather complicated API, so it would be nice to
-keep it up to date with this added semantics. Thanks!
+But I'm fine deferring for now, since it's not very reproducible.
 
-Also, please shorten the subject, it's way too long.
-
-pw-bot: cr
-
->
-> >
-> > > We have a 'flags' field in uapi header in
-> > >
-> > >          struct { /* struct used by BPF_MAP_*_BATCH commands */
-> > >                  __aligned_u64   in_batch;       /* start batch,
-> > >                                                   * NULL to start
-> > from beginning
-> > >                                                   */
-> > >                  __aligned_u64   out_batch;      /* output: next
-> > start batch */
-> > >                  __aligned_u64   keys;
-> > >                  __aligned_u64   values;
-> > >                  __u32           count;          /* input/output:
-> > >                                                   * input: # of
-> > key/value
-> > >                                                   * elements
-> > >                                                   * output: # of
-> > filled elements
-> > >                                                   */
-> > >                  __u32           map_fd;
-> > >                  __u64           elem_flags;
-> > >                  __u64           flags;
-> > >          } batch;
-> > >
-> > > we can add a flag in 'flags' like BPF_F_CLEAR_MAP_IF_KV_NULL with a
-> > comment
-> > > that if keys or values is NULL, the batched elements will be cleared.
-> >
-> > I just don't see what value this provides.
-> >
-> > > > BPF_MAP_LOOKUP keys/values =3D=3D NULL might be useful if we just w=
-ant
-> > > > the values/keys and don't want to bother copying the keys/values...
-> > > >
-> > > > BPF_MAP_LOOKUP keys & values =3D=3D NULL might be useful to count
-> > > > the number of populated entries.
-> > >
-> > > bpf_map_lookup_elem() does not have flags field, so we probably
-> > should not
-> > > change existins semantics.
-> >
-> > This is unrelated to this patch, since this only touches 'batch'
-> > operation.
-> > (unless I'm missing something)
-> >
-> > > > Cc: Alexei Starovoitov <ast@kernel.org>
-> > > > Cc: Daniel Borkmann <daniel@iogearbox.net>
-> > > > Cc: Stanislav Fomichev <sdf@fomichev.me>
-> > > > Signed-off-by: Maciej =C5=BBenczykowski <maze@google.com>
-> > > > ---
-> > > >   kernel/bpf/hashtab.c | 4 ++--
-> > > >   1 file changed, 2 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
-> > > > index 5001131598e5..8fbdd000d9e0 100644
-> > > > --- a/kernel/bpf/hashtab.c
-> > > > +++ b/kernel/bpf/hashtab.c
-> > > > @@ -1873,9 +1873,9 @@ __htab_map_lookup_and_delete_batch(struct
-> > bpf_map *map,
-> > > >
-> > > >       rcu_read_unlock();
-> > > >       bpf_enable_instrumentation();
-> > > > -     if (bucket_cnt && (copy_to_user(ukeys + total * key_size, key=
-s,
-> > > > +     if (bucket_cnt && (ukeys && copy_to_user(ukeys + total *
-> > key_size, keys,
-> > > >           key_size * bucket_cnt) ||
-> > > > -         copy_to_user(uvalues + total * value_size, values,
-> > > > +         uvalues && copy_to_user(uvalues + total * value_size,
-> > values,
-> > > >           value_size * bucket_cnt))) {
-> > > >               ret =3D -EFAULT;
-> > > >               goto after_loop;
-> > >
-> >
-> >
-> > --
-> > Maciej =C5=BBenczykowski, Kernel Networking Developer @ Google
->
->
+Brian
 
