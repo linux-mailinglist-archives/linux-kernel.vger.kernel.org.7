@@ -1,114 +1,118 @@
-Return-Path: <linux-kernel+bounces-780874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C190B30A70
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:36:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 682E7B30A71
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B0181CC07D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:36:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A51277A3248
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF5C7E792;
-	Fri, 22 Aug 2025 00:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D3F81732;
+	Fri, 22 Aug 2025 00:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="msvGCuMX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=cs.stanford.edu header.i=@cs.stanford.edu header.b="hH4XfRVx"
+Received: from smtp1.cs.Stanford.EDU (smtp1.cs.stanford.edu [171.64.64.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E80322E;
-	Fri, 22 Aug 2025 00:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E37B322E
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 00:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=171.64.64.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755822982; cv=none; b=W8WlEHoCm0j9U3JiGvx4EegT3RbE3Y9o11x6+m64hlaDGaRMIB2cz66z0UrkhEmpMA9DvHaIfDR3hklyXEZ/3e/FzuWJ90mrl+sXifvOzLKTNhcum4doG/WYpvL3RbhyjCum7XtYEuFBM6to82Tk8u9U0PDN3DdJfyKpA+zu2w4=
+	t=1755823257; cv=none; b=kY7ouQCwTD0r7/BEa9F0oE4cdswd71vJQlMrXAcXnciuYSbAo5tWat9qfremvv1oqd5VFMp8YjWlwWiPEUqQkLLcs2CPSMQb4CeS9kkdPJ1KNn2CwYFD7WZSPbxaOiclHFrxA6aFdcJz4JH7ayt1mbCOzUM9LNxPfmRLm4qMUaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755822982; c=relaxed/simple;
-	bh=phIRh9Mt3+S/rwTUKbjev/Q6p8ulUBAJlUSelhRf/sY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n1zVJh+UwDugIBco6imjFSwzZ6+lwhflnhUOg5LGARc6IC6M4Axh6GYDoF+rkqFLWPaitx2QJeQ5NtZe12h51SuW1JaGHyDXO9vDXBAxlq8xFApfKIl5UIwzUNuyjaIJWF1XLGi7RTX7tf4k3f9EZWVUbT7Wj039X4BccQXMa7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=msvGCuMX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FEC6C4CEEB;
-	Fri, 22 Aug 2025 00:36:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755822981;
-	bh=phIRh9Mt3+S/rwTUKbjev/Q6p8ulUBAJlUSelhRf/sY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=msvGCuMXFqCfoXk6IWjuAsPbROe5Y/mf5f6gJv2ixGlCSubOJQW+zcAkplMTsGeQt
-	 yGN05AV/59CDwsAun7JH8HY1bJ0Q/1kSqTpx1eBInHVl90GBltxwTo9C/5HNZtikvB
-	 kn7G5SNlNmWIPZqOxOlYaqjmhgNJb9G/dR7+vpa8jZPbB6EpKIPl4EkmJ6Uzz/W4j1
-	 9lIBeoJhgd+1LFg15Zdhm14uIBHb6c2uDDsuIyDpT+VyTMRghboLVdLHiOZV7MFHV8
-	 /Ehrl233plJDckMBICdTNN+nH+uwjJmXDZ5Qmr3n810Ey2kxltkvQi904cPBlcxLaQ
-	 WHKHh0Eb7+Npg==
-Date: Thu, 21 Aug 2025 17:36:20 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Xu Liang <lxu@maxlinear.com>, Heiner
- Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 1/3] net: phy: mxl-86110: add basic support
- for led_brightness_set op
-Message-ID: <20250821173620.367ce05c@kernel.org>
-In-Reply-To: <aKXOzyAg728qcylz@pidgin.makrotopia.org>
-References: <a63f1487c3d36fc150fa3a920cd3ab19feb9b9f9.1755691622.git.daniel@makrotopia.org>
-	<73c364ee-2712-4b95-a05b-886c3e4c4e15@lunn.ch>
-	<aKXOzyAg728qcylz@pidgin.makrotopia.org>
+	s=arc-20240116; t=1755823257; c=relaxed/simple;
+	bh=lnMZ0Fg1/5oZCOc3UI2+lY12/jAJB/8QMggC+0CJc3I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DIk8vV5Y4msnDxyHa4BexpFaq5U2K9gT5A/rjTtzn1elemJpknvykTWfKMCIx4xXEK0H0HaSt75KMMy11Z5HpLNQn3cBq+oHkS+sSj6oflwv5A+FmQmaF+j3A0JFwAmO7xQAivovZxM9vLqDbsBarehk9MRiFVrqIqGvmhXXdoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.stanford.edu; spf=pass smtp.mailfrom=cs.stanford.edu; dkim=pass (2048-bit key) header.d=cs.stanford.edu header.i=@cs.stanford.edu header.b=hH4XfRVx; arc=none smtp.client-ip=171.64.64.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.stanford.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs.stanford.edu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=cs.stanford.edu; s=cs2308; h=Content-Transfer-Encoding:MIME-Version:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=mgp2oXtmlIEgm3VhFQhAud1V7DVV3rLBaZVTH1PpXek=; t=1755823255; x=1756687255; 
+	b=hH4XfRVxt+FY9Mx18DNa5JyXMkQdiOUG+r9tp9PHWhKvDKNUbagoYoW514nSvz00iNBUJeykLOu
+	ooc64GobfUrVGmFzZtu6hyGfD0/muLIUHb8k6UqfJRtf7s+nB7rDhdHCnjTJ7b3EZGPpiTlYGMlI+
+	XQYxUyqeeztAI+CLsSjhPYWZm0403yNKCeFdRqqll5zJ6p4b7AvDydxcfsIHGKC6RaU7VFkfqrasC
+	ho/wb9BfFPJZShzXFI7D0OoxRVZHdCbchc40tC7UuaedrBEX0oqR6D/RSmn1Nky6T+i0o26nlG+5/
+	A16FjEOJzFuD8GG5oRea2awZIxMrwNw2v3wg==;
+Received: from 135-180-5-199.fiber.dynamic.sonic.net ([135.180.5.199]:57628 helo=macbookair.lan)
+	by smtp1.cs.Stanford.EDU with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.94.2)
+	(envelope-from <jgnieto@cs.stanford.edu>)
+	id 1upFpo-0003vb-T9; Thu, 21 Aug 2025 17:40:49 -0700
+From: Javier Nieto <jgnieto@cs.stanford.edu>
+To: luiz.dentz@gmail.com,
+	marcel@holtmann.org
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Javier Nieto <jgnieto@cs.stanford.edu>
+Subject: [PATCH] Bluetooth: hci_h5: avoid sending two SYNC messages
+Date: Thu, 21 Aug 2025 17:39:13 -0700
+Message-Id: <20250822003912.41754-1-jgnieto@cs.stanford.edu>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -1.0
+X-Scan-Signature: 3e263c829a24e9e508d860775f9d44fb
 
-On Wed, 20 Aug 2025 14:34:07 +0100 Daniel Golle wrote:
-> > > +	if (index >= MXL86110_MAX_LEDS)
-> > > +		return -EINVAL;
-> > > +
-> > > +	/* force manual control */
-> > > +	set = MXL86110_COM_EXT_LED_GEN_CFG_LFE(index);
-> > > +	/* clear previous force mode */
-> > > +	mask = MXL86110_COM_EXT_LED_GEN_CFG_LFM(index);
-> > > +
-> > > +	/* force LED to be permanently on */
-> > > +	if (value != LED_OFF)
-> > > +		set |= MXL86110_COM_EXT_LED_GEN_CFG_LFME(index);  
-> > 
-> > That is particularly complex. We know index is a u8, so why not
-> > GENMASK_U8(1 + 3 * index, 3 * index)? But set is a u16, so
-> > GENMASK_U16() would also be valid.  
-> 
-> I chose this construct to avoid reusing the macro parameter as gcc would
-> rightously complain about that potentially having unexpected side-effects.
-> 
-> Eg.
-> 
-> #define FOO(a) ((a)+(a))
-> 
-> Now with var=10, when calling FOO(var++) the result will be 21 and
-> var will be equal to 12, which isn't intuitive without seeing the
-> macro definition.
-> 
-> Also using GENMASK_TYPE would not avoid the problem of macro
-> parameter reuse.
-> 
-> However, I agree that the macro itself is also weirdly complex and
-> confusing (but at the same time also very common, a quick grep reveals
-> hundreds of occurances of that pattern in Linux sources), so maybe we
-> should introduce some generic helpers for this (quite common) use-case?
-> I can do that, but I certainly can't take care of migrating all the
-> existing uses of this pattern to switch to the new helper.
+Previously, h5_open() called h5_link_control() to send a SYNC message.
+But h5_link_control() only enqueues the packet and requires the caller
+to call hci_uart_tx_wakeup(). Thus, after H5_SYNC_TIMEOUT ran out
+(100ms), h5_timed_event() would be called and, realizing that the state
+was still H5_UNINITIALIZED, it would re-enqueue the SYNC and call
+hci_uart_tx_wakeup(). Consequently, two SYNC packets would be sent and
+initialization would unnecessarily wait for 100ms.
 
-IMHO this is one of the cases where the code would be far clearer
-without he macros..
+The naive solution of calling hci_uart_tx_wakeup() in h5_open() does not
+work because it will only schedule tx work if the HCI_PROTO_READY bit is
+set and hci_serdev only sets it after h5_open() returns. This patch
+removes the extraneous SYNC being enqueued and makes h5_timed_event()
+wake up on the next jiffy.
 
-#define MXL86110_COM_EXT_LED_GEN_CFG			0xA00B
-# define MXL86110_COM_EXT_LED_GEN_CFG_LFME(x)		(1 << (3 * (x)))
-# define MXL86110_COM_EXT_LED_GEN_CFG_LFE(x)		(2 << (3 * (x)))
-# define MXL86110_COM_EXT_LED_GEN_CFG_MASK(x)		(3 << (3 * (x)))
+Signed-off-by: Javier Nieto <jgnieto@cs.stanford.edu>
+---
+ drivers/bluetooth/hci_h5.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Right?
+diff --git a/drivers/bluetooth/hci_h5.c b/drivers/bluetooth/hci_h5.c
+index d0d4420c1a0f..863ee93dd8a8 100644
+--- a/drivers/bluetooth/hci_h5.c
++++ b/drivers/bluetooth/hci_h5.c
+@@ -213,7 +213,6 @@ static void h5_peer_reset(struct hci_uart *hu)
+ static int h5_open(struct hci_uart *hu)
+ {
+ 	struct h5 *h5;
+-	const unsigned char sync[] = { 0x01, 0x7e };
+ 
+ 	BT_DBG("hu %p", hu);
+ 
+@@ -243,9 +242,11 @@ static int h5_open(struct hci_uart *hu)
+ 
+ 	set_bit(HCI_UART_INIT_PENDING, &hu->hdev_flags);
+ 
+-	/* Send initial sync request */
+-	h5_link_control(hu, sync, sizeof(sync));
+-	mod_timer(&h5->timer, jiffies + H5_SYNC_TIMEOUT);
++	/*
++	 * Wait one jiffy because the UART layer won't set HCI_UART_PROTO_READY,
++	 * which allows us to send link packets, until this function returns.
++	 */
++	mod_timer(&h5->timer, jiffies + 1);
+ 
+ 	return 0;
+ }
+-- 
+2.43.0
+
 
