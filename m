@@ -1,132 +1,189 @@
-Return-Path: <linux-kernel+bounces-782520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06CFAB32185
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:30:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8488B32187
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B572EB22738
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:30:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B45AB227B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65054308F3D;
-	Fri, 22 Aug 2025 17:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0626285CB6;
+	Fri, 22 Aug 2025 17:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MUzUaI8m"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qRX6aCzQ"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C027286411
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDCE33F9;
+	Fri, 22 Aug 2025 17:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755883807; cv=none; b=lHQCttpTd+3kEJiaQiXTBr5c9bQARCtZ2CZPlsKv76sBYiZ56J5gq3WGjj6mbz64F0wYhoEhVn5bdVcFRElYCRPXC5uM1NziIviN3IlKYrTJU79syq147ZIBRoHDQoNYUiGrwOSwQZXHw5tzZ8+A5NQri1mqA5LlnWfYTNb5xUo=
+	t=1755883916; cv=none; b=GvhznZLB1NBI4RNZXEqkcgRSFU8z+uy1DNDBMD+7F149B8ZDBRMTgehZ7Zq960ejRTXK2n+nQ8seFkodB4cQ42sjoEAtLqKQPGf7z+etBwVNPorwPqMt0wlfnfesvyhbMCw3zNfljWhaS7EMZW6CDPGcQiEHW3i8v2BVwwnX16A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755883807; c=relaxed/simple;
-	bh=dZXIUtMf3TDWiRiuLsGcHlQc9zxF8JnGlI2ARPPevpI=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=tfTh4qsRgPpJVMyQtlQM6MKSPvY/TtbnbKi0jn1eJw5qOmzMTU17p4OrhXJg531Bkr6yi2L0waXXJW7R/J24RHWKVOBlXAGuiSe+kSByhaLo+C2M+3WwUWFkys5rOa6zRv/M/ioz7Bm/oEQoFEi7Jbsh7xrf4ZEZ5jb0Wm36gwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MUzUaI8m; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61a207a248cso791a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:30:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755883804; x=1756488604; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=252UfE/vBQ9r0TEDviOY2kI9MCQU3kCqK3n/Zyt8oR4=;
-        b=MUzUaI8mJTb04Cv1RizekLuSro6+E1RI7wOyeMPPe/Az9ioxgR3JS+xjdFk3D2sCVt
-         JqNcBqbz3rEhFSDG73wGd65c2VjOgX52aIQHxytyz69SkEuSaO4q1JEvdgkoJnkHRq+p
-         MyhF89IQ19MVb6HD04ooFlq32svTEbiRPT4cwyMkK9pjSsfYTgogmNpR7T8BAjHMes1U
-         yoz+brD9LIcloMHBxHxp10Qpi7wVzvRJaXYIACI3yNA0u+7lYs3iWHpNdBGfDa0jnblo
-         5oZMPRS4j2aZ6Y0GiUt1zyfTF9GKlTR5dgxm59qTjRKoeaEMCnDY+6U1hE7oi2wxbwrY
-         Hf4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755883804; x=1756488604;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=252UfE/vBQ9r0TEDviOY2kI9MCQU3kCqK3n/Zyt8oR4=;
-        b=aDvY0m2uhl7dSg7zrj/yCxfCX8nH746QP5JcQQGHdso70gLkj8Sw168Lf+Nxi2Qsg7
-         wPSlIVhtcSA4OsUDPdLXilZBYDG9fmcM897ulW78VibMzhxRAqYeB/Z/oTJziVo5r7Gg
-         OfMRRPDxMHFm3Zu7WN+8CWRKc0LrGQbCSAxt/mx7Bd50L2KBeWWnL+PgysGEV/WSQmLd
-         oAzWZJp0qooOE6wpZ7ImrFLzzfYjEqLpFlGEjeJs46DSr+dCq419fmWJxkcG/0acTXBB
-         OzG4lhTUt01tiorVGIQpo5E08TSc3kiSJ6mBa3eCZ26gPc3FAMZzNNQm4EEOr3/l2Ma2
-         IIMA==
-X-Forwarded-Encrypted: i=1; AJvYcCXf0rDcxjw7ymsT2cn5ugGuN9gny7YYcCTCwnDGT70I7QoCQEv2TaEkaskXhM+GZ8e/TyUyV8BYFII2NJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6OUNbEUJofQI3mQNUPmOwwwz1x7iOF1cZfVFPwQLVtbvQGzCf
-	PyHGUhQGE9dq8o33Y2tVojlbkabHWQgVZY0fnWvFeC5aGNN9lKuan5NE3RoyOPvT4Kh7KFrrdzb
-	fXQaU6HTz8UBFJxmoh56+OR14Ul+jmrAbjv5/kHF4
-X-Gm-Gg: ASbGnctEx5k+LMlm2Wov8hwHkEpKSRlAsXNwkWuCFZAt/l8opG21Zr7aQR+xPb9Xwma
-	acc4opVEezxQDJULEPDIWCdrnSd4llffGPtEraLaxIioZTBIAnQG/ftRmfysIW4EQ7bwzVbY3qb
-	dcsPu5E8jXuHNj3G8J435x6+AHtcHU2RCrSFjxp1tpnT8gIptKJwskyyidzPREhEXKNCOq3/Ek7
-	IphmryEqdXvQBRToOIxPAvAeYtRvtJesJjmce4iznAm
-X-Google-Smtp-Source: AGHT+IHnj5c0AQcYtFrhkC1wYBFb2YmVQM0FxMX03JVK1XoHfCrOErryzWCv9sPurRICdZwmIRfZ9c2Qqy8fv/ZcGyg=
-X-Received: by 2002:aa7:c458:0:b0:61c:18b3:4e4c with SMTP id
- 4fb4d7f45d1cf-61c1d7fd22bmr100263a12.5.1755883804135; Fri, 22 Aug 2025
- 10:30:04 -0700 (PDT)
+	s=arc-20240116; t=1755883916; c=relaxed/simple;
+	bh=N+YRCViQliEpY8xUYPaJut5c4EM3UG432EMSdekUGhA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=H3Lu5RsJUUCTdvhTaEm1ZPyiQbDGkyHQOVZFuWqxSe9sqPhtMBwHqYhBtfF2/71KLiilj3na93eYVSi2KNLuEpJKFiC1MVX0l5yRwQn/nTV0AhbEIS274Ppfo8lSGThnTVLqPRXKssvyQDlfUiVrVPVIuoBrE6B8+lBYi5VDrj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qRX6aCzQ; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57MHVkJh766696;
+	Fri, 22 Aug 2025 12:31:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755883906;
+	bh=8GA92uGphBr4Q50n20UsbkKpDY7geIAZlyZ30qOdmF0=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=qRX6aCzQJ1aFcMkw34uoaOYnqhaGNDZSwwy3MIn1YN/5rgWHcv6R9O398qK43Vnxq
+	 UfZcvVzvuK8z8m8CiS8CfsUrq/WU3rbnY/vpwRhnmJ8ut5LyfWPhOD26XwjIA070xA
+	 lPSIS709KXU77ISrozip9hKUu6Rdq1wslnq09p0U=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57MHVjMQ3073252
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 22 Aug 2025 12:31:46 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 22
+ Aug 2025 12:31:45 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 22 Aug 2025 12:31:45 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57MHViMB4176033;
+	Fri, 22 Aug 2025 12:31:45 -0500
+Message-ID: <32d4b3c2-4017-4ad2-8527-493b6d3b7ecb@ti.com>
+Date: Fri, 22 Aug 2025 12:31:44 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Lokesh Gidra <lokeshgidra@google.com>
-Date: Fri, 22 Aug 2025 10:29:52 -0700
-X-Gm-Features: Ac12FXypkWhwPQn0ViSOI46R77FnBhepBanwmGZ60DMp2xuHG2FRINOwhF4PUNM
-Message-ID: <CA+EESO4Z6wtX7ZMdDHQRe5jAAS_bQ-POq5+4aDx5jh2DvY6UHg@mail.gmail.com>
-Subject: [DISCUSSION] Unconditionally lock folios when calling rmap_walk()
-To: David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Harry Yoo <harry.yoo@oracle.com>, Zi Yan <ziy@nvidia.com>, Barry Song <21cnbao@gmail.com>, 
-	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, Peter Xu <peterx@redhat.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
-	android-mm <android-mm@google.com>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	Jann Horn <jannh@google.com>, Rik van Riel <riel@surriel.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 33/33] arm64: dts: ti: k3-j7*-ti-ipc-firmware: Switch MCU
+ R5F cluster to Split-mode
+To: Beleswar Prasad Padhi <b-padhi@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250814223839.3256046-1-b-padhi@ti.com>
+ <20250814223839.3256046-34-b-padhi@ti.com>
+ <9a3f4271-ada2-48aa-b99d-023619ec5e12@ti.com>
+ <a076e204-aa71-430e-a762-b8111d23d2e6@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <a076e204-aa71-430e-a762-b8111d23d2e6@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi all,
+On 8/22/25 12:26 PM, Beleswar Prasad Padhi wrote:
+> Hi Andrew, Nishanth,
+> 
+> On 8/15/2025 9:18 PM, Andrew Davis wrote:
+>> On 8/14/25 5:38 PM, Beleswar Padhi wrote:
+>>> Several TI K3 SoCs like J7200, J721E, J721S2, J784S4 and J742S2 have a
+>>> R5F cluster in the MCU domain which is configured for LockStep mode at
+>>> the moment. The necessary support to use MCU R5F cluster in split mode
+>>> was added in the bootloader. And the TI IPC firmware for the split
+>>> processors is already available public.
+>>>
+>>> Therefore, Switch this R5F cluster to Split mode by default in all the
+>>> boards using TI IPC Firmware config (k3-j7*-ti-ipc-firmware). This
+>>> gives out an extra general purpose R5F core free to run any applications
+>>> as required. Lockstep mode remains default in the SoC level dtsi, so
+>>> downstream board dts which do not use TI IPC Firmware config should not
+>>> be impacted by this switch.
+>>>
+>>> Users who prefer to use the fault-tolerant lockstep mode with TI IPC
+>>> firmware config, can do that by setting `ti,cluster-mode` property to 1.
+>>
+>> What a user prefers and other configuration like that does not belong
+>> in devicetree, which should only describe the hardware.
+>>
+>> Configuration should be done using the normal methods, like kernel
+>> cmdline, module params, ioctls, etc.. Maybe we can even set the mode
+>> based on some signal in the firmware itself, like in the resource table.
+> 
+> 
+> Agreed with your point.. But that is going to take a long time to implement
+> + upstream. I interpreted from [0] that it was okay to enable this split mode
+> once we had refactored the firmware related nodes in an overlay? (Since
+> people can swap out the dtsi if they don't need the firmware config)
+> 
+> Nishanth/Andrew,
+> Please advise if this patch is okay or should be dropped in the revision...
+> 
 
-Currently, some callers of rmap_walk() conditionally avoid try-locking
-non-ksm anon folios. This necessitates serialization through anon_vma
-write-lock elsewhere when folio->mapping and/or folio->index (fields
-involved in rmap_walk()) are to be updated. This hurts scalability due
-to coarse granularity of the lock. For instance, when multiple threads
-invoke userfaultfd=E2=80=99s MOVE ioctl simultaneously to move distinct pag=
-es
-from the same src VMA, they all contend for the corresponding
-anon_vma=E2=80=99s lock. Field traces for arm64 android devices reveal over
-30ms of uninterruptible sleep in the main UI thread, leading to janky
-user interactions.
+I would drop this and send it later as part of its own series, it doesn't belong
+in this series which should be refactors only, this patch is changing things, no
+reason to mixed the two types of patches.
 
-Among all rmap_walk() callers that don=E2=80=99t lock anon folios,
-folio_referenced() is the most critical (others are
-page_idle_clear_pte_refs(), damon_folio_young(), and
-damon_folio_mkold()). The relevant code in folio_referenced() is:
+Andrew
 
-if (!is_locked && (!folio_test_anon(folio) || folio_test_ksm(folio))) {
-        we_locked =3D folio_trylock(folio);
-        if (!we_locked)
-                return 1;
-}
+> [0]: https://lore.kernel.org/all/20250523114822.jrv73frz2wbzdd6d@falsify/
+> 
+> Thanks,
+> Beleswar
+> 
+>>
+>> Andrew
+>>
+>>>
+>>> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+>>> ---
+>>> arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi | 1 +
+>>> arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi | 1 +
+>>> arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi | 1 +
+>>> .../boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi | 1 +
+>>>   4 files changed, 4 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi
+>>> index 8eff7bd2e771..ddf3cd899d0e 100644
+>>> --- a/arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi
+>>> +++ b/arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi
+>>> @@ -94,6 +94,7 @@ &main_timer2 {
+>>>     &mcu_r5fss0 {
+>>>       status = "okay";
+>>> +    ti,cluster-mode = <0>;
+>>>   };
+>>>     &mcu_r5fss0_core0 {
+>>> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi
+>>> index 5b3fa95aed76..57890a3b38a2 100644
+>>> --- a/arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi
+>>> +++ b/arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi
+>>> @@ -211,6 +211,7 @@ &main_timer15 {
+>>>   };
+>>>     &mcu_r5fss0 {
+>>> +    ti,cluster-mode = <0>;
+>>>       status = "okay";
+>>>   };
+>>>   diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi
+>>> index 40c9f2b64e7e..7ee8a8615246 100644
+>>> --- a/arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi
+>>> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi
+>>> @@ -179,6 +179,7 @@ &main_timer5 {
+>>>   };
+>>>     &mcu_r5fss0 {
+>>> +    ti,cluster-mode = <0>;
+>>>       status = "okay";
+>>>   };
+>>>   diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi
+>>> index b5a4496a05bf..e12fa55a4df0 100644
+>>> --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi
+>>> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi
+>>> @@ -254,6 +254,7 @@ &main_timer9 {
+>>>   };
+>>>     &mcu_r5fss0 {
+>>> +    ti,cluster-mode = <0>;
+>>>       status = "okay";
+>>>   };
+>>
 
-It=E2=80=99s unclear why locking anon_vma exclusively (when updating
-folio->mapping, like in uffd MOVE) is beneficial over walking rmap
-with folio locked. It=E2=80=99s in the reclaim path, so should not be a
-critical path that necessitates some special treatment, unless I=E2=80=99m
-missing something.
-
-Therefore, I propose simplifying the locking mechanism by ensuring the
-folio is locked before calling rmap_walk(). This helps avoid locking
-anon_vma when updating folio->mapping, which, for instance, will help
-eliminate the uninterruptible sleep observed in the field traces
-mentioned earlier. Furthermore, it enables us to simplify the code in
-folio_lock_anon_vma_read() by removing the re-check to ensure that the
-field hasn=E2=80=99t changed under us.
-
-Thanks,
-Lokesh
 
