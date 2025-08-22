@@ -1,282 +1,250 @@
-Return-Path: <linux-kernel+bounces-781626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BEC2B314B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:06:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05115B314BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 506B3B67E39
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:04:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D4DC7A36E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114252C0260;
-	Fri, 22 Aug 2025 10:05:43 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61987296BAF;
+	Fri, 22 Aug 2025 10:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="azy5aiMP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510F4291C3F
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167B481724
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755857142; cv=none; b=kP7BHvOUCulFbyFC8o+FHTHsjFtr3u2Rosgk5TBv5B1aWU2ymzpxT3PGkyNenvoaLhgf05vA7u7p78oeuTGxGZ+FOjzcx0Dj2IWAvl2IAPl+Ze/zH76e9a8zU/xggQZCMiLKjtmOmP7lBvrRFqK5DHRHhHC+EFcTHPK0pyVXlw4=
+	t=1755857293; cv=none; b=ubrFLKzW2zGXRFaDMI0lqfZOqrx7YvSK4X02XgqCl4H7JfykapBR1t0eN4eTtiLh/hrWBMFoaswmJy/zHE/Q1Na7Hs3msi79QntrizNWj4fzswW7MT/u5K24U8N0PqKew8fFSy6hdjGaZAIcycOq3gXJUGyRtIbYthZ3QLZu5fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755857142; c=relaxed/simple;
-	bh=a3muh3rL5VyUL97AINRZ4oq9t9ey4aN1fwiASR6VVRI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HTqkZZYwb/uoH8VJpCUPOiFCuLvWJUNFWH8WrcX+by/H5xvsSwL/CyHrOlQ23hujvKUGvoGMth9DL9NBqKDUVH26SHbm8kGkgTMED8abl8ZAINNIybW0/h8vDdeCCLbIMIbPghenmWB0vhVGU2JjDos5tXJvh+BU9wlatixyVdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3e67df0ee00so47253205ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 03:05:40 -0700 (PDT)
+	s=arc-20240116; t=1755857293; c=relaxed/simple;
+	bh=VTMq5C98d5sTiqzfpTfra0ptRLg99zikanaHprFiL28=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qs++kMvTsGT2xAFJinzjhpBz+oHqkXETTAc6/+0iaTUifhIektHu7zLQyx+kTMGSg2U3SUIsH6Cf66CD0e8PwnJVjtLoxTNIPMYTnORqOMVXxrIzshe6cPUyBTfmF09XnQJIE49aQl2pLp2+fa2T03QjfhmjD54kMPxW7WoRDNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=azy5aiMP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755857290;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QUnkbTSabMcbQIfqW2wjwFOAR821LvcoUL/CideIRuc=;
+	b=azy5aiMPP+rQYt6uySEg7ccyvCPkee5iBgXtr8kqvcBYlzJWdBIW9mx8s7r8To12m51Yg3
+	98t+YLQGDDFwkXBtGQSZjTCUZZdPUsSUsrGU4zSCM5EYsKS0Ynyvelt+2k2vbcmtq5C1VU
+	i3ZJZmQT2SUazOGlm2DdWJYsGyUnlC8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-541-XJ76G8z_NciU7dQ0n3rjrA-1; Fri, 22 Aug 2025 06:08:09 -0400
+X-MC-Unique: XJ76G8z_NciU7dQ0n3rjrA-1
+X-Mimecast-MFC-AGG-ID: XJ76G8z_NciU7dQ0n3rjrA_1755857288
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45a1b0b14daso9959345e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 03:08:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755857139; x=1756461939;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=juGpK4kSjchRc2LkFcW3uTYahVs1DyJubiPrfmsEuGA=;
-        b=GNhJx2bQKTGEnqe1qI5LA0X/ANrC15S5m6L75K4/NgMKMaIlR9w9PxJjGpQmSJXCZj
-         Ohkr0KadsPQb/qDuV6VUHycAIp6t8B22d0KgEWkc15c/RwvXn1HIgj++rXmkmdUdqt1d
-         le62J6bT5YoD55tNI8HwlLojs2r1aYfXyAvJyeaVGkjUh1eToA9HZfjz1suaKv3/zVxY
-         DofKJickt22mVOU7iqQ+6h3NeaxcUqjFE4TLOwe9aeVJEjcwTXMl5JNPqn0Nkk76C4wF
-         8T/ZFOnlHh0oL4mke1c46If8JDJ+odjJUfY8FMW8n4v6VYDkjD8mVLkz45DYG3GHbdco
-         cFhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXy0lXc0VDzURyEmaBdbmDsAg047iiaHtpIY/xc+koFgcFjb/5TsytRi6DpDmYZDo9K+m3nVwlck3Fi5yw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN4+lj4GzzdfIWBpTzit+DLOO/pPxXi/3a0j9270LI5fOGI8k+
-	DuFOdNNmj+1ibY1ybK6Cp7xI0wd8uiST6mjhVU/sDZO8wzAxSgwyfO00V/moBh2eCBlUfg0YJZy
-	1nOcka138VSPfCW5xN+HOz7T3qzPvGY2xJeYHUM09LKwfa54PBSg3323cX64=
-X-Google-Smtp-Source: AGHT+IFYX/e/xC4ZNjaIIOYEvn5cXgmC4kzJH9oM9hp/VYR/NxaQ2PWTZUn4QxbO6a2fPsikd4K3KaLvGysC2Z5Sb/XvJw/yL8e8
+        d=1e100.net; s=20230601; t=1755857288; x=1756462088;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QUnkbTSabMcbQIfqW2wjwFOAR821LvcoUL/CideIRuc=;
+        b=GjVDWXAzcWZmm1+XdeX84aUSTCGspNP6PwtI8gMwWUlDXqrBMgygnylfjKcKk1cmvL
+         KroA0XHtAOnHlF2kqyQ8qFLI1E06gAhQysZlzZMLsB5/PahROOgpm+ygSY3kd1bpCep3
+         BQ79TixnH9ZJ7hSBy+6t4N/H9Sjhjg5LouX3T44RmoXLSxIdnK7TGPRJpGcFssjViUkI
+         QfgwNrQD6DCHlp87AGU99MEkz+Vm28gxtmM72sHJ411BxyEXRJSP0mTf95XLnCV3KPhg
+         pvfZod8bx4Vxxm0VzUllWEyo4GvK9hWeLyxnlnE/8RKV+f3KYW/hf6MmGastQoXqkIVj
+         c6qw==
+X-Forwarded-Encrypted: i=1; AJvYcCUq2vWnwVGLsCKX7afbdPtwldQySQzmBqbnnW4l6l+pwcjfrtiK5odPReTmpf86xKRB7BnjVVYB9bjOXu0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAdDTYD3WjOKmiszS2BR5W+NbQ6atOfgZjsU/BfJxBXTKnqUBZ
+	9P2m8sBjEkA4FXUjfiVf4wgHhwUYk/9u0fVWdEe6bCzIj57QlPm6ITgOYxkIDvO0r2EDwngOqvp
+	kDU3g3Ryg4CK5OQIa9JK5zolNXJRlBq2STn77bJkdAKLuPfDvmLIiy7NDqlLVyii0CA==
+X-Gm-Gg: ASbGncumHlDg31nH+46i5OCjMYj6li0fmNKfTWGY1VOTD9dSCzDAv7A6M8jXtPnrTMS
+	uj24PjXBmDH+bwisZh3xWWV5RA8oG9M+Pt1OWMnT/UEUkOQDzKxdDPIRe4TH+7aifeGvGep8i1n
+	6+EL74YrS49dWc512e40U59TDklFdLzDY0Zm9JB0anZkfhG7SpI+d+/40JcsXPkYqlxo5k1tzcE
+	XP1vlRC3CsuFbGSiZl9G0RlNZMBljXxpdD7bIXtIwkkdqk7Iwu5t44YoZrgazyaz1hBoRe9RyY0
+	2MMm3DiK/QhXOv474szpCV3jVHIcAjOGh+0crKYcrjBVijuRvJDIgk78qlTawVwRyjD8KhJcKwf
+	mZ9uuBAjYOg8COHgcsjUwg+rEfs2vPusDu2oVGKDj+dHdIKve8vFBff3tl98rKmtqGM4=
+X-Received: by 2002:a05:600c:4f8b:b0:459:e398:ed80 with SMTP id 5b1f17b1804b1-45b517e9de7mr17372025e9.32.1755857287937;
+        Fri, 22 Aug 2025 03:08:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF/I2g5Hwlv8A5Dsi6tWz98HgDHMBLctARhHYJlNSxF7aASwtTM7voaNtLhvwMa1MvPTFOctQ==
+X-Received: by 2002:a05:600c:4f8b:b0:459:e398:ed80 with SMTP id 5b1f17b1804b1-45b517e9de7mr17371255e9.32.1755857287336;
+        Fri, 22 Aug 2025 03:08:07 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f2e:6100:d9da:ae87:764c:a77e? (p200300d82f2e6100d9daae87764ca77e.dip0.t-ipconnect.de. [2003:d8:2f2e:6100:d9da:ae87:764c:a77e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b50dc023dsm32426085e9.5.2025.08.22.03.08.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Aug 2025 03:08:06 -0700 (PDT)
+Message-ID: <f6ef7e0f-0b48-4028-ba79-4a5ec66e720d@redhat.com>
+Date: Fri, 22 Aug 2025 12:08:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fe1:b0:3e5:7e26:2f90 with SMTP id
- e9e14a558f8ab-3e922504b72mr41859795ab.24.1755857139359; Fri, 22 Aug 2025
- 03:05:39 -0700 (PDT)
-Date: Fri, 22 Aug 2025 03:05:39 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a840f3.a00a0220.33401d.0255.GAE@google.com>
-Subject: [syzbot] [serial?] KASAN: slab-out-of-bounds Read in vc_do_resize (2)
-From: syzbot <syzbot+23804718314de4b145d4@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] copy_process: Handle architectures where
+ sizeof(unsigned long) < sizeof(u64)
+To: "schuster.simon@siemens-energy.com" <schuster.simon@siemens-energy.com>
+Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dinh Nguyen <dinguyen@kernel.org>, Christian Brauner <brauner@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Kees Cook <kees@kernel.org>
+References: <20250821-nios2-implement-clone3-v1-0-1bb24017376a@siemens-energy.com>
+ <20250821-nios2-implement-clone3-v1-1-1bb24017376a@siemens-energy.com>
+ <8c6239a9-8414-469c-9b94-a43735b4e882@redhat.com>
+ <FR2P281MB15445D806CF865A0E1CD8FFCB53DA@FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <FR2P281MB15445D806CF865A0E1CD8FFCB53DA@FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 22.08.25 10:52, schuster.simon@siemens-energy.com wrote:
+> On Thu, Aug 21, 2025 at 11:14:00PM +0200, David Hildenbrand wrote:
+>> Sounds reasonable.
+>>
+>> But is this actually something that is already exposed before patch#2
+>> on other architectures?
+> 
+> I'm not sure, but I would assume so, as e.g., arch/arm seems to have
+> support for clone3, but also seems to use 32bit unsigned longs as far as
+> I can tell and, thus, should also be affected:
+> 
+> $ cat /tmp/printulsize.c
+> #include <stdio.h>
+> 
+> int main(void) {
+> 	printf("sizeof(unsigned long): %zu\n", sizeof(unsigned long));
+> }
+> $ arm-linux-gnueabi-gcc-12 /tmp/printulsize.c -o printulsize
+> $ qemu-arm -L /usr/arm-linux-gnueabi ./printulsize
+> sizeof(unsigned long): 4
+> 
+> Is the above test enough to warrant a "Fixes: ", or do we need a
+> reproduced kselftest failure on some arch for that?
 
-syzbot found the following issue on:
+It would be good to describe that this would be an issue on nios2 and 
+was reproduced there without this fix. Then you can mention that this 
+should be an issue on 32bit archs with clone3 support as well, like arm.
 
-HEAD commit:    8d561baae505 Merge tag 'x86_urgent_for_v6.17_rc2' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=105f6ba2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4a59f5ce3f5878f0
-dashboard link: https://syzkaller.appspot.com/bug?extid=23804718314de4b145d4
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+Then we should add a Fixes:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> 
+>> (I assume above output is with patch #2 but without patch #1)
+> 
+> Yes, sorry, that one is on me; I've naturally first implemented support
+> for clone3 on nios2 and then investigated the test failures, but somehow
+> deemed it wise for whatever reason to switch the commit order in the
+> patch submission...
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3c8e63656e52/disk-8d561baa.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/19f4251b8bfd/vmlinux-8d561baa.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/aca2c5602160/bzImage-8d561baa.xz
+Right.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+23804718314de4b145d4@syzkaller.appspotmail.com
+I'll note that copy_process() ends up calling other functions with 
+clone_flags that accept an "unsigned long", like sched_fork(), which you 
+don't handle here.
 
-==================================================================
-BUG: KASAN: slab-out-of-bounds in scr_memcpyw include/linux/vt_buffer.h:38 [inline]
-BUG: KASAN: slab-out-of-bounds in vc_do_resize+0x80a/0x10e0 drivers/tty/vt/vt.c:1245
-Read of size 64 at addr ffff88807b47bfc0 by task syz.3.748/14193
+$ git grep "long clone_flags"
 
-CPU: 0 UID: 0 PID: 14193 Comm: syz.3.748 Not tainted 6.17.0-rc1-syzkaller-00224-g8d561baae505 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xcd/0x630 mm/kasan/report.c:482
- kasan_report+0xe0/0x110 mm/kasan/report.c:595
- check_region_inline mm/kasan/generic.c:183 [inline]
- kasan_check_range+0x100/0x1b0 mm/kasan/generic.c:189
- __asan_memcpy+0x23/0x60 mm/kasan/shadow.c:105
- scr_memcpyw include/linux/vt_buffer.h:38 [inline]
- vc_do_resize+0x80a/0x10e0 drivers/tty/vt/vt.c:1245
- vt_resizex drivers/tty/vt/vt_ioctl.c:717 [inline]
- vt_ioctl+0x2ca4/0x30a0 drivers/tty/vt/vt_ioctl.c:937
- tty_ioctl+0x65e/0x1680 drivers/tty/tty_io.c:2792
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl fs/ioctl.c:584 [inline]
- __x64_sys_ioctl+0x18b/0x210 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0ffab8ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f0ffba5a038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f0ffadb6090 RCX: 00007f0ffab8ebe9
-RDX: 0000000000000038 RSI: 000000000000560a RDI: 0000000000000003
-RBP: 00007f0ffac11e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f0ffadb6128 R14: 00007f0ffadb6090 R15: 00007ffeb7398ce8
- </TASK>
+likely is a good indication what needs changing outside of kernel/fork.c.
 
-Allocated by task 5857:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:405
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4365 [inline]
- __kvmalloc_node_noprof+0x27b/0x620 mm/slub.c:5052
- kvmalloc_array_node_noprof include/linux/slab.h:1065 [inline]
- __ptr_ring_init_queue_alloc_noprof include/linux/ptr_ring.h:471 [inline]
- ptr_ring_init_noprof include/linux/ptr_ring.h:489 [inline]
- skb_array_init_noprof include/linux/skb_array.h:182 [inline]
- pfifo_fast_init+0x125/0x3b0 net/sched/sch_generic.c:869
- qdisc_create_dflt+0x122/0x490 net/sched/sch_generic.c:1019
- attach_one_default_qdisc net/sched/sch_generic.c:1178 [inline]
- netdev_for_each_tx_queue include/linux/netdevice.h:2660 [inline]
- attach_default_qdiscs net/sched/sch_generic.c:1196 [inline]
- dev_activate+0x63f/0x12d0 net/sched/sch_generic.c:1255
- __dev_open+0x432/0x7c0 net/core/dev.c:1691
- __dev_change_flags+0x55d/0x720 net/core/dev.c:9537
- netif_change_flags+0x8d/0x160 net/core/dev.c:9600
- do_setlink.constprop.0+0xb53/0x4380 net/core/rtnetlink.c:3143
- rtnl_changelink net/core/rtnetlink.c:3761 [inline]
- __rtnl_newlink net/core/rtnetlink.c:3920 [inline]
- rtnl_newlink+0x1446/0x2000 net/core/rtnetlink.c:4057
- rtnetlink_rcv_msg+0x95b/0xe90 net/core/rtnetlink.c:6946
- netlink_rcv_skb+0x155/0x420 net/netlink/af_netlink.c:2552
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x5aa/0x870 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg net/socket.c:729 [inline]
- __sys_sendto+0x4a3/0x520 net/socket.c:2228
- __do_sys_sendto net/socket.c:2235 [inline]
- __se_sys_sendto net/socket.c:2231 [inline]
- __x64_sys_sendto+0xe0/0x1c0 net/socket.c:2231
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+It should be spelled out why you don't have to handle the others. And 
+likely in the fix, we should really only fix the ones that are really 
+required for now.
 
-The buggy address belongs to the object at ffff88807b478000
- which belongs to the cache kmalloc-8k of size 8192
-The buggy address is located 8320 bytes to the right of
- allocated 8000-byte region [ffff88807b478000, ffff88807b479f40)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7b478
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-anon flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801b842280 ffffea0001ea8000 0000000000000005
-raw: 0000000000000000 0000000000020002 00000000f5000000 0000000000000000
-head: 00fff00000000040 ffff88801b842280 ffffea0001ea8000 0000000000000005
-head: 0000000000000000 0000000000020002 00000000f5000000 0000000000000000
-head: 00fff00000000003 ffffea0001ed1e01 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0x528c0(GFP_NOWAIT|__GFP_IO|__GFP_FS|__GFP_NORETRY|__GFP_COMP), pid 5857, tgid 5857 (syz-executor), ts 75907413730, free_ts 75889157643
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1851
- prep_new_page mm/page_alloc.c:1859 [inline]
- get_page_from_freelist+0x132b/0x38e0 mm/page_alloc.c:3858
- __alloc_frozen_pages_noprof+0x261/0x23f0 mm/page_alloc.c:5148
- alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:2487 [inline]
- allocate_slab mm/slub.c:2655 [inline]
- new_slab+0x247/0x330 mm/slub.c:2709
- ___slab_alloc+0xcf2/0x1740 mm/slub.c:3891
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3981
- __slab_alloc_node mm/slub.c:4056 [inline]
- slab_alloc_node mm/slub.c:4217 [inline]
- __do_kmalloc_node mm/slub.c:4364 [inline]
- __kvmalloc_node_noprof+0x3b1/0x620 mm/slub.c:5052
- kvmalloc_array_node_noprof include/linux/slab.h:1065 [inline]
- __ptr_ring_init_queue_alloc_noprof include/linux/ptr_ring.h:471 [inline]
- ptr_ring_init_noprof include/linux/ptr_ring.h:489 [inline]
- skb_array_init_noprof include/linux/skb_array.h:182 [inline]
- pfifo_fast_init+0x125/0x3b0 net/sched/sch_generic.c:869
- qdisc_create_dflt+0x122/0x490 net/sched/sch_generic.c:1019
- attach_one_default_qdisc net/sched/sch_generic.c:1178 [inline]
- netdev_for_each_tx_queue include/linux/netdevice.h:2660 [inline]
- attach_default_qdiscs net/sched/sch_generic.c:1196 [inline]
- dev_activate+0x63f/0x12d0 net/sched/sch_generic.c:1255
- __dev_open+0x432/0x7c0 net/core/dev.c:1691
- __dev_change_flags+0x55d/0x720 net/core/dev.c:9537
- netif_change_flags+0x8d/0x160 net/core/dev.c:9600
- do_setlink.constprop.0+0xb53/0x4380 net/core/rtnetlink.c:3143
- rtnl_changelink net/core/rtnetlink.c:3761 [inline]
- __rtnl_newlink net/core/rtnetlink.c:3920 [inline]
- rtnl_newlink+0x1446/0x2000 net/core/rtnetlink.c:4057
-page last free pid 5854 tgid 5854 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1395 [inline]
- __free_frozen_pages+0x7d5/0x10f0 mm/page_alloc.c:2895
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x4d/0x120 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:340
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4180 [inline]
- slab_alloc_node mm/slub.c:4229 [inline]
- __kmalloc_cache_noprof+0x1f1/0x3e0 mm/slub.c:4391
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- vlan_info_alloc net/8021q/vlan_core.c:153 [inline]
- vlan_vid_add+0x2ee/0x750 net/8021q/vlan_core.c:329
- vlan_vid0_add net/8021q/vlan.c:370 [inline]
- vlan_device_event+0x1a39/0x2620 net/8021q/vlan.c:411
- notifier_call_chain+0xbc/0x410 kernel/notifier.c:85
- call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:2229
- call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
- call_netdevice_notifiers net/core/dev.c:2281 [inline]
- __dev_notify_flags+0x12c/0x2e0 net/core/dev.c:9576
- netif_change_flags+0x108/0x160 net/core/dev.c:9605
- do_setlink.constprop.0+0xb53/0x4380 net/core/rtnetlink.c:3143
- rtnl_changelink net/core/rtnetlink.c:3761 [inline]
- __rtnl_newlink net/core/rtnetlink.c:3920 [inline]
- rtnl_newlink+0x1446/0x2000 net/core/rtnetlink.c:4057
- rtnetlink_rcv_msg+0x95b/0xe90 net/core/rtnetlink.c:6946
- netlink_rcv_skb+0x155/0x420 net/netlink/af_netlink.c:2552
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x5aa/0x870 net/netlink/af_netlink.c:1346
-
-Memory state around the buggy address:
- ffff88807b47be80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88807b47bf00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff88807b47bf80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                                           ^
- ffff88807b47c000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff88807b47c080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
+As a follow-up, we should likely better convert *all* users of 
+clone_flags to use u64 (at least the one in core code), not just the 
+ones in kernel/fork.c you tried to handle here.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+For now, only the following require 64bit:
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+	CLONE_CLEAR_SIGHAND
+	CLONE_INTO_CGROUP
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+CLONE_CLEAR_SIGHAND is only checked against extracted flags in:
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+* copy_process()->copy_sighand() and
+  -> We don't use u64
+* copy_process()->perf_event_init_task()->perf_event_init_context()->
+   inherit_task_group()
+  -> We do use u64 already
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+CLONE_INTO_CGROUP doesn't seem to be checked against extracted flags AFAIKS.
 
-If you want to undo deduplication, reply with:
-#syz undup
+
+So I suggest making this fix CLONE_CLEAR_SIGHAND-specific and fixing 
+only copy_sighand(). That one should carry Fixes:
+
+Then, have a second patch where we convert all remaining "unsigned long 
+clone_flags" in the core to use u64. That one would not be a fix.
+
+Makes sense?
+
+-- 
+Cheers
+
+David / dhildenb
+
 
