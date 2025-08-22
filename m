@@ -1,125 +1,199 @@
-Return-Path: <linux-kernel+bounces-781144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F602B30DF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:27:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B85A7B30DF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 565CE7BBFF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:25:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E6B3AC657E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C16D27F006;
-	Fri, 22 Aug 2025 05:26:48 +0000 (UTC)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381362857E6;
+	Fri, 22 Aug 2025 05:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mWIwXN7m"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D49198A11
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15359198A11;
+	Fri, 22 Aug 2025 05:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755840407; cv=none; b=lWngw61IivXdsftPObMos9jShCr5iL7Q/SewVINEG1ydUD7NoPEuO6HLy75e1LzsI056hYxKeFYgxBnAE9Rq4gffUH5FWZojGNALBnsa7WLGZasoLR7KAZD4k1E2fY8rHS8mJbpcIgzz1abBDjvHJv5g/W4KzHCaC+7/akJMZqg=
+	t=1755840391; cv=none; b=eBw++XevICdrP6auuydbDgUZZ3xUUKySxw2s/9LsCAm/YOaNCHitWGys38fbmLTXV8wuxkk4vYuDpYo0AAzX5Z8ZxxFNzN5ac6gN6DsFNBEXaNuIvSBnScCSEvYfqMgzNzPb+n5miqkEqvDfjPEWN8r4Muuw/3PW9eeb3eCyrvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755840407; c=relaxed/simple;
-	bh=EwC/a0KV2I8YGxKhs/nPZvHT6OBRurivwO19o5f5pV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pPiBopYIGIp7Z7Z7qDLDDYGw/OMnEz69x1R9kk48TOEQiz5/mHt8Ewg7NniAOj0VX3//tm6hrq8zLSfVUDvSPuzRfUx+ouiZDRhNreQZ95UzURVhu5cTpEFANuHSaF4e+uhuu0kM4SIhKkeK/WcNKf/FUi91McqYUp4FvG/9+uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpsz11t1755840313t1968e2c3
-X-QQ-Originating-IP: ay1n1e7+jnTaE0tAKeASRzidqi+sbKOyFZfmoekBSgE=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 22 Aug 2025 13:25:11 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 6492650603905792360
-Date: Fri, 22 Aug 2025 13:25:11 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Parthiban.Veerasooran@microchip.com
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	lukas.bulwahn@redhat.com, alexanderduyck@fb.com,
-	richardcochran@gmail.com, kees@kernel.org, gustavoars@kernel.org,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v7 3/5] net: rnpgbe: Add basic mbx ops support
-Message-ID: <91803970CBBEA502+20250822052511.GB1931582@nic-Precision-5820-Tower>
-References: <20250822023453.1910972-1-dong100@mucse.com>
- <20250822023453.1910972-4-dong100@mucse.com>
- <b5f36260-8615-4b81-9905-a44d05e919a3@microchip.com>
+	s=arc-20240116; t=1755840391; c=relaxed/simple;
+	bh=hv4ee5TJub+glJha2W37KTbYuOGPiCe6LOnDorSPvqo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dab2RmwtYcwdSPgmWfiGn5Zt8VVebJ4zvQpRG5Xb6FZeq9T0cfKnRgNpAi6qQpYlXnRWddCce9X+yfwhCJXG6a1sX2FyBPXUD7iI+X7swU+Vnv/Flrubnb5lxpGYL45a5jlZpsmiRTaUE4EVEcazTTesC0/TMD/BfqYv9iRlvco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mWIwXN7m; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755840389; x=1787376389;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hv4ee5TJub+glJha2W37KTbYuOGPiCe6LOnDorSPvqo=;
+  b=mWIwXN7mtoRV/gWlZGa6eIKsZEhzugNXQ5KiJc/PersBH/nezCkuoFC3
+   71SU2ebKFg/RRVFSA0H9FoS4bMnY6vg0dKbmJ4fAH1EXZLN2s0J5B8zHy
+   hpItanhHzxQgK+oz3vUae/3TxqL4v1vqRNi+wVEbsk+9Po4FKavaR/lMG
+   C8g1HUpVdQpPTu3VUaMU7Iei8ugVsnVWTCQIh6Sd0Kaa2Brv/V0t9jRSX
+   r5E/lNLd9/DNUrQ+yR92HRM/p+hpL6ZIHBCzLD4uFh96onKny2eGMjhdz
+   LK9b4vyNma976CrwWml5mJeoKbfdJDUwu1fpoSHviG540NUO9jS+rAXJg
+   w==;
+X-CSE-ConnectionGUID: lx2qGbxuQ+OLFXKXk/e7kQ==
+X-CSE-MsgGUID: Dfd9va2rQMWb040iU7WxVg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="60771401"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="60771401"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 22:26:29 -0700
+X-CSE-ConnectionGUID: N5z1rdvXQjyfULYXn/Gqyg==
+X-CSE-MsgGUID: 7SXXW3lKRXeoGy/j1TSTPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="199578767"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.233.125]) ([10.124.233.125])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 22:26:25 -0700
+Message-ID: <683367fc-4295-41f5-b10d-3c120f54ca0f@linux.intel.com>
+Date: Fri, 22 Aug 2025 13:26:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b5f36260-8615-4b81-9905-a44d05e919a3@microchip.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MhUtCUWJSosqugGjMJxwwMxlMCsnDXl1pbxdZEM2u9Eg18AzRUCAYgNJ
-	Tmw+J+1g1+ZT/sVEIH6FynarCbmr58vDHQMRadUcsKJCMbeJn51MzUx1eWxPmfarPuK83Nj
-	pM/SjsTQTMA3KK6k1sUrCtf8N7HO3xu6r9MI3reg9YfV9BQY69o8Rkp7J9/PU5uRE3GU7yI
-	d5HNV+Ls3vLeOpbT4pqMtAl2d9sXEPTQxweuPA/6u46r6SMvWemcJasxfmbWjReFmifHwV9
-	UHedw/vnkdD1ZIB940i/edPj5QUb78BKqzskXJz6eDH20F0gCVCzzPife5f6rVS+3MPixAA
-	OxHlNQfMd/jzacb+sQcOdKpamEKQ7Xgd6PDuR5ScF374IiUxNZPK7d7NSxPzW+NkhSqX86Z
-	Dv9EM/mKWGqFncfkI2hPw+ICQPPTDwGSUwB6HPzluvwI6Wa/qUaGDKSCmbhEMdTnDp2j6oZ
-	B07zyozgVmjwLqIMWZwlPmvXSwbdhG7XMtDGrB8q+YHkWnbzN6XgyJkvVvnqWQ4t5IEonOA
-	EDgazyzcr2DfasAFGbSjmL04Q4+LcVAGHQpSgsTEt9NBEJJjrrRZiDMcGEgYL2d7ZxT/nNv
-	BXu71daOENiZf/ChR++0UNW3UWO10NG0uejmVJcHWHKiTOhTpfsi94+vBu1oL6woF1qc8Va
-	RqDhoudIgIS4HSeE3zI00d2AZHal3eJWbjYkERdKf6u9w1uubReiof+YPaT3riuUAd7KKjE
-	j4NHPzeUvo41bmomLCFwJCCeiOJ5gmGHfhpkLo0kVjz8Sl14Orf1bq3zpRgiYST6EJL90n/
-	UFWElkoOgykfxdWowQTDtIluKkbStw+WOdW2+5dw6RQs6/bYAaaHrKcWsVEG4DmRSSiO4VB
-	UHjZVxoMpLbx+5joVcwlStBaqeHqA6G8WrTHyBgFkgtvTHkBlgYwarWZNLPk0sRQmvKMwca
-	XXqfPZLYBttjyZkU4RGXOi3tZy69Gsfw6PU2LgDLtDh3bReu3qDcZ9ngMlI8uP1s8ydhHFQ
-	iGRYSRBC1T8ajQSWntVAWDQemC4SrAem8/PG6Y6A==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v3 3/7] perf/x86: Check if cpuc->events[*] pointer exists
+ before accessing it
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>,
+ kernel test robot <oliver.sang@intel.com>
+References: <20250820023032.17128-1-dapeng1.mi@linux.intel.com>
+ <20250820023032.17128-4-dapeng1.mi@linux.intel.com>
+ <20250821133514.GP4067720@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250821133514.GP4067720@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 22, 2025 at 04:41:48AM +0000, Parthiban.Veerasooran@microchip.com wrote:
-> > +
-> > +/**
-> > + * mucse_check_for_msg_pf - Check to see if the fw has sent mail
-> > + * @hw: pointer to the HW structure
-> > + *
-> > + * @return: 0 if the fw has set the Status bit or else
-> > + * -EIO
-> > + **/
-> > +static int mucse_check_for_msg_pf(struct mucse_hw *hw)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +       u16 hw_req_count = 0;
-> I don't think you need to assign 0 here as this variable is updated in 
-> the next line.
-> 
-> Best regards,
-> Parthiban V
 
-Got it, I will update this.
+On 8/21/2025 9:35 PM, Peter Zijlstra wrote:
+> On Wed, Aug 20, 2025 at 10:30:28AM +0800, Dapeng Mi wrote:
+>> When intel_pmu_drain_pebs_icl() is called to drain PEBS records, the
+>> perf_event_overflow() could be called to process the last PEBS record.
+>>
+>> While perf_event_overflow() could trigger the interrupt throttle and
+>> stop all events of the group, like what the below call-chain shows.
+>>
+>> perf_event_overflow()
+>>   -> __perf_event_overflow()
+>>     ->__perf_event_account_interrupt()
+>>       -> perf_event_throttle_group()
+>>         -> perf_event_throttle()
+>>           -> event->pmu->stop()
+>>             -> x86_pmu_stop()
+>>
+>> The side effect of stopping the events is that all corresponding event
+>> pointers in cpuc->events[] array are cleared to NULL.
+>>
+>> Assume there are two PEBS events (event a and event b) in a group. When
+>> intel_pmu_drain_pebs_icl() calls perf_event_overflow() to process the
+>> last PEBS record of PEBS event a, interrupt throttle is triggered and
+>> all pointers of event a and event b are cleared to NULL. Then
+>> intel_pmu_drain_pebs_icl() tries to process the last PEBS record of
+>> event b and encounters NULL pointer access.
+>>
+>> Since the left PEBS records have been processed when stopping the event,
+>> check and skip to process the last PEBS record if cpuc->events[*] is
+>> NULL.
+>>
+>> Reported-by: kernel test robot <oliver.sang@intel.com>
+>> Closes: https://lore.kernel.org/oe-lkp/202507042103.a15d2923-lkp@intel.com
+>> Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
+>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> Tested-by: kernel test robot <oliver.sang@intel.com>
+>> ---
+>>  arch/x86/events/intel/ds.c | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+>> index c0b7ac1c7594..dcf29c099ad2 100644
+>> --- a/arch/x86/events/intel/ds.c
+>> +++ b/arch/x86/events/intel/ds.c
+>> @@ -2663,6 +2663,16 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
+>>  			continue;
+>>  
+>>  		event = cpuc->events[bit];
+>> +		/*
+>> +		 * perf_event_overflow() called by below __intel_pmu_pebs_last_event()
+>> +		 * could trigger interrupt throttle and clear all event pointers of the
+>> +		 * group in cpuc->events[] to NULL. So need to re-check if cpuc->events[*]
+>> +		 * is NULL, if so it indicates the event has been throttled (stopped) and
+>> +		 * the corresponding last PEBS records have been processed in stopping
+>> +		 * event, don't need to process it again.
+>> +		 */
+>> +		if (!event)
+>> +			continue;
+>>  
+>>  		__intel_pmu_pebs_last_event(event, iregs, regs, data, last[bit],
+>>  					    counts[bit], setup_pebs_adaptive_sample_data);
+>
+> So if this is due to __intel_pmu_pebs_last_event() calling into
+> perf_event_overflow(); then isn't intel_pmu_drain_pebs_nhm() similarly
+> affected?
+>
+> And worse, the _nhm() version would loose all events for that counter,
+> not just the last.
 
-> > +
-> > +       hw_req_count = mucse_mbx_get_fwreq(mbx);
-> > +       /* chip's register is reset to 0 when rc send reset
-> > +        * mbx command. This causes 'hw_req_count != hw->mbx.fw_req'
-> > +        * be TRUE before fw really reply. Driver must wait fw reset
-> > +        * done reply before using chip, we must check no-zero.
-> > +        **/
-> > +       if (hw_req_count != 0 && hw_req_count != hw->mbx.fw_req) {
-> > +               hw->mbx.stats.reqs++;
-> > +               return 0;
-> > +       }
-> > +
-> > +       return -EIO;
-> > +}
-> > +
+hmm, Yes. After double check, I suppose I made a mistake for the answer to
+Andi. It indeed has data loss since the "ds->pebs_index" is reset at the
+head of _nhm()/_icl() these drain_pebs helper instead of the end of the
+drain_pebs helper.  :(
 
-Thanks for your feedback.
+> I'm really thinking this isn't the right thing to do.
+>
+>
+> How about we audit the entirety of arch/x86/events/ for cpuc->events[]
+> usage and see if we can get away with changing x86_pmu_stop() to simply
+> not clearing that field.
 
+Checking current code, I suppose it's fine that we don't clear
+cpuc->events[] in x86_pmu_stop() since we already have another variable
+"cpuc->active_mask" which is used to indicate if the corresponding
+cpuc->events[*] is active. But in current code, the cpuc->active_mask is
+not always checked.
+
+So if we select not to clear cpuc->events[] in x86_pmu_stop(), then it's a
+must to check cpuc->active_mask before really accessing cpuc->events[]
+represented event. Maybe we can add an inline function got check this.
+
+bool inline x86_pmu_cntr_event_active(int idx)
+{
+    struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+
+    return cpuc->events[idx] && test_bit(idx, cpuc->active_mask);
+}
+
+>
+> Or perhaps move the setting and clearing into x86_pmu_{add,del}() rather
+> than x86_pmu_{start,stop}(). After all, the latter don't affect the
+> counter placement, they just stop/start the event.
+
+IIUC, we could not move the setting into x86_pmu_add() from x86_pmu_stop()
+since the counter index is not finalized at x86_pmu_add() is called. The
+counter index could change for each adding a new event.
+
+
+>
+>
 
