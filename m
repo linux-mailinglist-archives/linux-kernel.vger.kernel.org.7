@@ -1,99 +1,139 @@
-Return-Path: <linux-kernel+bounces-782000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B4F6B319B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:34:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2544B319DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3932E4E54EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:34:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8089A2423A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F42302FD7C9;
-	Fri, 22 Aug 2025 13:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4E23043CD;
+	Fri, 22 Aug 2025 13:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="EIsaIcZc"
-Received: from pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.42.203.116])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="h8S/G+uH"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2FB2FF161
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.42.203.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D622FDC5D;
+	Fri, 22 Aug 2025 13:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755869530; cv=none; b=CBMMfEHD2S+3SmRK0wklF0jgB8E/abNWFIqhW3CQAXgj7EyX/rgMbrDaw6nVCh2VS423n9+owLT0wUM0wB1x1N2X6rrGCakUQ4XmbCPF/JRY6eKO31rIAgWTpEaPG4HjHzizsQygzyvF4RlMGPj74JuFqRmf3VKhteOXoPeCtrg=
+	t=1755869544; cv=none; b=ufVSmj2Ui+C+FuWXivqlkXWoVv1wFsprDIzLuMVnvvTTC+nBEXYzdUBExpu0HpggWrHkpPrgSM1+L5j2iScCk/zRkVMlo+Dppv9eYq+TZzKFhEe6/8664db43nkCe9SeCuLouta3UZmn6pxz9EmxA4wptUNw/kib8QCs0y9mbcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755869530; c=relaxed/simple;
-	bh=L45oTMiOlaaOd+nPv6NQxIvpKmSWzZsDRWEfVybZ0Dk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ubOX3uGTu/NI2VzotXwaoLjEUcERO5pZVVLgJi5sPmIv0b/RZjtxBbuzOQsjpJB1+coiyCcXCC0inJnolKOGBw0jLvkVZ1C2fS+qFszCYneXL89a3BiJvChh/eJrbl/fjeHqvxMZ8b876e05+shvJ7CTLdmgbfoYg0Lvjt9M9hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=EIsaIcZc; arc=none smtp.client-ip=52.42.203.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1755869528; x=1787405528;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=cUSZ5JNVmVEfL0q8eL0Od4vX8QNOMh2ME0a+7nBrD8Y=;
-  b=EIsaIcZcyt+on8pJUxpUMaGn7PkC8o8T/hluU5kahnHEqVNNB+w6rk3x
-   0FnyTUL463tfDYhBWRGhM11Gd7HyjuW20ysBnIfBXrl5U9gkVCW5hHxRD
-   sby5kwQmH939R2ASEhw6I09qKdkEZMxB67n1KEUVz45vU1kjaTbN2H5kJ
-   zUhH7rGfhMaiPMWzdwPd44rB3EZThEJR7BZcBgO568LP3hrFWiyI6lzcR
-   7d95aO+42fQVEZ5UHU5T+aHPnKIR1e+SwwwuyiTQsZ50H4H/XS4bAaIrd
-   GPn4KeSq/wqtzvIBDA+RzVp68MTtprcto6du4RhMmR6gbnJcj3AkTjXi0
-   w==;
-X-CSE-ConnectionGUID: c8BtiNQ7T3eBo84peV0pVg==
-X-CSE-MsgGUID: X9wldqwcTbScmfgxX6+5CQ==
-X-IronPort-AV: E=Sophos;i="6.17,309,1747699200"; 
-   d="scan'208";a="1613018"
-Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
-  by internal-pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 13:32:06 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:57093]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.41.67:2525] with esmtp (Farcaster)
- id 766ae113-6b2f-4cb8-9843-db8ece196c13; Fri, 22 Aug 2025 13:32:06 +0000 (UTC)
-X-Farcaster-Flow-ID: 766ae113-6b2f-4cb8-9843-db8ece196c13
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
- Fri, 22 Aug 2025 13:32:06 +0000
-Received: from HND-5CG1082HRX.ant.amazon.com (10.37.245.11) by
- EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
- Fri, 22 Aug 2025 13:32:00 +0000
-From: Yuichiro Tsuji <yuichtsu@amazon.com>
-To: <syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com>
-CC: <linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [v9fs?] UBSAN: shift-out-of-bounds in v9fs_get_tree
-Date: Fri, 22 Aug 2025 22:31:48 +0900
-Message-ID: <20250822133148.199-1-yuichtsu@amazon.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <68a6e577.050a0220.3d78fd.0020.GAE@google.com>
-References: <68a6e577.050a0220.3d78fd.0020.GAE@google.com>
+	s=arc-20240116; t=1755869544; c=relaxed/simple;
+	bh=ZYQ4ILV3RrkPQFj3nv+P9KHAr3nKxw/zqHI0NlcxtTc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pgL340Smd7na3cHaGdRpVGqv/DqrVJkJ3MhDbKAy5FRIB0DU7nPM2RA4xQT7tbDcxqZey1udTQ71+xXqBIdiZ6GjRnakSdBBdqcJ1/+Vtc9F3A2+LiHts/O84ofnEgv18fS0AFXPZW1o5q3cllN95l1QanZP7x50hTY7Z5lZQ+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=h8S/G+uH; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1755869543; x=1787405543;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ZYQ4ILV3RrkPQFj3nv+P9KHAr3nKxw/zqHI0NlcxtTc=;
+  b=h8S/G+uH4RUqFSJMVCZF3wHaFnwPFpbt4iI6FJ2+667Gffr9SVlqNrxN
+   SaRy7a0u5RALrdzdobd3FLysj/kZTqZ+dd6SlFh/BRGyE/Ike7jmu/KhM
+   MFMvSvVMZ4uoR51JCcscd9HqpcYGXxk7uyAciTAQV2vfJH9JXSqZxKziS
+   cUfcOr/u0z3OaHi3o+TxSzVLxUtBKoKyrh6DUw4jXQOBx1lXj57+IpgS0
+   eGX6rltlU8LiCMKcIrNZ377Dl+EdQYvM5t18/lP/oXPEZXT1JHiwWdeiL
+   LbFu4R6yeKnbO6cRfDpi4rVxfMRfFt8ujOe7VTSPAxPlustupAh01uP3M
+   g==;
+X-CSE-ConnectionGUID: s1Ub95wTSSmucjb9LrXB/Q==
+X-CSE-MsgGUID: 34LNloV2SSqIchEPAj2ZVQ==
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="45530459"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Aug 2025 06:32:22 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Fri, 22 Aug 2025 06:32:03 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Fri, 22 Aug 2025 06:31:59 -0700
+Message-ID: <d05d7de0-bfc8-4184-bd18-b3ffb50fbb76@microchip.com>
+Date: Fri, 22 Aug 2025 15:31:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D035UWB001.ant.amazon.com (10.13.138.33) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 3/9] arm64: lan969x: Add support for Microchip LAN969x
+ SoC
+To: Robert Marko <robert.marko@sartura.hr>, <linux@armlinux.org.uk>,
+	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <olivia@selenic.com>,
+	<herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+	<andi.shyti@kernel.org>, <lee@kernel.org>, <broonie@kernel.org>,
+	<gregkh@linuxfoundation.org>, <jirislaby@kernel.org>, <arnd@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-crypto@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+	<linux-spi@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+	<o.rempel@pengutronix.de>, <daniel.machon@microchip.com>
+CC: <luka.perkov@sartura.hr>
+References: <20250813174720.540015-1-robert.marko@sartura.hr>
+ <20250813174720.540015-4-robert.marko@sartura.hr>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Content-Language: en-US, fr
+Organization: microchip
+In-Reply-To: <20250813174720.540015-4-robert.marko@sartura.hr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-#syz test
+On 13/08/2025 at 19:44, Robert Marko wrote:
+> This adds support for the Microchip LAN969x ARMv8-based SoC switch family.
+> 
+> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
 
-diff --git a/fs/9p/vfs_super.c b/fs/9p/vfs_super.c
-index 795c6388744c..3947ef762aaa 100644
---- a/fs/9p/vfs_super.c
-+++ b/fs/9p/vfs_super.c
-@@ -59,7 +59,7 @@ v9fs_fill_super(struct super_block *sb, struct v9fs_session_info *v9ses,
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-        sb->s_maxbytes = MAX_LFS_FILESIZE;
-        sb->s_blocksize_bits = fls(v9ses->maxdata - 1);
--       sb->s_blocksize = 1 << sb->s_blocksize_bits;
-+       sb->s_blocksize = BIT(sb->s_blocksize_bits);
-        sb->s_magic = V9FS_MAGIC;
-        if (v9fs_proto_dotl(v9ses)) {
-                sb->s_op = &v9fs_super_ops_dotl;
+> ---
+> Changes in v9:
+> * Select ARCH_MICROCHIP when ARCH_LAN969X is selected as its now hidden
+> 
+> Changes in v8:
+> * Place LAN969x under ARCH_MICROCHIP as suggested by Arnd and drop review
+> tags due to this
+> 
+>   arch/arm64/Kconfig.platforms | 15 +++++++++++++++
+>   1 file changed, 15 insertions(+)
+> 
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index bfea380100a6..31bddd1a17de 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -177,6 +177,21 @@ menu "Microchip SoC support"
+>   config ARCH_MICROCHIP
+>          bool
+> 
+> +config ARCH_LAN969X
+> +       bool "Microchip LAN969X SoC family"
+> +       select PINCTRL
+> +       select DW_APB_TIMER_OF
+> +       select ARCH_MICROCHIP
+> +       help
+> +         This enables support for the Microchip LAN969X ARMv8-based
+> +         SoC family of TSN-capable gigabit switches.
+> +
+> +         The LAN969X Ethernet switch family provides a rich set of
+> +         switching features such as advanced TCAM-based VLAN and QoS
+> +         processing enabling delivery of differentiated services, and
+> +         security through TCAM-based frame processing using versatile
+> +         content aware processor (VCAP).
+> +
+>   config ARCH_SPARX5
+>          bool "Microchip Sparx5 SoC family"
+>          select PINCTRL
+> --
+> 2.50.1
+> 
+
 
