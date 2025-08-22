@@ -1,148 +1,76 @@
-Return-Path: <linux-kernel+bounces-781935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A041B318D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:09:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3D92B318CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79DB43B0086
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:02:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD1EF1C203C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B96F2FF146;
-	Fri, 22 Aug 2025 13:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F8E303C93;
+	Fri, 22 Aug 2025 13:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="o9+d1jyd"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ySk1i4Ja"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5606B2E6114;
-	Fri, 22 Aug 2025 13:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAA9302CC7;
+	Fri, 22 Aug 2025 13:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755867699; cv=none; b=KGV6npDTg5pGenVmL4pWZh84t+xQCnXhYUR8VQ4sPKKUc7G7/U9WVLYyppuTekiShnrdbnXHclxtwjf3asGL6cVx0IBxsDCTVFtiIJ4pAVcJPH3Yifrso6uNife1+joH7Z0bxTuMYyP6nOWsh6tX65s/jq5HeSS8JuNWyTtwqc4=
+	t=1755867606; cv=none; b=R0MXxbra21flMzgJY8gx5ri7gvNamQ0rk7T09kBsXZa+q7LOoUpp/2AILwxIlK2rLbw7iK5KUu3ns85usE/72ZQfa+l3Jd0VBzKx7uznx9aaoiUTy+LomyefJ5fMXK8SqZAQlAVuKsvP6zin/7jzOA213CENdf0wlIzKpbaG0j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755867699; c=relaxed/simple;
-	bh=hRTwqACIQ8hZJjA3GSkgqt13hL1cRiFuW3CfMttMcKs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KEAKFZZ/5k3nuiPVFEwBcDo7VmT4W0a+vlsHGs7JqK1eunZW83ljcLJpI2IE/nF7h7CIGwAc9ZrU47VJAakng8yWgAiI82OtprCguoYdIAJXG+Y9+s+15y/PKeCvHP4EUPCeSQ4Acci0QgY7ggTsJkmVPcBjPXh6Ecrccu9ZZ+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=o9+d1jyd; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MBsrtt005113;
-	Fri, 22 Aug 2025 15:01:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	fdRuwvgpdfkzMUyKr6tHlpFHvNuuCdXxV4D+HC6QaMA=; b=o9+d1jyddJZsZv7j
-	YYAMjp+cD2GsmtQUtGB0unOVKx/w4zZh5slX3aR4Di3d34rcX6sEGcppkS4sXh86
-	NTJMIxsroEnJcrFpC30b4Dku4THlEyd7qm27cQmnZB9zqJJM31Z7lXiQG9mzVZst
-	33G8e6rLFVrY3ejEVIIo532Ms7LWZxTW3LgwdYEP/DEpJpPBXf0kXhwfo4+vCGqO
-	N9emJ6Flm5G9rHUP0DRCl/6HLCUQKYidXhdACf5R8UIV0EW59DNy1/R9NwrMNpBJ
-	mBlYjzFx2bxbPJ2dx/5/lOFgCpL3ZVzq0OAc3uouW9A8ot/uyG2rFyKz8jjWkD5d
-	kaJBIg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48np7n7801-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Aug 2025 15:01:17 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DDE8E4002D;
-	Fri, 22 Aug 2025 14:59:59 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1B58571EE06;
-	Fri, 22 Aug 2025 14:59:03 +0200 (CEST)
-Received: from [10.48.87.178] (10.48.87.178) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 22 Aug
- 2025 14:59:02 +0200
-Message-ID: <03b4732e-1545-470a-b6ce-bda68c7477d4@foss.st.com>
-Date: Fri, 22 Aug 2025 14:59:01 +0200
+	s=arc-20240116; t=1755867606; c=relaxed/simple;
+	bh=OrVIPYS1E+djrOZ4LNmEbYam6+d+/9oqufM7Sapxb6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aeEznmHNTrLENJb+RGoEe0yGZox9NDQYfVV3bW38VSiucnW+wf8riV4Peq/8As5KT1p0WoWrFE85y1SVPg1TN1WPW2h3WGDPsPkLSnwhYIKAse8ilFr40nYCDZj+U4S6/7ogwvz2/yQwHEVgAj/qyMymps+l/DiqhQWwgSidMr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ySk1i4Ja; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=zwhAsXIwgy930xIEIc3hqz2SZ32KH1hEL9whGsP/YPU=; b=ySk1i4JaLkNHQKa6Rgx7+NZAiP
+	T6lMu0roX8z0YB9obpFJMEON09A6hCC+GnrPfKeg6Qxy/VfpyexSBEpP+xccYfRjWKu4doOYxuWjp
+	+jnauKfAlQGsZ1hitamFDNRMDCFaxiJRtfMqv8PFMX9i/nigWKNmOkydAMPLdIsIqIAs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1upRN2-005ZzQ-1J; Fri, 22 Aug 2025 14:59:52 +0200
+Date: Fri, 22 Aug 2025 14:59:52 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Parthiban.Veerasooran@microchip.com
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] microchip: lan865x: fix missing ndo_eth_ioctl
+ handler to support PHY ioctl
+Message-ID: <5ac05a1f-0cd2-421c-8747-9159a62dce2b@lunn.ch>
+References: <20250821082832.62943-1-parthiban.veerasooran@microchip.com>
+ <204b8b3d-e981-41fa-b65c-46b012742bfe@lunn.ch>
+ <4a2e6ca1-7ae9-4959-a394-c84aab4b4c02@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 09/13] arm64: dts: st: add ltdc support on stm32mp251
-To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Philippe Cornu
-	<philippe.cornu@foss.st.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Maxime
- Coquelin" <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Christophe Roullier
-	<christophe.roullier@foss.st.com>
-CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250821-drm-misc-next-v4-0-7060500f8fd3@foss.st.com>
- <20250821-drm-misc-next-v4-9-7060500f8fd3@foss.st.com>
-Content-Language: en-US
-From: Yannick FERTRE <yannick.fertre@foss.st.com>
-In-Reply-To: <20250821-drm-misc-next-v4-9-7060500f8fd3@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4a2e6ca1-7ae9-4959-a394-c84aab4b4c02@microchip.com>
 
-Hi Raphael,
+> By the way, is there a possibility to submit or apply this patch to the 
+> older stable kernels as well, so that users on those versions can also 
+> benefit from this feature?
 
-Thanks for the patch.
+This is the sort of patch the machine learning bot picks up for back
+porting to stable. The Fixes: tag is only one indicator it looks for,
+it being a one liner and the words in the commit message might trigger
+it as well.
 
-Acked-by: Yannick Fertre <yannick.fertre@foss.st.com>
-
-Le 21/08/2025 à 13:08, Raphael Gallais-Pou a écrit :
-> The LCD-TFT Display Controller (LTDC) handles display composition,
-> scaling and rotation.  It provides a parallel digital RGB flow to be
-> used by display interfaces.
->
-> Add the LTDC node.
->
-> Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-> ---
->   arch/arm64/boot/dts/st/stm32mp251.dtsi | 12 ++++++++++++
->   1 file changed, 12 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-> index 303abf915b8e489671b51a8c832041c14a42ecb8..372a99d9cc5c3730e8fbeddeb6134a3b18d938b6 100644
-> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-> @@ -1576,6 +1576,18 @@ dcmipp: dcmipp@48030000 {
->   				status = "disabled";
->   			};
->   
-> +			ltdc: display-controller@48010000 {
-> +				compatible = "st,stm32mp251-ltdc";
-> +				reg = <0x48010000 0x400>;
-> +				interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
-> +					<GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
-> +				clocks = <&rcc CK_KER_LTDC>, <&rcc CK_BUS_LTDC>;
-> +				clock-names = "lcd", "bus";
-> +				resets = <&rcc LTDC_R>;
-> +				access-controllers = <&rifsc 80>;
-> +				status = "disabled";
-> +			};
-> +
->   			combophy: phy@480c0000 {
->   				compatible = "st,stm32mp25-combophy";
->   				reg = <0x480c0000 0x1000>;
->
+	Andrew
 
