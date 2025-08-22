@@ -1,83 +1,112 @@
-Return-Path: <linux-kernel+bounces-781750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE73B3163B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:22:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A50B8B3163D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0E0D1CC3D89
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:22:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 334C0567F33
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0552F617C;
-	Fri, 22 Aug 2025 11:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156502ED858;
+	Fri, 22 Aug 2025 11:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="ANk2s219"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11020118.outbound.protection.outlook.com [52.101.84.118])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="J3IUhQdQ";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="E//vhMa6"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D45393DE1;
-	Fri, 22 Aug 2025 11:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380BE393DE1
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755861750; cv=fail; b=sKpWsTGYD5k4HXafIU7lMMi+FeBK5cVcAsPx9nMUVr0sCaCAN9Qumg0VPN9Y293BXv0fW67FV9/wvXupSFYSvc7xhfzs9S19VJGSeTku7gwXMIRFfU9SG40E9KxUsnT74/MRkMHylgZQ5bOIiF+EHqcrmgHh95nwlB0xs7TIIcU=
+	t=1755861820; cv=fail; b=j6sfPSH9TE0l1rDgmdD3Aak3jhV+Qoa0Po41hnHchFEeddPGetNFrXfo94dPb06Xd5R4UwarrXBXBLagaOkG1xakgIJBntnpBnT9oBzQKSwKdNItX6svsXNn5xmmFBDNFPydBSlLnrDOZSxnlkZxGwVnzNpJHyamGro95t556/U=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755861750; c=relaxed/simple;
-	bh=7nmp17J2NZQKHgMSopSUHAnCgOm6LzmpBeAZ0LkDPSY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dU6eEV37O6syDvT8P9uxvPEzD29QhhSzMkAGwo0c68B+TXm5Pky3lc8FSJnwEhQXMutnSiL4bqZcT3PDb6PCnTAWxxgyWfH8C9DS7tYI0QUQdmYVFz04dSDCsmUpE34vznJvRrO9MhAxr8YNC2B7D3QBViYTla4EzAttfVHvEig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=ANk2s219; arc=fail smtp.client-ip=52.101.84.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=genexis.eu
+	s=arc-20240116; t=1755861820; c=relaxed/simple;
+	bh=W3biR6DEaq05/wQ2yeUEPR7OBv1AdQgaHCSzxNHijZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=IIxggTBo8wjG4TxFyEBIE0IH2Pjg19m1wrd/lny21C1SxDh3DO8ymGfdrB3UqfMYCTcOYIyhEQ2PlsRNIzufs6gXv2/trLpaaGjrvqVirLxYTKRg4jko/ZWeBM9r54g4/3wI4GLzT3t+faJV/ZL7g3eQPuZ0YQiDLLHFDySjQto=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=J3IUhQdQ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=E//vhMa6; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57M9et5u010017;
+	Fri, 22 Aug 2025 11:23:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=oZfpq1JSQ3dbKrF4o+
+	QlGVfiN9h/thDoEp1Tnt/7MS4=; b=J3IUhQdQ24/rCdAAghUH2G7pkmjXh4vEQB
+	LSZmmgGAqsJJLeA2QLTVf1zDMTmAy0CMe2cpmxGvp9ANWHKT1ESiKW6xhy6eDtnA
+	SjudAosipEy7Bv8UGPc1nqmuBky7iz8xSBuIa1d9AhfysvIZWAH+VKMJuwkLOrGm
+	CQ7Bn7dN2FSZGjvGhtMjrwMvJd+4KCTlSL8QDQbWyWiM0XI/lw19H/lhho11kBXd
+	LsYKqY8KCMZdW3oxHoTtjAhByD5aqKCWxBvy7AvQhefHW1Dcxf9RETqPgtpIzNUO
+	TTIf/nMS/e3cGf1R8rw8fKoThCcHB0qNAZRHVZAaxHxgdfl2pLsw==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48n0tqwj05-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 22 Aug 2025 11:23:03 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57M9h3iw020714;
+	Fri, 22 Aug 2025 11:23:02 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12on2077.outbound.protection.outlook.com [40.107.244.77])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48nj6h83dy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 22 Aug 2025 11:23:02 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SfwQxjniATmgWoiCoxNQEgN5h3uC8SmR32WtugJYVp504RoKmw6qocGusbLZ1YVBtM6rDO6xbhwCE6IWw2qLQTHULugE7X6mJ9FygkUk1RZxapbbS98FCzBzVYZA+7lB35f4QcLmrMC2JFkyKgojSSARchwRwFRgrsG4sSqMij7HPB+J8BSxY2P+zkCeAgKCo1Y+hrs7hRF5L3RN+5BGRa1/pCDGtamOZnVEjq5BRKTHgpz0XAKK0/S4mynLke5PApHuTTavTHRrq0a1UAmCFaBnP2heA4XFvRrMWjsTTeBma3L3kIl9h/LF30aSgenJqCzoG9TIOyrrB8Tun5cf7Q==
+ b=d+xRuOVWI4dE9d5LH4mq19Ndanwl/uTd/9pqjH+HcPQc+HJi60o1xqMqOEKMPGry6mLfCiaFdwFfaiuSFY7f0IBURlr+ckdH3iG8O43Ba24sGxZssb0jvVG4T7ROjCdnEsl8SkRs18/0iwnW6tmwcNk+/KzxJGwvPxaMnHhHcdStVB/HfPYiNHxdv6PmUPJ8sqmxkLwn9tIC/MzjMNwKPuMR5Ww7l8dDLpPB9AHR8QkQTXNgqSqydWuha1XYpnNqOg3ixTtDR3JSfi7hmivzGsCLpYzc68GRGS50ytKy4zikkjl2fVBoPhAaDVxaoedfYlIhk71VQMxfi4gx0+y0sw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tbzkyc84FtUfM5Y52KD5POzjnw3BC64XYufs1hqRFUs=;
- b=uaqvO7V3MWNM/eQ5/9MEQ14uqT9h340JbbB6v93fU0ZN8xNfaUFeGIR8x8cUSxkA8KmkpFr8LzOI1U7Nz+ZnxaePUBRNH7769LkqV8DhYazEnBgYN+j8DiNyh1qR1fms7ih6u5beZ+XzC3Ms5IcAgpPrq6JWKTPqZo64joLXOgKF0T12IfpqbfGA6wkk9Ms3ZO+Fe4+AnJE0TWylbsAun+CeLN5wzrPDut+1Gpu7xghP1yjlLnJzvMb5SW9cYBPXnyDy+Kl7y3hukFa8PUbxrLoIWfufgwq/RpK07zvvdX2BNbw373aOrd5fKGswGoWeiLF5JZA3Lh1m4MCdu+rE7g==
+ bh=oZfpq1JSQ3dbKrF4o+QlGVfiN9h/thDoEp1Tnt/7MS4=;
+ b=MBTUz8FITGqP2aX85Ue6pmqHxOnNauBCe21Djc4sYJJrpumXkEAsd0yNavyaHBmzaljuTIYT8+Q/pKyZJV/du4xmnX1H+sug62GL+xFlyShlGcDi877sFd5AOPM20hjwTS4ZMevHoK6EO0DiuSgP9amT/60X1NM42MWFBF3jaiS9QhBBKIjqn564vQO7q1s78nrPfe+tRO1ZjGLhb+WzBZ6KEZrMwMNKCmwv31sq3kAi/0YgiNNcWa95cjolbKJRBYW8boVWjQcGsVRh9eMECIr9ARVSQ8zuBlHK79WeCfrcWBsk61SBWTg1qqWOIET15gCrgWnq2ZyexPivfV8TEw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=genexis.eu; dmarc=pass action=none header.from=iopsys.eu;
- dkim=pass header.d=iopsys.eu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iopsys.eu;
- s=selector1;
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tbzkyc84FtUfM5Y52KD5POzjnw3BC64XYufs1hqRFUs=;
- b=ANk2s219RO57Vyn5/Hd9LixTdh5Bz5PMvYI4cEENfY/dgiAb2mDUnPQw8/Fxjyox1CLr4Ihew1SDSaBhCawYJWcP8xBQD/K9o00w6vCZG6EsTk/gxtWENfuu87j0xaKbTpRJU4HNFPeRobSfYBOHlJA4LU89FLvScIGS08ib2NZwvkCcLfTrNNFWsQA60UvEcKxRxzifjhw6Tk4pcOelbzoTnFomZefG96ijGu1rdMMXt4qD6XOaXVKFkespI/wPAWVheVkAg95Vpm4nieFgmwZu7mMcWQmdDOa+DqsrdTFRqNDBcFRtIf6lbrkYk802WpGGZWLaQW6WLHqWwGoHzA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=iopsys.eu;
-Received: from GV2PR08MB8121.eurprd08.prod.outlook.com (2603:10a6:150:7d::22)
- by AS4PR08MB7878.eurprd08.prod.outlook.com (2603:10a6:20b:51d::8) with
+ bh=oZfpq1JSQ3dbKrF4o+QlGVfiN9h/thDoEp1Tnt/7MS4=;
+ b=E//vhMa6r8gY2rd5SBMCRhaRKPUTIQiEh8MxDP+xhi4wJXk2hpjrfCr4GSadUf1MKeSpeSnX5kxRNnpSAjonOtBHsh2Ve4GWEXfT6hZoWb+xeEftS1SHa/EQjTpasbKt7a5uCBvc6oXwGUFuwbLoQ0w2sQsI/t7MWxMNnTLSsqM=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by MW5PR10MB5762.namprd10.prod.outlook.com (2603:10b6:303:19b::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Fri, 22 Aug
- 2025 11:22:24 +0000
-Received: from GV2PR08MB8121.eurprd08.prod.outlook.com
- ([fe80::4cd3:da80:2532:daa0]) by GV2PR08MB8121.eurprd08.prod.outlook.com
- ([fe80::4cd3:da80:2532:daa0%4]) with mapi id 15.20.9031.018; Fri, 22 Aug 2025
- 11:22:24 +0000
-Message-ID: <1d053317-24a6-4bba-aa30-ad42460ec19b@iopsys.eu>
-Date: Fri, 22 Aug 2025 14:22:21 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/14] spi: airoha: driver fixes & improvements
-To: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Ray Liu <ray.liu@airoha.com>, Mark Brown <broonie@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
- linux-kernel@vger.kernel.org, Frieder Schrempf <frieder.schrempf@kontron.de>
-References: <20250820123317.728148-1-mikhail.kshevetskiy@iopsys.eu>
- <aKbDjIZhJuWo3yFu@lore-rh-laptop>
- <7bca8089-09ad-4550-93d1-35a365bcd167@iopsys.eu>
- <aKcEYn_hX0ZIusne@lore-rh-laptop>
- <eaea681a-cda8-4066-a58b-61a35e2b8b55@iopsys.eu>
- <aKgSY7bOrC8-qZE3@lore-rh-laptop>
-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Content-Language: en-US, ru-RU
-In-Reply-To: <aKgSY7bOrC8-qZE3@lore-rh-laptop>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0348.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f4::7) To GV2PR08MB8121.eurprd08.prod.outlook.com
- (2603:10a6:150:7d::22)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.18; Fri, 22 Aug
+ 2025 11:22:59 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9052.014; Fri, 22 Aug 2025
+ 11:22:59 +0000
+Date: Fri, 22 Aug 2025 12:22:56 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: schuster.simon@siemens-energy.com
+Cc: Dinh Nguyen <dinguyen@kernel.org>, Christian Brauner <brauner@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        Kees Cook <kees@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] copy_process: Handle architectures where
+ sizeof(unsigned long) < sizeof(u64)
+Message-ID: <233952f3-fdee-4ad6-8ad4-8f690b036f68@lucifer.local>
+References: <20250821-nios2-implement-clone3-v1-0-1bb24017376a@siemens-energy.com>
+ <20250821-nios2-implement-clone3-v1-1-1bb24017376a@siemens-energy.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821-nios2-implement-clone3-v1-1-1bb24017376a@siemens-energy.com>
+X-ClientProxiedBy: LO2P265CA0172.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a::16) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,238 +114,206 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR08MB8121:EE_|AS4PR08MB7878:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9a9b293f-a221-49c8-d59f-08dde16e2a9d
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|MW5PR10MB5762:EE_
+X-MS-Office365-Filtering-Correlation-Id: f5f3b3f1-4e27-40d5-7288-08dde16e3fbe
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|366016|7416014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZitncjR1MTVraWhGaDlJMGYzOWpHcFpJYWhtTk03blh6dlg1c3l5Z2MxK3Vy?=
- =?utf-8?B?MVNqNklXRGhxb3hyODJQeVpIK0c2T2JrZC9IZTk3eXk4L1BTTEYzMmd1NlV4?=
- =?utf-8?B?eWk1N2I2QVpDdUJVTm5WV29ZZENyMGlRVkxtMmMvL3pOclMybzhvUzVzUVZO?=
- =?utf-8?B?M0NYcHBCRU1mSi9Mc2UxYnh1M0JTQll4azZpbXlSSzV2UjQwUS9jSzNzc0Rz?=
- =?utf-8?B?dXVCbW5LL1FEV1IwOWRxSXdRV1RNTzBiZ011amVFQURlRGl3OUhQbEpDbXdQ?=
- =?utf-8?B?UFpqdWNaOXVWdm9RZFFsZ0JIcUdUZVFKa2ZvemdXTEp0Yk9FV2wwQ2hHTUNa?=
- =?utf-8?B?MXRxaWw4dUJxY1l2WnFjcnlaMlhOekYwWDd3RzFIZVBISGIzSjIvQ2NyVlpl?=
- =?utf-8?B?OGorTngvdDNOUGlhdW9GcEZ1TGFNUG9iVTdUT1NkVDZJVGxaT3RUdmhiTzQ0?=
- =?utf-8?B?ZkNranppNUxLdTJ3bWJwOHVWaVQ4V3ZpKzJ3OG41UktRakF2ckJyOTB5OXdK?=
- =?utf-8?B?L0loTUtjbm9nbFM0aTg2T011cVY5RHBxa3ppUUlDT3dtU3hqSFFNNHQ4RThM?=
- =?utf-8?B?aG4yT1FQYkV6QUpPRnpBY0liMFZKcm5DWGtCYlBrSEhqR21URENJRVlwQ200?=
- =?utf-8?B?V290eTFQaWMwYlBsL2lDS0NhODNQVHBqK2hoS2dsN0xmZU42ZFRxcXVNRGYw?=
- =?utf-8?B?ZDdXUTloUTdLYTVNVVZCeEt6ZHQ0UklobnVtOXl4eTFpRFZoRFZRWnNJUkpy?=
- =?utf-8?B?QldGQWVHd1JzMVV1bkFRd0diY01NR2x0RkFqSkxDNFJZaFdPYUhJbVd4QTdx?=
- =?utf-8?B?VjBzUjMzZjFnTEIrSXRqMnBNRTMxS2JHSjUya3R4RWtzM0lyNEhZbmlLejJn?=
- =?utf-8?B?OTVFTExHRURwbllXZ2o2NWJFS0x0QUx2cmJ3RXlVU3o3UHNTbUpwNkhTT0Zu?=
- =?utf-8?B?bzl2Y09ib25ReGtFZUdNMGFlM1gvR0VBTWdHUG1VczNBTE1lMzdXMDdOLzhF?=
- =?utf-8?B?cTk4NVUzSHJxcjF4Qi9SbUZYektBN1NoWmVyMkZNdmpNZ08zOCtpdmo1SVRS?=
- =?utf-8?B?Mjh6NGE2cjJPNVB1enJiaVJmamdUeS9TWjNwN2RGT3BLSzl1UmVRais2NmdN?=
- =?utf-8?B?bER2ZnQyRC9NY1E1M1U4WEttTUdBdjh4dmMrSE9WQUdFNnJuTnUrbjdLUW9z?=
- =?utf-8?B?VlNJWkRaRDk4S3JRclBtUW02M09MKzMyWUdRSmRHKzVBbmJuei9qQ2tkV1dh?=
- =?utf-8?B?a0xOUXlUejg5a2RlQ1dGYXNtaUZrb0NHeGkvZU1XL2QvU2NibmZkSWpsNHJT?=
- =?utf-8?B?eUlUWmRzYnVLclJPazlxTW5kaDdhMWhjQ2RkQ1FVTDJsVHo5cGtQd2d1ZjBn?=
- =?utf-8?B?Sm5HaGRJcCthRDkzU1U0Y2RYRXVWTjE4UlpLRlJHSGVYUVFqWGwybk4rUmVa?=
- =?utf-8?B?R1NpTWRPNjlMVU5nZkwxSnBGbVlQVU1YZFExaTExUnFMSnhrWUZjcWJramN5?=
- =?utf-8?B?Y1BoV0hEOEI3VHozRWlndXIyb292NG80bHNlWWVEOHFWcENMLzRyOWR5RFM0?=
- =?utf-8?B?LzZBbG9rRGNYNzZIRU5SYk1Sa25WeE1hN0hJaHVhdFN4Wno1WVZpaEJCYnZW?=
- =?utf-8?B?VWJQUmJlZEZIdlFKQnMrUW5lcGNmN1VJb2kxWEdkQXo5OHRiMkVnNTVsa0JG?=
- =?utf-8?B?Q25lVFpEanlKOEtmOCtBaVUyWmVZMFBoQW9GalBPZlU0bGJpTmJrbDRQVUpV?=
- =?utf-8?B?bmw4RXY3L0cwMGJyMmRiNXNzZHhFR1JtRjlDVTB3TCt6bVIyM1cyOEdqaDQ0?=
- =?utf-8?B?bWJ0V3pnZkJBQkppOXpEU1JzdVJMUko4bTJScXpKYXNiTmZwTi9PT1dIMEsx?=
- =?utf-8?B?Rkw0TmlUWGdGam5VKzl1NHJiWGhUQW5QYjA0cFBTOEU4QWFNUktVanhvNVNp?=
- =?utf-8?Q?8Be+oOv16LI=3D?=
+	=?us-ascii?Q?jjWmbo/bJ9VR8wSlmNuFNbWTWr2IwE+ymLfWzIMsA+2Im4J+oSk4YlWwHqyb?=
+ =?us-ascii?Q?ozW7cw+k9u4kGJEDbfl4+qLkRshu2fjreHWxqZyYFXMPYMTt9G/OVO8mevJX?=
+ =?us-ascii?Q?2uL/R+ARKBiK45hiXxM96TvLoHqMfbyi1ClEppa9GZW1Ox1wYQ52myw3qMPT?=
+ =?us-ascii?Q?xeBmJG4XQorlDgNc6eA/z32XPBe/j3oRFDVsk06bhH1061pesNld6c/vSJ4l?=
+ =?us-ascii?Q?M1SgxrlbE/HzjfaGvzoFihQJw/oS68sO04xKxXFScrr38bdnfL6PbixbtHh5?=
+ =?us-ascii?Q?lC5ldsCVvLUyc5Mm/iqxy5o7uwMGaL6x223SdC30B5T1NFrKiFLjx6Z50TYE?=
+ =?us-ascii?Q?aECnOprwjFv7JxDzkEXnJpToBqG0nYR4CyunfL6miDicj/MlayqHRcsLC7NZ?=
+ =?us-ascii?Q?hBm7hIh0gzPbF3neSpTFwGsiSnoQbMP3tUzMxvWU2BcyZ1dSJx0QnXx0Dz9f?=
+ =?us-ascii?Q?ULlNkBk8ltTBhP1EeMRmmqXyV1ZpqUP0czvhGa3FN0UkWGu/cIvC85EHu7gX?=
+ =?us-ascii?Q?dF8O/PJSQ13F2yiNu1teO9Je4vmwl6F2kjxBpDmiwE6441gdJ1aBrhCdwp/R?=
+ =?us-ascii?Q?t3D+XrLQqP5a6r24DN0AcHxKpMkotLb0lY8vsr+zklz//fcIDXaxvYwTEtQh?=
+ =?us-ascii?Q?+h1V3idWqyTQSQVFi7Ea9dxV+oeHqlSn/f3P8Ry4c4Vhe0oWslqDQA/ylKGC?=
+ =?us-ascii?Q?OrIwkNMotMfTQE1uSZ88nzvc/WCGlvLzrH9xD32oUHO3C9JUcdNqkgco06MA?=
+ =?us-ascii?Q?QnRKkt+D6gsWFRkTedh9fszfC7H7sAj792kfSWN2ITxskgyin0EFvwaThgF7?=
+ =?us-ascii?Q?9y4J4qhg2dX9An1aLzqKn8UgrNK3w6+dTGgXNDhzBlHZB9B0T43E9fFXAQHv?=
+ =?us-ascii?Q?rweABmNMtFAs+vcB377w+EYVKQFE2B7W1pIj8578sSL5HHJiA6tb2FTSeroU?=
+ =?us-ascii?Q?XnORT+eerxjQo7iX6LVs8ShUITyjwn9h9o45T5eVCmXNe7/1RuGxHIEaqWOW?=
+ =?us-ascii?Q?NukLJobfGCnBS+fy0HGXB1ypHXqP8QWFsWXCrh4754er98WOM9WkfC2MjqeU?=
+ =?us-ascii?Q?dU9w57cQANEy2c26d7UFOAEZX0FpkBRcbUp/66b1iJ6WWHZ0/aOfNWkeXfZZ?=
+ =?us-ascii?Q?nl0TfGyBgkg4NdH+5ct81N/SnHhWDV/Z2U9yFY8YwskyECIPt0DPO8iD8kM7?=
+ =?us-ascii?Q?IcE8v5FnfY59WzxuV3aQB09x9kXyhA7B0WUPR2ce1nA+ClnMHSZJW+UsCVQr?=
+ =?us-ascii?Q?fUv3R/ZNKjuktpwrBFqCFVp/aXsWFSg9Mx3qxsittTPrfnZ6JFcuocOOvZmT?=
+ =?us-ascii?Q?nDMNyRfSRTfd5iVmjQPwnNuqq4O7nzDLqJjSmJZWheKW8iXv4IiK9MzM2f2k?=
+ =?us-ascii?Q?0P9R980kWwXIHCZaxApxoaECBBqym0S2JuGKNDE6qLWMGRM/kIFoZnEPZlhq?=
+ =?us-ascii?Q?2LUmKHtLetE=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR08MB8121.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bGZNZmRlZkpXcjFsYnY3Sk1KaEVVYTkvMlAzYUhqVjJjUzZLdjMvS1hBaS84?=
- =?utf-8?B?U1k5OTMvekJ2MzZFd2J0Um1mUHhrRk9kVzJFWko0UFBLL3NwbFptOStOYkVI?=
- =?utf-8?B?Y1hFOUh2bWxIazFEYnZ4U25hNWIzV3hXYmdPbW8zYXB0NS9VMzBFQWRTcTU1?=
- =?utf-8?B?THlDZ0JPckx3RjhpM21WS1pPOUNMSFZPWE5RNEllK3dQVFdIcXJRSktidlh6?=
- =?utf-8?B?SzdMVVQxWjA4aWFDNnJTaXFBUFh5Q1RuZEVyZDdNb3JQL28zcDMvMEJ0anFi?=
- =?utf-8?B?SFNXdElqWmlTTnVDbEQxZE96azQwc2NsWHlmRmVrd25pRkI3cjdlQ2lmUDJK?=
- =?utf-8?B?aWQxbStPQmNkUE1tMWl3RTY5QXZEaVpMN05MMGYvQXJDbVgxam1MRGtnb0tU?=
- =?utf-8?B?MlowY2Y3QlhQRG1PdVJCWGo2ZDB6M25kS212TlFRbXpCUU5oaUw3NnVXWkhq?=
- =?utf-8?B?d1BXQ3ZGLy9saFlaWTdaY3BaMkpCK0FhQmlKVjFCYTVnSFRHVGJsb01nYk1w?=
- =?utf-8?B?a0ZxVGR2NXRsRmRQQ0VmVWY1OTZtamt2SlNQSE1YcGtIL2FkVHpvNHNWcUFL?=
- =?utf-8?B?b1Z6Z2FtZXBsNTdTbDJEVWlkUXA4WmpENjdpMkRybDFkNWxoTU5WZTBUcnFh?=
- =?utf-8?B?WndFYjVtMmM3Um1kbnIvK1l6bkxuL1BySGhNVDlXMVFFeC92eGljMGNJNTla?=
- =?utf-8?B?Uyt2RmRKQXd6dnhVMFljSWliRUYyZFcrdTV6dWtFbW5jOXZnbVpDNUYzN2Ro?=
- =?utf-8?B?YWtETndPRC94cXd4OVdLcjhLMmZaVHJoRXZhS3pvb2xieXVUUG9kOFBSay9r?=
- =?utf-8?B?YXE1V3pVaGpyMzc4dklyZU91djNIeGljSEh1bnRseno4UmZ2U1BraGFKMXl4?=
- =?utf-8?B?c1JCaW9DTGlmM0JieG9zNUFHdkNlNjVnNko1SUdtaUd0T2JCemlKQnM4d0ZT?=
- =?utf-8?B?djZ3eW5GTHFxRSt3NUpiNGk4UEpoamYyZmNKU1pBQ2N4ejA5QlZwajdJNktI?=
- =?utf-8?B?YVQvSVdlc1dGQjhQT3A4VUNUNkc4NDdlZU1JVzFWL29Fczluamg1QnJWUk05?=
- =?utf-8?B?K3d4Qy9HUnpwcHloaUxJS1ZFa2NhVkcrU2R0UzZnRXpiM2daZ2FFRzkvaTdh?=
- =?utf-8?B?RXY5REphNEJZc1FCR3NQbTI1RHE3YW5KNm1pd0tHN3BPeHowdWsrYjQ1K2lS?=
- =?utf-8?B?QmFIRHFuYmlsbVJxWXIrZU9kWUc5Mk5vaWhHUkM2ZHZMeDhuWlFGbm1GenJH?=
- =?utf-8?B?SnlEVytJUEd3azhBVzdEQUV1djJQNEZMWEp1aG1KWHkxaFlOV0JXeVM1ZG5H?=
- =?utf-8?B?RVMybThGQ1JXeHZiclZkQTJPK0MyNjJSclU1Z3F3YTFFZzk1ZU1BSzk3b3dY?=
- =?utf-8?B?S29ISEdFY1JpSXYzcVNreStMc3BIckJHMXlKeXVtb2Q2SGVFUEFmeWpMSE52?=
- =?utf-8?B?S2tCejk0V2ZtOU1rWTF3bHNabitGb1NEeW1FYytUTUhOTmpLY0tsRzNYM3lR?=
- =?utf-8?B?TmhQSlJjNWpOMEwrRWxmL2dPVUVFNnhkVi80dG83ajV2TS9zeGZaMEFObTIy?=
- =?utf-8?B?bTV3clZTY0J0TUROcWtuWU4xVVdWbVJxUkxVd3IrcHJ6aHlsL3YvU0I2TGJ0?=
- =?utf-8?B?cEVTMDFheXdjcWFYVkF1Rkh0Znh5eEZnSzZTSTg5aEZZS2Y5REhzMzFnaEN5?=
- =?utf-8?B?bXk2dEk1VUVjSHpIVEx4T1Z4SG5iQUFFNDJKQWpnbXpEVldPR0ZlU0VKbVJa?=
- =?utf-8?B?Tjl4b0NGYTJhTkxHRitGYUs1S3ZsZ1h0MUZ0dEp1cTJnWkJrOUdZc3lqLzBF?=
- =?utf-8?B?OFhTaGNIRFo2NE80RFNHcUNydlMzMHUyL2lUQVZLZ2dEVXYrMnZkWENnZnhy?=
- =?utf-8?B?VFNoR09hcG1oWnBGSE1LekRzUGdTRWF3ZEVCZEZPVWRLeTVEcjZyWm80ZHJZ?=
- =?utf-8?B?blJVL1VISXVpZmU4cmdyUjNMelgyQ2RKbXk0K0VsQ0ZsRVAzUjIrUFA2QVlJ?=
- =?utf-8?B?Z2RDVUd5eUl3NWxvd2ZCK0R2Mkh2MXdodjhZZmcvTHlyMXFHZXVVRTBIcENE?=
- =?utf-8?B?NitCU3V0RXRwN2xTUU8ydjhxM3YxSGt0NFZMY0dlQXgycTFVTnVLYjBIMUli?=
- =?utf-8?B?VTg3UWVzaW0zeVNCemtEZFhJWGlsTjBZV0dLMC80MEs2QWV6WWxqRTNXNWZa?=
- =?utf-8?Q?vwPHie44cTKmmA2U2JJhT78=3D?=
-X-OriginatorOrg: iopsys.eu
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a9b293f-a221-49c8-d59f-08dde16e2a9d
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR08MB8121.eurprd08.prod.outlook.com
+	=?us-ascii?Q?ZlydYsC/lDQYSxBMouznemrRJEU/xPI1F/OWEPGXllOOtLUkkjjj+lxKrJ8W?=
+ =?us-ascii?Q?VQJHtmpqAAPMdM4xxsLtjMo9Zpf2KQ9nv5mXx+Y50soSBLFGqmi9pIOdg6tJ?=
+ =?us-ascii?Q?fbrorWlBXwKlJXJYpkQQJfYxVWLaSf4XE30JqYgZy6L8BGdg526Z+AnpYge5?=
+ =?us-ascii?Q?3ptXJn5m5dcR/Ptn9OH2y/zoEWOqkU9V4ySOczorTybLDQXKVPJJvaIfR8jy?=
+ =?us-ascii?Q?s3DcXds4u6l7vT6SXrvhRBvywvNpCgyMSkZQqt+0PcPW/0CjH/0Hw1VD1GKC?=
+ =?us-ascii?Q?TFgELf3cGgS8pAVVfGist3JQ2DOMgYIjaBjXRFTunJ4UQF3Q8k3APfojtb2k?=
+ =?us-ascii?Q?+DqUaYCPUaVA+F90Gw6Y53ku0tmKcQ49fMw6MLFBSMfJ3pQYz4zFnJDthOq9?=
+ =?us-ascii?Q?T124dSFlreuZsuhf/twS4r5GjxMYsLDfVy9WHyV6h7ESieMc97nd7DHC3Lxl?=
+ =?us-ascii?Q?rJ1DloaqbJPXjn9xweCjtjFBHddqGvdp5ZTlHtc1O6GBKOyrmKPCbmbxNp3h?=
+ =?us-ascii?Q?NzU72AqTIQeo8s0LcSvcUp1fo+zVtbzjjzQOIrzcQrHQ9nB1FVxra05gZqYp?=
+ =?us-ascii?Q?gHpdy1kLyY2C8VyBlLIGwuV14hIQmg0Q2HStBWWu6QHf6y7GY0W/jM/4IFg+?=
+ =?us-ascii?Q?G3Y7NSxAXltGnHb227zbX1/NRj6IcRGhDJ4DynsEwdbOcmMvCZ4B3+tW3wZo?=
+ =?us-ascii?Q?qtERNhfgYBWkPgqKkvHucB6oSMcJvo7Qc4k4s4TiQ8A8rGwiA/BTQtkMJEb2?=
+ =?us-ascii?Q?FD3c0rzg1HuEN2Mvm3US3WvPLl2Wr/oweIuHA8J9E9RqitfrLu+wP4wbdjPY?=
+ =?us-ascii?Q?n5q85l5iwGIeQ2vUi4A0n67xhKr3zzEbJK/EbmD8dEDb+nf+P4kEPswJGCQr?=
+ =?us-ascii?Q?/vZk7fj9N0oN+Mr0U6IMcREkOVSHrZTRtfPzg2yg2MegYL/voW6opZjjGrDb?=
+ =?us-ascii?Q?PlE8IEo81MUDgYCFLY0J8BLG+W26lD+wunotcRoXXZfiAWjHqT+tx1X5HNOJ?=
+ =?us-ascii?Q?sOwgRe3+h2EBR8WjukLfrVBBdjih8z/YKjx+1jQZecEkWcz6L7eKhQJzQFXG?=
+ =?us-ascii?Q?+irqVgH9GL9DuG0KTdqqRXeDiiwd8NoARVzBYvDo4Q7/TLU2Xh4kZ9TtNiZZ?=
+ =?us-ascii?Q?2P9/rWAx9u2RUostUPeHTtgsK33Ddf+Mn9zyEOmnHRszits1qABhhE8GHIme?=
+ =?us-ascii?Q?VWLuJLWbzKhQffrvHP9iBmk60raVegBBUXAf0w5uyVJt0gydj+lWJzziaHzR?=
+ =?us-ascii?Q?VRlRKuB3c0cqd787nvw0ydQ8bGzJ+sCJ2e7WFVigShW0feUKGXwPpb13Rw9i?=
+ =?us-ascii?Q?TLJRLha5H3vRCHqA/fX2lDl/HhZvgASPZqkGsY9mS3PogayCLA6SZM9J0y0p?=
+ =?us-ascii?Q?6Mobxu5HuUkXeKVL7phn5tgw1Hz/8d+xiJdtcHr/zHrVrADayTydX5sRHl0R?=
+ =?us-ascii?Q?FmHI7vszEX9pScpKJrru9JPixphH2EMykF3jKw3P89wzmI+phVK25+WvJTpv?=
+ =?us-ascii?Q?VTNB1ONmXkSNWa0wbKo4iyihU8qIc5Mtx3soR0jWWoJLjEuJiAmDPzYkBf8V?=
+ =?us-ascii?Q?HGq3nuvwRLIjD263lMHgpf+ZLNW4Spm7UGEOawLX40KEbgxCEQ5HJ+vtut+s?=
+ =?us-ascii?Q?fw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	nOGx4ws/GjSU4CCwFwjhiWOE5zdvTUVSXGGrDtQsJcaSt+sfdUcaSBZ7OBLOAA67BCJ43lGL1aRW5osp/oACEaHza4hfnWV+fZCGRn1xH3WRdzz4aE/XqyGc3t5mcQAhs5ujJW2+8eBXkhbFfO1hecYOyCQf2brVByOAroVIHi/Byf5eohg53gUxdAT27DWVwu0O/C0IT+7CtbtXc78DJKonnDUA13XXt2ctK0zCUXTgwO2sikqvlY7qQrT1XQ/OAWlUgeXSgTbtj4mafHA2ajGRIEF+SoaWDr3IUhUYsDWkS6ayHGmyNoxz0XZIqA8XEARVbs9di4AZtUBT3W3riYyLbdU4eWW5upm9oGKf60o9BsObLVCWv+4ojYWjn+DL6TvcBqwWBzt+SpB07N6ax4JLRMltjEdREMYiYzbzZR3eGTftnom0c8xT2gkGroFhxNloQ47v77e/2a9D7p5nOErBiA1gZ79CxPaECG203rFxLUTtj0uRCVKME1McFdTRhE01hqBiY0A5Kby0NzPBhgwPCNVXL4YXGBssUppCHHxcJBLQpeS9n85S5H0E3GoUD9glwibXlt9ahiCBOvWY69G0pqdYhH/Bn0ty6qqTm5o=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f5f3b3f1-4e27-40d5-7288-08dde16e3fbe
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 11:22:23.8442
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 11:22:58.9248
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8d891be1-7bce-4216-9a99-bee9de02ba58
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UcqmB5aRV7Oemt+j0rzy4nppYf4/1QiQIyjyXgnQMvB2QkUgqbz1qNCXeKvQJhDeZwYN7ye3Pg2g8ZxXcecd3Cs/PS8D6daNAAk/1ak3FHY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR08MB7878
+X-MS-Exchange-CrossTenant-UserPrincipalName: oOosHkTp9UQGEfb0zz6KNuD04cFVuYHFt6YZHSGu7YHAJZCdcHgnW//0YIfwn1Wmzu8NxCh4/9CPy7ruZCEqxGV07clhTcbGH3uK9vVpdMY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR10MB5762
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ suspectscore=0 bulkscore=0 spamscore=0 adultscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2508220107
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDE5NyBTYWx0ZWRfX+BJaJDKUmJHY
+ e51pAJ7AlJeZ/OuysGvE/pk7F40CL/Erl8i/0vQvPE5GTHztVDSlsAUyWdP0qfQGbdwpD63Z3DZ
+ Azudbwioa6dIRZcGxcoTjUUEURJ9JJUJa8KWs7Uvddw2Jn7PuNSeVLqhH4CR+6uzbKmtTV5RZ7d
+ 2aMWhVE8vxr8NSMBMXYa/SFOU40wXIJPfWu5ZGPJw8LNYwOG2FQbjIgPLDwa+e4Z5skJ7MXmlVM
+ L0bBAjHIWCPd2tUpBL7m1sd1BWSMXKtiC+STiWWqHEFsmDE5J+bJ5MmJxP4/KKZsSJOhUEutVPq
+ 97pOfgyx8qNwign7FpELVDVtk/suaIvS+Y8b85DyE8dAN1Sk0QcR1HzwX7lKzlt3J31ayUaPJBE
+ LT2x+eYxPbPH2mtnM4j0PcU9kNscdb1Movuie6KhRhwuxtWPk8Q=
+X-Proofpoint-ORIG-GUID: ncU6_OVVTayezvZ54I10zSQvsSqELabs
+X-Proofpoint-GUID: ncU6_OVVTayezvZ54I10zSQvsSqELabs
+X-Authority-Analysis: v=2.4 cv=K/p73yWI c=1 sm=1 tr=0 ts=68a85317 b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
+ a=xrKq8BdPAAAA:8 a=56lA155kpmB9p1ufybEA:9 a=CjuIK1q_8ugA:10
+ a=XMSe_M5rEsREOkcl5Ev-:22 cc=ntf awl=host:12069
 
+On Thu, Aug 21, 2025 at 01:27:37PM +0200, Simon Schuster via B4 Relay wrote:
+> From: Simon Schuster <schuster.simon@siemens-energy.com>
+>
+> With the introduction of clone3 in commit 7f192e3cd316 ("fork: add
+> clone3") the effective bit width of clone_flags on all architectures was
+> increased from 32bit to 64bit. However, the signature of the copy_*
+> helper functions (e.g., copy_sighand) used by copy_process was not
+> adapted, as such, they potentially truncate the flags on architectures
+> such as nios2, where unsigned long is a 32bit unsigned integer type.
+>
+> This can, for instance, be observed via failures of kernel selftest
+> clone3_clear_sighand, which attempts to trigger the conditional
+>
+> 	if (clone_flags & CLONE_CLEAR_SIGHAND)
+>
+> in function copy_sighand within fork.c that will always fail given:
+>
+> 	unsigned long /* == uint32_t */ clone_flags
+> 	#define CLONE_CLEAR_SIGHAND 0x100000000ULL
+>
+> This commit fixes the bug by always passing clone_flags via their
+> declared u64 type, invariant of architecture-dependent integer sizes.
+>
+> Signed-off-by: Simon Schuster <schuster.simon@siemens-energy.com>
 
-On 22.08.2025 09:46, Lorenzo Bianconi wrote:
->> On 21.08.2025 14:34, Lorenzo Bianconi wrote:
->>>> On 21.08.2025 09:58, Lorenzo Bianconi wrote:
->>>>>> This patch series greatly improve airoha snfi driver and fix a
->>>>>> number of serious bug.
->>>>>>
->>>>>> Fixed bugs:
->>>>>>  * Fix reading/writing of flashes with more than one plane per lun
->>>>>>  * Fix inability to read/write oob area
->>>>>>  * Fill the buffer with 0xff before writing
->>>>>>  * Fix reading of flashes supporting continuous reading mode
->>>>>>  * Fix error paths
->>>>>>
->>>>>> Improvements:
->>>>>>  * Add support of dual/quad wires spi modes in exec_op().
->>>>>>  * Support of dualio/quadio flash reading commands
->>>>>>  * Remove dirty hack that reads flash page settings from SNFI registers
->>>>>>    during driver startup
->>>>>>
->>>>>> Unfortunately I am unable to test the driver with linux at the moment,
->>>>>> so only the following testing was done:
->>>>> It seems to me this is quite an important rework of the driver. I would prefer
->>>>> to have some test results for this series. Are you able to run mtd_test kernel
->>>>> module for testing?
->>>> I'll try to build latest openwrt with this patches  and mtd_test kernel
->>>> module and try it on one of our boards.
->>> what board are you using for testing? If it is based on Airoha-7581 you could
->>> use the following repo for testing.
->>>
->>> https://github.com/Ansuel/openwrt/tree/openwrt-24.10-airoha-an7581-stable
->>>
->>> Regards,
->>> Lorenzo
->> What tests do you suggest to run?
-> IIRC I run all of them. Can you please report even if there are some
-> improvements (or penalties) in read/write speed
-Do you mean to run it twice? with patches and without?
+Ah this is a change after my own heart :) as I have worked to make mm flags
+at a fixed size per architecture (and indeed, expandable in the future)
+[0], and plan to do so for VMA flags also.
+
+It'd be nice to go further and make this an opaque type etc. etc. but not
+sure if worth it.
+
+In any case for a backportable fix (I agree with others that indeed this
+needs a fixes and backporting as this is a bug fundamentally) this is fine.
+
+So,
+
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+
+[0]: https://lore.kernel.org/linux-mm/cover.1755012943.git.lorenzo.stoakes@oracle.com/
+
+> ---
+>  kernel/fork.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 >
->> I have a single flash I boot from. It have only 2 mtd partitions:
->>
->> [    2.980849] spi-nand spi0.0: Micron SPI NAND was found.
->> [    2.986102] spi-nand spi0.0: 256 MiB, block size: 128 KiB, page size:
->> 2048, OOB size: 128
->> [    2.994493] 2 fixed-partitions partitions found on MTD device spi0.0
->> [    3.000856] Creating 2 MTD partitions on "spi0.0":
->> [    3.005651] 0x000000000000-0x000000020000 : "bl2"
->> [    3.011247] 0x000000020000-0x000010000000 : "ubi"
->>
->> Most of tests are destructive. So If I use "bl2" or "ubi" partition for
->> test, next time I will be unable to boot :-(
-> yes, I flashed the device after carrying out the test.
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index 5115be549234..0e9b2dd6c365 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -1510,7 +1510,7 @@ static struct mm_struct *dup_mm(struct task_struct *tsk,
+>  	return NULL;
+>  }
 >
-> Regards,
-> Lorenzo
+> -static int copy_mm(unsigned long clone_flags, struct task_struct *tsk)
+> +static int copy_mm(u64 clone_flags, struct task_struct *tsk)
+>  {
+>  	struct mm_struct *mm, *oldmm;
 >
->> Do you suggest to patch u-boot & linux to have more mtd partitions?
->>
->> This is the results of the only read-only test I found.
->>
->> root@OpenWrt:/lib/modules/6.6.79# insmod mtd_test.ko
->> root@OpenWrt:/lib/modules/6.6.79# insmod mtd_readtest.ko dev=1
->> [  159.121706]
->> [  159.123220] =================================================
->> [  159.129053] mtd_readtest: MTD device: 1
->> [  159.132898] mtd_readtest: MTD device size 268304384, eraseblock size
->> 131072, page size 2048, count of eraseblocks 2047, pages per eraseblock
->> 64, OOB size 128
->> [  159.147008] mtd_test: scanning for bad eraseblocks
->> [  159.152141] mtd_test: scanned 2047 eraseblocks, 0 are bad
->> [  159.157549] mtd_readtest: testing page read
->>
->> Mikhail
->>
->>>> Actually patches can be divided on to parts:
->>>> * fixes of current driver (patches 1-10)
->>>> * change of behavior to avoid reading flash page settings from SNFI
->>>> registers during driver startup (patches 11-14)
->>>>
->>>> The changes are based on the code we are using for more than 3 years. I
->>>> adapt it to latest linux/u-boot code.
->>>>
->>>> Up to now the only known issue appears on en7523 chips only. Here a
->>>> corresponding patch description (not added to this series)
->>>> ====================================================== spi: airoha:
->>>> en7523: workaround flash damaging if UART_TXD was short to GND We found
->>>> that some serial console may pull TX line to GROUND during board boot
->>>> time. Airoha uses TX line as one of it's BOOT pins. This will lead to
->>>> booting in RESERVED boot mode. It was found that some flashes operates
->>>> incorrectly in RESERVED mode. Micron and Skyhigh flashes are definitely
->>>> affected by the issue, Winbond flashes are NOT affected. Details:
->>>> -------- DMA reading of odd pages on affected flashes operates
->>>> incorrectly. Page reading offset (start of the page) on hardware level
->>>> is replaced by 0x10. Thus results in incorrect data reading. Usage of
->>>> UBI make things even worse. Any attempt to access UBI leads to ubi
->>>> damaging. As result OS loading becomes impossible. Non-DMA reading is
->>>> OK. =======================================================
->>>>
->>>> Regards,
->>>> Mikhail
->>>>
->>>>
->>>>> Regards,
->>>>> Lorenzo
->>>>>
->>>>>>  * Driver compiles without error.
->>>>>>  * All changes were tested with corresponding u-boot driver. U-Boot
->>>>>>    SpiNAND driver was modified as well to match linux-6.17-rc2 with
->>>>>>    additional fixes for continuous mode.
->>>>>>
->>>>>> Changes v2:
->>>>>>  * minor fix
->>>>>>  * add comments to code
->>>>>>
->>>>>> Changes v3:
->>>>>>  * add patch to prevent continuous reading
->>>>>>
->>>>>> Mikhail Kshevetskiy (14):
->>>>>>   spi: airoha: return an error for continuous mode dirmap creation cases
->>>>>>   spi: airoha: remove unnecessary restriction length
->>>>>>   spi: airoha: add support of dual/quad wires spi modes
->>>>>>   spi: airoha: remove unnecessary switch to non-dma mode
->>>>>>   spi: airoha: unify dirmap read/write code
->>>>>>   spi: airoha: switch back to non-dma mode in the case of error
->>>>>>   spi: airoha: fix reading/writing of flashes with more than one plane
->>>>>>     per lun
->>>>>>   spi: airoha: support of dualio/quadio flash reading commands
->>>>>>   spi: airoha: allow reading/writing of oob area
->>>>>>   spi: airoha: buffer must be 0xff-ed before writing
->>>>>>   spi: airoha: avoid setting of page/oob sizes in REG_SPI_NFI_PAGEFMT
->>>>>>   spi: airoha: reduce the number of modification of REG_SPI_NFI_CNFG and
->>>>>>     REG_SPI_NFI_SECCUS_SIZE registers
->>>>>>   spi: airoha: set custom sector size equal to flash page size
->>>>>>   spi: airoha: avoid reading flash page settings from SNFI registers
->>>>>>     during driver startup
->>>>>>
->>>>>>  drivers/spi/spi-airoha-snfi.c | 508 +++++++++++++++++-----------------
->>>>>>  1 file changed, 260 insertions(+), 248 deletions(-)
->>>>>>
->>>>>> -- 
->>>>>> 2.50.1
->>>>>>
+> @@ -1548,7 +1548,7 @@ static int copy_mm(unsigned long clone_flags, struct task_struct *tsk)
+>  	return 0;
+>  }
+>
+> -static int copy_fs(unsigned long clone_flags, struct task_struct *tsk)
+> +static int copy_fs(u64 clone_flags, struct task_struct *tsk)
+>  {
+>  	struct fs_struct *fs = current->fs;
+>  	if (clone_flags & CLONE_FS) {
+> @@ -1569,7 +1569,7 @@ static int copy_fs(unsigned long clone_flags, struct task_struct *tsk)
+>  	return 0;
+>  }
+>
+> -static int copy_files(unsigned long clone_flags, struct task_struct *tsk,
+> +static int copy_files(u64 clone_flags, struct task_struct *tsk,
+>  		      int no_files)
+>  {
+>  	struct files_struct *oldf, *newf;
+> @@ -1599,7 +1599,7 @@ static int copy_files(unsigned long clone_flags, struct task_struct *tsk,
+>  	return 0;
+>  }
+>
+> -static int copy_sighand(unsigned long clone_flags, struct task_struct *tsk)
+> +static int copy_sighand(u64 clone_flags, struct task_struct *tsk)
+>  {
+>  	struct sighand_struct *sig;
+>
+> @@ -1648,7 +1648,7 @@ static void posix_cpu_timers_init_group(struct signal_struct *sig)
+>  	posix_cputimers_group_init(pct, cpu_limit);
+>  }
+>
+> -static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
+> +static int copy_signal(u64 clone_flags, struct task_struct *tsk)
+>  {
+>  	struct signal_struct *sig;
+>
+>
+> --
+> 2.39.5
+>
+>
 
