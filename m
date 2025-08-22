@@ -1,148 +1,120 @@
-Return-Path: <linux-kernel+bounces-781253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD24EB30FE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:06:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1738FB30FD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AE93621481
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:05:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F67C1CC6D0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C062E7648;
-	Fri, 22 Aug 2025 07:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECE72E7166;
+	Fri, 22 Aug 2025 07:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CNrxXIgi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="naW0xum0"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB302236FD;
-	Fri, 22 Aug 2025 07:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AB726F2BB;
+	Fri, 22 Aug 2025 07:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755846290; cv=none; b=sPTkGsZ3WWpVx5qFzINsGMm8QOgRf9jDZcq/hWXmoUc0HK0908FLRUk/KKCDWm9KtoqzhX8e4tbwjJhTpGRCmpb37yCDD4pFxD7kEScCk/nDY0TFE2KYuAxiRZRVvrRllspFxzrzXlOFM+zIJyLE9oB4XMR9xWQdUzZynetGEJY=
+	t=1755846258; cv=none; b=klw0P9CraLChcd/0kIrSDbYxCzdvKncZqBDcb3tDCER/V5ycDiE6lsymahS1cdvtXaYtf1fGoIEcyJ7tH7uOQo521Jfjc8/rLVmghJZhqLgCp6mMJ/CoYs4v6sBb9t7UqUuXfAksUgT4F3LWAVgk9Axqq/8YJ4WV19uvBcxrBgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755846290; c=relaxed/simple;
-	bh=xmBXjO8SZupecrd5krZAb/9zMHsYWEIsecBzZ3vXRTk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UR4eluNjtDvcrDuzK44A28PVBkka8Zxcx/p5pN5nBLSvT8Bf8Lcpp7pBFtFwbX2tMIRSgADgVC8dJjPICFusOpI6Eo/I53KAsy4gxd9RKdu2cbWpWWn3qed1uKgMejFlFFEzs9ktHhNs10XZ2uhTFW7wL8+ohCxvZt8sEaiRe48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CNrxXIgi; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755846288; x=1787382288;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=xmBXjO8SZupecrd5krZAb/9zMHsYWEIsecBzZ3vXRTk=;
-  b=CNrxXIgif5o5ta+YJ8bPAmRwQ/WyuPrsmsUAwj3XFwMGrt36l6Ar8Uo1
-   c/OoldPZsn4OFuJlRdw7YaiYzXh6xBX+Yn16ZOWQA7KlsBuaerXyJwKZW
-   ExGuLI+vLk6uQYgkH0Wo5OhP/a3cB0H/eTcuEELU/sBzJbV6zGBbfgzVS
-   xL3emR41T/3qY9rzHMb7/BlldCD896Q1R2Kmsa2XnEhueIOPB/lCwVqri
-   V9yMEf7uIYUhwb56Eb0xsZCah+Bmjk12RHM78+FKJFCgN2kgwd+c/6nTa
-   7vm8fTyRLjX14uOK/BmfWugnDAa6ORzH3xJiBooR/UIc4muErC0bGH39S
-   g==;
-X-CSE-ConnectionGUID: KiEJp8JIR+y2YKjW2TX1fw==
-X-CSE-MsgGUID: 4fuuzBU6RCy/aaz8Ifsmmg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58012685"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="58012685"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 00:04:47 -0700
-X-CSE-ConnectionGUID: vvUvI6jpR8G82h0pBNSo5w==
-X-CSE-MsgGUID: f0mWsXUNSJuSX++dpyW26w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="199595996"
-Received: from yzhao56-desk.sh.intel.com ([10.239.47.19])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 00:04:45 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: reinette.chatre@intel.com,
-	rick.p.edgecombe@intel.com,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH v2 1/3] KVM: x86/mmu: Return -EAGAIN if userspace deletes/moves memslot during prefault
-Date: Fri, 22 Aug 2025 15:03:47 +0800
-Message-ID: <20250822070347.26451-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20250822070305.26427-1-yan.y.zhao@intel.com>
-References: <20250822070305.26427-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1755846258; c=relaxed/simple;
+	bh=//iPq+9seSBsOGcSgTuoPGVpO2xMrH5yo+zOJJIOObo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b0ljk3ZftC//bRh9v5rK5YfZnZQ+5684MSt0Cwo6gdCKoTJQeuL/N0IT6ZuO5CcGlMcj0WtenRmAQ7682a6yOD+hq1RNxKdmnhhZoNZtjTdcQJXZJwFvszEMXGBZteB9LGmw0PjbnFhaYm3oE3kg9Ba194X6DsEsTYQyrpqKSX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=naW0xum0; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch [83.173.201.248])
+	by mail11.truemail.it (Postfix) with ESMTPA id 468631F90C;
+	Fri, 22 Aug 2025 09:04:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1755846245;
+	bh=b3LB6AKLWtMRp7LJqzHFsQOELisaDWWfVYYsVajcePw=; h=From:To:Subject;
+	b=naW0xum0rU7DNLezdhgLXYO/DYFEaWP2QDWzKZlUDUB4QISseWgnYJobWbTQNF1E6
+	 QjDPI92c8+wyXU77PgXu404whBJOvdMCFq92CXmgI2hbzeH6JtUh6wKobFif2WOAXb
+	 YfFUvbvfQrWRfVeB7AJ2vFzH2D49Tei+0Q7mG/9G+vxmFa/EWcCTxzzw/KtXu0G4JC
+	 Q7rR/NDP4JYSavNrX0mUWS0N0qtlVg/3JhyDRKwA47YBib6F20eSvuwYpoImUtbh8s
+	 lSD+lBnuqaRNc1oBk/OHWfBN/FqyL41x14gTm/qb2N+S/ZSqJXBg/se9qiiKS6rx3a
+	 4oO4occyk5T2g==
+Date: Fri, 22 Aug 2025 09:04:01 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Vitor Soares <ivitro@gmail.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Vitor Soares <vitor.soares@toradex.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Aradhya Bhatia <aradhya.bhatia@linux.dev>,
+	Jayesh Choudhary <j-choudhary@ti.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v3] drm/bridge: cdns-dsi: Replace deprecated
+ UNIVERSAL_DEV_PM_OPS()
+Message-ID: <20250822070401.GA15925@francesco-nb>
+References: <20250512083215.436149-1-ivitro@gmail.com>
+ <546ef388-299b-4d97-8633-9508fab4475a@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <546ef388-299b-4d97-8633-9508fab4475a@ideasonboard.com>
 
-From: Sean Christopherson <seanjc@google.com>
+Hello,
 
-Return -EAGAIN if userspace attempts to delete or move a memslot while also
-prefaulting memory for that same memslot, i.e. force userspace to retry
-instead of trying to handle the scenario entirely within KVM.  Unlike
-KVM_RUN, which needs to handle the scenario entirely within KVM because
-userspace has come to depend on such behavior, KVM_PRE_FAULT_MEMORY can
-return -EAGAIN without breaking userspace as this scenario can't have ever
-worked (and there's no sane use case for prefaulting to a memslot that's
-being deleted/moved).
+On Thu, May 22, 2025 at 12:09:08PM +0300, Tomi Valkeinen wrote:
+> On 12/05/2025 11:32, Vitor Soares wrote:
+> > From: Vitor Soares <vitor.soares@toradex.com>
+> > 
+> > The deprecated UNIVERSAL_DEV_PM_OPS() macro uses the provided callbacks
+> > for both runtime PM and system sleep. This causes the DSI clocks to be
+> > disabled twice: once during runtime suspend and again during system
+> > suspend, resulting in a WARN message from the clock framework when
+> > attempting to disable already-disabled clocks.
+> > 
+> > [   84.384540] clk:231:5 already disabled
+> > [   84.388314] WARNING: CPU: 2 PID: 531 at /drivers/clk/clk.c:1181 clk_core_disable+0xa4/0xac
+> > ...
+> > [   84.579183] Call trace:
+> > [   84.581624]  clk_core_disable+0xa4/0xac
+> > [   84.585457]  clk_disable+0x30/0x4c
+> > [   84.588857]  cdns_dsi_suspend+0x20/0x58 [cdns_dsi]
+> > [   84.593651]  pm_generic_suspend+0x2c/0x44
+> > [   84.597661]  ti_sci_pd_suspend+0xbc/0x15c
+> > [   84.601670]  dpm_run_callback+0x8c/0x14c
+> > [   84.605588]  __device_suspend+0x1a0/0x56c
+> > [   84.609594]  dpm_suspend+0x17c/0x21c
+> > [   84.613165]  dpm_suspend_start+0xa0/0xa8
+> > [   84.617083]  suspend_devices_and_enter+0x12c/0x634
+> > [   84.621872]  pm_suspend+0x1fc/0x368
+> > 
+> > To address this issue, replace UNIVERSAL_DEV_PM_OPS() with
+> > SET_RUNTIME_PM_OPS(), enabling suspend/resume handling through the
+> > _enable()/_disable() hooks managed by the DRM framework for both
+> > runtime and system-wide PM.
+> > 
+> > Cc: <stable@vger.kernel.org> # 6.1.x
+> > Fixes: e19233955d9e ("drm/bridge: Add Cadence DSI driver")
+> > Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
 
-And also unlike KVM_RUN, the prefault path doesn't naturally gaurantee
-forward progress.  E.g. to handle such a scenario, KVM would need to drop
-and reacquire SRCU to break the deadlock between the memslot update
-(synchronizes SRCU) and the prefault (waits for the memslot update to
-complete).
+ping on this, Tomi, maybe you can pick this one or is there any
+concern ?
 
-However, dropping SRCU creates more problems, as completing the memslot
-update will bump the memslot generation, which in turn will invalidate the
-MMU root.  To handle that, prefaulting would need to handle pending
-KVM_REQ_MMU_FREE_OBSOLETE_ROOTS requests and do kvm_mmu_reload() prior to
-mapping each individual.
-
-I.e. to fully handle this scenario, prefaulting would eventually need to
-look a lot like vcpu_enter_guest().  Given that there's no reasonable use
-case and practically zero risk of breaking userspace, punt the problem to
-userspace and avoid adding unnecessary complexity to the prefualt path.
-
-Note, TDX's guest_memfd post-populate path is unaffected as slots_lock is
-held for the entire duration of populate(), i.e. any memslot modifications
-will be fully serialized against TDX's flavor of prefaulting.
-
-Reported-by: Reinette Chatre <reinette.chatre@intel.com>
-Closes: https://lore.kernel.org/all/20250519023737.30360-1-yan.y.zhao@intel.com
-Debugged-by: Yan Zhao <yan.y.zhao@intel.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/mmu/mmu.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 92ff15969a36..f31fad33c423 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4653,10 +4653,16 @@ static int kvm_mmu_faultin_pfn(struct kvm_vcpu *vcpu,
- 	/*
- 	 * Retry the page fault if the gfn hit a memslot that is being deleted
- 	 * or moved.  This ensures any existing SPTEs for the old memslot will
--	 * be zapped before KVM inserts a new MMIO SPTE for the gfn.
-+	 * be zapped before KVM inserts a new MMIO SPTE for the gfn.  Punt the
-+	 * error to userspace if this is a prefault, as KVM's prefaulting ABI
-+	 * doesn't need provide the same forward progress guarantees as KVM_RUN.
- 	 */
--	if (slot->flags & KVM_MEMSLOT_INVALID)
-+	if (slot->flags & KVM_MEMSLOT_INVALID) {
-+		if (fault->prefetch)
-+			return -EAGAIN;
-+
- 		return RET_PF_RETRY;
-+	}
- 
- 	if (slot->id == APIC_ACCESS_PAGE_PRIVATE_MEMSLOT) {
- 		/*
--- 
-2.43.2
+Francesco
 
 
