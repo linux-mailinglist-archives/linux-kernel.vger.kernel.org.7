@@ -1,134 +1,130 @@
-Return-Path: <linux-kernel+bounces-781759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C7D0B31651
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:30:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E45BB31649
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 121375E43D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:30:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F1671BC88E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D802F656A;
-	Fri, 22 Aug 2025 11:29:56 +0000 (UTC)
-Received: from baidu.com (mx24.baidu.com [111.206.215.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E202327A3;
+	Fri, 22 Aug 2025 11:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="uczrKuiH"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFB22D249A
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384D82D249A
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755862195; cv=none; b=saeomG34KLR79uS9aqYCBXV598JUoduMhbpZiNYbAmszFirZpi3Qvvr1lUz1EA0j9BC/S0CuVqedPqv/WEGzDGWAH693rwOnGdRfLy3Q0IklZfsET8AFYZI6QL9ACktTnkZCpeDSLpMwWO2d/PpLXnpXLgeoCAU7y39lqOxKDKo=
+	t=1755862147; cv=none; b=OuK/abXgDA1YwVK6l5rYgvD8kMyN//J53EjUeo85LE0eb0jyRifiv6vepxyNt6ypFJ62Y9UDZfxElZ3ViNfmpOagP7bJ+b5dqnQfkDvyG4Ir8mhDjKTPkRjq00prZBi6+NP4w4wjFoPx+TgynmRWMohSr/tj72VFsnSAR/zFaCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755862195; c=relaxed/simple;
-	bh=CPZ0k7oMVXexbxeEs6Wmr89SnRH3G9ZYWsg8SGPYt1U=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MCjMazNuc6fIRxSDAqJBd/0pnfQrR/d2DxzSyq+KFZ0ktyoKfXsLM0LHYZWnAccmWAbFLCnvOhHy9irQQU4OrQHwkEe72OtmoaqwDXphwr+ZVE6yUuSTirM8TWAhKE7jL6+rj6jecrRVQxzYkJyft0GA5zaoPVdkYIx3kHmgrZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: lirongqing <lirongqing@baidu.com>
-To: <muchun.song@linux.dev>, <osalvador@suse.de>, <david@redhat.com>,
-	<akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Li RongQing <lirongqing@baidu.com>, Wenjie Xu <xuwenjie04@baidu.com>
-Subject: [PATCH] mm/hugetlb: two-phase hugepage allocation when reservation is high
-Date: Fri, 22 Aug 2025 19:28:28 +0800
-Message-ID: <20250822112828.2742-1-lirongqing@baidu.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1755862147; c=relaxed/simple;
+	bh=74WLWB2wpFFNY5jfwXbte9fVpaHxcpj8qGdUfhbQV/Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IsFLm2SvAZY9CYrxiGWjkbNk1SINzL3xQHQgmNKOW/LnXCFSlCAZ4lMfnBPSnv5izg3NQOXfvdZsnX07iibY9gG5D0s8/PORxDtnBe4sBQ8qsEQABaRBZ955hb49Z95u1Kx4xwZ8U6L8SBiHq80NAofUKlDj6HtTVpF56ToYcgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=uczrKuiH; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3e6831f5ce4so7905905ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 04:29:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1755862145; x=1756466945; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TAj4MTsX9crtFaSUyO+PrnGMFjFfbBShLF1OedjML3o=;
+        b=uczrKuiHTenWAgl7w12WD+sdSpNE8/Xed/gFkQ59lKvIG4wQfMKQLP1kmItdOjgYBi
+         nAh1rm6cbOstc2S+qK5s4ZOLbhVD6hCV2DAbOQKrK0TYZ5A+DgGjQKFvDWMDsjgPM0vq
+         rbzQod5I6k/ri9jqmIfvIMr8UrQmbklJcIV7IRdJOQ0KkNP5lZWYQy4rxnvKmy/TgTNe
+         NizcN1r4rki7biKn0seg+KOQOaTt6f5Mn6Oh7/x9pnMDQq1++fGSClSqnQTCI0lkntHj
+         TQusPC0rZpkNyZgwDvv77wNWH3gd36JyBnnm8I1NlaUMTjeeuXE4LEzpxkk4whaLs2NN
+         YtEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755862145; x=1756466945;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TAj4MTsX9crtFaSUyO+PrnGMFjFfbBShLF1OedjML3o=;
+        b=NFb7t/G+MJ66pIv522FqAOFpH7gE7om0aXa4u/P89Cnf/oGa8HguLcxkY2IF/PFa0s
+         mOtk03I5usweJw3hqyhjHPugvFo6XsSwwqxoiUJyVEczCy0RBZto18L9twsaTD0yAEyp
+         bLmNJSqgAk2vL3sUZAFLBeQtMKN/RqGQs0a7530nUNfDbbyWYo5i6NMGUVk4sbmxtTzH
+         gMUKHhk0IIAYu/d1noGJ3Gbslscaja2E+9lCLWr5pJGzjPg/LTfbbgtt8AJ5eR2ywPLT
+         +6PHa7BdP4xecLZaZiEhQ0iNV2xkeRhNP3IYxE6YBlZ+n0LhH/cLwxaYqrjRzxf8WuAd
+         CxMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOZSktccjSWjkkrpV73hqjy/08VCdW+XnrmgjQMqZh8sp/KE+2tpX6yfvLOL5/83h4fMgvYaf46MCL6WY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybF1ViBjbcE0ngFQpdvH99Zv728TJSuhDF9t/HQYkmsWF+0xDu
+	LSh+22YyxZAUU9JcaoLNl9fkjKksm4rZE8ZCU9YKnlrYYLlqKXbn9Baw0pRp2fjwpf5KcI/djaX
+	68Zhk5HKbh0l/vbAPFSmsiUg7aEtceQHY75h5caAQ5g==
+X-Gm-Gg: ASbGncsyyZqigy5mechPmCdkQNA87Tq1PCebYw8CAGgIr0Wg8orBK7Si6w1le3H6BRW
+	x+Vx/R6MGLNBQQmvjtr9P3r8G0NpUAapxRxKHGG1PkE2cp8rvAiu8m72umfs51E0JLlrREg43t9
+	wk6Lr5Z8B/fvRUBwmGcRwUuFEpv7jYQVA2fY51aQunLeA/IHRjPimIBFa45sHhvza4h9EJnCK9/
+	15kS26B
+X-Google-Smtp-Source: AGHT+IFotCEaG3Imylyjy2m0DQxnH2th5L/KRoKnw2C+LytW2vVJKqgXGAwa/u5DAm0MxjMWmuNiRe1PyZgcFc/tw+c=
+X-Received: by 2002:a05:6e02:2284:b0:3e9:e4ca:8f0a with SMTP id
+ e9e14a558f8ab-3e9e4ca9b34mr9579755ab.25.1755862145223; Fri, 22 Aug 2025
+ 04:29:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: bjhj-exc8.internal.baidu.com (172.31.3.18) To
- bjkjy-exc3.internal.baidu.com (172.31.50.47)
-X-FEAS-Client-IP: 172.31.50.47
-X-FE-Policy-ID: 52:10:53:SYSTEM
+References: <20250805104418.196023-4-rkrcmar@ventanamicro.com>
+In-Reply-To: <20250805104418.196023-4-rkrcmar@ventanamicro.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Fri, 22 Aug 2025 16:58:52 +0530
+X-Gm-Features: Ac12FXzA7OqPPvuSEUi3YmGf4O7XQNOfsrf-wXEXFi1rcASEvUu6djRNFKE82bo
+Message-ID: <CAAhSdy1OcQBgV6T5z0K5mMv9pr23_oVVEJpimdzDjgAN3BhYeg@mail.gmail.com>
+Subject: Re: [PATCH] RISC-V: KVM: fix stack overrun when loading vlenb
+To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
+Cc: kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Daniel Henrique Barboza <dbarboza@ventanamicro.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Li RongQing <lirongqing@baidu.com>
+On Tue, Aug 5, 2025 at 4:24=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar=
+@ventanamicro.com> wrote:
+>
+> The userspace load can put up to 2048 bits into an xlen bit stack
+> buffer.  We want only xlen bits, so check the size beforehand.
+>
+> Fixes: 2fa290372dfe ("RISC-V: KVM: add 'vlenb' Vector CSR")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@ventanamicro.com>
 
-When the total reserved hugepages account for 95% or more of system RAM
-(common in cloud computing on physical servers), allocating them all in one
-go can lead to OOM or fail to allocating huge page during early boot.
+Queued this as a fix for Linux-6.17
 
-The previous hugetlb vmemmap batching change (91f386bf0772) can worsen
-peak memory pressure under these conditions by deferring page frees,
-exacerbating allocation failures. To prevent this, split the allocation
-into two equal batches whenever
-	huge_reserved_pages >= totalram_pages() * 90 / 100.
+Thanks,
+Anup
 
-This change does not alter the number of padata worker threads per batch;
-it merely introduces a second round of padata_do_multithreaded(). The added
-overhead of restarting the worker threads is minimal.
-
-Before:
-[    8.423187] HugeTLB: allocation took 1584ms with hugepage_allocation_threads=48
-[    8.431189] HugeTLB: allocating 385920 of page size 2.00 MiB failed.  Only allocated 385296 hugepages.
-
-After:
-[    8.740201] HugeTLB: allocation took 1900ms with hugepage_allocation_threads=48
-[    8.748266] HugeTLB: registered 2.00 MiB page size, pre-allocated 385920 pages
-
-Fixes: 91f386bf0772 ("hugetlb: batch freeing of vmemmap pages")
-
-Co-developed-by: Wenjie Xu <xuwenjie04@baidu.com>
-Signed-off-by: Wenjie Xu <xuwenjie04@baidu.com>
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
----
- mm/hugetlb.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
-
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 753f99b..a86d3a0 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3587,12 +3587,23 @@ static unsigned long __init hugetlb_pages_alloc_boot(struct hstate *h)
- 		.numa_aware	= true
- 	};
- 
-+	unsigned long huge_reserved_pages = h->max_huge_pages << h->order;
-+	unsigned long huge_pages, remaining, total_pages;
- 	unsigned long jiffies_start;
- 	unsigned long jiffies_end;
- 
-+	total_pages = totalram_pages() * 90 / 100;
-+	if (huge_reserved_pages > total_pages) {
-+		huge_pages =  h->max_huge_pages * 90 / 100;
-+		remaining = h->max_huge_pages - huge_pages;
-+	} else {
-+		huge_pages =  h->max_huge_pages;
-+		remaining = 0;
-+	}
-+
- 	job.thread_fn	= hugetlb_pages_alloc_boot_node;
- 	job.start	= 0;
--	job.size	= h->max_huge_pages;
-+	job.size	= huge_pages;
- 
- 	/*
- 	 * job.max_threads is 25% of the available cpu threads by default.
-@@ -3616,10 +3627,16 @@ static unsigned long __init hugetlb_pages_alloc_boot(struct hstate *h)
- 	}
- 
- 	job.max_threads	= hugepage_allocation_threads;
--	job.min_chunk	= h->max_huge_pages / hugepage_allocation_threads;
-+	job.min_chunk	= huge_pages / hugepage_allocation_threads;
- 
- 	jiffies_start = jiffies;
- 	padata_do_multithreaded(&job);
-+	if (remaining) {
-+		job.start   = huge_pages;
-+		job.size    = remaining;
-+		job.min_chunk   = remaining / hugepage_allocation_threads;
-+		padata_do_multithreaded(&job);
-+	}
- 	jiffies_end = jiffies;
- 
- 	pr_info("HugeTLB: allocation took %dms with hugepage_allocation_threads=%ld\n",
--- 
-2.9.4
-
+> ---
+>  arch/riscv/kvm/vcpu_vector.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/riscv/kvm/vcpu_vector.c b/arch/riscv/kvm/vcpu_vector.c
+> index a5f88cb717f3..05f3cc2d8e31 100644
+> --- a/arch/riscv/kvm/vcpu_vector.c
+> +++ b/arch/riscv/kvm/vcpu_vector.c
+> @@ -182,6 +182,8 @@ int kvm_riscv_vcpu_set_reg_vector(struct kvm_vcpu *vc=
+pu,
+>                 struct kvm_cpu_context *cntx =3D &vcpu->arch.guest_contex=
+t;
+>                 unsigned long reg_val;
+>
+> +               if (reg_size !=3D sizeof(reg_val))
+> +                       return -EINVAL;
+>                 if (copy_from_user(&reg_val, uaddr, reg_size))
+>                         return -EFAULT;
+>                 if (reg_val !=3D cntx->vector.vlenb)
+> --
+> 2.50.0
+>
 
