@@ -1,42 +1,47 @@
-Return-Path: <linux-kernel+bounces-781198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952F1B30EFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:33:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B32CDB30F01
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C67C171392
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:31:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21E4B17B130
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9338E2E541E;
-	Fri, 22 Aug 2025 06:31:17 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44FEA2E5B01;
+	Fri, 22 Aug 2025 06:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="smudoD37"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D036D1684B4;
-	Fri, 22 Aug 2025 06:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452492459CD;
+	Fri, 22 Aug 2025 06:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755844277; cv=none; b=aoMvOtQ1ZTT1P9dkQkZHL9+lwHkz6s8GzLerMO5h34vMQciKc8q6sIvLSf/EZFKkU1jsEI4RVii/Sk/Ulb2cgWl3c+Bp9LVYIGV975HnmlchFkIr3bVgVGqH+v/5hRk8TBflevjXpLzKyy4k47WULVRixWZfldJ8H7nw+CrMc3Y=
+	t=1755844289; cv=none; b=POzZdhvfQPbBsqxD2G1naVgNKmvb/fYlOY8dgtqJR8VqOAVjYGOecalrG1DKPwGbYR/DM7LNr90guBV5QGNutUFTQgU0eHRDDZRqMK9cxr+tnIGfytzCuv0aee1wDFmKdAIdcZfj1dVh5bT9Sw5FXcjVxXxOF79rRZ1aS0d/cZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755844277; c=relaxed/simple;
-	bh=6/NaqANrmLyuM39qP7BCORtnUZ/QctrWrMXQ54qP3Hk=;
+	s=arc-20240116; t=1755844289; c=relaxed/simple;
+	bh=S0EtvDojJcb9ng9oKlg7nM6uF6tX+Gcl/Vg/yItF0B0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aoM7PB5PWupxDncw8Dsf7hRAd1xq+DKsg6aal9Ut8YJe2/wVsqROL77Y7HRdNMV+DBvMe5X3XP/1+kkSRk3fXIvITeU8wWaoQp6igvQUr1atBMmknO4J6l+7SEyui+XtRg0OMxq3e+Ydt8HvtCMXPSssM8t3huPXOrXbRzlkmww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.192] (ip5f5af7b3.dynamic.kabel-deutschland.de [95.90.247.179])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 6E01B61E647B3;
-	Fri, 22 Aug 2025 08:30:17 +0200 (CEST)
-Message-ID: <9416fdb1-d92e-4183-83d8-6a3001103045@molgen.mpg.de>
-Date: Fri, 22 Aug 2025 08:30:13 +0200
+	 In-Reply-To:Content-Type; b=MmQ81nFx4coxk/nYZVdethyYyNr2266xA7dK2o49R6LBimaieYJXCHV0I9kCTEtwNxxbLJuBV3UYWpoXr9zAjx20a8PduJuwm57yAdvPHuhc8RXDBenfIhkcK1v0iy/tOuIGZ1M3mPy58BfOH1OSDDrujizPXT+UG/9IxCluvpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=smudoD37; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 349D5C4CEF1;
+	Fri, 22 Aug 2025 06:31:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755844288;
+	bh=S0EtvDojJcb9ng9oKlg7nM6uF6tX+Gcl/Vg/yItF0B0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=smudoD37JbeCgskOA4dELZ7jIo+NtDFWQPjLhJYLKNuXZvB0UiCuc61R5hdoVsLmM
+	 ybo+TWt+wVJ2Rs4cZ75R9sLl2P3KleD0hQR9dONOUY2fdfE6xduX1tT8UNoVXdkuuF
+	 OEVLxOGXuBIHC//tRFStTH8sJOKjTi0BH7nKAvGeHJ++81afMtsRBHl34d+Rp6NP4Y
+	 F+RPOKtNtL/I0b5HBPExCKAh/CHtE+JXeRHe9NwYrf4TZz4s74ac8vhGZWFo+tT7f8
+	 bCXGXF48GrCtFYG/mDIZrimPojIXIrrldiIsne70iQlCF2SMoy+M7y1tAied6EfjvO
+	 P2TFMkTz/iohQ==
+Message-ID: <1907e1c7-2b15-4729-8497-a7e6f0526366@kernel.org>
+Date: Fri, 22 Aug 2025 08:31:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,172 +49,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH net] i40e: Prevent unwanted interface
- name changes
-To: Calvin Owens <calvin@wbinvd.org>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Ivan Vecera <ivecera@redhat.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jedrzej Jagielski
- <jedrzej.jagielski@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Eric Dumazet <edumazet@google.com>, Tony Nguyen
- <anthony.l.nguyen@intel.com>, intel-wired-lan@lists.osuosl.org,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, regressions@lists.linux.dev
-References: <94d7d5c0bb4fc171154ccff36e85261a9f186923.1755661118.git.calvin@wbinvd.org>
- <CADEbmW100menFu3KACm4p72yPSjbnQwnYumDCGRw+GxpgXeMJA@mail.gmail.com>
- <aKXqVqj_bUefe1Nj@mozart.vkv.me> <aKYI5wXcEqSjunfk@mozart.vkv.me>
- <e71fe3bf-ec97-431e-b60c-634c5263ad82@intel.com>
- <aKcr7FCOHZycDrsC@mozart.vkv.me>
- <8f077022-e98a-4e30-901b-7e014fe5d5b2@intel.com>
- <aKfwuFXnvOzWx5De@mozart.vkv.me>
+Subject: Re: [PATCH 000/114] clk: convert drivers from deprecated round_rate()
+ to determine_rate()
+To: bmasney@redhat.com, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+ Cristian Marussi <cristian.marussi@arm.com>,
+ Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Paul Cercueil <paul@crapouillou.net>, Keguang Zhang
+ <keguang.zhang@gmail.com>, Taichi Sugaya <sugaya.taichi@socionext.com>,
+ Takao Orito <orito.takao@socionext.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Jacky Huang <ychuang3@nuvoton.com>,
+ Shan-Chun Hung <schung@nuvoton.com>, Vladimir Zapolskiy <vz@mleia.com>,
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>, Yixun Lan <dlan@gentoo.org>,
+ Steen Hegelund <Steen.Hegelund@microchip.com>,
+ Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com,
+ Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Michal Simek <michal.simek@amd.com>, Maxime Ripard <mripard@kernel.org>,
+ =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+ Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>,
+ Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Neal Gompa <neal@gompa.dev>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Daniel Palmer <daniel@thingy.jp>, Romain Perier <romain.perier@gmail.com>,
+ Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Heiko Stuebner <heiko@sntech.de>, Andrea della Porta
+ <andrea.porta@suse.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Alex Helms <alexander.helms.jy@renesas.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Liviu Dudau <liviu.dudau@arm.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ sophgo@lists.linux.dev, linux-mips@vger.kernel.org, imx@lists.linux.dev,
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+ linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com,
+ linux-actions@lists.infradead.org, asahi@lists.linux.dev,
+ linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <aKfwuFXnvOzWx5De@mozart.vkv.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-[Cc: regressions@lists.linux.dev]
+On 11/08/2025 17:17, Brian Masney via B4 Relay wrote:
+> The round_rate() clk ops is deprecated in the clk framework in favor
+> of the determine_rate() clk ops, so let's go ahead and convert the
+> various clk drivers using the Coccinelle semantic patch posted below.
+> I did a few minor cosmetic cleanups of the code in a few cases.
 
-TLDR; for the regression folks: This is about a two year old commit 
-first appearing in Linux 6.7 (so after the 6.6 LTS series release), part 
-of which Red Hat reverted in their distro last year to address the 
-userspace regression. Users hit by this might not be able to log into 
-their systems due to the network not being configured.
+This is going to create huge conflicts and I did not find here any
+merging strategy.
 
+What do you expect from us here?
 
-Dear Calvin, dear Przemek,
-
-
-Thank you for raising this issue.
-
-
-Am 22.08.25 um 06:23 schrieb Calvin Owens:
-> On Thursday 08/21 at 22:39 +0200, Przemek Kitszel wrote:
->> On 8/21/25 16:23, Calvin Owens wrote:
->>> On Thursday 08/21 at 10:00 +0200, Przemek Kitszel wrote:
->>>> On 8/20/25 19:41, Calvin Owens wrote:
->>>>> On Wednesday 08/20 at 08:31 -0700, Calvin Owens wrote:
->>>>>> On Wednesday 08/20 at 08:42 +0200, Michal Schmidt wrote:
->>>>>>> On Wed, Aug 20, 2025 at 6:30 AM Calvin Owens <calvin@wbinvd.org> wrote:
->>>>>>>> The same naming regression which was reported in ixgbe and fixed in
->>>>>>>> commit e67a0bc3ed4f ("ixgbe: prevent from unwanted interface name
->>>>>>>> changes") still exists in i40e.
->>>>>>>>
->>>>>>>> Fix i40e by setting the same flag, added in commit c5ec7f49b480
->>>>>>>> ("devlink: let driver opt out of automatic phys_port_name generation").
->>>>>>>>
->>>>>>>> Fixes: 9e479d64dc58 ("i40e: Add initial devlink support")
->>>>>>>
->>>>>>> But this one's almost two years old. By now, there may be more users
->>>>>>> relying on the new name than on the old one.
->>>>>>> Michal
->>>>>>
->>>>>> Well, I was relying on the new ixgbe names, and I had to revert them
->>>>>> all in a bunch of configs yesterday after e67a0bc3ed4f :)
->>>>
->>>> we have fixed (changed to old naming scheme) ixgbe right after the
->>>> kernel was used by real users (modulo usual delay needed to invent
->>>> a good solution)
->>>
->>> No, the "fix" actually broke me for a *second time*, because I'd
->>> already converted my infrastructure to use the *new* names, which match
->>> i40e and the rest of the world.
->>>
->>> We've seen *two* user ABI regressions in the last several months in
->>> ixgbe now, both of which completely broke networking on the system.
->>>
->>> I'm not here to whine about that: I just want to save as many people out
->>> there in the real world as I can the trouble of having to do the same
->>> work (which has absolutely no benefit) over the next five years in i40e.
->>>
->>> If it's acceptable to break me for a second time to "fix" this, because
->>> I'm the minority of users (a viewpoint I am in agreement with), it
->>> should also be acceptable to break the minority of i40e users who are
->>> running newer kernels to "fix" it there too.
->>>
->>> Why isn't it?
->>
->> I think we agree that it is ok-ish to sometime break setups for bleeding
->> edge users, then fix (aka undo). It's bad that this time it was with
->> effect equivalent to the first breakage (hope that it was easier to fix
->> locally when it occurred second time in a row).
-> 
-> I just want to re-emphasize, it was *not* my intent to gripe at you
-> about this. A big reason I test new kernels is in the hope I can hit
-> things like this myself and get them fixed before they impact the wide
-> userbase, I'm only frustrated I'm probably too late here to do that.
-> 
->> But we dispute over change from Oct 2023, for me it is carved in stone
->> at this point. Every user either adjusted or worked it around [1]
-> 
-> IMHO the date of the release (Jan 2024) is more relevant than the
-> commit date, but it's not really that different in this case.
-> 
-> I think there's merit to the idea that the lack of complaining is a sign
-> that most users have not had to adjust yet, because if they had, they'd
-> have complained about it. But I don't have any real data either way.
-> 
-> The objections raised over the new interface naming in ixgbe are in no
-> way specific to ixgbe. You can s/ixgbe/i40e/ any mail about it and
-> nothing really changes. They're generalized objections against the
-> renaming of interfaces, so from a certain POV people *are* actively
-> complaining.
-> 
->>>>> And, even if it is e67a0bc3ed4f that introduced it, v6.7 was the first
->>>>> release with it. I strongly suspect most servers with i40e NICs running
->>>>> in the wild are running older kernels than that, and have not yet
->>>>> encountered the naming regression. But you probably have much better
->>>>> data about that than I do :)
->>>>
->>>> Red Hat patches their kernels with current code of the drivers that their
->>>> customers use (including i40e and ixgbe)
->>>> One could expect that changes made today to those will reach RHEL 10.3,
->>>> even if it would be named "kernel 6.12".
->>>>
->>>> (*) the changes will likely be also in 10.2, but I don't want to make
->>>> any promises from Intel or Red Hat here
->>>
->>> But how many i40e users are actually on the most recent version of RHEL?
->>> Not very many, is my guess. RHEL9 is 5.14, and has the old behavior.
->>
->> RHEL 9 backported devlink for i40e in July 2024 [0], together with undo
->> of interface name change [1] (this likely tells why there were zero
->> complains from RH users).
->>
->> [0]
->> https://gitlab.com/redhat/centos-stream/src/kernel/centos-stream-9/-/commit/bcbc349375ecd977aa429c3eff4d182b74dcdd8a
->>
->> [1]
->> https://gitlab.com/redhat/centos-stream/src/kernel/centos-stream-9/-/commit/5ab8aa31dc2b44fbd6761bb19463f5427b9be245
-> 
-> Heh. Thank you very much for checking that, and for the links.
-
-Too bad Red Hat didn’t report this over a year ago upstream.
-
->>> If you actually have data on that, obviously that's different. But it
->>> sounds like you're guessing just like I am.
->>
->> I could only guess about other OS Vendors, one could check it also
->> for Ubuntu in their public git, but I don't think we need more data, as
->> ultimate judge here are Stable Maintainers
-> 
-> Maybe I'm barking up the wrong tree, it's udev after all that decides to
-> read the thing in /sys and name the interfaces differently because it's
-> there...
-> 
-> In any case, Debian stable is on 6.12 and didn't patch it (just
-> checked), so I concede, it is simply too late :/
-
-I disagree. Debian admins do not upgrade their servers to the newest 
-stable release right away to exactly avoid such issues. So I’d argue, as 
-with Red Hat, that the change should be reverted as soon as possible, 
-before even more users are hit by this.
-
-But, as Przemek is one of the two subsystem maintainers, I guess his 
-opinion matters quite a lot.
-
-
-Kind regards,
-
-Paul
+Best regards,
+Krzysztof
 
