@@ -1,127 +1,136 @@
-Return-Path: <linux-kernel+bounces-781347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 951BEB31154
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:13:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A764B3115B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ADAC6833C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:09:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A7F51890E15
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382B02EB5A6;
-	Fri, 22 Aug 2025 08:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257072E8E17;
+	Fri, 22 Aug 2025 08:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aNksuNWB"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yk1fK0Op"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32E1248867
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 08:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1AE263F22;
+	Fri, 22 Aug 2025 08:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755850132; cv=none; b=AfFpQBHf7mR044kFnk8NNhVJ67OYaCUMuZJoF8jUydamNivioTfIhNCmmJRRSac0Ao0UbuONJL2BZPgwkJ9ysaQsFwPqtpsbzMpeBdLciP/tttuJf5wwBERgCvdbhZS9kMga/iwOctQyGkBAujXvQv/IYtb7QW5kRWlWyEzbxk8=
+	t=1755850231; cv=none; b=bG1lPCG3+aQ9RMtiVDfEOSRq3418WefLI/nsh6qXKD5KZUU18fCdvhZHbEq0FQ2zhgpgeIRaC+0/3smn9UV3jRGeupxJYICiVOqsDgF23GTfpxmPoEJFhmeUQs4P7F9cjNr7HPiHiUy/j4sEHebXO5YvIPq4ZKzD+Atf85EZTG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755850132; c=relaxed/simple;
-	bh=gcyyJ3A5+OKGc6ZQvYcrHgZc5PnnJU7+8btR3+9SeDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=CKS4WUYX7i8GQH7uuN7U9lA26a5USQ5m8/zjIf2VToFDK2BAjZfGAa3h+fXy3toFwYg2MkHmrv1HhGS8rx/JFoji6ZsPSqdu7G62jXscbxjbknUTM2HQ3IfQEz78g14XgFsYdUwzx2dJtvQ8Sb7z1xUZ9Ezs147eIDHWFLGz+40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aNksuNWB; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45a1b05a49cso13729825e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 01:08:50 -0700 (PDT)
+	s=arc-20240116; t=1755850231; c=relaxed/simple;
+	bh=xl+fsy/4SIB5/G2VQC4Z0kCPy4tzudJCgawpnVdUiq4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ibT8NLM9qDu5CBUReF+oKbHbdQhhcsQVrqeS02HumbEiySEFcDx1j5+seoBMS0vbwrmR/KXtCKMT515SSl5Z3NyJD3NHyjPiEN5bYEhmxqYruQcGEM1vTrukjbQWMa6e1xM5caBJKI4sUFqkxv/HoqsQohfD4Hc/JLOcxBV8LyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yk1fK0Op; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-61c21e50168so455158a12.3;
+        Fri, 22 Aug 2025 01:10:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755850129; x=1756454929; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=gmail.com; s=20230601; t=1755850228; x=1756455028; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=TNEBpGgZdG/2jJwkaxvAijY+ORi32/fy01Nt/XLeMz4=;
-        b=aNksuNWBZ4gPWFE3BOx95zh9f8QtMwqMY2ZiY90uWqq0ZmA0TsdBZx94V62m85ukIT
-         kPv4TklQgWLPQNWMiX60q2fenqBu212tdQbHrrJ9YDeerIHyAYGC7VIsoyVaso/KpZDC
-         mENG9bPS8Oi/JIqQoWINePz0hrodaJhhDibhGx5e/nMMO9qgzFoKGP0PRLdavONsvUY9
-         k9BwxUEIfjppiJ6NTGOBNmQ2oZ8VpLny2QNxp1POG95AGLVjyUY8RHzJcKmeO+tGWY4+
-         5Kn681SFjV2emvXt1SFtZs7tfK+f89IxHsr+xT/ZPY1zrwv7WAoTpDY26jWza5DdRnFL
-         6dCw==
+        bh=xl+fsy/4SIB5/G2VQC4Z0kCPy4tzudJCgawpnVdUiq4=;
+        b=Yk1fK0OpaVJO/Zqi61husiFPrGdwvV+4aZcmtU/uXDebwIksuLPNPC0DAR4Hm9+HOL
+         Kteb7xK/b3BXpPS9vnjBg9WDf/yUOMONeLdCwBedIsZBWhxTD1CkkMwJxtUhMcDNEXe0
+         ZRDl4ZMYyejP6Eio0IPj/yn5JiL3cZlICik4WFonoAO5ipumyaVSCka5EyDuZdVkxy6i
+         YO/nXugG4yHph5FIxVmqtVHftxqT/ujF+nUmx1KyIglrYA4gYtHG+/gFKUFETlmsea9p
+         KGzpKHCGAV51gP5y08s3SjFJbnmlNN7ghOsAMrtR9qiJ2j29a9Ltorb+xmMPp/Cb3vrt
+         IJBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755850129; x=1756454929;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1755850228; x=1756455028;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TNEBpGgZdG/2jJwkaxvAijY+ORi32/fy01Nt/XLeMz4=;
-        b=k+mtdG8SXtMXC6SSd8tCDotc2NHUAPmjY57WoGAtfi3A1Q8uZ4kSen9kewImcn3B86
-         VMMA9IGNQbQv5/VctRRG8owRKP6KV3d4GnPZCzpuFZlnizl5iiWjLD9duYPa9tLlMPkA
-         IyX6FIU5u3MjA5rZqLG0rRkr+IscejYR9sYC1JSuo01M6PUXWsF8QWNJGB6Mra1XYAOQ
-         uW1ffcLvNZIlXkREK1/tAD+3K0Hs50kDYq+ExVRzKFmUJAnhMyX5I8MBACJaU0w6Q1Lz
-         aQ3PQgtdHsp9yM8KNdxXWSivoqQQ1voD+UjHC3d+6+G1Ob2yCpbF4T7Ed31Jt3L87BRD
-         dHmA==
-X-Forwarded-Encrypted: i=1; AJvYcCURXD+8nTkp5PysezPefqsWo7f93EW2gk9vaZMRQ+RspFmy85TCOxi22Nr3DRhlffiB18U4NAwIzmOv2UA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr+nhoKBhPQLF0dDqA3Ox9J9qPtxCMf/RYzQSaGZz6GO0TLVyZ
-	/zUTMna7VI+f1DUqvhWbnB8RZpIMwk1631WE2roQoQZfyFivfs+KpjTKfrisrZJE5GU=
-X-Gm-Gg: ASbGncssPMABzJ44kgSt2pODD2sU/ye04YwYWXcxey18eT/SpXvYvDstnHZntNvj9bK
-	zwnYrEeMe5Hkkl9eOVyp68nRmJmJCdXV4N8/MFvsKdYiSt0C2r8khs5wZRn17tL44dvFXQ7kopD
-	6Akv8wyjh2j/MsKvs5Suu5+/CCVlD8TpTHcy8ZrhgnNnASRTwbtrTRXLaO5ApukMA7XJQ/wYsrT
-	7N5Eviag96hlQqfkJaCOo0gAFT0cT6LZ4RZjENxEkzcCzol9A4YbPORNl9WlGTntEXRY4wH82fy
-	9UV+nFkPIfENf4D8uW4SDqRoTjwkcDnfTnmO6fQKIofC6FaoRIbmiJnmw7sKXLRIgdRB4803UCV
-	IE7BD/mLUtVz2asgK9Nl/S5sOKYY=
-X-Google-Smtp-Source: AGHT+IEsxW6o/F7dQT5UHqvxMpkKhAVZlHmWm8Xnxd3OnhbNdincCBQd5nTWNUKg/zsTGxuq9w18LQ==
-X-Received: by 2002:a05:600c:1c1d:b0:459:dc92:b95f with SMTP id 5b1f17b1804b1-45b5179ce00mr17667625e9.5.1755850129318;
-        Fri, 22 Aug 2025 01:08:49 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b50de8a94sm28905885e9.12.2025.08.22.01.08.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 01:08:49 -0700 (PDT)
-Date: Fri, 22 Aug 2025 11:08:46 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Lizhi Hou <lizhi.hou@amd.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] of: dynamic: Fix use after free in
- of_changeset_add_prop_helper()
-Message-ID: <aKgljjhnpa4lVpdx@stanley.mountain>
+        bh=xl+fsy/4SIB5/G2VQC4Z0kCPy4tzudJCgawpnVdUiq4=;
+        b=EEfolVYGfSybWnlbG4r+gZaSH7+7iiOcsGYnmLyVXo8ZN5RbvvSILLjnWH5jQ+mecB
+         vkFS/UHcC6kYxg4CxLOR/JPweCrcIyW+V4WGpFMUbY1hmjPKquBZ+6ArWoGHd88niZGP
+         t9JJ84OKBQOM5sWOjEHIFqNu1OFlwBbusyJGnh93PdGIYmT8Z26q4L/VQroVYS1oqcq/
+         5pLc8PhqrIQl0NJLL1bGaHOt/0wL8/c5rfOrhHOP1NuQlOOZlOexJiz+2BMt3HfJk2nZ
+         z/YwdRSN3HjNuhE5ag00kTYfGkF3YF8SmxO3Cff+VWLu5ocVI92AiG3pZpXtkcM1Uwow
+         3m/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVh2MB1y07D4a+VXx/67rYEtDh0ws8bIrqymfZEveMaIb+vs/+iwfWCFKTxMx/JM+vKY99lG49msrU2Vr4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEgiyij7pC3SYqbIzS7m4mKwBoJutaQFOUymsiF1jUOBzggMzZ
+	kUItAPfYy+rVeM8dGXNEIQEMLJzv12OTMm/X/C/PP3e9x80lX9IpBe6S
+X-Gm-Gg: ASbGncv+9+S5rPsiZOfNzSHtB2uyMngCbsO0yjIp7dgxf390tAVP4h2QIGScp3mDcTq
+	pae5L6AmL9nGLe0DfH9I4jOJakZ1gIwE/Azs4qVt1BYe+3PFVe+2tHZpTGFfJXKGt5KQcq10l00
+	qdUc0mGvd+5757C2YWtft1WHFcIWb8TDk2VjLR4oihBOnfyBQbTDjm+wqjZUeC7qRVY3kQgTXTa
+	VD16WyO68R4MK775tzqYVsPi0Zl9qyiHYg526UKq637qZc1Wsv8SIz7bHrjipJa7ino5Ri8nrsW
+	eI1AxN2LzIMlqRpa8Ip2o2sDDadtEc9FOmX+mod1+zHEEiW/p6fHrBhfOhjLFx8PFLNVPElVeLJ
+	9SOGOPukS271hRHSgJXevIQTVwh63w2ix1tEdhEoGrAgL1nU5DjOHqvR32Yp+KpimvoLWzVfVi2
+	MmxKdkJMi7pud7hZ9DR68SfXsLRC2UB+gbbqiqyl1PhBe6+8oSaZGNHknV
+X-Google-Smtp-Source: AGHT+IHQw667QvfGf29y37h7kMKuCZz4wFgEWsXftySFT+pgVBaHd/nXfqu99jzPZKdN0SwP5q1CRw==
+X-Received: by 2002:a17:906:c145:b0:afd:eb4f:d5ce with SMTP id a640c23a62f3a-afe29743499mr182045266b.62.1755850227808;
+        Fri, 22 Aug 2025 01:10:27 -0700 (PDT)
+Received: from ?IPV6:2a02:908:1b0:afe0:dad8:d30e:64b4:faff? ([2a02:908:1b0:afe0:dad8:d30e:64b4:faff])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded4c9313sm557433566b.81.2025.08.22.01.10.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Aug 2025 01:10:27 -0700 (PDT)
+Message-ID: <93c32ea4-e7f0-4bdc-a21e-ba2b695183f1@gmail.com>
+Date: Fri, 22 Aug 2025 10:10:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] serial: 8250_core: fix coding style issues
+To: Jiri Slaby <jirislaby@kernel.org>, gregkh@linuxfoundation.org,
+ ilpo.jarvinen@linux.intel.com, mingo@kernel.org, john.ogness@linutronix.de,
+ tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20250821175856.22957-1-osama.abdelkader@gmail.com>
+ <ac753910-ff9f-42d6-aaad-74ccecfef681@kernel.org>
+Content-Language: en-US
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+In-Reply-To: <ac753910-ff9f-42d6-aaad-74ccecfef681@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-If the of_changeset_add_property() function call fails, then this code
-frees "new_pp" and then dereference it on the next line.  Return the
-error code directly instead.
 
-Fixes: c81f6ce16785 ("of: dynamic: Fix memleak when of_pci_add_properties() failed")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/of/dynamic.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-index dd30b7d8b5e4..2eaaddcb0ec4 100644
---- a/drivers/of/dynamic.c
-+++ b/drivers/of/dynamic.c
-@@ -935,13 +935,15 @@ static int of_changeset_add_prop_helper(struct of_changeset *ocs,
- 		return -ENOMEM;
- 
- 	ret = of_changeset_add_property(ocs, np, new_pp);
--	if (ret)
-+	if (ret) {
- 		__of_prop_free(new_pp);
-+		return ret;
-+	}
- 
- 	new_pp->next = np->deadprops;
- 	np->deadprops = new_pp;
- 
--	return ret;
-+	return 0;
- }
- 
- /**
--- 
-2.47.2
-
+On 8/22/25 6:30 AM, Jiri Slaby wrote:
+> On 21. 08. 25, 19:58, Osama Abdelkader wrote:
+>> Fix a few coding style issues in 8250_core.c:
+>>
+>> - Remove redundant NULL initialization of a global pointer
+>> - Add missing blank line after a variable declaration
+>>
+>> Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
+>> ---
+>>   drivers/tty/serial/8250/8250_core.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
+>> index feb920c5b2e8..0d1d2eed2a5c 100644
+>> --- a/drivers/tty/serial/8250/8250_core.c
+>> +++ b/drivers/tty/serial/8250/8250_core.c
+>> @@ -307,7 +307,7 @@ static void univ8250_release_irq(struct uart_8250_port *up)
+>>           serial_unlink_irq_chain(up);
+>>   }
+>>   -const struct uart_ops *univ8250_port_base_ops = NULL;
+>> +const struct uart_ops *univ8250_port_base_ops;
+>>   struct uart_ops univ8250_port_ops;
+>>     static const struct uart_8250_ops univ8250_driver_ops = {
+>> @@ -773,6 +773,7 @@ int serial8250_register_8250_port(const struct uart_8250_port *up)
+>>        */
+>>       if (!has_acpi_companion(uart->port.dev)) {
+>>           struct mctrl_gpios *gpios = mctrl_gpio_init(&uart->port, 0);
+>> +
+>>           if (IS_ERR(gpios)) {
+>
+> NACK to this one. It's a declaration with an initializer and the 'if' checks its value.
+Thanks for the review, I'm going to send v2.
+>
+>>               ret = PTR_ERR(gpios);
+>>               goto err;
+>
+>
 
