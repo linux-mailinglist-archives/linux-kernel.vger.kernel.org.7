@@ -1,199 +1,175 @@
-Return-Path: <linux-kernel+bounces-781629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B38B314C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:09:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D85FCB31287
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:06:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00CA01CE57C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:09:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B59854E5742
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7152D77ED;
-	Fri, 22 Aug 2025 10:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPC/aLcR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43DD2253F3;
+	Fri, 22 Aug 2025 09:06:05 +0000 (UTC)
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61442D3A97;
-	Fri, 22 Aug 2025 10:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5545C4C83
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755857330; cv=none; b=HqynsWIgsXHELjjUtPLOZnwXMc3dAfpxgoJGdMkmFQdqj/nXXCMgbd4PnwROnag2pUKTrQ6VEXnvp1NDqPNz22Y+HNZzH+L5BXfhOoCfmKqIkkrCzui4mblbJ5lWZqFMIJ5o8sQPdFFVVCjAEO72HoGVTrj+VDjAshAd0YmWWu8=
+	t=1755853565; cv=none; b=SDHXaG+pXdl00P0aRc+16L/i+oaVgkbFD6eODGUx/ecKkyN+y0Nw69RQFbqEuUK88+SE3z8DjkPNcyhTiA8a0BV/iyEp7aXgT3pwE+xi3340s1AB+cdAYK2TFTMNdx2uJ6rcmoVgjUjVe5j7ONyqglDLViiNJ0scDzKODKJDPqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755857330; c=relaxed/simple;
-	bh=7pbp7b4MJQuhnZtl/iQt6X0PGAG53lDNYxERnubuCEk=;
+	s=arc-20240116; t=1755853565; c=relaxed/simple;
+	bh=60t7hl/zu+umYs+4sITncQYOpqFbM2NUS4qjxJ79ijo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KaUbAiHuSPwNTwP9+pM3O5U8kb1L50jN1WBJ2QgOHR/Ta45Qav9AGb/GY9cLqzzbfTz7q7XxiQW9aoP+i9HhUV+gND3OLNx09a5jIqodqEUzvMrZdOdWOwMadSHn4wUvBslYmu1RhTuqdtGIYdHXBuiLYnK6+jGP/Snyj+VB4LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPC/aLcR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 945BDC4CEF1;
-	Fri, 22 Aug 2025 10:08:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755857330;
-	bh=7pbp7b4MJQuhnZtl/iQt6X0PGAG53lDNYxERnubuCEk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IPC/aLcR1VtD6z1nJN2YSAoZzdLo3MZsEee0m/eRJjRpHYtgxNfEinxYyfn3AUTna
-	 dM+sV0D5pAnbIrUmGFOBlNAw+xvVYhH77ngT2sLecoCU7072HZ7lEd4OEZ1agP0nlD
-	 QEXRPJkZb9hU/ZDyfzGu15XIuBkzuy70unHaoMWZCAUe9GGT/IG1WhdR7EIKktjAuK
-	 2LhV4yUY8qso6nmQCYD4CEBa8XEW/ew4N7P8N3ZS2sazAVz5LUzKYYHm5JdtsfYaNz
-	 ZF3++7JuKRRo5lQ+9ffuecWSIWnZdlUpc1NyRP4MTdTuFzGqhASLoGzGCZy9irZY8a
-	 3fLTp9Hj9yBuw==
-Date: Fri, 22 Aug 2025 14:34:08 +0530
-From: Naveen N Rao <naveen@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>, Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] KVM: SVM: Sync TPR from LAPIC into VMCB::V_TPR when
- setting LAPIC regs
-Message-ID: <zx4aiu65mmk72mo2kooj52q4k3vsp43znlrdadajivsw6ns7ou@7xtzfms3de66>
-References: <cover.1755609446.git.maciej.szmigiero@oracle.com>
- <2b2cfff9a2bd6bcc97b97fee7f3a3e1186c9b03c.1755609446.git.maciej.szmigiero@oracle.com>
- <aKeDuaW5Df7PgA38@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iKQ3pxuubGyh5ZVocHKH7tQ7vM/JR82nZyKHSUe5gQ5XmPXYlQ7Qxa1LsXC2ghexvwAJBVcfaDh+Fk9f99vo2AQNNn+l9mb492Bbyg2kWE1L6gqRxNRjqDubH7Q+/e0iTpmh8loux93EEmMwBhXLjr/kYETIavDBdU0gH4E/vds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpgz3t1755853484t91f67561
+X-QQ-Originating-IP: KdZQdKjiVmOq80u/rGcJtR2w8ZFqoQtAd8QF7QfZ6dY=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 22 Aug 2025 17:04:42 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 7948226793383003131
+Date: Fri, 22 Aug 2025 17:04:43 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Parthiban.Veerasooran@microchip.com
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	lukas.bulwahn@redhat.com, alexanderduyck@fb.com,
+	richardcochran@gmail.com, kees@kernel.org, gustavoars@kernel.org,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <42CB765B997D9FF5+20250822090443.GA1963638@nic-Precision-5820-Tower>
+References: <20250822023453.1910972-1-dong100@mucse.com>
+ <20250822023453.1910972-5-dong100@mucse.com>
+ <9fc58eb7-e3d8-4593-9d62-82ec40d4c7d2@microchip.com>
+ <7D780BA46B65623F+20250822053740.GC1931582@nic-Precision-5820-Tower>
+ <8fc334ac-cef8-447b-8a5b-9aa899e0d457@microchip.com>
+ <A1F3F9E0764A4308+20250822065132.GA1942990@nic-Precision-5820-Tower>
+ <bb6826d4-2e17-4cdd-a64f-26d346224805@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aKeDuaW5Df7PgA38@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bb6826d4-2e17-4cdd-a64f-26d346224805@microchip.com>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NyPaQtJYQgeoV1Z1Je0uGcsIvvrib12IMZH70pdwmOr5HPz3MeGNQYWD
+	/JRnheQzpVFBDg+y3tGMmUKKpJd0ZEoubW13vPGkX1Vy9hVqVC/y1kQ8deFtVJP6xtG/De2
+	MU/MkgEtJWm48Ax6JHkRQn3XSnd0StIZT2MZ2YWSZYhsyrkEhvyv2eAoButHLRegv5KTtcd
+	6A6QfwZtZGp0tw+ReDiaHbuzqfVYRMNtZS9c7ZolARypAYmaZc2K4QSQqNxbfwP0pou4Nu5
+	8arokGewfLIJa1KeHkMGMmwBhPIAnGPL1bQpUJdxQ+RAyLGcEe+NuRmiGndpvCZMAA/K/89
+	meky4rjswoWi+tFHrvY1Ul5lkm2f/+nK1bWy0z+KGaebYpoCbv4x2zXOMfkDuL+H8XKlW2S
+	PY3vH8HBsmwNpi6tsmQ8zZYyRsIYnvyCdirT8rd1Hziyy68si9IGfdh2/1rCGV942LeDMFp
+	IOaKN6idhEqI9bA4HZEa9e+QYWXIcb1+lVQ/GVHvxRJxkI/ha6MWoHMcoGo/8KFrxpCOZV1
+	AZ3YjodQaPGXvshypq/1UUJyPP15wwPS+6JQL0WSmkmHfUDGkbehsQtzCGTZEkT6cUPoE5V
+	0weWNdei0yYGietNPivGilNeK+Fsm8PUgAoJ1gv4gTxsdE+z8a2koIcSB3yu0tvhlEKEMzy
+	5kpdwAIF/N8axW0czDqXtYQVkiyQLfvPBdx3xbDQj4xXTq4D4Y3PMN+3g1R7goLGNwDm6nO
+	D/wd2vlXW1Xj5IbpPOQvhVYnqiwEVj/SSYoxJRiMlqDpunkLMZOgDDYTWmnsw1XTfKq6oRL
+	jdvQy3vXnvD7/UA+oUn8xOQr4XFDY/HopC1DnnIMwTk9iNcYnyJu38xofmGiZChbiman5rE
+	IMei9etgLB6NXFU/ABvk8ldpfKO2BgGGXYQfJ6F9mpAeFE8ibJkTdUhx03pZatIjwYLQvxQ
+	8jdZ3NBgHfyO0WFMiiF5TVdq2g1st/9T41jo9kiE4reXLiZbR2veeWdDvM0cGYLX/333WNm
+	f62qAK+A==
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-On Thu, Aug 21, 2025 at 01:38:17PM -0700, Sean Christopherson wrote:
-> On Tue, Aug 19, 2025, Maciej S. Szmigiero wrote:
-> > From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
+On Fri, Aug 22, 2025 at 08:05:50AM +0000, Parthiban.Veerasooran@microchip.com wrote:
+> On 22/08/25 12:21 pm, Yibo Dong wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
 > > 
-> > When AVIC is enabled the normal pre-VMRUN sync in sync_lapic_to_cr8() is
-> > inhibited so any changed TPR in the LAPIC state would not get copied into
-> > the V_TPR field of VMCB.
+> > On Fri, Aug 22, 2025 at 06:07:51AM +0000, Parthiban.Veerasooran@microchip.com wrote:
+> >> On 22/08/25 11:07 am, Yibo Dong wrote:
+> >>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> >>>
+> >>> On Fri, Aug 22, 2025 at 04:49:44AM +0000, Parthiban.Veerasooran@microchip.com wrote:
+> >>>> On 22/08/25 8:04 am, Dong Yibo wrote:
+> >>>>> +/**
+> >>>>> + * mucse_mbx_get_capability - Get hw abilities from fw
+> >>>>> + * @hw: pointer to the HW structure
+> >>>>> + *
+> >>>>> + * mucse_mbx_get_capability tries to get capabities from
+> >>>>> + * hw. Many retrys will do if it is failed.
+> >>>>> + *
+> >>>>> + * @return: 0 on success, negative on failure
+> >>>>> + **/
+> >>>>> +int mucse_mbx_get_capability(struct mucse_hw *hw)
+> >>>>> +{
+> >>>>> +       struct hw_abilities ability = {};
+> >>>>> +       int try_cnt = 3;
+> >>>>> +       int err = -EIO;
+> >>>> Here too you no need to assign -EIO as it is updated in the while.
+> >>>>
+> >>>> Best regards,
+> >>>> Parthiban V
+> >>>>> +
+> >>>>> +       while (try_cnt--) {
+> >>>>> +               err = mucse_fw_get_capability(hw, &ability);
+> >>>>> +               if (err)
+> >>>>> +                       continue;
+> >>>>> +               hw->pfvfnum = le16_to_cpu(ability.pfnum) & GENMASK_U16(7, 0);
+> >>>>> +               return 0;
+> >>>>> +       }
+> >>>>> +       return err;
+> >>>>> +}
+> >>>>> +
+> >>>
+> >>> err is updated because 'try_cnt = 3'. But to the code logic itself, it should
+> >>> not leave err uninitialized since no guarantee that codes 'whthin while'
+> >>> run at least once. Right?
+> >> Yes, but 'try_cnt' is hard coded as 3, so the 'while loop' will always
+> >> execute and err will definitely be updated.
+> >>
+> >> So in this case, the check isn’t needed unless try_cnt is being modified
+> >> externally with unknown values, which doesn’t seem to be happening here.
+> >>
+> >> Best regards,
+> >> Parthiban V
+> >>>
+> >>> Thanks for your feedback.
+> >>>
+> >>>
+> >>
 > > 
-> > AVIC does sync between these two fields, however it does so only on
-> > explicit guest writes to one of these fields, not on a bare VMRUN.
+> > Is it fine if I add some comment like this?
+> > .....
+> > /* Initialized as a defensive measure to handle edge cases
+> >   * where try_cnt might be modified
+> >   */
+> >   int err = -EIO;
+> > .....
 > > 
-> > This is especially true when it is the userspace setting LAPIC state via
-> > KVM_SET_LAPIC ioctl() since userspace does not have access to the guest
-> > VMCB.
+> > Additionally, keeping this initialization ensures we’ll no need to consider
+> > its impact every time 'try_cnt' is modified (Although this situation is
+> > almost impossible).
+> If you're concerned that 'try_cnt' might be modified, then let's keep 
+> the existing implementation as is. I also think the comment might not be 
+> necessary, so feel free to ignore my earlier suggestion.
+> 
+> Best regards,
+> Parthiban V
 > > 
-> > Practice shows that it is the V_TPR that is actually used by the AVIC to
-> > decide whether to issue pending interrupts to the CPU (not TPR in TASKPRI),
-> > so any leftover value in V_TPR will cause serious interrupt delivery issues
-> > in the guest when AVIC is enabled.
+> > Thanks for your feedback.
 > > 
-> > Fix this issue by explicitly copying LAPIC TPR to VMCB::V_TPR in
-> > avic_apicv_post_state_restore(), which gets called from KVM_SET_LAPIC and
-> > similar code paths when AVIC is enabled.
 > > 
-> > Fixes: 3bbf3565f48c ("svm: Do not intercept CR8 when enable AVIC")
-> > Signed-off-by: Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
-> > ---
-> >  arch/x86/kvm/svm/avic.c | 23 +++++++++++++++++++++++
-> >  1 file changed, 23 insertions(+)
-> > 
-> > diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
-> > index a34c5c3b164e..877bc3db2c6e 100644
-> > --- a/arch/x86/kvm/svm/avic.c
-> > +++ b/arch/x86/kvm/svm/avic.c
-> > @@ -725,8 +725,31 @@ int avic_init_vcpu(struct vcpu_svm *svm)
-> >  
-> >  void avic_apicv_post_state_restore(struct kvm_vcpu *vcpu)
-> >  {
-> > +	struct vcpu_svm *svm = to_svm(vcpu);
-> > +	u64 cr8;
-> > +
-> >  	avic_handle_dfr_update(vcpu);
-> >  	avic_handle_ldr_update(vcpu);
-> > +
-> > +	/* Running nested should have inhibited AVIC. */
-> > +	if (WARN_ON_ONCE(nested_svm_virtualize_tpr(vcpu)))
-> > +		return;
 > 
-> 
-> > +
-> > +	/*
-> > +	 * Sync TPR from LAPIC TASKPRI into V_TPR field of the VMCB.
-> > +	 *
-> > +	 * When AVIC is enabled the normal pre-VMRUN sync in sync_lapic_to_cr8()
-> > +	 * is inhibited so any set TPR LAPIC state would not get reflected
-> > +	 * in V_TPR.
-> 
-> Hmm, I think that code is straight up wrong.  There's no justification, just a
-> claim:
-> 
->   commit 3bbf3565f48ce3999b5a12cde946f81bd4475312
->   Author:     Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
->   AuthorDate: Wed May 4 14:09:51 2016 -0500
->   Commit:     Paolo Bonzini <pbonzini@redhat.com>
->   CommitDate: Wed May 18 18:04:31 2016 +0200
-> 
->     svm: Do not intercept CR8 when enable AVIC
->     
->     When enable AVIC:
->         * Do not intercept CR8 since this should be handled by AVIC HW.
->         * Also, we don't need to sync cr8/V_TPR and APIC backing page.   <======
->     
->     Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
->     [Rename svm_in_nested_interrupt_shadow to svm_nested_virtualize_tpr. - Paolo]
->     Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> 
-> That claim assumes APIC[TPR] will _never_ be modified by anything other than
-> hardware. 
 
-It also isn't clear to me why only sync_lapic_to_cr8() was gated when 
-AVIC was enabled, while sync_cr8_to_lapic() continues to copy V_TRP to 
-the backing page. If AVIC is enabled, then the AVIC hardware updates 
-both the backing page and V_TPR on a guest write to TPR.
-
-> That's obviously false for state restore from userspace, and it's also
-> technically false at steady state, e.g. if KVM managed to trigger emulation of a
-> store to the APIC page, then KVM would bypass the automatic harware sync.
-
-Do you mean emulation due to AVIC being inhibited? I initially thought 
-this could be a problem, but in this scenario, AVIC would be disabled on 
-the next VMRUN, so we will end up sync'ing TPR from the lapic to V_TPR.
-
-> 
-> There's also the comically ancient KVM_SET_VAPIC_ADDR, which AFAICT appears to
-> be largely dead code with respect to vTPR (nothing sets KVM_APIC_CHECK_VAPIC
-> except for the initial ioctl), but could again set APIC[TPR] without updating
-> V_TPR.
->
-> So, rather than manually do the update during state restore, my vote 
-> is to restore the sync logic.  And if we want to optimize that code 
-> (seems unnecessary), then we should hook all TPR writes.
-
-I guess you mean apic_set_tpr()? We will need to hook into that in 
-addition to updating avic_apicv_post_state_restore() since KVM_SET_LAPIC 
-just does a memcpy of the register state.
-
-> 
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index d9931c6c4bc6..1bfebe40854f 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -4046,8 +4046,7 @@ static inline void sync_lapic_to_cr8(struct kvm_vcpu *vcpu)
->         struct vcpu_svm *svm = to_svm(vcpu);
->         u64 cr8;
->  
-> -       if (nested_svm_virtualize_tpr(vcpu) ||
-> -           kvm_vcpu_apicv_active(vcpu))
-> +       if (nested_svm_virtualize_tpr(vcpu))
->                 return;
->  
->         cr8 = kvm_get_cr8(vcpu);
-
-I agree that this is a simpler fix, so would be good to do for backport 
-ease.
-
-The code in sync_lapic_to_cr8 ends up being a function call to 
-kvm_get_cr8() and ~6 instructions, which isn't that much. But if we can 
-gate sync'ing V_TPR to the backing page in sync_cr8_to_lapic() as well, 
-then it might be good to do so.
-
-
-- Naveen
+Thank you for your understanding and flexibility. I'll keep the current
+implementation with the initialization of err = -EIO as a defensive measure,
+as you suggested. I appreciate your willingness to accommodate this consideration.
 
 
