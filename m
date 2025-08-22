@@ -1,357 +1,164 @@
-Return-Path: <linux-kernel+bounces-781491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4BAAB31338
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:33:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E31FB3130B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B15E3BAA87
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:28:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A060AAE65A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905F52F0C55;
-	Fri, 22 Aug 2025 09:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7712E8B7F;
+	Fri, 22 Aug 2025 09:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HCpzWZv5"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WPN7qEWL"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C422EF65F
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6436229E10F
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755854811; cv=none; b=aUxMxCaXJhh6C4Zws/VUW/UHIIy2P2NOGA8sAe+Ryp0oxUyazvudrwwMgg+RG0QiMRumW2B42Z9cM0IpGbQKeK4lF/wRYxyDGoh/Vap4WgLoqPXkzWqvaDzR1wapW9ddjVhrOLOKPfVJZ9aiUN8kar2nQKgMEx+rnJzUCQyvrYQ=
+	t=1755854803; cv=none; b=GAqPJPObGaaeZunCPsnmV+L7VydI6PNwcTLN7yV28ZZ76zUNN1sjXKDdxDG8BkFNsZUgWBdgKCbDJh4QE+bjwPwmBHlfZbIOcRfcq6RekUa3xL2TP0f4bTGb88UZtmHXjK6Qb3tMQChLSBqI/wn/OH3ZllNVCyO4Sws143sJkZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755854811; c=relaxed/simple;
-	bh=wOwI2oKPnDRuHjZ2SOx+OFwv2fBfKeaehXv6eU6r2tU=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=DUEh2J3Mrbfwb/+0FohWJh+ck6zZvCDBtRZukNSe/loEUN4r945xOB6REjOHsfxvcU4IaBfqHl3rDwViMhitepC74EHkZAUa3pQD0zhh1gLcSQQT/+2cIk6UsVhAbEHzFf2UORR5S4PFqusKqeRf7P04zJSMhyjWdC2/c3RBIC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HCpzWZv5; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250822092638epoutp02e29d68a087c92782cb6eb793a5abefef~eDKL9KVkw2888228882epoutp02X
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:26:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250822092638epoutp02e29d68a087c92782cb6eb793a5abefef~eDKL9KVkw2888228882epoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755854798;
-	bh=nmtEoeQlWuqYko7mqBv9pQr3Zd1olsc1MAqj9gtJ+xo=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=HCpzWZv55h4/Y3Rnp1lf4B3OehmY2sv1WXATu/E8TIH9xI1JiUvdMJc96nTLLOTrU
-	 NRHX6Gwhywx84a6gjxknJR5WU9QgJaMZz/nqalCscox3T28UUmNW0e/crGbjBh8VjW
-	 yXPFJoLzQYdYkxChWMST6TkzFwJK96nYt7OdC1Q4=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250822092637epcas5p29a7dd2208e947a9732298efc46494f7e~eDKK4z4X51122911229epcas5p27;
-	Fri, 22 Aug 2025 09:26:37 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4c7ZZP0Mkqz6B9m5; Fri, 22 Aug
-	2025 09:26:37 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250822092636epcas5p41d4c9c6511ed7d0194c95e651ba0d6b3~eDKJrf--63154431544epcas5p4e;
-	Fri, 22 Aug 2025 09:26:36 +0000 (GMT)
-Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250822092633epsmtip197617a5a4f4d248d605769bfa26a2454~eDKGnqxap0570405704epsmtip1Z;
-	Fri, 22 Aug 2025 09:26:33 +0000 (GMT)
-From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
-To: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
-	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
-	<igor.belwon@mentallysanemainliners.org>, <johan@kernel.org>,
-	<m.szyprowski@samsung.com>, <s.nawrocki@samsung.com>
-Cc: <oe-kbuild-all@lists.linux.dev>, <linux-phy@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
-In-Reply-To: <202508220553.lm7ExAxG-lkp@intel.com>
-Subject: RE: [PATCH v6 6/6] phy: exynos5-usbdrd: support SS combo phy for
- ExynosAutov920
-Date: Fri, 22 Aug 2025 14:56:32 +0530
-Message-ID: <006f01dc1346$db4edf50$91ec9df0$@samsung.com>
+	s=arc-20240116; t=1755854803; c=relaxed/simple;
+	bh=jR/DVJ6iHDhOV9awxYxxy+P7xYkU9pJ0t0jQsaJ2ZMc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Mn8fJf3LIoQRrpBgDlEwUMup6lQ7iJOw1kEDQRLfcEdZkTLfVEoZ8fbReBgGsmvx81mfuaYCksEnn61J+dll/A8pZF44Ta9ITz0udWwKaoU/F+P4GjbxXPiyjjn3X9vrs8AlcfomhtXYKDZaaoyX5pqJfw68I9BpSVVB8tnTOoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WPN7qEWL; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45a15fd04d9so19772235e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 02:26:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755854800; x=1756459600; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=InzC6AEUn6N2EzT5qCdqSdLJvQVx7PhxAAj3EHoLbYQ=;
+        b=WPN7qEWLpgMSk7RLRGq+8gS1op+1SZ+CLuY1TLwf5kyyLuEMxHJzqzZ2EYFGVid3Rd
+         9qE1b5bJ7DcC9V+Xd8ipJaqKNoVzzJrLRt+pdWuwk0R/bGUxx0Ym9CVebMoZzWTqSZLE
+         O9n8DKFmHhe7ca8rl2zHss0LcH8Qdv5FJRZczVkjMZuxP6EJTVEVi0wiO3PS0IAhXFM8
+         gplkh37xlUcLRa2ptQE1iZdfbHjYMNESxvJxZjT0W3bK9moj/NC0j/7lbTm4TdNx1Jqw
+         3lXqhVi1cEHXo+yRhx/9gPQjkFU5USR1QMK2OkQDDs+jUtM1B91WilKHtnx2Bj5jqIzi
+         lHBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755854800; x=1756459600;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=InzC6AEUn6N2EzT5qCdqSdLJvQVx7PhxAAj3EHoLbYQ=;
+        b=p0vnvLVFSS8PLNTOblsqn7VmGP/+xBR9K1smzruZBnRiBYEPHXez2uIZTtMaEiOz0r
+         w8+QdIZxVXrCbzNgEWbSamxZltETqgaa4RWpHShJ59BCzODFBHE+x6KZp73x68hNK1P8
+         VNYKECmg6v5kvjtVAZWY+uNMN/SGQ5uL6prqwV78JPQWvOwXQFisUKX4mwL98hEWPZvm
+         l18S5wfl5yY60xLQvWpdz/G+/CAeSlrqjH0FChilPKJSNIsUdVIR4LnZXYGom9qnjbSm
+         s6wIyIlTpNS71U6JCZAtlUM1qhmDee06EP/XvmFemEDE4ivUR8DfjPnLcu7e7Xx3JejD
+         qwUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXhKJcVti7o+apOLIg+awnxBk2vVm7Q7j1zZCpdJZ1B1Gha0LHFTMOITSrm9ZPz8sbBHyiujtuZ8HVfXMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2wk9JvGEfk6+WH4ew16Tg9KfFDeSolnq8+DLGbQ+WOXaAB7et
+	R5dSP2Nlk+hK3Uvpq+GIesgjwyEhV2GIsW70d+eLlDKDUb/JNDZNdST8qXjPWnJ8NcI=
+X-Gm-Gg: ASbGnctKjbKP15Gl2CTS4LczhrmE7nsKA/7VIQ7fCMjRIDndInhY2p/KC5xbXvglQKr
+	fBFuhhVFC1OVpr3bt2XoGQnHYWXxaTph3GVuTfbnm/yoolIu5x+fUaMC3n1NiRQwxPjFS9IVIGl
+	vazqy2TdGfZEGWh7ZzHDzFeDmTlgpwXq14Svx7bnD7+R6g7LTv3c0d6vcS2mvKlNsRKZDZjsCWg
+	8gMX4hohycLIvnGDfBpxDKvLrzvzrzZOdOzx8ZbGaG0hA3ybH1KokXNmtHGu2R4nC/AbhaRcINC
+	YouT8s+zqGAfdrJRZ7+DXKNxfwTO97wCscjpcYoJpCTrcDiuGeB94AQS8sxTxuPl+7ZY1h0i/fD
+	XYLJn34BYrkrHYMb07rn3mkoycvakjND2nW3xW2IyQhU=
+X-Google-Smtp-Source: AGHT+IHj/debPj3AF+wfArUxR9wwDm7ZVG+p4jjPslw0JJ64XTjQA8wlXji7gqknsPS5xlcQeVdntg==
+X-Received: by 2002:a05:600c:4343:b0:45b:47e1:f603 with SMTP id 5b1f17b1804b1-45b4d817001mr25345445e9.18.1755854799533;
+        Fri, 22 Aug 2025 02:26:39 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c5826751d5sm3297007f8f.14.2025.08.22.02.26.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 02:26:39 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH v2 0/6] arm64: dts: qcom: Add multiple power domains in
+ videocc/gpucc
+Date: Fri, 22 Aug 2025 11:26:32 +0200
+Message-Id: <20250822-topic-sm8x50-upstream-pll-multi-pd-voting-dt-v2-0-28f35728a146@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHdPSQ+XjFsLeZLd+6ieGPrJFm5GwFxhWqcAlQOQPW0Tc8gUA==
-Content-Language: en-in
-X-CMS-MailID: 20250822092636epcas5p41d4c9c6511ed7d0194c95e651ba0d6b3
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250821212909epcas5p3cfcff210863febc2410cf661172be683
-References: <20250821073703.2498302-7-pritam.sutar@samsung.com>
-	<CGME20250821212909epcas5p3cfcff210863febc2410cf661172be683@epcas5p3.samsung.com>
-	<202508220553.lm7ExAxG-lkp@intel.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMg3qGgC/53NQQ7CIBCF4auYWTsGSKjFlfcwXZCC7SQUCFBS0
+ /TuYo/g8n+L9+2QbSKb4XHZIdlKmYJvIa4XGGftJ4tkWoNgQrJecCwh0oh56TfJcI25JKsXjM7
+ hsrpCGA3WUMhPaApq2QnFjZLKamiXMdk3bSf3GlrPlEtIn1Ov/Lf+CVWOrGmcjXdhNFPd05HXK
+ dxCmmA4juMLJJkdjekAAAA=
+X-Change-ID: 20250821-topic-sm8x50-upstream-pll-multi-pd-voting-dt-a56291d959ea
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Taniya Das <quic_tdas@quicinc.com>, Dmitry Baryshkov <lumag@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1871;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=jR/DVJ6iHDhOV9awxYxxy+P7xYkU9pJ0t0jQsaJ2ZMc=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBoqDfLssrex89Htd+CHrcEIaVG1MX0XtHQx5y2Wea9
+ 5GO8oqyJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaKg3ywAKCRB33NvayMhJ0R3wEA
+ Ci6aSitiWcpVoz9QLvm9Ri5o+4WiDPhqS+c2da2fbIwp/eG9T8lQp1PBB/Dv2TIrO6alzy6kFU6sMT
+ U+lQxsQUz/OkRIypgBZ78tEYvwD1Bpc9G0XFbRpO8sPzqnOSakq9sJ4aDuFUZZSDDTSO7JUe0i2DsZ
+ j484inFgHl3lGsTJabtdHbSKMJd9tcaN4oSKIJ+dHlC3z9xfSJX5tmjS5tv3/uHGTiaZqlEyD3CQAU
+ dG2r743c6rptCw+C74qEtrH0cd+01Z1Rm6EQ5KlB4lwFJXUCGX6R1dgKovhjPvC98KnJbgM/8FcqBX
+ 7iLf+5fLkmXbgNsOt+QqiZ4FcaDkf1XO5AV/Po7nRZCfaBn8MF9zED16d/bw3ya69P7CHaXUQS/iR1
+ VV7Fn5bYZp/AknQBJ1Q8uYjv5I7SDea4zzSleqAuWN2sEKfNM2jlDBqYtMA4HSbnrYd8JXRxHwy55w
+ O4WHbbHzCPNKKllP3P0dapQRUTXv/i30VW+TkTgUujqZH7AxY7Na2vgjwac2Z5w6T0cOuWdxvEIrpa
+ vCMfYQr6nB8grRR59kzlIJRB8j4dwIQB9XPUx2zEyXr5uYs0aYZxPvXGcNQRZg3mYdi95yljPjS/cZ
+ VzG2iA5T2diuxVkNbOY5nOk+N5OuZyUlHVYDitZ60cCe5D2dSkx2gaLVphrQ==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-Hi, 
+This is a continuation of [1] ("clk: qcom: Add support to attach multiple power domains in cc probe"),
+where all the clock changes were merged and the DT changes are lying
+on the lists for allmost 4 months now.
 
-> -----Original Message-----
-> From: kernel test robot <lkp@intel.com>
-> Sent: 22 August 2025 02:58 AM
-> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>; vkoul@kernel.org;
-> kishon@kernel.org; robh@kernel.org; krzk+dt@kernel.org;
-> conor+dt@kernel.org; alim.akhtar@samsung.com; andre.draszik@linaro.org;
-> peter.griffin@linaro.org; kauschluss@disroot.org;
-> ivo.ivanov.ivanov1@gmail.com; igor.belwon@mentallysanemainliners.org;
-> johan@kernel.org; m.szyprowski@samsung.com; s.nawrocki@samsung.com
-> Cc: oe-kbuild-all@lists.linux.dev; linux-phy@lists.infradead.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
-> rosa.pila@samsung.com; dev.tailor@samsung.com;
-> faraz.ata@samsung.com; muhammed.ali@samsung.com;
-> selvarasu.g@samsung.com
-> Subject: Re: [PATCH v6 6/6] phy: exynos5-usbdrd: support SS combo phy for
-> ExynosAutov920
-> 
-> Hi Pritam,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on robh/for-next] [also build test WARNING on
-> krzk/for-next linus/master v6.17-rc2 next-20250821] [If your patch is
-applied
-> to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://protect2.fireeye.com/v1/url?k=07116f39-666ac5ae-0710e476-
-> 74fe4860001d-17dff89291ad3b5b&q=1&e=45b4f292-bcb1-4614-86a0-
-> c790a47fb814&u=https%3A%2F%2Fgithub.com%2Fintel-lab-
-> lkp%2Flinux%2Fcommits%2FPritam-Manohar-Sutar%2Fdt-bindings-phy-
-> samsung-usb3-drd-phy-add-ExynosAutov920-HS-phy-
-> compatible%2F20250821-153122
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
-for-
-> next
-> patch link:    https://lore.kernel.org/r/20250821073703.2498302-7-
-> pritam.sutar%40samsung.com
-> patch subject: [PATCH v6 6/6] phy: exynos5-usbdrd: support SS combo phy
-> for ExynosAutov920
-> config: arc-randconfig-001-20250822 (https://download.01.org/0day-
-> ci/archive/20250822/202508220553.lm7ExAxG-lkp@intel.com/config)
-> compiler: arc-linux-gcc (GCC) 8.5.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-
-> ci/archive/20250822/202508220553.lm7ExAxG-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new
-version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes:
-> | https://lore.kernel.org/oe-kbuild-all/202508220553.lm7ExAxG-lkp@intel.
-> | com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    drivers/phy/samsung/phy-exynos5-usbdrd.c: In function
-> 'exynosautov920_usb31drd_cr_write':
-> >> drivers/phy/samsung/phy-exynos5-usbdrd.c:2167:17: warning: unused
-> >> variable 'dev' [-Wunused-variable]
->      struct device *dev = phy_drd->dev;
->                     ^~~
->    drivers/phy/samsung/phy-exynos5-usbdrd.c: In function
-> 'exynosautov920_usb31drd_port_phy_ready':
-> >> drivers/phy/samsung/phy-exynos5-usbdrd.c:2137:6: warning: 'reg' is
-> >> used uninitialized in this function [-Wuninitialized]
->      reg &= ~(PHY_CR_PARA_CON0_PHY0_CR_PARA_CLK |
->      ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->        PHY_CR_PARA_CON0_PHY0_CR_PARA_ADDR);
->        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    during RTL pass: mach
->    drivers/phy/samsung/phy-exynos5-usbdrd.c: In function
-> 'exynos5_usbdrd_phy_probe':
->    drivers/phy/samsung/phy-exynos5-usbdrd.c:3056:1: internal compiler
-> error: in arc_ifcvt, at config/arc/arc.c:9110
->     }
->     ^
->    Please submit a full bug report,
->    with preprocessed source if appropriate.
->    See <https://gcc.gnu.org/bugs/> for instructions.
-> 
-> 
-> vim +/dev +2167 drivers/phy/samsung/phy-exynos5-usbdrd.c
-> 
->   2125
->   2126	static void
->   2127	exynosautov920_usb31drd_port_phy_ready(struct
-> exynos5_usbdrd_phy *phy_drd)
->   2128	{
->   2129		struct device *dev = phy_drd->dev;
->   2130		void __iomem *reg_phy = phy_drd->reg_phy;
->   2131		static const unsigned int timeout_us = 20000;
->   2132		static const unsigned int sleep_us = 40;
->   2133		u32 reg;
->   2134		int err;
->   2135
->   2136		/* Clear cr_para_con */
-> > 2137		reg &= ~(PHY_CR_PARA_CON0_PHY0_CR_PARA_CLK |
->   2138
-> 	PHY_CR_PARA_CON0_PHY0_CR_PARA_ADDR);
->   2139		reg |= PHY_CR_PARA_CON0_PHY0_CR_PARA_SEL;
->   2140		writel(reg, reg_phy +
-> EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
->   2141		writel(0x0, reg_phy +
-> EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON1);
->   2142		writel(0x0, reg_phy +
-> EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON2);
->   2143
->   2144		exynosautov920_usb31drd_cr_clk(phy_drd, true);
->   2145		exynosautov920_usb31drd_cr_clk(phy_drd, false);
->   2146
->   2147		/*
->   2148		 * The maximum time from phy reset de-assertion to
-de-
-> assertion of
->   2149		 * tx/rx_ack can be as high as 5ms in fast
-simulation mode.
->   2150		 * Time to phy ready is < 20ms
->   2151		 */
->   2152		err = readl_poll_timeout(reg_phy +
->   2153
-> 	EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0,
->   2154				reg, !(reg &
-> PHY_CR_PARA_CON0_PHY0_CR_PARA_ACK),
->   2155				sleep_us, timeout_us);
->   2156		if (err)
->   2157			dev_err(dev, "timed out waiting for
-rx/tx_ack:
-> %#.8x\n", reg);
->   2158
->   2159		reg &= ~PHY_CR_PARA_CON0_PHY0_CR_PARA_CLK;
->   2160		writel(reg, reg_phy +
-> EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
->   2161	}
->   2162
->   2163	static void
->   2164	exynosautov920_usb31drd_cr_write(struct exynos5_usbdrd_phy
-> *phy_drd,
->   2165					 u16 addr, u16 data)
->   2166	{
-> > 2167		struct device *dev = phy_drd->dev;
->   2168		void __iomem *reg_phy = phy_drd->reg_phy;
->   2169		u32 cnt = 0;
->   2170		u32 reg;
->   2171
->   2172		/* Pre Clocking */
->   2173		reg = readl(reg_phy +
-> EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
->   2174		reg |= PHY_CR_PARA_CON0_PHY0_CR_PARA_SEL;
->   2175		writel(reg, reg_phy +
-> EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
->   2176
->   2177		/*
->   2178		 * tx clks must be available prior to assertion of
-tx req.
->   2179		 * tx pstate p2 to p0 transition directly is not
-permitted.
->   2180		 * tx clk ready must be asserted synchronously on tx
-clk prior
->   2181		 * to internal transmit clk alignment sequence in
-the phy
->   2182		 * when entering from p2 to p1 to p0.
->   2183		 */
->   2184		do {
->   2185			exynosautov920_usb31drd_cr_clk(phy_drd,
-true);
->   2186			exynosautov920_usb31drd_cr_clk(phy_drd,
-false);
->   2187			cnt++;
->   2188		} while (cnt < 15);
->   2189
->   2190		reg &= ~PHY_CR_PARA_CON0_PHY0_CR_PARA_SEL;
->   2191		writel(reg, reg_phy +
-> EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
->   2192
->   2193		/*
->   2194		 * tx data path is active when tx lane is in p0
-state
->   2195		 * and tx data en asserted. enable cr_para_wr_en.
->   2196		 */
->   2197		reg = readl(reg_phy +
-> EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON2);
->   2198		reg &= ~PHY_CR_PARA_CON2_PHY0_CR_PARA_WR_DATA;
->   2199		reg |=
-> FIELD_PREP(PHY_CR_PARA_CON2_PHY0_CR_PARA_WR_DATA, data) |
->   2200			PHY_CR_PARA_CON2_PHY0_CR_PARA_WR_EN;
->   2201		writel(reg, reg_phy +
-> EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON2);
->   2202
->   2203		/* write addr */
->   2204		reg = readl(reg_phy +
-> EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
->   2205		reg &= ~PHY_CR_PARA_CON0_PHY0_CR_PARA_ADDR;
->   2206		reg |=
-> FIELD_PREP(PHY_CR_PARA_CON0_PHY0_CR_PARA_ADDR, addr) |
->   2207			PHY_CR_PARA_CON0_PHY0_CR_PARA_CLK |
->   2208			PHY_CR_PARA_CON0_PHY0_CR_PARA_SEL;
->   2209		writel(reg, reg_phy +
-> EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
->   2210
->   2211		/* check cr_para_ack*/
->   2212		cnt = 0;
->   2213		do {
->   2214			/*
->   2215			 * data symbols are captured by phy on
-rising edge of
-> the
->   2216			 * tx_clk when tx data enabled.
->   2217			 * completion of the write cycle is
-acknowledged by
-> assertion
->   2218			 * of the cr_para_ack.
->   2219			 */
->   2220			exynosautov920_usb31drd_cr_clk(phy_drd,
-true);
->   2221			reg = readl(reg_phy +
-> EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
->   2222			if ((reg &
-> PHY_CR_PARA_CON0_PHY0_CR_PARA_ACK))
->   2223				break;
->   2224
->   2225			exynosautov920_usb31drd_cr_clk(phy_drd,
-false);
->   2226
->   2227			/*
->   2228			 * wait for minimum of 10 cr_para_clk cycles
-after phy
-> reset
->   2229			 * is negated, before accessing control regs
-to allow
-> for
->   2230			 * internal resets.
->   2231			 */
->   2232			cnt++;
->   2233		} while (cnt < 10);
->   2234
->   2235		if (cnt < 10)
->   2236			exynosautov920_usb31drd_cr_clk(phy_drd,
-false);
->   2237	}
->   2238
-> 
-> --
-> 0-DAY CI Kernel Test Service
-> https://protect2.fireeye.com/v1/url?k=96757503-f70edf94-9674fe4c-
-> 74fe4860001d-38e3f56dae8e119d&q=1&e=45b4f292-bcb1-4614-86a0-
-> c790a47fb814&u=https%3A%2F%2Fgithub.com%2Fintel%2Flkp-tests%2Fwiki
+I kindly asked for those patches to be re-send separately [2], but was
+ignored, and the lack of those causes a bunch of DT check errors, hopefully they can
+be picked for the next revision.
 
-Will post v7 with the fixes for these warnings.
+I did apply them on current next and fixed a patch 4 that
+didn't apply cleanly.
 
-Thank you.
+[1] https://lore.kernel.org/all/20250530-videocc-pll-multi-pd-voting-v5-0-02303b3a582d@quicinc.com/
+[2] https://lore.kernel.org/all/8e56e1a8-7b26-44df-ad57-e2092cb5c9ab@linaro.org/
 
-Regards,
-Pritam
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Changes in v2:
+- Fixed patch 5 commit msg
+- Link to v1: https://lore.kernel.org/r/20250821-topic-sm8x50-upstream-pll-multi-pd-voting-dt-v1-0-a510c72da096@linaro.org
 
+---
+Jagadeesh Kona (5):
+      arm64: dts: qcom: sm8450: Additionally manage MXC power domain in videocc
+      arm64: dts: qcom: sm8550: Additionally manage MXC power domain in videocc
+      arm64: dts: qcom: sm8650: Additionally manage MXC power domain in videocc
+      arm64: dts: qcom: sm8450: Additionally manage MXC power domain in camcc
+      arm64: dts: qcom: sm8650: Additionally manage MXC power domain in camcc
+
+Vladimir Zapolskiy (1):
+      arm64: dts: qcom: sm8550: Additionally manage MXC power domain in camcc
+
+ arch/arm64/boot/dts/qcom/sm8450.dtsi | 12 ++++++++----
+ arch/arm64/boot/dts/qcom/sm8550.dtsi | 12 ++++++++----
+ arch/arm64/boot/dts/qcom/sm8650.dtsi |  6 ++++--
+ 3 files changed, 20 insertions(+), 10 deletions(-)
+---
+base-commit: 6f66e22d741775dbd54e174560ae76b46750e570
+change-id: 20250821-topic-sm8x50-upstream-pll-multi-pd-voting-dt-a56291d959ea
+
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
 
 
