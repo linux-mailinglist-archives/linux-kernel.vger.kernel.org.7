@@ -1,77 +1,172 @@
-Return-Path: <linux-kernel+bounces-782444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5EE9B3207C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:28:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2691AB32072
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C242A681831
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:21:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 129C1189D9C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6BE22F772;
-	Fri, 22 Aug 2025 16:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8D4280A5B;
+	Fri, 22 Aug 2025 16:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npZlEv4o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2M8VQ8x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B9D111A8;
-	Fri, 22 Aug 2025 16:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95ABC265606;
+	Fri, 22 Aug 2025 16:22:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755879702; cv=none; b=XQkd/NdqkYZBmCQjvYmaGqJtvpS8H3r7m64BrvhoPsXx3o2JX4BzCHlbU0YDDZSSONk6gn8jIFwvqi5CpOZONOW0UwlZk19eQnS+Nrb/U9OakKWnfpZX/nW1cKlMCGgedXbGi8ogw58p6yxlQwGxzcSg+LTxaa4Df8kNQoiQ2ic=
+	t=1755879756; cv=none; b=fi1z2ip0Lx2kIUl0XTRVQgrGn0l0pgVhv4ShxfGScbhYVBid+OmqKS9jzoa+mshJaVWnq1pP91Z5+kOHWkXboQo5SGKMd0Y6NBgFpKBxw81gLfrGi/5j+/sSUhY7Iaz/6hRv5Y2OrWE/BEyA3ZAG1Y3AfdJ9yLSzvKe1D4VmvPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755879702; c=relaxed/simple;
-	bh=EhUz0WgYcQYVPW2xddPUf5WXnJ6f1YdV83X8PzDG3sM=;
+	s=arc-20240116; t=1755879756; c=relaxed/simple;
+	bh=QRF5S1JctSVCfJiq37FRGDX/S/NZL6ziFSrp1lMAHW8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=obn556SaddN+0jwEVULtQhqgmgTAqd1crirzsjnUiNOtbeArN+ljM81/nipT5TmNGlEQKZgSOMOb+1BkT1kqNQoJ0mzVm9gouKZP9NzYhCj1em3sE1TAZwqseunedTj5PSty+6W+nNzcDUErAUIJkjJ2HIwdkAbcMA1gP4klMBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npZlEv4o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C41C4CEED;
-	Fri, 22 Aug 2025 16:21:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nKjxH0qX13b6N4RwEQrefR9Ivyn10N2WbhkXsteA9jvcGo8Lzo+BbRcPxXklqj0PjdqXNNC0kJKqMAphB1edv/WMvoawRnDLp/yidddsPN/TP7wlvaZSfk1pBmnvsR+pz2VvCC/ETxBvCzc2dHcIXNgMSYQIvymZBbzPpF4sKRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j2M8VQ8x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A320BC4CEED;
+	Fri, 22 Aug 2025 16:22:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755879702;
-	bh=EhUz0WgYcQYVPW2xddPUf5WXnJ6f1YdV83X8PzDG3sM=;
+	s=k20201202; t=1755879755;
+	bh=QRF5S1JctSVCfJiq37FRGDX/S/NZL6ziFSrp1lMAHW8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=npZlEv4o4is9Imqayi3d9m2AHZ5qEsT/swD8pKbbf1PNx0/acROFdl62vZyv/R4mh
-	 ii1anT2GW2O0CNhSrGd2CVWfT18Bjxp7pWKbRKB+b/H/cDhoLx0A1285909SSMOvXA
-	 ZcqNHb7ms9KV2qyABRHSrZATJrsM6DwnaWDuk59WS1yYWB65wW/iNObiGxSAXGYe6i
-	 KpyJH+RiRUSnxoJSWRYYO/jtciaeYOlXvjbYwvUkOJTecBX3XOapXmwpzSx3489fBI
-	 sbR7GEevUGBs0qYlPNEQgvWEog7QjcN7G0E2cJq2bFTueRYw85N7oXoBV+v4skKiiv
-	 rfTgNBVoBG8QA==
-Date: Fri, 22 Aug 2025 11:21:41 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: eisantosh95@gmail.com
-Cc: linux-kernel@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH] docs: devicetree: fix typo in writing-schema.rst
-Message-ID: <175587970043.3941544.11685597833817175902.robh@kernel.org>
-References: <20250820181013.17817-1-eisantosh95@gmail.com>
+	b=j2M8VQ8xXkYI5FF48BwvSDtjvmYmKqQG2dmzWmNJ/nr7+fKUa/jCj82iZBW+MoW+N
+	 AkWp0Go3eAgAZAlexp2cSHGtTZWL2MA0J8ZCgu1CcVNXjVDidhw0t9+CQsU3b0JPsO
+	 CnXIXZ+CCLekCD4sHtnpG9r+J3N5x90jUT/gkILUrsWjXOQbQ34JxU9sBFzcmGcXQG
+	 plZdP7ZH1KvoUjsP3cTXv32PEixvkJMmnbQ62NT0suObmmtSRmFMzOHtAVCjzB5B7t
+	 czIVMT8hKXnjcZ4DSz8VooaPmGs/nrzyfF0MMto89mqV62845tgSXQuAvv1O1UJ/1y
+	 JHleRDVa0i92g==
+Date: Fri, 22 Aug 2025 17:22:30 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: "biju.das.au" <biju.das.au@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	"magnus.damm" <magnus.damm@gmail.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 06/11] dt-bindings: usb: Document Renesas RZ/G3E USB3HOST
+Message-ID: <20250822-headstone-churn-10f632ea4be8@spud>
+References: <20250820171812.402519-1-biju.das.jz@bp.renesas.com>
+ <20250820171812.402519-7-biju.das.jz@bp.renesas.com>
+ <20250820-onyx-salad-c5c96f6bd480@spud>
+ <TY3PR01MB113464F2ED8BFBB823B038C038632A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <20250821-arrange-exhume-aed87b75305c@spud>
+ <TY3PR01MB113463A076C2122107764660A863DA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tBNBaExK7Ja6D/pV"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250820181013.17817-1-eisantosh95@gmail.com>
+In-Reply-To: <TY3PR01MB113463A076C2122107764660A863DA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
 
-On Wed, 20 Aug 2025 23:40:13 +0530, eisantosh95@gmail.com wrote:
-> From: Santosh Mahto <eisantosh95@gmail.com>
-> 
-> Fixes a spelling mistake in writing-schema.rst:
-> "interpretted" → "interpreted"
-> 
-> Signed-off-by: Santosh Mahto <eisantosh95@gmail.com>
-> ---
->  Documentation/devicetree/bindings/writing-schema.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+--tBNBaExK7Ja6D/pV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks!
+On Fri, Aug 22, 2025 at 06:48:07AM +0000, Biju Das wrote:
+> Hi Conor,
+>=20
+> > -----Original Message-----
+> > From: Conor Dooley <conor@kernel.org>
+> > Sent: 21 August 2025 19:16
+> > Subject: Re: [PATCH 06/11] dt-bindings: usb: Document Renesas RZ/G3E US=
+B3HOST
+> >=20
+> > On Thu, Aug 21, 2025 at 07:15:59AM +0000, Biju Das wrote:
+> > > Hi Conor,
+> > >
+> > > Thanks for the feedback.
+> > >
+> > > > -----Original Message-----
+> > > > From: Conor Dooley <conor@kernel.org>
+> > > > Sent: 20 August 2025 21:11
+> > > > Subject: Re: [PATCH 06/11] dt-bindings: usb: Document Renesas RZ/G3E
+> > > > USB3HOST
+> > > >
+> > > > On Wed, Aug 20, 2025 at 06:17:53PM +0100, Biju wrote:
+> > > > > From: Biju Das <biju.das.jz@bp.renesas.com>
+> > > > >
+> > > > > Document the Renesas RZ/G3E USB3.2 Gen2 Host Controller (a.k.a US=
+B3HOST).
+> > > > > The USB3HOST is compliant with the Universal Serial Bus 3.2
+> > > > > Specification Revision 1.0.
+> > > > >  - Supports 1 downstream USB receptacles
+> > > > >      - Number of SSP Gen2 or SS ports: 1
+> > > > >      - Number of HS or FS or LS ports: 1
+> > > > >  - Supports Super Speed Plus Gen2x1 (10 Gbps), Super Speed (5 Gbp=
+s),
+> > > > >    High Speed (480 Mbps), Full Speed (12Mbps), and Low Speed (1.5=
+ Mbps).
+> > > > >  - Supports all transfer-types: Control, Bulk, Interrupt, Isochro=
+nous, and
+> > > > >    these split-transactions.
+> > > > >  - Supports Power Control and Over Current Detection.
+> > > > >
+> > > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > > > > Reviewed-by: Lad Prabhakar
+> > > > > <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > > +---
+> > > > > +$id: http://devicetree.org/schemas/usb/renesas,rzg3e-xhci.yaml#
+> > > >
+> > > > > +    const: renesas,r9a09g047-xhci
+> > > >
+> > > > How come these don't match? I don't understand your naming scheme a=
+t all, so idk which is even
+> > correct!
+> > >
+> > > r9a09g047 is SoC part number which also known as RZ/G3E SoC.
+> > >
+> > > I just followed the convention used in [1] and [2].
+> > > Please let me know I should change rzg3e-xhci.yaml->r9a09g047-xhci.ya=
+ml ?
+> >=20
+> > What's the benefit of using that instead of the compatible, other than =
+confusing me?
+>=20
+> I guess, for an end user it will be useful to locate the document easily =
+without any issue
 
+If you're looking to avoid issues for end users, why are you mixing and
+matching at all between the part number and the codename or w/e RZ/G3E
+is?
+
+> Given a choice to locate a document rzg3e-xhci.yaml vs r9a09g047-xhci.yam=
+l which one you prefer
+> for RZ/G3E XHCI IP?
+
+My preference is filenames matching compatibles as the norm, but
+apparently Rob doesn't give care in this case nor does Krzysztof
+(seeing as they acked/applied similar stuff for the platform already) so I
+won't dig my heels in.
+
+--tBNBaExK7Ja6D/pV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKiZRgAKCRB4tDGHoIJi
+0iGDAP42ywp92WEyKz8PRn+lTrdgfP1Ta4wlwf4RLtmPdPnxAwD9GaY6k9mOZvTQ
+vBz7pPOTGFrqTVYVu3UAC5GZZakRcQQ=
+=g6VL
+-----END PGP SIGNATURE-----
+
+--tBNBaExK7Ja6D/pV--
 
