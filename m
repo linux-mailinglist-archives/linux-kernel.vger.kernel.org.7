@@ -1,153 +1,131 @@
-Return-Path: <linux-kernel+bounces-781433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4727BB31253
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:54:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3963B31267
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 233111CE53EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:54:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D193A16DF5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722DD2EB5A1;
-	Fri, 22 Aug 2025 08:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310B82EBBA0;
+	Fri, 22 Aug 2025 08:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F240bS+X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="rjOIvWTe"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD6A1EA65;
-	Fri, 22 Aug 2025 08:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07728393DE7;
+	Fri, 22 Aug 2025 08:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755852848; cv=none; b=gzIUGG8wkVloYXsIjaahsn75OOR3ccl8F2AR3KWutK/9qZTQ6PDi/FC7F4kjbs1jg12ch+Qucd/IDv809DhjHTIvn/RZORKITNEbdLag3/JxbYfXOz/FVmwqd22iRhljsyaTr/oBVk+r09EYjfq8i66QitT+rcQVEyjB3632UPc=
+	t=1755852890; cv=none; b=P7rGgm1kmdIKY9JDHw8BcZukFSylN9xwYo/Utu/zp6VVJLdezY28qjudLMAmazrCRhWvRHIubn0GW6L04BdgyOcgUjLKbwKo7RShurfv/6MJecNrPxuPwKBLKEccAjnpfj3ig8iyjODzwDhutgDcHnjb8WRH8j7v/s44PW2PDiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755852848; c=relaxed/simple;
-	bh=1Kedd5nrOXuqAb/MAHK84Atl2vdOv9kO06NAwi1B5WQ=;
+	s=arc-20240116; t=1755852890; c=relaxed/simple;
+	bh=7DRLTvUN8Oydnr7V2W/N7Sny8gya5mniJ0/+hxJRsNs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nqY37UItPZC3NuKfL8tM1VX2yRoK4kUhW/8EiwvXsw1fbu3dQT6EKSb6VyZ9ffsByYvO87Zp2kpz+npwtpArVjzp+jpvBsjqzjkqch2o4xkfr0qsV/FjePEvUqpujFUmzw3Pm0oeZugQn5lSwBfZV0K8J19K5E6W0itJ39aGPSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F240bS+X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F7BC4CEF1;
-	Fri, 22 Aug 2025 08:54:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755852848;
-	bh=1Kedd5nrOXuqAb/MAHK84Atl2vdOv9kO06NAwi1B5WQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F240bS+X1iIQcVx+R2bCIVfkVa0pseohmnJkOicqQVt8EvB8jijjBLohl33+Ke0A9
-	 9lg7HeMnud+kWU8NoZPSu0ZExjDq5D9SHMQkP4GZrTEVWQw9iwLSEG/7XrR2cQHR9a
-	 P/b7mWA9rti9ZbUJ/PxxEZ3ZZFpNpbyDH6cU9K79qj4PopluUFQ5F72RerZMh7Sck0
-	 9GdPif3rw5fpLR9J46CuyVom+rcs4ULm/Zu8qQhYBvSPs6w8/ZrMcrnBNkW3wa0h5m
-	 gtVh2lrD7JpO+RbveFr07IadQo8eC+JAvL0qTCIrQ8RIg4vQmVttURCVWFAHYUbxj1
-	 g7v+/KWLZkurg==
-Date: Fri, 22 Aug 2025 14:23:57 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Nitin Rawat <quic_nitirawa@quicinc.com>, vkoul@kernel.org, 
-	kishon@kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3 2/2] phy: qcom-qmp-ufs: Add regulator loads for SM8650
- and SM8750
-Message-ID: <xir3u3hlmcvfu6uasijz6g2oialoasmuu4bno6ctxpscqcebz6@6kw6xpm5bxbd>
-References: <20250819222832.8471-1-quic_nitirawa@quicinc.com>
- <20250819222832.8471-3-quic_nitirawa@quicinc.com>
- <ger4kizeltjwalfuwu4dpfjiskrv2okgo5c7d6n3pb24yaxgfo@nkcndblyx3il>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SazuCz4eBtB8pDVuv/B+No2n8uaIhPgCmJrRFfWg8bYDM1ub58iZRboipXglKUlc2RxiSr3AIn8ds03UDZb0waNWqyrQdVUJJEzGN/++m0WBj2FjeFana8VN0+Le8T3XFTyi/pV+wHhHuXoHp+cg/5zAEqSrbWSxFvYLM+IwRqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=rjOIvWTe; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=W7WLQSNz7B5RmfHyRA2ZmCbMpTFkCh7ouhNUUgwN4UU=; b=rjOIvWTeS1BXXRyaEyOUnuiorc
+	C4wzdLdyBnQEvOi0ZOUsO9KJxrtDxGelvwWby72cJjAYpJzmcaXEzl3ExPqaOSqdpoR6OnDJyk7Nf
+	rWpB2acr68Liz0u97C8ZQVlMIGIdIA4fsv6O/Oi8If9FMV3YjfYDYgtn0LowvAoDkQ4Ai+XIBiCCq
+	/ziMG5MJl8y6tgCM+vyLQrOv7iEaGKycKr1rgTt+7gXRqCVz/RRUc8PWr9LHivVB2dIyKt/ydKNaS
+	my+6SsvHYrqZ1A9gqGXSmdqpVN3oUKXrj8uE+hXg5xipSPtFMr6ByeipDAjHYMTVKm1lHTYkWI2ll
+	0ECLA+kQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1upNIM-00GMNJ-2C;
+	Fri, 22 Aug 2025 16:54:44 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 22 Aug 2025 16:54:43 +0800
+Date: Fri, 22 Aug 2025 16:54:43 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, Ruud.Derwig@synopsys.com,
+	manjunath.hadli@vayavyalabs.com, adityak@vayavyalabs.com,
+	Bhoomika Kadabi <bhoomikak@vayavyalabs.com>
+Subject: Re: [PATCH v4 4/6] Add SPAcc ahash support
+Message-ID: <aKgwU4sVZrAHZ05s@gondor.apana.org.au>
+References: <20250808122631.697421-1-pavitrakumarm@vayavyalabs.com>
+ <20250808122631.697421-5-pavitrakumarm@vayavyalabs.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ger4kizeltjwalfuwu4dpfjiskrv2okgo5c7d6n3pb24yaxgfo@nkcndblyx3il>
+In-Reply-To: <20250808122631.697421-5-pavitrakumarm@vayavyalabs.com>
 
-On Wed, Aug 20, 2025 at 03:49:31AM GMT, Dmitry Baryshkov wrote:
-> On Wed, Aug 20, 2025 at 03:58:26AM +0530, Nitin Rawat wrote:
-> > Add regulator load voting support for SM8650 and SM8750 platforms by
-> > introducing dedicated regulator bulk data arrays with their load
-> > values.
-> > 
-> > The load requirements are:
-> > - SM8650: vdda-phy (205mA), vdda-pll (17.5mA)
-> > - SM8750: vdda-phy (213mA), vdda-pll (18.3mA)
-> > 
-> > This ensures stable operation and proper power management for these
-> > platforms where regulators are shared between the QMP USB PHY and
-> > other IP blocks by setting appropriate regulator load currents during PHY
-> > operations.
-> > 
-> > Configurations without specific load requirements will continue to work
-> > unchanged, as init_load_uA remains zero-initialized when .init_load_uA
-> > is not provided.
-> 
-> Can we please get configuration for the rest of the platforms?
-> 
+On Fri, Aug 08, 2025 at 05:56:29PM +0530, Pavitrakumar Managutte wrote:
+>
+> +static int spacc_hash_digest(struct ahash_request *req)
+> +{
+> +	int rc = 0;
+> +	struct crypto_ahash *reqtfm = crypto_ahash_reqtfm(req);
+> +	struct spacc_crypto_ctx *tctx = crypto_ahash_ctx(reqtfm);
+> +	struct spacc_crypto_reqctx *ctx = ahash_request_ctx(req);
+> +	struct spacc_priv *priv = dev_get_drvdata(tctx->dev);
+> +	const struct spacc_alg *salg = spacc_tfm_ahash(&reqtfm->base);
+> +
+> +	/* direct single shot digest call */
+> +	ctx->single_shot = 1;
+> +	ctx->total_nents = sg_nents(req->src);
+> +
+> +	/* alloc tmp_sgl */
+> +	tctx->tmp_sgl = kmalloc(sizeof(*tctx->tmp_sgl) * 2, GFP_KERNEL);
+> +
+> +	if (!tctx->tmp_sgl)
+> +		return -ENOMEM;
 
-Only if the rest of the platforms require setting the load... It is not very
-clear if the older platforms share the regulators with other IPs or not.
+You should use a software fallback to handle the failure case.
 
-- Mani
+Also GFP_KERNEL cannot be used because this path may be called
+from softirqs.  Please use GFP_ATOMIC.
 
-> > 
-> > Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-> > ---
-> >  drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 19 +++++++++++++++----
-> >  1 file changed, 15 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> > index aaa88ca0ef07..1c3ce0fa6adf 100644
-> > --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> > +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> > @@ -1170,6 +1170,17 @@ static const struct regulator_bulk_data qmp_phy_vreg_l[] = {
-> >  	{ .supply = "vdda-pll" },
-> >  };
-> > 
-> > +/* Regulator bulk data with load values for specific configurations */
-> > +static const struct regulator_bulk_data sm8650_ufsphy_vreg_l[] = {
-> > +	{ .supply = "vdda-phy", .init_load_uA = 205000 },
-> > +	{ .supply = "vdda-pll", .init_load_uA = 17500 },
-> > +};
-> > +
-> > +static const struct regulator_bulk_data sm8750_ufsphy_vreg_l[] = {
-> > +	{ .supply = "vdda-phy", .init_load_uA = 213000 },
-> > +	{ .supply = "vdda-pll", .init_load_uA = 18300 },
-> > +};
-> > +
-> >  static const struct qmp_ufs_offsets qmp_ufs_offsets = {
-> >  	.serdes		= 0,
-> >  	.pcs		= 0xc00,
-> > @@ -1638,8 +1649,8 @@ static const struct qmp_phy_cfg sm8650_ufsphy_cfg = {
-> >  		.max_gear	= UFS_HS_G5,
-> >  	},
-> > 
-> > -	.vreg_list		= qmp_phy_vreg_l,
-> > -	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
-> > +	.vreg_list		= sm8650_ufsphy_vreg_l,
-> > +	.num_vregs		= ARRAY_SIZE(sm8650_ufsphy_vreg_l),
-> >  	.regs			= ufsphy_v6_regs_layout,
-> >  };
-> > 
-> > @@ -1676,8 +1687,8 @@ static const struct qmp_phy_cfg sm8750_ufsphy_cfg = {
-> >  		.max_gear	= UFS_HS_G5,
-> >  	},
-> > 
-> > -	.vreg_list		= qmp_phy_vreg_l,
-> > -	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
-> > +	.vreg_list		= sm8750_ufsphy_vreg_l,
-> > +	.num_vregs		= ARRAY_SIZE(sm8750_ufsphy_vreg_l),
-> >  	.regs			= ufsphy_v6_regs_layout,
-> > 
-> >  };
-> > --
-> > 2.48.1
-> > 
-> 
-> -- 
-> With best wishes
-> Dmitry
+> +	sg_init_table(tctx->tmp_sgl, 2);
+> +	tctx->tmp_sgl[0].length = 0;
+> +
+> +	if (tctx->handle < 0 || !tctx->ctx_valid) {
+> +		priv = NULL;
+> +		priv = dev_get_drvdata(salg->dev);
+> +		tctx->dev = get_device(salg->dev);
+> +
+> +		rc = spacc_is_mode_keysize_supported(&priv->spacc,
+> +						     salg->mode->id, 0, 1);
+> +		if (rc)
+> +			tctx->handle = spacc_open(&priv->spacc,
+> +						  CRYPTO_MODE_NULL,
+> +						  salg->mode->id, -1, 0,
+> +						  spacc_digest_cb,
+> +						  reqtfm);
 
+This thing needs to be redesigned.  The digest function can be
+called from softirq context, so it must never sleep.  The function
+spacc_open tries to obtain a mutex and this cannot possibly work.
+
+I think you should hook this up to crypto_engine which would allow
+your driver to sleep.
+
+Another request is that your driver is too big to review.  Please
+submit one functionality at a time so that it's easier for me.  Perhaps
+start with just skcipher since that's where spacc_open is currently.
+
+Cheers,
 -- 
-மணிவண்ணன் சதாசிவம்
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
