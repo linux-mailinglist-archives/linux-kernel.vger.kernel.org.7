@@ -1,144 +1,126 @@
-Return-Path: <linux-kernel+bounces-781150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F20FB30E2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:39:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9C8DB30E2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24B43723415
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:39:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A08FD5A7C26
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E35E2E264C;
-	Fri, 22 Aug 2025 05:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1866B2E22A9;
+	Fri, 22 Aug 2025 05:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5UspzPJ"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SZL2wfSI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FF8223DF5;
-	Fri, 22 Aug 2025 05:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE6D223DF5
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755841180; cv=none; b=dypxWL9+MEIvcksDxzlAQhugAikeVrZHVVTCpy7+2czimQlxh4MusO0SOkggYhbvhAo5uaCCrydnXLMRNNtc1MsjxcleSHAnbykt9eqciDTa5tcDGeQnqJYl63SCH4HnCafQtEXALOeyHCHVvLl3i2k8e4W3VZNlhjH9ZTYf8FU=
+	t=1755841225; cv=none; b=VNFn4jrLnEBBwxuOXLDc3sqlIPkdw73ZJNdSYWRhRsIDk+vpr1OJXMavgJj4CjBhI290WOatACdI3dHmIv5r4jQpD/mCTmS+hbHXhglvVgvwGfd+dIDTddxOh+IoQbun6TFx/3XWlnKzyi7wZj2dX6JdLSDkRpIvCKNqtX9uM/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755841180; c=relaxed/simple;
-	bh=DUOcddI3mXvRcjypV5McRymWt4WifssDE6eXu1LlC+E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eTOMQgMp4oxZEUBpLS4f5ZPHGo85WVSse9+s3E8FCIaW0PrUUZ05ZCPZ9hBIjEVU2AoxeUhZvcW04KTTtM83OecEaRRTfMrrf7FlxbkkvnBaAFrK3D7IQ/Y0MP1ubowAMAepQxSPX5wKqkKZpeTSjDNawpiCib/zE/ArFuxgVdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C5UspzPJ; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55ce508cfe0so1640239e87.0;
-        Thu, 21 Aug 2025 22:39:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755841177; x=1756445977; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cktSZhhDXy0hCif2W3DZbZQLN29cfh8CxR1aWKR6R68=;
-        b=C5UspzPJPF6swIKGPttrOJ6ScqTd1tcK2fiLrmHobRYFDiTBdIK+IsSiIk9H69Wj98
-         SGy8soQ8BcwLhDYl+eIaEIKy3nv8Eay0Cdw4RkszNVrmYxPjHL0TFkzSVc//fAxDKHqh
-         Vc8jpR6uv4sdKm82AgsBJ6HLZXR65S/abuyxBdLYJGp+ugSHqTLjSrPLFlVd9MJPQnHk
-         o8C0nggu2rpdJRBdaUs2JMyx+A5BPlpvRb6pX4SgN7bgULE4rfkWQYIVK51MVrQ+3x+H
-         bhgte2K28l5KZh+1MysFxqWUHpGALlP7w8m8603tRebd/IbKls2bu+S7NVL3Kkkv0QW3
-         g4Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755841177; x=1756445977;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cktSZhhDXy0hCif2W3DZbZQLN29cfh8CxR1aWKR6R68=;
-        b=cKF301h0AYgB0ROcxLc2shgl9c9wKJ+YrF2agsiipsVJy7eupN9NkPeQBRw7Nn6Z7y
-         Kf5FMdjapM54NEHtKLztEfvlKHtoHEZnbNud32UA6SKh8V+tgrYkUw11HpZiKeoVwC4Q
-         bFu9B3Zm1MNFx6O54qclXU5aoKJC3xCAjm1cprArHcSqnCXs9D+9Mo0sv7+UaYn4GOPb
-         wShqRIesBw0u06crGGkWIRq9iqk1UEb3fS6BRHvcuc1F9fu2ZQ/1v22UkxK8jMSRVm+y
-         mRZsmxnkXs/zFy763TfkI+75Ms1frDNq/BwQyC6qWEh6flg7fxTj80E8RQv4DRSrK/Gg
-         TT4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUdDBsCYP92d1Z9VqyJKBJttIrekOVsP2dii5z5xiBApn7c031wSixQQDIZBBiZIagDh3AjwBMk6MID@vger.kernel.org, AJvYcCVQptUJGtNhf4oZiu4sQj0EZ94f23tqqMvCJFMAmSfpa0VhFs3ul4P4jT9+PfanNjm9OdcRntKvTuQu@vger.kernel.org, AJvYcCXECMAWSgjhg+iFY3+lk23sufxWSX2CPiLfjdgz7+tAsi5KtzklRyJzyf8WYmY2ePEbk0RGSihJLhuF923c@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNG7lanzLjHyh1VqT6Sk086QWKNxXXiiUgh/e1EQRa7e7zsRyF
-	//kBzqUsDPj9sPZvytIU0SnzTO12/eaK83AyUHmLrPq0brRoa3zIo9Bx
-X-Gm-Gg: ASbGncvu4Jc7fAiKIGVd/H8zs1VZCv6Aqf1Frf/0+IlaNBZMImBDzuac7vzgMw2d+Gj
-	d9Or8w84TO97TQxI1SyceYVhIRWJFyBVqaDtSCX1QR9hZQFmBvcUYCpxIzQx/sPKJBpU2S18ZCo
-	is6X7EHzT8G1IqwtAj7kfwi5zt5qI1Cv4cfGaHRJ5EX9I5Oujk7zF6Q++1kO2xwcE9D/g305Yvl
-	mKXtZyfGeL3Bqo5ShAt51VdRDvx4QeD2EB8sIUvnBIL38Qtfxqm/9RGuRCHUa+hnod5PM89P1Ad
-	T78svP6vVdyhRzXxI7dFjPIe17Fr0FQmEHJkOXgqx250sbg7mtWJjO9v6IjRE0dANpdcgZswGbD
-	fDlR7Isrpe0RmuNXsN0WkWZX5YVjiS4WFBlvn6pD1uFR7SQxu5aVK/zHIGXOYGRXMR1fge1djvO
-	+TbNY=
-X-Google-Smtp-Source: AGHT+IFdQlgDjn1LUPHReBm14miSwkL8ekDjE0cyhua5Y4fRBWhxH4K9ZBeoTPcaldW02MqLA7962w==
-X-Received: by 2002:a05:6512:260f:b0:55c:d5f8:7866 with SMTP id 2adb3069b0e04-55f0d3e3306mr539973e87.57.1755841176778;
-        Thu, 21 Aug 2025 22:39:36 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef47387esm3297633e87.164.2025.08.21.22.39.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Aug 2025 22:39:36 -0700 (PDT)
-Message-ID: <4d4120fa-3a20-4cc4-a078-ee94e03229f9@gmail.com>
-Date: Fri, 22 Aug 2025 08:39:35 +0300
+	s=arc-20240116; t=1755841225; c=relaxed/simple;
+	bh=giiH4kxOB5O1aaGhMf2GAHfxmjpaNjKzcQzCzzwlRTQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qq4KlYgQp69a2ZlGmz8FEUqm92G9QGEDVLiRkq2keHXv89gkyJ/MHt/k2RHD+NPSQF6F5iigj4mf1yT7jnH/gMBk2mdzkjqX1lo9pQWQ5APWyx9PmPNn7cLvmIHr/6vXqLq1q7gUG3syJK/dw4tHpnttHMcsvtN62KgMs2H7Rs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SZL2wfSI; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755841224; x=1787377224;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=giiH4kxOB5O1aaGhMf2GAHfxmjpaNjKzcQzCzzwlRTQ=;
+  b=SZL2wfSI4ttUECtp5qc2BDuo0dP021Le5FXcpXoN3XFFx5JPh3RfbRmw
+   5Q9Su4Iq/7RaCKBJ/lIFFXHnPewWD4eF6VB4ysJw7bhuaHnXIkW02pvHM
+   csCLZCaesrNy066aMdnfZsP5eeFtGEC1d7CEfZmeKyvWW3oXzfa3tyVyz
+   uL9z6SKn3cpxpLITQi/2rF4HGTaell+8hRInl4CUXTGMfCMVzn4BG9WT7
+   1g/LBmfN0Qu6Dpa+HZZnyS7CpCpT/g7PFnXU5tzLYN9wl5/bFwIT3jly2
+   mImjKLieiMLa75bU5Fxplj16Ttm9zheVpdE7Bf0oCNXtVPpwNb0lmu6Vq
+   A==;
+X-CSE-ConnectionGUID: sTLK+45pSiyOdSoqt6gq0g==
+X-CSE-MsgGUID: 8L/SoBxbSKq3B2WI9i0xKw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="61957113"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="61957113"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 22:40:23 -0700
+X-CSE-ConnectionGUID: yw8Vv2dBSnKmAP4JpykI4g==
+X-CSE-MsgGUID: l52Zd7HYRBCYxn3rr3/onw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="173896595"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 21 Aug 2025 22:40:19 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1upKVd-000Kwx-0C;
+	Fri, 22 Aug 2025 05:40:17 +0000
+Date: Fri, 22 Aug 2025 13:39:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, jgg@nvidia.com,
+	nicolinc@nvidia.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	robin.murphy@arm.com, will@kernel.org, joro@8bytes.org,
+	kevin.tian@intel.com, jsnitsel@redhat.com, vasant.hegde@amd.com,
+	iommu@lists.linux.dev, santosh.shukla@amd.com,
+	sairaj.arunkodilkar@amd.com, jon.grimm@amd.com,
+	prashanthpra@google.com, wvw@google.com, wnliu@google.com,
+	gptran@google.com, kpsingh@google.com,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: Re: [PATCH 7/8] iommu/amd: Add support for nested domain allocation
+Message-ID: <202508221308.4CwLNeZw-lkp@intel.com>
+References: <20250820113009.5233-8-suravee.suthikulpanit@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/3] iio: light: add support for veml6046x00 RGBIR
- color sensor
-To: Andreas Klinger <ak@it-klinger.de>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, lars@metafoo.de, javier.carrasco.cruz@gmail.com,
- arthur.becker@sentec.com, perdaniel.olsson@axis.com,
- mgonellabolduc@dimonoff.com, muditsharma.info@gmail.com, clamor95@gmail.com,
- emil.gedenryd@axis.com, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250715085810.7679-1-ak@it-klinger.de>
- <20250715085810.7679-3-ak@it-klinger.de>
- <aHdWAUMMH43tIqV4@smile.fi.intel.com> <aIMy_BHJYNA20k-x@mail.your-server.de>
- <aKbqLpJMCxJd3QXW@smile.fi.intel.com> <aKdrO7DE8ky2DBu2@mail.your-server.de>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <aKdrO7DE8ky2DBu2@mail.your-server.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820113009.5233-8-suravee.suthikulpanit@amd.com>
 
-On 21/08/2025 21:53, Andreas Klinger wrote:
-> Hi Andy,
-> 
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> schrieb am Do, 21. Aug 12:43:
->>>>> +	part_id = le16_to_cpu(reg);
->>>>> +	if (part_id != 0x0001)
->>>>> +		dev_info(dev, "Unknown ID %#04x\n", part_id);
->>>>
->>>> For 0 it will print 0 and not 0x0000. Is it okay?
->>>
->>> I just tried and it prints 0x00 if the part_id is 0.
->>
->> This is interesting... So it's not 0, nor 0x0000?
-> 
-> No. It prints 0x00 on my BeagleBoneBlack with kernel 6.16.0-rc5.
+Hi Suravee,
 
-I think this makes sense because of the '#' -flag. The "0x" is appended 
-because of it, and this consumes 2 characters from the 4 character 
-field, leaving only 2 chars left for the value.
+kernel test robot noticed the following build warnings:
 
-What I find interesting is that gcc on my PC does:
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.17-rc2 next-20250821]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-         printf("%#04x\n", 0);
-         printf("%#04x\n", 1);
-         printf("%#04x\n", 10);
-         printf("%#04x\n", 17);
+url:    https://github.com/intel-lab-lkp/linux/commits/Suravee-Suthikulpanit/iommu-amd-Make-amd_iommu_pdom_id_alloc-non-static/20250820-194937
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250820113009.5233-8-suravee.suthikulpanit%40amd.com
+patch subject: [PATCH 7/8] iommu/amd: Add support for nested domain allocation
+config: x86_64-randconfig-123-20250822 (https://download.01.org/0day-ci/archive/20250822/202508221308.4CwLNeZw-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250822/202508221308.4CwLNeZw-lkp@intel.com/reproduce)
 
-0000
-0x01
-0x0a
-0x11
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508221308.4CwLNeZw-lkp@intel.com/
 
-gcc version 15.2.1 20250808 (Red Hat 15.2.1-1) (GCC)
+sparse warnings: (new ones prefixed by >>)
+>> drivers/iommu/amd/nested.c:15:31: sparse: sparse: symbol 'nested_domain_ops' was not declared. Should it be static?
 
-It'd be nice to learn why the zero is treated differently? Andy, did you 
-have some insight as you asked this?
+vim +/nested_domain_ops +15 drivers/iommu/amd/nested.c
 
-Yours,
-	-- Matti
+    14	
+  > 15	const struct iommu_domain_ops nested_domain_ops = {
+    16		.free = amd_iommu_domain_free,
+    17	};
+    18	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
