@@ -1,160 +1,352 @@
-Return-Path: <linux-kernel+bounces-781582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3834B31430
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:53:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ED3AB31432
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2F68562AED
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:51:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F7E75A4033
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEA42EFD9E;
-	Fri, 22 Aug 2025 09:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755A72E7163;
+	Fri, 22 Aug 2025 09:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i6gmK0BZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f8dzwiuG"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3A22882CA;
-	Fri, 22 Aug 2025 09:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8A12EA498;
+	Fri, 22 Aug 2025 09:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755855858; cv=none; b=nck03/i0nvJU9LXDBGlKFVm3xR4VvWBvdAVdGLMevwkKHhS9mbphTtOWLC6RlJKrKGHyDDJK5Fjd3C9AqwJgFmQVr6d8gv4IJSzuTfI+0ZJuERPy/NuIObKiLbQFy18a7ennsaOOvmqIJYcb5OOEn48escXy4kmosw2bhkt0zm4=
+	t=1755855915; cv=none; b=qFlGMokRRwWwc7xuWrOfwt2IXQLqfvJ42g4BbGxiQAPOrYb8fIZzt7+uTEfQqrjVfzAdC2YMhoRyAj2Typ657gCX35zNQyuUqNkB7hQj7m7qqS41K6WZKyW4gYhouNDYLgzdGCsxVRlIEFAin5MF64m/oCcuZEE71dFmh52f7vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755855858; c=relaxed/simple;
-	bh=W2C6Re7Vw3DtX+1rmGtIoWysL7yYT+6xAjbwTheXHf0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hR4KnnYy19YcIEd1w9eScKNXbKCuNvRY+ytfktSUemTyuzTPPkX71vGJn4mxhNdqZ1Y918Sw/dzgGvjnMRk4HuXSpkXWyPPIKnFGl0jqY9VV91ZJ7GvlnXpOmCTqqMYhXO39nhudYrUrmlWXA/1qSSEwjKcIT0dSVQRVwpsOJLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i6gmK0BZ; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755855857; x=1787391857;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=W2C6Re7Vw3DtX+1rmGtIoWysL7yYT+6xAjbwTheXHf0=;
-  b=i6gmK0BZuZaHrrgAP2hrvI8btZa4nGIPKOR1XvHoljmaXBw0le/VE53C
-   bIG6gBaANTj6ldGmtDmgedMbK0tudDc+uQtB0p3eKIerM9zSPTnu/v2mT
-   WjJF451BfswBFqQuiTh4q+7l1hC1K1quNEv7ojyenQGJOUIw+1rGEJvNh
-   tTc54SRj4Ce+anVAaR+e/OJStt4gS2fMEBT7vX9SKiEXUeRAm6N2bF3oZ
-   Gdq6usy/2Jmu+umrN5DhrrJM+/AgkFOeY7SygC8tr6lOkiyhZJY90vyPa
-   XopPew77TNFmY0Axgmxm/0dDTEsjSsyuwlUcpUAAA4S4TK0v7ZcSNt+Z5
-   Q==;
-X-CSE-ConnectionGUID: vubCQiGHQaKV4UX7uMedKg==
-X-CSE-MsgGUID: Oo4v44Q5RnuXLSIbQowBXg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="57362167"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="57362167"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 02:44:17 -0700
-X-CSE-ConnectionGUID: 0OcfKOZ0RUi9+kz/e89TkA==
-X-CSE-MsgGUID: obP/HrmxQJi3iyj3ivPTUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="168571682"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 22 Aug 2025 02:44:15 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1upOJg-000L8F-11;
-	Fri, 22 Aug 2025 09:44:12 +0000
-Date: Fri, 22 Aug 2025 17:43:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jisheng Zhang <jszhang@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/2] clocksource/drivers: Add ARM SSE(Subsystems for
- Embedded) Timer driver
-Message-ID: <202508221736.qO3Ji6Dw-lkp@intel.com>
-References: <20250821152429.26995-3-jszhang@kernel.org>
+	s=arc-20240116; t=1755855915; c=relaxed/simple;
+	bh=1y89flJsXTKc2Wb35oysVI58lfHznxgrZjGDG4khb88=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Sn4RuS3sqbbLEGFj3cYf4d4kLeyBl+kYnzkhJ8FyOum1RZ9jXKAT8VoRlBhlB8jo5JmqHS9VxixM3HYZuwZ0dEAn2n1KAkD6vjzTyUFFn9gfGkKVtoZb6+/1id1PNYZo8NJipLI3CaiZPL9H5Q8V336MnRorslbSSLBFbBLQR94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f8dzwiuG; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6197efa570eso3688086a12.1;
+        Fri, 22 Aug 2025 02:45:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755855912; x=1756460712; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3cRCvGks0EFJYvJ71qS1eybI56GOiHuu7CXXJ2Si3fY=;
+        b=f8dzwiuG5JnCOug+HE/Lr4EjZL7qzw0vB+LVJ2DhRJzwrLXW2m1b0lyrwfFmLpSvS7
+         md2xgyxECvv3fqD5+vGq/mIn5errMD0XofmD6wP1c7zmDXeV0sX5O05pDrkhsK/9q6N1
+         +du1LjFLUTdsJI3G0je5yERAEq+lFsNtHpx6l0UsUlUWr5zf7KkZmnAVrRR4/8rr9Ylc
+         y4+cxFxCjm3AwvZjk3NeYA/rq2820zYCpT+x0pqVAvoN3HE3m7EvDt2pVUVJ72rC8opL
+         QrxVV8b72axaZjmKFX3q8lSjSAk6hMZulanBH69y2WQ5m1aK05csbjqb5QzeJrjZ7yO0
+         JvGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755855912; x=1756460712;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3cRCvGks0EFJYvJ71qS1eybI56GOiHuu7CXXJ2Si3fY=;
+        b=a945FZH8nwVxIvb7DEPEY6F5juXIpxe/j6PXxTXO50XRgHqB6VpSU0gvkslP+F09tQ
+         XqF24I72s7n0BvZojdW+TO4DqUJnjTzbTR0pPfL5AkZaM+0dN5XsNVTbQ+wRq1K61uNG
+         /phrZyxbWjtXyPT2OIy6ViVmmsvZkII8BNSg0IapFth71dxbJj8fRoNgebujwc/ubkrS
+         avDBrp/4sMwTUKK4fkBAzBAZ8uNHJSLsvDi1pXuyTerkrfJoHGaS2F5UoXIpO6QGbl2T
+         ee9nF/m9FeIP7Nn639uFVux/ALsrD8smXZfVhv4OeueXVrkNYK6MddzY8MfzKNw8cpRI
+         k8MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWeT7GbePba4IlayXzrLxEXT4GgZ+R2saKdr9ppBalt6GPShUT69BH723WZFxRxJhyDLOF8Gfr0F/t1mIHz@vger.kernel.org, AJvYcCXbdKJ3CY6Tzahw249hm7VYujH/llUUBf/NwQVi+hDuQ/CpVPRnsMdhyF058rlmJSrYyQSlVK3oy2wH6wP6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5jiJca51e7wqfqVSS/xLFW5r+utik+UL6mur0vDWYoS3GSnth
+	6hNER6t4WQ3E7UHMoFGJtECn+3jE7e9gj7Aky4f5gM+1ZT3XmFHpTcJrQ+DDXFtiRkC6tPY2hJy
+	8sh2gS6cg5Q/2TfVn35tkqbNN3Oc1vkY=
+X-Gm-Gg: ASbGncvYmIGKIQe/DODnQsnJYGmqIIIOJUiRbg0sN84NG1gCGd8mXi4PS0+nfO3MLjU
+	tXT+G9DdDfTBFOhFuDcdfp42lezf95xph4ef4mhtQLrB5eAI9kBUspg0xOfqK3z8KQhGqs1ftW2
+	8XCfKAvr7wMaw0zshMxrxvsccRlCtgccuMy+PFNVtsUKsFsMe5WqNYtver6QazwPQAuu7S8djAl
+	tsJ1zc=
+X-Google-Smtp-Source: AGHT+IFYrMscDooAcGybTNEBnrNhnjtULycCiZWX0/rP6f7EZG3KSr5AR001ZxTVI9zpqgqATWp/dTYNB4F2Ip7AcbA=
+X-Received: by 2002:a05:6402:270c:b0:61b:fabb:6d0e with SMTP id
+ 4fb4d7f45d1cf-61c1b705498mr1888374a12.19.1755855911313; Fri, 22 Aug 2025
+ 02:45:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821152429.26995-3-jszhang@kernel.org>
+References: <20250822000818.1086550-1-neil@brown.name> <20250822000818.1086550-16-neil@brown.name>
+In-Reply-To: <20250822000818.1086550-16-neil@brown.name>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 22 Aug 2025 11:44:59 +0200
+X-Gm-Features: Ac12FXx4q8rcAWzzkDZg6nP32TbSIW3WC2cWFhSpc3JVjEE-jAEJ8E4i5eJZ6Bc
+Message-ID: <CAOQ4uxgbv8as-m7P9Az41nZiOBPLN0znW4xu1HSqpuCN1=Tp4Q@mail.gmail.com>
+Subject: Re: [PATCH v2 15/16] VFS: introduce start_removing_dentry()
+To: NeilBrown <neil@brown.name>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jisheng,
+On Fri, Aug 22, 2025 at 2:11=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+>
+> start_removing_dentry() is similar to start_removing() but instead of
+> providing a name for lookup, the target dentry is given.
+>
+> start_removing_dentry() checks that the dentry is still hashed and in
+> the parent, and if so it locks and increases the refcount so that
+> end_dirop() can be used to finish the operation.
+>
+> This is used in cachefiles, overlayfs, smb/server and apparmor.
+>
+> There will be other users including ecryptfs.
+>
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>  fs/cachefiles/interface.c      | 14 +++++++++-----
+>  fs/cachefiles/namei.c          | 22 ++++++++++++----------
+>  fs/cachefiles/volume.c         | 10 +++++++---
+>  fs/namei.c                     | 29 +++++++++++++++++++++++++++++
+>  fs/overlayfs/dir.c             | 10 ++++------
+>  fs/overlayfs/readdir.c         |  8 ++++----
+>  fs/smb/server/vfs.c            | 27 ++++-----------------------
+>  include/linux/namei.h          |  2 ++
+>  security/apparmor/apparmorfs.c |  8 ++++----
+>  9 files changed, 75 insertions(+), 55 deletions(-)
+>
+> diff --git a/fs/cachefiles/interface.c b/fs/cachefiles/interface.c
+> index 3e63cfe15874..763d7d55b1f9 100644
+> --- a/fs/cachefiles/interface.c
+> +++ b/fs/cachefiles/interface.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/mount.h>
+>  #include <linux/xattr.h>
+>  #include <linux/file.h>
+> +#include <linux/namei.h>
+>  #include <linux/falloc.h>
+>  #include <trace/events/fscache.h>
+>  #include "internal.h"
+> @@ -428,11 +429,14 @@ static bool cachefiles_invalidate_cookie(struct fsc=
+ache_cookie *cookie)
+>                 if (!old_tmpfile) {
+>                         struct cachefiles_volume *volume =3D object->volu=
+me;
+>                         struct dentry *fan =3D volume->fanout[(u8)cookie-=
+>key_hash];
+> -
+> -                       inode_lock_nested(d_inode(fan), I_MUTEX_PARENT);
+> -                       cachefiles_bury_object(volume->cache, object, fan=
+,
+> -                                              old_file->f_path.dentry,
+> -                                              FSCACHE_OBJECT_INVALIDATED=
+);
+> +                       struct dentry *obj;
+> +
+> +                       obj =3D start_removing_dentry(fan, old_file->f_pa=
+th.dentry);
+> +                       if (!IS_ERR(obj))
+> +                               cachefiles_bury_object(volume->cache, obj=
+ect,
+> +                                                      fan, obj,
+> +                                                      FSCACHE_OBJECT_INV=
+ALIDATED);
+> +                       end_dirop(obj);
+>                 }
+>                 fput(old_file);
+>         }
+> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+> index ddced50afb66..cc6dccd606ea 100644
+> --- a/fs/cachefiles/namei.c
+> +++ b/fs/cachefiles/namei.c
+> @@ -424,13 +424,12 @@ int cachefiles_delete_object(struct cachefiles_obje=
+ct *object,
+>
+>         _enter(",OBJ%x{%pD}", object->debug_id, object->file);
+>
+> -       /* Stop the dentry being negated if it's only pinned by a file st=
+ruct. */
+> -       dget(dentry);
+> -
+> -       inode_lock_nested(d_backing_inode(fan), I_MUTEX_PARENT);
+> -       ret =3D cachefiles_unlink(volume->cache, object, fan, dentry, why=
+);
+> -       inode_unlock(d_backing_inode(fan));
+> -       dput(dentry);
+> +       dentry =3D start_removing_dentry(fan, dentry);
+> +       if (IS_ERR(dentry))
+> +               ret =3D PTR_ERR(dentry);
+> +       else
+> +               ret =3D cachefiles_unlink(volume->cache, object, fan, den=
+try, why);
+> +       end_dirop(dentry);
+>         return ret;
+>  }
+>
+> @@ -643,9 +642,12 @@ bool cachefiles_look_up_object(struct cachefiles_obj=
+ect *object)
+>
+>         if (!d_is_reg(dentry)) {
+>                 pr_err("%pd is not a file\n", dentry);
+> -               inode_lock_nested(d_inode(fan), I_MUTEX_PARENT);
+> -               ret =3D cachefiles_bury_object(volume->cache, object, fan=
+, dentry,
+> -                                            FSCACHE_OBJECT_IS_WEIRD);
+> +               struct dentry *de =3D start_removing_dentry(fan, dentry);
+> +               if (!IS_ERR(de))
+> +                       ret =3D cachefiles_bury_object(volume->cache, obj=
+ect,
+> +                                                    fan, de,
+> +                                                    FSCACHE_OBJECT_IS_WE=
+IRD);
+> +               end_dirop(de);
+>                 dput(dentry);
+>                 if (ret < 0)
+>                         return false;
+> diff --git a/fs/cachefiles/volume.c b/fs/cachefiles/volume.c
+> index 781aac4ef274..8c29f3db3fae 100644
+> --- a/fs/cachefiles/volume.c
+> +++ b/fs/cachefiles/volume.c
+> @@ -7,6 +7,7 @@
+>
+>  #include <linux/fs.h>
+>  #include <linux/slab.h>
+> +#include <linux/namei.h>
+>  #include "internal.h"
+>  #include <trace/events/fscache.h>
+>
+> @@ -58,9 +59,12 @@ void cachefiles_acquire_volume(struct fscache_volume *=
+vcookie)
+>                 if (ret < 0) {
+>                         if (ret !=3D -ESTALE)
+>                                 goto error_dir;
+> -                       inode_lock_nested(d_inode(cache->store), I_MUTEX_=
+PARENT);
+> -                       cachefiles_bury_object(cache, NULL, cache->store,=
+ vdentry,
+> -                                              FSCACHE_VOLUME_IS_WEIRD);
+> +                       vdentry =3D start_removing_dentry(cache->store, v=
+dentry);
+> +                       if (!IS_ERR(vdentry))
+> +                               cachefiles_bury_object(cache, NULL, cache=
+->store,
+> +                                                      vdentry,
+> +                                                      FSCACHE_VOLUME_IS_=
+WEIRD);
+> +                       end_dirop(vdentry);
+>                         cachefiles_put_directory(volume->dentry);
+>                         cond_resched();
+>                         goto retry;
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 34895487045e..af56bc39c4d5 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3261,6 +3261,35 @@ struct dentry *start_removing_noperm(struct dentry=
+ *parent,
+>  }
+>  EXPORT_SYMBOL(start_removing_noperm);
+>
+> +/**
+> + * start_removing_dentry - prepare to remove a given dentry
+> + * @parent - directory from which dentry should be removed
+> + * @child - the dentry to be removed
+> + *
+> + * A lock is taken to protect the dentry again other dirops and
+> + * the validity of the dentry is checked: correct parent and still hashe=
+d.
+> + *
+> + * If the dentry is valid a reference is taken and returned.  If not
+> + * an error is returned.
+> + *
+> + * end_dirop() should be called when removal is complete, or aborted.
+> + *
+> + * Returns: the valid dentry, or an error.
+> + */
+> +struct dentry *start_removing_dentry(struct dentry *parent,
+> +                                    struct dentry *child)
+> +{
+> +       inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
+> +       if (unlikely(IS_DEADDIR(parent->d_inode) ||
+> +                    child->d_parent !=3D parent ||
+> +                    d_unhashed(child))) {
+> +               inode_unlock(parent->d_inode);
+> +               return ERR_PTR(-EINVAL);
+> +       }
+> +       return dget(child);
+> +}
+> +EXPORT_SYMBOL(start_removing_dentry);
+> +
+>  #ifdef CONFIG_UNIX98_PTYS
+>  int path_pts(struct path *path)
+>  {
+> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> index 70b8687dc45e..b8f0d409e841 100644
+> --- a/fs/overlayfs/dir.c
+> +++ b/fs/overlayfs/dir.c
+> @@ -47,14 +47,12 @@ static int ovl_cleanup_locked(struct ovl_fs *ofs, str=
+uct inode *wdir,
+>  int ovl_cleanup(struct ovl_fs *ofs, struct dentry *workdir,
+>                 struct dentry *wdentry)
+>  {
+> -       int err;
+> -
+> -       err =3D ovl_parent_lock(workdir, wdentry);
+> -       if (err)
+> -               return err;
+> +       wdentry =3D start_removing_dentry(workdir, wdentry);
+> +       if (IS_ERR(wdentry))
+> +               return PTR_ERR(wdentry);
+>
+>         ovl_cleanup_locked(ofs, workdir->d_inode, wdentry);
+> -       ovl_parent_unlock(workdir);
+> +       end_dirop(wdentry);
+>
+>         return 0;
+>  }
+> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+> index b65cdfce31ce..20348be4b98f 100644
+> --- a/fs/overlayfs/readdir.c
+> +++ b/fs/overlayfs/readdir.c
+> @@ -1158,11 +1158,11 @@ int ovl_workdir_cleanup(struct ovl_fs *ofs, struc=
+t dentry *parent,
+>         if (!d_is_dir(dentry) || level > 1)
+>                 return ovl_cleanup(ofs, parent, dentry);
+>
+> -       err =3D ovl_parent_lock(parent, dentry);
+> -       if (err)
+> -               return err;
+> +       dentry =3D start_removing_dentry(parent, dentry);
+> +       if (IS_ERR(dentry))
+> +               return PTR_ERR(dentry);
+>         err =3D ovl_do_rmdir(ofs, parent->d_inode, dentry);
+> -       ovl_parent_unlock(parent);
+> +       end_dirop(dentry);
+>         if (err) {
+>                 struct path path =3D { .mnt =3D mnt, .dentry =3D dentry }=
+;
+>
 
-kernel test robot noticed the following build errors:
+I'm sorry I keep nagging about this semantic point, but when I request
+that code remains "balanced", I mean "balanced to a human eye".
 
-[auto build test ERROR on tip/timers/core]
-[also build test ERROR on robh/for-next linus/master v6.17-rc2 next-20250822]
-[cannot apply to daniel-lezcano/clockevents/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+If we are going to delegate reviews to LLM, then we can feed LLM
+the documentation that says which start_ pairs with which end_
+and go on to our retirement plans, but as long as I need to review
+code, I need a human readable signal about what pairs with what.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jisheng-Zhang/dt-bindings-timer-Add-ARM-SSE-Subsystems-for-Embedded-timer/20250822-000122
-base:   tip/timers/core
-patch link:    https://lore.kernel.org/r/20250821152429.26995-3-jszhang%40kernel.org
-patch subject: [PATCH 2/2] clocksource/drivers: Add ARM SSE(Subsystems for Embedded) Timer driver
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250822/202508221736.qO3Ji6Dw-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250822/202508221736.qO3Ji6Dw-lkp@intel.com/reproduce)
+Therefore, IMO it is better to have semantic wrappers
+end_removing(), end_creating(), than having to rely on humans
+to understand that  start_removing_dentry() pairs with end_dirop().
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508221736.qO3Ji6Dw-lkp@intel.com/
+Alternatively, use start_dirop_remove*, start_dirop_create*,
+so it is clear that they can all match end_dirop() (can they???).
 
-All errors (new ones prefixed by >>):
+And repeating my request again: I will insist for overlayfs patches
+but I think it is a good practice for all of your patches -
+Please keep the code balance by introducing start_ together
+with end_ in the same patch, so that it is clear from context of
+a single patch review, that the callers were converted correctly.
+Otherwise, the only way to verify that is to review the end result
+and that is not the idea of a patch series.
 
-   drivers/clocksource/timer-sse.c: In function 'sse_setup_clockevent':
->> drivers/clocksource/timer-sse.c:228:13: error: implicit declaration of function 'FIELD_GET' [-Wimplicit-function-declaration]
-     228 |         if (FIELD_GET(CNTP_CFG_AIVAL_MASK, val) == CNTP_CFG_AIVAL_IMPL) {
-         |             ^~~~~~~~~
-
-
-vim +/FIELD_GET +228 drivers/clocksource/timer-sse.c
-
-   211	
-   212	static int sse_setup_clockevent(struct device *dev, struct sse_timer_frame *f,
-   213					unsigned long rate)
-   214	{
-   215		int ret;
-   216		u32 val = readl_relaxed(f->base + CNTP_CFG);
-   217	
-   218		f->ticks_per_jiffy = DIV_ROUND_UP(rate, HZ);
-   219	
-   220		f->ce.name = "sse-timer";
-   221		f->ce.rating = 300;
-   222		f->ce.irq = f->irq;
-   223		f->ce.cpumask = cpu_possible_mask;
-   224		f->ce.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_DYNIRQ;
-   225		f->ce.set_state_shutdown = sse_ce_shutdown;
-   226		f->ce.set_next_event = sse_ce_next_event;
-   227		f->ce.set_state_oneshot_stopped = sse_ce_shutdown;
- > 228		if (FIELD_GET(CNTP_CFG_AIVAL_MASK, val) == CNTP_CFG_AIVAL_IMPL) {
-   229			f->ce.set_state_periodic = sse_ce_set_periodic;
-   230			f->ce.set_state_oneshot = sse_ce_set_oneshot;
-   231		}
-   232	
-   233		clockevents_config_and_register(&f->ce, rate, 0xf, ULONG_MAX);
-   234	
-   235		ret = devm_request_irq(dev, f->irq, sse_timer_interrupt,
-   236				       IRQF_TIMER | IRQF_NOBALANCING,
-   237				       f->ce.name, f);
-   238		if (ret) {
-   239			dev_err(dev, "Unable to register interrupt\n");
-   240			return ret;
-   241		}
-   242	
-   243		return 0;
-   244	}
-   245	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Amir.
 
