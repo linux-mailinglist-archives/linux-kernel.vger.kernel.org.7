@@ -1,64 +1,69 @@
-Return-Path: <linux-kernel+bounces-782508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C878EB32165
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:18:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0EE8B32166
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72183B04414
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:18:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48147AA82D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB48527A11B;
-	Fri, 22 Aug 2025 17:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877DD27701E;
+	Fri, 22 Aug 2025 17:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TxLFFCTE"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EFGePOGa"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93951150997;
-	Fri, 22 Aug 2025 17:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48524214A6A
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755883089; cv=none; b=hqkJs39npMPzd4YMIx/F7LST95MlhuZCHaTJjKb04K+T6kfgn+If+0sTaX1lKjLuCuwg9GfPmGhk1ryL0nE7CBkJSIpGM2bY2/S79fQxoruySvxjI1z2EFJGoy5KnlaaBzwC8Zc7IBosp4lRH1YEx9xiTXZGn7UYPON0qLBHAa0=
+	t=1755883101; cv=none; b=KyeFfa9uwpnixEpQONmDYfUdMdylK9VDNI/eNQYmEEEO5JNgZ1rqRIK2yXquZCl9jzak+yA5AnXb8SCkKuBugvnJTtKS5nZ5yZl+3Ow82CrDBT3170p+iaL0SzJPou1vLbm21ItLg95LRjQXIfwXqJCdJVGTHrl+f5QBONI/rtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755883089; c=relaxed/simple;
-	bh=hwrq1lLw6KjKJXICYD1LyrY0tRzO1wdYV6C9hUmJ6Vo=;
+	s=arc-20240116; t=1755883101; c=relaxed/simple;
+	bh=qCOHcK3j4TNkKx0iUT3lYngH9vUkVeQPHiVxX9n9uXw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JnPP8GSZ/VgjF1I5rLNv3jZny43N3L784tsgbd+sYeYLEO0kNGF04i5EggrL+P4fN+lhXJRsLCU7ZDPqxzCsAelauzTD8+pi9IpcZrGTFL9R0ovnfQDWEE0eWE1tNn7N2R8EustSqr5yWgQIqsd6qtTglzVNRC0L2922bTBJFmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TxLFFCTE; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=wvV9mGgYGu2s3zN+tea3Jt5QUjc2PHAs2MlqyU2ivQs=; b=TxLFFCTE9PpJ470k54MDStR0wN
-	4StI79XiOXLUv7eBg6QBy3/9hKpbDzgxyAgN7REKlOUZy0sOBk1cVTvzMeCC8NwPmgoCvUMFB8X4V
-	EZRoCB6rAWj2/6FbVFowHMLdcerI9Vzd+u7q4cXUuCmb151UiJa1gnS7QE/joGaEHX/U=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1upVOm-005bPL-0M; Fri, 22 Aug 2025 19:17:56 +0200
-Date: Fri, 22 Aug 2025 19:17:55 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de,
-	Dent Project <dentproject@linuxfoundation.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH net-next 2/2] net: pse-pd: pd692x0: Add sysfs interface
- for configuration save/reset
-Message-ID: <d4bc2c95-7e25-4d76-994f-b68f1ead8119@lunn.ch>
-References: <20250822-feature_poe_permanent_conf-v1-0-dcd41290254d@bootlin.com>
- <20250822-feature_poe_permanent_conf-v1-2-dcd41290254d@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GgsFi9Boc42rnjYrlpt/M5PCMIfbpl9vFkw5q/M1uwnbhGk/dpRoYcoXoLwZ3UDFeb1tf1NNcfgHeYWQlKNxYltWDD/yfbL+3u9kJTZdL0HH3prWqTMnZNzYHklY1iaOLVH/D+oei/h1iWxZRiUseIiIkNdzMenU0Mt2Wy6CArQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EFGePOGa; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=TgAdJ3j72gnDK10Zxbk1Jlr1gL3qO4aUda16rZ52SIc=; b=EFGePOGa6D2SXlxUpDRnjmCtgR
+	yQtukIuL7IB5xaiOeg3u1jG2TssWZ64qIqI+TewseLBkChcx2+xSm69lZLM8FK8WbJSGoY/RP23yI
+	WY79LyvzwIAlAGiTsyvo6Q18e/Vd5vjxYbX/xNsdnpB2PWx4T+LFGTbVFKmLwVotVNS7nKPPSlRO0
+	b1ymmdHBMN4a8A1fm6/889OWlGZTj5Qg9/WWlpshs2MrPhbVhrfCXx1yImIwU4XUiU5D8rja0sY9q
+	TdedtQXlnhupdQLxVtQDduSnCJYRRocNwY99v/JzUKhHUOFwo/SrCRGNTXFSwB5W5THmjkl5ec5JK
+	HGWRWnyQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1upVP1-0000000ASDO-1DGI;
+	Fri, 22 Aug 2025 17:18:11 +0000
+Date: Fri, 22 Aug 2025 18:18:11 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Brendan Jackman <jackmanb@google.com>, peterz@infradead.org,
+	bp@alien8.de, dave.hansen@linux.intel.com, mingo@redhat.com,
+	tglx@linutronix.de, akpm@linux-foundation.org, david@redhat.com,
+	derkling@google.com, junaids@google.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, reijiw@google.com,
+	rientjes@google.com, rppt@kernel.org, vbabka@suse.cz,
+	x86@kernel.org, yosry.ahmed@linux.dev,
+	Liam Howlett <liam.howlett@oracle.com>,
+	"Kirill A. Shutemov" <kas@kernel.org>,
+	Harry Yoo <harry.yoo@oracle.com>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>, Andy Lutomirski <luto@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>
+Subject: Re: [Discuss] First steps for ASI (ASI is fast again)
+Message-ID: <aKimU6tf7-RnwISE@casper.infradead.org>
+References: <20250812173109.295750-1-jackmanb@google.com>
+ <cdccc1a6-c348-4cae-ab70-92c5bd3bd9fd@lucifer.local>
+ <DC83J9RSZZ0E.3VKGEVIDMSA2R@google.com>
+ <05c32a14-805c-4603-9afc-80e8f29b7957@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,35 +72,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250822-feature_poe_permanent_conf-v1-2-dcd41290254d@bootlin.com>
+In-Reply-To: <05c32a14-805c-4603-9afc-80e8f29b7957@lucifer.local>
 
-On Fri, Aug 22, 2025 at 05:37:02PM +0200, Kory Maincent wrote:
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+On Fri, Aug 22, 2025 at 03:22:04PM +0100, Lorenzo Stoakes wrote:
+> > What I think we can do is an mm-global flush whenever there's a
+> > possibility that the process is losing logical access to a physical
+> > page. So basically I think that's whenever we evict from the page cache,
+> > or the user closes a file.
+> >
+> > ("Logical access" = we would let them do a read() that gives them the
+> > contents of the page).
+> >
+> > The key insight is that a) those events are reeelatively rare and b)
+> > already often involve big TLB flushes. So doing global flushes there is
+> > not that bad, and this allows us to forget about all the particular
+> > details of which pages might have TLB entries on which CPUs and just say
+> > "_some_ CPU in this MM might have _some_ stale TLB entry", which is
+> > simple and efficient to track.
 > 
-> Add sysfs attributes save_conf and reset_conf to enable userspace
-> management of the PSE's permanent configuration stored in EEPROM.
+> I guess rare to get truncation mid-way through a read(), closing it mid-way
+> would be... a bug surely? :P
+
+Truncation isn't a problem.  The contents of the file were visible to
+the process before.  The folio can't get recycled while we have a
+reference to it.  You might get stale data, but that's just the race
+going one way instead of the other.
+
+> > > Hmm, CoW generally a pain. Could you go into more detail as to what's the issue
+> > > here?
+> >
+> > It's just that you have two user pages that you wanna touch at once
+> > (src, dst). This crappy ephmap implementation doesn't suppport two
+> > mappings at once in the same context, so the second allocation fails, so
+> > you always get an asi_exit().
 > 
-> The save_conf attribute allows saving the current configuration to
-> EEPROM by writing '1'. The reset_conf attribute restores factory
-> defaults and reinitializes the port matrix configuration.
+> Right... well like can we just have space for 2 then? ;) it's mappings not
+> actually allocating pages so... :)
 
-I'm not sure sysfs is the correct interface for this.
+For reference, kmap_local/atomic supports up to 16 at once.  That may
+be excessive, but it's cheap.  Of course, kmap only supports a single
+page at a time, not an entire folio.  Now, the tradeoffs for kmap_local
+are based on how much address space is available to a 32-bit process (ie
+1GB, shared between lowmem, vmalloc space, ioremap space, kmap space,
+and probably a bunch of things I'm forgetting.
 
-Lets take a step back.
+There's MUCH more space available on 64-bit and I'm sure we can find
+32MB to allow us to map 16 * 2MB folios.  We can even make it easy and
+always map on 2MB boundaries.  We might get into A Bit Of Trouble if
+we decide that we want to map x86 1GB pages or ARM 512MB (I think ARM
+actually goes up to 4TB theoretically).
 
-I assume ethtool will report the correct state after a reboot when the
-EEPROM has content? The driver does not hold configuration state which
-cannot be represented in the EEPROM?
+If we're going this way, we might want to rework
+folio_test_partial_kmap() callers to instead ask "what is the mapped
+boundary of this folio", which might actually clean them up a bit.
 
-Is the EEPROM mandatory, or optional? Is it built into the controller?
-
-How fast is it to store the settings?
-
-I'm wondering if rather than having this sysfs parameter, you just
-store every configuration change? That could be more intuitive.
-
-I've not looked at the sysfs documentation. Are there other examples
-of such a property?
-
-      Andrew
 
