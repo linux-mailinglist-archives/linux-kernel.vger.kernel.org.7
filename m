@@ -1,244 +1,129 @@
-Return-Path: <linux-kernel+bounces-782621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 550FDB322C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:23:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7744BB322C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BAC11CC918C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:22:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E38D563DA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D432D1F42;
-	Fri, 22 Aug 2025 19:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D492D0623;
+	Fri, 22 Aug 2025 19:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BWLbgAj/"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XmaZrpAI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E662D3228
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 19:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB482C3761
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 19:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755890502; cv=none; b=tgDnt2Fu9VFdLIgq9Yl324ILpcZmsnUdCz9Pm1g2dI3TB1jJQixwokuhTpKBleL//2KoR0y7YUPGdCEUJ0DQMc+vrvDGM+fTh+ZLAjW6lMpZCNM0eU8jlzFVJPh5DIJ5/yAml3Gy0azs6FezI9301XUPKZUMBy5FwxXnINxMENs=
+	t=1755890557; cv=none; b=mpspzj2iFRmySvAoGIeMZu6no4NXonu3fdOVwyCz73tW9/5QPA6ZHfXbguW2Jh59h4zWofQ9sNWlY8ey+9mTVdrdNt8cZUCnrQyqsMaxN3IpIG7O8GjOt+9DUwtg4tQio/7U1oE/PpiBfIIdCHSnELHp6s0In6UTrmvIkArAs5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755890502; c=relaxed/simple;
-	bh=BIAou0EJH+Cde+0lcC7baB0kaHraaOyHB1jhoaFuDZ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KhCBJWq+X17B9jOdJ+NgOovr3+4uAY25AOgYPBVtP2jNNWaAuLha7mKhU0t1FOrPlzbHyJaGmoXGzyeRJ6008GqBaaBW/lj+XsMBfP1sKfaZHJAifn3y0XcBB58AHf6CDkkdvKmp37evcKB7f2IEL/fXDMlDgW/STwO3QQO9BNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BWLbgAj/; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-70d9a65c373so12705056d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:21:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755890500; x=1756495300; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=beM5HIc5H97tJfr+Bv+Qn5iVpdoA6CB95zAhcoVOSug=;
-        b=BWLbgAj/kOQPDNNBGrDAW4YTZO9lJDIrF9mv6KsoWkcgy/2pRycC11kAFq2Aolqth3
-         a8uxuh2kmM5gBKG5pGIr2ZFOA6VSXe7L8L1S39nL9feKBsFTAFK8DlYldOL9Hae09RIr
-         DQck99WXkJfRVI39ubNP4/mQrjvoDUXpKMXADgjWBv3QIBeof/A9wrzDSSkycuEBaMCo
-         vF+nxuSx3b4XSS2mukXqp5HQP9ud851ucJu3bhICbakDvhS4vaXDU5jcQykOurZoCqJg
-         ISlF1TCeCVNprf+5BdMiFOx8zkrPMxgDV2nI4cmWH8BuSvHYn9vwHfKH8hAwDLYPwNI/
-         Q7GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755890500; x=1756495300;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=beM5HIc5H97tJfr+Bv+Qn5iVpdoA6CB95zAhcoVOSug=;
-        b=THeU730gRlja/OcP5BxfgSspiObo/IjrYizhJSrCLbeqY/aE6sMjUZUAHf1iYKkmGn
-         wqd5Q5uWzc/fY3Nx+jdbFdsbDiKYsrLeGGZbL8RbbbQISlTKsdItVVol06X+TrVF5DGO
-         9EBu4VDGfONR5SVpOCkhrllT5thRkTUlSSZe9OHnApvAsEZkVYU89cPMW7+zCrK+a8Cm
-         u2H6mwyEQFcOtAFo1QigNK2OVSKaIjJ6bRombBfgXJu/9SMJGfXxhSoFSbtlBlI9RF2V
-         CHzzHovt/74/vYZ0Y1txv9L3Z8sL2rxDCu/FxFiMafb6eR72LYK89ieQkhWEmO9va7SO
-         5rQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTKS83L9aXveEsU+99/NHTwBjzdGVjff8d3eYRx7ZI9ZlU1yJlw7Emg8cVKycEFBbesYkrnjq6QhUNT/k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFD8MorxvrO6xJNBpmSt99aUViKAoDDCjU84+ERwhKeF8iBtF3
-	WCtc+D9MSBra6J73QgTPsFrXofJ+jl/+tzdBGXSJYu6bAiVZbZXwFadeRQl9nF+ogQU=
-X-Gm-Gg: ASbGncu1sQQSz70rMLqG4/qmmSj9YygieYXXPgkh7QpKhxI3TJ36MuxQpJWi7fuF7qz
-	XDdtq02COi/OdfMRsAum3fQ/bITOkeWbDzm6YZr2Ik5bBPFQeYtbZcPewbSht71yPa4IK4YYmNv
-	4kyabvQF3AslKw9zovL5rqvGxNEKYCgTEkiD7R5cSBWDRx+0DwiiTV0bhfvftYo9gU7CZPakWjr
-	HRxLOVc8z/YqAtD1DqXEaKg2oU6qHpq0ETqR2/0EbtDjzRmG+c3QHHLM7sXU7aR7KcQAvSs7fbf
-	IbXSWtMyXktBgS1XjT8Mejby6UtZTwOSOdtjre6Miu5I2bOSAnZgOUn16u9LfuN/BccTwxC5WR4
-	8lsmdjaLnPg8+EJ/wkLYze9YQHPyvItuvVz3VdkW8azw=
-X-Google-Smtp-Source: AGHT+IGDvVKjUk3ao3C3T4+HLvJurBFSlIikKQIK2AlVn7WhL5Fvzgj5Yph3zvj5UA7QSkPoWKGNyw==
-X-Received: by 2002:ad4:4b32:0:b0:70d:a44c:786d with SMTP id 6a1803df08f44-70da44c7c63mr16656606d6.7.1755890499801;
-        Fri, 22 Aug 2025 12:21:39 -0700 (PDT)
-Received: from KASONG-MC4.tencent.com ([101.32.222.185])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70da72b04a6sm3843656d6.52.2025.08.22.12.21.34
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 22 Aug 2025 12:21:39 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Hugh Dickins <hughd@google.com>,
-	Chris Li <chrisl@kernel.org>,
-	Barry Song <baohua@kernel.org>,
-	Baoquan He <bhe@redhat.com>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Kemeng Shi <shikemeng@huaweicloud.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	David Hildenbrand <david@redhat.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Zi Yan <ziy@nvidia.com>,
-	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>
-Subject: [PATCH 9/9] mm, swap: use a single page for swap table when the size fits
-Date: Sat, 23 Aug 2025 03:20:23 +0800
-Message-ID: <20250822192023.13477-10-ryncsn@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250822192023.13477-1-ryncsn@gmail.com>
-References: <20250822192023.13477-1-ryncsn@gmail.com>
-Reply-To: Kairui Song <kasong@tencent.com>
+	s=arc-20240116; t=1755890557; c=relaxed/simple;
+	bh=e9rHCm+5wUu2Fo6VZBoRAomA+U4W3ETnOYk3CD8ENvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h8Sg2VHMIoORwsdgzFfkAEQyOCEi7IAtR3g0PEc+M1DxhmJVJ+lmt87SMewHZcllRAXg/8X149Dr5IzlR/b0ZjL2LIVkSvoHesaO0gQI564s5pEBeom+Yhlc9oOg/NGQ8HuiHIO21XU+UaJ4OFVVM0aSD67JBM73Xh/45iuAdMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XmaZrpAI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755890554;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e9rHCm+5wUu2Fo6VZBoRAomA+U4W3ETnOYk3CD8ENvI=;
+	b=XmaZrpAIoFjfT514WAdOuS1itnLTXTqJRkoSk5RSTLQTDYukZ3v/uqA4x7WAkm1LjA6Duw
+	8OX6hr4f56bY0ILdwm2KzxfvkzBVZaiHSDvC7OcQP6OHzHJJNNvRh5WNO9nQPc6wB8Y6Ft
+	w1pDcR9PyzfTBOJP+NzraPJLx2BPJqU=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-677-MpmbiL-pN4ecga6I9AZffA-1; Fri,
+ 22 Aug 2025 15:22:30 -0400
+X-MC-Unique: MpmbiL-pN4ecga6I9AZffA-1
+X-Mimecast-MFC-AGG-ID: MpmbiL-pN4ecga6I9AZffA_1755890549
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E986A180034A;
+	Fri, 22 Aug 2025 19:22:27 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.227])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6C36F18003FC;
+	Fri, 22 Aug 2025 19:22:23 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 22 Aug 2025 21:21:08 +0200 (CEST)
+Date: Fri, 22 Aug 2025 21:21:02 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "debug@rivosinc.com" <debug@rivosinc.com>,
+	"mingo@kernel.org" <mingo@kernel.org>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"broonie@kernel.org" <broonie@kernel.org>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"Mehta, Sohil" <sohil.mehta@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH v2 0/5] x86/fpu: don't abuse x86_task_fpu(PF_USER_WORKER)
+ in .regset_get() paths
+Message-ID: <20250822192101.GA31721@redhat.com>
+References: <20250822153603.GA27103@redhat.com>
+ <064735211c874bf79bfdf6d22a33b5ae5b76386c.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <064735211c874bf79bfdf6d22a33b5ae5b76386c.camel@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-From: Kairui Song <kasong@tencent.com>
+On 08/22, Edgecombe, Rick P wrote:
+>
+> On Fri, 2025-08-22 at 17:36 +0200, Oleg Nesterov wrote:
+> > PF_USER_WORKER threads don't really differ from PF_KTHREAD threads
+> > at least in that they never return to usermode and never use their
+> > FPU state.
+> >
+> > However, ptrace or coredump paths can access their FPU state and this
+> > is the only reason why x86_task_fpu(PF_USER_WORKER) needs to work and
+> > and discriminate PF_USER_WORKER from PF_KTHREAD. Unlike all other x86
+> > FPU code paths which do not distinguish them.
+> >
+> > OTOH, arch/x86/kernel/fpu/regset.c doesn't really need "struct fpu *",
+> > the .regset_get() functions actually need a "struct fpstate *". If the
+> > target task is PF_USER_WORKER, they can safely use &init_fpstate. So
+> > this series adds the new simple helper
+>
+> PKRU affects kernel accesses to userspace. io threads and vhost access
+> userspace. So why don't we want PKRU state to be inherited for user workers?
 
-We have a cluster size of 512 slots. Each slot consumes 8 bytes in swap
-table so the swap table size of each cluster is exactly one page (4K).
+Sorry I don't follow... Again, this is not my area, I am sure I've missed something.
+But could you please explain how can this series affect the PKRU logic?
 
-If that condition is true, allocate one page direct and disable the slab
-cache to reduce the memory usage of swap table and avoid fragmentation.
+> I guess it is not today, but to me, conceptually we maybe don't want a special
+> case for them? So rather than add more special handling, could we actually just
+> remove special handling to make it consistent?
 
-Co-developed-by: Chris Li <chrisl@kernel.org>
-Signed-off-by: Chris Li <chrisl@kernel.org>
-Signed-off-by: Kairui Song <kasong@tencent.com>
----
- mm/swap_table.h |  2 ++
- mm/swapfile.c   | 50 ++++++++++++++++++++++++++++++++++++++++---------
- 2 files changed, 43 insertions(+), 9 deletions(-)
+Could you spell please?
 
-diff --git a/mm/swap_table.h b/mm/swap_table.h
-index 4e97513b11ef..984474e37dd7 100644
---- a/mm/swap_table.h
-+++ b/mm/swap_table.h
-@@ -11,6 +11,8 @@ struct swap_table {
- 	atomic_long_t entries[SWAPFILE_CLUSTER];
- };
- 
-+#define SWP_TABLE_USE_PAGE (sizeof(struct swap_table) == PAGE_SIZE)
-+
- /*
-  * A swap table entry represents the status of a swap slot on a swap
-  * (physical or virtual) device. The swap table in each cluster is a
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 00651e947eb2..7539ee26d59a 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -432,6 +432,38 @@ static inline unsigned int cluster_offset(struct swap_info_struct *si,
- 	return cluster_index(si, ci) * SWAPFILE_CLUSTER;
- }
- 
-+static struct swap_table *swap_table_alloc(gfp_t gfp)
-+{
-+	struct folio *folio;
-+
-+	if (!SWP_TABLE_USE_PAGE)
-+		return kmem_cache_zalloc(swap_table_cachep, gfp);
-+
-+	folio = folio_alloc(gfp | __GFP_ZERO, 0);
-+	if (folio)
-+		return folio_address(folio);
-+	return NULL;
-+}
-+
-+static void swap_table_free_folio_rcu_cb(struct rcu_head *head)
-+{
-+	struct folio *folio;
-+
-+	folio = page_folio(container_of(head, struct page, rcu_head));
-+	folio_put(folio);
-+}
-+
-+static void swap_table_free(struct swap_table *table)
-+{
-+	if (!SWP_TABLE_USE_PAGE) {
-+		kmem_cache_free(swap_table_cachep, table);
-+		return;
-+	}
-+
-+	call_rcu(&(folio_page(virt_to_folio(table), 0)->rcu_head),
-+		 swap_table_free_folio_rcu_cb);
-+}
-+
- static void swap_cluster_free_table(struct swap_cluster_info *ci)
- {
- 	unsigned int ci_off;
-@@ -445,7 +477,7 @@ static void swap_cluster_free_table(struct swap_cluster_info *ci)
- 	table = (void *)rcu_dereference_protected(ci->table, true);
- 	rcu_assign_pointer(ci->table, NULL);
- 
--	kmem_cache_free(swap_table_cachep, table);
-+	swap_table_free(table);
- }
- 
- /*
-@@ -469,8 +501,7 @@ swap_cluster_alloc_table(struct swap_info_struct *si,
- 	lockdep_assert_held(&ci->lock);
- 	lockdep_assert_held(&this_cpu_ptr(&percpu_swap_cluster)->lock);
- 
--	table = kmem_cache_zalloc(swap_table_cachep,
--				  __GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN);
-+	table = swap_table_alloc(__GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN);
- 	if (table) {
- 		rcu_assign_pointer(ci->table, table);
- 		return ci;
-@@ -485,7 +516,7 @@ swap_cluster_alloc_table(struct swap_info_struct *si,
- 	if (!(si->flags & SWP_SOLIDSTATE))
- 		spin_unlock(&si->global_cluster_lock);
- 	local_unlock(&percpu_swap_cluster.lock);
--	table = kmem_cache_zalloc(swap_table_cachep, __GFP_HIGH | GFP_KERNEL);
-+	table = swap_table_alloc(__GFP_HIGH | GFP_KERNEL);
- 
- 	local_lock(&percpu_swap_cluster.lock);
- 	if (!(si->flags & SWP_SOLIDSTATE))
-@@ -522,7 +553,7 @@ swap_cluster_alloc_table(struct swap_info_struct *si,
- 
- free_table:
- 	if (table)
--		kmem_cache_free(swap_table_cachep, table);
-+		swap_table_free(table);
- 	return ci;
- }
- 
-@@ -740,7 +771,7 @@ static int inc_cluster_info_page(struct swap_info_struct *si,
- 
- 	ci = cluster_info + idx;
- 	if (!ci->table) {
--		table = kmem_cache_zalloc(swap_table_cachep, GFP_KERNEL);
-+		table = swap_table_alloc(GFP_KERNEL);
- 		if (!table)
- 			return -ENOMEM;
- 		rcu_assign_pointer(ci->table, table);
-@@ -4076,9 +4107,10 @@ static int __init swapfile_init(void)
- 	 * only, and all swap cache readers (swap_cache_*) verifies
- 	 * the content before use. So it's safe to use RCU slab here.
- 	 */
--	swap_table_cachep = kmem_cache_create("swap_table",
--			    sizeof(struct swap_table),
--			    0, SLAB_PANIC | SLAB_TYPESAFE_BY_RCU, NULL);
-+	if (!SWP_TABLE_USE_PAGE)
-+		swap_table_cachep = kmem_cache_create("swap_table",
-+				    sizeof(struct swap_table),
-+				    0, SLAB_PANIC | SLAB_TYPESAFE_BY_RCU, NULL);
- 
- #ifdef CONFIG_MIGRATION
- 	if (swapfile_maximum_size >= (1UL << SWP_MIG_TOTAL_BITS))
--- 
-2.51.0
+> But again, what exactly is the problem here? Is there a crash or something for
+> user workers?
+
+Well. I already tried to to explain this in the previous discussions. Apperently
+I wasn't clear, my fault. So I guess this needs yet another email which I'll write
+tomorrow, becauase I am already sleeping today.
+
+Oleg.
 
 
