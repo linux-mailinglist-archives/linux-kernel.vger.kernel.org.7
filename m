@@ -1,249 +1,120 @@
-Return-Path: <linux-kernel+bounces-782092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9811AB31AF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:13:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4864FB31AF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8508F1CC7B1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:08:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 253CCB0227E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107603054D3;
-	Fri, 22 Aug 2025 14:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2ED3043D7;
+	Fri, 22 Aug 2025 14:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="VXVXOdnm"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="cFgt+Y6+";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="RGs6IhMO"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23A22C3261;
-	Fri, 22 Aug 2025 14:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AB32F066B;
+	Fri, 22 Aug 2025 14:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755871655; cv=none; b=t9SiQNnruDhfrJ8v+bAsBYdEa8UvzOhKu6ROKTQKlCycyhWzlBTpzFVT7UA8SZM3ItQSn4D6ZLWCj/9zdVmK8hnRBQCiTAZM6Cl/pwtW6sgnLATCA7h4IIZVwwXQuMgFMJm6fGxImCkOKHz8FLandY6EZGXC9zC7vJAcy/VF89Y=
+	t=1755871707; cv=none; b=XV5b2MuzEwX+ERBR3bOu9m9JP7703YdoMvR/hpY6MQhBiU3FHZv+iNJ+cbsIzxkfpIgMCybmcDwALsog6VzmdZLF/LY/FPEfJ0u6XJETDbzowD3xi2PCalTE4sqzceBPcdr5QJNVJGaEle/CbJClJdbgvRjg8FV4EJthVZcS5zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755871655; c=relaxed/simple;
-	bh=j6Gt5IZtxTbNbjVeBp6YN/qynlfox9l4Yo9xkXt4ufM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A4InoKOwwCkxTaJLRKF/AdHpeYssvH4lnQ2nWOlFgrSkbzYjVUs9dpZo0VbNFOZsh3mIwv8bOmoaJSh5dJPOxSdULgGqVAkT9rOrgnEcq125udOGmQlwVjtQdKaB72M5GrRZQnzIxqspu2pL0hXFo5ULPdpsIVdwveI3g5TdhJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=VXVXOdnm; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=/IcI3fs+CdosW5+lwwgmJ6BWeUSk0gNZDPTOXnVmqXs=; b=VXVXOdnmASDMqhMBxRarlqc5oi
-	GSBhG6C1yh0DvjPBGkYWez60anZn0mcR4t3SsgjRXcX51pnrUmFXPDRekFgx0ZESljE2usqNFKzjC
-	yjGPw3QrmHR+IE606lkgv6c7HmRg3zjKd5r8/pJq/t+iAudqyoIorJjIJ0THBzGk3syYkpb4UMLeN
-	0mDikYu2WgqHWeyKMDDrMu9RrQgVTu0BhJg0wuElpTm4qXYZkv1z0R56UhnpPTF9m455JesV+iiH0
-	eQ1If/ewF4NqrgYyOHiuAQPGUheugYdZXcV3oq381vqTQTdvfHnSMEw37ogUuiWNOr2fYs7OhXZw5
-	fjfzYoDQ==;
-Received: from [152.250.7.37] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1upSQJ-00080K-Mc; Fri, 22 Aug 2025 16:07:19 +0200
-Message-ID: <c1e1f4b3-e3a0-4a9a-982d-9fd6f6e96090@igalia.com>
-Date: Fri, 22 Aug 2025 11:07:14 -0300
+	s=arc-20240116; t=1755871707; c=relaxed/simple;
+	bh=dnNU8jPjjkJZUhbpXRRCzvNilR/RjhmQxT+1QfkQ3Rw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rba8gysr6vwPHXGu4J/TpyD3jlYj9EJf+4ANFeiKFdM1c4ZDC+gg8d1AhVkJNft3GdUqv2F4ZMcn5ctvNZ47MO/a2zVIxyUnwKc7Tii+Pat+dy+cCvyMYvDNJftigKIGpMJhVrc8UasMhB9COPufxdBbNOzRrjHKbUCdGHasU+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=cFgt+Y6+; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=RGs6IhMO reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1755871703; x=1787407703;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=tS+nBEv9oHEaSNtYsqRT1ZFZCy7e2jnR6M1qWnJYb6E=;
+  b=cFgt+Y6+/r6SZWhfnH2rDTnw2/DjqTr2kF5IMhmkDPh2CJXN3ACroRF6
+   Dv7ElfQGCZqp39FOHAAIYzU3gVDdgh0dsJIDgRBVO6cjnWtHtHjw2vgxV
+   CNsoSOjj6FlJq1Mgzws5g9eeoJkKgXZO7pzb4qUJNdZAHKoXyBtjb9ejG
+   W6zdE1EbJNHaENHywMzzGulEVu4GuBr4Sy8+DeqxX1clM7aoSU5v8KxvP
+   KmNEG9Dy03AE+hjugiDWq3DVH6m91Ot4jH8l5Kf5LyDAfkJqn+3kCsNRV
+   GYAx+/p5M18eqopNkoCakzJgZ5O7lPt7xNd0lPBrYiNLPubHSki5BsXkO
+   Q==;
+X-CSE-ConnectionGUID: 3ZLGV4isTLWShCVsOBQdQQ==
+X-CSE-MsgGUID: rHg/Oii3Rm6+VFvGcAxEMA==
+X-IronPort-AV: E=Sophos;i="6.17,309,1747692000"; 
+   d="scan'208";a="45868597"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 22 Aug 2025 16:08:20 +0200
+X-CheckPoint: {68A879D3-25-299FBAB0-EF52EDE7}
+X-MAIL-CPID: EC49AC01D376B20CFDD65F635FA6CFBE_5
+X-Control-Analysis: str=0001.0A002118.68A87981.0009,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C0B011610C9;
+	Fri, 22 Aug 2025 16:08:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1755871695; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=tS+nBEv9oHEaSNtYsqRT1ZFZCy7e2jnR6M1qWnJYb6E=;
+	b=RGs6IhMOEYWJprTa7nM2CmRinCHM8JGAerJJi5tEldNMyxDk1NoBYf64N3YsibLSabJkyM
+	24DYKjSJYpfVO0dX3jXkyZfeRiaX++Oy6jkvhhbvp1G4v31x0ICl0CJKJRPexp+JTv7+IR
+	Y6TGZ3rWmGGbSphthP7cRNx/tpU7IG4FGzcxEEG+OosqHJWbkr09FVE3qxksXPsHBGkn7c
+	XYTykrFUnArphmBsycFunw6tg0mp/kpZWy5ASFPaLlCOlw8lfuwVceVIEaONWUO5LLuxIu
+	1YaBRGo+o+aCAbKubEzZmP+RrmE0MrBudW/vlqSwVHtFtDPVFPfbgRe+h5zMkg==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux@ew.tq-group.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] arm64: dts: tqma8mpql-mba8mpxl: Add MicIn routing
+Date: Fri, 22 Aug 2025 16:07:41 +0200
+Message-ID: <20250822140742.3352401-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/9] ovl: Create ovl_casefold() to support casefolded
- strncmp()
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>,
- Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- kernel-dev@igalia.com
-References: <20250814-tonyk-overlayfs-v5-0-c5b80a909cbd@igalia.com>
- <20250814-tonyk-overlayfs-v5-4-c5b80a909cbd@igalia.com>
- <CAOQ4uxiX+ZURzvNdJw+UJw-2OTS5DRGr4LLr9YnHjjPKOv57TA@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <CAOQ4uxiX+ZURzvNdJw+UJw-2OTS5DRGr4LLr9YnHjjPKOv57TA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Em 17/08/2025 11:33, Amir Goldstein escreveu:
-> On Thu, Aug 14, 2025 at 7:22 PM André Almeida <andrealmeid@igalia.com> wrote:
->>
->> To add overlayfs support casefold layers, create a new function
->> ovl_casefold(), to be able to do case-insensitive strncmp().
->>
->> ovl_casefold() allocates a new buffer and stores the casefolded version
->> of the string on it. If the allocation or the casefold operation fails,
->> fallback to use the original string.
->>
->> The case-insentive name is then used in the rb-tree search/insertion
->> operation. If the name is found in the rb-tree, the name can be
->> discarded and the buffer is freed. If the name isn't found, it's then
->> stored at struct ovl_cache_entry to be used later.
->>
->> Signed-off-by: André Almeida <andrealmeid@igalia.com>
->> ---
->> Changes from v4:
->>   - Move the consumer/free buffer logic out to the caller
->>   - s/aux/c_name
->>
->> Changes from v3:
->>   - Improve commit message text
->>   - s/OVL_NAME_LEN/NAME_MAX
->>   - drop #ifdef in favor of if(IS_ENABLED)
->>   - use new helper sb_encoding
->>   - merged patch "Store casefold name..." and "Create ovl_casefold()..."
->>   - Guard all the casefolding inside of IS_ENABLED(UNICODE)
->>
->> Changes from v2:
->> - Refactor the patch to do a single kmalloc() per rb_tree operation
->> - Instead of casefolding the cache entry name everytime per strncmp(),
->>    casefold it once and reuse it for every strncmp().
->> ---
->>   fs/overlayfs/readdir.c | 115 +++++++++++++++++++++++++++++++++++++++++--------
->>   1 file changed, 97 insertions(+), 18 deletions(-)
->>
->> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
->> index b65cdfce31ce27172d28d879559f1008b9c87320..803ac6a7516d0156ae7793ee1ff884dbbf2e20b0 100644
->> --- a/fs/overlayfs/readdir.c
->> +++ b/fs/overlayfs/readdir.c
->> @@ -27,6 +27,8 @@ struct ovl_cache_entry {
->>          bool is_upper;
->>          bool is_whiteout;
->>          bool check_xwhiteout;
->> +       const char *cf_name;
->> +       int cf_len;
-> 
-> We should also change these member names to c_name
-> Because they are the "compare/canonicalized" name, which
-> may or may not be casefolded.
-> 
->>          char name[];
->>   };
->>
->> @@ -45,6 +47,7 @@ struct ovl_readdir_data {
->>          struct list_head *list;
->>          struct list_head middle;
->>          struct ovl_cache_entry *first_maybe_whiteout;
->> +       struct unicode_map *map;
->>          int count;
->>          int err;
->>          bool is_upper;
->> @@ -66,6 +69,27 @@ static struct ovl_cache_entry *ovl_cache_entry_from_node(struct rb_node *n)
->>          return rb_entry(n, struct ovl_cache_entry, node);
->>   }
->>
->> +static int ovl_casefold(struct unicode_map *map, const char *str, int len, char **dst)
->> +{
->> +       const struct qstr qstr = { .name = str, .len = len };
->> +       int cf_len;
->> +
->> +       if (!IS_ENABLED(CONFIG_UNICODE) || !map || is_dot_dotdot(str, len))
->> +               return 0;
->> +
->> +       *dst = kmalloc(NAME_MAX, GFP_KERNEL);
->> +
->> +       if (dst) {
->> +               cf_len = utf8_casefold(map, &qstr, *dst, NAME_MAX);
->> +
->> +               if (cf_len > 0)
->> +                       return cf_len;
->> +       }
->> +
->> +       kfree(*dst);
->> +       return 0;
->> +}
->> +
->>   static bool ovl_cache_entry_find_link(const char *name, int len,
->>                                        struct rb_node ***link,
->>                                        struct rb_node **parent)
->> @@ -79,7 +103,7 @@ static bool ovl_cache_entry_find_link(const char *name, int len,
->>
->>                  *parent = *newp;
->>                  tmp = ovl_cache_entry_from_node(*newp);
->> -               cmp = strncmp(name, tmp->name, len);
->> +               cmp = strncmp(name, tmp->cf_name, tmp->cf_len);
->>                  if (cmp > 0)
->>                          newp = &tmp->node.rb_right;
->>                  else if (cmp < 0 || len < tmp->len)
-> 
-> This looks like a bug - should be len < tmp->c_len
-> 
->> @@ -101,7 +125,7 @@ static struct ovl_cache_entry *ovl_cache_entry_find(struct rb_root *root,
->>          while (node) {
->>                  struct ovl_cache_entry *p = ovl_cache_entry_from_node(node);
->>
->> -               cmp = strncmp(name, p->name, len);
->> +               cmp = strncmp(name, p->cf_name, p->cf_len);
->>                  if (cmp > 0)
->>                          node = p->node.rb_right;
->>                  else if (cmp < 0 || len < p->len)
-> 
-> Same here.
-> 
-> But it's not the only bug, because this patch regresses 3 fstests without
-> enabling any casefolding:
-> 
+MicIn is connected to IN3_L. Add routing including the Mic Bias.
 
-That was due to the following change:
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+ .../arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
--               cmp = strncmp(name, p->name, len);
-+               cmp = strncmp(name, p->cf_name, p->cf_len);
-
-Keeping len (instead of p->cf_len) as the third argument fixed it. I 
-will send a v6 with that and the other changes.
-
-> overlay/038 12s ...  [14:16:39] [14:16:50]- output mismatch (see
-> /results/overlay/results-large/overlay/038.out.bad)
->      --- tests/overlay/038.out 2025-05-25 08:52:54.000000000 +0000
->      +++ /results/overlay/results-large/overlay/038.out.bad 2025-08-17
-> 14:16:50.549367654 +0000
->      @@ -1,2 +1,3 @@
->       QA output created by 038
->      +Merged dir: Invalid d_ino reported for ..
->       Silence is golden
-> 
-> overlay/041 11s ...  [14:16:54] [14:17:05]- output mismatch (see
-> /results/overlay/results-large/overlay/041.out.bad)
->      --- tests/overlay/041.out 2025-05-25 08:52:54.000000000 +0000
->      +++ /results/overlay/results-large/overlay/041.out.bad 2025-08-17
-> 14:17:05.275206922 +0000
->      @@ -1,2 +1,3 @@
->       QA output created by 041
->      +Merged dir: Invalid d_ino reported for ..
->       Silence is golden
-> 
-> overlay/077 19s ...  [14:17:08][  107.348626] WARNING: CPU: 3 PID:
-> 5414 at fs/overlayfs/readdir.c:677 ovl_dir_read_impure+0x178/0x1c0
-> [  107.354647] ---[ end trace 0000000000000000 ]---
-> [  107.399525] WARNING: CPU: 2 PID: 5415 at fs/overlayfs/readdir.c:677
-> ovl_dir_read_impure+0x178/0x1c0
-> [  107.406826] ---[ end trace 0000000000000000 ]---
-> _check_dmesg: something found in dmesg (see
-> /results/overlay/results-large/overlay/077.dmesg)
->   [14:17:28]- output mismatch (see
-> /results/overlay/results-large/overlay/077.out.bad)
->      --- tests/overlay/077.out 2025-05-25 08:52:54.000000000 +0000
->      +++ /results/overlay/results-large/overlay/077.out.bad 2025-08-17
-> 14:17:28.762250671 +0000
->      @@ -1,2 +1,6 @@
->       QA output created by 077
->      +getdents: Input/output error
->      +Missing created file in impure upper dir (see
-> /results/overlay/results-large/overlay/077.full for details)
->      +getdents: Input/output error
->      +Found unlinked file in impure upper dir (see
-> /results/overlay/results-large/overlay/077.full for details)
->       Silence is golden
-> 
-> Thanks,
-> Amir.
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
+index 2d4eaf9c02b88..1924d51bcbcd8 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
+@@ -245,6 +245,13 @@ sound {
+ 		audio-asrc = <&easrc>;
+ 		audio-cpu = <&sai3>;
+ 		audio-codec = <&tlv320aic3x04>;
++		audio-routing =
++			"IN3_L", "Mic Jack",
++			"Mic Jack", "Mic Bias",
++			"IN1_L", "Line In Jack",
++			"IN1_R", "Line In Jack",
++			"Line Out Jack", "LOL",
++			"Line Out Jack", "LOR";
+ 	};
+ 
+ 	sound-xcvr {
+-- 
+2.43.0
 
 
