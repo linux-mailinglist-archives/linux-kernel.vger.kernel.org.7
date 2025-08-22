@@ -1,103 +1,103 @@
-Return-Path: <linux-kernel+bounces-782437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A929CB32058
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:20:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E563CB32054
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B02BC626E95
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:16:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0CFD3B4D1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD467263F3C;
-	Fri, 22 Aug 2025 16:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="R5ErbakN"
-Received: from 5.mo533.mail-out.ovh.net (5.mo533.mail-out.ovh.net [54.36.140.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE90263F3C;
+	Fri, 22 Aug 2025 16:11:43 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A721A9FB9
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.36.140.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D278024A076;
+	Fri, 22 Aug 2025 16:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755879402; cv=none; b=ux92szxUKMEMUYFdsKJbhqe4xrfBpR95eaZRvBhO4Ce9SI7UtlnqVUxQROXJBaSxIxZ7WB54RPYQ14i09cXQzTaErHy+E8cTW9TMTrMJMwo4I/SM7XMiQTu5MB124R2YJFTIofe1WetYGtLyBYIjCHHe5FM6oo9ZguYDZYMFRSM=
+	t=1755879103; cv=none; b=V5wrXxs8ZVJjabkIu+c1Zc1fVSHTpPCBUn2BLWLVrRbKhXDadJbt6R0tB6Ypp6eVpAkbYUTfk4pvxzILhG7zARxjPXgQlWqE5kgrVykr0mlNFFiRBtngnJ4Z/rrlambpp4NETvlrosPUqDvqszbu/MstDdekwiOLqtBJRClgqYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755879402; c=relaxed/simple;
-	bh=Muy7A70ZsK2eQRnxqNVYMyvIfA2QXop/Nofswsm16qQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gA90EyO8OcWfbaLFbKIpoBk0F7SBcWeOApe5TBSyvlaC5eYYhnnmfYZrK2UYmkSQHEo9LbOVNnfe/ZZ4zkLaVvgKwmGSJJwlR35XuIz68antxnVCVErQnO7Yv3mkPH7cgmaXyR9aZesB1O683co8P7i71z+C3PWVMEdBqPbuTgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=R5ErbakN; arc=none smtp.client-ip=54.36.140.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
-Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net [51.68.80.175])
-	by mo533.mail-out.ovh.net (Postfix) with ESMTPS id 4c7lVG4bgsz5y8b;
-	Fri, 22 Aug 2025 16:08:38 +0000 (UTC)
-Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net. [127.0.0.1])
-        by director1.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <brgl@bgdev.pl>; Fri, 22 Aug 2025 16:08:38 +0000 (UTC)
-Received: from mta6.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.118.160])
-	by director1.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4c7lVG00x4z5xT3;
-	Fri, 22 Aug 2025 16:08:37 +0000 (UTC)
-Received: from orca.pet (unknown [10.1.6.6])
-	by mta6.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id BB32A8E32EC;
-	Fri, 22 Aug 2025 16:08:36 +0000 (UTC)
-Authentication-Results:garm.ovh; auth=pass (GARM-101G00461199434-89d8-4298-bfef-9cf54b1e3b55,
-                    ADC0680FE15BB91110492B9A34CE42AA242C155A) smtp.auth=marcos@orca.pet
-X-OVh-ClientIp:79.117.22.109
-Message-ID: <7c325631-c209-4df9-a259-4b9c4e545f87@orca.pet>
-Date: Fri, 22 Aug 2025 18:08:36 +0200
+	s=arc-20240116; t=1755879103; c=relaxed/simple;
+	bh=7fEWYxxS9e/HLjVM37+JV+JRgYz12UDQzpgzmP/0et0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fkyQXRskNhkElVIQxAufYE5knlQL86D6ScVwj4YhbcnfUM+nrgmWfqeSR9cV9EJhEtTtGxX8o2K7/EDB4MCqhcuUgUxxXT/OwC5jvrmZ1+nDixuOz++uimN4W0V79ooYs+cL3vJgbAb0sfC5xLbWoBNKBsAjWPVrUlGjhTVKjgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1upUMN-000000006nQ-06Fd;
+	Fri, 22 Aug 2025 16:11:23 +0000
+Date: Fri, 22 Aug 2025 17:11:18 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: [PATCH net-next v4 0/7] net: dsa: lantiq_gswip: prepare for
+ supporting new features
+Message-ID: <cover.1755878232.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] gpio: vortex: add new GPIO device driver
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Michael Walle <mwalle@kernel.org>,
- Lee Jones <lee@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- linux-gpio@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20250822154903.GA685390@bhelgaas>
-Content-Language: es-ES
-From: Marcos Del Sol Vives <marcos@orca.pet>
-In-Reply-To: <20250822154903.GA685390@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 10810327957363381862
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieegvddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpedtgedugfeiudfgkeduhfelgfejgfeuvdejffeiveegteejvddviefhiedujedvheenucfkphepuddvjedrtddrtddruddpjeelrdduudejrddvvddruddtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepledprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopehhvghlghgrrghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmfigrlhhlvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrh
- hnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-DKIM-Signature: a=rsa-sha256; bh=AGiF7sh4zThSv7GNcqRgASdL2+wKj6I58TlLd/g5bR4=;
- c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1755878918;
- v=1;
- b=R5ErbakNFYd4tWQVZSxIMyxRTfyYn4y75LTbQiiwt5NlZbGebT3sZFj3d33tv51gPQoxxOP5
- ZtGifOwJsAawg4EFc934hyUEa+qbtuk1o+15vzN6BIoGb1hrmdvhlir1uR/3IGFaWE6TugxbOaK
- EBWpqiLO/ATW9nHM/tfdiPR50BP2VvDM2jwCIRW3e7xlhGAdQUbDKsBsRbtq49z0Kja2H97YiK4
- MRV/w4MrP4TVrFBdXjUp6QOUc+KRmQa8Tm7JkFiQgVVBZ1M2ukg/3cx291pun39qqY+olxIYy0P
- H1D18nF3mwfhNCVCFkAbaRKwHMlRXqfFRqUUXFjpJ097g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-El 22/08/2025 a las 17:49, Bjorn Helgaas escribió:
-> On Fri, Aug 22, 2025 at 10:47:20AM -0500, Bjorn Helgaas wrote:
->> I'm not the person to merge this, but my advice is to wait a few days
->> and post a v4 that cleans up the includes and updates the commit
->> messages.  It makes the process cleaner if the patch you post is the
->> same as the one that gets merged.
-> 
-> Sorry for the noise, should have read farther through my email :)
+Prepare for supporting the newer standalone MaxLinear GSW1xx switch
+family by refactoring the existing lantiq_gswip driver.
+This is the first of a total of 3 series and doesn't yet introduce
+any functional changes, but rather just makes the driver more
+flexible, so new hardware and features can be supported in future.
 
-No problem, thanks for clarifying!
+This series has been preceded by an RFC series which covers everything
+needed to support the MaxLinear GSW1xx family of switches. Andrew Lunn
+had suggested to start with the 8 patches now submitted as they prepare
+but don't yet introduce any functional changes.
 
-I would've waited for a couple days more to give more time for review
-before the v4 if it was just minor styling details, but I found a nasty
-surprise yesterday in the DX3 programming manual (I was using the SX/MX/DX
-manual before): it has two discontinuous ranges for data and two
-discontinuous ranges for direction, and the icing on top is that
-*all four ranges have different sizes*.
+Everything has been compile and runtime tested on AVM Fritz!Box 7490
+(GSWIP version 2.1, VR9 v1.2)
 
-So as it was a pretty big change I wanted to have a new one with support
-for that for review asap :)
+Link: https://lore.kernel.org/netdev/aKDhFCNwjDDwRKsI@pidgin.makrotopia.org/
+
+Daniel Golle (7):
+  net: dsa: lantiq_gswip: deduplicate dsa_switch_ops
+  net: dsa: lantiq_gswip: prepare for more CPU port options
+  net: dsa: lantiq_gswip: move definitions to header
+  net: dsa: lantiq_gswip: introduce bitmap for MII ports
+  net: dsa: lantiq_gswip: load model-specific microcode
+  net: dsa: lantiq_gswip: make DSA tag protocol model-specific
+  net: dsa: lantiq_gswip: store switch API version in priv
+
+ drivers/net/dsa/lantiq_gswip.c | 414 ++++++++-------------------------
+ drivers/net/dsa/lantiq_gswip.h | 272 ++++++++++++++++++++++
+ drivers/net/dsa/lantiq_pce.h   |   9 +-
+ 3 files changed, 375 insertions(+), 320 deletions(-)
+ create mode 100644 drivers/net/dsa/lantiq_gswip.h
+
+-- 
+2.50.1
 
