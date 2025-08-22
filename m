@@ -1,95 +1,80 @@
-Return-Path: <linux-kernel+bounces-780880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC9AB30A7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:50:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B026EB30A81
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06596189D638
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:50:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C3CD1C832F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BD415539A;
-	Fri, 22 Aug 2025 00:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7561547EE;
+	Fri, 22 Aug 2025 00:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KcROCPiR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jlW8bTyS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBFD74040;
-	Fri, 22 Aug 2025 00:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C303C322A;
+	Fri, 22 Aug 2025 00:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755823796; cv=none; b=nHA9WX9tNyy4wPX+IiRNYJ/hOtlZy0WwYdJOsa6q2Ho2zpU9RtNPQ5YvhKQj8Hj7NF7nt/+ek7Dq9Z15k06hN0LGvQ25ACWtiBfITd0lFXBxr9lGtZOhz7WgLoCUr6WqT9skVEopgCRTys9HTc04ikJi4UoUNyA02DVzEUlI5S8=
+	t=1755824056; cv=none; b=L6ygSlOP9q2tDMiD7GAKOEiHLTlWiWeyyQAxaDdV98OMDwN/RTfYV6Ki1N/30rVbbQIkz9ehiqyqjB7buYFGzoEHAmmUQmevV9iwNPyAlPMGdsViUEsTVElpA1IiOyTekaJXVMA4LXotQCuBM1jqztF35aA1cjEy6CY2oFmoYhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755823796; c=relaxed/simple;
-	bh=arnBqAHfj/kHyqgyi2DswugplEKtCPcVqq34VWJ1tvc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=FAC1nsk4fKDs5ueigHjTO6Pcz9d1BSyWyGsYS6q7jfBGFnhtwVjfohb+65rXWdNSF6AqXbuPM+00GxmiPbgTuXCXybF1NW+I3iMS79Xbp/NnnSGYa4qgTMqvPUYTBmBeQ+IpPo+hC8z38dl6ZJd9pnzNWxZ1iRkYHfgXtEhUDYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KcROCPiR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52152C4CEEB;
-	Fri, 22 Aug 2025 00:49:56 +0000 (UTC)
+	s=arc-20240116; t=1755824056; c=relaxed/simple;
+	bh=qvBMaix31tj3okHWqTG9RDFc/IO2BW7m6zc19Y2m2TE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qJN13jUbQ+ApPeYULnqUSuBHxhusMh/DXFSYcl1cU+mW6cVF+bgDX6xks/rlk9YiaWJFvzOk8xD7OEDR6NXQrv1M67JuviEEEXnosoh9aPJWyDkrdhStSVZueL16vE1WaoGUHqQJ6KLV+kEeyOcKWy+OskFwPvLKTKgdJbDisRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jlW8bTyS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9C38C4CEEB;
+	Fri, 22 Aug 2025 00:54:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755823796;
-	bh=arnBqAHfj/kHyqgyi2DswugplEKtCPcVqq34VWJ1tvc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=KcROCPiR+ge1c4zsL3zkqzUtJfhvgHD7H2INxEsbGTrIJk7aS4OZjpkKbvbw6t7+3
-	 irI1yWq2jzPIj0Dmxdg7pJDlWEKrIHeUsf7exsUSCuf5Hi+S5CIVJ+uMQ4IF07/CKr
-	 o7pBWKXwdFN2Pa63P4sAD/s/wFJUYAQQLnFEfFsXeeC71aPKQ/ob2eq8+/6k7SnGjo
-	 Bc5UkWMNTBBeYhQ1Sq9ZuoMiP+lEFjOE2Blg0DWlUhhkxPhYDmMFNUZEQV4+oRo1X7
-	 QckjiwQ/fbh8TXNaplaf03pK8j/afT/XwfuD2cyHkSdU2W997o1ShzxdWok4WdONx8
-	 7TBKO9j8y/Yjw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD19383BF68;
-	Fri, 22 Aug 2025 00:50:06 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1755824056;
+	bh=qvBMaix31tj3okHWqTG9RDFc/IO2BW7m6zc19Y2m2TE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jlW8bTyS4wZ55fnUxsVRmhYpITvgkMdRCsSdgk/JFpJjAyEce5h+ynr00zU2g99Ba
+	 FZmZFww9Dbzp6Cptzpjg3Wf2tafAeixcbJhNw4O0/ePKgTIavz4FjJq/lp542+Tw03
+	 hB7QrgaFlJvDKRnoNxrXWSqZZWvnn2hw+S/CptEyWE3k8Uiz9s1KBdgiQoWdAGj4lg
+	 cF93H7CsMMLz9Umw3NwGqroDGqzEMPbqxM+Rs4BYUjqAWIlYSmwzHuJ8hYYEGBGFPn
+	 7uhU9Sov9HYmNbBQT6BzaKouW5I6tKs1rbhKIBc0D4hSJetVR+cbtXttPSO+ySX2wJ
+	 /MauTDMfMHxOg==
+Date: Thu, 21 Aug 2025 17:54:14 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH net v1 1/1] net: phy: Clear link-specific data on link
+ down
+Message-ID: <20250821175414.291ccc95@kernel.org>
+In-Reply-To: <20250818121159.2904967-1-o.rempel@pengutronix.de>
+References: <20250818121159.2904967-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] gve: support unreadable netmem
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175582380550.1256377.8748570016233109275.git-patchwork-notify@kernel.org>
-Date: Fri, 22 Aug 2025 00:50:05 +0000
-References: <20250818210507.3781705-1-hramamurthy@google.com>
-In-Reply-To: <20250818210507.3781705-1-hramamurthy@google.com>
-To: Harshitha Ramamurthy <hramamurthy@google.com>
-Cc: netdev@vger.kernel.org, jeroendb@google.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- willemb@google.com, pkaligineedi@google.com, joshwash@google.com,
- horms@kernel.org, linux-kernel@vger.kernel.org, almasrymina@google.com,
- ziweixiao@google.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Mon, 18 Aug 2025 14:11:59 +0200 Oleksij Rempel wrote:
+> When a network interface is brought down, the associated PHY is stopped.
+> However, several link-specific parameters within the phy_device struct
+> are not cleared. This leads to userspace tools like ethtool reporting
+> stale information from the last active connection, which is misleading
+> as the link is no longer active.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Makes sense but unless you can point at a commit which brought this
+behavior in I'm slightly worried about regressions. Not that I can
+think of an exact scenario..
 
-On Mon, 18 Aug 2025 21:05:07 +0000 you wrote:
-> From: Mina Almasry <almasrymina@google.com>
-> 
-> Declare PP_FLAG_ALLOW_UNREADABLE_NETMEM to turn on unreadable netmem
-> support in GVE.
-> 
-> We also drop any net_iov packets where header split is not enabled.
-> We're unable to process packets where the header landed in unreadable
-> netmem.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v2] gve: support unreadable netmem
-    https://git.kernel.org/netdev/net-next/c/62d7f40503bc
-
-You are awesome, thank you!
+Could you please repost for net-next and let's see if we can attract
+any PHY maintainer acks?
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+pw-bot: cr
 
