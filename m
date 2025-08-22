@@ -1,47 +1,86 @@
-Return-Path: <linux-kernel+bounces-781385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0C59B311D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53307B311DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C46D05E16DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:30:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB6995E2CE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B3C2EBBA0;
-	Fri, 22 Aug 2025 08:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35BF2EB5C1;
+	Fri, 22 Aug 2025 08:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Up+Vs1Ce"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IkVYBeB8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C5A2C11FA;
-	Fri, 22 Aug 2025 08:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738EF223DD1
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 08:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755851433; cv=none; b=onPfCyj4KPW5tkVD1g+dhSWsH20ccnz2fmwWPz2N7tCPnwH3ZV+M34+ZkJ1TdXhYcBOwa4q2B3JaHcluMH6oYf+7jcFJ6Nrr81uc25tbmC2l54Be9Qyu5GrbGW/2ASwY1MemRVXqVuB4LBLl4scidujv++X0hC1rz3Zn4q1cGCw=
+	t=1755851510; cv=none; b=Vvjm65PmNGPxLTymcU6Chnf8q/7qxMYjWnbbKcHG1B3tJk5b/YeRnHrBnmRj1IaWESiZU4dMRK2y9Q23CqHufX1WlL5iv2UirOdlNJHRtu34ht7PgRpNUEfaCQt0ve+DElFTcJKt2Bze3d49tp+EYNcUobQU46eiDMMxOAGGJMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755851433; c=relaxed/simple;
-	bh=AxK/GoCw3MHhRHI3TEY7MZkHfJclsaHmg2x1YWuJfvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=DjtjVc/ZZDW0ksd5Apa3cLp5ZcZZxRIcCDlrBpbtT/y79lFUWCDUduQq/AG0CfXsP0DdS1zB8BrJcN2/emXE1VxTss9W2SgPoOo17fzVMFpWV74viOK7vzK7bSNHd1Wuv/5D+tZJlonSHocHQWICTexjtEHoaSxgupFNOLK0E7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Up+Vs1Ce; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75984C4CEF1;
-	Fri, 22 Aug 2025 08:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755851433;
-	bh=AxK/GoCw3MHhRHI3TEY7MZkHfJclsaHmg2x1YWuJfvQ=;
-	h=Date:Subject:From:To:References:In-Reply-To:From;
-	b=Up+Vs1CeNdgpnM+zWU0tUf42oBESeU7bN1ukPQbzn2FPUDX0fZ2MUNzUy+O541TGe
-	 2iu8NvKQ+BUGda2ZVhWiJ9YQFbNVE1kEKKCcZCPKwQ/OMW4hOWcqaMVwv5jBHgBYZT
-	 NMePuocVxG9jwKM6cbWze1RcfzO4imguiLtzA7adLnQXEHxC1Xybs2bvOkiHaTRBnu
-	 9XRqdUZPRzXELSn+T6ReXnswU/chlojQpblhPSo7zD3QzgzqULWrZB84FY6bhzNYnh
-	 dYjjIK9yqIgmmLZGhAAOkfwTuw/JkN7u7Ps8+3UxZgXg4aczyA/FRZDyI/ag1BzShd
-	 wGRx/zToNZrhQ==
-Message-ID: <705e0588-50be-477f-a515-089df2d9bfd2@kernel.org>
-Date: Fri, 22 Aug 2025 10:30:28 +0200
+	s=arc-20240116; t=1755851510; c=relaxed/simple;
+	bh=hqLtAJ9wABRlEYOn9xK6DZ0YTbB/5G/61j0q4mx2/lg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LRTZFw/vyK59sp2cG0ux5la+6VpHxhbeDrbHKTc7qWgAs/zodZWRhCTAkMl9rvn2+Q5RaNLk995VQErU33VpULwXzo29Nm/lsfQLUvMVArdvRCUPpJy4deI0FMwzszXNNfAeHSc5P8B8N0cgvRZaJrpcfoLbZsqoTrbowX2znhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IkVYBeB8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755851507;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eBfUDrzwH2ngC4BBoj5LBB/d7iuKHS4QfXfLqrPHiM8=;
+	b=IkVYBeB8JJeqI6GUad/g8nICaY6g0zy740TQ/bKLK3auVi6H1J/3hmMi4J0IgTLwrBi5r5
+	FAJoX5Cp9I2L+sIyVStOjVOAksEmA1WKGUXT+A62xCFKzZ2sdidEAZj690xUyvugVipGAq
+	kj8QTP8Du31aMdy0t+0oJODin26plPs=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-136-R1NU_GY-Oj2TPvaRY-ud3w-1; Fri, 22 Aug 2025 04:31:46 -0400
+X-MC-Unique: R1NU_GY-Oj2TPvaRY-ud3w-1
+X-Mimecast-MFC-AGG-ID: R1NU_GY-Oj2TPvaRY-ud3w_1755851506
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-70d903d04dbso28668146d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 01:31:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755851506; x=1756456306;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eBfUDrzwH2ngC4BBoj5LBB/d7iuKHS4QfXfLqrPHiM8=;
+        b=db0wwHOBziI6CNcMpanATqMgCdIEES6CiupX4wWDsZp16ea8iqCnpExNx4oJvF9ZPa
+         jTsq6xLhBGx5l82s5Lt+FgkCFIqHLmR/LlV6SuYRHG+/ifwXF2mxk9uKmDk3Gz6RmuyJ
+         7PKC8jSsbRsmUPaW8i8MDP98OZWVD8kgoNVLBSdekZJs23+O5070fetJ3bR2ShOe/jVe
+         OWjiemBZKnYZGGbDWvuN1G8xNVVK8Zbutqknshyq44v45D6wf05Z6WhG80QGlYOBYAU7
+         nsx9mvZBG/G9ztH6lNTFtry7hnWAeZ7rtFtn3vhuvxokk4nDQB3NAoyl1Pz0Ejvt/R0m
+         d9UA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8viHkLazuhm1yp8OG3dNg9C0Js0+KdNDa/lWjydUsgq5/Mms7mevphZmNLHcGNreMCcMoO2MfsctJk9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5vIbNImI4Tt+LApxtJGCOtB8q/JE2sOkQtORmbZoF+0Bszsdc
+	XgAYzrT3sbdBlmy5d03hx+sb5c1DwmPZQzkUDlNSPBFf9ER1YnpU9bCzNl3TH1rij+ALjGrhn78
+	YHDQU5Sd90Yge65jnj6f1LR4n0Fy4rzY/NodcPbYpF8sljCZ+UvWHeZ6IUPUp6MauwQ==
+X-Gm-Gg: ASbGnctZX7Xj3sg7FuKA0t4Tt8+8ksVJVJJqKguGLijk/au+1qgTTv57QY9IVe7a6et
+	VP3zCrwNVtmZ6hP959GPDoXaBF8/bfkhIFzwwFU6DRqrR7QdzMRI2FgS0nr1+SNXt9AeaXsXXTa
+	MzxirRzh7lB58G53FWuHmWa9rY65gHPAreXOMc4NWVBhxodP/wFN0HTbxECRUz+7lsYzU4geyOy
+	eL9XVw88f/YuLIo5l0GxcOYH7poFJEoiXn2GD+Pf551ow4cfqZA1mo5D+i5leDtHnFaYXt9T0Xp
+	577+aYQ+OuywIQ9Sufn6tmPrPk3jejBLTJA+hUCp+WzZhXcXrRydrshl5NcTJyR3/n+6b5llqkg
+	Enaz6UcN38/c=
+X-Received: by 2002:a05:622a:50f:b0:4b2:9b6b:2e87 with SMTP id d75a77b69052e-4b2aaa5659dmr26798351cf.37.1755851505338;
+        Fri, 22 Aug 2025 01:31:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGgcD8gwiIxzXXKRCMowVi2ZH5iMzFmtaYO9GHaU6rujY/dSEy2icuZXX41HvTRFjjT1QARHA==
+X-Received: by 2002:a05:622a:50f:b0:4b2:9b6b:2e87 with SMTP id d75a77b69052e-4b2aaa5659dmr26798031cf.37.1755851504761;
+        Fri, 22 Aug 2025 01:31:44 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e1ddd9fsm1306550985a.71.2025.08.22.01.31.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Aug 2025 01:31:44 -0700 (PDT)
+Message-ID: <f3084a47-6c63-4ef4-948d-52835fa4c722@redhat.com>
+Date: Fri, 22 Aug 2025 10:31:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,105 +88,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/11] firmware: qcom_scm: Add
- qcom_scm_pas_get_rsc_table() to get resource table
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <20250819165447.4149674-8-mukesh.ojha@oss.qualcomm.com>
- <4a60c3d3-11fb-40fb-8686-3d83539f250b@kernel.org>
- <20250821172043.fh6sr6w4bwyhov5q@hu-mojha-hyd.qualcomm.com>
- <0741fed1-33d3-431d-8cf3-04b47fe80b03@kernel.org>
+Subject: Re: [PATCH net-next v3 2/5] net: gro: only merge packets with
+ incrementing or fixed outer ids
+From: Paolo Abeni <pabeni@redhat.com>
+To: Richard Gobert <richardbgobert@gmail.com>, netdev@vger.kernel.org
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ horms@kernel.org, corbet@lwn.net, saeedm@nvidia.com, tariqt@nvidia.com,
+ mbloch@nvidia.com, leon@kernel.org, ecree.xilinx@gmail.com,
+ dsahern@kernel.org, ncardwell@google.com, kuniyu@google.com,
+ shuah@kernel.org, sdf@fomichev.me, aleksander.lobakin@intel.com,
+ florian.fainelli@broadcom.com, willemdebruijn.kernel@gmail.com,
+ alexander.duyck@gmail.com, linux-kernel@vger.kernel.org,
+ linux-net-drivers@amd.com
+References: <20250821073047.2091-1-richardbgobert@gmail.com>
+ <20250821073047.2091-3-richardbgobert@gmail.com>
+ <d986135a-d0ee-4878-9fc2-958f35d569da@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <0741fed1-33d3-431d-8cf3-04b47fe80b03@kernel.org>
+In-Reply-To: <d986135a-d0ee-4878-9fc2-958f35d569da@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/08/2025 08:22, Krzysztof Kozlowski wrote:
-> On 21/08/2025 19:20, Mukesh Ojha wrote:
->>>
->>> Srsly, what sort of AI hallucinated slop it is?
->>>
->>> I think this is pretty close to proof that your submission does not meet
->>> criteria of open source contribution.
->>>
->>> Did you run any of this through your legal process in Qualcomm?
->>>
->>> I don't trust any part of this code.
->>
->> I don't know what made you think that way. There could be confusion with
->> my writing and may not have expressed the thing i wanted.
-> Commits were written by two different people, but signed only by you.
-> They have 100% different style and the other looks like taken out of
-> ChatGPT.
+On 8/22/25 10:26 AM, Paolo Abeni wrote:
+> On 8/21/25 9:30 AM, Richard Gobert wrote:
+>> @@ -442,29 +442,26 @@ static inline __wsum ip6_gro_compute_pseudo(const struct sk_buff *skb,
+>>  }
+>>  
+>>  static inline int inet_gro_flush(const struct iphdr *iph, const struct iphdr *iph2,
+>> -				 struct sk_buff *p, bool outer)
+>> +				 struct sk_buff *p, bool inner)
+>>  {
+>>  	const u32 id = ntohl(*(__be32 *)&iph->id);
+>>  	const u32 id2 = ntohl(*(__be32 *)&iph2->id);
+>>  	const u16 ipid_offset = (id >> 16) - (id2 >> 16);
+>>  	const u16 count = NAPI_GRO_CB(p)->count;
+>>  	const u32 df = id & IP_DF;
+>> -	int flush;
+>>  
+>>  	/* All fields must match except length and checksum. */
+>> -	flush = (iph->ttl ^ iph2->ttl) | (iph->tos ^ iph2->tos) | (df ^ (id2 & IP_DF));
+>> -
+>> -	if (flush | (outer && df))
+>> -		return flush;
+>> +	if ((iph->ttl ^ iph2->ttl) | (iph->tos ^ iph2->tos) | (df ^ (id2 & IP_DF)))
+>> +		return true;
+>>  
+>>  	/* When we receive our second frame we can make a decision on if we
+>>  	 * continue this flow as an atomic flow with a fixed ID or if we use
+>>  	 * an incrementing ID.
+>>  	 */
+>>  	if (count == 1 && df && !ipid_offset)
+>> -		NAPI_GRO_CB(p)->ip_fixedid = true;
+>> +		NAPI_GRO_CB(p)->ip_fixedid |= 1 << inner;
+>>  
+>> -	return ipid_offset ^ (count * !NAPI_GRO_CB(p)->ip_fixedid);
+>> +	return ipid_offset ^ (count * !(NAPI_GRO_CB(p)->ip_fixedid & (1 << inner)));
+>>  }
+>>  
+>>  static inline int ipv6_gro_flush(const struct ipv6hdr *iph, const struct ipv6hdr *iph2)
+>> @@ -478,28 +475,30 @@ static inline int ipv6_gro_flush(const struct ipv6hdr *iph, const struct ipv6hdr
+>>  }
+>>  
+>>  static inline int __gro_receive_network_flush(const void *th, const void *th2,
+>> -					      struct sk_buff *p, const u16 diff,
+>> -					      bool outer)
+>> +					      struct sk_buff *p, bool inner)
+>>  {
+>> -	const void *nh = th - diff;
+>> -	const void *nh2 = th2 - diff;
+>> +	const void *nh, *nh2;
+>> +	int off, diff;
+>> +
+>> +	off = skb_transport_offset(p);
+>> +	diff = off - NAPI_GRO_CB(p)->network_offsets[inner];
+>> +	nh = th - diff;
+>> +	nh2 = th2 - diff;
+>>  
+>>  	if (((struct iphdr *)nh)->version == 6)
+>>  		return ipv6_gro_flush(nh, nh2);
+>>  	else
+>> -		return inet_gro_flush(nh, nh2, p, outer);
+>> +		return inet_gro_flush(nh, nh2, p, inner);
+>>  }
+>>  
+>>  static inline int gro_receive_network_flush(const void *th, const void *th2,
+>>  					    struct sk_buff *p)
+>>  {
+>> -	const bool encap_mark = NAPI_GRO_CB(p)->encap_mark;
+>> -	int off = skb_transport_offset(p);
+>>  	int flush;
+>>  
+>> -	flush = __gro_receive_network_flush(th, th2, p, off - NAPI_GRO_CB(p)->network_offset, encap_mark);
+>> -	if (encap_mark)
+>> -		flush |= __gro_receive_network_flush(th, th2, p, off - NAPI_GRO_CB(p)->inner_network_offset, false);
+>> +	flush = __gro_receive_network_flush(th, th2, p, false);
+>> +	if (NAPI_GRO_CB(p)->encap_mark)
+>> +		flush |= __gro_receive_network_flush(th, th2, p, true);
 > 
-> Editing patches post factum is another reason.
+> Minor nit: I'm under the (unverified) impression that the old syntax
+> could help the compiler generating better code. What about storing the
+> diff in a local variable:
 > 
-> Reasoning here is typical for LLM - first claim something ("static is
-> possible"), then claim another ("dynamic are always") and then connect
-> these two to create false third statement (static and dynamic are always).
+> 	int diff;
 > 
-> You got three strong indications. So this is what made me think that way.
+> 	diff = skb_transport_offset(p) - NAPI_GRO_CB(p)->network_offset;
+> 	flush = __gro_receive_network_flush(th, th2, diff, false);
+> 	if (NAPI_GRO_CB(p)->encap_mark)
+> 		flush |= __gro_receive_network_flush(th, th2, diff, true);
 
-Huh, so this email was not sent to you, because of weird headers you
-have in your email client ("Mail-Followup-To:"). You were notified about
-this by Stephan and yet you ignored the problem.
+whoops, I rushed the above. I mean:
 
-Well, your call, your problem to find emails if you decide not to
-receive replies. :/
+	diff = off - NAPI_GRO_CB(p)->network_offset;
+	flush = __gro_receive_network_flush(th, th2, p, diff, false);
+ 	if (NAPI_GRO_CB(p)->encap_mark) {
+		diff = off - NAPI_GRO_CB(p)->inner network_offset;
+ 		flush |= __gro_receive_network_flush(th, th2, diff, true);
+	}
 
-Best regards,
-Krzysztof
+/P
+
 
