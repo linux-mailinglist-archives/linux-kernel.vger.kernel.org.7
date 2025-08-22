@@ -1,104 +1,101 @@
-Return-Path: <linux-kernel+bounces-781116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D277B30DB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:50:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19925B30DB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51A901CE1B99
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:50:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 143BBA25337
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A43026CE2A;
-	Fri, 22 Aug 2025 04:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725B426E704;
+	Fri, 22 Aug 2025 04:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AK+95ps9"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UqbPcm62"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C3213A3F7
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 04:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3EE393DF0;
+	Fri, 22 Aug 2025 04:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755838220; cv=none; b=Lh5WYM3XlH/9XgcuPxTnA50tDPYoRsFM1cxYeTAlm1zLfkr+1iikjXirino1Pmqi1oboqPUZpmKOC7jXz4dQj2sZ/mC4DMhQJyeuZBKua6I5gJWFWArk6LX3l7ZLMRWSGXfsK7mNRB/W8/QhjmFSo/SdwxE8Ri95jtNz1ft+Pv0=
+	t=1755838167; cv=none; b=GJ+DDZapeRQ+FZaX3VMBH8kxk5ErdqQG9KIirFnjCUXtw+0o48AyU9K2yX+U8RTmXe1Vnm1f6woNwhXDIVc8l+7DjlPpS0ZnmHuakp0XLUL4WNcQx3a828ZV9LS+IBuO8+HYPhAB1p22A42sIMwi7QnrGM3kzrn2rUJG78jtUfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755838220; c=relaxed/simple;
-	bh=7MLJMc8p0GhX1StEfjqpfk5hw9LwYycmmmOXaAEQznw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o2DNGLaqg6iJ2PiYgpLOVBIFxBaQerIQUyVgreaAk5k/f6dqIQieogYUoxc4idRPA315iY1BJFkR5feoDq3j8YOSMNWe/3vh72iJh+1m1a3mfz+MmK5r4KieJYfRi2T2/wwrvzzj22ajCEjwIz2i/TzzStKLiRPNFQzQfH3NlV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AK+95ps9; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb731ca8eso274295966b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 21:50:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755838217; x=1756443017; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rEIz24p5TaTxWLmelV42u1VEA76tZGIfbFJlyF85/YQ=;
-        b=AK+95ps9gAWnHafKQ/z0Pe8DFyHs3EcMYDdtxXS+aMFTP9IMxW9sAmUPmTfAwPtMqM
-         7qy9WOg0E/Nyb+LwgmIzYIFg+4vEzz/vsImbMao4ojdX+8OEhkQezSnyeo+98ySmOF+2
-         cj8LJe5JhgzA7JOBIG1Fb3lJ9J4up5hxHgQTUJ+8ZKTTqdOke7okPmLEHO8qM/HVNDVf
-         us4s61I6EB+HK0BVfnv2u46UN3K3dtbad/Upxaru4EtVZ0jBjT4mMOamuL6sBZ6oDlNk
-         Ll+xM8suvdjtS0lFSq7u7xylcLpUZ46dSdDuoEUMOlu0MCv244EaDcQS7SwRc5IU0BBE
-         jFhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755838217; x=1756443017;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rEIz24p5TaTxWLmelV42u1VEA76tZGIfbFJlyF85/YQ=;
-        b=J2geyPrsNXaszX2iAdcOd1wNCXCQczLj4foMXBUSxVQhWi3Umc8Fbv+vv7eI0vCoFV
-         PMIR4gEiRKmzR9R5uFxTXWxDD38cTUJPLc/CICO9PUgcRvg5kkEZ5LwDTHDKixq4N2QG
-         AZ7nGMPE0ExwmqYsfCvG/3seYHiBzJ2CIO8+dfg2qzK56K3Lc7B/xy8Zf3mxbyjjO2hh
-         m308ZJOe6Hn9unP8arCor2yfboetWRP8Y/ZfcIEFt1vqGaZ9FGAc/nF+J6dE54OgfW/f
-         GEtqC7zymfV9ONHiVTIt4ZYHluu12/pCgJ5+JrpEVjl9WPdKO/q0/wyZdEju+ASkiPyy
-         mJNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUVbOHOiqeiDaUnmIHqnk1+9EenL+IYJwJ4f0Q9v3LAmjAUHn13SPAl7DmtPji6JyZglln+79i/xAxlPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysLdJy//YC81qx4LW0BIgWOT0uHwTFyqVD/Z8k7R9HXVA6MZYw
-	w9koW4iGZMKeAZ2UQjJGl9iXyV0gMjT0nuW4sfJy8Ua6/QEyFO5Z5qj1
-X-Gm-Gg: ASbGncsIdBfv8x7NdAd7kdJlS+6W8PvJl+PTTjvBpXy3TnXzb6nfmniAM6bFkiLqxX2
-	w37MxUXLWqmEl5U4QZ/RPawe6dEMtvdkIsEb4Vj1m3qhvzog8sq3NAhM8P/kwQsYxUNEJDLG1Nd
-	1Si+IRis4K0740aZj271TCYqm5RDHQrIKOh8Xwqc5cJEcUgUe1WpiFI4WJ/3/npk6pyGQekIcsp
-	qrYB/0ChrQBxfV3TvkP0GqnrPY3AZaLU8dL0q5UWzM0y6EqcdNrUM1ugxFuHBsYBYwWfJrPro/a
-	eoEfp2IfZQzRvKSTd2bo4HohS1FItMIoszk6RxeQY37/N0G1etelIl0Y9HUH9c0tBCacY7jdfTX
-	s9WcbzD58+k7brdgC/QORsw==
-X-Google-Smtp-Source: AGHT+IENDR0qdwLnj2nmpmUrcCdaDleQNKrX2hEXY1PM8fVU79lv6FvuC4p+RFRlolkWHOy6tNGDlg==
-X-Received: by 2002:a17:907:805:b0:afd:d993:9f2b with SMTP id a640c23a62f3a-afe29638000mr141949066b.65.1755838217077;
-        Thu, 21 Aug 2025 21:50:17 -0700 (PDT)
-Received: from masalkhi.. ([61.8.144.158])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded4c993csm529951866b.91.2025.08.21.21.50.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 21:50:16 -0700 (PDT)
-From: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-To: nichen@iscas.ac.cn
-Cc: abd.masalkhi@gmail.com,
-	arnd@arndb.de,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] misc: eeprom/m24lr: Remove unneeded semicolon
-Date: Fri, 22 Aug 2025 04:49:07 +0000
-Message-ID: <20250822044907.1190-1-abd.masalkhi@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250821081804.3168680-1-nichen@iscas.ac.cn>
-References: <20250821081804.3168680-1-nichen@iscas.ac.cn>
+	s=arc-20240116; t=1755838167; c=relaxed/simple;
+	bh=lrB9DC2wIo77kTJ7HkkZjFXvU4Cb/omt9e+VHXMqLRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aFwvdOYYEe+nj7WEUhtzTMdQK3Eb+QIrbQ2QHQIS4T//E7+42/w4wLKW8qJqMvHkrtoI8fo+CYg6YC0DehXjhHwSVcKHBk2Cook/4GsC8GAPg1AU1B6+TWmApfh/JIRpBMb4NuPFO8Xu2SF505SfA5ncjyoRks3dFPa/B5E10ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UqbPcm62; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED3CAC4CEF1;
+	Fri, 22 Aug 2025 04:49:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755838167;
+	bh=lrB9DC2wIo77kTJ7HkkZjFXvU4Cb/omt9e+VHXMqLRA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UqbPcm62uMesDWkt7g9hqVghT0corwH37xjm8lxMY7iq54BBBEi/iKJWFHBOT17uZ
+	 rX4ev0Pe1F7ZFOapgE100JYc8FHHP9en2xlhSqpbloh1QbfS60JC3mEz9ca/wMsNkG
+	 32sBoSwWSJ4lcqseo8v5bWZR8ns2Wm8lxAZ/RX74=
+Date: Fri, 22 Aug 2025 06:49:23 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: ccc194101@163.com
+Cc: jannh@google.com, stern@rowland.harvard.edu, rex.nie@jaguarmicro.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	chenchangcheng <chenchangcheng@kylinos.cn>
+Subject: Re: [PATCH] usb: usbfs: Add reset_resume callback to usbfs.
+Message-ID: <2025082256-wizard-traverse-1c88@gregkh>
+References: <20250822024602.42894-1-ccc194101@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822024602.42894-1-ccc194101@163.com>
 
-Hello Chen,
+On Fri, Aug 22, 2025 at 10:46:02AM +0800, ccc194101@163.com wrote:
+> From: chenchangcheng <chenchangcheng@kylinos.cn>
+> 
+> When an Apple device is inserted into the host, and the host
+> wakes up from S3/S4 power states, if the reset_resume process
+> is triggered, the absence of a reset_resume callback in usbfs will
+> cause the device to unbind.
+> By adding a reset_resume callback to usbfs and reporting REMOVE and ADD
+> uevents in reset_resume, the userspace is prompted to reissue commands
+> to re-establish the binding with usbfs.
+> 
+> Signed-off-by: chenchangcheng <chenchangcheng@kylinos.cn>
 
-Thank you.
+Nit, we need a "real name", see the kernel documentation for details.
 
-Reviewed-by: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+> ---
+>  drivers/usb/core/devio.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
+> index f6ce6e26e0d4..358850596b0d 100644
+> --- a/drivers/usb/core/devio.c
+> +++ b/drivers/usb/core/devio.c
+> @@ -749,6 +749,14 @@ static int driver_resume(struct usb_interface *intf)
+>  	return 0;
+>  }
+>  
+> +static int driver_reset_resume(struct usb_interface *intf)
+> +{
+> +	struct usb_device *udev = interface_to_usbdev(intf);
+> +
+> +	kobject_uevent(&udev->dev.kobj, KOBJ_REMOVE);
+> +	kobject_uevent(&udev->dev.kobj, KOBJ_ADD);
 
--- 
-Best Regards,
-Abd-Alrhman
+But the object is not being removed and added.  So why lie like this?
+How does userspace now handle this as the device did not go away?
+
+This feels odd, what changed to require this kernel change to be added?
+
+thanks,
+
+greg k-h
 
