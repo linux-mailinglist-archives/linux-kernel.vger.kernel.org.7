@@ -1,144 +1,178 @@
-Return-Path: <linux-kernel+bounces-781819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8700B3171C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:10:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D01EBB31720
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 731D2B60F55
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:08:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8BD0B60421
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7482FB621;
-	Fri, 22 Aug 2025 12:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758402FAC1D;
+	Fri, 22 Aug 2025 12:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WolNuskl"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lSCjDdr5"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDAB2FA0E8
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B892FABFD;
+	Fri, 22 Aug 2025 12:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755864541; cv=none; b=kohN4tzow+k3J7ZTrSm79wj6hBfHlHZiXokbTCu0pGTdffdVBxWspImvztD/W7/HOXzpp4C7Ao8bm0kfovXUptmkhCWJZivxxGIqRyMpUFijfxaxJqGhOxm3t+MWORTihmmN7pGSPzEEz0nTxbJm5zRuXkGaE8WCu8WO9mhmX2s=
+	t=1755864598; cv=none; b=flr3aRDuTPwi2IPB/l+WCOgL0gIvOCQSTGsNJcVTw/DZ4e+UT1DgwVxtdcapoqHv4lG8K0l5dcADeBem0jC4jc/xQSMYJFa8qPNygHYTOEwRz0nvczD1tofPCHhlH0LWYupvTEPJl+PM11SBE+eTYfPirN5BxBPHYSLRTRf89oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755864541; c=relaxed/simple;
-	bh=nLOyAWpzOxcLbnq6AYRm7XRxX4QswK3V/TLTzyzGOjs=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=q/NXLhh6j1yRcZ/Mp40r5jBYhEbsu+hyaTOP6lSmDgi2hFOrunJPmjgG7/W715pZR3wvX3a7mEt5A2Y9E5n4DcEFxQbVR9nbC1JRaP3wYn9loCqrm93OIuRDIzIATOJ45OWgm+SJnmQtttsVcRNWPmE5s0G8Yuh8N/9hlF0zGIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WolNuskl; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250822120856epoutp043c927292429f5367381cf5dc1ee5edde~eFX4b-1V82361923619epoutp04h
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:08:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250822120856epoutp043c927292429f5367381cf5dc1ee5edde~eFX4b-1V82361923619epoutp04h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755864536;
-	bh=lET1kWbDLqrIbol+G/CIjHWw2OZjsq9g7OfEHWdvLhI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=WolNusklP2tPVeQsUUFTpoi76gsovm194InhNOSHq7mcJKNAWfjDLXOI/ZsAGcYVx
-	 FMiMVYEDvjWIBDc3I9lvLlQ6817/HP1S6GCI6+jAncykr9Tp110dKjjfk5pGP/k7dk
-	 G22xA6VX6fFjKHMwEuh0mG4d5NRCJcB2N1L+nvMA=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250822120855epcas5p396d2099360b9ba11aa5a33fc9502af6a~eFX3h5JrT2585025850epcas5p3L;
-	Fri, 22 Aug 2025 12:08:55 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.87]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4c7f9f16r4z2SSKb; Fri, 22 Aug
-	2025 12:08:54 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250822120853epcas5p15497652f90d08bf64646bac341be80e8~eFX1qy8Mg2210422104epcas5p1D;
-	Fri, 22 Aug 2025 12:08:53 +0000 (GMT)
-Received: from FDSFTE411 (unknown [107.122.81.184]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250822120848epsmtip184aef53aafea6c576ae0dbebc5b6f376~eFXxPWsKW0871608716epsmtip1j;
-	Fri, 22 Aug 2025 12:08:48 +0000 (GMT)
-From: "Ravi Patel" <ravi.patel@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <jesper.nilsson@axis.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <s.nawrocki@samsung.com>,
-	<cw00.choi@samsung.com>, <alim.akhtar@samsung.com>,
-	<linus.walleij@linaro.org>, <tomasz.figa@gmail.com>,
-	<catalin.marinas@arm.com>, <will@kernel.org>, <arnd@arndb.de>
-Cc: <ksk4725@coasia.com>, <kenkim@coasia.com>, <pjsin865@coasia.com>,
-	<gwk1013@coasia.com>, <hgkim05@coasia.com>, <mingyoungbo@coasia.com>,
-	<smn1196@coasia.com>, <pankaj.dubey@samsung.com>, <shradha.t@samsung.com>,
-	<inbaraj.e@samsung.com>, <swathi.ks@samsung.com>,
-	<hrishikesh.d@samsung.com>, <dj76.yang@samsung.com>,
-	<hypmean.kim@samsung.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-arm-kernel@axis.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<soc@lists.linux.dev>
-In-Reply-To: <ceb20624-7405-40c5-9c29-1a7339e0cca4@kernel.org>
-Subject: RE: [PATCH v2 02/10] clk: samsung: Add clock PLL support for
- ARTPEC-8 SoC
-Date: Fri, 22 Aug 2025 17:38:47 +0530
-Message-ID: <000301dc135d$86ed30d0$94c79270$@samsung.com>
+	s=arc-20240116; t=1755864598; c=relaxed/simple;
+	bh=xYxKUqOPi9uHsSz9T2SIay1cubV4WKGr+q+8n/POPLQ=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=X26XYe/aQruFPmzNu/4B2XVz8c1lbKT9PTEDHuc0S/8hNcMgoLhIfmOQBBXRFpnL0Wk9Z+dzAjhNGcq36ay9AqQVbKG6RJOYVwypx8SfghG2H4eoafY2irsfggNkG4tB81IL1Hx2mz3PrQM+gxGN9o0+zi6QIyLC7BV1EcLHoBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lSCjDdr5; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57M8UUQA024258;
+	Fri, 22 Aug 2025 12:09:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=EYn7ITBL8Ul4UiFt5Y/PML
+	ay6Su4Sfb9WTuXzDCSrAY=; b=lSCjDdr5vxvNLn+mtnUy/zgxzJlpWjVGcbXXBH
+	pgOdptzLjHAsIkZ/TwCyo2eUIShOvhDx8IU5jOmD5P+Zi0T6qsJfuJjqWFhRmcR7
+	D176eeJzZuqA0vUPpwTU2r9tkAJE3epe66gQc/QtRNxRddZrkUcXbEETfQgLB9jB
+	qNT+cBUXfAeq4I4D3MNZYMA2NvD0IWvXcP6ENNY6MjM0wfSj6WnGLPuJCCg5GSc6
+	VeCMVfiwJ3BQZM6q/31eAEBHFrdObfAdBVfFRFgN7ZyBTEpg5mobnpS4/8nBG5Wg
+	m0yXVHw85aW1Ueic3mPDmciRRl4RNjNrGGljCFuspmEtwHVQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52ah6kc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 12:09:53 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57MC9qa2025894
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 12:09:52 GMT
+Received: from cse-cd01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Fri, 22 Aug 2025 05:09:49 -0700
+From: Wenmeng Liu <quic_wenmliu@quicinc.com>
+Subject: [PATCH v3 0/3] media: qcom: camss: Add sa8775p camss TPG support
+Date: Fri, 22 Aug 2025 20:09:18 +0800
+Message-ID: <20250822-camss_tpg-v3-0-c7833a5f10d0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGJY/8wx4BImu0YLFPVfwpfqUmFNgKGrjAaAcRz3scCHvrcAQFBK/RJtNaTkzA=
-Content-Language: en-in
-X-CMS-MailID: 20250822120853epcas5p15497652f90d08bf64646bac341be80e8
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250821124024epcas5p349dda3c9e0523cc07acf2889476beeb1
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
-	<20250821123310.94089-1-ravi.patel@samsung.com>
-	<CGME20250821124024epcas5p349dda3c9e0523cc07acf2889476beeb1@epcas5p3.samsung.com>
-	<20250821123310.94089-3-ravi.patel@samsung.com>
-	<ceb20624-7405-40c5-9c29-1a7339e0cca4@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPBdqGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDCyMj3eTE3OLi+JKCdF1zQ4uUJDNzixRLCxMloPqCotS0zAqwWdGxtbU
+ A28jfr1sAAAA=
+X-Change-ID: 20250822-camss_tpg-718db678d984
+To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        Wenmeng Liu <quic_wenmliu@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755864588; l=2633;
+ i=quic_wenmliu@quicinc.com; s=20250211; h=from:subject:message-id;
+ bh=xYxKUqOPi9uHsSz9T2SIay1cubV4WKGr+q+8n/POPLQ=;
+ b=fKkoKexAJ3Zg7UKJuEJ9TCHwX4BjJyBYHQJIzbgmGu/f/V88IqbvxIRAKVHE2mMngC6cJHm4S
+ UZLVkCjX26ABKgVtR8PtsXUmKtV/+NxXPlxk1DddYT9U+FoWLQrXNwO
+X-Developer-Key: i=quic_wenmliu@quicinc.com; a=ed25519;
+ pk=PTegr3w0f1C9dOSL6CUdJR5+u+X/4vsW7VMfwIMeMXQ=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: eqtFM2slnpL9KO_ZG1cixRx6JhctIutD
+X-Authority-Analysis: v=2.4 cv=B83gEOtM c=1 sm=1 tr=0 ts=68a85e11 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=2kMP3QB-8nRYnlZXCZMA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: eqtFM2slnpL9KO_ZG1cixRx6JhctIutD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX0XkMUGegANj7
+ DQGFdspYrfX3U7DlcRWUU6+gHhfoHp0HTkg/Rp6uGMWQ3sUAhCs6X/6TE6TX2mZfaEMhbnIigm9
+ i4hcyJEbH/OPNa6X3gcvDgx1jKzUX2iglIqxKya9IO5knUJFK34NGCjtICZ+9TuFkXZEzORvuTW
+ v4nmTExLerNyKdBLHFx+FPVjoCsJ6gnErYPPIvMfKyDRLYKFmjmol4/jFWeiKZoQo/r9N9rIYEK
+ Q7wOqmeqWICS+t2aZvE4LHZwzdlixqp5KmjFGAcxWAA0LZX1MApibdTsQTe2I6Eo8zRarwR2cL6
+ ekdS19YNp3otplXuSOQk6YEWsf0jZmtxqZbhZqCqtfmszsfFLaJgrwhlcNHZv3O/E1K94btj5PY
+ jbw2UJTDCtC9Xz5V8akAlBUcYI5mMQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 priorityscore=1501 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 adultscore=0 impostorscore=0 clxscore=1015 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
+SA8775P is a Qualcomm SoC. This series adds driver changes to
+bring up the TPG interfaces in SA8775P.
 
+We have tested this on qcs9100-ride board with 'Test Pattern Generator'.
+Unlike CSID TPG, this TPG can be seen as a combination of CSIPHY and sensor.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: 22 August 2025 12:02
-> To: Ravi Patel <ravi.patel@samsung.com>; jesper.nilsson@axis.com; mturquette@baylibre.com; sboyd@kernel.org;
-> robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
-> alim.akhtar@samsung.com; linus.walleij@linaro.org; tomasz.figa@gmail.com; catalin.marinas@arm.com; will@kernel.org;
-> arnd@arndb.de
-> Cc: ksk4725@coasia.com; kenkim@coasia.com; pjsin865@coasia.com; gwk1013@coasia.com; hgkim05@coasia.com;
-> mingyoungbo@coasia.com; smn1196@coasia.com; pankaj.dubey@samsung.com; shradha.t@samsung.com;
-> inbaraj.e@samsung.com; swathi.ks@samsung.com; hrishikesh.d@samsung.com; dj76.yang@samsung.com;
-> hypmean.kim@samsung.com; linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-
-> soc@vger.kernel.org; linux-arm-kernel@axis.com; linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> gpio@vger.kernel.org; soc@lists.linux.dev
-> Subject: Re: [PATCH v2 02/10] clk: samsung: Add clock PLL support for ARTPEC-8 SoC
-> 
-> On 21/08/2025 14:32, Ravi Patel wrote:
-> > +
-> > +static const struct clk_ops samsung_pll1031x_clk_ops = {
-> > +	.recalc_rate = samsung_pll1031x_recalc_rate,
-> > +	.round_rate = samsung_pll_round_rate,
-> 
-> 
-> This will conflict with round_rate drop, so might need rebasing. Please
-> follow up discussion or decisions in the round rate patchset.
+Tested with following commands:
+- media-ctl --reset
+- media-ctl -V '"msm_tpg0":0[fmt:SRGGB10/4608x2592 field:none]'
+- media-ctl -V '"msm_csid0":0[fmt:SRGGB10/4608x2592 field:none]'
+- media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/4608x2592 field:none]'
+- media-ctl -l '"msm_tpg0":1->"msm_csid0":0[1]'
+- media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
+- v4l2-ctl -d /dev/v4l-subdev4 -c test_pattern=9
+- yavta -B capture-mplane -n 5 -f SRGGB10P -s 4608x2592 /dev/video0
+  --capture=7
 
-Thanks for review. Yes, I can see conflicts with below patch 
-https://lore.kernel.org/linux-samsung-soc/20250811-clk-for-stephen-round-rate-v1-99-b3bf97b038dc@redhat.com/
+Dependencies:
+https://lore.kernel.org/all/20250814101615.1102795-10-quic_vikramsa@quicinc.com/
+https://lore.kernel.org/all/20250813053724.232494-1-quic_vikramsa@quicinc.com/
 
-Since merging strategy of round_rate patches are not clear as of now, will wait for couple of days before posting v3.
-Request to review other patches also.
+changes in v3:
+- Change the payload mode string
+- Change the method for setting the TPG clock rate
+- Remove the TPG IRQ
+- Format correction
+- Remove unused variables
+- Merge functions and eliminate redundancy
+- Modify the register write method
+- Change TPG matching method to use grp_id
+- Encapsulate magic numbers as macros
+- Link to v2: https://lore.kernel.org/all/20250717-lemans_tpg-v2-0-a2538659349c@quicinc.com/
 
-Thanks,
-Ravi
+Changes in v2:
+- rebase tpg changes based on new versions of sa8775p and qcs8300 camss patches
+- Link to v1: https://lore.kernel.org/all/20250211-sa8775p_tpg-v1-0-3f76c5f8431f@quicinc.com/
 
-> 
-> Best regards,
-> Krzysztof
+---
+Wenmeng Liu (3):
+      media: qcom: camss: Add support for TPG common
+      media: qcom: camss: Add link support for TPG common
+      media: qcom: camss: tpg: Add TPG support for SA8775P and QCS8300
+
+ drivers/media/platform/qcom/camss/Makefile         |   2 +
+ .../media/platform/qcom/camss/camss-csid-gen3.c    |  17 +
+ drivers/media/platform/qcom/camss/camss-csid.c     |  43 +-
+ drivers/media/platform/qcom/camss/camss-csiphy.c   |   1 +
+ drivers/media/platform/qcom/camss/camss-csiphy.h   |   2 +
+ drivers/media/platform/qcom/camss/camss-tpg-gen1.c | 219 +++++++
+ drivers/media/platform/qcom/camss/camss-tpg.c      | 696 +++++++++++++++++++++
+ drivers/media/platform/qcom/camss/camss-tpg.h      | 125 ++++
+ drivers/media/platform/qcom/camss/camss.c          | 130 ++++
+ drivers/media/platform/qcom/camss/camss.h          |   5 +
+ 10 files changed, 1226 insertions(+), 14 deletions(-)
+---
+base-commit: 6afac82056e38e02266cd30f458b25a1f9017508
+change-id: 20250822-camss_tpg-718db678d984
+
+Best regards,
+-- 
+Wenmeng Liu <quic_wenmliu@quicinc.com>
 
 
