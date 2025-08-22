@@ -1,66 +1,40 @@
-Return-Path: <linux-kernel+bounces-782251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 200D4B31D9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:11:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E30A5B31DA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25E96B42399
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:02:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C06C06444FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2ED313529;
-	Fri, 22 Aug 2025 14:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KrvTPCvq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C86334393;
+	Fri, 22 Aug 2025 14:59:53 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7803431FD;
-	Fri, 22 Aug 2025 14:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC562334382;
+	Fri, 22 Aug 2025 14:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755874778; cv=none; b=P97gdk+SOxfyIWxdIHe7foxS/CNHZdc4c+c5Ih/XCcOlgle8GU0lswmWIqqIYx5Drdf9wc2Vrgjac4EKU9462BFAKxqleZl4xt2NdPNDI3BVySnXvKqgnOJMS2L0qyp6QlfqG7DmHe62nRrfvaZImGEYygPC4JQMPKUBmSAYBZI=
+	t=1755874792; cv=none; b=GtadpbxQKJZnAR1nw7THHDrMqWtQqMq4BmP7yzmy8dkvQCYeyscfHDjVO5IlaOoRLi3PqGz8FYEhHAhcUd0Ye77V/D0Yzoo8ECm9ufv01tbfvaDqW5JhXXps6O3cnMXaniUgqTCqN1Z/FnqklcsyMT13RXNxflnMQaB1of/5pGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755874778; c=relaxed/simple;
-	bh=QiIs1pkIuMyELjCt2/wzjrK99v47E1KfFEUFDvAoA+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LqXaRM/7XrHT88oS/mXN93ddKGkFncKCz6n61ZPLd++wcLBjQ3XcqOcHC3UHtCv4bWHkY8OLvCKf3/Bho0RQY62TTtIzeAIn4O58GfQS/fy4Y6RtgeMqZLky5IvBRVVXgkbQYiyxSGmW+NDzwTRM9WRjdgj8DAmFkBqIakxYeT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KrvTPCvq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FF5AC4CEED;
-	Fri, 22 Aug 2025 14:59:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755874775;
-	bh=QiIs1pkIuMyELjCt2/wzjrK99v47E1KfFEUFDvAoA+0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KrvTPCvqxasOYk65yKmYn7lc/TcvBvmKohNLldcr/oPoO7OMyNaZuJTg2rm4kAW+h
-	 sqAv/ThuDyXTmk+f1LigOr804JFCW9zYXwNncd3aTv+1uBvjbgJwWSt/4+2HJEN1dl
-	 YWJB1i6RWhwLFY+djvibe8bjiBp9S1bRuJEvp+VpvPmxCQDSF1lW1HAadgUvxEPfjZ
-	 op9VlFZUqi1M/f3k6oJcRf1S+Fc/eLK79phhKjNdrNmikUHyLrqTf5PQmiOZ74zmJW
-	 XKQE71hMzis6/z8R1OvFITmzMP3VExwUX6MrWaldcuFtjSInANv9b2iDiOmDjM4Hd+
-	 TwcjGf+8gvQkQ==
-Date: Fri, 22 Aug 2025 09:59:34 -0500
-From: Rob Herring <robh@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/9] dt-bindings: memory: Document Tegra114 Memory
- Controller
-Message-ID: <20250822145934.GA3791610-robh@kernel.org>
-References: <20250820151323.167772-1-clamor95@gmail.com>
- <20250820151323.167772-3-clamor95@gmail.com>
+	s=arc-20240116; t=1755874792; c=relaxed/simple;
+	bh=UpjmrSVz2v3UklwM+ux83+DBGR8x4f1FN2dpxeY57XQ=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j47/w66uA7qDTln4VXYc43b+vJT1WP78quMJaGEGnC1rtVpyimJhR7i8+1t50kB0yR4iCOdEFLuK4iau6QqZUAHPx70L7tFYH+um5cVdgpqFtA+B8lbHzqspTgIW1qTnFXkK+RAWC8/wYHIingY+56g+wWe041qMLXmy+0yBZxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E370FC4CEED;
+	Fri, 22 Aug 2025 14:59:51 +0000 (UTC)
+Date: Fri, 22 Aug 2025 16:59:49 +0200
+From: Greg KH <greg@kroah.com>
+To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6.16 0/9] 6.16.3-rc1 review
+Message-ID: <2025082238-playing-empower-69e5@gregkh>
+References: <20250822123516.780248736@linuxfoundation.org>
+ <20250822144937.GF2771@pc21.mareichelt.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,155 +43,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250820151323.167772-3-clamor95@gmail.com>
+In-Reply-To: <20250822144937.GF2771@pc21.mareichelt.com>
 
-On Wed, Aug 20, 2025 at 06:13:16PM +0300, Svyatoslav Ryhel wrote:
-> Add Tegra114 suffort into existing Tegra124 MC schema with the most notable
-> difference in the amount of EMEM timings.
+On Fri, Aug 22, 2025 at 04:49:37PM +0200, Markus Reichelt wrote:
+> * Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 > 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../nvidia,tegra124-mc.yaml                   | 106 +++++++++++++-----
->  1 file changed, 80 insertions(+), 26 deletions(-)
+> > This is the start of the stable review cycle for the 6.16.3 release.
+> > There are 9 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
 > 
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
-> index 7b18b4d11e0a..e2568040213d 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
-> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
-> @@ -19,7 +19,9 @@ description: |
->  
->  properties:
->    compatible:
-> -    const: nvidia,tegra124-mc
-> +    enum:
-> +      - nvidia,tegra114-mc
-> +      - nvidia,tegra124-mc
->  
->    reg:
->      maxItems: 1
-> @@ -62,31 +64,7 @@ patternProperties:
->              minimum: 1000000
->              maximum: 1066000000
->  
-> -          nvidia,emem-configuration:
-> -            $ref: /schemas/types.yaml#/definitions/uint32-array
+> Hi Greg
+> 
+> 6.16.3-rc1 compiles on x86_64 (Xeon E5-1620 v2, Slackware64-15.0),
+> and boots & runs on x86_64 (AMD Ryzen 5 7520U, Slackware64-current).
+> 
+> No regressions observed, apart from the one already mentioned for
+> 6.16.2-rc1.
+> Thus I tested 6.16.3-rc1 with V3 of the patch and it seems to work ok:
+> https://lore.kernel.org/stable/20250821105806.1453833-1-wangzijie1@honor.com/
 
-The type should stay here. It is not conditional.
-
-> -            description: |
-> -              Values to be written to the EMEM register block. See section
-> -              "15.6.1 MC Registers" in the TRM.
-> -            items:
-> -              - description: MC_EMEM_ARB_CFG
-> -              - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> -              - description: MC_EMEM_ARB_TIMING_RCD
-> -              - description: MC_EMEM_ARB_TIMING_RP
-> -              - description: MC_EMEM_ARB_TIMING_RC
-> -              - description: MC_EMEM_ARB_TIMING_RAS
-> -              - description: MC_EMEM_ARB_TIMING_FAW
-> -              - description: MC_EMEM_ARB_TIMING_RRD
-> -              - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> -              - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> -              - description: MC_EMEM_ARB_TIMING_R2R
-> -              - description: MC_EMEM_ARB_TIMING_W2W
-> -              - description: MC_EMEM_ARB_TIMING_R2W
-> -              - description: MC_EMEM_ARB_TIMING_W2R
-> -              - description: MC_EMEM_ARB_DA_TURNS
-> -              - description: MC_EMEM_ARB_DA_COVERS
-> -              - description: MC_EMEM_ARB_MISC0
-> -              - description: MC_EMEM_ARB_MISC1
-> -              - description: MC_EMEM_ARB_RING1_THROTTLE
-> +          nvidia,emem-configuration: true
->  
->          required:
->            - clock-frequency
-> @@ -109,6 +87,82 @@ required:
->    - "#iommu-cells"
->    - "#interconnect-cells"
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra114-mc
-> +    then:
-> +      patternProperties:
-> +        "^emc-timings-[0-9]+$":
-> +          patternProperties:
-> +            "^timing-[0-9]+$":
-> +              properties:
-> +                nvidia,emem-configuration:
-> +                  $ref: /schemas/types.yaml#/definitions/uint32-array
-> +                  description: |
-
-Drop '|'.
-
-> +                    Values to be written to the EMEM register block. See section
-> +                    "20.11.1 MC Registers" in the TRM.
-> +                  items:
-> +                    - description: MC_EMEM_ARB_CFG
-> +                    - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> +                    - description: MC_EMEM_ARB_TIMING_RCD
-> +                    - description: MC_EMEM_ARB_TIMING_RP
-> +                    - description: MC_EMEM_ARB_TIMING_RC
-> +                    - description: MC_EMEM_ARB_TIMING_RAS
-> +                    - description: MC_EMEM_ARB_TIMING_FAW
-> +                    - description: MC_EMEM_ARB_TIMING_RRD
-> +                    - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> +                    - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> +                    - description: MC_EMEM_ARB_TIMING_R2R
-> +                    - description: MC_EMEM_ARB_TIMING_W2W
-> +                    - description: MC_EMEM_ARB_TIMING_R2W
-> +                    - description: MC_EMEM_ARB_TIMING_W2R
-> +                    - description: MC_EMEM_ARB_DA_TURNS
-> +                    - description: MC_EMEM_ARB_DA_COVERS
-> +                    - description: MC_EMEM_ARB_MISC0
-> +                    - description: MC_EMEM_ARB_RING1_THROTTLE
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra124-mc
-> +    then:
-> +      patternProperties:
-> +        "^emc-timings-[0-9]+$":
-> +          patternProperties:
-> +            "^timing-[0-9]+$":
-> +              properties:
-> +                nvidia,emem-configuration:
-> +                  $ref: /schemas/types.yaml#/definitions/uint32-array
-> +                  description: |
-> +                    Values to be written to the EMEM register block. See section
-> +                    "15.6.1 MC Registers" in the TRM.
-> +                  items:
-> +                    - description: MC_EMEM_ARB_CFG
-> +                    - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> +                    - description: MC_EMEM_ARB_TIMING_RCD
-> +                    - description: MC_EMEM_ARB_TIMING_RP
-> +                    - description: MC_EMEM_ARB_TIMING_RC
-> +                    - description: MC_EMEM_ARB_TIMING_RAS
-> +                    - description: MC_EMEM_ARB_TIMING_FAW
-> +                    - description: MC_EMEM_ARB_TIMING_RRD
-> +                    - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> +                    - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> +                    - description: MC_EMEM_ARB_TIMING_R2R
-> +                    - description: MC_EMEM_ARB_TIMING_W2W
-> +                    - description: MC_EMEM_ARB_TIMING_R2W
-> +                    - description: MC_EMEM_ARB_TIMING_W2R
-> +                    - description: MC_EMEM_ARB_DA_TURNS
-> +                    - description: MC_EMEM_ARB_DA_COVERS
-> +                    - description: MC_EMEM_ARB_MISC0
-> +                    - description: MC_EMEM_ARB_MISC1
-> +                    - description: MC_EMEM_ARB_RING1_THROTTLE
-
-I imagine every SoC is going to be slightly different. I really don't 
-care to know what are all the magic registers in the list, so I would 
-just drop all this and just document the length. Just treat it as opaque 
-data like calibration data we have in other bindings.
-
-Rob
+Yeah, that one needs to get into Linus's tree, hopefully soon...
 
