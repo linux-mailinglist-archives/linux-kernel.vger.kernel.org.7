@@ -1,95 +1,114 @@
-Return-Path: <linux-kernel+bounces-780873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DB74B30A69
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:30:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C190B30A70
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBE0BA06EED
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:30:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B0181CC07D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5390F1684B4;
-	Fri, 22 Aug 2025 00:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF5C7E792;
+	Fri, 22 Aug 2025 00:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNBYSdKR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="msvGCuMX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75B0153BE9;
-	Fri, 22 Aug 2025 00:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E80322E;
+	Fri, 22 Aug 2025 00:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755822623; cv=none; b=JasqfuMTVvJozPqYe36aR89ZgCUaZ3adE7nmMl+Ekno9SpJYDeNMlnur1FO/sw8o0UKgi98DKvro+WEAYMq72DiBpoSnBit3SPmtJa9cNvS2RIOAohwNQ5rfoCHTbFm5jq0US6EdSV/yDq5w9An4dFPUbXCpcQtVOPgeAt8hQ9c=
+	t=1755822982; cv=none; b=W8WlEHoCm0j9U3JiGvx4EegT3RbE3Y9o11x6+m64hlaDGaRMIB2cz66z0UrkhEmpMA9DvHaIfDR3hklyXEZ/3e/FzuWJ90mrl+sXifvOzLKTNhcum4doG/WYpvL3RbhyjCum7XtYEuFBM6to82Tk8u9U0PDN3DdJfyKpA+zu2w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755822623; c=relaxed/simple;
-	bh=VKRl8cnNoiINeeX3AA2VXrrO6NBigYUCFhxRKeI7hKY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=MQ9ucZdDOOusT443ZFMSMe0owPi8yPxdn0aNgccHFpap7XCdc2OZtPIAQO7r51MTS9sR88aG60qgVyRcom/2Cc3fHncv3y2kIvtaMqPCrsxzxwF9LC8Ryxr6TyjGxn/syiku9SoiSMGslsa6wwOIEHO/ZYWIAJ7q8S3RgidToCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lNBYSdKR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F5E9C4CEEB;
-	Fri, 22 Aug 2025 00:30:23 +0000 (UTC)
+	s=arc-20240116; t=1755822982; c=relaxed/simple;
+	bh=phIRh9Mt3+S/rwTUKbjev/Q6p8ulUBAJlUSelhRf/sY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n1zVJh+UwDugIBco6imjFSwzZ6+lwhflnhUOg5LGARc6IC6M4Axh6GYDoF+rkqFLWPaitx2QJeQ5NtZe12h51SuW1JaGHyDXO9vDXBAxlq8xFApfKIl5UIwzUNuyjaIJWF1XLGi7RTX7tf4k3f9EZWVUbT7Wj039X4BccQXMa7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=msvGCuMX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FEC6C4CEEB;
+	Fri, 22 Aug 2025 00:36:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755822623;
-	bh=VKRl8cnNoiINeeX3AA2VXrrO6NBigYUCFhxRKeI7hKY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=lNBYSdKRL4Syci8ory0BoTOzrTklutL1HCnL3g+AiI1vbl+8UdPngk/H1INGwI6z6
-	 zQ4cGvdKk/EdOZF4HmaEfLR0oOKaLzmWy2mnAPPS6DrU0M1StK4lCZK9lzpVCo5SCf
-	 4wKnqZQiEidRiOYmAOIb422ogAMgadVhOYr/5q8mK+BiUepX5WBpebiiZwrkFUSFIF
-	 Ead4OgZ+uaZ0zQjjO4ZESkIjht7svDysQHYkLGqcFnJ/4LTjkh+Q0OjqftQ/vcAK8t
-	 lTHpTmsLgIoLAfMwJQgnZIFHedoie3Kpac3sM2fTSpyO1YSPVoVL/phSRCecH4GGaC
-	 8nTjTeqWwzvmA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADC58383BF68;
-	Fri, 22 Aug 2025 00:30:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1755822981;
+	bh=phIRh9Mt3+S/rwTUKbjev/Q6p8ulUBAJlUSelhRf/sY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=msvGCuMXFqCfoXk6IWjuAsPbROe5Y/mf5f6gJv2ixGlCSubOJQW+zcAkplMTsGeQt
+	 yGN05AV/59CDwsAun7JH8HY1bJ0Q/1kSqTpx1eBInHVl90GBltxwTo9C/5HNZtikvB
+	 kn7G5SNlNmWIPZqOxOlYaqjmhgNJb9G/dR7+vpa8jZPbB6EpKIPl4EkmJ6Uzz/W4j1
+	 9lIBeoJhgd+1LFg15Zdhm14uIBHb6c2uDDsuIyDpT+VyTMRghboLVdLHiOZV7MFHV8
+	 /Ehrl233plJDckMBICdTNN+nH+uwjJmXDZ5Qmr3n810Ey2kxltkvQi904cPBlcxLaQ
+	 WHKHh0Eb7+Npg==
+Date: Thu, 21 Aug 2025 17:36:20 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Xu Liang <lxu@maxlinear.com>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 1/3] net: phy: mxl-86110: add basic support
+ for led_brightness_set op
+Message-ID: <20250821173620.367ce05c@kernel.org>
+In-Reply-To: <aKXOzyAg728qcylz@pidgin.makrotopia.org>
+References: <a63f1487c3d36fc150fa3a920cd3ab19feb9b9f9.1755691622.git.daniel@makrotopia.org>
+	<73c364ee-2712-4b95-a05b-886c3e4c4e15@lunn.ch>
+	<aKXOzyAg728qcylz@pidgin.makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/2] net: Remove the use of dev_err_probe()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175582263224.1251664.3095429249858247888.git-patchwork-notify@kernel.org>
-Date: Fri, 22 Aug 2025 00:30:32 +0000
-References: <20250820085749.397586-1-zhao.xichao@vivo.com>
-In-Reply-To: <20250820085749.397586-1-zhao.xichao@vivo.com>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: hauke@hauke-m.de, andrew@lunn.ch, olteanv@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- shaojijie@huawei.com, shenjian15@huawei.com, salil.mehta@huawei.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 20 Aug 2025 16:57:47 +0800 you wrote:
-> The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
-> Therefore, remove the useless call to dev_err_probe(), and just
-> return the value instead.
+On Wed, 20 Aug 2025 14:34:07 +0100 Daniel Golle wrote:
+> > > +	if (index >= MXL86110_MAX_LEDS)
+> > > +		return -EINVAL;
+> > > +
+> > > +	/* force manual control */
+> > > +	set = MXL86110_COM_EXT_LED_GEN_CFG_LFE(index);
+> > > +	/* clear previous force mode */
+> > > +	mask = MXL86110_COM_EXT_LED_GEN_CFG_LFM(index);
+> > > +
+> > > +	/* force LED to be permanently on */
+> > > +	if (value != LED_OFF)
+> > > +		set |= MXL86110_COM_EXT_LED_GEN_CFG_LFME(index);  
+> > 
+> > That is particularly complex. We know index is a u8, so why not
+> > GENMASK_U8(1 + 3 * index, 3 * index)? But set is a u16, so
+> > GENMASK_U16() would also be valid.  
 > 
-> Xichao Zhao (2):
->   net: hibmcge: Remove the use of dev_err_probe()
->   net: dsa: Remove the use of dev_err_probe()
+> I chose this construct to avoid reusing the macro parameter as gcc would
+> rightously complain about that potentially having unexpected side-effects.
 > 
-> [...]
+> Eg.
+> 
+> #define FOO(a) ((a)+(a))
+> 
+> Now with var=10, when calling FOO(var++) the result will be 21 and
+> var will be equal to 12, which isn't intuitive without seeing the
+> macro definition.
+> 
+> Also using GENMASK_TYPE would not avoid the problem of macro
+> parameter reuse.
+> 
+> However, I agree that the macro itself is also weirdly complex and
+> confusing (but at the same time also very common, a quick grep reveals
+> hundreds of occurances of that pattern in Linux sources), so maybe we
+> should introduce some generic helpers for this (quite common) use-case?
+> I can do that, but I certainly can't take care of migrating all the
+> existing uses of this pattern to switch to the new helper.
 
-Here is the summary with links:
-  - [1/2] net: hibmcge: Remove the use of dev_err_probe()
-    https://git.kernel.org/netdev/net-next/c/ed1e7e22571c
-  - [2/2] net: dsa: Remove the use of dev_err_probe()
-    https://git.kernel.org/netdev/net-next/c/5e91879a7a4e
+IMHO this is one of the cases where the code would be far clearer
+without he macros..
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+#define MXL86110_COM_EXT_LED_GEN_CFG			0xA00B
+# define MXL86110_COM_EXT_LED_GEN_CFG_LFME(x)		(1 << (3 * (x)))
+# define MXL86110_COM_EXT_LED_GEN_CFG_LFE(x)		(2 << (3 * (x)))
+# define MXL86110_COM_EXT_LED_GEN_CFG_MASK(x)		(3 << (3 * (x)))
 
-
+Right?
 
