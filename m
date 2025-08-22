@@ -1,164 +1,81 @@
-Return-Path: <linux-kernel+bounces-781527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87893B31387
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:41:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10BC1B313CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ECF31D2029A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:37:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E97CF4E619D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFDD2F3623;
-	Fri, 22 Aug 2025 09:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97C92F618E;
+	Fri, 22 Aug 2025 09:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XzD4ZkWM"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="UhkiRzGN"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C028D2FD1C9
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F12A2EFDB8;
+	Fri, 22 Aug 2025 09:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755855028; cv=none; b=t4IMZ4p1LoAGWzR+mfqE87MT135VILNghP7aSk46v3JM3gGe0GbNTmp54ZOfnEPsCrhbukPDFSc7OGvG6THW5RrupU6/FZhzh6sgrRGyZ+x6Zt4fXhtH4VwUGdtD9Lg4bVW2mSEdUN+nun/gAn+l9Jfk8B/VtEkGtkKkOBgY4Tc=
+	t=1755855575; cv=none; b=kprVBXFRTakoovmvSnvmY7EgG7TuHcbfk+xEkA9GKfVSc29N1nEmgW4r4EcMlTW296bbjmBhUglHyfNqARlETi/u4Eu+3uXaK6Bj5ndK6ktVmAQDxO0p5AV7qCKc/v7uRIERRKZr1pJX/FSrA9z2pGKiFYlZLexslMbBu5UZSfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755855028; c=relaxed/simple;
-	bh=CGZC9rvDYJn6hoomOPZa+LcY3gSlz6wSmOoeiMhP2IU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=QzBcfUhC3CCdUTAIic91PEdasRRYipONRtyWfmb84X7Sxz6F18Bkpv3EjjkQgGfK9nmFyiRr7Usb9jDsLdELfNLpw98uU20rux02ZnaeVYe8/Z5MB3Y9IvEFKvEQHpESk+euYgq5hWIQhwW+mjbVSMaCos7zOgLnKvj7NZaWt74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XzD4ZkWM; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250822093025epoutp0346ed50aca4c891ad96cd8f22157d98fe~eDNepTCh00953209532epoutp03O
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:30:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250822093025epoutp0346ed50aca4c891ad96cd8f22157d98fe~eDNepTCh00953209532epoutp03O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755855025;
-	bh=Gq+PpG5cVj4mp8JBa0dZZvGn/EEDRm/JzW0Q8UqHc3o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XzD4ZkWM3FTRvFeP3iVAUO197ilgj8h0S1DNyQP2XFIDOq0+mc8A6yC0AG3TtbLq6
-	 yIuaHJ9G/fKyLaDMmSzxwtYQGEFr/RuJISWN2mihv3MM+KdIFJzl1oCDgXlp3pj3Bb
-	 smlFr8KGy2qY9MvyVrBNPi/UrRGRz4xwVJ8ZGToU=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250822093024epcas5p13a69b1277f50affcf4862339dd4540da~eDNd2TI7q1782717827epcas5p10;
-	Fri, 22 Aug 2025 09:30:24 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.88]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4c7Zfl2Fkfz3hhTF; Fri, 22 Aug
-	2025 09:30:23 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f~eDNcRlRyr2690826908epcas5p4w;
-	Fri, 22 Aug 2025 09:30:22 +0000 (GMT)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250822093019epsmtip2641178230191f30da0a89d4d5af595c9~eDNZQkGfV2817928179epsmtip2b;
-	Fri, 22 Aug 2025 09:30:19 +0000 (GMT)
-From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-To: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
-	andre.draszik@linaro.org, peter.griffin@linaro.org, kauschluss@disroot.org,
-	ivo.ivanov.ivanov1@gmail.com, igor.belwon@mentallysanemainliners.org,
-	johan@kernel.org, m.szyprowski@samsung.com, s.nawrocki@samsung.com,
-	pritam.sutar@samsung.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
-	dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
-	selvarasu.g@samsung.com
-Subject: [PATCH v7 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 combo ssphy
-Date: Fri, 22 Aug 2025 15:08:44 +0530
-Message-Id: <20250822093845.1179395-6-pritam.sutar@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250822093845.1179395-1-pritam.sutar@samsung.com>
+	s=arc-20240116; t=1755855575; c=relaxed/simple;
+	bh=escQ0eYemKQ36vqXovrhDFWhLwxwMiVnwgqPn+khWlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MBEXbZgpRzjh7OclLQHKjloBSsb//mlykOQVbKhznDJlXE3NJTyT28Pj7n+GeMNWWMXvkqnoICqZETbJMLnXc2v0BsA+vheONvurNN1g0hiPl+GSyr0yjD63JUjRhBbGcEl6yPI6IrXXskjNHDFxdzKdaWEv5TdzaUIodI2FMlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=UhkiRzGN; arc=none smtp.client-ip=220.197.32.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=l0H7eWI6XbSubtchLLYle5o/qTdCGwy3vl8S3tVMSUQ=;
+	b=UhkiRzGNmJIrB+P3HlxAvrgqc0kGw8nszom35do73cxuOA1dcPOL/afy2fJC10
+	sis+r5O1wIRuwhAp0Kd0jKPmU8Q7xdObn8FlI9+RgDO/OB1aQXXpfRiPAg1d6w+f
+	a374bxAQpt78c4ccAH6kkdf/4s6gSkSwtdFEgXQFk2a9k=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgD3tG6lOqhoRwwWAw--.12680S3;
+	Fri, 22 Aug 2025 17:38:47 +0800 (CST)
+Date: Fri, 22 Aug 2025 17:38:45 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Stefan Agner <stefan@agner.ch>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH 1/4] ARM: dts: vfxxx: rename nodename iomux to pinctrl
+Message-ID: <aKg6pYNjxZvjkJq6@dragon>
+References: <20250819-vfxxx_warning-v1-0-080930d8e1ea@nxp.com>
+ <20250819-vfxxx_warning-v1-1-080930d8e1ea@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f
-References: <20250822093845.1179395-1-pritam.sutar@samsung.com>
-	<CGME20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f@epcas5p4.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819-vfxxx_warning-v1-1-080930d8e1ea@nxp.com>
+X-CM-TRANSID:M88vCgD3tG6lOqhoRwwWAw--.12680S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUzOzVUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNAn8YmioOqkPXAAA3j
 
-This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
-compatible to the USB3.0 SS(5Gbps). It requires two clocks, named
-"phy" and "ref". The required supplies for USB3.1 are named as
-vdd075_usb30(0.75v), vdd18_usb30(1.8v).
+On Tue, Aug 19, 2025 at 03:44:06PM -0400, Frank Li wrote:
+> Rename nodename iomux to pinctrl to fix below warnings:
+>   arch/arm/boot/dts/nxp/vf/vf610-zii-scu4-aib.dtb: iomuxc@40048000 (fsl,vf610-iomuxc): $nodename:0: 'iomuxc@40048000' does not match '^(pinctrl|pinmux)(@[0-9a-f]+)?$'
+> 	from schema $id: http://devicetree.org/schemas/pinctrl/fsl,vf610-iomuxc.yaml#
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Add schemas for combo ssphy found on this SoC.
+Fabio beat you to this one ;)
 
-Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
----
- .../bindings/phy/samsung,usb3-drd-phy.yaml    | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-index f0cfca5736b8..96e5bbb2e42c 100644
---- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-@@ -34,6 +34,7 @@ properties:
-       - samsung,exynos7870-usbdrd-phy
-       - samsung,exynos850-usbdrd-phy
-       - samsung,exynos990-usbdrd-phy
-+      - samsung,exynosautov920-usb31drd-combo-ssphy
-       - samsung,exynosautov920-usbdrd-combo-hsphy
-       - samsung,exynosautov920-usbdrd-phy
- 
-@@ -118,6 +119,12 @@ properties:
-   vdd18-usb20-supply:
-     description: 1.8V power supply for the USB 2.0 phy.
- 
-+  dvdd075-usb30-supply:
-+    description: 0.75V power supply for the USB 3.0 phy.
-+
-+  vdd18-usb30-supply:
-+    description: 1.8V power supply for the USB 3.0 phy.
-+
- required:
-   - compatible
-   - clocks
-@@ -227,6 +234,7 @@ allOf:
-               - samsung,exynos7870-usbdrd-phy
-               - samsung,exynos850-usbdrd-phy
-               - samsung,exynos990-usbdrd-phy
-+              - samsung,exynosautov920-usb31drd-combo-ssphy
-               - samsung,exynosautov920-usbdrd-combo-hsphy
-               - samsung,exynosautov920-usbdrd-phy
-     then:
-@@ -262,6 +270,21 @@ allOf:
-       properties:
-         dvdd075-usb20-supply: false
-         vdd18-usb20-supply: false
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,exynosautov920-usb31drd-combo-ssphy
-+    then:
-+      required:
-+        - dvdd075-usb30-supply
-+        - vdd18-usb30-supply
-+
-+    else:
-+      properties:
-+        dvdd075-usb30-supply: false
-+        vdd18-usb30-supply: false
- 
- unevaluatedProperties: false
- 
--- 
-2.34.1
+Shawn
 
 
