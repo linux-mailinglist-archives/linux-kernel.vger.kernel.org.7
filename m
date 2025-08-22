@@ -1,282 +1,212 @@
-Return-Path: <linux-kernel+bounces-781293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE64B3109C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:38:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F6D0B31099
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:37:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E6CB606B20
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:37:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E765A600F88
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6EC2E8B64;
-	Fri, 22 Aug 2025 07:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VscEH+NL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A922E88AC;
+	Fri, 22 Aug 2025 07:37:16 +0000 (UTC)
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7FA2E7BB1;
-	Fri, 22 Aug 2025 07:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755848261; cv=fail; b=gv1yYMt1hL+Iq7VLPdpLGcf1wjAOxjHsNoBytjW6nU6aQCOpCAmrHvFeHrxPfTKxi7Lxp+1PunOo7Wcfnq5fni/SWgGgt7Qqg7yezzZseqhmizmUkjCkPLMw33U1s99XVQP72f42Jjv25zgkiUgVXrHk9ZBd46O847Gij2YQ/MA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755848261; c=relaxed/simple;
-	bh=VBZL8iw1bUGbARUiIj8InOPAbBfoL3zRxkL4uldaWQ4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WoqYVj1C+RHyfWv0kkS3AHIizhc1dCGTYHhfoq7JgkehFu93JCL6WN/szT7E0N+MrIfCrLYYDN22EWm6D30QR0LA+LpXSbZl12kTYXqr0V3LsKPTCys1QmjOeu3L5gqb9tZpu3zQz/xHwXcw3LbIyfdnAwQKthnq2It8ky2XfEM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VscEH+NL; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755848258; x=1787384258;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=VBZL8iw1bUGbARUiIj8InOPAbBfoL3zRxkL4uldaWQ4=;
-  b=VscEH+NLIgN47ONzKAUYqb5G5TLLjtR1lC0u7BCaYwVnifVD/02pb2d1
-   a6aDr+n9BXMA77NhEl1+NUVSpXhh5NiplEcOlD5+qjYzsC5hvlyb68m9J
-   9uTAVyzsjYvF5McYvs0kA80DKKmBit3xTo/6Wtx+umh6J/1m8NL/7zlew
-   jRE5icPQ3EOUxeAOhpj66WdSpw9SKgUefAnwmqCVpItlA44JL6nkCPiZ+
-   6kyO6Q614I5hV5H3NELg15JXDJ/bJO3DEiUMbsoRiu5eg+5U0iG1KI2J4
-   GIfsj0IUsQ7kXql7AS+sLw9U1Ki6jU21Ca6Vf/8Z/zTN8lZoyTCi0cw1l
-   Q==;
-X-CSE-ConnectionGUID: IspQEmezQdGYld63TN3Ufg==
-X-CSE-MsgGUID: WydHh5qjS3y/skTcNzuosA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="68754000"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="68754000"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 00:37:37 -0700
-X-CSE-ConnectionGUID: y7Afnbg/TQyEwbE5aEULWw==
-X-CSE-MsgGUID: 29lKMSLrQ+29tgpcM90nAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="199601040"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 00:37:30 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 22 Aug 2025 00:37:30 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Fri, 22 Aug 2025 00:37:30 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.83)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 22 Aug 2025 00:37:30 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KzTFYJ9ulWv2lAT5WnpefIgayPn9LzcXRpn8iLDhwoAwdsMBwCIKTJpQJ7E/NSCGspmwwbEofiefu3T8YyKOLxBvWDnmYZeeoFIUtYHurst/ZfA9xXgrbNmoFMvCZlPjL7pWek7rsW1AgiR4NDkEfzrpeGqHW/nGsYodURTx0cZlXoyC9Z8XD3sN+UU4NRFMd6oxRCQm0Vo1wWR4zLYm4+DV9+0ERAKKv/N4LV5BXIv9STiqMsEG36aFeIcnV0X5ROh2xEjhdtsFNv6+5K9wht6AUMp1RH96hgz2Y4g9WUZ+XyecOhZj5mkQw2vZTb6Bq0Kw/MvTNOMBJ1x7nvgn1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6bJoOdvjf1XG//lsQT7QvvRu+gIxqRz97YA9T9vz4eg=;
- b=rsrkjkXXr/ifKn+aKa6039N05ThiSg0HFv9KWUC3BD6U9dr/jOd96bPsSTyJEPty5O/xtXfgqrGJsvQ41u3cWyYOElwqun28C/OnkEcT2iWM8LJ/DZ5a0XUebyccrgXB+ARQKrtjoMOdMRJKS8ALF3erpHkNYbnsY0eYGCRmwgpDucbFVwCUrIeZDwEjk/HSjp6soslhejNnA4cHLqIYfimd5eOQWCD69VSFBEflSjrorsUDfKyo/jARmxMR1kfwlgcl08j1nmlTUKgIE7A9M0Q/9dpLNUgaLQhy3ojqbPa4pBw6QB02ei+x8mIl7sni0FQJaZdklhoZELuPHjJsgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN2PR11MB3934.namprd11.prod.outlook.com (2603:10b6:208:152::20)
- by IA0PR11MB7883.namprd11.prod.outlook.com (2603:10b6:208:3de::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Fri, 22 Aug
- 2025 07:37:22 +0000
-Received: from MN2PR11MB3934.namprd11.prod.outlook.com
- ([fe80::45fd:d835:38c1:f5c2]) by MN2PR11MB3934.namprd11.prod.outlook.com
- ([fe80::45fd:d835:38c1:f5c2%6]) with mapi id 15.20.9052.014; Fri, 22 Aug 2025
- 07:37:22 +0000
-Date: Fri, 22 Aug 2025 09:36:40 +0200
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: Ada Couprie Diaz <ada.coupriediaz@arm.com>
-CC: <nathan@kernel.org>, <arnd@arndb.de>, <broonie@kernel.org>,
-	<Liam.Howlett@oracle.com>, <urezki@gmail.com>, <will@kernel.org>,
-	<kaleshsingh@google.com>, <rppt@kernel.org>, <leitao@debian.org>,
-	<coxu@redhat.com>, <surenb@google.com>, <akpm@linux-foundation.org>,
-	<luto@kernel.org>, <jpoimboe@kernel.org>, <changyuanl@google.com>,
-	<hpa@zytor.com>, <dvyukov@google.com>, <kas@kernel.org>, <corbet@lwn.net>,
-	<vincenzo.frascino@arm.com>, <smostafa@google.com>,
-	<nick.desaulniers+lkml@gmail.com>, <morbo@google.com>,
-	<andreyknvl@gmail.com>, <alexander.shishkin@linux.intel.com>,
-	<thiago.bauermann@linaro.org>, <catalin.marinas@arm.com>,
-	<ryabinin.a.a@gmail.com>, <jan.kiszka@siemens.com>, <jbohac@suse.cz>,
-	<dan.j.williams@intel.com>, <joel.granados@kernel.org>, <baohua@kernel.org>,
-	<kevin.brodsky@arm.com>, <nicolas.schier@linux.dev>, <pcc@google.com>,
-	<andriy.shevchenko@linux.intel.com>, <wei.liu@kernel.org>, <bp@alien8.de>,
-	<xin@zytor.com>, <pankaj.gupta@amd.com>, <vbabka@suse.cz>,
-	<glider@google.com>, <jgross@suse.com>, <kees@kernel.org>,
-	<jhubbard@nvidia.com>, <joey.gouly@arm.com>, <ardb@kernel.org>,
-	<thuth@redhat.com>, <pasha.tatashin@soleen.com>,
-	<kristina.martsenko@arm.com>, <bigeasy@linutronix.de>,
-	<lorenzo.stoakes@oracle.com>, <jason.andryuk@amd.com>, <david@redhat.com>,
-	<graf@amazon.com>, <wangkefeng.wang@huawei.com>, <ziy@nvidia.com>,
-	<mark.rutland@arm.com>, <dave.hansen@linux.intel.com>,
-	<samuel.holland@sifive.com>, <kbingham@kernel.org>,
-	<trintaeoitogc@gmail.com>, <scott@os.amperecomputing.com>,
-	<justinstitt@google.com>, <kuan-ying.lee@canonical.com>, <maz@kernel.org>,
-	<tglx@linutronix.de>, <samitolvanen@google.com>, <mhocko@suse.com>,
-	<nunodasneves@linux.microsoft.com>, <brgerst@gmail.com>,
-	<willy@infradead.org>, <ubizjak@gmail.com>, <peterz@infradead.org>,
-	<mingo@redhat.com>, <sohil.mehta@intel.com>, <linux-mm@kvack.org>,
-	<linux-kbuild@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<x86@kernel.org>, <llvm@lists.linux.dev>, <kasan-dev@googlegroups.com>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 00/18] kasan: x86: arm64: KASAN tag-based mode for x86
-Message-ID: <rbppxnzk5qcb3xn3gexennv3erveqdndxljytqe7bsbnfa4hd4@6zvjav6iuzhi>
-References: <cover.1755004923.git.maciej.wieczor-retman@intel.com>
- <9eb211ee-94bf-431b-981c-e305c8ea5e0b@arm.com>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9eb211ee-94bf-431b-981c-e305c8ea5e0b@arm.com>
-X-ClientProxiedBy: DU2PR04CA0332.eurprd04.prod.outlook.com
- (2603:10a6:10:2b4::20) To MN2PR11MB3934.namprd11.prod.outlook.com
- (2603:10b6:208:152::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD70922DA1F
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 07:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755848235; cv=none; b=Cj7O5byTuuQms/hjSqwQl9HF6jaVlOVXpW7iAZgHcIOWUavAbE8lQaSpvYxYexs4zlJ+crLg/ZT5aSmMJU8FmQfdSd4GsRyDAuq0UNrcCru1uvOGN5/Qb0kOzRZo0B5HZ/FWC6g7+p9+LI1mn5KNKHAY16jgRW2csyIQNwZMaDE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755848235; c=relaxed/simple;
+	bh=krPOIuAnX1YAn/LSlLgHFThnWB2dzMlHdGdTX+Q+fpQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QU6nsiq50Y4fRoEXFfvPM1io94GtM7KwbD6+sjEKLf2Ik2NVKcEwPABHQlEObNi4Ztc6dBgqOYDhn6QtK5yPMtwEvtZD2HSsqD+aUiZFN3+s2NM9ijZgNsjLqcz+uwDPadsbGJPnFMV0R+cxfmUCKe6knuG5kBKx0lnhPhavPNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-53b17552198so603131e0c.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 00:37:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755848232; x=1756453032;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0FARPr6rK+Mbgdw6vlFkXYOZ64JiCWby6oGm3JaoyMM=;
+        b=EqYdI+nS08b9+aX1hjkpWQVlOJpXgc6IifgG6RwpsK0k1gKwHWi5nMFuM187PsOM0u
+         0qdLb1dPI5FWi5uRln0F3PlCRcwQ+xi3qwfiVrA3MEZAcLoFg9T9TqOua313QGhZjyh4
+         2ssnxXt7eZlsdtS6zeCBwrBY4GpXJwjpoTBFUJa0/pjM7TzwBxFjOgxTSAEmnXLwOIML
+         9Dd6uZKXOPMt30V80kEEkGMVtbhRk6EkOYdSjbbUZwJKkKOzooGtQLH+g8YPEeiV7H/m
+         mhqhMYQxdT6JXLQUoJuuXsgp2WIvpY+mAX6x2E9kES7edrunWwOnM4XRjF/VvNbAit3A
+         iXEg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7BnfQOpvt8ZJJSFcVXY2ZVrnU/gh2lN4/jx8jkHUIgvlPoaAVsIsSIS7wG6WZDCjwbeGfWCU3mQcGuAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiSe1NhLpWTu41rFo9MtzFgxzOd3bFvr77Taa9CsYB6ScapH39
+	E1yYW4BfwxLQN8gCL2yMH+vEht4oTBt95zemaTBSSGm5xH9vPJt0LVFXQiBtoTau
+X-Gm-Gg: ASbGncsTRgSKukkXgS8OdsUddsdYrkNoQ/UBJ7YUmhZ5kNTeScqYQCKAYJ7zmmNRgMz
+	fLxOgvEbqkSS1DG0VmG8cloAkK+Yc7Vcwt8F9HYfRnGPftUZ1gAl1eVEabIoSv+fk8QpAzjJISl
+	nK4q/mpej7mpyxVu9xyGNE0SkW8fMJ66wbfyD8ZtbvnZwZssLuVhcMp3znwQjB7oAv9Z6jLmRvN
+	UvmdjJLbnLcQ1dVwA46QqkSIkd/CI4dw4YGOPhoM79p7dKnkfUr0SYG64cjoJrUUXuZt59IRKbj
+	eequPDLFHI0TzMn9vIqw2nL7Y8FWRV3C6GOjcqUq9wc5Ra2lkXi5UyhoqtMW5wGxA8v5pWjrgX5
+	0GvVafXc2yCPp1/rU6x1rNDikp/rml08ekOrLdt5T4qlgr/L0U+r5t+H8op6b
+X-Google-Smtp-Source: AGHT+IEKrc3utV24tBWZ1g3JES8MaOF+SJVBlSWQHk530WPhefkZdfE3+o6VXaFWMWMXbRljtuFwYg==
+X-Received: by 2002:a05:6122:8285:b0:53c:6d68:1cd5 with SMTP id 71dfb90a1353d-53c8a45b6e8mr613060e0c.15.1755848232290;
+        Fri, 22 Aug 2025 00:37:12 -0700 (PDT)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2bd9a854sm4207608e0c.11.2025.08.22.00.37.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Aug 2025 00:37:12 -0700 (PDT)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-8901915d04fso432531241.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 00:37:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWhfBBobfx7rU6prhNJSkShmZk38vMpttnCUhAflETMNUFVJWv3/yA7KPKjx/qi3aNaqIGZlv90ka48oJg=@vger.kernel.org
+X-Received: by 2002:a05:6102:292c:b0:51a:4906:f198 with SMTP id
+ ada2fe7eead31-51d0f712425mr493191137.32.1755848231779; Fri, 22 Aug 2025
+ 00:37:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR11MB3934:EE_|IA0PR11MB7883:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9f3ab166-5da9-416a-3fbb-08dde14ebb1a
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?Ay17XSIT2h83PR4a8XDzyBjVuKYBkP59XBJuMpZ5VRGBpBjF2H+NvItLNY?=
- =?iso-8859-1?Q?q/ABt0r2YK3ZERa9qVnmU1sdiq7Ra7Pc/faQQkvLwMY9sMrmd9rB2n2tRa?=
- =?iso-8859-1?Q?oFqbs4P91fweqU0LuVyeJjTr9abFRKWib8fIGf6z6K2ExAQVfVGEHAvMui?=
- =?iso-8859-1?Q?6BemfFKqGUJtkRwU0yHLnOjH3hnVE7I6SA4pCJaCDJa2xpjzUvBmyJGyem?=
- =?iso-8859-1?Q?cTYZpI46+mzCYiLrVSFD8cY95vCUXES/CySkKO1XHJHcH2YLsYKz+6fZoP?=
- =?iso-8859-1?Q?rs6ROVRIHf8PY18alrkLu6H2TkcGLPe70ksUiSimOyTvzqEqG3d9nngaWQ?=
- =?iso-8859-1?Q?kpqbbRI20+QEnh5gT3RySVntYn+O4cAbL72xcJ8KqwfzISVRFH5GEruT/U?=
- =?iso-8859-1?Q?QLMd3VKEqIJeqMAAf9tsi1UkvCw7ItNpRWC453ERX7q4KafRVl/6UFPtvN?=
- =?iso-8859-1?Q?6cPvx5nbsE7Y5pf7saYZnlHxybqM4bU8mD11oGXKXJe44YOIZxfXOktwY7?=
- =?iso-8859-1?Q?36BzdV46KPzicVZKJ39BP5DNNz8QRgVxa1NfdFJSg+POsVqiy8AcmdNHoL?=
- =?iso-8859-1?Q?rd9JsvdboN0oF+0CO61Z5UqAPgyhmkoCrX/r0LJje+JFFqbf701/RaSKYK?=
- =?iso-8859-1?Q?9x7CGug+TZO+nLkAuJgtgB+HxcgQW02ElXaVTRbbAAAP99rWOPlSDzb7ke?=
- =?iso-8859-1?Q?wPZqADRR+7v/DjPZ0OA/kqOE3xHAw29oyBF1v0TNBmTrh7rmXhdcRjtI2+?=
- =?iso-8859-1?Q?sSMMONiGEYt+OCPs/8/id2Sc3X7ZcKvUwlCn0jsYXL7oQmGa5UPxV7q7Ui?=
- =?iso-8859-1?Q?Vq7xK1bLWNQXX9wEOW/l7W1yjlHR8oWI0xwe2Z+4s/Pj9QLb/BRTRNYaP3?=
- =?iso-8859-1?Q?vB0VMiqnpJ0ERzLUN9AzasfdTK4n/ZRY+xuMmfPPDbaBSbMIIiFfAKgjvn?=
- =?iso-8859-1?Q?F31kOF3ljaDfiTiwjoBt5BUDFjxFQltJJJ/rw0Dn/G/EpMXNPc+UxQ3q3M?=
- =?iso-8859-1?Q?895WK/FB8SuGyLxebKvt68URx29tE02x3gEAhZ9O03zxGEJml7sT+YHoCF?=
- =?iso-8859-1?Q?EulLSyO2Ot9cRWmzGT//VrOicgDS/Ia1nwuxAG2B/OTo2qbQAIj1ZkhwJy?=
- =?iso-8859-1?Q?W9+byXpy7VOtzmFKtfOVvCM7m255Wfvp3SJNa2g2mXMhtKHrEwP78RuszG?=
- =?iso-8859-1?Q?p689zoXC/ySzelI4iVIUd+eXrQHwO/6bJ2iepsRvDL6udv1/tOPy1oubUG?=
- =?iso-8859-1?Q?XC+o+Pg/Ig2ETBbKP10A8CEe32MMEGc93YK1E3AMxZJCw2mYYAIvFhIM8N?=
- =?iso-8859-1?Q?SRTQt1KQHC2vSKTG9CRPX70IKj6g3iNnWVNBH3IZFP29M3daYuoszbmF3Q?=
- =?iso-8859-1?Q?WXNYDlPUqlUimX76qhnEVgIdW9MDQwdkWV90N5wjVilohnrxXkzPsT8GBy?=
- =?iso-8859-1?Q?QWMfTb5LS8f/nXj4AJpiqOo9b7EHDLjCAOROmBZR06jj0MSvNhDm6VBCH8?=
- =?iso-8859-1?Q?8=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR11MB3934.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?aadM5Hr6K4uVjoaXZVYwNdBeUZQUtyOtgtGco8l9OOS+6vVg8/q5w4YaRQ?=
- =?iso-8859-1?Q?JAHaPjHEUlHzlIi+N5xxOIkpD5cAbIFz7MxadxzWtaOpcg2yLOifDplSgt?=
- =?iso-8859-1?Q?R3UMhw2s4hQPlag0gNrMz2GU957AaEjjJityNnv7coYWDf5fboWbXP73C0?=
- =?iso-8859-1?Q?PXy4quV+V10k70LQXXLVR9RgVILgJg5Y/VedzjNLwFtcvOzSVN5sRzR/y2?=
- =?iso-8859-1?Q?KSi7b7aks3F4TYOgmduX4P2S/1S6/1kFwnIB1YZ9u/WpuWEVUxkhQ2Egn2?=
- =?iso-8859-1?Q?JyMk+ZpVCOCL2fJ4Q99sB31z0g4RMRCQ8fnyTPx+syEAEWFHxgW6f6r/X6?=
- =?iso-8859-1?Q?PyXPP3sttDzS4aaCy9TNuP8UJPRw66KLQucxDmwGuM92Ez0RTplFnI8/DK?=
- =?iso-8859-1?Q?z+UfzKA9wl1ZMhfqwTgGvK3Va7JOjRnfEfeMUMQr6CwWxgLNbIGGPBUO2M?=
- =?iso-8859-1?Q?xnvbJeudtiGN5jjvVjUvCzU43EfHF46ax3xUkegDu7Dp3TAOvr6F42S3HO?=
- =?iso-8859-1?Q?LiOOUwOKp+YK42OXbIRhEKJD4UO4y565Ku+yC+14WtSoFk5iBUNizmzOSs?=
- =?iso-8859-1?Q?QMhjChh4KtmFeUjKqPgWd3DEclZXGUxN1ynZCMJGfHlb84sr0R8XteadYA?=
- =?iso-8859-1?Q?8ChqiHCi4CCkfrfTeHR8CzrdS7KwUX68T9oA0aLFcoyNwOhFrbM6q96Siv?=
- =?iso-8859-1?Q?Pu0spuEJ0Lgax5Cn5oolLwsZd/C3N2KErHLQjsqQOIl2JnrDsY7LCnX553?=
- =?iso-8859-1?Q?q3LEJe/IDfaDIwa/L7CCvdoTLt7byO598Mcv7q+u8vr145eK6O6oRHgrBU?=
- =?iso-8859-1?Q?BWZlGQoh91vTwQmf61q9hx2PG1+8aVOZ8aXywNApJupr4EAf378w631mqK?=
- =?iso-8859-1?Q?xnSlzrRI4NZQRC/5ZJdLyIrDf9EK/W/eLIFdiBa5CxHUwYmjHWSIA380q/?=
- =?iso-8859-1?Q?6PvcrOrntEPBjsfU1UivwSbjl+bHYiBb7Sb0dnw0jNQwkLvQCTN6oqPr0m?=
- =?iso-8859-1?Q?pTwA/sTW10CM8lzPchde4PyRskt57qYmadFKiAn64S1HZPJLA3miU0aRdH?=
- =?iso-8859-1?Q?Qt8oJWiSGlZG6HccQHGDNgJrGrcbJni741zGjMgqw3AsR5c/3ZEX6HlVyO?=
- =?iso-8859-1?Q?nQ7f/OC0zCy1Znv4OjxKe9/z+v3HPK+XsR7DDfdu/DT3Yt/OvisixQClc0?=
- =?iso-8859-1?Q?kbksQnCn6O6oFYIgBotAQuQvKoz+nycXBRQQtbdzBbfknsXhJUVPfQq+F+?=
- =?iso-8859-1?Q?pdCJVYmHNinK35g3SqHmiubGDO+QWT+oGubwqXNJTPQJFXkJjKaXfIU3kK?=
- =?iso-8859-1?Q?nXjokRtJDg6WFH3luzZMvMkvsmBOAWiWbZpU+4zFAP8BA8kLbafvDIe7If?=
- =?iso-8859-1?Q?+fZE0Ox72rbYic9gvUkL1ePCvRc8p3IbyMD8HIF6r9B/ZgBH6AdzEfs+nD?=
- =?iso-8859-1?Q?DjbvgvH7/HcclI4OR1G56JYxv3t4v6wb+K9LDBo77zGdzD9qqnDjPcM3Ke?=
- =?iso-8859-1?Q?5cdz/4VZB/J7CXpTCyN2tZ+r3Y+QiozRP+w6Fgez7K+vkNpNXuSo7Rvdnz?=
- =?iso-8859-1?Q?wqQ1bqdn8FmbqbI3g7p9WCLN22NvHWxmoOOHeMvFjHzMhjC+fvPbUt//im?=
- =?iso-8859-1?Q?kJ7fScgkGIPHccqFz/KhUdMInDynLbXlVTtAEbkyoSKlzpRUV99q9ajGPj?=
- =?iso-8859-1?Q?4oRLhgYptuS9cRRU4z8=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9f3ab166-5da9-416a-3fbb-08dde14ebb1a
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR11MB3934.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 07:37:22.1873
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: A2PHruk0+sGWnrT8wj8Bk+0LUtAsKyYCW98VXBw/B90hGbhe0vfgPNE/nADSA4GO3/tLX75QmMfWCEJUXy8lNojlRr3G4IGi6+x9DnuVwGc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7883
-X-OriginatorOrg: intel.com
+References: <20250627072924.36567-1-lance.yang@linux.dev> <20250627072924.36567-3-lance.yang@linux.dev>
+ <CAMuHMdXR72M+oiJ_WmuHC0Xkq2m4=zqhP8DtW40mHyJTCdS+ew@mail.gmail.com>
+In-Reply-To: <CAMuHMdXR72M+oiJ_WmuHC0Xkq2m4=zqhP8DtW40mHyJTCdS+ew@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 22 Aug 2025 09:37:00 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUHFQcvHzYSQjXZduPUUiStS4Yyv45k5XNY2MeDjSjW0A@mail.gmail.com>
+X-Gm-Features: Ac12FXxI_L5Ws2KwGrFXrK6I6fkxlxM84gwL4BbWTbOUZfcpCqY9qguqBwYwQ8o
+Message-ID: <CAMuHMdUHFQcvHzYSQjXZduPUUiStS4Yyv45k5XNY2MeDjSjW0A@mail.gmail.com>
+Subject: Re: [PATCH 2/3] hung_task: extend hung task blocker tracking to rwsems
+To: Lance Yang <ioworker0@gmail.com>
+Cc: akpm@linux-foundation.org, zi.li@linux.dev, anna.schumaker@oracle.com, 
+	boqun.feng@gmail.com, joel.granados@kernel.org, jstultz@google.com, 
+	kent.overstreet@linux.dev, leonylgao@tencent.com, 
+	linux-kernel@vger.kernel.org, longman@redhat.com, mhiramat@kernel.org, 
+	mingo@redhat.com, mingzhe.yang@ly.com, peterz@infradead.org, 
+	rostedt@goodmis.org, senozhatsky@chromium.org, tfiga@chromium.org, 
+	will@kernel.org, Lance Yang <lance.yang@linux.dev>, Eero Tamminen <oak@helsinkinet.fi>, 
+	linux-m68k <linux-m68k@lists.linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello, and thanks for testing the series!
-
-On 2025-08-21 at 13:30:28 +0100, Ada Couprie Diaz wrote:
->Hi,
+On Fri, 22 Aug 2025 at 09:34, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Fri, 27 Jun 2025 at 09:30, Lance Yang <ioworker0@gmail.com> wrote:
+> > From: Lance Yang <lance.yang@linux.dev>
+> >
+> > Inspired by mutex blocker tracking[1], and having already extended it to
+> > semaphores, let's now add support for reader-writer semaphores (rwsems).
+> >
+> > The approach is simple: when a task enters TASK_UNINTERRUPTIBLE while
+> > waiting for an rwsem, we just call hung_task_set_blocker(). The hung task
+> > detector can then query the rwsem's owner to identify the lock holder.
+> >
+> > Tracking works reliably for writers, as there can only be a single writer
+> > holding the lock, and its task struct is stored in the owner field.
+> >
+> > The main challenge lies with readers. The owner field points to only one
+> > of many concurrent readers, so we might lose track of the blocker if that
+> > specific reader unlocks, even while others remain. This is not a
+> > significant issue, however. In practice, long-lasting lock contention is
+> > almost always caused by a writer. Therefore, reliably tracking the writer
+> > is the primary goal of this patch series ;)
+> >
+> > With this change, the hung task detector can now show blocker task's info
+> > like below:
+> >
+> > [Fri Jun 27 15:21:34 2025] INFO: task cat:28631 blocked for more than 122 seconds.
+> > [Fri Jun 27 15:21:34 2025]       Tainted: G S                  6.16.0-rc3 #8
+> > [Fri Jun 27 15:21:34 2025] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> > [Fri Jun 27 15:21:34 2025] task:cat             state:D stack:0     pid:28631 tgid:28631 ppid:28501  task_flags:0x400000 flags:0x00004000
+> > [Fri Jun 27 15:21:34 2025] Call Trace:
+> > [Fri Jun 27 15:21:34 2025]  <TASK>
+> > [Fri Jun 27 15:21:34 2025]  __schedule+0x7c7/0x1930
+> > [Fri Jun 27 15:21:34 2025]  ? __pfx___schedule+0x10/0x10
+> > [Fri Jun 27 15:21:34 2025]  ? policy_nodemask+0x215/0x340
+> > [Fri Jun 27 15:21:34 2025]  ? _raw_spin_lock_irq+0x8a/0xe0
+> > [Fri Jun 27 15:21:34 2025]  ? __pfx__raw_spin_lock_irq+0x10/0x10
+> > [Fri Jun 27 15:21:34 2025]  schedule+0x6a/0x180
+> > [Fri Jun 27 15:21:34 2025]  schedule_preempt_disabled+0x15/0x30
+> > [Fri Jun 27 15:21:34 2025]  rwsem_down_read_slowpath+0x55e/0xe10
+> > [Fri Jun 27 15:21:34 2025]  ? __pfx_rwsem_down_read_slowpath+0x10/0x10
+> > [Fri Jun 27 15:21:34 2025]  ? __pfx___might_resched+0x10/0x10
+> > [Fri Jun 27 15:21:34 2025]  down_read+0xc9/0x230
+> > [Fri Jun 27 15:21:34 2025]  ? __pfx_down_read+0x10/0x10
+> > [Fri Jun 27 15:21:34 2025]  ? __debugfs_file_get+0x14d/0x700
+> > [Fri Jun 27 15:21:34 2025]  ? __pfx___debugfs_file_get+0x10/0x10
+> > [Fri Jun 27 15:21:34 2025]  ? handle_pte_fault+0x52a/0x710
+> > [Fri Jun 27 15:21:34 2025]  ? selinux_file_permission+0x3a9/0x590
+> > [Fri Jun 27 15:21:34 2025]  read_dummy_rwsem_read+0x4a/0x90
+> > [Fri Jun 27 15:21:34 2025]  full_proxy_read+0xff/0x1c0
+> > [Fri Jun 27 15:21:34 2025]  ? rw_verify_area+0x6d/0x410
+> > [Fri Jun 27 15:21:34 2025]  vfs_read+0x177/0xa50
+> > [Fri Jun 27 15:21:34 2025]  ? __pfx_vfs_read+0x10/0x10
+> > [Fri Jun 27 15:21:34 2025]  ? fdget_pos+0x1cf/0x4c0
+> > [Fri Jun 27 15:21:34 2025]  ksys_read+0xfc/0x1d0
+> > [Fri Jun 27 15:21:34 2025]  ? __pfx_ksys_read+0x10/0x10
+> > [Fri Jun 27 15:21:34 2025]  do_syscall_64+0x66/0x2d0
+> > [Fri Jun 27 15:21:34 2025]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [Fri Jun 27 15:21:34 2025] RIP: 0033:0x7f3f8faefb40
+> > [Fri Jun 27 15:21:34 2025] RSP: 002b:00007ffdeda5ab98 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> > [Fri Jun 27 15:21:34 2025] RAX: ffffffffffffffda RBX: 0000000000010000 RCX: 00007f3f8faefb40
+> > [Fri Jun 27 15:21:34 2025] RDX: 0000000000010000 RSI: 00000000010fa000 RDI: 0000000000000003
+> > [Fri Jun 27 15:21:34 2025] RBP: 00000000010fa000 R08: 0000000000000000 R09: 0000000000010fff
+> > [Fri Jun 27 15:21:34 2025] R10: 00007ffdeda59fe0 R11: 0000000000000246 R12: 00000000010fa000
+> > [Fri Jun 27 15:21:34 2025] R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000fff
+> > [Fri Jun 27 15:21:34 2025]  </TASK>
+> > [Fri Jun 27 15:21:34 2025] INFO: task cat:28631 <reader> blocked on an rw-semaphore likely owned by task cat:28630 <writer>
+> > [Fri Jun 27 15:21:34 2025] task:cat             state:S stack:0     pid:28630 tgid:28630 ppid:28501  task_flags:0x400000 flags:0x00004000
+> > [Fri Jun 27 15:21:34 2025] Call Trace:
+> > [Fri Jun 27 15:21:34 2025]  <TASK>
+> > [Fri Jun 27 15:21:34 2025]  __schedule+0x7c7/0x1930
+> > [Fri Jun 27 15:21:34 2025]  ? __pfx___schedule+0x10/0x10
+> > [Fri Jun 27 15:21:34 2025]  ? __mod_timer+0x304/0xa80
+> > [Fri Jun 27 15:21:34 2025]  schedule+0x6a/0x180
+> > [Fri Jun 27 15:21:34 2025]  schedule_timeout+0xfb/0x230
+> > [Fri Jun 27 15:21:34 2025]  ? __pfx_schedule_timeout+0x10/0x10
+> > [Fri Jun 27 15:21:34 2025]  ? __pfx_process_timeout+0x10/0x10
+> > [Fri Jun 27 15:21:34 2025]  ? down_write+0xc4/0x140
+> > [Fri Jun 27 15:21:34 2025]  msleep_interruptible+0xbe/0x150
+> > [Fri Jun 27 15:21:34 2025]  read_dummy_rwsem_write+0x54/0x90
+> > [Fri Jun 27 15:21:34 2025]  full_proxy_read+0xff/0x1c0
+> > [Fri Jun 27 15:21:34 2025]  ? rw_verify_area+0x6d/0x410
+> > [Fri Jun 27 15:21:34 2025]  vfs_read+0x177/0xa50
+> > [Fri Jun 27 15:21:34 2025]  ? __pfx_vfs_read+0x10/0x10
+> > [Fri Jun 27 15:21:34 2025]  ? fdget_pos+0x1cf/0x4c0
+> > [Fri Jun 27 15:21:34 2025]  ksys_read+0xfc/0x1d0
+> > [Fri Jun 27 15:21:34 2025]  ? __pfx_ksys_read+0x10/0x10
+> > [Fri Jun 27 15:21:34 2025]  do_syscall_64+0x66/0x2d0
+> > [Fri Jun 27 15:21:34 2025]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [Fri Jun 27 15:21:34 2025] RIP: 0033:0x7f8f288efb40
+> > [Fri Jun 27 15:21:34 2025] RSP: 002b:00007ffffb631038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> > [Fri Jun 27 15:21:34 2025] RAX: ffffffffffffffda RBX: 0000000000010000 RCX: 00007f8f288efb40
+> > [Fri Jun 27 15:21:34 2025] RDX: 0000000000010000 RSI: 000000002a4b5000 RDI: 0000000000000003
+> > [Fri Jun 27 15:21:34 2025] RBP: 000000002a4b5000 R08: 0000000000000000 R09: 0000000000010fff
+> > [Fri Jun 27 15:21:34 2025] R10: 00007ffffb630460 R11: 0000000000000246 R12: 000000002a4b5000
+> > [Fri Jun 27 15:21:34 2025] R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000fff
+> > [Fri Jun 27 15:21:34 2025]  </TASK>
+> >
+> > [1] https://lore.kernel.org/all/174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com/
+> >
+> > Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > Suggested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > Signed-off-by: Lance Yang <lance.yang@linux.dev>
 >
->On 12/08/2025 14:23, Maciej Wieczor-Retman wrote:
->> [...]
->> ======= Testing
->> Checked all the kunits for both software tags and generic KASAN after
->> making changes.
->> 
->> In generic mode the results were:
->> 
->> kasan: pass:59 fail:0 skip:13 total:72
->> Totals: pass:59 fail:0 skip:13 total:72
->> ok 1 kasan
->> 
->> and for software tags:
->> 
->> kasan: pass:63 fail:0 skip:9 total:72
->> Totals: pass:63 fail:0 skip:9 total:72
->> ok 1 kasan
->I tested the series on arm64 and after fixing the build issues mentioned
->I was able to boot without issues and did not observe any regressions
->in the KASAN KUnit tests with either generic or software tags.
->
->So this is Tested-by: Ada Couprie Diaz <ada.coupriediaz@arm.com> (For arm64)
+> Thanks for your patch, which is now commit 194a9b9e843b4077
+> ("hung_task: show the blocker task if the task is hung on
+> semaphore") in v6.16-rc1.
 
-Thank you! I'll try to send the fixed series on monday/tuesday.
+Sorry, wrong email thread.
 
->I will note that the tests `kmalloc_memmove_negative_size` and
->`kmalloc_memmove_invalid_size` seem to be able to corrupt memory
->and lead to kernel crashes if `memmove()` is not properly instrumented,
->which I discovered while investigating [0].
+Gr{oetje,eeting}s,
 
-What do you mean by 'properly instrumented'? Is it the intrinsic prefix thing
-for gcc that you mentioned?
-
->> [...]
->> ======= Compilation
->> Clang was used to compile the series (make LLVM=1) since gcc doesn't
->> seem to have support for KASAN tag-based compiler instrumentation on
->> x86.
->
->Interestingly, while investigating [0], this comment slipped by me and
->I managed to compile your series for x86 with software tags using GCC,
->though it is a bit hacky.
->You need to update the CC_HAS_KASAN_SW_TAGS to pass `-mlam=u48`
->or `-mlam=u57`, as it is disabled by default, and pass `-march=arrowlake`
->for compilation (the support for software tags depends on the arch).
->You could then test with GCC (though the issue in [0] also applies to x86).
-
-Thanks! I'll try it out :)
-
->
->Best,
->Ada
+                        Geert
 
 -- 
-Kind regards
-Maciej Wieczór-Retman
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
