@@ -1,155 +1,121 @@
-Return-Path: <linux-kernel+bounces-781553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F6BB313F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:48:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 661D7B31418
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B798B02F3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:43:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19F013AEC7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844DD2F3C10;
-	Fri, 22 Aug 2025 09:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BAE82FD1CA;
+	Fri, 22 Aug 2025 09:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y4qAIruQ"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EL/2jZf1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68742EB5A6
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F462EE60B;
+	Fri, 22 Aug 2025 09:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755855569; cv=none; b=mBcmtt9/5UTLRVtFm9wWgawNicyU3tDNy0J1MkgWk+kfcmfMBEKL40iN+Tta2LvIGhcHySkhKFCJ9sgKo80nMbkaDIm8xmT8tB0oDuYH2mfpKsAj+GrwDLGI55ZbskpWXBA2Yh3tpQSiugGwD+7OrJ2yRPZJG/udYe8wTsH7S9I=
+	t=1755855575; cv=none; b=gptZ49dqg71B04K7gRwyxwXZ71mmexI29ZVBbzhwcJ5XaW6YXtCSpKtFq0Gbl9HDw5EGhJuZZjVenvS1O153KwXY8pyFW++ZUMMtZh37f7tK2LF6jHxGN9NKrMZCjgfDPz2bWNPx4cs7JpgULdoGkkFW89LfnedTffJJuHGZpEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755855569; c=relaxed/simple;
-	bh=rr71+BBtnhxoI0vp1gh26EB5RHubOusDekfjzEuTCME=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DBZK5KpMY6mmih9n9d83CbztJ5rV4ZUEVG55UTQ8uOMS/fE5H3aPfVjUWvr/zjCLEQjATu0oMP6XZVuGJrrBxk8QIrU0t7xQw8pdGln46AojeUTTatXhJyZUmWqWUKs6EFlQtdxqp6pLapbNYkp1d6FxZs/aXN617KyHsI/q9lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y4qAIruQ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a286135c8so14854535e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 02:39:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755855563; x=1756460363; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G8BLkvgVSbp7ucpmwzFe6L0udmC1CeuwZxTZJh2EA+8=;
-        b=Y4qAIruQbMmhbukL6LrBBPHd/w995fgwx/HerE8RfnC6OjoyIMq56/vgPLXnkMD15z
-         8IzewdAROipWBXRf1uuSIarJBF+ZwiyQdyVflZxghWEC8oKOxHQjirEeFt351Y/AeBUv
-         cXMuU7M9wEcv3TqZZrBEDSWUq+68OkEc0QhcRPiUmojYbKUIaoFsHMIGxYDS2+kFfVGq
-         /CjcvFo7mH7D/+zeMfPrQLfgV2s4Q+K6Rcr5LC/1wly8/FQ4oDDOfu2RS8Ro5Fic5UXY
-         K9JPkXO0DPXhROaydwTYlkb2iIkVGYWSd0pgN/fhQtBKtb+thANHOpJAuRAYoaeLiuXY
-         L+lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755855563; x=1756460363;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G8BLkvgVSbp7ucpmwzFe6L0udmC1CeuwZxTZJh2EA+8=;
-        b=mWweqaYf35elS9A719ZFdXNry6VzRG3G2WQpDsfhFad7Tb7Sg+3Kwhq6pTn6VMLz4m
-         5sHP12t+VzQK92mHgEcwb6B4aq6pU6nmjhNz++u/MSaLYdZEQgLgHX2+K18varyJaKak
-         yIG56zsRNt62DRfBz8iwabwX+zf8W+5uArNoBbkV6LrzfVcBPxl6xivfbl9wQRNEjRAa
-         sdRuRuy+3mz2liVxXFyEK8TCwIg4NmJEmVkZOPUphaf6ziBQa4hDRGXpQ+njykDG/NDP
-         alO96n/7GvuSc/z/XmLZbxpdWaUQ8Z+n36m0M4HYHdZwpCP4t8EZw3K+sZRpV/1LZKtb
-         KS4A==
-X-Forwarded-Encrypted: i=1; AJvYcCU/Bk3f2YP4/XmPq9F2OPSr6qTobXQV5fW6YOD6TQjE8MoD6gHgJAMZvDFGV3dl+AlYvcZa1pHIqShaGjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZCwCrowZXcsCAflmHsYGxIO6TGc3wce/Xy/YPbmX3aVYvQ5PK
-	Sx3IWJu7UHgBMP4S/8DNg2GuRIks3ICLLWEWg7Xa7Ga5YcQyl1q6nuLm9YN7Z5dwzn8kHUZrUo/
-	velH0+yU=
-X-Gm-Gg: ASbGncsF/xsMX1KPcf+n+OP/QRAaSyU6bm8Kto0v4mr4EcNkqXBXdg4KrBtijpL+Dki
-	zksMUjHPweX23HKBZH1oPBMZNdEfBpACL9UwPh9M0FUNQFpy+poSBC0xbzI65LV2YRFCCXsE4fx
-	aHG4q0A9GJCim92wD0pkcXua7thSNEuq0Wi7WBOaHivEnGFND0eawWLnG+tRb+vRVGKICrn60vi
-	CRjaKyNL15a2uKxELKoPG1kBHNfFvfc1yYMGb/EELIdc02qsKEaEwYGDIFHN1iWxQyQWLTy6Nls
-	nQtdWOvjGoP4NGKMI4hhaqhpkwHF06p4oDZZEg5VI1AviSWfFiz/CMXwfDePNbjbriOQUsy2Uv5
-	PXlSQvexLXE4xgQe6V6JUfo5SZc/zgY77Qeq6VbDaqNOEaVupLI6l6g==
-X-Google-Smtp-Source: AGHT+IHkEjGLOPZDQQAJJfc331wMAfAko0s4sN43VgTmDN2Np39z0BKpArqORRG5gXz0P4/jO0SJdw==
-X-Received: by 2002:a05:600c:a101:b0:456:1146:5c01 with SMTP id 5b1f17b1804b1-45b4e1dffaemr39935825e9.12.1755855563553;
-        Fri, 22 Aug 2025 02:39:23 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c684524163sm609890f8f.61.2025.08.22.02.39.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 02:39:23 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Fri, 22 Aug 2025 11:39:15 +0200
-Subject: [PATCH v2 03/16] arm64: dts: qcom: x1e80100: allow mode-switch
- events to reach the QMP Combo PHYs
+	s=arc-20240116; t=1755855575; c=relaxed/simple;
+	bh=7TUjIdFSpxdPwhWS7KavRP+nexN6+krDK0zXKT3Z4nI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jZFap6Ib4g1CrCqpvfcpT9atBaLbOTJIFSCXxNuO71wc67Pak5xlWNrruKV81K6u4BCU2SQhv8BagmheVpNQrNjycWivtUts1KHpwZAqFiUXENCPv5F/wD3uSTaA3raz5uIqyoYeNDQT1Liou0ytDFCyXppPo29PbK0LkpjqyQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EL/2jZf1; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755855569; x=1787391569;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7TUjIdFSpxdPwhWS7KavRP+nexN6+krDK0zXKT3Z4nI=;
+  b=EL/2jZf1G02VLbxeyigwW40DBROzamQU+/7jjve8gU8H9lNKTJ8Bc4hn
+   OTcMTnY9HR6C+XewwMQVLkc4K/e+SMX3Y0l1C+EBdPmX3EAAsGISQe2tO
+   TG5kxN7vSIoc75aIHGA3WjwAt1K0WsEAghxdSCAoJER9XSSroA1M7+7Ix
+   2LYm1nbCR6sii2NwdPZmM2ppOrepmB/urTggKwCJJ/oZRNhVXUmARpMwn
+   MOjj32nr4OxTGz1wJoAfo/S7zbbyj4XBq8kOWY0bdIA/6G2OW/OBu6zec
+   ihPz6sa96WusdfLCNolfUTto7TQZQaqWwarNOJMctVM/0XvqxUmFeaboV
+   Q==;
+X-CSE-ConnectionGUID: RKGUoP7SRliwfszzu9L+UQ==
+X-CSE-MsgGUID: 96BbsFwlTSO/NFzIGUJWSg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="69260143"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="69260143"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 02:39:26 -0700
+X-CSE-ConnectionGUID: f9G7SEp4RL+f9OQZP3DIVg==
+X-CSE-MsgGUID: a3E0ehOpQtuXsOFDu60/Iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="168177411"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 02:39:20 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1upOEu-00000007Tma-2yFG;
+	Fri, 22 Aug 2025 12:39:16 +0300
+Date: Fri, 22 Aug 2025 12:39:16 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Dixit Parmar <dixitparmar19@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Support Opensource <support.opensource@diasemi.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Haibo Chen <haibo.chen@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Cai Huoqing <cai.huoqing@linux.dev>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Andreas Klinger <ak@it-klinger.de>, Crt Mori <cmo@melexis.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 01/10] iio: accel: Drop unnecessary -ENOMEM messages
+Message-ID: <aKg6xF4w2ugRqDMt@smile.fi.intel.com>
+References: <20250822-enomam_logs-v1-0-db87f2974552@gmail.com>
+ <20250822-enomam_logs-v1-1-db87f2974552@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250822-topic-x1e80100-4lanes-v2-3-4b21372b1901@linaro.org>
-References: <20250822-topic-x1e80100-4lanes-v2-0-4b21372b1901@linaro.org>
-In-Reply-To: <20250822-topic-x1e80100-4lanes-v2-0-4b21372b1901@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1094;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=rr71+BBtnhxoI0vp1gh26EB5RHubOusDekfjzEuTCME=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBoqDrCMu4SEvkcLpCWvdlZ5vi82Q+kL6aYpxHptRDW
- haDR6/KJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaKg6wgAKCRB33NvayMhJ0fCXD/
- 4si6TUAj6Un0+uq5oPDOHKa12lndEe+g7jZFhZcD5A36zgd6lckNc6eJ/0SHl0UlJy5GGrpQo555Gj
- zqru6l2taATvXH2a6p55DaxcrZqRFCe2kFlgopWIZxjTtu4dB/FxnDcQ1XWtFVHeZzWiSLhJm3dIC/
- KHY6JW+NOhl1Cbq/Upj5SfxjHCKovOdsLmisC+QF1W1vORKcpCabYic5yPWhI/8xgwsey9gEPb7fCo
- KV2AECcGzGWcTKkLos2JNL3NNFv+j0Un9cp/dKrWWmUNwl7tL5ypQ7BnO7YscHqtBcrEhuKqAyU/4n
- HAs1Nt9KLZnmopRFU8rFdqC+MMUx/nlyPQgSaojqJvVASJEHkjCIyd8ZjprRsdCAX3MpuwvRarUAbc
- BqZQ946+Ovw/k4sMiALIS9UuAM9m2VeYgfpJZr1uZrfMEA9QGMfQmMK8dA0RSEvDlmTsB5Cay9I9b2
- U+LMrKWmt3TeJ9PKN1HsedMcWyPs2cbm8TYQ/OgjVOWg3E3ErqVH/g0qPOfcBznpTMjlDgwahBYS9D
- QEnpgWL8Ok2OJPFDRayR82xp3hIzHX6cUsHubF186X+ahUF/ClXUbWR8dLWfP+KaaTzBBlNg5Ra5QF
- 0vxKAN5DipqKR+IvB0DUtx8Yq2X1FYlWsT2CPDiILk4LqQsK+ZrhHp7J42DA==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822-enomam_logs-v1-1-db87f2974552@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Allow mode-switch events to reach the QMP Combo PHYs to support
-setting the QMP Combo PHY in DP 4Lanes Altmode.
+On Fri, Aug 22, 2025 at 09:19:49AM +0530, Dixit Parmar wrote:
+> The drivers do not require their own error messages for error
+> -ENOMEM, memory allocation failures. So remove the dev_err
+> messages from the probe().
 
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+Misplaced (), should be like
+"...So remove the dev_err() messages from the probe."
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index f293b13ecc0ce426661187ac793f147d12434fcb..48c715e9ada33d4909049bca28c68a6b24ca0b0a 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -2857,6 +2857,7 @@ usb_1_ss0_qmpphy: phy@fd5000 {
- 			#clock-cells = <1>;
- 			#phy-cells = <1>;
- 
-+			mode-switch;
- 			orientation-switch;
- 
- 			status = "disabled";
-@@ -2927,6 +2928,7 @@ usb_1_ss1_qmpphy: phy@fda000 {
- 			#clock-cells = <1>;
- 			#phy-cells = <1>;
- 
-+			mode-switch;
- 			orientation-switch;
- 
- 			status = "disabled";
-@@ -2997,6 +2999,7 @@ usb_1_ss2_qmpphy: phy@fdf000 {
- 			#clock-cells = <1>;
- 			#phy-cells = <1>;
- 
-+			mode-switch;
- 			orientation-switch;
- 
- 			status = "disabled";
+Same applies to all of the affected commit messages in the series.
 
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
