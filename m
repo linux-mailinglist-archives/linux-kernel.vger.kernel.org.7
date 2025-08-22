@@ -1,126 +1,112 @@
-Return-Path: <linux-kernel+bounces-781151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C8DB30E2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:40:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4661B30E3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:42:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A08FD5A7C26
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:40:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5EAE1C265BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1866B2E22A9;
-	Fri, 22 Aug 2025 05:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D3B2E2DFB;
+	Fri, 22 Aug 2025 05:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SZL2wfSI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5j435qr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE6D223DF5
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BED328B4FD;
+	Fri, 22 Aug 2025 05:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755841225; cv=none; b=VNFn4jrLnEBBwxuOXLDc3sqlIPkdw73ZJNdSYWRhRsIDk+vpr1OJXMavgJj4CjBhI290WOatACdI3dHmIv5r4jQpD/mCTmS+hbHXhglvVgvwGfd+dIDTddxOh+IoQbun6TFx/3XWlnKzyi7wZj2dX6JdLSDkRpIvCKNqtX9uM/Y=
+	t=1755841289; cv=none; b=GIY24Goxvh8bXvt4anVmNuA19VPRlmpkPonQ1FqdPIyAu/1zy73QjzbY3G+EnRpbGsv0esz1Cxn/WwEw+wk2IX/Muqft9Kc2BLrsEid//eI8dUYRw3MXubIOY+5iAdpcgthkU6xvsk2SYCf3VUWkW0LMxkH98xFDz/cl24dywwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755841225; c=relaxed/simple;
-	bh=giiH4kxOB5O1aaGhMf2GAHfxmjpaNjKzcQzCzzwlRTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qq4KlYgQp69a2ZlGmz8FEUqm92G9QGEDVLiRkq2keHXv89gkyJ/MHt/k2RHD+NPSQF6F5iigj4mf1yT7jnH/gMBk2mdzkjqX1lo9pQWQ5APWyx9PmPNn7cLvmIHr/6vXqLq1q7gUG3syJK/dw4tHpnttHMcsvtN62KgMs2H7Rs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SZL2wfSI; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755841224; x=1787377224;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=giiH4kxOB5O1aaGhMf2GAHfxmjpaNjKzcQzCzzwlRTQ=;
-  b=SZL2wfSI4ttUECtp5qc2BDuo0dP021Le5FXcpXoN3XFFx5JPh3RfbRmw
-   5Q9Su4Iq/7RaCKBJ/lIFFXHnPewWD4eF6VB4ysJw7bhuaHnXIkW02pvHM
-   csCLZCaesrNy066aMdnfZsP5eeFtGEC1d7CEfZmeKyvWW3oXzfa3tyVyz
-   uL9z6SKn3cpxpLITQi/2rF4HGTaell+8hRInl4CUXTGMfCMVzn4BG9WT7
-   1g/LBmfN0Qu6Dpa+HZZnyS7CpCpT/g7PFnXU5tzLYN9wl5/bFwIT3jly2
-   mImjKLieiMLa75bU5Fxplj16Ttm9zheVpdE7Bf0oCNXtVPpwNb0lmu6Vq
-   A==;
-X-CSE-ConnectionGUID: sTLK+45pSiyOdSoqt6gq0g==
-X-CSE-MsgGUID: 8L/SoBxbSKq3B2WI9i0xKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="61957113"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="61957113"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 22:40:23 -0700
-X-CSE-ConnectionGUID: yw8Vv2dBSnKmAP4JpykI4g==
-X-CSE-MsgGUID: l52Zd7HYRBCYxn3rr3/onw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="173896595"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 21 Aug 2025 22:40:19 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1upKVd-000Kwx-0C;
-	Fri, 22 Aug 2025 05:40:17 +0000
-Date: Fri, 22 Aug 2025 13:39:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, jgg@nvidia.com,
-	nicolinc@nvidia.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	robin.murphy@arm.com, will@kernel.org, joro@8bytes.org,
-	kevin.tian@intel.com, jsnitsel@redhat.com, vasant.hegde@amd.com,
-	iommu@lists.linux.dev, santosh.shukla@amd.com,
-	sairaj.arunkodilkar@amd.com, jon.grimm@amd.com,
-	prashanthpra@google.com, wvw@google.com, wnliu@google.com,
-	gptran@google.com, kpsingh@google.com,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: Re: [PATCH 7/8] iommu/amd: Add support for nested domain allocation
-Message-ID: <202508221308.4CwLNeZw-lkp@intel.com>
-References: <20250820113009.5233-8-suravee.suthikulpanit@amd.com>
+	s=arc-20240116; t=1755841289; c=relaxed/simple;
+	bh=SWllvQUuWXUiZ37XKVOHkxwQQPRk+5jHJR1X7QQbqWU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JG7Y4HkiBfBGu1LwosZGKkGmWcKsGfceIaj/Mdl5VVjtr1QY9iis1nhKbKMgoSqCw2j6Z3sLgMZo0ENzhls+OS2t/ZZjCoxlG7mFZVQo6+fkp7PjTRKV2H2lWq4p2qiMmkSM2xoH/QcVrZpzh8scE7xKxCJ/zWuIoFDW6lI7Rmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C5j435qr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E4FA4C4CEF1;
+	Fri, 22 Aug 2025 05:41:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755841289;
+	bh=SWllvQUuWXUiZ37XKVOHkxwQQPRk+5jHJR1X7QQbqWU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=C5j435qr4Pj8VO0GCMmm/0ypKQMl7HSaVhfYN5xCQH/qpPo9DacK5T5F9oS+M0TKp
+	 8H1h8ty/DB1Zkz7xbceBqro39/dRNmgI69ehsKsG3CnUmUpYBejhyMkrChVkcAkJA6
+	 eGCVhz+jMl42iemjHiz3QytcNtmJq6AJvRuKAyFbKo7keecwUaG89HqysDFknHZxuc
+	 Adet3E4iRgKeRl4k+aFHRnSoMYYQnj7pEJeBZD+xU8KStkZDQ/ypOf9D72AlvSzUIk
+	 p+fGI6tNeTGH1Crq4/TXoZAYkjXD72DBKG28qb8qC9krbAhf9PzJgUr5EbCwQV2+XF
+	 DsqzeK65yyBEA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB9EFCA0EFF;
+	Fri, 22 Aug 2025 05:41:28 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH 0/5] Power: Add power domain driver for S6 S7 S7D
+Date: Fri, 22 Aug 2025 13:39:54 +0800
+Message-Id: <20250822-pm-s6-s7-s7d-v1-0-82e3f3aff327@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820113009.5233-8-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKoCqGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDCyMD3YJc3WIz3WJzIErRtTQ1SDM3MkhMTDZLUQJqKShKTcusABsXHVt
+ bCwC3esbIXgAAAA==
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Jianxin Pan <jianxin.pan@amlogic.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, Xianwei Zhao <xianwei.zhao@amlogic.com>, 
+ "hongyu.chen1" <hongyu.chen1@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755841286; l=1213;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=SWllvQUuWXUiZ37XKVOHkxwQQPRk+5jHJR1X7QQbqWU=;
+ b=v6zP1X1MiyNWQVfGhjRcfGOC0lt9iG/FSAbPc+2Df+zqZf0YLjimp7/DcF5ze+DfN5jFWSfkw
+ C5A8U4wNBWFDDsajqvt6DFrIfF7N0vlKPmgrOvHh1HqITJru5NZz9yJ
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-Hi Suravee,
+Add power controller driver support for Amlogic S6 S7 S7D SoC.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+hongyu.chen1 (5):
+      dt-bindings: power: add Amlogic S6 S7 S7D power domains
+      pmdomain: amlogic: Add support for S6 S7 S7D power domains controller
+      arm64: dts: amlogic: s6: add power domain controller node
+      arm64: dts: amlogic: s7: add power domain controller node
+      arm64: dts: amlogic: s7d: add power domain controller node
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.17-rc2 next-20250821]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+ .../bindings/power/amlogic,meson-sec-pwrc.yaml     |  3 +
+ arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi        | 10 +++
+ arch/arm64/boot/dts/amlogic/amlogic-s7.dtsi        | 10 +++
+ arch/arm64/boot/dts/amlogic/amlogic-s7d.dtsi       | 10 +++
+ drivers/pmdomain/amlogic/meson-secure-pwrc.c       | 95 ++++++++++++++++++++++
+ include/dt-bindings/power/amlogic,s6-pwrc.h        | 29 +++++++
+ include/dt-bindings/power/amlogic,s7-pwrc.h        | 20 +++++
+ include/dt-bindings/power/amlogic,s7d-pwrc.h       | 27 ++++++
+ 8 files changed, 204 insertions(+)
+---
+base-commit: ffeebf7587f518a3717fad308cf735adbbcaba97
+change-id: 20250820-pm-s6-s7-s7d-950f720aac6d
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Suravee-Suthikulpanit/iommu-amd-Make-amd_iommu_pdom_id_alloc-non-static/20250820-194937
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250820113009.5233-8-suravee.suthikulpanit%40amd.com
-patch subject: [PATCH 7/8] iommu/amd: Add support for nested domain allocation
-config: x86_64-randconfig-123-20250822 (https://download.01.org/0day-ci/archive/20250822/202508221308.4CwLNeZw-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250822/202508221308.4CwLNeZw-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508221308.4CwLNeZw-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/iommu/amd/nested.c:15:31: sparse: sparse: symbol 'nested_domain_ops' was not declared. Should it be static?
-
-vim +/nested_domain_ops +15 drivers/iommu/amd/nested.c
-
-    14	
-  > 15	const struct iommu_domain_ops nested_domain_ops = {
-    16		.free = amd_iommu_domain_free,
-    17	};
-    18	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Xianwei Zhao <xianwei.zhao@amlogic.com>
+
+
 
