@@ -1,149 +1,163 @@
-Return-Path: <linux-kernel+bounces-781896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905A4B31861
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:53:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9E8B31853
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:51:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 042831C82738
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:53:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8FF094E3188
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A95D2FC035;
-	Fri, 22 Aug 2025 12:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476512FC016;
+	Fri, 22 Aug 2025 12:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fY2Ll00Z"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1yxazY5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07AC2FC00E;
-	Fri, 22 Aug 2025 12:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F3B2ECE8F;
+	Fri, 22 Aug 2025 12:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755867165; cv=none; b=HczlzOJIPXztTDV/Sxf23XyV7h+Y2VcUAEGhdEL1U+G5E7aEtVaPzwHEA29WYm4LM62x0r2fTbn4iT3I2AS1TSuAyAh/RNuywUNVLKjWLZk2fvQuyEZl98glgbkS0e+DASiA5pBY2xDNawhuFUe3F5RiFKjM3RnTifpNh1nCD3w=
+	t=1755867062; cv=none; b=AoPWuMwDjo22BkeX1sk5Rxw1L7BUGllWb4JXGiFk2IWvcWjUoI++JT5fWXaHyV/IELSffyBdFIUdQuZuz+BuVS1ie8kyxhykUYaPzZkHIGSMY/iU1EuTFkg9k77xko+oNMm2iKRDOqk2Pz3DJOyrvD4w4PtPbvKBzHdD1yYM7pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755867165; c=relaxed/simple;
-	bh=SPEn7P3mjkWhID617eIY0l+bYfag61lfCySYeoLUzIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B/tq37sia6aiSiqwiYTe2VKYADioplFzc/q7vQoVjCqRDrZZv6vGA1qGUrwXqkQvK1IJOmdBpKIREH/A1HWTCVeEcZfzof9OXY8PbCn3HDdQ5bIbrPswSL/txIulfir7JP+qsRWQUjLsKC5Dn7Fykz8hMbK5NeweWkbqGiSV18A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fY2Ll00Z; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755867162; x=1787403162;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SPEn7P3mjkWhID617eIY0l+bYfag61lfCySYeoLUzIs=;
-  b=fY2Ll00Ze4JaH0RsxomjY5kF9BZ0PuFxwBhZfOePPf6o66mir7004RHa
-   CD2zpaYt1Iq85O0SELHBuS1WFvs0dgRzdChsK1ZO/Mr98WRNJfwH0A9xW
-   ReJWJMoHizc0B3z7Rfg3iVnYo3VPNHBYhl1DVjbiHhWumyxMC6Y0SH1Xe
-   37WEbDZ95Urn6OkxIrJlC4+nl3wXsczFhUr1QimgI4CpEeBDk8jYdvE1o
-   92KrL4j3PpplTcX1T6bx+QEFbN6xcb/AOvu1HnDWzEAkrwRqSSW3Javip
-   72sTienAisroHCoTwMIIA01Uh+pO8RTtncBHQBGS+jmptldyS3hOPdcjZ
-   A==;
-X-CSE-ConnectionGUID: CKpvkZe2RZ6GbQTzIGqgmw==
-X-CSE-MsgGUID: MrUdWte5Qh22Uz7TknZuJA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="57191227"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="57191227"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 05:52:42 -0700
-X-CSE-ConnectionGUID: Z3/yPDQiRuS5zxcdPa/slQ==
-X-CSE-MsgGUID: W3HnWrRlQDmSxTL4bCDOWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="169104621"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 22 Aug 2025 05:52:40 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1upRFQ-000LHr-1P;
-	Fri, 22 Aug 2025 12:52:07 +0000
-Date: Fri, 22 Aug 2025 20:50:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2 03/16] Introduce wake_up_key()
-Message-ID: <202508222051.JpjiLYJb-lkp@intel.com>
-References: <20250822000818.1086550-4-neil@brown.name>
+	s=arc-20240116; t=1755867062; c=relaxed/simple;
+	bh=62L/Xc8PMFF3fvmTu93PaFJyJD9WQMobEpBD9EWjLB0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BSTGzgEuxj+YdGXrdwVQFgowwi62PAlytInzfjXmPf4Fz0PNK0FkBBu6KLQTwyg1aKc9h5p1C+dVGdJWgOPqCstz4p4hOaMLzrxQkoavBRdSFCniJba2uHMWPfQGKZCO8nWXdyL1W9cXLmX3+aRPY3XxNNEIH1EYQs/htKI+9G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O1yxazY5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E9DFC4CEED;
+	Fri, 22 Aug 2025 12:51:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755867062;
+	bh=62L/Xc8PMFF3fvmTu93PaFJyJD9WQMobEpBD9EWjLB0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=O1yxazY5MJCsReRUfP6WNlfY2rRh9qlmd2JeN9rQA7zlyIfReweAVTlOQl6steOJu
+	 Nt+780GihMEo+H03Drdd3r37zBMA4+tZPO8B5GOhvLauj1M+3GiJ8dQqqYlH4dTz0K
+	 kKkiA7NwrKGBGv20FujnsUST/HSsHOrxjkC4/VhJXJzuJpqGyU3LkNNeeZDMBcxcks
+	 sLKKmhXJdZ52SBn0WSr4c+qDEKtmlmsBf3Nlhima4XEiijThYajYM8UQORUzZUT+Cm
+	 39auTfd5YuuAeW1tFbh5ex1VXltsUGGAY31iVyMxWeDbru0jkdFLcDdllg5HIO5oPv
+	 odjYLRonNfrtw==
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-30cce5cb708so1438623fac.0;
+        Fri, 22 Aug 2025 05:51:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW6PAw9CNHsIB9kSrvRfamcoFyDaArtbAkDB2BJRPq8c/r4igNceQhcz/PcOta3KfUORBlyk9fXz6k=@vger.kernel.org, AJvYcCWDCkBKu0Nl0ckCBIfXv2El0htbpiZRSp8U5UN5PBW0gNfLKkLd6At+zGYSZk+f9Kzh/eSi4fVRQ+dkV20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFWCEVN8s+CSJza7sDIE3hYu3zfdSJryqdufDbUWd+rrloBzR/
+	tEIKUCC0o9k+sRfdMGhbq9pVVlB7TrOppYS734PjGlhCf/UhkbyNe6tDTdHc30wfB6iWQbCu7ak
+	4JaEW1OLCKT9+en5amw9q1qgyNrahXgU=
+X-Google-Smtp-Source: AGHT+IFL9dntZ4Kq7JegAnYSa68sNCLfWKru9JguUim257NjBCxrSj6SmH2KH26Sk8rcYUY0laYzDCzO0yMX4+y3WmM=
+X-Received: by 2002:a05:6870:e242:b0:2ff:8bc7:44a9 with SMTP id
+ 586e51a60fabf-314dcc311c7mr1315348fac.21.1755867061407; Fri, 22 Aug 2025
+ 05:51:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822000818.1086550-4-neil@brown.name>
+References: <20250813185530.635096-1-srinivas.pandruvada@linux.intel.com> <20250813185530.635096-4-srinivas.pandruvada@linux.intel.com>
+In-Reply-To: <20250813185530.635096-4-srinivas.pandruvada@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 22 Aug 2025 14:50:50 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ht1Z0dDxW1hfDUBoQOWXRBD+XHTph0juRhRCAvy=Z61Q@mail.gmail.com>
+X-Gm-Features: Ac12FXwuQ-mTXPcre9cCSCDFWmzBm1aGuMluKtr_dmcwOAT1o7Gs6jf2FxOMeqE
+Message-ID: <CAJZ5v0ht1Z0dDxW1hfDUBoQOWXRBD+XHTph0juRhRCAvy=Z61Q@mail.gmail.com>
+Subject: Re: [PATCH 3/5] thermal: intel: int340x: Add module parameter for
+ balanced Slider
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: rafael@kernel.org, daniel.lezcano@linaro.org, lukasz.luba@arm.com, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi NeilBrown,
+On Wed, Aug 13, 2025 at 8:55=E2=80=AFPM Srinivas Pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
+>
+> By default, the SoC slider value for the "balanced" platform profile is
+> set to 3. A new module parameter is introduced to allow users to change
+> this default value. After modifying the module parameter, users must call
+> an update to the "profile" sysfs attribute for the change to take effect.
 
-kernel test robot noticed the following build errors:
+This last bit is slightly confusing.  What exactly do they need to do
+for this purpose?
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on trondmy-nfs/linux-next linus/master v6.17-rc2 next-20250822]
-[cannot apply to tip/sched/core]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/NeilBrown/VFS-discard-err2-in-filename_create/20250822-081444
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20250822000818.1086550-4-neil%40brown.name
-patch subject: [PATCH v2 03/16] Introduce wake_up_key()
-config: sh-randconfig-r073-20250822 (https://download.01.org/0day-ci/archive/20250822/202508222051.JpjiLYJb-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250822/202508222051.JpjiLYJb-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508222051.JpjiLYJb-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/gpio/gpiolib-cdev.c: In function 'linereq_put_event':
->> drivers/gpio/gpiolib-cdev.c:596:2: error: 'else' without a previous 'if'
-     596 |  else
-         |  ^~~~
-   drivers/gpio/gpiolib-cdev.c: In function 'lineevent_irq_thread':
-   drivers/gpio/gpiolib-cdev.c:2018:2: error: 'else' without a previous 'if'
-    2018 |  else
-         |  ^~~~
-   drivers/gpio/gpiolib-cdev.c: In function 'lineinfo_changed_func':
-   drivers/gpio/gpiolib-cdev.c:2536:2: error: 'else' without a previous 'if'
-    2536 |  else
-         |  ^~~~
-
-
-vim +596 drivers/gpio/gpiolib-cdev.c
-
-a0dda508bd66b9e Bartosz Golaszewski 2023-08-17  581  
-73e0341992b68bb Kent Gibson         2020-09-28  582  static void linereq_put_event(struct linereq *lr,
-73e0341992b68bb Kent Gibson         2020-09-28  583  			      struct gpio_v2_line_event *le)
-73e0341992b68bb Kent Gibson         2020-09-28  584  {
-73e0341992b68bb Kent Gibson         2020-09-28  585  	bool overflow = false;
-73e0341992b68bb Kent Gibson         2020-09-28  586  
-0ebeaab4d59eb37 Kent Gibson         2023-12-19  587  	scoped_guard(spinlock, &lr->wait.lock) {
-73e0341992b68bb Kent Gibson         2020-09-28  588  		if (kfifo_is_full(&lr->events)) {
-73e0341992b68bb Kent Gibson         2020-09-28  589  			overflow = true;
-73e0341992b68bb Kent Gibson         2020-09-28  590  			kfifo_skip(&lr->events);
-73e0341992b68bb Kent Gibson         2020-09-28  591  		}
-73e0341992b68bb Kent Gibson         2020-09-28  592  		kfifo_in(&lr->events, le, 1);
-0ebeaab4d59eb37 Kent Gibson         2023-12-19  593  	}
-73e0341992b68bb Kent Gibson         2020-09-28  594  	if (!overflow)
-73e0341992b68bb Kent Gibson         2020-09-28  595  		wake_up_poll(&lr->wait, EPOLLIN);
-73e0341992b68bb Kent Gibson         2020-09-28 @596  	else
-73e0341992b68bb Kent Gibson         2020-09-28  597  		pr_debug_ratelimited("event FIFO is full - event dropped\n");
-73e0341992b68bb Kent Gibson         2020-09-28  598  }
-73e0341992b68bb Kent Gibson         2020-09-28  599  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> ---
+>  .../processor_thermal_soc_slider.c            | 41 +++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>
+> diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_=
+slider.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_slid=
+er.c
+> index c492ee937dc7..ffc538c9b9e3 100644
+> --- a/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_slider.=
+c
+> +++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_slider.=
+c
+> @@ -50,6 +50,43 @@ static u8 slider_values[] =3D {
+>         [SOC_POWER_SLIDER_POWERSAVE] =3D SOC_SLIDER_VALUE_MAXIMUM,
+>  };
+>
+> +/* Lock to protect module param updates */
+> +static DEFINE_MUTEX(slider_param_lock);
+> +
+> +static int slider_balanced_param =3D SOC_SLIDER_VALUE_BALANCE;
+> +
+> +static int slider_def_balance_set(const char *arg, const struct kernel_p=
+aram *kp)
+> +{
+> +       u8 slider_val;
+> +       int ret;
+> +
+> +       guard(mutex)(&slider_param_lock);
+> +
+> +       ret =3D kstrtou8(arg, 16, &slider_val);
+> +       if (!ret) {
+> +               if (slider_val > SOC_SLIDER_VALUE_MAXIMUM)
+> +                       return -EINVAL;
+> +
+> +               slider_balanced_param =3D slider_val;
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static int slider_def_balance_get(char *buf, const struct kernel_param *=
+kp)
+> +{
+> +       guard(mutex)(&slider_param_lock);
+> +       return sysfs_emit(buf, "%02x\n", slider_values[SOC_POWER_SLIDER_B=
+ALANCE]);
+> +}
+> +
+> +static const struct kernel_param_ops slider_def_balance_ops =3D {
+> +       .set =3D slider_def_balance_set,
+> +       .get =3D slider_def_balance_get,
+> +};
+> +
+> +module_param_cb(slider_balance, &slider_def_balance_ops, NULL, 0644);
+> +MODULE_PARM_DESC(slider_balance, "Set slider default value for balance."=
+);
+> +
+>  /* Convert from platform power profile option to SoC slider value */
+>  static int convert_profile_to_power_slider(enum platform_profile_option =
+profile)
+>  {
+> @@ -106,6 +143,10 @@ static int power_slider_platform_profile_set(struct =
+device *dev,
+>         if (!proc_priv)
+>                 return -EOPNOTSUPP;
+>
+> +       guard(mutex)(&slider_param_lock);
+> +
+> +       slider_values[SOC_POWER_SLIDER_BALANCE] =3D slider_balanced_param=
+;
+> +
+>         slider =3D convert_profile_to_power_slider(profile);
+>         if (slider < 0)
+>                 return slider;
+> --
+> 2.43.0
+>
 
