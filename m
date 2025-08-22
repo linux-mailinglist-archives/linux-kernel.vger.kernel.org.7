@@ -1,91 +1,95 @@
-Return-Path: <linux-kernel+bounces-782290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 215E4B31E1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:19:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9F2EB31E7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CFDE64E6BFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:19:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AD30687CDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0367D31282C;
-	Fri, 22 Aug 2025 15:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD1F3126DF;
+	Fri, 22 Aug 2025 15:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="dqIR5Wql"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aeX8kKa/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE0A3128B2;
-	Fri, 22 Aug 2025 15:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D20F21FF3C;
+	Fri, 22 Aug 2025 15:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755875870; cv=none; b=szlxzhVMT8i6ZDOit7bNbT48LhT6PXy5fESWTTITme48V2QORFCbvVI4tAP2V81BgN6RnmuTcWm3tImIzuLLozlHnkD85JbZRTps9ZzCdRn8IWjVZ4g98YewXEK6G82LxkF7aPAqpo2dElqLOptzls9o0xLBbDBjrMeuq65Jf+8=
+	t=1755875861; cv=none; b=qrTmOT+qRNBwOl14A4J8cr/BfWHzmn1Kf2GhvXqXpr2AEAa1uR8Ehf1jbF0XAKOD8cOedgq8DUt1ekbeQ5vooz41V7p5x//dYDMjxNzyuqrshPvDaGL0NkpZYgJ4HCUp7DBi3yGy/R4RkWHY6lxwsxO6cMQcTTa3DSmt6oerRrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755875870; c=relaxed/simple;
-	bh=UUIuMemQ4yZziJD9+AhK63S0jT0r3OEI9F9PpDNfyqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fq8bIoPtXPfDEg0itUyKDYZkgo1dyuLbn9tfr4ViQmWczIvmhJclozgqH3KCAXDoxtI+KTsqjeTlO/hxTcaLyhuCVximJOwB8jlZ3ufDr6P8FpyMZuCxg5WiQLVS8IghzXuov51EVW2roWN+pCbr0OJ7NZnuI76oww/iGWxM2uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=dqIR5Wql; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4c7kMb1LwVzlgqV7;
-	Fri, 22 Aug 2025 15:17:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1755875865; x=1758467866; bh=UUIuMemQ4yZziJD9+AhK63S0
-	jT0r3OEI9F9PpDNfyqo=; b=dqIR5WqltNR+dQ1XaLcvCrR5egeC1Zup4+GYgj+G
-	YGdJzeqdjBbuy+ySQsReRXjaK1BeAJgbUygifczyzuvsP4HFIEY30rzepOOhNEx/
-	l+3ftG2ATZjyi/JLybYCXz43zalScYwA7pazZqmO4U7RNSicOLk7CKZqEBji5AFW
-	tr/KtEbTTctjsCvy1R9PgOXQaQjPSbFoLifaefVzTj/FrZfMTb5wEUGjIkHAmZQc
-	SefAkPHRV23fB8lcdzO+aLml6hcxq6AkD+2JlkeyAyq8GZnyEcHv3VKxTl/FWs/K
-	lkhfteDGIrnp85R+xawNoiObBS7IbgemUxgsLJeMCkF2bw==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id MeLRszCoK-qj; Fri, 22 Aug 2025 15:17:45 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4c7kMQ1MQdzlgqVr;
-	Fri, 22 Aug 2025 15:17:36 +0000 (UTC)
-Message-ID: <f02e9bb8-3477-4fa7-8b20-72bd518407ed@acm.org>
-Date: Fri, 22 Aug 2025 08:17:35 -0700
+	s=arc-20240116; t=1755875861; c=relaxed/simple;
+	bh=XdRY7HKsACkQeqSKAyGk2v2Vlf2LTnVd6fqMdVcahtg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Czl6QWIv7P2Jv+AeBqK62oCLcrtAWtzNrNj3B2A+X0i4AeIWVax3cLiJUzYwHo+PqS/KM5G3HQ+thIadnOSaZWLPkd7MHxHXqO6m0wAZUk0CVp91dk4YxwFSG9O5nwHoYCmf6B8wmqdBI+cgLNCECNwyz0v24ZL46YG+duZ9M1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aeX8kKa/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE912C4CEED;
+	Fri, 22 Aug 2025 15:17:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755875860;
+	bh=XdRY7HKsACkQeqSKAyGk2v2Vlf2LTnVd6fqMdVcahtg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aeX8kKa/dZgcRh5rVfaqoe1CC8NN0aLGou2XiuH7yWo6zZoT0QIhl5aMWgudGWbFY
+	 PPJfl4qu/m+btSrUwCgNWzdEyti9DSk+4yNowmd5ObzKp71SEHpVRe1OG/T15oBtg8
+	 9AN3tUi+2Dlzatpa4sax+YkIVrb7+SqyD5H2awAnfF1PN1l3gHGmcimjHYyWWl0XLS
+	 KDwELS31Lh0WKfWDKLUMyqgWU4sIpyzrjgQzSw4ldlERimgWAAjaK0Yyi7mXII7kK2
+	 bMuRspo3WJffjr3/yeEtypJUPrix/S0g2/97MTyC+C1McOGFXza9L3Cz4L8nB3UHw8
+	 +rd3s0ZGFUt4Q==
+Date: Fri, 22 Aug 2025 10:17:40 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: airlied@gmail.com, matthias.bgg@gmail.com, krzk+dt@kernel.org,
+	louisalexis.eyraud@collabora.com, minghsiu.tsai@mediatek.com,
+	dmitry.torokhov@gmail.com, support.opensource@diasemi.com,
+	linux-kernel@vger.kernel.org, kernel@collabora.com,
+	edumazet@google.com, kuba@kernel.org, jeesw@melfas.com,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-sound@vger.kernel.org, andrew-ct.chen@mediatek.com,
+	linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
+	davem@davemloft.net, mripard@kernel.org, ck.hu@mediatek.com,
+	maarten.lankhorst@linux.intel.com, linus.walleij@linaro.org,
+	yunfei.dong@mediatek.com, houlong.wei@mediatek.com,
+	p.zabel@pengutronix.de, linux-clk@vger.kernel.org,
+	tzimmermann@suse.de, chunkuang.hu@kernel.org,
+	angelogioacchino.delregno@collabora.com, lgirdwood@gmail.com,
+	simona@ffwll.ch, linux-mediatek@lists.infradead.org,
+	jmassot@collabora.com, linux-arm-kernel@lists.infradead.org,
+	conor+dt@kernel.org, netdev@vger.kernel.org, amergnat@baylibre.com,
+	broonie@kernel.org, sean.wang@kernel.org,
+	linux-media@vger.kernel.org, tiffany.lin@mediatek.com,
+	kyrie.wu@mediatek.corp-partner.google.com, pabeni@redhat.com,
+	flora.fu@mediatek.com, andrew+netdev@lunn.ch, mchehab@kernel.org
+Subject: Re: [PATCH v1 09/14] dt-bindings: pinctrl: mediatek,mt65xx-pinctrl:
+ Allow gpio-line-names
+Message-ID: <175587585960.3825744.17420648666303158652.robh@kernel.org>
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+ <20250820171302.324142-10-ariel.dalessandro@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] scsi: hisi_sas: Switch to use tasklet over threaded
- irq handling
-To: Yihang Li <liyihang9@h-partners.com>, martin.petersen@oracle.com,
- James.Bottomley@HansenPartnership.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linuxarm@huawei.com, liyihang9@huawei.com, liuyonglong@huawei.com,
- prime.zeng@hisilicon.com
-References: <20250822075951.2051639-1-liyihang9@h-partners.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250822075951.2051639-1-liyihang9@h-partners.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820171302.324142-10-ariel.dalessandro@collabora.com>
 
-On 8/22/25 12:59 AM, Yihang Li wrote:
-> We found that when the CPU handling the interrupt thread is occupied by
-> other high-priority processes, the interrupt thread will not be scheduled.
-> So there is a change to switch the driver to use tasklet over threaded
-> interrupt handling.
-Tasklets have severe disadvantages and hence their removal has been
-proposed several times. See e.g. https://lwn.net/Articles/960041/.
-There must be a better solution than switching to tasklets.
 
-Bart.
+On Wed, 20 Aug 2025 14:12:57 -0300, Ariel D'Alessandro wrote:
+> Current, the DT bindings for MediaTek's MT65xx Pin controller is missing
+> the gpio-line-names property, add it to the associated schema.
+> 
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+> ---
+>  .../devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml    | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
 
