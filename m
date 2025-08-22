@@ -1,98 +1,133 @@
-Return-Path: <linux-kernel+bounces-781322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02EE5B3110B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:02:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A3D2B3111B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB23616921F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:01:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F29F3B4788
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF832EAB62;
-	Fri, 22 Aug 2025 08:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11272E9EB8;
+	Fri, 22 Aug 2025 08:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EHsW+l5l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pr2Ni+pF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314F2269D18;
-	Fri, 22 Aug 2025 08:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE3C17BA3;
+	Fri, 22 Aug 2025 08:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755849625; cv=none; b=X1T+I5N0/qNAO0fsVYsxcyUey18cTNvTRf1Q+UbZSKMtklD+pFvXEOArpILbk0zqkmLzfg7bg75zFQczawouByptV+cFZKu69xsW5+ldjAW5ucIS5Dguf8SET5LOPYQVMItsDrddl/D+nyOR5/Q9bsgELag3JlZKA3568MJGrUA=
+	t=1755849732; cv=none; b=UvvBVgWHSdsSu+3Hn3rFxks04tS26ZhoManJOB46mSVKLAKzPsQVh6jvVkoS5lTRoMLoV3obMTv3M/p5A83u6tNYqzinzTX0iZtuMAl+hTX6boXzA56XLMT3LI0rWZm6oTm8u0hd0QliGTDUEv3v64keWFdtbNK1eZ2jwkLleNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755849625; c=relaxed/simple;
-	bh=3LSBrlgPclPcn4MCgtRigx2+6I/Y0aDUi3B5dRZXgJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XddnWDfe2sRYj8Pbx4op2KrxSbM9SA33KjmboM8ttRB/sgIHmsOKvixMPWw7+F5yiOk1nRIKL6itSw2TEYMqFNey8GCt5Ujl8HlRBaa3bDBAUU6zKKIjOqe9AffVW+DE9f58cSlhxXupAutO3Le1No64yiOI+W/A81SE+AJAdug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EHsW+l5l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED615C4CEF1;
-	Fri, 22 Aug 2025 08:00:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755849624;
-	bh=3LSBrlgPclPcn4MCgtRigx2+6I/Y0aDUi3B5dRZXgJU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EHsW+l5lBzW6kIrQPVMAzO+pLHcaO9NHZlYPxnKMkHMJ4t0v1jWgeqNJeriGCTOXy
-	 4mj7Yj0W1lhPZncT1Q1rcwbsRxk1frpx6p7fK521064HLZoSTKOaSv50jbwGhAff/R
-	 IGcREZsoQUt7Fy2BogPc0NRiig+ip1MyOv3g5ntKq2/8rWKboO7f4bhSaFhujEu5CZ
-	 PSfI/bxD8EFetgLxg7/grV6GwCEP0bCMmDdQfUc/FVg9Ha6gKVnLj846fyyFWodWhN
-	 B02F0I1VKT99cWB6hfO4VHiOUqLVdHXNy+xBcWZ0KRY78b6KttQ2Z+JJfMSCAYO9Kh
-	 018gCc3WKLGrw==
-Date: Fri, 22 Aug 2025 10:00:21 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-Cc: Yannick Fertre <yannick.fertre@foss.st.com>, 
-	Philippe Cornu <philippe.cornu@foss.st.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Christophe Roullier <christophe.roullier@foss.st.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 01/13] dt-bindings: display: st: add two new
- compatibles to LTDC device
-Message-ID: <20250822-gifted-messy-fulmar-1eab63@kuoka>
-References: <20250821-drm-misc-next-v4-0-7060500f8fd3@foss.st.com>
- <20250821-drm-misc-next-v4-1-7060500f8fd3@foss.st.com>
+	s=arc-20240116; t=1755849732; c=relaxed/simple;
+	bh=Mz8tUStcgjbbl3K6GnMgZXqnsGG9VQy723c9+S7cXKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hl2IY8V7dkTBNoQ3SnT3nxmP+SUazM1CTVk6lZ75sbf+z4HICCPVcgnc8fO4VSB1mrY2mN6NRasoXAi9WK6vFrXAmOkLBI7rvHeBvTibkJTJUbOXqrI4dqo1U3mTfDdNBRQNCIpNdQ97VUmjk0HMTwvsbAFNK/fWhs3qaUC9dnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pr2Ni+pF; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755849731; x=1787385731;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Mz8tUStcgjbbl3K6GnMgZXqnsGG9VQy723c9+S7cXKY=;
+  b=Pr2Ni+pFhj7Psv9OK9ugT1fFibmSicrqpy5HJZ4gbens/UaBAnfpEyIf
+   WDDJvfBqpSsxRhwdhaqk2bIPefmZXUbruzi/g6UHFCaYwF0flHbBzZQUy
+   WU3v53PrGXm3dgpzgv/U4okZTtql6BjJ7pvkRiEDJLzrx3no8rBC8uWc0
+   Qpio4tsRk4QoP4EamFrWMWjWu+0VCXJ6fRmyBlfspqYmxbMHbJjSp+u9V
+   iT0KtG/q8AOat/vnHOF/pZh4v6kerstZ5y/rNamIROen0QTfL1WjNwimK
+   PHEDFr74G2cFFSWY7NE52rUXJPeYhxcx8sz2yBJh0YMnajP8SCnP8coax
+   g==;
+X-CSE-ConnectionGUID: /hEH82SrQUKd6lmG3sZZOw==
+X-CSE-MsgGUID: NyUCGl7kTOmrh36+b7a3Rw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="69592260"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="69592260"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 01:02:10 -0700
+X-CSE-ConnectionGUID: wSNCe5crQT2F9fzcHP6ZuA==
+X-CSE-MsgGUID: s4Cd5KeDR0my/RRWS5lnLA==
+X-ExtLoop1: 1
+Received: from yzhao56-desk.sh.intel.com ([10.239.47.19])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 01:02:07 -0700
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com
+Cc: peterx@redhat.com,
+	rick.p.edgecombe@intel.com,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH v3 0/3] KVM: Do not reset dirty GFNs in a memslot not enabling dirty tracking
+Date: Fri, 22 Aug 2025 16:01:00 +0800
+Message-ID: <20250822080100.27218-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250821-drm-misc-next-v4-1-7060500f8fd3@foss.st.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 21, 2025 at 01:08:51PM +0200, Raphael Gallais-Pou wrote:
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 1
-> +        clock-names:
-> +          maxItems: 1
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - st,stm32mp251-ltdc
-> +    then:
-> +      properties:
-> +        clocks:
+Hi,
+This series addresses a bug where userspace can request KVM to reset dirty
+GFNs in memslots that do not have dirty tracking enabled.
 
-minItems: 2
+Patch 1 provides the fix.
+Patch 2 is an optimization to avoid unnecessary invoking of handlers in
+        kvm_handle_hva_range() when a GFN range is entirely private.
 
-> +          maxItems: 2
-> +        clock-names:
+        Patch 2 is not directly related to the issue in this series, but
+        was found while implementing the selftest in patch 3. It also
+        enhance reliability of the selftest results in patch 3 by ruling
+        out the zap-related changes to private mappings of the test slot.
 
-minItems: 2
+Patch 3 converts the TDX-specific selftest in v2 to test
+        KVM_X86_SW_PROTECTED_VM VMs.
 
-Best regards,
-Krzysztof
+        Unlike TDX cases which would generate KVM_BUG_ON() when GFNs are
+        incorrectly reset in memslots not enabling dirty tracking, there
+        are not obvious errors for KVM_X86_SW_PROTECTED_VMs. So, patch 3
+        detects the event kvm_tdp_mmu_spte_changed instead.
+
+        Will provide TDX cases once the TDX selftest framework is
+        finalized.
+
+v3:
+- Rebased patch 1.
+- Added patch 2.
+- Converted patch 3 to test KVM_X86_SW_PROTECTED_VM VMs.
+- code base: kvm-x86-next-2025.08.21
+
+v2: https://lore.kernel.org/all/20241223070427.29583-1-yan.y.zhao@intel.com
+- Added a comment in patch 1, explaining that it's possible to try to
+  update a memslot that isn't being dirty-logged if userspace is
+  misbehaving. Specifically, userspace can write arbitrary data into the
+  ring. (Sean)
+
+v1: https://lore.kernel.org/all/20241220082027.15851-1-yan.y.zhao@intel.com
+
+
+Yan Zhao (3):
+  KVM: Do not reset dirty GFNs in a memslot not enabling dirty tracking
+  KVM: Skip invoking shared memory handler for entirely private GFN
+    ranges
+  KVM: selftests: Test resetting dirty ring in gmem slots in protected
+    VMs
+
+ tools/testing/selftests/kvm/Makefile.kvm      |   1 +
+ .../kvm/x86/reset_dirty_ring_on_gmem_test.c   | 392 ++++++++++++++++++
+ virt/kvm/dirty_ring.c                         |   8 +-
+ virt/kvm/kvm_main.c                           |  11 +
+ 4 files changed, 411 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/kvm/x86/reset_dirty_ring_on_gmem_test.c
+
+-- 
+2.43.2
 
 
