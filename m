@@ -1,94 +1,111 @@
-Return-Path: <linux-kernel+bounces-782627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F6DB322CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:28:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CCF9B322CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C44767A16D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:26:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 808E7640A19
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDBE2D0C7F;
-	Fri, 22 Aug 2025 19:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58192D0C8D;
+	Fri, 22 Aug 2025 19:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dLb4CQU1"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KJjpOTjC"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A23729994B
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 19:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006DB2D0C7F
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 19:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755890878; cv=none; b=XIl5wD6Gb8T2XEQVMZCUT3Bk75+3EaESsRtXpeZLre17oUmajK5ghXRr+5Q5SDDXWA4J3+DgkbZZjGIZnBqxKRvYupO6oQC8QrL4bXSiHwstLF8kopSFul89gxnFA8/Wkz83HSzF5GNsqEu/zvbeWuKe6+vFQkMEZh0nczMlcjo=
+	t=1755890900; cv=none; b=kDxsF3vz3I/Q/ssh2uIPbXrR4oEERI71MnuLPwsRWwvSJoCSDd9nz/VvUuycfuujYnYWLt0xb7oUwwIadfkI/bYbykn4Z9mKUhBUug8QmAM11tzdiJ/Qi4CN6VpNAtBpxoAlTBPR6NOSQb8ds/12OZTwYJP7/tzJ7k2QAuWFxGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755890878; c=relaxed/simple;
-	bh=M0P0HQ+EROChtcg44tr/Trj/AZjEl0C4MNocqhQSunQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PgDWp1YtuNofmbDZUEC04QGXHwYTR/U6v3B8EB2VY4C828A+Y4gNP7mCxL+isnPIzv/004D+XDUBv+GX1iI6gF78P1Yt7VMeiRlSXtwTXJCGr1X1VHpefanhNhtw0tH8/FnPS6NALb6HplCb7dTFvU4IF64mZ4IParqKCHM/QSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dLb4CQU1; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755890874;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tYNnmeG0XprxKHduPvXJ3NDXo6LkvZ9PXIZw0+i39Mw=;
-	b=dLb4CQU1hdQ6WGWVNfKCXMj3e0QSc58PFH34wffAKQg7MGYRyXfGhinDJPLodwwg+E8S55
-	COiW8FoozWMKc4A3ZD4LpWWcF1hW5y36YziTryHO0lB+0laZ4U6XnMOQAwTsCqEPrHI8+g
-	XRL10qKJMbfZKT2pplmVc6EgeVI0VjA=
-Date: Fri, 22 Aug 2025 12:27:48 -0700
+	s=arc-20240116; t=1755890900; c=relaxed/simple;
+	bh=j7A81r6RegdpWcYK+nl/r11XbwhWIIuLUbhyJyMgDFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HSXNR9bjCUvcRjT7WHFNNe0296pUWSGb9YSxG8NSFDRr+WOdWN3yKmt7v7zHcpuOoEm0Q+OGMuxl/R8h+t6odE0aIeP0RzhOkjZp3ZF727+w12rbqYdV2PS/wTpxxn50nf6U71aAmgncSwQNd4R9W+rN3d9Q0OSyNfFRR4cL+ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KJjpOTjC; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7C3FD40E025A;
+	Fri, 22 Aug 2025 19:28:14 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id T2m5S5JyptlF; Fri, 22 Aug 2025 19:28:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755890890; bh=R14rzH+K/gudqUukLtOD/dl9q9GH0ErTFk5o67w8BoQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KJjpOTjCCWaHiFfYpDscCe2ZJpwFAM4b7mAS6ONMwIusSYTSdZk4ut2J31t0Udu78
+	 vlN2jIlmZCaXMFKA2s0PVFsWOsjOCwFmSY6db7qcE7lRLlgDf8my0P5I7yptqbyvXm
+	 zdGiRG2crthyD0n/2xviDLbGFk0hgtDCBXi5noxY9r/0w+LYWT1oN8IOOOm1cipHMc
+	 j3UGidTWyt+jI7N8bHNxc+uzXGd5qu2lZSpzzRUik24iYwyTEBIQjqshn6+RPmvnZI
+	 eDTYgv+G+ESNBZyt/bjAGUyYs/Gw7KMglECgmR/1E/8T+uSIUnNxoe7YPvil4uwuSb
+	 JaTx0wK9StnmgKIy8rPMnXmWacBQRsor5zz2LjEtkpLYqox+QDvTbb44cZUEj/dcOU
+	 hPGPcYNSSQswfwguaK3kkxCsw2A2WFdkSZR/fyUoT0IIBQTRxWnd8oICDTwVvlgVpo
+	 LYiA7vqG3wrEVvPzoPqAZrzZzCPRYGQcCBBHhD2T3qmrSV0Y44homwu6itYgWYeNlE
+	 626eqlD3BCfWz7C4IhLBBcTdNzuTrtePewDfnE9EjHAWYO/cb6EigKRflQ8YOzS5Ox
+	 ZDEb2hefGgTioOrevTu5WSmihQEo5w7Mc3mePvRwtmJ+97+wOK55Y3DdJ9g9BATZBw
+	 pNaOwKTn7Wb2x+tKfXm9HJUk=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7DFDB40E00DD;
+	Fri, 22 Aug 2025 19:27:57 +0000 (UTC)
+Date: Fri, 22 Aug 2025 21:27:51 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Sohil Mehta <sohil.mehta@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] scripts/x86/intel: Add a script to update the minimum
+ ucode revisions
+Message-ID: <20250822192751.GJaKjEtw5Rf4f0K3DE@fat_crate.local>
+References: <20250822004422.2908427-1-sohil.mehta@intel.com>
+ <20250822100949.GAaKhB7ZlYxjpfcIit@fat_crate.local>
+ <aaed72a9-8dc8-4744-96ae-ac3db9fb4d01@intel.com>
+ <20250822182447.GHaKi176wVuSsNMmi4@fat_crate.local>
+ <4d5a17d5-f26a-4682-ab7b-5a3b05b5af3a@intel.com>
+ <20250822190622.GIaKi_rpJxdNGsbDlf@fat_crate.local>
+ <2d677e21-a5a7-4b68-b11c-e73473bab0a6@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
-To: Roman Gushchin <roman.gushchin@linux.dev>,
- Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc: linux-mm@kvack.org, bpf@vger.kernel.org,
- Suren Baghdasaryan <surenb@google.com>, Johannes Weiner
- <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>,
- David Rientjes <rientjes@google.com>,
- Matt Bobrowski <mattbobrowski@google.com>, Song Liu <song@kernel.org>,
- Alexei Starovoitov <ast@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-References: <20250818170136.209169-1-roman.gushchin@linux.dev>
- <20250818170136.209169-2-roman.gushchin@linux.dev>
- <CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
- <87ms7tldwo.fsf@linux.dev>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <87ms7tldwo.fsf@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2d677e21-a5a7-4b68-b11c-e73473bab0a6@intel.com>
 
-On 8/20/25 5:24 PM, Roman Gushchin wrote:
->> How is it decided who gets to run before the other? Is it based on
->> order of attachment (which can be non-deterministic)?
-> Yeah, now it's the order of attachment.
+On Fri, Aug 22, 2025 at 12:16:59PM -0700, Dave Hansen wrote:
+> Ahh, gotcha. Should we slap something like this in the script?
 > 
->> There was a lot of discussion on something similar for tc progs, and
->> we went with specific flags that capture partial ordering constraints
->> (instead of priorities that may collide).
->> https://lore.kernel.org/all/20230719140858.13224-2-daniel@iogearbox.net
->> It would be nice if we can find a way of making this consistent.
+> 	This script is intended to be run in response to releases of the
+> 	official Intel microcode github repository[link]. Typically,
+> 	someone at Intel would see a new release, run this script,
+> 	refresh the intel-ucode-defs.h file and send a patch upstream to
+> 	update the mainline and stable versions.
 
-+1
+Yap, thanks!
 
-The cgroup bpf prog has recently added the mprog api support also. If the simple 
-order of attachment is not enough and needs to have specific ordering, we should 
-make the bpf struct_ops support the same mprog api instead of asking each 
-subsystem creating its own.
+-- 
+Regards/Gruss,
+    Boris.
 
-fyi, another need for struct_ops ordering is to upgrade the 
-BPF_PROG_TYPE_SOCK_OPS api to struct_ops for easier extension in the future. 
-Slide 13 in https://drive.google.com/file/d/1wjKZth6T0llLJ_ONPAL_6Q_jbxbAjByp/view
+https://people.kernel.org/tglx/notes-about-netiquette
 
