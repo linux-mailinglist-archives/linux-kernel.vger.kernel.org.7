@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-782130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C114CB31B8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:30:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C30BEB31B92
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADB2F606D63
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:23:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F86E1D61244
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB96D322A1E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBDF312823;
 	Fri, 22 Aug 2025 14:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RdSwNKJt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zgmhr3DZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A851311979;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987C5311977;
 	Fri, 22 Aug 2025 14:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755872388; cv=none; b=oH+YUUVuzid+uE/C5kSduQSAHKgPvGnv9MjTYxuX/bpG/RBeKiRYF3/cLAcfWXYyq++rPf6qivwTVrBlTUamRdkZmnKljFCifIiLUIYTXQAg+jbUY+KgYfQ1sBEYgF5npjgJQc+v+BAG3A5hlY7aNkaqPwycjxEWNEDaK1Xqang=
+	t=1755872388; cv=none; b=sBk3eapjgedg6EyLXr2NJIenzh+PhC/87gY6WbaNlO8XL4p9JGwGJjMXWFuyYaf+ivGCsCGs5jF2ZVwGI/HKEj2nHMNoLB+xXv5YjmjfcPGqSCjcbEFKCeOByaTz2ldggzXNRRNH+iqh2WgONvAN4PQxW0ctGTvjLAMYl5c/zWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755872388; c=relaxed/simple;
-	bh=qu5eqKXlag7ALsP16SkP+d9fl76226iDf9IK5Sgc2pE=;
+	bh=wQmzELiyLlP6dYnGbR5xm0Wl2cXgsAK4Vx4o5Slpgnw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y352w/Oh8E6x0vY9jzKi1bgMRoMcrS8pWYBtG6OuQGit9w3KK0GZEMVsIpL3v2iK79x/tKY1Vh/KiiNp4C/KhhGsE2yDa/oEfQUu+cPKPTMD0TOewiBntkgSoSgabwhetZHE6Up5eGGlqYKeTMQT0PBY4DTHE94gzy8J8hL11U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RdSwNKJt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3331AC19425;
+	 MIME-Version; b=b1BLz7ZyTVp4J8wvZojFyePONFcD9yZ9T5FzMjXtQxDihaTvozYPVMj0S+8yOIUEbbdk11zhPqR+Z/NIXWOCEgSva7+p+HsiMs420iOliFFOX+5wygFHtCUWyF5t/eXWcLXd0vdeH3Ha8rRg8j6Kqi298fyDGUyGX5l9l/afDJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zgmhr3DZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4037BC2BCB7;
 	Fri, 22 Aug 2025 14:19:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755872388;
-	bh=qu5eqKXlag7ALsP16SkP+d9fl76226iDf9IK5Sgc2pE=;
+	bh=wQmzELiyLlP6dYnGbR5xm0Wl2cXgsAK4Vx4o5Slpgnw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RdSwNKJtIWxqNfoqmY0cnxTHcYolGcM5WW/mwIh0w0awYgEDDtZboXnG+5DlqMEcI
-	 N/RjB868xkaXRXQEXQIA/VqG7KOXqEzDIyBRWiYJ9KnBMcmztF67RReWqh+UE9zTFD
-	 HaKm+zHeqU0+evOhe7SU0GzXFj6RozppGl4ifQF+Ay+Po3OLJzLwCegiSGMqJFtuAm
-	 N0yi1Aa3FV5i48XWN7496Rv5MKoHrsVCbbHsuzYBqGJ3CYcqZHuqrosEJAtTcPMHpb
-	 ObmxCrdVEAB8lTSv+qVV494IUANdgO6Vy8Xm/a7fLFPESbln1AGjBa/yneB809Poyg
-	 dEhBGOFIp6oaw==
+	b=Zgmhr3DZt+Ed1uvBvlGY6a0RI3Qw7O7QBPDF2XQDJvwwuhtFW4YIVZnU2WiUdtnXy
+	 RZ6Gc1RJRbRACwbkhdZJ8UdE6Vv/0XMyicEl3jkF+wt80SQ1cf2nKRVj+p4kcg34G/
+	 Wo2fKhy1W3zqrj9n9g18rwI9uj+3uYLg+7ms3Vr/2/hvhixcL4MIZdKlRMuGt15dzk
+	 SfFZw4BPyIVCyRhOdHxY6ZCPD3OrCKHvmntddpns1C4ViDTOgwRmMQ0JCvOBoJHvGe
+	 BQPk9Igq2xL9iHvh9Uhm1W2WpfNejvvj4Y2Iz72516mizzANBsm7K1f3ETrphzCKih
+	 nOjuuX2gRKaRA==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1upScM-0000000CCrl-1zot;
+	id 1upScM-0000000CCrp-26gB;
 	Fri, 22 Aug 2025 16:19:46 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
@@ -51,9 +51,9 @@ Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	Kees Cook <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 14/24] docs: kernel_include.py: move range logic to a separate function
-Date: Fri, 22 Aug 2025 16:19:26 +0200
-Message-ID: <12fa2204a9e7e309ae4b8694a37ebad9327ca634.1755872208.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 15/24] docs: kernel_include.py: remove range restriction for gen docs
+Date: Fri, 22 Aug 2025 16:19:27 +0200
+Message-ID: <5dff693860a6a3faade15c24abdc380f09db468d.1755872208.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1755872208.git.mchehab+huawei@kernel.org>
 References: <cover.1755872208.git.mchehab+huawei@kernel.org>
@@ -66,86 +66,42 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Cleanup run() function by moving the range logic to a separate
-function.
+Originally, parse-readers were generating an output where
+the first two lines were setting a literal block.
 
-Here, I ended checking the current Sphinx implementation, as it
-has some extra logic for the range check.
+The script now gets only the actual parsed data without that,
+so it is now safe to allow start-line and end-line parameters
+to be handled.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/sphinx/kernel_include.py | 51 +++++++++++++++++---------
- 1 file changed, 33 insertions(+), 18 deletions(-)
+ Documentation/sphinx/kernel_include.py | 6 ------
+ 1 file changed, 6 deletions(-)
 
 diff --git a/Documentation/sphinx/kernel_include.py b/Documentation/sphinx/kernel_include.py
-index ef86ee9e79d6..c5f4f34e22cb 100755
+index c5f4f34e22cb..4cdd1c77982e 100755
 --- a/Documentation/sphinx/kernel_include.py
 +++ b/Documentation/sphinx/kernel_include.py
-@@ -131,6 +131,38 @@ class KernelInclude(Include):
+@@ -122,9 +122,6 @@ class KernelInclude(Include):
+             exceptions_file = os.path.join(source_dir, self.options['exception-file'])
+             parser.process_exceptions(exceptions_file)
  
-         return parser.gen_output()
+-        if self.options.get("start-line") or self.options.get("end-line"):
+-            raise self.severe('generate-cross-refs can\'t be used with "start-line" or "end-line"')
+-
+         # Store references on a symbol dict to be used at check time
+         if 'warn-broken' in self.options:
+             env._xref_files.add(path)
+@@ -209,9 +206,6 @@ class KernelInclude(Include):
  
-+    def apply_range(self, rawtext):
-+        # Get to-be-included content
-+        startline = self.options.get('start-line', None)
-+        endline = self.options.get('end-line', None)
-+        try:
-+            if startline or (endline is not None):
-+                lines = rawtext.splitlines()
-+                rawtext = '\n'.join(lines[startline:endline])
-+        except UnicodeError as error:
-+            raise self.severe(f'Problem with "{self.name}" directive:\n'
-+                              + io.error_string(error))
-+        # start-after/end-before: no restrictions on newlines in match-text,
-+        # and no restrictions on matching inside lines vs. line boundaries
-+        after_text = self.options.get("start-after", None)
-+        if after_text:
-+            # skip content in rawtext before *and incl.* a matching text
-+            after_index = rawtext.find(after_text)
-+            if after_index < 0:
-+                raise self.severe('Problem with "start-after" option of "%s" '
-+                                  "directive:\nText not found." % self.name)
-+            rawtext = rawtext[after_index + len(after_text) :]
-+        before_text = self.options.get("end-before", None)
-+        if before_text:
-+            # skip content in rawtext after *and incl.* a matching text
-+            before_index = rawtext.find(before_text)
-+            if before_index < 0:
-+                raise self.severe('Problem with "end-before" option of "%s" '
-+                                  "directive:\nText not found." % self.name)
-+            rawtext = rawtext[:before_index]
-+
-+        return rawtext
-+
-     def run(self):
-         """Include a file as part of the content of this reST file."""
-         env = self.state.document.settings.env
-@@ -185,24 +217,7 @@ class KernelInclude(Include):
+             title = os.path.basename(path)
+ 
+-            if startline or endline:
+-                raise self.severe('generate-cross-refs can\'t be used together with "start-line" or "end-line"')
+-
+             if "code" not in self.options:
+                 rawtext = ".. parsed-literal::\n\n" + rawtext
          else:
-             rawtext = self.read_rawtext(path, encoding)
- 
--        # start-after/end-before: no restrictions on newlines in match-text,
--        # and no restrictions on matching inside lines vs. line boundaries
--        after_text = self.options.get("start-after", None)
--        if after_text:
--            # skip content in rawtext before *and incl.* a matching text
--            after_index = rawtext.find(after_text)
--            if after_index < 0:
--                raise self.severe('Problem with "start-after" option of "%s" '
--                                  "directive:\nText not found." % self.name)
--            rawtext = rawtext[after_index + len(after_text) :]
--        before_text = self.options.get("end-before", None)
--        if before_text:
--            # skip content in rawtext after *and incl.* a matching text
--            before_index = rawtext.find(before_text)
--            if before_index < 0:
--                raise self.severe('Problem with "end-before" option of "%s" '
--                                  "directive:\nText not found." % self.name)
--            rawtext = rawtext[:before_index]
-+        rawtext = self.apply_range(rawtext)
- 
-         include_lines = statemachine.string2lines(rawtext, tab_width,
-                                                   convert_whitespace=True)
 -- 
 2.50.1
 
