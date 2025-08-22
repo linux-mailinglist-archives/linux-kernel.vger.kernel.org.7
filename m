@@ -1,156 +1,103 @@
-Return-Path: <linux-kernel+bounces-782426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4417CB32038
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:13:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A929CB32058
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37E2D1D63E19
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:07:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B02BC626E95
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E050E230269;
-	Fri, 22 Aug 2025 16:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD467263F3C;
+	Fri, 22 Aug 2025 16:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=watter.com header.i=@watter.com header.b="ZnNCh69a"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="R5ErbakN"
+Received: from 5.mo533.mail-out.ovh.net (5.mo533.mail-out.ovh.net [54.36.140.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986D925B312
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A721A9FB9
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.36.140.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755878826; cv=none; b=NSZXUMZsaV/ptR0NtTOkQF2rgkuuFp6jQbkAM9jVPey1gXcnjXDal2M8JHQwtLPtrjotTwyAbdu0flRISEy6LUG5jm+/HPW2CQDv8tiZS63HK59Ncrrun1IfcggRjZyOSWM9Kc8XV6KqYK2WerG0OSiCZrIC/YdODGnYrXzwxN0=
+	t=1755879402; cv=none; b=ux92szxUKMEMUYFdsKJbhqe4xrfBpR95eaZRvBhO4Ce9SI7UtlnqVUxQROXJBaSxIxZ7WB54RPYQ14i09cXQzTaErHy+E8cTW9TMTrMJMwo4I/SM7XMiQTu5MB124R2YJFTIofe1WetYGtLyBYIjCHHe5FM6oo9ZguYDZYMFRSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755878826; c=relaxed/simple;
-	bh=PeFWqmKvO1chHjKzpamnENPM1xecjmZuSEwZ1WqrNeU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=oTZkD0YhXxGfFaVIoN6WzhmUBEVu59N/Vdk1yYYMgmm7d85BgeJmLEegEoHVn4X/bAuQZN7GgLWzVRlhZ0P233N9VEUNmyMrkIs5cEmq9+L9+WyBicMf6UbAy0gfSDswBVkxQyxrYMl//HPcu0SX5Uiqye1CNY5nEukfdOG2z7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=watter.com; spf=pass smtp.mailfrom=watter.com; dkim=pass (2048-bit key) header.d=watter.com header.i=@watter.com header.b=ZnNCh69a; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=watter.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=watter.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b1099192b0so37504471cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:07:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=watter.com; s=google; t=1755878823; x=1756483623; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v3a0v0yEWcj3RiPcDwFFeqOwhcQzYtQNA5v8wZVyGNw=;
-        b=ZnNCh69aYatPDomewHW3izDxvTaBbOmll+HCCioEBkaP+q8OoqigkBu19KJDsO8pa9
-         D4DmSAlBX5a06MTjjFc3iWNcwg2louEdBB9YwV/gxXN1IfOLyZhHqrEnamHwHOdOU/Hl
-         zaXim4jO71kDYLCI/4gMc/F4jmEB0D5KNSM6YOJ0t+R5vtrAPLN9/xVJzgNUZXFugMCY
-         /+j5qR6x2OCUGpTWs3Qf+Fw+cACwMTomXD1KjEP0S3fxJ3l9K5tCpNPDZolaDpTSxulv
-         zXuK9RCIItVPnjyoGv6L3PG3O79kghlBAqQdrVpaokCMl/eHiMqN1aGd71uOOnHvENd2
-         Qbkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755878823; x=1756483623;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v3a0v0yEWcj3RiPcDwFFeqOwhcQzYtQNA5v8wZVyGNw=;
-        b=sPCUe7BtxdI7thEYj3AIt4arKKEwiVy90Dx7/mD9bj932LnMaKF0cu9B+Ff1wRgamv
-         7YnlKtSjxPRb+IIrvbSw5KB76aB9GP3Dpp1lA3aoaP12p96hbysSDzuEhk5wbTGrjBrL
-         uKfPtf75JIXsgKLPYFWjE+PWtwoDoNBgWulvdQFZiwYx0W8J+jAYw5T+HFTlz0BlefM+
-         EPZIBnVhape/TW/iYTQHeRRZrlHHpBatu2LgGJOUY+CgMhzqpQHJWv5csxbnKbagUFor
-         O1Fi9FOhLt6xDwq9YSpBwOfQ+q7YeqhAWQBkPxipBzBuZhHu4VD49T8NI1AtArghcx48
-         6sKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXu/E16/I2b+X4W3W06Y8Go5ErC4+YvvVhCcHMK+KLKmIPQVIF/ZmMpeFQXrUOluRDWGzftIOwYunInbd0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK1vz6aGkVPb7cNkFG/rIzjb777ezObRLfJqc5KJUoBBY3+zkH
-	95Lup/5hqbVV3EwhyV0SANtqcaZzOf6WgdLpZYRCEe9ZUnC+hPYRRmDRxvpnLHe7Mg==
-X-Gm-Gg: ASbGncsYZ5y+sloFSK38HWjyPAOglcEWJ5huFodqMZkzu6zUBDIRgmgoiujzwT7zjoP
-	03AuF3ZDBcEdGQeBYPTwgVM/P4fmlWqnnhdPTO7phLcJ5GIj0g3iIuas8hk40AgFSM6h7Gle/8u
-	ahCpv1iSt3MdKv+VbWn8Q17ft/VY3rJQAbmmGUu/TyZDpfmJOWMr57Snx67fsz+v3BYsap7qua+
-	nQDpdy7uvzlSaISy64C9p0riOZ5HocpGulgO+kqJs7u282S6zciFp5+UUzKC2hTvkvXnBy/K5J7
-	EbyEDy0VdTXUuuIIMzuoc0pr8TYmqM/p5BeKdtsqAKrgCdHcoX/1dnz6U8ChyCOH+J2ZX8fnBEW
-	5MNUycqpB/+9ygxKn6buxazrz9Lh++G3/Ou5YlVMOIQ==
-X-Google-Smtp-Source: AGHT+IHAD7H5L6yCdeTC6tSubZLEJn8ENm+E+LtaoKzBuMfi/WRcDB8L8WglMrH9i33FpqnhIRJ71A==
-X-Received: by 2002:a05:622a:4e06:b0:4b2:8ac4:f07c with SMTP id d75a77b69052e-4b2aab8ac98mr53224851cf.78.1755878823153;
-        Fri, 22 Aug 2025 09:07:03 -0700 (PDT)
-Received: from smtpclient.apple ([70.32.192.89])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b2b8e514fesm1661981cf.50.2025.08.22.09.07.02
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Aug 2025 09:07:02 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1755879402; c=relaxed/simple;
+	bh=Muy7A70ZsK2eQRnxqNVYMyvIfA2QXop/Nofswsm16qQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gA90EyO8OcWfbaLFbKIpoBk0F7SBcWeOApe5TBSyvlaC5eYYhnnmfYZrK2UYmkSQHEo9LbOVNnfe/ZZ4zkLaVvgKwmGSJJwlR35XuIz68antxnVCVErQnO7Yv3mkPH7cgmaXyR9aZesB1O683co8P7i71z+C3PWVMEdBqPbuTgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=R5ErbakN; arc=none smtp.client-ip=54.36.140.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
+Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net [51.68.80.175])
+	by mo533.mail-out.ovh.net (Postfix) with ESMTPS id 4c7lVG4bgsz5y8b;
+	Fri, 22 Aug 2025 16:08:38 +0000 (UTC)
+Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net. [127.0.0.1])
+        by director1.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <brgl@bgdev.pl>; Fri, 22 Aug 2025 16:08:38 +0000 (UTC)
+Received: from mta6.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.118.160])
+	by director1.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4c7lVG00x4z5xT3;
+	Fri, 22 Aug 2025 16:08:37 +0000 (UTC)
+Received: from orca.pet (unknown [10.1.6.6])
+	by mta6.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id BB32A8E32EC;
+	Fri, 22 Aug 2025 16:08:36 +0000 (UTC)
+Authentication-Results:garm.ovh; auth=pass (GARM-101G00461199434-89d8-4298-bfef-9cf54b1e3b55,
+                    ADC0680FE15BB91110492B9A34CE42AA242C155A) smtp.auth=marcos@orca.pet
+X-OVh-ClientIp:79.117.22.109
+Message-ID: <7c325631-c209-4df9-a259-4b9c4e545f87@orca.pet>
+Date: Fri, 22 Aug 2025 18:08:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.5\))
-Subject: Re: [PATCH v8 4/5] iio: mcp9600: Recognize chip id for mcp9601
-From: Ben Collins <bcollins@watter.com>
-In-Reply-To: <CAHp75VdMCY3=bL2t7zWw0D1WqtiLXrWi+ptjpaxK16b8J1KVSg@mail.gmail.com>
-Date: Fri, 22 Aug 2025 12:06:51 -0400
-Cc: Jonathan Cameron <jic23@kernel.org>,
- David Lechner <dlechner@baylibre.com>,
- =?utf-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Andrew Hepp <andrew.hepp@ahepp.dev>,
- linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <7C976B5E-781D-472B-B2C8-3AD22550E036@watter.com>
-References: <20250822-upstream-changes-v8-0-40bb1739e3e2@watter.com>
- <20250822-upstream-changes-v8-4-40bb1739e3e2@watter.com>
- <CAHp75VdMCY3=bL2t7zWw0D1WqtiLXrWi+ptjpaxK16b8J1KVSg@mail.gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-X-Mailer: Apple Mail (2.3864.100.1.1.5)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] gpio: vortex: add new GPIO device driver
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Michael Walle <mwalle@kernel.org>,
+ Lee Jones <lee@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-gpio@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20250822154903.GA685390@bhelgaas>
+Content-Language: es-ES
+From: Marcos Del Sol Vives <marcos@orca.pet>
+In-Reply-To: <20250822154903.GA685390@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 10810327957363381862
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieegvddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpedtgedugfeiudfgkeduhfelgfejgfeuvdejffeiveegteejvddviefhiedujedvheenucfkphepuddvjedrtddrtddruddpjeelrdduudejrddvvddruddtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepledprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopehhvghlghgrrghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmfigrlhhlvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrh
+ hnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+DKIM-Signature: a=rsa-sha256; bh=AGiF7sh4zThSv7GNcqRgASdL2+wKj6I58TlLd/g5bR4=;
+ c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1755878918;
+ v=1;
+ b=R5ErbakNFYd4tWQVZSxIMyxRTfyYn4y75LTbQiiwt5NlZbGebT3sZFj3d33tv51gPQoxxOP5
+ ZtGifOwJsAawg4EFc934hyUEa+qbtuk1o+15vzN6BIoGb1hrmdvhlir1uR/3IGFaWE6TugxbOaK
+ EBWpqiLO/ATW9nHM/tfdiPR50BP2VvDM2jwCIRW3e7xlhGAdQUbDKsBsRbtq49z0Kja2H97YiK4
+ MRV/w4MrP4TVrFBdXjUp6QOUc+KRmQa8Tm7JkFiQgVVBZ1M2ukg/3cx291pun39qqY+olxIYy0P
+ H1D18nF3mwfhNCVCFkAbaRKwHMlRXqfFRqUUXFjpJ097g==
 
+El 22/08/2025 a las 17:49, Bjorn Helgaas escribió:
+> On Fri, Aug 22, 2025 at 10:47:20AM -0500, Bjorn Helgaas wrote:
+>> I'm not the person to merge this, but my advice is to wait a few days
+>> and post a v4 that cleans up the includes and updates the commit
+>> messages.  It makes the process cleaner if the patch you post is the
+>> same as the one that gets merged.
+> 
+> Sorry for the noise, should have read farther through my email :)
 
-> On Aug 22, 2025, at 11:57=E2=80=AFAM, Andy Shevchenko =
-<andy.shevchenko@gmail.com> wrote:
->=20
-> On Fri, Aug 22, 2025 at 4:24=E2=80=AFPM Ben Collins =
-<bcollins@watter.com> wrote:
->>=20
->> The current driver works with mcp9601, but emits a warning because it
->> does not recognize the chip id.
->>=20
->> MCP9601 is a superset of MCP9600. The drivers works without changes
->> on this chipset.
->>=20
->> However, the 9601 chip supports open/closed-circuit detection if =
-wired
->> properly, so we'll need to be able to differentiate between them.
->>=20
->> Moved "struct mcp9600_data" up in the file since a later patch will
->> need it and chip_info before the declarations.
->=20
-> ...
->=20
->> +struct mcp9600_data {
->> +       struct i2c_client *client;
->> +};
->> +
->=20
->> -struct mcp9600_data {
->> -       struct i2c_client *client;
->> -};
->> -
->=20
-> Seems we discussed this. And my suggestion was to defer the change to
-> when it will be needed.
+No problem, thanks for clarifying!
 
-And my response was that it=E2=80=99s needed in 5/5 where I add the =
-mcp9600_config()
-function. That function will need to be before mcp9600_channels[] in the
-IIR patch series.
+I would've waited for a couple days more to give more time for review
+before the v4 if it was just minor styling details, but I found a nasty
+surprise yesterday in the DX3 programming manual (I was using the SX/MX/DX
+manual before): it has two discontinuous ranges for data and two
+discontinuous ranges for direction, and the icing on top is that
+*all four ranges have different sizes*.
 
-So either I move mcp9600_data now, or I leave it and put =
-mcp9600_config()
-below it, and then in the IIR series I=E2=80=99ll have to move both up.
-
-Didn=E2=80=99t seem to make sense to move 30 lines of code later when I =
-can move
-3 lines now.
-
-Regards,
-  Ben=
+So as it was a pretty big change I wanted to have a new one with support
+for that for review asap :)
 
