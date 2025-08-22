@@ -1,108 +1,94 @@
-Return-Path: <linux-kernel+bounces-782626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21763B322CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:27:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F6DB322CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFC446406BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:27:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C44767A16D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8DA2D0C90;
-	Fri, 22 Aug 2025 19:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDBE2D0C7F;
+	Fri, 22 Aug 2025 19:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyn2+mIg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dLb4CQU1"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0048C29994B;
-	Fri, 22 Aug 2025 19:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A23729994B
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 19:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755890871; cv=none; b=O+3VM2WD35Pm1xSBn9Akc/OnCQ5QNw4aLGQfOjK5Sjhr83fSTC2G500l3vIglth8lTQVD2J8uZHOiguhXj9rOqRMjXP9QdxZBz+taRLNXhIx8IS95821CV+vajlBw+IZvF5UmqDOsFZ9zrKIaI+VQNLXzn0Wrj3PPKdrlBuZPng=
+	t=1755890878; cv=none; b=XIl5wD6Gb8T2XEQVMZCUT3Bk75+3EaESsRtXpeZLre17oUmajK5ghXRr+5Q5SDDXWA4J3+DgkbZZjGIZnBqxKRvYupO6oQC8QrL4bXSiHwstLF8kopSFul89gxnFA8/Wkz83HSzF5GNsqEu/zvbeWuKe6+vFQkMEZh0nczMlcjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755890871; c=relaxed/simple;
-	bh=UrSFc4ceG2KOC9f1OqXNvzvbLgWDesJ+3YD6m1xObDA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Oet4GxtnDEPz33+yWeZTausQxsWhRPU5tiqdiZa40LnkvmtayQjPzZ2Ut9q177T3WZi6CdWjN7i/4ceNGVdunr/adcJeefdQ1yK6bT4ik0x/ACa/5PpgInudwvVIA69pRrIw16bgZhJRmqFWpYc4rEXtaRv7DiB3eoFNibZt688=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyn2+mIg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DB43C4CEED;
-	Fri, 22 Aug 2025 19:27:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755890870;
-	bh=UrSFc4ceG2KOC9f1OqXNvzvbLgWDesJ+3YD6m1xObDA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hyn2+mIgBo8O7wkfPZAqZP0AC6dPtJFLg++z7ishNacZ2IUtLAJGLYlA39gbq/YCD
-	 rdZFYzBDXikwOVfV186z7i5uAcea0aULJFBm9qbog5RLqA3IDCC2LjUNDNtOluj0t1
-	 ioR43MDInW6RG/3huccUvuV7NFPV30qgXrsGKNweBivnqMbQ4Q4IdsLTImdi2uqPHv
-	 V4yTMptbG815KymqMRD2E85sMzCn4uJNbDO10bDeX+9zUuFewUI4+v4WsaH2lEW8ux
-	 lUGrtSy3sCOwOwYLsbu9XvaC3YtGok0JFk8lPROqyAPL/23N0fN+K5Gti3v6VmIXLF
-	 IV6WkIRAYZB8w==
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-61bc52fd7a4so1945553eaf.0;
-        Fri, 22 Aug 2025 12:27:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXt9VYY63lYZeOUKB1cmft2nbRbf1+xOY7hQWkIfZsgzQ1JFsRV/57RrKr8C4+MhRhMap5+lxGXODZD@vger.kernel.org, AJvYcCXwGAwrTQ2iWK3r0erKSGp89FabxK2a0uQZqipoEtpvS/SixeKhzyHE+S6N0ZifEY2CiGm4hKqzZca3ab/V@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYSkd7Ed1Tp+fUcdfULmP5qYHQhQACkXHdezLImpp2V03GySDt
-	/DhIBHacY7IBmOw0YvT0mVbVVHP8m6q4WXvcPooqY4wKFOEBSdus487NHvO4gjlKIXpNSkqLdKD
-	qlvxlS/+BOo5gHL4d9ZE1Nxmm7368MBs=
-X-Google-Smtp-Source: AGHT+IFwyQIR5WWfBTC+i7HkpeOSpK0phH5gxCkFaPo2TqBE2UYaYKYoFKiUQF3I1397M+baz0oJdPJhuoG/nqkczxo=
-X-Received: by 2002:a05:6870:b507:b0:314:9689:a466 with SMTP id
- 586e51a60fabf-314dd6e64d7mr2103441fac.22.1755890869635; Fri, 22 Aug 2025
- 12:27:49 -0700 (PDT)
+	s=arc-20240116; t=1755890878; c=relaxed/simple;
+	bh=M0P0HQ+EROChtcg44tr/Trj/AZjEl0C4MNocqhQSunQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PgDWp1YtuNofmbDZUEC04QGXHwYTR/U6v3B8EB2VY4C828A+Y4gNP7mCxL+isnPIzv/004D+XDUBv+GX1iI6gF78P1Yt7VMeiRlSXtwTXJCGr1X1VHpefanhNhtw0tH8/FnPS6NALb6HplCb7dTFvU4IF64mZ4IParqKCHM/QSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dLb4CQU1; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755890874;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tYNnmeG0XprxKHduPvXJ3NDXo6LkvZ9PXIZw0+i39Mw=;
+	b=dLb4CQU1hdQ6WGWVNfKCXMj3e0QSc58PFH34wffAKQg7MGYRyXfGhinDJPLodwwg+E8S55
+	COiW8FoozWMKc4A3ZD4LpWWcF1hW5y36YziTryHO0lB+0laZ4U6XnMOQAwTsCqEPrHI8+g
+	XRL10qKJMbfZKT2pplmVc6EgeVI0VjA=
+Date: Fri, 22 Aug 2025 12:27:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728070612.1260859-1-lihuisong@huawei.com> <20250728070612.1260859-2-lihuisong@huawei.com>
-In-Reply-To: <20250728070612.1260859-2-lihuisong@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 22 Aug 2025 21:27:38 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ir6ds5KGMQAUwb-hEdwhbuALHdYzDspT9z=W4md1rsOw@mail.gmail.com>
-X-Gm-Features: Ac12FXxeNPnp9DZtU-EOTSVEq2I6VEFp-0bTRwQXvdmuJ7s9CENx8TIn4dVonGs
-Message-ID: <CAJZ5v0ir6ds5KGMQAUwb-hEdwhbuALHdYzDspT9z=W4md1rsOw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] ACPI: processor: idle: Fix memory leak when
- register cpuidle device failed
-To: Huisong Li <lihuisong@huawei.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
-	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
-	yubowen8@huawei.com, liuyonglong@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
+To: Roman Gushchin <roman.gushchin@linux.dev>,
+ Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc: linux-mm@kvack.org, bpf@vger.kernel.org,
+ Suren Baghdasaryan <surenb@google.com>, Johannes Weiner
+ <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>,
+ David Rientjes <rientjes@google.com>,
+ Matt Bobrowski <mattbobrowski@google.com>, Song Liu <song@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+References: <20250818170136.209169-1-roman.gushchin@linux.dev>
+ <20250818170136.209169-2-roman.gushchin@linux.dev>
+ <CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
+ <87ms7tldwo.fsf@linux.dev>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <87ms7tldwo.fsf@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Jul 28, 2025 at 9:06=E2=80=AFAM Huisong Li <lihuisong@huawei.com> w=
-rote:
->
-> The cpuidle device's memory has been leaked when register cpuidle
-> device failed in acpi_processor_power_init().
->
-> Fixes: 3d339dcbb56d ("cpuidle / ACPI : move cpuidle_device field out of t=
-he acpi_processor_power structure")
-> Signed-off-by: Huisong Li <lihuisong@huawei.com>
-> ---
->  drivers/acpi/processor_idle.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
-c
-> index 2c2dc559e0f8..031738390f2d 100644
-> --- a/drivers/acpi/processor_idle.c
-> +++ b/drivers/acpi/processor_idle.c
-> @@ -1405,6 +1405,8 @@ int acpi_processor_power_init(struct acpi_processor=
- *pr)
->                 if (retval) {
->                         if (acpi_processor_registered =3D=3D 0)
->                                 cpuidle_unregister_driver(&acpi_idle_driv=
-er);
-> +                       kfree(dev);
-> +                       per_cpu(acpi_cpuidle_device, pr->id) =3D NULL;
->                         return retval;
->                 }
->                 acpi_processor_registered++;
-> --
+On 8/20/25 5:24 PM, Roman Gushchin wrote:
+>> How is it decided who gets to run before the other? Is it based on
+>> order of attachment (which can be non-deterministic)?
+> Yeah, now it's the order of attachment.
+> 
+>> There was a lot of discussion on something similar for tc progs, and
+>> we went with specific flags that capture partial ordering constraints
+>> (instead of priorities that may collide).
+>> https://lore.kernel.org/all/20230719140858.13224-2-daniel@iogearbox.net
+>> It would be nice if we can find a way of making this consistent.
 
-Applied as 6.18 material with minor adjustments, thanks!
++1
+
+The cgroup bpf prog has recently added the mprog api support also. If the simple 
+order of attachment is not enough and needs to have specific ordering, we should 
+make the bpf struct_ops support the same mprog api instead of asking each 
+subsystem creating its own.
+
+fyi, another need for struct_ops ordering is to upgrade the 
+BPF_PROG_TYPE_SOCK_OPS api to struct_ops for easier extension in the future. 
+Slide 13 in https://drive.google.com/file/d/1wjKZth6T0llLJ_ONPAL_6Q_jbxbAjByp/view
 
