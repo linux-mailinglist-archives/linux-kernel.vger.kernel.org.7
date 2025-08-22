@@ -1,142 +1,149 @@
-Return-Path: <linux-kernel+bounces-782459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C87B3209A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:36:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CD45B3209F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27C6B1D250E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:36:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0D7A18980CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1111305E04;
-	Fri, 22 Aug 2025 16:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28312580CF;
+	Fri, 22 Aug 2025 16:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KhliOF1J"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n8hLAZfJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198462853F8;
-	Fri, 22 Aug 2025 16:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5756D1F463C;
+	Fri, 22 Aug 2025 16:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755880541; cv=none; b=dS3WSvXJpPL0D++yn7pw2ZqFz3UstxlTz1fUOyPnh+usvJ2ByiP8cGBdmRh/vrPL1uEvpG8jNxUSTHTx0cZEMi88hAiTA8BXiPi1AumzxTQfC3xyMw31m6+aMp/X0N4Stutzmgv9Mr1kW9U4EOwDNG81TQmln3lQRI4Rc3B0IZg=
+	t=1755880629; cv=none; b=JXCp3kEO+7hU6hIJ8Pf+akyXeSSPqMVQPRAWytazdTjUSkwOgTLJ4rO45EjD+2qt6oIwcgl4e6V78gpxZ85oIdvMkfgfNLNQB8WHGpoxLnZ85P/Ia0J8NoI+JmBActKvxh/jI87GnjLcvN5llQ7ahJ4YfzSfNZq4ElNqwiRAlbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755880541; c=relaxed/simple;
-	bh=wmzL8WhEl7OoUCt6gCCzTFu2FcX/5HDAySlZEShwT4I=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=icbhpjfFLQL9I0hA2V6ta5y1RrG6yctoFEFpBC8ZA+XUgOT4aovWjLDtR8yVPka1qDD5Km8c4L7VArBWl3/HVXaTfhZfAhNTUOngsxWnKDjhMooscBVmh161i6jGVEhmAqClluRYdjep0rTB9En9vICAMf/1cqP3GqDBpsiEai0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KhliOF1J; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-770305d333aso948112b3a.0;
-        Fri, 22 Aug 2025 09:35:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755880534; x=1756485334; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wmzL8WhEl7OoUCt6gCCzTFu2FcX/5HDAySlZEShwT4I=;
-        b=KhliOF1JmcrYP+aZ8uVltTnrvGwDEE/g4I3mlGrhSISOkyimL+Qccc9eibnrEZouVs
-         zdXVDSL+gv3b1CAIJWLqKbJt/qrxpOVnw0SpTdoAl96dc8OsmWnaSlBTp2SKksZZXn+P
-         r1ejrzsDEUZ7Ly5wuDfix4KzNHWiJ/Z1aPZmGQwVwqffzSRJEOnldLRuug1BrSLXXGEa
-         9TriaMV/ij/8d/nq3bkMGkLbFfh+bEKU8kS+0fOR1y4jY0EbTcvoabpLkve7jmRDheli
-         1z+HTi1ClCMRXKH3TA7S6/ZHvxmEd6LqBWh5u/42+iRJjifGbrNrG4QNHiLkokv3puaq
-         9mIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755880534; x=1756485334;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wmzL8WhEl7OoUCt6gCCzTFu2FcX/5HDAySlZEShwT4I=;
-        b=pzHM4ecuMlLrWfmBEYPcZ30cbKwdn9xZjoJoE0oyGMlMcSdN6997jq+ZipOIaoAHi0
-         ojRVXyFSl5Dgs9magYDoHB5yKfAnvuI21pfWHpi9rnizX6r+hkDu00JM4mzUFo2JJ5fm
-         rVnUZ2NGqwxgIGhnZis0HPYQdQy8KFAujXCfhOBz5KWWGaRpLytk0mt4wKA0E0b3ohBG
-         nsgWGtwVF/d0A0wsreKX4ei4OObZqqGAYtuvHsa9NCWplEoOpNAdRYlFt/fBJBrwa0Un
-         1gtmzt2n9YWxTn68oE3tgBUsuETMobmS0j+UG7pW/jkFk7d/mVN3GZiKMYwOWXI02Edo
-         z5zg==
-X-Forwarded-Encrypted: i=1; AJvYcCUclZ4QS1N92x7Px8h2EyjLC3w2uoHx0HQUGDOLOgpaXcs6TmGNHiRNGzYSdj6x5LDv1r7qjKAw@vger.kernel.org, AJvYcCVZ19Rc4ehJeW1l7KsL8pe3UBrB73e3bIyw+CpI5BIbPzE0MrUeaeNFuBj4jU87/sh7Bi3F07Gzgttj/GQ=@vger.kernel.org, AJvYcCXIhWbpP1h40GmSBDwzZ15DRLr+a0S9dIT18OZucEi0fvXCXR28iSlh17OKSX27NS2zruBWvCTm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlBdA35SoTDETNiQ2Gbdh96P+JlUvwCf+HSVIsp0wx9LXQSY8n
-	OiOxQsU9b6kl7AF7+AE2Hem+8k4IO6f+42+NKzZgYhdzWR0Ht0MjPLxIASO+55G2ewYodnVjUlf
-	xMh2A9VTACoktnEt2syWbLGLJAVvYNw==
-X-Gm-Gg: ASbGncsv4iBOocShPXfN1USPK1kmHovMxysk2mh3RppNyAZyh4VXJQBxt60SF0DmVN3
-	GLdN2N2hf6F7LVvZDB8Nj8tauMcqXx/YryN3JjaWDaaFup/sM/ZfGMkKDf6mXdRty4FbYCRdAAC
-	NNKVKUByk9ZJDeCOX5J8Oe/pNcLCqDxyAW81rVZiyuNzQNd8GhhH1yZvyh39HfPFYZvoM0y3Wo2
-	AEPK+fC0aIR3z08h6cL8eFty/pmfPn/J0Jw721UZHs3cmIman34gdOQphcTAODKEUaRq6fnXLgA
-	zM1xCoJBYV/vTfHrcZt2
-X-Google-Smtp-Source: AGHT+IHTDq1oeNBYpM1bw8gGhdGoQ7e0NTteeJjpTzVATWPWK+u5h4kRpsn/uFF5bNXy7VxhaDie626knu1nQQws00E=
-X-Received: by 2002:a05:6a20:3d06:b0:240:1c36:79a2 with SMTP id
- adf61e73a8af0-24340b01a3emr5979726637.10.1755880534264; Fri, 22 Aug 2025
- 09:35:34 -0700 (PDT)
+	s=arc-20240116; t=1755880629; c=relaxed/simple;
+	bh=Nu4e6UeAXwVcvfZtjpDX4+Fvi5Hf97mH4y1qIQ3VZzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=POkTcU3/NgeGouEkHlhywmkuvL/2y5LRK+hS0EoJo4VxkbbKZYxBDrSxoD3psn1HuUn9NLU6NWkkb2nY31UB3zM+B7vpqtTWuDpCJMD5M3wOIw2d55S9YaPzdTIkt/nSjSgMarIVZI7fsrFrVQH+W8fv9pxsPRN26rviYZl0Evo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n8hLAZfJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73852C4CEED;
+	Fri, 22 Aug 2025 16:37:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755880628;
+	bh=Nu4e6UeAXwVcvfZtjpDX4+Fvi5Hf97mH4y1qIQ3VZzA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n8hLAZfJovCKOU2fELvFU+ZBcFqnowH+57AbthIsjm22+oAhTNi6jrkkShDDkK6K/
+	 C1H8s6gvzNgkXr31PNpTZ4UMCG/1+hzaGo4VbrTKm/r+LrQ5wGvaWOI55XUeKNykvT
+	 /jSzs4nHn9hFj1gb2KcPdkn6rZ0txqkgQnhe57K9CLyHSIJCjeTsQgr2OWkdLM7wc5
+	 W8umRxG2B8NtlR/N5bVucmEIwDjeM2AjYC3sxBa07queDIccM1qoYlZ43ooRfiqC6b
+	 D9zNd4dWYQxcO/nfvNYuzpk5PzHkPtB0GUYx+K9iKYzqGnGYiP5NHwB6Gf5ylsP3K7
+	 BPZUyP/CprI9A==
+Date: Fri, 22 Aug 2025 17:37:04 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Hal Feng <hal.feng@starfivetech.com>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC 1/3] dt-bindings: riscv: Add StarFive JH7110S SoC and
+ VisionFive 2 Lite board
+Message-ID: <20250822-rascal-geometry-83c35926ea7e@spud>
+References: <20250821100930.71404-1-hal.feng@starfivetech.com>
+ <20250821100930.71404-2-hal.feng@starfivetech.com>
+ <20250821-pencil-anguished-6b8467adbd38@spud>
+ <ZQ2PR01MB13071F6F2732451DBE3BEE9DE63D2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Rui Salvaterra <rsalvaterra@gmail.com>
-Date: Fri, 22 Aug 2025 17:35:22 +0100
-X-Gm-Features: Ac12FXxOAJwfk6e6i3lw8xuT8N1nK7SDe6oUIjfCp20HUbSIh_3_NqPV8J5QaGY
-Message-ID: <CALjTZvZkDr8N18ocZ8jNND_4DwKqr-PV4BBXB60+=WXPF3vn=Q@mail.gmail.com>
-Subject: [REGRESSION, BISECTED] IPv6 RA is broken with Linux 6.12.42+
-To: wangzijie1@honor.com, gregkh@linuxfoundation.org
-Cc: adobriyan@gmail.com, viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	openwrt-devel@lists.openwrt.org
-Content-Type: text/plain; charset="UTF-8"
-
-Hi, everyone,
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nZfVf4i1qpRGT5hz"
+Content-Disposition: inline
+In-Reply-To: <ZQ2PR01MB13071F6F2732451DBE3BEE9DE63D2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
 
 
-We noticed a regression in OpenWrt, with IPv6, which causes a router's
-client devices to stop receiving the IPv6 default route. I have
-bisected it down to (rather surprisingly)
-fc1072d934f687e1221d685cf1a49a5068318f34 ("proc: use the same
-treatment to check proc_lseek as ones for proc_read_iter et.al").
-Reverting the aforementioned commit fixes the issue, of course.
+--nZfVf4i1qpRGT5hz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Git bisect log follows:
+On Fri, Aug 22, 2025 at 07:37:29AM +0000, Hal Feng wrote:
+> > On 22.08.25 02:17, Conor Dooley wrote:
+> > On Thu, Aug 21, 2025 at 06:09:28PM +0800, Hal Feng wrote:
+> > > Add device tree bindings for the StarFive JH7110S SoC and the
+> > > VisionFive 2 Lite board equipped with it.
+> > >
+> > > JH7110S SoC is an industrial SoC which can run at -40~85 degrees
+> > > centigrade and up to 1.25GHz. Its CPU cores and peripherals are mostly
+> > > similar to those of the JH7110 SoC.
+> >=20
+> > How "mostly" is mostly? Are there memory map or capability differences?
+>=20
+> To be precise, the CPU cores and peripherals are the same as those of the
+> JH7110 SoC. I will improve the commit description in the next version.
 
-git bisect start
-# status: waiting for both good and bad commits
-# bad: [880e4ff5d6c8dc6b660f163a0e9b68b898cc6310] Linux 6.12.42
-git bisect bad 880e4ff5d6c8dc6b660f163a0e9b68b898cc6310
-# status: waiting for good commit(s), bad commit known
-# good: [8f5ff9784f3262e6e85c68d86f8b7931827f2983] Linux 6.12.41
-git bisect good 8f5ff9784f3262e6e85c68d86f8b7931827f2983
-# good: [dab173bae3303f074f063750a8dead2550d8c782] RDMA/hns: Fix
-double destruction of rsv_qp
-git bisect good dab173bae3303f074f063750a8dead2550d8c782
-# bad: [11fa01706a4f60e759fbee7c53095ff22eaf1595] PCI: pnv_php: Work
-around switches with broken presence detection
-git bisect bad 11fa01706a4f60e759fbee7c53095ff22eaf1595
-# bad: [966460bace9e1dd8609c9d44cf4509844daea8bb] perf record: Cache
-build-ID of hit DSOs only
-git bisect bad 966460bace9e1dd8609c9d44cf4509844daea8bb
-# bad: [f63bd615e58f43dbe4b2e4c3f3ffa0bfb7766007] hwrng: mtk - handle
-devm_pm_runtime_enable errors
-git bisect bad f63bd615e58f43dbe4b2e4c3f3ffa0bfb7766007
-# bad: [9ea3f6b9a67be3476e331ce51cac316c2614a564] pinmux: fix race
-causing mux_owner NULL with active mux_usecount
-git bisect bad 9ea3f6b9a67be3476e331ce51cac316c2614a564
-# good: [1209e33fe3afb6d9e543f963d41b30cfc04538ff] RDMA/hns: Get
-message length of ack_req from FW
-git bisect good 1209e33fe3afb6d9e543f963d41b30cfc04538ff
-# good: [5f3c0301540bc27e74abbfbe31571e017957251b] RDMA/hns: Fix
--Wframe-larger-than issue
-git bisect good 5f3c0301540bc27e74abbfbe31571e017957251b
-# bad: [fc1072d934f687e1221d685cf1a49a5068318f34] proc: use the same
-treatment to check proc_lseek as ones for proc_read_iter et.al
-git bisect bad fc1072d934f687e1221d685cf1a49a5068318f34
-# good: [ec437d0159681bbdb1cf1f26759d12e9650bffca] kernel: trace:
-preemptirq_delay_test: use offstack cpu mask
-git bisect good ec437d0159681bbdb1cf1f26759d12e9650bffca
-# first bad commit: [fc1072d934f687e1221d685cf1a49a5068318f34] proc:
-use the same treatment to check proc_lseek as ones for proc_read_iter
-et.al
+Ye, please do. The complete lack of differences other than thermals
+and cpu performance is what allows you to use all the same compatibles
+for the peripherals after all!
 
-Please let me know if you need any additional information.
+>=20
+> Here are the differences between them:=20
+> JH7110 supports 0~70 degrees centigrade and up to 1.5GHz.
+> JH7110S supports -40~85 degrees centigrade and up to 1.25GHz.
+>=20
+> Best regards,
+> Hal
+>=20
+> >=20
+> > >
+> > > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/riscv/starfive.yaml | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/riscv/starfive.yaml
+> > > b/Documentation/devicetree/bindings/riscv/starfive.yaml
+> > > index 7ef85174353d..a2952490709f 100644
+> > > --- a/Documentation/devicetree/bindings/riscv/starfive.yaml
+> > > +++ b/Documentation/devicetree/bindings/riscv/starfive.yaml
+> > > @@ -33,6 +33,11 @@ properties:
+> > >                - starfive,visionfive-2-v1.3b
+> > >            - const: starfive,jh7110
+> > >
+> > > +      - items:
+> > > +          - enum:
+> > > +              - starfive,visionfive-2-lite
+> > > +          - const: starfive,jh7110s
+> > > +
+> > >  additionalProperties: true
+> > >
+> > >  ...
+> > > --
+> > > 2.43.2
+> > >
+>=20
 
+--nZfVf4i1qpRGT5hz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Kind regards,
+-----BEGIN PGP SIGNATURE-----
 
-Rui Salvaterra
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKicsAAKCRB4tDGHoIJi
+0sCgAQCngjj8rbPb0Af9BMZYRbpS50JcfXIJv0U+8Lki4SL4CQEAzz2rJzTiq/u6
+Udk42wTGzXD6bXBGwcGrUnFUsV713ws=
+=6L7i
+-----END PGP SIGNATURE-----
+
+--nZfVf4i1qpRGT5hz--
 
