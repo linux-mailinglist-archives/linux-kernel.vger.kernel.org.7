@@ -1,61 +1,56 @@
-Return-Path: <linux-kernel+bounces-781447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52B6B3128D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:08:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C117B31292
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C7EAB4E0F79
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:08:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DF61A03781
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EEB2EDD47;
-	Fri, 22 Aug 2025 09:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6131E230BC5;
+	Fri, 22 Aug 2025 09:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWX6GBCs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177432D7DC3;
-	Fri, 22 Aug 2025 09:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="4eRYkddp"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04B52D7DC3
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755853675; cv=none; b=Y8BGw9oEYVMN4EXbCBkrXcrFlr76Mp7H+YbQ81PJltdvbmLql2Z6D3Ut1xpwdshZToDr0lKvbE3PaRHpnnDHKpKeGvDl6zvTY0YAmUblxRUWwoUfvchR1G5S/WkgizCsiN46WaeCD5pyb97WAkt93qKPsXGEeWUoVF0ifI/yPpA=
+	t=1755853685; cv=none; b=ZOjIsd6RKvllm75wTrulRAliMOUv1YYgs5/WqVtAro4z34k0/wlZ6j9rHlIKJlTEGqXwIg63LRadFQyBegptu2zqHrQyelIkqSMt0dhXbOI0Q9ltu6ayq5Y1y8kH+GruQegriZGkobo6E+O+OEXzoV+qKeRiiSgt/68ZLWRJqTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755853675; c=relaxed/simple;
-	bh=FxrjqFELS+dXUd5ll19YeqCrkQ1FgtMrYB3uOgPx40Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WzCnY2XOn+qrVRbt4l70HEw3oRec3KkqD/OQ4NrwwviEXIFmN/XDgyXkJen+yd/IBoX4NCNaPWm5UH+YXV6HqMLsmArk2sypAVaRty/E+CgpXHT4vEehW4BSEy0+au0/sBlTJiKVf/htXGS09HXYlcPM6d01dPgsVwKAAX3qbrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWX6GBCs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE31BC4CEF1;
-	Fri, 22 Aug 2025 09:07:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755853674;
-	bh=FxrjqFELS+dXUd5ll19YeqCrkQ1FgtMrYB3uOgPx40Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aWX6GBCsVbCpVua+O/aUNMrm00R73ZixmA+onU8syn9mjRksDRiuTN834RIjjX+EM
-	 n2BHoZMhaN8uL48N6KPeqlLGcoVTs3iqUD0ePPPi/coLjQvPLgkFg8/5yjVLdMN/u0
-	 FPZEZ52cUVa5cOV1tWx45Jtye2+2bLSZ1V3QhTuOQDtFFsqZkCMt2+UH040a5gu3EI
-	 uamYnKj76naPun5ZmUXtL3Jrv/1Z22EEVk16NAaNlnHFMuEeEv+676LVLY0ha41Blt
-	 +jMvEjz/bvAkJwiv7y7+f3gfuziyCtJ43b6A1k42XtxPT3eLJRot4CE8lR+l1bKXeA
-	 XnzLjTcP5A3iA==
-Date: Fri, 22 Aug 2025 14:37:47 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Masahisa Kojima <kojima.masahisa@socionext.com>
-Subject: Re: [PATCH 1/3] efi: stmm: Fix incorrect buffer allocation method
-Message-ID: <aKgzY27lDreFXxis@sumit-X1>
-References: <cover.1755285161.git.jan.kiszka@siemens.com>
- <37ba67b97d55c49a7c6a1597f104b30b31a4a395.1755285161.git.jan.kiszka@siemens.com>
- <CAC_iWjL84EFiKh0ETb7LwYjMRgLAZA8hFKy-YDS4=YQ1LRwg9A@mail.gmail.com>
- <75db5f5e-9e0c-4c48-a3c8-034414276036@siemens.com>
- <aKboY9oBmHJJb2Pc@sumit-X1>
- <2acfbc7b-5222-425b-a1f7-83fc47148920@siemens.com>
+	s=arc-20240116; t=1755853685; c=relaxed/simple;
+	bh=zNsikR9MK678/wLcnz+pzfRB+dtH0G9PMJUyWqEGx28=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rbXZiu3laIOaotMYwwfdIfCOn4O323sMcQa9cJTqqR+eBmwsbI+WRVzl89vZX4ws6UqE9beWo4XnqfR3lY23jzvcd2Qr2/yWcmVL2u7Dm36IguTAJ9JfPjLzma/vod4IyoyuPWCklW/spx/+SKClGXYvJRxfQISwdMYg1ZTGbqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=4eRYkddp; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p54921b16.dip0.t-ipconnect.de [84.146.27.22])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 69E165248F;
+	Fri, 22 Aug 2025 11:08:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1755853682;
+	bh=zNsikR9MK678/wLcnz+pzfRB+dtH0G9PMJUyWqEGx28=;
+	h=Date:From:To:Cc:Subject:From;
+	b=4eRYkddp4OyeRYccOsS8obmroCy2XtmVO07xi+7yKv0IpSv8BDcybPCr/c0vt/o7m
+	 zjAsoYCiXNgmSYRjV5VXq6SEpa4IR3WHwNWfh9uW4PhJ8t3eX1BwgQJpzmLwgIEHKV
+	 KQhByl3HgkDrsqFyrHVery5TXK1zV0gfydUc4CtgTN+ernx6nKDXS4TbxcnKxABBU3
+	 2lAH1z+2rJ/gKJk4IAheUrmqaBm8sZRv93Vwkyr7zr6blolVQ8nWdqOyG4JHg01W5r
+	 fKDlq/EHIBNrgSHrJp3jc1FTzwws9xdQI5aZiRhr90b8nLJ1tjluW/ESQD3BCOGaTV
+	 zL05nAIH1eEgg==
+Date: Fri, 22 Aug 2025 11:08:00 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: [git pull] IOMMU Fixes for Linux v6.17-rc2
+Message-ID: <aKgzcK1EldsksrPH@8bytes.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,73 +59,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2acfbc7b-5222-425b-a1f7-83fc47148920@siemens.com>
 
-On Thu, Aug 21, 2025 at 02:56:59PM +0200, Jan Kiszka wrote:
-> On 21.08.25 11:35, Sumit Garg wrote:
-> > Hi Jan,
-> > 
-> > On Wed, Aug 20, 2025 at 05:05:43PM +0200, Jan Kiszka wrote:
-> >> On 20.08.25 09:29, Ilias Apalodimas wrote:
-> >>> (++cc Sumit and Kojima-san on their updated emails)
-> >>>
-> >>> On Fri, 15 Aug 2025 at 22:12, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> >>>>
-> >>>> From: Jan Kiszka <jan.kiszka@siemens.com>
-> >>>>
-> >>>> The communication buffer allocated by setup_mm_hdr is later on passed to
-> >>>> tee_shm_register_kernel_buf. The latter expects those buffers to be
-> >>>> contiguous pages, but setup_mm_hdr just uses kmalloc. That can cause
-> >>>> various corruptions or BUGs, specifically since 9aec2fb0fd5e, though it
-> >>>> was broken before as well.
-> >>>>
-> >>>> Fix this by using alloc_pages_exact instead of kmalloc.
-> >>>>
-> >>>> Fixes: c44b6be62e8d ("efi: Add tee-based EFI variable driver")
-> >>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> >>>> ---
-> >>>
-> >>> [...]
-> >>>
-> >>>>         const efi_guid_t mm_var_guid = EFI_MM_VARIABLE_GUID;
-> >>>>         struct efi_mm_communicate_header *mm_hdr;
-> >>>> @@ -173,9 +174,12 @@ static void *setup_mm_hdr(u8 **dptr, size_t payload_size, size_t func,
-> >>>>                 return NULL;
-> >>>>         }
-> >>>>
-> >>>> -       comm_buf = kzalloc(MM_COMMUNICATE_HEADER_SIZE +
-> >>>> -                                  MM_VARIABLE_COMMUNICATE_SIZE + payload_size,
-> >>>> -                          GFP_KERNEL);
-> >>>> +       *nr_pages = roundup(MM_COMMUNICATE_HEADER_SIZE +
-> >>>> +                           MM_VARIABLE_COMMUNICATE_SIZE + payload_size,
-> >>>> +                           PAGE_SIZE) / PAGE_SIZE;
-> >>>> +
-> >>>> +       comm_buf = alloc_pages_exact(*nr_pages * PAGE_SIZE,
-> >>>> +                                    GFP_KERNEL | __GFP_ZERO);
-> >>>
-> >>> Rename nr_pages to something else and skip division, multiplying.
-> >>> Unless there's a reason I am missing?
-> >>> Also doesn't alloc_pages_exact() already rounds things up?
-> >>
-> >> I was looking at tee_dyn_shm_alloc_helper and the dance it does to
-> >> calculate the pages from the size parameter.
-> > 
-> > The rework of tee_shm_register_kernel_buf() to directly accept kernel
-> > pages instead of buffer pointers is already due. If you are willing to
-> > fix existing TEE client drivers and the API then I will be happy to
-> > review them.
-> 
-> I'm currently testing the stmm quite a bit but I have no setup/use case
-> for the trusted_tee so far. Testing is eating most of the time,
-> specifically with these seriously complex firmware security stacks.
+Hi Linus,
 
-For TEE based trusted keys, it is rather a bit straigtforward to run
-tests using OP-TEE Qemu build setup where you would only need to patch
-the kernel.
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-Test command:
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-$ make -j$(nproc) CHECK_TESTS="trusted-keys" check
+are available in the Git repository at:
 
--Sumit
+  git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-fixes-v6.17-rc2
+
+for you to fetch changes up to 99d4d1a070870aa08163af8ce0522992b7f35d8c:
+
+  iommu/riscv: prevent NULL deref in iova_to_phys (2025-08-22 08:51:49 +0200)
+
+----------------------------------------------------------------
+IOMMU Fixes for Linux v6.17-rc2:
+
+Including:
+
+	- AMD-Vi: Fix potential stack buffer overflow via command line.
+
+	- NVidia-Tegra: Fix endianess sparse warning.
+
+	- ARM-SMMU: Fix ATS-masters reference count issue.
+
+	- Virtio-IOMMU: Fix race condition on instance lookup.
+
+	- RISC-V IOMMU: Fix potential NULL-ptr dereference in
+	  riscv_iommu_iova_to_phys().
+
+----------------------------------------------------------------
+Kees Cook (1):
+      iommu/amd: Avoid stack buffer overflow from kernel cmdline
+
+Nicolin Chen (2):
+      iommu/tegra241-cmdqv: Fix missing cpu_to_le64 at lvcmdq_err_map
+      iommu/arm-smmu-v3: Fix smmu_domain->nr_ats_masters decrement
+
+Robin Murphy (1):
+      iommu/virtio: Make instance lookup robust
+
+XianLiang Huang (1):
+      iommu/riscv: prevent NULL deref in iova_to_phys
+
+ drivers/iommu/amd/init.c                       |  4 ++--
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c    |  2 +-
+ drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c |  8 +++++---
+ drivers/iommu/riscv/iommu.c                    |  2 +-
+ drivers/iommu/virtio-iommu.c                   | 15 +++++++++------
+ 5 files changed, 18 insertions(+), 13 deletions(-)
+
+Please pull.
+
+Thanks,
+
+	Joerg
 
