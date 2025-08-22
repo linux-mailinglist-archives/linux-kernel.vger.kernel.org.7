@@ -1,60 +1,51 @@
-Return-Path: <linux-kernel+bounces-782083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79C81B31A96
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:04:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18250B31AD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 399457BF70D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:01:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 941F91D05403
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFC630504F;
-	Fri, 22 Aug 2025 14:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rzq2MzCZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68161305E19;
+	Fri, 22 Aug 2025 14:02:11 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A3A2EB84F;
-	Fri, 22 Aug 2025 14:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496F3303C91;
+	Fri, 22 Aug 2025 14:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755871310; cv=none; b=dRFOczdtYxyRaw8f7N/cwTBG48K++Qz0CiO/Zfqi+fqpRxAtWiaRzpz8tOWO7qt58kUiYUJjFemopLy8sYG5Xz8tmFNO/JQ/FIBYxKsHkHKWPQ+wv5ATZWRrMb2OVXCQ7cFbDwlFXOv7zbrvNmNl51PwRBFz/QHWHkRHXcXHvWg=
+	t=1755871331; cv=none; b=f+dwPkEEWfPdZ3mcilqMWakJAwxaIW+JPyVH03dUCwXwGhe60WT1jfM+oGKxzqcMDpuCX9isUoGaYnGK1TvO8MkY92Es6i6PlIMMMeGXY/fmbufQLnPBnSlnXFIvwfr+jv1bdRH6DCP5NZ5pPmE61K4omqdQ9VeSxODz7TrH7sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755871310; c=relaxed/simple;
-	bh=9TuER9TVfaawHAu2ZzezpBnq2eWkpUazPrpKKrgYpg0=;
+	s=arc-20240116; t=1755871331; c=relaxed/simple;
+	bh=yCUqiA+xuE4zJFCW6AYibhagiz3DrxXdNGy+kNXMUPg=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z63/NWgWW3yL4LyuOkHFJX3feqGTaJvJle2O4nR8Qbg8trgKkXuQzRY9i/Y31sXeaSv2upbcIzeVvgINSNZPWcOOCeRPv+GgKdTWO4QPwd77yytGdZ18rm72pKKxKvo1+0jokvnaA56S+b0tLctB7Cb27PAGPtTuSmtmxZsA+To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rzq2MzCZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6274EC4CEED;
-	Fri, 22 Aug 2025 14:01:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755871309;
-	bh=9TuER9TVfaawHAu2ZzezpBnq2eWkpUazPrpKKrgYpg0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rzq2MzCZieMW0wVn6HeGXsec3xM34igLkKufPD/dfIvpyGhjVevYzUJayUzXn/5nz
-	 mgpZBtnBHLy90AIyUkfivIFoXXL6tdtKEPmBTmOzwEgUlUSMdAEFD4iSbgkVFbYEpL
-	 v25TUu0kLym28YxBVZs/h+AINUBuzJwDvCY+Ao5w7D7lFn/WEm6G+NDM6kYF2de4lc
-	 jrHq5rhiV9D5TetJZjn3LF/Z1X4FFFUTYjnrZmbY4Af25sNu8KLYRnvS7GCDOQJNNp
-	 806g3WKhXuuHp4SDHN73qMPNrUuu+J+rCED9fJG8BIFnAMp6U/wmBDI9OMpnCZivhK
-	 2q84RQIt0HPpQ==
-Date: Fri, 22 Aug 2025 07:01:48 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Michael Walle" <mwalle@kernel.org>
-Cc: "Vinod Koul" <vkoul@kernel.org>, "Kishon Vijay Abraham I"
- <kishon@kernel.org>, "Siddharth Vadapalli" <s-vadapalli@ti.com>, "Matthias
- Schiffer" <matthias.schiffer@ew.tq-group.com>, "Andrew Lunn"
- <andrew@lunn.ch>, <linux-phy@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, <nm@ti.com>,
- <vigneshr@ti.com>
-Subject: Re: [PATCH v3] phy: ti: gmii-sel: Always write the RGMII ID setting
-Message-ID: <20250822070148.2e23c3f6@kernel.org>
-In-Reply-To: <DC8R5IJ2Q88K.YKUE9X9FZRNK@kernel.org>
-References: <20250819065622.1019537-1-mwalle@kernel.org>
-	<20250821181850.6af0ff7f@kernel.org>
-	<DC8R5IJ2Q88K.YKUE9X9FZRNK@kernel.org>
+	 MIME-Version:Content-Type; b=YproFZRYfhIV3SD2BHXX2/nwcEkz3ptekETO+uctOhoYXqf0Z8r494H8ZBN4bAPukaeHUTFrd6Ev+/xMab1c+f9dV0nf0UPdGTXK0KHOnaRA7TwKS++PDyP6CuaCDwQEYYUHAjSsX8KpE++8B5cFJPQbJzmABm8fGEdDBkrzvS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id C0B1B1A01F6;
+	Fri, 22 Aug 2025 14:02:05 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id F3D3217;
+	Fri, 22 Aug 2025 14:02:02 +0000 (UTC)
+Date: Fri, 22 Aug 2025 10:02:09 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Xiang Gao <gxxa03070307@gmail.com>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com, andrii@kernel.org,
+ mingo@kernel.org, oleg@redhat.com, akpm@linux-foundation.org,
+ gmonaco@redhat.com, ricardo.neri-calderon@linux.intel.com,
+ libo.chen@oracle.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, gaoxiang17 <gaoxiang17@xiaomi.com>
+Subject: Re: [PATCH] tracing/sched: add 'next_policy' to trace_sched_switch
+Message-ID: <20250822100209.7b1c5acf@gandalf.local.home>
+In-Reply-To: <20250822105113.1102099-1-gxxa03070307@gmail.com>
+References: <20250822105113.1102099-1-gxxa03070307@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,18 +54,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: F3D3217
+X-Stat-Signature: 41atar358yqmjx6zd7oua7j9mb39hsxr
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19VJPBxE2vdYNGR/y0sUnI29O6vjzLWUsc=
+X-HE-Tag: 1755871322-58142
+X-HE-Meta: U2FsdGVkX183YkdXJK5HgpTFAwU5Wxv2lzm30piEMHx2krBWHgl4JBk65DDU2TC/0jtNHJhRo5biKFZ3x5mXT1+rLSqt9nGGzJytF2JgXEVVmrr5nfMTSQzgHnuVDkusodMgj6dTb+rN8IP1uefG9GEE+jhHrut73gNAn3IfuIJf/NEH2ZTJTGKYzk0riuv0yWM5XoLuDyXzX6MrnRv4HQY7bWroESMoi2L8WrfXuR++CETih3d/lAyh5Znmg23ZNpPNEycj0gjLzVQDGmwI2PXgqJNMM1qrbY2IxGzZUB5qw6uULMIB6GAPRGljwvfJgmHzxAifN8JaOfY1x6A6yb4ykSEsJFTFOeF4xKwg8Ga+i80S5lSEm8QoNhVS2F1wEmC60YfPEzxpb0gA109ORlD8SiCiLn7M
 
-On Fri, 22 Aug 2025 08:45:33 +0200 Michael Walle wrote:
-> On Fri Aug 22, 2025 at 3:18 AM CEST, Jakub Kicinski wrote:
-> > On Tue, 19 Aug 2025 08:56:22 +0200 Michael Walle wrote:  
-> > > v3:
-> > >  - simplify the logic. Thanks Matthias.
-> > >  - reworded the commit message  
-> >
-> > This was set to Not Applicable in our patchwork, IDK why.
-> > Could you resend?  
+On Fri, 22 Aug 2025 18:51:13 +0800
+Xiang Gao <gxxa03070307@gmail.com> wrote:
+
+> From: gaoxiang17 <gaoxiang17@xiaomi.com>
 > 
-> Won't this patch be picked up by the linux-phy tree?
+> Sometimes, when analyzing some real-time process issues, it is necessary to know the sched policy.
+> 
+> Show up in the trace as:
+> 
+>       113.457176: sched_switch: prev_comm=kcompactd0 prev_pid=30 prev_prio=120 prev_state=S ==> next_comm=kworker/u4:1 next_pid=27 next_prio=120 next_policy=0
+>       113.457282: sched_switch: prev_comm=kworker/u4:1 prev_pid=27 prev_prio=120 prev_state=I ==> next_comm=swapper/0 next_pid=0 next_prio=120 next_policy=0
+>       113.461166: sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=kworker/u4:1 next_pid=27 next_prio=120 next_policy=0
+> 
+> Signed-off-by: gaoxiang17 <gaoxiang17@xiaomi.com>
+> ---
+>  include/trace/events/sched.h | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+> index 7b2645b50e78..b416b7bafee4 100644
+> --- a/include/trace/events/sched.h
+> +++ b/include/trace/events/sched.h
+> @@ -234,6 +234,7 @@ TRACE_EVENT(sched_switch,
+>  		__array(	char,	next_comm,	TASK_COMM_LEN	)
+>  		__field(	pid_t,	next_pid			)
+>  		__field(	int,	next_prio			)
+> +		__field(	unsigned int,	next_policy	)
+>  	),
+>  
+>  	TP_fast_assign(
+> @@ -244,10 +245,11 @@ TRACE_EVENT(sched_switch,
+>  		memcpy(__entry->next_comm, next->comm, TASK_COMM_LEN);
+>  		__entry->next_pid	= next->pid;
+>  		__entry->next_prio	= next->prio;
+> +		__entry->next_policy	= next->policy;
+>  		/* XXX SCHED_DEADLINE */
+>  	),
+>  
+> -	TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d",
+> +	TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d next_policy=%u",
+>  		__entry->prev_comm, __entry->prev_pid, __entry->prev_prio,
+>  
+>  		(__entry->prev_state & (TASK_REPORT_MAX - 1)) ?
+> @@ -263,7 +265,7 @@ TRACE_EVENT(sched_switch,
+>  		  "R",
+>  
+>  		__entry->prev_state & TASK_REPORT_MAX ? "+" : "",
+> -		__entry->next_comm, __entry->next_pid, __entry->next_prio)
+> +		__entry->next_comm, __entry->next_pid, __entry->next_prio, __entry->next_policy)
 
-Ah, poops, you're right! Let me adjust our filters..
+
+I'm fine with this change, but I'm not sure how Peter feels about updating
+scheduler tracepoints. That said, why not show the policy name?
+
+	TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d next_policy=%s",
+	[..]
+		__entry->next_comm, __entry->next_pid, __entry->next_prio,
+		__print_symbolic(__entry->next_policy,
+			{ SCHED_NORMAL,		"normal" },
+			{ SCHED_FIFO,		"FIFO" },
+			{ SCHED_RR,		"RR" },
+			{ SCHED_BATCH,		"batch" },
+			{ SCHED_IDLE,		"idle" },
+			{ SCHED_DEADLINE,	"deadline" },
+			{ SCHED_EXT,		"sched_ext"}))
+
+-- Steve
+
+
+
+
+
+
+>  );
+>  
+>  /*
+
 
