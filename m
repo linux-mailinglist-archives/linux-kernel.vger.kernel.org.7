@@ -1,197 +1,153 @@
-Return-Path: <linux-kernel+bounces-781673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7C9B3155A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:27:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ECAAB31566
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C947626261
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:24:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48EEE3AD399
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6D42E9ED0;
-	Fri, 22 Aug 2025 10:24:12 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D162C028E;
+	Fri, 22 Aug 2025 10:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DbOyIrT0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBE52D837C;
-	Fri, 22 Aug 2025 10:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECD62E762A
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755858252; cv=none; b=oZRR+oeTw/LQ4qGHM43gn3Q4BumBGqlO07fMpEf6rxSXVuNENV4lU67Exp3ueivPKATcGdgesESB8d5n9q5xz2cNckWBp0BoCTMHmSt+7cfQ12cYS4ZMxamJt8X8UYhpTtZARr8FGkUv4U1vYlg3XrT/RcGdx5lUWllgl96PxkA=
+	t=1755858240; cv=none; b=ffyntKhWRLGz13VSuQgFyF6SMOcyTFon3zkngeoEyBAQvHphcCUN6i+7ALwAroXxMHMjaAg2CYhU7qAupgsKp8tYApu4J2Jox8pPk0j6vbKWkBNQ1h3ffVtrh7709pizcEZGTuySnt+A21W4E+S9cJmNK58VWpJY3W/qvXkRt0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755858252; c=relaxed/simple;
-	bh=EuP5AqH3b3XOrYEptDqVYNEWFMdxAyiErg60KbJ6JGs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P1OrsT6d7pdTRqneUyir3Fw03mU+CyvKqmtOoBpAp1Cxu8cn7DY0/+ZG8rrBurWcsI7aD4tIUaGkAKzljFDc/pWHox+5CBpgKW2gdSvjhVnPUoXmAwSRO9QNqNouHly3X8yXAQyryMi49lrJ6FloMFVTD2dkxj585V4O0WkfICw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 57MANl4X026917;
-	Fri, 22 Aug 2025 19:23:47 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 57MANlB2026912
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 22 Aug 2025 19:23:47 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <bb595640-0597-4d18-a9e1-f6eb8e6bb50e@I-love.SAKURA.ne.jp>
-Date: Fri, 22 Aug 2025 19:23:48 +0900
+	s=arc-20240116; t=1755858240; c=relaxed/simple;
+	bh=Pi24T1VzeRTeyxb78iSx9eOfruahP8bbLgZ7xrrxp9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fbDQcjRuOPSLiEG6XQDFACMNA2QSBoM2VoMQCmD5i3mkT4VVipknLbaXBxAj9+jLoNc16SovmW1JQebXwY9OvWcU17071RQ4hQXHUC19VgLH4GIFp57CsJL44NY6QNiqvqtF7SjIVBEoMv6F/CxtZDX0aQfx8Pp/gFie383FdrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DbOyIrT0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755858237;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eJvTKEyEbzhmekaQhrASqnfJY8OZgIJPjxsG4VBPz2I=;
+	b=DbOyIrT0oo3LaxWkFj22kgDGX32LmZAJ6K90PumU/WTQ1QrCv57MdnQJWOEVVRJ2RYkUhX
+	07wLcaedNudYfRpzD50tdzwd5JJVEoQrnMcOrG0vPRwAxIKcrBoHHQYvwkyj4OI8d5hOfo
+	fC9Mc8reo21nbwEfUbVMSXfPd0nQzHY=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-645-UhmJbf1EMAOvnloM6pUJQg-1; Fri, 22 Aug 2025 06:23:56 -0400
+X-MC-Unique: UhmJbf1EMAOvnloM6pUJQg-1
+X-Mimecast-MFC-AGG-ID: UhmJbf1EMAOvnloM6pUJQg_1755858236
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7e864817cb8so812063485a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 03:23:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755858236; x=1756463036;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eJvTKEyEbzhmekaQhrASqnfJY8OZgIJPjxsG4VBPz2I=;
+        b=kHcCTb8CmnHGbsxOKGR8SIjoPX9BMTlAKS7nJGSMb1e+ufHkFRq+jBbZFhcrzRkLv/
+         Ai13Z4YqY3xuLFyfhFVDBSr2L5mBLDosz+t83VAyoZiL+pS2lOmXJpiTGTbZqY6C+nEH
+         OfPWKRrkrxG8i3fxvpnEWg2OkIw4AdsHVg1nlUc2F986U3Lsrky/aHOUCszOhgduWSCs
+         2q/UobKK7ZSwDmhaetQRx5VSEiCl19AaDBgJkEqfTgIYZ/QzShwzrJjV6QGOQUM8ISfq
+         Hh+qnSNIhQD/i4Y/mf40doXL9hF6m8tSMDDAmkNhQVc17Hk7bQbcAuw8PGafrNCZnGjJ
+         mhSw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7TK2TxocJnjJL/WiMV8I2O4c94HQrLkiUSlbP4GwJPHVrXACBmylKJt9wdZkVqCicMd3FbGXZhARN0xM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyoy0yfZ3b5/aWniORs2vwymqTDaJbmezL/A9mdvqSiKVyrj1eg
+	vbfKvHmtg+qqQ0CqxhFXTBh+HUZNepZuIJ4eUBfGHdhwx/rYZkHAEDnbO9EeySTJ8LP7LE9h8IA
+	pNhUpbBz3M5YRp9RhiJFev81978pvJ1Te6Zyvo2flYY4Mik/vkPYl6ubXgqakarNLdA==
+X-Gm-Gg: ASbGncs/8Ki3YGzun1BJZdA6ZvD3FLKiSwszhl/7kYy4kU+tQUip6FWQakQZ7K8oDqo
+	vsVMSAqhrfPh3o9hZ+mb/VejqpmEjKARTHgJoeSoexJRMSqxKi7EQn0N3EKymZmV4hYlVW6JAHq
+	8/NnQipoeTokMtGbv4craA2WsJz0SltUjCVApqN3Yc2Yv0shahXN8TXqLhzU1Ea+Ve3cJTmtY/z
+	58Ncn9za5+7OmczsN7L1Fn7LlXoWTki6QhMRB3ZAbp/JWOR0DLCB+70qgm2OTJ8w+VY3TXHgJ+o
+	YHR7r5XAhNQEZbER/x1QehrC4MsJuxHbNoO5MY8+50Wk9HJ0qEF2C6c1zPrioARISNxpg0NlnCF
+	56ZyIokclGVsNuEg+rsI=
+X-Received: by 2002:a05:620a:2985:b0:7ea:61e:3ce with SMTP id af79cd13be357-7ea11515112mr250142985a.4.1755858235958;
+        Fri, 22 Aug 2025 03:23:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGzbF5my1f7sWP1hvt+Ae8lWAWkUFPWkmMGpX8yUvMXDR4PmNo9Qp3wmQyKLcPE30uIWwQ98Q==
+X-Received: by 2002:a05:620a:2985:b0:7ea:61e:3ce with SMTP id af79cd13be357-7ea11515112mr250139985a.4.1755858235417;
+        Fri, 22 Aug 2025 03:23:55 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7eb1123ce2asm16520885a.65.2025.08.22.03.23.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 03:23:54 -0700 (PDT)
+Date: Fri, 22 Aug 2025 06:23:52 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	willmcvicker@google.com, kernel-team@android.com
+Subject: Re: [PATCH 3/3] clk: samsung: add Exynos ACPM clock driver
+Message-ID: <aKhFOHFGKPYXgIri@x1>
+References: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
+ <20250819-acpm-clk-v1-3-6bbd97474671@linaro.org>
+ <aKdmurrT1pFtLSI8@x1>
+ <720799b1-04ce-46da-b643-1adbdfc661e6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: can/j1939: hung inside rtnl_dellink()
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Robin van der Gracht <robin@protonic.nl>, kernel@pengutronix.de,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>
-References: <50055a40-6fd9-468f-8e59-26d1b5b3c23d@I-love.SAKURA.ne.jp>
- <aKg9mTaSxzBVpTVI@pengutronix.de>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <aKg9mTaSxzBVpTVI@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav301.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <720799b1-04ce-46da-b643-1adbdfc661e6@linaro.org>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-(Adding netdev ML to ask for hints from different network protocols...)
+Hi Tudor,
 
-On 2025/08/22 18:51, Oleksij Rempel wrote:
-> Hello Tetsuo,
+On Fri, Aug 22, 2025 at 09:14:03AM +0100, Tudor Ambarus wrote:
+> On 8/21/25 7:34 PM, Brian Masney wrote:
+> > On Tue, Aug 19, 2025 at 11:45:38AM +0000, Tudor Ambarus wrote:
+> >> +static long acpm_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> >> +				unsigned long *parent_rate)
+> >> +{
+> >> +	/*
+> >> +	 * We can't figure out what rate it will be, so just return the
+> >> +	 * rate back to the caller. acpm_clk_recalc_rate() will be called
+> >> +	 * after the rate is set and we'll know what rate the clock is
+> >> +	 * running at then.
+> >> +	 */
+> >> +	return rate;
+> >> +}
+> > 
+> > ...
+> > 
+> >> +
+> >> +static const struct clk_ops acpm_clk_ops = {
+> >> +	.recalc_rate = acpm_clk_recalc_rate,
+> >> +	.round_rate = acpm_clk_round_rate,
+> >> +	.set_rate = acpm_clk_set_rate,
+> >> +};
+> > 
+> > The round_rate clk op is deprecated. Please convert this over to use
+> > determine_rate.
 > 
-> On Sat, Aug 16, 2025 at 03:51:54PM +0900, Tetsuo Handa wrote:
->> Hello.
->>
->> I made a minimized C reproducer for
->>
->>   unregister_netdevice: waiting for vcan0 to become free. Usage count = 2
->>
->> problem at https://syzkaller.appspot.com/bug?extid=881d65229ca4f9ae8c84 , and
->> obtained some data using debug printk() patch. It seems that the cause is
->> net/can/j1939/ does not handle NETDEV_UNREGISTER notification
->> while net/can/j1939/ can directly call rtnl_dellink() via sendmsg().
-> 
-> Sorry for long delay and than you for your investigation!
-> 
->> The minimized C reproducer is shown below.
-> ....
-> 
->> Therefore, I guess that either
->>
->>   j1939_netdev_notify() is handling NETDEV_UNREGISTER notification
+> I can do that, sure. Shall I also update the kdoc for round_rate(), mark it
+> as deprecated and add your Suggested-by tag? It would help other newcomers.
 
-Oops. I wanted to write
+I am working to remove round_rate from the clk core and the various
+drivers. Your driver just needs to be updated similar to this:
 
-     j1939_netdev_notify() is *not* handling NETDEV_UNREGISTER notification
+https://lore.kernel.org/all/20250710-clk-imx-round-rate-v1-10-5726f98e6d8d@redhat.com/
 
->>
->> or
->>
->>   rtnl_dellink() can be called via sendmsg() despite the j1939 socket
->>   are in use
->>
->> is wrong. How to fix this problem?
-> 
-> I assume the first variant is correct. Can you please test following change:
-> --- a/net/can/j1939/main.c
-> +++ b/net/can/j1939/main.c
-> @@ -370,6 +370,7 @@
->  		goto notify_done;
->  
->  	switch (msg) {
-> +	case NETDEV_UNREGISTER:
->  	case NETDEV_DOWN:
->  		j1939_cancel_active_session(priv, NULL);
->  		j1939_sk_netdev_event_netdown(priv);
-> 
-
-Such change is not sufficient.
-
-As far as I tested, the only way that can drop the refcount to 1 is to
-call j1939_sk_release() (which involves sock_put()) on all j1939 sockets
-(i.e. something like shown below).
-
-
-diff --git a/net/can/j1939/j1939-priv.h b/net/can/j1939/j1939-priv.h
-index 31a93cae5111..81f58924b4ac 100644
---- a/net/can/j1939/j1939-priv.h
-+++ b/net/can/j1939/j1939-priv.h
-@@ -212,6 +212,7 @@ void j1939_priv_get(struct j1939_priv *priv);
-
- /* notify/alert all j1939 sockets bound to ifindex */
- void j1939_sk_netdev_event_netdown(struct j1939_priv *priv);
-+void j1939_sk_netdev_event_unregister(struct j1939_priv *priv);
- int j1939_cancel_active_session(struct j1939_priv *priv, struct sock *sk);
- void j1939_tp_init(struct j1939_priv *priv);
-
-diff --git a/net/can/j1939/main.c b/net/can/j1939/main.c
-index 7e8a20f2fc42..e568b5928a39 100644
---- a/net/can/j1939/main.c
-+++ b/net/can/j1939/main.c
-@@ -377,6 +377,11 @@ static int j1939_netdev_notify(struct notifier_block *nb,
-                j1939_sk_netdev_event_netdown(priv);
-                j1939_ecu_unmap_all(priv);
-                break;
-+       case NETDEV_UNREGISTER:
-+               pr_info("NETDEV_UNREGISTER notification on %px start\n", ndev);
-+               j1939_sk_netdev_event_unregister(priv);
-+               pr_info("NETDEV_UNREGISTER notification on %px end\n", ndev);
-+               break;
-        }
-
-        j1939_priv_put(priv);
-diff --git a/net/can/j1939/socket.c b/net/can/j1939/socket.c
-index 3d8b588822f9..4e53a1b10907 100644
---- a/net/can/j1939/socket.c
-+++ b/net/can/j1939/socket.c
-@@ -1300,6 +1313,24 @@ void j1939_sk_netdev_event_netdown(struct j1939_priv *priv)
-        read_unlock_bh(&priv->j1939_socks_lock);
- }
-
-+void j1939_sk_netdev_event_unregister(struct j1939_priv *priv)
-+{
-+       struct j1939_sock *jsk;
-+       struct socket sock = { };
-+
-+ rescan:
-+       read_lock_bh(&priv->j1939_socks_lock);
-+       list_for_each_entry(jsk, &priv->j1939_socks, list) {
-+               read_unlock_bh(&priv->j1939_socks_lock);
-+               pr_info("Releasing %px\n", &jsk->sk);
-+               sock.sk = &jsk->sk;
-+               //sock_hold(&jsk->sk);
-+               j1939_sk_release(&sock);
-+               goto rescan;
-+       }
-+       read_unlock_bh(&priv->j1939_socks_lock);
-+}
-+
- static int j1939_sk_no_ioctlcmd(struct socket *sock, unsigned int cmd,
-                                unsigned long arg)
- {
-
-
-Of course, calling sk_j1939_sk_release() upon NETDEV_UNREGISTER event
-causes refcount underflow bug. But calling sock_hold() before calling
-j1939_sk_release() prevents the refcount from dropping to 1. :-(
-
-I think we need to somehow make it possible to logically close j1939
-sockets without actually closing. Maybe something like 
-"struct in_device"->dead flag which is set by inetdev_destroy() upon
-NETDEV_UNREGISTER event is needed by j1939 sockets...
-
-My build environment is very slow (testing on VMWare on a Windows PC).
-Running my simplified reproducer on your build environment would be
-much faster.
+Brian
 
 
