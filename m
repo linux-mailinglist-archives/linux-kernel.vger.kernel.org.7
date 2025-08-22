@@ -1,62 +1,89 @@
-Return-Path: <linux-kernel+bounces-782138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E15B31BA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:32:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1034CB31C08
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2DF41D0694D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:25:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86B8F1D6315A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69708308F35;
-	Fri, 22 Aug 2025 14:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E9E337692;
+	Fri, 22 Aug 2025 14:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QYYkXOU3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="eTjjxCbk"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8563126B1;
-	Fri, 22 Aug 2025 14:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7B527AC43;
+	Fri, 22 Aug 2025 14:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755872388; cv=none; b=Q1WbwRKw9q4dt0JRqD9H2vsqRBB/XtOHG01q9GwsPDFT5AvtnOcbJSKzapKTbCo+gH4lkARKhiAMjL0O1puBu1FfxYTIb1SwY6S85dxZpo/cjF22PEyzYoQheL8e9z+VckeD6JsA/TQPxsbwCmPh5bIqBz3oIZ8XwtI8KrSXM48=
+	t=1755872723; cv=none; b=MBPEYQy6/kkue5E+Vpu7rIoMdbkVUFfr54X1tC0NS42dYokefD7KeHS5ZWof4RTp3MCtImffEjm5/dCWHnJonlg8epk3lRebrWu6fxBUucpm/XaZ4cZGXiQOW9rqddMQerSRMGVwdf9q4cN9kzQEO+xS0ua6+S6e6RP5acOP1GY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755872388; c=relaxed/simple;
-	bh=lRH9SEB4iDb1LfHInxrSMa8aPsx5ggsWJbqLQRJAoqQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CQ1c0Kig6TsI7xkObiYUUYrRviFuuEGjeTbCNp+Mgs3dpEVhgvA571QQqEd8tuudwgAnc6dpHyBBRX+mlqbSe35qUdL4NsIHjqR1Za23dbYGlSSx84TOXa6yk3OtOlPE1tU+Sh+lu5qetVgFgx2Kv8RoHRM0QeABH1ol1p58lXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QYYkXOU3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BF0DC2BC9E;
-	Fri, 22 Aug 2025 14:19:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755872388;
-	bh=lRH9SEB4iDb1LfHInxrSMa8aPsx5ggsWJbqLQRJAoqQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QYYkXOU3/ipHgWgtXTfBSbsdEnwC0+UoegWmTxdTXZQOpSYSzrLpdKU4f3lhpusYn
-	 lSnbym7pyKO3LtuYqcYYe4XzIud6e8FLAxGIhgq+LRAVhbyzSTBjN4QIYkfs5XVnjC
-	 cz5B3MyuMFnZfMDYoOn4MC4GPFmp0RhcgaNmxUKRuYw8BvAh+crlrMLLwQsXx6jhlu
-	 f9JaYTDhyJ2ZEItjf8VRSF4uhFfOwIxH7c195ejBIPJQY3zGLXkktFTNnjGgowKP1I
-	 yA2Ut026HP8Fxcb8I6irFIj1XSM310Qg20EkG5Rt/Frm/yYs6Ukg0bzP/m7vK0w2K2
-	 0iUtRLNrtt3iQ==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1upScM-0000000CCrZ-1fRm;
-	Fri, 22 Aug 2025 16:19:46 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	Kees Cook <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 11/24] docs: kernel_include.py: allow cross-reference generation
+	s=arc-20240116; t=1755872723; c=relaxed/simple;
+	bh=xb5TOEehY2vIAhaP312qMAw6NVGL99DD0VXXKP45u2Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kGB7pXoLYgxAC1QjQQPTa69nlm65JMHlZArXYg3FxwrGDoF2OEPb3GYR2FQ7Ae142VJ1NICD7wbA/SJVkhA2ryimLcl8VGioHJXacJv7KBpjl2MfGl9YyjKtanZS9vSftSOK7IgywHkdw/zQZh79IudEHD6Lkf5epaDhlF4m/LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=eTjjxCbk; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MBtbtR002505;
+	Fri, 22 Aug 2025 16:24:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=3LeisAj1Cwd8ZHYc3VbqAj
+	scWGD/Uc/4Za/fl9paTp0=; b=eTjjxCbkO343Al1uCRDS42GMaZzbXxH2BYhSFg
+	lIvoh3f8adhmPYHz20R+FKBkXFX99TD9rq5gK2RIxN6GAc8qIOXQMbhztYRoDsMA
+	WQHaZf9h0XSMHtia7O+jaf5iP8qrB2epg6pAVGzqij8O0Ll7xrWD3xxgjLOGeVD/
+	JT2V4UvMM0dwjl0urBcdgBI9tPn005dAazZYVMPXfO5CyJdM4Tl01SgxGXSsXghF
+	QWV/hGXITO0vcXs4arRV94305menIabMEj77MVv20zc9Z61t/BEvZrpoStkyqOxJ
+	EdLHKbjAlASzKhKIqNRUbGw/DwzY1hwJEBgG5UJmxzUZU/fw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48n754kemw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 16:24:54 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 23BDB40045;
+	Fri, 22 Aug 2025 16:23:22 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 572F26C9834;
+	Fri, 22 Aug 2025 16:22:19 +0200 (CEST)
+Received: from localhost (10.130.74.180) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 22 Aug
+ 2025 16:22:19 +0200
+From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby
+	<jirislaby@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
+        Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>,
+        "Maciej W. Rozycki" <macro@orcam.me.uk>,
+        Douglas Anderson <dianders@chromium.org>,
+        Zong Jiang
+	<quic_zongjian@quicinc.com>,
+        Robert Marko <robert.marko@sartura.hr>,
+        "Thierry
+ Bultel" <thierry.bultel.yh@bp.renesas.com>,
+        Raphael Gallais-Pou
+	<raphael.gallais-pou@foss.st.com>,
+        Kartik Rajput <kkartik@nvidia.com>,
+        "Peter
+ Hurley" <peter@hurleysoftware.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Vladimir Zapolskiy
+	<vladimir_zapolskiy@mentor.com>,
+        Antonio Borneo <antonio.borneo@foss.st.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <stable@vger.kernel.org>
+Subject: [PATCH v2] serial: stm32: allow selecting console when the driver is module
 Date: Fri, 22 Aug 2025 16:19:23 +0200
-Message-ID: <efc39c8e54a2056ae2fdb94d5006fcb19e227198.1755872208.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1755872208.git.mchehab+huawei@kernel.org>
-References: <cover.1755872208.git.mchehab+huawei@kernel.org>
+Message-ID: <20250822141923.61133-1-raphael.gallais-pou@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,192 +91,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
 
-kernel_include extension was originally designed to be used by the
-media comprehensive uAPI documentation, where, instead of simpler
-kernel-doc markups, the uAPI documentation is enriched with a larger
-text, with images, complex tables, graphs, etc.
+Console can be enabled on the UART compile as module.
+Change dependency to allow console mode when the driver is built as module.
 
-There, we wanted to include the much simpler yet documented .h
-file.
-
-This extension is needed to include files from other parts of the
-Kernel tree outside Documentation, because the original Sphinx
-include tag doesn't allow going outside of the directory passed
-via sphinx-build command line.
-
-Yet, the cross-references themselves to the full documentation
-were using a perl script to create cross-references against the
-comprehensive documentation.
-
-As the perl script is now converted to Phython and there is a
-Python class producing an include-compatible output with cross
-references, add two optional arguments to kernel_include.py:
-
-1. :generate-cross-refs:
-
-        If present, instead of reading the file, it calls ParseDataStructs()
-        class, which converts C data structures into cross-references to
-        be linked to ReST files containing a more comprehensive documentation;
-
-        Don't use it together with :start-line: and/or :end-line:, as
-        filtering input file line range is currently not supported.
-
-2. :exception-file:
-
-        Used together with :generate-cross-refs:. Points to a file containing
-        rules to ignore C data structs or to use a different reference name,
-        optionally using a different reference type.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Fixes: 48a6092fb41fa ("serial: stm32-usart: Add STM32 USART Driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
 ---
- Documentation/sphinx/kernel_include.py | 94 ++++++++++++++++++++------
- 1 file changed, 74 insertions(+), 20 deletions(-)
+Changes in v2:
+- Cced stable tree
+---
+ drivers/tty/serial/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/sphinx/kernel_include.py b/Documentation/sphinx/kernel_include.py
-index 1212786ac516..fc37e6fa9d96 100755
---- a/Documentation/sphinx/kernel_include.py
-+++ b/Documentation/sphinx/kernel_include.py
-@@ -25,6 +25,24 @@
-     Substrings of the form $name or ${name} are replaced by the value of
-     environment variable name. Malformed variable names and references to
-     non-existing variables are left unchanged.
-+
-+    This extension overrides Sphinx include directory, adding two extra
-+    arguments:
-+
-+    1. :generate-cross-refs:
-+
-+        If present, instead of reading the file, it calls ParseDataStructs()
-+        class, which converts C data structures into cross-references to
-+        be linked to ReST files containing a more comprehensive documentation;
-+
-+        Don't use it together with :start-line: and/or :end-line:, as
-+        filtering input file line range is currently not supported.
-+
-+    2. :exception-file:
-+
-+        Used together with :generate-cross-refs:. Points to a file containing
-+        rules to ignore C data structs or to use a different reference name,
-+        optionally using a different reference type.
- """
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index e661f5951f558..1e27a822c1cba 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -1420,7 +1420,7 @@ config SERIAL_STM32
  
- # ==============================================================================
-@@ -32,6 +50,7 @@
- # ==============================================================================
+ config SERIAL_STM32_CONSOLE
+ 	bool "Support for console on STM32"
+-	depends on SERIAL_STM32=y
++	depends on SERIAL_STM32
+ 	select SERIAL_CORE_CONSOLE
+ 	select SERIAL_EARLYCON
  
- import os.path
-+import sys
- 
- from docutils import io, nodes, statemachine
- from docutils.utils.error_reporting import SafeString, ErrorString
-@@ -39,6 +58,11 @@ from docutils.parsers.rst import directives
- from docutils.parsers.rst.directives.body import CodeBlock, NumberLines
- from docutils.parsers.rst.directives.misc import Include
- 
-+srctree = os.path.abspath(os.environ["srctree"])
-+sys.path.insert(0, os.path.join(srctree, "tools/docs/lib"))
-+
-+from parse_data_structs import ParseDataStructs
-+
- __version__ = "1.0"
- 
- 
-@@ -57,6 +81,14 @@ def setup(app):
- class KernelInclude(Include):
-     """KernelInclude (``kernel-include``) directive"""
- 
-+    # Add extra options
-+    option_spec = Include.option_spec.copy()
-+
-+    option_spec.update({
-+        'generate-cross-refs': directives.flag,
-+        'exception-file': directives.unchanged,
-+    })
-+
-     def run(self):
-         env = self.state.document.settings.env
-         path = os.path.realpath(os.path.expandvars(self.arguments[0]))
-@@ -99,28 +131,49 @@ class KernelInclude(Include):
-         e_handler = self.state.document.settings.input_encoding_error_handler
-         tab_width = self.options.get("tab-width",
-                                      self.state.document.settings.tab_width)
--        try:
--            self.state.document.settings.record_dependencies.add(path)
--            include_file = io.FileInput(source_path=path, encoding=encoding,
--                                        error_handler=e_handler)
--        except UnicodeEncodeError:
--            raise self.severe('Problems with "%s" directive path:\n'
--                              'Cannot encode input file path "%s" '
--                              "(wrong locale?)." % (self.name, SafeString(path)))
--        except IOError as error:
--            raise self.severe('Problems with "%s" directive path:\n%s.'
--                              % (self.name, ErrorString(error)))
-         startline = self.options.get("start-line", None)
-         endline = self.options.get("end-line", None)
--        try:
--            if startline or (endline is not None):
--                lines = include_file.readlines()
--                rawtext = "".join(lines[startline:endline])
--            else:
--                rawtext = include_file.read()
--        except UnicodeError as error:
--            raise self.severe('Problem with "%s" directive:\n%s' %
--                              (self.name, ErrorString(error)))
-+
-+        # Get optional arguments to related to cross-references generation
-+        if 'generate-cross-refs' in self.options:
-+            parser = ParseDataStructs()
-+            parser.parse_file(path)
-+
-+            exceptions_file = self.options.get('exception-file')
-+            if exceptions_file:
-+                exceptions_file = os.path.join(source_dir, exceptions_file)
-+                parser.process_exceptions(exceptions_file)
-+
-+            title = os.path.basename(path)
-+            rawtext = parser.gen_output()
-+            if startline or endline:
-+                raise self.severe('generate-cross-refs can\'t be used together with "start-line" or "end-line"')
-+
-+            if "code" not in self.options:
-+                rawtext = ".. parsed-literal::\n\n" + rawtext
-+        else:
-+            try:
-+                self.state.document.settings.record_dependencies.add(path)
-+                include_file = io.FileInput(source_path=path, encoding=encoding,
-+                                            error_handler=e_handler)
-+            except UnicodeEncodeError:
-+                raise self.severe('Problems with "%s" directive path:\n'
-+                                'Cannot encode input file path "%s" '
-+                                "(wrong locale?)." % (self.name, SafeString(path)))
-+            except IOError as error:
-+                raise self.severe('Problems with "%s" directive path:\n%s.'
-+                                % (self.name, ErrorString(error)))
-+
-+            try:
-+                if startline or (endline is not None):
-+                    lines = include_file.readlines()
-+                    rawtext = "".join(lines[startline:endline])
-+                else:
-+                    rawtext = include_file.read()
-+            except UnicodeError as error:
-+                raise self.severe('Problem with "%s" directive:\n%s' %
-+                                (self.name, ErrorString(error)))
-+
-         # start-after/end-before: no restrictions on newlines in match-text,
-         # and no restrictions on matching inside lines vs. line boundaries
-         after_text = self.options.get("start-after", None)
-@@ -171,6 +224,7 @@ class KernelInclude(Include):
-             else:
-                 literal_block += nodes.Text(text, text)
-             return [literal_block]
-+
-         if "code" in self.options:
-             self.options["source"] = path
-             codeblock = CodeBlock(self.name,
 -- 
-2.50.1
+2.25.1
 
 
