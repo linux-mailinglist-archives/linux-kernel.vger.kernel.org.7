@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-782538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9340BB321B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:49:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB10B321BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8495C5B84
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:47:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B9A268455B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDD5292B24;
-	Fri, 22 Aug 2025 17:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F38296BBD;
+	Fri, 22 Aug 2025 17:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="Db8PlhDM"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="fBjLopqN"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87C3244670
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB624231832
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755884845; cv=none; b=U6e2ldHPjY0Mvm5+665FVIqDEyV7aWnFiSdNfsW672pxIaV6AOhcwJ4Qi6bJQYyaBqJb4ZbiMrSySahfUrrHzawuV2vyRLfk27S4qQLysK1iOlZJXSx30FnsbmpvZzyAxtSAg5jeY/rbPhWlPVjSN2ouhpriTz9UbBzCyjb73l0=
+	t=1755884845; cv=none; b=avm7wgQxcB0tZu+rAwfi8H5FDjDke253oBtcSi1cB0MMLb1lPMmwxFcDrk9Nhe6s4OlIitHK3qo1Wl8zTZeXnpofBYEA2MQnyPhXmFBbFE8JESZXLFgji+++G0M6DQtNI+0SZM3juUeP/idxB+MdXAPSBtGB6oZCCLY6XnBztsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755884845; c=relaxed/simple;
-	bh=BV0hel6ZwTRfLcWIhyLCzYLrNPPpUC5DDGdvvs3aWKA=;
+	bh=3eKPG4TUTR4+0R+9VHkqyjDfcIO6WcWdW7JtEbAMzYk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CQ80mplfpCk5Unj+dcMIZtOUToPGLaNchoQw8f2Fakma7Mp2QaHfcGZMsI5f2n0+NeeLaV3dpHH3VslTV5dsLSB3DhGckJaum56Ow1nTajFv3h8Li4EW6FPZrWCyMa5WBgprZ+KRNK9NA62XsCGnQX/g+76gi1mbq0TISBMNy8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=Db8PlhDM; arc=none smtp.client-ip=209.85.160.177
+	 MIME-Version; b=aU3dpQhCmF+jpf5+Y4+am7Dd2iOyGI0jgBolZ54J/BMLQP+gb79KbGMT2FJOPlSXzij2WeM1TPTcmAT/J+qABFLWIWg/PAUa15jMRD9t203EtzusS5JEwfiq5IsBW3CPcswb6bIfJhGFoj/QFBxz6awWpDxSETQ/tjGhN5MAknc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=fBjLopqN; arc=none smtp.client-ip=209.85.160.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b109919a09so28983011cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:47:21 -0700 (PDT)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b1099192b0so39196111cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:47:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1755884841; x=1756489641; darn=vger.kernel.org;
+        d=rivosinc.com; s=google; t=1755884843; x=1756489643; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aDpjZc97n4U0egjgFALLU1N3dP/taaCunEfrlMVFon0=;
-        b=Db8PlhDMf/Ud6jD21bZpDuyvBglluHsdXzOHzTOM2tLS85uVmtxMQjB9nvM/AXNs4s
-         I2sBGewpHgz7d+QshgTVNpSLwlmP8Di7pzLC/0TCX1jkDVANo2DNiKmJqU4p6hE8oJ4y
-         AUZRWESR5Dgxz2S1/zc1wxSmI/k2rkm2Pc24lJZOqZcfk7HHsf3gLeo+vzuZHmRFZpAZ
-         T3nuCRRiKCvAAAN92Bh0p3/QeCkW4ntKW4TObUyYYKECWtgJLWOEtjA2OURjrqHF5u5y
-         etiIlcaIUUgyq4/tAGyxJRggjmkWtF2J6Zjfquw9P5iBYd4uYYvgVgxx6KpTlQwirFoN
-         4tsQ==
+        bh=QfYucjg1h8+O9tUzDFG8M32q+vBz17OTGpTy9qZYkXU=;
+        b=fBjLopqN5EamQhGvCd6Lo53HOqTtoDS4WKUW9EozTWhL5fB/KWElBdc0KmgFHSxeoP
+         krFy3uhbq+I++gwDyOWcywCCvWlJFh2gL29JOHnpq6J23gs2ftjxVALBzM9CF2po2U1Z
+         f7BQQRA3BS8o5I4N31GWgeS24n5cesMyWZgcFtzYs80k7Z8h7f5YBVcZkrT5pCRUjzVf
+         yMLXFlmmD9Fl1km0kITCWoZIwzZWr+7QQJaSh0Xud6CgnyxlptYm5BbNBG67wkI9GajW
+         xUncgC4e3i4VGRJOUO95USaPI9Iy0HuCbZnmZclCn6Je8DievwzrbzsYstPG4A4Zfj1N
+         TVoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755884841; x=1756489641;
+        d=1e100.net; s=20230601; t=1755884843; x=1756489643;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aDpjZc97n4U0egjgFALLU1N3dP/taaCunEfrlMVFon0=;
-        b=kdCUDn3V6IYPvQq9Ip/wMVIN+/VxqVIjmWZuCLHBCBeAiqBt3NfzIvUsfJidfVFRFl
-         1FD3mVrlmM0VNli2CL2TkOKzGndTDDyg/Z6eyLQFiXAHqofptt3a1fjPuY3d91rnJ29O
-         T5PfgqD+evOlGEkjuQgsA5BQ534+NAAtiMC1qTJZjnLlqUcxWh3eva4MhL+uT0K3Bnxk
-         zVWXQsfQY8+T71mDpbYrNrOp5IYXkb2QXSrQzGhYMqwC0Zk6AzWpjaqItyZRxeQAnDFt
-         hItTNExVfZ2fXexn7UoiW3Gg7U4SqLUHmpAINLf13GAlFHF3WymRXNwjhsY+sfVWqaak
-         OtMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCbPEYmVO1qzScNpO4y/GYb4IRUDEcAtJXzLYhYXIizrq599owJ5VEGsmqEwFjZn+muQz1ef7MezWSLmc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygodOLGdwtUGjvZxb2an21bvFWEKUCfm6dyJNIt9COVcvAFlMi
-	gqy1tPQGV0s+5NI3OyPwBCWckRcUVRkrEMTJCXf9d+Bz2gWRFFFK6ioLXaMFbuesN6I=
-X-Gm-Gg: ASbGncuVyUbqP/W14RR4/gm4rFHwSvWF7ogzrUFXiajG0u1JBJy3xxETNk6o36iw25o
-	kdsxEOju31MyJW4MLqox9/yt1RVCihg714rtd/nwyBVssTRGExxj12+GNgCQJ14JpwILd5C5kml
-	ECa1qtS4kkRYKODvJmgmhI5FkyOSSW4RkzI53QF8wWBMWSQgF6TK5lVWJiH1qXqWIknxBH9rpBt
-	0FEWuOKmEtszqKSmCEGD5LRiYL9hviJ6uXlMSnbp185sv3ddmKDtcyLjQiHmxnPfm2GEz3qm/1E
-	G9JD7aXYO8j4QudZoRydSGPXjtmmOaql6uZMqYze4VpQvQMX2HI7S36AwGXzkNhnfUN1W0v+KKi
-	8oxThtMvODKfwDmtSoYxQJOT2+1AYFghYmu+asQEyuarg7ROh5M2HavXv8tVlkFb0pcECnjES2F
-	3lu7CIrRYHbt1+62LT
-X-Google-Smtp-Source: AGHT+IHNrCDOw6FL6pCo4DbPw+v/tihYCiWlLKD99o6wPnSaszr779gTketdS2R8nKaudoSSWZudpQ==
-X-Received: by 2002:a05:622a:4007:b0:4b0:89c2:68e0 with SMTP id d75a77b69052e-4b2aab5d1f6mr45761641cf.60.1755884840514;
-        Fri, 22 Aug 2025 10:47:20 -0700 (PDT)
+        bh=QfYucjg1h8+O9tUzDFG8M32q+vBz17OTGpTy9qZYkXU=;
+        b=Ox0kXEmHSLpMa/qPGNGfcFXcHe1v9N54eNw5x0u5X+O7x3rvDFuGLz2zSNkPaow/v7
+         Yax8J/t/HGMvwbfFHljoRX+HfX5opme1H0B1ZRPcjKANsm1Jxm9wBBO7cWGD4pHqrSkI
+         UZUT04NPTRIuA6f/sTI48IluWfiLF2p0qW/7LIEnxx688M6aoHQpNs5W34VnE20ObbwX
+         9h1zOZlKVQTZFDpi7aSmyZ+Nj0URn0vTiAcy+vUwYgMIfLvcsUiChOJIGYfvYyaQU/wa
+         l48Dvpa757AmSY4ijWBnFRXlU6iS9kFzMEKqTQ4Va+epaqyc9h/HCqW3hDU7AnbNt+Sb
+         FuXg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8Ulow9QW4bNDTTizpyH0I8G8CTpNIE/NEMj9SLAUuiWqUZQOGyglUcS9N78T99UjRIgg1OleISCOH02I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN8ipVH8wYM/AqnsXdZHVBHwRubngdFKpinyKXRwbszDQLcW4w
+	bYve7+gSaj1Or4n0hB5A7ldKB+AFk6Iajk0ueiBsbK3zMCzLSmH1hJmO8gDqx93SR40=
+X-Gm-Gg: ASbGncsVvVps53nlOhswJcI3NfXfVIc4Q/snVTXlluR7Yzeo1kMlrt73DkFBO0aPdl3
+	VuPmb/YmRadGjeyd+EDsewtYhvj601ZNjZ/mQVSXt+el4wEeCE5d/ZiIIOsKLmMNfaUU0klS2cd
+	OV4bZqz2zSNqQA4CSQhZYmk2JR4WYqCYs6HjXTrkoOWumGOj35yG1aqznQiC8t1ITEqcl7GMaFM
+	trQCPv+Muqn4+RfO+qQISJ02Oz01v/XqUv8EJlC/ShqSf1wTzQIdmFCIKn8+tC22C9/s/ohGT2m
+	uRz0oUUYkQmMpOioXg2w1z4so3iwHm78O0Ul8HvAxDtsueD359MPrZwlX7P3kdY1zPStvXnxfIB
+	CjowndhYD24nnXNf1/9vbNohOJPkuLLdQPi1P0wIFAZ8iMtV0ZOy6jOZ8Mm4rYBhONRwy4zr7E7
+	3AFdXdPw==
+X-Google-Smtp-Source: AGHT+IGIVSOen45mpOt0xYdR05GnbUoonndymEzs2Y2tUjKO6oUDKgrfkoqnPSp/0zNTXeE4BQVymQ==
+X-Received: by 2002:a05:622a:2615:b0:4b0:75ed:bbf9 with SMTP id d75a77b69052e-4b2aaacb9dfmr44784981cf.33.1755884842505;
+        Fri, 22 Aug 2025 10:47:22 -0700 (PDT)
 Received: from jesse-lt.jtp-bos.lab (pool-108-26-215-125.bstnma.fios.verizon.net. [108.26.215.125])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b2b8e6023asm3121361cf.53.2025.08.22.10.47.18
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b2b8e6023asm3121361cf.53.2025.08.22.10.47.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 10:47:19 -0700 (PDT)
+        Fri, 22 Aug 2025 10:47:22 -0700 (PDT)
 From: Jesse Taube <jesse@rivosinc.com>
 To: linux-riscv@lists.infradead.org
 Cc: Paul Walmsley <paul.walmsley@sifive.com>,
@@ -127,9 +127,9 @@ Cc: Paul Walmsley <paul.walmsley@sifive.com>,
 	linux-perf-users@vger.kernel.org,
 	linux-kselftest@vger.kernel.org,
 	Joel Stanley <joel@jms.id.au>
-Subject: [PATCH 1/8] riscv: Add insn.c, consolidate instruction decoding
-Date: Fri, 22 Aug 2025 10:47:08 -0700
-Message-ID: <20250822174715.1269138-2-jesse@rivosinc.com>
+Subject: [PATCH 2/8] riscv: Add SBI debug trigger extension and function ids
+Date: Fri, 22 Aug 2025 10:47:09 -0700
+Message-ID: <20250822174715.1269138-3-jesse@rivosinc.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250822174715.1269138-1-jesse@rivosinc.com>
 References: <20250822174715.1269138-1-jesse@rivosinc.com>
@@ -141,719 +141,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Various parts of the kernel decode and read instruction from memory.
-Functions like get_insn, GET_INSN_LENGTH and riscv_insn_is_c are defined
-in multiple places. Consolidate these functions into the insn.h and the
-newly added insn.c.
+From: Himanshu Chauhan <hchauhan@ventanamicro.com>
 
-Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+Debug trigger extension is a proposed SBI extension to support
+native debugging in S-mode and VS-mode.
+
+The proposal for the extension can be found at:
+https://lists.riscv.org/g/sig-hypervisors/message/361
+
+This patch adds the extension and the function IDs defined
+by the extension.
+
+Signed-off-by: Himanshu Chauhan <hchauhan@ventanamicro.com>
 ---
 RFC -> V1:
  - No change
-V2 -> V1:
+V1 -> V2:
  - No change
 ---
- arch/riscv/include/asm/bug.h         |  12 ---
- arch/riscv/include/asm/insn.h        | 131 ++++++++++++++++++++++-
- arch/riscv/kernel/Makefile           |   1 +
- arch/riscv/kernel/insn.c             | 151 +++++++++++++++++++++++++++
- arch/riscv/kernel/kgdb.c             | 102 +-----------------
- arch/riscv/kernel/probes/kprobes.c   |   1 +
- arch/riscv/kernel/traps.c            |   5 +-
- arch/riscv/kernel/traps_misaligned.c |  93 ++++-------------
- 8 files changed, 309 insertions(+), 187 deletions(-)
- create mode 100644 arch/riscv/kernel/insn.c
+ arch/riscv/include/asm/sbi.h | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/arch/riscv/include/asm/bug.h b/arch/riscv/include/asm/bug.h
-index 1aaea81fb141..a2777eb67ad1 100644
---- a/arch/riscv/include/asm/bug.h
-+++ b/arch/riscv/include/asm/bug.h
-@@ -12,21 +12,9 @@
+diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+index 3d250824178b..be2ca8e8a49e 100644
+--- a/arch/riscv/include/asm/sbi.h
++++ b/arch/riscv/include/asm/sbi.h
+@@ -35,6 +35,7 @@ enum sbi_ext_id {
+ 	SBI_EXT_DBCN = 0x4442434E,
+ 	SBI_EXT_STA = 0x535441,
+ 	SBI_EXT_NACL = 0x4E41434C,
++	SBI_EXT_DBTR = 0x44425452,
  
- #include <asm/asm.h>
+ 	/* Experimentals extensions must lie within this range */
+ 	SBI_EXT_EXPERIMENTAL_START = 0x08000000,
+@@ -402,6 +403,34 @@ enum sbi_ext_nacl_feature {
+ #define SBI_NACL_SHMEM_SRET_X(__i)		((__riscv_xlen / 8) * (__i))
+ #define SBI_NACL_SHMEM_SRET_X_LAST		31
  
--#define __INSN_LENGTH_MASK  _UL(0x3)
--#define __INSN_LENGTH_32    _UL(0x3)
--#define __COMPRESSED_INSN_MASK	_UL(0xffff)
--
- #define __BUG_INSN_32	_UL(0x00100073) /* ebreak */
- #define __BUG_INSN_16	_UL(0x9002) /* c.ebreak */
- 
--#define GET_INSN_LENGTH(insn)						\
--({									\
--	unsigned long __len;						\
--	__len = ((insn & __INSN_LENGTH_MASK) == __INSN_LENGTH_32) ?	\
--		4UL : 2UL;						\
--	__len;								\
--})
--
- typedef u32 bug_insn_t;
- 
- #ifdef CONFIG_GENERIC_BUG_RELATIVE_POINTERS
-diff --git a/arch/riscv/include/asm/insn.h b/arch/riscv/include/asm/insn.h
-index 09fde95a5e8f..ba74e5b8262c 100644
---- a/arch/riscv/include/asm/insn.h
-+++ b/arch/riscv/include/asm/insn.h
-@@ -64,6 +64,7 @@
- #define RVG_RS2_OPOFF		20
- #define RVG_RD_OPOFF		7
- #define RVG_RS1_MASK		GENMASK(4, 0)
-+#define RVG_RS2_MASK		GENMASK(4, 0)
- #define RVG_RD_MASK		GENMASK(4, 0)
- 
- /* The bit field of immediate value in RVC J instruction */
-@@ -121,17 +122,27 @@
- #define RVC_C0_RS1_OPOFF	7
- #define RVC_C0_RS2_OPOFF	2
- #define RVC_C0_RD_OPOFF		2
-+#define RVC_C0_RS1_MASK		GENMASK(2, 0)
-+#define RVC_C0_RS2_MASK		GENMASK(2, 0)
-+#define RVC_C0_RD_MASK		GENMASK(2, 0)
-+#define RVC_C0_REG_OFFSET	8
- 
- /* The register offset in RVC op=C1 instruction */
- #define RVC_C1_RS1_OPOFF	7
- #define RVC_C1_RS2_OPOFF	2
- #define RVC_C1_RD_OPOFF		7
-+#define RVC_C1_RS1_MASK		GENMASK(2, 0)
-+#define RVC_C1_RS2_MASK		GENMASK(2, 0)
-+#define RVC_C1_RD_MASK		GENMASK(2, 0)
-+#define RVC_C1_REG_OFFSET	8
- 
- /* The register offset in RVC op=C2 instruction */
- #define RVC_C2_RS1_OPOFF	7
- #define RVC_C2_RS2_OPOFF	2
- #define RVC_C2_RD_OPOFF		7
- #define RVC_C2_RS1_MASK		GENMASK(4, 0)
-+#define RVC_C2_RS2_MASK		GENMASK(4, 0)
-+#define RVC_C2_RD_MASK		GENMASK(4, 0)
- 
- /* parts of opcode for RVG*/
- #define RVG_OPCODE_FENCE	0x0f
-@@ -226,12 +237,26 @@
- #define RVC_MASK_C_EBREAK	0xffff
- #define RVG_MASK_EBREAK		0xffffffff
- #define RVG_MASK_SRET		0xffffffff
-+#define RVC_MASK_C		GENMASK(15, 0)
- 
- #define __INSN_LENGTH_MASK	_UL(0x3)
- #define __INSN_LENGTH_GE_32	_UL(0x3)
- #define __INSN_OPCODE_MASK	_UL(0x7F)
- #define __INSN_BRANCH_OPCODE	_UL(RVG_OPCODE_BRANCH)
- 
-+#define GET_INSN_LENGTH(insn)						\
-+({									\
-+	unsigned long __len;						\
-+	__len = ((insn & __INSN_LENGTH_MASK) == __INSN_LENGTH_GE_32) ?	\
-+		4UL : 2UL;						\
-+	__len;								\
-+})
++/* SBI debug triggers function IDs */
++enum sbi_ext_dbtr_fid {
++	SBI_EXT_DBTR_NUM_TRIGGERS = 0,
++	SBI_EXT_DBTR_SETUP_SHMEM,
++	SBI_EXT_DBTR_TRIG_READ,
++	SBI_EXT_DBTR_TRIG_INSTALL,
++	SBI_EXT_DBTR_TRIG_UPDATE,
++	SBI_EXT_DBTR_TRIG_UNINSTALL,
++	SBI_EXT_DBTR_TRIG_ENABLE,
++	SBI_EXT_DBTR_TRIG_DISABLE,
++};
 +
-+static __always_inline bool riscv_insn_is_c(u32 code)
-+{
-+	return (code & (__INSN_LENGTH_MASK)) != (__INSN_LENGTH_GE_32);
-+}
++struct sbi_dbtr_data_msg {
++	unsigned long tstate;
++	unsigned long tdata1;
++	unsigned long tdata2;
++	unsigned long tdata3;
++};
 +
- #define __RISCV_INSN_FUNCS(name, mask, val)				\
- static __always_inline bool riscv_insn_is_##name(u32 code)		\
- {									\
-@@ -260,7 +285,7 @@ __RISCV_INSN_FUNCS(c_bnez, RVC_MASK_C_BNEZ, RVC_MATCH_C_BNEZ)
- __RISCV_INSN_FUNCS(c_ebreak, RVC_MASK_C_EBREAK, RVC_MATCH_C_EBREAK)
- __RISCV_INSN_FUNCS(ebreak, RVG_MASK_EBREAK, RVG_MATCH_EBREAK)
- __RISCV_INSN_FUNCS(sret, RVG_MASK_SRET, RVG_MATCH_SRET)
--__RISCV_INSN_FUNCS(fence, RVG_MASK_FENCE, RVG_MATCH_FENCE);
-+__RISCV_INSN_FUNCS(fence, RVG_MASK_FENCE, RVG_MATCH_FENCE)
- 
- /* special case to catch _any_ system instruction */
- static __always_inline bool riscv_insn_is_system(u32 code)
-@@ -295,6 +320,10 @@ static __always_inline bool riscv_insn_is_c_jalr(u32 code)
- 	({typeof(x) x_ = (x); \
- 	(RV_X(x_, RVG_RS1_OPOFF, RVG_RS1_MASK)); })
- 
-+#define RV_EXTRACT_RS2_REG(x) \
-+	({typeof(x) x_ = (x); \
-+	(RV_X(x_, RVG_RS2_OPOFF, RVG_RS2_MASK)); })
++struct sbi_dbtr_id_msg {
++	unsigned long idx;
++};
 +
- #define RV_EXTRACT_RD_REG(x) \
- 	({typeof(x) x_ = (x); \
- 	(RV_X(x_, RVG_RD_OPOFF, RVG_RD_MASK)); })
-@@ -322,9 +351,41 @@ static __always_inline bool riscv_insn_is_c_jalr(u32 code)
- 	(RV_X(x_, RV_B_IMM_11_OPOFF, RV_B_IMM_11_MASK) << RV_B_IMM_11_OFF) | \
- 	(RV_IMM_SIGN(x_) << RV_B_IMM_SIGN_OFF); })
- 
-+#define RVC_EXTRACT_C0_RS1_REG(x) \
-+	({typeof(x) x_ = (x); \
-+	(RVC_X(x_, RVC_C0_RS1_OPOFF, RVC_C0_RS1_MASK)); })
++union sbi_dbtr_shmem_entry {
++	struct sbi_dbtr_data_msg data;
++	struct sbi_dbtr_id_msg id;
++};
 +
-+#define RVC_EXTRACT_C0_RS2_REG(x) \
-+	({typeof(x) x_ = (x); \
-+	(RVC_X(x_, RVC_C0_RS2_OPOFF, RVC_C0_RS2_MASK)); })
-+
-+#define RVC_EXTRACT_C0_RD_REG(x) \
-+	({typeof(x) x_ = (x); \
-+	(RVC_X(x_, RVC_C0_RD_OPOFF, RVC_C0_RD_MASK)); })
-+
-+#define RVC_EXTRACT_C1_RS1_REG(x) \
-+	({typeof(x) x_ = (x); \
-+	(RVC_X(x_, RVC_C1_RS1_OPOFF, RVC_C1_RS1_MASK)); })
-+
-+#define RVC_EXTRACT_C1_RS2_REG(x) \
-+	({typeof(x) x_ = (x); \
-+	(RVC_X(x_, RVC_C1_RS2_OPOFF, RVC_C1_RS2_MASK)); })
-+
-+#define RVC_EXTRACT_C1_RD_REG(x) \
-+	({typeof(x) x_ = (x); \
-+	(RVC_X(x_, RVC_C1_RD_OPOFF, RVC_C1_RD_MASK)); })
-+
- #define RVC_EXTRACT_C2_RS1_REG(x) \
- 	({typeof(x) x_ = (x); \
--	(RV_X(x_, RVC_C2_RS1_OPOFF, RVC_C2_RS1_MASK)); })
-+	(RVC_X(x_, RVC_C2_RS1_OPOFF, RVC_C2_RS1_MASK)); })
-+
-+#define RVC_EXTRACT_C2_RS2_REG(x) \
-+	({typeof(x) x_ = (x); \
-+	(RVC_X(x_, RVC_C2_RS2_OPOFF, RVC_C2_RS2_MASK)); })
-+
-+#define RVC_EXTRACT_C2_RD_REG(x) \
-+	({typeof(x) x_ = (x); \
-+	(RVC_X(x_, RVC_C2_RD_OPOFF, RVC_C2_RD_MASK)); })
- 
- #define RVC_EXTRACT_JTYPE_IMM(x) \
- 	({typeof(x) x_ = (x); \
-@@ -354,6 +415,66 @@ static __always_inline bool riscv_insn_is_c_jalr(u32 code)
- 
- #define RVV_EXRACT_VL_VS_WIDTH(x) RVFDQ_EXTRACT_FL_FS_WIDTH(x)
- 
-+/*
-+ * Get the rs1 register number from RV or RVC instruction.
-+ *
-+ * @insn: instruction to process
-+ * Return: rs1 register
-+ */
-+static inline unsigned int riscv_insn_extract_rs1_reg(u32 insn)
-+{
-+	switch (RVC_INSN_OPCODE_MASK & insn) {
-+	case RVC_OPCODE_C0:
-+		return RVC_EXTRACT_C0_RS1_REG(insn) + RVC_C0_REG_OFFSET;
-+	case RVC_OPCODE_C1:
-+		return RVC_EXTRACT_C1_RS1_REG(insn) + RVC_C1_REG_OFFSET;
-+	case RVC_OPCODE_C2:
-+		return RVC_EXTRACT_C2_RS1_REG(insn);
-+	default:
-+		return RV_EXTRACT_RS1_REG(insn);
-+	}
-+}
-+
-+/*
-+ * Get the rs2 register number from RV or RVC instruction.
-+ *
-+ * @insn: instruction to process
-+ * Return: rs2 register
-+ */
-+static inline unsigned int riscv_insn_extract_rs2_reg(u32 insn)
-+{
-+	switch (RVC_INSN_OPCODE_MASK & insn) {
-+	case RVC_OPCODE_C0:
-+		return RVC_EXTRACT_C0_RS2_REG(insn) + RVC_C0_REG_OFFSET;
-+	case RVC_OPCODE_C1:
-+		return RVC_EXTRACT_C1_RS2_REG(insn) + RVC_C1_REG_OFFSET;
-+	case RVC_OPCODE_C2:
-+		return RVC_EXTRACT_C2_RS2_REG(insn);
-+	default:
-+		return RV_EXTRACT_RS2_REG(insn);
-+	}
-+}
-+
-+/*
-+ * Get the rd register number from RV or RVC instruction.
-+ *
-+ * @insn: instruction to process
-+ * Return: rd register
-+ */
-+static inline unsigned int riscv_insn_extract_rd_reg(u32 insn)
-+{
-+	switch (RVC_INSN_OPCODE_MASK & insn) {
-+	case RVC_OPCODE_C0:
-+		return RVC_EXTRACT_C0_RD_REG(insn) + RVC_C0_REG_OFFSET;
-+	case RVC_OPCODE_C1:
-+		return RVC_EXTRACT_C1_RD_REG(insn) + RVC_C1_REG_OFFSET;
-+	case RVC_OPCODE_C2:
-+		return RVC_EXTRACT_C2_RD_REG(insn);
-+	default:
-+		return RV_EXTRACT_RD_REG(insn);
-+	}
-+}
-+
- /*
-  * Get the immediate from a J-type instruction.
-  *
-@@ -428,4 +549,10 @@ static inline void riscv_insn_insert_utype_itype_imm(u32 *utype_insn, u32 *itype
- 	*utype_insn |= (imm & RV_U_IMM_31_12_MASK) + ((imm & BIT(11)) << 1);
- 	*itype_insn |= ((imm & RV_I_IMM_11_0_MASK) << RV_I_IMM_11_0_OPOFF);
- }
-+
-+#include <asm/ptrace.h>
-+
-+int get_insn(struct pt_regs *regs, ulong epc, ulong *r_insn);
-+unsigned long get_step_address(struct pt_regs *regs, u32 code);
-+
- #endif /* _ASM_RISCV_INSN_H */
-diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-index f7480c9c6f8d..4f719b09e5ad 100644
---- a/arch/riscv/kernel/Makefile
-+++ b/arch/riscv/kernel/Makefile
-@@ -51,6 +51,7 @@ obj-$(CONFIG_RISCV_ALTERNATIVE) += alternative.o
- obj-y	+= cpu.o
- obj-y	+= cpufeature.o
- obj-y	+= entry.o
-+obj-y	+= insn.o
- obj-y	+= irq.o
- obj-y	+= process.o
- obj-y	+= ptrace.o
-diff --git a/arch/riscv/kernel/insn.c b/arch/riscv/kernel/insn.c
-new file mode 100644
-index 000000000000..dd2a6ef9fd25
---- /dev/null
-+++ b/arch/riscv/kernel/insn.c
-@@ -0,0 +1,151 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright 2025 Rivos, Inc
-+ */
-+#include <asm/insn.h>
-+#include <asm/ptrace.h>
-+#include <asm/uaccess.h>
-+
-+#define __read_insn(regs, insn, insn_addr, type)	\
-+({							\
-+	int __ret;					\
-+							\
-+	if (user_mode(regs)) {				\
-+		__ret = get_user(insn, (type __user *) insn_addr); \
-+	} else {					\
-+		insn = *(type *)insn_addr;		\
-+		__ret = 0;				\
-+	}						\
-+							\
-+	__ret;						\
-+})
-+
-+/*
-+ * Update a set of two instructions (U-type + I-type) with an immediate value.
-+ *
-+ * Used for example in auipc+jalrs pairs the U-type instructions contains
-+ * a 20bit upper immediate representing bits[31:12], while the I-type
-+ * instruction contains a 12bit immediate representing bits[11:0].
-+ *
-+ * This also takes into account that both separate immediates are
-+ * considered as signed values, so if the I-type immediate becomes
-+ * negative (BIT(11) set) the U-type part gets adjusted.
-+ *
-+ * @regs: pointer to the utype instruction of the pair
-+ * @epc: pointer to the itype instruction of the pair
-+ * @r_insn: the immediate to insert into the two instructions
-+ * Return: combined immediate
-+ */
-+int get_insn(struct pt_regs *regs, ulong epc, ulong *r_insn)
-+{
-+	ulong insn = 0;
-+
-+	if (epc & 0x2) {
-+		ulong tmp = 0;
-+
-+		if (__read_insn(regs, insn, epc, u16))
-+			return -EFAULT;
-+		/* __get_user() uses regular "lw" which sign extend the loaded
-+		 * value make sure to clear higher order bits in case we "or" it
-+		 * below with the upper 16 bits half.
-+		 */
-+		insn &= RVC_MASK_C;
-+		if (riscv_insn_is_c(insn)) {
-+			*r_insn = insn;
-+			return 0;
-+		}
-+		epc += sizeof(u16);
-+		if (__read_insn(regs, tmp, epc, u16))
-+			return -EFAULT;
-+		*r_insn = (tmp << 16) | insn;
-+
-+		return 0;
-+	} else {
-+		if (__read_insn(regs, insn, epc, u32))
-+			return -EFAULT;
-+		if (!riscv_insn_is_c(insn)) {
-+			*r_insn = insn;
-+			return 0;
-+		}
-+		insn &= RVC_MASK_C;
-+		*r_insn = insn;
-+
-+		return 0;
-+	}
-+}
-+
-+/* Calculate the new address for after a step */
-+unsigned long get_step_address(struct pt_regs *regs, u32 code)
-+{
-+	unsigned long pc = regs->epc;
-+	unsigned int rs1_num, rs2_num;
-+
-+	if ((code & __INSN_LENGTH_MASK) != __INSN_LENGTH_GE_32) {
-+		if (riscv_insn_is_c_jalr(code) ||
-+		    riscv_insn_is_c_jr(code)) {
-+			rs1_num = riscv_insn_extract_rs1_reg(code);
-+			return regs_get_register(regs, rs1_num);
-+		} else if (riscv_insn_is_c_j(code) ||
-+			   riscv_insn_is_c_jal(code)) {
-+			return RVC_EXTRACT_JTYPE_IMM(code) + pc;
-+		} else if (riscv_insn_is_c_beqz(code)) {
-+			rs1_num = riscv_insn_extract_rs1_reg(code);
-+			if (!rs1_num || regs_get_register(regs, rs1_num) == 0)
-+				return RVC_EXTRACT_BTYPE_IMM(code) + pc;
-+			else
-+				return pc + 2;
-+		} else if (riscv_insn_is_c_bnez(code)) {
-+			rs1_num = riscv_insn_extract_rs1_reg(RVC_C1_RS1_OPOFF);
-+			if (rs1_num && regs_get_register(regs, rs1_num) != 0)
-+				return RVC_EXTRACT_BTYPE_IMM(code) + pc;
-+			else
-+				return pc + 2;
-+		} else {
-+			return pc + 2;
-+		}
-+	} else {
-+		if ((code & __INSN_OPCODE_MASK) == __INSN_BRANCH_OPCODE) {
-+			bool result = false;
-+			long imm = RV_EXTRACT_BTYPE_IMM(code);
-+			unsigned long rs1_val = 0, rs2_val = 0;
-+
-+			rs1_num = riscv_insn_extract_rs1_reg(code);
-+			rs2_num = riscv_insn_extract_rs2_reg(code);
-+			if (rs1_num)
-+				rs1_val = regs_get_register(regs, rs1_num);
-+			if (rs2_num)
-+				rs2_val = regs_get_register(regs, rs2_num);
-+
-+			if (riscv_insn_is_beq(code))
-+				result = (rs1_val == rs2_val) ? true : false;
-+			else if (riscv_insn_is_bne(code))
-+				result = (rs1_val != rs2_val) ? true : false;
-+			else if (riscv_insn_is_blt(code))
-+				result =
-+				    ((long)rs1_val <
-+				     (long)rs2_val) ? true : false;
-+			else if (riscv_insn_is_bge(code))
-+				result =
-+				    ((long)rs1_val >=
-+				     (long)rs2_val) ? true : false;
-+			else if (riscv_insn_is_bltu(code))
-+				result = (rs1_val < rs2_val) ? true : false;
-+			else if (riscv_insn_is_bgeu(code))
-+				result = (rs1_val >= rs2_val) ? true : false;
-+			if (result)
-+				return imm + pc;
-+			else
-+				return pc + 4;
-+		} else if (riscv_insn_is_jal(code)) {
-+			return RV_EXTRACT_JTYPE_IMM(code) + pc;
-+		} else if (riscv_insn_is_jalr(code)) {
-+			rs1_num = riscv_insn_extract_rs1_reg(code);
-+			return RV_EXTRACT_ITYPE_IMM(code) +
-+			       (rs1_num ? regs_get_register(regs, rs1_num) : 0);
-+		} else if (riscv_insn_is_sret(code)) {
-+			return pc;
-+		} else {
-+			return pc + 4;
-+		}
-+	}
-+}
-diff --git a/arch/riscv/kernel/kgdb.c b/arch/riscv/kernel/kgdb.c
-index 9f3db3503dab..aafc1424fc81 100644
---- a/arch/riscv/kernel/kgdb.c
-+++ b/arch/riscv/kernel/kgdb.c
-@@ -23,111 +23,19 @@ enum {
- static unsigned long stepped_address;
- static unsigned int stepped_opcode;
- 
--static int decode_register_index(unsigned long opcode, int offset)
--{
--	return (opcode >> offset) & 0x1F;
--}
--
--static int decode_register_index_short(unsigned long opcode, int offset)
--{
--	return ((opcode >> offset) & 0x7) + 8;
--}
--
--/* Calculate the new address for after a step */
--static int get_step_address(struct pt_regs *regs, unsigned long *next_addr)
--{
--	unsigned long pc = regs->epc;
--	unsigned long *regs_ptr = (unsigned long *)regs;
--	unsigned int rs1_num, rs2_num;
--	int op_code;
--
--	if (get_kernel_nofault(op_code, (void *)pc))
--		return -EINVAL;
--	if ((op_code & __INSN_LENGTH_MASK) != __INSN_LENGTH_GE_32) {
--		if (riscv_insn_is_c_jalr(op_code) ||
--		    riscv_insn_is_c_jr(op_code)) {
--			rs1_num = decode_register_index(op_code, RVC_C2_RS1_OPOFF);
--			*next_addr = regs_ptr[rs1_num];
--		} else if (riscv_insn_is_c_j(op_code) ||
--			   riscv_insn_is_c_jal(op_code)) {
--			*next_addr = RVC_EXTRACT_JTYPE_IMM(op_code) + pc;
--		} else if (riscv_insn_is_c_beqz(op_code)) {
--			rs1_num = decode_register_index_short(op_code,
--							      RVC_C1_RS1_OPOFF);
--			if (!rs1_num || regs_ptr[rs1_num] == 0)
--				*next_addr = RVC_EXTRACT_BTYPE_IMM(op_code) + pc;
--			else
--				*next_addr = pc + 2;
--		} else if (riscv_insn_is_c_bnez(op_code)) {
--			rs1_num =
--			    decode_register_index_short(op_code, RVC_C1_RS1_OPOFF);
--			if (rs1_num && regs_ptr[rs1_num] != 0)
--				*next_addr = RVC_EXTRACT_BTYPE_IMM(op_code) + pc;
--			else
--				*next_addr = pc + 2;
--		} else {
--			*next_addr = pc + 2;
--		}
--	} else {
--		if ((op_code & __INSN_OPCODE_MASK) == __INSN_BRANCH_OPCODE) {
--			bool result = false;
--			long imm = RV_EXTRACT_BTYPE_IMM(op_code);
--			unsigned long rs1_val = 0, rs2_val = 0;
--
--			rs1_num = decode_register_index(op_code, RVG_RS1_OPOFF);
--			rs2_num = decode_register_index(op_code, RVG_RS2_OPOFF);
--			if (rs1_num)
--				rs1_val = regs_ptr[rs1_num];
--			if (rs2_num)
--				rs2_val = regs_ptr[rs2_num];
--
--			if (riscv_insn_is_beq(op_code))
--				result = (rs1_val == rs2_val) ? true : false;
--			else if (riscv_insn_is_bne(op_code))
--				result = (rs1_val != rs2_val) ? true : false;
--			else if (riscv_insn_is_blt(op_code))
--				result =
--				    ((long)rs1_val <
--				     (long)rs2_val) ? true : false;
--			else if (riscv_insn_is_bge(op_code))
--				result =
--				    ((long)rs1_val >=
--				     (long)rs2_val) ? true : false;
--			else if (riscv_insn_is_bltu(op_code))
--				result = (rs1_val < rs2_val) ? true : false;
--			else if (riscv_insn_is_bgeu(op_code))
--				result = (rs1_val >= rs2_val) ? true : false;
--			if (result)
--				*next_addr = imm + pc;
--			else
--				*next_addr = pc + 4;
--		} else if (riscv_insn_is_jal(op_code)) {
--			*next_addr = RV_EXTRACT_JTYPE_IMM(op_code) + pc;
--		} else if (riscv_insn_is_jalr(op_code)) {
--			rs1_num = decode_register_index(op_code, RVG_RS1_OPOFF);
--			if (rs1_num)
--				*next_addr = ((unsigned long *)regs)[rs1_num];
--			*next_addr += RV_EXTRACT_ITYPE_IMM(op_code);
--		} else if (riscv_insn_is_sret(op_code)) {
--			*next_addr = pc;
--		} else {
--			*next_addr = pc + 4;
--		}
--	}
--	return 0;
--}
--
- static int do_single_step(struct pt_regs *regs)
- {
- 	/* Determine where the target instruction will send us to */
--	unsigned long addr = 0;
--	int error = get_step_address(regs, &addr);
-+	unsigned long addr, insn;
-+	int error = get_insn(regs, regs->epc, &insn);
- 
- 	if (error)
- 		return error;
- 
-+	addr = get_step_address(regs, insn);
-+
- 	/* Store the op code in the stepped address */
--	error = get_kernel_nofault(stepped_opcode, (void *)addr);
-+	error = get_insn(regs, addr, stepped_opcode);
- 	if (error)
- 		return error;
- 
-diff --git a/arch/riscv/kernel/probes/kprobes.c b/arch/riscv/kernel/probes/kprobes.c
-index c0738d6c6498..6a9cfb0b664a 100644
---- a/arch/riscv/kernel/probes/kprobes.c
-+++ b/arch/riscv/kernel/probes/kprobes.c
-@@ -12,6 +12,7 @@
- #include <asm/sections.h>
- #include <asm/cacheflush.h>
- #include <asm/bug.h>
-+#include <asm/insn.h>
- #include <asm/text-patching.h>
- 
- #include "decode-insn.h"
-diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-index 9c83848797a7..938a8b841f94 100644
---- a/arch/riscv/kernel/traps.c
-+++ b/arch/riscv/kernel/traps.c
-@@ -26,6 +26,7 @@
- #include <asm/bug.h>
- #include <asm/cfi.h>
- #include <asm/csr.h>
-+#include <asm/insn.h>
- #include <asm/processor.h>
- #include <asm/ptrace.h>
- #include <asm/syscall.h>
-@@ -409,10 +410,10 @@ int is_valid_bugaddr(unsigned long pc)
- 		return 0;
- 	if (get_kernel_nofault(insn, (bug_insn_t *)pc))
- 		return 0;
--	if ((insn & __INSN_LENGTH_MASK) == __INSN_LENGTH_32)
-+	if ((insn & __INSN_LENGTH_MASK) == __INSN_LENGTH_GE_32)
- 		return (insn == __BUG_INSN_32);
- 	else
--		return ((insn & __COMPRESSED_INSN_MASK) == __BUG_INSN_16);
-+		return ((insn & RVC_MASK_C) == __BUG_INSN_16);
- }
- #endif /* CONFIG_GENERIC_BUG */
- 
-diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/traps_misaligned.c
-index 77c788660223..42a50e21b1d2 100644
---- a/arch/riscv/kernel/traps_misaligned.c
-+++ b/arch/riscv/kernel/traps_misaligned.c
-@@ -10,12 +10,13 @@
- #include <linux/irq.h>
- #include <linux/stringify.h>
- 
--#include <asm/processor.h>
--#include <asm/ptrace.h>
-+#include <asm/cpufeature.h>
- #include <asm/csr.h>
- #include <asm/entry-common.h>
- #include <asm/hwprobe.h>
--#include <asm/cpufeature.h>
-+#include <asm/insn.h>
-+#include <asm/processor.h>
-+#include <asm/ptrace.h>
- #include <asm/vector.h>
- 
- #define INSN_MATCH_LB			0x3
-@@ -112,25 +113,22 @@
- #define SH_RS2				20
- #define SH_RS2C				2
- 
--#define RV_X(x, s, n)			(((x) >> (s)) & ((1 << (n)) - 1))
--#define RVC_LW_IMM(x)			((RV_X(x, 6, 1) << 2) | \
--					 (RV_X(x, 10, 3) << 3) | \
--					 (RV_X(x, 5, 1) << 6))
--#define RVC_LD_IMM(x)			((RV_X(x, 10, 3) << 3) | \
--					 (RV_X(x, 5, 2) << 6))
--#define RVC_LWSP_IMM(x)			((RV_X(x, 4, 3) << 2) | \
-+#define RVC_LW_IMM(x)			((RV_X(x, 6, 0x1) << 2) | \
-+					 (RV_X(x, 10, 0x7) << 3) | \
-+					 (RV_X(x, 5, 0x1) << 6))
-+#define RVC_LD_IMM(x)			((RV_X(x, 10, 0x7) << 3) | \
-+					 (RV_X(x, 5, 0x3) << 6))
-+#define RVC_LWSP_IMM(x)			((RV_X(x, 4, 0x7) << 2) | \
-+					 (RV_X(x, 12, 0x1) << 5) | \
-+					 (RV_X(x, 2, 0x3) << 6))
-+#define RVC_LDSP_IMM(x)			((RV_X(x, 5, 0x3) << 3) | \
- 					 (RV_X(x, 12, 1) << 5) | \
--					 (RV_X(x, 2, 2) << 6))
--#define RVC_LDSP_IMM(x)			((RV_X(x, 5, 2) << 3) | \
--					 (RV_X(x, 12, 1) << 5) | \
--					 (RV_X(x, 2, 3) << 6))
--#define RVC_SWSP_IMM(x)			((RV_X(x, 9, 4) << 2) | \
--					 (RV_X(x, 7, 2) << 6))
--#define RVC_SDSP_IMM(x)			((RV_X(x, 10, 3) << 3) | \
--					 (RV_X(x, 7, 3) << 6))
--#define RVC_RS1S(insn)			(8 + RV_X(insn, SH_RD, 3))
--#define RVC_RS2S(insn)			(8 + RV_X(insn, SH_RS2C, 3))
--#define RVC_RS2(insn)			RV_X(insn, SH_RS2C, 5)
-+					 (RV_X(x, 2, 0x7) << 6))
-+#define RVC_SWSP_IMM(x)			((RV_X(x, 9, 0xf) << 2) | \
-+					 (RV_X(x, 7, 0x3) << 6))
-+#define RVC_SDSP_IMM(x)			((RV_X(x, 10, 0x7) << 3) | \
-+					 (RV_X(x, 7, 0x7) << 6))
-+#define RVC_RS2S(insn)			(8 + RV_X(insn, SH_RS2C, 0x7))
- 
- #define SHIFT_RIGHT(x, y)		\
- 	((y) < 0 ? ((x) << -(y)) : ((x) >> (y)))
-@@ -146,7 +144,6 @@
- 
- #define GET_RS1(insn, regs)		(*REG_PTR(insn, SH_RS1, regs))
- #define GET_RS2(insn, regs)		(*REG_PTR(insn, SH_RS2, regs))
--#define GET_RS1S(insn, regs)		(*REG_PTR(RVC_RS1S(insn), 0, regs))
- #define GET_RS2S(insn, regs)		(*REG_PTR(RVC_RS2S(insn), 0, regs))
- #define GET_RS2C(insn, regs)		(*REG_PTR(insn, SH_RS2C, regs))
- #define GET_SP(regs)			(*REG_PTR(2, 0, regs))
-@@ -270,58 +267,6 @@ static unsigned long get_f32_rs(unsigned long insn, u8 fp_reg_offset,
- #define GET_F32_RS2C(insn, regs) (get_f32_rs(insn, 2, regs))
- #define GET_F32_RS2S(insn, regs) (get_f32_rs(RVC_RS2S(insn), 0, regs))
- 
--#define __read_insn(regs, insn, insn_addr, type)	\
--({							\
--	int __ret;					\
--							\
--	if (user_mode(regs)) {				\
--		__ret = get_user(insn, (type __user *) insn_addr); \
--	} else {					\
--		insn = *(type *)insn_addr;		\
--		__ret = 0;				\
--	}						\
--							\
--	__ret;						\
--})
--
--static inline int get_insn(struct pt_regs *regs, ulong epc, ulong *r_insn)
--{
--	ulong insn = 0;
--
--	if (epc & 0x2) {
--		ulong tmp = 0;
--
--		if (__read_insn(regs, insn, epc, u16))
--			return -EFAULT;
--		/* __get_user() uses regular "lw" which sign extend the loaded
--		 * value make sure to clear higher order bits in case we "or" it
--		 * below with the upper 16 bits half.
--		 */
--		insn &= GENMASK(15, 0);
--		if ((insn & __INSN_LENGTH_MASK) != __INSN_LENGTH_32) {
--			*r_insn = insn;
--			return 0;
--		}
--		epc += sizeof(u16);
--		if (__read_insn(regs, tmp, epc, u16))
--			return -EFAULT;
--		*r_insn = (tmp << 16) | insn;
--
--		return 0;
--	} else {
--		if (__read_insn(regs, insn, epc, u32))
--			return -EFAULT;
--		if ((insn & __INSN_LENGTH_MASK) == __INSN_LENGTH_32) {
--			*r_insn = insn;
--			return 0;
--		}
--		insn &= GENMASK(15, 0);
--		*r_insn = insn;
--
--		return 0;
--	}
--}
--
- union reg_data {
- 	u8 data_bytes[8];
- 	ulong data_ulong;
+ /* SBI spec version fields */
+ #define SBI_SPEC_VERSION_DEFAULT	0x1
+ #define SBI_SPEC_VERSION_MAJOR_SHIFT	24
 -- 
 2.43.0
 
