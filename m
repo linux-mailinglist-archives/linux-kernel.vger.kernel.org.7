@@ -1,152 +1,114 @@
-Return-Path: <linux-kernel+bounces-781678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47273B3156D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:31:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58115B31569
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E370AA13A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:27:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F73516EF1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389472EE261;
-	Fri, 22 Aug 2025 10:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3856A2EF673;
+	Fri, 22 Aug 2025 10:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I/IIx3pr"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6v8eDwk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB6A2E92DF
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9056219307F;
+	Fri, 22 Aug 2025 10:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755858435; cv=none; b=N6gkQk/P8VQldkIcoONBqpmPFlF9TnMQcpdyRkDJsXqkPIMCZjReH7sO72hP11xpcMY+DHwWxqW5i5ry3vZOiarSerflSEY8PJz0xjo9Lo28gVaxrbP0CaHU6iH9GXgTOL+DtKUm1SGRKaU3AmnAq0dfGjmo1A7KgRdtHvE6wOk=
+	t=1755858518; cv=none; b=p3EiBIhMYqWcYkuCDO1/OLDCXCHiUdzMZ39b4VG+O8K7ozMNSyqqR4/REDzITHWqqVWAIWZj6nadD2h3gUf9b2Z65ZpNp5cIJ/3lMc4hZq5dD9JtEA6UVYMLwCT//0+dKFZyKHzSS7h06ziJag/jm1lOB9tol167Y7o8tE8gh9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755858435; c=relaxed/simple;
-	bh=DKiNN1RMdn2Gn2M4I96hlwsVSaQvym/NqklBxGqQSGc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dby4Oi5Earuhx2cdA1BaoBxqnNNoqKQiz9ZekNGhMQd0waDCXXGfilSZicLLgDBvKrYzJhoCO3BvsUa5Ev+FsmUofJb1bFFRWxbA465LI0I4yvvrBnbRaomoPFhIBwEj3s6/GNjjQMmWnUlr3wbN1MKOA8C9OKpmdAi4E5DhKnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I/IIx3pr; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb7acfde3so296264366b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 03:27:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755858432; x=1756463232; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cd5s72x9mZV/+O9tEQqldJerG6gz6k4UPw65u8py8ZY=;
-        b=I/IIx3prkNnuzMy6JBsKrt51brhDi4/t+bHBD5i5Sv9heUwQXkMIpVqe3qNVKj81g5
-         OJs5QZS6wIJqcgSwdno2W/6regDlqUkqIX/krg4e9tfYfqt5xSMgvT2QWlCLN1iA32hC
-         DdtBzxsBg+rDyTCuxu5uBZY8LDz+XH0We8qAo0tOtjrificJ2GM6C+etqH3MQaq779Dq
-         RKc63E0Zwu7qImRpFb13gPYqtf5xktrNQGR0UABmZf0Cf0O012eyskgrZ2/BSlQ2jSTZ
-         sR9Xkhme6UILSuXSTwRHoC07Wr6tDRVvoeyOs/AW7mA4RADcDv3F861lVtzsjmYQyFQQ
-         B1nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755858432; x=1756463232;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cd5s72x9mZV/+O9tEQqldJerG6gz6k4UPw65u8py8ZY=;
-        b=MR8kiAIDP4+ApxVkevlw6pSZxl8ejPkZgMAtDeCiuwQGYq3RAVCsBCytc+1SJWjfyn
-         zYxQlfd7P4nLql3Bg6PO5EMyuslErLpwBoANxc4+c67D71aYwOdUjno8JD/DMLFgQib2
-         LirvJis5OP5AUPA7a4+ALDQ7DqaxXnKeyqTZboh4xJiJDji3bBCv1K8B8LK0p9ziLHqt
-         Hgxz3hi4CTaSxAizhiGOwAb+59xGOqfyvNR9EW07qB2C7bMiSr03UW1PB7cPi6SVMlgP
-         gpxMP2mG8gj1i4+tmRZpY0aNa6TzecqFQsOXGVE9o7sYGBBDRpSO/IEbw7fxLNaRoTOc
-         CLLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgmQ5Q+SsDIXqoh90XHYIm49pPWBfzmmN0J2P5xTU4mDC4FTnB7/vmfTnjjk5gaIX3moocmyIQnTbvt2I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUTbmcK0QL/Ptdun9ts/CmW9l0zx/SDE6mTyQqa8ZNOOHMPTo8
-	EaIEFqCGtkO40SkKxXVjFFIT1Iztop/h4d3JSC0ACJoGhKijgtnrR/XVSlOauukPyBc=
-X-Gm-Gg: ASbGnctxTBzR8gJAxzH+SbyWVKqGkp1UiVIW4i44I+P/L38k9zuoFQ2dyBBs/YDNImb
-	lWa6LR80QtP4HQ4GK1ZaFHUJeCgu/3d5YlpZIKEmIOhvQLyKyEBcuO24h6uzL9bEQ6tfkY67N6D
-	OBV6GkTu4zFCUyGKYrT9alFwlEKBrusW1T2tpNR9kbZJZSA3xvoRqEWA+m5FIfS+0dhTApaSILS
-	knaAsTxYROWvL6SIk0HkzxPRofa3m1mVbzs3DXqgxSt0WnDyMexC/6zIClSq/RhN8/G1llH8AwE
-	9PtTOUEP1nCcsCKjQ4u7espsp0PA2xRZgbS9eupvl66JSxtqlwvur5JZBV3wirTIL6YugHirnUz
-	T7gWUptoiGT3vX1GvAzsDqivayCSn8HeF
-X-Google-Smtp-Source: AGHT+IEjRd6Tx5sKZi6OWN0Ddp+BLYTOG0lrQ3ub++Nybf0iOaCMKeFsTfA36+kF67hMQ9sg6CmMMA==
-X-Received: by 2002:a17:907:3f11:b0:aec:76c6:6ef6 with SMTP id a640c23a62f3a-afe29605d34mr191833466b.50.1755858431819;
-        Fri, 22 Aug 2025 03:27:11 -0700 (PDT)
-Received: from [172.20.10.10] ([213.233.104.29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded4ca67fsm585912066b.92.2025.08.22.03.27.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 03:27:11 -0700 (PDT)
-Message-ID: <493a072e-352c-4e96-b58b-04b56fa56dc0@linaro.org>
-Date: Fri, 22 Aug 2025 11:27:09 +0100
+	s=arc-20240116; t=1755858518; c=relaxed/simple;
+	bh=UhhnLcGKdARCqcQkNb0PZAh2gumC9LMMptQdei1s5io=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=F0DIDRvXsSV7ICHZdXL3K+vtDiPYtiqLzfU1jxka8EE6vClXdE5pGlgtRLuvX7vHPuWF/wn3aTqBfuFyGHZ78rAzXX393/oIqiIvNT3KhMknxQJCG5qIpkSkObUFZ/ChmYTIAB4Qj6Y/ZSeu5syucNxblzWaRSJIhGNrPkXWDTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6v8eDwk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1A3A7C4CEED;
+	Fri, 22 Aug 2025 10:28:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755858518;
+	bh=UhhnLcGKdARCqcQkNb0PZAh2gumC9LMMptQdei1s5io=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=b6v8eDwk4t4M4v+Kkn5FVe+lZSC0Rimai9aqmkuRWXOxLCOqch5YpdKZMgrazAlOf
+	 /WT8WMqdKNfFTkQwOw1zbNM0Rodopx+mIHjFkXoyR7kbHZKt853iQqnY5EEELJDep8
+	 c7GMjxnzwmiWa6bFKSQTnjBskKm9kQ1A+V/FEujQIGUiZdk26Atw5mgPdSe84OPcgb
+	 m/QsKbYby3b7DlR0wVxpwvUCOu+n9bapkq8QJZpK1d2Z99jdcJhUx/gk704x90nu2+
+	 1DIjSwF0nnjgQ+nKJGyo2NDwwE+FOOrRso3ommdR8g1U1JZNg6sTIyTmLWtQw+Mg5L
+	 TjbiG3Ayr53lA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0554DCA0FE1;
+	Fri, 22 Aug 2025 10:28:38 +0000 (UTC)
+From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
+Date: Fri, 22 Aug 2025 18:28:33 +0800
+Subject: [PATCH] ASoC: codecs: idt821034: fix wrong log in
+ idt821034_chip_direction_output()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] clk: samsung: add Exynos ACPM clock driver
-To: Brian Masney <bmasney@redhat.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Peter Griffin
- <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- willmcvicker@google.com, kernel-team@android.com
-References: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
- <20250819-acpm-clk-v1-3-6bbd97474671@linaro.org> <aKdmurrT1pFtLSI8@x1>
- <720799b1-04ce-46da-b643-1adbdfc661e6@linaro.org> <aKhFOHFGKPYXgIri@x1>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <aKhFOHFGKPYXgIri@x1>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250822-idt821034-v1-1-e2bfffbde56f@uniontech.com>
+X-B4-Tracking: v=1; b=H4sIAFBGqGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDCyMjILfEwsjQwNhE1yDJNDnJwizJINnSTAmovqAoNS2zAmxWdGxtLQA
+ pAZE0WwAAAA==
+X-Change-ID: 20250822-idt821034-0b5cb86b0c96
+To: Herve Codina <herve.codina@bootlin.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ guanwentao@uniontech.com, niecheng1@uniontech.com, zhanjun@uniontech.com, 
+ Cryolitia PukNgae <cryolitia@uniontech.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755858517; l=1022;
+ i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
+ bh=Xf7JFZXRbt8rXAX/IFwN/P7Ba3v6XdLGbf2wZX2q3kI=;
+ b=utMVbNOaZjz16DXuia93Q7alE05P+SVaph8G790DbgkFgWzfz6oObdvp6v+qBHq16mbFeEGLp
+ kPtPjee41xpAEHHkEpSeIBuVuIH8Ij2y3+4IgS0Z4TyyvsTUSalebt9
+X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
+ pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
+X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
+ auth_id=474
+X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+Reply-To: cryolitia@uniontech.com
 
+From: Cryolitia PukNgae <cryolitia@uniontech.com>
 
+Change `dir in` to `dir out`
 
-On 8/22/25 11:23 AM, Brian Masney wrote:
-> Hi Tudor,
-> 
-> On Fri, Aug 22, 2025 at 09:14:03AM +0100, Tudor Ambarus wrote:
->> On 8/21/25 7:34 PM, Brian Masney wrote:
->>> On Tue, Aug 19, 2025 at 11:45:38AM +0000, Tudor Ambarus wrote:
->>>> +static long acpm_clk_round_rate(struct clk_hw *hw, unsigned long rate,
->>>> +				unsigned long *parent_rate)
->>>> +{
->>>> +	/*
->>>> +	 * We can't figure out what rate it will be, so just return the
->>>> +	 * rate back to the caller. acpm_clk_recalc_rate() will be called
->>>> +	 * after the rate is set and we'll know what rate the clock is
->>>> +	 * running at then.
->>>> +	 */
->>>> +	return rate;
->>>> +}
->>>
->>> ...
->>>
->>>> +
->>>> +static const struct clk_ops acpm_clk_ops = {
->>>> +	.recalc_rate = acpm_clk_recalc_rate,
->>>> +	.round_rate = acpm_clk_round_rate,
->>>> +	.set_rate = acpm_clk_set_rate,
->>>> +};
->>>
->>> The round_rate clk op is deprecated. Please convert this over to use
->>> determine_rate.
->>
->> I can do that, sure. Shall I also update the kdoc for round_rate(), mark it
->> as deprecated and add your Suggested-by tag? It would help other newcomers.
-> 
-> I am working to remove round_rate from the clk core and the various
+Suggested-by: Jun Zhan <zhanjun@uniontech.com>
+Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+---
+ sound/soc/codecs/idt821034.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-ah, great. Thanks for the pointer!
+diff --git a/sound/soc/codecs/idt821034.c b/sound/soc/codecs/idt821034.c
+index 6738cf21983b0dc58e162cbfaacaedb5edaaa245..a03d4e5e7d144195622ea0cbf6b6c6ba95642aa7 100644
+--- a/sound/soc/codecs/idt821034.c
++++ b/sound/soc/codecs/idt821034.c
+@@ -1067,7 +1067,7 @@ static int idt821034_chip_direction_output(struct gpio_chip *c, unsigned int off
+ 
+ 	ret = idt821034_set_slic_conf(idt821034, ch, slic_conf);
+ 	if (ret) {
+-		dev_err(&idt821034->spi->dev, "dir in gpio %d (%u, 0x%x) failed (%d)\n",
++		dev_err(&idt821034->spi->dev, "dir out gpio %d (%u, 0x%x) failed (%d)\n",
+ 			offset, ch, mask, ret);
+ 	}
+ 
 
-> drivers. Your driver just needs to be updated similar to this:
-> 
-> https://lore.kernel.org/all/20250710-clk-imx-round-rate-v1-10-5726f98e6d8d@redhat.com/
-> 
-> Brian
-> 
+---
+base-commit: 3957a5720157264dcc41415fbec7c51c4000fc2d
+change-id: 20250822-idt821034-0b5cb86b0c96
+
+Best regards,
+-- 
+Cryolitia PukNgae <cryolitia@uniontech.com>
+
 
 
