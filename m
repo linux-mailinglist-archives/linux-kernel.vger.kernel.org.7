@@ -1,190 +1,181 @@
-Return-Path: <linux-kernel+bounces-782563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13CCB3221C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:11:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F6C4B32222
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16660B0098B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:11:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB8B3AE15DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AD22BE630;
-	Fri, 22 Aug 2025 18:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1544B2BE628;
+	Fri, 22 Aug 2025 18:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IWgj6Fci"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VD0GlZI/"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FB11A9FB9
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986FD2BD5B3;
+	Fri, 22 Aug 2025 18:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755886259; cv=none; b=ZrFwEwc01ir23bzDfUJyzfR8GN/l6NN/8TU9teqNhzNNtpPpoVZ6FuKpQP6ccO4XpgXIRf/wlWAO3UqJul6/060UTF7iH8fDNOmGO8TwGHy7zBksajf7X7w1NQojvble1cNmqpGechnqS/DI2oW02YCw5STD7OTxUOTx4Ah/w90=
+	t=1755886302; cv=none; b=uXjBMkjdZMw2PjJBDLEBOq+P4UY6UEddmij4WJy/ziEyHmtDA+2bAJ6EBrYBaD8Mas9b0T+J+v2MgvhhwkgntjV20+vDOaLxoVUj1knALc6DxEhgDybPvLclurBhWhcnwWEEY3s14ICD6Venfbdgvxma/yN2WMsJvpeDgE9AmtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755886259; c=relaxed/simple;
-	bh=zx8MvH5t85eVRYN60js9SAsxgYkD1auMlyzP4cjVgeQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A3NQaDSgWaEsKb0ssbNbLV7DJlxMizECml8cGHx7wkoP/l/MHPapxtPlVN1dJ/IAi3gcLPGbqjd9n41nCGGasT9IEkzrZ478M54DfMPoPa5KiVNdNw3nFy7tHG5BephKJv9y0wvjGkpKqxpaxIvSsgz4XXsj4HFSCtAeUcvlml4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IWgj6Fci; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755886257;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Cs65i5/BwS5INh2iU3PXL6F11yYfHDlCfNAhWqRXwfw=;
-	b=IWgj6Fci9ElqdFXj8byMf4hxIXgsBUs1GfAurgb2wzF4VBWb83+rfw8u9VAQN6Gfo45UHu
-	8n35STJv+8SXFFdHtS6SdH0BBxPPZCgHCB4rhX4kCf2hW7REbooqNSsT24jWkplEqYppAh
-	6nlXEQcj+Vdpc2pDBdPhGBzzZFG2Y6E=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-635-5xVykF0yOdOAikgT0sCUjw-1; Fri, 22 Aug 2025 14:10:55 -0400
-X-MC-Unique: 5xVykF0yOdOAikgT0sCUjw-1
-X-Mimecast-MFC-AGG-ID: 5xVykF0yOdOAikgT0sCUjw_1755886254
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b9edf41d07so1140874f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:10:55 -0700 (PDT)
+	s=arc-20240116; t=1755886302; c=relaxed/simple;
+	bh=IJtLE1Q4rJCO8zJhc+hEtTZK1+HnLN8Rtssuw8qX5aw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ox44m+2+RcCiIE/jdNz5qwUOttnO1OMhk9Tp20nfdVkGd4rIvCa0M01G+6ArZjIyw2krA+ERu1EzqVUBAhUmVSt2jCXyG3NHPU3pa00K2JDWYhMed+OK+WNh9YUKsDpWMIN/pqm8v6w4E2nmXhBb/08GRw4dV4GZyr1RiKcTKT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VD0GlZI/; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45a1b04f8b5so15396645e9.1;
+        Fri, 22 Aug 2025 11:11:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755886299; x=1756491099; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zhlyI1Vji6S4iPUyGLb7GjEFW+HU1Z0XCJTAoKiKDwk=;
+        b=VD0GlZI/Xje8VutMEnH4GJBeKebl2sEK8V8Ea8ttRDWHGibSKOoCLSTxA4YwVDFPxX
+         wePRIkfxp1vBD9gEW/ZfoPNCorWeJM3ey3H0kgsRt/JsR9EphasbfAojVW0uP2iyuJCS
+         1zeWprJnUu0Z5tb2Tq6fNSo/zraNPs875qZBx7ahOrB/NMNI5xU1ntckLSDv5JGlfXxu
+         ODjYiZT2X2wTlpeBOnh37y4t2nplofRAJRa8ydkpISkwvNl3WS4YAGh2SjxejyvV9AMN
+         iU2m8Ct2j7tJ42bWTRL/7p0IIuLrSAACkTSsOdUKNvy4rnEIhXDo1xGjX8aqYBZcwRkT
+         wABg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755886254; x=1756491054;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Cs65i5/BwS5INh2iU3PXL6F11yYfHDlCfNAhWqRXwfw=;
-        b=jKd9WpW0Z/+SkmLsX6f7ugAOhEOjuy70Tbaj5ZtloFljoM8U7iZlvIdTIReC9giwPa
-         ufKK0sw8K9dzJHx1C1EWMUW/fkIDGnxNo1e8yukSIfrpl1U1DVStD10NGThonKW3Ob6U
-         pnW9FiIKruJHc1aRpMzKQ12TMxOQ6OoiGoJbjWvH2X4xu538vTJ6yK9lxhHyODBgCfcj
-         r835FLfpHaYl03RaxDF+picTobJDXzT957j72M/eFnIfbarFG0E2eJCsa/7L0f0eSK8Q
-         FnqjyYZLQsg3EJt+lZo/h5NXvod056mrEDnbNW7JkOyKTwFU9shPY9RMbgq62xQPZnX/
-         KNCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZjHRxsltslwcEoDeRutyoAY6/x9koFYPI+Dju2Qtxa5fa6nm0phib0Q4CKYnasXTeMw5xSarcJ98WWO4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5Fbs9R/sxcJ/uezng2UQL43s3W60dtpg1tRg0tkx/sMUGJqfs
-	eXIs4AqBIWPV3pwGi4urmZFJLYcf6YUo69qd8arSD0L6hd5CHSFxWjKQW9NcSz4lRfNzDY3qbdd
-	1RypbGCK1VKp54BqDYTlRqTyKlJzLHL8hKpOnudSMU5eBVfRzM2HB1TuH6aMstHiBgkX2/2Evx4
-	KS
-X-Gm-Gg: ASbGncuqnm18Znljkc3MVgGsg6aGlDoZP+01VHeND/bTnhFyxqGI1GY3rVBOjwKlphQ
-	vZ2tx6fjGZorTfvppj3Q66UulKWtjRM7Os/qCLEKQ0P0TbYjPx0a2HttDNSE24SR+F6VRSDR9rD
-	CEid4ACs160T9AXdBcAbvY+SNFZhiwwDrKfiXWFGyUonWZAEuUj5b+iN3KG2w1ZYd73vJiopG4J
-	irxYrI7B2O6jjepuQg32T58upAkQerJ4vmUI0AKmMWU9pNvFCDuyKsL++tGlPl8h1cST5+GMQ/v
-	VO+fYytqMhLYALsVWu0MHYAxDbwUkwHsPaen0lTJwmErohAemmQhCpIzftG16ilqLaY7vlvhP9J
-	r2Q9dvFCuYCxelrhQlkb3gQH6285IvEfI3kDtRLsU2IxCfJAZPm4rbFZPX1/TejOIgt8=
-X-Received: by 2002:a05:6000:26ce:b0:3b7:83c0:a9e0 with SMTP id ffacd0b85a97d-3c5daefc76amr3207790f8f.25.1755886254472;
-        Fri, 22 Aug 2025 11:10:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFruF/9yLWC9qQiiSeqlnaZybt0y1Lc6OlpmYaNOwlaf7dspYYth5O1iwJEpGlFoX5TNvjMRA==
-X-Received: by 2002:a05:6000:26ce:b0:3b7:83c0:a9e0 with SMTP id ffacd0b85a97d-3c5daefc76amr3207779f8f.25.1755886254021;
-        Fri, 22 Aug 2025 11:10:54 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f2e:6100:d9da:ae87:764c:a77e? (p200300d82f2e6100d9daae87764ca77e.dip0.t-ipconnect.de. [2003:d8:2f2e:6100:d9da:ae87:764c:a77e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70f238640sm404818f8f.26.2025.08.22.11.10.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 11:10:53 -0700 (PDT)
-Message-ID: <9a9eb9ca-a5ae-4230-8921-fd0e0a79ccbb@redhat.com>
-Date: Fri, 22 Aug 2025 20:10:51 +0200
+        d=1e100.net; s=20230601; t=1755886299; x=1756491099;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zhlyI1Vji6S4iPUyGLb7GjEFW+HU1Z0XCJTAoKiKDwk=;
+        b=U7x5gZUwl12FfDmPaMG1cUo58nXJPYD/85dvl92fwAzT4Vo6B8+ugBhyM5lfrVHR9k
+         2267XPt5iMjKoc5426GpYY7/5iIRXgzwn2jpVKU7MvJH9iYCS0bH0adQScy/nSf6RFbu
+         EKqk7JBHQlsXol65wIKwQO2dTN1VH3wq2Yx8h0aWxZk3Qdy87w6hMn3aeCS/RNgvS8Jb
+         y278eISsJbjMdXONhoKVrLprqNxIHPsrb3NqcVB9pibxSLd9dSGJuOV280thbfK6q0Oz
+         r2W1QleBUJzHdCIbQ4ePmASJr4+5P51/g1k+dJOSUpV+5sODl79FHa8wuDkvhm6R36o3
+         5yrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3AS1YfYlBT0WKjGeglVmVDf4lJdsPgeyAcTVlKZUCSgCUrX8P9cPWmBi2csV4DQl4WbGNKjuoG4IlHaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKPuRYj5Xp3tVaMEKTAudaon2t4nPS7zZ7EOfcpni6Evg/JKel
+	KdCvfgQfCsWu3NefXtEyqOP7kaos4micc/bxvl65sVk1EVCDqyuObH5Ls+cmYv4=
+X-Gm-Gg: ASbGncultxQD1AF9CP8CPs1YJc/HrXHrJt7W2w/YGTpkJU8c2E69W0uAlfctzjkgyth
+	eQqj3DLOrzPxymu2VfPt3YqPqt+wVbdbbScStaGYL/5etR7W6P8HpGMKPtZkQj7JTzTXTx2syed
+	sfv3AYtsNTf1byzhwNb46vSFgxZKjPdATrvC1d4jmRnLLu7QaMKx+X6EU1c6/vHXvWmMtpMNrNW
+	35EelZFCm+XZ8CSZf3HafKvsaIT57ygt/XPxV62o/mU1VBmnqwuNo5YLL43yvpHPx6gnG3T3IhI
+	nsxRXLcZakvILG5PK1/+I7ag6feFKDFss6900vKbo+9prS0UqB5qw7OJqbaapxGJfveXxixc63S
+	ESf59J5MZu403gz7pLlaBa7a3
+X-Google-Smtp-Source: AGHT+IEcEXXL9E75Q0oSfCH1XgdzQeq368tH6A0PH5dLP2MAUtRhM2w8SNkWmRhoGzgwKx1EHVEoVw==
+X-Received: by 2002:a05:600c:4695:b0:456:26a1:a0c1 with SMTP id 5b1f17b1804b1-45b517cb8e5mr42484925e9.17.1755886298715;
+        Fri, 22 Aug 2025 11:11:38 -0700 (PDT)
+Received: from vova-pc ([37.122.165.138])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b57535439sm8574595e9.4.2025.08.22.11.11.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 11:11:38 -0700 (PDT)
+Date: Fri, 22 Aug 2025 20:11:36 +0200
+From: Vladimir Riabchun <ferr.lambarginio@gmail.com>
+To: isdn@linux-pingi.de
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ferr.lambarginio@gmail.com
+Subject: [PATCH] mISDN: hfcpci: Fix warning when deleting uninitialized timer
+Message-ID: <aKiy2D_LiWpQ5kXq@vova-pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 29/35] scsi: core: drop nth_page() usage within SG
- entry
-To: Bart Van Assche <bvanassche@acm.org>, linux-kernel@vger.kernel.org
-Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Doug Gilbert <dgilbert@interlog.com>, Alexander Potapenko
- <glider@google.com>, Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
- Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
- Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
- Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
- Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>,
- Tejun Heo <tj@kernel.org>, virtualization@lists.linux.dev,
- Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, x86@kernel.org,
- Zi Yan <ziy@nvidia.com>
-References: <20250821200701.1329277-1-david@redhat.com>
- <20250821200701.1329277-30-david@redhat.com>
- <58816f2c-d4a7-4ec0-a48e-66a876ea1168@acm.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <58816f2c-d4a7-4ec0-a48e-66a876ea1168@acm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 22.08.25 20:01, Bart Van Assche wrote:
-> On 8/21/25 1:06 PM, David Hildenbrand wrote:
->> It's no longer required to use nth_page() when iterating pages within a
->> single SG entry, so let's drop the nth_page() usage.
-> Usually the SCSI core and the SG I/O driver are updated separately.
-> Anyway:
+With CONFIG_DEBUG_OBJECTS_TIMERS unloading hfcpci module leads
+to the following splat:
 
-Thanks, I had it separately but decided to merge per broader subsystem 
-before sending. I can split it up in the next version.
+[  250.215892] ODEBUG: assert_init not available (active state 0) object: ffffffffc01a3dc0 object type: timer_list hint: 0x0
+[  250.217520] WARNING: CPU: 0 PID: 233 at lib/debugobjects.c:612 debug_print_object+0x1b6/0x2c0
+[  250.218775] Modules linked in: hfcpci(-) mISDN_core
+[  250.219537] CPU: 0 UID: 0 PID: 233 Comm: rmmod Not tainted 6.17.0-rc2-g6f713187ac98 #2 PREEMPT(voluntary)
+[  250.220940] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[  250.222377] RIP: 0010:debug_print_object+0x1b6/0x2c0
+[  250.223131] Code: fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 4f 41 56 48 8b 14 dd a0 4e 01 9f 48 89 ee 48 c7 c7 20 46 01 9f e8 cb 84d
+[  250.225805] RSP: 0018:ffff888015ea7c08 EFLAGS: 00010286
+[  250.226608] RAX: 0000000000000000 RBX: 0000000000000005 RCX: ffffffff9be93a95
+[  250.227708] RDX: 1ffff1100d945138 RSI: 0000000000000008 RDI: ffff88806ca289c0
+[  250.228993] RBP: ffffffff9f014a00 R08: 0000000000000001 R09: ffffed1002bd4f39
+[  250.230043] R10: ffff888015ea79cf R11: 0000000000000001 R12: 0000000000000001
+[  250.231185] R13: ffffffff9eea0520 R14: 0000000000000000 R15: ffff888015ea7cc8
+[  250.232454] FS:  00007f3208f01540(0000) GS:ffff8880caf5a000(0000) knlGS:0000000000000000
+[  250.233851] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  250.234856] CR2: 00007f32090a7421 CR3: 0000000004d63000 CR4: 00000000000006f0
+[  250.236117] Call Trace:
+[  250.236599]  <TASK>
+[  250.236967]  ? trace_irq_enable.constprop.0+0xd4/0x130
+[  250.237920]  debug_object_assert_init+0x1f6/0x310
+[  250.238762]  ? __pfx_debug_object_assert_init+0x10/0x10
+[  250.239658]  ? __lock_acquire+0xdea/0x1c70
+[  250.240369]  __try_to_del_timer_sync+0x69/0x140
+[  250.241172]  ? __pfx___try_to_del_timer_sync+0x10/0x10
+[  250.242058]  ? __timer_delete_sync+0xc6/0x120
+[  250.242842]  ? lock_acquire+0x30/0x80
+[  250.243474]  ? __timer_delete_sync+0xc6/0x120
+[  250.244262]  __timer_delete_sync+0x98/0x120
+[  250.245015]  HFC_cleanup+0x10/0x20 [hfcpci]
+[  250.245704]  __do_sys_delete_module+0x348/0x510
+[  250.246461]  ? __pfx___do_sys_delete_module+0x10/0x10
+[  250.247338]  do_syscall_64+0xc1/0x360
+[  250.247924]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
+Fix this by initializing hfc_tl timer with DEFINE_TIMER macro.
+Also, use mod_timer instead of manual timeout update.
+
+Fixes: 87c5fa1bb426 ("mISDN: Add different different timer settings for hfc-pci")
+Fixes: 175302f6b79e ("mISDN: hfcpci: Fix use-after-free bug in hfcpci_softirq")
+Signed-off-by: Vladimir Riabchun <ferr.lambarginio@gmail.com>
+---
+ drivers/isdn/hardware/mISDN/hfcpci.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/isdn/hardware/mISDN/hfcpci.c b/drivers/isdn/hardware/mISDN/hfcpci.c
+index 2b05722d4dbe..ea8a0ab47afd 100644
+--- a/drivers/isdn/hardware/mISDN/hfcpci.c
++++ b/drivers/isdn/hardware/mISDN/hfcpci.c
+@@ -39,12 +39,13 @@
+ 
+ #include "hfc_pci.h"
+ 
++static void hfcpci_softirq(struct timer_list *unused);
+ static const char *hfcpci_revision = "2.0";
+ 
+ static int HFC_cnt;
+ static uint debug;
+ static uint poll, tics;
+-static struct timer_list hfc_tl;
++static DEFINE_TIMER(hfc_tl, hfcpci_softirq);
+ static unsigned long hfc_jiffies;
+ 
+ MODULE_AUTHOR("Karsten Keil");
+@@ -2305,8 +2306,7 @@ hfcpci_softirq(struct timer_list *unused)
+ 		hfc_jiffies = jiffies + 1;
+ 	else
+ 		hfc_jiffies += tics;
+-	hfc_tl.expires = hfc_jiffies;
+-	add_timer(&hfc_tl);
++	mod_timer(&hfc_tl, hfc_jiffies);
+ }
+ 
+ static int __init
+@@ -2332,10 +2332,8 @@ HFC_init(void)
+ 	if (poll != HFCPCI_BTRANS_THRESHOLD) {
+ 		printk(KERN_INFO "%s: Using alternative poll value of %d\n",
+ 		       __func__, poll);
+-		timer_setup(&hfc_tl, hfcpci_softirq, 0);
+-		hfc_tl.expires = jiffies + tics;
+-		hfc_jiffies = hfc_tl.expires;
+-		add_timer(&hfc_tl);
++		hfc_jiffies = jiffies + tics;
++		mod_timer(&hfc_tl, hfc_jiffies);
+ 	} else
+ 		tics = 0; /* indicate the use of controller's timer */
+ 
 -- 
-Cheers
-
-David / dhildenb
+2.43.0
 
 
