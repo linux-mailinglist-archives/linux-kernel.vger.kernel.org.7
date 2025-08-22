@@ -1,241 +1,174 @@
-Return-Path: <linux-kernel+bounces-781735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FBF3B3160F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:03:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97269B31611
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 080F17B6472
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:01:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A8511CE8529
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B192E0410;
-	Fri, 22 Aug 2025 11:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05C02BEFFD;
+	Fri, 22 Aug 2025 11:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d8DfVnKr"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="odUmb+Dh";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KU95G1jF"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21D32C0262
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9236320330
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755860580; cv=none; b=Z75+a/IhywRaDtOBqgSYq6bL9ymaod/3HMmE/h0eUd/KJorSXjfTtRtX2UAaQJb0rq2Oy/IsJGYhWOcao8csUUbUWvslqoXoFTBkAhGPrh/t23cbaBIsLKeCE3jr6S/NvF/XE+2DcY9JFhOk9OoVgS7Eb0wKofQyPBYYupiabvI=
+	t=1755860677; cv=none; b=Zor2ljNzadGJLjI2BltC2Bro/zK3YKajtPoY2Jx5Aflfnm5B38uvYKHNJk1WzFDfrjBIZ2ouoZDBvP5yDSeni6Kme0TvGvELbU268MzZPO0pMRFa7+QB4EfD+ejzTxIzc6AdmkD0pyrLa9Q9cb8CfIxNIbK1OFFFGUqdbDO6qDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755860580; c=relaxed/simple;
-	bh=wEg0i8ljpxKTk+ox+KSaAg2bJ9cNagorHHhQEBmrDtU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZYdO9qQbnPHHNd4vAd7kMLPRweB0eWmOtsEWgN30fNJXmiF3GfIYEp/CTEDtxVhimah9o/xo05iJLDOfPkPNw1RGlNWX7MTgZnDwxnWiijBeYCjaqpzciwPpecW9E93/YUj83aFPejjyyUFGreBpmb5C0IcGTctlPuuSP9jbhbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d8DfVnKr; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45a1b05ac1eso11321715e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 04:02:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755860577; x=1756465377; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cSPNDRQEXSByP3k9ud61Mdrc8MbERDVLg0jj88ZjWgE=;
-        b=d8DfVnKrAvg6QVFmg9IlUIrbXthKUUTiQSyIbp9xRyNDyv97l5hEPKm2bUY1RahPTu
-         tvCr/IMMLskmrkIMBC5z4kKcv4MqwH1QPgnAHtdHQNCdkXKVunDqobsqpkf3CETLDnnw
-         mR6VKBNbMSHeKhyZl4PVQw0fh1NZbOEKLUj9TiM2NAvwTLPk6CkUIduRn99xYk1l+SNS
-         +sCVcFdLZZs4zXd1DCWoHxrvMBPaH4BXecD5KsOpGHGd54iUybngpC7FLGh9OqfjCkZZ
-         HpQ0p9TGeJkefyHd06FOYZk0mh31V8/I+BhKkX1F7HKn0xGzATyteVcvK4YAFk5JZW2+
-         Cg3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755860577; x=1756465377;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cSPNDRQEXSByP3k9ud61Mdrc8MbERDVLg0jj88ZjWgE=;
-        b=GQwuQ1mJWD0d1KdmGm2OUJGSJvQi4dxMMYlP4tnPHkfRhtHKsdROoUjcoUCtEXS1KX
-         bxg6gv+TA5N3lJX+VYOB2mDb/9ur1EScizquftkNQ/vEvN7gH8zY8s02UxYyWXBTJEEq
-         cSYfS6ocQsMUOyiFLIcdTWcAQExdiHUon7pZgaROXknzg9AQzEUnOY/FOAReh4geZCoA
-         CN7cE7Id5iPvbzsyom73zJ5a8zvekWdb0orL+G9sCjrLIZvGDdrqLIUQa8vKWFBh5G3K
-         8+06x4gOtkB5/gOJC69tQW4Sdu7/UHKdhGdiEe++UtWtPUIBDVLT/JnBAXT0LfD7FaMD
-         Kvqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhyXQ1IR830k646MFAjkbyVDsjyp/VoZf2mRo8stbSR1bHHVAf4UuwMpVfnIcxGDew1DlxoTXnr2ywu4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydGm+kcbViwdSht/14MMy1an5yL5tUfqN/cJ6H2utMHFbylIdM
-	81rXkdw6QvPlkf2dpLjNX02ooCL8pzUPftqk9pB8G3KDNDpLemEsPsHUV4tHuQKyncA=
-X-Gm-Gg: ASbGncsL7TMXD4gpLwRyJ4ZlldQjgQ+p1BfMa6SsV7WrHpUJ9Bb50t5sod5Ww980nWS
-	czySilKDJkE5SH6aqdlgyCel3GQohUgmbdR88kKiXpfeCseP6kF2bqNMiayluLs+DFe1BJnLvUV
-	swl5uDvXTyRISLEBcKSa21wwetxVrUG2AiqHad3OF2/uUveXuBCCpiqrdAPzAv/oHcZAICEhNeP
-	SCA1hWGPjZosUOk9iwzBPrj32+zXU2qITxyI/nz52ORsgL5BaLKLjNd8VSpJf1ibCEtF3CYs4zD
-	tkv4q2aMUOCpsu/PyvbzAHkBMkba8H+wy6beCttcuOObEJ2u+vfPJq5eThjKHPuXp/mWNR+zT3Q
-	XG07AlIZOayKGdPfg0DJEZkdErF3J00Qc9uldcKXkF5QotwZDwqwTPb+lVTVqzLaf+0LaPzQSWq
-	k=
-X-Google-Smtp-Source: AGHT+IE9PTwlyQ2HBsXoeltYN2/3zplP7/7veKdqNUYfYAOzMFeQKW/6u0My0eAnWH9Eypu5kHR5qw==
-X-Received: by 2002:a05:600c:3b22:b0:458:c002:6888 with SMTP id 5b1f17b1804b1-45b517d9ef7mr18067295e9.32.1755860576998;
-        Fri, 22 Aug 2025 04:02:56 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:3dd7:7361:c101:6a77? ([2a01:e0a:3d9:2080:3dd7:7361:c101:6a77])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b50e3a587sm35232305e9.18.2025.08.22.04.02.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 04:02:56 -0700 (PDT)
-Message-ID: <431de5f8-2dca-4ec0-9b94-fcc12480e8c9@linaro.org>
-Date: Fri, 22 Aug 2025 13:02:56 +0200
+	s=arc-20240116; t=1755860677; c=relaxed/simple;
+	bh=4MwyKnzsOOpRmGCODYZ++C3D7ihjQA9juNODtrWjJbw=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=kpd9+XcBoddiEpq5NvwdP5LdysKFmG9L1d09xDjPS2/AGwzdVpBaVyrTdDvy0nIOsIlxk1W5lO8w5IiHgmc0ZoKRcM8U+SI+dndj6fbyQ3rJRArphqX19DVRwZtM1yvSdEm0/mYk0m81h0JB0+K6AorPkSUwJenXbygCCSjuX7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=odUmb+Dh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KU95G1jF; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 9B610EC094A;
+	Fri, 22 Aug 2025 07:04:32 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Fri, 22 Aug 2025 07:04:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1755860672;
+	 x=1755947072; bh=EmIUXF86YcQrT/8Hjt3QbuzJX9flVj+2OUQWxZuGrsA=; b=
+	odUmb+Dhs2VS+C0GwK2Ch9U8/U+xpZXk1XEC70+Pntyibd0lIeB3x/gd8oJvPXwG
+	YgevcwC9PI508ReOCtMEICnlU4SXrEhUnjnXKk3+z4bcAmQruNw1OgQh4p4CAS3S
+	4Xb1TzLfmsJalz9uLwr7mW0nOaThYwVP71wk35FFZoKp2xJ0qC0tH61vH82IxgeU
+	ZOLoRPaYu2rxK7EXSqZqL+fD/ShYJgmH5HHfVuuVJPAxoBAutW1qccZauYzy5K1F
+	OJYFdy2XIvXbwwHuWBSIXzmjfct07GWObWngqXE1J4cvUlIjZUIXKMUK/wZivDmA
+	e45M3OXji1uFq2EjDiCT6A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755860672; x=
+	1755947072; bh=EmIUXF86YcQrT/8Hjt3QbuzJX9flVj+2OUQWxZuGrsA=; b=K
+	U95G1jFCCKMtIbaULGb03C3x0nNYBZLl0OKd5hGWgty9sCojBaXVdHCY4zjAAzu+
+	Qk96cUJD9qC5NMl/vmVtmjwo/eVIKotjlQz1ojto2zHrFjR+Wv8pw2frgi+N3CNT
+	xU5alI15wx5w6snF8O1Hri+KycM+mpeMbzpS87Ry2XkGgA2eUxlRcSQ1XCUzsrBx
+	GdhbmM83vHx67ni5xSfARaWVgMRVUQAo5ca4vGVW2JcTHX89tfxaPson4e7BZtR2
+	wTbld3+yrZAARJPLsyFAC6RxwEb0uOJBuDmbi9twMA5aWCY2jF1JniKggZLJ+KuD
+	ERPfn9HHKUzkHNlpjOW5w==
+X-ME-Sender: <xms:v06oaFnNY0cUdO21P-9Ma-qjweXgKLB1f11vK-G-5Ntc_Ex8ubiFkg>
+    <xme:v06oaA2B_tMUHaiSYJQWnmGgLvoZoqfNiSC_gGssewMw5d-gdxRTWgwQ8k5RKcPcT
+    FO2jXE9aBT28NsXIbg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieefheelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvdefpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopeguihgvthhmrghrrdgvghhgvghmrghnnhesrghrmhdrtghomhdprh
+    gtphhtthhopehrohhsthgvughtsehgohhoughmihhsrdhorhhgpdhrtghpthhtohepsghs
+    vghgrghllhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepshhurhgvnhgssehgohhogh
+    hlvgdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdp
+    rhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeguih
+    hnghhuhigvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvvghssehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehrphhptheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:v06oaNv2vkg4FQGapO3c_YHhofNvxfTuo2zOGcxqE8zhNZZ5hUhLMA>
+    <xmx:v06oaOFVs_4iy7m3Hm_AH6WQFEniE3zbrPKmWXN-rnPMqYcQK84n5Q>
+    <xmx:v06oaA--uPBA6Mm7vI9kW8ii1lE_kAUxJZfMwjbVIxXelxhZLXRtoQ>
+    <xmx:v06oaMNLABhtZ6b6BCWK356wtaSiXa9MyR_NbR8VWIJAcNyvbz8HTQ>
+    <xmx:wE6oaNXuCP0_6qmIwJ5SSu4OWGFSmgyfWKLLtMXkQCYYsBHfyGfofuT9>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 385FB700069; Fri, 22 Aug 2025 07:04:31 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH RFC 3/3] arm64: dts: qcom: x1e78100-lenovo-thinkpad-t14s:
- add HDMI nodes
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250821-topic-x1e80100-hdmi-v1-0-f14ad9430e88@linaro.org>
- <20250821-topic-x1e80100-hdmi-v1-3-f14ad9430e88@linaro.org>
- <as7pbmhfgsg3ht3s5lu25pfjjamaxyonuohkuohono3kr2mxii@posspuko4vwa>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <as7pbmhfgsg3ht3s5lu25pfjjamaxyonuohkuohono3kr2mxii@posspuko4vwa>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-ThreadId: AVsTuni0f5VB
+Date: Fri, 22 Aug 2025 13:03:50 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "schuster.simon@siemens-energy.com" <schuster.simon@siemens-energy.com>,
+ "David Hildenbrand" <david@redhat.com>
+Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Dinh Nguyen" <dinguyen@kernel.org>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>, "Mike Rapoport" <rppt@kernel.org>,
+ "Suren Baghdasaryan" <surenb@google.com>, "Michal Hocko" <mhocko@suse.com>,
+ "Ingo Molnar" <mingo@redhat.com>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Juri Lelli" <juri.lelli@redhat.com>,
+ "Vincent Guittot" <vincent.guittot@linaro.org>,
+ "Dietmar Eggemann" <dietmar.eggemann@arm.com>,
+ "Steven Rostedt" <rostedt@goodmis.org>,
+ "Benjamin Segall" <bsegall@google.com>, "Mel Gorman" <mgorman@suse.de>,
+ "Valentin Schneider" <vschneid@redhat.com>, "Kees Cook" <kees@kernel.org>
+Message-Id: <1e9f9975-7be0-4abf-87c6-a8f54cd9d059@app.fastmail.com>
+In-Reply-To: 
+ <FR2P281MB15445D806CF865A0E1CD8FFCB53DA@FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM>
+References: 
+ <20250821-nios2-implement-clone3-v1-0-1bb24017376a@siemens-energy.com>
+ <20250821-nios2-implement-clone3-v1-1-1bb24017376a@siemens-energy.com>
+ <8c6239a9-8414-469c-9b94-a43735b4e882@redhat.com>
+ <FR2P281MB15445D806CF865A0E1CD8FFCB53DA@FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM>
+Subject: Re: [PATCH 1/2] copy_process: Handle architectures where sizeof(unsigned long)
+ < sizeof(u64)
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 22/08/2025 13:01, Dmitry Baryshkov wrote:
-> On Thu, Aug 21, 2025 at 03:53:28PM +0200, Neil Armstrong wrote:
->> The Thinkpad T14s embeds a transparent 4lanes DP->HDMI transceiver
->> connected to the third QMP Combo PHY 4 lanes.
+On Fri, Aug 22, 2025, at 10:52, schuster.simon@siemens-energy.com wrote:
+> On Thu, Aug 21, 2025 at 11:14:00PM +0200, David Hildenbrand wrote:
+>> Sounds reasonable.
 >>
->> Add all the data routing, disable mode switching and specify the
->> QMP Combo PHY should be in DP-Only mode to route the 4 lanes to
->> the underlying DP phy.
->>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>   .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    | 44 ++++++++++++++++++++++
->>   1 file changed, 44 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
->> index 4cf61c2a34e31233b1adc93332bcabef22de3f86..5b62b8c3123633360f249e3ecdc8ea23f44e8e09 100644
->> --- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
->> @@ -62,6 +62,20 @@ switch-lid {
->>   		};
->>   	};
->>   
->> +
->> +	hdmi-connector {
->> +		compatible = "hdmi-connector";
->> +		type = "a";
->> +		pinctrl-0 = <&hdmi_hpd_default>;
->> +		pinctrl-names = "default";
-> 
-> If this is a DP HPD signal, it should be a part of the DP device.
-> 
->> +
->> +		port {
->> +			hdmi_con: endpoint {
->> +				remote-endpoint = <&usb_1_ss2_qmpphy_out>;
-> 
-> Please describe the transparent bridge too. It can be covered by the
-> simple-bridge.yaml / simple-bridge.c
+>> But is this actually something that is already exposed before patch#2
+>> on other architectures?
+>
+> I'm not sure, but I would assume so, as e.g., arch/arm seems to have
+> support for clone3, but also seems to use 32bit unsigned longs as far as
+> I can tell and, thus, should also be affected:
 
-Ack, indeed it could take the pinctrl thing.
+Correct. 'unsigned long' is always the native word size for an ISA
+on architectures that Linux runs on, and the same size as a pointer,
+so the bug affects all 32-bit architectures that have clone3:
 
-Neil
+arc, arm, csky, m68k, microblaze, mips32, openrisc, parisc32,
+powerpc32, riscv32, x86-32 and xtensa.
 
-> 
-> 
->> +			};
->> +		};
->> +	};
->> +
->>   	pmic-glink {
->>   		compatible = "qcom,x1e80100-pmic-glink",
->>   			     "qcom,sm8550-pmic-glink",
->> @@ -1007,6 +1021,14 @@ &mdss_dp1_out {
->>   	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
->>   };
->>   
->> +&mdss_dp2 {
->> +	status = "okay";
->> +};
->> +
->> +&mdss_dp2_out {
->> +	data-lanes = <0 1 2 3>;
->> +};
->> +
->>   &mdss_dp3 {
->>   	/delete-property/ #sound-dai-cells;
->>   
->> @@ -1263,6 +1285,12 @@ &tlmm {
->>   			       <72 2>, /* Secure EC I2C connection (?) */
->>   			       <238 1>; /* UFS Reset */
->>   
->> +	hdmi_hpd_default: hdmi-hpd-default-state {
->> +		pins = "gpio126";
->> +		function = "usb2_dp";
->> +		bias-disable;
->> +	};
->> +
->>   	eusb3_reset_n: eusb3-reset-n-state {
->>   		pins = "gpio6";
->>   		function = "gpio";
->> @@ -1486,6 +1514,22 @@ &usb_1_ss0_qmpphy_out {
->>   	remote-endpoint = <&retimer_ss0_ss_in>;
->>   };
->>   
->> +&usb_1_ss2_qmpphy {
->> +	vdda-phy-supply = <&vreg_l2j_1p2>;
->> +	vdda-pll-supply = <&vreg_l2d_0p9>;
->> +
->> +	qcom,combo-initial-mode = "dp";
->> +
->> +	/delete-property/ mode-switch;
->> +	/delete-property/ orientation-switch;
->> +
->> +	status = "okay";
->> +};
->> +
->> +&usb_1_ss2_qmpphy_out {
->> +	remote-endpoint = <&hdmi_con>;
->> +};
->> +
->>   &usb_1_ss1_hsphy {
->>   	vdd-supply = <&vreg_l3j_0p8>;
->>   	vdda12-supply = <&vreg_l2j_1p2>;
->>
->> -- 
->> 2.34.1
->>
-> 
+However, since the ABI itself is fine and 64-bit kernels pass the
+value as native words internally, the 'compat' mode support on
+arm/mips/ parisc/powerpc/riscv/s390/x86 does not have the same
+problem, and running the same 32-bit executable on a 64-bit kernel
+should work fine. This may explain why nobody caught this so far,
+even when they were testing the new flags with x86-32 or arm32
+userland, but using 64-bit machines.
 
+>> (I assume above output is with patch #2 but without patch #1)
+>
+> Yes, sorry, that one is on me; I've naturally first implemented support
+> for clone3 on nios2 and then investigated the test failures, but somehow
+> deemed it wise for whatever reason to switch the commit order in the
+> patch submission...
+
+The order you picked is fine: we generally want bug fixes before
+new features to allow backporting them more easily. Please add
+
+Fixes: b612e5df4587 ("clone3: add CLONE_CLEAR_SIGHAND")
+Cc: stable@vger.kernel.org # linux-5.5+
+
+above your Signed-off-by for this patch, to ensure the fix gets
+picked up. I would also suggest changing the text to not mention
+nios2 specifically but just say that it affects "all 32-bit kernels".
+
+    Arnd
 
