@@ -1,66 +1,66 @@
-Return-Path: <linux-kernel+bounces-782183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA29B31C68
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:46:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8510B31C57
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 856FF1D04AF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:39:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 740C0B40906
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BB4309DBD;
-	Fri, 22 Aug 2025 14:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0FB307AD4;
+	Fri, 22 Aug 2025 14:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="LbwFlT0u"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="NBX7P9w7"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6369B305E0D;
-	Fri, 22 Aug 2025 14:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF16214232;
+	Fri, 22 Aug 2025 14:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755873502; cv=none; b=UqznFx3Vxe+y+9tIQSxqRRg3Q++D6lQv/a/TWpVet9Ozp2yOk/wuTlwnEvO7UqjZ4aBl80SAjJ5vqdq8sGef7zhOMJc0DBFQ7Q6J/B09g54X+5pfz/DRJIu366i89qlNyxRxO/Tjc2vCxbqeQAUQRSyP3R/UdtfXOtIM1jzbWyU=
+	t=1755873512; cv=none; b=UcZuKPVMsnSZyTPWYgQsxEnZoq6n0eKqdOc0YVo8vgzreEMx1muAh9PaCETpr28wpN+2rZmejkMl8Jo21UFZohdrh5QeJJpTDCMo47JgfmyCFhVdBFvn4IQBn3RkD3Cn5uKMPtA5VW4Lh4Cl0EPilFjOIlC7BORZRvvikU8sZ0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755873502; c=relaxed/simple;
-	bh=XDgtwNH/CY89g+y2S0C3jp4B1ZeRe89pthHvX8wJyKQ=;
+	s=arc-20240116; t=1755873512; c=relaxed/simple;
+	bh=n/k/WObRNToFQoq9VExTjDLeZD94Hdt85ZrGjCeDPxw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Y1+wLqI10xJXFWi8CUhc7Hk8n4/2sRovMpE75A0GrCtBXyh8oVA8Ncse/nPF29Qljp1NIs4eU1fYh/fC75fSD0MqKVnAtWXLQFdRz9cbAJIBOwW25j92Bn1PQiFUD2XQwJ5InFoit/2u2d5xkqemtq52Va24kCKkR5aTUHGEK+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=LbwFlT0u; arc=none smtp.client-ip=185.132.182.106
+	 In-Reply-To:To:CC; b=hJBkXtj9orMuneVJ84/8qOW+IJdQryLZnDGeyHKCjNuB+kvkcm1fcLtnwBLPTEXqAiX0azuwyQ4O2B52qGRe686zE7XLu1944P7ut5I8dCVDPtEk7j6leBJyOX3oBTP2YlRTBgISlcFnVToDiZubeqZwxC1rUjX+Jxos8juV1LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=NBX7P9w7; arc=none smtp.client-ip=91.207.212.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MCtLm9022141;
-	Fri, 22 Aug 2025 16:38:01 +0200
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MCNlUw018576;
+	Fri, 22 Aug 2025 16:38:17 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	cwiG2uHzULaRyQqXABmaav9+d44JCQulFhkLgOFVuK4=; b=LbwFlT0uQVIIewuh
-	44BkjicEBXJOlP301NYeYhQE9shiAn7F7TH8uz2fWoypkEnlFrZopT+MNmTBhW0q
-	+dEihM1NV+mudzfYTegjG0EKta2pTz/BUypTApVJ3rHmGn4TkyuyvlyrUr4WYZWE
-	st/Re3WglqogTBKM/cyOosQNMTQG+RoRKJfQZxtI5oQiBVjuYOa08XoaUWM7MLuh
-	iBGFLgaHGM+jiYArFzG5PVccUXvL0nPUeWcDVouw2qXSalYSmRNNZUUsNVpqWnC8
-	s1D2Ns3mt6+N7BDEPcUakTMWa+gV4XPJ3H5cJ9qiawJiT7yBUDzHdgwspGAesNCF
-	vBCqFA==
+	Xwng4tLCmXcfutoUgEnbXk+sPZQAQDCb+EfzGCxzZ1M=; b=NBX7P9w77+qHcvpt
+	jA1Rh3kmQHeoCbUFdNElDR5gamQQPpP1JlBIA/AiQcd/dtjjTsZR8pwGCCpNkC7i
+	4Z+6OwRjuZb2FmmdXbFIyONRbsiDyFv8R8oA6BryxIpT5vi3quE8gUsOqgUtgXHZ
+	DulNlJwuQRu6V+sICTuGzUi/+kYVB6e+34cuWIUNsSp0EoPnVATTyAaoybe9BLhU
+	ZrDJqwiI60Q0sPJmifttyCplZ3hlfSTtK5VxYTUKf3zmC9Rwhm03RIsBVySK67BP
+	XYptmVIGkyyY1xOMvK/vypvFYiojD6/2IYr9UYrbkmFPEgBKVINCbnVsj7AkCbBv
+	aR0Srg==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48nj3v8jeq-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48np7n7hp4-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Aug 2025 16:38:01 +0200 (MEST)
+	Fri, 22 Aug 2025 16:38:17 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9AC5D40044;
-	Fri, 22 Aug 2025 16:36:47 +0200 (CEST)
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B25FD40049;
+	Fri, 22 Aug 2025 16:36:51 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5EF79726F09;
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F3A98726CAC;
 	Fri, 22 Aug 2025 16:35:50 +0200 (CEST)
 Received: from localhost (10.130.74.180) by SHFDAG1NODE2.st.com (10.75.129.70)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 22 Aug
  2025 16:35:50 +0200
 From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-Date: Fri, 22 Aug 2025 16:34:11 +0200
-Subject: [PATCH v5 02/13] dt-bindings: display: st,stm32-ltdc: add
- access-controllers property
+Date: Fri, 22 Aug 2025 16:34:12 +0200
+Subject: [PATCH v5 03/13] dt-bindings: display: st: add new compatible to
+ LVDS device
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20250822-drm-misc-next-v5-2-9c825e28f733@foss.st.com>
+Message-ID: <20250822-drm-misc-next-v5-3-9c825e28f733@foss.st.com>
 References: <20250822-drm-misc-next-v5-0-9c825e28f733@foss.st.com>
 In-Reply-To: <20250822-drm-misc-next-v5-0-9c825e28f733@foss.st.com>
 To: Yannick Fertre <yannick.fertre@foss.st.com>,
@@ -94,7 +94,8 @@ To: Yannick Fertre <yannick.fertre@foss.st.com>,
 	<christophe.roullier@foss.st.com>
 CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
 X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
  (10.75.129.70)
@@ -102,35 +103,35 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
 
-access-controllers is an optional property that allows a peripheral to
-refer to one or more domain access controller(s).
+Update the compatible to accept both "st,stm32mp255-lvds" and
+st,stm32mp25-lvds" respectively.  Default will fall back to
+"st,stm32mp25-lvds".
 
-This property is added when the peripheral is under the STM32 firewall
-controller.  It allows an accurate representation of the hardware, where
-the peripheral is connected to a firewall bus.  The firewall can then check
-the peripheral accesses before allowing its device to probe.
-
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Acked-by: Yannick Fertre <yannick.fertre@foss.st.com>
 Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
 ---
- Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
-index 1233345a16307532ea08d3686d194b486f897ea9..77058a5ccf682832b923d3e0c5ce0cdf1f0b85f4 100644
---- a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
-+++ b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
-@@ -41,6 +41,9 @@ properties:
-   resets:
-     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml b/Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml
+index 6736f93256b5cebb558cda5250369ec4b1b3033c..74e61d95370c299130410cdaae833514324c3e8f 100644
+--- a/Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml
++++ b/Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml
+@@ -31,7 +31,12 @@ description: |
  
-+  access-controllers:
-+    maxItems: 1
-+
-   port:
-     $ref: /schemas/graph.yaml#/properties/port
-     description: |
+ properties:
+   compatible:
+-    const: st,stm32mp25-lvds
++    oneOf:
++      - items:
++          - enum:
++              - st,stm32mp255-lvds
++          - const: st,stm32mp25-lvds
++      - const: st,stm32mp25-lvds
+ 
+   "#clock-cells":
+     const: 0
 
 -- 
 2.25.1
