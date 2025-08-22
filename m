@@ -1,148 +1,157 @@
-Return-Path: <linux-kernel+bounces-780877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C4A4B30A76
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:45:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D4AB30A7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBBD7A05FC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:44:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2D1B189FEDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A55218FDBE;
-	Fri, 22 Aug 2025 00:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6A2136349;
+	Fri, 22 Aug 2025 00:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YFy3QMvR"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MZe7cd5b"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B00126C1E;
-	Fri, 22 Aug 2025 00:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C623594E
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 00:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755823475; cv=none; b=Jqm/mI5XP8Fmd6w56HgrWEUvYCUOPR7rzCoxQTkKXLBvomjbWdOZp7hPQXzI+wnyAM2UWTPGOoM4HImuA3bDZw7gqbyHJmiJJz01c1M1xx2xRg1Tw3vXZydz2XfYKnxH2RzcbAzMnaA48lEKHwOXurV0ARLkRTWMh0tcBL5nfXc=
+	t=1755823724; cv=none; b=nZHShs+DKxTYS4DO23VdRqnESsTQP4KooY7LiLGk77ETpCtd5TzXkcHVYnrAqiLKK99xa8Y/jczfdxFP9bYQ4ueEfhCwSK2HAqn4/KG3eCwv46uZD20O8Ba//FnyqyBnXaYQCabkx6t/1Mh+bZxsiiFZXJttnQxXXvQNRqZ1Ba0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755823475; c=relaxed/simple;
-	bh=uMC1ezpW2pO2VtZK/21zRYvhwNfw1yRfk7llACC6iYM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g+UU08wcJv+ePjG8VDarGx/bINqoJywwOskHhD/Hftidlx9l6Uta1P522JpT2CrxfQZwQZOyWnziEdUE9EnD5gl9ZxXBf9A3sQDEsZw3eLpdfrJ5IdsgI/Mc380EkDmY+mz0sra6+nEOD3Wp/iacMYxDjVg7/p3GrVniy2Kkgb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YFy3QMvR; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=IZGbXBIKVnEINSWfL77Ztazh/k5cgk5rloyUoDalXc4=; b=YFy3QMvRtEzTXGLqQ1xgWFxvfh
-	7Y68belj5u3TMqGpNWEK5q+kCuhRFWecRWpw6lZOPO4hlx8v5FQ2MLfKp8r1deXUlmmB+WDWBVUAx
-	O07mK3wV3+OtRQIc8KHWxCt2liRj1gPDcA2F0URJxU9JSQKCQr/FWSLu/B6X2CcJEFe5ISe6/kFJe
-	+Zv25yI488fl6j/uc9dMJXaASiROUxjTMuAJJmjS9mwEnkiD+nBxVZpTfiBZ+AWZY6emRNIWFuj/x
-	sHsT8OrE7SsLs1CfI2a4RB3ZVE5zkntXCqQ/0SDQ6uvhnhkkK9ij5ZXpDbvpuxdjMlpI6AiycbfoA
-	nI8sJ/bQ==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1upFtP-0000000143i-1nwQ;
-	Fri, 22 Aug 2025 00:44:31 +0000
-Message-ID: <23072476-627c-4d2a-a8b4-e337dfca7853@infradead.org>
-Date: Thu, 21 Aug 2025 17:44:29 -0700
+	s=arc-20240116; t=1755823724; c=relaxed/simple;
+	bh=IyLNz3ER9QHJAuCSeL2/f81q15LzIaZ+iGJMt6hLaqQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lQqIVHHJ8jJl7sxi33MHX45lPEapvYQMnYGec+Hsg7qyatOVvRNHf5SYCWBEkT3TolbHXkFWRLZyn1yYbIWZehEwdGCD9h7Fy2qRi4+BaiKWc2JTJXzIX0fsYPSEdcjF8Q2RioL2n9fJ8WpKJ71NwT7np+SlNdudcZInlMIAtM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MZe7cd5b; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-53b17378b74so687798e0c.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 17:48:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755823722; x=1756428522; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RwcJVey4yrVkW+1jJjtWZIJIiSCur0pA69hI423iRXg=;
+        b=MZe7cd5b9FJ8AUEA13+2L1mGwD+lfiNw/1yXuB7qGEBZ0pJl5nWrE8iChXklz0D+24
+         PC4FFfhScsTpqTzNWQEsr84MCykPMstc+AnnYwbZtkwPGhKm/veKqrKa1DxIzIa/z1B1
+         /ZippzqMsXDhUfIWpNUwLsFwnv/u0dbw5EtMOszP7y4Mo5gQFUU9Tap6GCDsvPAasxxd
+         3SGhz3y1/u/XzdnpLgzjnmbA+KUtMCumrjNYCk1oszanpddRSDPA65oABSXVm87oFPVW
+         Mp1ROVwznDiYqZpRgWFEKPtov+qkH5yE+IibrcxyrYd+qYB5hcnGZ6pAM/MBAtNdDTxE
+         huXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755823722; x=1756428522;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RwcJVey4yrVkW+1jJjtWZIJIiSCur0pA69hI423iRXg=;
+        b=X3qkyk0IukNozxN4F1XfNj3zFhpchTnAKt1bLzJScrJpXWPAyskFglPrrgHrPQ1A9f
+         /HSgaT4Ahg/BIN0TPtWkvrVjsa+bIQeVd6xjJ7MyiqAhCsNqs4rU4E+iX7FyfZIb6YLe
+         9P+V8Bmjd2HP8XSn0niNorkGeiZzu/349KgHfQYT0aBlH8FdVxr4PbVDrhkfdUsyVfJz
+         MPzu4XNVaN9K07uc9cbZ90f2N1qPQ+9/cqLaNiKZEUDlr6iPvWIkvCsV6jkfK2OhMpEJ
+         pIO57ZZKgTRGEjwpIlTNKihzxODpHI66P6+ias9lN8g+NVC3ACcCjbtvbDXmv3DHpozh
+         qW5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVO3CgAgoVB+gg6bRVuJ1VkXyWiUh4DnIujAtffKV5kE/bt9gUEmhfmy7Ak1v24B+tarEzwOamXt4tvE+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA+B+gnW+TS7WphZ1HNKg/lVRIZoFGGnKz56+nqNsQcBkW9AzQ
+	J62nVj6CoRWRsF9EIyOnRrNQdVB/DjwZVxKJVT9lM6xl8VBymr3VH+FSHFWmwYymCxC1UcLrXTO
+	zqsarqibXh+4oJwFbU3RUrFQd70aKFDY=
+X-Gm-Gg: ASbGncsojb+lMJf4/oPkx6W1L7Z4Ed7dtBdJ94CZoMGJcaVf6uP3ka2gJn6IXheQjDy
+	A2VL9cXOvhFCPvmpXhst4NQPdoS4ywc+/9h3IViTHt0GRT4Z2yKOYg6QTRHRAhCfGKoZ2cpqXBJ
+	Jb4UG6Sm97hkuLZgPklNgTDcdrGy6PUTgNps99+l4rXKlkw3WSF8OqDYVSynF0MT2nE9kCsAsiC
+	uzMGbXa
+X-Google-Smtp-Source: AGHT+IEJ8UV2rY3maHA7Q2JeaQyfxz3x4B6F5JbVShfI+RF8U73165NhtCdKVMvrPJGjZBGmtK++pwqP1/9/ts3xhoc=
+X-Received: by 2002:a05:6122:6587:b0:539:3548:389f with SMTP id
+ 71dfb90a1353d-53c8a40ca61mr393737e0c.11.1755823721627; Thu, 21 Aug 2025
+ 17:48:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs: Add 'rootfsflags' to set rootfs mount options
-To: Rob Landley <rob@landley.net>, Christian Brauner <brauner@kernel.org>,
- Lichen Liu <lichliu@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- safinaskar@zohomail.com, kexec@lists.infradead.org, weilongchen@huawei.com,
- cyphar@cyphar.com, linux-api@vger.kernel.org, zohar@linux.ibm.com,
- stefanb@linux.ibm.com, initramfs@vger.kernel.org, corbet@lwn.net,
- linux-doc@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz
-References: <20250815121459.3391223-1-lichliu@redhat.com>
- <20250821-zirkel-leitkultur-2653cba2cd5b@brauner>
- <da1b1926-ba18-4a81-93e0-56cb2f85e4dd@landley.net>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <da1b1926-ba18-4a81-93e0-56cb2f85e4dd@landley.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CAF8kJuM++mc5PjcN_bxjZjbByT7QpVdOqRQte=vGJnuQxSTVfw@mail.gmail.com>
+ <20250821213630.1771-1-sj@kernel.org>
+In-Reply-To: <20250821213630.1771-1-sj@kernel.org>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 22 Aug 2025 12:48:27 +1200
+X-Gm-Features: Ac12FXy5T4X3nugaRsfZafAE6RY6-5rjjFf0YRDC1qItYPbeHGefEN8T2wRF5eI
+Message-ID: <CAGsJ_4xLKVM+1LqKzbwjd0vB_OYnb2E-h-Wb_C2bBxiSdU=3WA@mail.gmail.com>
+Subject: Re: [PATCH v4] mm/zswap: store <PAGE_SIZE compression failed page as-is
+To: SeongJae Park <sj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Chris Li <chrisl@kernel.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosry.ahmed@linux.dev>, kernel-team@meta.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Takero Funaki <flintglass@gmail.com>, David Hildenbrand <david@redhat.com>, Baoquan He <bhe@redhat.com>, 
+	Kairui Song <kasong@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+> > >
+> > > 1. remove it,
+> > > 2. keep it as is, or
+> > > 3. keep it, but account only -EINPROGRESS[1]
+> > >
+> > > If I'm not missing other options, I'm tempted to the first option (re=
+move it)
+> > > since it doesn't change any existing things, and we can revisit later=
+.
+> >
+> > I am fine with 1) removing it. Maybe add a log once print error on the
+> > error code if -EINPROGRESS, just to know such extreme error has been
+> > triggered.
+> > >
+> > > Please let me know if I'm missing other options or if you have other =
+preferences.
+> >
+> > I just don't want to hide the extreme error case but I am also fine
+> > with just removing it. It is your call.
+>
+> Thank you for your opinion, Chris!  Unless others have different opinions=
+, I
+> will only remove the counter (option 1), since it is simplest and we can
+> consider adding another counter or error logs on top of it.
 
+Yes, that seems the best option=E2=80=94to remove the counter for now.
 
-On 8/21/25 12:02 PM, Rob Landley wrote:
-> On 8/21/25 03:24, Christian Brauner wrote:
->> This seems rather useful but I've renamed "rootfsflags" to
-> 
-> I remember when bikeshedding came in the form of a question.
-> 
->> "initramfs_options" because "rootfsflags" is ambiguous and it's not
->> really just about flags.
-> 
-> The existing config option (applying to the fallback root=/dev/blah filesystem overmounting rootfs) is called "rootflags", the new name differs for the same reason init= and rdinit= differ.
-> 
-> The name "rootfs" has been around for over 20 years, as evidenced in https://kernel.org/doc/Documentation/filesystems/ramfs-rootfs-initramfs.txt and so on. Over the past decade least three independently authored patches have come up with the same name for this option. Nobody ever suggested a name where people have to remember whether it has _ or - in it.
+And I still need Herbert=E2=80=99s help to understand why crypto_wait_req()=
+ might return
+-EINPROGRESS, given the code below:
 
-Either is accepted. From Documentation/admin-guide/kernel-parameters.rst:
+static inline int crypto_wait_req(int err, struct crypto_wait *wait)
+{
+    switch (err) {
+    case -EINPROGRESS:
+    case -EBUSY:
+        wait_for_completion(&wait->completion);
+        reinit_completion(&wait->completion);
+        err =3D wait->err;
+        break;
+    }
 
-Special handling
-----------------
+    return err;
+}
 
-Hyphens (dashes) and underscores are equivalent in parameter names, so::
+void crypto_req_done(void *data, int err)
+{
+    struct crypto_wait *wait =3D data;
 
-	log_buf_len=1M print-fatal-signals=1
+    if (err =3D=3D -EINPROGRESS)
+        return;
 
-can also be entered as::
+    wait->err =3D err;
+    complete(&wait->completion);
+}
 
-	log-buf-len=1M print_fatal_signals=1
+Is it even possible for crypto_wait_req() to return -EINPROGRESS, since
+crypto_req_done() will not call complete(&wait->completion) in that case at
+all?
 
-
-> Technically initramfs is the name of the cpio extractor and related plumbing, the filesystem instance identifies itself as "rootfs" in
-> /proc/mounts:
-> 
-> $ head -n 1 /proc/mounts
-> rootfs / rootfs rw,size=29444k,nr_inodes=7361 0 0
-> 
-> I.E. rootfs is an instance of ramfs (or tmpfs) populated by initramfs.
-> 
-> Given that rdinit= is two letters added to init= it made sense for rootfsflags= to be two letters added to rootflags= to distinguish them.
-> 
-> (The "rd" was because it's legacy shared infrastructure with the old 1990s initial ramdisk mechanism ala /dev/ram0. The same reason bootloaders like grub have an "initrd" command to load the external cpio.gz for initramfs when it's not statically linked into the kernel image: the delivery mechanism is the same, the kernel inspects the file type to determine how to handle it. This new option _isn't_ legacy, and "rootfs" is already common parlance, so it seemed obvious to everyone with even moderate domain familiarity what to call it.)
-> 
->> Other than that I think it would make sense to just raise the limit to
->> 90% for the root_fs_type mount. I'm not sure why this super privileged
->> code would only be allowed 50% by default.
-> 
-> Because when a ram based filesystem pins all available memory the kernel deadlocks (ramfs always doing this was one of the motivations to use tmpfs, but tmpfs doesn't mean you have swap), because the existing use cases for this come from low memory systems that already micromanage this sort of thing so a different default wouldn't help, because it isn't a domain-specific decision but was inheriting the tmpfs default value so you'd need extra code _to_ specify a different default, because you didn't read the answer to the previous guy who asked this question earlier in this patch's discussion...
-> 
-> https://lkml.org/lkml/2025/8/8/1050
-> 
-> Rob
-
-Thanks for the explanations.
-
-> P.S. It's a pity lkml.iu.edu and spinics.net are both down right now, but after vger.kernel.org deleted all reference to them I can't say I'm surprised. Neither lkml.org nor lore.kernel.org have an obvious threaded interface allowing you to find stuff without a keyword search, and lore.kernel.org somehow manages not to list "linux-kernel" in its top level list of "inboxes" at all. The wagons are circled pretty tightly...
-Yep, they down for me also. :(
-linux-kernel is called lkml of lore. It would be nice if they were synonyms.
-If you go to https://lore.kernel.org/lkml/, you can use the search box to look for
-"s:rootfsflags" or just use a browser's Search (usually Ctrl-F) to search for
-"rootflags". Then the email thread is visible.
-Or just do a huge $search_engine search for something close to
-the $Subject -- or some text from the body of the message. But you probably
-know all of this.
-
-
-If you go to lkml.org and click on "Last 100 messages", then scroll down to
-	Re: [PATCH v2] fs: Add 'rootfsflags' to set rootfs mount options	Rob Landley
-you can read the email thread for this message (see left side panel).
-Or you can find it by date (if you have any idea what the date was).
-
-cheers.
-
--- 
-~Randy
-
+Thanks
+Barry
 
