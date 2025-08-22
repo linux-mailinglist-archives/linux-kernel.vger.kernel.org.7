@@ -1,176 +1,150 @@
-Return-Path: <linux-kernel+bounces-782293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82D7B31E85
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:28:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D40EFB31E7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 187C7B0128F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:20:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A019A188C3A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645C2280337;
-	Fri, 22 Aug 2025 15:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914B9241690;
+	Fri, 22 Aug 2025 15:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YW/2WUY4"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TXKpmGyN"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974E020B7EC;
-	Fri, 22 Aug 2025 15:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0F27261B;
+	Fri, 22 Aug 2025 15:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755876005; cv=none; b=CpteShWfDGg87DmcXzalq3AOaixNI4kByeTidg0yhm8WQOeAXa4o7F+I2Lsa2pkRW4JMyTbYdA5hTk+mirJ1owBjTM5s8+pJYBAjn6fs7m6Cjbw1AySc++H8V/8FLa87yqKMw6EXhx7nsygiRpHHAcqAhHPCXjzeLwdJi8mWqA0=
+	t=1755876223; cv=none; b=mNedwDkFiu4R+gLGz3i1uxCUvLZ2Q+8DORixybiK6aVGjdByKrFDNMJcSWnJ/lPM+wT4USLK4R6NsKZJDRvsORV8ljHzfetpV8V2XtAArnUZPCQGo8R29yvPO2ApgcZC45HzC+lld7w1RHZnYljXTDb8aHxYwqtgqugE156uwqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755876005; c=relaxed/simple;
-	bh=JOL3FpNcW7XVkfaKqRUbAJhlY/J+/ntD61UHF/LtcUY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PqBKLLoa+qITtpvtlMhGqh9RnRUJyjE48Vvmho4xciMlAA/TBopF44MEhRwETHOKzufJp7yn2mEzHPgwHYsVZXIUEojtmkZ504cWzPxJ1IC4ZXOxskiV4NIAYA9wCCXzR1pZxTZdvJWu98PA2vT06YhmDnc61knQ3JvoXVh5d1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YW/2WUY4; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-70ba7aa131fso26711866d6.2;
-        Fri, 22 Aug 2025 08:20:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755876002; x=1756480802; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eg4VQPMYGnpIz2eC4DVED3WvrWoEWvClGsj9KQ0QyuQ=;
-        b=YW/2WUY4ye1VO706src3Asnl8xBCOA8uZRY3355fDU4xo6Q261uVBwj5G+ObUDeS2G
-         di+7wbFXp4REH31MwblD7rebxcLaA/uty6X7EKKejpSaaoRVSO5Y2SEwjufLAy3eihB3
-         xsvGaV47IB7yz1hsCciLvUiRfgSw2bf7Wt4gP87HjeliUxUBY35OqWonkzhy60lNhcEu
-         R+DvdtW/XHBzaEIF96SzLTR/P1jLBLSPm/VG6wZHj4Z1Bw9sEj3Cpb1lyrt18wuqCej4
-         Vm2BpkJhz6tEqy4aGjtQqwLeV02osHuyR/JIyTjQoa4ALoglGOgXDnZmez2dLmcczlkx
-         CGEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755876002; x=1756480802;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eg4VQPMYGnpIz2eC4DVED3WvrWoEWvClGsj9KQ0QyuQ=;
-        b=vK9xDnSwQ9iMfmLJ7+zFDi7XN6hszajseI2qIK7T3NwlmNUqPFWfwDpZerz7UuaxXt
-         MuP1Zl/U14/nH8LiJzGCxQ5AZUnTVzw64DbkVfNilmPCaDl3hWPAAoqZuhg/5fUZ1jWN
-         N+n1GeZgrdf5RYnyHphXbhDmGBCbSZPkusTCVMs6+9uodgn3YTeavgZXX6Ru778IcarV
-         Pkj8+L//22w3xZo+Hf0RYaJ3Sr7CdeqPIid3os2ZhOmj19izwF1xmf1MgYgJ7JiWW+LH
-         6sdsbz49bZ+FGKsbtps/gHz2xETYP+on1KNvEGyXAOa6nKKKcQdkrYWvG0fAQTqXrvVs
-         5V3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWiMa857Xk+1qJRlB37HbVkb5JcaEPOq6A3GlOV38UoCOxRQhtEoCft6W0f3eY6usgRELwKEUbmYfynsvA=@vger.kernel.org, AJvYcCXg0F+mH4pECnHkJFbIZPAwdfqZNrgHFNA5/IpmLEnj1Kvalxw25fCJSB8p4Wg9yo04+nIgd/DRiHGKAAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw+im9ynlkSkLAllvlg4RmwUlxIq/H9C+peHQBnHV04tToeOJ4
-	7ognRoesR8u6F84HRLUdofVGQX7HhDjrcmtwKJNiHqrdZPH4FE0yUSZHVnVhxoca9qR4+HVW4ZA
-	Z4pFB5Il45apPWI2YiOymvnU9QDUzYeU=
-X-Gm-Gg: ASbGnctiVHGMemeLxq/wfYHdmLQGnnY1LkwRG775pAh9ChiufbZkpgMm4RGGTQPyVNQ
-	MKBPaYCyaKVCZkNXOTvA5of/K/mBaAM8S8Xvk+ROoy1YxRt+Vitm314Db1SQQI8A0Zk/tHl1ub8
-	JOx5oA5Id80xviRrch6vgc7TE+PA1rK/1CGBgVd+F32R6uvtOT46yCX+gKAZmbsK4hl+3L0kI4a
-	sMvFU6ClA==
-X-Google-Smtp-Source: AGHT+IGBu+vkrLjqW0pAir920usKcMTOQd8uGzahofHowT4Tnjo3YnmqhFKwCUt3kfJ7vGhFgxgmK/+hkj0IrYp8YpA=
-X-Received: by 2002:a05:6214:2466:b0:70d:924c:324e with SMTP id
- 6a1803df08f44-70d970b28b8mr39600846d6.14.1755876002073; Fri, 22 Aug 2025
- 08:20:02 -0700 (PDT)
+	s=arc-20240116; t=1755876223; c=relaxed/simple;
+	bh=dDiTso7F7LNgejI62OYKxYRMhrQZVDgAYSvotoCofXQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I7UpjI7bQMyRzWcI6s3jVwWvLeVG2U2Vd5QV5NrhVTG6wjatvGdVpjDq2mJTzquWVE9cp+hRB1oI5TO/DQGRUpeyOcXODgwsQ0SX9YyxJh0cjbtRerhuZTWlKr4w1JMOKQA1LdQJndnYJC1c84AJxVhACYb1vYG69vyEyg0rX5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TXKpmGyN; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57MFNDLW754277;
+	Fri, 22 Aug 2025 10:23:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755876193;
+	bh=VBLghRpDnKN0bEo3TKQupICpm0Ote+xiP5+E9br8q0Y=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=TXKpmGyNM/uEgtR/FgNT1eyTAgohzC8a0+t3WtH1M+Lonyf8qw4QaIwjX1sAcA+0n
+	 DgdLthlfRL+3SOyGBP/GnTDuO05NUOTKNsG7bONu3Tir7cpqZO/eHIROJ5sKCW1GMQ
+	 AWfqUHFzQ1ApqFB6aeZ2J7QhQDCCdYPzMAspzGV0=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57MFNDMG2793766
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 22 Aug 2025 10:23:13 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 22
+ Aug 2025 10:23:13 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 22 Aug 2025 10:23:13 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57MFNDV33741978;
+	Fri, 22 Aug 2025 10:23:13 -0500
+Date: Fri, 22 Aug 2025 10:23:13 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Michael Walle <mwalle@kernel.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+        Guenter
+ Roeck <linux@roeck-us.net>, Lee Jones <lee@kernel.org>,
+        Srinivas Kandagatla
+	<srini@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-hwmon@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>
+Subject: Re: [PATCH v1 0/7] Initial Kontron SMARC-sAM67 support
+Message-ID: <20250822152313.vjzjtzik2q5ek5kq@sadly>
+References: <20250822131531.1366437-1-mwalle@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822065849.1145572-1-aha310510@gmail.com> <7FD2157E-6F0B-40E0-9984-7485845DAC51@gmail.com>
-In-Reply-To: <7FD2157E-6F0B-40E0-9984-7485845DAC51@gmail.com>
-From: Jeongjun Park <aha310510@gmail.com>
-Date: Sat, 23 Aug 2025 00:19:57 +0900
-X-Gm-Features: Ac12FXzJddLAYvULbOo4Rc_RE78LsHEgNPs4nfYYPQavtL_lbzpS-9tkQMZhpbM
-Message-ID: <CAO9qdTH=7qdR2KGQiAeKu11g8T9pPjYN0zjarLGGW_EPQ_nZ3w@mail.gmail.com>
-Subject: Re: [PATCH] media: vidtv: fix to initialize local pointers upon
- transfer of memory ownership
-To: Daniel Almeida <dwlsalmeida@gmail.com>
-Cc: mchehab@kernel.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+1d9c0edea5907af239e0@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250822131531.1366437-1-mwalle@kernel.org>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello Daniel,
+On 15:15-20250822, Michael Walle wrote:
+> Now that the PMIC support is there, we can finally, upstream the
+> support for this board. Besides the usual device tree, this
+> patchset contains the support for the on-board house keeping MCU. It
+> make extensive reuse of the drivers for the former SMARC-sAL28
+> board. Besides different hwmon sensors, all the dt binding patches
+> will just add a board specific compatible (in addition to the old
+> sl28 compatible) to make any future board specific quirks possible.
+> 
+> I'm aware that there is a patch [1] which moves the sl28cpld MFD
+> schema to a different directory. Once that patch is merged, I'll
+> repost this series. But I already want to get some early feedback.
+> 
+> [1] https://lore.kernel.org/r/20250822075712.27314-2-krzysztof.kozlowski@linaro.org/
+> 
+> Michael Walle (7):
+>   dt-bindings: arm: ti: Add bindings for Kontron SMARC-sAM67 module
+>   dt-bindings: mfd: sl28cpld: add sa67mcu compatible
+>   dt-bindings: hwmon: sl28cpld: add sa67mcu compatible
+>   dt-bindings: watchdog: add SMARC-sAM67 support
+>   dt-bindings: nvmem: sl28cpld: add sa67mcu compatible
+>   hwmon: sl28cpld: add SMARC-sAM67 support
+>   arm64: dts: ti: Add support for Kontron SMARC-sAM67
 
+Since this goes through multiple maintainers, may I suggest the
+following strategy?
 
-Daniel Almeida <dwlsalmeida@gmail.com> wrote:
->
-> Hi Jeongjun,
->
-> > On 22 Aug 2025, at 03:58, Jeongjun Park <aha310510@gmail.com> wrote:
-> >
-> > vidtv_channel_si_init() transfers ownership of each object to the corre=
-ct
-> > table through functions such as vidtv_psi_*_assign().
-> >
-> > However, since it does not set the local pointer to NULL afterwards, if=
- it
-> > fails for various reasons and jumps to a place such as free_*it, memory
-> > that was freed in vidtv_psi_*_table_destroy() will be accessed and free=
-d
-> > again, resulting in use-after-free and double-free vuln.
->
-> I get what you=E2=80=99re trying to say, but what you actually wrote is h=
-ard to
-> parse, can you improve the wording here?
+for this window:
+* send dts and board binding changes dropping the nodes that are yet to
+ be upstream
+* send the compatible changes to each of the maintainers
 
-Oops, I think I made the explanation difficult to understand and confusing.
-I'll try to rewrite it so it's as easy to understand as possible.
+Next window:
+* add the nodes based on acceptance of the driver bindings
 
->
-> >
-> > Therefore, local pointers that have completed ownership transfer must b=
-e
-> > initialized to NULL to prevent re-access to already freed memory.
-> >
-> > Reported-by: syzbot+1d9c0edea5907af239e0@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=3D1d9c0edea5907af239e0
-> > Fixes: 3be8037960bc ("media: vidtv: add error checks")
-> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > ---
-> > drivers/media/test-drivers/vidtv/vidtv_channel.c | 3 +++
-> > 1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/media/test-drivers/vidtv/vidtv_channel.c b/drivers=
-/media/test-drivers/vidtv/vidtv_channel.c
-> > index f3023e91b3eb..3541155c6fc6 100644
-> > --- a/drivers/media/test-drivers/vidtv/vidtv_channel.c
-> > +++ b/drivers/media/test-drivers/vidtv/vidtv_channel.c
-> > @@ -461,12 +461,15 @@ int vidtv_channel_si_init(struct vidtv_mux *m)
-> >
-> > /* assemble all programs and assign to PAT */
-> > vidtv_psi_pat_program_assign(m->si.pat, programs);
-> > + programs =3D NULL;
-> >
-> > /* assemble all services and assign to SDT */
-> > vidtv_psi_sdt_service_assign(m->si.sdt, services);
-> > + services =3D NULL;
-> >
-> > /* assemble all events and assign to EIT */
-> > vidtv_psi_eit_event_assign(m->si.eit, events);
-> > + events =3D NULL;
-> >
-> > m->si.pmt_secs =3D vidtv_psi_pmt_create_sec_for_each_pat_entry(m->si.pa=
-t,
-> >     m->pcr_pid);
-> > --
->
-> The patch itself is ok, thanks a lot, however:
->
-> > media: vidtv: fix to initialize local pointers upon transfer of memory =
-ownership
->
-> Can you please use imperative voice here? i.e.:
->
-> "media: vidtv: initialize local pointers upon transfer of memory ownershi=
-p=E2=80=9D
+This removes multiple maintainers needing to give me immutable tags etc.
 
-If I do that, the patch subject will change. Should I just change the
-subject and send it to you, or should I also send it with the v2 tag
-included?
+What do you think?
+> 
+>  .../devicetree/bindings/arm/ti/k3.yaml        |    1 +
+>  .../hwmon/kontron,sl28cpld-hwmon.yaml         |    1 +
+>  .../bindings/mfd/kontron,sl28cpld.yaml        |    7 +-
+>  .../nvmem/layouts/kontron,sl28-vpd.yaml       |    7 +-
+>  .../watchdog/kontron,sl28cpld-wdt.yaml        |    7 +-
+>  arch/arm64/boot/dts/ti/Makefile               |    6 +
+>  .../dts/ti/k3-am67a-kontron-sa67-base.dts     | 1092 +++++++++++++++++
+>  .../dts/ti/k3-am67a-kontron-sa67-gbe1.dtso    |   19 +
+>  .../ti/k3-am67a-kontron-sa67-rtc-rv8263.dtso  |   24 +
+>  drivers/hwmon/sl28cpld-hwmon.c                |   76 +-
+>  10 files changed, 1234 insertions(+), 6 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/ti/k3-am67a-kontron-sa67-base.dts
+>  create mode 100644 arch/arm64/boot/dts/ti/k3-am67a-kontron-sa67-gbe1.dtso
+>  create mode 100644 arch/arm64/boot/dts/ti/k3-am67a-kontron-sa67-rtc-rv8263.dtso
+> 
+> -- 
+> 2.39.5
+> 
 
->
-> =E2=80=94 Daniel
-
+-- 
 Regards,
-Jeongjun Park
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://ti.com/opensource
 
