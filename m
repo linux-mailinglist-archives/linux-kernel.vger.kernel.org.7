@@ -1,151 +1,131 @@
-Return-Path: <linux-kernel+bounces-782176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84BB6B31C54
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:44:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C91B31BC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE6FC5858C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:36:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B668D7B960D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54201307AF9;
-	Fri, 22 Aug 2025 14:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35561B4156;
+	Fri, 22 Aug 2025 14:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ulzq/rLV"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDgxtLvL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4C9271464;
-	Fri, 22 Aug 2025 14:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3879271464;
+	Fri, 22 Aug 2025 14:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755873357; cv=none; b=GxRoyw3aJKYbmJ36tOtCuyYO/TZmmGRIpdwmhP0OuqD4hkgNNBP6tMy0lxWrdMIMOpib2Th+/LD2+f62PHaMBeZN9KZe7qzFKWz4iH6GiNJwZy0zan2ZidX0KhFHPJAnTEhf7xhmeZifUgMbM96+2BWrK+hBoKQ/cfVKx6YVkbc=
+	t=1755873351; cv=none; b=R5DlppXqQ46NcEoFApicvOz+3A97D/I0s+diZE/G5mjp9tv/qQI5swJAu9Yojw+Eljahe4L3qHBSIGliNy5dzL+VPVgVzxkkQ+a7qqsfP/YWZ8p3KYQLFuObPIrKNDxfcQxe1r5YZ4ULszo5EahqK4/wrrzDBgd96/vqK28sT+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755873357; c=relaxed/simple;
-	bh=96xcxk++8tsezde1KQbToqIZuQwUY2p6+5DevPtZOiA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CXowalwCd/kF9BHyYbMqyJJNCf2xGYPiEn2raQtV7ZJTEMGc5AaKUBFGldoAx7LMnuwIgXGlxt9UNZF0ic17Sc3ONriDUv9nUUQ7DCE6C9MwloZkQeP5yoeV7U8sKoz6DXPfTOXsO/90rbDjX2CXBGErcio2foUoCn4PPmJtLEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ulzq/rLV; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b474d0f1d5eso1473187a12.2;
-        Fri, 22 Aug 2025 07:35:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755873355; x=1756478155; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1rrIMuoEKua+reAZjU5EG7jCiOts2NB6m2+CDx3dJic=;
-        b=Ulzq/rLVxHPQJTbf7Sd1kGpzcY6HkJnkhXYAZeRrx9WChm42krvdmMNBh6VHgPWYYx
-         X+Cry3qpWrH3v4HRNbH0ffGMAGBvb5yTvSf5Z9T1WJZ8FdEBIgoqyYIgZ2uS/3jJfdEf
-         ftBXjNdwjYQ55VjFBfMJVmv1AyaVynKpwramZG156YBBSAW8yHnzsuLq275HJWfosDzs
-         soEpITphP1WnCoY+as5YJqjnvTdN95Pf8PsQAKdgHFck7ULQAGhcXVdhaVcL9pyhHaT8
-         DipYXFw1+BeQHeoq28g7+zym8dOcrCTZsiK+sAa0MA7F9opCeeYBeWSYtibJPsmkfRA4
-         LOWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755873355; x=1756478155;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1rrIMuoEKua+reAZjU5EG7jCiOts2NB6m2+CDx3dJic=;
-        b=ftJX7t15+mkT2V62cGNEuxD4sEZgZzr1CdnOQ5gP0Es21UqJsCLinkPFFV5+77S/p4
-         QzfS2cGhMn2lqa2LtKcVIaXCryxKNJiR7+pFoIdVsXTbINVgYVidMDj7oGQ3l8342cVY
-         PorE7QCGMdbI4+IQ906Ndd9a3GeocFeGqSj/KlTC1vITSO/bu97fQuRCDoNY/P8nxb6o
-         bTLBrfwQXNDl6dRPKzZvFQVTbPVMR5ET0zFLvpgF97bUBn0M10f1FO8gR8nCU14htX8V
-         QihWFzSZzrWRnyTjq7APvlSTvUFjNQSUJe/vyc8flgZjnqhGPazAtMyjYzXFML2NfzYx
-         9qTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSaPXVqVkt8YVSi6XZum42OaVhpaTKW6tVMudmUMA1PUBqa0hiMoOcpeazHJWcjat7AAXmhKl2VFD8cFg=@vger.kernel.org, AJvYcCVYYn0imzdNTF6HgKr4nGHBlf/fYr6aF0aAYeF5Rbtuf0i9Hq3hzVpm7HUvN5iBZfVt0rMe5uXqDKFlnsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb+BQZAQReYeHDvMQRalIiTIPeDc2IOgfxqfjbRJja1YJBmDbW
-	LalCy/DOxbo1EqIdj53aGreOZXgdceX/KnA+/PVTuDLvMOSnS+nt/MXp7Urn5St9
-X-Gm-Gg: ASbGncs9vgrbsXsbRdehPVty6o1fRcP39LV3Rwg3TmwH6xt4ojqnU9bf66TrsJrsm7W
-	hRrh86blOdObiwATfIz+SKBRjyU1kn75qqv78cW4nR+iygXvRMEaXqtJMNjLbRlHv/AJGvDLU4f
-	JaBc+aTVdVAS3ShecBNUfsgBwYVGnZOU+DtVvZbq17FkK+OO4sWMUEC9duCSOliOmESwCJj08h+
-	92liGMGHXy/XLDcunD1kHEfEW/xmb1QgLg0JmfZ7DEKd3sMqHTkjF7hu8+er4Gyk6AnYtEgYKcE
-	TsxAua+ffixAqPAbPjiH6U/23z6jfjgj4VCBFu1GTRB8PA11rjK4pKm489hUTx49sNVQuZ+r6qX
-	ySe8Lu/EAEjnaK+6mNOINzQD01LjYUxo993QDnKlxl2+cP/CAPg==
-X-Google-Smtp-Source: AGHT+IGiQ2Vo+pbwW04/pSc3wd9e0Z4hwikBsHoqMhMGLUxAE5J7EEUQj+CUnMN4lQ4jUuhJ+p1ZOQ==
-X-Received: by 2002:a17:903:19ce:b0:235:eb8d:7fff with SMTP id d9443c01a7336-2462ef1f70amr42836645ad.28.1755873355415;
-        Fri, 22 Aug 2025 07:35:55 -0700 (PDT)
-Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4c6fa6sm85821575ad.92.2025.08.22.07.35.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 07:35:55 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: mchehab@kernel.org
-Cc: khoroshilov@ispras.ru,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+47321e8fd5a4c84088db@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH] media: as102: fix to not free memory after the device is registered in as102_usb_probe()
-Date: Fri, 22 Aug 2025 23:35:39 +0900
-Message-Id: <20250822143539.1157329-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755873351; c=relaxed/simple;
+	bh=xbIWt5zJF7zdNnuu196XkwfuvOFHej9VtwDilSlX6XY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bS/iRgv69QcPr2dH5gT4oz7jscX+rdhW1VkeQ9S8JRy6MiYAUHNfGwmIH3kP30oiNWrAVhDnFU5zBit68+4NwTqUYAXlJSDbDPvyefP69BJl3H5BnhIm8+ZXsdcyY0KyHXfnOr2HQVLxK8wuVKbnDdxxkBtj1EDSZqQ5FZ3oQ8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDgxtLvL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8919FC113D0;
+	Fri, 22 Aug 2025 14:35:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755873350;
+	bh=xbIWt5zJF7zdNnuu196XkwfuvOFHej9VtwDilSlX6XY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sDgxtLvL2pUG6pnfqCzV6aJ2U8QyW0tI6fToE1Uyrt+usjeD5n/ZKtHMzH2KwduzN
+	 4UaPrFcsPSsgJrC9TFy91xI5uzN3MaKa9RHkM6Lnn0twbatPeIIs0k2tHlfI6ZlxtN
+	 7A816v4Y7r70HhHmjyUdFw3xGiiXNphf7cxIngHVQ1mw4ydNqOB2GHz0h3X2TZRQs/
+	 6Gb4OQ85DjYBmV4VDBA7L9YdeUfMlaWx0G7DLF0tSrues778QXUJlG8e4kxus9egMe
+	 EQOmq3j9wqJwteKpiISOfVM6X2eHBIjXunBBjkjyKrop6r15rPjre1GaTRcGt3RXZ+
+	 1WHWOtrGfHksw==
+Date: Fri, 22 Aug 2025 09:35:49 -0500
+From: Rob Herring <robh@kernel.org>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vishal Mahaveer <vishalm@ti.com>,
+	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
+	Sebin Francis <sebin.francis@ti.com>,
+	Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>,
+	Simon Horman <horms@kernel.org>,
+	Vincent MAILHOL <mailhol.vincent@wanadoo.fr>,
+	linux-can@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 1/4] dt-bindings: can: m_can: Add wakeup properties
+Message-ID: <20250822143549.GA3664230-robh@kernel.org>
+References: <20250820-topic-mcan-wakeup-source-v6-12-v9-0-0ac13f2ddd67@baylibre.com>
+ <20250820-topic-mcan-wakeup-source-v6-12-v9-1-0ac13f2ddd67@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820-topic-mcan-wakeup-source-v6-12-v9-1-0ac13f2ddd67@baylibre.com>
 
-In as102_usb driver, the following race condition occurs:
----
-		CPU0						CPU1
-as102_usb_probe()
-  kzalloc(); // alloc as102_dev_t
-  ....
-  usb_register_dev();
-						open("/path/to/dev"); // open as102 dev
-						....
-  usb_deregister_dev();
-  ....
-  kfree(); // free as102_dev_t
-  ....
-						close(fd);
-						  as102_release() // UAF!!
-						    as102_usb_release()
-							  kfree(); // DFB!!
----
+On Wed, Aug 20, 2025 at 02:42:25PM +0200, Markus Schneider-Pargmann wrote:
+> The pins associated with m_can have to have a special configuration to
+> be able to wakeup the SoC from some system states. This configuration is
+> described in the wakeup pinctrl state while the default state describes
+> the default configuration. Also add the sleep state which is already in
+> use by some devicetrees.
+> 
+> Also m_can can be a wakeup-source if capable of wakeup.
+> 
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> ---
+>  .../devicetree/bindings/net/can/bosch,m_can.yaml   | 25 ++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+> index c4887522e8fe97c3947357b4dbd4ecf20ee8100a..0e00be18a8be681634f25378bb2cdef034dc4e6b 100644
+> --- a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+> +++ b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+> @@ -106,6 +106,26 @@ properties:
+>          maximum: 32
+>      minItems: 1
+>  
+> +  pinctrl-0:
+> +    description: Default pinctrl state
+> +
+> +  pinctrl-1:
+> +    description: Can be Sleep or Wakeup pinctrl state
+> +
+> +  pinctrl-2:
+> +    description: Can be Sleep or Wakeup pinctrl state
+> +
+> +  pinctrl-names:
+> +    description:
+> +      When present should contain at least "default" describing the default pin
+> +      states. Other states are "sleep" which describes the pinstate when
+> +      sleeping and "wakeup" describing the pins if wakeup is enabled.
+> +    minItems: 1
+> +    items:
+> +      - const: default
+> +      - const: sleep
+> +      - const: wakeup
 
-When a USB character device registered with usb_register_dev() is later
-unregistered (via usb_deregister_dev() or disconnect), the device node is
-removed so new open() calls fail. However, file descriptors that are
-already open do not go away immediately: they remain valid until the last
-reference is dropped and the driver's .release() is invoked.
+This doesn't allow '"default", "wakeup"' which I think you want.
 
-In as102, as102_usb_probe() calls usb_register_dev() and then, on an
-error path, does usb_deregister_dev() and frees as102_dev_t right away.
-If userspace raced a successful open() before the deregistration, that
-open FD will later hit as102_release() --> as102_usb_release() and access
-or free as102_dev_t again, occur a race to use-after-free and
-double-free vuln.
+"sleep" and "wakeup" seem mutually exclusive and really are just the 
+same thing. Both apply to the same mode/state. Whether you can wake from 
+it is just an additional property (of the state). 
 
-The fix is to never kfree(as102_dev_t) directly once usb_register_dev()
-has succeeded. After deregistration, defer freeing memory to .release().
+So I think you want:
 
-In other words, let release() perform the last kfree when the final open
-FD is closed.
+items:
+  - const: default
+  - enum: [ sleep, wakeup ]
 
-Reported-by: syzbot+47321e8fd5a4c84088db@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=47321e8fd5a4c84088db
-Fixes: cd19f7d3e39b ("[media] as102: fix leaks at failure paths in as102_usb_probe()")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- drivers/media/usb/as102/as102_usb_drv.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/usb/as102/as102_usb_drv.c b/drivers/media/usb/as102/as102_usb_drv.c
-index e0ef66a522e2..abde5666b2ee 100644
---- a/drivers/media/usb/as102/as102_usb_drv.c
-+++ b/drivers/media/usb/as102/as102_usb_drv.c
-@@ -404,6 +404,7 @@ static int as102_usb_probe(struct usb_interface *intf,
- 	as102_free_usb_stream_buffer(as102_dev);
- failed_stream:
- 	usb_deregister_dev(intf, &as102_usb_class_driver);
-+	return ret;
- failed:
- 	usb_put_dev(as102_dev->bus_adap.usb_dev);
- 	usb_set_intfdata(intf, NULL);
---
+Or you should just drop 'wakeup' and just support wakeup with 'sleep' 
+when 'wakeup-source' is present.
+
+Rob
 
