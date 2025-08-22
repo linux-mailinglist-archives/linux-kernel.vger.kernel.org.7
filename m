@@ -1,148 +1,163 @@
-Return-Path: <linux-kernel+bounces-782587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31901B32275
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:53:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AEDCB32279
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D77AB1D62B8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:53:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CA4C6014D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D866D2C08CA;
-	Fri, 22 Aug 2025 18:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gjn4XveT"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084362C0327;
+	Fri, 22 Aug 2025 18:55:32 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C7E1A0BE0;
-	Fri, 22 Aug 2025 18:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5E92BEFF9
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755888793; cv=none; b=kQDOavcFK0CLX73rphVkWrcxGeIuUGzjNtDKrNb0C+fnbKCHG64iHvF2ihUwTyROWc5qC23IBPCNIT73Oxd0HCiaJBIrOGPmOt04V117z90iMLptMXvYpH6AezpjTSx7qQdYcK3OtBG5wgTYCLJOHQWME42d5L3uMYYvgUURwkA=
+	t=1755888931; cv=none; b=XPEoESwIkUKc9zllzsdDo7wlerTaVH0k4pKEPjNXYH58Tyl3N+Sw3jGwNvtFFwPliwemr8a5sVfCBDjaCIQa3hzXdv26p/BZ+9mGOYy0RsVuCfbTtcyewIgu+wzBLQlg9OrdALIelS5xORqnIieUwvr66tq8k8a3E6UwYrSLR4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755888793; c=relaxed/simple;
-	bh=o1DP4NTDT2hpHWzi15ZfKL3uEkjLv//VbMHRkL7Xv2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UQlbmdkfnAh5ZztrMvXqETu/dz5NAf80ymmT7l7zBu4OC8I4IYXggAFoUCwbKKfCBrMvYOx1YsL9Fl8niRqsLfSIhHstPGLZ3ycuPHRbRF6HveoEjYqEXFdmX63dmdExIQPE3F4vKYuOK/UYMbG4QUxPhni/Iox9XPPFgi5Rv08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gjn4XveT; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a1b0d224dso12327405e9.3;
-        Fri, 22 Aug 2025 11:53:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755888789; x=1756493589; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kgQUn5CtNABDqKDSDivPq45BncqGSev+VDo5NGeADv8=;
-        b=gjn4XveTr1ZCAjw4BlC1nueMJcVb+RBE4n1s2OD7vm+79EmNd2SG8C51xRTDCzT5QR
-         DEgBXUJQyWf98hQ3+weEEOh9YcyOJ/L4NLd2IWyDac0PuK7+Bk7sEw6AAvR1LHwlS6q6
-         UBjAak6yPFLjtZmTqNj4Q5UWIj1PxcfeZLsKYgd5ZzkW39JR4+g6sceXjMUnBL5HX/Dr
-         RIxOYGa2DeO6F6F0D3lkVMKh1DYqLZyLMfCU2BaRpTRcmdNOyBTS4BSb4LVFOk86WOgX
-         HUzTp8CSoEgINs/cyvr1cdWS2nn6TfjjZ7iaq5H0SlRBRnxWaVztDlwTT40XCZni/a1a
-         jb/A==
+	s=arc-20240116; t=1755888931; c=relaxed/simple;
+	bh=a63glzP/dR4Z5IDZyY0j0bnleFUXuQdCzY0jxb2znuA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DbL32HdWVmu1y+uRgEndlJujDrdnF9mrM8S30c5Oup+brlaQC8RGj3ybjs30le9qlrVFYQREMRrq4ea6fSX2CKXd06cAxmHLeQLwTEiU1gQw4gQjyrZcu12Yv+ILC7TxPeqscyPnBZ2Ldc5ztYA2dEJhiBDOVz6yzzc5iUvJMdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3e67fa671beso27306515ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:55:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755888789; x=1756493589;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kgQUn5CtNABDqKDSDivPq45BncqGSev+VDo5NGeADv8=;
-        b=Wfz9hrgYCvU1JzbcdxjR0Jr8wc2PExgvEiZ0TKqQNKQhAY0B6lF37qGo/iNb9wgzp8
-         rTWxR2Gw2uk56JoiKQJH9WYBHwp1AunAz06TYb3Jo95VXPYvsIiniKJeUdfmzUBrG/CU
-         9Qp3GqkrY5faXTjXHQ7LNaalj+m6wGPXkDeMhncW8M/gZNPpzdjWDzwgOW66GYtvX3zu
-         Iw3yJ3nnSz+uUeH8Ln2vsV0GW5Bq1MRfF1kmv0F0XJ1kXTCernPnuekUMl5MTFSN46WH
-         XXZ7fPQj7OMxTFE5EV9Nadx7OfWVIGlahyfM0kD1VRqTRbP2AKDND6JEBNcsHEn4wht9
-         A89w==
-X-Forwarded-Encrypted: i=1; AJvYcCVtGfLNGpt5SzcM5FJIOYkQs4CacaLUkHTVYLk3xdYIupv4hPYRnGs3RhcLjsLTXLIaPAi20GjozxAbbw==@vger.kernel.org, AJvYcCVvqruZQmnL/VTxZ6/OsNYaE93d04FroVPT846nDDcZIo/WwXVBFuCetENDtf2vTxdigdNKcLHmD3TMIM56hA==@vger.kernel.org, AJvYcCW0XAmdpBb8j0AR4gajFR7lYXLR5i2VTSOhdIevq74y/y6xIvQkxHiqO6PyPu4N5y6QAOXZ2NjHwr2QVw3O@vger.kernel.org
-X-Gm-Message-State: AOJu0YyluKFtvhSScb9Q2ei4R94ylY9oAe3prLpSll6oOPUQ7eZJpGT9
-	Z8DeUoRQPT+mhoSu95Bf5dHn71ZIFxmCVAEUM0DM40i81Bh/WK5qqGYz
-X-Gm-Gg: ASbGncugAT7u6toksWaqXcnwN3poi+BaSLZx0p1hQCPD7U49CHZhrdTo5w7hUAOeit+
-	q2UfCzXFkmt0rLhUPaggAzxHFRdeuFaPHWhbovMqIlUygEwBSSUnWgNd1un/GodlnBTuyDdsQFr
-	T9pcZd+2PKV2PaYYTqmakFKpB1y79cmHaz8eQdTsnZx4jvNIjz+uku+w/M8sNtITvhrHOedZiDf
-	J2PWmoYjKVkZMuPd0PHUYn5oxC3iv+9eNqW4w2ioYN5sKWhXjeSM/gdqOL4X0nlB3CW9L58ACe0
-	Z7wziyMX4ST+5Tf0j5+N2TMZ1WQOIjlgUYFxFsk/AExsaX7RpWEFrffEVA8oxt3Eq+j1lSCGA71
-	rPA9E4AgbO+yAAaeS6HzkVizrfVfF7wtiDjrpezzU/3kKUsgySlGHyXLz5rvItgQF
-X-Google-Smtp-Source: AGHT+IH2CJD7uzzmkgj7levHo8yeRDnD2Rey6jjYpn4mLRK/SjHZtD8Mo7fIGKErdyaVDFxn1SiP2A==
-X-Received: by 2002:a05:600c:1d02:b0:43d:42b:e186 with SMTP id 5b1f17b1804b1-45b5178e6d8mr38320405e9.8.1755888788475;
-        Fri, 22 Aug 2025 11:53:08 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70f238640sm527339f8f.26.2025.08.22.11.53.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 11:53:08 -0700 (PDT)
-Date: Fri, 22 Aug 2025 19:53:03 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Madhavan
- Srinivasan <maddy@linux.ibm.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, Andre Almeida
- <andrealmeid@igalia.com>, Andrew Morton <akpm@linux-foundation.org>, Dave
- Hansen <dave.hansen@linux.intel.com>, Daniel Borkmann
- <daniel@iogearbox.net>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v2 02/10] uaccess: Add speculation barrier to
- copy_from_user_iter()
-Message-ID: <20250822195303.0d9fb6eb@pumpkin>
-In-Reply-To: <CAHk-=whKeVCEtR2mQJQjT2ndSOXGDdb+L0=WoVUQUGumm88VpA@mail.gmail.com>
-References: <cover.1755854833.git.christophe.leroy@csgroup.eu>
-	<82b9c88e63a6f1f5926e39471364168b345d84cc.1755854833.git.christophe.leroy@csgroup.eu>
-	<CAHk-=whKeVCEtR2mQJQjT2ndSOXGDdb+L0=WoVUQUGumm88VpA@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        d=1e100.net; s=20230601; t=1755888929; x=1756493729;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ESxP4ps4VFtj/7eR3pxdRW3J+PLwa0Tgkn2AHSSMyOU=;
+        b=o0TFDjs2wA19X49M9MrqX6LvADa0SIts7Y7ttviVzKIxLeqdmIBB1q9905GkwP4F7u
+         d4TVaPdouce6lB/mo1PZXUYCDXv526+ntIX/P+Ju8cC5NmZilIQLo5QyodDkZcRgGkfG
+         9AKDVZ3ES+RHWllZUrlWtqk7E8YqIAvee/acmRFVzoKqR4YwugeGSzd2WAAAi8HTpvCX
+         /m4bz8F7vxjYL3sCazFmZvcvXol+3+MCE6g+qn5FYr6X10jm/q5+ku5MS9XTEOMCF2by
+         EIjAmL00q9vf6nO6+tj4H4i3gzScs/eqp6BLdt8YnkOudwCzGm8r+Kt8XFaluWSoshYD
+         AQow==
+X-Forwarded-Encrypted: i=1; AJvYcCVlufeF9CccXh5y0fpEq+vMLfsrpQCS9KupvhD8d9c1wnetsjtfRZUY8iXYGbfok4eWmGCq2pdm4XqIC6I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZJm9ACXRRsSw53aK9yw5mTOu/M/N2bJ8LVZYJp0HdkZ1l2/xZ
+	hGF3AKC0RnFL+WfVZE1ADZSAqn0L3gXK+VTJsNqwy5ePUCft0Ohj6Dz5/GwTCAT3T9y+N6PIT4b
+	bspJRqGrUgl6nOVjDOkAjOjEHePPulU5IyMCiVYHrLJVPB2xUZyzDtnBzOgA=
+X-Google-Smtp-Source: AGHT+IHn2TTGvlJS+QXiOxYtabCHdCi0tpf3KzdhcZWwcEvafjQqrVOH2j8cD7Vv9XWBXm0PkEmCP4YyexYWtzea+iSw5oEMeGog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:3801:b0:3e3:d8af:3847 with SMTP id
+ e9e14a558f8ab-3e921c4d9bemr61966665ab.16.1755888928572; Fri, 22 Aug 2025
+ 11:55:28 -0700 (PDT)
+Date: Fri, 22 Aug 2025 11:55:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a8bd20.050a0220.37038e.005a.GAE@google.com>
+Subject: [syzbot] [erofs?] KASAN: global-out-of-bounds Read in z_erofs_decompress_queue
+From: syzbot <syzbot+5a398eb460ddaa6f242f@syzkaller.appspotmail.com>
+To: chao@kernel.org, dhavale@google.com, jefflexu@linux.alibaba.com, 
+	lihongbo22@huawei.com, linux-erofs@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	xiang@kernel.org, zbestahu@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 22 Aug 2025 09:46:37 -0400
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Hello,
 
-> On Fri, 22 Aug 2025 at 05:58, Christophe Leroy
-> <christophe.leroy@csgroup.eu> wrote:
-> >
-> > The results of "access_ok()" can be mis-speculated.  The result is that
-> > you can end speculatively:
-> >
-> >         if (access_ok(from, size))
-> >                 // Right here
-> 
-> I actually think that we should probably just make access_ok() itself do this.
+syzbot found the following issue on:
 
-You'd need to re-introduce the read/write parameter.
-And you'd want it to be compile time.
-Although going through the code changing them to read_access_ok()
-and write_access_ok() would probably leave you with a lot fewer calls.
+HEAD commit:    3957a5720157 Merge tag 'cgroup-for-6.17-rc2-fixes' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=104f0062580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
+dashboard link: https://syzkaller.appspot.com/bug?extid=5a398eb460ddaa6f242f
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16650c42580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1277dfa2580000
 
-> We don't have *that* many users since we have been de-emphasizing the
-> "check ahead of time" model, and any that are performance-critical can
-> these days be turned into masked addresses.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c5cbe8650b9a/disk-3957a572.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/51911bea9855/vmlinux-3957a572.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b07279b5fcc2/bzImage-3957a572.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/b6ca0d9a661b/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=142187bc580000)
 
-Or aim to allocate a guard page on all archs, support 'masked' access
-on all of them, and then just delete access_ok().
-That'll make it look less ugly.
-Perhaps not this week though :-)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5a398eb460ddaa6f242f@syzkaller.appspotmail.com
 
-	David
+==================================================================
+BUG: KASAN: global-out-of-bounds in z_erofs_decompress_pcluster fs/erofs/zdata.c:1274 [inline]
+BUG: KASAN: global-out-of-bounds in z_erofs_decompress_queue+0x341/0x3580 fs/erofs/zdata.c:1411
+Read of size 8 at addr ffffffff8e05df10 by task kworker/u9:1/5152
 
-> 
-> As it is, now we're in the situation that careful places - like
-> _inline_copy_from_user(), and with your patch  copy_from_user_iter() -
-> do maybe wethis by hand and are ugly as a result, and lazy and
-> probably incorrect places don't do it at all.
-> 
-> That said, I don't object to this patch and maybe we should do that
-> access_ok() change later and independently of any powerpc work.
-> 
->                  Linus
+CPU: 1 UID: 0 PID: 5152 Comm: kworker/u9:1 Tainted: G        W           syzkaller #0 PREEMPT_{RT,(full)} 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: erofs_worker z_erofs_decompressqueue_work
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x240 mm/kasan/report.c:482
+ kasan_report+0x118/0x150 mm/kasan/report.c:595
+ z_erofs_decompress_pcluster fs/erofs/zdata.c:1274 [inline]
+ z_erofs_decompress_queue+0x341/0x3580 fs/erofs/zdata.c:1411
+ z_erofs_decompressqueue_work+0x82/0xd0 fs/erofs/zdata.c:1423
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
+The buggy address belongs to the variable:
+ z_erofs_decomp+0x30/0xe0
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xe05d
+flags: 0x80000000002000(reserved|node=0|zone=1)
+raw: 0080000000002000 ffffea0000381748 ffffea0000381748 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner info is not present (never set?)
+
+Memory state around the buggy address:
+ ffffffff8e05de00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffffff8e05de80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffffffff8e05df00: 00 00 f9 f9 f9 f9 f9 f9 00 00 00 00 00 00 00 00
+                         ^
+ ffffffff8e05df80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffffff8e05e000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
