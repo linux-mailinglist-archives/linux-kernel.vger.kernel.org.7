@@ -1,163 +1,187 @@
-Return-Path: <linux-kernel+bounces-782522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDD5B32189
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:33:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF1FB3217B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B4FAB232D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:33:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67C761C27723
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9090C28C5AA;
-	Fri, 22 Aug 2025 17:33:22 +0000 (UTC)
-Received: from passt.top (passt.top [88.198.0.164])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EADF280A29;
+	Fri, 22 Aug 2025 17:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YX9L9seI"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D70335948;
-	Fri, 22 Aug 2025 17:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.198.0.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01AFB1096F;
+	Fri, 22 Aug 2025 17:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755884002; cv=none; b=bfIwToBBsvbwxD0cLPhikJCo6cxu0TXTKPYbJU8vK+RybJRMZ60NGS7Icu5bi9je7aXa4MUb1ffsbOkifV8QFMu8jiA9p8Nbg7+5fTPmwluEZALn4Gx6DmdrbHrvwrYhCH3huQAZu2Z8ubovuJBp/K9Uvn1ZpZrSuvXQCY0wNv0=
+	t=1755883576; cv=none; b=avan3kEGiiUYZA4GEQWsFRgpFPTBzxXkOv0GP/MPVoAjEiIl3TOoxlEZfjnv1IAyn/TbDp8gCsDhOnh+Y24I9FCCIzIN57WCiihsCo7m/fXw9fR9fy6/O+hEGMTqPSIrP2GEHFjMqihxYWK9Jy9F1vvdxtrzsRyhjtRDcHn6+fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755884002; c=relaxed/simple;
-	bh=Ep+12uNxJtRBwkg/6WXOn5HwUmXIfedla1HYoJDu6sc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=toW7WNgSy0XR3PPRyd3yIRFtC8zY43Il/4cNkt6qrhiOs7FeoYJGwYPppd90TLFIrw61g15OocDCfge9uOLAHiHy4y/MG0EJq4fiTg+iTCv+mDbmwnwDHxOZDvLqOIL/cal3XVsQ+94WdLr5s5NygcKz/DUIK6mu9mRnOcCGp60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=passt.top; arc=none smtp.client-ip=88.198.0.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=passt.top
-Received: by passt.top (Postfix, from userid 1000)
-	id 9262A5A027A; Fri, 22 Aug 2025 19:23:35 +0200 (CEST)
-From: Stefano Brivio <sbrivio@redhat.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	wangzijie <wangzijie1@honor.com>,
-	Alexey Dobriyan <adobriyan@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	passt-dev@passt.top,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Ye Bin <yebin10@huawei.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"Rick P . Edgecombe" <rick.p.edgecombe@intel.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH] proc: Bring back lseek() operations for /proc/net entries
-Date: Fri, 22 Aug 2025 19:23:35 +0200
-Message-ID: <20250822172335.3187858-1-sbrivio@redhat.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755883576; c=relaxed/simple;
+	bh=EnYBmOMUMgHOtWNIvXTWSSwe2cfet+zGjc8f4XAiOtw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EJpcfyAAFCCnueT0cGK2UJr/SbAVuAn6Vn2lXvjhqflsFD6YFFUlXWSObS3ah/tc0IFDhuFRXg2stxzTRNs4b5VlQ9UVe925aZfOOckGLingbQGx69KcX+Z7QjOp/zltB8eWHSL5oQ1D6p7tVKbTKI4NUvmLAUOHBGt5xlAixwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YX9L9seI; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57MHQ6fb295383;
+	Fri, 22 Aug 2025 12:26:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755883566;
+	bh=96MWakcLYUDT4lNqC75SMCSgjUsPFgGv1W6nK3rjsuU=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=YX9L9seIhewXnb2QsC4bjdEtDoAMoXFkyWAnpsBFkN1PyVaWONu/7f8AeBq+eDf5Q
+	 J6erPhEHgUV75IAmHNNLKgpq49I0zcvk9Qe/FJld1e6qI8Rd3HPc9+0ipN+hexI445
+	 x3huy9SjjDXX3WwkwciYLeiSBsHHPAT9AfVjHtxM=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57MHQ6hu3435230
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 22 Aug 2025 12:26:06 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 22
+ Aug 2025 12:26:06 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 22 Aug 2025 12:26:05 -0500
+Received: from [10.249.139.51] ([10.249.139.51])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57MHQ1RA4168190;
+	Fri, 22 Aug 2025 12:26:01 -0500
+Message-ID: <a076e204-aa71-430e-a762-b8111d23d2e6@ti.com>
+Date: Fri, 22 Aug 2025 22:56:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 33/33] arm64: dts: ti: k3-j7*-ti-ipc-firmware: Switch MCU
+ R5F cluster to Split-mode
+To: Andrew Davis <afd@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250814223839.3256046-1-b-padhi@ti.com>
+ <20250814223839.3256046-34-b-padhi@ti.com>
+ <9a3f4271-ada2-48aa-b99d-023619ec5e12@ti.com>
+Content-Language: en-US
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <9a3f4271-ada2-48aa-b99d-023619ec5e12@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Commit ff7ec8dc1b64 ("proc: use the same treatment to check proc_lseek
-as ones for proc_read_iter et.al") breaks lseek() for all /proc/net
-entries, as shown for instance by pasta(1), a user-mode network
-implementation using those entries to scan for bound ports:
+Hi Andrew, Nishanth,
 
-  $ strace -e openat,lseek -e s=none pasta -- true
-  [...]
-  openat(AT_FDCWD, "/proc/net/tcp", O_RDONLY|O_CLOEXEC) = 12
-  openat(AT_FDCWD, "/proc/net/tcp6", O_RDONLY|O_CLOEXEC) = 13
-  lseek(12, 0, SEEK_SET)                  = -1 ESPIPE (Illegal seek)
-  lseek() failed on /proc/net file: Illegal seek
-  lseek(13, 0, SEEK_SET)                  = -1 ESPIPE (Illegal seek)
-  lseek() failed on /proc/net file: Illegal seek
-  openat(AT_FDCWD, "/proc/net/udp", O_RDONLY|O_CLOEXEC) = 14
-  openat(AT_FDCWD, "/proc/net/udp6", O_RDONLY|O_CLOEXEC) = 15
-  lseek(14, 0, SEEK_SET)                  = -1 ESPIPE (Illegal seek)
-  lseek() failed on /proc/net file: Illegal seek
-  lseek(15, 0, SEEK_SET)                  = -1 ESPIPE (Illegal seek)
-  lseek() failed on /proc/net file: Illegal seek
-  [...]
+On 8/15/2025 9:18 PM, Andrew Davis wrote:
+> On 8/14/25 5:38 PM, Beleswar Padhi wrote:
+>> Several TI K3 SoCs like J7200, J721E, J721S2, J784S4 and J742S2 have a
+>> R5F cluster in the MCU domain which is configured for LockStep mode at
+>> the moment. The necessary support to use MCU R5F cluster in split mode
+>> was added in the bootloader. And the TI IPC firmware for the split
+>> processors is already available public.
+>>
+>> Therefore, Switch this R5F cluster to Split mode by default in all the
+>> boards using TI IPC Firmware config (k3-j7*-ti-ipc-firmware). This
+>> gives out an extra general purpose R5F core free to run any applications
+>> as required. Lockstep mode remains default in the SoC level dtsi, so
+>> downstream board dts which do not use TI IPC Firmware config should not
+>> be impacted by this switch.
+>>
+>> Users who prefer to use the fault-tolerant lockstep mode with TI IPC
+>> firmware config, can do that by setting `ti,cluster-mode` property to 1.
+>
+> What a user prefers and other configuration like that does not belong
+> in devicetree, which should only describe the hardware.
+>
+> Configuration should be done using the normal methods, like kernel
+> cmdline, module params, ioctls, etc.. Maybe we can even set the mode
+> based on some signal in the firmware itself, like in the resource table.
 
-That's because PROC_ENTRY_proc_lseek isn't set for /proc/net entries,
-and it's now mandatory for lseek(). In fact, flags aren't set at all
-for those entries because pde_set_flags() isn't called for them.
 
-As commit d919b33dafb3 ("proc: faster open/read/close with "permanent"
-files") introduced flags for procfs directory entries, along with the
-pde_set_flags() helper, they weren't relevant for /proc/net entries,
-so the lack of pde_set_flags() calls in proc_create_net_*() functions
-was harmless.
+Agreed with your point.. But that is going to take a long time to implement
++ upstream. I interpreted from [0] that it was okay to enable this split 
+mode
+once we had refactored the firmware related nodes in an overlay? (Since
+people can swap out the dtsi if they don't need the firmware config)
 
-Now that the calls are strictly needed for lseek() functionality,
-add them.
+Nishanth/Andrew,
+Please advise if this patch is okay or should be dropped in the revision...
 
-Fixes: ff7ec8dc1b64 ("proc: use the same treatment to check proc_lseek as ones for proc_read_iter et.al")
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
----
- fs/proc/generic.c  | 2 +-
- fs/proc/internal.h | 1 +
- fs/proc/proc_net.c | 4 ++++
- 3 files changed, 6 insertions(+), 1 deletion(-)
+[0]: https://lore.kernel.org/all/20250523114822.jrv73frz2wbzdd6d@falsify/
 
-diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-index 76e800e38c8f..57ec5e385d1b 100644
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -561,7 +561,7 @@ struct proc_dir_entry *proc_create_reg(const char *name, umode_t mode,
- 	return p;
- }
- 
--static void pde_set_flags(struct proc_dir_entry *pde)
-+void pde_set_flags(struct proc_dir_entry *pde)
- {
- 	if (pde->proc_ops->proc_flags & PROC_ENTRY_PERMANENT)
- 		pde->flags |= PROC_ENTRY_PERMANENT;
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index e737401d7383..a358974f14d2 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -284,6 +284,7 @@ extern struct dentry *proc_lookup(struct inode *, struct dentry *, unsigned int)
- struct dentry *proc_lookup_de(struct inode *, struct dentry *, struct proc_dir_entry *);
- extern int proc_readdir(struct file *, struct dir_context *);
- int proc_readdir_de(struct file *, struct dir_context *, struct proc_dir_entry *);
-+void pde_set_flags(struct proc_dir_entry *pde);
- 
- static inline void pde_get(struct proc_dir_entry *pde)
- {
-diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
-index 52f0b75cbce2..20bc7481b02c 100644
---- a/fs/proc/proc_net.c
-+++ b/fs/proc/proc_net.c
-@@ -124,6 +124,7 @@ struct proc_dir_entry *proc_create_net_data(const char *name, umode_t mode,
- 	p->proc_ops = &proc_net_seq_ops;
- 	p->seq_ops = ops;
- 	p->state_size = state_size;
-+	pde_set_flags(p);
- 	return proc_register(parent, p);
- }
- EXPORT_SYMBOL_GPL(proc_create_net_data);
-@@ -170,6 +171,7 @@ struct proc_dir_entry *proc_create_net_data_write(const char *name, umode_t mode
- 	p->seq_ops = ops;
- 	p->state_size = state_size;
- 	p->write = write;
-+	pde_set_flags(p);
- 	return proc_register(parent, p);
- }
- EXPORT_SYMBOL_GPL(proc_create_net_data_write);
-@@ -217,6 +219,7 @@ struct proc_dir_entry *proc_create_net_single(const char *name, umode_t mode,
- 	pde_force_lookup(p);
- 	p->proc_ops = &proc_net_single_ops;
- 	p->single_show = show;
-+	pde_set_flags(p);
- 	return proc_register(parent, p);
- }
- EXPORT_SYMBOL_GPL(proc_create_net_single);
-@@ -261,6 +264,7 @@ struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mo
- 	p->proc_ops = &proc_net_single_ops;
- 	p->single_show = show;
- 	p->write = write;
-+	pde_set_flags(p);
- 	return proc_register(parent, p);
- }
- EXPORT_SYMBOL_GPL(proc_create_net_single_write);
--- 
-2.43.0
+Thanks,
+Beleswar
 
+>
+> Andrew
+>
+>>
+>> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+>> ---
+>> arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi | 1 +
+>> arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi | 1 +
+>> arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi | 1 +
+>> .../boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi | 1 +
+>>   4 files changed, 4 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi 
+>> b/arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi
+>> index 8eff7bd2e771..ddf3cd899d0e 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi
+>> +++ b/arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi
+>> @@ -94,6 +94,7 @@ &main_timer2 {
+>>     &mcu_r5fss0 {
+>>       status = "okay";
+>> +    ti,cluster-mode = <0>;
+>>   };
+>>     &mcu_r5fss0_core0 {
+>> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi 
+>> b/arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi
+>> index 5b3fa95aed76..57890a3b38a2 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi
+>> +++ b/arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi
+>> @@ -211,6 +211,7 @@ &main_timer15 {
+>>   };
+>>     &mcu_r5fss0 {
+>> +    ti,cluster-mode = <0>;
+>>       status = "okay";
+>>   };
+>>   diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi 
+>> b/arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi
+>> index 40c9f2b64e7e..7ee8a8615246 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi
+>> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi
+>> @@ -179,6 +179,7 @@ &main_timer5 {
+>>   };
+>>     &mcu_r5fss0 {
+>> +    ti,cluster-mode = <0>;
+>>       status = "okay";
+>>   };
+>>   diff --git 
+>> a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi 
+>> b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi
+>> index b5a4496a05bf..e12fa55a4df0 100644
+>> --- 
+>> a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi
+>> +++ 
+>> b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi
+>> @@ -254,6 +254,7 @@ &main_timer9 {
+>>   };
+>>     &mcu_r5fss0 {
+>> +    ti,cluster-mode = <0>;
+>>       status = "okay";
+>>   };
+>
 
