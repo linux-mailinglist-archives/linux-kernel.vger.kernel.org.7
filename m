@@ -1,144 +1,141 @@
-Return-Path: <linux-kernel+bounces-782487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D737B32104
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:06:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DBBEB3213D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EC4FAE7B26
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:04:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63524B21003
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A22312826;
-	Fri, 22 Aug 2025 17:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C371531B139;
+	Fri, 22 Aug 2025 17:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b="XfQbI8zU"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C4+wIUPb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F2A285050
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4BB31AF36;
+	Fri, 22 Aug 2025 17:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755882281; cv=none; b=qfOBKwJWKiyDaHbZStFmO7wjmGIKY1WE58GqoY6dFZhUe53ElvyzeeGWWcoxfcGD/HkvMLU8gJg7xcyqK7CRZvJRLJUqGJ53PqSrMssDgucxSNgjNZwn0foLwfPXFGOAVmn4Fl1Tz9ufGL3Tr2+jQYzgZET/SWVTYW74yJjZ7gM=
+	t=1755882570; cv=none; b=fxsGkr7UbhJYm5KgdmJMiOfOInItZGsH+UFcuT+WVHwT+gibnPf8dA3o7eHUaWSCggZDRH+Ie3HIjYNAWC/AEl6EfPs+CXX2EjrZFXGK20yCRSXfVgOEZa3QLm4LUW71RbkBY5o0RMmsYigVcAevwpyXeR40WhIg2XFJIpKWGBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755882281; c=relaxed/simple;
-	bh=5dfaUAllvYL9ZgEKiJLevm9at1ZnpgDDAmK6vElqIsc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ajMmvgP6x6wV6gGnVyKNOYRULESUDmvuwZfEgORJuHM6YkK/JIn+jaynHgZ1QaxfoBw51FVnXsRdi4/U3n8z8P9zHdvJBbtG+c/nmbVap/krRWQRq8YXKD3D48LgWTGSFrD12lhXQz3I2NztWRulvQFDbHJGe6PhsceoeS3c5i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk; spf=pass smtp.mailfrom=pinefeat.co.uk; dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b=XfQbI8zU; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pinefeat.co.uk
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b4d892175so10652735e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:04:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pinefeat.co.uk; s=google; t=1755882278; x=1756487078; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6ruBVDj+qOB6imevgf8x/SkAW4nSEvcagJ8QJX1Gamo=;
-        b=XfQbI8zUxpgJTmv8XIbtSrpY/gSYzvuX61lI4/gG+UoOzBmjy6my1WpBoBgDq//WtY
-         W1PBTSsbmV3g4KMzoNnpf9bupmiIA+AeQ7UD0slkykC1YGd6D40Mh6csEo0XGfVBjMjA
-         VjDSwje7qCTuvWT+FUupzSrzYOeIxIfmubg/AMO1Os9HhtC18flnanpVOZ+shOuoS62Z
-         fefgoaI5ex/YAdE8PySN/WAi0VKhU5NkDqmFOTXc2KnYb1fZCp3RHTBlzyfRHJi/plvl
-         c/brlce7+Ko/7tASUAF7IZLoimHbXVRyKVdYaRlZVQfq1k+rkUBU118+rTNmAWSqyW9m
-         SD/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755882278; x=1756487078;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6ruBVDj+qOB6imevgf8x/SkAW4nSEvcagJ8QJX1Gamo=;
-        b=pXtqZSyboB8g1lRpYqrjgew0G58SHdXFlegXRG5l50yqUomilz20nefuXY1jCOjFNG
-         rxZLw20H8WNfnvyL1xH1QS7qfM6WdX8qGf3bjMfh7ouEvQUeXAE7f9A1GjtchgvpQ6U+
-         eBXW3VnvUc2q6tJRpmEJWmHzJsFLkHKxYqawbVlboYleWv1Q1Hm6e+h52Zk7xSy1Ta59
-         MzQtSe5IV0K28yL2aeBjGsUzXznRuvDU/KP7/WC0s2hFsieLrs8wpKQ4/cc5KfDlGnTF
-         TBA9/9Ku12T/7gk21EeCrDudnvaODeX5lFO0uEh94GOKja2PBD/VMNdKQGXVTHAOBmHx
-         xnGg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9plq5rRmPDK+6RGshabDZ+jkMGljIWcFwwsxnn8adsVrkULtzqugnw8uK42Oq+Fj3n+aaDcdKqkA/dMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+7LkI2KdyZSCDKREVr6FiJhBfug+/bV6aG45x3XAToZenWrvm
-	cs8GovtVlzN/0kAz1mk8VXwwFh+kd5CDjeOUJnWePWs0/PAhfGmy7cYyn4QTSySSIHs=
-X-Gm-Gg: ASbGnctYMH8J3wB2/aL+A5FeueHaeFmFW5uY+OK9e3y9L4ZBX/BQr6HtuNE6qErjc+W
-	jzHKU3AD9urd5fTluLSyRkQGrBnDtBdx4PhzKknfYdSqqlsElyHPfMELOi/4TZobEmN8hNasdkI
-	XD5gAx/wHyK45kdCSWoBYwWbDKHbgo6TJrhbDs69lcAUOmxmE5EJpecEZhSPZdeWEvVEnfiZuWZ
-	qdvK0FJgkvXht3xwMSLgaf6Wc0mlAEYqRvl5Va2qPdBm7uSydd3egGnbYL1LP54go8TjKcrLfJD
-	9gxsM1OIPjCLkuETCR9JIwZkJbHeGzPF6Xmmmlb5qYRQfvZIackYa1z15B62KWtUo6kRGIFlnY6
-	1iRpDVGLpck3MK1qL43gHlIoL+CSnytmF2jPIivN4
-X-Google-Smtp-Source: AGHT+IGJm120I2fO6Ejvhyi0cL/lXZlUxGg0+XxiLpAUXgJGj5+mlfzbh56yVxIwk9g2fimpHbnuYg==
-X-Received: by 2002:a05:600c:4586:b0:45b:47e1:ef6b with SMTP id 5b1f17b1804b1-45b517e0104mr29338505e9.34.1755882277427;
-        Fri, 22 Aug 2025 10:04:37 -0700 (PDT)
-Received: from asmirnov-G751JM.Home ([2a02:c7c:b28c:1f00:c77a:e59e:20e0:4966])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c711ca61d8sm160312f8f.61.2025.08.22.10.04.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 10:04:37 -0700 (PDT)
-From: Aliaksandr Smirnou <support@pinefeat.co.uk>
-To: jacopo.mondi@ideasonboard.com
-Cc: conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	hverkuil@xs4all.nl,
-	krzk+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	mchehab@kernel.org,
-	robh@kernel.org,
-	support@pinefeat.co.uk
-Subject: Re: [PATCH v3 2/2] media: i2c: Pinefeat cef168 lens control board driver
-Date: Fri, 22 Aug 2025 18:04:35 +0100
-Message-Id: <20250822170435.7057-1-support@pinefeat.co.uk>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <d2ka3glpjiisjs7ydx7knzzfb2dzi2lyc2r7d4hppqor33xate@2evtuolz6wah>
-References: <d2ka3glpjiisjs7ydx7knzzfb2dzi2lyc2r7d4hppqor33xate@2evtuolz6wah>
+	s=arc-20240116; t=1755882570; c=relaxed/simple;
+	bh=7Edpu4iaigfyMUiRCVPJ8Q6j8sogTZ4BIgKymb2DFMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nuiFywQMCxXuWHK348nwXtrMiPQKeF1F+uAn+3eTP8Z/NnBZN8TLPodJv3OtQuuEyUjAYukgIrttUsiUNoioV7fbKSAAPyE43XQUKl3dcRlbEflWeot3eWQ5H7rUwGTjuoDsfa+GlMrzA7LZsb7lsAeOr7pMYJoNEFdrAKDi2Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C4+wIUPb; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755882569; x=1787418569;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7Edpu4iaigfyMUiRCVPJ8Q6j8sogTZ4BIgKymb2DFMw=;
+  b=C4+wIUPbOdQDw1nkMdDvYgCMGdWe8VQw+N6EaM9/pcy5Dzkvheu99CW/
+   Pdgxry7ogt9KfZhBQUB0uHDONzmVvcbvt2aotBlq2E3BVHAIHZEnBWjq0
+   b364hUoRWjhnCvKgVieQbezTMHOo/jwETFxVeZoGfbIXBHQMKH8Fw1msB
+   Ay9Cl/0ZOzpeRYAJqs7le3qB6jcd91Yhu9W/A+nePQ0We5c4w3v9PjLxe
+   o9Fj1gS4/7OAhmH6vqFxBWXWcQLoRJRwohHdkHOZW4oVkD86+Jmio3k0L
+   ztc3HJ8DaPnmP1m+H/8mTdvXKuSYRAXrj1CjYtbkuc47jbkxYp/0ZLLhN
+   w==;
+X-CSE-ConnectionGUID: rZZ1TfvDTFaAHtei3GF5ng==
+X-CSE-MsgGUID: nnC4yLELQnqvfER1rh1LXw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58145624"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="58145624"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 10:09:28 -0700
+X-CSE-ConnectionGUID: bSznwY7qTReg8XKsoJX+Qw==
+X-CSE-MsgGUID: 5jtGIIBhT2ugTPUQX6bJ8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="168947402"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 22 Aug 2025 10:09:24 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1upVG1-000LZR-1i;
+	Fri, 22 Aug 2025 17:09:01 +0000
+Date: Sat, 23 Aug 2025 01:07:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Xiandong Wang <xiandong.wang@mediatek.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Yongqiang Niu <yongqiang.niu@mediatek.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, sirius.wang@mediatek.com,
+	vince-wl.liu@mediatek.com, jh.hsu@mediatek.com,
+	Project_Global_Chrome_Upstream_Group@mediatek.com,
+	Xiandong Wang <xiandong.wang@mediatek.com>
+Subject: Re: [PATCH v3 3/4] mailbox: mtk-cmdq: Add cmdq driver for mt8189
+Message-ID: <202508230035.zCJcuz93-lkp@intel.com>
+References: <20250819033746.16405-4-xiandong.wang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819033746.16405-4-xiandong.wang@mediatek.com>
 
-On Wed, 20 Aug 2025 14:56:38 +0200, Jacopo Mondi wrote:
-> > > > +	    ctrl->id != CEF168_V4L2_CID_CUSTOM(data) &&
-> > > > +	    ctrl->id != CEF168_V4L2_CID_CUSTOM(focus_range) &&
-> > > > +	    ctrl->id != CEF168_V4L2_CID_CUSTOM(lens_id))
-> > > > +		return -EINVAL;
-> > >
-> > > If you mark them WRITE_ONLY wouldn't the core take care of this ?
-> >
-> > These controls are read-only. The data they return depens on the lens.
-> >
->
-> Sorry, I wasn't clear.
-> 
-> If you mark as WO the controls you don't accept here, will the core
-> handle this for you ?
+Hi Xiandong,
 
-I see what you mean now. Indeed, the other controls are alredy WO, so the
-core will not let them pass here. I'll remove this check as redundant.
+kernel test robot noticed the following build errors:
 
-> > > > +#define CEF168_V4L2_CID_CUSTOM(ctrl) \
-> > > > +	((V4L2_CID_USER_BASE | 168) + custom_##ctrl)
-> > >
-> > > I think you need to reserve space for your controls in
-> > > include/uapi/linux/v4l2-controls.h
-> > >
-> > > otherwise this will never be visible to applications ?
-> >
-> > I found there is no need for that. Custom control become available
-> > automatically by name via the v4l2-ctl utility. For example, the focus
-> > range can be read directly in the terminal as follows:
-> >
-> > v4l2-ctl -d $DEV_LENS -C focus_range
-> >
-> 
-> Yes the driver enuemrates them, but you need to add them to the main
-> header, otherwise USER_BASE | 168 will be take by someone else.
-> 
+[auto build test ERROR on jassibrar-mailbox/for-next]
+[also build test ERROR on robh/for-next krzk/for-next krzk-dt/for-next linus/master v6.17-rc2 next-20250822]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I see, ok, I'll reserve 16 controls for this driver in v4l2-controls.h.
+url:    https://github.com/intel-lab-lkp/linux/commits/Xiandong-Wang/dt-bindings-mailbox-add-cmdq-yaml-for-MT8189/20250819-113946
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jassibrar/mailbox.git for-next
+patch link:    https://lore.kernel.org/r/20250819033746.16405-4-xiandong.wang%40mediatek.com
+patch subject: [PATCH v3 3/4] mailbox: mtk-cmdq: Add cmdq driver for mt8189
+config: arm-randconfig-001-20250822 (https://download.01.org/0day-ci/archive/20250823/202508230035.zCJcuz93-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d26ea02060b1c9db751d188b2edb0059a9eb273d)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250823/202508230035.zCJcuz93-lkp@intel.com/reproduce)
 
-Thank you for your help.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508230035.zCJcuz93-lkp@intel.com/
 
-Kind regards,
-  Aliaksandr
+All errors (new ones prefixed by >>):
+
+>> drivers/mailbox/mtk-cmdq-mailbox.c:781:3: error: field designator 'mminfra_offset' does not refer to any field in type 'const struct gce_plat'
+     781 |         .mminfra_offset = 0x40000000, /* 1GB */
+         |         ~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 error generated.
+
+
+vim +781 drivers/mailbox/mtk-cmdq-mailbox.c
+
+   777	
+   778	static const struct gce_plat gce_plat_mt8189 = {
+   779		.thread_nr = 32,
+   780		.shift = 3,
+ > 781		.mminfra_offset = 0x40000000, /* 1GB */
+   782		.control_by_sw = false,
+   783		.sw_ddr_en = true,
+   784		.gce_num = 2
+   785	};
+   786	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
