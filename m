@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-782521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8488B32187
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:32:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC8EB3218C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B45AB227B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:32:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FDEB588AAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0626285CB6;
-	Fri, 22 Aug 2025 17:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617EE313532;
+	Fri, 22 Aug 2025 17:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qRX6aCzQ"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ut2gKRSU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDCE33F9;
-	Fri, 22 Aug 2025 17:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0253828E579;
+	Fri, 22 Aug 2025 17:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755883916; cv=none; b=GvhznZLB1NBI4RNZXEqkcgRSFU8z+uy1DNDBMD+7F149B8ZDBRMTgehZ7Zq960ejRTXK2n+nQ8seFkodB4cQ42sjoEAtLqKQPGf7z+etBwVNPorwPqMt0wlfnfesvyhbMCw3zNfljWhaS7EMZW6CDPGcQiEHW3i8v2BVwwnX16A=
+	t=1755884023; cv=none; b=Six5breNF5UlmdbOJMTXhT5G1e+4ftayLd+Sm6S/O78haenrYqw5W6/9rGmWbatuAFhiZ5rdtqyLer5tXCI3Tp3S9snuRnSRSy+C86Zenc1MKoI/N5bLzgzUo//AfrUoq0kSCUKXDesfkNEZoMj0QLBzmlunqqZpwGYIIhgQ9r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755883916; c=relaxed/simple;
-	bh=N+YRCViQliEpY8xUYPaJut5c4EM3UG432EMSdekUGhA=;
+	s=arc-20240116; t=1755884023; c=relaxed/simple;
+	bh=qzGcX2QKJZgPau8n3KCGHQhknefVrNuVSIhpxGsvuW8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=H3Lu5RsJUUCTdvhTaEm1ZPyiQbDGkyHQOVZFuWqxSe9sqPhtMBwHqYhBtfF2/71KLiilj3na93eYVSi2KNLuEpJKFiC1MVX0l5yRwQn/nTV0AhbEIS274Ppfo8lSGThnTVLqPRXKssvyQDlfUiVrVPVIuoBrE6B8+lBYi5VDrj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qRX6aCzQ; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57MHVkJh766696;
-	Fri, 22 Aug 2025 12:31:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755883906;
-	bh=8GA92uGphBr4Q50n20UsbkKpDY7geIAZlyZ30qOdmF0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=qRX6aCzQJ1aFcMkw34uoaOYnqhaGNDZSwwy3MIn1YN/5rgWHcv6R9O398qK43Vnxq
-	 UfZcvVzvuK8z8m8CiS8CfsUrq/WU3rbnY/vpwRhnmJ8ut5LyfWPhOD26XwjIA070xA
-	 lPSIS709KXU77ISrozip9hKUu6Rdq1wslnq09p0U=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57MHVjMQ3073252
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 22 Aug 2025 12:31:46 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 22
- Aug 2025 12:31:45 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 22 Aug 2025 12:31:45 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57MHViMB4176033;
-	Fri, 22 Aug 2025 12:31:45 -0500
-Message-ID: <32d4b3c2-4017-4ad2-8527-493b6d3b7ecb@ti.com>
-Date: Fri, 22 Aug 2025 12:31:44 -0500
+	 In-Reply-To:Content-Type; b=h3+XdSlzbbdWaAHpKK0NSNSISfSTOWkxMPo/vuwhpqNSUEjLpGfepj2er6kf2y1SSAHHCcbgwj3dwCOGEDXzrdkKM3DaeSrGI6fTrGmjmIh9W63rqEiC+9wMZ+DwSmhZ2gPZbDD64cRLPkNoJN/pP6AR2kLuiF0dAz415vZ+a+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ut2gKRSU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MHV3Ht019350;
+	Fri, 22 Aug 2025 17:33:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lwBcAcs5br8qQtNHRCfNFC2LF/dfcqaA+kuFhinPq08=; b=Ut2gKRSUymGL4/bK
+	c9MIkKE7fuCO638jNdFZFemNgcLoYBGF+5gSS7CI1zlrDvILZgOt/2buTbxk2Oa0
+	yf2LsmRjJiXzl2zld+G+N09p9WDXeGGZXiJ+bCpr135zikkBuhpUSEhloX0X4hNV
+	fgRYKcqnWI4To7KSr0aHknFHo0aPDXpZSWoWGOXdKeIEn8Yd9QfmIkRmOJoCTDUg
+	aiFpiXl8rCFa9nmNRyOZjBtck/P27a9AL2jMMBn57RMUoKLhhwx/29eJCD4oX3ik
+	JTxLBJ7O0CLzivkHiMJpMVSvEKGI0VwnROwNPdYyzzD/rsCWNwNeGsMcOsupJWwj
+	KAkEwg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48pw10r0cv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 17:33:36 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57MHXZEv026286
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 17:33:35 GMT
+Received: from [10.216.23.37] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 22 Aug
+ 2025 10:33:30 -0700
+Message-ID: <c81019f3-3570-4437-a10a-d49cabc4952d@quicinc.com>
+Date: Fri, 22 Aug 2025 23:03:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,126 +64,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 33/33] arm64: dts: ti: k3-j7*-ti-ipc-firmware: Switch MCU
- R5F cluster to Split-mode
-To: Beleswar Prasad Padhi <b-padhi@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250814223839.3256046-1-b-padhi@ti.com>
- <20250814223839.3256046-34-b-padhi@ti.com>
- <9a3f4271-ada2-48aa-b99d-023619ec5e12@ti.com>
- <a076e204-aa71-430e-a762-b8111d23d2e6@ti.com>
+Subject: Re: [PATCH v8 0/9] Enable audio on qcs6490-RB3Gen2 and qcm6490-idp
+ boards
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        <cros-qcom-dts-watchers@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+        <kernel@oss.qualcomm.com>,
+        Mohammad Rafi Shaik
+	<mohammad.rafi.shaik@oss.qualcomm.com>
+References: <20250821044914.710044-1-quic_pkumpatl@quicinc.com>
+ <CACRpkdYEzbM33HBAhHEmAg9f4Zpi=2WvqPdZ35=M2eVCqcTTFg@mail.gmail.com>
 Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <a076e204-aa71-430e-a762-b8111d23d2e6@ti.com>
+From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+In-Reply-To: <CACRpkdYEzbM33HBAhHEmAg9f4Zpi=2WvqPdZ35=M2eVCqcTTFg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIyMDE2MCBTYWx0ZWRfX9pZidifCGK7S
+ jn07VXThat6c3gUuOxH3AD+f0IG1JNB4WoCuDf2wwFVzqIXCQ9gtHcsIJ+nfhuR7I0nLUwq/24C
+ QZD36ryFNGTwSCsobS/792yjN46l50eAdZOz9MBC9aSuGVHcVZkNeDFF0VEo1CmA53iU8e9F6Zr
+ fn0MA/HyUmqpAnCHDiROGNZQOEFS5C6GgEZkvPOJ03eyrf2SjY/7LUZnM/D8MInThV7BD89eGP4
+ vQB09SFK2RngOvky69hNw9UNykO1DMyPl4rbD2qxkmYkE81X/eof3510+HQXlZLrI73cqNg0Edz
+ gxVxt9tDmMTyY+qxeLoh1rX+ot00li2PH61jBn4gQx+xLIPevkvDwjYt6XBDZt1wC/OaGieFbaf
+ KCyK3+cz
+X-Authority-Analysis: v=2.4 cv=eaA9f6EH c=1 sm=1 tr=0 ts=68a8a9f0 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
+ a=eBniO7g4Yh2Fc4B1ST8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: o6nGBWm1tINpdsv4yEeZS4GtajS-cSJS
+X-Proofpoint-ORIG-GUID: o6nGBWm1tINpdsv4yEeZS4GtajS-cSJS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 adultscore=0 suspectscore=0 impostorscore=0 malwarescore=0
+ priorityscore=1501 phishscore=0 spamscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508220160
 
-On 8/22/25 12:26 PM, Beleswar Prasad Padhi wrote:
-> Hi Andrew, Nishanth,
-> 
-> On 8/15/2025 9:18 PM, Andrew Davis wrote:
->> On 8/14/25 5:38 PM, Beleswar Padhi wrote:
->>> Several TI K3 SoCs like J7200, J721E, J721S2, J784S4 and J742S2 have a
->>> R5F cluster in the MCU domain which is configured for LockStep mode at
->>> the moment. The necessary support to use MCU R5F cluster in split mode
->>> was added in the bootloader. And the TI IPC firmware for the split
->>> processors is already available public.
->>>
->>> Therefore, Switch this R5F cluster to Split mode by default in all the
->>> boards using TI IPC Firmware config (k3-j7*-ti-ipc-firmware). This
->>> gives out an extra general purpose R5F core free to run any applications
->>> as required. Lockstep mode remains default in the SoC level dtsi, so
->>> downstream board dts which do not use TI IPC Firmware config should not
->>> be impacted by this switch.
->>>
->>> Users who prefer to use the fault-tolerant lockstep mode with TI IPC
->>> firmware config, can do that by setting `ti,cluster-mode` property to 1.
->>
->> What a user prefers and other configuration like that does not belong
->> in devicetree, which should only describe the hardware.
->>
->> Configuration should be done using the normal methods, like kernel
->> cmdline, module params, ioctls, etc.. Maybe we can even set the mode
->> based on some signal in the firmware itself, like in the resource table.
-> 
-> 
-> Agreed with your point.. But that is going to take a long time to implement
-> + upstream. I interpreted from [0] that it was okay to enable this split mode
-> once we had refactored the firmware related nodes in an overlay? (Since
-> people can swap out the dtsi if they don't need the firmware config)
-> 
-> Nishanth/Andrew,
-> Please advise if this patch is okay or should be dropped in the revision...
-> 
 
-I would drop this and send it later as part of its own series, it doesn't belong
-in this series which should be refactors only, this patch is changing things, no
-reason to mixed the two types of patches.
 
-Andrew
+On 8/21/2025 7:04 PM, Linus Walleij wrote:
+> On Thu, Aug 21, 2025 at 6:49 AM Prasad Kumpatla
+> <quic_pkumpatl@quicinc.com> wrote:
+> 
+>> Mohammad Rafi Shaik (9):
+>>    dt-bindings: pinctrl: qcom,sc7280-lpass-lpi-pinctrl: Document the
+>>      clock property
+> 
+> Can I just apply this one patch to the pinctrl tree?
 
-> [0]: https://lore.kernel.org/all/20250523114822.jrv73frz2wbzdd6d@falsify/
-> 
-> Thanks,
-> Beleswar
-> 
->>
->> Andrew
->>
->>>
->>> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
->>> ---
->>> arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi | 1 +
->>> arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi | 1 +
->>> arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi | 1 +
->>> .../boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi | 1 +
->>>   4 files changed, 4 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi
->>> index 8eff7bd2e771..ddf3cd899d0e 100644
->>> --- a/arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi
->>> +++ b/arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi
->>> @@ -94,6 +94,7 @@ &main_timer2 {
->>>     &mcu_r5fss0 {
->>>       status = "okay";
->>> +    ti,cluster-mode = <0>;
->>>   };
->>>     &mcu_r5fss0_core0 {
->>> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi
->>> index 5b3fa95aed76..57890a3b38a2 100644
->>> --- a/arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi
->>> +++ b/arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi
->>> @@ -211,6 +211,7 @@ &main_timer15 {
->>>   };
->>>     &mcu_r5fss0 {
->>> +    ti,cluster-mode = <0>;
->>>       status = "okay";
->>>   };
->>>   diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi
->>> index 40c9f2b64e7e..7ee8a8615246 100644
->>> --- a/arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi
->>> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi
->>> @@ -179,6 +179,7 @@ &main_timer5 {
->>>   };
->>>     &mcu_r5fss0 {
->>> +    ti,cluster-mode = <0>;
->>>       status = "okay";
->>>   };
->>>   diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi
->>> index b5a4496a05bf..e12fa55a4df0 100644
->>> --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi
->>> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi
->>> @@ -254,6 +254,7 @@ &main_timer9 {
->>>   };
->>>     &mcu_r5fss0 {
->>> +    ti,cluster-mode = <0>;
->>>       status = "okay";
->>>   };
->>
+yes, please go ahead.
+
+Thanks,
+Prasad>
+> Yours,
+> Linus Walleij
 
 
