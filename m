@@ -1,37 +1,79 @@
-Return-Path: <linux-kernel+bounces-781872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4C67B31807
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:39:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 184E6B3180C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C50CA188AD26
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:38:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE9D9601250
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2CAB2FB972;
-	Fri, 22 Aug 2025 12:38:18 +0000 (UTC)
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC6F2FB978;
+	Fri, 22 Aug 2025 12:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="3BYFJHp4"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F951B4141
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1003C2E8B74
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755866298; cv=none; b=VYiGCyIDNBdIvDqKZxwRqum3bZWNonf3Z4WS5TncElP+TJst9T0TkP+bJSql08ktP7IZ53oQZqJhOdie6PMNomXdg04xCTSnYU5bxJs3M3BUBeofHxZF6k3ke6gwIIzXKdefNpLClvgnkGtjYkpXwz06dAQojczPqdEBYfekXUg=
+	t=1755866408; cv=none; b=k4PHnosQUt4JgBw4SLYVodSOhxSsRSl4pII4ppmskgVZpl80yZSk0ixvivEFsBmGPlJOrqoFM+izeAxmYZeTBap4JBKaqyOa9FHC3Qor6wZehj5H5FVYLfCqHylngklhnnVlTs7WkJIsExKC0U1aCoqFX5UoxW1+k3mc4crmuGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755866298; c=relaxed/simple;
-	bh=vTU6/21/tsv+e8WPOQeqgNrvSRjoFUgsFJUPIX7P6iE=;
+	s=arc-20240116; t=1755866408; c=relaxed/simple;
+	bh=dph5PYREDD1pA0b8chqVFqGvC+vOsxLs/HqOrSPAUes=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OIY9b1bby1Q0ssFd0PehvQuamcKc8kP9CRgit26MXUrFWWu/ertvsJtlR0n/mS7T0vriGurKzC6524Th97Ac/RfHTUsLvXSOwu7DM+ycK9KQr5cm5diksnVOUc+sMMyXskBFrnV07b2EiIbltM7nbtBkRXzQBh2skIPouVoA6vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E13EB443CB;
-	Fri, 22 Aug 2025 12:38:11 +0000 (UTC)
-Message-ID: <30ebd580-80e7-456e-8628-9d0a08dced95@ghiti.fr>
-Date: Fri, 22 Aug 2025 14:38:08 +0200
+	 In-Reply-To:Content-Type; b=X99y3x77dbnCVieiFl7n8Wl3mEKM/yYiL4xC79iTCAg8HgW7UCqxEpdg7gEDjRbx4RwFCozmD9osZ3YK4d1xqy/DqEFwHeQV8hbNvXwvRUZNdP5MEFwtoM1nLT6yufytgoPrxmPPu2u7NN59hjOq6qB/g+u77iy7qVPgxeaDSis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=3BYFJHp4; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b474a38b25cso1764075a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:40:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1755866406; x=1756471206; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B+yr9sRToH/PruAdIM7WqBdD3kL6ipM/1pLENcMhk1k=;
+        b=3BYFJHp4t8Uz2lOHeVi/WjBt60rnY+N2KcNxGq39dpJdpJTj5U5P6ezvTwrJUDU9l7
+         3Jb1iz+nD3Y+tkXLroqhSA6OEZfnaPRF79I7cLGR0WvunLaGZG3innM5YqJ8CFW4CGHq
+         JDy1qY/gpL0rctROy3bM5jEmA9JjIzr39ThsjIQa8vTWu1stkmeXc+HfwDRY/q1+dXAN
+         YLFCWaXJgrcE0bPYKCMuuJ/rvNl/mqedyse36M1i/+sq15UdBlAxvRaE74Eg7bZybk+s
+         gRFkt5Z6heJTOo+kH6YoZBuHFwwqIhFfDPGNyrjkEeUzkDsvdr9lKaMKhKSs9rbQ03Bj
+         6jnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755866406; x=1756471206;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B+yr9sRToH/PruAdIM7WqBdD3kL6ipM/1pLENcMhk1k=;
+        b=FcsBXyx2mF9vkEPFaa870lYaFrm3qj8NcX7SQb5sQf0o3v4bZWQJdj6RMzeMxybR/u
+         EgxHyvK3b97FeJu7lOPoOSg9z+1ajp3v76KYbjqmLWYkeCVvPL6Ga8IboLnraWLZQEEx
+         4b55JjlIJFRVJqubB98gmS9vSrN3ZeehwrR+A8gXGSIEhtcl8qJQEwEAYDG6NgTNbvNc
+         s92rTtdLmqY8nur47IWdbM+o+xujL12pTqXdbSYeHbo1mBsThxUbgMbNg8NFw/dfDHJ9
+         a4Fpye9rSdlVH16gBMjk8vyNFNmTZHTUzRxbuYkDr4wFM0mgfzWCKs4QB4ZIdrbET6Wo
+         Tvzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHYC/bCHaDDAYF+yidZvVWcVilsQoeHryMMmkOI+NTAHOIHx6EY0rl8Gl2PSddeC9sdoF1M0NY8XElaJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrtZqcE0AXbcJADzx3gnxi7kw5D6SJpVlcLYeVGT3sQNqIbLMn
+	zEe6DaOgJG/j2MoHMV99dGTEZSX4Bcdqmb0rzS0HgTNXeptJOmptVnXI6+FtNNmGqg==
+X-Gm-Gg: ASbGncsCalSgwkMJADYdRcvxTD+KeXewLHso84q/RvCAiH2Ba3V5Pq7VVbbxXO8NCBL
+	WMcpohn9qhgPtaBAE/JEjuhcU1l4JeU++9kavUE8AweHc3oleko+YxJfXWhUbYGsMWvJ22Mpoub
+	2LG26GIKtAeQdfDxKBQkMfjn7JBbN6URlFzNeD5kf+ZyhwgyD8adM4N+MVdBSyFqyzqTtmIki2o
+	pu+U9wwezabK5KJ84jasv3jpkYrSkdmQkxT1yJVUKxBk+gGg70GPfB1hGFHmCf3Mfh4d6p6SX9a
+	11zNpns601wKyRplUyScDS/FXlePiLmoB9usfY7peA3iziCn5NF32/kEjIv+1F5JN/tS4bInwwz
+	vGCK0aaDFmAsSTyhoGqBOTybHj3AsjO0omErRkeXUOghvl8mQqXSSVwnf/65OoyDpCD8l
+X-Google-Smtp-Source: AGHT+IH5GwW/1LtdiOxW1n+MhOlbTwJKo2G4oIdIoLQEQsy6aOmCo5AeIoYMEsOb8r546lNVBC0s3w==
+X-Received: by 2002:a05:6a20:7fa0:b0:21f:5598:4c2c with SMTP id adf61e73a8af0-24340b01969mr4479905637.13.1755866406259;
+        Fri, 22 Aug 2025 05:40:06 -0700 (PDT)
+Received: from ?IPV6:2804:7f1:e2c3:f78a:6c07:66e5:2cc3:7521? ([2804:7f1:e2c3:f78a:6c07:66e5:2cc3:7521])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-325132487b3sm2485980a91.11.2025.08.22.05.40.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Aug 2025 05:40:05 -0700 (PDT)
+Message-ID: <98c5d450-e766-45cd-a300-bbeaf31cb0b9@mojatatu.com>
+Date: Fri, 22 Aug 2025 09:40:01 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,97 +81,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/12] riscv: Remove ld.lld version checks from many
- TOOLCHAIN_HAS configs
-To: Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Kees Cook <kees@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- llvm@lists.linux.dev, patches@lists.linux.dev,
- Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org
-References: <20250821-bump-min-llvm-ver-15-v2-0-635f3294e5f0@kernel.org>
- <20250821-bump-min-llvm-ver-15-v2-9-635f3294e5f0@kernel.org>
+Subject: Re: [PATCH net-next 1/2] tcp: Destroy TCP-AO, TCP-MD5 keys in
+ .sk_destruct()
+To: dima@arista.com, Eric Dumazet <edumazet@google.com>,
+ Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>,
+ "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>
+Cc: Bob Gilligan <gilligan@arista.com>,
+ Salam Noureddine <noureddine@arista.com>,
+ Dmitry Safonov <0x7f454c46@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250822-b4-tcp-ao-md5-rst-finwait2-v1-0-25825d085dcb@arista.com>
+ <20250822-b4-tcp-ao-md5-rst-finwait2-v1-1-25825d085dcb@arista.com>
 Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250821-bump-min-llvm-ver-15-v2-9-635f3294e5f0@kernel.org>
+From: Victor Nogueira <victor@mojatatu.com>
+In-Reply-To: <20250822-b4-tcp-ao-md5-rst-finwait2-v1-1-25825d085dcb@arista.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieefjeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpedthfelfeejgeehveegleejleelgfevhfekieffkeeujeetfedvvefhledvgeegieenucfkphepkedtrddvudegrddvuddurddvtddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepkedtrddvudegrddvuddurddvtddupdhhvghloheplgduledvrdduieekrdektddrudeffegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddupdhrtghpthhtohepnhgrthhhrghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnihgtkhdruggvshgruhhlnhhivghrshdolhhkmhhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhorhgsohesghhoohhgl
- hgvrdgtohhmpdhrtghpthhtohepjhhushhtihhnshhtihhtthesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhlvhhmsehlihhsthhsrdhlihhnuhigrdguvghv
-X-GND-Sasl: alex@ghiti.fr
+Content-Transfer-Encoding: 8bit
 
-On 8/21/25 23:15, Nathan Chancellor wrote:
-> Now that the minimum supported version of LLVM for building the kernel
-> has been bumped to 15.0.0, several ld.lld version checks become
-> tautological, as they are always true. Replace them with a simple
-> CONFIG_LD_IS_LLD check.
->
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+On 8/22/25 01:55, Dmitry Safonov via B4 Relay wrote:
+> From: Dmitry Safonov <dima@arista.com>
+> 
+> Currently there are a couple of minor issues with destroying the keys
+> tcp_v4_destroy_sock():
+> 
+> 1. The socket is yet in TCP bind buckets, making it reachable for
+>     incoming segments [on another CPU core], potentially available to send
+>     late FIN/ACK/RST replies.
+> 
+> 2. There is at least one code path, where tcp_done() is called before
+>     sending RST [kudos to Bob for investigation]. This is a case of
+>     a server, that finished sending its data and just called close().
+> 
+>     The socket is in TCP_FIN_WAIT2 and has RCV_SHUTDOWN (set by
+>     __tcp_close())
+> 
+>     tcp_v4_do_rcv()/tcp_v6_do_rcv()
+>       tcp_rcv_state_process()            /* LINUX_MIB_TCPABORTONDATA */
+>         tcp_reset()
+>           tcp_done_with_error()
+>             tcp_done()
+>               inet_csk_destroy_sock()    /* Destroys AO/MD5 keys */
+>       /* tcp_rcv_state_process() returns SKB_DROP_REASON_TCP_ABORT_ON_DATA */
+>     tcp_v4_send_reset()                  /* Sends an unsigned RST segment */
+> 
+>     tcpdump:
+>> 22:53:15.399377 00:00:b2:1f:00:00 > 00:00:01:01:00:00, ethertype IPv4 (0x0800), length 74: (tos 0x0, ttl 64, id 33929, offset 0, flags [DF], proto TCP (6), length 60)
+>>      1.0.0.1.34567 > 1.0.0.2.49848: Flags [F.], seq 2185658590, ack 3969644355, win 502, options [nop,nop,md5 valid], length 0
+>> 22:53:15.399396 00:00:01:01:00:00 > 00:00:b2:1f:00:00, ethertype IPv4 (0x0800), length 86: (tos 0x0, ttl 64, id 51951, offset 0, flags [DF], proto TCP (6), length 72)
+>>      1.0.0.2.49848 > 1.0.0.1.34567: Flags [.], seq 3969644375, ack 2185658591, win 128, options [nop,nop,md5 valid,nop,nop,sack 1 {2185658590:2185658591}], length 0
+>> 22:53:16.429588 00:00:b2:1f:00:00 > 00:00:01:01:00:00, ethertype IPv4 (0x0800), length 60: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto TCP (6), length 40)
+>>      1.0.0.1.34567 > 1.0.0.2.49848: Flags [R], seq 2185658590, win 0, length 0
+>> 22:53:16.664725 00:00:b2:1f:00:00 > 00:00:01:01:00:00, ethertype IPv4 (0x0800), length 74: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto TCP (6), length 60)
+>>      1.0.0.1.34567 > 1.0.0.2.49848: Flags [R], seq 2185658591, win 0, options [nop,nop,md5 valid], length 0
+>> 22:53:17.289832 00:00:b2:1f:00:00 > 00:00:01:01:00:00, ethertype IPv4 (0x0800), length 74: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto TCP (6), length 60)
+>>      1.0.0.1.34567 > 1.0.0.2.49848: Flags [R], seq 2185658591, win 0, options [nop,nop,md5 valid], length 0
+> 
+>    Note the signed RSTs later in the dump - those are sent by the server
+>    when the fin-wait socket gets removed from hash buckets, by
+>    the listener socket.
+> 
+> Instead of destroying AO/MD5 info and their keys in inet_csk_destroy_sock(),
+> slightly delay it until the actual socket .sk_destruct(). As shutdown'ed
+> socket can yet send non-data replies, they should be signed in order for
+> the peer to process them. Now it also matches how AO/MD5 gets destructed
+> for TIME-WAIT sockets (in tcp_twsk_destructor()).
+> 
+> This seems optimal for TCP-MD5, while for TCP-AO it seems to have an
+> open problem: once RST get sent and socket gets actually destructed,
+> there is no information on the initial sequence numbers. So, in case
+> this last RST gets lost in the network, the server's listener socket
+> won't be able to properly sign another RST. Nothing in RFC 1122
+> prescribes keeping any local state after non-graceful reset.
+> Luckily, BGP are known to use keep alive(s).
+> 
+> While the issue is quite minor/cosmetic, these days monitoring network
+> counters is a common practice and getting invalid signed segments from
+> a trusted BGP peer can get customers worried.
+> 
+> Investigated-by: Bob Gilligan <gilligan@arista.com>
+> Signed-off-by: Dmitry Safonov <dima@arista.com>
 > ---
-> Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> Cc: Alexandre Ghiti <alex@ghiti.fr>
-> Cc: linux-riscv@lists.infradead.org
-> ---
->   arch/riscv/Kconfig | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index d482236e93f4..850ba4b4b534 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -620,7 +620,7 @@ config TOOLCHAIN_HAS_V
->   	default y
->   	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64imv)
->   	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32imv)
-> -	depends on LLD_VERSION >= 140000 || LD_VERSION >= 23800
-> +	depends on LD_IS_LLD || LD_VERSION >= 23800
->   	depends on AS_HAS_OPTION_ARCH
->   
->   config RISCV_ISA_V
-> @@ -721,7 +721,7 @@ config TOOLCHAIN_HAS_ZBB
->   	default y
->   	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64ima_zbb)
->   	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zbb)
-> -	depends on LLD_VERSION >= 150000 || LD_VERSION >= 23900
-> +	depends on LD_IS_LLD || LD_VERSION >= 23900
->   	depends on AS_HAS_OPTION_ARCH
->   
->   # This symbol indicates that the toolchain supports all v1.0 vector crypto
-> @@ -736,7 +736,7 @@ config TOOLCHAIN_HAS_ZBA
->   	default y
->   	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64ima_zba)
->   	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zba)
-> -	depends on LLD_VERSION >= 150000 || LD_VERSION >= 23900
-> +	depends on LD_IS_LLD || LD_VERSION >= 23900
->   	depends on AS_HAS_OPTION_ARCH
->   
->   config RISCV_ISA_ZBA
-> @@ -771,7 +771,7 @@ config TOOLCHAIN_HAS_ZBC
->   	default y
->   	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64ima_zbc)
->   	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zbc)
-> -	depends on LLD_VERSION >= 150000 || LD_VERSION >= 23900
-> +	depends on LD_IS_LLD || LD_VERSION >= 23900
->   	depends on AS_HAS_OPTION_ARCH
->   
->   config RISCV_ISA_ZBC
-> @@ -794,7 +794,7 @@ config TOOLCHAIN_HAS_ZBKB
->   	default y
->   	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64ima_zbkb)
->   	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zbkb)
-> -	depends on LLD_VERSION >= 150000 || LD_VERSION >= 23900
-> +	depends on LD_IS_LLD || LD_VERSION >= 23900
->   	depends on AS_HAS_OPTION_ARCH
->   
->   config RISCV_ISA_ZBKB
->
+>   net/ipv4/tcp.c      | 31 +++++++++++++++++++++++++++++++
+>   net/ipv4/tcp_ipv4.c | 25 -------------------------
+>   2 files changed, 31 insertions(+), 25 deletions(-)
+> 
+> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> index 71a956fbfc5533224ee00e792de2cfdccd4d40aa..4e996e937e8e5f0e75764caa24240e25006deece 100644
+> --- a/net/ipv4/tcp.c
+> +++ b/net/ipv4/tcp.c
+> @@ -412,6 +412,36 @@ static u64 tcp_compute_delivery_rate(const struct tcp_sock *tp)
+>   	return rate64;
+>   }
+> [...]
+> +
+> +static void tcp_destruct_sock(struct sock *sk)
+> +{
+> +	struct tcp_sock *tp = tcp_sk(sk);
 
-Acked-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+It looks like this variable is unused when CONFIG_TCP_MD5SIG is not set 
 
-Thanks for the v2!
+and this is causing the test CI build to fail.
 
-Alex
+net/ipv4/tcp.c: In function ‘tcp_destruct_sock’:
+net/ipv4/tcp.c:417:26: error: unused variable ‘tp’ [-Werror=unused-variable]
+   417 |         struct tcp_sock *tp = tcp_sk(sk);
+       |                          ^~
+cc1: all warnings being treated as errors
+make[4]: *** [scripts/Makefile.build:287: net/ipv4/tcp.
 
+cheers,
+Victor
 
