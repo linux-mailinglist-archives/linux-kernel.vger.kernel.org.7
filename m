@@ -1,108 +1,118 @@
-Return-Path: <linux-kernel+bounces-781927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F685B318A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:00:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DE16B318C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D32BB61C4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:59:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE416B05C3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664722FF14D;
-	Fri, 22 Aug 2025 12:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7414A2FFDDD;
+	Fri, 22 Aug 2025 12:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ld4V7Snz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jOJuITsm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A375D2FC034;
-	Fri, 22 Aug 2025 12:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07312FFDC1;
+	Fri, 22 Aug 2025 12:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755867482; cv=none; b=fvPHObBh+OToMQZc3REZxW8Y0e3ngKwBV4CIaMdarcVPjMs84UYwiNiTQpDK0nfYSUij9Vq6jA7dbdNqj1ARJERZZ+Y6iJZuB4Jqg3SPDectarfajwbEYzTb9fJRwaZt3GxTSMqgL7gvrg9X/A0IwUlNtZ2ep8QTcziey5enBNg=
+	t=1755867490; cv=none; b=gKIyUOoVt8wy7/oAbnjQiL/RqAhqcJwfJbas20W0FTP0cCoWRzCfsUzksD0OZ1Se6pt19DMRDFZoOESxoZK01ugZ0MuBwIi0Z6Ho8Wq6ayJ+YpjovQtFd6woXnRFVAmbHLrrO+ZphwbI19IvzzKIuJWxRvP3jNIAs9BfpoeOgfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755867482; c=relaxed/simple;
-	bh=NthJul2t/ihkNQEDNJDxStrByPgsFY1WvD6qbeKO9zc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=J0MJn8iD9JDtpqieOMC2Q+yDtGFjc1sOi2pRbb85rE0DwdEHh1rs5IZIBe7UKo+HWry/jAFvEmVCmGNJTF832SwSNfd9rtjUKQkySIAXuXkYasSfZfa6TwgeY1Jl+85GOD9hPfiIvPISpNYttl1dnQhU+pwW+6KD2XGbXFXvoBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ld4V7Snz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5B36C4CEED;
-	Fri, 22 Aug 2025 12:57:58 +0000 (UTC)
+	s=arc-20240116; t=1755867490; c=relaxed/simple;
+	bh=4/1ip04GTUVjn+DTl6JTM32LsyVUAI+Y7eDrGdATaYc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FLJJVsg2eskZPKfE4bxCMgBaxCmn/oMl9fVPU9H7pkd0gObQ+lv8ZeuLpiwqyyj17XxMJ3NHMPjpDFA2XQh6UbS1qIt4wYhzKSY+Vw9KwXWRK1qWXnYROARDtUdS/FEVIeoWr3Vp904S45Crif/L3lspf29YmaGoxyVcHZ7QSyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jOJuITsm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4DE0FC113D0;
+	Fri, 22 Aug 2025 12:58:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755867482;
-	bh=NthJul2t/ihkNQEDNJDxStrByPgsFY1WvD6qbeKO9zc=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=Ld4V7SnzrCinLkVqtfXR19IT/hb1L9Tyb7FRqml4IsQfef9ypJcEfou5A31TbgctY
-	 Dcqn+lvrg+NzS/GnUjmVgAH19bZvj4EIaMuzQjl6RKT5xx194NJQ0IzYL5+hg1WcaR
-	 9fAHCcQz3P1o4/Wrb7XKZiOeeWKqiJmdEGiDJAPbkIqwH//4fWylhFJ69/5CBrUOVT
-	 wb0az991RPI2g4veMLJceH7H92NkEmTLkt3VXz1Ng1u9iQXpyJWfxTyyUs2wa2Oeq9
-	 jsM+BypbyKe0rJEdESPC8EIz1V78M9PEIZtRyaUOub1E898ol9BSUazGmXujY2eZdC
-	 SDH2cEZipJjpA==
+	s=k20201202; t=1755867489;
+	bh=4/1ip04GTUVjn+DTl6JTM32LsyVUAI+Y7eDrGdATaYc=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=jOJuITsmR/VHBSrsLLxE08s9zp0o+Uwsm48EoIlO+2UlKCp3uTraJHWow9JS8g5Su
+	 0kMgW+9owV7tvt7cGe581O++3UAmPF02XspSudcLtJbd4GJGco3FgEUshDBOV/JF1H
+	 P5IrzgTblzglQgNXgh53N4/yGgf7gtVt88DqsEMPS71VjWHLew/tbn/Ju/00R8+QtS
+	 GbNGbX3Md9StxQHoyBdULNjaO0WoHfrUwZOCvGNIGIjBJNub7utrNNatD2FBkSx06h
+	 pPKEg0urZvChV4Ff3EYmVyIv7SPumAb64VwCwu5fHkBPeShUnUL9gTuIymBZRxSRZW
+	 PNI52gjdP8yFQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E8AFCA0EEB;
+	Fri, 22 Aug 2025 12:58:09 +0000 (UTC)
+From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
+Date: Fri, 22 Aug 2025 20:58:08 +0800
+Subject: [PATCH] ALSA: usb-audio: Add mute TLV for playback volumes on some
+ devices
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 22 Aug 2025 14:57:55 +0200
-Message-Id: <DC8Z2MLOJN7D.3IOSY6SJ7DPVD@kernel.org>
-Subject: Re: [PATCH 5/5] gpu: nova-core: firmware: process and prepare the
- GSP firmware
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
-To: "Alexandre Courbot" <acourbot@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250822-nova_firmware-v1-0-ff5633679460@nvidia.com>
- <20250822-nova_firmware-v1-5-ff5633679460@nvidia.com>
-In-Reply-To: <20250822-nova_firmware-v1-5-ff5633679460@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250822-mixer-quirk-v1-1-b19252239c1c@uniontech.com>
+X-B4-Tracking: v=1; b=H4sIAF9pqGgC/xWMQQqAIBAAvxJ7TjAtjL4SHSrXWiKrlSIQ/54dh
+ 2EmQkAmDNAVERgfCnT4DFVZwLyOfkFBNjMoqRrZKiV2epHFdRNvAqWpnZmM1UZDLk5Gl/V/64e
+ UPo8oZktdAAAA
+X-Change-ID: 20250822-mixer-quirk-e074f7b7d373
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ guanwentao@uniontech.com, niecheng1@uniontech.com, zhanjun@uniontech.com, 
+ jeffbai@aosc.io, Guoli An <anguoli@uniontech.com>, 
+ Cryolitia PukNgae <cryolitia@uniontech.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755867488; l=1344;
+ i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
+ bh=CbanlkJhMdYwPVYycxuiequ7kNqYRPxDyM43A/LEFUw=;
+ b=yCxulBPx293iMhoZV+mLoi+fq/AH8+tHNDLBwFVMn6E6UhqhkD30MdIhEOftKafe1+gSimyE5
+ xepKmUPCykeB7T9W26JQvqix9eJaJpzL+4fglwhO8G5xr614LscM4pD
+X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
+ pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
+X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
+ auth_id=474
+X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+Reply-To: cryolitia@uniontech.com
 
-Hi Alex,
+From: Cryolitia PukNgae <cryolitia@uniontech.com>
 
-not a full review yet, but a few ad-hoc comments from skimming over it.
+Applying the quirk of that, the lowest Playback mixer volume setting
+mutes the audio output, on more devices.
 
-On Fri Aug 22, 2025 at 2:47 PM CEST, Alexandre Courbot wrote:
-> +/// A device-mapped firmware with a set of (also device-mapped) pages ta=
-bles mapping the firmware
-> +/// to the start of their own address space.
-> +pub(crate) struct GspFirmware {
-> +    /// The GSP firmware inside a [`VVec`], device-mapped via a SG table=
-.
-> +    #[expect(unused)]
+Link: https://gitlab.freedesktop.org/pipewire/pipewire/-/merge_requests/2514
+Tested-by: Guoli An <anguoli@uniontech.com>
+Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+---
+ sound/usb/mixer_quirks.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Do we expect this to change? Otherwise, just prefix the field name with an
-underscore.
+diff --git a/sound/usb/mixer_quirks.c b/sound/usb/mixer_quirks.c
+index 7cc27ae5512f07d5318443a7e03c1da7943bfb7a..6b47b3145d2cfd84bbadbe9e2b3e4383ed6828b4 100644
+--- a/sound/usb/mixer_quirks.c
++++ b/sound/usb/mixer_quirks.c
+@@ -4609,9 +4609,11 @@ void snd_usb_mixer_fu_apply_quirk(struct usb_mixer_interface *mixer,
+ 			snd_dragonfly_quirk_db_scale(mixer, cval, kctl);
+ 		break;
+ 	/* lowest playback value is muted on some devices */
++	case USB_ID(0x0572, 0x1b09): /* Conexant Systems (Rockwell), Inc. */
+ 	case USB_ID(0x0d8c, 0x000c): /* C-Media */
+ 	case USB_ID(0x0d8c, 0x0014): /* C-Media */
+ 	case USB_ID(0x19f7, 0x0003): /* RODE NT-USB */
++	case USB_ID(0x2d99, 0x0026): /* HECATE G2 GAMING HEADSET */
+ 		if (strstr(kctl->id.name, "Playback"))
+ 			cval->min_mute = 1;
+ 		break;
 
-> +    fw: Pin<KBox<SGTable<Owned<VVec<u8>>>>>,
-> +    /// The level 2 page table, mapping [`Self::fw`] at its beginning.
-> +    #[expect(unused)]
-> +    lvl2: Pin<KBox<SGTable<Owned<VVec<u8>>>>>,
-> +    /// The level 1 page table, mapping [`Self::lvl2`] at its beginning.
-> +    #[expect(unused)]
-> +    lvl1: Pin<KBox<SGTable<Owned<VVec<u8>>>>>,
+---
+base-commit: 3957a5720157264dcc41415fbec7c51c4000fc2d
+change-id: 20250822-mixer-quirk-e074f7b7d373
 
-Instead of creating three allocations, just make struct GspFirmware pin_dat=
-a by
-itself. This should even propagate down to struct Gpu, which is pin_data.
+Best regards,
+-- 
+Cryolitia PukNgae <cryolitia@uniontech.com>
 
-So everything can be in one single allocation.
 
-> +    /// The level 0 page table, mapping [`Self::lvl1`] at its beginning.
-> +    lvl0: DmaObject,
-> +    /// Size in bytes of the firmware contained in [`Self::fw`].
-> +    #[expect(unused)]
-> +    pub size: usize,
-> +}
 
