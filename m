@@ -1,169 +1,145 @@
-Return-Path: <linux-kernel+bounces-781360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DA7B31192
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:20:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4560B31196
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D3F05C608A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:20:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 302565C5CDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBB32EBB9F;
-	Fri, 22 Aug 2025 08:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7802B2EAD10;
+	Fri, 22 Aug 2025 08:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="j6JP2Gcc"
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b="w4O+TQhc"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6963C26656D;
-	Fri, 22 Aug 2025 08:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248EF274B3D
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 08:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755850793; cv=none; b=R59TkpTyHoZqA5ntmsH3Qpd1bwi5+Ykhpovzp+GhflFZrWaD2+e0o8PZ7H1ww9+01jkkN2RNFkNLn9L0WAOONqEFuc42N5+2M+2UmLfGwZguwZqZckiey8Bat3UUzT1PQMK8cRigs9wk4v7YallqiA9idShLgJT9fEMUmMfce8Y=
+	t=1755850822; cv=none; b=VajZV5k/+aGYcDydJlPu2gFMIQG5FFFl/EfhUpuxtiRlFHmOwfAN4dXEH83a7beVnQ4Nq9pWQtWLD2fRGlojM45WRKWSpML9HRM9hJKzK5Qn4Q/vGPNrz8R9B8BaNnDWwFys9IPxQkN2tLyO8/0Do4L9KlVUi0WtmbEdgY1UeRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755850793; c=relaxed/simple;
-	bh=60ouIOMZNI4fWnOHSbMHCMjtcFdSJqT/Ab/afS1Y3Mw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:References:To:Cc:
-	 In-Reply-To:Content-Type; b=ZXyN+ubhp0EzMFsackww4xhJLrqpTht5z6C01IOnPVfz8QBskrUSmTsJM7V/z0JXusKr51qz4+VaVRxs41P72eBUsUqWtDig7ftjhxB0ohnLtDC0F685TAcSelfwsuF91RMYx9adMSxKjNkVB0JSo6G9VBRBpvjCs8/6BqmpmPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=j6JP2Gcc; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1755850760;
-	bh=W7YCuvCPw9irUhaTiH73c5zU7lbnLuDOyxSvUUqMIn4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To;
-	b=j6JP2GccDJteZxnoJt9uQbF0ew89mYn7uGfGLdsCKIa9Ga/e349GLYwEU0lG2SnVj
-	 cf80nbV/ESwbgtIOFrdjec6HKpNsry8D6z7Rp/csxKKpZapDPXfujCmiaduc4+SwW1
-	 nRBc/aGRl9FavqWIZjrXszaWBWe3vdE7X20HfRkY=
-X-QQ-mid: esmtpgz16t1755850751t6f1767cb
-X-QQ-Originating-IP: YQyxchHu0ua4Ds3I/SkKn4MXnSly7xSc9+Jbp9oLNbs=
-Received: from [198.18.0.1] ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 22 Aug 2025 16:18:53 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 18263725170358339871
-EX-QQ-RecipientCnt: 10
-Message-ID: <A6EC60FB84292EDF+4c8a74f7-6a65-47ee-bc0b-01ba77065ee8@uniontech.com>
-Date: Fri, 22 Aug 2025 16:18:53 +0800
+	s=arc-20240116; t=1755850822; c=relaxed/simple;
+	bh=SoqeEvRyDj9xNZRwO+49resqGUPxezysRjpX7ed1NkA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ui0gnCY2GacL5ecyVEkFnkWmZOfhPflm4KDLP8x7bFoBgbwOm308xs6/5gL0eGnKagfnQmmYI2YPIa/NLP79qQ0VV2arLTcTYVFN9Gx5a/E5rsGky0KRh8sE/+DHrOoprtPel2/20UxxZD+2YFHZJJjASRPyfNigJjResv73szw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com; spf=pass smtp.mailfrom=linbit.com; dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b=w4O+TQhc; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linbit.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61a94bd82a5so3394085a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 01:20:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linbit-com.20230601.gappssmtp.com; s=20230601; t=1755850818; x=1756455618; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JyWZRAhQvL3ZewOrTkNRPEBR9onjx67kcalcGvlZ+IA=;
+        b=w4O+TQhcQMl5lL+KvCdtNXNg7ROAM8lJ0sL0oGNYA3440gZcgxmps+YKW2o4KOZFYP
+         xdzZJQdMxnGDQTKI9TOlpJYRve6IQfTHiVVlc/0Q3/wTSI5fyUwyxFFjFdzW8LQcNQR1
+         8qP+sa9kXcp/ryvWWXtYmorldqBAK+6TDwkSZCHvrFPPYn05F7wniKTyvbPBkRHAAnjI
+         tDhgvnMFECJoiAhSSz1fxmxDFETbm5jXh85gw/OH+mVQ0OLqWgMVNHStWwiGlq+BLr5l
+         8MkeJcH16/DrJhYXKO3axP3UwNqedoiBbtUAo6bwUtI1L0e1kcN4sa6zZwxPl/pPPvWH
+         HR+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755850818; x=1756455618;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JyWZRAhQvL3ZewOrTkNRPEBR9onjx67kcalcGvlZ+IA=;
+        b=Ebxpu8+J6X08C7Vu5Kj40LuuRC04L12EdWMtZEtgPAxWcXUVJFIZOMHnf7iONvYNLU
+         SEXA8hHRd3fdx/aSt/U9A/jYowYQLQX6WZoUmp0ulo5xCfAQ9vRgFV40w4h9pL1/40jy
+         y6wREdmWRDxijnRBLnwf9EpwRw/trm8sRO1XZtlLBd+5IYm2ojCtQ+BmJliGD7kdZ2mA
+         pKrA3ywNLSEFHMQ8/GS/IlfxtXPwr5Hx3ZjRQam9TkpIO++Uk1s92f5SmYrD9JZzmmsZ
+         ZU/md8G4TvIQi8oSLGNgjGA2fEqEleP7XRCjwXl7sEuUy8pQH4BRlyoNnYDXkIFyqrSN
+         uQ2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWpROcBCTKFY1APHa2af4mls7jQdDahvttNcKzjUJNXTwrE1LBKTbSCx/z5oMdV5bIo7qMq+z9nYzzQeo0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZGdhTm/BVdT/XqSgvQYYdqXiiencH3nBzYQZw545SE90yosVP
+	HUZURW0C4KuW8mUdW2xC/15pSym/arKP01Bu7Mwe+Vf1pL++nWNv0MDiQbQquuZV8QE=
+X-Gm-Gg: ASbGncsVhxSWRuATXofjxMqDjrHUA9UKoMBGrelOqDQyGMXU/pjif9K71tu3LCDso81
+	RO+/ZMhx1QyUS3khoEysf/v51nJr1MQJ1FsIOtQWguvhgbYpVBJTup73CXye5o7818Dy3P8lkpK
+	hkAEBCzAo/QPdI2X97YLUT6dsZt0ESgQ/sIId8NOmiqmnfL0mE1OR8xiCgzVbInMRh9++jwzvXj
+	rdpdEEL1WUPLguT4bUL4C8Bwx5GkP1DpxwRhk+RPoGcmWha23QOAMAkqd5S5vVmqXoJjpBPQSb5
+	CrzVdYnZlniTY9p99hpk0wqeSuP/TmoUvKwrIrk+eLbLHhM7QJsOs8HyzZ4jV0yoLHVIGXo+P59
+	nXE/Iuu+oM17HYWh4NGnTz57p54pLcvrZXlHnOD/irAXbcG7RwyaxY4pn3765lo7ZWU1z6SAjLv
+	zGsYWdCw==
+X-Google-Smtp-Source: AGHT+IFlbHv8xDZAAC640GMgCDpBsfF6zlAzeggthwP5mZNndc9mGjlmfC4QW/vbdALXrNy2SS/1PA==
+X-Received: by 2002:a05:6402:5187:b0:61a:89aa:8d37 with SMTP id 4fb4d7f45d1cf-61c1b7134ccmr1679703a12.21.1755850818338;
+        Fri, 22 Aug 2025 01:20:18 -0700 (PDT)
+Received: from ryzen9.home (194-166-79-38.hdsl.highway.telekom.at. [194.166.79.38])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61a761f2599sm6538432a12.5.2025.08.22.01.20.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 01:20:17 -0700 (PDT)
+From: Philipp Reisner <philipp.reisner@linbit.com>
+To: Zhu Yanjun <yanjun.zhu@linux.dev>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Philipp Reisner <philipp.reisner@linbit.com>
+Subject: [PATCH V2] rdma_rxe: call comp_handler without holding cq->cq_lock
+Date: Fri, 22 Aug 2025 10:19:41 +0200
+Message-ID: <20250822081941.989520-1-philipp.reisner@linbit.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Zi Yao <liziyao@uniontech.com>
-Subject: [PATCH] PCI: Override PCIe bridge supported speeds for older Loongson
- 3C6000 series steppings
-References: <>
-Content-Language: en-US
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, loongarch@lists.linux.dev,
- =?UTF-8?B?6IGC6K+a?= <niecheng1@uniontech.com>,
- Jun Zhan <zhanjun@uniontech.com>, linux-kernel@vger.kernel.org,
- Lain Fearyncess Yang <fsf@live.com>, Mingcong Bai <baimingcong@aosc.io>,
- Ayden Meng <aydenmeng@yeah.net>, Guan Wentao <guanwentao@uniontech.com>
-In-Reply-To: <>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:uniontech.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: NbLMjDNEDlGtK6XyVh+w8Wy8MdGiMW/Z9wqOYiE/7jZ0zd/gS0FSJPI2
-	+UxcphMSOh2+xEKggFcgFQ9fYpAkDm2b0GO8wuRyx218By/M3CZS74NO0VnCtzK/fFhOEdq
-	3Z1lO0YWHC/fAJsaCZbklFxiIAA1zHFMgH7JzzLnoJ6FFQDdq6MGW4LQQCFPoamV+eXJFEY
-	N2WpP3fR7zqaoq9NnDbtmHgiUMFwUbKG2cJWEwF0leeFPqUwynmlWt0LbsJP9np7IZW9nl8
-	mDpA/O+WqGaClFj4OV5l4LfKH+6NNh6HdK5zPjd5P4lETERqWSxV0Rw+DRn5WeiuUa3ni4q
-	rK0dQJ+lSq2t6eY/BFA6YJUebpSKq5Xk6Gb5hxFjWG+6i3+acsFPdAwQcUqhumS25ibHXzt
-	7pUiT0niu/s9+7M/9DsJ9LB/mO1O142uvGOmp03lxh7GdSlOapMFDlp+9c8pUMq7cGZKn3D
-	/sLDBfY82dOI74kIH5hoxw0HWx80ejNHlnDxnimcylRbGwUTWymPpMO5rqdYHlWZKaqVpN+
-	qtXcaIyZQc2+J4brQDJXmfF27ukthztu4UsRCZPyRPPZJlzdwBIlFDQAeAOnjjwb9ptOwZi
-	gOP+RN5Yls+R/0NBYX1hnlwNK/DyyWHt7x2ibNn0OIGvY59e6E4se3e/985JCit9/EEo21v
-	Ga4Dn8uJfW/G+waJBu7lkJL6Y7AbAIpxcBq4U2zIH5OAjXXbrIZWm9jBZ598KXfjD8pPjRx
-	TGMOG0gSYCzEbOaMxxHqAqrDy89mzKOuxtDDliDSsAhXyklp+STQUpu2gweB/hVtu9DuPUB
-	/+La3t48Ljhwan23YGdESEWNQhWogTVrvrBkgtRYgCPl7tEopjlLhkepAjFKRNB5S2H0WdJ
-	6xd7J+8ZK3QuQXJlUOLxLsfPNZPeK9qufEHx+iuJ7yHFS0TCkHba/E+f+EBDyZGwiHe+VUT
-	4ktrmW13++2km2r+PuvbO5WXRsVrSlDE30hTO4h3NTX3/r/AEMGc90N3Pu2xMXzXLyYuqrm
-	l4U9aLoqynhYD0NpOjk/L2sDVEjMRD5wcHs3jZMlz+sSo2drEYDp9Ex91F2Zk=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
 
+Allow the comp_handler callback implementation to call ib_poll_cq().
+A call to ib_poll_cq() calls rxe_poll_cq() with the rdma_rxe driver.
+And rxe_poll_cq() locks cq->cq_lock. That leads to a spinlock deadlock.
 
-Older steppings of the Loongson 3C6000 series incorrectly report the
-supported link speeds on their PCIe bridges (device IDs 3c19, 3c29) as
-only 2.5 GT/s, despite the upstream bus supporting speeds from 2.5 GT/s
-up to 16 GT/s.
+The Mellanox and Intel drivers allow a comp_handler callback
+implementation to call ib_poll_cq().
 
-As a result, certain PCIe devices would be incorrectly probed as a Gen1-
-only, even if higher link speeds are supported, harming performance and
-prevents dynamic link speed functionality from being enabled in drivers
-such as amdgpu.
+Avoid the deadlock by calling the comp_handler callback without
+holding cq->cq_lock.
 
-Manually override the `supported_speeds` field for affected PCIe bridges
-with those found on the upstream bus to correctly reflect the supported
-link speeds.
+Changelog:
+v1: https://lore.kernel.org/all/20250806123921.633410-1-philipp.reisner@linbit.com/
+v1 -> v2:
+- Only reset cq->notify to 0 when invoking the comp_handler
+====================
 
-This patch is found from AOSC OS[1].
-
-Link: https://github.com/AOSC-Tracking/linux/pull/2 #1
-Tested-by: Lain Fearyncess Yang <fsf@live.com>
-Tested-by: Mingcong Bai <baimingcong@aosc.io>
-Tested-by: Ayden Meng <aydenmeng@yeah.net>
-Signed-off-by: Ayden Meng <aydenmeng@yeah.net>
-Signed-off-by: Zi Yao <liziyao@uniontech.com>
+Signed-off-by: Philipp Reisner <philipp.reisner@linbit.com>
+Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
 ---
-  drivers/pci/quirks.c | 24 ++++++++++++++++++++++++
-  1 file changed, 24 insertions(+)
+ drivers/infiniband/sw/rxe/rxe_cq.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 
-d97335a401930fe8204e7ca91a8474b6b02554c1..8d29b130f45854d2bff8c47e6529a41a3231221e 
-100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -1956,6 +1956,30 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 
-PCI_DEVICE_ID_INTEL_E7525_MCH,	quir
-   DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_HUAWEI, 0x1610, 
-PCI_CLASS_BRIDGE_PCI, 8, quirk_pcie_mch);
-  +/*
-+ * Older steppings of the Loongson 3C6000 series incorrectly report the
-+ * supported link speeds on their PCIe bridges (device IDs 3c19, 3c29) as
-+ * only 2.5 GT/s, despite the upstream bus supporting speeds from 2.5 GT/s
-+ * up to 16 GT/s.
-+ */
-+static void quirk_loongson_pci_bridge_supported_speeds(struct pci_dev 
-*pdev)
-+{
-+	switch (pdev->bus->max_bus_speed) {
-+	case PCIE_SPEED_16_0GT:
-+		pdev->supported_speeds |= PCI_EXP_LNKCAP2_SLS_16_0GB;
-+	case PCIE_SPEED_8_0GT:
-+		pdev->supported_speeds |= PCI_EXP_LNKCAP2_SLS_8_0GB;
-+	case PCIE_SPEED_5_0GT:
-+		pdev->supported_speeds |= PCI_EXP_LNKCAP2_SLS_5_0GB;
-+	case PCIE_SPEED_2_5GT:
-+		pdev->supported_speeds |= PCI_EXP_LNKCAP2_SLS_2_5GB;
-+	default:
-+		break;
-+	}
-+}
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_LOONGSON, 0x3c19, 
-quirk_loongson_secondary_bridge_supported_speeds);
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_LOONGSON, 0x3c29, 
-quirk_loongson_secondary_bridge_supported_speeds);
+diff --git a/drivers/infiniband/sw/rxe/rxe_cq.c b/drivers/infiniband/sw/rxe/rxe_cq.c
+index fffd144d509e..95652001665d 100644
+--- a/drivers/infiniband/sw/rxe/rxe_cq.c
++++ b/drivers/infiniband/sw/rxe/rxe_cq.c
+@@ -88,6 +88,7 @@ int rxe_cq_post(struct rxe_cq *cq, struct rxe_cqe *cqe, int solicited)
+ 	int full;
+ 	void *addr;
+ 	unsigned long flags;
++	bool invoke_handler = false;
+ 
+ 	spin_lock_irqsave(&cq->cq_lock, flags);
+ 
+@@ -113,11 +114,14 @@ int rxe_cq_post(struct rxe_cq *cq, struct rxe_cqe *cqe, int solicited)
+ 	if ((cq->notify & IB_CQ_NEXT_COMP) ||
+ 	    (cq->notify & IB_CQ_SOLICITED && solicited)) {
+ 		cq->notify = 0;
+-		cq->ibcq.comp_handler(&cq->ibcq, cq->ibcq.cq_context);
++		invoke_handler = true;
+ 	}
+ 
+ 	spin_unlock_irqrestore(&cq->cq_lock, flags);
+ 
++	if (invoke_handler)
++		cq->ibcq.comp_handler(&cq->ibcq, cq->ibcq.cq_context);
 +
-  /*
-   * HiSilicon KunPeng920 and KunPeng930 have devices appear as PCI but are
-   * actually on the AMBA bus. These fake PCI devices can support SVA via
-
----
-base-commit: 3957a5720157264dcc41415fbec7c51c4000fc2d
-change-id: 20250822-loongson-pci-0cca9e050843
-
-Best regards,
+ 	return 0;
+ }
+ 
 -- 
-Zi Yao <liziyao@uniontech.com>
-
+2.50.1
 
