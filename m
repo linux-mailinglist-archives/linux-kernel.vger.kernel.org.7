@@ -1,123 +1,113 @@
-Return-Path: <linux-kernel+bounces-782761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3390DB3250A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:26:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD4EB32512
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F58B189F056
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:26:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0872C4E187F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA602D739E;
-	Fri, 22 Aug 2025 22:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A9728A73A;
+	Fri, 22 Aug 2025 22:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ESv9/Sq+"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="s9je1zNh"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F303723505F;
-	Fri, 22 Aug 2025 22:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B399520B80D;
+	Fri, 22 Aug 2025 22:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755901566; cv=none; b=ll8GKTHdkT2EOyMDZMmrJOPjNEZi7ogMo5M96nXtwwIawNTtCzGXDgLroT2r5kELrvAttxcLJcZkUqlAvcbVIkTGtCPoLTG440GCvlOXI15CfQxu2bC0Wd+1/R1kNO4VfV51+nkykUyI9gnjMcO64us6TqLSd+cpbf+jzgK6Pjs=
+	t=1755902087; cv=none; b=F0IBRYAUF9/hNeNgvFkKOuOiGkdZxwA0ZoCSqdCKMqs5RzanAxtRfYqYJDVHx3IH8PBTdJwTCDIALpufNQGUh/e5ujfpTgryFUFvamFXmi3dgn0hpeg1Basdm0QWnuXwCVrK97sUyM37nVh3H25RPGHoXALqN2Wyl09lftbPRGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755901566; c=relaxed/simple;
-	bh=T5U3T59xMxutbqhRQ80mhcOf2qZtze/ckJ399JrRFoo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bBUYCSDWNZEp9dWPEuQTlh8oecNBXeYruI+Q+JM98NxSW1ZpMxZQPB26Idcq+A6YT6l4RzPDwT/kIvMZHiELyNwcP+HU6hUuvOlnUIH1RiAX7twXC/O6EGdWTzfgAOlmluNO3ymRQJw+3CGQuVfVpd+85A0vyp11iH/nZe365Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ESv9/Sq+; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b05d252so20308125e9.1;
-        Fri, 22 Aug 2025 15:26:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755901563; x=1756506363; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1yIf7UahS4pxZ1gqlZo5h06LoLmN0soC2fUAOI/fcBk=;
-        b=ESv9/Sq+HEn9fRM7+ndfKCD92JaMaMv6k8Wvgs8ImUho55+b9m817uK4t0otOkTYuh
-         1A9aHXpDjNohGHSYL0gkDd8EBUtuZcza75Mv254hgXd3hT5q8jk047+YJkr3uK49By4n
-         bq68LzooTl8IwBA/IVYvdCg3XJs5dHxcNUhJ0wZUdNhu5j7Jd54JtRcXkjdPZX1y/CHz
-         tL3S6wd0Zuu8V++7MBNRb0pT/k4ZnUvJJ2/kQDQowiIY9RCFdQCjt5J4fem8Qy1/BrrH
-         5jHVT7Vl7fkzYcvcHYMpCNW86TNSeMRUR4EUpU+RGw1P6y0/3RcxK/V+TWeljXujmmOk
-         jPyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755901563; x=1756506363;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1yIf7UahS4pxZ1gqlZo5h06LoLmN0soC2fUAOI/fcBk=;
-        b=LnyoenPowo/k/stBjvUx5GiJYkt07Hj6iOkbpBnbeINA5Zbv8yr4E5qwID2HvvA91I
-         8rYEUl1QuZldUnUUIItCcv62YUMoJYm518kU0Jc6KziqE6/0yssYRyGnlAf6dG15RmXa
-         6cM06MCumfscJDswnkZ11mcAYwC8XEwUSjO6GLw6qUMJG7iLDZy3aq+gzwwj7w3S6i2x
-         CeGLSQ+1dVg5E7EXVA9klZwF1OfaxfSJfORt1TClA6rzKWrrLryQQF4rsgqrE58NuPdR
-         NXG5xjur2FJrdvIx27IXIc/wKlLyTCLTVpulBtGDRXejAWlasE1rEcAOxykkJMR/fWOT
-         03dA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHXA8/EqzEa8ngRUr4rRqPrl3lkcTg5Zv78Weto1weMmrEWHCRCoh3ShF3ACdHlfcItZwn2vYu0vLy@vger.kernel.org, AJvYcCWHSw3lzFgFjHif9AWu/Ov5eka/ffHlWQrQ9LYdrJ30oVc5e2WmFVj+MMlYY4fnQ+R5rUi8AN4AOS9tGqS7@vger.kernel.org, AJvYcCWjxlr2T0bKs+Zu31UqxwmnY/BgatynUX6gLuRNiocvdWXcjpoEVjMPTHpNR5wxtk6p/5AbWXxVeJVNxw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq4hTNpL4Ku+ZRnN4CXrGajK+RcBg2Mx87V7efj0Md7Nebr/iS
-	iQ9P5Syj4c57BW/Mje/5I7rxh52yNQzkC0dasMmBztekGhQiQXKCHsQ=
-X-Gm-Gg: ASbGnct3Je/iIqct+Y0ONeamDfO56oGmWQMD42Mw+UpWJtjCfRy++wL3OpfqcbkxQbp
-	V5Xseijqz+XXWFCB7ECHiHT4dHOW9UC9Fmvea52tSqlO4d84nBSH2Z8UcbCn5XxzArgZ5otz3xr
-	7mZWY4U4JwCsvupcsIAupNkdWG6NbSwpkJNZ71SBU3r9VkZRaLSZDcMjZogI81j6/BkE2EeoKD2
-	hkVZT3IAomS7+QmO5c/XCJ7mZoFOTTdtg/q9eJGpodKEAtJSw7bFBbYZGkGa8WQnySd/dTu8xiK
-	LoXG5ZmsuJg0RwkvV07g4ez/oPrmcI+uvd1kmXgFvJfaz02jYThKGFkf0YlZbISeZ3RdqUG51+X
-	FORlBFQKzEbMxsx7aZCJLRNGQIAkt0mRuTiL2pYpa2NzuyQ==
-X-Google-Smtp-Source: AGHT+IEJMybfO8956xjyYvUhaELGFJCgGASiKmKJ7a5pJizulPbRSnIF/KoBKRBTVTDjZPCdLYkenA==
-X-Received: by 2002:a05:600c:4715:b0:458:aed1:f82c with SMTP id 5b1f17b1804b1-45b517d3b30mr34477415e9.22.1755901563145;
-        Fri, 22 Aug 2025 15:26:03 -0700 (PDT)
-Received: from localhost.localdomain ([2a0d:e487:58f:6d42:4e65:e74f:bc8e:3791])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4e8f4552sm41226025e9.8.2025.08.22.15.26.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 15:26:02 -0700 (PDT)
-From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-To: tony@atomide.com
-Cc: krzk+dt@kernel.org,
-	robh@kernel.org,
-	conor+dt@kernel.org,
-	linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	jihed.chaibi.dev@gmail.com
-Subject: [PATCH] ARM: dts: ti: omap: am335x-baltos: Fix ti,en-ck32k-xtal property in DTS to use correct boolean syntax
-Date: Sat, 23 Aug 2025 00:25:30 +0200
-Message-Id: <20250822222530.113520-1-jihed.chaibi.dev@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1755902087; c=relaxed/simple;
+	bh=QI2/E/bFFxEqQoEs1yOnb71CU1HNTGZ/wOCYxlTlpEY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DFwxUbKWx7Di/vqigqq7VfozT1LhVjnMcRXJLv5BHsfEI+G0m/u3o0cuEKTFE2fww/zzJcfZ2AqRrvP+FWfM1k7FX/dg99/68oyu+bwkWYxsu8PBgWA4tohKhM8FCNmVpm6jzDACyO8oXqH0fLlXTMMKkzc+jVNPUbDHOydX++s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=s9je1zNh; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net D41D140ADA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1755902079; bh=t8rPWkDB3SHf2JcvGH2JzmaQJM58cY0fUG8mM4lekc0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=s9je1zNhN/lu7OKtuQZpTfU1eYoZn9c+URZwl0YOS8CqhUUbcYa00wihJDmRUWG/E
+	 Cr7FGztnRkYfLKPaD5k5Guyju69tOUH68nA7GMOUmN0a9W8UvyDWk1IJOsaYhQbm9Q
+	 4+lPjKjDTdm8MjGx/jBfm8/5prYqLvLPbwR8wowHqNRJHw2GxjQXZLirUayUByCyBN
+	 S/YtOFFIcRmBnVnpRh9tgkQNvKVyRIDN9fCi+It0irHFkGj2Bsll+BocLtGGmTjmcf
+	 MYDYT5HzH83Wz/lA5yNGO4RDr/SQcOsrf3+eJD6fa2/1WYBhqz7DyUH+Hz2fh1khAS
+	 QhJi1UkFd6LSw==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id D41D140ADA;
+	Fri, 22 Aug 2025 22:34:38 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Akira Yokosawa
+ <akiyks@gmail.com>
+Cc: mchehab+huawei@kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 07/14] docs: conf.py: extra cleanups and fixes
+In-Reply-To: <fa7rreuvodpe673lwcwlj6kddkpnmkoxlz4y5mythgntkmveey@m5fqvtsuel6l>
+References: <08d16c2ad817910eb5606842f776d3f77d83282f.1755763127.git.mchehab+huawei@kernel.org>
+ <f5d4804c-9a51-443a-a73e-d9c043673cbc@gmail.com>
+ <fa7rreuvodpe673lwcwlj6kddkpnmkoxlz4y5mythgntkmveey@m5fqvtsuel6l>
+Date: Fri, 22 Aug 2025 16:34:38 -0600
+Message-ID: <87sehjdlz5.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The ti,en-ck32k-xtal property, defined as a boolean in the Device Tree
-schema, was incorrectly assigned a value (<1>) in the DTS file, causing
-a validation error: "size (4) error for type flag". The driver uses
-of_property_read_bool(), expecting a boolean. Remove the value to fix
-the dtbs_check error.
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> On Fri, Aug 22, 2025 at 09:01:03PM +0900, Akira Yokosawa wrote:
 
-Fixes: 262178b6b8e5
-Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
----
- arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> > 3) I got a corner case on one of the distros was using xindy to produce
+>> >    indexes. This ended causing the build logic to incorretly try to use
+>> >    T1 fontenc, which is not UTF-8 compatible.
+>> > 
+>> >    This patch adds:
+>> > 
+>> >         \PassOptionsToPackage{xindy}{language=english,codepage=utf8,noautomatic}
+>> > 
+>> >    to cover such case. It should be noticed that, as the config doesn't
+>> >    have \usepackage{xindy}, this will be used only if latexmk ends
+>> >    using xindy.
+>> 
+>> But I can't see how this macro (executed by XeTeX engine) would have any
+>> effect on xindy (command) invoked from latexmk.
+>> 
+>> Can you elaborate on your theory of how it works?
+>> And which distro runs xindy?
+>
+> I can't remember on what distro I saw the issue, but I got it during
+> my builds, where, instead of running makeindex, it tried to run xindy,
+> with failed because of utf-8 fonts.
+>
+> My theory is that, on one of the ditros, there is a /etc/latexmk
+> or similar containing instructions to use xindy instead of makeindex.
+>
+> In any case, this rule is harmless on setups that use makeindex:
+> it only affect setups where there is a latexmk or .latexmk file
+> setting xindy as the default index builder: if this is used, 
+> xindy will use utf-8 fonts instead of Type 1.
 
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi b/arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi
-index ae2e8dffb..ea47f9960 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi
-+++ b/arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi
-@@ -269,7 +269,7 @@ &tps {
- 	vcc7-supply = <&vbat>;
- 	vccio-supply = <&vbat>;
- 
--	ti,en-ck32k-xtal = <1>;
-+	ti,en-ck32k-xtal;
- 
- 	regulators {
- 		vrtc_reg: regulator@0 {
--- 
-2.39.5
+Can we try to get a handle on that and, if it's truly needed, document
+why?  I will confess that I'm confused by it:
 
+> \PassOptionsToPackage{xindy}{language=english,codepage=utf8,noautomatic}
+
+As I understand it, the arguments are {options}{package}, right?  so I'm
+not sure how this would work...?
+
+Thanks,
+
+jon  (who will be traveling and slow to respond for a bit)
 
