@@ -1,393 +1,189 @@
-Return-Path: <linux-kernel+bounces-781610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A17B31465
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:57:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A199AB3145F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1E99B629CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:55:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AC9616F2CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3457B2F9992;
-	Fri, 22 Aug 2025 09:50:19 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B012EDD7B
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755856215; cv=none; b=sWpZEzgKo9wNRycKtt8HA+aMtlVOzlGSckKWnA6f0mzEUaiMqEdq7RZHplHlrK4U7zAqzk8jc8CJFSSG92b3foB7TyZhoAC66uEK+2kOc5mZIUrXUubMr6pkx5a8MSmKZFJrQ+geaOw096GWOz+qRpd8Njbhq/quWk+iemc/pV4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755856215; c=relaxed/simple;
-	bh=WADXS2VKRWUWLiX4h3IhYErm/PVZi0VVdVGNoxqerdQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X7npJ6bsSLLlA7ejyTsjRpLCz+Y03obncVVw8bL8nMTn95bq/Mj+Dk1GvqGQRvCqJn0QDjaB6F2xzlih+5Ff0RBSO5WddzRQ18LjE1gIp6ytMiCN82rEGjY59nok5EYV83vSKDkvQSq86W+tiLsIQvpmuPywCcj+eS96fQr2oL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.89])
-	by gateway (Coremail) with SMTP id _____8Dxfb84PahoJe4BAA--.2594S3;
-	Fri, 22 Aug 2025 17:49:44 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.89])
-	by front1 (Coremail) with SMTP id qMiowJAxfcEsPahoGeVfAA--.44506S5;
-	Fri, 22 Aug 2025 17:49:42 +0800 (CST)
-From: Binbin Zhou <zhoubinbin@loongson.cn>
-To: Binbin Zhou <zhoubb.aaron@gmail.com>,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Lee Jones <lee@kernel.org>,
-	Corey Minyard <minyard@acm.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	openipmi-developer@lists.sourceforge.net,
-	jeffbai@aosc.io,
-	kexybiscuit@aosc.io,
-	wangyao@lemote.com,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Chong Qiao <qiaochong@loongson.cn>,
-	Corey Minyard <corey@minyard.net>
-Subject: [PATCH v10 3/3] ipmi: Add Loongson-2K BMC support
-Date: Fri, 22 Aug 2025 17:49:25 +0800
-Message-ID: <d2d63d4a6d07eb84e5bb5414a427fb333333eeb6.1755853480.git.zhoubinbin@loongson.cn>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1755853480.git.zhoubinbin@loongson.cn>
-References: <cover.1755853480.git.zhoubinbin@loongson.cn>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871812F3619;
+	Fri, 22 Aug 2025 09:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="f9UXWdFr"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012056.outbound.protection.outlook.com [52.101.126.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B58A2ED15F;
+	Fri, 22 Aug 2025 09:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755856202; cv=fail; b=RgCNYOLgOR2pS8ccI+XAqMmQfb1+N1g7UigKrkdx36noWC32KpoD7xOQlxxQDrJiHHicACKoT7C8KVHd8yn4tGg/iasoSlikxkC3wy1pKiqpaAxRxcmSt7JzKN1YqC3qM+zrKgg9Q79+97rAlAfgj86nhPjbawoaXGDtcCfwyG0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755856202; c=relaxed/simple;
+	bh=9VtrnhNnul4ySK/PXUEtIcEV+n4F0KocxsdtBwmprvA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=gS0m8CFX8MHI6anzuDVoDAmZujo0gnm5WjRvtPgxqig3g+0Tyo4tBbsClZHiOL5u46rDHpqjhSzVM5Qwj81beWHE039ZKBw6WJllaYmhWLwaRXo27cWC6vFQd4IyNJvKVhwecVJN01JlJxlCQV5KikcHilS9x+juFwF/qM/ZNNA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=f9UXWdFr; arc=fail smtp.client-ip=52.101.126.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LTlrdjE5Q84Dw5iq5gtTfOwfkmQlqemFt51rTP9orcmMJFcCHgxZRKyMRVgb34+DQq7eaDdInRZsEyV46wNpLkGCldshRUMOUEfG9XvX0jx9JsTMlAmYYpywF9ZFv2BoxCrKJwdskKUBwOSYvqk0kL2/iZ0nW7fPD9ProkCXOiyRo9xdbS3AVYw3DPw3fxUD9jYyS/PAZmD6qIJpg6oIE3GZTfGQk9FqHQiLT3vaBs4DGE3TQ+Tva4HXOPj06Oxglk2F4c1WqQNxL4G4tbuz6zeGz9qpfgV/3TtRoP+g7suDL+RHPDfjmsJShsgc+8R4zQ5jiqxh6YoRngU5ALDoMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9VtrnhNnul4ySK/PXUEtIcEV+n4F0KocxsdtBwmprvA=;
+ b=bNCjZcQzUBq0RZwTqGuBaBNEKklMABbPuVhQlqjvryKsJ87QFqTegikzT28hgBB9/ZkUdkoo/F/7H9krv1IeMU2IStfcDDxRAKkoT5eKOE1zZLU5EJDvH0Qb3L9aTA5Yu/frHieCKwSVj5hghK7QGGFtk0k8Mqd+c016BWnHrt7I/Gp94OF9D92viV3FVeb5p2oMHwJ8a+R4TEY+jkLqUdw5cfZSs9g2HZhUaxmqM/9gpAbJTuBYC2Zkoe3olakKpBOsm/y/Ng+a8iv+tI85sr3cX5l19b99iHbnh4ucdt8KQGjUZlLuyZyybOpS0xZyGPh65YnzUEA+RPF4birWZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9VtrnhNnul4ySK/PXUEtIcEV+n4F0KocxsdtBwmprvA=;
+ b=f9UXWdFr6G11Ca9/CgxPPXGUegmNFRk8NkwKHpaFD3Q41Xe0lRVrKTvlzgMYs2qnPR9td9Em2dDKFxplaBgByZRc11m7eoJ0SPLsy4HGcuTiiAKcop3KCvOk8S6A2dUzZc3jEKxUPQIPcF/pTse9Gvw1t1iCOfKVpfLHwAPd2JSz3ldiOwXhgeJxHhXaxAXejfrcoulfuz0DPvWCtB2kXRSoWRcB8EU4QKd2939OQumpJ/32d+Pib3a1e9gneg4H4J9GXwJLTRjhApdT7EUOgdP9ObOn2qEQFI8DcNwxoFUKZlmQGzVWPeiJ9+78rDwzklZxB0eoY9wLZxSchXALsg==
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
+ by KL1PR06MB6687.apcprd06.prod.outlook.com (2603:1096:820:fd::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.17; Fri, 22 Aug
+ 2025 09:49:45 +0000
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9052.014; Fri, 22 Aug 2025
+ 09:49:44 +0000
+From: =?utf-8?B?6LW16KW/6LaF?= <zhao.xichao@vivo.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] usb: phy: twl6030: Fix incorrect type for ret
+Thread-Topic: [PATCH] usb: phy: twl6030: Fix incorrect type for ret
+Thread-Index: AQHcEzy+Jmsrfz0DeUOP/iAQSewg37RuW7aAgAAR/QA=
+Date: Fri, 22 Aug 2025 09:49:44 +0000
+Message-ID: <07068f88-7daa-4951-b680-945f36169867@vivo.com>
+References: <20250822081403.12932-1-zhao.xichao@vivo.com>
+ <2025082212-monorail-impromptu-ec1b@gregkh>
+In-Reply-To: <2025082212-monorail-impromptu-ec1b@gregkh>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: KL1PR06MB6020:EE_|KL1PR06MB6687:EE_
+x-ms-office365-filtering-correlation-id: 0c9c3159-fa50-4c7a-06ca-08dde1613972
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|42112799006|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?Tm5PMGNmSis4Q2hURm9DYWxOVCt4dzJwa3NjUTlHRkJoWURWYmxGVzVTYitG?=
+ =?utf-8?B?VkFJNDBLQVBsSGhETVN2L2llcGQyWVl3MnJBSVkyZW9ObDE5T3RFaHlKN3ZN?=
+ =?utf-8?B?QTRjVzQ2Q0MzaWlXUmgwWGNYSG9SSVpjcmdBZ0ErMmdDNWkyVmEvZmpkSUtI?=
+ =?utf-8?B?UldJOWo3MzhFUm8yc1VjNkNsQmE2NzZzVEVnNmtLWi95ajIrTUlCTDB2eU5U?=
+ =?utf-8?B?alRoMktxWkFsVXZLVTF6VVUzUmo4ak8rWTNZSkxBWVZmUjdEUmlqWC91Q1Rx?=
+ =?utf-8?B?UFlneXpwbmRWRGhhbUdiM0k4M0hQRXZWYS9aNjJqLy9TWjNRN3lPUXhjWGx6?=
+ =?utf-8?B?V0tvL1FabzJEamlKbEk3b3k2QXhXRG5PVFVJZW5KK210ODQ2U2cveHMrVGJp?=
+ =?utf-8?B?NnNZWCtlejlTd0Q2UTNIZVE1aE5FQkVoSnZjYnRLNC9LMVpGNC9kQlBPOGgx?=
+ =?utf-8?B?UXd6cUYvRXNjMVFBVkQyYWorY25aR1l3Vy9RdmpWckxmWkw1UFFnbEVwMHBE?=
+ =?utf-8?B?aFpPTjNvYVA3eUludlppZkkzN0xDMWRwaVU4elRaZnRFNnZBbk1Gdk1ZRjFY?=
+ =?utf-8?B?Yit2cU9xMXBreUFtQ0VYb09wZmhZVUExWHh4S29pek5DeGprcWtpcVNHQ2Qz?=
+ =?utf-8?B?UmZudmZSblBpZmFXR05zL3l4VjlMSjIrR2xCSC8yZVp4NFFDeVlVVnQzWmxP?=
+ =?utf-8?B?SlpoVm80eXZSNFMyWDhuTFJTS2djaHU0Zit2M01LcUZPOFNsZU5Hc00vZ0pn?=
+ =?utf-8?B?VlhPU1pjL1l4djZKbHRXQVUzOUJnNVJzRVZad04rRUtmRGtPV002YXVxai82?=
+ =?utf-8?B?YlhRVGpVQ3oraUJBdC9qQmwydVZPOWJvbHlCYTQ0TEhxSFBoYkxZWEhGN2da?=
+ =?utf-8?B?aHlnTmcxV3ZyVUZmUk5zVEVIcVlMWFU0VEZSYVRhWnMwK1ZqQTdUSnF6NkJ4?=
+ =?utf-8?B?NVAxZjN5TzAvUG5temY1azRNRHQ2Vy9ORTBtS0VOSkFldUdJT1Q0RjlDc0ZW?=
+ =?utf-8?B?U2dFbEhXSmN6QUhrTFN2Q2RTdGRkVXZta0lKZGlPR011dS9mQklsVXlxT3dU?=
+ =?utf-8?B?K3pCYjY3TFpubytkN0NTWlhQUDE4QkJFYkRUYStwSFlFbWlMMHJ6cUpGRERE?=
+ =?utf-8?B?RFdhZzcza2hrUTgveFkvRWNDeVlZd3pmdzZKeUZNMkpJS0RQMk5oY24xSkQv?=
+ =?utf-8?B?aXVmNHRwZXVFVWhMd0ZUSzBNQm5qNE5TTFYvcFVnRk9hanRSeVhhd2VYWlA2?=
+ =?utf-8?B?VkRjT2ZhWWRQY1VuM1FTcFpObG16RVNqaHZNcjlMaExVYURsSGNFS2F1bzNK?=
+ =?utf-8?B?a2hBdS9SeFE3Y0VJeXdpQ3NMNE5ETkJaaU55V3A5UnM5QlU3OG15Y1pyMmNP?=
+ =?utf-8?B?YmcxSUpqcHduRWVsazdrRjgzbHMrbm8rQ2ZjeGl1cDU3djJCdnlmWHBsN0tz?=
+ =?utf-8?B?ZFR5T1U4YktYWTNpc0htcWZ0TUJHdTFGVVBhbzBVeXl6bDFETzRhSTJlMzFV?=
+ =?utf-8?B?cFdpSEkrVzF3WkxHTUhaeHJmTS92Nk0yQk8zSno1eXluUzNBWk8wb3BSQ0xj?=
+ =?utf-8?B?eHd5UlNUaHk5M3B4bkFqZ0NjcDRUVkZ4UnU5RUM3aklGcGs3ajJyaGFpVzRC?=
+ =?utf-8?B?TUNZZFhSN0ZjdWN4Y3JwWWlPK0loOEMvdFU4cDMwVXE5T3FYNTNOckZ1MGlW?=
+ =?utf-8?B?QXR6aWppcytTWVZ4YU5EWitiQW04d0l4OUxDQ2w4ekxocEl3b1lPcCtiVjI3?=
+ =?utf-8?B?ZkFVWkZaek5wVm1yWTU4anNoRVFDNnlaU2RuQTBmUFNwaHMyVFFRWjJ3cTZC?=
+ =?utf-8?B?UjhnZE9tdzBMZzNTd09DcDlzbldBMnhhOXZyemttMGNYWnkvRDR1RXNLdlFD?=
+ =?utf-8?B?S1p5dmZzazNYVnpvNjZNOUgwZ1VnNnJIWnlFakxmRFg3eWxrR2VnMVpPejN5?=
+ =?utf-8?B?eFZYaVJTaUh4Tko1RjR5cldQd2htaDZkNUdOU3NHNnpMRVZFeEp1V2xkUkg3?=
+ =?utf-8?B?K3o1Q09QdjBBPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(42112799006)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?V3QybVFmUTRzejVWdzdHWFlMbEtPcmdnYUtkR29tWEpPZUVuNlhkaStoQ250?=
+ =?utf-8?B?T2l3S0hadmZEWE94dkdjYXRDN2ZzMnBNeWJVWUtFeG41azJaQzk3V2VHZWZl?=
+ =?utf-8?B?akM5M09QOFgrWlVSdm9XVDZxVWVBWWdPUFlYemZXcUd0LzJQTTRCcTUzRFoz?=
+ =?utf-8?B?ZTVSYmVuL0pjVnNPc2lRZVAzTjUxV2FJYUJZUE1JTjZqR0Y5SEMwQkFJNmQ0?=
+ =?utf-8?B?MmVUdjJpZHB3QjBFSHpjdXpicjBLUHVFeWNtNElaQmNIRmNBZnFUNjlLUXFw?=
+ =?utf-8?B?eStLWUdjRVYwS2tmQ0s2a1ZaeHFEVGZwWlVlaVdvTjMwb25GN3krOSt5V0Za?=
+ =?utf-8?B?L0lmcERERWtQM3dkOEtsaFFiQ1gzZHY0SmxmTFVPWStWbHh1M0Y4UXJhTU9q?=
+ =?utf-8?B?QjhvNUZhL2laR0dsU2V1Z2c0OVpjbzZlM0V3TURJZndVamRkZUlMSlc0YmVm?=
+ =?utf-8?B?T1IvSmZlemJYZVoxRlhEOXV0U1NqN3BmdEJ4TVlKRDc0L1J3aDkvT1BnYzJG?=
+ =?utf-8?B?MmtLVlkyeUpGbUg3WnZGWmlWMWpKWVdlWlhzVVJWMWYwU1lzR2JZZU1XeGZy?=
+ =?utf-8?B?QkVBSGFteFRTeDlvdjcxKzlqT0wyVTZ2WTFWQ2lBWk43ZmhRZmp1Nm5FV0VD?=
+ =?utf-8?B?WTFEZSsrTTVZYlpNSkNvbXU1NkZ0TDhWdlJzMGgzdXNnamg2YUpvM2tsbFJD?=
+ =?utf-8?B?eE55MjZra3NFeDdWYXZ5UVByektqb0Z4Wk9vVzZWeDBJZXJoTzNhZnowYVYr?=
+ =?utf-8?B?dHpqSmNuYW5TR1lYV2tEU0tKbXBSbU1yRUhyQjg0bEcvVU9EU3hscXZMblpF?=
+ =?utf-8?B?ZmVJT25MR2hHK3kvWVd4YitlQmllU1MrYTVGaVpsRXVldldjSEFtQ2czdmF5?=
+ =?utf-8?B?SjdENDdtclAwL0ZvOFdJa0VrOW8rdFE1bE1SSWhEdlBQZ3A1ZjlST01qNzNH?=
+ =?utf-8?B?TTJ4THMzV29OY3RiQUQ1QWJwNThyMEoyYTlUdjIxc1BIaEYzZ3REcmVDVEk1?=
+ =?utf-8?B?S2d6OStoNWRqanBFQVhmamdqaTNoWWlJeTFJV3dCU0NRcHFyblRJZ1dWVmIx?=
+ =?utf-8?B?TGxrVkhzQnpoZXZPRjN1TjVHZFBFeEtGSkNhaS93eEN4enhxS0kxUXFvY2Zp?=
+ =?utf-8?B?dG9waUpSRjRoVG5FZFNOWVBjMDhIc3JpYzk5b1BPZ0loQ1FtSHdvbU1yYVE3?=
+ =?utf-8?B?NjFDYjgwcXZmQUpta2djUEhMamdsWFNQbFMyRk01WGxLOVV6YzZ2cjdWWFVt?=
+ =?utf-8?B?U1hOTmhYb3M2eTFGQzJsellKdDJMM2M2ZkRFZHJDMlMwblB0eVhDSEl3Wk95?=
+ =?utf-8?B?akFQN1FJRmREOE9xUWxYaG5iWHphemFDaHJZMi9LRzVXNS9JZFhmTXd0YmR4?=
+ =?utf-8?B?NTBhRDhlMTRCcU9ZbEoxTlZrdU9oMFdVbmtRMTJLVGphTm93SmhLL2lPdzlr?=
+ =?utf-8?B?T0l5NCsvVlVoTHN1Vk1SWU1EeHg5RGVEU3BtcWZPbER3L21vcDBGaVkyUExR?=
+ =?utf-8?B?NEtGVVkzdDlETy8wQmJXdmMxa3NsZ1pWV1k5a0JiRWNoWkJCYnF2Q3JEWW8y?=
+ =?utf-8?B?TWExRWp3TXh3NjBLcnRMQm9GaEQ0ZUhMYnNkbUVNVzdLWk85ZzYzYWVqVXRG?=
+ =?utf-8?B?azRyeFFRdkZQa2owZ3RRdjdlMFFHbElzckpocDlMYU5TdGY3Y2Qvd3g3UmNu?=
+ =?utf-8?B?TDJZanNRZFFHRVF1L0hQbDRJUk9uQmtPTmVia0N4elNPTlV1VU5SalpheFdN?=
+ =?utf-8?B?azhLZDh0WnBCcG12S3VWS3pLRnYzcVFKM1F4N1hCTHlwTk9nOVVsUEpsNTJt?=
+ =?utf-8?B?amxMSjNRUHJqdmNOMXU2c2h1RDA3Zy9BdnR6dWZXLzhhTWsxOHJvRzdvVlg5?=
+ =?utf-8?B?MWVibklJRHc5aGdVcFVxRkJrbVd3bjlZTCtFRFllbU9MWGVaK0JISktnNUJY?=
+ =?utf-8?B?eGN4U052dDcxNmpQNFJkYlduc1hCUDBPQVQ1c3JDMnpBbDh6OWtCeEgvSlhO?=
+ =?utf-8?B?UkphYmtNWFg3QmhmS2R1U2RieEdnTHRlRFoxQXZWWGRhVnJWTlc2cUxHeWJ5?=
+ =?utf-8?B?WUtpQnJQdG1LcFM5TkJnQjJVTENRZC9LTEZOcy8zcWpYVlhrOHo4S1VhL1h0?=
+ =?utf-8?Q?yuco=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D72E927FC81B3D4284769D9EEE8D8974@apcprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxfcEsPahoGeVfAA--.44506S5
-X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW3Ar17WF17Gr17GFW5Gw18CrX_yoWfur47pa
-	1aya43Cr48tF47K397ZryDWFyrAwnrWa4rtF47W34ruFWj934vgr1vya4fAry7tFy0qrW3
-	JrZ8ArW3WF13JwcCm3ZEXasCq-sJn29KB7ZKAUJUUUUf529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWrXVW3
-	AwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
-	8JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4
-	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
-	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0XdjtUUUUU==
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c9c3159-fa50-4c7a-06ca-08dde1613972
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2025 09:49:44.8050
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: nhPIsPIL1dTTjg1Vz/5pD+DQnLtsTViGdRtG91MnolwQdS4w4ez3RTOzcU8YF/jTJ3kaURBRemOeCFAETy7M3g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6687
 
-This patch adds Loongson-2K BMC IPMI support.
-
-According to the existing design, we use software simulation to
-implement the KCS interface registers: Stauts/Command/Data_Out/Data_In.
-
-Also since both host side and BMC side read and write kcs status, fifo flag
-is used to ensure data consistency.
-
-The single KCS message block is as follows:
-
-+-------------------------------------------------------------------------+
-|FIFO flags| KCS register data | CMD data | KCS version | WR REQ | WR ACK |
-+-------------------------------------------------------------------------+
-
-Co-developed-by: Chong Qiao <qiaochong@loongson.cn>
-Signed-off-by: Chong Qiao <qiaochong@loongson.cn>
-Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
-Acked-by: Corey Minyard <corey@minyard.net>
-Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
----
- MAINTAINERS                      |   1 +
- drivers/char/ipmi/Kconfig        |   7 ++
- drivers/char/ipmi/Makefile       |   1 +
- drivers/char/ipmi/ipmi_si.h      |   7 ++
- drivers/char/ipmi/ipmi_si_intf.c |   4 +
- drivers/char/ipmi/ipmi_si_ls2k.c | 189 +++++++++++++++++++++++++++++++
- 6 files changed, 209 insertions(+)
- create mode 100644 drivers/char/ipmi/ipmi_si_ls2k.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 48783add7a8b..560b76d00a30 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14412,6 +14412,7 @@ LOONGSON-2K Board Management Controller (BMC) DRIVER
- M:	Binbin Zhou <zhoubinbin@loongson.cn>
- M:	Chong Qiao <qiaochong@loongson.cn>
- S:	Maintained
-+F:	drivers/char/ipmi/ipmi_si_ls2k.c
- F:	drivers/mfd/ls2k-bmc-core.c
- 
- LOONGSON EDAC DRIVER
-diff --git a/drivers/char/ipmi/Kconfig b/drivers/char/ipmi/Kconfig
-index f4adc6feb3b2..92bed266d07c 100644
---- a/drivers/char/ipmi/Kconfig
-+++ b/drivers/char/ipmi/Kconfig
-@@ -84,6 +84,13 @@ config IPMI_IPMB
- 	  bus, and it also supports direct messaging on the bus using
- 	  IPMB direct messages.  This module requires I2C support.
- 
-+config IPMI_LS2K
-+	bool 'Loongson-2K IPMI interface'
-+	depends on LOONGARCH
-+	select MFD_LS2K_BMC_CORE
-+	help
-+	  Provides a driver for Loongson-2K IPMI interfaces.
-+
- config IPMI_POWERNV
- 	depends on PPC_POWERNV
- 	tristate 'POWERNV (OPAL firmware) IPMI interface'
-diff --git a/drivers/char/ipmi/Makefile b/drivers/char/ipmi/Makefile
-index e0944547c9d0..4ea450a82242 100644
---- a/drivers/char/ipmi/Makefile
-+++ b/drivers/char/ipmi/Makefile
-@@ -8,6 +8,7 @@ ipmi_si-y := ipmi_si_intf.o ipmi_kcs_sm.o ipmi_smic_sm.o ipmi_bt_sm.o \
- 	ipmi_si_mem_io.o
- ipmi_si-$(CONFIG_HAS_IOPORT) += ipmi_si_port_io.o
- ipmi_si-$(CONFIG_PCI) += ipmi_si_pci.o
-+ipmi_si-$(CONFIG_IPMI_LS2K) += ipmi_si_ls2k.o
- ipmi_si-$(CONFIG_PARISC) += ipmi_si_parisc.o
- 
- obj-$(CONFIG_IPMI_HANDLER) += ipmi_msghandler.o
-diff --git a/drivers/char/ipmi/ipmi_si.h b/drivers/char/ipmi/ipmi_si.h
-index 508c3fd45877..687835b53da5 100644
---- a/drivers/char/ipmi/ipmi_si.h
-+++ b/drivers/char/ipmi/ipmi_si.h
-@@ -101,6 +101,13 @@ void ipmi_si_pci_shutdown(void);
- static inline void ipmi_si_pci_init(void) { }
- static inline void ipmi_si_pci_shutdown(void) { }
- #endif
-+#ifdef CONFIG_IPMI_LS2K
-+void ipmi_si_ls2k_init(void);
-+void ipmi_si_ls2k_shutdown(void);
-+#else
-+static inline void ipmi_si_ls2k_init(void) { }
-+static inline void ipmi_si_ls2k_shutdown(void) { }
-+#endif
- #ifdef CONFIG_PARISC
- void ipmi_si_parisc_init(void);
- void ipmi_si_parisc_shutdown(void);
-diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-index 8b5524069c15..cc7033e7f550 100644
---- a/drivers/char/ipmi/ipmi_si_intf.c
-+++ b/drivers/char/ipmi/ipmi_si_intf.c
-@@ -2120,6 +2120,8 @@ static int __init init_ipmi_si(void)
- 
- 	ipmi_si_pci_init();
- 
-+	ipmi_si_ls2k_init();
-+
- 	ipmi_si_parisc_init();
- 
- 	mutex_lock(&smi_infos_lock);
-@@ -2331,6 +2333,8 @@ static void cleanup_ipmi_si(void)
- 
- 	ipmi_si_pci_shutdown();
- 
-+	ipmi_si_ls2k_shutdown();
-+
- 	ipmi_si_parisc_shutdown();
- 
- 	ipmi_si_platform_shutdown();
-diff --git a/drivers/char/ipmi/ipmi_si_ls2k.c b/drivers/char/ipmi/ipmi_si_ls2k.c
-new file mode 100644
-index 000000000000..45442c257efd
---- /dev/null
-+++ b/drivers/char/ipmi/ipmi_si_ls2k.c
-@@ -0,0 +1,189 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Driver for Loongson-2K BMC IPMI interface
-+ *
-+ * Copyright (C) 2024-2025 Loongson Technology Corporation Limited.
-+ *
-+ * Authors:
-+ *	Chong Qiao <qiaochong@loongson.cn>
-+ *	Binbin Zhou <zhoubinbin@loongson.cn>
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/ioport.h>
-+#include <linux/module.h>
-+#include <linux/types.h>
-+
-+#include "ipmi_si.h"
-+
-+#define LS2K_KCS_FIFO_IBFH	0x0
-+#define LS2K_KCS_FIFO_IBFT	0x1
-+#define LS2K_KCS_FIFO_OBFH	0x2
-+#define LS2K_KCS_FIFO_OBFT	0x3
-+
-+/* KCS registers */
-+#define LS2K_KCS_REG_STS	0x4
-+#define LS2K_KCS_REG_DATA_OUT	0x5
-+#define LS2K_KCS_REG_DATA_IN	0x6
-+#define LS2K_KCS_REG_CMD	0x8
-+
-+#define LS2K_KCS_CMD_DATA	0xa
-+#define LS2K_KCS_VERSION	0xb
-+#define LS2K_KCS_WR_REQ		0xc
-+#define LS2K_KCS_WR_ACK		0x10
-+
-+#define LS2K_KCS_STS_OBF	BIT(0)
-+#define LS2K_KCS_STS_IBF	BIT(1)
-+#define LS2K_KCS_STS_SMS_ATN	BIT(2)
-+#define LS2K_KCS_STS_CMD	BIT(3)
-+
-+#define LS2K_KCS_DATA_MASK	(LS2K_KCS_STS_OBF | LS2K_KCS_STS_IBF | LS2K_KCS_STS_CMD)
-+
-+static bool ls2k_registered;
-+
-+static unsigned char ls2k_mem_inb_v0(const struct si_sm_io *io, unsigned int offset)
-+{
-+	void __iomem *addr = io->addr;
-+	int reg_offset;
-+
-+	if (offset & BIT(0)) {
-+		reg_offset = LS2K_KCS_REG_STS;
-+	} else {
-+		writeb(readb(addr + LS2K_KCS_REG_STS) & ~LS2K_KCS_STS_OBF, addr + LS2K_KCS_REG_STS);
-+		reg_offset = LS2K_KCS_REG_DATA_OUT;
-+	}
-+
-+	return readb(addr + reg_offset);
-+}
-+
-+static unsigned char ls2k_mem_inb_v1(const struct si_sm_io *io, unsigned int offset)
-+{
-+	void __iomem *addr = io->addr;
-+	unsigned char inb = 0, cmd;
-+	bool obf, ibf;
-+
-+	obf = readb(addr + LS2K_KCS_FIFO_OBFH) ^ readb(addr + LS2K_KCS_FIFO_OBFT);
-+	ibf = readb(addr + LS2K_KCS_FIFO_IBFH) ^ readb(addr + LS2K_KCS_FIFO_IBFT);
-+	cmd = readb(addr + LS2K_KCS_CMD_DATA);
-+
-+	if (offset & BIT(0)) {
-+		inb = readb(addr + LS2K_KCS_REG_STS) & ~LS2K_KCS_DATA_MASK;
-+		inb |= FIELD_PREP(LS2K_KCS_STS_OBF, obf)
-+		    | FIELD_PREP(LS2K_KCS_STS_IBF, ibf)
-+		    | FIELD_PREP(LS2K_KCS_STS_CMD, cmd);
-+	} else {
-+		inb = readb(addr + LS2K_KCS_REG_DATA_OUT);
-+		writeb(readb(addr + LS2K_KCS_FIFO_OBFH), addr + LS2K_KCS_FIFO_OBFT);
-+	}
-+
-+	return inb;
-+}
-+
-+static void ls2k_mem_outb_v0(const struct si_sm_io *io, unsigned int offset,
-+			     unsigned char val)
-+{
-+	void __iomem *addr = io->addr;
-+	unsigned char sts = readb(addr + LS2K_KCS_REG_STS);
-+	int reg_offset;
-+
-+	if (sts & LS2K_KCS_STS_IBF)
-+		return;
-+
-+	if (offset & BIT(0)) {
-+		reg_offset = LS2K_KCS_REG_CMD;
-+		sts |= LS2K_KCS_STS_CMD;
-+	} else {
-+		reg_offset = LS2K_KCS_REG_DATA_IN;
-+		sts &= ~LS2K_KCS_STS_CMD;
-+	}
-+
-+	writew(val, addr + reg_offset);
-+	writeb(sts | LS2K_KCS_STS_IBF, addr + LS2K_KCS_REG_STS);
-+	writel(readl(addr + LS2K_KCS_WR_REQ) + 1, addr + LS2K_KCS_WR_REQ);
-+}
-+
-+static void ls2k_mem_outb_v1(const struct si_sm_io *io, unsigned int offset,
-+			     unsigned char val)
-+{
-+	void __iomem *addr = io->addr;
-+	unsigned char ibfh, ibft;
-+	int reg_offset;
-+
-+	ibfh = readb(addr + LS2K_KCS_FIFO_IBFH);
-+	ibft = readb(addr + LS2K_KCS_FIFO_IBFT);
-+
-+	if (ibfh ^ ibft)
-+		return;
-+
-+	reg_offset = (offset & BIT(0)) ? LS2K_KCS_REG_CMD : LS2K_KCS_REG_DATA_IN;
-+	writew(val, addr + reg_offset);
-+
-+	writeb(offset & BIT(0), addr + LS2K_KCS_CMD_DATA);
-+	writeb(!ibft, addr + LS2K_KCS_FIFO_IBFH);
-+	writel(readl(addr + LS2K_KCS_WR_REQ) + 1, addr + LS2K_KCS_WR_REQ);
-+}
-+
-+static void ls2k_mem_cleanup(struct si_sm_io *io)
-+{
-+	if (io->addr)
-+		iounmap(io->addr);
-+}
-+
-+static int ipmi_ls2k_mem_setup(struct si_sm_io *io)
-+{
-+	unsigned char version;
-+
-+	io->addr = ioremap(io->addr_data, io->regspacing);
-+	if (!io->addr)
-+		return -EIO;
-+
-+	version = readb(io->addr + LS2K_KCS_VERSION);
-+
-+	io->inputb = version ? ls2k_mem_inb_v1 : ls2k_mem_inb_v0;
-+	io->outputb = version ? ls2k_mem_outb_v1 : ls2k_mem_outb_v0;
-+	io->io_cleanup = ls2k_mem_cleanup;
-+
-+	return 0;
-+}
-+
-+static int ipmi_ls2k_probe(struct platform_device *pdev)
-+{
-+	struct si_sm_io io;
-+
-+	memset(&io, 0, sizeof(io));
-+
-+	io.si_info	= &ipmi_kcs_si_info;
-+	io.io_setup	= ipmi_ls2k_mem_setup;
-+	io.addr_data	= pdev->resource[0].start;
-+	io.regspacing	= resource_size(&pdev->resource[0]);
-+	io.dev		= &pdev->dev;
-+
-+	dev_dbg(&pdev->dev, "addr 0x%lx, spacing %d.\n", io.addr_data, io.regspacing);
-+
-+	return ipmi_si_add_smi(&io);
-+}
-+
-+static void ipmi_ls2k_remove(struct platform_device *pdev)
-+{
-+	ipmi_si_remove_by_dev(&pdev->dev);
-+}
-+
-+struct platform_driver ipmi_ls2k_platform_driver = {
-+	.driver = {
-+		.name = "ls2k-ipmi-si",
-+	},
-+	.probe	= ipmi_ls2k_probe,
-+	.remove	= ipmi_ls2k_remove,
-+};
-+
-+void ipmi_si_ls2k_init(void)
-+{
-+	platform_driver_register(&ipmi_ls2k_platform_driver);
-+	ls2k_registered = true;
-+}
-+
-+void ipmi_si_ls2k_shutdown(void)
-+{
-+	if (ls2k_registered)
-+		platform_driver_unregister(&ipmi_ls2k_platform_driver);
-+}
--- 
-2.47.3
-
+DQo+IE9uIEZyaSwgQXVnIDIyLCAyMDI1IGF0IDA0OjE0OjAzUE0gKzA4MDAsIFhpY2hhbyBaaGFv
+IHdyb3RlOg0KPj4gSW4gdGhlIHR3bDYwMzBfdXNiX3Byb2JlKCksIHRoZSB2YXJpYWJsZSByZXQg
+aXMgZGVjbGFyZWQgYXMNCj4+IGEgdTMyIHR5cGUuIEhvd2V2ZXIsIHNpbmNlIHJldCBtYXkgcmVj
+ZWl2ZSAtRU5PREVWIHdoZW4gYWNjZXB0aW5nDQo+PiB0aGUgcmV0dXJuIHZhbHVlIG9mIG9tYXBf
+dXNiMl9zZXRfY29tcGFyYXRvcigpLlRoZXJlZm9yZSwgaXRzIHR5cGUNCj4+IHNob3VsZCBiZSBj
+aGFuZ2VkIHRvIGludC4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBYaWNoYW8gWmhhbyA8emhhby54
+aWNoYW9Adml2by5jb20+DQo+PiAtLS0NCj4+ICAgZHJpdmVycy91c2IvcGh5L3BoeS10d2w2MDMw
+LXVzYi5jIHwgMyArLS0NCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAyIGRl
+bGV0aW9ucygtKQ0KPiBXaGF0IGNvbW1pdCBpZCBkb2VzIHRoaXMgZml4Pw0KPg0KPiB0aGFua3Ms
+DQo+DQo+IGdyZWcgay1oDQoNCkkgaGF2ZSBhZGRlZCB0aGUgZml4ZXMgYW5kIHNlbnQgb3V0IHRo
+ZSB2MiB2ZXJzaW9uIG9mIHRoZSBwYXRjaC4NCg0KDQpCZXN0IFJlZ2FyZHMsDQoNClhpY2hhbyBa
+aGFvDQoNCg==
 
