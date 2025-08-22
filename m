@@ -1,156 +1,142 @@
-Return-Path: <linux-kernel+bounces-781984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E390AB31980
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:29:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B3EB31983
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 598071C2303A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:29:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 110AA6263F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FCC2D0274;
-	Fri, 22 Aug 2025 13:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918EA2FF156;
+	Fri, 22 Aug 2025 13:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debanilchowdhury.com header.i=@debanilchowdhury.com header.b="e2QiEQpm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dgLAXY7V"
-Received: from flow-a1-smtp.messagingengine.com (flow-a1-smtp.messagingengine.com [103.168.172.136])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="I3zETg6d"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027FF2FFDE0;
-	Fri, 22 Aug 2025 13:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B297A2D97BB;
+	Fri, 22 Aug 2025 13:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755869343; cv=none; b=C7ZWpoH03oinN6vDbT8BCJKiHXTS0oCVNGJY0GFDZ7U4MUCD9jw/symtImQWh6T01IpBLkcj2LYFiujIOTFlOGDJP12xphWX53pj+bvlEg44GQFcSajnAio/QMuYd4NGXTStybfwLkQtZiG4zZqoQhYEucoYdS3/5dSnbntvTlI=
+	t=1755869138; cv=none; b=trsnDJjNd+ZQednYSaHa+9pn59ZN/cgwqY/+rDPe4LgGd9uASrLUhxMzhu5Rv6KkKkrgey7DIVni0WspKIT13XM/P8nYt+/06Uq7TAvh8UhkdqF8GeovfHUCBMYdL0Om3m6rfLqVlzO73LoM72bDDRjE+UBspyZRWARVUMy4vjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755869343; c=relaxed/simple;
-	bh=ZL8GY7g3uwloV0kELsLuK74wUOOqCTd2WYewZKfdFAY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uqU+A7+wK9UW/bvpiFkBWdvzaSQE0W7j5gEv5b0f3T3V16rSY/yiXBdQRv1qWjP9pMP6K/BXACFcceE0OQMI2hzFRF5vCQ1RIiNwDvYzW4XX96ib6PpBL10wwbncdt2lvCXSlc2yhZTUdUGx76ul+qw9MepKqURefaTq153tYSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debanilchowdhury.com; spf=pass smtp.mailfrom=debanilchowdhury.com; dkim=pass (2048-bit key) header.d=debanilchowdhury.com header.i=@debanilchowdhury.com header.b=e2QiEQpm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dgLAXY7V; arc=none smtp.client-ip=103.168.172.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debanilchowdhury.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=debanilchowdhury.com
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailflow.phl.internal (Postfix) with ESMTP id 359101380836;
-	Fri, 22 Aug 2025 09:28:59 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Fri, 22 Aug 2025 09:28:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	debanilchowdhury.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm1;
-	 t=1755869339; x=1755872939; bh=wGSgMf6A1+ZzqOwuHh7cUjUzSlzSWwas
-	r3z6cM11JqU=; b=e2QiEQpmtO+zUtuUCCuUIhEh+m8BC0Td/GFbdqqD5kcjSiIn
-	gw83qn8IGVrB3oef45dIgnVsIrO96NIS3Dp9i0rfCickEk6Fo5QSyDmY00l3Ur7I
-	ShHRxRS1h36kW7b7EYVWpYoj+Qgnr3IgueP1jqhcYjbrWXd/GccQ5/Pcf2IA7ZR2
-	GX3nICLjBiae9tocfVc83SeGQVYiy+yy1OvHX+ewet3pIlnmxO3WHA6qBIVikFdb
-	y5aRY6mLTnvFmXep2mxyoHiPmm9mXjBju49iNGUNbTETzFGjaMB9Y03hL7qN6AKO
-	V4u7kNyM4x/oLhZsiX/zzdmvGFJOxDkjDXbduQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1755869339; x=1755872939; bh=wGSgMf6A1+ZzqOwuHh7cUjUzSlzS
-	Wwasr3z6cM11JqU=; b=dgLAXY7Vbay4e4uyY76rDfSbM1NuTe2EzhxswsACNQdZ
-	9iv6+qiXDQ43+CeIVt0eK/ShHUJctC1Miys2UqLzIx56wLZeM/GHmsww4AVW5Ysb
-	KGSUS51wb/7HAD/cl8zk+KQpjk5yIo3vWBnPlIZjXSQOBh5MZZXcV0nhk8UielnB
-	vE9SLw5UNnvC3ddWrr1gWMTvpCM1p8lc0k3hHcZQv+OrBduNmR/q/XqnBT87cm9E
-	16U+bG54xtguonmxwnroKeDD7EX4MzeYh9Wv0LybDvOaLRytWNymHE9dlHuqrYq0
-	9pvnUVDD3ixfUTHBJm5GgohHm44tjPQiEtTtSmFbaA==
-X-ME-Sender: <xms:mnCoaH6ayRa1J5VjV97lTOdc70mpfxI-tzRb5VFXffIMalstXi-P0w>
-    <xme:mnCoaFg_GnzLBSHa-goUBu-nQdAYbeSwK07ZcmkZSGtmnsxgYKpW963ZGgiUP9XbU
-    hbFWNmHA32yfBMqxvc>
-X-ME-Received: <xmr:mnCoaF7bGhjG0YWieZxUljQvarX73Fz0RrhZJENZKJC5Zxlxg2cGvI5ZxBtgIa13cJ5zT6vd>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieefkeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffogggtgfesthekredtre
-    dtjeenucfhrhhomhepffgvsggrnhhilhcuvehhohifughhuhhrhicuoehkvghrnhgvlhgu
-    vghvseguvggsrghnihhltghhohifughhuhhrhidrtghomheqnecuggftrfgrthhtvghrnh
-    epuddtfefgffffiefgtddugeefvdeuteefhfeltdeuieejvdeludetveettdetheefnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhgvrhhnvg
-    hluggvvhesuggvsggrnhhilhgthhhofiguhhhurhihrdgtohhmpdhnsggprhgtphhtthho
-    pedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhhinhgrugeslhhinhhugi
-    drihgsmhdrtghomhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphht
-    thhopehjuggvlhhvrghrvgesshhushgvrdgtohhmpdhrtghpthhtoheplhhinhhugiesrh
-    hovggtkhdquhhsrdhnvghtpdhrtghpthhtoheplhhinhhugidqhhifmhhonhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdguohgtsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepshhkhhgrnheslhhinhhugihfohhunhgurght
-    ihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhdqmhgvnhhtvggvsh
-    eslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
-    lhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:mnCoaCH2-PIzc-BXzTMsh8eBAabRosNSN8dfDMuwefl2-jnU3iBo4A>
-    <xmx:mnCoaPLcv2LOc3B-3j2uBnHe0do8pRLT4eJ2Fd4ggKjffjEF5S7Ojg>
-    <xmx:mnCoaHi4m799LMv0Y3iukXzpDUNrqwXbRmhrXAWmO-L_NV3AhwgFIQ>
-    <xmx:mnCoaFmYV843PbkrPB52lbNVmZz5rBM9i2r8PdX3SjBVfL62YaJ5qA>
-    <xmx:m3CoaGd2-erDJxWWGrT5hIJdem637aHkTCS0G3p7l4GHby1HeuaAwaHo>
-Feedback-ID: i77364836:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 22 Aug 2025 09:28:55 -0400 (EDT)
-From: Debanil Chowdhury <kerneldev@debanilchowdhury.com>
-To: ninad@linux.ibm.com,
-	corbet@lwn.net
-Cc: jdelvare@suse.com,
-	linux@roeck-us.net,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Debanil Chowdhury <kerneldev@debanilchowdhury.com>
-Subject: [PATCH v3] hwmon: crps: Fix typos in crps.rst documentation
-Date: Fri, 22 Aug 2025 18:55:02 +0530
-Message-ID: <20250822132836.5384-1-kerneldev@debanilchowdhury.com>
-X-Mailer: git-send-email 2.49.1
+	s=arc-20240116; t=1755869138; c=relaxed/simple;
+	bh=4PITLW052mM/0cTmEK1pA04kvx4snzr0G0rUt4eAAeA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MoY+j5O43HoDbFre+4ruVI+pXNOV6qAM6wKHvJX81/YQ4O3GiOwiPv224aKcLxynQdhrpTAynHTvP93n59yIZXuTwO/AuXbqtKX2dxTFPAt4HjRWEiad88gLqQdknYatDNSfadJsJnM80ROEkvTjfSAeqXwznP704EmZPS3St7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=I3zETg6d; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4c7gsy4jskz9tWT;
+	Fri, 22 Aug 2025 15:25:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1755869126;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4PITLW052mM/0cTmEK1pA04kvx4snzr0G0rUt4eAAeA=;
+	b=I3zETg6dE36v3QvGTZ3phKvzINWZlRKxEzPAs7CFP1An8HwSYV2kTCd8itbvhNqikX7vEk
+	3KtKU9dg7Uf9E4qUJN14JMgWtxAdZfccmQzvbnO3DTXFKaFAlCkAG9qg1u9kdLmIXjkJ28
+	tSz/v97+0NM5GNQldHJwrCVCj70wqkbXzDcHxfAq767C9uPAznFr0uiSjU2dGAZPAtfZBC
+	bKyjtANVWfFvJzM/Nc+5IwK8gpHBlYC4H0/XxLePVeIF+JOvaOZ+FlIYF8i18KE8xDVziT
+	OEyAs7UzBoXMSajx60azDdDu2qU83QWM/iAaxLIVVgLrKdjWsFsUu3ChEJEBeA==
+Date: Fri, 22 Aug 2025 23:25:11 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Rob Landley <rob@landley.net>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Lichen Liu <lichliu@redhat.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	safinaskar@zohomail.com, kexec@lists.infradead.org, weilongchen@huawei.com, 
+	linux-api@vger.kernel.org, zohar@linux.ibm.com, stefanb@linux.ibm.com, 
+	initramfs@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, jack@suse.cz
+Subject: Re: [PATCH v2] fs: Add 'rootfsflags' to set rootfs mount options
+Message-ID: <2025-08-22-witty-worthy-wink-sitcom-T5L8wA@cyphar.com>
+References: <20250815121459.3391223-1-lichliu@redhat.com>
+ <20250821-zirkel-leitkultur-2653cba2cd5b@brauner>
+ <da1b1926-ba18-4a81-93e0-56cb2f85e4dd@landley.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6rvitifl7wogvg7j"
+Content-Disposition: inline
+In-Reply-To: <da1b1926-ba18-4a81-93e0-56cb2f85e4dd@landley.net>
 
-Changed a misspelling in crps.rst documentation:
-"Critial" → "Critical".
 
-Reported-by: codespell
-Signed-off-by: Debanil Chowdhury <kerneldev@debanilchowdhury.com>
----
-Changed in v3:
-- Update subject to correctly identify crps driver documentation 
-  (suggested by Guenter Roeck)
+--6rvitifl7wogvg7j
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] fs: Add 'rootfsflags' to set rootfs mount options
+MIME-Version: 1.0
 
-Changed in v2:
-- In previous patch "From" header did not have my name in it. Fixed
-  that.
+On 2025-08-21, Rob Landley <rob@landley.net> wrote:
+> P.S. It's a pity lkml.iu.edu and spinics.net are both down right now, but
+> after vger.kernel.org deleted all reference to them I can't say I'm
+> surprised. Neither lkml.org nor lore.kernel.org have an obvious threaded
+> interface allowing you to find stuff without a keyword search, and
 
-Documentation/hwmon/crps.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I'm not sure what issue you're gesturing to exactly, but if you have the
+Message-ID you can link to it directly with
+<https://lore.kernel.org/lkml/$MESSAGE_ID>. For instance, this email
+will be available at
+<https://lore.kernel.org/lkml/2025-08-22-witty-worthy-wink-sitcom-T5L8wA@cy=
+phar.com>.
 
-diff --git a/Documentation/hwmon/crps.rst b/Documentation/hwmon/crps.rst
-index 87380b496..d42ea59d2 100644
---- a/Documentation/hwmon/crps.rst
-+++ b/Documentation/hwmon/crps.rst
-@@ -43,7 +43,7 @@ curr1_label		"iin"
- curr1_input		Measured input current
- curr1_max		Maximum input current
- curr1_max_alarm		Input maximum current high alarm
--curr1_crit		Critial high input current
-+curr1_crit		Critical high input current
- curr1_crit_alarm	Input critical current high alarm
- curr1_rated_max		Maximum rated input current
- 
-@@ -51,7 +51,7 @@ curr2_label		"iout1"
- curr2_input		Measured output current
- curr2_max		Maximum output current
- curr2_max_alarm		Output maximum current high alarm
--curr2_crit		Critial high output current
-+curr2_crit		Critical high output current
- curr2_crit_alarm	Output critical current high alarm
- curr2_rated_max		Maximum rated output current
- 
--- 
-2.49.1
+To be honest, I much prefer that to lkml.org's completely opaque
+mappings based on arrival order and date (and in my experience it seems
+to miss messages). The same goes for lkml.iu.edu, spinics and gmane.
 
+One of the biggest losses when gmane disappeared was that all of the
+URLs that referenced it were rendered unusable because the mapping from
+their numbering to Message-IDs was not maintained. If lkml.org goes down
+10 years from now, every reference to it will also be unusable, but
+lore.kernel.org addresses will still be usable even if it goes down (you
+can even search your local archives for the mails).
+
+(It would be nice if more people spent a bit of time configuring their
+Message-ID generation to be more friendly for this usecase -- mutt
+changed their default Message-ID generation to be completely random
+characters a few years ago, which made Message-IDs less recognisable
+until folks adjusted their configs. Gmail is even worse, obviously.)
+
+Also, lore.kernel.org has threading on the main page and on individual
+thread pages? Maybe I don't understand what you're referring to?
+
+> lore.kernel.org somehow manages not to list "linux-kernel" in its top lev=
+el
+> list of "inboxes" at all. The wagons are circled pretty tightly...
+
+No it's definitely there, it's just labeled as "lkml" (they're sorted by
+latest message timestamp so LKML will usually be near the top).
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--6rvitifl7wogvg7j
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaKhvtxsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG+QSwD7BO+PtnsXEDae0r97BHM6
+PkIHOEXbXJqq1URgT+54x98A+wSeZX6FvxMSF0Ghiw07nuOnRO3d0pW2Lpww9iVW
+T0UE
+=YHVJ
+-----END PGP SIGNATURE-----
+
+--6rvitifl7wogvg7j--
 
