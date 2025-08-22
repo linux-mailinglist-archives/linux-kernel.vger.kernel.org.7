@@ -1,173 +1,185 @@
-Return-Path: <linux-kernel+bounces-781910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C98B31893
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:59:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF8CFB3185F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B50AA1BA2EE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:56:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB9E61C81828
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAC1303C91;
-	Fri, 22 Aug 2025 12:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B924B2FC02B;
+	Fri, 22 Aug 2025 12:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="yrD/44iT"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="STDm5/53"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433822FD1C8;
-	Fri, 22 Aug 2025 12:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934002FAC04
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755867250; cv=none; b=bUUdG28wqYDvAJ1hrcqzx26E2hLeIMldl2d7eoH8/DMjK1+S+ZCrAH+4Zq7o/lkhmHmYHySV0WqpV+zWmA7iKqSrFlpVZTXLgnQHmLvhHipQpXg3Yrs7f40PHNlWH5Fi8Yz8dxXvcdr4fUVmdMcTMB3fHoJ9RMSrADuaopNObiU=
+	t=1755867140; cv=none; b=fMnmyGTYJIbcEcgrnnrLUc6i1hyy92763mFXNl+sLsOR+LpKTfdG/1Mv9N5a6bXX+L8PW6sVAdbWALPxVp8fP7nEEUW+sFxmjGHIHVOgHnJ4WTmlrLWi+OR6PHVV/dDl72ozw33QIUznNnDbOzmYkehSr6r0Y417d6Vz1c9H2eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755867250; c=relaxed/simple;
-	bh=zCMBJK8gsK34ZEoHJ8DDDujm7zPzdGwOgGL1+YdKfJc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=c55Rj4CVH/mJw8IDbST5KovWgqtzWAm9c5M/SASJtDp9TlJz6zobEY4XF2FyNR3EN9L8U348zeeDESGnhdM6thlGcEQGDy/bSSq36gW5md0hscYll9HVsoufT4xMOx2q1NaZLLazW+djAWBqt+yi1/t6xLCSuXyRHKu551gm4S8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=yrD/44iT; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MCc12j019648;
-	Fri, 22 Aug 2025 14:53:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	J0xEHhpDr5Ii0lNf94Y5NJ7HClkQVYYRlfEovqbGqyo=; b=yrD/44iTpG6d7ZWH
-	wgrtFXahyjJZvdUKlQCA4ddPj0sRoExjds+LljZRRBiQ0y5Vs/RqnX2RPKD2rdDX
-	+GeUDKKbq7pQs/fLkoAEqA5Yeqe8/6eqSnCqTBNKQ0mtxwfBV0O+TdGXuQQy6i5T
-	b7YzugGDY6bL8EsJ47ZHyg71QYyP5uHOWfV/rJUC6VK7Wkoe06e1YqwP9DtWCbba
-	TrjmsxWD8z3bziyn0nc+6/2MiDX8U8Fz96kcXVgve5t7mje+bzwOoQRSQvKeQFWl
-	dqXpLwcKhVex7DPC1lghryENCpzYxpQ52mfnxGufdt2SODr8pacM8ut7eUqqT787
-	RhXNaA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48n81wtrcs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Aug 2025 14:53:50 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5314C40044;
-	Fri, 22 Aug 2025 14:52:36 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B0FF66C67BC;
-	Fri, 22 Aug 2025 14:51:24 +0200 (CEST)
-Received: from [10.48.87.178] (10.48.87.178) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 22 Aug
- 2025 14:51:23 +0200
-Message-ID: <09c20af0-e33f-4325-9cf5-249cb2f31b38@foss.st.com>
-Date: Fri, 22 Aug 2025 14:51:23 +0200
+	s=arc-20240116; t=1755867140; c=relaxed/simple;
+	bh=Qvkm8ZvcKVj/gdX6BAq0K2JgptBY3L/xiu5D9dt3b90=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gPG+mwZUUx0+wmDCpzixmpRW9BQSZhJtEP5hxNQUCqLqaWj85kSm093dqConbPW95Hx6ztykzS8WrnSO5x+GInXE4zftUqfCsswyKC6EeSO8oPOd8xjf2EJ3vD6/E7R14xAnOhEhNK+0v7OxBIwHBtV+yu7KuN9/3ZnWt9QZ96A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=STDm5/53; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7702fc617e9so711278b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:52:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755867138; x=1756471938; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yPWZ0k713TIq/QYfMNdmSvfN5q6KC+M5vfGH3Fh2z5k=;
+        b=STDm5/53EXT1VljXn6BGfCspYCVEX2AZpq506mI8kXtBAAxGhHiYkO345XzmHjhH+b
+         bx0hJN12V3NAFUXu4uNF+xu4WnaOvZ9MFvn6sK26XKIdguvCvZFB3a8Wsp/FY7oZg6rC
+         KcgnTenKiLi78N1FGLwD7BlWlDbrEpNiMD5Ys=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755867138; x=1756471938;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yPWZ0k713TIq/QYfMNdmSvfN5q6KC+M5vfGH3Fh2z5k=;
+        b=q67hBFfhVbBrrgZhHAJ3mHCxPXQM8NggyuNPoSpDpneskx2e6ie5w0F/KVFfKNZaHK
+         GdN573EAJL2hJPneFJmxSxkMQ4VaZoS3ufhwjw2hkgWoNc2wfbxXxVjLG9AIBKF+uzJW
+         z4EjHHIrKyLRQvCHDgYmW4CTCymS4e2riU92/SP148u1tjg2qEfOHdXwhywXMhdShLvB
+         MN3WhBa393JmDH98E72Zh/PmzY9+lah3h+XPjXA/pThuUckyuzipG4Ha89Bt42ftVePK
+         n2OcYpqzYx6FqbjCPNVzfcTDgjqaOd62IsSkT9D4Cmi/XnhGtmGFZXdkrHLwoqe3JOWH
+         AyBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVp2NfPMklcvCvTDpJekJvA13lauckR6gEMlyCbNwipkQRz2r1ulVQVriu+PKLoKFbk8q//uAgOR88bWHM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywsqnia0y7HmhL8lXbnp/7e8Im7sDE4871+a4ti+TP29X2YZiI7
+	K8BQhtFJkEsTUByty8PJk19QFG1oPeXC8lVs1ICOxdE+uEFD/wSYp1bmCAp+9RI1p4VoKlPcv6S
+	wFkOVT8NuNYkFCffKgjJMRd3tB7opOxM8dZ7bQ5j2
+X-Gm-Gg: ASbGncsNFxV+LZzCncE9Hv+FsMq6Y9u0zlFp6bYVgDy03eqVd9cQddgNlGtQ9hajMAy
+	vVbwobsAGOZll8vOUxIKLk41EY9wyEpm/Md0KXjjhl1OmLJQQUfeb0Weut4Zs9cZ49u1+MmtOlG
+	ruB5Bl50Y9HOCUx/S0JtiJi6j5fHKqSHSoH7NEYGzHjmSjadY7nrGNrfPrl835FFNRG1K0/Sc8b
+	wqLkopZfJ1NsD8E7i8xz7d0R/5t9UBNtH3vd3xce62D
+X-Google-Smtp-Source: AGHT+IGRt7T15g4J9TtJHeozRsfP6YTUMgnhVNdFI3+HALeg7CoNfApLp63yXeFIxoeJ6WrrgpylLU3LPWYlGugAkhs=
+X-Received: by 2002:a05:6a20:430b:b0:23d:54bd:92e6 with SMTP id
+ adf61e73a8af0-24340d02428mr4351745637.29.1755867137998; Fri, 22 Aug 2025
+ 05:52:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/13] dt-bindings: arm: stm32: add required
- #clock-cells property
-To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Philippe Cornu
-	<philippe.cornu@foss.st.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Maxime
- Coquelin" <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Christophe Roullier
-	<christophe.roullier@foss.st.com>
-CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250821-drm-misc-next-v4-0-7060500f8fd3@foss.st.com>
- <20250821-drm-misc-next-v4-6-7060500f8fd3@foss.st.com>
-Content-Language: en-US
-From: Yannick FERTRE <yannick.fertre@foss.st.com>
-In-Reply-To: <20250821-drm-misc-next-v4-6-7060500f8fd3@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
+References: <20250814184455.723170-1-akuchynski@chromium.org>
+ <20250814184455.723170-5-akuchynski@chromium.org> <aKbwby7OYdUpLvhA@kuha.fi.intel.com>
+ <aKb_rwVqqzipHHqf@kuha.fi.intel.com>
+In-Reply-To: <aKb_rwVqqzipHHqf@kuha.fi.intel.com>
+From: Andrei Kuchynski <akuchynski@chromium.org>
+Date: Fri, 22 Aug 2025 14:52:05 +0200
+X-Gm-Features: Ac12FXx3ANTUMIa8Fow-ciMNUPql3vLmAiHYubi-qOYKb8F15LFr1nZlCVhH7cs
+Message-ID: <CAMMMRMc6YYpQMo0hDqvjVwg28tTazJxxxgQ5j9iUq-ZWeYg6qA@mail.gmail.com>
+Subject: Re: [PATCH v1 4/5] usb: typec: Implement alternate mode priority handling
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Benson Leung <bleung@chromium.org>, 
+	Jameson Thies <jthies@google.com>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, Guenter Roeck <groeck@chromium.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, "Christian A. Ehrhardt" <lk@c--e.de>, 
+	Venkat Jayaraman <venkat.jayaraman@intel.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Raphael,
+On Thu, Aug 21, 2025 at 1:15=E2=80=AFPM Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
+>
+> Hi again,
+>
+> On Thu, Aug 21, 2025 at 01:09:57PM +0300, Heikki Krogerus wrote:
+> > > diff --git a/drivers/usb/typec/mode_selection.c b/drivers/usb/typec/m=
+ode_selection.c
+> > > new file mode 100644
+> > > index 000000000000..8a54639b86bf
+> > > --- /dev/null
+> > > +++ b/drivers/usb/typec/mode_selection.c
+> > > @@ -0,0 +1,127 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/*
+> > > + * Copyright 2025 Google LLC.
+> > > + */
+> > > +
+> > > +#include <linux/usb/typec_altmode.h>
+> > > +#include <linux/slab.h>
+> > > +#include <linux/list.h>
+> > > +#include "mode_selection.h"
+> > > +#include "class.h"
+> > > +
+> > > +static const char * const mode_names[TYPEC_ALTMODE_MAX] =3D {
+> > > +   [TYPEC_ALTMODE_DP] =3D "DisplayPort",
+> > > +   [TYPEC_ALTMODE_TBT] =3D "Thunderbolt3",
+> > > +   [TYPEC_ALTMODE_USB4] =3D "USB4",
+> > > +};
+> >
+> > You only need string for USB4. The altmode names come from the drivers.
+>
+> Sorry, that won't work with port altmode. But you can still do the
+> lookup with just the sid.
+>
 
-Thanks for the patch.
-Reviewed-by: Yannick Fertre <yannick.fertre@foss.st.com>
+Hi Heikki,
 
-Le 21/08/2025 à 13:08, Raphael Gallais-Pou a écrit :
-> On STM32MP25 SoC, the syscfg peripheral provides a clock to the display
-> subsystem through a multiplexer.  Since it only provides a single clock,
-> the cell value is 0.
+I can get names from altmode partner. Names are only needed to
+provide results of entering the mode. No partner - no results.
+
 >
-> Doing so allows the clock consumers to reach the peripheral and gate the
-> clock accordingly.
+> I think this needs to be simplified. You don't need this elaborate
+> implementation in the beginning.
 >
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-> ---
->   .../bindings/arm/stm32/st,stm32-syscon.yaml        | 31 +++++++++++++++-------
->   1 file changed, 21 insertions(+), 10 deletions(-)
+> I'm going to do some suggestions. I don't know if all of them work,
+> but hopefully you get the idea how I would like to see the initial
+> support to be implemented.
 >
-> diff --git a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
-> index ed97652c84922813e94b1818c07fe8714891c089..95d2319afe235fa86974d80f89c9deeae2275232 100644
-> --- a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
-> +++ b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
-> @@ -36,20 +36,31 @@ properties:
->     clocks:
->       maxItems: 1
->   
-> +  "#clock-cells":
-> +    const: 0
-> +
->   required:
->     - compatible
->     - reg
->   
-> -if:
-> -  properties:
-> -    compatible:
-> -      contains:
-> -        enum:
-> -          - st,stm32mp157-syscfg
-> -          - st,stm32f4-gcan
-> -then:
-> -  required:
-> -    - clocks
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - st,stm32mp157-syscfg
-> +              - st,stm32f4-gcan
-> +    then:
-> +      required:
-> +        - clocks
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: st,stm32mp25-syscfg
-> +    then:
-> +      required:
-> +        - "#clock-cells"
->   
->   additionalProperties: false
->   
+
+I checked your suggestions. It looks like all of them should
+work. Thank you!
+
+- priority is a member to struct typec_altmode
+- use svid instead of enum typec_mode_type
+- no list or other variables in struct typec_port.
+- struct mode_selection_state will be introduced in other series
+
 >
+> The default priorities is an array of svids. And I really think that
+> the highest priority should be 1 not 0.
+>
+
+I think your idea of setting priorities based on the order of
+port altmod registrations is better. We don't really need default
+priorities in this case.
+
+>
+> No driver so you would need to use the mode_names, but instead of
+> doing that, just don't limit this at all.
+>
+> If there is no name for the mode, use the svid.
+>
+> thanks,
+>
+> --
+> heikki
+
+What if we later create typec_USB4 driver, similar to the
+existing typec_displayport and typec_thunderbolt?
+This approach could unify how various modes are handled,
+eliminating exceptions for USB4 or any other mode.
+
+The port altmode would contain priority and support "enter" and
+"exit" operations, while partner altmode would handle "activate"
+and name field. I've explored this approach with cros_ec_typec
+driver, and it appears to be a promising way to manage USB4 as
+alternate mode.
+
+Thanks,
+
+Andrei
 
