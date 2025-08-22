@@ -1,136 +1,162 @@
-Return-Path: <linux-kernel+bounces-782072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08854B31A9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:04:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A67B31A7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32870B026E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:59:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 808BF7B1C1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97773074AF;
-	Fri, 22 Aug 2025 13:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0259D308F2D;
+	Fri, 22 Aug 2025 13:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="p8zbifub"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jwvOoxx+"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFF42FE58C
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E480C3043DB
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755871017; cv=none; b=CCtZKeazLOgpwpwGHtUHieqkIXJliGDRnCHxLW0+FiUSRcVVaoB6Gn8Hmw1AeeqmQwS+s89BEqRK0I2CKCaaQuP/yUxJZN1NNG6a8yT4iUrMmhkvkyWS2Pmj/3bThdLjHFjLMAAV/p9l29Nor3VYcBwrsobicc/OLvCC7qK9bDc=
+	t=1755871041; cv=none; b=S91QJseFicWyKEZWaw6Ci5pCvYw2mPLNgFQ5E/ck/3tbvuFpmMqXRxmBC37kGXSON8NL0bOhPqEVmXplBAUE1uhYNIjPR0/e1pJCikOT44vtiIfSgy9yaJawPTdie0sftv52zjkAEwWusgWTh0Drib1q08YBcOtWN4xiXppMaYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755871017; c=relaxed/simple;
-	bh=Z38lZ8HTjUBjB4ep5770vP6LsmNBlzJ7QTHWWCYh6S0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JdOImhhHfN6basASxU1rGO6g7zDSaXUDFpxaDUUHWbiHpMDqKhQQV/xl7ez44D6/4b+JfSo/YzG1dj1b41HRS3IaynijFdT90dKzbcYwPGiqKoqBx2P5BBWfHdtqk1d5Yd1iGZOB0OfY7s9eemSlYONW9aVpqykDOChLpvPsY8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=p8zbifub; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7e8706a6863so255141585a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:56:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1755871013; x=1756475813; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nZYV/lOVxyLopKkodxehHImvjO52GrrOsoxMKVsFDgs=;
-        b=p8zbifubRHUjF/Nwk2M46Fww9EdZZ084fydB2uzrVQ/8N0mf9SU8Ksf1pOMxHNOFQp
-         rpklAfkTZQaxZHxWlztRMdwVHNfxsFDOqvQHRa3FV+S9FfV+j7XWwMCfJyi4GcgVHf9B
-         lR4zumfVa94+tkJLzijSuZVZk349zmunsRSymVO/2g8eqwx2znQk3Vq4r8r2ad3SNggv
-         nPzxxrqRI+lOMfP7YZZ7mX71EwxUULQKZE2A7X+Wfg71lH/gWuitv5AInXALeswa+BhK
-         REshncUro+kGRaQePdPEpzz0FVlCfHp/ku+7bSK5i+NrSVBHhHY4aPf8uaWcWumZn1cz
-         S0Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755871013; x=1756475813;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nZYV/lOVxyLopKkodxehHImvjO52GrrOsoxMKVsFDgs=;
-        b=Iv6JPmlav6DbVNQvR8p56hnItr2N6Y7LGq0qcMvf9WfneMwxdqTGU95nARhMq0Z2sN
-         BRebkpEsH6mpeCkr0HazYbJQ3NNrd2BZc/CUIyL8fzi/mYMs6mQeCIVSrhDulMid1A/W
-         6bYXovn+TK5RjLWWH6OdwbfD5u0kGyUa+wvePnwMtIfGr7bn4IG5fPo7CEK1OhwCiL5R
-         Pr4L59yY870NNCaXx/pqCLqstQ9aUuQlp5uKLIdpW2Vg0C7qYvDmS2swTmUMFaM6iwCb
-         R3f4geGUdpwclnZGSfGvgIqtiYKqkQ+WsXyOTcht4jw02oxRc27z6DCmvhEpIc4/5m0n
-         VFtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdpqrEaltpmrP0I4P5pD6jg+Wc/EmetsQtYnBH6h4ubfbZku9Lre+7XMBMRck3PYXMWgrMWvQSKdEOwRE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/K2Y8XBV8QLK+ays9I5TwEo0RzrlsHc7i/Lw+qlJfOxASKrMQ
-	cKOQAyooOZkeludBOrNl1N/xHew3Gt8zhsLcIPqLmikvT59p0xeTIeq0dPpcFA08zw==
-X-Gm-Gg: ASbGncsqlT6ZhhUNGhZ7kgfLb3kp703KC2To+xqTsg0JwWG7GuiE8h8Gls87EDzUgpA
-	PTPEbwW75qzJO0uy4w0T/yPAyvVfoJd4BmE2fGp7JNSVH3Nba/vtAilanaubUdD2blb3j3h0kga
-	QTxW4QjJ8u6V2nkMpNull3kGSMMNsC/hKBsoiNdOPooWYEuTBolK7gv2UQn4bfuHJRDVI46iAI4
-	GwP1U1DUDeEVqgIlRCV59ZxrQ8zlMJINMdX7mow00YIr9MJFi3pjYb7iM5mvoXYMaOaL3neruip
-	UkMF36iG+m9l2/XkHkBx41FUZVJjtdbDf3meWaEUpGS7C9w2TVLOHSKSrA5lj1mxP7vE7B19LZU
-	3Cixpe/qDCACYHtPgyIqaH3r3aday
-X-Google-Smtp-Source: AGHT+IEenma9Vbx+kv/9/x3JbF+/IZ5+YvWnnHq6SX8M5lkdxgGOoJ4n+r2TlUe1OinW734nthus/A==
-X-Received: by 2002:a05:620a:4003:b0:7e8:13ef:2b33 with SMTP id af79cd13be357-7ea110445f9mr348465385a.59.1755871012947;
-        Fri, 22 Aug 2025 06:56:52 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:156:8000:24f0::3e8c])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e04f43csm1322495585a.19.2025.08.22.06.56.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 06:56:52 -0700 (PDT)
-Date: Fri, 22 Aug 2025 09:56:49 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: William Wu <william.wu@rock-chips.com>
-Cc: gregkh@linuxfoundation.org, Chris.Wulff@biamp.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	frank.wang@rock-chips.com, jianwei.zheng@rock-chips.com,
-	yue.long@rock-chips.com
-Subject: Re: [PATCH] usb: gadget: f_hid: Fix zero length packet transfer
-Message-ID: <c09f21ee-be83-4880-841b-70e1e5c036f0@rowland.harvard.edu>
-References: <1755828118-21640-1-git-send-email-william.wu@rock-chips.com>
+	s=arc-20240116; t=1755871041; c=relaxed/simple;
+	bh=qYOiKaomuYF3FFz6S9PgNZ0UIWGTOlBCNi6+QRdBe8c=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=mw/YHtDsD8s+UWU0P8dC1Ml9i3lPoXSjq+W0Z90oX0jH4uQ4e55jYq9wn+E+0EZeAVbso462T9u5Ko+tcRvS8TxB2Ksxq27kqq6PmbP68MDgzfnyq10GHzCfjQB9hGMGF/sLZNROXQaYmUN5dXVjEOuW1A3Ib2BaIWBf2+C9+Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jwvOoxx+; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250822135717epoutp02b309b926b2725b2b2893d79a9a5e9030~eG2e8gEik2738827388epoutp02U
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:57:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250822135717epoutp02b309b926b2725b2b2893d79a9a5e9030~eG2e8gEik2738827388epoutp02U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755871037;
+	bh=W4C5v6Mam7mfoOZt+/Uk2fNaLUuqcHXWmVmMPWM4nmI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=jwvOoxx+0UkR29FGHjt3nZB44roEkqCrPy3UV4AxVKwtIX37Oul0uvkstC1WMv2Jq
+	 EVKhVqqQcxDJBxtEAtUas3cMR818eJ/xFBm1R+98ywV0zAFG1JpHKkCARpXGj0ZOLa
+	 6w0XRyIrH69pEU8cfi4QLo0K4EXFLxqOhao5xbfs=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250822135716epcas5p18bd9dbea2d4c64fddf513df96cf206a8~eG2eIJ28p2289722897epcas5p1m;
+	Fri, 22 Aug 2025 13:57:16 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.87]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4c7hZg1tPyz6B9m4; Fri, 22 Aug
+	2025 13:57:15 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250822135714epcas5p1061155a3eaf18a8843e73652afbcfe52~eG2ckacBH1755517555epcas5p1I;
+	Fri, 22 Aug 2025 13:57:14 +0000 (GMT)
+Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250822135710epsmtip1545b9b7689f40f6c2351d8d4952539fc~eG2Y0A9DZ0796007960epsmtip1e;
+	Fri, 22 Aug 2025 13:57:10 +0000 (GMT)
+From: "Inbaraj E" <inbaraj.e@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <s.hauer@pengutronix.de>,
+	<shawnguo@kernel.org>, <cw00.choi@samsung.com>, <rmfrfs@gmail.com>,
+	<laurent.pinchart@ideasonboard.com>, <martink@posteo.de>,
+	<mchehab@kernel.org>, <linux-fsd@tesla.com>, <will@kernel.org>,
+	<catalin.marinas@arm.com>, <pankaj.dubey@samsung.com>,
+	<shradha.t@samsung.com>, <ravi.patel@samsung.com>
+Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
+	<linux-samsung-soc@vger.kernel.org>, <kernel@puri.sm>,
+	<kernel@pengutronix.de>, <festevam@gmail.com>,
+	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <1919de68-99ea-47f7-b3d2-cae4611f9c52@kernel.org>
+Subject: RE: [PATCH v2 04/12] arm64: dts: fsd: Add CSI nodes
+Date: Fri, 22 Aug 2025 19:27:09 +0530
+Message-ID: <00d101dc136c$aa037020$fe0a5060$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1755828118-21640-1-git-send-email-william.wu@rock-chips.com>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQE9OnCOAxwEstACXXiXx7J94PTA
+Content-Language: en-in
+X-CMS-MailID: 20250822135714epcas5p1061155a3eaf18a8843e73652afbcfe52
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250814141019epcas5p2f957b934d5b60d4649cf9c6abd6969d5
+References: <20250814140943.22531-1-inbaraj.e@samsung.com>
+	<CGME20250814141019epcas5p2f957b934d5b60d4649cf9c6abd6969d5@epcas5p2.samsung.com>
+	<20250814140943.22531-5-inbaraj.e@samsung.com>
+	<1919de68-99ea-47f7-b3d2-cae4611f9c52@kernel.org>
 
-On Fri, Aug 22, 2025 at 10:01:58AM +0800, William Wu wrote:
-> If the hid transfer with size divisible to EPs max packet
-> size, it needs to set the req->zero to true, then the usb
-> controller can transfer a zero length packet at the end
-> according to the USB 2.0 spec.
-> 
-> Signed-off-by: William Wu <william.wu@rock-chips.com>
-> ---
->  drivers/usb/gadget/function/f_hid.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/gadget/function/f_hid.c b/drivers/usb/gadget/function/f_hid.c
-> index 8e1d1e8..8021af3 100644
-> --- a/drivers/usb/gadget/function/f_hid.c
-> +++ b/drivers/usb/gadget/function/f_hid.c
-> @@ -511,7 +511,7 @@ static ssize_t f_hidg_write(struct file *file, const char __user *buffer,
->  	}
->  
->  	req->status   = 0;
-> -	req->zero     = 0;
-> +	req->zero     = ((count % hidg->in_ep->maxpacket) == 0);
 
-Here and below, there is no need to check whether count is divisible by 
-the maxpacket length.  The UDC driver does this for you automatically.  
-(See the kerneldoc for struct usb_request.)  Simply set req->zero to 1.
+Hi Krzysztof,
 
-Alan Stern
+Thanks for the review.
 
->  	req->length   = count;
->  	req->complete = f_hidg_req_complete;
->  	req->context  = hidg;
-> @@ -967,7 +967,7 @@ static int hidg_setup(struct usb_function *f,
->  	return -EOPNOTSUPP;
->  
->  respond:
-> -	req->zero = 0;
-> +	req->zero = ((length % cdev->gadget->ep0->maxpacket) == 0);
->  	req->length = length;
->  	status = usb_ep_queue(cdev->gadget->ep0, req, GFP_ATOMIC);
->  	if (status < 0)
-> -- 
-> 2.0.0
+>=20
+> On 14/08/2025 16:09, Inbaraj E wrote:
+> > There is a csi dma and csis interface that bundles together to allow
+>=20
+> CSI DMA?
+> What is CSIS?
+>=20
+> > csi2 capture.
+>=20
+> CSI2?
+
+CSIS stands for Camera Serial Interface Slave.
+
+Samsung v4.3 CSIS IP bundles both the CSIS link operation and the CSIS
+DMA operation. The DMA-related operation are referred to as CSIS DMA and
+are handled by the fsd-csis driver. The link related operations are
+referred to simply as CSIS and are integrated into imx-mipi-csis driver.
+
+I'll update the commit message and commit description accordingly,
+and maintain consistency across the patches.
+
+>=20
+> >
+> > Signed-off-by: Inbaraj E <inbaraj.e=40samsung.com>
+> > ---
+> >  arch/arm64/boot/dts/tesla/fsd-evb.dts =7C  96 +++++
+> > +++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
+> > =40=40 -493,6 +493,558 =40=40 clock_mfc: clock-controller=4012810000 =
+=7B
+> >  			clock-names =3D =22fin_pll=22;
+> >  		=7D;
+> >
+> > +		mipicsis0: mipi-csis=4012640000 =7B
+>=20
+> Messed ordering. See DTS coding style.
+
+I'll fix the ordering in next patchset.
+
+>=20
+> Node names should be generic. See also an explanation and list of example=
+s
+> (not exhaustive) in DT specification:
+> https://protect2.fireeye.com/v1/url?k=3Da30d23f8-c28636dd-a30ca8b7-
+> 74fe485cbff6-ee12f8a711c584c8&q=3D1&e=3Db96506d8-2d5d-4303-b9e8-
+> 0e1189db1585&u=3Dhttps%3A%2F%2Fdevicetree-
+> specification.readthedocs.io%2Fen%2Flatest%2Fchapter2-devicetree-
+> basics.html%23generic-names-recommendation
+>=20
+
+There is no generic name directly related to CSI apart from camera. That's
+why I used mipi-csis. If preferred, I can move the name to csis or simply c=
+si.
+Please let me know which one is more appropriate.
+
+Regards,
+Inbaraj E
+
 
