@@ -1,133 +1,218 @@
-Return-Path: <linux-kernel+bounces-781647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23182B314F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:17:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E125B31527
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23EB61CE474C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:17:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 638BAA070E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAD62D3759;
-	Fri, 22 Aug 2025 10:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549B32D7DD9;
+	Fri, 22 Aug 2025 10:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="D6zIOcWK"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3008C23A564;
-	Fri, 22 Aug 2025 10:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nWwkuL0F"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EE92D7DE8
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755857826; cv=none; b=m6XtFsS89mQc1cBSVCge3P9eLVgqTRKjmz+SV0t1hMabwyiBlZ3iUi0PIexd4O46k//PxoWKBLTCXBpJFE8SWkUjEAfznTZuY8mY1ITh96iswfUy/+o0I+nfjYGv9ZoxFFQbCCFzXzDptdvf4mi5hWZy5oezUECT8dpXdkH3RYU=
+	t=1755857882; cv=none; b=jHiyaFCbHLad442Z+/+7L/IRHmJ3fyVAqdxSQsWS979gO8GfGmN320PWExwQ3c/b3Dl3on9wl738l4OlmO2ng1IMNMN/CIHeAqoh/FAgoXWex48Wol0sNGQtVhziQSQ1lTrM3m/+dyJsmsB0Yi1tiTojIO4NhAvwW7IIW6JM3Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755857826; c=relaxed/simple;
-	bh=gMQLm4izBWJNKM2/xCxHuxNpuXZRAeAHDeP5MeF4wxM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MZ5kwwtm0IdyK2S5zHsl8GA3inEScn4UszcIDs+Hbb4lz1m+KFEzgCMEARCMvbce08khoWc5hHY6pTixAU8dSeFm6eFawgABlJaFrMN3wfYbYiBEcIImPMNgnASUq7x9YDqaZ2Jqe1ThdBinSDCCepWq5vAKs4eNlO3K12ZFbO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=D6zIOcWK; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=PK
-	dTEHXlTCrSFOHLYyhag5amkwibf7FyuEGx4ErU5VM=; b=D6zIOcWKomfQVMytl7
-	Lz8scq26Sh4DrQbhR6XmARtIiRvGwahWzrL2zV+pUG2taX16BDRKalMcilABkzvb
-	gcmlywUEZG9kOw9MO4GTJSiaIT57xPAShcBpR3FeaQmmkfblQuk119TwVFvaSlt8
-	1ycdM80DwrkdnYmYIWzYr3GIY=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wDn5cKCQ6hokuXqDg--.63707S2;
-	Fri, 22 Aug 2025 18:16:35 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: willemdebruijn.kernel@gmail.com,
-	edumazet@google.com,
-	ferenc@fejes.dev
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6] net: af_packet: Use hrtimer to do the retire operation
-Date: Fri, 22 Aug 2025 18:16:34 +0800
-Message-Id: <20250822101634.129855-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755857882; c=relaxed/simple;
+	bh=rMOg2gvZ18O8ML3ZWRnRUP0AXccfSxiSrtww5bto3CY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hdhqjVfSJjPvnWtauhWVJLOuAfe5L3NmXq7h+PsDi7+1Mq2sIvGjQSRCm5Qzy2YY4JwPo5k457LsRJeUTBp+Ejk8DvgSTbRImkem10ZxWnvnTy4Oou11cpdt+4wQ7hixvO0L+SUIEmEJ/NthfdTl4uClO8q1mSfysC694i/kNt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nWwkuL0F; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-71d603b62adso16613187b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 03:18:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755857880; x=1756462680; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VMaJzA26Jp/KHypl7yi6sQJZmbGhp8+CxAAR+uR0Jss=;
+        b=nWwkuL0Fe2Z7bWlrR9ttK3R0K9ScyVtrzn+1/mDedH7f0XZXnY3ivxvGVdhpvPfSXN
+         Fodmwy4YTWefSVjeSLhCNnn4dRukL5GAq7t0PL7YKSVF4Vk8+gaQ20dqlbNWrspYXLvh
+         jTxAhTYKTmb2iV06IgBPFcsrXUgQkNV/cL99guoLen2TZubBkUeajql1+313LYpLDrI9
+         c8JyNqY7L4oOaGcHdCvDmuxwLAAF77gTqlfZAUEwPW54ef0OZUp4uvk+uo9NppPPVleJ
+         DmEmiqlEuBwfHDok9tF8xPuWXuK/Up6pRYyvVSQnolZZzGIGYCleEtI0Oq20tg/eJQUj
+         Ggfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755857880; x=1756462680;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VMaJzA26Jp/KHypl7yi6sQJZmbGhp8+CxAAR+uR0Jss=;
+        b=j4QdslTNnh6u2iSTeoeG46SUmwz32qnOGtFVM496ry8IFNViyfqkPZ9UtTVrVcRVvu
+         DgJpPvLiOL/njxWtL5df7zTxNzPxv69nwfwQPi1hbfmwApO5cALI7K+XB1jKfDyP+tPT
+         cAsKKjyO/HvHxeit8JcE7fqD8KRZAX58wgr2yGPab2tedYa1s+aQg+6GuUn8/551LobX
+         miJc7Mra1jKOr5kzmABCRrmRRZvS++/faW0ox1qvPRoUS3P/7Wk0E6Rzb2HbMefhY36e
+         ggezaPkRutksxPRlITRoHb6XO94NFKKPvbhPoCplFENw0JK2s7arUMd6xvBc6isRevO9
+         aFkw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0uYmSIC4QN032IlJcICQUL+KItBA23rYFYV1By5a+LuttB4rWhj89IUnn9xWiq29RfHxgjlFo+bIjCTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyji9G89M9rGbe4/Y61hhWohV+KbpUxSClCNrWTa/y9QOELd+7k
+	aXhwaHCuOoSZwcZanc08PcrB1RcojfBb33CYywes/dH2m1hHc29pm00HxmhkKxtkd76CxBpF5Mc
+	plaZsrs0IqSd3L3aW8In0hdQ3Le8pUX43sYS5hfS8VA==
+X-Gm-Gg: ASbGncss8V4OkY/82JMpYx6N/mgaQ7bQgDxIMtHKHrtGiOSiDi3N+x/zNsWZMA+u+Ai
+	9Q0Eozsi974nL/4gt+sRqAydjcSk1Bra4zU5JF7kv9nZotDC5IQ5VMwfrTZGuXr5eHqlNjcQ0kW
+	HKETNpZm4ze3LP4srNvSXJpZltbYREPqvDkcs3pq1sHtUx//fcMVwvBhG4cfCcBy4afz2pC5w71
+	V7GlphJ
+X-Google-Smtp-Source: AGHT+IGE3siUxQjopG9rHtwkuRpjA9/N+RV6hg5NCeOK0qVB5EPCNDlzWHD9g5dDC2y+88YaLX7Q6Ekh9mh+SfmJpxQ=
+X-Received: by 2002:a05:690c:6892:b0:71f:b944:1050 with SMTP id
+ 00721157ae682-71fdc5669d4mr24856077b3.51.1755857879487; Fri, 22 Aug 2025
+ 03:17:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDn5cKCQ6hokuXqDg--.63707S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxWw1ftFWrWrykuFW8WrWDXFb_yoW5Cw1Dpa
-	yjg347Cw1kAr429r47Zw4kXFWrXw4fJr43Jrs3GF1jyr9xWFyUXFW2vFyFqFWIgrs3trsF
-	vF18X39xAr4Du37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UG_M-UUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbibh2xCmioQp0WNAAAs1
+References: <20250821130751.2089587-1-o.rempel@pengutronix.de>
+In-Reply-To: <20250821130751.2089587-1-o.rempel@pengutronix.de>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 22 Aug 2025 12:17:23 +0200
+X-Gm-Features: Ac12FXzATkOB53kBFLymCe1Lpp3t7gUcUKPJOqU-WWPxNMENT_1oR3lo3uUI80U
+Message-ID: <CAPDyKFo5tJHEb8o892vg9DoMsLTq+715gotqnP26hMWenvjg8A@mail.gmail.com>
+Subject: Re: [PATCH v9 0/2] mmc: handle undervoltage events and prevent eMMC corruption
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, =?UTF-8?Q?S=C3=B8ren_Andersen?= <san@skov.dk>, 
+	Christian Loehle <christian.loehle@arm.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Avri Altman <Avri.Altman@sandisk.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 2025-08-22 at 14:37 +0800, Willem wrote:
+On Thu, 21 Aug 2025 at 15:07, Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+>
+> changes v9:
+> - Drop stray whitespace after mmc_claim_host() in mmc_attach_mmc()
+> - Remove unnecessary #include <linux/workqueue.h> from host.h,
+>   add forward declarations instead
+> - Move internal prototypes for undervoltage helpers
+>   (mmc_regulator_register/unregister_undervoltage_notifier(),
+>    mmc_undervoltage_workfn()) from host.h to core.h
+> - remove host->card check
+> changes v8:
+> - fix compile warning
+> changes v7:
+> - Remove all usage of the redundant undervoltage_notify_registered flag
+> - Register undervoltage notifier in mmc_add_card() after setting card as
+>   present, for all supported cards.
+> - Unregister undervoltage notifier in mmc_remove_card() based on card presence
+> - Remove all unnecessary EXPORT_SYMBOL_GPL for functions only used within MMC
+>   core.
+> - Move all host claiming and releasing responsibility for undervoltage events
+>   into the bus_ops callback;
+> - add comment for host->undervoltage
+> - Squash undervoltage suspend preparation and handler into one patch.
+> - Use mmc_card_removed() in shutdown path instead of host->undervoltage.
+> - Remove redundant card presence check in undervoltage handler.
+> changes v6:
+> - Rewrite commit message to be more technical per reviewer feedback.
+> - Address race conditions by using __mmc_stop_host() instead of only
+>   claiming the host in the undervoltage handler.
+> - Move notifier registration from mmc_regulator_get_supply() to the end of
+>   a successful card initialization in mmc_attach_mmc(), ensuring it only
+>   runs for capable cards.
+> - Centralize notifier unregistration in mmc_remove_card() to correctly
+>   handle all card removal and error paths.
+> - Add 'undervoltage_notify_registered' flag to struct mmc_host to
+>   reliably track the notifier state.
+> - Consolidate multiple notifier callbacks into a single, generic handler.
+> - Remove premature notifier support for vqmmc and vqmmc2 regulators.
+> - Move INIT_WORK() for the undervoltage workqueue to mmc_alloc_host().
+> changes v5:
+> - Rebased on top of mmc/next after introduction of enum mmc_poweroff_type
+> - Replaced boolean undervoltage parameter with MMC_POWEROFF_UNDERVOLTAGE
+> - Dropped unused __mmc_resume() helper
+> - Updated commit messages accordingly
+> changes v4:
+> - drop HPI and SDHCI related patches
+>
+> This patch set introduces a framework for handling undervoltage events
+> in the MMC subsystem. The goal is to improve system reliability by
+> ensuring graceful handling of power fluctuations that could otherwise
+> lead to metadata corruption, potentially rendering the eMMC chip
+> unusable or causing significant data loss.
+>
+> ## Problem Statement
+>
+> Power fluctuations and sudden losses can leave eMMC devices in an
+> undefined state, leading to severe consequences. The worst case can
+> result in metadata corruption, making the entire storage inaccessible.
+> While some eMMC devices promise to handle such situations internally,
+> experience shows that some chip variants are still affected. This has
+> led vendors to take a more protective approach, implementing external
+> undervoltage handling as a precautionary measure to avoid costly field
+> failures and returns.
+>
+> The existence of the "Power Off Notification" feature in the eMMC
+> standard itself serves as indirect evidence that this is a real-world
+> issue.  While some projects have already faced the consequences of
+> ignoring this problem (often at significant cost), specific cases cannot
+> be disclosed due to NDAs.
+>
+> ## Challenges and Implementation Approach
+>
+> 1. **Raising awareness of the problem**: While vendors have used
+>    proprietary solutions for years, a unified approach is needed upstream.
+>    This patch set is a first step in making that happen.
+>
+> 2. **Finding an acceptable implementation path**: There are multiple
+>    ways to handle undervoltage - either in the kernel or in user space,
+>    through a global shutdown mechanism, or using the regulator framework.
+>    This patch set takes the kernel-based approach but does not prevent
+>    future extensions, such as allowing user-space handoff once available.
+>
+> 3. **Preparing for vendor adoption and testing**: By providing a
+>    structured solution upstream, this patch set lowers the barrier for
+>    vendors to standardize their undervoltage handling instead of relying on
+>    fragmented, out-of-tree implementations.
+>
+> ## Current Limitations
+>
+> This patch set is an initial step and does not yet cover all possible
+> design restrictions or edge cases. Future improvements may include
+> better coordination with user space and enhancements based on broader
+> testing.
+>
+> ## Testing Details
+>
+> The implementation was tested on an iMX8MP-based system. The board had
+> approximately 100ms of available power hold-up time. The Power Off
+> Notification was sent ~4ms after the board was detached from the power
+> supply, allowing sufficient time for the eMMC to handle the event
+> properly.  Tests were conducted under both idle conditions and active
+> read/write operations.
+>
+> Oleksij Rempel (2):
+>   mmc: core: Add infrastructure for undervoltage handling
+>   mmc: core: add undervoltage handler for MMC/eMMC devices
+>
+>  drivers/mmc/core/bus.c       | 12 ++++++
+>  drivers/mmc/core/core.c      | 23 +++++++++++
+>  drivers/mmc/core/core.h      |  5 +++
+>  drivers/mmc/core/host.c      |  2 +
+>  drivers/mmc/core/mmc.c       | 70 ++++++++++++++++++++++++++++++--
+>  drivers/mmc/core/regulator.c | 77 ++++++++++++++++++++++++++++++++++++
+>  include/linux/mmc/host.h     | 11 ++++++
+>  7 files changed, 197 insertions(+), 3 deletions(-)
+>
+> --
+> 2.39.5
+>
 
-> The hrtimer callback is called by __run_hrtimer, if we only use hrtimer_forward_now in the callback,
-> it will not restart the time within the callback. The timer will be enqueued after the callback
-> return. So when the timer is being enqueued, it is not protected by sk_receive_queue.lock.
+This is nice work - and I appreciated all your efforts you have put in
+to get this done!
 
-I see.
+The series applied for next, thanks!
 
-> > Consider the following timing sequence:
-> > timer   cpu0 (softirq context, hrtimer timeout)                cpu
-> > 0       hrtimer_run_softirq
-> > 1         __hrtimer_run_queues
-> > 2           __run_hrtimer
-> > 3             prb_retire_rx_blk_timer_expired
-> > 4               spin_lock(&po->sk.sk_receive_queue.lock);
-> > 5               _prb_refresh_rx_retire_blk_timer
-> > 6                 hrtimer_forward_now
-> > 7               spin_unlock(&po->sk.sk_receive_queue.lock)
-> > 8             raw_spin_lock_irq(&cpu_base->lock);              tpacket_rcv
-> > 9             enqueue_hrtimer                                    spin_lock(&sk->sk_receive_queue.lock);
-> > 10                                                               packet_current_rx_frame
-> > 11                                                                 __packet_lookup_frame_in_block
-> > 12            finish enqueue_hrtimer                                 prb_open_block
-> > 13                                                                     _prb_refresh_rx_retire_blk_timer
-> > 14                                                                       hrtimer_is_queued(&pkc->retire_blk_timer) == true
-> > 15                                                                       hrtimer_forward_now
-> > 16                                                                         WARN_ON
-> > 
-> > On cpu0 in the timing sequence above, enqueue_hrtimer is not protected by sk_receive_queue.lock,
-> > while the hrtimer_forward_now is not protected by raw_spin_lock_irq(&cpu_base->lock).
-> > 
-> > It will cause WARN_ON if we only use 'hrtimer_is_queued(&pkc->retire_blk_timer) == true' to check
-> > whether to call hrtimer_forward_now.
-> 
-> One way around this may be to keep the is_timer_queued state inside
-> tpacket_kbdq_core protected by a relevant lock, like the receive queue
-> lock. Similar to pkc->delete_blk_timer.
-> 
-> Admittedly I have not given this much thought yet. Am traveling for a
-> few days, have limited time.
-
-Thank you for replying to me during your break. I later thought of a way to ensure that the enqueue of
-the hrtimer can be set in an ordered manner without adding new locks or using local_irq_save. I will
-reflect this in version 7.
-
-Additionally, we still need the 'bool callback' parameter to determine whether we are inside the
-hrtimer's callback, while 'bool start' parameter is unnecessary.
-
-
-Why should we keep the callback parameter?
-
-As mentioned earlier, the enqueue action occurs after exiting the hrtimer callback, and this enqueue
-action is not performed in the af_packet code. This could lead to the timer's state being changed back
-to enqueued at an uncertain time, which does not provide a timing guarantee for our logic in
-_prb_refresh_rx_retire_blk_timer, where we check the status using hrtimer_is_queued.
-
-As previously discussed, I said that we must accurately determine whether we are in the hrtimer callback
-in _prb_refresh_rx_retire_blk_timer. Relying on either hrtimer_is_queued or hrtimer_callback_running
-would not provide sufficient accuracy. However, adding a callback variable as a parameter would be a
-reliable approach, requiring minimal code changes and making it easier for future readers to understand.
-Therefore, I will also add this 'bool callback' parameter in version 7.
-
-
-Thanks
-Xin Zhao
-
+Kind regards
+Uffe
 
