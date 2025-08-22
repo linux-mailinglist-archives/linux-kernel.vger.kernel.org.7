@@ -1,123 +1,96 @@
-Return-Path: <linux-kernel+bounces-782474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AA81B320CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:52:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C775B320D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4189F1D41337
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:51:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21EDC1BA2B25
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D5026E175;
-	Fri, 22 Aug 2025 16:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67A63126A9;
+	Fri, 22 Aug 2025 16:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOldZ6P4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTtKvyPn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA5A307ACD;
-	Fri, 22 Aug 2025 16:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4D025A35D;
+	Fri, 22 Aug 2025 16:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755881475; cv=none; b=gRlRg+MjupceW/WT+z8guFZxGUinttJXNpSQ3Xx8nGCbGMRcnVr7hM+/qvRcR71iU7hZLUAcW8JRG+7MMbvCGcF+BXbulmxap/c7f04N2Vve95Sm4GPJZg3p34nT47AZ8ptvnORadiuSgkkdE/Of8URx+p1f/rxXrrwWzr08LWI=
+	t=1755881542; cv=none; b=j58d9Z4yQNFnBKuJ5835/yY+1YnmmUX5esbWn+kPJ85B1MpDPGYg8+mbO6zHEHMJbO07me45h1bsJymVOwsfXqquMbvafUl+3UR3HK+DcQj/eKAT7u9RcWcV88HG7Q6GMt3tNjO58VmzwWLORIMiXgx91YxH7Q+c/ghuM44pbJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755881475; c=relaxed/simple;
-	bh=ZN1/GSSsUnr11TA2ChLgQXw36yoz98xor8JyYYUMooQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Jtl/J3BnYQir1ajBt0Nf5+LzYprrQnu2tD6Qm1zuVz4wMUdvJEJj0CgPMoHAVK6tljGMMhTnClcv8zPTKYFBSgYeckcqcDmvKP8Gamfo9bjuU315FTvG3N9wCG4gJmJROrlqSfwLoU4kmJHTqsZaYBtFSovOuFIy4jFsvVooQus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOldZ6P4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E68FDC4CEED;
-	Fri, 22 Aug 2025 16:51:14 +0000 (UTC)
+	s=arc-20240116; t=1755881542; c=relaxed/simple;
+	bh=yaK/J9Mq7TMSJEOF0Q/1YTVBPo06y0I9D1S4aI0nInk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=haqIuKDhWvCnr7RISAabh7A/4aJWlyR/2W2nmCTTpEcw9yo+I84RYbfx5tCiptJ4aajmkiYWa7C6tXMpheoC+yNG1qoC2FyqmBXZK2C85aUJhUzx0FBtHATQo1utYFXMBbkMBpuiL7ZSuFfhbXhrDmXEyKZzepng3vFuZcZk2zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MTtKvyPn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27602C4CEED;
+	Fri, 22 Aug 2025 16:52:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755881475;
-	bh=ZN1/GSSsUnr11TA2ChLgQXw36yoz98xor8JyYYUMooQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=TOldZ6P4XjDi8geWUHI4dDlTT6CJl79l8sxl1DywRr/cP9kB878+0JkMA/VKU4RXH
-	 0/0bkecaXvUt55YZXuEbcOHw0QQEAL1sp9aA5eSUXoQNTKa+vwliCqVYL132XwqGYX
-	 jOyAVQR7WyYfW21GVtx8cGUCtlMYTOf2rrGtTRMmP3JH/EUTBqXjGU16IcKqKz7gzU
-	 ii4KkNruWP1ZjXjkv4hjXC3g1ALdUqATnnaexhDPwrJkflTfRAVA//GsLljIjaCxjq
-	 C5TibyaJM2cpWRRjFBbRv2JHLBft3EPEvwjfn3TexdNBE3CTT4r1jCt/Xf9RETQSvX
-	 CWUdvouXz1saw==
-Date: Fri, 22 Aug 2025 11:51:12 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Duan, Zhenzhong" <zhenzhong.duan@intel.com>
-Cc: "Carlis, Matthew" <mattc@purestorage.com>,
-	"Smita.KoralahalliChannabasappa@amd.com" <Smita.KoralahalliChannabasappa@amd.com>,
-	"Preble, Adam C" <adam.c.preble@intel.com>,
-	"Schofield, Alison" <alison.schofield@intel.com>,
-	"bhelgaas@google.com" <bhelgaas@google.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"Peng, Chao P" <chao.p.peng@intel.com>,
-	"Williams, Dan J" <dan.j.williams@intel.com>,
-	"Jiang, Dave" <dave.jiang@intel.com>,
-	"dave@stgolabs.net" <dave@stgolabs.net>,
-	"erwin.tsaur@intel.com" <erwin.tsaur@intel.com>,
-	"Wanyan, Feiting" <feiting.wanyan@intel.com>,
-	"Weiny, Ira" <ira.weiny@intel.com>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"lenb@kernel.org" <lenb@kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"lukas@wunner.de" <lukas@wunner.de>,
-	"mahesh@linux.ibm.com" <mahesh@linux.ibm.com>,
-	"oohall@gmail.com" <oohall@gmail.com>,
-	"qingshun.wang@linux.intel.com" <qingshun.wang@linux.intel.com>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"rrichter@amd.com" <rrichter@amd.com>,
-	"Kuppuswamy, Sathyanarayanan" <sathyanarayanan.kuppuswamy@intel.com>,
-	"Luck, Tony" <tony.luck@intel.com>,
-	"Verma, Vishal L" <vishal.l.verma@intel.com>,
-	"Wang, Yudong" <yudong.wang@intel.com>,
-	"Saggi, Meeta" <msaggi@purestorage.com>,
-	"sconnor@purestorage.com" <sconnor@purestorage.com>,
-	"Karkare, Ashish" <ashishk@purestorage.com>,
-	"rhan@purestorage.com" <rhan@purestorage.com>,
-	"Rangi, Jasjeet" <jrangi@purestorage.com>,
-	"Govindjee, Arjun" <agovindjee@purestorage.com>,
-	"Amstadt, Bob" <bamstadt@purestorage.com>
-Subject: Re: [PATCH v5 0/2] PCI/AER: Handle Advisory Non-Fatal error
-Message-ID: <20250822165112.GA688464@bhelgaas>
+	s=k20201202; t=1755881541;
+	bh=yaK/J9Mq7TMSJEOF0Q/1YTVBPo06y0I9D1S4aI0nInk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MTtKvyPnUlzqGaBwQRa4ApDd1eD78Vx/uDltIbOsZNeZ9FXqn6LgBoNYdVvzP+TLZ
+	 G6Hwwgw3IH6QrbydGfUJK4dMRu/KjXCWM/Wta1Xu/Qh5m6pzO9Xodry7FgmAgQ6IE5
+	 jfXRK1i9nIV6INAtYBguAK1DdUCfICmhNJ9q0eLH0D8hTMS34d1pXz1WZW1MwChISY
+	 k+xpxj061avk6wAg6MlLci7qBS03EzI6oo8vxoAFQo/1sxpv8Otf/cLiZKSDuNfZNm
+	 eoiKYpA4/RnHKr6ZVV2VELIfrwrqL/VJpgE5O5Zkarg6FdiWPBdoJUpiKj1vfs0SNb
+	 vuOwjd6H1Sf5A==
+Date: Fri, 22 Aug 2025 17:52:16 +0100
+From: Conor Dooley <conor@kernel.org>
+To: maudspierings@gocontroll.com
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Aswath Govindraju <a-govindraju@ti.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-can@vger.kernel.org,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] dt-bindings: phy: ti,tcan104x-can: Document TI
+ TCAN1051
+Message-ID: <20250822-gout-denture-688eeb65b6e0@spud>
+References: <20250822-can_phy3-v1-0-73b3ba1690ee@gocontroll.com>
+ <20250822-can_phy3-v1-1-73b3ba1690ee@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="417/6ibRk/SLnFGF"
+Content-Disposition: inline
+In-Reply-To: <20250822-can_phy3-v1-1-73b3ba1690ee@gocontroll.com>
+
+
+--417/6ibRk/SLnFGF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <IA3PR11MB9136FCB8C778B0AE08BF8DB5923DA@IA3PR11MB9136.namprd11.prod.outlook.com>
 
-On Fri, Aug 22, 2025 at 01:45:30AM +0000, Duan, Zhenzhong wrote:
-> Hi Matthew,
-> 
-> Feel free to take it over if you are interested. Maintainer didn't
-> respond to this series, perhaps he expects some improvement in the
-> series.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-I'm terribly sorry, this is my fault.  It just fell off my list for no
-good reason.  Matthew, if you are able to test and/or provide a
-Reviewed-by, that would be the best thing you can do to move this
-forward (although neither is actually necessary).
+--417/6ibRk/SLnFGF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Bjorn
+-----BEGIN PGP SIGNATURE-----
 
-> >-----Original Message-----
-> >From: Matthew W Carlis <mattc@purestorage.com>
-> >Subject: [PATCH v5 0/2] PCI/AER: Handle Advisory Non-Fatal error
-> >
-> >Hello. My team had independently started to make a change similar to this
-> >before realizing that someone had already taken a stab at it. It is highly
-> >desirable in my mind to have an improved handling of Advisory Errors in
-> >the upstream kernel. Is there anything we can do to help move this effort
-> >along? Perhaps testing? We have a decent variety of system configurations &
-> >are able to inject various kinds of errors via special devices/commands etc.
-> >
-> >Thanks,
-> >-Matt
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKigPwAKCRB4tDGHoIJi
+0pC3AQCDOtsgl3v4+3MpC8nave18XEmONgIFklHfXnBS5G3TwwEA0mnpdzGtsgfJ
+aa1SEma1o0J1HMb0GPVTGrRvFhFXVgI=
+=SrOb
+-----END PGP SIGNATURE-----
+
+--417/6ibRk/SLnFGF--
 
