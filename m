@@ -1,95 +1,180 @@
-Return-Path: <linux-kernel+bounces-781765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3F9DB31674
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:38:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BDBCB31676
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:39:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45950A03F29
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:38:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C873C7BC23D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C022F6575;
-	Fri, 22 Aug 2025 11:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E562F6575;
+	Fri, 22 Aug 2025 11:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="leIePJR/"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PA0BE+25"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6412F49EA
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4627A2C029E;
+	Fri, 22 Aug 2025 11:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755862730; cv=none; b=TIucBY+x17pi0uPGy03Z7iYV+xeuKrwgOrG/ryOuuyuzcoNHsFgZUUhvIFa1pJalva5hiqJcRC/CWnzBJmHPANLio1MM/oCeYMokHJvhxrUKijhhu3hnuOOrmrCNyDDBN30Sj0qYf8KRZ7K2IAZuZ0qqv2Tt6dofTJ7GkIsc2ys=
+	t=1755862772; cv=none; b=N5iycwLhDK4vHwWDelh9knmxpvByf0hJwEewHUrD3JXJLjZlxvd/f6ou1HlW2zVTev6kPL/dVPMExYU8IzZ1dHHVLQwSfdc9QQ2slrgGZWWLaMSQzG9iSHLUw08qSqzzbQqp9cp7EoA9IngGk3yQzXFJzp+WasVaRDtJS0XB+00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755862730; c=relaxed/simple;
-	bh=m+A9WcXi5zkO3a4udqaXufGb0jNFoo6PlkvfjpuydaQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eGinGDUB/QiCW4xjWWnSJltdD6VKWqF7ME2uE4Dotb0bS/mqx4z9TPyCpSI/sGlZvrxlPqFLpGmYQIhXD5O9z0ZJTP4Jj5pDkMXRcf27HU1STr8wVKjoeYxhgtcUc92n0pzgRpDwxl/keLYMM7TD4bnjJstvrC6BapkHZbhBks4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=leIePJR/; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45a1b0514a5so9823825e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 04:38:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755862727; x=1756467527; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CFcr6uz0jG9ffYUWcqfQzbDevoZ3JeHXkrQo4S5TjdQ=;
-        b=leIePJR/ntGiXCVjY7d5+6+xISvElRqLJnMhnW6QCJtaL5jUqYdyKeJ0SmLt3usA3U
-         2+ydUXOsCSLoLZFNclBiOTzPfF0hR53s6StWKeAXaUb7T7aAdBsxrNjRwryLtFhKx1b4
-         IEWzIy5bCi9hMU5KiDhB+kWQxvHvUl96yrA8bZT7PIjKpDjarX3ct6tIsELrOz8g7Qof
-         MQUUxCKzMVJN0KOOWJBvS7D0BrgHpjFP1jQ6eDnfp0193USwEFcn39k9aThoEuj7ChSa
-         VR+/oQ6iOZEu2AQAfNipAzPMUJHCltis7opfJnN9A9rLhoak7FKQV1Aak9DgoKxC4NGB
-         D4sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755862727; x=1756467527;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CFcr6uz0jG9ffYUWcqfQzbDevoZ3JeHXkrQo4S5TjdQ=;
-        b=tjxMFjPOvFVGRAELL1mCiJVvPBSrfpbAysS+/WMcVllq97NiqobpYclqQkp8j8PzvF
-         ZghOXSxdMBGMCAD2wM6SwwjNfmaFkolyNL+m97BHA4NWN+rPv2uvLcar6iVA0z/z3uJX
-         6UmhX6uJiwzgjquUQtc1HLRjxNuRh+fI4FYw7dEHg/jEq6XHcXRJp0wnDxwLBRj9cG6D
-         m7gEBeO30/DPgW7XoySYB6CSV59rlXneWnvrTqBIUYxJ26SYvc96Hx/Yy6fVUWkWRTpd
-         C+UX6z42SXS4ouRleaFBcRQJ+sTfLn3Oay6fFs0MqlgagnBoTAwBhghyOaE96pDwW7I2
-         0iTw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2//Y3YXHL4lBTT6f4XBnFZGBoCcQuSRPo8ZKmgG8CC7pdOvauAFYqes+g27CrgYxHQZTNjuQrrHRxcc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztHu/qZJCWt7LCeE7U9o79hiqA2GAWK2ajqV5ClPeibhwTbF64
-	aWv4cfL24s32h4EXnrQAWtW2Jjsg7IdLoBDItMAvWIlKKJUt9rREuaLqxYVXGKZyjonGtNp44qM
-	Ut6M0cQIuy4ZZ5mnl+A==
-X-Google-Smtp-Source: AGHT+IFj165R5y0xOFN9mQjeC9un8ZkWRh+o/LKKA4frRy8x/8931NLrOa9vNTnnCurNnFmGJfO6w53TOHPIGVg=
-X-Received: from wmsr18.prod.google.com ([2002:a05:600c:8b12:b0:458:be4f:f5e5])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:46c5:b0:458:a7fa:211d with SMTP id 5b1f17b1804b1-45b517e95a3mr20199435e9.29.1755862727525;
- Fri, 22 Aug 2025 04:38:47 -0700 (PDT)
-Date: Fri, 22 Aug 2025 11:38:46 +0000
-In-Reply-To: <20250820165431.170195-3-dakr@kernel.org>
+	s=arc-20240116; t=1755862772; c=relaxed/simple;
+	bh=uvNUTxYl0XwoSMHXMw1EfB7DGYUW4T7Op0LDyNvMkHY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JBuTRLYOTVtizV002OeiT46xUZGQMfDEFI9IWMmFNSXuiKjke+GNnddY4VDDKsswtYmUKhv/zgvPXCJ3j9jlysWOoMe0Lc+j/GhndkUHnky//gPpnczNhmn9LbnEckqe6ohvT0vCDtdoTBOdNxBJ93kqMeLBRcRt5xVWJC6phEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PA0BE+25; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57M8UT1Z001157;
+	Fri, 22 Aug 2025 11:39:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	URe68+m74VE3wYAAfDXp6vPIEBqNgHCchsFwNybDTMw=; b=PA0BE+25E4zHlDjI
+	dw6k83kUsW8gx9p9bI4R+fBMKHwb8jsYBOQU2Ub0iRYjZK3PEy35f88YjE35oONu
+	tCabbQwt+9CKPX5wnPbeprOMhxdxMnoHqMhmLce/2yJ4zBX2UOkQNz6iBL6gDOrq
+	GFG/IaYU7GMudW1YNUAd+PMjM8vjr3NzoJqhlK7DXD4uM9fryMNF7kmniOWN9GN8
+	COCszUXVFIXyq7PEpV6QxWV71hFNaolLwuYvBr7X4x8op2wsYFVuroXcJvO3dcZh
+	JiYIb6kxQ8+jioppS6VPm5jpDh6SL/Dp6LMGqMjsPjdsMhZx4wdQ7+nv8AYwfeau
+	ByF7Kg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52992m0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 11:39:22 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57MBdLcj009520
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 11:39:21 GMT
+Received: from [10.216.22.206] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 22 Aug
+ 2025 04:39:18 -0700
+Message-ID: <61070746-431d-4adf-9e68-7ae9646a44c9@quicinc.com>
+Date: Fri, 22 Aug 2025 17:09:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250820165431.170195-1-dakr@kernel.org> <20250820165431.170195-3-dakr@kernel.org>
-Message-ID: <aKhWxpyqpneA1AiG@google.com>
-Subject: Re: [PATCH v2 2/5] rust: dma: add type alias for bindings::dma_addr_t
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: akpm@linux-foundation.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu, 
-	abdiel.janulgue@gmail.com, acourbot@nvidia.com, jgg@ziepe.ca, 
-	lyude@redhat.com, robin.murphy@arm.com, daniel.almeida@collabora.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 2/2] phy: qcom-qmp-ufs: Add regulator loads for SM8650
+ and SM8750
+To: Manivannan Sadhasivam <mani@kernel.org>
+CC: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250819222832.8471-1-quic_nitirawa@quicinc.com>
+ <20250819222832.8471-3-quic_nitirawa@quicinc.com>
+ <ger4kizeltjwalfuwu4dpfjiskrv2okgo5c7d6n3pb24yaxgfo@nkcndblyx3il>
+ <xir3u3hlmcvfu6uasijz6g2oialoasmuu4bno6ctxpscqcebz6@6kw6xpm5bxbd>
+ <761c97bb-ee90-4ace-acd3-08349831aade@oss.qualcomm.com>
+ <2635ced4-b91f-4c79-ae2a-079f06bbb8a9@quicinc.com>
+ <pp3hr3kssytyfuuesdfrzdo6hm6e3tjlahla53mlmydetsgxdy@wmxwkatf7lvr>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <pp3hr3kssytyfuuesdfrzdo6hm6e3tjlahla53mlmydetsgxdy@wmxwkatf7lvr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 5v7xh36p9XeVI0fn4RteLWNjKdl2vSH_
+X-Proofpoint-ORIG-GUID: 5v7xh36p9XeVI0fn4RteLWNjKdl2vSH_
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX9EuZ9Z/NdqLp
+ VvVDGpm0X7MsRJ6EG1xN8EhtTsaFAIh+8hCT0c4+XUJhN3Ek7CA85CW3kEB7mCzpwp+vETeIx9d
+ WNeYb9z2lzu3rplil9FJ351Md4uPAiUe0gjaDEwRxVHu6GjJzOnMjPE0hzICbBbLYtvnO0z3dh3
+ i9wRGLa+9Aaoo6pLxGbmnt8cfjTcZN5WdmCl6flXk6DfV5v3u3IPw8XMGlaZYut+bSbGJvsb7Jy
+ e5+AHX64kBBgbgZ4oTe90D1aDqgVMprtP2gazRrtb2qawzgZhSLjpJvLKsqt8ZW8czGkFktTzBP
+ VXouk+E37EA+fNiOKmUUpFJUcLTQIfe2KcGMpq16U0F6sjR99uXLb8MSyr3cE4rtrk0zr0BeCef
+ k8WNI0fl8UvIeBbdrZAvtI7cuaK+eA==
+X-Authority-Analysis: v=2.4 cv=SPkblOvH c=1 sm=1 tr=0 ts=68a856ea cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=GElOo5Rt_zXM7e0JAJwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
+ impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-On Wed, Aug 20, 2025 at 06:52:56PM +0200, Danilo Krummrich wrote:
-> Add a type alias for bindings::dma_addr_t (DmaAddress), such that we do
-> not have to access bindings directly.
+
+
+On 8/22/2025 4:26 PM, Manivannan Sadhasivam wrote:
+> On Fri, Aug 22, 2025 at 02:53:31PM GMT, Nitin Rawat wrote:
+>>
+>>
+>> On 8/22/2025 2:45 PM, Dmitry Baryshkov wrote:
+>>> On 22/08/2025 11:53, Manivannan Sadhasivam wrote:
+>>>> On Wed, Aug 20, 2025 at 03:49:31AM GMT, Dmitry Baryshkov wrote:
+>>>>> On Wed, Aug 20, 2025 at 03:58:26AM +0530, Nitin Rawat wrote:
+>>>>>> Add regulator load voting support for SM8650 and SM8750 platforms by
+>>>>>> introducing dedicated regulator bulk data arrays with their load
+>>>>>> values.
+>>>>>>
+>>>>>> The load requirements are:
+>>>>>> - SM8650: vdda-phy (205mA), vdda-pll (17.5mA)
+>>>>>> - SM8750: vdda-phy (213mA), vdda-pll (18.3mA)
+>>>>>>
+>>>>>> This ensures stable operation and proper power management for these
+>>>>>> platforms where regulators are shared between the QMP USB PHY and
+>>>>>> other IP blocks by setting appropriate regulator load
+>>>>>> currents during PHY
+>>>>>> operations.
+>>>>>>
+>>>>>> Configurations without specific load requirements will continue to work
+>>>>>> unchanged, as init_load_uA remains zero-initialized when .init_load_uA
+>>>>>> is not provided.
+>>>>>
+>>>>> Can we please get configuration for the rest of the platforms?
+>>>>>
+>>>>
+>>>> Only if the rest of the platforms require setting the load... It is
+>>>> not very
+>>>> clear if the older platforms share the regulators with other IPs or not.
+>>>
+>>> Yes, they are usually shared. USB. PCIe and DSI frequently sit on the
+>>> same voltage rails.
+>>
+>> Yes, it’s typically shared across multiple clients.
+>>
+>> However, as I mentioned earlier, in the current upstream codebase, the
+>> "regulator-allow-set-load" property is defined only for SM8750 and SM8650
+>> within the PMIC PHY and PLL device tree nodes. This means that even if the
+>> UFS PHY driver is updated to vote for this configuration on other platforms,
+>> it will have no effect, as the property is not supported there.
+>>
 > 
-> Suggested-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> Which means:
+> 
+> 1. Those platforms are still prone to this stability issue.
+> 2. Only UFS is setting the regulator constraint, but not other drivers sharing
+> the same regulator.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+You understanding is correct.
+
+> 
+> IMO, both cases are bad. At leat, you can update the UFS driver to set the load
+> now and later on add the DTS property as a follow-up series for those platforms.
+
+
+sure will take care of this.>
+> - Mani
+
+
+
+> 
+
 
