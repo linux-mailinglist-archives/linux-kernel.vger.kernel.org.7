@@ -1,76 +1,147 @@
-Return-Path: <linux-kernel+bounces-781930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3D92B318CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:07:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9401B318DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD1EF1C203C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:02:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 817006254B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F8E303C93;
-	Fri, 22 Aug 2025 13:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B002FE586;
+	Fri, 22 Aug 2025 13:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ySk1i4Ja"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="nxmKQCPh";
+	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="Jp/67mQN"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAA9302CC7;
-	Fri, 22 Aug 2025 13:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755867606; cv=none; b=R0MXxbra21flMzgJY8gx5ri7gvNamQ0rk7T09kBsXZa+q7LOoUpp/2AILwxIlK2rLbw7iK5KUu3ns85usE/72ZQfa+l3Jd0VBzKx7uznx9aaoiUTy+LomyefJ5fMXK8SqZAQlAVuKsvP6zin/7jzOA213CENdf0wlIzKpbaG0j8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755867606; c=relaxed/simple;
-	bh=OrVIPYS1E+djrOZ4LNmEbYam6+d+/9oqufM7Sapxb6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aeEznmHNTrLENJb+RGoEe0yGZox9NDQYfVV3bW38VSiucnW+wf8riV4Peq/8As5KT1p0WoWrFE85y1SVPg1TN1WPW2h3WGDPsPkLSnwhYIKAse8ilFr40nYCDZj+U4S6/7ogwvz2/yQwHEVgAj/qyMymps+l/DiqhQWwgSidMr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ySk1i4Ja; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=zwhAsXIwgy930xIEIc3hqz2SZ32KH1hEL9whGsP/YPU=; b=ySk1i4JaLkNHQKa6Rgx7+NZAiP
-	T6lMu0roX8z0YB9obpFJMEON09A6hCC+GnrPfKeg6Qxy/VfpyexSBEpP+xccYfRjWKu4doOYxuWjp
-	+jnauKfAlQGsZ1hitamFDNRMDCFaxiJRtfMqv8PFMX9i/nigWKNmOkydAMPLdIsIqIAs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1upRN2-005ZzQ-1J; Fri, 22 Aug 2025 14:59:52 +0200
-Date: Fri, 22 Aug 2025 14:59:52 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Parthiban.Veerasooran@microchip.com
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] microchip: lan865x: fix missing ndo_eth_ioctl
- handler to support PHY ioctl
-Message-ID: <5ac05a1f-0cd2-421c-8747-9159a62dce2b@lunn.ch>
-References: <20250821082832.62943-1-parthiban.veerasooran@microchip.com>
- <204b8b3d-e981-41fa-b65c-46b012742bfe@lunn.ch>
- <4a2e6ca1-7ae9-4959-a394-c84aab4b4c02@microchip.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77D42FC008;
+	Fri, 22 Aug 2025 13:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755867649; cv=pass; b=QO1DmY8FuZitIk7GRYJQg/HY7BooiRDu9nV8sVU4hicRcijQmHTybF+LB+96dttPEF+/g5aejiy/PEQwkLfe71/wfHn48lDQgOn3lnXFgXTeKY0wdqnsY3shrrEN+QM5ONlPlUSGinm5cyAabfnIGmDGbizlmZTKAg2S80uBxqw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755867649; c=relaxed/simple;
+	bh=tKWIfxfpH/XWzFDUflAitZfOsO2kUNsz1M5UwojPLDg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=XytnqKdvjkoY6CJ3FHsvAkMwMjAY5au6qYI/o8eGmnCUOzLaOTrrg4VG5iWNFiv/HSNb+MPO9dmbLkfK+XA9HRRAxi1ihQIHn0nQHQHNIKyNM2SQ5fMn1zJhHu30SmxrsICVvD1RRcTqFyS4EgS9kGLHO8sATKJcompAkarafEA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=nxmKQCPh; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=Jp/67mQN; arc=pass smtp.client-ip=85.215.255.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
+ARC-Seal: i=1; a=rsa-sha256; t=1755867629; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=OQUKXQKrLIEkTNdxgMLMUmUMN1QNPVW0lHu4nhT5I54CNgy8tU3OL/oJpC05WWuNgo
+    atu3NCfBEn7rtkv7CGNd+TtNAZ+SW009ZBrBvBuJP9oZOrA8KLhQnAI4HhHrsJGpZfmX
+    HEyAFLI689W/IVIh6TfdNymMsxOKW0vkdufHBc9RZ8gsdRqEeSc8Q0mMjPiSW6HX8OAU
+    iHKZWSeMpGKteU3jlL3OZqrPzJOdjPYjptIjDqwljJHMmPxAaEYMkxOio/QgafsXYZGV
+    57ORTCHGUiPxKAEHTI6vIMOFGWwzTmigrLUauM0jlFfSjRRMFzZqwH8I//C1DLgApuXt
+    4wQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1755867629;
+    s=strato-dkim-0002; d=strato.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=dyqgy5T3hx+MqXXKObwy6WBXqr/oFHAkqS1wlQiF4gA=;
+    b=L9UOthVWOLA+Lfpxh/Wt0eJ53Y3mvGXJ1j6Mqn6iUfpxNdgJ+NcrK8ZPIqALKTIlwu
+    jh7wgXfanMBNJG6E3FjIOscmJaxqKKSfjrymRyjCZ8TBoNKsCFeAPiqhoRg/gqdgwpGg
+    lkfcFJIY1h4t1eS+nLrMzBgKB3cqBItlPsPxryDC2fncGs2BjHIHiW4QPE9l1un0BlsT
+    ILZuyi+wsfLN+ExJPMxzptEaeIThos/neqEQhw094JUYP1MVGx6DDakiUcWPBQXfwRNh
+    4zFJlBEIP11FT4s3dq2x1KlGQ3Y6zCJmQ+llzK1gNSkWFm0YYgTbm8ryL+DMjyBYWLMt
+    +5Aw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1755867629;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=dyqgy5T3hx+MqXXKObwy6WBXqr/oFHAkqS1wlQiF4gA=;
+    b=nxmKQCPhCIRF7ZinVmUI7+HayKuUW41E/T0aRamLmIPI7FcMOU7U0ooj/fUIIAYAvY
+    eTFvu+ygC6mJivTInVSNFdlgqRg6qYJbEJVSYquAiwLpSVM/n/H9dZ3XtOil6Y/uHYwE
+    AF396238NbPCXZ5qYYgG1kruPzPzbAvHhDFRCbkn0wL4WxcFa5Yr9io3GScTpMFljWOM
+    cb6Yziznjm31oBF5HqwVKQN6NR5JSIgSvIrf87axlgUxWmlmFhRcFVSLb79/fKz7pQx9
+    rV4WqyKU/ArlNT8Do5SBhu6a8jq4v1GrlqpEfq6pD3CjKbZdosJOHoV/dw65cM/T7Bub
+    U+8Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1755867629;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=dyqgy5T3hx+MqXXKObwy6WBXqr/oFHAkqS1wlQiF4gA=;
+    b=Jp/67mQNx3H74Jec//qwPYmo0UxLEBWaAYkXHLrRjsBN71l+eAVP61N54Ku31kPZwu
+    +rS7H9RI/6iFaZr9KiDA==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yfz0Z"
+Received: from smtpclient.apple
+    by smtp.strato.de (RZmta 52.1.2 DYNA|AUTH)
+    with ESMTPSA id Q307a417MD0S2Yt
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+	(Client did not present a certificate);
+    Fri, 22 Aug 2025 15:00:28 +0200 (CEST)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a2e6ca1-7ae9-4959-a394-c84aab4b4c02@microchip.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH] power: supply: bq27xxx: fix error return in case of no
+ bq27000 hdq battery
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <F9E0EBBA-094D-4940-8A15-409696E6B405@goldelico.com>
+Date: Fri, 22 Aug 2025 15:00:18 +0200
+Cc: Sebastian Reichel <sre@kernel.org>,
+ Jerry Lv <Jerry.Lv@axis.com>,
+ =?utf-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+ linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ letux-kernel@openphoenux.org,
+ stable@vger.kernel.org,
+ kernel@pyra-handheld.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D003BFF9-737D-432D-B522-9AD5E60A6E9A@goldelico.com>
+References: <bc405a6f782792dc41e01f9ddf9eadca3589fcdc.1753101969.git.hns@goldelico.com>
+ <20250821201544.047e54e9@akair>
+ <10174C85-591A-4DCB-A44E-95F2ACE75E99@goldelico.com>
+ <20250821220552.2cb701f9@akair>
+ <F9E0EBBA-094D-4940-8A15-409696E6B405@goldelico.com>
+To: Andreas Kemnade <andreas@kemnade.info>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
 
-> By the way, is there a possibility to submit or apply this patch to the 
-> older stable kernels as well, so that users on those versions can also 
-> benefit from this feature?
+Hi,
 
-This is the sort of patch the machine learning bot picks up for back
-porting to stable. The Fixes: tag is only one indicator it looks for,
-it being a one liner and the words in the commit message might trigger
-it as well.
+> Am 22.08.2025 um 08:51 schrieb H. Nikolaus Schaller =
+<hns@goldelico.com>:
+>=20
+>=20
+> What do you mean with "catched earlier"? What is your proposal?
+>=20
+> Well, as proposed by Jerry earlier, it appears as if it can also be =
+handled in bq27xxx_battery_hdq_read()
+> by detecting the register BQ27XXX_REG_FLAGS and the read value 0xff =
+and return -ENODEV.
 
-	Andrew
+I tried this but there are more locations where BQ27XXX_REG_FLAGS are =
+read and where the reading
+code is not prepared to receive an -ENODEV. This will for example emit
+
+[  293.389831] w1_slave_driver 01-000000000000: error reading flags
+
+each time the battery is removed. And in some race cases (a read of the =
+full /sys properties is
+already in progress), there may be more than one such message. That is =
+not nice to replace one
+console message with another...
+
+So I am not sure if it is a good idea to make the lowest layer ("catched =
+earlier") read function
+detect -ENODEV based on the register number. It can not know what the =
+next layer wants to do with
+the result.
+
+BR,
+Nikolaus
+
 
