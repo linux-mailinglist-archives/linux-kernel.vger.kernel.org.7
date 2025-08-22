@@ -1,171 +1,248 @@
-Return-Path: <linux-kernel+bounces-781131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C1F0B30DD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:09:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E150B30DD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DC01A059AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:09:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E61F65E7F12
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAC128AAE0;
-	Fri, 22 Aug 2025 05:09:04 +0000 (UTC)
-Received: from zg8tmty1ljiyny4xntuumtyw.icoremail.net (zg8tmty1ljiyny4xntuumtyw.icoremail.net [165.227.155.160])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05198266B67;
-	Fri, 22 Aug 2025 05:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=165.227.155.160
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0548028B7DA;
+	Fri, 22 Aug 2025 05:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b="GGzV5MK2"
+Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFF0289E08;
+	Fri, 22 Aug 2025 05:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.84.1.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755839344; cv=none; b=EzZ4fSa1Tf9Pqf6gm6NO2PKf/DPpA3uxnlMjTp8A1S3zvMb1vnX+9MSCjuBtqhfQAxznjjVgswZWaQy50uawiSMPEc65vZH6kHKFxerFngWISsCtqVsLXQiRtzejdUl2/wtH0yhs37NshYTs8Zxb9//hrPVTF3CLs5zlqOERCSA=
+	t=1755839421; cv=none; b=dccdf5e7QwOBT9BddYi9FKi2ngRJhy8Fj8JB7gKYOBneOfDfHlsL0mPRy8A+Lu8waB0Ej0R0r+4uXcHY0PzY5CphtqEJyl6HAv5T6lJz2L+xMAXqUYQ0BmgY0o3mEb02lX3of8DpQZ1WA2vlbIeEe2D7Xg3C3HpB4e1NTvGN0d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755839344; c=relaxed/simple;
-	bh=ImzbWSeUVNC5unK6e2Xdbt/EPWZNXA1qmCgfG7zJiXk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GEHbwQ8LhekoeakM4+W18jS+Kym3wjcMW7ZwxnDyP2laE1drwI5niP35XTsrpAGWO//keNCjILt7BnF7z1+OlsuxdUfOMhn/eirYl+i2MvWpX6zwJs+xa6aiJKDWJDHEkvEnM7sVoNycNrocIObWQhtRMFrb324vyCPS34yfsWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=165.227.155.160
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from zju.edu.cn (unknown [218.12.21.37])
-	by mtasvr (Coremail) with SMTP id _____wCHJGlf+6doK096AQ--.18128S3;
-	Fri, 22 Aug 2025 13:08:48 +0800 (CST)
-Received: from ubuntu.localdomain (unknown [218.12.21.37])
-	by mail-app1 (Coremail) with SMTP id yy_KCgDHHNha+6doUlRxAQ--.48590S2;
-	Fri, 22 Aug 2025 13:08:46 +0800 (CST)
-From: Duoming Zhou <duoming@zju.edu.cn>
-To: brcm80211@lists.linux.dev
-Cc: brcm80211-dev-list.pdl@broadcom.com,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	mingo@kernel.org,
-	tglx@linutronix.de,
-	arend.vanspriel@broadcom.com,
-	Duoming Zhou <duoming@zju.edu.cn>
-Subject: [PATCH v2] brcmfmac: btcoex: Fix use-after-free when rescheduling brcmf_btcoex_info work
-Date: Fri, 22 Aug 2025 13:08:39 +0800
-Message-Id: <20250822050839.4413-1-duoming@zju.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755839421; c=relaxed/simple;
+	bh=u78+GWVaWnaMGY0TMJxjyP+RnBFR/HtfMv9mXJtHIPM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jSjLdyCVueZKpJbhUz5jH0FPNZfJ4ArDPsmch1zIDHuJIpad0kH/ELvxEfi50g1avUjUtugFZgUTlM7Z/qzbeT6wVbV4YkiT/Qix3iZxvfU/wTDzJ6vmwya1nl2Tl7WDENj4H9/dd7ohNge9zsgfJcJKmgOahqHxwKFI61BOuMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com; spf=pass smtp.mailfrom=panix.com; dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b=GGzV5MK2; arc=none smtp.client-ip=166.84.1.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=panix.com
+Received: from [192.168.55.30] (ip174-65-98-148.sd.sd.cox.net [174.65.98.148])
+	by mailbackend.panix.com (Postfix) with ESMTPSA id 4c7StZ0PK8z4cdw;
+	Fri, 22 Aug 2025 01:10:13 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
+	t=1755839415; bh=u78+GWVaWnaMGY0TMJxjyP+RnBFR/HtfMv9mXJtHIPM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=GGzV5MK2YYYhiABfNPRq4mkRg7WgQujJRu2i9HqgF8NJxxUjpAz/MO3d0PJnGRxgm
+	 L87+NHtR97X701jEtXLK9gbDzR+r/yY5bGQXINtLSZwZmAZMR2HXHbbOMz0+bNpo3e
+	 an6Nyrb56E1yTLmWILaQPDjwmpdvCOY29E7M9q8Q=
+Message-ID: <202d3647-ecc0-41a5-b481-28de45a5bb33@panix.com>
+Date: Thu, 21 Aug 2025 22:10:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:yy_KCgDHHNha+6doUlRxAQ--.48590S2
-X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwAGAWindnkDJAALso
-X-CM-DELIVERINFO: =?B?XBWk/gXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
-	CR1+FKPRRHSLOk9dZ6tUQqRhJiqWo8QcKJNUBNPSN6B4l5UJbmYI+M+3mlBheizaJvNRuQ
-	3dECz0taxrGnZuv6MqtMe5xQh6TzeVOiyZZ44+8EP+AOCOuPfhje8WtXyKsysQ==
-X-Coremail-Antispam: 1Uk129KBj93XoWxJw1ktFWrCrykWFyfCr17Arc_yoW5tryfpa
-	93J34ayry0qrW3KrWkJr1kZFy5KanrG3Wqyr48CF43uFsIqr4xtF40yF12gFW7CFWI9ay2
-	yF4FqFy3Jrs8tFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvmb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
-	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
-	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
-	AKI48G6xCjnVAKz4kxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I
-	3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxV
-	WUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8I
-	cVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-	AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZE
-	Xa7IU801v3UUUUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 1/2] PCI/ASPM: Add host-bridge API to override default
+ ASPM/CLKPM link state
+To: "David E. Box" <david.e.box@linux.intel.com>, rafael@kernel.org,
+ bhelgaas@google.com, vicamo.yang@canonical.com,
+ ilpo.jarvinen@linux.intel.com, nirmal.patel@linux.intel.com, mani@kernel.org
+Cc: linux-pm@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Me <kenny@panix.com>
+References: <20250822031159.4005529-1-david.e.box@linux.intel.com>
+Content-Language: en-US
+From: Kenneth Crudup <kenny@panix.com>
+In-Reply-To: <20250822031159.4005529-1-david.e.box@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The brcmf_btcoex_detach() only shuts down the btcoex timer, if the
-flag timer_on is false. However, the brcmf_btcoex_timerfunc(), which
-runs as timer handler, sets timer_on to false. This creates critical
-race conditions:
 
-1.If brcmf_btcoex_detach() is called while brcmf_btcoex_timerfunc()
-is executing, it may observe timer_on as false and skip the call to
-timer_shutdown_sync().
+Tested-By: Kenneth R. Crudup <kenny@panix.com>
 
-2.The brcmf_btcoex_timerfunc() may then reschedule the brcmf_btcoex_info
-worker after the cancel_work_sync() has been executed, resulting in
-use-after-free bugs.
+----
+Bzy_MHz C1E%    C10%    CPU%c7  PkgTmp  GFX%rc6 GFXMHz  CPUGFX% Pkg%pc8 
+Pk%pc10 CPU%LPI SYS%LPI PkgWatt CorWatt GFXWatt
+909     1.37    98.28   42.74   45      99.79   300     0.15    21.61 
+47.17   47.24   38.78   1.07    0.19    0.00
+1788    3.86    95.43   42.24   46      99.84   300     0.14    23.97 
+32.84   32.89   26.52   1.80    0.68    0.00
+1014    0.01    99.70   42.74   45      99.84   300     0.12    26.23 
+59.45   59.54   48.82   0.59    0.12    0.00
+1887    0.86    98.41   42.25   45      99.83   300     0.13    24.62 
+47.84   47.92   40.02   1.42    0.63    0.00
+951     0.01    99.70   42.74   46      99.83   300     0.13    27.87 
+56.99   57.08   46.82   0.63    0.12    0.00
+Bzy_MHz C1E%    C10%    CPU%c7  PkgTmp  GFX%rc6 GFXMHz  CPUGFX% Pkg%pc8 
+Pk%pc10 CPU%LPI SYS%LPI PkgWatt CorWatt GFXWatt
+1814    4.11    95.08   42.26   46      99.81   300     0.14    18.76 
+37.64   37.70   30.90   1.93    0.77    0.00
+1009    0.30    99.41   42.73   45      99.89   300     0.13    27.08 
+55.32   55.42   45.56   0.70    0.13    0.00
+1896    2.06    97.25   42.25   46      99.82   300     0.13    20.58 
+41.54   41.61   35.22   1.66    0.67    0.00
+972     0.01    99.69   42.74   45      99.86   300     0.14    28.82 
+56.29   56.38   47.29   0.59    0.11    0.00
+1859    1.66    97.61   42.24   45      99.86   300     0.12    22.99 
+40.33   40.40   33.22   1.69    0.71    0.00
+----
 
-The use-after-free bugs occur in two distinct scenarios, depending on
-the timing of when the brcmf_btcoex_info struct is freed relative to
-the execution of its worker thread.
+(Hope I've done that properly!)
 
-Scenario 1: Freed before the worker is scheduled
+-K
 
-The brcmf_btcoex_info is deallocated before the worker is scheduled.
-A race condition can occur when schedule_work(&bt_local->work) is
-called after the target memory has been freed. The sequence of events
-is detailed below:
+On 8/21/25 20:11, David E. Box wrote:
+> Synthetic PCIe hierarchies, such as those created by Intel VMD, are not
+> enumerated by firmware and do not receive BIOS-provided ASPM or CLKPM
+> defaults. Devices in such domains may therefore run without the intended
+> power management.
+> 
+> Add a host-bridge mechanism that lets controller drivers supply their own
+> defaults. A new aspm_default_link_state field in struct pci_host_bridge is
+> set via pci_host_set_default_pcie_link_state(). During link initialization,
+> if this field is non-zero, ASPM and CLKPM defaults come from it instead of
+> BIOS.
+> 
+> This enables drivers like VMD to align link power management with platform
+> expectations and avoids embedding controller-specific quirks in ASPM core
+> logic.
+> 
+> Link: https://patchwork.ozlabs.org/project/linux-pci/patch/20250720190140.2639200-1-david.e.box%40linux.intel.com/
+> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+> ---
+> 
+> Changes in V1 from RFC:
+> 
+>    -- Rename field to aspm_dflt_link_state since it stores
+>       PCIE_LINK_STATE_XXX flags, not a policy enum.
+>    -- Move the field to struct pci_host_bridge since it's being applied to
+>       the entire host bridge per Mani's suggestion.
+>    -- During testing noticed that clkpm remained disabled and this was
+>       also handled by the formerly used pci_enable_link_state(). Add a
+>       check in pcie_clkpm_cap_init() as well to enable clkpm during init.
+> 
+> Changes in V2:
+> 
+>    -- Host field name changed to aspm_default_link_state.
+>    -- Added get/set functions for aspm_default_link_state. Only the
+>       setter is exported. Added a kernel-doc describing usage and
+>       particulars around meaning of 0.
+> 
+>   drivers/pci/pcie/aspm.c | 42 +++++++++++++++++++++++++++++++++++++++--
+>   include/linux/pci.h     |  9 +++++++++
+>   2 files changed, 49 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index 919a05b97647..b4f0b4805a35 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -373,6 +373,39 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
+>   	pcie_set_clkpm_nocheck(link, enable);
+>   }
+>   
+> +/**
+> + * pci_host_set_default_pcie_link_state - set controller-provided default ASPM/CLKPM mask
+> + * @host: host bridge on which to apply the defaults
+> + * @state: PCIE_LINK_STATE_XXX flags
+> + *
+> + * Allows a PCIe controller driver to specify the default ASPM and/or
+> + * Clock Power Management (CLKPM) link state mask that will be used
+> + * for links under this host bridge during ASPM/CLKPM capability init.
+> + *
+> + * The value is consumed in pcie_aspm_cap_init() and pcie_clkpm_cap_init()
+> + * to override the firmware-discovered defaults.
+> + *
+> + * Interpretation of aspm_default_link_state:
+> + *   - Nonzero: bitmask of PCIE_LINK_STATE_* values to be used as defaults
+> + *   - Zero:    no override provided; ASPM/CLKPM defaults fall back to
+> + *              values discovered in hardware/firmware
+> + *
+> + * Note: zero is always treated as "unset", not as "force ASPM/CLKPM off".
+> + */
+> +void pci_host_set_default_pcie_link_state(struct pci_host_bridge *host,
+> +					  unsigned int state)
+> +{
+> +	host->aspm_default_link_state = state;
+> +}
+> +EXPORT_SYMBOL_GPL(pci_host_set_default_pcie_link_state);
+> +
+> +static u32 pci_host_get_default_pcie_link_state(struct pci_dev *parent)
+> +{
+> +	struct pci_host_bridge *host = pci_find_host_bridge(parent->bus);
+> +
+> +	return host ? host->aspm_default_link_state : 0;
+> +}
+> +
+>   static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+>   {
+>   	int capable = 1, enabled = 1;
+> @@ -394,7 +427,10 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+>   			enabled = 0;
+>   	}
+>   	link->clkpm_enabled = enabled;
+> -	link->clkpm_default = enabled;
+> +	if (pci_host_get_default_pcie_link_state(link->pdev) & PCIE_LINK_STATE_CLKPM)
+> +		link->clkpm_default = 1;
+> +	else
+> +		link->clkpm_default = enabled;
+>   	link->clkpm_capable = capable;
+>   	link->clkpm_disable = blacklist ? 1 : 0;
+>   }
+> @@ -866,7 +902,9 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
+>   	}
+>   
+>   	/* Save default state */
+> -	link->aspm_default = link->aspm_enabled;
+> +	link->aspm_default = pci_host_get_default_pcie_link_state(parent);
+> +	if (!link->aspm_default)
+> +		link->aspm_default = link->aspm_enabled;
+>   
+>   	/* Setup initial capable state. Will be updated later */
+>   	link->aspm_capable = link->aspm_support;
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 59876de13860..8947cbaf9fa6 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -620,6 +620,10 @@ struct pci_host_bridge {
+>   	unsigned int	size_windows:1;		/* Enable root bus sizing */
+>   	unsigned int	msi_domain:1;		/* Bridge wants MSI domain */
+>   
+> +#ifdef CONFIG_PCIEASPM
+> +	unsigned int	aspm_default_link_state;	/* Controller-provided default */
+> +#endif
+> +
+>   	/* Resource alignment requirements */
+>   	resource_size_t (*align_resource)(struct pci_dev *dev,
+>   			const struct resource *res,
+> @@ -1849,6 +1853,8 @@ int pci_disable_link_state(struct pci_dev *pdev, int state);
+>   int pci_disable_link_state_locked(struct pci_dev *pdev, int state);
+>   int pci_enable_link_state(struct pci_dev *pdev, int state);
+>   int pci_enable_link_state_locked(struct pci_dev *pdev, int state);
+> +void pci_host_set_default_pcie_link_state(struct pci_host_bridge *host,
+> +					  unsigned int state);
+>   void pcie_no_aspm(void);
+>   bool pcie_aspm_support_enabled(void);
+>   bool pcie_aspm_enabled(struct pci_dev *pdev);
+> @@ -1861,6 +1867,9 @@ static inline int pci_enable_link_state(struct pci_dev *pdev, int state)
+>   { return 0; }
+>   static inline int pci_enable_link_state_locked(struct pci_dev *pdev, int state)
+>   { return 0; }
+> +static inline void
+> +pci_host_set_default_pcie_link_state(struct pci_host_bridge *host,
+> +				     unsigned int state) { }
+>   static inline void pcie_no_aspm(void) { }
+>   static inline bool pcie_aspm_support_enabled(void) { return false; }
+>   static inline bool pcie_aspm_enabled(struct pci_dev *pdev) { return false; }
+> 
+> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
 
-CPU0                           | CPU1
-brcmf_btcoex_detach            | brcmf_btcoex_timerfunc
-                               |   bt_local->timer_on = false;
-  if (cfg->btcoex->timer_on)   |
-    ...                        |
-  cancel_work_sync();          |
-  ...                          |
-  kfree(cfg->btcoex); // FREE  |
-                               |   schedule_work(&bt_local->work); // USE
-
-Scenario 2: Freed after the worker is scheduled
-
-The brcmf_btcoex_info is freed after the worker has been scheduled
-but before or during its execution. In this case, statements within
-the brcmf_btcoex_handler() — such as the container_of macro and
-subsequent dereferences of the brcmf_btcoex_info object will cause
-a use-after-free access. The following timeline illustrates this
-scenario:
-
-CPU0                            | CPU1
-brcmf_btcoex_detach             | brcmf_btcoex_timerfunc
-                                |   bt_local->timer_on = false;
-  if (cfg->btcoex->timer_on)    |
-    ...                         |
-  cancel_work_sync();           |
-  ...                           |   schedule_work(); // Reschedule
-                                |
-  kfree(cfg->btcoex); // FREE   |   brcmf_btcoex_handler() // Worker
-  /*                            |     btci = container_of(....); // USE
-   The kfree() above could      |     ...
-   also occur at any point      |     btci-> // USE
-   during the worker's execution|
-   */                           |
-
-To resolve the race conditions, drop the conditional check and call
-timer_shutdown_sync() directly. It can deactivate the timer reliably,
-regardless of its current state. Once stopped, the timer_on state is
-then set to false.
-
-Fixes: 61730d4dfffc ("brcmfmac: support critical protocol API for DHCP")
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
----
-Changes in v2:
-  - Make the description clearer.
-
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/btcoex.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/btcoex.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/btcoex.c
-index 69ef8cf203d2..67c0c5a92f99 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/btcoex.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/btcoex.c
-@@ -393,10 +393,8 @@ void brcmf_btcoex_detach(struct brcmf_cfg80211_info *cfg)
- 	if (!cfg->btcoex)
- 		return;
- 
--	if (cfg->btcoex->timer_on) {
--		cfg->btcoex->timer_on = false;
--		timer_shutdown_sync(&cfg->btcoex->timer);
--	}
-+	timer_shutdown_sync(&cfg->btcoex->timer);
-+	cfg->btcoex->timer_on = false;
- 
- 	cancel_work_sync(&cfg->btcoex->work);
- 
 -- 
-2.34.1
+Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange 
+County CA
 
 
