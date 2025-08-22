@@ -1,227 +1,158 @@
-Return-Path: <linux-kernel+bounces-781070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B4DEB30D0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:54:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74992B30D12
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18EFA1894659
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:55:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30C31AC57E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871D4288512;
-	Fri, 22 Aug 2025 03:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA6F286893;
+	Fri, 22 Aug 2025 03:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="s0cTfwsx"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b="lFuSKbJo"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9147393DE2;
-	Fri, 22 Aug 2025 03:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A770E393DE2
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 03:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755834873; cv=none; b=WMmspDRgWiyqcuBuepH7on1S8ewryV0qbaw50W7P+rbp492F+i2bradNYh7uEBvIC6RR+PnEXh/mVnIpKAawTflTf3IQMvcM41muHlGnUzhbeJQK3JuNmSIYrhT9zyJJIPSMOXuu51gNgS/PlbflqokZbhx/jFx7rzNLA9R9kuk=
+	t=1755834971; cv=none; b=S2jriOl5y+LUzQTcvJMf+gXLl6HpIjCDJ+W7iuwqnA4LpCPE7ql/SFKFHOf7SAl96NpVGKI+tMh3pH4REuj6+k+f0J8r7E7T7+8ZY4Xp36/lf1nBhLHsRXb/4EFw/jUoqPxxf5jVsy2YLCblnKVOZt+TdSSpj7kgLN1nGLQjo6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755834873; c=relaxed/simple;
-	bh=qI8bZAA2Zqy39VyGC8+39a/1c6k4LzwCc1SZ0CNmLkI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tW9h8YujQiadtMk+QaTpPd2UJtyUdIQoMF1wI2YziRJYD8Tu6mQK58CzJhLKdEjH/SNR+O8onRaqNjXUUkYV05wUR6sbDX6qaKNS/SBEdN77GuE60995dYGNro2azU3brHX8K/0PO2FwooViO0CoYxGdIozKea/PLifoV8fkgJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=s0cTfwsx; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1755834869; x=1756439669; i=efault@gmx.de;
-	bh=4EUYfaocQHlDFb92PRxw93GL+dbsyMJy8t+/CbeTSfE=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:Content-Transfer-Encoding:MIME-Version:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=s0cTfwsxK4RBbmLl6G+Eiac33A2kwVQ/g21qhofUbWYywEr8e+hz2avzoHDgIReF
-	 kEcGbR1+/4xj0/mfl+CL4NB2+iZkqFEZPgVAuM66U48fskopfOOahBmJB9KTAwCpm
-	 QNQjsaa3ZmbM4UtJLKJ3kz0kVoXQhQZe75SaeqtEEVxvatN5f0eh6biBlCkOg+G2l
-	 e/pN+zY4fpMgaUftUFVuz3z3NvW7nVWxGtOM8e1xT4jhqcbbRuhYPT1s8dsQ2czLu
-	 NEr08bZQy76GnfeLi07zqw01bd8yWKNqwB4G+SE/zqhTMDjFjAfO+sMsBEEENEsvq
-	 q/pHdN2J+enpDnkNDQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from homer.fritz.box ([185.146.50.21]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N95e9-1uRA1L3EzH-0174Wd; Fri, 22
- Aug 2025 05:54:28 +0200
-Message-ID: <5b509b1370d42fd0cc109fc8914272be6dcfcd54.camel@gmx.de>
-Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
-From: Mike Galbraith <efault@gmx.de>
-To: Breno Leitao <leitao@debian.org>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, Jakub Kicinski
- <kuba@kernel.org>,  Johannes Berg <johannes@sipsolutions.net>,
- paulmck@kernel.org, LKML <linux-kernel@vger.kernel.org>, 
- netdev@vger.kernel.org, boqun.feng@gmail.com
-Date: Fri, 22 Aug 2025 05:54:28 +0200
-In-Reply-To: <tx2ry3uwlgqenvz4fsy2hugdiq36jrtshwyo4a2jpxufeypesi@uceeo7ykvd6w>
-References: <3d20ce1b-7a9b-4545-a4a9-23822b675e0c@gmail.com>
-	 <20250815094217.1cce7116@kernel.org>
-	 <isnqkmh36mnzm5ic5ipymltzljkxx3oxapez5asp24tivwtar2@4mx56cvxtrnh>
-	 <3dd73125-7f9b-405c-b5cd-0ab172014d00@gmail.com>
-	 <hyc64wbklq2mv77ydzfxcqdigsl33leyvebvf264n42m2f3iq5@qgn5lljc4m5y>
-	 <b2qps3uywhmjaym4mht2wpxul4yqtuuayeoq4iv4k3zf5wdgh3@tocu6c7mj4lt>
-	 <4c4ed7b836828d966bc5bf6ef4d800389ba65e77.camel@gmx.de>
-	 <otlru5nr3g2npwplvwf4vcpozgx3kbpfstl7aav6rqz2zltvcf@famr4hqkwhuv>
-	 <d1679c5809ffdc82e4546c1d7366452d9e8433f0.camel@gmx.de>
-	 <7a2b44c9e95673829f6660cc74caf0f1c2c0cffe.camel@gmx.de>
-	 <tx2ry3uwlgqenvz4fsy2hugdiq36jrtshwyo4a2jpxufeypesi@uceeo7ykvd6w>
-Autocrypt: addr=efault@gmx.de;
- keydata=mQGiBE/h0fkRBACJWa+2g5r12ej5DQZEpm0cgmzjpwc9mo6Jz7PFSkDQGeNG8wGwFzFPKQrLk1JRdqNSq37FgtFDDYlYOzVyO/6rKp0Iar2Oel4tbzlUewaYWUWTTAtJoTC0vf4p9Aybyo9wjor+XNvPehtdiPvCWdONKZuGJHKFpemjXXj7lb9ifwCg7PLKdz/VMBFlvbIEDsweR0olMykD/0uSutpvD3tcTItitX230Z849Wue3cA1wsOFD3N6uTg3GmDZDz7IZF+jJ0kKt9xL8AedZGMHPmYNWD3Hwh2gxLjendZlcakFfCizgjLZF3O7k/xIj7Hr7YqBSUj5Whkbrn06CqXSRE0oCsA/rBitUHGAPguJfgETbtDNqx8RYJA2A/9PnmyAoqH33hMYO+k8pafEgXUXwxWbhx2hlWEgwFovcBPLtukH6mMVKXS4iik9obfPEKLwW1mmz0eoHzbNE3tS1AaagHDhOqnSMGDOjogsUACZjCJEe1ET4JHZWFM7iszyolEhuHbnz2ajwLL9Ge8uJrLATreszJd57u+NhAyEW7QeTWlrZSBHYWxicmFpdGggPGVmYXVsdEBnbXguZGU+iGIEExECACIFAk/h0fkCGyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEMYmACnGfbb41A4AnjscsLm5ep+DSi7Bv8BmmoBGTCRnAJ9oXX0KtnBDttPkgUbaiDX56Z1+crkBDQRP4dH5EAQAtYCgoXJvq8VqoleWvqcNScHLrN4LkFxfGkDdqTyQe/79rDWr8su+8TH1ATZ/k+lC6W+vg7ygrdyOK7egA5u+T/GBA1VN+KqcqGqAEZqCLvjorKVQ6mgb5FfXouSGvtsblbRMireEEhJqIQPndq3DvZbKXHVkKrUBcco4MMGDVucABAsEAKXKCwGVEVuYcM/KdT2htDpziRH4JfUn3Ts2EC6F7rXIQ4NaIA6gAvL6HdD3q
-	y6yrWaxyqUg8CnZF/J5HR+IvRK+vu85xxwSLQsrVONH0Ita1jg2nhUW7yLZer8xrhxIuYCqrMgreo5BAA3+irHy37rmqiAFZcnDnCNDtJ4sz48tiEkEGBECAAkFAk/h0fkCGwwACgkQxiYAKcZ9tvgIMQCeIcgjSxwbGiGn2q/cv8IvHf1r/DIAnivw+bGITqTU7rhgfwe07dhBoIdz
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1755834971; c=relaxed/simple;
+	bh=5p4ROGVZNnB4rzZq4BAPq4K/FmfzDbjHgmLIiCLca+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qfN+cW2gqnmb0H7JROgkyLQ5h0uGcd+x+Xg7gT+0vkrfOXFWakmCysUprbemSrhzTgzxvOwTbA/Y/yNPwoWR2Ig29L0+lm75Eu3M5guf4qRkoReQ7BdHr2OvCDnew05FOU/ydc1bsQZKLDKskilJzuE6pWCAeqqU4jaNQnDl55o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=kerneltoast.com; dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b=lFuSKbJo; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kerneltoast.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e1fc69f86so2053401b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 20:56:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kerneltoast.com; s=google; t=1755834969; x=1756439769; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6qpBz+mUG/W7+SuXK7yES9yGHSsanCxGvvT/MesdcNk=;
+        b=lFuSKbJo/XTuRWdDvk17feV1nL6H30OZ9W+LjPt/W+GxXFAQtpBtCJwpqTHX6JrocK
+         rOzkNIzLJpCqVK068yGfDoOLmywLwA5FRreeZZv6oplnvzJkLZNSaR7X3zUaHSkh6u/e
+         n+X645V5Jw9b7qLglJ4bYW9NTrHfsd209YtNfTuOX1S3zAPVimi/XkgbzQgc0r71zZFa
+         2RJFVdB3GjRKGWs84FiHXjAOgqkbkaG1V3gO9VvHuqw+e7xk3YWsG88K7R4aekkHYH3o
+         SlFNlQh9jFlorTbzaEdBzZxQR7WGfDdzwCPtCynsqE3PfJDCqp6BFYXbv3CJ8idj11wi
+         E+fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755834969; x=1756439769;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6qpBz+mUG/W7+SuXK7yES9yGHSsanCxGvvT/MesdcNk=;
+        b=d1dUzndVMaExOU6PAgvYwi5CPaiJYvxzxLbcpEFOPgSvYbnP9gNgBLTFzKcZIbwOXV
+         51RY7wvD83EhOUczqcLnZD+xgWvXxfwbD7ipCtoWFR5bB5BzLgEVW4f4yNJKCqoTDis1
+         /33Nb/1FUeMSvkU7cHLtSS6zhBuhZoS/xNs7ZdsWs71vYIdM/gBFzlIO/O4NOZNXcWn0
+         kXa0UHkePmhbxXmVdHI0VlXCLYi6mbnTnPbMe7/+VTQ5yhE2yQUZ0MWOjGh3xwDvEt3C
+         VmUo0yf/2eXAUP/G2OrFFMEqx2tIfkiEeyMATNenBVBMkqArsAuEuK/bp0RjVCjLxYF+
+         QXdA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsSX564rENY+03XLsTJVwKAqoe09u26UDv5+MKR1pXE/ekXFN0FXPlxj9/c4hDdctzBUaqlM2d0jLSYZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRFWZ9fFIvdBgWz2Z7zgFW+9y+vPPCHEtGXcYsYeGjUoMR+zl4
+	LD9F+kVuk5K1hsSs7J7GU1/lwPJ14bpsUGaHNsSBw5LiUayd74CN7E+dKJ8Z+rcVmzXV
+X-Gm-Gg: ASbGncsrGIuRAwvYkSnqR6B/7E2oNJWhm3BmL8STzMcQ1tKAmPH3IVbmshHV5ERSEYd
+	qLvShVzVbNlAIHYC0z8sdBLjj6COklVPVRDX5sHlHrbGT4arr2GmJPqtE0EW7Cv+jJBF6BFGGD9
+	jHOZxe5eoEB0ll4a5O3dxxe1hM5LT4ovFeJhN1Fi2D7SoLxmWdUT7YB2lgI2m/Jzhj8humgpis/
+	5qDaJ5TAJ/PNt1VEi9OzPkS4QTBlh0fsKmML+j16Rmx7HfShLs7qvvcq/FYkywKBv9XlH7UYPKk
+	7uy3yIicH0H59DLuC6gMthUwQf8QKuToX1jWO1w3UOv39EVUAqOvYYC8dImf+34UWhX51BsLTKz
+	WGzjYd6eBOIebNfVo7mg0LnTcyQ==
+X-Google-Smtp-Source: AGHT+IHf6Ntu1u45GJaKvFGYSzxs1o9GISkf1oG3NJOqQEEeoFqWuMAdBjEKefriWui4az6AIEE7kQ==
+X-Received: by 2002:a05:6a20:3c89:b0:240:792:e87a with SMTP id adf61e73a8af0-24340b581f6mr1987029637.3.1755834968873;
+        Thu, 21 Aug 2025 20:56:08 -0700 (PDT)
+Received: from sultan-box ([142.147.89.218])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4763fbe626sm5973542a12.6.2025.08.21.20.56.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 20:56:08 -0700 (PDT)
+Date: Thu, 21 Aug 2025 20:56:04 -0700
+From: Sultan Alsawaf <sultan@kerneltoast.com>
+To: "Du, Bin" <bin.du@amd.com>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
+	laurent.pinchart+renesas@ideasonboard.com,
+	bryan.odonoghue@linaro.org, sakari.ailus@linux.intel.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
+	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
+	Dominic.Antony@amd.com,
+	Mario Limonciello <mario.limonciello@amd.com>, Richard.Gong@amd.com,
+	anson.tsao@amd.com
+Subject: Re: [PATCH v2 0/8] Add AMD ISP4 driver
+Message-ID: <aKfqVNk_WSEeBxlz@sultan-box>
+References: <20250618091959.68293-1-Bin.Du@amd.com>
+ <aJ2H6CIyZvN8W2sS@sultan-box>
+ <ed9deffd-296c-465b-ad8a-314ed0968390@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Provags-ID: V03:K1:/NNsoQb8snN483P6iDaZ5PkM+rSso7dMoCUaQSm9KyGwibGbigh
- yeJGhqhzLHHf+Ux7otkljuLtYbL1A+uQKuZF8ELmxbjC0h8awgGjedFWbEk9O4VM2LNIoaP
- UdtEPpvXEFZJYzrZc6MRcYcX3jROvDhe0dtsKCWqKfqzZaeaSZw7aTIWhYrtj+POBBhBVT+
- PG4WGQR1km3dHDt+3ROOw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RYCWiz9X3s8=;uLyMYQ7XmGXagNccL7HQ/U3nM0x
- 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
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ed9deffd-296c-465b-ad8a-314ed0968390@amd.com>
 
-On Thu, 2025-08-21 at 10:35 -0700, Breno Leitao wrote:
-> > On Thu, Aug 21, 2025 at 05:51:59AM +0200, Mike Galbraith wrote:
-=20
-> > > > --- a/drivers/net/netconsole.c
-> > > > +++ b/drivers/net/netconsole.c
-> > > > @@ -1952,12 +1952,12 @@ static void netcon_write_thread(struct c
-> > > > =C2=A0static void netconsole_device_lock(struct console *con, unsig=
-ned long *flags)
-> > > > =C2=A0{
-> > > > =C2=A0	/* protects all the targets at the same time */
-> > > > -	spin_lock_irqsave(&target_list_lock, *flags);
-> > > > +	spin_lock(&target_list_lock);
-> >=20
-> > I personally think this target_list_lock can be moved to an RCU lock.
-> >=20
-> > If that is doable, then we probably make netconsole_device_lock()
-> > to a simple `rcu_read_lock()`, which would solve this problem as well.
+On Fri, Aug 22, 2025 at 10:23:48AM +0800, Du, Bin wrote:
+> On 8/14/2025 2:53 PM, Sultan Alsawaf wrote:
+> > On Wed, Jun 18, 2025 at 05:19:51PM +0800, Bin Du wrote:
+> > > AMD ISP4 Key features:
+> > > - Processes bayer raw data from the connected sensor and output them to different YUV formats
+> > > - Downscale input image to different output image resolution
+> > > - Pipeline to do image processing on the input image including demosaic, denoise, 3A, etc
+> > 
+> > BTW, another problem I have which I would love some help with: may I get the FW
+> > commands for setting basic 3A parameters?
+> > 
+> > It seems like the default AE mode does frame-averaging, which is really
+> > unsuitable for video calls on the webcam. My face is really underexposed as a
+> > result during the daytime because there's a lot of ambient light in the
+> > background.
+> > 
+> > The webcam on this laptop also has a very wide field of view, which makes my
+> > face appear small and shows too much of the background. This also exacerbates
+> > the AE problem.
+> > 
+> > I'm thinking CMD_ID_SET_ZOOM would fix the FOV problem, and then either
+> > CMD_ID_AE_SET_MODE to change the AE mode or CMD_ID_AE_SET_REGION to set the AE
+> > ROI would fix the exposure problem. What do you think?
+> > 
+> > Thanks,
+> > Sultan
+>
+> Thanks Sultan for the suggestion, sorry for the late response because we
+> spent some time internally to discuss the feasibility.
 
-The bigger issue for the nbcon patch would seem to be the seemingly
-required .write_atomic leading to landing here with disabled IRQs.
+Thanks for looking into this!
 
-WRT my patch, seeing a hard RT crash on wired box cleanly logged with
-your nbcon patch applied (plus my twiddle mentioned earlier) tells me
-my patch has lost its original reason to exist.  It's relevant to this
-thread only in that those once thought to be RT specific IRQ disable
-spots turned out to actually be RT agnostic wireless sore spots.
+> Yes, it's really good suggestion. Because current V4l2 doesn't have standard
+> ioctl for like region setting, to support it, besides adding FW command, new
+> customized ioctl also needs be added and no existing APP can benefit from
+> it. So our idea is not to add them to our current upstream driver, but we
+> would be really glad to help you to enable them locally with dedicated
+> thread, suppose it can help to improve the IQ with correct input setting
+> like the correct ROI region, but we aren't sure because we didn't do that
+> before on Linux and would really expect your test result and feedback.
 
-> > > > --- a/net/core/netpoll.c
-> > > > +++ b/net/core/netpoll.c
-> > > > @@ -58,6 +58,29 @@ static void zap_completion_queue(void);
-> > > > =C2=A0static unsigned int carrier_timeout =3D 4;
-> > > > =C2=A0module_param(carrier_timeout, uint, 0644);
-> > > > =C2=A0
-> > > > +DEFINE_PER_CPU(int, _netpoll_tx_running);
-> > > > +EXPORT_PER_CPU_SYMBOL(_netpoll_tx_running);
-> > > > +
-> > > > +#define
-> > > > netpoll_tx_begin(flags)					\
-> > > > +	do
-> > > > {							\
-> > > > +		if (IS_ENABLED(CONFIG_PREEMPT_RT)
-> > > > ||		\
-> > > > +		=C2=A0=C2=A0=C2=A0
-> > > > IS_ENABLED(CONFIG_NETCONSOLE_NBCON))	\
-> > > > +			local_bh_disable();	=09
-> > > > 	\
-> > > > +		else				=09
-> > > > 	\
-> > > > +			local_irq_save(flags);	=09
-> > > > 	\
-> > > > +		this_cpu_write(_netpoll_tx_running,
-> > > > 1);		\
-> > > > +	} while (0)
-> >=20
-> > Why can't we just use local_bh_disable() in both cases?
+I'm happy to help develop this and even help write the code. :)
 
-Yeah, believe so.
+I think a lot of useful functionality can be put upstream just through V4L2,
+like V4L2_CID_EXPOSURE_METERING to control the AE mode.
 
-> > >=20
-> > > > @@ -246,7 +269,7 @@ static void refill_skbs(struct netpoll *
-> > > > =C2=A0static void zap_completion_queue(void)
-> > > > =C2=A0{
-> > > > =C2=A0	unsigned long flags;
-> > > > -	struct softnet_data *sd =3D &get_cpu_var(softnet_data);
-> > > > +	struct softnet_data *sd =3D this_cpu_ptr(&softnet_data);
-> >=20
-> > How do I check if this is safe to do ?
+For advanced functions that don't have a standard V4L2 control, maybe we can set
+some defaults in the driver to improve the experience for front-facing cameras,
+i.e. webcams.
 
-Too much water under the bridge, I don't recall my path to conclusion
-reached, and it seems to no longer matter.
+Depending on the features exposed by FW, maybe setting a ROI for AE isn't
+necessary. Is it possible for the FW to do face detection and set 3A according
+to the face landmarks/ROI?
 
-	-Mike
+Thanks,
+Sultan
 
