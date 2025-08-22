@@ -1,139 +1,185 @@
-Return-Path: <linux-kernel+bounces-782512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 944EDB3216D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:20:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D37DB32172
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1411D189B431
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFF58AA8589
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02900278E7B;
-	Fri, 22 Aug 2025 17:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA26248F48;
+	Fri, 22 Aug 2025 17:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mLGWl0EF"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6S4ns3I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53F01A0BE0
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1993235355;
+	Fri, 22 Aug 2025 17:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755883232; cv=none; b=C/6MxMIajiSquYG8dSTu/wwz6D90yyDPiCGakNHnRGFW/0PQyig+cSZrzhJySGkLY5wkFnn0EsA+U8bT1fblV+9GQv/lL36AIWU8QKE3pKUoHYbncAyqe3sRwYMiRBYhQKYUtREgSGG19GCPWwsdmTkqaB7pYuSoL2249vAnlTY=
+	t=1755883250; cv=none; b=kSMsiGvKXnnXw6COcPJBXzfETWOkrw9q43Om6cfnVh2h/s1Si/gKcfqBBrDCnN/81Xrbq8gESEcDBzJnRS6jJXfY3uT7cL9sb3IfUyo41HjAmxv5iVQqzoFqh3/tEOW95MAVr6HOwp0Lcxmq64Io7AZfbYZtBTfjCz2+ZaOfH9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755883232; c=relaxed/simple;
-	bh=X4Bwa471mvdLFgQpjwEvYNyvuNvBAos1wzWCBTWg0tA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ryzSjpYc8X1LFA3X7qSqa48519zbbpORdxEBe/3X7Pix4nAf2PmAj7WYuON0I+cZTL5htrUaXmSO2NS/SWvq2Bx7vfr3C9FuvDNs5k7GQCG3fCwNn6k6trNBtov6u1AzdLwjCn9HjVk3CIcIG6aJHNQevPqiaE4/N9/pXcrN2kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mLGWl0EF; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45a1b05d31cso12235865e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:20:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755883229; x=1756488029; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hAIfYRgGwZxY2d+J+2Tw9OQSooCUHaphp7wteQwPLhs=;
-        b=mLGWl0EFgBGLPJiv+wuVYSvl/Eq5RdUvCUbNhMIe7DBhAlYCY8tvoimpw6X4GNUi6G
-         JJ0M+gJ/V8UykM8ZRQ8atHAc6ATKap1KSOX/cwAW6p3VSe5gDfDQhCNWx1nsh5RcJRDc
-         kldQgksOxZjP9tm482pO2CuBtiLQdgw0VONlF/8dDU338FxqKD7Ic3sRhhA4MRG4mNNi
-         JwWbxNO6v8Abqf7OEYnMo8gKtzvDpmErxQhVTW8aK1ySBNU7WP+3Zm/Vx6al7VksfOwg
-         5iDJy8RBW3kkmxlQhqT1eTJ0nGBQ9NF5xlGymrd5UxE5qxXY0T455xz6aNgJPQbYpQEK
-         e/cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755883229; x=1756488029;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hAIfYRgGwZxY2d+J+2Tw9OQSooCUHaphp7wteQwPLhs=;
-        b=JPrUU2l40/K/VaJ+au3IlTiw+rvDtXAlE9qpBSDQcGbkQyyFORM2h3w7RV874cB1Se
-         soBKNt5KLe6mo7YBDYD46cw1Fhm9DH27vEDC+oBw5IO4NMQzsXM1Gx7gCBhH6FvSfaiU
-         9XknDJrv0fvazWi7xQ8fgGwUtHPk7ie7Mj+C7tFRUot0yv7O0n8QeqFNP+vBMi+RogXI
-         OF/8pqw3HIIRUCtwCl5ZZvCIBoITlx9NqzK3MnZOHyns7qU+bdCrgsejl3Oi40j4j9IW
-         dLTAltiTaQVR9d0qTRjSQJBX+iMsfSkqzjbz/vRbDRjja3amcom2V2t2KM81TR/6gadG
-         hwZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVC1aFxiMGdbgWB94SSyUp2TOskhSucMX3Ku714yx2lj/TH0nQqO7MZDPhdet7LXoDo2nCY9rdZ5CLBbQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/GObZ/5re/z550ZC7CvfmJ4AMvL+HitbgLP5DXTMZw3ra7qEk
-	wb26c9s2m1y6M62krudxfqCLTYkHa9Fl+VLXObTDl4R6/44VdUZAKdaBVrfWtQTaCkZNjR1MbY+
-	PPLBZ9xmlyBwzbg==
-X-Google-Smtp-Source: AGHT+IGAQ3nKBaK3QO/Ktb7KuI028hAduXrZ22Qu6Xo0zqvcqENW+BUAAlbLyqUJ713Bt/ANAuJrBwMOcBFf1A==
-X-Received: from wmbes27.prod.google.com ([2002:a05:600c:811b:b0:459:db77:fc89])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1f95:b0:456:1846:6566 with SMTP id 5b1f17b1804b1-45b517d903amr28510805e9.29.1755883229001;
- Fri, 22 Aug 2025 10:20:29 -0700 (PDT)
-Date: Fri, 22 Aug 2025 17:20:28 +0000
-In-Reply-To: <aKihQv8fWzZIgnAW@pc636>
+	s=arc-20240116; t=1755883250; c=relaxed/simple;
+	bh=OnWyIqS1IwZagUDq5QHd0lxIlcBzULMwktA4A6aD7Hk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=iXf7Datjl6I7J1lc/sSyhTH0SU6pq6sAscG6ZxpGqmv8Sa9onT4PopWfbzodVVz0+FJ5921Hrd6K1uoenWv5vqTtx0wKeNoLRHqiT2UuPVIB6LSD+FKmVypo6Aks3OTWXPOmWMwmd8gKI2rH86V3SR3FXOphUn3Yt7mbPbRPHAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g6S4ns3I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5224AC4CEED;
+	Fri, 22 Aug 2025 17:20:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755883249;
+	bh=OnWyIqS1IwZagUDq5QHd0lxIlcBzULMwktA4A6aD7Hk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=g6S4ns3IMeuZvHVo4dNEQgx9QjTJ13jY9bQQPvAWsQLXQW8eCTt0QlQu7DrWkhkPy
+	 R7iG2Uj+v+gZV1wSXidZgHkhER+ZZhzNC4ogRde5oG9Zq7jM7cZVV3fta/a/DkExQl
+	 YqJeAce7lPxkLbfRydUdqoamvl60ng2ScbsmXjQdrKNAK862DOmLeC8kLF9nDlddoj
+	 OLE9/urHUi0sNlTES/WtQl99dfh0Vp7WkngSPhR8u9yWpWzNkw76cCv+1p9r9w/jeg
+	 vF8nlTSa7rC/ZaoRPFAJfSgeCe5dsHoSYX8cU4EPabopJhfSaz52jOotbxFK+GDQ8z
+	 zsLj0Xn55whXQ==
+Date: Fri, 22 Aug 2025 12:20:47 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Zhenzhong Duan <zhenzhong.duan@intel.com>
+Cc: linux-pci@vger.kernel.org, bhelgaas@google.com, mahesh@linux.ibm.com,
+	oohall@gmail.com, linuxppc-dev@lists.ozlabs.org,
+	linux-acpi@vger.kernel.org, rafael@kernel.org, lenb@kernel.org,
+	james.morse@arm.com, tony.luck@intel.com, bp@alien8.de,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com, linmiaohe@huawei.com,
+	shiju.jose@huawei.com, adam.c.preble@intel.com, lukas@wunner.de,
+	Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
+	linux-cxl@vger.kernel.org, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, erwin.tsaur@intel.com,
+	sathyanarayanan.kuppuswamy@intel.com, dan.j.williams@intel.com,
+	feiting.wanyan@intel.com, yudong.wang@intel.com,
+	chao.p.peng@intel.com, qingshun.wang@linux.intel.com,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: Re: [PATCH v5 1/2] PCI/AER: Clear UNCOR_STATUS bits that might be
+ ANFE
+Message-ID: <20250822172047.GA689409@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250812173109.295750-1-jackmanb@google.com> <cdccc1a6-c348-4cae-ab70-92c5bd3bd9fd@lucifer.local>
- <DC83J9RSZZ0E.3VKGEVIDMSA2R@google.com> <aKihQv8fWzZIgnAW@pc636>
-X-Mailer: aerc 0.20.1
-Message-ID: <DC94NN6SM15D.3DQVRLO2E282W@google.com>
-Subject: Re: [Discuss] First steps for ASI (ASI is fast again)
-From: Brendan Jackman <jackmanb@google.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, <peterz@infradead.org>, <bp@alien8.de>, 
-	<dave.hansen@linux.intel.com>, <mingo@redhat.com>, <tglx@linutronix.de>, 
-	<akpm@linux-foundation.org>, <david@redhat.com>, <derkling@google.com>, 
-	<junaids@google.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, 
-	<reijiw@google.com>, <rientjes@google.com>, <rppt@kernel.org>, 
-	<vbabka@suse.cz>, <x86@kernel.org>, <yosry.ahmed@linux.dev>, 
-	Matthew Wilcox <willy@infradead.org>, Liam Howlett <liam.howlett@oracle.com>, 
-	"Kirill A. Shutemov" <kas@kernel.org>, Harry Yoo <harry.yoo@oracle.com>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Andy Lutomirski <luto@kernel.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620025857.206647-2-zhenzhong.duan@intel.com>
 
-On Fri Aug 22, 2025 at 4:56 PM UTC, Uladzislau Rezki wrote:
->> >> 2. The ephmap implementation is extremely stupid. It only works for the simple
->> >>    shmem usecase. I don't think this is really important though, whatever we end
->> >>    up with needs to be very simple, and it's not even clear that we actually
->> >>    want a whole new subsystem anyway. (e.g. maybe it's better to just adapt
->> >>    kmap_local_page() itself).
->> >
->> > Right just testing stuff out, fair enough. Obviously not an upstremable thing
->> > but sort of test case right?
->> 
->> Yeah exactly. 
->> 
->> Maybe worth adding here that I explored just using vmalloc's allocator
->> for this. My experience was that despite looking quite nicely optimised
->> re avoiding synchronisation, just the simple fact of traversing its data
->> structures is too slow for this usecase (at least, it did poorly on my
->> super-sensitive FIO benchmark setup).
->> 
-> Could you please elaborate here? Which test case and what is a problem
-> for it?
+On Thu, Jun 20, 2024 at 10:58:56AM +0800, Zhenzhong Duan wrote:
+> In some cases the detector of a Non-Fatal Error(NFE) is not the most
+> appropriate agent to determine the type of the error. For example,
+> when software performs a configuration read from a non-existent
+> device or Function, completer will send an ERR_NONFATAL Message.
+> On some platforms, ERR_NONFATAL results in a System Error, which
+> breaks normal software probing.
+> 
+> Advisory Non-Fatal Error(ANFE) is a special case that can be used
+> in above scenario. It is predominantly determined by the role of the
+> detecting agent (Requester, Completer, or Receiver) and the specific
+> error. In such cases, an agent with AER signals the NFE (if enabled)
+> by sending an ERR_COR Message as an advisory to software, instead of
+> sending ERR_NONFATAL.
+> 
+> When processing an ANFE, ideally both correctable error(CE) status and
+> uncorrectable error(UE) status should be cleared. However, there is no
+> way to fully identify the UE associated with ANFE. Even worse, Non-Fatal
+> Error(NFE) may set the same UE status bit as ANFE. Treating an ANFE as
+> NFE will reproduce above mentioned issue, i.e., breaking software probing;
+> treating NFE as ANFE will make us ignore some UEs which need active
+> recover operation. To avoid clearing UEs that are not ANFE by accident,
+> the most conservative route is taken here: If any of the NFE Detected
+> bits is set in Device Status, do not touch UE status, they should be
+> cleared later by the UE handler. Otherwise, a specific set of UEs that
+> may be raised as ANFE according to the PCIe specification will be cleared
+> if their corresponding severity is Non-Fatal.
+> 
+> To achieve above purpose, cache UNCOR_STATUS bits that might be ANFE
+> in aer_err_info.anfe_status and clean them in pci_aer_handle_error().
+> aer_err_info.anfe_status will also be used to print ANFE related bits
+> in following patch.
+> 
+> For instance, previously, when the kernel receives an ANFE with Poisoned
+> TLP in OS native AER mode, only the status of CE will be reported and
+> cleared:
+> 
+>   AER: Correctable error message received from 0000:b7:02.0
+>   PCIe Bus Error: severity=Correctable, type=Transaction Layer, (Receiver ID)
+>     device [8086:0db0] error status/mask=00002000/00000000
+>      [13] NonFatalErr
+> 
+> If the kernel receives a Malformed TLP after that, two UEs will be
+> reported, which is unexpected. The Malformed TLP Header is lost since
+> the previous ANFE gated the TLP header logs:
+> 
+>   PCIe Bus Error: severity="Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
+>     device [8086:0db0] error status/mask=00041000/00180020
+>      [12] TLP                    (First)
+>      [18] MalfTLP
+> 
+> To handle this case properly, calculate potential ANFE related status bits
+> and save in aer_err_info. Use this information to determine the status bits
+> that need to be cleared.
+> 
+> Now, for the previous scenario, both CE status and related UE status will
+> be cleared after ANFE:
+> 
+>   AER: Correctable error message received from 0000:b7:02.0
+>   PCIe Bus Error: severity=Correctable, type=Transaction Layer, (Receiver ID)
+>     device [8086:0db0] error status/mask=00002000/00000000
+>      [13] NonFatalErr
+> 
+>   PCIe Bus Error: severity="Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
+>     device [8086:0db0] error status/mask=00040000/00180020
+>      [18] MalfTLP                    (First)
+> 
+> Tested-by: Yudong Wang <yudong.wang@intel.com>
+> Co-developed-by: "Wang, Qingshun" <qingshun.wang@linux.intel.com>
+> Signed-off-by: "Wang, Qingshun" <qingshun.wang@linux.intel.com>
+> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@intel.com>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-What I'm trying to do here is allocate some virtual space, map some
-memory into it, read it through that mapping, then tear it down again.
-The test case was an FIO benchmark reading 4k blocks from tmpfs, which I
-think is a pretty tight loop. Maybe this is the kinda thing where the
-syscall overhead is pretty significant, so that it's an unrealistic
-workload, I'm not too sure. But it was a nice way to get a maximal
-measure of the ASI perf hit on filesystem access.
+This no longer applies cleanly; would you mind rebasing it to pci/main
+(v6.17-rc1)?  There have been recent AER changes; if they affect the
+dmesg text, could you update that as well?
 
-I didn't make careful notes but I vaguely remember I was seeing
-something like 10% hits to this workload that I attributed to the
-vmalloc calls based on profiling with perf.
+> +static void anfe_get_uc_status(struct pci_dev *dev, struct aer_err_info *info)
+> +{
+> +	u32 uncor_mask, uncor_status, anfe_status;
+> +	u16 device_status;
+> +	int aer = dev->aer_cap;
+> +
+> +	/*
+> +	 * To avoid race between device status read and error status register read,
+> +	 * cache uncorrectable error status before checking for NFE in device status
+> +	 * register.
 
-I didn't interpret this as "vmalloc is bad" but rather "this is an abuse
-of vmalloc". Allocating anything at all for this usecase is quite
-unfortunate really.
+I can't tell for sure from the patch, but if this doesn't fit in 80
+columns, can you rewrap it so it matches the rest of the file?
 
-Anyway, the good news is I don't think we actually need a general
-purpose allocator here. I think we can just have something very simple,
-stack based and completely CPU-local. I just tried vmalloc() at the
-beginning coz it was the hammer I happened to be holding at the time!
+> +	 */
+> +	pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS, &uncor_status);
+> +	pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_MASK, &uncor_mask);
+> +	/*
+> +	 * According to PCIe Base Specification Revision 6.1 Section 6.2.3.2.4,
+> +	 * if an UNCOR error is raised as Advisory Non-Fatal error, it will
+> +	 * match the following conditions:
+> +	 *	a. The severity of the error is Non-Fatal.
+> +	 *	b. The error is one of the following:
+> +	 *		1. Poisoned TLP           (Section 6.2.3.2.4.3)
+> +	 *		2. Completion Timeout     (Section 6.2.3.2.4.4)
+> +	 *		3. Completer Abort        (Section 6.2.3.2.4.1)
+> +	 *		4. Unexpected Completion  (Section 6.2.3.2.4.5)
+> +	 *		5. Unsupported Request    (Section 6.2.3.2.4.1)
+> +	 */
 
-> You can fragment the main KVA space where we use a rb-tree to manage
-> free blocks. But the question is how important your use case and
-> workload for you?
+Could you update the citation to PCIe 7.0, please?
 
+Bjorn
 
