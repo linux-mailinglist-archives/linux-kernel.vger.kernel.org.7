@@ -1,49 +1,51 @@
-Return-Path: <linux-kernel+bounces-781417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A99EB31233
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:48:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A7BB31242
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7916F1CE7BF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:47:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 889245C9A7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B132ED175;
-	Fri, 22 Aug 2025 08:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCD82EE5FE;
+	Fri, 22 Aug 2025 08:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jhLr5ui+"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UDINbROl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615242EBDFB;
-	Fri, 22 Aug 2025 08:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C092EDD7E;
+	Fri, 22 Aug 2025 08:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755852340; cv=none; b=IVa57uHcM06sk0//PlVppi4/qp5V30iWwf7FZ7cslBsPB9cuMbct1rYN2Q9d5Jb7Nhf5nkbVhbVEMAOwXh4efnL+hU159SIiuWGg4S5u1+2mAs91XEITXTMu0b3ludk3iT24vbyHzvr9KrkK6rUv69uz+OtAYolI/pDE+jB5BIE=
+	t=1755852357; cv=none; b=nBbLjARQac2WLsspOya1EpJvYhbph3IhWF1L6R5WF7lTtQVUnyiaAFe9vyq3EKSyAFJwjfcBDxr+olN3zbAa2TtDHXJA3/FFgpKKx+NQdspvC+xSyl5FkIoUL8Z3HJz/alO2UcLZnzAhHTCXVLZYLZUO/Mquaxhl1AvM8jfT4II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755852340; c=relaxed/simple;
-	bh=MwTBivIsWzzCRaSBjsMx0hwxeVU7kmJDJZIOhiavlCU=;
+	s=arc-20240116; t=1755852357; c=relaxed/simple;
+	bh=ZM+WLVaxURr8F7hf8mGnfn05FHhtyvOcaXkQKkM9s8s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bf6673zueX8TV8LPqVU+Y6HdFN/SVo3CuveD5ctn9FZgYtN94sfaJfllQ6gxzKGCaQtMX5RTjCNvH7OXe70CkKKulWDDtTyxpS3yxG8ng7Yf32y2ktOY0qJinitfgOYJa/NQrHw36qGV22uR05hiYF46ocXLoPBDwJ6gin/OyqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jhLr5ui+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 833E6C4CEF4;
-	Fri, 22 Aug 2025 08:45:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HbPx7tTSAQkuUoexoPMs7UuZdqD3OtYBnIynyjTmBWjmbcb0uIVxkJcgH8Gyu6ne5PL3Q2UXIFrUGaFfwAW0CJCXT1mo4zVM/B28uNjMHG2gFnU5VlD/s47/HHyYBmZAYaDO9CNJ6jdM0WKMj2lns0KQYq1m25kJmBI1nvvZ6Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UDINbROl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18C71C16AAE;
+	Fri, 22 Aug 2025 08:45:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755852338;
-	bh=MwTBivIsWzzCRaSBjsMx0hwxeVU7kmJDJZIOhiavlCU=;
+	s=korg; t=1755852357;
+	bh=ZM+WLVaxURr8F7hf8mGnfn05FHhtyvOcaXkQKkM9s8s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jhLr5ui+jVE8wvYwWVFKbG+0ocWqDGDeVHSRtQ57sLGIpChQitxKGhvam38CuJqNG
-	 CXwz26IEa2whH/5t2h89fkbL882R8cjvWrMKmUN/y1kOWwBRi0gvx6K73ymgyiMtsp
-	 dPp+eNKSnbwO/Dg9+2+CqxdVNTN0HQBNG9kKNIOA=
-Date: Fri, 22 Aug 2025 10:45:21 +0200
+	b=UDINbROl7jy9YNt2jNgZWd4lQduqIcOFGOqBWnRUuWtNlg8tkGFkWvngV3vjPpC9Z
+	 o0e22DTV/tVhc/IBnJTgZo3EQ1DzpkMv9GRoQBUZ1Yv0mGRgSL6EmUwqSPTiQx5Zej
+	 GipUYiYMQnXslRrxS0mqex27A1fWimjZTPxo10/c=
+Date: Fri, 22 Aug 2025 10:45:49 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: phy: twl6030: Fix incorrect type for ret
-Message-ID: <2025082212-monorail-impromptu-ec1b@gregkh>
-References: <20250822081403.12932-1-zhao.xichao@vivo.com>
+To: Osama Abdelkader <osama.abdelkader@gmail.com>
+Cc: jirislaby@kernel.org, ilpo.jarvinen@linux.intel.com, mingo@kernel.org,
+	john.ogness@linutronix.de, tglx@linutronix.de,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2] serial: 8250_core: fix coding style issue
+Message-ID: <2025082235-wriggly-wildcat-0477@gregkh>
+References: <20250822082311.16501-1-osama.abdelkader@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,22 +54,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250822081403.12932-1-zhao.xichao@vivo.com>
+In-Reply-To: <20250822082311.16501-1-osama.abdelkader@gmail.com>
 
-On Fri, Aug 22, 2025 at 04:14:03PM +0800, Xichao Zhao wrote:
-> In the twl6030_usb_probe(), the variable ret is declared as
-> a u32 type. However, since ret may receive -ENODEV when accepting
-> the return value of omap_usb2_set_comparator().Therefore, its type
-> should be changed to int.
+On Fri, Aug 22, 2025 at 10:23:10AM +0200, Osama Abdelkader wrote:
+> Fix a coding style issue in 8250_core.c:
 > 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+> - Remove redundant NULL initialization of a global pointer
+> 
+> Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
 > ---
->  drivers/usb/phy/phy-twl6030-usb.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  drivers/tty/serial/8250/8250_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
+> index feb920c5b2e8..225bb7e4b89c 100644
+> --- a/drivers/tty/serial/8250/8250_core.c
+> +++ b/drivers/tty/serial/8250/8250_core.c
+> @@ -307,7 +307,7 @@ static void univ8250_release_irq(struct uart_8250_port *up)
+>  		serial_unlink_irq_chain(up);
+>  }
+>  
+> -const struct uart_ops *univ8250_port_base_ops = NULL;
+> +const struct uart_ops *univ8250_port_base_ops;
+>  struct uart_ops univ8250_port_ops;
+>  
+>  static const struct uart_8250_ops univ8250_driver_ops = {
+> -- 
+> 2.43.0
+> 
+> 
 
-What commit id does this fix?
+
+Hi,
+
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
 thanks,
 
-greg k-h
+greg k-h's patch email bot
 
