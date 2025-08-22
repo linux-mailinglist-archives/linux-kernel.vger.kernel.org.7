@@ -1,210 +1,128 @@
-Return-Path: <linux-kernel+bounces-781740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36789B3161D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:09:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 803C5B31620
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA0921D02C08
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:09:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA7E76217FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDF22E5406;
-	Fri, 22 Aug 2025 11:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7084F2E3B05;
+	Fri, 22 Aug 2025 11:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BHtOQyOP"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="h03m3uah"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C54F2BEFFD
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D2620330;
+	Fri, 22 Aug 2025 11:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755860940; cv=none; b=LTv4honbhjrCX2TlhzZQdAtr2e9pmGxBdFw1G4PLvu6R9L4ocXb/lCfaPSaJikR7CuOb/6mORklRlNVqIoxy0Oqgbb5V0wYjTcksRqICjUrpqkuIb44cjCIVaUazQgSaiFbsgld7OJxSYtYqU6IVR2TlzTBo0Rk0sOaAXLbEVxk=
+	t=1755860983; cv=none; b=rpLZWysPtjCvDzpkxPKXMv6BaPWyaJIm4VsE3BMmInyOocMAm3fBRaPNZ6I5MGvGt8QlomwZpNpnUvfuAm8v+9KZ3cZbc+iZog6K+3/2qhhpGyYR7csVoKI2IURQpLNMQnW3wfDcvrekHwG4+3EplVCXS/bCCejknjG8+hkq1p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755860940; c=relaxed/simple;
-	bh=OT3HSae7R65W4PAndKvu7iADgArEJirDbvmmcXLhdeE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RLzEg0nedVU+esYHPBW70Ke1r4pegqJJ+HLdgzqysf/+EbyOB4taA5fGsT59EjTOFFSl4COgsjaVHcA506Bc6Sc19KhcdRY0xE7oAKQZKg608vxE0A6owDazy3YzcWX7Wrz+iXdwrWbz/mykS99tGYk8Lu/MLTk2iiPxFNbn+sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BHtOQyOP; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45a1b0990b2so14960905e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 04:08:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755860936; x=1756465736; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O3DVCW96rCgg3n/nWKKS7K0ME3L8qhV8+wGLF4ed4gE=;
-        b=BHtOQyOPo/heTSX88n4wlli9WcykxH6fAWK4KiiUkoPRjB80aaOr9rf+RBwQsVYNsm
-         YLTT1vIvMFzn5oH5jiM6pLaSxEiVFKYlV3Ma/Lp2XhsE/x96EGauRJNOJeHmAg9poMlk
-         1a05xQFxx4HAjbsJK89t8La2UmtuKCc5rYhLlQH9437Wf9r/E0doa6c9GPFf50Za3Tn3
-         wbzeYGUPc95LvAWIXj+8Wy+aUmbHtwR08HLqGqQruW8COuYSYix0004foSUZMOmc/x05
-         I2G5RYMffTs24b8rlxzzmnU4LC8vP/A5xfpiW8cZ2ZNoGrVnRR4eGvdXSUAeVpk2bqxN
-         RcnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755860936; x=1756465736;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=O3DVCW96rCgg3n/nWKKS7K0ME3L8qhV8+wGLF4ed4gE=;
-        b=RbNz5L19PrmYFax12ude9kXjkvSzfuIqG/kM7/kueGL1vL0VQoyXAd3z5wFxr6K/nX
-         JouAtbU5CTLNz5ef8yVs9IsMzTQK7fBS3ISA9f9SktQKkwRm3KHhzMz3aeWLlxov44om
-         bLL4JPfMeQpfJ8zA64HvQ9IBk84VWUzuAx/K3Ru2Ck06owl6m+3O40vQ6GPkS1fQlqv7
-         2ZOp8Wp+QNcfll/trGwvlp3rICUBxsXnQXUp8PHKeEUC4WEIEcs/vXcyvT741a+8VZvl
-         me/ginygeZGw0CGf2eimvHNm1+xqDLpyA9QybV8Z09KgQmHZlxPrHWOKN/fWiF0peZQD
-         a+Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmZNF6VZfVBV4tJIO/zzefV08yoNeEh3y8jooxZsjhPrmjU1qOCMO8T0DVk3aCFfk7QpOHGz9JalEAUq8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyStrfGUgGiHFrZf8t62rPYUi+moY1wOwzwaSnAAQl8K2f7Zlu
-	MyebljhpcBLN2yGnLT53GeRB3cwvu+FfKdVwB/dAMoulEV/I3ZXSWOIiwY/gWCkopkY=
-X-Gm-Gg: ASbGncswP6CZYnjxcq1VP7VawoXpIyChjsVkd6btD8FG6Cgvc780nL9QuVC+bEtAhm4
-	Y2KpThR0ChO2nACsKFW3UCqagHG0alq8aad8HH874UbkD4b68s7yjVQAsYa5DGoD7ODi/x0MpBI
-	8M23jUM6g8MIhcOMCrN/MQD+jq89AQbkJt708iPYr9iTy1kkmCjF7LmczRUIewoRrGp17TEb11y
-	1J3v3VIgFLeEnNjsEHYUHPd8w2/VapahBPItBlcDH5uSqsViRttt1bcsaAJ6Ck39Cj1EwWgADou
-	lYMXDRFBU5GC3lkxP2Rx48lgr4cTTC/Ezzv886a8O3QQC1/KXp3lbhRY/n+x9icNYR4D6N7h5UR
-	BHv+94KKlfmuu9eGT94ghdBpSngTeOPPHarcjhyYrxPC3rZfAQfQQQZvFYrtcWrCx4VwlOug96h
-	w=
-X-Google-Smtp-Source: AGHT+IGCVe9bfrzPpi2RuGVqVugcIjq7Pad1nS2JNmjT8LBzTfwmXherE8yXAAufyte/ynJR0prSWg==
-X-Received: by 2002:adf:a115:0:b0:3c6:2010:ffcd with SMTP id ffacd0b85a97d-3c62011038fmr1026778f8f.45.1755860936268;
-        Fri, 22 Aug 2025 04:08:56 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:3dd7:7361:c101:6a77? ([2a01:e0a:3d9:2080:3dd7:7361:c101:6a77])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c61843c8fcsm1901354f8f.22.2025.08.22.04.08.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 04:08:55 -0700 (PDT)
-Message-ID: <0662da96-8987-45ae-ab06-c60003ef26e3@linaro.org>
-Date: Fri, 22 Aug 2025 13:08:55 +0200
+	s=arc-20240116; t=1755860983; c=relaxed/simple;
+	bh=/ioH/M3LDzYpNRt8BKiYOZNGO079fVuLd2eOZHrZ6fM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Iu9qUVOFRLCj29mnPHskzY3tjIiAtEtsqD8Ra2uCIcI2re+mc7biNI4/w2NpZp2HT50Zg9xjBxuPByILph9UrZ5WarSXJl6JfiSn/uybcLawl+/TJbSBbxslLCmSem6i0g9YQn6lnKW/LNZrRo9nCi7G2gyVSnoFdo8VEcIfEtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=h03m3uah; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755860980;
+	bh=/ioH/M3LDzYpNRt8BKiYOZNGO079fVuLd2eOZHrZ6fM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=h03m3uah3VnzQJtdD5OKKtM9gkO3j0+7d5zNOStpGKJW6Px20P8cahvl12s1YgPew
+	 2F5EfFJ0T+fmfQNmQxp/1ggZtN7pM/ctnXsfH/yD3k6YvhBdyICPQqI1Vy0Sd+9xlv
+	 YT81dDGsvvNaD7PfueyqmqnkYzU+RpNQrmwmKoKIjmsXF922AlUMEc6oH7hDgOXhoH
+	 qh2uW/HMdoHhSw3+p5SZpWIZeAJCo0pCEt0+/fft0xUoTq+rBaBT/4aBiDd50sxKEA
+	 t3G95PRWjm12Hhy7bNbC81iRUphv41b7EmfOyBgQ5lyFaX6+YexBxml6C6UbNRMRTA
+	 02F86oRzp+Xnw==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2F2BC17E0DE3;
+	Fri, 22 Aug 2025 13:09:39 +0200 (CEST)
+Date: Fri, 22 Aug 2025 13:09:33 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Danilo Krummrich
+ <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, Steven
+ Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Rob Clark
+ <robin.clark@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, Miguel Ojeda
+ <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, "=?UTF-8?B?QmrDtnJu?= Roy Baron"
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas
+ Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] drm_gem: add mutex to drm_gem_object.gpuva
+Message-ID: <20250822130933.50bf1746@fedora>
+In-Reply-To: <aKhNFn7hdsLapLWO@google.com>
+References: <20250822-gpuva-mutex-in-gem-v2-0-c41a10d1d3b9@google.com>
+	<20250822-gpuva-mutex-in-gem-v2-1-c41a10d1d3b9@google.com>
+	<20250822115221.24fffc2c@fedora>
+	<aKhNFn7hdsLapLWO@google.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v3 00/26] Enable H.264/H.265 encoder support and fixes in
- iris driver common code
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Stefan Schmidt <stefan.schmidt@linaro.org>,
- Vedang Nagar <quic_vnagar@quicinc.com>, Hans Verkuil <hverkuil@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Renjiang Han <quic_renjiang@quicinc.com>,
- Wangao Wang <quic_wangaow@quicinc.com>
-References: <20250820-iris-video-encoder-v3-0-80ab0ba58b3d@quicinc.com>
- <9584a286-7d8a-48b0-a65c-7a37ced78ac6@linaro.org>
- <38d56655-cfea-ef3d-46ff-a77d81e35297@quicinc.com>
- <19f844ee-da08-4497-a4f7-c90d45554534@linaro.org>
- <cdce193e-c055-6599-16e5-83e33123099e@quicinc.com>
- <92f50738-571c-479c-9be8-b72c32fd8b70@linaro.org>
- <25d44811-953c-1145-73b9-967909fc3983@quicinc.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <25d44811-953c-1145-73b9-967909fc3983@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 22/08/2025 12:09, Vikash Garodia wrote:
-> 
-> On 8/22/2025 1:47 PM, Neil Armstrong wrote:
->> [  157.299604] qcom-iris aa00000.video-codec: <VFW_H:CmdDec:265e:a723e008:00>
->> SetProperty(HFI_PROP_MAX_GOP_FRAMES) --> 0x0000003b
->> [  157.311341] qcom-iris aa00000.video-codec: <VFW_H:CmdDec:265e:a723e008:00>
->> Disabling ONE_SLICE mode, tiling:0 numTile:1 CP:0 SliceDelivery:0 MultiSliceMode:0
->> [  157.325847] qcom-iris aa00000.video-codec: <VFW_H:CmdDec:265e:a723e008:00>
->> HFI_BUFFER_COMMON_INTERNAL_SCRATCH, Driver macro size = 9563648 vs FW HFI macro
->> size = 7953920 vs FW golden buffer size = 5833728
->> [  157.344542] qcom-iris aa00000.video-codec: <VFW_H:CmdDec:265e:a723e008:00>
->> HFI_BUFFER_COMMON_INTERNAL_SCRATCH_1_NON_COMV, Driver macro size = 299008 vs FW
->> HFI macro size = 299264 vs FW golden buffer size = 299264
->> [  157.363944] qcom-iris aa00000.video-codec: <VFW_E:CmdDec:265e:a723e008:00>
->> venc_c2Start(3860): Send HFI_CMD_START error response for port 1
->> [  157.376855] qcom-iris aa00000.video-codec: <VFW_E:CmdDec:265e:a723e008:00>
->> VenusVencCodecEmptyThisBuffer(6732): ETB received in wrong state!
->> [  157.389836] qcom-iris aa00000.video-codec: <VFW_E:CmdDec:265e:a723e008:00>
->> VenusVencCodecEmptyThisBuffer(6732): ETB received in wrong state!
->> [  157.402827] qcom-iris aa00000.video-codec: <VFW_E:CmdDec:265e:a723e008:00>
->> VenusVencCodecEmptyThisBuffer(6732): ETB received in wrong state!
->> [  157.415816] qcom-iris aa00000.video-codec: <VFW_E:CmdDec:265e:a723e008:00>
->> VenusVencCodecEmptyThisBuffer(6732): ETB received in wrong state!
->> [  157.428832] qcom-iris aa00000.video-codec: session error received 0x1000005:
->> unknown
->> [  157.436848] qcom-iris aa00000.video-codec: session error received 0x1000005:
->> unknown
-> 
-> Thank you for the logs, the issue is due to driver non_comv macro size (299008)
-> is less than firmware requirement (299264). Please try below fix, if that works
-> for SM8650
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-> b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-> index 558dba37dbfbc..3247ad736a17c 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-> @@ -967,7 +967,8 @@ static u32 iris_vpu_enc_non_comv_size(struct iris_inst *inst)
->          if (inst->codec == V4L2_PIX_FMT_HEVC) {
->                  lcu_size = 32;
->                  return hfi_buffer_non_comv_enc(width, height, num_vpp_pipes,
-> -                                              lcu_size, HFI_CODEC_ENCODE_HEVC);
-> +                                              lcu_size, HFI_CODEC_ENCODE_HEVC) +
-> +                                              SIZE_ONE_SLICE_BUF;
->          }
-> 
->          return hfi_buffer_non_comv_enc(width, height, num_vpp_pipes,
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
-> b/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
-> index 1ff1b07ecbaa8..94668c5b3d15f 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
-> @@ -41,6 +41,7 @@ struct iris_inst;
-> #define SIZE_SLIST_BUF_H265 (BIT(10))
-> #define H265_DISPLAY_BUF_SIZE (3072)
-> #define H265_NUM_FRM_INFO (48)
-> +#define SIZE_ONE_SLICE_BUF 256
-> 
-> #define VP9_NUM_FRAME_INFO_BUF 32
-> #define VP9_NUM_PROBABILITY_TABLE_BUF (VP9_NUM_FRAME_INFO_BUF + 4)
+On Fri, 22 Aug 2025 10:57:26 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-Works like a charm !
+> On Fri, Aug 22, 2025 at 11:52:21AM +0200, Boris Brezillon wrote:
+> > On Fri, 22 Aug 2025 09:28:24 +0000
+> > 
+> > Maybe it's time we start moving some bits of the gpuva field docs next
+> > to the fields they describe:
+> > 
+> > 	/**
+> > 	 * @gpuva: Fields used by GPUVM to manage mappings pointing to this GEM object.
+> > 	 */
+> > 	struct {
+> > 		/**
+> > 		 * @gpuva.list: list of GPU VAs attached to this GEM object.
+> > 		 *
+> > 		 * Drivers should lock list accesses with the GEMs &dma_resv lock
+> > 		 * (&drm_gem_object.resv) or &drm_gem_object.gpuva.lock if the
+> > 		 * list is being updated in places where the resv lock can't be
+> > 		 * acquired (fence signalling path).
+> > 		 */
+> > 		struct list_head list;  
+> 
+> This isn't a new issue, but it's somewhat confusing to call it a list of
+> VAs when it's a list of vm_bos.
 
-Do you want me to add it to the iri33 buffer size patch I'm preparing ?
-
-Thanks,
-Neil
+Yep, that's true.
 
 > 
-> Regards,
-> Vikash
+> > 		/**
+> > 		 * @gpuva.lock: lock protecting access to &drm_gem_object.gpuva.list
+> > 		 * when the resv lock can't be used.
+> > 		 *
+> > 		 * Should only be used when the VM is being modified in a fence
+> > 		 * signalling path, otherwise you should use &drm_gem_object.resv to
+> > 		 * protect accesses to &drm_gem_object.gpuva.list.
+> > 		 */
+> > 		struct mutex lock;
+> > 
+> > 		...
+> > 	};
+> >   
+> 
+> Alice
 
 
