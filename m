@@ -1,362 +1,172 @@
-Return-Path: <linux-kernel+bounces-782376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5101EB31FA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:54:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7007FB31FAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 178A668143E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:48:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 291053A8C42
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676D1352094;
-	Fri, 22 Aug 2025 15:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462A32FE56C;
+	Fri, 22 Aug 2025 15:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZOvGqT6v"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SUiAyH0I"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF1C23D297
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 15:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B8D25C833
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 15:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755877084; cv=none; b=KhpYA5fzV/fWog5ZSJAbQpU8Oy1ofRwFj7Xg/XbxPul61+u+fCPhEfZUd5cDEZK9vp835Jvbn9rufRn8jWWsUVBoFjSFR8A/mcQ7mSZ0R8yyBUWsU2aqjRu+jWB1kx7iMOtmdV3dPHg1fG25nPLzxjHF1UQGdhf/Z1mpDQ3tvdo=
+	t=1755877116; cv=none; b=YoJdPSo3YPeRvMUlGX2Z5X0EJYrrfQvzu1/+YNoiF2/MRtuQ82XPOcEXiFKHZb4XUHdzwQVjyXcs7f4lKYPgPwjjqV/jmeCYoulEn0s2Ne8hCqMoOd6/XqD5fDeM4CeFxTW5OhtSliE/rxHn7M6/EZYn/d6BQ09tRTCya+9nbzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755877084; c=relaxed/simple;
-	bh=fNFPaFxaGIxv5Y8hCloKDpiUz2vCKZuJPCQSbCRT2CM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=COgRP8dqcikqwrF5ChLT2fttcX4dJO3/VTDWvb5TPjLVS+wOebm95hRSnirnlJgOjqBFmQ7IO/OvmO18p4bHfQm3goVNWFfuuS7LUdUcekausFnz89TCuL5rTk2LHdl86flh1E96UsCKwnV/LAuKeSLnidyEofw4FTRWfY1m2PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZOvGqT6v; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id B0E6EC8EC60;
-	Fri, 22 Aug 2025 15:37:45 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 8EAD7604AD;
-	Fri, 22 Aug 2025 15:37:59 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E88791C22D194;
-	Fri, 22 Aug 2025 17:37:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1755877078; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=7PVWOEKulKe5NQD88m9aMzcwTOMAsDLujR1Ax84aCtE=;
-	b=ZOvGqT6viS25r9BeVLxBHtz91CZ30Cx3LeFaFwaG1vqZ1qmgDqZAzDfl07afzAp4QQEBZC
-	YkRl9Sq+81q6hbq9qPLPJqgfnaExwx5sR+cP+VgwiiC0RaGwjzfKG5/R+b70f6/Nf3gpbH
-	aQH25DTAYlnqG9acUKMl41I2NR0zeVDh015nP9PH6xcrzlh0a1D/MroAA6zsf1CnkdoDK6
-	z9gxlDg1dVjdSYBoBAJM+B+12Wg3LHQtubqp80Wu1jV/EUC2D+mJtIH3yC5abtdgxWvW4X
-	otJizU1BxTtDxdAHSZhTyCgzbPH43JB49Aa1HLbdIv9EkOs7DA1csz6bxP+pdg==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Fri, 22 Aug 2025 17:37:01 +0200
-Subject: [PATCH net-next 1/2] net: pse-pd: pd692x0: Separate configuration
- parsing from hardware setup
+	s=arc-20240116; t=1755877116; c=relaxed/simple;
+	bh=IApp4LzrpZfZpq4FOoG4uXSMm/Rh7qJX8SvuMXYVIdo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=tLtZprVlJbnLkmb5j6mL9KKqYGJnsuSflWgqU7gUXBLw2KucSGryG1VBi2JtuwKnsMJrH23ZQj2sE6u5SeA5hr3ffNpHo+H+AbvxeSlmeCBLKAr/7/rVCZr2E0B3hN6amJ1ZatepHDTF9FE+/ZZ2fanhuFwc2Nj2NsmYTnR1ifE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SUiAyH0I; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755877113;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=iwwQoFvPri9HBUT5vlx/GnO2PxJgU97nR07EdM103u0=;
+	b=SUiAyH0Ie1htWS1NhZFV+W8vz6Q3H5zDxR7mivEOsM3cBo5LzAf/4ybo6wsws03XKcTl+0
+	Se/8hfAMPJjr5noUkhsvGD+/iQx84/+i1LgIopTj1TqaJZnudafTPXs6mXuHqaTI5wxi7v
+	9WwJq2TqV8ExT2hgdWLdEsg7y/HDafA=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-674-pk2HpOYUNqapQm2ot-_90g-1; Fri,
+ 22 Aug 2025 11:38:30 -0400
+X-MC-Unique: pk2HpOYUNqapQm2ot-_90g-1
+X-Mimecast-MFC-AGG-ID: pk2HpOYUNqapQm2ot-_90g_1755877108
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 029761800366;
+	Fri, 22 Aug 2025 15:38:28 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.227])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8D9221955F24;
+	Fri, 22 Aug 2025 15:38:23 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 22 Aug 2025 17:37:08 +0200 (CEST)
+Date: Fri, 22 Aug 2025 17:37:02 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Ingo Molnar <mingo@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [PATCH v2 4/5] x86/shstk: don't create the shadow stack for
+ PF_USER_WORKERs
+Message-ID: <20250822153702.GA27153@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250822-feature_poe_permanent_conf-v1-1-dcd41290254d@bootlin.com>
-References: <20250822-feature_poe_permanent_conf-v1-0-dcd41290254d@bootlin.com>
-In-Reply-To: <20250822-feature_poe_permanent_conf-v1-0-dcd41290254d@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: kernel@pengutronix.de, Dent Project <dentproject@linuxfoundation.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>
-X-Mailer: b4 0.15-dev-8cb71
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822153603.GA27103@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+If a features_enabled(ARCH_SHSTK_SHSTK) userspace thread creates a
+PF_USER_WORKER thread, shstk_alloc_thread_stack() allocates the shadow
+stack for no reason, the new (kernel) thread will never return to usermode.
 
-Cache the port matrix configuration in driver private data to enable
-PSE controller reconfiguration. This refactoring separates device tree
-parsing from hardware configuration application, allowing settings to be
-reapplied without reparsing the device tree.
+Plus the current code doesn't even look correct, in this case fpu_clone()
+won't call update_fpu_shstk().
 
-This prepares for upcoming permanent configuration support where cached
-settings can be restored after device resets or firmware updates.
+Add the new "bool minimal = !!args->fn" argument (which matches that of
+fpu_clone()) to shstk_alloc_thread_stack() and change it to check this
+argument along with CLONE_VFORK.
 
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+With this patch ssp_get() -> ssp_active(target) should never return true
+if target->flags & PF_USER_WORKER.
+
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 ---
- drivers/net/pse-pd/pd692x0.c | 113 ++++++++++++++++++++++++++++---------------
- 1 file changed, 74 insertions(+), 39 deletions(-)
+ arch/x86/include/asm/shstk.h | 4 ++--
+ arch/x86/kernel/process.c    | 2 +-
+ arch/x86/kernel/shstk.c      | 9 +++++++--
+ 3 files changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
-index f4e91ba64a66..8b94967bb4fb 100644
---- a/drivers/net/pse-pd/pd692x0.c
-+++ b/drivers/net/pse-pd/pd692x0.c
-@@ -85,6 +85,11 @@ enum {
- 	PD692X0_MSG_CNT
- };
- 
-+struct pd692x0_matrix {
-+	u8 hw_port_a;
-+	u8 hw_port_b;
-+};
-+
- struct pd692x0_priv {
- 	struct i2c_client *client;
- 	struct pse_controller_dev pcdev;
-@@ -101,6 +106,8 @@ struct pd692x0_priv {
- 	enum ethtool_c33_pse_admin_state admin_state[PD692X0_MAX_PIS];
- 	struct regulator_dev *manager_reg[PD692X0_MAX_MANAGERS];
- 	int manager_pw_budget[PD692X0_MAX_MANAGERS];
-+	int nmanagers;
-+	struct pd692x0_matrix *port_matrix;
- };
- 
- /* Template list of communication messages. The non-null bytes defined here
-@@ -809,11 +816,6 @@ struct pd692x0_manager {
- 	int nports;
- };
- 
--struct pd692x0_matrix {
--	u8 hw_port_a;
--	u8 hw_port_b;
--};
--
- static int
- pd692x0_of_get_ports_manager(struct pd692x0_priv *priv,
- 			     struct pd692x0_manager *manager,
-@@ -903,7 +905,8 @@ pd692x0_of_get_managers(struct pd692x0_priv *priv,
- 	}
- 
- 	of_node_put(managers_node);
--	return nmanagers;
-+	priv->nmanagers = nmanagers;
-+	return 0;
- 
- out:
- 	for (i = 0; i < nmanagers; i++) {
-@@ -963,8 +966,7 @@ pd692x0_register_manager_regulator(struct device *dev, char *reg_name,
- 
- static int
- pd692x0_register_managers_regulator(struct pd692x0_priv *priv,
--				    const struct pd692x0_manager *manager,
--				    int nmanagers)
-+				    const struct pd692x0_manager *manager)
- {
- 	struct device *dev = &priv->client->dev;
- 	size_t reg_name_len;
-@@ -975,7 +977,7 @@ pd692x0_register_managers_regulator(struct pd692x0_priv *priv,
+diff --git a/arch/x86/include/asm/shstk.h b/arch/x86/include/asm/shstk.h
+index ba6f2fe43848..a4ee2baab51c 100644
+--- a/arch/x86/include/asm/shstk.h
++++ b/arch/x86/include/asm/shstk.h
+@@ -17,7 +17,7 @@ struct thread_shstk {
+ long shstk_prctl(struct task_struct *task, int option, unsigned long arg2);
+ void reset_thread_features(void);
+ unsigned long shstk_alloc_thread_stack(struct task_struct *p, unsigned long clone_flags,
+-				       unsigned long stack_size);
++				       bool minimal, unsigned long stack_size);
+ void shstk_free(struct task_struct *p);
+ int setup_signal_shadow_stack(struct ksignal *ksig);
+ int restore_signal_shadow_stack(void);
+@@ -28,7 +28,7 @@ static inline long shstk_prctl(struct task_struct *task, int option,
+ 			       unsigned long arg2) { return -EINVAL; }
+ static inline void reset_thread_features(void) {}
+ static inline unsigned long shstk_alloc_thread_stack(struct task_struct *p,
+-						     unsigned long clone_flags,
++						     unsigned long clone_flags, bool minimal,
+ 						     unsigned long stack_size) { return 0; }
+ static inline void shstk_free(struct task_struct *p) {}
+ static inline int setup_signal_shadow_stack(struct ksignal *ksig) { return 0; }
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 1b7960cf6eb0..e932e0e53972 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -209,7 +209,7 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
+ 	 * is disabled, new_ssp will remain 0, and fpu_clone() will know not to
+ 	 * update it.
  	 */
- 	reg_name_len = strlen(dev_name(dev)) + 23;
+-	new_ssp = shstk_alloc_thread_stack(p, clone_flags, args->stack_size);
++	new_ssp = shstk_alloc_thread_stack(p, clone_flags, args->fn, args->stack_size);
+ 	if (IS_ERR_VALUE(new_ssp))
+ 		return PTR_ERR((void *)new_ssp);
  
--	for (i = 0; i < nmanagers; i++) {
-+	for (i = 0; i < priv->nmanagers; i++) {
- 		static const char * const regulators[] = { "vaux5", "vaux3p3" };
- 		struct regulator_dev *rdev;
- 		char *reg_name;
-@@ -1008,10 +1010,14 @@ pd692x0_register_managers_regulator(struct pd692x0_priv *priv,
+diff --git a/arch/x86/kernel/shstk.c b/arch/x86/kernel/shstk.c
+index 2ddf23387c7e..6c8c4593e202 100644
+--- a/arch/x86/kernel/shstk.c
++++ b/arch/x86/kernel/shstk.c
+@@ -192,7 +192,7 @@ void reset_thread_features(void)
  }
  
- static int
--pd692x0_conf_manager_power_budget(struct pd692x0_priv *priv, int id, int pw)
-+pd692x0_conf_manager_power_budget(struct pd692x0_priv *priv, int id)
+ unsigned long shstk_alloc_thread_stack(struct task_struct *tsk, unsigned long clone_flags,
+-				       unsigned long stack_size)
++				       bool minimal, unsigned long stack_size)
  {
- 	struct pd692x0_msg msg, buf;
--	int ret, pw_mW = pw / 1000;
-+	int ret, pw_mW;
-+
-+	pw_mW = priv->manager_pw_budget[id] / 1000;
-+	if (!pw_mW)
-+		return 0;
- 
- 	msg = pd692x0_msg_template_list[PD692X0_MSG_GET_POWER_BANK];
- 	msg.data[0] = id;
-@@ -1032,11 +1038,11 @@ pd692x0_conf_manager_power_budget(struct pd692x0_priv *priv, int id, int pw)
- }
- 
- static int
--pd692x0_configure_managers(struct pd692x0_priv *priv, int nmanagers)
-+pd692x0_req_managers_pw_budget(struct pd692x0_priv *priv)
- {
- 	int i, ret;
- 
--	for (i = 0; i < nmanagers; i++) {
-+	for (i = 0; i < priv->nmanagers; i++) {
- 		struct regulator *supply = priv->manager_reg[i]->supply;
- 		int pw_budget;
- 
-@@ -1053,7 +1059,18 @@ pd692x0_configure_managers(struct pd692x0_priv *priv, int nmanagers)
- 			return ret;
- 
- 		priv->manager_pw_budget[i] = pw_budget;
--		ret = pd692x0_conf_manager_power_budget(priv, i, pw_budget);
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+pd692x0_configure_managers(struct pd692x0_priv *priv)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < priv->nmanagers; i++) {
-+		ret = pd692x0_conf_manager_power_budget(priv, i);
- 		if (ret < 0)
- 			return ret;
- 	}
-@@ -1101,10 +1118,9 @@ pd692x0_set_port_matrix(const struct pse_pi_pairset *pairset,
- 
- static int
- pd692x0_set_ports_matrix(struct pd692x0_priv *priv,
--			 const struct pd692x0_manager *manager,
--			 int nmanagers,
--			 struct pd692x0_matrix port_matrix[PD692X0_MAX_PIS])
-+			 const struct pd692x0_manager *manager)
- {
-+	struct pd692x0_matrix *port_matrix = priv->port_matrix;
- 	struct pse_controller_dev *pcdev = &priv->pcdev;
- 	int i, ret;
- 
-@@ -1117,7 +1133,7 @@ pd692x0_set_ports_matrix(struct pd692x0_priv *priv,
- 	/* Update with values for every PSE PIs */
- 	for (i = 0; i < pcdev->nr_lines; i++) {
- 		ret = pd692x0_set_port_matrix(&pcdev->pi[i].pairset[0],
--					      manager, nmanagers,
-+					      manager, priv->nmanagers,
- 					      &port_matrix[i]);
- 		if (ret) {
- 			dev_err(&priv->client->dev,
-@@ -1126,7 +1142,7 @@ pd692x0_set_ports_matrix(struct pd692x0_priv *priv,
- 		}
- 
- 		ret = pd692x0_set_port_matrix(&pcdev->pi[i].pairset[1],
--					      manager, nmanagers,
-+					      manager, priv->nmanagers,
- 					      &port_matrix[i]);
- 		if (ret) {
- 			dev_err(&priv->client->dev,
-@@ -1139,9 +1155,9 @@ pd692x0_set_ports_matrix(struct pd692x0_priv *priv,
- }
- 
- static int
--pd692x0_write_ports_matrix(struct pd692x0_priv *priv,
--			   const struct pd692x0_matrix port_matrix[PD692X0_MAX_PIS])
-+pd692x0_write_ports_matrix(struct pd692x0_priv *priv)
- {
-+	struct pd692x0_matrix *port_matrix = priv->port_matrix;
- 	struct pd692x0_msg msg, buf;
- 	int ret, i;
- 
-@@ -1166,13 +1182,32 @@ pd692x0_write_ports_matrix(struct pd692x0_priv *priv,
- 	return 0;
- }
- 
-+static int pd692x0_hw_conf_init(struct pd692x0_priv *priv)
-+{
-+	int ret;
-+
-+	/* Is PD692x0 ready to be configured? */
-+	if (priv->fw_state != PD692X0_FW_OK &&
-+	    priv->fw_state != PD692X0_FW_COMPLETE)
-+		return 0;
-+
-+	ret = pd692x0_configure_managers(priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = pd692x0_write_ports_matrix(priv);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static void pd692x0_of_put_managers(struct pd692x0_priv *priv,
--				    struct pd692x0_manager *manager,
--				    int nmanagers)
-+				    struct pd692x0_manager *manager)
- {
- 	int i, j;
- 
--	for (i = 0; i < nmanagers; i++) {
-+	for (i = 0; i < priv->nmanagers; i++) {
- 		for (j = 0; j < manager[i].nports; j++)
- 			of_node_put(manager[i].port_node[j]);
- 		of_node_put(manager[i].node);
-@@ -1202,46 +1237,46 @@ static int pd692x0_setup_pi_matrix(struct pse_controller_dev *pcdev)
- {
- 	struct pd692x0_manager *manager __free(kfree) = NULL;
- 	struct pd692x0_priv *priv = to_pd692x0_priv(pcdev);
--	struct pd692x0_matrix port_matrix[PD692X0_MAX_PIS];
--	int ret, nmanagers;
--
--	/* Should we flash the port matrix */
--	if (priv->fw_state != PD692X0_FW_OK &&
--	    priv->fw_state != PD692X0_FW_COMPLETE)
--		return 0;
-+	struct pd692x0_matrix *port_matrix;
-+	int ret;
- 
- 	manager = kcalloc(PD692X0_MAX_MANAGERS, sizeof(*manager), GFP_KERNEL);
- 	if (!manager)
- 		return -ENOMEM;
- 
-+	port_matrix = devm_kcalloc(&priv->client->dev, PD692X0_MAX_PIS,
-+				   sizeof(*port_matrix), GFP_KERNEL);
-+	if (!port_matrix)
-+		return -ENOMEM;
-+	priv->port_matrix = port_matrix;
-+
- 	ret = pd692x0_of_get_managers(priv, manager);
- 	if (ret < 0)
- 		return ret;
- 
--	nmanagers = ret;
--	ret = pd692x0_register_managers_regulator(priv, manager, nmanagers);
-+	ret = pd692x0_register_managers_regulator(priv, manager);
- 	if (ret)
- 		goto err_of_managers;
- 
--	ret = pd692x0_configure_managers(priv, nmanagers);
-+	ret = pd692x0_req_managers_pw_budget(priv);
- 	if (ret)
- 		goto err_of_managers;
- 
--	ret = pd692x0_set_ports_matrix(priv, manager, nmanagers, port_matrix);
-+	ret = pd692x0_set_ports_matrix(priv, manager);
- 	if (ret)
- 		goto err_managers_req_pw;
- 
--	ret = pd692x0_write_ports_matrix(priv, port_matrix);
-+	ret = pd692x0_hw_conf_init(priv);
- 	if (ret)
- 		goto err_managers_req_pw;
- 
--	pd692x0_of_put_managers(priv, manager, nmanagers);
-+	pd692x0_of_put_managers(priv, manager);
- 	return 0;
- 
- err_managers_req_pw:
- 	pd692x0_managers_free_pw_budget(priv);
- err_of_managers:
--	pd692x0_of_put_managers(priv, manager, nmanagers);
-+	pd692x0_of_put_managers(priv, manager);
- 	return ret;
- }
- 
-@@ -1644,7 +1679,7 @@ static enum fw_upload_err pd692x0_fw_poll_complete(struct fw_upload *fwl)
- 		return FW_UPLOAD_ERR_FW_INVALID;
- 	}
- 
--	ret = pd692x0_setup_pi_matrix(&priv->pcdev);
-+	ret = pd692x0_hw_conf_init(priv);
- 	if (ret < 0) {
- 		dev_err(&client->dev, "Error configuring ports matrix (%pe)\n",
- 			ERR_PTR(ret));
-
+ 	struct thread_shstk *shstk = &tsk->thread.shstk;
+ 	unsigned long addr, size;
+@@ -208,8 +208,13 @@ unsigned long shstk_alloc_thread_stack(struct task_struct *tsk, unsigned long cl
+ 	 * For CLONE_VFORK the child will share the parents shadow stack.
+ 	 * Make sure to clear the internal tracking of the thread shadow
+ 	 * stack so the freeing logic run for child knows to leave it alone.
++	 *
++	 * If minimal == true, the new kernel thread cloned from userspace
++	 * thread will never return to usermode.
+ 	 */
+-	if (clone_flags & CLONE_VFORK) {
++	if ((clone_flags & CLONE_VFORK) || minimal) {
++		if (minimal)
++			tsk->thread.features &= ~ARCH_SHSTK_SHSTK;
+ 		shstk->base = 0;
+ 		shstk->size = 0;
+ 		return 0;
 -- 
-2.43.0
+2.25.1.362.g51ebf55
 
 
