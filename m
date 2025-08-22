@@ -1,62 +1,53 @@
-Return-Path: <linux-kernel+bounces-782529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7135AB3219E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:41:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A3BCB3219D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B988FB23F1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:39:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC96AB23B04
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73B5313558;
-	Fri, 22 Aug 2025 17:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2BB31355B;
+	Fri, 22 Aug 2025 17:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="StjMwzwV"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="lEnDPnG3"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D5A31DD98;
-	Fri, 22 Aug 2025 17:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A373D76;
+	Fri, 22 Aug 2025 17:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755884372; cv=none; b=ahCkXDH4bSzP+fOZUuU0T8HpcDRqx0HBrmTA9Y+UAVBZc5k/omr436KQ+0RqeKMB35PcyRRw9CqQ1PHWWSbmAoA4nM2KmZ/kMQpm3A+V2vRNoQVhnzOnBqj9CvJrC6rj//QIxa241b/PCZPl0zI1WPp57fDDpvoXuA51H5HxG4A=
+	t=1755884367; cv=none; b=TXQisunZNjyU75jcOSO49tgBr4IlOfNoYKhvj5XADU2O7sGJtJ7F+P23JTM0ZTfBnGYhqnyXXQh0LDRdWH6UlcJuJuq8lD7FOz43W9lWv8afg5xmj6XHNtY06CQWuCT0eD9p8n8x7gSm5lI+1FUwGCs04Pdb6n2mV4nuWQ9nZhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755884372; c=relaxed/simple;
-	bh=oCzH+qVdplQ2pgD+ImK3bjogniiN7B27MVSHwO/I+4o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TPbW7zbqkb2ymRfxf0y0PEFkelm9H2qcMk4iTyXT715wX4HcYlMJ1prBvRbEEp1pWKJLycTmCP1l0xywxBvTkgZIXKXndSjFXfG1g8scbLIi2rH/qtyBNv81jWvZ2y/0Pu9expzt+pSPKLT1M1oplLc95u71sSBUw9skkLWCkqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=StjMwzwV; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57MHdDTg299741;
-	Fri, 22 Aug 2025 12:39:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755884353;
-	bh=EQHjqdGHZGwz5jlXpEQ4A8fr2g0aWp9TNlx/qZj0tAM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=StjMwzwVLVDe40mulHlLMB/LS+E0mfIWI6dPqG3qcqRYLkOXRNINtgiW0Yb3khtZP
-	 EcV3Mlx1iwu/KMlqC8SK3YRsG6wuS9hAeMjp6raftH98LLC2rP8sRun5DJ1jpfLgR+
-	 D1GFZjCuShnGbbCx8PnBcSOJGOjKWpGqis6t5168=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57MHdDpk3077731
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 22 Aug 2025 12:39:13 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 22
- Aug 2025 12:39:12 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 22 Aug 2025 12:39:12 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57MHdCxq3898888;
-	Fri, 22 Aug 2025 12:39:12 -0500
-Message-ID: <c05c0a13-e7af-4fc0-9363-b629b2c48201@ti.com>
-Date: Fri, 22 Aug 2025 12:39:12 -0500
+	s=arc-20240116; t=1755884367; c=relaxed/simple;
+	bh=dWMRT0QE1bmEABLuxeUnZ1c6/L5TsIDzUSpqsEJPAHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=swHaobhch4DU/dW3SE+4ofVueq9A+x4hOrwla5zFctcnZRbI2ojJ8yoqbdRrl+ZWBQzrAknWR2y9j7JbbqYN0vMn5Lk6G3BEioWZAtzjZwPZKMRdvLXv6jJCA1avDkL3deElY5gmImSpLIihwlqesl3kOCKtXu98w3BcAAJDT+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=lEnDPnG3; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=RwFxUebRFfqFsAgA+uxsppQf6Cb9kI/rJOWmtbFU+NQ=; b=lEnDPnG3djFiMDDg2SZeL0jBUc
+	nUeLZEQ73Q6lRFbKhpgp4RboukkO21ppU6m0+DlcLshW6re/QxoysswgZFV15tWV7y3DJbiNNeq0+
+	8B5Y7erc99ucDQggXVyrB7tBho5oEpc3vLwRDNiwJmI8dHfr7PQDfXwYZ3sPXXpJS1zZL0FzdxkPF
+	VbqSVbqqX5tkIo2RAagsO+8TGrOus4q7QyWL9S9/eGUg1qftXpfvp5vEkuacQhbvu3ycCr4Oln8v8
+	N++Np3p/bU4RhUWCVts8JBx8G4BBhvIZL6+bX21IS/Q91cS5mHO63cdAcqhs6Lz4yhUOkof91Rrew
+	7Cj72+Wg==;
+Received: from [152.250.7.37] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1upVjT-000Cso-Bd; Fri, 22 Aug 2025 19:39:19 +0200
+Message-ID: <3ed1275e-fc10-450c-8cbf-422e28a7d5a9@igalia.com>
+Date: Fri, 22 Aug 2025 14:39:13 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,134 +55,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] PATCH: firmware: ti_sci: Add trace events to TI SCI
-To: Jon Cormier <jcormier@criticallink.com>
-CC: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Santosh
- Shilimkar <ssantosh@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami
- Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers
-	<mathieu.desnoyers@efficios.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-trace-kernel@vger.kernel.org>
-References: <20250820-linux_master_ti_sci_trace-v1-0-2a69c0abf55e@criticallink.com>
- <e11fd419-1095-471e-a57f-fc5ff7ce713a@ti.com>
- <CADL8D3aR_ecr4q54cX7yfr_aDPA7NhXmLhkiHjUY9MjNZeg78Q@mail.gmail.com>
+Subject: Re: [PATCH v5 0/9] ovl: Enable support for casefold layers
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>,
+ linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ kernel-dev@igalia.com, Gabriel Krisman Bertazi <krisman@kernel.org>
+References: <20250814-tonyk-overlayfs-v5-0-c5b80a909cbd@igalia.com>
+ <cffb248a-87ce-434e-bd64-2c8112872a18@igalia.com>
+ <CAOQ4uxiVFubhiC9Ftwt3kG=RoGSK7rBpPv5Z0GdZfk17dBO6YQ@mail.gmail.com>
+ <e2238a17-3d0a-4c30-bc81-65c8c4da98e6@igalia.com>
+ <CAOQ4uxgfKcey301gZRBHf=2YfWmNg5zkj7Bh+DwVwpztMR1uOg@mail.gmail.com>
+ <CAOQ4uxjf6S7xX+LiMaxoz7Rg03jU1-4A4o3FZ_Hi8z6EyEc7PQ@mail.gmail.com>
+ <5da6b0f4-2730-4783-9c57-c46c2d13e848@igalia.com>
+ <CAOQ4uxiOYFf_qUZAwCZ2DO0qemUdAbOWyUD2+oqewVPGn2+0cw@mail.gmail.com>
 Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <CADL8D3aR_ecr4q54cX7yfr_aDPA7NhXmLhkiHjUY9MjNZeg78Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <CAOQ4uxiOYFf_qUZAwCZ2DO0qemUdAbOWyUD2+oqewVPGn2+0cw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 8/22/25 11:05 AM, Jon Cormier wrote:
-> On Wed, Aug 20, 2025 at 4:04 PM Andrew Davis <afd@ti.com> wrote:
+Em 22/08/2025 14:21, Amir Goldstein escreveu:
+> On Fri, Aug 22, 2025 at 4:16 PM André Almeida <andrealmeid@igalia.com> wrote:
 >>
->> On 8/20/25 1:10 PM, Jonathan Cormier wrote:
->>> Add trace events to help debug and measure the speed of the
->>> communication channel.
+>> Em 17/08/2025 12:03, Amir Goldstein escreveu:
+>>> On Fri, Aug 15, 2025 at 3:50 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>>>>
+>>>> On Fri, Aug 15, 2025 at 3:34 PM André Almeida <andrealmeid@igalia.com> wrote:
+>>>>>
+>>>>> Hi Amir,
+>>>>>
+>>>>> On 8/14/25 21:06, Amir Goldstein wrote:
+>>>>>> On Thu, Aug 14, 2025 at 7:30 PM André Almeida <andrealmeid@igalia.com> wrote:
+>>>>>>> Em 14/08/2025 14:22, André Almeida escreveu:
+>>>>>>>> Hi all,
+>>>>>>>>
+>>>>>>>> We would like to support the usage of casefold layers with overlayfs to
+>>>>>>>> be used with container tools. This use case requires a simple setup,
+>>>>>>>> where every layer will have the same encoding setting (i.e. Unicode
+>>>>>>>> version and flags), using one upper and one lower layer.
+>>>>>>>>
+>>>>>>> Amir,
+>>>>>>>
+>>>>>>> I tried to run your xfstest for casefolded ovl[1] but I can see that it
+>>>>>>> still requires some work. I tried to fix some of the TODO's but I didn't
+>>>>>>> managed to mkfs the base fs with casefold enabled...
+>>>>>> When you write mkfs the base fs, I suspect that you are running
+>>>>>> check -overlay or something.
+>>>>>>
+>>>>>> This is not how this test should be run.
+>>>>>> It should run as a normal test on ext4 or any other fs  that supports casefold.
+>>>>>>
+>>>>>> When you run check -g casefold, the generic test generic/556 will
+>>>>>> be run if the test fs supports casefold (e.g. ext4).
+>>>>>>
+>>>>>> The new added test belongs to the same group and should run
+>>>>>> if you run check -g casefold if the test fs supports casefold (e.g. ext4).
+>>>>>>
+>>>>> I see, I used `check -overlay` indeed, thanks!
+>>>>>
+>>>>
+>>>> Yeh that's a bit confusing I'll admit.
+>>>> It's an overlayfs test that "does not run on overlayfs"
+>>>> but requires extra overlayfs:
+>>>>
+>>>> _exclude_fs overlay
+>>>> _require_extra_fs overlay
+>>>>
+>>>> Because it does the overlayfs mount itself.
+>>>> That's the easiest way to test features (e.g. casefold) in basefs
+>>>>
 >>>
->>> Add parsing of the messages types but I am not sure how to parse the
->>> flags, since the REQ and RESP flags conflict. Left as seperate commit to
->>
->> The REQ and RESP flags should be handled by different TRACE_EVENTs. Right
->> now you only dump the content of the response messages (the ones in
->> rx_callback), also tracing what is sent is just as important, so you
->> might want to add slightly different ti_sci_msg_dump EVENT for the
->> sending side which uses the different REQ flag parser.
-> 
-> 
-> Does it make sense to have seperate trace events, one that only decode
-> the hdrs and ones that also include the buffers?
-> 
-> I'm bothered by the code duplication, but am trying to convince myself
-> it doesn't matter.
-> 
-> Currently, with the above updates, if you enabled all the traces,
-> you'd see something like:
-> 
-> [15.579036] ti_sci_xfer_begin: type=SET_DEVICE_STATE host=0C seq=00
-> flags=00000402 status=0
-> [15.xxxxxxx] ti_sci_tx_msg_dump: type=SET_DEVICE_STATE host=0C seq=00
-> flags=00000402 data=<data>
-> [15.587595] ti_sci_rx_callback: type=SET_DEVICE_STATE host=0C seq=00
-> flags=00000002 status=0
-> [15.xxxxxxx] ti_sci_rx_msg_dump: type=SET_DEVICE_STATE host=0C seq=00
-> flags=00000002 data=<data>
-> [15.606135] ti_sci_xfer_end: type=SET_DEVICE_STATE host=0C seq=00
-> flags=00000002 status=0
-> 
-> Presumably if you were worried about timing, you'd disable the
-> msg_dumps, avoiding the extra memcpy's.  And if you only cared about
-> the data being sent, you'd only enable the msg_dumps.  Does this make
-> sense / is it worth the extra trace calls?
-> 
-> Or removing the buffer decoding in the msg_dumps, removes the duplication:
-> 
-> [15.579036] ti_sci_xfer_begin: type=SET_DEVICE_STATE host=0C seq=00
-> flags=00000402 status=0
-> [15.xxxxxxx] ti_sci_msg_dump: data=<data>
-> [15.587595] ti_sci_rx_callback: type=SET_DEVICE_STATE host=0C seq=00
-> flags=00000002 status=0
-> [15.xxxxxxx] ti_sci_msg_dump: data=<data>
-> [15.606135] ti_sci_xfer_end: type=SET_DEVICE_STATE host=0C seq=00
-> flags=00000002 status=0
-> 
-
-I like this one ^^^ but I'd also just remove the `ti_sci_rx_callback`
-trace, the contents would always be the same as `ti_sci_xfer_end`.
-
-This way you have two sets of symmetrical trace events, a "begin" and "end"
-that can be used for timing measurements, and a dump message for "send" and
-"receive" that would help with debugging based on the message contents.
-
-As for the code duplication in the send/receive traces, I'm not sure
-what can be done, these trace macros already confuse me enough without
-trying to optimize them :)
-
-Andrew
-
-> Or do condense the trace calls so they all have the data into something like:
-> 
-> [15.579036] ti_sci_xfer_begin: type=SET_DEVICE_STATE host=0C seq=00
-> flags=00000402 status=0  data=<data>
-> [15.587595] ti_sci_rx_callback: type=SET_DEVICE_STATE host=0C seq=00
-> flags=00000002 status=0 data=<data>
-> [15.606135] ti_sci_xfer_end: type=SET_DEVICE_STATE host=0C seq=00
-> flags=00000002 status=0
-> 
-> Simplifying the code in the trace header.
->>
->>
->> Andrew
->>
->>> make it easier to drop or make changes depending on comments.  The two
->>> commits should squash easily.
+>>> I tried to run the new test, which is able to mount an overlayfs
+>>> with layers with disabled casefolding with kernel 6.17-rc1.
 >>>
->>> Nishanth Menon and Vignesh Raghavendra requested I send this patch
->>> upstream.
->>>
->>> Signed-off-by: Jonathan Cormier <jcormier@criticallink.com>
->>> ---
->>> Jonathan Cormier (2):
->>>         firmware: ti_sci: Add trace events
->>>         firmware: ti_sci: trace: Decode message types
->>>
->>>    MAINTAINERS                     |   1 +
->>>    drivers/firmware/Makefile       |   3 +
->>>    drivers/firmware/ti_sci.c       |  11 +++
->>>    drivers/firmware/ti_sci_trace.h | 146 ++++++++++++++++++++++++++++++++++++++++
->>>    4 files changed, 161 insertions(+)
->>> ---
->>> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
->>> change-id: 20250709-linux_master_ti_sci_trace-91fd2af65dca
->>>
->>> Best regards,
+>>> It does not even succeed in passing this simple test with
+>>> your patches, so something is clearly off.
 >>
+>> Apart from the other changes I had done for v6, I also had to change the
+>> test itself. The directories need to be empty to set the +F attribute,
+>> so I had to do this change:
 > 
+> Nice, so I suppose this test is passing with v6. I will try it.
+> Can you help to complete the TODO:
 > 
 
+Yes, I will handle that next week.
+
+Thanks!
 
