@@ -1,108 +1,111 @@
-Return-Path: <linux-kernel+bounces-781035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA47B30CA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:36:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B2FB30CD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AC33AA2935
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:36:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F60E7BF225
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D9D28A73A;
-	Fri, 22 Aug 2025 03:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="CPzj808T"
-Received: from mail-m3282.qiye.163.com (mail-m3282.qiye.163.com [220.197.32.82])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316C72BDC20;
+	Fri, 22 Aug 2025 03:42:29 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DED1684B4;
-	Fri, 22 Aug 2025 03:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65E929B204;
+	Fri, 22 Aug 2025 03:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755833786; cv=none; b=rmroafN6iNh5wbfrk59h/bXjbCETH0hFn7wkZy25syh/1y2wCPhaPdx4HUAH1B3zz3Fd5F5MeC17rZUU2p/8MU8ZoNuXkNnPVRlm6eDgc3p6OHFDdGDAjiLs/O5bUGBe9+pEYSj1ns+oA48BC2POdWTNdZN2TISAY+XqFZ9qm8Y=
+	t=1755834148; cv=none; b=gPtXE+H16ZkU+yKUmdagM9d6A6mrmXknDpoPQSTK9hP8eVCl4VTCC0e5iQM4KLJomzFCCxljOSeySI5fn/wa8A/LxU/uoEhNt43/pYLM/0cntw7/prvm5JiBuH71rpNFbu9zvkubbWYStCUT793EJY/wsprmhdBVU4pnpLxIKMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755833786; c=relaxed/simple;
-	bh=rM1ahS6a2B8+/PWLYl+bW846eAp8FZu42OwordjjBKA=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=q2sWWO66uRAwuQAt89N8Zkzsl2CKgTmKYHbJXvWzUsG5QcJ6hVrO09EimQR1ehp8nWsMrxzVOVd6QIuKfpJZURdIgNcoCzIZGncHIhgVVWnKe7cWvNpryca0iC0/FlXL2B7F+nkXMeDvRSAiaHhtODzC7GSIGqqgqx3FeKvs7Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=CPzj808T; arc=none smtp.client-ip=220.197.32.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from localhost.localdomain (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 20397154d;
-	Fri, 22 Aug 2025 11:36:11 +0800 (GMT+08:00)
-From: William Wu <william.wu@rock-chips.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	william.wu@rock-chips.com,
-	frank.wang@rock-chips.com,
-	jianwei.zheng@rock-chips.com,
-	yue.long@rock-chips.com
-Subject: [PATCH] usb: gadget: configfs: Correctly set use_os_string at bind
-Date: Fri, 22 Aug 2025 11:36:09 +0800
-Message-Id: <1755833769-25434-1-git-send-email-william.wu@rock-chips.com>
-X-Mailer: git-send-email 2.0.0
-X-HM-Tid: 0a98cfd9271009d4kunm74fcece015f95ec
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUIeGVZCT0gaTktJQx8aTEtWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=CPzj808TVqFupTStMStpwMw0ZjUufp+iz2JziOQ6PsgoX10QbK7qmI4eFrKNfSu7VbefOGYdkMqZ8l1zCXEdY+aVrGpNDgHcBPwy9xUCKUFTkDyqp1apCfs3txItWOVMl4HZ6GXXHNIOmiSAiLS/1eczAv4T4UAKfQeqaP8RxPY=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=9EwhBvf+CZi7anqyyhJMIJS9Q2jTsfhtrsAiA+38Igc=;
-	h=date:mime-version:subject:message-id:from;
+	s=arc-20240116; t=1755834148; c=relaxed/simple;
+	bh=wvyXRHM2WopjLx8pJvIG5Kd3fWsd4X4lSFXPuUl42IU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TY/WGxkw1Fn4TMfOTppmHhf4MpDYlaBk5ndf2xVpDbxX08Avq9EETaJIui4Wwn46Y7cLWEzIuL4dBLZFpUw+AbEA+fGlk71ETAGdHpSNIVIawQQmzKjci9U0XPccfoidyuJwBuw5rZ4klA4vETmSxKHk4BbOkHDInJHlPrGPslI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c7Qsx5RPgz2Dc7T;
+	Fri, 22 Aug 2025 11:39:33 +0800 (CST)
+Received: from dggpemf500011.china.huawei.com (unknown [7.185.36.131])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9C27B140158;
+	Fri, 22 Aug 2025 11:42:24 +0800 (CST)
+Received: from huawei.com (10.67.174.55) by dggpemf500011.china.huawei.com
+ (7.185.36.131) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 22 Aug
+ 2025 11:42:23 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <prarit@redhat.com>,
+	<gregkh@linuxfoundation.org>, <x86@kernel.org>, <stable@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH v6.6 RESEND 0/2] x86/irq: Plug vector setup race
+Date: Fri, 22 Aug 2025 03:38:23 +0000
+Message-ID: <20250822033825.1096753-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemf500011.china.huawei.com (7.185.36.131)
 
-Once the use_os_string flag is set to true for some functions
-(e.g. adb/mtp) which need to response the OS string, and then
-if we re-bind the ConfigFS gadget to use the other functions
-(e.g. hid) which should not to response the OS string, however,
-because the use_os_string flag is still true, so the usb gadget
-response the OS string descriptor incorrectly, this can cause
-the USB device to be unrecognizable on the Windows system.
+There is a vector setup race, which overwrites the interrupt
+descriptor in the per CPU vector array resulting in a disfunctional device.
 
-An example of this as follows:
+CPU0				CPU1
+				interrupt is raised in APIC IRR
+				but not handled
+  free_irq()
+    per_cpu(vector_irq, CPU1)[vector] = VECTOR_SHUTDOWN;
 
-echo 1 > os_desc/use
-ln -s functions/ffs.adb configs/b.1/function0
-start adbd
-echo "<udc device>" > UDC   #succeed
+  request_irq()			common_interrupt()
+  				  d = this_cpu_read(vector_irq[vector]);
 
-stop adbd
-rm configs/b.1/function0
-echo 0 > os_desc/use
-ln -s functions/hid.gs0 configs/b.1/function0
-echo "<udc device>" > UDC  #fail to connect on Windows
+    per_cpu(vector_irq, CPU1)[vector] = desc;
 
-This patch sets the use_os_string flag to false at bind if
-the functions not support OS Descriptors.
+    				  if (d == VECTOR_SHUTDOWN)
+				    this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
 
-Signed-off-by: William Wu <william.wu@rock-chips.com>
----
- drivers/usb/gadget/configfs.c | 2 ++
- 1 file changed, 2 insertions(+)
+free_irq() cannot observe the pending vector in the CPU1 APIC as there is
+no way to query the remote CPUs APIC IRR.
 
-diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
-index f94ea19..6bcac85 100644
---- a/drivers/usb/gadget/configfs.c
-+++ b/drivers/usb/gadget/configfs.c
-@@ -1750,6 +1750,8 @@ static int configfs_composite_bind(struct usb_gadget *gadget,
- 		cdev->use_os_string = true;
- 		cdev->b_vendor_code = gi->b_vendor_code;
- 		memcpy(cdev->qw_sign, gi->qw_sign, OS_STRING_QW_SIGN_LEN);
-+	} else {
-+		cdev->use_os_string = false;
- 	}
- 
- 	if (gadget_is_otg(gadget) && !otg_desc[0]) {
+This requires that request_irq() uses the same vector/CPU as the one which
+was freed, but this also can be triggered by a spurious interrupt.
+
+Interestingly enough this problem managed to be hidden for more than a
+decade.
+
+Prevent this by reevaluating vector_irq under the vector lock, which is
+held by the interrupt activation code when vector_irq is updated.
+
+The first patch provides context for subsequent real bugfix patch.
+
+Fixes: 9345005f4eed ("x86/irq: Fix do_IRQ() interrupt warning for cpu hotplug retriggered irqs")
+Cc: stable@vger.kernel.org#6.6.x
+Cc: gregkh@linuxfoundation.org
+
+v1 -> RESEND
+- Add upstream commit ID.
+
+Jacob Pan (1):
+  x86/irq: Factor out handler invocation from common_interrupt()
+
+Thomas Gleixner (1):
+  x86/irq: Plug vector setup race
+
+ arch/x86/kernel/irq.c | 70 ++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 56 insertions(+), 14 deletions(-)
+
 -- 
-2.0.0
+2.34.1
 
 
