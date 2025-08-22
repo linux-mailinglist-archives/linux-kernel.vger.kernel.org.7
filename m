@@ -1,81 +1,138 @@
-Return-Path: <linux-kernel+bounces-782545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C9BDB321C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:52:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0A0B321C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8082AA3901
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:49:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F7EDAC1699
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4653F28B7EA;
-	Fri, 22 Aug 2025 17:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F5E292B3D;
+	Fri, 22 Aug 2025 17:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQh9Mbyv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="A2KAcRL3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08AC280335;
-	Fri, 22 Aug 2025 17:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D93A20296C;
+	Fri, 22 Aug 2025 17:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755884889; cv=none; b=kzFlS5v0dVnFUaN/fIP0vcNSbaoFieG16bUL75GPHF/4lK0lB5/AFLz95iFxh8zTff/LFqFMs6iEQmKDN/V4tACxye6t/EPxsT6OQtLLG0DaoqL6fgN5FyoDiFwfzNaB0qcJA0Cxkar7/6y/Bu4+lBRtbQKVGdcdWCB4aDNbgfE=
+	t=1755885018; cv=none; b=sI95UbijGD9H0S49SZFeQHQDllpYKkMVBBGL2d1ILkep1xCKUyChBTj4/hFwzK/DL537pBZl3EbKLnkScsb+ru3u66NIxJnayFUbx9CN4zSqAH+G+wJwiPT5AAbidafOxip0Bp0WXR9zDFGnnTXLubprGO0pqZSxaAJES1sJgA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755884889; c=relaxed/simple;
-	bh=bawwJYcFS67p2XyiS6mrS3GbOPCZtnc2YPCaCZhdb3s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qj0VYpZHTaRoW5cCxXv7bjawu4lUsLrgJ+NKvjrsiVTiPUP6OX2Vwao9AQA4HkZnrSXRJk8EJAFzfY9T1S9JClkxxlzvNHv8TeMlzGtZ/p1E3NiKS5kkrhnUJOH67R4+CmP5a5GfwsyDuMVTwiQRoRO5AbD+VO4kCy4IlxoHwLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQh9Mbyv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 156F9C4CEED;
-	Fri, 22 Aug 2025 17:48:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755884889;
-	bh=bawwJYcFS67p2XyiS6mrS3GbOPCZtnc2YPCaCZhdb3s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cQh9MbyvY5xmQAiIsvXYLm9Kk0lTRh0j0JJukPANKD6TvfyJTE/96U+m0tXiKxbr9
-	 jlQ+YOIn2FY41M//cP2zDFw8lwSn7nJPVbcWYmrzQZOjeqjW2zX5T/XuAZ1IAt59O7
-	 sMrVce6tMVte9tJ6NETZeDhRvqFExaBB0XK2Jh87kXSoS3evIsIvmua2ELW5ssiBgG
-	 PwDHiR1bYxUaOmkJMJbZQDomN/Dt7jbJgo/uDNPxGvqy+/0+oG6W53u6CMrMZHMOTI
-	 KSTpFUovFpa6Vz+24Dasbml3tsi5sXp0z90wNDnL9jnQ2ZfrBnyaMqvYJ+KoWSoCm+
-	 F2Hc/40X++k3A==
-Date: Fri, 22 Aug 2025 07:48:08 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: gregkh@linuxfoundation.org, hannes@cmpxchg.org, mkoutny@suse.com,
-	peterz@infradead.org, zhouchengming@bytedance.com,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	lujialin4@huawei.com, chenridong@huawei.com, libaokun1@huawei.com
-Subject: Re: [PATCH v2 2/2] cgroup/psi: Set of->priv to NULL upon file release
-Message-ID: <aKitWH39wpfTF5st@slm.duckdns.org>
-References: <20250822070715.1565236-1-chenridong@huaweicloud.com>
- <20250822070715.1565236-3-chenridong@huaweicloud.com>
+	s=arc-20240116; t=1755885018; c=relaxed/simple;
+	bh=crlFXTtPOCRSODeADxqFBsqvA33SprWic8ysA0jIVTU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CNmvupMODMcZLAqj8Nr9xkXE8lw9Ma1CPQXB+XEi1aigU3D6qyCcEuxlZi8Au98Q7BvDi9+MSGAly/9QpNWElSv5oXZuLpDgw1KxfnXay4gIJtR9jr2wg5UiZD4GLMW5tY8N24PseFmeVnNY15tJd8iwKKVVWxHLdzirYDyqun0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=A2KAcRL3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MHVBn0027462;
+	Fri, 22 Aug 2025 17:50:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	SseLQ8AT+W4NgEjzst/ukb/WLq/b5dpMpdoRkCRc3Lo=; b=A2KAcRL3jXXAntPj
+	hPgIvCFgeprGqjCcV3NDn0zBnom9fA1yjqK+8quuXrp9Y6PVtzLa2UExUVn1flAC
+	R8AyPXMSvr6QjyfypEZJ0jDuUu1VEXw7YvDzbMrfubaBdVjAnua6ALTT4zjw751Q
+	6+sc4+HadjSYyF0M57QOpd3WC6vBNYiO04IOOiYhAucgZnxwC8zyBagPYdeD4yUk
+	o7TqF0bEYhgoWhJzdVss/UePDb2+vmlNFuU1yHdaFP287VFEi0pN37aT+13CVAr3
+	AQq4QUdO+CXgNJ7UWCUJUivrnXQ6hfKoHWBvCgioIDYgKpErTgqNRX1euZv8QbYR
+	2byV4Q==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48pw108203-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 17:50:10 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57MHo9Gs032106
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 17:50:09 GMT
+Received: from [10.216.23.81] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Fri, 22 Aug
+ 2025 10:50:05 -0700
+Message-ID: <096260bb-a016-4099-b23c-ae76b0c6d472@quicinc.com>
+Date: Fri, 22 Aug 2025 23:19:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822070715.1565236-3-chenridong@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 2/5] ufs: ufs-qcom: Refactor MCQ register dump logic
+To: Manivannan Sadhasivam <mani@kernel.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
+References: <20250821112403.12078-1-quic_rdwivedi@quicinc.com>
+ <20250821112403.12078-3-quic_rdwivedi@quicinc.com>
+ <3dp7gqh3lflz3y6vj4ya4lv35llmttte7oilsptei2m3yp6efm@h3wncsrgxztv>
+Content-Language: en-US
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+In-Reply-To: <3dp7gqh3lflz3y6vj4ya4lv35llmttte7oilsptei2m3yp6efm@h3wncsrgxztv>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: AOP4GgLJRocAbqd3m2Tge2pHfn--lJqX
+X-Authority-Analysis: v=2.4 cv=Z+fsHGRA c=1 sm=1 tr=0 ts=68a8add2 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
+ a=xFLw_cd-ZLVkc5SjNV0A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIyMDE2MCBTYWx0ZWRfX3PsZ+VlN9a2d
+ 8E20PbEKCynzxwU8b0By0W2I0+N1uWTVyb+MR+br9LMI0iwN/+uW6ENKWRnTMRV6LSHYiXmMH0n
+ gFZTY1gQIX352KA+5lc+g240ccYaNL/3LHJc0MPLO5OtVZ/OVsVQz+J0PCJXfakZ+6LP3jS2Dnf
+ 2aqykhoXcinaNFVS4KelxwD+fmWgEFmvlDOCWuGFeOS/R+lHtwzUqcQN7veAvWhWHi3pImIugv9
+ CaPorG8a6gLyKKlzuUBpjkETCIygYOdQD+lc0OF+EPolXYCl3k9aJsRqA/vp+Ipy8dcJTbdxxS5
+ 5da+5dwMJ3Flc3wfAJVViUKZlkObQy68gspc43D6q5LO7VnFt57wqBhcWJFn4YL+6h+2EN5Q0MT
+ awJzznua
+X-Proofpoint-ORIG-GUID: AOP4GgLJRocAbqd3m2Tge2pHfn--lJqX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 spamscore=0 priorityscore=1501 bulkscore=0
+ adultscore=0 malwarescore=0 phishscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508220160
 
-On Fri, Aug 22, 2025 at 07:07:15AM +0000, Chen Ridong wrote:
-> From: Chen Ridong <chenridong@huawei.com>
+
+
+On 22-Aug-25 2:38 PM, Manivannan Sadhasivam wrote:
+> On Thu, Aug 21, 2025 at 04:54:00PM GMT, Ram Kumar Dwivedi wrote:
+>> From: Nitin Rawat <quic_nitirawa@quicinc.com>
+>>
+>> Refactor MCQ register dump to align with the new resource mapping.
+>> As part of refactor, below changes are done:
+>>
+>> - Update ufs_qcom_dump_regs() function signature to accept direct
+>>   base address instead of resource ID enum
+>> - Modify ufs_qcom_dump_mcq_hci_regs() to use hba->mcq_base and
+>>   calculated addresses from MCQ operation info
+>> - Replace enum ufshcd_res with direct memory-mapped I/O addresses
+>>
+>> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
 > 
-> Setting of->priv to NULL when the file is released enables earlier bug
-> detection. This allows potential bugs to manifest as NULL pointer
-> dereferences rather than use-after-free errors[1], which are generally more
-> difficult to diagnose.
+> Missing your s-o-b tag. Please spare some time to check these rudimentary rules
+> before submitting.
+Hi Mani,
+
+sure, I will take care of this going forward.
+
+Thanks,
+Ram.
+
 > 
-> [1] https://lore.kernel.org/cgroups/38ef3ff9-b380-44f0-9315-8b3714b0948d@huaweicloud.com/T/#m8a3b3f88f0ff3da5925d342e90043394f8b2091b
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> - Mani
+> 
 
-Applied to cgroup/for-6.17-fixes.
-
-Thanks.
-
--- 
-tejun
 
