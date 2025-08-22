@@ -1,254 +1,107 @@
-Return-Path: <linux-kernel+bounces-782720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 978EAB3241B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:23:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52CF2B3241C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29A033BA607
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:21:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C3FCA04F89
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45AF230496A;
-	Fri, 22 Aug 2025 21:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6623314DF;
+	Fri, 22 Aug 2025 21:22:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="NZbkz9eZ"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="MqjXmnGz"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4575333F9
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 21:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4393F2EB861;
+	Fri, 22 Aug 2025 21:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755897707; cv=none; b=kLSo1a5RsLsSyz6H4EDJXN7e93RBcqLiVJqTla9ebJuIcf4//3zGByaa35iNGjxjp2JoCNm8aIHu98qi/cfADK0O/ged09fW673i3qURfc2aoAix7+fwi0zwW+khDJJG0Q3BFb7zJ8qs0nPLK3YYrpb3kM70Y0HvwgBooNXDqAo=
+	t=1755897755; cv=none; b=DsE6L2kQQaj0XuzgccGbSQbgZbWt0/tfiQoadLAabmxZaIqtfu6CayOuSGm8Nac7pcVMuVQgVC6EiY8PFmQCVWdS9+gAxS2mHMpfEUU3f8Xtazl/o3jT21AQnBCkQ8wJ1j+EyNg+TX3NmC7M4VELO8uXzYNI2t6mIWtwtssBaD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755897707; c=relaxed/simple;
-	bh=zCPS3UkTXKhVne7QeoHosWy8wlOTXgBGhWgZXPSaC1I=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gJxl4V9gwEHPT3mlSVdTa4L2mHG/lq4UWqX2OiCkIAGS7VmllvmcAgSKZrJa1xqouTnyiwfkofjnlpYmFYy3+EAV0kSDrxvyIFdyNHEg7giorMfwrYgP/omWiBisYhku2rUzpDrVA4mjQu821WqHNfzsBwwaHfMpEEBzjdShLv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=NZbkz9eZ; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (p5de4594b.dip0.t-ipconnect.de [93.228.89.75])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id EFB222FC0069;
-	Fri, 22 Aug 2025 23:21:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1755897694;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+cxmw9eDXHLUIkAO2tG8/qESth12sPhFwTRWl0knmW4=;
-	b=NZbkz9eZceoHNRWts3tHpVs+70aEVvtPCPgqL6r5c4RFKylKRLgbvnVKQ3Mhi+12r6n2/C
-	GFUjhRBch4iG+N1c0FZDiOoCeKsnPtwLjk9nO+vCn848R5IWBtFUtPIbqrXcyZgLs6KDZV
-	fiMKLsRnCMG7nNRJG55Agjc30qmdTNs=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <37e439f4-232c-437f-a0ea-b25606f65921@tuxedocomputers.com>
-Date: Fri, 22 Aug 2025 23:21:33 +0200
+	s=arc-20240116; t=1755897755; c=relaxed/simple;
+	bh=8zlq2lGcS0m3Z+6f/hS7oqKA/SdpyGyLCfZ0xUdtWUs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZmQDairrv/+elsKAwa4dhOcyl8LfMaDD/HKk+4uIr2XaCxomlVtCtHeljILlRtox+riEANssXohvAcL9tBF2gJcp+3SykviavE75/VkLE28fEOqpL2Dzlr73fOaI9pBqc8iAw2euzv1mxA3VaQBvXFobb8VGyYaiAHcs/J37wME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=MqjXmnGz; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=MUyMAIJnbkOdcwtpYR/h4OiFxPawHL+4XS3+iNmUVuU=; b=MqjXmnGzSVAi7K9hMP41rVxp3H
+	ZmIMpPrHojZ+uFniw/zrIG8lzmZQLGtvBp0p4cAKVhYj7dBBuCqsOIrVoNjazjh5+PnmT7I3FwM7/
+	zIcVNaHivTP9nm4dZgEQVTtBvmEq2o7XvUsdu2PaavVIW1eUQS9GPVVTWpAv+J8PecKuRsbumGx8E
+	yyxrGDmMfzwZ6jV2e/cbOYWZOL6eGqg/szMr+AhHkwsfkYl96E+3AsGRYslHk5mPc85CR9XMjgQzR
+	7bGVtxiNIW0Uz23MNIxJSm5qmOze3zMqc33KvSgqpqjdw49k/IPwWqZ5DoBDf/UGmNoihdU6ssReP
+	fUkCUIKg==;
+Received: from i53875a83.versanet.de ([83.135.90.131] helo=phil..)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1upZD7-0004lj-An; Fri, 22 Aug 2025 23:22:09 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: neil.armstrong@linaro.org,
+	quic_jesszhan@quicinc.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	hjc@rock-chips.com,
+	andy.yan@rock-chips.com,
+	andyshrk@163.com,
+	nicolas.frattaroli@collabora.com,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: (subset) [PATCH 00/13] Support DSI output on rk3576 and roc-rk3576-pc board
+Date: Fri, 22 Aug 2025 23:22:06 +0200
+Message-ID: <175589772390.3317579.11344569273616285700.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250707164906.1445288-1-heiko@sntech.de>
+References: <20250707164906.1445288-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] drm/i915/display: Add quirk to force backlight type
- on some TUXEDO devices
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: jani.nikula@linux.intel.com, rodrigo.vivi@intel.com,
- joonas.lahtinen@linux.intel.com, tursulin@ursulin.net, airlied@gmail.com,
- simona@ffwll.ch, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250411171756.142777-1-wse@tuxedocomputers.com>
- <20250411171756.142777-2-wse@tuxedocomputers.com>
- <Z_llydAABYIueYA6@intel.com>
- <6e4f4d23-3c5a-448f-bc0b-cf6a6e9f3d2e@tuxedocomputers.com>
- <6126584e-587e-4758-9bfb-83e0231f98be@tuxedocomputers.com>
-Content-Language: en-US
-In-Reply-To: <6126584e-587e-4758-9bfb-83e0231f98be@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Hi,
 
-Am 22.07.25 um 13:40 schrieb Werner Sembach:
-> Hi,
->
-> Am 15.04.25 um 17:48 schrieb Werner Sembach:
->> Hi,
->>
->> Am 11.04.25 um 20:56 schrieb Ville Syrjälä:
->>> On Fri, Apr 11, 2025 at 05:55:08PM +0200, Werner Sembach wrote:
->>>> The display backlight on TUXEDO DX1708 and InsanityBook 15 v1 with panels
->>>> AUO 12701 and AUO 12701 must be forced to INTEL_DP_AUX_BACKLIGHT_ON to be
->>>> able to control the brightness.
->>>>
->>>> This could already be archived via a module parameter, but this patch adds
->>>> a quirk to apply this by default on the mentioned device + panel
->>>> combinations.
->>> Why aren't you fixing the VBT to be correct in the first place?
->>
->> I don't have access to the firmware source code and these are quite old 
->> devices so I also can't request a fix from the ODM. Besides: it can be quite 
->> hard to explain to the ODM what exactly the problem is if it doesn't also 
->> affect Windows.
->
-> TBH I don't know what VBT stands for, I just assumed it has to to with the 
-> displays firmware?
->
-> Unlike I wrote in the cover letter we actually still had an affected device in 
-> our archives -> the issue persists and the quirk is still necessary.
-Hope a gentle bump here is ok
->
-> Best Regards,
->
-> Werner
->
->>
->> Best regards,
->>
->> Werner Sembach
->>
->>>
->>>> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
->>>> Cc: stable@vger.kernel.org
->>>> ---
->>>>   .../drm/i915/display/intel_dp_aux_backlight.c | 14 ++++++-
->>>>   drivers/gpu/drm/i915/display/intel_quirks.c   | 42 +++++++++++++++++++
->>>>   drivers/gpu/drm/i915/display/intel_quirks.h   |  1 +
->>>>   3 files changed, 56 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c 
->>>> b/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c
->>>> index c846ef4acf5b2..0cac04c98a3e3 100644
->>>> --- a/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c
->>>> +++ b/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c
->>>> @@ -34,12 +34,14 @@
->>>>    * for some reason.
->>>>    */
->>>>   +#include <drm/drm_edid.h>
->>>>   #include "i915_utils.h"
->>>>   #include "intel_backlight.h"
->>>>   #include "intel_display_core.h"
->>>>   #include "intel_display_types.h"
->>>>   #include "intel_dp.h"
->>>>   #include "intel_dp_aux_backlight.h"
->>>> +#include "intel_quirks.h"
->>>>     /*
->>>>    * DP AUX registers for Intel's proprietary HDR backlight interface. We 
->>>> define
->>>> @@ -607,11 +609,21 @@ int intel_dp_aux_init_backlight_funcs(struct 
->>>> intel_connector *connector)
->>>>       struct drm_device *dev = connector->base.dev;
->>>>       struct intel_panel *panel = &connector->panel;
->>>>       bool try_intel_interface = false, try_vesa_interface = false;
->>>> +    int enable_dpcd_backlight;
->>>> +    u32 pnl_id;
->>>>         /* Check the VBT and user's module parameters to figure out which
->>>>        * interfaces to probe
->>>>        */
->>>> -    switch (display->params.enable_dpcd_backlight) {
->>>> +    enable_dpcd_backlight = display->params.enable_dpcd_backlight;
->>>> +    if (enable_dpcd_backlight == INTEL_DP_AUX_BACKLIGHT_AUTO &&
->>>> +        intel_has_quirk(display, 
->>>> QUIRK_AUO_12701_21229_ENABLE_DPCD_BACKLIGHT)) {
->>>> +        pnl_id = drm_edid_get_panel_id(panel->fixed_edid);
->>>> +        if (pnl_id == drm_edid_encode_panel_id('A', 'U', 'O', 0x319d) ||
->>>> +            pnl_id == drm_edid_encode_panel_id('A', 'U', 'O', 0x52ed))
->>>> +            enable_dpcd_backlight = INTEL_DP_AUX_BACKLIGHT_ON;
->>>> +    }
->>>> +    switch (enable_dpcd_backlight) {
->>>>       case INTEL_DP_AUX_BACKLIGHT_OFF:
->>>>           return -ENODEV;
->>>>       case INTEL_DP_AUX_BACKLIGHT_AUTO:
->>>> diff --git a/drivers/gpu/drm/i915/display/intel_quirks.c 
->>>> b/drivers/gpu/drm/i915/display/intel_quirks.c
->>>> index 8b30e9fd936e7..6f724e5712664 100644
->>>> --- a/drivers/gpu/drm/i915/display/intel_quirks.c
->>>> +++ b/drivers/gpu/drm/i915/display/intel_quirks.c
->>>> @@ -78,6 +78,12 @@ static void quirk_fw_sync_len(struct intel_dp *intel_dp)
->>>>       drm_info(display->drm, "Applying Fast Wake sync pulse count quirk\n");
->>>>   }
->>>>   +static void quirk_auo_12701_21229_enable_dpcd_backlight(struct 
->>>> intel_display *display)
->>>> +{
->>>> +    intel_set_quirk(display, QUIRK_AUO_12701_21229_ENABLE_DPCD_BACKLIGHT);
->>>> +    drm_info(display->drm, "Applying Display AUO Model 12701 and 21229 
->>>> Enable DPCD Backlight quirk\n");
->>>> +}
->>>> +
->>>>   struct intel_quirk {
->>>>       int device;
->>>>       int subsystem_vendor;
->>>> @@ -118,6 +124,12 @@ static int intel_dmi_no_pps_backlight(const struct 
->>>> dmi_system_id *id)
->>>>       return 1;
->>>>   }
->>>>   +static int intel_dmi_auo_12701_21229_enable_dpcd_backlight(const struct 
->>>> dmi_system_id *id)
->>>> +{
->>>> +    DRM_INFO("Display AUO model 12701 and 21229 DPCD backlight control on 
->>>> %s\n", id->ident);
->>>> +    return 1;
->>>> +}
->>>> +
->>>>   static const struct intel_dmi_quirk intel_dmi_quirks[] = {
->>>>       {
->>>>           .dmi_id_list = &(const struct dmi_system_id[]) {
->>>> @@ -164,6 +176,36 @@ static const struct intel_dmi_quirk intel_dmi_quirks[] 
->>>> = {
->>>>           },
->>>>           .hook = quirk_no_pps_backlight_power_hook,
->>>>       },
->>>> +    {
->>>> +        .dmi_id_list = &(const struct dmi_system_id[]) {
->>>> +            {
->>>> +                .callback = intel_dmi_auo_12701_21229_enable_dpcd_backlight,
->>>> +                .ident = "TUXEDO DX1708",
->>>> +                .matches = {DMI_MATCH(DMI_BOARD_NAME, "N8xEJEK"),
->>>> +                },
->>>> +            },
->>>> +            {
->>>> +                .callback = intel_dmi_auo_12701_21229_enable_dpcd_backlight,
->>>> +                .ident = "TUXEDO InsanityBook 15 v1",
->>>> +                .matches = {DMI_MATCH(DMI_BOARD_NAME, "P95_HP"),
->>>> +                },
->>>> +            },
->>>> +            {
->>>> +                .callback = intel_dmi_auo_12701_21229_enable_dpcd_backlight,
->>>> +                .ident = "TUXEDO InsanityBook 15 v1",
->>>> +                .matches = {DMI_MATCH(DMI_BOARD_NAME, "P95_HR"),
->>>> +                },
->>>> +            },
->>>> +            {
->>>> +                .callback = intel_dmi_auo_12701_21229_enable_dpcd_backlight,
->>>> +                .ident = "TUXEDO InsanityBook 15 v1",
->>>> +                .matches = {DMI_MATCH(DMI_BOARD_NAME, "P95_HP,HR,HQ"),
->>>> +                },
->>>> +            },
->>>> +            { }
->>>> +        },
->>>> +        .hook = quirk_auo_12701_21229_enable_dpcd_backlight,
->>>> +    },
->>>>   };
->>>>     static struct intel_quirk intel_quirks[] = {
->>>> diff --git a/drivers/gpu/drm/i915/display/intel_quirks.h 
->>>> b/drivers/gpu/drm/i915/display/intel_quirks.h
->>>> index cafdebda75354..38bdbd65d7efb 100644
->>>> --- a/drivers/gpu/drm/i915/display/intel_quirks.h
->>>> +++ b/drivers/gpu/drm/i915/display/intel_quirks.h
->>>> @@ -20,6 +20,7 @@ enum intel_quirk_id {
->>>>       QUIRK_LVDS_SSC_DISABLE,
->>>>       QUIRK_NO_PPS_BACKLIGHT_POWER_HOOK,
->>>>       QUIRK_FW_SYNC_LEN,
->>>> +    QUIRK_AUO_12701_21229_ENABLE_DPCD_BACKLIGHT,
->>>>   };
->>>>     void intel_init_quirks(struct intel_display *display);
->>>> -- 
->>>> 2.43.0
+On Mon, 07 Jul 2025 18:48:53 +0200, Heiko Stuebner wrote:
+> This enables all the necesary bits and bindings to get display output
+> on the dm-m10r800-v3s addon module for the Firefly roc-rk3576-pc board.
+> 
+> A bit of cleanup of the ili9881c, because the driver was still trying
+> to send dcs commands when the underlying DSI driver might have already
+> switched to video-mode, which caused me quite a bit of headache until
+> I realized this being the culprit for my garbled display output :-) .
+> 
+> [...]
+
+Applied, thanks!
+
+[07/13] dt-bindings: soc: rockchip: add rk3576 mipi dcphy syscon
+        commit: 0e3f3d7c7ae3dec5ff52325915e3efcbce652a82
+[10/13] arm64: dts: rockchip: add mipi-dcphy to rk3576
+        commit: 21bc1a7fcea4635a49f6b2eff3e4c661e80e8f43
+[11/13] arm64: dts: rockchip: add the dsi controller to rk3576
+        commit: e51828f80df99a2899e263b750cada6426f14c92
+[12/13] arm64: dts: rockchip: add vcc3v3-lcd-s0 regulator to roc-rk3576-pc
+        commit: 3d5c0c21d86fed05caeae43549e0c13ddd203c31
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
