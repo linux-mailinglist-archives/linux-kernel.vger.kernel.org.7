@@ -1,324 +1,156 @@
-Return-Path: <linux-kernel+bounces-781234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CC9BB30FA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:55:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E5AB30FA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3A893A429D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:52:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76379723230
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3908F2E5B01;
-	Fri, 22 Aug 2025 06:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="HvBWOyFk";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="Hi7MfI0p"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5596D2E5B01;
+	Fri, 22 Aug 2025 06:53:11 +0000 (UTC)
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF28219A8D;
-	Fri, 22 Aug 2025 06:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755845524; cv=pass; b=iftDOhJ2fXeXKFLm7uvN/jHcfROgRg7SmJOzsF93tAwFUiX8+QAatWQyesIGK6MRrNyvMmo6zUcc2D6gr+FVak+7TBZpFsBSrLKTF2UgH+7hBxa0c2VS/OWn2DJYE6zVIoiYzi+991ej/mF897mHKnuk+esy6+giZl1VahYQ2+k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755845524; c=relaxed/simple;
-	bh=yPo2tU5IBHFymeiD9YN1F94DEx3t+ri+FIkcWa6RTjI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Etwr6z36ErABsBdIf27gV7n7ycqkFRXl9OVt4mv9SeqW+dondpiuxRw/nFlzQFy5zfm+YJ7MwCvtmkd7DYbF6mqkcOYL3XI39lhrcLEoi+didnqa+TMt9GrHLsjoe9dQqodJ7PYITDHCoiKqqNdmCLMgcxyqZqPrJ9c3dhEMxa8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=HvBWOyFk; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=Hi7MfI0p; arc=pass smtp.client-ip=85.215.255.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755845501; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=ZqRUgziFs0M0R385SWt8qUg2Pz6rbgSkht2Q0z1E/t9CHUKIYKxwlep1ger25MNllQ
-    gI0iVQeA/QegYXVb8Lh2hoyHU1sMq+p2+1NzDglqBytLcB8V7jpF5dBF0D+8icEH/lNU
-    FNE5KDd6Q9Gn8+uO7p7Jh2RcnikVEi1i0KSbiQ1ynM4I2GM5zkLpnWL2OLzXH+dg8KJH
-    27cEMA36fLSW/bfDNzDYpl2YQb8Yd87fkVwil2Zet8RqyvPsEDi+rIOwAWwEAqa5LZq4
-    FRxNgwwYyfZwwbrSrhC7Ten5F4+QHaJ+VmGtukooDtqDueQOJUWdUlBJgN9q215wTV20
-    oGGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1755845501;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=BS4EX3FnN5XwFScpK/VeLAyxwk8YGCvuUK5IxFz7KT4=;
-    b=gGNkMGypDTPq9oQo7A+IKVqtUTahmMdwmSoMAfbTb8o5mwvNDcpBxtvo9P/68b4Ovb
-    GAAV+hzA5mElG1fpOeBaEkPeVLlDntegec1YC+Q46dLHEzEv4Mz6IzV6GXvAQOpCiVtJ
-    Bu3SrFyJVE+jt8B3Tr1XVQXG9/AEmq3QDP1BuWswtpJjxO39u1BchB6lUWL/kPq03Lhh
-    MWlZXKRWGDmFGPToViD8JqHJBR+Pkri9V8uji8UfE+OFAwric3lJknhab45VysxVIA43
-    d9qF5tKprpjqW7OqGA/P4LW1AJKMQScRw5VFXxf98SG71HEU5flKVy5gn1F910QX4tHe
-    mGsA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1755845501;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=BS4EX3FnN5XwFScpK/VeLAyxwk8YGCvuUK5IxFz7KT4=;
-    b=HvBWOyFk7wdgJgrPIg0FcWU14LZFUMVoAf4Z2MrvG3JFVW7UICfLxMjfSkY9etkzf9
-    n7+vwzUMWyZ0TGSLvMcmOf7UvrJfAD1DR7QtPRBSZfn5r3uk4DoadwalTlMPxATYMW0i
-    rnKmCdmUvic0p807DnO/rijBf/YFc5/yrNA/iEufxLwYtGtCGdN6mkKj4r72e5Wlp6YJ
-    R1MreXG77G+8upfYq3AF/sCYwt6AcIdb8CjYGj86P/BniPRL8ZEVs+KaO6gpffiTWWzV
-    ESSaP7j0TpxfJAaYKgGLDcJJlBU56LKmjvGPeY2qr4d04VF5XPSC1qRMXZzgbZawaBFU
-    F8FQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1755845501;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=BS4EX3FnN5XwFScpK/VeLAyxwk8YGCvuUK5IxFz7KT4=;
-    b=Hi7MfI0peHYz/iPNSVidYfl0/8D0IPxf7F3rbF2hUxJ8mvHnv6S11CUoYATeMzFABP
-    R5Z3T/vPLbaHJzOTEaCw==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yfz0Z"
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 52.1.2 DYNA|AUTH)
-    with ESMTPSA id Q307a417M6pezjE
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Fri, 22 Aug 2025 08:51:40 +0200 (CEST)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391DC4A1A
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755845590; cv=none; b=ixPndCaiqWBdtb9Ksu2kHhRedox+UxFZz6cGEljcRDApOJui/7WI5RCtGUzJEuldyVCcs4ga9yTV6JcfdoA4jOAF40Kjd39SlhMSkxKVrTcQDrlDQrEplgZxfN65MIVqS84Enmhr25PPKI0JZnfdJ1QutlDUnYfZ0DXO4xTwm0E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755845590; c=relaxed/simple;
+	bh=vplvL1nmG6kTSq3roTyiGVMH4b1Ixr3GFIczpAYrtsw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WOzWTEwZwSL0nbNuIGtGmGCctsCep+6Pr0LBqauLhYuiKea3sZgedAp+/apJVewqbUEMhvZK07Yjkvkbqa2tboMgMwxElliOn191SXuiq9GRliJiJ5SlX5iEafubNtcUbozqBfJvEkt1m1syos0mGgl/Gcqsm691QhFJ3kg2X2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpsz16t1755845493t933f16a6
+X-QQ-Originating-IP: KhLwTna69ThfucotKL1WpEwMlyB+8j0yekyAFUzHemw=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 22 Aug 2025 14:51:31 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 17939985140440540817
+Date: Fri, 22 Aug 2025 14:51:32 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Parthiban.Veerasooran@microchip.com
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	lukas.bulwahn@redhat.com, alexanderduyck@fb.com,
+	richardcochran@gmail.com, kees@kernel.org, gustavoars@kernel.org,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <A1F3F9E0764A4308+20250822065132.GA1942990@nic-Precision-5820-Tower>
+References: <20250822023453.1910972-1-dong100@mucse.com>
+ <20250822023453.1910972-5-dong100@mucse.com>
+ <9fc58eb7-e3d8-4593-9d62-82ec40d4c7d2@microchip.com>
+ <7D780BA46B65623F+20250822053740.GC1931582@nic-Precision-5820-Tower>
+ <8fc334ac-cef8-447b-8a5b-9aa899e0d457@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH] power: supply: bq27xxx: fix error return in case of no
- bq27000 hdq battery
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20250821220552.2cb701f9@akair>
-Date: Fri, 22 Aug 2025 08:51:29 +0200
-Cc: Sebastian Reichel <sre@kernel.org>,
- Jerry Lv <Jerry.Lv@axis.com>,
- =?utf-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
- linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- letux-kernel@openphoenux.org,
- stable@vger.kernel.org,
- kernel@pyra-handheld.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F9E0EBBA-094D-4940-8A15-409696E6B405@goldelico.com>
-References: <bc405a6f782792dc41e01f9ddf9eadca3589fcdc.1753101969.git.hns@goldelico.com>
- <20250821201544.047e54e9@akair>
- <10174C85-591A-4DCB-A44E-95F2ACE75E99@goldelico.com>
- <20250821220552.2cb701f9@akair>
-To: Andreas Kemnade <andreas@kemnade.info>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8fc334ac-cef8-447b-8a5b-9aa899e0d457@microchip.com>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NOVhbBM8HVHMeUAwbWl553TcdPLZWYT4icYq/vE+HYX8s0krT8IDPDcx
+	tEf1TZ6XCC5hxB63N56xcvMMsOjFReeKqi9VXxBU+HtKdFiia0dR9QOir/0sq8OcC0OYo9F
+	gJgLpnmUZ7/h0Sz25MrV7HPTJ7GdCmc67vYEYBkOM3UrlC1gpnxtV4UgepybOM+SjzIXUZk
+	+6N8Oe1b+qO/fqxuFuLw8UAK63KE1d9ty/LOf6w0MI2Nvbea/vDjlW5xvJj7EtNLMbBREGr
+	0c6XZYd9924kAeyBhkABPi55YFcMvvU7OBnPkifq0w77mue6+GfcGbJokf2zDZRRreQ5atH
+	+zWDc8pU94Is75QOgUmKNWkN4x9ILavHKcV8FHVua78OQ8T1tQsoFi6pz4DHIGbMOqs8QrP
+	NPozAXDxmUA+au85xDG0sH6Eh0GwUJXKerkpSZVU3cYBzQoi8hPP1wdD08es0u76KsLIMds
+	m3LyQFfYjYDSFBqWoCH79U9CMKT4YxfdhWzIgtcD8gDA9+gQ+qf+O/GZh8vRGHI8z1Gqvu4
+	nyIePorhqlWGQS6XMbLJixJ9LWlI2h9EBI6JW6Qmz/GbzHNNLVAzB9iMcug2J4gT8B9Oujp
+	xbbh0LUUggIqWgnsBRpGb6LqgubyOJcf7WUi+4bHG2eJNszgyLHtXBZFoG7ddrEJM/WGnAx
+	tYHlU2SWnSWwqoDsnFtf8XH3Ci/m6PEbGnbr+6CHvTo2GK7qm6SP5JJD1xhOEB/U0JOExYJ
+	X1AVOJLi9XjJWSmF40i6YDq9cxicS0oAFlgHwEj2/zM4cdMmsIM0Huj+ruFQlQmcVDsqZ15
+	kvsMleSXpS5406UE3zJO9Ze61i/O0TihZFfVdf99rczfEk5CBpooCQhfEPWlMb6Ep/gFcNq
+	R7jtfLtYraS3bB+LT1LIzBUU9lLwO2raM5s0wrbeKVzTJqA3dkGZaBI5qLpH+NqI5dmQnHf
+	mj244/5zJjUcc+w1XC1Pi2HW0L55s+KBtElpzbgnvfhZIlA9+WfAQUcSbBd14mi3n/jK5Lh
+	tdnCi7sO6hfZSzC25HlFjgLakepoomtmRIaKoCQA==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-Hi,
+On Fri, Aug 22, 2025 at 06:07:51AM +0000, Parthiban.Veerasooran@microchip.com wrote:
+> On 22/08/25 11:07 am, Yibo Dong wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> > 
+> > On Fri, Aug 22, 2025 at 04:49:44AM +0000, Parthiban.Veerasooran@microchip.com wrote:
+> >> On 22/08/25 8:04 am, Dong Yibo wrote:
+> >>> +/**
+> >>> + * mucse_mbx_get_capability - Get hw abilities from fw
+> >>> + * @hw: pointer to the HW structure
+> >>> + *
+> >>> + * mucse_mbx_get_capability tries to get capabities from
+> >>> + * hw. Many retrys will do if it is failed.
+> >>> + *
+> >>> + * @return: 0 on success, negative on failure
+> >>> + **/
+> >>> +int mucse_mbx_get_capability(struct mucse_hw *hw)
+> >>> +{
+> >>> +       struct hw_abilities ability = {};
+> >>> +       int try_cnt = 3;
+> >>> +       int err = -EIO;
+> >> Here too you no need to assign -EIO as it is updated in the while.
+> >>
+> >> Best regards,
+> >> Parthiban V
+> >>> +
+> >>> +       while (try_cnt--) {
+> >>> +               err = mucse_fw_get_capability(hw, &ability);
+> >>> +               if (err)
+> >>> +                       continue;
+> >>> +               hw->pfvfnum = le16_to_cpu(ability.pfnum) & GENMASK_U16(7, 0);
+> >>> +               return 0;
+> >>> +       }
+> >>> +       return err;
+> >>> +}
+> >>> +
+> > 
+> > err is updated because 'try_cnt = 3'. But to the code logic itself, it should
+> > not leave err uninitialized since no guarantee that codes 'whthin while'
+> > run at least once. Right?
+> Yes, but 'try_cnt' is hard coded as 3, so the 'while loop' will always 
+> execute and err will definitely be updated.
+> 
+> So in this case, the check isn’t needed unless try_cnt is being modified 
+> externally with unknown values, which doesn’t seem to be happening here.
+> 
+> Best regards,
+> Parthiban V
+> > 
+> > Thanks for your feedback.
+> > 
+> > 
+> 
 
-> Am 21.08.2025 um 22:05 schrieb Andreas Kemnade <andreas@kemnade.info>:
->=20
-> Am Thu, 21 Aug 2025 20:54:41 +0200
-> schrieb "H. Nikolaus Schaller" <hns@goldelico.com>:
->=20
->>> Am 21.08.2025 um 20:15 schrieb Andreas Kemnade =
-<andreas@kemnade.info>:
->>>=20
->>> Hi,
->>>=20
->>> Am Mon, 21 Jul 2025 14:46:09 +0200
->>> schrieb "H. Nikolaus Schaller" <hns@goldelico.com>:
->>>=20
->>>> Since commit
->>>>=20
->>>> commit f16d9fb6cf03 ("power: supply: bq27xxx: Retrieve again when =
-busy")
->>>>=20
->>>> the console log of some devices with hdq but no bq27000 battery
->>>> (like the Pandaboard) is flooded with messages like:
->>>>=20
->>>> [   34.247833] power_supply bq27000-battery: driver failed to =
-report 'status' property: -1
->>>>=20
->>>> as soon as user-space is finding a /sys entry and trying to read =
-the
->>>> "status" property.
->>>>=20
->>>> It turns out that the offending commit changes the logic to now =
-return the
->>>> value of cache.flags if it is <0. This is likely under the =
-assumption that
->>>> it is an error number. In normal errors from bq27xxx_read() this is =
-indeed
->>>> the case.
->>>>=20
->>>> But there is special code to detect if no bq27000 is installed or =
-accessible
->>>> through hdq/1wire and wants to report this. In that case, the =
-cache.flags
->>>> are set (historically) to constant -1 which did make reading =
-properties
->>>> return -ENODEV. So everything appeared to be fine before the return =
-value was
->>>> fixed. Now the -1 is returned as -ENOPERM instead of -ENODEV, =
-triggering the
->>>> error condition in power_supply_format_property() which then floods =
-the
->>>> console log.
->>>>=20
->>>> So we change the detection of missing bq27000 battery to simply set
->>>>=20
->>>> cache.flags =3D -ENODEV
->>>>=20
->>>> instead of -1.
->>>>=20
->>> This all is a bit inconsistent, the offending commit makes it worse.=20=
+Is it fine if I add some comment like this?
+.....
+/* Initialized as a defensive measure to handle edge cases
+ * where try_cnt might be modified
+ */
+ int err = -EIO;
+.....
 
->>> Normally devices appear only in /sys if they exist. Regarding stuff =
-in
->>> /sys/class/power_supply, input power supplies might be there or not,
->>> but there you can argument that the entry in /sys/class/power_supply
->>> only means that there is a connector for connecting a supply. =20
->>=20
->> Indeed. If there is an optional bq27000 hdq battery the entry exists.
->>=20
-> Which is the condition that there is an optional bq27000 battery?
+Additionally, keeping this initialization ensures we’ll no need to consider
+its impact every time 'try_cnt' is modified (Although this situation is
+almost impossible). 
 
-If there is no bq27000 battery, hdq reads 8 bits of 0xff (no client on =
-the
-1 bit serial bus with pull-up) as the "value" of the battery status =
-register.
-If there is a battery connected, the value is defined and not 0xff.
-
-See 3dd843e1c26a023dc8d776e5d984c635c642785f
-
-> w1 might be enabled for other reasons. The bq27000 is not the only w1
-> chip in the world.
-
-In these cases the bq27xxx driver does not need to be present and does
-not interfere.
-
-BTW: the bq27000 is unconditionally added to the hdq subsystem as soon =
-as
-CONFIG_BATTERY_BQ27XXX_HDQ is configured. On every system. So the =
-alternative
-to disabling hdq on the processor and enabling in the board specific DTB =
-is
-to unconfigure CONFIG_BATTERY_BQ27XXX_HDQ if hdq is used for something =
-else.
-
-> BTW: I have removed the battery from my macbook and
-> there is no battery entry in /sys/class/power_supply. Same with =
-another
-> laptop.
-
-Does the entry disappear if you remove the battery while powered from AC =
-and
-come back on re-insertion of the battery?
-
-Do they use hdq at all? With i2c it is easier to detect a "no response" =
-during
-probe or operation. But still i2c assumes that a chip responds at boot
-or never (or user-space must run a timer to reprobe every now and then).
-
-IMHO they are not prepared to handle the use case we have for the =
-bq27000
-and should therefore not be the role model.
-
->=20
->>> But having the battery entry everywhere looks like waste. If would
->>> expect the existence of a battery bay in the device where the common
->>> battery is one with a bq27xxx. =20
->>=20
->> I think the flaw you are mentioning is a completely diffent one. It =
-comes from that
->> the 1-wire or hdq interface of some omap processors is enabled in the =
-.dtsi by default
->> instead of disabling it like other interfaces (e.g. mcbsp1). E.g. for =
-omap3 hdqw1w:
->>=20
->> =
-https://elixir.bootlin.com/linux/v6.16.1/source/arch/arm/boot/dts/ti/omap/=
-omap3.dtsi#L502
->>=20
->> And we should have the dts for the boards enable it only if the hdq =
-interface is really
->> in use and there is a chance that a bq27000 can be connected. In that =
-case the full
->> /sys entry is prepared but returns -ENODEV if the battery is missing, =
-which is then
->> exactly the right error return (instead of -EPERM triggering the =
-console message).
->>=20
->=20
-> And why do you think bq27000 should behave different than
-> max1721x_battery or ds2780_battery or ds2781_battery?
-
-I have looked into the ds2780 code but do not understand how they handle =
-the case
-that the battery is removed or swapped or inserted during operation =
-(while on external
-power supply).
-
-The max1721x is different. At least from looking into code it behaves =
-exactly the same
-as the bq27000. There is a POWER_SUPPLY_PROP_PRESENT. Which can always =
-be read. It does
-this by reading the MAX172XX_REG_STATUS and detecting that some bit =
-(MAX172XX_BAT_PRESENT)
-is not set. This can either mean no battery connected to the chip or the =
-chip (built into
-the battery case) is not connected to the hdq bus.
-
-I can not test but would therefore assume the same for the max1721. As =
-soon as you configure
-it for a hdq capable device/kernel there should be a /sys entry for it =
-with present =3D=3D 0.
-
-BTW: all bq27xxx gauges have this property, not only the bq27000.
-
-> If I enable the
-> drivers there is no additional battery in /sys/class/power_supply!
-
-Which is surprising because then the max1721x can never report "no =
-battery present".
-Unless it is always sitting on the main board and the battery is =
-connected or not.
-
-Or there is some special logic in the max1721x probe which can detect =
-during boot that
-the chip is really connected. But then you can not remove a battery with =
-built-in
-max1721x because it must be installed on first boot and can not be =
-inserted later.
-
-> Why
-> should everyone have a bq27000 in /sys/class/power_supply if the =
-driver
-> is enabled and w1 is used for something? I wonder if the -ENODEV =
-should
-> be catched earlier.
-
-What do you mean with "catched earlier"? What is your proposal?
-
-Well, as proposed by Jerry earlier, it appears as if it can also be =
-handled in bq27xxx_battery_hdq_read()
-by detecting the register BQ27XXX_REG_FLAGS and the read value 0xff and =
-return -ENODEV.
-
-Then it would be constrained to the bq27000 - but still not solve your =
-issue that boards
-may not have a bq27000 option on their hdq bus...
-
-Anyways this discussion now goes far beyond fixing the regression =
-introduced by
-
-f16d9fb6cf03 ("power: supply: bq27xxx: Retrieve again when busy")
-
-So I'd suggest to fix the regression first and then add new functions or =
-changes (for handling
-removable chips and removable batteries reasonably) in a separate patch =
-or series. Having separate
-patches improves bisectability and is easier to track what has been =
-changed (for different reasons).
-
-BR,
-Nikolaus
-
+Thanks for your feedback.
 
 
