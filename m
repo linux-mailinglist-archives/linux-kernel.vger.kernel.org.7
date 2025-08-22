@@ -1,125 +1,148 @@
-Return-Path: <linux-kernel+bounces-781870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE54BB317FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:38:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B9FEB317FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6693601F76
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:37:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63D6D1D2222E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780E72FB983;
-	Fri, 22 Aug 2025 12:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2237D2FB983;
+	Fri, 22 Aug 2025 12:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gL9uhbjg"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="APMRnes3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D2F2FB62D;
-	Fri, 22 Aug 2025 12:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6241A19007D;
+	Fri, 22 Aug 2025 12:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755866206; cv=none; b=haS/nUH8Vwgzvu5+j/lvHyfeR0YEvhsrPXJd3QtAFJ26avGfooEhLY2v1v7R1+QMCpHY9P+to6s51xdSOFLD1vSJk9xM3qYrAkajEoxhvbJBnhSgbslUzN27H2xlfW8tX+kZowe6aorG1y/XXHpYaTWNOHnUxJPQRhSactfBPkI=
+	t=1755866237; cv=none; b=Eo0f47uZ+gjkwQz7t1VsFj8FeLWWMJ1/T2gwp6+6R6OdWi2NfU2O08y3uZINr62Gr6MbjJi4p6t9bEEHjkmV/IO+702JzggT5k4ttZYiXRhdHO99moE+jiH4A7df7aKi3bsQxPUZ/6nwQPg2c5+p6tuQw0lX0oDE8JsRSdPD3WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755866206; c=relaxed/simple;
-	bh=oIde0TlaVmSW9RW3Vxdsr4fR2WlErknPKwu1GrYxy5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ew3Ul3kCapmf1QJK+qkgx8lOb/Tk4m7lpshZIwsNinJOSTj9oVubTuQDANGup3FL0kdUYU10twn47JDcdqxMBVCHSNsVnntkCPQDabDNkUdV38BKg/UGfdOShucUTJPZwfpdFNtPjq47lANqeMnRuqWlXGDmNhglE/zYUe8t4Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gL9uhbjg; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b4a25ccceso11745245e9.3;
-        Fri, 22 Aug 2025 05:36:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755866203; x=1756471003; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bx/4A3+Gx2aFj8IGwK89M2ZsIpiYLL8axuyOuMZrEXE=;
-        b=gL9uhbjgBk0aAtCVndPg5PlNAVfioJz80qFEXgXnZw4oHxVpsxqBXkBElEpUXFw43e
-         hp2HmDTs9gmw5d6M6ZFfbYD0trS2z5Njc3jftXRCPa06QNX5RXWqX+P1mAS5Lkv+N1Ro
-         nNscCSVaZ8BJYBWxMDwExlOrufAEvlCc/QFXzKI+sfYWBnBLbgB0Y/RxwBggPSQ5gV6m
-         gJw6D9CLiwSX+BQZYQMF3GTfdPGho8lH6gP7azhDgJCyNLptteWHOZlm5VrdyU2iX6jm
-         GAeK37UsQwcxtJS4VKqr3uIylJ03Pn+cOjhCPAunpw/DShjPkSs0m4We3cw01p1RYO9F
-         YQQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755866203; x=1756471003;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bx/4A3+Gx2aFj8IGwK89M2ZsIpiYLL8axuyOuMZrEXE=;
-        b=MS5F2exYAMfWcHxudY0wQwkiHkY/KUBue9ojN9dN9REpvN5CdG+w2Ee7gax+809JHp
-         jNnDt4wOil0/k/9DkiU6/7opLYWBQ7egWhVL7dLVyjSL0q9U/T9VivRTXQTBS4s2Qsuu
-         iYnkHAhBanMJsv2MF2HBUCPghjCN4g/Ln5T6n7J0LGc9ndZd0T5jpvVzqfdhsvKZnyHh
-         nzpz7doE2D0mcnREUZn/QEnSDPukmccuSkEZ0+QCqrkilX2BuEwEjK5VmOCNH/n8EptL
-         DxmtPWxWMX/npwSAkreDrvTbt68HkkbBREGcLI8sJL9qNbsntHjlRSUKCm5znWeBli80
-         VGuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhGfts2oKs8qnZCUaq7b4IKqAU8YBwrxaygewN/pPT1LpeFgKIvg8XGDVX3daPEhlf21LgFv9OprmDEmfI@vger.kernel.org, AJvYcCVs0yc62ULWhHu/ZqE4nPT/pNIGIWyQZbX0y85gSmYRQcrYEpK570m8P0PDv4YyDFNzoy0e0lzpZcc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFbJLsYiFedXWRg3NLkBbQlO6s6FOw3pq8AGVoVeXJ4zO7V4re
-	ZXHH9afn5oc3DqvxzIL2JtoieboV+9yCoh8vTkMSkqnE1PKG2EmblteE
-X-Gm-Gg: ASbGncuY+HvLMauRbvEDMVTuFv8iX9CRnihAkbr0Y25+l8PBLNyjgdcoObdtJV5gAWH
-	XJeK7/kuBNct/pCPEdVXbNINElC0pnnMRwV09PBerNENCpgtmiDOtFiS9/JLyQrvL1KJZFRvuCx
-	zhTdWG8SYHcrfCDbxYZ5WFefd+aCRkW6xxlLHmRVWFur+BoZaF90qBXKXavm46v5vYkVX/vXh+y
-	mR7xU+xP6PmpGkzwyYpsFRCVrCnkEvsRwh9RN3advtxXXiLehKhFHg8J92W+0ZXaSJk8tLpWjDh
-	+94mEm1lbNNs+UWX20y61amOSq8a5YKdJu8xQqZamKJD0ORn6HDAW6ILfCsHDutIfCWjQzUT51j
-	8k6kZpL2VeyJp5UyB1mHY
-X-Google-Smtp-Source: AGHT+IGLHePYvKetdZF0ttglnEALzl+yrK+mHjXKOrhefcCSe1sTmJGdI5xkl0FH1V6Q5aDp/8oHxA==
-X-Received: by 2002:a05:600c:1c87:b0:456:173c:8a53 with SMTP id 5b1f17b1804b1-45b5179cdd5mr19741695e9.2.1755866203245;
-        Fri, 22 Aug 2025 05:36:43 -0700 (PDT)
-Received: from legfed1 ([2a00:79c0:65a:1400:1ebe:eb51:3a97:3b47])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b50dc4c55sm36618485e9.4.2025.08.22.05.36.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 05:36:42 -0700 (PDT)
-Date: Fri, 22 Aug 2025 14:36:41 +0200
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: dimitri.fedrau@liebherr.com,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Li peiyu <579lpy@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Chris Lesiak <chris.lesiak@licorbio.com>
-Subject: Re: [PATCH 1/2] iio: humditiy: hdc3020: fix units for temperature
- and humidity measurement
-Message-ID: <20250822123641.GA19315@legfed1>
-References: <20250821-hdc3020-units-fix-v1-0-6ab0bc353c5e@liebherr.com>
- <20250821-hdc3020-units-fix-v1-1-6ab0bc353c5e@liebherr.com>
- <aKc-2WHDTtGcXmCJ@smile.fi.intel.com>
- <aKc-_j84oUwCquHk@smile.fi.intel.com>
+	s=arc-20240116; t=1755866237; c=relaxed/simple;
+	bh=qV4yCJDW8fgYgPrO31lo0L8XmfA+YRYPx/g5jRK736s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K/WuhDT48R8+Y2iCgOCRyB8/qIY8F4cczXM6lUPnaLkshgjpYZvvCNS22x/264I2GDbYZC2AZoXb96rNMxAnh+HMVy6D/YoiRajTDE/vMFip/BJfAotYmVurfoHd08O365cLMinBxskD1oq1wGsHtk5idKbR0qyR4noZxI/Mkrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=APMRnes3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40FE6C4CEED;
+	Fri, 22 Aug 2025 12:37:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755866237;
+	bh=qV4yCJDW8fgYgPrO31lo0L8XmfA+YRYPx/g5jRK736s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=APMRnes3Worxq2nQzPT4QtJnka3GYi5lFLoxITXoykNWH42Ibck0W9TDufgTj4OdV
+	 NsmAxxjx/0pi/UBAA7FhWFyLHdmvKTBS6N+RWhYUjdgSnzGDtAZB2ukJS2O2l4xCL3
+	 TDj2YSP2+JlUBhM1XgVB5ny3Irgmq/0/VaVsVhFM=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hargar@microsoft.com,
+	broonie@kernel.org,
+	achill@achill.org
+Subject: [PATCH 6.16 0/9] 6.16.3-rc1 review
+Date: Fri, 22 Aug 2025 14:37:00 +0200
+Message-ID: <20250822123516.780248736@linuxfoundation.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKc-_j84oUwCquHk@smile.fi.intel.com>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.3-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-6.16.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 6.16.3-rc1
+X-KernelTest-Deadline: 2025-08-24T12:35+00:00
+Content-Transfer-Encoding: 8bit
 
-Am Thu, Aug 21, 2025 at 06:45:02PM +0300 schrieb Andy Shevchenko:
-> On Thu, Aug 21, 2025 at 06:44:25PM +0300, Andy Shevchenko wrote:
-> > On Thu, Aug 21, 2025 at 05:23:54PM +0200, Dimitri Fedrau via B4 Relay wrote:
-> 
-> ...
-> 
-> > >  		if (chan->type == IIO_TEMP)
-> > > -			*val = 175;
-> > > +			*val = 175000;
-> > >  		else
-> > > -			*val = 100;
-> > > +			*val = 100000;
-> 
-> > Perhaps  use " * MILL" uin both cases?
-> 
-> Perhaps  use " * MILLI" in both cases?
-> 
->
-Ok.
+This is the start of the stable review cycle for the 6.16.3 release.
+There are 9 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Best regards,
-Dimitri Fedrau
+Responses should be made by Sun, 24 Aug 2025 12:35:08 +0000.
+Anything received after that time might be too late.
+
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.3-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
+and the diffstat can be found below.
+
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 6.16.3-rc1
+
+Zhang Yi <yi.zhang@huawei.com>
+    ext4: replace ext4_writepage_trans_blocks()
+
+Zhang Yi <yi.zhang@huawei.com>
+    ext4: reserved credits for one extent during the folio writeback
+
+Zhang Yi <yi.zhang@huawei.com>
+    ext4: correct the reserved credits for extent conversion
+
+Zhang Yi <yi.zhang@huawei.com>
+    ext4: enhance tracepoints during the folios writeback
+
+Zhang Yi <yi.zhang@huawei.com>
+    ext4: restart handle if credits are insufficient during allocating blocks
+
+Zhang Yi <yi.zhang@huawei.com>
+    ext4: refactor the block allocation process of ext4_page_mkwrite()
+
+Zhang Yi <yi.zhang@huawei.com>
+    ext4: fix stale data if it bail out of the extents mapping loop
+
+Zhang Yi <yi.zhang@huawei.com>
+    ext4: move the calculation of wbc->nr_to_write to mpage_folio_done()
+
+Zhang Yi <yi.zhang@huawei.com>
+    ext4: process folios writeback in bytes
+
+
+-------------
+
+Diffstat:
+
+ Makefile                    |   4 +-
+ fs/ext4/ext4.h              |   2 +-
+ fs/ext4/extents.c           |   6 +-
+ fs/ext4/inline.c            |   6 +-
+ fs/ext4/inode.c             | 323 +++++++++++++++++++++++++++-----------------
+ fs/ext4/move_extent.c       |   3 +-
+ fs/ext4/xattr.c             |   2 +-
+ include/trace/events/ext4.h |  47 +++++--
+ 8 files changed, 251 insertions(+), 142 deletions(-)
+
+
 
