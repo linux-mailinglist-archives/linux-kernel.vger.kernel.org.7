@@ -1,174 +1,100 @@
-Return-Path: <linux-kernel+bounces-781736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97269B31611
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:04:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E73B31612
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A8511CE8529
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:05:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34C7C7AFECF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05C02BEFFD;
-	Fri, 22 Aug 2025 11:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49AB2EA473;
+	Fri, 22 Aug 2025 11:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="odUmb+Dh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KU95G1jF"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="S0vKdSSv"
+Received: from smtpout7.mo534.mail-out.ovh.net (smtpout7.mo534.mail-out.ovh.net [54.36.140.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9236320330
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31132E92C6
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.36.140.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755860677; cv=none; b=Zor2ljNzadGJLjI2BltC2Bro/zK3YKajtPoY2Jx5Aflfnm5B38uvYKHNJk1WzFDfrjBIZ2ouoZDBvP5yDSeni6Kme0TvGvELbU268MzZPO0pMRFa7+QB4EfD+ejzTxIzc6AdmkD0pyrLa9Q9cb8CfIxNIbK1OFFFGUqdbDO6qDE=
+	t=1755860683; cv=none; b=GTK/u4962UlQ/UbQTbBeYaBJAMSi7AnBrfgwmRMaj5uhaqigfR9QSgkhef/X9VoeNjYkEYQBYGElePC7AZOkMeek/v5J+qlNVLtlMGugd+0O9nCqcsLwFTTOIUbhhISpEP6FwO1VvuWZG3iAadQau7QMyZOGYsw3M+vJzCTyWEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755860677; c=relaxed/simple;
-	bh=4MwyKnzsOOpRmGCODYZ++C3D7ihjQA9juNODtrWjJbw=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=kpd9+XcBoddiEpq5NvwdP5LdysKFmG9L1d09xDjPS2/AGwzdVpBaVyrTdDvy0nIOsIlxk1W5lO8w5IiHgmc0ZoKRcM8U+SI+dndj6fbyQ3rJRArphqX19DVRwZtM1yvSdEm0/mYk0m81h0JB0+K6AorPkSUwJenXbygCCSjuX7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=odUmb+Dh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KU95G1jF; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 9B610EC094A;
-	Fri, 22 Aug 2025 07:04:32 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 22 Aug 2025 07:04:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1755860672;
-	 x=1755947072; bh=EmIUXF86YcQrT/8Hjt3QbuzJX9flVj+2OUQWxZuGrsA=; b=
-	odUmb+Dhs2VS+C0GwK2Ch9U8/U+xpZXk1XEC70+Pntyibd0lIeB3x/gd8oJvPXwG
-	YgevcwC9PI508ReOCtMEICnlU4SXrEhUnjnXKk3+z4bcAmQruNw1OgQh4p4CAS3S
-	4Xb1TzLfmsJalz9uLwr7mW0nOaThYwVP71wk35FFZoKp2xJ0qC0tH61vH82IxgeU
-	ZOLoRPaYu2rxK7EXSqZqL+fD/ShYJgmH5HHfVuuVJPAxoBAutW1qccZauYzy5K1F
-	OJYFdy2XIvXbwwHuWBSIXzmjfct07GWObWngqXE1J4cvUlIjZUIXKMUK/wZivDmA
-	e45M3OXji1uFq2EjDiCT6A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755860672; x=
-	1755947072; bh=EmIUXF86YcQrT/8Hjt3QbuzJX9flVj+2OUQWxZuGrsA=; b=K
-	U95G1jFCCKMtIbaULGb03C3x0nNYBZLl0OKd5hGWgty9sCojBaXVdHCY4zjAAzu+
-	Qk96cUJD9qC5NMl/vmVtmjwo/eVIKotjlQz1ojto2zHrFjR+Wv8pw2frgi+N3CNT
-	xU5alI15wx5w6snF8O1Hri+KycM+mpeMbzpS87Ry2XkGgA2eUxlRcSQ1XCUzsrBx
-	GdhbmM83vHx67ni5xSfARaWVgMRVUQAo5ca4vGVW2JcTHX89tfxaPson4e7BZtR2
-	wTbld3+yrZAARJPLsyFAC6RxwEb0uOJBuDmbi9twMA5aWCY2jF1JniKggZLJ+KuD
-	ERPfn9HHKUzkHNlpjOW5w==
-X-ME-Sender: <xms:v06oaFnNY0cUdO21P-9Ma-qjweXgKLB1f11vK-G-5Ntc_Ex8ubiFkg>
-    <xme:v06oaA2B_tMUHaiSYJQWnmGgLvoZoqfNiSC_gGssewMw5d-gdxRTWgwQ8k5RKcPcT
-    FO2jXE9aBT28NsXIbg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieefheelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvdefpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopeguihgvthhmrghrrdgvghhgvghmrghnnhesrghrmhdrtghomhdprh
-    gtphhtthhopehrohhsthgvughtsehgohhoughmihhsrdhorhhgpdhrtghpthhtohepsghs
-    vghgrghllhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepshhurhgvnhgssehgohhogh
-    hlvgdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdp
-    rhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeguih
-    hnghhuhigvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvvghssehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehrphhptheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:v06oaNv2vkg4FQGapO3c_YHhofNvxfTuo2zOGcxqE8zhNZZ5hUhLMA>
-    <xmx:v06oaOFVs_4iy7m3Hm_AH6WQFEniE3zbrPKmWXN-rnPMqYcQK84n5Q>
-    <xmx:v06oaA--uPBA6Mm7vI9kW8ii1lE_kAUxJZfMwjbVIxXelxhZLXRtoQ>
-    <xmx:v06oaMNLABhtZ6b6BCWK356wtaSiXa9MyR_NbR8VWIJAcNyvbz8HTQ>
-    <xmx:wE6oaNXuCP0_6qmIwJ5SSu4OWGFSmgyfWKLLtMXkQCYYsBHfyGfofuT9>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 385FB700069; Fri, 22 Aug 2025 07:04:31 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1755860683; c=relaxed/simple;
+	bh=4POstXQug6/tm324a/uxWTpYPZm2WzR82ZBrp7W+wwE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F6yxFPbGwclR6lbc0WK3ANCfQILZTNyfz9gGYpCS41+qu9WF/PLsvm+VMZ+Fy0rVdAmwtVj9KosniDRURGTi4oyS5lV3HLb5pN/ZSotelg7u6OpVv+4r3OE1cIqo2U7kX73S+3xM3QcNjkgAZsFEpyJ4yT7MSAtDCALY4LNcwU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=S0vKdSSv; arc=none smtp.client-ip=54.36.140.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
+Received: from director4.derp.mail-out.ovh.net (director4.derp.mail-out.ovh.net [79.137.60.37])
+	by mo534.mail-out.ovh.net (Postfix) with ESMTPS id 4c7clP0r5yz6FhZ;
+	Fri, 22 Aug 2025 11:04:33 +0000 (UTC)
+Received: from director4.derp.mail-out.ovh.net (director4.derp.mail-out.ovh.net. [127.0.0.1])
+        by director4.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <brgl@bgdev.pl>; Fri, 22 Aug 2025 11:04:32 +0000 (UTC)
+Received: from mta3.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.0.128])
+	by director4.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4c7clN5r1Vz1xpF;
+	Fri, 22 Aug 2025 11:04:32 +0000 (UTC)
+Received: from orca.pet (unknown [10.1.6.10])
+	by mta3.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id 954BB9432CD;
+	Fri, 22 Aug 2025 11:04:31 +0000 (UTC)
+Authentication-Results:garm.ovh; auth=pass (GARM-114S0082ef14080-d45a-44d5-83ba-a09211dd5816,
+                    ADC0680FE15BB91110492B9A34CE42AA242C155A) smtp.auth=marcos@orca.pet
+X-OVh-ClientIp:79.117.22.109
+Message-ID: <9ee82305-6f46-461b-ad0d-441425727be3@orca.pet>
+Date: Fri, 22 Aug 2025 13:04:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AVsTuni0f5VB
-Date: Fri, 22 Aug 2025 13:03:50 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "schuster.simon@siemens-energy.com" <schuster.simon@siemens-energy.com>,
- "David Hildenbrand" <david@redhat.com>
-Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Dinh Nguyen" <dinguyen@kernel.org>,
- "Christian Brauner" <brauner@kernel.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- "Vlastimil Babka" <vbabka@suse.cz>, "Mike Rapoport" <rppt@kernel.org>,
- "Suren Baghdasaryan" <surenb@google.com>, "Michal Hocko" <mhocko@suse.com>,
- "Ingo Molnar" <mingo@redhat.com>, "Peter Zijlstra" <peterz@infradead.org>,
- "Juri Lelli" <juri.lelli@redhat.com>,
- "Vincent Guittot" <vincent.guittot@linaro.org>,
- "Dietmar Eggemann" <dietmar.eggemann@arm.com>,
- "Steven Rostedt" <rostedt@goodmis.org>,
- "Benjamin Segall" <bsegall@google.com>, "Mel Gorman" <mgorman@suse.de>,
- "Valentin Schneider" <vschneid@redhat.com>, "Kees Cook" <kees@kernel.org>
-Message-Id: <1e9f9975-7be0-4abf-87c6-a8f54cd9d059@app.fastmail.com>
-In-Reply-To: 
- <FR2P281MB15445D806CF865A0E1CD8FFCB53DA@FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM>
-References: 
- <20250821-nios2-implement-clone3-v1-0-1bb24017376a@siemens-energy.com>
- <20250821-nios2-implement-clone3-v1-1-1bb24017376a@siemens-energy.com>
- <8c6239a9-8414-469c-9b94-a43735b4e882@redhat.com>
- <FR2P281MB15445D806CF865A0E1CD8FFCB53DA@FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM>
-Subject: Re: [PATCH 1/2] copy_process: Handle architectures where sizeof(unsigned long)
- < sizeof(u64)
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] gpio: gpio-regmap: add flags to control some
+ behaviour
+To: Michael Walle <mwalle@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Lee Jones <lee@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-gpio@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20250821101902.626329-1-marcos@orca.pet>
+ <20250821101902.626329-2-marcos@orca.pet>
+ <CACRpkdb7PZTx8WPQP8Jrj_sR8X2ejK3OgA+9v2PUaOcTM4NnrQ@mail.gmail.com>
+ <DC8RMCPRX0UZ.3RP6IGY2KJ96@kernel.org>
+Content-Language: es-ES
+From: Marcos Del Sol Vives <marcos@orca.pet>
+In-Reply-To: <DC8RMCPRX0UZ.3RP6IGY2KJ96@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 5674535533833246310
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieefheelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpedtgedugfeiudfgkeduhfelgfejgfeuvdejffeiveegteejvddviefhiedujedvheenucfkphepuddvjedrtddrtddruddpjeelrdduudejrddvvddruddtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepkedprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmfigrlhhlvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
+ hlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheefgegmpdhmohguvgepshhmthhpohhuth
+DKIM-Signature: a=rsa-sha256; bh=cwbNrb23A+8SUEIo2+pV65nYKzVzqJSprND2O24vDUY=;
+ c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1755860673;
+ v=1;
+ b=S0vKdSSvQfX3N/6oFSTGs2J5T6GgUc0m5ftAJnnkxcEwDKt9pPkI4m3pYDYeN2YaI3t4McKj
+ zzvh2hP8yfNAvUyDorSzy9p5VTdNi87VJp0wYLROn8ZS7+CZEGv6K8oiVHJeQvUu0hbgw1bYA59
+ AZho88FKBRbNQK9KM39/4XE5TlTlfECHJhvmyvFAmuNurQSqlWL3LJ3th+5VUNYR6xb7ZNdMZQF
+ BRgdyDLAtlxr5TsHFb8FYsGP2YnSQRsgo4+OzX+6R6Agqe0f8RgOcZPRUBb+xcmSdQYDO+kgwUY
+ F5hK6etT7RUbOV7s65bcFDqtfqfJOABQJQMnJa1BQxtIw==
 
-On Fri, Aug 22, 2025, at 10:52, schuster.simon@siemens-energy.com wrote:
-> On Thu, Aug 21, 2025 at 11:14:00PM +0200, David Hildenbrand wrote:
->> Sounds reasonable.
->>
->> But is this actually something that is already exposed before patch#2
->> on other architectures?
->
-> I'm not sure, but I would assume so, as e.g., arch/arm seems to have
-> support for clone3, but also seems to use 32bit unsigned longs as far as
-> I can tell and, thus, should also be affected:
+El 22/08/2025 a las 9:07, Michael Walle escribió:
+>>> +       ret = gpio_regmap_set(chip, offset, value);
+>>> +       if (ret)
+>>> +               return ret;
+> 
+> Could you add a short paragraph to the commit message that you've
+> added error checking? Something like:
+> 
+>   While at it, add the missing error check in
+>   gpio_regmap_direction_output().
+> 
 
-Correct. 'unsigned long' is always the native word size for an ISA
-on architectures that Linux runs on, and the same size as a pointer,
-so the bug affects all 32-bit architectures that have clone3:
-
-arc, arm, csky, m68k, microblaze, mips32, openrisc, parisc32,
-powerpc32, riscv32, x86-32 and xtensa.
-
-However, since the ABI itself is fine and 64-bit kernels pass the
-value as native words internally, the 'compat' mode support on
-arm/mips/ parisc/powerpc/riscv/s390/x86 does not have the same
-problem, and running the same 32-bit executable on a 64-bit kernel
-should work fine. This may explain why nobody caught this so far,
-even when they were testing the new flags with x86-32 or arm32
-userland, but using 64-bit machines.
-
->> (I assume above output is with patch #2 but without patch #1)
->
-> Yes, sorry, that one is on me; I've naturally first implemented support
-> for clone3 on nios2 and then investigated the test failures, but somehow
-> deemed it wise for whatever reason to switch the commit order in the
-> patch submission...
-
-The order you picked is fine: we generally want bug fixes before
-new features to allow backporting them more easily. Please add
-
-Fixes: b612e5df4587 ("clone3: add CLONE_CLEAR_SIGHAND")
-Cc: stable@vger.kernel.org # linux-5.5+
-
-above your Signed-off-by for this patch, to ensure the fix gets
-picked up. I would also suggest changing the text to not mention
-nios2 specifically but just say that it affects "all 32-bit kernels".
-
-    Arnd
+Added! Thanks for the feedback!
 
