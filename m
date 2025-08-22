@@ -1,245 +1,115 @@
-Return-Path: <linux-kernel+bounces-782669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8536BB32367
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:12:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28AC5B3235F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 323AC1BA7083
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:12:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68A80B63B15
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA542D739E;
-	Fri, 22 Aug 2025 20:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D942B2D660E;
+	Fri, 22 Aug 2025 20:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WDVUNafm"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cW75YYBH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12EE296BC2;
-	Fri, 22 Aug 2025 20:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DD224679A
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 20:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755893520; cv=none; b=KiG/3547IcvSeUcNIv3dk+vKG9pXGztc1i0U9vge29Vk+npMYbdxXmQYs5Re94wSzsuLYIP/Ov/e43Dru4oDBFPu0J9YBtmjqlfTohm2Z0pQepgPd2Y/WoGR9YTbSoIcDKKULp3O4QJ5/+VGehAaPfXsGEJuPmlwgn7g1ShFdq4=
+	t=1755893243; cv=none; b=oYr42AQuiQDaPyubWfbYiSCqOiyI4ZXn7/pWNwnEI5c+sHxAto/jAUMw3SvmfTGopErVJYaFxriMLpV5kuM9UUz50Zzofu6FF+3nARLmiDCqHm07IGTaWszAWULpGEy8GP/9gIYvcvXRAmhEztgHVFV/0rVg/4eOzdj86N6lo7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755893520; c=relaxed/simple;
-	bh=Qc+tAas79SoueLGZxYqBMNxoUP0dz7M7A9BmuH2IGqc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OB0HLWjYABHnJv9Db8Y78DsuZzvFR1Pfj2m9qmBFs6uilaMKhdLimD8gtVHBWy92d25p3wUtFNLH/4OvuDaJkOm0ZrE9/fvMn6kgvbdEIM+noYlYy1PrTY6/fnPbVcxFthT4jSSwe57TmDTqyIO9CG7IRRkinSreXRLytQjXgtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WDVUNafm; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7347e09so413454566b.0;
-        Fri, 22 Aug 2025 13:11:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755893517; x=1756498317; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4A1Ql4lSxr5sI97S3+o3OJuBZrWXIlFBUEQUap99xyg=;
-        b=WDVUNafmOHTNx9eMfCHB9SGoSj1P4OTdSrTE6q3npaCf3esuxh6xOan6iG7j8BBz5D
-         FrsZwRkAAU91NrQy53854JN7+WOxOCkijK97sQ2PzkuVxuInPvwAr6eCBBSzD3Kt7r1G
-         IbFzcwl5CO8jU8/NLN5FtLnz9FaJ3DTt3KjD4k7Yl28ULrxQVSbVzhYuknx8lnTF4atg
-         Eqmh3GxNBfmdK9K11VC8AXpToLTNrpNiWo23L/yjJD1IZnoCNkq/35bdARxQo2azuvQL
-         RjyWN1ZrM9Klhc2KO82lVbAGzRaeLi5drGeN81qswtsZI0RBrofdf8C+JfqIrD+PKIBh
-         menw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755893517; x=1756498317;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4A1Ql4lSxr5sI97S3+o3OJuBZrWXIlFBUEQUap99xyg=;
-        b=G9AvguYa71G2RKJUQAbKyz8Sdgq3g30660rLEo1BQKh1Rqil7Fvuona1Ika6F9HMEb
-         swoDUdxyWiFoErPW2HwQy+L6zS0Vj3cTaOumA47Jmf5BCbMcA8uV5k9cbqGEixz0H/Mh
-         tfMeU/wP/w25e3M9yXrNtMinEFMG0KklO0YyPkjOGASjS8zUBAIvVow37JGauETlKQDt
-         /1gvGONWfPV163HLvtx4ii/L83/xiD1SBIGCm/zcCyZ0oiE83iqeDPhkPQXGsmDLJWe6
-         97t4OraMePOrh2FzTucoBMPcTqLxzYD9eDhLSTbZF2XtV1pdEpHDU1kOSfz8jTUnXBlG
-         QxXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlqKuJSkBQE3aBliodBJMCOG53wkUyqz9RUpW1I0eKdfOp4lvh1ToI46XaU2kcNWQ7MuwwB4bGOS+CNNW8@vger.kernel.org, AJvYcCVguX9cEkxUsDAyGrokC1rrEsbSLhGT+esRAW2ijHpUaLvSdbRvP89yZ8sQ1JnylBqZLDRenMK5OJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe3E3cli2eJ8pi7vOf90gftCtRI0ck7WDs86zyqa+PUunB3XjG
-	o6SeMaK8AGPOEoECXpgsZLF6pftnS+AuRd808zRYH6rbRX8iTOSDZTStbXl77zXxtuQ2QoyQmwQ
-	/8SaQ8sZzIAWc8hLPYH9ubs2+Kzg9wpg=
-X-Gm-Gg: ASbGnctT8YqObxJS7/9OYsJnTMuidDdJDhrBxk5xCdiYLnWNBETR4Z09o93kA3QXYi8
-	i0tl+gJjfMpo8coMwySsrosAvNM+5iwLpBeBJzLVQJ3JqB6tSyUtpXgCK7eNm2Ojr3dYEDYWIx+
-	JK+xUbJERi41aC6ZwW78I1SZ5sIrEfokDm12n0oe061TS1xeWPaQawljqdOJfFccMYvJ2BCMCBy
-	rvtsP0=
-X-Google-Smtp-Source: AGHT+IHn4GOiuwGaU6VFDIZs961JwxHdDxXoF3cqv0zx77t33hP5YIEeDsdS5T62+lZsEVADGUhPBA0EQmaSJmo6/R0=
-X-Received: by 2002:a17:907:ea0:b0:afd:fed4:9bec with SMTP id
- a640c23a62f3a-afe29548e90mr398121066b.31.1755893516882; Fri, 22 Aug 2025
- 13:11:56 -0700 (PDT)
+	s=arc-20240116; t=1755893243; c=relaxed/simple;
+	bh=ozE1cSoy/uNFxRcyYjqiBF7w8Pa9CgIf75tou4tbpp8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cWwUgBQeKjnAfhdRctutswE8VHij1jIMXRkYnTj0h7oFbEg2ZIAyKJDUyedPHtOKm/I2kHa2puAADoOFlxgxg0fJP28jiwDlPbqJrx5d64toGkhWSmUXZDZq8sQAh844ddthIjZq4HIXkCcLOA7BQxJpQH36o6s1Hhcq8CignIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cW75YYBH; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755893241; x=1787429241;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ozE1cSoy/uNFxRcyYjqiBF7w8Pa9CgIf75tou4tbpp8=;
+  b=cW75YYBHSh9t5bSG2JNWpygqDKpn/C6U3CJruhHq4B12ynWZjGploIHj
+   Hc7dkupqUSpQw+ihSsGn09HuArVMs3tYVHD2Nk2e2U783MxdQHrn036DS
+   iQeA90NJKeBQUDG7JlZJywUTBZxFjMNcOfZhW29aqkHJLl9HbSaDxUmGO
+   2B0pvvS+jUxihQPDl1oMNi6GFhDrdzM6cMpv161xKnGQ1VZ/RH+Wdz691
+   u5pMdYfnCQi6I7FeObersxNNiOzZKZXK121KqXaL2/dHh5/IhspXSZlSN
+   nWW4vtnSWhXNk64Tenh91LYuhM74W2c9yeh5HeLu4cxKSEtpn4IcV4jzf
+   A==;
+X-CSE-ConnectionGUID: ZFlQpre+STWrZXe4saQDwA==
+X-CSE-MsgGUID: 2OO7riPCRdqccvFiKtJoXg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="57224555"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="57224555"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 13:07:20 -0700
+X-CSE-ConnectionGUID: 9WgPgvd/Qa+gHZzcQdHGZA==
+X-CSE-MsgGUID: 6xZgs99RQQaFjaUORP9k/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="169145735"
+Received: from b04f130c83f2.jf.intel.com ([10.165.154.98])
+  by fmviesa008.fm.intel.com with ESMTP; 22 Aug 2025 13:07:19 -0700
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Tim Chen <tim.c.chen@intel.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Libo Chen <libo.chen@oracle.com>,
+	Abel Wu <wuyun.abel@bytedance.com>,
+	Len Brown <len.brown@intel.com>,
+	linux-kernel@vger.kernel.org,
+	Chen Yu <yu.c.chen@intel.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Zhao Liu <zhao1.liu@intel.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Subject: [PATCH 0/2] Fix NUMA sched domain build errors for GNR-X and CWF-X
+Date: Fri, 22 Aug 2025 13:14:13 -0700
+Message-Id: <cover.1755893468.git.tim.c.chen@linux.intel.com>
+X-Mailer: git-send-email 2.32.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822180335.362979-1-akshayaj.lkd@gmail.com>
-In-Reply-To: <20250822180335.362979-1-akshayaj.lkd@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 22 Aug 2025 23:11:20 +0300
-X-Gm-Features: Ac12FXxqaQRGd6tU76w-OOR4W7PTDWpiileG2wHNSCaUs6qC23trjcC1zzJpbqs
-Message-ID: <CAHp75Veqf6tKiFh=dNkgNkc2qE17VM7u-Yt8CZaXOsnEFUwd_w@mail.gmail.com>
-Subject: Re: [PATCH] iio: light: ltr390: Add runtime PM support
-To: Akshay Jindal <akshayaj.lkd@gmail.com>
-Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 22, 2025 at 9:03=E2=80=AFPM Akshay Jindal <akshayaj.lkd@gmail.c=
-om> wrote:
->
-> Implement runtime power management for the LTR390 sensor.
-> The device would now autosuspend after 1s of idle time.
-> This would save the overall power consumption by the sensor.
->
-> Ensure that interrupts continue to be delivered during
-> runtime suspend by disabling the sensor only when no
-> interrupts are enabled. This prevents loss of events
-> while still allowing power savings when IRQs are unused.
+While testing Granite Rapids X (GNR-X) and Clearwater Forest X (CWF-X) in
+SNc-3 mode, we encountered sched domain build errors reported in dmesg.
+Asymmetric node distances from local node to to nodes in remote package
+was not expected by the scheduler domain code and also led to excessive
+number of sched domain hierachy levels.
 
-Have you tried to enable it as a wake source and disable it?
+Fix the missing NUMA domain level set in topology_span_sane() check and
+also simplify the distance to nodes in remote package to retain distance
+symmetry and make the NUMA topology sane for GNR-X and CWF-X.
 
-...
+Tim Chen (1):
+  sched: Fix sched domain build error for GNR-X, CWF-X in SNC-3 mode
 
-> --- a/drivers/iio/light/ltr390.c
-> +++ b/drivers/iio/light/ltr390.c
-> @@ -30,6 +30,7 @@
->
->  #include <linux/iio/iio.h>
->  #include <linux/iio/events.h>
+Vinicius Costa Gomes (1):
+  sched: topology: Fix topology validation error
 
-> +#include <linux/pm_runtime.h>
+ arch/x86/kernel/smpboot.c      | 28 ++++++++++++++++++++++++++++
+ include/linux/sched/topology.h |  1 +
+ kernel/sched/topology.c        | 33 +++++++++++++++++++++++++++------
+ 3 files changed, 56 insertions(+), 6 deletions(-)
 
-Please, preserve ordering.
+-- 
+2.32.0
 
->  #include <linux/unaligned.h>
-
-(This is here due to historical reasons when mass move from
-asm/unaligned to linux/unaligned happened)
-
-...
-
-> +static int ltr390_set_power_state(struct ltr390_data *data, bool on)
-> +{
-> +       struct device *dev =3D &data->client->dev;
-> +       int ret =3D 0;
-
-Replace this assignment...
-
-> +       if (on) {
-> +               ret =3D pm_runtime_resume_and_get(dev);
-> +               if (ret) {
-> +                       dev_err(dev, "failed to resume runtime PM: %d\n",=
- ret);
-> +                       return ret;
-> +               }
-> +       } else {
-> +               pm_runtime_mark_last_busy(dev);
-> +               pm_runtime_put_autosuspend(dev);
-
-mark_last_busy is redundant.
-
-> +       }
-
-> +       return ret;
-
-...calling return 0; here.
-
-> +}
-
-
-...
-
-> +       ltr390_set_power_state(data, true);
-
-The boolean parameter is a sign for refactoring to have just two
-functions for false and for true cases respectively.
-
-...
-
->                 default:
-> -                       return -EINVAL;
-> +                       ret =3D -EINVAL;
->                 }
-> +               break;
->
->         case IIO_CHAN_INFO_INT_TIME:
->                 *val =3D data->int_time_us;
-> -               return IIO_VAL_INT;
-> +               ret =3D IIO_VAL_INT;
-> +               break;
->
->         case IIO_CHAN_INFO_SAMP_FREQ:
->                 *val =3D ltr390_get_samp_freq_or_period(data, LTR390_GET_=
-FREQ);
-> -               return IIO_VAL_INT;
-> +               ret =3D IIO_VAL_INT;
-> +               break;
->
->         default:
-> -               return -EINVAL;
-> +               ret =3D -EINVAL;
->         }
-> +
-> +handle_pm:
-> +       ltr390_set_power_state(data, false);
-> +       return ret;
-
-
-Instead, refactor the code the way that it just will have a wrapper
-with power state calls. The change will be much smaller and easier to
-understand, review, etc.
-
-...
-
->  static int ltr390_write_raw(struct iio_dev *indio_dev, struct iio_chan_s=
-pec const *chan,
->                                 int val, int val2, long mask)
->  {
-> +       int ret;
->         struct ltr390_data *data =3D iio_priv(indio_dev);
->
-> +       ltr390_set_power_state(data, true);
-> +
->         switch (mask) {
->         case IIO_CHAN_INFO_SCALE:
-> -               if (val2 !=3D 0)
-> -                       return -EINVAL;
-> -
-> -               return ltr390_set_gain(data, val);
-> +               if (val2 !=3D 0) {
-> +                       ret =3D -EINVAL;
-> +                       goto handle_pm;
-> +               }
-
-Ditto.
-
-And so on. I stop here, because this seems needlessly invasive change.
-Just refactor first.
-
-...
-
-> +       ret =3D devm_pm_runtime_enable(dev);
-> +       if (ret)
-> +               return dev_err_probe(dev, ret,
-> +                                       "failed to enable powermanagement=
-\n");
-
-Missed space.
-
-...
-
-> +static _DEFINE_DEV_PM_OPS(ltr390_pm_ops,
-
-Why _DEFINE_... macro? This one is internal to the header.
-
-> +               ltr390_suspend, ltr390_resume,
-> +               ltr390_runtime_suspend, ltr390_runtime_resume, NULL);
-
---=20
-With Best Regards,
-Andy Shevchenko
 
