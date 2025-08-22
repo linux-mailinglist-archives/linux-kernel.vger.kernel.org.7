@@ -1,194 +1,126 @@
-Return-Path: <linux-kernel+bounces-782037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFAEBB31A2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:50:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E54CFB31A29
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80B8916ED4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:44:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B19D188F2F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F35C2D480B;
-	Fri, 22 Aug 2025 13:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AC2304BAE;
+	Fri, 22 Aug 2025 13:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OrzIh7Ax"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2052.outbound.protection.outlook.com [40.107.220.52])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SgWcGcEk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D905630276A
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755870279; cv=fail; b=GULPEMpIDyEPe89MXCLgtTfQAmJPGU9oMzhzBI0ebSCFHpQ5Rhefahgz/qj4Az0/u5Q6Sbdp2Ms0FMIZnwS/2ADNATKNecQhkOpT7xhJDTa0rFjKUDpHcn7MD/lXKRriJuW5kO4iIf+u9cDny1RClB5Yo4yyRL/RYJHEu1+8ta8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755870279; c=relaxed/simple;
-	bh=Gl+eLzrVoXPvs5u1BRaJz3nkDYw95NPHPFMkS3nk9Uc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F3EwVZlTBy4v3uni3SGOhwGpceBb+cX2mlL78iGk9ZeRsYsebhe3Rhw8yS/rJTqYyuT4yFm0ACptd4H/dgNKo2A+rLVS5gpa1AYHWMXyWiOGBZj9zLPP3Vmq6WkDi5t3GCYt35TltaDYe/9v9HqfWHyOUjGz0lS4FOb+g+EmYbM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OrzIh7Ax; arc=fail smtp.client-ip=40.107.220.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Pov7l47q9O16deyHzdCmAt+VcXX5fC3dudv5U4KVLJWf2XludYJEQkYrJyfiYi5tZzTLXWlcAjxM/qfVXbYDCguFlP3LJZjU9G66LSuZ/gTJ0xHpVVSrEsfCzP7Fn38yQC0/ywHDDlpOseOaCgBudWa+bv2AGSxvt02VYFn8sQJ5QvuqJNfESUVeYBOdWVK3KMF7BILsB9bPdOl+CiPL0aIhA69vlHn5jgHKqH91QwWcUhuBY/w8XRlr9GU8u0QS0scXrnGf1gwk2XEvrbt/W/zjfZhZqywvbr3isddNEehmuUb3lFojf7fAwdLfDD8TZlEbHiQVMQMIvJRnH/aJeg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Uo15/LPDPedwbP1VjFvhnI8DDB0Y2WOZmQHMS8uj1rI=;
- b=VBrdONF1n2rnvbzYajzexpNDmwe5SYPUEEOGI5nipRs4WaIkzhq3fxmsuj3MO1XUv5TnKY4biChiYsgmYZGhWbUEcL1yMJtuqFpPyweXuZzCgsmw2YpBSc6KtGaGUVKf3EvWSb87M9NHZSr6NlHASXsKDf+f31L4Q5ePPGTbT5Nwtg5OFHi4psgrs6fWnDZRDllJmoymRZAs0Y5fFV0oMu+BiIFpAISDSttRL9QclHo/B0ll8IoT4J+OUN38czc1R/9yf4IcwfonjcJiAh0cUdvHZfhibOc7KM0i8VjCvnQpifSOiWC1WyOxQfAgEtTldFmFYf6Ba6t159LtrqiHDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Uo15/LPDPedwbP1VjFvhnI8DDB0Y2WOZmQHMS8uj1rI=;
- b=OrzIh7AxlUnmfDbyLKe7FWZMa4lPc1Y9O1aV+XjgwlBfMXpgpEfgdLWcIJK7pgsCii1G66gMmQVzK+mW4t0XPVLZpQEBcYkkuNRfKi0eJZP9HnidJvDedg5yNJEjTEm539d33qf9yWKCAwa2Be4XjZy/UM/z+BHUDbHOd9T25T8=
-Received: from SJ0PR13CA0138.namprd13.prod.outlook.com (2603:10b6:a03:2c6::23)
- by MN0PR12MB5956.namprd12.prod.outlook.com (2603:10b6:208:37f::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Fri, 22 Aug
- 2025 13:44:34 +0000
-Received: from CO1PEPF000042A9.namprd03.prod.outlook.com
- (2603:10b6:a03:2c6:cafe::63) by SJ0PR13CA0138.outlook.office365.com
- (2603:10b6:a03:2c6::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.9 via Frontend Transport; Fri,
- 22 Aug 2025 13:44:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000042A9.mail.protection.outlook.com (10.167.243.38) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9052.8 via Frontend Transport; Fri, 22 Aug 2025 13:44:33 +0000
-Received: from FRAPPELLOUX01.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 22 Aug
- 2025 08:44:30 -0500
-From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-To: Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich
-	<dakr@kernel.org>, Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-CC: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 2/2] drm/sched: limit sched score update to jobs change
-Date: Fri, 22 Aug 2025 15:43:47 +0200
-Message-ID: <20250822134348.6819-2-pierre-eric.pelloux-prayer@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250822134348.6819-1-pierre-eric.pelloux-prayer@amd.com>
-References: <20250822134348.6819-1-pierre-eric.pelloux-prayer@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE6B2F5491;
+	Fri, 22 Aug 2025 13:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755870344; cv=none; b=bXxsGn4RF40rrNkh3I6solfW8iEzX/kqaT8hxaAHu2ps6c3vm1Pp/dJ8hK0PT4CVJoLa5sZGHQlHYO9zG2MvYVY5DPY/7qsUoUgxfHtY1y860850vHuybh3Ecz0kSE4iyPZpIJYlGHlQA0HUNrEQr03XwYaIz9ZTPZlgisoy5wc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755870344; c=relaxed/simple;
+	bh=HlBthYh+hP49U3XrAXfxw/UemL2h0PKIINNsuGTDpKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IcKvb5jmigGHYboXKmZt1D5AKuMcr7i5YcD6t3kNUM6iZ/C3NhWj/Na1UhGqNFRY81IDulct5OhVCS3896dxl6JdSiZJJKA/bvHQ+lJrD2JRmaXK9znrfdfFIdEIoF7iiJ1m1YBE6qHdTQa8L0dbd41tgK9BXJvr283rM2fdI3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SgWcGcEk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1A22C4CEED;
+	Fri, 22 Aug 2025 13:45:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755870344;
+	bh=HlBthYh+hP49U3XrAXfxw/UemL2h0PKIINNsuGTDpKw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SgWcGcEkXCOvaRMJfRLqncE7uDSGPhQ6fVD2s7s5fX/m/ghAn8G/HR47g2FEPUcym
+	 pcJqo2BBrMZo8Ba+q6qu/XbQJ+rxMX2+Iswewo48TqxPrvcu+NVuVSDMi3JqFhwHtc
+	 cPVDtzjXrVOVvdeJ/isAWrRmD2GDoCJOp4OExu94=
+Date: Fri, 22 Aug 2025 15:45:12 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Maciej W. Rozycki" <macro@orcam.me.uk>,
+	Douglas Anderson <dianders@chromium.org>,
+	Zong Jiang <quic_zongjian@quicinc.com>,
+	Robert Marko <robert.marko@sartura.hr>,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	Kartik Rajput <kkartik@nvidia.com>,
+	Peter Hurley <peter@hurleysoftware.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	Antonio Borneo <antonio.borneo@foss.st.com>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH] serial: stm32: allow selecting console when the driver
+ is module
+Message-ID: <2025082200-roamer-evasive-33ea@gregkh>
+References: <20250822133753.54300-1-raphael.gallais-pou@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042A9:EE_|MN0PR12MB5956:EE_
-X-MS-Office365-Filtering-Correlation-Id: 52db2537-5bf3-4d6f-2efb-08dde18206e9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WNLelK7geSt4aOMJkwNsLZ5FLc4LiNIBLXuVzsEZgSFTO+8t28i1jUJ6jDox?=
- =?us-ascii?Q?+BFJF+CN9Vqzf6A6nDJisNKYH6N09a0vKxifkQzt3nshSEKJb9k1kod2st0n?=
- =?us-ascii?Q?msHaSM7eL1KhPEc6AcNEayYegrAXy8g+7GHDe2mF+9quqOhjyK4/vqKUqJuy?=
- =?us-ascii?Q?AxxWUbgbIoC1sK34mVTeQhWp8GX3lDDDXsZ8otHE+6mLyjHbRZP4focPReyZ?=
- =?us-ascii?Q?OMNqrwnBMcUGZTN3VDVXf3TSsoehhTrm4m0kQRs8oP/k+Z4zVqiEvjLDttBR?=
- =?us-ascii?Q?QChUyZExsIiZNaNvP96sqpdz8qqI8fG+StUCwP35ytxXw4AGF4xccArCdgtP?=
- =?us-ascii?Q?B94OpbZbCZvEvWdVW9PJ1FNJz7MDAyacfyi8UYomgJG2wFUltgPifFKNZnK4?=
- =?us-ascii?Q?X5YX91azZvfdpyvNlOWbneyF0t6NRywRyrly9GGn3cs3RYLueY2iYxmBWeEf?=
- =?us-ascii?Q?YgrqmbcA0/c2ZqbDE4jdsFOJAPIlpSdwEds4/6sa1JcAV4moEt6lEKfYWJHY?=
- =?us-ascii?Q?8jdTUSQAYyHYMoOunHtFSvEFsZ4KlYitPdnZJiunhUbHBvc9amnPZDbSWmge?=
- =?us-ascii?Q?uf4qx9nHf2f3AfpmcVoYK7zrTuxIbfYTap/k9LZ7H7HPA4WwhccLG577bxgd?=
- =?us-ascii?Q?QkYVjzZQKB0Ud0Y6Ddn/QZVmE0Uh1PPrC+YhGKvOiTb+Q/kN4EXOxBn2rhAD?=
- =?us-ascii?Q?dKMD2MUKrPU+3p2HzvBIBLAYjalp9I6yPeYidjpJ5SIBPUGF4JEj4ifefG5o?=
- =?us-ascii?Q?nwNy2OHDcclNxTPH9QZ4/rlDi+0/4Y3ZcSHfVMWoPDFwYQLsSOvKGOFSOk+Z?=
- =?us-ascii?Q?kwvZ8krPZR2ah9JnN2R7mPseU1AJ6hHo0IKkqNaJEDXEjsNRy6OgCUloQ+Y0?=
- =?us-ascii?Q?/I+GTGu7fWTV2gOwZ4V5fMPIR8aCPg3yGPFZYSd/jEbryunH7nPPV/pkQT59?=
- =?us-ascii?Q?7Vqbd/vfVFrknIm1F/S0KDJJyUy/ZUK8sVks10NIFIRsyyIuOVA21HXakezG?=
- =?us-ascii?Q?07ddnwwa9a02lcrjyKP+9PFNlW7fJCJ4eAQKrb80wz0MwhBoA8WdBdpmLRvq?=
- =?us-ascii?Q?SyvYLMVH6DjE0JuADHzWIqjl/byBTGD6yMVWJg/bRgWiRQ3zGSxqCV6huY1e?=
- =?us-ascii?Q?D+LIOweKukkpNiYELA6rTj9rePMnF7apyI6ABV3oTHJ1VlotNuAziw248LE0?=
- =?us-ascii?Q?9tKhVZixN2KKtC2otEcO1AIHRqOlLN1XkGU/tAlx+oQ+MAjbEgLQ1iVm0q2Y?=
- =?us-ascii?Q?pfPxmi/BqPsiPjsJ2FsKdtRjHMcKk3mVJkqfd8bNwS/VVt1O+jAre01Xvxny?=
- =?us-ascii?Q?ntN2o5BTrz2FW0kFvd8xDrHYQ2AfcH3xI6zjGk1syAp/IQK1mrI7WKwYm+6J?=
- =?us-ascii?Q?atIcjChKs2KXAT1Yys6dJ3IbCVYvFu67dqAaCdV1+fPtTTjToXVdXFn7vXhn?=
- =?us-ascii?Q?UooWz8gF5l/uskt1sGWv8JFcSgWFkr+scRtojXcLwOVPEam/m0F7Eh07pnx1?=
- =?us-ascii?Q?c/FgL0UhkbRyIk1QcgueGq7bELULucnWkU17?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 13:44:33.3047
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 52db2537-5bf3-4d6f-2efb-08dde18206e9
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000042A9.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5956
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822133753.54300-1-raphael.gallais-pou@foss.st.com>
 
-Currently, the scheduler score is incremented when a job is pushed to an
-entity and when an entity is attached to the scheduler.
+On Fri, Aug 22, 2025 at 03:37:53PM +0200, Raphael Gallais-Pou wrote:
+> Console can be enabled on the UART compile as module.
+> Change dependency to allow console mode when the driver is built as module.
+> 
+> Fixes: 48a6092fb41fa ("serial: stm32-usart: Add STM32 USART Driver")
+> Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+> ---
+>  drivers/tty/serial/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+> index e661f5951f558..1e27a822c1cba 100644
+> --- a/drivers/tty/serial/Kconfig
+> +++ b/drivers/tty/serial/Kconfig
+> @@ -1420,7 +1420,7 @@ config SERIAL_STM32
+>  
+>  config SERIAL_STM32_CONSOLE
+>  	bool "Support for console on STM32"
+> -	depends on SERIAL_STM32=y
+> +	depends on SERIAL_STM32
+>  	select SERIAL_CORE_CONSOLE
+>  	select SERIAL_EARLYCON
+>  
+> -- 
+> 2.25.1
+> 
 
-This leads to some bad scheduling decision where the score value is
-largely made of idle entities.
+Hi,
 
-For instance, a scenario with 2 schedulers and where 10 entities submit
-a single job, then do nothing, each scheduler will probably end up with
-a score of 5.
-Now, 5 userspace apps exit, so their entities will be dropped. In
-the worst case, these apps' entities where all attached to the same
-scheduler and we end up with score=5 (the 5 remaining entities) and
-score=0, despite the 2 schedulers being idle.
-When new entities show up, they will all select the second scheduler
-based on its low score value, instead of alternating between the 2.
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-Some amdgpu rings depended on this feature, but the previous commit
-implemented the same thing in amdgpu directly so it can be safely
-removed from drm/sched.
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
----
- drivers/gpu/drm/scheduler/sched_main.c | 2 --
- 1 file changed, 2 deletions(-)
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
 
-diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-index 5a550fd76bf0..e6d232a8ec58 100644
---- a/drivers/gpu/drm/scheduler/sched_main.c
-+++ b/drivers/gpu/drm/scheduler/sched_main.c
-@@ -206,7 +206,6 @@ void drm_sched_rq_add_entity(struct drm_sched_rq *rq,
- 	if (!list_empty(&entity->list))
- 		return;
- 
--	atomic_inc(rq->sched->score);
- 	list_add_tail(&entity->list, &rq->entities);
- }
- 
-@@ -228,7 +227,6 @@ void drm_sched_rq_remove_entity(struct drm_sched_rq *rq,
- 
- 	spin_lock(&rq->lock);
- 
--	atomic_dec(rq->sched->score);
- 	list_del_init(&entity->list);
- 
- 	if (rq->current_entity == entity)
--- 
-2.43.0
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
+thanks,
+
+greg k-h's patch email bot
 
