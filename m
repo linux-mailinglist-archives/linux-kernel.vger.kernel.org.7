@@ -1,187 +1,155 @@
-Return-Path: <linux-kernel+bounces-782441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D44B32077
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:27:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97BF6B3206C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A9DF3B843E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:20:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF4471785C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416D027934E;
-	Fri, 22 Aug 2025 16:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C4B277CBD;
+	Fri, 22 Aug 2025 16:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMi+85sx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="v8wr2uZ3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vtO1+coR";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="R0gYAF1/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4D5vr7xD"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D129239567;
-	Fri, 22 Aug 2025 16:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDF2258EF1
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755879644; cv=none; b=bUZhR9eDSsKbUkHXLkTwCTO6dp3CHf5/V+svqgVy4+xhcdLP/HJN/AvkqaFesdIS+zLZrXQOCPYfi4NYtNHpJLZIRxy9/+UXuX/NrIFNW0s67IymMJxHaaMWnwhu8M+6Pea58TFtOGp9NW4BKlV95U5tnx225CnMmDsiGtbGH4c=
+	t=1755879653; cv=none; b=mTBM4hN1BhAqHlKOxIrZfUfhhcF6p1D850gbtUtfi3iXdxEKYtmEq8gnqhwgDGK2HTFR6zI7K6Jj0WPVuq1354j+zWULo9WXS2C7Qfac7swNYY0Fw0D4pP5KgD6ZGLKDDpi7VTU7JOgM7j9xGzgOyEMW7yvtv2HlYzs0H+Gyo04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755879644; c=relaxed/simple;
-	bh=O6G/Aax9AfaMy7cKL+RsehhRcoBaJheJ6T/fA+30ExQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CpaXoqdI0MjjwOXu5EnG9dwQXnQw1GZyNAJQ+SFOOiM6tsVvOIoLLNpCXJnBqQfyCP1ps5t8Gp9yEBnLeY0qB3om3ta234OSREk1YDej2+bkf0d1sGQX9HuIMDdU4W4gvlF3erXswCOJWrLtD2ra8qcs/ZmxWGb9ofiOODv8x5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IMi+85sx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDDF6C4CEED;
-	Fri, 22 Aug 2025 16:20:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755879644;
-	bh=O6G/Aax9AfaMy7cKL+RsehhRcoBaJheJ6T/fA+30ExQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IMi+85sxc1/ebXZRbIBpo4iBm8lXcoJfP4+kwGGXyCpjHfoNtlDFDvNC/LW32XO4r
-	 CG1JJYVPeLew2z7dIrQFOGnnO7d/RYV4Q7bE5hDMMRLewFNS3ZAYr7Ud1/yAAXkRx/
-	 43vth9t6BDB7bdpNfbUPyU/OLIEPq+9oLdm4sx8UVGEtYY4PRE2ZyVDwg126Zglmc0
-	 nUR3ZTKPMEIxqlVMtaaCiNxeHM5ZE680VhZGM8jB5oravxZ/44se1K4ikBk+fdcWKU
-	 jKRTNZGfB+o7+Mf9OFihrQBdnqt1bXTW7k50TNsx3YGRbBSRhCQR7IICOhPh3wTMFZ
-	 4RShDckUvXiMQ==
-Date: Fri, 22 Aug 2025 11:20:43 -0500
-From: Rob Herring <robh@kernel.org>
-To: Biju <biju.das.au@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 06/11] dt-bindings: usb: Document Renesas RZ/G3E USB3HOST
-Message-ID: <20250822162043.GA3920949-robh@kernel.org>
-References: <20250820171812.402519-1-biju.das.jz@bp.renesas.com>
- <20250820171812.402519-7-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1755879653; c=relaxed/simple;
+	bh=7lxvSp3xknP0ncWDrIdidiF2KXik5mdLOiRveqS4JAE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BoYJcwv+fqtyDKs6Ht8Nmjn47yqfTp9p3173dnqwntxqS84Jv/RN7PaASkeL+cNloAwDrA21IEVVU/TmeSAWFQJovFzrnij3kuBuxe9IGx4xuH1Q6/k4XTSk7yT7MIRQoLrwASA39CqxIRSa1eFRRrStUF9qBHftXOUmoHnbfhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=v8wr2uZ3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vtO1+coR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=R0gYAF1/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4D5vr7xD; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 385BA21CAA;
+	Fri, 22 Aug 2025 16:20:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755879650; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rzZrkrYEVebL5JcnI8zpZya0TGeLqT8CkJ3Q10kaPSE=;
+	b=v8wr2uZ35uij08cattSd/1weCQzS0+MwisyyYnKZvm8YFb75DnonS/t4vDcBz2ARsQfuom
+	iT5zhb89mUuUyO4orMi6rNYoKtr1t3sUxDbVl43d/6wGQALp9nBiXp3/UJv1pZQ+sN+nkV
+	jfslCDoYLnN8Umz6w68HAIyJLME614I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755879650;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rzZrkrYEVebL5JcnI8zpZya0TGeLqT8CkJ3Q10kaPSE=;
+	b=vtO1+coRg0G1oKmwJxDpO6Qb9IlWDQGwSbs2oxTjy716za0eLWyw5HIHEQHmI2+mD78LWK
+	bOyxOYgn2u9/qZBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="R0gYAF1/";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=4D5vr7xD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755879649; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rzZrkrYEVebL5JcnI8zpZya0TGeLqT8CkJ3Q10kaPSE=;
+	b=R0gYAF1/Z2duBxOH2w3SjrPP4CXTMhzdNYNgl2E7d1t+eS2Pq9L9FPwN04pkwESlPfYbIF
+	gcYLJUqNvk98HiV5qWXLo5sWVw9k+sazymMaYJ6ZFA+boZkLX+EyxINa9EXBqLV+Ub3Pd5
+	LXM/LjITpF3Pvm8c1YixqWBHcOAxn9M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755879649;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rzZrkrYEVebL5JcnI8zpZya0TGeLqT8CkJ3Q10kaPSE=;
+	b=4D5vr7xDrO2b82waOhxpTdfCXwj56x8QpJWpLORDoN5B6KzQ1hkdGBWpUIJLQejVint0fG
+	qf1P/cxQkx2MZPCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EFC4613931;
+	Fri, 22 Aug 2025 16:20:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TA8KOeCYqGjHKgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 22 Aug 2025 16:20:48 +0000
+Date: Fri, 22 Aug 2025 18:20:48 +0200
+Message-ID: <878qjb49b3.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Brady Norander <bradynorander@gmail.com>
+Cc: alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	amadeuszx.slawinski@linux.intel.com,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	pierre-louis.bossart@linux.intel.com
+Subject: Re: [PATCH] ALSA: hda: intel-dsp-config: Select SOF driver on MTL Chromebooks
+In-Reply-To: <20250821014730.8843-1-bradynorander@gmail.com>
+References: <20250821014730.8843-1-bradynorander@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820171812.402519-7-biju.das.jz@bp.renesas.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 385BA21CAA
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.98%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid]
+X-Spam-Score: -3.51
 
-On Wed, Aug 20, 2025 at 06:17:53PM +0100, Biju wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
+On Thu, 21 Aug 2025 03:47:30 +0200,
+Brady Norander wrote:
 > 
-> Document the Renesas RZ/G3E USB3.2 Gen2 Host Controller (a.k.a USB3HOST).
-> The USB3HOST is compliant with the Universal Serial Bus 3.2 Specification
-> Revision 1.0.
->  - Supports 1 downstream USB receptacles
->      - Number of SSP Gen2 or SS ports: 1
->      - Number of HS or FS or LS ports: 1
->  - Supports Super Speed Plus Gen2x1 (10 Gbps), Super Speed (5 Gbps),
->    High Speed (480 Mbps), Full Speed (12Mbps), and Low Speed (1.5 Mbps).
->  - Supports all transfer-types: Control, Bulk, Interrupt, Isochronous, and
->    these split-transactions.
->  - Supports Power Control and Over Current Detection.
+> The SOF driver is required for functional audio on MTL Chromebooks
 > 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  .../bindings/usb/renesas,rzg3e-xhci.yaml      | 84 +++++++++++++++++++
->  1 file changed, 84 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/renesas,rzg3e-xhci.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/renesas,rzg3e-xhci.yaml b/Documentation/devicetree/bindings/usb/renesas,rzg3e-xhci.yaml
-> new file mode 100644
-> index 000000000000..2f73ea2e1e78
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/renesas,rzg3e-xhci.yaml
-> @@ -0,0 +1,84 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/usb/renesas,rzg3e-xhci.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas RZ/G3E USB 3.2 Gen2 Host controller
-> +
-> +maintainers:
-> +  - Biju Das <biju.das.jz@bp.renesas.com>
-> +
+> Signed-off-by: Brady Norander <bradynorander@gmail.com>
 
-Common USB and XHCI properties don't apply?
+Thanks, applied now.
 
-> +properties:
-> +  compatible:
-> +    const: renesas,r9a09g047-xhci
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    items:
-> +      - description: Logical OR of all interrupt signals.
-> +      - description: System management interrupt
-> +      - description: Host system error interrupt
-> +      - description: Power management event interrupt
-> +      - description: xHC interrupt
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: all
-> +      - const: smi
-> +      - const: hse
-> +      - const: pme
-> +      - const: xhc
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  phys:
-> +    maxItems: 2
-> +
-> +  phy-names:
-> +    items:
-> +      - const: usb2-phy
-> +      - const: usb3-phy
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - interrupt-names
-> +  - clocks
-> +  - power-domains
-> +  - resets
-> +  - phys
-> +  - phy-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/renesas,r9a09g047-cpg.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    usb@15850000 {
-> +      compatible = "renesas,r9a09g047-xhci";
-> +      reg = <0x15850000 0x10000>;
-> +      interrupts = <GIC_SPI 759 IRQ_TYPE_LEVEL_HIGH>,
-> +                   <GIC_SPI 758 IRQ_TYPE_LEVEL_HIGH>,
-> +                   <GIC_SPI 757 IRQ_TYPE_LEVEL_HIGH>,
-> +                   <GIC_SPI 756 IRQ_TYPE_LEVEL_HIGH>,
-> +                   <GIC_SPI 755 IRQ_TYPE_LEVEL_HIGH>;
-> +      interrupt-names = "all", "smi", "hse", "pme", "xhc";
-> +      clocks = <&cpg CPG_MOD 0xaf>;
-> +      power-domains = <&cpg>;
-> +      resets = <&cpg 0xaa>;
-> +      phys = <&usb3_phy>, <&usb3_phy>;
-> +      phy-names = "usb2-phy", "usb3-phy";
-> +    };
-> -- 
-> 2.43.0
-> 
+
+Takashi
 
