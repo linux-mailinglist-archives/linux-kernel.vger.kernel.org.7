@@ -1,136 +1,318 @@
-Return-Path: <linux-kernel+bounces-782470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D9B4B320C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:51:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FCFFB320BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93A74AE3C7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:48:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AAB11D27153
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7FD307ACD;
-	Fri, 22 Aug 2025 16:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F94F30DEB7;
+	Fri, 22 Aug 2025 16:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HrvrSPn7"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TgyipajJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6812E285C8C;
-	Fri, 22 Aug 2025 16:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6182E284B
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755881301; cv=none; b=s9RXF6UDmRby3YzDM4x2NgAFDYkL+fcZIuf3FM65E+Q8jsLFQJ5o27CsfxwwhVJV6OZBEp5x3RFO7Aviw4VUib4nD7edA/uH0hBLjRVAWNdLss/yHBU9wDMTGFIN/1TVp+HFwqN9NXQopRsl2yyAE0oQJf2BMmsmPq9ZlYrHXGA=
+	t=1755881326; cv=none; b=rLgLVc2BkEx9JLtYySBxGlWLI5LIY+ULNBPmK9pEpgPuzXjl1z0FMnOectMAqgHZQxB82ct+A8hvQ7XULmalJwrgIg2ihFvz+IDbFtu4nKmL24UZ8WBJlBXOdUc6qW80x4rrNBjTiHZgWecYBujebo437Q1jdmi5rGFXMsaUx6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755881301; c=relaxed/simple;
-	bh=m9/zEgxBbLFqMOjy+Vf77O/OAO1RTz6rJmG6l1hSjBk=;
+	s=arc-20240116; t=1755881326; c=relaxed/simple;
+	bh=TYQIQp1NujBukq4LQ/crsbFhjOljGgADOcjgjYHCdAM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TMMyrGQMO3adIH//a062vxPWnkauPquTWt7XwMI8fYrnJ2QJxjvFbSpbAKzNKdFH6Bl//m7Xyl9gWRqruHROoTwUGfbud8jrAOpAkChZlNivfem3mU2YGWXXZ6bZOrzBo2XQJrRTeE9JRM6PzDHVHAQOk5lSIoeLCPmKMb7XQsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HrvrSPn7; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb79f659aso383732966b.2;
-        Fri, 22 Aug 2025 09:48:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755881296; x=1756486096; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3ryekvywWpfMy8Ss+YQoqzDrE/6dWRIDmmej9hkWous=;
-        b=HrvrSPn7N3RpZReWrPUBHMvPAYs8hzxHNUVkGPANTTtkejovq5NmiRSFGy9KYW8Ik2
-         eG8rbgFRiViyD48KBfVjOGkrMLYI1oZh7cAK6S7GKDrMSlKXojGGVPSQM+xKROQkVb/1
-         xBr5UMUTqbz4aJQWmmK4gZSdl8Nl9CcKfnV4LmUVUr3scvjGNdI8pbdLFqKEWqxR1pGe
-         FF8hw4SQ8tg6l7qvl/eDkBmJbRQEei+fWEmzP3QDeMK7BkeC3lAOyGjiaBubOVJkHOyS
-         hQ3SBTVuQxWUIdD7jGj+4ARoDjRQPB/yqUzLASVirxHkVURHVNVgPND2u+Jhp/4I6lkP
-         UX3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755881296; x=1756486096;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3ryekvywWpfMy8Ss+YQoqzDrE/6dWRIDmmej9hkWous=;
-        b=NB0QH73Hihv9Z1Sv5i+aYkI/6yg+tEFqo3DP4cn3GRbmXSQPNizcCzUPr6Cz4X1ntF
-         TmaCDriZSyjT+BPyCWZjnHJDGXN5ZtN9YYWxjVIH2hOm80L2CapeEwioVY5ujCEmVjo/
-         HVHHLZsmRqKecjwkZWNhGoccdhSSztzb0bOKh2p3/tEKBnbuhEjvVyD2VKzSyBE9xb+Z
-         tLPwQq2goa0dBk1fkWJeZoKRRjiH6jM1p4MQ+TR65Yux+VFQqtqZQAyxn0SAZahMhwrk
-         oVGXxVx08xNzkwkuHR4R1BqUupCp795rAicN9al18pcGgeynEbvRo4qpTkGrawRU0N+6
-         dWyA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlH4f+uXTFoF1oqxQPLMvcugbbean/nHk5qfRkuPDiuMec30AGeyaraZEEUHx8nKnBF280hI087ATs@vger.kernel.org, AJvYcCVt3obyycwfwhX1HxdIqmfNUoBb/qtPywCAbGTugaP55/bgYNQvO5gWZFE8AQAmY5j9c7bYFjj43kpz@vger.kernel.org, AJvYcCWDaOCK9EPzffCVDd16m4zHyDerf89Du1Tq9p/9x0JgH+ICv6hz1kS0g142eEzWdkGctcOvBYmMWZNKRAJ1@vger.kernel.org
-X-Gm-Message-State: AOJu0YzREoOgy271jHHCAVomUuyL4pkSSTKzYb5UvIil9b9ikmfut2mn
-	UhlegVG4kZIEipRsjybIpATlgk/sV0/isvqkhWUxBb22WOyX/nMeKtU8WTveANBaQWtJUK1BNTX
-	5r64W+D+A5mXr7z+syhFAKnoBSG3aXwdr0+R9Uww=
-X-Gm-Gg: ASbGncsKv7vC6VjB+VgOnul9lQaKPM3+s54ZOQ/ybxapOo50y+d7xNDkhczov+neDV9
-	XVX64IlR6jzIpQk30FZjZcQf6t+T0PMHgQ9JscsVo6jtDgpgFjSvMpuYIamrneMx/lcSiM/zDT0
-	G+ffPIDkJFozQyLJamGGXp6okuxS34MnU+EnL+VHyDFQz9kjV8ij1bAtberFHvjxWLufrXETJkq
-	kq9WmC/zA==
-X-Google-Smtp-Source: AGHT+IFm68yZ6GRjGnbguBBagvthdC7rt33OMmtjlajRu/zNCcj+GlG3u+QtHSQkuyPMsXuH2Y0+HkMsH6lmQ6nMsUI=
-X-Received: by 2002:a17:907:7202:b0:af9:bfef:156b with SMTP id
- a640c23a62f3a-afe296a7876mr259675366b.59.1755881295464; Fri, 22 Aug 2025
- 09:48:15 -0700 (PDT)
+	 To:Cc:Content-Type; b=YTBfPjxyqM/aKgt4zWxTbDBb9o4LcQdNNPWFh64ExAGgXKITsdmNtJyjnxz0K16Z0+EVyxZeLXuCcp1tO1S4u4K60ETI2IwfDdSPsGrQv3tGqT8a+h6KeyMhDyT3Nc1wT3ao3CnwgUOqbFFZu2u8j6PGFkmWeI2xwT3LscQ92WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TgyipajJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6B03C4CEED
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:48:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755881325;
+	bh=TYQIQp1NujBukq4LQ/crsbFhjOljGgADOcjgjYHCdAM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TgyipajJ2g8nbnedK0RV54hnypJ3DaUalN56+ZaiY0hXPaOPINmqflvVqqA6Ade8A
+	 42/Pzaf9zZoLZOtkhVdYjiopjSXHiHsLvT1kKoheRpc8UbDEmqBzeT6voLYzeTxprf
+	 FPLIL2j+W9LfErkKxV44We00MXb3LWMwwozQZ6B8VrmPki6m0eYV/nt4sxw4Z46SyD
+	 X33XlOikFYMJg9xt6Vh4wVV5bjM52KrM/H4yrwLbBhm7DsX3J+TFros4HZtLw/SR4a
+	 QPhCKjY8odgbFwOUI6ttH9vZkSFA1CcDhUc/f8Hx/dOM2VwAH4aZhmvIuQ4LCyQS6F
+	 i/5IvaIYhEPGA==
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-459fbc92e69so1635e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:48:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUIuXvtCne/OajjbJVG9I4rKwrfgBp0tKSrIBlvOCBBkmDFYW6fmIO8EAFoAnHeup26e/Dr+Sxj4RuY/YQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg+3nZHa9H5EWlP304At61HoIcKZnRlQoKumqPRtd9hnnLwsG4
+	beDClOKh/UQbdwEv53R4WYpBWDw32u1C4HJ+uoPksRH+2NNJyPEiCzn8h0bVmejJT8uUGPc8RDa
+	oS2jbW/r7EVOzghwF2R83/4ocy3QcWw4paFS7K78I
+X-Google-Smtp-Source: AGHT+IEQGkNZ+YIeD4Ab6wByDF43LtG+ePKPKlcWbnTXJJTA28r5qb3dOjGqLRBrrTV3SgP9gvvGQquS1jK3YV4hBNQ=
+X-Received: by 2002:a05:600c:4aa9:b0:456:4607:b193 with SMTP id
+ 5b1f17b1804b1-45b52128a6emr1291465e9.7.1755881324322; Fri, 22 Aug 2025
+ 09:48:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822-upstream-changes-v8-0-40bb1739e3e2@watter.com>
- <20250822-upstream-changes-v8-4-40bb1739e3e2@watter.com> <CAHp75VdMCY3=bL2t7zWw0D1WqtiLXrWi+ptjpaxK16b8J1KVSg@mail.gmail.com>
- <7C976B5E-781D-472B-B2C8-3AD22550E036@watter.com>
-In-Reply-To: <7C976B5E-781D-472B-B2C8-3AD22550E036@watter.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 22 Aug 2025 19:47:39 +0300
-X-Gm-Features: Ac12FXyQ6joBP2nusnELrLQPneRJfO01oBOdppEm3OUW9-7VBBVAUa3Juz1iLHs
-Message-ID: <CAHp75VdbfCenb+N4rY59hG1E9DL9s4ibCdQX=Ar8hT0_wi5h+Q@mail.gmail.com>
-Subject: Re: [PATCH v8 4/5] iio: mcp9600: Recognize chip id for mcp9601
-To: Ben Collins <bcollins@watter.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andrew Hepp <andrew.hepp@ahepp.dev>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <aH+apAbBCmkMGPlO@yjaykim-PowerEdge-T330> <aH/baxIgrBI3Z1Hl@yjaykim-PowerEdge-T330>
+ <uyxkdmnmvjipxuf7gagu2okw7afvzlclomfmc6wb6tygc3mhv6@736m7xs6gn5q>
+ <CAF8kJuMo3yNKOZL9n5UkHx_O5cTZts287HOnQOu=KqQcnbrMdg@mail.gmail.com>
+ <aKC+EU3I/qm6TcjG@yjaykim-PowerEdge-T330> <CAF8kJuNuNuxxTbtkCb3Opsjfy-or7E+0AwPDi7L-EgqoraQ3Qg@mail.gmail.com>
+ <aKROKZ9+z2oGUJ7K@yjaykim-PowerEdge-T330> <CAF8kJuPUouN4c6V-CaG7_WQUAvRxBg02WRxsMtL56_YTdTh1Jg@mail.gmail.com>
+ <aKXeLCr9DgQ2YfCq@yjaykim-PowerEdge-T330> <CAF8kJuM4f2W6w29VcHY5mgXVMYmTF4yORKaFky6bCjS1xRek9Q@mail.gmail.com>
+ <aKgD7nZy7U+rHt9X@yjaykim-PowerEdge-T330>
+In-Reply-To: <aKgD7nZy7U+rHt9X@yjaykim-PowerEdge-T330>
+From: Chris Li <chrisl@kernel.org>
+Date: Fri, 22 Aug 2025 09:48:33 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuMb5i6GuD_-XWtHPYnu-8dQ0W51_KqUk60DccqbKjNq6w@mail.gmail.com>
+X-Gm-Features: Ac12FXwV8Pu536bYTbqPyLV4-nVlSFp8jYXrfNMlVJBoyvYT3NOOf-bufZ6u1ZI
+Message-ID: <CAF8kJuMb5i6GuD_-XWtHPYnu-8dQ0W51_KqUk60DccqbKjNq6w@mail.gmail.com>
+Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
+ cgroup-based swap priority
+To: YoungJun Park <youngjun.park@lge.com>
+Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
+	shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com, 
+	bhe@redhat.com, baohua@kernel.org, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com, 
+	iamjoonsoo.kim@lge.com, taejoon.song@lge.com, 
+	Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, Kairui Song <ryncsn@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 22, 2025 at 7:07=E2=80=AFPM Ben Collins <bcollins@watter.com> w=
-rote:
-> > On Aug 22, 2025, at 11:57=E2=80=AFAM, Andy Shevchenko <andy.shevchenko@=
-gmail.com> wrote:
-> > On Fri, Aug 22, 2025 at 4:24=E2=80=AFPM Ben Collins <bcollins@watter.co=
-m> wrote:
+On Thu, Aug 21, 2025 at 10:45=E2=80=AFPM YoungJun Park <youngjun.park@lge.c=
+om> wrote:
+>
+> I still believe that the priority based approach has more flexibility,
+> and can cover more usage scenarios. That opinion has not changed.
 
-...
+I agree with you on that. It is more flexible that way, no question about i=
+t.
 
-> >> +struct mcp9600_data {
-> >> +       struct i2c_client *client;
-> >> +};
-> >> +
+I am open to considering your usage scenarios and revisit the
+swap.tiers limitation. I just haven't seen the real usage scenario
+yet.
+
+> However, from this discussion I came to clearly understand and agree on
+> three points:
+>
+> 1. The swap.tier idea can be implemented in a much simpler way, and
+> 2. It can cover the most important use cases I initially needed, as well
+>    as common performance scenarios, without causing LRU inversion.
+Glad we are aligned on this.
+
+> 3. The really really needed usage scenario of arbitrary ordering does not=
+ exist.
+> the usage scenario I suggest is imaginary.(just has possibility)
+Wow, that is surprise for me to see that from you. I was expecting
+some very complex or special usage case demand on the arbitrary
+ordering. If it is just an imaginary usage scenario, I am very glad we
+did not pay the price of extra complexity for imaginary usage.
+
+> I have also considered the situation where I might need to revisit my
+> original idea in the future. I believe this would still be manageable
+> within the swap.tier framework. For example:
+
+Sure, having an incremental improvement is a good thing. We can always
+come back and revisit if the reasoning for the previous decision is
+still valid or not.
+
+> * If after swap.tier is merged, an arbitrate ordering use case arises
+>   (which you do not consider concrete), it could be solved by allowing
+>   cgroups to remap the tier order individually.
+
+Ack.
+
+> * If reviewers later decide to go back to the priority based direction,
+>   I think it will still be possible. By then, much of the work would
+>   already be done in patch v2, so switching back would not be
+>   impossible.
+
+I really doubt that we need to get back to the pure priority approach.
+
+> And also, since I highly respect you for long-time contributions and
+> deep thinking in the swap layer, I decided to move the idea forward
+> based on swap.tier.
+
+Thank you. I really appreciate you taking the feedback with flexibility.
+
+> For now, I would like to share the first major direction change I am
+> considering, and get feedback on how to proceed. If you think this path
+> is promising, please advise whether I should continue as patch v2, or
+> send a new RFC series or new patch series.
+>
+> -----------------------------------------------------------------------
+> 1. Interface
+> -----------------------------------------------------------------------
+>
+> In the initial thread you replied with the following examples:
+>
+> > Here are a few examples:
+> > e.g. consider the following cgroup hierarchy a/b/c/d, a as the first
+> > level cgroup.
+> > a/swap.tiers: "- +compress_ram"
+> > it means who shall not be named is set to opt out, optin in
+> > compress_ram only, no ssd, no hard.
+> > Who shall not be named, if specified, has to be the first one listed
+> > in the "swap.tiers".
 > >
-> >> -struct mcp9600_data {
-> >> -       struct i2c_client *client;
-> >> -};
-> >> -
+> > a/b/swap.tiers: "+ssd"
+> > For b cgroup, who shall not be named is not specified, the tier is
+> > appended to the parent "a/swap.tiers". The effective "a/b/swap.tiers"
+> > become "- +compress_ram +ssd"
+> > a/b can use both zswap and ssd.
 > >
-> > Seems we discussed this. And my suggestion was to defer the change to
-> > when it will be needed.
+> > Every time the who shall not be named is changed, it can drop the
+> > parent swap.tiers chain, starting from scratch.
+> >
+> > a/b/c/swap.tiers: "-"
+> >
+> > For c, it turns off all swap. The effective "a/b/c/swap.tiers" become
+> > "- +compress_ram +ssd -" which simplify as "-", because the second "-"
+> > overwrites all previous optin/optout results.
+> > In other words, if the current cgroup does not specify the who shall
+> > not be named, it will walk the parent chain until it does. The global
+> > "/" for non cgroup is on.
+> >
+> > a/b/c/d/swap.tiers: "- +hdd"
+> > For d, only hdd swap, nothing else.
+> >
+> > More example:
+> > "- +ssd +hdd -ssd" will simplify to: "- +hdd", which means hdd only.
+> > "+ -hdd": No hdd for you! Use everything else.
+> >
+> > Let me know what you think about the above "swap.tiers"(name TBD)
+> > proposal.
 >
-> And my response was that it=E2=80=99s needed in 5/5 where I add the mcp96=
-00_config()
-> function. That function will need to be before mcp9600_channels[] in the
-> IIR patch series.
->
-> So either I move mcp9600_data now, or I leave it and put mcp9600_config()
-> below it, and then in the IIR series I=E2=80=99ll have to move both up.
->
-> Didn=E2=80=99t seem to make sense to move 30 lines of code later when I c=
-an move
-> 3 lines now.
+> My opinion is that instead of mapping priority into named concepts, it
+> may be simpler to represent it as plain integers.
 
-TBH, I have no strong preference, I leave this to Jonathan and other review=
-ers.
+In my mind, the tier name is just a look up to a bit in the bit mask.
+Give it a name so it is easier to distinguish with the other number
+e.g. priority number.
 
---=20
-With Best Regards,
-Andy Shevchenko
+> (The integers are assigned in sequential order, as explained in the follo=
+wing reply.)
+> This would make the interface almost identical to the cpuset style sugges=
+ted by Koutn=C3=BD.
+>
+> For example:
+>
+>   echo 1-8,9-10 > a/swap.tier   # parent allows tier range 1=E2=80=938 an=
+d 9-10
+
+swap.tiers, it can have more than one tier.
+
+How do you express the default tier who shall not name? There are
+actually 3 states associated with default. It is not binary.
+1) default not specified: look up parent chain for default.
+2) default specified as on. Override parent default.
+3) default specified as off. Override parent default.
+
+e.g. "- +zswap +ssd" means default off, allow zswap and sdd tiers.
+
+>   echo 1-4,9    > a/b/swap.tier # child uses tier 1-4 and 9 within parent=
+'s range
+>   echo 20   > a/b/swap.tier # invalid: parent only allowed 1-8 and 9-10
+
+How are you going to store the list of ranges? Just  a bitmask integer
+or a list?
+I feel the tier name is more readable. The number to which actual
+device mapping is non trivial to track for humans.
+Adding a name to a tier object is trivial. Using the name is more convenien=
+t.
+We might be able to support both if we make up a rule that tier names
+can't be pure numbers.
+
+I want to add another usage case into consideration. The swap.tiers
+does not have to be per cgroup. It can be per VMA. We can extend the
+"madvise" syscall so the user space can advise to the kernel, I only
+want this memory  range which contains my private key swap to zswap,
+not hdd. So that if there is an unexpected power off event,  my
+private key will not end up in the hdd. In RAM or zswap is fine
+because they will be gone when power off.
+>
+> named concepts can be dealt with by some userland based software solution=
+.
+> kernel just gives simple integer mapping concept.
+> userland software can abstract it as a "named" tier to user.
+
+The kernel will need to manage the tier object anyway, which range it
+covers, having a name there is trivial. I consider it just convenient
+for system admins. Pure tier number map to another priority number is
+a bit cryptic.
+
+> Regarding the mapping of names to ranges, as you also mentioned:
+>
+> > There is a simple mapping of global swap tier names into priority
+> > range
+> > The name itself is customizable.
+> > e.g. 100+ is the "compress_ram" tier. 50-99 is the "SSD" tier,
+> > 0-55 is the "hdd" tier.
+> > The detailed mechanization and API is TBD.
+> > The end result is a simple tier name lookup will get the priority
+> > range.
+> > By default all swap tiers are available for global usage without
+> > cgroup. That matches the current global swap on behavior.
+>
+> One idea would be to provide a /proc/swaptier interface:
+
+Maybe stay away from  '/proc'. Maybe some thing like "/sys/kernel/mm/swap"
+>
+>   echo "100 40" > /proc/swaptier
+>
+> This would mean:
+> * >=3D100 : tier 1
+> * 40=E2=80=9399 : tier 2
+> * <40   : tier 3
+>
+> How do you feel about this approach?
+Sounds fine. Maybe we can have
+"ssd:100 zswap:40 hdd" for the same thing but give a name to the tier
+as well.You can still reference the tier by numbers.
+
+>
+> -----------------------------------------------------------------------
+> 2. NUMA autobind
+> -----------------------------------------------------------------------
+>
+> If NUMA autobind is in use, perhaps it is best to simply disallow
+> swaptier settings. I expect workloads depending on autobind would rely
+> on it globally, rather than per-cgroup. Therefore, when a negative
+> priority is present, tier grouping could reject the configuration.
+
+Can you elaborate on that. Just brainstorming, can we keep the
+swap.tiers and assign NUMA autobind range to tier as well? It is just
+negative ranges, we can assign negative ranges to say "NUMA" tier.
+Then if the swap.tiers contain "ssd NUMA" then it is as if the system
+only configures ssd and numa globally. Frankly I don't think the NUMA
+autobind swap matters any more in the new swap allocator. It can also
+make up rules that if swap.tiers was used, no NUMA autobinds for that
+cgroup.
+
+>
+> -----------------------------------------------------------------------
+> 3. Implementation
+> -----------------------------------------------------------------------
+>
+> My initial thought is to implement a simple bitmask check. That is, in
+> the slow swap path, check whether the cgroup has selected the given
+> tier. This is simple, but I worry it might lose the optimization of the
+> current priority list, where devices are dynamically tracked as they
+> become available or unavailable.
+>
+> So perhaps a better design is to make swap tier an object, and have
+> each cgroup traverse only the priority list of the tiers it selected. I
+> would like feedback on whether this design makes sense.
+
+I feel that that has the risk of  premature optimization. I suggest
+just going with the simplest bitmask check first then optimize as
+follow up when needed. The bitmask check should still work with the
+dynamic lists of swap devices but I doubt how much of a difference
+that NUMA autobind makes now.
+
+Chris
 
