@@ -1,99 +1,86 @@
-Return-Path: <linux-kernel+bounces-780961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC021B30BA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:11:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14455B30BAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04BB3A01347
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:07:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5E703AD269
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB40E1ACEDC;
-	Fri, 22 Aug 2025 02:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Me+Zx6gk"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF1F19066D;
+	Fri, 22 Aug 2025 02:09:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D875F1DFCB;
-	Fri, 22 Aug 2025 02:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FFD1DFCB
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 02:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755828466; cv=none; b=dT4vtDBqm8zi0PfgyaA4jIYnlkatYnHOT24k9wU3LsYjn/1JfSO4p5iK3DO/6Mm0E8y6BxdFmPoMKTMOz5b7/msa5TRZh0MWeksfuyiTw5zrO8Yj/qVswp+VL10MkEjdM62OYTgZuiCf8ZSwVdFSc3hZI1LuHvv029gwJHKPeG0=
+	t=1755828545; cv=none; b=X2UDcZKS8bOVaJU9DrElv3EOI0c3Vm29EF27plRutmcemxd7NsJ/zbDnzEpx2rDSO+vDhU5TMs53dgzgKHlAMD81NMmmInNCxM5QoSNccLogoNjAu2RLkwhSD6RMNYCqSipnD9uAp+uAAWXiiTjhyzUEejjLfcH1gDjNyobzyF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755828466; c=relaxed/simple;
-	bh=1pBUX+vDFl3U44u3TQQHSIPd3ezq6gaNCl2KWdzmA/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h0uitN14FdjYKZZCbUEKP/VBl5oqhH+mCidWXc5enCP7yDH9fl/oGcBlPWmu6O8+dY3jxBSyXhDeKMLB819Q10JkqT9z07ESzlzWAW/0ZROdYpbAKnEzMxlEtoTuABM7+63UntaxZiTa0K7x2/mFs2YklWHc8CV292A75SkqCn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Me+Zx6gk; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1755828453; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=BZG5wn6OOzkGvybk2tGzkZrM8NPuvCMbIDppxpIKqq0=;
-	b=Me+Zx6gktf+tsRUnOXAwFDlwj306sK3eWfx6OoZTMqN0zJzRraUG0VKIrGumV8tat4vzV1th/qXbnOm3ZBKg8JITAD2y5m8qzHP6fkYy447VjupCVeJJJVz19yYTnB60Zt+VBmN7NSIvs+0GuHahk1NeyeacKEv3Qwb1OnLfGWw=
-Received: from 30.221.128.112(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0WmHvIJ3_1755828452 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 22 Aug 2025 10:07:33 +0800
-Message-ID: <b4c54718-648b-44e6-baed-2a08f287c24a@linux.alibaba.com>
-Date: Fri, 22 Aug 2025 10:07:32 +0800
+	s=arc-20240116; t=1755828545; c=relaxed/simple;
+	bh=S61IUl+kXP8xqcmJhF6nBdGwu4eLj1fNU3YG4lL+T2I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qWVpJbIeYNFbkBro0wus9FgkR4sNfqYM1aMfk1vVrMBMlkx1RLddUOPHwbGtW/LAUMzRaGR/4sCjBgnzIZ3Pt+mEhX7sD/O40R+ux56w0ev9SzvcdfAEz6sjgZ3LDfYE3xy7W2g3OkOVgNkUErjwVIoNzUYTVMLUGBP1ry+UWm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3e56ff1127cso18972835ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 19:09:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755828543; x=1756433343;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WQ6MQEcL5VFAywtLpopeUbAzA9xJqdO7DFRT/zazyLQ=;
+        b=L5PldQvgCWLplvuTmiF9yHPfV6AndCPNBm8+Vt/IxK6ebBRyKSbUXqDqqmR1cpGs19
+         Aq5UmMTapMyG3I8ofllw0mzv/GWZMzPk4a6WLwxOyUk7mWKJzHk1cSFLIWfgzUXM2IKs
+         t5keOdJ5wd9vdFttGgTioWHboNUzhPiB6uudyVPgqWdoRTPlQQ7fhsZvMxEeP0umWdVn
+         xJ+1lt6pkYdmlHy22Y3F86iOEYIBV9ScM7iwjNsRKbkR5DYyyq+VYZ2izdmGy5SRvMTt
+         i2quITfF4aciIyg+MJwFVrHefBbSA478BbMz8K87zV3exx3vMZYSupxvjR9tAANiwLmK
+         xKSA==
+X-Gm-Message-State: AOJu0YwH/zF0I+9m0SOil9IArVJDo38tg8LyNq8Ta2S92K+xk4b+xHtK
+	qk+4PLLF5/W/Zk4TNs3KTC0mNEQvzNCl/aedI56ZDcYtFZJTKhy4HG9he4WCzk5GCm+9LjtCAik
+	x2jgtx09UNUmt59l6p9caIQSXtC9xmQvScKqjg8IZvwov/dLRxEWMebkQ4ak=
+X-Google-Smtp-Source: AGHT+IGtnyDs6rWS4LZA57CT9/hs3GMWzArNZK8NRSlfO/nIetx/uKbF4O8aSuZKZsz7AZ72PJfbeSyLDswoit/mwQfkzqTVxmoo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4] ptp: add Alibaba CIPU PTP clock driver
-To: David Woodhouse <dwmw2@infradead.org>,
- Richard Cochran <richardcochran@gmail.com>, Jakub Kicinski <kuba@kernel.org>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, xuanzhuo@linux.alibaba.com, dust.li@linux.alibaba.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>
-References: <20250812115321.9179-1-guwen@linux.alibaba.com>
- <20250815113814.5e135318@kernel.org> <aKd8AtiXq0o09pba@hoboy.vegasvil.org>
- <91008c3cd2502b3726992b0f490aac54a1efa186.camel@infradead.org>
-From: Wen Gu <guwen@linux.alibaba.com>
-In-Reply-To: <91008c3cd2502b3726992b0f490aac54a1efa186.camel@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:3788:b0:3e5:81ef:b099 with SMTP id
+ e9e14a558f8ab-3e91f74c7c1mr27778985ab.1.1755828542806; Thu, 21 Aug 2025
+ 19:09:02 -0700 (PDT)
+Date: Thu, 21 Aug 2025 19:09:02 -0700
+In-Reply-To: <20250822014128.751169-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a7d13e.050a0220.cb3d1.0006.GAE@google.com>
+Subject: Re: [syzbot] [media?] general protection fault in su3000_i2c_transfer
+From: syzbot <syzbot+d99f3a288cc7d8ef60fb@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On 2025/8/22 04:12, David Woodhouse wrote:
-> On Thu, 2025-08-21 at 13:05 -0700, Richard Cochran wrote:
->> On Fri, Aug 15, 2025 at 11:38:14AM -0700, Jakub Kicinski wrote:
->>
->>> Maybe it's just me, but in general I really wish someone stepped up
->>> and created a separate subsystem for all these cloud / vm clocks.
->>> They have nothing to do with PTP. In my mind PTP clocks are simple HW
->>> tickers on which we build all the time related stuff. While this driver
->>> reports the base year for the epoch and leap second status via sysfs.
->>
->> Yeah, that is my feeling as well.
-> 
-> Agreed. While vmclock is presented as a PTP clock for compatibility,
-> it's more than that because it can do better than simply giving a
-> single precise point in time. It actually tells the guest the precise
-> relationship between the hardware counter and real time, much like the
-> private data structure exposed from the kernel to vDSO gettimeofday.
-> 
-> We should work on having the kernel consume that *directly* and feed
-> its CLOCK_REALTIME with it. Having hundreds of guests on the same host
-> all recalculate the same thing based on a set of points in time,
-> obtained through /dev/ptpX or otherwise, is just daft.
+Reported-by: syzbot+d99f3a288cc7d8ef60fb@syzkaller.appspotmail.com
+Tested-by: syzbot+d99f3a288cc7d8ef60fb@syzkaller.appspotmail.com
 
-Hi David,
+Tested on:
 
-How does vmclock work in a bare‑metal scenario, given that there is no
-guest–hypervisor architecture?
+commit:         3957a572 Merge tag 'cgroup-for-6.17-rc2-fixes' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10a6fbbc580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=292f3bc9f654adeb
+dashboard link: https://syzkaller.appspot.com/bug?extid=d99f3a288cc7d8ef60fb
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1206f442580000
 
-You mentioned "vmclock over PCI", do you mean passing a PCI device to the
-bare‑metal? What is this PCI device, and which driver does it use?
-
-Thanks.
+Note: testing is done by a robot and is best-effort only.
 
