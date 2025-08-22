@@ -1,260 +1,248 @@
-Return-Path: <linux-kernel+bounces-782265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D14CB31DF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:17:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACB89B31D9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:11:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9F89B45FF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:06:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E6301880168
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7A61EB5E1;
-	Fri, 22 Aug 2025 15:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C5F1F4E57;
+	Fri, 22 Aug 2025 15:05:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SO/viMQV"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YXakziac"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A9B3F9D2;
-	Fri, 22 Aug 2025 15:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24ABA19C558;
+	Fri, 22 Aug 2025 15:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755875104; cv=none; b=IOdKr+0KCxOUT1KQFuO6eGCY85C5wEJNUpMniOq2UPtq1p8ECYUjg4o8OUHfSR29VU8HKJY5Fnrw2dBUOQvkfhjZ64Nn/xG9yzNV7Ojxisfuda7SMaXfMjphGYCyMknH56XoD4BGieI9dcub3uHOuoe6aVvuYhHt6oGjG6UgodA=
+	t=1755875106; cv=none; b=MhGn84Ils+GZHQUjMRNCvFta7vdcBfP9beBfAF/bfAX6XyMJmqrHj9ZzmNrre3qGGld65+Wp0/7XW/8Qu8dl6neKkqB1MgkD7jwrIfQ/O1SPshu547DNtVMdE2VJgN4S6MLW3PGfIs+db8l78nhLyxyyRZZec9EjtuomHxA7/1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755875104; c=relaxed/simple;
-	bh=tGSSNSnFFWPZY21Ur0558xtTyXaUmF1cBPI/rRqOS3g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PF143m5EmJofXLhqMaWHylstSjmP1wYJkSS6Bh3Qg5f0Bc7JkKlHbP4N1TmujGLxnWsf0/fwxnKh23pHXL+yTyn5Zk8YI8pM/M5vIPH34zVgsWS27pvVOBrlWP/QEMGQr+4+sl2egOTLTRdwEGlMBuKas9jT9QhBDj42gfatjfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SO/viMQV; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3c4368ab352so1075701f8f.1;
-        Fri, 22 Aug 2025 08:05:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755875101; x=1756479901; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jSy3uP111tmp0BYAk5JJsg/1JnSS0DO1D4O3BOeuxDQ=;
-        b=SO/viMQVv19xDwv0W+EqZLzF90zM52OAp2jz0NnZgK/4uGx+JoSxSRkeI2oYzpfGTa
-         FMpNtcY4XL22tMqpwLjyjuFaf/cgaXjvsO5nr2sDNrt8sFXeioccJy7GdRKwpDLqx1mv
-         ooJqhlTvHO2FS3Djbk6VAtxvwQV7S9iv3qHbhGqp+j78pnNI3xJEhjQmqu9fExDvbh7Z
-         KxPMjUiPprA5+kEjY3hav2l/yJyI6KDjJkKwqISpghiPoDQBdPLuWxrR1K4PLYjvvaZs
-         8Kq5O8VrujNUIeSsB3YDNjyzppNjX4WcNe/jLhQbzIHigQLv+cuc3+c3W2ZdTSZs4kM/
-         Pwcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755875101; x=1756479901;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jSy3uP111tmp0BYAk5JJsg/1JnSS0DO1D4O3BOeuxDQ=;
-        b=QEz5yBWUHlHMg44WbjX/UQsIdvXq+78yl+DJNTf6GNE8UVE8UJ3bBLxUh0yzCU4kR9
-         T22nIJ0b1zALjPj1SUR+7gG+0YNn9Pkzu7UVwonxqJ+hRdoblW6xjusiTXrg50BYNz6w
-         GKO4zPAi3lrYGANKWRmZfj517RHkgLxnRUwIZmSMRAsukiDvhR71WZjx+wgJCnGJKvfD
-         es++rGkByYr3b64ayEXkxilYXOkhMEw/DDibtWQhzRSk18CGzYg5q3uk3ZKElkWNYuAv
-         mbDXg5qYEKjNovgBEHUuIpdbHFJCsHPbbEVqP8B9AxBhUlz4dJY44m95T4nbwkEF5ZKe
-         tYDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoGoZtwXOOqkmJ6E/D+2e1QiQhU702xZCredeqnGjy7DVUKagKlNwucrZu3vXNu5Ro4t8pkwb6iTnpVAw=@vger.kernel.org, AJvYcCVR0hnUM4DGAJzV+YcO/b1g3q+tsLhlfYeximFVUvyPnl58nzsz2frPpcWbIgBN+8Af838ty8RsFRAYWccy@vger.kernel.org, AJvYcCW6N2l4lwrTDmn7TP1D3eRMPj3iyiqWDEc97Izi4SENk4xsYosR3YcBX8F2YEOERtG50U7e3PykvkHl@vger.kernel.org, AJvYcCWP9g5y4CM4FQdwsOzlG0lZqfzkowypNojE8h5bWmuOj5coctdwYOaOb1uHdo/B3FKnT4pBRooebOKf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzf/A/ib/ZBENpGI5kF9r/YPFNmJ7u7ZAEUCGwia1CIpLSHrPAp
-	8qE9hVL4wn+9SQa9dGwmBmp3glRdTLY4UqtjjfuplM4HwlrRPHtFUs3/A78Snukoss1QICQ4rDN
-	RkyXR1PbxWPX47G2DY3hwKSUM/mT+pRM=
-X-Gm-Gg: ASbGnctZ1yXh8Ok8GvLcLW1mUCB0K947/0wTUkERcdZijRxdfSVTvfBK3rOcfAfvlBx
-	nmSIu+dq4fVjf4oTEgIDeyiGgXGgEvXfgkxKXjM7yeMgwJNBBkyE8qa4xFKpZHM7Ro9u//deAJ4
-	CyacJlZsMZr0rSF+iUs5bjy/zIclxcV6KBvwfUiNIqzPZW6mxn9UOEiGSVifLgg23lPadKwUR9o
-	31lmkQV
-X-Google-Smtp-Source: AGHT+IHdbJCM1JrU9aZhUhCW3G/ZDFnrficgj+epThhDt8C/ZyJfJc4LFShS/wBERzgRCfTyJaZymDF2pTWqYPZCvmI=
-X-Received: by 2002:a05:6000:310d:b0:3c3:d82c:2295 with SMTP id
- ffacd0b85a97d-3c5dad0fdbamr2848028f8f.24.1755875101014; Fri, 22 Aug 2025
- 08:05:01 -0700 (PDT)
+	s=arc-20240116; t=1755875106; c=relaxed/simple;
+	bh=dLsTZSYRVyxqxTXUWeEgGAw9LE4Neawdtev2hwiX5qk=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=TK/Q1D9g0fZryqyd1ltDZYv5iBGfk4uupdfu69GxJC4/u0efUAEifoAD6EvcyWS1yCVI5hC8BLJ5qGzk6d67NtnTktRG+5exWST2APZbKoQ0mosxfmhblaDfkWYHKWLoZwCgmtEfl8C0yFrUUEYE7GF9vMT3eiEpYSqfYdtL7QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YXakziac; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755875105; x=1787411105;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=dLsTZSYRVyxqxTXUWeEgGAw9LE4Neawdtev2hwiX5qk=;
+  b=YXakziacXlRydnB92pdqu7toTnCfqZjJOjhxdxWyg6DTlbk/DrCygFJd
+   uXyB848v1D07bFddwujUsvZpRDrDlvgJRgjDOQE44qqUGjVMcKUVNl0Bh
+   eHD54fmVc4ulJIpuEjI+ga1mhB+Wz7LAdRGoQ/FVQ1mgtdnC4iPbs3v24
+   awijsCWEI3OKbMgQz1LLW6dBTwxjrI+eTyA4qSaVzt1juajw/iQHhfcDT
+   qQQJXtqEqBkxNOyjy6UW86juwD85wcCK/eia1z9C4k2IzPtAmyLaMVTFP
+   UGMzQ7CvoyFIt8qliGhw3X1+3b7tqFG35qsZ98YsHKo8QiCKEwMpb5k8M
+   g==;
+X-CSE-ConnectionGUID: RL/kW1KHQfS3+PVehXtCoQ==
+X-CSE-MsgGUID: rGB/jLZ8RE6RDMTBB6rh5Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="75641767"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="75641767"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 08:05:04 -0700
+X-CSE-ConnectionGUID: 4jAY6QjsTeKQlzSdx7kcaw==
+X-CSE-MsgGUID: sNqH4E0FRAOEg+EUiy1s7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="172988946"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.115])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 08:04:57 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 22 Aug 2025 18:04:54 +0300 (EEST)
+To: linux-pci@vger.kernel.org
+cc: Andreas Larsson <andreas@gaisler.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+    "David S. Miller" <davem@davemloft.net>, 
+    Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@lists.linux-m68k.org, 
+    linux-mips@vger.kernel.org, sparclinux@vger.kernel.org, 
+    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
+    Yinghai Lu <yinghai@kernel.org>, Igor Mammedov <imammedo@redhat.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, 
+    Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+    Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>, 
+    linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 00/24] PCI: Bridge window selection improvements
+In-Reply-To: <20250822145605.18172-1-ilpo.jarvinen@linux.intel.com>
+Message-ID: <e256f7c5-d096-de28-3148-22b44d45f9fa@linux.intel.com>
+References: <20250822145605.18172-1-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820151323.167772-1-clamor95@gmail.com> <20250820151323.167772-3-clamor95@gmail.com>
- <20250822145934.GA3791610-robh@kernel.org>
-In-Reply-To: <20250822145934.GA3791610-robh@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 22 Aug 2025 18:04:49 +0300
-X-Gm-Features: Ac12FXypG4PfqbTzwK4muiuwuwQ2NYN0lKk_T4ivOXsgmwVEHmwuJibOvc-hr2M
-Message-ID: <CAPVz0n3ysZA2ku4PzcwVTyuii_ORe=3qkD1z+iYAmVYFhZuUCA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/9] dt-bindings: memory: Document Tegra114 Memory Controller
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <treding@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="8323328-1455586025-1755875094=:937"
 
-=D0=BF=D1=82, 22 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 17:5=
-9 Rob Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Wed, Aug 20, 2025 at 06:13:16PM +0300, Svyatoslav Ryhel wrote:
-> > Add Tegra114 suffort into existing Tegra124 MC schema with the most not=
-able
-> > difference in the amount of EMEM timings.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  .../nvidia,tegra124-mc.yaml                   | 106 +++++++++++++-----
-> >  1 file changed, 80 insertions(+), 26 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidi=
-a,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/n=
-vidia,tegra124-mc.yaml
-> > index 7b18b4d11e0a..e2568040213d 100644
-> > --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra=
-124-mc.yaml
-> > +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra=
-124-mc.yaml
-> > @@ -19,7 +19,9 @@ description: |
-> >
-> >  properties:
-> >    compatible:
-> > -    const: nvidia,tegra124-mc
-> > +    enum:
-> > +      - nvidia,tegra114-mc
-> > +      - nvidia,tegra124-mc
-> >
-> >    reg:
-> >      maxItems: 1
-> > @@ -62,31 +64,7 @@ patternProperties:
-> >              minimum: 1000000
-> >              maximum: 1066000000
-> >
-> > -          nvidia,emem-configuration:
-> > -            $ref: /schemas/types.yaml#/definitions/uint32-array
->
-> The type should stay here. It is not conditional.
->
-> > -            description: |
-> > -              Values to be written to the EMEM register block. See sec=
-tion
-> > -              "15.6.1 MC Registers" in the TRM.
-> > -            items:
-> > -              - description: MC_EMEM_ARB_CFG
-> > -              - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> > -              - description: MC_EMEM_ARB_TIMING_RCD
-> > -              - description: MC_EMEM_ARB_TIMING_RP
-> > -              - description: MC_EMEM_ARB_TIMING_RC
-> > -              - description: MC_EMEM_ARB_TIMING_RAS
-> > -              - description: MC_EMEM_ARB_TIMING_FAW
-> > -              - description: MC_EMEM_ARB_TIMING_RRD
-> > -              - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> > -              - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> > -              - description: MC_EMEM_ARB_TIMING_R2R
-> > -              - description: MC_EMEM_ARB_TIMING_W2W
-> > -              - description: MC_EMEM_ARB_TIMING_R2W
-> > -              - description: MC_EMEM_ARB_TIMING_W2R
-> > -              - description: MC_EMEM_ARB_DA_TURNS
-> > -              - description: MC_EMEM_ARB_DA_COVERS
-> > -              - description: MC_EMEM_ARB_MISC0
-> > -              - description: MC_EMEM_ARB_MISC1
-> > -              - description: MC_EMEM_ARB_RING1_THROTTLE
-> > +          nvidia,emem-configuration: true
-> >
-> >          required:
-> >            - clock-frequency
-> > @@ -109,6 +87,82 @@ required:
-> >    - "#iommu-cells"
-> >    - "#interconnect-cells"
-> >
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - nvidia,tegra114-mc
-> > +    then:
-> > +      patternProperties:
-> > +        "^emc-timings-[0-9]+$":
-> > +          patternProperties:
-> > +            "^timing-[0-9]+$":
-> > +              properties:
-> > +                nvidia,emem-configuration:
-> > +                  $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +                  description: |
->
-> Drop '|'.
->
-> > +                    Values to be written to the EMEM register block. S=
-ee section
-> > +                    "20.11.1 MC Registers" in the TRM.
-> > +                  items:
-> > +                    - description: MC_EMEM_ARB_CFG
-> > +                    - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> > +                    - description: MC_EMEM_ARB_TIMING_RCD
-> > +                    - description: MC_EMEM_ARB_TIMING_RP
-> > +                    - description: MC_EMEM_ARB_TIMING_RC
-> > +                    - description: MC_EMEM_ARB_TIMING_RAS
-> > +                    - description: MC_EMEM_ARB_TIMING_FAW
-> > +                    - description: MC_EMEM_ARB_TIMING_RRD
-> > +                    - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> > +                    - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> > +                    - description: MC_EMEM_ARB_TIMING_R2R
-> > +                    - description: MC_EMEM_ARB_TIMING_W2W
-> > +                    - description: MC_EMEM_ARB_TIMING_R2W
-> > +                    - description: MC_EMEM_ARB_TIMING_W2R
-> > +                    - description: MC_EMEM_ARB_DA_TURNS
-> > +                    - description: MC_EMEM_ARB_DA_COVERS
-> > +                    - description: MC_EMEM_ARB_MISC0
-> > +                    - description: MC_EMEM_ARB_RING1_THROTTLE
-> > +
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - nvidia,tegra124-mc
-> > +    then:
-> > +      patternProperties:
-> > +        "^emc-timings-[0-9]+$":
-> > +          patternProperties:
-> > +            "^timing-[0-9]+$":
-> > +              properties:
-> > +                nvidia,emem-configuration:
-> > +                  $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +                  description: |
-> > +                    Values to be written to the EMEM register block. S=
-ee section
-> > +                    "15.6.1 MC Registers" in the TRM.
-> > +                  items:
-> > +                    - description: MC_EMEM_ARB_CFG
-> > +                    - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> > +                    - description: MC_EMEM_ARB_TIMING_RCD
-> > +                    - description: MC_EMEM_ARB_TIMING_RP
-> > +                    - description: MC_EMEM_ARB_TIMING_RC
-> > +                    - description: MC_EMEM_ARB_TIMING_RAS
-> > +                    - description: MC_EMEM_ARB_TIMING_FAW
-> > +                    - description: MC_EMEM_ARB_TIMING_RRD
-> > +                    - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> > +                    - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> > +                    - description: MC_EMEM_ARB_TIMING_R2R
-> > +                    - description: MC_EMEM_ARB_TIMING_W2W
-> > +                    - description: MC_EMEM_ARB_TIMING_R2W
-> > +                    - description: MC_EMEM_ARB_TIMING_W2R
-> > +                    - description: MC_EMEM_ARB_DA_TURNS
-> > +                    - description: MC_EMEM_ARB_DA_COVERS
-> > +                    - description: MC_EMEM_ARB_MISC0
-> > +                    - description: MC_EMEM_ARB_MISC1
-> > +                    - description: MC_EMEM_ARB_RING1_THROTTLE
->
-> I imagine every SoC is going to be slightly different. I really don't
-> care to know what are all the magic registers in the list, so I would
-> just drop all this and just document the length. Just treat it as opaque
-> data like calibration data we have in other bindings.
->
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-I though about length but not only names, amount of registers,
-unfortunately, changes as well.
+--8323328-1455586025-1755875094=:937
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-> Rob
+On Fri, 22 Aug 2025, Ilpo J=C3=A4rvinen wrote:
+
+> This series is based on top of the three resource fitting and
+> assignment algorithm fixes (v3).
+
+I realized I didn't include a link to those patches. It's this series:=20
+
+https://lore.kernel.org/linux-pci/20250822123359.16305-1-ilpo.jarvinen@linu=
+x.intel.com/
+
+I'm sorry about the extra hassle.
+
+--=20
+ i.
+
+> PCI resource fitting and assignment code needs to find the bridge
+> window a resource belongs to in multiple places, yet, no common
+> function for that exists. Thus, each site has its own version of
+> the decision, each with their own corner cases, misbehaviors, and
+> some resulting in complex interfaces between internal functions.
+>=20
+> This series tries to rectify the situation by adding two new functions
+> to select the bridge window. To support these functions, bridge windows
+> must always contain their type information in flags which requires
+> modifying the flags behavior for bridge window resources.
+>=20
+> I've hit problems related to zeroed resource flags so many times by now
+> that I've already lost count which has highlighted over and over again
+> that clearing type information is not a good idea. As also proven by
+> some changes of this series, retaining the flags for bridge windows
+> ended up fixing existing issues (although kernel ended up recovering
+> from the worst problem graciously and the other just results in dormant
+> code).
+>=20
+> This series only changes resource flags behavior for bridge windows.
+> The sensible direction is to make a similar change for the other
+> resources as well eventually but making that change involves more
+> uncertainty and is not strictly necessary yet. Driver code outside of
+> PCI core could have assumptions about the flags, whereas bridge windows
+> are mostly internal to PCI core code (or should be, sane endpoint
+> drivers shouldn't be messing with the bridge windows). Thus, limiting
+> the flags behavior changes to bridge windows for now is safer than
+> attempting full behavioral change in a single step.
+>=20
+>=20
+> I've tried to look out for any trouble that code under arch/ could
+> cause after the flags start to behave differently and therefore ended
+> up consolidating arch/ code to use pci_enable_resources(). My
+> impression is that strictly speaking only the MIPS code would break
+> similar to PCI core's copy of pci_enable_resources(), the others were
+> much more lax in checking so they'd likely keep working but
+> consolidation seemed still the best approach there as the enable checks
+> seemed diverging for no apparent reason.
+>=20
+> Most sites are converted by this change. There are three known places
+> that are not yet converted:
+>=20
+>   - fail_type based logic in __assign_resources_sorted():
+>     I'm expecting to cover this along with the resizable BAR
+>     changes as I need to change the fallback logic anyway (one
+>     of the motivators what got me started with this series,
+>     I need an easy way to acquire the bridge window during
+>     retries/fallbacks if maximum sized BARs do not fit, which
+>     is what this series provides).
+>=20
+>   - Failure detection after BAR resize: Keeps using the type
+>     based heuristic for failure detection. It isn't very clear how
+>     to decide which assignment failures should be counted and which
+>     not. There could be pre-existing failures that keep happening
+>     that end up blocking BAR resize but that's no worse than behavior
+>     before this series. How to identify the relevant failures does
+>     not look straightforward given the current structures. This
+>     clearly needs more thought before coding any solution.
+>=20
+>   - resource assignment itself: This is a very complex change
+>     due to bus and kernel resources abstractions and might not be
+>     realistic any time soon.
+>=20
+> I'd have wanted to also get rid of pci_bridge_check_ranges() that
+> (re)adds type information which seemed now unnecessary. It turns out,
+> however, that root windows still require so it will have to wait for
+> now.
+>=20
+> This change has been tested on a large number of machine I've access to
+> which come with heterogeneous PCI configurations. Some resources
+> retained their original addresses now also with pci=3Drealloc because
+> this series fixed the unnecessary release(+assign) of those resources.
+> Other than that, nothing worth of note from that testing.
+>=20
+>=20
+> My test coverage is x86 centric unfortunately so I'd appreciate if
+> somebody with access to non-x86 archs takes the effort to test this
+> series.
+>=20
+> Info for potential testers:
+>=20
+> Usually, it's enough to gather lspci -vvv pre and post the series, and
+> use diff to see whether the resources remained the same and also check
+> that the same drivers are still bound to the devices to confirm that
+> devices got properly enabled (also shown by lspci -vvv). I normally
+> test both with and without pci=3Drealloc. In case of a trouble, besides
+> lspci -vvv output, providing pre and post dmesg and /proc/iomem
+> contents would be helpful, please take the dmesg with dyndbg=3D"file
+> drivers/pci/*.c +p" on the kernel cmdline.
+>=20
+> Ilpo J=C3=A4rvinen (24):
+>   m68k/PCI: Use pci_enable_resources() in pcibios_enable_device()
+>   sparc/PCI: Remove pcibios_enable_device() as they do nothing extra
+>   MIPS: PCI: Use pci_enable_resources()
+>   PCI: Move find_bus_resource_of_type() earlier
+>   PCI: Refactor find_bus_resource_of_type() logic checks
+>   PCI: Always claim bridge window before its setup
+>   PCI: Disable non-claimed bridge window
+>   PCI: Use pci_release_resource() instead of release_resource()
+>   PCI: Enable bridge even if bridge window fails to assign
+>   PCI: Preserve bridge window resource type flags
+>   PCI: Add defines for bridge window indexing
+>   PCI: Add bridge window selection functions
+>   PCI: Fix finding bridge window in pci_reassign_bridge_resources()
+>   PCI: Warn if bridge window cannot be released when resizing BAR
+>   PCI: Use pbus_select_window() during BAR resize
+>   PCI: Use pbus_select_window_for_type() during IO window sizing
+>   PCI: Rename resource variable from r to res
+>   PCI: Use pbus_select_window() in space available checker
+>   PCI: Use pbus_select_window_for_type() during mem window sizing
+>   PCI: Refactor distributing available memory to use loops
+>   PCI: Refactor remove_dev_resources() to use pbus_select_window()
+>   PCI: Add pci_setup_one_bridge_window()
+>   PCI: Pass bridge window to pci_bus_release_bridge_resources()
+>   PCI: Alter misleading recursion to pci_bus_release_bridge_resources()
+>=20
+>  arch/m68k/kernel/pcibios.c   |  39 +-
+>  arch/mips/pci/pci-legacy.c   |  38 +-
+>  arch/sparc/kernel/leon_pci.c |  27 --
+>  arch/sparc/kernel/pci.c      |  27 --
+>  arch/sparc/kernel/pcic.c     |  27 --
+>  drivers/pci/bus.c            |   3 +
+>  drivers/pci/pci-sysfs.c      |  27 +-
+>  drivers/pci/pci.h            |   8 +-
+>  drivers/pci/probe.c          |  35 +-
+>  drivers/pci/setup-bus.c      | 798 ++++++++++++++++++-----------------
+>  drivers/pci/setup-res.c      |  46 +-
+>  include/linux/pci.h          |   5 +-
+>  12 files changed, 504 insertions(+), 576 deletions(-)
+>=20
+>=20
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> prerequisite-patch-id: 801e8dd3aa9847d4945cb7d8958574a6006004ab
+> prerequisite-patch-id: 0233311f04e3ea013676b6cc00626410bbe11e41
+> prerequisite-patch-id: 9841faf37d56c1acf1167559613e862ef62e509d
+>=20
+--8323328-1455586025-1755875094=:937--
 
