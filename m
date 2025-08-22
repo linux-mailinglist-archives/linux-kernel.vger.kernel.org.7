@@ -1,539 +1,170 @@
-Return-Path: <linux-kernel+bounces-781675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26992B31561
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:28:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 608A0B31562
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54967163501
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:26:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B71A51CE7CC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D2F2E92B6;
-	Fri, 22 Aug 2025 10:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5F82E92DF;
+	Fri, 22 Aug 2025 10:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QZDEdZDA"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X4mYBJrn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE24D2E7F21
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D942E9ED0
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755858375; cv=none; b=MDmuw7zYWgG0cncMkSpuqLLxD1343v7IbEfwecdaETzMHwUtDv4Up6ZuRmwQbNXydJertMGDSorrG6vspf36AbqyYMLCSz2c+paHR+Ziffo+odbSka61+lj+TINV7tbQuXWNJFpmOBfyhZr/BMO5pcnymZA2ngZJweoNyLagoTY=
+	t=1755858420; cv=none; b=cu3p1HtsqpiqxVWLU4GqbJOUL0gA6nvwM+XoEDtrBg4wIJVWsAIL1mhn9nQELKl/oUAdg8H4/wX6laueZfvG0XzL1ExfCN7YQQ5i/2uhoLfn1nOT/J8U8KRDkyJ/c3oI/0dEjeK270mby6hz/A1dsPAv4l+KCv0HMKpajVyoqk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755858375; c=relaxed/simple;
-	bh=Pco2t8IAcL9gCluAxTcToSuYIWCxXlVzevjzIgE5PjQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
-	 Content-Type:References; b=mcS8UVQCgoz/jeERpjmHDpNU1YjfpN0g6FQS43tsUP0OPnkAP2D22g+I8fkKBzQphhghWAITYByh9ubeLacV9lNhwVvaviicuG+++weftcAuqqNvdVR9XuM2BNz6Buc/O/0jabgOeFr3RzfLdYwtbz2Lu51Gx25sMyzXW5Dc8Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QZDEdZDA; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250822102611euoutp0260949f6805118e9d17e25af520cdf6cb~eD_K30gjZ2230622306euoutp02B
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:26:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250822102611euoutp0260949f6805118e9d17e25af520cdf6cb~eD_K30gjZ2230622306euoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755858371;
-	bh=Q+6Xs7HEwbU8PjeuZpGHjXULFml+y8xhITqWaoDVDIs=;
-	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=QZDEdZDAnccRvEuBv0P/VUu+KDFDgpIarhA+x135y0cdj3BmsFQJRLtKgXDL+MwzF
-	 /WYi2nWdW6zL/0Roxg+DLl1VWVU95hsWEsRlTh9BOyAYJr86Q8x6wD5KCWk7qPQxzX
-	 sohnq3aQMQJLk1Phr4N9piC8RZObVrLVhFTOD6bI=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250822102610eucas1p17b57ad56569020fb2d563c61d4fd5a4a~eD_KBaM3q2024620246eucas1p1c;
-	Fri, 22 Aug 2025 10:26:10 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250822102609eusmtip10d4a23b2bd09752681a16ed23cc33ccf~eD_I7t1y21166311663eusmtip1h;
-	Fri, 22 Aug 2025 10:26:09 +0000 (GMT)
-Message-ID: <daf94e44-7c37-4fa6-a31e-b043b7bf46f1@samsung.com>
-Date: Fri, 22 Aug 2025 12:26:08 +0200
+	s=arc-20240116; t=1755858420; c=relaxed/simple;
+	bh=3sn3980IVXfFLfphdS3EBqJPJpq1/RlVKRKQ+S0oe/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cgr3dOBmd2xru1AlMYJ2cNX+FA25ndXsgRaV4DBMc9xeoHEeAUzqw9HGdRTrzuYzMv6ogsPjHwT5zdxA539EPFP+N3SzbDzDk+KIygnYzUz+za5SORLRZjxVf6A2LNxc0ZbFSafnhmsStGtwdzxnlW7bApeXAveg4kQzJvZG8cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X4mYBJrn; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755858418; x=1787394418;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=3sn3980IVXfFLfphdS3EBqJPJpq1/RlVKRKQ+S0oe/Y=;
+  b=X4mYBJrnl+cpHRJKFtZQkd3z0pfZko+mgqH1l9OQvPJEFWX7K96ReNtc
+   +Qddt5Kf8WnR1+kmr7VJd7ROW4f7lwb1s03SrdYcFcMj1/g3EgyuxNHqt
+   MI68F3Hc5zkMjgU5GMKSrlTLK2E7sm7sNRHXaubtnlqD5uI+sLjatYMFH
+   X8WsSvx2Wcd6OILU6+uB3O+fmJ3Ry54N/LSz5MTy9DIm5lG8sO/1NATbh
+   rIuCXHoKer8u7Eayyln6CSgSvorXYUuBP7MBB3OlASCryh/IecUbpjWzb
+   MbNAbfV+kvBODa2nlL/RO3WyzxaVLVOl/IfBw0RRMD16ZWzlQKEGiwGEA
+   w==;
+X-CSE-ConnectionGUID: 6wix8cVLTre26FCJs5thUQ==
+X-CSE-MsgGUID: b/+OfF26Rw2E6IkdJR6EtA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="68764116"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="68764116"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 03:26:57 -0700
+X-CSE-ConnectionGUID: a4JQPw8NQkCI7GVaJ55pFw==
+X-CSE-MsgGUID: yRtNSGt+THu19a+22QgNKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="169039958"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 22 Aug 2025 03:26:38 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1upOyi-000L9v-13;
+	Fri, 22 Aug 2025 10:26:36 +0000
+Date: Fri, 22 Aug 2025 18:26:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Subject: include/trace/events/dma_fence.h:12:1: sparse: sparse: incorrect
+ type in assignment (different address spaces)
+Message-ID: <202508221834.hekYlJqU-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 1/4] drm/imagination: Use pwrseq for TH1520 GPU
- power management
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-To: Matt Coster <Matt.Coster@imgtec.com>, Drew Fustini <drew@pdp7.com>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Frank Binns <Frank.Binns@imgtec.com>, Maarten
-	Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Paul Walmsley
-	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson
-	<ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Drew
-	Fustini <fustini@kernel.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>
-Content-Language: en-US
-In-Reply-To: <55e606c5-9ac0-4e0b-8506-5f88a6fc540e@samsung.com>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250822102610eucas1p17b57ad56569020fb2d563c61d4fd5a4a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250821222020eucas1p20e40b85b991da0b4d867df76e55350ed
-X-EPHeader: CA
-X-CMS-RootMailID: 20250821222020eucas1p20e40b85b991da0b4d867df76e55350ed
-References: <20250822-apr_14_for_sending-v13-0-af656f7cc6c3@samsung.com>
-	<CGME20250821222020eucas1p20e40b85b991da0b4d867df76e55350ed@eucas1p2.samsung.com>
-	<20250822-apr_14_for_sending-v13-1-af656f7cc6c3@samsung.com>
-	<aa8d4ffb-4607-4bff-9d87-8635cd37d439@imgtec.com>
-	<55e606c5-9ac0-4e0b-8506-5f88a6fc540e@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   3957a5720157264dcc41415fbec7c51c4000fc2d
+commit: 506aa8b02a8d6898c64cc095d233fbae1cef8b8a dma-fence: Add safe access helpers and document the rules
+date:   2 months ago
+config: sh-randconfig-r132-20250822 (https://download.01.org/0day-ci/archive/20250822/202508221834.hekYlJqU-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 15.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20250822/202508221834.hekYlJqU-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508221834.hekYlJqU-lkp@intel.com/
 
-On 8/22/25 12:04, Michal Wilczynski wrote:
-> 
-> 
-> On 8/22/25 11:28, Matt Coster wrote:
->> On 21/08/2025 23:20, Michal Wilczynski wrote:
->>> Update the Imagination PVR DRM driver to leverage the pwrseq framework
->>> for managing the complex power sequence of the GPU on the T-HEAD TH1520
->>> SoC.
->>>
->>> To cleanly separate platform-specific logic from the generic driver,
->>> this patch introduces an `init` callback to the `pwr_power_sequence_ops`
->>> struct. This allows for different power management strategies to be
->>> selected at probe time based on the device's compatible string.
->>>
->>> A `pvr_device_data` struct, associated with each compatible in the
->>> of_device_id table, points to the appropriate ops table (manual or
->>> pwrseq).
->>>
->>> At probe time, the driver now calls the `->init()` op. For pwrseq-based
->>> platforms, this callback calls `devm_pwrseq_get("gpu-power")`, deferring
->>> probe if the sequencer is not yet available. For other platforms, it
->>> falls back to the existing manual clock and reset handling. The runtime
->>> PM callbacks continue to call the appropriate functions via the ops
->>> table.
->>>
->>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->>
->> Reviewed-by: Matt Coster <matt.coster@imgtec.com>
->>
->> Would you like me to take the non-DTS changes via drm-misc-next?
-> 
-> Yeah I think this would be appropriate.
-> Thanks !
+sparse warnings: (new ones prefixed by >>)
+   drivers/dma-buf/dma-fence.c:1112:51: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected char const [noderef] __rcu * @@     got char const * @@
+   drivers/dma-buf/dma-fence.c:1112:51: sparse:     expected char const [noderef] __rcu *
+   drivers/dma-buf/dma-fence.c:1112:51: sparse:     got char const *
+   drivers/dma-buf/dma-fence.c:1114:24: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected char const [noderef] __rcu * @@     got char * @@
+   drivers/dma-buf/dma-fence.c:1114:24: sparse:     expected char const [noderef] __rcu *
+   drivers/dma-buf/dma-fence.c:1114:24: sparse:     got char *
+   drivers/dma-buf/dma-fence.c:1144:51: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected char const [noderef] __rcu * @@     got char const * @@
+   drivers/dma-buf/dma-fence.c:1144:51: sparse:     expected char const [noderef] __rcu *
+   drivers/dma-buf/dma-fence.c:1144:51: sparse:     got char const *
+   drivers/dma-buf/dma-fence.c:1146:24: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected char const [noderef] __rcu * @@     got char * @@
+   drivers/dma-buf/dma-fence.c:1146:24: sparse:     expected char const [noderef] __rcu *
+   drivers/dma-buf/dma-fence.c:1146:24: sparse:     got char *
+   drivers/dma-buf/dma-fence.c: note: in included file (through include/trace/trace_events.h, include/trace/define_trace.h, include/trace/events/dma_fence.h):
+   include/trace/events/dma_fence.h:12:1: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected char const *str @@     got char const [noderef] __rcu * @@
+   include/trace/events/dma_fence.h:12:1: sparse:     expected char const *str
+   include/trace/events/dma_fence.h:12:1: sparse:     got char const [noderef] __rcu *
+   include/trace/events/dma_fence.h:12:1: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void const *driver_ptr_ @@     got char const [noderef] __rcu * @@
+   include/trace/events/dma_fence.h:12:1: sparse:     expected void const *driver_ptr_
+   include/trace/events/dma_fence.h:12:1: sparse:     got char const [noderef] __rcu *
+   include/trace/events/dma_fence.h:12:1: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected char const *str @@     got char const [noderef] __rcu * @@
+   include/trace/events/dma_fence.h:12:1: sparse:     expected char const *str
+   include/trace/events/dma_fence.h:12:1: sparse:     got char const [noderef] __rcu *
+>> include/trace/events/dma_fence.h:12:1: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void const *timeline_ptr_ @@     got char const [noderef] __rcu * @@
+   include/trace/events/dma_fence.h:12:1: sparse:     expected void const *timeline_ptr_
+   include/trace/events/dma_fence.h:12:1: sparse:     got char const [noderef] __rcu *
+   include/trace/events/dma_fence.h:12:1: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected char const *str @@     got char const [noderef] __rcu * @@
+   include/trace/events/dma_fence.h:12:1: sparse:     expected char const *str
+   include/trace/events/dma_fence.h:12:1: sparse:     got char const [noderef] __rcu *
+   include/trace/events/dma_fence.h:12:1: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void const *driver_ptr_ @@     got char const [noderef] __rcu * @@
+   include/trace/events/dma_fence.h:12:1: sparse:     expected void const *driver_ptr_
+   include/trace/events/dma_fence.h:12:1: sparse:     got char const [noderef] __rcu *
+   include/trace/events/dma_fence.h:12:1: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected char const *str @@     got char const [noderef] __rcu * @@
+   include/trace/events/dma_fence.h:12:1: sparse:     expected char const *str
+   include/trace/events/dma_fence.h:12:1: sparse:     got char const [noderef] __rcu *
+>> include/trace/events/dma_fence.h:12:1: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void const *timeline_ptr_ @@     got char const [noderef] __rcu * @@
+   include/trace/events/dma_fence.h:12:1: sparse:     expected void const *timeline_ptr_
+   include/trace/events/dma_fence.h:12:1: sparse:     got char const [noderef] __rcu *
 
-Hi Drew,
+vim +12 include/trace/events/dma_fence.h
 
-Matt offered to take the non-DTS patches (1/4 and 4/4) from this series
-through the DRM tree.
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  11  
+f54d1867005c33 include/trace/events/dma_fence.h Chris Wilson            2016-10-25 @12  DECLARE_EVENT_CLASS(dma_fence,
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  13  
+f54d1867005c33 include/trace/events/dma_fence.h Chris Wilson            2016-10-25  14  	TP_PROTO(struct dma_fence *fence),
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  15  
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  16  	TP_ARGS(fence),
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  17  
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  18  	TP_STRUCT__entry(
+ecec875a6c3379 include/trace/events/dma_fence.h Tvrtko Ursulin          2025-05-15  19  		__string(driver, dma_fence_driver_name(fence))
+ecec875a6c3379 include/trace/events/dma_fence.h Tvrtko Ursulin          2025-05-15  20  		__string(timeline, dma_fence_timeline_name(fence))
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  21  		__field(unsigned int, context)
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  22  		__field(unsigned int, seqno)
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  23  	),
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  24  
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  25  	TP_fast_assign(
+2c92ca849fcc6e include/trace/events/dma_fence.h Steven Rostedt (Google  2024-05-16  26) 		__assign_str(driver);
+2c92ca849fcc6e include/trace/events/dma_fence.h Steven Rostedt (Google  2024-05-16  27) 		__assign_str(timeline);
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  28  		__entry->context = fence->context;
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  29  		__entry->seqno = fence->seqno;
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  30  	),
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  31  
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  32  	TP_printk("driver=%s timeline=%s context=%u seqno=%u",
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  33  		  __get_str(driver), __get_str(timeline), __entry->context,
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  34  		  __entry->seqno)
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  35  );
+e941759c74a44d include/trace/events/fence.h     Maarten Lankhorst       2014-07-01  36  
 
-This leaves the DT binding and TH1520 DT patches (2/4 and 3/4). Would
-you be able to pick them up through your tree ?
+:::::: The code at line 12 was first introduced by commit
+:::::: f54d1867005c3323f5d8ad83eed823e84226c429 dma-buf: Rename struct fence to dma_fence
 
-Thanks !
+:::::: TO: Chris Wilson <chris@chris-wilson.co.uk>
+:::::: CC: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-> 
->>
->> Cheers,
->> Matt
->>
->>> ---
->>>  drivers/gpu/drm/imagination/pvr_device.c |  22 +----
->>>  drivers/gpu/drm/imagination/pvr_device.h |  17 ++++
->>>  drivers/gpu/drm/imagination/pvr_drv.c    |  23 ++++-
->>>  drivers/gpu/drm/imagination/pvr_power.c  | 158 +++++++++++++++++++++++--------
->>>  drivers/gpu/drm/imagination/pvr_power.h  |  15 +++
->>>  5 files changed, 176 insertions(+), 59 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/imagination/pvr_device.c b/drivers/gpu/drm/imagination/pvr_device.c
->>> index 8b9ba4983c4cb5bc40342fcafc4259078bc70547..294b6019b4155bb7fdb7de73ccf7fa8ad867811f 100644
->>> --- a/drivers/gpu/drm/imagination/pvr_device.c
->>> +++ b/drivers/gpu/drm/imagination/pvr_device.c
->>> @@ -23,6 +23,7 @@
->>>  #include <linux/firmware.h>
->>>  #include <linux/gfp.h>
->>>  #include <linux/interrupt.h>
->>> +#include <linux/of.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/pm_runtime.h>
->>>  #include <linux/reset.h>
->>> @@ -121,21 +122,6 @@ static int pvr_device_clk_init(struct pvr_device *pvr_dev)
->>>  	return 0;
->>>  }
->>>  
->>> -static int pvr_device_reset_init(struct pvr_device *pvr_dev)
->>> -{
->>> -	struct drm_device *drm_dev = from_pvr_device(pvr_dev);
->>> -	struct reset_control *reset;
->>> -
->>> -	reset = devm_reset_control_get_optional_exclusive(drm_dev->dev, NULL);
->>> -	if (IS_ERR(reset))
->>> -		return dev_err_probe(drm_dev->dev, PTR_ERR(reset),
->>> -				     "failed to get gpu reset line\n");
->>> -
->>> -	pvr_dev->reset = reset;
->>> -
->>> -	return 0;
->>> -}
->>> -
->>>  /**
->>>   * pvr_device_process_active_queues() - Process all queue related events.
->>>   * @pvr_dev: PowerVR device to check
->>> @@ -618,6 +604,9 @@ pvr_device_init(struct pvr_device *pvr_dev)
->>>  	struct device *dev = drm_dev->dev;
->>>  	int err;
->>>  
->>> +	/* Get the platform-specific data based on the compatible string. */
->>> +	pvr_dev->device_data = of_device_get_match_data(dev);
->>> +
->>>  	/*
->>>  	 * Setup device parameters. We do this first in case other steps
->>>  	 * depend on them.
->>> @@ -631,8 +620,7 @@ pvr_device_init(struct pvr_device *pvr_dev)
->>>  	if (err)
->>>  		return err;
->>>  
->>> -	/* Get the reset line for the GPU */
->>> -	err = pvr_device_reset_init(pvr_dev);
->>> +	err = pvr_dev->device_data->pwr_ops->init(pvr_dev);
->>>  	if (err)
->>>  		return err;
->>>  
->>> diff --git a/drivers/gpu/drm/imagination/pvr_device.h b/drivers/gpu/drm/imagination/pvr_device.h
->>> index 7cb01c38d2a9c3fc71effe789d4dfe54eddd93ee..ab8f56ae15df6c2888feb16b1d87b59510961936 100644
->>> --- a/drivers/gpu/drm/imagination/pvr_device.h
->>> +++ b/drivers/gpu/drm/imagination/pvr_device.h
->>> @@ -37,6 +37,9 @@ struct clk;
->>>  /* Forward declaration from <linux/firmware.h>. */
->>>  struct firmware;
->>>  
->>> +/* Forward declaration from <linux/pwrseq/consumer.h> */
->>> +struct pwrseq_desc;
->>> +
->>>  /**
->>>   * struct pvr_gpu_id - Hardware GPU ID information for a PowerVR device
->>>   * @b: Branch ID.
->>> @@ -57,6 +60,14 @@ struct pvr_fw_version {
->>>  	u16 major, minor;
->>>  };
->>>  
->>> +/**
->>> + * struct pvr_device_data - Platform specific data associated with a compatible string.
->>> + * @pwr_ops: Pointer to a structure with platform-specific power functions.
->>> + */
->>> +struct pvr_device_data {
->>> +	const struct pvr_power_sequence_ops *pwr_ops;
->>> +};
->>> +
->>>  /**
->>>   * struct pvr_device - powervr-specific wrapper for &struct drm_device
->>>   */
->>> @@ -98,6 +109,9 @@ struct pvr_device {
->>>  	/** @fw_version: Firmware version detected at runtime. */
->>>  	struct pvr_fw_version fw_version;
->>>  
->>> +	/** @device_data: Pointer to platform-specific data. */
->>> +	const struct pvr_device_data *device_data;
->>> +
->>>  	/** @regs_resource: Resource representing device control registers. */
->>>  	struct resource *regs_resource;
->>>  
->>> @@ -148,6 +162,9 @@ struct pvr_device {
->>>  	 */
->>>  	struct reset_control *reset;
->>>  
->>> +	/** @pwrseq: Pointer to a power sequencer, if one is used. */
->>> +	struct pwrseq_desc *pwrseq;
->>> +
->>>  	/** @irq: IRQ number. */
->>>  	int irq;
->>>  
->>> diff --git a/drivers/gpu/drm/imagination/pvr_drv.c b/drivers/gpu/drm/imagination/pvr_drv.c
->>> index b058ec183bb30ab5c3db17ebaadf2754520a2a1f..916b40ced7eb0408fe985ba1b83b3be2eb024bae 100644
->>> --- a/drivers/gpu/drm/imagination/pvr_drv.c
->>> +++ b/drivers/gpu/drm/imagination/pvr_drv.c
->>> @@ -1480,15 +1480,33 @@ static void pvr_remove(struct platform_device *plat_dev)
->>>  	pvr_power_domains_fini(pvr_dev);
->>>  }
->>>  
->>> +static const struct pvr_device_data pvr_device_data_manual = {
->>> +	.pwr_ops = &pvr_power_sequence_ops_manual,
->>> +};
->>> +
->>> +static const struct pvr_device_data pvr_device_data_pwrseq = {
->>> +	.pwr_ops = &pvr_power_sequence_ops_pwrseq,
->>> +};
->>> +
->>>  static const struct of_device_id dt_match[] = {
->>> -	{ .compatible = "img,img-rogue", .data = NULL },
->>> +	{
->>> +		.compatible = "thead,th1520-gpu",
->>> +		.data = &pvr_device_data_pwrseq,
->>> +	},
->>> +	{
->>> +		.compatible = "img,img-rogue",
->>> +		.data = &pvr_device_data_manual,
->>> +	},
->>>  
->>>  	/*
->>>  	 * This legacy compatible string was introduced early on before the more generic
->>>  	 * "img,img-rogue" was added. Keep it around here for compatibility, but never use
->>>  	 * "img,img-axe" in new devicetrees.
->>>  	 */
->>> -	{ .compatible = "img,img-axe", .data = NULL },
->>> +	{
->>> +		.compatible = "img,img-axe",
->>> +		.data = &pvr_device_data_manual,
->>> +	},
->>>  	{}
->>>  };
->>>  MODULE_DEVICE_TABLE(of, dt_match);
->>> @@ -1513,4 +1531,5 @@ MODULE_DESCRIPTION(PVR_DRIVER_DESC);
->>>  MODULE_LICENSE("Dual MIT/GPL");
->>>  MODULE_IMPORT_NS("DMA_BUF");
->>>  MODULE_FIRMWARE("powervr/rogue_33.15.11.3_v1.fw");
->>> +MODULE_FIRMWARE("powervr/rogue_36.52.104.182_v1.fw");
->>>  MODULE_FIRMWARE("powervr/rogue_36.53.104.796_v1.fw");
->>> diff --git a/drivers/gpu/drm/imagination/pvr_power.c b/drivers/gpu/drm/imagination/pvr_power.c
->>> index 187a07e0bd9adb2f0713ac2c8e091229f4027354..c6e7ff9e935d3b348eff6953c633c72410fdf507 100644
->>> --- a/drivers/gpu/drm/imagination/pvr_power.c
->>> +++ b/drivers/gpu/drm/imagination/pvr_power.c
->>> @@ -18,6 +18,7 @@
->>>  #include <linux/platform_device.h>
->>>  #include <linux/pm_domain.h>
->>>  #include <linux/pm_runtime.h>
->>> +#include <linux/pwrseq/consumer.h>
->>>  #include <linux/reset.h>
->>>  #include <linux/timer.h>
->>>  #include <linux/types.h>
->>> @@ -234,6 +235,118 @@ pvr_watchdog_init(struct pvr_device *pvr_dev)
->>>  	return 0;
->>>  }
->>>  
->>> +static int pvr_power_init_manual(struct pvr_device *pvr_dev)
->>> +{
->>> +	struct drm_device *drm_dev = from_pvr_device(pvr_dev);
->>> +	struct reset_control *reset;
->>> +
->>> +	reset = devm_reset_control_get_optional_exclusive(drm_dev->dev, NULL);
->>> +	if (IS_ERR(reset))
->>> +		return dev_err_probe(drm_dev->dev, PTR_ERR(reset),
->>> +				     "failed to get gpu reset line\n");
->>> +
->>> +	pvr_dev->reset = reset;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int pvr_power_on_sequence_manual(struct pvr_device *pvr_dev)
->>> +{
->>> +	int err;
->>> +
->>> +	err = clk_prepare_enable(pvr_dev->core_clk);
->>> +	if (err)
->>> +		return err;
->>> +
->>> +	err = clk_prepare_enable(pvr_dev->sys_clk);
->>> +	if (err)
->>> +		goto err_core_clk_disable;
->>> +
->>> +	err = clk_prepare_enable(pvr_dev->mem_clk);
->>> +	if (err)
->>> +		goto err_sys_clk_disable;
->>> +
->>> +	/*
->>> +	 * According to the hardware manual, a delay of at least 32 clock
->>> +	 * cycles is required between de-asserting the clkgen reset and
->>> +	 * de-asserting the GPU reset. Assuming a worst-case scenario with
->>> +	 * a very high GPU clock frequency, a delay of 1 microsecond is
->>> +	 * sufficient to ensure this requirement is met across all
->>> +	 * feasible GPU clock speeds.
->>> +	 */
->>> +	udelay(1);
->>> +
->>> +	err = reset_control_deassert(pvr_dev->reset);
->>> +	if (err)
->>> +		goto err_mem_clk_disable;
->>> +
->>> +	return 0;
->>> +
->>> +err_mem_clk_disable:
->>> +	clk_disable_unprepare(pvr_dev->mem_clk);
->>> +
->>> +err_sys_clk_disable:
->>> +	clk_disable_unprepare(pvr_dev->sys_clk);
->>> +
->>> +err_core_clk_disable:
->>> +	clk_disable_unprepare(pvr_dev->core_clk);
->>> +
->>> +	return err;
->>> +}
->>> +
->>> +static int pvr_power_off_sequence_manual(struct pvr_device *pvr_dev)
->>> +{
->>> +	int err;
->>> +
->>> +	err = reset_control_assert(pvr_dev->reset);
->>> +
->>> +	clk_disable_unprepare(pvr_dev->mem_clk);
->>> +	clk_disable_unprepare(pvr_dev->sys_clk);
->>> +	clk_disable_unprepare(pvr_dev->core_clk);
->>> +
->>> +	return err;
->>> +}
->>> +
->>> +const struct pvr_power_sequence_ops pvr_power_sequence_ops_manual = {
->>> +	.init = pvr_power_init_manual,
->>> +	.power_on = pvr_power_on_sequence_manual,
->>> +	.power_off = pvr_power_off_sequence_manual,
->>> +};
->>> +
->>> +static int pvr_power_init_pwrseq(struct pvr_device *pvr_dev)
->>> +{
->>> +	struct device *dev = from_pvr_device(pvr_dev)->dev;
->>> +
->>> +	pvr_dev->pwrseq = devm_pwrseq_get(dev, "gpu-power");
->>> +	if (IS_ERR(pvr_dev->pwrseq)) {
->>> +		/*
->>> +		 * This platform requires a sequencer. If we can't get it, we
->>> +		 * must return the error (including -EPROBE_DEFER to wait for
->>> +		 * the provider to appear)
->>> +		 */
->>> +		return dev_err_probe(dev, PTR_ERR(pvr_dev->pwrseq),
->>> +				     "Failed to get required power sequencer\n");
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int pvr_power_on_sequence_pwrseq(struct pvr_device *pvr_dev)
->>> +{
->>> +	return pwrseq_power_on(pvr_dev->pwrseq);
->>> +}
->>> +
->>> +static int pvr_power_off_sequence_pwrseq(struct pvr_device *pvr_dev)
->>> +{
->>> +	return pwrseq_power_off(pvr_dev->pwrseq);
->>> +}
->>> +
->>> +const struct pvr_power_sequence_ops pvr_power_sequence_ops_pwrseq = {
->>> +	.init = pvr_power_init_pwrseq,
->>> +	.power_on = pvr_power_on_sequence_pwrseq,
->>> +	.power_off = pvr_power_off_sequence_pwrseq,
->>> +};
->>> +
->>>  int
->>>  pvr_power_device_suspend(struct device *dev)
->>>  {
->>> @@ -252,11 +365,7 @@ pvr_power_device_suspend(struct device *dev)
->>>  			goto err_drm_dev_exit;
->>>  	}
->>>  
->>> -	clk_disable_unprepare(pvr_dev->mem_clk);
->>> -	clk_disable_unprepare(pvr_dev->sys_clk);
->>> -	clk_disable_unprepare(pvr_dev->core_clk);
->>> -
->>> -	err = reset_control_assert(pvr_dev->reset);
->>> +	err = pvr_dev->device_data->pwr_ops->power_off(pvr_dev);
->>>  
->>>  err_drm_dev_exit:
->>>  	drm_dev_exit(idx);
->>> @@ -276,53 +385,22 @@ pvr_power_device_resume(struct device *dev)
->>>  	if (!drm_dev_enter(drm_dev, &idx))
->>>  		return -EIO;
->>>  
->>> -	err = clk_prepare_enable(pvr_dev->core_clk);
->>> +	err = pvr_dev->device_data->pwr_ops->power_on(pvr_dev);
->>>  	if (err)
->>>  		goto err_drm_dev_exit;
->>>  
->>> -	err = clk_prepare_enable(pvr_dev->sys_clk);
->>> -	if (err)
->>> -		goto err_core_clk_disable;
->>> -
->>> -	err = clk_prepare_enable(pvr_dev->mem_clk);
->>> -	if (err)
->>> -		goto err_sys_clk_disable;
->>> -
->>> -	/*
->>> -	 * According to the hardware manual, a delay of at least 32 clock
->>> -	 * cycles is required between de-asserting the clkgen reset and
->>> -	 * de-asserting the GPU reset. Assuming a worst-case scenario with
->>> -	 * a very high GPU clock frequency, a delay of 1 microsecond is
->>> -	 * sufficient to ensure this requirement is met across all
->>> -	 * feasible GPU clock speeds.
->>> -	 */
->>> -	udelay(1);
->>> -
->>> -	err = reset_control_deassert(pvr_dev->reset);
->>> -	if (err)
->>> -		goto err_mem_clk_disable;
->>> -
->>>  	if (pvr_dev->fw_dev.booted) {
->>>  		err = pvr_power_fw_enable(pvr_dev);
->>>  		if (err)
->>> -			goto err_reset_assert;
->>> +			goto err_power_off;
->>>  	}
->>>  
->>>  	drm_dev_exit(idx);
->>>  
->>>  	return 0;
->>>  
->>> -err_reset_assert:
->>> -	reset_control_assert(pvr_dev->reset);
->>> -
->>> -err_mem_clk_disable:
->>> -	clk_disable_unprepare(pvr_dev->mem_clk);
->>> -
->>> -err_sys_clk_disable:
->>> -	clk_disable_unprepare(pvr_dev->sys_clk);
->>> -
->>> -err_core_clk_disable:
->>> -	clk_disable_unprepare(pvr_dev->core_clk);
->>> +err_power_off:
->>> +	pvr_dev->device_data->pwr_ops->power_off(pvr_dev);
->>>  
->>>  err_drm_dev_exit:
->>>  	drm_dev_exit(idx);
->>> diff --git a/drivers/gpu/drm/imagination/pvr_power.h b/drivers/gpu/drm/imagination/pvr_power.h
->>> index ada85674a7ca762dcf92df40424230e1c3910342..b853d092242cc90cb98cf66100679a309055a1dc 100644
->>> --- a/drivers/gpu/drm/imagination/pvr_power.h
->>> +++ b/drivers/gpu/drm/imagination/pvr_power.h
->>> @@ -41,4 +41,19 @@ pvr_power_put(struct pvr_device *pvr_dev)
->>>  int pvr_power_domains_init(struct pvr_device *pvr_dev);
->>>  void pvr_power_domains_fini(struct pvr_device *pvr_dev);
->>>  
->>> +/**
->>> + * struct pvr_power_sequence_ops - Platform specific power sequence operations.
->>> + * @init: Pointer to the platform-specific initialization function.
->>> + * @power_on: Pointer to the platform-specific power on function.
->>> + * @power_off: Pointer to the platform-specific power off function.
->>> + */
->>> +struct pvr_power_sequence_ops {
->>> +	int (*init)(struct pvr_device *pvr_dev);
->>> +	int (*power_on)(struct pvr_device *pvr_dev);
->>> +	int (*power_off)(struct pvr_device *pvr_dev);
->>> +};
->>> +
->>> +extern const struct pvr_power_sequence_ops pvr_power_sequence_ops_manual;
->>> +extern const struct pvr_power_sequence_ops pvr_power_sequence_ops_pwrseq;
->>> +
->>>  #endif /* PVR_POWER_H */
->>>
->>
->>
-> 
-> Best regards,
-
-Best regards,
 -- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
