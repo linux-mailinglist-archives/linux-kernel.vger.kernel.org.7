@@ -1,231 +1,174 @@
-Return-Path: <linux-kernel+bounces-781945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5108B318FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:14:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ADF5B31917
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CCA71CC431E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:13:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1E79685C11
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817FA2FDC35;
-	Fri, 22 Aug 2025 13:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546042FDC39;
+	Fri, 22 Aug 2025 13:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="0Eedm75k"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WtbBqVC6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CAC33DF;
-	Fri, 22 Aug 2025 13:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA2A33DF;
+	Fri, 22 Aug 2025 13:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755868370; cv=none; b=qDlzby9XfaPa3RgA6Eu+h5gsIEajgimqKYe8DcRZSAQzC4kSG1hMIqugzTPy8ySyCt/OHXIhWS7sWkkedrtdiMWsTxogmzd3r/vZ3hRWvtGJFVZeX8dDOxO5MBAop+d04A8mopjkG3QtJtwLDIhL1Dq7JhqGzYzdLUM8WQ44osw=
+	t=1755868420; cv=none; b=KMkvf6sL8X0QEZurH9/kwODLnaCPOG4XPjaeNcvfTnqhofT4vQhacY5alO2c75jM5banqhoTfaBJ0ViQUw90L0i8LwTOcHQrYXOMA0Tos0fAAgXmesfCjhgyjfvbVOihoOPKGM+va4SCy0QAsuBC9C4WlpJ3MBGUxJ2UIJGgLiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755868370; c=relaxed/simple;
-	bh=q4JqQt2fVhFDOCL8SkHpfrtTrPWIgWAQ2A8aiau95Zw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hy7mtSJZ8IDVfb7cS+/ylJsSlTCHpo36Ab4/0bBjutfmSKtDx19V3bssVA5HJ3JPXVS9ntSzIZpuoyBCkiCkofl/Xy5bzKQf6ughARV/0eltYBrRh8WlNJmHc35EUkp3OgQj5D6BX4J7kFKCF+L3zTCOPyIICjdG6FUttA6gBbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=0Eedm75k; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MCcqnv031363;
-	Fri, 22 Aug 2025 15:12:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	GokK0EwgMtfsSNnIpttne/zzS1Pm4lLm8u+xuFpTDOc=; b=0Eedm75kc0PDSdky
-	/8jqHNndow2ZEb5RGHoy9LDDl00fo7DN6SI+sP01h0hN4/eGmIohw8BY+4hnQ7TK
-	QJIMF7f/QQPTc1auYlfMmDjrNgw7pa4havE+xo6jvNi3jwYsG0ssCAr+A0clIdb2
-	ih4l/a8IJcuw8mIqnVosxq2OSXKWOrRHTJE5qqMyYKzZ8LsqE+K5jWHpOxP5ePeF
-	FWVyfur2bVOnOYGxfybcYo7SsAj0BCWT17YbvQdJsYhdOhEmYIM1kpi9+og2Q64M
-	9Rh7ilp4ZnMMZRQMnkuDw9cTbbYvHqOBde8ooYnKiZXZDD9RBwshHnxecYV+c8V2
-	9ZmL8Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48nd5xs993-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Aug 2025 15:12:34 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id F380D4002D;
-	Fri, 22 Aug 2025 15:11:15 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 415ED7206CF;
-	Fri, 22 Aug 2025 15:10:19 +0200 (CEST)
-Received: from [10.48.87.178] (10.48.87.178) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 22 Aug
- 2025 15:10:18 +0200
-Message-ID: <d193523c-5508-4bba-971b-8c0a8b7b44de@foss.st.com>
-Date: Fri, 22 Aug 2025 15:10:17 +0200
+	s=arc-20240116; t=1755868420; c=relaxed/simple;
+	bh=to2PW5L9ZA4+ZLuKmCSzsBNNcJnycnTz+AmHT7UpSxw=;
+	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=kCAcUhVKEEz+Z8mhl3NjqKESwja53IArhzBoXiAN17WFib7soK4B+s0gLJLTEI9UD4nE8cuBFMsMjcOX2TnuoIjN7Is+yNe+kYoovJbOebNExl1WfWemfi4l4dcCmhGOCxTdus+vWhjXfSSTUqkDK9ZL2+8XfZd88VEy61qywu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WtbBqVC6; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755868419; x=1787404419;
+  h=from:to:cc:date:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=to2PW5L9ZA4+ZLuKmCSzsBNNcJnycnTz+AmHT7UpSxw=;
+  b=WtbBqVC6oHYGVZ3rUeIBaI8HrscdpbgU5DlNpafUuhP0FDqDjFa93mG7
+   YmL20QuO4Jg5PdV/FlLwc0i9e6w4RKQVjbZE8ZIUUy04KMN9rtSDdAL6f
+   7cbnkqHeqM1u5tPOGxyMNri33LyuCYYvTZ3oVrLKm5AKWujRx5SOapxu2
+   sNwIgptDor13km2ByYYXTuNFIJaiza15D+27G+CaFMhKntaOQ8iGy6uzq
+   kt1PzOE4TId8HTZkyVdclJsXsrh4e24j8H48iIJPJJmRRfowGmtIeZOLh
+   KPek4f1TjND5wh9M2YjDRYiQBHoP5Qw2W+8UxwJrYzlFAJE5/qguyh+8q
+   g==;
+X-CSE-ConnectionGUID: yR1obXg+QHmqcMKk7XxHgQ==
+X-CSE-MsgGUID: TnjtPrzTTnOxi8QQ4vlwuQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="69614533"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="69614533"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 06:13:39 -0700
+X-CSE-ConnectionGUID: DieSF0OTSd2huQJBZD+W+g==
+X-CSE-MsgGUID: SEM/MNdhS+WBdiXyD8WvhA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="168607523"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.115])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 06:13:35 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
+Date: Fri, 22 Aug 2025 16:11:52 +0300
+Subject: [GIT PULL] platform-drivers-x86 for v6.17-2
+Message-ID: <pdx86-pr-20250822161152-256141077@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 13/13] arm64: dts: st: enable display support on
- stm32mp257f-ev1 board
-To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Philippe Cornu
-	<philippe.cornu@foss.st.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Maxime
- Coquelin" <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Christophe Roullier
-	<christophe.roullier@foss.st.com>
-CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250821-drm-misc-next-v4-0-7060500f8fd3@foss.st.com>
- <20250821-drm-misc-next-v4-13-7060500f8fd3@foss.st.com>
-Content-Language: en-US
-From: Yannick FERTRE <yannick.fertre@foss.st.com>
-In-Reply-To: <20250821-drm-misc-next-v4-13-7060500f8fd3@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
 
-Hi Raphael,
+Hi Linus,
 
-Thanks for the patch.
+Here is a platform-drivers-x86 fixes PR for v6.17.
 
-Acked-by: Yannick Fertre <yannick.fertre@foss.st.com>
+Fixes and New HW Support:
 
-Le 21/08/2025 à 13:09, Raphael Gallais-Pou a écrit :
-> Enable the following IPs on stm32mp257f-ev1 in order to get display:
->     * LTDC
->     * LVDS
->     * WSVGA LVDS panel (1024x600)
->     * Panel LVDS backlight as GPIO backlight
->     * ILI2511 i2c touchscreen
->
-> Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-> ---
->   arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 79 ++++++++++++++++++++++++++++++
->   1 file changed, 79 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-> index 836b1958ce65fb72c99d634a92af3efaf9844d76..2958ad413b0675575d84942e193a16f80197b88e 100644
-> --- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-> +++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-> @@ -86,6 +86,43 @@ mm_ospi1: mm-ospi@60000000 {
->   			no-map;
->   		};
->   	};
-> +
-> +	panel_lvds: display {
-> +		compatible = "edt,etml0700z9ndha", "panel-lvds";
-> +		enable-gpios = <&gpiog 15 GPIO_ACTIVE_HIGH>;
-> +		backlight = <&panel_lvds_backlight>;
-> +		power-supply = <&scmi_v3v3>;
-> +		status = "okay";
-> +
-> +		width-mm = <156>;
-> +		height-mm = <92>;
-> +		data-mapping = "vesa-24";
-> +
-> +		panel-timing {
-> +			clock-frequency = <54000000>;
-> +			hactive = <1024>;
-> +			vactive = <600>;
-> +			hfront-porch = <150>;
-> +			hback-porch = <150>;
-> +			hsync-len = <21>;
-> +			vfront-porch = <24>;
-> +			vback-porch = <24>;
-> +			vsync-len = <21>;
-> +		};
-> +
-> +		port {
-> +			lvds_panel_in: endpoint {
-> +				remote-endpoint = <&lvds_out0>;
-> +			};
-> +		};
-> +	};
-> +
-> +	panel_lvds_backlight: backlight {
-> +		compatible = "gpio-backlight";
-> +		gpios = <&gpioi 5 GPIO_ACTIVE_HIGH>;
-> +		default-on;
-> +		status = "okay";
-> +	};
->   };
->   
->   &arm_wdt {
-> @@ -183,6 +220,15 @@ imx335_ep: endpoint {
->   			};
->   		};
->   	};
-> +
-> +	ili2511: ili2511@41 {
-> +		compatible = "ilitek,ili251x";
-> +		reg = <0x41>;
-> +		interrupt-parent = <&gpioi>;
-> +		interrupts = <13 IRQ_TYPE_EDGE_FALLING>;
-> +		reset-gpios = <&gpiog 14 GPIO_ACTIVE_LOW>;
-> +		status = "okay";
-> +	};
->   };
->   
->   &i2c8 {
-> @@ -230,6 +276,39 @@ timer {
->   	};
->   };
->   
-> +&ltdc {
-> +	status = "okay";
-> +
-> +	port {
-> +		ltdc_ep0_out: endpoint {
-> +			remote-endpoint = <&lvds_in>;
-> +		};
-> +	};
-> +};
-> +
-> +&lvds {
-> +	status = "okay";
-> +
-> +	ports {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		port@0 {
-> +			reg = <0>;
-> +			lvds_in: endpoint {
-> +				remote-endpoint = <&ltdc_ep0_out>;
-> +			};
-> +		};
-> +
-> +		port@1 {
-> +			reg = <1>;
-> +			lvds_out0: endpoint {
-> +				remote-endpoint = <&lvds_panel_in>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
->   &rtc {
->   	status = "okay";
->   };
->
+ - amd/hsmp:
+
+   - Ensure sock->metric_tbl_addr is non-NULL
+
+   - Register driver even if hwmon registration fails
+
+ - amd/pmc: Drop SMU F/W match for Cezanne
+
+ - dell-smbios-wmi: Separate "priority" from WMI device ID
+
+ - hp-wmi: mark Victus 16-r1xxx for Victus s fan and thermal profile support
+
+ - intel-uncore-freq: Check write blocked for efficiency latency control
+
+Regards, i.
+
+
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.17-2
+
+for you to fetch changes up to 748f897511446c7578ca5f6d2ff099916bad6e28:
+
+  platform/x86: hp-wmi: mark Victus 16-r1xxx for victus_s fan and thermal profile support (2025-08-12 15:23:09 +0300)
+
+----------------------------------------------------------------
+platform-drivers-x86 for v6.17-2
+
+Fixes and New HW Support:
+
+ - amd/hsmp:
+
+   - Ensure sock->metric_tbl_addr is non-NULL
+
+   - Register driver even if hwmon registration fails
+
+ - amd/pmc: Drop SMU F/W match for Cezanne
+
+ - dell-smbios-wmi: Separate "priority" from WMI device ID
+
+ - hp-wmi: mark Victus 16-r1xxx for Victus s fan and thermal profile support
+
+ - intel-uncore-freq: Check write blocked for efficiency latency control
+
+The following is an automated shortlog grouped by driver:
+
+amd/hsmp:
+ -  Ensure sock->metric_tbl_addr is non-NULL
+ -  Ensure success even if hwmon registration fails
+
+amd: pmc:
+ -  Drop SMU F/W match for Cezanne
+
+dell-smbios-wmi:
+ -  Stop touching WMI device ID
+
+hp-wmi:
+ -  mark Victus 16-r1xxx for victus_s fan and thermal profile support
+
+intel-uncore-freq:
+ -  Check write blocked for ELC
+
+----------------------------------------------------------------
+Armin Wolf (1):
+      platform/x86: dell-smbios-wmi: Stop touching WMI device ID
+
+Edip Hazuri (1):
+      platform/x86: hp-wmi: mark Victus 16-r1xxx for victus_s fan and thermal profile support
+
+Mario Limonciello (1):
+      platform/x86/amd: pmc: Drop SMU F/W match for Cezanne
+
+Srinivas Pandruvada (1):
+      platform/x86/intel-uncore-freq: Check write blocked for ELC
+
+Suma Hegde (2):
+      platform/x86/amd/hsmp: Ensure sock->metric_tbl_addr is non-NULL
+      platform/x86/amd/hsmp: Ensure success even if hwmon registration fails
+
+ drivers/platform/x86/amd/hsmp/acpi.c               |  2 +-
+ drivers/platform/x86/amd/hsmp/hsmp.c               |  5 ++
+ drivers/platform/x86/amd/pmc/pmc-quirks.c          | 54 ++++++++++++++--------
+ drivers/platform/x86/amd/pmc/pmc.c                 | 13 ------
+ drivers/platform/x86/dell/dell-smbios-base.c       | 19 ++++----
+ drivers/platform/x86/dell/dell-smbios-smm.c        |  3 +-
+ drivers/platform/x86/dell/dell-smbios-wmi.c        |  4 +-
+ drivers/platform/x86/dell/dell-smbios.h            |  2 +-
+ drivers/platform/x86/hp/hp-wmi.c                   |  4 +-
+ .../intel/uncore-frequency/uncore-frequency-tpmi.c |  5 ++
+ 10 files changed, 59 insertions(+), 52 deletions(-)
 
