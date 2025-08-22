@@ -1,91 +1,48 @@
-Return-Path: <linux-kernel+bounces-780843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF1F6B309FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:33:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E67BDB30A2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90B49623415
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:33:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FB492A414B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04BF2EA478;
-	Thu, 21 Aug 2025 23:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=libre.computer header.i=@libre.computer header.b="f4LIXA2K"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B82A212557;
+	Fri, 22 Aug 2025 00:11:29 +0000 (UTC)
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5F82E1EFF
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 23:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976E31547EE;
+	Fri, 22 Aug 2025 00:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755819226; cv=none; b=etpxVTYCZAi6MzW62C8L4vOeQB3IIpXoeBhECH3zbQae0T1WB2KOp42z6i94WQGRrbwvZYV4WkVQ8iWVgWxPffDbzfQqhROmgX6/Y07EAoDIv2yGhbTUqY0Kq6SVGPeg4gXZ1PnylBIyxGeWfe+fQSLZwM1kC41gxQ7m8zgz2lM=
+	t=1755821487; cv=none; b=J83HXfqVgwVE3atOoI6KVL27ngtCTyEz3QcIB82JQaZEGQBtsVQvIbAVLUZmhPfmx2XtyddrXhgoCUjgRvZh6GT8aSTqMUj34sXPC8W8yLvblBd4KXkMdM0B7pmM7GuRCOHGNzwLPDzf9MdD+GfSWuZmUY6glvyTn0KOg4Sw0Pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755819226; c=relaxed/simple;
-	bh=DJeXCGYX6D/OlH0QEqQjuSy5fuYgqi7zZqhKILfluK0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GU78TUuZpGMlZ6YEND9CI7V5sITZJuM4sstg4Hj81GzQSGBeC0K1ML7EfpZ9dN5NFEE6zqKwbgll/pDWqAzKxtJXiApBwJbQ6mL/jdVefy88kUB7WTAXKwRCAsTmi2AoVBxqDEPwaNfiRLtARzW3K0J9GGzAm87ilqsdG75wL3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libre.computer; spf=none smtp.mailfrom=libretech.co; dkim=pass (2048-bit key) header.d=libre.computer header.i=@libre.computer header.b=f4LIXA2K; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libre.computer
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=libretech.co
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7e87055e1b6so231694985a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 16:33:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=libre.computer; s=google; t=1755819223; x=1756424023; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hvbh5Obgs9w+xkwaE6p3IluxarxC/+wS6HEpg73DttY=;
-        b=f4LIXA2KqvYP3jSE2Tw5FeqTUubloMJxusbAyjpLek0wSXXnFI4AEzNkrOAKjrkcG7
-         +1+oz0dUvA3XdGINt1eZdwv9Vg/w25GYjQo2J+nFHwd2ooLQdoljqNI0OZhyc5fimqbY
-         l2JS6EYXYqeuVA5Gv60IfqkEJwtwepS7Lv34czKMszZGv5cpDX4795YWhirv63GCLWGk
-         7Ccp3wnIN+DseDA6A5RLEMY8ZB/PvfpeGKdzuJHDkdkzMwQd3OaXeIvgeDJwgvo9UWS1
-         LGgkPYFy7vQUyYe3u4GuBUtJOWtlTRBdiJR7Aj88mnu3lh11nGVMT/sJuas0yF1MLFhX
-         LiLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755819223; x=1756424023;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Hvbh5Obgs9w+xkwaE6p3IluxarxC/+wS6HEpg73DttY=;
-        b=spxemASWOyR+DBH5wEngvwHS5mXBPFdvRLi9LpN1VypIxXJi31LxYf/AibQZbhGpQI
-         bhABLKlAEKBf9lrf0JP3sRrE81KZG8By2SkSoB1WkLLGa+t3ZBmnCQGGE7sPFyvza7d6
-         oy0UGXjPb5qdeYCeulLkNvl7u0RhOLJ6wypPKt28/QGqTXg41qYF+58ehXKbo9c6Fbzj
-         davRRFVT6kQWl01G0T/ekMcPyy9xVVui/586r6H9+XVTo28tcRS2fhO3/f2kA/Wriya+
-         vseWjzdTUfnPw4wyAu5fNiuyiOHmFja2GLGfyHhiBVQCKsqRH0AyKHj8vbhmKgAEyOrT
-         nbcg==
-X-Forwarded-Encrypted: i=1; AJvYcCViKxKJ86fF+/L8owf4QUdZLjujHZxBTwzpnBwOizCemtIauicTUrA8IpDuu5d/Td2uzq5mz91HjsNmVPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiUewBv1vGNcG45hOjwMcs9rqJ7j7NK2OUf8tWTkHDTBc0595d
-	j2JwXTTT7nEv6PAL3F04unMCdP6aLFXOeDpMlsEqAn3b+2EPzsupIWgOwWfPuluVsA==
-X-Gm-Gg: ASbGnctajIQWE3sE+mk2kXkU129h8zW+z3aNkHg8VzYy75ZGIACXofi8+eOwbAzJlbc
-	LAPOZBguvBMX+10P2+r8RiZyxVmo6QIkOOF1xQzpwxkFtdK6RpQozo10mPZdZf5ysSICvtJvtb0
-	HqdQWiH6TTIa6BenkI3P/fK3ZE+vzuIAmq0uv9Gf1JKrmGG7fj3y5sd+C1fnhMp7p48O5jEH1Ag
-	t/8VWn3yNwDiNwlg+KvoROB8X39vde8zlm+44WjM7tEq18Eu0TP9pyR5pABiix8mrowyYEedSqm
-	Izj2NerDfXm1rfA/hMsj2o2Cww2oFIq36DYUhEvPN8IEzUzeXl6uJhU1v5nFNeINb1Z3oAozY+B
-	R6OOG+fqGJlAnMXDoC7+uBfXBst0vkQ==
-X-Google-Smtp-Source: AGHT+IEE8fYgK55NmdoQhhgPInOhivLoo6o9lQD203iWvd3p+5PTTXRIeOG74yZ2ZatbGTKv9Gbgbw==
-X-Received: by 2002:a05:620a:4590:b0:7e2:23c2:e55a with SMTP id af79cd13be357-7ea10f73cf5mr175527285a.27.1755819223112;
-        Thu, 21 Aug 2025 16:33:43 -0700 (PDT)
-Received: from localhost ([2607:fb91:3b82:29b4:add9:bee5:e413:378f])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7e87e0204ddsm1216833585a.10.2025.08.21.16.33.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 16:33:42 -0700 (PDT)
-From: Da Xue <da@libre.computer>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Rob Herring <robh@kernel.org>
-Cc: Da Xue <da@libre.computer>,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: meson-gxl: add missing i2c_d pinmux
-Date: Thu, 21 Aug 2025 19:33:34 -0400
-Message-ID: <20250821233335.1707559-1-da@libre.computer>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1755821487; c=relaxed/simple;
+	bh=U36K3UL1GafSRzKJ9JZcwd/7oz3VTvOqPFQHpnLbMZM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jkBa7Dob7lynA9Lkf+M12zlEeWlIJM9lwXdop3g6HfATBsLJjQo9Zj/rm9V8T0bgPc8BWn4/pgPYG3uwNzqsT/UOtOAsXBrwI7EOqx82YbA6kU6lpJymydfKRYeQuNaWs+R/F0A+UI26HjRVt7wwewxkosJ7WWqGbyupTOIY+GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1upFN7-006naX-6B;
+	Fri, 22 Aug 2025 00:11:11 +0000
+From: NeilBrown <neil@brown.name>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH v2 00/16] VFS: prepare for changes to directory locking
+Date: Fri, 22 Aug 2025 10:00:18 +1000
+Message-ID: <20250822000818.1086550-1-neil@brown.name>
+X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,59 +51,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Amlogic GXL has 4 I2C attached to gpio-periphs. I2C_D is on GPIOX_10/11.
+This is a partial revised set of patches based on review comments.
+Apart from the first five which received generally positive review and
+could possibly land now, they focus only on centralising the locking of
+directories for dirops, and only focus on create/remove, leaving rename
+for later.
 
-Add the relevant func 3 pinmux per the datasheet for S805X/S905X/S905D.
+Each time an interface is introduced, many new uses are included.
+overlayfs, smb/server, and ecryptfs (at least) will also make use of
+these interface, but that requires large patches which would distract
+from the introduction.
 
-Fixes: 0f15f500ff2c ("pinctrl: meson: Add GXL pinctrl definitions")
-Signed-off-by: Da Xue <da@libre.computer>
----
- drivers/pinctrl/meson/pinctrl-meson-gxl.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+I haven't included the change to vfs_mkdir() to have it unlock the
+directory.  Consequently there is a different "unlock" interface that
+must be used after vfs_mkdir() calls (end_dirop_mkdir()).  If we
+eventually make that change to vfs_mkdir(), end_dirop_mkdir() can be
+discarded.
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-index 9171de657f97..a75762e4d264 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-@@ -187,6 +187,9 @@ static const unsigned int i2c_sda_c_pins[]	= { GPIODV_28 };
- static const unsigned int i2c_sck_c_dv19_pins[] = { GPIODV_19 };
- static const unsigned int i2c_sda_c_dv18_pins[] = { GPIODV_18 };
- 
-+static const unsigned int i2c_sck_d_pins[]	= { GPIOX_11 };
-+static const unsigned int i2c_sda_d_pins[]	= { GPIOX_10 };
-+
- static const unsigned int eth_mdio_pins[]	= { GPIOZ_0 };
- static const unsigned int eth_mdc_pins[]	= { GPIOZ_1 };
- static const unsigned int eth_clk_rx_clk_pins[] = { GPIOZ_2 };
-@@ -411,6 +414,8 @@ static const struct meson_pmx_group meson_gxl_periphs_groups[] = {
- 	GPIO_GROUP(GPIO_TEST_N),
- 
- 	/* Bank X */
-+	GROUP(i2c_sda_d,	5,	5),
-+	GROUP(i2c_sck_d,	5,	4),
- 	GROUP(sdio_d0,		5,	31),
- 	GROUP(sdio_d1,		5,	30),
- 	GROUP(sdio_d2,		5,	29),
-@@ -651,6 +656,10 @@ static const char * const i2c_c_groups[] = {
- 	"i2c_sck_c", "i2c_sda_c", "i2c_sda_c_dv18", "i2c_sck_c_dv19",
- };
- 
-+static const char * const i2c_d_groups[] = {
-+	"i2c_sck_d", "i2c_sda_d",
-+};
-+
- static const char * const eth_groups[] = {
- 	"eth_mdio", "eth_mdc", "eth_clk_rx_clk", "eth_rx_dv",
- 	"eth_rxd0", "eth_rxd1", "eth_rxd2", "eth_rxd3",
-@@ -777,6 +786,7 @@ static const struct meson_pmx_func meson_gxl_periphs_functions[] = {
- 	FUNCTION(i2c_a),
- 	FUNCTION(i2c_b),
- 	FUNCTION(i2c_c),
-+	FUNCTION(i2c_d),
- 	FUNCTION(eth),
- 	FUNCTION(pwm_a),
- 	FUNCTION(pwm_b),
--- 
-2.47.2
+[peterz added for this intro and patch 03]
 
+Thanks,
+NeilBrown
+
+ [PATCH v2 01/16] VFS: discard err2 in filename_create()
+ [PATCH v2 02/16] VFS: unify old_mnt_idmap and new_mnt_idmap in
+ [PATCH v2 03/16] Introduce wake_up_key()
+ [PATCH v2 04/16] VFS: use global wait-queue table for
+ [PATCH v2 05/16] VFS: use d_alloc_parallel() in
+ [PATCH v2 06/16] VFS: introduce start_dirop()
+ [PATCH v2 07/16] VFS: introduce end_dirop() and end_dirop_mkdir()
+ [PATCH v2 08/16] VFS: implement simple_start_creating() with
+ [PATCH v2 09/16] VFS: introduce simple_end_creating() and
+ [PATCH v2 10/16] Use simple_start_creating() in various places.
+ [PATCH v2 11/16] VFS/nfsd/cachefiles: add start_creating() and
+ [PATCH v2 12/16] nfsd: move name lookup out of nfsd4_list_rec_dir()
+ [PATCH v2 13/16] VFS/nfsd/cachefiles: introduce start_removing()
+ [PATCH v2 14/16] VFS: introduce start_creating_noperm() and
+ [PATCH v2 15/16] VFS: introduce start_removing_dentry()
+ [PATCH v2 16/16] VFS: add start_creating_killable() and
 
