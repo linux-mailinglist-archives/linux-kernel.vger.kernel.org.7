@@ -1,111 +1,112 @@
-Return-Path: <linux-kernel+bounces-780988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59176B30BFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:45:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 109FBB30BFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A281AC491E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:45:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFBBDAC4A1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7FD024DCE9;
-	Fri, 22 Aug 2025 02:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8015021D3C0;
+	Fri, 22 Aug 2025 02:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hozn43S9"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E8C242D93;
-	Fri, 22 Aug 2025 02:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="S/BAgFdq"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A0B21ADB9;
+	Fri, 22 Aug 2025 02:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755830697; cv=none; b=ZwBauV6a8SUPFu2Dnl8yVsywDAoQnJD7XyX49JhxyJDUkPt4e9pVBwY3eR30uh63ApSvwUd/MJWLb2QYN+AziCF7X1OzMYZn2zDSic0oZuLNXNxR5LCb3j5nfuAxdR+bAJNPcXUvBLM9Gh/gwLj6RA6MLzXaC7woFAJX7btlMz4=
+	t=1755830798; cv=none; b=mT33mbrKJgqaomIAGaBfKp/Cm6XVMfWWOliSxp15Gf/cL/dsAluYvrnWsge+GGNxDbUR7mFxmyQh3btYvfem0/6zE0fXdN1DRTkHQ8PqlUWhJET+topx7CYghMJnika58cHP/gYWFvA60MLkcH92ANQCrtn1WtJBhFOth2F5Yv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755830697; c=relaxed/simple;
-	bh=ymmCrP+/+P+LpNntOeSJe6zYTkGwo1FDY5h+FuIYRoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l5C56BU4qu+ogOOE7ogWL0RoclZtzQoFr+YjjjsDA49KJqumcjoZZIJgjMhymjb/mB+bcCFSug75pxZsU5SX3QTYigMsxiLh/wB1GusXJ6HDEKLI+PaN+111uwLp5Vbkr1VB5nNnHve9fqPepmOPeUXeyqzAKBZpLLlHc0GWaiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hozn43S9; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b4717ba0d5dso1198535a12.1;
-        Thu, 21 Aug 2025 19:44:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755830695; x=1756435495; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uHOsZL5h3AOX8Ev+qfsTMnxg8y5sgs76/JGMQGQVcN8=;
-        b=Hozn43S9Gpx3MM8hSNcuPMpOYsnP4kdoTADWf84Qb/87vwXulHE+dhXVB9woc1eCql
-         vzBuKO146f+fZNlcXAYs/pno9f6XfsjxA7g+hM13WjKEN8flR/8dmjY2pykEPNOWuk5U
-         pn8BFUcVdXoZzzywC3JnSN/r9cQ9X5WDBTOxNtIDwQQx1/nKamzDYGlABzGh8xvHdAvv
-         pdfhpYXJsVUboXbFkgpjwshroVThXa8KCaUPtyrQw1jCnNAeP9x47dx+T7TvHPAt/ZX3
-         ZNMiniqcbQFEyrjEYLZ71nyDIWiNbTLXnW67EOPnvBl8QttKYmSGN+3mhhMcjff2kdNF
-         TApw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755830695; x=1756435495;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uHOsZL5h3AOX8Ev+qfsTMnxg8y5sgs76/JGMQGQVcN8=;
-        b=Kw2HfoMRMwQw5yVj2/l3axQfwe4ScKLghM2vlc16YmVdkFZZSjCOZkCWKEQY0bB8B8
-         plIzCiJr5UijuKyc25QEKRwOAQqcqUFFUYWrDrIpUgqluYWubiU8h04M25ckjhevVg72
-         yh0+sJZz4n+eNxOLrdlxP4i7fWygA+QX3DMtkeObDrFa/0SljzbeeQDE1P+h3fdy0HzO
-         QMCcu88uWE+LD+T9t5ZG5JAUvh4k3TST0WoJtBgxWFrMn8iG8AP3egtm+Fwg4yASaCHR
-         6nh3TNBuLtRm9aeIKEVEMBpzfK5CueUws2d58/z20wSQyoWiiPMgimcpIt8skfhIeCpj
-         ip4A==
-X-Forwarded-Encrypted: i=1; AJvYcCURcux4gU0qFChN4yeyh1Q2R81c87uiZFHvIN3EmU7Cl81jE0+wMASeAiCac5I8SnN//U9LFQDeTfmT@vger.kernel.org, AJvYcCXgkoKkHziDzbPp3q+YhQP+21D8yT851XFeSFhMVzXewjzV7Pur8dmjaZPE5lcFsEuAJkBjcijFwKiESB1X@vger.kernel.org, AJvYcCXxh12pDh5+CiAGF9ev2XZ6pBqounOhFjQ3MZwTQTgCbwYtJU93e/eanjElne8SCSrTjBmW5FwM8t16U74=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqLQqh+RQfNay+GmWW5bD4iqCIjC6xKO6DMPst4WrGyg4l31Au
-	ov+yc53RW57WvbAAcAhwp0NjjV3hNO4imr/e5/1Gt/SDl1GamL+HXl2X
-X-Gm-Gg: ASbGncsVo1Rwc9G0t2lKvcz/dr9CTmkIW4bk0UoZD7ece8o9+t8Jok8RYR3GZDUaV/M
-	Ht0tXrA3Y5FY0aPpRLj8xUSB1iYbYeBVCzuZHYU//zd1RAucO718xFwSmc2FnsZj6g8Kvp448U7
-	IfjiPa2b4cPGrpCVLECWu5tH3DuAhdd2GptAZoHr/6z/iTAFjc/+xIpHoMB0V/Z9egThup31grl
-	8S9fsyfWkFjS2akKzrRK+o2MOTN1xQc4lpqTQh6HgCN6WxmscRksVRdzLEweiZZ1mD2etaDCj+j
-	KIL5UOaDZtGVdiS2RdvjGmL//E48mfDJRGnWRbxLz6q/ZyXRbfS5HN9gQRhBxtZkrobs/AZ5RUE
-	fqT2oNTbM9PvnrVHOH+rgfJX2k7c+ye7s
-X-Google-Smtp-Source: AGHT+IG/bG+rHH6H4KxhjjaxQycZZAweGpYfTMuCllHKApJ6KI6vKWQZMMacqTWR/3qipm3upk4BaQ==
-X-Received: by 2002:a05:6a20:2450:b0:243:78a:82d2 with SMTP id adf61e73a8af0-24340e2aeddmr1948063637.31.1755830694893;
-        Thu, 21 Aug 2025 19:44:54 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:9cb2:179:b04b:be48])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77033785903sm262094b3a.66.2025.08.21.19.44.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 19:44:54 -0700 (PDT)
-Date: Thu, 21 Aug 2025 19:44:51 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
-	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"moderated list:ARM/LPC32XX SOC SUPPORT" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [RESEND v2 1/1] dt-bindings: input: convert lpc32xx-key.txt to
- yaml format
-Message-ID: <x43o5o4pcmhoudaeoklzanvivvwgytyrubvfwjfigcplaizgzm@ll5mq3nzsgnb>
-References: <20250818183814.3603308-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1755830798; c=relaxed/simple;
+	bh=Ywx7e4h2sBHfe1jk7/s3AaNTx3ChkLUEFIgXEVyKgeo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T2LHBPNFBUgVoQOyU3V+8hM+fgMvYDAE6NBH7txGK+TiQcXUus3w0EegM25KU2bSv04fPfDOEQR+NJMAFHlSfI+y8SlhLLMqSqnQSDX//Q2mYL4huc3p6jg3skYnMAcRJ99woihASEC6gnz6SiUXXJW4j0N/PDQl4KtDgH6SCkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=S/BAgFdq; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=KD
+	wtmxqmQM9tsvXEIkX1bqnD+g/okK51Yr1LWmD6FtQ=; b=S/BAgFdq1KJgUy1iY3
+	ZV/J1xzDVVZEd97HLj8yqABh7m5xpW8TMtg7o4D9oWhf7dWCnId8krWsYGe2QxnK
+	NW4cpHsViHrb9y4l09bvlVxHbmKQNyZLywPd2KAkBbHoBFOsdnbeMBZUNodg+jB4
+	eHxOUURNEpM2B01NVXJZEU0HQ=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDHKo7t2adoOpKLDg--.63895S2;
+	Fri, 22 Aug 2025 10:46:06 +0800 (CST)
+From: ccc194101@163.com
+To: gregkh@linuxfoundation.org
+Cc: jannh@google.com,
+	stern@rowland.harvard.edu,
+	rex.nie@jaguarmicro.com,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chenchangcheng <chenchangcheng@kylinos.cn>
+Subject: [PATCH] usb: usbfs: Add reset_resume callback to usbfs.
+Date: Fri, 22 Aug 2025 10:46:02 +0800
+Message-Id: <20250822024602.42894-1-ccc194101@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818183814.3603308-1-Frank.Li@nxp.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHKo7t2adoOpKLDg--.63895S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Zw1UCF47Zw13tFWDGFyfJFb_yoW8Wr18pF
+	WYya9Fyr1UJr47WrsYyFn5ZFyrAanYyay2kry3Z39xua43J34xtF18tFy5J3WDKr129r9x
+	tF17Kwnxua4rGrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j7YFAUUUUU=
+X-CM-SenderInfo: 5fffimiurqiqqrwthudrp/1tbiYxyx3min1YSMSQAAsL
 
-On Mon, Aug 18, 2025 at 02:38:13PM -0400, Frank Li wrote:
-> Convert lpc32xx-key.txt to yaml format.
-> 
-> Additional changes:
-> - set maximum of key-row(column) to 4.
-> - add ref to matrix-keymap.yaml.
-> 
-> Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+From: chenchangcheng <chenchangcheng@kylinos.cn>
 
-Applied, thank you.
+When an Apple device is inserted into the host, and the host
+wakes up from S3/S4 power states, if the reset_resume process
+is triggered, the absence of a reset_resume callback in usbfs will
+cause the device to unbind.
+By adding a reset_resume callback to usbfs and reporting REMOVE and ADD
+uevents in reset_resume, the userspace is prompted to reissue commands
+to re-establish the binding with usbfs.
 
+Signed-off-by: chenchangcheng <chenchangcheng@kylinos.cn>
+---
+ drivers/usb/core/devio.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
+index f6ce6e26e0d4..358850596b0d 100644
+--- a/drivers/usb/core/devio.c
++++ b/drivers/usb/core/devio.c
+@@ -749,6 +749,14 @@ static int driver_resume(struct usb_interface *intf)
+ 	return 0;
+ }
+ 
++static int driver_reset_resume(struct usb_interface *intf)
++{
++	struct usb_device *udev = interface_to_usbdev(intf);
++
++	kobject_uevent(&udev->dev.kobj, KOBJ_REMOVE);
++	kobject_uevent(&udev->dev.kobj, KOBJ_ADD);
++	return 0;
++}
+ #ifdef CONFIG_PM
+ /* The following routines apply to the entire device, not interfaces */
+ void usbfs_notify_suspend(struct usb_device *udev)
+@@ -776,6 +784,7 @@ struct usb_driver usbfs_driver = {
+ 	.disconnect =	driver_disconnect,
+ 	.suspend =	driver_suspend,
+ 	.resume =	driver_resume,
++	.reset_resume =	driver_reset_resume,
+ 	.supports_autosuspend = 1,
+ };
+ 
+
+base-commit: b19a97d57c15643494ac8bfaaa35e3ee472d41da
 -- 
-Dmitry
+2.25.1
+
 
