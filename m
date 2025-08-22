@@ -1,134 +1,118 @@
-Return-Path: <linux-kernel+bounces-781179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B039B30E8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:12:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23417B30E92
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F2B25E61B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:12:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F1535E6211
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEC12E2DDF;
-	Fri, 22 Aug 2025 06:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7672E2DDC;
+	Fri, 22 Aug 2025 06:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFNfNOPf"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="VoTRNjt+"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9851D7262F;
-	Fri, 22 Aug 2025 06:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC707262F
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755843153; cv=none; b=LIx3L7ehx7RmZM7fcl2AK456feTh/XtBLfCtZJ9RdPE/qrm8BdmJ7LVIueVOtrP2ycsAHBjGgSQfHUiwkmy+1DKeMZtoSASxOpsoLvkQQT9DyYKpBDRCKDs7cajSkCZLms8IxTQPK59wnITbrXx99dp7NvJxyyJLx2nWW+owOk8=
+	t=1755843260; cv=none; b=tmHtJb8UyBrjq/ofevj5lBE8DQkbFFOsubDwEXjZ8uVlBvQoaj8VjJhup9f44T3XnHMmR8jUuX8owIzBaPQbW9Q/mTFwt7iks97WVV1qREZQwqCOD81/gMkE7rCSJWKtsLH2MoQO9CmyA5sKYjMZ682kkxNCejubN6CzT1laNWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755843153; c=relaxed/simple;
-	bh=LhSLL9e6B9AAwZvmGOujsflvopTdIP4LayPRhrm+i3g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hx/5qV7xugnjLwE5w1bEQTxUJ1BJkecA2AabQouiZ1DuvcR0RNWS3XaYVD6QKvGQz+ubAjj+WbDp6jl/MDNJ0gkrROW2UIAUx6HiUZMm1xF3BTq5YBIwwkbH24g+GSFVZ6Sfzu7MoVHS4YD+tTKtmaFBnINbtW7P70d6jM26cMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFNfNOPf; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afcb61f6044so301746766b.0;
-        Thu, 21 Aug 2025 23:12:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755843150; x=1756447950; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LhSLL9e6B9AAwZvmGOujsflvopTdIP4LayPRhrm+i3g=;
-        b=eFNfNOPfGTlSFricJZt000adwYUWI5DAKpgaVMTAL5RR7gfMnUJSvY6tsa0ngyH0E+
-         /WAwWDHeU2XAh6FnPJfZi1E0lIx0zfgnRHGYQDdbOOraXht1lbJOljD514GpA8t7/4W1
-         hJn8XUCXHyYeI6SGAOWZ9zgy7LbcNRPR79HPJx/NnmSvtVeDCac3bmUCQ2BGPFA9rTat
-         MiGOaHiRG0poi89JFvor1Yk/BnzHrMe2XrBs45M4ocJuWAZxC7Cb2Y4flEsUFrCb+Y4g
-         BNlHqb2MDpAHte1YjCo/e3+VReouJuHSQ8wr2d6w8DKTWBeDGUljdjv8kZCPm5Qijt1i
-         l2mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755843150; x=1756447950;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LhSLL9e6B9AAwZvmGOujsflvopTdIP4LayPRhrm+i3g=;
-        b=PBr6Xyc/0yGX9ZBjrRvkMSkfXlUlhfMJnpP6snV5wjtjGa0ZE7nCf/CLjucWoZFelX
-         D1LECFBdSBUQEU4OnqIV7s6zPXKAliq6KU9Br/nCE7S34KVkOsks02xOHiSYz/angynJ
-         3veu2aV9YSKjyxiGhDzKu3f8ipkA2G8J1prFETfYKmD1wWC8FcTrfjsWEAOhYDlPTKJy
-         03lFowbpaGwwJnW+mPUMityIadmExgXPSWH4xTxo43Dct4WkvCAVL0koy8qDhhcwM27f
-         sq18k6pb+Nx19ysb46qiGB8BGWbsfV/cdP9nu1JAdioFQ7gqc99+D11xlB7zokh3t+DX
-         AbSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEx/ipWefmWcG4b1ILYl0EnEZERZyq90tYYfyH8/S1Hy2ro3Xe4P/DF1mtZPKj//MaG0XVF/0LcUtC@vger.kernel.org, AJvYcCVBZWAXKQkzJAZSnVihTguasBN3+FiJnEH8t6UjGPUTuCX9/Ifbo/jgRZFh5vRS76a5vHKlqMZ7/b2AjfOi@vger.kernel.org, AJvYcCXbq8VYYKrXEBimk4+DxPyQqcLgm7Psz06647WB9b7KsTa8qZwM6RWhD/aPY7Nj6MhRixxTZHU5zoUs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx744jxQZWSTDP6U9gZQ4xCgytmtlelL4dkh/EL2ijayO/WIBoD
-	BtXhftFH6au4GdUNtvLPSL9MeawakwlxBMp91nVzgyFhA8nSd4ukfeN2OPqFrq5Ug/4q5yNwDm9
-	cn/oatkwjCj7eAE82I1GlAmJozESex5mDPZ8PLF0=
-X-Gm-Gg: ASbGncvfxVrvcYrnoSqkRKHN6uwkttMBxlAqHQdyS4yj0YDSmdAwQ4h5ABledehz0b7
-	q9Uz3No6d9Zy5LwKV2k7oGvjaC3WhohVFXyPziYogzSuxnX+3wHWbuzyQmkGflDkEkpmYX6AcUQ
-	TrjKMCRSK0eJEU+U2s8RN00FhDUnquFnBwCGGH+buyB/8u8DCyLrSojElgFTs/D6ueI8HCi23cu
-	/yPLso=
-X-Google-Smtp-Source: AGHT+IHhYMuJFyaWh7s3kCivnxAbgWFVJsFET1lvGj1oS6aO8CW5sWhRa/8NlKjsTAxe7mAAoWCmJ/1pE8MO9LMieVI=
-X-Received: by 2002:a17:907:a089:b0:af9:5b51:2e6d with SMTP id
- a640c23a62f3a-afe28c96336mr191277666b.0.1755843149602; Thu, 21 Aug 2025
- 23:12:29 -0700 (PDT)
+	s=arc-20240116; t=1755843260; c=relaxed/simple;
+	bh=xSTLBZgeyAStKdfuml2IaShqaI6DLW75Lj3aJeFeAdY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Txz0SlfuWRo23rRDqBeijAZzAq5JCxxd3T/GEtWg2gS7SanSnwPuDSGnJiZNwHUuLgXTmKexavPLgEuMw9qgXrpTXwcHob3mCKaaRQEbEURGu09ZHH/coFmBN/ds/5nbWtE04hAjQC61QWD9HTzc2t8GezzObGDqTUsyCJ9dwgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=VoTRNjt+; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 7190B101490A
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:44:13 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 7190B101490A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1755843253; bh=xSTLBZgeyAStKdfuml2IaShqaI6DLW75Lj3aJeFeAdY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=VoTRNjt+9UOkFeptaHnX8VB4s8dpM3PXi0sgotYw9jHPlfQQVVWEp1skVGqCJ38O2
+	 wMAhfHyWdHNFaYgiJEawVmRfVZL/JVV8GYMxzsGRJcwpOF9219xJfPsiGqqwLgUh3Z
+	 V/IRlLAH8a6wmA4AcnR9pgew1DDp8MzMX1WWNP1Y=
+Received: (qmail 12637 invoked by uid 510); 22 Aug 2025 11:44:13 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 2.236196 secs; 22 Aug 2025 11:44:13 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
+  by ldns1.iitb.ac.in with SMTP; 22 Aug 2025 11:44:11 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns1.iitb.ac.in (Postfix) with ESMTP id 8CAE736004F;
+	Fri, 22 Aug 2025 11:44:10 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 637081E81562;
+	Fri, 22 Aug 2025 11:44:09 +0530 (IST)
+Date: Fri, 22 Aug 2025 11:44:04 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: thierry.reding@gmail.com, mperttunen@nvidia.com, airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akhileshpatilvnit@gmail.com,
+	skhan@linuxfoundation.org
+Subject: [PATCH v2] gpu: host1x: use dev_err_probe() in probe path
+Message-ID: <aKgKrCxUvP9Sw0YI@bhairav-test.ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814-tlv493d-sensor-v6_16-rc5-v4-0-81b82805aae0@gmail.com>
- <20250814-tlv493d-sensor-v6_16-rc5-v4-1-81b82805aae0@gmail.com>
- <aKXW5pGiN18DyIZ7@smile.fi.intel.com> <aKaMPMnGRyvKqTny@dixit>
- <CAHp75Vdw5X1Y057fpGjdvVGwKq0x0UBdm8py+m+55RbzXi1PJw@mail.gmail.com> <aKfYlP-yWdQi34db@dixit>
-In-Reply-To: <aKfYlP-yWdQi34db@dixit>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 22 Aug 2025 09:11:53 +0300
-X-Gm-Features: Ac12FXxcbGBvQWNbfM4ap7xlZtMvAEEgt4gYfh6-pLar28-Ixfel30OkWz8zK8s
-Message-ID: <CAHp75VfDR0UsjSufDQmO5+nx5jqoPL+qHgGRVMdH4Tp0+3wsoA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] iio: magnetometer: add support for Infineon
- TLV493D 3D Magentic sensor
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aIbBFQqgZalOMc6r@bhairav-test.ee.iitb.ac.in>
 
-On Fri, Aug 22, 2025 at 5:40=E2=80=AFAM Dixit Parmar <dixitparmar19@gmail.c=
-om> wrote:
-> On Thu, Aug 21, 2025 at 10:41:03AM +0300, Andy Shevchenko wrote:
-> > On Thu, Aug 21, 2025 at 6:02=E2=80=AFAM Dixit Parmar <dixitparmar19@gma=
-il.com> wrote:
-> > > On Wed, Aug 20, 2025 at 05:08:38PM +0300, Andy Shevchenko wrote:
+Use dev_err_probe() helper as recommended by core driver model in
+drivers/base/core.c to handle deferred probe error. Improve code
+consistency and debuggability using standard helper.
 
-...
+Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+---
+V1 -> V2: addressed review comments as below.
+* inline - err = PTR_ERR(host->clk) inside dev_err_probe()
+* avoid printing err, as dev_err_probe() prints it internally.
+* rebase and compile test with v6.17-rc2
 
-> > > > Interestingly that you have used 100 limit and suddenly don't do it=
- here
-> > > > and maybe elsewhere. Why inconsistent style? Please, go through the=
- whole
-> > > > file and make sure the style is consistent in all of the aspects:
-> > > > - C style used
-> > > > - comments style (one-line and multi-line)
-> > > > - indentation
-> > > > - etc.
-> > > I tried to follow 80 limit(except few places where it was just on bor=
-der or not
-> > > clear to read). I belive the standard is to use 80 limit(correct me i=
-f I referred
-> > > wrong place) and I will recheck to meet that.
-> >
-> > There are two standards, the old and strict one -- 80 characters, and
-> > this subsystem _tries_ to follow it and relaxed with 100 limit.
-> > The exceptions are possible when it affects readability.
-> Understood, I will go with 100 limit and make sure everything is well wit=
-hin it.
+ drivers/gpu/host1x/dev.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-It seems I was not clear enough. The IIO hardly tries to use the 80
-limit, so don't go for 100 until it's agreed upon with the
-maintainers.
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 1f93e5e276c0..c586c242f2c2 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -585,14 +585,8 @@ static int host1x_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	host->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(host->clk)) {
+-		err = PTR_ERR(host->clk);
+-
+-		if (err != -EPROBE_DEFER)
+-			dev_err(&pdev->dev, "failed to get clock: %d\n", err);
+-
+-		return err;
+-	}
++	if (IS_ERR(host->clk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(host->clk), "failed to get clock\n");
+ 
+ 	err = host1x_get_resets(host);
+ 	if (err)
+-- 
+2.34.1
 
---=20
-With Best Regards,
-Andy Shevchenko
 
