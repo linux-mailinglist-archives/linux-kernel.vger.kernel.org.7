@@ -1,128 +1,136 @@
-Return-Path: <linux-kernel+bounces-782488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED392B32121
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:09:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4D1B32115
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 308A9B03C36
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:08:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD24E1D6158C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20AF3313557;
-	Fri, 22 Aug 2025 17:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568DF2EE5FE;
+	Fri, 22 Aug 2025 17:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSplAPAb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="hG5HIpVS"
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444CC312802;
-	Fri, 22 Aug 2025 17:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3697214807
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755882469; cv=none; b=oK1zHiIzrhSOspR+0B4eMECAi/HhhMR7O0QGF8c4crZur6t6uo93t0VpvKOQSQ6tqp3vD+ecBoJ9rK2eWYjMNF6kPGqd1zGepZ4cQWICVMGefR7FCpNkYiZYXXR7Tlb1NTRGExsMxyjsABqc1/97N6V0MBA82ivCWaG10qsf2z0=
+	t=1755882501; cv=none; b=c/ymGKLJLIb4rzbiajdbnJQ/Ym6++9mEq0eTLbK8WOEX0rRo01WhGS5b4c2BOu2nDlN8RnmEyq86lZNGNB6huopy+ZUk6PnuyjnjBOvXcpzC/HU2KZkImIlKQOsqeW51ImWB4Eee2nMXpmz+WE4tFek/5QmTmnPcEXvWbzu+DYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755882469; c=relaxed/simple;
-	bh=vZLAjgh0rHfPoMdjN4T/8EdoC5/y95Yj/31fEqm5lgA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Z3fHJU6pTKNk6CdzkHGzCZr1c6A28Lx5XDeC1JTKxJQEybE92VdunBr/b6c0ZgJ28l7d3QVDhI7Ltb0bIEyj4YYNhKFHFhwLrEbz0mOQ2eB0VoAjA9JyMg+lNjzaWww1FlYU31Xpz+7qSRxznNhFRJd/w+MjzUJnC3n2ki2hzTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSplAPAb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD1D1C4CEF4;
-	Fri, 22 Aug 2025 17:07:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755882468;
-	bh=vZLAjgh0rHfPoMdjN4T/8EdoC5/y95Yj/31fEqm5lgA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fSplAPAbcqCwXrc73KaBOQNzaayHHHryXHEfz/QvCIP5+OLUcuUqhayGQU30an1Hx
-	 YGDC2ch0190J8ZS7lR1jUdP6OQwlEiLMILXs/CkC/SlPI/9/wAF5EXwIZ0nb0Uecnj
-	 UA9Ha7hLdu3BvCtDoUnTti40P6RP3bVkvwZuA5UDhaj8Dob3g32dp2vkLL6LUz2Uga
-	 JrNca6OOm6CtiYGSnyjbJHFyuYTMa9sirnIIEndUMU2kE26IZfHRAqBcN1+HEuWJKI
-	 iH1nd0618aV38WN9VJmQt9ibmxV/jw/X7xirOs3F2GwN8kBuIL5KMKravrNObUYubi
-	 MyQ+vWsMpUjxQ==
-From: SeongJae Park <sj@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Alexander Potapenko <glider@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Christoph Lameter <cl@gentwo.org>,
-	Dennis Zhou <dennis@kernel.org>,
+	s=arc-20240116; t=1755882501; c=relaxed/simple;
+	bh=V2ZTsarFg/J8E5OaQui6bJ/rqih15nGa1jJfmYgVI1U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=drrguibY5Y57e3IaYdlFpooNJ8JqcD4DSatwGMBIfXk74H3zOTKgHBHwFTHHxTxxwk5cp9ohBnedIv58xRm2EWYo+9FqmMsEgw4ZGthuQ2wb4W9UDDL6Vx4p0Pd7yMkAJOR9a/p3n0u1+uJApStasu+b988/g1uNd+CeMYq0y60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=hG5HIpVS; arc=none smtp.client-ip=84.16.66.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4c7mpy134kzxXK;
+	Fri, 22 Aug 2025 19:08:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1755882489;
+	bh=NUlPE+heYCOxk91D6n6N1q+wkFLg9BAFfbEyk2M2p7s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hG5HIpVSutSZRtsFd06T355DYxH9qGfeUrqxCfDId/uv7nj6uXVjPRBf18tBMYdh4
+	 J6MiUTTm1h4vs8d4xuZbZYXJlYRjshhhkRv5DqPl8As0hFQMoU8Fji4LbbavOEzeD6
+	 pu8JGqfHl0XehVrNxAaaC0/jXXueFPe5Q8Oj6srA=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4c7mpw1MlWzprv;
+	Fri, 22 Aug 2025 19:08:08 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Serge Hallyn <serge@hallyn.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Andy Lutomirski <luto@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Heimes <christian@python.org>,
 	Dmitry Vyukov <dvyukov@google.com>,
-	dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	iommu@lists.linux.dev,
-	io-uring@vger.kernel.org,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	kasan-dev@googlegroups.com,
-	kvm@vger.kernel.org,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-arm-kernel@axis.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Marco Elver <elver@google.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	netdev@vger.kernel.org,
-	Oscar Salvador <osalvador@suse.de>,
-	Peter Xu <peterx@redhat.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Tejun Heo <tj@kernel.org>,
-	virtualization@lists.linux.dev,
-	Vlastimil Babka <vbabka@suse.cz>,
-	wireguard@lists.zx2c4.com,
-	x86@kernel.org,
-	Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH RFC 06/35] mm/page_alloc: reject unreasonable folio/compound page sizes in alloc_contig_range_noprof()
-Date: Fri, 22 Aug 2025 10:07:46 -0700
-Message-Id: <20250822170746.53309-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250821200701.1329277-7-david@redhat.com>
-References: 
+	Elliott Hughes <enh@google.com>,
+	Fan Wu <wufan@linux.microsoft.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jordan R Abrahams <ajordanr@google.com>,
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+	Luca Boccassi <bluca@debian.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+	Robert Waite <rowait@microsoft.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Scott Shell <scottsh@microsoft.com>,
+	Steve Dower <steve.dower@python.org>,
+	Steve Grubb <sgrubb@redhat.com>,
+	kernel-hardening@lists.openwall.com,
+	linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+Date: Fri, 22 Aug 2025 19:07:58 +0200
+Message-ID: <20250822170800.2116980-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Thu, 21 Aug 2025 22:06:32 +0200 David Hildenbrand <david@redhat.com> wrote:
+Hi,
 
-> Let's reject them early,
+Script interpreters can check if a file would be allowed to be executed
+by the kernel using the new AT_EXECVE_CHECK flag. This approach works
+well on systems with write-xor-execute policies, where scripts cannot
+be modified by malicious processes. However, this protection may not be
+available on more generic distributions.
 
-I like early failures. :)
+The key difference between `./script.sh` and `sh script.sh` (when using
+AT_EXECVE_CHECK) is that execve(2) prevents the script from being opened
+for writing while it's being executed. To achieve parity, the kernel
+should provide a mechanism for script interpreters to deny write access
+during script interpretation. While interpreters can copy script content
+into a buffer, a race condition remains possible after AT_EXECVE_CHECK.
 
-> which in turn makes folio_alloc_gigantic() reject
-> them properly.
-> 
-> To avoid converting from order to nr_pages, let's just add MAX_FOLIO_ORDER
-> and calculate MAX_FOLIO_NR_PAGES based on that.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+This patch series introduces a new O_DENY_WRITE flag for use with
+open*(2) and fcntl(2). Both interfaces are necessary since script
+interpreters may receive either a file path or file descriptor. For
+backward compatibility, open(2) with O_DENY_WRITE will not fail on
+unsupported systems, while users requiring explicit support guarantees
+can use openat2(2).
 
-Acked-by: SeongJae Park <sj@kernel.org>
+The check_exec.rst documentation and related examples do not mention this new
+feature yet.
+
+Regards,
+
+Mickaël Salaün (2):
+  fs: Add O_DENY_WRITE
+  selftests/exec: Add O_DENY_WRITE tests
+
+ fs/fcntl.c                                |  26 ++-
+ fs/file_table.c                           |   2 +
+ fs/namei.c                                |   6 +
+ include/linux/fcntl.h                     |   2 +-
+ include/uapi/asm-generic/fcntl.h          |   4 +
+ tools/testing/selftests/exec/check-exec.c | 219 ++++++++++++++++++++++
+ 6 files changed, 256 insertions(+), 3 deletions(-)
 
 
-Thanks,
-SJ
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+-- 
+2.50.1
 
-[...]
 
