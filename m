@@ -1,234 +1,460 @@
-Return-Path: <linux-kernel+bounces-781466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFAFDB312CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:21:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E73B312D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 241E0A08B6C
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2AE97BD868
 	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC1E2E3AED;
-	Fri, 22 Aug 2025 09:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YbQCAlpl"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3D82EC570;
+	Fri, 22 Aug 2025 09:22:44 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD72C2D7DD8
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014B42E2F17;
+	Fri, 22 Aug 2025 09:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755854480; cv=none; b=UyxPsEgSEttfGmbJ3idKDaRgY4VKPGXB7eDpe2tRGs47ScJOvXgdMjyFNCiBA3sdbvOERvcf8ptz9MfETAS8m8YlLIAeIHtRZQX2k8zoAvp1iaMdf0hsPRVYvyOucK6TAIHAiCwZ0f6cfL5t4eeWqZDSe1uCG+h6B3mkVDMvFyc=
+	t=1755854563; cv=none; b=rU/rmOVabQtBy11Aus+W/eQ0CXQ+P438Jn1YBQPSOQACZHogrLiRx/DADQvXEglrhC2G87Kk7i1/kW1UJOcxVXA1r78PpTOIHEM4AVtFmLfJtn/10yPzkNKzwA5iYkWDMh9AKZKcMU1Ulg4F+ZPyRIP3cOM4KMkdq61QwF72Zes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755854480; c=relaxed/simple;
-	bh=yNbdXORajyB6uUaMUAhu4mOLFE93vNT+gPSj/d3fJCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FcwieoPZ1dPYmPuSHDG+3gbG84PvSTQkXG+hfXrqNhUcBWLYMp7X9TdVZw2bcEUh5WItIqmXnJ/InI3VF/QAgDFL0d3koSgLhjQ3rB/XcTT+pEPNIPvbbA08DEjzrX1THVShknTBEGUL1O6kvDSNCrxX5ngalR//nWaxRVOEHSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YbQCAlpl; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57M8UM8J028651
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:21:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IOCyID8v1JmSthjeoZP7YK+Yq23g9nLuF93nvuZi7jg=; b=YbQCAlplt/Wpi/WH
-	yv8oHte/mq+ndlCMTemNruW3G6tGClfh1ifyy+t4UpBCCHg9R9JD6yNnm8kwbdBP
-	mcPiwm7IdZ20ccYQtS2157zT3IKtJKjVw+RQXhcNjwuLbQYaEVUSDKhdMYUxI43g
-	m58D04oOshRGrTnQerRdHHrctuYKyqKjNKwrC311aSmODdKmI9CTbo1zrVLeDfj3
-	HIgFto3NUdgILSn/j3M3r0G6ezuAGjV4Md3BSXmwpf5ROC7G9r7RF2Pj6LLzI+9J
-	8Sp2rnR2i36m69BE9wj29OYoZRQMjWJlc9ybt7ybp42KRfCSRjque6ZC3CtbB3FV
-	Id1uaA==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52crnhm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:21:18 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-76e2eb47455so3872063b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 02:21:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755854477; x=1756459277;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IOCyID8v1JmSthjeoZP7YK+Yq23g9nLuF93nvuZi7jg=;
-        b=Zgo+cTjYjT97DgoLMd7f1hdXHfaLWITrzSPBW5hL5EUdb48Bqli4bN2qt45GXWvi8F
-         9xnC+E6zdQQAvJI1r4KeN1agZc3j4Z9j+dWK4c4zA6qPLDJSxHuiUYhBkFiGmLux+zQj
-         MHxhACCDNTK/Yay5pGAOKiMb4+lo9GZkxWC/Bo9ZiQO7f6GctOKnhTErtnTQDa+4RBQO
-         HFas2T6gcoj9Oz1+dPSX3AzDx0BSRb2QB9wWsF9G3SHg9vdUjCVjlWXw7m5lhT7V9koJ
-         T57TVsfNZAXYW9YSTaZawXdACZD+osCol519wyM+upJVLXyOuhmaXyEcandeuA7yuF83
-         aXWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMnwegnB/yWwglVfuvR14JIBqeRCTEKIHKSuN/9HJK4XKGz6/DB6cDw9zyL78Qz6RFKq20aOoLeufyoh4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9qxAUmA9NT7CA2KzfwRO65kcVKPLXiZ26ToSpp709GaxjOMER
-	NrKRzt5wzsVV0tBjjPxFZ4ohjf+A27PrTzr+vCEGBXV5i2odPPqR76jps2JMqgbp3N27aNIXJ+H
-	d7/c7J8XFLeVxLkrDTFLUck2TtbWUD5lRLvfSQLJ5t0vjD/t9euzKyAfalGt3cqOAtFU=
-X-Gm-Gg: ASbGnctAO7AsKkZ9prGZs0UgVNv968V0pMBgwVMsFCFnddtbo39ZaAeJlWToLXsQ8lN
-	FNUyddipD1nPhkackjhMNhLUvxAFV7nKglJiZ9HWp+P+iPzvIPSSRaAJIikZjcZOf+5xuMogyjv
-	/538r0jZhzauqXKNUECR3LKaJCK4Uyzkvwyu/UQxfZ0o7EZJ4oaVqk2EHuSwIyXbswsHbQ0G77A
-	hPwHIzbTBWyFygI0ue5dxus8X3PwIi0aI+OIC3xKtncQsEW0gWC2Ln1ZPw1sLyBn53WoFEKIDFA
-	NhQ+ZBsvPJ6FeCMgd82MyRN3IEIpIfq/7slKVM1Ahud9154Y+vXgVYoRxiW1yjPpZPY=
-X-Received: by 2002:a05:6a00:1ca8:b0:76b:dedb:3048 with SMTP id d2e1a72fcca58-7702fa0a9e3mr3338308b3a.14.1755854477067;
-        Fri, 22 Aug 2025 02:21:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE169SwcjAeKFg+hGSDS6nNE0NmrbfptvokZy+amX2UJ70H+B4WuVrskBuZjtYUqvzfDL1gJQ==
-X-Received: by 2002:a05:6a00:1ca8:b0:76b:dedb:3048 with SMTP id d2e1a72fcca58-7702fa0a9e3mr3338263b3a.14.1755854476577;
-        Fri, 22 Aug 2025 02:21:16 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e843bb510sm9369488b3a.53.2025.08.22.02.21.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 02:21:16 -0700 (PDT)
-Date: Fri, 22 Aug 2025 14:51:09 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v2 06/11] remoteproc: Move resource table data structure
- to its own header
-Message-ID: <20250822092109.awrfyqz2tfaxchjy@hu-mojha-hyd.qualcomm.com>
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <20250819165447.4149674-7-mukesh.ojha@oss.qualcomm.com>
- <aKWDXySSt57tXHVP@linaro.org>
- <20250820151822.6cmowxfsheqxfrnb@hu-mojha-hyd.qualcomm.com>
- <20250820163250.hszey3i2gtd3o2i6@hu-mojha-hyd.qualcomm.com>
- <aKX9kO5eHUp40oRj@linaro.org>
+	s=arc-20240116; t=1755854563; c=relaxed/simple;
+	bh=jYxDEvevWvUFBxHs/UiwVMVWp5e5zbPaDeAmGm3Ff7g=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=uNuCHpso5tbqMkmhdL2PMCf9xU8VRlQ8NaCOjlJyghqLatObrMkFySHAs6s4famgDSSW/qSwILI8BGBTeikJLHtIg9gHMKpe4P5pNph8vktcvhaU0tO3Q2/HZ+jLpwZsBHJQqt3mLyOdVQeWvyDKb76XdSkeIleFncIBY6Rxpzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4c7ZTd5ysSz8Xs7F;
+	Fri, 22 Aug 2025 17:22:29 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl1.zte.com.cn with SMTP id 57M9MCNA049839;
+	Fri, 22 Aug 2025 17:22:13 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Fri, 22 Aug 2025 17:22:15 +0800 (CST)
+Date: Fri, 22 Aug 2025 17:22:15 +0800 (CST)
+X-Zmail-TransId: 2afa68a836c7753-06ddd
+X-Mailer: Zmail v1.0
+Message-ID: <202508221722153413ll-8HkCJFfNKj4yOkzoH@zte.com.cn>
+In-Reply-To: <20250822171232584GYKo3tPbZNfE3VsK7dvM0@zte.com.cn>
+References: 20250822171232584GYKo3tPbZNfE3VsK7dvM0@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aKX9kO5eHUp40oRj@linaro.org>
-X-Proofpoint-GUID: r6IgSDsWRdvtrzF7vtg8noZOCBT1HFLV
-X-Proofpoint-ORIG-GUID: r6IgSDsWRdvtrzF7vtg8noZOCBT1HFLV
-X-Authority-Analysis: v=2.4 cv=Xpij+VF9 c=1 sm=1 tr=0 ts=68a8368e cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
- a=EUspDBNiAAAA:8 a=iMW2xQpcS57KE3qV-eEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=2VI0MkxyNR6bbpdq8BZq:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfXxVa93Fwpyas4
- GAPMQ5jPKxsAVXtvhMiqGCNd3yutont7CXCnbupCRTQMMukDYNBl4CuZ4fTQnnmPrso8RAmxZI2
- +GNE5k9xubFkSdGjfTZHVhnkfZkaIW+LG5VPjav3EdiEJLF4xfkMunnx7nERPhrSkmiY11deSCK
- eVqSFv1zSoan+N4VFu3kYmRSVarjIpFFtqj2iX5gb2/RX20EUwU5R4XlaXU/wBw/MyQDB0BQyUM
- 7mi0G+apuPaxbo8qgwBWG02OHK1wSsZgJYbkKoHOWDuBNdd2B4m3HjCszwIbA40yBBlOfw+Q9MW
- ACMFfdvwwPkghbd9n7Krh1e1KzkTvsJDRMRhKbCUlAa3IwwuFMowHXK2xjZ9sd7zKPYs0KfBI6V
- X+VW1gqN8lTtxBejwNfhxb5iERTPGA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-22_03,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0 impostorscore=0
- adultscore=0 spamscore=0 phishscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <shao.mingyin@zte.com.cn>
+Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>,
+        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
+        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIHYzIDIvN10gRG9jcy96aF9DTjogVHJhbnNsYXRlIHViaWZzLWF1dGhlbnRpY2F0aW9uLnJzdCB0b8KgU2ltcGxpZmllZCBDaGluZXNl?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 57M9MCNA049839
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Fri, 22 Aug 2025 17:22:29 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68A836D5.000/4c7ZTd5ysSz8Xs7F
 
-On Wed, Aug 20, 2025 at 06:53:36PM +0200, Stephan Gerhold wrote:
-> On Wed, Aug 20, 2025 at 10:02:50PM +0530, Mukesh Ojha wrote:
-> > On Wed, Aug 20, 2025 at 08:48:22PM +0530, Mukesh Ojha wrote:
-> > > On Wed, Aug 20, 2025 at 10:12:15AM +0200, Stephan Gerhold wrote:
-> > > > On Tue, Aug 19, 2025 at 10:24:41PM +0530, Mukesh Ojha wrote:
-> > > > > The resource table data structure has traditionally been associated with
-> > > > > the remoteproc framework, where the resource table is included as a
-> > > > > section within the remote processor firmware binary. However, it is also
-> > > > > possible to obtain the resource table through other means—such as from a
-> > > > > reserved memory region populated by the boot firmware, statically
-> > > > > maintained driver data, or via a secure SMC call—when it is not embedded
-> > > > > in the firmware.
-> > > > > 
-> > > > > There are multiple Qualcomm remote processors (e.g., Venus, Iris, GPU,
-> > > > > etc.) in the upstream kernel that do not use the remoteproc framework to
-> > > > > manage their lifecycle for various reasons.
-> > > > > 
-> > > > > When Linux is running at EL2, similar to the Qualcomm PAS driver
-> > > > > (qcom_q6v5_pas.c), client drivers for subsystems like video and GPU may
-> > > > > also want to use the resource table SMC call to retrieve and map
-> > > > > resources before they are used by the remote processor.
-> > > > > 
-> > > > 
-> > > > All the examples you give here (Venus/Iris, GPU) have some sort of EL2
-> > > > support already for older platforms:
-> > > 
-> > > Example was taken from perspective of remote processor life-cycle management.
-> > > You are right they have worked before in non-secure way for Chrome.
-> > > 
-> > > > 
-> > > >  - For GPU, we just skip loading the ZAP shader and access the protected
-> > > >    registers directly. I would expect the ZAP shader does effectively
-> > > >    the same, perhaps with some additional handling for secure mode. Is
-> > > >    this even a real remote processor that has a separate IOMMU domain?
-> > > > 
-> > > 
-> > > I don't think it is the case and think the same that they can skip
-> > > loading and Hence, I have not yet added support for it.
-> > > 
-> > > Will check internally before doing anything on GPU.
-> > > 
-> > > >  - For Venus/Iris, there is code upstream similar to your PATCH 11/11
-> > > >    that maps the firmware with the IOMMU (but invokes reset directly
-> > > >    using the registers, without using PAS). There is no resource table
-> > > >    used for that either, so at least all Venus/Iris versions so far
-> > > >    apparently had no need for any mappings aside from the firmware
-> > > >    binary.
-> > > 
-> > > You are absolutely right
-> > > 
-> > > > 
-> > > > I understand that you want to continue using PAS for these, but I'm a
-> > > > bit confused what kind of mappings we would expect to have in the
-> > > > resource table for video and GPU. Could you give an example?
-> > > 
-> > > We have some debug hw tracing available for video for lemans, which is
-> > > optional However, I believe infra is good to have incase we need some
-> > > required resources to be map for Video to work for a SoC.
-> > > 
-> > > > 
-> > > > Thanks,
-> > > > Stephan
-> > > 
-> > > -- 
-> > > -Mukesh Ojha
-> > 
-> > Since I am not subscribed to any of the mailing lists to which this
-> > series was sent, I am not receiving emails from the list. As a result,
-> > your recent messages did not reach my inbox. Additionally, it seems your
-> > reply inadvertently removed me from the To-list.
-> > 
-> > 
-> > https://lore.kernel.org/lkml/aKXqSU-487b6Je2B@linaro.org/
-> > 
-> > https://lore.kernel.org/lkml/aKXQAoXZyR6SRPAA@linaro.org/
-> > 
-> 
-> Indeed, but I don't think this is my fault: You have a strange
-> "Mail-Followup-To:" list in the email header of your reply [1] and my
-> email client honors it when I press "group reply". Your email client or
-> server seems to produce this header without including you in the follow
-> up list, as if you don't want to receive any replies. :-)
-> 
-> I fixed it up manually this time, but perhaps you should look into the
-> source of this weird header in your replies, I'm probably not the only
-> person using mutt and just hitting "group reply" all the time ...
+From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-Thanks for pointing out.
-I am trying to fix this, let me see with this reply.
+translate the "ubifs-authentication.rst" into Simplified Chinese.
 
-> 
-> Stephan
-> 
-> [1]: https://lore.kernel.org/linux-arm-msm/20250820163250.hszey3i2gtd3o2i6@hu-mojha-hyd.qualcomm.com/raw
+Update to commit d56b699d76d1("Documentation: Fix typos")
 
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+Signed-off-by: yang tao <yang.tao172@zte.com.cn>
+---
+ .../translations/zh_CN/filesystems/index.rst  |   1 +
+ .../filesystems/ubifs-authentication.rst      | 354 ++++++++++++++++++
+ 2 files changed, 355 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/filesystems/ubifs-authentication.rst
+
+diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
+index faaa0f097223..3c25b39739db 100644
+--- a/Documentation/translations/zh_CN/filesystems/index.rst
++++ b/Documentation/translations/zh_CN/filesystems/index.rst
+@@ -27,4 +27,5 @@ Linux Kernel中的文件系统
+    debugfs
+    tmpfs
+    ubifs
++   ubifs-authentication
+
+diff --git a/Documentation/translations/zh_CN/filesystems/ubifs-authentication.rst b/Documentation/translations/zh_CN/filesystems/ubifs-authentication.rst
+new file mode 100644
+index 000000000000..aebd6a8e4b7c
+--- /dev/null
++++ b/Documentation/translations/zh_CN/filesystems/ubifs-authentication.rst
+@@ -0,0 +1,354 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++.. include:: ../disclaimer-zh_CN.rst
++
++:Original: Documentation/filesystems/ubifs-authentication.rst
++
++:翻译:
++
++   邵明寅 Shao Mingyin <shao.mingyin@zte.com.cn>
++
++:校译:
++
++   - 杨涛 yang tao <yang.tao172@zte.com.cn>
++
++=============
++UBIFS认证支持
++=============
++
++引言
++====
++UBIFS 利用 fscrypt 框架为文件内容及文件名提供保密性。这能防止攻击者在单一
++时间点读取文件系统内容的攻击行为。典型案例是智能手机丢失时，攻击者若没有文件
++系统解密密钥则无法读取设备上的个人数据。
++
++在现阶段，UBIFS 加密尚不能防止攻击者篡改文件系统内容后用户继续使用设备的攻
++击场景。这种情况下，攻击者可任意修改文件系统内容而不被用户察觉。例如修改二
++进制文件使其执行时触发恶意行为 [DMC-CBC-ATTACK]。由于 UBIFS 大部分文件
++系统元数据以明文存储，使得文件替换和内容篡改变得相当容易。
++
++其他全盘加密系统（如 dm-crypt）可以覆盖所有文件系统元数据，这类系统虽然能
++增加这种攻击的难度，但特别是当攻击者能多次访问设备时，也有可能实现攻击。对于
++基于 Linux 块 IO 层的 dm-crypt 等文件系统，可通过 dm-integrity 或
++dm-verity 子系统[DM-INTEGRITY, DM-VERITY]在块层实现完整数据认证，这些
++功能也可与 dm-crypt 结合使用[CRYPTSETUP2]。
++
++本文描述一种为 UBIFS 实现文件内容认证和完整元数据认证的方法。由于 UBIFS
++使用 fscrypt 进行文件内容和文件名加密，认证系统可与 fscrypt 集成以利用密
++钥派生等现有功能。但系统同时也应支持在不启用加密的情况下使用 UBIFS 认证。
++
++
++MTD, UBI & UBIFS
++----------------
++在 Linux 中，MTD（内存技术设备）子系统提供访问裸闪存设备的统一接口。运行于
++MTD 之上的重要子系统是 UBI（无序块映像），它为闪存设备提供卷管理功能，类似
++于块设备的 LVM。此外，UBI 还处理闪存特有的磨损均衡和透明 I/O 错误处理。
++UBI 向上层提供逻辑擦除块(LEB)，并透明地映射到闪存的物理擦除块(PEB)。
++
++UBIFS 是运行于 UBI 之上的裸闪存文件系统。因此 UBI 处理磨损均衡和部分闪存
++特性，而 UBIFS专注于可扩展性、性能和可恢复性。
++
++::
++
++	+------------+ +*******+ +-----------+ +-----+
++	|            | * UBIFS * | UBI-BLOCK | | ... |
++	| JFFS/JFFS2 | +*******+ +-----------+ +-----+
++	|            | +-----------------------------+ +-----------+ +-----+
++	|            | |              UBI            | | MTD-BLOCK | | ... |
++	+------------+ +-----------------------------+ +-----------+ +-----+
++	+------------------------------------------------------------------+
++	|                  MEMORY TECHNOLOGY DEVICES (MTD)                 |
++	+------------------------------------------------------------------+
++	+-----------------------------+ +--------------------------+ +-----+
++	|         NAND DRIVERS        | |        NOR DRIVERS       | | ... |
++	+-----------------------------+ +--------------------------+ +-----+
++
++            图1：处理裸闪存的 Linux 内核子系统
++
++
++
++UBIFS 内部维护多个持久化在闪存上的数据结构：
++
++- *索引*：存储在闪存上的 B+ 树，叶节点包含文件系统数据
++- *日志*：在更新闪存索引前收集文件系统变更的辅助数据结构，可减少闪存磨损
++- *树节点缓存(TNC)*：反映当前文件系统状态的内存 B+ 树，避免频繁读取闪存。
++  本质上是索引的内存表示，但包含额外属性
++- *LEB属性树(LPT)*：用于统计每个 UBI LEB 空闲空间的闪存B+树
++
++本节后续将详细讨论UBIFS的闪存数据结构。因为 TNC 不直接持久化到闪存，其在此
++处的重要性较低。更多 UBIFS 细节详见[UBIFS-WP]。
++
++
++UBIFS 索引与树节点缓存
++~~~~~~~~~~~~~~~~~~~~~~
++
++UBIFS 在闪存上的基础实体称为 *节点* ，包含多种类型。如存储文件内容块的数据
++节点
++( ``struct ubifs_data_node`` )，或表示 VFS 索引节点的 inode 节点
++( ``struct ubifs_ino_node`` )。几乎所有节点共享包含节点类型、长度、序列
++号等基础信息的通用头
++( ``ubifs_ch`` )（见内核源码 ``fs/ubifs/ubifs-media.h`` ）。LPT条目
++和填充节点（用于填充 LEB
++尾部不可用空间）等次要节点类型除外。
++
++为避免每次变更重写整个 B+ 树，UBIFS 采用 *wandering tree* 实现：仅重写
++变更节点，旧版本被标记废弃而非立即擦除。因此索引不固定存储于闪存某处，而是在
++闪存上 *wanders* ，在 LEB 被 UBIFS 重用前，闪存上会存在废弃部分。为定位
++最新索引，UBIFS 在 UBI LEB 1 存储称为 *主节点* 的特殊节点，始终指向最新
++UBIFS 索引根节点。为增强可恢复性，主节点还备份到 LEB 2。因此挂载 UBIFS 只
++需读取 LEB 1 和 2 获取当前主节点，进而定位最新闪存索引。
++
++TNC 是闪存索引的内存表示，包含未持久化的运行时属性（如脏标记）。TNC 作为回
++写式缓存，所有闪存索引修改都通过 TNC 完成。与其他缓存类似，TNC 无需将完整
++索引全部加载到内存中，需要时从闪存读取部分内容。 *提交* 是更新闪存文件系统
++结构（如索引）的 UBIFS 操作。每次提交时，标记为脏的 TNC 节点被写入闪存以更
++新持久化索引。
++
++
++日志
++~~~~
++
++为避免闪存磨损，索引仅在满足特定条件（如 ``fsync(2)`` ）时才持久化（提交）。
++日志用于记录索引提交之间的所有变更（以 inode 节点、数据节点等形式）。挂载时
++从闪存读取日志并重放到 TNC（此时 TNC 按需从闪存索引创建）。
++
++UBIFS 保留一组专用于日志的 LEB（称为 *日志区* ）。日志区 LEB 数量在文件系
++统创建时配置（使用 ``mkfs.ubifs`` ）并存储于超级块节点。日志区仅含两类节
++点： *引用节点* 和 *提交起始节点* 。执行索引提交时写入提交起始节点，每次日
++志更新时写入引用节点。每个引用节点指向构成日志条目的其他节点（ inode 节点、
++数据节点等）在闪存上的位置，这些节点称为 *bud* ，描述包含数据的实际文件系
++统变更。
++
++日志区以环形缓冲区维护。当日志将满时触发提交操作，同时写入提交起始节点。因此
++挂载时 UBIFS 查找最新提交起始节点，仅重放其后的引用节点。提交起始节点前的引
++用节点将被忽略（因其已属于闪存索引）。
++
++写入日志条目时，UBIFS 首先确保有足够空间写入引用节点和该条目的 bud。然后先
++写引用节点，再写描述文件变更的 bud。在日志重放阶段，UBIFS 会记录每个参考节
++点，并检查其引用的 LEB位置以定位 buds。若这些数据损坏或丢失，UBIFS 会尝试
++通过重新读取 LEB 来恢复，但仅针对日志中最后引用的 LEB，因为只有它可能因断
++电而损坏。若恢复失败，UBIFS 将拒绝挂载。对于其他 LEB 的错误，UBIFS 会直接
++终止挂载操作。
++
++::
++
++       | ----    LOG AREA     ---- | ----------    MAIN AREA    ------------ |
++
++        -----+------+-----+--------+----   ------+-----+-----+---------------
++        \    |      |     |        |   /  /      |     |     |               \
++        / CS |  REF | REF |        |   \  \ DENT | INO | INO |               /
++        \    |      |     |        |   /  /      |     |     |               \
++         ----+------+-----+--------+---   -------+-----+-----+----------------
++                 |     |                  ^            ^
++                 |     |                  |            |
++                 +------------------------+            |
++                       |                               |
++                       +-------------------------------+
++
++
++                图2：包含提交起始节点(CS)和引用节点(REF)的日志区闪存布局，引用节点指向含
++                    bud 的主区
++
++
++LEB属性树/表
++~~~~~~~~~~~~
++
++LEB 属性树用于存储每个 LEB 的信息，包括 LEB 类型、LEB 上的空闲空间和
++*脏空间* （旧空间，废弃内容） [1]_ 的数量。因为 UBIFS 从不在单个 LEB 混
++合存储索引节点和数据节点，所以 LEB 的类型至关重要，每个 LEB 都有特定用途，
++这对空闲空间计算非常有帮助。详见[UBIFS-WP]。
++
++LEB 属性树也是 B+ 树，但远小于索引。因为其体积小，所以每次提交时都整块写入，
++保存 LPT 是原子操作。
++
++
++.. [1] 由于LEB只能追加写入不能覆盖，空闲空间（即 LEB 剩余可写空间）与废弃
++   内容（先前写入但未擦除前不能覆盖）存在区别。
++
++
++UBIFS认证
++=========
++
++本章介绍UBIFS认证，使UBIFS能验证闪存上元数据和文件内容的真实性与完整性。
++
++
++威胁模型
++--------
++
++UBIFS 认证可检测离线数据篡改。虽然不能防止篡改，但是能让（可信）代码检查闪
++存文件内容和文件系统元数据的完整性与真实性，也能检查文件内容被替换的攻击。
++
++UBIFS 认证不防护全闪存内容回滚（攻击者可转储闪存内容并在后期还原）。也不防护
++单个索引提交的部分回滚（攻击者能部分撤销变更）。这是因为 UBIFS 不立即覆盖索
++引树或日志的旧版本，而是标记为废弃，稍后由垃圾回收擦除。攻击者可擦除当前树部
++分内容并还原闪存上尚未擦除的旧版本。因每次提交总会写入索引根节点和主节点的新
++版本而不覆盖旧版本，UBI 的磨损均衡操作（将内容从物理擦除块复制到另一擦除块
++且非原子擦除原块）进一步助长此问题。
++
++UBIFS 认证不覆盖认证密钥提供后攻击者在设备执行代码的攻击，需结合安全启动和
++可信启动等措施确保设备仅执行可信代码。
++
++
++认证
++----
++
++为完全信任从闪存读取的数据，所有存储在闪存的 UBIFS 数据结构均需认证：
++- 包含文件内容、扩展属性、文件长度等元数据的索引
++- 通过记录文件系统变更来包含文件内容和元数据的日志
++- 存储 UBIFS 用于空闲空间统计的 UBI LEB 元数据的 LPT
++
++
++索引认证
++~~~~~~~~
++
++借助 *wandering tree* 概念，UBIFS 仅更新和持久化从叶节点到根节点的变更
++部分。这允许用子节点哈希增强索引树节点。最终索引基本成为 Merkle 树：因索引
++叶节点含实际文件系统数据，其父索引节点的哈希覆盖所有文件内容和元数据。文件
++变更时，UBIFS 索引从叶节点到根节点（含主节点）相应更新，此过程可挂钩以同步
++重新计算各变更节点的哈希。读取文件时，UBIFS 可从叶节点到根节点逐级验证哈希
++确保节点完整性。
++
++为确保整个索引真实性，UBIFS 主节点存储基于密钥的哈希(HMAC)，覆盖自身内容及
++索引树根节点哈希。如前所述，主节点在索引持久化时（即索引提交时）总会写入闪存。
++
++此方法仅修改 UBIFS 索引节点和主节点以包含哈希，其他类型节点保持不变，减少了
++对 UBIFS 用户（如嵌入式设备）宝贵的存储开销。
++
++::
++
++                             +---------------+
++                             |  Master Node  |
++                             |    (hash)     |
++                             +---------------+
++                                     |
++                                     v
++                            +-------------------+
++                            |  Index Node #1    |
++                            |                   |
++                            | branch0   branchn |
++                            | (hash)    (hash)  |
++                            +-------------------+
++                               |    ...   |  (fanout: 8)
++                               |          |
++                       +-------+          +------+
++                       |                         |
++                       v                         v
++            +-------------------+       +-------------------+
++            |  Index Node #2    |       |  Index Node #3    |
++            |                   |       |                   |
++            | branch0   branchn |       | branch0   branchn |
++            | (hash)    (hash)  |       | (hash)    (hash)  |
++            +-------------------+       +-------------------+
++                 |   ...                     |   ...   |
++                 v                           v         v
++               +-----------+         +----------+  +-----------+
++               | Data Node |         | INO Node |  | DENT Node |
++               +-----------+         +----------+  +-----------+
++
++
++           图3：索引节点哈希与主节点 HMAC 的覆盖范围
++
++
++
++健壮性性和断电安全性的关键在于以原子操作持久化哈希值与文件内容。UBIFS 现有
++的变更节点持久化机制专为此设计，能够确保断电时安全恢复。为索引节点添加哈希值
++不会改变该机制，因为每个哈希值都与其对应节点以原子操作同步持久化。
++
++
++日志认证
++~~~~~~~~
++
++日志也需要认证。因为日志持续写入，必须频繁地添加认证信息以确保断电时未认证数
++据量可控。方法是从提交起始节点开始，对先前引用节点、当前引用节点和 bud 节点
++创建连续哈希链。适时地在bud节点间插入认证节点，这种新节点类型包含哈希链当前
++状态的 HMAC。因此日志可认证至最后一个认证节点。日志尾部无认证节点的部分无法
++认证，在日志重放时跳过。
++
++日志认证示意图如下::
++
++    ,,,,,,,,
++    ,......,...........................................
++    ,. CS  ,               hash1.----.           hash2.----.
++    ,.  |  ,                    .    |hmac            .    |hmac
++    ,.  v  ,                    .    v                .    v
++    ,.REF#0,-> bud -> bud -> bud.-> auth -> bud -> bud.-> auth ...
++    ,..|...,...........................................
++    ,  |   ,
++    ,  |   ,,,,,,,,,,,,,,,
++    .  |            hash3,----.
++    ,  |                 ,    |hmac
++    ,  v                 ,    v
++    , REF#1 -> bud -> bud,-> auth ...
++    ,,,|,,,,,,,,,,,,,,,,,,
++       v
++      REF#2 -> ...
++       |
++       V
++      ...
++
++因为哈希值包含引用节点，攻击者无法重排或跳过日志头重放，仅能移除日志尾部的
++bud 节点或引用节点，最大限度将文件系统回退至上次提交。
++
++日志区位置存储于主节点。因为主节点通过 HMAC 认证，所以未经检测无法篡改。日
++志区大小在文件系统创建时由 `mkfs.ubifs` 指定并存储于超级块节点。为避免篡
++改此值及其他参数，超级块结构添加 HMAC。超级块节点存储在 LEB 0，仅在功能标
++志等变更时修改，文件变更时不修改。
++
++
++LPT认证
++~~~~~~~
++
++LPT 根节点在闪存上的位置存储于 UBIFS 主节点。因为 LPT 每次提交时都以原子
++操作写入和读取，无需单独认证树节点。通过主节点存储的简单哈希保护完整 LPT
++即可。因为主节点自身已认证，通过验证主节点真实性并比对存储的 LTP 哈希与读
++取的闪存 LPT 计算哈希值，即可验证 LPT 真实性。
++
++
++密钥管理
++--------
++
++为了简化实现，UBIFS 认证使用单一密钥计算超级块、主节点、提交起始节点和引用
++节点的 HMAC。创建文件系统(`mkfs.ubifs`) 时需提供此密钥以认证超级块节点。
++挂载文件系统时也需此密钥验证认证节点并为变更生成新 HMAC。
++
++UBIFS 认证旨在与 UBIFS 加密(fscrypt)协同工作以提供保密性和真实性。因为
++UBIFS 加密采用基于目录的差异化加密策略，可能存在多个 fscrypt 主密钥甚至未
++加密目录。而 UBIFS 认证采用全有或全无方式，要么认证整个文件系统要么完全不
++认证。基于此特性，且为确保认证机制可独立于加密功能使用，UBIFS 认证不与
++fscrypt 共享主密钥，而是维护独立的认证专用密钥。
++
++提供认证密钥的API尚未定义，但可通过类似 fscrypt 的用户空间密钥环提供。需注
++意当前 fscrypt 方案存在缺陷，用户空间 API 终将变更[FSCRYPT-POLICY2]。
++
++用户仍可通过用户空间提供单一口令或密钥覆盖 UBIFS 认证与加密。相应用户空间工
++具可解决此问题：除派生的 fscrypt 加密主密钥外，额外派生认证密钥。
++
++为检查挂载时密钥可用性，UBIFS 超级块节点将额外存储认证密钥的哈希。此方法类
++似 fscrypt 加密策略 v2 提出的方法[FSCRYPT-POLICY2]。
++
++
++未来扩展
++========
++
++特定场景下，若供应商需要向客户提供认证文件系统镜像，应该能在不共享 UBIFS 认
++证密钥的前提下实现。方法是在每个 HMAC 外额外存储数字签名，供应商随文件系统
++镜像分发公钥。若该文件系统后续需要修改，若后续需修改该文件系统，UBIFS 可在
++首次挂载时将全部数字签名替换为 HMAC，其处理逻辑与 IMA/EVM 子系统应对此类情
++况的方式类似。此时，HMAC 密钥需按常规方式预先提供。
++
++
++参考
++====
++
++[CRYPTSETUP2]        https://www.saout.de/pipermail/dm-crypt/2017-November/005745.html
++
++[DMC-CBC-ATTACK]     https://www.jakoblell.com/blog/2013/12/22/practical-malleability-attack-against-cbc-en
++crypted-luks-partitions/
++
++[DM-INTEGRITY]       https://www.kernel.org/doc/Documentation/device-mapper/dm-integrity.rst
++
++[DM-VERITY]          https://www.kernel.org/doc/Documentation/device-mapper/verity.rst
++
++[FSCRYPT-POLICY2]    https://www.spinics.net/lists/linux-ext4/msg58710.html
++
++[UBIFS-WP]           http://www.linux-mtd.infradead.org/doc/ubifs_whitepaper.pdf
 -- 
--Mukesh Ojha
+2.25.1
 
