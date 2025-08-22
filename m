@@ -1,86 +1,84 @@
-Return-Path: <linux-kernel+bounces-781196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F545B30EEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:28:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943CFB30EED
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF2F1601482
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:27:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BD3D68678B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CF62E541C;
-	Fri, 22 Aug 2025 06:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5E842048;
+	Fri, 22 Aug 2025 06:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="laqojCAz"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="djFdonhQ"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDF22E5405
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9316F2A8C1
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755844074; cv=none; b=KE0QF5kepWV3UTJ9eo2tei6vBSFFxT+xdTRcDsqV0pzHuAER6y+3uzQzdbcYyLUQUyFIiNX+pX7wiZ21UPhXqSv4Si4QG+rNi2fcjwRHrPfTP7+dGiV87IOCbQwssBhRGpSq2/lZBpZZa5ztAOxjUObLMIMCzGFAqbW0dxBezPE=
+	t=1755844142; cv=none; b=Tm1ifvKtiJK1OABw4YbNYBMYc6RQf0AhMULD1o3G2B1sCYAe1DrIjagOZQKU0+wnGYkhWiDjSk96QzG5+mnP9cIAGMrV/cZ4BVEGKoWzBxvg7NZZHmAkPsgRfrhQ7Ly48Ftxvl5nTRh4lwMa3XfNBwMKwtvsJCOeRYJkCvzsN0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755844074; c=relaxed/simple;
-	bh=9ATXq32utM4kfVagp8Kf92pg+poNWX+xRDXTF9eH0no=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qVBIuF1jV9E169pWlCJqIDovkvgectFhO3iBXWJu+vcnsWtZVOyAiZLwbNmD7sg45kanscG0sQaPQA2NJxhy00KUeyX0qjfgd6DlTpDKiITUxCU83t+QN+ggwCexmuVqrvncm38egPscM2cwYkrpEdcFEXr0BiRdfxy3VeCiFg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=laqojCAz; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1755844142; c=relaxed/simple;
+	bh=CDQnJj3KcI7gr1gzNZoQr1S3uzUp3/HF6QMZuuEmugI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W5kt4Se8v8Fg4OU6AqycNRcstHU7GKz21M/0Cne/9EajNiMgI2I0g0obmwBunyCra7j/pSFahu2GtLUR80SY4iWS0Pp1VN9DIj1sOsZjbFksTEJMLdYqBSC7D6i9G1DS+nP75cn+xgrZDb/4oiAgdCeCy7d3zFHHtN1bp4OIyxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=djFdonhQ; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2445806e03cso21753085ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 23:27:52 -0700 (PDT)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-324fb2bb099so1170081a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 23:29:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755844072; x=1756448872; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1755844141; x=1756448941; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=a74RVsak1TLYR6bws4zrQXpjsmVG5raUd4MS/ii7fb8=;
-        b=laqojCAzLZa9/WRZm+IstdDYaLUAFmgD17Zw3GwUJIPkXuFXCkHz2IMrxXKVSGZUpw
-         iTS1o+4yGjzvm/0hi6JpbKv2LwdeCYT+Cs98B9x9JJvrH6K25PB31kiJRLP64Vy4suLy
-         4DigazfWlTPD1HizQ9XnWm/3PSQSBdBRLemI8=
+        bh=AxFZWCSKR4desKiHPJ6haTS2ebGrBTXqENWB7tlhWOw=;
+        b=djFdonhQsnHb9clygPy86+SpKvswI87LLWaknjEoB9ByYKHdR4H0eAJnXoB/e0oBXL
+         Nur2hv4xaA1ZWOxsJB9Mvrdp+SKsd9sOKVjcHp/X0IrABXXrYN5ToYEgj988r7SGjHJf
+         RaY4bSv2rqHrvlaPR+HRd7CnHGZdgrXAQ4Iuw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755844072; x=1756448872;
+        d=1e100.net; s=20230601; t=1755844141; x=1756448941;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=a74RVsak1TLYR6bws4zrQXpjsmVG5raUd4MS/ii7fb8=;
-        b=ETMpbiOTD6+zKpZ0SYx2XIoQ41QqKgHZ2EvJJtdhO5m1m5DnX8Vv6AMSikmdgzF4Y3
-         x1TwC27luvn+M9z/OR+g/x+dAYbhLexd/ObyeuoWxyT+kD8qY8h6keLNjgWgU1bwavZ+
-         7p5I9wKyxuNpCU4u68SSvCcxSfnFs+IUlDBvRuumtQn6q4L54dHBWqzGiCANb2jwHEGN
-         ylkNLjj4UMC0JybmWcHqrgUmL88oK1XddFg9Zup4+iRRTbuQGYVMElwW978nS2rrtmXx
-         QT4dOSG4YeN5RnkBI63D9EWXAhoE3r8nH7l51LREUGfBi8NlAY+zttFm50Q5FbODd4T/
-         ZCfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzBmhuEYqGrXjt30EbSibrYyFUwAF73djdkwxAhoV6la8e2aX4lbFJjNKKB+O08jet0TKtqFu++hJz/hg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv8jmOdcSySF4CQXkub138m+sdmu7SwBccT71Wil9CUAe9t0CK
-	lXmhiiO3j5W0mlOTlc8/O0NAngd/wzvpC2adZSPikDcEauuxt9r3sJzR/iqy92Wqzw==
-X-Gm-Gg: ASbGncvwqaTQDPqGPHqd6A4iRopjoXCOAG0SEYswHEzSDp9gt4UNypNy/+ngndw3opG
-	BFgv5G+knMHPW7HtbysqsAOYYMOJ43mvSORek4H6toy90FykGBJrY/ud5thePFXkpspCmm3Ty/C
-	e1KWGCbZ63QnsK34q/L3A8AgJqNgFKl4371zN8u+PZxQvGfE35hF0Ra7BLnSAqVIi+V4QZV/lzf
-	VyFe1Hm7l8TDZmAZRPJJpdzn2jFbhZXBGhrnRbCMzxXauOaDNUqDap2LVpN0EWLNeuuiAc5HjKR
-	ZbUZz1P/tOS7VXDuHT0hKzjjw7PGkQoy2u5/+Wabs3h/xejaCz2OaYqG/FVUT+MbtSDDu+YnqME
-	3CHnKUsr4X/1NPDBLNPJs6lR14swXa/TPsY6rROJqbo2TLEcqShk=
-X-Google-Smtp-Source: AGHT+IF4m2GD74ARWQ90O62WKvsqVkiAGFVrRDGXDAa8grwxDZefBXzvdvCU1/9OIzJpcFb0Leq+aw==
-X-Received: by 2002:a17:902:c402:b0:246:464d:118a with SMTP id d9443c01a7336-246464d12bbmr7066525ad.46.1755844071478;
-        Thu, 21 Aug 2025 23:27:51 -0700 (PDT)
+        bh=AxFZWCSKR4desKiHPJ6haTS2ebGrBTXqENWB7tlhWOw=;
+        b=JYS7ctqriAFsdqmhyZ3T7V71Puk4mHLHz6h2mJEC1YzOjskWZYczSPFJLUFV9vqWaB
+         C4viUxNZnrYP8l9kknpAaDU4fUywt+xf/xdt81E72bQTIPqOHs2u7WoYclmYYnro2p0u
+         d0ZBUAAES7eseQjjX4fETewIKLSy7a8LzDsIPZC5ONBkCShlu4sPDINGzxNVYlc3eQ4o
+         CFohtGys8zRNIaDHVGA6ASL/AlPHxwlErMAAzt5pQTy0YY5UPJ0HUAl711/wCHDyWVpS
+         1zyLgv9FymqtkRAKp1A8hgEL5s+2zvzkaAVgDsu5iahCo8judkNJZvNvJio9+dwHwxaL
+         BL0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWH2rs/NUDzXuDQ1kH76Ct+fg/5BkbVjWS58uI/j9GQAXqaQqc8SJVpNezXu1jK8jSn+XMalpNNmRbr74Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsCcJdgsflgz37aFY/dhiSJDz2FsWg26l61CQvsqfriYFoaKPA
+	UHK1jic5qEHSa6eKcS+QHcIc6EU/sGU6DKVuWK2Dsskz5nodwFEcG/OT67XrDdXEJw==
+X-Gm-Gg: ASbGncshodvBsI9bv2vEyylGXtvQHRv+Ru3MlreLVsZkG69b4PLXNxPB6E/9AoocGRG
+	D4BjltiQwMRGELsX2MR+JTwTeHaHVGG11LtOILmTAkyCcEsfaYir8/WCWzi48gm3yDb+rb+klp+
+	CVpcCmWB98lTfcLYXj+pZLJU9aastcpoUr2rL6b618fG3/7CfQfxCN1+j8oXY5MGnovCyFLGLVF
+	KvQswTQfOVmerwNPg0vNw9VIcMhmeBgIIW/TkxDIPJGX47eVxDHWfkS//4+Wiyzx0k0+kWFrVvO
+	AOc/w9qFI6d0JoLB+fKKoQiiTa73BYr/PRCLmhAwq1FqJvGGDc84oOwmF64hKWbhe2dX7IMajWb
+	55Ep67OwlTVInmS67ePlsfS7Y/g8eiH52lgH37x8h
+X-Google-Smtp-Source: AGHT+IEmIoRbqzsMhT4RaCduv/mgQBiZTCW0YMv/crR9hLxBxCwCtU4VSoj9WK1ncCfxE24zov8CFw==
+X-Received: by 2002:a17:90b:2e0e:b0:313:f6fa:5bca with SMTP id 98e67ed59e1d1-3251744cbfamr2642987a91.22.1755844140925;
+        Thu, 21 Aug 2025 23:29:00 -0700 (PDT)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:8278:5411:367e:2f11])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2463606470asm11813375ad.14.2025.08.21.23.27.49
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-325143959e1sm1530661a91.23.2025.08.21.23.28.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 23:27:51 -0700 (PDT)
+        Thu, 21 Aug 2025 23:29:00 -0700 (PDT)
 From: Chen-Yu Tsai <wenst@chromium.org>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Stephen Boyd <sboyd@kernel.org>
 Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: mediatek: common: Switch to for_each_available_child_of_node_scoped()
-Date: Fri, 22 Aug 2025 14:27:37 +0800
-Message-ID: <20250822062738.2632746-1-wenst@chromium.org>
+Subject: [PATCH] clk: mediatek: clk-mux: Do not pass flags to clk_mux_determine_rate_flags()
+Date: Fri, 22 Aug 2025 14:28:52 +0800
+Message-ID: <20250822062854.2633133-1-wenst@chromium.org>
 X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -90,63 +88,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Using for_each_available_child_of_node_scoped() allows us to get rid of
-of_node_put() calls from early returns or breaks in the loop. It also
-fixes issues with missing of_node_put() calls.
+The `flags` in |struct mtk_mux| are core clk flags, not mux clk flags.
+Passing one to the other is wrong.
 
-Switch to for_each_available_child_of_node_scoped() in parse_dai_link_info().
-Also drop the braces around if blocks now that the inner block is just
-one statement.
+Since there aren't any actual users adding CLK_MUX_* flags, just drop it
+for now.
 
+Fixes: b05ea3314390 ("clk: mediatek: clk-mux: Add .determine_rate() callback")
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- .../soc/mediatek/common/mtk-soundcard-driver.c | 18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
+ drivers/clk/mediatek/clk-mux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/mediatek/common/mtk-soundcard-driver.c b/sound/soc/mediatek/common/mtk-soundcard-driver.c
-index 95a083939f3e..1e3b43fbb16f 100644
---- a/sound/soc/mediatek/common/mtk-soundcard-driver.c
-+++ b/sound/soc/mediatek/common/mtk-soundcard-driver.c
-@@ -95,34 +95,26 @@ int parse_dai_link_info(struct snd_soc_card *card)
- 	int ret, i;
+diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
+index 60990296450b..cb015dcf8d30 100644
+--- a/drivers/clk/mediatek/clk-mux.c
++++ b/drivers/clk/mediatek/clk-mux.c
+@@ -148,7 +148,7 @@ static int mtk_clk_mux_determine_rate(struct clk_hw *hw,
+ {
+ 	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
  
- 	/* Loop over all the dai link sub nodes */
--	for_each_available_child_of_node(dev->of_node, sub_node) {
-+	for_each_available_child_of_node_scoped(dev->of_node, sub_node) {
- 		if (of_property_read_string(sub_node, "link-name",
--					    &dai_link_name)) {
--			of_node_put(sub_node);
-+					    &dai_link_name))
- 			return -EINVAL;
--		}
+-	return clk_mux_determine_rate_flags(hw, req, mux->data->flags);
++	return clk_mux_determine_rate_flags(hw, req, 0);
+ }
  
- 		for_each_card_prelinks(card, i, dai_link) {
- 			if (!strcmp(dai_link_name, dai_link->name))
- 				break;
- 		}
- 
--		if (i >= card->num_links) {
--			of_node_put(sub_node);
-+		if (i >= card->num_links)
- 			return -EINVAL;
--		}
- 
- 		ret = set_card_codec_info(card, sub_node, dai_link);
--		if (ret < 0) {
--			of_node_put(sub_node);
-+		if (ret < 0)
- 			return ret;
--		}
- 
- 		ret = set_dailink_daifmt(card, sub_node, dai_link);
--		if (ret < 0) {
--			of_node_put(sub_node);
-+		if (ret < 0)
- 			return ret;
--		}
- 	}
- 
- 	return 0;
+ const struct clk_ops mtk_mux_clr_set_upd_ops = {
 -- 
 2.51.0.261.g7ce5a0a67e-goog
 
