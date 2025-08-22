@@ -1,235 +1,117 @@
-Return-Path: <linux-kernel+bounces-781962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB872B3195D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:24:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB94B31941
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CA4EA21C4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:20:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17D931894391
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72BD2FFDDD;
-	Fri, 22 Aug 2025 13:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EAB2FF17C;
+	Fri, 22 Aug 2025 13:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DaKYv8m1"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dzav66wS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD492FE574
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48E22FE592;
+	Fri, 22 Aug 2025 13:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755868775; cv=none; b=RjsuZIdBC6g0Ec4c+C3bzolTRfxfAL9zKFbPhiG3Uf8CdRyn3/FnRM5VzPXhMrTVihQewSE6zZbj7t/p/zOilJ7+1C8I83anD71SKqtm3Uy4bTow6KJEkTQKF+xNh+ed6VBOzRU0h47u6F+e0etN9x9unrRvKqvxds4hvKWIAdE=
+	t=1755868786; cv=none; b=GHD+maRqsA+Qpq7sw0EQf6tjy+hJW5paXDeG/WsSZY5YXTDKiMBEymDUe0OQgYXwz1x8rcgivPSnPRIe07KzyRiY7JtNxO76f0HxeS7ujGBJD06EFCJlz3ycnzALl2DcNPhDqCFtcOXPphb+joG47f0bz/Uou3O1EoLf4z1X8gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755868775; c=relaxed/simple;
-	bh=p1lojM5nyeVH0L3ungCLAGrmlI+pOzLl59WmtGTtIF8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OQd841I4IdSHVhIAFs8JO9EX62fXrk0BxnIJMzDsVAbdlDeVhzOwFumIPPaGF1V+FmTh4cLNBYawlhVyn9aZCe65LO6uajSBL0Z2vtdXEwzxBZvhQvhnGnc7Lu2QcNYXx0INCz6d2qTBqXNOIBzh5UvFjZJiBkqt3rcJwerETsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DaKYv8m1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57M8UVCn001232
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:19:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=vNUipRbE5fx
-	ce8vnIsbMIrjSIDj5rZHRbC1GeB9L/KY=; b=DaKYv8m11fBqbvyOGHLxvD4QQ3a
-	wXdzjKyD+MH9W6GwVr9PGwHhw0oZojJGPMHnJBPzj85IQaaKWqClAAjd6wcnKt59
-	JZyIk5hQwcmH9HW8Qa3PNuygOj961/ByBzojNYUgOMLvIwF9EKCC39+REWTci/Fq
-	7OA/8aqMxb82YqE+NNNmwnloQZvsPVV2hZEGm+fo86exczZet3AAzBZp5vDyv+/x
-	Jx3vizvwFI9rsEoucys2ZYkDtqf7aPU8p3X8L4OZ45cuMAv8T+cKVHXZ9nTk5yJC
-	lhhVHeYVNzEjvlQBZvolkqqByWT6Ik9hloq+A61GHODFYIaa8rFEXB78Q+A==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n5299bbq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:19:31 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-76e2eab5baaso1878410b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:19:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755868771; x=1756473571;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vNUipRbE5fxce8vnIsbMIrjSIDj5rZHRbC1GeB9L/KY=;
-        b=uY+lOcHWxvVRMKcIpe1E94d6aQTm0BmTa55Vj8MGLz9BME+JkffIyZEK7ByvsT6kNI
-         Bcjv4NIcuw90/GlgnJ6ihGLmyKQBE+1y6H867mu15n0CuOQHXVXOUZCfrthwOZN4ShW5
-         ts3QvSL1FdJkDRVn5fd5nE/1gr+yPzsQjFLUsFvL+EcjDqoCem9mBBISrfyQIZCsVPpf
-         8KHZOEo1o9/3eYcHgWG+BrAGhPS+4LsrmXM8A9MT5MkGQkSPQTLCeIi81HKOEkaJVDYp
-         TC8ydqnqxPqQiK38Fet91+FSwSIS/dRXQcZ+7DPy6EuaeBUcxBWxMytTiPJX/opsxXg7
-         nvaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtctg91vt+ycTMc98g9tIArdzhuoUnk5F7ezCISE8eUUIUj7DFl+PR0ZzMhSm/ov59W3J+OU/RD3amwRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY9VYWFdQXB9xIYjaqNLYlnivTGX9RDKSgI5egjW9P4q1DgC8G
-	PE+UgDx8oL0B6MKhGNqIE8plp3v2Sln157H1vi5QTH/taR3z4UcfRCV0yLQRK5PsTW4Emrn38oh
-	Cy/unQg9SVIrWTv6FkkL/7OaWqt8auCul2VO+/JCaHOc9Ug1kYxeNkrSeFOO3FspzKY0=
-X-Gm-Gg: ASbGnctvcns9n+N6OTAP76E7qLp4J65vuODp8HMEeNuRLheEnXPHLVGgj7YXQl4s3ZU
-	igRELWQyvr80i9kJmlK1h9wJtSeoykTFZnFjF6mqQmGT6j3hZ/nL/w/ixKRhHPOfRtasxY7MkPR
-	7uzylAa2p6npcJHInWqzzmwtBV4Fyt9JaFCTEZJDBLrRgO4xiqMY0Gl/U2BqxYXPyQe8RaMKS1r
-	uRhgOj0IaUyynk9DgHihg1xbOjOvOgabsQy6NaHV/VkFH0+gerYdXNnWpWZeNy3MMQhCHULc3qx
-	+FYcpdMCCF3zw+VWLbwHRgJm8q5IyMYcs2+JoasmarVNUg7bu8jwjDhviYN8P8jQpS9cElzsU2Q
-	g
-X-Received: by 2002:a05:6a20:7fa7:b0:220:631c:e090 with SMTP id adf61e73a8af0-24340884ecfmr4535902637.0.1755868770960;
-        Fri, 22 Aug 2025 06:19:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEs0KFkP5BTa+R2QlhzOkxpGvgMcS67+Ki+Y7hGXCge7fxFOeBX3xAEM0bX/4I7Gp2cRnOFIQ==
-X-Received: by 2002:a05:6a20:7fa7:b0:220:631c:e090 with SMTP id adf61e73a8af0-24340884ecfmr4535857637.0.1755868770475;
-        Fri, 22 Aug 2025 06:19:30 -0700 (PDT)
-Received: from hu-mohs-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7703d2b7301sm405621b3a.93.2025.08.22.06.19.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 06:19:30 -0700 (PDT)
-From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@oss.qualcomm.com
-Subject: [PATCH v4 2/2] arm64: dts: qcom: lemans-evk: Add sound card
-Date: Fri, 22 Aug 2025 18:49:02 +0530
-Message-Id: <20250822131902.1848802-3-mohammad.rafi.shaik@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250822131902.1848802-1-mohammad.rafi.shaik@oss.qualcomm.com>
-References: <20250822131902.1848802-1-mohammad.rafi.shaik@oss.qualcomm.com>
+	s=arc-20240116; t=1755868786; c=relaxed/simple;
+	bh=MyNgdMxnyEB/P7oXWoztxQMr+47U1RLFpT8c8a5OKoc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SSombk1bNWZ2DDrRJG9HIbDjXXzO7U3lwCrx2GNWDPLA6R0ERezATFY5n7aj224rOLO9MN0TFiRuas88Zh0MEXwehxgdoX+ZmKMp5goojNYJJeWdGISt01thA/Xq9i2mX8E9piC24jXRfG8qNZZR0ahbTNW1he9DduvQ+j2EHsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dzav66wS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B787C4CEED;
+	Fri, 22 Aug 2025 13:19:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755868786;
+	bh=MyNgdMxnyEB/P7oXWoztxQMr+47U1RLFpT8c8a5OKoc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Dzav66wSYqOQh8PgImtIxM6Cwlr5krkZrJf+Uu5VPHyuhSq5Mw+zkORV28y1TFVnZ
+	 m+aPS5PjU1NFfMmbJDXcrIDDnu2cGNRbwfQubvtO81xavtkDRYx4NZrUVxBCx/NnfN
+	 ncZiOYpie5SitqOF6Eh/RvYnXXJIl/SHRaYvLld7FaYlm+uXgh1i1+4qtkIhSHweyW
+	 0YxTHB9TgUvzR6/Nubmqbzv/p/V7Ov7BY3yGpHJu1r2huyyjDxejrd49WLaZ901BkS
+	 5+vQNHMUcfmaD8nzHCkcNcwNzsc6FQQdKXSxk2Xnl9qXeu3kGv13mZXa2W4mR0mqAB
+	 8TvIttVQXfprg==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v2 0/2] sunrpc: allow dprintk() to go to the trace buffer
+ instead of console
+Date: Fri, 22 Aug 2025 09:19:21 -0400
+Message-Id: <20250822-nfs-testing-v2-0-5f6034b16e46@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: _GeAqqCXTN5o9euKJTg3XeAluKcYbHSv
-X-Proofpoint-ORIG-GUID: _GeAqqCXTN5o9euKJTg3XeAluKcYbHSv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX7LEwcd2KZAJO
- T83pLAVK6FywZs+BXF3ozEh2UPdSyQjg2ts0UHuRWL9VJzNVdyYuqnt3V8Iqb/jJdLWO4qdOIpY
- PyqBR25RJZM7MdPIe3MlPgQuv/FT3C5bbp7xuEldbzlgIzKfc2Ecm9tqQdc+s3t4Ov27lbii9wG
- MZgrHM3H45PcsKqG1wYfl4zEePKI7OOMruNXdcdkbAEiKKZayEeDNDioXQ1iAlpkE9/UyXpzfed
- SXYkS+mylxCHfL+FjPwQ2hTCGdi3Fr2eNDB9RKQYUOa1coK7EYjbam1KDyIzD6BgZXdPK6/Rbiq
- o5rQdtReP2POQ0+EX6rvIk42MVxjG4mAVS96GMbrgqd/do9Otig/MWG3Bc5aLUdZY3tIYGJlstJ
- uta8lrcndxLIKDmj+Tuc9F7PMrzXGw==
-X-Authority-Analysis: v=2.4 cv=SPkblOvH c=1 sm=1 tr=0 ts=68a86e64 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=_dDu9j5-v2Tbu4HaPncA:9
- a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
- impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFluqGgC/23MQQ6CMBCF4auQWVszHQWtK+9hWKAdYKIppNM0G
+ sLdraxd/i953wLKUVjhUi0QOYvKFErQroLH2IWBjfjSQEg1nsma0KtJrEnCYOhOFk/oavJHKI8
+ 5ci/vTbu1pUfRNMXPhmf7W/872Ro0PTbonGsO7Lvrk2Pg136KA7Trun4BfKlknKcAAAA=
+X-Change-ID: 20250821-nfs-testing-2b21070952d4
+To: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+ Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1243; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=MyNgdMxnyEB/P7oXWoztxQMr+47U1RLFpT8c8a5OKoc=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBoqG5nlo54B+e38yagzXYM8iUYdmSkDPT+QaAEj
+ K8b3fpOdQuJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaKhuZwAKCRAADmhBGVaC
+ FfWLEACyR9DwlivE1t0R3+hiKGnmcX8Dj+dyFumcDeLRq0r6F/qFqNOPJl1U+cxvCXdt91r2tO/
+ kI6bHTnCJwFdzwhj4oySHNoYqmeDFC4ZyxrO+pKreWR2Uw9BdudISWMywMcNntIQLko48dyelUR
+ CWni6JnHsVgqEnfkhfvAdmZ2Kv2pXeKuBsI0n7YhOHVs4emAlBRieNql30ELQpzQZZFr/Gg952d
+ wonnYN8rNJuyp/0FYM3brch0ucTao9P4jHTbjvJAyMhO2uDkQUnimH8JE/DxyeRkVePy3u6NiWL
+ sjTM1gnfbfBit5XiIOyiayUqMJGbgNkR39o7bk8q4NO74cd1dU4GEInMk6F4+0H/ZGBzsHD6xQa
+ MCPjjPq3cImkmL2WDtpvveSQ22ywLA5ZUpZ0KAYcIkrLMepXjU3EhkPq7CbfyHi+ZPn7qHyqPqt
+ /s4jB/qBcDpRXqUmSGmK0vCa9YhAukKM0iWZ9SFkCC42r14upoDLAKSuy7XPgqAti/6UJ7kDHqc
+ T8suQQgq3//JmGPxXxTDmi8BmNa1bdFmXBIXRUDCNTDMzPz8IA0zwcqyPLloXBcgmi9CjzSvGiF
+ CpMD4CtMfl91IhtTQtPzoScJQUY1NUZ+K9GJb9mGeBwR3U/VweSGw7zmTSPPjVCjE6EWSjiGvd0
+ wwCaQwo2/3whrbg==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Add the sound card node with tested playback over max98357a
-I2S speakers amplifier and I2S mic.
+While we have added a lot of static tracepoints in the last few years,
+we still have a load of dprintks in place at all levels of the
+NFS/NLM/RPC stack. At the same time, they're pretty useless under any
+significant load due to the console overhead.
 
-Introduce HS (High-Speed) MI2S pin control support.
-The I2S max98357a speaker amplifier is connected via HS0 and I2S
-microphones utilize the HS2 interface.
+This adds a new Kconfig switch to allow those to go to the trace buffer
+instead. In addition to being more efficient, that allows us to enable
+static tracepoints alongside dprintk() and get a unified log.
 
-Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/lemans-evk.dts | 52 +++++++++++++++++++++++++
- arch/arm64/boot/dts/qcom/lemans.dtsi    | 14 +++++++
- 2 files changed, 66 insertions(+)
+Changes in v2:
+- pr_default() doesn't exist. Use printk(KERN_DEFAULT ...) instead.
+- Link to v1: https://lore.kernel.org/r/20250821-nfs-testing-v1-0-f06099963eda@kernel.org
 
-diff --git a/arch/arm64/boot/dts/qcom/lemans-evk.dts b/arch/arm64/boot/dts/qcom/lemans-evk.dts
-index 669ac52f4cf6..d67a9307cc75 100644
---- a/arch/arm64/boot/dts/qcom/lemans-evk.dts
-+++ b/arch/arm64/boot/dts/qcom/lemans-evk.dts
-@@ -6,6 +6,7 @@
- /dts-v1/;
- 
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/sound/qcom,q6afe.h>
- #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
- 
- #include "lemans.dtsi"
-@@ -22,6 +23,57 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	dmic: audio-codec-0 {
-+		compatible = "dmic-codec";
-+		#sound-dai-cells = <0>;
-+		num-channels = <1>;
-+	};
-+
-+	max98357a: audio-codec-1 {
-+		compatible = "maxim,max98357a";
-+		#sound-dai-cells = <0>;
-+	};
-+
-+	sound {
-+		compatible = "qcom,qcs9100-sndcard";
-+		model = "LEMANS-EVK";
-+
-+		pinctrl-0 = <&hs0_mi2s_active>, <&hs2_mi2s_active>;
-+		pinctrl-names = "default";
-+
-+		hs0-mi2s-playback-dai-link {
-+			link-name = "HS0 MI2S Playback";
-+
-+			codec {
-+				sound-dai = <&max98357a>;
-+			};
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai PRIMARY_MI2S_RX>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		hs2-mi2s-capture-dai-link {
-+			link-name = "HS2 MI2S Capture";
-+
-+			codec {
-+				sound-dai = <&dmic>;
-+			};
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai TERTIARY_MI2S_TX>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
-index 7026f25877c8..d73037d6d97a 100644
---- a/arch/arm64/boot/dts/qcom/lemans.dtsi
-+++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
-@@ -5005,6 +5005,20 @@ tlmm: pinctrl@f000000 {
- 			gpio-ranges = <&tlmm 0 0 149>;
- 			wakeup-parent = <&pdc>;
- 
-+			hs0_mi2s_active: hs0-mi2s-active-state {
-+				pins = "gpio114", "gpio115", "gpio116", "gpio117";
-+				function = "hs0_mi2s";
-+				drive-strength = <8>;
-+				bias-disable;
-+			};
-+
-+			hs2_mi2s_active: hs2-mi2s-active-state {
-+				pins = "gpio122", "gpio123", "gpio124", "gpio125";
-+				function = "hs2_mi2s";
-+				drive-strength = <8>;
-+				bias-disable;
-+			};
-+
- 			qup_i2c0_default: qup-i2c0-state {
- 				pins = "gpio20", "gpio21";
- 				function = "qup0_se0";
+---
+Jeff Layton (2):
+      sunrpc: remove dfprintk_cont() and dfprintk_rcu_cont()
+      sunrpc: add a Kconfig option to redirect dfprintk() output to trace buffer
+
+ fs/nfs/write.c               |  6 +++---
+ include/linux/sunrpc/debug.h | 30 ++++++++----------------------
+ net/sunrpc/Kconfig           | 14 ++++++++++++++
+ 3 files changed, 25 insertions(+), 25 deletions(-)
+---
+base-commit: 80a1bea0cd81de70c56b37a8292c23d57419776f
+change-id: 20250821-nfs-testing-2b21070952d4
+
+Best regards,
 -- 
-2.34.1
+Jeff Layton <jlayton@kernel.org>
 
 
