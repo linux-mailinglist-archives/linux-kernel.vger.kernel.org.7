@@ -1,138 +1,141 @@
-Return-Path: <linux-kernel+bounces-781780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0612EB316AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:49:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3622B316B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFE965A69B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:49:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40D53B65CC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F152EA73A;
-	Fri, 22 Aug 2025 11:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC462E8E19;
+	Fri, 22 Aug 2025 11:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E7Ua+gIW"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cVuv5bzX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A981C2324;
-	Fri, 22 Aug 2025 11:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790F7393DC4
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755863334; cv=none; b=GoY0UwvAITIdLPc3QsBFu99wY45fjwDy8ioSzEtCq77xk+hxuXkWceCyz3BrcZR2o+Cs+Kln/2BNFj5KpIYPaBYDpNRPHY8Mclrr+PUbxBUg+6XJzhO0vWbMTHoHZSkgERbjStPhSgvEBr84tTFTD6J/fcNlHTO36TNK6B4VG4A=
+	t=1755863349; cv=none; b=PsYt7r0wKviV8YdX2SZreR73wXlC+s/LaQn2cC3uEO7zkkO7XCzOktgCCL5cltK4G5pthZ7C44JC0aHO+CWGF71amOd+CmHlz5q685GMDVsXtaCPoVxWcGOTLWLRUmHE/YcidhJdBQ64WMWCXZGFdFxasU4DECGeDuugDKa/t+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755863334; c=relaxed/simple;
-	bh=huT5Sxo3XY1JHlGV2/HneQ7NQ4xPHvMqzJhNPHE+uT8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=HobaRUjTUeP4Q6IZq+85r4eUhxLlqlutq+ECWRyUUpW29gZJudDI146ADwiV4ZIqfoEL9CXCPdG+SJB7iJwAKLLyPD1iWnd/jlv7Krwvt0zP9t6Ss8AxeaPKWkCYZgcSnHSQ8iA2hMx6YeeABh8s12C1IBq6AApeOZyw6KqnDNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E7Ua+gIW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D8B8C4CEF1;
-	Fri, 22 Aug 2025 11:48:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755863332;
-	bh=huT5Sxo3XY1JHlGV2/HneQ7NQ4xPHvMqzJhNPHE+uT8=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=E7Ua+gIW1IH9Psl+1lr0kfo5TVLWVDGjlaItM4iEuOSEyrfNe/xUxkjgL/cdnbIsd
-	 kuIFIwHnpuuxkbuB8VKO6xlT3aAFENftFAnsR4IUrrGrjS85TP1jGpEQA6TXTRvgas
-	 flvI+RnQY4bBS013+k3KiNNEa2I/ag5YznLO50+sjmVm8Llr/X/2kOuG9nEaJuGtil
-	 +5rhybcRr2d6OmeGol3wldalZPcAEiOMcY/OGzub2oZefNT/Y58p4K9gVVuYQKqMMH
-	 w9q3M93sZzWv1AiuC758sOVU9GICYBw7BJ7QdTupT3vT5tJuQGasLVIROIDv6zT47i
-	 iGarlppASglig==
+	s=arc-20240116; t=1755863349; c=relaxed/simple;
+	bh=RhtZ9QF3jNeWlu1NyFf57VDqqZgeDOt1OLEdNPilCV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LpzpfWTxbz7CCewdfdGOtUQzTpIv/dkfvCZnumDG24q0IIdqdt5/vmG0lb+e6KHprhpuBVXD6eIlbBc1B/r2FSeLmCHbM8P+OFzb4m02w64h0RQBErK3MGvVQ7ZyxB8iHJZOObTKL1ELWB3yCx6shVcAAXocXwV2HLSvmswnEyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cVuv5bzX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5679DC4CEED;
+	Fri, 22 Aug 2025 11:49:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755863349;
+	bh=RhtZ9QF3jNeWlu1NyFf57VDqqZgeDOt1OLEdNPilCV8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cVuv5bzX+5SDkVZko/FxaR8PIehk2hm9GwG194YkD4PdxbojWmDB49ZiIS7c6KjyE
+	 bcu10fZIrslTqSRXdey/bq7fmYqIA/cjZFHXS9qaxW6LwErOndsgftLu4ogMRugi//
+	 WCXofIN0tn2lV00/6UmtssqwL6v1V3LsIJYC2bs8=
+Date: Fri, 22 Aug 2025 13:49:05 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Mahesh Rao <mahesh.rao@altera.com>
+Cc: Dinh Nguyen <dinguyen@kernel.org>, linux-kernel@vger.kernel.org,
+	Matthew Gerlach <matthew.gerlach@altera.com>
+Subject: Re: [PATCH 1/5] firmware: stratix10-svc: Add mutex lock and unlock
+ in stratix10 memory allocation/free
+Message-ID: <2025082234-scarcity-relive-9362@gregkh>
+References: <20250722163045.168186-1-dinguyen@kernel.org>
+ <2025081920-greyhound-discuss-79b2@gregkh>
+ <0bee0edb-5a3b-4648-8ca5-ad334220f092@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 22 Aug 2025 13:48:47 +0200
-Message-Id: <DC8XLP6C3E5I.10QJQVI4LORSF@kernel.org>
-Subject: Re: [PATCH v2 3/5] rust: scatterlist: Add type-state abstraction
- for sg_table
-Cc: <akpm@linux-foundation.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <tmgross@umich.edu>, <abdiel.janulgue@gmail.com>, <acourbot@nvidia.com>,
- <jgg@ziepe.ca>, <lyude@redhat.com>, <robin.murphy@arm.com>,
- <daniel.almeida@collabora.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250820165431.170195-1-dakr@kernel.org>
- <20250820165431.170195-4-dakr@kernel.org> <aKhYCf6wgSztcdXU@google.com>
-In-Reply-To: <aKhYCf6wgSztcdXU@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0bee0edb-5a3b-4648-8ca5-ad334220f092@altera.com>
 
-On Fri Aug 22, 2025 at 1:44 PM CEST, Alice Ryhl wrote:
->> +#[pinned_drop]
->> +impl PinnedDrop for RawSGTable {
->> +    #[inline]
->> +    fn drop(self: Pin<&mut Self>) {
->> +        // SAFETY: `sgt` is a valid and initialized `struct sg_table`.
->> +        unsafe { bindings::sg_free_table(self.sgt.get()) };
->
-> It's weird that this is called free when the sg_table isn't freed by
-> this call.
+On Fri, Aug 22, 2025 at 03:17:54PM +0530, Mahesh Rao wrote:
+> Hi Greg,
+> 	thanks for reviewing the code.
+> 
+> On 19-08-2025 04:36 pm, Greg KH wrote:
+> > On Tue, Jul 22, 2025 at 11:30:41AM -0500, Dinh Nguyen wrote:
+> > > From: Mahesh Rao <mahesh.rao@altera.com>
+> > > 
+> > > This commit adds a mutex lock to protect the
+> > > stratix10_svc_allocate_memory and
+> > > stratix10_svc_free_memory functions to ensure
+> > > thread safety when allocating and freeing memory.
+> > > This prevents potential race conditions and ensures
+> > > synchronization.
+> > 
+> > You have 72 columns to write a changelog in, please use it :)
+> > 
+> > And is this fixing a bug?  If so, shouldn't this be tagged for stable
+> > and add a Fixes: tag?
+> > 
+> > If this isn't a bug, then why is it needed?  How can these race?
+> 
+> In the current implementation, all operations were performed serially,
+> eliminating the need for protection mechanisms. However, with this patch
+> set, we are introducing parallel access and communication with the SDM
+> across multiple client drivers. This change may lead to race conditions
+> involving the svc_data_mem list.
 
-It frees the entries contained in the sg_table.
+Then that needs to be said here :)
 
->> +    }
->> +}
->> +
->> +/// The [`Owned`] type state of an [`SGTable`].
->> +///
->> +/// A [`SGTable<Owned>`] signifies that the [`SGTable`] owns all associ=
-ated resources:
->> +///
->> +/// - The backing memory pages.
->> +/// - The `struct sg_table` allocation (`sgt`).
->> +/// - The DMA mapping, managed through a [`Devres`]-managed `DmaMapSgt`=
-.
->> +///
->> +/// Users interact with this type through the [`SGTable`] handle and do=
- not need to manage
->> +/// [`Owned`] directly.
->> +#[pin_data]
->> +pub struct Owned<P> {
->> +    // Note: The drop order is relevant; we first have to unmap the `st=
-ruct sg_table`, then free the
->> +    // `struct sg_table` and finally free the backing pages.
->> +    #[pin]
->> +    dma: Devres<DmaMapSgt>,
->> +    #[pin]
->> +    sgt: RawSGTable,
->> +    _pages: P,
->> +}
->> +
->> +// SAFETY: `Owned` can be send to any task if `P` can be send to any ta=
-sk.
->> +unsafe impl<P: Send> Send for Owned<P> {}
->> +
->> +// SAFETY: `Owned` can be accessed concurrently if `P` can be accessed =
-concurrently.
->> +unsafe impl<P: Sync> Sync for Owned<P> {}
->> +
->> +impl<P> Owned<P>
->> +where
->> +    for<'a> P: page::AsPageIter<Iter<'a> =3D VmallocPageIter<'a>> + 'st=
-atic,
->> +{
->> +    fn new(
->> +        dev: &Device<Bound>,
->> +        mut pages: P,
->> +        dir: dma::DataDirection,
->> +        flags: alloc::Flags,
->> +    ) -> Result<impl PinInit<Self, Error> + '_> {
->> +        let page_iter =3D pages.page_iter();
->> +        let size =3D page_iter.size();
->
-> Variable naming here is confusing. There's another variable called size
-> in an inner scope, and then afterwards in RawSGTable you use *this* size
-> variable again.
+Also, what is causing these operations to be performed serially if there
+is no locking?
 
-I can change the size in the assignment block of max_segment to max_size, o=
-r do
-you have other suggestions?
+> 
+> > 
+> > > 
+> > > Signed-off-by: Mahesh Rao <mahesh.rao@altera.com>
+> > > Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
+> > > Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> > > ---
+> > >   drivers/firmware/stratix10-svc.c | 31 ++++++++++++++++++++++++-------
+> > >   1 file changed, 24 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+> > > index e3f990d888d7..73c77b8e9f2b 100644
+> > > --- a/drivers/firmware/stratix10-svc.c
+> > > +++ b/drivers/firmware/stratix10-svc.c
+> > > @@ -1,6 +1,7 @@
+> > >   // SPDX-License-Identifier: GPL-2.0
+> > >   /*
+> > >    * Copyright (C) 2017-2018, Intel Corporation
+> > > + * Copyright (C) 2025, Altera Corporation
+> > >    */
+> > >   #include <linux/completion.h>
+> > > @@ -171,6 +172,10 @@ struct stratix10_svc_chan {
+> > >   static LIST_HEAD(svc_ctrl);
+> > >   static LIST_HEAD(svc_data_mem);
+> > > +/* svc_mem_lock protects access to the svc_data_mem list for
+> > > + * concurrent multi-client operations
+> > > + */
+> > 
+> > Odd coding style, this isn't the network subsystem :(
+> 
+> Ok sure, will change
+> 
+> > 
+> > And what about a lock for svc_ctrl?
+> 
+> There is only one instance of svc_ctrl and there is no parallel access to
+> it.so a lock is not required as of now.
+
+But don't you have multiple places that list can be accessed now at the
+same time?
+
+In other words, what is changing to require one list to require it but
+not the other?  Is there some other lock for that?
+
+thanks,
+
+greg k-h
 
