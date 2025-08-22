@@ -1,114 +1,111 @@
-Return-Path: <linux-kernel+bounces-780889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D351B30A99
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:04:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F02DB30AA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3193F4E048A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:04:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C41468877E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C192193077;
-	Fri, 22 Aug 2025 01:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cFir6WWG"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDA619992C;
+	Fri, 22 Aug 2025 01:08:55 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E25820EB;
-	Fri, 22 Aug 2025 01:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D21D20EB;
+	Fri, 22 Aug 2025 01:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755824650; cv=none; b=Dor/2PSqVBOScnJNIJC4yHk1JHqMZ4W6Ze5wUtbFneqm3s1LMjgqvcpCOS6joCfkS0PMK1lOmPIUQc4IK7aL/dtyfI2DAHpCfjcQMAJH3V6V0lrkEMKoatjx1MaMj+n/ms3Otj/Ggc2yIhjWT1Miu5InZlUGdZ0HPvT1UAZvUnk=
+	t=1755824935; cv=none; b=FzqtVWhijToEIg8WvSjkGXU0g3FXR2OIkrcYh9FZmXxgPtWWYJ8vaFNlE5Sf56e6g/aNB+r5wcq+jlS9S/9sys8zO1mSR1LSSlttq0nfxLNDCoEy1ZUYR2MMQCRZw0mfWYsC8eGnY8a8Vs0uFSqecRSq0iJodilavIYLmAsTI0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755824650; c=relaxed/simple;
-	bh=m/oT083UvBsRBS6hZ73RCoP0PWmJw7QiMgbEgQofiOc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sahgk7+XTDbHyfKFi3MuXpGOW91uFtPz+rw9jgM0CO0fwsZAoRiAtS15ZM4qMrZlo5fZChJa6Ysgh75ZTn29eIn8na4X2ZOYbPrZ0u2gPmDm+SZLbv4+6XOCLCFh61Ddq6CriwNzX3sKckhArWZpIoiq6LuDzO1k9XH3hd2ca/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cFir6WWG; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-24641067be2so227505ad.3;
-        Thu, 21 Aug 2025 18:04:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755824648; x=1756429448; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m/oT083UvBsRBS6hZ73RCoP0PWmJw7QiMgbEgQofiOc=;
-        b=cFir6WWGnpwqI8AO7S4LMM5tXDz6Yhk9qcV41Ikv1iR8J2zHkV3Np6nKmJYrSMBPzj
-         4e9/Uzon+mOIXq1M2AUZMPReZ3jzu+paCxqxVo1ymgmvBFJN1Ekr1aU0CQdIHpYFIAld
-         cT3cVqKjIe8kc9xumkSFtCEXtkBz0db7C8/aJarQr2MquEJCm8sx5aArHvk/I06exGkD
-         74o8CYV0wjrbujv2nETuobuViL70uRcG/NpQ5pD9TsgLWvaEOPeqhwsxrwQrG+vEd81c
-         jV4fdEJQq3KwIwSNDQtBVUTyqX4WJbZnDmhdGtHrPJ+YyMwsn5R5hGJjYGi8MGFzOSCf
-         j4kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755824648; x=1756429448;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m/oT083UvBsRBS6hZ73RCoP0PWmJw7QiMgbEgQofiOc=;
-        b=Fjz3GXBs0DVgom/zC7DAhKywRPxvqJ83ny4K5GCFBh371PL1bhcCBtr9oGy2X6/9ED
-         tqIC6rwBjPq1GG5xVDCzT4eO97d6nr3QxDgizn9dhtNCjXx2kLQEhPbMiDyqCTUP6Sin
-         ly5gVB8KHhyu445VhUbk6F5d6hqFH+1x/SOlETnLRfn/dLcYeQgHuwWu9QdNue1dSa9H
-         yTdYWgv5VFOCMaHXw6saAhJuPPtlvuaGC2iMTRBQCTOaLEb2PeO3aGjrByjLR10Aq2GS
-         +p41SI4JdKpWAhWL/kj/QWsgzWic++6W9kUfZM+Yulx8Rln4nze2xGEJCxHn0L0B6oEu
-         6JuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjarvW9TndB2krrPWya240KCqAmJtp97C4u6Ds1N5n3MV+FF2Ko8Vg7GVrKMKytpHkt/ba+axBDCWT@vger.kernel.org, AJvYcCW78gRPSsmjsz4s8BtlYisxQYYLhPR4aeUBOT1M06M2ff8dnO1MYtYZXm7jvYH2A+h/Hj0MplHBoH8sGMw=@vger.kernel.org, AJvYcCX6lWUPjrGYXclnJKpl0nAuKU5dxg7OUrd0PAttHsXf5n+ZBqrbzszl27uDab/wQO8dLkSg55byFAz8XQJkPNw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9AZffC3sC3uq4UJRGX3w+IbE5ujiD22JkQRDilVS4QZXlAMBo
-	4hPQuJyRoC5QPIl63b2tUUf1ctLgibabVtQviPupV7LJxyrEREtNpTt4UPN9J6g45ZJhQaFrv5w
-	nJTetFQ1F7Jepn+SG7VhFnJmpbz6U+srXjzfg
-X-Gm-Gg: ASbGnctb7N4l4gzMh9CWFklOeZ3BhzcGJn1FziWY5Gazx7m0XSiKLsZwvffliqDsxAR
-	71C9Pi/cJOyyeeClUxabYX1Ick5kf44+wPLg/9vdC7bCPvcwykZ3EyR9zdPGQ65z8TUUtP4Wnwi
-	FvLOOAdxoPAPtQ8H+/5eB/bo+qfkAumUNhduCdYQ+OmSVFFt00vQy2HD0i66Hwcpuhe8Tiiaf26
-	ofUVJWG6ukntutw52I3RU0G61LpD6hZJR5xAIuLMaDBhNVJFkMouAytDJkLnPsG8MLNTj2nVlii
-	nUneo74qmcR3av3RCxHayC+6Ag==
-X-Google-Smtp-Source: AGHT+IG1pfrx0CDcHH5YIWUaVT3XeEYgLK2FE/WIstqerPC4ya0XceUMKWOuBRJ00fvYKDFqfW4XYx3/m37svKscg8Q=
-X-Received: by 2002:a17:902:ecc6:b0:240:3e72:ef98 with SMTP id
- d9443c01a7336-24630149490mr8902805ad.10.1755824648271; Thu, 21 Aug 2025
- 18:04:08 -0700 (PDT)
+	s=arc-20240116; t=1755824935; c=relaxed/simple;
+	bh=mhtMjMM8sl4QM2j/204rTXTQo3Dig9BevZ/k5TmelaU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NRwsWGjLFMhaTwDrkSQRi3DIWrJnSjBzW05W+P/wNj7243KOcPQr1HObjnuHrjFlEc1895i6/4VKT2OQubNv+5Y1xrK9hhsXIn0qK4PdrwQRWNDyM4or82SyFZnqgwZTQD1v8fUU+dHxwdLvRRGC7hyhVcS4hv9ifg3EdaDt07U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4c7MQz1hH0zdcS5;
+	Fri, 22 Aug 2025 09:04:27 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id ED3CF140257;
+	Fri, 22 Aug 2025 09:08:50 +0800 (CST)
+Received: from [10.174.176.70] (10.174.176.70) by
+ dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 22 Aug 2025 09:08:49 +0800
+Message-ID: <9f576014-c54f-44d4-a8aa-ddfafeb7a310@huawei.com>
+Date: Fri, 22 Aug 2025 09:08:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818013305.1089446-1-jhubbard@nvidia.com> <20250818013305.1089446-2-jhubbard@nvidia.com>
- <aKVFVO3wbzClcLwg@archiso>
-In-Reply-To: <aKVFVO3wbzClcLwg@archiso>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 22 Aug 2025 03:03:56 +0200
-X-Gm-Features: Ac12FXwhH15AUsgGlwJRqyMw3OprDu14FpxrTqbVSws_CTfUXO2lf2JLddNl5wo
-Message-ID: <CANiq72=aavHWOSxnLh3L8kR3BcbznZPFJWDJJJxEm9cssYe-=w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] rust: pci: provide access to PCI Class, subclass,
- implementation values
-To: Elle Rhumsaa <elle@weathered-steel.dev>
-Cc: John Hubbard <jhubbard@nvidia.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Alexandre Courbot <acourbot@nvidia.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, nouveau@lists.freedesktop.org, 
-	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] netfilter: br_netfilter: reread nf_conn from skb
+ after confirm()
+To: Florian Westphal <fw@strlen.de>
+CC: <pablo@netfilter.org>, <kadlec@netfilter.org>, <razor@blackwall.org>,
+	<idosch@nvidia.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
+	<bridge@lists.linux.dev>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250820043329.2902014-1-wangliang74@huawei.com>
+ <aKWyImI9qxi6GDIF@strlen.de>
+ <80706fff-ca22-45f5-ac0b-ff84e1ba6a8b@huawei.com>
+ <aKbDZWHNf4_Nktsm@strlen.de>
+From: Wang Liang <wangliang74@huawei.com>
+In-Reply-To: <aKbDZWHNf4_Nktsm@strlen.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-On Wed, Aug 20, 2025 at 5:48=E2=80=AFAM Elle Rhumsaa <elle@weathered-steel.=
-dev> wrote:
+
+在 2025/8/21 14:57, Florian Westphal 写道:
+> Wang Liang <wangliang74@huawei.com> wrote:
+>> 在 2025/8/20 19:31, Florian Westphal 写道:
+>>> Wang Liang <wangliang74@huawei.com> wrote:
+>>>> Previous commit 2d72afb34065 ("netfilter: nf_conntrack: fix crash due to
+>>>> removal of uninitialised entry") move the IPS_CONFIRMED assignment after
+>>>> the hash table insertion.
+>>> How is that related to this change?
+>>> As you write below, the bug came in with 62e7151ae3eb.
+>> Before the commit 2d72afb34065, __nf_conntrack_confirm() set
+>> 'ct->status |= IPS_CONFIRMED;' before check hash, the warning will not
+>> happen, so I put it here.
+> Oh, right, the problem was concealed before this.
 >
-> All of the functions could probably be `#[inline]`ed, though I'm not
-> sure how much it affects the `const` functions, since they're already
-> evaluated at compile-time.
+>>> There is a second bug here, confirm can return NF_DROP and
+>>> nfct will be NULL.
+>> Thanks for your suggestion!
+>>
+>> Do you mean that ct may be deleted in confirm and return NF_DROP, so we can
+>> not visit it in br_nf_local_in() and need to add 'case NF_DROP:' here?
+>>
+>> I cannot find somewhere set skb->_nfct to NULL and return NF_DROP. Can you
+>> give some hints?
+> You are right, skb->_nfct isn't set to NULL in case NF_DROP is returned.
+> However, the warning will trigger as we did not insert the conntrack
+> entry in that case.
+>
+> I suggest to remove the warning, I don't think it buys anything.
+>
+> Thanks.
 
-I don't think that is guaranteed unless called from a const context.
 
-Cheers,
-Miguel
+Yes, remove the warning is a good a choice. I will remove the two lines in
+v2 patch later, please check it.
+
+------
+Best regards
+Wang Liang
+
 
