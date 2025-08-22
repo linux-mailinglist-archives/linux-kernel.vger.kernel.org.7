@@ -1,133 +1,137 @@
-Return-Path: <linux-kernel+bounces-781817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E69F9B31714
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:09:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23C38B3170C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC5A3623EF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:09:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE594B61AB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5472E2FDC29;
-	Fri, 22 Aug 2025 12:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EF93043AA;
+	Fri, 22 Aug 2025 12:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m6+dkYrP"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Is6KVeWU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="no7xRGAM"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37AC2FB607;
-	Fri, 22 Aug 2025 12:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E743E303CB5;
+	Fri, 22 Aug 2025 12:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755864449; cv=none; b=TzxyTKMtb+ADyZiCJYhuusE9477rs3UX4+OdfjHhcXUvEK/GW1BKeXUnXyARV1ycvz6QdUDuzD9l6xJeVJ4bzqOzmM2SKiPPqJvS9cP7zCd8X8psuNJ8TlX+vgxM4xwvpqHsHIJHFCmvLFZwPZBVN2coze3TwWN40b68pts5wIg=
+	t=1755864299; cv=none; b=NjDOO5yvZB3wXjxGPFcsJw6pmTFZoho5KO5R7Ex+nmHIlSY5yAIwGhO47vSv7xjHmqpZj4yxsLEqhsZ9pJPoBaU43JtGkyPBU3kBDp7PhVetiP8Dx60ERTkRQDTl0ZeuRTl3mJ0wsbvXrfhfG7drL6f9mVcVbBo7swm2Ibs2AlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755864449; c=relaxed/simple;
-	bh=w9LDDKbbCU32z8mFAmsc72r+haOmtzzbI1hp4FHEhZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iSAjNWQzBIUh5OPmNSXX/EGCBwBoAOlDuJ0xlKYDH0SLp1jBbhKCm88rLRwFZ5IJFLd6wjLuI1zaxHmGNJlFIqwFBqOA9e37q5HdZFc7YXgQZbr0GlJFyJm5z/RU6y3SJPzLeYsjqn9iBhy09IwtfztfaBEYNuRbAnzr5p325yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m6+dkYrP; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b9e7437908so1368383f8f.3;
-        Fri, 22 Aug 2025 05:07:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755864446; x=1756469246; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G8l8c6RdN9SEwzhMIPJOr5f2j416dT55akZSctyPtco=;
-        b=m6+dkYrPSdl4HDLTuMoH9qJhUVNvoMcYD+zpbuuF0vmKgglHm2rnboNewb0Sba6+QA
-         ydD0+3jHfidGfTM/CRyhCqosrVj8R5G9DbvBFMiHuzhYMuc/igPx5rQea6j5hXSlscUf
-         TzQPXFh35msrBxs1BUWmH8GLmeu/hDU246phHFfKq7jOByqvbmObZoorrBgPkuMO0PaC
-         8ZlriJolMHzuXAeZXA/m2hiR3TyeYVu4RBGz/5OYQVMOduQ2/S37r5o3kquAhYIWrEyI
-         6EheMNkw+dn4fg1kqigozjOY6eDl730J4aeu+l2i2yLrBZ5NrYvQEL68RO487BsnhxKW
-         TIHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755864446; x=1756469246;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G8l8c6RdN9SEwzhMIPJOr5f2j416dT55akZSctyPtco=;
-        b=FsZcDpIHoaCqiZPmaGaHa86PUndeoD82NXaBx8zvx8X4/t2xO+nndY+Y0W/p1PYFcg
-         uMv/soajR/eBNbP38dybmWsCIAUIF2wgLcyIq0U1jhvRcGk816WiRc9dnuB+QHAEf+AI
-         ighrxeWoHLAdfA8kbsICOSwTANItghaTh7uccPzFrAbcf+cVtfKHkAcdJHNURISeTx6N
-         ZiJcRzVrHKw3FXpAJFQFHM/GN+mzwdF4VE4Cq820D3ncWCGjOvPpuzBSKI0FbYX+trGQ
-         /lKT7bWHvlMa25dFVL+L2FU6NvT9PVvuQGwU730oTdw7izoR+isk6JhpAx0HHkPCo76g
-         Ez/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUCxEGTT5XsQkOAeicpVsd+dEPfB7EDUao9xdV7Rm5jemmSuVfcayoBwtIiEnICR9AZclQBl3dCXK7ite+89w==@vger.kernel.org, AJvYcCWaLbaLuBHcGQoi5a/dsOPk8SDjodIv3E+833+cOmxYAKDD3fT80tMZQrPTRJbmRzwwhfJLARYwB5mHlQ==@vger.kernel.org, AJvYcCX/MgQIW0L71/4jl+8qV+Hfg+EMSWp69rcnQmQq4rl/ZIm/X+mLRoIxfY+j/MUFUjMGCK71m/Yyij8ZNLEn@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrvH4cw4eRHlNXlKs92s40R/1R6DvmK4zPIejTHd8N/wfxc/FN
-	pKjbkdNvZJ1JYiX7M0/BthVqdw8k4fkpAoPht/t2RPMzultC+b+o7Nov
-X-Gm-Gg: ASbGncuB2bEPKstd0LhF/R683NhYZQ49vOaYwehLPJl2Qpv9sjKQZgt+TE+6szEDaRb
-	bey6GeCirIrAWvn72uJrl8Ucv8g5uqFgUg2q4y1wtAVOGzKD6iJCP3U9YXbjnlZiOXHdXLfDePo
-	swx7LTKcq/B7gr3yeTwYT1gRJmC83JIMYJiASxzyIeIaR/1k+I2w7rAcmhhSKrL0z/uNgesw1r8
-	lL9HDGpIzGtColioLby0HeOGU0sTla7eb4PV89Hn/Wn7/mVTKJDCIAQ7E6F/E1x9GTGMHoBEXfe
-	181SFwHBHdyW+MJ6bTT1WD3xQIYox+O1ntiRMkDEvNl3TxjdbHQveodSvAqBRRhjtc/DsN8dz0f
-	BuwGoOI9COigNj3L37lrmLY5tNCccRNL3Ll5hp/cxWxfPiJgpjus+zv2bPZTacbPe
-X-Google-Smtp-Source: AGHT+IF32esv8LZscvwNHgYR6ljsLtgAqraMmy0VAs35rpd70926148m7dEBX/SFBT9exOpIVVtZSg==
-X-Received: by 2002:a5d:5d0f:0:b0:3b8:d0bb:7541 with SMTP id ffacd0b85a97d-3c5dc5426ccmr2223990f8f.40.1755864446093;
-        Fri, 22 Aug 2025 05:07:26 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c5393b797csm5054822f8f.39.2025.08.22.05.07.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 05:07:25 -0700 (PDT)
-Date: Fri, 22 Aug 2025 13:04:20 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Madhavan Srinivasan <maddy@linux.ibm.com>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Darren Hart
- <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, "Andre
- Almeida" <andrealmeid@igalia.com>, Andrew Morton
- <akpm@linux-foundation.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Daniel Borkmann
- <daniel@iogearbox.net>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v2 09/10] powerpc/32: Automatically adapt TASK_SIZE
- based on constraints
-Message-ID: <20250822130420.6c6a3fce@pumpkin>
-In-Reply-To: <db7f9b12d731d88ac612a27e2caf4d99d76472d2.1755854833.git.christophe.leroy@csgroup.eu>
-References: <cover.1755854833.git.christophe.leroy@csgroup.eu>
-	<db7f9b12d731d88ac612a27e2caf4d99d76472d2.1755854833.git.christophe.leroy@csgroup.eu>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1755864299; c=relaxed/simple;
+	bh=wXoAflquMnJ9fOAtd5oQsiYZ6SWkFwfvGG0Jut4ud1E=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=uAS3rm5PG4kqubhMfeWYI5S62SBGVlN8e8vw12lAm62I7s0SZyte/SATmKAt43sEhFUK8ZOUMnvm8qWCgqfQFwu1Op+oOwAkHCo0EYFiVeShh2oIYiWfaXyEjizu0ADvm3S4ffdPqMc8rKQV1/DI/gmbDqu5+0j7ybgF4urUe7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Is6KVeWU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=no7xRGAM; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 22 Aug 2025 12:04:53 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755864295;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1LUj+JUxdqYa592kSYtdWok934ugg29P4ZPqPNucb7k=;
+	b=Is6KVeWU725Jo5zZsvXY0UjaVdhdzwOQJdBZbAiYDIA2a6H2fEqBZHQ3AkqCQk6OBMy9im
+	Xrx87m8ddZriTwiAfONNcxn3eJOhC26PEGAT6mGVOV8lMlYKvhsAedO+BxmCUZJEhW4NBG
+	DW5d95nGbKw5+Xjz3jtRkZWoEjgiE+3h4uqjpST21PRX2c/WxTHoNtq4667Kve6BmL6ysn
+	N4NiEqRSthazdIoDueoDIKs5xDr9yQwc781eOyEiGA0D+f8ZkW20Sp3y86xTZJTB0O5IDS
+	RVUMwN6boyls9G+mBdViAN++EYHF9M9kxVEA03Co1urTdgeNj+eJrPT8hsxK5A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755864295;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1LUj+JUxdqYa592kSYtdWok934ugg29P4ZPqPNucb7k=;
+	b=no7xRGAMSNIsfXxcqxNqbvH8N7fclFtOej5TTd+82U9MlFaakwKIvussemrcOdVxdHSCBb
+	8odauuZg+sziBiCw==
+From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cleanups] x86/idle: Use MONITORX and MWAITX mnemonics in
+ <asm/mwait.h>
+Cc: Uros Bizjak <ubizjak@gmail.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250616083056.157460-1-ubizjak@gmail.com>
+References: <20250616083056.157460-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Message-ID: <175586429393.1420.14916636191217721438.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 22 Aug 2025 11:58:05 +0200
-Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
+The following commit has been merged into the x86/cleanups branch of tip:
 
-> At the time being, TASK_SIZE can be customized by the user via Kconfig
-> but it is not possible to check all constraints in Kconfig. Impossible
-> setups are detected at compile time with BUILD_BUG() but that leads
-> to build failure when setting crazy values. It is not a problem on its
-> own because the user will usually either use the default value or set
-> a well thought value. However build robots generate crazy random
-> configs that lead to build failures, and build robots see it as a
-> regression every time a patch adds such a constraint.
-> 
-> So instead of failing the build when the custom TASK_SIZE is too
-> big, just adjust it to the maximum possible value matching the setup.
-> 
-> Several architectures already calculate TASK_SIZE based on other
-> parameters and options.
-> 
-> In order to do so, move MODULES_VADDR calculation into task_size_32.h
-> and ensure that:
-> - On book3s/32, userspace and module area have their own segments (256M)
-> - On 8xx, userspace has its own full PGDIR entries (4M)
-> 
-> Then TASK_SIZE is garantied to be correct so remove related
-                    ^ guaranteed
+Commit-ID:     d20a5d96eddb95b4faa33247ec653a580c48fdfa
+Gitweb:        https://git.kernel.org/tip/d20a5d96eddb95b4faa33247ec653a580c4=
+8fdfa
+Author:        Uros Bizjak <ubizjak@gmail.com>
+AuthorDate:    Mon, 16 Jun 2025 10:30:41 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Fri, 22 Aug 2025 13:52:21 +02:00
 
-> BUILD_BUG()s.
+x86/idle: Use MONITORX and MWAITX mnemonics in <asm/mwait.h>
+
+Current minimum required version of binutils is 2.30, which supports MONITORX
+and MWAITX instruction mnemonics.
+
+Replace the byte-wise specification of MONITORX and MWAITX with these proper
+mnemonics.
+
+No functional change intended.
+
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/20250616083056.157460-1-ubizjak@gmail.com
+---
+ arch/x86/include/asm/mwait.h | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/include/asm/mwait.h b/arch/x86/include/asm/mwait.h
+index 6ca6516..e4815e1 100644
+--- a/arch/x86/include/asm/mwait.h
++++ b/arch/x86/include/asm/mwait.h
+@@ -36,9 +36,7 @@ static __always_inline void __monitor(const void *eax, u32 =
+ecx, u32 edx)
+=20
+ static __always_inline void __monitorx(const void *eax, u32 ecx, u32 edx)
+ {
+-	/* "monitorx %eax, %ecx, %edx" */
+-	asm volatile(".byte 0x0f, 0x01, 0xfa"
+-		     :: "a" (eax), "c" (ecx), "d"(edx));
++	asm volatile("monitorx" :: "a" (eax), "c" (ecx), "d"(edx));
+ }
+=20
+ static __always_inline void __mwait(u32 eax, u32 ecx)
+@@ -80,9 +78,7 @@ static __always_inline void __mwaitx(u32 eax, u32 ebx, u32 =
+ecx)
+ {
+ 	/* No need for TSA buffer clearing on AMD */
+=20
+-	/* "mwaitx %eax, %ebx, %ecx" */
+-	asm volatile(".byte 0x0f, 0x01, 0xfb"
+-		     :: "a" (eax), "b" (ebx), "c" (ecx));
++	asm volatile("mwaitx" :: "a" (eax), "b" (ebx), "c" (ecx));
+ }
+=20
+ /*
 
