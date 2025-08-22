@@ -1,164 +1,128 @@
-Return-Path: <linux-kernel+bounces-782068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60152B31A82
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:01:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13EF7B31A68
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 435455805E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:58:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B7DA17DCF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B4E3126DA;
-	Fri, 22 Aug 2025 13:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3F13043A6;
+	Fri, 22 Aug 2025 13:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HS7+ehFT"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DfOfzRux"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BB330AAB8
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FC12737E8;
+	Fri, 22 Aug 2025 13:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755870924; cv=none; b=j7FhU6s9Nrn596prx2B3v0GsH1WXB4wuftn6RNvadvkYMRa9QH0JKg+RacET8pqGtn4H+QKGfmOJEx6N3+OWeoAMp67XVtPScz/QHUdUlCeNeedEZs2w/PQNTcvs64mnTCnQd8dF9Ee3IcgXRVkz1HXouGQqmHKt50TQ9q2GYUY=
+	t=1755870901; cv=none; b=GTvrlBfSQCqI5igoNn893Ht/cgHoE9r4CTJhdwNQDrjtpFxhpVscma8hDPnlvGXYx55Ax+gDxk4jln/4tYorfwoDPo5ePBjmYVlvzvSRpW3mqKgb7/qqjewY+SGtVKi1I06x2r90YnHCbbuLW7/kJcr+FqQhIp58ZtDu5C1n9cM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755870924; c=relaxed/simple;
-	bh=bAWWYr7G0wEavsSSEbN4ZfueckmKJWlFmmKXRgGMffA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JO1pZggvuWuuGweiS94UHSYqn5gSZ/HG3YF0eyO0sdcLEmmSDPfnuxS32yxLi1COwMGqHdJOHg/fo+1m6K7hVi70pqCBdNHTbJpKZBIST/i2ra3CD5ZIlO/NpHgUDeshJEON5XPcWM598x5h9pqImz8t3XpeWRk5ttZRqq0pHrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HS7+ehFT; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb731ca8eso343040266b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:55:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755870919; x=1756475719; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MriLCdOSPXFFmX+bYG2sehrfu/eciyiJysfVnIX8JBY=;
-        b=HS7+ehFTt3razrEEy1bP9xG1raGKmvEVNOt/vIM8jpM29FcYmEQmzYH/uTgkHGTvEY
-         nQjmr8cTirZzVlK8JuZVoKdlPJmSMPBDXHp10o4+n0dYd/JgSNXy/I51KO0uZ5+PZH7B
-         KZAqS+8kEilG4UliiA3Rs9moxuqLR5fvoeYPLj2d9nktALgV7HB7TtVs/6r0dxko4BQV
-         WYS8sftlVBuAQVfKED9PypmVg8bu8y0m0wP/L1dIRp5uKhZ+WBIf82FtyjMuMfkngIj5
-         fCoQ8pVIx3oQIi5jjZLRoJEeIMbmODn0PExG4LTDJ1CEumsScRc5n5AEoJMVhI+BI62w
-         0Lzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755870919; x=1756475719;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MriLCdOSPXFFmX+bYG2sehrfu/eciyiJysfVnIX8JBY=;
-        b=Wd2iX2iuv2SZz/rmYsw0buz4sS4MTQlsvwYPdXllw4RGQ2KOHRgkA6w5D+YPJ2F/y0
-         yYtjLITMnhGxNysUKpI9eQHwIYtpO+MIn27eKWAG4pYo16Qgxviassj4RbL67ih6GpHW
-         DfNwSPLHilEeP+OSdjWjEqIshzYbJZ/94kE5GdP40kdAEBtJ5r50xbt7jeJiu8B47Jd3
-         V9q99+J2rMNaOD2bIdPPfB5KrGMrJm97bbZ4xTiztycWqWmwkTLpFTYUAf/HcDxLfZgp
-         1dh20r55lVPCiOzDv5EfcmG4WwLLSsiYk05jcrQQnB75gHqqoLGEF10kHpqTelrtyFR4
-         gUmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDsWFZFaBGsvOI1HD9nYul47/nvzX6F+4Cd7z8yVPTWl4Y73XB4DzLA9uDuhEnijym5MKrIVg5ypVQc6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqnM5TZooEkNWfM1v8d8mPYx+0/Qw6X5BJmSEZPSn3M/xnfPhA
-	fYYRJC8fo8bJRzMdTmo6SNFpqqKfz7YB1xqhkjdCy5wQNSI9UA+xrc5Y
-X-Gm-Gg: ASbGncuBKQpWRmNgBcVu7zeO5dtyUGgsQaAUdQwdvi91CmwWQgcVIXTs5sDsEJbbqeo
-	M5OoLhQOaFgImbwRy93WZOYNDg0XZAdUdWatSnHxgoWCrCHWxSuSIoaxqsQeCEC3D+MNCCFImV0
-	l67CAzpoIXugULd86mmfpqsm5IwY4xtGLNJCQ/hqpfmwPYsMLbQaI7A6F/ptiR6IT4yFRZok0jF
-	IzfX96jUP1O/hTYzSoQ4RTFcK18qbzriYmIhmjGDZISSWOLjhZ8+ltYWZE/BsBEY9iaMRQrTpem
-	qVzYUsz6KyoHkooFGURyhVG9IfYQRMWuH+UvYOCEy4153kKJTLak3jWvZnbXQo7miqRvGbEGYeP
-	CP/tk4p80ngKRZWAb7pDkeqDQJA==
-X-Google-Smtp-Source: AGHT+IHIpHoFlT4DekRBl5w9SoEW/KPa+BrtCmGRAFzA38cXn3uIrIP9U3qCMOfb7i/PwhdId5s+yw==
-X-Received: by 2002:a17:907:3f07:b0:ae3:f2a0:459f with SMTP id a640c23a62f3a-afe295a456amr305665066b.54.1755870918977;
-        Fri, 22 Aug 2025 06:55:18 -0700 (PDT)
-Received: from tumbleweed ([95.90.184.246])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded307138sm612353866b.45.2025.08.22.06.55.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 06:55:18 -0700 (PDT)
-From: Michael Straube <straube.linux@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: hdegoede@redhat.com,
-	Larry.Finger@lwfinger.net,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 13/13] staging: rtl8723bs: remove include/recv_osdep.h
-Date: Fri, 22 Aug 2025 15:54:18 +0200
-Message-ID: <20250822135418.118115-14-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250822135418.118115-1-straube.linux@gmail.com>
-References: <20250822135418.118115-1-straube.linux@gmail.com>
+	s=arc-20240116; t=1755870901; c=relaxed/simple;
+	bh=YPBaPR65gbIgfuU8DW5Zf1H4Ulj1k8A4IlsO2yYtJQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qxDXOG2t/LBnAp3keZ5EXj/8JNIXFZIF/VAufbz5tTkVYJGMLO8CUNZNtOsRYDBWufzRhM3yYgywhp9yqQNo6u4pyGbhXA5NCMqBGmUs+bG+BxL2Ludwdx1EBzvRn9DpVb4rQczDe2tYLtjJP5hBpRjGtRpVWJ8HgBmuXTwrb3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DfOfzRux; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 17A2240E00DD;
+	Fri, 22 Aug 2025 13:54:57 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Hbz-VzBCVrbN; Fri, 22 Aug 2025 13:54:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755870893; bh=cU+sFi2Tg32hg70nWhILQn8eC9PUNjpsUYNCBZ+GafU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DfOfzRuxgYlcwqZnoaEl1AzLwMJkuUVYTiUt8RQbuLH1hudWdZLCbnBSbvUR0nhgG
+	 YwAHrAucKQEL975VYGM68CsOR5awgv6QCTyT48fIW+cXtQrxNDFM+GKRiLqd5tsjV/
+	 0li0Ytex1dpN+JUMEum5M8jMsJmCXvI7UFoHIFj6Mubv6b53t4+zUzAF9HpwMscsrT
+	 lgzBVjI8A3LuOS0eO6sEUoMaXHjjkCTgtctBWlmgddheNoBRmuvI5QDREfcuKVsW3W
+	 bgafxAebZDSmCt+l82xU0byrE3vP9dj/4/pIlYhgi/+zemmLp4uIBwSH0gkA9mNVcY
+	 oplldDek4otdnPnGqYZLzpaTmGt7jSuWqWAa8Nt9LxmdANNV6Rex2zsrabvQ5QuXWS
+	 EBo4vF/aOKKXEImXRCRrLn5sana9yZYDUhFlZqKCzAMJtVcBLRZVjPQ0yz8SpYYUzi
+	 CNqDIccTz24al3Z+dMsTw1cp91dw6kPtiMV+CaDsI+PUkAKKVZANShTkEbYfOv9MV9
+	 0g/8qKU50bEpRolNXlqLfaxH7TXbcUKBazHClX9HmW1hNVR4kBylzGhy8dCbOOipVG
+	 K9+jNh9NJbExx4giYa6iUrJaNc6IoUYCMbYV0Q2R/U2/U/7pfZBZXCwxdVuq752pdp
+	 sMRuPR3OGibsoeSzqBXambRM=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 01F3640E0163;
+	Fri, 22 Aug 2025 13:54:27 +0000 (UTC)
+Date: Fri, 22 Aug 2025 15:54:22 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Tony Luck <tony.luck@intel.com>, pbonzini@redhat.com,
+	seanjc@google.com, vannapurve@google.com,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+	H Peter Anvin <hpa@zytor.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	rick.p.edgecombe@intel.com, kai.huang@intel.com,
+	reinette.chatre@intel.com, xiaoyao.li@intel.com,
+	tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
+	ira.weiny@intel.com, isaku.yamahata@intel.com,
+	Fan Du <fan.du@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>,
+	yan.y.zhao@intel.com, chao.gao@intel.com
+Subject: Re: [PATCH RESEND V2 1/2] x86/mce: Fix missing address mask in
+ recovery for errors in TDX/SEAM non-root mode
+Message-ID: <20250822135422.GDaKh2jhb5ooQ6QOe9@fat_crate.local>
+References: <20250819162436.137625-1-adrian.hunter@intel.com>
+ <20250819162436.137625-2-adrian.hunter@intel.com>
+ <20250819213247.GJaKTtf1er-Ced_mzP@fat_crate.local>
+ <10587d02-1133-45fa-9ec8-2288a8868b68@intel.com>
+ <20250821132521.GDaKceQXfEWHVwrlxV@fat_crate.local>
+ <441aaf76-977f-487e-9db8-80edcda6078f@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <441aaf76-977f-487e-9db8-80edcda6078f@intel.com>
 
-Move still needed function prototypes defined in the recv_osdep.h header
-to rtw_recv.h and remove the now obsolete recv_osdep.h.
+On Fri, Aug 22, 2025 at 10:57:36AM +0300, Adrian Hunter wrote:
+> Not exactly.  I just want to fix the bug whereby the mce handler fails
+> to mark the affected page as poisoned because it does not remove the KeyID
+> from the address before looking-up the page.
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8723bs/include/drv_types.h |  1 -
- .../staging/rtl8723bs/include/recv_osdep.h    | 21 -------------------
- drivers/staging/rtl8723bs/include/rtw_recv.h  |  4 ++++
- 3 files changed, 4 insertions(+), 22 deletions(-)
- delete mode 100644 drivers/staging/rtl8723bs/include/recv_osdep.h
+Lemme ask this differently then: are you ever going to need KeyID in mci_addr?
 
-diff --git a/drivers/staging/rtl8723bs/include/drv_types.h b/drivers/staging/rtl8723bs/include/drv_types.h
-index f1c16ddacc83..dd9018aa4ee5 100644
---- a/drivers/staging/rtl8723bs/include/drv_types.h
-+++ b/drivers/staging/rtl8723bs/include/drv_types.h
-@@ -33,7 +33,6 @@
- #include <xmit_osdep.h>
- #include <rtw_recv.h>
- 
--#include <recv_osdep.h>
- #include <rtw_efuse.h>
- #include <hal_intf.h>
- #include <hal_com.h>
-diff --git a/drivers/staging/rtl8723bs/include/recv_osdep.h b/drivers/staging/rtl8723bs/include/recv_osdep.h
-deleted file mode 100644
-index 20ce25132700..000000000000
---- a/drivers/staging/rtl8723bs/include/recv_osdep.h
-+++ /dev/null
-@@ -1,21 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/******************************************************************************
-- *
-- * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
-- *
-- ******************************************************************************/
--#ifndef __RECV_OSDEP_H_
--#define __RECV_OSDEP_H_
--
--
--extern signed int _rtw_init_recv_priv(struct recv_priv *precvpriv, struct adapter *padapter);
--extern void _rtw_free_recv_priv(struct recv_priv *precvpriv);
--
--
--extern s32  rtw_recv_entry(union recv_frame *precv_frame);
--extern void rtw_recv_returnpacket(struct net_device *cnxt, struct sk_buff *preturnedpkt);
--
--int	rtw_init_recv_priv(struct recv_priv *precvpriv, struct adapter *padapter);
--void rtw_free_recv_priv(struct recv_priv *precvpriv);
--
--#endif /*  */
-diff --git a/drivers/staging/rtl8723bs/include/rtw_recv.h b/drivers/staging/rtl8723bs/include/rtw_recv.h
-index aa9f9d5ecd01..8e45871f07f0 100644
---- a/drivers/staging/rtl8723bs/include/rtw_recv.h
-+++ b/drivers/staging/rtl8723bs/include/rtw_recv.h
-@@ -342,6 +342,10 @@ struct recv_buf *rtw_dequeue_recvbuf(struct __queue *queue);
- 
- void rtw_reordering_ctrl_timeout_handler(struct timer_list *t);
- 
-+signed int _rtw_init_recv_priv(struct recv_priv *precvpriv, struct adapter *padapter);
-+void _rtw_free_recv_priv(struct recv_priv *precvpriv);
-+s32  rtw_recv_entry(union recv_frame *precv_frame);
-+
- static inline u8 *get_rxmem(union recv_frame *precvframe)
- {
- 	/* always return rx_head... */
+> No one expects to find non-address bits in struct mce addr,
+
+You're preaching to the choir - I don't know whose idea it was to shove
+a key ID in an address value... it sure sounds silly.
+
+> However, it is allowed to extend struct mce, so adding KeyID or raw MCI ADDR
+> later is quite possible.
+
+Why would you want to do that? Do you have a use case?
+
+If not, you can drop that whole angle about adding KeyID later. If yes, let's
+hear it.
+
+Just this hypothetically, maybe we'd need it, maybe not, it might be a good
+idea ... bla is muddying the water unnecessarily. So let's focus pls and
+address *only* the issue(s) at hand.
+
+Thx.
+
 -- 
-2.51.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
