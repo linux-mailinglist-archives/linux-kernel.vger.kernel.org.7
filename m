@@ -1,152 +1,147 @@
-Return-Path: <linux-kernel+bounces-781633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC49B314D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:11:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E589B314CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DAE3B68042
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:08:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F09C01897208
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21BF2D4805;
-	Fri, 22 Aug 2025 10:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="1D3gQZVH"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8CA2D7DD4;
+	Fri, 22 Aug 2025 10:09:30 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0C427EFF1;
-	Fri, 22 Aug 2025 10:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2338B2C028E
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755857384; cv=none; b=BPjCsMPvOCltZ0jN3Fsa+lXrsnPNAlS4fxbxSoZkjbCB2c0EwQJS5SGmOi4YOqq6Ob62xF3rDyiHPhXDzYgFkPUUkQXfOqT0sw6aZ1x9t7FS8qsl764vtRt2Tnz58qFATL1BUrNdvsVAt6WOMboJ4J3+EcXCB81xEIefjGpQXuw=
+	t=1755857369; cv=none; b=HzUSTW7Zu8n/G2+BkTX+azQUj1oXjVKGyjpd0xLhwTPyHFyOIB+1DenG1UA8vcV53RUp5ljW0pkhd0TN5TIw8Y+jnvA26hs/8l5d6Vzuy7wv5nPFTWOsAbr6y74z25zUntMIFG5WqpGTBWPcj5gr10EbV53mrslp5IMCEZaeWPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755857384; c=relaxed/simple;
-	bh=A8seymhPD/UjqZ8mH0/ODm0W3dD3W2Dvk1eT3zcM94A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mJch+Z33axP9xIOLvGgcqPRL0QCPuCnLtObU0KdEmHfX6WhwJbrYjn4siaPgj+4Jq2wE90vxNETddMagZmk0B7Aw08j/Kb7NzbVKzbt9IQE/GUOWtjXfb784gvZsMzpQ9dPv0TyA29Lc+64Fow+35gXrxPq+YbDbt8/+5faV4eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=1D3gQZVH; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 960AA4E40BA0;
-	Fri, 22 Aug 2025 10:09:39 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 671B8604AD;
-	Fri, 22 Aug 2025 10:09:39 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 064AF1C22CE69;
-	Fri, 22 Aug 2025 12:09:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1755857378; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=6cVjVZ5wfnye80ZbXrAniO6QjKQrZFpfgRoqYcTlg4w=;
-	b=1D3gQZVHT49ReUfvBPoqsjhy5kAYBmEOOV3UyYLH7mKyxQqQDOi+nlP4rdGSfeKwuE7Hfr
-	0whhtCYevKSVM1zUub/qm+jbfOsQDsKCC3ry8/raGb19f+gru2PjyJ0f6lVSet5hj3AigZ
-	D/eSO0D57bC9mxgTjJLpLte7t/2xEH2JMjm1HpdvoOyCkL4A/AQo4RcU+vqy16i2k0yDtl
-	uZgasz8gZ1WPKGx2JxF4/y4rcL6DObniEvDvHYFNjdgBMtr4FCozKZhXhObVB19MYYpSu/
-	03d2cX2haqW3hwkWm0vEqOCPaz8NZUEHqVb/JEUWSeYn/eDjGazviSoFtIQ50A==
-Message-ID: <a30d00cd-9148-423b-a3e5-b11d6c5c270b@bootlin.com>
-Date: Fri, 22 Aug 2025 12:09:22 +0200
+	s=arc-20240116; t=1755857369; c=relaxed/simple;
+	bh=lTIPtZ/FQiu+wxGIVysw/XvafV7SUmZ7l1qW2Z9KJuc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kq7sHOU6gopLYS3x5FboY4TlhUqLiSqe8rDRxWSEBCMDFJmvXi//WNpnt5zYt2Y0P8aSqL6vShKkPJo6rT0vQMhRwkf6T+pEydkT/LXFTd1VI/6VbFokimc0I8Fy/zbUDq1LfoYq5Cuoip8rgg7/cQJduKgUjzl+NI2RmEe2ixc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-88432e3c4ffso188619139f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 03:09:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755857367; x=1756462167;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VRc3xIFCTnSdLY/FderHjqmKE6fBYoDej+8lK7B2w/Y=;
+        b=nraWzajE9i8R78SyAJYVo9a5IkPIHgT47gqQGzrGpCW603p5sxWI7pOBdx4FpqV6eI
+         zhN1g9eKVN1gmdudBX1kd1BJA9y3W4A8DKjbY+kpSz7HGs4vt4hqGh4nzWzs/g7aQ8py
+         dyecKJqWVxwreaTZJj3etqRnPln+rMqLmZAtmScDp/vYey+Xfh+3b/ySju9JWGzx8rm3
+         EEEvwSkjYa6bja9LzfZJyW5XSCUstJoPHeejxQkyMZ9QWgF6dH/1ttGIlA5zxK2YURwh
+         2P8m9mSvfn2NbSCetyXE3pzPfT3MpARB8dhAjnXWffZcuFicoUJWUQOnjQhKqElai5SL
+         6xSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXM3NV2o/jqCisnDjseD3SWMWpn/5ydRzbcMj2ol+vguGVBm6pe71Y0j86CNdZl1xUePXj4nEtYB/8mm+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDJORWRzqitG4zlIRG0q7fspfadzMDuhAm9ANxVrz9lOhzwh9L
+	eJ6bjtkvHZPVPfEYykCqk9Yrm9OOnpdTJDmdpwPveoWLRMtWvins1z3O33MS4/yto25QwB7Ty/a
+	a7/2SwY8aEXlRTovzTMRvmQx7AsfYIL7gfsSjeJO/1LcJRjWb6td7k3zhgx0=
+X-Google-Smtp-Source: AGHT+IEMLm27wvZOVdNUPQaksCYCLLv5JHT+qmWWsl120o7UXyJbn/3MaL4zxA8MZvdeNNKsO1umGhqr7ga7N23ZAe1QhU0QLrqE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v10 07/15] net: phy: Introduce generic SFP
- handling for PHY drivers
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
- Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
- =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
- Oleksij Rempel <o.rempel@pengutronix.de>,
- =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
- Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
- Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Romain Gantois <romain.gantois@bootlin.com>,
- Daniel Golle <daniel@makrotopia.org>,
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-References: <20250722121623.609732-1-maxime.chevallier@bootlin.com>
- <20250722121623.609732-8-maxime.chevallier@bootlin.com>
- <aIX35MUxx-OkvX4G@shell.armlinux.org.uk>
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <aIX35MUxx-OkvX4G@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-Received: by 2002:a05:6e02:16c5:b0:3e5:4db8:2f1a with SMTP id
+ e9e14a558f8ab-3e921a5cce4mr36780815ab.11.1755857367275; Fri, 22 Aug 2025
+ 03:09:27 -0700 (PDT)
+Date: Fri, 22 Aug 2025 03:09:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a841d7.050a0220.37038e.0051.GAE@google.com>
+Subject: [syzbot] [fs?] [mm?] linux-next test error: WARNING in __folio_start_writeback
+From: syzbot <syzbot+0630e71306742d4b2aea@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, 
+	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Russell,
+Hello,
 
-I'm re-replying here even though a more recent version was sent, as I 
-realise I forgot to fully address that.
+syzbot found the following issue on:
 
-On 27/07/2025 11:56, Russell King (Oracle) wrote:
-> On Tue, Jul 22, 2025 at 02:16:12PM +0200, Maxime Chevallier wrote:
->> +static int phy_sfp_module_insert(void *upstream, const struct sfp_eeprom_id *id)
->> +{
->> +	struct phy_device *phydev = upstream;
->> +	struct phy_port *port = phy_get_sfp_port(phydev);
->> +
->> +	__ETHTOOL_DECLARE_LINK_MODE_MASK(sfp_support);
->> +	DECLARE_PHY_INTERFACE_MASK(interfaces);
->> +	phy_interface_t iface;
->> +
->> +	linkmode_zero(sfp_support);
->> +
->> +	if (!port)
->> +		return -EINVAL;
->> +
->> +	sfp_parse_support(phydev->sfp_bus, id, sfp_support, interfaces);
->> +
->> +	if (phydev->n_ports == 1)
->> +		phydev->port = sfp_parse_port(phydev->sfp_bus, id, sfp_support);
->> +
->> +	linkmode_and(sfp_support, port->supported, sfp_support);
->> +
->> +	if (linkmode_empty(sfp_support)) {
->> +		dev_err(&phydev->mdio.dev, "incompatible SFP module inserted\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	iface = sfp_select_interface(phydev->sfp_bus, sfp_support);
-> 
-> I've been moving phylink away from using sfp_select_interface() because
-> it requires two stages of translation - one from the module capabilties
-> to linkmodes, and then linkmodes to interfaces.
-> 
-> sfp_parse_support() now provides the interfaces that the optical module
-> supports, and the possible interfaces that a copper module _might_
-> support (but we don't know for certain about that until we discover a
-> PHY.)
-> 
-> The only place in phylink where this function continues to be used is
-> when there's an optical module which supports multiple different
-> speeds, and we need to select it based on the advertising mask provided
-> by userspace. Everywhere else shouldn't use this function, but should
-> instead use the interfaces returned from sfp_parse_support().
-> 
+HEAD commit:    0f4c93f7eb86 Add linux-next specific files for 20250822
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=172c07bc580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=21eed27c0deadb92
+dashboard link: https://syzkaller.appspot.com/bug?extid=0630e71306742d4b2aea
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-In any case, we'll eventually have to select one of the interfaces if 
-there are multiple matches from the sfp_parse_support. phylink maintains 
-a sorted list of interfaces used as a preference, I think we should use 
-the same list for phy-driver SFP. I'm thinking about moving 
-phylink_choose_sfp_interface() in the sfp code, would you be OK with that ?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/669ede8f5d66/disk-0f4c93f7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/50feda89fe89/vmlinux-0f4c93f7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/317a0d3516fb/bzImage-0f4c93f7.xz
 
-Maxime
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0630e71306742d4b2aea@syzkaller.appspotmail.com
 
+------------[ cut here ]------------
+WARNING: ./include/linux/backing-dev.h:243 at inode_to_wb include/linux/backing-dev.h:239 [inline], CPU#1: kworker/u8:6/2949
+WARNING: ./include/linux/backing-dev.h:243 at __folio_start_writeback+0x9d5/0xb70 mm/page-writeback.c:3027, CPU#1: kworker/u8:6/2949
+Modules linked in:
+CPU: 1 UID: 0 PID: 2949 Comm: kworker/u8:6 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: writeback wb_workfn (flush-8:0)
+RIP: 0010:inode_to_wb include/linux/backing-dev.h:239 [inline]
+RIP: 0010:__folio_start_writeback+0x9d5/0xb70 mm/page-writeback.c:3027
+Code: 28 4c 89 f8 48 c1 e8 03 42 80 3c 28 00 74 08 4c 89 ff e8 ce a2 29 00 49 8b 07 25 ff 3f 00 00 e9 1b fa ff ff e8 7c 04 c6 ff 90 <0f> 0b 90 e9 d6 fb ff ff e8 6e 04 c6 ff 48 c7 c7 a0 f8 5f 8e 4c 89
+RSP: 0018:ffffc9000bb06ea0 EFLAGS: 00010293
+RAX: ffffffff81fad344 RBX: ffffea00050de8c0 RCX: ffff88802ee29e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000bb07010 R08: ffffc9000bb06f97 R09: 0000000000000000
+R10: ffffc9000bb06f80 R11: fffff52001760df3 R12: ffffea00050de8c8
+R13: 0000000000000000 R14: ffff888023060880 R15: ffff888023060660
+FS:  0000000000000000(0000) GS:ffff8881258c3000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f7354907000 CR3: 000000000e338000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __block_write_full_folio+0x75f/0xe10 fs/buffer.c:1928
+ blkdev_writepages+0xd1/0x170 block/fops.c:484
+ do_writepages+0x32e/0x550 mm/page-writeback.c:2604
+ __writeback_single_inode+0x145/0xff0 fs/fs-writeback.c:1680
+ writeback_sb_inodes+0x6c7/0x1010 fs/fs-writeback.c:1976
+ __writeback_inodes_wb+0x111/0x240 fs/fs-writeback.c:2047
+ wb_writeback+0x44f/0xaf0 fs/fs-writeback.c:2158
+ wb_check_old_data_flush fs/fs-writeback.c:2262 [inline]
+ wb_do_writeback fs/fs-writeback.c:2315 [inline]
+ wb_workfn+0xaef/0xef0 fs/fs-writeback.c:2343
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x47c/0x820 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
