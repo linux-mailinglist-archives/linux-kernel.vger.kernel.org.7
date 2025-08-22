@@ -1,116 +1,138 @@
-Return-Path: <linux-kernel+bounces-781701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED0C2B315A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:43:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15986B3159F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05CFAA00AA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:41:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D967D4E6ACF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55AF2F546D;
-	Fri, 22 Aug 2025 10:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5292F60B2;
+	Fri, 22 Aug 2025 10:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Fj70XLl/"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Js6V+l1k"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093C72EB86B
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129C61A9F83;
+	Fri, 22 Aug 2025 10:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755859256; cv=none; b=X4+VQVRX1HTkPw365FVWqwjevyhxPCz65+JVlsPJYGhN8i7yOlrWqlu0oS4zq2DY1PRREqGZX1GYL8Zu6/VqCplUodinPcc/oyL0zAuy2rISMIOCa23fxcv7eKKZavSRTonHksCaFDVfL1cPqauGVi4vXuy88VnClhoPy60zJEg=
+	t=1755859284; cv=none; b=BMA7o+bJtAQglbI81O+V3QDrfhBMuFJJzJpRdR96/390hzMV69Jjgw0t1u9MxZ0l3j4n1gU9qplNAA7N1IdfnMKwmlrCJ7mSlpIGlHdKKElDBDYp2pivmkspVG7jAe9K/UqvKgs65lkmlO8+DluwSToFlVqbQRV3W2cbCTbYq8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755859256; c=relaxed/simple;
-	bh=G0UruinHndufRA+yER4xnW9qrYl8zlVXkJmIqfKhlmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ddK/AZhSXMXaZ19rlKognfGB9vamRhWkGdJYZ8P3O2Z4dLStbNAF1nfRBwaKPAS4DHdcADbqGQ4i65dJH3ct2fniiYQitrFckJm9rS5Wif7RIxTNCWUmBDeIPCgYyptIEsGPz91RyMYgIAybLJPcM/OEw85SfNy6anme4vTG8ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Fj70XLl/; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 44F0D1A0BD3;
-	Fri, 22 Aug 2025 10:40:52 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 15123604AD;
-	Fri, 22 Aug 2025 10:40:52 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 51E271C22D52D;
-	Fri, 22 Aug 2025 12:40:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1755859251; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=OW0FggShZPPjAF0w/QGH/DlMClKT+k1ffmqTYWGuus0=;
-	b=Fj70XLl/Oa5u4HpofEugIrqq1CWZo0337r2Egj4GHXaFl4Nfp1hIIIXV3PoiWtSVk25/e6
-	DqUzwWpmhN4hsl98r0MvzOBLwwx63GgouIdOe9g5pv82zsNwpAJsR46JOJjoAOqk9KtUkl
-	mcko2IenY7YG2SmS7l1bv8ar3Kl1Fl4x0U5+pNiMCtQzQKRFfCbj5ZZ4V6o6tAoNdCow4J
-	KJZw79GsbrodKX5IuYdqpXAO3adrOMgC3t6GstlFoOx0IGAIeYOy3sxTrqul1IgWrUF5c7
-	avF3ElEaVRllKK3I3nruaR24kOdjBO1DJxN3W59GgJY36VVFa+e6vNdb8e7T8w==
-Date: Fri, 22 Aug 2025 12:40:36 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Cryolitia PukNgae via B4 Relay
- <devnull+cryolitia.uniontech.com@kernel.org>
-Cc: cryolitia@uniontech.com, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
- <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
- <tiwai@suse.com>, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, guanwentao@uniontech.com,
- niecheng1@uniontech.com, zhanjun@uniontech.com
-Subject: Re: [PATCH] ASoC: codecs: idt821034: fix wrong log in
- idt821034_chip_direction_output()
-Message-ID: <20250822124036.2855a5f0@bootlin.com>
-In-Reply-To: <20250822-idt821034-v1-1-e2bfffbde56f@uniontech.com>
-References: <20250822-idt821034-v1-1-e2bfffbde56f@uniontech.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1755859284; c=relaxed/simple;
+	bh=Me1dJg/pHlizlj5H84yNP2X0isXkGGoFfRDIoGVPRWc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JJ8ggRRdP1LHaht5eQ6tnN6qMZmpi79fc1v6kLWBM5g6B14YaDx/KycL+rqXWyrzkuB2of7HmTu3H9HKC5ZBC95ank5cBrJY9Mihi+YnY70p6tXfVwxyohff7tQK+ik81V4g3nBd9nT3BjtCHpInJZPIY3+8oke434ZNWAd8hOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Js6V+l1k; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76e2ea79219so2391842b3a.2;
+        Fri, 22 Aug 2025 03:41:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755859282; x=1756464082; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dNhDX4p0fKfiv+TH9iIj+ArcAJDpkAdzS+QmGkDY6Ck=;
+        b=Js6V+l1kZs75fXAj4clIB5xtP55YwR64rb3FxiOUlaxgnsM9K4/MB+g07o98clKrGM
+         WNdiMxTshzR9jrNqfF57ZjHm8E8oFb7uUKTl2kAJZTJgVXF01JFm4uPMKHFQzu3mZu2r
+         6kEgodAKEjPMoCMKM3t6/2S1IeGITKqATNAu7mwgYHNp3lYFfE6uaD1WtxvRGfTjsJ+O
+         RguThyEtRpDWz5pbXvGJjuuB5ZpHLVYaFMhVuc0GODmfcg15uBqUuz/vnRb8EM9kqcsO
+         SBU4B5GP4F+a23deLDMUvm7iktwvPoivrtSuKBPwHzTmAhQQzieI7cITHYvKk6UYar4L
+         Llgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755859282; x=1756464082;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dNhDX4p0fKfiv+TH9iIj+ArcAJDpkAdzS+QmGkDY6Ck=;
+        b=cmmQSlD089ptJWbXEnRyB4zCrQ+Ip38VKnRwiCnSfbYsf59NDkHnJ7BU+qxmWP/j/9
+         vRvIY2dubaCn2bta+PztTx4l2NRQsfbESXnT3t1q4vHHpYQTxESqGbsPQGc+3uujwXr9
+         BkC3dQQ2flnxbcds1G+Awk84QfVOE8v/46+dJUTv0vIKGvKt4to2NHUyN31L3jVQf2hM
+         9PLo8juIs/7xdGlD+byfR/fYKdQw3/qpOOJ3+pbQLrKkiyxb8pThFtusZgZDUl2cUlgb
+         4F3dMJVXccxQAQME4LyX/1l57wslRb+C1HYCqG90F44qGa0j5RDipiS/CefjSql74E5U
+         FdEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjIht+gSjxSQL45FebsdBMa8efirkLs82YADvdM9lTsasQncizHdDd+XK+RHGD31IZT7IBx2v2VkMDUHBO@vger.kernel.org, AJvYcCWNu6v/zpGiB0CptjO4S82YldO5pfs9KK2O87Kww3kJoJbM7nuZTVgu253zFO7y1ruqOf0+64iQEwbc@vger.kernel.org, AJvYcCWTw/tCWYIpQJwakKzNVjMuV/lZlbtOx/zBaplIbbUkA5zT0Htnym8pcWI1c56qYUD7oMaCVasHg5fZTmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywji61ckYOZnGiYCu+fQoAEkmCNK76lU1sDs33+35yL+JevtiV0
+	DtqsDgCz70/Q3k4DyKg0DdQ/m9oA6l0e/P99DvyNlQADSbTqNu4iqT15l+GVx35B
+X-Gm-Gg: ASbGncs1o5viliJYMH4N2M9eZ8DXIt+fS0jwGQh8tO7GKwh3spIn3M1mzTs8lCUSy+V
+	/EkOShllD2P0+mV01f8GWfeQ7/PMroNbK8xnyU6d//EswmIyyO2l0C3WhCPR3era+O1pOiYvENP
+	SxpD0kJWA6br4Ad3ORMItZDgPu0QSlWG5uGVTalBeT9Tjz/7H62McersT+k6lRHC8B8bCxKUR56
+	Tgr5+eaFOSKY64oHx5TIoHFB8imNf7AEcKHHFFV2DwSKtUIhNqB2y2nZ+yDYGnMJ/v5MG43HxLP
+	9p49d8qn3oHcVL4FRpgpExpVXXgVbIyOAj/IT18TwHaWCvGD7HgJHkEI+/gHK/WLcqqtul+3mCd
+	UbI3nBLXSQY+EucG2txIaCsrTTl7GYEArod6QRBZ1ni5b6i04DkLEAA==
+X-Google-Smtp-Source: AGHT+IGFbM8ZjqqsU+rm9GDna/8IXtWUPRaXMNahHH9CkarNnF51vCXglirbqDNJp085MX6wfShpkw==
+X-Received: by 2002:a17:903:178b:b0:240:8cec:4823 with SMTP id d9443c01a7336-2462eeea432mr31617995ad.41.1755859282081;
+        Fri, 22 Aug 2025 03:41:22 -0700 (PDT)
+Received: from 100ask.localdomain ([116.234.74.152])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24615b25fddsm38310785ad.138.2025.08.22.03.41.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 03:41:21 -0700 (PDT)
+From: Nino Zhang <ninozhang001@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nino Zhang <ninozhang001@gmail.com>
+Subject: [PATCH] arm64: dts: tegra: fix APB DMA controller node name
+Date: Fri, 22 Aug 2025 18:41:11 +0800
+Message-ID: <20250822104111.416390-1-ninozhang001@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Cryolitia,
+The APB DMA controller node is currently named "dma@60020000",
+but according to the binding
+Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.yaml
+the node name should be "dma-controller".
 
-On Fri, 22 Aug 2025 18:28:33 +0800
-Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org> wrote:
+Update the node name to match the binding and fix dtbs_check
+warnings.
 
-> From: Cryolitia PukNgae <cryolitia@uniontech.com>
-> 
-> Change `dir in` to `dir out`
-> 
-> Suggested-by: Jun Zhan <zhanjun@uniontech.com>
-> Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
-> ---
->  sound/soc/codecs/idt821034.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/codecs/idt821034.c b/sound/soc/codecs/idt821034.c
-> index 6738cf21983b0dc58e162cbfaacaedb5edaaa245..a03d4e5e7d144195622ea0cbf6b6c6ba95642aa7 100644
-> --- a/sound/soc/codecs/idt821034.c
-> +++ b/sound/soc/codecs/idt821034.c
-> @@ -1067,7 +1067,7 @@ static int idt821034_chip_direction_output(struct gpio_chip *c, unsigned int off
->  
->  	ret = idt821034_set_slic_conf(idt821034, ch, slic_conf);
->  	if (ret) {
-> -		dev_err(&idt821034->spi->dev, "dir in gpio %d (%u, 0x%x) failed (%d)\n",
-> +		dev_err(&idt821034->spi->dev, "dir out gpio %d (%u, 0x%x) failed (%d)\n",
->  			offset, ch, mask, ret);
->  	}
->  
-> 
-> ---
-> base-commit: 3957a5720157264dcc41415fbec7c51c4000fc2d
-> change-id: 20250822-idt821034-0b5cb86b0c96
-> 
+Signed-off-by: Nino Zhang <ninozhang001@gmail.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Thanks for the patch.
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+index 5bcccfef3f7f..f6e63ffe1ff8 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+@@ -271,7 +271,7 @@ gpio: gpio@6000d000 {
+ 		interrupt-controller;
+ 	};
+ 
+-	apbdma: dma@60020000 {
++	apbdma: dma-controller@60020000 {
+ 		compatible = "nvidia,tegra124-apbdma", "nvidia,tegra148-apbdma";
+ 		reg = <0x0 0x60020000 0x0 0x1400>;
+ 		interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 402b0ede1472..a5018c486326 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -502,7 +502,7 @@ gpio: gpio@6000d000 {
+ 		interrupt-controller;
+ 	};
+ 
+-	apbdma: dma@60020000 {
++	apbdma: dma-controller@60020000 {
+ 		compatible = "nvidia,tegra210-apbdma", "nvidia,tegra148-apbdma";
+ 		reg = <0x0 0x60020000 0x0 0x1400>;
+ 		interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
+-- 
+2.43.0
 
-Acked-by: Herve Codina <herve.codina@bootlin.com>
-
-Best regards,
-Hervé
 
