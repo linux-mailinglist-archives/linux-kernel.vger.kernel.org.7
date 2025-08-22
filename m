@@ -1,75 +1,70 @@
-Return-Path: <linux-kernel+bounces-782374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4DF5B31F9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:53:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29F60B31F4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19C6FB61A98
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:47:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95D897A7E54
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DA0289E07;
-	Fri, 22 Aug 2025 15:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437BF34A338;
+	Fri, 22 Aug 2025 15:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J9HWjYPT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gkm3JskI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA76F258CDA
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 15:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BBE34A324;
+	Fri, 22 Aug 2025 15:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755877057; cv=none; b=mxsjvlsRorn2E+/OdIHBp7DsomlxKCZwFX5I2l1H9NQpYvmJNm0k7jy2jubGgU+kErO0r638fKmzz1fswnMUUmiQagMT7l8EZTzxbIhh7c0yn3urOVb/J4hFeAcCzMtFNmVJrngKnFEsrAj8wnJGoQQYWF7byw63l7BQzHQsgd8=
+	t=1755876974; cv=none; b=UMHp4GOJPQ8BVIGbVrQd0Ikmu4W7wR9MYh4B8BydHzS79yEVrxT0RaYPu+YR0asVHXuYvAaMfYxwCVNVQuns3RkAg9TXyTyy1tNtukscrUKmz3xBpNBITa+MfXgfY8Yjx7s1/ZfQEuRjFNAPwyrleM8EodLwcds7gZjHbDUqYZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755877057; c=relaxed/simple;
-	bh=qnsv/ZjCG1JYu1kJwQKMQn4UOqSRvURuwm56KGssZxM=;
+	s=arc-20240116; t=1755876974; c=relaxed/simple;
+	bh=M4axMQs8H13c09qWo6K3CitPMFiulFvZkPJOaBof5qk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YvLDw/W6f+Yj01Xt0RQrPYdwI127MDwnKLOJVkQ6Qssjsx4Oke4IgAhR0+V8rtsYrmOscD3hAF+aBCIB1MQj9pPBhp5ni0+0Q1k4SAV6cMdoNHDAOB1jyq7scX4eBlOAiexxyg76MzPGfvsGZ/UF7guzTxMDtW7oVHK0J1O7bLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J9HWjYPT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755877054;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=wFw6mFQ+6kbDnXHcYzeKbdQfDYtk1RfBmdQBYPTnIxY=;
-	b=J9HWjYPTi/uTkQ0x1Pva/PSrwhFfOLuUTe3j+Rwe+MdJ8zyXpEfXVQ99c/oupxcXQURYoh
-	8evJAT4iBYka9r5tkLw1JLQy/j6JIVX6mFfCAH4YSqBkxGYmBlIOqDf0QSbf1RmiTfAj6I
-	9aFrydDYeVJOgzbmALDOMmOe8Djv494=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-608-jKZGxJbUMqmT4pje4n2NVg-1; Fri,
- 22 Aug 2025 11:37:32 -0400
-X-MC-Unique: jKZGxJbUMqmT4pje4n2NVg-1
-X-Mimecast-MFC-AGG-ID: jKZGxJbUMqmT4pje4n2NVg_1755877051
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5AA8819541A4;
-	Fri, 22 Aug 2025 15:37:30 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.227])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 015B3180047F;
-	Fri, 22 Aug 2025 15:37:24 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 22 Aug 2025 17:36:10 +0200 (CEST)
-Date: Fri, 22 Aug 2025 17:36:03 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Ingo Molnar <mingo@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v2 0/5] x86/fpu: don't abuse x86_task_fpu(PF_USER_WORKER) in
- .regset_get() paths
-Message-ID: <20250822153603.GA27103@redhat.com>
+	 Content-Disposition:In-Reply-To; b=o2Ob5mdBgrZP5JoFZ9w4FbA3nXtRT7li1NESUsEiRpmSurZwg3LvDRpGYgvtNqnornkg1a4jr/rjHCd8U8m49J+ipi1YwhAmaiSnUzCz0xPuKtClA8KC9FjzriW2draMdgy6D2nMc0Np7FBFt4ZoUphkAfOceDBe5AELfsxQMcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gkm3JskI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9AE6C4CEED;
+	Fri, 22 Aug 2025 15:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755876974;
+	bh=M4axMQs8H13c09qWo6K3CitPMFiulFvZkPJOaBof5qk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Gkm3JskIl9AEISSDTxGOPEQ5Ekw+yO/AvQdomznGVF8QhL2AKSjB9ug0fr1l8cDAC
+	 R5sn0gLRNWsiAEXDV/8IqKrKhmFhfaIV0eZ2Ifeh4tLF63tK6IWjZnREefRXi/M03D
+	 sonYkEFxAHk5WnTO9vZYeGm/kLZ++fqGgDYfTihFHvZFAojKUxRz39rTZqvajG+zmS
+	 C5cdC9xRurIk0OtWquWGUHHvSsQMbdCi9wn8LX+sUhjGWTlzoGERhtdVdDoJXui0e5
+	 RMD+nlwye1ZCE/pFkHY1ti7fjopPKBrl36OGkQOSbkQ95P59TCZ58RYnkJ70Qa5E+H
+	 M8+0Xh8w08Hdg==
+Date: Fri, 22 Aug 2025 10:36:11 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"kwilczynski@kernel.org" <kwilczynski@kernel.org>,
+	"mani@kernel.org" <mani@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"joel@jms.id.au" <joel@jms.id.au>,
+	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	BMC-SW <BMC-SW@aspeedtech.com>
+Subject: Re: =?utf-8?B?5Zue6KaG?= =?utf-8?Q?=3A?= [PATCH v2 09/10] PCI:
+ aspeed: Add ASPEED PCIe RC driver
+Message-ID: <20250822153611.GA684739@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,70 +73,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <SEYPR06MB5134692DCCFD55F5ABD812F39D3DA@SEYPR06MB5134.apcprd06.prod.outlook.com>
 
-PF_USER_WORKER threads don't really differ from PF_KTHREAD threads
-at least in that they never return to usermode and never use their
-FPU state.
+On Fri, Aug 22, 2025 at 07:00:25AM +0000, Jacky Chou wrote:
+> > v1 posting was
+> > https://lore.kernel.org/r/20250613033001.3153637-1-jacky_chou@aspeedtech
+> > .com
+> > Links to previous postings are helpful in the cover letter.
+> > 
+> > On Tue, Jul 15, 2025 at 11:43:19AM +0800, Jacky Chou wrote:
+> > > Introduce PCIe Root Complex driver for ASPEED SoCs. Support RC
+> > > initialization, reset, clock, IRQ domain, and MSI domain setup.
+> > > Implement platform-specific setup and register configuration for
+> > > ASPEED. And provide PCI config space read/write and INTx/MSI interrupt
+> > > handling.
 
-However, ptrace or coredump paths can access their FPU state and this
-is the only reason why x86_task_fpu(PF_USER_WORKER) needs to work and
-and discriminate PF_USER_WORKER from PF_KTHREAD. Unlike all other x86
-FPU code paths which do not distinguish them.
+> > > +#define MAX_MSI_HOST_IRQS	64
+> > > +#define PCIE_RESET_CONFIG_DEVICE_WAIT_MS	500
+> > 
+> > Where does this value come from?  Is there a generic value from
+> > drivers/pci/pci.h you can use?
+> 
+> We check the PCIe specification to find these contents.
+>
+> "With a Downstream Port that supports Link speeds greater than 5.0
+> GT/s, software must wait a minimum of 100 ms after Link training
+> completes before sending a Configuration Request to the device
+> immediately below that Port."
+>
+> So, we think delay 500ms to let kernel issue the first configuration
+> command is enough after deassert PERST.
 
-OTOH, arch/x86/kernel/fpu/regset.c doesn't really need "struct fpu *",
-the .regset_get() functions actually need a "struct fpstate *". If the
-target task is PF_USER_WORKER, they can safely use &init_fpstate. So
-this series adds the new simple helper
+Isn't this PCIE_RESET_CONFIG_WAIT_MS?
 
-	static struct fpstate *get_fpstate(struct task_struct *task)
-	{
-		struct fpu *fpu;
+I prefer to use #defines from the PCI core whenever possible because
+it makes it easier to ensure that all drivers include the required
+delays.
 
-		if (unlikely(task->flags & PF_USER_WORKER))
-			return &init_fpstate;
+> > > +#define PCIE_RESET_CONFIG_RC_WAIT_MS		10
+> > 
+> > Ditto.  If it's an Aspeed-specific value, can you point to the
+> > source in the Aspeed datasheet?
+> 
+> This delay is set to ensure that the RC internal settings are
+> completely reset.  We do not put its usage in our datasheet.
 
-		fpu = x86_task_fpu(task);
-		if (task == current)
-			fpu_sync_fpstate(fpu);
-		return fpu->fpstate;
-	}
+The "PCIE_" prefix suggests something required by the PCIe base spec.
+If this is an Aspeed-specific value, perhaps remove the "PCIE_"
+prefix?
 
-which can be used instead of x86_task_fpu(task)->fpstate pattern in
-arch/x86/kernel/fpu/regset.c.
+> > > +static int aspeed_ast2700_child_config(struct pci_bus *bus, unsigned int
+> > devfn,
+> > > +				       int where, int size, u32 *val,
+> > > +				       bool write)
+> > > +{
+> > > +	struct aspeed_pcie *pcie = bus->sysdata;
+> > > +	u32 bdf_offset, status, cfg_val;
+> > > +	int ret;
+> > > +
+> > > +	bdf_offset = aspeed_pcie_get_bdf_offset(bus, devfn, where);
+> > > +
+> > > +	cfg_val = CRG_PAYLOAD_SIZE;
+> > > +	if (write)
+> > > +		cfg_val |= (bus->number == 1) ? CRG0_WRITE_FMTTYPE :
+> > CRG1_WRITE_FMTTYPE;
+> > > +	else
+> > > +		cfg_val |= (bus->number == 1) ? CRG0_READ_FMTTYPE :
+> > > +CRG1_READ_FMTTYPE;
+> > 
+> > I don't think you should assume that bus 0 is the root bus.  The root bus
+> > number should come from the DT bus-range.
 
-However, there is an annoying complication: shstk_alloc_thread_stack()
-can alloc the pointless shadow stack for PF_USER_WORKER thread and set
-the ARCH_SHSTK_SHSTK flag. This means that ssp_get()->ssp_active() can
-return true, and in this case it wouldn't be right to use the "unrelated"
-init_fpstate.
+Just making sure you saw this part since you didn't mention it.
 
-That is why this series includes 4/5, and to me it looks like a cleanup
-which makes sense regardless.
-
-Link to V1: https://lore.kernel.org/all/20250814101340.GA17288@redhat.com/
-
-Changes:
-
-	- improve the subject/changelog in 1/5
-
-	- drop "x86/shstk: add "task_struct *tsk" argument to reset_thread_features()"
-
-	- rework 4/5 to not use reset_thread_features()
-
-TODO:
-	update the fpregs_soft_get() and user_regset.set() paths as well
-
-Oleg.
----
-
- arch/x86/include/asm/shstk.h |  4 ++--
- arch/x86/kernel/fpu/regset.c | 46 ++++++++++++++++++++++++++------------------
- arch/x86/kernel/fpu/xstate.c | 12 ++++++------
- arch/x86/kernel/fpu/xstate.h |  4 ++--
- arch/x86/kernel/process.c    |  2 +-
- arch/x86/kernel/shstk.c      |  9 +++++++--
- 6 files changed, 45 insertions(+), 32 deletions(-)
-
+Bjorn
 
