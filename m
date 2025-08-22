@@ -1,308 +1,223 @@
-Return-Path: <linux-kernel+bounces-782589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3961B3227A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:56:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD8EB3227C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8994AB21CB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:55:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22C0AB21CE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9652C11D9;
-	Fri, 22 Aug 2025 18:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QUYaTz0s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FAC22C1586;
+	Fri, 22 Aug 2025 18:56:30 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E004E2C08CF;
-	Fri, 22 Aug 2025 18:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA5E2C11D9
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755888954; cv=none; b=DXi/DB+dnFNIBOIFSzuWkXXeTVKkMc+Tk7Blup6yhxFe+5nC2JMHh0XBPwZ12z6C4N9nGJMy/uiUdat/DKDk8pkJACiRKlBpXybgh1mmgH19s16D0Vo7YTKu3ohzaSjM8WyP5KKdBq9SZWmPn/byN2xXViwG72aG+WRVJqI3A/8=
+	t=1755888989; cv=none; b=dXziHJlJLoyZvra/aH/xUoT9AvSymanvhqWUmylRfRJBs4VT5QzHW2l78eMJlnjqSIhr0kEh9/q7P6etmIGvrV0+HTUv++D/GmdCScNE0ubDvExTpLHiQarXtp9Y8K1WvZ6dblz2UEt6l9bWSEX/5fjuvXY4TMHOBnpdZtXLUGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755888954; c=relaxed/simple;
-	bh=a5NOhtnlQKLsbIgMiZXaTJteOdAaw0MlM4/GWAlryW4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kVTgr3oKw4uOkRMn7iD/gScQ+qk//egAHBxoMX1xvvANN/VSxSWh2/I5NbrMCm6/SMS6VQLw/qu7HyA0Cro529LBts+lJ1PV17x5947HGahgC5veaB7f0fMVJtXddd4h3IJ/OEeNB3sNwGy7OUjPROX45Kobd9WUmUAsdbF2JjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QUYaTz0s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 390C2C4CEED;
-	Fri, 22 Aug 2025 18:55:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755888952;
-	bh=a5NOhtnlQKLsbIgMiZXaTJteOdAaw0MlM4/GWAlryW4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QUYaTz0svKOKztdcRe587yLFE7UZRAv2sJQfq8XYPvxW9tjU/Vr7NDhcl3HX7BBHq
-	 5tIFleD8iAPxGswe5+gSd/U2cTm/i5/BR1jfZlYNQAOrwSLnV7xur+t0llD2WXgXq0
-	 NKsIAOAK2/SamniLgFtAgwLaAX7jrEimevbwTpwflnRauR+d/OuZmIWBtieJEc6TqP
-	 vFuc+QyK/kw2OrNT0JaEAt/VjNxOGXVOXCqxlGJblpInfzGFOPzMBoFLQcdnBtzXp6
-	 iXER7/RdR8w05znsuwBRDgEcSz4i01BF3UlltE0imtp34tB33iEkMPkdRHtezZVdtZ
-	 G72D6nzfmHFQQ==
-From: SeongJae Park <sj@kernel.org>
-To: Yunseong Kim <ysk@kzalloc.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Tejun Heo <tj@kernel.org>,
-	Minchan Kim <minchan@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Hyunchul Lee <cheol.lee@lge.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Minwoo Im <minwoo.im@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Chanho Min <chanho.min@lge.com>,
-	Taehee Yoo <ap420073@gmail.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	gwan-gyeong.mun@intel.com,
-	yeoreum.yun@arm.com,
-	Mingi Cho <mgcho.minic@gmail.com>,
-	Hyunwoo Kim <imv4bel@gmail.com>,
-	austindh.kim@gmail.com,
-	pmnxis@gmail.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6] Documentation: cve Korean translation
-Date: Fri, 22 Aug 2025 11:55:49 -0700
-Message-Id: <20250822185550.48996-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250822131829.50331-2-ysk@kzalloc.com>
-References: 
+	s=arc-20240116; t=1755888989; c=relaxed/simple;
+	bh=Ry+ZP2Os2x/BMl5i1bh1GquxYlmGZDwRyRK5ppziU4M=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EbDXjPECXiaNnxuRsqTh0U5Yr0gHZtOkSCcsLjbVsqHMVMkAvNzpRMaFcTROvrKkN5rA0EzWolS5ihFQKMYKGOmY0GsNEY6a8UX/cRtUBqTDzS65LaxVXY37+6E0cix5Z7h4m8ff5gLuH/q3AnkvPbTaW0949W7FGTZuL2PB8lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3e66b7e4a94so66025945ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:56:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755888987; x=1756493787;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gO1uvurb7E5+bUOrRjbFRLqMNNGI5Dg/3J6JpBb+3S4=;
+        b=qbDmpE3kZkuownbLpcSjohxXaFLQmttFAf06AeCMLdflfvsamvGKRKaqi2Iz6LuRDK
+         x/N10tvAtYMD8nRZlZ4ArCgr5+XM/ha9GAbm0CuBUFZy3RBrMQEpc3ToUwiGEI2wiIRt
+         1OqheFVAtNPZiHAlZaprMzh56AsuEkbuARkelnFdn1mVakrN20gr+b9CPsS/2AxFObwe
+         +oD0GasXqswYMLM7AgKgJ1q5TqsQKDGwM0EBjkTAL/mDkWq1o0E8dJhglqVtJNhObTaj
+         hOy/Hpxx4BqQjXWzvY7Ny0MlC57nRxTQMyXFgQGXdOhriHt0sgViM02qhBJkQ20iB4hU
+         vC7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUkbhq2dRMMOdYTXRTNVKKoTTr+Xei1VELouS/OMyQCDa6NP+Pz3mMJPyZkJS/q2hUagiXy7k0YmxOJfvA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkqmZIZ8In3Fc023KbiFBzL14ZTe8mmcW5hbxC2ka8fqfbImjk
+	toAoS3S7nusNPwGnUiZV9OITlYyuRv+eINu4kDIM5gAlXJ5UoCMuGy3h5V8DweORRAJ5Xm9RJkw
+	69i8c60ugVxtPAZc0aVkO4x7mPTQk/Gr4EkchB1OHNZym9o1wpdhoHh6u1oo=
+X-Google-Smtp-Source: AGHT+IHi9yUm+mHc7c+4BkmiVIW0r739bRnAUSs/tGpm9X2Og6PI9yNeLlFrST7C92Vb5wK7Gh0RIh+tkupOJKun9IlH1ypM8ODG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:184c:b0:3e9:eec4:9b7e with SMTP id
+ e9e14a558f8ab-3e9eec49f8amr30758855ab.29.1755888987328; Fri, 22 Aug 2025
+ 11:56:27 -0700 (PDT)
+Date: Fri, 22 Aug 2025 11:56:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a8bd5b.050a0220.37038e.005b.GAE@google.com>
+Subject: [syzbot] [f2fs?] INFO: task hung in f2fs_llseek
+From: syzbot <syzbot+942fb6ce3ac2843a1420@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Yunseong,
+Hello,
 
-On Fri, 22 Aug 2025 22:18:29 +0900 Yunseong Kim <ysk@kzalloc.com> wrote:
+syzbot found the following issue on:
 
-> Understanding the Linux kernel's CVE handling process is becoming
-> increasingly critical. This is especially important for Korean companies
-> exporting products to regions like Europe, as they must comply with
-> regulations such as the Cyber Resilience Act (CRA).
-> 
-> This translation aims to raise awareness among Korean kernel developers and
-> companies, helping them better understand and adhere to the kernel
-> community's security practices.
-> 
-> The translation is based on the contributor's direct experience with
-> the Linux kernel security bug process and obtaining CVEs. Furthermore,
-> completion of the security training program provided by the Linux
-> Foundation ensures the necessary accuracy for this documentation.
+HEAD commit:    3957a5720157 Merge tag 'cgroup-for-6.17-rc2-fixes' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13e20c42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
+dashboard link: https://syzkaller.appspot.com/bug?extid=942fb6ce3ac2843a1420
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17db07bc580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12f62a34580000
 
-Thank you for continuing this important work!
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c5cbe8650b9a/disk-3957a572.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/51911bea9855/vmlinux-3957a572.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b07279b5fcc2/bzImage-3957a572.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/f35e0e9a079a/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=10a5dfa2580000)
 
-> 
-> Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+942fb6ce3ac2843a1420@syzkaller.appspotmail.com
 
-I left a few comments below, but those are trivial and based on my personal
-(mostly uncautionsly biased) opinions rather than blockers of this patch.
-Nothing really stands out to me, so:
-
-Reviewed-by: SeongJae Park <sj@kernel.org>
-
-> ---
-
-It woudl be nice to add changes you made on top of previous versions and links
-to those versions.  That can help reviewers.
-
->  Documentation/translations/ko_KR/index.rst    |   1 +
->  .../translations/ko_KR/process/cve.rst        | 126 ++++++++++++++++++
->  2 files changed, 127 insertions(+)
->  create mode 100644 Documentation/translations/ko_KR/process/cve.rst
-> 
-> diff --git a/Documentation/translations/ko_KR/index.rst b/Documentation/translations/ko_KR/index.rst
-> index a20772f9d61c..0bf8f775a215 100644
-> --- a/Documentation/translations/ko_KR/index.rst
-> +++ b/Documentation/translations/ko_KR/index.rst
-> @@ -12,6 +12,7 @@
->     :maxdepth: 1
->  
->     process/howto
-> +   process/cve
->     core-api/wrappers/memory-barriers.rst
->  
->  .. raw:: latex
-> diff --git a/Documentation/translations/ko_KR/process/cve.rst b/Documentation/translations/ko_KR/process/cve.rst
-> new file mode 100644
-> index 000000000000..f59f3bd95f06
-> --- /dev/null
-> +++ b/Documentation/translations/ko_KR/process/cve.rst
-> @@ -0,0 +1,126 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +NOTE:
-> +This is a version of Documentation/process/cve.rst translated into Korean.
-> +This document is maintained by Yunseong Kim <ysk@kzalloc.com>.
-> +If you find any difference between this document and the original file or
-> +a problem with the translation, please contact the maintainer of this file.
-> +
-> +Please also note that the purpose of this file is to be easier to
-> +read for non English (read: Korean) speakers and is not intended as
-> +a fork.  So if you have any comments or updates for this file please
-> +update the original English file first.  The English version is
-> +definitive, and readers should look there if they have any doubt.
-> +
-> +================================================================
-> +이 문서는
-> +Documentation/process/cve.rst
-> +의 한글 번역입니다.
-> +
-> +:역자: 김윤성 <ysk@kzalloc.com>
-> +:감수: 박성재 <sj@kernel.org>, 김동현 <austindh.kim@gmail.com>,
-
-It is my honor to show my name here, but I don't think I deserve to be listed
-here.  Please remove my name.
-
-> +       박진우 <pmnxis@gmail.com>
-> +================================================================
-> +
-> +=================
-> +CVE 항목들 (CVEs)
-> +=================
-> +
-> +공통 취약점 및 노출(Common Vulnerabilities and Exposure, CVE®) 번호는 공개적으로
-> +알려진 보안 취약점을 식별, 정의하고 목록화하기 위한 명확한 방법으로
-> +개발되었습니다. 하지만 시간이 지나면서 커널 프로젝트에서는 그 유용성이
-> +감소했으며, CVE 번호가 부적절한 방식과 이유로 할당되는 경우가 매우 많았습니다.
-> +이 때문에 커널 개발 커뮤니티는 CVE 사용을 꺼리는 경향이 있었습니다. 그러나
-> +CVE 및 기타 보안 식별자 할당에 대한 지속적인 압력과, 커널 커뮤니티 외부의
-> +개인 및 회사들의 지속적인 남용이 결합되면서, 커널 커뮤니티가 이러한 할당에
-> +대한 통제권을 가져야 한다는 점이 명확해졌습니다.
-> +
-> +리눅스 커널 개발팀은 잠재적인 리눅스 커널 보안 이슈에 대해 CVE를 할당할 수
-> +있습니다. 이 할당은 :doc:`일반적인 리눅스 커널 보안 버그 보고
-> +절차<Documentation/process/security-bugs>`와는 독립적으로 이루어집니다.
-> +
-> +리눅스 커널에 할당된 모든 CVE 목록은 linux-cve 메일링 리스트 아카이브
-> +(https://lore.kernel.org/linux-cve-announce/)에서 확인할 수 있습니다.
-> +할당된 CVE에 대한 알림을 받으려면 해당 메일링 리스트를
-> +`구독<https://subspace.kernel.org/subscribing.html>`_ 하시기 바랍니다.
-> +
-> +프로세스 (Process)
-> +==================
-
-I think most Korean readers would understand above, but to be more
-Korean-friendly, what about using more Korean-translated term, e.g., "할당
-절차"?
-
-> +
-> +일반적인 안정(stable) 릴리스 프로세스의 일부로, 잠재적으로 보안 이슈가 될 수
-> +있는 커널 변경 사항은 CVE 번호 할당 담당 개발자가 식별하여 자동으로 CVE 번호가
-> +할당됩니다. 이러한 할당 내역은 linux-cve-announce 메일링 리스트에 공지사항으로
-> +빈번하게 게시됩니다.
-> +
-> +참고로, 리눅스 커널이 시스템에서 차지하는 계층의 특성상 거의 모든 버그가 커널
-> +보안을 침해하는 데 악용될 수 있지만, 버그가 수정될 당시에는 악용 가능성이
-> +명확하지 않은 경우가 많습니다. 이 때문에 CVE 할당 팀은 매우 신중하게
-> +접근하며(overly cautious), 식별한 모든 버그 수정(bugfix)에 CVE 번호를
-> +할당합니다. 이는 리눅스 커널 팀이 발행하는 CVE의 수가 겉보기에 많아 보이는
-> +이유를 설명합니다.
-> +
-> +만약 CVE 할당 팀이 놓친 특정 수정 사항에 대해 CVE가 할당되어야 한다고 생각되면,
-> +<cve@kernel.org>로 이메일을 보내주십시오. 담당 팀이 협력할 것입니다.
-> +이 이메일 주소는 이미 릴리스된 커널 트리에 포함된 수정 사항에 대한 CVE 할당
-> +전용이며, 잠재적인 보안 이슈를 보내서는 안 된다는 점에 유의하십시오.
-> +아직 수정되지 않은 보안 이슈를 발견했다고 생각되면 :doc:`일반적인 리눅스
-> +커널 보안 버그 보고 절차<Documentation/process/security-bugs>` 를 따르십시오.
-> +
-> +리눅스 커널의 수정되지 않은 보안 이슈에 대해서는 CVE가 자동으로 할당되지
-> +않습니다. 할당은 수정 사항이 제공되고 안정(stable) 커널 트리에 적용된 후에만
-> +자동으로 이루어지며, 원본 수정 사항의 git 커밋 ID로 추적됩니다. 커밋으로
-> +이슈가 해결되기 전에 CVE를 할당받고자 하는 경우, 커널 CVE 할당
-> +팀(<cve@kernel.org>)에 연락하여 예약된 식별자 목록에서 할당받을 수 있습니다.
-> +
-> +현재 안정/장기 지원 버전(Stable/LTS) 커널 팀이 적극적으로 지원하지 않는 커널
-> +버전에서 발견된 이슈에 대해서는 CVE가 할당되지 않습니다. 현재 지원되는 커널
-> +브랜치 목록은 https://kernel.org/releases.html 에서 확인할 수 있습니다.
-> +
-> +할당된 CVE에 대한 이의 제기 (Disputes)
-> +======================================
-> +
-> +특정 커널 변경 사항에 할당된 CVE에 대해 이의를 제기하거나 수정할 권한은 오직
-> +영향을 받는 관련 서브시스템의 메인테이너에게만 있습니다. 이 원칙은 취약점
-> +보고의 높은 정확성과 책임성을 보장합니다. 서브시스템에 대한 깊은 전문 지식과
-> +긴밀한 이해(intimate knowledge)를 가진 개인만이 보고된 취약점의 유효성과
-> +범위를 효과적으로 평가하고 적절한 CVE 지정을 결정할 수 있습니다. 이 지정된
-> +권한 밖에서 CVE를 수정하거나 이의를 제기하려는 시도는 혼란, 부정확한 보고,
-> +그리고 궁극적으로 시스템 침해로 이어질 수 있습니다.
-> +
-> +유효하지 않은 CVE (Invalid CVEs)
-> +================================
-
-What about making it shorter and simlper, e.g., s/유효하지 않은/ 무효한/ ?
-
-No strong opinion.  The current one is also good for me.
-
-> +
-> +리눅스 배포판이 자체적으로 적용한 변경 사항 때문에 해당 배포판에서만 지원되는
-> +리눅스 커널에서 보안 이슈가 발견된 경우, 또는 배포판이 더 이상 kernel.org에서
-> +지원하는 릴리스가 아닌 커널 버전을 지원하여 보안 이슈가 발견된 경우, 리눅스
-
-Maybe above can be shorter and easier to read, e.g.,
-s/지원하는 릴리스가 아닌/지원하지 않는 이유/ ?
-
-Again, no strong opinion.  The current one also look good to me.
-
-> +커널 CVE 팀은 CVE를 할당할 수 없으며 해당 리눅스 배포판에 직접 요청해야
-> +합니다.
-> +
-> +적극적으로 지원되는 커널 버전에 대해, 커널 CVE 할당 팀이 아닌 다른 그룹이
-> +리눅스 커널에 할당한 모든 CVE는 유효한 CVE로 간주되어서는 안 됩니다.
-
-I personally feel "적극적으로" is not a good translation of "actively" here,
-but I also have no good better idea.  I think this is also good enough.
-
-> +커널 CVE 할당 팀(<cve@kernel.org>)에 알려주시면 CNA(CVE Numbering Authority)
-> +시정(remediation) 절차를 통해 해당 항목을 무효화하도록 조치할 것입니다.
-> +
-> +특정 CVE의 적용 가능성 (Applicability)
-> +======================================
-> +
-> +리눅스 커널은 다양한 방식으로 사용될 수 있으며, 외부 사용자가 접근하는 방식도
-> +다양하거나 아예 접근이 없을 수도 있습니다. 따라서 특정 CVE의 적용 가능성(해당
-> +여부)은 CVE 할당 팀이 아닌 리눅스 사용자가 결정해야 합니다. 특정 CVE의 적용
-> +가능성을 판단하기 위해 저희에게 연락하지 마십시오.
-> +
-> +또한, 소스 트리는 매우 방대하고 개별 시스템은 소스 트리의 작은 부분 집합만을
-> +사용하므로, 리눅스 사용자는 할당된 수많은 CVE가 자신의 시스템과 관련이 없다는
-> +점을 인지해야 합니다.
-> +
-> +요컨대, 저희는 귀하의 사용 사례(use case)를 알지 못하며 귀하가 커널의 어느
-> +부분을 사용하는지 알지 못하므로, 특정 CVE가 귀하의 시스템과 관련이 있는지
-> +판단할 방법이 없습니다.
-> +
-> +언제나 그렇듯이, 개별적으로 선별된(체리픽된) 변경 사항이 아니라, 많은 커뮤니티
-
-I think this translation is good enough to just remove "(체리픽된)".  I'm
-rather feel like "체리픽된" _might_ confuse some Korean readers.  Again, no
-strong opinion but a personal and uncautiosly biased feeling.
-
-> +구성원들에 의해 통합된 전체로서 함께 테스트된 모든 릴리스된 커널 변경 사항을
-> +적용하는 것이 가장 좋습니다. 또한 많은 버그의 경우, 전체 문제에 대한 해결책은
-> +단일 변경 사항이 아니라 서로 중첩된 많은 수정 사항의 합으로 발견된다는 점에
-> +유의하십시오. 이상적으로는 모든 이슈에 대한 모든 수정 사항에 CVE가 할당되지만,
-> +때때로 저희가 수정 사항을 인지하지 못할 수 있습니다. 따라서 CVE가 할당되지
-> +않은 일부 변경 사항도 적용하는 것이 관련 있을 수 있다고 가정하십시오.
-> \ No newline at end of file
-
-Why don't you add a new line at the end of the file? :)
-
-> -- 
-> 2.50.1
-> 
-> 
+INFO: task syz.1.23:6086 blocked for more than 143 seconds.
+      Tainted: G        W           syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.1.23        state:D stack:29352 pid:6086  tgid:6081  ppid:6062   task_flags:0x400040 flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ rt_mutex_schedule+0x77/0xf0 kernel/sched/core.c:7339
+ rt_mutex_slowlock_block kernel/locking/rtmutex.c:1647 [inline]
+ __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
+ __rt_mutex_slowlock_locked+0x1e04/0x25e0 kernel/locking/rtmutex.c:1760
+ __rwbase_read_lock+0xbc/0x180 kernel/locking/rwbase_rt.c:114
+ rwbase_read_lock kernel/locking/rwbase_rt.c:147 [inline]
+ __down_read kernel/locking/rwsem.c:1466 [inline]
+ down_read+0x127/0x1f0 kernel/locking/rwsem.c:1539
+ inode_lock_shared include/linux/fs.h:884 [inline]
+ f2fs_seek_block fs/f2fs/file.c:458 [inline]
+ f2fs_llseek+0x1e5/0x1840 fs/f2fs/file.c:545
+ vfs_llseek fs/read_write.c:389 [inline]
+ ksys_lseek fs/read_write.c:402 [inline]
+ __do_sys_lseek fs/read_write.c:412 [inline]
+ __se_sys_lseek fs/read_write.c:410 [inline]
+ __x64_sys_lseek+0x155/0x1f0 fs/read_write.c:410
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7c9077ebe9
+RSP: 002b:00007f7c8fdcd038 EFLAGS: 00000246 ORIG_RAX: 0000000000000008
+RAX: ffffffffffffffda RBX: 00007f7c909a6090 RCX: 00007f7c9077ebe9
+RDX: 0000000000000004 RSI: 0000000000000008 RDI: 0000000000000004
+RBP: 00007f7c90801e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f7c909a6128 R14: 00007f7c909a6090 R15: 00007fffeb5fe138
+ </TASK>
+INFO: lockdep is turned off.
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 39 Comm: khungtaskd Tainted: G        W           syzkaller #0 PREEMPT_{RT,(full)} 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
+ watchdog+0xf93/0xfe0 kernel/hung_task.c:491
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 6274 Comm: syz.3.43 Tainted: G        W           syzkaller #0 PREEMPT_{RT,(full)} 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:unwind_next_frame+0x175d/0x2390 arch/x86/kernel/unwind_orc.c:648
+Code: 28 84 c0 0f 85 19 0b 00 00 48 89 d0 48 c1 e8 03 0f b6 04 28 84 c0 0f 85 2b 0b 00 00 48 0f bf 03 49 01 c4 49 8d 56 40 4c 89 f7 <4c> 89 e6 eb 5d 49 8d 5e 40 48 89 d8 48 c1 e8 03 80 3c 28 00 74 08
+RSP: 0018:ffffc90003b06438 EFLAGS: 00000283
+RAX: fffffffffffffff0 RBX: ffffffff8fd32106 RCX: 0000000000000000
+RDX: ffffc90003b06548 RSI: 0000000000000001 RDI: ffffc90003b06508
+RBP: dffffc0000000000 R08: ffffc90003b06567 R09: 0000000000000000
+R10: ffffc90003b06558 R11: fffff52000760cad R12: ffffc90003b069d0
+R13: ffffc90003b06558 R14: ffffc90003b06508 R15: 1ffffffff1fa6421
+FS:  00007f0008c3c6c0(0000) GS:ffff8881268c4000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f8cae82bf98 CR3: 000000005b1bc000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ arch_stack_walk+0x11c/0x150 arch/x86/kernel/stacktrace.c:25
+ stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
+ kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
+ kasan_record_aux_stack+0xbd/0xd0 mm/kasan/generic.c:548
+ slab_free_hook mm/slub.c:2378 [inline]
+ slab_free mm/slub.c:4680 [inline]
+ kmem_cache_free+0x3ef/0x510 mm/slub.c:4782
+ f2fs_read_end_io+0x398/0x9d0 fs/f2fs/data.c:-1
+ f2fs_submit_page_read+0x116/0x190 fs/f2fs/data.c:1110
+ f2fs_get_read_data_folio+0x4a4/0x7d0 fs/f2fs/data.c:1268
+ gc_data_segment fs/f2fs/gc.c:1641 [inline]
+ do_garbage_collect+0x3898/0x6410 fs/f2fs/gc.c:1826
+ f2fs_gc+0xca9/0x2580 fs/f2fs/gc.c:1931
+ f2fs_balance_fs+0x5fb/0x7f0 fs/f2fs/segment.c:466
+ f2fs_map_blocks+0x345f/0x4130 fs/f2fs/data.c:1792
+ f2fs_expand_inode_data+0x5b1/0xa60 fs/f2fs/file.c:1923
+ f2fs_fallocate+0x4f8/0x990 fs/f2fs/file.c:2026
+ vfs_fallocate+0x672/0x7f0 fs/open.c:342
+ ioctl_preallocate fs/ioctl.c:290 [inline]
+ file_ioctl+0x61d/0x780 fs/ioctl.c:-1
+ do_vfs_ioctl+0xb36/0x1440 fs/ioctl.c:577
+ __do_sys_ioctl fs/ioctl.c:596 [inline]
+ __se_sys_ioctl+0x82/0x170 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f000960ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f0008c3c038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f0009836180 RCX: 00007f000960ebe9
+RDX: 0000200000000000 RSI: 0000000040305828 RDI: 0000000000000005
+RBP: 00007f0009691e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f0009836218 R14: 00007f0009836180 R15: 00007ffee123ac28
+ </TASK>
 
 
-Thanks,
-SJ
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
