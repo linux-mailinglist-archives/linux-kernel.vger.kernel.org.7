@@ -1,142 +1,147 @@
-Return-Path: <linux-kernel+bounces-782717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8CEB3240D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:20:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F55AB3240F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4450D4E2091
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:20:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E2B0172A78
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12ACA2ED153;
-	Fri, 22 Aug 2025 21:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B33334371;
+	Fri, 22 Aug 2025 21:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="arYkT+sL"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o4gwtYPv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FBF283C9D
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 21:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D473C27B335;
+	Fri, 22 Aug 2025 21:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755897617; cv=none; b=gHZhBZ+P/FziTQsR3ltU+1qJckKeyO07vEFkVyl8OgzdKDmI+i1rECYVHkzo3OQ8PePetZMG2jCamcpxkZ7ptxZBDrH8kDR/cA84k3ACOoGizvy3v/9hbz725vkT0/ANdDw3ggzuLOC0rQmskP4EGm4K3N8NJBKqGRmiEqlm4b0=
+	t=1755897645; cv=none; b=VxIjyWoIMlWRGChXiht+vrkWm8f24GF7bswySZyEnbBxzePmq7bI/+dcgD8ErBvcJx1WELTpL7Wx9GP3/eC8/I2m5JLHaEcPI+3sBotL6VEG9b5LIFLrdGqVbkl12Y0uT/i96zvCuN8RPE/K0O9KkPMD1yobPNmhsPYjyFIPlMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755897617; c=relaxed/simple;
-	bh=9fA0yHG8SS2Fd7s3upe/4ZWUaSmlKYSByXORV1ojuDI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lA4adQwgE7k/brQMPwja5of3tMyjThdkd8k2dPRrj91XW7RR0kbe0n/Qy23qJzpT30m1Nv/MLuA2QglmdnDP5qI5DgLv7HInYkolYjKq/gtjxZaLs1gGxvSjq1Ohdvqx9HfiOjaI9CIOdMXnON4UwmPmYBi4Q2mqRG7fWsi6ZS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=arYkT+sL; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=9uZLhzPEmMwp8D7S73NTMgQyO+O6LpYFyWrFqzJc7vM=; b=arYkT+sLUfSekCdSUtkDWfZFab
-	/M5zuPdpjW/R27iXLK8WNRIWl1Ma6ocvoAs55hPqAi8Q8XUU051sgda0oFwjEWS1mCv3tQNCd28XS
-	VTyiOUyneFP84wycyt9kGYGh75Q71oKNffNiTBXFZ6VbhisqKq0HXRNxpdT2UklJYUHcK2PUuHcC6
-	n+bXpbb0yfgS8mL6w7xPzlotyQQNQmAIygHo5FTErKtzY3y/U8MuAWxgm0hjmHbcvuZaVqvsZdWBv
-	wqPsrbWcJJk7hNGabw+/kpTBcD7Xnc1/Pdbfl3zz+6wGZLTm/KTXmfTI+i/4F3xrWf+4JiQo5l3Pm
-	H1+E86Cg==;
-Received: from [189.6.13.79] (helo=[192.168.31.42])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1upZB5-000I7b-Rv; Fri, 22 Aug 2025 23:20:04 +0200
-Message-ID: <9c544984-7b73-46df-a63a-fc8820d2ccba@igalia.com>
-Date: Fri, 22 Aug 2025 18:19:58 -0300
+	s=arc-20240116; t=1755897645; c=relaxed/simple;
+	bh=vtsRBb4sPfT6W/YuCCdEbbOfe14BIwGnGP4Fd7ycMyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s8jF8lsFrUg01N1vL+eluEkD02TlR3bSe/sTBlq/1q1IY0fVHvXqDf9bQvCZ4d1gNfhnhTwcB3VuRhHD/hcpxv75kvfnGkv3VSjdalLMyCKa69F04q0CwTVFVj9G1IIaJxYGBKLFg4hDEloKa1XKHLK7gbYHtlujtcJPy9mfdAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o4gwtYPv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ED3DC4CEED;
+	Fri, 22 Aug 2025 21:20:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755897644;
+	bh=vtsRBb4sPfT6W/YuCCdEbbOfe14BIwGnGP4Fd7ycMyo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o4gwtYPve2kzqW5VoEoRCbZfLcL2oSL+8xpjZXUzaw5f2WKCbpmr6f40mHE00Bqz4
+	 618bZC932KkR/cmbVhsqYsCLMlYSlutIfBYmCkHkucmfln+V10ch/D8D3XagzlpQTX
+	 JHRa1n9EvkxC3k6zkCV1gCZoviAiLRAo9ywDMGhaMiCfyhhtHZaVljD9MjFwJO0dm5
+	 /ElPtJfF1E715k/R/7Wb1fqRARAXlLj6VlsE1R64yrBOe8HNWtwTyQvjATNSnjc7Zt
+	 VqjuRqK8ZXk96UkWiK4MH1NQDJh/iDE4RQ1sNHga3E1TtyLLtyWrlywtDIKUWWlzIn
+	 cNXZHGODn6Xgw==
+Date: Fri, 22 Aug 2025 16:20:43 -0500
+From: Rob Herring <robh@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v4 1/6] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp:
+ Reference usb-switch.yaml to allow mode-switch
+Message-ID: <20250822212043.GA475528-robh@kernel.org>
+References: <20250807-topic-4ln_dp_respin-v4-0-43272d6eca92@oss.qualcomm.com>
+ <20250807-topic-4ln_dp_respin-v4-1-43272d6eca92@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amdgpu: Fix kernel-doc comments for some LUT
- properties
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Harry Wentland <harry.wentland@amd.com>
-Cc: kernel@collabora.com, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250823-amdgpu-fix-kdoc-lut-v1-1-306bcad41267@collabora.com>
-Content-Language: en-US
-From: Melissa Wen <mwen@igalia.com>
-In-Reply-To: <20250823-amdgpu-fix-kdoc-lut-v1-1-306bcad41267@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807-topic-4ln_dp_respin-v4-1-43272d6eca92@oss.qualcomm.com>
 
-
-
-On 22/08/2025 18:11, Cristian Ciocaltea wrote:
-> The following members of struct amdgpu_mode_info do not have valid
-> references in the related kernel-doc sections:
->
->   - plane_shaper_lut_property
->   - plane_shaper_lut_size_property,
->   - plane_lut3d_size_property
->
-> Correct all affected comment blocks.
->
-> Fixes: f545d82479b4 ("drm/amd/display: add plane shaper LUT and TF driver-specific properties")
-> Fixes: 671994e3bf33 ("drm/amd/display: add plane 3D LUT driver-specific properties")
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Nice catch. Thanks for reviewing docs and fixing them.
-
-Reviewed-by: Melissa Wen <mwen@igalia.com>
-
+On Thu, Aug 07, 2025 at 06:33:19PM +0200, Konrad Dybcio wrote:
+> From: Neil Armstrong <neil.armstrong@linaro.org>
+> 
+> The QMP USB3/DP Combo PHY can work in 3 modes:
+> - DisplayPort Only
+> - USB3 Only
+> - USB3 + DisplayPort Combo mode
+> 
+> In order to switch between those modes, the PHY needs to receive
+> Type-C events, allow marking to the phy with the mode-switch
+> property in order to allow the PHY to Type-C events.
+> 
+> Reference usb-switch.yaml as a simpler way to allow the mode-switch
+> property instead of duplicating the property definition.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h | 16 ++++++++--------
->   1 file changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
-> index 6da4f946cac008ac865cd6d8a06fb0bd84d646d5..c3ad371658065388c10b7cfc45377b0465bd24ca 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
-> @@ -366,15 +366,15 @@ struct amdgpu_mode_info {
->   
->   	struct drm_property *plane_ctm_property;
->   	/**
-> -	 * @shaper_lut_property: Plane property to set pre-blending shaper LUT
-> -	 * that converts color content before 3D LUT. If
-> -	 * plane_shaper_tf_property != Identity TF, AMD color module will
-> +	 * @plane_shaper_lut_property: Plane property to set pre-blending
-> +	 * shaper LUT that converts color content before 3D LUT.
-> +	 * If plane_shaper_tf_property != Identity TF, AMD color module will
->   	 * combine the user LUT values with pre-defined TF into the LUT
->   	 * parameters to be programmed.
->   	 */
->   	struct drm_property *plane_shaper_lut_property;
->   	/**
-> -	 * @shaper_lut_size_property: Plane property for the size of
-> +	 * @plane_shaper_lut_size_property: Plane property for the size of
->   	 * pre-blending shaper LUT as supported by the driver (read-only).
->   	 */
->   	struct drm_property *plane_shaper_lut_size_property;
-> @@ -398,10 +398,10 @@ struct amdgpu_mode_info {
->   	 */
->   	struct drm_property *plane_lut3d_property;
->   	/**
-> -	 * @plane_degamma_lut_size_property: Plane property to define the max
-> -	 * size of 3D LUT as supported by the driver (read-only). The max size
-> -	 * is the max size of one dimension and, therefore, the max number of
-> -	 * entries for 3D LUT array is the 3D LUT size cubed;
-> +	 * @plane_lut3d_size_property: Plane property to define the max size
-> +	 * of 3D LUT as supported by the driver (read-only). The max size is
-> +	 * the max size of one dimension and, therefore, the max number of
-> +	 * entries for 3D LUT array is the 3D LUT size cubed.
->   	 */
->   	struct drm_property *plane_lut3d_size_property;
->   	/**
->
-> ---
-> base-commit: 0f4c93f7eb861acab537dbe94441817a270537bf
-> change-id: 20250823-amdgpu-fix-kdoc-lut-357db8b57fee
->
+>  .../devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml     | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
+> index 38ce04c35d945d0d8d319191c241920810ee9005..c8bc512df08b5694c8599f475de78679a4438449 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
+> @@ -73,10 +73,8 @@ properties:
+>      description:
+>        See include/dt-bindings/phy/phy-qcom-qmp.h
+>  
+> -  orientation-switch:
+> -    description:
+> -      Flag the PHY as possible handler of USB Type-C orientation switching
+> -    type: boolean
+> +  mode-switch: true
+> +  orientation-switch: true
+>  
+>    ports:
+>      $ref: /schemas/graph.yaml#/properties/ports
+> @@ -106,6 +104,7 @@ required:
+>    - "#phy-cells"
+>  
+>  allOf:
+> +  - $ref: /schemas/usb/usb-switch.yaml#
 
+As reported already in this thread, this adds a crap load of warnings as 
+it makes ports or port required. Sigh. Can QCom folks pay more attention 
+to this please. Every cycle the number goes up though that's often 
+temporary because there's no coordination of taking .dts files after 
+bindings. But generally, progress on QCom warnings has stalled.
+
+Here's the top (bottom?) platforms in arm64. The first number is 
+total warnings. The 2nd number is unique warnings (to remove inflated 
+numbers due to lots of boards per SoC).
+
+mediatek:785:166
+hisilicon:133:112
+qcom:362:104
+broadcom:286:104
+marvell:558:80
+apm:78:58
+rockchip:128:57
+nvidia:199:53
+sprd:30:29
+xilinx:94:22
+
+Congrats on 3rd place. There's a bunch of pending Mediatek fixes, so I 
+expect you all will move up to 2nd soon. 
+
+All this data is updated daily. There's some scripts to get and process 
+the logs here[1].
+
+Rob
+
+[1] https://gitlab.com/robherring/ci-jobs.git
 
