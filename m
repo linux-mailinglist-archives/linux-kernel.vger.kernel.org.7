@@ -1,242 +1,133 @@
-Return-Path: <linux-kernel+bounces-782592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3D95B32280
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:58:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 953ADB3228C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA70B7A874F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:57:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FDC8189D9A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7884E2C11D9;
-	Fri, 22 Aug 2025 18:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA94D23A58E;
+	Fri, 22 Aug 2025 19:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b="ncWyh5Bh"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2105.outbound.protection.outlook.com [40.107.223.105])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dOZ3m6ld"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83D9393DCB;
-	Fri, 22 Aug 2025 18:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.105
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755889112; cv=fail; b=mC7glstAiXaUcW4tzKo71baVsTAYXoohOPk4EodBn0wpc8Pl+Pguud1C0h1A2tGlDBDuJ/n6BDsAJWFDnpreNzXAGU95rejzRshOxTHVyLIGfbsjJ2sMVy/j1IuDQwGczQ2xIxO3XqT8YmEDQJWq6v4VR4ofkYToXeA/ztMwoiw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755889112; c=relaxed/simple;
-	bh=y1S+rSq+8xpLQva+s6FgAa3RwWXXJ/MNSGNfdJkQZus=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=U4MfH7HinyNPs8ZuG8beshagFIGiSdumHjQqOSgJOaTaudZTtgFDLTY+JgcyRF+Hz6NgytZ13rKmDazV0Ca65PPWjt/TxzGPjZldFzljFGCRiF9qtrwnVGEnXQvTd/U4VNoUU5byMTdEQmpwgGk8sRIeNtAltJnS1GrJTjiF9m8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com; spf=pass smtp.mailfrom=axiado.com; dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b=ncWyh5Bh; arc=fail smtp.client-ip=40.107.223.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axiado.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZwmTferZqQSkYx4RkjTqwE7QgImY0iFGTwXV5ux8h9vL+R0+a7PZUb++aHo2SbgKMAt+1Pi+TSltBDBZRVlwT+1yd6dBK15mVMHK/SmjSUC5LqFzrzjhG6qIXACz2QQ55T0Hn+lAHN5+Q84zU8yLWm6v9cwgxz94rpX3w538L62i523Q1/XqjtNqJzpgBuZHCUg5BJSZX0t0Ms5H9pREzTGRJ6FHXVas75Wd5/g39629o7CmeF4Lq/LgzHzGu0L4UttT9tPf0lhvBzd+DqKIzP4CnAf/cFYFqx8QCkVGJvlhinuSpStKw9/fkuS5Nzwl3FhbYZNkQ7wZ1HbdUd83gQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6RYCIM1m6GQJ1TadmLnYtOPqs43NRt5qNsoEZiWC+Do=;
- b=VJnhuOr9lZU/dMb9gxHXWAD3Ssa5zdBXzRzrdQPiDxBz5HDNrWbznZjYxtuFAOdF6gSdXqrFnUiODlIrVRgqmp33zAuXPgxDJqPVjpDbTSie5vvAQy8ovdvmP5/vaBicozZJ6oCdqSG6wMWgIuSu9iRjcTI7voQbwBiI8Jj0RvDygsvlF+erN9+lmiHhAwqKfBvV/kcRScfVDAQvh7ldpeYI58ENGJAzx99b+V7dW9y+Ru7ILSjDWCdyZll3xkMmXRwNLQg0WGgleHFpbBs4+BwfcxOFqgSjy0pFDAbzGkkyhtqnHJshBOtgw4Lh4FQdID9TuFX8FKdqVz40+yIdOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 50.233.182.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axiado.com;
- dmarc=none action=none header.from=axiado.com; dkim=none (message not
- signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axiado.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6RYCIM1m6GQJ1TadmLnYtOPqs43NRt5qNsoEZiWC+Do=;
- b=ncWyh5BhkGigcolr20RnzHrsVyQ+wqg6Mv0XMTNDjr/ffYmwnF2nY7tGvOv4C7mthdC2747LCk6JgyYSF560K73Up7XWMTOHffuWf2jUW1Ma7MoZSU/McmHZyl7OosTYofCyQve8LAVkpX3buGaWO/mvSi4bDoj+U16UDNPoXapNa5MobCi0snW5R95H2lRme6ZvPixYLc2ncp9NjmiB/Z1SLIA8+H8wX5Z+hQegI1AuKHxcF/mCKoPcUTb3VEy8I3LZjtqC5CnxbU0+PfLGDo5QgWpPYREx60aZkHjBS7H0ilHmGlZj3pz5nF3rPW8Sv+PUtK3PlTSDSdYQj3JUyw==
-Received: from CY5PR10CA0003.namprd10.prod.outlook.com (2603:10b6:930:1c::30)
- by PH8PR18MB5311.namprd18.prod.outlook.com (2603:10b6:510:23a::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Fri, 22 Aug
- 2025 18:58:27 +0000
-Received: from CY4PEPF0000FCBE.namprd03.prod.outlook.com
- (2603:10b6:930:1c:cafe::b) by CY5PR10CA0003.outlook.office365.com
- (2603:10b6:930:1c::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.17 via Frontend Transport; Fri,
- 22 Aug 2025 18:58:27 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 50.233.182.194)
- smtp.mailfrom=axiado.com; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axiado.com;
-Received-SPF: Fail (protection.outlook.com: domain of axiado.com does not
- designate 50.233.182.194 as permitted sender)
- receiver=protection.outlook.com; client-ip=50.233.182.194; helo=[127.0.1.1];
-Received: from [127.0.1.1] (50.233.182.194) by
- CY4PEPF0000FCBE.mail.protection.outlook.com (10.167.242.100) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.8
- via Frontend Transport; Fri, 22 Aug 2025 18:58:26 +0000
-From: Harshit Shah <hshah@axiado.com>
-Date: Fri, 22 Aug 2025 11:58:14 -0700
-Subject: [PATCH] serial: xilinx_uartps: read reg size from DTS
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DFE18E025
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 19:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755889311; cv=none; b=SHbPD2lpRlp8zpj1Kx1xTdt2PAke1kZpT4GYl0C/j66kFJqWW62ED3xxfy96oYkqZTS3ZhImPh5MmMHH0bwgjPUOz/YNYyzdq8ToQ3t4dlFqO6nmkQ7gSc3/Qu4yDgPvuFH6dG8VT2l3VtaLEOR3C0aCT8DKyUqqqtAXPDvzCcc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755889311; c=relaxed/simple;
+	bh=lrP3+BKdVHexNiHGP1MG0oNTvhr4hDVIV/sqvcQ08yA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AF2oPt2VCyuklyJAaxCG5JyDJODPTbRMlgnXaNk8f0ZYUVgH40Yatrj4Jlgk8sdNcTULiJcQszwIm7310C6FtUWVZ6dm/UYozyoSDdDyQMbS8aL+cs7vaqQT2+WHeP9+f/jax1Sy+JUDPjd444ZPCF+vU7X5mx7mQwi8hQv6ScA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dOZ3m6ld; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-32326e8005bso2598799a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:01:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755889309; x=1756494109; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5zTTkGdcZ/scP0jDMusNy3bX+FVIQ438G4R7UXgwXYc=;
+        b=dOZ3m6ldCZt8HB32pApO8tUXeV4XoyyxUdcx8yL2etnFC8WBeWedPHVRJK/Tl0DjMg
+         j+ZD05jxEN1poepF4exYuDfXm81of2heH/JWNmQCN+9oO2xFBiGcPQwjxIpeKMiI+MZE
+         tmI6GjrKpVwZZi1F85Qrd1l5IWaIg+ETZs/ZY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755889309; x=1756494109;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5zTTkGdcZ/scP0jDMusNy3bX+FVIQ438G4R7UXgwXYc=;
+        b=Mr3yS1DpmMBo5frR+GEGZEK4yeBj00nZS3XLTwQor2KlXmp5XrJgMqacvdos3T92gj
+         EVm40+sysuGLIjRSSium8mFsjAfN3ERxihJABVq3STTqg72FSf6I/8P8RJdHlB/Dkblr
+         sbizkfFHfpJuHGHweepgyRCoLksu5pTaQYREiID2v0OmoDQMjH2SJLSZGG+5bNzJM7I3
+         cZNhli+ELhTr9mvmUhUnjry0HFTA1Pyr6+Dud2LgarfRXFCmMSfHmmF2GB30lJQfqIof
+         6uBKE3Ix1LO8SeDm3fYhAo57vAmya2GCfZsRXcSWJqNDU7O3tFGD6jP7IioDG7msN9Bs
+         89AA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpkQPuz5PDVH3tWakepvoGm9G+2NfoWpvJ0Nt7UK3ggon3VPYivnfxepa1KEZiTBAiNlR5EfC/QokXK8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH1dA+s5AUJPLtExOYg3HfhsM8bfVEN6hGVBu4l1r+96ZTC3C4
+	IZMsELAg+tc0kXqioOxcu+uS5vX7yY3dMdlmzWBQODPcS50MRA61/Yo0tqKX/+IsxRYlY78/1tb
+	sCZc=
+X-Gm-Gg: ASbGncuFcHym/J8vDEp2K0+/uDagOWrQKpCkDN21xHIhRqOQDkvfkYkAgRacYN3ngO0
+	pj8uSx3wq1A0FjcDI1UwBklEPaTcdDpCfDY1W98fXiRySbuY8rZep57X20piQrN8BIwTIB+3oWz
+	PNKvaNfGkCHQaqRgsvGNzCF3pu7/fRSj8GVsvCSfS45j0V+M4P/nQ8A/58nSqbI8zF8GCkwoKPA
+	eA/xJ+MM/ZLc731LmE552kt+2LXbm1ZO82qT8o3nJwLTYfXD2Cw3ReHlmW9tPDP5yA4uaH7DmMX
+	hlG+H1ToOhmUWwTt84M94EcdTVzoZWbiJoYsjrLfqLNVodEyzK8CYCyZflJ7baT/iJzr+799BWR
+	03paBKpBleJZ+LDa9L/ZrYMQ2AXKORgXsX3wTFll72/eB+vyAxgbYaxBPC3ivrJDaiVpqzw==
+X-Google-Smtp-Source: AGHT+IFvBUKCJmTugnB0N6QWHl9zevvjgdTYsRZLECeP05Q82Ey8c49zXlk8iNTf29aqORnoBMg6dg==
+X-Received: by 2002:a17:90b:528d:b0:321:cfbf:cbd6 with SMTP id 98e67ed59e1d1-32515e3cba6mr5541435a91.6.1755889308844;
+        Fri, 22 Aug 2025 12:01:48 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:154c:8cf:f7d0:c083])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3254a1e5888sm566832a91.12.2025.08.22.12.01.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Aug 2025 12:01:48 -0700 (PDT)
+From: Brian Norris <briannorris@chromium.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: David Gow <davidgow@google.com>,
+	linux-kernel@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	kunit-dev@googlegroups.com,
+	Brian Norris <briannorris@chromium.org>
+Subject: [PATCH v2 0/6] genirq/test: Platform/architecture fixes
+Date: Fri, 22 Aug 2025 11:59:01 -0700
+Message-ID: <20250822190140.2154646-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.51.0.rc2.233.g662b1ed5c5-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250822-xilinx-uartps-reg-size-v1-1-78a5c63cb6df@axiado.com>
-X-B4-Tracking: v=1; b=H4sIAMW9qGgC/3WNyw6CMBBFf4XM2jF9qKAr/8OwaMsAkyglLZIq4
- d+tJC5dnpPccxeIFJgiXIoFAs0c2Q8Z5K4A15uhI+QmMyihjqKSGhPfeUj4NGEaIwbqMPKb0Gl
- Lp7KpKls6yOMxUMtpC9/qzD3HyYfX9jPLr/0lz/+Ss0SJorWlPkihdGuvJrFp/N75B9Trun4AK
- cKsQr0AAAA=
-X-Change-ID: 20250813-xilinx-uartps-reg-size-c3be67d88b7c
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, Michal Simek <michal.simek@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Harshit Shah <hshah@axiado.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3100; i=hshah@axiado.com;
- h=from:subject:message-id; bh=y1S+rSq+8xpLQva+s6FgAa3RwWXXJ/MNSGNfdJkQZus=;
- b=owEB7QES/pANAwAKAfFYcxGhMtX7AcsmYgBoqL3ShANOd0sY/mLGDFmfpTBXpvmFcdgxiOd+/
- EEzjVYMJVmJAbMEAAEKAB0WIQRO3pC/7SkLS2viWOvxWHMRoTLV+wUCaKi90gAKCRDxWHMRoTLV
- +9QlC/91y0TQDRTk0HprpvLw8Bj29zFiJU/ksxXDbv3AZOKkVNuBf/2grP8jUfxNm/BlnoPARhR
- X9LmpM5y70IVJZ5EHxhSi+ryAu/ASeY5+/pqfrKd3qj8Z7Wh5bakDy+R/n4Hy4CYD/5mVrWDPtG
- NukN5XS//kB7xeN5I5kosFGR9bW0EmR5BtZ6gKu4bSpI74hkm7gCvLRFPw9QX4W+45vzYm+GPTW
- GC4zk/BpbKIC/TTqJXZ2KlI4cJROXW/N1dV13v81Z0c/nCJQLCz5+cqBcb6GGXE5I5QNuDIBjLx
- ndLwh1vgk/mf24J5afqZZUEh3ONXJF28J3K2i39x3qwyNrYyv9kf3Vo7xpmazvytQP9xNIIdz2A
- d3a34RQc8sA3xB7juY23/V2JWrcWCirRw4B3MeSWcmh78j+OunvAb3YSTJ6VqMRz/hxPRzBobSz
- fsQOAkP24oKMdumjQ+bOFkYEkoPGENk6JQ9FiYrOn+4jkMM0X5AeG9+FKsFoetFqiBf58=
-X-Developer-Key: i=hshah@axiado.com; a=openpgp;
- fpr=4EDE90BFED290B4B6BE258EBF1587311A132D5FB
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCBE:EE_|PH8PR18MB5311:EE_
-X-MS-Office365-Filtering-Correlation-Id: eb43e413-ebdf-4205-12d1-08dde1ade0bb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y0R4T2lKVmRpUnJxRUxiYjBwSllXbFhUWHozL0xObnFyS2MwRWlsVUljblNY?=
- =?utf-8?B?NjA0cFZLbDRHUm1mZnlRaGVCRzdPamFrckZ0b3J2dFR6eWMwZEt0bzZocE9x?=
- =?utf-8?B?MU15L3dxWWszNUZLV05ObHBBd25Ld2JTT3dRRUYwVnRJQk1ud2dCbGFvbVlU?=
- =?utf-8?B?dnVFKzB6UkZhSjJkb2JwWUUra2U3WDk4ckxoUXhZaW5qSEE4WThsd1N1empR?=
- =?utf-8?B?L0dod1ZadDdRSi8zTnprcFpZdDhiRGozcitUM2JrUnkzYW8yWDhuTUpSZGtU?=
- =?utf-8?B?aFpIMVRnR040eFQ2OFJlRUNnZ2dndEYzU1Jsek9kMmZxWG96VjlaaXJ6ZEJS?=
- =?utf-8?B?VDRFOTFZUE1WS2V5WkxIeC85TzA4SHc0UHBOTGpTSmF1VzhwS0Qrbnl1aW1n?=
- =?utf-8?B?SGo4dVBWOWQxNm5YdDZvdUZhbW5zOSt6WkQ5T2FxYXVIRkVWb3Q0RGtjdXhl?=
- =?utf-8?B?QXUwWE1sM0N3OHhBaUJqZkNIQ0FHU2ZydlloZlZ5a1V6cXBwRytvYmYyNG1i?=
- =?utf-8?B?RlFzY1hERVA3SE94V0F2ZHdRV0VOWVVxejNTcVBVbVlQeFVBVkZqUEV0U1Uz?=
- =?utf-8?B?VVQzcXFhNlliZHdmeGhPQnZ3WVNPK0dBQUtQVEduSG9DNzdzbC9yU2lhRUFS?=
- =?utf-8?B?eFhqNVBYZklBREJvcmY1TU1zZkJWSDJHQ21iZFVaaUJBQS9EejdvVmlvbDN0?=
- =?utf-8?B?REtzL3RwODhubW9sUHBGcWFaQ0NCSy9ISWhlVE1sT1JOQUNBaDR5UWlsYUZq?=
- =?utf-8?B?K3ArUTN2Vm9JNzlkMHkrR0tWUXMycWpmcHQ5bGdMRDBqeWYyTCs2ZS9yc0Ez?=
- =?utf-8?B?OHNWMjRwY0dFblcrbmJaZGZkUDF4c1Vxa3dLbWl3MmNSdUdqSHVsd2luRVUv?=
- =?utf-8?B?Ym5PSVZEVUN5QU13aGUxTHdzSFhmOXJUMHpiSEFzaVJURDBKNHhoQ1ZOOTJj?=
- =?utf-8?B?ZlVsQlE0SHFWSlg0QlFXK0JDcnZVMkZUU3lYbWJMclVVd2R5SHBaTXFpMldK?=
- =?utf-8?B?WUh6RHlqR2x1ZC9zOGdUR1J6RkE4OWNENFpTbmlaRDVoL3NPYXU0bnpWb2ty?=
- =?utf-8?B?ajk5T25ISEV0NVRMMmIxV3VtSEY5d2wzSy9sYjJic0x5ZitxY1RtQUlQdlI5?=
- =?utf-8?B?dDduVnJnZ0xSUHhxaDVRQTl6QzdUSUVyc2FKODk5dGdKUnV3ZlpRalVieG5S?=
- =?utf-8?B?QkgzeHZ3VEQxNDZ1T0txaHFXcWJyRGszL3dCd3EzWjRQenh0MlBSaHdySXBx?=
- =?utf-8?B?Sm8wSnJnSWMzaTVuQWJERVhkdFZEZTJqZlpwOXVwZUNYaTNlMkl2WVZ4a2t3?=
- =?utf-8?B?VUVaeHRPclUxdkw2UUhQNVpVay9aTnhtRUJleDVtOHd4NFJJTmcwTlp1THdK?=
- =?utf-8?B?Ym5GNUZnSWxIL2s4Sk93V3BLUzV4M2MzUmZiUlFxVk1MZGJ1OTFac1VaYzVH?=
- =?utf-8?B?ekxTdCtYY0MyWGdSU1UxY3ZFY29Gd1BtUk1BLzB2MFkrdW5sZ0hjM29LQWhS?=
- =?utf-8?B?aWJQME05SkdsRXBiVnloTVNLV1V6ZE4zdTR2eWZObDRuN2x3QmJVNVNIcmMr?=
- =?utf-8?B?WlFMdVJEVWdld0I2dXczTGdXRTZVTHBjZ2RqZzNXdkVUYVZRWUhaS0pDZGs0?=
- =?utf-8?B?UmJtajdBdDZucWtOMGN3VVhWQ0w1Zks2OXFva2I5Tk0wODA3TnE3eExhVGo1?=
- =?utf-8?B?a2M3NVZaSXhkWHIrZmJrclNCdXJnR0tPTTNFSXNPZktxNjdDemVkRUd3VFdK?=
- =?utf-8?B?VUczL0JTNTBPczFqL29kTnpqejh3Z3RCM0ZVT1VzM0RnL0U2UFNHODEyQ0wv?=
- =?utf-8?B?WndsVTY2LzFlb3NUK0s0UEdZM3ExV05Rb1BXWmRKQnRGZ0JzS1BhR1VWYUxB?=
- =?utf-8?B?NUlPUUREaWUwTk5Oemttci91SkxWbTl1WHAxTXNicTRLeWpSc2NNejRvelEy?=
- =?utf-8?B?ZWJxaldzRjZxQWpIdExUaWJXbnZMWXJwWnZwcmsvRVZVMUQyRWxIRTlLbldy?=
- =?utf-8?B?QkJ3c1VhWnpOZUlNY3JwRDlQZ0xEWkFIMUZSTWg3Z1NFWXlmUVdzQ3VvV0xv?=
- =?utf-8?Q?xGwUkf?=
-X-Forefront-Antispam-Report:
-	CIP:50.233.182.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:[127.0.1.1];PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1102;
-X-OriginatorOrg: axiado.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 18:58:26.9988
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb43e413-ebdf-4205-12d1-08dde1ade0bb
-X-MS-Exchange-CrossTenant-Id: ff2db17c-4338-408e-9036-2dee8e3e17d7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=ff2db17c-4338-408e-9036-2dee8e3e17d7;Ip=[50.233.182.194];Helo=[[127.0.1.1]]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000FCBE.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR18MB5311
+Content-Transfer-Encoding: 8bit
 
-Current implementation uses `CDNS_UART_REGISTER_SPACE(0x1000)`
-for request_mem_region() and ioremap() in cdns_uart_request_port() API.
+The new kunit tests at kernel/irq/irq_test.c were primarily tested on
+x86_64, with QEMU and with ARCH=um builds. Naturally, there are other
+architectures that throw complications in the mix, with various CPU
+hotplug and IRQ implementation choices.
 
-The cadence/xilinx IP has register space defined from offset 0x0 to 0x48.
-It also mentions that the register map is defined as [6:0]. So, the upper
-region may/maynot be used based on the IP integration.
+Guenter has been dutifully noticing and reporting these errors, in
+places like:
+https://lore.kernel.org/all/b4cf04ea-d398-473f-bf11-d36643aa50dd@roeck-us.net/
 
-Fixes: 1f7055779001 ("arm64: dts: axiado: Add initial support for AX3000 SoC and eval board")
-In Axiado AX3000 SoC two UART instances are defined
-0x100 apart. That is creating issue in some other instance due to overlap
-with addresses.
+I hope I've addressed all the failures, but it's hard to tell when I
+don't have cross-compilers and QEMU setups for all of these
+architectures.
 
-Since, this address space is already being defined in the
-devicetree, use the same when requesting the register space.
+I've tested what I could on arm, arm64, m68k, powerpc64, x86_64, and um
+ARCH. (Notably, patch 4 ("genirq/test: Depend on SPARSE_IRQ") drops
+support for ARCH=um and ARCH=m68k.)
 
-Acked-by: Michal Simek <michal.simek@amd.com>
-Signed-off-by: Harshit Shah <hshah@axiado.com>
----
-- Add fixes tag in commit msg
-- Link to v1: https://lore.kernel.org/r/20250819-xilinx-uartps-reg-size-v1-1-0fb7341023fb@axiado.com
----
- drivers/tty/serial/xilinx_uartps.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+This series is based on David's patch for these tests:
 
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index fe457bf1e15bb4fc77a5c7de2aea8bfbdbaa643a..a66b44d21fba2558d0b2a62864d86d3b73152e26 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -33,7 +33,6 @@
- #define CDNS_UART_MINOR		0	/* works best with devtmpfs */
- #define CDNS_UART_NR_PORTS	16
- #define CDNS_UART_FIFO_SIZE	64	/* FIFO size */
--#define CDNS_UART_REGISTER_SPACE	0x1000
- #define TX_TIMEOUT		500000
- 
- /* Rx Trigger level */
-@@ -1098,15 +1097,15 @@ static int cdns_uart_verify_port(struct uart_port *port,
-  */
- static int cdns_uart_request_port(struct uart_port *port)
- {
--	if (!request_mem_region(port->mapbase, CDNS_UART_REGISTER_SPACE,
-+	if (!request_mem_region(port->mapbase, port->mapsize,
- 					 CDNS_UART_NAME)) {
- 		return -ENOMEM;
- 	}
- 
--	port->membase = ioremap(port->mapbase, CDNS_UART_REGISTER_SPACE);
-+	port->membase = ioremap(port->mapbase, port->mapsize);
- 	if (!port->membase) {
- 		dev_err(port->dev, "Unable to map registers\n");
--		release_mem_region(port->mapbase, CDNS_UART_REGISTER_SPACE);
-+		release_mem_region(port->mapbase, port->mapsize);
- 		return -ENOMEM;
- 	}
- 	return 0;
-@@ -1121,7 +1120,7 @@ static int cdns_uart_request_port(struct uart_port *port)
-  */
- static void cdns_uart_release_port(struct uart_port *port)
- {
--	release_mem_region(port->mapbase, CDNS_UART_REGISTER_SPACE);
-+	release_mem_region(port->mapbase, port->mapsize);
- 	iounmap(port->membase);
- 	port->membase = NULL;
- }
-@@ -1780,6 +1779,7 @@ static int cdns_uart_probe(struct platform_device *pdev)
- 	 * and triggers invocation of the config_port() entry point.
- 	 */
- 	port->mapbase = res->start;
-+	port->mapsize = resource_size(res);
- 	port->irq = irq;
- 	port->dev = &pdev->dev;
- 	port->uartclk = clk_get_rate(cdns_uart_data->uartclk);
+[PATCH] genirq/test: Fix depth tests on architectures with NOREQUEST by default.
+https://lore.kernel.org/all/20250816094528.3560222-2-davidgow@google.com/
 
----
-base-commit: 8742b2d8935f476449ef37e263bc4da3295c7b58
-change-id: 20250813-xilinx-uartps-reg-size-c3be67d88b7c
+Changes in v2:
+ * Make all tests depend on SPARSE_IRQ, not just a few (resolves
+   ARCH=m68k issues)
+ * Add David's Reviewed-by on unchanged patches
 
-Best regards,
+Brian Norris (6):
+  genirq/test: Select IRQ_DOMAIN
+  genirq/test: Factor out fake-virq setup
+  genirq/test: Fail early if we can't request an IRQ
+  genirq/test: Depend on SPARSE_IRQ
+  genirq/test: Drop CONFIG_GENERIC_IRQ_MIGRATION assumptions
+  genirq/test: Ensure CPU 1 is online for hotplug test
+
+ kernel/irq/Kconfig    |  2 ++
+ kernel/irq/irq_test.c | 61 +++++++++++++++++++------------------------
+ 2 files changed, 29 insertions(+), 34 deletions(-)
+
 -- 
-Harshit Shah <hshah@axiado.com>
+2.51.0.rc2.233.g662b1ed5c5-goog
 
 
