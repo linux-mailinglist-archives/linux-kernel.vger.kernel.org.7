@@ -1,186 +1,223 @@
-Return-Path: <linux-kernel+bounces-781936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6FCBB318D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:09:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D98B318DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38CF8B20873
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:03:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45DEE3B7C21
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624D31BF58;
-	Fri, 22 Aug 2025 13:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D1C2FC024;
+	Fri, 22 Aug 2025 13:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQDm8DY+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BmCsoI1f"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2061.outbound.protection.outlook.com [40.107.92.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5FC2EBDDC;
-	Fri, 22 Aug 2025 13:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755867776; cv=none; b=COn3yoQMaOF5QgHxWWe+h/YqpWcnthdJB3w3s2q6/ZM/4RYfplyJRyQ9Ejrfcs5k0Ed0nwpyPP7nNmELz31qCern5R/N5dY6WWuaZNe/bQB57zRQPwCf/KNTDkyqdlL3/n5juxAZbaUQuYLse8vV0r2uDJzaK8oLu1L+/VdAuFM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755867776; c=relaxed/simple;
-	bh=XUf06i8e8RoMGL2RRWjVSNqQW46vBv9zyMPjHciLK5g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NYs55syUAb/lngV185OHW4wBHeIlN478q/dEaoiim9xKO/spb5TtRxnUA3UpGfkQE811mv80Lzj05jpQzTVNUMkLW0yB4I8oLdNnVUZB7FLVUuKcJbCi0iqKWHcjFDwgjYc0tNHUG9aM9Dz3uLRprj10EOO1Os3+08nSdXXi7kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQDm8DY+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D27D8C113CF;
-	Fri, 22 Aug 2025 13:02:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755867775;
-	bh=XUf06i8e8RoMGL2RRWjVSNqQW46vBv9zyMPjHciLK5g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FQDm8DY+9K3wtjDyJxzji3tWiEkNa+5YRyEXi1KY1HoNwNzSr8Ya1kRkq25J8a5jq
-	 MPdpwaa/KCmnEwTh9GjXmauy+844ACYW2WpLxp9abGmFxzYNj7V/0T/tPxs+jlESfo
-	 k8/qy8b6p2v82vRRQNML10zft9JuEpbh/DwYkABd0/w+b66+mHamNFX7aJH6HNQ7Hg
-	 yLJIaNkRAT/BKzOr9D7wh8/qujXgMFU9asdovWpjfq1Dw+8mC9RkjWws7hal4EYckR
-	 XQNauQi3lPra6BH492CBP2QOscuIq+j6/+wFyGBmyViuHQCUeoVRBC9pdkM+tVR4rN
-	 MYa+uyWfoHwzQ==
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-74381fbc6e3so986547a34.2;
-        Fri, 22 Aug 2025 06:02:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUxm9Z5FF4Kf7rVECYCV5urMqVPSQdXMMdN+3wiQHUWJkPrxCCstKGW/IVuyMVNEejcTbR1t/Ln11A=@vger.kernel.org, AJvYcCVRjZx2CwxRXu9Udb7NZiysx3fNW6Ca2eOPqI2UTsqjHB63Gtlhcj+eoRc5sBCBGm90V8VbiE4Grnhoc2w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw64bMVopTk0h7AnIvAxdVO5PADhe+nEyf0nLA9uXbZplATMot+
-	ne24++5xo52jI5WZaEgPtqwHNIjex7rBEYeCeXznGfEaEgoVl5RSKAH8N9kGFB429cdKs/qvaye
-	/mRG8tpgQqUAxcQr3S9quSZ6w9K9BDRI=
-X-Google-Smtp-Source: AGHT+IEa8TntZjcbUwt6F90eNByfKDYM9ExzV95BccIfO+e8B/oc/lPhsOkVc4Gzm9tJX3UTPlhmCj0wyuipuCDMG0w=
-X-Received: by 2002:a05:6830:6613:b0:744:f08d:15fc with SMTP id
- 46e09a7af769-74500a9d977mr1901547a34.34.1755867775123; Fri, 22 Aug 2025
- 06:02:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01856225D6;
+	Fri, 22 Aug 2025 13:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755867876; cv=fail; b=rh8wTd0oAJBoWN4cIPDWbZqRrLiOlHBwrs8khaqAuK77aSM2QfYvLrAZ2Gc7GSuD2t2sqksW9XV9Ivg4MH+D7YU9cm0kFpbBvPXRcO4pOESjO79IGkRwv6UVped8rBW0qKiKy/ORDX+7N2bRMcXYNgz1ZE+bV+1CmT90nnkmDio=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755867876; c=relaxed/simple;
+	bh=xS+HF2/cLwoYJnAKVmjsHksnORfyes510si5sSGU5WY=;
+	h=Content-Type:Date:Message-Id:Subject:From:To:Cc:References:
+	 In-Reply-To:MIME-Version; b=TIYjnm0J003rvFnog4SvlPHKXhCWF0890LzT4dDMMrf6TEMvUFp5mfogl13ucLmZhG//Mnln9C9Wf0oX2mPhQhr2eVQuER+a/VThqp4Y1CqlgohR4vY3gIRrI3SJJm52bugpLWn7ElYEOGK4UurouFQHEcWE0vxQ5q+FNHQCd/o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BmCsoI1f; arc=fail smtp.client-ip=40.107.92.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=e7wnQGXJ7LbL+xSx5XtZiDnHn/fWNQWC0G3LfTTEGX9SWq61Oer6tPuB+pR1lS10i6/np6nkg5AyFKrJq4em6Pbg0JLabA/A4JIabLnBqhx3IupDuoiWsXoD2N0eV83XrrftjjYOed1Ecqwn8Dsu1ntFiYWyeP+zA6KxuQZdTwmqB8XOxG07N76SBifymLgNpp169v6XiQJaf5U0FQtBgOLsApWIZRGB2w64uOd2/bfSM612e9O6ODtFYaJTa+OtuFgbD+0DaToq9gkMPOkq9NvZNn7WH5AfjlTHWWpWt25bzlyCyISFgAQT8IuS0rbniA6kD/xUFG1cVAvxBdHDmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eOYqs0EEhC53DQ5IKfppgH+wVW7+hl+SqMi97nllo7I=;
+ b=t166lwlLhufZfxyqnir4nbjoRiE2DJRX6smYFOucA/IjUqdGXuWw4OCwqeEipUJNRaRc3aa6fUz1O/sapZT47jreriV/BlavakV7nEZ0cX+NdnGNRMaKbBOaHZ708s1PskTXNhsmzdA+bdwXYgpWvNarrqXqMjbdmSU7AYkyTsmitbcj02IgBzE0S8bAX7OvkHQpdmYXuuXOXPuFnaNWaCpggdU8dggy/HF9CX2Pj7f+7AjSg9yLMsjYzQWLwS2FgFe/6SUAK3WG6m/06In6m3Xe4UdL/qpM9dH9P+1lOIlt1Ztlp+nneHqQixwwE7P9GWtYa3E0pGUNo3IiW/K+7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eOYqs0EEhC53DQ5IKfppgH+wVW7+hl+SqMi97nllo7I=;
+ b=BmCsoI1fpa5UiC2V27QCt0gGkbvHnHz6tUnSeR47At4s5TUdeCrvLboUuMsQJyQEt0hVk/KwyeKSXKNLXKpx9t8oXgz/s70oYwKZWT4S+VMx9VFRfKH5R1USQCuiKpX3HEcOCvdAh3nCEnxJKTf8ZMWNzG/2rtDb1AHs8QerkMPwIO5vf8cyNsKSAcDYYtQfT2sQDajalxCq0YtSG17KCMOc7HTSIq7Lhc2MHksxVq7jcdsV2wuSRvahXY5f4JIpAUWpp/8uRvWYjGuCNN/i7HSrpZxT7J6aFI8JgtG9zwzk76nj2ah+j4+UswMBLUS+9rc4QCxvSY6XwP6BbRRgfA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by DS2PR12MB9661.namprd12.prod.outlook.com (2603:10b6:8:27b::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Fri, 22 Aug
+ 2025 13:04:31 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9052.014; Fri, 22 Aug 2025
+ 13:04:30 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 22 Aug 2025 22:04:27 +0900
+Message-Id: <DC8Z7MLH1J7K.176ZEFST32FS4@nvidia.com>
+Subject: Re: [PATCH 5/5] gpu: nova-core: firmware: process and prepare the
+ GSP firmware
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Danilo Krummrich" <dakr@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250822-nova_firmware-v1-0-ff5633679460@nvidia.com>
+ <20250822-nova_firmware-v1-5-ff5633679460@nvidia.com>
+ <DC8Z2MLOJN7D.3IOSY6SJ7DPVD@kernel.org>
+In-Reply-To: <DC8Z2MLOJN7D.3IOSY6SJ7DPVD@kernel.org>
+X-ClientProxiedBy: TY2PR02CA0051.apcprd02.prod.outlook.com
+ (2603:1096:404:e2::15) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813185530.635096-1-srinivas.pandruvada@linux.intel.com> <20250813185530.635096-6-srinivas.pandruvada@linux.intel.com>
-In-Reply-To: <20250813185530.635096-6-srinivas.pandruvada@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 22 Aug 2025 15:02:44 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gZ3w=CWCfaejB+ALrbzeOvDUGynNADQvgvgK-1ENteeQ@mail.gmail.com>
-X-Gm-Features: Ac12FXy31mDcO6Avt_CzgMO575K5xSFTO8iUB1g9Ri1dz-KiydTWt1EWI39d20w
-Message-ID: <CAJZ5v0gZ3w=CWCfaejB+ALrbzeOvDUGynNADQvgvgK-1ENteeQ@mail.gmail.com>
-Subject: Re: [PATCH 5/5] thermal: intel: int340x: Add suspend and resume callbacks
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: rafael@kernel.org, daniel.lezcano@linaro.org, lukasz.luba@arm.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS2PR12MB9661:EE_
+X-MS-Office365-Filtering-Correlation-Id: c1248073-092c-4d8c-e55d-08dde17c6ea1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|10070799003|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?enFVYnFxMGFWV05OMTV0VEl2azBtQmJCQnl2UkR2MXVtdzV4d1RMWjlPZzIv?=
+ =?utf-8?B?NmFWU1A5NEt2VjV4RTlEd08wTzlsUnJFU0NqS2RzR0J5eDJsemt2WEJpSDhr?=
+ =?utf-8?B?YnpRR2RsNzJaWGFaV3ZHYWhMWWh5blRaYVVjdjRwZzR2QS8yOWEyNTU2K05p?=
+ =?utf-8?B?VjlyYUNXNVcrU1FJV2V1YWxwYnV6RjhDd3Y2MkRxeVZvYTM1Uno0QlE5aDZ0?=
+ =?utf-8?B?UWpnTHA0dW1kRjNJdXhaSlBCbnc4Uk5RR2d2VWkyZWhtUkY1cVN3TzhUZ3I2?=
+ =?utf-8?B?VE1JcTUzcTNIcVdmWU5ubnhBSFhQRnRBRldhdFFsaTB3VVk1bUJ5b01zeEdl?=
+ =?utf-8?B?ZnhIRGgwcEJwYnZ4OEY0RGtTS0MrOXZyL1BWYTZhUndpaSs0OWNMNFlXS1Nq?=
+ =?utf-8?B?SUJkNk9VdEVodkdTYmtnUGxBdVRuN0FQVE5yRG4zOGtSYVh4dXhJTUZBQjVJ?=
+ =?utf-8?B?ZzI5bUJMb2I1YU9DT1Foems3REpiQ3hHblMzdjlweEhZQVkwVTYxeGwrR1Ix?=
+ =?utf-8?B?NXUzRjE1L3loT0JUOStnNDl2R2pnZVVFWnVRZnh0eWZtclpiWHVoL3hyWnVF?=
+ =?utf-8?B?Zy8zMGVDeFFPa2trbUVKZUZ4M0U0SytWV0U3U1M0SUVTRTdFSnVBSXFGUCt3?=
+ =?utf-8?B?RzVKa2xXWTIwMnVvSHovbXQxd3ZDdm1BTyt1QXNqb2JZMkY3WjV3V0JIbUh0?=
+ =?utf-8?B?YkVXeFg0dUZEdEFrb055aVN6N2pxRjI0TGpJZzFPbXNoVVhRZGlqQTBXOUx2?=
+ =?utf-8?B?S3NXR0dIeHJMWERQRjRhU2FNcTQ3K3lPSWxJemdPSFZJRndmWG9GblNhUmw4?=
+ =?utf-8?B?YW5PSjZjYTEyMm5NQnVnYWV0SDF1R1gxa09RNUFjRVFtWnVPVWVQZ3hGVjhD?=
+ =?utf-8?B?WVFMTFRTRWxMcWdqcHJzZllDWWZoM05GZFZzL2hidTBnR0FpTS9OM09Wc1NF?=
+ =?utf-8?B?amo1UU0wUVpRTTlnN3pyOHVDTnpNaDhlcytoUE1reVZwZi9PQ1FHZ2lSZVg5?=
+ =?utf-8?B?cWI1ZVVnQVdVR0ZncEZjY29pZVFxV2hUc2t1R0t5WE90SVZtZ0M1a1FWQlMw?=
+ =?utf-8?B?bXRXa3ZiQUxyVnNmMExrcEc4S3htb2puWnNZZmRPZEJVWU4xcFVXWFZ1L1hO?=
+ =?utf-8?B?NkN2Tm5uang1TUhPd1FpdzZPVHNYTTJVSVptU3dpTFhuRkhMZmtHL0Y1UGVq?=
+ =?utf-8?B?TVIwZGpLL2VkZCtuY3RCVkpIWlluUGh0dHA1WFJTYkVsWEtKTVJLUEpUM0s0?=
+ =?utf-8?B?ejhQSStFUTh2aG1iUk56RGlmVGlBT3VIT1Y0YzN6ZDdPemNJRXd4VTUrTjR0?=
+ =?utf-8?B?eGR3UTJzeHRJOC8vUkNtMGR6WmhIdmltUFFaREs2MWVMVzhwSzByOGZMZHRt?=
+ =?utf-8?B?UGRZVGdtc01abndWSDhnTXQyem5OeW4xTEp2ZmxWRnM3L1JTUno5c0dTbmo0?=
+ =?utf-8?B?cDZwMGdCb1FSMmJHUTRnWGFlK1NlekNWUW5vL1A5cFo2UDZUOUpJU2xsdUw5?=
+ =?utf-8?B?UEc0WE8rdVZSbnJRWGxta0JPcFNJUXhzZGI3YTB0VmtNRnh0TmYrYmVyWTRl?=
+ =?utf-8?B?NzBucnpiVklYU1c4UGdoazRNcVd1eE0rTzRBaEVyK1NMTDJFODRqOUpxYXpu?=
+ =?utf-8?B?a1pGRDk1Zy92Qlppblh1TkZzQ0hyeVBpQkhrcTZKM1NZd3QyT3hDNlVPRzBQ?=
+ =?utf-8?B?NEdQMDI2b2kxUnpxR1FmNDNNVGVHUGpyNDJIaVJURHZuNy9NLzQwVGRuaWto?=
+ =?utf-8?B?djM5MnVoa2VpYnpFQ0hZQjA5L3NyR1owWmhCRitjSzBVMFhoMnV1M00zbEE4?=
+ =?utf-8?B?Rmh3bnYvUy9YWlYwMk5hU0ZnWmdkc0FnYndnVUVHV3ZRa240WEgyTE1sMUsv?=
+ =?utf-8?B?S28vTEkyRlViVnhVeTRyVUtFWHVMOXBRa0ROL1Zyc1dhT1E9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(10070799003)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TUU4MURJN3JxMXdIU09DbVFVTmRaRDdndUkvc1FtT3ZQTEE3UVo0RXB5Y2pz?=
+ =?utf-8?B?UDVXMXRWZFh1S2N1dEpCRTRWMjJVOW0yWEhDMC9zSUk0elcreVJyTVl5Ti9V?=
+ =?utf-8?B?TjcrUmdZeFlGVGQ2QkFmbDR3Ujk2ZWltSnN0YXRxNTVNTzVMOHZPV1UrQkN6?=
+ =?utf-8?B?eXpkem1uenNNcFd6MmhCS2IrcUdWM3JiU0tVaDMvMjgxSzdUUzBJTjE0Y3F4?=
+ =?utf-8?B?WVk2RE5pek5JVFBQbVduVWlEeUhtM0xyLzFjYTNSUlRiK2FJMlUweUtqTFMv?=
+ =?utf-8?B?Z0FPajQvU2lwVC84dFV0S0cxMVZPbXVrZmFBclZLcUlQUU9Bbys0ODRBTVNV?=
+ =?utf-8?B?ZG15bFc4VjV0OTJsQVFHYklucncvWGVyNUVJUnlWWkRVY3EwMzBWVWVsNEFE?=
+ =?utf-8?B?NTNxTHl6OHpKWmtJV1VrYmpNVGFGdlRsWGlXV1JpNXY5Q05zYU5URHpmYjJs?=
+ =?utf-8?B?ZlQvdUZzL2dacVFuWWJLM0ZOWDNpNWJNQnJmaE9GeWJBTVdqMWlIbUxhYkNM?=
+ =?utf-8?B?T29uQ0Fjbzl1VmtpRVp5ZjI3Ukl0a0F5YlpjdTVGY2o1WGZnT2s1RTZlRFI5?=
+ =?utf-8?B?MVBtcVBnY3pSUHZ2MVMvU1laRWlwM1M2NlBLcFMycEkzMjhiWnAwSEZpMHND?=
+ =?utf-8?B?UWNiRlkzZmF1T0hSUS9MdjJUa2MxRmNBYXNBWUZKUC8ra1UvcjJiRUhzNXgv?=
+ =?utf-8?B?cm5jbUVvdDRlRUxJUEtqdGIzS3ZpeWl2YW12OXFqWlFNU1RVRWh3Z1ZuMGdv?=
+ =?utf-8?B?M3FzcmlJbXFRRStXcFJSUEdnUFhwd1N4Yml2SFNjeStJenQ0aTZxcURoK0JM?=
+ =?utf-8?B?UkV6Z2N6S1FUL0hUVGlvZDJJOE5Db1VHYXB0aU5SUHZNVWcvZ2NZQTZVbnJR?=
+ =?utf-8?B?TExjOWZZMit0SUpiVDF1MXpNa3ZFVUdLYWVhamZEbHZ4b2Y2cUhwdnlwQzNy?=
+ =?utf-8?B?VjBKY0kwNFh4dGNZaVVNeCtYK3IyNThZcGNpeCtIQzZ0TEwvdDQxdXM5d1pS?=
+ =?utf-8?B?UlVzTXo2MlpHd0xKekRSSlNWcUc3dFFPNWVSdkNJeHFZUXJpb3YzYlcwZzVh?=
+ =?utf-8?B?cGVycmZSSjRKRWN6Vk56OTBwY2NNZFJvSmV1NnN6bzVMMzhXdm4rNDFySlpn?=
+ =?utf-8?B?RVFhUDh3YkhDUkZpck9vSWkwVEVtbmR0cHJnMEFOZldtY3R1Rml3VmJ2Rzcy?=
+ =?utf-8?B?VHVDU25sOEwxR0h4OVJkYVdWWUZoR2RubUVkSlFibHBWR0FacXkyR1lPSWdP?=
+ =?utf-8?B?aVNsL3RSbGxGRktxWlpSdHAzR0FUOGI3R28yVXphbW42eVRLbDdKV0J4TTdS?=
+ =?utf-8?B?VkZheHVWWnR6bUlGWXoreTNic2NIQS8xU3djcjlLNmlvVHhWckU3YzBGdXJX?=
+ =?utf-8?B?RzdjdzdtUGJTNVFKYktjZWxSdllrTitJaWxHNTd6ZHZkYzF4eStxV3Y5Y2Zx?=
+ =?utf-8?B?cTVWQUk1OUZxYXhtNFU0WWZBVVppOWF3QzVoTEJEN1NmRHYwM1QvNytON25E?=
+ =?utf-8?B?NVZia3NuZkdBRFVNVnJmTnN5ZkVjOGU0WU1ORkdTdngzTkl5UE9sbXNTUXRL?=
+ =?utf-8?B?VWhFbUlVdXhIdm0wV1BrVHJMUGxpaS83VWdYZEJZOGFzTVk4dHpHQjNRMmRa?=
+ =?utf-8?B?VmJVUFNMcllDNTdYRW9qc3Rlakt4NlFQU1QzQzM2T1RSbU1ubWlHZlJHT1lv?=
+ =?utf-8?B?c2d6eUdIcDFlU1NNNm4wTUxSRUhDR1JWYmYzTkJzdWpkTmxWRnB5T3VjQVFV?=
+ =?utf-8?B?b2s4ZC9PTWU0blpVbnRoYXVXWnBrNWVtL0pkUEcyZXI0UE5ndWM4cUZmdlFF?=
+ =?utf-8?B?RE5oNVdnV2lwdWw2SUIxWlEyQjE1V1d1bjloZ3dkWGhGcUZydWFxRlBBOXhE?=
+ =?utf-8?B?VFFsdDM1YzZaNmFrV05Dd3dYK0Z0MHlMd25GRWw1eFRPNVhjRlp0NTVKMzBK?=
+ =?utf-8?B?MkliVE1tMXpaelpPWEh0cjBWTDg5VWd2RmpFa2RoM3RWeGNGQ2JoV2RMM3Bk?=
+ =?utf-8?B?VktQZVJ2VXVBcjNsTkF4cjg4Z3RKWWM3UFZZcDlFTnJoZWxkdFZWWEVFME42?=
+ =?utf-8?B?c0d3bll2SzNPTnZ4ZkJFT3JxUEhSQUtBSDdtcm1TZ29TZ21yaWNlZnY1WHhl?=
+ =?utf-8?B?b1JTeE82MWVvaklOajg2Yk1iekxnMkM5Um9mR0NML1FJK3laR1hTekJoYmdJ?=
+ =?utf-8?Q?hadel2HlU+qK+FljudQBil7uzRVBznOQ4EEd7KaWiris?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1248073-092c-4d8c-e55d-08dde17c6ea1
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 13:04:30.6468
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ar6bvxBg/DS9M0RTSuTvk6aXOwBrhuf0MfezSjWmtc3llkKCXjfD/bBVrReneH+UM4kTWvPdT0g9CPcO1qQAzw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9661
 
-On Wed, Aug 13, 2025 at 8:55=E2=80=AFPM Srinivas Pandruvada
-<srinivas.pandruvada@linux.intel.com> wrote:
+On Fri Aug 22, 2025 at 9:57 PM JST, Danilo Krummrich wrote:
+> Hi Alex,
 >
-> During system suspend callback save slider register and restore during
-> resume callback.
+> not a full review yet, but a few ad-hoc comments from skimming over it.
 >
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> On Fri Aug 22, 2025 at 2:47 PM CEST, Alexandre Courbot wrote:
+>> +/// A device-mapped firmware with a set of (also device-mapped) pages t=
+ables mapping the firmware
+>> +/// to the start of their own address space.
+>> +pub(crate) struct GspFirmware {
+>> +    /// The GSP firmware inside a [`VVec`], device-mapped via a SG tabl=
+e.
+>> +    #[expect(unused)]
+>
+> Do we expect this to change? Otherwise, just prefix the field name with a=
+n
+> underscore.
 
-I would combine this with the first patch.
+Yes, all the fields marked unused are eventually used in incoming
+patches.
 
-It doesn't add extra functionality, it's mandatory stuff.
+>
+>> +    fw: Pin<KBox<SGTable<Owned<VVec<u8>>>>>,
+>> +    /// The level 2 page table, mapping [`Self::fw`] at its beginning.
+>> +    #[expect(unused)]
+>> +    lvl2: Pin<KBox<SGTable<Owned<VVec<u8>>>>>,
+>> +    /// The level 1 page table, mapping [`Self::lvl2`] at its beginning=
+.
+>> +    #[expect(unused)]
+>> +    lvl1: Pin<KBox<SGTable<Owned<VVec<u8>>>>>,
+>
+> Instead of creating three allocations, just make struct GspFirmware pin_d=
+ata by
+> itself. This should even propagate down to struct Gpu, which is pin_data.
+>
+> So everything can be in one single allocation.
 
-> ---
->  .../int340x_thermal/processor_thermal_device.c    | 10 ++++++++++
->  .../int340x_thermal/processor_thermal_device.h    |  2 ++
->  .../processor_thermal_soc_slider.c                | 15 +++++++++++++++
->  3 files changed, 27 insertions(+)
->
-> diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_devi=
-ce.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> index 4aea5c9baae9..a772c187bedb 100644
-> --- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> +++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> @@ -338,10 +338,17 @@ static int tcc_offset_save =3D -1;
->
->  int proc_thermal_suspend(struct device *dev)
->  {
-> +       struct proc_thermal_device *proc_dev;
-> +
->         tcc_offset_save =3D intel_tcc_get_offset(-1);
->         if (tcc_offset_save < 0)
->                 dev_warn(dev, "failed to save offset (%d)\n", tcc_offset_=
-save);
->
-> +       proc_dev =3D dev_get_drvdata(dev);
-> +
-> +       if (proc_dev->mmio_feature_mask & PROC_THERMAL_FEATURE_SOC_POWER_=
-SLIDER)
-> +               proc_thermal_soc_power_slider_suspend(proc_dev);
-> +
->         return 0;
->  }
->  EXPORT_SYMBOL_GPL(proc_thermal_suspend);
-> @@ -357,6 +364,9 @@ int proc_thermal_resume(struct device *dev)
->         if (tcc_offset_save >=3D 0)
->                 intel_tcc_set_offset(-1, tcc_offset_save);
->
-> +       if (proc_dev->mmio_feature_mask & PROC_THERMAL_FEATURE_SOC_POWER_=
-SLIDER)
-> +               proc_thermal_soc_power_slider_resume(proc_dev);
-> +
->         return 0;
->  }
->  EXPORT_SYMBOL_GPL(proc_thermal_resume);
-> diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_devi=
-ce.h b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.h
-> index ba3f64742f2f..30760475102f 100644
-> --- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.h
-> +++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.h
-> @@ -130,5 +130,7 @@ int proc_thermal_ptc_add(struct pci_dev *pdev, struct=
- proc_thermal_device *proc_
->  void proc_thermal_ptc_remove(struct pci_dev *pdev);
->
->  int proc_thermal_soc_power_slider_add(struct pci_dev *pdev, struct proc_=
-thermal_device *proc_priv);
-> +void proc_thermal_soc_power_slider_suspend(struct proc_thermal_device *p=
-roc_priv);
-> +void proc_thermal_soc_power_slider_resume(struct proc_thermal_device *pr=
-oc_priv);
->
->  #endif
-> diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_=
-slider.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_slid=
-er.c
-> index bd4ff26a488b..268bf9124d95 100644
-> --- a/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_slider.=
-c
-> +++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_slider.=
-c
-> @@ -248,6 +248,21 @@ int proc_thermal_soc_power_slider_add(struct pci_dev=
- *pdev, struct proc_thermal_
->  }
->  EXPORT_SYMBOL_NS_GPL(proc_thermal_soc_power_slider_add, "INT340X_THERMAL=
-");
->
-> +static u64 soc_slider_save;
-> +
-> +void proc_thermal_soc_power_slider_suspend(struct proc_thermal_device *p=
-roc_priv)
-> +{
-> +       soc_slider_save =3D readq(proc_priv->mmio_base + SOC_POWER_SLIDER=
-_OFFSET);
-> +
-> +}
-> +EXPORT_SYMBOL_NS_GPL(proc_thermal_soc_power_slider_suspend, "INT340X_THE=
-RMAL");
-> +
-> +void proc_thermal_soc_power_slider_resume(struct proc_thermal_device *pr=
-oc_priv)
-> +{
-> +       writeq(soc_slider_save, proc_priv->mmio_base + SOC_POWER_SLIDER_O=
-FFSET);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(proc_thermal_soc_power_slider_resume, "INT340X_THER=
-MAL");
-> +
->  MODULE_IMPORT_NS("INT340X_THERMAL");
->  MODULE_LICENSE("GPL");
->  MODULE_DESCRIPTION("Processor Thermal Power Slider Interface");
-> --
-> 2.43.0
->
->
+Ah, I was actually wondering - thanks, will try and do that.
 
