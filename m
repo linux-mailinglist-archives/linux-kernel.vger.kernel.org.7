@@ -1,141 +1,200 @@
-Return-Path: <linux-kernel+bounces-781833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31AEEB31760
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:16:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A05ECB31778
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70A941D203B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:16:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FC62B04492
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40C92FDC55;
-	Fri, 22 Aug 2025 12:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078FC14A4DB;
+	Fri, 22 Aug 2025 12:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FpZ586V4"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RhWmqziw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715442FD1BB
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385892F99A4;
+	Fri, 22 Aug 2025 12:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755864879; cv=none; b=BeX6WoFJFwHttVcanAjY2VxN/0BPUhbi0lh38/eRjCavfgQlwQKaBe41w3c+lEsxXI69NRUIuIRvbTSHiHpaHeHvCiOToFF7WccQX78P/7KgVSLWaEAHOPv2d+C0dahbtsbahwJ76Kh5G6brtf6OA/ZGWRzp/yT8+GV6qshKxcY=
+	t=1755864915; cv=none; b=mwE+jvLrDetZTxzQruaecm9KrrQcVD2YL3Wzu0VPapdXykL27A7BI81gQxsA8Pm1Mu8uRvEQCvxSBvOxvIQJJsph6L+3rf1cPzSPUHI61SUXb17VczU4mVlzEdq7svCGcFEH4sc9X4LTzjK2pJxBFhatmOcb9+WmTi6OW2sFnrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755864879; c=relaxed/simple;
-	bh=Xg8fbeULkVAunNHSuMSzm27A8P/HmltLuUUNMaXdfUY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AVhTwvuynkb66tVe0d5c6qanyAhwwEJ+4qp6py5mOVdvFov8JXkKWR1hg521KT7woigszAMTqJxz8AvkHDltyD9z/ksdK8yn3jsP9Hvwz62CPwJvS7ENlnLKavzGaC8k3B0UZUP4eekwdC+7ho4e7zVsGH/vf1RyWMb3+d6LiZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FpZ586V4; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6188b6f5f9aso277704a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:14:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755864876; x=1756469676; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bS3pk4A3vwWotpGEwKef8o97dm0WRz75Dj7bwTZ/WIk=;
-        b=FpZ586V4jzS9Sag5EmwpsZGuE9eFD1gXm3TwlB9woUbDVQrgdAa3OfL8Itp2EPK11Q
-         Hjb+YzeOSM6GfG0HDUDWfrM6/SRnfixuvS2/R49U63+NdrL201P4re6QPlB4kYCP7EQl
-         fzf4TMp82/2aP+rerfygIyaenkG4AmA8xsuAFspyn9ydHg0lCP8/q1g4ohBHREDBvysa
-         Zfq/vgsYrjHMCNmIOmBjrNdVHOuwVA1EplYiEsal3wpPt+F+7jhvphCR4xJzcDelsnv+
-         bF3cTkj4SbIiVPr6Xu1ggM6tn1zgbyla2BktMKQ8juTANULfQQ0IZS+/LuLMzhotbBoA
-         N2Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755864876; x=1756469676;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bS3pk4A3vwWotpGEwKef8o97dm0WRz75Dj7bwTZ/WIk=;
-        b=NnkOID7X9rI7NbxIKscyCb/gu0bxL2M1Z2DHvJ+OF86p/+BRVFFIru5vTLhIL3rDRW
-         GhNRpI7vnnicruQeWXH1kUt5krqq6Iam2TEjVaBrVH5ZNAQSSovG9/eVC8+6Dx4z0HJG
-         xKzhpGhu+Iopvzkq9OidiXf1/pVwwlUWnRhtC9DM0rFoNwwKcm1QU9iqb78ua0gBnjFf
-         aZdsWDTy0MnLGSq4uKDXG2u6EsCNFZfY4WxP3THe81xCUZmujAhMTLhizbSCv5XDf6KX
-         PCqRJRE42g7gb/DRMsQvqqvTPnX75BB6bjYeOsPoGCmZbQXzxIyD6LEcXM0ll1fGj+8n
-         DlZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUXbCs6A2J632OClmFZcbpDLao/sHSln+FR5gcFkRTGjd+3EEZl5W1jkrvT7lbrNX6trHB9AdgL57fcN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXOFJf/sSTtZiOxG9MjYf6svrt02PunI/Xb1h7l/W9wjI5YWkb
-	33A2/8cAluV5YILglmx9SHXfFA5wGdivMdFKT53u8r+n8rjHzN3iwGL8qDWtntXqkB4=
-X-Gm-Gg: ASbGnctsrW56Gk7mWusEfck0jJ+G6fRBd8IGqEqVSWHKYKx1EXjdwVDzs8wC8wX65zj
-	O7VrF46wL8rZuioqVvU7svwfSKaA408ienCIp7iR1wrDIxN5ke3YqienpebAZWHGfeUO9F/YIld
-	ZuX0wxIRb5uaM/Rym6Vd7DvRv695ugktib5Va3/cHvTLrLhv1OiN6a727HZq90ILFz1iHS+19ns
-	VEPvUiw465bgyiI0mou1PVSCiUnIyEy8udkuVQMN66GIn7a6nV4RlZsMNne5NAbqrudzpioex9s
-	14nU+Ku8xB8v6F7LGblbfL2l0XyAR0pm++/9CJhOrO++yTr2R9+AtmqhXm4RWldvbfEzCZ+HYNZ
-	xFtOONLvpxIjVyvg0BQpLU+H9/E85/J1nGAM+JBBVLQj5
-X-Google-Smtp-Source: AGHT+IEs5KmocG/KlG2h0mSlEdpjChfOeNLb5C+4lvVluwFDeR16CG9SFzVcRYZbx4Bk+B/miczFYA==
-X-Received: by 2002:a05:6402:34c3:b0:61b:cadd:d84 with SMTP id 4fb4d7f45d1cf-61c1b2193c5mr1231624a12.0.1755864875727;
-        Fri, 22 Aug 2025 05:14:35 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61a75778c5dsm6842065a12.31.2025.08.22.05.14.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 05:14:35 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	linux-fsd@tesla.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 4/4] arm64: dts: exynos2200: Add default GIC address cells
-Date: Fri, 22 Aug 2025 14:14:27 +0200
-Message-ID: <20250822121423.228500-8-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250822121423.228500-5-krzysztof.kozlowski@linaro.org>
-References: <20250822121423.228500-5-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1755864915; c=relaxed/simple;
+	bh=1skKBQN9bkuB1K4Hq6zHIcgUjRNl091GUakh3Rk7h6Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tRsrKwwMXl7kpSSWUndHJV9CRifQIezPsjx785X1pMGh4VhiuW+0Qmgnk/5DXlx1shW5xh+lou2oi5fWSFJPeA25Z+Tlr/a0s6f9VnS3BCAvPleEm+y38SBe+hnNlKNVoco9IRIW07wfUiji0GreGugvw7XwvJ8tiXVko5t6CIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RhWmqziw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6372C116C6;
+	Fri, 22 Aug 2025 12:15:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755864914;
+	bh=1skKBQN9bkuB1K4Hq6zHIcgUjRNl091GUakh3Rk7h6Q=;
+	h=From:Subject:Date:To:Cc:From;
+	b=RhWmqziwcemXkubBDoF3bXvQZbw7G5qaw4QPcqzsBgkzJ49KAsvZPKj9uLYjIK7i/
+	 hY6LgvRxxOibiAtcMq26fmULbNYuWIfwcsQV8Unt2s+Erc8QSGWsERF/aam95VjvNC
+	 q5O2qAf16+QCy2iSjYukka9tcl3N6D6DslT8qhFaaZkxUWNMnV/fq7WP6arYV15KIp
+	 LJdZUfz6buPkiEj7huPNyt2ARpxAWv9J1njcVRIcRMLeNj/3qeNykxr2bw3hkjPQBo
+	 KfGO3Je7UY16CGC8iSdqVHk1antE33VbNoRE3Wlu8LAlcEXElN2dGuzZHAJ1202Pv2
+	 AXLbhN0i3UcOg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+Subject: [PATCH v6 00/18] rnull: add configfs, remote completion to rnull
+Date: Fri, 22 Aug 2025 14:14:36 +0200
+Message-Id: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=863; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=Xg8fbeULkVAunNHSuMSzm27A8P/HmltLuUUNMaXdfUY=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoqF8iqytdsSKdAQp7OV0wh+MN7sQXLAODPAJWe
- RxyvnA72wKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKhfIgAKCRDBN2bmhouD
- 1/FrD/9T8gtPfLYVVMoSMObYA+o3SUHEGhUwlrr6NN6OsRErI+9TnP2Q60WHSUBrmH1Vch3Us/B
- egXQwdy5DAy94htJnu9b1V/jPaM6OfVsOOPCW+2hJZR0bBo3a8DRn2Wsh/KJRLhswIO9cA3EOUX
- zhz1blWRGOpRavXkXC32Q2zE+73l/OVNrKzOdAlt2t2Pzwyc4pmkptaEm4UKR3CIqAdBK8lkPAw
- 5WXFs1090LyabpZhqMwaLKxg+l97LUfrico+E/8eez/UP0dIzbgPF4wz3dj/LOWohZVCR4TDHvT
- 77VPH/BA/3UsW3pUVSKsgl4/TRDQG6rZHfHOzGtmxMNfJYIfc0JwhYdJqig/nyNGOQiFtNdgF5N
- YO0A7jVXw/Ut721AguDqg3J4/7kZEprvgjXIna38iX6WCi82RupWRtIFu/IdrFGcfmPv4iCICDr
- ew0O3vZr3wdD311zj77Os6N+Gm5hHnr52YyKqm1QNo2uny5P4oq5QPRo0GYt1T2K3cweGPn+8Tx
- 6mHu6xRaGKidjX98H5ACEwF11d4vZvRZQhaDPDJtG5R/YRheG1N7XNTZ8RVH8vss71G+TFpxr3D
- Nhedh15zAS1ym05PrHCcBiXqDhMyBXDF81XmMRaMomjHbmUyK3r5Sq6xPOKqBwL7tIkeIOqg9Mm Dl45IID/LarMebQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACxfqGgC/3XMwYrCMBSF4VeRrM2Qe5Obpq58j8FF095qsLSSa
+ hiRvvukblSCy//Adx5i5hh4FrvNQ0ROYQ7TmMNuN6I9NeORZehyC1RIyoKVcbwNg7xdZLIypzd
+ UAaPrmVlkdInch7/n4e8h9ynM1ynen/8J1vXrVQKpZGPAOu+4sh73Z44jDz9TPIr1K+HLV8oVH
+ lfva92qvjdY+8LrNw9QeJ29btCiN4w1QuHNyzvAwpvsuXMKuk77htrC07unwlP25MCQBjQt0Id
+ fluUf/4oUr60BAAA=
+X-Change-ID: 20250616-rnull-up-v6-16-b4571e28feee
+To: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+ Jens Axboe <axboe@kernel.dk>, Breno Leitao <leitao@debian.org>
+Cc: linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Daniel Almeida <daniel.almeida@collabora.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5398; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=1skKBQN9bkuB1K4Hq6zHIcgUjRNl091GUakh3Rk7h6Q=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBoqF8v0tbDwWXBOxZ8mFeZdsTIZI4twbwH3oeRs
+ N6s/nkPqw6JAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaKhfLwAKCRDhuBo+eShj
+ d6cMEAC071sRIFG3BrPTzyKoy+BxUSbIVwJ5FEm6uUWwWa2ueA03hHpR/kcjEj8tx8k0bfHQTaA
+ jePoiHd7KikdAi/ROcZCEb2aztkFj3M60bKOsY6zH4tXNcH2AzGJAOvLAZUgXcyKA6qBE/6wIuX
+ BxdVOmKKAAia9hPMh1bYgvTAR66gTOg5brbB6woRT/bDJocTg5IEme1aSdhnufRGx/pEcKDkF+f
+ e9Wq6Wc0bI0tDBJWyqeaIp4wABOoIFITakE09HQTfBWGpJuGgjUsuS7b+48jtE8EMoz/awzDrFb
+ t8kLFu93JD+SY9A7mCo3kZwcjLLBRnZRjAJasaxDr7iClqzt070lvz9+YiewSM/k9X5Q43xLBCW
+ ThB3IUnifR6ITRjzEX3MIlBHwgnlSuyxw4zzhavw85MXSAIyI1irwtxPtlvo1L0cN3fwxYk5I7y
+ 40GWrC36dcjfaHHSlQegDxl7/cLF4M5uONOvW1p/TUi3NPmwh8dMrbdEfIUhJ3G5A4MR406ib/B
+ SVbKRKVUSthvXN25qsKnOHN5XLXBXuQYbYVxsJItq7ydp+E7PCtRau3SpF6ChuFwMZDSB6lrqCH
+ 4cbuOVhEkGA8lAk8beANwkb4AfWQ3IaeoJz/VVdakC+n6HaZNDePJwqHB52pf5VASehxnU8YAm9
+ 4x7tupfRPgu2T2Q==
+X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
+ fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-Add missing address-cells 0 to GIC interrupt node.  Value '0' is correct
-because GIC interrupt controller does not have children.
+This series adds configuration via configfs and remote completion to
+the rnull driver. The series also includes a set of changes to the
+rust block device driver API: a few cleanup patches, and a few features
+supporting the rnull changes.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The series removes the raw buffer formatting logic from `kernel::block`
+and improves the logic available in `kernel::string` to support the same
+use as the removed logic.
+
+This series is a smaller subset of the patches available in the
+downstream rnull tree. I hope to minimize the delta between upstream
+and downstream over the next few kernel releases.
+
+Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 ---
- arch/arm64/boot/dts/exynos/exynos2200.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v6:
+- Move re-export of `configfs_attrs` next to macro.
+- Use implicit coersion to pointer in `kstrtobool`.
+- Change the name of `bool_to_bytes` to `kstrtobool_bytes` and improve the implementation.
+- Remove a useless pointer cast in "rust: block: add `GenDisk` private data support".
+- Get `GFP_KERNEL` from the prelude in "rnull: enable configuration via `configfs`".
+- Rebased on v6.17-rc2.
+- Link to v5: https://lore.kernel.org/r/20250815-rnull-up-v6-16-v5-0-581453124c15@kernel.org
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos2200.dtsi b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
-index 6b5ac02d010f..b1fe315b40fd 100644
---- a/arch/arm64/boot/dts/exynos/exynos2200.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
-@@ -273,6 +273,7 @@ gic: interrupt-controller@10200000 {
- 			reg = <0x0 0x10200000 0x0 0x10000>,     /* GICD */
- 			      <0x0 0x10240000 0x0 0x200000>;    /* GICR * 8 */
- 
-+			#address-cells = <0>;
- 			#interrupt-cells = <4>;
- 			interrupt-controller;
- 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH 0>;
+Changes in v5:
+- Re-export `configfs_attrs` from the `configfs` module.
+- Remove transient stray dead code `NullTerminatedFormatter::from_array`.
+- Use `kstrtobool` when parsing boolean values through configfs.
+- Remove a stray space in `pin_init!` macro invocation.
+- Remove useless calls to `ptr::cast` when retrieving `queue_data`.
+- Rearrange positioning of safety comments.
+- Link to v4: https://lore.kernel.org/r/20250812-rnull-up-v6-16-v4-0-ed801dd3ba5c@kernel.org
+
+Changes in v4:
+- Rebase on v6.17-rc1
+- Merge patches that expose `str::{Formatter, RawFormatter}` publicly.
+- Remove `NullTerminatedFormatter::from_array`.
+- Change signature of `Formatter::new`.
+- Change invariant wording for `NullTerminatedFormatter`.
+- Add missing period in comment for `SECTOR_MASK`.
+- Rephrase docstring for PAGE_SECTORS_SHIFT.
+- Use `write_str` rather than `write_fmt` where applicable.
+- Improve boolean parsing in rnull configfs interface.
+- Be explicit when intentionally dropping data (GenDisk::drop).
+- Add minimum size invariant to `NullTerminatedFormatter`.
+- Import `EINVAL` from the prelude.
+- Link to v3: https://lore.kernel.org/r/20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org
+
+Changes in v3:
+- Rename `NullBorrowFormatter` as `NullTerminatedFormatter`.
+- Remove `pos` from `NullBorrowFormatter`.
+- Call into `Self::new` in `NullBorrowFormatter::from_array`.
+- Use `Option` return type in `NullBorrowFormatter::from_array`
+- Use `Option` return type in `NullBorrowFormatter::new`.
+- Remove `BorrowFormatter` and update `Formatter` with a generic lifetime.
+- Split visibility change of `str::Formatter` into separate patch.
+- Link to v2: https://lore.kernel.org/r/20250708-rnull-up-v6-16-v2-0-ab93c0ff429b@kernel.org
+
+Changes in v2:
+- Rework formatter logic. Add two new formatters that write to slices,
+  one of which adds a trailing null byte.
+- Reorder and split patches so that changes are more clear.
+- Fix a typo in soft-irq patch summary.
+- Link to v1: https://lore.kernel.org/r/20250616-rnull-up-v6-16-v1-0-a4168b8e76b2@kernel.org
+
+---
+Andreas Hindborg (18):
+      rust: str: normalize imports in `str.rs`
+      rust: str: allow `str::Formatter` to format into `&mut [u8]`.
+      rust: str: expose `str::{Formatter, RawFormatter}` publicly.
+      rust: str: introduce `NullTerminatedFormatter`
+      rust: str: introduce `kstrtobool` function
+      rust: str: add `bytes_to_bool` helper function
+      rust: configfs: re-export `configfs_attrs` from `configfs` module
+      rust: block: normalize imports for `gen_disk.rs`
+      rust: block: use `NullTerminatedFormatter`
+      rust: block: remove `RawWriter`
+      rust: block: remove trait bound from `mq::Request` definition
+      rust: block: add block related constants
+      rnull: move driver to separate directory
+      rnull: enable configuration via `configfs`
+      rust: block: add `GenDisk` private data support
+      rust: block: mq: fix spelling in a safety comment
+      rust: block: add remote completion to `Request`
+      rnull: add soft-irq completion support
+
+ MAINTAINERS                        |   2 +-
+ drivers/block/Kconfig              |  10 +-
+ drivers/block/Makefile             |   4 +-
+ drivers/block/rnull.rs             |  80 -----------
+ drivers/block/rnull/Kconfig        |  13 ++
+ drivers/block/rnull/Makefile       |   3 +
+ drivers/block/rnull/configfs.rs    | 262 +++++++++++++++++++++++++++++++++++++
+ drivers/block/rnull/rnull.rs       | 104 +++++++++++++++
+ rust/kernel/block.rs               |  13 ++
+ rust/kernel/block/mq.rs            |  14 +-
+ rust/kernel/block/mq/gen_disk.rs   |  54 ++++++--
+ rust/kernel/block/mq/operations.rs |  65 +++++++--
+ rust/kernel/block/mq/raw_writer.rs |  55 --------
+ rust/kernel/block/mq/request.rs    |  21 ++-
+ rust/kernel/configfs.rs            |   2 +
+ rust/kernel/str.rs                 | 163 +++++++++++++++++++++--
+ samples/rust/rust_configfs.rs      |   2 +-
+ 17 files changed, 675 insertions(+), 192 deletions(-)
+---
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+change-id: 20250616-rnull-up-v6-16-b4571e28feee
+
+Best regards,
 -- 
-2.48.1
+Andreas Hindborg <a.hindborg@kernel.org>
+
 
 
