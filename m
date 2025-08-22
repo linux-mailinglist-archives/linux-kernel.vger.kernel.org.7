@@ -1,126 +1,166 @@
-Return-Path: <linux-kernel+bounces-781615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF0EB3148E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:01:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07899B3153E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E2CE1CE2FB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:58:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A29E1CE6A20
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579F42EE29D;
-	Fri, 22 Aug 2025 09:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Npwpj4Dx"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D6B1BFE00;
-	Fri, 22 Aug 2025 09:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34F02F3609;
+	Fri, 22 Aug 2025 10:21:24 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FDD2F872;
+	Fri, 22 Aug 2025 10:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755856583; cv=none; b=bHU0WYEMjuI3sF7BCM+MUpJ9+0RltVjagujjkRzZn//W3v7AkHs8ldd3IVuM4PdS5lD1Kch95+sB1lNT2BirZlkVMLFddWTeiUoa2eTQsVWVMuC3oK8q/qev6y+pugpghC1OYpULGgStJ6p0cBZefqVQNaoMSXkr51QRJui/jQY=
+	t=1755858084; cv=none; b=ZpIoN/fYP2bAwCsDp4mRcLNNS/6VAN+CMlESsuI0j2a3lkI8MSK293oiKv1AxYBLjFqvCsxTnPdwHLzd7nMHwHh/NQNIeMlR4aT+Yqt3FtyiuFsJgZ30eMgYeIB/DLDtZDfs3mVorceh2QPrQbirJ4r0hFF0qpT9EmngdFZeZLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755856583; c=relaxed/simple;
-	bh=2givOylEnr0yX9tChhm21ireUXa6/Th9iVp9vfknWMg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mb+FXJR1MLmOlfWWxKEnUsZDUKFZUoQ62rUCds2pkTV2k2drg2BUrnCC4JQH1N+6REuEkja/iFl7Vz9WAY9W1XGyaktvCfJDUKbsRJvws+QFEQPtablXCSJFJzdl3O/4pAGyO25wBcGjEFSr19bu6DRzj6meHl4epAixGzYAWzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Npwpj4Dx; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61c20e28380so754019a12.1;
-        Fri, 22 Aug 2025 02:56:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755856580; x=1756461380; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JtaeRXCFkR+O5mEXivZeTbeJaIoLBp/G3PsDU98MzXI=;
-        b=Npwpj4DxpfNIoMcd4YPmt/Nm8dA+ctJkUMLVUjkU0fHuYbcs2M0I0Zb5skaMFLIx+g
-         1VRwhyRtFd5M6RGCQM4tpFUB62QDISkwvC/I3EW7bK+AgrbApm+X8ny3WhdvgEjzHUzE
-         egS7g9H9bcCq/e9ZV6+qOkN5SmrbaFRuR5mUvz9oqC6/wThHAfLqhyu65GCV+kzGlFOk
-         TpBvWEGlgpgH5M8PQP0OiSWuyn8HHAuIXHgyERuSz6DX0zC9V7eQl7UJbeWTIbtbLhjd
-         ngG6J6qByxLCXdv47De0qVVB48RN4d20t+ISIvmIW/nLBtr6Z3PbD1/IqV6AMbSqe6FB
-         n9bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755856580; x=1756461380;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JtaeRXCFkR+O5mEXivZeTbeJaIoLBp/G3PsDU98MzXI=;
-        b=tGeRSAQsoHa8IgA2hwVbqU1XxTwoaLdkxNkxMWs3Q2LDs2t+iAJD/ZYqXbjB9+g7+d
-         HbpiNIONMpHGZua7awrWPhHAfgDCtwom5zXuCWETsesjR2aXcZUG9MSlx67ByEKN3L5Q
-         vBUSmZIcm5Qf8fJO4BKDrCGh2Hs/nVEv4iyHmBJvmKtRybILpjaW8oWxPXanSig2R3LT
-         WlLQO/lUOFiTWNBYAhgfu9e2ior81PMuv+0fX05dXanD9zN7U4s5i1GB+g4XoOINeEPg
-         0zvLl7VNUK6P8jOzuRAJHmKBREvYJLqAl+TsreP/N3SA61LKc9grovgMX7Q+S/l6dQ+p
-         jrLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWc4dccEfj3YOrz1aPV5/viVcpQ1pHxkMf1kMz/lctqOUtdRgwr91YHzEHVBTpO8woJdK7ixvNxi8LQ0AA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHkx1vDW5oocMRo+9SmY93FZFBpW2LFPGw3PJGZ7Qd+z18Zv8l
-	jnq7qs1PGhoZThOYvB6uIigwBYNPpeysdg763mFoVIASJRMmrjUvEO5a
-X-Gm-Gg: ASbGncsQOOcRvjTo2JJI5CJ90AyqgFR/qjAHOFxrLmQUdPH+kM4HNoWO09BvPNz+fdf
-	t8F3s+M5CW45E6AYmhMbKgZorj6MBOSh9aelABA4WzXulB3g2xz7KWHjmDgubAb6IxB6NxScI0Y
-	471k6Gsk1Pn9qVkUKJOEHUWc670xKklJnKIPL9XOrEm0Vkf+xsZs/zbdfzWPLMEtAl+PVWtLD8j
-	rcq8z87fU/NvdGAFjdSMYtk4fWuLC9odGDg5uGx24s8myiP73sS0b6AOWzMMEWD4aViohDqwgfa
-	C0dVdHXeU0+W2l1l9A24i1ksj3FDl4wvTIAhxTItsAo+pcmmUXFvch49zhFKYeN7LBne3OLBoQ3
-	bvwUzl01PJ3uh6ZltVjLrVmVTbuo8wnod4o+cCCu74sXDHRZ2vkLf+GQBedKwfL4T5G/ZLwbPOK
-	wsoDsX
-X-Google-Smtp-Source: AGHT+IF/k4XTcpzBgvkI/JGQTo9MzSpeL581PIbIAwXl3racEgZAtIwEgGrL4eHbKYwnPJcSn6Q/AQ==
-X-Received: by 2002:a05:6402:2787:b0:618:8702:522c with SMTP id 4fb4d7f45d1cf-61c1b28ab9bmr1899232a12.0.1755856580063;
-        Fri, 22 Aug 2025 02:56:20 -0700 (PDT)
-Received: from XPS.. ([2a02:908:1b0:afe0:2cf9:d2f0:ffe6:6e52])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c25709d66sm399027a12.22.2025.08.22.02.56.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 02:56:19 -0700 (PDT)
-From: Osama Abdelkader <osama.abdelkader@gmail.com>
-To: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	mingo@kernel.org,
-	john.ogness@linutronix.de,
-	tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Osama Abdelkader <osama.abdelkader@gmail.com>
-Subject: [PATCH v3] serial: 8250_core: fix coding style issue
-Date: Fri, 22 Aug 2025 11:56:13 +0200
-Message-ID: <20250822095614.18108-1-osama.abdelkader@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755858084; c=relaxed/simple;
+	bh=/phN/AgtMsLAd6ka2rRe1+fTTKRpm5UtXySxy3tBMG8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ACaVQdkPgSVEQZKgPmQA+ZTMUIFjxXW/VypnAE/lkqbZRne3w3qeygvP8DhKmDUTL1UkjWl84vN43uVD4xDJSJp5ol2FSzQU+vSMU7XgAEveCD3rsZqBXEqYz2EVh3LvafRJFXsVVjqAQ7XeZvEsUvAtLD6HZ/Vlif/Dr+SK68E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4c7bGk5BLBz9sS8;
+	Fri, 22 Aug 2025 11:58:06 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id IWDZVwqsS1ox; Fri, 22 Aug 2025 11:58:06 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4c7bGk4BThz9sRs;
+	Fri, 22 Aug 2025 11:58:06 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7BEF38B781;
+	Fri, 22 Aug 2025 11:58:06 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id eIHQVHg49t7f; Fri, 22 Aug 2025 11:58:06 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6BEC98B775;
+	Fri, 22 Aug 2025 11:58:05 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	"Andre Almeida" <andrealmeid@igalia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Laight <david.laight.linux@gmail.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Daniel Borkmann <daniel@iogearbox.net>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-block@vger.kernel.org
+Subject: [PATCH v2 00/10] powerpc: Implement masked user access
+Date: Fri, 22 Aug 2025 11:57:56 +0200
+Message-ID: <cover.1755854833.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755856678; l=3745; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=/phN/AgtMsLAd6ka2rRe1+fTTKRpm5UtXySxy3tBMG8=; b=1V9AFEKpjDyk6FnUrGnkLYoDWwBrkQcqv5fCGwg429FpoGvEzmMQhX1fRZY0SIQqSAI16OrRi R6sNAdKx0x1A+t4how5qZX/b5neGHfNC9U+6+4eTmM1L60Bhm6fz49y
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-Fix a coding style issue in 8250_core.c:
+Masked user access avoids the address/size verification by access_ok().
+Allthough its main purpose is to skip the speculation in the
+verification of user address and size hence avoid the need of spec
+mitigation, it also has the advantage to reduce the amount of
+instructions needed so it also benefits to platforms that don't
+need speculation mitigation, especially when the size of the copy is
+not know at build time.
 
-- Remove redundant NULL initialization of a global pointer
+Patches 1,2,4 are cleaning up some redundant barrier_nospec()
+introduced by commit 74e19ef0ff80 ("uaccess: Add speculation barrier
+to copy_from_user()"). To do that, a speculation barrier is added to
+copy_from_user_iter() so that the barrier in powerpc raw_copy_from_user()
+which is redundant with the one in copy_from_user() can be removed. To
+avoid impacting x86, copy_from_user_iter() is first converted to using
+masked user access.
 
-Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
----
-v2:
-- Dropped extra blank line after gpios declaration
-v3:
-- Added changelog to commit message
----
- drivers/tty/serial/8250/8250_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch 3 adds masked_user_read_access_begin() and
+masked_user_write_access_begin() to match with user_read_access_end()
+and user_write_access_end().
 
-diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-index feb920c5b2e8..225bb7e4b89c 100644
---- a/drivers/tty/serial/8250/8250_core.c
-+++ b/drivers/tty/serial/8250/8250_core.c
-@@ -307,7 +307,7 @@ static void univ8250_release_irq(struct uart_8250_port *up)
- 		serial_unlink_irq_chain(up);
- }
- 
--const struct uart_ops *univ8250_port_base_ops = NULL;
-+const struct uart_ops *univ8250_port_base_ops;
- struct uart_ops univ8250_port_ops;
- 
- static const struct uart_8250_ops univ8250_driver_ops = {
+Patches 5,6,7 are cleaning up powerpc uaccess functions.
+
+Patches 8 and 9 prepare powerpc/32 for the necessary gap at the top
+of userspace.
+
+Last patch implements masked user access.
+
+Changes in v2:
+- Converted copy_from_user_iter() to using masked user access.
+- Cleaned up powerpc uaccess function to minimise code duplication
+when adding masked user access
+- Automated TASK_SIZE calculation to minimise use of BUILD_BUG_ON()
+- Tried to make some commit messages more clean based on feedback from
+version 1 of the series.
+
+Christophe Leroy (10):
+  iter: Avoid barrier_nospec() in copy_from_user_iter()
+  uaccess: Add speculation barrier to copy_from_user_iter()
+  uaccess: Add masked_user_{read/write}_access_begin
+  powerpc/uaccess: Move barrier_nospec() out of
+    allow_read_{from/write}_user()
+  powerpc/uaccess: Remove unused size and from parameters from
+    allow_access_user()
+  powerpc/uaccess: Remove
+    {allow/prevent}_{read/write/read_write}_{from/to/}_user()
+  powerpc/uaccess: Refactor user_{read/write/}_access_begin()
+  powerpc/32s: Fix segments setup when TASK_SIZE is not a multiple of
+    256M
+  powerpc/32: Automatically adapt TASK_SIZE based on constraints
+  powerpc/uaccess: Implement masked user access
+
+ arch/powerpc/Kconfig                          |   3 +-
+ arch/powerpc/include/asm/barrier.h            |   2 +-
+ arch/powerpc/include/asm/book3s/32/kup.h      |   3 +-
+ arch/powerpc/include/asm/book3s/32/mmu-hash.h |   5 +-
+ arch/powerpc/include/asm/book3s/32/pgtable.h  |   4 -
+ arch/powerpc/include/asm/book3s/64/kup.h      |   6 +-
+ arch/powerpc/include/asm/kup.h                |  52 +------
+ arch/powerpc/include/asm/nohash/32/kup-8xx.h  |   3 +-
+ arch/powerpc/include/asm/nohash/32/mmu-8xx.h  |   4 -
+ arch/powerpc/include/asm/nohash/kup-booke.h   |   3 +-
+ arch/powerpc/include/asm/task_size_32.h       |  28 +++-
+ arch/powerpc/include/asm/uaccess.h            | 134 +++++++++++++-----
+ arch/powerpc/kernel/asm-offsets.c             |   2 +-
+ arch/powerpc/kernel/head_book3s_32.S          |   6 +-
+ arch/powerpc/mm/book3s32/mmu.c                |   4 +-
+ arch/powerpc/mm/mem.c                         |   2 -
+ arch/powerpc/mm/nohash/8xx.c                  |   2 -
+ arch/powerpc/mm/ptdump/segment_regs.c         |   2 +-
+ fs/select.c                                   |   2 +-
+ include/linux/uaccess.h                       |   7 +
+ kernel/futex/futex.h                          |   4 +-
+ lib/iov_iter.c                                |  22 ++-
+ lib/strncpy_from_user.c                       |   2 +-
+ lib/strnlen_user.c                            |   2 +-
+ 24 files changed, 172 insertions(+), 132 deletions(-)
+
 -- 
-2.43.0
+2.49.0
 
 
