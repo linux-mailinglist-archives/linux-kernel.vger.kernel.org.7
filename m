@@ -1,225 +1,172 @@
-Return-Path: <linux-kernel+bounces-782262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF4BDB31DDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:15:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C205B31D49
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB0686476D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:05:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D07CA4E6BA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D97A1DE3D6;
-	Fri, 22 Aug 2025 15:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Fnw2lP6r";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nAow2dWp"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC45E1E32DB;
+	Fri, 22 Aug 2025 15:02:02 +0000 (UTC)
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA771CB518;
-	Fri, 22 Aug 2025 15:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F153C1DE2CF;
+	Fri, 22 Aug 2025 15:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755874866; cv=none; b=MDYoUlszPRP/d67Ry54CapKiCbba/s3HUBEd9vWyVvBXCz4Fi1ShFIeaOPdSnUdsZJ0U4QRYRAk4vYqIR6n3/cWyBu8csa6aD2qcNjaX++2O4AmirTiLGyWN49QWUxrqFuV/TYTqly70ue2ZQrWsU7evdZ4eqezQNTghnV1LLFU=
+	t=1755874922; cv=none; b=DTh+ii5J8q2cRkBgN4XAMHSVj6CVZlU4CdeksPTjBANp2hixXUbbWcXgubRiuxImeyLblkv9nQKbWUAyupidwGXs5oTmMuvOs/9BNvrL59wePltdUKoB0CSS5koaUnuwirdgVQ0Sd7sdwxGVeHVSRr076Bw/cZrgftcTdLbBNgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755874866; c=relaxed/simple;
-	bh=k1mCD4aoF34nNMPH+rTXlzZPHqohx0wOi3GsOX/qIhc=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=Fvr8Umo8vd98878cpeqcvzYzIzDodwX1bhcuLB6uJhGmMiZJOHgeYbP0qVOOi6QJuIOpIj2FfzvKVu1bYdkdmGGgJhEN0/3bd7gPhh2BYXxn/R/Nu7ibKL052/meBEd56lGAlMowVW2v+QQerd74OUNWrrgQbfEhsqJZRxqz4Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Fnw2lP6r; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nAow2dWp; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 22 Aug 2025 15:01:00 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755874861;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=73snTadtlVEFtLHKEQcb1nRxmIfD/xGwlcWBPAYiAoQ=;
-	b=Fnw2lP6rFKZy08iSilhLNoEtcY0JhSO513+S05k4j0jODSw0Bx+PnMdh0k74u5XUE+RApn
-	uvmv04zIuFmLNhseh9WqErAuPiINAr7X4dZW50mahzrWivQZOszzc8MC/npI5ZjDk1oAa/
-	2Q7zK8hUcwwllGeddtoJCsa3HrNSgZ2K6xV3Vo5PanIZkhl/pthc9ptSryqGy9q1pn6kLG
-	Uf73oZKUfFqv+CNIHjheFX/zA+TxN2SEK+aT1k/aESMDvN9ecpyfA7gaow2CQEVrvpzv2z
-	fNreBuMhO7h3a8AYWpCyGfuWwy9NAX6mxyimDCHAYhy4vqAHYPqQyklwMOdnIg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755874861;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=73snTadtlVEFtLHKEQcb1nRxmIfD/xGwlcWBPAYiAoQ=;
-	b=nAow2dWpST9d1tUHYPgIw5bBYZTvMpoISA7i9/apzF7A8kiFRSmo2h1/NSniBxwJQ9brzm
-	WevUUGEIprDKHZAA==
-From: "tip-bot2 for Adrian Hunter" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/tdx] x86/tdx: Eliminate duplicate code in tdx_clear_page()
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "Kirill A. Shutemov" <kas@kernel.org>, Binbin Wu <binbin.wu@linux.intel.com>,
- Xiaoyao Li <xiaoyao.li@intel.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Kai Huang <kai.huang@intel.com>,
- Sean Christopherson <seanjc@google.com>,
- Vishal Annapurve <vannapurve@google.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1755874922; c=relaxed/simple;
+	bh=NEjLvM63WPR4tRkhy+QvBCaZwu3UNCdXTXo/KqMRCdo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qLmWenKTiR2cJak1gjXrxWgD7pQ12fKmOTaf1liCZEeBiT6uIOAr3y8+QuZRdyVXlMTivoA3//8EFR3LNzhessqZceUSLeQ8wZ+lHQGwMQ4XpyfARE13GXo2nvj/7OSBbFwkmIcnNL3A+D7v9Fkz6GaVjNiAAn6wOOlogrCChcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2462ae29714so1610035ad.0;
+        Fri, 22 Aug 2025 08:02:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755874920; x=1756479720;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qQxFfMbVY694nwqT/Zr69fBeRewrLZzBFyNEZe7ythI=;
+        b=SychvEMZncV6ydR6l1D+PipMfRtYDRqz8bOKnm7hwy99a9k1uzqrp0Pau8kP7YIJ+6
+         O2fiWSjSISjKv9/UTmC6sgLYM3uNszHUhrhh7vURFQ2EYWGeHd1adzwl2RJC4/CrtcZ9
+         XIBAS62BoYA4KtnGsR8v1DTEfMddkj1UHVcdSdYAgwSC81EujXfdT2O2Hix69aCCewAX
+         SUfkZPYwbjFRIy7xjtCYgtURi++CrJ6EJM3c+XFgE0FtmArYUKDdCyaTac+XTFZuFwK6
+         yQ2yrbB7TOC72qv1kmI1eYGC3ydeXQJ9Mqw+CXCG0hMFaYt5UV52tc3UcJtOwh5b0DAh
+         /1cg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBOHzbYvcl4lCB6UcSOA71X9IebpS7hOLiagr7UwD6egy7BMLuVVT3kCEG9BfLBu9jUnt3II2t5OaiPyuXO2zEIg==@vger.kernel.org, AJvYcCV1fj3wNPboCZz1ewR3PLLgfw+/td5gx8G0URho7EH4e/vC6UXNnFKpbdaeawtecuvY6YX81tvfbqidRQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzeTSMi1v+fYaY+BMrsAGonlq2OoUJxhQgaO00kxD+6IBWY4My
+	KodXRS6wAXneatS7xCVdEnoAtnlfFvMgBD813TyVxOe34upOU36+sAx3
+X-Gm-Gg: ASbGncs77/wRA23WuZJTQ15I/KlkQMTzDC/AzJo5/HfsZqUrjwkCmC9aFJJoGBN1iGy
+	XDQUJ/+t/zflEXH534lJEKWOHAZviFZ5wtykMjzEdUwA0M8yUTxTgI9I0yvePWtOaPuqz6zGmLg
+	isItHyjezkWQ4mkNy06m8/J5TbsguoEt3DMBxJBASJUD9oCP4PUnB70dBHRhTEx9ldQN5zQyBiv
+	pPrc0HevPUKvf5TF6NveXxrKp65TCcTbc4WLKZp3LlhMcztZ30fj8D+Sd/gRBXocgM6ngkrZX5K
+	hFntO6YUqkgxfPiOSOgUtWytbv1IcxRBgSxMnhVH7Al3jf6U5f0ELmMlcdvZtaBTQCRGc5ET3fG
+	3vg/cYqrt3YIg1q+++COZDT0A1ueuRjs3G6AoI175XJK7xA9IWUK2fouW5vuurt4sLpeFp9Prwz
+	0cQEycfMNTn2RE7i1bmA==
+X-Google-Smtp-Source: AGHT+IG8h+rTjIYpDUhkLX0FKz+yq6EYhXDcqOADp2zpIy/mkPHlai6jtgygN4ifJj/kHfxfd3C9eg==
+X-Received: by 2002:a17:902:e5c8:b0:245:f5fd:8eea with SMTP id d9443c01a7336-2462ef8af80mr24163935ad.8.1755874918990;
+        Fri, 22 Aug 2025 08:01:58 -0700 (PDT)
+Received: from [192.168.50.136] ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed53e779sm85642335ad.160.2025.08.22.08.01.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Aug 2025 08:01:58 -0700 (PDT)
+Message-ID: <e935e36a-1c5f-4706-830c-95cf6d9e6dc7@kzalloc.com>
+Date: Sat, 23 Aug 2025 00:01:51 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175587486008.1420.155372414308617864.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf: arm64: Sync ESR_ELx_EC_* macros in
+ arm64_exception_types.h with esr.h
+To: Leo Yan <leo.yan@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>,
+ Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250814151452.618765-2-ysk@kzalloc.com>
+ <20250821113825.GA745271@e132581.arm.com>
+Content-Language: en-US
+From: Yunseong Kim <ysk@kzalloc.com>
+Organization: kzalloc
+In-Reply-To: <20250821113825.GA745271@e132581.arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/tdx branch of tip:
+Thank you for the review Leo!
 
-Commit-ID:     94272b084a745940e076a170d8193ac3427292e6
-Gitweb:        https://git.kernel.org/tip/94272b084a745940e076a170d8193ac3427=
-292e6
-Author:        Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate:    Tue, 19 Aug 2025 18:58:09 +03:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Fri, 22 Aug 2025 07:45:50 -07:00
+On 8/21/25 8:38 PM, Leo Yan wrote:
+> Hi,
+> 
+> On Thu, Aug 14, 2025 at 03:14:53PM +0000, Yunseong Kim wrote:
+>> Update perf util arm64_exception_types.h to match the exception class
+>> macros defined in tools/arch/arm64/include/asm/esr.h. This ensures
+>> consistency between perf tooling and the kernel header definitions for
+>> ESR_ELx_EC_* values.
+>>
+>> Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+> 
+> Thanks for working on this.
+> 
+> This patch still misses couple macros, please see below.
 
-x86/tdx: Eliminate duplicate code in tdx_clear_page()
+I nearly missed that. Appreciate your checking.
 
-tdx_clear_page() and reset_tdx_pages() duplicate the TDX page clearing
-logic.  Rename reset_tdx_pages() to tdx_quirk_reset_paddr() and create
-tdx_quirk_reset_page() to call tdx_quirk_reset_paddr() and be used in
-place of tdx_clear_page().
+>> ---
+>>  tools/perf/arch/arm64/util/arm64_exception_types.h | 9 ++++++---
+>>  1 file changed, 6 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/tools/perf/arch/arm64/util/arm64_exception_types.h b/tools/perf/arch/arm64/util/arm64_exception_types.h
+>> index 27c981ebe401..29931bf19062 100644
+>> --- a/tools/perf/arch/arm64/util/arm64_exception_types.h
+>> +++ b/tools/perf/arch/arm64/util/arm64_exception_types.h
+>> @@ -33,7 +33,7 @@
+>>  #define ESR_ELx_EC_PAC		(0x09)	/* EL2 and above */
+>>  /* Unallocated EC: 0x0A - 0x0B */
+> 
+> #define ESR_ELx_EC_OTHER	(0x0A)
+> 
+>>  #define ESR_ELx_EC_CP14_64	(0x0C)
+>> -/* Unallocated EC: 0x0d */
+>> +#define ESR_ELx_EC_BTI		(0x0D)
+>>  #define ESR_ELx_EC_ILL		(0x0E)
+>>  /* Unallocated EC: 0x0F - 0x10 */
+>>  #define ESR_ELx_EC_SVC32	(0x11)
+>> @@ -46,7 +46,10 @@
+>>  #define ESR_ELx_EC_SYS64	(0x18)
+>>  #define ESR_ELx_EC_SVE		(0x19)
+>>  #define ESR_ELx_EC_ERET		(0x1a)	/* EL2 only */
+>> -/* Unallocated EC: 0x1b - 0x1E */
+>> +/* Unallocated EC: 0x1B */
+>> +#define ESR_ELx_EC_FPAC		(0x1C)	/* EL1 and above */
+>> +#define ESR_ELx_EC_SME		(0x1D)
+>> +/* Unallocated EC: 0x1E */
+>>  #define ESR_ELx_EC_IMP_DEF	(0x1f)	/* EL3 only */
+>>  #define ESR_ELx_EC_IABT_LOW	(0x20)
+>>  #define ESR_ELx_EC_IABT_CUR	(0x21)
+>> @@ -55,7 +58,7 @@
+>>  #define ESR_ELx_EC_DABT_LOW	(0x24)
+>>  #define ESR_ELx_EC_DABT_CUR	(0x25)
+>>  #define ESR_ELx_EC_SP_ALIGN	(0x26)
+>> -/* Unallocated EC: 0x27 */
+>> +#define ESR_ELx_EC_MOPS		(0x27)
+>>  #define ESR_ELx_EC_FP_EXC32	(0x28)
+>>  /* Unallocated EC: 0x29 - 0x2B */
+>>  #define ESR_ELx_EC_FP_EXC64	(0x2C)
+> 
+> #define ESR_ELx_EC_GCS		(0x2D)
+> 
+> Thanks,
+> Leo
+> 
+>> -- 
+>> 2.50.0
+>>
 
-The new name reflects that, in fact, the clearing is necessary only for
-hardware with a certain quirk.  That is dealt with in a subsequent patch
-but doing the rename here avoids additional churn.
+I’ve sent out patch v2, Thanks everyone!
 
-Note reset_tdx_pages() is slightly different from tdx_clear_page() because,
-more appropriately, it uses mb() in place of __mb().  Except when extra
-debugging is enabled (kcsan at present), mb() just calls __mb().
+Best regards,
+Yunseong Kim
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Kirill A. Shutemov <kas@kernel.org>
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
-Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Acked-by: Kai Huang <kai.huang@intel.com>
-Acked-by: Sean Christopherson <seanjc@google.com>
-Acked-by: Vishal Annapurve <vannapurve@google.com>
-Link: https://lore.kernel.org/all/20250819155811.136099-2-adrian.hunter%40int=
-el.com
----
- arch/x86/include/asm/tdx.h  |  2 ++
- arch/x86/kvm/vmx/tdx.c      | 25 +++----------------------
- arch/x86/virt/vmx/tdx/tdx.c | 10 ++++++++--
- 3 files changed, 13 insertions(+), 24 deletions(-)
 
-diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-index 7ddef3a..57b46f0 100644
---- a/arch/x86/include/asm/tdx.h
-+++ b/arch/x86/include/asm/tdx.h
-@@ -131,6 +131,8 @@ int tdx_guest_keyid_alloc(void);
- u32 tdx_get_nr_guest_keyids(void);
- void tdx_guest_keyid_free(unsigned int keyid);
-=20
-+void tdx_quirk_reset_page(struct page *page);
-+
- struct tdx_td {
- 	/* TD root structure: */
- 	struct page *tdr_page;
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 66744f5..f457b2e 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -281,25 +281,6 @@ static inline void tdx_disassociate_vp(struct kvm_vcpu *=
-vcpu)
- 	vcpu->cpu =3D -1;
- }
-=20
--static void tdx_clear_page(struct page *page)
--{
--	const void *zero_page =3D (const void *) page_to_virt(ZERO_PAGE(0));
--	void *dest =3D page_to_virt(page);
--	unsigned long i;
--
--	/*
--	 * The page could have been poisoned.  MOVDIR64B also clears
--	 * the poison bit so the kernel can safely use the page again.
--	 */
--	for (i =3D 0; i < PAGE_SIZE; i +=3D 64)
--		movdir64b(dest + i, zero_page);
--	/*
--	 * MOVDIR64B store uses WC buffer.  Prevent following memory reads
--	 * from seeing potentially poisoned cache.
--	 */
--	__mb();
--}
--
- static void tdx_no_vcpus_enter_start(struct kvm *kvm)
- {
- 	struct kvm_tdx *kvm_tdx =3D to_kvm_tdx(kvm);
-@@ -345,7 +326,7 @@ static int tdx_reclaim_page(struct page *page)
-=20
- 	r =3D __tdx_reclaim_page(page);
- 	if (!r)
--		tdx_clear_page(page);
-+		tdx_quirk_reset_page(page);
- 	return r;
- }
-=20
-@@ -593,7 +574,7 @@ static void tdx_reclaim_td_control_pages(struct kvm *kvm)
- 		pr_tdx_error(TDH_PHYMEM_PAGE_WBINVD, err);
- 		return;
- 	}
--	tdx_clear_page(kvm_tdx->td.tdr_page);
-+	tdx_quirk_reset_page(kvm_tdx->td.tdr_page);
-=20
- 	__free_page(kvm_tdx->td.tdr_page);
- 	kvm_tdx->td.tdr_page =3D NULL;
-@@ -1714,7 +1695,7 @@ static int tdx_sept_drop_private_spte(struct kvm *kvm, =
-gfn_t gfn,
- 		pr_tdx_error(TDH_PHYMEM_PAGE_WBINVD, err);
- 		return -EIO;
- 	}
--	tdx_clear_page(page);
-+	tdx_quirk_reset_page(page);
- 	tdx_unpin(kvm, page);
- 	return 0;
- }
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index c7a9a08..fc8d8e4 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -637,7 +637,7 @@ err:
-  * clear these pages.  Note this function doesn't flush cache of
-  * these TDX private pages.  The caller should make sure of that.
-  */
--static void reset_tdx_pages(unsigned long base, unsigned long size)
-+static void tdx_quirk_reset_paddr(unsigned long base, unsigned long size)
- {
- 	const void *zero_page =3D (const void *)page_address(ZERO_PAGE(0));
- 	unsigned long phys, end;
-@@ -654,9 +654,15 @@ static void reset_tdx_pages(unsigned long base, unsigned=
- long size)
- 	mb();
- }
-=20
-+void tdx_quirk_reset_page(struct page *page)
-+{
-+	tdx_quirk_reset_paddr(page_to_phys(page), PAGE_SIZE);
-+}
-+EXPORT_SYMBOL_GPL(tdx_quirk_reset_page);
-+
- static void tdmr_reset_pamt(struct tdmr_info *tdmr)
- {
--	tdmr_do_pamt_func(tdmr, reset_tdx_pages);
-+	tdmr_do_pamt_func(tdmr, tdx_quirk_reset_paddr);
- }
-=20
- static void tdmrs_reset_pamt_all(struct tdmr_info_list *tdmr_list)
 
