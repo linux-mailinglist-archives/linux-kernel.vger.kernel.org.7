@@ -1,71 +1,66 @@
-Return-Path: <linux-kernel+bounces-781394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A122DB311F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:37:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17222B31202
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 748B4189B413
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:37:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F3B9568227
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D962EB86C;
-	Fri, 22 Aug 2025 08:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E892EBDEE;
+	Fri, 22 Aug 2025 08:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JxdVYRkB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="je0N7Nlk"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBCA17BA3
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 08:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A09D287276;
+	Fri, 22 Aug 2025 08:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755851833; cv=none; b=Gso1G/fSi8HiEGmntJZierTAe4p3XNlSjSDzQ6PLEPnmUqV1Zq0PI/0lKMSH9P/ZMPXEa1x/KkZoI+44HbbNC9EiJwb92XIWCUqi1vsM5f+jAYKdkYMs772lokzwP/tuadArExzJeNgxKcmEx0mp2thkEriJ72RIUdfAmVOB7iA=
+	t=1755852156; cv=none; b=eiMHIxLqvHNYgkzWfcLkFqCZuleumJHIGvSWWx8mzvCRXCj0bVuTrQRng53xJ772VtBRUXqoE9ibs1Jjy2q5nDivQYBUb468WPZEhn5iPJqFjWOTGPGdlqshBdpDVymZ3WOonT4a2xJ6UXILZ78FIj916wBGQdlkfWvS88+Lg3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755851833; c=relaxed/simple;
-	bh=eVTZyiZvgqa682S9nJU3vD53mTkSTA+NUYHYOx/YAOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=c77Ql/wVtivkGrYKp7JZSxxcueb3eRhWh0lCZ5goTVtedFhuI0BUSqbVgULBNZ7bj8S5JOQR22qWgmmcdxUUABP41mkq0Fo1llzLTltqoyuPHoeVlaDhsQNTTdt9m56RexFbuh8DK5B940WvCYrg82cEhrpLQzuqG0CTk2IjPZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JxdVYRkB; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755851833; x=1787387833;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=eVTZyiZvgqa682S9nJU3vD53mTkSTA+NUYHYOx/YAOg=;
-  b=JxdVYRkB5NWuzr2s98oOjwCFDna28lM6woDmBmXWoZUwA3jaxjepgr90
-   QqSG+bqRE3x9DvvNRokghNL6uNwvxPYR51WBctHuAcPjydJXJDKR5/UlO
-   ZNZzzXh0t7klVMi4gCPYLwHDX/8u6wM1YyU9jhmpLAEM7d0oQipxdsvmF
-   b4wqhBdi/xVF6y7y8dYnE1XuRtCmnZiKW1CNPxU2VXyJrWwbRaVVp+Fc8
-   EzVh0glosm+u2i4y9Ebjp/IfT6Otvx1iTrjR7BkHDiDHZ4XrfYP0tvA6j
-   J2/Fkug3L3ZvIhIdGvx2bXSY1Q5OCFm6EouWI2rVGC9Ja6sjbEgktnv1X
-   g==;
-X-CSE-ConnectionGUID: g04Q4VtNT+yeQZfWycFbvQ==
-X-CSE-MsgGUID: gj/g/T+ZQHGC83k+pUq0jA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58080538"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="58080538"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 01:37:12 -0700
-X-CSE-ConnectionGUID: KTQIfo8ZQ6iQkd9L1JMxkQ==
-X-CSE-MsgGUID: ryAUjIpNQ5KD8eRUby/dLg==
-X-ExtLoop1: 1
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 22 Aug 2025 01:37:11 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1upNGg-000L4V-0s;
-	Fri, 22 Aug 2025 08:37:06 +0000
-Date: Fri, 22 Aug 2025 16:36:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Song Liu <song@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Alexei Starovoitov <ast@kernel.org>
-Subject: {standard input}:27156: Error: operands mismatch -- statement `sub.l
- -228(%fp),-184(%fp)' ignored
-Message-ID: <202508221639.OF7OHpcE-lkp@intel.com>
+	s=arc-20240116; t=1755852156; c=relaxed/simple;
+	bh=WHCfEIYrpZ9r/ypC/WgaKQSC3GIDtKB9TvHLS/cyANQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PtlxwKYfIYgKDi7gb73UY9Lv4Pv1ygQAz1MSAbptX6zLK3zUxKvUchWvv/xGb4FIKsdfAmh195jr+GgVkiRCjZSbrlMjAF9otFJk6UA5ErKXFIJ5XXdB36rsKYHoE3bQkB2yMLExQXHKPTlg0e0DfNiTtGMugal8VR5n1GicsN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=je0N7Nlk; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=XrMbvNKRSNnSF17wBBbmWQ82eEPNaqSlEuR4cZ/H4CM=;
+	b=je0N7NlkWm2hwsblw0RIflKegRq7k3Te40Q5yJVH9a/Z3td9XRc3Z8mqLIrYIL
+	ydY7X5rlP6z80W6dVxUbz3XYMZvx7Z6yq0KsBoV/uw0gXOjbKB4Kha1iDMPNUQ6K
+	mTxe+NMwbIJRIv2WOA6wHHIgySXcZFOJYchR871XRCztI=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgBXpG3mLKho6HQVAw--.9849S3;
+	Fri, 22 Aug 2025 16:40:08 +0800 (CST)
+Date: Fri, 22 Aug 2025 16:40:05 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Joy Zou <joy.zou@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, peng.fan@nxp.com, richardcochran@gmail.com,
+	catalin.marinas@arm.com, will@kernel.org, ulf.hansson@linaro.org,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, frieder.schrempf@kontron.de,
+	primoz.fiser@norik.com, othacehe@gnu.org,
+	Markus.Niebel@ew.tq-group.com, alexander.stein@ew.tq-group.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux@ew.tq-group.com, netdev@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	Frank.Li@nxp.com
+Subject: Re: [PATCH v8 01/11] dt-bindings: arm: fsl: add i.MX91 11x11 evk
+ board
+Message-ID: <aKgs5TylbGJ2GBiQ@dragon>
+References: <20250806114119.1948624-1-joy.zou@nxp.com>
+ <20250806114119.1948624-2-joy.zou@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,26 +69,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250806114119.1948624-2-joy.zou@nxp.com>
+X-CM-TRANSID:M88vCgBXpG3mLKho6HQVAw--.9849S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU5qXdUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEhuxZWioJsERLQAAsG
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   3957a5720157264dcc41415fbec7c51c4000fc2d
-commit: aced132599b3c8884c050218d4c48eef203678f6 bpf: Add range tracking for BPF_NEG
-date:   8 weeks ago
-config: m68k-randconfig-r133-20250822 (https://download.01.org/0day-ci/archive/20250822/202508221639.OF7OHpcE-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 11.5.0
-reproduce: (https://download.01.org/0day-ci/archive/20250822/202508221639.OF7OHpcE-lkp@intel.com/reproduce)
+On Wed, Aug 06, 2025 at 07:41:09PM +0800, Joy Zou wrote:
+> From: Pengfei Li <pengfei.li_1@nxp.com>
+> 
+> Add the board imx91-11x11-evk in the binding document.
+> 
+> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
+> Signed-off-by: Joy Zou <joy.zou@nxp.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508221639.OF7OHpcE-lkp@intel.com/
+Applied, thanks!
 
-All errors (new ones prefixed by >>):
-
-   {standard input}: Assembler messages:
->> {standard input}:27156: Error: operands mismatch -- statement `sub.l -228(%fp),-184(%fp)' ignored
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
