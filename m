@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-782397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D223B31FF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:03:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 538FAB31FF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5C36845FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:57:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C309FA07DB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3E72441A0;
-	Fri, 22 Aug 2025 15:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D9E2472AD;
+	Fri, 22 Aug 2025 15:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="icnBgfel"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CoUO/Jc8"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C442B233712
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 15:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564BC2367DF
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 15:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755878220; cv=none; b=PFtxhlMvyzPYxgIGkc0H8IZtlqFPA5eQtegSg7kpJhOJAEJPs8L24pB0c389kVJsuqac/wujoT0g04UVsMwyOYuJGEp8yB2WMKZb2lEslpcRxjYFvFoVJk1kyMD/koMe3UETnjwAoE7FVkQaDBHnOZtyK5KEDfCz8IlJpXqEjLI=
+	t=1755878221; cv=none; b=R8Uca0QKTIgspTW84n2WbN+C4HvdO+p4j72WVVPSJmcy09BqCM7ImEPSZrRlq903E2EPkgm1MiyzkcKVHRNNqHUG589QNa/cCSJOMm19C9l0P2V0ggHZRIPorswjWkUdCxi+lLheYGLvTtaMum8/DVnm2i4PTCx86QHZ2a1fJJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755878220; c=relaxed/simple;
-	bh=bFbkXWGJmm2SJsxrU4hHphoEIzK8Alyv2GhqPrtMwXM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZeUIJdx3BJSW39GELwlM3/29wE9BwCl/9Fft4MLxBL8i9SZ+OutIdG5WXBcJyfQvoDB4FFJ4gFWfh/vV5GKqVT4cTJRpRbqH5x7it+f1Yi3XxdxzP1f2l9nSwEBobjSQQjIppYimSucQVDr2YPFF3hOgKs+tq3Ptv8eQ3E0Je5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=icnBgfel; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1755878221; c=relaxed/simple;
+	bh=w1VZqVZB4tsSvRFPjcFON1TkRO+UIqwQJ3G42TS9+0c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Azn0kHPTPptR90L5SVPrxBzwcPKOm7sb/LFWR/rdvVsBCMGZ4mtQk8WhKMHgw1O/Uri8og4SqH7Fg0zNW2z8QXg4i7dhpgWxlE0YgB6SCAnxEmQ8BennHON/f3wjqcI2Wvf068nqaIzXI4V0iuztRz1OH7HAA+JwOr+L6TzA6SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CoUO/Jc8; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b004954so15716005e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 08:56:58 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b9dc5c2f0eso1193869f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 08:56:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755878217; x=1756483017; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QacgOb2ZgVuvvk6y//Vt2Nw6LEN08WKlZ4aG0uscgHg=;
-        b=icnBgfelaSTTwkjcXGruJgvAu/aRRnraJlPcIuNwbZvdoTbWDBUEN0PBi3Y11TV3AX
-         HfoNznzj4H2gdIKsTLQ/WTpwWebDgiGS/nWctozo5L6M2gSaqNdbBHg2iV4kH8GXnm3b
-         bJ5jCBcivDQVdEmtJdYMmyArkoznqKZm/FXvP7sxE0AKU+zkscnYoB2L4A2Za0xE2JlD
-         laAtrUtcoSwuhOMa6VJr2jR6dmMXxg1hP+WHdf2UjfMG0GjaGRwHzoy5XXFrBtK9pejn
-         lrfkSuNdYgGYwYkrFUEyakDAJBnQ2M+Ra2NkcobH/dat9i9opXA58ofg59LXZldKTBu1
-         yPkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755878217; x=1756483017;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1755878218; x=1756483018; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QacgOb2ZgVuvvk6y//Vt2Nw6LEN08WKlZ4aG0uscgHg=;
-        b=akX/N5x5par+3IxWuMwaoZ+d3BVgwLlllJsC5MwLSFWAEgjE+kmmYY0q3Gtm+BQpeA
-         98U1xf+bhFIK87s70qlUWqIwowwZyA1ZQYzrPr4HJf7mXeVT4sBQIDzLuwIce9UpNYf4
-         kVGjhd6blokzQI0nrVddLe1dy2L0wM6ZV4ahgi4IQE8J+g9cIzlkfoA9B5j1POm6AsjZ
-         wUAwZQVlaFUGrFDWulUOWX+pUdmQQa7+1ydHCrwOTQ68p40Rwgh8eNjugFEDAzjz1YfY
-         6Sw07xAKr9Iy/Q/VeQuRIvb5frgy+LLMIZnWymmhtC/bi2UW727F/aYppWr6j8THNWSP
-         IVyA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfoH7kbI4s1fQMKLwTGCNg0KxjzXq8XUN0xPPDBUCR8+o0s8r7ThKQ+7wFLgI/gCMivk9U7fcoMRfCqnA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUCRI2QMP70iyJsb6ux9MXf3Bbc2jxDwxbZt+feEfzckGa29Ow
-	yu9mIsAEEmq3rEt98llrNwdJNJfXoLYuE4BUlDD+Wm4RZ5SXLj4bu2mbD1a2BRxEaGs=
-X-Gm-Gg: ASbGncsaxZGM5oA4oVd11fPzjl/WYrOiWj7YJd+dnrtEvV92gIn/AB8ClGQhgG9bVe7
-	BeC/fwqN1GqtuNQfej2hoRr89iLKOBBRP9x/ziRZG0WeZ8njDGWilixp4m+YWGl4dZ8UKkcAKDh
-	ZNjSzDMNgYwbeAuX8lLh+ARj1YpQgLaCJqEiaj7bgvtS2ZKpSQ1NIm8kLMfAluXLMOebgXCd+9p
-	+YW6kWAMsgD2a0RaIHXYIxGD3aVZO5vVJQrAoq/eEUTz0D/S3XbUllVPbKrGb9vmMtEMuGJpx5T
-	GlNXXfp3dQZd3Vy+hhpXMAKTgTaaQCA2JZg1ShyrgXbOXpYrVk4BWVuLzrzYie0c+Lo6xdzS19A
-	Xt8U3VTW72UGxq7Ql3Mjzca48T+0CmR6BmQskgZfz3nE=
-X-Google-Smtp-Source: AGHT+IGq0ThWPZKJH0HgcylK4MA0Mh5QW4qLOf30E2AzLsWgCITzX5gUoWjudf83Dh263NPF8feg6A==
-X-Received: by 2002:a05:600c:1d14:b0:456:2a9:f815 with SMTP id 5b1f17b1804b1-45b51798fe4mr31006065e9.4.1755878217019;
+        bh=GLNjFnxfd0fsnNGaZyEi99xhqnfoLRLL41xepcgfytM=;
+        b=CoUO/Jc8folbxPDMqndYMBBsUqDazOXFURFeQY4/z/Q2FkHMxUv0h7REc53P4/OZzl
+         afOUt6No/BjVggD6fO/vmZ3cVIcokxemcgtohLYvIJjFAz409ulOidEmz3hS5pSU28Rq
+         2Bzljg1VZdXVEnOeWhBEel41uFMi+66zhNHeDZtmHIfaptF19KHes4GxLcE78gDkKf+Y
+         nt7VSO2eGMyCx3IoJ56EvD8cLtmUTFtuvR1aKknToIIcQBJGFvJpCSiGz3P5YDOphcSw
+         8p8xKTwHj29fQ5a4L8AjVNfSH9IU6Uh16BzVS/SZjcD+KML9ZkGUycv+HbqP5jDWFCeE
+         nvpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755878218; x=1756483018;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GLNjFnxfd0fsnNGaZyEi99xhqnfoLRLL41xepcgfytM=;
+        b=cm194N9LgreVY5p0/tt/7zEEgNLmPrQUyE2lz1JnzRl2ZV7YZkBWpGyfT6XGENSSVd
+         8hnApMxyQzkdxOFMczIusOQcblAd3szSVi2z70D43AUilD9akzYZ2+z7b1p4PciEPLEh
+         e56lSPNbXfKo3F15WKRhfDmZ12WcVs4aEZqqdM7i9tgY+fLs5KxtcsPPPlSOn0C6chPg
+         y/H7jhSrkSb65n/YxDrrUXbQs0WmCA5bqj9dcJrYkMma6KMHOIhUXsHx7FscnsDInzpt
+         CDT6J4Chu7uo2c3t2KOCCJdXAWp1Am2YRGBgcOTTnu+XrJM6v9nYGQh2ARThEg4/QlCg
+         LkUA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1OsVY69gMZrbvogUHLBbe3vrEPtbA7dFdwgWAb5WElj9ABt3hTcdm1rj7PdDIia7OgF4XlDYyJiW+Czk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSBnT/EuEZZHdones5R3nJ/miPynDGotGl8zz1xZeG1e4hgu+A
+	6UtL4PXD13pGpD9egRx3Ilsf+H7L0VSuybERl1GxHkhD/mVwDRD2Rn/696oN5LHpeXc=
+X-Gm-Gg: ASbGncv2Ffb9+m00mazmaYiJRcm5pjy+PlGdkCLl4gHlqYsZy/PSuMugUIGZ05gK4ql
+	UzheXbAUhbuRD3TI9dPvrwWMouLIItZn5zReDoTyKDeapVAu2zfU360l/rODwHFqOyeDSRwZGJl
+	3X9Pyzi9dC+wsYsWWDxiboy75G2XFgVL3D5hfKd0iaJlTx9/W6xEMvh/+P+p4JkxpuM3hno6e5W
+	9y01/XGlROtHe1sUbUneE/I4q40WirF+UyPsjBf0TXvbw+nLpgosrouRwfdL3K/OOECNpd1hQFe
+	6I4w1QjA1cEVKisuRSUfWqxEDVpsXttadXFt2SnCq2uGrZ+lWyO6hWhyIYQs7+lLuCJn/lzMqXe
+	2UQ0zhw1kpHBLgMIS/5YRtDACAjrTGt1zIaMHyGBO2Rivrw3M0U6AoA==
+X-Google-Smtp-Source: AGHT+IEmFm4+ceTHHTKE+fyS80PNvEs2hq8lv91bfxzNojpH1C6IQ9irqwAiOQCJFolcVtJxlRJB1A==
+X-Received: by 2002:a05:6000:2313:b0:3c3:c280:d43b with SMTP id ffacd0b85a97d-3c5dcff5d74mr2404818f8f.56.1755878217619;
         Fri, 22 Aug 2025 08:56:57 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c3c89cd4d4sm10095765f8f.42.2025.08.22.08.56.56
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c3c89cd4d4sm10095765f8f.42.2025.08.22.08.56.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 08:56:56 -0700 (PDT)
+        Fri, 22 Aug 2025 08:56:57 -0700 (PDT)
 From: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: [PATCH v3 0/9] arm64: dts: qcom: Set up 4-lane DP for sm8[56]50 &
- x1e boards
-Date: Fri, 22 Aug 2025 17:56:48 +0200
-Message-Id: <20250822-topic-x1e80100-4lanes-v3-0-5363acad9e32@linaro.org>
+Date: Fri, 22 Aug 2025 17:56:49 +0200
+Subject: [PATCH v3 1/9] arm64: dts: qcom: sm8550: allow mode-switch events
+ to reach the QMP Combo PHY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,11 +84,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEGTqGgC/4XNQQ6CMBCF4auQrq2ZGUDAlfcwLgotMIlpSUsaD
- OHuFla6MC7/l8w3qwjGswnimq3Cm8iBnU2RnzLRjcoORrJOLQiohJpQzm7iTi5oakAAWTyVNUG
- qWuuqx06Xl0ak28mbnpfDvT9Sjxxm51/Hm4j7+k+MKEFCiwo0NHmCb0+2yruz84PYyUifDP1iK
- DFFS5hX1GID+MVs2/YGtDFO9AIBAAA=
-X-Change-ID: 20250821-topic-x1e80100-4lanes-a8dd7f1cd569
+Message-Id: <20250822-topic-x1e80100-4lanes-v3-1-5363acad9e32@linaro.org>
+References: <20250822-topic-x1e80100-4lanes-v3-0-5363acad9e32@linaro.org>
+In-Reply-To: <20250822-topic-x1e80100-4lanes-v3-0-5363acad9e32@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -95,74 +94,45 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2677;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=724;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=bFbkXWGJmm2SJsxrU4hHphoEIzK8Alyv2GhqPrtMwXM=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBoqJNECmzXuqOivdxSTNpCT/23prVqjvyOsvvUQay+
- ULepHcKJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaKiTRAAKCRB33NvayMhJ0YDNEA
- CHBQ88C5b8M7VgSHDqDzRSu6rGwZnuA4NuUjclCGCzUYaRqIwYB6bjltIxg1kKFsyerGbHC9BUiXlb
- jI7EtivHqFfltpfep6nU0JImt0wj8FCyNUEsWR8JaACf8Tw2qNmv7DQ998lSW+Frv2WOB0cCYdpkGC
- Q/0RvU4XzOA94Hmp6Npaph5zT/8XO39XBef13g1qtAKxzsZp22BuZY/KLQWKV7gWqdCKA8E4FFY0Il
- p/fcw3w/4L30U2qsZQV6Ft1tSDACRqM91gzXPYU5cgdgLZx5GfW8xeBLYJkXvAtDfPUfuS5UF2CI97
- +0Dr1Mrl2bUPB2mYMVi8jpzW5/xIjqRjzd1G/GiCnTu5POUGUkbcwVWlGJM5ZLrVYUowTnSw6eU41S
- zW+1nnkq7w9yBaBULnZBCcxB5VWS5+3qPxllqWJJoxvNbf0fP6YNIB8mtiZtMIKfFZsWK7mAoMxZ8V
- 0Q12HTZjmTNXBDx6Bztf/TGFYah2VYVIwTkd/uc1J16cCtDlTd1IUPh4qDZORvFc1yrVkWxDV9ju3q
- lI0oS8cz6llK+o1uwLFqlTAIyVHI5kQVzvc6iclOXcgOmeuBvw/bfKUIir0uRKHaLOLJAu7fVg4La4
- HglOQAwt8EyYxmKaU4Tm5lizKV718e0Ub2cQpY+olw5we8VeRvtYTgiKIk/A==
+ bh=w1VZqVZB4tsSvRFPjcFON1TkRO+UIqwQJ3G42TS9+0c=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBoqJNEHPXOuGvx5JN8cuE1YtPOfX+b700koEJW/nL4
+ 4F8U6g2JAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaKiTRAAKCRB33NvayMhJ0WOCD/
+ 9YwkM/T0OKDcnApMF1AErStMU2LfD1vvp5oI0T+0orIOBrCBOFuBy5mMduiNZQTWCjyt+2Kzwtq+wV
+ ApZUHUx8Cs5p/NGRQjgwvf6Mm0AnlVmTnO54UXwckwgXgarNoREEynzqPUCgsyZ6b7mncthQC5JaN6
+ QbpxjLj2V0zdp/Y+/Sc0x7X8p+SMX6nm7dPs0M6GJocruffAYToBHT1dmbuKmmxThPNZJ7Q89Eve0B
+ jWX5oGENeV1KK2BbfjQkIdsWy8gh31LfDT9oZi8Q0KjiSsW+AAbpW5JarVc//fBIZeoYQ1AEKUw99F
+ HS5cTzSitIo2PufXW1ChuK9JvLCkQC5yDJNOt7jOtNY+waoFteJtdYPKzPZSiAN/1sjOyIg4dn0TQN
+ pXj0CLgrT0mvJd4ZQNLbg1hYmSnjz+2QL1mXeGbfS3BYg+HeQ2jP9XNYP5DFVAVM8/E0FzQKCks5Ev
+ h0GsMWqUnAJReNVJT+Py6cCKnKeVrqugiu5AGAfTvwFk27LEoAjrfmQ7lgkOr1wf1iCgjLx3NjWoNE
+ RWtwbW+96VPiCNjS2oskqdV+D9MUmys4yDWgk+Y108BbT3jprloIgBS2LO/bKk8p6Kz5rA4L7H+xbI
+ iGM5VQ4FUS95QwHk2m/UhNsqE2a+ceHDfjrLUE5h8yPc3fxOh8urJ++FCNAg==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-Now the 4lanes support in the QMP Combo PHY has been merged in [1],
-add the required plumbing in DT.
-
-[1] https://lore.kernel.org/all/20250807-topic-4ln_dp_respin-v4-0-43272d6eca92@oss.qualcomm.com/
+Allow mode-switch events to reach the QMP Combo PHY to support
+setting the QMP Combo PHY in DP 4Lanes Altmode.
 
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
-Changes in v3:
-- Move the data-lanes in the SoC dtsi, and update it there
-- Link to v2: https://lore.kernel.org/r/20250822-topic-x1e80100-4lanes-v2-0-4b21372b1901@linaro.org
+ arch/arm64/boot/dts/qcom/sm8550.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes in v2:
-- Add missing x1-asus-zenbook-a14 & x1-crd
-- Link to v1: https://lore.kernel.org/r/20250821-topic-x1e80100-4lanes-v1-0-0b1a0d093cd5@linaro.org
+diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+index 38d139d1dd4a994287c03d064ca01d59a11ac771..0409ae7517f239171a89bc0ba7bb47bc9e7fedaf 100644
+--- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+@@ -4051,6 +4051,7 @@ usb_dp_qmpphy: phy@88e8000 {
+ 			#clock-cells = <1>;
+ 			#phy-cells = <1>;
+ 
++			mode-switch;
+ 			orientation-switch;
+ 
+ 			status = "disabled";
 
----
-Neil Armstrong (9):
-      arm64: dts: qcom: sm8550: allow mode-switch events to reach the QMP Combo PHY
-      arm64: dts: qcom: sm8650: allow mode-switch events to reach the QMP Combo PHY
-      arm64: dts: qcom: x1e80100: allow mode-switch events to reach the QMP Combo PHYs
-      arm64: dts: qcom: sm8550: move dp0 data-lanes to SoC dtsi
-      arm64: dts: qcom: sm8650: move dp0 data-lanes to SoC dtsi
-      arm64: dts: qcom: x1e80100: move dp0/1/2 data-lanes to SoC dtsi
-      arm64: dts: qcom: sm8550: Set up 4-lane DP
-      arm64: dts: qcom: sm8650: Set up 4-lane DP
-      arm64: dts: qcom: x1e80100: Set up 4-lane DP
-
- arch/arm64/boot/dts/qcom/sm8550-hdk.dts                     | 4 ----
- arch/arm64/boot/dts/qcom/sm8550-mtp.dts                     | 4 ----
- arch/arm64/boot/dts/qcom/sm8550-qrd.dts                     | 4 ----
- arch/arm64/boot/dts/qcom/sm8550.dtsi                        | 2 ++
- arch/arm64/boot/dts/qcom/sm8650-hdk.dts                     | 4 ----
- arch/arm64/boot/dts/qcom/sm8650-qrd.dts                     | 4 ----
- arch/arm64/boot/dts/qcom/sm8650.dtsi                        | 2 ++
- arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi           | 2 --
- arch/arm64/boot/dts/qcom/x1-crd.dtsi                        | 3 ---
- arch/arm64/boot/dts/qcom/x1e001de-devkit.dts                | 3 ---
- arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi | 2 --
- arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts       | 2 --
- arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts       | 2 --
- arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts    | 3 ---
- arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi    | 2 --
- arch/arm64/boot/dts/qcom/x1e80100-qcp.dts                   | 3 ---
- arch/arm64/boot/dts/qcom/x1e80100.dtsi                      | 6 ++++++
- 17 files changed, 10 insertions(+), 42 deletions(-)
----
-base-commit: 7fa4d8dc380fbd81a9d702a855c50690c9c6442c
-change-id: 20250821-topic-x1e80100-4lanes-a8dd7f1cd569
-
-Best regards,
 -- 
-Neil Armstrong <neil.armstrong@linaro.org>
+2.34.1
 
 
