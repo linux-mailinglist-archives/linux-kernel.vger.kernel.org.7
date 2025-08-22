@@ -1,186 +1,138 @@
-Return-Path: <linux-kernel+bounces-781500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6232FB31350
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D8E1B31351
 	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6348AE600F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:31:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE1AAE7EC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2D82F28E9;
-	Fri, 22 Aug 2025 09:28:32 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271342F4A0E;
+	Fri, 22 Aug 2025 09:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HYojqN9S"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61502F1FFA;
-	Fri, 22 Aug 2025 09:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F2622CBC0
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755854911; cv=none; b=owe5SpFYgwPlDxr7YGwUq5LO8QybrYHIixacJnB94ZlNgGgEXsPYZCZyHSAXa/2S2cNyeDTQA/hwsy2IFNeM/IUE7G1CDpHb9fADVrGfk96bdQWtB6CNKqH7UhoVyoxpjnKyWsy6YXK/DnNDgittO9DtjKJYsoDqSjqNouwaG1Q=
+	t=1755854930; cv=none; b=CjHwCOsoeOwdV/WMDI5fXa3UPkpiWfVoc/SV/1PX+/z+dat5UXim2A03pzMeoKQI0LScWoMzQHP6OM94f3sci+djZKiJPIrHC23ecX6jOAAtuTeEm8Y6O+RVM4adhSPo20a0udPdy3g7bdBNz/1zfyWsPRWHRBknC+YwH5yQICE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755854911; c=relaxed/simple;
-	bh=6NfNKH2/5Ex9MkMi1xX3pcCJaCNEsgGjtKN2pSlHG/M=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=mkTRWKQS6cbdowIrslfg/uNBdaXeL1pF+v/vVeyyGMDSmh8HsVQdR13RI/Ac/NUsa8AEM8yNtLkX/4q56h8IsR0dBnJKKBb9zZ7nSyObE5AUpoEfoyD8gIlj2dwhx4Q1tT0JFe2EtUib3w+/pShqsIXOF5/3BRzzZ2HzuNbH9GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4c7ZcW4xPfz5PM38;
-	Fri, 22 Aug 2025 17:28:27 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl2.zte.com.cn with SMTP id 57M9SBtG061104;
-	Fri, 22 Aug 2025 17:28:12 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp05[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Fri, 22 Aug 2025 17:28:14 +0800 (CST)
-Date: Fri, 22 Aug 2025 17:28:14 +0800 (CST)
-X-Zmail-TransId: 2afc68a8382effffffff97c-e4028
-X-Mailer: Zmail v1.0
-Message-ID: <20250822172814216UpCi2uCZm_cXohi5cSYB-@zte.com.cn>
-In-Reply-To: <20250822171232584GYKo3tPbZNfE3VsK7dvM0@zte.com.cn>
-References: 20250822171232584GYKo3tPbZNfE3VsK7dvM0@zte.com.cn
+	s=arc-20240116; t=1755854930; c=relaxed/simple;
+	bh=IbLEAjuHyqoZRTWTQ1Get3JTdLxmKfmmH4b9vD9fY7Y=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tkIi920oluE6Uns8xsT+GX98kf4cja6VQf0e9yXYm8CLvrNKRBZNWMG7suIJr0C8SVZTLqgN52B/BTQEnsB3SmpFGJJ1qeOr4FJJfyL1GoslC/SJT1jQiE+wplivXuuwXxg5+QRiaSjZNOSvo5HYEBWCvSXiPMmCalBpczbWS9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HYojqN9S; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45a1b05d251so11082665e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 02:28:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755854927; x=1756459727; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tdZspPlKaSzIHZ+2SN/TDgYtX3ulzfnLR3chwiPSwtY=;
+        b=HYojqN9S15y8qfkOHoF9u3nBL4XkHfd9nD1KRznW0YjguFEsTsf62xtit7phbBIDBO
+         iKzYMl5cMbGNdPV6YDAgE/uO01S8ZUQ48GOZoQeelVuKueOKTS4/R3FQZathCEbwFek+
+         r1VB3uebrfg9NFvI6Gy1Mo5ERidRJhqOsqqC8N6hlqZgCCyp9oCmLb0eIOOk6t75i1Yw
+         EZ6PTFQU9zgpU3/vSUPxBtVBPh2kFAwAbIl1xRSdNaS7f7QhLDvAvPxnfWJBhq+UR2CI
+         mg9W6H6Gs7ZykUDRvwGLfWrZhk0NTMpr5XDde4XkcysjRUPTigib3BzbtRrPBRgvcoyq
+         kdtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755854927; x=1756459727;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tdZspPlKaSzIHZ+2SN/TDgYtX3ulzfnLR3chwiPSwtY=;
+        b=hD1rWDsjKE68eqij0f7zh533Os0euK9TGa6a15jSNKTyW7Whwp2CXGivplbqBtkdeu
+         c3Z2oUVM6OlmosWCZmzqilZ+Ge7WsN5UsOqo8z9uJFU8Zka8UZvRAaNQIhn8/LsEpAOj
+         MIsS4R0dcKkS/KEyhuO8pRHMNJODjCyDZUHIbx+FY+ByGG3BF1+tCD5mvV11i043xmi8
+         EpBAZ2LN6yqzO1EzP85n9lXiyAF3kwn46wB95y8AqIgKrXnUKfT8MceprT+K4jEGouQz
+         Q50G1mKffvLdafPatmR5tUwqLMRec/uVNQ7KNfm3mCVbct9WUP1qCu2iBBGR0eKNd0XU
+         TRWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmsvvbt6epFKCzW2qQthvW/9wEsWZ2bYRE9KrpQK3Mn7t/crywsFN9SC2JjTdpQT1pQ6PcyN9Yq3FGLZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXFzkZ1QEDZNT21XTWoCJUkM2ttev6xYfQWJvOmjwKq9PtVZJp
+	fqupMi6ivhImy42Zmmogkh/Rkq0GjmuD6CiWHLhq0jOTa7IavKm/T5FZGhOtdhJWYTq5gwvlvBy
+	orZ1ZP+msF9r4YE9cjw==
+X-Google-Smtp-Source: AGHT+IFR6iebHf+8m9CthwrSpnbKhlvbWxtJ/c0VWjlsjpaPAyeik2NIhpLjJuZj3UbyEmu0IRZMKxiqKzeCS3M=
+X-Received: from wmby11-n1.prod.google.com ([2002:a05:600c:c04b:10b0:459:d6d6:554d])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1548:b0:459:d709:e5b0 with SMTP id 5b1f17b1804b1-45b5178e893mr20589265e9.5.1755854927367;
+ Fri, 22 Aug 2025 02:28:47 -0700 (PDT)
+Date: Fri, 22 Aug 2025 09:28:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <shao.mingyin@zte.com.cn>
-Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>,
-        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
-        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>,
-        <wang.longjie1@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIHYzIDYvN10gRG9jcy96aF9DTjogVHJhbnNsYXRlIGRub3RpZnkucnN0IHRvIFNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 57M9SBtG061104
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Fri, 22 Aug 2025 17:28:27 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68A8383B.001/4c7ZcW4xPfz5PM38
+X-B4-Tracking: v=1; b=H4sIADg4qGgC/32NSw6DMAxEr4K8rquEv7rqPSoWAUyw1BCUQESFc
+ vemHKDLN5p5c4Inx+ThkZ3gKLBnuyTIbxkMs1o0IY+JIRd5JVpZol73oNDsGx3IC2oyqGrRqr4
+ oSqokpOHqaOLjkr66xDP7zbrP9RHkL/2rCxIFUmoM/UT12DRPba1+032wBroY4xc4q3GTtQAAA A==
+X-Change-Id: 20250814-gpuva-mutex-in-gem-a608ab334e51
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1188; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=IbLEAjuHyqoZRTWTQ1Get3JTdLxmKfmmH4b9vD9fY7Y=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBoqDhI7cJ5PRI/lSv1X75CC6AIfMHgMPZS1RZIN
+ g5Lt7w1VqmJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaKg4SAAKCRAEWL7uWMY5
+ RlcaD/9/NlLC8uUEjxawJfxBiv/2EsetL0ASiMNHOOfB3U8qD816yL7nN3UvHwlvTrXHzhT7A22
+ Vgbq/nU0Be2ft9I0TEzz8MIFc5iG66Q2TM3txaBp96519MrHNj6eZT1WBRC/ceFcOZYEWqlRDUL
+ 8K6QrGpO0DA3R2/xwFLBiTyNlZ/fmx4m/ZG48Et1sB5RpCSyu1aMGx8JallE79LUd3wlLYaJW8f
+ bBa7iWaB5rLaPls3w9i1RorovONa2VUt9nqc/Jzh8TVuueKvcPOfS/01zeDnZXgexESZQQejF1q
+ Z73usLjZ09gSfOg/TMwTjzj77iQ5vZnJnecgDaMNcKucZ1d9+NM/aOwjr1RUUXsUfqHQs09bspJ
+ aHwKl1p6fQdDv83GK9qRKAXKuH53SmCIb3YufjTQhpoB1q/KctdRAA9sBhHNFUUrB/j8pyPeaLj
+ ynhWmNIW8OXGFykqExurrsnJw0wq9lU1cnXy2G3+N2CpoxE4gweveYIUQFYUDZPknZas1nng3zS
+ S/+z6oRE13mtKcNv8ECUK2LVceNOifVVZVIhxLUGY8/inWuPJv+qc8b/Dbx1yQnl2qpLNcbnVlf
+ C6RvPM7HvcXdPvCrWTttwRJswy87NqMqXMuoSck5WftFq3XiwuvhEBbc9jPqQfAcWaPuN3fb00T ExxdTky9MUx9uVw==
+X-Mailer: b4 0.14.2
+Message-ID: <20250822-gpuva-mutex-in-gem-v2-0-c41a10d1d3b9@google.com>
+Subject: [PATCH v2 0/3] Add mutex to drm_gem_object.gpuva list
+From: Alice Ryhl <aliceryhl@google.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Danilo Krummrich <dakr@kernel.org>, Boris Brezillon <boris.brezillon@collabora.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Rob Herring <robh@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-From: Wang Longjie <wang.longjie1@zte.com.cn>
+See the first patch for motivation.
 
-translate the "dnotify.rst" into Simplified Chinese.
-
-Update to commit b31763cff488("docs: filesystems: convert dnotify.txt to
-ReST")
-
-Signed-off-by: Wang Longjie <wang.longjie1@zte.com.cn>
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- .../zh_CN/filesystems/dnotify.rst             | 67 +++++++++++++++++++
- .../translations/zh_CN/filesystems/index.rst  | 10 +++
- 2 files changed, 77 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/filesystems/dnotify.rst
+Changes in v2:
+- Move the mutex_destroy() call to drm_gem_private_object_fini()
+- Add a third patch to get rid of the lockdep map.
+- Link to v1: https://lore.kernel.org/r/20250814-gpuva-mutex-in-gem-v1-0-e202cbfe6d77@google.com
 
-diff --git a/Documentation/translations/zh_CN/filesystems/dnotify.rst b/Documentation/translations/zh_CN/filesystems/dnotify.rst
-new file mode 100644
-index 000000000000..5ab109b9424c
---- /dev/null
-+++ b/Documentation/translations/zh_CN/filesystems/dnotify.rst
-@@ -0,0 +1,67 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/filesystems/dnotify.rst
-+
-+:翻译:
-+
-+   王龙杰 Wang Longjie <wang.longjie1@zte.com.cn>
-+
-+==============
-+Linux 目录通知
-+==============
-+
-+	   Stephen Rothwell <sfr@canb.auug.org.au>
-+
-+目录通知的目的是使用户应用程序能够在目录或目录中的任何文件发生变更时收到通知。基本机制包括应用程序
-+通过 fcntl(2) 调用在目录上注册通知，通知本身则通过信号传递。
-+
-+应用程序可以决定希望收到哪些 “事件” 的通知。当前已定义的事件如下：
-+
-+	=========	=====================================
-+	DN_ACCESS	目录中的文件被访问（read）
-+	DN_MODIFY	目录中的文件被修改（write,truncate）
-+	DN_CREATE	目录中创建了文件
-+	DN_DELETE	目录中的文件被取消链接
-+	DN_RENAME	目录中的文件被重命名
-+	DN_ATTRIB	目录中的文件属性被更改（chmod,chown）
-+	=========	=====================================
-+
-+通常，应用程序必须在每次通知后重新注册，但如果将 DN_MULTISHOT 与事件掩码进行或运算，则注册
-+将一直保持有效，直到被显式移除（通过注册为不接收任何事件）。
-+
-+默认情况下，SIGIO 信号将被传递给进程，且不附带其他有用的信息。但是，如果使用 F_SETSIG fcntl(2)
-+调用让内核知道要传递哪个信号，一个 siginfo 结构体将被传递给信号处理程序，该结构体的 si_fd 成员将
-+包含与发生事件的目录相关联的文件描述符。
-+
-+应用程序最好选择一个实时信号（SIGRTMIN + <n>），以便通知可以被排队。如果指定了 DN_MULTISHOT，
-+这一点尤为重要。注意，SIGRTMIN 通常是被阻塞的，因此最好使用（至少）SIGRTMIN + 1。
-+
-+实现预期（特性与缺陷 :-)）
-+--------------------------
-+
-+对于文件的任何本地访问，通知都应能正常工作，即使实际文件系统位于远程服务器上。这意味着，对本地用户
-+模式服务器提供的文件的远程访问应能触发通知。同样的，对本地内核 NFS 服务器提供的文件的远程访问
-+也应能触发通知。
-+
-+为了尽可能减小对文件系统代码的影响，文件硬链接的问题已被忽略。因此，如果一个文件（x）存在于两个
-+目录（a 和 b）中，通过名称”a/x”对该文件进行的更改应通知给期望接收目录“a”通知的程序，但不会
-+通知给期望接收目录“b”通知的程序。
-+
-+此外，取消链接的文件仍会在它们链接到的最后一个目录中触发通知。
-+
-+配置
-+----
-+
-+Dnotify 由 CONFIG_DNOTIFY 配置选项控制。禁用该选项时，fcntl(fd, F_NOTIFY, ...) 将返
-+回 -EINVAL。
-+
-+示例
-+----
-+具体示例可参见 tools/testing/selftests/filesystems/dnotify_test.c。
-+
-+注意
-+----
-+从 Linux 2.6.13 开始，dnotify 已被 inotify 取代。有关 inotify 的更多信息，请参见
-+Documentation/filesystems/inotify.rst。
-diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
-index 9f2a8b003778..342b588ada34 100644
---- a/Documentation/translations/zh_CN/filesystems/index.rst
-+++ b/Documentation/translations/zh_CN/filesystems/index.rst
-@@ -15,6 +15,16 @@ Linux Kernel中的文件系统
- 文件系统（VFS）层以及基于其上的各种文件系统如何工作呈现给大家。当前\
- 可以看到下面的内容。
+---
+Alice Ryhl (3):
+      drm_gem: add mutex to drm_gem_object.gpuva
+      panthor: use drm_gem_object.gpuva.lock instead of gpuva_list_lock
+      gpuvm: remove gem.gpuva.lock_dep_map
 
-+核心 VFS 文档
-+=============
-+
-+有关 VFS 层本身以及其算法工作方式的文档，请参阅这些手册。
-+
-+.. toctree::
-+   :maxdepth: 1
-+
-+   dnotify
-+
- 文件系统
- ========
+ drivers/gpu/drm/drm_gem.c             |  2 ++
+ drivers/gpu/drm/drm_gpuvm.c           | 30 +++++++++++++--------------
+ drivers/gpu/drm/panthor/panthor_gem.c |  3 ---
+ drivers/gpu/drm/panthor/panthor_gem.h | 12 -----------
+ drivers/gpu/drm/panthor/panthor_mmu.c | 21 ++++++++++---------
+ include/drm/drm_gem.h                 | 39 ++++++++++++++---------------------
+ include/drm/drm_gpuvm.h               | 30 ++++++++++++++++++++++++---
+ 7 files changed, 70 insertions(+), 67 deletions(-)
+---
+base-commit: 3f13bcc886fc034113cb75cb32b8d9db1216b846
+change-id: 20250814-gpuva-mutex-in-gem-a608ab334e51
 
+Best regards,
 -- 
-2.27.0
+Alice Ryhl <aliceryhl@google.com>
+
 
