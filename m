@@ -1,141 +1,157 @@
-Return-Path: <linux-kernel+bounces-781781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3622B316B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:49:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55424B316B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40D53B65CC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:47:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4250A5A6CE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC462E8E19;
-	Fri, 22 Aug 2025 11:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457282F656A;
+	Fri, 22 Aug 2025 11:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cVuv5bzX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kR1Ty6qR"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790F7393DC4
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE50C2DCF47
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755863349; cv=none; b=PsYt7r0wKviV8YdX2SZreR73wXlC+s/LaQn2cC3uEO7zkkO7XCzOktgCCL5cltK4G5pthZ7C44JC0aHO+CWGF71amOd+CmHlz5q685GMDVsXtaCPoVxWcGOTLWLRUmHE/YcidhJdBQ64WMWCXZGFdFxasU4DECGeDuugDKa/t+o=
+	t=1755863386; cv=none; b=XbpifkKQYkLFUewwiv4YMaSL3KKaRks3XtkkRm1DBgpn4MqKZec/V+pDB2RSTSeRy+Xw/2UrJVBnSw8JNbserpX+Yx+ppPMT9/GIOeepIqIYKw4I635UZTd5yesrjcgnF1NmHcZ2aJLQWUclmmt4lH0MTnWma6BLTt67C7B4+OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755863349; c=relaxed/simple;
-	bh=RhtZ9QF3jNeWlu1NyFf57VDqqZgeDOt1OLEdNPilCV8=;
+	s=arc-20240116; t=1755863386; c=relaxed/simple;
+	bh=dHH9YPLn4wVeWFb1FvHgDp6/7RNVg60CahvbkhmFxYU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LpzpfWTxbz7CCewdfdGOtUQzTpIv/dkfvCZnumDG24q0IIdqdt5/vmG0lb+e6KHprhpuBVXD6eIlbBc1B/r2FSeLmCHbM8P+OFzb4m02w64h0RQBErK3MGvVQ7ZyxB8iHJZOObTKL1ELWB3yCx6shVcAAXocXwV2HLSvmswnEyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cVuv5bzX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5679DC4CEED;
-	Fri, 22 Aug 2025 11:49:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755863349;
-	bh=RhtZ9QF3jNeWlu1NyFf57VDqqZgeDOt1OLEdNPilCV8=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=UFkBOblPM246xydbLhy2vsyNV3ogD6Lu1AMSyUSuMJtj7rF74XzZhSC1wikJqFfkXjftM1KDWBBDbtUp2JiwB836djzfDzcdy1QDgu/uFgkkP5B1j0pzE5mk02B+iPGwhzbqeTAD0zSC+tWjBI1LzQPtpnYOGnn+H78JMamuzGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kR1Ty6qR; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BAB7140E00DD;
+	Fri, 22 Aug 2025 11:49:39 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id CgYhBf2FJT3Q; Fri, 22 Aug 2025 11:49:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755863376; bh=sw3urXir574JHPoRBsF3idrTap821okJ/B/kZCWAxmM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cVuv5bzX+5SDkVZko/FxaR8PIehk2hm9GwG194YkD4PdxbojWmDB49ZiIS7c6KjyE
-	 bcu10fZIrslTqSRXdey/bq7fmYqIA/cjZFHXS9qaxW6LwErOndsgftLu4ogMRugi//
-	 WCXofIN0tn2lV00/6UmtssqwL6v1V3LsIJYC2bs8=
-Date: Fri, 22 Aug 2025 13:49:05 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Mahesh Rao <mahesh.rao@altera.com>
-Cc: Dinh Nguyen <dinguyen@kernel.org>, linux-kernel@vger.kernel.org,
-	Matthew Gerlach <matthew.gerlach@altera.com>
-Subject: Re: [PATCH 1/5] firmware: stratix10-svc: Add mutex lock and unlock
- in stratix10 memory allocation/free
-Message-ID: <2025082234-scarcity-relive-9362@gregkh>
-References: <20250722163045.168186-1-dinguyen@kernel.org>
- <2025081920-greyhound-discuss-79b2@gregkh>
- <0bee0edb-5a3b-4648-8ca5-ad334220f092@altera.com>
+	b=kR1Ty6qR5nOEKaCkSQiHdUnArEY2H60elG+yyyf8rzi5XAw80I2Zx/QJxg8ugShMU
+	 2qtwlX91t/hn+o1pAAZnyYHg7S4orCNVj6iHYrq5hTu9mr45GEG7Qn3bc41zzWfypP
+	 dfybF4oo0WpBX6ti/5AehGTucRxkMDZaz6ILUoLHHvcDp1jqlM5nSipSXJ5LfAwuRz
+	 ENWRM3AJEp8vecO/dKNhMa9wfsPzlCK4XLOnbH1H1M/3bIecMBDTChXKcBRMe3pzFy
+	 bBroHGYa1ULjGxXsqsFHc1vNFOCA5a4rZQDRAnQrPPpR1DZNWqgIu3z8D6nRwl6biq
+	 m0W1eEnD4GC+NJiK+v9B2s7GNHX4sk5iB00s1jYVB8RHvD5I1Yww7OKuaaYDhFk8BI
+	 vZVT69BuDSan+vkvitfMAOZGDHnEC8rIUYDU5WVVCk8MyT8HgcPTNjHuEMWxvSM2mN
+	 z5pv3LsSbtf3yjXKURFjHd6DiZ98v+Ou/kSCAUEroZwpsx5cxneG4av5uSFxDjnGLI
+	 QoyBSVxaQsWr2ULF1RxY6olYOJRMYBD/xgVPy0kQQWIVd21t1JN5cHwQziJH28DT7f
+	 YEkvbwpJ1VhLqULulwls8OegXJrez3OARl7Qtp9liBKZqOxT8IsbrnIOBYIytF6UGg
+	 1nIkm9vVOa76xxDCOsZSBdAY=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4C02940E025A;
+	Fri, 22 Aug 2025 11:49:26 +0000 (UTC)
+Date: Fri, 22 Aug 2025 13:49:18 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: David Kaplan <david.kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] x86/bugs: Use early_param for spectre_v2
+Message-ID: <20250822114918.GQaKhZPrvA7zP33TX4@fat_crate.local>
+References: <20250819192200.2003074-1-david.kaplan@amd.com>
+ <20250819192200.2003074-3-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0bee0edb-5a3b-4648-8ca5-ad334220f092@altera.com>
+In-Reply-To: <20250819192200.2003074-3-david.kaplan@amd.com>
 
-On Fri, Aug 22, 2025 at 03:17:54PM +0530, Mahesh Rao wrote:
-> Hi Greg,
-> 	thanks for reviewing the code.
+On Tue, Aug 19, 2025 at 02:21:57PM -0500, David Kaplan wrote:
+> +static void __init spectre_v2_check_cmd(void)
+
+Why the separate function?
+
+This can simply go in spectre_v2_select_mitigation() before the switch-case
+like with all the others *_select_mitigation() functions...
+
+> +{
+> +	if ((spectre_v2_cmd == SPECTRE_V2_CMD_RETPOLINE ||
+> +	     spectre_v2_cmd == SPECTRE_V2_CMD_RETPOLINE_LFENCE ||
+> +	     spectre_v2_cmd == SPECTRE_V2_CMD_RETPOLINE_GENERIC ||
+> +	     spectre_v2_cmd == SPECTRE_V2_CMD_EIBRS_LFENCE ||
+> +	     spectre_v2_cmd == SPECTRE_V2_CMD_EIBRS_RETPOLINE) &&
+> +	    !IS_ENABLED(CONFIG_MITIGATION_RETPOLINE)) {
+> +		pr_err("RETPOLINE selected but not compiled in. Switching to AUTO select\n");
+> +		spectre_v2_cmd = SPECTRE_V2_CMD_AUTO;
+> +	}
+> +
+> +	if ((spectre_v2_cmd == SPECTRE_V2_CMD_EIBRS ||
+> +	     spectre_v2_cmd == SPECTRE_V2_CMD_EIBRS_LFENCE ||
+> +	     spectre_v2_cmd == SPECTRE_V2_CMD_EIBRS_RETPOLINE) &&
+> +	    !boot_cpu_has(X86_FEATURE_IBRS_ENHANCED)) {
+> +		pr_err("EIBRS selected but CPU doesn't have Enhanced or Automatic IBRS. Switching to AUTO select\n");
+> +		spectre_v2_cmd = SPECTRE_V2_CMD_AUTO;
+> +	}
+> +
+> +	if ((spectre_v2_cmd == SPECTRE_V2_CMD_RETPOLINE_LFENCE ||
+> +	     spectre_v2_cmd == SPECTRE_V2_CMD_EIBRS_LFENCE) &&
+> +	    !boot_cpu_has(X86_FEATURE_LFENCE_RDTSC)) {
+> +		pr_err("LFENCE selected, but CPU doesn't have a serializing LFENCE. Switching to AUTO select\n");
+> +		spectre_v2_cmd = SPECTRE_V2_CMD_AUTO;
+> +	}
+> +
+> +	if (spectre_v2_cmd == SPECTRE_V2_CMD_IBRS && !IS_ENABLED(CONFIG_MITIGATION_IBRS_ENTRY)) {
+> +		pr_err("IBRS selected but not compiled in. Switching to AUTO select\n");
+> +		spectre_v2_cmd = SPECTRE_V2_CMD_AUTO;
+> +	}
+> +
+> +	if (spectre_v2_cmd == SPECTRE_V2_CMD_IBRS && boot_cpu_data.x86_vendor != X86_VENDOR_INTEL) {
+> +		pr_err("IBRS selected but not Intel CPU. Switching to AUTO select\n");
+> +		spectre_v2_cmd = SPECTRE_V2_CMD_AUTO;
+> +	}
+> +
+> +	if (spectre_v2_cmd == SPECTRE_V2_CMD_IBRS && !boot_cpu_has(X86_FEATURE_IBRS)) {
+> +		pr_err("IBRS selected but CPU doesn't have IBRS. Switching to AUTO select\n");
+> +		spectre_v2_cmd = SPECTRE_V2_CMD_AUTO;
+> +	}
+> +
+> +	if (spectre_v2_cmd == SPECTRE_V2_CMD_IBRS && cpu_feature_enabled(X86_FEATURE_XENPV)) {
+> +		pr_err("IBRS selected but running as XenPV guest. Switching to AUTO select\n");
+> +		spectre_v2_cmd = SPECTRE_V2_CMD_AUTO;
+> +	}
+> +}
+> +
+>  static void __init spectre_v2_select_mitigation(void)
+>  {
+> -	spectre_v2_cmd = spectre_v2_parse_cmdline();
+> +	spectre_v2_check_cmd();
+>  
+>  	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2) &&
+>  	    (spectre_v2_cmd == SPECTRE_V2_CMD_NONE || spectre_v2_cmd == SPECTRE_V2_CMD_AUTO))
+> -- 
+> 2.34.1
 > 
-> On 19-08-2025 04:36 pm, Greg KH wrote:
-> > On Tue, Jul 22, 2025 at 11:30:41AM -0500, Dinh Nguyen wrote:
-> > > From: Mahesh Rao <mahesh.rao@altera.com>
-> > > 
-> > > This commit adds a mutex lock to protect the
-> > > stratix10_svc_allocate_memory and
-> > > stratix10_svc_free_memory functions to ensure
-> > > thread safety when allocating and freeing memory.
-> > > This prevents potential race conditions and ensures
-> > > synchronization.
-> > 
-> > You have 72 columns to write a changelog in, please use it :)
-> > 
-> > And is this fixing a bug?  If so, shouldn't this be tagged for stable
-> > and add a Fixes: tag?
-> > 
-> > If this isn't a bug, then why is it needed?  How can these race?
-> 
-> In the current implementation, all operations were performed serially,
-> eliminating the need for protection mechanisms. However, with this patch
-> set, we are introducing parallel access and communication with the SDM
-> across multiple client drivers. This change may lead to race conditions
-> involving the svc_data_mem list.
 
-Then that needs to be said here :)
+-- 
+Regards/Gruss,
+    Boris.
 
-Also, what is causing these operations to be performed serially if there
-is no locking?
-
-> 
-> > 
-> > > 
-> > > Signed-off-by: Mahesh Rao <mahesh.rao@altera.com>
-> > > Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
-> > > Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-> > > ---
-> > >   drivers/firmware/stratix10-svc.c | 31 ++++++++++++++++++++++++-------
-> > >   1 file changed, 24 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-> > > index e3f990d888d7..73c77b8e9f2b 100644
-> > > --- a/drivers/firmware/stratix10-svc.c
-> > > +++ b/drivers/firmware/stratix10-svc.c
-> > > @@ -1,6 +1,7 @@
-> > >   // SPDX-License-Identifier: GPL-2.0
-> > >   /*
-> > >    * Copyright (C) 2017-2018, Intel Corporation
-> > > + * Copyright (C) 2025, Altera Corporation
-> > >    */
-> > >   #include <linux/completion.h>
-> > > @@ -171,6 +172,10 @@ struct stratix10_svc_chan {
-> > >   static LIST_HEAD(svc_ctrl);
-> > >   static LIST_HEAD(svc_data_mem);
-> > > +/* svc_mem_lock protects access to the svc_data_mem list for
-> > > + * concurrent multi-client operations
-> > > + */
-> > 
-> > Odd coding style, this isn't the network subsystem :(
-> 
-> Ok sure, will change
-> 
-> > 
-> > And what about a lock for svc_ctrl?
-> 
-> There is only one instance of svc_ctrl and there is no parallel access to
-> it.so a lock is not required as of now.
-
-But don't you have multiple places that list can be accessed now at the
-same time?
-
-In other words, what is changing to require one list to require it but
-not the other?  Is there some other lock for that?
-
-thanks,
-
-greg k-h
+https://people.kernel.org/tglx/notes-about-netiquette
 
