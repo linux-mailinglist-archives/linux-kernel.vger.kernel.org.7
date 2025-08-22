@@ -1,149 +1,195 @@
-Return-Path: <linux-kernel+bounces-782460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CD45B3209F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:37:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 472C8B320AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0D7A18980CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:37:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F5F6AA5884
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28312580CF;
-	Fri, 22 Aug 2025 16:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45A2305E04;
+	Fri, 22 Aug 2025 16:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n8hLAZfJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CT+fJdAi"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5756D1F463C;
-	Fri, 22 Aug 2025 16:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096203043B2;
+	Fri, 22 Aug 2025 16:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755880629; cv=none; b=JXCp3kEO+7hU6hIJ8Pf+akyXeSSPqMVQPRAWytazdTjUSkwOgTLJ4rO45EjD+2qt6oIwcgl4e6V78gpxZ85oIdvMkfgfNLNQB8WHGpoxLnZ85P/Ia0J8NoI+JmBActKvxh/jI87GnjLcvN5llQ7ahJ4YfzSfNZq4ElNqwiRAlbQ=
+	t=1755880814; cv=none; b=HckNNPh0OCfCmaFBMmDuv9mzmpdnfuVtj4sB8XrkEfRQkg+mZlUww1lgrzaPTY3eeVSDKp5o+8u1Gn4Dy0burxoKBtqkT0whFt01t1CHkLbrLxAcuspEc5i9XbrbiVSQoNBh1sbZwg8bprTHQaL3iO5NPtRwhTtwdgvtPSTrYEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755880629; c=relaxed/simple;
-	bh=Nu4e6UeAXwVcvfZtjpDX4+Fvi5Hf97mH4y1qIQ3VZzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=POkTcU3/NgeGouEkHlhywmkuvL/2y5LRK+hS0EoJo4VxkbbKZYxBDrSxoD3psn1HuUn9NLU6NWkkb2nY31UB3zM+B7vpqtTWuDpCJMD5M3wOIw2d55S9YaPzdTIkt/nSjSgMarIVZI7fsrFrVQH+W8fv9pxsPRN26rviYZl0Evo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n8hLAZfJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73852C4CEED;
-	Fri, 22 Aug 2025 16:37:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755880628;
-	bh=Nu4e6UeAXwVcvfZtjpDX4+Fvi5Hf97mH4y1qIQ3VZzA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n8hLAZfJovCKOU2fELvFU+ZBcFqnowH+57AbthIsjm22+oAhTNi6jrkkShDDkK6K/
-	 C1H8s6gvzNgkXr31PNpTZ4UMCG/1+hzaGo4VbrTKm/r+LrQ5wGvaWOI55XUeKNykvT
-	 /jSzs4nHn9hFj1gb2KcPdkn6rZ0txqkgQnhe57K9CLyHSIJCjeTsQgr2OWkdLM7wc5
-	 W8umRxG2B8NtlR/N5bVucmEIwDjeM2AjYC3sxBa07queDIccM1qoYlZ43ooRfiqC6b
-	 D9zNd4dWYQxcO/nfvNYuzpk5PzHkPtB0GUYx+K9iKYzqGnGYiP5NHwB6Gf5ylsP3K7
-	 BPZUyP/CprI9A==
-Date: Fri, 22 Aug 2025 17:37:04 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Hal Feng <hal.feng@starfivetech.com>
-Cc: Conor Dooley <conor+dt@kernel.org>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC 1/3] dt-bindings: riscv: Add StarFive JH7110S SoC and
- VisionFive 2 Lite board
-Message-ID: <20250822-rascal-geometry-83c35926ea7e@spud>
-References: <20250821100930.71404-1-hal.feng@starfivetech.com>
- <20250821100930.71404-2-hal.feng@starfivetech.com>
- <20250821-pencil-anguished-6b8467adbd38@spud>
- <ZQ2PR01MB13071F6F2732451DBE3BEE9DE63D2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+	s=arc-20240116; t=1755880814; c=relaxed/simple;
+	bh=XhTpkxvx4Bh/Fu9SxN3bEQdCgA5hUs4DjYlGrXbVmpA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=r74YSh5CZO4Ay0zST9Ez6tpAsNqW8tRArE0sUa8lbF7FCbUOQj++V+B7t3pVpiEywG3ILb3f/4jYpWLlxfy4EjT4H/ABVkpqId620vlECcg6Qyymz4Bs92CUO4Dws3ipLV0UazW0NazRSXelV7qnX1vFUz3lsJFUXGnqtQuNDK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CT+fJdAi; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57MGduNv291327;
+	Fri, 22 Aug 2025 11:39:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755880796;
+	bh=/RPSsH3f3z2Vqavjrk93revEmME+1uytS0pwCHeGwAQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=CT+fJdAiV2ghPTF/zj9h11E/n3/x1ouiAYNoCz2tNiTuAe5TyskzJaPVae0gQWJVv
+	 9BSeetRWCRfFIzZWikZlD7fn6+EGpAolqrFk/2q/BaHIDGR9WqwW1WgrmTO2ZZ1mLC
+	 0ttzdyI/an2R5QihtrMhm7fyBlcpzfrxpwS4arSY=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57MGduAJ3039382
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 22 Aug 2025 11:39:56 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 22
+ Aug 2025 11:39:56 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 22 Aug 2025 11:39:56 -0500
+Received: from [10.249.139.51] ([10.249.139.51])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57MGdn3B3828477;
+	Fri, 22 Aug 2025 11:39:50 -0500
+Message-ID: <ecff956d-1019-41d0-9bfc-b0bdc30e87ba@ti.com>
+Date: Fri, 22 Aug 2025 22:09:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nZfVf4i1qpRGT5hz"
-Content-Disposition: inline
-In-Reply-To: <ZQ2PR01MB13071F6F2732451DBE3BEE9DE63D2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 16/33] arm64: dts: ti: k3-am62p-verdin: Add missing cfg
+ for TI IPC Firmware
+To: Francesco Dolcini <francesco@dolcini.it>
+CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <afd@ti.com>,
+        <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Francesco Dolcini <francesco.dolcini@toradex.com>,
+        Emanuele Ghidoli
+	<emanuele.ghidoli@toradex.com>,
+        Parth Pancholi <parth.pancholi@toradex.com>,
+        Jo_o Paulo Gon_alves <joao.goncalves@toradex.com>
+References: <20250814223839.3256046-1-b-padhi@ti.com>
+ <20250814223839.3256046-17-b-padhi@ti.com>
+ <20250821060629.GB7503@francesco-nb>
+Content-Language: en-US
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <20250821060629.GB7503@francesco-nb>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 
---nZfVf4i1qpRGT5hz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 8/21/2025 11:36 AM, Francesco Dolcini wrote:
+> On Fri, Aug 15, 2025 at 04:08:22AM +0530, Beleswar Padhi wrote:
+>> The wkup_r5fss0_core0_memory_region is used to store the text/data
+>> sections of the Device Manager (DM) firmware itself and is necessary for
+>> platform boot. Whereas the wkup_r5fss0_core0_dma_memory_region is used
+>> for allocating the Virtio buffers needed for IPC with the DM core which
+>> could be optional. The labels were incorrectly used in the
+>> k3-am62p-verdin.dtsi file. Correct the firmware memory region label.
+>>
+>> Currently, only mailbox node is enabled with FIFO assignment. However,
+>> there are no users of the enabled mailboxes. Add the missing carveouts
+>> for WKUP and MCU R5F remote processors, and enable those by associating
+>> to the above carveout and mailboxes. This config aligns with other AM62P
+>> boards and can be refactored out later.
+>>
+>> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+>> ---
+>> Cc: Francesco Dolcini <francesco.dolcini@toradex.com>
+>> Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+>> Cc: Parth Pancholi <parth.pancholi@toradex.com>
+>> Cc: Jo_o Paulo Gon_alves <joao.goncalves@toradex.com>
+>> Requesting for a review/test.
+>>
+>>   arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi | 42 ++++++++++++++++++++-
+>>   1 file changed, 41 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
+>> index 6a04b370d149..0687debf3bbb 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
+>> +++ b/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
+>> @@ -162,7 +162,25 @@ secure_ddr: optee@9e800000 {
+>>   			no-map;
+>>   		};
+>>   
+>> -		wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
+>> +		mcu_r5fss0_core0_dma_memory_region: mcu-r5fss-dma-memory-region@9b800000 {
+>> +			compatible = "shared-dma-pool";
+>> +			reg = <0x00 0x9b800000 0x00 0x100000>;
+>> +			no-map;
+>> +		};
+>> +
+>> +		mcu_r5fss0_core0_memory_region: mcu-r5fss-memory-region@9b900000 {
+> Node name should be generic, `memory@9b900000` ?
 
-On Fri, Aug 22, 2025 at 07:37:29AM +0000, Hal Feng wrote:
-> > On 22.08.25 02:17, Conor Dooley wrote:
-> > On Thu, Aug 21, 2025 at 06:09:28PM +0800, Hal Feng wrote:
-> > > Add device tree bindings for the StarFive JH7110S SoC and the
-> > > VisionFive 2 Lite board equipped with it.
-> > >
-> > > JH7110S SoC is an industrial SoC which can run at -40~85 degrees
-> > > centigrade and up to 1.25GHz. Its CPU cores and peripherals are mostly
-> > > similar to those of the JH7110 SoC.
-> >=20
-> > How "mostly" is mostly? Are there memory map or capability differences?
->=20
-> To be precise, the CPU cores and peripherals are the same as those of the
-> JH7110 SoC. I will improve the commit description in the next version.
 
-Ye, please do. The complete lack of differences other than thermals
-and cpu performance is what allows you to use all the same compatibles
-for the peripherals after all!
+Humm, that memory is reserved and has the 'no-map' property. So it
+technically is only used by the node which references it (a particular
+rproc in this case), and never used by Linux for any allocations. So it
+is not generic memory per say...
 
->=20
-> Here are the differences between them:=20
-> JH7110 supports 0~70 degrees centigrade and up to 1.5GHz.
-> JH7110S supports -40~85 degrees centigrade and up to 1.25GHz.
->=20
-> Best regards,
-> Hal
->=20
-> >=20
-> > >
-> > > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/riscv/starfive.yaml | 5 +++++
-> > >  1 file changed, 5 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/riscv/starfive.yaml
-> > > b/Documentation/devicetree/bindings/riscv/starfive.yaml
-> > > index 7ef85174353d..a2952490709f 100644
-> > > --- a/Documentation/devicetree/bindings/riscv/starfive.yaml
-> > > +++ b/Documentation/devicetree/bindings/riscv/starfive.yaml
-> > > @@ -33,6 +33,11 @@ properties:
-> > >                - starfive,visionfive-2-v1.3b
-> > >            - const: starfive,jh7110
-> > >
-> > > +      - items:
-> > > +          - enum:
-> > > +              - starfive,visionfive-2-lite
-> > > +          - const: starfive,jh7110s
-> > > +
-> > >  additionalProperties: true
-> > >
-> > >  ...
-> > > --
-> > > 2.43.2
-> > >
->=20
+So I was inclined for putting the specific node name which uses the
+carveout in the label. What do you think?
 
---nZfVf4i1qpRGT5hz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKicsAAKCRB4tDGHoIJi
-0sCgAQCngjj8rbPb0Af9BMZYRbpS50JcfXIJv0U+8Lki4SL4CQEAzz2rJzTiq/u6
-Udk42wTGzXD6bXBGwcGrUnFUsV713ws=
-=6L7i
------END PGP SIGNATURE-----
-
---nZfVf4i1qpRGT5hz--
+>
+> this applies in multiple patches in this series
+>
+>
+>> +			compatible = "shared-dma-pool";
+>> +			reg = <0x00 0x9b900000 0x00 0xf00000>;
+>> +			no-map;
+>> +		};
+>> +
+>> +		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c800000 {
+>> +			compatible = "shared-dma-pool";
+>> +			reg = <0x00 0x9c800000 0x00 0x100000>;
+>> +			no-map;
+>> +		};
+>> +
+>> +		wkup_r5fss0_core0_memory_region: r5f-memory@9c900000 {
+>>   			compatible = "shared-dma-pool";
+>>   			reg = <0x00 0x9c900000 0x00 0x01e00000>;
+>>   			no-map;
+>> @@ -848,6 +866,28 @@ mbox_mcu_r5_0: mbox-mcu-r5-0 {
+>>   	};
+>>   };
+>>   
+>> +&wkup_r5fss0 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&wkup_r5fss0_core0 {
+>> +	mboxes = <&mailbox0_cluster0 &mbox_r5_0>;
+>> +	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
+>> +			<&wkup_r5fss0_core0_memory_region>;
+>> +	status = "okay";
+>> +};
+>> +
+>> +&mcu_r5fss0 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&mcu_r5fss0_core0 {
+>> +	mboxes = <&mailbox0_cluster1 &mbox_mcu_r5_0>;
+>> +	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+>> +			<&mcu_r5fss0_core0_memory_region>;
+>> +	status = "okay";
+>> +};
+>> +
+>>   &main0_alert {
+>>   	temperature = <95000>;
+>>   };
+>> -- 
+>> 2.34.1
+>>
 
