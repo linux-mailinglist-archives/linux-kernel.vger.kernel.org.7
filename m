@@ -1,150 +1,103 @@
-Return-Path: <linux-kernel+bounces-780902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07112B30AC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:22:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB63B30AC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32BB1AA6A49
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:21:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE19AA7519
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5976E1A2C0B;
-	Fri, 22 Aug 2025 01:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ACFC19CC27;
+	Fri, 22 Aug 2025 01:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VmRuWpWJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bxz/mP97"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84AA8393DE0;
-	Fri, 22 Aug 2025 01:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A2819C54B
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 01:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755825683; cv=none; b=dpZ360Oqm8aaHdNM4vLJujh5XrbTp3uhZyvxmEmLj2Efo5iZZbPy0MM5gNSpg5VTOMz62Hm5XcQgT3xuvW2JC5ouxdYiqsmbQQTCxVbviFlQW+7kTCbr+A4TYQveFf46INLAMtgzURIrBGXUnYQ14DAxfsp0WIop4zUdaZcHum0=
+	t=1755825713; cv=none; b=uBPDsVa1I3l5E+51XyMiZ81ZbO+dfvjAOOC9b+yr+L01uXjcI5kkpQkx20+hxv3zBUrmlPkICBXighfjx+XtJIbHUEJo04K1NoY+2SkUcs4yPjWUlgt6cGGCUXqzcIEj2rCy8exStheFm0AEerlGVGPa+uiWCyBnjvMFm/Aq0bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755825683; c=relaxed/simple;
-	bh=tVhsYHxxFfX7gGzpp6/1LpcEhJi77iuO99nxuLjq6VE=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=q9afxS4V+qJ6DfAquIFJ2AVMn/kT3m2IaNl0tnnaDuKIwhOl4DE6xwqReygWMcTR2umJLX/Ww28b8/biAvzr4z/Dvhv3ikcx1nNMTYczVBjyhdml5LOPsR0L5/42IsjBv9d+WIMlA41zJCanXPCH8cPrupQ1YjLB2Snu0bH4E5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VmRuWpWJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA7DCC4CEEB;
-	Fri, 22 Aug 2025 01:21:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755825683;
-	bh=tVhsYHxxFfX7gGzpp6/1LpcEhJi77iuO99nxuLjq6VE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VmRuWpWJNQvSp2Yp6FHRGVB4G0XYU6yBwuR9Ey439kdy0gKxIPav8VKcWWeG4FGoV
-	 sEX1+CDT1U/YivRO40cVHX1BZEd3SOcRIejgpo3+zRTbetfu+lfNvQlGUBuzoAs04+
-	 WICZ4EUJJ9tgfCVPCdSjzDxiWpAsmP621V3ogmzc=
-Date: Thu, 21 Aug 2025 18:21:22 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hotfixes for 6.17-rc3
-Message-Id: <20250821182122.eb19072cafdbc6612e76ac8f@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755825713; c=relaxed/simple;
+	bh=ntCiTsnHyv89Ppw/YN8mIQ+gYRwhLO3TxI+GVHhT5J0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vc3S+QHUGzyAuhz/CmDX9UkDG0BBuWxfpZYpNe+vFYK9dKx8vdBo483ATKZ/h9BxCYdgnAo1cBd2PWcDE8N9mxXPbfhnKIPhtnzKVDIN9oDMbT20qOb3LXp3UT1lZC475CM4w9qGATKjObCjQulryqZrnllHF59WwglovLLdHxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bxz/mP97; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755825710;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pP1gIuRFr7tSKsLKFv1sUFXkEDX22rWdnjLkvx8Dr3w=;
+	b=bxz/mP970haO0GhwvMwNYNIg2XAFuRY50CEbjjXhV++QxbQ5jtkmzBx3hSmLDZUmoHcn9i
+	KxUQtIDtB5Ddtc2mHSHhFDJHBCBiCjvazbpybP7tt1bJQQ2gmtstz6+s/6TCysKEZ0Djp6
+	DmNAFH7luWMZDe+55rGMm39WQDGrxuw=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-167-NdzZ7o2eMMy-971uUgmbKA-1; Thu,
+ 21 Aug 2025 21:21:47 -0400
+X-MC-Unique: NdzZ7o2eMMy-971uUgmbKA-1
+X-Mimecast-MFC-AGG-ID: NdzZ7o2eMMy-971uUgmbKA_1755825704
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5BF62180035C;
+	Fri, 22 Aug 2025 01:21:43 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.34])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 18ED9180028F;
+	Fri, 22 Aug 2025 01:21:29 +0000 (UTC)
+Date: Fri, 22 Aug 2025 09:21:24 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+Cc: akpm@linux-foundation.org, shuah@kernel.org, mic@digikod.net,
+	gnoack@google.com, david@redhat.com, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	horms@kernel.org, skhan@linuxfoundation.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+	netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: Re: [PATCH] selftests: centralise maybe-unused definition in
+ kselftest.h
+Message-ID: <aKfGFB2MmkbA4BBC@fedora>
+References: <20250821101159.2238-1-reddybalavignesh9979@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821101159.2238-1-reddybalavignesh9979@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
+On Thu, Aug 21, 2025 at 03:41:59PM +0530, Bala-Vignesh-Reddy wrote:
+> Several selftests subdirectories duplicated the define __maybe_unused,
+> leading to redundant code. Moved to kselftest.h header and removed
+> other definition.
+> 
+> This addresses the duplication noted in the proc-pid-vm warning fix
+> 
+> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+> Link:https://lore.kernel.org/lkml/20250820143954.33d95635e504e94df01930d0@linux-foundation.org/
+> 
+> Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
 
-Linus, please merge this week's bunch of mainly-MM hotfixes, thanks.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-
-The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
-
-  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-08-21-18-17
-
-for you to fetch changes up to 772e5b4a5e8360743645b9a466842d16092c4f94:
-
-  mm/mremap: fix WARN with uffd that has remap events disabled (2025-08-19 16:35:57 -0700)
-
-----------------------------------------------------------------
-20 hotfixes.  10 are cc:stable and the remainder address post-6.16 issues
-or aren't considered necessary for -stable kernels.  17 of these fixes are
-for MM.
-
-As usual, singletons all over the place, apart from a three-patch series
-of KHO followup work from Pasha which is actually also a bunch of
-singletons.
-
-----------------------------------------------------------------
-Alice Ryhl (1):
-      mm: rust: add page.rs to MEMORY MANAGEMENT - RUST
-
-Axel Rasmussen (1):
-      MAINTAINERS: mark MGLRU as maintained
-
-David Hildenbrand (1):
-      mm/mremap: fix WARN with uffd that has remap events disabled
-
-Dominique Martinet (1):
-      iov_iter: iterate_folioq: fix handling of offset >= folio size
-
-Easwar Hariharan (1):
-      .mailmap: add entry for Easwar Hariharan
-
-Herton R. Krzesinski (1):
-      mm/debug_vm_pgtable: clear page table entries at destroy_args()
-
-Huacai Chen (1):
-      mm/migrate: fix NULL movable_ops if CONFIG_ZSMALLOC=m
-
-Jinjiang Tu (1):
-      mm/memory-failure: fix infinite UCE for VM_PFNMAP pfn
-
-Lorenzo Stoakes (4):
-      tools/testing: add linux/args.h header and fix radix, VMA tests
-      mm/mremap: allow multi-VMA move when filesystem uses thp_get_unmapped_area
-      mm/mremap: catch invalid multi VMA moves earlier
-      selftests/mm: add test for invalid multi VMA operations
-
-Pasha Tatashin (3):
-      kho: init new_physxa->phys_bits to fix lockdep
-      kho: mm: don't allow deferred struct page with KHO
-      kho: warn if KHO is disabled due to an error
-
-Phillip Lougher (1):
-      squashfs: fix memory leak in squashfs_fill_super
-
-Sang-Heon Jeon (3):
-      mm/damon/core: fix commit_ops_filters by using correct nth function
-      selftests/damon: fix selftests by installing drgn related script
-      mm/damon/core: fix damos_commit_filter not changing allow
-
-SeongJae Park (1):
-      mm/damon/sysfs-schemes: put damos dests dir after removing its files
-
- .mailmap                                 |   2 +
- MAINTAINERS                              |  19 +++
- fs/squashfs/super.c                      |  14 +-
- include/linux/iov_iter.h                 |  20 +--
- include/linux/migrate.h                  |   5 +
- kernel/Kconfig.kexec                     |   1 +
- kernel/kexec_handover.c                  |  29 +++-
- mm/balloon_compaction.c                  |   6 +
- mm/damon/core.c                          |  15 +-
- mm/damon/sysfs-schemes.c                 |   2 +-
- mm/debug_vm_pgtable.c                    |   9 +-
- mm/memory-failure.c                      |   8 +
- mm/migrate.c                             |  38 ++++-
- mm/mremap.c                              |  82 ++++++----
- mm/zsmalloc.c                            |  10 ++
- tools/include/linux/args.h               |  28 ++++
- tools/testing/selftests/damon/Makefile   |   1 +
- tools/testing/selftests/mm/mremap_test.c | 264 ++++++++++++++++++++++++++++++-
- tools/testing/shared/linux/idr.h         |   4 +
- 19 files changed, 487 insertions(+), 70 deletions(-)
- create mode 100644 tools/include/linux/args.h
+Thanks,
+Ming
 
 
