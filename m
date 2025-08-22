@@ -1,527 +1,223 @@
-Return-Path: <linux-kernel+bounces-782166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08372B31C01
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:39:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9FEDB31BBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89B59647028
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:32:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E73EB17B7B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B923126B6;
-	Fri, 22 Aug 2025 14:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5873126BD;
+	Fri, 22 Aug 2025 14:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LS/FdKZx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaMeOYRl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15DC309DDB
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 14:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2644311598;
+	Fri, 22 Aug 2025 14:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755872876; cv=none; b=RhKoSZ09DBx+km/3zIhYGQQHn321PqrbRAwhGJ/Ml9KANm48U6rZctghKpIRlrzGW1/leAhn8sbpu50/LImY8bwwbUeMtuvBA1ZW85yk3TC4U9fCpYBhm7TTDB9zbwPv0Y4sNrNHLF5quCDcca/BR2/UMkWkx2YcRpIK8kU72tg=
+	t=1755872551; cv=none; b=SAZ++34CmdRkoTYqR0+bPsorkJLYnFTcI6TORopgVGSnB+Iv2N5c4zMmiILGJn+LidOFG8FGaFq1e4PiUAg+aRxqXqHCd+R+oR1USW+eUxdWRjQwoN0wLNl+0eYqSmn9anCXRsa0LIY3X3yV5L/8pZCdjRKsOzZAb48+U2F0kjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755872876; c=relaxed/simple;
-	bh=rCTWizcS8tppI1Pb0q/Qf3pwJuoMcIAjRl0Y1SBqJ7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sMsnegrcV/YEzAtiacbu1LEaa5hL9DKKh0B5FW4mIXWbHwpU6EecsrvcLGwoARpihrgtP7cLc37WWmuBeL+DW4nqH8QMQr5ulpd6xXG8Ygcz/TQieLb6370uXwmqrhjXgBVNmDHb/n/ix1VUwROGRapcnsDBD9SYFp4QRuDV3VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LS/FdKZx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755872873;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MyiW9WG9d02tUGD/bkZ0ruTVUbMBtZ9QTexYOI6sGjk=;
-	b=LS/FdKZxEN6o9hW2CaQp8Bucu91jvLAgaZrNTthKAB85jQb0jf+L1Jd88iH9MSQf/7hYBq
-	vPkKOFv+Ks4RTKERGR8aDz3+XJXScDETif5IIf/bmsrMUb1vSL95mQhmvlBXlcZK+AGr0G
-	q7AnLkljjmsiDXgTY2NhDcfECJrwSU8=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-413-xBDlz-VGM3KQFE3OqAiivQ-1; Fri,
- 22 Aug 2025 10:22:39 -0400
-X-MC-Unique: xBDlz-VGM3KQFE3OqAiivQ-1
-X-Mimecast-MFC-AGG-ID: xBDlz-VGM3KQFE3OqAiivQ_1755872558
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 762F31956087;
-	Fri, 22 Aug 2025 14:22:38 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.132])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3B68C1955F24;
-	Fri, 22 Aug 2025 14:22:37 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: David Howells <dhowells@redhat.com>,
-	keyrings@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] request-key: Support the promised multiwildcard matching
-Date: Fri, 22 Aug 2025 15:22:14 +0100
-Message-ID: <20250822142215.2475014-8-dhowells@redhat.com>
-In-Reply-To: <20250822142215.2475014-1-dhowells@redhat.com>
-References: <20250822142215.2475014-1-dhowells@redhat.com>
+	s=arc-20240116; t=1755872551; c=relaxed/simple;
+	bh=Jfs2aObCoc6/9U+QUowqTuZJPGKpl9EHfkAakKt01fA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lc+b4DINo46kzu+eSQ1pALfZ3Am+ucThNWVQ/jSzD1uhAcJeRUaHBIGsnbXtzRb42OsP+kfE7OqYRJ3Gz6q0UkFIahAX3o8PPu49jPbrsmEg9L7vIUomVtcs8xcuuwwr7FXzSp6WCWV/vvh29bIkVgURLfYs76VIPNgP1YRACm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaMeOYRl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39066C4CEED;
+	Fri, 22 Aug 2025 14:22:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755872551;
+	bh=Jfs2aObCoc6/9U+QUowqTuZJPGKpl9EHfkAakKt01fA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qaMeOYRlR4Wv/Qpfazr+fo0Yo7+OBcRJGW62A3b4/mgjwe9k/g3rOj6w0V6+obcSO
+	 YwUvSrcRG9N16SjtpKOJ245+NA/KDnGZ8/Flkm2gy06fvsfE1pUYx55oo0EJdYouBR
+	 5OaUow07gdPvg7YjN9xh4t7cZoroh7XWXR8hVT+ordFWaXUhQjXXFIOk4C7vKd3Vrb
+	 KeXDdrxgd6taY8hNG6Ro96WkMwQ115uk/0SmE5YCfZcy5oORlqyxpCFZNO4iU92Q0R
+	 LOJM9aJrkloBRtFQ1N0+m+r5o3LwqtQBi0TkEcMn5/igGCqMpEgMrEfdEjzEgi2DVY
+	 wfA3Lm/2ip+/Q==
+Date: Fri, 22 Aug 2025 09:22:30 -0500
+From: Rob Herring <robh@kernel.org>
+To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kuogee Hsieh <quic_khsieh@quicinc.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
+	tingwei.zhang@oss.qualcomm.com,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	quic_lliu6@quicinc.com
+Subject: Re: [PATCH v3 02/14] dt-bindings: phy: Add QMP USB3+DP PHY for QCS615
+Message-ID: <20250822142230.GA3591699-robh@kernel.org>
+References: <20250820-add-displayport-support-for-qcs615-platform-v3-0-a43bd25ec39c@oss.qualcomm.com>
+ <20250820-add-displayport-support-for-qcs615-platform-v3-2-a43bd25ec39c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820-add-displayport-support-for-qcs615-platform-v3-2-a43bd25ec39c@oss.qualcomm.com>
 
-The manual page for request-key.conf says that multiple wildcards can be
-used in match elements in the config files, so implement this feature.
+On Wed, Aug 20, 2025 at 05:34:44PM +0800, Xiangxu Yin wrote:
+> Add device tree binding documentation for the Qualcomm QMP USB3+DP PHY
+> on QCS615 Platform. This PHY supports both USB3 and DP functionality
+> over USB-C, with PHY mode switching capability. It does not support
+> combo mode.
+> 
+> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+> ---
+>  .../bindings/phy/qcom,qcs615-qmp-usb3dp-phy.yaml   | 108 +++++++++++++++++++++
+>  1 file changed, 108 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/qcom,qcs615-qmp-usb3dp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,qcs615-qmp-usb3dp-phy.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..c2b1fbab2930f0653f4ddb95f7b54d8fe994f92d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/qcom,qcs615-qmp-usb3dp-phy.yaml
+> @@ -0,0 +1,108 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/qcom,qcs615-qmp-usb3dp-phy.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm QMP USB3-DP PHY controller (DP, QCS615)
+> +
+> +maintainers:
+> +  - Vinod Koul <vkoul@kernel.org>
 
-Also add a flag, "--test-match", to allow that match function to be tested
-directly, e.g.:
+No, this should be someone who has the h/w.
 
-  request-key --test-match "**a*a***i**a**a**" antidisestablishmentarianism
+> +
+> +description:
+> +  The QMP PHY controller supports physical layer functionality for both
+> +  USB3 and DisplayPort over USB-C. While it enables mode switching
+> +  between USB3 and DisplayPort, but does not support combo mode.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
- man/request-key.8 |  19 +++-
- request-key.c     | 252 ++++++++++++++++++++++++++++++++++++----------
- 2 files changed, 217 insertions(+), 54 deletions(-)
+Wrap at 80 chars.
 
-diff --git a/man/request-key.8 b/man/request-key.8
-index 90121d9..7cec6e8 100644
---- a/man/request-key.8
-+++ b/man/request-key.8
-@@ -16,6 +16,7 @@ request\-key \- handle key instantiation callback requests from the kernel
- \fB/sbin/request\-key\fP \fIop key uid gid t-ring p-ring s-ring\fP [\fIinfo\fP]
- \fB/sbin/request\-key -d\fP [\fB-lnv\fP] [\fB-D\fP \fIdesc\fP] \fIop key\fP...
- \fB/sbin/request\-key --check\fP [\fB-lnv\fP] \fItype desc\fP [\fIinfo\fP] [\fIop\fP]
-+\fB/sbin/request\-key --match\fP [\fB-v\fP] \fIpattern datum\fP [\fIdatum...\fP]
- .fi
- .SH DESCRIPTION
- This program is invoked by the kernel when the kernel is asked for a key that
-@@ -65,6 +66,10 @@ If this is provide, then a simpler debugging mode is engaged that defaults most
- of the arguments, but otherwise operates much the same as '-d'.
- .IP \fB--help\fP
- Print help text and exit.
-+.IP \fB--match\fP
-+Test the pattern matcher.  The first parameter is the pattern and all
-+subsequent parameters are strings to try matching against that.  The program
-+exits 1 if any match failure occurs, 0 if all succeed.
- .IP \fB--version\fP
- Print the program version and exit.
- .SH EXAMPLES
-@@ -84,9 +89,19 @@ request-key --check user debug:bar
- request-key --check user debug:bar foo
- request-key --check user debug:bar foo create
- .fi
-+.PP
-+Pattern match testing can be done directly without invoking any of the lookup
-+code and without reference to the configuration, e.g.:
-+.PP
-+.nf
-+request-key --match "debug:*" debug:a user:b user:debug:c
-+request-key --match -v "*a*a***a*a**a**" antidisestablishmentarianism
-+.fi
-+.PP
- .SH ERRORS
--All errors will be logged to the syslog unless \fB-n\fP or \fB--check\fP are
--given.  Errors will also be logged to stderr if \fB-v\fP is given.
-+All errors will be logged to the syslog unless one of \fB-n\fP, \fB--check\fP
-+or \fB--match\fP are given.  Errors will also be logged to stderr if \fB-v\fP
-+is given.
- .SH FILES
- .ul
- /etc/request\-key.d/*.conf
-diff --git a/request-key.c b/request-key.c
-index 302d083..97afeee 100644
---- a/request-key.c
-+++ b/request-key.c
-@@ -16,6 +16,7 @@
-  *	data:	command name, e.g.: "/home/dhowells/request-key-create.sh"
-  */
- 
-+#define _GNU_SOURCE
- #include <stdio.h>
- #include <stdint.h>
- #include <stdlib.h>
-@@ -56,6 +57,7 @@ struct parameters {
- };
- 
- static int verbosity;
-+static int match_debug;
- static int xlocaldirs;
- static int xnolog;
- static int debug_mode;
-@@ -81,8 +83,8 @@ static void pipe_to_program(struct parameters *params,
- 			    char **argv)
- 	__attribute__((noreturn));
- 
--static int match(const char *pattern, int plen, const char *datum, int dlen,
--		 unsigned int *wildness);
-+static int match(const char *pattern, unsigned int plen,
-+		 const char *datum, unsigned int dlen);
- 
- static void debug(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
- static void debug(const char *fmt, ...)
-@@ -153,6 +155,7 @@ static const char help_text[] =
- 	"Usage: request-key [OPTIONS] [PARAMS]\n"
- 	"       request-key [OPTIONS] -d -D <desc> [PARAMS]\n"
- 	"       request-key [OPTIONS] --check <type> <desc> [<callout>] [<op>]\n"
-+	"       request-key [OPTIONS] --match <pattern> <datum> [datum ...]\n"
- 	"\n"
- 	"Where the required parameters, [PARAMS], are, in order:\n"
- 	"  <op>     : The operation type (e.g. 'create')\n"
-@@ -168,6 +171,7 @@ static const char help_text[] =
- 	"  -d       : Debug mode for direct cmdline testing\n"
- 	"  -D <desc>: Description for debug mode\n"
- 	"  -l       : Use config from local dir, not /etc\n"
-+	"  -M       : Enable string-matching algorithm debugging\n"
- 	"  -n       : Don't log to syslog\n"
- 	"  -v       : Turn up verbosity (can use multiple times)\n"
- 	"  --help   : Print this text and exit\n"
-@@ -191,12 +195,20 @@ static const char help_text[] =
- 	"  ./request-key --check user debug:bar\n"
- 	"  ./request-key --check user debug:bar foo\n"
- 	"  ./request-key --check user debug:bar foo create\n"
-+	"\n"
-+	"Another test mode is available ('--match') that allows the\n"
-+	"pattern match evaluator to be tested against a bunch of sample\n"
-+	"strings.  For each string, either 'No' or 'Yes(n)' is printed,\n"
-+	"where 'n' is the number of wild-matched characters.  For example:\n"
-+	"\n"
-+	"  ./request-key --match \"**foo**bar*\" \"foobar\"\n"
- 	;
- 
- static struct option long_options[] = {
- 	{ .name = "help",	.val = 1 },
- 	{ .name = "version",	.val = 2 },
- 	{ .name = "check",	.val = 3 },
-+	{ .name = "match",	.val = 4 },
- 	{}
- };
- 
-@@ -236,6 +248,12 @@ int main(int argc, char *argv[])
- 			debug_mode = 2;
- 			xnolog = 1;
- 			break;
-+		case 4:
-+			if (debug_mode)
-+				cmderror("Multiple debug modes specified\n");
-+			debug_mode = 3;
-+			xnolog = 1;
-+			break;
- 		case 'D':
- 			test_desc = optarg;
- 			break;
-@@ -351,6 +369,30 @@ int main(int argc, char *argv[])
- 		params.process_keyring	= "undef-pring";
- 		params.session_keyring	= "undef-sring";
- 		break;
-+
-+	case 3:
-+		const char *pattern;
-+		int e = 0;
-+
-+		if (verbosity)
-+			match_debug = 1;
-+		if (argc < 2)
-+			cmderror("Insufficient arguments\n");
-+		pattern = argv[0];
-+		argv++;
-+		argc--;
-+		for (; argc; argc--) {
-+			int m = match(pattern, strlen(pattern),
-+				      argv[0], strlen(argv[0]));
-+			if (m >= 0) {
-+				printf("Yes(%d)\n", m);
-+			} else {
-+				printf("No\n");
-+				e = 3;
-+			}
-+			argv++;
-+		}
-+		exit(e);
- 	}
- 
- 	debug("Key type: %s\n", params.key_type);
-@@ -450,6 +492,7 @@ static void scan_conf_file(struct parameters *params, int dirfd, const char *con
- 	for (confline = 1;; confline++) {
- 		unsigned int wildness[4] = {};
- 		unsigned int len;
-+		int m;
- 
- 		/* read the file line-by-line */
- 		if (!fgets(buf, sizeof(buf), conf)) {
-@@ -478,9 +521,10 @@ static void scan_conf_file(struct parameters *params, int dirfd, const char *con
- 			goto syntax_error;
- 		*p = 0;
- 
--		if (!match(q, p - q, params->op, params->oplen, &wildness[0]))
-+		m = match(q, p - q, params->op, params->oplen);
-+		if (m < 0)
- 			continue;
--
-+		wildness[0] += m;
- 		p++;
- 
- 		/* attempt to match the type */
-@@ -494,8 +538,10 @@ static void scan_conf_file(struct parameters *params, int dirfd, const char *con
- 			goto syntax_error;
- 		*p = 0;
- 
--		if (!match(q, p - q, params->key_type, params->ktlen, &wildness[1]))
-+		m = match(q, p - q, params->key_type, params->ktlen);
-+		if (m < 0)
- 			continue;
-+		wildness[1] += m;
- 
- 		p++;
- 
-@@ -510,9 +556,10 @@ static void scan_conf_file(struct parameters *params, int dirfd, const char *con
- 			goto syntax_error;
- 		*p = 0;
- 
--		if (!match(q, p - q, params->key_desc, params->kdlen, &wildness[2]))
-+		m = match(q, p - q, params->key_desc, params->kdlen);
-+		if (m < 0)
- 			continue;
--
-+		wildness[2] += m;
- 		p++;
- 
- 		/* attempt to match the callout info */
-@@ -526,8 +573,10 @@ static void scan_conf_file(struct parameters *params, int dirfd, const char *con
- 			goto syntax_error;
- 		*p = 0;
- 
--		if (!match(q, p - q, params->callout_info, params->cilen, &wildness[3]))
-+		m = match(q, p - q, params->callout_info, params->cilen);
-+		if (m < 0)
- 			continue;
-+		wildness[3] += m;
- 
- 		p++;
- 
-@@ -569,75 +618,174 @@ syntax_error:
- 	line_error("Syntax error\n");
- }
- 
-+static void mdebug(const char *msg,
-+		   const char *pattern, unsigned int plen,
-+		   const char *datum, unsigned int dlen)
-+{
-+	if (match_debug)
-+		printf("- %s(%*.*s,%*.*s)\n",
-+		       msg, plen, plen, pattern, dlen, dlen, datum);
-+}
-+
-+static void mdebug2(const char *msg)
-+{
-+	if (match_debug)
-+		printf("- %s\n", msg);
-+}
-+
- /*****************************************************************************/
- /*
-  * attempt to match a datum to a pattern
-  * - one asterisk is allowed anywhere in the pattern to indicate a wildcard
-- * - returns true if matched, false if not
-- * - adds the total number of chars skipped by wildcard to *_wildness
-+ * - returns -1 if not matched or the number of chars skipped by wildcard
-  */
--static int match(const char *pattern, int plen, const char *datum, int dlen,
--		 unsigned int *_wildness)
-+static int match(const char *pattern, unsigned int plen,
-+		 const char *datum, unsigned int dlen)
- {
--	const char *asterisk;
--	int n;
-+	const char *left, *right;
-+	unsigned int wild = 0, n;
- 
- 	if (verbosity >= 2)
- 		debug("match(%*.*s,%*.*s)", plen, plen, pattern, dlen, dlen, datum);
-+	mdebug("match", pattern, plen, datum, dlen);
- 
--	asterisk = memchr(pattern, '*', plen);
--	if (!asterisk) {
--		/* exact match only if no wildcard */
--		if (plen == dlen && memcmp(pattern, datum, dlen) == 0)
--			goto yes;
-+	if (plen <= 0)
- 		goto no;
-+
-+	/* Special case "*" matches everything */
-+	if (plen == 1 && pattern[0] == '*') {
-+		wild = dlen;
-+		goto yes;
- 	}
- 
--	/* the datum mustn't be shorter than the pattern without the asterisk */
--	if (dlen < plen - 1)
-+	left = memchr(pattern, '*', plen);
-+	if (!left) {
-+		/* No wildcard: exact match only. */
-+		mdebug2("exact-only");
-+		if (plen == dlen && memcmp(pattern, datum, dlen) == 0) {
-+			wild = 0;
-+			goto yes;
-+		}
- 		goto no;
-+	}
- 
--	n = asterisk - pattern;
--	if (n == 0) {
--		/* wildcard at beginning of pattern */
--		pattern++;
--		if (!*pattern)
--			goto yes_wildcard; /* "*" matches everything */
-+	if (left > pattern) {
-+		/* Check prefix matches. */
-+		mdebug("prefix", pattern, left - pattern, datum, dlen);
-+		if (dlen < left - pattern ||
-+		    memcmp(pattern, datum, left - pattern) != 0) {
-+			mdebug2("prefix-x");
-+			goto no;
-+		}
-+		n = left - pattern;
-+		datum += n;
-+		dlen  -= n;
-+		pattern += n + 1;
-+		plen    -= n + 1;
-+		while (plen > 0 && *pattern == '*') {
-+			pattern++;
-+			plen--;
-+		}
-+		if (!plen) {
-+			/* Simple prefix match. */
-+			mdebug2("simple-prefix");
-+			wild = dlen;
-+			goto yes;
-+		}
-+	} else {
-+		while (plen > 0 && *pattern == '*') {
-+			pattern++;
-+			plen--;
-+		}
-+	}
- 
--		/* match the end of the datum */
--		if (memcmp(pattern, datum + (dlen - (plen - 1)), plen - 1) == 0)
--			goto yes_wildcard;
--		goto no;
-+	right = memrchr(pattern, '*', plen);
-+	if (right != pattern + plen - 1) {
-+		/* Check suffix matches */
-+		const char *suffix = right ? right + 1 : pattern;
-+		const char *p_end = pattern + plen;
-+		const char *d_end = datum + dlen;
-+		int slen = p_end - suffix;
-+
-+		mdebug("suffix", suffix, slen, datum, dlen);
-+		if (slen > dlen ||
-+		    memcmp(suffix, d_end - slen, slen) != 0) {
-+			mdebug2("suffix-x");
-+			goto no;
-+		}
-+		dlen -= slen;
-+		plen -= slen;
-+		while (plen > 0 && pattern[plen - 1] == '*')
-+			plen--;
-+		if (!plen) {
-+			/* Simple prefix+suffix match. */
-+			wild = dlen;
-+			goto yes;
-+		}
-+	} else {
-+		while (plen > 0 && pattern[plen - 1] == '*')
-+			plen--;
- 	}
- 
--	/* need to match beginning of datum for "abc*" and "abc*def" */
--	if (memcmp(pattern, datum, n) != 0)
--		goto no;
-+	/* We now have a remnant part of the pattern bounded by a pair of
-+	 * wildcards (e.g.: [aa**]bb*cc*dd[**ee]) and we need to find the
-+	 * middle substrings in order in the remnant part of the datum.  The
-+	 * remnant pattern fragment may also contain further wildcards.
-+	 */
-+	for (;;) {
-+		mdebug("middle", pattern, plen, datum, dlen);
-+		const char *sub = pattern, *p;
-+		int slen, skip;
-+
-+		left = memchr(pattern, '*', plen);
-+		if (!left) {
-+			/* No further wildcard */
-+			mdebug2("middle-1");
-+			if (plen > dlen)
-+				goto no;
-+			p = memmem(datum, dlen, pattern, plen);
-+			if (!p) {
-+				mdebug2("middle-1-x");
-+				goto no;
-+			}
-+			wild += dlen - plen;
-+			goto yes;
-+		}
- 
--	if (!asterisk[1])
--		goto yes_wildcard; /* "abc*" matches */
-+		slen = left - pattern;
-+		pattern = left + 1;
-+		plen -= slen + 1;
- 
--	/* match the end of the datum */
--	asterisk++;
--	n = plen - n - 1;
--	if (memcmp(pattern, datum + (dlen - n), n) == 0)
--		goto yes_wildcard;
-+		p = memmem(datum, dlen, sub, slen);
-+		if (!p) {
-+			mdebug2("middle-x");
-+			goto no;
-+		}
-+		skip = p - datum;
-+		wild += skip;
-+		datum += skip + slen;
-+		dlen -= skip + slen;
-+
-+		while (plen && *pattern == '*') {
-+			pattern++;
-+			plen--;
-+		}
- 
--no:
--	if (verbosity >= 2)
--		debug(" = no\n");
--	return 0;
-+		/* plen really shouldn't be 0 here. */
-+		if (plen <= 0) {
-+			error("plen unexpectedly 0\n");
-+			goto no;
-+		}
-+	}
- 
- yes:
- 	if (verbosity >= 2)
--		debug(" = yes (w=0)\n");
--	return 1;
--
--yes_wildcard:
--	*_wildness += dlen - (plen - 1);
-+		debug(" = yes (w=%u)\n", wild);
-+	return wild;
-+no:
- 	if (verbosity >= 2)
--		debug(" = yes (w=%u)\n", dlen - (plen - 1));
--	return 1;
-+		debug(" = no\n");
-+	return -1;
- 
- } /* end match() */
- 
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,qcs615-qmp-usb3-dp-phy
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    items:
+> +      - const: cfg_ahb
+> +      - const: ref
+> +
+> +  resets:
+> +    maxItems: 2
+> +
+> +  reset-names:
+> +    items:
+> +      - const: phy_phy
 
+phy_phy?
+
+> +      - const: dp_phy
+> +
+> +  vdda-phy-supply: true
+> +
+> +  vdda-pll-supply: true
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +    description:
+> +      See include/dt-bindings/phy/phy-qcom-qmp.h
+> +
+> +  "#phy-cells":
+> +    const: 1
+> +    description:
+> +      See include/dt-bindings/phy/phy-qcom-qmp.h
+> +
+> +  qcom,tcsr-reg:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    items:
+> +      - items:
+> +          - description: phandle to TCSR hardware block
+> +          - description: offset of the VLS CLAMP register
+> +      - items:
+> +          - description: phandle to TCSR hardware block
+> +          - description: offset of the DP PHY mode register
+> +    description: Clamp and PHY mode register present in the TCSR
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - resets
+> +  - reset-names
+> +  - vdda-phy-supply
+> +  - vdda-pll-supply
+> +  - "#clock-cells"
+> +  - "#phy-cells"
+> +  - qcom,tcsr-reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,qcs615-gcc.h>
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +
+> +    phy@88e8000 {
+> +      compatible = "qcom,qcs615-qmp-usb3-dp-phy";
+> +      reg = <0x88e8000 0x2000>;
+> +
+> +      clocks = <&gcc GCC_AHB2PHY_WEST_CLK>,
+> +               <&gcc GCC_USB3_SEC_CLKREF_CLK>;
+> +      clock-names = "cfg_ahb",
+> +                    "ref";
+> +
+> +      resets = <&gcc GCC_USB3PHY_PHY_SEC_BCR >,
+> +               <&gcc GCC_USB3_DP_PHY_SEC_BCR>;
+> +      reset-names = "phy_phy",
+> +                    "dp_phy";
+> +
+> +      vdda-phy-supply = <&vreg_l11a>;
+> +      vdda-pll-supply = <&vreg_l5a>;
+> +
+> +      #clock-cells = <1>;
+> +      #phy-cells = <1>;
+> +
+> +      qcom,tcsr-reg = <&tcsr 0xbff0>,
+> +                      <&tcsr 0xb24c>;
+> +    };
+> 
+> -- 
+> 2.34.1
+> 
 
