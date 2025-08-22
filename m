@@ -1,78 +1,82 @@
-Return-Path: <linux-kernel+bounces-780910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 446F9B30ADB
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBABFB30ADF
 	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDB5C1C8396F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:39:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA2E66035F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB6C35959;
-	Fri, 22 Aug 2025 01:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00CD11A9FA6;
+	Fri, 22 Aug 2025 01:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="negoLTiM"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="asdIECFg"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6579A13C3CD
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 01:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8793C19004A
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 01:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755826726; cv=none; b=hZdu/PjZLE99PERoMQjKgeUZuQfCS/SMWEvM3ALx8QiwjhefBKiD8D3xna6NwweedtsHIkEa6oRZUiiB6xHx2VpSIuAuXBqryPObcRsDL2Mxk8mpwxF6k7DCl0+GlfG1NV0oOlG7AG868DJonl3Bfc13hnBqXtG+NqU2qM1J6OU=
+	t=1755826736; cv=none; b=hkjseoNy6SFBxk4es+dqFoY2CfXW7XWAZ9urDdCpPMJSM66IsjJP4awiirfIucLM2M5CQfqu6esKrJ9c0tZ4ZcQk9TiMUWXhEjtt4ykuQZrm7tpqEkptnmO2lLaQtohdPupeWG1Hg407K8rtrofL3udy7wqECpGtRQDeqOvO4gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755826726; c=relaxed/simple;
-	bh=A49EhjtovdcOMZSxAFwCEK81dRUbjpo5bkUejNjPW/A=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=QTr0NRW+u+CGrdEF8MMEadh3TDbq5izkDK9BKrIlKNiT831mhsP7+HjwbACc8qSUap0bQRK3y2/974Llpj69naIgG2VxvJeJevF1NKcGNnoC8UYcjBSD2BgICdWjOol9Fy0nQWi6l1503+hbI0pPebf9FnCZlVKLGaqd4oywQh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=negoLTiM; arc=none smtp.client-ip=209.85.214.202
+	s=arc-20240116; t=1755826736; c=relaxed/simple;
+	bh=uzwVbtH3o+hjF2l5bOPykDA1fiOU/qSMF14O0eSqX1A=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Vq2P/8mvEYDcVc/7wMH0Tz3jc0LJFZFCf3o89OnGIQusdGtyyr7ZZVimOi9gAUXQOZfuynASavmahTb7wcl3zVwEd7EBWsGf9M/yVOOAZ1hL2u1elSspta/aDfB0qmseEyEvuNsOGOm7T8EMd01lfAQF2gdodWKw9P53Kt7B3Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=asdIECFg; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2445805d386so19178645ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 18:38:45 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-244581ce13aso33021525ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 18:38:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755826725; x=1756431525; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W15LouMyj4vdHymi7TVZHUFLWipG+7CdV/EGR2TsyJU=;
-        b=negoLTiMhigrb4WOxUeYZwslBrPELMadcwzJr1Pf1HPZ8JFSZoYv9vWJAXh04/Gnx5
-         bUn6SOV+J2gD5heKMzK4PZKrxH4bVDsEFyV77Boyg3Rv0IGwnRc2O2FdQzCL7TblwEBE
-         EOtUyD6TBcVnoiRKLGwE/R5H6PTwD6CADLhpzs+lxiSlV8fkjlsJZCro4FSZTn/5Bt3U
-         zmQ1VgYo+NAoLcl0++2RE57NCr1cNpRK0cFjGn/ZRrcUaDPlewLBHlRkBu78wkKUhNHe
-         G5PZkRdGHmsxsxmai/5DCJVSAv0lbk5CaxIn8OJqGqGDGJUFPxn3N9M5a6cmXGacT3Ph
-         vvoA==
+        d=google.com; s=20230601; t=1755826733; x=1756431533; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XicJAgG/MZnmzphaKWfnZbo7JmxBw0IawJij22UnvYM=;
+        b=asdIECFg5CBy4pTVEYORCBsjv8VKLgsmV38sDVgNkfQrt4MwHwy4RMwosCrixCUiIV
+         IFj8kUrPmb6D/pCTjudj0T5mVKMHw6Wwtzrd3c/4bTVIWNTRiHPqlgIxpOv6jV2RZScl
+         8Q284gJMJ5x18rGhq0ugUg/CpFSUFao1P0g5VLN3EuskZMUPrIQztsZolB1Bnwu1H22k
+         d4/gPzSFuNqDf59pn4NGPtRbkvc01M7wntrYXaOhwnX+QPvwquR131ZS6EqVsBSBH/Lo
+         hei1sfj+nliL4Esiw04ICDj/OjDVlI5iIXMOkvX3MfiQSgTQ6tFgNMiGFkyeWkNlxECQ
+         gHsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755826725; x=1756431525;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W15LouMyj4vdHymi7TVZHUFLWipG+7CdV/EGR2TsyJU=;
-        b=XG0GBRgSuatp2TjAx5gbRe1dUz2Yyw+RRm7El1C4OGaG47zWf5gsEa3bMgw7FaFoGD
-         XAsjyqbZt3e0GK7XExBvVDsJqfdvGC324dYnunzDMPbFh8eXaZKBwfI2o8QYbav+eLxk
-         LWuU48qNuQyz1O07lLKZqnFLLAG/FilDSQ9e+zKwUHovhrBBxdhg6VnxuUzBVy2l8DQi
-         +L00QsHviSMNRPcXpxSL1o7l695w/MLwrA9n0FfpTtmuci1/Hns4ORGZwMJbd5c4W5Ri
-         6vsAKdyBHSE1t10aXbXmIocQRHgYv+jl2q8AzMXtbtfn4QIBs9x3lGlrH+7QD9pYCRiD
-         4FFQ==
-X-Gm-Message-State: AOJu0YzMJUyjkMMuJ44hVeiPq7m8m1FcLQh3VyKN69FB1Srlolt3LBDN
-	sF85U5C6FLCkmwmwKTSNUPuadVoYR67SrHjx0c8aT3B4d7iUUJwak7zwTRzGyknhNefTaG0e5ck
-	CVMLZir8f5UJHsslITFxBClsJazWc3JSRISY+mEs7HUlnaXLT2cbkpo5CLiYscQcJJcqVuIqoVH
-	gpxY1dbUv2Q/sIT5r4YNtfTDniq6MpxYHDMe/bSiCEdZd9TwMipA==
-X-Google-Smtp-Source: AGHT+IHopvgy+NT1vyxHR0lL/IQJOLtwOt5TkxAJYqqhMkX+S6CNkIYHIk02Ok4PnPzh/BGnt+DyE+ktjcJP
-X-Received: from plbme14.prod.google.com ([2002:a17:902:fc4e:b0:240:1953:fa3])
- (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:46c6:b0:246:1c6a:7025
- with SMTP id d9443c01a7336-2462edec143mr21257215ad.12.1755826724580; Thu, 21
- Aug 2025 18:38:44 -0700 (PDT)
-Date: Thu, 21 Aug 2025 18:37:51 -0700
+        d=1e100.net; s=20230601; t=1755826733; x=1756431533;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XicJAgG/MZnmzphaKWfnZbo7JmxBw0IawJij22UnvYM=;
+        b=p9XfyShYWktRMo5oUoM0Tbgvm18jVuWspMm8wZCuEsLMjLZKcbpxrxmwrsn1UaeemY
+         oYOw+G+Y0HE5CkiwoO06oqD/neN53J91DE1Vwb5tK9aQeXNQU1q+ftfcctzXvv5AfcSM
+         WwAVZUPNLGD+g1Xy01RoR9zqTRfLdmDFj0P+k+0aj91LABssW3vz1iag0RVDrNWKaX0P
+         4+ymjD4YH+lWv6NXI39Ww2fx/uH2K1diLvv/SwqsxwsvxHv1l60+7qx0itkY+zHKYMvW
+         K3qe9nlA5hIcbh9gmR13xjexvVjxG5tHjhYuPic/BleG291kV7sHPxYN+jhsPX30az8Y
+         B6Ew==
+X-Gm-Message-State: AOJu0Yw3GDeN2LRE+gQKmCkJDdRQmUhjiCEwVGNbu2j+VZ440lxkbbRK
+	Un+sMIeuPPo90t9GG5SIdY9jp7DzBjnmm2fRf6DVie6JrCYw/AUwdNIWoLrcQernLVirKGRg3OX
+	TBH6S1sTPhv7yn3SwHv4ucQhmNtaxSj4fNgF162EIJZAldgvDzghWrjbWCzh7oFcmzvSVmv1+4b
+	iscbEw61P4deiayzn5q1OdT2tAg6U4thfnyfUTgwxor6oGHGmCQw==
+X-Google-Smtp-Source: AGHT+IGM5W9uClBkGABg+25APHoASZyRNMkhP9+ED/Z5aAxqaCN5U58g337NiIzjq3f8aWlcxcFwpcQBD36K
+X-Received: from plblw16.prod.google.com ([2002:a17:903:2ad0:b0:246:1648:2c77])
+ (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:238e:b0:240:50ef:2f00
+ with SMTP id d9443c01a7336-2462eea80fbmr22118335ad.26.1755826733477; Thu, 21
+ Aug 2025 18:38:53 -0700 (PDT)
+Date: Thu, 21 Aug 2025 18:37:52 -0700
+In-Reply-To: <20250822013749.3268080-6-ynaffit@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250822013749.3268080-6-ynaffit@google.com>
 X-Mailer: git-send-email 2.51.0.rc2.233.g662b1ed5c5-goog
-Message-ID: <20250822013749.3268080-6-ynaffit@google.com>
-Subject: [PATCH v4 0/2] cgroup: Track time in cgroup v2 freezer
+Message-ID: <20250822013749.3268080-7-ynaffit@google.com>
+Subject: [PATCH v4 1/2] cgroup: cgroup.stat.local time accounting
 From: Tiffany Yang <ynaffit@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
@@ -87,66 +91,230 @@ Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello,
+There isn't yet a clear way to identify a set of "lost" time that
+everyone (or at least a wider group of users) cares about. However,
+users can perform some delay accounting by iterating over components of
+interest. This patch allows cgroup v2 freezing time to be one of those
+components.
 
-The cgroup v2 freezer controller is useful for freezing background
-applications so they don't contend with foreground tasks. However, this
-may disrupt any internal monitoring that the application is performing,
-as it may not be aware that it was frozen.
+Track the cumulative time that each v2 cgroup spends freezing and expose
+it to userland via a new local stat file in cgroupfs. Thank you to
+Michal, who provided the ASCII art in the updated documentation.
 
-To illustrate, an application might implement a watchdog thread to
-monitor a high-priority task by periodically checking its state to
-ensure progress. The challenge is that the task only advances when the
-application is running, but watchdog timers are set relative to system
-time, not app time. If the app is frozen and misses the expected
-deadline, the watchdog, unaware of this pause, may kill a healthy
-process.
+To access this value:
+  $ mkdir /sys/fs/cgroup/test
+  $ cat /sys/fs/cgroup/test/cgroup.stat.local
+  freeze_time_total 0
 
-This series tracks the time that each cgroup spends "freezing" and
-exposes it via cgroup.stat.local. Include several basic selftests to
-demonstrate the expected behavior of this interface, including that:
-  1. Freeze time will increase while a cgroup is freezing, regardless of
-     whether it is frozen or not.
-  2. Each cgroup's freeze time is independent from the other cgroups in
-     its hierarchy.
-
-Thanks,
-Tiffany
+Ensure consistent freeze time reads with freeze_seq, a per-cgroup
+sequence counter. Writes are serialized using the css_set_lock.
 
 Signed-off-by: Tiffany Yang <ynaffit@google.com>
----
-v3: https://lore.kernel.org/all/20250805032940.3587891-4-ynaffit@google.com=
-/
-v2: https://lore.kernel.org/lkml/20250714050008.2167786-2-ynaffit@google.co=
-m/
-v1: https://lore.kernel.org/lkml/20250603224304.3198729-3-ynaffit@google.co=
-m/
-
-Cc: John Stultz <jstultz@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Frederic Weisbecker <frederic@kernel.org>
 Cc: Tejun Heo <tj@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
 Cc: Michal Koutn=C3=BD <mkoutny@suse.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Chen Ridong <chenridong@huawei.com>
-Signed-off-by: Tiffany Yang <ynaffit@google.com>
+---
+v3 -> v4:
+* Replace "freeze_time_total" with "frozen" and expose stats via
+  cgroup.stat.local, as recommended by Tejun.
+* Use the same timestamp when freezing/unfreezing a cgroup as its
+  descendants, as suggested by Michal.
 
-Tiffany Yang (2):
-  cgroup: cgroup.stat.local time accounting
-  cgroup: selftests: Add tests for freezer time
+v2 -> v3:
+* Use seqcount along with css_set_lock to guard freeze time accesses, as
+  suggested by Michal.
 
- Documentation/admin-guide/cgroup-v2.rst       |  18 +
- include/linux/cgroup-defs.h                   |  17 +
- kernel/cgroup/cgroup.c                        |  28 +
- kernel/cgroup/freezer.c                       |  16 +-
- tools/testing/selftests/cgroup/test_freezer.c | 663 ++++++++++++++++++
- 5 files changed, 738 insertions(+), 4 deletions(-)
+v1 -> v2:
+* Track per-cgroup freezing time instead of per-task frozen time, as
+  suggested by Tejun.
+---
+ Documentation/admin-guide/cgroup-v2.rst | 18 ++++++++++++++++
+ include/linux/cgroup-defs.h             | 17 +++++++++++++++
+ kernel/cgroup/cgroup.c                  | 28 +++++++++++++++++++++++++
+ kernel/cgroup/freezer.c                 | 16 ++++++++++----
+ 4 files changed, 75 insertions(+), 4 deletions(-)
 
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-=
+guide/cgroup-v2.rst
+index 51c0bc4c2dc5..a1e3d431974c 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1001,6 +1001,24 @@ All cgroup core files are prefixed with "cgroup."
+ 		Total number of dying cgroup subsystems (e.g. memory
+ 		cgroup) at and beneath the current cgroup.
+=20
++  cgroup.stat.local
++	A read-only flat-keyed file which exists in non-root cgroups.
++	The following entry is defined:
++
++	  frozen_usec
++		Cumulative time that this cgroup has spent between freezing and
++		thawing, regardless of whether by self or ancestor groups.
++		NB: (not) reaching "frozen" state is not accounted here.
++
++		Using the following ASCII representation of a cgroup's freezer
++		state, ::
++
++			       1    _____
++			frozen 0 __/     \__
++			          ab    cd
++
++		the duration being measured is the span between a and c.
++
+   cgroup.freeze
+ 	A read-write single value file which exists on non-root cgroups.
+ 	Allowed values are "0" and "1". The default is "0".
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index 6b93a64115fe..539c64eeef38 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -433,6 +433,23 @@ struct cgroup_freezer_state {
+ 	 * frozen, SIGSTOPped, and PTRACEd.
+ 	 */
+ 	int nr_frozen_tasks;
++
++	/* Freeze time data consistency protection */
++	seqcount_t freeze_seq;
++
++	/*
++	 * Most recent time the cgroup was requested to freeze.
++	 * Accesses guarded by freeze_seq counter. Writes serialized
++	 * by css_set_lock.
++	 */
++	u64 freeze_start_nsec;
++
++	/*
++	 * Total duration the cgroup has spent freezing.
++	 * Accesses guarded by freeze_seq counter. Writes serialized
++	 * by css_set_lock.
++	 */
++	u64 frozen_nsec;
+ };
+=20
+ struct cgroup {
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 312c6a8b55bb..ab096b884bbc 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -3763,6 +3763,27 @@ static int cgroup_stat_show(struct seq_file *seq, vo=
+id *v)
+ 	return 0;
+ }
+=20
++static int cgroup_core_local_stat_show(struct seq_file *seq, void *v)
++{
++	struct cgroup *cgrp =3D seq_css(seq)->cgroup;
++	unsigned int sequence;
++	u64 freeze_time;
++
++	do {
++		sequence =3D read_seqcount_begin(&cgrp->freezer.freeze_seq);
++		freeze_time =3D cgrp->freezer.frozen_nsec;
++		/* Add in current freezer interval if the cgroup is freezing. */
++		if (test_bit(CGRP_FREEZE, &cgrp->flags))
++			freeze_time +=3D (ktime_get_ns() -
++					cgrp->freezer.freeze_start_nsec);
++	} while (read_seqcount_retry(&cgrp->freezer.freeze_seq, sequence));
++
++	seq_printf(seq, "frozen_usec %llu\n",
++		   (unsigned long long) freeze_time / NSEC_PER_USEC);
++
++	return 0;
++}
++
+ #ifdef CONFIG_CGROUP_SCHED
+ /**
+  * cgroup_tryget_css - try to get a cgroup's css for the specified subsyst=
+em
+@@ -5354,6 +5375,11 @@ static struct cftype cgroup_base_files[] =3D {
+ 		.name =3D "cgroup.stat",
+ 		.seq_show =3D cgroup_stat_show,
+ 	},
++	{
++		.name =3D "cgroup.stat.local",
++		.flags =3D CFTYPE_NOT_ON_ROOT,
++		.seq_show =3D cgroup_core_local_stat_show,
++	},
+ 	{
+ 		.name =3D "cgroup.freeze",
+ 		.flags =3D CFTYPE_NOT_ON_ROOT,
+@@ -5763,6 +5789,7 @@ static struct cgroup *cgroup_create(struct cgroup *pa=
+rent, const char *name,
+ 	 * if the parent has to be frozen, the child has too.
+ 	 */
+ 	cgrp->freezer.e_freeze =3D parent->freezer.e_freeze;
++	seqcount_init(&cgrp->freezer.freeze_seq);
+ 	if (cgrp->freezer.e_freeze) {
+ 		/*
+ 		 * Set the CGRP_FREEZE flag, so when a process will be
+@@ -5771,6 +5798,7 @@ static struct cgroup *cgroup_create(struct cgroup *pa=
+rent, const char *name,
+ 		 * consider it frozen immediately.
+ 		 */
+ 		set_bit(CGRP_FREEZE, &cgrp->flags);
++		cgrp->freezer.freeze_start_nsec =3D ktime_get_ns();
+ 		set_bit(CGRP_FROZEN, &cgrp->flags);
+ 	}
+=20
+diff --git a/kernel/cgroup/freezer.c b/kernel/cgroup/freezer.c
+index bf1690a167dd..6c18854bff34 100644
+--- a/kernel/cgroup/freezer.c
++++ b/kernel/cgroup/freezer.c
+@@ -171,7 +171,7 @@ static void cgroup_freeze_task(struct task_struct *task=
+, bool freeze)
+ /*
+  * Freeze or unfreeze all tasks in the given cgroup.
+  */
+-static void cgroup_do_freeze(struct cgroup *cgrp, bool freeze)
++static void cgroup_do_freeze(struct cgroup *cgrp, bool freeze, u64 ts_nsec=
+)
+ {
+ 	struct css_task_iter it;
+ 	struct task_struct *task;
+@@ -179,10 +179,16 @@ static void cgroup_do_freeze(struct cgroup *cgrp, boo=
+l freeze)
+ 	lockdep_assert_held(&cgroup_mutex);
+=20
+ 	spin_lock_irq(&css_set_lock);
+-	if (freeze)
++	write_seqcount_begin(&cgrp->freezer.freeze_seq);
++	if (freeze) {
+ 		set_bit(CGRP_FREEZE, &cgrp->flags);
+-	else
++		cgrp->freezer.freeze_start_nsec =3D ts_nsec;
++	} else {
+ 		clear_bit(CGRP_FREEZE, &cgrp->flags);
++		cgrp->freezer.frozen_nsec +=3D (ts_nsec -
++			cgrp->freezer.freeze_start_nsec);
++	}
++	write_seqcount_end(&cgrp->freezer.freeze_seq);
+ 	spin_unlock_irq(&css_set_lock);
+=20
+ 	if (freeze)
+@@ -260,6 +266,7 @@ void cgroup_freeze(struct cgroup *cgrp, bool freeze)
+ 	struct cgroup *parent;
+ 	struct cgroup *dsct;
+ 	bool applied =3D false;
++	u64 ts_nsec;
+ 	bool old_e;
+=20
+ 	lockdep_assert_held(&cgroup_mutex);
+@@ -271,6 +278,7 @@ void cgroup_freeze(struct cgroup *cgrp, bool freeze)
+ 		return;
+=20
+ 	cgrp->freezer.freeze =3D freeze;
++	ts_nsec =3D ktime_get_ns();
+=20
+ 	/*
+ 	 * Propagate changes downwards the cgroup tree.
+@@ -298,7 +306,7 @@ void cgroup_freeze(struct cgroup *cgrp, bool freeze)
+ 		/*
+ 		 * Do change actual state: freeze or unfreeze.
+ 		 */
+-		cgroup_do_freeze(dsct, freeze);
++		cgroup_do_freeze(dsct, freeze, ts_nsec);
+ 		applied =3D true;
+ 	}
+=20
 --=20
 2.51.0.rc2.233.g662b1ed5c5-goog
 
