@@ -1,97 +1,85 @@
-Return-Path: <linux-kernel+bounces-780863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A8DAB30A30
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:15:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85694B30A31
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45B83AE546A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:15:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A8BAE0237
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE394B67F;
-	Fri, 22 Aug 2025 00:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B377F27450;
+	Fri, 22 Aug 2025 00:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="UqOWNexb"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hE9vcDcv"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AAF4A3E;
-	Fri, 22 Aug 2025 00:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491314A3C;
+	Fri, 22 Aug 2025 00:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755821522; cv=none; b=WDJgpGKejlQVrIR38f8lQuL2/DEYnWf5V9bnpC5H5X2ppaoMHbFX5TjBBBRo/lD80OmuWYi5AvYRd4d0jSiL7mnEBcdhfGnQ0xqvHg6FtiIaiHD4muKnIuysNVIOZid64J1umk2m9PfXfGARPlYibxSh/S/N7OvTp5ivCtmHl2k=
+	t=1755821546; cv=none; b=ORJY76gF15a5gqP/YCddCAXAs+gxWh1oppU+86BlV2+kLyHxynth+Dm3DYsQT3CGGPVs5NOjskaCFLOvZVdsyyTQBQAA5g6NT41zVweI4iZh8YA2r3C+a3Nj+3xZaqsKL9wHadzY2Yj2aWUBg4Cxxd5VS+PUmr2PyTtvUsqExW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755821522; c=relaxed/simple;
-	bh=ABAWepAjHiZJzYettTX3FTQg/SU/KOcCVAnQL50u/gg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lbr0C/XoUQiJbgZflhj3AOC9X3f9WbZtrmbI96g0Uc6BUW2eB6ugcPbMkqoYtWa1vzSLsiei0sXlDWLPfBl1qi9zKw5GFaKMzp3wLhQPlVXth3NT7gdMmVoO966P/zRYqP7/uxgvby6qKtLsqlvi5Yu/nQCmGiyVZY0q+j9NryQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=UqOWNexb; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=aeUBRdfQnoF/XeLI+FS29F1kvxnlVvl/a40ejNepzFw=; b=UqOWNexbepiAZnlzW+cl6Rn7Kx
-	FbmRX41KlgAEJBXWEpW6sGdtT1hvX/dgZe/HxldMHrYUL7DgpwuTSqXKY5nrvyK6lqGsiSxyiCdcK
-	CipY5jnGkDS5D8xxnR82TPXQ0cZ/DrY1G64rhT5qFiPf04z88FmAqdnwWd51568YkK5bHu+eThLX3
-	b8VigckODHM4XMTGwnk7eLNjDbrxP9jMQjTsjHzdiLVNPNYGoP1iUGnER/EKm5xNT7sEZLupcWmY6
-	at/xkCgAeLI/vJVVm1ZfqwbXgYfNJnMLZQcFp6vWXMduFXUGVu2QZdh03kWvMOkMkCW6ZyYIB7Cwd
-	CwrmJbOg==;
-Received: from [59.10.240.225] (helo=[172.28.113.15])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1upFNZ-00HTRe-Rv; Fri, 22 Aug 2025 02:11:38 +0200
-Message-ID: <2c5134f4-c0b6-47a8-ba44-402b7f6893bd@igalia.com>
-Date: Fri, 22 Aug 2025 09:11:28 +0900
+	s=arc-20240116; t=1755821546; c=relaxed/simple;
+	bh=p1dGIjTvkNnpxKCOB7RchEpvReZY90qlUytsq4gDFus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jdr8fOBqld9r0eaVCZ53a6d871SJ0MfNHykJSexMy9pEfA3Qju4PUGIkiKtKZN/WukXhp6jheXHMNSMMYM/zr8NCYW3aEacfpQR7fxl8p9IUH885UTf1A/LtgcaeZKJSvuCNJ/6FEdfcxR2f4BJt3IvPgQDOvlwTK7dcJGcaZg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hE9vcDcv; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=0V9vnhvl7kfzNO/a9uciBu9rFyDt7meyaj/wnJfH86E=; b=hE9vcDcvu8i7v5Uh6vAfLCZ32i
+	GZ7mT1gdrfNFREwtqr88Ijj/ipJHSsfGjhcO4A/ygORSA94FThY1eRtgRDRs+TwVM7ZECF6tkQiYK
+	ynhgDpw8MDLJIG2eN0nJmK6tDak86IkvU19ggl9pv62PQBr1tAgtNSHTvObueR06Nt3s=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1upFNr-005W4E-6y; Fri, 22 Aug 2025 02:11:55 +0200
+Date: Fri, 22 Aug 2025 02:11:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	joel@jms.id.au, andrew@codeconstruct.com.au,
+	howard_chiu@aspeedtech.com, arnd@arndb.de, andrew+netdev@lunn.ch,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [net] ARM: dts: aspeed: ast2600-evb: Correct phy-mode to rgmii-id
+Message-ID: <6a3d7eb4-c091-437f-98f8-2b8577e539a7@lunn.ch>
+References: <20250821052555.298860-1-jacky_chou@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 00/10] PM: EM: Add netlink support for the
- energy model.
-To: "Rafael J. Wysocki" <rafael@kernel.org>, lukasz.luba@arm.com
-Cc: len.brown@intel.com, pavel@kernel.org, christian.loehle@arm.com,
- tj@kernel.org, kernel-dev@igalia.com, linux-pm@vger.kernel.org,
- sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-References: <20250810233347.81957-1-changwoo@igalia.com>
- <CAJZ5v0ibEHC+Ckgisr+VAU=B21MgKJz2=QqGH2hd6UjUFutMSg@mail.gmail.com>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <CAJZ5v0ibEHC+Ckgisr+VAU=B21MgKJz2=QqGH2hd6UjUFutMSg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821052555.298860-1-jacky_chou@aspeedtech.com>
 
-Hi Rafael,
+On Thu, Aug 21, 2025 at 01:25:55PM +0800, Jacky Chou wrote:
+> According to the latest ethernet-controller.yaml.
+> Since there is no RGMII delay on AST2600 EVB, the phy-mode property of all
+> MACs change to "rgmii-id" mode.
 
-On 8/21/25 20:27, Rafael J. Wysocki wrote:
-> Hi,
-> 
-> On Mon, Aug 11, 2025 at 1:34 AM Changwoo Min <changwoo@igalia.com> wrote:
->>
-> I've done a high-level review of this and it looks reasonable to me
-> overall, but I'd like to get some feedback from Lukasz on it.
+> @@ -123,7 +123,7 @@ ethphy3: ethernet-phy@0 {
+>  &mac0 {
+>  	status = "okay";
+>  
+> -	phy-mode = "rgmii-rxid";
+> +	phy-mode = "rgmii-id";
+>  	phy-handle = <&ethphy0>;
 
-Thank you, Rafael, for the review! I will send v4 as soon as
-I get feedback from Lukasz.
+How does this change actually work?
 
-> 
-> My two requests for now are: please reorder the series, so patches
-> [3-5] go first, and remove the ending period (".") from all of the
-> patch subjects.
+I could imaging such a change as part of a patchset which changes the
+MAC driver, and how it handles RGMII delays. But on its own, how does
+this not break the board?
 
-Sure. Moving [3-5] to the beginning of the series and making the
-title style consistent makes sense. I will change it in the next
-version as suggested.
-
-Regards,
-Changwoo Min
+	Andrew
 
