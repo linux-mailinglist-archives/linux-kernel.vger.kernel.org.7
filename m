@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-781858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E4FB317C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:28:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E4FB317E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 492291C257CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:28:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 780473AC6CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B04D2E1F13;
-	Fri, 22 Aug 2025 12:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1832FB621;
+	Fri, 22 Aug 2025 12:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="eU7Rkse6"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Zahfk0R3"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1B51E51D
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE2378F58;
+	Fri, 22 Aug 2025 12:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755865681; cv=none; b=u+rsPHwdUxngicRUC5/PrR3katgo60mrgGt6TQ66ghCpru91PKIlB767jbHzPA+QUY4JgYkYjz+g8IWHUhduaCbRoXZtB7sdVvvIcnu2XMoleNsGSwLUTsSDLR1kduH1iPI9LXL5HQz7lY5tbC4/r2oa9eaaaUGG3NCctfH+awQ=
+	t=1755865931; cv=none; b=mb2mSolBDaIWldKTvCMWJXpv6x8yQkbIBbJIF0ZCNeaKXpbZxpe51OJa3z/6MqnLy69GH+8wJrD0ZwwUp5ZpfxHzE3sKaFEuKcyy39mGfcR3Xa8r/YYcbx6xaHs1T/kijFkrIxuai/kx3Bb78bi5tdS48libqyxAUau5558b1vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755865681; c=relaxed/simple;
-	bh=n5xgv3Quc+USBLbZPbbXiLHJsfAIvUmEYJ8piqWwIfo=;
+	s=arc-20240116; t=1755865931; c=relaxed/simple;
+	bh=1vOkihTL/FW3jv5lIyr5b0s5TaRbEjA9TqMW25XJvZQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VN8rUgXl0k/iw1713UFQ25cfREgquOmZjUwwy0cJb2f2tPiX9byGuQxWRdKl4SJAyncHMgd3UFXXT8UV8tmkLEE4Ob/WujjqIIZExXK8RHAmwSxgTQfDZhRqeQg+IfYdVzVaioOwv+Z8mPxI8yP98cZoWyt6+orwihhJwBUERrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=eU7Rkse6; arc=none smtp.client-ip=91.207.212.93
+	 In-Reply-To:Content-Type; b=ORLUrHG62p+lNidBnlNonKhYb707tg/txYvLOB4mxXDdL/cLwSr29L4W388HcpJjGi6T98Sz+NsfjsAxOIA06krDBYgTbGzIKu0cx/3+vM2VF+L9lHyDJkk7ZgBtwgWB/OadKvQN22Sqr4R0raz2ZplmGNLizWaMcT7nfUOWv3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Zahfk0R3; arc=none smtp.client-ip=91.207.212.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MC4SMI030214;
-	Fri, 22 Aug 2025 14:27:31 +0200
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MCHGJl009682;
+	Fri, 22 Aug 2025 14:31:55 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	T6mgh6btBywzlp/e+SiWkYAG5i8x7Ry7OTIJ2BWMvmI=; b=eU7Rkse6g+EGMn01
-	HitdPnhSEHnufAZ0JgTvzgW3Q/AOoAGt0d8wfy/t2cVf4Uzi1VHgxgFB1FG9Ofkh
-	mcMd+97Jbj23wfYuU3kWa6kYvetNs0GCmMXsGFLS2Fo8M8f4AAkxXK2ZOGTApndd
-	0V/9DwWrgCsoA7ukdSLCipC+T67sIzhZb2sxnIkVGji/SJdaaf/y1viFsk4wWmrf
-	+guu1XtiLFvvKsiUIOeDG3t39bwpHfwNmo8HhPSlQhsfxYHhoNeSmxlerNEb3qeU
-	P6LnZwkc39bpjgzn2awbLDDAFnxK8MuscdQEfcU2Ft7oNqqSqyDWavmoNq+RNFIL
-	a7f0cA==
+	JBT1UDpbACmKUTz7QVz33kNvVsoysRpJ/dCT2cDLpW4=; b=Zahfk0R3fVBUSlts
+	KqSACcCnut8KaGkwtIZecPsqlTIN+SuQG3TxqHT8iCCddekygt83cXwczb6jvr8l
+	VA5fiAaU2B9eDZFRDludMIopoz/7pBF3ktLeHYyH/cMsPjipz1O0bMlQJpx4wQfS
+	R/Z3uz3liKRAL6xgoz7HxXQeBAnVxPFRkQlz9/kEK8Drl08bmPIB4x2w7LuNiFd7
+	tFg1Rqwtz1vEr1JgQ6B4pyq+Yd6e9hfmFKl5XtKOSJ5bNofx1m2eWSIvSe4ggcJj
+	ckmbEczqw+Lql/Way9StH+kZfUmq3PrmX24dfd2vKR6z6qZLobT/H9ddXOm+zsss
+	BcUoMw==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48n81wtnr0-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48np7n752x-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Aug 2025 14:27:31 +0200 (MEST)
+	Fri, 22 Aug 2025 14:31:55 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E456240044;
-	Fri, 22 Aug 2025 14:26:14 +0200 (CEST)
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1470240046;
+	Fri, 22 Aug 2025 14:30:40 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A698F71CE44;
-	Fri, 22 Aug 2025 14:25:40 +0200 (CEST)
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1F9F26C2A88;
+	Fri, 22 Aug 2025 14:29:43 +0200 (CEST)
 Received: from [10.48.87.178] (10.48.87.178) by SHFDAG1NODE3.st.com
  (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 22 Aug
- 2025 14:25:40 +0200
-Message-ID: <2f0186da-89ad-4c56-b8e9-928226b95f10@foss.st.com>
-Date: Fri, 22 Aug 2025 14:25:39 +0200
+ 2025 14:29:42 +0200
+Message-ID: <512c5e41-276d-4c2c-936c-718347df3711@foss.st.com>
+Date: Fri, 22 Aug 2025 14:29:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,7 +66,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/stm: ltdc: unify log system
+Subject: Re: [PATCH v4 01/13] dt-bindings: display: st: add two new
+ compatibles to LTDC device
 To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
         Philippe Cornu
 	<philippe.cornu@foss.st.com>,
@@ -75,15 +76,26 @@ To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
         David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC: <dri-devel@lists.freedesktop.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Maxime
+ Coquelin" <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>
+CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250821130356.883553-1-raphael.gallais-pou@foss.st.com>
+References: <20250821-drm-misc-next-v4-0-7060500f8fd3@foss.st.com>
+ <20250821-drm-misc-next-v4-1-7060500f8fd3@foss.st.com>
 Content-Language: en-US
 From: Yannick FERTRE <yannick.fertre@foss.st.com>
-In-Reply-To: <20250821130356.883553-1-raphael.gallais-pou@foss.st.com>
+In-Reply-To: <20250821-drm-misc-next-v4-1-7060500f8fd3@foss.st.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
@@ -98,8 +110,99 @@ Thanks for the patch.
 
 Acked-by: Yannick Fertre <yannick.fertre@foss.st.com>
 
-
-Le 21/08/2025 à 15:03, Raphael Gallais-Pou a écrit :
-> -	DRM_DEBUG_DRIVER("\n");
-> +	drm_dbg_driver(ddev, "\n");
+Le 21/08/2025 à 13:08, Raphael Gallais-Pou a écrit :
+> The new STMicroelectronics SoC features a display controller similar to
+> the one used in previous SoCs.  Because there is additional registers,
+> and different mandatory clocks it is incompatible with existing IPs.  On
+> STM32MP251, the device only needs two clocks while on STM32MP255 it
+> needs four.
+>
+> Add the new names to the list of compatible string and handle each
+> quirks accordingly.
+>
+> Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+> ---
+>   .../devicetree/bindings/display/st,stm32-ltdc.yaml | 50 +++++++++++++++++++++-
+>   1 file changed, 48 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
+> index d6ea4d62a2cfae26353c9f20a326a4329fed3a2f..bcedcfef5427f5725a0473c09628e70d172c8f58 100644
+> --- a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
+> +++ b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
+> @@ -12,7 +12,10 @@ maintainers:
+>   
+>   properties:
+>     compatible:
+> -    const: st,stm32-ltdc
+> +    enum:
+> +      - st,stm32-ltdc
+> +      - st,stm32mp251-ltdc
+> +      - st,stm32mp255-ltdc
+>   
+>     reg:
+>       maxItems: 1
+> @@ -24,11 +27,16 @@ properties:
+>       minItems: 1
+>   
+>     clocks:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 4
+>   
+>     clock-names:
+>       items:
+>         - const: lcd
+> +      - const: bus
+> +      - const: ref
+> +      - const: lvds
+> +    minItems: 1
+>   
+>     resets:
+>       maxItems: 1
+> @@ -51,6 +59,44 @@ required:
+>     - resets
+>     - port
+>   
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - st,stm32-ltdc
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 1
+> +        clock-names:
+> +          maxItems: 1
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - st,stm32mp251-ltdc
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 2
+> +        clock-names:
+> +          maxItems: 2
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - st,stm32mp255-ltdc
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 4
+> +        clock-names:
+> +          minItems: 4
+> +
+>   additionalProperties: false
+>   
+>   examples:
+>
 
