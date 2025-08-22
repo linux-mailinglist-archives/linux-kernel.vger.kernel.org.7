@@ -1,134 +1,258 @@
-Return-Path: <linux-kernel+bounces-782411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C715BB32024
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:08:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F3C0B3202B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1225F1BA2178
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:03:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FCCB1D40A58
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AAB27FB35;
-	Fri, 22 Aug 2025 16:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979512877CA;
+	Fri, 22 Aug 2025 16:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="SS1uCrt5"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e2XcsNJC"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9442825B1DA;
-	Fri, 22 Aug 2025 16:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71CB286D53
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755878555; cv=none; b=LxH/zgChn6X0N2ZO+dGaSmoahuFtspu3XIYA9FqLOefQSpbE4IZCa1Bcrp/xlcmR+mHadbHqJH0BbbUNupnO66+IQ4xhD2njXcPGGPzUqTzLBC+ZbHt/lZG9fXQTTZ21OPFMqD2sVJ2Qq/M/fDMoSSR4852MWeVNIhFe6HXZubE=
+	t=1755878564; cv=none; b=igWm2J3n9nsH2xIUtFIBjASTFAsu5luE+Qx5l2MbdQ3xRkiFX6/7t1EHonKSzK+d5dqTY1KE31JKe4aSE5eykq771fPICapABTdtYUJCFU4RcmfnR+uQvZTqSwZRZ+5iqG4TJq3hkAGbV7nizNKLUS3FpcHtiNMJ2nthPDGbXH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755878555; c=relaxed/simple;
-	bh=kspGLdPkNtzhu4rQDp5/TVNuldcYtNLHK/6wJj3wquE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Kap85PJJ4UX+xi91kmzyKpaxog79s2Jy2NrbhRWDCtyz0r3P2WgX6KAuQtf4MCPeKJa+TYG2LNJn0Br9gFX0kQ8nH1IylC3JaUccFPaf2UIOyuX+4FzgHI/LSqMARS9N7qEE3KDLRFYS2iH5DWt7fqWgvdJg4ZbzgYHyWrHG1vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=SS1uCrt5; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MEEmvV004396;
-	Fri, 22 Aug 2025 12:02:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=PozY+
-	M/LDTJ0jNL4YP/Fx/ozmIWeWf340wZY8rrkRC0=; b=SS1uCrt5Qr6jIgaUBXCqU
-	wBlK+s4X5DkEgYUTq5wtwtDazCxyPvd+PQ0RBfwxJ4bhgPnbXbsNljFgjajgVj4E
-	a3cGcp5RWoCLMTduRayysVJH8+PWi/IF06D73wELdjuucVHyZG2oMn6sOjgTYM9p
-	8J+8//H8KirXo9yaUCKT/+RHDikxL9IvoDoWeto4HIRnnFSF+uhJwi2+CAHp/AT8
-	Gq6qnPdl92dMwpmlBefmDaDagJQi7ELNFmr8IfzxW+PW+irkRUT6wHmh6TlAuzRO
-	YxcZMn7zo4pKaAePTwekfDTcpU1D8giQI++t7AUlThXqU2QwgLx1ljL32mIQfy0V
-	Q==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 48n0tdh4uj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Aug 2025 12:02:25 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 57MG2OQ2033828
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 22 Aug 2025 12:02:24 -0400
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 22 Aug 2025 12:02:24 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 22 Aug 2025 12:02:24 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 22 Aug 2025 12:02:24 -0400
-Received: from Ubuntu.ad.analog.com ([10.32.13.98])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 57MG263R000568;
-	Fri, 22 Aug 2025 12:02:20 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Subject: [PATCH v5 6/6] Documentation: ABI: iio: add sinc4+lp
-Date: Fri, 22 Aug 2025 16:01:55 +0000
-Message-ID: <20250822160157.5092-7-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250822160157.5092-1-antoniu.miclaus@analog.com>
-References: <20250822160157.5092-1-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1755878564; c=relaxed/simple;
+	bh=6j2wVSC1eY0LNYrhjKWMbjy4LYJKfEoSAUxyGf+TkRM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G+DG3NbQ0F7vHhiPI22sU4SnHzsdWAnsQaz/hcBf5xUFwQ3yg1cgJzwSKB79VxIYFNfK8LQwB4kqKIRuJJ+yP3eLNiLaN3muDqL9st+UKP3BVy1I12rLaKswcj5TS0KgKNtJH862E1BQQr54Q7ul56Cenp69cG+zRzGn0ELWRNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e2XcsNJC; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b916fda762so1527877f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:02:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755878560; x=1756483360; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u6uIOvK2yrojSK1BrIKyE65F98CHI8uQnPckjILUm/E=;
+        b=e2XcsNJCUcyRtkXxzPoqqOkwBj4GlrtOeZevyDxI5LSfZZOCmpGScyLuoxaj9SMatV
+         tv/x7zCuW67Sn6EyJ+kCIYs3rwP8Rhoz6KsDhyxIyYT735sTU62ezEJFsxMbsJs1hsPt
+         I9yBMhhAoDCi3cCPBSHHFwTIlqamuX778g/gFzncwNptTgSb79Ko9cj8qAmBNEXSQBq1
+         tCKTYk9RKLg79uuNtum+uoDe+jz5LBoxxJ3a9mb9CXGt0Z2D4VMJEghsbsJleMe76u+E
+         6dIBvpt7o7ZFPvxn2s4M3Sy4aOHMuWFWMK0Qtu5IrpJglDj6n+Y7i/lsG+GvSpGjbhBr
+         UyzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755878560; x=1756483360;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u6uIOvK2yrojSK1BrIKyE65F98CHI8uQnPckjILUm/E=;
+        b=nxThr0h8rbN+FzDyzM6bn4tSaHG39exzn1l/Y0gMiXGUcmQKb8rvG5w/Ffel9wUgH9
+         mCMEuRayByA1wL1zHAcSyWGKlHiZEIedu5/wuwQ1IccO6+WJwHDXmacAi0p4gPtNTD9j
+         TaIF4uX3dJb9c/9jubfkqjXfXaKWJG7rkh9HF9U0S5LKPskA6UBipiYwnn0RsSMwxUle
+         k1I4LVU6GEJxOfptc/ZXQoRekn07sk7xOAefiKEv1Mrd28hB2DqzUpMFdprtLvlKHr3y
+         s/L0w5du1WG8dgoMc0lL1L5+J6P0HoAZdxTdN49PVFzxk2upRz/ZS0Fe32AuMbxVfxyT
+         Q2lw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzFoEvdn0v2g9QNv8/J/o+nTmx/qTTrrnbfBCP2HEEplzGk5h3vnX4ON9Bi7GgRAuO6zN1PjCxt3uIfeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuHTe810a1BJrOyn75ynrsHMaN3Zpb8KjgktXzYbGLwJUejW/d
+	e3tJNoPyH/AcuqwXN0xqsg7X86GTP1GWtOgBiCqQrJ2ZYikBPR0x6q5f1+FTusICZEVWvN116e2
+	p0wxh0BqeJEPU1z7jFTxqS/VllI0l3SbYZnbWamER
+X-Gm-Gg: ASbGncs2FWz/7Oz8h7qRjLT515znAnFX/veneSgzPyI7p24u2XiUe56y24LRcOK8tCi
+	KKj8yLEOHiDE2+mrhlmy1HRfJ1f/9bpkYBrIII0IqVl2pAZh/BQjVA6qmLvE341me6ZNY8BwbMF
+	LII7+Ws1m1geSJuLtFNMTutK+Kjn5Obj5ST/8DG4cnk/6d8m2dhfN6IRFF39R6aU3OlkXo6g3lC
+	PWifnYGX4zkFPV7FYH/d5LogzDQF0zoPdQ=
+X-Google-Smtp-Source: AGHT+IHy+0GrlNeJA6rIuVVSrxezkgWo24V2J7OrpAtJYKHx3aM+NyvHVhAwt3nKQNrGTxbTgOXS6zxhQjzYrqsL3SQ=
+X-Received: by 2002:a05:6000:2c05:b0:3b6:5d0d:9826 with SMTP id
+ ffacd0b85a97d-3c4b082654cmr5273385f8f.21.1755878558965; Fri, 22 Aug 2025
+ 09:02:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Authority-Analysis: v=2.4 cv=bvAVxEai c=1 sm=1 tr=0 ts=68a89491 cx=c_pps
- a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
- a=2OwXVqhp2XgA:10 a=gAnH3GRIAAAA:8 a=U6ZNB8FNVxHzf_OyWnsA:9
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: KcVwS01EDW1wDpRwWC4SLuRL8xH7JakT
-X-Proofpoint-ORIG-GUID: KcVwS01EDW1wDpRwWC4SLuRL8xH7JakT
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDE5NSBTYWx0ZWRfX1Gyx0lGlWRJD
- sapyqPY+Yl6thDQ8W24we8ef3RDQcnxuSOpnHKTGAwzS369hmKebT0NvMZs1TQa9v77z5KjlxbW
- 76iP8mZo//1JILQIP9L/kgcCnKSsU4YPrldWotUnG2HH2nzCesNgtbnmDfnGcPYF0nMlw94+ekq
- RLKhKfj07vp4MiGsUElI0kxt0eiqZQIygonL8ZZbMcCHUX74MvjK3KYyIlzcr148ChSWZnVYnDj
- MnGkpXtErefAKwdLeK2BQguLeKihdrExiZg/7dxlNrhhaFYCZTBzw9Wt2/1Rxh9N3G0sbHR3tcV
- vO+jWhwiuDakmPcXEapkEJaJHLnOtGtZXSq1hJ25EZQ1lI7q2uHLVkIUZo+o9tXOS+QXPIug8vL
- XtMVdi/zU8PntQEeDMLjl+EK6L/IzQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0
- spamscore=0 suspectscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508190195
+References: <20250822060254.74708-1-mii.w@linux.alibaba.com> <CANn89iLYHdtAFSjSW+cSN0Td_V3B+V05hHnGeop5Y+hjWEt_HA@mail.gmail.com>
+In-Reply-To: <CANn89iLYHdtAFSjSW+cSN0Td_V3B+V05hHnGeop5Y+hjWEt_HA@mail.gmail.com>
+From: Yuchung Cheng <ycheng@google.com>
+Date: Fri, 22 Aug 2025 09:02:02 -0700
+X-Gm-Features: Ac12FXxBZ2hBC8VfYiO98CAitgGa1e2IFQ2I30ERv-IptpnUB4wFdmjuC-ZT7NE
+Message-ID: <CAK6E8=fG69i1eCFJtu-r19Wt=A-nx_Y5Q4gAum_T1v-42foFPA@mail.gmail.com>
+Subject: Re: [RFC net] tcp: Fix orphaned socket stalling indefinitely in FIN-WAIT-1
+To: Eric Dumazet <edumazet@google.com>
+Cc: MingMing Wang <mii.w@linux.alibaba.com>, ncardwell@google.com, kuniyu@google.com, 
+	davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, 
+	horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dust Li <dust.li@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add new filter type to the sysfs-bus-iio ABI documentation:
-- "sinc4+lp" for Sinc4 + Low Pass Filter
+On Fri, Aug 22, 2025 at 1:53=E2=80=AFAM Eric Dumazet <edumazet@google.com> =
+wrote:
+>
+> On Thu, Aug 21, 2025 at 11:04=E2=80=AFPM MingMing Wang <mii.w@linux.aliba=
+ba.com> wrote:
+> >
+> > From: MingMing Wang <mii.w@linux.alibaba.com>
+> >
+> > An orphaned TCP socket can stall indefinitely in FIN-WAIT-1
+> > if the following conditions are met:
+> > 1. net.ipv4.tcp_retries2 is set to a value =E2=89=A4 8;
+> > 2. The peer advertises a zero window, and the window never reopens.
+> >
+> > Steps to reproduce:
+> > 1. Set up two instances with nmap installed: one will act as the server
+> >    the other as the client
+> > 2. Execute on the server:
+> >    a. lower rmem : `sysctl -w net.ipv4.tcp_rmem=3D"16 32 32"`
+> >    b. start a listener: `nc -l -p 1234`
+> > 3. Execute on the client:
+> >    a. lower tcp_retries2: `sysctl -w net.ipv4.tcp_retries2=3D8`
+> >    b. send pakcets: `cat /dev/zero | nc <server-ip> 1234`
+> >    c. after five seconds, stop the process: `killall nc`
+> > 4. Execute on the server: `killall -STOP nc`
+> > 5. Expected abnormal result: using `ss` command, we'll notice that the
+> >    client connection remains stuck in the FIN_WAIT1 state, and the
+> >    backoff counter always be 8 and no longer increased, as shown below:
+> >    ```
+>
+> Hi MingMing
+>
+> Please prepare and share with us a packetdrill test, instead of this
+> 'repro', which is the old way of describing things :/
+>
+> - This will be easier for us to understand the issue.
+>
+> - It will be added to existing tests in tools/testing/selftests/net/packe=
+tdrill
+> if your patch is accepted, so that we can make sure future changes are
+> not breaking this again.
+>
+> Ideally, you should attach this packetdrill test in a second patch
+> (thus sending a series of two patches)
+>
+> Thank you.
+>
+> >    FIN-WAIT-1 0      1389    172.16.0.2:50316    172.16.0.1:1234
+> >          cubic wscale:2,7 rto:201 backoff:8 rtt:0.078/0.007 mss:36
+> >                  ... other fields omitted ...
+> >    ```
+> > 6. If we set tcp_retries2 to 15 and repeat the steps above, the FIN_WAI=
+T1
+> >    state will be forcefully reclaimed after about 5 minutes.
+> >
+> > During the zero-window probe retry process, it will check whether the
+> > current connection is alive or not. If the connection is not alive and
+> > the counter of retries exceeds the maximum allowed `max_probes`, retry
+> > process will be terminated.
+> >
+> > In our case, when we set `net.ipv4.tcp_retries2` to 8 or a less value,
+> > according to the current implementation, the `icsk->icsk_backoff` count=
+er
+> > will be capped at `net.ipv4.tcp_retries2`. The value calculated by
+> > `inet_csk_rto_backoff` will always be too small, which means the
+> > computed backoff duration will always be less than rto_max. As a result=
+,
+> > the alive check will always return true. The condition before the
+> > `goto abort` statement is an logical AND condition, the abort branch
+> > can never be reached.
+> >
+> > So, the TCP retransmission backoff mechanism has two issues:
+> >
+> > 1. `icsk->icsk_backoff` should monotonically increase during probe
+> >    transmission and, upon reaching the maximum backoff limit, the
+> >    connection should be terminated. However, the backoff value itself
+> >    must not be capped prematurely =E2=80=94 it should only control when=
+ to abort.
+> >
+> > 2. The condition for orphaned connection abort was incorrectly based on
+> >    connection liveness and probe count. It should instead consider whet=
+her
+> >    the number of orphaned probes exceeds the intended limit.
+> >
+> > To fix this, introduce a local variable `orphan_probes` to track orphan
+> > probe attempts separately from `max_probes`, which is used for RTO
+> > retransmissions. This decouples the two counters and prevents accidenta=
+l
+> > overwrites, ensuring correct timeout behavior for orphaned connections.
+> >
+> > Fixes: b248230c34970 ("tcp: abort orphan sockets stalling on zero windo=
+w probes")
+Thanks for catching this corner case. Feel free to add a Acked-by:
+<ycheng@google.com> after the packetdrill test in your respin
 
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
----
-no changes in v5.
- Documentation/ABI/testing/sysfs-bus-iio | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index 78da68826307..cb300135b4c4 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -2319,6 +2319,7 @@ Description:
- 		  time.
- 		* "sinc4" - Sinc 4. Excellent noise performance. Long
- 		  1st conversion time.
-+		* "sinc4+lp" - Sinc4 + Low Pass Filter.
- 		* "sinc4+sinc1" - Sinc4 + averaging by 8. Low 1st conversion
- 		  time.
- 		* "sinc5" - The digital sinc5 filter. Excellent noise
--- 
-2.43.0
-
+> > Co-developed-by: Dust Li <dust.li@linux.alibaba.com>
+> > Signed-off-by: Dust Li <dust.li@linux.alibaba.com>
+> > Co-developed-by: MingMing Wang <mii.w@linux.alibaba.com>
+> > Signed-off-by: MingMing Wang <mii.w@linux.alibaba.com>
+> >
+> > ---
+> > We couldn't determine the rationale behind the following check in tcp_s=
+end_probe0():
+> > ```
+> > if (icsk->icsk_backoff < READ_ONCE(net->ipv4.sysctl_tcp_retries2))
+> >     icsk->icsk_backoff++;
+> > ```
+> >
+> > This condition appears to be the root cause of the observed stall.
+> > However, it has existed in the kernel for over 20 years =E2=80=94 which=
+ suggests
+> > there might be a historical or subtle reason for its presence.
+> >
+> > We would greatly appreciate it if anyone could shed
+> > ---
+> >  net/ipv4/tcp_output.c | 4 +---
+> >  net/ipv4/tcp_timer.c  | 4 ++--
+> >  2 files changed, 3 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+> > index caf11920a878..21795d696e38 100644
+> > --- a/net/ipv4/tcp_output.c
+> > +++ b/net/ipv4/tcp_output.c
+> > @@ -4385,7 +4385,6 @@ void tcp_send_probe0(struct sock *sk)
+> >  {
+> >         struct inet_connection_sock *icsk =3D inet_csk(sk);
+> >         struct tcp_sock *tp =3D tcp_sk(sk);
+> > -       struct net *net =3D sock_net(sk);
+> >         unsigned long timeout;
+> >         int err;
+> >
+> > @@ -4401,8 +4400,7 @@ void tcp_send_probe0(struct sock *sk)
+> >
+> >         icsk->icsk_probes_out++;
+> >         if (err <=3D 0) {
+> > -               if (icsk->icsk_backoff < READ_ONCE(net->ipv4.sysctl_tcp=
+_retries2))
+> > -                       icsk->icsk_backoff++;
+> > +               icsk->icsk_backoff++;
+>
+> I think we need to have a cap, otherwise we risk overflows in
+> inet_csk_rto_backoff()
+>
+>
+> >                 timeout =3D tcp_probe0_when(sk, tcp_rto_max(sk));
+> >         } else {
+> >                 /* If packet was not sent due to local congestion,
+> > diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
+> > index a207877270fb..4dba2928e1bf 100644
+> > --- a/net/ipv4/tcp_timer.c
+> > +++ b/net/ipv4/tcp_timer.c
+> > @@ -419,9 +419,9 @@ static void tcp_probe_timer(struct sock *sk)
+> >         if (sock_flag(sk, SOCK_DEAD)) {
+> >                 unsigned int rto_max =3D tcp_rto_max(sk);
+> >                 const bool alive =3D inet_csk_rto_backoff(icsk, rto_max=
+) < rto_max;
+> > +               int orphan_probes =3D tcp_orphan_retries(sk, alive);
+> >
+> > -               max_probes =3D tcp_orphan_retries(sk, alive);
+> > -               if (!alive && icsk->icsk_backoff >=3D max_probes)
+> > +               if (!alive || icsk->icsk_backoff >=3D orphan_probes)
+> >                         goto abort;
+> >                 if (tcp_out_of_resources(sk, true))
+> >                         return;
+> > --
+> > 2.46.0
+> >
 
