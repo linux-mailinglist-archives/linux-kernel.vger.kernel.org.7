@@ -1,176 +1,256 @@
-Return-Path: <linux-kernel+bounces-781255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B913DB30FEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:08:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 260A0B30FEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90ED0165E2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:06:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 384591BA3E4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEEF2E7644;
-	Fri, 22 Aug 2025 07:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B54F2E62B5;
+	Fri, 22 Aug 2025 07:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="WFiZvrYr";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TQa2Lw8I"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gdV1tyce"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4FD2253F9
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 07:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985032253F9;
+	Fri, 22 Aug 2025 07:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755846365; cv=none; b=VZ7mjRt2xYdQoV22Rfq2Rog0YB1JRzlukez68jvTZKA0B/UF0eKjLIU6bkL1kj4/YpGHufNNRmpx0tBkRlWBmqV20zwQvjGlR3z9aj20mKsOYwLzrA3qySDhKZ5MCo+tdC+iyZhnRxQwfSPnzZwCcGKD0ez/9NxsuZjmT/HqFNI=
+	t=1755846398; cv=none; b=H+fDVKjl5Qe0rRvvEiPFKcxfpN5XrcyxyaRTMqxmvPy2HvvciMdaV4wzQjL5YPXepi5yn5u1TezlXC/p8PgzlYY9MSKfT3E1Z/ZwKnJ5SGhbZcPKZnAr5gtvNzMEYONay+U/SIy0Hv2LKksOlzF/q3Sslhyl8pqe2B41rT473ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755846365; c=relaxed/simple;
-	bh=1zauvedElwCQUXBUOPPqOSpWlZSJJOKXlW2tRIrt99Y=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=ie3u9He5dVQ1efliC4n56xuA9xdgYoXxU5cp4eLd4IjP8kUw1Bm0Nemp7gROpCMFco+q8NZNWKg1n2rBHmEoaO7UiJUObvggiBzmRRIgzKD2DPXZWJFSPmpoEAlHeKNDOs3+JqB6NI5RZzRVYKi6JXXDTNOL+OdLRSO2qUgRVcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=WFiZvrYr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TQa2Lw8I; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 8A902EC0958;
-	Fri, 22 Aug 2025 03:06:00 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 22 Aug 2025 03:06:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1755846360;
-	 x=1755932760; bh=oMJSNEUSKKDn7Dffolj3gAHZX6/fUfm0lTvkTxBDCHk=; b=
-	WFiZvrYrZDGDgFIeP2gDUyu1lZ0OTNIxL8He8RvJV1mCiJo6JsRO20F6M+5rSPsd
-	OcL55vkPHIuRBOUQG4UYlKizEuIMWt2FbRqPrXcNyPT6zy9vOoySHKIowQOjD4gz
-	xMHI0qkt85bpIrZ9FLikJbwtrCxb0ZjWepQb2+yrC4K1vbpHo2nD1sETbiRtaSN+
-	2Dx5v01Zc5yYPMJIB85Pqy/MEQNaItgCPDF2Kw34Vmo8C6F6EGwsWmtfbdWHvD8M
-	SFeMH/uwoRXC/JjOGfcQowVWR+N/q+6aUROulrW+n1Qk0U9/RR9FC8ZrVchUJiB4
-	h9dL7832YWYw9v1LPTEXiQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755846360; x=
-	1755932760; bh=oMJSNEUSKKDn7Dffolj3gAHZX6/fUfm0lTvkTxBDCHk=; b=T
-	Qa2Lw8IsH7CgksQbCfiAXgGJ6Q6WDsnBSrBgBJYLQ2AQHlyPP9M+IgR/NU5sHCu9
-	YtcugPu5usZTlGrlgCfndU3Ql6KhqUgD6whCr0WTZ4BBQQv42coIavErY4qGgEsG
-	/f67tn3p5AuN+JNPwrJjr0ecyEjrIf+H9RLSwJ716DBTTWzvghuKGbhEl0aptY9W
-	nT//CQfw0vxd/I+wGVqOvYqGAkCeE06Q6hRrMEm9gl46pB1KaLernRuHQPZHcjLc
-	rVwhAgBF/vjjYSYMCW4SOU+mjGwU2aagKuPhnVwX28P4UtRUo0AkPsrKt03ivyaB
-	XiGNvEQQOMcT3bzK+Y2XQ==
-X-ME-Sender: <xms:2BaoaOLaWKSmrt1w6Rz5mEIUTSxDRXFsnfmLjr6i_Fb3FjJfW78b6g>
-    <xme:2BaoaGJaytqaykyXZ6D4GOTJfBtxh6-botUl-TMU-QvSND3v8xxXIzpLnrbh7Yjqx
-    98N_B1JKkHPHGizqIw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieefudduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpth
-    htohepnhhitghkrdguvghsrghulhhnihgvrhhsodhlkhhmlhesghhmrghilhdrtghomhdp
-    rhgtphhtthhopehjuhhsthhinhhsthhithhtsehgohhoghhlvgdrtghomhdprhgtphhtth
-    hopehmohhrsghosehgohhoghhlvgdrtghomhdprhgtphhtthhopegrrhgusgeskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehnrghthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghr
-    mhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoh
-    eplhhlvhhmsehlihhsthhsrdhlihhnuhigrdguvghv
-X-ME-Proxy: <xmx:2BaoaHX-rBzOi4fEzVlO_r-b6O12-Gd2BQqvF1-u7ZKpmJW09pV8dQ>
-    <xmx:2BaoaKCDunUP6cGWqSpPLXrcfnSk3O0vFgdrz12DZPYi43gJO068kg>
-    <xmx:2BaoaK5JlhyQr4SR8w-x-xYIUQddJ3ChifOGxZJbBcQ7IGhZ58B-0g>
-    <xmx:2BaoaJ3Uh3_j5Rrj0JYci63M16Tb-5bboRUvoOh-cNjk9AA9Q7BWKQ>
-    <xmx:2BaoaESHR9avTufRWoOnB7jyYuS4O_fJriKScgy4arR5vT0HhzH2TWW6>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 0E72B700065; Fri, 22 Aug 2025 03:06:00 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1755846398; c=relaxed/simple;
+	bh=vK1Fc9hq2tBF3cBCzzIiljNe8N3mobe9b1tyZxZ4buU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rTn2ZoefVl73aruxdfV3C6x6T6fXeAm0kgJTWJLDvbXDKGrcFRr5prPqqbJbmQQUDtnRkT5x9MzZ2dsj5s3gfFy8YykIkG+75qsrcjxeheKGgAMubsfxi8qy5qqAjzzfvDmFTGQjRgejFkuuOYs1wKCpNynZfKCNuc2M4LKse7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gdV1tyce; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755846397; x=1787382397;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=vK1Fc9hq2tBF3cBCzzIiljNe8N3mobe9b1tyZxZ4buU=;
+  b=gdV1tyceWLlO52sClX9gUdm/86iKswrVRVRmFCTznxgtoIwRHczlLDyy
+   rJnvppcevpYVSH4qjmCD8Q5v5feKEw4y7uwufVNlu1RW4dJqAWnhZHml/
+   TsXFte2A5ZWQzzYQLWSm6aIyCuFq0q1uPPQdAM5pYS8vRtneSEGnD8/Kg
+   MpIk7mmhfA37zhIQqkpu3wFSgkHVG1Y/6BcLqjvriwCXIPdIYn7PdDvf/
+   9DrgiFZbD035juDPbGY9CT6djBR00JHEXoT6tHAbcaaP4zIemkg2HcQvn
+   Rc3I994WKbPvXpwDSKuYHiXqUyzuJCRubQHYOq1qG9o3G80yUoDFFfjzg
+   Q==;
+X-CSE-ConnectionGUID: CkABdel/STCriOejPEsGlg==
+X-CSE-MsgGUID: N9f47Mz7S6qCujcg9JIqIA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58216274"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="58216274"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 00:06:36 -0700
+X-CSE-ConnectionGUID: gcF2yLkNSUSlOftyS9kDBw==
+X-CSE-MsgGUID: 1MzEeu0TSqiaScYbMY6pxw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="172829670"
+Received: from yzhao56-desk.sh.intel.com ([10.239.47.19])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 00:06:34 -0700
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com
+Cc: reinette.chatre@intel.com,
+	rick.p.edgecombe@intel.com,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH v2 3/3] KVM: selftests: Test prefault memory during concurrent memslot removal
+Date: Fri, 22 Aug 2025 15:05:54 +0800
+Message-ID: <20250822070554.26523-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20250822070305.26427-1-yan.y.zhao@intel.com>
+References: <20250822070305.26427-1-yan.y.zhao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AlhDZOV2HdTF
-Date: Fri, 22 Aug 2025 09:05:38 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Nathan Chancellor" <nathan@kernel.org>, linux-kernel@vger.kernel.org
-Cc: "Kees Cook" <kees@kernel.org>,
- "Nick Desaulniers" <nick.desaulniers+lkml@gmail.com>,
- "Bill Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
- llvm@lists.linux.dev, patches@lists.linux.dev,
- "Russell King" <linux@armlinux.org.uk>, "Ard Biesheuvel" <ardb@kernel.org>,
- linux-arm-kernel@lists.infradead.org
-Message-Id: <35178205-7cff-4b4b-abdd-b4cfb9e69dc2@app.fastmail.com>
-In-Reply-To: <20250821-bump-min-llvm-ver-15-v2-3-635f3294e5f0@kernel.org>
-References: <20250821-bump-min-llvm-ver-15-v2-0-635f3294e5f0@kernel.org>
- <20250821-bump-min-llvm-ver-15-v2-3-635f3294e5f0@kernel.org>
-Subject: Re: [PATCH v2 03/12] ARM: Clean up definition of ARM_HAS_GROUP_RELOCS
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 21, 2025, at 23:15, Nathan Chancellor wrote:
-> Now that the minimum supported version of LLVM for building the kernel
-> has been bumped to 15.0.0, the first depends line of
-> ARM_HAS_GROUP_RELOCS is always true, so it can be safely removed.
-> Combine the !COMPILE_TEST dependency into the 'def_bool' line and update
-> the comment as well.
->
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Test prefault memory during concurrent memslot removal.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Add a new param "remove_slot" to pre_fault_memory() to indicate testing
+concurrent memslot removal. When "remove_slot" is set:
 
->.
-> 
->  config ARM_HAS_GROUP_RELOCS
-> -	def_bool y
-> -	depends on !LD_IS_LLD || LLD_VERSION >= 140000
-> -	depends on !COMPILE_TEST
-> +	def_bool !COMPILE_TEST
->  	help
->  	  Whether or not to use R_ARM_ALU_PC_Gn or R_ARM_LDR_PC_Gn group
-> -	  relocations, which have been around for a long time, but were not
-> -	  supported in LLD until version 14. The combined range is -/+ 256 MiB,
-> -	  which is usually sufficient, but not for allyesconfig, so we disable
-> -	  this feature when doing compile testing.
+Create a remove_thread which deletes the test slot concurrently while the
+main thread is executing ioctl KVM_PRE_FAULT_MEMORY on the test slot memory
+range.
 
-The change is obviously correct by itself, but can we revisit the
-question of whether the COMPILE_TEST check is still needed?
+Introduce variables "delete_thread_ready" and "prefault_ready" to
+synchronize the slot removal and ioctl KVM_PRE_FAULT_MEMORY. When the
+concurrency is achieved, ioctl KVM_PRE_FAULT_MEMORY should return the error
+EAGAIN. Otherwise, the ioctl should succeed as in cases where remove_slot
+is not set.
 
-Trying it out, I single link issue using llvm-21:
+Retry ioctl KVM_PRE_FAULT_MEMORY upon receiving EAGAIN. Since the memslot
+should have been successfully removed during the retry, EFAULT or ENOENT
+should be returned depending on whether the prefault is for private or
+shared memory.
 
-ld.lld-21: error: vmlinux.a(arch/arm/kernel/entry-armv.o):(function __bad_stack: .text+0x110): relocation R_ARM_LDR_PC_G2 out of range: 10168 is not in [0, 4095]; references 'overflow_stack_ptr'
->>> defined in vmlinux.a(arch/arm/kernel/traps.o)
+Split the existing "gpa" parameter in pre_fault_memory() into "base_gpa"
+and "offset" to facilitate adding the test slot back to "base_gpa" after
+the test concludes, ensuring that subsequent tests are not affected.
 
-which is from this line
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+---
+ .../selftests/kvm/pre_fault_memory_test.c     | 94 +++++++++++++++----
+ 1 file changed, 78 insertions(+), 16 deletions(-)
 
-arch/arm/kernel/entry-armv.S:   ldr_this_cpu_armv6 ip, overflow_stack_ptr
+diff --git a/tools/testing/selftests/kvm/pre_fault_memory_test.c b/tools/testing/selftests/kvm/pre_fault_memory_test.c
+index 0350a8896a2f..56e65feb4c8c 100644
+--- a/tools/testing/selftests/kvm/pre_fault_memory_test.c
++++ b/tools/testing/selftests/kvm/pre_fault_memory_test.c
+@@ -10,12 +10,16 @@
+ #include <test_util.h>
+ #include <kvm_util.h>
+ #include <processor.h>
++#include <pthread.h>
+ 
+ /* Arbitrarily chosen values */
+ #define TEST_SIZE		(SZ_2M + PAGE_SIZE)
+ #define TEST_NPAGES		(TEST_SIZE / PAGE_SIZE)
+ #define TEST_SLOT		10
+ 
++static bool prefault_ready;
++static bool delete_thread_ready;
++
+ static void guest_code(uint64_t base_gpa)
+ {
+ 	volatile uint64_t val __used;
+@@ -30,17 +34,47 @@ static void guest_code(uint64_t base_gpa)
+ 	GUEST_DONE();
+ }
+ 
+-static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 gpa, u64 size,
+-			     u64 left)
++static void *remove_slot_worker(void *data)
++{
++	struct kvm_vcpu *vcpu = (struct kvm_vcpu *)data;
++
++	WRITE_ONCE(delete_thread_ready, true);
++
++	while (!READ_ONCE(prefault_ready))
++		cpu_relax();
++
++	vm_mem_region_delete(vcpu->vm, TEST_SLOT);
++
++	WRITE_ONCE(delete_thread_ready, false);
++	return NULL;
++}
++
++static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 base_gpa, u64 offset,
++			     u64 size, u64 left, bool private, bool remove_slot)
+ {
+ 	struct kvm_pre_fault_memory range = {
+-		.gpa = gpa,
++		.gpa = base_gpa + offset,
+ 		.size = size,
+ 		.flags = 0,
+ 	};
+-	u64 prev;
++	pthread_t remove_thread;
++	bool remove_hit = false;
+ 	int ret, save_errno;
++	u64 prev;
+ 
++	if (remove_slot) {
++		pthread_create(&remove_thread, NULL, remove_slot_worker, vcpu);
++
++		while (!READ_ONCE(delete_thread_ready))
++			cpu_relax();
++
++		WRITE_ONCE(prefault_ready, true);
++	}
++
++	/*
++	 * EAGAIN may be returned if slot removal is performed during
++	 * KVM_PRE_FAULT_MEMORY.
++	 */
+ 	do {
+ 		prev = range.size;
+ 		ret = __vcpu_ioctl(vcpu, KVM_PRE_FAULT_MEMORY, &range);
+@@ -49,18 +83,42 @@ static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 gpa, u64 size,
+ 			    "%sexpecting range.size to change on %s",
+ 			    ret < 0 ? "not " : "",
+ 			    ret < 0 ? "failure" : "success");
+-	} while (ret >= 0 ? range.size : save_errno == EINTR);
+ 
+-	TEST_ASSERT(range.size == left,
+-		    "Completed with %lld bytes left, expected %" PRId64,
+-		    range.size, left);
++		if (remove_slot && ret < 0 && save_errno == EAGAIN)
++			remove_hit = true;
++
++	} while (ret >= 0 ? range.size : ((save_errno == EINTR) || (save_errno == EAGAIN)));
+ 
+-	if (left == 0)
+-		__TEST_ASSERT_VM_VCPU_IOCTL(!ret, "KVM_PRE_FAULT_MEMORY", ret, vcpu->vm);
+-	else
+-		/* No memory slot causes RET_PF_EMULATE. it results in -ENOENT. */
+-		__TEST_ASSERT_VM_VCPU_IOCTL(ret && save_errno == ENOENT,
++	if (remove_slot) {
++		pthread_join(remove_thread, NULL);
++		WRITE_ONCE(prefault_ready, false);
++
++		vm_userspace_mem_region_add(vcpu->vm, VM_MEM_SRC_ANONYMOUS,
++					    base_gpa, TEST_SLOT, TEST_NPAGES,
++					    private ? KVM_MEM_GUEST_MEMFD : 0);
++	}
++
++	if (remove_hit) {
++		/*
++		 * Prefault within a removed memory slot range returns
++		 * - EFAULT for private memory or
++		 * - ENOENT for shared memory (due to RET_PF_EMULATE).
++		 */
++		__TEST_ASSERT_VM_VCPU_IOCTL(ret && save_errno == (private ? EFAULT : ENOENT),
+ 					    "KVM_PRE_FAULT_MEMORY", ret, vcpu->vm);
++	} else {
++		TEST_ASSERT(range.size == left,
++			    "Completed with %lld bytes left, expected %" PRId64,
++			    range.size, left);
++
++		if (left == 0)
++			__TEST_ASSERT_VM_VCPU_IOCTL(!ret, "KVM_PRE_FAULT_MEMORY",
++						    ret, vcpu->vm);
++		else
++			/* No memory slot causes RET_PF_EMULATE. it results in -ENOENT. */
++			__TEST_ASSERT_VM_VCPU_IOCTL(ret && save_errno == ENOENT,
++						    "KVM_PRE_FAULT_MEMORY", ret, vcpu->vm);
++	}
+ }
+ 
+ static void __test_pre_fault_memory(unsigned long vm_type, bool private)
+@@ -97,9 +155,13 @@ static void __test_pre_fault_memory(unsigned long vm_type, bool private)
+ 
+ 	if (private)
+ 		vm_mem_set_private(vm, guest_test_phys_mem, TEST_SIZE);
+-	pre_fault_memory(vcpu, guest_test_phys_mem, SZ_2M, 0);
+-	pre_fault_memory(vcpu, guest_test_phys_mem + SZ_2M, PAGE_SIZE * 2, PAGE_SIZE);
+-	pre_fault_memory(vcpu, guest_test_phys_mem + TEST_SIZE, PAGE_SIZE, PAGE_SIZE);
++
++	pre_fault_memory(vcpu, guest_test_phys_mem, 0, SZ_2M, 0, private, true);
++	pre_fault_memory(vcpu, guest_test_phys_mem, 0, SZ_2M, 0, private, false);
++	pre_fault_memory(vcpu, guest_test_phys_mem, SZ_2M, PAGE_SIZE * 2, PAGE_SIZE,
++			 private, false);
++	pre_fault_memory(vcpu, guest_test_phys_mem, TEST_SIZE, PAGE_SIZE, PAGE_SIZE,
++			 private, false);
+ 
+ 	vcpu_args_set(vcpu, 1, guest_test_virt_mem);
+ 	vcpu_run(vcpu);
+-- 
+2.43.2
 
-with the macro expanding to
-
-        .macro          ldr_this_cpu_armv6, rd:req, sym:req
-        this_cpu_offset \rd
-        .globl          \sym 
-        .reloc          .L0_\@, R_ARM_ALU_PC_G0_NC, \sym
-        .reloc          .L1_\@, R_ARM_ALU_PC_G1_NC, \sym
-        .reloc          .L2_\@, R_ARM_LDR_PC_G2, \sym
-        add             \rd, \rd, pc
-.L0_\@: sub             \rd, \rd, #4
-.L1_\@: sub             \rd, \rd, #0
-.L2_\@: ldr             \rd, [\rd, #4]
-        .endm
-
-Would it be possible to either change the macro or to move
-the overflow_stack_ptr closer in order to completely eliminate
-the CONFIG_ARM_HAS_GROUP_RELOCS symbol and have VMAP_STACK
-enabled for all CONFIG_MMU builds?
-
-Are there any other build testing issues with ARM_HAS_GROUP_RELOCS
-besides the one I saw here?
-
-      Arnd
 
