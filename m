@@ -1,79 +1,90 @@
-Return-Path: <linux-kernel+bounces-781374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B347B311AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:24:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C33D6B311A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 32C304E26FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:24:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 780697AE495
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A422ED847;
-	Fri, 22 Aug 2025 08:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916A72EC55A;
+	Fri, 22 Aug 2025 08:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NkW2hxq3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fWYOyLRU"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4E52EB5D9;
-	Fri, 22 Aug 2025 08:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796682EC541;
+	Fri, 22 Aug 2025 08:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755851022; cv=none; b=CYoBzu4hgFpl2PIWYYHy+k2UAUdcRO7AWmNn/srHH2ilPr9CER62OFx5G7DwTtp6fxF9m/bp82LCdP2DUMAjgOw/J+tjCwNmF/bQLIK8Z/T+pw/jBl4fHAWuVYOa+crGoKpDsHpRPAc6pholL8hbDJ6MapK1U1iLymPamqEQMiY=
+	t=1755850998; cv=none; b=NnZIz5nFcHdWi6YHCJPHna+IpV4HhXvQIhFKGO7Rl8KJviyC/Yq4GYYIH2gufUCxTIwgyGNiJHw03xpX+2zIK9qeE3GSXaYF/li24vbx5idSqKnxUHHP+jshPnM4744wxu2pmMg3bowzk22AZIk2WhzkBFN6Hd3EI1jXDf3VeT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755851022; c=relaxed/simple;
-	bh=l271mH/2s7sZVR71jaM1oYJGsIzB3Y8dxH+x8mjAV6s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D2a5mGDLRv3QhDrz8VddLk0vQ11smP2lKeGLN15Ghck/FwPhvAf5ZgUd226EuXodAvcyVNAXHDHk7DZbZe2CJp0ttt2//xecOoXGpEt1tc8tLxOiRZiuLnuOpoPRCeBHKC4Zs6f7nd2ufQdAm64xkqEu4Prd03syN2AuFawRpsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NkW2hxq3; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755851021; x=1787387021;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=l271mH/2s7sZVR71jaM1oYJGsIzB3Y8dxH+x8mjAV6s=;
-  b=NkW2hxq3tcJyQmxEdCdc8ba+TBRHqjQJaSmjui9YU0LDgnZY1q+c/O/y
-   FKO3sn/Gr44Ntc4zee84R4uJbPjUvfLAgciGdDkzHKFp6XI0cz0Ya01nR
-   zJAK0g7FsuZLQokP+nhhHSxttYAtU7SV4v5OdtMuRzO++3pQx4P33y3EM
-   CG3/q28+cwpWzEh0FtY8ObH2+3RRtf6CXUmcNCDqck3K24FD51Y1hlRFg
-   5DnL1RiuAF/EX7ldcEBcojDurgsAQgHQOQGEjTiqq+XT/yOR18uJnsPPZ
-   vV8kwzZ7jcsAoX+NjWSIx2zYdJzuxJwpA2mBN5BmlsrpfWS2vEIiEt+Eh
-   A==;
-X-CSE-ConnectionGUID: YyFvuBazTrO+AMW0a2UQxg==
-X-CSE-MsgGUID: g2O47t3SQKWVmIvyEpf3Lw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58303326"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="58303326"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 01:23:40 -0700
-X-CSE-ConnectionGUID: p6OjpZoKQoufk2J58ZAd1w==
-X-CSE-MsgGUID: XSwHC0FrSDOVsCM14AZ4+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="168157908"
-Received: from spr.sh.intel.com ([10.112.229.196])
-  by fmviesa007.fm.intel.com with ESMTP; 22 Aug 2025 01:23:37 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Xudong Hao <xudong.hao@intel.com>
-Subject: [PATCH] perf tools topdown: Fix incorrect topdown slots regroup
-Date: Fri, 22 Aug 2025 16:22:33 +0800
-Message-Id: <20250822082233.1850417-1-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755850998; c=relaxed/simple;
+	bh=SLgXpq2Fh983VVrX7UDWoLI+l75KftJ3fX4YuMu0BDo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PHqk9o2LB4KmuJhH4wNe9VlshmYPAA2FBwN92V5BJmZofbCXim2tv//9jvnsREHmVVuoH1+dE0vtU4v13afnU35lscs0dsQphdVenAZkJb/34OS6Rav6C13mBaDWveTdch6lH2cCfFUe8Cbsz5+WTCu78chIl+gaJQkKdCfvw6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fWYOyLRU; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb7a7bad8so263988166b.3;
+        Fri, 22 Aug 2025 01:23:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755850995; x=1756455795; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k2f2TsuwTC/XCi5X+heoSLXvqjGa6qy1ak2QsJOLClE=;
+        b=fWYOyLRUN7fbOweewiuVN8u/FCfgTuu7JXrhnG/sUIjNp5B794yQTzhHVTx+OCSLfK
+         5UZNROwwzIzGca3JSHRWfVKbs83dgXkoIXKL0UaushfbvwvifJPV+DGB1gnbb9V0CetE
+         FLU92wGUi7LZJaEj+W/IMqRW1lHeozuIwq9Fxksy4kb4FXKAHs+nr/fZNue2/DOHxrtP
+         ZKEWkgJ+SEMFVl2fVpOIy7pT14aje2MGXpnXNKPjijpbDZmTqMYpO+INtz3S3KwBEYPl
+         /36mu//S+Kxrsu7pRNGg3eqnFtfiCA87EEvP611FzEDuGfIRvQVkC0awOkVEuJVGNLdV
+         AJ4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755850995; x=1756455795;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k2f2TsuwTC/XCi5X+heoSLXvqjGa6qy1ak2QsJOLClE=;
+        b=rLnHVMht7o/edEMeIVO+bIf5HtWZgOlup4S3Ns/udodEmT1+AKbzV8po7NDpYppJr2
+         u4vzklWgNLs2//f+FohB9kdiV8ue3nQVL4BtzgqNupwowFRZm+0wBUf7vyuSCkFC2VAy
+         OqL5Zilgu2svWWwbO4gwBifzJheNPpY62g5wW9oSTTYkIIWYOKEei8N++vfk80rWzDcJ
+         oOl5W9AHa/qMgiodvctRWKRM5leA9czkaB0NOfMcjLI3CECKwY3BG7iCVyB9SBG1/x0s
+         rssCOOcz955KyVsPiiZllmcY7leb9HIAfkfvTLiKSyQhgeqwgTiGP5m4IlWkoPiiWRM2
+         ds+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVIgQwnX0dlIA1iapZw244/+aPDf6c9yccoIcTDYYMwJQjQ1xGnCLVlq/Of3Kt3ogvM1YywHjmUwPlXOuw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKRRbMBIV5zLoYjlZU7JzMhsrgTLBNtOX5Tf2lGMmStY8dZqNK
+	Rs5Moe2xJuuOnYm3avgCuApLKaTy6g4Hal18ZJEl3JBbjb9xvGNfKSgU
+X-Gm-Gg: ASbGncsA/7P6ORAnWMfIByCDx1QC9I5dzvr9DuOypgERSQGSHZ2o0jtDjLqWmNIIRRc
+	Wz10pNmw8Mx1GiqmnXxVS1xegJ0NpoXp+C6ssCO4eOCekmcfJdHDEGFBnyDnfoAFktsUXbC/Nbz
+	vDNFDCOR5sB19KBWcBAmC60HvZznWAqp+1DNbGLd1twLM5alXSFw012mxWlxC5jEcQ7QO6Dbqna
+	kSMKNecH+DOfWF9KKLhSlXNw1bg4QDtRNZziCDNzlYFGckBMdfeYPauwxC1CL2ZyD9iizxrkhNz
+	i/FQHeUYTpMtI6DkXHJmJ9bbJEEe3OtmRle3BeXhpmKscLQDZaU52W4iI8bzzg1lK5GwnziuZnL
+	g9qIsDQ0ekyz0OI5ZQ2Qs8/fqfM42hnVoXa71aJyZwuI3ws0Rq6mYGy8ZZBP2QeE5778HZxm8EV
+	TLA+II
+X-Google-Smtp-Source: AGHT+IGVOs1bMKRgKKgKJTnfgaApw/Pvzew2Qv+Xsjmv1gsBRsbJR3pdRoNwx0YUIXhnxIOq8RPDyg==
+X-Received: by 2002:a17:907:3f88:b0:adb:229f:6b71 with SMTP id a640c23a62f3a-afe28ec5a6bmr184432566b.5.1755850994661;
+        Fri, 22 Aug 2025 01:23:14 -0700 (PDT)
+Received: from XPS.. ([2a02:908:1b0:afe0:dad8:d30e:64b4:faff])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afdfe05ace0sm405607566b.112.2025.08.22.01.23.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 01:23:13 -0700 (PDT)
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	mingo@kernel.org,
+	john.ogness@linutronix.de,
+	tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Osama Abdelkader <osama.abdelkader@gmail.com>
+Subject: [PATCH v2] serial: 8250_core: fix coding style issue
+Date: Fri, 22 Aug 2025 10:23:10 +0200
+Message-ID: <20250822082311.16501-1-osama.abdelkader@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,134 +93,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When running the command "perf stat -e "slots,slots" -C0 sleep 1", we
-see below error.
+Fix a coding style issue in 8250_core.c:
 
-perf stat -e "slots,slots" -C0 sleep 1
-WARNING: events were regrouped to match PMUs
- Performance counter stats for 'CPU(s) 0':
-     <not counted>      slots
-   <not supported>      slots
+- Remove redundant NULL initialization of a global pointer
 
-     1.002265769 seconds time elapsed
-
-The topdown slots events are not correctly counted. The root cause is
-that perf tools incorrectly regroup these 2 slots events into a group.
-If there are only topdown slots events but no topdown metrics events,
-the regroup should not be done since topdown slots event can only be
-programed on fixed counter 3 and multiple slots events can only be
-multiplexed to run on fixed counter 3, but grouping them blocks
-multiplexing.
-
-So avoid to regroup topdown slots events if there is no topdown metrics
-events.
-
-With this change, above command can be run successfully.
-
-perf stat -e "slots,slots" -C0 sleep 1
- Performance counter stats for 'CPU(s) 0':
-       103,973,791      slots
-       106,488,170      slots
-
-       1.003517284 seconds time elapsed
-
-Besides, run perf stats/record test on SPR and PTL, both passed.
-
-Reported-by: Xudong Hao <xudong.hao@intel.com>
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
 ---
- tools/perf/arch/x86/util/topdown.h |  2 --
- tools/perf/util/evsel.c            | 10 ++++++++++
- tools/perf/util/evsel.h            |  2 ++
- tools/perf/util/parse-events.c     | 11 +++++++++++
- 4 files changed, 23 insertions(+), 2 deletions(-)
+ drivers/tty/serial/8250/8250_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/arch/x86/util/topdown.h b/tools/perf/arch/x86/util/topdown.h
-index 69035565e649..6a917b2066f7 100644
---- a/tools/perf/arch/x86/util/topdown.h
-+++ b/tools/perf/arch/x86/util/topdown.h
-@@ -8,8 +8,6 @@ struct evsel;
- struct list_head;
- 
- bool topdown_sys_has_perf_metrics(void);
--bool arch_is_topdown_slots(const struct evsel *evsel);
--bool arch_is_topdown_metrics(const struct evsel *evsel);
- int topdown_insert_slots_event(struct list_head *list, int idx, struct evsel *metric_event);
- 
- #endif
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index d264c143b592..6aaae1ac026e 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -3965,6 +3965,16 @@ int evsel__source_count(const struct evsel *evsel)
- 	return count;
+diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
+index feb920c5b2e8..225bb7e4b89c 100644
+--- a/drivers/tty/serial/8250/8250_core.c
++++ b/drivers/tty/serial/8250/8250_core.c
+@@ -307,7 +307,7 @@ static void univ8250_release_irq(struct uart_8250_port *up)
+ 		serial_unlink_irq_chain(up);
  }
  
-+bool __weak arch_is_topdown_slots(const struct evsel *evsel __maybe_unused)
-+{
-+	return false;
-+}
-+
-+bool __weak arch_is_topdown_metrics(const struct evsel *evsel __maybe_unused)
-+{
-+	return false;
-+}
-+
- bool __weak arch_evsel__must_be_in_group(const struct evsel *evsel __maybe_unused)
- {
- 	return false;
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 5797a02e5d6a..33f8aab675a9 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -556,6 +556,8 @@ void evsel__set_leader(struct evsel *evsel, struct evsel *leader);
- int evsel__source_count(const struct evsel *evsel);
- void evsel__remove_from_group(struct evsel *evsel, struct evsel *leader);
+-const struct uart_ops *univ8250_port_base_ops = NULL;
++const struct uart_ops *univ8250_port_base_ops;
+ struct uart_ops univ8250_port_ops;
  
-+bool arch_is_topdown_slots(const struct evsel *evsel);
-+bool arch_is_topdown_metrics(const struct evsel *evsel);
- bool arch_evsel__must_be_in_group(const struct evsel *evsel);
- 
- bool evsel__set_needs_uniquify(struct evsel *counter, const struct perf_stat_config *config);
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 8282ddf68b98..bd09fc47ea90 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -2127,6 +2127,8 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
- 	int ret;
- 	struct evsel *force_grouped_leader = NULL;
- 	bool last_event_was_forced_leader = false;
-+	bool has_slots = false;
-+	bool has_metrics = false;
- 
- 	/* On x86 topdown metrics events require a slots event. */
- 	ret = arch_evlist__add_required_events(list);
-@@ -2147,6 +2149,11 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
- 		if (pos == pos_leader)
- 			orig_num_leaders++;
- 
-+		if (!has_slots)
-+			has_slots = arch_is_topdown_slots(pos);
-+		if (!has_metrics)
-+			has_metrics = arch_is_topdown_metrics(pos);
-+
- 		/*
- 		 * Ensure indexes are sequential, in particular for multiple
- 		 * event lists being merged. The indexes are used to detect when
-@@ -2163,6 +2170,10 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
- 			force_grouped_idx = pos_leader->core.idx;
- 	}
- 
-+	/* Don't regroup if there are only topdown slots events. */
-+	if (force_grouped_idx != -1 && has_slots && !has_metrics)
-+		force_grouped_idx = -1;
-+
- 	/* Sort events. */
- 	list_sort(&force_grouped_idx, list, evlist__cmp);
- 
-
-base-commit: 6235ce77749f45cac27f630337e2fdf04e8a6c73
+ static const struct uart_8250_ops univ8250_driver_ops = {
 -- 
-2.34.1
+2.43.0
 
 
