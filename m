@@ -1,112 +1,236 @@
-Return-Path: <linux-kernel+bounces-781018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB37EB30C5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:12:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE81B30C64
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BFCA1D016B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:13:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6ABF5A01B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF08285C97;
-	Fri, 22 Aug 2025 03:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A325280A35;
+	Fri, 22 Aug 2025 03:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="meEz8aOE"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="LA8CP65O"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D2F233155;
-	Fri, 22 Aug 2025 03:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93599231A32;
+	Fri, 22 Aug 2025 03:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755832336; cv=none; b=Os/65smNFE66JYBw4MMtxxnECFqEI8jnTVVcXLAAV7hui0FVV1Iu7QkvJJaZXFhAKG3K7kUakU1n09JNfv/gsT6E7nM7lLh+PsFbbD4nm/TmT3Fx+alcVZssrgp6dt3YjZDNQ4X3Zn4QEOvShped5vXfEH2Fl6/VL0made1OFEM=
+	t=1755832527; cv=none; b=ScpRDu+nxDiuVhp3V682foIwkulGMnNDVbPjTmEa4/WcpOKFeX4bK9Q33joSqqSQPf05mUTwtE53F+ZS8NYnJ+Yn9XFqAcrB+ksY/WIlz1IcKeNh0+rAnKbj39LaER1NMj7C9l+ZG8t9QPkKjz/hmRJ7nz/VpJDeYM6OWrHfDIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755832336; c=relaxed/simple;
-	bh=xgIaFQ68tlgBevrsv47YroVIQGCGYCdpFKVo25GB6FA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=qDU/5LqrVR0WCO5PZFOr7/Mq3xv2/ANPQ8aeS2xapfgI76bjMjhzdTKNLTo+g5I18wSpkJ2MsSEezrTRY8nBvugmhT2HEp6X+MHRIDbBNIREjVQ22vuz33dLdL/DUmSBNGUh7spQFDl2clQkEkLPwciMhnFNZ9bw/IhoUav16Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=meEz8aOE; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-70d9a65c353so3013956d6.2;
-        Thu, 21 Aug 2025 20:12:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755832334; x=1756437134; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=oUCwBP5hS+RhTy0i1m8L/lHk9qguwYZ1lnkT/6sAsuM=;
-        b=meEz8aOEeAYnzzjOv/f886UNGGclxYOwK6PsKHv7cnUCr6lqDt132xiCH0WZON8PIN
-         fH+UGGkto2NqmXaDoeVvh5DDOE/XMIfRBpS+pNVDNkei3rhR9YvH/ClkZwjOAHlVtNUL
-         iEy8owzLFZXisJ294VglGFVO6iyRYGYESCV7YUbFQublpKIzf1sDFF8WCf9Sxj3T+pFw
-         UXq/4Af5MNWsIddm2mE56JFttiITP1uzNEgbMlGAMwj033G5+hMZExQ6/9obVT5YFqzS
-         PcT0qf+7TzKd42B1F8wNUf5Noo0ajUVOn0CQa8ngZrZLngDDf9ETTdhaoT1jSU3GEFWl
-         lXBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755832334; x=1756437134;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oUCwBP5hS+RhTy0i1m8L/lHk9qguwYZ1lnkT/6sAsuM=;
-        b=YO3wFf66FyBoqdxYbjzVHDFUnjMPd3F198Fw/6ouYoOkBeK1el4CEtvMYADA7Z+cuO
-         aVFMcI6fl8phxhum4rmNepdmfnciR6Apq1QkPn0nUaqJ3R9JjZnyBmFb58g80L1KP9yI
-         UxNFDiP25/8kxP8dZYJ/yYr2oKSdxJPLmk989YVb3va3WWWBhhvjdjNN2TuS0H9WP8Dp
-         ubIJFpUEPRuPkcN1HZAP7yHjcTTHSHfdXIe5Dxkqe703Z3s5PPYTpKc+euKt/ZHIN7iG
-         Fpp7Jof7konHS0ZMDSu68zOyTXbxM/1+TNZKDdjwEUNRZKcIQZaoQlVrpaaBNkgKUWA2
-         hBhg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkEdAJrucxjSvRcFhM+JLRsb3KB1CfrVJcX9VpKXhxKpVY7qxzRw3xr7Bex2RFvMqSsmfNDd26trRwBZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJLt40MQLJWBcDE7H0TXbWIjQWQ3F9oqoZ/B0A5iaEJq+PlSCD
-	F+EdfkMgQqcTn/Ap0noYXKesN5bc+jv25Zp0HnAI931MsSQ7wIdjLfjtpD3Zdev8yITksLcG8E7
-	QQeZh5QwmG8lRBqtEo9Rea4fvxu+5md7nV2qC
-X-Gm-Gg: ASbGncu46rMuck7H6Bk0zsAPm5mx7xcH3oYHOeoEvwaUK0+FuWlHpf9vc6MpixfdU13
-	mNf3qHsJqA26pfU13skP+N8J8XS4rRyaxDx12HRQr/RVCCZQY176fAuGb/noOPd5VnZF2/g9Bw/
-	Y7woGTcqwLZSLdv0YBSxr6zRMX/jaXewzp2q7gjk5KJj3dCty2AFmApsNXswO+JnlQHDw+EwKBa
-	/+Etkfi2Zf5GpGC1YcBwSh6o/wwpYrFaWFfJbrED2PgZa6MH9cdOncmKYcIB8Ut2U3JT7y4mI/m
-	YxWRwwr6ONo5XkHrF5xCHYmU41NgeQo=
-X-Google-Smtp-Source: AGHT+IERDV0huF80juR1IF8eB3NI3HvYVAS2icY5Pws/DXKpP/RZ/KkMEKJx7W7uca60lnz7UotrWohoAwOwnqJVRDU=
-X-Received: by 2002:ad4:5766:0:b0:70d:8eb5:2c8b with SMTP id
- 6a1803df08f44-70d9737c149mr22193376d6.48.1755832333995; Thu, 21 Aug 2025
- 20:12:13 -0700 (PDT)
+	s=arc-20240116; t=1755832527; c=relaxed/simple;
+	bh=mkUutMM0ZI/EqBEJrog0pad/NwwTZqCyCvtY9cs926o=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=HAWtT30fRu/EN9/hbdywhwCc7yRe1KD+/5LorJbEJUFnOLOKA8g7zclht5drsaJxP0RJAqcJf1v0xxVITqSrIKYw8ccxbEBbaP4FqEqdUw53yKMuXZbdY7VuhgvWtMP8yIWUME/twd54QEiWjfO1cjoBUCXn2xbiB4mSJHusQcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=LA8CP65O; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 21 Aug 2025 22:12:02 -0500
-X-Gm-Features: Ac12FXxDv_Qc8LFoAp8SWeFM3B9Hfri5wU-DYOX2zhS50Ew_iubdCQdB_7kvaEQ
-Message-ID: <CAH2r5mtBRtF=ZtzjRWfdMwtvGzJ-oJ5_H2wfoBpkoZJJpfaebQ@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fix
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1755832522;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FVNj7XuCRYzgakERnKLvBNWM2bucmEROJFI6LqjhvO4=;
+	b=LA8CP65OXnnR9gteh1dgRcomRR3qHjJm1l0KP+WuXv9Ef4pVYSQ+RBQwYmk+ZxAg+xQccJ
+	YtJ9i4GQobi6N8AJmrfSOt7M0iQpBRJcxx++tj2uGCtZ4078K8OBQ6T2tR1Mx6gJ8ALAqF
+	dJAfmbVPQMcwW36IWEjYUZjwJYQZvNp6qcCLzMofDMt6bpcyDJLO7YOHCrwN38IR3d3Xgi
+	3PdCAC7emnQwyNFo8JZGYGVxp6XTZ8j3e+0WXXfjSYIaFMTdYLnk/lwdfMHyLMnmDi0tXT
+	lrHVz6c0hGwphutvAe7xtpr40XnP+zyzH1U41r8Mq/wAf43Sj+VcDV6iGsreow==
+Date: Fri, 22 Aug 2025 05:15:22 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
+ <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
+ <lukasz.luba@arm.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Diederik de Haas
+ <didi.debian@cknow.org>, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ kernel@collabora.com
+Subject: Re: [PATCH v2 2/3] thermal: rockchip: shut up GRF warning
+In-Reply-To: <20250820-thermal-rockchip-grf-warning-v2-2-c7e2d35017b8@kernel.org>
+References: <20250820-thermal-rockchip-grf-warning-v2-0-c7e2d35017b8@kernel.org>
+ <20250820-thermal-rockchip-grf-warning-v2-2-c7e2d35017b8@kernel.org>
+Message-ID: <2951de6ac036c7e8c62a940d2ed029ea@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Please pull the following changes since commit
-c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
+Hello Sebastian,
 
-  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
+On 2025-08-20 19:40, Sebastian Reichel wrote:
+> Most of the recent Rockchip devices do not have a GRF associated
+> with the tsadc IP. Let's avoid printing a warning on those devices.
+> 
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>  drivers/thermal/rockchip_thermal.c | 23 ++++++++++++++++++-----
+>  1 file changed, 18 insertions(+), 5 deletions(-)
 
-are available in the Git repository at:
+Thanks for the patch!  It's looking good to me, and it's virtually
+identical to my rather old patch that I implemented a while ago, but
+never submitted to the mailing list(s).
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/6.17-rc2-smb3-client-fix
+Please feel free to include
 
-for you to fetch changes up to 453a6d2a68e54a483d67233c6e1e24c4095ee4be:
+Reviewed-by: Dragan Simic <dsimic@manjaro.org>
 
-  cifs: Fix oops due to uninitialised variable (2025-08-19 11:16:14 -0500)
-
-----------------------------------------------------------------
-Fix for netfs smb3 oops
-
-----------------------------------------------------------------
-David Howells (1):
-      cifs: Fix oops due to uninitialised variable
-
- fs/smb/client/smb2ops.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-
--- 
-Thanks,
-
-Steve
+> diff --git a/drivers/thermal/rockchip_thermal.c
+> b/drivers/thermal/rockchip_thermal.c
+> index
+> 7b18a705dfade6fa7318b28c2b57544a4446c1cc..c49ddf70f86e7beaf0190b1b3e93f5e6b2f72b2c
+> 100644
+> --- a/drivers/thermal/rockchip_thermal.c
+> +++ b/drivers/thermal/rockchip_thermal.c
+> @@ -74,6 +74,7 @@ struct chip_tsadc_table {
+>   * @tshut_temp: the hardware-controlled shutdown temperature value,
+> with no trim
+>   * @tshut_mode: the hardware-controlled shutdown mode (0:CRU 1:GPIO)
+>   * @tshut_polarity: the hardware-controlled active polarity (0:LOW 
+> 1:HIGH)
+> + * @grf_required: true, if a GRF is required for proper functionality
+>   * @initialize: SoC special initialize tsadc controller method
+>   * @irq_ack: clear the interrupt
+>   * @control: enable/disable method for the tsadc controller
+> @@ -97,6 +98,9 @@ struct rockchip_tsadc_chip {
+>  	enum tshut_mode tshut_mode;
+>  	enum tshut_polarity tshut_polarity;
+> 
+> +	/* GRF availability */
+> +	bool grf_required;
+> +
+>  	/* Chip-wide methods */
+>  	void (*initialize)(struct regmap *grf,
+>  			   void __iomem *reg, enum tshut_polarity p);
+> @@ -1098,6 +1102,7 @@ static const struct rockchip_tsadc_chip
+> px30_tsadc_data = {
+>  	/* cpu, gpu */
+>  	.chn_offset = 0,
+>  	.chn_num = 2, /* 2 channels for tsadc */
+> +	.grf_required = true,
+>  	.tshut_mode = TSHUT_MODE_CRU, /* default TSHUT via CRU */
+>  	.tshut_temp = 95000,
+>  	.initialize = rk_tsadcv4_initialize,
+> @@ -1119,6 +1124,7 @@ static const struct rockchip_tsadc_chip
+> rv1108_tsadc_data = {
+>  	/* cpu */
+>  	.chn_offset = 0,
+>  	.chn_num = 1, /* one channel for tsadc */
+> +	.grf_required = false,
+>  	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp = 95000,
+> @@ -1141,6 +1147,7 @@ static const struct rockchip_tsadc_chip
+> rk3228_tsadc_data = {
+>  	/* cpu */
+>  	.chn_offset = 0,
+>  	.chn_num = 1, /* one channel for tsadc */
+> +	.grf_required = false,
+>  	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp = 95000,
+> @@ -1163,6 +1170,7 @@ static const struct rockchip_tsadc_chip
+> rk3288_tsadc_data = {
+>  	/* cpu, gpu */
+>  	.chn_offset = 1,
+>  	.chn_num = 2, /* two channels for tsadc */
+> +	.grf_required = false,
+>  	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp = 95000,
+> @@ -1185,6 +1193,7 @@ static const struct rockchip_tsadc_chip
+> rk3328_tsadc_data = {
+>  	/* cpu */
+>  	.chn_offset = 0,
+>  	.chn_num = 1, /* one channels for tsadc */
+> +	.grf_required = false,
+>  	.tshut_mode = TSHUT_MODE_CRU, /* default TSHUT via CRU */
+>  	.tshut_temp = 95000,
+>  	.initialize = rk_tsadcv2_initialize,
+> @@ -1206,6 +1215,7 @@ static const struct rockchip_tsadc_chip
+> rk3366_tsadc_data = {
+>  	/* cpu, gpu */
+>  	.chn_offset = 0,
+>  	.chn_num = 2, /* two channels for tsadc */
+> +	.grf_required = true,
+>  	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp = 95000,
+> @@ -1228,6 +1238,7 @@ static const struct rockchip_tsadc_chip
+> rk3368_tsadc_data = {
+>  	/* cpu, gpu */
+>  	.chn_offset = 0,
+>  	.chn_num = 2, /* two channels for tsadc */
+> +	.grf_required = false,
+>  	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp = 95000,
+> @@ -1250,6 +1261,7 @@ static const struct rockchip_tsadc_chip
+> rk3399_tsadc_data = {
+>  	/* cpu, gpu */
+>  	.chn_offset = 0,
+>  	.chn_num = 2, /* two channels for tsadc */
+> +	.grf_required = true,
+>  	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp = 95000,
+> @@ -1272,6 +1284,7 @@ static const struct rockchip_tsadc_chip
+> rk3568_tsadc_data = {
+>  	/* cpu, gpu */
+>  	.chn_offset = 0,
+>  	.chn_num = 2, /* two channels for tsadc */
+> +	.grf_required = true,
+>  	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp = 95000,
+> @@ -1294,6 +1307,7 @@ static const struct rockchip_tsadc_chip
+> rk3576_tsadc_data = {
+>  	/* top, big_core, little_core, ddr, npu, gpu */
+>  	.chn_offset = 0,
+>  	.chn_num = 6, /* six channels for tsadc */
+> +	.grf_required = false,
+>  	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp = 95000,
+> @@ -1318,6 +1332,7 @@ static const struct rockchip_tsadc_chip
+> rk3588_tsadc_data = {
+>  	/* top, big_core0, big_core1, little_core, center, gpu, npu */
+>  	.chn_offset = 0,
+>  	.chn_num = 7, /* seven channels for tsadc */
+> +	.grf_required = false,
+>  	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp = 95000,
+> @@ -1594,12 +1609,10 @@ static int rockchip_configure_from_dt(struct
+> device *dev,
+>  		return -EINVAL;
+>  	}
+> 
+> -	/* The tsadc wont to handle the error in here since some SoCs didn't
+> -	 * need this property.
+> -	 */
+>  	thermal->grf = syscon_regmap_lookup_by_phandle(np, "rockchip,grf");
+> -	if (IS_ERR(thermal->grf))
+> -		dev_warn(dev, "Missing rockchip,grf property\n");
+> +	if (IS_ERR(thermal->grf) && thermal->chip->grf_required)
+> +		return dev_err_probe(dev, PTR_ERR(thermal->grf),
+> +				     "Missing rockchip,grf property\n");
+> 
+>  	rockchip_get_trim_configuration(dev, np, thermal);
 
