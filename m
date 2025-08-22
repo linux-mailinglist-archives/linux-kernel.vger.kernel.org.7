@@ -1,115 +1,134 @@
-Return-Path: <linux-kernel+bounces-781419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1A7BB31242
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:51:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F5FB31240
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:51:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 889245C9A7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:47:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C1235C9863
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCD82EE5FE;
-	Fri, 22 Aug 2025 08:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148EE2EDD70;
+	Fri, 22 Aug 2025 08:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UDINbROl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pgg1KNVp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C092EDD7E;
-	Fri, 22 Aug 2025 08:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510102EBBA0;
+	Fri, 22 Aug 2025 08:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755852357; cv=none; b=nBbLjARQac2WLsspOya1EpJvYhbph3IhWF1L6R5WF7lTtQVUnyiaAFe9vyq3EKSyAFJwjfcBDxr+olN3zbAa2TtDHXJA3/FFgpKKx+NQdspvC+xSyl5FkIoUL8Z3HJz/alO2UcLZnzAhHTCXVLZYLZUO/Mquaxhl1AvM8jfT4II=
+	t=1755852356; cv=none; b=BpzwQCLi6e8Jet0jIxrHJ2XujqtxSYLwbvdO4Q/3gxAU681HD94+X+3YVgeaZ6L05GurGlDr2EW5/fqFyYEI5vOpWDAgg3MzcUWbeoGub+QDYo627Kj6bxFthQ2I8EhZcWjkJuFReiTzEMHY0t3/dDBgcGviVCebmDS3OYsR6o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755852357; c=relaxed/simple;
-	bh=ZM+WLVaxURr8F7hf8mGnfn05FHhtyvOcaXkQKkM9s8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HbPx7tTSAQkuUoexoPMs7UuZdqD3OtYBnIynyjTmBWjmbcb0uIVxkJcgH8Gyu6ne5PL3Q2UXIFrUGaFfwAW0CJCXT1mo4zVM/B28uNjMHG2gFnU5VlD/s47/HHyYBmZAYaDO9CNJ6jdM0WKMj2lns0KQYq1m25kJmBI1nvvZ6Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UDINbROl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18C71C16AAE;
-	Fri, 22 Aug 2025 08:45:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755852357;
-	bh=ZM+WLVaxURr8F7hf8mGnfn05FHhtyvOcaXkQKkM9s8s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UDINbROl7jy9YNt2jNgZWd4lQduqIcOFGOqBWnRUuWtNlg8tkGFkWvngV3vjPpC9Z
-	 o0e22DTV/tVhc/IBnJTgZo3EQ1DzpkMv9GRoQBUZ1Yv0mGRgSL6EmUwqSPTiQx5Zej
-	 GipUYiYMQnXslRrxS0mqex27A1fWimjZTPxo10/c=
-Date: Fri, 22 Aug 2025 10:45:49 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Osama Abdelkader <osama.abdelkader@gmail.com>
-Cc: jirislaby@kernel.org, ilpo.jarvinen@linux.intel.com, mingo@kernel.org,
-	john.ogness@linutronix.de, tglx@linutronix.de,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2] serial: 8250_core: fix coding style issue
-Message-ID: <2025082235-wriggly-wildcat-0477@gregkh>
-References: <20250822082311.16501-1-osama.abdelkader@gmail.com>
+	s=arc-20240116; t=1755852356; c=relaxed/simple;
+	bh=HBWip7Z8RxO+48QMeuJ+BAOGDB1iVSdiaOKOS/y9a/Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pFsG7YkQxgAZquUGJ6e5eSxuQT+fohXFNqG5kauHtYa1oeBTqduWoRIuZ3BMHCgnWtEZYfUNTM0V0z63Hu1DQLO8ZLV7aVNHYdSBAtCGUcKawLU0qDKn+tjBdVAOZqHxrp/HPT/3ML4v9kes6wKQFyMSlfnwTWHgIIKOVyzxxjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pgg1KNVp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC03DC4CEF1;
+	Fri, 22 Aug 2025 08:45:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755852355;
+	bh=HBWip7Z8RxO+48QMeuJ+BAOGDB1iVSdiaOKOS/y9a/Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pgg1KNVpeTtnTy8rPsYXZGc4fwb8ouA65AIMeaf/vtqbGemc+StkJvqOJVFKtE7O9
+	 Z6wIn5Q64DmzXgXUVv0T672bNv8N5uS9mivN0vDE6lFXGpCI8/j0s0BKH2cCwqcDt/
+	 j3g6rHXBIF1/MTgcMSUmdO7rgSiY9/75pBVaia73S+fE/i3Kuq5eYC1tDIbJ4K44xG
+	 Il/gXDZSj0s20AykXb+U7rOe7N5/jvIzkqjJjOkZvpwBI+7pwog2MjmTPT6/cSHHhV
+	 6Ad8tIBuwfsOQe0c5H12WXGk5v9oEbOPISqri82Lad7jqSe4obPZ5uLpydHwHp75N9
+	 MT+VoZmbq/akQ==
+Message-ID: <e18ac460-dcbb-4ac0-9c5e-3aaadf3485fd@kernel.org>
+Date: Fri, 22 Aug 2025 10:45:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822082311.16501-1-osama.abdelkader@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 11/11] media: iris: Enable Secure PAS support with
+ IOMMU managed by Linux
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <20250819165447.4149674-12-mukesh.ojha@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250819165447.4149674-12-mukesh.ojha@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 22, 2025 at 10:23:10AM +0200, Osama Abdelkader wrote:
-> Fix a coding style issue in 8250_core.c:
-> 
-> - Remove redundant NULL initialization of a global pointer
-> 
-> Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
-> ---
->  drivers/tty/serial/8250/8250_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-> index feb920c5b2e8..225bb7e4b89c 100644
-> --- a/drivers/tty/serial/8250/8250_core.c
-> +++ b/drivers/tty/serial/8250/8250_core.c
-> @@ -307,7 +307,7 @@ static void univ8250_release_irq(struct uart_8250_port *up)
->  		serial_unlink_irq_chain(up);
->  }
->  
-> -const struct uart_ops *univ8250_port_base_ops = NULL;
-> +const struct uart_ops *univ8250_port_base_ops;
->  struct uart_ops univ8250_port_ops;
->  
->  static const struct uart_8250_ops univ8250_driver_ops = {
-> -- 
-> 2.43.0
-> 
-> 
+On 19/08/2025 18:54, Mukesh Ojha wrote:
+> +int iris_fw_init(struct iris_core *core)
+> +{
+> +	struct platform_device_info info;
+> +	struct iommu_domain *iommu_dom;
+> +	struct platform_device *pdev;
+> +	struct device_node *np;
+> +	int ret;
+> +
+> +	np = of_get_child_by_name(core->dev->of_node, "video-firmware");
 
+Undocumented ABI.
 
-Hi,
+If you tested your DTS, you would notice warnings.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+Best regards,
+Krzysztof
 
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 
