@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-781005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA0EB30C4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:09:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8405B30C36
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CA67681F98
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:07:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB531C28953
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F077273D8D;
-	Fri, 22 Aug 2025 03:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9F9279781;
+	Fri, 22 Aug 2025 03:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="0PssIhJK"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="B0tZ7czM"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2502267B02
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 03:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A031126A0D0
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 03:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755832008; cv=none; b=DKix8wIKcySS76mjLzCiRe7dE+/yN/CWjclFeMnGXLnH1bfSZ/Fi5/vMeXbHyNorhyf1k+cwTuLyH4aQmS3wuHVawd29o7TaZua8Dp5PZqa5b5VphJDFQyGmz8JSgVv3YbXG3HUVdEt4fGOprmonX2IO2mdKysTHXVE8kgzVKko=
+	t=1755832012; cv=none; b=HPkf8LQtQBl5xfPDfTFcMo98wm5SHBOhOgF0p+LZG0upTGT7vzAhEnr5bgNzzPeoJvfXQxvX7aRBEpgnL/Y8Gd1kusaVSyc4NKjKhyIhM84MPkX6ObuZ7M7cSdDmYswQypQEdpJiiZSWMAJpFDgmiJJaq9qjqEm5+EsP1lpbWdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755832008; c=relaxed/simple;
-	bh=6B1EWWWNBC0BcU5DjOwniaBZ2haD4jvXMC5b4w6KDZs=;
+	s=arc-20240116; t=1755832012; c=relaxed/simple;
+	bh=ET9r67SBgRJAysqntixUlTo+ibcE6/lAnyl7Y1qAqb4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lU2vPqOrHX+mprcMCY5tY038bTeM7eqrti6nUZbDNPkjpkvCdyUYWlMv0ki5nZPmMaO50zEO+Aof2J+74uo1ol/iSlzpWFr6mMCLCmLvp2xlx1a2GFhFRwYbxzIbwD8c8ErBTPCTEZoW8ElLJn3AMh04+mY6WXLxQsRLxNKGVGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=0PssIhJK; arc=none smtp.client-ip=209.85.216.54
+	 In-Reply-To:To:Cc; b=nMPMg5xfpQ3jHyZ9suF3cd+xftScAS1WlvIa9/QT144YMtWMbHuloR8x1WktbK8LO+jft8nWJSqPgd82rinjp4XP0Payjpeat6gCE6YEd/rA95TH34NfDuMDeZf0vcCTTCy1BHOKzbe/pbcKIS8QmU2FgimKbFhotj88OUPqv2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=B0tZ7czM; arc=none smtp.client-ip=209.85.215.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32326e202e0so1583990a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 20:06:45 -0700 (PDT)
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b474a38b25cso1410311a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 20:06:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1755832005; x=1756436805; darn=vger.kernel.org;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1755832010; x=1756436810; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ZNSJ2mPLuZ8B3CyF3qAdwHZOD3xnp4hT+na7SYM4Trs=;
-        b=0PssIhJKONXkOMoY67F3UDVdTd/ixRwfNEy9BTr/Dg9e1gCnWbS0HFXzmpxWBasIhA
-         IUe9dunwbTTXZk0R9JUDj23Hp1qMiSKkp+8hX+mOlbf/s/c5zlG8xN7UvZtAL2QW8FX3
-         ZEBDlFEzSkG1WTqetYA6pjxtXchjuxy0LH2ev47K58sM7/0ZpZ4GXsOj8yqLJJCaY+Z7
-         1ECCr0AVWsSJjyDfLE5vU0Krz/SBu527HPSlvZ9saw1jv6NHZC9wLlA4HtRTfyIlWChD
-         vtbbYQsNrjUape+PbSWF2o7q54mDmQO7+mQCiYxwpirmTdMZojXsyGhDuiSfyeIEy+WK
-         dGvQ==
+        bh=dC7kl9A7D2BWwkfx5jwlJiGlSj0s6ZSSxNG7ocAEL44=;
+        b=B0tZ7czMfJU1/ngOrYt1uG4xgRL1v5wO7FI7uw8nMNDvz9w5K7y7KlD2C2wqtJ6ZNZ
+         iAyhYZJhcMdCqKznP7r4Ze2vYL19/G85Ky0Xx5EF/qPJUPS7bdnSg+5umBIOOb5IbDTp
+         V5xPIWuHMHj2Aru3zlGSyOo8U911/MyJOD4qM1koPkWsYxvxRJquqXrLKSuItfXH7wCw
+         1+TxlMsq7P6gRaBrI2Lc4azw8PmijKbmbgBPwFNUNAE2KFecENYDT3cjPh9AogoBjjp1
+         XkDxUCk3PHe6Qa0CrMLV+D/kDwFyOx0A2jH9L1qZE9M0ck5QVGn+lxzpdNLgEjEOcY9n
+         s/QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755832005; x=1756436805;
+        d=1e100.net; s=20230601; t=1755832010; x=1756436810;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZNSJ2mPLuZ8B3CyF3qAdwHZOD3xnp4hT+na7SYM4Trs=;
-        b=YozS4XC8I09A2//T0Cj1GW/ba0unCz35UCUrP8AxkazDCpLK/AoAoWtt/vUsncGOSg
-         T0cjrp5z6YF+wzkDhUjdfoPHsm8VWTo5TGRWaB1gxxdm46fGc4BUPWu69HvyEcWOi9c7
-         K1NVq+dFbTaCS+SQxpW4hNr6U8qOYxVQjFt4vXFV/qx0y0fKLNzpWcuBPiGIj1EBc4Ua
-         BbR2XtjWxbUK5qseuEYH/fTtH/QbV9o2Wd2aOGq2ajr5Nv0Kyzh4VW5udm6tl+Iv4mSz
-         ytY3+q4L/yNyGR+hjmCUB7mTSuNAItMcDQ/oZX+pQcYGAKfEP5BX/fc/wJD5KWlm1e+E
-         xqUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMG8SpWbaQkoz64QwK8PKNxzEFo+6utscLltKbGntXkAe3JXRZ2+mGzVLfgReKac8V5Eb62P1q3Q4k/vc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypVYHfPt4QiKH7tH8VTkkAyo/Aw3W5ztankGrcPkmkimh13KWF
-	5VkkoUfBiBj4tTSub1Qn/sg0zIwM+MdUIcMDxzgOos+EhI0SEj7HTPEUdP8PIFAfJyUYuWoIvYP
-	QlZIwxeel2N+D
-X-Gm-Gg: ASbGncuXbSKwcA95G6LRDIHtGPoMJ/RzGi7pBSEsuPQieEm724PaLcUBztcDfhVJalh
-	jeVCrU6KDPkfd1yZqwEbdiTZJhQqvipbfe8B/OKHpKyz+n3CvMew1Tv673GpS2GVDhESmG1uUro
-	GHMWErvP/sODE6gegWZIJ9VGLbBpJnRBcsm4SQJTtkD7hfP6H0SA7HZNDVhpnN9I2fnk4GPKumn
-	YeeLtoBWWs2qyOaE4GXJ2ubi1A7LDd3xuNPCjkeOpmYbxQEOASdHl5EpZrHsTYTCMfqJ/wf3Gt7
-	CYI2YoSCemJjOCDVQZ1MF/NX19RB6SQ2wkg5lN9oMj8BAelqYTThTJpEDhmhm7WGcZlbkG+wEmk
-	dlogCKjApZzkUYYt4ZzEY9vi0hj6dKTdm3A==
-X-Google-Smtp-Source: AGHT+IFm4R14mG8VZTD2qtlcugXo9bV6lRrUZXdMxf/jLK5A59pmBdn675N88wWnNFsP+MW07XoLbQ==
-X-Received: by 2002:a17:90a:e703:b0:31f:6d95:8f76 with SMTP id 98e67ed59e1d1-325177456famr2245633a91.29.1755832005018;
-        Thu, 21 Aug 2025 20:06:45 -0700 (PDT)
+        bh=dC7kl9A7D2BWwkfx5jwlJiGlSj0s6ZSSxNG7ocAEL44=;
+        b=V6wfD7XIW046Ye5KUxnpUEbZuljvzhyLknnL3PVLpavhOWvt07g1JIutYKfg+/wVDv
+         A+6pZ0qFu11PDT9uAHmT5w3kgOIqlwCxb4ogQ4NGzo9Sd48TJFgGrqypkGYYUQ6lU42I
+         oex1hy3QBGTOVjs2HuAkmarw4pJyar+jS16/BlVo/JZJgedScwTCJF28+b+O7VyUyWCb
+         8YSpkWIrq6E1uiWLk68ACVmHER3ciIORFOS/f/1wXucAXlwKRsoDk72gcl7amcc0uGpE
+         lb894baQD4IcvbS4BygkBQqt2N2rf4JH7c3e7E0q39MUQ0s1OaK07ip4g8NJT28a8OLv
+         3GYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRhW6GIgzx4Qp27szlAMRYxdPdAsuyKkSxSbWrWp3O+eVU9zQAGjo1lZmZjHtXarg58E8Qidnfue2sc1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj2+YR3x9cIlfaCoaZQzsYUpE+TNGk0gtR6t+d51cwyDulfmLh
+	dsKlQLDrfvLvWhyWgNLgbprYFX5hD3OTLYnq+Chbaf6NMiagV8x+7nVoRyQNgy75O2lt3mdAKpc
+	OoZZu0F0bW8g3
+X-Gm-Gg: ASbGnctEt0v7KqgffqkKYBkkAEpw4uHaNsSco0IhmD+hc1vUUjgz/mbmhlgUj2sizQt
+	WN1OWv1kx+9Oqo/XQfn1ixRPGy7gCtbssiaQhb53Ur7pqeTYdEMVLSoG6Ja+E5T+If1LfckKX+8
+	vkQCZOuoarkg4RLmjIGs8NGd0hPGjUmV8X5H4ZGiNGlD1B3UWyfp5+gQjRq3M5jGrUElE0qNgJS
+	nY0Ti5j7ODMaCV6JRqifUe+pWhNsBSrkU8iMc7zVONQafscJwwRQqkKO4BOuEIvWl0ljBUuY1eq
+	PUvZ5FRwtjCv1X6ynIOZ7EMbzZBk1ScdtntgSs5HhcQthjuq3tEuwvWnIovo1O9yr3IF3ZtM6Mb
+	u73UfZnq8up8SjJojjjQEOu7cIOfqrFn+QA==
+X-Google-Smtp-Source: AGHT+IEAIhdT3Tfgdb8iNC0j7z0iqiuqLPLYGzXSr+7++MUa1eCRn81F36zR4QAh/yOgPvq9YcRdkQ==
+X-Received: by 2002:a05:6a21:339c:b0:220:aea6:2154 with SMTP id adf61e73a8af0-24340b016bamr2141981637.17.1755832009592;
+        Thu, 21 Aug 2025 20:06:49 -0700 (PDT)
 Received: from [127.0.1.1] ([222.71.237.178])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b47769afc1bsm2756777a12.19.2025.08.21.20.06.40
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b47769afc1bsm2756777a12.19.2025.08.21.20.06.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 20:06:44 -0700 (PDT)
+        Thu, 21 Aug 2025 20:06:49 -0700 (PDT)
 From: Guodong Xu <guodong@riscstar.com>
-Date: Fri, 22 Aug 2025 11:06:28 +0800
-Subject: [PATCH v5 2/8] dmaengine: mmp_pdma: Add clock support
+Date: Fri, 22 Aug 2025 11:06:29 +0800
+Subject: [PATCH v5 3/8] dmaengine: mmp_pdma: Add reset controller support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250822-working_dma_0701_v2-v5-2-f5c0eda734cc@riscstar.com>
+Message-Id: <20250822-working_dma_0701_v2-v5-3-f5c0eda734cc@riscstar.com>
 References: <20250822-working_dma_0701_v2-v5-0-f5c0eda734cc@riscstar.com>
 In-Reply-To: <20250822-working_dma_0701_v2-v5-0-f5c0eda734cc@riscstar.com>
 To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -101,49 +101,50 @@ Cc: Alex Elder <elder@riscstar.com>, Vivian Wang <wangruikang@iscas.ac.cn>,
  Troy Mitchell <troy.mitchell@linux.spacemit.com>
 X-Mailer: b4 0.14.2
 
-Add support for retrieving and enabling an optional clock during
-mmp_pdma_probe(). It is optional because in Marvell devices
-such as "marvell,pdma-1.0" the clocks property is not a required
+Add support to acquire and deassert an optional hardware reset controller
+during mmp_pdma_probe(). It is optional because in Marvell devices
+such as "marvell,pdma-1.0" the resets property is not a required
 property. But in SpacemiT K1 PDMA, "spacemit,k1-pdma" as the dt
-binding schema file stated, clocks is required.
+binding schema file stated, resets is required.
 
 Signed-off-by: Guodong Xu <guodong@riscstar.com>
 ---
 v5: No change.
-v4: Update the commit message, no source code change.
+v4: Updated the commit message, no source code change.
 v3: No change.
 v2: No change.
 ---
- drivers/dma/mmp_pdma.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/dma/mmp_pdma.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/drivers/dma/mmp_pdma.c b/drivers/dma/mmp_pdma.c
-index a95d31103d3063a1d11177a1a37b89ac2fd213e9..4a6dbf55823722d26cc69379d22aaa88fbe19313 100644
+index 4a6dbf55823722d26cc69379d22aaa88fbe19313..fe627efeaff07436647f86ab5ec5333144a3c92d 100644
 --- a/drivers/dma/mmp_pdma.c
 +++ b/drivers/dma/mmp_pdma.c
-@@ -15,6 +15,7 @@
- #include <linux/device.h>
+@@ -16,6 +16,7 @@
  #include <linux/platform_data/mmp_dma.h>
  #include <linux/dmapool.h>
-+#include <linux/clk.h>
+ #include <linux/clk.h>
++#include <linux/reset.h>
  #include <linux/of_dma.h>
  #include <linux/of.h>
  
-@@ -1019,6 +1020,7 @@ static int mmp_pdma_probe(struct platform_device *op)
- {
+@@ -1021,6 +1022,7 @@ static int mmp_pdma_probe(struct platform_device *op)
  	struct mmp_pdma_device *pdev;
  	struct mmp_dma_platdata *pdata = dev_get_platdata(&op->dev);
-+	struct clk *clk;
+ 	struct clk *clk;
++	struct reset_control *rst;
  	int i, ret, irq = 0;
  	int dma_channels = 0, irq_num = 0;
  	const enum dma_slave_buswidth widths =
-@@ -1037,6 +1039,10 @@ static int mmp_pdma_probe(struct platform_device *op)
- 	if (IS_ERR(pdev->base))
- 		return PTR_ERR(pdev->base);
+@@ -1043,6 +1045,11 @@ static int mmp_pdma_probe(struct platform_device *op)
+ 	if (IS_ERR(clk))
+ 		return PTR_ERR(clk);
  
-+	clk = devm_clk_get_optional_enabled(pdev->dev, NULL);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
++	rst = devm_reset_control_get_optional_exclusive_deasserted(pdev->dev,
++								   NULL);
++	if (IS_ERR(rst))
++		return PTR_ERR(rst);
 +
  	if (pdev->dev->of_node) {
  		/* Parse new and deprecated dma-channels properties */
