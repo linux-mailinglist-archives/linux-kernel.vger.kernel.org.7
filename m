@@ -1,113 +1,78 @@
-Return-Path: <linux-kernel+bounces-782019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDEDEB319FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:44:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C234B319F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B239E16B5E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:39:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EAFD1883AE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10220302CC1;
-	Fri, 22 Aug 2025 13:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBFB305E05;
+	Fri, 22 Aug 2025 13:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1A9+pX/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9d3VUI3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F4D2FFDF3;
-	Fri, 22 Aug 2025 13:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20113305E03;
+	Fri, 22 Aug 2025 13:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755869698; cv=none; b=Y5ipbWN9sWDbIp74mlHnMpiXqqVtKKZvKwOZKyQEV+XNWlZ8wH7oJzWY74Gy65p8Mk7b7Q0X2TJnDKjvRHzNR4/rVTAAwrC0hvlsYEcfVgv+IGEx2TlCSmx1fnPEmRsSxfGRl167OYIUdrV4UT7CDoK2ArpTw0BWPnlp5AYNX2o=
+	t=1755869783; cv=none; b=kf3aXm/OF3N8FXTQ+w1CCwseLD91kgFzUGi7dYxezfmmzkwLM48fvVKKWzu9Xe4qmD+OeNOxZRUmGVDjKxldYfa7150Stl6fVSR2DKHC+JyA8MQUfmD+2d7Q/gcxmiLH+bRtqje5zFxjML8DeV+vRy3XdE/MVAFaPGS5OXXKTo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755869698; c=relaxed/simple;
-	bh=FrdD8HO82GHssBpSmKjbaPQSVpS4OUvibF5tifAwsKk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZBcsT8o93WqnIxB8w0AfHNeJyZoufgMnCu2wthuEiRMXHbaBDZ7705D9XAiePqqT0CEQNSONZeRqkQyjCM4A8cQmfTFBMOMdubYp+mlf1ghOhAj6oudc8+aWfpPrwmDT8CxsIO8tpEPupz3ns6KprZ4wyqlIXljVr14H245XgKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1A9+pX/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C86D3C113CF;
-	Fri, 22 Aug 2025 13:34:57 +0000 (UTC)
+	s=arc-20240116; t=1755869783; c=relaxed/simple;
+	bh=95FgaTA08CZt7zqW4778eoQHgSzTh+tdD9TNspJq6Qg=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=q2Q80DMa6+MCx9EQDN1wFBqjkIByoJ80o59fWE16PexxGEPMGyD+8PJUIDwB5i7wd8gmdcsykN/ID8QLjnstKzTlMu/2hVpLgdUiXav3hdJRUASroSlAjFcqYt5azYjSK2IICUbb5rcUlA0bsi058BCGcxoy7b0BZWrLC3QaT+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9d3VUI3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDA06C4CEED;
+	Fri, 22 Aug 2025 13:36:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755869697;
-	bh=FrdD8HO82GHssBpSmKjbaPQSVpS4OUvibF5tifAwsKk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=b1A9+pX/E4IdjC0uILsgxMhqBQemWjTAjNOPmxzBN0O6a5la4Qap+UymM8/UBEfx4
-	 Z4zJ+aI7NrH8jp6/H+CEQ6dxYyYnQOOpnCXd6UwtTmzhk2lUyHhPAf5nWwI/Ky8A1+
-	 1pgi/RguJzUrlrgcY+YaTRBGSxIuZG7Bhfh3Gdk7P3HprMyAdMti12y3myxgwfrykh
-	 etEDyV0cAnZxCPztYt6b3trfny8hVe0GnAFbNmnsZ9Bl2uZheN3s9SVWqdiHEb6g1I
-	 wnrFgyALpCgo5Isp9K2HuCpf0K0sPTARsTGlMJelzA4TfwG1B+PIVFJSiS94LEdPLK
-	 twUb38GdxAkfw==
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb7aea37cso277310466b.3;
-        Fri, 22 Aug 2025 06:34:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUtMJOh5PbUvvRxDzGEmYhmdVmMfWQkluxTEZyVXAilp3qLoewj+wf10KaoBM4RrzRhi8pR3C7LE/bn@vger.kernel.org, AJvYcCVdcDc4wEWhfJ+r9sPnDOgnbMEO0tId4T7i5BSQQEQIsBVgG4RSJotVMvRAeVkVE+9W4hrECKtjCAklW5OB@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOP1VM/Y2GqAHz4SX8Def11MK2aUTn3udSAjkUf0NnN9zUyQpW
-	bQZFQXLjVhsJHb0s4G2cq2zUwxrZUSvnNTngSNpS6E2HZrzjGtxhRMPKDwm+G2FFLB5fyK2IhVD
-	BuLRqMENmLDWcByqUlVJIpQBf9ThBsA==
-X-Google-Smtp-Source: AGHT+IESCIYaUj1361Ru8jSWyGXtqBuI4FVQaliMDU3J04yvjuUpryjegQFzizN6g9GNF+2T2FvtqQVAFlT+tmwc/ZI=
-X-Received: by 2002:a17:907:980b:b0:ad8:9997:aa76 with SMTP id
- a640c23a62f3a-afe295c0defmr253420866b.37.1755869696343; Fri, 22 Aug 2025
- 06:34:56 -0700 (PDT)
+	s=k20201202; t=1755869783;
+	bh=95FgaTA08CZt7zqW4778eoQHgSzTh+tdD9TNspJq6Qg=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=B9d3VUI3tQn2THUGhPdrjiM35nVXrHZZVfVCIIqm6KlgqsjILxdCkiNVSfXDYzBiE
+	 GCREfjNYC9NAGIhZA2bc0aa/2O+BW74wwo7wODHUmon9bmo9CffCV4NnYO1elSbfYg
+	 t1315LZZYTWLS9SNlyo2fs4g4SvSQcGNZqNe4Jn7CQnTErKII5W0jxGZBUaQNrbK9S
+	 OhoCrR6faHK2UboXwFu+8+Pb2PkAsdYITRs++sQVEfl9C4/7c+83GuqXhM56RgHbV1
+	 FjO8N/eCOMtqcXOtOZMRQM70slcJzBx3veHB/MOupUhm7/Y8P2OmmMMB5INmylMS7N
+	 X6zdj8SnPL8+g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34024383BF6A;
+	Fri, 22 Aug 2025 13:36:33 +0000 (UTC)
+Subject: Re: [GIT PULL] hotfixes for 6.17-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250821182122.eb19072cafdbc6612e76ac8f@linux-foundation.org>
+References: <20250821182122.eb19072cafdbc6612e76ac8f@linux-foundation.org>
+X-PR-Tracked-List-Id: <mm-commits.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250821182122.eb19072cafdbc6612e76ac8f@linux-foundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-08-21-18-17
+X-PR-Tracked-Commit-Id: 772e5b4a5e8360743645b9a466842d16092c4f94
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6eba757ce90483b76da4e7eda962d8b8b8930f2c
+Message-Id: <175586979170.1831455.3293661494826885715.pr-tracker-bot@kernel.org>
+Date: Fri, 22 Aug 2025 13:36:31 +0000
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250822060417.52935-1-alex.t.tran@gmail.com>
-In-Reply-To: <20250822060417.52935-1-alex.t.tran@gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 22 Aug 2025 08:34:45 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKQEiGvt8H+7vO38PkMsmb3+CHvb=d2QcLd6zBOfNLs=A@mail.gmail.com>
-X-Gm-Features: Ac12FXz5da89Z9fM999DhvPFtTsDWpxigD8RKy2_wOvMRSuDKergCkUsY3c2BSo
-Message-ID: <CAL_JsqKQEiGvt8H+7vO38PkMsmb3+CHvb=d2QcLd6zBOfNLs=A@mail.gmail.com>
-Subject: Re: [PATCH] scripts/dtc/flattree.c: stringtable_insert optimization
-To: Alex Tran <alex.t.tran@gmail.com>
-Cc: saravanak@google.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 22, 2025 at 1:04=E2=80=AFAM Alex Tran <alex.t.tran@gmail.com> w=
-rote:
->
-> Increment string by string instead of character by character.
+The pull request you sent on Thu, 21 Aug 2025 18:21:22 -0700:
 
-Why? Are you doing something where this provides measurable improvement?
+> git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-08-21-18-17
 
->
-> Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
-> ---
->  scripts/dtc/flattree.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6eba757ce90483b76da4e7eda962d8b8b8930f2c
 
-This is a copy of upstream dtc. If you want to make changes to dtc,
-you have to submit them upstream.
+Thank you!
 
->
-> diff --git a/scripts/dtc/flattree.c b/scripts/dtc/flattree.c
-> index 1bcd8089c5b9..156ca5da89b2 100644
-> --- a/scripts/dtc/flattree.c
-> +++ b/scripts/dtc/flattree.c
-> @@ -222,9 +222,7 @@ static int stringtable_insert(struct data *d, const c=
-har *str)
->  {
->         unsigned int i;
->
-> -       /* FIXME: do this more efficiently? */
-> -
-> -       for (i =3D 0; i < d->len; i++) {
-> +       for (i =3D 0; i < d->len; i +=3D strlen(d->val + i) + 1) {
-
-This isn't equivalent. If 'd' was 'foobar' and 'str' was 'bar', then
-before we'd match. Now you don't.
-
->                 if (streq(str, d->val + i))
->                         return i;
->         }
-> --
-> 2.50.1
->
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
