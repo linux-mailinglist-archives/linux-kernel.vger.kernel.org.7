@@ -1,118 +1,104 @@
-Return-Path: <linux-kernel+bounces-782381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B379BB31FB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:55:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B76FB31F9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C2DB1D61C24
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:50:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 958169E024A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270AF2FB631;
-	Fri, 22 Aug 2025 15:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F1D2EAB6B;
+	Fri, 22 Aug 2025 15:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OQ5fMd7Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nXnlOgEh"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BF225BEFD
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 15:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AB1255F27;
+	Fri, 22 Aug 2025 15:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755877111; cv=none; b=NwI2W3X2PCLxoZBa5CNieOnwW9xkzYslicBLu53N+HdlIv3EB0ejws4YL2uPcV+E15jm4rGfstyzzXdzjbRVY4lMNypRX49HN2cUxydSlll/JXC87fm4KZfuHyHfGVntQNZXCEN68ShrO9OH2dx+D95LDttjO2Dgr68qmzk+NvA=
+	t=1755877079; cv=none; b=U1b6p9THowpNIc+aQv9Cyk+3eJTIsuNDHZXXPnxwo5JCVgeoQkHIMzpRutXFx/ZbRi9B1v4nUVLBTFGJYTQbBc3IkLPWJUfo66u8JO7rfn4ykyXYZNEK9zHt+KlIBdjGMZuJyGKzq7I0j+W8ayg+s8UQLjM72I6xcGYPaCvEtkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755877111; c=relaxed/simple;
-	bh=cRBDZ0V4M7USIfEXDXK1MhDoXCarJ9SLFjiHd+H031I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=iBihwSO6KTyrFe2/jeydMeAPQ+K4iSB/n5D/KcWxYrXxq9KyUbZheVjsfGmHbRvdQNR5kw2UDP8a0prACmQFsDox1kCeh9mTu99MZDY46FWsYmsa5yQiPZk0zx4SG2eM5FIqaC20LNFrLwl/PRDjl0eBWTRJZWDEfdF6QhLQdq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OQ5fMd7Q; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755877109;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=I9OqGrWe4bFx0j7k4ZODRtHJTXRM3rkKeIqs4AxHQOM=;
-	b=OQ5fMd7QY6tNI5q9b4taC8I+8gzHjjb6FLsqNx8KsmDmkeSDcizi6fqiYxM4d4Bd5UbU1W
-	swKRSmDuqambpWqpliWF27Uejgj5kCHI8WNhTQmYINl7AWEznQA9RaQQt4Q9BR3FoZX12d
-	f4i1gF/ECICl8aCxhvCR0FOglHnSQ+8=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-542-nSGTsydMNwuQi9co0eihyw-1; Fri,
- 22 Aug 2025 11:38:23 -0400
-X-MC-Unique: nSGTsydMNwuQi9co0eihyw-1
-X-Mimecast-MFC-AGG-ID: nSGTsydMNwuQi9co0eihyw_1755877101
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 58BD1180048E;
-	Fri, 22 Aug 2025 15:38:21 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.227])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 905A51800296;
-	Fri, 22 Aug 2025 15:38:15 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 22 Aug 2025 17:37:01 +0200 (CEST)
-Date: Fri, 22 Aug 2025 17:36:53 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Ingo Molnar <mingo@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v2 3/5] x86/fpu: fold sync_fpstate() into get_fpstate()
-Message-ID: <20250822153653.GA27150@redhat.com>
+	s=arc-20240116; t=1755877079; c=relaxed/simple;
+	bh=uSDz0yKbW29Kqi+kh8DILfeymb7IOfkqZihSGlvm7og=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nrX4kSu7Y/E8/F+ESMTS30mMFvTZt95UxJYQKchNhy5glHiduo2Eu29a4NBgYnn2jhCZ8/JUU1CjRdP1tUakAPMNOy8mXgm/Nw5ak7GVFg3Gbf2z8DlE63l1KeAkDf2HabAojFtXBmoYyN/qlu0LODgmlVLl6wDL2nvuazC3RcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nXnlOgEh; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 840BE1A0C7D;
+	Fri, 22 Aug 2025 15:37:53 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 5D541604AD;
+	Fri, 22 Aug 2025 15:37:53 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 15DF61C22D750;
+	Fri, 22 Aug 2025 17:37:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1755877072; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=vL6SrPv3s4tTvpqu8dd2Y1q408FTzzYF7Ub5PJS8YhE=;
+	b=nXnlOgEh0bh2bNUup3nmDKXLrqgFtrINTl3DU4jsEkiPmbHvjxNavZMP/KdtwYbg1HQJlg
+	gyp6rZcYK/j605g0Zp1B9YU6ca6AIF8waBv+1MttReNAflFChlO/gOKjBm3VAqisH6X/DP
+	I7jbLyi1hUZfRWi3vnspulAi4soVTbkq97Y71OP3T+fx9NqhNZLsN7uPrb0TuK03Ufcoo7
+	xhvocetCeRg/+or2ChXBMwnfRL9lbqvjWHv4Wo8nyEFT6cV2VsLPKY6fK3YvWCKPu41bpQ
+	arIeUOPpGhYfohMMo6PT5GdZrFZiv8Mxyt9RcxqVEKsHg7WAqqHSGZ2sVX6AgQ==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Subject: [PATCH net-next 0/2] net: pse-pd: pd692x0: Add permanent
+ configuration management support
+Date: Fri, 22 Aug 2025 17:37:00 +0200
+Message-Id: <20250822-feature_poe_permanent_conf-v1-0-dcd41290254d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822153603.GA27103@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAJyOqGgC/x3MQQqDMBBG4avIrBtIUivSq5QiIf6ps3Aik7QI4
+ t0bXLzFt3kHFSij0LM7SPHjwlka3K2juAT5wPDcTN76hx3d3SSE+lVMW25B1yCQOsUsySAOvZ1
+ DhEue2mBTJN6v+YsE1Qj2Su/z/APP+hlsdgAAAA==
+To: Oleksij Rempel <o.rempel@pengutronix.de>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: kernel@pengutronix.de, Dent Project <dentproject@linuxfoundation.org>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>
+X-Mailer: b4 0.15-dev-8cb71
+X-Last-TLS-Session-Version: TLSv1.3
 
-After the previous change sync_fpstate() has no other callers.
+From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+This patch series adds support for saving and resetting the PD692x0
+device's permanent configuration through new sysfs attributes:
+save_conf and reset_conf.
+
+The permanent configuration allows settings to persist across device
+resets and power cycles, providing better control over PSE behavior
+in production environments.
+
+Signed-off-by: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 ---
- arch/x86/kernel/fpu/regset.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+Kory Maincent (2):
+      net: pse-pd: pd692x0: Separate configuration parsing from hardware setup
+      net: pse-pd: pd692x0: Add sysfs interface for configuration save/reset
 
-diff --git a/arch/x86/kernel/fpu/regset.c b/arch/x86/kernel/fpu/regset.c
-index f5a803774e1c..ecbabdc15ec1 100644
---- a/arch/x86/kernel/fpu/regset.c
-+++ b/arch/x86/kernel/fpu/regset.c
-@@ -43,16 +43,12 @@ int regset_xregset_fpregs_active(struct task_struct *target, const struct user_r
-  *   - ptrace to dump fpstate of a stopped task, in which case the registers
-  *     have already been saved to fpstate on context switch.
-  */
--static void sync_fpstate(struct fpu *fpu)
--{
--	if (fpu == x86_task_fpu(current))
--		fpu_sync_fpstate(fpu);
--}
--
- static struct fpstate *get_fpstate(struct task_struct *task)
- {
- 	struct fpu *fpu = x86_task_fpu(task);
--	sync_fpstate(fpu);
-+
-+	if (task == current)
-+		fpu_sync_fpstate(fpu);
- 	return fpu->fpstate;
- }
- 
+ drivers/net/pse-pd/pd692x0.c | 262 ++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 221 insertions(+), 41 deletions(-)
+---
+base-commit: 02ccf77ea7d93268e52b4ea31f5538874bca5ac1
+change-id: 20250813-feature_poe_permanent_conf-ec640dace1f2
+
+Best regards,
 -- 
-2.25.1.362.g51ebf55
+Köry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
 
