@@ -1,84 +1,64 @@
-Return-Path: <linux-kernel+bounces-782507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE6EDB32163
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:17:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C878EB32165
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:18:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CFFB687331
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:17:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72183B04414
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0D1275AFF;
-	Fri, 22 Aug 2025 17:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB48527A11B;
+	Fri, 22 Aug 2025 17:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H58es/lH"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TxLFFCTE"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FFC1D5CFB
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93951150997;
+	Fri, 22 Aug 2025 17:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755883052; cv=none; b=nwKpnQZ+Cu2FkPOEBokQnECsP/RtTjt+LEeNLCGj4YTB55aXIS/f4J72nuP3L9BKGRRgs/R7hhUah5v4nz+Jn057apn4ED8Q6tRjOlKj/IjehtlEJ6eRZMKt57CtT6p7CXcqWBr6aM5z5jqffAYc+fpwykWQnfQep9ZVY3IH0aE=
+	t=1755883089; cv=none; b=hqkJs39npMPzd4YMIx/F7LST95MlhuZCHaTJjKb04K+T6kfgn+If+0sTaX1lKjLuCuwg9GfPmGhk1ryL0nE7CBkJSIpGM2bY2/S79fQxoruySvxjI1z2EFJGoy5KnlaaBzwC8Zc7IBosp4lRH1YEx9xiTXZGn7UYPON0qLBHAa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755883052; c=relaxed/simple;
-	bh=5Udo/f8ent/K3o9ISDeOwIWa6pto6XFRhDz1qdZBK/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=teMX6xenwqJo6Cz5Y2lHnvHzE4YCrAD9ByVKm5M4RglBiEegyE9d5FenhGQBQu2WXIPvLb3quMtmMxGlyqovS+QCdHNOBqoK94fdbxLDIh413q6LBjXkr4YZNthXQmfurOrOC7ddOW9/BIS6ji+800ptoE1UIjV07snHUZHk+0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H58es/lH; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45a1b05fe23so14100805e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:17:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755883049; x=1756487849; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nG60mJTcfDhZrN0Chr9ou2fiLnhkow+tZ1jRLbxcJ6I=;
-        b=H58es/lHKvLkGOUNkdCCn1kAqRZjWMIe6TnktkO+odkdjU7qbzNQSf/vBL2VT8R6HQ
-         nRDNFwSImMkWdFvqsPIjVab2mN0RnBBYJQ/GUsCkcWl7hOCNWL2PVbsU/wSBpqY8b1+v
-         lIme8MLwV4N/swwnOMA9/CBZ4emKSsBHZs6Bfy2YI7ao6r9vUBO1ckoucptoxz0NuHDK
-         Ol2tyXpEmN7H6caLVaRxH5JXNm93WQx6lx1Fua63elHQLffffx/c2oc+K/AuEdSSrLqR
-         pDPL336ffOHhTTuNzMKBL8Km6DoQp4Ozuqs4cNbdZ2Y2plyNSGjrFvk7L1Gli/80PKC/
-         2Ihg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755883049; x=1756487849;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nG60mJTcfDhZrN0Chr9ou2fiLnhkow+tZ1jRLbxcJ6I=;
-        b=AoAaT1GXjzmevRKrdkwd/xZhXsnh5PuUgArCzjjaYvyg6cDKx/CNPQ3iSNtiHkoV+R
-         bNDP6x6x0tnAUppT2Pjoi52WkTjWifntTSVs7mICdd6XJitpIqFjrmPxVOv1lcIfJwsw
-         OhSg/hXeKAZYjNBr3nvnXldYPjenxnUHJ8ZocryzU0/3Lpx9xR5LOslMeU78IGcyW6r9
-         i8ignByWM3RmH0z0vEmdP5kW8QwHhEWMqOTdX6gWvJry7y60ahKMiRA5p8FAYHzXGO05
-         FrUDkTxCHc/gBCuRFELUJl8058Fyr52hXMw2JVx2GBXRCv6rBM8px+sHJXvhlDT3BDy7
-         JjHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUABpr62z5ZDKerTJ4xD/vm79w6kQMB38+bjJH9wZHO/g642mVwyU+iq0RH73PQKlsYZa8KUZKVXrDixVE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7UlDGEA16UYSq19dLzv3N2xiWQdKx8wyKfM/qxDkiz8KX2joq
-	OtIQBv9r+sesP1ZhtAHkeVNYVlWPW6HFDzpVx4wDklBb0U8otmaY2b/++yUHPTfYdCM=
-X-Gm-Gg: ASbGncsMWqYNz7k9u8196sp51YR67Kl9FkYpuKFQMxPyRcm0dOIjcxfKUcO3u3Kp5Ju
-	4nfSHBh5R4he5vyre/XcUw/nACJEAXtC54VRTdkF4W2WE4Al4jnj7wGCRTvKR4YFcy6i+83GXQF
-	JdULMeh1tZjylyEBM59P5Oc3/IonxgVxw/9OpCoX6cs1Wbkd6yfewtLfcWQiYnuTns/OqHIbS6g
-	Mp10AevZBz3BU5LrL0xLC92HDyEJjY2oCAdygOyo8GWIjKSACh6NXmZuA52eaSiz0SNWCFwntlA
-	Nm1AdKHzKRnyeWpZrpBk4H7ld7D738GENEl0BVbsa6B9qzI3HHWrwho+X4yYufjHMyp8mqH+gsh
-	eHIXRFvFh2hx9YyoUBvr21iukVTM=
-X-Google-Smtp-Source: AGHT+IE6I2k6xPHD429XkzRqTgiEYzD1yR/BB8fOScRUjLp3oce39ToFkb+CldfR2IO0M4Ry6HmIRg==
-X-Received: by 2002:a05:600c:4fcb:b0:458:bc58:850c with SMTP id 5b1f17b1804b1-45b5179f436mr29795645e9.1.1755883049157;
-        Fri, 22 Aug 2025 10:17:29 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c7117d5977sm207666f8f.51.2025.08.22.10.17.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 10:17:28 -0700 (PDT)
-Date: Fri, 22 Aug 2025 20:17:25 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Rob Clark <robdclark@chromium.org>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Antonino Maniscalco <antomani103@gmail.com>
-Subject: drivers/gpu/drm/msm/msm_iommu.c:778 msm_iommu_gpu_new() error: we
- previously assumed 'adreno_smmu' could be null (see line 767)
-Message-ID: <202508230010.dMoERmOs-lkp@intel.com>
+	s=arc-20240116; t=1755883089; c=relaxed/simple;
+	bh=hwrq1lLw6KjKJXICYD1LyrY0tRzO1wdYV6C9hUmJ6Vo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JnPP8GSZ/VgjF1I5rLNv3jZny43N3L784tsgbd+sYeYLEO0kNGF04i5EggrL+P4fN+lhXJRsLCU7ZDPqxzCsAelauzTD8+pi9IpcZrGTFL9R0ovnfQDWEE0eWE1tNn7N2R8EustSqr5yWgQIqsd6qtTglzVNRC0L2922bTBJFmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TxLFFCTE; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=wvV9mGgYGu2s3zN+tea3Jt5QUjc2PHAs2MlqyU2ivQs=; b=TxLFFCTE9PpJ470k54MDStR0wN
+	4StI79XiOXLUv7eBg6QBy3/9hKpbDzgxyAgN7REKlOUZy0sOBk1cVTvzMeCC8NwPmgoCvUMFB8X4V
+	EZRoCB6rAWj2/6FbVFowHMLdcerI9Vzd+u7q4cXUuCmb151UiJa1gnS7QE/joGaEHX/U=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1upVOm-005bPL-0M; Fri, 22 Aug 2025 19:17:56 +0200
+Date: Fri, 22 Aug 2025 19:17:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@pengutronix.de,
+	Dent Project <dentproject@linuxfoundation.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH net-next 2/2] net: pse-pd: pd692x0: Add sysfs interface
+ for configuration save/reset
+Message-ID: <d4bc2c95-7e25-4d76-994f-b68f1ead8119@lunn.ch>
+References: <20250822-feature_poe_permanent_conf-v1-0-dcd41290254d@bootlin.com>
+ <20250822-feature_poe_permanent_conf-v1-2-dcd41290254d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,55 +67,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250822-feature_poe_permanent_conf-v1-2-dcd41290254d@bootlin.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   cf6fc5eefc5bbbbff92a085039ff74cdbd065c29
-commit: e601ea31d66ba83d565cae9cfa45cbbcdd8286dd drm/msm: Support pgtable preallocation
-config: arm64-randconfig-r071-20250822 (https://download.01.org/0day-ci/archive/20250823/202508230010.dMoERmOs-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+On Fri, Aug 22, 2025 at 05:37:02PM +0200, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+> 
+> Add sysfs attributes save_conf and reset_conf to enable userspace
+> management of the PSE's permanent configuration stored in EEPROM.
+> 
+> The save_conf attribute allows saving the current configuration to
+> EEPROM by writing '1'. The reset_conf attribute restores factory
+> defaults and reinitializes the port matrix configuration.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202508230010.dMoERmOs-lkp@intel.com/
+I'm not sure sysfs is the correct interface for this.
 
-smatch warnings:
-drivers/gpu/drm/msm/msm_iommu.c:778 msm_iommu_gpu_new() error: we previously assumed 'adreno_smmu' could be null (see line 767)
+Lets take a step back.
 
-vim +/adreno_smmu +778 drivers/gpu/drm/msm/msm_iommu.c
+I assume ethtool will report the correct state after a reboot when the
+EEPROM has content? The driver does not hold configuration state which
+cannot be represented in the EEPROM?
 
-8cceb773f565f3 Dmitry Baryshkov 2023-02-14  756  struct msm_mmu *msm_iommu_gpu_new(struct device *dev, struct msm_gpu *gpu, unsigned long quirks)
-8cceb773f565f3 Dmitry Baryshkov 2023-02-14  757  {
-8cceb773f565f3 Dmitry Baryshkov 2023-02-14  758  	struct adreno_smmu_priv *adreno_smmu = dev_get_drvdata(dev);
-8cceb773f565f3 Dmitry Baryshkov 2023-02-14  759  	struct msm_iommu *iommu;
-8cceb773f565f3 Dmitry Baryshkov 2023-02-14  760  	struct msm_mmu *mmu;
-8cceb773f565f3 Dmitry Baryshkov 2023-02-14  761  
-8cceb773f565f3 Dmitry Baryshkov 2023-02-14  762  	mmu = msm_iommu_new(dev, quirks);
-db40d2928d245f Luca Weiss       2023-05-08  763  	if (IS_ERR_OR_NULL(mmu))
-8cceb773f565f3 Dmitry Baryshkov 2023-02-14  764  		return mmu;
-8cceb773f565f3 Dmitry Baryshkov 2023-02-14  765  
-8cceb773f565f3 Dmitry Baryshkov 2023-02-14  766  	iommu = to_msm_iommu(mmu);
-e601ea31d66ba8 Rob Clark        2025-06-29 @767  	if (adreno_smmu && adreno_smmu->cookie) {
-                                                            ^^^^^^^^^^^
-Check for NULL.  Hopefully this can be removed.
+Is the EEPROM mandatory, or optional? Is it built into the controller?
 
-e601ea31d66ba8 Rob Clark        2025-06-29  768  		const struct io_pgtable_cfg *cfg =
-e601ea31d66ba8 Rob Clark        2025-06-29  769  			adreno_smmu->get_ttbr1_cfg(adreno_smmu->cookie);
-e601ea31d66ba8 Rob Clark        2025-06-29  770  		size_t tblsz = get_tblsz(cfg);
-e601ea31d66ba8 Rob Clark        2025-06-29  771  
-e601ea31d66ba8 Rob Clark        2025-06-29  772  		iommu->pt_cache =
-e601ea31d66ba8 Rob Clark        2025-06-29  773  			kmem_cache_create("msm-mmu-pt", tblsz, tblsz, 0, NULL);
-e601ea31d66ba8 Rob Clark        2025-06-29  774  	}
-f66f3cf6bc42ab Abhinav Kumar    2025-02-19  775  	iommu_set_fault_handler(iommu->domain, msm_gpu_fault_handler, iommu);
-8cceb773f565f3 Dmitry Baryshkov 2023-02-14  776  
-8cceb773f565f3 Dmitry Baryshkov 2023-02-14  777  	/* Enable stall on iommu fault: */
-8cceb773f565f3 Dmitry Baryshkov 2023-02-14 @778  	if (adreno_smmu->set_stall)
-                                                            ^^^^^^^^^^^^^^^^^^^^^^
-Because otherwise we are toasted.
+How fast is it to store the settings?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I'm wondering if rather than having this sysfs parameter, you just
+store every configuration change? That could be more intuitive.
 
+I've not looked at the sysfs documentation. Are there other examples
+of such a property?
+
+      Andrew
 
