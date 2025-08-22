@@ -1,82 +1,63 @@
-Return-Path: <linux-kernel+bounces-782074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9438B31AA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:05:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31A39B31AB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A54FA06376
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:00:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE141AE70F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FD6304BC1;
-	Fri, 22 Aug 2025 13:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313D53043BC;
+	Fri, 22 Aug 2025 13:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="c7Cjx71j";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="coZaT6+1"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="d2Qxbrrb"
+Received: from 5.mo533.mail-out.ovh.net (5.mo533.mail-out.ovh.net [54.36.140.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2306D3074BE
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE4B2FF16C
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.36.140.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755871053; cv=none; b=sSW2PyabE2MOzDSXlFtqP3nqpe2rPPznt4Ra+V+NhBm7+zhe2sMlchrF78Jmm+IVbFhyCWLR/Q0XFbNs6bmkbH2ze8Sbd9YAJ1GDpMV24Ie6w5wOOWdlU810OJnY/zrqHks9rlbzzLmGLD4RUnVrTqBRZtjLn6Q864YRRTOazYc=
+	t=1755871117; cv=none; b=gneVcQO0eBDfzuMvu3e1nCnKHOH1W8/Zt0LQkqYUN9Z5ca3h3qAj38fomYjCfc+IDtapjmT29cdS+15YYsIWr5SN88WdmCViDVVnT1mz+B/RcOFhLSzQr15VXJYiT28Zy9eBUrCqnwxbJfvBpr+qCLz2G3pbKi5Yq+h9kdd3Poo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755871053; c=relaxed/simple;
-	bh=zCCSy0o35JvAI7QafSxpydH2hzoK0y79MPd+2j4OwW0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nwN8kN/StVifslsqXgJ7+KzGCdhnFyWp/1Yo4XsvPLkGivddZl+kITmiZXMHWe+2oRq9/fOP/dMBNYrUgFyMcW0ooSZf2P3iVcsgrIQGNxsSv9KqxyIEwWJXyo6EU6fqCtu74DKkj9Ihl2/IcLbcJARbwCdo53m81VwmZkLjvUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=c7Cjx71j; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=coZaT6+1 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1755871051; x=1787407051;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=9n/naAKcBCNNY+t9a5vJJ7PI9f1fYi7nwTRgic5hZFg=;
-  b=c7Cjx71jAcmaqDyqxP25MEIcXnW4EKKxSsO07Ax+IDH5J2bm58n25ztx
-   eTlegmZ96jlUTSAPQ93z5bG4eRt6+RJFvttI/jDCrRR1/i+b2IURNpBDL
-   C8SZFI+4OuRoRQwxJCn+ei5JhA+rQdFjHh/M76yp8oqhBHiaXSxqmA8eq
-   uILa2I2KCvitIlBRpdMSRSIPaMEh0Uw3IXU9bDfpbj0/SfylkBVGTIp3m
-   ix5fV40HiN3z31cy4CL9nZLrikHPXpYAXx0Q/tQYzTb/s9Ew3bj75WjPC
-   S7aejuonxc7wNJpOPi5PjeonZMKZ5NQ6IESp9Hql69oxz/F1UYYYfqISh
-   w==;
-X-CSE-ConnectionGUID: JKVv52hjTCGPr31HoOYi9A==
-X-CSE-MsgGUID: 0Ixf0lb7QBKCT3RAt1aU2Q==
-X-IronPort-AV: E=Sophos;i="6.17,309,1747692000"; 
-   d="scan'208";a="45868445"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 22 Aug 2025 15:57:27 +0200
-X-CheckPoint: {68A87747-0-820F521C-C7779E56}
-X-MAIL-CPID: E1AE969BEAE425E55620FADF3E35DF18_4
-X-Control-Analysis: str=0001.0A00210E.68A8769F.000E,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 79A8416462D;
-	Fri, 22 Aug 2025 15:57:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1755871042; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=9n/naAKcBCNNY+t9a5vJJ7PI9f1fYi7nwTRgic5hZFg=;
-	b=coZaT6+1llALA9Baw1AWaB0ssP8Dg1+xnD1pjqaOsGmdomdMEnc2PJGDmx8osO3fjR8/YQ
-	e30NfqHz4kkrY1azSk9x0khEctHIFZT4K378dzK9HtVrFPROdqqAFyMh/8CIvBlQQQf46e
-	uXD5WPawv1HMDHvUpE1aoMNIsInSaa/+cq++fk3G0nl9GKAc9kW9v14NpnGfD2Cv+HVw5V
-	z2f6AJbb8OzsXa8v1D0ZslArziwum4jUmL/hznldevKy5TvEH4RU4uD/ymyGx4uAx0sNxl
-	dDgrrny5Y6UPsxFXtk/jUxVaWyuA2vGlxMsItyOnycFLxp9IgrIYSZvIqzxs2g==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: [PATCH v3 1/1] arm64: defconfig: Enable Marvell WiFi-Ex USB driver
-Date: Fri, 22 Aug 2025 15:57:14 +0200
-Message-ID: <20250822135715.3335023-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755871117; c=relaxed/simple;
+	bh=Qbb/epaf7fqKy6B1p0XkqBoYHHqp4Kz/aBUdu96ueDo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L6zEeQ+TYq2/+64SWJhHYU7u5vDfO0/wRyRD591/UEwA2OfBF6+XaWyUhafUp7QiF2lmqII0q6hd9fq5P7ZLUB+UQLGOUB8LCGp+XI5mJ5UalwHHpEPCy/CIguL1UGWIicYEIIVfSd32b6GedMBkQjE7S884QX/Gije6mbR8rok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=d2Qxbrrb; arc=none smtp.client-ip=54.36.140.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
+Received: from director2.derp.mail-out.ovh.net (director2.derp.mail-out.ovh.net [79.137.60.36])
+	by mo533.mail-out.ovh.net (Postfix) with ESMTPS id 4c7hc82q6Fz5x9N;
+	Fri, 22 Aug 2025 13:58:32 +0000 (UTC)
+Received: from director2.derp.mail-out.ovh.net (director2.derp.mail-out.ovh.net. [127.0.0.1])
+        by director2.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <brgl@bgdev.pl>; Fri, 22 Aug 2025 13:58:32 +0000 (UTC)
+Received: from mta2.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.178.149])
+	by director2.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4c7hc81BlFz1xng;
+	Fri, 22 Aug 2025 13:58:32 +0000 (UTC)
+Received: from orca.pet (unknown [10.1.6.4])
+	by mta2.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id B71493E32CF;
+	Fri, 22 Aug 2025 13:58:30 +0000 (UTC)
+Authentication-Results:garm.ovh; auth=pass (GARM-95G001c22d9f73-ec1f-49ce-9199-0c9084c0de17,
+                    ADC0680FE15BB91110492B9A34CE42AA242C155A) smtp.auth=marcos@orca.pet
+X-OVh-ClientIp:147.156.42.5
+From: Marcos Del Sol Vives <marcos@orca.pet>
+To: linux-kernel@vger.kernel.org
+Cc: Marcos Del Sol Vives <marcos@orca.pet>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Michael Walle <mwalle@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-gpio@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: [PATCH v4 0/3] Introduce support for Vortex GPIO pins
+Date: Fri, 22 Aug 2025 15:58:10 +0200
+Message-Id: <20250822135816.739582-1-marcos@orca.pet>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,39 +65,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-Ovh-Tracer-Id: 8613134289362769510
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieefleegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepofgrrhgtohhsucffvghlucfuohhlucggihhvvghsuceomhgrrhgtohhssehorhgtrgdrphgvtheqnecuggftrfgrthhtvghrnhepgffhgfefvefghfetveevgffhleffjedvjeekieejgeeiuddvffetieejjeejgfegnecukfhppeduvdejrddtrddtrddupddugeejrdduheeirdegvddrheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepledprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmfigrlhhlvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepmhgrrhgtohhssehorhgtrgdrphgvthdprhgtphhtthhopehlihhnuhigqdhgphhiohesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+ dprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhptghisehvghgvrhdrkhgvrhhnvghlrdhorhhg
+DKIM-Signature: a=rsa-sha256; bh=XZ4yITvAsFyCu22AAADrQVM1VgCRSYKKdnUzs27X8JM=;
+ c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1755871112;
+ v=1;
+ b=d2QxbrrbVzs3o5PNO1C5U7BEmy3vPPLUl5lfEgu4U0gZzxA8A+4cAqWi9oOLmLB0ebtnjbCn
+ Tgp4fmvcm3oSOD4NbGyAtKQiwOsnJPYxHIwmsWmzt/72AaObVHcz9Ts3IpWj4YEDloClbaGhyHr
+ LhOIk1O0iWFe3qV4G24Mid5K5UlyLLekUcuL4KGxuctkErmgt0piZ3BzQsg/bXtdUZVRJ35qI0C
+ k1yFRYOgRDuFsZgVt0LBMG3RVQ92TYtsR4H60dvA9BxGuHAxjOyVbxdjw+FmJf1QqxIvGuws+/7
+ Hu15GYXr5jNXB2TKMb8jjMPX89xTp/zNrsmfjxMJ2ml2Q==
 
-MBa91xxCA (imx93-tqma9352-mba91xxca.dts) features a USB attached WiFi
-module. lsusb says:
- ID 1286:204e Marvell Semiconductor, Inc. Bluetooth and Wireless LAN Composite Device
-Enable the corresponding driver.
+This series of patches add support for the GPIO pins exposed on the
+southbridge most DM&P's Vortex86 SoCs, using a new GPIO driver plus a MFD
+driver to automatically load the driver in supported platforms.
 
-To: Shawn Guo <shawnguo@kernel.org>
-To: Fabio Estevam <festevam@gmail.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: imx@lists.linux.dev
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-Changes in v3:
-* Improved commit message
+Supported SoCs are Vortex86SX/MX/MX+/DX/DX2/DX3, though I have only
+personally tried with a MX and a DX3.
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Marcos Del Sol Vives (3):
+  gpio: gpio-regmap: add flag to set direction before value
+  gpio: vortex: add new GPIO device driver
+  mfd: vortex: implement new driver for Vortex southbridges
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 603c9528c778d..4535a3e5a7560 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -441,6 +441,7 @@ CONFIG_IWLMVM=m
- CONFIG_MWIFIEX=m
- CONFIG_MWIFIEX_SDIO=m
- CONFIG_MWIFIEX_PCIE=m
-+CONFIG_MWIFIEX_USB=m
- CONFIG_MT7921E=m
- CONFIG_RSI_91X=m
- CONFIG_WL18XX=m
+ MAINTAINERS                 |   6 ++
+ drivers/gpio/Kconfig        |  13 +++
+ drivers/gpio/Makefile       |   1 +
+ drivers/gpio/gpio-regmap.c  |  17 +++-
+ drivers/gpio/gpio-vortex.c  | 170 ++++++++++++++++++++++++++++++++++++
+ drivers/mfd/Kconfig         |   9 ++
+ drivers/mfd/Makefile        |   1 +
+ drivers/mfd/vortex-sb.c     | 135 ++++++++++++++++++++++++++++
+ include/linux/gpio/regmap.h |  19 ++++
+ include/linux/pci_ids.h     |   3 +
+ 10 files changed, 373 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpio/gpio-vortex.c
+ create mode 100644 drivers/mfd/vortex-sb.c
+
 -- 
-2.43.0
+2.34.1
 
 
