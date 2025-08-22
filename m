@@ -1,85 +1,196 @@
-Return-Path: <linux-kernel+bounces-780864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85694B30A31
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:16:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F09B30A33
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A8BAE0237
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:15:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63FDA1D0782F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B377F27450;
-	Fri, 22 Aug 2025 00:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hE9vcDcv"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192DB12B93;
+	Fri, 22 Aug 2025 00:15:32 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491314A3C;
-	Fri, 22 Aug 2025 00:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDD04C81
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 00:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755821546; cv=none; b=ORJY76gF15a5gqP/YCddCAXAs+gxWh1oppU+86BlV2+kLyHxynth+Dm3DYsQT3CGGPVs5NOjskaCFLOvZVdsyyTQBQAA5g6NT41zVweI4iZh8YA2r3C+a3Nj+3xZaqsKL9wHadzY2Yj2aWUBg4Cxxd5VS+PUmr2PyTtvUsqExW8=
+	t=1755821731; cv=none; b=CMdLmdcgKxOvGds08aziRbiIs4JsTIlL3XhkV604Bs0vwUj5ArQe/nbemvD/LRC2bhh3g4KbUF1wWkk29mXK3rq5vJq+75ITn4GnbF3rnxrzByuZvjURMdRHPnhnQR/1eCnjvanj9BypRXLSy1xdKwj08jvJBsmxBD4sM44GskY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755821546; c=relaxed/simple;
-	bh=p1dGIjTvkNnpxKCOB7RchEpvReZY90qlUytsq4gDFus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jdr8fOBqld9r0eaVCZ53a6d871SJ0MfNHykJSexMy9pEfA3Qju4PUGIkiKtKZN/WukXhp6jheXHMNSMMYM/zr8NCYW3aEacfpQR7fxl8p9IUH885UTf1A/LtgcaeZKJSvuCNJ/6FEdfcxR2f4BJt3IvPgQDOvlwTK7dcJGcaZg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hE9vcDcv; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=0V9vnhvl7kfzNO/a9uciBu9rFyDt7meyaj/wnJfH86E=; b=hE9vcDcvu8i7v5Uh6vAfLCZ32i
-	GZ7mT1gdrfNFREwtqr88Ijj/ipJHSsfGjhcO4A/ygORSA94FThY1eRtgRDRs+TwVM7ZECF6tkQiYK
-	ynhgDpw8MDLJIG2eN0nJmK6tDak86IkvU19ggl9pv62PQBr1tAgtNSHTvObueR06Nt3s=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1upFNr-005W4E-6y; Fri, 22 Aug 2025 02:11:55 +0200
-Date: Fri, 22 Aug 2025 02:11:55 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	joel@jms.id.au, andrew@codeconstruct.com.au,
-	howard_chiu@aspeedtech.com, arnd@arndb.de, andrew+netdev@lunn.ch,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [net] ARM: dts: aspeed: ast2600-evb: Correct phy-mode to rgmii-id
-Message-ID: <6a3d7eb4-c091-437f-98f8-2b8577e539a7@lunn.ch>
-References: <20250821052555.298860-1-jacky_chou@aspeedtech.com>
+	s=arc-20240116; t=1755821731; c=relaxed/simple;
+	bh=CsQ2g5rgnURgAxGrsOg8jGu31SG0qFAec8vbDN/JAgk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gKb+ck3dloW8covmSSbyu9x5RE8iMZKpVQYJcKsB7odHcOrOzatQm6YzjNgwTZj+J6fQQGoZudevnZO0DA6ui2+25yWtUDt/PK/xBW2icvzVrfi9r2fyg7X69w+kRrlft2fcPWomJcZpQjBxwIBaRoGR0zvceNxGrOJ9QWGFIXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-88432da036bso160917339f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 17:15:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755821728; x=1756426528;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FyKM0EQABf3vNkgSV/GGQkPbG27/7UYkkIP+/kbpuq0=;
+        b=NgVjMPL4wlC8xsFcAzVmCrwZnBdkwcm1rlVFJWy8BX5n8oSJaBwVv/r2wI59ri5q+B
+         rkfzla/CxXxuefF7ez+w9s2Y61X4cB+KroZ2CZy3tOAIvH4LP5r0MCR8Um+Ne9dgJmj3
+         1JWhc9JmTOOGFFzB57dW5PZv+vVnyymvc+qUefgXLv94tiW7lnoy7mFsel6VTHU34pQZ
+         sVkjIjar5EKqMKGlySwZbz610PNFE3LPFZVtgW2V1/xwA0QXKZqY3azdHvNqAgnOfwQz
+         aovKh59lo0TYGfU2VXMxf+xJ29+5V/MjitzwxB9c2/yCGY//Oqe4uJ7OSONqojVPHiKX
+         TVgA==
+X-Gm-Message-State: AOJu0YyMMoXVMYji6R027gFzT98BI/JXxMUz7yTPIyuB5WgWZE4EMb7T
+	CZKH+TL4SJB98LQT71UYmGxc4JBT6BuTZt6blXqh6JdWfqVWVpDFuPc5nB3IX0SAL3ut0SGHI0w
+	Jv5/1joBnUmjteLegYlyme+DeSTGu4UHoCEq4fnilwtT6ukOSt61X52S4wpO45Q==
+X-Google-Smtp-Source: AGHT+IFK/IGsPoyrVcHADKuPfHfHmrFijMeNTA/eFat7zqh6BYi11CogvPZ/K4TcCxDF4JKwCRWMBw+GisHdXXYvrC8jUJLApW1U
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821052555.298860-1-jacky_chou@aspeedtech.com>
+X-Received: by 2002:a92:ca08:0:b0:3e5:5c80:2cf3 with SMTP id
+ e9e14a558f8ab-3e921d46281mr20832795ab.13.1755821727811; Thu, 21 Aug 2025
+ 17:15:27 -0700 (PDT)
+Date: Thu, 21 Aug 2025 17:15:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a7b69f.050a0220.37038e.0047.GAE@google.com>
+Subject: [syzbot] [media?] general protection fault in su3000_i2c_transfer
+From: syzbot <syzbot+d99f3a288cc7d8ef60fb@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	mchehab@kernel.org, micha@freedict.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 21, 2025 at 01:25:55PM +0800, Jacky Chou wrote:
-> According to the latest ethernet-controller.yaml.
-> Since there is no RGMII delay on AST2600 EVB, the phy-mode property of all
-> MACs change to "rgmii-id" mode.
+Hello,
 
-> @@ -123,7 +123,7 @@ ethphy3: ethernet-phy@0 {
->  &mac0 {
->  	status = "okay";
->  
-> -	phy-mode = "rgmii-rxid";
-> +	phy-mode = "rgmii-id";
->  	phy-handle = <&ethphy0>;
+syzbot found the following issue on:
 
-How does this change actually work?
+HEAD commit:    8d561baae505 Merge tag 'x86_urgent_for_v6.17_rc2' of git:/..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15226ba2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ce98061fb8ee27bc
+dashboard link: https://syzkaller.appspot.com/bug?extid=d99f3a288cc7d8ef60fb
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=176206f0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=102993a2580000
 
-I could imaging such a change as part of a patchset which changes the
-MAC driver, and how it handles RGMII delays. But on its own, how does
-this not break the board?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f70b0639e5f7/disk-8d561baa.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8d12dcdbfe95/vmlinux-8d561baa.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/47f7ceb7ac19/bzImage-8d561baa.xz
 
-	Andrew
+The issue was bisected to:
+
+commit 0e148a522b8453115038193e19ec7bea71403e4a
+Author: Michael Bunk <micha@freedict.org>
+Date:   Sun Jan 16 11:22:36 2022 +0000
+
+    media: dw2102: Don't translate i2c read into write
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14657ba2580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16657ba2580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12657ba2580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d99f3a288cc7d8ef60fb@syzkaller.appspotmail.com
+Fixes: 0e148a522b84 ("media: dw2102: Don't translate i2c read into write")
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000002: 0000 [#1] SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000010-0x0000000000000017]
+CPU: 1 UID: 0 PID: 5865 Comm: syz-executor259 Not tainted 6.17.0-rc1-syzkaller-00224-g8d561baae505 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:su3000_i2c_transfer+0x1ad/0x1040 drivers/media/usb/dvb-usb/dw2102.c:740
+Code: 4c 89 f8 48 c1 e8 03 49 bc 00 00 00 00 00 fc ff df 42 80 3c 20 00 74 08 4c 89 ff e8 8d b6 3c fa 49 8b 1f 48 89 d8 48 c1 e8 03 <42> 0f b6 04 20 84 c0 0f 85 5f 09 00 00 0f b6 1b 48 8b 44 24 38 42
+RSP: 0018:ffffc9000411faa8 EFLAGS: 00010202
+
+RAX: 0000000000000002 RBX: 0000000000000010 RCX: 0000000000000003
+RDX: ffffffff87e65d05 RSI: ffffffff8f0d3a50 RDI: 0000000000001900
+RBP: 0000000000000000 R08: ffff888032dd0000 R09: 0000000000000002
+R10: 0000000000001a00 R11: 0000000000000000 R12: dffffc0000000000
+R13: 1ffff1100fb25968 R14: 0000000000000002 R15: ffff88807d92cb48
+FS:  000055556ae14380(0000) GS:ffff888125d1b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055b6f1430230 CR3: 000000007277a000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __i2c_transfer+0x871/0x2170 drivers/i2c/i2c-core-base.c:-1
+ i2c_transfer+0x25b/0x3a0 drivers/i2c/i2c-core-base.c:2320
+ i2cdev_ioctl_rdwr+0x460/0x740 drivers/i2c/i2c-dev.c:306
+ i2cdev_ioctl+0x64b/0x7f0 drivers/i2c/i2c-dev.c:467
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc919191e19
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 31 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcc5ebd038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fc9191cd533 RCX: 00007fc919191e19
+RDX: 0000200000000a40 RSI: 0000000000000707 RDI: 0000000000000004
+RBP: 00007fc919205610 R08: 0000000000002a00 R09: 00007ffcc5ebd208
+R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffcc5ebd1f8 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:su3000_i2c_transfer+0x1ad/0x1040 drivers/media/usb/dvb-usb/dw2102.c:740
+Code: 4c 89 f8 48 c1 e8 03 49 bc 00 00 00 00 00 fc ff df 42 80 3c 20 00 74 08 4c 89 ff e8 8d b6 3c fa 49 8b 1f 48 89 d8 48 c1 e8 03 <42> 0f b6 04 20 84 c0 0f 85 5f 09 00 00 0f b6 1b 48 8b 44 24 38 42
+RSP: 0018:ffffc9000411faa8 EFLAGS: 00010202
+RAX: 0000000000000002 RBX: 0000000000000010 RCX: 0000000000000003
+RDX: ffffffff87e65d05 RSI: ffffffff8f0d3a50 RDI: 0000000000001900
+RBP: 0000000000000000 R08: ffff888032dd0000 R09: 0000000000000002
+R10: 0000000000001a00 R11: 0000000000000000 R12: dffffc0000000000
+R13: 1ffff1100fb25968 R14: 0000000000000002 R15: ffff88807d92cb48
+FS:  000055556ae14380(0000) GS:ffff888125c1b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000562d24ac2168 CR3: 000000007277a000 CR4: 00000000003526f0
+----------------
+Code disassembly (best guess):
+   0:	4c 89 f8             	mov    %r15,%rax
+   3:	48 c1 e8 03          	shr    $0x3,%rax
+   7:	49 bc 00 00 00 00 00 	movabs $0xdffffc0000000000,%r12
+   e:	fc ff df
+  11:	42 80 3c 20 00       	cmpb   $0x0,(%rax,%r12,1)
+  16:	74 08                	je     0x20
+  18:	4c 89 ff             	mov    %r15,%rdi
+  1b:	e8 8d b6 3c fa       	call   0xfa3cb6ad
+  20:	49 8b 1f             	mov    (%r15),%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 0f b6 04 20       	movzbl (%rax,%r12,1),%eax <-- trapping instruction
+  2f:	84 c0                	test   %al,%al
+  31:	0f 85 5f 09 00 00    	jne    0x996
+  37:	0f b6 1b             	movzbl (%rbx),%ebx
+  3a:	48 8b 44 24 38       	mov    0x38(%rsp),%rax
+  3f:	42                   	rex.X
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
