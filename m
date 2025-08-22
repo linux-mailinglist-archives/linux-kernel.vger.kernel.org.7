@@ -1,156 +1,176 @@
-Return-Path: <linux-kernel+bounces-781256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 869CEB30FEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:08:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B913DB30FEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 736641CE41BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:06:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90ED0165E2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89A22E7BB3;
-	Fri, 22 Aug 2025 07:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEEF2E7644;
+	Fri, 22 Aug 2025 07:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PiBVN39Z"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="WFiZvrYr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TQa2Lw8I"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAE02E62B5;
-	Fri, 22 Aug 2025 07:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4FD2253F9
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 07:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755846368; cv=none; b=GPsbgo7sju+tb5D76Uv1umLxOZpFyH2onQQsmlcTvt166ZKBKOei28vcnwJdQlmyhuKbVcef+xjHcC6ymO4HWoAF0eMo7bwZExWjbVnH+Lq3cTrv7i7eqI5bfHNVybdb4dIsYidrszozRyQDAJoPZcsVG8ZyME8FEv7x3CvAWIM=
+	t=1755846365; cv=none; b=VZ7mjRt2xYdQoV22Rfq2Rog0YB1JRzlukez68jvTZKA0B/UF0eKjLIU6bkL1kj4/YpGHufNNRmpx0tBkRlWBmqV20zwQvjGlR3z9aj20mKsOYwLzrA3qySDhKZ5MCo+tdC+iyZhnRxQwfSPnzZwCcGKD0ez/9NxsuZjmT/HqFNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755846368; c=relaxed/simple;
-	bh=0LFBzy/1ND4vvMfeYVthXvze9VjxghC/baD6CkbxVpg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iYKBWcAM+YHPu7KVUtOXMVSHvLEaTplz6Z+CCgKsfDXoSrxkyxvhBgfZx4/iB98114foEuMmEGfnizMTE0oe56xPxvqGP+uJSbz4DtHDI2SYKa3xqxQ/+oFPYtcKBNCQ2vqdF6fGqq96ruCcLD5iKXaj95UGgIa5z6HHyVGROwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PiBVN39Z; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755846366; x=1787382366;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=0LFBzy/1ND4vvMfeYVthXvze9VjxghC/baD6CkbxVpg=;
-  b=PiBVN39ZFZGiSDS9hxw7QDG2kqM+xdtHnrVO44SSTZrioTnk/Cw+NBXo
-   maMIArXgBk+gJx5E4PcQ0TCfxO4/oP16AW5dVYTUT5ByITMbAfuMU3GIV
-   jN7hmWXBTVIKfMZdnS5pFPCmaeYEIGpKo7q8lkFXmaX6u8jqDUVBl4NY6
-   hhZcDLZN1dC4SrTGi7jfoFf1yBxZ8mP+iUpX8H2Y38uIvjE9tZzHHd5Wb
-   KH3TgvH+OJQCJAkcsOpWLhzEb0RpNpFLW6nvJlkmKapinBuNS7CJ2Vue+
-   xWe4EjGZKzIQWPxSjlD+RdHXi5frfZf87OdMlEIOzkuDEv7Fm2LUsrlxF
-   A==;
-X-CSE-ConnectionGUID: R2BNde0AR7iy5Ff7eF6HoA==
-X-CSE-MsgGUID: XDkBM5vRTI2eEj9li0V8Sg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58012896"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="58012896"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 00:06:05 -0700
-X-CSE-ConnectionGUID: wg4jZzJKQ1yxQKl/rSFcww==
-X-CSE-MsgGUID: tdrdyDRTSsiLdv40MP81iQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="168143631"
-Received: from yzhao56-desk.sh.intel.com ([10.239.47.19])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 00:06:03 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: reinette.chatre@intel.com,
-	rick.p.edgecombe@intel.com,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH v2 2/3] KVM: TDX: Do not retry locally when the retry is caused by invalid memslot
-Date: Fri, 22 Aug 2025 15:05:23 +0800
-Message-ID: <20250822070523.26495-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20250822070305.26427-1-yan.y.zhao@intel.com>
-References: <20250822070305.26427-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1755846365; c=relaxed/simple;
+	bh=1zauvedElwCQUXBUOPPqOSpWlZSJJOKXlW2tRIrt99Y=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ie3u9He5dVQ1efliC4n56xuA9xdgYoXxU5cp4eLd4IjP8kUw1Bm0Nemp7gROpCMFco+q8NZNWKg1n2rBHmEoaO7UiJUObvggiBzmRRIgzKD2DPXZWJFSPmpoEAlHeKNDOs3+JqB6NI5RZzRVYKi6JXXDTNOL+OdLRSO2qUgRVcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=WFiZvrYr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TQa2Lw8I; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 8A902EC0958;
+	Fri, 22 Aug 2025 03:06:00 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Fri, 22 Aug 2025 03:06:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1755846360;
+	 x=1755932760; bh=oMJSNEUSKKDn7Dffolj3gAHZX6/fUfm0lTvkTxBDCHk=; b=
+	WFiZvrYrZDGDgFIeP2gDUyu1lZ0OTNIxL8He8RvJV1mCiJo6JsRO20F6M+5rSPsd
+	OcL55vkPHIuRBOUQG4UYlKizEuIMWt2FbRqPrXcNyPT6zy9vOoySHKIowQOjD4gz
+	xMHI0qkt85bpIrZ9FLikJbwtrCxb0ZjWepQb2+yrC4K1vbpHo2nD1sETbiRtaSN+
+	2Dx5v01Zc5yYPMJIB85Pqy/MEQNaItgCPDF2Kw34Vmo8C6F6EGwsWmtfbdWHvD8M
+	SFeMH/uwoRXC/JjOGfcQowVWR+N/q+6aUROulrW+n1Qk0U9/RR9FC8ZrVchUJiB4
+	h9dL7832YWYw9v1LPTEXiQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755846360; x=
+	1755932760; bh=oMJSNEUSKKDn7Dffolj3gAHZX6/fUfm0lTvkTxBDCHk=; b=T
+	Qa2Lw8IsH7CgksQbCfiAXgGJ6Q6WDsnBSrBgBJYLQ2AQHlyPP9M+IgR/NU5sHCu9
+	YtcugPu5usZTlGrlgCfndU3Ql6KhqUgD6whCr0WTZ4BBQQv42coIavErY4qGgEsG
+	/f67tn3p5AuN+JNPwrJjr0ecyEjrIf+H9RLSwJ716DBTTWzvghuKGbhEl0aptY9W
+	nT//CQfw0vxd/I+wGVqOvYqGAkCeE06Q6hRrMEm9gl46pB1KaLernRuHQPZHcjLc
+	rVwhAgBF/vjjYSYMCW4SOU+mjGwU2aagKuPhnVwX28P4UtRUo0AkPsrKt03ivyaB
+	XiGNvEQQOMcT3bzK+Y2XQ==
+X-ME-Sender: <xms:2BaoaOLaWKSmrt1w6Rz5mEIUTSxDRXFsnfmLjr6i_Fb3FjJfW78b6g>
+    <xme:2BaoaGJaytqaykyXZ6D4GOTJfBtxh6-botUl-TMU-QvSND3v8xxXIzpLnrbh7Yjqx
+    98N_B1JKkHPHGizqIw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieefudduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpth
+    htohepnhhitghkrdguvghsrghulhhnihgvrhhsodhlkhhmlhesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehjuhhsthhinhhsthhithhtsehgohhoghhlvgdrtghomhdprhgtphhtth
+    hopehmohhrsghosehgohhoghhlvgdrtghomhdprhgtphhtthhopegrrhgusgeskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehnrghthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghr
+    mhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoh
+    eplhhlvhhmsehlihhsthhsrdhlihhnuhigrdguvghv
+X-ME-Proxy: <xmx:2BaoaHX-rBzOi4fEzVlO_r-b6O12-Gd2BQqvF1-u7ZKpmJW09pV8dQ>
+    <xmx:2BaoaKCDunUP6cGWqSpPLXrcfnSk3O0vFgdrz12DZPYi43gJO068kg>
+    <xmx:2BaoaK5JlhyQr4SR8w-x-xYIUQddJ3ChifOGxZJbBcQ7IGhZ58B-0g>
+    <xmx:2BaoaJ3Uh3_j5Rrj0JYci63M16Tb-5bboRUvoOh-cNjk9AA9Q7BWKQ>
+    <xmx:2BaoaESHR9avTufRWoOnB7jyYuS4O_fJriKScgy4arR5vT0HhzH2TWW6>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 0E72B700065; Fri, 22 Aug 2025 03:06:00 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: AlhDZOV2HdTF
+Date: Fri, 22 Aug 2025 09:05:38 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Nathan Chancellor" <nathan@kernel.org>, linux-kernel@vger.kernel.org
+Cc: "Kees Cook" <kees@kernel.org>,
+ "Nick Desaulniers" <nick.desaulniers+lkml@gmail.com>,
+ "Bill Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
+ llvm@lists.linux.dev, patches@lists.linux.dev,
+ "Russell King" <linux@armlinux.org.uk>, "Ard Biesheuvel" <ardb@kernel.org>,
+ linux-arm-kernel@lists.infradead.org
+Message-Id: <35178205-7cff-4b4b-abdd-b4cfb9e69dc2@app.fastmail.com>
+In-Reply-To: <20250821-bump-min-llvm-ver-15-v2-3-635f3294e5f0@kernel.org>
+References: <20250821-bump-min-llvm-ver-15-v2-0-635f3294e5f0@kernel.org>
+ <20250821-bump-min-llvm-ver-15-v2-3-635f3294e5f0@kernel.org>
+Subject: Re: [PATCH v2 03/12] ARM: Clean up definition of ARM_HAS_GROUP_RELOCS
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-From: Sean Christopherson <seanjc@google.com>
+On Thu, Aug 21, 2025, at 23:15, Nathan Chancellor wrote:
+> Now that the minimum supported version of LLVM for building the kernel
+> has been bumped to 15.0.0, the first depends line of
+> ARM_HAS_GROUP_RELOCS is always true, so it can be safely removed.
+> Combine the !COMPILE_TEST dependency into the 'def_bool' line and update
+> the comment as well.
+>
+> Reviewed-by: Kees Cook <kees@kernel.org>
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 
-Avoid local retries within the TDX EPT violation handler if a retry is
-triggered by faulting in an invalid memslot, indicating that the memslot is
-undergoing a removal process.
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-This prevents the slot removal process from being blocked while waiting for
-the VMExit handler to release the SRCU lock.
+>.
+> 
+>  config ARM_HAS_GROUP_RELOCS
+> -	def_bool y
+> -	depends on !LD_IS_LLD || LLD_VERSION >= 140000
+> -	depends on !COMPILE_TEST
+> +	def_bool !COMPILE_TEST
+>  	help
+>  	  Whether or not to use R_ARM_ALU_PC_Gn or R_ARM_LDR_PC_Gn group
+> -	  relocations, which have been around for a long time, but were not
+> -	  supported in LLD until version 14. The combined range is -/+ 256 MiB,
+> -	  which is usually sufficient, but not for allyesconfig, so we disable
+> -	  this feature when doing compile testing.
 
-Opportunistically, export symbol kvm_vcpu_gfn_to_memslot() to allow for
-per-vCPU acceleration of gfn_to_memslot translation.
+The change is obviously correct by itself, but can we revisit the
+question of whether the COMPILE_TEST check is still needed?
 
-[Yan: Wrote patch log, comment, fixed a minor error, function export]
+Trying it out, I single link issue using llvm-21:
 
-Reported-by: Reinette Chatre <reinette.chatre@intel.com>
-Closes: https://lore.kernel.org/all/20250519023737.30360-1-yan.y.zhao@intel.com
-Signed-off-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
- arch/x86/kvm/vmx/tdx.c | 11 +++++++++++
- virt/kvm/kvm_main.c    |  1 +
- 2 files changed, 12 insertions(+)
+ld.lld-21: error: vmlinux.a(arch/arm/kernel/entry-armv.o):(function __bad_stack: .text+0x110): relocation R_ARM_LDR_PC_G2 out of range: 10168 is not in [0, 4095]; references 'overflow_stack_ptr'
+>>> defined in vmlinux.a(arch/arm/kernel/traps.o)
 
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 6784aaaced87..de2c4bb36069 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -1992,6 +1992,11 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
- 	 * blocked by TDs, false positives are inevitable i.e., KVM may re-enter
- 	 * the guest even if the IRQ/NMI can't be delivered.
- 	 *
-+	 * Breaking out of the local retries if a retry is caused by faulting
-+	 * in an invalid memslot (indicating the slot is under removal), so that
-+	 * the slot removal will not be blocked due to waiting for releasing
-+	 * SRCU lock in the VMExit handler.
-+	 *
- 	 * Note: even without breaking out of local retries, zero-step
- 	 * mitigation may still occur due to
- 	 * - invoking of TDH.VP.ENTER after KVM_EXIT_MEMORY_FAULT,
-@@ -2002,6 +2007,8 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
- 	 * handle retries locally in their EPT violation handlers.
- 	 */
- 	while (1) {
-+		struct kvm_memory_slot *slot;
-+
- 		ret = __vmx_handle_ept_violation(vcpu, gpa, exit_qual);
- 
- 		if (ret != RET_PF_RETRY || !local_retry)
-@@ -2015,6 +2022,10 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
- 			break;
- 		}
- 
-+		slot = kvm_vcpu_gfn_to_memslot(vcpu, gpa_to_gfn(gpa));
-+		if (slot && slot->flags & KVM_MEMSLOT_INVALID)
-+			break;
-+
- 		cond_resched();
- 	}
- 	return ret;
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 6c07dd423458..f769d1dccc21 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -2661,6 +2661,7 @@ struct kvm_memory_slot *kvm_vcpu_gfn_to_memslot(struct kvm_vcpu *vcpu, gfn_t gfn
- 
- 	return NULL;
- }
-+EXPORT_SYMBOL_GPL(kvm_vcpu_gfn_to_memslot);
- 
- bool kvm_is_visible_gfn(struct kvm *kvm, gfn_t gfn)
- {
--- 
-2.43.2
+which is from this line
 
+arch/arm/kernel/entry-armv.S:   ldr_this_cpu_armv6 ip, overflow_stack_ptr
+
+with the macro expanding to
+
+        .macro          ldr_this_cpu_armv6, rd:req, sym:req
+        this_cpu_offset \rd
+        .globl          \sym 
+        .reloc          .L0_\@, R_ARM_ALU_PC_G0_NC, \sym
+        .reloc          .L1_\@, R_ARM_ALU_PC_G1_NC, \sym
+        .reloc          .L2_\@, R_ARM_LDR_PC_G2, \sym
+        add             \rd, \rd, pc
+.L0_\@: sub             \rd, \rd, #4
+.L1_\@: sub             \rd, \rd, #0
+.L2_\@: ldr             \rd, [\rd, #4]
+        .endm
+
+Would it be possible to either change the macro or to move
+the overflow_stack_ptr closer in order to completely eliminate
+the CONFIG_ARM_HAS_GROUP_RELOCS symbol and have VMAP_STACK
+enabled for all CONFIG_MMU builds?
+
+Are there any other build testing issues with ARM_HAS_GROUP_RELOCS
+besides the one I saw here?
+
+      Arnd
 
