@@ -1,469 +1,469 @@
-Return-Path: <linux-kernel+bounces-782373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A743B31F8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:52:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57445B31ECD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A6311D4115B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:48:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7664E625A96
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FA428850F;
-	Fri, 22 Aug 2025 15:37:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C4F288537;
-	Fri, 22 Aug 2025 15:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755877047; cv=none; b=qn8iIxu1dgsxMSHy8fpJzjMS68IxYxCF6nnKRNfDCVWfeXqmSabI2Sm73e3XoAHkSUbp0iPBvYU4+Z9KhFz2veS68mhEaLdT2VQBcKZRmQKSoUasvOTIIizsJntQ3bjewptTqAk+YM0zDpp9Z415NLWiYk0W6qcBb5Q/yhWAiCQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755877047; c=relaxed/simple;
-	bh=lragvBPTnKAmGnzARVDDLvZBMkp4gYril1NUMVAfObk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ispS1nBgtRGNJcVKPTo8o8sZadLIDB8rDGoLLt4yIePqGHTvZjtW6ZpkT860b/Epg03mbBoRzQYvPyV3KoZjQIW9yjlzmJ97oMnjV0TURYSRtGyVRKvPhjXxd6aG3unHRU/Iau7vMhPmcuquzOLB3D9JfnyUCLZlEA4jMPbakdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BFF652880;
-	Fri, 22 Aug 2025 08:37:16 -0700 (PDT)
-Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B04383F63F;
-	Fri, 22 Aug 2025 08:37:19 -0700 (PDT)
-From: James Morse <james.morse@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-acpi@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: James Morse <james.morse@arm.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com,
-	lcherian@marvell.com,
-	bobo.shaobowang@huawei.com,
-	tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>,
-	peternewman@google.com,
-	dfustini@baylibre.com,
-	amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Dave Martin <dave.martin@arm.com>,
-	Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	fenghuay@nvidia.com,
-	baisheng.gao@unisoc.com,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Rob Herring <robh@kernel.org>,
-	Rohit Mathew <rohit.mathew@arm.com>,
-	Rafael Wysocki <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH 33/33] arm_mpam: Add kunit tests for props_mismatch()
-Date: Fri, 22 Aug 2025 15:30:48 +0000
-Message-Id: <20250822153048.2287-68-james.morse@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250822153048.2287-1-james.morse@arm.com>
-References: <20250822153048.2287-1-james.morse@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31AF23D29F;
+	Fri, 22 Aug 2025 15:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SUbHdF9r";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="NU7KEvxU"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B9421D3CD;
+	Fri, 22 Aug 2025 15:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755876712; cv=fail; b=QjXLhF9mbsSh+RkE2OyXQ5lhcMwbiea47nE6a3s8HCdNfkGGREMPKXHR6PHgqCixTGPW/83WSgyvZQvqdm8JzrTtx3cFBUpqpKNphNcW54aqXZI49hGjSPw8ozS0urnkOmKSRlOkBcm0NNXegL8fD5miQthrgbWRDM3X9vf5WGA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755876712; c=relaxed/simple;
+	bh=NLhvzQzGG3X4jgbcKd5oIKDBaw1W2Y9jIJWIMeJl/EE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=dsUoy6k2AlfnPOAewjOQFrnqkeYvKB2KmPebq47tmsmlu8tGS1DR3cKMjrcAsiBw4JEoo7dEp5lUWAlBR1oj9GU+yf5XlIa4VacP/TrH7MqoxVdms5yHNOGjoTHecJuf2BmhNzHNZDzkixHjqacvctgxwgBf15rDSniTmi6/xVM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=SUbHdF9r; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=NU7KEvxU; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MDmn8w032589;
+	Fri, 22 Aug 2025 15:31:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=0TE+XnqRM7niU3T6+bjJnBMXiRpQlENKxbi5NaYz0TE=; b=
+	SUbHdF9rLP8d8VYlohndMtOi12jXfg5VahI2S17UOOs/u+M/IO98xKp8k6cZ5ZtH
+	cZzEvb1Dwm73GKt4nP4IqBR+C/mdXHe/6QasXQhf21tNmll3TjA6jqaVA4vg8Kui
+	x7GNjldyVPmTlrQtpJyJyntkFlrPjDBwAdeWiJnUNbyL+4dQCUeu/GxlG/kozDDN
+	kLWZLe2X5Go+hCeomSMSaOPuLY5Wy3By6dLfHthsAp3r1IfRSR0147KYI2gPNLiN
+	gVBJ5pptjzG5STdvsy+uTUKW5vwuyrd7ZqjNqPiiwoOq/g6bCeRL0SoG1yIapaLF
+	P98pHhvpLUsMK0xED3Pbzw==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48n0tqx29s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 22 Aug 2025 15:31:26 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57ME6pDI020631;
+	Fri, 22 Aug 2025 15:31:26 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12on2042.outbound.protection.outlook.com [40.107.244.42])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48nj6hg10f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 22 Aug 2025 15:31:26 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OEcCjnT8esSGJW03hViNAsWKdBSuqnKGoROV0ioh05s5SVusockFmC6h4wIEuz7J4bPjlRjOqqdE1jOZi5TPp/Tx7iWvT99DTnVJjv6hZDSJiCLDpAItwsNHEWl7j6TUej7dqZJ5gslHjmbe+CAYoBf6xP+hmXTcBWUx0hH2c2s3nGf5UVQiErmJd8pQ7tCiy1GnVCbDjlyK4UzSarYAMZ5GkhHjUTUyv7iVziKp/kfUF8EniL+0vvfi+r01e5jWPTpXNNomrykDnuPmiavj+ZRK7BcLaWB6CYgZ2MkxAJuh9zXc8tDpo9X4IkTQNgwcy34w8OOryz/5P6XpPd5xXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0TE+XnqRM7niU3T6+bjJnBMXiRpQlENKxbi5NaYz0TE=;
+ b=IU9/4M2qpmdUoTVlopMNgl575FjdIerNSWFiCnedEwOm7FwgmsTIvYlKKEIaboIngLeiFUR/DKSc02f3h9ur32mQszFoW9hmssxqIWJ1xTacYnYaupsJadVXemwZOItr4xxYhMQUJxB84FaLZq64OTxQDRmbosubTFVwb78IA2m2/i4Xg6C6y3H0RRMxe7p7jO/t/82WbkxPaaDHW8Trz6ZSCENbIREFy3BChyW4U7Ge23tmVmuNb/WBsARQJ9vadNPcPh5fZ63GZqSsUDCLcHfdVzxG5cy2cOCFTDjtpwhBqoB/ZWFOBRzZi3X7TdasA5+CDhsxYTiERisrhfaCwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0TE+XnqRM7niU3T6+bjJnBMXiRpQlENKxbi5NaYz0TE=;
+ b=NU7KEvxUzUrhaUIaRfK7gV2b/vP24JofMo7lwC8nDkn1t3owr8sw5p6jEb7/JPJSfM/oybeFdfMI1Cd5iZ4BKjkk3un2nkZnIBaZvQWDd2OFT2K20Jhg2Uj/HSb6yFRl05kRiu9cKPeuuN858Ok0eDqY2jLntfGUgNVpNQcHUIc=
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
+ by DM4PR10MB8217.namprd10.prod.outlook.com (2603:10b6:8:1cc::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Fri, 22 Aug
+ 2025 15:31:23 +0000
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c%5]) with mapi id 15.20.9052.013; Fri, 22 Aug 2025
+ 15:31:23 +0000
+Date: Fri, 22 Aug 2025 11:31:19 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Alice Ryhl <aliceryhl@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Andrew Ballance <andrewjballance@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+        Benno Lossin <lossin@kernel.org>,
+        Andreas Hindborg <a.hindborg@kernel.org>,
+        Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+        linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
+        rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 3/5] rust: maple_tree: add MapleTree::lock() and load()
+Message-ID: <mrc7a7s7g4ylxvxfezwx3rf7ry7sng4adn64i443aikpjfz5ik@jq4co7zq7ryq>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Andrew Ballance <andrewjballance@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+References: <20250819-maple-tree-v2-0-229b48657bab@google.com>
+ <20250819-maple-tree-v2-3-229b48657bab@google.com>
+ <38B2DEA2-774D-45B5-8923-C5330B975FB9@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <38B2DEA2-774D-45B5-8923-C5330B975FB9@collabora.com>
+User-Agent: NeoMutt/20250510
+X-ClientProxiedBy: YT3PR01CA0053.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:82::20) To PH0PR10MB5777.namprd10.prod.outlook.com
+ (2603:10b6:510:128::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|DM4PR10MB8217:EE_
+X-MS-Office365-Filtering-Correlation-Id: d0a3f022-3a77-42be-48ac-08dde190f36b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SFY4cG0vYlhPOWxJWGVWZGxMc3E3UGtZcXlHb3Bwd0tHYmlIYXRCWlBrUGxK?=
+ =?utf-8?B?TEtQRzUwaXBHVnpyOGNFVXUyUnZoVjJQdzlCVTRsYWQ1RXFkNElQVnh2WHdQ?=
+ =?utf-8?B?Qm1NRUxTTFU5cHZkL3kvZ1g5aDVmL05wVlk5amVHb051T1g4M2xBdE1MeE96?=
+ =?utf-8?B?RDFzaXN5eUwyYnJvKzBJYUR5ekE0WlZLUG15T05UZUl4NUZVelVKTnJRUkUz?=
+ =?utf-8?B?TnFiUTJVblR1TFBKa04ySXJaQ09MV1dHclJGUkdpaDF5YURNcG1ReHVGZUNm?=
+ =?utf-8?B?clRSZVdtUVNVQ3hSK0VhT3dzU2YxWCtLTVN0OW00by9xT3FEbWw4V3ZydUI5?=
+ =?utf-8?B?NnZ1Ny9mSElwQzVCZ3hNVGhhQnoyVFRCVUNvbGhwV3JISDVpUkdzRi85Vmli?=
+ =?utf-8?B?c2F3UzU4ekxQVHVKb0hMT3NodUpPOEhUNEJ4Nkpibkl0anIxQ0ZaRXIzTFRi?=
+ =?utf-8?B?blFYM05iWVYyc09VYlozVVBtbjRiTm9KOW1XSllGb1RPdGNCTHpoeCszQ0Q3?=
+ =?utf-8?B?WnpkT01SYkhXcjVTYnM0bGI5MXY2ZmNhN01DS2J0RStGMUQwS0xJODVJeisv?=
+ =?utf-8?B?WU9WR3B3bEJsYTVYT01paWdJcGovU1JNMDREalpJbkJJUC9FZUpZT2RWT3dK?=
+ =?utf-8?B?Y21Qb0UzS25pY0g5TTlZS0diTU0yRHE1NGJ4N3cyQVVNTnNTbnZ5aW9TVGhR?=
+ =?utf-8?B?NU9kN3pCSHJKeGYrTjhzbC9lNFVKV21kbHBVbzRIRUwzaTBLbWU2SDVPNjRn?=
+ =?utf-8?B?enZxcDZ1SGlFODYydXk2Q0g0NlA5RFVNOWhCM2JtS0V6Vk1IN0RyMVRxUzNa?=
+ =?utf-8?B?dzkvNkdSOWQ2dEVoeUFiM091YXk2anNweWMyT21ybGh2MGlVRDZmZ2x5aksy?=
+ =?utf-8?B?MjF2Vi9VcDRlQWJ5bFFWUVgvUGdYeUpvU0owdGxZZWtoLzZsSEhRcUNnT2VT?=
+ =?utf-8?B?SmVkT2pJMzJ0dEdraW54eFdWRytuL1RPR2lmUEpJVlp0TjVKL1JkaUhOcGNB?=
+ =?utf-8?B?ZmVSTGFwdFUrYko4cXRvcnNQRHZHbVlkYklnR1A5bm0veWxtV09QTFhqTzh2?=
+ =?utf-8?B?MFd2TTNHbE1rOEZnMWxZcmhqeUVHdWpTS1lMeWNBMzAva0p6bzdRNUMyRzI4?=
+ =?utf-8?B?a3Jpb0hRM1NLTmJXdmhIVFhuOCtpblBhYXM3b0dVeUMzUkJ4RzN0S1EydFZR?=
+ =?utf-8?B?NTM5aDdmbGl0T3BXK0YzNkpaL0trUHJTMXo3bzdWWGZrRWRSRVpZWmQ2WThE?=
+ =?utf-8?B?enhRL3JDSW5hT1hSRUxBaklhYVRWWE9iM1QrSWp2RkdOU3VMdjBScWVQbm1l?=
+ =?utf-8?B?c3RNU2tvVFhINFB2eTlyTHN0MFJBWVMyWWlCY214S3BVK2ZNbGt1elo5eDJE?=
+ =?utf-8?B?Sk02YmE4ejZMZlRJY0pDVDlsNWRYOWszM2RaUHBMNXd0Wll2Q3JLRFAxWHVD?=
+ =?utf-8?B?VEY0bDFTcFVjS0xzbisyOEt1ZHFIYnBKeGpHdktwdlhGWjB1cVNHWEJVSU5T?=
+ =?utf-8?B?S3pybUZ1SWl3NmJQd1pJMXEyOEU4SzE0djZ2TVRTTDFlSFRZOGJ0ZVloWTZ5?=
+ =?utf-8?B?SEwrNTdWbUc5WHRnYTlNTkl3TmJ5REduWWN1MFptektSZi9iTnlDcFI0N2xi?=
+ =?utf-8?B?SmdRbkIvTjRRVjVieFk2SGF1VlpOWElBQll3VU5iMGZITmxrc3VxSldYcHFu?=
+ =?utf-8?B?SVRGYnY4TjhaSEhlTE1LV2tjTU83N21hYzEyVFdQM2pHMTFLRWFLbG5ZWWxh?=
+ =?utf-8?B?dEJWUnAzWThoVVJPTHhlUWF1eCtDS2VIOWFEMUVjZTZXdXcwNjF2dERoeFIz?=
+ =?utf-8?B?VnkwczhQZmJJTXhTVVNQL1N4ZFlFU2RCbU1NQWYxOExjSWdwcDlHV3dDY0tN?=
+ =?utf-8?B?V29pYkVpUTJobnFHQ25sMzdxL0lZT1lQYzdiaUQ5Y1YyZVErb2xLNURvNllY?=
+ =?utf-8?Q?BRB+gDqvUFQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VGlGQ21YZVVCLytrbzhjKzhMTjA2bTFzUUZFY3ZJRks2RUNvMyt3bHNJWXRm?=
+ =?utf-8?B?RSt5VzN1YW1jOUpFaXFHWGlMbWhJcmxwQ29KYnBZWmo5MUN2cTdIeDJlOStR?=
+ =?utf-8?B?OGJBTHNEeFZPYitNT2MvVjVWK1IvZStoMzc0c25VNnNlSWl5bERBWkZPTVpx?=
+ =?utf-8?B?NjcwOUwzTnZGTG54RndRQVY5OStpT29wclJESnlCMXhzVWNxem9nVGRjZHRL?=
+ =?utf-8?B?OSsxR1oyYUhMWGxVNFAxeEx2NWFZMVNmOWNXVnJLdURMOVFLSFRMTFoyNVlB?=
+ =?utf-8?B?UDRSSmxNdEttLzE1REdSTit2QXVZbGtlMWxOWDlRWHYyZ3FnYUZlbDR4dlE1?=
+ =?utf-8?B?NnppaVp5T2hjak0zY3dDK1dHUzFvRVkvWUNPSnRWTFNCdEdCa1BBWHlhS2hS?=
+ =?utf-8?B?THhsZllGSTFxb1g1MnRvQUNJSHh4NTBZNHMwME1lMkVkQzF2aFZoMWFja1Fw?=
+ =?utf-8?B?WG1rakxsWWZ0aDlEWUVicExhSElOb1FFdmJpVCtGaUd3TENzell5WUpNVE5z?=
+ =?utf-8?B?bEZpOGQrcXZqUFFkRTR0Z3hxRVNoTWFyMS9Yd2ZIWUVkSFRsbzczYlozdzhC?=
+ =?utf-8?B?dG9KQTFlWXhFaGIrOWNOeDFleHRLWG9OQ2ZXYlZMUXQ2aHlWU0FtdGticHBV?=
+ =?utf-8?B?WklwdXZyUDRHQ2RCRlZUOFdNWGJJMWRSTHBkUE9LNCszazd0cEhaNHNnSi9C?=
+ =?utf-8?B?cU1lb0ZXMUVjckRJSFlKa21RYVU5Tk9kazZUbWpoRUVhQ3NQeHFnNnhsQWsw?=
+ =?utf-8?B?ZG9uQnJINmZsSm92ajNnVTRROWM5UWJ4OGxsWlhhY1RyK2ZMVVFHcTZyaWFR?=
+ =?utf-8?B?Vm5rcjJVczlGc1NaN0IweENHMlMrYVhvM1gydUpLdnREdHVUODRvREFtUkhH?=
+ =?utf-8?B?YVZ1dUVla3RGdkRRU2ErZ2MxZkhjOW5iU1dneGpaTklTd1FuVWZ4Q1hybzhj?=
+ =?utf-8?B?NjA3QUlnL1pNUXdlNzNOV1pmcnhjdFhQUlZ3K3lsTEhjZUN3NldncjNxS0ZM?=
+ =?utf-8?B?SWlJaFdIT2VndldWNmJWeU5YamEzME03MS96NFhSQnpCa0xVaSttNkxXV1Fx?=
+ =?utf-8?B?dnJwUnk3UEI1ZWZxM1V2cGJwN1R2d0RjNjRQZjFrZEd0UG5LUzJJTVN2cENN?=
+ =?utf-8?B?QlhiMkpSbFB1UEROZDBnazhvYkV6a2laYk8zNWk0NG9ZSUV3V0plblhnam44?=
+ =?utf-8?B?TzQrMlpFaTN5SVJIcHpOUWhDNXMvUU1mbml3TUROcEk2djBad2p3U21IN3dH?=
+ =?utf-8?B?dTR4Z21Bcmlzb0VIQVR2aGJXK1kyN0VmbDJyMG9SMGFsN3k2SmlRUVQ0YlZ2?=
+ =?utf-8?B?WGlBMFk3ZXJMaFl0OEdnemdIT0ZqSTBQdjVXZEo0MndNZTEwT2owMy9uNEhj?=
+ =?utf-8?B?Sy9hbFA2d0NNZkFyWVEzT3pVcXFaRUhadE9SUlFreGxETytjcHZXblJqbVo2?=
+ =?utf-8?B?UkZHdFZVait2OWFwRGcwNG5KZ0p5OElnM1NFZ1RtVUxhbXBIVjlmYmU4QmZW?=
+ =?utf-8?B?Vk1nano3RGFlSWxhTTYrOFJVdTJDLzZuUHpqWUZoQ2lINmN6SzBtWVhaNk5N?=
+ =?utf-8?B?WlJ0b3JSY3NJSFB4OXZrS083Y1RPYW9QcnpNRm9VaHAvS296T3BKM0lxSy9Y?=
+ =?utf-8?B?aXZENXlvY2t4bEZ6K05sRG9DUExxa2RjMUNRak15bEhKQTVpYldKcm1pZDIv?=
+ =?utf-8?B?YzNia3Nheit6aTIwMGRVMWNhT3ViazJPdThZMGtCYVBpTEJLcTFYcUV1NTkz?=
+ =?utf-8?B?MlJJcXdFN1hDb0tja0FtQjZ0d1h0SGo1aDJVRUpWMFlnS1VuWGpKdDVycDJi?=
+ =?utf-8?B?Qnk5UGhDVW9jTExCNGwyd052aFlUK2p6am9saUg1UXBiZmUxZ3hLZ1BMS1lw?=
+ =?utf-8?B?dE95NzBRL05XWFphMWtsYndyMmJnS3ZnZzBzYmdnVFNRSG52WnNTZ3JHMnZZ?=
+ =?utf-8?B?K3JBUFNmM2JsZ0JHMGRYejIvT3c5aTdmaTdFRlJSa3JCQ2FjNjFBZmw3TlZy?=
+ =?utf-8?B?UE9wYjZDWDM2SHYvSFJmSS8wdW11WTdmMm5wc0dqU1NSbzV3SCtMYUk5UEgx?=
+ =?utf-8?B?L05wdFdEbFVSL3ZidVpxSGU1VDc3ekYrbEloNHlRa2Evejd4aEo2VmRkNVBy?=
+ =?utf-8?Q?qgL4y72ymMZkeARXFH3g3dxTU?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	7Iqj1x+0PkdK2j+Wzgm7DDXPEqQaLTm29uWh/p05zD1PnijI16tbmVNfLVwxeaYqdpUfY4nW1mhgBmXkBq4RK9BKf5xSu1L/p2OLx7nlLhpacj3c6sxcyXccOvpO/9eAQBOx1fsyPIXZWxrsIxPuYn6YtYeTBVGlbVBZLYxFHzqZyoJ+fMhbGKSGuHnSiLJVNOSBFjf5hZMi5X+y0he5DsWqLPeHb9K6zdB5HAhdetPAjecovUdbtkTW+UXGCV4e5OF28EI+MB1/3TQylm7EIgorAVi+Hu/XrXoB1r/035aeLlXFZSER91UOT1rYKbUi90cHqpJKMO07AhPJgpg0MzqubN6ARfpsjo0HmbZUOgv4KbxW07S/hVcYYvg6YeFo5hmrYOYKBepNwVnVKxu29taJUQ/iWlfqoPqN/pmrM9x69zKljuMAMToArZMfh6lxTcVcevnYv903m9TUwynF6xobMLqNJvgISAzUMAMpZSySGVBFJnblV+8BR8D+Jyb3z5RVSunq4MdCpM/1+oLRpi4Wv0XOqPxYNfwpY+a+M0E6n9E3FFTMrDWMSk8iBABJKXmKne5Cz9D+p6OoGDmoBvH0eQb3yfrRMC9nAbtdIk4=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d0a3f022-3a77-42be-48ac-08dde190f36b
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 15:31:23.3872
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cuUYmDSoeOmggpH2mJuP/LrjNnetPoOol+QhkLupGdN0PQ1O3r6DDQrohELXD5eXt7KNGqeo7meHNCjAmDMn4g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB8217
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ suspectscore=0 bulkscore=0 spamscore=0 adultscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2508220140
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDE5NyBTYWx0ZWRfX2hSXnpe+jeMy
+ T03qFrNmqEWMAdHneecUvD+tylbp/B8tPAselmQOHAV1fjzNjmS8Eci2cEpWr7+zZ1kThy1uopc
+ Li/w0k4lzoKX7A0K0sjEqklvqy4uwt884tLMvpejVTGrDYvw3N7b5NptrY33Bqiy5JthTLrn/qB
+ gbIdHL/LYU77o/ExCaAXF0CZcTqi0NdCSpv2FWEhm05lMuuLGP3r5va+B5M2HKV+A3Kcm5Payl6
+ bv+W8GTM+QtmJyij3VG2W6/U/zOL3VI1QwCvl3YFwqofl50y1qHagyHLFisAPhvMj92Aqzn6wCK
+ BK9UArMdBfyhOBEzthvFk/8F09RF/jexFGQefh7nDgWUNIzV2cDbjQfXBYxIqANGa2rdN9LVqeR
+ Oubjcgrz5EFBwkcFj5Un7veauJatXdeJVNgT7nPnNqpH2MYMYA0=
+X-Proofpoint-ORIG-GUID: wiMyRNr8YlnuS39kYrj0194laxtAy2zm
+X-Proofpoint-GUID: wiMyRNr8YlnuS39kYrj0194laxtAy2zm
+X-Authority-Analysis: v=2.4 cv=K/p73yWI c=1 sm=1 tr=0 ts=68a88d4e b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=QX4gbG5DAAAA:8 a=1XWaLZrsAAAA:8
+ a=pGLkceISAAAA:8 a=eCHl1Wyg1uum3Av_NTcA:9 a=QEXdDO2ut3YA:10
+ a=AbAUZ8qAyYyZVLSsDulk:22 cc=ntf awl=host:12069
 
-When features are mismatched between MSC the way features are combined
-to the class determines whether resctrl can support this SoC.
-
-Add some tests to illustrate the sort of thing that is expected to
-work, and those that must be removed.
-
-Signed-off-by: James Morse <james.morse@arm.com>
----
- drivers/resctrl/mpam_internal.h     |   8 +-
- drivers/resctrl/test_mpam_devices.c | 322 ++++++++++++++++++++++++++++
- 2 files changed, 329 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-index bbf0306abc82..6e973be095f8 100644
---- a/drivers/resctrl/mpam_internal.h
-+++ b/drivers/resctrl/mpam_internal.h
-@@ -18,6 +18,12 @@
- 
- DECLARE_STATIC_KEY_FALSE(mpam_enabled);
- 
-+#ifdef CONFIG_MPAM_KUNIT_TEST
-+#define PACKED_FOR_KUNIT __packed
-+#else
-+#define PACKED_FOR_KUNIT
-+#endif
-+
- static inline bool mpam_is_enabled(void)
+* Daniel Almeida <daniel.almeida@collabora.com> [250819 13:08]:
+> Hi Alice,
+>=20
+> Overall LGTM, a few comments below,
+>=20
+> > On 19 Aug 2025, at 07:34, Alice Ryhl <aliceryhl@google.com> wrote:
+> >=20
+> > To load a value, one must be careful to hold the lock while accessing
+> > it. To enable this, we add a lock() method so that you can perform
+> > operations on the value before the spinlock is released.
+> >=20
+> > This adds a MapleGuard type without using the existing SpinLock type.
+> > This ensures that the MapleGuard type is not unnecessarily large, and
+> > that it is easy to swap out the type of lock in case the C maple tree i=
+s
+> > changed to use a different kind of lock.
+> >=20
+> > Co-developed-by: Andrew Ballance <andrewjballance@gmail.com>
+> > Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+> > Reviewed-by: Andrew Ballance <andrewjballance@gmail.com>
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> > rust/kernel/maple_tree.rs | 139 +++++++++++++++++++++++++++++++++++++++=
++++++++
+> > 1 file changed, 139 insertions(+)
+> >=20
+> > diff --git a/rust/kernel/maple_tree.rs b/rust/kernel/maple_tree.rs
+> > index ea1bd694213b73108732aecc36da95342aeafe04..17e4d8586ebad56aee87a97=
+befdfec5741f147de 100644
+> > --- a/rust/kernel/maple_tree.rs
+> > +++ b/rust/kernel/maple_tree.rs
+> > @@ -220,6 +220,22 @@ pub fn erase(&self, index: usize) -> Option<T> {
+> >         unsafe { T::try_from_foreign(ret) }
+> >     }
+> >=20
+> > +    /// Lock the internal spinlock.
+> > +    #[inline]
+> > +    pub fn lock(&self) -> MapleGuard<'_, T> {
+> > +        // SAFETY: It's safe to lock the spinlock in a maple tree.
+> > +        unsafe { bindings::spin_lock(self.ma_lock()) };
+> > +
+> > +        // INVARIANT: We just took the spinlock.
+> > +        MapleGuard(self)
+> > +    }
+> > +
+> > +    #[inline]
+> > +    fn ma_lock(&self) -> *mut bindings::spinlock_t {
+> > +        // SAFETY: This pointer offset operation stays in-bounds.
+> > +        unsafe { &raw mut (*self.tree.get()).__bindgen_anon_1.ma_lock =
+}
+> > +    }
+> > +
+> >     /// Free all `T` instances in this tree.
+> >     ///
+> >     /// # Safety
+> > @@ -263,6 +279,91 @@ fn drop(mut self: Pin<&mut Self>) {
+> >     }
+> > }
+> >=20
+> > +/// A reference to a [`MapleTree`] that owns the inner lock.
+> > +///
+> > +/// # Invariants
+> > +///
+> > +/// This guard owns the inner spinlock.
+> > +#[must_use =3D "if unused, the lock will be immediately unlocked"]
+> > +pub struct MapleGuard<'tree, T: ForeignOwnable>(&'tree MapleTree<T>);
+> > +
+> > +impl<'tree, T: ForeignOwnable> Drop for MapleGuard<'tree, T> {
+> > +    #[inline]
+> > +    fn drop(&mut self) {
+> > +        // SAFETY: By the type invariants, we hold this spinlock.
+> > +        unsafe { bindings::spin_unlock(self.0.ma_lock()) };
+> > +    }
+> > +}
+> > +
+> > +impl<'tree, T: ForeignOwnable> MapleGuard<'tree, T> {
+> > +    /// Create a [`MaState`] protected by this lock guard.
+> > +    pub fn ma_state(&mut self, first: usize, end: usize) -> MaState<'_=
+, T> {
+> > +        // SAFETY: The `MaState` borrows this `MapleGuard`, so it can =
+also borrow the `MapleGuard`s
+> > +        // read/write permissions to the maple tree.
+> > +        unsafe { MaState::new_raw(self.0, first, end) }
+> > +    }
+> > +
+> > +    /// Load the value at the given index.
+> > +    ///
+> > +    /// # Examples
+> > +    ///
+> > +    /// Read the value while holding the spinlock.
+> > +    ///
+> > +    /// ```
+> > +    /// use kernel::maple_tree::{MapleTree, InsertErrorKind};
+> > +    ///
+> > +    /// let tree =3D KBox::pin_init(MapleTree::<KBox<i32>>::new(), GFP=
+_KERNEL)?;
+> > +    ///
+> > +    /// let ten =3D KBox::new(10, GFP_KERNEL)?;
+> > +    /// let twenty =3D KBox::new(20, GFP_KERNEL)?;
+> > +    /// tree.insert(100, ten, GFP_KERNEL)?;
+> > +    /// tree.insert(200, twenty, GFP_KERNEL)?;
+> > +    ///
+> > +    /// let mut lock =3D tree.lock();
+> > +    /// assert_eq!(lock.load(100), Some(&mut 10));
+> > +    /// assert_eq!(lock.load(200), Some(&mut 20));
+> > +    /// assert_eq!(lock.load(300), None);
+> > +    /// # Ok::<_, Error>(())
+> > +    /// ```
+> > +    ///
+> > +    /// Increment refcount while holding spinlock and read afterwards.
+> > +    ///
+> > +    /// ```
+> > +    /// use kernel::maple_tree::{MapleTree, InsertErrorKind};
+> > +    /// use kernel::sync::Arc;
+> > +    ///
+> > +    /// let tree =3D KBox::pin_init(MapleTree::<Arc<i32>>::new(), GFP_=
+KERNEL)?;
+> > +    ///
+> > +    /// let ten =3D Arc::new(10, GFP_KERNEL)?;
+> > +    /// let twenty =3D Arc::new(20, GFP_KERNEL)?;
+> > +    /// tree.insert(100, ten, GFP_KERNEL)?;
+> > +    /// tree.insert(200, twenty, GFP_KERNEL)?;
+> > +    ///
+> > +    /// // Briefly take the lock to increment the refcount.
+> > +    /// let value =3D Arc::from(tree.lock().load(100).unwrap());
+> > +    ///
+> > +    /// // At this point, another thread might remove the value.
+> > +    /// tree.erase(100);
+> > +    ///
+> > +    /// // But we can still access it because we took a refcount.
+> > +    /// assert_eq!(*value, 10);
+> > +    /// # Ok::<_, Error>(())
+> > +    /// ```
+> > +    #[inline]
+> > +    pub fn load(&mut self, index: usize) -> Option<T::BorrowedMut<'_>>=
  {
- 	return static_branch_likely(&mpam_enabled);
-@@ -209,7 +215,7 @@ struct mpam_props {
- 	u16			dspri_wd;
- 	u16			num_csu_mon;
- 	u16			num_mbwu_mon;
--};
-+} PACKED_FOR_KUNIT;
- 
- #define mpam_has_feature(_feat, x)	((1 << (_feat)) & (x)->features)
- 
-diff --git a/drivers/resctrl/test_mpam_devices.c b/drivers/resctrl/test_mpam_devices.c
-index 8e9d6c88171c..ef39696e7ff8 100644
---- a/drivers/resctrl/test_mpam_devices.c
-+++ b/drivers/resctrl/test_mpam_devices.c
-@@ -4,6 +4,326 @@
- 
- #include <kunit/test.h>
- 
-+/*
-+ * This test catches fields that aren't being sanitised - but can't tell you
-+ * which one...
-+ */
-+static void test__props_mismatch(struct kunit *test)
-+{
-+	struct mpam_props parent = { 0 };
-+	struct mpam_props child;
-+
-+	memset(&child, 0xff, sizeof(child));
-+	__props_mismatch(&parent, &child, false);
-+
-+	memset(&child, 0, sizeof(child));
-+	KUNIT_EXPECT_EQ(test, memcmp(&parent, &child, sizeof(child)), 0);
-+
-+	memset(&child, 0xff, sizeof(child));
-+	__props_mismatch(&parent, &child, true);
-+
-+	KUNIT_EXPECT_EQ(test, memcmp(&parent, &child, sizeof(child)), 0);
-+}
-+
-+static void test_mpam_enable_merge_features(struct kunit *test)
-+{
-+	/* o/` How deep is your stack? o/` */
-+	struct list_head fake_classes_list;
-+	struct mpam_class fake_class = { 0 };
-+	struct mpam_component fake_comp1 = { 0 };
-+	struct mpam_component fake_comp2 = { 0 };
-+	struct mpam_vmsc fake_vmsc1 = { 0 };
-+	struct mpam_vmsc fake_vmsc2 = { 0 };
-+	struct mpam_msc fake_msc1 = { 0 };
-+	struct mpam_msc fake_msc2 = { 0 };
-+	struct mpam_msc_ris fake_ris1 = { 0 };
-+	struct mpam_msc_ris fake_ris2 = { 0 };
-+	struct platform_device fake_pdev = { 0 };
-+
-+#define RESET_FAKE_HIEARCHY()	do {				\
-+	INIT_LIST_HEAD(&fake_classes_list);			\
-+								\
-+	memset(&fake_class, 0, sizeof(fake_class));		\
-+	fake_class.level = 3;					\
-+	fake_class.type = MPAM_CLASS_CACHE;			\
-+	INIT_LIST_HEAD_RCU(&fake_class.components);		\
-+	INIT_LIST_HEAD(&fake_class.classes_list);		\
-+								\
-+	memset(&fake_comp1, 0, sizeof(fake_comp1));		\
-+	memset(&fake_comp2, 0, sizeof(fake_comp2));		\
-+	fake_comp1.comp_id = 1;					\
-+	fake_comp2.comp_id = 2;					\
-+	INIT_LIST_HEAD(&fake_comp1.vmsc);			\
-+	INIT_LIST_HEAD(&fake_comp1.class_list);			\
-+	INIT_LIST_HEAD(&fake_comp2.vmsc);			\
-+	INIT_LIST_HEAD(&fake_comp2.class_list);			\
-+								\
-+	memset(&fake_vmsc1, 0, sizeof(fake_vmsc1));		\
-+	memset(&fake_vmsc2, 0, sizeof(fake_vmsc2));		\
-+	INIT_LIST_HEAD(&fake_vmsc1.ris);			\
-+	INIT_LIST_HEAD(&fake_vmsc1.comp_list);			\
-+	fake_vmsc1.msc = &fake_msc1;				\
-+	INIT_LIST_HEAD(&fake_vmsc2.ris);			\
-+	INIT_LIST_HEAD(&fake_vmsc2.comp_list);			\
-+	fake_vmsc2.msc = &fake_msc2;				\
-+								\
-+	memset(&fake_ris1, 0, sizeof(fake_ris1));		\
-+	memset(&fake_ris2, 0, sizeof(fake_ris2));		\
-+	fake_ris1.ris_idx = 1;					\
-+	INIT_LIST_HEAD(&fake_ris1.msc_list);			\
-+	fake_ris2.ris_idx = 2;					\
-+	INIT_LIST_HEAD(&fake_ris2.msc_list);			\
-+								\
-+	fake_msc1.pdev = &fake_pdev;				\
-+	fake_msc2.pdev = &fake_pdev;				\
-+								\
-+	list_add(&fake_class.classes_list, &fake_classes_list);	\
-+} while (0)
-+
-+	RESET_FAKE_HIEARCHY();
-+
-+	mutex_lock(&mpam_list_lock);
-+
-+	/* One Class+Comp, two RIS in one vMSC with common features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = NULL;
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc1.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cpbm_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 4);
-+
-+	RESET_FAKE_HIEARCHY();
-+
-+	/* One Class+Comp, two RIS in one vMSC with non-overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = NULL;
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc1.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cmax_cmin, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cmax_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	/* Multiple RIS within one MSC controlling the same resource can be mismatched */
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cmax_cmin, &fake_class.props));
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cmax_cmin, &fake_vmsc1.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 4);
-+	KUNIT_EXPECT_EQ(test, fake_vmsc1.props.cmax_wd, 4);
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cmax_wd, 4);
-+
-+	RESET_FAKE_HIEARCHY();
-+
-+	/* One Class+Comp, two MSC with overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp1;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp1.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cpbm_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 4);
-+
-+	RESET_FAKE_HIEARCHY();
-+
-+	/* One Class+Comp, two MSC with non-overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp1;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp1.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cmax_cmin, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cmax_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	/*
-+	 * Multiple RIS in different MSC can't the same resource, mismatched
-+	 * features can not be supported.
-+	 */
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_cmax_cmin, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 0);
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cmax_wd, 0);
-+
-+	RESET_FAKE_HIEARCHY();
-+
-+	/* One Class+Comp, two MSC with incompatible overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp1;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp1.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris2.props);
-+	mpam_set_feature(mpam_feat_mbw_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_mbw_part, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 5;
-+	fake_ris2.props.cpbm_wd = 3;
-+	fake_ris1.props.mbw_pbm_bits = 5;
-+	fake_ris2.props.mbw_pbm_bits = 3;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	/*
-+	 * Multiple RIS in different MSC can't the same resource, mismatched
-+	 * features can not be supported.
-+	 */
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_mbw_part, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 0);
-+	KUNIT_EXPECT_EQ(test, fake_class.props.mbw_pbm_bits, 0);
-+
-+	RESET_FAKE_HIEARCHY();
-+
-+	/* One Class+Comp, two MSC with overlapping features that need tweaking */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp1;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp1.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_mbw_min, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_mbw_min, &fake_ris2.props);
-+	mpam_set_feature(mpam_feat_cmax_cmax, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cmax_cmax, &fake_ris2.props);
-+	fake_ris1.props.bwa_wd = 5;
-+	fake_ris2.props.bwa_wd = 3;
-+	fake_ris1.props.cmax_wd = 5;
-+	fake_ris2.props.cmax_wd = 3;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	/*
-+	 * Multiple RIS in different MSC can't the same resource, mismatched
-+	 * features can not be supported.
-+	 */
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_mbw_min, &fake_class.props));
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cmax_cmax, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.bwa_wd, 3);
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cmax_wd, 3);
-+
-+	RESET_FAKE_HIEARCHY();
-+
-+	/* One Class Two Comp with overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = &fake_class;
-+	list_add(&fake_comp2.class_list, &fake_class.components);
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp2;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp2.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cpbm_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 4);
-+
-+	RESET_FAKE_HIEARCHY();
-+
-+	/* One Class Two Comp with non-overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = &fake_class;
-+	list_add(&fake_comp2.class_list, &fake_class.components);
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp2;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp2.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cmax_cmin, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cmax_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	/*
-+	 * Multiple components can't control the same resource, mismatched features can
-+	 * not be supported.
-+	 */
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_cmax_cmin, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 0);
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cmax_wd, 0);
-+
-+	mutex_unlock(&mpam_list_lock);
-+
-+#undef RESET_FAKE_HIEARCHY
-+}
-+
- static void test_mpam_reset_msc_bitmap(struct kunit *test)
- {
- 	char *buf = kunit_kzalloc(test, SZ_16K, GFP_KERNEL);
-@@ -57,6 +377,8 @@ static void test_mpam_reset_msc_bitmap(struct kunit *test)
- 
- static struct kunit_case mpam_devices_test_cases[] = {
- 	KUNIT_CASE(test_mpam_reset_msc_bitmap),
-+	KUNIT_CASE(test_mpam_enable_merge_features),
-+	KUNIT_CASE(test__props_mismatch),
- 	{}
- };
- 
--- 
-2.20.1
+> > +        // SAFETY: `self.tree` contains a valid maple tree.
+> > +        let ret =3D unsafe { bindings::mtree_load(self.0.tree.get(), i=
+ndex) };
+> > +        if ret.is_null() {
+> > +            return None;
+> > +        }
+> > +
+> > +        // SAFETY: If the pointer is not null, then it references a va=
+lid instance of `T`. It is
+> > +        // safe to borrow the instance mutably because the signature o=
+f this function enforces that
+> > +        // the mutable borrow is not used after the spinlock is droppe=
+d.
+> > +        Some(unsafe { T::borrow_mut(ret) })
+> > +    }
+> > +}
+> > +
+> > impl<'tree, T: ForeignOwnable> MaState<'tree, T> {
+> >     /// Initialize a new `MaState` with the given tree.
+> >     ///
+> > @@ -303,6 +404,44 @@ fn mas_find_raw(&mut self, max: usize) -> *mut c_v=
+oid {
+> >         // to the tree.
+> >         unsafe { bindings::mas_find(self.as_raw(), max) }
+> >     }
+> > +
+> > +    /// Find the next entry in the maple tree.
+>=20
+> This is not in the commit title.
+>=20
+> > +    ///
+> > +    /// # Examples
+> > +    ///
+> > +    /// Iterate the maple tree.
+> > +    ///
+> > +    /// ```
+> > +    /// use kernel::maple_tree::{MapleTree, InsertErrorKind};
+> > +    /// use kernel::sync::Arc;
+> > +    ///
+> > +    /// let tree =3D KBox::pin_init(MapleTree::<Arc<i32>>::new(), GFP_=
+KERNEL)?;
+> > +    ///
+> > +    /// let ten =3D Arc::new(10, GFP_KERNEL)?;
+> > +    /// let twenty =3D Arc::new(20, GFP_KERNEL)?;
+> > +    /// tree.insert(100, ten, GFP_KERNEL)?;
+> > +    /// tree.insert(200, twenty, GFP_KERNEL)?;
+> > +    ///
+> > +    /// let mut ma_lock =3D tree.lock();
+> > +    /// let mut iter =3D ma_lock.ma_state(0, usize::MAX);
+> > +    ///
+> > +    /// assert_eq!(*iter.mas_find(usize::MAX).unwrap(), 10);
+> > +    /// assert_eq!(*iter.mas_find(usize::MAX).unwrap(), 20);
+> > +    /// assert!(iter.mas_find(usize::MAX).is_none());
+> > +    /// # Ok::<_, Error>(())
+> > +    /// ```
+> > +    #[inline]
+> > +    pub fn mas_find(&mut self, max: usize) -> Option<T::BorrowedMut<'_=
+>> {
+>=20
+> Should we drop the =E2=80=9Cmas=E2=80=9D prefix here? I think that =E2=80=
+=9Cfind()=E2=80=9D is fine.
 
+The maple tree has two interfaces, the advanced one which starts with
+mas_ and the simple on that uses mt_.  This is probably why the mas_ is
+here?
+
+>=20
+> > +        let ret =3D self.mas_find_raw(max);
+> > +        if ret.is_null() {
+> > +            return None;
+> > +        }
+> > +
+> > +        // SAFETY: If the pointer is not null, then it references a va=
+lid instance of `T`. It's
+> > +        // safe to access it mutably as the returned reference borrows=
+ this `MaState`, and the
+> > +        // `MaState` has read/write access to the maple tree.
+> > +        Some(unsafe { T::borrow_mut(ret) })
+> > +    }
+> > }
+> >=20
+> > /// Error type for failure to insert a new value.
+> >=20
+> > --=20
+> > 2.51.0.rc1.167.g924127e9c0-goog
+> >=20
+> >=20
+>=20
 
