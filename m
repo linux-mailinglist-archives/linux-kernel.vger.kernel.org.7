@@ -1,234 +1,128 @@
-Return-Path: <linux-kernel+bounces-781744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 259AFB31629
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:13:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5C77B3162B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0FA5175061
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:12:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8965F3ACA61
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DA32F5339;
-	Fri, 22 Aug 2025 11:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B1B2ECD3F;
+	Fri, 22 Aug 2025 11:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2Ib62DD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="H4/Z6Pby"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D0721255D;
-	Fri, 22 Aug 2025 11:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492D12327A3
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755861128; cv=none; b=cgM0RyYPMV+E7RLlwfJQiJM8aFvFeuhxDB5hQT0Kb3Ap+GQjIPtgiUeZIBsaEzPozeNp7mLO+yIS5SOfZIT1nuU29Kh1ejxdDvVC3GpDC5MxMJwfZxwXS5UcvQZAyVBMTkXcYqnD5mh5pkWl51AN6eEVnDeX/OeMbfv4Ne3aHaU=
+	t=1755861414; cv=none; b=b2P/QrP0VepBroijMHPhmmnKWvckBvWguSocBOxHVojJ+el0kzfEW7/rPavxR1MxQLZPDQtPZib9VphfDaQKdy4m4N3ESy2hmuL6YmuMvWfHUvkKHpy+Jkz+bIMtElIntPArDkhbtFWJwMRh65/cSsHoMADjROR5LJ6iTZvfkPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755861128; c=relaxed/simple;
-	bh=N8II0tKKmr+jYcX2kJ5FQ3s6Z9IvUZ67ogJraYwkwok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nakl5cbR9BQBt+NxkTgWw+WaPRaVUiAp1o6hVcOJP9X8wausKgeGt8X0nT/FWKLCm5ZwQqwlKvL7GQ7jDmSwx8oD5HPs3kEnct/LBYHTQlkes7qcq5JuzV8AurFUtcMlAANoAvUIBhSsEvSvW+vbhfgYgbwEHlvy7gSyGzCnvdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2Ib62DD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5024C4CEED;
-	Fri, 22 Aug 2025 11:12:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755861128;
-	bh=N8II0tKKmr+jYcX2kJ5FQ3s6Z9IvUZ67ogJraYwkwok=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T2Ib62DDl42DK3INX+lvLhkuJhI2GerHhn03pcnvfWvOa3dJkj4JPa/AesfThZXBx
-	 p7aJddQhoLLE/ZBgDDebC7CZ7gb8Sq/w5xiXmAnXt/m81BF0oy40umPD6q9P1TGeYi
-	 0zPOAbH2v1A3Zeevh5rWSUKJ7X6eXGZRKyBvAW3AMcSiKnnJ0lC/ueQbHKAdmZXAge
-	 frp2a0fw7zS9JNAui+cD7X76jHJMIKX8xr99meyrWCzvJ8fo3k/WNmK1fA+MtyyznU
-	 kRwJRbHoBYtluoXDlsKPYtUybXloqlaoS7/vvEKAlhCMsxh+Q6E7l/rflNovf2cSUs
-	 kBYBc4hVWNnxg==
-Message-ID: <5950bff3-cce5-4a26-aad7-9314542f70dd@kernel.org>
-Date: Fri, 22 Aug 2025 13:12:01 +0200
+	s=arc-20240116; t=1755861414; c=relaxed/simple;
+	bh=EnVRyJysqSZwi8MQGqg2qst/Kg6P27YOfLXyF05YSm4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p9ue0vn/uISigbC/iSyJUn3r2LRd1LChvLATehzyYJXLlXDJzpj/OVc4OOI4+xRjf03OzsN5R27f0zp3aS7bI4xo1iwciyIo0nooey/EY7WHrHv4rzQMhaZc0TlnvC/sumnrRKPJ6+vYHOI11JWyBY9Fh5N/0jOjyorAOtSIcQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=H4/Z6Pby; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3e67d83ed72so19353045ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 04:16:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1755861412; x=1756466212; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Q/jRAhPC0Tmtp2ISTMDpD9VBCqxj20vPKIcSTLHsWE=;
+        b=H4/Z6PbynrbE5e9mnQqSLoQ+BkUjEcilLRbMs+pdvSn+g+L11VnGuSPFqLABPJhTap
+         eUNjp9a+f1B1rm28mqtECGzv+YXMTfSPfmrpXxZ1ggQn4+oksA01Gp3v82vkomo3/wgK
+         UqG4t5rYJrt2x4xP8TLG0PatjNS2D7lRGlIF87rPoB+R3xodtMFOxj+pQho1lqYx05Su
+         uDCysfhRebe1OTfEFFAoXwT8DwaL+PpdHD5vvveiqebtsgSKuXiVtJtouHkPMqBMlJH0
+         hWtPt9w9fhwcMRcLFZeMgx4hRZ5fO9XTYJ/4Wl1bvF30iDoCETZv514NcBPxmp4745cD
+         mY4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755861412; x=1756466212;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3Q/jRAhPC0Tmtp2ISTMDpD9VBCqxj20vPKIcSTLHsWE=;
+        b=DALsA40Fo6bbQaxM2Gk0NreN31bbcf3EmuKiz+L8riiCv+rMqo4gIIajcCd9HDXDGO
+         N2h8k6Z+OFKh5t3i2mnrs0Xuyu3HoJcHZvw/dShR3BbWA6YIQFmXj8QJ+hEiVSQ1OAz6
+         4/L2puT4wne8M2kVF6NVnufL+lSofM+1vFGZ1OXSFkQAi9I+iIawESBoOAHaJRw5szDZ
+         8nT734jH9m8hHQ1r8EOo9p067kdbsJIhkp75sTCxLyFbDMAj7SBQ3N+xr9LUsiN4iYs6
+         FccnAmNkzZnLIpCjFpumx2HOIUf7/jnzItNXBAZc4tNJA2UJWszDQlP0cJbflL3nvaL7
+         8w3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUL4kG/khTqyy6KhQE5fP2C0Bs48A5Ezulm08jQG6avFVVGPpYntE37xDxfHbzHV50BJmxJTGwMZf8TGMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd3MGrjJXK26CD3/5JSKjCxLLR7slTjmKljzcdktJvwln6lPpc
+	ySKWYR+uTZy3/o9teZuFBZ5coQ9bvHGMPj0bpGwsC5z0a8SeJ0zvvX3Ye65DZcKxI8DIXq+AZNw
+	R72/nfNmidhhqkNNUucqbdMZr2xqoFI+wybaZjupaVQ==
+X-Gm-Gg: ASbGncvo//mIcOBH1tdAE9Ga58nRH5xFf12udlLBGQ9ac5b/LkEdchwFVRyA3jMnjFl
+	TqaU4ENgQUmWMYMnhjwJEBbxBp7x7emsFWVkzO+gRYzfYnGUNkmuM4GYrXKS1SS6yUtbqD+PPQf
+	klugeEBMoHOLmW2AFsx8+RA9VhHymuGS3VaLvQqHaHXaHekKqoqzQs5ejUasUn7yEovCzqVU89u
+	/Dt5qI+E40hWoOT6R0=
+X-Google-Smtp-Source: AGHT+IEf3catLTwMZg08ITt9v+soiykhih7JmD1rfhONXLyWgFCvIw5fWgoyzMygsiEhsdJqKvljnLxwiGXIRXDHO7Q=
+X-Received: by 2002:a05:6e02:220b:b0:3e9:eec4:9b7f with SMTP id
+ e9e14a558f8ab-3e9eec4a13cmr7393215ab.30.1755861412296; Fri, 22 Aug 2025
+ 04:16:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] media: dt-bindings: nxp,imx8mq-mipi-csi2: Add
- i.MX8ULP compatible string
-To: Guoniu Zhou <guoniu.zhou@nxp.com>, Rui Miguel Silva <rmfrfs@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Frank Li <Frank.Li@nxp.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250822-csi2_imx8ulp-v2-0-26a444394965@nxp.com>
- <20250822-csi2_imx8ulp-v2-1-26a444394965@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250822-csi2_imx8ulp-v2-1-26a444394965@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <49680363098c45516ec4b305283d662d26fa9386.1754326285.git.zhouquan@iscas.ac.cn>
+In-Reply-To: <49680363098c45516ec4b305283d662d26fa9386.1754326285.git.zhouquan@iscas.ac.cn>
+From: Anup Patel <anup@brainfault.org>
+Date: Fri, 22 Aug 2025 16:46:39 +0530
+X-Gm-Features: Ac12FXydDmBYaqaWI2oDhvXmh2nBQ17DyRxWSqA9fqFJ4rPMhrjf4Rw1RRPXrJg
+Message-ID: <CAAhSdy0kpxEhz8AAiUUXapsEEGo4aMsDpSyMemr9khdYfy0OAw@mail.gmail.com>
+Subject: Re: [PATCH] RISC-V: KVM: Correct kvm_riscv_check_vcpu_requests() comment
+To: zhouquan@iscas.ac.cn
+Cc: ajones@ventanamicro.com, atishp@atishpatra.org, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/08/2025 12:50, Guoniu Zhou wrote:
-> The CSI-2 receiver in the i.MX8ULP is almost identical to the version
-> present in the i.MX8QXP/QM. But have different reset and clock design,
-> so add a device-specific compatible string for i.MX8ULP to handle the
-> difference.
-> 
-> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+On Mon, Aug 11, 2025 at 8:00=E2=80=AFAM <zhouquan@iscas.ac.cn> wrote:
+>
+> From: Quan Zhou <zhouquan@iscas.ac.cn>
+>
+> Correct `check_vcpu_requests` to `kvm_riscv_check_vcpu_requests`.
+>
+> Fixes: f55ffaf89636 ("RISC-V: KVM: Enable ring-based dirty memory trackin=
+g")
+> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+
+Queued this as fixes for Linux-6.17
+
+Thanks,
+Anup
+
 > ---
->  .../bindings/media/nxp,imx8mq-mipi-csi2.yaml       | 42 ++++++++++++++++++++--
->  1 file changed, 40 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml b/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
-> index 3389bab266a9adbda313c8ad795b998641df12f3..ca485d1d596c274eb7e1f3cdc39c61bb54cc0685 100644
-> --- a/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
-> +++ b/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
-> @@ -21,7 +21,9 @@ properties:
->            - fsl,imx8mq-mipi-csi2
->            - fsl,imx8qxp-mipi-csi2
->        - items:
-> -          - const: fsl,imx8qm-mipi-csi2
-> +          - enum:
-> +              - fsl,imx8ulp-mipi-csi2
-> +              - fsl,imx8qm-mipi-csi2
-
-That;s some sort of random change. Previously code was correctly sorted
-- u > q... now it is not
-
->            - const: fsl,imx8qxp-mipi-csi2
->  
->    reg:
-> @@ -39,12 +41,19 @@ properties:
->                       clock that the RX DPHY receives.
->        - description: ui is the pixel clock (phy_ref up to 333Mhz).
->                       See the reference manual for details.
-> +      - description: pclk is the lpav bus clock of i.MX8ULP. It provides
-> +                     clock to CSI_REG module.
-> +                     (see section "4.5.4 Peripheral clock diagrams,
-> +                      Figure 76 MIPI CSI clocking" in IMX8ULPRM REV1)
-> +    minItems: 3
->  
->    clock-names:
->      items:
->        - const: core
->        - const: esc
->        - const: ui
-> +      - const: pclk
-> +    minItems: 3
->  
->    power-domains:
->      maxItems: 1
-> @@ -125,19 +134,48 @@ required:
->    - ports
->  
->  allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - fsl,imx8ulp-mipi-csi2
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 2
-> +        resets:
-> +          maxItems: 2
-> +          minItems: 2
-
-minItems goes before max.
-
-> +        clocks:
-> +          minItems: 4
-> +        clock-names:
-> +          minItems: 4
-> +
->    - if:
->        properties:
->          compatible:
->            contains:
->              enum:
->                - fsl,imx8qxp-mipi-csi2
-> +          not:
-> +            contains:
-> +              enum:
-> +                - fsl,imx8ulp-mipi-csi2
->      then:
->        properties:
->          reg:
->            minItems: 2
->          resets:
->            maxItems: 1
-> -    else:
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - fsl,imx8mq-mipi-csi2
-> +    then:
->        properties:
->          reg:
->            maxItems: 1
-
-I don't see what we asked you for - restrict other variants.
-
-Answer previous review:
-
-"Or explain why old hardware has now 4
-clocks. That explanation is missing."
-
-> 
-
-
-Best regards,
-Krzysztof
+>  arch/riscv/kvm/vcpu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+> index f001e56403f9..3ebcfffaa978 100644
+> --- a/arch/riscv/kvm/vcpu.c
+> +++ b/arch/riscv/kvm/vcpu.c
+> @@ -683,7 +683,7 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+>  }
+>
+>  /**
+> - * check_vcpu_requests - check and handle pending vCPU requests
+> + * kvm_riscv_check_vcpu_requests - check and handle pending vCPU request=
+s
+>   * @vcpu:      the VCPU pointer
+>   *
+>   * Return: 1 if we should enter the guest
+> --
+> 2.34.1
+>
 
