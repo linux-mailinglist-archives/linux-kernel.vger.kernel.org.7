@@ -1,172 +1,161 @@
-Return-Path: <linux-kernel+bounces-782722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47822B3241A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:23:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49227B32421
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A95C580042
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:22:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C261BAA6150
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B23333471E;
-	Fri, 22 Aug 2025 21:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC4033768D;
+	Fri, 22 Aug 2025 21:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gQS8Om7v"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dRAS1keY"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8854017BA3
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 21:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B48A32276E;
+	Fri, 22 Aug 2025 21:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755897756; cv=none; b=KRf20Ph3SniczNRxuF/ah0CKL4BVaQFt4TkzFIC/WJy9+AZEx6RQECOZBkiAI096mBrmVITUUucWs0L9AXy3Ddmj3x8X/vG6iJwXy92+l67Tw93mDVEO/gRulg/5/blTj/65djoCzaRo54JvNG8rhO3Lup7l6X4ejXxQ11GjS0I=
+	t=1755897802; cv=none; b=Zl0z7xH11mDMj+cYZNBVth9zqJuFndf6JvwRUKL5tHLW0UTRCqjcURMrEbXeD/El020pK/4srjedHbr088EQD9lXBpHQI3xoEK7+I4ivvcNzxGwAUHi0p/X1g4Tod8d1I3mV6Q7tjo99kCQcen+C+wEfN+43dQYXZ5Nnm/yWCzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755897756; c=relaxed/simple;
-	bh=fLNcQx0engoQmdLVWT3nsxi8NHNazUitXj86aoV4nI8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OpFUtmlSx5a8gk9he90h/IKRoisUyZ0AKJDFwmPTqXNsZAiLIjQCgp+wefaWE1SpAm6NjnwDlu5W6KGtowdm0f7GoM6vHVeRp9P/PxMuhMdAfwSz63X7HV+Ncbu9yPfzNkdyfhNkCzyK373NTtDu/dJdXHLqp2FEFRZr+Gjhf6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gQS8Om7v; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MKF2ff005583
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 21:22:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	y04A3Fq2j9qagFY6krypelE5uzKnSvrs/VFzYky1PFg=; b=gQS8Om7vQtOyKzYk
-	Fy41yFewp/AE82OFifGiQr6Rq+Zmao8xQeRDTu6nesE1TXyWnBUwaTp8ztldk0Zq
-	rImQ6OLSJ9wzj2YrELxsUuD52qRalGZXUN/xiREzUKWV6u8PjB25m3OyML1S5mxg
-	Muh8slscn3lggCPC2f7csqm2x/+hSOM4ttZmGEwsFGaVAKTvZ9/90DoMQKI4hoUB
-	vfM6GPetebR5W/zyhtoN6HuMrpTiTRBa/b4tz3fEIveYq5j4xs0BmxYnMUQDuxt7
-	ycv/Ok91yS8m3KrNuXIRhOHVSsja0cnbvkGEIgg0rKMa45f1j3X1EsecX5fzb2Si
-	9gTNTg==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48pw10gh1k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 21:22:33 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-76e2e62284dso4857852b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 14:22:33 -0700 (PDT)
+	s=arc-20240116; t=1755897802; c=relaxed/simple;
+	bh=oH8hEd3Xh95OS4Zj7F4TJPkJBMw5KkDWhnVrMfbT3kY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ExagrvHilePMTcXlZ0chkPMx+1nGs2n1Y+ZEGNy/4SHVAplpQWCZXrf/uJ7S2Gpv5m3b3lLxdGy/EQ6C6b1AdyfLF6j+Y26d6CPLQDkFZyMx+ckXWPgRnWGuUWUHNYVrwCNS+vANxo0/vyUoxyQSngpjQw+Hil286WmtMFwju1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dRAS1keY; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b4717330f9eso1800617a12.1;
+        Fri, 22 Aug 2025 14:23:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755897799; x=1756502599; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cigHzkD9VKrMPHnR2u8edDTCZGXj+bAVSWOdyrroCYU=;
+        b=dRAS1keYsbC2BtRbTC+k1qHgf62rNESoxz/aeMbIBpB45ZNTxmIIo6MyNG5wqS84ji
+         TPWXbSAO7OzKu2OdJz66M/62K3NQcaPdgq9Ag5cUmy7g7zaClLR9k59QVQnV5mnFkMZX
+         U2yI0qFfH5AXtkDX2iTxjDPKErWFnnDFD1zKIuDD20ZwM/uVKd3aTIn6G6xqg+4m3nhd
+         rm/cb3LM99g1SAkHyqlcrH54yE2X0e5RCs72v+zi8hFAAMx/GTR1Oo3R+P4pXqzSYUFJ
+         dZ1yv7uhRFpm01ZURaORT0lL1caMokn41uDSuvczNUY/kUs37qhVVcA935SblhjKyfAp
+         vWxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755897753; x=1756502553;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y04A3Fq2j9qagFY6krypelE5uzKnSvrs/VFzYky1PFg=;
-        b=kObNbn015X+dhslSgaQDtZnVEXv3iG1c2XyWufXJWmyKfw/gP/iS2nKks3nKRoZhZP
-         tLwgrbisYXEw/R4hUmNb5mZykMXyI4IsoOHKxONVPQ/pyokmgUjx+aG83PDSFPyjVlC2
-         5t9AfauZEVnLr0QtgAaKj1wnTSMju3fLlHYIxE9sWrDtE05IDv7pZ9V+iZL+i65+nafA
-         +bN5lpztulriKG8AlXpj1lh4geACSvWqOif1uF8i4WrBAnDCFCK4JDiWHrsOAPfwP9ZJ
-         L8aM1pnMq+IcB0N/7ibjgOeEThtdUA9/CXlwUBhd/rK0cHO0dz9wf8EzxyLE+btLB3gb
-         ViVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYPZymzVw9sRe28mt2fDoSRIt+77W/TLqyFV67yJcEDObMYwoPvtKnrOMk7LYd7bbK2/ZOTpEQcE+jDhM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyIWsuehGt5zZKCyhLAeETMjdiy8xla95YO5YngT/5eU+RTKrG
-	qKMc8sFatj8ZVTjIQfKgubCrQ/WAFVSDfuYNJ9xhAH7rHXEw0/uE1dc/gKuzUaC9dKeA+53Qwar
-	8PH0ogXNxxSc7oH0ghhuQB/TTMGcJmnSksCBKvj5/OjowD48qRGnr2ySyWsDZ+PCtlhc=
-X-Gm-Gg: ASbGncsrk5TcJK19oSNtcHsiaojtyMoGAl22iUPTRoSVSxZiMKeh9SsNErwNkRyeTJu
-	pUsONSpNXboJlcTK4aK0qKwqyJg3Ka4LhT1RHyF41U6g8/26LtYZFkEtSQJVub73/vyaGMGIiO5
-	1nkb782qvhJ8Mu0jnVMsHQ0dIyQaPkNuVpdtZDtgV+B06Qjn1Jt3u7Yvpn7rPOd0fghvFzvQ8zz
-	Dt4N1n+raghTAshd7ewHCg5ooad6f45iqNE+788E/QLMXXnvgqJ6tvJx49AAN/B4eOn59oJOqYp
-	l2qRg3fCEk7uLS4DflwMjyT5VfYK55gs3TK3Q3yEtcWdQG5lzNAA7GEXRlBMHrc=
-X-Received: by 2002:a05:6a00:2991:b0:770:374c:6c60 with SMTP id d2e1a72fcca58-770375bb1b7mr3749751b3a.12.1755897752707;
-        Fri, 22 Aug 2025 14:22:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHqSDDQ1Oqep4mXvYQ0f5AHY2NlHaFudfMAfAYS8IQDadWgR54tO2EW+TnIYNX89ov0/SlHQg==
-X-Received: by 2002:a05:6a00:2991:b0:770:374c:6c60 with SMTP id d2e1a72fcca58-770375bb1b7mr3749726b3a.12.1755897752210;
-        Fri, 22 Aug 2025 14:22:32 -0700 (PDT)
-Received: from [192.168.1.6] ([106.222.235.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-770401af16bsm767687b3a.54.2025.08.22.14.22.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 14:22:31 -0700 (PDT)
-Message-ID: <73ba625b-604d-44e7-a73b-9f727ec46917@oss.qualcomm.com>
-Date: Sat, 23 Aug 2025 02:52:26 +0530
+        d=1e100.net; s=20230601; t=1755897799; x=1756502599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cigHzkD9VKrMPHnR2u8edDTCZGXj+bAVSWOdyrroCYU=;
+        b=DIi317IsgIRHCoONl/9cDuAE/iOlCbWjNEI5NgNlze2yx1o4E7WRwa60pssH6vUddq
+         pTXfH2jd3lTvqaFBPL6i9msG6UH/L4KsRUKATVz82kn2dkFQrQoVV9VjX2SFkGoiyvlU
+         IeyE+7RBhIbFaULW2LDP4nJGB1kUE6SM8sDztVu5mkijYKiNs6i8IZT09delPkK5M8Z9
+         uRZ3DsWvngvMwpTj34oIMe0yVCdicos0bQGUAeXs5JbZj5jo6vPaO4MTjKOyeuWTrsyk
+         qKutluBFF5YZENV6oXhdMI6WdaJc2UK0QnQWW9eQ3BpIwLd3/kZydABSpV/H/1Epz0i/
+         7BLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBo8iJygo0eReFJK11evgeh9ACrzq0VBwlTkfT4ALKF02pqL4tuAtYc+S+wefAbehaYUiZVPuagl+VGCE=@vger.kernel.org, AJvYcCVWTf/qosQsEWQNQnkdGz3Vtg0cMHbgK9D29DzHE/iGEoki1zbKQjZCoFk7g8hH+WPjTkT7dUK0KacHxM44LwXT@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHe4WeOb+qjEKrJ2VHQv6+L/IMf8qxmfQLMo4MmKlPy1t3ZFwp
+	aywrSEUi60Dv/j/oFNUuQuwneHRx+XtzRmbgXGIILOpjdPtzPR6n4u6AcgTsEP7PfS3/UnmrjUu
+	Dmx95vBlT1SliBqO1D2BZzdl2vkL0Phk=
+X-Gm-Gg: ASbGncv3ddWeXQrP9q09sn3jn/fEWtgNtJ0c7YPvt4z4NhTlwbEwvQXXSm3me/IfvvI
+	qZPWzvgfxp2fth7o80gQSKPUsv2VevvnLniZogA3zPOAIZc2gDWxBPkEGDJbJEjB+JmHWTNf78W
+	Wu9649mxQpAnTKroWSXAHTApNJc7mdtdRho+koXbNra8NUqTe0mmUoOyd5jwi41ef1BnBaM8wty
+	WNPrdxAWdfMvoPKjrEBwmA=
+X-Google-Smtp-Source: AGHT+IGAb1ykLBNf+7vCFUXiySU8Nxu82yayp/F9ft0zlMg1j7Ay3f7ENvehleDJa8y+ZLlAzgq9UieLZ8bAU9N3ca4=
+X-Received: by 2002:a17:903:1c8:b0:242:3105:1787 with SMTP id
+ d9443c01a7336-2462ef8e152mr58423365ad.50.1755897799298; Fri, 22 Aug 2025
+ 14:23:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm: make sure to not queue up recovery more than
- once
-To: Antonino Maniscalco <antomani103@gmail.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250821-recovery-fix-v1-1-abfc518ba0a5@gmail.com>
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <20250821-recovery-fix-v1-1-abfc518ba0a5@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: il_NipoF45_4feqlJo4EZli5oNdrpLeq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIyMDE2MCBTYWx0ZWRfX8XCjaMZzuZ6+
- rP+lSFrTpcTFQKGnUWWsHBarPLBTzLlEhbc6aPYGyvzhGLiUhtvApHkONkT4O8E2qIbnYAOoJAI
- Ir/AVRElsIbgYWVTtJBh/3BQkeFRgPygJLi06+TphzkIWTLLngmU+a4SMWjI0EwHpk2H24Mc5yz
- syNFL7bE4Jyrqy+DGWFliNInN8W22yfk0khJ0JQCKnYwENgSWS5cHtyoQe1KMLg3beGvfz68Xvj
- 2/uK7xCIkhfLY9KiebWAdd5v74GCTbvd8aoakNThGToFdFD+a5yi8l7JdgWK4UBxiGUXWiBCSL7
- 25NyC262LOEfYkwspN78TaWrvF+BBUQpLfn0jU2YGBA9jaSsyqrp/yh1mZmZ/YqDwo16Pu1SoFo
- sE7gQ8oP
-X-Proofpoint-GUID: il_NipoF45_4feqlJo4EZli5oNdrpLeq
-X-Authority-Analysis: v=2.4 cv=B4G50PtM c=1 sm=1 tr=0 ts=68a8df99 cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=YJRzWv9GHcPC3W2cS631hg==:17
- a=xRKJ3yPZld0_iGqN:21 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=pGLkceISAAAA:8
- a=EUspDBNiAAAA:8 a=F5irVdaa_9mHTkytiuEA:9 a=QEXdDO2ut3YA:10
- a=zc0IvFSfCIW2DFIPzwfm:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-22_05,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 suspectscore=0 spamscore=0 phishscore=0 priorityscore=1501
- adultscore=0 impostorscore=0 clxscore=1015 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508220160
+References: <20250804022101.2171981-1-xukuohai@huaweicloud.com> <20250804022101.2171981-3-xukuohai@huaweicloud.com>
+In-Reply-To: <20250804022101.2171981-3-xukuohai@huaweicloud.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 22 Aug 2025 14:23:03 -0700
+X-Gm-Features: Ac12FXwHNeczuDhGuV2foSF9m_Z4qnE30i2s2DCCieGa_DciRFyxDqFAIRCA2vA
+Message-ID: <CAEf4Bzaq5drHWChXoRBnrmkb6reAsSVj8r=uByFSup31FMA7hw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 2/4] libbpf: ringbuf: Add overwrite ring buffer process
+To: Xu Kuohai <xukuohai@huaweicloud.com>
+Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yhs@fb.com>, 
+	Song Liu <song@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Willem de Bruijn <willemb@google.com>, 
+	Jason Xing <kerneljasonxing@gmail.com>, Paul Chaignon <paul.chaignon@gmail.com>, 
+	Tao Chen <chen.dylane@linux.dev>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, 
+	Martin Kelly <martin.kelly@crowdstrike.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/21/2025 6:36 PM, Antonino Maniscalco wrote:
-> If two fault IRQs arrive in short succession recovery work will be
-> queued up twice.
-> 
-> When recovery runs a second time it may end up killing an unrelated
-> context.
-> 
-> Prevent this by masking off interrupts when triggering recovery.
-> 
-> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+On Sun, Aug 3, 2025 at 7:27=E2=80=AFPM Xu Kuohai <xukuohai@huaweicloud.com>=
+ wrote:
+>
+> From: Xu Kuohai <xukuohai@huawei.com>
+>
+> In overwrite mode, the producer does not wait for the consumer, so the
+> consumer is responsible for handling conflicts. An optimistic method
+> is used to resolve the conflicts: the consumer first reads consumer_pos,
+> producer_pos and overwrite_pos, then calculates a read window and copies
+> data in the window from the ring buffer. After copying, it checks the
+> positions to decide if the data in the copy window have been overwritten
+> by be the producer. If so, it discards the copy and tries again. Once
+> success, the consumer processes the events in the copy.
+>
 
-Reviewed-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+I don't mind adding BPF_F_OVERWRITE mode to BPF ringbuf (it seems like
+this will work fine) itself, but I don't think retrofitting it to this
+callback-based libbpf-side API is a good fit.
 
--Akhil
+For one, I don't like that extra memory copy and potentially a huge
+allocation that you do. I think for some use cases user logic might be
+totally fine with using ringbuf memory directly, even if it can be
+overwritten at any point. So it would be unfair to penalize
+sophisticated users for such cases. Even if not, I'd say allocating
+just enough to hold the record would be a better approach.
 
+Another downside is that the user doesn't really have much visibility
+right now into whether any samples were overwritten.
+
+I've been mulling over the idea of adding an iterator-like API for BPF
+ringbuf on the libbpf side for a while now. I'm still debating some
+API nuances with Eduard, but I think we'll end up adding something
+pretty soon. Iterator-based API seems like a much better fit for
+overwritable mode here.
+
+But all that is not really overwrite-specific and is broader, so I
+think we can proceed with finalizing kernel-side details of overwrite
+and not block on libbpf side of things for now, though.
+
+> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
 > ---
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> index 45dd5fd1c2bfcb0a01b71a326c7d95b0f9496d99..f8992a68df7fb77362273206859e696c1a52e02f 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> @@ -1727,6 +1727,9 @@ static void a6xx_fault_detect_irq(struct msm_gpu *gpu)
->  	/* Turn off the hangcheck timer to keep it from bothering us */
->  	timer_delete(&gpu->hangcheck_timer);
->  
-> +	/* Turn off interrupts to avoid triggering recovery again */
-> +	gpu_write(gpu, REG_A6XX_RBBM_INT_0_MASK, 0);
-> +
->  	kthread_queue_work(gpu->worker, &gpu->recover_work);
->  }
->  
-> 
-> ---
-> base-commit: ba0f4c4c0f9d0f90300578fc8d081f43be281a71
-> change-id: 20250821-recovery-fix-350c07a92f97
-> 
-> Best regards,
+>  tools/lib/bpf/ringbuf.c | 103 +++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 102 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/lib/bpf/ringbuf.c b/tools/lib/bpf/ringbuf.c
+> index 9702b70da444..9c072af675ff 100644
+> --- a/tools/lib/bpf/ringbuf.c
+> +++ b/tools/lib/bpf/ringbuf.c
+> @@ -27,10 +27,13 @@ struct ring {
+>         ring_buffer_sample_fn sample_cb;
+>         void *ctx;
+>         void *data;
+> +       void *read_buffer;
+>         unsigned long *consumer_pos;
+>         unsigned long *producer_pos;
+> +       unsigned long *overwrite_pos;
+>         unsigned long mask;
+>         int map_fd;
+> +       bool overwrite_mode;
+>  };
 
+[...]
 
