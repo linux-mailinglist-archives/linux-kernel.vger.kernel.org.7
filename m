@@ -1,120 +1,103 @@
-Return-Path: <linux-kernel+bounces-781249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1738FB30FD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:04:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D62B30FDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F67C1CC6D0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:04:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5137605349
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECE72E7166;
-	Fri, 22 Aug 2025 07:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="naW0xum0"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552D82E7648;
+	Fri, 22 Aug 2025 07:04:40 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AB726F2BB;
-	Fri, 22 Aug 2025 07:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382CA2253F9;
+	Fri, 22 Aug 2025 07:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755846258; cv=none; b=klw0P9CraLChcd/0kIrSDbYxCzdvKncZqBDcb3tDCER/V5ycDiE6lsymahS1cdvtXaYtf1fGoIEcyJ7tH7uOQo521Jfjc8/rLVmghJZhqLgCp6mMJ/CoYs4v6sBb9t7UqUuXfAksUgT4F3LWAVgk9Axqq/8YJ4WV19uvBcxrBgU=
+	t=1755846279; cv=none; b=ldr88lgjiyNgyauwI6Sa6g5q6r6BuKn2tu2cf0lctHqfCl69Z4SRxqS4TyKKTad//4C3PZR5rhYy0Ttfxglc63WofoQ02YUFWmmS8RpbRrKmbDc0brlRFK0cj5bEAxw+VrNStKzp6rCBx7S+XVDQEceNGKz6sFnf5IcxBhWbWT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755846258; c=relaxed/simple;
-	bh=//iPq+9seSBsOGcSgTuoPGVpO2xMrH5yo+zOJJIOObo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0ljk3ZftC//bRh9v5rK5YfZnZQ+5684MSt0Cwo6gdCKoTJQeuL/N0IT6ZuO5CcGlMcj0WtenRmAQ7682a6yOD+hq1RNxKdmnhhZoNZtjTdcQJXZJwFvszEMXGBZteB9LGmw0PjbnFhaYm3oE3kg9Ba194X6DsEsTYQyrpqKSX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=naW0xum0; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch [83.173.201.248])
-	by mail11.truemail.it (Postfix) with ESMTPA id 468631F90C;
-	Fri, 22 Aug 2025 09:04:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1755846245;
-	bh=b3LB6AKLWtMRp7LJqzHFsQOELisaDWWfVYYsVajcePw=; h=From:To:Subject;
-	b=naW0xum0rU7DNLezdhgLXYO/DYFEaWP2QDWzKZlUDUB4QISseWgnYJobWbTQNF1E6
-	 QjDPI92c8+wyXU77PgXu404whBJOvdMCFq92CXmgI2hbzeH6JtUh6wKobFif2WOAXb
-	 YfFUvbvfQrWRfVeB7AJ2vFzH2D49Tei+0Q7mG/9G+vxmFa/EWcCTxzzw/KtXu0G4JC
-	 Q7rR/NDP4JYSavNrX0mUWS0N0qtlVg/3JhyDRKwA47YBib6F20eSvuwYpoImUtbh8s
-	 lSD+lBnuqaRNc1oBk/OHWfBN/FqyL41x14gTm/qb2N+S/ZSqJXBg/se9qiiKS6rx3a
-	 4oO4occyk5T2g==
-Date: Fri, 22 Aug 2025 09:04:01 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Vitor Soares <ivitro@gmail.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Vitor Soares <vitor.soares@toradex.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Aradhya Bhatia <aradhya.bhatia@linux.dev>,
-	Jayesh Choudhary <j-choudhary@ti.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v3] drm/bridge: cdns-dsi: Replace deprecated
- UNIVERSAL_DEV_PM_OPS()
-Message-ID: <20250822070401.GA15925@francesco-nb>
-References: <20250512083215.436149-1-ivitro@gmail.com>
- <546ef388-299b-4d97-8633-9508fab4475a@ideasonboard.com>
+	s=arc-20240116; t=1755846279; c=relaxed/simple;
+	bh=F9AEUqmn/NekpYItgVpHC4OprnZUh+JhGF6cYJ4hrWg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fIs9GYG1pHki0E/72V27ufR0OIHa4xHEfH4V7LxCP3jiafyaMR0RSx2jc8mo6ZH17G4QKEo1J5+X7uCrHt3MPnpxWg9JgS4LHZ7ezYggijYW8eCZTqY19E6QSKLfObwY4tDoGsf1cOtvV9APBkp5ZS+LCJiTR5t2SIw7RNyGX5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 3eb916507f2611f0b29709d653e92f7d-20250822
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:9910f657-f544-4765-a940-77a8abdc5dd4,IP:0,U
+	RL:0,TC:0,Content:36,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:36
+X-CID-META: VersionHash:6493067,CLOUDID:cecc2b5f2ffdb34e62039edd32a44217,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:4|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 3eb916507f2611f0b29709d653e92f7d-20250822
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1972000434; Fri, 22 Aug 2025 15:04:28 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 71AA9E008FA3;
+	Fri, 22 Aug 2025 15:04:28 +0800 (CST)
+X-ns-mid: postfix-68A8167B-754843306
+Received: from localhost.localdomain (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 3F954E008FA2;
+	Fri, 22 Aug 2025 15:04:27 +0800 (CST)
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: "rafael J . wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: zhenglifeng <zhenglifeng1@huawei.com>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zihuan Zhang <zhangzihuan@kylinos.cn>
+Subject: [PATCH v3 0/2] cpufreq: Cleanups and minor fixes
+Date: Fri, 22 Aug 2025 15:04:22 +0800
+Message-Id: <20250822070424.166795-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <546ef388-299b-4d97-8633-9508fab4475a@ideasonboard.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+This series contains two small cpufreq cleanups:
 
-On Thu, May 22, 2025 at 12:09:08PM +0300, Tomi Valkeinen wrote:
-> On 12/05/2025 11:32, Vitor Soares wrote:
-> > From: Vitor Soares <vitor.soares@toradex.com>
-> > 
-> > The deprecated UNIVERSAL_DEV_PM_OPS() macro uses the provided callbacks
-> > for both runtime PM and system sleep. This causes the DSI clocks to be
-> > disabled twice: once during runtime suspend and again during system
-> > suspend, resulting in a WARN message from the clock framework when
-> > attempting to disable already-disabled clocks.
-> > 
-> > [   84.384540] clk:231:5 already disabled
-> > [   84.388314] WARNING: CPU: 2 PID: 531 at /drivers/clk/clk.c:1181 clk_core_disable+0xa4/0xac
-> > ...
-> > [   84.579183] Call trace:
-> > [   84.581624]  clk_core_disable+0xa4/0xac
-> > [   84.585457]  clk_disable+0x30/0x4c
-> > [   84.588857]  cdns_dsi_suspend+0x20/0x58 [cdns_dsi]
-> > [   84.593651]  pm_generic_suspend+0x2c/0x44
-> > [   84.597661]  ti_sci_pd_suspend+0xbc/0x15c
-> > [   84.601670]  dpm_run_callback+0x8c/0x14c
-> > [   84.605588]  __device_suspend+0x1a0/0x56c
-> > [   84.609594]  dpm_suspend+0x17c/0x21c
-> > [   84.613165]  dpm_suspend_start+0xa0/0xa8
-> > [   84.617083]  suspend_devices_and_enter+0x12c/0x634
-> > [   84.621872]  pm_suspend+0x1fc/0x368
-> > 
-> > To address this issue, replace UNIVERSAL_DEV_PM_OPS() with
-> > SET_RUNTIME_PM_OPS(), enabling suspend/resume handling through the
-> > _enable()/_disable() hooks managed by the DRM framework for both
-> > runtime and system-wide PM.
-> > 
-> > Cc: <stable@vger.kernel.org> # 6.1.x
-> > Fixes: e19233955d9e ("drm/bridge: Add Cadence DSI driver")
-> > Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
+  1) Use strlen() as the length argument for strncasecmp() in
+     cpufreq_parse_policy(). This makes comparison more permissive
+     (prefix match), which is consistent with the intention in our
+     deployment and improves readability over using CPUFREQ_NAME_LEN.
 
-ping on this, Tomi, maybe you can pick this one or is there any
-concern ?
+  2) The second patch is new in this version. It simplifies the validatio=
+n
+     logic in cpufreq_register_driver().This makes the registration code=20
+     more straightforward without changing functionality.
 
-Francesco
+Changes since v2:
+    - Fix code suggested by Viresh Kumar
+
+Changes since v1:
+	- Dropped the second patch from v1, which was not needed.
+	- Kept the first patch as-is (already Acked).
+	- Added a new second patch to simplify driver registration checks
+
+Zihuan Zhang (2):
+  cpufreq: use strlen() for governor name comparison
+  cpufreq: simplify setpolicy/target check in driver verification
+
+ drivers/cpufreq/cpufreq.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+--=20
+2.25.1
 
 
