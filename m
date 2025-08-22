@@ -1,133 +1,121 @@
-Return-Path: <linux-kernel+bounces-782558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D785B321FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:06:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A281AB321FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11E0DA21BEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:06:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 017E34E1D9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DD12BDC1C;
-	Fri, 22 Aug 2025 18:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F55B2BE03B;
+	Fri, 22 Aug 2025 18:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dKpBU1U6"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hB230mCe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7356C214A78;
-	Fri, 22 Aug 2025 18:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96BC1A9FB9;
+	Fri, 22 Aug 2025 18:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755885975; cv=none; b=ivwwxCtPYeiOOBjSzOhYd3mvoy+t7fa9mfuDKuAYdzwVXxfAdGdLyVqmYb74tFELXYMfl8Kay/scNWZGMK8gY9fsX0lrYpB5l+gqlsOVB4DHPvZkYRqnuXE8zUIGF7twg+rx0OKDX2M1IVv/11kPtsp+B+oS0z05dskWhR5yZfQ=
+	t=1755886069; cv=none; b=PigwuGv4Eo+lgjh8y+nV54M5D21TkSt1yy6twv9Dktl/ZcS4QI5ylmNM56YndATDv3ttUqjvsSzfH1JOj2/wmRZAxKyKsFvCj5aVj9uuEwFVwW2u/8hk8w5mfHFm2vz/gj14a/+Dc0UAVOx51RfdbClZozBMMS3H9v13zw1Uf1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755885975; c=relaxed/simple;
-	bh=UD+NDBzOOFKP0Ldz8mQ9Lp6ee4T6073Zsmxqgs2rCR8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XS0Z/WTwWFEMlK+RYA8fGxRycVqN10T1gwwcN30x32LXzyGx4QbPMzJN6RRhL4RamJbaacYFXOye3XyLI94KQAD+Bp5holqg/05DAtYe4HZ2jLL0l5eciRinaXzRVk+vsMBsdVDJO6RRtf9PwYtXOytvB0s0jRPvVN06iVUdN2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dKpBU1U6; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-321cfa7ad29so2658604a91.1;
-        Fri, 22 Aug 2025 11:06:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755885974; x=1756490774; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GGbuZpjNy2mydNzS32UDYUsfLRx7izubX1ZCwH1grG8=;
-        b=dKpBU1U622Z4jBQs8PDL66/f1mIw9vHUEh9bkEwJsrCbwMjz8B5NyjgvBvZwcgBvs1
-         8CTI6TTvGhQ2a9EBObZITxhq7gxZ/7ljh5tJWZGdUelOQfM9wgPhvABQ8ImwEHYapAjN
-         ikuXUoT3XV3ONKuSYsrGqW5RlaHPYsncdRmmOeqOU7GkZH0QdE//FPo+nKZeFZSff899
-         cQkFACUsZrct5+oYnntI+MenHHD9Sr+P7a6zIkNvp4VAgVKEHvQjNRhLm/DqyHGixDCk
-         Kv58V+8SUi3nVI6ezNF0tI9R7/AvOWflS1g+NjhvkEUxGj4un9VfKuPUqJSWD2Qux7GB
-         FpZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755885974; x=1756490774;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GGbuZpjNy2mydNzS32UDYUsfLRx7izubX1ZCwH1grG8=;
-        b=whyY4JNPmPJ86eAWSR/rmLCrjVKtGDq/xQ7WDnyVCflBYCCDGCrDIRsp4njDSRnfhC
-         TEqCoCV1VydwvM6aIqRg6ehy1D+tbsuJzhOotzVMnA7SmoXBDt/Jf6KJErNWVzQf1X6d
-         qEzEQo2OuAIBJP/Jt7XzL6ZQSsvZ1HkEFXQISWRYwitpgpIIiP0kaLTXP2hIeSg06M25
-         ZOoAsmWqk+P22Im2jmDhkrptQGF+y1fg/lBpbMoVCdJRgSXWFP8NRo+x5CaNLzqOGNFm
-         x6tnYYQ+5EGjw81cFhQFgFI0z2g2YEMUweRQhXcJVS4BiqHc/7vtmdW4BHMKHpmOmS+n
-         RaLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNpgjaWwaaUqzDCYozXvBpyyB9sDugkVi2Tm4AFE/AWng+j5Av8uXAmBfxsEkExlynFnPetE4pdi+1vtu5cbtxHoET@vger.kernel.org, AJvYcCXPpg0Wzsk2QVWJrE84czouiVuTSUcMZS9E+wvzuQ7hafSF3wZs0aV7zloKH8PF2YvL0R5uFP4FehdIj6z+@vger.kernel.org, AJvYcCXypcseFVP5uhDl9ze9Tkeua23vulLc6d5Ni58WcROAX/Q1ykaCWTzNoUHWV754wBdQFmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0kx3mumUkYiRuDmihasqTvHUnU/UIV5JLZELgl2Smcv21ETqh
-	Gq8KQkHzQC2VoBgfSGBWdARP/ku/2whZY7ICdGD/lluQmpPrUIECHqiavCPRMbBHUyShtZQaS0F
-	o9dQU/DgfgKonnt4mNkWKZFpEb65u3DI=
-X-Gm-Gg: ASbGnctpGNEluRu8WxeCPNqYOP+452D8eMIynuqxWaAvrTZoqUBRlEQFG4CfyeAQnXW
-	LAZXc9L7fOW94qlyNqtzKzN9ENHw/fOIvW0J+0Q3R0OUFh1daPkHHbxXVhzpYAAnJlguQvbYe+M
-	o+7qaVAnBxLuZur4lcyPuDti0awVdOyq3+qsgM8b58tf3T35ujsJl6Dfe+y/hGm4GH4chXR522g
-	dnKV2TydyI5++WuOe0yxCI=
-X-Google-Smtp-Source: AGHT+IEKP3ji+tVqY2bw0xHuOLuE8k4b1SlsawGnIcY6c1SzPnAnTKNsiwyGtUvIvwWQ4vZzU9e0f1w9UJc/bwM5peo=
-X-Received: by 2002:a17:90b:4b4d:b0:31f:252:e765 with SMTP id
- 98e67ed59e1d1-3251d492f0bmr4749271a91.6.1755885973496; Fri, 22 Aug 2025
- 11:06:13 -0700 (PDT)
+	s=arc-20240116; t=1755886069; c=relaxed/simple;
+	bh=TRLO2DCNENsTrov5nyNcOD2c9LJ9eBSAaPzlTkEcayM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P9DgsdxQRmmmDFtLqQkX6643KEeCB9cOUh//L8d3zjWkNRG/z/S5JwsLjlM4Q5Wsw3LaxoIkhGeWyqcIEEB1PaWcZ6kccW8wEZN19rXYEmQYfpMl3aJWpZJWGueSSor4HnhTTX9FaGw52DMgsSKvrzGy/36UVy1ZQzouzMGUIPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hB230mCe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F508C4CEED;
+	Fri, 22 Aug 2025 18:07:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755886068;
+	bh=TRLO2DCNENsTrov5nyNcOD2c9LJ9eBSAaPzlTkEcayM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hB230mCefFRs7TfSvZjlWxnaB4i/QJcIMYBg0mFVphlFpKgjYJRFIGR531o2fE2bT
+	 mXLfGmqCK+WSZIaLOMaFwcr+1pwAIsxkXgbAlD24o70T331VkRZFc81SYfTz6z0iBm
+	 I31knfy3W6fKUVjoWaFWO+63IrvOrV3puxdfmvxcMWUFvLPp4ENR6aGWVAkXHelUNH
+	 w/QXUecfA39sfknub5dZOWBnvJopIKQIsgJMtID/VLdBIayvHsT2VL77Fk7Vwd/dmu
+	 WcbY0lB+jbIDBdDWUIcsuw7yzYIFFi+vVitgVfygVDl+K0EMQ19lQuyG1Rnc0umzcS
+	 b2Rl+HU+r1FzA==
+Date: Fri, 22 Aug 2025 08:07:47 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] softirq: Provide a handshake for canceling tasklets via
+ polling on PREEMPT_RT
+Message-ID: <aKix80fycymWz3Mh@slm.duckdns.org>
+References: <aJzT7rqwkRQrLGqo@slm.duckdns.org>
+ <20250818125242.vJ4wGk20@linutronix.de>
+ <aKNlshZmWsHVXBo0@slm.duckdns.org>
+ <20250819150105.DYeV89fa@linutronix.de>
+ <20250820103657.vDuDuLx6@linutronix.de>
+ <20250820105518.Yf36NzJd@linutronix.de>
+ <aKYltdkLBRZJF0Ok@slm.duckdns.org>
+ <20250821092827.zcFpdnNy@linutronix.de>
+ <aKdTEkK5MBz_Fj47@slm.duckdns.org>
+ <20250822094812.L4hiquhY@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821122822.671515652@infradead.org> <aKcqm023mYJ5Gv2l@krava> <aKgtaXHtQvJ0nm_b@krava>
-In-Reply-To: <aKgtaXHtQvJ0nm_b@krava>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 22 Aug 2025 11:05:59 -0700
-X-Gm-Features: Ac12FXxeC-KsZyreT3czhyiPwAUFcHkIFRPzz5QyW-vmpZTqIKYJ5J9cnPVS0S0
-Message-ID: <CAEf4BzYg9jsEK1XdKW4dKFdOSrY4CAspaCAAv6ZJZScHxkHSyA@mail.gmail.com>
-Subject: Re: [PATCH 0/6] uprobes/x86: Cleanups and fixes
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: andrii@kernel.org, Peter Zijlstra <peterz@infradead.org>, oleg@redhat.com, 
-	mhiramat@kernel.org, linux-kernel@vger.kernel.org, alx@kernel.org, 
-	eyal.birger@gmail.com, kees@kernel.org, bpf@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org, songliubraving@fb.com, 
-	yhs@fb.com, john.fastabend@gmail.com, haoluo@google.com, rostedt@goodmis.org, 
-	alan.maguire@oracle.com, David.Laight@aculab.com, thomas@t-8ch.de, 
-	mingo@kernel.org, rick.p.edgecombe@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250822094812.L4hiquhY@linutronix.de>
 
-On Fri, Aug 22, 2025 at 1:42=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrot=
-e:
->
-> On Thu, Aug 21, 2025 at 04:18:03PM +0200, Jiri Olsa wrote:
-> > On Thu, Aug 21, 2025 at 02:28:22PM +0200, Peter Zijlstra wrote:
-> > > Hi,
-> > >
-> > > These are cleanups and fixes that I applied on top of Jiri's patches:
-> > >
-> > >   https://lkml.kernel.org/r/20250720112133.244369-1-jolsa@kernel.org
-> > >
-> > > The combined lot sits in:
-> > >
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git perf=
-/core
-> > >
-> > > Jiri was going to send me some selftest updates that might mean rebas=
-ing that
-> > > tree, but we'll see. If this all works we'll land it in -tip.
-> > >
-> >
-> > hi,
-> > sent the selftest fix in here:
-> >   https://lore.kernel.org/bpf/20250821141557.13233-1-jolsa@kernel.org/T=
-/#u
->
-> Andrii,
-> do we want any special logistic for the bpf/selftest changes or it could
-> go through the tip tree?
+Hello, Sebastian.
 
-let's route selftest changes through tip together with the rest of
-uprobe changes, it's unlikely to conflict
+On Fri, Aug 22, 2025 at 11:48:12AM +0200, Sebastian Andrzej Siewior wrote:
+> > Okay, so, on !RT, that busy loop section is there to allow
+> > cancel_work_sync() to be called from BH-disabled contexts and the caller is
+> > responsible for ensuring there's no recursion. It's not great but matches
+> > the existing behavior. 
+> 
+> hold on for for a sec: existing behaviour for tasklet_unlock_spin_wait()
+> which has three users (a fourth one if we count i915 which has its own
+> tasklet layer). Not something that I would call common or wide spread
+> behaviour in the kernel (and task workqueue does not have it either).
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+IIRC, there was a conversion patchset which didn't get pushed to completion
+and it hit those, so the patch to add the busy wait.
 
->
-> thanks,
-> jirka
+> tasklet_disable() and tasklet_kill() both sleep while waiting for
+> completion and don't spin.
+> 
+> >                        Obviously, in !RT, we can't go to
+> > wait_for_completion() there because we can be in a non-sleepable context.
+> 
+> Again, only a small amount of users require to do so.
+> 
+> > Are you saying that, in RT, it'd be fine to call wait_for_completion()
+> > inside local_bh_disable() and won't trip any of the context warnings? If so,
+> > yeah, we don't need any of the looping.
+> 
+> No, that won't work. local_bh_disable() will start a RCU read section
+> and then RCU will complain during schedule().
+> So if the requirement is to cancel a BH workitem from within a BH
+> disabled section then we need the first patch in this thread.
+> 
+> But if we get rid of this requirement…
+
+Agreed, once we get rid of them, we can drop the whole block for both RT and
+!RT - ie. revert the patch that added it. But, wouldn't it be more orderly
+to match the semantics in both cases even if the behavior isn't quite
+optimal? We can put some comment noting what to do once the culprits are
+updated to not need it.
+
+Thanks.
+
+-- 
+tejun
 
