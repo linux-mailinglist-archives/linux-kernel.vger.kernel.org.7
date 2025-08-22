@@ -1,145 +1,199 @@
-Return-Path: <linux-kernel+bounces-781831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAEDBB31770
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:17:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 354D8B31761
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94023AE79A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:15:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 551153AA082
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B532FD7C1;
-	Fri, 22 Aug 2025 12:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084B62FC001;
+	Fri, 22 Aug 2025 12:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="LAYLKyig"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DG5aOP25"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB642FCBE8;
-	Fri, 22 Aug 2025 12:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496EC2ECD06;
+	Fri, 22 Aug 2025 12:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755864878; cv=none; b=XSmABL5myv7s38wSVti8Qud9hQuFFyU6CzQhb6tOWXGBI2Nc1rDiL73VXua1ooXcR2CgdD6893v/rZXN18PyuynjmEasa5w4MydBb4IwLS5DXm9tPW/mCu6gCS7cegJCdEqhTULGsDC+fD+ubnNyM25jEzVhn5tU0AYpTWBC5So=
+	t=1755864860; cv=none; b=NRBRqB75IfTFt6F1GRxeDqgG0bGjAxF9FlrTYW6CB1I6o86fRHDUgINmyVvOqN38brNruQkeHPVg87EBtIc+u/lgJr0c0R+9OHiegO+I0NjjJq+bZ5r0zQWAhGG6dgM7B+NuaW7/OAF+TkMFezmE65KkZMiiWl3b9B8TCfOlSao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755864878; c=relaxed/simple;
-	bh=xUzCqw8G2JO1bhdytol3kfokW1GSmJ1/SVm3V50NR/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XexFkd716uxhmHVoM1gfIUfTJeJPuLpCA8HMmgzKuwGQPjE5e9zQ8QqLEOPa/vYxnHTwlHZpFXtbJ4funFZdwzSZR23XICEOK/7/rHS8uFOk64OQ/+RxtDqhbApdJqCwWp0dVPmuiqfybHVKlkCdipwi4S63oehAKTudC7peQWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=LAYLKyig; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1755864877; x=1787400877;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=xUzCqw8G2JO1bhdytol3kfokW1GSmJ1/SVm3V50NR/g=;
-  b=LAYLKyigeTTjvC34kfVLH4i9EbjGdZko/yCTxg1NLSTWxnkwbLhDiE96
-   rmkCYHU/6nsb7XlRJnUDre2RKyLvmCf/L/XMzgYpDLIrYM//xkSVmVuHc
-   Y5hsB5F82+Y4aO6KeFxCY1IO7d1jde/3HCYdU2XTLt42UrCpZFo+/nKqe
-   W8nY5a/XEKcHulou0s5FEeubJXT4igk4KLqKBfn3gnkz7bqlsYSuBqWnA
-   o+D7gIt0T2o270kI0uTklHUXCvVI6bBz5gYsvbZ0N1jmRA7ySmsQcO89P
-   GPJwsKEe0l9CLNfN4B81cg1bvgj3VKqv5NZFks7U9pcTPgmlKtQTChsG2
-   w==;
-X-CSE-ConnectionGUID: UKvKOVZXRqugqNL71FaA+g==
-X-CSE-MsgGUID: /uRisEj6RXar0b2HQ8WGoQ==
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="45527384"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Aug 2025 05:14:21 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Fri, 22 Aug 2025 05:13:59 -0700
-Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Fri, 22 Aug 2025 05:13:55 -0700
-Message-ID: <364fadbd-20fd-4f89-8a86-ed5b8d87ab42@microchip.com>
-Date: Fri, 22 Aug 2025 14:13:55 +0200
+	s=arc-20240116; t=1755864860; c=relaxed/simple;
+	bh=mTJhF/BUDSVW9qsIepE2kodROp+3P/RuOXWIZZEbz2c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PQ5yCoWwFh6cx6JFM7Iay4ji6BmnvyjMOm89GIIPIFlQqDzGMX4NmtbdD15Qw9WjDNqNtIw0aA9urgjsFOzpMQ1M0FGpvB3eB/IyR2kFxcPz+WQty0xfcdE5ue2xRUC98PEiiSApBtSpN9T+kasl+/32ErURBHiAH8bI8Rw8z9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DG5aOP25; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 287DFC4CEF1;
+	Fri, 22 Aug 2025 12:14:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755864860;
+	bh=mTJhF/BUDSVW9qsIepE2kodROp+3P/RuOXWIZZEbz2c=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DG5aOP25pHW45GbVNJaaQmFvai7cMm3NT5BNYgudFIW8JwMeMDGEaTDWcH5Fo+8oV
+	 aLzAbzGWxrCwuTx+LvOEI6YPr47D2vGGq4nvo1uE9ncQ1ovMOc6MEsGWWgh7KBfnhY
+	 hSCarJyod7eVr7lhG0GYbAmDTFogNNMOH6Mspu9P1rH0smkeLJcIHdOeIurCyGRH9+
+	 IyeKSk6JsKY5H2tfKmUfx9d/f5OcyQ/WxOVOgrJqDuMyUjUZHRZ0ptDREpRW39JFAf
+	 b/t6Wgb4BFHUuNoTV8p+llhR7+QRNn8MV0i63Y0JZsWhOEcRf7Vn+6N3OyNXYtrUo3
+	 pXWQAOe17nItA==
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-30ccec59b4bso1649279fac.3;
+        Fri, 22 Aug 2025 05:14:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUdkyqPUhp9LdytIrOl+uG+/HMphWP/lmMHZMFIW0rQ/ttODQ+SAd96zeTcCQ9VPIjXCuJzfLGhWVc=@vger.kernel.org, AJvYcCUyklljCx83gMN8Dot78KR23M5ngJlBQwP/ef3OaIAK3E+QgkHQLHcUXn0wAZQolJWx9i6iu/Eg9T+p@vger.kernel.org, AJvYcCWC5gf5NVO3vlJ2WB02T//6axXLceEhgjnP5efBpi8O7z+jkXmLM7yr6IP5B5hOCcKO0HlU2cSWff4LNag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuUWmkNLKRy8O/ZYFgPyPAEZTtAr0IBEh1Wen0GGxov+biR34I
+	Hxe+qnNlcc+BpD0dD+xYYsUmc7IWOwBF5YjTHzm1c1GmolICOr6JrVW2/jupBF/g10hV18sPeul
+	Q73YIuUOcuD1s5upCLTXCjKlmQUAJCy0=
+X-Google-Smtp-Source: AGHT+IEWHa1tu80kztln5BulBF+tV07twYAtImEOLSbpU1ZRtppC39W+GqQwuCsbMH8qg3q4aA1idNQ54Q+fFdFiomg=
+X-Received: by 2002:a05:6870:6124:b0:2ff:a860:3402 with SMTP id
+ 586e51a60fabf-314dcbb854amr1259934fac.12.1755864859383; Fri, 22 Aug 2025
+ 05:14:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] net: cadence: macb: Add support for Raspberry Pi
- RP1 ethernet controller
-To: Stanimir Varbanov <svarbanov@suse.de>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-rpi-kernel@lists.infradead.org>, Broadcom internal kernel review list
-	<bcm-kernel-feedback-list@broadcom.com>
-CC: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
-	Andrea della Porta <andrea.porta@suse.com>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>, Phil Elwell <phil@raspberrypi.com>, Jonathan Bell
-	<jonathan@raspberrypi.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Andrew Lunn <andrew@lunn.ch>
-References: <20250822093440.53941-1-svarbanov@suse.de>
- <20250822093440.53941-4-svarbanov@suse.de>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <20250822093440.53941-4-svarbanov@suse.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250822031159.4005529-1-david.e.box@linux.intel.com> <20250822031159.4005529-2-david.e.box@linux.intel.com>
+In-Reply-To: <20250822031159.4005529-2-david.e.box@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 22 Aug 2025 14:14:07 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hHU0oni=wMAMThCknAZgX5K0iNYLvyeAmS4fkmheLQ8w@mail.gmail.com>
+X-Gm-Features: Ac12FXx_KnIauHu_xSyE2LiQV_gI4Sw4XEiH3bwJ-pEjSWCeBBeLiLdeCNzyGWg
+Message-ID: <CAJZ5v0hHU0oni=wMAMThCknAZgX5K0iNYLvyeAmS4fkmheLQ8w@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] PCI: vmd: Use pci_host_set_default_pcie_link_state()
+ to set ASPM defaults
+To: "David E. Box" <david.e.box@linux.intel.com>
+Cc: rafael@kernel.org, bhelgaas@google.com, vicamo.yang@canonical.com, 
+	kenny@panix.com, ilpo.jarvinen@linux.intel.com, nirmal.patel@linux.intel.com, 
+	mani@kernel.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/08/2025 at 11:34, Stanimir Varbanov wrote:
-> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> 
-> The RP1 chip has the Cadence GEM block, but wants the tx_clock
-> to always run at 125MHz, in the same way as sama7g5.
-> Add the relevant configuration.
-> 
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+On Fri, Aug 22, 2025 at 5:12=E2=80=AFAM David E. Box
+<david.e.box@linux.intel.com> wrote:
+>
+> Now that pci_host_set_default_pcie_link_state() exists, set the VMD child
+> domain with PCIE_LINK_STATE_ALL at bridge creation so core ASPM uses thos=
+e
+> defaults during ASPM and CLKPM capability init.
+>
+> Also remove the unneeded pci_set_power_state_locked(pdev, PCI_D0) and
+> pci_enable_link_state_locked() calls now that the links are configured
+> during enumeration.
+>
+> This aligns VMD behavior with platform expectations without per-controlle=
+r
+> ASPM tweaks at runtime.
+>
+> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+No issues found, so
+
+Reviewed-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
 
 > ---
->   drivers/net/ethernet/cadence/macb_main.c | 12 ++++++++++++
->   1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> index 36717e7e5811..260fdac46f4b 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -5135,6 +5135,17 @@ static const struct macb_config versal_config = {
->          .usrio = &macb_default_usrio,
->   };
-> 
-> +static const struct macb_config raspberrypi_rp1_config = {
-> +       .caps = MACB_CAPS_GIGABIT_MODE_AVAILABLE | MACB_CAPS_CLK_HW_CHG |
-> +               MACB_CAPS_JUMBO |
-> +               MACB_CAPS_GEM_HAS_PTP,
-> +       .dma_burst_length = 16,
-> +       .clk_init = macb_clk_init,
-> +       .init = macb_init,
-> +       .usrio = &macb_default_usrio,
-> +       .jumbo_max_len = 10240,
-> +};
-> +
->   static const struct of_device_id macb_dt_ids[] = {
->          { .compatible = "cdns,at91sam9260-macb", .data = &at91sam9260_config },
->          { .compatible = "cdns,macb" },
-> @@ -5155,6 +5166,7 @@ static const struct of_device_id macb_dt_ids[] = {
->          { .compatible = "microchip,mpfs-macb", .data = &mpfs_config },
->          { .compatible = "microchip,sama7g5-gem", .data = &sama7g5_gem_config },
->          { .compatible = "microchip,sama7g5-emac", .data = &sama7g5_emac_config },
-> +       { .compatible = "raspberrypi,rp1-gem", .data = &raspberrypi_rp1_config },
->          { .compatible = "xlnx,zynqmp-gem", .data = &zynqmp_config},
->          { .compatible = "xlnx,zynq-gem", .data = &zynq_config },
->          { .compatible = "xlnx,versal-gem", .data = &versal_config},
+> Changes in V2:
+>
+>   -- Separated VMD changes into new patch.
+>   -- Changed comment for VMD_FEAT_BIOS_PM_QUIRK to remove ASPM
+>   -- Removed pci_set_power_state() and pci_enable_link_state_locked()
+>      calls in vmd_pm_enable_quirk()
+>   -- Use pci_host_set_default_pcie_link_state()
+>
+>  drivers/pci/controller/vmd.c | 22 ++++++++--------------
+>  1 file changed, 8 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+> index b679c7f28f51..b99e01a57ddb 100644
+> --- a/drivers/pci/controller/vmd.c
+> +++ b/drivers/pci/controller/vmd.c
+> @@ -71,10 +71,9 @@ enum vmd_features {
+>         VMD_FEAT_CAN_BYPASS_MSI_REMAP           =3D (1 << 4),
+>
+>         /*
+> -        * Enable ASPM on the PCIE root ports and set the default LTR of =
+the
+> -        * storage devices on platforms where these values are not config=
+ured by
+> -        * BIOS. This is needed for laptops, which require these settings=
+ for
+> -        * proper power management of the SoC.
+> +        * Program default LTR values for storage devices on platforms wh=
+ere
+> +        * firmware did not. Required on many laptops for proper SoC powe=
+r
+> +        * management.
+>          */
+>         VMD_FEAT_BIOS_PM_QUIRK          =3D (1 << 5),
+>  };
+> @@ -733,7 +732,7 @@ static void vmd_copy_host_bridge_flags(struct pci_hos=
+t_bridge *root_bridge,
+>  }
+>
+>  /*
+> - * Enable ASPM and LTR settings on devices that aren't configured by BIO=
+S.
+> + * Enable LTR settings on devices that aren't configured by BIOS.
+>   */
+>  static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *userdata)
+>  {
+> @@ -747,7 +746,7 @@ static int vmd_pm_enable_quirk(struct pci_dev *pdev, =
+void *userdata)
+>
+>         pos =3D pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_LTR);
+>         if (!pos)
+> -               goto out_state_change;
+> +               return 0;
+>
+>         /*
+>          * Skip if the max snoop LTR is non-zero, indicating BIOS has set=
+ it
+> @@ -755,7 +754,7 @@ static int vmd_pm_enable_quirk(struct pci_dev *pdev, =
+void *userdata)
+>          */
+>         pci_read_config_dword(pdev, pos + PCI_LTR_MAX_SNOOP_LAT, &ltr_reg=
+);
+>         if (!!(ltr_reg & (PCI_LTR_VALUE_MASK | PCI_LTR_SCALE_MASK)))
+> -               goto out_state_change;
+> +               return 0;
+>
+>         /*
+>          * Set the default values to the maximum required by the platform=
+ to
+> @@ -767,13 +766,6 @@ static int vmd_pm_enable_quirk(struct pci_dev *pdev,=
+ void *userdata)
+>         pci_write_config_dword(pdev, pos + PCI_LTR_MAX_SNOOP_LAT, ltr_reg=
+);
+>         pci_info(pdev, "VMD: Default LTR value set by driver\n");
+>
+> -out_state_change:
+> -       /*
+> -        * Ensure devices are in D0 before enabling PCI-PM L1 PM Substate=
+s, per
+> -        * PCIe r6.0, sec 5.5.4.
+> -        */
+> -       pci_set_power_state_locked(pdev, PCI_D0);
+> -       pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
+>         return 0;
+>  }
+>
+> @@ -921,6 +913,8 @@ static int vmd_enable_domain(struct vmd_dev *vmd, uns=
+igned long features)
+>         WARN(sysfs_create_link(&vmd->dev->dev.kobj, &vmd->bus->dev.kobj,
+>                                "domain"), "Can't create symlink to domain=
+\n");
+>
+> +       pci_host_set_default_pcie_link_state(to_pci_host_bridge(vmd->bus-=
+>bridge),
+> +                                            PCIE_LINK_STATE_ALL);
+>         vmd_acpi_begin();
+>
+>         pci_scan_child_bus(vmd->bus);
 > --
-> 2.47.0
-> 
-
+> 2.43.0
+>
 
