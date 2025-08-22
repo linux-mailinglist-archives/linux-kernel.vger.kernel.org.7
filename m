@@ -1,111 +1,162 @@
-Return-Path: <linux-kernel+bounces-782628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CCF9B322CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:28:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FF0AB322D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 808E7640A19
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:28:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 17E024E11B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58192D0C8D;
-	Fri, 22 Aug 2025 19:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KJjpOTjC"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032D12D130A;
+	Fri, 22 Aug 2025 19:28:27 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006DB2D0C7F
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 19:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54C72D12E1
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 19:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755890900; cv=none; b=kDxsF3vz3I/Q/ssh2uIPbXrR4oEERI71MnuLPwsRWwvSJoCSDd9nz/VvUuycfuujYnYWLt0xb7oUwwIadfkI/bYbykn4Z9mKUhBUug8QmAM11tzdiJ/Qi4CN6VpNAtBpxoAlTBPR6NOSQb8ds/12OZTwYJP7/tzJ7k2QAuWFxGs=
+	t=1755890906; cv=none; b=jZBW57WYHZVtJfADCsGHOBRZAf4EF/51ep5KRuLBaDEzD431j3BTWhJupTJYOXQwCRZQFrN1u9QaanvueVpKzyt9qlhKo8/+RaRInIR5FfeR0EUgYGmkjX0NQkeZY9UxkgBzzQW27TBrAC3kC1rloZB62Xnu8qc+YpDCq/37Eg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755890900; c=relaxed/simple;
-	bh=j7A81r6RegdpWcYK+nl/r11XbwhWIIuLUbhyJyMgDFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HSXNR9bjCUvcRjT7WHFNNe0296pUWSGb9YSxG8NSFDRr+WOdWN3yKmt7v7zHcpuOoEm0Q+OGMuxl/R8h+t6odE0aIeP0RzhOkjZp3ZF727+w12rbqYdV2PS/wTpxxn50nf6U71aAmgncSwQNd4R9W+rN3d9Q0OSyNfFRR4cL+ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KJjpOTjC; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7C3FD40E025A;
-	Fri, 22 Aug 2025 19:28:14 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id T2m5S5JyptlF; Fri, 22 Aug 2025 19:28:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755890890; bh=R14rzH+K/gudqUukLtOD/dl9q9GH0ErTFk5o67w8BoQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KJjpOTjCCWaHiFfYpDscCe2ZJpwFAM4b7mAS6ONMwIusSYTSdZk4ut2J31t0Udu78
-	 vlN2jIlmZCaXMFKA2s0PVFsWOsjOCwFmSY6db7qcE7lRLlgDf8my0P5I7yptqbyvXm
-	 zdGiRG2crthyD0n/2xviDLbGFk0hgtDCBXi5noxY9r/0w+LYWT1oN8IOOOm1cipHMc
-	 j3UGidTWyt+jI7N8bHNxc+uzXGd5qu2lZSpzzRUik24iYwyTEBIQjqshn6+RPmvnZI
-	 eDTYgv+G+ESNBZyt/bjAGUyYs/Gw7KMglECgmR/1E/8T+uSIUnNxoe7YPvil4uwuSb
-	 JaTx0wK9StnmgKIy8rPMnXmWacBQRsor5zz2LjEtkpLYqox+QDvTbb44cZUEj/dcOU
-	 hPGPcYNSSQswfwguaK3kkxCsw2A2WFdkSZR/fyUoT0IIBQTRxWnd8oICDTwVvlgVpo
-	 LYiA7vqG3wrEVvPzoPqAZrzZzCPRYGQcCBBHhD2T3qmrSV0Y44homwu6itYgWYeNlE
-	 626eqlD3BCfWz7C4IhLBBcTdNzuTrtePewDfnE9EjHAWYO/cb6EigKRflQ8YOzS5Ox
-	 ZDEb2hefGgTioOrevTu5WSmihQEo5w7Mc3mePvRwtmJ+97+wOK55Y3DdJ9g9BATZBw
-	 pNaOwKTn7Wb2x+tKfXm9HJUk=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7DFDB40E00DD;
-	Fri, 22 Aug 2025 19:27:57 +0000 (UTC)
-Date: Fri, 22 Aug 2025 21:27:51 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Sohil Mehta <sohil.mehta@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] scripts/x86/intel: Add a script to update the minimum
- ucode revisions
-Message-ID: <20250822192751.GJaKjEtw5Rf4f0K3DE@fat_crate.local>
-References: <20250822004422.2908427-1-sohil.mehta@intel.com>
- <20250822100949.GAaKhB7ZlYxjpfcIit@fat_crate.local>
- <aaed72a9-8dc8-4744-96ae-ac3db9fb4d01@intel.com>
- <20250822182447.GHaKi176wVuSsNMmi4@fat_crate.local>
- <4d5a17d5-f26a-4682-ab7b-5a3b05b5af3a@intel.com>
- <20250822190622.GIaKi_rpJxdNGsbDlf@fat_crate.local>
- <2d677e21-a5a7-4b68-b11c-e73473bab0a6@intel.com>
+	s=arc-20240116; t=1755890906; c=relaxed/simple;
+	bh=35igRbOXzOT+aygBasJmYZRDoSWiSChONhMzreTISto=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=bCQ+EphSN5O16hGdzI/8S0SGgEW7inKTS4KWGfi+AoG8hW5xOYqbq3vFkwqJMWhtvDxyLTPx5hFCEfvxCddd62viM/qZ7ZuyJvFeiai6/uISevFrIe2xqQBsBvOAzPQp9eEAsj7J9bqGk2IL27+DfwsWVaq0eL6nHXAqY7OxVO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e66b7e4a94so66911505ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:28:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755890904; x=1756495704;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i4R3au6CNsIn/pqv5n1ncdda6pzTzrRFDv2YWrqK32g=;
+        b=GLJ+TwPIhrxOpan0cKb6XTSYqaKfANNMYNf0M0LOkzlB8Zf+d/6a5rmySNup5tYl4Y
+         8zRUyqwTk/f29rhb7BtU0q3t9BwK2ytswIBsUGfxCis3NhiPYLW1ktOOge3wKUHxRWiZ
+         VO6S4+k2DRYp21lQEWLIag5REf9PQM1tWS3r7m8KIKjHdTDGEooYAesx8UcjZG/ZMquA
+         JU/ZNjUWjen2gmygLrpuhTkkrTtB+7DmAuGMCXCmQaGD0bNElJuC3K1/R9sMkpzKwzLZ
+         uyMWttdASKwo2RVoYe4deqPHOBkx9PmpxaiM3aMdhzAvYrBbdm1u4xW7cIsAuEga3RXQ
+         AE+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUKptlKYv38cjjbyULpOoXIRkOdffvVHm8P6Mc3AlwHQ/uWa6UnJ9WDsKdaKXySLSfuVqMSIaMV2VIJvcs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3KiY9a28k8kecII0ZPSTakPCf2CDLPJ4NVOADRpvN/0F2eb1H
+	QCDMFouWts0nxODLUTZLntufbY0vTWG1VDOZVOtfAWGcx9aHWg5Ti8bV1P32/u85Aw55R1tZWrJ
+	spqoe1DY9Po0dwTvdriwmOZGoHk5qbTvwi9Mkrle83YpxSmePZ7LoJgcPO9U=
+X-Google-Smtp-Source: AGHT+IG3U36EMnJ1g2gMt2B8U8DuDa3xFIgQkIPGGoFgSqtFehP53nVfp0x16ED8BLcY8flXUeXz6TWMwbwRdSbl8hZUTfb7NWqK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2d677e21-a5a7-4b68-b11c-e73473bab0a6@intel.com>
+X-Received: by 2002:a92:cdad:0:b0:3e5:5937:e576 with SMTP id
+ e9e14a558f8ab-3e921581390mr67420845ab.13.1755890903892; Fri, 22 Aug 2025
+ 12:28:23 -0700 (PDT)
+Date: Fri, 22 Aug 2025 12:28:23 -0700
+In-Reply-To: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a8c4d7.050a0220.37038e.005c.GAE@google.com>
+Subject: [syzbot ci] Re: ovl: Enable support for casefold layers
+From: syzbot ci <syzbot+cie307097d7feb4e34@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, andrealmeid@igalia.com, brauner@kernel.org, 
+	jack@suse.cz, kernel-dev@igalia.com, krisman@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, tytso@mit.edu, 
+	viro@zeniv.linux.org.uk
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 22, 2025 at 12:16:59PM -0700, Dave Hansen wrote:
-> Ahh, gotcha. Should we slap something like this in the script?
-> 
-> 	This script is intended to be run in response to releases of the
-> 	official Intel microcode github repository[link]. Typically,
-> 	someone at Intel would see a new release, run this script,
-> 	refresh the intel-ucode-defs.h file and send a patch upstream to
-> 	update the mainline and stable versions.
+syzbot ci has tested the following series
 
-Yap, thanks!
+[v6] ovl: Enable support for casefold layers
+https://lore.kernel.org/all/20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com
+* [PATCH v6 1/9] fs: Create sb_encoding() helper
+* [PATCH v6 2/9] fs: Create sb_same_encoding() helper
+* [PATCH v6 3/9] ovl: Prepare for mounting case-insensitive enabled layers
+* [PATCH v6 4/9] ovl: Create ovl_casefold() to support casefolded strncmp()
+* [PATCH v6 5/9] ovl: Ensure that all layers have the same encoding
+* [PATCH v6 6/9] ovl: Set case-insensitive dentry operations for ovl sb
+* [PATCH v6 7/9] ovl: Add S_CASEFOLD as part of the inode flag to be copied
+* [PATCH v6 8/9] ovl: Check for casefold consistency when creating new dentries
+* [PATCH v6 9/9] ovl: Support mounting case-insensitive enabled layers
 
--- 
-Regards/Gruss,
-    Boris.
+and found the following issue:
+WARNING in ovl_dentry_weird
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Full report is available here:
+https://ci.syzbot.org/series/efd002b5-e585-4cf8-86e7-4f24ba2247c7
+
+***
+
+WARNING in ovl_dentry_weird
+
+tree:      torvalds
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
+base:      068a56e56fa81e42fc5f08dff34fab149bb60a09
+arch:      amd64
+compiler:  Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+config:    https://ci.syzbot.org/builds/039eb31b-2b45-4207-b63e-71a25ed89f00/config
+C repro:   https://ci.syzbot.org/findings/726ae90b-83b6-49e2-a496-9bfe444dc24f/c_repro
+syz repro: https://ci.syzbot.org/findings/726ae90b-83b6-49e2-a496-9bfe444dc24f/syz_repro
+
+EXT4-fs (loop0): 1 orphan inode deleted
+EXT4-fs (loop0): mounted filesystem 00000000-0000-0000-0000-000000000000 r/w without journal. Quota mode: none.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6001 at fs/overlayfs/ovl_entry.h:118 OVL_FS fs/overlayfs/ovl_entry.h:118 [inline]
+WARNING: CPU: 0 PID: 6001 at fs/overlayfs/ovl_entry.h:118 ovl_dentry_weird+0x15a/0x1a0 fs/overlayfs/util.c:206
+Modules linked in:
+CPU: 0 UID: 0 PID: 6001 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:OVL_FS fs/overlayfs/ovl_entry.h:118 [inline]
+RIP: 0010:ovl_dentry_weird+0x15a/0x1a0 fs/overlayfs/util.c:206
+Code: e8 6b f9 8f fe 83 e5 03 0f 95 c3 31 ff 89 ee e8 9c fd 8f fe 89 d8 5b 41 5c 41 5e 41 5f 5d e9 3d b9 4c 08 cc e8 47 f9 8f fe 90 <0f> 0b 90 e9 08 ff ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 0b
+RSP: 0018:ffffc90002caf9c8 EFLAGS: 00010293
+RAX: ffffffff832fb1e9 RBX: ffff888109730000 RCX: ffff888023295640
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88802b624a48
+RBP: dffffc0000000000 R08: 0000000030656c69 R09: 1ffff110048d0ce0
+R10: dffffc0000000000 R11: ffffed10048d0ce1 R12: dffffc0000000000
+R13: 0000000000000003 R14: ffff88802b624a48 R15: ffff888109730028
+FS:  0000555581e17500(0000) GS:ffff8880b861b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000001000 CR3: 00000000242f4000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ ovl_mount_dir_check fs/overlayfs/params.c:300 [inline]
+ ovl_do_parse_layer+0x307/0xbb0 fs/overlayfs/params.c:422
+ ovl_parse_layer fs/overlayfs/params.c:448 [inline]
+ ovl_parse_param+0xb62/0xee0 fs/overlayfs/params.c:633
+ vfs_parse_fs_param+0x1a9/0x420 fs/fs_context.c:146
+ vfs_parse_fs_string fs/fs_context.c:188 [inline]
+ vfs_parse_monolithic_sep+0x24d/0x310 fs/fs_context.c:230
+ do_new_mount+0x273/0x9e0 fs/namespace.c:3804
+ do_mount fs/namespace.c:4136 [inline]
+ __do_sys_mount fs/namespace.c:4347 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4324
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0c2558ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd67150878 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f0c257b5fa0 RCX: 00007f0c2558ebe9
+RDX: 0000200000000b80 RSI: 0000200000000100 RDI: 0000000000000000
+RBP: 00007f0c25611e19 R08: 0000200000000180 R09: 0000000000000000
+R10: 0000000000000008 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f0c257b5fa0 R14: 00007f0c257b5fa0 R15: 0000000000000005
+ </TASK>
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
