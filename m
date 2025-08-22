@@ -1,70 +1,75 @@
-Return-Path: <linux-kernel+bounces-782360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F60B31F4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:47:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E76B31FA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95D897A7E54
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:43:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E27EEAA2469
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437BF34A338;
-	Fri, 22 Aug 2025 15:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D928F2EDD59;
+	Fri, 22 Aug 2025 15:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gkm3JskI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JmazHfqA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BBE34A324;
-	Fri, 22 Aug 2025 15:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE9B23D7C4
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 15:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755876974; cv=none; b=UMHp4GOJPQ8BVIGbVrQd0Ikmu4W7wR9MYh4B8BydHzS79yEVrxT0RaYPu+YR0asVHXuYvAaMfYxwCVNVQuns3RkAg9TXyTyy1tNtukscrUKmz3xBpNBITa+MfXgfY8Yjx7s1/ZfQEuRjFNAPwyrleM8EodLwcds7gZjHbDUqYZ4=
+	t=1755877096; cv=none; b=uQCwUwqLIUdUXVPtm9Wh7o+mpcrs5QBMEdKvvf8TC/TxErpXYAokwii8TqBF/fTKZwdvB0qvnuQX3DrwurhzoD/MWl5AaJ2034NHglxiL5VzWjj/WZ2f56l515GgGUY8hBfkvsVkZxJ9mabqRA9Ur2Od7btbV63FnoTWVWMAY+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755876974; c=relaxed/simple;
-	bh=M4axMQs8H13c09qWo6K3CitPMFiulFvZkPJOaBof5qk=;
+	s=arc-20240116; t=1755877096; c=relaxed/simple;
+	bh=vtoLwSy+rSGK7Qrg8w4sry4YSsxubqnZXpbq0bBBQ3E=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=o2Ob5mdBgrZP5JoFZ9w4FbA3nXtRT7li1NESUsEiRpmSurZwg3LvDRpGYgvtNqnornkg1a4jr/rjHCd8U8m49J+ipi1YwhAmaiSnUzCz0xPuKtClA8KC9FjzriW2draMdgy6D2nMc0Np7FBFt4ZoUphkAfOceDBe5AELfsxQMcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gkm3JskI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9AE6C4CEED;
-	Fri, 22 Aug 2025 15:36:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755876974;
-	bh=M4axMQs8H13c09qWo6K3CitPMFiulFvZkPJOaBof5qk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Gkm3JskIl9AEISSDTxGOPEQ5Ekw+yO/AvQdomznGVF8QhL2AKSjB9ug0fr1l8cDAC
-	 R5sn0gLRNWsiAEXDV/8IqKrKhmFhfaIV0eZ2Ifeh4tLF63tK6IWjZnREefRXi/M03D
-	 sonYkEFxAHk5WnTO9vZYeGm/kLZ++fqGgDYfTihFHvZFAojKUxRz39rTZqvajG+zmS
-	 C5cdC9xRurIk0OtWquWGUHHvSsQMbdCi9wn8LX+sUhjGWTlzoGERhtdVdDoJXui0e5
-	 RMD+nlwye1ZCE/pFkHY1ti7fjopPKBrl36OGkQOSbkQ95P59TCZ58RYnkJ70Qa5E+H
-	 M8+0Xh8w08Hdg==
-Date: Fri, 22 Aug 2025 10:36:11 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"kwilczynski@kernel.org" <kwilczynski@kernel.org>,
-	"mani@kernel.org" <mani@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"joel@jms.id.au" <joel@jms.id.au>,
-	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	BMC-SW <BMC-SW@aspeedtech.com>
-Subject: Re: =?utf-8?B?5Zue6KaG?= =?utf-8?Q?=3A?= [PATCH v2 09/10] PCI:
- aspeed: Add ASPEED PCIe RC driver
-Message-ID: <20250822153611.GA684739@bhelgaas>
+	 Content-Disposition:In-Reply-To; b=ef5sNpXJNsKDwQT4U00t5Fj6vEIIgXSHurp9XNNVrlUUli5QU611lZX1tP5G+SNHuU1PTbHqb/Lm/rL3dut05XQZDVdbpZ2igxCyjdQ0Acl5dhSFNoewnjToYC82FzQS07N1whEsoUdWB/F9dTPsuIBbQBJeMmijrNs2sdwvco8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JmazHfqA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755877093;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=wcb+UP6uLJYVIufEAJyNrWK+nKSeXT9MKLtT9eMyJe4=;
+	b=JmazHfqAVHOB5Tu3xmasw38lwkKIMMoKy3EyV8VNbYU12YYIfugZqB0rpLX5r/yPUfkZCY
+	PYuJL72iGbRbn/fsbSNgiWO4R5zc1hWqnC2Mr6ZNBzgVX9BKETcp9ynNyZO+Ys0KgO2vLN
+	zjeOqt+xUo++z1gSLJFuGTeDpIUyR/Y=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-583-Z-lD4Dc_NTq8iJsVqLjeZw-1; Fri,
+ 22 Aug 2025 11:38:08 -0400
+X-MC-Unique: Z-lD4Dc_NTq8iJsVqLjeZw-1
+X-Mimecast-MFC-AGG-ID: Z-lD4Dc_NTq8iJsVqLjeZw_1755877086
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 743841800561;
+	Fri, 22 Aug 2025 15:38:05 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.227])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A0633180044F;
+	Fri, 22 Aug 2025 15:38:00 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 22 Aug 2025 17:36:45 +0200 (CEST)
+Date: Fri, 22 Aug 2025 17:36:39 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Ingo Molnar <mingo@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [PATCH v2 1/5] x86/fpu: don't use x86_task_fpu() in
+ copy_xstate_to_uabi_buf()
+Message-ID: <20250822153639.GA27139@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,78 +78,109 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SEYPR06MB5134692DCCFD55F5ABD812F39D3DA@SEYPR06MB5134.apcprd06.prod.outlook.com>
+In-Reply-To: <20250822153603.GA27103@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Fri, Aug 22, 2025 at 07:00:25AM +0000, Jacky Chou wrote:
-> > v1 posting was
-> > https://lore.kernel.org/r/20250613033001.3153637-1-jacky_chou@aspeedtech
-> > .com
-> > Links to previous postings are helpful in the cover letter.
-> > 
-> > On Tue, Jul 15, 2025 at 11:43:19AM +0800, Jacky Chou wrote:
-> > > Introduce PCIe Root Complex driver for ASPEED SoCs. Support RC
-> > > initialization, reset, clock, IRQ domain, and MSI domain setup.
-> > > Implement platform-specific setup and register configuration for
-> > > ASPEED. And provide PCI config space read/write and INTx/MSI interrupt
-> > > handling.
+No functional changes, preparation for the next patches.
 
-> > > +#define MAX_MSI_HOST_IRQS	64
-> > > +#define PCIE_RESET_CONFIG_DEVICE_WAIT_MS	500
-> > 
-> > Where does this value come from?  Is there a generic value from
-> > drivers/pci/pci.h you can use?
-> 
-> We check the PCIe specification to find these contents.
->
-> "With a Downstream Port that supports Link speeds greater than 5.0
-> GT/s, software must wait a minimum of 100 ms after Link training
-> completes before sending a Configuration Request to the device
-> immediately below that Port."
->
-> So, we think delay 500ms to let kernel issue the first configuration
-> command is enough after deassert PERST.
+Change copy_xstate_to_uabi_buf() to take a "struct fpstate *" and
+"u32 pkru" instead of "struct task_struct *" to avoid x86_task_fpu(tsk).
+The callers already have "struct fpu *" and can pass fpu->fpstate directly.
 
-Isn't this PCIE_RESET_CONFIG_WAIT_MS?
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+---
+ arch/x86/kernel/fpu/regset.c | 10 ++++++----
+ arch/x86/kernel/fpu/xstate.c | 12 ++++++------
+ arch/x86/kernel/fpu/xstate.h |  4 ++--
+ 3 files changed, 14 insertions(+), 12 deletions(-)
 
-I prefer to use #defines from the PCI core whenever possible because
-it makes it easier to ensure that all drivers include the required
-delays.
+diff --git a/arch/x86/kernel/fpu/regset.c b/arch/x86/kernel/fpu/regset.c
+index 0986c2200adc..d280d415b171 100644
+--- a/arch/x86/kernel/fpu/regset.c
++++ b/arch/x86/kernel/fpu/regset.c
+@@ -83,7 +83,7 @@ int xfpregs_get(struct task_struct *target, const struct user_regset *regset,
+ 				    sizeof(fpu->fpstate->regs.fxsave));
+ 	}
+ 
+-	copy_xstate_to_uabi_buf(to, target, XSTATE_COPY_FX);
++	copy_xstate_to_uabi_buf(to, fpu->fpstate, target->thread.pkru, XSTATE_COPY_FX);
+ 	return 0;
+ }
+ 
+@@ -130,12 +130,14 @@ int xfpregs_set(struct task_struct *target, const struct user_regset *regset,
+ int xstateregs_get(struct task_struct *target, const struct user_regset *regset,
+ 		struct membuf to)
+ {
++	struct fpu *fpu = x86_task_fpu(target);
++
+ 	if (!cpu_feature_enabled(X86_FEATURE_XSAVE))
+ 		return -ENODEV;
+ 
+-	sync_fpstate(x86_task_fpu(target));
++	sync_fpstate(fpu);
+ 
+-	copy_xstate_to_uabi_buf(to, target, XSTATE_COPY_XSAVE);
++	copy_xstate_to_uabi_buf(to, fpu->fpstate, target->thread.pkru, XSTATE_COPY_XSAVE);
+ 	return 0;
+ }
+ 
+@@ -419,7 +421,7 @@ int fpregs_get(struct task_struct *target, const struct user_regset *regset,
+ 		struct membuf mb = { .p = &fxsave, .left = sizeof(fxsave) };
+ 
+ 		/* Handle init state optimized xstate correctly */
+-		copy_xstate_to_uabi_buf(mb, target, XSTATE_COPY_FP);
++		copy_xstate_to_uabi_buf(mb, fpu->fpstate, target->thread.pkru, XSTATE_COPY_FP);
+ 		fx = &fxsave;
+ 	} else {
+ 		fx = &fpu->fpstate->regs.fxsave;
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index 12ed75c1b567..2bd5974d5f0e 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -1256,7 +1256,8 @@ void __copy_xstate_to_uabi_buf(struct membuf to, struct fpstate *fpstate,
+ /**
+  * copy_xstate_to_uabi_buf - Copy kernel saved xstate to a UABI buffer
+  * @to:		membuf descriptor
+- * @tsk:	The task from which to copy the saved xstate
++ * @fpstate:	The fpstate buffer from which to copy
++ * @pkru_val:	The PKRU value to store in the PKRU component
+  * @copy_mode:	The requested copy mode
+  *
+  * Converts from kernel XSAVE or XSAVES compacted format to UABI conforming
+@@ -1265,12 +1266,11 @@ void __copy_xstate_to_uabi_buf(struct membuf to, struct fpstate *fpstate,
+  *
+  * It supports partial copy but @to.pos always starts from zero.
+  */
+-void copy_xstate_to_uabi_buf(struct membuf to, struct task_struct *tsk,
+-			     enum xstate_copy_mode copy_mode)
++void copy_xstate_to_uabi_buf(struct membuf to, struct fpstate *fpstate,
++			     u32 pkru_val, enum xstate_copy_mode copy_mode)
+ {
+-	__copy_xstate_to_uabi_buf(to, x86_task_fpu(tsk)->fpstate,
+-				  x86_task_fpu(tsk)->fpstate->user_xfeatures,
+-				  tsk->thread.pkru, copy_mode);
++	__copy_xstate_to_uabi_buf(to, fpstate, fpstate->user_xfeatures,
++				  pkru_val, copy_mode);
+ }
+ 
+ static int copy_from_buffer(void *dst, unsigned int offset, unsigned int size,
+diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
+index 52ce19289989..9d76ded84cdd 100644
+--- a/arch/x86/kernel/fpu/xstate.h
++++ b/arch/x86/kernel/fpu/xstate.h
+@@ -46,8 +46,8 @@ struct membuf;
+ extern void __copy_xstate_to_uabi_buf(struct membuf to, struct fpstate *fpstate,
+ 				      u64 xfeatures, u32 pkru_val,
+ 				      enum xstate_copy_mode copy_mode);
+-extern void copy_xstate_to_uabi_buf(struct membuf to, struct task_struct *tsk,
+-				    enum xstate_copy_mode mode);
++extern void copy_xstate_to_uabi_buf(struct membuf to, struct fpstate *fpstate,
++				    u32 pkru_val, enum xstate_copy_mode copy_mode);
+ extern int copy_uabi_from_kernel_to_xstate(struct fpstate *fpstate, const void *kbuf, u32 *pkru);
+ extern int copy_sigframe_from_user_to_xstate(struct task_struct *tsk, const void __user *ubuf);
+ 
+-- 
+2.25.1.362.g51ebf55
 
-> > > +#define PCIE_RESET_CONFIG_RC_WAIT_MS		10
-> > 
-> > Ditto.  If it's an Aspeed-specific value, can you point to the
-> > source in the Aspeed datasheet?
-> 
-> This delay is set to ensure that the RC internal settings are
-> completely reset.  We do not put its usage in our datasheet.
-
-The "PCIE_" prefix suggests something required by the PCIe base spec.
-If this is an Aspeed-specific value, perhaps remove the "PCIE_"
-prefix?
-
-> > > +static int aspeed_ast2700_child_config(struct pci_bus *bus, unsigned int
-> > devfn,
-> > > +				       int where, int size, u32 *val,
-> > > +				       bool write)
-> > > +{
-> > > +	struct aspeed_pcie *pcie = bus->sysdata;
-> > > +	u32 bdf_offset, status, cfg_val;
-> > > +	int ret;
-> > > +
-> > > +	bdf_offset = aspeed_pcie_get_bdf_offset(bus, devfn, where);
-> > > +
-> > > +	cfg_val = CRG_PAYLOAD_SIZE;
-> > > +	if (write)
-> > > +		cfg_val |= (bus->number == 1) ? CRG0_WRITE_FMTTYPE :
-> > CRG1_WRITE_FMTTYPE;
-> > > +	else
-> > > +		cfg_val |= (bus->number == 1) ? CRG0_READ_FMTTYPE :
-> > > +CRG1_READ_FMTTYPE;
-> > 
-> > I don't think you should assume that bus 0 is the root bus.  The root bus
-> > number should come from the DT bus-range.
-
-Just making sure you saw this part since you didn't mention it.
-
-Bjorn
 
