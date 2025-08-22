@@ -1,124 +1,131 @@
-Return-Path: <linux-kernel+bounces-782791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2909FB32568
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:28:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE41B3256E
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C3AA2827A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:28:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AB095874D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45112D4805;
-	Fri, 22 Aug 2025 23:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22CB288C20;
+	Fri, 22 Aug 2025 23:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Xkf6imxC"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UWI9qTHD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB4A2D3A9E;
-	Fri, 22 Aug 2025 23:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B8819E7E2
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 23:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755905279; cv=none; b=c8N6wDagH5LsygfNm5pOoVEAbDG5hjz38cXkJC56t9UnJW3AbXJEXkDqFRSaLWPqu0ixvdUHfXdIsfyW88z/NmxS5e9kBI9B3y54NMkZzIjYtegj0WEJwf/HIHpmA8RGWxdTV6O3XcytITqDYhvPbeUb4oSz8GTUUAr5q8L0kKs=
+	t=1755905692; cv=none; b=J4hQMxam21Og2tsir8IdqBgcUA030l7oiYxh5iY4qSv7N+Ko01nvakU8QBXBHxNVBGWWtLhnVTFbbBWsIBO0Weccr1zFngkxJvGn+/lIIdDHDyF+bMXI2lKjGXS+PQN2xSxcdLKQanWLp9OmWZIt4aig5jE9xvU3bV26QnWBQNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755905279; c=relaxed/simple;
-	bh=Dtbshtfd59+ACburoBjaQs73/LoWpyMIikfBId5SyFA=;
+	s=arc-20240116; t=1755905692; c=relaxed/simple;
+	bh=MSJqi0VeON0ZQBLt52IbT+wCyIeM5w4B0hU1vJU5sNk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VGW4mvs/gMJoepFwqUDaZgtgRqoW5+5FSkLH9JdpJbNxh2MCjwDdF6I5bEdiOMKGXcmHdjtukgDljsPSrpGZbSVNWMZP/npLqQjvZ0XXdzclLmjgOUfG4ghWiwvtq/VsuXkPNv2lopSpcpa9Uiecd81MoVV/MLLwqBn81DSNprQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Xkf6imxC; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3c68ac7e238so452471f8f.1;
-        Fri, 22 Aug 2025 16:27:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1755905275; x=1756510075; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k1gpNFvn5HCFRwIuldpjghpNbvpOxRC8cn9/8F0Qqgs=;
-        b=Xkf6imxCYYsqSySZ7kenoXJcCSBsbNOXRNstNrojSUYMJY2CPYgLaQmtxLApbhFfly
-         qHXXX6VP+7OruXrcnaPEPW8a4pbE7A8Ut1tiIhnFYRksfFZJsifj6MHSzrAfST8sGI8k
-         4R1HJ9Ev5Avia7sZtQ+IIGGjETYV+XGZjm1EjqevZUuErv42UhyCSskbC+edSNOMsL1C
-         dYU1uWbux3HIueFItAaLys1zxeGdw/jwbhAqqpYLTxin/h5b8KsxmmFSIKxX3M19CSsY
-         b05Rc48NcxyoOqcWgBpluEsmaROycfb6YS+s1CDwSW+6iTFyl/xMGM0fkn/S2vOnvhTJ
-         IAUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755905275; x=1756510075;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k1gpNFvn5HCFRwIuldpjghpNbvpOxRC8cn9/8F0Qqgs=;
-        b=WKV3DBLSDtcIeGC4CpY0Fj31f2sZfmMSqFb8zydt2t5Z7N4Uv6fjxhiELe0VfolBqy
-         b9sTWIcLUHdYue6zZ93ifEwn2RBbCHEvJMECI/mNk5hpQE+s1jy/TXxcemn8xyybkFUD
-         6Hqgm+6ej+6VOTEwNU1VP/DKxu2IT2aMbPjd8Zect3hPCCO6YqwKpsUSKsvm0Ltwfobn
-         NzizLYKW5GxAtl1DjPyCpBx8F6UNg/hpOTVpZpNBtyytOD+KeQEwWrm9sin6XWBNgWnE
-         llA6+h8jPSobmeZEU9SlV59Ji0ztLwpSOYLPZXx8oYgk9bD6BK0UMgtMQz6LID7g388e
-         YyNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvdNx2bGjMOK/i3KvMrTiDrZp/3fOkjZN4pTTNxjjLHMF+NoOoXs+mfeBmiFYjs99Q5adfWNNCm29LwWo=@vger.kernel.org, AJvYcCWVZXADFY3iY6r3rhZt+AeNdIQTLZybVfvqenzpqRaQ3Sotie2zUEAKoV/nKESsx6tQOvPDwYHC@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAHM7oPbc4W0Pmz4zyTfEbxIgFdS5iOyQFuTmhXMhkUBzECm+y
-	Lh2tn8SwvMyVI9sttTUJ/+Ei1X+kv+S5TzaD5gfNj3v7dmAQMnqIiPw=
-X-Gm-Gg: ASbGncte2ncAHWKKHSc/IxeQ9mjMD0hZREi+YB4lBrpuAergbCOkEu+SZmL9atcHebh
-	ujFXRf95RkCXJiwEkCciv3uSs7Vb3Tk0TRozyP1EHjlCtoqnFx+zqC23zuCQnhda/ubrKMt7RTj
-	EU83741w4FcxuraRqcwTGC1Iu0xbVrLcE70fvJ72aR/AUaz6lonUCSW8AIpfS6vSQgt6a7dHM9i
-	ItZT01992rZx4vROVpR//Xj/BGHrGXT1Ms03LzO2Er5dAINwRVATb5sEQNPYXqNxOH3CSSMb4XJ
-	fL0VFnq9h2L5SD/TNfsNLtUtT8u5scb51rmfYWumH0kstXy1cA1JW1k4CBxIGV4YRKMzq9fXk6l
-	3txEylzbWlpj+DAZ+pYpdlPfiag0Ndz1xO63WaRnG0se7QnntFBRph7AcBEfWg+qgJpbFCzOT34
-	FEzJv3mch/
-X-Google-Smtp-Source: AGHT+IForz6W8J+AT6PAiCEWl7L36/ArwT8KQw87Xw+3heLnbXHk0yiBNL84FscOsiQA1vM902L9tQ==
-X-Received: by 2002:a05:6000:4387:b0:3bb:bd05:7bef with SMTP id ffacd0b85a97d-3c5dbf69bfbmr3843292f8f.24.1755905275241;
-        Fri, 22 Aug 2025 16:27:55 -0700 (PDT)
-Received: from [192.168.1.3] (p5b057523.dip0.t-ipconnect.de. [91.5.117.35])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c711211cbcsm1171217f8f.31.2025.08.22.16.27.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 16:27:54 -0700 (PDT)
-Message-ID: <9f68aadd-b0dc-403e-90d8-eedc018267bd@googlemail.com>
-Date: Sat, 23 Aug 2025 01:27:53 +0200
+	 In-Reply-To:Content-Type; b=jv8iNhfPVpb8BMxYqw6sHMDKtk36gkYysTubZzcAiegQwuGG/X4vJT4jTjPE+ZeoGvoMqh9cb0s50xoUFNuDXhRQLch3E2eJTUD1u8SaqixYBzormbuONxGg/ynQZOXzbxQPzvCH4Y2DS30+u9Iw1k6yKXCsxvgMXR+JwtjjDfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UWI9qTHD; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755905691; x=1787441691;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=MSJqi0VeON0ZQBLt52IbT+wCyIeM5w4B0hU1vJU5sNk=;
+  b=UWI9qTHDNwfzKslVj7VkaCV7dPohszx4H5bEFddh3wr+ON5P0x09lMN5
+   XV97CzA46rAasaw3ijQbvFXUc2f9HoGNo3sghR6ndpR+MruBbWXn+oxa2
+   GfdrUGQRLxh8Da/d6YKgtu9fn/G7myvDBdCEglVNE8obdARWrCug02Tx1
+   5fu/Kn+g1jhVAr9JyPH2NGDxFnsb0FsrUZ2GxRJe3z4Cjhi9HBbeDv27r
+   +cDeh1XQlS704e0Gj6gAzuU4tYq+ZsUlf7Cwrb5g6TTJluY0bfJ7njFrl
+   VfnydmmyU94sSFbXwp14D4QYXh5NY04/9IBoQ4I9Km3Ux3DaLKg0TPX3c
+   A==;
+X-CSE-ConnectionGUID: kfenNpyXQWGUjASJBhFk/Q==
+X-CSE-MsgGUID: ufiL5GEgTB6btDoDQfFbcA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="68489760"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="68489760"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 16:34:50 -0700
+X-CSE-ConnectionGUID: TjmLevu1RbutCQZNWgoo2Q==
+X-CSE-MsgGUID: aOnC23JuQfGvgqRgBIAiag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="169176092"
+Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.125.108.168]) ([10.125.108.168])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 16:34:49 -0700
+Message-ID: <be15615e-d0be-40e4-8df4-c64caf3e94d6@intel.com>
+Date: Fri, 22 Aug 2025 16:34:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.16 0/9] 6.16.3-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250822123516.780248736@linuxfoundation.org>
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250822123516.780248736@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4a 2/6] x86/microcode/intel: Establish staging control
+ logic
+To: "Chang S. Bae" <chang.seok.bae@intel.com>, dave.hansen@linux.intel.com,
+ x86@kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ colinmitchell@google.com, chao.gao@intel.com, abusse@amazon.de,
+ linux-kernel@vger.kernel.org
+References: <06d43a86-204f-4658-9759-d24b7038b2d3@intel.com>
+ <20250822223940.12504-1-chang.seok.bae@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250822223940.12504-1-chang.seok.bae@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am 22.08.2025 um 14:37 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.16.3 release.
-> There are 9 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+What's with the "v4a" stuff? Is this an attempt to torture test b4? ;)
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
-
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
-
-
-Beste Grüße,
-Peter Schneider
-
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+Seriously, though, it's been more than a week since the last series.
+Just send a new series, please.
 
