@@ -1,127 +1,103 @@
-Return-Path: <linux-kernel+bounces-780908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 879E8B30AD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:32:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE70CB30AD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3C3D6033A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:32:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FE03AE0A72
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E8F1A0730;
-	Fri, 22 Aug 2025 01:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4LDnxkq"
-Received: from mail-pj1-f67.google.com (mail-pj1-f67.google.com [209.85.216.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B34186E2E;
+	Fri, 22 Aug 2025 01:35:49 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C054233E1;
-	Fri, 22 Aug 2025 01:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7DF7261E;
+	Fri, 22 Aug 2025 01:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755826342; cv=none; b=WUjJnDe0YWAzwim2mhu6+hh/mIQF3WefC82Qhlgobh8J9m/YnWKMrkHfTQwBYt+C3HtNrMem7Cf6RKv4+4HsUO0HSgdrVEQ7yt5TibfbgQMks8GDlsGfV5ob6dUhjJbpNd5jO3KomYutuRXm3iiEVWXzzuBm4Mt1c6XnkfG2/aI=
+	t=1755826549; cv=none; b=ARCcjije5bt924QK4FpQhOARd0gall4ta5jVCjp4WmQy66oLrGKiFxmsT+AbpMm1ybdJ4vdxtVSEPj5kIi1hKdt/eWC1cVvcXT37emIog/YZf3Cxc3GGGHU4zrvTc+u52fnwqqSp4mfgEy68kruMhzUN8ER7bJ2KHCx78nWRw9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755826342; c=relaxed/simple;
-	bh=Wg6B5bcLCFGQGWcq0+K/fyju+Mj984O0JHIBAY+rP78=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fpIygiIhr9kH5rUaIxx+FoTONI9l0LQu50NdVXtSZI2u/CDgCr7k2nPs/GwUR7j2yBfa0m5CvYXUpxVl42eZR3bOgJCyOzJG7Hh6zLdtVwop9abH7T9Kp/Q1EBXVVwuF0/YFwodN43RN0tK27P8/NkTRcy732xTvo9UXEoujvSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4LDnxkq; arc=none smtp.client-ip=209.85.216.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f67.google.com with SMTP id 98e67ed59e1d1-32326e202e0so1534430a91.2;
-        Thu, 21 Aug 2025 18:32:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755826340; x=1756431140; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HLZ4xRwf86hNbCUyOlRYqjM/i0x4T75qp61KARr1Axc=;
-        b=H4LDnxkqDYuU1nyz715eycsGp2uFxaGRV981PzasHoBLafnChAM8xzcYb2Z+HA1K3x
-         07lEtbWFCMXoNWXYrOC/QRABKZeJfORKclDQt+OBlUw1a+6wQ92vkLPZuYD7aHTKUmRq
-         V+dkuDSwpmtL/zZdFwUQQ5aBSERCxANgE+xSy9AdbMqV+liP7gnVqvASlOTpGe3kLZVM
-         NNVeNzTqdV6Xg90FWB0bCGA7VMYEC8lE6RJEx5282L8QJ1SOXCX3nKkng32URJtI5PX7
-         4ZFt1mjIPSN4KruN7loYEHelhPLPcYCybOIaam+U4fWjc5xPmdHPGEsUShEM+wKftWez
-         wqsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755826340; x=1756431140;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HLZ4xRwf86hNbCUyOlRYqjM/i0x4T75qp61KARr1Axc=;
-        b=ffKCPrsTT+hiQiQXFpJdXLsR0t0/SqQ52aIOISIdqtzvQJgKL+I7cCgtp0Tm/YfcnD
-         8qxG4nw24yM4WW900ZCKhAYFcLe+vsFmbpTadg8d9Ceiwu9u2jiGU7gH2JmQBibojLZb
-         iZTHE3nGfiUol+mbP64M5oIrVhQUt2axQL1HHaCcYCWPfqk/QsiKAsN36042VftLaLVW
-         ABIx4M6XK2EFZ00lpSkShgVwI0dkF3MNyLmv3lFfnSSfwqg0tMoJ31Pm6gtgXx5d3eHo
-         jUXv2yBkkH0LnvymakW4bNiYV2MYKcIdftOAxn7kllk6sKf6PfddbxQWCJkfkodSPyyY
-         bOiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXr2v+yoWvonZBMMOPDOrnb3gnzqGVt2iXw75gIq+nKLOKm+nbFmGuWWcQhsCBDEhiaEDqVpU9oWVu@vger.kernel.org, AJvYcCVinrKfAFRNVqbW5ugWGNGYMfyPvaqrfJfltjmwNUwXxeKBa52siLlEAU0PdD5IZp2Pv08wEufoFl8o5vQI@vger.kernel.org, AJvYcCWJKqf9gZ5UrYOkUnFoviW4ZX90e1W3CkgLzaYsb8MthN6xcCgg5iXQrSvSYGF0TLzOAHnCBX4iVzSm@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA1Z8OgSXQaDLpBSdsbMhp76vKuYW/xmxki3ar1ROpSE9AO9j2
-	lHui0bOJF2P1f7ebyXDRNcRZf2WEGJctA6ybXyrK4HfdDCGdGb7TPu6k
-X-Gm-Gg: ASbGncvMeaDJHHDH4XcXeKknlRaB+grPTlRKe32d7gQYI0JQdlEDqNoDa/qxHmc3l8d
-	/dztfFHB2Jd8MDnFvpBOtiJTkntkqS71rCGubaY8j4EBVLvkK8Wf5BZBMLGj0+lXWP2aYvdB3b+
-	DVO81C85eZJ2B7EiIWRX8dXjk29gOjfUWeQ4dLSG3fGMZYKF3lKgy02B4wIIeu7ZXdO6lBN0Pj8
-	nQwn5nxqTbD452pYNov4xuXabJ6JUAn/uWO13OIlcZyqD7+gF39SkmMX38S9fzFS1kN9VykQy+1
-	5lPlBJ0LDKSTA6uN2gU/SG5IKKpAKIT+gnaA1QZ5qCw9JbmETZAZdIk+wRMoTyfgkBBWKKeGbl6
-	zdlk=
-X-Google-Smtp-Source: AGHT+IHqg5BMS5H5H0CXatOkDxWYnVma8locc0gsDLlLL4jvBLJblPVH8Oi76UEBkFgq0T0ofvpIFQ==
-X-Received: by 2002:a17:90b:1d91:b0:321:59e7:c5c5 with SMTP id 98e67ed59e1d1-325177426fcmr1615455a91.27.1755826339746;
-        Thu, 21 Aug 2025 18:32:19 -0700 (PDT)
-Received: from localhost ([2602:f919:106::1b8])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-76e8344494dsm8737468b3a.79.2025.08.21.18.32.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 18:32:19 -0700 (PDT)
-Date: Fri, 22 Aug 2025 09:32:15 +0800
-From: Troy Mitchell <troymitchell988@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Troy Mitchell <troymitchell988@gmail.com>,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: i2c: spacemit,k1-i2c: Minor whitespace
- cleanup in example
-Message-ID: <aKfInxTH8XeZo55z@troy-wujie14pro-arch>
-References: <20250821083205.46600-2-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1755826549; c=relaxed/simple;
+	bh=JalOgAPy+10ijoEjkUyxw2IZaQ73SnV+0ZOBdc0KXz4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qgk6jV3Rs7jkhFCMVfCwZbXTi2Iingslmz9QcnIdIlnuLTdXEUYMNnNEZa8msZuwXUqSQR7o7cwvx9MeRZs5fMbl0M7zHg+uE/LsBcQLHSVtwkeHdULX6a8CB5KnGgGzNd1x/FHUyS6JwZNXHoBDx6zUi18vDNCYzKKHhgbUAEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c7N746wB9zKHMww;
+	Fri, 22 Aug 2025 09:35:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 763841A1724;
+	Fri, 22 Aug 2025 09:35:44 +0800 (CST)
+Received: from [10.67.110.36] (unknown [10.67.110.36])
+	by APP4 (Coremail) with SMTP id gCh0CgAX3w9vyadomKT9EQ--.7615S2;
+	Fri, 22 Aug 2025 09:35:44 +0800 (CST)
+Message-ID: <edc9900c-b2d9-49f9-bd12-cd44f11b89a1@huaweicloud.com>
+Date: Fri, 22 Aug 2025 09:35:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821083205.46600-2-krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] ftrace: Fix potential warning in trace_printk_seq
+ during ftrace_dump
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Ingo Molnar <mingo@elte.hu>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250820090017.2978279-1-wutengda@huaweicloud.com>
+ <20250820101054.50c0b8b8@gandalf.local.home>
+ <40bcf20b-e2e6-442f-bfd8-bb7ad6245397@huaweicloud.com>
+ <20250821105113.1536d567@gandalf.local.home>
+Content-Language: en-US
+From: Tengda Wu <wutengda@huaweicloud.com>
+In-Reply-To: <20250821105113.1536d567@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAX3w9vyadomKT9EQ--.7615S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYb7kC6x804xWl14x267AKxVW8JVW5JwAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
+	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrwCF
+	54CYxVCY1x0262kKe7AKxVWUAVWUtwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UQzV
+	bUUUUU=
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
-On Thu, Aug 21, 2025 at 10:32:06AM +0200, Krzysztof Kozlowski wrote:
-> The DTS code coding style expects exactly one space around '='
-> character.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml b/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
-> index 3d6aefb0d0f1..c1a3004df71d 100644
-> --- a/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
-> @@ -53,7 +53,7 @@ examples:
->          reg = <0xd4010800 0x38>;
->          interrupt-parent = <&plic>;
->          interrupts = <36>;
-> -        clocks =<&ccu 32>, <&ccu 84>;
-> +        clocks = <&ccu 32>, <&ccu 84>;
-Reviewed-by: Troy Mitchell <troymitchell988@gmail.com>
 
-Best regards,
-Troy
->          clock-names = "func", "bus";
->          clock-frequency = <100000>;
->      };
-> -- 
-> 2.48.1
+
+On 2025/8/21 22:51, Steven Rostedt wrote:
+> On Thu, 21 Aug 2025 09:53:53 +0800
+> Tengda Wu <wutengda@huaweicloud.com> wrote:
 > 
+>> There remains an edge case that concerns me: if size is 0, setting len to
+>> size - 1 would cause an underflow. Should we handle this edge case?
+> 
+> When the trace_seq is allocated, the size is set to 8K. If size is ever
+> zero, then there would be no buffer. So no, we should not worry about that
+> edge case because if it happened then we have a lot of other things to
+> worry about.
+> 
+> -- Steve
+
+Got it, thanks for the clarification.
+
+-- Tengda
+
 
