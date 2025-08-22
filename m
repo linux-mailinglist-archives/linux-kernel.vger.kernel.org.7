@@ -1,67 +1,90 @@
-Return-Path: <linux-kernel+bounces-782750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA4EB324BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:53:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9B2B324BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1553E62435B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:53:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6615624AA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C6427A90A;
-	Fri, 22 Aug 2025 21:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F911A9FA7;
+	Fri, 22 Aug 2025 21:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="iSaUa7a2"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="JqhENhGu"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9C01A9FA7
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 21:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755899609; cv=pass; b=RsbilIw7kf7WpdSuywtCjtHx18QbSjMMCSHKcLULT4uHeJsJ62rQCU8J1/m9o0yk3Hr41E+93VLK4ARzyZgUWbqlKqpYbv2RgdYxzGgBYwzbJ1ppAUexREK90z3pURHHlBD0YZRuYUiZIlHHl07IXSm+IwrcgEX9xOPTgLroTu4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755899609; c=relaxed/simple;
-	bh=AjWPsPmZxyCqtDJpcMl4uvITTgatiNf2opr9t6IpqbI=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3BB21256B
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 21:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755899641; cv=none; b=dWxRJLzRK9FQ8HHFVi47gZo8Sk3iGUx4KrAXRAHg5dF+TWpGWtIR5qDRmrdKkhxZR+5JXE0iSophLfJMifA4DXUA9aGR32RjKUydvRA3AePcqMXAFAaoeLcgy5QRMoFRrcFANlGlMpbZq94L8r5v7YEJi0dmJ0rtZX6Fb0W51KY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755899641; c=relaxed/simple;
+	bh=x5KMzwVFQDVQkxjB1n5nWMjhuHTK19ZjWPtHl3XuouY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oYEbeUF4uR42hhZwlcMmvxHLgUTaBIEIzC0ctSK+BHMaGi6I839jH/TkbWNWZTJmd9ddiIFTD3Gxaufu9gMRdxuROAHCjABdIqGX0FiLEz5yBt2OcSFpiNT4yyMG5bEnymX4l2rOJfsKsp9MpuXPhAGDPq7SswXxnkBKP3Sf+FU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=iSaUa7a2; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755899596; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=DaeXgqa2mfRAFXQsvYwFnGOx5N/UdDLKPRI4H35tJwQx+SwVAMnl0amneiS5XBvLn1OTE0Xpxl+ajk5yMdjEGmslbLGRV2U0QZynDlZ1uCaoo8YtNx3EDWBAjWd+aQYXrgT9lvThlHsOx/4pV6T2kjE+LJ72rAgB3pUSDjuJXEA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755899596; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=klrRb34wKjAx4QD4DOsPfFa5Y+y4vc9xPa3T8I/olE8=; 
-	b=bZ1yeQlkjA1buILpzDbO1uU4/+W0ZCFzleflKEKwpEL2fx+rLE4nVogYYyT3IVed3c3Azh8F9uKmJ2PTWei0kwPZir70CLK6ngk0owgYeySKL6QFgD8D+K5kaTwO1lVtS+/hhlVW1soSQ06sW4O6d6wFAezH6aIlxELR9AvIRlc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755899596;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=klrRb34wKjAx4QD4DOsPfFa5Y+y4vc9xPa3T8I/olE8=;
-	b=iSaUa7a2jNmxQGqe7vXbTWhQ/nmEra/4nn8lzccL0eqk3c1NKO3Lyu0hJ0YJtvCN
-	PfHdixcUHSL4GNliUGu095teO9PJZt2EwBvsdLVYuRK9hYmyUKEsrpP8UCsxsFyN2Iv
-	1AyfHKI5yCLvXxh8skcZWeTEK1n/n3jM8PHvB4io=
-Received: by mx.zohomail.com with SMTPS id 1755899594556961.1841976736891;
-	Fri, 22 Aug 2025 14:53:14 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 3A4AE1808AD; Fri, 22 Aug 2025 23:53:11 +0200 (CEST)
-Date: Fri, 22 Aug 2025 23:53:11 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] arm64: defconfig: enable backlight device class
-Message-ID: <fozbq6otnko75e4zfsad4c3qp7zgh5n3r4yj3swjd24dxdg4ue@krbmtduwdapm>
-References: <20250408134249.1131127-1-alexander.stein@ew.tq-group.com>
- <2385138.ElGaqSPkdT@steina-w>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QF2Otmuw4M+R6OZcXUtIOdz/089ruDz97E9UVO1doohoF9hqsYPLAUiwzrw1mknOlr8pY87v22HskBzz0cVImZipoHJQYP/7ZcJjSq7LgOwX7D878XdyJVAi4gJw9SaLx4HdWOMjsNeVsuCTjznttnjbITaEhq5YamOSt3K/cOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=JqhENhGu; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-30ccec50c0aso2053594fac.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 14:53:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1755899637; x=1756504437; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kraZQwgGsqActCzVMqrdt2pTEU4/LJMkbYTSib4v1/0=;
+        b=JqhENhGukBmHalcP8aXt09D3Pne9WHUmC5rXmwt1P+5KxeBKztWAJVQMo7nDXiG8Rv
+         cVSgKmKmNPGh/hZ6KgqK6nrFDjgr70qRyO+BEJ/PzwhXncy4qpU5rs7TYw2yCYlLZYP2
+         LR4WFYif5dM2HJswwdmSZy0fF+VGuxaI2qhb/QxyuFFbvzJfAw5zwf7CjOgfyjR6Do4A
+         W2DGsUKcqaQq7DCFOoNwtQhg9ZuKE54myZFXtyU8RzTuTeZh6lOe6H26f62s/sz9oarq
+         Y89HjSKNraFUcopzpVssVO4TsX4gRrppxukzNnkrGxm6s/L8aGJAWQaJYUGs/TTvo5iB
+         QpFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755899637; x=1756504437;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kraZQwgGsqActCzVMqrdt2pTEU4/LJMkbYTSib4v1/0=;
+        b=ZrFrEtGTUZBwWKz6yzjwCuryNJ7JUnTJ8nazQqYGPRpdB3dQa9M83ATfoQTOggsJH0
+         7F43rg7MH02SmkfTiNXyESq7Ubh3egv8Zt+bpmGp5Obh+mEBzyb5N4Eamz/Wr0m+4vSW
+         Xk9I99b/gktoLxZ//9c/3ptHl8+MJuOe9F0xhGKBGk9M0OUmNm6bYFpJ4hOYi/TOJcod
+         GyBsJvBMuNGqPCFU8NXBy9JJTBzT4Z1qBHtWrSCm40dATnm3kHphAV8mvazZEK7xAGCs
+         r156YplqD1NeVoKP5zsHKcnsmZQVsqro9KET9Y4G1T5THLRPZKSHrE5XPdY5mEt1pH8C
+         fozQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVk1VyRI9Cau0DteuFHriSMkZzzW0BAfvN0DgxcfaInEP7uIlOCgtRotnaQbmWxZMJcR9oBQaGPJb+lwcM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxsxl/pp1TWqFN+b3JCqI8ZSp3vTy+TbTHvCWNspd949UtSow+j
+	UO1n7NdMqCvl30ixcBZM2f13CIdSuQWL3Rr739wZnWHd4pRtiLo09VZqreR99Bp0OZU=
+X-Gm-Gg: ASbGnctQo9YyjjP7TiTTYblVt4SV7l6DbnBQGQvNkcaVXQ1YvUM+9Y7OUo9oeK0Ku5Z
+	EgsGlzyubtCDcKaVjyJCmaaPIuGIsZHUg2NLO4d8ns7SCDkMX4W5oab48kg+2kFmprl/J/kZ006
+	WgSkZWkYdWkrQf/Jjx69UjnXpIXcvYjoqsjYNf7QSFohqLx9/5M7cqZ8r/FG9sWS6x4JZ16JIJD
+	5fDwsq0gdVPuCue/PhC42XC1En8IKz6XyO0C5sdfiS6HcrmZH0p2qQHnlAjCcY6sAHjxYVlVmfe
+	xHmkPIo5fm26Bf/81r/LMm1sc2oFK/SunZpAxySYrjDbEzqCXF9urcGJVt5gfkQETEUPk+UMPhB
+	9QhKmVEwIB4UFz0e8sY/BKsWAMg==
+X-Google-Smtp-Source: AGHT+IGle2jw1xd8dLQ862DWWobTWUfXHknafLz25LxA22r/5hTCow0Z0ePt+9doHwWtGNnn7+KGwQ==
+X-Received: by 2002:a05:6871:7a16:b0:30b:ae56:576d with SMTP id 586e51a60fabf-314dce737c0mr2423251fac.29.1755899637328;
+        Fri, 22 Aug 2025 14:53:57 -0700 (PDT)
+Received: from mail.minyard.net ([2001:470:b8f6:1b:fb40:1612:1e27:b18a])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-314f7a24047sm186723fac.9.2025.08.22.14.53.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 14:53:55 -0700 (PDT)
+Date: Fri, 22 Aug 2025 16:53:50 -0500
+From: Corey Minyard <corey@minyard.net>
+To: Tony Hutter <hutter2@llnl.gov>
+Cc: alok.a.tiwari@oracle.com, Bjorn Helgaas <helgaas@kernel.org>,
+	Lukas Wunner <lukas@wunner.de>, mariusz.tkaczyk@linux.intel.com,
+	minyard@acm.org, linux-pci@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] PCI: Introduce Cray ClusterStor E1000 NVMe slot LED
+ driver
+Message-ID: <aKjm7mBDQ6VR8kWl@mail.minyard.net>
+Reply-To: corey@minyard.net
+References: <e5a6290a-7dc4-43b1-838d-bf43edae1faa@llnl.gov>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,44 +93,508 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2385138.ElGaqSPkdT@steina-w>
-X-ZohoMailClient: External
+In-Reply-To: <e5a6290a-7dc4-43b1-838d-bf43edae1faa@llnl.gov>
 
-Hi,
-
-On Fri, Aug 22, 2025 at 03:55:12PM +0200, Alexander Stein wrote:
-> Am Dienstag, 8. April 2025, 15:42:48 CEST schrieb Alexander Stein:
-> > CONFIG_DRM_PANEL_SIMPLE is enabled in this config. But it depends on
-> > CONFIG_BACKLIGHT_CLASS_DEVICE which is only transitively enabled by
-> > DRM_NOUVEAU, iff DRM_NOUVEAU_BACKLIGHT is enabled as well.
-> > As simple-panel depends on backlight, enable this in defconfig as well.
-> > 
-> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> > ---
-> >  arch/arm64/configs/defconfig | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> > index 65ec5a5be407d..b70257878812e 100644
-> > --- a/arch/arm64/configs/defconfig
-> > +++ b/arch/arm64/configs/defconfig
-> > @@ -963,6 +963,7 @@ CONFIG_DRM_POWERVR=m
-> >  CONFIG_FB=y
-> >  CONFIG_FB_EFI=y
-> >  CONFIG_FB_MODE_HELPERS=y
-> > +CONFIG_BACKLIGHT_CLASS_DEVICE=m
-> >  CONFIG_BACKLIGHT_PWM=m
-> >  CONFIG_BACKLIGHT_LP855X=m
-> >  CONFIG_LOGO=y
-> > 
+On Fri, Aug 22, 2025 at 02:36:34PM -0700, Tony Hutter wrote:
+> Add driver to control the NVMe slot LEDs on the Cray ClusterStor E1000.
+> The driver provides hotplug attention status callbacks for the 24 NVMe
+> slots on the E1000.  This allows users to access the E1000's locate and
+> fault LEDs via the normal /sys/bus/pci/slots/<slot>/attention sysfs
+> entries.  This driver uses IPMI to communicate with the E1000 controller
+> to toggle the LEDs.
 > 
-> gentle ping. Any feedback?
+> Signed-off-by: Tony Hutter <hutter2@llnl.gov>
+> ---
+> Changes in v4:
+>  - Fix typo in Kconfig: "is it" ->  "it is"
+>  - Rename some #defines to CRAYE1K_SUBCMD_*
+>  - Use IS_ERR() check in craye1k_debugfs_init()
+>  - Return -EIO instead of -EINVAL when LED value check fails
+> 
+> Changes in v3:
+>  - Add 'attention' values in Documentation/ABI/testing/sysfs-bus-pci.
+>  - Remove ACPI_PCI_SLOT dependency.
+>  - Cleanup craye1k_do_message() error checking.
+>  - Skip unneeded memcpy() on failure in __craye1k_do_command().
+>  - Merge craye1k_do_command_and_netfn() code into craye1k_do_command().
+>  - Make craye1k_is_primary() return boolean.
+>  - Return negative error code on failure in craye1k_set_primary().
+> 
+> Changes in v2:
+>  - Integrated E1000 code into the pciehp driver as an built-in
+>    extention rather than as a standalone module.
+>  - Moved debug tunables and counters to debugfs.
+>  - Removed forward declarations.
+>  - Kept the /sys/bus/pci/slots/<slot>/attention interface rather
+>    than using NPEM/_DSM or led_classdev as suggested.  The "attention"
+>    interface is more beneficial for our site, since it allows us to
+>    control the NVMe slot LEDs agnostically across different enclosure
+>    vendors and kernel versions using the same scripts.  It is also
+>    nice to use the same /sys/bus/pci/slots/<slot>/ sysfs directory for
+>    both slot LED toggling ("attention") and slot power control
+>    ("power").
+> ---
+>  Documentation/ABI/testing/sysfs-bus-pci |  21 +
+>  MAINTAINERS                             |   5 +
+>  drivers/pci/hotplug/Kconfig             |  10 +
+>  drivers/pci/hotplug/Makefile            |   3 +
+>  drivers/pci/hotplug/pciehp.h            |   7 +
+>  drivers/pci/hotplug/pciehp_core.c       |  12 +
+>  drivers/pci/hotplug/pciehp_craye1k.c    | 659 ++++++++++++++++++++++++
+>  7 files changed, 717 insertions(+)
+>  create mode 100644 drivers/pci/hotplug/pciehp_craye1k.c
+> 
+...snip
+> diff --git a/drivers/pci/hotplug/pciehp_craye1k.c b/drivers/pci/hotplug/pciehp_craye1k.c
+> new file mode 100644
+> index 000000000000..72c636ceb976
+> --- /dev/null
+> +++ b/drivers/pci/hotplug/pciehp_craye1k.c
+> @@ -0,0 +1,659 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2022-2024 Lawrence Livermore National Security, LLC
+> + */
+> +/*
+> + * Cray ClusterStor E1000 hotplug slot LED driver extensions
+> + *
+> + * This driver controls the NVMe slot LEDs on the Cray ClusterStore E1000.
+> + * It provides hotplug attention status callbacks for the 24 NVMe slots on
+> + * the E1000.  This allows users to access the E1000's locate and fault
+> + * LEDs via the normal /sys/bus/pci/slots/<slot>/attention sysfs entries.
+> + * This driver uses IPMI to communicate with the E1000 controller to toggle
+> + * the LEDs.
+> + *
+> + * This driver is based off of ibmpex.c
+> + */
+> +
+> +#include <linux/debugfs.h>
+> +#include <linux/delay.h>
+> +#include <linux/errno.h>
+> +#include <linux/dmi.h>
+> +#include <linux/ipmi.h>
+> +#include <linux/ipmi_smi.h>
 
-You want to resend with updated mail destination:
+You shouldn't need to include ipmi_smi.h.  If you do, that's a bug on my
+part.
 
-https://lore.kernel.org/all/20250818-arm64-defconfig-v1-1-f589553c3d72@collabora.com/
+> +#include <linux/module.h>
+> +#include <linux/pci.h>
+> +#include <linux/pci_hotplug.h>
+> +#include <linux/random.h>
+> +#include "pciehp.h"
+> +
+...snip
+> +/*
+> + * craye1k_send_message() - Send the message already setup in 'craye1k'
+> + *
+> + * Context: craye1k->lock is already held.
+> + * Return: 0 on success, non-zero on error.
+> + */
+> +static int craye1k_send_message(struct craye1k *craye1k)
+> +{
+> +	int rc;
+> +
+> +	rc = ipmi_validate_addr(&craye1k->address, sizeof(craye1k->address));
+> +	if (rc) {
+> +		dev_err_ratelimited(craye1k->dev, "validate_addr() = %d\n", rc);
+> +		return rc;
+> +	}
+> +
+> +	craye1k->tx_msg_id++;
+> +
+> +	rc = ipmi_request_settime(craye1k->user, &craye1k->address,
+> +				  craye1k->tx_msg_id, &craye1k->tx_msg, craye1k,
+> +				  0, craye1k->ipmi_retries,
+> +				  craye1k->ipmi_timeout_ms);
+> +
+> +	if (rc) {
+> +		craye1k->request_failed++;
+> +		return rc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * craye1k_do_message() - Send the message in 'craye1k' and wait for a response
+> + *
+> + * Context: craye1k->lock is already held.
+> + * Return: 0 on success, non-zero on error.
+> + */
+> +static int craye1k_do_message(struct craye1k *craye1k)
+> +{
+> +	int rc;
+> +	struct completion *read_complete = &craye1k->read_complete;
+> +	unsigned long tout = msecs_to_jiffies(craye1k->completion_timeout_ms);
 
-Greetings,
+I don't see anything that will prevent multiple messages from being sent
+at one time.  What happens if two things send a message at the same time
+here?
 
--- Sebastian
+-corey
+
+> +
+> +	rc = craye1k_send_message(craye1k);
+> +	if (rc)
+> +		return rc;
+> +
+> +	rc = wait_for_completion_killable_timeout(read_complete, tout);
+> +	if (rc == 0) {
+> +		/* timed out */
+> +		craye1k->completion_timeout++;
+> +		return -ETIME;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * __craye1k_do_command() - Do an IPMI command
+> + *
+> + * Send a command with optional data bytes, and read back response bytes.
+> + * Context: craye1k->lock is already held.
+> + * Returns: 0 on success, non-zero on error.
+> + */
+> +static int __craye1k_do_command(struct craye1k *craye1k, u8 netfn, u8 cmd,
+> +				u8 *send_data, u8 send_data_len, u8 *recv_data,
+> +				u8 recv_data_len)
+> +{
+> +	int rc;
+> +
+> +	craye1k->tx_msg.netfn = netfn;
+> +	craye1k->tx_msg.cmd = cmd;
+> +
+> +	if (send_data) {
+> +		memcpy(&craye1k->tx_msg_data[0], send_data, send_data_len);
+> +		craye1k->tx_msg.data_len = send_data_len;
+> +	} else {
+> +		craye1k->tx_msg_data[0] = 0;
+> +		craye1k->tx_msg.data_len = 0;
+> +	}
+> +
+> +	rc = craye1k_do_message(craye1k);
+> +	if (rc == 0)
+> +		memcpy(recv_data, craye1k->rx_msg_data, recv_data_len);
+> +
+> +	return rc;
+> +}
+> +
+> +/*
+> + * craye1k_do_command() - Do a Cray E1000 specific IPMI command.
+> + * @cmd: Cray E1000 specific command
+> + * @send_data:  Data to send after the command
+> + * @send_data_len: Data length
+> + *
+> + * Context: craye1k->lock is already held.
+> + * Returns: the last byte from the response or 0 if response had no response
+> + * data bytes, else -1 on error.
+> + */
+> +static int craye1k_do_command(struct craye1k *craye1k, u8 cmd, u8 *send_data,
+> +			      u8 send_data_len)
+> +{
+> +	int rc;
+> +
+> +	rc = __craye1k_do_command(craye1k, CRAYE1K_CMD_NETFN, cmd, send_data,
+> +				  send_data_len, NULL, 0);
+> +	if (rc != 0) {
+> +		/* Error attempting command */
+> +		return -1;
+> +	}
+> +
+> +	if (craye1k->tx_msg.data_len == 0)
+> +		return 0;
+> +
+> +	/* Return last received byte value */
+> +	return craye1k->rx_msg_data[craye1k->rx_msg_len - 1];
+> +}
+> +
+> +/*
+> + * __craye1k_set_primary() - Tell the BMC we want to be the primary server
+> + *
+> + * An E1000 board has two physical servers on it.  In order to set a slot
+> + * NVMe LED, this server needs to first tell the BMC that it's the primary
+> + * server.
+> + *
+> + * Returns: 0 on success, non-zero on error.
+> + */
+> +static int __craye1k_set_primary(struct craye1k *craye1k)
+> +{
+> +	u8 bytes[2] = {CRAYE1K_SUBCMD_SET_PRIMARY, 1};	/* set primary to 1 */
+> +
+> +	craye1k->set_primary++;
+> +	return craye1k_do_command(craye1k, CRAYE1K_CMD_PRIMARY, bytes, 2);
+> +}
+> +
+> +/*
+> + * craye1k_is_primary() - Are we the primary server?
+> + *
+> + * Returns: true if we are the primary server, false otherwise.
+> + */
+> +static bool craye1k_is_primary(struct craye1k *craye1k)
+> +{
+> +	u8 byte = 0;
+> +	int rc;
+> +
+> +	/* Response byte is 0x1 on success */
+> +	rc = craye1k_do_command(craye1k, CRAYE1K_CMD_PRIMARY, &byte, 1);
+> +	craye1k->check_primary++;
+> +	if (rc == 0x1)
+> +		return true;   /* success */
+> +
+> +	craye1k->check_primary_failed++;
+> +	return false;   /* We are not the primary server node */
+> +}
+> +
+> +/*
+> + * craye1k_set_primary() - Attempt to set ourselves as the primary server
+> + *
+> + * Returns: 0 on success, -1 otherwise.
+> + */
+> +static int craye1k_set_primary(struct craye1k *craye1k)
+> +{
+> +	int tries = 10;
+> +
+> +	if (craye1k_is_primary(craye1k)) {
+> +		craye1k->was_already_primary++;
+> +		return 0;
+> +	}
+> +	craye1k->was_not_already_primary++;
+> +
+> +	/* delay found through experimentation */
+> +	msleep(300);
+> +
+> +	if (__craye1k_set_primary(craye1k) != 0) {
+> +		craye1k->set_initial_primary_failed++;
+> +		return -1;	/* error */
+> +	}
+> +
+> +	/*
+> +	 * It can take 2 to 3 seconds after setting primary for the controller
+> +	 * to report that it is the primary.
+> +	 */
+> +	while (tries--) {
+> +		msleep(500);
+> +		if (craye1k_is_primary(craye1k))
+> +			break;
+> +	}
+> +
+> +	if (tries == 0) {
+> +		craye1k->set_primary_failed++;
+> +		return -1;	/* never reported that it's primary */
+> +	}
+> +
+> +	/* Wait for primary switch to finish */
+> +	msleep(1500);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * craye1k_get_slot_led() - Get slot LED value
+> + * @slot: Slot number (1-24)
+> + * @is_locate_led: 0 = get fault LED value, 1 = get locate LED value
+> + *
+> + * Returns: slot value on success, -1 on failure.
+> + */
+> +static int craye1k_get_slot_led(struct craye1k *craye1k, unsigned char slot,
+> +				bool is_locate_led)
+> +{
+> +	u8 bytes[2];
+> +	u8 cmd;
+> +
+> +	bytes[0] = CRAYE1K_SUBCMD_GET_LED;
+> +	bytes[1] = slot;
+> +
+> +	cmd = is_locate_led ? CRAYE1K_CMD_LOCATE_LED : CRAYE1K_CMD_FAULT_LED;
+> +
+> +	return craye1k_do_command(craye1k, cmd, bytes, 2);
+> +}
+> +
+> +/*
+> + * craye1k_set_slot_led() - Attempt to set the locate/fault LED to a value
+> + * @slot: Slot number (1-24)
+> + * @is_locate_led: 0 = use fault LED, 1 = use locate LED
+> + * @value: Value to set (0 or 1)
+> + *
+> + * Check the LED value after calling this function to ensure it has been set
+> + * properly.
+> + *
+> + * Returns: 0 on success, non-zero on failure.
+> + */
+> +static int craye1k_set_slot_led(struct craye1k *craye1k, unsigned char slot,
+> +				unsigned char is_locate_led,
+> +				unsigned char value)
+> +{
+> +	u8 bytes[3];
+> +	u8 cmd;
+> +
+> +	bytes[0] = CRAYE1K_SUBCMD_SET_LED;
+> +	bytes[1] = slot;
+> +	bytes[2] = value;
+> +
+> +	cmd = is_locate_led ? CRAYE1K_CMD_LOCATE_LED : CRAYE1K_CMD_FAULT_LED;
+> +
+> +	return craye1k_do_command(craye1k, cmd, bytes, 3);
+> +}
+> +
+> +static int __craye1k_get_attention_status(struct hotplug_slot *hotplug_slot,
+> +					  u8 *status, bool set_primary)
+> +{
+> +	unsigned char slot;
+> +	int locate, fault;
+> +	struct craye1k *craye1k;
+> +
+> +	craye1k = craye1k_global;
+> +	slot = PSN(to_ctrl(hotplug_slot));
+> +
+> +	if (set_primary) {
+> +		if (craye1k_set_primary(craye1k) != 0) {
+> +			craye1k->get_led_failed++;
+> +			return -EIO;
+> +		}
+> +	}
+> +
+> +	locate = craye1k_get_slot_led(craye1k, slot, true);
+> +	if (locate == -1) {
+> +		craye1k->get_led_failed++;
+> +		return -EIO;
+> +	}
+> +	msleep(CRAYE1K_POST_CMD_WAIT_MS);
+> +
+> +	fault = craye1k_get_slot_led(craye1k, slot, false);
+> +	if (fault == -1) {
+> +		craye1k->get_led_failed++;
+> +		return -EIO;
+> +	}
+> +	msleep(CRAYE1K_POST_CMD_WAIT_MS);
+> +
+> +	*status = locate << 1 | fault;
+> +
+> +	return 0;
+> +}
+> +
+> +int craye1k_get_attention_status(struct hotplug_slot *hotplug_slot,
+> +				 u8 *status)
+> +{
+> +	int rc;
+> +	struct craye1k *craye1k;
+> +
+> +	craye1k = craye1k_global;
+> +
+> +	if (mutex_lock_interruptible(&craye1k->lock) != 0)
+> +		return -EINTR;
+> +
+> +	rc =  __craye1k_get_attention_status(hotplug_slot, status, true);
+> +
+> +	mutex_unlock(&craye1k->lock);
+> +	return rc;
+> +}
+> +
+> +int craye1k_set_attention_status(struct hotplug_slot *hotplug_slot,
+> +				 u8 status)
+> +{
+> +	unsigned char slot;
+> +	int tries = 4;
+> +	int rc;
+> +	u8 new_status;
+> +	struct craye1k *craye1k;
+> +	bool locate, fault;
+> +
+> +	craye1k = craye1k_global;
+> +
+> +	slot = PSN(to_ctrl(hotplug_slot));
+> +
+> +	if (mutex_lock_interruptible(&craye1k->lock) != 0)
+> +		return -EINTR;
+> +
+> +	/* Retry to ensure all LEDs are set */
+> +	while (tries--) {
+> +		/*
+> +		 * The node must first set itself to be the primary node before
+> +		 * setting the slot LEDs (each board has two nodes, or
+> +		 * "servers" as they're called by the manufacturer).  This can
+> +		 * lead to contention if both nodes are trying to set the LEDs
+> +		 * at the same time.
+> +		 */
+> +		rc = craye1k_set_primary(craye1k);
+> +		if (rc != 0) {
+> +			/* Could not set as primary node.  Just retry again. */
+> +			continue;
+> +		}
+> +
+> +		/* Write value twice to increase success rate */
+> +		locate = (status & 0x2) >> 1;
+> +		craye1k_set_slot_led(craye1k, slot, 1, locate);
+> +		if (craye1k_set_slot_led(craye1k, slot, 1, locate) != 0) {
+> +			craye1k->set_led_locate_failed++;
+> +			continue;	/* fail, retry */
+> +		}
+> +
+> +		msleep(CRAYE1K_POST_CMD_WAIT_MS);
+> +
+> +		fault = status & 0x1;
+> +		craye1k_set_slot_led(craye1k, slot, 0, fault);
+> +		if (craye1k_set_slot_led(craye1k, slot, 0, fault) != 0) {
+> +			craye1k->set_led_fault_failed++;
+> +			continue;	/* fail, retry */
+> +		}
+> +
+> +		msleep(CRAYE1K_POST_CMD_WAIT_MS);
+> +
+> +		rc = __craye1k_get_attention_status(hotplug_slot, &new_status,
+> +						    false);
+> +
+> +		msleep(CRAYE1K_POST_CMD_WAIT_MS);
+> +
+> +		if (rc == 0 && new_status == status)
+> +			break;	/* success */
+> +
+> +		craye1k->set_led_readback_failed++;
+> +
+> +		/*
+> +		 * At this point we weren't successful in setting the LED and
+> +		 * need to try again.
+> +		 *
+> +		 * Do a random back-off to reduce contention with other server
+> +		 * node in the unlikely case that both server nodes are trying to
+> +		 * trying to set a LED at the same time.
+> +		 *
+> +		 * The 500ms minimum in the back-off reduced the chance of this
+> +		 * whole retry loop failing from 1 in 700 to none in 10000.
+> +		 */
+> +		msleep(500 + (get_random_long() % 500));
+> +	}
+> +	mutex_unlock(&craye1k->lock);
+> +	if (tries == 0) {
+> +		craye1k->set_led_failed++;
+> +		return -EIO;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static bool is_craye1k_board(void)
+> +{
+> +	return dmi_match(DMI_PRODUCT_NAME, "VSSEP1EC");
+> +}
+> +
+> +bool is_craye1k_slot(struct controller *ctrl)
+> +{
+> +	return (PSN(ctrl) >= 1 && PSN(ctrl) <= 24 && is_craye1k_board());
+> +}
+> +
+> +int craye1k_init(void)
+> +{
+> +	if (!is_craye1k_board())
+> +		return 0;
+> +
+> +	return ipmi_smi_watcher_register(&craye1k_smi_watcher);
+> +}
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Tony Hutter <hutter2@llnl.gov>");
+> +MODULE_DESCRIPTION("Cray E1000 NVMe Slot LED driver");
+> -- 
+> 2.43.7
 
