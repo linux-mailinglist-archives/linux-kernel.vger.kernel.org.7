@@ -1,195 +1,210 @@
-Return-Path: <linux-kernel+bounces-781185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0CBB30EA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:15:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F116B30EB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 642FDB60FBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:13:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95342AC3A5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF83E2E424A;
-	Fri, 22 Aug 2025 06:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BB82E338F;
+	Fri, 22 Aug 2025 06:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LR7mDKA2"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g3lpNsQt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1852E2EF5;
-	Fri, 22 Aug 2025 06:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8F72E3700
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755843307; cv=none; b=dHpxkRVpCJyMMSAEzqxPJpZ/K1NE7TWcPmgu6OHqZF9MwkSPj89jiZJsShUwBqM6P6HspMX8Pa7oGy48apyLdvih05D0HxQvpJa51PGV/3I5jUpkR2aeXNO5zQtIYOylYavKtAF4D4rQ3fZvGEEKZ+Fy8hRUt7emwxYgQgA/7Cs=
+	t=1755843531; cv=none; b=LhY6WewR/mVRjYLP9XYYdhh/sdZQ3PrPh8x3DdEB8pGCGen7BH5Jjrua6LtK7VvwxLZL5zko/BL91q4UEqRgBPU15ni0zIdnfMpR5H7bLN/fhT40D4SRnHT0H3ojnmhQY480S6p26P/l3IcOZCTGJwN5vDlnRu2hS4kqIuiGNMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755843307; c=relaxed/simple;
-	bh=26zbFI6hb3mIw5E6fR+zJorauuLVdmbMe2rz4rsCbfc=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JmpXOSG1QBRKOZh2ZCht8JpMLGAx0r6TjXMEvJ5dx22KPzGVAqo8uAlwq1UAPLTfjs+p53OMVmlKCvqc7FqIpcObfS+h/nLh07INh+qr2j6lUtZXHnZBDw48DumQ9HA6I6ogeWmJz+QB3+yXzT4UPEAavJ5uYbIYJjgsuHphnqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LR7mDKA2; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b4717330f9eso1247451a12.1;
-        Thu, 21 Aug 2025 23:15:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755843304; x=1756448104; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OY4GJHvVYK+N5LUJGUaOnp3q0oNX2or2mbmIQLdKleU=;
-        b=LR7mDKA2wavEoiIHgxsk+ERkJPQPyOMizjkSDHHwT3duNrtbXbfTrUmfS4c7el5gES
-         C/L4xjjB1o0wQPlQsBkXMi5lz/r2LDAx5bbrzqUg2qdahGQ1Vg6cuUGSV/iOhoYlwE4v
-         DrMENF3dqmNI9rwcBKhqmPTTW/j7LazZoyGk57iO7P+mS9eblz9R/+i4ZOjGQaxAuzZI
-         Pz0yA/ndpZ0LZxo8k1N24AI52gzLSOnlyVPQFCkmc+QeSX653+sPCGt/bWCoF1NP4QO8
-         FSu6Ixl0439OoEz3AGvgHvGm5fQsCNKGj+4aKBq5gYbYD5K4prvdwg597NFfrNh0AkHe
-         3kGg==
+	s=arc-20240116; t=1755843531; c=relaxed/simple;
+	bh=Ipdvs+TlyksrM4l/hJDMakLp93JAanz9a9w+7zx003g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NfryZpDjwjhhJmcGn7k/fEfJ1y/jj8Wpb0SMZ1yIfv7Mg1T0uQDjrNFgQBAzLhXKBIJksT/Co2xS/IXncGFMrJiAHsdJiUe03UyyvRZY7FJmaDO9oUJ3Azap/3/YL1/gp+i7pX8m/uyHOOYT4K16n+kS2QZWYWOnTEZ9+W7R9I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g3lpNsQt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755843528;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=niXcAgzmbCLTQjKBYxU2ktBBprjtNy5MGdyac9sGLRc=;
+	b=g3lpNsQtrMwj7COnClx/q7j/8Ab+GmyJ3Ld+qQ/IM9HWQGoFoCGo/I7bG0puiSixJMk1lo
+	VmS7LqKTAvJrRpqYB0aEWuAyxEbAwPwkQP15LEW0qjhkkl2mKPz7mUITV+bIfYKbBsR8bl
+	6QmC3IU1DBaLGtoOAOuw8cNtJfyFv4k=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-86-xCLm-LY0MPSVft6w1ucH3g-1; Fri, 22 Aug 2025 02:18:45 -0400
+X-MC-Unique: xCLm-LY0MPSVft6w1ucH3g-1
+X-Mimecast-MFC-AGG-ID: xCLm-LY0MPSVft6w1ucH3g_1755843524
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45a1b05d8d0so11425115e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 23:18:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755843304; x=1756448104;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OY4GJHvVYK+N5LUJGUaOnp3q0oNX2or2mbmIQLdKleU=;
-        b=Nf62G3MwPKA5QdUnS6xRD5GIY1cJYQm65u6HGL6hJLQdhmhMleI7H/hgODEG+re/6J
-         sNTlwfrB6ury2lUhG81cFcnA4S+GA8RH96xdM/WyZodhUIGZaaTafJsq8s8uDp9eSnrJ
-         ye2DASiEBjObgS919ngz296UkEYAdOIBaLqbr8F+Ut1ZZ+tS8yoT+NQJt17nqkL/Q3dG
-         jeFUn5i+C+Yd8C0UfeGNafy1J+43tst1DYQz6evN29RwGoFYFaTZJeMqiEoBELyLtlg5
-         uNTQE6QBJD1md8Ahh/EsbzixriCym5gvveVleilCKtctn7yeZ4KjvhT4U7EOZgpXsb9E
-         d2xw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOiHFaAmuG/lHNAgxsy4G6YL1QfBF4H84rnCcDZ15TtEFHyXCuMJMoWYjfaWsKdNaPTqxc84obhKIpImb3@vger.kernel.org, AJvYcCUP1xL0GiUpU3bfjcrd1rwUMUuN23ge2KOUb08Y2lu8jycevh4g/E+RHRTDCGiJ3VEq3TfgdEXqaX70@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz34tlltsX/GuCLZX0AYHbXuLF5UykDd4yPDk26vOwSEi+1FO1Z
-	/hkc22pybnWUpQ8D3AcQR1AtbE1lGNfHk5q18MGXxJj5Ug9b+8va5ncc
-X-Gm-Gg: ASbGncvZto0ipYttwAQGGaq+utDJoLfZ9ABCR7zppPpdktFgnYuK0n7cogZcmf9HEDU
-	94e4zfyD8p1TdlvErjiHRtFhrhg1P8vDwsRdqWqhmg0Zk3RrlLe0rGVatg0A8RofxTpDCGMYsmZ
-	bx91bLx76EohZoXrZLb039DTUu66WfnLlKK0fGSHENbqHhujFGTQcGy9Q90wT/NkHNrR0/UJmju
-	MkhRnKKYS/LPefJMsAh4q+dtggnpk2SjIw4+FneyS7pVNN4RvFn6Ls69mMcZ4aRiGBFmTWryV6P
-	s9v9jLBGPmDAHbKZA2CT9GoJR12yWNEd1o5akpM8jDWAmv7b+Ej80DaLj5ZQYFJuBGnOIydfLhi
-	24XhaR90DRh1A2YebaYi4XqITB7SmjoJtvRzNMzFoY1NbyK86oK9HX3o6oIZpdd53BoEeFlFWyV
-	GgXH31jgyGr1PilE+D6V8Q+WO223/V
-X-Google-Smtp-Source: AGHT+IEX8roGyBHGJ/i9ej1bGUzipkk+L88noriLAZ1+JU3Yv/i6WVdaBF5O/2TerwAvPB7SMxG8mg==
-X-Received: by 2002:a17:903:2ac8:b0:234:986c:66bf with SMTP id d9443c01a7336-2462edd7d39mr20587355ad.11.1755843304375;
-        Thu, 21 Aug 2025 23:15:04 -0700 (PDT)
-Received: from peter-bmc.. (2001-b400-e35d-8041-a0f2-62d1-f7aa-e5b7.emome-ip6.hinet.net. [2001:b400:e35d:8041:a0f2:62d1:f7aa:e5b7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246181c48c1sm28660385ad.116.2025.08.21.23.15.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 23:15:04 -0700 (PDT)
-From: Peter Yin <peteryin.openbmc@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] ARM: dts: aspeed: harma: revise gpio name
-Date: Fri, 22 Aug 2025 14:14:52 +0800
-Message-ID: <20250822061454.2610386-3-peteryin.openbmc@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250822061454.2610386-1-peteryin.openbmc@gmail.com>
-References: <20250822061454.2610386-1-peteryin.openbmc@gmail.com>
+        d=1e100.net; s=20230601; t=1755843524; x=1756448324;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=niXcAgzmbCLTQjKBYxU2ktBBprjtNy5MGdyac9sGLRc=;
+        b=UF+yys7JxY3Tl7b+4/xbYWxhD06HSKtAvyfsJ2aw2CtlEJ/PZnk7wWRM3eXX2NsoI7
+         0oCwRVgeZfcda8zduGi/E07G0EPkM1rr3dO8f40rRqHDEDIxP1hqcn/7Amfp0guqn+rh
+         8PDUDvbBYfow9yf4aOS9+l/YzPeAv3DzxJYYCIvyOkqaxCanxaN2kY+CkT6D2wWF/OdT
+         YSVYmC9MHJN2KbUT+6hyzxV+wFs0EuijK2nVvDFx6b+mCohzTRF01LUtUj/6ZKaM/nzZ
+         vptNXrnlpvYXvR7GKuCYlBaF6s9xBTlhkMWfYoDfNCGvEWDW2Vy/yRlBha5qcFfKe7P8
+         OpFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzr7lNA+DNWNjZUmZ90v8YInkBMDzE5/deBja7tOd0kxRKfrlrwqeWe2AVHPxkqbRaP4xQhVbUmtF86f0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynVLp4Zr0Rrhd2G5kQvMDopFJqWXK3Qpy+0/TAlmCB9a+5MrwH
+	5Tvaitbh0CDsDxrqKUG1ZOR1mAlTsspt3GveISJmIbCglMHHHQWJp7LgBEEdmGOybt1x0ZT4j2d
+	fhZrc/IbEQI02QgJtRCwfKorpAtqo8pR583c2Lg0sVxMIzMTi6B+enLLSJsOufHQ7eA==
+X-Gm-Gg: ASbGncuwVfx7JIhPeo+dFzvIDqEvZJFmx4BMcEyA0RPUHy/bmXHrkTf1oCgskEUpsF4
+	ITNSlLxduS9JQKw07OLr1Kcf64ROvfc0f7191utdCPRmF1Seyovb6ajX60NUHvMg/cO/8YoxfIH
+	pjIKQn+y9ScA57TRlHxMjUSxOe9JkS7tZEBmoIL6CVk87XEdRRifholxN8Ah4SZpr+VFCaMx0fD
+	xOLEknv9ETYZQUI9rpRwQdr3RX4mAEoM6uFpKHAih8LXGNpe8tX6ekSqq4eEt8c31hzLzsOlgaA
+	w2wBS9A1+YZeYH7DiXEJ039aLe88vlYGNMlxe2xrmfgkIJo1pds6kECB/pPFhJnVCqmc+g==
+X-Received: by 2002:a05:600c:4e8c:b0:456:1ac8:cace with SMTP id 5b1f17b1804b1-45b5179e7e8mr12435575e9.12.1755843523902;
+        Thu, 21 Aug 2025 23:18:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHdnIqi4Hq3cqdHCtXLM1BskgbP/iNxi6JCTe3b4/5WxUiRcTB1IoXLbvfQ3J7NKdKWtFg41A==
+X-Received: by 2002:a05:600c:4e8c:b0:456:1ac8:cace with SMTP id 5b1f17b1804b1-45b5179e7e8mr12435175e9.12.1755843523431;
+        Thu, 21 Aug 2025 23:18:43 -0700 (PDT)
+Received: from [192.168.3.141] (p4ff1f25c.dip0.t-ipconnect.de. [79.241.242.92])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b50d62991sm24078285e9.0.2025.08.21.23.18.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 23:18:42 -0700 (PDT)
+Message-ID: <6bff5a45-8e52-4a5d-81cb-63a7331d7d0b@redhat.com>
+Date: Fri, 22 Aug 2025 08:18:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 24/35] ata: libata-eh: drop nth_page() usage within SG
+ entry
+To: Damien Le Moal <dlemoal@kernel.org>, linux-kernel@vger.kernel.org
+Cc: Niklas Cassel <cassel@kernel.org>, Alexander Potapenko
+ <glider@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
+ Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
+ Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>,
+ Tejun Heo <tj@kernel.org>, virtualization@lists.linux.dev,
+ Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, x86@kernel.org,
+ Zi Yan <ziy@nvidia.com>
+References: <20250821200701.1329277-1-david@redhat.com>
+ <20250821200701.1329277-25-david@redhat.com>
+ <3812ed9e-2a47-4c1c-bd69-f37768e62ad3@kernel.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <3812ed9e-2a47-4c1c-bd69-f37768e62ad3@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Update GPIO label definitions in the device tree to reflect the correct
-power and control signal names. This includes:
+On 22.08.25 03:59, Damien Le Moal wrote:
+> On 8/22/25 05:06, David Hildenbrand wrote:
+>> It's no longer required to use nth_page() when iterating pages within a
+>> single SG entry, so let's drop the nth_page() usage.
+>>
+>> Cc: Damien Le Moal <dlemoal@kernel.org>
+>> Cc: Niklas Cassel <cassel@kernel.org>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> ---
+>>   drivers/ata/libata-sff.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/ata/libata-sff.c b/drivers/ata/libata-sff.c
+>> index 7fc407255eb46..9f5d0f9f6d686 100644
+>> --- a/drivers/ata/libata-sff.c
+>> +++ b/drivers/ata/libata-sff.c
+>> @@ -614,7 +614,7 @@ static void ata_pio_sector(struct ata_queued_cmd *qc)
+>>   	offset = qc->cursg->offset + qc->cursg_ofs;
+>>   
+>>   	/* get the current page and offset */
+>> -	page = nth_page(page, (offset >> PAGE_SHIFT));
+>> +	page += offset / PAGE_SHIFT;
+> 
+> Shouldn't this be "offset >> PAGE_SHIFT" ?
 
-- Rename "fcb0-activate" to "fcb1-activate" and "fcb2-activate"
-- Add labels for:
-  - power-p3v3-standby
-  - power-p1v8-good
-  - power-pvdd33-s5
-  - power-pvdd18-s5
-  - power-asic-good
-  - power-12v-memory-good
+Thanks for taking a look!
 
-- Replace unnamed GPIOs with appropriate labels such as:
-  - irq-pvddcore0-ocp-alert
-  - irq-pvddcore1-ocp-alert
+Yeah, I already reverted back to "offset >> PAGE_SHIFT" after Linus 
+mentioned in another mail in this thread that ">> PAGE_SHIFT" is 
+generally preferred because the compiler cannot optimize as much if 
+offset would be a signed variable.
 
-Signed-off-by: Peter Yin <peteryin.openbmc@gmail.com>
----
- .../dts/aspeed/aspeed-bmc-facebook-harma.dts  | 21 +++++++++++--------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+So the next version will have the shift again.
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-index 741d2d9b6d03..81278a7702de 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-@@ -234,7 +234,7 @@ gpio@12 {
- 		"","",
- 		"","",
- 		"","",
--		"","fcb1-activate",
-+		"","fcb2-activate",
- 		"","";
- 	};
- };
-@@ -308,7 +308,7 @@ gpio@12 {
- 		"","",
- 		"","",
- 		"","",
--		"","fcb0-activate",
-+		"","fcb1-activate",
- 		"","";
- 	};
- };
-@@ -698,14 +698,14 @@ &sgpiom0 {
- 	"","",
- 	/*A4-A7 line 8-15*/
- 	"","power-config-asic-module-enable",
--	"","power-config-asic-power-good",
--	"","power-config-pdb-power-good",
-+	"power-p3v3-standby","power-config-asic-power-good",
-+	"power-p1v8-good","power-config-pdb-power-good",
- 	"presence-cpu","smi-control-n",
- 	/*B0-B3 line 16-23*/
- 	"","nmi-control-n",
--	"","nmi-control-sync-flood-n",
--	"","",
-+	"power-pvdd33-s5","nmi-control-sync-flood-n",
- 	"","",
-+	"power-pvdd18-s5","",
- 	/*B4-B7 line 24-31*/
- 	"","FM_CPU_SP5R1",
- 	"reset-cause-rsmrst","FM_CPU_SP5R2",
-@@ -749,7 +749,7 @@ &sgpiom0 {
- 	/*F4-F7 line 88-95*/
- 	"presence-asic-modules-0","rt-cpu0-p1-force-enable",
- 	"presence-asic-modules-1","bios-debug-msg-disable",
--	"","uart-control-buffer-select",
-+	"power-asic-good","uart-control-buffer-select",
- 	"presence-cmm","ac-control-n",
- 	/*G0-G3 line 96-103*/
- 	"FM_CPU_CORETYPE2","",
-@@ -801,7 +801,7 @@ &sgpiom0 {
- 	"asic0-card-type-detection2-n","",
- 	"uart-switch-lsb","",
- 	"uart-switch-msb","",
--	"","",
-+	"power-12v-memory-good","",
- 	/*M4-M7 line 200-207*/
- 	"","","","","","","","",
- 	/*N0-N3 line 208-215*/
-@@ -809,7 +809,10 @@ &sgpiom0 {
- 	/*N4-N7 line 216-223*/
- 	"","","","","","","","",
- 	/*O0-O3 line 224-231*/
--	"","","","","","","","",
-+	"","",
-+	"irq-pvddcore0-ocp-alert","",
-+	"irq-pvddcore1-ocp-alert","",
-+	"","",
- 	/*O4-O7 line 232-239*/
- 	"","","","","","","","",
- 	/*P0-P3 line 240-247*/
 -- 
-2.43.0
+Cheers
+
+David / dhildenb
 
 
