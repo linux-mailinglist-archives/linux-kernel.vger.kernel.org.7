@@ -1,190 +1,116 @@
-Return-Path: <linux-kernel+bounces-781173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 740D5B30E79
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:05:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D2C8B30E6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07FC91CE3249
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:05:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45260AA70EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA552E267D;
-	Fri, 22 Aug 2025 06:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5232323909F;
+	Fri, 22 Aug 2025 06:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="UnVg07Ty"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/fOlzxj"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C61A1662E7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6955F7262F;
 	Fri, 22 Aug 2025 06:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755842671; cv=none; b=rleaB9MY6eHwqTCtPHR2oaZ2T7EmZfIP7X2J7fLLZeNshEumM+hClrw4VxL1O7TTltVXHikVsoAPpkI16S1nnn4uamYKGvuRx4GDwAMDzhDCxT/Bv0xHoa2ytsd+FZkwITFXWC4XRZpNuJzy58TG4LEhwBOCKGXYSnmrCp/wkmo=
+	t=1755842668; cv=none; b=MvlcU2yw2f9Bw2IvtPbCOSAWRbrP0peYgqAHPQfUGFNrMKFqu6r9+eHXvD5s/JaQFv/pgVWQ2J5cikeWv2MPSjfS8JIyy2MfRIjOJShHu9071zBBYZ7aGEjSpNhe39x+4db/sWHt5xESYL8mjWuDvR5pPOP5lz9GjfuAnIvDi+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755842671; c=relaxed/simple;
-	bh=6bdEFkPP9mtL8SXN2YyvE+O8XqCKf7T664vIzlyCJ+U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lmoD3ZSjfqPq52gb42jQax8IwLr99udU6hHAXsCp3Spbll013XT8RxD8dEY5APyrqnCdMvM0KMDQzhcec4QMiVdu9CSH/Qd+SSAEkDReZ2YlF25jJumitZhwZVWaty0RR/+yDNscFcQ4c4Jpb15gUjTU9EkfLJc8qQVSYDpnjyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=UnVg07Ty; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1755842665; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=v8DQvhGd0hsTZwVKh2gZIsPRps/MXpijPs1f0x0Pe6U=;
-	b=UnVg07TyujxpwcAJHhK6CGD5MsE4yahq+Hj2IPrnl7jtFWQriLtyYJ9/mmENXmGwnNPTPleGMrgEExHS0JnP0Da49zG/kO63KTlNgczPAG8mlIamiMWhC+TEQUTw4K31orkdEFMOJfRAZ2pBC+3rY0GNUNKl9Gpa4fJ/FHS+V2Y=
-Received: from localhost.localdomain(mailfrom:mii.w@linux.alibaba.com fp:SMTPD_---0WmId2o._1755842662 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 22 Aug 2025 14:04:24 +0800
-From: 'MingMing Wang' <mii.w@linux.alibaba.com>
-To: edumazet@google.com,
-	ncardwell@google.com,
-	kuniyu@google.com,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	ycheng@google.com
-Cc: netdev@vger.kernel.org,
+	s=arc-20240116; t=1755842668; c=relaxed/simple;
+	bh=UiUYReCj5NOMEOAHaFcJU7PwriRUfom/Ix6fZbdArBM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iBuwzwx434WLVngm9Tb5UoRCqfWWTIh9JcF47TlU8Hz/8ZXNEuRmAFsChlmsZnpRj/HGQUqytm3poEFIeP8ZRzCRmiNgRrFsn8u2Gon6i2XlajA6bfDOOEO7GarkMVjuS9DSbsT+s5zpS1cvJzx7sKBc1SecZS8yrTtpypPh93o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E/fOlzxj; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2460757107bso13652565ad.2;
+        Thu, 21 Aug 2025 23:04:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755842667; x=1756447467; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sWgKWHd/sc4pjgErj4aUjUcK4gHol/ug73h3HW8zsiU=;
+        b=E/fOlzxj57ctRj5QCu3bHJQMLIxwg5VpQ08hqnqq1PlKQL7y4XTcQGYfXruj/0fqUd
+         MXVeksB8Q4fn3CSJ+8vnZMgXS3jTsB33H7jSeTefUJ7vmyeniHpVsmXhR6lD+mTT5II4
+         lUMt7OG5IsWku4jf+K51LcrZgQTwu2TkeCAlXL8qcJIWxAL31SdGZtVa2bTT0hWdfJxd
+         gtHYVmyWKHt6F9jl5yKKPYLaeeqfx891cGguR4tqzPhdCmp6C4h0S3O0eh4XBFGEguGu
+         A8Mr9SwfXC+CgsU+LgneR7+nxPubWxjwiStY+w9pWt1/5MKhHFrmVxl8uQAnX0gKaLHo
+         2ZUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755842667; x=1756447467;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sWgKWHd/sc4pjgErj4aUjUcK4gHol/ug73h3HW8zsiU=;
+        b=Lya+EX0XxNu7m2D425XdInh3euSVHaSAkOwa+gzO6dFzNYx/8BUgu+fNxExLE3+tui
+         cVb8Sv7v/+x59bNTJQdfIncrEkcA4wtMKLVRQ8/dV+5+PS5qlbTY1EnQLeNgcC6wrzaR
+         xXrpdQ/MCDiVZx70lQNeC6T5n2kanH7RMkIfaBUXwOSPSI7/QYczaeRrqkxPCanzuawf
+         fJRtqig1c6e5LCUy3U3DVxuRO1yGD9dtXLnYyBp19pH9Ec3YM79VY419Pr76PH53Iv8W
+         +52oL2CHyIdsbAbcr3HyFRzcZ1bDqj1tn87f3tJ3rp5CBRHxOwiTqT+SkXfGYXWjG+ew
+         3F0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWCa1h1JZfNvjyv2Y3NH5hxUJ5Tdm3sqtBlbnxwjCWlOggIQBHzNTnYjyASH2eoHMfvJGxIl28l360KMgU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr5wewFsKedCtnev5ZjbfM79jbCXKqz6P0Oun5JLh0OxjQ+5Jn
+	dWG/YIflRQf0BVj034qtQPJ1hAOJDXw1JCgROcd1XKTwbYIsAeP4Z3v/
+X-Gm-Gg: ASbGncuGu+SjgUCBstVDCcJVEokmGY3Xu14SAYSNAETwfKqcUzq0+s2Vhe1673G+SEb
+	zpa1IgJtspQVnqcdbby45b5Yj/IsFgPk7inJQ7W1O+8FkScdUkmpkU+M66fTyjf7U9lSdBvfTyy
+	7TaIIkcpEt8udOXP3WLHJjgagURcSpbbgif8jI0abnOr8fvHPtLFvPgHK83IgOdCsToN9lbkb7N
+	KkBncx+8wvE55+IxEXc6rQpBXn03E3woDisOHfrMs9wPrpEcYego8H8B1TmcEgSzgUJbyVbXFOT
+	gCKKtiuuLOr54sOVm8SjLlF0El0gQYoDKheq63L97EBR9YU5klDeMF1D/6FKgrBIPIfwA8vaWK0
+	wkijnUAinUKAaMdYobZ8PY8/K8kOJyBFqW/srNeiG4j9ICVSjyhynHg==
+X-Google-Smtp-Source: AGHT+IFpLU6XrEIPrFgTF4JVMX6edxo2lc6RP29jAi2GsYoM3sNOLe6c4U6XTtz35e6YcOLq5XSf2g==
+X-Received: by 2002:a17:902:fc4f:b0:240:6fda:582a with SMTP id d9443c01a7336-2462ee0a951mr25812385ad.23.1755842666530;
+        Thu, 21 Aug 2025 23:04:26 -0700 (PDT)
+Received: from fedora ([172.59.161.146])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed33a727sm73267685ad.1.2025.08.21.23.04.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 23:04:26 -0700 (PDT)
+From: Alex Tran <alex.t.tran@gmail.com>
+To: robh@kernel.org,
+	saravanak@google.com
+Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	MingMing Wang <mii.w@linux.alibaba.com>,
-	Dust Li <dust.li@linux.alibaba.com>
-Subject: [RFC net] tcp: Fix orphaned socket stalling indefinitely in FIN-WAIT-1
-Date: Fri, 22 Aug 2025 14:02:54 +0800
-Message-ID: <20250822060254.74708-1-mii.w@linux.alibaba.com>
-X-Mailer: git-send-email 2.46.0
+	Alex Tran <alex.t.tran@gmail.com>
+Subject: [PATCH] scripts/dtc/flattree.c: stringtable_insert optimization
+Date: Thu, 21 Aug 2025 23:04:17 -0700
+Message-ID: <20250822060417.52935-1-alex.t.tran@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: MingMing Wang <mii.w@linux.alibaba.com>
+Increment string by string instead of character by character.
 
-An orphaned TCP socket can stall indefinitely in FIN-WAIT-1
-if the following conditions are met:
-1. net.ipv4.tcp_retries2 is set to a value ≤ 8;
-2. The peer advertises a zero window, and the window never reopens.
-
-Steps to reproduce:
-1. Set up two instances with nmap installed: one will act as the server
-   the other as the client
-2. Execute on the server:
-   a. lower rmem : `sysctl -w net.ipv4.tcp_rmem="16 32 32"`
-   b. start a listener: `nc -l -p 1234`
-3. Execute on the client:
-   a. lower tcp_retries2: `sysctl -w net.ipv4.tcp_retries2=8`
-   b. send pakcets: `cat /dev/zero | nc <server-ip> 1234`
-   c. after five seconds, stop the process: `killall nc`
-4. Execute on the server: `killall -STOP nc`
-5. Expected abnormal result: using `ss` command, we'll notice that the
-   client connection remains stuck in the FIN_WAIT1 state, and the
-   backoff counter always be 8 and no longer increased, as shown below:
-   ```
-   FIN-WAIT-1 0      1389    172.16.0.2:50316    172.16.0.1:1234
-         cubic wscale:2,7 rto:201 backoff:8 rtt:0.078/0.007 mss:36
-		 ... other fields omitted ...
-   ```
-6. If we set tcp_retries2 to 15 and repeat the steps above, the FIN_WAIT1
-   state will be forcefully reclaimed after about 5 minutes.
-
-During the zero-window probe retry process, it will check whether the
-current connection is alive or not. If the connection is not alive and
-the counter of retries exceeds the maximum allowed `max_probes`, retry
-process will be terminated.
-
-In our case, when we set `net.ipv4.tcp_retries2` to 8 or a less value,
-according to the current implementation, the `icsk->icsk_backoff` counter
-will be capped at `net.ipv4.tcp_retries2`. The value calculated by
-`inet_csk_rto_backoff` will always be too small, which means the
-computed backoff duration will always be less than rto_max. As a result,
-the alive check will always return true. The condition before the
-`goto abort` statement is an logical AND condition, the abort branch
-can never be reached.
-
-So, the TCP retransmission backoff mechanism has two issues:
-
-1. `icsk->icsk_backoff` should monotonically increase during probe
-   transmission and, upon reaching the maximum backoff limit, the
-   connection should be terminated. However, the backoff value itself
-   must not be capped prematurely — it should only control when to abort.
-
-2. The condition for orphaned connection abort was incorrectly based on
-   connection liveness and probe count. It should instead consider whether
-   the number of orphaned probes exceeds the intended limit.
-
-To fix this, introduce a local variable `orphan_probes` to track orphan
-probe attempts separately from `max_probes`, which is used for RTO
-retransmissions. This decouples the two counters and prevents accidental
-overwrites, ensuring correct timeout behavior for orphaned connections.
-
-Fixes: b248230c34970 ("tcp: abort orphan sockets stalling on zero window probes")
-Co-developed-by: Dust Li <dust.li@linux.alibaba.com>
-Signed-off-by: Dust Li <dust.li@linux.alibaba.com>
-Co-developed-by: MingMing Wang <mii.w@linux.alibaba.com>
-Signed-off-by: MingMing Wang <mii.w@linux.alibaba.com>
-
+Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
 ---
-We couldn't determine the rationale behind the following check in tcp_send_probe0():
-```
-if (icsk->icsk_backoff < READ_ONCE(net->ipv4.sysctl_tcp_retries2))
-    icsk->icsk_backoff++;
-```
+ scripts/dtc/flattree.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-This condition appears to be the root cause of the observed stall.
-However, it has existed in the kernel for over 20 years — which suggests
-there might be a historical or subtle reason for its presence.
-
-We would greatly appreciate it if anyone could shed
----
- net/ipv4/tcp_output.c | 4 +---
- net/ipv4/tcp_timer.c  | 4 ++--
- 2 files changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index caf11920a878..21795d696e38 100644
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -4385,7 +4385,6 @@ void tcp_send_probe0(struct sock *sk)
+diff --git a/scripts/dtc/flattree.c b/scripts/dtc/flattree.c
+index 1bcd8089c5b9..156ca5da89b2 100644
+--- a/scripts/dtc/flattree.c
++++ b/scripts/dtc/flattree.c
+@@ -222,9 +222,7 @@ static int stringtable_insert(struct data *d, const char *str)
  {
- 	struct inet_connection_sock *icsk = inet_csk(sk);
- 	struct tcp_sock *tp = tcp_sk(sk);
--	struct net *net = sock_net(sk);
- 	unsigned long timeout;
- 	int err;
+ 	unsigned int i;
  
-@@ -4401,8 +4400,7 @@ void tcp_send_probe0(struct sock *sk)
- 
- 	icsk->icsk_probes_out++;
- 	if (err <= 0) {
--		if (icsk->icsk_backoff < READ_ONCE(net->ipv4.sysctl_tcp_retries2))
--			icsk->icsk_backoff++;
-+		icsk->icsk_backoff++;
- 		timeout = tcp_probe0_when(sk, tcp_rto_max(sk));
- 	} else {
- 		/* If packet was not sent due to local congestion,
-diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
-index a207877270fb..4dba2928e1bf 100644
---- a/net/ipv4/tcp_timer.c
-+++ b/net/ipv4/tcp_timer.c
-@@ -419,9 +419,9 @@ static void tcp_probe_timer(struct sock *sk)
- 	if (sock_flag(sk, SOCK_DEAD)) {
- 		unsigned int rto_max = tcp_rto_max(sk);
- 		const bool alive = inet_csk_rto_backoff(icsk, rto_max) < rto_max;
-+		int orphan_probes = tcp_orphan_retries(sk, alive);
- 
--		max_probes = tcp_orphan_retries(sk, alive);
--		if (!alive && icsk->icsk_backoff >= max_probes)
-+		if (!alive || icsk->icsk_backoff >= orphan_probes)
- 			goto abort;
- 		if (tcp_out_of_resources(sk, true))
- 			return;
+-	/* FIXME: do this more efficiently? */
+-
+-	for (i = 0; i < d->len; i++) {
++	for (i = 0; i < d->len; i += strlen(d->val + i) + 1) {
+ 		if (streq(str, d->val + i))
+ 			return i;
+ 	}
 -- 
-2.46.0
+2.50.1
 
 
