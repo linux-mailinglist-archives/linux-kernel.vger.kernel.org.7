@@ -1,95 +1,100 @@
-Return-Path: <linux-kernel+bounces-782210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9871B31C89
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:48:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFED2B31CCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA4CABA186C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:46:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5DB7AC6A2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C134230F54F;
-	Fri, 22 Aug 2025 14:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05186311C39;
+	Fri, 22 Aug 2025 14:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgQ4QtKN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HyapY0/A"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D641A5BA0;
-	Fri, 22 Aug 2025 14:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A862EB84F;
+	Fri, 22 Aug 2025 14:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755874098; cv=none; b=tZ9V3BtYGiaxeCfTwFALhH6daMEVDWFWCc3nrSi1MlyH8FC0KiGsH+Xv3i9qgbFCZLTZQArhBkZVICxZeLWcyAXdASX7oMf2Q1hPq6BshypKfd6sYabAGAQwMyIHaEaG7OBZ1pXUpFBXDEPQOhIDORbc4X20R0h+QMmP9kHPa2Y=
+	t=1755874121; cv=none; b=I/pRVLwo8+kVHzvuRAaGNpIQQzjYPzHT7RD6X10RZMF99PCEMFvs3vEz8QKyebcWgjaiWbHMrisDKFa6UmpEqQFRziBnXILh2X2UVqSAOBltIk9Mi7yvw4hXkhpo6QuTLrhZ2NJYmB4R6x39aa7WRE6AB8qYhVsdPi3mW3RiXd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755874098; c=relaxed/simple;
-	bh=n4JvEFi7K9Gnd4LcwTA0bUtIPMP+X5TsCejUHnwhR34=;
+	s=arc-20240116; t=1755874121; c=relaxed/simple;
+	bh=uQif88yNNdYttf7+cRaZ0eiCASc8RCBeBqL7RUBpweY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bkch+66Kcxp1iiHiRgzpbce281uUqAIl/rqsFLfp3TByFCECAWsaHTadHg3MouqfRB3oyfhW5sz7LO4U8VGY/ZaXTjDoCsgb4B3CwhuKgyUTaLb3sBes+XfrdDGZak5yd9KNO2g/G9I0JqAZEqbAx3ksXoRclhLuyNdMQsjU7V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgQ4QtKN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87789C4CEED;
-	Fri, 22 Aug 2025 14:48:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755874097;
-	bh=n4JvEFi7K9Gnd4LcwTA0bUtIPMP+X5TsCejUHnwhR34=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=TdmYA69/8uSXimMcdUDX6G5xFfW81OsZu+mKfW4HI0ImiFQHxQgGw7iKFmUjIwb1S6EVswcLy97888jvhaiPukpQ93FYDkw+qNpm8XVpFxTImcXNEN59MtW1IiWlaQRkFMPC2bzLjhoVBSn/DMktIjeivLk0JAzCpQULqScMsSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HyapY0/A; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2FE7540E00DD;
+	Fri, 22 Aug 2025 14:48:36 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id UDit7YffPw_M; Fri, 22 Aug 2025 14:48:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755874112; bh=pMFvfqcahBTsCFrIW1RAWQWo0sTGzcaCEwz/SgmdPGM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BgQ4QtKN0Hrlp+tukqXWm1mhlAR7cmdX5V73Oyrmx/LUNmbGl7mcWKEc8K0JS3PnU
-	 cZsf1QxRdJYiqT/ljbvr2pdN3lqlaBFwrmaXY9/OTYKDRaFBEdkm4ee6gxhixeeX3Y
-	 SbwaSRu6YR6PW3QOwwIcYj+KxYEYIRorQUlLaTQ6f7ycze9l1TJ9fTVgauCJF6SrLR
-	 0kpHfu5WZqx4qRoy2M7MnF6/fC8KBVd7adWJ05/3hqBP4BhXQBTsHdseuAcO8dbQhs
-	 F5aNMKlX91su9yhj4W+inDZWQhuaIbLsWKeu6rBkRVK3GFyFhOzoxotW3hqt0BRZcM
-	 hud/qTNt6vaEQ==
-Date: Fri, 22 Aug 2025 09:48:16 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Simona Vetter <simona@ffwll.ch>,
-	"H. Nikolaus Schaller" <hns@goldelico.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>, devicetree@vger.kernel.org,
-	Arnaud Vrac <avrac@freebox.fr>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	David Airlie <airlied@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>, Robert Foss <rfoss@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Andy Yan <andy.yan@rock-chips.com>, dri-devel@lists.freedesktop.org,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, Jonas Karlman <jonas@kwiboo.se>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Pierre-Hugues Husson <phhusson@freebox.fr>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: display: ingenic,jz4780-hdmi: Add
- missing clock-names
-Message-ID: <175587409204.3789906.17191769934979803832.robh@kernel.org>
-References: <20250820-dt-bindings-display-v2-0-91e2ccba3d4e@linaro.org>
- <20250820-dt-bindings-display-v2-1-91e2ccba3d4e@linaro.org>
+	b=HyapY0/AW/Kd1MA+/ePvhypOqVVu8VLym9JUJN9lw4dyWdjbrTjPnGuDmu4ENLthk
+	 LRic5nC4h3/RFVJVH+9nHRbi5V795R4GwllwcI3oRhOFWvA/DFPC3xThptQpAvAoWT
+	 L3tn1z03LvQ4LZQ23vm///FmSuzuNbdQUYeTgnZnA/HfvqieAxa88OI523AzRc65dB
+	 HsWwH4u8D4wBOmKteN3QIv3Ox18tcobYM2djOK3/TOtMw3Hlr17u8/WwlWESMTqoka
+	 iZTpoeEHnleL5RRLiDRJVAx0Hj8a0Ryrsjd0EABu+dhDQP9dwr5X1lwmt8rTLyJexZ
+	 0WEdXXYEnNAHGGdsZG+0QJ1yxNdwOY9D5pXoIhniG594jwUK1Q/DIslGj0xqnBoNqY
+	 Xi3vnSm7OOXOHZy1GWymcNnIqzO4p8wN4LX8modeghqM5EEB7jF3G9Cam5OR7CdTAL
+	 dWOfYkVtRF05niah+WdOyGeal/bHRXJEXOYJJENiLUbctM2fPNcREelXlGC15u4LSy
+	 otv26hFGgwvNF2+499PxbKgWmjM1qGoivuHInbTRnbGGnBv7lh60pksAJ1/yD9gQr1
+	 O1AWoaEHhC8Q1iMClT6pjF8bvaZvPC74TMhEIiW2Sij1FXHO+7zMmUCbxnGEMvtWRW
+	 8o9iSQs2CBRWPT+8A5cJGb3c=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C564840E0163;
+	Fri, 22 Aug 2025 14:48:24 +0000 (UTC)
+Date: Fri, 22 Aug 2025 16:48:19 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: darshanrathod475@gmail.com
+Cc: tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org,
+	rric@kernel.org, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] edac/amd76x: Remove assignment from if condition in
+ amd76x_remove_one()
+Message-ID: <20250822144819.GAaKiDM8l-eJgU1-bs@fat_crate.local>
+References: <20250812130154.2220684-1-darshanrathod475@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250820-dt-bindings-display-v2-1-91e2ccba3d4e@linaro.org>
+In-Reply-To: <20250812130154.2220684-1-darshanrathod475@gmail.com>
 
-
-On Wed, 20 Aug 2025 16:17:36 +0200, Krzysztof Kozlowski wrote:
-> The binding references synopsys,dw-hdmi.yaml schema which defines both
-> 'clocks' and 'clock-names' with variable length, therefore we need here
-> also same constraint for 'clock-names' as for 'clocks'.
+On Tue, Aug 12, 2025 at 06:31:54PM +0530, darshanrathod475@gmail.com wrote:
+> From: Darshan Rathod <darshanrathod475@gmail.com>
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../devicetree/bindings/display/bridge/ingenic,jz4780-hdmi.yaml        | 3 +++
->  1 file changed, 3 insertions(+)
+> The code was performing an assignment inside the if condition:
 > 
+>     if ((mci = edac_mc_del_mc(&pdev->dev)) == NULL)
+> 
+> This triggers a checkpatch.pl warning.
 
-Applied, thanks!
+And?
 
+Is this a bug or just something some silly script is telling you to do?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
