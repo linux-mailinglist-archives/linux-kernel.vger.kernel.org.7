@@ -1,173 +1,89 @@
-Return-Path: <linux-kernel+bounces-782105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B0DB31B26
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:20:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B55E4B31B2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04779188E00B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:16:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97F411BA2173
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70950306D2B;
-	Fri, 22 Aug 2025 14:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADBF306D2B;
+	Fri, 22 Aug 2025 14:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ORLdTg4E"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2u/LSTZM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PlE961fM"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21455303C83;
-	Fri, 22 Aug 2025 14:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677802FF17D
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 14:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755872168; cv=none; b=lt/WKzl09ezC0082/XbDm73jTu4IWaHhV4/oDNjJh48Qf7byXmyImcYJecG3AHOUaZa+gwiicOQ/VV7tdOyJ9cqGoUWfRdVUPslicSWjzcyHUc3n6PbXyuH/4LA5HEVdSqp77FgT4Bai/ZTL76J3OVdSu52tc6zaZvVfeKCnAsY=
+	t=1755872219; cv=none; b=XWXrBC9+Q7MNz2+MmPVbnzOF9CJ6lNA7p8kkMmDfEOKVlNqHtmpr8xJE64usM03NLwOHCaiUjWnQUx6FFo1fSHfwER3jCMOX+tlIamGyLMbyUWlT4YmnkVanfYCU0l55pZ2dOJmWpojgV6P9uQ3HifURZFNtrVOejC1z0f4XosY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755872168; c=relaxed/simple;
-	bh=GjRjHlx+8IVIK4VGLsw3756nQx9Hum+SOnAk0B/KELw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I1r3aIAm5IoXTC7xGDOCOAl+Wj98oIOYt8oKU3INiyUJRytGuLJy2nazTDgkyC1CKQ8kuTe0iN9f2KGJTcWgEU2FG6mMa4c4bB/Thm1y2N9l7KGR8agc/FuXWeRkUBeSwWN6vKDSGjTF0X/bNzbT6D0B+JZSANEMl3uLi6T4s/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ORLdTg4E; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=AB1DTWmFI46rZseB1HIkiwEXCITFFpy1H7xYdXQNU9Y=; b=ORLdTg4Ecy2ssTwjsLqBptIF+9
-	Qwo9YCYxp+jyfZb2iDqrSpGP+Kj5dKBUvXgzjpp2N9UPkqOdjTlVh8RjRoB1nmou9NDOZ//SxO74l
-	sKP3KdKe1TCgY7BYYvi0BpP8r6KHcly6EBum6doS+DKJoJLYkA3nzcp/w++vJggdNJ5l4HLA3guXZ
-	rl7r1edN9foH4gqB+eA8UmYhflQb1UlgU5exHiT9hXslW83p5V3QFPEIcZw3Mkbi4/aplBiHXFWlL
-	Nk9nQWyA+wobfKLZKvkecxv75jrDOL3DpayYQ7QaYpPSo42KeH50LPPdukbv9MxDOH5bZlFwBCL1O
-	WvCRvqWg==;
-Received: from [152.250.7.37] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1upSYi-0008E8-MV; Fri, 22 Aug 2025 16:16:00 +0200
-Message-ID: <5da6b0f4-2730-4783-9c57-c46c2d13e848@igalia.com>
-Date: Fri, 22 Aug 2025 11:15:56 -0300
+	s=arc-20240116; t=1755872219; c=relaxed/simple;
+	bh=DHEF/sRtEUfVZJrky/fG0g6fwC0YpUpOvdDoRBnU+Hw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G0DlGuBxGb6gxlwAvdEEd+kZeQ3AuPpmFF3q4uOiJIXu60OigLefEK8tq244189eDxk7wnhKG2/g/dsBv1i2GLUZuod4GEsnNAC2m1llW1zSFlFn9opt+orH5Ec9dt6qQYgZes269HHyskXxrr9y7zfU2LLhun0zZm18ADt+FIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2u/LSTZM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PlE961fM; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 22 Aug 2025 16:16:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755872215;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6qGPbFm6ev3FCh05T0AkxuGsgsnsJn4OeQyYmrseSXA=;
+	b=2u/LSTZMjHbIT6aqK25yCTh5PO8YuoqK69duoqvhMzafxm4hSS1i2lKXDKwfVvdcBDuX3e
+	r4bu5K0NMBJCS4ET7n8akpZiKel/16aKccBX6JbPFdUGudumsrO/3TmEZ5IFfGx8+Qj85N
+	VJPdPTAXSPHU72bBynub/mWh3+kO1ElTKdzdqXMz5IpWINhdWWIZHeEpC96DqWPX6gb5qb
+	g0cYdmYCLaZz5scetYu2cAM2lmhxj6bHaAaQ8XIh9IuC9q7XQUoX3c384NSlqSpByqw7XB
+	0Rz2Ra6DtY7tI+K2j2Nlh+1YjTLaEFp9v1lCoOHPSMGZMY0oPnLx4R6Y/EpeWw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755872215;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6qGPbFm6ev3FCh05T0AkxuGsgsnsJn4OeQyYmrseSXA=;
+	b=PlE961fMfFnaxi8inWU+/n24foRjQm9V8RMEpv1T721h8/nwmX7BX3BYY3DXCyO+C7XlQC
+	sQQv11G4lFXMtiAw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>, x86-ml <x86@kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] locking/urgent for v6.17-rc1
+Message-ID: <20250822141654.Sjoffo8F@linutronix.de>
+References: <20250809180207.GAaJeNHymvt6gaR5nY@fat_crate.local>
+ <CAHk-=wi+X2A6K839AxrRvaCDCakya-2B68NTkYP5YGfi-h5EuQ@mail.gmail.com>
+ <aKd3cNJqj6_g_ATE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/9] ovl: Enable support for casefold layers
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>,
- linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- kernel-dev@igalia.com, Gabriel Krisman Bertazi <krisman@kernel.org>
-References: <20250814-tonyk-overlayfs-v5-0-c5b80a909cbd@igalia.com>
- <cffb248a-87ce-434e-bd64-2c8112872a18@igalia.com>
- <CAOQ4uxiVFubhiC9Ftwt3kG=RoGSK7rBpPv5Z0GdZfk17dBO6YQ@mail.gmail.com>
- <e2238a17-3d0a-4c30-bc81-65c8c4da98e6@igalia.com>
- <CAOQ4uxgfKcey301gZRBHf=2YfWmNg5zkj7Bh+DwVwpztMR1uOg@mail.gmail.com>
- <CAOQ4uxjf6S7xX+LiMaxoz7Rg03jU1-4A4o3FZ_Hi8z6EyEc7PQ@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <CAOQ4uxjf6S7xX+LiMaxoz7Rg03jU1-4A4o3FZ_Hi8z6EyEc7PQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aKd3cNJqj6_g_ATE@google.com>
 
-Em 17/08/2025 12:03, Amir Goldstein escreveu:
-> On Fri, Aug 15, 2025 at 3:50 PM Amir Goldstein <amir73il@gmail.com> wrote:
->>
->> On Fri, Aug 15, 2025 at 3:34 PM André Almeida <andrealmeid@igalia.com> wrote:
->>>
->>> Hi Amir,
->>>
->>> On 8/14/25 21:06, Amir Goldstein wrote:
->>>> On Thu, Aug 14, 2025 at 7:30 PM André Almeida <andrealmeid@igalia.com> wrote:
->>>>> Em 14/08/2025 14:22, André Almeida escreveu:
->>>>>> Hi all,
->>>>>>
->>>>>> We would like to support the usage of casefold layers with overlayfs to
->>>>>> be used with container tools. This use case requires a simple setup,
->>>>>> where every layer will have the same encoding setting (i.e. Unicode
->>>>>> version and flags), using one upper and one lower layer.
->>>>>>
->>>>> Amir,
->>>>>
->>>>> I tried to run your xfstest for casefolded ovl[1] but I can see that it
->>>>> still requires some work. I tried to fix some of the TODO's but I didn't
->>>>> managed to mkfs the base fs with casefold enabled...
->>>> When you write mkfs the base fs, I suspect that you are running
->>>> check -overlay or something.
->>>>
->>>> This is not how this test should be run.
->>>> It should run as a normal test on ext4 or any other fs  that supports casefold.
->>>>
->>>> When you run check -g casefold, the generic test generic/556 will
->>>> be run if the test fs supports casefold (e.g. ext4).
->>>>
->>>> The new added test belongs to the same group and should run
->>>> if you run check -g casefold if the test fs supports casefold (e.g. ext4).
->>>>
->>> I see, I used `check -overlay` indeed, thanks!
->>>
->>
->> Yeh that's a bit confusing I'll admit.
->> It's an overlayfs test that "does not run on overlayfs"
->> but requires extra overlayfs:
->>
->> _exclude_fs overlay
->> _require_extra_fs overlay
->>
->> Because it does the overlayfs mount itself.
->> That's the easiest way to test features (e.g. casefold) in basefs
->>
+On 2025-08-21 12:45:52 [-0700], Sean Christopherson wrote:
+> Piggybacking the futex private hashing attention, the new fanciness is causing
+> crashes in my testing.  The crashes are 100% reproducible, but my reproducer is
+> simply running a variety of tests in parallel, i.e. isn't very debug-friendly,
+> and the code itself is black magic to me, so all I've done is bisect.
 > 
-> I tried to run the new test, which is able to mount an overlayfs
-> with layers with disabled casefolding with kernel 6.17-rc1.
+> I reported the issue on the original thread, but haven't seen any follow-up.
 > 
-> It does not even succeed in passing this simple test with
-> your patches, so something is clearly off.
+> https://lore.kernel.org/all/aJ_vEP2EHj6l0xRT@google.com
 
-Apart from the other changes I had done for v6, I also had to change the 
-test itself. The directories need to be empty to set the +F attribute, 
-so I had to do this change:
+I somehow missed it. Can you try rc2 with the patch I just sent? 
 
---- a/tests/generic/999
-+++ b/tests/generic/999
-@@ -104,6 +104,9 @@ mount_overlay $lowerdir >>$seqres.full
-  ls $merge/casefold/subdir |& _filter_scratch
-  unmount_overlay
-
-+# workdir needs to be empty to set casefold attribute
-+rm -rf $workdir/*
-+
-  _casefold_set_attr $upperdir >>$seqres.full
-  _casefold_set_attr $workdir >>$seqres.full
-
-@@ -112,7 +115,10 @@ mount_overlay $lowerdir >>$seqres.full 2>&1 && \
-         echo "Overlayfs mount with casefold enabled upperdir should 
-have failed" && \
-         unmount_overlay
-
-+# lowerdir needs to be empty to set casefold attribute
-+rm -rf $lowerdir/*
-  _casefold_set_attr $lowerdir >>$seqres.full
-+mkdir $casefolddir
-
-  # Try to mount an overlay with casefold enabled layers.
-  # On kernels older than v6.18 expect failure and skip the rest of the test
-
-> 
->> You should also run check -overlay -g overlay/quick,
->> but that's only to verify your patches did not regress any
->> non-casefolded test.
->>
->>
-> 
-> My tests also indicate that there are several regressions, so your patches
-> must have changed code paths that should not have been changed.
-> 
-> Thanks,
-> Amir.
-
+Sebastian
 
