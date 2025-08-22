@@ -1,131 +1,167 @@
-Return-Path: <linux-kernel+bounces-782097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88720B31AFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:15:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DDA3B31B05
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9475E5836A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:12:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33ACC16052E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9744C3054C8;
-	Fri, 22 Aug 2025 14:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A172FDC31;
+	Fri, 22 Aug 2025 14:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QoCahja5"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="guVmW8Ao";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DU3RvPP6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531852EB5D1;
-	Fri, 22 Aug 2025 14:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA87305044
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 14:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755871925; cv=none; b=lzUlB/F4ShF3kA01ScUX0B5l20QYul4yatOMy9EnZAjVo2OZHdrHHD3g7riDn7cmO9e6iBsJ91xUcm2lXxwHZ+JlJpm4sRSPds1ENkkM3QNBvlWvWxDsvm5oa3CwrtAneJX6zi5sPzQutala5hrX1toSjn7eSkOZ690zw14XWSk=
+	t=1755871963; cv=none; b=gUDs5nPyBfkgWWuKkZVScNYA35WLNpVe7BhpAoddWJ6csRMpL3mNnwenWBC6ArpBW5Pq/rp8q0GsK9NsVjJrYy7wlbenXjDkqR0OFx20iGmLDpKLByjq8jtsXXl9T1CuHEVaxy813a16Q3IllZeMi9wbfY8vb5m5Z1OMee8ieWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755871925; c=relaxed/simple;
-	bh=+TKObB0AlaNIYbYugxrZxt/fF1Z783K4/w4R1udf4Q4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=SbinD9zBe5Ko0feg4pGXBBenAr0RxJWoMIxu3b2qaRvN63dntl6PJn7+3m06aRgqh0s3Gn+xIoo1+QcoBciizK6rdOLiNXNzeCte0W7axM9wSOM3cL/NZquFAgMwMK0eG9q/pihZ63JbAb97CsFFcYg/Nlx0rtBemcwhVpSSUYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QoCahja5; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3c5594715e1so50122f8f.2;
-        Fri, 22 Aug 2025 07:12:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755871921; x=1756476721; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SUrkI8gRxT8al9H8bcipd0cfLDrY2l84rj0Cw0HvR90=;
-        b=QoCahja5KtKcZIEYtH+WOGBeAddtdT/tDfiBJObTD2eCXsI3pC2Yd3ee3JciEnpLiK
-         apITea4KJ72PNH7NwDNtmS6P49F5xBBBaota/H4scVwkaQKBb0TUZjanLeLJ4RZpIbHi
-         xkMxieZdRCLIWIJC02jISrqK8KeSdTTiqDEtDgEt4Zff60ADx5fyEyV1zC3FeuT26O1D
-         EUc/Z4pnToXaiZcOCJcOxlABNKLAtmk+Nj00SKGJ4jOqyggWEyCDCxzYzA77cmlzAY4e
-         LOZKMoyidyJhpcvI+WMK9x6PEVM/wmwSDfv9GLDzqS6KzkmGV3Ga2HWR+KxYsVgeo3uB
-         /9ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755871921; x=1756476721;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SUrkI8gRxT8al9H8bcipd0cfLDrY2l84rj0Cw0HvR90=;
-        b=vNV2+/S+ac2dtIOX6iCa3esVnEze8vvkJlD2CFv7KUn7tzt62gSbgXg1F5x8dj3H2I
-         ENJD6VWkz92hlfaLJWdkNNbcGRJRnXW/RqcGZVrYJGTokpuzX9J41/kzzgGMRX626LrU
-         KavR/oDjRPTaGFS2/NTu4XtaS4KEVdoD12olQBDgq8JAGNoCY5gufXi/dJtawV1vWSQh
-         Kp/fPG0tgsAfrEiut31nfp+m9a8ovkVUYvXMjFCAUWglHRpyaYEFlGFmHxByVsK80ed5
-         LuX6srLHxZfy2p4q8luSHNvtgMGnQUonCm37UWRz+TNtj6vs7dICqt6x0YAI2taVpQ0a
-         k5LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHQakfsAVXyfrvCMZ1gCRyef83Qjp543nlirl/nn32XeNMCdNwVOsfy1FdSWBJt6fGg5BvMTFcUWGVkg==@vger.kernel.org, AJvYcCX+JJUcOvIbwsgJVK9QEzflgRwMCqMe7g/Eg7xyck5R0KzBB/latsUa4lB8EGsaLfDSYUthnHd1fG3zrzuf@vger.kernel.org, AJvYcCX5kEeYwH62MlSOgskGJx+AamBJQxQMZBpVJSEKKEEAkE5jlW1AZ8olGfqr7l6xF+r/K7jAq02pjVDAFj79qA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUGXcCBioI2+d5w4utOicnZAOntK0Zn9TMynDLzqJQPgPqdyw0
-	avHJ+Ylv2zvxpsit5MHbi+WG0edkUiTPMtnsD5Wk/dNTS/DJVdxAQHg/
-X-Gm-Gg: ASbGncuh8zlWhHUUAxyCBnhMQirosHezebd3V0eSHa43wSNFjDuJ0Co44KZwMMQmOcu
-	lbDJrWwNU/fy9mE/6s9w2KYsfmOyFCPBZ7clqffw2XMm4B0/5UwcdD3B6Hoert+ujz51w1APaU1
-	xherfpEw74eVWUibnneIjvXwxHpHydqXN3K7wKt7B/vT8MgRiLmHepu8qxVvpisv9L/mKjjjoSy
-	oTcGdvmIFC0aMwsInKdacopwZwBDnuq+Z+BufPcCihCqJdauTUYOp3d0aJUkywesq2n4Py0zOQ3
-	URL+eretkxl1KGx9pBs/acaVD6xzpI61zUsOZ73ULFSE8jxywEIQwcDTA+KKH/DxKpObkQQPz83
-	FrNrgb3m6zte3EY+rvI9pWf99Dn/vcGq05+Ft5hRIdaGu+PYPnwsuUNIovDzm7sM0PFaqziXl3J
-	WB1I7Z0oFa
-X-Google-Smtp-Source: AGHT+IFjwShx3D0jJMvSWdaLG4T39JgpaQyzemTxwtJre4OZUc8C3M5BPxw9JQYLkgJW8PLQe/esRQ==
-X-Received: by 2002:a05:6000:25c3:b0:3c5:7050:e2af with SMTP id ffacd0b85a97d-3c5dcdfc35fmr1024231f8f.9.1755871921342;
-        Fri, 22 Aug 2025 07:12:01 -0700 (PDT)
-Received: from [192.168.100.6] ([149.3.87.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c6c737b303sm576035f8f.47.2025.08.22.07.11.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 07:12:00 -0700 (PDT)
-Message-ID: <98191ca5-9581-44fd-b9b1-6f0b932f141e@gmail.com>
-Date: Fri, 22 Aug 2025 18:11:58 +0400
+	s=arc-20240116; t=1755871963; c=relaxed/simple;
+	bh=H95vp4MfAQXB7bSHS8XL8SYVinnSgBBkXY8ras7FbSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S5zeWMDPZxHU1Jz+jTrrfVPzQ//hZ6EaqOab7BAbLzW5oTQk3/pa8pK0hGwosHdFu7hZ78QnQaQymqlurXP0B+lBVFBTzVK4yQlso6ttpx47A1N678KfkxEgAaCKPutmYGvmaZNMEwdr00m+8UUD2V42WTceUp976XSwZsjuuWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=guVmW8Ao; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DU3RvPP6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 22 Aug 2025 16:12:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755871959;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bAQdGe767WDBTybeykhPZeWedB1d1YwoZ4Ay4neJaZY=;
+	b=guVmW8AoYzayGb4qs8tIOqwNcr0By5UWWgh19uoFc4xARskKxGfccfmRR+jwo/fVLdJ0A2
+	hktbVBiVK/K1KxSTnC+bICIpP5zgsQM6D0KVCROFSURfQvVHg95rwbP5t+snhsUo00z9pT
+	iKygMaqOcc3Tqyhr4ZJVgX/1TFDubjDOyRcTnIMcaluoiXjvw48zUhLscMMuui8kYjelM4
+	WrGwYspaP3nqZuWHlAmrOYuZe4Blfoql/J2ChYxCLRhjW6sRWgsZBFSEd1fY2sQ1xBdChp
+	ulJeEtnhnZJnU/zlFhASaGoOJOi/nRTMemYfYl1zqcLXyS9XRVu21SAx5i/A+w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755871959;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bAQdGe767WDBTybeykhPZeWedB1d1YwoZ4Ay4neJaZY=;
+	b=DU3RvPP69QQ+CyoLmg+iIoGw77g0YZmyGvuK5Ag9V9clGddjEYDx2VWNI9SDatcTUpiKF8
+	+/BJI6liiDrC4iDw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>, x86-ml <x86@kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>
+Subject: [PATCH] futex: Move futex_hash_free() back to __mmput()
+Message-ID: <20250822141238.PfnkTjFb@linutronix.de>
+References: <20250809180207.GAaJeNHymvt6gaR5nY@fat_crate.local>
+ <CAHk-=wi+X2A6K839AxrRvaCDCakya-2B68NTkYP5YGfi-h5EuQ@mail.gmail.com>
+ <20250822105712.CRp0on1Y@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: torvalds@linux-foundation.org
-Cc: akpm@linux-foundation.org, andrealmeid@igalia.com, brauner@kernel.org,
- christophe.leroy@csgroup.eu, daniel@iogearbox.net,
- dave.hansen@linux.intel.com, dave@stgolabs.net,
- david.laight.linux@gmail.com, dvhart@infradead.org, jack@suse.cz,
- linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linuxppc-dev@lists.ozlabs.org, maddy@linux.ibm.com, mingo@redhat.com,
- mpe@ellerman.id.au, npiggin@gmail.com, peterz@infradead.org,
- tglx@linutronix.de, viro@zeniv.linux.org.uk
-References: <CAHk-=whKeVCEtR2mQJQjT2ndSOXGDdb+L0=WoVUQUGumm88VpA@mail.gmail.com>
-Subject: Re: [PATCH v2 02/10] uaccess: Add speculation barrier to
- copy_from_user_iter()
-Content-Language: en-US
-From: Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>
-In-Reply-To: <CAHk-=whKeVCEtR2mQJQjT2ndSOXGDdb+L0=WoVUQUGumm88VpA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250822105712.CRp0on1Y@linutronix.de>
 
-so we can use speculation barrier? and fix the problem locally
+To avoid a memory leak via mm_alloc() + mmdrop() the futex cleanup code
+has been moved to __mmdrop(). This resulted in a warnings if the futex
+hash table has been allocated via vmalloc() the mmdrop() was invoked
+from atomic context.
+The free path must stay in __mmput() to ensure it is invoked from
+preemptible context.
 
+In order to avoid the memory leak, delay the allocation of
+mm_struct::mm->futex_ref to futex_hash_allocate(). This works because
+neither the per-CPU counter nor the private hash has been allocated and
+therefore
+- futex_private_hash() callers (such as exit_pi_state_list()) don't
+  acquire reference if there is no private hash yet. There is also no
+  reference put.
 
-On 8/22/2025 5:52 PM, Linus Torvalds wrote:
-> On Fri, 22 Aug 2025 at 05:58, Christophe Leroy
-> <christophe.leroy@csgroup.eu> wrote:
->> > The results of "access_ok()" can be mis-speculated. The result is 
-> that > you can end speculatively: > > if (access_ok(from, size)) > // 
-> Right here
-> I actually think that we should probably just make access_ok() itself do this.
-> 
-> We don't have *that* many users since we have been de-emphasizing the
-> "check ahead of time" model, and any that are performance-critical can
-> these days be turned into masked addresses.
-> 
-> As it is, now we're in the situation that careful places - like
-> _inline_copy_from_user(), and with your patch  copy_from_user_iter() -
-> do maybe wethis by hand and are ugly as a result, and lazy and
-> probably incorrect places don't do it at all.
-> 
-> That said, I don't object to this patch and maybe we should do that
-> access_ok() change later and independently of any powerpc work.
-> 
->                   Linus
-> 
+- Regular callers (futex_hash()) fallback to global hash. No reference
+  counting here.
 
+The futex_ref member can be allocated in futex_hash_allocate() before
+the private hash itself is allocated. This happens either while the
+first thread is created or on request. In both cases the process has
+just a single thread so there can be either futex operation in progress
+or the request to create a private hash.
+
+Move futex_hash_free() back to __mmput();
+Move the allocation of mm_struct::futex_ref to futex_hash_allocate().
+
+Fixes:  e703b7e247503 ("futex: Move futex cleanup to __mmdrop()")
+Reported-by: Jakub Kicinski <kuba@kernel.org>
+Closes: https://lore.kernel.org/all/20250821102721.6deae493@kernel.org/
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ kernel/fork.c       |  2 +-
+ kernel/futex/core.c | 15 +++++++++++----
+ 2 files changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/fork.c b/kernel/fork.c
+index af673856499dc..c4ada32598bd5 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -689,7 +689,6 @@ void __mmdrop(struct mm_struct *mm)
+ 	mm_pasid_drop(mm);
+ 	mm_destroy_cid(mm);
+ 	percpu_counter_destroy_many(mm->rss_stat, NR_MM_COUNTERS);
+-	futex_hash_free(mm);
+ 
+ 	free_mm(mm);
+ }
+@@ -1138,6 +1137,7 @@ static inline void __mmput(struct mm_struct *mm)
+ 	if (mm->binfmt)
+ 		module_put(mm->binfmt->module);
+ 	lru_gen_del_mm(mm);
++	futex_hash_free(mm);
+ 	mmdrop(mm);
+ }
+ 
+diff --git a/kernel/futex/core.c b/kernel/futex/core.c
+index d9bb5567af0c5..fb63c13aa66fc 100644
+--- a/kernel/futex/core.c
++++ b/kernel/futex/core.c
+@@ -1724,10 +1724,6 @@ int futex_mm_init(struct mm_struct *mm)
+ 	/* futex-ref */
+ 	atomic_long_set(&mm->futex_atomic, 0);
+ 	mm->futex_batches = get_state_synchronize_rcu();
+-	mm->futex_ref = alloc_percpu(unsigned int);
+-	if (!mm->futex_ref)
+-		return -ENOMEM;
+-	this_cpu_inc(*mm->futex_ref); /* 0 -> 1 */
+ 	return 0;
+ }
+ 
+@@ -1801,6 +1797,17 @@ static int futex_hash_allocate(unsigned int hash_slots, unsigned int flags)
+ 		}
+ 	}
+ 
++	if (!mm->futex_ref) {
++		/*
++		 * This will always be allocated by the first thread and
++		 * therefore requires no locking.
++		 */
++		mm->futex_ref = alloc_percpu(unsigned int);
++		if (!mm->futex_ref)
++			return -ENOMEM;
++		this_cpu_inc(*mm->futex_ref); /* 0 -> 1 */
++	}
++
+ 	fph = kvzalloc(struct_size(fph, queues, hash_slots),
+ 		       GFP_KERNEL_ACCOUNT | __GFP_NOWARN);
+ 	if (!fph)
+-- 
+2.50.1
 
 
