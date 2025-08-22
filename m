@@ -1,222 +1,215 @@
-Return-Path: <linux-kernel+bounces-781364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90472B311B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:25:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B347B311AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A75681C81F35
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:22:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 32C304E26FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE6D2EB5A7;
-	Fri, 22 Aug 2025 08:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A422ED847;
+	Fri, 22 Aug 2025 08:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="a99m7rAZ"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NkW2hxq3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E91321256B;
-	Fri, 22 Aug 2025 08:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4E52EB5D9;
+	Fri, 22 Aug 2025 08:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755850918; cv=none; b=nBG895tpe5V1VLDufWPXPUiEPUEpsjif4slC/3S8zxZTCJjPuehPFIvaDYqQrj4C7OmEHrj/lTFM6yhZRCmuM70OU4JfyHgBG3DIDDP4bleQo/u30Num48RbuOx8LpYo24CVQ9kDGmpNTSWzvG0qes0mqJiuSoQsz0C7jHF7tqE=
+	t=1755851022; cv=none; b=CYoBzu4hgFpl2PIWYYHy+k2UAUdcRO7AWmNn/srHH2ilPr9CER62OFx5G7DwTtp6fxF9m/bp82LCdP2DUMAjgOw/J+tjCwNmF/bQLIK8Z/T+pw/jBl4fHAWuVYOa+crGoKpDsHpRPAc6pholL8hbDJ6MapK1U1iLymPamqEQMiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755850918; c=relaxed/simple;
-	bh=PWIeXmdBk8sOPfOzgIyBbD4F0B9qEfIuco2f+wBido8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mKrhTxtje4eLqv92PSjD9P8RJKPsmwwMKS/HnCSAj3pzQsjnGf+nqL1XEPu7pGDwuUEGJ0IMnyMfwQusMjKu+H8b6pyoCjU1RFPE4+oJSYZdlX9MMbh3IYgUSFbA/kkRwfoTHQDzPRy73ITJkZhSI3SJ/lPPVV5trGsd112MVQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=a99m7rAZ; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1755850907;
-	bh=PWIeXmdBk8sOPfOzgIyBbD4F0B9qEfIuco2f+wBido8=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=a99m7rAZQWm+UjHvWrf1rGV1iRHSpZdyNGyE2Bcbhga0edcdvhVbM+Zsz5e9V/E40
-	 47NSPqyku26AycKn2jHXaEhLGRYig3tSJHwhYANZYVbyOexfrttBTa5/U1MqSI+6kI
-	 daGpOevkCSPbunng3Xb/9ITM/MFC2FUXTRlE4f02w/u/KuI2/T+75xJ/YixrOjyLGe
-	 mNoN8/dt10fYtFdJWw0KwBrwg+jhpNyD8xJ59jiqPWkrmdVL4Axy4A87ciKyA3mqR9
-	 2iog7IYgA8TxtN36KtLg+ZS5JyXlxggvCBsomWKXHD8V+PHYocJZPs61Hz08lTyeDO
-	 FWHRSqRxaD4zw==
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 429406CEE4;
-	Fri, 22 Aug 2025 16:21:46 +0800 (AWST)
-Message-ID: <88a67cc10907926204a478c58e361cb6706a939a.camel@codeconstruct.com.au>
-Subject: Re: [PATCH net-next v25 1/1] mctp pcc: Implement MCTP over PCC
- Transport
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: admiyo@os.amperecomputing.com, Matt Johnston
- <matt@codeconstruct.com.au>,  Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep Holla
-	 <sudeep.holla@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Huisong Li <lihuisong@huawei.com>
-Date: Fri, 22 Aug 2025 16:21:45 +0800
-In-Reply-To: <20250819205159.347561-2-admiyo@os.amperecomputing.com>
-References: <20250819205159.347561-1-admiyo@os.amperecomputing.com>
-	 <20250819205159.347561-2-admiyo@os.amperecomputing.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1755851022; c=relaxed/simple;
+	bh=l271mH/2s7sZVR71jaM1oYJGsIzB3Y8dxH+x8mjAV6s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D2a5mGDLRv3QhDrz8VddLk0vQ11smP2lKeGLN15Ghck/FwPhvAf5ZgUd226EuXodAvcyVNAXHDHk7DZbZe2CJp0ttt2//xecOoXGpEt1tc8tLxOiRZiuLnuOpoPRCeBHKC4Zs6f7nd2ufQdAm64xkqEu4Prd03syN2AuFawRpsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NkW2hxq3; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755851021; x=1787387021;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=l271mH/2s7sZVR71jaM1oYJGsIzB3Y8dxH+x8mjAV6s=;
+  b=NkW2hxq3tcJyQmxEdCdc8ba+TBRHqjQJaSmjui9YU0LDgnZY1q+c/O/y
+   FKO3sn/Gr44Ntc4zee84R4uJbPjUvfLAgciGdDkzHKFp6XI0cz0Ya01nR
+   zJAK0g7FsuZLQokP+nhhHSxttYAtU7SV4v5OdtMuRzO++3pQx4P33y3EM
+   CG3/q28+cwpWzEh0FtY8ObH2+3RRtf6CXUmcNCDqck3K24FD51Y1hlRFg
+   5DnL1RiuAF/EX7ldcEBcojDurgsAQgHQOQGEjTiqq+XT/yOR18uJnsPPZ
+   vV8kwzZ7jcsAoX+NjWSIx2zYdJzuxJwpA2mBN5BmlsrpfWS2vEIiEt+Eh
+   A==;
+X-CSE-ConnectionGUID: YyFvuBazTrO+AMW0a2UQxg==
+X-CSE-MsgGUID: g2O47t3SQKWVmIvyEpf3Lw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58303326"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="58303326"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 01:23:40 -0700
+X-CSE-ConnectionGUID: p6OjpZoKQoufk2J58ZAd1w==
+X-CSE-MsgGUID: XSwHC0FrSDOVsCM14AZ4+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="168157908"
+Received: from spr.sh.intel.com ([10.112.229.196])
+  by fmviesa007.fm.intel.com with ESMTP; 22 Aug 2025 01:23:37 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Xudong Hao <xudong.hao@intel.com>
+Subject: [PATCH] perf tools topdown: Fix incorrect topdown slots regroup
+Date: Fri, 22 Aug 2025 16:22:33 +0800
+Message-Id: <20250822082233.1850417-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-SGkgQWRhbSwKCkEgZmV3IGNvbW1lbnRzIGlubGluZSwgbWFpbmx5IG9uIHRoZSBsb2NraW5nICYg
-bGlzdCB0cmF2ZXJzYWwuCgo+ICtzdHJ1Y3QgbWN0cF9wY2NfbWFpbGJveCB7Cj4gK8KgwqDCoMKg
-wqDCoMKgdTMyIGluZGV4Owo+ICvCoMKgwqDCoMKgwqDCoHN0cnVjdCBwY2NfbWJveF9jaGFuICpj
-aGFuOwo+ICvCoMKgwqDCoMKgwqDCoHN0cnVjdCBtYm94X2NsaWVudCBjbGllbnQ7Cj4gK8KgwqDC
-oMKgwqDCoMKgc3RydWN0IHNrX2J1ZmZfaGVhZCBwYWNrZXRzOwo+ICt9Owo+ICsKPiArLyogVGhl
-IG5ldGRldiBzdHJ1Y3R1cmUuIE9uZSBvZiB0aGVzZSBwZXIgUENDIGFkYXB0ZXIuICovCj4gK3N0
-cnVjdCBtY3RwX3BjY19uZGV2IHsKPiArwqDCoMKgwqDCoMKgwqAvKiBzcGlubG9jayB0byBzZXJp
-YWxpemUgYWNjZXNzIHRvIHF1ZXVlIHRoYXQgaG9sZHMgYSBjb3B5IG9mIHRoZQo+ICvCoMKgwqDC
-oMKgwqDCoCAqIHNrX2J1ZmZzIHRoYXQgYXJlIGFsc28gaW4gdGhlIHJpbmcgYnVmZmVycyBvZiB0
-aGUgbWFpbGJveC4KPiArwqDCoMKgwqDCoMKgwqAgKi8KPiArwqDCoMKgwqDCoMKgwqBzcGlubG9j
-a190IGxvY2s7Cj4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IG5ldF9kZXZpY2UgKm5kZXY7Cj4gK8Kg
-wqDCoMKgwqDCoMKgc3RydWN0IGFjcGlfZGV2aWNlICphY3BpX2RldmljZTsKPiArwqDCoMKgwqDC
-oMKgwqBzdHJ1Y3QgbWN0cF9wY2NfbWFpbGJveCBpbmJveDsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1
-Y3QgbWN0cF9wY2NfbWFpbGJveCBvdXRib3g7Cj4gK307Cj4gKwo+ICtzdGF0aWMgdm9pZCAqbWN0
-cF9wY2NfcnhfYWxsb2Moc3RydWN0IG1ib3hfY2xpZW50ICpjLCBpbnQgc2l6ZSkKPiArewo+ICvC
-oMKgwqDCoMKgwqDCoHN0cnVjdCBtY3RwX3BjY19uZGV2ICptY3RwX3BjY19uZGV2Owo+ICvCoMKg
-wqDCoMKgwqDCoHN0cnVjdCBtY3RwX3BjY19tYWlsYm94ICpib3g7Cj4gK8KgwqDCoMKgwqDCoMKg
-c3RydWN0IHNrX2J1ZmYgKnNrYjsKPiArCj4gK8KgwqDCoMKgwqDCoMKgbWN0cF9wY2NfbmRldiA9
-wqBjb250YWluZXJfb2YoYywgc3RydWN0IG1jdHBfcGNjX25kZXYsIGluYm94LmNsaWVudCk7Cj4g
-K8KgwqDCoMKgwqDCoMKgYm94ID0gJm1jdHBfcGNjX25kZXYtPmluYm94Owo+ICsKPiArwqDCoMKg
-wqDCoMKgwqBpZiAoc2l6ZSA+IG1jdHBfcGNjX25kZXYtPm5kZXYtPm10dSkKPiArwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIE5VTEw7Cj4gK8KgwqDCoMKgwqDCoMKgc2tiID0g
-bmV0ZGV2X2FsbG9jX3NrYihtY3RwX3BjY19uZGV2LT5uZGV2LCBzaXplKTsKPiArwqDCoMKgwqDC
-oMKgwqBpZiAoIXNrYikKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIE5V
-TEw7Cj4gK8KgwqDCoMKgwqDCoMKgc2tiX3B1dChza2IsIHNpemUpOwo+ICvCoMKgwqDCoMKgwqDC
-oHNrYi0+cHJvdG9jb2wgPSBodG9ucyhFVEhfUF9NQ1RQKTsKPiArCj4gK8KgwqDCoMKgwqDCoMKg
-c3Bpbl9sb2NrKCZtY3RwX3BjY19uZGV2LT5sb2NrKTsKPiArwqDCoMKgwqDCoMKgwqBza2JfcXVl
-dWVfaGVhZCgmYm94LT5wYWNrZXRzLCBza2IpOwo+ICvCoMKgwqDCoMKgwqDCoHNwaW5fdW5sb2Nr
-KCZtY3RwX3BjY19uZGV2LT5sb2NrKTsKCkdpdmVuIHlvdSdyZSB1c2luZyB5b3VyIG93biBsb2Nr
-aW5nIGhlcmUgKHdoaWNoIHNlZW1zIHNlbnNpYmxlLCBzaW5jZQp5b3UncmUgaXRlcmF0aW5nIGVs
-c2V3aGVyZSksIHlvdSdyZSBub3QgcmVseWluZyBvbiB0aGUgbGlzdCdzIGxvY2suIEluCndoaWNo
-IGNhc2UgeW91IGNhbiB1c2UgX19za2JfcXVldWVfaGVhZCgpIChhbmQgX19za2JfdW5saW5rIGJl
-bG93KSBhcwpsb2NrbGVzcyB2YXJpYW50cy4KCj4gKwo+ICvCoMKgwqDCoMKgwqDCoHJldHVybiBz
-a2ItPmRhdGE7Cj4gK30KPiArCj4gK3N0YXRpYyB2b2lkIG1jdHBfcGNjX2NsaWVudF9yeF9jYWxs
-YmFjayhzdHJ1Y3QgbWJveF9jbGllbnQgKmMsIHZvaWQgKmJ1ZmZlcikKPiArewo+ICvCoMKgwqDC
-oMKgwqDCoHN0cnVjdCBtY3RwX3BjY19uZGV2ICptY3RwX3BjY19uZGV2Owo+ICvCoMKgwqDCoMKg
-wqDCoHN0cnVjdCBwY2NfaGVhZGVyIHBjY19oZWFkZXI7Cj4gK8KgwqDCoMKgwqDCoMKgc3RydWN0
-IHNrX2J1ZmYgKnNrYiA9IE5VTEw7Cj4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IG1jdHBfc2tiX2Ni
-ICpjYjsKPiArCj4gK8KgwqDCoMKgwqDCoMKgbWN0cF9wY2NfbmRldiA9IGNvbnRhaW5lcl9vZihj
-LCBzdHJ1Y3QgbWN0cF9wY2NfbmRldiwgaW5ib3guY2xpZW50KTsKPiArwqDCoMKgwqDCoMKgwqBp
-ZiAoIWJ1ZmZlcikgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBkZXZfZHN0YXRz
-X3J4X2Ryb3BwZWQobWN0cF9wY2NfbmRldi0+bmRldik7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoHJldHVybjsKPiArwqDCoMKgwqDCoMKgwqB9Cj4gKwo+ICvCoMKgwqDCoMKgwqDC
-oHNwaW5fbG9jaygmbWN0cF9wY2NfbmRldi0+bG9jayk7Cj4gK8KgwqDCoMKgwqDCoMKgc2tiX3F1
-ZXVlX3dhbGsoJm1jdHBfcGNjX25kZXYtPmluYm94LnBhY2tldHMsIHNrYikgewo+ICvCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAoc2tiLT5kYXRhICE9IGJ1ZmZlcikKPiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGNvbnRpbnVlOwo+ICvCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBza2JfdW5saW5rKHNrYiwgJm1jdHBfcGNjX25kZXYt
-PmluYm94LnBhY2tldHMpOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBicmVhazsK
-PiArwqDCoMKgwqDCoMKgwqB9Cj4gK8KgwqDCoMKgwqDCoMKgc3Bpbl91bmxvY2soJm1jdHBfcGNj
-X25kZXYtPmxvY2spOwo+ICsKPiArwqDCoMKgwqDCoMKgwqBpZiAoc2tiKSB7CgpUaGUgdGVybWlu
-YXRpb24gY2FzZSBvZiBza2JfcXVldWVfd2FsaygpIHdpbGwgbm90IGxlYXZlIHNrYiBhcyBudWxs
-LgoKSW5zdGVhZCwgeW91IHdpbGwgcHJvYmFibHkgd2FudCB0byB1c2UgYSB0ZW1wb3JhcnkgdmFy
-aWFibGUgZm9yIHRoZQppdGVyYXRvciwgYW5kIHNldCBza2Igd2hlbiB5b3UgZmluZCBhIG1hdGNo
-LgoKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZGV2X2RzdGF0c19yeF9hZGQobWN0
-cF9wY2NfbmRldi0+bmRldiwgc2tiLT5sZW4pOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqBza2JfcmVzZXRfbWFjX2hlYWRlcihza2IpOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqBza2JfcHVsbChza2IsIHNpemVvZihwY2NfaGVhZGVyKSk7Cj4gK8KgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoHNrYl9yZXNldF9uZXR3b3JrX2hlYWRlcihza2IpOwo+ICvCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjYiA9IF9fbWN0cF9jYihza2IpOwo+ICvCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjYi0+aGFsZW4gPSAwOwo+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqBuZXRpZl9yeChza2IpOwo+ICvCoMKgwqDCoMKgwqDCoH0KPiArfQo+ICsK
-PiArc3RhdGljIHZvaWQgbWN0cF9wY2NfdHhfZG9uZShzdHJ1Y3QgbWJveF9jbGllbnQgKmMsIHZv
-aWQgKm1zc2csIGludCByKQo+ICt7Cj4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IG1jdHBfcGNjX25k
-ZXYgKm1jdHBfcGNjX25kZXY7Cj4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IG1jdHBfcGNjX21haWxi
-b3ggKmJveDsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3Qgc2tfYnVmZiAqc2tiID0gTlVMTDsKPiAr
-Cj4gK8KgwqDCoMKgwqDCoMKgbWN0cF9wY2NfbmRldiA9IGNvbnRhaW5lcl9vZihjLCBzdHJ1Y3Qg
-bWN0cF9wY2NfbmRldiwgb3V0Ym94LmNsaWVudCk7Cj4gK8KgwqDCoMKgwqDCoMKgYm94ID0gY29u
-dGFpbmVyX29mKGMsIHN0cnVjdCBtY3RwX3BjY19tYWlsYm94LCBjbGllbnQpOwo+ICvCoMKgwqDC
-oMKgwqDCoHNwaW5fbG9jaygmbWN0cF9wY2NfbmRldi0+bG9jayk7Cj4gK8KgwqDCoMKgwqDCoMKg
-c2tiX3F1ZXVlX3dhbGsoJmJveC0+cGFja2V0cywgc2tiKSB7Cj4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoGlmIChza2ItPmRhdGEgPT0gbXNzZykgewo+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc2tiX3VubGluayhza2IsICZib3gtPnBhY2tl
-dHMpOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgYnJl
-YWs7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoH0KPiArwqDCoMKgwqDCoMKgwqB9
-Cj4gK8KgwqDCoMKgwqDCoMKgc3Bpbl91bmxvY2soJm1jdHBfcGNjX25kZXYtPmxvY2spOwo+ICsK
-PiArwqDCoMKgwqDCoMKgwqBpZiAoc2tiKQoKU2FtZSBhcyBhYm92ZTsgdGhpcyB3aWxsIG5vdCBi
-ZSBudWxsIGluIHRoZSBub3QtZm91bmQgY2FzZSwgYnV0IHdpbGwKcG9pbnQgdG8gdGhlIGxpc3Qg
-aGVhZC4KCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGRldl9jb25zdW1lX3NrYl9h
-bnkoc2tiKTsKCi4uLiBidXQgZXZlbiBpZiBzbywgeW91IGNvdWxkIHBhc3Mgc2tiIGFzIE5VTEwg
-aGVyZSBhbmQgYXZvaWQgdGhlIGlmLgoKPiArfQo+ICsKPiArc3RhdGljIG5ldGRldl90eF90IG1j
-dHBfcGNjX3R4KHN0cnVjdCBza19idWZmICpza2IsIHN0cnVjdCBuZXRfZGV2aWNlICpuZGV2KQo+
-ICt7Cj4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IG1jdHBfcGNjX25kZXYgKm1wbmQgPSBuZXRkZXZf
-cHJpdihuZGV2KTsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgcGNjX2hlYWRlciAqcGNjX2hlYWRl
-cjsKPiArwqDCoMKgwqDCoMKgwqBpbnQgbGVuID0gc2tiLT5sZW47Cj4gK8KgwqDCoMKgwqDCoMKg
-aW50IHJjOwo+ICsKPiArwqDCoMKgwqDCoMKgwqByYyA9IHNrYl9jb3dfaGVhZChza2IsIHNpemVv
-ZigqcGNjX2hlYWRlcikpOwo+ICvCoMKgwqDCoMKgwqDCoGlmIChyYykgewo+ICvCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqBkZXZfZHN0YXRzX3R4X2Ryb3BwZWQobmRldik7Cj4gK8KgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGtmcmVlX3NrYihza2IpOwo+ICvCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gTkVUREVWX1RYX09LOwo+ICvCoMKgwqDCoMKgwqDCoH0K
-PiArCj4gK8KgwqDCoMKgwqDCoMKgcGNjX2hlYWRlciA9IHNrYl9wdXNoKHNrYiwgc2l6ZW9mKCpw
-Y2NfaGVhZGVyKSk7Cj4gK8KgwqDCoMKgwqDCoMKgcGNjX2hlYWRlci0+c2lnbmF0dXJlID0gUEND
-X1NJR05BVFVSRSB8IG1wbmQtPm91dGJveC5pbmRleDsKPiArwqDCoMKgwqDCoMKgwqBwY2NfaGVh
-ZGVyLT5mbGFncyA9IFBDQ19DTURfQ09NUExFVElPTl9OT1RJRlk7Cj4gK8KgwqDCoMKgwqDCoMKg
-bWVtY3B5KCZwY2NfaGVhZGVyLT5jb21tYW5kLCBNQ1RQX1NJR05BVFVSRSwgTUNUUF9TSUdOQVRV
-UkVfTEVOR1RIKTsKPiArwqDCoMKgwqDCoMKgwqBwY2NfaGVhZGVyLT5sZW5ndGggPSBsZW4gKyBN
-Q1RQX1NJR05BVFVSRV9MRU5HVEg7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoHNwaW5fbG9jaygmbXBu
-ZC0+bG9jayk7Cj4gK8KgwqDCoMKgwqDCoMKgc2tiX3F1ZXVlX2hlYWQoJm1wbmQtPm91dGJveC5w
-YWNrZXRzLCBza2IpOwo+ICvCoMKgwqDCoMKgwqDCoHNwaW5fdW5sb2NrKCZtcG5kLT5sb2NrKTsK
-PiArCj4gK8KgwqDCoMKgwqDCoMKgcmMgPSBtYm94X3NlbmRfbWVzc2FnZShtcG5kLT5vdXRib3gu
-Y2hhbi0+bWNoYW4sIHNrYi0+ZGF0YSk7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoGlmIChyYyA8IDAp
-IHsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc2tiX3VubGluayhza2IsICZtcG5k
-LT5vdXRib3gucGFja2V0cyk7CgpUaGlzIGRvZXMgbm90IGhvbGQgdGhlIGxvY2sgeW91IGFyZSB1
-c2luZyBmb3IgdGhlIGxpc3QgdHJhdmVyc2FsLiBJZiB5b3UKd2FudCB0byByZWx5IG9uIHRoZSBs
-aXN0LWludGVybmFsIGxvY2tpbmcsIHRoYXQncyBmaW5lLCBidXQgeW91IG5lZWQgdG8KYmUgY29u
-c2lzdGVudCBpbiB5b3VyIGFwcHJvYWNoLgoKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgcmV0dXJuIE5FVERFVl9UWF9CVVNZOwo+ICvCoMKgwqDCoMKgwqDCoH0KPiArCj4gK8KgwqDC
-oMKgwqDCoMKgZGV2X2RzdGF0c190eF9hZGQobmRldiwgbGVuKTsKPiArwqDCoMKgwqDCoMKgwqBy
-ZXR1cm4gTkVUREVWX1RYX09LOwo+ICt9Cj4gKwo+ICtzdGF0aWMgdm9pZCBkcmFpbl9wYWNrZXRz
-KHN0cnVjdCBza19idWZmX2hlYWQgKmxpc3QpCj4gK3sKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3Qg
-c2tfYnVmZiAqc2tiOwo+ICsKPiArwqDCoMKgwqDCoMKgwqB3aGlsZSAoIXNrYl9xdWV1ZV9lbXB0
-eShsaXN0KSkgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBza2IgPSBza2JfZGVx
-dWV1ZShsaXN0KTsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZGV2X2NvbnN1bWVf
-c2tiX2FueShza2IpOwo+ICvCoMKgwqDCoMKgwqDCoH0KPiArfQo+ICsKPiArc3RhdGljIGludCBt
-Y3RwX3BjY19uZG9fb3BlbihzdHJ1Y3QgbmV0X2RldmljZSAqbmRldikKPiArewo+ICvCoMKgwqDC
-oMKgwqDCoHN0cnVjdCBtY3RwX3BjY19uZGV2ICptY3RwX3BjY19uZGV2ID0KPiArwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgbmV0ZGV2X3ByaXYobmRldik7Cj4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IG1j
-dHBfcGNjX21haWxib3ggKm91dGJveCA9Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgICZtY3RwX3Bj
-Y19uZGV2LT5vdXRib3g7Cj4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IG1jdHBfcGNjX21haWxib3gg
-KmluYm94ID0KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqAgJm1jdHBfcGNjX25kZXYtPmluYm94OwoK
-TWlub3I6IEkgZG9uJ3QgdGhpbmsgdGhlc2UgbmVlZCB3cmFwcGluZz8KCj4gK8KgwqDCoMKgwqDC
-oMKgaW50IG1jdHBfcGNjX210dTsKPiArCj4gK8KgwqDCoMKgwqDCoMKgb3V0Ym94LT5jaGFuID0g
-cGNjX21ib3hfcmVxdWVzdF9jaGFubmVsKCZvdXRib3gtPmNsaWVudCwgb3V0Ym94LT5pbmRleCk7
-Cj4gK8KgwqDCoMKgwqDCoMKgaWYgKElTX0VSUihvdXRib3gtPmNoYW4pKQo+ICvCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gUFRSX0VSUihvdXRib3gtPmNoYW4pOwo+ICsKPiAr
-wqDCoMKgwqDCoMKgwqBpbmJveC0+Y2hhbiA9IHBjY19tYm94X3JlcXVlc3RfY2hhbm5lbCgmaW5i
-b3gtPmNsaWVudCwgaW5ib3gtPmluZGV4KTsKPiArwqDCoMKgwqDCoMKgwqBpZiAoSVNfRVJSKGlu
-Ym94LT5jaGFuKSkgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwY2NfbWJveF9m
-cmVlX2NoYW5uZWwob3V0Ym94LT5jaGFuKTsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgcmV0dXJuIFBUUl9FUlIoaW5ib3gtPmNoYW4pOwo+ICvCoMKgwqDCoMKgwqDCoH0KPiArCj4g
-K8KgwqDCoMKgwqDCoMKgbWN0cF9wY2NfbmRldi0+aW5ib3guY2hhbi0+cnhfYWxsb2MgPSBtY3Rw
-X3BjY19yeF9hbGxvYzsKPiArwqDCoMKgwqDCoMKgwqBtY3RwX3BjY19uZGV2LT5vdXRib3guY2hh
-bi0+bWFuYWdlX3dyaXRlcyA9IHRydWU7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoC8qIFRoZXJlIGlz
-IG5vIGNsZWFuIHdheSB0byBwYXNzIHRoZSBNVFUgdG8gdGhlIGNhbGxiYWNrIGZ1bmN0aW9uCj4g
-K8KgwqDCoMKgwqDCoMKgICogdXNlZCBmb3IgcmVnaXN0cmF0aW9uLCBzbyBzZXQgdGhlIHZhbHVl
-cyBhaGVhZCBvZiB0aW1lLgo+ICvCoMKgwqDCoMKgwqDCoCAqLwoKRm9yIG15IG93biBjbGFyaXR5
-LCB3aGF0J3MgInRoZSBjYWxsYmFjayBmdW5jdGlvbiB1c2VkIGZvcgpyZWdpc3RyYXRpb24iPwoK
-PiArwqDCoMKgwqDCoMKgwqBtY3RwX3BjY19tdHUgPSBtY3RwX3BjY19uZGV2LT5vdXRib3guY2hh
-bi0+c2htZW1fc2l6ZSAtCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHNpemVvZihz
-dHJ1Y3QgcGNjX2hlYWRlcik7Cj4gK8KgwqDCoMKgwqDCoMKgbmRldi0+bXR1ID0gTUNUUF9NSU5f
-TVRVOwo+ICvCoMKgwqDCoMKgwqDCoG5kZXYtPm1heF9tdHUgPSBtY3RwX3BjY19tdHU7Cj4gK8Kg
-wqDCoMKgwqDCoMKgbmRldi0+bWluX210dSA9IE1DVFBfTUlOX01UVTsKPiArCj4gK8KgwqDCoMKg
-wqDCoMKgcmV0dXJuIDA7Cj4gK30KPiArCj4gK3N0YXRpYyBpbnQgbWN0cF9wY2NfbmRvX3N0b3Ao
-c3RydWN0IG5ldF9kZXZpY2UgKm5kZXYpCj4gK3sKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgbWN0
-cF9wY2NfbmRldiAqbWN0cF9wY2NfbmRldiA9Cj4gKyAgICAgICAgICAgbmV0ZGV2X3ByaXYobmRl
-dik7Cj4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IG1jdHBfcGNjX21haWxib3ggKm91dGJveCA9Cj4g
-KyAgICAgICAgICAgJm1jdHBfcGNjX25kZXYtPm91dGJveDsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1
-Y3QgbWN0cF9wY2NfbWFpbGJveCAqaW5ib3ggPQo+ICsgICAgICAgICAgICZtY3RwX3BjY19uZGV2
-LT5pbmJveDsKCk5vIHdyYXBwaW5nIG5lZWRlZCBoZXJlIGVpdGhlci4KCkNoZWVycywKCgpKZXJl
-bXkK
+When running the command "perf stat -e "slots,slots" -C0 sleep 1", we
+see below error.
+
+perf stat -e "slots,slots" -C0 sleep 1
+WARNING: events were regrouped to match PMUs
+ Performance counter stats for 'CPU(s) 0':
+     <not counted>      slots
+   <not supported>      slots
+
+     1.002265769 seconds time elapsed
+
+The topdown slots events are not correctly counted. The root cause is
+that perf tools incorrectly regroup these 2 slots events into a group.
+If there are only topdown slots events but no topdown metrics events,
+the regroup should not be done since topdown slots event can only be
+programed on fixed counter 3 and multiple slots events can only be
+multiplexed to run on fixed counter 3, but grouping them blocks
+multiplexing.
+
+So avoid to regroup topdown slots events if there is no topdown metrics
+events.
+
+With this change, above command can be run successfully.
+
+perf stat -e "slots,slots" -C0 sleep 1
+ Performance counter stats for 'CPU(s) 0':
+       103,973,791      slots
+       106,488,170      slots
+
+       1.003517284 seconds time elapsed
+
+Besides, run perf stats/record test on SPR and PTL, both passed.
+
+Reported-by: Xudong Hao <xudong.hao@intel.com>
+Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+---
+ tools/perf/arch/x86/util/topdown.h |  2 --
+ tools/perf/util/evsel.c            | 10 ++++++++++
+ tools/perf/util/evsel.h            |  2 ++
+ tools/perf/util/parse-events.c     | 11 +++++++++++
+ 4 files changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/arch/x86/util/topdown.h b/tools/perf/arch/x86/util/topdown.h
+index 69035565e649..6a917b2066f7 100644
+--- a/tools/perf/arch/x86/util/topdown.h
++++ b/tools/perf/arch/x86/util/topdown.h
+@@ -8,8 +8,6 @@ struct evsel;
+ struct list_head;
+ 
+ bool topdown_sys_has_perf_metrics(void);
+-bool arch_is_topdown_slots(const struct evsel *evsel);
+-bool arch_is_topdown_metrics(const struct evsel *evsel);
+ int topdown_insert_slots_event(struct list_head *list, int idx, struct evsel *metric_event);
+ 
+ #endif
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index d264c143b592..6aaae1ac026e 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -3965,6 +3965,16 @@ int evsel__source_count(const struct evsel *evsel)
+ 	return count;
+ }
+ 
++bool __weak arch_is_topdown_slots(const struct evsel *evsel __maybe_unused)
++{
++	return false;
++}
++
++bool __weak arch_is_topdown_metrics(const struct evsel *evsel __maybe_unused)
++{
++	return false;
++}
++
+ bool __weak arch_evsel__must_be_in_group(const struct evsel *evsel __maybe_unused)
+ {
+ 	return false;
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index 5797a02e5d6a..33f8aab675a9 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -556,6 +556,8 @@ void evsel__set_leader(struct evsel *evsel, struct evsel *leader);
+ int evsel__source_count(const struct evsel *evsel);
+ void evsel__remove_from_group(struct evsel *evsel, struct evsel *leader);
+ 
++bool arch_is_topdown_slots(const struct evsel *evsel);
++bool arch_is_topdown_metrics(const struct evsel *evsel);
+ bool arch_evsel__must_be_in_group(const struct evsel *evsel);
+ 
+ bool evsel__set_needs_uniquify(struct evsel *counter, const struct perf_stat_config *config);
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index 8282ddf68b98..bd09fc47ea90 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -2127,6 +2127,8 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
+ 	int ret;
+ 	struct evsel *force_grouped_leader = NULL;
+ 	bool last_event_was_forced_leader = false;
++	bool has_slots = false;
++	bool has_metrics = false;
+ 
+ 	/* On x86 topdown metrics events require a slots event. */
+ 	ret = arch_evlist__add_required_events(list);
+@@ -2147,6 +2149,11 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
+ 		if (pos == pos_leader)
+ 			orig_num_leaders++;
+ 
++		if (!has_slots)
++			has_slots = arch_is_topdown_slots(pos);
++		if (!has_metrics)
++			has_metrics = arch_is_topdown_metrics(pos);
++
+ 		/*
+ 		 * Ensure indexes are sequential, in particular for multiple
+ 		 * event lists being merged. The indexes are used to detect when
+@@ -2163,6 +2170,10 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
+ 			force_grouped_idx = pos_leader->core.idx;
+ 	}
+ 
++	/* Don't regroup if there are only topdown slots events. */
++	if (force_grouped_idx != -1 && has_slots && !has_metrics)
++		force_grouped_idx = -1;
++
+ 	/* Sort events. */
+ 	list_sort(&force_grouped_idx, list, evlist__cmp);
+ 
+
+base-commit: 6235ce77749f45cac27f630337e2fdf04e8a6c73
+-- 
+2.34.1
 
 
