@@ -1,267 +1,183 @@
-Return-Path: <linux-kernel+bounces-781981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD45B31991
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:31:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78D49B31A2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93C29A20EE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:28:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9C7C16FB78
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949F9301476;
-	Fri, 22 Aug 2025 13:27:50 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4932B3043D7;
+	Fri, 22 Aug 2025 13:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQonPoTE"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9942FE586;
-	Fri, 22 Aug 2025 13:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065C9302CD8;
+	Fri, 22 Aug 2025 13:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755869270; cv=none; b=mq1PzxIp62g7DMFjfoMzFByWI6l5NItt+FN8UMusF2IZZveF3Wsve3kUpb8GGBBxVIv0x93vJiJE7aA+D5nb4dPnNcraqSMQ3qmwo7OWRNOEagvHOCrvN4sGaLMq6gExQlKeVLDoSUIkVuUg7DsVKyF5R0wPg7ctZpvAq1a9B1c=
+	t=1755870339; cv=none; b=Ghq1Cd1POmu4GtRi7w24SQUv3dMFDMvfCk+/zIYnFU7s+oQeDWXvCvTVV4C3TyaukpS3HJARwiiYq3xlZPeKFrzN02QYaGErnrHOvHyapVkGo7KmeyAC7Jt/q/2FW863i+3X8zUUuplP0gZEHpWO7NnKuUFehUzJZwZPXnye8PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755869270; c=relaxed/simple;
-	bh=CvQW0D4khBGNDHhog9aZU9HwDtvPDlg7O4IlJEZ4bfk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IKQmOtD6vg5vYrJ+oiAjkdNF3ecnd3CLJZTTD3B4iaCh2CRvSL/gdIXXsSMfITQH+5P7rTK4g9CuEjOcgXZKP3M1FetRvpwqRGIYT53gSub3P3r6ojIXkhaVbKtwd5So67yHsrwBKjLIYUPlJVfbhtn7um30IRg6kXUDXFyVwg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.0.105] (unknown [114.241.87.235])
-	by APP-03 (Coremail) with SMTP id rQCowADnQIIncKhoqZtfDg--.14333S2;
-	Fri, 22 Aug 2025 21:27:04 +0800 (CST)
-Message-ID: <50926ebd-f8c0-485b-87cd-f7552df4bcd4@iscas.ac.cn>
-Date: Fri, 22 Aug 2025 21:27:03 +0800
+	s=arc-20240116; t=1755870339; c=relaxed/simple;
+	bh=9guF4nYAdpubhBEM+nGDmqAXkJV2Tmi2Jyrl1UttPyo=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=ov6HGoUt5rjA4lI+QyGNlbnAEFgxfGHPgOZC17BVGDziS8mEu8aCdwJE8yJ5+KNJQp9SyKN/t6G7qgizwNn6tOcfMfN3esEc1tNlJKgNvUT+iTE8u15NzmiXSO83XHjX29DLCiMg4DpBUn9A0MiTL7KVTzZtPzgYZRRkEQOo224=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQonPoTE; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b49c0c5f4dfso547461a12.1;
+        Fri, 22 Aug 2025 06:45:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755870337; x=1756475137; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uKWOYEUs0uCA6Fp6TXWX4VIxm5Onhrin5LUppg0AoHg=;
+        b=aQonPoTEl7hUsfik5a9lCN9sJJwfxCPICKMXO3kjxSJ+l6xQSxPIxAco82uVlqKN7F
+         6+xDg8InROAes+HibFsjYtYrARfWa/ieSnjMUtkR4BMytnK2w96Z7c39ub/8XytUgVk8
+         2FOZZNjpmh+LtShx2czhQQ+HpsaD4Vpd6LlPXRXDkBG0oTWyQNnEQSnXzlMItcW03ixs
+         4JyrATyKdEmZfof/E36yCr5xk9tCQK9ytjIKb770dqgegXsgUdtz0lVIJSfgWG+EU2HL
+         nIY4yBFD9WKaiM1S9t6KZSnytkbe/yOlOQPT6lon/Pt7d/KKhHij5nLSAtUMljI9rdaH
+         Wyhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755870337; x=1756475137;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uKWOYEUs0uCA6Fp6TXWX4VIxm5Onhrin5LUppg0AoHg=;
+        b=vMlCnLsl92d3r/PEUJYw2vLDO5AD9OUT8x/TcBZLTfCbUxY+PaRVsgpcAKYirxgFoC
+         SK9t5P/RLbqmcJw3yibo/5aZq9Uu2vmKSeaVR52r9DsI65go8c45Efbxu+EYLqC5NPwr
+         zo6PKiulaj4jHGEpO/sqhBqf/JXiDiYDrQymP09Rru9n0IQvQTKqeM1vtKXb+iSSd4gi
+         tlgsGoB76/BoqClQRp4bCtDDk1nmhKlhSHSIwrpDSgrP1OPMq+yiqFSOx62kTGA+hg9V
+         hujAhlW/uaErqYRkgVSV5AoVqAmx9Jh7kOfVwkdLxY8MQlA64jS5/aOpsJIOiAd1qExO
+         fIyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJg3+Y2AEUoQwxRGqwzAYfIJX1k07AexWEy7m+i/9+cWaE3csMgjS6mrCg8Ba29a0hPs5pDox0wDz1Xg==@vger.kernel.org, AJvYcCUd+p/7Trnb6DnTQaAe7FO0RTi1hIghr697cKnngh42j4KtZneQLKueiXxqn7oWu9NH6sB8vJ2mvm4pBpPH@vger.kernel.org, AJvYcCVRbxOxH5s9rh5I6nzKxgRlekP9Zyw0I39U+BQeOFF9AxUnrE8scGZbnvxXmxJne5ISyMfzv2O7ZLrXNg==@vger.kernel.org, AJvYcCWmEqk2F9OKAmwB/cLB4QaxXebPLZgnQJjREXwE/dsSyFyiADqCZtrK7jSkNy9ISbIeVoQTk9F+9zputzVbAQ==@vger.kernel.org, AJvYcCWzlBuyv3rC2GTA/Wlg283M8OZjWxVjWVCHGqL+b7jgEM5J0p4aeHpHDutb0i2EI4/D3arHAhcCL6kq@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMAkNSDjB2Fx/ZlvH8nVBNriwxeLH0EQZX2o4O7MI2JDuuZUwb
+	WxHXWnmzd9zuvKOp7aa2nn13JEpVJku80lnGruB7tf3Uwq8yQsIQfjU5
+X-Gm-Gg: ASbGncuaQgAz7zduzZaoQ7gJDVBRdVH+nrMZ6/gsHaXTtwCaH94Zje+X++GzyfxXnwk
+	E2M2w57vRNM0KA093ois8485efTnrc0aUjnhL7FEQwqgeyCsVkn47iUDQ7DCyXGsadDMXw912vL
+	MZioF/kIZaqhjpv89rZrQ3fxqApvpriEDpxP6omiqDa9RPDjrN35NSLAhHDNK4Yb6V19QQJQYdP
+	rWziG1FGUtno+qVZrObhy6xlx5deskRSWR7Xnas25wl43nE8bt+1vPof3PQynPwS2YHOJ2gI+YS
+	eBoctYEyx14bmyHDzV9D3VgHmCluCokSeWoBvdjq2eMX86i5M1NWFo3ami7bCr/cpuLvjjsbFOx
+	TON+VYBS+KQNWEg==
+X-Google-Smtp-Source: AGHT+IGWgCeQyNze15y8g6Rc5RnPSYAOGwg5TD20mIDdL4Y5P6UMgD46dIVXG0JZ8EnVWgy0ligsEw==
+X-Received: by 2002:a17:903:283:b0:240:7f7d:2b57 with SMTP id d9443c01a7336-2462eeb705dmr41706525ad.28.1755870336565;
+        Fri, 22 Aug 2025 06:45:36 -0700 (PDT)
+Received: from dw-tp ([171.76.85.35])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245f38ab988sm74460305ad.124.2025.08.22.06.45.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 06:45:35 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+Cc: snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org, hch@lst.de, martin.petersen@oracle.com, djwong@kernel.org, linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk, Keith Busch <kbusch@kernel.org>, Jan Kara <jack@suse.com>
+Subject: Re: [PATCHv3 0/8] direct-io: even more flexible io vectors
+In-Reply-To: <20250819164922.640964-1-kbusch@meta.com>
+Date: Fri, 22 Aug 2025 18:57:08 +0530
+Message-ID: <87a53ra3mb.fsf@gmail.com>
+References: <20250819164922.640964-1-kbusch@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v6 2/5] net: spacemit: Add K1 Ethernet MAC
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Vadim Fedorenko
- <vadim.fedorenko@linux.dev>, Junhui Liu <junhui.liu@pigmoral.tech>,
- Simon Horman <horms@kernel.org>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
- Vivian Wang <uwu@dram.page>
-References: <20250820-net-k1-emac-v6-0-c1e28f2b8be5@iscas.ac.cn>
- <20250820-net-k1-emac-v6-2-c1e28f2b8be5@iscas.ac.cn>
- <20250821161420.7c9804f7@kernel.org>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <20250821161420.7c9804f7@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:rQCowADnQIIncKhoqZtfDg--.14333S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3JFy3XFyxKFyDAr15urW3ZFb_yoW7ArW8pF
-	W8Wa1DAF48Xrn7Cr47Xr4UAFnFvr1xXw15u3WYyaya9F9IkrySgryrKrWak34rCr909r1F
-	vr4jv343WFn5KrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvqb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4
-	A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
-	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY
-	1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
-	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
-	wI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
-	v20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
-	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
-	ZFpf9x07bIBTOUUUUU=
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-Hi Jakub,
+Keith Busch <kbusch@meta.com> writes:
 
-Thank you for the comments.
-
-On 8/22/25 07:14, Jakub Kicinski wrote:
-> On Wed, 20 Aug 2025 14:47:51 +0800 Vivian Wang wrote:
->> +static void emac_tx_mem_map(struct emac_priv *priv, struct sk_buff *skb)
->> +{
->> +	struct emac_desc_ring *tx_ring = &priv->tx_ring;
->> +	struct emac_desc tx_desc, *tx_desc_addr;
->> +	struct device *dev = &priv->pdev->dev;
->> +	struct emac_tx_desc_buffer *tx_buf;
->> +	u32 head, old_head, frag_num, f;
->> +	bool buf_idx;
->> +
->> +	frag_num = skb_shinfo(skb)->nr_frags;
->> +	head = tx_ring->head;
->> +	old_head = head;
->> +
->> +	for (f = 0; f < frag_num + 1; f++) {
->> +		buf_idx = f % 2;
->> +
->> +		/*
->> +		 * If using buffer 1, initialize a new desc. Otherwise, use
->> +		 * buffer 2 of previous fragment's desc.
->> +		 */
->> +		if (!buf_idx) {
->> +			tx_buf = &tx_ring->tx_desc_buf[head];
->> +			tx_desc_addr =
->> +				&((struct emac_desc *)tx_ring->desc_addr)[head];
->> +			memset(&tx_desc, 0, sizeof(tx_desc));
->> +
->> +			/*
->> +			 * Give ownership for all but first desc initially. For
->> +			 * first desc, give at the end so DMA cannot start
->> +			 * reading uninitialized descs.
->> +			 */
->> +			if (head != old_head)
->> +				tx_desc.desc0 |= TX_DESC_0_OWN;
->> +
->> +			if (++head == tx_ring->total_cnt) {
->> +				/* Just used last desc in ring */
->> +				tx_desc.desc1 |= TX_DESC_1_END_RING;
->> +				head = 0;
->> +			}
->> +		}
->> +
->> +		if (emac_tx_map_frag(dev, &tx_desc, tx_buf, skb, f)) {
->> +			netdev_err(priv->ndev, "Map TX frag %d failed", f);
->> +			goto dma_map_err;
->> +		}
->> +
->> +		if (f == 0)
->> +			tx_desc.desc1 |= TX_DESC_1_FIRST_SEGMENT;
->> +
->> +		if (f == frag_num) {
->> +			tx_desc.desc1 |= TX_DESC_1_LAST_SEGMENT;
->> +			tx_buf->skb = skb;
->> +			if (emac_tx_should_interrupt(priv, frag_num + 1))
->> +				tx_desc.desc1 |=
->> +					TX_DESC_1_INTERRUPT_ON_COMPLETION;
->> +		}
->> +
->> +		*tx_desc_addr = tx_desc;
->> +	}
->> +
->> +	/* All descriptors are ready, give ownership for first desc */
->> +	tx_desc_addr = &((struct emac_desc *)tx_ring->desc_addr)[old_head];
->> +	dma_wmb();
->> +	WRITE_ONCE(tx_desc_addr->desc0, tx_desc_addr->desc0 | TX_DESC_0_OWN);
->> +
->> +	emac_dma_start_transmit(priv);
->> +
->> +	tx_ring->head = head;
->> +
->> +	return;
->> +
->> +dma_map_err:
->> +	dev_kfree_skb_any(skb);
-> You free the skb here.. 
+> From: Keith Busch <kbusch@kernel.org>
 >
->> +	priv->ndev->stats.tx_dropped++;
->> +}
->> +
->> +static netdev_tx_t emac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
->> +{
->> +	struct emac_priv *priv = netdev_priv(ndev);
->> +	int nfrags = skb_shinfo(skb)->nr_frags;
->> +	struct device *dev = &priv->pdev->dev;
->> +
->> +	if (unlikely(emac_tx_avail(priv) < nfrags + 1)) {
->> +		if (!netif_queue_stopped(ndev)) {
->> +			netif_stop_queue(ndev);
->> +			dev_err_ratelimited(dev, "TX ring full, stop TX queue\n");
->> +		}
->> +		return NETDEV_TX_BUSY;
->> +	}
->> +
->> +	emac_tx_mem_map(priv, skb);
->> +
->> +	ndev->stats.tx_packets++;
->> +	ndev->stats.tx_bytes += skb->len;
-> .. and then you use skb here.
+> Previous version:
 >
->> +	/* Make sure there is space in the ring for the next TX. */
->> +	if (unlikely(emac_tx_avail(priv) <= MAX_SKB_FRAGS + 2))
->> +		netif_stop_queue(ndev);
->> +
->> +	return NETDEV_TX_OK;
->> +}
-
-Thanks for the catch. I'll fix the error handling here in the next version.
-
->> +static void emac_get_ethtool_stats(struct net_device *dev,
->> +				   struct ethtool_stats *stats, u64 *data)
->> +{
->> +	struct emac_priv *priv = netdev_priv(dev);
->> +	u64 *rx_stats = (u64 *)&priv->rx_stats;
->> +	int i;
->> +
->> +	scoped_guard(spinlock_irqsave, &priv->stats_lock) {
-> Why is this spin lock taken in irqsave mode?
-> Please convert the code not to use scoped_guard()
-> There's not a single flow control (return) in any of them.
-> It's just hiding the information that you're unnecessarily masking irqs.
-> See
-> https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#using-device-managed-and-cleanup-h-constructs
-
-I'll fix these in the next version.
-
->> +		emac_stats_update(priv);
->> +
->> +		for (i = 0; i < ARRAY_SIZE(emac_ethtool_rx_stats); i++)
->> +			data[i] = rx_stats[emac_ethtool_rx_stats[i].offset];
->> +	}
->> +static void emac_tx_timeout_task(struct work_struct *work)
->> +{
->> +	struct net_device *ndev;
->> +	struct emac_priv *priv;
->> +
->> +	priv = container_of(work, struct emac_priv, tx_timeout_task);
->> +	ndev = priv->ndev;
-> I don't see this work ever being canceled.
-> What prevents ndev from being freed before it gets to run?
-Oops. I'll fix the handling of this timer in the next version.
->> +/* Called when net interface is brought up. */
->> +static int emac_open(struct net_device *ndev)
->> +{
->> +	struct emac_priv *priv = netdev_priv(ndev);
->> +	struct device *dev = &priv->pdev->dev;
->> +	int ret;
->> +
->> +	ret = emac_alloc_tx_resources(priv);
->> +	if (ret) {
->> +		dev_err(dev, "Error when setting up the Tx resources\n");
->> +		goto emac_alloc_tx_resource_fail;
->> +	}
->> +
->> +	ret = emac_alloc_rx_resources(priv);
->> +	if (ret) {
->> +		dev_err(dev, "Error when setting up the Rx resources\n");
->> +		goto emac_alloc_rx_resource_fail;
->> +	}
->> +
->> +	ret = emac_up(priv);
->> +	if (ret) {
->> +		dev_err(dev, "Error when bringing interface up\n");
->> +		goto emac_up_fail;
->> +	}
->> +	return 0;
->> +
->> +emac_up_fail:
-> please name the jump labels after the destination not the source.
-> Please fix everywhere in the driver.
-> This is covered in the kernel coding style docs.
+>   https://lore.kernel.org/linux-block/20250805141123.332298-1-kbusch@meta.com/
 >
-I'll fix in next version.
+> This series removes the direct io requirement that io vector lengths
+> align to the logical block size.
+>
+> I tested this on a few raw block device types including nvme,
+> virtio-blk, ahci, and loop. NVMe is the only one I tested with 4k
+> logical sectors; everything else was 512.
+>
+> On each of those, I tested several iomap filesystems: xfs, ext4, and
+> btrfs. I found it interesting that each behave a little
+> differently with handling invalid vector alignments:
+>
+>   - XFS is the most straight forward and reports failures on invalid
+>     vector conditions, same as raw blocks devices.
+>
+>   - EXT4 falls back to buffered io for writes but not for reads.
 
-Thanks,
-Vivian "dramforever" Wang
+++linux-ext4 to get any historical context behind why the difference of
+behaviour in reads v/s writes for EXT4 DIO. 
 
+
+BTW - I did some basic testing of the series against block device, XFS &
+EXT4 and it worked as expected (for both DIO & AIO-DIO) i.e.
+1. Individial iov_len need not be aligned to the logical block size anymore.
+2. Total length of iovecs should be logical block size aligned though.
+
+i.e. this combination works with this patch series now:
+
+    posix_memalign((void**)&aligned_buf, mem_align, 2 * BLOCK_SIZE);
+    struct iovec iov[4] = {
+        {.iov_base = aligned_buf, .iov_len = 500},
+        {.iov_base = aligned_buf + 500, .iov_len = 1500},
+        {.iov_base = aligned_buf + 2000, .iov_len = 2000},
+        {.iov_base = aligned_buf + 4000, .iov_len = 4192}
+    }; // 500 + 1500 + 2000 + 4192 = 8192
+ 
+
+-ritesh
+
+>
+>   - BTRFS doesn't even try direct io for any unusual alignments; it
+>     chooses buffered io from the start.
+>
+> So it has been a little slow going figuring out which results to expect
+> from various tests, but I think I've got all the corner cases covered. I
+> can submit the tests cases to blktests and fstests for consideration
+> separately, too.
+>
+> I'm not 100% sure where we're at with the last patch. I think Mike
+> initially indicated this was okay to remove, but I could swear I read
+> something saying that might not be the case anymore. I just can't find
+> the message now. Mike?
+>
+> Changes from v2:
+>
+>   Include vector lengths when validating a split. The length check is
+>   only valid for r/w commands, and skipped for passthrough
+>   DRV_IN/DRV_OUT commands.
+>
+>   Introduce a prep patch having bio_iov_iter_get_pages() take the
+>   caller's desired length alignment.
+>
+>   Additional code comments explaing less obvious error conditions.
+>
+>   Added reviews on the patches that haven't changed.
+>
+> Keith Busch (8):
+>   block: check for valid bio while splitting
+>   block: add size alignment to bio_iov_iter_get_pages
+>   block: align the bio after building it
+>   block: simplify direct io validity check
+>   iomap: simplify direct io validity check
+>   block: remove bdev_iter_is_aligned
+>   blk-integrity: use simpler alignment check
+>   iov_iter: remove iov_iter_is_aligned
+>
+>  block/bio-integrity.c  |  4 +-
+>  block/bio.c            | 64 ++++++++++++++++++----------
+>  block/blk-map.c        |  2 +-
+>  block/blk-merge.c      | 20 +++++++--
+>  block/fops.c           | 13 +++---
+>  fs/iomap/direct-io.c   |  6 +--
+>  include/linux/bio.h    | 13 ++++--
+>  include/linux/blkdev.h | 20 +++++----
+>  include/linux/uio.h    |  2 -
+>  lib/iov_iter.c         | 95 ------------------------------------------
+>  10 files changed, 94 insertions(+), 145 deletions(-)
+>
+> -- 
+> 2.47.3
 
