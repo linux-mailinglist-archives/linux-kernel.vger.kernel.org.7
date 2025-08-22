@@ -1,219 +1,222 @@
-Return-Path: <linux-kernel+bounces-782677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91504B32385
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:20:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D631B3238B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 763C11CC36EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:20:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D189D1CC83DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EE92D6E4B;
-	Fri, 22 Aug 2025 20:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072F62C3257;
+	Fri, 22 Aug 2025 20:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzO9EgdR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jmQigWxS"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2057.outbound.protection.outlook.com [40.107.223.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32832877CA;
-	Fri, 22 Aug 2025 20:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755894018; cv=none; b=aXErY0OPag3ncOXbzA9adXI0PXJ8u4vLWdK14K6lyzUw2E+vgBtzPfohNXbEECucka+wPWAqe+1ods/gFAvhuHEV9/ZwxmNlP6lvDbgMLTn1Ul0LYsmpsDpJjWTdjrsB2vJFeCA5R3OlGkRJm78XBZg26U2u7QSXSEqWvCBdkX8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755894018; c=relaxed/simple;
-	bh=tdtNSs8Kpu/sExAf4TXBpIT5C7B1P4VkLkgrDCZvGXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HXv5THMj+L50p2ZuUFyljeCNDUrRH/D/o8aYvbUmEy5rED4NLwtEq37bZDUMMQacBqgon9XFoMu9PQPJT0PA1Jj1cOKzPHWZew59yTb/TCFtdj64MxfGreCktgcgxdg9+ze48PP7lDGOOI40DyRigqyk8bS2JgkUQHJu/KFv7sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzO9EgdR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 465F5C4CEED;
-	Fri, 22 Aug 2025 20:20:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755894017;
-	bh=tdtNSs8Kpu/sExAf4TXBpIT5C7B1P4VkLkgrDCZvGXY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lzO9EgdR7yAAuw4MAy6NAMcNJzNOxchSLb3UDks+Vx5t7khko1bBwoZ/Hmcha3ssz
-	 k79MgQNMwMESniJJjNMVsXab1fagt/Zhnujwgfprcjsbz9vFPTX5GQRCKq2IpNRXap
-	 qw5mPkeerbyapNE6B1EGb+o/IOJQJYILe4/RYgB15qVc9u72TV/X5C4xf6dZ1b6ZL3
-	 3it0/Qlz2keHGvwb8gfbXrsHyuAkZViFeamL0PN9tAZqAqk9C383YnnfwhfeI992KG
-	 sBg8dhwAUePwlIhTc1eid85HyubEsiiz7yNyDZKt6Ur/KW5Fayyr7DcaP8NluVVLld
-	 tNg2tK94rkk5g==
-Date: Fri, 22 Aug 2025 15:20:16 -0500
-From: Rob Herring <robh@kernel.org>
-To: Baojun Xu <baojun.xu@ti.com>
-Cc: broonie@kernel.org, tiwai@suse.de, andriy.shevchenko@linux.intel.com,
-	13916275206@139.com, alsa-devel@alsa-project.org,
-	shenghao-ding@ti.com, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
-	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	k-yi@ti.com, henry.lo@ti.com, robinchen@ti.com, jesse-ji@ti.com,
-	will-wang@ti.com
-Subject: Re: [PATCH v2 2/2] ASoC: tas2781: Add tas2118, tas2x20, tas5825
- support
-Message-ID: <20250822202016.GA297320-robh@kernel.org>
-References: <20250822051410.1732-1-baojun.xu@ti.com>
- <20250822051410.1732-2-baojun.xu@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9AC8223DCE
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 20:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755894057; cv=fail; b=TbyEBILU/KAxs9byEDm+NqUvQIG6xdfx3Rn7r5tJZCDS570EVguCe7izxYc8Kfx4lqKsoVDUBuDZBtwwoFvaufqxUZUknU24RSMvj8+SsHG7vXEP+qsVNjimHflkLwRfxIs+UXxAFizCUx3hBZuqCHMEOMb41FNGKs+K5wx2S+0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755894057; c=relaxed/simple;
+	bh=yz9HnMlecYLKbt1f5VOL1WiM5fqg2D1Mim7Gz8njxus=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lbrKj7xGbDz7JDts0LIFsuhf4qeY7XXllC+LNisRIQS6D+D+7dK+Ubb9oxiGJxl7kqaavc7LlAFkdy/33ZEwV+Qm6GPFCEGuKAkSt8UckCeuJxQvxhSjEsccFZ2W8b3pLsJQ4mdiCOF41z8APLr8h0JWgYKBy9kuPUadAG4bEZA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jmQigWxS; arc=fail smtp.client-ip=40.107.223.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QAHCvYY3wb6gk0VWpTedcsHSfGSX4xrxBalRFSPfhURLz2j1RazeGicZdckrUMKe13cUiOnRLybV5mhf4W3rArjgHVI+TbOXHVQiLjM2yYUBzWkSLSfEwbNS6MX5VRJ40yJVeHAUAKSMzWKlPOPithZel2dFpXigmyh18uKTJ09W9yYa0erXoOf8nsZ8UkV/zSvnN5n8EU1ExIsvTooGbBorul/KvJ1xcfOjPnBzl1dZ8bNvN2pAuXT1DKBylEs6KAoffWYzg9F5xIcN3ifnZ9+xvYr0S5SVxP25T6JnOzGXulFqV1k8DxjvHjYx69CdhwajAGd4uCpg7vIYyANYpw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RHECeQLRSwUHtDGzvPudG9U2/+fOeGCvvy8hJsnMmgI=;
+ b=i3w4VFgQ+1p46gJLpwk1ws+0i/zo2DOXsU13i2D3ZiE2W3fHC8OieY0Uk4/Yd6lyEe+YAl08cK/SVX/5VDzprYhnaBTc4gfOFcKMad2f0SLMGetAFnNNPdyfiLZE3cZ4mF+EwXqZ8oihTpwh7gkkNGGaIDY/qMwIGpW1wZf5kyxpiF6u7t+8wUxaJXihSVRfAlIlpVptsI+oXqgQlEmBXVMVjTV8UaP7t+2ocxrEdSyiKsq5vnc2bOjozK4b+WHB1rJfBTLfV6nN2zv+J9Zfziy84WDknU1vf/Oa2RNp7x98hwa8s+5L5/EaHRSnXNoR+lgaBZEKWVZdcnyL/LYRsw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RHECeQLRSwUHtDGzvPudG9U2/+fOeGCvvy8hJsnMmgI=;
+ b=jmQigWxScKIsKzXxbf9dVVQdxRe1smbQIrOYURHt62Yxi6tROydrlYXSZWNLX94az02/gToKLuBxzuTHT96nQNrvKq+deJB4WTW3Z8A+M64m96sVkPsORwRDBnYwwoYWGy89KcY9mGzTbN3v2YLtYtKRaV8ZrcLE7BWmfllcpxPjipAZ7nKMMbJ9PvAnXj9xCU2u63K27p2zYkQWJy5LR/VCSSukziGb37cjGX/FP+2E+haHX4vzrhwhrcN1NDrVqtbQfD0wSQ1grSAHFHEk7VQpTXD2P2J3ShjU54xO8GOCjbzjzheNbZRHr0jZdLuTMQxP99lMOUPJZlU9dKbLvw==
+Received: from BL0PR0102CA0067.prod.exchangelabs.com (2603:10b6:208:25::44) by
+ DM4PR12MB7765.namprd12.prod.outlook.com (2603:10b6:8:113::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.18; Fri, 22 Aug 2025 20:20:52 +0000
+Received: from BL02EPF0001A105.namprd05.prod.outlook.com
+ (2603:10b6:208:25:cafe::b0) by BL0PR0102CA0067.outlook.office365.com
+ (2603:10b6:208:25::44) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.16 via Frontend Transport; Fri,
+ 22 Aug 2025 20:20:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BL02EPF0001A105.mail.protection.outlook.com (10.167.241.137) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.8 via Frontend Transport; Fri, 22 Aug 2025 20:20:52 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 22 Aug
+ 2025 13:20:26 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 22 Aug
+ 2025 13:20:26 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Fri, 22 Aug 2025 13:20:25 -0700
+Date: Fri, 22 Aug 2025 13:20:23 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+CC: <jgg@nvidia.com>, <linux-kernel@vger.kernel.org>, <robin.murphy@arm.com>,
+	<will@kernel.org>, <joro@8bytes.org>, <kevin.tian@intel.com>,
+	<jsnitsel@redhat.com>, <vasant.hegde@amd.com>, <iommu@lists.linux.dev>,
+	<santosh.shukla@amd.com>, <sairaj.arunkodilkar@amd.com>, <jon.grimm@amd.com>,
+	<prashanthpra@google.com>, <wvw@google.com>, <wnliu@google.com>,
+	<gptran@google.com>, <kpsingh@google.com>
+Subject: Re: [PATCH 8/8] iommu/amd: Add support for nested domain
+ attach/detach
+Message-ID: <aKjRB5MqCrJ2Px7G@Asurada-Nvidia>
+References: <20250820113009.5233-1-suravee.suthikulpanit@amd.com>
+ <20250820113009.5233-9-suravee.suthikulpanit@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250822051410.1732-2-baojun.xu@ti.com>
+In-Reply-To: <20250820113009.5233-9-suravee.suthikulpanit@amd.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0001A105:EE_|DM4PR12MB7765:EE_
+X-MS-Office365-Filtering-Correlation-Id: 032df5e3-dac9-4ffe-ceed-08dde1b9644b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|7416014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?+T45q6UR4KfNzsciJl3Dpb80JQFublKUe6jmV075zMZgurIrRZQUYmMmlU8v?=
+ =?us-ascii?Q?zSVXCwfDj6g+QNu1TUj+ULck+KiI7Skhf5Fk7M8wCpIivA/Aq1PLUf+9eYnv?=
+ =?us-ascii?Q?3zqSSPMjUL+DQQ749Yyt+yKjvL5pkG5uRJaHs6BV6YszIn/SZWz73z5oVy2F?=
+ =?us-ascii?Q?Ye1zyOdeSPYdOIC5QEyC5ZlG3ZR/JhhQQEy3GVyfhYM5Ac6pXlUHRY1ad7rU?=
+ =?us-ascii?Q?Bu714c1iwqC7k1dyk8EVtSWUFhGk2bHRO5mjtP+rP8D8RWinugZcCTvMowpk?=
+ =?us-ascii?Q?TGtMZSnh2hJWhYeetRgu6RaVDBOf7xuQBEUIPewvdFje7Rwucc7miNjZbQpN?=
+ =?us-ascii?Q?gPCdWncppVA+TsWNlsq501MU1yVTcErgd6qL5+XK1FuVOwQT1D3ctedMSJDO?=
+ =?us-ascii?Q?35xv1sxcixZCj58QCmE4ngUeBWZXs3AdB+cAVgm0ko1QMpd+R6PNREaotpF8?=
+ =?us-ascii?Q?cWAG8rWp76OsKFhVwRFBkJ0lh7WWdQeTFWx9KXtZyx4PGXVy07XR69aTIKSb?=
+ =?us-ascii?Q?Stut3w1+YIqgDa8MJLLKrHRgAq3gM2KftvtSFIsV+pobx7aLxhHJX0lJ6Pqs?=
+ =?us-ascii?Q?5aywT2pup8zrf77Y2CCzy5Vl6EYLqOhCYjLtxZo6eDX+qGM/g+Yt8KjAEISX?=
+ =?us-ascii?Q?DnAY9szWZAORIyo2LWEMob7BGYgx3VW/i3Q3jhqc1yHd5icNJaUcQOgwkq0z?=
+ =?us-ascii?Q?0MASV/jvMjLwc8YbUa6RMqsyfaOLgaZWYxjORGYjtfzTUrb3Q5kJDfwsPBhL?=
+ =?us-ascii?Q?Rk3lBEbDX2AtVRgL4Nq1+hLRe7ewas5m0fL4P1n0/qnBNl4Rw4fNGLSGfYNF?=
+ =?us-ascii?Q?9BGpwYguH2MyIkR/TBPO2nFFhs6Yefoh1tqQmkOHZKZARaUIwdHQ/mfuh0nv?=
+ =?us-ascii?Q?sZUnr2Gb5PHggB3bGtN1p8cve+JEYBhSu+CkXXRYSUGwYEzqlqBtN66zdTTn?=
+ =?us-ascii?Q?T60sBMLxxP4wEtQ846k9Q2UAJwg9MCPw8ag5mgnnVbwgzw8uQ+cbplUKXoG8?=
+ =?us-ascii?Q?HR1Ny2ooyvt0j+ChNiTLO0bsrtbDgmvzx9oFlqL95LHOU9ZiGa3wOKNkUZcq?=
+ =?us-ascii?Q?Y75kFd7X78BS6ZRh1phEbIS6gbS1pFsVTsNMVVKFAHhhT+3Tb4xVCclo0FhM?=
+ =?us-ascii?Q?NAd70rQ8y6gNXKemaUtlbr/EvoESilBS6TPKkwNrXaTDMXwiqzzz8+eDiBtX?=
+ =?us-ascii?Q?FadvfG8E70JrhKaJvLu4+5tM6R9P9Ml+9sTxx4wUw7C7X86uom23aVeIIvUW?=
+ =?us-ascii?Q?u/TkhfZScm+4F+H9zKQzbJR5JE9SDPWxrnSDFLoGJOIu7EYhOJsVAKVPC8NJ?=
+ =?us-ascii?Q?5Iw7DliTORQARSP39fosZO8HHNoFQ7/9LEKpQ/oTVRU675r9+nGNF3ir4mRM?=
+ =?us-ascii?Q?VwOumcS0AgslUWoyU4ovN+Thw8iUxsAceJ9rHMQiovvJu+7/BfKdhVATeE1Y?=
+ =?us-ascii?Q?SHtMyEngC4vlA583StmQcsR3NTgMTDpiATb7tC8MdqnXCGYYbjzVSgsxn/to?=
+ =?us-ascii?Q?DL47Bw4rh1B6cZqbnYJNT+2Mlvm3ti+uE0/d?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(7416014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 20:20:52.2343
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 032df5e3-dac9-4ffe-ceed-08dde1b9644b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0001A105.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7765
 
-On Fri, Aug 22, 2025 at 01:14:09PM +0800, Baojun Xu wrote:
-> Update ti,tas2781.yaml for added tas2118, tas2x20, tas5825.
-> 
-> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
-> 
-> ---
-> v2:
->  - Update the mail list for maintainers of yaml file
-> ---
->  .../devicetree/bindings/sound/ti,tas2781.yaml | 73 ++++++++++++++++++-
->  1 file changed, 72 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/ti,tas2781.yaml b/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
-> index 5ea1cdc593b5..fb57b63a00a2 100644
-> --- a/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
-> +++ b/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
-> @@ -1,5 +1,5 @@
->  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> -# Copyright (C) 2022 - 2023 Texas Instruments Incorporated
-> +# Copyright (C) 2022 - 2025 Texas Instruments Incorporated
->  %YAML 1.2
->  ---
->  $id: http://devicetree.org/schemas/sound/ti,tas2781.yaml#
-> @@ -11,30 +11,62 @@ maintainers:
->    - Shenghao Ding <shenghao-ding@ti.com>
->  
->  description: |
-> +  The TAS2118/TAS2X20 is mono, digital input Class-D audio amplifier
-> +  optimized for efficiently driving high peak power into small loudspeakers.
-> +  Integrated speaker voltage and current sense provides for
-> +  real time monitoring of loudspeaker behavior.
->    The TAS2563/TAS2781 is a mono, digital input Class-D audio
->    amplifier optimized for efficiently driving high peak power into
->    small loudspeakers. An integrated on-chip DSP supports Texas
->    Instruments Smart Amp speaker protection algorithm. The
->    integrated speaker voltage and current sense provides for real time
->    monitoring of loudspeaker behavior.
-> +  The TAS5825 is a stereo, digital input Class-D audio
-> +  amplifier optimized for efficiently driving high peak power into
-> +  small loudspeakers. An integrated on-chip DSP supports Texas
-> +  Instruments Smart Amp speaker protection algorithm. The
-> +  integrated speaker voltage and current sense provides for real time
-> +  monitoring of loudspeaker behavior.
->  
->    Specifications about the audio amplifier can be found at:
-> +    https://www.ti.com/lit/gpn/tas2120
-> +    https://www.ti.com/lit/gpn/tas2320
->      https://www.ti.com/lit/gpn/tas2563
->      https://www.ti.com/lit/gpn/tas2781
-> +    https://www.ti.com/lit/gpn/tas5825m
->  
->  properties:
->    compatible:
->      description: |
-> +      ti,tas2020: 3.2-W Mono Digital Input Class-D Speaker Amp with 5.5V PVDD
-> +      Support.
-> +
-> +      ti,tas2118: 5-W Mono Digital Input Class-D Speaker Amp with Integrated
-> +      8.4-V Class-H Boost.
-> +
-> +      ti,tas2120: 8.2-W Mono Digital Input Class-D Speaker Amp with
-> +      Integrated 14.75V Class-H Boost.
-> +
-> +      ti,tas2320: 15-W Mono Digital Input Class-D Speaker Amp with 15V Support.
-> +
->        ti,tas2563: 6.1-W Boosted Class-D Audio Amplifier With Integrated
->        DSP and IV Sense, 16/20/24/32bit stereo I2S or multichannel TDM.
->  
->        ti,tas2781: 24-V Class-D Amplifier with Real Time Integrated Speaker
->        Protection and Audio Processing, 16/20/24/32bit stereo I2S or
->        multichannel TDM.
-> +
-> +      ti,tas5825: 38-W Stereo, Inductor-Less, Digital Input, Closed-Loop 4.5V
-> +      to 26.4V Class-D Audio Amplifier with 192-kHz Extended Audio Processing.
->      oneOf:
->        - items:
->            - enum:
-> +              - ti,tas2020
-> +              - ti,tas2118
-> +              - ti,tas2120
-> +              - ti,tas2320
->                - ti,tas2563
-> +              - ti,tas5825
->            - const: ti,tas2781
->        - enum:
->            - ti,tas2781
-> @@ -61,6 +93,27 @@ required:
->  
->  allOf:
->    - $ref: dai-common.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - ti,tas2020
-> +              - ti,tas2118
-> +              - ti,tas2120
-> +              - ti,tas2320
-> +    then:
-> +      properties:
-> +        reg:
-> +          description:
-> +            I2C address, in multiple-AMP case, all the i2c address
-> +            aggregate as one Audio Device to support multiple audio slots.
-> +          maxItems: 4
-> +          minItems: 1
+On Wed, Aug 20, 2025 at 11:30:09AM +0000, Suravee Suthikulpanit wrote:
+> +static inline bool has_gcr3_table(struct gcr3_tbl_info *gcr3_info)
+> +{
+> +	if (!gcr3_info || (!gcr3_info->gcr3_tbl && !gcr3_info->trp_gpa))
+> +		return false;
 
-1 is already the min items, so drop.
+"gcr3_info" seems always pointing to "&dev_data->gcr3_info", which
+can never be NULL.
 
-> +          items:
-> +            minimum: 0x48
-> +            maximum: 0x4b
-> +
->    - if:
->        properties:
->          compatible:
-> @@ -97,6 +150,24 @@ allOf:
->              minimum: 0x38
->              maximum: 0x3f
+> @@ -2061,7 +2087,14 @@ static void set_dte_entry(struct amd_iommu *iommu,
+>  	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
+>  	struct dev_table_entry *dte = &get_dev_table(iommu)[dev_data->devid];
 >  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - ti,tas5825
-> +    then:
-> +      properties:
-> +        reg:
-> +          description:
-> +            I2C address, in multiple-AMP case, all the i2c address
-> +            aggregate as one Audio Device to support multiple audio slots.
-
-You've duplicated this. Does it belong at the top level 'reg'?
-
-> +          maxItems: 4
-> +          minItems: 1
-
-Same here.
-
-> +          items:
-> +            minimum: 0x4c
-> +            maximum: 0x4f
+> -	if (gcr3_info && gcr3_info->gcr3_tbl)
+> +	/*
+> +	 * For nested domain, use parent domain to setup v1 table
+> +	 * information and domain id.
+> +	 */
+> +	if (amd_iommu_domain_is_nested(domain))
+> +		domain = domain->parent;
 > +
->  additionalProperties: false
->  
->  examples:
-> -- 
-> 2.43.0
-> 
+> +	if (has_gcr3_table(gcr3_info))
+>  		domid = dev_data->gcr3_info.domid;
+
+There is already a local variable "gcr3_info".
+
+> +static int nested_gcr3_update(struct protection_domain *pdom, struct device *dev)
+> +{
+> +	struct iommu_dev_data *dev_data = dev_iommu_priv_get(dev);
+> +	struct iommu_hwpt_amd_v2 *hwpt = &pdom->guest_hwpt;
+> +	struct pci_dev *pdev = to_pci_dev(dev);
+> +
+> +	if (!pdev || !hwpt)
+> +		return -EINVAL;
+
+to_pci_dev is a container_of from the dev. !pdev indicates a !dev
+that should never happen in the path of an attach_dev op. Or, did
+you actually want to check if dev_is_pci(dev)?
+
+Also, hwpt is "&pdom->guest_hwpt", which would never be NULL.
+
+> +static int amd_iommu_nested_attach_device(struct iommu_domain *dom, struct device *dev)
+> +{
+> +	struct iommu_dev_data *dev_data = dev_iommu_priv_get(dev);
+> +	struct protection_domain *pdom = to_pdomain(dom);
+> +	struct pci_dev *pdev;
+> +	int ret;
+> +
+> +	if (dev_data->domain == pdom)
+> +		return 0;
+> +
+> +	ret = nested_gcr3_update(pdom, dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (dev_data->domain)
+> +		amd_iommu_detach_device(dev);
+> +
+> +	ret = __amd_iommu_attach_device(dev, pdom);
+> +	if (ret)
+> +		return ret;
+> +
+> +	pdev = dev_is_pci(dev_data->dev) ? to_pci_dev(dev_data->dev) : NULL;
+> +	if (pdev)
+> +		amd_iommu_pdev_enable_cap_ats(pdev);
+
+Is "dev_data->dev" expected to be "dev"?
+
+Nicolin
 
