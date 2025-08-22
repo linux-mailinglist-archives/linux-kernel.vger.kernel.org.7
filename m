@@ -1,121 +1,203 @@
-Return-Path: <linux-kernel+bounces-781612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C91BB31470
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:58:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 980ABB3148B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3286F5E3480
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:57:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AEFE1CC575B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E972129DB6E;
-	Fri, 22 Aug 2025 09:51:32 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2900D2EB86B;
+	Fri, 22 Aug 2025 09:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nB2uBX1d"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C63E27990D
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21978239E9A;
+	Fri, 22 Aug 2025 09:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755856292; cv=none; b=u0pbK3bEfqf+2dAuORx3U3NsFmSvuuKwWtGvn4DOimiSOMJ9IxmU+bLOZGkdvdOlnWA6rJWctsk0VBiRqixaM/D7rHiEAMQOBMC9pSZTTk94eE0F+EXleE6qqDdJOmz26XwvJAdy60Dr2HiPOgq6W0Rah0y/1+HRbI3hVENymlY=
+	t=1755856349; cv=none; b=TemBs056PuEP4t0N+pDTi3Lg2aGjGwq0RJqUH08BKdteu93c8xF0lExUpoxbA8uxmgBb/aGiV9gsViecRcdtuQlpEj9rJPWkld/Ulc+rIkLizY4kSzCd2F38+qy24975sfL6aZ1yXjhN2fOOkjWlNQeNorxFWUsuEUnjm3w8pGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755856292; c=relaxed/simple;
-	bh=8v1zu7FbFT5zGaFyS+U86qwFLsQ4LJfn2ILDpx4uklQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ulsabZiH+m2Ckauh7Op+2HmA+5QYg4CyKeeyab7UAjQAAXD5VhQMCSeJlH5VU3IlLnSrw7vPSMe1/zXIZ9GKD6AlOFcBYgHxiDxmRZHHSLVUwNyopF5vjkqPBCFocxXzajw916U1vXCIxxELjjI7+NfBsmD0lAaLZiJBrfEbQBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1upOQd-0000nC-6n; Fri, 22 Aug 2025 11:51:23 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1upOQb-001YYS-1P;
-	Fri, 22 Aug 2025 11:51:21 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1upOQb-00A5Ry-10;
-	Fri, 22 Aug 2025 11:51:21 +0200
-Date: Fri, 22 Aug 2025 11:51:21 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Robin van der Gracht <robin@protonic.nl>, kernel@pengutronix.de,
-	Oliver Hartkopp <socketcan@hartkopp.net>,
-	Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: can/j1939: hung inside rtnl_dellink()
-Message-ID: <aKg9mTaSxzBVpTVI@pengutronix.de>
-References: <50055a40-6fd9-468f-8e59-26d1b5b3c23d@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1755856349; c=relaxed/simple;
+	bh=jfoOjycqNQZf36ZYHkgozD3Xli5JPO0u/7CtBBxQepM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dF8s3PkEDI/f6qaFb0+dFuODH0/8RrdNeonTr+sCXVVvphqnZIb9PlZiZHOdm158Y6KZUx7ZUs2v5lq6OwmYzRumU0kwsJViXla3wIAxDD+I5aDbz3/ma1ViIeR/1/DJcv/bw8ytTzydvw1oy/ki2jxAgfTEd4y9FczzBrXTYJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nB2uBX1d; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755856345;
+	bh=jfoOjycqNQZf36ZYHkgozD3Xli5JPO0u/7CtBBxQepM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nB2uBX1dLFPHsb2pBHVJLB2rWMp1MNNQblPU5wKU4NrOafY69EQUymKMaEDYUijfn
+	 r14fTSx+VMDqDRTv4X0bD33n1jK20CF19KndGdDKBILph0d0JQDJGuoeKOKHLVGDOh
+	 HzwJcqox/BrPqYqqa9tNHxNH+xnqWBK/e0b9LmkLY/gsgPK9g1QTKFAdXBrDadtXxB
+	 aZnpiyQSA0dD8lnHwNCwXWCLFGGy2wJOt/Nfo7TlNe2zZ9aIXt6J6hzjYnECK7p/uB
+	 K6frOh6zeJW8Lh74ssTwTIPXNosM9oyukAZpCivKyhS9yqwrrWdN4fvR4T1wFuLvWv
+	 O9Jvh6fTAKXvA==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6826217E12DF;
+	Fri, 22 Aug 2025 11:52:24 +0200 (CEST)
+Date: Fri, 22 Aug 2025 11:52:21 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Danilo Krummrich
+ <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, Steven
+ Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Rob Clark
+ <robin.clark@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, Miguel Ojeda
+ <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, "=?UTF-8?B?QmrDtnJu?= Roy Baron"
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas
+ Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] drm_gem: add mutex to drm_gem_object.gpuva
+Message-ID: <20250822115221.24fffc2c@fedora>
+In-Reply-To: <20250822-gpuva-mutex-in-gem-v2-1-c41a10d1d3b9@google.com>
+References: <20250822-gpuva-mutex-in-gem-v2-0-c41a10d1d3b9@google.com>
+	<20250822-gpuva-mutex-in-gem-v2-1-c41a10d1d3b9@google.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <50055a40-6fd9-468f-8e59-26d1b5b3c23d@I-love.SAKURA.ne.jp>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello Tetsuo,
+On Fri, 22 Aug 2025 09:28:24 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-On Sat, Aug 16, 2025 at 03:51:54PM +0900, Tetsuo Handa wrote:
-> Hello.
+> There are two main ways that GPUVM might be used:
 > 
-> I made a minimized C reproducer for
+> * staged mode, where VM_BIND ioctls update the GPUVM immediately so that
+>   the GPUVM reflects the state of the VM *including* staged changes that
+>   are not yet applied to the GPU's virtual address space.
+> * immediate mode, where the GPUVM state is updated during run_job(),
+>   i.e., in the DMA fence signalling critical path, to ensure that the
+>   GPUVM and the GPU's virtual address space has the same state at all
+>   times.
 > 
->   unregister_netdevice: waiting for vcan0 to become free. Usage count = 2
+> Currently, only Panthor uses GPUVM in immediate mode, but the Rust
+> drivers Tyr and Nova will also use GPUVM in immediate mode, so it is
+> worth to support both staged and immediate mode well in GPUVM. To use
+> immediate mode, the GEMs gpuva list must be modified during the fence
+> signalling path, which means that it must be protected by a lock that is
+> fence signalling safe.
 > 
-> problem at https://syzkaller.appspot.com/bug?extid=881d65229ca4f9ae8c84 , and
-> obtained some data using debug printk() patch. It seems that the cause is
-> net/can/j1939/ does not handle NETDEV_UNREGISTER notification
-> while net/can/j1939/ can directly call rtnl_dellink() via sendmsg().
+> For this reason, a mutex is added to struct drm_gem_object that is
+> intended to achieve this purpose. Adding it directly in the GEM object
+> both makes it easier to use GPUVM in immediate mode, but also makes it
+> possible to take the gpuva lock from core drm code.
+> 
+> As a follow-up, another change that should probably be made to support
+> immediate mode is a mechanism to postpone cleanup of vm_bo objects, as
+> dropping a vm_bo object in the fence signalling path is problematic for
+> two reasons:
+> 
+> * When using DRM_GPUVM_RESV_PROTECTED, you cannot remove the vm_bo from
+>   the extobj/evicted lists during the fence signalling path.
+> * Dropping a vm_bo could lead to the GEM object getting destroyed.
+>   The requirement that GEM object cleanup is fence signalling safe is
+>   dubious and likely to be violated in practice.
+> 
+> Panthor already has its own custom implementation of postponing vm_bo
+> cleanup.
+> 
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Sorry for long delay and than you for your investigation!
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-> The minimized C reproducer is shown below.
-....
+One minor thing below.
 
-> Therefore, I guess that either
+> ---
+>  drivers/gpu/drm/drm_gem.c | 2 ++
+>  include/drm/drm_gem.h     | 4 +++-
+>  2 files changed, 5 insertions(+), 1 deletion(-)
 > 
->   j1939_netdev_notify() is handling NETDEV_UNREGISTER notification
-> 
-> or
-> 
->   rtnl_dellink() can be called via sendmsg() despite the j1939 socket
->   are in use
-> 
-> is wrong. How to fix this problem?
+> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+> index 4a89b6acb6af39720451ac24033b89e144d282dc..8d25cc65707d5b44d931beb0207c9d08a3e2de5a 100644
+> --- a/drivers/gpu/drm/drm_gem.c
+> +++ b/drivers/gpu/drm/drm_gem.c
+> @@ -187,6 +187,7 @@ void drm_gem_private_object_init(struct drm_device *dev,
+>  	kref_init(&obj->refcount);
+>  	obj->handle_count = 0;
+>  	obj->size = size;
+> +	mutex_init(&obj->gpuva.lock);
+>  	dma_resv_init(&obj->_resv);
+>  	if (!obj->resv)
+>  		obj->resv = &obj->_resv;
+> @@ -210,6 +211,7 @@ void drm_gem_private_object_fini(struct drm_gem_object *obj)
+>  	WARN_ON(obj->dma_buf);
+>  
+>  	dma_resv_fini(&obj->_resv);
+> +	mutex_destroy(&obj->gpuva.lock);
+>  }
+>  EXPORT_SYMBOL(drm_gem_private_object_fini);
+>  
+> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+> index d3a7b43e2c637b164eba5af7cc2fc8ef09d4f0a4..5934d8dc267a65aaf62d2d025869221cd110b325 100644
+> --- a/include/drm/drm_gem.h
+> +++ b/include/drm/drm_gem.h
+> @@ -403,11 +403,13 @@ struct drm_gem_object {
+>  	 * Provides the list of GPU VAs attached to this GEM object.
+>  	 *
+>  	 * Drivers should lock list accesses with the GEMs &dma_resv lock
+> -	 * (&drm_gem_object.resv) or a custom lock if one is provided.
+> +	 * (&drm_gem_object.resv) or a custom lock if one is provided. The
+> +	 * mutex inside this struct may be used as the custom lock.
+>  	 */
+>  	struct {
+>  		struct list_head list;
+>  
+> +		struct mutex lock;
 
-I assume the first variant is correct. Can you please test following change:
---- a/net/can/j1939/main.c
-+++ b/net/can/j1939/main.c
-@@ -370,6 +370,7 @@
- 		goto notify_done;
- 
- 	switch (msg) {
-+	case NETDEV_UNREGISTER:
- 	case NETDEV_DOWN:
- 		j1939_cancel_active_session(priv, NULL);
- 		j1939_sk_netdev_event_netdown(priv);
+Maybe it's time we start moving some bits of the gpuva field docs next
+to the fields they describe:
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+	/**
+	 * @gpuva: Fields used by GPUVM to manage mappings pointing to this GEM object.
+	 */
+	struct {
+		/**
+		 * @gpuva.list: list of GPU VAs attached to this GEM object.
+		 *
+		 * Drivers should lock list accesses with the GEMs &dma_resv lock
+		 * (&drm_gem_object.resv) or &drm_gem_object.gpuva.lock if the
+		 * list is being updated in places where the resv lock can't be
+		 * acquired (fence signalling path).
+		 */
+		struct list_head list;
+
+		/**
+		 * @gpuva.lock: lock protecting access to &drm_gem_object.gpuva.list
+		 * when the resv lock can't be used.
+		 *
+		 * Should only be used when the VM is being modified in a fence
+		 * signalling path, otherwise you should use &drm_gem_object.resv to
+		 * protect accesses to &drm_gem_object.gpuva.list.
+		 */
+		struct mutex lock;
+
+		...
+	};
+
+>  #ifdef CONFIG_LOCKDEP
+>  		struct lockdep_map *lock_dep_map;
+>  #endif
+> 
+
 
