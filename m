@@ -1,275 +1,235 @@
-Return-Path: <linux-kernel+bounces-781087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B48C6B30D6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:15:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D5FB30D73
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A5E768153A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:15:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52B9E1CC8722
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31F228B7DA;
-	Fri, 22 Aug 2025 04:15:40 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A0B28CF47;
+	Fri, 22 Aug 2025 04:15:42 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE45814A09C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11BC72623
 	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 04:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755836140; cv=none; b=Irqmnv7Xi7etM7gYE31UUXJYEy1bCH9YdAS2M330LJ4Td3wVwT4/HsuUIezXQnVmqyDxQWoLpi27+TzGwjflkFkPdklEIzluJ62KrK7ylIA1B2QM/f4idlCYnpO9HjIsIxS77qYU9B8NHX6Bcc5i+VB3TC43bbtg59R5w6BwS4M=
+	t=1755836141; cv=none; b=i5mYVAUoV31z4uVNqPsRVIOkxPQDSBcWyhGpcB8NZcLHi9Z7unJmGeo6xCpU+ClVdfoeVudufbsz/sbjXB97sFGAUK23xoGpMrspVOyn4BmvwJO5jq5gtHMrw2lnKBVzgVTVICJ9mP6MAODYaxgOAgULgTSo2+oE9CkDJ8J7DSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755836140; c=relaxed/simple;
-	bh=0UtnbgypcIHLPgtMaR5WhF9g0lMwCV+mw4VvcC0iq80=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=fe8H7xK0MBHAqrfqUz1kKzsccjQKCfLzKA7E9H3D/aZjFN7kcR4xSKMlzKjq8aH03i8CVDmOK7Mx8K6hCwMxtELVG/cQJnKGTF+k+7LU7tyeG+YK1hnHe6UIp5MuJq0HBK/JgZqYLg8OX4GR5lW6qiqq+0CIzHLqzl7QpfJkdKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+	s=arc-20240116; t=1755836141; c=relaxed/simple;
+	bh=uKruYYyOFQwGB7jerIDtbk4zLS2dfbbI/FW7fvLQlWk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nr4UBe0/VHLtxmQlYR0Bv+aAM1YEjv9flZOmMGAiPSAQs6zHRiagMFoHiDUbFLzijDnhXc+geQMN5PGOXfkELIqbt6NlSEysS1Y193BQve8s2Ax46AHwxQ13MH19ilEMmKEdMdvB45oSTvCTElj/UPka2Xp1L56u5eFGGI/xkH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3e7172dea48so36235785ab.1
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-88432e1ea71so415721939f.2
         for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 21:15:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1755836137; x=1756440937;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=X7GDzN9ltNSpi4Er69lRfMFSau6qxZQyGvXnyF0Dip8=;
-        b=CTFMMLd7lNFcTJkaXaoDoxoaIUTbL8gPvhA1JGJuePxkACGJwQgKN5LMExlhGAqaem
-         zQIvok1pjWT3xQT3irlgz78mA4ci+1B/O/CMyagpTriIgA2b2O8EIRLUs2ydRDr5i//O
-         Rr+HyfFJbXPrvp0FWhYeYm6oJpBP37tcjOh3dFmoY1rcKQ9Bivjhwyoz4vHUXfpvbhcZ
-         4ZjDl5/LHDN8P7yp8o1BC/LrqpGzPof5KbIZJyJ3s1W2dzU2WXrcpKpYkf4jLVP6DgcU
-         fewV9rHiUtEFqDMwTi6IzxYlDfp2fxnn5ivJHQDmJiO9bFqWVZVzJea7Apm5bpy2L8nY
-         YJFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUT8umJiGqmlTpv4bthvSqWcmsVqrUDCjJ1hA9Q3pBxQ/2uhE5g+MUX2+gTJpIOQXlJtjjbona4EbhgkfU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+RYKy+/QqmiBdq57QieWzulLtkXjaVkjj+6KnXp7O7TXAiOIH
-	nOPFmb6OlnCxGCLrI01WdoGoHdPkXF36GnKuwXQxcqElyBwOLk0bByZMvVAz0fQ/UxUuTQ5GT/4
-	e/4tS2JboTTujueFMgGu8AWDWvfheAyPRXblpGUNa8wDNAy7mlwRryKKKPcs=
-X-Google-Smtp-Source: AGHT+IGABAXaqi53Nfp6ROVfQxgeolkrnbkzi9bbO0pFT6AcqaLdGU87jtbNgeEjSGjDFJwiWK+XH5ny/obmIEbKYxpBJs7QmYDI
+        bh=Sooom7ibB6unsgJsOQuQIZ+XDG9A4vkYGL93HbGK11g=;
+        b=BUvhj4Ur86X6vlGq+BzGz7BuNaiAFW7VVAFUCUtp+eJNp12A9MxUr3UDdnm+1lApP4
+         Bkx9Z2nvite8NWdBfDg3SzJL7Nw12l2ddzHDoytpJHl9SadGwl1w5PSWigHynwtUDEW6
+         Bgic66d+KNxgBNV9Kvg8hiuzFx57zZewtSiGFzo1fC7Xe1zSJ7fuqb7S2f4elglqDNnx
+         OVuxtGZNXi6yXomSrnhn3W5gVdUbcjbGCVve4uC/6yyYD0PvpqQHI81WLWMQflD9lq66
+         K8gDVuUt73jgCoB7KX1qZXVCszEx2aNGmghX2gPlzYtuKlGMWhYnqZbDDBZlrZcetF7U
+         CTQA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1Hts92CYz9IrQIZknDVyzMJ/gIhQlLM99TIhQ8dcPeMGIdTntoipZK0wsvg8jyJ9WxoT09rZ4E+OZjSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSdsjmWw/25W5NnkhAdHjD56I5VK29YOdTAyAV4/HxNWho7q4I
+	7BRGrL2vWZ6Nc1cmxpQahkqJshzaCvOvMtN1pZQJAFFXY1/f7amoBhAse6zwmbSyupd81ok/jqe
+	9qWH/vzKrnacyC/5C9DQL0f+bNrlZgCelbPWf48WukmaDgmIyF6gpyukHk1M=
+X-Google-Smtp-Source: AGHT+IFLt8oqegHL1llaZsphwgFhR/m3ZmVVOqcSlwLrRY9am2eDr3bHXwav1B9UaCHpDJqGAZ07P9ENGR7R6XP1azYIwak5JhI+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2303:b0:3e5:42ec:1372 with SMTP id
- e9e14a558f8ab-3e9223161c7mr35472125ab.19.1755836136845; Thu, 21 Aug 2025
- 21:15:36 -0700 (PDT)
-Date: Thu, 21 Aug 2025 21:15:36 -0700
+X-Received: by 2002:a05:6e02:19c6:b0:3e5:3ef0:b0e5 with SMTP id
+ e9e14a558f8ab-3e9201f3b84mr31115545ab.7.1755836137084; Thu, 21 Aug 2025
+ 21:15:37 -0700 (PDT)
+Date: Thu, 21 Aug 2025 21:15:37 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a7eee8.a00a0220.33401d.0167.GAE@google.com>
-Subject: [syzbot] [bcachefs?] INFO: task hung in bch2_mark_pagecache_reserved (3)
-From: syzbot <syzbot+baf59efef8862c9ba260@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <68a7eee9.a00a0220.33401d.0168.GAE@google.com>
+Subject: [syzbot] [mm?] INFO: rcu detected stall in sys_munmap (2)
+From: syzbot <syzbot+8785aaf121cfb2141e0d@syzkaller.appspotmail.com>
+To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, jannh@google.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	pfalcato@suse.de, syzkaller-bugs@googlegroups.com, vbabka@suse.cz
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    8d561baae505 Merge tag 'x86_urgent_for_v6.17_rc2' of git:/..
+HEAD commit:    be48bcf004f9 Merge tag 'for-6.17-rc2-tag' of git://git.ker..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1241eba2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=98e114f4eb77e551
-dashboard link: https://syzkaller.appspot.com/bug?extid=baf59efef8862c9ba260
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172f1ba2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11a79234580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=136dfba2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=142508fb116c212f
+dashboard link: https://syzkaller.appspot.com/bug?extid=8785aaf121cfb2141e0d
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=107a43bc580000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/595e1e4d6418/disk-8d561baa.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ab14cc587702/vmlinux-8d561baa.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/368a3a55dcfb/bzImage-8d561baa.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/d90b312697dc/mount_0.gz
+disk image: https://storage.googleapis.com/syzbot-assets/24fd400c6842/disk-be48bcf0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/59146305635d/vmlinux-be48bcf0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b3e5f65cbcc8/bzImage-be48bcf0.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+baf59efef8862c9ba260@syzkaller.appspotmail.com
+Reported-by: syzbot+8785aaf121cfb2141e0d@syzkaller.appspotmail.com
 
-INFO: task syz.0.17:6129 blocked for more than 143 seconds.
-      Tainted: G        W           6.17.0-rc1-syzkaller-00224-g8d561baae505 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.17        state:D stack:24520 pid:6129  tgid:6105  ppid:5963   task_flags:0x400140 flags:0x00004004
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P6029/1:b..l P1208/1:b..l P6031/3:b..l P6030/1:b..l
+rcu: 	(detected by 1, t=10502 jiffies, g=6285, q=421 ncpus=2)
+task:dhcpcd          state:R  running task     stack:28896 pid:6030  tgid:6030  ppid:5513   task_flags:0x400040 flags:0x00004002
 Call Trace:
  <TASK>
  context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- io_schedule+0x81/0xe0 kernel/sched/core.c:7903
- folio_wait_bit_common+0x6b5/0xb90 mm/filemap.c:1317
- folio_lock include/linux/pagemap.h:1133 [inline]
- bch2_mark_pagecache_reserved+0x33d/0xbb0 fs/bcachefs/fs-io-pagecache.c:314
- __bchfs_fallocate+0x1284/0x1870 fs/bcachefs/fs-io.c:733
- bchfs_fallocate+0x33f/0x680 fs/bcachefs/fs-io.c:789
- bch2_fallocate_dispatch+0x28d/0x410 fs/bcachefs/fs-io.c:836
- vfs_fallocate+0x672/0x7f0 fs/open.c:342
- ksys_fallocate fs/open.c:366 [inline]
- __do_sys_fallocate fs/open.c:371 [inline]
- __se_sys_fallocate fs/open.c:369 [inline]
- __x64_sys_fallocate+0xc0/0x110 fs/open.c:369
+ __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
+ preempt_schedule_irq+0x51/0x90 kernel/sched/core.c:7288
+ irqentry_exit+0x36/0x90 kernel/entry/common.c:197
+ asm_sysvec_reschedule_ipi+0x1a/0x20 arch/x86/include/asm/idtentry.h:707
+RIP: 0010:unwind_next_frame+0xfe7/0x20a0 arch/x86/kernel/unwind_orc.c:664
+Code: 85 80 0c 00 00 49 89 6d 40 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 0f b6 04 02 84 c0 74 08 3c 03 0f 8e 56 10 00 00 <41> 39 5d 00 0f 84 10 06 00 00 bd 01 00 00 00 e9 de f3 ff ff 48 b8
+RSP: 0018:ffffc90003cdf6a8 EFLAGS: 00000246
+RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffc90003ce0000
+RDX: 1ffff9200079bee3 RSI: ffffc90003cdfa70 RDI: ffffc90003cdf758
+RBP: ffffc90003cdfae0 R08: 0000000000000001 R09: 0000000000000000
+R10: ffffc90003cdf718 R11: 00000000000121e6 R12: ffffc90003cdf768
+R13: ffffc90003cdf718 R14: ffffc90003cdfa80 R15: ffffc90003cdf74c
+ arch_stack_walk+0x94/0x100 arch/x86/kernel/stacktrace.c:25
+ stack_trace_save+0x8e/0xc0 kernel/stacktrace.c:122
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_record_aux_stack+0xa7/0xc0 mm/kasan/generic.c:548
+ slab_free_hook mm/slub.c:2378 [inline]
+ slab_free mm/slub.c:4680 [inline]
+ kmem_cache_free+0x15a/0x4d0 mm/slub.c:4782
+ vms_complete_munmap_vmas+0x573/0x970 mm/vma.c:1293
+ do_vmi_align_munmap+0x43b/0x7d0 mm/vma.c:1536
+ do_vmi_munmap+0x204/0x3e0 mm/vma.c:1584
+ __vm_munmap+0x19a/0x390 mm/vma.c:3155
+ __do_sys_munmap mm/mmap.c:1080 [inline]
+ __se_sys_munmap mm/mmap.c:1077 [inline]
+ __x64_sys_munmap+0x59/0x80 mm/mmap.c:1077
  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f72068bebe9
-RSP: 002b:00007f7205f05038 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
-RAX: ffffffffffffffda RBX: 00007f7206ae6090 RCX: 00007f72068bebe9
-RDX: 0000000000000005 RSI: 0000000000000001 RDI: 0000000000000007
-RBP: 00007f7206941e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000007fff R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f7206ae6128 R14: 00007f7206ae6090 R15: 00007ffc00c97a38
+RIP: 0033:0x7fb13ec2f2e7
+RSP: 002b:00007fffe10fae78 EFLAGS: 00000206 ORIG_RAX: 000000000000000b
+RAX: ffffffffffffffda RBX: 0000562bd1443510 RCX: 00007fb13ec2f2e7
+RDX: 0000000000000002 RSI: 0000000000004028 RDI: 00007fb13ea1b000
+RBP: 00007fffe10faf80 R08: 0000562bd1432470 R09: 0000000000000001
+R10: 00007fffe10fadb0 R11: 0000000000000206 R12: 00007fffe10faea0
+R13: 00007fb13ec42000 R14: 0000562bd1443510 R15: 0000000000000000
  </TASK>
-INFO: task syz.0.17:6130 blocked for more than 143 seconds.
-      Tainted: G        W           6.17.0-rc1-syzkaller-00224-g8d561baae505 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.17        state:D stack:26872 pid:6130  tgid:6105  ppid:5963   task_flags:0x440040 flags:0x00004004
+task:syz-executor    state:R  running task     stack:27632 pid:6031  tgid:6031  ppid:5870   task_flags:0x400000 flags:0x00004000
 Call Trace:
  <TASK>
  context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- __bch2_two_state_lock+0x1ea/0x370 fs/bcachefs/two_state_shared_lock.c:7
- bch2_two_state_lock fs/bcachefs/two_state_shared_lock.h:55 [inline]
- bch2_readahead+0x94f/0x1100 fs/bcachefs/fs-io-buffered.c:296
- read_pages+0x177/0x580 mm/readahead.c:160
- page_cache_ra_unbounded+0x2d3/0x740 mm/readahead.c:264
- filemap_get_pages+0x443/0x1df0 mm/filemap.c:2603
- filemap_splice_read+0x587/0xc60 mm/filemap.c:2991
- do_splice_read fs/splice.c:979 [inline]
- splice_direct_to_actor+0x4b1/0xcd0 fs/splice.c:1083
- do_splice_direct_actor fs/splice.c:1201 [inline]
- do_splice_direct+0x187/0x270 fs/splice.c:1227
- do_sendfile+0x4ec/0x7f0 fs/read_write.c:1370
- __do_sys_sendfile64 fs/read_write.c:1431 [inline]
- __se_sys_sendfile64+0x13e/0x190 fs/read_write.c:1417
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f72068bebe9
-RSP: 002b:00007f7205ee4038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00007f7206ae6180 RCX: 00007f72068bebe9
-RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000004
-RBP: 00007f7206941e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000100001 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f7206ae6218 R14: 00007f7206ae6180 R15: 00007ffc00c97a38
+ __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
+ preempt_schedule_common+0x44/0xc0 kernel/sched/core.c:7145
+ preempt_schedule_thunk+0x16/0x30 arch/x86/entry/thunk.S:12
+ __raw_spin_unlock include/linux/spinlock_api_smp.h:143 [inline]
+ _raw_spin_unlock+0x3e/0x50 kernel/locking/spinlock.c:186
+ spin_unlock include/linux/spinlock.h:391 [inline]
+ filemap_map_pages+0xe15/0x1670 mm/filemap.c:3791
+ do_fault_around mm/memory.c:5531 [inline]
+ do_read_fault mm/memory.c:5564 [inline]
+ do_fault mm/memory.c:5707 [inline]
+ do_pte_missing+0xe39/0x3ba0 mm/memory.c:4234
+ handle_pte_fault mm/memory.c:6052 [inline]
+ __handle_mm_fault+0x152a/0x2a50 mm/memory.c:6195
+ handle_mm_fault+0x589/0xd10 mm/memory.c:6364
+ do_user_addr_fault+0x60c/0x1370 arch/x86/mm/fault.c:1336
+ handle_page_fault arch/x86/mm/fault.c:1476 [inline]
+ exc_page_fault+0x5c/0xb0 arch/x86/mm/fault.c:1532
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0033:0x7f54cd7177c7
+RSP: 002b:00007fffb79a5b40 EFLAGS: 00010246
+RAX: 00007f54ce525000 RBX: 0000000000000000 RCX: 0000000000000064
+RDX: 00007fffb79a5de9 RSI: 0000000000000002 RDI: 00007fffb79a5dd8
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
+R13: 00007fffb79a5c48 R14: 0000000000000000 R15: 0000000000000000
  </TASK>
-INFO: task syz.3.35:6346 blocked for more than 143 seconds.
-      Tainted: G        W           6.17.0-rc1-syzkaller-00224-g8d561baae505 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.3.35        state:D stack:24520 pid:6346  tgid:6305  ppid:5970   task_flags:0x400140 flags:0x00004004
+task:kworker/0:3     state:R  running task     stack:25368 pid:1208  tgid:1208  ppid:2      task_flags:0x4208060 flags:0x00004000
+Workqueue: events_power_efficient gc_worker
 Call Trace:
  <TASK>
  context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- io_schedule+0x81/0xe0 kernel/sched/core.c:7903
- folio_wait_bit_common+0x6b5/0xb90 mm/filemap.c:1317
- folio_lock include/linux/pagemap.h:1133 [inline]
- bch2_mark_pagecache_reserved+0x33d/0xbb0 fs/bcachefs/fs-io-pagecache.c:314
- __bchfs_fallocate+0x1284/0x1870 fs/bcachefs/fs-io.c:733
- bchfs_fallocate+0x33f/0x680 fs/bcachefs/fs-io.c:789
- bch2_fallocate_dispatch+0x28d/0x410 fs/bcachefs/fs-io.c:836
- vfs_fallocate+0x672/0x7f0 fs/open.c:342
- ksys_fallocate fs/open.c:366 [inline]
- __do_sys_fallocate fs/open.c:371 [inline]
- __se_sys_fallocate fs/open.c:369 [inline]
- __x64_sys_fallocate+0xc0/0x110 fs/open.c:369
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f556c76ebe9
-RSP: 002b:00007f556bdb5038 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
-RAX: ffffffffffffffda RBX: 00007f556c996090 RCX: 00007f556c76ebe9
-RDX: 0000000000000005 RSI: 0000000000000001 RDI: 0000000000000007
-RBP: 00007f556c7f1e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000007fff R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f556c996128 R14: 00007f556c996090 R15: 00007ffe84a319a8
- </TASK>
-INFO: task syz.3.35:6347 blocked for more than 143 seconds.
-      Tainted: G        W           6.17.0-rc1-syzkaller-00224-g8d561baae505 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.3.35        state:D stack:27160 pid:6347  tgid:6305  ppid:5970   task_flags:0x440040 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- __bch2_two_state_lock+0x1ea/0x370 fs/bcachefs/two_state_shared_lock.c:7
- bch2_two_state_lock fs/bcachefs/two_state_shared_lock.h:55 [inline]
- bch2_readahead+0x94f/0x1100 fs/bcachefs/fs-io-buffered.c:296
- read_pages+0x177/0x580 mm/readahead.c:160
- page_cache_ra_unbounded+0x2d3/0x740 mm/readahead.c:264
- filemap_get_pages+0x443/0x1df0 mm/filemap.c:2603
- filemap_splice_read+0x587/0xc60 mm/filemap.c:2991
- do_splice_read fs/splice.c:979 [inline]
- splice_direct_to_actor+0x4b1/0xcd0 fs/splice.c:1083
- do_splice_direct_actor fs/splice.c:1201 [inline]
- do_splice_direct+0x187/0x270 fs/splice.c:1227
- do_sendfile+0x4ec/0x7f0 fs/read_write.c:1370
- __do_sys_sendfile64 fs/read_write.c:1431 [inline]
- __se_sys_sendfile64+0x13e/0x190 fs/read_write.c:1417
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f556c76ebe9
-RSP: 002b:00007f556bd94038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00007f556c996180 RCX: 00007f556c76ebe9
-RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000004
-RBP: 00007f556c7f1e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000100001 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f556c996218 R14: 00007f556c996180 R15: 00007ffe84a319a8
- </TASK>
-INFO: lockdep is turned off.
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 38 Comm: khungtaskd Tainted: G        W           6.17.0-rc1-syzkaller-00224-g8d561baae505 #0 PREEMPT_{RT,(full)} 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
- watchdog+0xf93/0xfe0 kernel/hung_task.c:491
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
+ preempt_schedule_irq+0x51/0x90 kernel/sched/core.c:7288
+ irqentry_exit+0x36/0x90 kernel/entry/common.c:197
+ asm_sysvec_reschedule_ipi+0x1a/0x20 arch/x86/include/asm/idtentry.h:707
+RIP: 0010:write_comp_data+0x0/0x90 kernel/kcov.c:240
+Code: 48 8b 05 db b4 1a 12 48 8b 80 30 16 00 00 e9 97 05 db 09 0f 1f 80 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 <49> 89 d2 49 89 f8 49 89 f1 65 48 8b 15 a7 b4 1a 12 65 8b 05 b8 b4
+RSP: 0018:ffffc9000441fb50 EFLAGS: 00000293
+RAX: 0000000000000000 RBX: 0000000000040000 RCX: ffffffff89ba2a52
+RDX: 0000000000040000 RSI: 0000000000000433 RDI: 0000000000000004
+RBP: ffffffff9b2c41ec R08: 0000000000000004 R09: 0000000000000000
+R10: 0000000000000000 R11: ffffffff9b030610 R12: ffff888031800000
+R13: 0000000000000433 R14: dffffc0000000000 R15: 0000000000001770
+ gc_worker+0x342/0x16e0 net/netfilter/nf_conntrack_core.c:1549
+ process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+ kthread+0x3c5/0x780 kernel/kthread.c:463
+ ret_from_fork+0x5d7/0x6f0 arch/x86/kernel/process.c:148
  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
  </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 17 Comm: pr/legacy Tainted: G        W           6.17.0-rc1-syzkaller-00224-g8d561baae505 #0 PREEMPT_{RT,(full)} 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:io_serial_in+0x77/0xc0 drivers/tty/serial/8250/8250_port.c:400
-Code: e8 ce d8 7f fc 44 89 f9 d3 e3 49 83 ee 80 4c 89 f0 48 c1 e8 03 42 80 3c 20 00 74 08 4c 89 f7 e8 cf 0b df fc 41 03 1e 89 da ec <0f> b6 c0 5b 41 5c 41 5e 41 5f c3 cc cc cc cc cc 44 89 f9 80 e1 07
-RSP: 0018:ffffc90000167890 EFLAGS: 00000202
-RAX: 1ffffffff3274800 RBX: 00000000000003fd RCX: 0000000000000000
-RDX: 00000000000003fd RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffffff993a4810 R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: ffffffff853e8220 R12: dffffc0000000000
-R13: 0000000000000000 R14: ffffffff993a4580 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8881268c5000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f814fde4000 CR3: 000000005b504000 CR4: 00000000003526f0
+task:dhcpcd          state:R  running task     stack:26072 pid:6029  tgid:6029  ppid:5513   task_flags:0x400040 flags:0x00004002
 Call Trace:
  <TASK>
- serial_in drivers/tty/serial/8250/8250.h:137 [inline]
- serial_lsr_in drivers/tty/serial/8250/8250.h:159 [inline]
- wait_for_lsr+0x1aa/0x2f0 drivers/tty/serial/8250/8250_port.c:1984
- fifo_wait_for_lsr drivers/tty/serial/8250/8250_port.c:3288 [inline]
- serial8250_console_fifo_write drivers/tty/serial/8250/8250_port.c:3329 [inline]
- serial8250_console_write+0x1341/0x1b40 drivers/tty/serial/8250/8250_port.c:3396
- console_emit_next_record kernel/printk/printk.c:3118 [inline]
- console_flush_all+0x695/0xcd0 kernel/printk/printk.c:3226
- __console_flush_and_unlock+0xa4/0x240 kernel/printk/printk.c:3285
- legacy_kthread_func+0x13b/0x1a0 kernel/printk/printk.c:3638
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
+ preempt_schedule_irq+0x51/0x90 kernel/sched/core.c:7288
+ irqentry_exit+0x36/0x90 kernel/entry/common.c:197
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:orc_ip arch/x86/kernel/unwind_orc.c:80 [inline]
+RIP: 0010:__orc_find+0x7e/0xf0 arch/x86/kernel/unwind_orc.c:102
+Code: ea 3f 48 c1 fe 02 48 01 f2 48 d1 fa 48 8d 5c 95 00 48 89 da 48 c1 ea 03 0f b6 34 0a 48 89 da 83 e2 07 83 c2 03 40 38 f2 7c 05 <40> 84 f6 75 4b 48 63 13 48 01 da 49 39 d5 73 af 4c 8d 63 fc 49 39
+RSP: 0018:ffffc90003337648 EFLAGS: 00000202
+RAX: ffffffff914e0dd8 RBX: ffffffff90c5215c RCX: dffffc0000000000
+RDX: 0000000000000007 RSI: 0000000000000000 RDI: ffffffff90c52148
+RBP: ffffffff90c52148 R08: ffffffff914e0e1a R09: 0000000000000000
+R10: ffffc900033376f8 R11: 0000000000011271 R12: ffffffff90c52170
+R13: ffffffff82127173 R14: ffffffff90c52148 R15: ffffffff90c52148
+ orc_find arch/x86/kernel/unwind_orc.c:227 [inline]
+ unwind_next_frame+0x2ec/0x20a0 arch/x86/kernel/unwind_orc.c:494
+ arch_stack_walk+0x94/0x100 arch/x86/kernel/stacktrace.c:25
+ stack_trace_save+0x8e/0xc0 kernel/stacktrace.c:122
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:405
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ slab_free_hook mm/slub.c:2369 [inline]
+ slab_free mm/slub.c:4680 [inline]
+ kmem_cache_free+0x142/0x4d0 mm/slub.c:4782
+ vms_complete_munmap_vmas+0x573/0x970 mm/vma.c:1293
+ do_vmi_align_munmap+0x43b/0x7d0 mm/vma.c:1536
+ do_vmi_munmap+0x204/0x3e0 mm/vma.c:1584
+ __vm_munmap+0x19a/0x390 mm/vma.c:3155
+ __do_sys_munmap mm/mmap.c:1080 [inline]
+ __se_sys_munmap mm/mmap.c:1077 [inline]
+ __x64_sys_munmap+0x59/0x80 mm/mmap.c:1077
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb13ec2f2e7
+RSP: 002b:00007fffe10fae78 EFLAGS: 00000202 ORIG_RAX: 000000000000000b
+RAX: ffffffffffffffda RBX: 0000562bd1443f00 RCX: 00007fb13ec2f2e7
+RDX: 0000000000000001 RSI: 000000000002f6d0 RDI: 00007fb13e9c1000
+RBP: 00007fffe10faf80 R08: 00000000000004f0 R09: 0000000000000002
+R10: 00007fffe10fadb0 R11: 0000000000000202 R12: 00007fffe10faec0
+R13: 00007fb13ec42000 R14: 0000562bd1443f00 R15: 0000000000000000
  </TASK>
 
 
