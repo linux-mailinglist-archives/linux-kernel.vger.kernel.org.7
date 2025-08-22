@@ -1,182 +1,289 @@
-Return-Path: <linux-kernel+bounces-781634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3C0B314E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:14:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 663C6B314D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 178DBAA6370
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:10:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73693BA111E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A646E2E3B08;
-	Fri, 22 Aug 2025 10:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B2C2E973F;
+	Fri, 22 Aug 2025 10:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="SG7D2pum"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011071.outbound.protection.outlook.com [52.101.70.71])
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="ofC3MbHg"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17BB296BA0;
-	Fri, 22 Aug 2025 10:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69242C029C;
+	Fri, 22 Aug 2025 10:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755857384; cv=fail; b=t87gOnAQJPKKeQjwPftRKGA/cnaCZm89gU1PhzQjZPouRNOLE+wuhfVgwpntcrjMNr8hMDYvQYrRnSLeQLg3xm4QQ6bcDaW9KhLZ/ojnYWip9Y6F7apVaQ8OlG3wiQ3AuWHTgs6zw534IqxW53k2dhbatR2dq8H4y+rJCzpyGFw=
+	t=1755857393; cv=pass; b=hefzGCLyhQB9oAP90eoi9gskKae9/joobSIfO0NDL6FhF/5oqd9Yb4l3pUL0YoaarCln9XpHZHj4v3Uqt4zpEHDC5FWUdKb3XIEZM90Jci9tOpxgwu+lPI0D8GldXVfgoOytwo+JJi1ku9q3NvUHqQNn97sP+JaOVLTAChHkxxc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755857384; c=relaxed/simple;
-	bh=a/Jqly8jVBtUUl7HDyYvmi5v984qbk1WTLVidod+biI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qulGswfVw9SXoZkuOguZBwSGOwwvtnmIRzmPYb0qdWeE5ehsJzTFvqYI1Ic+mZsdDdjZXEP3LPFYcNn+wyvz8ZfGAt6gLIrtUST6IIIZ8ZguLTqrOkhY86gswGLIys/JEtIb4JoW1IINKH8lUOlkLfvl7g7SqiaVh4pqDUVbfcc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=SG7D2pum; arc=fail smtp.client-ip=52.101.70.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j5rzZSHnY+OkOt/4nanrPG72F0s5JaftC+c0WaC5pImpNhvYNCHtIHdAx9RD0wG++6QNYlLxEKeCW5PZjRmMjcriRN6M69UIYgHdcBZgk3GDbIfCF4t1hdkhoojeT9IMQhiVHxyL0+qkCD0agqHvHC/mB1WWZH1eIvULh49mylO669sk0PCTiKhV4f2LI7kmz/kXlqG5zQrZErrYTLl/kifIPHX181x4ZvaFrHiZh6fHeIlTIpjFufidAQo8ez4SNi5NzT5a1Kai6zVtGDSKggjkXqQPCAdSGatgNVrzK3bqvxuozZglHOmYixpbv7E0/1KNspCAfoqHefyM25BAog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WWpZA2XtMd2RPv+RPQaaQtdBGy2QBN/UDAEjy1yzQaY=;
- b=hjCWCmkYAoV7y3eA6Blzy/jOKGjovcVciwr5AlDbmOn+pf666zFk6/WncAwP4IHBWkzL36InbMwarJefbgd3mUmAGnl08U96/lEUbVqKx0XTXVKfQxjZ68z7QtshHO9VHP1OnLQqcdd1D3bAXiV/rwZGc0+7naIFQyEvbnUORa4VxpGtjD2T3+x4vHAHOflCU/adfs3TBzsAw8emF+pqRtKcjQxU69GM/Y4c6xNLtLjTd4byC6G24jjOqZTg1M0TVOuC0Fe86PoR63VBaJKkhCyQcwjeXH25C+icCrCkBy9pnX6D5HzVRwRuK26zLopk9OGuhucZAxm+4FJE1AH93w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WWpZA2XtMd2RPv+RPQaaQtdBGy2QBN/UDAEjy1yzQaY=;
- b=SG7D2pumYuGzSR2mQDi5BOhPaHq5l6eghTGW7SCEi9/xs49zEoG5WFZhux4Ft44D2Dt5Pt5u4a/IfrPxinJv++Ip0QSyrjMQopMniHhR+mmbxkXdyoiOhEbVjF2/Wf9HSUx0+9SDQ/k/8PbdxR/EcH+HieM4ImEgCk0007GVrHo62XT1r/B6G30/3+L19gvPWqFB4RqcOJZUyXi4AVVODB39dRO+nM9LmLN52lB9cQvkGGZ7MuhANTAB/PmXmyw4EkqXwF9jRvVXjtHH2RusGefMCZ+B+jDWhtSkpq65w3ep3xxZW9o0O8xzEUxnuwe1UpDBsY5tfu9ygJdcSDMUKQ==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by VE1PR04MB7471.eurprd04.prod.outlook.com (2603:10a6:800:1a7::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.15; Fri, 22 Aug
- 2025 10:09:38 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.9031.012; Fri, 22 Aug 2025
- 10:09:38 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-CC: Clark Wang <xiaoning.wang@nxp.com>, Stanislav Fomichev <sdf@fomichev.me>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
-	<daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>
-Subject: RE: [PATCH v2 net-next 3/5] et: fec: add rx_frame_size to support
- configurable RX length
-Thread-Topic: [PATCH v2 net-next 3/5] et: fec: add rx_frame_size to support
- configurable RX length
-Thread-Index: AQHcEsoyoJ7sYfSghkG8db/Gx4Jg+bRucgcQ
-Date: Fri, 22 Aug 2025 10:09:38 +0000
-Message-ID:
- <PAXPR04MB85106B9BAA426968D0C08678883DA@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20250821183336.1063783-1-shenwei.wang@nxp.com>
- <20250821183336.1063783-4-shenwei.wang@nxp.com>
-In-Reply-To: <20250821183336.1063783-4-shenwei.wang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|VE1PR04MB7471:EE_
-x-ms-office365-filtering-correlation-id: 77b5cb8a-2642-4ad2-acf4-08dde16400e6
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|19092799006|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?4+OVS42lBpwGdKOgKsQ6ZQUKAwX9DhicwWQIbdLYNVt2XyDb6ZmmFtoBtnj0?=
- =?us-ascii?Q?FvOGjigNGaKM82/0r7TLfXZI2xdDeSjutxHM3AXs7T0jP2u3+SnYJQZlFo+A?=
- =?us-ascii?Q?sbU2p7Fj2M+O1s48UkwcMrPcTnoFrd5SAS/Yl3X88AjWeitA+agfFtLM5r85?=
- =?us-ascii?Q?aaumjpF7pyluxtelK6RJz25z84ihr7xLmflSJk66LCGmjPa2B4iQN0WIxcTK?=
- =?us-ascii?Q?PSKokc085mIyZ81zn6k2XXal/zPOOg5JH81nAeLX29mujxnMmw1U3atiT3pD?=
- =?us-ascii?Q?5v+2vPaBlyPahEda3EMgGFtVoNmX9esSxElVMC1XXx16gd/ZmsrvkaE21yQY?=
- =?us-ascii?Q?jpMpvo1RgaY4gxFouLtO6kPaJUDGSlqOsvxk++3PSFJU5Z9ItEHOSTdavzSY?=
- =?us-ascii?Q?WEfZtNu/8DNjCE08c8/SP+H5lwguwrAoSqpd7b0ZpZ1h2NwygZnsl89iRcvw?=
- =?us-ascii?Q?IM7hWosrO99GohschcDx7BhZ6QVG935a5nKZalN+RXfdCMdvWYKBIajLTVuH?=
- =?us-ascii?Q?Pf9sotwAdG5F3TlEF0otxR2C6VHqfnZ3pmEHITVprd1dL7o5p69XInEiLp/z?=
- =?us-ascii?Q?zn6+oDeAJqQMBIEcKdcbwVIxJ5h0hLZpp8HB8Vw0eKA3QOkvonIwLFEZZA0b?=
- =?us-ascii?Q?/uvdZk5fefTg5iHh1LCtog1co0BCprKhZVnrUGMyGMDSqfcrMm8Rqzj1DTRA?=
- =?us-ascii?Q?r47QwRJwhRcHJieyvmvpSDlenJsEAP+oeleVq4u4B33kmyo9ZCn4EwSHGLWn?=
- =?us-ascii?Q?SYLwXvig1wwtv9UtkQJ5Zg8XygHeWAJDpTmG4MApAwtMbUnJM1Xy6L9H2IHE?=
- =?us-ascii?Q?TOJLm5HGCHtf92XN30fQcJyOa/Ru6DWprPQm74jgBsQrtsHQs842pGjeanse?=
- =?us-ascii?Q?6QBRFK4JXafXR+EqeZ30MqDsmCIxebJGjb9L/fhkSxiB2g/xafwEp8LlTAqJ?=
- =?us-ascii?Q?44WJ3rGgavTMvmp4rrnfJpsvvPByA31J8lmSUtUqCUuf6UAD2i8BAMb8FTmi?=
- =?us-ascii?Q?W7VA27oW629HtMho3cm6Utc5gMHqIgIMAbDj0gRQ+vZtT/KRyuTcLf5O7vOq?=
- =?us-ascii?Q?WvPZ9OBFGqn3CLmFEWHa9dXuKlto/zfOXvX1fIvgZ1OPwQJ76YF5AXDeibyd?=
- =?us-ascii?Q?hZrdLMbGf8G2GQnFH/190NnLgKaBES+celuR/Pou2g/KWkU6tx6qxNjAHzfe?=
- =?us-ascii?Q?okSWOt7BW4mw9NdP7llzKk2MruwW51IgSYZSxxCvs4g6LNy4xZP9wixnzXDO?=
- =?us-ascii?Q?dWfJkz6OfkpFo5Z8NFQ/LORDNr/Ch1Vp57XROXNifISuAqzqxEcyHPAbj3js?=
- =?us-ascii?Q?1xUymFUaOc9KUeohyWsKBED4Z3KzLVroDapFqegfQrXJn0YO6sf5/lgjOM3M?=
- =?us-ascii?Q?BWlSYT2TPNW3z0nQsSeEQBuRNyV0eGYyBDpWyKbQrOfwI3fX9zLAyNj2h9lT?=
- =?us-ascii?Q?MEtr14AyxSBgZnzzZc7Ge5S3MRo4WT2CWAi2y+3mTBfXO868RMkWoQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?EW56l0VePzcwjjn97GPy/r9XPb57FjsOk6wBY8SRzoOBpFJq0vRXFFk1sD30?=
- =?us-ascii?Q?9R2t1ar4mp7xs8vqwYfenKYvvZiKOOi0l58nncx1tohoQahXJV4VkmpQZCMQ?=
- =?us-ascii?Q?LeSt3H2RbR8bj6UczA2gJi2qRURgYyXAAsMqE5iV4T1588sylUKYJqip8yOz?=
- =?us-ascii?Q?0WxJo1hWDlRFfyzMbrBVeCbEEZqFiy/vfpB9zQaaLP30oHC0dwaF0piw1pGp?=
- =?us-ascii?Q?Z5VTxlU+GjcYb1yLOo8Lo7SWdHL4EXQPk6CNxBRK00IbCMFVEwEhzkjgalPC?=
- =?us-ascii?Q?psEpto4vt8o18lqui1/mry2jBSgu0CX23Crllfx0v/n8hYmFlqdcbnWe/ogK?=
- =?us-ascii?Q?hZIUPosKRtGxVqTx5X1dlLPgFc/lvCh65BFIIVhEEyk5Z190QvxnoPtS4D0S?=
- =?us-ascii?Q?wpaQEf0GdEw92nhupb4Un0teQwyzo7GYK6xY916Zf9qdzEkrherOaUcYTeZP?=
- =?us-ascii?Q?LkCClDoZddhiKYVLcHJTEuUcPh0Kjzt5R1c4D/5TtUQLIT/VF9M3NeEsq5SU?=
- =?us-ascii?Q?heDyHun1xikCBkHhEZ3mld5oiUTkBdae1HTS6TrzIBWKhhTBQgMTqdr2txa5?=
- =?us-ascii?Q?N8MEG79h27CFR4AS739lg13EAZ+lEG+8NuYjXJF0jriGpJxelgWQSK5ksVs1?=
- =?us-ascii?Q?hpEQQCxLp3srJ8RGibJJJTRmXFk3/yzTTxCFSHOCM35k1LywFVe1JbUZI3Oa?=
- =?us-ascii?Q?8D6fJIutsksZic9RwUE63RvOES24TY5/XmL1FfgrDV+vuQL07TbRN0yrE7aW?=
- =?us-ascii?Q?GKu41MzGlSGC3v2+Ebl3JGAnc6AOKzilXKuHxGRFzyy1EZuK7SSdmaiYWjcV?=
- =?us-ascii?Q?DC2nP2Ccg/eBot4q5dXIcNo3BZTcqp1lESu3uaATu9dZ0SRDtRxcPX+fYUNb?=
- =?us-ascii?Q?8I/NSkXYYnra+t9Qsp6HSnnisVUS4H/0w3tx6A6pOhAK9fnpUeMDEyuuZEk2?=
- =?us-ascii?Q?jjUp1WVffZfeZPoMk0edsU5RBPYK8Zi4UOON/Lm2mKlirOVHKuASFgUslJUl?=
- =?us-ascii?Q?Ej1eBNV4c0k7pCcHUK6ATdhkxAgmELmt7w4UBhUIM0qavXZRDzh1f7CGiBGG?=
- =?us-ascii?Q?wriTFKKOhU4PAzHMozbJi4zWwSdCq/yqhO6+LMdMOBfvVHa/mTXXnZ8thB1K?=
- =?us-ascii?Q?jU8GD8CfNsJqTr1vSdczlyxG4MkaW3Z3Cc02s6elzOJQo+0UXPIV/baLduc6?=
- =?us-ascii?Q?ziHezFKk1GnUUckivBhQdrBA0TMT4oVfqbpSQHaRx1CiGzbLArnYvY/tWNPz?=
- =?us-ascii?Q?QTUEoeDuupq0nIBtGMjWOL9sJRrZbTv8SN1GSKMrTXGS380x2XEHULGm47Xg?=
- =?us-ascii?Q?H+Hq4kgnbcxtBuebiXP65vZxI1FlicKSNzhc9Xb8AtVbKg/TiAUrD+dCDhGh?=
- =?us-ascii?Q?+8XLnz1aa+PDYwUi4BY9k4s0xo7s6aIgP8c+VK3aeooOtmumX2FXi4ETWiGt?=
- =?us-ascii?Q?6mALq6T8OC8Y07I6lxwbKVEAlW/FDUXjA6yJfomCQnOcOgv15d2eO639FQLo?=
- =?us-ascii?Q?6teXppIJvWTUz32XjhU6pUBGjT91TWuG6Clv1Meqtpd4T2KEzULfiv2EMW3n?=
- =?us-ascii?Q?DD/uTM0D0KAoZKyyM/Y=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1755857393; c=relaxed/simple;
+	bh=T8ROrNDIfDuYoTbq8PfIQiVDeBf323W6pfygO8iSHAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AM25jgXiXoJTn+AHz+TeO70qSwpYuVr+GQgAJZYpgUabaVvpxbbKBOQKKToSeSOXOy3N8FkHZDZV4IK6aRSQUBIXveXDmvIuZwD/iNik/8GckbFcSCKggq01hYgZMCjYnfc2dH4xadfqAKI3GN7Z9JxdT0rZ4H9MlI4yTXv9aE4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=ofC3MbHg; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4c7bXC6pn8zyT0;
+	Fri, 22 Aug 2025 13:09:47 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1755857388;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Edx5eFoI2kFWMn+C2kKn3uVggSyrKKBix583FrwpuJw=;
+	b=ofC3MbHgs0pTJQUjGMOWaW3psKoScTP49kmMWNgrvjpW8YSoinaCe+J9ivejcJtMJHdCvE
+	cSSBtz/RFAHVszPDbzW9TN26qdjVvCwGfalqwmbkanvtCs5W0sZpbuaWXt1RGodrUKUU/U
+	rG35EZ+fEEI3UVbtIaKntYxfJXDBqNk=
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1755857388; a=rsa-sha256; cv=none;
+	b=yjRvcgXivtm9H6dYImPIlkLwv2NE6TU7i9Q/WLQE/kvOWeadfcMJdgvWKt52h4QWTCUYe2
+	sq3/evz5M+Cahvm0/SryvR9d0jJ0WZPoGbfwBhKjY3kD9Qo8FX36FCc1WIKnkDuMdQwwrg
+	t4SkdR9ejMRXattlTjFKfB8KHxZe/Dc=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1755857388;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Edx5eFoI2kFWMn+C2kKn3uVggSyrKKBix583FrwpuJw=;
+	b=tB/YWjQJvdg0ZoWCtD50wbcEgVfZF6J7Sp9VV5KOXp1Za+TYCR7MWsyyGGTCIrcDCPNpd6
+	fdQKx6WM3PsAZqqocOXRT7WEZoTCaGvpPOQ41y93HQ7KdZmzNQftl9Mf0sND9PM2R5yuBO
+	czxXnDs4C6KssHuIHNpoWsLRdVWi+4A=
+Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 6F62F634C98;
+	Fri, 22 Aug 2025 13:09:47 +0300 (EEST)
+Date: Fri, 22 Aug 2025 10:09:47 +0000
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Ricardo Ribalda <ribalda@chromium.org>
+Subject: Re: [PATCH v4 3/5] docs: media: update maintainer-entry-profile for
+ multi-committers
+Message-ID: <aKhB6zrtRKwbAZ-s@valkosipuli.retiisi.eu>
+References: <cover.1733218348.git.mchehab+huawei@kernel.org>
+ <5eed1e4a37d087f401b7bd54b793ea301e511d7e.1733218348.git.mchehab+huawei@kernel.org>
+ <aKcQak8k2MiCriZt@valkosipuli.retiisi.eu>
+ <20250822102346.30347275@foz.lan>
+ <aKgxcWYq-WZAFwsx@valkosipuli.retiisi.eu>
+ <20250822113159.70b0339d@foz.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77b5cb8a-2642-4ad2-acf4-08dde16400e6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2025 10:09:38.4027
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zopX0Oaewpd0PfUwOxfk0aixGu+OZE4nhFEfS86ejJG8etm4XRnRSAnBA9ilSnH707xpGNwZ9iNF+K+0Lu2ciA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7471
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822113159.70b0339d@foz.lan>
 
-> @@ -4563,6 +4563,7 @@ fec_probe(struct platform_device *pdev)
->  	pinctrl_pm_select_sleep_state(&pdev->dev);
->=20
->  	fep->pagepool_order =3D 0;
-> +	fep->rx_frame_size =3D FEC_ENET_RX_FRSIZE;
+Hi Mauro,
 
-According to the RM, to allow one maximum size frame per buffer,
-FEC_R_BUFF_SIZE must be set to FEC_R_CNTRL [MAX_FL] or larger.
-FEC_ENET_RX_FRSIZE is greater than PKT_MAXBUF_SIZE, I'm not
-sure whether it will cause some unknown issues.
+On Fri, Aug 22, 2025 at 11:31:59AM +0200, Mauro Carvalho Chehab wrote:
+> Em Fri, 22 Aug 2025 08:59:29 +0000
+> Sakari Ailus <sakari.ailus@iki.fi> escreveu:
+> 
+> > Hi Mauro,
+> > 
+> > On Fri, Aug 22, 2025 at 10:23:46AM +0200, Mauro Carvalho Chehab wrote:
+> > > Em Thu, 21 Aug 2025 12:26:18 +0000
+> > > Sakari Ailus <sakari.ailus@iki.fi> escreveu:
 
->  	fep->max_buf_size =3D PKT_MAXBUF_SIZE;
->  	ndev->max_mtu =3D fep->max_buf_size - ETH_HLEN - ETH_FCS_LEN;
+...
 
+> > > What about this:
+> > > 
+> > > <text>
+> > > The Linux Media Community (aka: the LinuxTV Community) consist of developers 
+> > > who work with the Linux Kernel media subsystem, together with users who
+> > > benefit from such develoment and help testing the developed code.  
+> > 
+> > How about, with slight modifications:
+> > 
+> > The Linux Media Community (aka: the LinuxTV Community) is formed of
+> > developers working on Linux Kernel Media Subsystem, together with users.
+> 
+> Works for me, although I prefer keep mentioning about the important
+> role that users play on help testing drivers.
+
+How about then:
+
+The Linux Media Community (aka: the LinuxTV Community) is formed of
+developers working on Linux Kernel Media Subsystem, together with users who
+also play an important role in testing the code.
+
+> 
+> > 
+> > > 
+> > > They work on the top of the Media tree, which has code to support a    
+> > > variety of devices: stream capture, analog and digital TV streams, cameras,
+> > > remote controllers, HDMI CEC and media pipeline control.
+> > > 
+> > > The Media tree is mainly responsible to be the main source of the
+> > > code under development with the contents of those directories:
+> > > 
+> > >   - drivers/media
+> > >   - drivers/staging/media
+> > >   - Documentation/admin-guide/media
+> > >   - Documentation/driver-api/media
+> > >   - Documentation/userspace-api/media
+> > >   - Documentation/devicetree/bindings/media/\ [1]_
+> > >   - include/media
+> > > </text>
+> > >   
+> > > >   
+> > > > >  
+> > > > >    - drivers/media
+> > > > >    - drivers/staging/media
+> > > > > @@ -27,19 +28,158 @@ It covers, mainly, the contents of those directories:
+> > > > >  Both media userspace and Kernel APIs are documented and the documentation
+> > > > >  must be kept in sync with the API changes. It means that all patches that
+> > > > >  add new features to the subsystem must also bring changes to the
+> > > > > -corresponding API files.
+> > > > > +corresponding API documentation files.    
+> > > > 
+> > > > I'd drop " files" as the documentation is split between C source code files
+> > > > and ReST nowadays.  
+> > > 
+> > > OK.
+> > >   
+> > > > > -Due to the size and wide scope of the media subsystem, media's
+> > > > > -maintainership model is to have sub-maintainers that have a broad
+> > > > > -knowledge of a specific aspect of the subsystem. It is the sub-maintainers'
+> > > > > -task to review the patches, providing feedback to users if the patches are
+> > > > > +Due to the size and wide scope of the media subsystem, the media's
+> > > > > +maintainership model is to have committers that have a broad knowledge of    
+> > > > 
+> > > > Maintainership or maintenance?
+> > > > 
+> > > > s/is to have/recognises/ ?  
+> > > 
+> > > OK.
+> > >    
+> > > > > +a specific aspect of the subsystem. It is the committers' task to
+> > > > > +review the patches, providing feedback to users if the patches are
+> > > > >  following the subsystem rules and are properly using the media kernel and
+> > > > >  userspace APIs.
+> > > > >  
+> > > > > -Patches for the media subsystem must be sent to the media mailing list
+> > > > > -at linux-media@vger.kernel.org as plain text only e-mail. Emails with
+> > > > > -HTML will be automatically rejected by the mail server. It could be wise
+> > > > > -to also copy the sub-maintainer(s).
+> > > > > +Media committers
+> > > > > +----------------
+> > > > > +
+> > > > > +In the media subsystem, there are experienced developers who can push
+> > > > > +patches directly to the development tree. These developers are called
+> > > > > +Media committers and are divided into the following categories:
+> > > > > +
+> > > > > +- Committers:
+> > > > > +    contributors for one or more drivers within the media subsystem.
+> > > > > +    They can push changes to the tree that do not affect the core or ABI.    
+> > > > 
+> > > > Question to Ricardo -- sorry if I already have asked this: can this be
+> > > > enforced?
+> > > >   
+> > > > > +
+> > > > > +- Core committers:
+> > > > > +    responsible for part of the media core. They are typically
+> > > > > +    responsible for one or more drivers within the media subsystem, but, besides
+> > > > > +    that, they can also merge patches that change the code common to multiple
+> > > > > +    drivers, including the kernel internal API.    
+> > > > 
+> > > > This doesn't say clearly whether e.g. the V4L2 or MC frameworks are
+> > > > included or not. I think they should be and this should be mentioned. Same
+> > > > for videobuf2.  
+> > > 
+> > > The problem of specifying what the core via frameworks, vb2, etc is that
+> > > this would require constant maintainance. Core is everything that is not
+> > > inside a driver for an specific driver.
+> > > 
+> > > We called this here as "the code common to multiple drivers". For me it
+> > > is clear, but if you have a better generic term, I'm all ears.  
+> > 
+> > How about:
+> > 
+> > - Core committers:
+> >     responsible for part of the Media Core, including V4L2, Media
+> >     controller, Videobuf2, CEC and DVB frameworks. They are typically
+> >     responsible for one or more drivers within the Media Subsystem, but,
+> >     besides that, they can also merge patches that change the code common
+> >     to multiple drivers, including the kernel internal API.
+> > 
+> > I think we should define Media Subsystem, Media Core and possibly Media
+> > Community in the glossary but I'd do that after merging this set.
+> 
+> You forgot remote controllers there ;-)
+> 
+> Btw, that's exactly my point: when we enumerate things, we tend to forget
+> about something, and, when new stuff gets add, we need to remember to
+> add here.
+
+The text above does not imply something isn't part of Media Core even if
+not listed. But of course Remote Controller should have been in the above
+list. Adding that results in:
+
+- Core committers:
+    responsible for part of the Media Core, including V4L2, Media
+    controller, Videobuf2, Remote Controller, CEC and DVB frameworks. They
+    are typically responsible for one or more drivers within the Media
+    Subsystem, but, besides that, they can also merge patches that change
+    the code common to multiple drivers, including the kernel internal API.
+
+> 
+> > 
+> > >   
+> > > >   
+> > > > > +
+> > > > > +- Subsystem maintainers:
+> > > > > +    responsible for the subsystem as a whole, with access to the
+> > > > > +    entire subsystem.
+> > > > > +
+> > > > > +    API/ABI changes are done via consensus between subsystem maintainers\ [2]_.
+> > > > > +
+> > > > > +    Only subsystem maintainers push changes that affect the userspace
+> > > > > +    API/ABI. Committers may push ABI/API changes on their commits if they
+> > > > > +    have approvals from subsystem maintainers.
+> > > > > +
+> > > > > +All media committers shall explicitly agree with the Kernel development process
+> > > > > +as described at Documentation/process/index.rst and to the Kernel
+> > > > > +development rules inside the Kernel documentation, including its code of
+> > > > > +conduct.    
+> > > > 
+> > > > Is there a need to mention this? Aren't people generally expected to
+> > > > follow the process anyway?  
+> > > 
+> > > There's a big difference between "generally expected" and "have to agree".
+> > > The goal here is really to prevent having bad committers as we had in the
+> > > past on our previous multicommiters model before we moved to git. If this
+> > > ever have again, by having an explicit agreement, one cannot deny he/she
+> > > didn't know the rules.  
+> > 
+> > Fair enough. Either way, enforment is discretionary so I think this is
+> > fine -- mistakes tend to happen, to everybody, at least in some extent.
+> 
+> Yeah, mistakes can happen. What we want to cover is intentional misbehavior.
+
+I agree. I hope this will remain a theoretical possibility though.
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
