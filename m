@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-782145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25DAB31BAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:33:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B87EB31BAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E99CE621D22
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:25:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64A471C272E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626C8343203;
-	Fri, 22 Aug 2025 14:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F302E341AA6;
+	Fri, 22 Aug 2025 14:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnZoaR8m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="us9Gpwf9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11694312806;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEAE3126B7;
 	Fri, 22 Aug 2025 14:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755872389; cv=none; b=N7Nq4vZ0e23o3QDPeB5fn18MmhXjfWjKGlARjkPrAALj2BaF/m/Ja+N7CjmVLNVkKi2rv/DYnHPA9iGAh8u94eq0jINM2Ogl0lmrbFa/QdN7nwCE4dAJYxie7DnvQcHA0k+wEfH4n6XTR6GMIWAcE9AIb/QrJv9MNLUFjuHyqhQ=
+	t=1755872388; cv=none; b=cy566oj0EOVUNA+hq+Pp6bQjXm4OvVR/0scoKTrCFYVjlfD06EolNpLP98hdjYLZSzJyTPaM+iMz1pWgEWXt8JMYfXM3c4OHntzdaIrbouEsVOoJfkUly3y9b731ASuY68mZ4Vt6H1lQEjxFphxJ4A+EYyL7QxIJCQsELzvnhVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755872389; c=relaxed/simple;
-	bh=TiBwJFe/nRO7mW633U4ruwZsiS7f5kmzwOmkA8jDJ8g=;
+	s=arc-20240116; t=1755872388; c=relaxed/simple;
+	bh=LQfriqJ7w45m1TsmRVR1XR73bImTQyUEqk93YtSCuzA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EzgrHagGB8MnaLjKZgHejJ945dr157sBl4vJZdQ8ws/KGLbvlrFtoHncd2EScQvK2lTNZwUHtQrP1Ab96PepeJ5lu5kjS2QIKpCYxprx922QBa1tkyNAC/mEaQqx6F4ImD6uNSe3Hpa5PcrOkTLvfg0FE6RHcz8xwAOrOSAE01o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cnZoaR8m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CF74C4AF0B;
+	 MIME-Version; b=AahTBolZ4UI8WHap5/MO3ulpbY7vwMhHQYfAGbFJBG/8YpnLpVD6GA9sfZKfID4PkKCk1GmvZRQXkGJwEmflKUxxHoK1gbltev9smLjkAzBEMG6GT09T306XnGljw7B0Gex2fy4y/OsG+gaDqctbyYH1HqGqga2NBdwGmmjknWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=us9Gpwf9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6833FC2BCFD;
 	Fri, 22 Aug 2025 14:19:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755872388;
-	bh=TiBwJFe/nRO7mW633U4ruwZsiS7f5kmzwOmkA8jDJ8g=;
+	bh=LQfriqJ7w45m1TsmRVR1XR73bImTQyUEqk93YtSCuzA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cnZoaR8mkqWdkhXogG36OiOzzru0Q6F7fY9vMqdWMxvZ31bkmVwl52w7x7dWtmhaY
-	 JkbG2COElI/BIJMRBEwcjkL0vWWFJkuHvVpOhhtYS66oVh9Q730sNv1q3C6NAroF8N
-	 4HuhUUIwa8/5Gpj1kdzENRtehmRX2VV9AxlepiaNx14v7uBuUBTWoNZBR9iCqOTuYM
-	 IcM7nOvztBIdGuxbbJ4uaPSv5BjUoV2mfML0QrF+atwB0sssFFHpy7VFzG/ub2O2nk
-	 TGxXySWuxgMNWLeM4guToi46M8saTRq0gSkN+OCyhEYLibHvIVa6UyeIVXJrbcPDdo
-	 ByYC5yMsFBJ8w==
+	b=us9Gpwf99h+qvYS/a+8T+1/mfs4B3xHFRUUQWYt2QgV1GiRQInibaRyMEGkKnlE/h
+	 FU338kCo1P6ySBNunbIfM7vpS/w50qpMq8ljjjRcfhogHMSVBf8r/3irGEnT0b3o8Z
+	 w1khWMvS7D4upMsD7P4Ls2JWNc14cgItnvE0AmeqpkAbQltjFzf8WxNV0G94XfCwCA
+	 6wgNNybY1/yaD3qQuLpIBcwWWVJ7W3Y34L7hQ9vun9VS5OHA5nhQGCmMZ1yX2xOVQJ
+	 dVYe+xPExniLau5uJDFAEqKIsmv/kJDlD9foII7bZa4k8IwrHfZvBkERAxwkLDDpAS
+	 sG3ncmpLAHKmw==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1upScM-0000000CCsB-2ebD;
+	id 1upScM-0000000CCsF-2lMI;
 	Fri, 22 Aug 2025 16:19:46 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
@@ -51,9 +51,9 @@ Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	Kees Cook <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 20/24] docs: kernel_include.py: remove line numbers from parsed-literal
-Date: Fri, 22 Aug 2025 16:19:32 +0200
-Message-ID: <b484fe5fcbf6e5217f112f205fbf54f0bbc3dcca.1755872208.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 21/24] docs: kernel_include.py: remove Include class inheritance
+Date: Fri, 22 Aug 2025 16:19:33 +0200
+Message-ID: <a9f2eebf11c6b0c3a2e3bf42e71392cdfd2835d1.1755872208.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1755872208.git.mchehab+huawei@kernel.org>
 References: <cover.1755872208.git.mchehab+huawei@kernel.org>
@@ -66,48 +66,97 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-When parsed-literal directive is added to rawtext, while cross
-references will be properly displayed, Sphinx will ignore
-line numbers. So, it is not worth adding them.
+While the original code came from the Sphinx Include class,
+such class is monolithic: it has only one function that does
+everything, and 3 variables that are used:
+
+	- required_arguments
+	- optional_arguments
+	- option_spec
+
+So, basically those are the only members that remain from
+the original class, but hey! Those are the same vars that every
+other Sphinx directive extension has to define!
+
+In summary, keeping inheritance here doesn't make much sense.
+
+Worse than that, kernel-include doesn't support the current set
+of options that the original Include class has, but it also
+has its own set of options.
+
+So, let's fill in the argument vars with what it does
+support, dropping the rest.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/sphinx/kernel_include.py | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ Documentation/sphinx/kernel_include.py | 40 ++++++++++++++++++++------
+ 1 file changed, 32 insertions(+), 8 deletions(-)
 
 diff --git a/Documentation/sphinx/kernel_include.py b/Documentation/sphinx/kernel_include.py
-index fd4887f80577..3a1753486319 100755
+index 3a1753486319..e6f734476ab3 100755
 --- a/Documentation/sphinx/kernel_include.py
 +++ b/Documentation/sphinx/kernel_include.py
-@@ -171,13 +171,24 @@ class KernelInclude(Include):
-         if 'warn-broken' in self.options:
-             env._xref_files.add(path)
+@@ -62,9 +62,8 @@ import sys
+ from docutils import io, nodes, statemachine
+ from docutils.statemachine import ViewList
+ from docutils.utils.error_reporting import SafeString, ErrorString
+-from docutils.parsers.rst import directives
++from docutils.parsers.rst import Directive, directives
+ from docutils.parsers.rst.directives.body import CodeBlock, NumberLines
+-from docutils.parsers.rst.directives.misc import Include
  
--        if "toc" in self.options:
--            rawtext = parser.gen_toc()
--        else:
-+        if "toc" not in self.options:
-+
-             rawtext = ".. parsed-literal::\n\n" + parser.gen_output()
-             self.apply_range(rawtext)
+ from sphinx.util import logging
  
--        title = os.path.basename(path)
-+            include_lines = statemachine.string2lines(rawtext, tab_width,
-+                                                      convert_whitespace=True)
-+
-+            # Sphinx always blame the ".. <directive>", so placing
-+            # line numbers here won't make any difference
-+
-+            self.state_machine.insert_input(include_lines, path)
-+            return []
-+
-+        # TOC output is a ReST file, not a literal. So, we can add line
-+        # numbers
-+
-+        rawtext = parser.gen_toc()
+@@ -81,18 +80,43 @@ RE_SIMPLE_REF = re.compile(r'`([^`]+)`')
  
-         include_lines = statemachine.string2lines(rawtext, tab_width,
-                                                   convert_whitespace=True)
+ 
+ # ==============================================================================
+-class KernelInclude(Include):
+-    """KernelInclude (``kernel-include``) directive"""
++class KernelInclude(Directive):
++    """
++    KernelInclude (``kernel-include``) directive
+ 
+-    # Add extra options
+-    option_spec = Include.option_spec.copy()
++    Most of the stuff here came from Include directive defined at:
++        docutils/parsers/rst/directives/misc.py
+ 
+-    option_spec.update({
++    Yet, overriding the class don't has any benefits: the original class
++    only have run() and argument list. Not all of them are implemented,
++    when checked against latest Sphinx version, as with time more arguments
++    were added.
++
++    So, keep its own list of supported arguments
++    """
++
++    required_arguments = 1
++    optional_arguments = 0
++    final_argument_whitespace = True
++    option_spec = {
++        'literal': directives.flag,
++        'code': directives.unchanged,
++        'encoding': directives.encoding,
++        'tab-width': int,
++        'start-line': int,
++        'end-line': int,
++        'start-after': directives.unchanged_required,
++        'end-before': directives.unchanged_required,
++        # ignored except for 'literal' or 'code':
++        'number-lines': directives.unchanged,  # integer or None
++        'class': directives.class_option,
++
++        # Arguments that aren't from Sphinx Include directive
+         'generate-cross-refs': directives.flag,
+         'warn-broken': directives.flag,
+         'toc': directives.flag,
+         'exception-file': directives.unchanged,
+-    })
++    }
+ 
+     def read_rawtext(self, path, encoding):
+             """Read and process file content with error handling"""
 -- 
 2.50.1
 
