@@ -1,199 +1,271 @@
-Return-Path: <linux-kernel+bounces-781143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B85A7B30DF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:26:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9EEB30DFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E6B3AC657E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:26:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56DFA688A41
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381362857E6;
-	Fri, 22 Aug 2025 05:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D4A2D46D8;
+	Fri, 22 Aug 2025 05:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mWIwXN7m"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SviNHeyD"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15359198A11;
-	Fri, 22 Aug 2025 05:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD544B661;
+	Fri, 22 Aug 2025 05:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755840391; cv=none; b=eBw++XevICdrP6auuydbDgUZZ3xUUKySxw2s/9LsCAm/YOaNCHitWGys38fbmLTXV8wuxkk4vYuDpYo0AAzX5Z8ZxxFNzN5ac6gN6DsFNBEXaNuIvSBnScCSEvYfqMgzNzPb+n5miqkEqvDfjPEWN8r4Muuw/3PW9eeb3eCyrvY=
+	t=1755840582; cv=none; b=cAIthSg/4N/gqR9Z5Mva725+OHfwzhVfAq9Bjnu8gAxzz5rnsgXd96kTAsrrtx6+Em9/5f/XPqNhKDSR3phO2h8VM1j2xjjWSyq9UnT9LPI1Uf0J87pndPLRp00HNHOtchQ1A/WQdVuTJm8Mgy7KtmEPIfyv+7AhfS5h60DdKBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755840391; c=relaxed/simple;
-	bh=hv4ee5TJub+glJha2W37KTbYuOGPiCe6LOnDorSPvqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dab2RmwtYcwdSPgmWfiGn5Zt8VVebJ4zvQpRG5Xb6FZeq9T0cfKnRgNpAi6qQpYlXnRWddCce9X+yfwhCJXG6a1sX2FyBPXUD7iI+X7swU+Vnv/Flrubnb5lxpGYL45a5jlZpsmiRTaUE4EVEcazTTesC0/TMD/BfqYv9iRlvco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mWIwXN7m; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755840389; x=1787376389;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=hv4ee5TJub+glJha2W37KTbYuOGPiCe6LOnDorSPvqo=;
-  b=mWIwXN7mtoRV/gWlZGa6eIKsZEhzugNXQ5KiJc/PersBH/nezCkuoFC3
-   71SU2ebKFg/RRVFSA0H9FoS4bMnY6vg0dKbmJ4fAH1EXZLN2s0J5B8zHy
-   hpItanhHzxQgK+oz3vUae/3TxqL4v1vqRNi+wVEbsk+9Po4FKavaR/lMG
-   C8g1HUpVdQpPTu3VUaMU7Iei8ugVsnVWTCQIh6Sd0Kaa2Brv/V0t9jRSX
-   r5E/lNLd9/DNUrQ+yR92HRM/p+hpL6ZIHBCzLD4uFh96onKny2eGMjhdz
-   LK9b4vyNma976CrwWml5mJeoKbfdJDUwu1fpoSHviG540NUO9jS+rAXJg
-   w==;
-X-CSE-ConnectionGUID: lx2qGbxuQ+OLFXKXk/e7kQ==
-X-CSE-MsgGUID: Dfd9va2rQMWb040iU7WxVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="60771401"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="60771401"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 22:26:29 -0700
-X-CSE-ConnectionGUID: N5z1rdvXQjyfULYXn/Gqyg==
-X-CSE-MsgGUID: 7SXXW3lKRXeoGy/j1TSTPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="199578767"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.233.125]) ([10.124.233.125])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 22:26:25 -0700
-Message-ID: <683367fc-4295-41f5-b10d-3c120f54ca0f@linux.intel.com>
-Date: Fri, 22 Aug 2025 13:26:22 +0800
+	s=arc-20240116; t=1755840582; c=relaxed/simple;
+	bh=34Wicx5fiqySh4vcbwHKLgw38TXxHzyUyeFT3n/7A2g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YbvRXeoobdn+jUsWukUGFE9Ls56lzIpqyqyQWHVQ82rzlkqH8Wuaooxh9o+sdpx245XBseYeOqJYWR91GPOpdVJvzmA8icXSFRJiDDMekdoZjeSun3pmLp+GLosazL9rlPii+hd1nZA+Gb+xheB2MBOIlTMIAOOOvZBQKHBvvPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SviNHeyD; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LI94uv003022;
+	Fri, 22 Aug 2025 05:29:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GjN8tcpqQR7ngN/208vaK7sSHrIqTJw0swa0+U/r4TQ=; b=SviNHeyDRZ51mI3i
+	EbS8NBK9fryyoe4cKQ7Ay1R9rRlMwq7PjKbQ2j6QrZ1lMNfKb9NgJLIBEzAnl+4/
+	uNWflwscJoCIIw/Ga3+vOm29N+9kFgzz7TUZ2OEgU62D+4in1MwRY8MrHuX0U7T7
+	T3f0RXcABiLFsUGYiq8Pk6r99NcKHIyKKZqVQhvQCY7I75Aauynepyx1NSF0yl+T
+	Lm39IDI3Dw3gwcTy1cj2b0loUQSE4qoYBhGGmG9ymv9qXGd4WYNSuzKFrgIxKpKb
+	3Uc08gVWwWyG96xernN09/nvYh6yQdx7+l2h4SmDasq9WdenEEArBp6fDxL7RNbD
+	ojy5Jw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n5297x0d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 05:29:34 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57M5TXrV009617
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 05:29:33 GMT
+Received: from [10.50.10.127] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 21 Aug
+ 2025 22:29:30 -0700
+Message-ID: <567f7007-12b1-ecf9-30cc-11fe9e90af39@quicinc.com>
+Date: Fri, 22 Aug 2025 10:59:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v3 3/7] perf/x86: Check if cpuc->events[*] pointer exists
- before accessing it
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
- Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>,
- kernel test robot <oliver.sang@intel.com>
-References: <20250820023032.17128-1-dapeng1.mi@linux.intel.com>
- <20250820023032.17128-4-dapeng1.mi@linux.intel.com>
- <20250821133514.GP4067720@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] media: iris: fix module removal if firmware download
+ failed
 Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250821133514.GP4067720@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250820-topic-sm8x50-iris-remove-fix-v1-1-07b23a0bd8fc@linaro.org>
+ <6c93b790-6d84-aec5-5b4d-2584d249f74e@quicinc.com>
+ <802b5a3c-15c7-4291-8e3e-e598b5587fb8@linaro.org>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <802b5a3c-15c7-4291-8e3e-e598b5587fb8@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: RQquNLQIQSg_prhf40Tv8TcbcjvIdXml
+X-Proofpoint-ORIG-GUID: RQquNLQIQSg_prhf40Tv8TcbcjvIdXml
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX8snhT1ZZuBf8
+ ngM4vdCEW8Ix/kD8GpBmDIZo+4tu0IuwDIcR4kcxxcwsm/GJB7DvTM5BbnJWrUdjfN0LwWGZdkI
+ 9LB+/9Nrg//kvfv3Jd+oc+4aprBjZ0f1I3lnM/azq+TFMAUVP5EJZYzWGAasOAN3NHbIgQXZv5V
+ ea4yIK0Vhp152fBMJHDof8bBobyEcw64hwnpfuZHwXDn1nO/eo0BtfTwzV4ldC4XI1/U0BmRq3G
+ dt6x8G0qzmiu5eA2rKfQXWaqEqFJ79W1GuUo15LXA2lFebqvCthrBcIdU7YX73BY+k7cjHOjJWY
+ tzUtDbygd67hQBbATIYGPNiq3kiMZ3fqi5ignlqozAro9nvwyS4YK0LxAYxCKqt0QWckc2JkN2q
+ dSoFvgVKRqwlyo5wF0Nw5eT+BExlXw==
+X-Authority-Analysis: v=2.4 cv=SPkblOvH c=1 sm=1 tr=0 ts=68a8003e cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8
+ a=COk6AnOGAAAA:8 a=Azs14qeiMlSh3algld4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_01,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
+ impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
 
-On 8/21/2025 9:35 PM, Peter Zijlstra wrote:
-> On Wed, Aug 20, 2025 at 10:30:28AM +0800, Dapeng Mi wrote:
->> When intel_pmu_drain_pebs_icl() is called to drain PEBS records, the
->> perf_event_overflow() could be called to process the last PEBS record.
+
+On 8/21/2025 5:57 PM, Neil Armstrong wrote:
+> On 21/08/2025 11:42, Dikshita Agarwal wrote:
 >>
->> While perf_event_overflow() could trigger the interrupt throttle and
->> stop all events of the group, like what the below call-chain shows.
 >>
->> perf_event_overflow()
->>   -> __perf_event_overflow()
->>     ->__perf_event_account_interrupt()
->>       -> perf_event_throttle_group()
->>         -> perf_event_throttle()
->>           -> event->pmu->stop()
->>             -> x86_pmu_stop()
+>> On 8/20/2025 10:36 PM, Neil Armstrong wrote:
+>>> Fix remove if firmware failed to load:
+>>> qcom-iris aa00000.video-codec: Direct firmware load for
+>>> qcom/vpu/vpu33_p4.mbn failed with error -2
+>>> qcom-iris aa00000.video-codec: firmware download failed
+>>> qcom-iris aa00000.video-codec: core init failed
+>>>
+>>> then:
+>>> $ echo aa00000.video-codec > /sys/bus/platform/drivers/qcom-iris/unbind
+>>>
+>>> Triggers:
+>>> genpd genpd:1:aa00000.video-codec: Runtime PM usage count underflow!
+>>> ------------[ cut here ]------------
+>>> video_cc_mvs0_clk already disabled
+>>> WARNING: drivers/clk/clk.c:1206 at clk_core_disable+0xa4/0xac, CPU#1:
+>>> sh/542
+>>> <snip>
+>>> pc : clk_core_disable+0xa4/0xac
+>>> lr : clk_core_disable+0xa4/0xac
+>>> <snip>
+>>> Call trace:
+>>>   clk_core_disable+0xa4/0xac (P)
+>>>   clk_disable+0x30/0x4c
+>>>   iris_disable_unprepare_clock+0x20/0x48 [qcom_iris]
+>>>   iris_vpu_power_off_hw+0x48/0x58 [qcom_iris]
+>>>   iris_vpu33_power_off_hardware+0x44/0x230 [qcom_iris]
+>>>   iris_vpu_power_off+0x34/0x84 [qcom_iris]
+>>>   iris_core_deinit+0x44/0xc8 [qcom_iris]
+>>>   iris_remove+0x20/0x48 [qcom_iris]
+>>>   platform_remove+0x20/0x30
+>>>   device_remove+0x4c/0x80
+>>> <snip>
+>>> ---[ end trace 0000000000000000 ]---
+>>> ------------[ cut here ]------------
+>>> video_cc_mvs0_clk already unprepared
+>>> WARNING: drivers/clk/clk.c:1065 at clk_core_unprepare+0xf0/0x110, CPU#2:
+>>> sh/542
+>>> <snip>
+>>> pc : clk_core_unprepare+0xf0/0x110
+>>> lr : clk_core_unprepare+0xf0/0x110
+>>> <snip>
+>>> Call trace:
+>>>   clk_core_unprepare+0xf0/0x110 (P)
+>>>   clk_unprepare+0x2c/0x44
+>>>   iris_disable_unprepare_clock+0x28/0x48 [qcom_iris]
+>>>   iris_vpu_power_off_hw+0x48/0x58 [qcom_iris]
+>>>   iris_vpu33_power_off_hardware+0x44/0x230 [qcom_iris]
+>>>   iris_vpu_power_off+0x34/0x84 [qcom_iris]
+>>>   iris_core_deinit+0x44/0xc8 [qcom_iris]
+>>>   iris_remove+0x20/0x48 [qcom_iris]
+>>>   platform_remove+0x20/0x30
+>>>   device_remove+0x4c/0x80
+>>> <snip>
+>>> ---[ end trace 0000000000000000 ]---
+>>> genpd genpd:0:aa00000.video-codec: Runtime PM usage count underflow!
+>>> ------------[ cut here ]------------
+>>> gcc_video_axi0_clk already disabled
+>>> WARNING: drivers/clk/clk.c:1206 at clk_core_disable+0xa4/0xac, CPU#4:
+>>> sh/542
+>>> <snip>
+>>> pc : clk_core_disable+0xa4/0xac
+>>> lr : clk_core_disable+0xa4/0xac
+>>> <snip>
+>>> Call trace:
+>>>   clk_core_disable+0xa4/0xac (P)
+>>>   clk_disable+0x30/0x4c
+>>>   iris_disable_unprepare_clock+0x20/0x48 [qcom_iris]
+>>>   iris_vpu33_power_off_controller+0x17c/0x428 [qcom_iris]
+>>>   iris_vpu_power_off+0x48/0x84 [qcom_iris]
+>>>   iris_core_deinit+0x44/0xc8 [qcom_iris]
+>>>   iris_remove+0x20/0x48 [qcom_iris]
+>>>   platform_remove+0x20/0x30
+>>>   device_remove+0x4c/0x80
+>>> <snip>
+>>> ------------[ cut here ]------------
+>>> gcc_video_axi0_clk already unprepared
+>>> WARNING: drivers/clk/clk.c:1065 at clk_core_unprepare+0xf0/0x110, CPU#4:
+>>> sh/542
+>>> <snip>
+>>> pc : clk_core_unprepare+0xf0/0x110
+>>> lr : clk_core_unprepare+0xf0/0x110
+>>> <snip>
+>>> Call trace:
+>>>   clk_core_unprepare+0xf0/0x110 (P)
+>>>   clk_unprepare+0x2c/0x44
+>>>   iris_disable_unprepare_clock+0x28/0x48 [qcom_iris]
+>>>   iris_vpu33_power_off_controller+0x17c/0x428 [qcom_iris]
+>>>   iris_vpu_power_off+0x48/0x84 [qcom_iris]
+>>>   iris_core_deinit+0x44/0xc8 [qcom_iris]
+>>>   iris_remove+0x20/0x48 [qcom_iris]
+>>>   platform_remove+0x20/0x30
+>>>   device_remove+0x4c/0x80
+>>> <snip>
+>>> ---[ end trace 0000000000000000 ]---
+>>>
+>>> Skip deinit if initialization never succeeded.
+>>>
+>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>> ---
+>>>   drivers/media/platform/qcom/iris/iris_core.c | 10 ++++++----
+>>>   1 file changed, 6 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/media/platform/qcom/iris/iris_core.c
+>>> b/drivers/media/platform/qcom/iris/iris_core.c
+>>> index
+>>> 0fa0a3b549a23877af57c9950a5892e821b9473a..8406c48d635b6eba0879396ce9f9ae2292743f09 100644
+>>> --- a/drivers/media/platform/qcom/iris/iris_core.c
+>>> +++ b/drivers/media/platform/qcom/iris/iris_core.c
+>>> @@ -15,10 +15,12 @@ void iris_core_deinit(struct iris_core *core)
+>>>       pm_runtime_resume_and_get(core->dev);
+>>>         mutex_lock(&core->lock);
+>>> -    iris_fw_unload(core);
+>>> -    iris_vpu_power_off(core);
+>>> -    iris_hfi_queues_deinit(core);
+>>> -    core->state = IRIS_CORE_DEINIT;
+>>> +    if (core->state != IRIS_CORE_DEINIT) {
+>>> +        iris_fw_unload(core);
+>>> +        iris_vpu_power_off(core);
+>>> +        iris_hfi_queues_deinit(core);
+>>> +        core->state = IRIS_CORE_DEINIT;
+>>> +    }
+>>>       mutex_unlock(&core->lock);
+>>>         pm_runtime_put_sync(core->dev);
+>>>
 >>
->> The side effect of stopping the events is that all corresponding event
->> pointers in cpuc->events[] array are cleared to NULL.
+>> The iris_core_deinit() API should ideally not be called when core->state is
+>> in IRIS_CORE_DEINIT. Better to handle this check in the caller itself.
+> 
+> Checking core->state in iris_remove() won't be protected by the core->lock,
+> so the check and call to iris_core_deinit() should be done _after_
+> unregistering
+> the v4l2 devices to make sure there's no more users of core.
+> 
+> As you want, I think my approach is simpler and don't change the state if
+> already in deinit state.
+
+Agree.
+
+Reviewed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+
+> 
+> Neil
+> 
 >>
->> Assume there are two PEBS events (event a and event b) in a group. When
->> intel_pmu_drain_pebs_icl() calls perf_event_overflow() to process the
->> last PEBS record of PEBS event a, interrupt throttle is triggered and
->> all pointers of event a and event b are cleared to NULL. Then
->> intel_pmu_drain_pebs_icl() tries to process the last PEBS record of
->> event b and encounters NULL pointer access.
->>
->> Since the left PEBS records have been processed when stopping the event,
->> check and skip to process the last PEBS record if cpuc->events[*] is
->> NULL.
->>
->> Reported-by: kernel test robot <oliver.sang@intel.com>
->> Closes: https://lore.kernel.org/oe-lkp/202507042103.a15d2923-lkp@intel.com
->> Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
->> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->> Tested-by: kernel test robot <oliver.sang@intel.com>
->> ---
->>  arch/x86/events/intel/ds.c | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->>
->> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
->> index c0b7ac1c7594..dcf29c099ad2 100644
->> --- a/arch/x86/events/intel/ds.c
->> +++ b/arch/x86/events/intel/ds.c
->> @@ -2663,6 +2663,16 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
->>  			continue;
->>  
->>  		event = cpuc->events[bit];
->> +		/*
->> +		 * perf_event_overflow() called by below __intel_pmu_pebs_last_event()
->> +		 * could trigger interrupt throttle and clear all event pointers of the
->> +		 * group in cpuc->events[] to NULL. So need to re-check if cpuc->events[*]
->> +		 * is NULL, if so it indicates the event has been throttled (stopped) and
->> +		 * the corresponding last PEBS records have been processed in stopping
->> +		 * event, don't need to process it again.
->> +		 */
->> +		if (!event)
->> +			continue;
->>  
->>  		__intel_pmu_pebs_last_event(event, iregs, regs, data, last[bit],
->>  					    counts[bit], setup_pebs_adaptive_sample_data);
->
-> So if this is due to __intel_pmu_pebs_last_event() calling into
-> perf_event_overflow(); then isn't intel_pmu_drain_pebs_nhm() similarly
-> affected?
->
-> And worse, the _nhm() version would loose all events for that counter,
-> not just the last.
-
-hmm, Yes. After double check, I suppose I made a mistake for the answer to
-Andi. It indeed has data loss since the "ds->pebs_index" is reset at the
-head of _nhm()/_icl() these drain_pebs helper instead of the end of the
-drain_pebs helper.  :(
-
-> I'm really thinking this isn't the right thing to do.
->
->
-> How about we audit the entirety of arch/x86/events/ for cpuc->events[]
-> usage and see if we can get away with changing x86_pmu_stop() to simply
-> not clearing that field.
-
-Checking current code, I suppose it's fine that we don't clear
-cpuc->events[] in x86_pmu_stop() since we already have another variable
-"cpuc->active_mask" which is used to indicate if the corresponding
-cpuc->events[*] is active. But in current code, the cpuc->active_mask is
-not always checked.
-
-So if we select not to clear cpuc->events[] in x86_pmu_stop(), then it's a
-must to check cpuc->active_mask before really accessing cpuc->events[]
-represented event. Maybe we can add an inline function got check this.
-
-bool inline x86_pmu_cntr_event_active(int idx)
-{
-    struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-
-    return cpuc->events[idx] && test_bit(idx, cpuc->active_mask);
-}
-
->
-> Or perhaps move the setting and clearing into x86_pmu_{add,del}() rather
-> than x86_pmu_{start,stop}(). After all, the latter don't affect the
-> counter placement, they just stop/start the event.
-
-IIUC, we could not move the setting into x86_pmu_add() from x86_pmu_stop()
-since the counter index is not finalized at x86_pmu_add() is called. The
-counter index could change for each adding a new event.
-
-
->
->
+>>> ---
+>>> base-commit: 5303936d609e09665deda94eaedf26a0e5c3a087
+>>> change-id: 20250820-topic-sm8x50-iris-remove-fix-76f86621d6ac
+>>>
+>>> Best regards,
+> 
 
