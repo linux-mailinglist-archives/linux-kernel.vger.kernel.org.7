@@ -1,232 +1,760 @@
-Return-Path: <linux-kernel+bounces-782586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 283FAB3226F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:51:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E02B32271
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85858688429
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:51:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDA2C1D634DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97D52C08CD;
-	Fri, 22 Aug 2025 18:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892002C08A2;
+	Fri, 22 Aug 2025 18:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RjEAWOvJ"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2082.outbound.protection.outlook.com [40.107.237.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3gNFLLIx"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40008299A90;
-	Fri, 22 Aug 2025 18:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755888689; cv=fail; b=JHl++kcOezy8Rvp1KP5yLVN7yYkxVeyi/luPakHa2nV51Rtoz1A53dDpGDyhyc4DZjVjnxv2zjLGfVKQAmxUBbNTlCtbH58E2c74ZMevBj2XdrIhwcuTt/9rCocKAitij55HcXme2tTV2t/q7wRXQRP9EVwOqtNjXAnxDlr8JwE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755888689; c=relaxed/simple;
-	bh=1rAnXX0H2ON1Lh20LfT2X+K0gIMJKJ2V63+5lj75nhk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kTS17zXqRFeictWaXxY9mXc5N8PWaEqaqpoJNgJ+YEIo9FMBH9EvKa03b+0twgQmBtssfpFBacLUQ6GE42w3/jIgGAMd6KYAixiXMLRN5mcqr/cS9eRs5lAfqByNy39AiYud1hl+J4bcbOXlhq131MpQzKDraEqAzWQ288SjBn8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RjEAWOvJ; arc=fail smtp.client-ip=40.107.237.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pTWsjEZ+/0EndzCwcvH9w6ArGbgEdDKdzl8eSaAz9xg9deOnQc8GD6vZfr57eVu6Bs3eIqxRb1/aKZVR8mQk87Vd42HkAZdR7FPEh5VJA7/+VANH6thE6t5o6NbjgL2dnmDtctI8CYRzq+M0F33TGcTxvuuzA8jnMV+zVHE+xyR5KQ39J/DTbRHlmguo9vtaeLQ35RRX2lG821oyXn2J5xZKnRm4uIesM3dTDf5UOLLVO3qXZzamVx6PcTv3y6ZpzvHWausFWi/jSXOgG0MykGgncousvTyAYgi3ixAd1HfwOq4mB+8fj+N9w9L6Mlmd2p3ZoB+SpHg6G5pBcz72fg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XqsAVqx2D9fPf18hSHoZHOjMqFsEIFJD0EpmkHZBGjU=;
- b=c27a7TbfigbI4OkO9I8N9C2JO/JOKOvX1ua9M5DKDv2HlqcBo2Y60l2KGgUMt324hS/s14TETlul9zfFaTxIJ49oTaBfsp/pXg+wUhpWgf0BaEV96nG3JLOeNv4ox8WP/v3UAPppt/vS3WYqva09z/J6epa/xrf8Xb87p4DUIQpARhkro8GypH7dzeTza4AC2VdylJfwMW/p1/JSBMHVWAiV4ueuHq+Z33ckc+uYJT1EuI411KVeHcQSD/a8jqEca/jdpwrvj5uBqiGhX3eF0pDW58+A1PzcFTmtnM6IOmXaedeFkIVPpcxycPVrGiyOsjoTgcsm9l10gC9iwp9U9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=lists.linux.dev smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XqsAVqx2D9fPf18hSHoZHOjMqFsEIFJD0EpmkHZBGjU=;
- b=RjEAWOvJg8Fu0AGHqv+UtRlOiU6BrBAXL0eiEP9HETxmxyKg1FirCZ3DCqgr2cNRpIfkSFWJ5Tcuvwz4ZuvfGBbaorj1SbO/ohnpal6UNvxe+M2esQ6e1kLOf+j16B3QpDgZ9HBBt+B4ICzLRDA+RBPk8M9EStpY8PpHC4E+BgTk0yfYDtEhXzh0b+GriCuEgVVIrkfM6Ex8ybGYWxbJcRvtwvrt41NhRhhCdwK1PkSaPrGjmeyhia6RiKHDaSLLE8NulPDTtQtAKIg1UHce/nDRzUrnoGdL7kiSAIrKkkD1YChuuL4JODJbaB1gDrNaMWlJBB4zPksOjW+AkUW+zg==
-Received: from MW4PR02CA0003.namprd02.prod.outlook.com (2603:10b6:303:16d::30)
- by DS4PR12MB9658.namprd12.prod.outlook.com (2603:10b6:8:280::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Fri, 22 Aug
- 2025 18:51:24 +0000
-Received: from CO1PEPF000042AA.namprd03.prod.outlook.com
- (2603:10b6:303:16d:cafe::92) by MW4PR02CA0003.outlook.office365.com
- (2603:10b6:303:16d::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.18 via Frontend Transport; Fri,
- 22 Aug 2025 18:51:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1PEPF000042AA.mail.protection.outlook.com (10.167.243.39) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.8 via Frontend Transport; Fri, 22 Aug 2025 18:51:23 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 22 Aug
- 2025 11:51:02 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 22 Aug
- 2025 11:51:01 -0700
-Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Fri, 22 Aug 2025 11:50:59 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D24929B777
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755888663; cv=none; b=s2vwzyR127jkm04BxyiZooUExf9/m7L/JSS9mSTrz773QmoDkzfeaZYrztOgkHai9vVFhIrLDrz25OEb6Uz/laeTQl67qseqPrG1WtcKy+inyo0ooE7JfQtoeNz/mei11CR6ANbfT0qDKHm71CxQ5RANtIZANPn0T1mggwp63h0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755888663; c=relaxed/simple;
+	bh=62RHWmEFghr2hDCfzymeVlhMTE2zu2Szcc94M5ovaIg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=H8MyCGNRGrLICqD3saJWbDeVmT+PyETlloI9v9yoY7PDwRM/HwzneGlpOm7hSUi9EyJwsKzge/PJkFVZRyO5RndQuXH9qw4uHA7Zqqt8HSGuP4ZGL7RZEz9EzfNnNXzYvC5zxJBDDFO/HD9JcPkHpVVtWS+NLCm7nTNVBRWrGzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3gNFLLIx; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2461c537540so20769685ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:51:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755888660; x=1756493460; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:user-agent:references:mime-version
+         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RNJVbyMASg6OaHdYKLJRD6s++8dLw9B8FspS4kM0ZvA=;
+        b=3gNFLLIxR2FVDvYs5oa4r9pjzVZgeoK3aZD0oarQ4YtBFsjwb5j+2o4MePlfHFHTKm
+         vtFdB/utxcG3YSQUf8hh1n0EjyZCxoQaR7l10u8IRF2YR+zwmrfacRr/gpcM6EbQYUYu
+         LMIpbe+c3ZwNLp/At3REHqtVjZsZWl+9Swt3unOwn2XnB7vkvwBrdEjD+7iXhxmjgPS2
+         +xzi5K+WQmhuNDzVAopHCyT6JQtcWz/SXBMj0wBqGwB13pWcuQnJpREyZ1CpeEbfsJV1
+         vIiLQLGdDcog9SHUNV3vL8QncOIWodYeeq0dGysY3EeVikgMzXT/L1MeAIbVGT/4fUQL
+         WtTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755888660; x=1756493460;
+        h=cc:to:from:subject:message-id:user-agent:references:mime-version
+         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RNJVbyMASg6OaHdYKLJRD6s++8dLw9B8FspS4kM0ZvA=;
+        b=k4ALErGTGiO5WxZQ9eQLI4kgTdI0ceVcXShBauFwkagLSnbM9xWNufsSkQJHCGR72I
+         WLdJVTczJt8C2LEB1VfY4VixKo4dDFnnMaa9GFdopT+owWn3yNr20sgs+9RK5OoMVmBO
+         6FN4UC7v7uE+Iv2PL25u8+m66KSC+3qubnsMwrYo4nFCxITQ/gvjT+hpAheKcv8dfA/6
+         sxRJFTya6wxAZthcO6HbXADOAAM1VXMWYw/ipMOPkvBRbPoVquEv+OzY1F58E4q31aJN
+         KocIayN7HDJ+w7Zz/LBPslWlCppMXVa6V3rjn6s0CqqXE5RQihKg2OhvEoFN4JD1boMl
+         U2Yg==
+X-Gm-Message-State: AOJu0Yxp1E/nQdkY+O9q74ofX8cbn/10/gjwYZqoVaUGERGu04R5Obw7
+	CQpt6MqoemG6+OoLhNGF+LFjoCnma/EF7yTV082YNluGcC/sto0kP6r+XDjM1Lg4AlnrczTtS3m
+	9H4kVy5KNhw==
+X-Google-Smtp-Source: AGHT+IE/KR/xuGrSTbpJUep5kLn83DL4hYVCuTHtTK7xSj3aHgOzXeIVcRC0hElos+5tRp1/t7TC/LfMb1/9
+X-Received: from plrx6.prod.google.com ([2002:a17:902:b406:b0:240:229f:5b97])
+ (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d2d1:b0:240:48f4:40f7
+ with SMTP id d9443c01a7336-2462ef423e2mr53447575ad.39.1755888659925; Fri, 22
+ Aug 2025 11:50:59 -0700 (PDT)
 Date: Fri, 22 Aug 2025 11:50:58 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: Ethan Zhao <etzhao1900@gmail.com>, <robin.murphy@arm.com>,
-	<joro@8bytes.org>, <bhelgaas@google.com>, <will@kernel.org>,
-	<robin.clark@oss.qualcomm.com>, <yong.wu@mediatek.com>,
-	<matthias.bgg@gmail.com>, <angelogioacchino.delregno@collabora.com>,
-	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
-	<rafael@kernel.org>, <lenb@kernel.org>, <kevin.tian@intel.com>,
-	<yi.l.liu@intel.com>, <baolu.lu@linux.intel.com>,
-	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<patches@lists.linux.dev>, <pjaroszynski@nvidia.com>, <vsethi@nvidia.com>,
-	<helgaas@kernel.org>
-Subject: Re: [PATCH v3 5/5] pci: Suspend iommu function prior to resetting a
- device
-Message-ID: <aKi8EqEp1DKG+h38@Asurada-Nvidia>
-References: <cover.1754952762.git.nicolinc@nvidia.com>
- <3749cd6a1430ac36d1af1fadaa4d90ceffef9c62.1754952762.git.nicolinc@nvidia.com>
- <550635db-00ce-410e-add0-77c1a75adb11@gmail.com>
- <aKTzq6SLGB22Xq5b@Asurada-Nvidia>
- <20250821130741.GL802098@nvidia.com>
- <aKgPr3mUcIsd1iuT@Asurada-Nvidia>
- <20250822140821.GE1311579@nvidia.com>
+In-Reply-To: <bad4609b-4427-48ff-80e9-70cb3066253e@huaweicloud.com> (Chen
+ Ridong's message of "Fri, 22 Aug 2025 15:19:26 +0800")
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250822140821.GE1311579@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042AA:EE_|DS4PR12MB9658:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2c9d1356-26f5-4af7-21e8-08dde1ace464
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|7416014|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?F9NqNtOQk/XokkfZEOw6E09rWDMnPzWrkLZ6Zy26tNzb2zWG+yZ4ZOOGIrRy?=
- =?us-ascii?Q?OOVS2vR4nr+G1oykLPvNivO7z6tk1VXYdCJ1W18Bl/pdQiLWYKMpn3rPAyrm?=
- =?us-ascii?Q?uaC6jKfNyV/fZnNxixvPafcSanajs0v6R09XpmTqhknpqolCjSX4CU7tpPGk?=
- =?us-ascii?Q?oSKOTdHpk/VbaqFmPqpAsyKgR2AnNBP1s5rB3gNFhuKd2ZigIhztk4kcbHeU?=
- =?us-ascii?Q?OVw3HQoBtfXHjyG3b/dZdqLsLewLy662iLMl1sPof8pehXLKizpbVpH38Eed?=
- =?us-ascii?Q?1Mw/4RGVExlN9DFw1AsZADwsaTuTbveoG5mY9D67fhWqeok+kP94xTPHm26+?=
- =?us-ascii?Q?hJyxjqpviUuHRH2uinFZ8u3yrk8ARIm3WfVMI8PCiO8HBJ4qnUK624XmiYa9?=
- =?us-ascii?Q?jK2+KEtGG0ISahiZb21ThzLHYb1yeCeJ2Q3InPDinCOYXxRe5jUJekJq5jxR?=
- =?us-ascii?Q?TX7L27YG7IWbrhhg6R7wOMrgO+0UL638+CiQEzHfhCF6k8hpwoP0YeM8nkl5?=
- =?us-ascii?Q?w6u0rgJNaAG9tfZL/ayj8apoNyBgh9FDhw3kkFBBYJ7kmSde98fHd6QqFB8C?=
- =?us-ascii?Q?hP9mNsfr2MP3g04ziDFRHFGZgpGOtsVV/YRcVEznkCLpmVU3cTHazsffRlsm?=
- =?us-ascii?Q?cLuYSyUBz3e1ApMnrsTQiq0vwwX5I6Pw8NeL2L756Fmute1bWDPcsK8Vb+VK?=
- =?us-ascii?Q?BvH9scCS/MmC5zHUpP7yYy7jgknbU/oSWCmxhvRoUT3YrEjQEYALeDCVPlV9?=
- =?us-ascii?Q?4CghCW1RdptgsTmxzQ2tcctLOUYKLww6GZgx6yD+EzCmqcU5p1BMQ1GsiLJ1?=
- =?us-ascii?Q?wRUUtFfzH+lAoSqoOwOXxqS5EO7PPttMbQoKsiXy7TZ+vYBben/2fFIFg7yn?=
- =?us-ascii?Q?LhjZEG8UdWJVFZdFCyMmVWSoWovBtJCZ0MX49nu2lNxPKfzyMFIy45WjNBQQ?=
- =?us-ascii?Q?fniVgHXEiK+Z//uQt41ySM0rRAIE6gkQna/qIn71Q1rzjZoY4F30bKuZ4OK6?=
- =?us-ascii?Q?Xn0PHAzPmhjLQ3JL43pam/dIfu3UPm1zh9cE24Vn+Y53WfrN/QvptCGxUKvu?=
- =?us-ascii?Q?UBte+0EYMC6QFf+b9Bebp7bgW4rnURFPlJz1JJ8+zkixrIMNdrLqXD99eDSo?=
- =?us-ascii?Q?qzmWtmeQZHAInMnBA7BMhtVoa/jxuKMe/BKqSjuhJ7FmYbjtygKyYpqHBnFY?=
- =?us-ascii?Q?ne9eeGVNIaSG6JVMcyMmSH7OriOQI26hs2P+vm1zXvAQf4SphbH5BPuZcojq?=
- =?us-ascii?Q?5FH7h5pt61bWEWF4sWawU0I0dgakZHD8gpw7RjC7HKWldEqJjWpFw9WP61Oe?=
- =?us-ascii?Q?NDZSqKHn2sLb54zOayn6YfsCbZYV72yskXUjBU8ehdWjrZdTquFChsU/Av9e?=
- =?us-ascii?Q?FgL8e1NbhFB6U8RihNEASIrZBZEklNQH9xYtpvUVNU2fJCSWgp4UtAlNMlyF?=
- =?us-ascii?Q?qNqZqSIzERLtTvX478NZ5iSq9y4llOn/7i/oplz+MZm44nH4Gz7Y/gdqDk89?=
- =?us-ascii?Q?qka5toPAmz3+MnqmSNI9mGWa9TN9WeYWtDY8?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 18:51:23.7474
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c9d1356-26f5-4af7-21e8-08dde1ace464
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000042AA.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR12MB9658
+Mime-Version: 1.0
+References: <20250822013749.3268080-6-ynaffit@google.com> <20250822013749.3268080-8-ynaffit@google.com>
+ <bad4609b-4427-48ff-80e9-70cb3066253e@huaweicloud.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Message-ID: <dbx8sehj8a25.fsf@ynaffit-andsys.c.googlers.com>
+Subject: Re: [PATCH v4 2/2] cgroup: selftests: Add tests for freezer time
+From: Tiffany Yang <ynaffit@google.com>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: linux-kernel@vger.kernel.org, John Stultz <jstultz@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	"Michal =?utf-8?Q?Koutn=C3=BD?=" <mkoutny@suse.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Chen Ridong <chenridong@huawei.com>, 
+	kernel-team@android.com, Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
+	cgroups@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 
-On Fri, Aug 22, 2025 at 11:08:21AM -0300, Jason Gunthorpe wrote:
-> On Thu, Aug 21, 2025 at 11:35:27PM -0700, Nicolin Chen wrote:
-> > On Thu, Aug 21, 2025 at 10:07:41AM -0300, Jason Gunthorpe wrote:
-> > > On Tue, Aug 19, 2025 at 02:59:07PM -0700, Nicolin Chen wrote:
-> > > >  c) multiple pci_devs with their own RIDs
-> > > > 
-> > > >     In this case, either FLR or IOMMU only resets the PF. That
-> > > >     being said, VFs might be affected since PF is resetting?
-> > > >     If there is an issue, I don't see it coming from the IOMMU-
-> > > >     level reset..
-> > > 
-> > > It would still allow the ATS issue from the VF side. The VF could be
-> > > pushing an invalidation during the PF reset that will get clobbered.
-> > > 
-> > > I haven't fully checked but I think Linux doesn't really (easially?)
-> > > allow resetting a PF while a VF is present...
-> > 
-> > Hmm, what if the PF encountered some fault? Does Linux have a choice
-> > not to reset PF?
-> 
-> Upon more reflect I guess outside VFIO I seem to remember the SRIOV
-> reset to the PFs will clobber the VFs too and then restore the SRIOV
-> configuration in config space to bring them back.
+Thanks for taking the time to look at these patches!
 
-Yea, I see ci_restore_iov_state() called in pci_restore_state().
+Chen Ridong <chenridong@huaweicloud.com> writes:
 
-> > > Arguably if the PF is reset the VFs should have their translations
-> > > blocked too.
-> > 
-> > Yea, that sounds plausible to me. But, prior to that (an IOMMU-level
-> > reset), should VFs be first reset at the PCI level?
-> 
-> PF reset of a SRIOV PF disables the VFs and effectively resets them
-> already.
+> On 2025/8/22 9:37, Tiffany Yang wrote:
+>> Test cgroup v2 freezer time stat. Freezer time accounting should
+>> be independent of other cgroups in the hierarchy and should increase
+>> iff a cgroup is CGRP_FREEZE (regardless of whether it reaches
+>> CGRP_FROZEN).
 
-Yea, I was expecting something like a SW reset routine, for each VF,
-which would invoke iommu_dev_reset_prepare/_done() individually.
+...
+>> +	if (curr < 0) {
+>> +		ret = KSFT_SKIP;
+>> +		goto cleanup;
+>> +	}
+>> +	if (curr > 0) {
+>> +		debug("Expect time (%ld) to be 0\n", curr);
+>> +		goto cleanup;
+>> +	}
+>> +
 
-Without that, iommu_dev_reset_prepare/_done() has to iterate all VFs
-internally and block them.
+> Perhaps we can simply use if (curr != 0) for the condition?
 
-> But reaching out to mangle the translation of the VFs means you do
-> have to take care not to disrupt anything else the VF owning driver is
-> doing since it is fully unaware of this. Ie it could be reattaching to
-> something else concurrently.
 
-Hmm, and this is tricky now..
+Here we have 2 separate conditions because in the case where curr < 0,
+it means that the interface is not available and we should skip this
+test instead of failing it. In the case where curr > 0, the feature is
+not working correctly, and the test should fail as a result.
 
-The current version allows deferring the concurrent attach during a
-reset. But, as Kevin pointed out, we may have no choice but to fail
-any concurrent attach with -EBUSY, because a deferred attach might
-fail due to incompatibility triggering a WARN_ON only in done().
+>> +	if (cg_freeze_nowait(cgroup, true))
+>> +		goto cleanup;
+>> +
+>> +	/*
+>> +	 * 2) Sleep for 1000 us. Check that the freeze time is at
+>> +	 *    least 1000 us.
+>> +	 */
+>> +	usleep(1000);
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr < 1000) {
+>> +		debug("Expect time (%ld) to be at least 1000 us\n",
+>> +		      curr);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	/*
+>> +	 * 3) Unfreeze the cgroup. Check that the freeze time is
+>> +	 *    larger than at 2).
+>> +	 */
+>> +	if (cg_freeze_nowait(cgroup, false))
+>> +		goto cleanup;
+>> +	prev = curr;
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr <= prev) {
+>> +		debug("Expect time (%ld) to be more than previous check (%ld)\n",
+>> +		      curr, prev);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	/*
+>> +	 * 4) Check the freeze time again to ensure that it has not
+>> +	 *    changed.
+>> +	 */
+>> +	prev = curr;
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr != prev) {
+>> +		debug("Expect time (%ld) to be unchanged from previous check (%ld)\n",
+>> +		      curr, prev);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	ret = KSFT_PASS;
+>> +
+>> +cleanup:
+>> +	if (cgroup)
+>> +		cg_destroy(cgroup);
+>> +	free(cgroup);
+>> +	return ret;
+>> +}
+>> +
+>> +/*
+>> + * A simple test for cgroup freezer time accounting. This test follows
+>> + * the same flow as test_cgfreezer_time_empty, but with a single process
+>> + * in the cgroup.
+>> + */
+>> +static int test_cgfreezer_time_simple(const char *root)
+>> +{
+>> +	int ret = KSFT_FAIL;
+>> +	char *cgroup = NULL;
+>> +	long prev, curr;
+>> +
+>> +	cgroup = cg_name(root, "cg_time_test_simple");
+>> +	if (!cgroup)
+>> +		goto cleanup;
+>> +
+>> +	/*
+>> +	 * 1) Create a cgroup and check that its freeze time is 0.
+>> +	 */
+>> +	if (cg_create(cgroup))
+>> +		goto cleanup;
+>> +
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr < 0) {
+>> +		ret = KSFT_SKIP;
+>> +		goto cleanup;
+>> +	}
+>> +	if (curr > 0) {
+>> +		debug("Expect time (%ld) to be 0\n", curr);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	/*
+>> +	 * 2) Populate the cgroup with one child and check that the
+>> +	 *    freeze time is still 0.
+>> +	 */
+>> +	cg_run_nowait(cgroup, child_fn, NULL);
+>> +	prev = curr;
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr > prev) {
+>> +		debug("Expect time (%ld) to be 0\n", curr);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	if (cg_freeze_nowait(cgroup, true))
+>> +		goto cleanup;
+>> +
+>> +	/*
+>> +	 * 3) Sleep for 1000 us. Check that the freeze time is at
+>> +	 *    least 1000 us.
+>> +	 */
+>> +	usleep(1000);
+>> +	prev = curr;
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr < 1000) {
+>> +		debug("Expect time (%ld) to be at least 1000 us\n",
+>> +		      curr);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	/*
+>> +	 * 4) Unfreeze the cgroup. Check that the freeze time is
+>> +	 *    larger than at 3).
+>> +	 */
+>> +	if (cg_freeze_nowait(cgroup, false))
+>> +		goto cleanup;
+>> +	prev = curr;
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr <= prev) {
+>> +		debug("Expect time (%ld) to be more than previous check (%ld)\n",
+>> +		      curr, prev);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	/*
+>> +	 * 5) Sleep for 1000 us. Check that the freeze time is the
+>> +	 *    same as at 4).
+>> +	 */
+>> +	usleep(1000);
+>> +	prev = curr;
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr != prev) {
+>> +		debug("Expect time (%ld) to be unchanged from previous check (%ld)\n",
+>> +		      curr, prev);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	ret = KSFT_PASS;
+>> +
+>> +cleanup:
+>> +	if (cgroup)
+>> +		cg_destroy(cgroup);
+>> +	free(cgroup);
+>> +	return ret;
+>> +}
+>> +
+>> +/*
+>> + * Test that freezer time accounting works as expected, even while we're
+>> + * populating a cgroup with processes.
+>> + */
+>> +static int test_cgfreezer_time_populate(const char *root)
+>> +{
+>> +	int ret = KSFT_FAIL;
+>> +	char *cgroup = NULL;
+>> +	long prev, curr;
+>> +	int i;
+>> +
+>> +	cgroup = cg_name(root, "cg_time_test_populate");
+>> +	if (!cgroup)
+>> +		goto cleanup;
+>> +
+>> +	if (cg_create(cgroup))
+>> +		goto cleanup;
+>> +
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr < 0) {
+>> +		ret = KSFT_SKIP;
+>> +		goto cleanup;
+>> +	}
+>> +	if (curr > 0) {
+>> +		debug("Expect time (%ld) to be 0\n", curr);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	/*
+>> +	 * 1) Populate the cgroup with 100 processes. Check that
+>> +	 *    the freeze time is 0.
+>> +	 */
+>> +	for (i = 0; i < 100; i++)
+>> +		cg_run_nowait(cgroup, child_fn, NULL);
+>> +	prev = curr;
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr != prev) {
+>> +		debug("Expect time (%ld) to be 0\n", curr);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	/*
+>> +	 * 2) Wait for the group to become fully populated. Check
+>> +	 *    that the freeze time is 0.
+>> +	 */
+>> +	if (cg_wait_for_proc_count(cgroup, 100))
+>> +		goto cleanup;
+>> +	prev = curr;
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr != prev) {
+>> +		debug("Expect time (%ld) to be 0\n", curr);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	/*
+>> +	 * 3) Freeze the cgroup and then populate it with 100 more
+>> +	 *    processes. Check that the freeze time continues to grow.
+>> +	 */
+>> +	if (cg_freeze_nowait(cgroup, true))
+>> +		goto cleanup;
+>> +	prev = curr;
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr <= prev) {
+>> +		debug("Expect time (%ld) to be more than previous check (%ld)\n",
+>> +		      curr, prev);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	for (i = 0; i < 100; i++)
+>> +		cg_run_nowait(cgroup, child_fn, NULL);
+>> +	prev = curr;
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr <= prev) {
+>> +		debug("Expect time (%ld) to be more than previous check (%ld)\n",
+>> +		      curr, prev);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	/*
+>> +	 * 4) Wait for the group to become fully populated. Check
+>> +	 *    that the freeze time is larger than at 3).
+>> +	 */
+>> +	if (cg_wait_for_proc_count(cgroup, 200))
+>> +		goto cleanup;
+>> +	prev = curr;
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr <= prev) {
+>> +		debug("Expect time (%ld) to be more than previous check (%ld)\n",
+>> +		      curr, prev);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	/*
+>> +	 * 5) Unfreeze the cgroup. Check that the freeze time is
+>> +	 *    larger than at 4).
+>> +	 */
+>> +	if (cg_freeze_nowait(cgroup, false))
+>> +		goto cleanup;
+>> +	prev = curr;
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr <= prev) {
+>> +		debug("Expect time (%ld) to be more than previous check (%ld)\n",
+>> +		      curr, prev);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	/*
+>> +	 * 6) Kill the processes. Check that the freeze time is the
+>> +	 *    same as it was at 5).
+>> +	 */
+>> +	if (cg_killall(cgroup))
+>> +		goto cleanup;
+>> +	prev = curr;
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr != prev) {
+>> +		debug("Expect time (%ld) to be unchanged from previous check (%ld)\n",
+>> +		      curr, prev);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	/*
+>> +	 * 7) Freeze and unfreeze the cgroup. Check that the freeze
+>> +	 *    time is larger than it was at 6).
+>> +	 */
+>> +	if (cg_freeze_nowait(cgroup, true))
+>> +		goto cleanup;
+>> +	if (cg_freeze_nowait(cgroup, false))
+>> +		goto cleanup;
+>> +	prev = curr;
+>> +	curr = cg_check_freezetime(cgroup);
+>> +	if (curr <= prev) {
+>> +		debug("Expect time (%ld) to be more than previous check (%ld)\n",
+>> +		      curr, prev);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	ret = KSFT_PASS;
+>> +
+>> +cleanup:
+>> +	if (cgroup)
+>> +		cg_destroy(cgroup);
+>> +	free(cgroup);
+>> +	return ret;
+>> +}
+>> +
+>> +/*
+>> + * Test that frozen time for a cgroup continues to work as expected,
+>> + * even as processes are migrated. Frozen cgroup A's freeze time should
+>> + * continue to increase and running cgroup B's should stay 0.
+>> + */
+>> +static int test_cgfreezer_time_migrate(const char *root)
+>> +{
+>> +	long prev_A, curr_A, curr_B;
+>> +	char *cgroup[2] = {0};
+>> +	int ret = KSFT_FAIL;
+>> +	int pid;
+>> +
+>> +	cgroup[0] = cg_name(root, "cg_time_test_migrate_A");
+>> +	if (!cgroup[0])
+>> +		goto cleanup;
+>> +
+>> +	cgroup[1] = cg_name(root, "cg_time_test_migrate_B");
+>> +	if (!cgroup[1])
+>> +		goto cleanup;
+>> +
+>> +	if (cg_create(cgroup[0]))
+>> +		goto cleanup;
+>> +
+>> +	if (cg_check_freezetime(cgroup[0]) < 0) {
+>> +		ret = KSFT_SKIP;
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	if (cg_create(cgroup[1]))
+>> +		goto cleanup;
+>> +
+>> +	pid = cg_run_nowait(cgroup[0], child_fn, NULL);
+>> +	if (pid < 0)
+>> +		goto cleanup;
+>> +
+>> +	if (cg_wait_for_proc_count(cgroup[0], 1))
+>> +		goto cleanup;
+>> +
+>> +	curr_A = cg_check_freezetime(cgroup[0]);
+>> +	if (curr_A) {
+>> +		debug("Expect time (%ld) to be 0\n", curr_A);
+>> +		goto cleanup;
+>> +	}
+>> +	curr_B = cg_check_freezetime(cgroup[1]);
+>> +	if (curr_B) {
+>> +		debug("Expect time (%ld) to be 0\n", curr_B);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	/*
+>> +	 * Freeze cgroup A.
+>> +	 */
+>> +	if (cg_freeze_wait(cgroup[0], true))
+>> +		goto cleanup;
+>> +	prev_A = curr_A;
+>> +	curr_A = cg_check_freezetime(cgroup[0]);
+>> +	if (curr_A <= prev_A) {
+>> +		debug("Expect time (%ld) to be > 0\n", curr_A);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	/*
+>> +	 * Migrate from A (frozen) to B (running).
+>> +	 */
+>> +	if (cg_enter(cgroup[1], pid))
+>> +		goto cleanup;
+>> +
+>> +	usleep(1000);
+>> +	curr_B = cg_check_freezetime(cgroup[1]);
+>> +	if (curr_B) {
+>> +		debug("Expect time (%ld) to be 0\n", curr_B);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	prev_A = curr_A;
+>> +	curr_A = cg_check_freezetime(cgroup[0]);
+>> +	if (curr_A <= prev_A) {
+>> +		debug("Expect time (%ld) to be more than previous check (%ld)\n",
+>> +		      curr_A, prev_A);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	ret = KSFT_PASS;
+>> +
+>> +cleanup:
+>> +	if (cgroup[0])
+>> +		cg_destroy(cgroup[0]);
+>> +	free(cgroup[0]);
+>> +	if (cgroup[1])
+>> +		cg_destroy(cgroup[1]);
+>> +	free(cgroup[1]);
+>> +	return ret;
+>> +}
+>> +
+>> +/*
+>> + * The test creates a cgroup and freezes it. Then it creates a child  
+>> cgroup.
+>> + * After that it checks that the child cgroup has a non-zero freeze time
+>> + * that is less than the parent's. Next, it freezes the child, unfreezes
+>> + * the parent, and sleeps. Finally, it checks that the child's freeze
+>> + * time has grown larger than the parent's.
+>> + */
+>> +static int test_cgfreezer_time_parent(const char *root)
+>> +{
+>> +	char *parent, *child = NULL;
+>> +	int ret = KSFT_FAIL;
+>> +	long ptime, ctime;
+>> +
+>> +	parent = cg_name(root, "cg_test_parent_A");
+>> +	if (!parent)
+>> +		goto cleanup;
+>> +
+>> +	child = cg_name(parent, "cg_test_parent_B");
+>> +	if (!child)
+>> +		goto cleanup;
+>> +
+>> +	if (cg_create(parent))
+>> +		goto cleanup;
+>> +
+>> +	if (cg_check_freezetime(parent) < 0) {
+>> +		ret = KSFT_SKIP;
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	if (cg_freeze_wait(parent, true))
+>> +		goto cleanup;
+>> +
+>> +	usleep(1000);
+>> +	if (cg_create(child))
+>> +		goto cleanup;
+>> +
+>> +	if (cg_check_frozen(child, true))
+>> +		goto cleanup;
+>> +
+>> +	/*
+>> +	 * Since the parent was frozen the entire time the child cgroup
+>> +	 * was being created, we expect the parent's freeze time to be
+>> +	 * larger than the child's.
+>> +	 *
+>> +	 * Ideally, we would be able to check both times simultaneously,
+>> +	 * but here we get the child's after we get the parent's.
+>> +	 */
+>> +	ptime = cg_check_freezetime(parent);
+>> +	ctime = cg_check_freezetime(child);
+>> +	if (ptime <= ctime) {
+>> +		debug("Expect ptime (%ld) > ctime (%ld)\n", ptime, ctime);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	if (cg_freeze_nowait(child, true))
+>> +		goto cleanup;
+>> +
+>> +	if (cg_freeze_wait(parent, false))
+>> +		goto cleanup;
+>> +
+>> +	if (cg_check_frozen(child, true))
+>> +		goto cleanup;
+>> +
+>> +	usleep(100000);
+>> +
+>> +	ctime = cg_check_freezetime(child);
+>> +	ptime = cg_check_freezetime(parent);
+>> +
+>> +	if (ctime <= ptime) {
+>> +		debug("Expect ctime (%ld) > ptime (%ld)\n", ctime, ptime);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	ret = KSFT_PASS;
+>> +
+>> +cleanup:
+>> +	if (child)
+>> +		cg_destroy(child);
+>> +	free(child);
+>> +	if (parent)
+>> +		cg_destroy(parent);
+>> +	free(parent);
+>> +	return ret;
+>> +}
+>> +
+>> +/*
+>> + * The test creates a parent cgroup and a child cgroup. Then, it freezes
+>> + * the child and checks that the child's freeze time is greater than the
+>> + * parent's, which should be zero.
+>> + */
+>> +static int test_cgfreezer_time_child(const char *root)
+>> +{
+>> +	char *parent, *child = NULL;
+>> +	int ret = KSFT_FAIL;
+>> +	long ptime, ctime;
+>> +
+>> +	parent = cg_name(root, "cg_test_child_A");
+>> +	if (!parent)
+>> +		goto cleanup;
+>> +
+>> +	child = cg_name(parent, "cg_test_child_B");
+>> +	if (!child)
+>> +		goto cleanup;
+>> +
+>> +	if (cg_create(parent))
+>> +		goto cleanup;
+>> +
+>> +	if (cg_check_freezetime(parent) < 0) {
+>> +		ret = KSFT_SKIP;
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	if (cg_create(child))
+>> +		goto cleanup;
+>> +
+>> +	if (cg_freeze_wait(child, true))
+>> +		goto cleanup;
+>> +
+>> +	ctime = cg_check_freezetime(child);
+>> +	ptime = cg_check_freezetime(parent);
+>> +	if (ptime != 0) {
+>> +		debug("Expect ptime (%ld) to be 0\n", ptime);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	if (ctime <= ptime) {
+>> +		debug("Expect ctime (%ld) <= ptime (%ld)\n", ctime, ptime);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	ret = KSFT_PASS;
+>> +
+>> +cleanup:
+>> +	if (child)
+>> +		cg_destroy(child);
+>> +	free(child);
+>> +	if (parent)
+>> +		cg_destroy(parent);
+>> +	free(parent);
+>> +	return ret;
+>> +}
+>> +
+>> +/*
+>> + * The test creates the following hierarchy:
+>> + *    A
+>> + *    |
+>> + *    B
+>> + *    |
+>> + *    C
+>> + *
+>> + * Then it freezes the cgroups in the order C, B, A.
+>> + * Then it unfreezes the cgroups in the order A, B, C.
+>> + * Then it checks that C's freeze time is larger than B's and
+>> + * that B's is larger than A's.
+>> + */
+>> +static int test_cgfreezer_time_nested(const char *root)
+>> +{
+>> +	char *cgroup[3] = {0};
+>> +	int ret = KSFT_FAIL;
+>> +	long time[3] = {0};
+>> +	int i;
+>> +
+>> +	cgroup[0] = cg_name(root, "cg_test_time_A");
+>> +	if (!cgroup[0])
+>> +		goto cleanup;
+>> +
+>> +	cgroup[1] = cg_name(cgroup[0], "B");
+>> +	if (!cgroup[1])
+>> +		goto cleanup;
+>> +
+>> +	cgroup[2] = cg_name(cgroup[1], "C");
+>> +	if (!cgroup[2])
+>> +		goto cleanup;
+>> +
+>> +	if (cg_create(cgroup[0]))
+>> +		goto cleanup;
+>> +
+>> +	if (cg_check_freezetime(cgroup[0]) < 0) {
+>> +		ret = KSFT_SKIP;
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	if (cg_create(cgroup[1]))
+>> +		goto cleanup;
+>> +
+>> +	if (cg_create(cgroup[2]))
+>> +		goto cleanup;
+>> +
+>> +	if (cg_freeze_nowait(cgroup[2], true))
+>> +		goto cleanup;
+>> +
+>> +	if (cg_freeze_nowait(cgroup[1], true))
+>> +		goto cleanup;
+>> +
+>> +	if (cg_freeze_nowait(cgroup[0], true))
+>> +		goto cleanup;
+>> +
+>> +	usleep(1000);
+>> +
+>> +	if (cg_freeze_nowait(cgroup[0], false))
+>> +		goto cleanup;
+>> +
+>> +	if (cg_freeze_nowait(cgroup[1], false))
+>> +		goto cleanup;
+>> +
+>> +	if (cg_freeze_nowait(cgroup[2], false))
+>> +		goto cleanup;
+>> +
+>> +	time[2] = cg_check_freezetime(cgroup[2]);
+>> +	time[1] = cg_check_freezetime(cgroup[1]);
+>> +	time[0] = cg_check_freezetime(cgroup[0]);
+>> +
+>> +	if (time[2] <= time[1]) {
+>> +		debug("Expect C's time (%ld) > B's time (%ld)", time[2], time[1]);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	if (time[1] <= time[0]) {
+>> +		debug("Expect B's time (%ld) > A's time (%ld)", time[1], time[0]);
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	ret = KSFT_PASS;
+>> +
+>> +cleanup:
+>> +	for (i = 2; i >= 0 && cgroup[i]; i--) {
+>> +		cg_destroy(cgroup[i]);
+>> +		free(cgroup[i]);
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>   #define T(x) { x, #x }
+>>   struct cgfreezer_test {
+>>   	int (*fn)(const char *root);
+>> @@ -819,6 +1475,13 @@ struct cgfreezer_test {
+>>   	T(test_cgfreezer_stopped),
+>>   	T(test_cgfreezer_ptraced),
+>>   	T(test_cgfreezer_vfork),
+>> +	T(test_cgfreezer_time_empty),
+>> +	T(test_cgfreezer_time_simple),
+>> +	T(test_cgfreezer_time_populate),
+>> +	T(test_cgfreezer_time_migrate),
+>> +	T(test_cgfreezer_time_parent),
+>> +	T(test_cgfreezer_time_child),
+>> +	T(test_cgfreezer_time_nested),
+>>   };
+>>   #undef T
 
-This isn't likely a problem for PF, as we can expect its driver not
-to do an insane concurrent attach during a reset. But it would be a
-very sane case for a VF. So if its driver doesn't retry or defer an
-EBUSY-ed attach properly, it would not be restored successfully..
 
-It feels like we need a no-fail re-attach operation, or at least an
-unlikely-to-fail one. I recall years ago we tried a can_attach op
-to test the compatibility but it didn't get merged. Maybe we'd need
-it so that a concurrent attach can test compatibility, allowing the
-re-attach in iommu_dev_reset_done() to more likely succeed.
-
-Thanks
-Nicolin
+-- 
+Tiffany Y. Yang
 
