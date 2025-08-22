@@ -1,130 +1,147 @@
-Return-Path: <linux-kernel+bounces-781826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19825B31748
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:14:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFD3BB31754
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5905B62E0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:12:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87F831CE79F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0172FB62C;
-	Fri, 22 Aug 2025 12:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD642FC025;
+	Fri, 22 Aug 2025 12:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Wn6OWavu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zf7BKyPz"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E582FAC12;
-	Fri, 22 Aug 2025 12:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09572FB962
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755864854; cv=none; b=Xi6Hv4ra2W/MNsdDGEdHJgGZa7XR3lPuSwKTsc5YSH5ewKjrmQuqc/o+9jYuplIKbcUq3+8mLMC5KgqiFRSv9QK6kmJL0YPbuELWQ9Sww9h0264SbOpqC7Qv+j17inRA1niYhFa3CKwRThLZx/evyrBSvhuYSAlpJs/eLfS07rg=
+	t=1755864874; cv=none; b=G3pyuVRvGPG1AfnoeezAN2FwoSNlvO9l8j1ZooS+X1FdFOCyw1zK97cjR30tITYivu1UhirTIFwNGurhbf20kRPcbkEZ0eogXTB+/DYgpFhasJjB68v9Xe2TYBmXC0sXP6Qa2JH4rjkpo5iDjb0nR98q/KbTuATyORRJ2xO/Mqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755864854; c=relaxed/simple;
-	bh=XebrtUmoMkJk2ywQK0G1KR8BcZhBHmQQQZC6S0DWuAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HLroZGPnTWWqCRaR29LRtSfTym4cg7ifdK3xLs8FtYtTVjUpOUKDaDxp+cMi7/+4g1ytBjKG7mSYjPoqj9sebWeXgky9P956mC7RMCc5lpfp7OFHo8ZKqTaMwB73+eRTfg7v2x69vQH4axhmgRtn5HL6HI8E7FDy8RjpmTtGa4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Wn6OWavu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5421AC4CEED;
-	Fri, 22 Aug 2025 12:14:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755864853;
-	bh=XebrtUmoMkJk2ywQK0G1KR8BcZhBHmQQQZC6S0DWuAA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wn6OWavu9Zhmk0yyzgBKNH3ykhrK9F24bTidvvcy1hUyZqXSYfj5wI7QlJDeg6jSE
-	 k9DOJopRPjyw4EXB7CoY3RM4WdhCCeHdUMsaHeIehRuAhi2XqkLdMdJDJ61x5bd4VJ
-	 AV9yLKKykf1rkz3yjpCI/BhO3NmqX8LZtFhDt0wk=
-Date: Fri, 22 Aug 2025 14:14:10 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Zhang Yi <yi.zhang@huaweicloud.com>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
-	linux-ext4 <linux-ext4@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, Joseph Qi <jiangqi903@gmail.com>,
-	Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Ben Copeland <benjamin.copeland@linaro.org>
-Subject: Re: [PATCH 6.16 000/564] 6.16.2-rc2 review
-Message-ID: <2025082242-skyward-mascot-f992@gregkh>
-References: <20250819122844.483737955@linuxfoundation.org>
- <CA+G9fYsjac=SLhzVCZqVHnHGADv1KmTAnTdfcrnhnhcLuko+SQ@mail.gmail.com>
- <aKg41GMffk9t1p56@stanley.mountain>
+	s=arc-20240116; t=1755864874; c=relaxed/simple;
+	bh=5IK7visueTFPJvwe8aBx75t2Dc2ShuOFkE1pHPlyTJ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bZnPNs0LX/Rx1a2G6i2sSoUdfQjUSx3UVeHXz2gfuI0EsMUtG3BU1QVDVtLNQU0dWmyKMJVwhoE1hV8U10wQLya7f98cowItKGhNahn7cNx6aPxWDHRdtE3W2g71w3Yvy7Ilgj84g2r9ubXGWjLLMMs1TOR1Neq9ZVNWbBpof98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zf7BKyPz; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61c297e8306so23627a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:14:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755864871; x=1756469671; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DkBAAsfyV6LHd7/MmlCwhNuJJcA3WELhZpHBrkWxRP0=;
+        b=Zf7BKyPz89RXdVHjILYb+pOlS/J8wENaSzkiPxrRkADJfVOau2LRPpHPrphJfUG+hu
+         YUwXtVqzpeOFSVhDr4ZHRDnc6Z07WpeGHLJkGy198l128gx5NuBjK8fq4hrRG3R/+XW+
+         zPGPJFVKWi9xUgnL+vYLHPwhHDUf8XpEXvzIFyEQcRtMwONGEOPaB5CEQEAABXQP0C34
+         r+mU1n9LQh727zJLipoT8ybUDUHHnDH7L4g3Lof6ko7d3FvawSCBGiebIzJaa3xWBMVC
+         7MvHg0OZk89zBcfCwVdIhPKTqZIh/ZyNdhN2B4hV5K514MDVejKZzZmnFqVfLrJs9fCz
+         Pcsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755864871; x=1756469671;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DkBAAsfyV6LHd7/MmlCwhNuJJcA3WELhZpHBrkWxRP0=;
+        b=LWR3fiXYb8Djsfand1+AvI15bT++wbITBj1AuW66lHWKG9Ds6+D8uPw9ADWJnfKYTB
+         dujMRkq7ei0iuRRWxNpTa9rlryMP8RdM7t5icF89nTKrqhpeX4/DmnLwl7FB1JzPfyjc
+         W/f/0H8e4H5vkfaDaqxP1NZXIu3fGvdZLHCHkKDcP3dYXJ2zdAT0XuQGK5zYZFOPw1t6
+         xVYz/hRT9VRAmdosfdUR24LBpauG7bW0mPxVaW7Set44KQtyOqwib8otBS1LX8EMLmNB
+         Vu+5uJDGafD4Ekc5EIL4zrzT7jOOtJ/xvvk4/LCvJn3GFW94vHCiOc5PDtfciadyoJNn
+         O17Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUP/toQBuOltwHIfpZT/4yQXRJ5kSKggXyK2IOKAiEfpTHfjwHcmpHZfsers85+jnP6YvVcBv2iXRZoZfE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzfo8/0kvEIbSfRLWnMavFwY+S+XSvadAm01gyaW6eHmpKcHvSD
+	LmnLW3qTi8NBFfENHEwYWBfH0Mrr9xgrHOPQeNGfKpliNGW9jgAS6Se1RvBK+Gm1lUg=
+X-Gm-Gg: ASbGncvcPchs5fNVzauEystxYYyxveE+2qlGovxX7xqiSFmN5i5XN4yJ4Nygzson7Fi
+	92gFJwbe6hkvJ+otPssVFiGMXDp+oRnz3WhfK4Q9sCoqnl+6pmssyWul2rBcwWG01r8J/B1EJOi
+	neDTdS4vR0vD5sEwrLZaq+0AhLCklORF29RdSvmLmKDErdHYObHQVG27ABqn0yF0WiMNKgsrsUM
+	lPPjNctzx5hyuN6nSXFB/SjCi3I1mf1puStN4+NE2RqusnSzEdwA05e0XHzoLs07ZBzgYIrVjBb
+	R0/xs3NAjKEEH2Mb1g9yDwqlBEYbmG3fB8kbDcYMeYOOMPxPKpIgv1JHnJsNOeKH5CBjvox08Qp
+	ii8jMg877FvTgJZ/xfGYTdO7IFDu72eaITg==
+X-Google-Smtp-Source: AGHT+IFs4WBH1bJhJTxlQHx++FWWCdHXe96mTCh87JmHiQTRMMJIfTGjozNDivKIUBJBc92gTGlIvg==
+X-Received: by 2002:a05:6402:5251:b0:615:c741:ec18 with SMTP id 4fb4d7f45d1cf-61c1b45ca84mr1190009a12.2.1755864870953;
+        Fri, 22 Aug 2025 05:14:30 -0700 (PDT)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61a75778c5dsm6842065a12.31.2025.08.22.05.14.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 05:14:30 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	linux-fsd@tesla.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/4] arm64: dts: exynos5433: Add default GIC address cells
+Date: Fri, 22 Aug 2025 14:14:24 +0200
+Message-ID: <20250822121423.228500-5-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKg41GMffk9t1p56@stanley.mountain>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1272; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=5IK7visueTFPJvwe8aBx75t2Dc2ShuOFkE1pHPlyTJ8=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoqF8fG4TdtYM0cmBodGvFcfp4CgidVvnzzwGRR
+ hF5QnIYt1GJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKhfHwAKCRDBN2bmhouD
+ 1xCJD/wOs1s2c6cZkJlscMJv54fg1CFIqLecvrsXnlikIuOSInwpa8sCW4lL/PckSmRAX/wJGIf
+ /RFOn0k/+skDBPFigKH3lwK1HCTnSQTTNtsYThsHBcZHKlXDVnFFycRsNK3U4rfldltdnl+ItXG
+ zhi50Yh2vnjg61l/51jX1LqvIcpPyyJ+1AW8TADnOKG4SVZIL94sGd+iP6BSRQHVpos6jxYCY7S
+ NiZ9szmd1Nf92KtIOIadb48c3W6lWpLNrHwY5zfeGdzzmv+pzqXSRKRWYVT2N+kSfCCM8Y4AIWz
+ 44rMBbe3uV8TrnQ+NxtOCuY7MQIMazBWtGZ2EiOt+CKBugQ2i1n4lxEAl+i/EIZC6SadTVwXN2g
+ JhgFGG3Ifzuq/Q3lSpER35OX87hA0PnlOR82yzRrSMqLvW2biSmWy8+nrg2dMMUErBYrGF6/IDi
+ NtPn/B4MfrPYu7c1u7eJmdjzyiOyFtsCLw4Ug4DuAZcwi+i5oQbq/4PKYDHebaNwBwKMKX4VV6F
+ tKbHslXeDzJcvbZuE7Eh5Lnp586PhTQWynD2R70Wco6g4tvewvMhGJ8PVWd3p2oOpkH+7nas0+n
+ LkFxeMQdnVtsqKTVXVhfRcKKOTRpd2L/TAZnM02eQBrk2F+3zhz0h18KYzmGEsYYd1pi4M5Pw16 ZKH/3SJXFYLGrYg==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 22, 2025 at 12:31:00PM +0300, Dan Carpenter wrote:
-> On Wed, Aug 20, 2025 at 08:06:01PM +0530, Naresh Kamboju wrote:
-> > On Tue, 19 Aug 2025 at 18:02, Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > This is the start of the stable review cycle for the 6.16.2 release.
-> > > There are 564 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > >
-> > > Responses should be made by Thu, 21 Aug 2025 12:27:23 +0000.
-> > > Anything received after that time might be too late.
-> > >
-> > > The whole patch series can be found in one patch at:
-> > >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.2-rc2.gz
-> > > or in the git tree and branch at:
-> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
-> > > and the diffstat can be found below.
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> > 
-> > As I have reported last week on 6.16.1-rc1 as regression is
-> > still noticed on 6.16.2-rc2.
-> > 
-> > WARNING: CPU: 0 PID: 7012 at fs/jbd2/transaction.c:334 start_this_handle
-> > 
-> > Full test log:
-> > ------------[ cut here ]------------
-> > [  153.965287] WARNING: CPU: 0 PID: 7012 at fs/jbd2/transaction.c:334
-> > start_this_handle+0x4df/0x500
-> 
-> The problem is that we only applied the last two patches in:
-> https://lore.kernel.org/linux-ext4/20250707140814.542883-1-yi.zhang@huaweicloud.com/
-> 
-> Naresh is on vacation until Monday, but he tested the patchset on
-> linux-next and it fixed the issues.  So we need to cherry-pick the
-> following commits.
-> 
-> 1bfe6354e097 ext4: process folios writeback in bytes
-> f922c8c2461b ext4: move the calculation of wbc->nr_to_write to mpage_folio_done()
-> ded2d726a304 ext4: fix stale data if it bail out of the extents mapping loop
-> 2bddafea3d0d ext4: refactor the block allocation process of ext4_page_mkwrite()
-> e2c4c49dee64 ext4: restart handle if credits are insufficient during allocating blocks
-> 6b132759b0fe ext4: enhance tracepoints during the folios writeback
-> 95ad8ee45cdb ext4: correct the reserved credits for extent conversion
-> bbbf150f3f85 ext4: reserved credits for one extent during the folio writeback
-> 57661f28756c ext4: replace ext4_writepage_trans_blocks()
-> 
-> They all apply cleanly to 6.16.3-rc1.
+Add missing address-cells 0 to GIC interrupt node to silence W=1
+warning:
 
-Ugh.  Ok, let me go push out a -rc for JUST this issue now so that
-people can test and I can get it released for those that are tripped up
-by it.  Thanks for the information, much appreciated.
+  exynos5433-tm2-common.dtsi:1000.2-41: Warning (interrupt_map): /soc@0/pcie@15700000:interrupt-map:
+    Missing property '#address-cells' in node /soc@0/interrupt-controller@11001000, using 0 as fallbac
 
-greg k-h
+Value '0' is correct because:
+1. GIC interrupt controller does not have children,
+2. interrupt-map property (in PCI node) consists of five components and
+   the fourth component "parent unit address", which size is defined by
+   '#address-cells' of the node pointed to by the interrupt-parent
+   component, is not used (=0).
+
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 0b9053b9b2b5..fa2029e280a5 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -937,6 +937,7 @@ reboot: syscon-reboot {
+ 
+ 		gic: interrupt-controller@11001000 {
+ 			compatible = "arm,gic-400";
++			#address-cells = <0>;
+ 			#interrupt-cells = <3>;
+ 			interrupt-controller;
+ 			reg = <0x11001000 0x1000>,
+-- 
+2.48.1
+
 
