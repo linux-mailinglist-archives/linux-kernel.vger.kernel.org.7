@@ -1,136 +1,230 @@
-Return-Path: <linux-kernel+bounces-782047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76668B31A4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:55:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2233AB31A3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50ED317D70F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:50:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8926B188FDE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588A63054F8;
-	Fri, 22 Aug 2025 13:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5JHQE7j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8904528643B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DD830146C;
 	Fri, 22 Aug 2025 13:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VbqQClYT"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCBE302747;
+	Fri, 22 Aug 2025 13:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755870615; cv=none; b=GbNnzVn0eX2iwQrMsEwRLL1WEpLvViNZlEZ8f8Yv4HejAvzDV+CGsXxumJVFe3HOlU5qoABmj3e9votLvThtbczCdm6ADglOOW2meMrayoHYR8FjOP6o5cQriqiWbkw2hkyXa8Eic8b3fx51iYGWRzlDgUd3nzXSFTxRX1sYzJo=
+	t=1755870614; cv=none; b=iIEHMYCED8/P69j4Pqr4Mp0BnvJCGdyE+S7M6UpT+8UNSrEkE7o/syqP8i0wRoCFMP7/VFFHHvoO8A3LDkAVPOSPUO7J+jfia7cPVk10zehXad/bdR/xa+XwnmdzEIFDD8gY94/38wzuO4xp54iSGpdHQpDVtW9tco7E14vuZfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755870615; c=relaxed/simple;
-	bh=4csLMJWEKL0FQgzY0JcEeIbaYFvPi98v3ZZmSuKKcC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CZGRfwsj6BLcV3SxJVqdXfQTpjUWP6+LMLFYy2793ov8C7USe7NLnrRmtAaHquqwS4in45lMW6qnyLoNDa1xHzNjL4dZF8AcXVEFSe63jCwfwbTMa6tZLGt+/Zc6RKPO2w3moIKnCeNTOsLITqsCfpp4Cm7UM6figaBqrN+4ahQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5JHQE7j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3B68C4CEED;
-	Fri, 22 Aug 2025 13:50:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755870615;
-	bh=4csLMJWEKL0FQgzY0JcEeIbaYFvPi98v3ZZmSuKKcC8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=L5JHQE7jOsDk7AN4SpxIT+KOakh6Bbeq/3ZIAB1P7513GBcUrXEBoodZHadhLFyTQ
-	 r4i9X1KogEbYxilVkQFdapxEt9zz+4seg1jwj7kHNXAwWHZVRXkGiMHpDfnhRjrPKy
-	 2rzJZ/j/T+NoA0Js3qv9SlzlagJhbsMRA9IieR8UnCqcv7MiYiKbdfaUxE2w9zQ3f7
-	 r1Za8sr3Da3XCCuEfFNGqqDK4KQG20PmvDk1MBiFmLYjfgdcPn5dCUAvYTJ/SD+Tyj
-	 jexsfI3tpStB/u/+o905rLtWeQDhpzEVT/Zv/OSljwd/qCzubkWhBC6FYMLtmohjhb
-	 oYI35ohjcr2Dw==
-Message-ID: <7b7f6958-3178-4c6f-8be3-f52ef77464f7@kernel.org>
-Date: Fri, 22 Aug 2025 15:50:06 +0200
+	s=arc-20240116; t=1755870614; c=relaxed/simple;
+	bh=hZlKJ98KgXmJHaXDA06fKKwOuQM8edRZgwMDXHYu7gM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=jd9WgUFQbxzwebUvg7qlTMQ9zzbusFOpnlTu/SHUqUCskOdGOvAt4X0+d+eml4KpUVLM/mzZqwU2lzQhX2Co+DpluC2PdqmSgAwzzZJGxncdYeMqWPs2AEcsXOKLgEG7vYtY66fPd38kFo8YGI13FtHoEWPVYWsWkTVBINc130M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VbqQClYT; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7e87067b15aso243119685a.3;
+        Fri, 22 Aug 2025 06:50:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755870611; x=1756475411; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IluoYrUQ+3NQRTHNTAVkkPLNzy3MyswNqTCES/Ri328=;
+        b=VbqQClYTXK2wl8xRz/THVykVH4zFFxa8Co/0PyUKz0L0e4rG9JN77Hb1Ibvk1q7ad8
+         hEiwqsvtG6dPxWyoo4yQ9xVgAvFmw4q/dXHqjYuRiBwY7EeY4W1/0BafO+TdoQ1to9H0
+         WWu258RXnRc5V6CLgh6XWUofPTz37Df93LTfjwnRklS98+1xcWqy3VFiymDhyhRN4EcS
+         Ofs7pK6gZbnlGj/2JcQjbSqt9YKxZxDKH/V/UhTRDWk23jX1IBKChy6SaiLo7jPf+zQR
+         HOTSVOrqvmSRI2hKI7+yA/2E3/7Wev2TNWETr1tv/t0rvenRV9tpT+CsMD8q4uz65bTf
+         HfRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755870611; x=1756475411;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IluoYrUQ+3NQRTHNTAVkkPLNzy3MyswNqTCES/Ri328=;
+        b=DgdDY1pqCiAEBx6elcGXgF0wd9jVBWIE4RXVWnzNzdCwjUXVXDdIYiJJM9KcsWi9w8
+         8FCANKG/NtCi3+9s6rcEOKGs7JgIOuq9+GcG6QDsSShRra51N8E+zIFphnxST+Mzz7DV
+         P3A3FnAtL0CqUPGrFLNexoOfJqIScpKrkvmdEKXQTv07g4kg/j3jtwTRcgWY6Si7Ck8P
+         qRyaSb9pAINklRWDFNVUgGng2oLgigHXNucYHgrKNELS5tiMyrhWVzKm4uJZBHZU+h1y
+         7N1pkEPOplpLGkDM8AmhzTJwldcudp4TZbddVBQv8C4GTNYjBBKObHd08q/H3pnYJV7C
+         u82g==
+X-Forwarded-Encrypted: i=1; AJvYcCVxPVom38NKjxi04s2r9CC9VmOwE6Y+z+kjhZb31XBs8JZenKTn4vzIn+qVpBW03a1zRP0NTeY0ffDNCaBD@vger.kernel.org, AJvYcCWzxztFXD2kmG5jMEyAXg1gsV39bZFaWIL/Yp+HKvSwESGk/oKx2UvqgBWSwFCDjiQXWs13uLfhWpA6@vger.kernel.org, AJvYcCX1h3239IPm00/zaMsV4zEOkpU9Y4uRbBHxkEv3WVqUtOiZ1HF/+2CemBvsRJszfo3E91rblhykfX8/wQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4FZEhEGSrJOHrz/lbp/3lFgUXtpTxOGoC45+Ws/tdBraI5d6j
+	cUH4rtysPLH4i4hDFfYXfnBFIoHGe+iYm61aSV5kbwq/TboF7h/JTmTS
+X-Gm-Gg: ASbGncur8aLijH/hvOIo49eLmYgm6/fgoIz82f2FDL6xA5cRLLucwLDewC7727JFQyo
+	R1BUXESLjl9N+Rd3amJyYxhCQ3rA8+YJsltEKbfXfhRFn+Rg6GUGotXrHmxwevBaynsE+MkTeer
+	78bP2PkElrBxkBq5VEslNzsK0DWBQrmvzAnjJrLtjFIzOT8g1kB77gy5BX38WCf7bfazq3PQXo5
+	vtffsK8pzczw6D7G5QL35ZAIQffNrknRIB21n1G5T4ha5Of9HSfmDMyIjHzg7vmAScCfP/akBdQ
+	074Xta5xspSDtPrDLACm6Hqxn1Ru9gUWgEE0WWPxrn9Ph5lHynq3mYqs8l147I/AWXP2D+K8Im5
+	bw5p1tqr05XGB/Xk75WezoavFhQwe3V8ytI1CKj/hJAC3Fb+nhqz2VnSJ9l33FHinp3I74Q==
+X-Google-Smtp-Source: AGHT+IEbbxxrr4OguXpetCtZgs9NZQXKQKPH4ZU2Atto0l6S0/rLKx603SX7KDJ7VbFhwkRrIQXcIA==
+X-Received: by 2002:a05:620a:a211:b0:7e6:50f2:d62d with SMTP id af79cd13be357-7ea10fc7aa2mr290119185a.5.1755870611308;
+        Fri, 22 Aug 2025 06:50:11 -0700 (PDT)
+Received: from [127.0.0.1] (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11de55b61sm118197211cf.56.2025.08.22.06.50.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Aug 2025 06:50:10 -0700 (PDT)
+Date: Fri, 22 Aug 2025 09:50:08 -0400
+From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, devicetree@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?ISO-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>,
+ Boris Gjenero <boris.gjenero@gmail.com>,
+ Christian Hewitt <christianshewitt@gmail.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Paolo Sabatino <paolo.sabatino@gmail.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_3/4=5D_auxdisplay=3A_Add_TM16xx_7-?=
+ =?US-ASCII?Q?segment_LED_matrix_display_controllers_driver?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <CAHp75VcpJzMUtrN2kBhWs90G3n6_NWTBhw3MX2WpuhsDt7zmjQ@mail.gmail.com>
+References: <20250820163120.24997-1-jefflessard3@gmail.com> <20250820163120.24997-4-jefflessard3@gmail.com> <CAHp75VfG7p+YYV1b9f6i_o-VrLhMh_=TaLdZTVRWHa8ky-G8Zg@mail.gmail.com> <D21AECF9-85D7-4846-9DE6-8B9DD912339D@gmail.com> <CAHp75Vcdp5fHPNAy=_iEFR6Fa5PEE4U++T5owE1mW_H2-y3ijA@mail.gmail.com> <D0111A5F-5FA1-4405-A86A-C0D772FDAAEA@gmail.com> <CAHp75VcpJzMUtrN2kBhWs90G3n6_NWTBhw3MX2WpuhsDt7zmjQ@mail.gmail.com>
+Message-ID: <13102F25-B59B-46CA-B0DC-F6F5724E4974@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/12] dt-bindings: media: nxp: Add support for FSD SoC
-To: Inbaraj E <inbaraj.e@samsung.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
- cw00.choi@samsung.com, rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com,
- martink@posteo.de, mchehab@kernel.org, linux-fsd@tesla.com, will@kernel.org,
- catalin.marinas@arm.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
- ravi.patel@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
- linux-samsung-soc@vger.kernel.org, kernel@puri.sm, kernel@pengutronix.de,
- festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20250814140943.22531-1-inbaraj.e@samsung.com>
- <CGME20250814141014epcas5p410d41ede7e8ae4f3cf8db6d041d03946@epcas5p4.samsung.com>
- <20250814140943.22531-4-inbaraj.e@samsung.com>
- <ac9769af-9ab6-4b48-9890-ec3bcda3b180@kernel.org>
- <00d001dc136a$36ad7230$a4085690$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <00d001dc136a$36ad7230$a4085690$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 22/08/2025 15:39, Inbaraj E wrote:
->>>
->>>    power-domains:
->>>      maxItems: 1
->>>
->>> +  samsung,syscon-csis:
+Le 22 ao=C3=BBt 2025 02 h 08 min 42 s HAE, Andy Shevchenko <andy=2Eshevchen=
+ko@gmail=2Ecom> a =C3=A9crit=C2=A0:
+>On Fri, Aug 22, 2025 at 5:20=E2=80=AFAM Jean-Fran=C3=A7ois Lessard
+><jefflessard3@gmail=2Ecom> wrote:
+>> Le 21 ao=C3=BBt 2025 16 h 19 min 23 s HAE, Andy Shevchenko <andy=2Eshev=
+chenko@gmail=2Ecom> a =C3=A9crit :
+>> >On Thu, Aug 21, 2025 at 10:04=E2=80=AFPM Jean-Fran=C3=A7ois Lessard
+>> ><jefflessard3@gmail=2Ecom> wrote:
+>> >> Le 21 ao=C3=BBt 2025 04 h 08 min 51 s HAE, Andy Shevchenko <andy=2Es=
+hevchenko@gmail=2Ecom> a =C3=A9crit :
+>> >> >On Wed, Aug 20, 2025 at 7:32=E2=80=AFPM Jean-Fran=C3=A7ois Lessard
+>> >> ><jefflessard3@gmail=2Ecom> wrote:
+>
+>=2E=2E=2E
+>
+>> >> >> +#define TM16XX_DRIVER_NAME "tm16xx"
+>
+>> >> The TM16XX_DRIVER_NAME macro is standard practice for consistent str=
+ing usage
+>> >> in registration and module macros=2E
+>> >> If helpful, I can add a leading /* module name */ header comment=2E
+>> >
+>> >Instead of an unneeded comment it seems better to use explicit string
+>> >literal in all cases (two?)=2E
 >>
->> samsung, so not nxp. Even more confusing.
+>> I'm surprised by this preference since driver name macros are very comm=
+on
+>> practice, but I'll use explicit string literals to align on this prefer=
+ence=2E
+>
+>Usually we put a macro to something which (theoretically) might
+>change=2E The driver name is part of an ABI and I prefer it to be
+>explicit as we do not break an ABI=2E Once introduced it can't be
+>modified or removed=2E Also it's better to see clearly exactly at the
+>place in use in the code the name as it's easier to (git) grep for
+>something similar=2E With a macro I would need to grep at least twice to
+>see the users=2E
+>
+
+Well received=2E I'll use explicit string literals=2E
+
+>=2E=2E=2E
+>
+>> >> >> +       keypad->state =3D devm_bitmap_zalloc(display->dev, nbits,=
+ GFP_KERNEL);
+>> >> >> +       keypad->last_state =3D devm_bitmap_zalloc(display->dev, n=
+bits, GFP_KERNEL);
+>> >> >> +       keypad->changes =3D devm_bitmap_zalloc(display->dev, nbit=
+s, GFP_KERNEL);
+>> >> >> +       if (!keypad->state || !keypad->last_state || !keypad->cha=
+nges) {
+>> >> >> +               ret =3D -ENOMEM;
+>> >
+>> >> >> +               goto free_keypad;
+>> >
+>> >(Hit send too early that time=2E=2E=2E) This goto is bad=2E It means
+>> >misunderstanding of the devm concept=2E See below=2E
 >>
-> 
-> I used samsung,syscon-csis because the system controller on Tesla FSD
-> follows Samsung's sysreg design.
+>> I can assure I understand the devm paradigm=2E The keypad probe is opti=
+onal,
+>> failure doesn't fail the main driver probe but only generates a warning=
+=2E The
+>> cleanup code prevents memory from staying allocated until device remova=
+l
+>> in this specific optional failure case=2E However, if you insist, I'll =
+remove the
+>> cleanup and let devm handle it normally=2E
+>
+>Assume you have a separate feature, let's say keypad driver for some
+>complex HW, like this one, and you have even a separate (library)
+>driver for it=2E Then you want to introduce some kind of library
+>functions to probe and remove the only keypad part, here are two
+>options:
+>- follow the library pattern with plain (non-devm) k*alloc() in probe
+>and kfree in remove
+>- use driver pattern with devm
+>
+>If you choose the second one, it will be weird to call devm_kfree()=2E
+>The rule of thumb the devm_$FREE_MY_RESOURSE() *must* be *well*
+>justified=2E Because it's exceptional=2E Losing 1kb memory or so is not
+>enough to justify=2E
+>
 
-OK, this is property for Tesla though, so please use tesla prefix.
+Understood=2E I'll remove the cleanup gotos for this scenario given that
+devm is generally preferred and that losing 1kb memory or so is not
+enough to justify=2E
 
-Best regards,
-Krzysztof
+>> >> >> +       }
+>> >> >> +
+>> >> >> +       input =3D devm_input_allocate_device(display->dev);
+>
+>> >> >> +free_bitmaps:
+>> >> >> +       devm_kfree(display->dev, keypad->state);
+>> >> >> +       devm_kfree(display->dev, keypad->last_state);
+>> >> >> +       devm_kfree(display->dev, keypad->changes);
+>> >> >> +free_keypad:
+>> >> >> +       devm_kfree(display->dev, keypad);
+>> >> >> +       return ret;
+>> >
+>> >No way=2E We don't do that, If required it signals about exceptional
+>> >case (0=2E01% probability) or misunderstanding of devm:
+>> >- managed resources are managed by core, no need to call for free
+>> >- using managed resources in the contexts when object lifetime is
+>> >short is incorrect, needs to be switched to the plain alloc (nowadays
+>> >with __free() from cleanup=2Eh to have RAII enabled)
+>> >
+>> >Choose one of these and fix the code accordingly=2E
+>>
+>> Same as above=2E
+>
+
+=2E=2E=2E
+
+>> >I stopped here, I believe it's enough for now (and I would wait for
+>> >the smaller changes per patch, perhaps 2 DT bindings patch + common
+>> >part (basic functionality) + spi driver + i2c driver + keyboard,
+>> >something like 6+ patches)=2E
+
+I know it's a lot to review ~1800 lines at once and that the split into mu=
+ltiple
+files will require a review anyway, but feel free to share additional feed=
+back
+on any other obvious issues you may observe, so I can fix these for v4=2E
+
+Thanks again for your time and thorough feedback,
+Jean-Fran=C3=A7ois Lessard
 
