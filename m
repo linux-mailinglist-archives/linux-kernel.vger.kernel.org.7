@@ -1,87 +1,156 @@
-Return-Path: <linux-kernel+bounces-782227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691A7B31D0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:59:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E81FB31DB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4924F564691
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:56:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D14065A663A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A623128D3;
-	Fri, 22 Aug 2025 14:56:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2E13314DC;
+	Fri, 22 Aug 2025 14:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KLi+cj+2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50D4312802
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 14:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643C6227B88;
+	Fri, 22 Aug 2025 14:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755874565; cv=none; b=QlFW+Cg+mlgbb/wCdIu0j7yo+BqK8S1uSzH/qHTxvWIW6VCT0vZZ9QGBmDSkcpqdV4kp2Jl+7flY7/IAcBl2V745s0fkk5VZgeKWNpmL05SrqA+avzoRdRv987DslvOLyJJg8meCp28YHUcrnWFWLjZtI6CHK7Gck+OSmyMcLFk=
+	t=1755874775; cv=none; b=K5L9xVdx52KL7ay9Zv4PC5AUHrB1emlDYZn+itEBytnx8k5PVIId40TPhei0aWWpTqGBGUGIsudmsIZ+S4zm508AxTdh3ZWCJ5i6dAvFiuspmPa6qSrwPVHDspiOJM2oPTklppLD3NDig25G8hdMdrvwBEYwTVdGm9HBY1j/rH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755874565; c=relaxed/simple;
-	bh=V4VhVXyvZ8Eo9fL6wXvJxbJy6OAVFi9AQLWlB/8O29E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gbKP02g/HPnmm2nYYpAPa9/0PzU27/KGCWaIevBqXQhZ/Ot2qgrcau+YRpy7MDxPrO54ob/npqIR2EOpTSFrxC5CFstEAjITXYdZfgi9X26kzUBn4tODidRlG9P+tQBfO/pyTL7708daSdhLSory8SllEMimySvNxgbSz7ItBsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-886b468c98cso434895239f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 07:56:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755874563; x=1756479363;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AH09MnVdsed7jGPJzM4FkFA5e4/oQhv+2uODYKFhGaU=;
-        b=j/5xItarZywc9XVXaTZpSQ9xojVQEiZZxnd9WNIqJ7LHv3/lqhuqiyuEu2YjBAFEPj
-         gXTmnLy6K/IP5UznITcy6QTI4M+rUxpoMbmYZbrmPlgTEKKGvMi8dzFwYPLRY8f3j+P/
-         E0ySSrmWy5sa9Ks2A+Z20y8sKprIxp9Dy/DcBzFnPaRDOUV0oaGIdISs5h7EiqnbMhHd
-         LHpKYKUai9soGWuckFter1I+yZ7W/hLkWFAoi2SFnY2pGQ633J/ZaDmyC8B0vaDZgQFi
-         Gzti7VCZE5kWNZkleU5SVf2gutS+UBHu/q9HApg2T6ols1cSJPcXn3/UYPBQHX7e3Kmn
-         3biQ==
-X-Gm-Message-State: AOJu0Ywt5k4MNbVsjTr5XTYyZ9hmJ3nM0DfdNTlPVBH0tCFy8gWlg9F7
-	tAKXyfHjScwh9K/M37dsWL/EF/pUtkn+ulpoXuxq4K3ojqdSue6NOJsWzZaG9RvUAZ5xDDDf5bz
-	1j80nZae3nZw+fo+ABlgG8/NF1kVSnoMxX90ar+FmdJFCeOrPZMjunxT/J7E=
-X-Google-Smtp-Source: AGHT+IGICdDRZhOmfr7zgmYs5OKsorRCh7vt+i1Pa8grpRV6Vlnd/Iz8vQb/JJXUJpooPTXKXRdCG266iDMFpNAiN7G+a7/UftIR
+	s=arc-20240116; t=1755874775; c=relaxed/simple;
+	bh=FRfssbwFVOeTRuS2nCD7Ynmj6Ps7cVzti/WfWUW/SwQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aTbPv6pf8xFymJ03NCybLB5s5J13inMX1+WeI7xBLcXqfkOTpVdm3umrXnnv2UeiHfOFOR+2nUZPMCboG0ztql1hZvhGRXVwRhnlrDdQcaUmFK3Fbs1/CAoj1KyyqGtgHPRPzmW5tvYpSphf5OiAIPxIcCt6LF37+/Ip40u1I88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KLi+cj+2; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755874775; x=1787410775;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=FRfssbwFVOeTRuS2nCD7Ynmj6Ps7cVzti/WfWUW/SwQ=;
+  b=KLi+cj+2Gw4b84vymRsQP+iuUjqInzEzez8ucpAI/eBk3ZKWjfn6A53b
+   bg3/VRF0S5bD7AEBJ/r2Q08oztXiUGjlEvsnvVaec0+ZVKJmbavryX+3I
+   U60SwC5668IS05r6Zrsxw4JNTI8MLTMjDmIcs1B2lAAJx0PhPsyYOJ41f
+   dO+ynnPKuaZy7MrmEGIjG3lspkpmxnKkWkXf8G954ZQ8rmODNPebHTZFU
+   2ufIs5+Ko6gjwtYv88nKFtsdatjO6YJGOztgiDSeFrDgLNtemDa8DN5TP
+   NdM3zq2gzZzAJChGAwzRf+0XXDgDFgdSz6E4xm46oOvMOhclVDf7a0yAa
+   w==;
+X-CSE-ConnectionGUID: Lul5mvyQQ0GQDhSRgJYezA==
+X-CSE-MsgGUID: sr8csa7zRP+a/n/2Bs9bCA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="75640712"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="75640712"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 07:59:34 -0700
+X-CSE-ConnectionGUID: 7HgkGi3zQqKRPBeZCM3JIw==
+X-CSE-MsgGUID: FNeyO842RAq2qXrusEvxbg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="172986945"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.115])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 07:59:29 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Andreas Larsson <andreas@gaisler.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Yinghai Lu <yinghai@kernel.org>,
+	Igor Mammedov <imammedo@redhat.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH 21/24] PCI: Refactor remove_dev_resources() to use pbus_select_window()
+Date: Fri, 22 Aug 2025 17:56:02 +0300
+Message-Id: <20250822145605.18172-22-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250822145605.18172-1-ilpo.jarvinen@linux.intel.com>
+References: <20250822145605.18172-1-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:170f:b0:3e6:6730:34e4 with SMTP id
- e9e14a558f8ab-3e92158384bmr64692725ab.12.1755874562912; Fri, 22 Aug 2025
- 07:56:02 -0700 (PDT)
-Date: Fri, 22 Aug 2025 07:56:02 -0700
-In-Reply-To: <20250822133148.199-1-yuichtsu@amazon.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a88502.a00a0220.33401d.025a.GAE@google.com>
-Subject: Re: [syzbot] [v9fs?] UBSAN: shift-out-of-bounds in v9fs_get_tree
-From: syzbot <syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	yuichtsu@amazon.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Convert remove_dev_resources() to use pbus_select_window(). As
+'available' is not the real resources, the index has to be adjusted as
+only bridge resource counterparts are present in the 'available' array.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
+ drivers/pci/setup-bus.c | 34 +++++++++-------------------------
+ 1 file changed, 9 insertions(+), 25 deletions(-)
 
-failed to apply patch:
-checking file fs/9p/vfs_super.c
-patch: **** unexpected end of file in patch
-
-
-
-Tested on:
-
-commit:         0f4c93f7 Add linux-next specific files for 20250822
-git tree:       linux-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6d1acc6b9e1fca1b
-dashboard link: https://syzkaller.appspot.com/bug?extid=30c83da54e948f6e9436
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15230062580000
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index ee2f2c78d8c9..ece533181ff1 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -2061,34 +2061,18 @@ static void remove_dev_resource(struct resource *avail, struct pci_dev *dev,
+ static void remove_dev_resources(struct pci_dev *dev,
+ 				 struct resource available[PCI_P2P_BRIDGE_RESOURCE_NUM])
+ {
+-	struct resource *mmio_pref = &available[PCI_BUS_BRIDGE_PREF_MEM_WINDOW];
+-	struct resource *res;
++	struct resource *res, *b_win;
++	int idx;
+ 
+ 	pci_dev_for_each_resource(dev, res) {
+-		if (resource_type(res) == IORESOURCE_IO) {
+-			remove_dev_resource(&available[PCI_BUS_BRIDGE_IO_WINDOW],
+-					    dev, res);
+-		} else if (resource_type(res) == IORESOURCE_MEM) {
++		b_win = pbus_select_window(dev->bus, res);
++		if (!b_win)
++			continue;
+ 
+-			/*
+-			 * Make sure prefetchable memory is reduced from
+-			 * the correct resource. Specifically we put 32-bit
+-			 * prefetchable memory in non-prefetchable window
+-			 * if there is a 64-bit prefetchable window.
+-			 *
+-			 * See comments in __pci_bus_size_bridges() for
+-			 * more information.
+-			 */
+-			if ((res->flags & IORESOURCE_PREFETCH) &&
+-			    ((res->flags & IORESOURCE_MEM_64) ==
+-			     (mmio_pref->flags & IORESOURCE_MEM_64))) {
+-				remove_dev_resource(&available[PCI_BUS_BRIDGE_PREF_MEM_WINDOW],
+-						    dev, res);
+-			} else {
+-				remove_dev_resource(&available[PCI_BUS_BRIDGE_MEM_WINDOW],
+-						    dev, res);
+-			}
+-		}
++		idx = pci_resource_num(dev->bus->self, b_win);
++		idx -= PCI_BRIDGE_RESOURCES;
++
++		remove_dev_resource(&available[idx], dev, res);
+ 	}
+ }
+ 
+-- 
+2.39.5
 
 
