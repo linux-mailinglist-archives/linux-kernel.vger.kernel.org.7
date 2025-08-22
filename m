@@ -1,128 +1,510 @@
-Return-Path: <linux-kernel+bounces-782053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13EF7B31A68
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:58:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 608D5B31A8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B7DA17DCF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:55:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC2FE17F690
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3F13043A6;
-	Fri, 22 Aug 2025 13:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FEC3054C0;
+	Fri, 22 Aug 2025 13:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DfOfzRux"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MMvhIZo5";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="JZYaKYyD"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FC12737E8;
-	Fri, 22 Aug 2025 13:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755870901; cv=none; b=GTvrlBfSQCqI5igoNn893Ht/cgHoE9r4CTJhdwNQDrjtpFxhpVscma8hDPnlvGXYx55Ax+gDxk4jln/4tYorfwoDPo5ePBjmYVlvzvSRpW3mqKgb7/qqjewY+SGtVKi1I06x2r90YnHCbbuLW7/kJcr+FqQhIp58ZtDu5C1n9cM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755870901; c=relaxed/simple;
-	bh=YPBaPR65gbIgfuU8DW5Zf1H4Ulj1k8A4IlsO2yYtJQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qxDXOG2t/LBnAp3keZ5EXj/8JNIXFZIF/VAufbz5tTkVYJGMLO8CUNZNtOsRYDBWufzRhM3yYgywhp9yqQNo6u4pyGbhXA5NCMqBGmUs+bG+BxL2Ludwdx1EBzvRn9DpVb4rQczDe2tYLtjJP5hBpRjGtRpVWJ8HgBmuXTwrb3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DfOfzRux; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 17A2240E00DD;
-	Fri, 22 Aug 2025 13:54:57 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Hbz-VzBCVrbN; Fri, 22 Aug 2025 13:54:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755870893; bh=cU+sFi2Tg32hg70nWhILQn8eC9PUNjpsUYNCBZ+GafU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DfOfzRuxgYlcwqZnoaEl1AzLwMJkuUVYTiUt8RQbuLH1hudWdZLCbnBSbvUR0nhgG
-	 YwAHrAucKQEL975VYGM68CsOR5awgv6QCTyT48fIW+cXtQrxNDFM+GKRiLqd5tsjV/
-	 0li0Ytex1dpN+JUMEum5M8jMsJmCXvI7UFoHIFj6Mubv6b53t4+zUzAF9HpwMscsrT
-	 lgzBVjI8A3LuOS0eO6sEUoMaXHjjkCTgtctBWlmgddheNoBRmuvI5QDREfcuKVsW3W
-	 bgafxAebZDSmCt+l82xU0byrE3vP9dj/4/pIlYhgi/+zemmLp4uIBwSH0gkA9mNVcY
-	 oplldDek4otdnPnGqYZLzpaTmGt7jSuWqWAa8Nt9LxmdANNV6Rex2zsrabvQ5QuXWS
-	 EBo4vF/aOKKXEImXRCRrLn5sana9yZYDUhFlZqKCzAMJtVcBLRZVjPQ0yz8SpYYUzi
-	 CNqDIccTz24al3Z+dMsTw1cp91dw6kPtiMV+CaDsI+PUkAKKVZANShTkEbYfOv9MV9
-	 0g/8qKU50bEpRolNXlqLfaxH7TXbcUKBazHClX9HmW1hNVR4kBylzGhy8dCbOOipVG
-	 K9+jNh9NJbExx4giYa6iUrJaNc6IoUYCMbYV0Q2R/U2/U/7pfZBZXCwxdVuq752pdp
-	 sMRuPR3OGibsoeSzqBXambRM=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 01F3640E0163;
-	Fri, 22 Aug 2025 13:54:27 +0000 (UTC)
-Date: Fri, 22 Aug 2025 15:54:22 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-	Tony Luck <tony.luck@intel.com>, pbonzini@redhat.com,
-	seanjc@google.com, vannapurve@google.com,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-	H Peter Anvin <hpa@zytor.com>, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	rick.p.edgecombe@intel.com, kai.huang@intel.com,
-	reinette.chatre@intel.com, xiaoyao.li@intel.com,
-	tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
-	ira.weiny@intel.com, isaku.yamahata@intel.com,
-	Fan Du <fan.du@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>,
-	yan.y.zhao@intel.com, chao.gao@intel.com
-Subject: Re: [PATCH RESEND V2 1/2] x86/mce: Fix missing address mask in
- recovery for errors in TDX/SEAM non-root mode
-Message-ID: <20250822135422.GDaKh2jhb5ooQ6QOe9@fat_crate.local>
-References: <20250819162436.137625-1-adrian.hunter@intel.com>
- <20250819162436.137625-2-adrian.hunter@intel.com>
- <20250819213247.GJaKTtf1er-Ced_mzP@fat_crate.local>
- <10587d02-1133-45fa-9ec8-2288a8868b68@intel.com>
- <20250821132521.GDaKceQXfEWHVwrlxV@fat_crate.local>
- <441aaf76-977f-487e-9db8-80edcda6078f@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1999B302747
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755870974; cv=fail; b=lJW5tRh/k9rnMNqXvKW3RaCbVzVbXjUu8topZVZGdwG9biDnoSY2HPaH0fXiqC29LYodY8fSyoLjUMnhSQuOziocIW8CeBwEHAL+1C6Wtcb34tNZn+uLVjtfFrEtNUBtu4VlzdTpJ8iCS3R+NVd4+GrAMX55Rzrq8PB3dP/H2sI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755870974; c=relaxed/simple;
+	bh=pEtxWgBWNrQ3Db/Sb+aVSvzbah7uYnUqBLV3ssq/uy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=SullFZ9q7z1cPcrkoJJdC3TvnjfGYsuNNMkmueUs1yg+vlCUmzDcsYrVnz1M3wyBruPdvEyvMW3q1kQWM/IvgX6newiVJPKjZ79+nCYd/invLZS0v1gDnfDyLjWZmTBpokF0kz/BjbSFnvKnFPcHJZlAmYydPOcXPSp/dMUxaR4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=MMvhIZo5; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=JZYaKYyD; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MDmFoT016527;
+	Fri, 22 Aug 2025 13:55:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=CHOd1R3GbwLvieRnhg
+	rNTEev5kOnAsb6/emkGzbWSEc=; b=MMvhIZo5swaKuqbycbMYrB9A2cBmNWQNWE
+	D1anP7ZOxxTFjKEzeD3QDwsyfLZ8kIzmg1dvqdoCS3ZQglQJ4Kg0KSWEgpZUhNA6
+	h1m4ilKSVMv1psa8abv/185bDJ3Gb0RcfAuYsdl8gZ1QY/9ioLUrfih8WiaDPY28
+	QZrFxiSxjPYDsrONiW1J/7o1J+aC1ynsE4sLsQnJYp+rSeJ798r1nE5m9aQy3aVj
+	KiZFA5AUQHXBmNLxlZij8+ogmnOsUjyxZrvZO9qjTbx+WrqQaUnGbOFx69zkbKK/
+	ZUT7dhnqyS1EpglEavq4LA4T7S1sHjzi0pccMMLUXeORyVpUEt0w==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48pa269cvn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 22 Aug 2025 13:55:35 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57MCGCi4030246;
+	Fri, 22 Aug 2025 13:55:33 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10on2051.outbound.protection.outlook.com [40.107.94.51])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48my3wq4aq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 22 Aug 2025 13:55:33 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=l5bi5+6G86CLYu6n0ouU5glFqGGB4hdRU0rznTnfSneS14MkzchoAaPrwlDv1qGby9CWN8HRvRL4rev9uFqjFIzNwmu6zQELismdQuXHQJ1bEqjlqIzmfYLl1Hee9Hv6ng/PT38JpV/YSu2ibSLFO/Yn92HEnLjKevj05X2su1AJNqVyFQ4f3/PZJBhZMLf/cbBEnAzX/C/bh8ncLAv9omC9iTZF/hOEj/5dkn3cMHwBjoZHjd3i9YQTalaq4nJBu1C2PdE6lhzl2xs8NqPSspm//NRmkGV/FOD7BqMFN4gHeiDVXF6T8yVT7Zabil6rSac13mAyrO0IQW9Jm+z9tQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CHOd1R3GbwLvieRnhgrNTEev5kOnAsb6/emkGzbWSEc=;
+ b=ni4H3+5klajH4FjazQ6tU+cnM32NuWuL+Y7EnjNAJOi88rzElYYc+1SVQqAboJrIKd4IN0sHK8Vo206ri72F1Lh4DxhO65z2IALzy6ZVQIP9ewt0ahHJCN7UFkO77QEaT4aSh9//m2UJEE+zcp7gQl52K2R/rnEdcZdpWfcx8oCqIGyXPe2pXZiUE8aXYnZIIeeoilenTw0VPL7bZHsgcBvx949LpDRzeG+x9OmJC3So7yfc4V+MXYqLaQRsg+M1wenHlk5UB2B14O0JhLH7DBM55CfQ79HvjVQg3Gp4AZ6ii9eHcdBgVAiOoX02v9ysjhVvAfC+vciOzIyr4Hk6GA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CHOd1R3GbwLvieRnhgrNTEev5kOnAsb6/emkGzbWSEc=;
+ b=JZYaKYyDSwdTm4Er0Sw5G8r4yNXItLEsAWf+tD9b1Ayitszs29JgODIY7hPILyJTG+SBjRH3snVZb9EWbs+U8jqJyCHxrV2RqhuOi/a7eaw+UHheiu6xAbXmuvgyDBmss8LVzVqhEJnX6iHKfzd2ldePbIu3f9K6UXdxNKw9AaI=
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
+ by PH0PR10MB4712.namprd10.prod.outlook.com (2603:10b6:510:3f::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Fri, 22 Aug
+ 2025 13:55:30 +0000
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23%7]) with mapi id 15.20.9052.014; Fri, 22 Aug 2025
+ 13:55:30 +0000
+Date: Fri, 22 Aug 2025 22:55:10 +0900
+From: Harry Yoo <harry.yoo@oracle.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: syzbot <syzbot+8785aaf121cfb2141e0d@syzkaller.appspotmail.com>,
+        Liam.Howlett@oracle.com, akpm@linux-foundation.org, jannh@google.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, pfalcato@suse.de,
+        syzkaller-bugs@googlegroups.com, vbabka@suse.cz,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>, jpoimboe@kernel.org,
+        peterz@infradead.org
+Subject: Re: [syzbot] [mm?] INFO: rcu detected stall in sys_munmap (2)
+Message-ID: <aKh2vr9HtFRKcnR6@harry>
+References: <68a7eee9.a00a0220.33401d.0168.GAE@google.com>
+ <2d1297ef-5df3-4679-8e38-05be188f18d8@lucifer.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2d1297ef-5df3-4679-8e38-05be188f18d8@lucifer.local>
+X-ClientProxiedBy: SE2P216CA0072.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:118::20) To CH3PR10MB7329.namprd10.prod.outlook.com
+ (2603:10b6:610:12c::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <441aaf76-977f-487e-9db8-80edcda6078f@intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|PH0PR10MB4712:EE_
+X-MS-Office365-Filtering-Correlation-Id: 740aa5f6-d74b-42eb-62ca-08dde1838e16
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?fBvfQIYgXKOwMDj774Y61fiqonZ1pFnR7Klnb4BrbxEvosR+FVCFZyD/62tm?=
+ =?us-ascii?Q?8QGTK1c1Umf9j+i0W2gcCIUjVAiNl/BQbNU+g8fPPNsmSaxJj0mm+8Matg0V?=
+ =?us-ascii?Q?9ohs6NtOw4HaCtuQTv84syN0Ckyu31yab1vSAwMrlzfA/ChzpdQNmXVPSciy?=
+ =?us-ascii?Q?wjyTuLgKMIczFOkmonznliDt4095ua9LMTXF4CCM4aYwl3+ALFRaIB//sIhc?=
+ =?us-ascii?Q?eUtY+sjf9nB9J6xEzLvc/Z0eWhWwnB0gyhuRHMlBn1lpcpYZnbL6nNRoilgM?=
+ =?us-ascii?Q?FCStMCeXIJE+sKNuMJuQgVP7CVGkWms/zh/o3bpWuKFVeOE2pWUDcZbxThQ/?=
+ =?us-ascii?Q?1cp5eeuCaf4RCI760ZUjSFRgnY1s/3oIwR+Jqm+NKkHImYEIm+S8s/MePc3z?=
+ =?us-ascii?Q?HHwjFbpN82hM1vVwRJhOsjp/t401tR8kXSEqSyfCL5G9pUW6aOldgaEq2Z7S?=
+ =?us-ascii?Q?/wp1tRdKrkry6L2UoJOU0xk4NBfpH6AZUpjoQAcoyMlAzDBJbtc09vZ3pO6A?=
+ =?us-ascii?Q?LCCgYh1+3Fl7w0aoBVOYVDphNkOLIjXIiXPIVtfMq0NARhAxIue+YwKN/e8J?=
+ =?us-ascii?Q?1CHHmHg8hJEPPtU+Wr6bekh8jsYehDGQ8dgTy30MrPysm8kwDoWEHnsPYnru?=
+ =?us-ascii?Q?aSWO/e8vKyFxc6vQ6jLyPSoz10LmhOd/lN4t8a4zTcrraXnXl5FjJ8sm5vQY?=
+ =?us-ascii?Q?nP0bOytcKI8hoKPqIrOq/noCXSpA2o82I+xYPBZk2TMeWK5xqtetJijZE0vH?=
+ =?us-ascii?Q?zDD2F0ohUQHNS6oPe36Wh7d8uhbg6cSiSvBNhpzkVuvsTipx2DuARrqauZ+U?=
+ =?us-ascii?Q?OCLEOED4SDAsq8uE788M0iJXo48kdNWWMjPHaRGbbji/vS1Nwv5ct2LrrEGM?=
+ =?us-ascii?Q?PxSap+bMFg7RKmXzKQGlDDF0izJ0r4XcjuX5p0IEeeoUf5pScRjetTaTU96G?=
+ =?us-ascii?Q?zTpWlbthV28pBYU4032ZdJY5T2I8vKYGUMptS+C/Fg6g3A6EtjNynGmrtGmF?=
+ =?us-ascii?Q?a/7Wj7HQONE3odigFezVpErxzFPb1MlBvDjjb0xuKviUdIa61OQsb4yfQvl+?=
+ =?us-ascii?Q?FKRu7/Pr64zM52Tv9hoyKbfSP0VzgZnW2F6ZAXOR2Oavg9XCyb5p+GrsKpRx?=
+ =?us-ascii?Q?o5UpH0oDrBiQuPSm//XBpdiEoaPZMLO12bf3xk7ojheO8Kg725vTJPYu2l/H?=
+ =?us-ascii?Q?AVh5hLdEy5MnkVvILnk4iFIp2ygK8Wbtc5hPVhP4kn068PHfYSlfgIuRRxL2?=
+ =?us-ascii?Q?Tw/d+cqAO7SYxrS8rmOlEOXzE5NwEOVBzWld8jfdjOSmThijNyJW1c6flU8E?=
+ =?us-ascii?Q?wjpplt6gy3mM1dm9Pb4iI+kNEZUG5GqVFh4oSB07w3QAzqMDtqs0xYOqX/SG?=
+ =?us-ascii?Q?WNT0w9jnP2e4Qo2tU4GHnm15717H?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?GjVTu8XXtHRd6u89kLT05+hwwG/YR4ZmdP9hS+QQDyaq1MfIvAxWggkHbTE4?=
+ =?us-ascii?Q?0G8/pJgciGXeBVQ6M4Alfbh9bCAECMVLV8iODqZSCISFxDskQG5AUj54/aiS?=
+ =?us-ascii?Q?gDwKlTAk9zlMSiJA8PeIxDhQVKnbVuoPdVB0cQtgTlUW7ffTpXyvC7MK0N2U?=
+ =?us-ascii?Q?M1sqfXXNRr7/Dd9SibRTjZJLUcANvGXJBKvjppDe6X67TPRCtQIvh57L4RcO?=
+ =?us-ascii?Q?JKQFJfh6AYaZLKmVWPpToyZ65kQq63JDCSSY2xfyyb1f7J1CvPksxJ+KxOqu?=
+ =?us-ascii?Q?f8WlKrRI4ANu8+m6pt1Hl7euk5D7qnpEtZeZtZDRfnD3DW576UZy/lFfR7jK?=
+ =?us-ascii?Q?0aRCrWyLirr9pfX6BG8kce1sNj3YQpaOFpMFWQ96P4bKTlsH0RFnhn3oX1ph?=
+ =?us-ascii?Q?DvmqeFuRNH3kGROFOzqAFeXiiyrgyAO3hAEQqqWWE6D4U3eyWK7i7qYbbtX5?=
+ =?us-ascii?Q?dWEsQdVU+6ro/SgkKtbxakjlScJ0ttHPjAklOjvqKZBl7Em0OVLedkFoUxrY?=
+ =?us-ascii?Q?FzzKyK//EtGyYTDDOQDGUayTvs8og65H9PkMGWK5jZIciRNPQkGw0A7HeihG?=
+ =?us-ascii?Q?p4ycZJERYLw+3izNVl1DyXGSTmdOuSmY24uOPDlQXQsbPkw9ImW8Y6wrNKNI?=
+ =?us-ascii?Q?K/QNpWMMlY/yuMmPXf/SCytg/+JXKocfgfbnJkWsBuDHQ144CgroXInFNIp2?=
+ =?us-ascii?Q?C/R4BTVz691aW8kTRsXAdHjIMFVdoMRx59OwxqDqDflMi40Ab9Bvgk+2J6Qj?=
+ =?us-ascii?Q?Qzxoh4K+HADQVRzknl0R96mjbTgJbb+znQzsESUedYsWt6zmGZW/Ly99Ixeg?=
+ =?us-ascii?Q?b9WovOO6Z14qja1dyY6pcin11DarOUyiolCzP8AuJm0S+WXKbA//egktEqWI?=
+ =?us-ascii?Q?OEmkSK8heBSvPQkuPJMkkw9yh9o9DXUOd0Blyb2ANMgvAY84SiyJGJJTnB0b?=
+ =?us-ascii?Q?VX7TcJCgSdq3ukoKcRDpJvKGM/zwOGohtYQ2EPevTGGV/7jAQ+MgJ32p7ipO?=
+ =?us-ascii?Q?uZCrFdjLohhgNAagpA2/TqLL/XOTinajD/KyoPPSVbxVPyqsOMBxzKnX0YCI?=
+ =?us-ascii?Q?ryA80lqB/vfy3253ye/3B/wfQiRhopzMpmGnAjBZvsyhEte8p/Q0PbEI4ia3?=
+ =?us-ascii?Q?pOJcbsiMdMt3btcmDmXllsJMU+yCPif7RFvtoSsn1BasTds48vywZznElIuk?=
+ =?us-ascii?Q?waA0xgXgzLSHOIGjy2b1Q6A22oe/avb8Y26TMgIk6hRFFwajhNd+3gPqa5Aw?=
+ =?us-ascii?Q?szDWNoXTLJ8+6JIkbRyquC4qGyTc77dGm+3gGqAe+pgNm5Zpa817gP4SoR6v?=
+ =?us-ascii?Q?E6bGho/q+jhFKinyswfaAxdA8TlTz8FkDQsllbLDN9OOVGR7QzDw2mKrfEhr?=
+ =?us-ascii?Q?McjTbpYRxTJ/JHXR80GoHe9EyQ+YOmZk2imGVA2sOD0SpJH1Yo+M7uNwqCP/?=
+ =?us-ascii?Q?Z2s9PXTu+YvfbeNiORpKHZI6qS+dDPFI4+mopk0c0GQzBK/pMbKJpEIr2kSO?=
+ =?us-ascii?Q?Xqbh29Wa3ZbmnEsn4B08Ri0KHsXzLnc3yeOg6YamHCvVbGgse74z7h5KLq0J?=
+ =?us-ascii?Q?QZsJgA2nkgVIAPd2lCWhOlzWvoF54mzLU05ZlPMk?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	rbZJWs7jea+4ARBBoAwj/1Q/jBoiUf4Yl4ceZPUf8dZ+Dr8s+J42c1cW+J4pEO7zft0FTzi6G7UnCQZhtHMCw1uzDz4Jrz7Xo505UMpYrlo5FjDy9zPOhc6gpvohqVFB4qfXCymzxDHPEAmrzE7S0HTRZXOXO+OFMzwwdkkivaMLMY54PRdkkuUZbh8ufpoDbW7kp3LBEil/LlhPfCeYVNjT9CqGj0gC14y9hHE1DHv5ExfWOHGmHnDLPcXbEP1CrVqgLvuQ+kJGIm0fBt83OwhJwVteeb8ReHxKC4UkDYMIIMFS8NsUrZjEaGbJgSoamGuxbp1Com/M5VB1nGniW268Ed5ijnW6JASfVbkAOZmruyyN7YqSMDQlNQeffLoV2lkpCjF4mSPSONMyQbihCRxIV4BWcmDeIYGf6mHPqJSDmi0xOtIZQUFx0tMsKR+DEtKzvedL2mc68vBd9AzyUoMF7kljwLZFK0r0KD2eHc+LeHKj1KGkVpQrstArj1oYO6Efi5Ou42095VPDwbAWUkWKZ0N2l9BxzpzX+eh/O/OxnMKuliqrfoExTuJrojcavoUsqh1kl7HkW0eRg1ITX3aF5dgs3rgLgdbPNSpNESo=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 740aa5f6-d74b-42eb-62ca-08dde1838e16
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 13:55:29.9718
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jdk3OG30zWg97nN7agAdQ2tDofw9QnN+m7A1UOc+b4DL35O+UxRWoJuh0fsWPqMdLIseH7+AGkYBrDTrs+58cQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4712
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 phishscore=0
+ mlxscore=0 adultscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2508220124
+X-Authority-Analysis: v=2.4 cv=ZPiOWX7b c=1 sm=1 tr=0 ts=68a876d7 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=edf1wS77AAAA:8 a=3g80flMcAAAA:8
+ a=oHvirCaBAAAA:8 a=hSkVLCK3AAAA:8 a=4RBUngkUAAAA:8 a=0zgOq92d76KTLj2kfncA:9
+ a=BhMdqm2Wqc4Q2JL7t0yJfBCtM/Y=:19 a=CjuIK1q_8ugA:10 a=slFVYn995OdndYK6izCD:22
+ a=DcSpbTIhAlouE1Uv7lRv:22 a=3urWGuTZa-U-TZ_dHwj2:22 a=cQPPKAXgyycSBL8etih5:22
+ a=_sbA2Q-Kp09kWB8D3iXc:22 cc=ntf awl=host:13600
+X-Proofpoint-GUID: sj1sc1EPeHJfHPvsv1vGAT-htDfn1ane
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIxMDE2OCBTYWx0ZWRfX3X8iEldjBauZ
+ U7DETghk6lRAnvF4EDtwViqPEpanV0UODREdCn0PjvI02uBos6kpF/FyLIDQOI72RbJKk6l0m2g
+ 6KhdElbafQGRCHzeLigFHbgdAexTM01bemRvk/ZSHmHFLYWnybvHJuCPWiRvtcFG8yuUJ0ZcKkV
+ 114Zz8QeFMokroTkh0MlovaXJO1iSZppGBjbIIVXqsAcpzIciHkYhZmT4kHbwVJoefEizLABkAA
+ aEEcra9ybxkQGym6Kj5ir3ByqvlP/1f55uqvJ9wXVZ8+KzNtV0Blw1+tRscgapinaKwcU6ErAgS
+ mNUvD5ATkmNt8SzmPw17i5mAAbLGtpSdTjAqVfaCnDZigKMo/XURGVVrY4/bk8AOdK9g1wxAAgL
+ i0zPV/HqcG7ldXnu+s8Lh4MqZZhT7pL0RKQdAUuaMw6HZwCfGkc=
+X-Proofpoint-ORIG-GUID: sj1sc1EPeHJfHPvsv1vGAT-htDfn1ane
 
-On Fri, Aug 22, 2025 at 10:57:36AM +0300, Adrian Hunter wrote:
-> Not exactly.  I just want to fix the bug whereby the mce handler fails
-> to mark the affected page as poisoned because it does not remove the KeyID
-> from the address before looking-up the page.
+On Fri, Aug 22, 2025 at 01:08:02PM +0100, Lorenzo Stoakes wrote:
+> +cc Sebastian for RCU ORC change...
+> 
+> +cc Harry for slab side.
 
-Lemme ask this differently then: are you ever going to need KeyID in mci_addr?
++cc Josh and Peter for stack unwinding stuff.
 
-> No one expects to find non-address bits in struct mce addr,
+> Pinging Jann for the CONFIG_SLUB_RCU_DEBUG element.
+> 
+> Jann - could this possibly be related to CONFIG_SLUB_RCU_DEBUG? As it seems to
+> the stack is within KASAN, but no KASAN report so maybe it's KASAN itself that's
+> having an issue?
+> 
+> Though I'm thinking maybe it's the orc unwinder itself that could be problematic
+> here (yet invoked by CONFIG_SLUB_RCU_DEBUG though)... and yeah kinda suspcious
+> because:
+> 
+> - We have two threads freeing VMAs using SLAB_TYPESAFE_BY_RCU
+> - CONFIG_SLUB_RCU_DEBUG means that we use KASAN to save an aux stack, which
+>   makes us do an unwind via ORC, which then takes an RCU read lock on
+>   unwind_next_frame(), and both are doing this unwinding at the time of report.
+> - ???
+> - Somehow things get locked up?
+> 
+> I'm not an RCU expert (clearly :) so I'm not sure exactly how this could result
+> in a stall, but it's suspicious.
 
-You're preaching to the choir - I don't know whose idea it was to shove
-a key ID in an address value... it sure sounds silly.
+Can this be because of misleading ORC data or logical error in ORC unwinder
+that makes it fall into an infinite loop (unwind_done() never returning
+true in arch_stack_walk())?
 
-> However, it is allowed to extend struct mce, so adding KeyID or raw MCI ADDR
-> later is quite possible.
-
-Why would you want to do that? Do you have a use case?
-
-If not, you can drop that whole angle about adding KeyID later. If yes, let's
-hear it.
-
-Just this hypothetically, maybe we'd need it, maybe not, it might be a good
-idea ... bla is muddying the water unnecessarily. So let's focus pls and
-address *only* the issue(s) at hand.
-
-Thx.
+...because the reported line number reported doesn't really make sense
+as a cause of stalls.
 
 -- 
-Regards/Gruss,
-    Boris.
+Cheers,
+Harry / Hyeonggon
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> On Thu, Aug 21, 2025 at 09:15:37PM -0700, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    be48bcf004f9 Merge tag 'for-6.17-rc2-tag' of git://git.ker..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=136dfba2580000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=142508fb116c212f
+> 
+> lockdep (CONFIG_PROVE_LOCKING) is on, so I'm guessing there's no deadlock here.
+> 
+> CONFIG_DEBUG_VM_MAPLE_TREE is enabled, which will cause _major_ slowdown on VMA
+> operations as the tree is constantly being fully validated.
+> 
+> This may explain the stalls...
+> 
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=8785aaf121cfb2141e0d
+> > compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=107a43bc580000
+> 
+> No C repro yet...
+> 
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/24fd400c6842/disk-be48bcf0.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/59146305635d/vmlinux-be48bcf0.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/b3e5f65cbcc8/bzImage-be48bcf0.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+8785aaf121cfb2141e0d@syzkaller.appspotmail.com
+> >
+> > rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+> > rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P6029/1:b..l P1208/1:b..l P6031/3:b..l P6030/1:b..l
+> > rcu: 	(detected by 1, t=10502 jiffies, g=6285, q=421 ncpus=2)
+> 
+> So 105s, or 1m45s, that's pretty long...
+> 
+> > task:dhcpcd          state:R  running task     stack:28896 pid:6030  tgid:6030  ppid:5513   task_flags:0x400040 flags:0x00004002
+> > Call Trace:
+> >  <TASK>
+> >  context_switch kernel/sched/core.c:5357 [inline]
+> >  __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
+> >  preempt_schedule_irq+0x51/0x90 kernel/sched/core.c:7288
+> >  irqentry_exit+0x36/0x90 kernel/entry/common.c:197
+> >  asm_sysvec_reschedule_ipi+0x1a/0x20 arch/x86/include/asm/idtentry.h:707
+> > RIP: 0010:unwind_next_frame+0xfe7/0x20a0 arch/x86/kernel/unwind_orc.c:664
+> 
+> Hmm, while the line number is not pertinent, I notice unwind_next_frame() has:
+> 
+> guard(rcu)()
+> 
+> In it from commit 14daa3bca217 ("x86: Use RCU in all users of
+> __module_address().") though from Jan 2025...
+> 
+> This is defined (took me a while to track down!!) in include/linux/rcupdate.h:
+> 
+> DEFINE_LOCK_GUARD_0(rcu,
+> 	do {
+> 		rcu_read_lock();
+> 		/*
+> 		 * sparse doesn't call the cleanup function,
+> 		 * so just release immediately and don't track
+> 		 * the context. We don't need to anyway, since
+> 		 * the whole point of the guard is to not need
+> 		 * the explicit unlock.
+> 		 */
+> 		__release(RCU);
+> 	} while (0),
+> 	rcu_read_unlock())
+> 
+> Meaning it's equivalent to a scoped rcu_read_lock() / rcu_read_unlock().
+> 
+> But since no C repro this is likely a race of some kind that might be very hard to hit.
+> 
+> > Code: 85 80 0c 00 00 49 89 6d 40 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 0f b6 04 02 84 c0 74 08 3c 03 0f 8e 56 10 00 00 <41> 39 5d 00 0f 84 10 06 00 00 bd 01 00 00 00 e9 de f3 ff ff 48 b8
+> > RSP: 0018:ffffc90003cdf6a8 EFLAGS: 00000246
+> > RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffc90003ce0000
+> > RDX: 1ffff9200079bee3 RSI: ffffc90003cdfa70 RDI: ffffc90003cdf758
+> > RBP: ffffc90003cdfae0 R08: 0000000000000001 R09: 0000000000000000
+> > R10: ffffc90003cdf718 R11: 00000000000121e6 R12: ffffc90003cdf768
+> > R13: ffffc90003cdf718 R14: ffffc90003cdfa80 R15: ffffc90003cdf74c
+> >  arch_stack_walk+0x94/0x100 arch/x86/kernel/stacktrace.c:25
+> >  stack_trace_save+0x8e/0xc0 kernel/stacktrace.c:122
+> >  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+> >  kasan_record_aux_stack+0xa7/0xc0 mm/kasan/generic.c:548
+> >  slab_free_hook mm/slub.c:2378 [inline]
+> 
+> Invokes the CONFIG_SLUB_RCU_DEBUG stack trace saving stuff
+> 
+> >  slab_free mm/slub.c:4680 [inline]
+> >  kmem_cache_free+0x15a/0x4d0 mm/slub.c:4782
+> 
+> Note that VMAs are SLAB_TYPESAFE_BY_RCU so maybe that's somehow playing a role
+> here?
+> 
+> In free_slab():
+> 
+> 	if (unlikely(s->flags & SLAB_TYPESAFE_BY_RCU))
+> 		call_rcu(&slab->rcu_head, rcu_free_slab);
+> 
+> >  vms_complete_munmap_vmas+0x573/0x970 mm/vma.c:1293
+> >  do_vmi_align_munmap+0x43b/0x7d0 mm/vma.c:1536
+> >  do_vmi_munmap+0x204/0x3e0 mm/vma.c:1584
+> >  __vm_munmap+0x19a/0x390 mm/vma.c:3155
+> >  __do_sys_munmap mm/mmap.c:1080 [inline]
+> >  __se_sys_munmap mm/mmap.c:1077 [inline]
+> >  __x64_sys_munmap+0x59/0x80 mm/mmap.c:1077
+> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> >  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> Seems a normal trace for an unmap, note (inlining removes stuff here) it's:
+> 
+> vms_complete_munmap_vmas() -> remove_vma() -> vm_area_free() -> kmem_cache_free()
+> 
+> > RIP: 0033:0x7fb13ec2f2e7
+> > RSP: 002b:00007fffe10fae78 EFLAGS: 00000206 ORIG_RAX: 000000000000000b
+> > RAX: ffffffffffffffda RBX: 0000562bd1443510 RCX: 00007fb13ec2f2e7
+> > RDX: 0000000000000002 RSI: 0000000000004028 RDI: 00007fb13ea1b000
+> > RBP: 00007fffe10faf80 R08: 0000562bd1432470 R09: 0000000000000001
+> > R10: 00007fffe10fadb0 R11: 0000000000000206 R12: 00007fffe10faea0
+> > R13: 00007fb13ec42000 R14: 0000562bd1443510 R15: 0000000000000000
+> >  </TASK>
+> > task:syz-executor    state:R  running task     stack:27632 pid:6031  tgid:6031  ppid:5870   task_flags:0x400000 flags:0x00004000
+> > Call Trace:
+> >  <TASK>
+> >  context_switch kernel/sched/core.c:5357 [inline]
+> >  __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
+> >  preempt_schedule_common+0x44/0xc0 kernel/sched/core.c:7145
+> >  preempt_schedule_thunk+0x16/0x30 arch/x86/entry/thunk.S:12
+> >  __raw_spin_unlock include/linux/spinlock_api_smp.h:143 [inline]
+> >  _raw_spin_unlock+0x3e/0x50 kernel/locking/spinlock.c:186
+> >  spin_unlock include/linux/spinlock.h:391 [inline]
+> >  filemap_map_pages+0xe15/0x1670 mm/filemap.c:3791
+> >  do_fault_around mm/memory.c:5531 [inline]
+> >  do_read_fault mm/memory.c:5564 [inline]
+> >  do_fault mm/memory.c:5707 [inline]
+> >  do_pte_missing+0xe39/0x3ba0 mm/memory.c:4234
+> >  handle_pte_fault mm/memory.c:6052 [inline]
+> >  __handle_mm_fault+0x152a/0x2a50 mm/memory.c:6195
+> >  handle_mm_fault+0x589/0xd10 mm/memory.c:6364
+> >  do_user_addr_fault+0x60c/0x1370 arch/x86/mm/fault.c:1336
+> >  handle_page_fault arch/x86/mm/fault.c:1476 [inline]
+> >  exc_page_fault+0x5c/0xb0 arch/x86/mm/fault.c:1532
+> >  asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+> 
+> Faulting path being context switched on unlock of PTE spinlock...
+> 
+> > RIP: 0033:0x7f54cd7177c7
+> > RSP: 002b:00007fffb79a5b40 EFLAGS: 00010246
+> > RAX: 00007f54ce525000 RBX: 0000000000000000 RCX: 0000000000000064
+> > RDX: 00007fffb79a5de9 RSI: 0000000000000002 RDI: 00007fffb79a5dd8
+> > RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
+> > R13: 00007fffb79a5c48 R14: 0000000000000000 R15: 0000000000000000
+> >  </TASK>
+> > task:kworker/0:3     state:R  running task     stack:25368 pid:1208  tgid:1208  ppid:2      task_flags:0x4208060 flags:0x00004000
+> > Workqueue: events_power_efficient gc_worker
+> > Call Trace:
+> >  <TASK>
+> >  context_switch kernel/sched/core.c:5357 [inline]
+> >  __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
+> >  preempt_schedule_irq+0x51/0x90 kernel/sched/core.c:7288
+> >  irqentry_exit+0x36/0x90 kernel/entry/common.c:197
+> >  asm_sysvec_reschedule_ipi+0x1a/0x20 arch/x86/include/asm/idtentry.h:707
+> > RIP: 0010:write_comp_data+0x0/0x90 kernel/kcov.c:240
+> > Code: 48 8b 05 db b4 1a 12 48 8b 80 30 16 00 00 e9 97 05 db 09 0f 1f 80 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 <49> 89 d2 49 89 f8 49 89 f1 65 48 8b 15 a7 b4 1a 12 65 8b 05 b8 b4
+> > RSP: 0018:ffffc9000441fb50 EFLAGS: 00000293
+> > RAX: 0000000000000000 RBX: 0000000000040000 RCX: ffffffff89ba2a52
+> > RDX: 0000000000040000 RSI: 0000000000000433 RDI: 0000000000000004
+> > RBP: ffffffff9b2c41ec R08: 0000000000000004 R09: 0000000000000000
+> > R10: 0000000000000000 R11: ffffffff9b030610 R12: ffff888031800000
+> > R13: 0000000000000433 R14: dffffc0000000000 R15: 0000000000001770
+> >  gc_worker+0x342/0x16e0 net/netfilter/nf_conntrack_core.c:1549
+> >  process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3236
+> >  process_scheduled_works kernel/workqueue.c:3319 [inline]
+> >  worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+> >  kthread+0x3c5/0x780 kernel/kthread.c:463
+> >  ret_from_fork+0x5d7/0x6f0 arch/x86/kernel/process.c:148
+> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+> >  </TASK>
+> > task:dhcpcd          state:R  running task     stack:26072 pid:6029  tgid:6029  ppid:5513   task_flags:0x400040 flags:0x00004002
+> > Call Trace:
+> >  <TASK>
+> >  context_switch kernel/sched/core.c:5357 [inline]
+> >  __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
+> >  preempt_schedule_irq+0x51/0x90 kernel/sched/core.c:7288
+> >  irqentry_exit+0x36/0x90 kernel/entry/common.c:197
+> >  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+> > RIP: 0010:orc_ip arch/x86/kernel/unwind_orc.c:80 [inline]
+> > RIP: 0010:__orc_find+0x7e/0xf0 arch/x86/kernel/unwind_orc.c:102
+> > Code: ea 3f 48 c1 fe 02 48 01 f2 48 d1 fa 48 8d 5c 95 00 48 89 da 48 c1 ea 03 0f b6 34 0a 48 89 da 83 e2 07 83 c2 03 40 38 f2 7c 05 <40> 84 f6 75 4b 48 63 13 48 01 da 49 39 d5 73 af 4c 8d 63 fc 49 39
+> > RSP: 0018:ffffc90003337648 EFLAGS: 00000202
+> > RAX: ffffffff914e0dd8 RBX: ffffffff90c5215c RCX: dffffc0000000000
+> > RDX: 0000000000000007 RSI: 0000000000000000 RDI: ffffffff90c52148
+> > RBP: ffffffff90c52148 R08: ffffffff914e0e1a R09: 0000000000000000
+> > R10: ffffc900033376f8 R11: 0000000000011271 R12: ffffffff90c52170
+> > R13: ffffffff82127173 R14: ffffffff90c52148 R15: ffffffff90c52148
+> >  orc_find arch/x86/kernel/unwind_orc.c:227 [inline]
+> >  unwind_next_frame+0x2ec/0x20a0 arch/x86/kernel/unwind_orc.c:494
+> 
+> This is also RCU-read locked.
+> 
+> >  arch_stack_walk+0x94/0x100 arch/x86/kernel/stacktrace.c:25
+> >  stack_trace_save+0x8e/0xc0 kernel/stacktrace.c:122
+> >  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+> >  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+> >  poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
+> >  __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:405
+> >  kmalloc_noprof include/linux/slab.h:905 [inline]
+> >  slab_free_hook mm/slub.c:2369 [inline]
+> >  slab_free mm/slub.c:4680 [inline]
+> >  kmem_cache_free+0x142/0x4d0 mm/slub.c:4782
+> >  vms_complete_munmap_vmas+0x573/0x970 mm/vma.c:1293
+> >  do_vmi_align_munmap+0x43b/0x7d0 mm/vma.c:1536
+> >  do_vmi_munmap+0x204/0x3e0 mm/vma.c:1584
+> >  __vm_munmap+0x19a/0x390 mm/vma.c:3155
+> 
+> Simultaneous unmap?
+> 
+> >  __do_sys_munmap mm/mmap.c:1080 [inline]
+> >  __se_sys_munmap mm/mmap.c:1077 [inline]
+> >  __x64_sys_munmap+0x59/0x80 mm/mmap.c:1077
+> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> >  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > RIP: 0033:0x7fb13ec2f2e7
+> > RSP: 002b:00007fffe10fae78 EFLAGS: 00000202 ORIG_RAX: 000000000000000b
+> > RAX: ffffffffffffffda RBX: 0000562bd1443f00 RCX: 00007fb13ec2f2e7
+> > RDX: 0000000000000001 RSI: 000000000002f6d0 RDI: 00007fb13e9c1000
+> > RBP: 00007fffe10faf80 R08: 00000000000004f0 R09: 0000000000000002
+> > R10: 00007fffe10fadb0 R11: 0000000000000202 R12: 00007fffe10faec0
+> > R13: 00007fb13ec42000 R14: 0000562bd1443f00 R15: 0000000000000000
+> >  </TASK>
+> >
+> >
+> > ---
+> > This report is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this issue. See:
+> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> >
+> > If the report is already addressed, let syzbot know by replying with:
+> > #syz fix: exact-commit-title
+> >
+> > If you want syzbot to run the reproducer, reply with:
+> > #syz test: git://repo/address.git branch-or-commit-hash
+> > If you attach or paste a git patch, syzbot will apply it before testing.
+> >
+> > If you want to overwrite report's subsystems, reply with:
+> > #syz set subsystems: new-subsystem
+> > (See the list of subsystem names on the web dashboard)
+> >
+> > If the report is a duplicate of another one, reply with:
+> > #syz dup: exact-subject-of-another-report
+> >
+> > If you want to undo deduplication, reply with:
+> > #syz undup
+> 
+> Cheers, Lorenzo
 
