@@ -1,169 +1,160 @@
-Return-Path: <linux-kernel+bounces-781579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0927DB3144F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:55:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3834B31430
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B55BB041A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:50:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2F68562AED
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515E02EDD7D;
-	Fri, 22 Aug 2025 09:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEA42EFD9E;
+	Fri, 22 Aug 2025 09:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YkWRe60c"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i6gmK0BZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578792327A3;
-	Fri, 22 Aug 2025 09:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3A22882CA;
+	Fri, 22 Aug 2025 09:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755855782; cv=none; b=CNiGt5keIWVfdj1S7fdrOo4xAnecKtPn2DPQ1TfcD+Nl8RHMvSt+1qE/t6tnyMn9UmZMZAUPRRiKQcQKxyzqxP8MqkWNA+ydAEwYjN3MmpThW+o4HYX+nB4zM8J69yAyVuz23OeknlV8+IQdIsvAWEZTFqweMPF9i+VxBXyEXx0=
+	t=1755855858; cv=none; b=nck03/i0nvJU9LXDBGlKFVm3xR4VvWBvdAVdGLMevwkKHhS9mbphTtOWLC6RlJKrKGHyDDJK5Fjd3C9AqwJgFmQVr6d8gv4IJSzuTfI+0ZJuERPy/NuIObKiLbQFy18a7ennsaOOvmqIJYcb5OOEn48escXy4kmosw2bhkt0zm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755855782; c=relaxed/simple;
-	bh=GAAM0WfLy15KZaMv+Mv+m2ZoYa2aXG4Xc0Pkj8se6C0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KP3Mhx2QRafyRXf2lXrvLLKzG3GDSZm2Qasiv9Z2NU7IdL029tbKzicX3PHTsYAswwL/zzMME/UorCK708L8prlVWhh9hQ61JeZLMiPt2tX9HYlhdIb6DkMevthpHtSp+pVpn0MDeGzUA3eTOIBYt87/X184mXfyRC673X1gsO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YkWRe60c; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6188b5b7c72so2983108a12.0;
-        Fri, 22 Aug 2025 02:42:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755855778; x=1756460578; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3NhTENhPiBZ0gP5DTq0s9G1TB1DFx2wNSSAtIKfu88s=;
-        b=YkWRe60cvSN1MSWgeIHmqI9Y/0oMh//uN0f4Cr+/nrCvfHGrNkLPFd6Ft8V0YSqVCP
-         50dcJHzW75YRgihowdYyHLiEfPU0LliruWyCfw5+ZwlhVti9sCluIXKjNFs455uCGsj3
-         GpTR1nCttT8S0pXHAdMK82BE8f/9X3CazBgiJaUnzTMWh9gTHhLFgZKbpfKAF7y0lKtb
-         VkoHOjlCitBC69lHgsRSekEAl+Lh0Mp0tLzxI7OJ1W01n6/RhPhM5CIZbvDrbkNc43G2
-         mYiFokD0Ww+NGo1kfc6PGJgUk/rNiOMkCG8F2SaCOAEtl2Gv5gENrXkk6Lz2jIZ9kEia
-         Lc5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755855778; x=1756460578;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3NhTENhPiBZ0gP5DTq0s9G1TB1DFx2wNSSAtIKfu88s=;
-        b=GlWTUik7xGSTcOEBuES23xWcxq9N/cAT4yCEVHTbDP2WkpWkE+v/36coZcBxSkJnUT
-         ugQymC/fL3WJVjnvgRQtMJy8b/V1EfOb0CByCQz+DQxWsB6FwlRn1o/tNjfLvl4KjI2v
-         MkeLmTDhfapakEbBXDfXg49ljgmKL2xRcF7TRAG6wS+Cqs1NLr8CaEF7RRp7K1aZfTNS
-         u35zT05cCIsobqyGPRgpRAtKSjdiS5siEyKzoeKin4pqAdoarHHdVxCGDX7plUKGN1MY
-         K5KnZc9RaH56Bt4MXw94LJ9YxRU7Uwrk057rH3yaPNTbqqNWJWjPlSxAqgaB3E9X5a7z
-         Pj0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUCm34UwSiJcb5oaPBnMUE0eqe0OtG0awmdQl3ZkIFQHWCuTcA/fqsry3XOI9GTkpAGUta4Glzq3UObGMJN@vger.kernel.org, AJvYcCUWEUBWdTJCKfOkAhJrvafms9hfAmRTYwSL/xh1ODI8qKaEpdARK3zKl1rWri10qP71WzM6I3HGuUt69No=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxThrYpbG9M6DB/B1K4NvpU1kjHRhfzJk1nMgWJPvWPQj5H92wM
-	xUo4A9mD7DkBP/dR9LTqKwgg+4TCXyc3vHN9+k5mfFFUouKB2BukAN4k
-X-Gm-Gg: ASbGncukvKQTh4RTVcXlVUGPgO8ZxIskbZptdqAtRe+9FFBErdj6wEuViRtngJGXQPd
-	fN49W2xR7A4oBvtmJnrWrywELaEH1uDYoZ2+yWe2zw/LoxqZWGgYnBAD7nfIW9Xf9A+PXfm/KnE
-	zvurhAKlwA21G9yC/0ww3MDhfPLWRSk2rUpFhkRUxXz3dP+6F4igeKRrxH6TFGI9d9HkCnl2K4v
-	f8KQLKvmdFXtpfqVXevTirUmy8jqvT2SuEFYiZ7y+SPc0/GqcYMn2fST6A6sfUkjgBvSGRtCDtu
-	0kBpOEIUphiroRbRBcWN4x6URztCy1+IG/vSY2EewYSFF9iplJFbIjVmWrOaE77TVobVWyU7YXM
-	OmrOj/8XCM2LZl7xlJvCaFK/quGUJuQobBj2wWUBHRJoxHwB59f8ABDrPar7fORylrMc57MGrGG
-	OBeqt5J4XS8T1Jtrz5P62xuHP4yPed+RlK55jZaqS00ooGrPHUZb8DQMnm
-X-Google-Smtp-Source: AGHT+IHhfqov5J5/cpzmqY6Y2xL2af4c9MM6Q4X67R+acnF53o3WvCLTbsPzluFzQjt4kJ8MhOfkcw==
-X-Received: by 2002:a17:907:7f0b:b0:ade:44f8:569 with SMTP id a640c23a62f3a-afe29548f56mr209435166b.42.1755855777271;
-        Fri, 22 Aug 2025 02:42:57 -0700 (PDT)
-Received: from ?IPV6:2a02:908:1b0:afe0:2cf9:d2f0:ffe6:6e52? ([2a02:908:1b0:afe0:2cf9:d2f0:ffe6:6e52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afdf6ff14f8sm489424166b.67.2025.08.22.02.42.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 02:42:56 -0700 (PDT)
-Message-ID: <6503f380-1566-4efc-913d-125d316787d1@gmail.com>
-Date: Fri, 22 Aug 2025 11:42:55 +0200
+	s=arc-20240116; t=1755855858; c=relaxed/simple;
+	bh=W2C6Re7Vw3DtX+1rmGtIoWysL7yYT+6xAjbwTheXHf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hR4KnnYy19YcIEd1w9eScKNXbKCuNvRY+ytfktSUemTyuzTPPkX71vGJn4mxhNdqZ1Y918Sw/dzgGvjnMRk4HuXSpkXWyPPIKnFGl0jqY9VV91ZJ7GvlnXpOmCTqqMYhXO39nhudYrUrmlWXA/1qSSEwjKcIT0dSVQRVwpsOJLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i6gmK0BZ; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755855857; x=1787391857;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=W2C6Re7Vw3DtX+1rmGtIoWysL7yYT+6xAjbwTheXHf0=;
+  b=i6gmK0BZuZaHrrgAP2hrvI8btZa4nGIPKOR1XvHoljmaXBw0le/VE53C
+   bIG6gBaANTj6ldGmtDmgedMbK0tudDc+uQtB0p3eKIerM9zSPTnu/v2mT
+   WjJF451BfswBFqQuiTh4q+7l1hC1K1quNEv7ojyenQGJOUIw+1rGEJvNh
+   tTc54SRj4Ce+anVAaR+e/OJStt4gS2fMEBT7vX9SKiEXUeRAm6N2bF3oZ
+   Gdq6usy/2Jmu+umrN5DhrrJM+/AgkFOeY7SygC8tr6lOkiyhZJY90vyPa
+   XopPew77TNFmY0Axgmxm/0dDTEsjSsyuwlUcpUAAA4S4TK0v7ZcSNt+Z5
+   Q==;
+X-CSE-ConnectionGUID: vubCQiGHQaKV4UX7uMedKg==
+X-CSE-MsgGUID: Oo4v44Q5RnuXLSIbQowBXg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="57362167"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="57362167"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 02:44:17 -0700
+X-CSE-ConnectionGUID: 0OcfKOZ0RUi9+kz/e89TkA==
+X-CSE-MsgGUID: obP/HrmxQJi3iyj3ivPTUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="168571682"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 22 Aug 2025 02:44:15 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1upOJg-000L8F-11;
+	Fri, 22 Aug 2025 09:44:12 +0000
+Date: Fri, 22 Aug 2025 17:43:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jisheng Zhang <jszhang@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] clocksource/drivers: Add ARM SSE(Subsystems for
+ Embedded) Timer driver
+Message-ID: <202508221736.qO3Ji6Dw-lkp@intel.com>
+References: <20250821152429.26995-3-jszhang@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] serial: 8250_core: fix coding style issue
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: jirislaby@kernel.org, ilpo.jarvinen@linux.intel.com, mingo@kernel.org,
- john.ogness@linutronix.de, tglx@linutronix.de, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-References: <20250822082311.16501-1-osama.abdelkader@gmail.com>
- <2025082235-wriggly-wildcat-0477@gregkh>
-Content-Language: en-US
-From: Osama Abdelkader <osama.abdelkader@gmail.com>
-In-Reply-To: <2025082235-wriggly-wildcat-0477@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821152429.26995-3-jszhang@kernel.org>
+
+Hi Jisheng,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on tip/timers/core]
+[also build test ERROR on robh/for-next linus/master v6.17-rc2 next-20250822]
+[cannot apply to daniel-lezcano/clockevents/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Jisheng-Zhang/dt-bindings-timer-Add-ARM-SSE-Subsystems-for-Embedded-timer/20250822-000122
+base:   tip/timers/core
+patch link:    https://lore.kernel.org/r/20250821152429.26995-3-jszhang%40kernel.org
+patch subject: [PATCH 2/2] clocksource/drivers: Add ARM SSE(Subsystems for Embedded) Timer driver
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250822/202508221736.qO3Ji6Dw-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250822/202508221736.qO3Ji6Dw-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508221736.qO3Ji6Dw-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/clocksource/timer-sse.c: In function 'sse_setup_clockevent':
+>> drivers/clocksource/timer-sse.c:228:13: error: implicit declaration of function 'FIELD_GET' [-Wimplicit-function-declaration]
+     228 |         if (FIELD_GET(CNTP_CFG_AIVAL_MASK, val) == CNTP_CFG_AIVAL_IMPL) {
+         |             ^~~~~~~~~
 
 
-On 8/22/25 10:45 AM, Greg KH wrote:
-> On Fri, Aug 22, 2025 at 10:23:10AM +0200, Osama Abdelkader wrote:
->> Fix a coding style issue in 8250_core.c:
->>
->> - Remove redundant NULL initialization of a global pointer
->>
->> Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
->> ---
->>  drivers/tty/serial/8250/8250_core.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
->> index feb920c5b2e8..225bb7e4b89c 100644
->> --- a/drivers/tty/serial/8250/8250_core.c
->> +++ b/drivers/tty/serial/8250/8250_core.c
->> @@ -307,7 +307,7 @@ static void univ8250_release_irq(struct uart_8250_port *up)
->>  		serial_unlink_irq_chain(up);
->>  }
->>  
->> -const struct uart_ops *univ8250_port_base_ops = NULL;
->> +const struct uart_ops *univ8250_port_base_ops;
->>  struct uart_ops univ8250_port_ops;
->>  
->>  static const struct uart_8250_ops univ8250_driver_ops = {
->> -- 
->> 2.43.0
->>
->>
->
-> Hi,
->
-> This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-> a patch that has triggered this response.  He used to manually respond
-> to these common problems, but in order to save his sanity (he kept
-> writing the same thing over and over, yet to different people), I was
-> created.  Hopefully you will not take offence and will fix the problem
-> in your patch and resubmit it so that it can be accepted into the Linux
-> kernel tree.
->
-> You are receiving this message because of the following common error(s)
-> as indicated below:
->
-> - This looks like a new version of a previously submitted patch, but you
->   did not list below the --- line any changes from the previous version.
->   Please read the section entitled "The canonical patch format" in the
->   kernel file, Documentation/process/submitting-patches.rst for what
->   needs to be done here to properly describe this.
->
-> If you wish to discuss this problem further, or you have questions about
-> how to resolve this issue, please feel free to respond to this email and
-> Greg will reply once he has dug out from the pending patches received
-> from other developers.
->
-> thanks,
->
-> greg k-h's patch email bot
+vim +/FIELD_GET +228 drivers/clocksource/timer-sse.c
 
-Hi All,
+   211	
+   212	static int sse_setup_clockevent(struct device *dev, struct sse_timer_frame *f,
+   213					unsigned long rate)
+   214	{
+   215		int ret;
+   216		u32 val = readl_relaxed(f->base + CNTP_CFG);
+   217	
+   218		f->ticks_per_jiffy = DIV_ROUND_UP(rate, HZ);
+   219	
+   220		f->ce.name = "sse-timer";
+   221		f->ce.rating = 300;
+   222		f->ce.irq = f->irq;
+   223		f->ce.cpumask = cpu_possible_mask;
+   224		f->ce.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_DYNIRQ;
+   225		f->ce.set_state_shutdown = sse_ce_shutdown;
+   226		f->ce.set_next_event = sse_ce_next_event;
+   227		f->ce.set_state_oneshot_stopped = sse_ce_shutdown;
+ > 228		if (FIELD_GET(CNTP_CFG_AIVAL_MASK, val) == CNTP_CFG_AIVAL_IMPL) {
+   229			f->ce.set_state_periodic = sse_ce_set_periodic;
+   230			f->ce.set_state_oneshot = sse_ce_set_oneshot;
+   231		}
+   232	
+   233		clockevents_config_and_register(&f->ce, rate, 0xf, ULONG_MAX);
+   234	
+   235		ret = devm_request_irq(dev, f->irq, sse_timer_interrupt,
+   236				       IRQF_TIMER | IRQF_NOBALANCING,
+   237				       f->ce.name, f);
+   238		if (ret) {
+   239			dev_err(dev, "Unable to register interrupt\n");
+   240			return ret;
+   241		}
+   242	
+   243		return 0;
+   244	}
+   245	
 
-I forgot to include the changelog in v2.
-
-v2:
-
-- Dropped extra blank line after gpios declaration
-
-Thanks,
-
-Osama
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
