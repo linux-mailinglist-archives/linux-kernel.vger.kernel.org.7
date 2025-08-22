@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-782543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E587AB321B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:48:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5356DB321BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DDEB1D6395B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:49:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E84566056CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F62229CB2A;
-	Fri, 22 Aug 2025 17:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C565296BCC;
+	Fri, 22 Aug 2025 17:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="FKwmNFPW"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="H9am+3yK"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E4A299950
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE776289E07
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755884857; cv=none; b=cB/7e//jH1jZjcQpzjsb4SZ8HCBgtcfeCJr6bWD/xUmbkB2jaVS9lx2Y3iedtovLs+dqTmanHFTP+REItvlIICwapcbWEjYPPStgbWdYqw9xF5TouwCx6soRKo/wTMRaBd2U9aYv1gH8V2deWkAQAogcPiEzt4f7SzbqpyvwjIA=
+	t=1755884859; cv=none; b=RNdBGl4d7ZvsLuerwE4OnZM5rmTo2Xjzo4qtrCj85FbdjMFXLdCMZH87T3aMFbskalTRsWahgE3+NU+jBPemBUVfKevdyaX1E0E00mYXWDPQUFo+KltWf2zEqHX/Pr5b0kzSL1dVEZrfmq8VaMDq02fAKjBv77k6Ix8VZhBrch0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755884857; c=relaxed/simple;
-	bh=OYjInNuDIbxgUr95L691pkXfEg25gucGlrQ1kVE7uI0=;
+	s=arc-20240116; t=1755884859; c=relaxed/simple;
+	bh=Tewu1o9TEDAwro0wIjOKO+bdoL8MBTkvGl+q4i50X14=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lZ4SXaJMGLD2d9CPfmf0oYAMR0KqH0PptQtv7BtkppzBECHXtc0aMQWZIPuAsF10MM624QxntOlIF/DsRE63zIFTN1Lfv1yO2p00/Xpeq1LS95O6QcY8JQJ4NhtPURYwz/+Bo6A9vFZB/ohvDIAEaxfhZ6zdSJjb0SvruduYrGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=FKwmNFPW; arc=none smtp.client-ip=209.85.160.182
+	 MIME-Version; b=f5o2NvZ9v9uFvIpCiH0QpjC4g1QnU3JRXhAZk6MaI84zyjSD+m9elo6uA5Y5DzrwSiRQ/77WADSNJP/ejgt1d+4su/BjkNwjxiVYJIeG1lyYjAQNB2fH3p8bRe2TtjAJaawRHsIXfwtCYAZ/CWANjiGX2UfiK/d/STNX0SCFvqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=H9am+3yK; arc=none smtp.client-ip=209.85.160.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b297962b24so23403781cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:47:34 -0700 (PDT)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b109921fe7so27751391cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:47:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1755884854; x=1756489654; darn=vger.kernel.org;
+        d=rivosinc.com; s=google; t=1755884856; x=1756489656; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1/NZ3invqjYii7VgIefIBIrdQlA4A/NoIleSlxqcTKI=;
-        b=FKwmNFPWHkVyr6Rcfqh0/BrPDjqVgnkZLZ9zud1CQHmIgjmvsGDP7tr7gzM9qM7EDe
-         N1NiWwc1pRReDCQNZCUWYiYvVONU2FChaPjTyYgmFLbF5HvWEpVEgeVESpz8BjMB8QDW
-         6uehox7PaQn1oLYWxrcThNp24bKU1shtRbLExtWMr83BMHY7YA3Qy59ZdsJcAlU+I+T7
-         x3T85Nf97UMzcgBrBl6Z63PRar0rHEbBk9UGH5dIjqlCs8YuEpopAk2i/cBC9PjC+U4z
-         /tJYngVx10Vb6JRPHPhdWWUVXd6674/6L9M+YZHWOO2DSWa4DLGG6SNUCFc9ymIw2ZkZ
-         xDWg==
+        bh=lASAogWwaY4J3oXaSg+X8r5SCu4Wp/t1yzCv89toveQ=;
+        b=H9am+3yK6oHMcrJhdU25BLMmvUy/4ftKC/0yzLUQn7CYRf2Yguiyg196cWuZW583SV
+         Z34pSjxRXP3F7y9M0uwdqyxU44v3VIx06QIiMrZZBqpSvGHNY4xlILH3wRlfwIGKlTjS
+         mTWNhx3eUV9XRUPD/PBG914c003I24Lhqxawebj6/2H/8KEWnap3xdJCsi0Zer7UfC4Q
+         ZBuQQybf8/79c68HuRfBKpjjPJuRTiSq9btfRm3TSZUUOGZBfqxXTnWO09m6pBpmaxY4
+         R0+BmP/SVlEZD6hELrToVggKcr1mmyDdATyrnBZxbmxGoeVGZTq3qCoMdAkb6LmYlPVq
+         YiiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755884854; x=1756489654;
+        d=1e100.net; s=20230601; t=1755884856; x=1756489656;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1/NZ3invqjYii7VgIefIBIrdQlA4A/NoIleSlxqcTKI=;
-        b=HmX2t5nvyoOTONl0LA6hVlEzT7vqh2VSvdzFvHnX7mgJhuBpd7PbQiSA0fIf4x0rz6
-         26+gvlLQ46nycDu59Ui9Zc8HfewDldrdVCSG8i7HrT5jkeE9wnSUlzgYl2633sNIeZC8
-         Vtjexx7+9fqRoxpc4JEMys6y69gik8ltWi4luqNFHZmo11KdHob5N+e1lKyiEzD0gq8v
-         w8gGi5M7YUwJpyEC7sOple4cv/wPJRioACGwosKRSTN4Jn2OVRql26hEJ9rVIcEs83oW
-         r3xMx5hyJ591initOJzyeHVs4+3Bk69LlU8afQD6whxUzFMY7E/jLeuzcz/AB6jgaQym
-         1Hzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxekgqkvHfRgy+aYD1Jr2+1RhjIz633MyO5rkjmoJ42TJzFT7twFlx6WQSaF/D9C4OPrgX78p/LhVOfT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOV0Yx/vgRkxlNZFDmHl2ODHlpTqW7bpec3Loh7LTyBbKnjDAg
-	/+CQIy/w/8fIenJZDSHz3oLmg2gniML/ddGN0lk6nlt2gp5yweWVtiOqsXR/FpiKgEY=
-X-Gm-Gg: ASbGnctN+YAswO428IgXULArxLKFX3jUkRCTf5cP0NwyNgUrDWjOGJoaLEn6oPCiTDE
-	Uq+Wjl0mGucJNUwvqZ/i2wGHHmiCYFW4fjGk9+VlxiqiMvJAnESXbjXFuZodQ07HptG70+nn1uh
-	tCh+6YfnT9RgQl9LIQwXWCdE2t+aNQxiTf146WuQniP00q3uKedaHcMuk+pEDJhZoTs8YO1ogTY
-	EoCUm/532qbWWVws3guA3w53pKe2KKKxw+cszNcekrMnIcc0UWp31eP6I4ULvlvfmH+Pr6mOhWx
-	2+VVHP04A1Np1O7EGG7tFb2eKR+cNayP+ZojqxVZmWaRqzmbOt/kV3kPrPt+jkBmTT2Tyr3/vvd
-	tbKeNyQMeiJeuIVL7Lm0fHProlqnuG63zNhQAp5sbUJAB1BAgdPk6Y/yJzaWaAWT8azQ8cc+Nu+
-	EHEeZXQg==
-X-Google-Smtp-Source: AGHT+IFZbeEwjqDea0hlGgRVd9Xscw2cIAz+36MfAAXzcnD0U+Bx3mxtHkRwJItm6g9vdsmkz7a3oQ==
-X-Received: by 2002:a05:622a:50c:b0:4b2:8ac4:ef7c with SMTP id d75a77b69052e-4b2aab4abe8mr43670911cf.75.1755884853830;
-        Fri, 22 Aug 2025 10:47:33 -0700 (PDT)
+        bh=lASAogWwaY4J3oXaSg+X8r5SCu4Wp/t1yzCv89toveQ=;
+        b=kWl3dB2Yt58lo5yUTvMhOI5VrS0mdEBtSY//V6KhqWOiOn3XRvEsJpKMAj2Wi3bkYW
+         fWeEm07O6IKpfypJsUR7Y+RZpUj5rfyFuEeHdHxpcX/mvUuhCBRvl7ToVbIM1a3zUbvo
+         Fd7G7d/ShV8ffDokWQsFuJPD8ZIMvOviBbiA3aAGnfH/KWUTd1dl4vFw0OaoUjXgWzNT
+         VuXrjPUMYmoIMyVyG6CEUjTVFjEpjpEa2jcax7eu3qtLArPMGjdf6bJOGsMXdQ1EPk++
+         Vgc2n6Dcqfd+LLIlt1Bm6SwEWUlBR4PjJSZRl23flm822BUA3UFA4rlqC8OckYtmiSA1
+         B84w==
+X-Forwarded-Encrypted: i=1; AJvYcCWT+SzTdzY0Z6uD7L5ZIMCjlPCAPhlepuXwFFZFTAThRlTlgCRH3dMuFJmQRKlgw+nef0jadC17PO8FCvI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywdc7GUA89tC/WO5raY+mIbt4VJ0xDBOD83RMcD7GJLRb3gOISe
+	6YlGKFlzg82n9dY/hV2RHUyX825R3Q4BEiBBRz9JcoriaL5SGqlZYGfrOjS7OHLzMEQ=
+X-Gm-Gg: ASbGncviSacOqYK1je/kfMZdHeCzHq9aX+bt7B7ncECoANkqdcn6tG6uYtcTBw31XbT
+	DTrLcKtHX2PAuVHHEoRFCvVCA4SYdCq5T86LqxQSbysStr2u1Q9PLxisZ4TP9jnjCsx705r2Pje
+	SGwM0A9+nY7GG9xwqE+AgzXx+aJB83mfR5f/fWOyTElYL9R51h7bKMx/v1ajalilPg9VkYk7yh3
+	QdX9dnxKJy2lmE0+7zirOmiX1w0bUbMZoAfya8gmLCFCa4PfXDkNyuJpXniqlH7QFmdA3dAfJnH
+	hDwG4ylArv2kjDKtjcuYW8GI2JUpd+GTgiYflTlKvCEgaftWUtr7R4i7eCIpIs1LTyWrtpWOXxx
+	PGw5Cml4gPgRw6KOOuA+Pva+2nmAzewjoB4wUV9QKCwhKR6PeMGunXVKoawJUxpq9xYCAg6p5QL
+	5YyuR8JA==
+X-Google-Smtp-Source: AGHT+IF7NBwPyWijDa6fVd6FPPHBKgHBj6d8UJ7rY1WXrx0r6jLeZuvNMUy7ENqP9DpN+xFIGjFOyA==
+X-Received: by 2002:a05:622a:4016:b0:4ae:f8bb:7c6a with SMTP id d75a77b69052e-4b2aaaf96abmr39630891cf.54.1755884855769;
+        Fri, 22 Aug 2025 10:47:35 -0700 (PDT)
 Received: from jesse-lt.jtp-bos.lab (pool-108-26-215-125.bstnma.fios.verizon.net. [108.26.215.125])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b2b8e6023asm3121361cf.53.2025.08.22.10.47.31
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b2b8e6023asm3121361cf.53.2025.08.22.10.47.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 10:47:33 -0700 (PDT)
+        Fri, 22 Aug 2025 10:47:35 -0700 (PDT)
 From: Jesse Taube <jesse@rivosinc.com>
 To: linux-riscv@lists.infradead.org
 Cc: Paul Walmsley <paul.walmsley@sifive.com>,
@@ -127,9 +127,9 @@ Cc: Paul Walmsley <paul.walmsley@sifive.com>,
 	linux-perf-users@vger.kernel.org,
 	linux-kselftest@vger.kernel.org,
 	Joel Stanley <joel@jms.id.au>
-Subject: [PATCH 7/8] riscv: ptrace: Add hw breakpoint regset
-Date: Fri, 22 Aug 2025 10:47:14 -0700
-Message-ID: <20250822174715.1269138-8-jesse@rivosinc.com>
+Subject: [PATCH 8/8] selftests: riscv: Add test for hardware breakpoints
+Date: Fri, 22 Aug 2025 10:47:15 -0700
+Message-ID: <20250822174715.1269138-9-jesse@rivosinc.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250822174715.1269138-1-jesse@rivosinc.com>
 References: <20250822174715.1269138-1-jesse@rivosinc.com>
@@ -141,131 +141,337 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add ability to setup hw breakpoints using REGSET use the
-__riscv_hwdebug_state structure to configure breakpoints.
+Add riscv specific selftest for hardware breakpoints.
+These tests are based on:
+tools/testing/selftests/breakpoints/breakpoint_test_arm64.c
 
 Signed-off-by: Jesse Taube <jesse@rivosinc.com>
 ---
+The selftest fails as register_user_hw_breakpoint seemingly does not
+call arch_install_hw_breakpoint. The test also seems to fail on arm64
+in the same way when I tested it.
+
 RFC -> V1:
  - New commit
 V1 -> V2:
- - No change
+ - Add KHDR_INCLUDES to Makefile
+ - Change <elf.h> to <linux/elf.h>
 ---
- arch/riscv/kernel/ptrace.c     | 59 ++++++++++++++++++++++++++++++++++
- include/uapi/linux/elf.h       |  2 ++
- tools/include/uapi/linux/elf.h |  1 +
- 3 files changed, 62 insertions(+)
+ tools/perf/tests/tests.h                      |   3 +-
+ tools/testing/selftests/riscv/Makefile        |   2 +-
+ .../selftests/riscv/breakpoints/.gitignore    |   1 +
+ .../selftests/riscv/breakpoints/Makefile      |  13 +
+ .../riscv/breakpoints/breakpoint_test.c       | 246 ++++++++++++++++++
+ 5 files changed, 263 insertions(+), 2 deletions(-)
+ create mode 100644 tools/testing/selftests/riscv/breakpoints/.gitignore
+ create mode 100644 tools/testing/selftests/riscv/breakpoints/Makefile
+ create mode 100644 tools/testing/selftests/riscv/breakpoints/breakpoint_test.c
 
-diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
-index e097e6a61910..fbd0097ec168 100644
---- a/arch/riscv/kernel/ptrace.c
-+++ b/arch/riscv/kernel/ptrace.c
-@@ -33,6 +33,9 @@ enum riscv_regset {
- #ifdef CONFIG_RISCV_ISA_SUPM
- 	REGSET_TAGGED_ADDR_CTRL,
- #endif
-+#ifdef CONFIG_HAVE_HW_BREAKPOINT
-+	REGSET_HW_BREAK
-+#endif
- };
+diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
+index 8aea344536b8..5ff35304c11a 100644
+--- a/tools/perf/tests/tests.h
++++ b/tools/perf/tests/tests.h
+@@ -183,7 +183,8 @@ DECLARE_SUITE(util);
+  * Just disable the test for these architectures until these issues are
+  * resolved.
+  */
+-#if defined(__powerpc__) || defined(__s390x__) || defined(__arm__) || defined(__aarch64__)
++#if defined(__powerpc__) || defined(__s390x__) || defined(__arm__) || defined(__aarch64__) || \
++    defined(__riscv)
+ #define BP_SIGNAL_IS_SUPPORTED 0
+ #else
+ #define BP_SIGNAL_IS_SUPPORTED 1
+diff --git a/tools/testing/selftests/riscv/Makefile b/tools/testing/selftests/riscv/Makefile
+index 099b8c1f46f8..96aba246cb3e 100644
+--- a/tools/testing/selftests/riscv/Makefile
++++ b/tools/testing/selftests/riscv/Makefile
+@@ -5,7 +5,7 @@
+ ARCH ?= $(shell uname -m 2>/dev/null || echo not)
  
- static int riscv_gpr_get(struct task_struct *target,
-@@ -280,7 +283,53 @@ static long ptrace_sethbpregs(struct task_struct *child, unsigned long idx,
- 		return -EFAULT;
- 
- 	return ptrace_hbp_set(child, idx, &state);
-+}
- 
-+static int hw_break_set(struct task_struct *target,
-+			const struct user_regset *regset,
-+			unsigned int pos, unsigned int count,
-+			const void *kbuf, const void __user *ubuf)
+ ifneq (,$(filter $(ARCH),riscv))
+-RISCV_SUBTARGETS ?= abi hwprobe mm sigreturn vector
++RISCV_SUBTARGETS ?= abi hwprobe mm sigreturn vector breakpoints
+ else
+ RISCV_SUBTARGETS :=
+ endif
+diff --git a/tools/testing/selftests/riscv/breakpoints/.gitignore b/tools/testing/selftests/riscv/breakpoints/.gitignore
+new file mode 100644
+index 000000000000..9b3193d06608
+--- /dev/null
++++ b/tools/testing/selftests/riscv/breakpoints/.gitignore
+@@ -0,0 +1 @@
++breakpoint_test
+diff --git a/tools/testing/selftests/riscv/breakpoints/Makefile b/tools/testing/selftests/riscv/breakpoints/Makefile
+new file mode 100644
+index 000000000000..2315d7d874fc
+--- /dev/null
++++ b/tools/testing/selftests/riscv/breakpoints/Makefile
+@@ -0,0 +1,13 @@
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (C) 2021 ARM Limited
++# Originally tools/testing/arm64/abi/Makefile
++
++CFLAGS += -I$(top_srcdir)/tools/include
++CFLAGS += $(KHDR_INCLUDES)
++
++TEST_GEN_PROGS := breakpoint_test
++
++include ../../lib.mk
++
++$(OUTPUT)/breakpoint_test: breakpoint_test.c
++	$(CC) -static -o$@ $(CFLAGS) $(LDFLAGS) $^
+diff --git a/tools/testing/selftests/riscv/breakpoints/breakpoint_test.c b/tools/testing/selftests/riscv/breakpoints/breakpoint_test.c
+new file mode 100644
+index 000000000000..2675055a924e
+--- /dev/null
++++ b/tools/testing/selftests/riscv/breakpoints/breakpoint_test.c
+@@ -0,0 +1,246 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2016 Google, Inc.
++ *
++ * Original Code by Pavel Labath <labath@google.com>
++ *
++ * Code modified by Pratyush Anand <panand@redhat.com>
++ * for testing different byte select for each access size.
++ * Originally tools/testing/selftests/breakpoints/breakpoint_test_arm64.c
++ */
++
++#define _GNU_SOURCE
++
++#include <asm/ptrace.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <sys/ptrace.h>
++#include <sys/param.h>
++#include <sys/uio.h>
++#include <stdint.h>
++#include <stdbool.h>
++#include <stddef.h>
++#include <string.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <linux/elf.h>
++#include <errno.h>
++#include <signal.h>
++
++#include "../../kselftest.h"
++
++#define MAX_BP_SIZE 8
++
++static volatile uint8_t var[3*MAX_BP_SIZE] __attribute__((__aligned__(MAX_BP_SIZE)));
++
++static void child(int size, int wr)
 +{
-+	struct __riscv_hwdebug_state state;
-+	int ret, idx, offset, limit;
++	volatile uint8_t *addr = &var[MAX_BP_SIZE + wr];
 +
-+	idx = offset = 0;
-+	limit = regset->n * regset->size;
-+	while (count && offset < limit) {
-+		if (count < sizeof(state))
-+			return -EINVAL;
-+
-+		ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &state,
-+					 offset, offset + sizeof(state));
-+		if (ret)
-+			return ret;
-+		ret = ptrace_hbp_set(target, idx, &state);
-+		if (ret)
-+			return ret;
-+		offset += sizeof(state);
-+		idx++;
++	if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) != 0) {
++		ksft_print_msg(
++			"ptrace(PTRACE_TRACEME) failed: %s\n",
++			strerror(errno));
++		_exit(1);
 +	}
 +
-+	return 0;
-+}
-+
-+static int hw_break_get(struct task_struct *target,
-+			const struct user_regset *regset,
-+			struct membuf to)
-+{
-+	int ret, idx = 0;
-+	struct __riscv_hwdebug_state state;
-+
-+	while (to.left) {
-+		ret = ptrace_hbp_get(target, idx, &state);
-+		if (ret)
-+			return ret;
-+
-+		membuf_write(&to, &state, sizeof(state));
-+		idx++;
++	if (raise(SIGSTOP) != 0) {
++		ksft_print_msg(
++			"raise(SIGSTOP) failed: %s\n", strerror(errno));
++		_exit(1);
 +	}
 +
-+	return 0;
- }
- #endif
- 
-@@ -324,6 +373,16 @@ static const struct user_regset riscv_user_regset[] = {
- 		.set = tagged_addr_ctrl_set,
- 	},
- #endif
-+#ifdef CONFIG_HAVE_HW_BREAKPOINT
-+	[REGSET_HW_BREAK] = {
-+		.core_note_type = NT_RISCV_HW_BREAK,
-+		.n = sizeof(struct __riscv_hwdebug_state) / sizeof(unsigned long),
-+		.size = sizeof(unsigned long),
-+		.align = sizeof(unsigned long),
-+		.regset_get = hw_break_get,
-+		.set = hw_break_set,
-+	},
-+#endif
- };
- 
- static const struct user_regset_view riscv_user_native_view = {
-diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
-index 819ded2d39de..7a32073e0d68 100644
---- a/include/uapi/linux/elf.h
-+++ b/include/uapi/linux/elf.h
-@@ -545,6 +545,8 @@ typedef struct elf64_shdr {
- #define NT_RISCV_VECTOR	0x901		/* RISC-V vector registers */
- #define NN_RISCV_TAGGED_ADDR_CTRL "LINUX"
- #define NT_RISCV_TAGGED_ADDR_CTRL 0x902	/* RISC-V tagged address control (prctl()) */
-+#define NN_RISCV_HW_BREAK	"LINUX"
-+#define NT_RISCV_HW_BREAK	0x903	/* RISC-V hardware breakpoint registers */
- #define NN_LOONGARCH_CPUCFG	"LINUX"
- #define NT_LOONGARCH_CPUCFG	0xa00	/* LoongArch CPU config registers */
- #define NN_LOONGARCH_CSR	"LINUX"
-diff --git a/tools/include/uapi/linux/elf.h b/tools/include/uapi/linux/elf.h
-index 5834b83d7f9a..b5f35df1de7a 100644
---- a/tools/include/uapi/linux/elf.h
-+++ b/tools/include/uapi/linux/elf.h
-@@ -460,6 +460,7 @@ typedef struct elf64_shdr {
- #define NT_RISCV_CSR	0x900		/* RISC-V Control and Status Registers */
- #define NT_RISCV_VECTOR	0x901		/* RISC-V vector registers */
- #define NT_RISCV_TAGGED_ADDR_CTRL 0x902	/* RISC-V tagged address control (prctl()) */
-+#define NT_RISCV_HW_BREAK	0x903	/* RISC-V hardware breakpoint registers */
- #define NT_LOONGARCH_CPUCFG	0xa00	/* LoongArch CPU config registers */
- #define NT_LOONGARCH_CSR	0xa01	/* LoongArch control and status registers */
- #define NT_LOONGARCH_LSX	0xa02	/* LoongArch Loongson SIMD Extension registers */
++	if ((uintptr_t) addr % size) {
++		ksft_print_msg(
++			 "Wrong address write for the given size: %s\n",
++			 strerror(errno));
++		_exit(1);
++	}
++
++	switch (size) {
++	case 1:
++		*addr = 47;
++		break;
++	case 2:
++		*(uint16_t *)addr = 47;
++		break;
++	case 4:
++		*(uint32_t *)addr = 47;
++		break;
++	case 8:
++		*(uint64_t *)addr = 47;
++		break;
++	}
++
++	_exit(0);
++}
++
++static bool set_watchpoint(pid_t pid, int size, int wp)
++{
++	const volatile uint8_t *addr = &var[MAX_BP_SIZE + wp];
++	const int offset = (uintptr_t)addr % 8;
++	const unsigned int type = 2; /* Write */
++	const unsigned int enable = 1;
++	struct __riscv_hwdebug_state debug_state;
++	struct iovec iov;
++
++	memset(&debug_state, 0, sizeof(debug_state));
++	debug_state.addr = (uintptr_t)(addr - offset);
++	debug_state.len = size;
++	debug_state.ctrl = enable;
++	debug_state.type = type;
++	iov.iov_base = &debug_state;
++	iov.iov_len = sizeof(debug_state);
++	if (ptrace(PTRACE_SETREGSET, pid, NT_RISCV_HW_BREAK, &iov) == 0)
++		return true;
++
++	if (errno == EIO)
++		ksft_print_msg(
++			"ptrace(PTRACE_SETREGSET, NT_RISCV_HW_BREAK) not supported on this hardware: %s\n",
++			strerror(errno));
++
++	ksft_print_msg(
++		"ptrace(PTRACE_SETREGSET, NT_RISCV_HW_BREAK) failed: %s\n",
++		strerror(errno));
++	return false;
++}
++
++static bool run_test(int wr_size, int wp_size, int wr, int wp)
++{
++	int status;
++	siginfo_t siginfo;
++	pid_t pid = fork();
++	pid_t wpid;
++
++	if (pid < 0) {
++		ksft_test_result_fail(
++			"fork() failed: %s\n", strerror(errno));
++		return false;
++	}
++	if (pid == 0)
++		child(wr_size, wr);
++
++	wpid = waitpid(pid, &status, __WALL);
++	if (wpid != pid) {
++		ksft_print_msg(
++			"waitpid() failed: %s\n", strerror(errno));
++		return false;
++	}
++	if (!WIFSTOPPED(status)) {
++		ksft_print_msg(
++			"child did not stop: %s\n", strerror(errno));
++		return false;
++	}
++	if (WSTOPSIG(status) != SIGSTOP) {
++		ksft_print_msg("child did not stop with SIGSTOP\n");
++		return false;
++	}
++
++	if (!set_watchpoint(pid, wp_size, wp))
++		return false;
++
++	if (ptrace(PTRACE_CONT, pid, NULL, NULL) < 0) {
++		ksft_print_msg(
++			"ptrace(PTRACE_CONT) failed: %s\n",
++			strerror(errno));
++		return false;
++	}
++
++	alarm(3);
++	wpid = waitpid(pid, &status, __WALL);
++	if (wpid != pid) {
++		ksft_print_msg(
++			"waitpid() failed: %s\n", strerror(errno));
++		return false;
++	}
++	alarm(0);
++	if (WIFEXITED(status)) {
++		ksft_print_msg("child exited prematurely\n");
++		return false;
++	}
++	if (!WIFSTOPPED(status)) {
++		ksft_print_msg("child did not stop\n");
++		return false;
++	}
++	if (WSTOPSIG(status) != SIGTRAP) {
++		ksft_print_msg("child did not stop with SIGTRAP\n");
++		return false;
++	}
++	if (ptrace(PTRACE_GETSIGINFO, pid, NULL, &siginfo) != 0) {
++		ksft_print_msg(
++			"ptrace(PTRACE_GETSIGINFO): %s\n",
++			strerror(errno));
++		return false;
++	}
++	if (siginfo.si_code != TRAP_HWBKPT) {
++		ksft_print_msg(
++			"Unexpected si_code %d\n", siginfo.si_code);
++		return false;
++	}
++
++	kill(pid, SIGKILL);
++	wpid = waitpid(pid, &status, 0);
++	if (wpid != pid) {
++		ksft_print_msg(
++			"waitpid() failed: %s\n", strerror(errno));
++		return false;
++	}
++	return true;
++}
++
++static void sigalrm(int sig)
++{
++}
++
++int main(int argc, char **argv)
++{
++	int opt;
++	bool succeeded = true;
++	struct sigaction act;
++	int wr, wp, size;
++	bool result;
++
++	ksft_print_header();
++	ksft_set_plan(213);
++
++	act.sa_handler = sigalrm;
++	sigemptyset(&act.sa_mask);
++	act.sa_flags = 0;
++	sigaction(SIGALRM, &act, NULL);
++	for (size = 1; size <= MAX_BP_SIZE; size = size*2) {
++		for (wr = 0; wr <= MAX_BP_SIZE; wr = wr + size) {
++			for (wp = wr - size; wp <= wr + size; wp = wp + size) {
++				result = run_test(size, MIN(size, 8), wr, wp);
++				if ((result && wr == wp) ||
++				    (!result && wr != wp))
++					ksft_test_result_pass(
++						"Test size = %d write offset = %d watchpoint offset = %d\n",
++						size, wr, wp);
++				else {
++					ksft_test_result_fail(
++						"Test size = %d write offset = %d watchpoint offset = %d\n",
++						size, wr, wp);
++					succeeded = false;
++				}
++			}
++		}
++	}
++
++	for (size = 1; size <= MAX_BP_SIZE; size = size*2) {
++		if (run_test(size, 8, -size, -8))
++			ksft_test_result_pass(
++				"Test size = %d write offset = %d watchpoint offset = -8\n",
++				size, -size);
++		else {
++			ksft_test_result_fail(
++				"Test size = %d write offset = %d watchpoint offset = -8\n",
++				size, -size);
++			succeeded = false;
++		}
++	}
++
++	if (succeeded)
++		ksft_exit_pass();
++	else
++		ksft_exit_fail();
++}
 -- 
 2.43.0
 
