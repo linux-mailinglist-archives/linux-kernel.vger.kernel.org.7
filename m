@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-781142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F727B30DF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:26:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F602B30DF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:27:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D905189A534
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:25:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 565CE7BBFF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DDF231832;
-	Fri, 22 Aug 2025 05:24:45 +0000 (UTC)
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C16D27F006;
+	Fri, 22 Aug 2025 05:26:48 +0000 (UTC)
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DFA212563
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D49198A11
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755840285; cv=none; b=kCAfZpzJqvVbIUuq+HutHYtazYWRgN0wHNCI7X07SFF8OL07xhsSsVqnxSHoTj4pAAzbelPrv2WCw1/xfutuoqshp2aEYS8AZ7GlUV8+wuS5ibclRWgnORAV3j6LNqnjTprhSlP5IWTU1l1BXSQSviaLO7tLDtZ165Kic+vNhUs=
+	t=1755840407; cv=none; b=lWngw61IivXdsftPObMos9jShCr5iL7Q/SewVINEG1ydUD7NoPEuO6HLy75e1LzsI056hYxKeFYgxBnAE9Rq4gffUH5FWZojGNALBnsa7WLGZasoLR7KAZD4k1E2fY8rHS8mJbpcIgzz1abBDjvHJv5g/W4KzHCaC+7/akJMZqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755840285; c=relaxed/simple;
-	bh=vqrYwUwAVs5X2DPvqk2UlNCPO6LGG4MO76/HcDklnnw=;
+	s=arc-20240116; t=1755840407; c=relaxed/simple;
+	bh=EwC/a0KV2I8YGxKhs/nPZvHT6OBRurivwO19o5f5pV4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pfsp9q5ac2HBvL6BFlxsmb/ufot8ukNnNhwAQiNAWBL4XnEl4r9HJ06CuKUB9TVWyG6cnmQSebvOh0U185Chvsr2wnkIiPt0ypGqmfSmZNWpPzPFTbYJXhPeFxX37rC+E5TdBLeeaKznO8wLIvHRK7PMBPdr/e/PoHzOfjZ/B6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.207.19.206
+	 Content-Type:Content-Disposition:In-Reply-To; b=pPiBopYIGIp7Z7Z7qDLDDYGw/OMnEz69x1R9kk48TOEQiz5/mHt8Ewg7NniAOj0VX3//tm6hrq8zLSfVUDvSPuzRfUx+ouiZDRhNreQZ95UzURVhu5cTpEFANuHSaF4e+uhuu0kM4SIhKkeK/WcNKf/FUi91McqYUp4FvG/9+uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.243.244.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpsz3t1755840193tae549ba7
-X-QQ-Originating-IP: 5NgYGNwVjuXw11VeCT6N7t3/42rH5L5UVcwCtVF/r0o=
+X-QQ-mid: esmtpsz11t1755840313t1968e2c3
+X-QQ-Originating-IP: ay1n1e7+jnTaE0tAKeASRzidqi+sbKOyFZfmoekBSgE=
 Received: from localhost ( [203.174.112.180])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 22 Aug 2025 13:23:11 +0800 (CST)
+	id ; Fri, 22 Aug 2025 13:25:11 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3820646082963758569
-Date: Fri, 22 Aug 2025 13:23:12 +0800
+X-BIZMAIL-ID: 6492650603905792360
+Date: Fri, 22 Aug 2025 13:25:11 +0800
 From: Yibo Dong <dong100@mucse.com>
 To: Parthiban.Veerasooran@microchip.com
 Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
@@ -48,11 +48,11 @@ Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
 	richardcochran@gmail.com, kees@kernel.org, gustavoars@kernel.org,
 	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v7 1/5] net: rnpgbe: Add build support for rnpgbe
-Message-ID: <4DDD62E86FE72117+20250822052312.GA1931582@nic-Precision-5820-Tower>
+Subject: Re: [PATCH net-next v7 3/5] net: rnpgbe: Add basic mbx ops support
+Message-ID: <91803970CBBEA502+20250822052511.GB1931582@nic-Precision-5820-Tower>
 References: <20250822023453.1910972-1-dong100@mucse.com>
- <20250822023453.1910972-2-dong100@mucse.com>
- <f66e4b61-c547-428c-a947-57ea2a71c1ea@microchip.com>
+ <20250822023453.1910972-4-dong100@mucse.com>
+ <b5f36260-8615-4b81-9905-a44d05e919a3@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,69 +61,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f66e4b61-c547-428c-a947-57ea2a71c1ea@microchip.com>
+In-Reply-To: <b5f36260-8615-4b81-9905-a44d05e919a3@microchip.com>
 X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OXhWvHhbOVwtis9ps2diS86gnIj1fYXjMFzVWLYJwBGs5xJECb75HaJz
-	GND/0SPCia6LZvCPmC6gO2a2M61udq03fa2XcPiAFMQ/QnhiQ/VmxYEpjjaSVoRQiQeC5B2
-	wjFJRfYmgYQFrVXdaIWvg1UXDIS333nshYZlsz78xEyf3mObY2cqoiJfisyyeINRBq/DjwK
-	z/uduTdJ5DAroW+1Y7v/UBn6uHEjYFvb0od+ZFjkFd5EuKqxHYNq+IlD2zVd4dw9tj7r0rL
-	1I7+INsOg5m6EEGXgWl/OteLPFxXIGfGK5mCbdmaY0mayK2JtlqwMurykaz+Z78tJH63aii
-	+3s7P6eetBOYhOBeeZqvSw9XpfVuw4Bby+LO7pLFrFp7dDia51/y8bbExBRZSF0KXYtO+dZ
-	m6U7koaKZOskkeTsXoy5VemlNpZQdeBUXlKK75jD4CPTGY28a2izSCBtCxKnbGGiCzfIHt8
-	6PX1clan8dsXbB3w3ZcfpaZ7aexPAW3xrfYCaOjaVPqdW/meTbSSHwx2wkgGKPk8nq13Brt
-	xK4cv8mkItf6IBcRzKALSjqtQduwRA5FNQzM/uKsO1Yuj/WUwOhyPEkcnVyaUibnCNqcc2X
-	V3h4BX1uFyzSD3enHTZ1zGmVwJhEV0s6FIuxKg3sMH5xDkVPstVJPjzCza6Lz169vRfZaDH
-	nXkDRa6H6wPDoAMe1bAV8Bsf4VM4gIIarKhpGOHMnSYtLSZ75J5W/fuJalJDSK8szAMmZlj
-	IHkA+ibAqafta5QIvcvytjRIT9jKaD92F5W5twpZrw+8134Ysf0D61eNSzZKQ7PwxxrfHkm
-	09suaTAQrI7GZQwrQoC/6z/6YKUNfItNCGo1x5pkw7DwABVhmeZKj+1hcPoZdPqH4ODigaC
-	9HG2IsdwozmWn5B+eIf6w2IVjIjCu7QOI8c49wCEAKYdpXVMTbK1oB0Q03fAQK/5cOcFt7B
-	IXeY1IH+F34Jctn3EtsVV6yHaESsSzqb6YpExA0kq1OuaNIF6rKh7LZ6bxtPrR/Ts+X8=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MhUtCUWJSosqugGjMJxwwMxlMCsnDXl1pbxdZEM2u9Eg18AzRUCAYgNJ
+	Tmw+J+1g1+ZT/sVEIH6FynarCbmr58vDHQMRadUcsKJCMbeJn51MzUx1eWxPmfarPuK83Nj
+	pM/SjsTQTMA3KK6k1sUrCtf8N7HO3xu6r9MI3reg9YfV9BQY69o8Rkp7J9/PU5uRE3GU7yI
+	d5HNV+Ls3vLeOpbT4pqMtAl2d9sXEPTQxweuPA/6u46r6SMvWemcJasxfmbWjReFmifHwV9
+	UHedw/vnkdD1ZIB940i/edPj5QUb78BKqzskXJz6eDH20F0gCVCzzPife5f6rVS+3MPixAA
+	OxHlNQfMd/jzacb+sQcOdKpamEKQ7Xgd6PDuR5ScF374IiUxNZPK7d7NSxPzW+NkhSqX86Z
+	Dv9EM/mKWGqFncfkI2hPw+ICQPPTDwGSUwB6HPzluvwI6Wa/qUaGDKSCmbhEMdTnDp2j6oZ
+	B07zyozgVmjwLqIMWZwlPmvXSwbdhG7XMtDGrB8q+YHkWnbzN6XgyJkvVvnqWQ4t5IEonOA
+	EDgazyzcr2DfasAFGbSjmL04Q4+LcVAGHQpSgsTEt9NBEJJjrrRZiDMcGEgYL2d7ZxT/nNv
+	BXu71daOENiZf/ChR++0UNW3UWO10NG0uejmVJcHWHKiTOhTpfsi94+vBu1oL6woF1qc8Va
+	RqDhoudIgIS4HSeE3zI00d2AZHal3eJWbjYkERdKf6u9w1uubReiof+YPaT3riuUAd7KKjE
+	j4NHPzeUvo41bmomLCFwJCCeiOJ5gmGHfhpkLo0kVjz8Sl14Orf1bq3zpRgiYST6EJL90n/
+	UFWElkoOgykfxdWowQTDtIluKkbStw+WOdW2+5dw6RQs6/bYAaaHrKcWsVEG4DmRSSiO4VB
+	UHjZVxoMpLbx+5joVcwlStBaqeHqA6G8WrTHyBgFkgtvTHkBlgYwarWZNLPk0sRQmvKMwca
+	XXqfPZLYBttjyZkU4RGXOi3tZy69Gsfw6PU2LgDLtDh3bReu3qDcZ9ngMlI8uP1s8ydhHFQ
+	iGRYSRBC1T8ajQSWntVAWDQemC4SrAem8/PG6Y6A==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
 X-QQ-RECHKSPAM: 0
 
-On Fri, Aug 22, 2025 at 04:32:06AM +0000, Parthiban.Veerasooran@microchip.com wrote:
+On Fri, Aug 22, 2025 at 04:41:48AM +0000, Parthiban.Veerasooran@microchip.com wrote:
 > > +
 > > +/**
-> > + * rnpgbe_probe - Device initialization routine
-> > + * @pdev: PCI device information struct
-> > + * @id: entry in rnpgbe_pci_tbl
+> > + * mucse_check_for_msg_pf - Check to see if the fw has sent mail
+> > + * @hw: pointer to the HW structure
 > > + *
-> > + * rnpgbe_probe initializes a PF adapter identified by a pci_dev
-> > + * structure.
-> > + *
-> > + * @return: 0 on success, negative on failure
+> > + * @return: 0 if the fw has set the Status bit or else
+> > + * -EIO
 > > + **/
-> > +static int rnpgbe_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> > +static int mucse_check_for_msg_pf(struct mucse_hw *hw)
 > > +{
-> > +       int err;
-> > +
-> > +       err = pci_enable_device_mem(pdev);
-> > +       if (err)
-> > +               return err;
-> > +
-> > +       err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(56));
-> > +       if (err) {
-> > +               dev_err(&pdev->dev,
-> > +                       "No usable DMA configuration, aborting %d\n", err);
-> > +               goto err_dma;
-> > +       }
-> > +
-> > +       err = pci_request_mem_regions(pdev, rnpgbe_driver_name);
-> > +       if (err) {
-> > +               dev_err(&pdev->dev,
-> > +                       "pci_request_selected_regions failed 0x%x\n", err);
-> > +               goto err_dma;
-> > +       }
-> > +
-> > +       pci_set_master(pdev);
-> > +       pci_save_state(pdev);
-> Don't you need to check the return value of this?
+> > +       struct mucse_mbx_info *mbx = &hw->mbx;
+> > +       u16 hw_req_count = 0;
+> I don't think you need to assign 0 here as this variable is updated in 
+> the next line.
 > 
 > Best regards,
 > Parthiban V
 
-Ok, I will add the check.
+Got it, I will update this.
+
+> > +
+> > +       hw_req_count = mucse_mbx_get_fwreq(mbx);
+> > +       /* chip's register is reset to 0 when rc send reset
+> > +        * mbx command. This causes 'hw_req_count != hw->mbx.fw_req'
+> > +        * be TRUE before fw really reply. Driver must wait fw reset
+> > +        * done reply before using chip, we must check no-zero.
+> > +        **/
+> > +       if (hw_req_count != 0 && hw_req_count != hw->mbx.fw_req) {
+> > +               hw->mbx.stats.reqs++;
+> > +               return 0;
+> > +       }
+> > +
+> > +       return -EIO;
+> > +}
+> > +
 
 Thanks for your feedback.
 
