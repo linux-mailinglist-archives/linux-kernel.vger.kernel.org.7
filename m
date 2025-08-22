@@ -1,96 +1,150 @@
-Return-Path: <linux-kernel+bounces-780901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F11B30ABE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:20:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07112B30AC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:22:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7449F1D04319
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32BB1AA6A49
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE34E1DB12E;
-	Fri, 22 Aug 2025 01:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5976E1A2C0B;
+	Fri, 22 Aug 2025 01:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBLltYVC"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VmRuWpWJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD891C1F02;
-	Fri, 22 Aug 2025 01:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84AA8393DE0;
+	Fri, 22 Aug 2025 01:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755825603; cv=none; b=TmijvhoiPMMeumbxk0UjWqd4DCE3/qvGQrb9snEFFS51bOVdXtkQKbzfCRzHvN5irS/MIubAJzonEZ/U2KseMNak/tQeVkShjSpxR6nwnXe1zfhpycl0BcInSDV07vIRMzGFu/Y2+FaMZiCTG9e/boWK3X0y0GNE3/SnqHSSX08=
+	t=1755825683; cv=none; b=dpZ360Oqm8aaHdNM4vLJujh5XrbTp3uhZyvxmEmLj2Efo5iZZbPy0MM5gNSpg5VTOMz62Hm5XcQgT3xuvW2JC5ouxdYiqsmbQQTCxVbviFlQW+7kTCbr+A4TYQveFf46INLAMtgzURIrBGXUnYQ14DAxfsp0WIop4zUdaZcHum0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755825603; c=relaxed/simple;
-	bh=oOO3ie4hfstobcHHlzmO+TVfvshoU1uuWOswgELCK8E=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=dBq2A0wpVCurloSVJNWQhxQKTruCaqWqGfGtncQfpqBGbPnpT58MZWzvVku8sFr+tpnGmvPIDY/ng4BMqXdKBy/ZvAzNA2hLDF9U0lWUHZaV4jl036c508MUty0gt0au1WMaBsFxP01pv7HyXJZ9NPg3kgCvTiPAvstbRiibYeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBLltYVC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95B8CC4CEEB;
-	Fri, 22 Aug 2025 01:20:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755825602;
-	bh=oOO3ie4hfstobcHHlzmO+TVfvshoU1uuWOswgELCK8E=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=mBLltYVCsQQDYoHRaq13wnw7tO3X2HjtEVbpelINwIebAApWjxjeBGq+jePep1VIX
-	 tUaW+AVd6dVqQa8galXadA+NVK+E4IbC/t0ExMKkMnu8OoNwUSFkzXOg0W74dogJ3Z
-	 XcKVYOM1cdF6RK6/B4Z98D8IMKpg/8E8mP1tendOiiW0MtLuHWayCoyMqUvNUx7YF0
-	 keSpIwcA1r5QksTUAGquRn/FtpRAgm9NZ7VSCUvUqnyGl9iVAKA0wKWjNVu1PZFXLv
-	 v3Kh+1mgoScgWGu6Rfixuhx63YcE3SPj+uRfa/AVpboQOR5OCxtuymKSCDyuq6mHVE
-	 M3ugA+RbuFHLw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAC28383BF68;
-	Fri, 22 Aug 2025 01:20:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1755825683; c=relaxed/simple;
+	bh=tVhsYHxxFfX7gGzpp6/1LpcEhJi77iuO99nxuLjq6VE=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=q9afxS4V+qJ6DfAquIFJ2AVMn/kT3m2IaNl0tnnaDuKIwhOl4DE6xwqReygWMcTR2umJLX/Ww28b8/biAvzr4z/Dvhv3ikcx1nNMTYczVBjyhdml5LOPsR0L5/42IsjBv9d+WIMlA41zJCanXPCH8cPrupQ1YjLB2Snu0bH4E5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VmRuWpWJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA7DCC4CEEB;
+	Fri, 22 Aug 2025 01:21:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1755825683;
+	bh=tVhsYHxxFfX7gGzpp6/1LpcEhJi77iuO99nxuLjq6VE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VmRuWpWJNQvSp2Yp6FHRGVB4G0XYU6yBwuR9Ey439kdy0gKxIPav8VKcWWeG4FGoV
+	 sEX1+CDT1U/YivRO40cVHX1BZEd3SOcRIejgpo3+zRTbetfu+lfNvQlGUBuzoAs04+
+	 WICZ4EUJJ9tgfCVPCdSjzDxiWpAsmP621V3ogmzc=
+Date: Thu, 21 Aug 2025 18:21:22 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hotfixes for 6.17-rc3
+Message-Id: <20250821182122.eb19072cafdbc6612e76ac8f@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/2] Fix vsock error-handling regression introduced in
- v6.17-rc1
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175582561148.1263133.8095775634903727151.git-patchwork-notify@kernel.org>
-Date: Fri, 22 Aug 2025 01:20:11 +0000
-References: <20250818180355.29275-1-will@kernel.org>
-In-Reply-To: <20250818180355.29275-1-will@kernel.org>
-To: Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
- netdev@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
- davem@davemloft.net, edumazet@google.com, hdanton@sina.com, kuba@kernel.org,
- jasowang@redhat.com, mst@redhat.com, pabeni@redhat.com, stefanha@redhat.com,
- sgarzare@redhat.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
 
-This series was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Linus, please merge this week's bunch of mainly-MM hotfixes, thanks.
 
-On Mon, 18 Aug 2025 19:03:53 +0100 you wrote:
-> Hi all,
-> 
-> Here are a couple of patches fixing the vsock error-handling regression
-> found by syzbot [1] that I introduced during the recent merge window.
-> 
-> Cheers,
-> 
-> [...]
 
-Here is the summary with links:
-  - [1/2] net: Introduce skb_copy_datagram_from_iter_full()
-    https://git.kernel.org/netdev/net/c/b08a784a5d14
-  - [2/2] vsock/virtio: Fix message iterator handling on transmit path
-    https://git.kernel.org/netdev/net/c/7fb1291257ea
+The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-08-21-18-17
+
+for you to fetch changes up to 772e5b4a5e8360743645b9a466842d16092c4f94:
+
+  mm/mremap: fix WARN with uffd that has remap events disabled (2025-08-19 16:35:57 -0700)
+
+----------------------------------------------------------------
+20 hotfixes.  10 are cc:stable and the remainder address post-6.16 issues
+or aren't considered necessary for -stable kernels.  17 of these fixes are
+for MM.
+
+As usual, singletons all over the place, apart from a three-patch series
+of KHO followup work from Pasha which is actually also a bunch of
+singletons.
+
+----------------------------------------------------------------
+Alice Ryhl (1):
+      mm: rust: add page.rs to MEMORY MANAGEMENT - RUST
+
+Axel Rasmussen (1):
+      MAINTAINERS: mark MGLRU as maintained
+
+David Hildenbrand (1):
+      mm/mremap: fix WARN with uffd that has remap events disabled
+
+Dominique Martinet (1):
+      iov_iter: iterate_folioq: fix handling of offset >= folio size
+
+Easwar Hariharan (1):
+      .mailmap: add entry for Easwar Hariharan
+
+Herton R. Krzesinski (1):
+      mm/debug_vm_pgtable: clear page table entries at destroy_args()
+
+Huacai Chen (1):
+      mm/migrate: fix NULL movable_ops if CONFIG_ZSMALLOC=m
+
+Jinjiang Tu (1):
+      mm/memory-failure: fix infinite UCE for VM_PFNMAP pfn
+
+Lorenzo Stoakes (4):
+      tools/testing: add linux/args.h header and fix radix, VMA tests
+      mm/mremap: allow multi-VMA move when filesystem uses thp_get_unmapped_area
+      mm/mremap: catch invalid multi VMA moves earlier
+      selftests/mm: add test for invalid multi VMA operations
+
+Pasha Tatashin (3):
+      kho: init new_physxa->phys_bits to fix lockdep
+      kho: mm: don't allow deferred struct page with KHO
+      kho: warn if KHO is disabled due to an error
+
+Phillip Lougher (1):
+      squashfs: fix memory leak in squashfs_fill_super
+
+Sang-Heon Jeon (3):
+      mm/damon/core: fix commit_ops_filters by using correct nth function
+      selftests/damon: fix selftests by installing drgn related script
+      mm/damon/core: fix damos_commit_filter not changing allow
+
+SeongJae Park (1):
+      mm/damon/sysfs-schemes: put damos dests dir after removing its files
+
+ .mailmap                                 |   2 +
+ MAINTAINERS                              |  19 +++
+ fs/squashfs/super.c                      |  14 +-
+ include/linux/iov_iter.h                 |  20 +--
+ include/linux/migrate.h                  |   5 +
+ kernel/Kconfig.kexec                     |   1 +
+ kernel/kexec_handover.c                  |  29 +++-
+ mm/balloon_compaction.c                  |   6 +
+ mm/damon/core.c                          |  15 +-
+ mm/damon/sysfs-schemes.c                 |   2 +-
+ mm/debug_vm_pgtable.c                    |   9 +-
+ mm/memory-failure.c                      |   8 +
+ mm/migrate.c                             |  38 ++++-
+ mm/mremap.c                              |  82 ++++++----
+ mm/zsmalloc.c                            |  10 ++
+ tools/include/linux/args.h               |  28 ++++
+ tools/testing/selftests/damon/Makefile   |   1 +
+ tools/testing/selftests/mm/mremap_test.c | 264 ++++++++++++++++++++++++++++++-
+ tools/testing/shared/linux/idr.h         |   4 +
+ 19 files changed, 487 insertions(+), 70 deletions(-)
+ create mode 100644 tools/include/linux/args.h
 
 
