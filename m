@@ -1,89 +1,92 @@
-Return-Path: <linux-kernel+bounces-781237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384A7B30F9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:54:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98FC5B30FA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5608A5E3033
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:53:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 799281660D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB74F2E5B14;
-	Fri, 22 Aug 2025 06:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D106C2C327D;
+	Fri, 22 Aug 2025 06:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PJrfF+3Q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YykTIPYK"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1382E22AE;
-	Fri, 22 Aug 2025 06:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22542E2281
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755845614; cv=none; b=bGCyjqEYnMBFyXHPUHN4MqE64LhcoVjO/+7DqbO2/afQWCjIPu2+tEdg42rwZZCRR0l7qKeiavDVgPW4ek79Fd6N6+oJkBseFIRSfauj1iEKog0JanjW1X/QCPXZhT4TNMNbb94RML+OrS6tDR5kPHXsi2oKB1DgKzjv6nm2RxM=
+	t=1755845715; cv=none; b=Fab89mbtn0xCmy/hNNsPpzYqJny1gaDNiD3Hp72CZBdNZSxIkyaBI8ig9rdmUwUn6lmpTnyhccbffMXL2NaOXRzxWSjN6JNqEjHopYGJ10U1tgUG05kvPH/dOT2MJizVLS/IXGgBDkxRXwYzWAMVMXW3908Db837ElUKxInCFFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755845614; c=relaxed/simple;
-	bh=9wRvB665rcxu8fe1PXnuVkbMQ0wZR5mh+LTi0x0XhqE=;
+	s=arc-20240116; t=1755845715; c=relaxed/simple;
+	bh=EWHdzyRT33IHKlwkAtAepytBgh5e0kzufrx+qy60ECY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JikeXitFyAeBiGv79bng246zl2fPN9RRn//YlQyZONFRy83sqPRmxAhOvmMDQrbSnIFst+NK2AM+CQe2uCpiPsLuI8VWo26ZXmVM981KiMxXdlybW+MGNTf8CDa8hqr2lkypaMP7xm5H0Aq8nbPds+xsZE5o4/lvGzHYo/0RHpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PJrfF+3Q; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755845613; x=1787381613;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9wRvB665rcxu8fe1PXnuVkbMQ0wZR5mh+LTi0x0XhqE=;
-  b=PJrfF+3QstoDlAtbXlZJWNTKjqqbwHl8UnYyTw7dn/64uFZA3tlZlFa7
-   kOqvmmjL7VrGa7nugOHZ0UPKXD0Pzt1MrAfhVehkTA5dR0iVf3Khl79yp
-   hnUZ6OQ9E+/GOTfUu/JVkBlL9/z515Wov4CyzU3rsvq3gMiJYvsqTIj/C
-   tHtbj8cybYhf59+alT0JAOXAK9B9zoqGrUgnrdj6TtJU6fYFhEsC7Ob8S
-   tZ3SeJfUDsWtKS7g6Qnqg2vdHswtYl+iQ2EOJxevqW30730JR0gMZA4YU
-   3ZmBpiwajQJikVWFdVb6wzYtlOdIrROwMwXqDyJI1mCHsDMLrQx5Lt5Al
-   g==;
-X-CSE-ConnectionGUID: 8h4QFdWqQ3OEHDaz8pFaZA==
-X-CSE-MsgGUID: /5W3JcALQE+1b3P1vkNzaA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="60777425"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="60777425"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 23:53:32 -0700
-X-CSE-ConnectionGUID: G0lx52a5T56sJGD0DmjRDQ==
-X-CSE-MsgGUID: q6bYU03qRYWZlhUkuK6F1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="168246511"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 21 Aug 2025 23:53:28 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1upLeP-000Kzf-0H;
-	Fri, 22 Aug 2025 06:53:25 +0000
-Date: Fri, 22 Aug 2025 14:52:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=fh1JpTuk9FXgqnrS0PC7ckTEXnBBWF/elxKh17iEt9KHwyi/3LKkj7CaDTd5GO4BKwniwO/tCk7rZWC7kvSWX0P18cu1OI65tsGzkmoPB6vMafeJS48LIIpAZkPmV+CnicK/yb1eckj6ovsfz9KMfc1VX0+91NCdca1Dy9uvI44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YykTIPYK; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e2ea79219so2197547b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 23:55:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755845713; x=1756450513; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bjicZI/1Nbr8qAa/3VcUbv7hfNRQcnbsv7M4jPSglw0=;
+        b=YykTIPYKV3nDmtOadZW4FF7zUtzPipM5DuFSrcLQZzI+iXYbd8bPHvItlkcBKVcNK2
+         ZvRiSCbi8ykK1ixRIqNVVdD6v9mZGRO8uQDVG9fMoM21VUU2pHwZPO1V3X+V4prUAcI1
+         EApeBiqvUT0UghRt5AtnghXMn1Ykm2iGXWADeUuf1/M4U/djhWNzfFszrtIyje+oB4hK
+         2sULttvrecfJXDQwP9C37eH/tbHo57Fb6rj8cR+WhEoKj0io8juZVrVtcdDCdAUHkyRc
+         /PpdjoRWuHS2z9IkZRl2EUrMawj4PDA/hzO3lFzOzQ5T2LiNz3+ryXRC6M50+PJ6jp7z
+         3WGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755845713; x=1756450513;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bjicZI/1Nbr8qAa/3VcUbv7hfNRQcnbsv7M4jPSglw0=;
+        b=miTY3P6ZAFGOBis9OntU3obS99SJjijxDsvuUdtXu1DOVfl+zvm55wT1owTSH70vrs
+         Li3WPj6U6VwV2MThMo095CvnY7ux13WZWh8ocvq15nhNzhu90l8SJ/AWfsNjhrh5DpwQ
+         1fGnbR/xrS+8YUfT93+FnNCFpdv2SMMU6DiCZ9HRHTXvtQ4deFMlP6xFPU7pK/fz8oH5
+         11zq22bb5BKcLECD2vUA9dc0ESEZZNSBapig0Wwxw02Pzg6I5Ljd90BLQ5ifsOqs+8Fz
+         rOUJGMTU68xw/3i4BOzSfEmLOzzJjtz35TmXLzJIRdiJ3jmD9wfky8DKovi8NLJP+xIo
+         pS6w==
+X-Forwarded-Encrypted: i=1; AJvYcCX4QxUZWq4+oIR29wKNyoyJOUAsCMDH0RySZuJiMtjwYXDVgpYsZtbdKy8JniTo75y8MnFguE9tyrrBn94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIqnku+Q6OugDi7mY3nVWjmIG2SOrxnZLc+y5VATGddV5tWtHX
+	zzL90UFrdv3ftnLNuV1JyFNPJlxCbPrB/AVaDHXfCctLIGLQqBcROXjEQcQ6ScsPtHI=
+X-Gm-Gg: ASbGncuMYb4X4CfXrDBEqjF0bShBhfofy30MRljMhm0t/wPK0uFoAiamQ1RtvLU8Wfz
+	mgnFaXpSTqtjEhQ3RhSCjD77TMG8xa++5O3zQXpARqEDJtOw2GBCVVHK/JO36BQNP6rJ4WaDQpG
+	oVPahDcKU8Qc06bcmksjj+LYkTjUY991xxlxltN7ZM4HHsYRL8C5BE2S1M7Dl4W4i82JmruPY2m
+	CJR65bPOu/0uZdM43uDLotL3sZjwNjT3GYprN2TZYKqDmsFg94v7EPOjRJXOKFMo4CBdylWmnn5
+	uxRoIwCzZ8XkWPfA4KM0s8+B3rXEN1re3tTwnNzOrNCPK1r4DFb961HxQ+ZlCh0gAliIYZ2GCyr
+	iyPiDyRpJjVVfb4oEG/q+z7Mp
+X-Google-Smtp-Source: AGHT+IFqTCtn1vTBHrNEXFDiI/RKgrZ8CU3yklaDBqhgIBX1zop4EhNr7+iPGnFTdss9iSbzazknMg==
+X-Received: by 2002:a05:6a00:2355:b0:76b:e0f7:42f with SMTP id d2e1a72fcca58-7702faaf381mr2736161b3a.19.1755845713053;
+        Thu, 21 Aug 2025 23:55:13 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d137dfbsm9903213b3a.44.2025.08.21.23.55.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 23:55:12 -0700 (PDT)
+Date: Fri, 22 Aug 2025 12:25:10 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Judith Mendez <jm@ti.com>
+Cc: Nishanth Menon <nm@ti.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
-	Ceclan Dumitru <dumitru.ceclan@analog.com>,
-	Jonathan Santos <Jonathan.Santos@analog.com>,
-	Dragos Bogdan <dragos.bogdan@analog.com>
-Subject: Re: [PATCH v1 2/2] iio: adc: Add basic support for MAX14001
-Message-ID: <202508221427.TaHJJwvG-lkp@intel.com>
-References: <2919a00f86c1188b83446853bcb9740138d70f44.1755778212.git.marilene.agarcia@gmail.com>
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Bryan Brattlof <bb@ti.com>, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH 2/3] cpufreq: ti: Allow all silicon revisions to support
+ OPPs
+Message-ID: <20250822065510.3vlbjwakt7ts75gk@vireshk-i7>
+References: <20250818192632.2982223-1-jm@ti.com>
+ <20250818192632.2982223-3-jm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,47 +95,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2919a00f86c1188b83446853bcb9740138d70f44.1755778212.git.marilene.agarcia@gmail.com>
+In-Reply-To: <20250818192632.2982223-3-jm@ti.com>
 
-Hi Marilene,
+On 18-08-25, 14:26, Judith Mendez wrote:
+> More silicon revisions are being defined for AM62x, AM62Px, and AM62ax
+> SoCs. These silicon may also support currently establishes OPPs, so remove
+> the revision limitation in ti-cpufreq and thus determine if an OPP applies
+> with speed grade efuse parsing.
+> 
+> Signed-off-by: Judith Mendez <jm@ti.com>
+> ---
+>  drivers/cpufreq/ti-cpufreq.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
+> index f7be09dc63e3..90c896d02649 100644
+> --- a/drivers/cpufreq/ti-cpufreq.c
+> +++ b/drivers/cpufreq/ti-cpufreq.c
+> @@ -311,9 +311,9 @@ static struct ti_cpufreq_soc_data am3517_soc_data = {
+>  };
+>  
+>  static const struct soc_device_attribute k3_cpufreq_soc[] = {
+> -	{ .family = "AM62X", .revision = "SR1.0" },
+> -	{ .family = "AM62AX", .revision = "SR1.0" },
+> -	{ .family = "AM62PX", .revision = "SR1.0" },
+> +	{ .family = "AM62X", },
+> +	{ .family = "AM62AX", },
+> +	{ .family = "AM62PX", },
+>  	{ /* sentinel */ }
+>  };
 
-kernel test robot noticed the following build errors:
+This got a minor conflict, fixed it as:
 
-[auto build test ERROR on 7c680c4dbbb5365ad78ce661886ce1668ff40f9c]
+diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
+index d6bd0d2dcf15..6ee76f5fe9c5 100644
+--- a/drivers/cpufreq/ti-cpufreq.c
++++ b/drivers/cpufreq/ti-cpufreq.c
+@@ -311,10 +311,10 @@ static struct ti_cpufreq_soc_data am3517_soc_data = {
+ };
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Marilene-Andrade-Garcia/dt-bindings-iio-adc-Add-MAX14001/20250821-225647
-base:   7c680c4dbbb5365ad78ce661886ce1668ff40f9c
-patch link:    https://lore.kernel.org/r/2919a00f86c1188b83446853bcb9740138d70f44.1755778212.git.marilene.agarcia%40gmail.com
-patch subject: [PATCH v1 2/2] iio: adc: Add basic support for MAX14001
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250822/202508221427.TaHJJwvG-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250822/202508221427.TaHJJwvG-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508221427.TaHJJwvG-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/iio/adc/max14001.c:10:10: fatal error: 'asm/unaligned.h' file not found
-      10 | #include <asm/unaligned.h>
-         |          ^~~~~~~~~~~~~~~~~
-   1 error generated.
-
-
-vim +10 drivers/iio/adc/max14001.c
-
-  > 10	#include <asm/unaligned.h>
-    11	#include <linux/bitfield.h>
-    12	#include <linux/bitrev.h>
-    13	#include <linux/module.h>
-    14	#include <linux/spi/spi.h>
-    15	#include <linux/iio/iio.h>
-    16	#include <linux/regulator/consumer.h>
-    17	
+ static const struct soc_device_attribute k3_cpufreq_soc[] = {
+-       { .family = "AM62X", .revision = "SR1.0" },
+-       { .family = "AM62AX", .revision = "SR1.0" },
+-       { .family = "AM62PX", .revision = "SR1.0" },
+-       { .family = "AM62DX", .revision = "SR1.0" },
++       { .family = "AM62X", },
++       { .family = "AM62AX", },
++       { .family = "AM62PX", },
++       { .family = "AM62DX", },
+        { /* sentinel */ }
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+viresh
 
