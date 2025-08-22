@@ -1,116 +1,241 @@
-Return-Path: <linux-kernel+bounces-781028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B7D0B30C8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:29:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E86FB30C92
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B49317A830
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:26:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B940A234D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D58728AB0B;
-	Fri, 22 Aug 2025 03:26:44 +0000 (UTC)
-Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A5D1096F;
-	Fri, 22 Aug 2025 03:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D3D28B3EB;
+	Fri, 22 Aug 2025 03:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h5v/vvGF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CE1289E21;
+	Fri, 22 Aug 2025 03:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755833204; cv=none; b=dogOR2KdwX/Yf6ljqcMGFLum9W+G/2BEx7eindVGCPT8JOu00YrRd1M24AbiepbvscjmUXszZYFQeF2Kse6/G4JJSWGVmfNpYw3adH28LkZ/juXeSWhdPve/enTtSHPP44xkZ4xaXcWPPrlgYCfK7IN7ySdePCOKzRQNJHOWTls=
+	t=1755833345; cv=none; b=bfpNmtRL/b9vSMooThXK/AnQXkQYKwYfISTHq8dsJo6b+7Meh3/ZcY5QNr3FbUcaAsBxgqA3rX0FP1uF5QVeXecZGy93dwTluSb3up7wbSH5L+xA0zdHPam7bngPt9IuYfrNuykATLTuae8RL+h0c0MdgCn/XOB3aGIQCRZOth4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755833204; c=relaxed/simple;
-	bh=wF1ylDXFmSCDCWt+ugfOeabac+MMovP6GAcpIG+yjw0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=mQFDoyr8YrEBkgTr02rgZSeek59tW2RQkQBq8LF6v42x8bmRet+aWNnBCgLJD2tJExvs5BXZcHQ4H0PkumaZ6elfU/mbeMQytNzXE5MbEahQbeb5toZ203/bZtNI7mNf+BEQLTP7UkrHrnchtjJykVi7Ab8AvcoC9ePbwMXc2hQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from lizhi2$eswincomputing.com ( [10.11.96.26] ) by
- ajax-webmail-app1 (Coremail) ; Fri, 22 Aug 2025 11:26:02 +0800 (GMT+08:00)
-Date: Fri, 22 Aug 2025 11:26:02 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?5p2O5b+X?= <lizhi2@eswincomputing.com>
-To: "Andrew Lunn" <andrew@lunn.ch>
-Cc: weishangjuan@eswincomputing.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, rmk+kernel@armlinux.org.uk,
-	yong.liang.choong@linux.intel.com, vladimir.oltean@nxp.com,
-	jszhang@kernel.org, jan.petrous@oss.nxp.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
-	boon.khai.ng@altera.com, dfustini@tenstorrent.com, 0x1207@gmail.com,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: Re: Re: Re: Re: Re: [PATCH v3 2/2] ethernet: eswin: Add
- eic7700 ethernet driver
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <548973df-2fa8-4502-9f7c-668d0eeb16c6@lunn.ch>
-References: <c212c50e-52ae-4330-8e67-792e83ab29e4@lunn.ch>
- <7ccc507d.34b1.1980d6a26c0.Coremail.lizhi2@eswincomputing.com>
- <e734f2fd-b96f-4981-9f00-a94f3fd03213@lunn.ch>
- <6c5f12cd.37b0.1982ada38e5.Coremail.lizhi2@eswincomputing.com>
- <6b3c8130-77f0-4266-b1ed-2de80e0113b0@lunn.ch>
- <006c01dbfafb$3a99e0e0$afcda2a0$@eswincomputing.com>
- <28a48738-af05-41a4-be4c-5ca9ec2071d3@lunn.ch>
- <2b4deeba.3f61.1985fb2e8d4.Coremail.lizhi2@eswincomputing.com>
- <bad83fec-afca-4c41-bee4-e4e4f9ced57a@lunn.ch>
- <3261748c.629.198cfa3bc10.Coremail.lizhi2@eswincomputing.com>
- <548973df-2fa8-4502-9f7c-668d0eeb16c6@lunn.ch>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1755833345; c=relaxed/simple;
+	bh=4g+NOdWwaTNFdwMM6/vbTTgDQgvH1CGzNnjQxHwcBQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=irwqx36rwPyRNeJkf9PqOP4HIjrXbQVkIPfssYtZsdCV2mrWS5WlTl1EazXtlhu4MWYJ/8I3zuJY4bHQjNStCb6E7FFWWz2UVbMbzOuhddcGMNfQq3LGZ61znkjfHEIT9vAtgZ1qvdKGxF8Hr0jL4tU+lYLoYtlQ4Z5VsfmLul0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h5v/vvGF; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755833344; x=1787369344;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4g+NOdWwaTNFdwMM6/vbTTgDQgvH1CGzNnjQxHwcBQg=;
+  b=h5v/vvGF0yPb3ZlzxICNZ4iSXBs5EEBrL0kVdw9HUJ6Fvud7i7EMvKHD
+   9+J6mlNAkoHwamzpOv8NTQqnq39lf0XiLVnCgReF2i0ujud+SiPiBUTOm
+   I7qpuBXwECMUbASKqqZSJ2e5Q1ev8GSQ/8/b/ubP4xnhlqUyMRhJDJB40
+   4N/h2LH/45XF43v6RweH31T/D0gyE+GnwhUxaxi8h7O4a+0Xay3fawXDG
+   3WxpY3zfpJbzhUMwAvAUva3RGCsu/PaMLdU3/+JDJCJnclIokq8LOeq++
+   xcoRt6kiXvJSuoWk172hIPDkofGW+PtL1jo31zL2gbQW/qai57XQ+SNpI
+   A==;
+X-CSE-ConnectionGUID: gkzudP81Q2a3/Izx1fl6MA==
+X-CSE-MsgGUID: DqbZOzOdT+yjxjmFbTRayw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="69575023"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="69575023"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 20:29:03 -0700
+X-CSE-ConnectionGUID: 0GUAmjcMR3u1FdznOpBq/g==
+X-CSE-MsgGUID: l+1pqG1rTImOpTAfJ8Xm/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="168496106"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 21 Aug 2025 20:29:00 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1upISY-000KsD-0k;
+	Fri, 22 Aug 2025 03:28:58 +0000
+Date: Fri, 22 Aug 2025 11:27:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Marcos Del Sol Vives <marcos@orca.pet>, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Marcos Del Sol Vives <marcos@orca.pet>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Michael Walle <mwalle@kernel.org>, Lee Jones <lee@kernel.org>,
+	Bjorn Helgaas <helgaas@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] gpio: gpio-regmap: add flags to control some
+ behaviour
+Message-ID: <202508221142.ETxcEpjA-lkp@intel.com>
+References: <20250821101902.626329-2-marcos@orca.pet>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <1935a8ad.648.198cfcfdcb1.Coremail.lizhi2@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TAJkCgDH3g9L46do9c3BAA--.11720W
-X-CM-SenderInfo: xol2xx2s6h245lqf0zpsxwx03jof0z/1tbiAgECDGinSk8OdAABs8
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821101902.626329-2-marcos@orca.pet>
 
-RGVhciBBbmRyZXcgTHVubiwKVGhhbmsgeW91IGZvciB5b3VyIHZhbHVhYmxlIGFuZCBwcm9mZXNz
-aW9uYWwgc3VnZ2VzdGlvbnMuClBsZWFzZSBmaW5kIG91ciBleHBsYW5hdGlvbnMgZW1iZWRkZWQg
-YmVsb3cgeW91ciBjb21tZW50cyBpbiB0aGUKb3JpZ2luYWwgZW1haWwuCgpCZXN0IHJlZ2FyZHMs
-CgpMaSBaaGkKRXN3aW4gQ29tcHV0aW5nCgoKPiAtLS0tLeWOn+Wni+mCruS7ti0tLS0tCj4g5Y+R
-5Lu25Lq6OiAiQW5kcmV3IEx1bm4iIDxhbmRyZXdAbHVubi5jaD4KPiDlj5HpgIHml7bpl7Q6MjAy
-NS0wOC0yMiAxMToxNzozNyAo5pif5pyf5LqUKQo+IOaUtuS7tuS6ujog5p2O5b+XIDxsaXpoaTJA
-ZXN3aW5jb21wdXRpbmcuY29tPgo+IOaKhOmAgTogd2Vpc2hhbmdqdWFuQGVzd2luY29tcHV0aW5n
-LmNvbSwgYW5kcmV3K25ldGRldkBsdW5uLmNoLCBkYXZlbUBkYXZlbWxvZnQubmV0LCBlZHVtYXpl
-dEBnb29nbGUuY29tLCBrdWJhQGtlcm5lbC5vcmcsIHJvYmhAa2VybmVsLm9yZywga3J6aytkdEBr
-ZXJuZWwub3JnLCBjb25vcitkdEBrZXJuZWwub3JnLCBuZXRkZXZAdmdlci5rZXJuZWwub3JnLCBk
-ZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZywgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZywg
-bWNvcXVlbGluLnN0bTMyQGdtYWlsLmNvbSwgYWxleGFuZHJlLnRvcmd1ZUBmb3NzLnN0LmNvbSwg
-cm1rK2tlcm5lbEBhcm1saW51eC5vcmcudWssIHlvbmcubGlhbmcuY2hvb25nQGxpbnV4LmludGVs
-LmNvbSwgdmxhZGltaXIub2x0ZWFuQG54cC5jb20sIGpzemhhbmdAa2VybmVsLm9yZywgamFuLnBl
-dHJvdXNAb3NzLm54cC5jb20sIHByYWJoYWthci5tYWhhZGV2LWxhZC5yakBicC5yZW5lc2FzLmNv
-bSwgaW5vY2hpYW1hQGdtYWlsLmNvbSwgYm9vbi5raGFpLm5nQGFsdGVyYS5jb20sIGRmdXN0aW5p
-QHRlbnN0b3JyZW50LmNvbSwgMHgxMjA3QGdtYWlsLmNvbSwgbGludXgtc3RtMzJAc3QtbWQtbWFp
-bG1hbi5zdG9ybXJlcGx5LmNvbSwgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn
-LCBuaW5neXVAZXN3aW5jb21wdXRpbmcuY29tLCBsaW5taW5AZXN3aW5jb21wdXRpbmcuY29tLCBw
-aW5rZXNoLnZhZ2hlbGFAZWluZm9jaGlwcy5jb20KPiDkuLvpopg6IFJlOiBSZTogUmU6IFJlOiBS
-ZTogUmU6IFtQQVRDSCB2MyAyLzJdIGV0aGVybmV0OiBlc3dpbjogQWRkIGVpYzc3MDAgZXRoZXJu
-ZXQgZHJpdmVyCj4gCj4gPiBXZSByZS10dW5lZCBhbmQgdmVyaWZpZWQgdGhhdCBzZXR0aW5nIHRo
-ZSBUWEQgYW5kIFJYRCBkZWxheXMgdG8gMCBhbmQKPiA+IGNvbmZpZ3VyaW5nIFRYRU4gYW5kIFJY
-RFYgdG8gMCB5aWVsZGVkIHRoZSBzYW1lIGhhcmR3YXJlIHBlcmZvcm1hbmNlIGFzCj4gPiBsb25n
-IGFzIHdlIG9ubHkgYXBwbGllZCBkZWxheXMgKGUuZy4gMjAwcHMpIHRvIFRYQ0xLIGFuZCBSWENM
-Sy4KPiAKPiBUaGlzIGlzIGluIGFkZGl0aW9uIHRvIHBoeS1tb2RlID0gJ3JnbWlpLWlkJz8KPiAK
-Clllcywgb3VyIHJlLXR1bmluZyBhbmQgdmVyaWZpY2F0aW9uIHdlcmUgcGVyZm9ybWVkIHdpdGgg
-cGh5LW1vZGUgc2V0IHRvCnJnbWlpLWlkLgoKPiA+IFRoZXJlZm9yZSwgaW4gdGhlIG5leHQgcGF0
-Y2gsIHdlIHdpbGwgZHJvcCB0aGUgdmVuZG9yLXNwZWNpZmljIHByb3BlcnRpZXMKPiA+IChlLmcu
-IGVzd2luLGRseS1wYXJhbS0qKSBhbmQga2VlcCBvbmx5IHRoZSBzdGFuZGFyZCBhdHRyaWJ1dGVz
-LCBuYW1lbHkKPiA+IHJ4LWludGVybmFsLWRlbGF5LXBzIGFuZCB0eC1pbnRlcm5hbC1kZWxheS1w
-cy4KPiA+IElzIHRoaXMgY29ycmVjdD8KPiAKPiBZZXMsIDIwMHBzIGlzIGEgc21hbGwgdHVuaW5n
-IHZhbHVlLCB3aGVuIHRoZSBQSFkgYWRkcyB0aGUgMm5zLiBUaGlzIGlzCj4gTy5LLgo+IAo+IAlB
-bmRyZXcK
+Hi Marcos,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on brgl/gpio/for-next]
+[also build test ERROR on lee-mfd/for-mfd-next lee-mfd/for-mfd-fixes pci/next pci/for-linus linus/master v6.17-rc2 next-20250821]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Marcos-Del-Sol-Vives/gpio-gpio-regmap-add-flags-to-control-some-behaviour/20250821-182416
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20250821101902.626329-2-marcos%40orca.pet
+patch subject: [PATCH v3 1/3] gpio: gpio-regmap: add flags to control some behaviour
+config: x86_64-buildonly-randconfig-001-20250822 (https://download.01.org/0day-ci/archive/20250822/202508221142.ETxcEpjA-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250822/202508221142.ETxcEpjA-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508221142.ETxcEpjA-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/gpio/gpio-fxl6408.c:11:
+>> include/linux/gpio/regmap.h:26:31: error: call to undeclared function 'BIT'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      26 |         GPIO_REGMAP_DIR_BEFORE_SET      = BIT(0),
+         |                                           ^
+>> include/linux/gpio/regmap.h:26:31: error: expression is not an integer constant expression
+      26 |         GPIO_REGMAP_DIR_BEFORE_SET      = BIT(0),
+         |                                           ^~~~~~
+   In file included from drivers/gpio/gpio-fxl6408.c:12:
+   In file included from include/linux/i2c.h:13:
+   In file included from include/linux/acpi.h:14:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/x86/include/asm/elf.h:10:
+   In file included from arch/x86/include/asm/ia32.h:7:
+   In file included from include/linux/compat.h:17:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:98:11: warning: array index 3 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+      98 |                 return (set->sig[3] | set->sig[2] |
+         |                         ^        ~
+   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
+      24 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from drivers/gpio/gpio-fxl6408.c:12:
+   In file included from include/linux/i2c.h:13:
+   In file included from include/linux/acpi.h:14:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/x86/include/asm/elf.h:10:
+   In file included from arch/x86/include/asm/ia32.h:7:
+   In file included from include/linux/compat.h:17:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:98:25: warning: array index 2 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+      98 |                 return (set->sig[3] | set->sig[2] |
+         |                                       ^        ~
+   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
+      24 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from drivers/gpio/gpio-fxl6408.c:12:
+   In file included from include/linux/i2c.h:13:
+   In file included from include/linux/acpi.h:14:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/x86/include/asm/elf.h:10:
+   In file included from arch/x86/include/asm/ia32.h:7:
+   In file included from include/linux/compat.h:17:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:99:4: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+      99 |                         set->sig[1] | set->sig[0]) == 0;
+         |                         ^        ~
+   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
+      24 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from drivers/gpio/gpio-fxl6408.c:12:
+   In file included from include/linux/i2c.h:13:
+   In file included from include/linux/acpi.h:14:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/x86/include/asm/elf.h:10:
+   In file included from arch/x86/include/asm/ia32.h:7:
+   In file included from include/linux/compat.h:17:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:101:11: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+     101 |                 return (set->sig[1] | set->sig[0]) == 0;
+         |                         ^        ~
+   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
+      24 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from drivers/gpio/gpio-fxl6408.c:12:
+   In file included from include/linux/i2c.h:13:
+   In file included from include/linux/acpi.h:14:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/x86/include/asm/elf.h:10:
+   In file included from arch/x86/include/asm/ia32.h:7:
+   In file included from include/linux/compat.h:17:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:114:11: warning: array index 3 is past the end of the array (that has type 'const unsigned long[1]') [-Warray-bounds]
+     114 |                 return  (set1->sig[3] == set2->sig[3]) &&
+         |                          ^         ~
+   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
+
+
+vim +/BIT +26 include/linux/gpio/regmap.h
+
+    14	
+    15	
+    16	/**
+    17	 * enum gpio_regmap_flags - flags to control GPIO operation
+    18	 */
+    19	enum gpio_regmap_flags {
+    20		/**
+    21		 * @GPIO_REGMAP_DIR_BEFORE_SET: when setting a pin as an output, set
+    22		 * its direction before the value. The output value will be undefined
+    23		 * for a short time which may have unwanted side effects, but some
+    24		 * hardware requires this.
+    25		 */
+  > 26		GPIO_REGMAP_DIR_BEFORE_SET	= BIT(0),
+    27	};
+    28	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
