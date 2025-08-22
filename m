@@ -1,71 +1,61 @@
-Return-Path: <linux-kernel+bounces-782125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C395DB31B81
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:29:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1230B31B83
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 327FA5A242B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:22:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EF856434B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498B03128BE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AC9312818;
 	Fri, 22 Aug 2025 14:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uC7AEXE3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iKa5TAxQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60314308F17;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6022730748F;
 	Fri, 22 Aug 2025 14:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755872388; cv=none; b=Vvay/nQoI6xtySJtTSLKtD5s6mBELcvkDFs+bBGMFkC/oGD0CMOLcMiyhw7LNJx3/wIaclVbqP93lfE++GuVJjOVgbbnw6GubGGu1qpho25E4GqRtc9VdhAuQqZlwj4k2btnqummzqnrwYgQkfryLedOeWFu9B8LjAhdH1M3F3Q=
+	t=1755872388; cv=none; b=T8M6l2Xxtlsyc+T5UykSbXuQmjh5APYJgdUM+IuU4pwmZRhFxEbuoQZDO88/wOFa5DLCOXK59Dxf26oRSixCwcDbTNn6c22tkIHRGzmfAOCbkQ4n3KQTHYhxciwu6iQAr/gSk681jLeB3YJWNghLkRP/Uhqge5pfwoscc2ymAIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755872388; c=relaxed/simple;
-	bh=pSYdMcus0LPCr9HogH6HkcL5YxbX5KWhzFdqlhGcbmI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q6IWiJ4Sw+qScBI/nhnplEpxLh8zrEWUxEyYcKoUChoJd8RJJOdA+TLpAhaiqVSdMao9DzA4w+dkdeV83gp9Qt/nvYjyTKA7f8AfD5nXxu8VlBE17t5s/wJCvKl4OegThpFPrxUk26Na99Vidme0vg3EwiZ+RYjdnPQwLGui/zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uC7AEXE3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E8DEC116B1;
+	bh=XDxTPT2c6W8eHR7BT6Ec6vb15gsGsFJ8CPPzepOj7LY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DtyvvABDfvBYhTjjeGdQBHp0LVPNXSTD16dmDWwl9+xGCbBstgEJqZ5bryADrywO/7kNJKQZl1yLIeZOkWTH8bCwUbw+1MvAGgKKR6Kh5hzIk++96gq1e6IkcDORL1Lv4fyRUWIQYYv+LSZtVUdFeeP3O9IIpfZCKP/HQz/yg2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iKa5TAxQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08C15C4CEED;
 	Fri, 22 Aug 2025 14:19:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755872388;
-	bh=pSYdMcus0LPCr9HogH6HkcL5YxbX5KWhzFdqlhGcbmI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=uC7AEXE3+SwOLKHHd/wbeW8x2JVxV6NK2Ub6v++0euDxAh4oNSN31LmoC1NlKAlQW
-	 ywYsuakEjDbrZEo6GG03meJsLEq3ENrZ8+bwgUqIR0F0VQfG1z4c3osvR1qQyCpXNM
-	 1aJpSQGXDKJij64PdbwTsAmME36to5mqr7kFVKzwJCFZByY8QK6Bnn2CQ8oMtFxIcB
-	 d9bEdmyPnwYZMTpVgknuhCLuBsFlq1rrNke+h0v0gJl9MHRLA/CR1F3Que/4GCVXBh
-	 b14SVQT3G2zwOX7yLdMyuOXR5yMORnRVaeBM6hMK/M/RGgCEjBdtQGhc/x19A9v3aH
-	 Ej5O0H6GgHDMQ==
+	bh=XDxTPT2c6W8eHR7BT6Ec6vb15gsGsFJ8CPPzepOj7LY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=iKa5TAxQ4kuKEqZ7waaDQnnY0ZlPBzABftighqhaZ7U19xSAhr7AvsZrOv404D8i/
+	 lMgNFTcTSllxoFAkeyuoS6JcnJnIpQ8/F2sD3wyy2AYvmk9fNz7D/6jIi61z82KugT
+	 zm0fOLHPsYsU89KdAn4/bjy91vYmmiV0KERJMaI5aB1spxet6cDQsxUB4pqQiFdIpM
+	 FZtm/+jN4U446VHNm1532YE+XIvQVnAtyWRcA9ipphxm4AsNceG65FMNblBLYEnvJa
+	 T6nAffR3+TZQW+Wifq63UJ0pvZlzu7DArK7lg31miyWu7F/ESyfmN/XzbtMq83CRnt
+	 qBXnnRjKfU9eg==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1upScM-0000000CCqq-0RR1;
+	id 1upScM-0000000CCqv-0YfL;
 	Fri, 22 Aug 2025 16:19:46 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andreas Hindborg <mchehab+huawei@kernel.org>,
-	Benno Lossin <mchehab+huawei@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Danilo Krummrich <mchehab+huawei@kernel.org>,
-	Gary Guo <gary@garyguo.net>,
-	Miguel Ojeda <mchehab+huawei@kernel.org>,
-	Sean Young <sean@mess.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	linux-media@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH v2 00/24] better handle media headers
-Date: Fri, 22 Aug 2025 16:19:12 +0200
-Message-ID: <cover.1755872208.git.mchehab+huawei@kernel.org>
+	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 01/24] docs: parse-headers.pl: improve its debug output format
+Date: Fri, 22 Aug 2025 16:19:13 +0200
+Message-ID: <1064011717951eac257889a3032303c9d4440711.1755872208.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <cover.1755872208.git.mchehab+huawei@kernel.org>
+References: <cover.1755872208.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,123 +65,70 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Hi Jon,
+Change the --debug logic to help comparing its results with
+a new python script.
 
-Sorry for resending this big series. The content is almost identical
-to the first version, but this one can be applied directly on the top
-of docs/next, without requiring the sphinx-build-wrapper series.
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ Documentation/sphinx/parse-headers.pl | 31 ++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
 
-I'm opting for this approach, in order to avoid adding 42 lines to
-sphinx-build-wrapper just to be removed at the v1 of this series.
-
+diff --git a/Documentation/sphinx/parse-headers.pl b/Documentation/sphinx/parse-headers.pl
+index 7b1458544e2e..560685926cdb 100755
+--- a/Documentation/sphinx/parse-headers.pl
++++ b/Documentation/sphinx/parse-headers.pl
+@@ -31,8 +31,6 @@ my %enums;
+ my %enum_symbols;
+ my %structs;
+ 
+-require Data::Dumper if ($debug);
 -
-
-The goal of this series is to drop one of the most ancient and ugliest
-hack from the documentation build system. Before migrating to Sphinx,
-the media subsystem already had a very comprehensive uAPI book, together
-with a build time system to detect and point for any documentation gaps.
-
-When migrating to Sphinx, we ported the logic to a Perl script
-(parse-headers.pl) and Markus came up with a Sphinx extension
-(kernel_include.py). We also added some files to control how parse-headers
-produce results, and a Makefile.
-
-At the initial Sphinx versions (1.4.1 if I recall correctly), when
-a new symbol is added to videodev2.h, a new warning were
-produced at documentatiion time, it the patchset didn't have
-the corresponding documentation path.
-
-While kernel-include is generic, the only user at the moment is the media
-subsystem.
-
-This series gets rid of the Python script, replacing it by a command
-line script and a class. The parse header class can optionally be used by
-kernel-include to produce an enriched code that will contain cross-references.
-
-As the other conversions, it starts with a bug-compatible version of
-parse-headers, but the subsequent patches add more functionalities and
-fix bugs.
-
-It should be noticed that modern of Sphinx disabled the cross-reference
-warnings. So, at the next series, I'll be re-adding it in a controlled way
-(e.g. just for the references from kernel-include that has an special
-argument).
-
-The script also supports now generating a "toc" output, which will be used
-at the next series.
-
--
-
-v2:
-   - makes it indepentent of sphinx-build-wrapper patch series.
-
-Mauro Carvalho Chehab (24):
-  docs: parse-headers.pl: improve its debug output format
-  docs: parse-headers.py: convert parse-headers.pl
-  docs: parse-headers.py: improve --help logic
-  docs: parse-headers.py: better handle @var arguments
-  docs: parse-headers.py: simplify the rules for hashes
-  tools: docs: parse-headers.py: move it from sphinx dir
-  tools: docs: parse_data_structs.py: add methods to return output
-  MAINTAINERS: add files from tools/docs to documentation entry
-  docs: uapi: media: Makefile: use parse-headers.py
-  docs: kernel_include.py: Update its coding style
-  docs: kernel_include.py: allow cross-reference generation
-  docs: kernel_include.py: generate warnings for broken refs
-  docs: kernel_include.py: move rawtext logic to separate functions
-  docs: kernel_include.py: move range logic to a separate function
-  docs: kernel_include.py: remove range restriction for gen docs
-  docs: kernel_include.py: move code and literal functions
-  docs: kernel_include.py: add support to generate a TOC table
-  docs: kernel_include.py: append line numbers to better report errors
-  docs: kernel_include.py: move apply_range() and add a docstring
-  docs: kernel_include.py: remove line numbers from parsed-literal
-  docs: kernel_include.py: remove Include class inheritance
-  docs: kernel_include.py: document all supported parameters
-  scripts: sphinx-build-wrapper: get rid of uapi/media Makefile
-  docs: sphinx: drop parse-headers.pl
-
- .pylintrc                                     |   2 +-
- Documentation/Makefile                        |   3 +-
- Documentation/sphinx/kernel_include.py        | 519 +++++++++----
- Documentation/sphinx/parse-headers.pl         | 404 ----------
- Documentation/userspace-api/media/Makefile    |  64 --
- .../userspace-api/media/cec/cec-header.rst    |   5 +-
- .../media/{ => cec}/cec.h.rst.exceptions      |   0
- .../media/{ => dvb}/ca.h.rst.exceptions       |   0
- .../media/{ => dvb}/dmx.h.rst.exceptions      |   0
- .../media/{ => dvb}/frontend.h.rst.exceptions |   0
- .../userspace-api/media/dvb/headers.rst       |  17 +-
- .../media/{ => dvb}/net.h.rst.exceptions      |   0
- .../media/mediactl/media-header.rst           |   5 +-
- .../{ => mediactl}/media.h.rst.exceptions     |   0
- .../userspace-api/media/rc/lirc-header.rst    |   4 +-
- .../media/{ => rc}/lirc.h.rst.exceptions      |   0
- .../userspace-api/media/v4l/videodev.rst      |   4 +-
- .../{ => v4l}/videodev2.h.rst.exceptions      |   0
- MAINTAINERS                                   |   1 +
- scripts/sphinx-build-wrapper                  | 719 ++++++++++++++++++
- tools/docs/lib/__init__.py                    |   0
- tools/docs/lib/enrich_formatter.py            |  70 ++
- tools/docs/lib/parse_data_structs.py          | 452 +++++++++++
- tools/docs/parse-headers.py                   |  60 ++
- 24 files changed, 1704 insertions(+), 625 deletions(-)
- delete mode 100755 Documentation/sphinx/parse-headers.pl
- delete mode 100644 Documentation/userspace-api/media/Makefile
- rename Documentation/userspace-api/media/{ => cec}/cec.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => dvb}/ca.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => dvb}/dmx.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => dvb}/frontend.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => dvb}/net.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => mediactl}/media.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => rc}/lirc.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => v4l}/videodev2.h.rst.exceptions (100%)
- create mode 100755 scripts/sphinx-build-wrapper
- create mode 100644 tools/docs/lib/__init__.py
- create mode 100644 tools/docs/lib/enrich_formatter.py
- create mode 100755 tools/docs/lib/parse_data_structs.py
- create mode 100755 tools/docs/parse-headers.py
-
+ #
+ # read the file and get identifiers
+ #
+@@ -197,6 +195,9 @@ if ($file_exceptions) {
+ 		} else {
+ 			$reftype = $def_reftype{$type};
+ 		}
++		if (!$reftype) {
++		    print STDERR "Warning: can't find ref type for $type";
++		}
+ 		$new = "$reftype:`$old <$new>`";
+ 
+ 		if ($type eq "ioctl") {
+@@ -229,12 +230,26 @@ if ($file_exceptions) {
+ }
+ 
+ if ($debug) {
+-	print Data::Dumper->Dump([\%ioctls], [qw(*ioctls)]) if (%ioctls);
+-	print Data::Dumper->Dump([\%typedefs], [qw(*typedefs)]) if (%typedefs);
+-	print Data::Dumper->Dump([\%enums], [qw(*enums)]) if (%enums);
+-	print Data::Dumper->Dump([\%structs], [qw(*structs)]) if (%structs);
+-	print Data::Dumper->Dump([\%defines], [qw(*defines)]) if (%defines);
+-	print Data::Dumper->Dump([\%enum_symbols], [qw(*enum_symbols)]) if (%enum_symbols);
++	my @all_hashes = (
++		{ioctl      => \%ioctls},
++		{typedef    => \%typedefs},
++		{enum       => \%enums},
++		{struct     => \%structs},
++		{define     => \%defines},
++		{symbol     => \%enum_symbols}
++	);
++
++	foreach my $hash (@all_hashes) {
++		while (my ($name, $hash_ref) = each %$hash) {
++			next unless %$hash_ref;  # Skip empty hashes
++
++			print "$name:\n";
++			for my $key (sort keys %$hash_ref) {
++				print "  $key -> $hash_ref->{$key}\n";
++			}
++			print "\n";
++		}
++	}
+ }
+ 
+ #
 -- 
 2.50.1
 
