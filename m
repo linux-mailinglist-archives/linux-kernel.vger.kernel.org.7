@@ -1,222 +1,115 @@
-Return-Path: <linux-kernel+bounces-782686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC96FB32396
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:29:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CAAB3239B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57B691899696
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:29:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 701BF3B5B50
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B292D6621;
-	Fri, 22 Aug 2025 20:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009AC2D780C;
+	Fri, 22 Aug 2025 20:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VdsElT3O"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="Bo4JcEkR"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439B91FF7D7
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 20:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE91F2D4B69
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 20:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755894568; cv=none; b=H4pvA7d0Wi4eZAfibnaU2wjnmoZQgYex1OEBVGeZGgyaLDHhTyslPX3h+9Yyb5hMi6+1II2n9XeObS+BHPHc8j+EsuUZ4ALtdzh57mGAdquzrXzUBWSzlRBIpGFfxY8RF1iC0f6ELgCR/J+X4/0YTYCuC/UOdi0YsQ7aE2Xm2XM=
+	t=1755894624; cv=none; b=VhTOgmk8mgDTrK8/7dDssieej60zzCJkgejjpE2L+hdZE90aaqTNWH4KxY8nsRkr8Y+SOW2n2WpolLdOQEz85T4GVZyRNL7P2L0K80LRHW3Dj3Fb02ntvWaSombHduk/iTs4a3qqiVBBjyZsgMK0LxU12zuphl9VbiuqRc+ZgFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755894568; c=relaxed/simple;
-	bh=ZOYp+nzOPwe14p1kxWcd+s70VP8w17e+NwdUa4bTpr0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rZIpF9PG4sDUpD7eJDmxflwl2R8agWm2UBFYbz9KYu4K45nDlouOItlNuHIFsD96w029Cb04sY7ywIxpxHpqZSQshO1R9Io4fVBdES965Mx6HbFy+2uCPpW5Zj31z5MkZM5SP6uTzJsIMeRTMvTZeuWf2U0LLdKvc7w2mosIWXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VdsElT3O; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b29b715106so25081cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:29:27 -0700 (PDT)
+	s=arc-20240116; t=1755894624; c=relaxed/simple;
+	bh=lTl6wgweEQv4laAWpdYCO46ogSy927RmttBcv2HdDaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fdC/s2oOyOGqaLBPrH2J94T2pkVyBsyxdkHkrXbETX9A0+0JzeZ9v8M1rLlvr8UkMjKxlf6yuH6ClHPRwoHmQbJkWaSRp208H8oaVVg9073rT45pkXlVCEeHyae7cPVj6cXh1njUDAmQXoDB1A3EhcylFPMporAMl0xbyO7RSdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=Bo4JcEkR; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b2b859ab0dso4559141cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:30:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755894566; x=1756499366; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sFW/ka6qBc+ExLqD+f/nxo2YH7Yq8nmI0R2bjFCfWYs=;
-        b=VdsElT3OiaZzv1/vT1FwQ/3G7iur0/JJOvLMrc/u69UqcpeX+Jt8dNxd2VMf2KRjrs
-         l16TGmFx9/qTRPLpovpuxHvOe8rwaxFuNJLmsW4/iF/dzf90If5nF1wrYDat1CzGozX+
-         VQR19uC0n6D8W8HPfEec+sUHwNI+KCOVD36KpdMPoou6x9F5L7N5e0kmg7skoPs4K9CQ
-         cgDu7Xmj3kQlyikB2o1EbK4YSi8JIEls2s/zZ6YfLSGiXYC62L3/8ESlopFXrFTcsJbA
-         Szp2saNnqshEtE31oqJfznZCN2U6cPL2kVhnjqEUFwqyr94R2Ozd6PgQPLaxj+xxh9qS
-         Kv5Q==
+        d=rowland.harvard.edu; s=google; t=1755894622; x=1756499422; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EbpkbOUAEzf+F7t3G4Zil0e0i2itYVJ77ywSmWwUXeU=;
+        b=Bo4JcEkRAvnxaZyk72mrObiz2xdy2tauXE7+24GKJRYNV/oUGsa22I50izcVQjE0gx
+         VU8YWyFQv2sxQOFwuGPn9qS1zKQj7Z1PyFzAUxeiEp7jshkfMC1zoIjJT4uNnG+r38IE
+         yxkOLFhQ8l2XxZV9QKkSRPtTkJGPIean664ABSEu/60oOUXq/NQouN8GxQTWR5uGFZtt
+         eKF+S1vg3B08PuRuFTyPTrXttebhhjayPN1hGGwPTN/QaCFLp7wP+6x+n9JMmYnd6Yd7
+         GxPWjfYdxBLney7Bo2K9o3RR7z+GUeKq6aRIvYxs4yHtKct+jBs0mna/jGMZHPc+aw72
+         lhEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755894566; x=1756499366;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sFW/ka6qBc+ExLqD+f/nxo2YH7Yq8nmI0R2bjFCfWYs=;
-        b=k2c0lsNCcW7HeGRS2Q5Yj9Nrf9M4bkWOPwkOdggLQAM8oiTP6mZY6jhiX1xkMr6AJ6
-         onzMxIE9OUurSePiMBTRodnXibjPLWrS6rbH94cYPvGJfWu3n7d8esNjGqOALDCpeKX5
-         YSUrMosi4EOHKwo248qrW9uR5efFbQABAhD2VWFpamifg8g5ez2UZs6OCeLChG+uBZ+a
-         lxZlSrKEQbq8mPheJP8hWcLsBfi4k2UCW873kqmDCvox8C0PipNdKie+Nm1zKP6mQlNS
-         OR+11ZxDbDmU7PYQoNIyzwHMuydI0K1ChUAfj1aYhBV7rhAV0S4gHSvC1138pTlopIGL
-         9XGg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3jXbm8EbFNmUFElFD031aKs7m8/opM1V79aixA76ExvfSy8w8NJbjzgbgjEuYCzJFwBgNOBJZDR8cLSs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIQBuqlxM9zQxmmVLFnV1hL+NvHb4bHVLys97Zhl1T+M+Y4UAY
-	9w142hF5jccAgn6xbdgGhbrmy2/28BLUrVOVJgvxH0ZslZVHGlwNcGK97jLBzuXgzWkwfw5XqvX
-	8yuR4L8gNvpdfsBv+ELlNCpiab7GEQaZN4t/lCqUa
-X-Gm-Gg: ASbGncsgpuDK5TVfpUKfwuCaOYwbI1b6YSlzbQ3G0Ra0rzvEOysl0lKodilEDBZk3QN
-	5k5T+Vpz24MCM1BroYuS3k8YG5CjLpMgXKPGXjsR8bdlHNYPsEBa+bA63cgSAvIZScu6sLM/eYM
-	O9eB1xhFqTyybQNl7a11gohMthfPDVQXlybikjgRNTEASBWyvkX7xP4N6azLSOs53u45PAHexJo
-	xDT9BUvgmCy
-X-Google-Smtp-Source: AGHT+IE4pKQt99yfD8phfxzg64h26jRgQtXjKYToOS/x0NhTO00qhgEpbXPpJ20CmT3cAcOxNgN3tfWpuWfg/a8bQMc=
-X-Received: by 2002:a05:622a:253:b0:4a5:9b0f:a150 with SMTP id
- d75a77b69052e-4b2ba82db6fmr837361cf.16.1755894565605; Fri, 22 Aug 2025
- 13:29:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755894622; x=1756499422;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EbpkbOUAEzf+F7t3G4Zil0e0i2itYVJ77ywSmWwUXeU=;
+        b=DzMyyTneAiIZ7GPmCZPYEeqqifJ1ElSxSpaazVTP6mBcER9lIxetzTPCVr/ojK2J6+
+         yEhdbFGJwZ3dIuuh7WgJ0RSfwWfAr6bnRiqS6Mryb1BJ+sGpUYkaD14hFdw3LLWooo2y
+         Z+Ivx7QBs7N/hG/wqQXncCUcZEex+kfGT54FYyD47GlWMS8HsyfORiRu/gzqtfYPsmGR
+         9mykUouv9nHa33khdcULSZRVoFQYW6h0sgjkXdqnN+B1j2zRus2/NyEPRD8VdQix5DyI
+         d89Sv7m3X9J7aMLF+DJDvyoYWxAOInXV5d1IsBVyWUa1Vn0OKmwzahqA1zSxtdmJQY/4
+         2ezA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEiegjj/hxmXy4iXUyVPiJGvpGVIhUYS23Mo9jWfo9Sxh6exfLnvtMghjHybEJ66FwJG6PmzJzmCqZOVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvaLTLT6CUPZe9VRTKMY+mkKuKK9X+MXhTqywNt3u21Fr8bqAO
+	0saaLh8ejcwP6cVDt6WHDjkrHT8fYRyjBfDLiyo/xANafj2f6k4/omFmHExqihJrRD1A/K1AJCr
+	4sPQ=
+X-Gm-Gg: ASbGncvLzBIGpud0aBHpKAWdAFtpfCyV6tqDZ48GR1QkSor5jTyHPmd4ksnGgktPzNg
+	crQyFogRqvEZPhsByParZ3AdI7ShiIoos9GfmcYNbS/tr/OxcZXLpimIzAQwj4dEfiPOMqcwX3H
+	hhVOVfNpXykjW41medFZhA/ssShzzspKlhq795Uyzk2AqhJj7PlkUp8sKY3TjxgkpOPNNd/YhEK
+	BzkVs35qxdTFiDtBxCdJuu8tO75zNPtOIh9dJfko5B4fwvoHYCsHN/088zrQdDbVMpCdiBY+iJT
+	4NxoONETFPGFjq7tHlPahPsrGEu34rLu3dB7gh988Q1ubPsBhk3y9mROqsgeFk3fz73tqeuK0L9
+	wMiWZukQEd1Jyt5cWIhp/WoFm
+X-Google-Smtp-Source: AGHT+IG2XWGEJciDU0PSbVvm4slMul4QRrIq8kKvevKNp6CtldMCRhHdKFdGhQLZvMXSrUdVQ4fuaA==
+X-Received: by 2002:a05:622a:ce:b0:4a3:fcc7:c72e with SMTP id d75a77b69052e-4b2aaa55fc1mr47860031cf.9.1755894621579;
+        Fri, 22 Aug 2025 13:30:21 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:156:8000:24f0::3e8c])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ebed79a712sm43044185a.17.2025.08.22.13.30.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 13:30:20 -0700 (PDT)
+Date: Fri, 22 Aug 2025 16:30:18 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: ccc194101@163.com
+Cc: gregkh@linuxfoundation.org, jannh@google.com, rex.nie@jaguarmicro.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	chenchangcheng <chenchangcheng@kylinos.cn>
+Subject: Re: [PATCH] usb: usbfs: Add reset_resume callback to usbfs.
+Message-ID: <f159e37f-3b27-4977-9712-345e8902eb48@rowland.harvard.edu>
+References: <20250822024602.42894-1-ccc194101@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz> <20250723-slub-percpu-caches-v5-14-b792cd830f5d@suse.cz>
-In-Reply-To: <20250723-slub-percpu-caches-v5-14-b792cd830f5d@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 22 Aug 2025 13:29:14 -0700
-X-Gm-Features: Ac12FXzd89CHC2aRvtwVoiHY-2WtL8K1s3anAhQP19TUMIyfZkmLWoeYPfL7oE8
-Message-ID: <CAJuCfpH4PNCaMQ4k3iOvt7BK-+nDzVV1p3PcH++7DFGGvg9=fA@mail.gmail.com>
-Subject: Re: [PATCH v5 14/14] maple_tree: Convert forking to use the sheaf interface
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter <cl@gentwo.org>, 
-	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
-	maple-tree@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822024602.42894-1-ccc194101@163.com>
 
-On Wed, Jul 23, 2025 at 6:35=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
->
-> Use the generic interface which should result in less bulk allocations
-> during a forking.
->
-> A part of this is to abstract the freeing of the sheaf or maple state
-> allocations into its own function so mas_destroy() and the tree
-> duplication code can use the same functionality to return any unused
-> resources.
->
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+On Fri, Aug 22, 2025 at 10:46:02AM +0800, ccc194101@163.com wrote:
+> From: chenchangcheng <chenchangcheng@kylinos.cn>
+> 
+> When an Apple device is inserted into the host, and the host
+> wakes up from S3/S4 power states, if the reset_resume process
+> is triggered, the absence of a reset_resume callback in usbfs will
+> cause the device to unbind.
+> By adding a reset_resume callback to usbfs and reporting REMOVE and ADD
+> uevents in reset_resume, the userspace is prompted to reissue commands
+> to re-establish the binding with usbfs.
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+usbfs has no way to inform userspace when the device is reset.  This is 
+true for normal resets as well as for reset-resumes (no pre_reset, 
+post_reset, or reset_resume callbacks).  I don't see any point in trying 
+to add support for the latter but not the former.
 
-> ---
->  lib/maple_tree.c | 42 +++++++++++++++++++++++-------------------
->  1 file changed, 23 insertions(+), 19 deletions(-)
->
-> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-> index 9aa782b1497f224e7366ebbd65f997523ee0c8ab..180d5e2ea49440248aaae04a0=
-66276406b2537ed 100644
-> --- a/lib/maple_tree.c
-> +++ b/lib/maple_tree.c
-> @@ -1178,6 +1178,19 @@ static inline void mas_alloc_nodes(struct ma_state=
- *mas, gfp_t gfp)
->         mas_set_err(mas, -ENOMEM);
->  }
->
-> +static inline void mas_empty_nodes(struct ma_state *mas)
-> +{
-> +       mas->node_request =3D 0;
-> +       if (mas->sheaf) {
-> +               mt_return_sheaf(mas->sheaf);
-> +               mas->sheaf =3D NULL;
-> +       }
-> +
-> +       if (mas->alloc) {
-> +               mt_free_one(mas->alloc);
-> +               mas->alloc =3D NULL;
-> +       }
-> +}
->
->  /*
->   * mas_free() - Free an encoded maple node
-> @@ -5414,15 +5427,7 @@ void mas_destroy(struct ma_state *mas)
->                 mas->mas_flags &=3D ~MA_STATE_REBALANCE;
->         }
->         mas->mas_flags &=3D ~(MA_STATE_BULK|MA_STATE_PREALLOC);
-> -
-> -       mas->node_request =3D 0;
-> -       if (mas->sheaf)
-> -               mt_return_sheaf(mas->sheaf);
-> -       mas->sheaf =3D NULL;
-> -
-> -       if (mas->alloc)
-> -               mt_free_one(mas->alloc);
-> -       mas->alloc =3D NULL;
-> +       mas_empty_nodes(mas);
->  }
->  EXPORT_SYMBOL_GPL(mas_destroy);
->
-> @@ -6499,7 +6504,7 @@ static inline void mas_dup_alloc(struct ma_state *m=
-as, struct ma_state *new_mas,
->         struct maple_node *node =3D mte_to_node(mas->node);
->         struct maple_node *new_node =3D mte_to_node(new_mas->node);
->         enum maple_type type;
-> -       unsigned char request, count, i;
-> +       unsigned char count, i;
->         void __rcu **slots;
->         void __rcu **new_slots;
->         unsigned long val;
-> @@ -6507,20 +6512,17 @@ static inline void mas_dup_alloc(struct ma_state =
-*mas, struct ma_state *new_mas,
->         /* Allocate memory for child nodes. */
->         type =3D mte_node_type(mas->node);
->         new_slots =3D ma_slots(new_node, type);
-> -       request =3D mas_data_end(mas) + 1;
-> -       count =3D mt_alloc_bulk(gfp, request, (void **)new_slots);
-> -       if (unlikely(count < request)) {
-> -               memset(new_slots, 0, request * sizeof(void *));
-> -               mas_set_err(mas, -ENOMEM);
-> +       count =3D mas->node_request =3D mas_data_end(mas) + 1;
-> +       mas_alloc_nodes(mas, gfp);
-> +       if (unlikely(mas_is_err(mas)))
->                 return;
-> -       }
->
-> -       /* Restore node type information in slots. */
->         slots =3D ma_slots(node, type);
->         for (i =3D 0; i < count; i++) {
->                 val =3D (unsigned long)mt_slot_locked(mas->tree, slots, i=
-);
->                 val &=3D MAPLE_NODE_MASK;
-> -               ((unsigned long *)new_slots)[i] |=3D val;
-> +               new_slots[i] =3D ma_mnode_ptr((unsigned long)mas_pop_node=
-(mas) |
-> +                                           val);
->         }
->  }
->
-> @@ -6574,7 +6576,7 @@ static inline void mas_dup_build(struct ma_state *m=
-as, struct ma_state *new_mas,
->                         /* Only allocate child nodes for non-leaf nodes. =
-*/
->                         mas_dup_alloc(mas, new_mas, gfp);
->                         if (unlikely(mas_is_err(mas)))
-> -                               return;
-> +                               goto empty_mas;
->                 } else {
->                         /*
->                          * This is the last leaf node and duplication is
-> @@ -6607,6 +6609,8 @@ static inline void mas_dup_build(struct ma_state *m=
-as, struct ma_state *new_mas,
->         /* Make them the same height */
->         new_mas->tree->ma_flags =3D mas->tree->ma_flags;
->         rcu_assign_pointer(new_mas->tree->ma_root, root);
-> +empty_mas:
-> +       mas_empty_nodes(mas);
->  }
->
->  /**
->
-> --
-> 2.50.1
->
+Unbinding the device forces userspace to re-open the device file and 
+establish a new binding.  How does adding REMOVE and ADD uevents make 
+the situation any better than it already is?
+
+Alan Stern
 
