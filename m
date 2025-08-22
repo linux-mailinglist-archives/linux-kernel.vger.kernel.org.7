@@ -1,248 +1,153 @@
-Return-Path: <linux-kernel+bounces-781432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D97CEB31251
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:54:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4727BB31253
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0DC27A93F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:52:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 233111CE53EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E620F2EACE8;
-	Fri, 22 Aug 2025 08:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722DD2EB5A1;
+	Fri, 22 Aug 2025 08:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gi+PdxMj"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F240bS+X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7689C1EA65
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 08:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD6A1EA65;
+	Fri, 22 Aug 2025 08:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755852833; cv=none; b=Gx15Xu8Y2CZUPiddSYrTGBRXnDIQTzllLfcv6AhXfj+hkoaCcubxtuGFB2bk45DC048w/Im1HZMJO8cBlG6TlW8Gsh2JM9ByHs4nySFC5W6JCT5p+5SL4dWbV69M+TigCMMlv5tdrvOv4jeU4qeQkKDto8D2Dra6nDbAGYJiLtU=
+	t=1755852848; cv=none; b=gzIUGG8wkVloYXsIjaahsn75OOR3ccl8F2AR3KWutK/9qZTQ6PDi/FC7F4kjbs1jg12ch+Qucd/IDv809DhjHTIvn/RZORKITNEbdLag3/JxbYfXOz/FVmwqd22iRhljsyaTr/oBVk+r09EYjfq8i66QitT+rcQVEyjB3632UPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755852833; c=relaxed/simple;
-	bh=2+bRuuIzI9S+oIj5Db0h0yF3G+mLElAksm4w4Lz8vS8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QJdSegSQOE3n9pz3VnucEe2X7srSUVlAUhLP82/B9JOCZqF2L0JR0OrOUEjXNBzlfW2jY0kI46FmPx888BC/GokwJJm43izg4+olGsmUMKCGtOgUb4Rz25L91jdchdlD+2hUQrXj4K3k+3HUYstPAuGrsmeaFsEs7Od8qvNeOOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gi+PdxMj; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b297962b24so19022561cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 01:53:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755852830; x=1756457630; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VwnXI8Q4i5E1F2kA0OUxgOWXMwST0o08T6okrD/DYYA=;
-        b=Gi+PdxMjVe+HTSaNV0YCLDx/qmsE49KJHKQiXwsQu4zOnOLBlKg7qP98/n4hUcQ5Yt
-         lNg2WRevgu8mEPLML5M09QKlaUrRBSnezQQ7+oC7+FELBrhMcoGighbqEMIXJMwOnYdo
-         aTYI1wnqi3TbsgyKc9CQn0ZlZvrJ75rdea0JY0OBDOWHipUM73i1/S/q7uFeI4enRJS+
-         3CAAXumVv7cwLieHnD9Q6HeC5oiRwZi5lM3fXYfxALTrPvEvC5NexdytuM0ByeAstjKd
-         +8Ci5ryqlXk3oPBMwYGhnXHmHV9c52izsjEWO4ALFA6T7R4isAGD+VPgwKFo58WWzisC
-         7Vkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755852830; x=1756457630;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VwnXI8Q4i5E1F2kA0OUxgOWXMwST0o08T6okrD/DYYA=;
-        b=WHQoVerSVmraBMeyQDcKHr6owaRrihOZCAOto/0toD7L1A1R9S82v30aejb0W+VBeX
-         wn0J0DrLe98dbLKRYWBf6fPLxd8NhussODjngrwAERT7PTIAaYZhmPh73QJh8TgGC2TS
-         Sbv3f+Y0wzrD0NkF+7mZ1CRZwbOVy5aa6zSfr2P2MWlHqVWrdF8FkQ90MJki1cie/jEW
-         1YsR3yXZjfDuVRU9+QrGpH1nvM4r9EEZi4O+LaZVL+ggs4ws/J2wzpV3NnolrBgaj9zE
-         /AIehpO3jM1sSTVUQcEEh2k0oL47AmM0fvjino+bCqw3fIPwTVSaF/aCXpXFlrsYwmcP
-         UA+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXPiHmhAeXvKBXc+YNLMN1690zvrlvjPLSbbFP74TjGa21NwVNBV03raYZKSk83cTKHK3Ps2qUsL7xRuaM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx20PsD5THfi8Rsjyfkf/ymrU11cDIXYsv2IZw+ZVPsbXlYFcUx
-	d4MJNWSV1uDdPf4RYk8Z0AzeR78iEebQ4pZpUHs+xHtPJwmv6luZzi4Rx+o9A+EXPZShfR5aw4u
-	nE3eohkj7jGkByqpXkaK/HJ7gMUdeW91YsjRawwSZ
-X-Gm-Gg: ASbGncuJxrxkqTk+QP8aLIFIBFBJGG5rwrX2D7gBXhIGnrT/N+4ZlMs6encWXRLeo3S
-	9+5K4ixhJ10k/AHB3BEeh36yEZ8lquaczMptLPrjaRSiZsdVPqe/hpBtfDZaUimNUrvFCImU5G+
-	6SFURDi26MlJwkA0hfE4r4+XH5rwTiKwoX3Uenw+FbiMwtjH3YESml72MLVxDGG1MDcVtB2kGY1
-	vX18yhtdCR5knU=
-X-Google-Smtp-Source: AGHT+IFJCOD9ED9ZQtQim2+n+wKW3ngXRFg4cSckRxMhx5RX7rC8DBvYjQpn3RQUBVTBx47wLJ0ZQpKyrA52UTxR1KI=
-X-Received: by 2002:ac8:5956:0:b0:4b1:103b:bb72 with SMTP id
- d75a77b69052e-4b2aab26a18mr27843471cf.64.1755852829840; Fri, 22 Aug 2025
- 01:53:49 -0700 (PDT)
+	s=arc-20240116; t=1755852848; c=relaxed/simple;
+	bh=1Kedd5nrOXuqAb/MAHK84Atl2vdOv9kO06NAwi1B5WQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nqY37UItPZC3NuKfL8tM1VX2yRoK4kUhW/8EiwvXsw1fbu3dQT6EKSb6VyZ9ffsByYvO87Zp2kpz+npwtpArVjzp+jpvBsjqzjkqch2o4xkfr0qsV/FjePEvUqpujFUmzw3Pm0oeZugQn5lSwBfZV0K8J19K5E6W0itJ39aGPSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F240bS+X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F7BC4CEF1;
+	Fri, 22 Aug 2025 08:54:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755852848;
+	bh=1Kedd5nrOXuqAb/MAHK84Atl2vdOv9kO06NAwi1B5WQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F240bS+X1iIQcVx+R2bCIVfkVa0pseohmnJkOicqQVt8EvB8jijjBLohl33+Ke0A9
+	 9lg7HeMnud+kWU8NoZPSu0ZExjDq5D9SHMQkP4GZrTEVWQw9iwLSEG/7XrR2cQHR9a
+	 P/b7mWA9rti9ZbUJ/PxxEZ3ZZFpNpbyDH6cU9K79qj4PopluUFQ5F72RerZMh7Sck0
+	 9GdPif3rw5fpLR9J46CuyVom+rcs4ULm/Zu8qQhYBvSPs6w8/ZrMcrnBNkW3wa0h5m
+	 gtVh2lrD7JpO+RbveFr07IadQo8eC+JAvL0qTCIrQ8RIg4vQmVttURCVWFAHYUbxj1
+	 g7v+/KWLZkurg==
+Date: Fri, 22 Aug 2025 14:23:57 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Nitin Rawat <quic_nitirawa@quicinc.com>, vkoul@kernel.org, 
+	kishon@kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 2/2] phy: qcom-qmp-ufs: Add regulator loads for SM8650
+ and SM8750
+Message-ID: <xir3u3hlmcvfu6uasijz6g2oialoasmuu4bno6ctxpscqcebz6@6kw6xpm5bxbd>
+References: <20250819222832.8471-1-quic_nitirawa@quicinc.com>
+ <20250819222832.8471-3-quic_nitirawa@quicinc.com>
+ <ger4kizeltjwalfuwu4dpfjiskrv2okgo5c7d6n3pb24yaxgfo@nkcndblyx3il>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822060254.74708-1-mii.w@linux.alibaba.com>
-In-Reply-To: <20250822060254.74708-1-mii.w@linux.alibaba.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 22 Aug 2025 01:53:38 -0700
-X-Gm-Features: Ac12FXxVs71jQnan2ses4SoCzFVxcC4m-okhoTzkf2IeSW992nOUWQViEMHGDkQ
-Message-ID: <CANn89iLYHdtAFSjSW+cSN0Td_V3B+V05hHnGeop5Y+hjWEt_HA@mail.gmail.com>
-Subject: Re: [RFC net] tcp: Fix orphaned socket stalling indefinitely in FIN-WAIT-1
-To: MingMing Wang <mii.w@linux.alibaba.com>
-Cc: ncardwell@google.com, kuniyu@google.com, davem@davemloft.net, 
-	dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	ycheng@google.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dust Li <dust.li@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ger4kizeltjwalfuwu4dpfjiskrv2okgo5c7d6n3pb24yaxgfo@nkcndblyx3il>
 
-On Thu, Aug 21, 2025 at 11:04=E2=80=AFPM MingMing Wang <mii.w@linux.alibaba=
-.com> wrote:
->
-> From: MingMing Wang <mii.w@linux.alibaba.com>
->
-> An orphaned TCP socket can stall indefinitely in FIN-WAIT-1
-> if the following conditions are met:
-> 1. net.ipv4.tcp_retries2 is set to a value =E2=89=A4 8;
-> 2. The peer advertises a zero window, and the window never reopens.
->
-> Steps to reproduce:
-> 1. Set up two instances with nmap installed: one will act as the server
->    the other as the client
-> 2. Execute on the server:
->    a. lower rmem : `sysctl -w net.ipv4.tcp_rmem=3D"16 32 32"`
->    b. start a listener: `nc -l -p 1234`
-> 3. Execute on the client:
->    a. lower tcp_retries2: `sysctl -w net.ipv4.tcp_retries2=3D8`
->    b. send pakcets: `cat /dev/zero | nc <server-ip> 1234`
->    c. after five seconds, stop the process: `killall nc`
-> 4. Execute on the server: `killall -STOP nc`
-> 5. Expected abnormal result: using `ss` command, we'll notice that the
->    client connection remains stuck in the FIN_WAIT1 state, and the
->    backoff counter always be 8 and no longer increased, as shown below:
->    ```
+On Wed, Aug 20, 2025 at 03:49:31AM GMT, Dmitry Baryshkov wrote:
+> On Wed, Aug 20, 2025 at 03:58:26AM +0530, Nitin Rawat wrote:
+> > Add regulator load voting support for SM8650 and SM8750 platforms by
+> > introducing dedicated regulator bulk data arrays with their load
+> > values.
+> > 
+> > The load requirements are:
+> > - SM8650: vdda-phy (205mA), vdda-pll (17.5mA)
+> > - SM8750: vdda-phy (213mA), vdda-pll (18.3mA)
+> > 
+> > This ensures stable operation and proper power management for these
+> > platforms where regulators are shared between the QMP USB PHY and
+> > other IP blocks by setting appropriate regulator load currents during PHY
+> > operations.
+> > 
+> > Configurations without specific load requirements will continue to work
+> > unchanged, as init_load_uA remains zero-initialized when .init_load_uA
+> > is not provided.
+> 
+> Can we please get configuration for the rest of the platforms?
+> 
 
-Hi MingMing
+Only if the rest of the platforms require setting the load... It is not very
+clear if the older platforms share the regulators with other IPs or not.
 
-Please prepare and share with us a packetdrill test, instead of this
-'repro', which is the old way of describing things :/
+- Mani
 
-- This will be easier for us to understand the issue.
+> > 
+> > Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+> > ---
+> >  drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 19 +++++++++++++++----
+> >  1 file changed, 15 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> > index aaa88ca0ef07..1c3ce0fa6adf 100644
+> > --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> > +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> > @@ -1170,6 +1170,17 @@ static const struct regulator_bulk_data qmp_phy_vreg_l[] = {
+> >  	{ .supply = "vdda-pll" },
+> >  };
+> > 
+> > +/* Regulator bulk data with load values for specific configurations */
+> > +static const struct regulator_bulk_data sm8650_ufsphy_vreg_l[] = {
+> > +	{ .supply = "vdda-phy", .init_load_uA = 205000 },
+> > +	{ .supply = "vdda-pll", .init_load_uA = 17500 },
+> > +};
+> > +
+> > +static const struct regulator_bulk_data sm8750_ufsphy_vreg_l[] = {
+> > +	{ .supply = "vdda-phy", .init_load_uA = 213000 },
+> > +	{ .supply = "vdda-pll", .init_load_uA = 18300 },
+> > +};
+> > +
+> >  static const struct qmp_ufs_offsets qmp_ufs_offsets = {
+> >  	.serdes		= 0,
+> >  	.pcs		= 0xc00,
+> > @@ -1638,8 +1649,8 @@ static const struct qmp_phy_cfg sm8650_ufsphy_cfg = {
+> >  		.max_gear	= UFS_HS_G5,
+> >  	},
+> > 
+> > -	.vreg_list		= qmp_phy_vreg_l,
+> > -	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
+> > +	.vreg_list		= sm8650_ufsphy_vreg_l,
+> > +	.num_vregs		= ARRAY_SIZE(sm8650_ufsphy_vreg_l),
+> >  	.regs			= ufsphy_v6_regs_layout,
+> >  };
+> > 
+> > @@ -1676,8 +1687,8 @@ static const struct qmp_phy_cfg sm8750_ufsphy_cfg = {
+> >  		.max_gear	= UFS_HS_G5,
+> >  	},
+> > 
+> > -	.vreg_list		= qmp_phy_vreg_l,
+> > -	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
+> > +	.vreg_list		= sm8750_ufsphy_vreg_l,
+> > +	.num_vregs		= ARRAY_SIZE(sm8750_ufsphy_vreg_l),
+> >  	.regs			= ufsphy_v6_regs_layout,
+> > 
+> >  };
+> > --
+> > 2.48.1
+> > 
+> 
+> -- 
+> With best wishes
+> Dmitry
 
-- It will be added to existing tests in tools/testing/selftests/net/packetd=
-rill
-if your patch is accepted, so that we can make sure future changes are
-not breaking this again.
-
-Ideally, you should attach this packetdrill test in a second patch
-(thus sending a series of two patches)
-
-Thank you.
-
->    FIN-WAIT-1 0      1389    172.16.0.2:50316    172.16.0.1:1234
->          cubic wscale:2,7 rto:201 backoff:8 rtt:0.078/0.007 mss:36
->                  ... other fields omitted ...
->    ```
-> 6. If we set tcp_retries2 to 15 and repeat the steps above, the FIN_WAIT1
->    state will be forcefully reclaimed after about 5 minutes.
->
-> During the zero-window probe retry process, it will check whether the
-> current connection is alive or not. If the connection is not alive and
-> the counter of retries exceeds the maximum allowed `max_probes`, retry
-> process will be terminated.
->
-> In our case, when we set `net.ipv4.tcp_retries2` to 8 or a less value,
-> according to the current implementation, the `icsk->icsk_backoff` counter
-> will be capped at `net.ipv4.tcp_retries2`. The value calculated by
-> `inet_csk_rto_backoff` will always be too small, which means the
-> computed backoff duration will always be less than rto_max. As a result,
-> the alive check will always return true. The condition before the
-> `goto abort` statement is an logical AND condition, the abort branch
-> can never be reached.
->
-> So, the TCP retransmission backoff mechanism has two issues:
->
-> 1. `icsk->icsk_backoff` should monotonically increase during probe
->    transmission and, upon reaching the maximum backoff limit, the
->    connection should be terminated. However, the backoff value itself
->    must not be capped prematurely =E2=80=94 it should only control when t=
-o abort.
->
-> 2. The condition for orphaned connection abort was incorrectly based on
->    connection liveness and probe count. It should instead consider whethe=
-r
->    the number of orphaned probes exceeds the intended limit.
->
-> To fix this, introduce a local variable `orphan_probes` to track orphan
-> probe attempts separately from `max_probes`, which is used for RTO
-> retransmissions. This decouples the two counters and prevents accidental
-> overwrites, ensuring correct timeout behavior for orphaned connections.
->
-> Fixes: b248230c34970 ("tcp: abort orphan sockets stalling on zero window =
-probes")
-> Co-developed-by: Dust Li <dust.li@linux.alibaba.com>
-> Signed-off-by: Dust Li <dust.li@linux.alibaba.com>
-> Co-developed-by: MingMing Wang <mii.w@linux.alibaba.com>
-> Signed-off-by: MingMing Wang <mii.w@linux.alibaba.com>
->
-> ---
-> We couldn't determine the rationale behind the following check in tcp_sen=
-d_probe0():
-> ```
-> if (icsk->icsk_backoff < READ_ONCE(net->ipv4.sysctl_tcp_retries2))
->     icsk->icsk_backoff++;
-> ```
->
-> This condition appears to be the root cause of the observed stall.
-> However, it has existed in the kernel for over 20 years =E2=80=94 which s=
-uggests
-> there might be a historical or subtle reason for its presence.
->
-> We would greatly appreciate it if anyone could shed
-> ---
->  net/ipv4/tcp_output.c | 4 +---
->  net/ipv4/tcp_timer.c  | 4 ++--
->  2 files changed, 3 insertions(+), 5 deletions(-)
->
-> diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-> index caf11920a878..21795d696e38 100644
-> --- a/net/ipv4/tcp_output.c
-> +++ b/net/ipv4/tcp_output.c
-> @@ -4385,7 +4385,6 @@ void tcp_send_probe0(struct sock *sk)
->  {
->         struct inet_connection_sock *icsk =3D inet_csk(sk);
->         struct tcp_sock *tp =3D tcp_sk(sk);
-> -       struct net *net =3D sock_net(sk);
->         unsigned long timeout;
->         int err;
->
-> @@ -4401,8 +4400,7 @@ void tcp_send_probe0(struct sock *sk)
->
->         icsk->icsk_probes_out++;
->         if (err <=3D 0) {
-> -               if (icsk->icsk_backoff < READ_ONCE(net->ipv4.sysctl_tcp_r=
-etries2))
-> -                       icsk->icsk_backoff++;
-> +               icsk->icsk_backoff++;
-
-I think we need to have a cap, otherwise we risk overflows in
-inet_csk_rto_backoff()
-
-
->                 timeout =3D tcp_probe0_when(sk, tcp_rto_max(sk));
->         } else {
->                 /* If packet was not sent due to local congestion,
-> diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
-> index a207877270fb..4dba2928e1bf 100644
-> --- a/net/ipv4/tcp_timer.c
-> +++ b/net/ipv4/tcp_timer.c
-> @@ -419,9 +419,9 @@ static void tcp_probe_timer(struct sock *sk)
->         if (sock_flag(sk, SOCK_DEAD)) {
->                 unsigned int rto_max =3D tcp_rto_max(sk);
->                 const bool alive =3D inet_csk_rto_backoff(icsk, rto_max) =
-< rto_max;
-> +               int orphan_probes =3D tcp_orphan_retries(sk, alive);
->
-> -               max_probes =3D tcp_orphan_retries(sk, alive);
-> -               if (!alive && icsk->icsk_backoff >=3D max_probes)
-> +               if (!alive || icsk->icsk_backoff >=3D orphan_probes)
->                         goto abort;
->                 if (tcp_out_of_resources(sk, true))
->                         return;
-> --
-> 2.46.0
->
+-- 
+மணிவண்ணன் சதாசிவம்
 
