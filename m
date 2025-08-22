@@ -1,248 +1,205 @@
-Return-Path: <linux-kernel+bounces-782266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB89B31D9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:11:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8484B31DE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E6301880168
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:06:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0134266114B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C5F1F4E57;
-	Fri, 22 Aug 2025 15:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD95126BFF;
+	Fri, 22 Aug 2025 15:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YXakziac"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mS8tqQ7w"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24ABA19C558;
-	Fri, 22 Aug 2025 15:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E2515E5DC
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 15:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755875106; cv=none; b=MhGn84Ils+GZHQUjMRNCvFta7vdcBfP9beBfAF/bfAX6XyMJmqrHj9ZzmNrre3qGGld65+Wp0/7XW/8Qu8dl6neKkqB1MgkD7jwrIfQ/O1SPshu547DNtVMdE2VJgN4S6MLW3PGfIs+db8l78nhLyxyyRZZec9EjtuomHxA7/1Q=
+	t=1755875183; cv=none; b=Yzo4epW4So3ZllhMiLdv2MyqZRgLMlT6VdD0Hy1ca1zAcxgbBj5WrJxXFYV7M+FIVbVizJTtg1P8N+d4YTR2dVrN7bYhsO95oSh+iJ77QlI0VyCf5m7DrboN7yGDBGdxPfr2c3mRlwvVCNS5gBkI08ILuZWEN43J93Ub5JUkyG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755875106; c=relaxed/simple;
-	bh=dLsTZSYRVyxqxTXUWeEgGAw9LE4Neawdtev2hwiX5qk=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=TK/Q1D9g0fZryqyd1ltDZYv5iBGfk4uupdfu69GxJC4/u0efUAEifoAD6EvcyWS1yCVI5hC8BLJ5qGzk6d67NtnTktRG+5exWST2APZbKoQ0mosxfmhblaDfkWYHKWLoZwCgmtEfl8C0yFrUUEYE7GF9vMT3eiEpYSqfYdtL7QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YXakziac; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755875105; x=1787411105;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=dLsTZSYRVyxqxTXUWeEgGAw9LE4Neawdtev2hwiX5qk=;
-  b=YXakziacXlRydnB92pdqu7toTnCfqZjJOjhxdxWyg6DTlbk/DrCygFJd
-   uXyB848v1D07bFddwujUsvZpRDrDlvgJRgjDOQE44qqUGjVMcKUVNl0Bh
-   eHD54fmVc4ulJIpuEjI+ga1mhB+Wz7LAdRGoQ/FVQ1mgtdnC4iPbs3v24
-   awijsCWEI3OKbMgQz1LLW6dBTwxjrI+eTyA4qSaVzt1juajw/iQHhfcDT
-   qQQJXtqEqBkxNOyjy6UW86juwD85wcCK/eia1z9C4k2IzPtAmyLaMVTFP
-   UGMzQ7CvoyFIt8qliGhw3X1+3b7tqFG35qsZ98YsHKo8QiCKEwMpb5k8M
-   g==;
-X-CSE-ConnectionGUID: RL/kW1KHQfS3+PVehXtCoQ==
-X-CSE-MsgGUID: rGB/jLZ8RE6RDMTBB6rh5Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="75641767"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="75641767"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 08:05:04 -0700
-X-CSE-ConnectionGUID: 4jAY6QjsTeKQlzSdx7kcaw==
-X-CSE-MsgGUID: sNqH4E0FRAOEg+EUiy1s7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="172988946"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.115])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 08:04:57 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 22 Aug 2025 18:04:54 +0300 (EEST)
-To: linux-pci@vger.kernel.org
-cc: Andreas Larsson <andreas@gaisler.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-    "David S. Miller" <davem@davemloft.net>, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@lists.linux-m68k.org, 
-    linux-mips@vger.kernel.org, sparclinux@vger.kernel.org, 
-    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
-    Yinghai Lu <yinghai@kernel.org>, Igor Mammedov <imammedo@redhat.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, 
-    Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-    Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>, 
-    linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 00/24] PCI: Bridge window selection improvements
-In-Reply-To: <20250822145605.18172-1-ilpo.jarvinen@linux.intel.com>
-Message-ID: <e256f7c5-d096-de28-3148-22b44d45f9fa@linux.intel.com>
-References: <20250822145605.18172-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1755875183; c=relaxed/simple;
+	bh=TaGjZVBNjqzB9wouC54FD4GU1xyQRprfFDBycdH1uMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sYH4Jn+RUzJrGn5YHj/RRpe6gqCCjBG7RZrOt+9iwJG2pBHgle5YqvERegMber3/WYPkjfQ3dEfx8Fh7G3i5fWaFiYPtZwapzeytc14Ixe9D1tnelbb7SXMphK7h3trDDjFdamjGYHPv+5ot9HP2hKh5feBeBDmGIGQhJc7xFJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mS8tqQ7w; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MEL4lV009169
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 15:06:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=BwpqZ61LBFwlqjVSb9xTIEnN
+	VKZalQo+jXTMu0ZiAnc=; b=mS8tqQ7wS1ddBiYsTugAgpdhJo5uNPAiqiFAwwHF
+	aAayN9gBy82wTn+F1PwaTkQd7RrgRDK1Kd5ZCV3tgK16/AysfoTPfVfHJc0kTsz3
+	PpkZ9BigV0t9qWYU1fzHimnyhdwrp8EZo6F3hOU1N79GT/8Mdz5zAbVti3gQylkh
+	dt2gpohCDS73Qn1OlocDCyYzIamZQswjvt7cFq+7MUbPElhggF+bwdXDyI2y4H8y
+	Kd1hzXAc3z62iPKXYrG/VJEe3Uln0uuL2aSpkErR+7bBnqtAvtJd9jzlxgjOLyQ8
+	v86K6VZkDKPMFTHYnlmL8kqGZuF6sIPSYJrjcoyG5Nqo4g==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48pt7vg3vs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 15:06:20 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-24457f42254so48501015ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 08:06:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755875179; x=1756479979;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BwpqZ61LBFwlqjVSb9xTIEnNVKZalQo+jXTMu0ZiAnc=;
+        b=F/lfPnA1RJ0+vrkpRI3ScLooElJpsSKlFDwMfc+6wnDqgeFXCLWeJgV/QVCUaaqYvm
+         SNTiGwkexF7f3x73D0cHy+5ZoL78HfrR0UbtHxiOjQ6vSFEtys0eaU4KEdly3wPJ6Bc6
+         PqwtCUl8tbMn8463NNfbh8ZAUwXVDKgHI+HOZXLSCNVGtmgogHp0oFX/pDopfpEfmrIz
+         EKrbS5pA00EbD085/Ux5bOoo95fyedkS+XRSIwF52ux4POv+rILhDamayKvtJ+aZjxAY
+         ZsgWcUQVfuIisI5/ejaU4dEQlzjfKzs29fbJVZIRS1l/h/HvzPWWSYLZqh7PsOWOHTru
+         BD/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUKwo0MYDyYwqVxrTfrreN7+VvDe1xhI2BIHevh/f0d8RiuzBcyg9n4rqcKRsmrspbh/S5CbOUnurd2C+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY9UaE+2tXtWqRUNChNvErPNGZoY2pFfBV6DjUmPC0of2F56j7
+	0D9kyAAohmYpcbLcr5X4C6oQq4Msk34KnQMcmxLX9UUN2FyBYhZXDkIQZlvVBjDUcloipcuRJdI
+	jzinz5j1SnrvPinPXsgeVFYR8L+v9WhFa27ZkEg12JjKMdW5WOZjK47+QDoMaak/Kerk=
+X-Gm-Gg: ASbGnctQS4h+MpHLMKuV0HnMgS4Yltzc22ENrNM+1woTHUDtqsJKuwzCMmtiq0ut31z
+	g1ArvFpHK/bs4DlmWXZBJbxn0FVQVQ09j0asWyZZmYki3KGDFv72ec2K+4L1z11hKA2AIo78ubt
+	rzTsiN3KDTwIMpC7302Z8XM+jxatgnKUpSE2mEPHt4MAJqh0v8jv2sRRy1pMePIcRd5MTxdqmHy
+	i7ia1kV/nu0VLoZkZaUljnjI/0b7N1whPyl2mOVL6/ganHsqvsCND9rqhcvgPkkKjXxGnm4Kt6x
+	oCt1f2SFG5Dcb8kpEKjwf9t7UMLV9ug7Ryll0bbwzoEEav93FqHn7lYN4b4zByjO6ag=
+X-Received: by 2002:a17:902:c402:b0:246:570:2d9a with SMTP id d9443c01a7336-2462efca0femr41628135ad.59.1755875179142;
+        Fri, 22 Aug 2025 08:06:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEBa7+NR/UqARzf3gLr4vrEuhT70rpF/eoP4nZO8thtakTCqhfzCPBBCTNxi6EQ2bmua/KKwg==
+X-Received: by 2002:a17:902:c402:b0:246:570:2d9a with SMTP id d9443c01a7336-2462efca0femr41627505ad.59.1755875178605;
+        Fri, 22 Aug 2025 08:06:18 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245fd335ea1sm55029105ad.110.2025.08.22.08.06.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 08:06:18 -0700 (PDT)
+Date: Fri, 22 Aug 2025 20:36:11 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2 11/11] media: iris: Enable Secure PAS support with
+ IOMMU managed by Linux
+Message-ID: <20250822150611.ryixx2qeuhyk72u3@hu-mojha-hyd.qualcomm.com>
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <20250819165447.4149674-12-mukesh.ojha@oss.qualcomm.com>
+ <aKWLZwYVPJBABhRI@linaro.org>
+ <20250820115659.kkngraove46wemxv@hu-mojha-hyd.qualcomm.com>
+ <aKXQAoXZyR6SRPAA@linaro.org>
+ <f25b6cb4-666d-e3e1-0540-b2d7fad86407@quicinc.com>
+ <aKguXNGneBWqSMUe@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1455586025-1755875094=:937"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKguXNGneBWqSMUe@linaro.org>
+X-Authority-Analysis: v=2.4 cv=ao/rySZV c=1 sm=1 tr=0 ts=68a8876c cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=QS3pIwUUYRx7lZdHfBUA:9
+ a=CjuIK1q_8ugA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-ORIG-GUID: Od5g9ldyMDS-hAIispW0tunH289HrR6C
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIyMDEyOCBTYWx0ZWRfX/hcZ4nUQCzL5
+ gBhtn597kMHjeMpT4151pjM+d5o1aVknjgZbUt3mp+9e83HCaDkO9CdDbhu06fvepJxhF3fGfSB
+ G5th2ufEnbS5B2rA1eX/HiY1SdaMsi8nqjTjb2cM8vUwN5bklMtlnQoYcZx+RxiddpDHWG0giz/
+ 5gWAutCU07pxmLg0AmMYTnvb/PXbU+VWPjIDWB1FHT40oOg0NuWSpvgz6gta5krGng2sfQwT2JD
+ 3Mkx3hDm71szpfHlfpwRUsbNTuZQEW9tKl0JiV/jLkjX+HCiHhKqAZ4VH3Qg2YaWoP3GksS8T8N
+ SZx+A/4TQKhlKAzQAgdqt5ccR2XxBNSpVXBuVmQFlv6wUYNMqXF7yFDcVJs1rZbDb2aF7JWCr7/
+ cPB+mvIVXX7hjJoVEmkCSVs78/sxGQ==
+X-Proofpoint-GUID: Od5g9ldyMDS-hAIispW0tunH289HrR6C
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
+ bulkscore=0 priorityscore=1501 clxscore=1015 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508220128
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, Aug 22, 2025 at 10:46:20AM +0200, Stephan Gerhold wrote:
+> On Fri, Aug 22, 2025 at 09:56:49AM +0530, Vikash Garodia wrote:
+> > On 8/20/2025 7:09 PM, Stephan Gerhold wrote:
+> > >>>> +int iris_fw_init(struct iris_core *core)
+> > >>>> +{
+> > >>>> +	struct platform_device_info info;
+> > >>>> +	struct iommu_domain *iommu_dom;
+> > >>>> +	struct platform_device *pdev;
+> > >>>> +	struct device_node *np;
+> > >>>> +	int ret;
+> > >>>> +
+> > >>>> +	np = of_get_child_by_name(core->dev->of_node, "video-firmware");
+> > >>>> +	if (!np)
+> > >>>> +		return 0;
+> > >>> You need a dt-bindings change for this as well. This is documented only
+> > >>> for Venus.
+> > >> You are right, wanted to send device tree and binding support separately.
+> > >> But if required, will add with the series in the next version.
+> > >>
+> > > You can send device tree changes separately, but dt-binding changes
+> > > always need to come before the driver changes.
+> > 
+> > Do you mean to update the examples section[1] with the firmware subnode,
+> > something similar to venus schema[2] ?
+> > 
+> 
+> Sorry, I missed the fact that the "video-firmware" subnode is already
+> documented for iris as well through qcom,venus-common.yaml (which is
+> included for qcom,sm8550-iris). I don't think it's strictly required to
+> add every possibility to the examples of the schema, since we'll also
+> have the actual DTBs later to test this part of the schema.
+> 
+> I would recommend to extend the description of the "video-firmware" node
+> in qcom,venus-common.yaml a bit. You do use the reset functionality of
+> TrustZone, so the description there doesn't fit for your use case.
+> 
+> I think we will also have to figure out how to handle the old
+> "ChromeOS"/"non_tz" use case (that resets Iris directly with the
+> registers) vs the EL2 PAS use case (that resets Iris in TZ but still
+> handles IOMMU from Linux). Simply checking for the presence of the
+> "video-firmware" node is not enough, because that doesn't tell us if the
+> PAS support is present in TZ.
+> 
+> I have been experimenting with a similar patch that copies the "non_tz"
+> code paths from Venus into Iris. We need this to upstream the Iris DT
+> patch for X1E without regressing the community-contributed x1-el2.dtso,
+> which doesn't have functional PAS when running in EL2.
+> 
+> Perhaps we could check for __qcom_scm_is_call_available() with the new
+> QCOM_SCM_PIL_PAS_GET_RSCTABLE to choose between invoking reset via PAS
+> or directly with the registers. I don't have a device with the new
+> firmware to verify if that works.
 
---8323328-1455586025-1755875094=:937
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+You can check QCOM_SCM_PIL_PAS_GET_RSCTABLE with __qcom_scm_is_call_available() 
+but there is a possibility that QCOM_SCM_PIL_PAS_GET_RSCTABLE SMC call will be
+used even for Gunyah. So, I believe, __qcom_scm_is_call_available() and
+video-firmware's iommu property is also important.
 
-On Fri, 22 Aug 2025, Ilpo J=C3=A4rvinen wrote:
+> 
+> I'll try to send out my patch soon, so you can better see the context.
 
-> This series is based on top of the three resource fitting and
-> assignment algorithm fixes (v3).
+Are you saying that you are going to send patch to support IRIS on
+x1-el2.dtso in non-secure way i.e., non-PAS way.
 
-I realized I didn't include a link to those patches. It's this series:=20
+> 
+> Thanks,
+> Stephan
 
-https://lore.kernel.org/linux-pci/20250822123359.16305-1-ilpo.jarvinen@linu=
-x.intel.com/
-
-I'm sorry about the extra hassle.
-
---=20
- i.
-
-> PCI resource fitting and assignment code needs to find the bridge
-> window a resource belongs to in multiple places, yet, no common
-> function for that exists. Thus, each site has its own version of
-> the decision, each with their own corner cases, misbehaviors, and
-> some resulting in complex interfaces between internal functions.
->=20
-> This series tries to rectify the situation by adding two new functions
-> to select the bridge window. To support these functions, bridge windows
-> must always contain their type information in flags which requires
-> modifying the flags behavior for bridge window resources.
->=20
-> I've hit problems related to zeroed resource flags so many times by now
-> that I've already lost count which has highlighted over and over again
-> that clearing type information is not a good idea. As also proven by
-> some changes of this series, retaining the flags for bridge windows
-> ended up fixing existing issues (although kernel ended up recovering
-> from the worst problem graciously and the other just results in dormant
-> code).
->=20
-> This series only changes resource flags behavior for bridge windows.
-> The sensible direction is to make a similar change for the other
-> resources as well eventually but making that change involves more
-> uncertainty and is not strictly necessary yet. Driver code outside of
-> PCI core could have assumptions about the flags, whereas bridge windows
-> are mostly internal to PCI core code (or should be, sane endpoint
-> drivers shouldn't be messing with the bridge windows). Thus, limiting
-> the flags behavior changes to bridge windows for now is safer than
-> attempting full behavioral change in a single step.
->=20
->=20
-> I've tried to look out for any trouble that code under arch/ could
-> cause after the flags start to behave differently and therefore ended
-> up consolidating arch/ code to use pci_enable_resources(). My
-> impression is that strictly speaking only the MIPS code would break
-> similar to PCI core's copy of pci_enable_resources(), the others were
-> much more lax in checking so they'd likely keep working but
-> consolidation seemed still the best approach there as the enable checks
-> seemed diverging for no apparent reason.
->=20
-> Most sites are converted by this change. There are three known places
-> that are not yet converted:
->=20
->   - fail_type based logic in __assign_resources_sorted():
->     I'm expecting to cover this along with the resizable BAR
->     changes as I need to change the fallback logic anyway (one
->     of the motivators what got me started with this series,
->     I need an easy way to acquire the bridge window during
->     retries/fallbacks if maximum sized BARs do not fit, which
->     is what this series provides).
->=20
->   - Failure detection after BAR resize: Keeps using the type
->     based heuristic for failure detection. It isn't very clear how
->     to decide which assignment failures should be counted and which
->     not. There could be pre-existing failures that keep happening
->     that end up blocking BAR resize but that's no worse than behavior
->     before this series. How to identify the relevant failures does
->     not look straightforward given the current structures. This
->     clearly needs more thought before coding any solution.
->=20
->   - resource assignment itself: This is a very complex change
->     due to bus and kernel resources abstractions and might not be
->     realistic any time soon.
->=20
-> I'd have wanted to also get rid of pci_bridge_check_ranges() that
-> (re)adds type information which seemed now unnecessary. It turns out,
-> however, that root windows still require so it will have to wait for
-> now.
->=20
-> This change has been tested on a large number of machine I've access to
-> which come with heterogeneous PCI configurations. Some resources
-> retained their original addresses now also with pci=3Drealloc because
-> this series fixed the unnecessary release(+assign) of those resources.
-> Other than that, nothing worth of note from that testing.
->=20
->=20
-> My test coverage is x86 centric unfortunately so I'd appreciate if
-> somebody with access to non-x86 archs takes the effort to test this
-> series.
->=20
-> Info for potential testers:
->=20
-> Usually, it's enough to gather lspci -vvv pre and post the series, and
-> use diff to see whether the resources remained the same and also check
-> that the same drivers are still bound to the devices to confirm that
-> devices got properly enabled (also shown by lspci -vvv). I normally
-> test both with and without pci=3Drealloc. In case of a trouble, besides
-> lspci -vvv output, providing pre and post dmesg and /proc/iomem
-> contents would be helpful, please take the dmesg with dyndbg=3D"file
-> drivers/pci/*.c +p" on the kernel cmdline.
->=20
-> Ilpo J=C3=A4rvinen (24):
->   m68k/PCI: Use pci_enable_resources() in pcibios_enable_device()
->   sparc/PCI: Remove pcibios_enable_device() as they do nothing extra
->   MIPS: PCI: Use pci_enable_resources()
->   PCI: Move find_bus_resource_of_type() earlier
->   PCI: Refactor find_bus_resource_of_type() logic checks
->   PCI: Always claim bridge window before its setup
->   PCI: Disable non-claimed bridge window
->   PCI: Use pci_release_resource() instead of release_resource()
->   PCI: Enable bridge even if bridge window fails to assign
->   PCI: Preserve bridge window resource type flags
->   PCI: Add defines for bridge window indexing
->   PCI: Add bridge window selection functions
->   PCI: Fix finding bridge window in pci_reassign_bridge_resources()
->   PCI: Warn if bridge window cannot be released when resizing BAR
->   PCI: Use pbus_select_window() during BAR resize
->   PCI: Use pbus_select_window_for_type() during IO window sizing
->   PCI: Rename resource variable from r to res
->   PCI: Use pbus_select_window() in space available checker
->   PCI: Use pbus_select_window_for_type() during mem window sizing
->   PCI: Refactor distributing available memory to use loops
->   PCI: Refactor remove_dev_resources() to use pbus_select_window()
->   PCI: Add pci_setup_one_bridge_window()
->   PCI: Pass bridge window to pci_bus_release_bridge_resources()
->   PCI: Alter misleading recursion to pci_bus_release_bridge_resources()
->=20
->  arch/m68k/kernel/pcibios.c   |  39 +-
->  arch/mips/pci/pci-legacy.c   |  38 +-
->  arch/sparc/kernel/leon_pci.c |  27 --
->  arch/sparc/kernel/pci.c      |  27 --
->  arch/sparc/kernel/pcic.c     |  27 --
->  drivers/pci/bus.c            |   3 +
->  drivers/pci/pci-sysfs.c      |  27 +-
->  drivers/pci/pci.h            |   8 +-
->  drivers/pci/probe.c          |  35 +-
->  drivers/pci/setup-bus.c      | 798 ++++++++++++++++++-----------------
->  drivers/pci/setup-res.c      |  46 +-
->  include/linux/pci.h          |   5 +-
->  12 files changed, 504 insertions(+), 576 deletions(-)
->=20
->=20
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> prerequisite-patch-id: 801e8dd3aa9847d4945cb7d8958574a6006004ab
-> prerequisite-patch-id: 0233311f04e3ea013676b6cc00626410bbe11e41
-> prerequisite-patch-id: 9841faf37d56c1acf1167559613e862ef62e509d
->=20
---8323328-1455586025-1755875094=:937--
+-- 
+-Mukesh Ojha
 
