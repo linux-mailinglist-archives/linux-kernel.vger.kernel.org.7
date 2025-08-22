@@ -1,181 +1,152 @@
-Return-Path: <linux-kernel+bounces-782564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F6C4B32222
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:12:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93B33B32229
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB8B3AE15DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:11:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DF983A76DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1544B2BE628;
-	Fri, 22 Aug 2025 18:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6F7291C07;
+	Fri, 22 Aug 2025 18:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VD0GlZI/"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jIkIhtgd"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986FD2BD5B3;
-	Fri, 22 Aug 2025 18:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCC02BE02C
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755886302; cv=none; b=uXjBMkjdZMw2PjJBDLEBOq+P4UY6UEddmij4WJy/ziEyHmtDA+2bAJ6EBrYBaD8Mas9b0T+J+v2MgvhhwkgntjV20+vDOaLxoVUj1knALc6DxEhgDybPvLclurBhWhcnwWEEY3s14ICD6Venfbdgvxma/yN2WMsJvpeDgE9AmtY=
+	t=1755886343; cv=none; b=Fa2LxKio4jQJZ0TJOXAi68mdIRFhfdl+qJ5zBrCHVoXF26ZgFZzkGYIr21mU3dFJaErb+K/xBSbHwTjNDtx4WQdNT2Qzcm2GVVjfV+hlffnc3D9cz54vTJeZm79XCcUINEQefSOTraPSmKJhQCNSfxP0AeWyDIsrF//st85GjWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755886302; c=relaxed/simple;
-	bh=IJtLE1Q4rJCO8zJhc+hEtTZK1+HnLN8Rtssuw8qX5aw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ox44m+2+RcCiIE/jdNz5qwUOttnO1OMhk9Tp20nfdVkGd4rIvCa0M01G+6ArZjIyw2krA+ERu1EzqVUBAhUmVSt2jCXyG3NHPU3pa00K2JDWYhMed+OK+WNh9YUKsDpWMIN/pqm8v6w4E2nmXhBb/08GRw4dV4GZyr1RiKcTKT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VD0GlZI/; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45a1b04f8b5so15396645e9.1;
-        Fri, 22 Aug 2025 11:11:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755886299; x=1756491099; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zhlyI1Vji6S4iPUyGLb7GjEFW+HU1Z0XCJTAoKiKDwk=;
-        b=VD0GlZI/Xje8VutMEnH4GJBeKebl2sEK8V8Ea8ttRDWHGibSKOoCLSTxA4YwVDFPxX
-         wePRIkfxp1vBD9gEW/ZfoPNCorWeJM3ey3H0kgsRt/JsR9EphasbfAojVW0uP2iyuJCS
-         1zeWprJnUu0Z5tb2Tq6fNSo/zraNPs875qZBx7ahOrB/NMNI5xU1ntckLSDv5JGlfXxu
-         ODjYiZT2X2wTlpeBOnh37y4t2nplofRAJRa8ydkpISkwvNl3WS4YAGh2SjxejyvV9AMN
-         iU2m8Ct2j7tJ42bWTRL/7p0IIuLrSAACkTSsOdUKNvy4rnEIhXDo1xGjX8aqYBZcwRkT
-         wABg==
+	s=arc-20240116; t=1755886343; c=relaxed/simple;
+	bh=RAxWI0euiUT6SEQblqsBhwKkDxfsL904Z6hDWRCsopQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bo0xBXxEpaErejIzgHGLNQr9a7ec0tXBZ2Ov43RzolZ43kErxSflhBjXFS05l/riDYhWjFiiuQ+40Dt3UhzAWug1U+g74eRkD+SQxllfPGUNjyQhHU4FS/+chruVOFtLpcq4q93dYMVHmpNLTQLs5zXUcYLOzz9idwgdapyIsjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jIkIhtgd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MHa7Bq026217
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:12:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/9F4kF/0PG0gqpOGPryNaB+t1E6t5FiaNAX6DsaIWBY=; b=jIkIhtgdj5s0I7Db
+	TnMfmrdMghAf+6PpmRtcXHMhhLOut7gGkaK1ibTUkBVDIeBKf8d6RUWjayhKnX5h
+	bCKd2EWhQ0ZEw8TUbR3xmxsuoDuyYDlZHv+3nE5y1fb73/6lQYfqCBYc8/Y+kknX
+	oOEgAi7NKytojhlzZLvyKo/vxb1xZ/dTu8mBROnHUP3szxGUWlO3pLadCOXnWCLP
+	Y/H6d2K8O5zwsBE/P2m7osqazaEaulLzY2VpvXE9olmN7OkdcmPfKYdAXDysVH2h
+	+P8T4ECoUMgGVKoNdNn3eBJ2WgZECC2OOg9fV57FAVh3yc2yJC9E87jDJIfTIeH0
+	lCuJuw==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48pw3cg3a1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:12:21 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70d9f5bdf67so20768116d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:12:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755886299; x=1756491099;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zhlyI1Vji6S4iPUyGLb7GjEFW+HU1Z0XCJTAoKiKDwk=;
-        b=U7x5gZUwl12FfDmPaMG1cUo58nXJPYD/85dvl92fwAzT4Vo6B8+ugBhyM5lfrVHR9k
-         2267XPt5iMjKoc5426GpYY7/5iIRXgzwn2jpVKU7MvJH9iYCS0bH0adQScy/nSf6RFbu
-         EKqk7JBHQlsXol65wIKwQO2dTN1VH3wq2Yx8h0aWxZk3Qdy87w6hMn3aeCS/RNgvS8Jb
-         y278eISsJbjMdXONhoKVrLprqNxIHPsrb3NqcVB9pibxSLd9dSGJuOV280thbfK6q0Oz
-         r2W1QleBUJzHdCIbQ4ePmASJr4+5P51/g1k+dJOSUpV+5sODl79FHa8wuDkvhm6R36o3
-         5yrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3AS1YfYlBT0WKjGeglVmVDf4lJdsPgeyAcTVlKZUCSgCUrX8P9cPWmBi2csV4DQl4WbGNKjuoG4IlHaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKPuRYj5Xp3tVaMEKTAudaon2t4nPS7zZ7EOfcpni6Evg/JKel
-	KdCvfgQfCsWu3NefXtEyqOP7kaos4micc/bxvl65sVk1EVCDqyuObH5Ls+cmYv4=
-X-Gm-Gg: ASbGncultxQD1AF9CP8CPs1YJc/HrXHrJt7W2w/YGTpkJU8c2E69W0uAlfctzjkgyth
-	eQqj3DLOrzPxymu2VfPt3YqPqt+wVbdbbScStaGYL/5etR7W6P8HpGMKPtZkQj7JTzTXTx2syed
-	sfv3AYtsNTf1byzhwNb46vSFgxZKjPdATrvC1d4jmRnLLu7QaMKx+X6EU1c6/vHXvWmMtpMNrNW
-	35EelZFCm+XZ8CSZf3HafKvsaIT57ygt/XPxV62o/mU1VBmnqwuNo5YLL43yvpHPx6gnG3T3IhI
-	nsxRXLcZakvILG5PK1/+I7ag6feFKDFss6900vKbo+9prS0UqB5qw7OJqbaapxGJfveXxixc63S
-	ESf59J5MZu403gz7pLlaBa7a3
-X-Google-Smtp-Source: AGHT+IEcEXXL9E75Q0oSfCH1XgdzQeq368tH6A0PH5dLP2MAUtRhM2w8SNkWmRhoGzgwKx1EHVEoVw==
-X-Received: by 2002:a05:600c:4695:b0:456:26a1:a0c1 with SMTP id 5b1f17b1804b1-45b517cb8e5mr42484925e9.17.1755886298715;
-        Fri, 22 Aug 2025 11:11:38 -0700 (PDT)
-Received: from vova-pc ([37.122.165.138])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b57535439sm8574595e9.4.2025.08.22.11.11.37
+        d=1e100.net; s=20230601; t=1755886340; x=1756491140;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/9F4kF/0PG0gqpOGPryNaB+t1E6t5FiaNAX6DsaIWBY=;
+        b=PbXRRh0NlwVZ4+Iz5B7f0VXL5bzef0Rz/mkFIi2g5YAZaa50j5P0FB2WveXRSg0lbw
+         0Bz2d/wiCDyDe/K05y2GquUEZTc4p22kh9HWG7amOGMhGVPh6RJTx3cRIJJPz6saUprD
+         qtnFbF7B0A3Q54bCo1sBSYqmbqQUClGpMO6Z8B7ZLSjgXROymbGSlhc1tLujFbVpAIsx
+         3V4zpC5Krl57YXK261GarJtOthkn5PvYwjyIPeP/p3sFc5AIYlTiaAqkqpfBwJf1aveh
+         o0tg3qcaQIxalDEJoLLNJpgG0bqRkaCU3K77dpOgPPSOgVFnJNZB7rCtYSTj1OG275+O
+         7YnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFYbN39uUm0pgKyGE4Fmp76MK5hzgLVDcp9uxMf4+2x1ikzdM/xn2wqe3AtsvqUx7Dx/nhNMFVd/oFesI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbN2HLygEYU8tD15UwGnV6Qw8lKeWo5NSD5tilFulacWIioiHR
+	Al0kv6gm7+AVoPIei8anSoEbRyt3Zw3rw/SCWhYnjKp+NAIYapdo3HjgpUDHA/faNxzJn5Qvg1M
+	ViR6azuaTPP1WMsvRx/ldCJD5nDzpYZWvdzI2GHelRkAOWa337Jn9jqUGQzxaq6HQg3I=
+X-Gm-Gg: ASbGncup8t7jWm2cS5a1M2udQH5gBfD6fojolS7zORHhdwWpQMFVSHkdHJHEG6Tukc7
+	UoyIxqtcNipaaBTaDLzNlQd3PeHnR7qd7gC88DSTWhqRpuyC2udk8uqIrvVdsHDhqMYT+HhVO6a
+	h0YrmwBbTouadC4D9iX2hlAo72NZL6DO+A8H6TWgpuRCk6D/HITTBDgYt2+ARTn7JwXa0V6hekt
+	iAp25Ihb0kuCOVCzR54zav97QIzdaPq6Ah7hjKa7S4fUGTTLpPbVdFnOHuLJUwcjlgR3RYzrrV/
+	A6Xx65WqMHJBaQHszbKTSvhD9Imvt2sgkRbnon5X45zjs4oFvJbXdcBqg+0Cke10V0wkE2bbCvn
+	P060baMrjjZtPg33IPZIndg74AsM2Yhma52lXQ7Nu4Xyp+a6xLa98
+X-Received: by 2002:a05:6214:2244:b0:70d:a4bf:66ae with SMTP id 6a1803df08f44-70da4bf69c5mr19413906d6.12.1755886340103;
+        Fri, 22 Aug 2025 11:12:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHZ9vrMkeP87y8XS1HYbM10ipCEtP2NQ/1/i89/UBtmnM3Uakd6ZPlSGQcOg+/ENSPZGgsjeA==
+X-Received: by 2002:a05:6214:2244:b0:70d:a4bf:66ae with SMTP id 6a1803df08f44-70da4bf69c5mr19413446d6.12.1755886339585;
+        Fri, 22 Aug 2025 11:12:19 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35c01e5asm89897e87.26.2025.08.22.11.12.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 11:11:38 -0700 (PDT)
-Date: Fri, 22 Aug 2025 20:11:36 +0200
-From: Vladimir Riabchun <ferr.lambarginio@gmail.com>
-To: isdn@linux-pingi.de
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ferr.lambarginio@gmail.com
-Subject: [PATCH] mISDN: hfcpci: Fix warning when deleting uninitialized timer
-Message-ID: <aKiy2D_LiWpQ5kXq@vova-pc>
+        Fri, 22 Aug 2025 11:12:18 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: heiko@sntech.de, Andy Yan <andyshrk@163.com>
+Cc: hjc@rock-chips.com, mripard@kernel.org, naoki@radxa.com, stephen@radxa.com,
+        cristian.ciocaltea@collabora.com, neil.armstrong@linaro.org,
+        Laurent.pinchart@ideasonboard.com, yubing.zhang@rock-chips.com,
+        krzk+dt@kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        robh@kernel.org, sebastian.reichel@collabora.com,
+        Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: (subset) [PATCH v7 00/10] Add support for RK3588 DisplayPort Controller
+Date: Fri, 22 Aug 2025 21:12:16 +0300
+Message-ID: <175588622226.771426.4504932000654632813.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250822063959.692098-1-andyshrk@163.com>
+References: <20250822063959.692098-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIyMDE2MSBTYWx0ZWRfX0mow0goaAnKZ
+ jYtD8627FCaPRHHd4K7VbgKRNzOa1FEZigjyF6buGaoomjBMPZaUqZQ+XCcz2wvCIlpvk5Tgw7Q
+ cj0z83gaLPIxTIv1JUnWANsv5Enc6hpvAuHaJlihNbx1BOgqCgD78UuLYgZWw7tPTXEa7MPXTsf
+ eWG/n9zstacNqXmip8E3IclXM6Z8EWCcQJB8FGvDbacYY5KI9u2l51ODvdTjl3ruva5RRXnmzJ1
+ eC0I+jlTsIy6MYzUlOXQN1OSHgJf1kHQHfRPVq8CDMMXw45HHWc1v8T59cqUIwxJQD2300rVk0V
+ phjBs7CHuBEZDCs/lIDUDhJqEgesvsV9M1n9NibX27JI5YYd1RP9nvOVgr+uclSMA4LFbMa79GF
+ NrFxSI3S
+X-Authority-Analysis: v=2.4 cv=EJ4G00ZC c=1 sm=1 tr=0 ts=68a8b305 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=2OwXVqhp2XgA:10 a=s8YR1HE3AAAA:8 a=u1nK3qfxStItYws1ViEA:9 a=QEXdDO2ut3YA:10
+ a=OIgjcC2v60KrkQgK7BGD:22 a=jGH_LyMDp9YhSvY-UuyI:22
+X-Proofpoint-ORIG-GUID: jzh7qmVV6gKPyDOK4Y6kz76y-GzlbAn4
+X-Proofpoint-GUID: jzh7qmVV6gKPyDOK4Y6kz76y-GzlbAn4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 bulkscore=0 adultscore=0 malwarescore=0
+ impostorscore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508220161
 
-With CONFIG_DEBUG_OBJECTS_TIMERS unloading hfcpci module leads
-to the following splat:
+On Fri, 22 Aug 2025 14:39:44 +0800, Andy Yan wrote:
+> From: Andy Yan <andy.yan@rock-chips.com>
+> 
+> 
+> There are two DW DPTX based DisplayPort Controller on rk3588 which
+> are compliant with the DisplayPort Specification Version 1.4 with
+> the following features:
+> 
+> [...]
 
-[  250.215892] ODEBUG: assert_init not available (active state 0) object: ffffffffc01a3dc0 object type: timer_list hint: 0x0
-[  250.217520] WARNING: CPU: 0 PID: 233 at lib/debugobjects.c:612 debug_print_object+0x1b6/0x2c0
-[  250.218775] Modules linked in: hfcpci(-) mISDN_core
-[  250.219537] CPU: 0 UID: 0 PID: 233 Comm: rmmod Not tainted 6.17.0-rc2-g6f713187ac98 #2 PREEMPT(voluntary)
-[  250.220940] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[  250.222377] RIP: 0010:debug_print_object+0x1b6/0x2c0
-[  250.223131] Code: fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 4f 41 56 48 8b 14 dd a0 4e 01 9f 48 89 ee 48 c7 c7 20 46 01 9f e8 cb 84d
-[  250.225805] RSP: 0018:ffff888015ea7c08 EFLAGS: 00010286
-[  250.226608] RAX: 0000000000000000 RBX: 0000000000000005 RCX: ffffffff9be93a95
-[  250.227708] RDX: 1ffff1100d945138 RSI: 0000000000000008 RDI: ffff88806ca289c0
-[  250.228993] RBP: ffffffff9f014a00 R08: 0000000000000001 R09: ffffed1002bd4f39
-[  250.230043] R10: ffff888015ea79cf R11: 0000000000000001 R12: 0000000000000001
-[  250.231185] R13: ffffffff9eea0520 R14: 0000000000000000 R15: ffff888015ea7cc8
-[  250.232454] FS:  00007f3208f01540(0000) GS:ffff8880caf5a000(0000) knlGS:0000000000000000
-[  250.233851] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  250.234856] CR2: 00007f32090a7421 CR3: 0000000004d63000 CR4: 00000000000006f0
-[  250.236117] Call Trace:
-[  250.236599]  <TASK>
-[  250.236967]  ? trace_irq_enable.constprop.0+0xd4/0x130
-[  250.237920]  debug_object_assert_init+0x1f6/0x310
-[  250.238762]  ? __pfx_debug_object_assert_init+0x10/0x10
-[  250.239658]  ? __lock_acquire+0xdea/0x1c70
-[  250.240369]  __try_to_del_timer_sync+0x69/0x140
-[  250.241172]  ? __pfx___try_to_del_timer_sync+0x10/0x10
-[  250.242058]  ? __timer_delete_sync+0xc6/0x120
-[  250.242842]  ? lock_acquire+0x30/0x80
-[  250.243474]  ? __timer_delete_sync+0xc6/0x120
-[  250.244262]  __timer_delete_sync+0x98/0x120
-[  250.245015]  HFC_cleanup+0x10/0x20 [hfcpci]
-[  250.245704]  __do_sys_delete_module+0x348/0x510
-[  250.246461]  ? __pfx___do_sys_delete_module+0x10/0x10
-[  250.247338]  do_syscall_64+0xc1/0x360
-[  250.247924]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Applied to drm-misc-next, thanks! I will wait for a few more days to apply the
+rest, maybe it gets some more R-b (especially the MAINTAINERS patch).
 
-Fix this by initializing hfc_tl timer with DEFINE_TIMER macro.
-Also, use mod_timer instead of manual timeout update.
+[05/10] dt-bindings: display: simple-bridge: Add ra620 compatible
+        commit: 480a76c64f4f6a7f8d4aa2ac86cd2178687716b9
+[06/10] drm/bridge: simple-bridge: Add support for radxa ra620
+        commit: 73b81fcb12df1051bd169e488245f8bf4c37bc93
 
-Fixes: 87c5fa1bb426 ("mISDN: Add different different timer settings for hfc-pci")
-Fixes: 175302f6b79e ("mISDN: hfcpci: Fix use-after-free bug in hfcpci_softirq")
-Signed-off-by: Vladimir Riabchun <ferr.lambarginio@gmail.com>
----
- drivers/isdn/hardware/mISDN/hfcpci.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/isdn/hardware/mISDN/hfcpci.c b/drivers/isdn/hardware/mISDN/hfcpci.c
-index 2b05722d4dbe..ea8a0ab47afd 100644
---- a/drivers/isdn/hardware/mISDN/hfcpci.c
-+++ b/drivers/isdn/hardware/mISDN/hfcpci.c
-@@ -39,12 +39,13 @@
- 
- #include "hfc_pci.h"
- 
-+static void hfcpci_softirq(struct timer_list *unused);
- static const char *hfcpci_revision = "2.0";
- 
- static int HFC_cnt;
- static uint debug;
- static uint poll, tics;
--static struct timer_list hfc_tl;
-+static DEFINE_TIMER(hfc_tl, hfcpci_softirq);
- static unsigned long hfc_jiffies;
- 
- MODULE_AUTHOR("Karsten Keil");
-@@ -2305,8 +2306,7 @@ hfcpci_softirq(struct timer_list *unused)
- 		hfc_jiffies = jiffies + 1;
- 	else
- 		hfc_jiffies += tics;
--	hfc_tl.expires = hfc_jiffies;
--	add_timer(&hfc_tl);
-+	mod_timer(&hfc_tl, hfc_jiffies);
- }
- 
- static int __init
-@@ -2332,10 +2332,8 @@ HFC_init(void)
- 	if (poll != HFCPCI_BTRANS_THRESHOLD) {
- 		printk(KERN_INFO "%s: Using alternative poll value of %d\n",
- 		       __func__, poll);
--		timer_setup(&hfc_tl, hfcpci_softirq, 0);
--		hfc_tl.expires = jiffies + tics;
--		hfc_jiffies = hfc_tl.expires;
--		add_timer(&hfc_tl);
-+		hfc_jiffies = jiffies + tics;
-+		mod_timer(&hfc_tl, hfc_jiffies);
- 	} else
- 		tics = 0; /* indicate the use of controller's timer */
- 
+Best regards,
 -- 
-2.43.0
+With best wishes
+Dmitry
 
 
