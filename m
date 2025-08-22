@@ -1,118 +1,123 @@
-Return-Path: <linux-kernel+bounces-780875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 682E7B30A71
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:41:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5213B30A92
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A51277A3248
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:39:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F4057A07195
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D3F81732;
-	Fri, 22 Aug 2025 00:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF8A17A2EB;
+	Fri, 22 Aug 2025 00:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=cs.stanford.edu header.i=@cs.stanford.edu header.b="hH4XfRVx"
-Received: from smtp1.cs.Stanford.EDU (smtp1.cs.stanford.edu [171.64.64.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o0Y9XJqV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E37B322E
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 00:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=171.64.64.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13D5347C7;
+	Fri, 22 Aug 2025 00:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755823257; cv=none; b=kY7ouQCwTD0r7/BEa9F0oE4cdswd71vJQlMrXAcXnciuYSbAo5tWat9qfremvv1oqd5VFMp8YjWlwWiPEUqQkLLcs2CPSMQb4CeS9kkdPJ1KNn2CwYFD7WZSPbxaOiclHFrxA6aFdcJz4JH7ayt1mbCOzUM9LNxPfmRLm4qMUaI=
+	t=1755824312; cv=none; b=GzZBY+oaKEvj40/BVpmY6LVh6IMus+e/IH/7y9B0w02f3+crUK/LJ9X8EgvjrPx3NhbahqwyVTtiSDlyfszqPhWcH+iiLNfvvXA+Y/XIZV0kSQt/aLueUiN4GPpqcy3G6mmmoGtXHM8rGFIX/dUTQlaEOY8VLase9PxqbSA9g8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755823257; c=relaxed/simple;
-	bh=lnMZ0Fg1/5oZCOc3UI2+lY12/jAJB/8QMggC+0CJc3I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DIk8vV5Y4msnDxyHa4BexpFaq5U2K9gT5A/rjTtzn1elemJpknvykTWfKMCIx4xXEK0H0HaSt75KMMy11Z5HpLNQn3cBq+oHkS+sSj6oflwv5A+FmQmaF+j3A0JFwAmO7xQAivovZxM9vLqDbsBarehk9MRiFVrqIqGvmhXXdoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.stanford.edu; spf=pass smtp.mailfrom=cs.stanford.edu; dkim=pass (2048-bit key) header.d=cs.stanford.edu header.i=@cs.stanford.edu header.b=hH4XfRVx; arc=none smtp.client-ip=171.64.64.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.stanford.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs.stanford.edu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=cs.stanford.edu; s=cs2308; h=Content-Transfer-Encoding:MIME-Version:
-	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=mgp2oXtmlIEgm3VhFQhAud1V7DVV3rLBaZVTH1PpXek=; t=1755823255; x=1756687255; 
-	b=hH4XfRVxt+FY9Mx18DNa5JyXMkQdiOUG+r9tp9PHWhKvDKNUbagoYoW514nSvz00iNBUJeykLOu
-	ooc64GobfUrVGmFzZtu6hyGfD0/muLIUHb8k6UqfJRtf7s+nB7rDhdHCnjTJ7b3EZGPpiTlYGMlI+
-	XQYxUyqeeztAI+CLsSjhPYWZm0403yNKCeFdRqqll5zJ6p4b7AvDydxcfsIHGKC6RaU7VFkfqrasC
-	ho/wb9BfFPJZShzXFI7D0OoxRVZHdCbchc40tC7UuaedrBEX0oqR6D/RSmn1Nky6T+i0o26nlG+5/
-	A16FjEOJzFuD8GG5oRea2awZIxMrwNw2v3wg==;
-Received: from 135-180-5-199.fiber.dynamic.sonic.net ([135.180.5.199]:57628 helo=macbookair.lan)
-	by smtp1.cs.Stanford.EDU with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.94.2)
-	(envelope-from <jgnieto@cs.stanford.edu>)
-	id 1upFpo-0003vb-T9; Thu, 21 Aug 2025 17:40:49 -0700
-From: Javier Nieto <jgnieto@cs.stanford.edu>
-To: luiz.dentz@gmail.com,
-	marcel@holtmann.org
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Javier Nieto <jgnieto@cs.stanford.edu>
-Subject: [PATCH] Bluetooth: hci_h5: avoid sending two SYNC messages
-Date: Thu, 21 Aug 2025 17:39:13 -0700
-Message-Id: <20250822003912.41754-1-jgnieto@cs.stanford.edu>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1755824312; c=relaxed/simple;
+	bh=pI8wKsf8uAxXInNw8qE22IYRaoUiFkgFmGC3/Qwm5I0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ClD5GMrtI/gvo7DIZ+mv8pzwyLAz9gFU/pJ1KSoNTbOKyfisEmEjbi7fTZiUfKuUEx5fazVq2bF+58ADb9OzTyQr50v+WAmOIX0UZKwM5o/sEZQPsFETVofTCta+SedK4hffPVBILz4fVfI97AG4bdIJtW+hCaInmPR/4U0Z5t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o0Y9XJqV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B849AC4CEED;
+	Fri, 22 Aug 2025 00:58:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755824312;
+	bh=pI8wKsf8uAxXInNw8qE22IYRaoUiFkgFmGC3/Qwm5I0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o0Y9XJqVei3rwjosFgiyvTus/kOCXUXSIUfA1RKvv1WlgUrOAjQsZ1HFNS5m9fhgF
+	 z0NhZKznsybOS2f6RUatmaMiKXfWEnEInuFt5iCY+bzrWrIAl7EhyFyJ4qQnLXIOUm
+	 JMzPt+fSFwbqpTnx6peA3vfvk0d3FC2ZZGo1g/wRlgJTfWqUeGARPOKupujYm3UdV+
+	 AAn63fp1Fyn5ZJja+oEqsKljNUOwZnuOB7uXPSIbX40EBHvN4PGWCHozstVKq47Gfx
+	 hTJ2+ZGmb3S8DaKni6x366N/sM2rNDCALVtMz3gBJ37lJ1/aeBxJsKlv4FFnRzIGwv
+	 V9HDlYKM+2vAw==
+Date: Fri, 22 Aug 2025 08:41:17 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: timer: Add ARM SSE(Subsystems for
+ Embedded) timer
+Message-ID: <aKe8rd7kFy8SLVBA@xhacker>
+References: <20250821152429.26995-1-jszhang@kernel.org>
+ <20250821152429.26995-2-jszhang@kernel.org>
+ <175581575625.1136124.14166801245928231276.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -1.0
-X-Scan-Signature: 3e263c829a24e9e508d860775f9d44fb
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <175581575625.1136124.14166801245928231276.robh@kernel.org>
 
-Previously, h5_open() called h5_link_control() to send a SYNC message.
-But h5_link_control() only enqueues the packet and requires the caller
-to call hci_uart_tx_wakeup(). Thus, after H5_SYNC_TIMEOUT ran out
-(100ms), h5_timed_event() would be called and, realizing that the state
-was still H5_UNINITIALIZED, it would re-enqueue the SYNC and call
-hci_uart_tx_wakeup(). Consequently, two SYNC packets would be sent and
-initialization would unnecessarily wait for 100ms.
+On Thu, Aug 21, 2025 at 05:39:48PM -0500, Rob Herring (Arm) wrote:
+> 
+> On Thu, 21 Aug 2025 23:24:28 +0800, Jisheng Zhang wrote:
+> > Add binding doc for the ARM SSE(Subsystems for Embedded) timer. Here
+> > is the document URL:
+> > https://developer.arm.com/documentation/107610/0000/System-timer-components?lang=en
+> > 
+> > Although the IP is mostly seen on MCU SoC platforms, but nothing
+> > prevent it from being integrated into linux capable SoC platforms.
+> > 
+> > The IP core may have a system counter to generate timestamp value,
+> > a system timer to raise an interrupt when a period has elapsed, and
+> > a System Watchdog to detect errant system behaviour then reset the
+> > system if a period elapses without ping.
+> > 
+> > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> > ---
+> >  .../bindings/timer/arm,sse_timer.yaml         | 90 +++++++++++++++++++
+> >  1 file changed, 90 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/timer/arm,sse_timer.yaml
+> > 
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
 
-The naive solution of calling hci_uart_tx_wakeup() in h5_open() does not
-work because it will only schedule tx work if the HCI_PROTO_READY bit is
-set and hci_serdev only sets it after h5_open() returns. This patch
-removes the extraneous SYNC being enqueued and makes h5_timed_event()
-wake up on the next jiffy.
+Oops, thanks for the hint. I would like to collect feedbacks to the
+implementation itself, then fix the dt errors/warnings in v2.
 
-Signed-off-by: Javier Nieto <jgnieto@cs.stanford.edu>
----
- drivers/bluetooth/hci_h5.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/bluetooth/hci_h5.c b/drivers/bluetooth/hci_h5.c
-index d0d4420c1a0f..863ee93dd8a8 100644
---- a/drivers/bluetooth/hci_h5.c
-+++ b/drivers/bluetooth/hci_h5.c
-@@ -213,7 +213,6 @@ static void h5_peer_reset(struct hci_uart *hu)
- static int h5_open(struct hci_uart *hu)
- {
- 	struct h5 *h5;
--	const unsigned char sync[] = { 0x01, 0x7e };
- 
- 	BT_DBG("hu %p", hu);
- 
-@@ -243,9 +242,11 @@ static int h5_open(struct hci_uart *hu)
- 
- 	set_bit(HCI_UART_INIT_PENDING, &hu->hdev_flags);
- 
--	/* Send initial sync request */
--	h5_link_control(hu, sync, sizeof(sync));
--	mod_timer(&h5->timer, jiffies + H5_SYNC_TIMEOUT);
-+	/*
-+	 * Wait one jiffy because the UART layer won't set HCI_UART_PROTO_READY,
-+	 * which allows us to send link packets, until this function returns.
-+	 */
-+	mod_timer(&h5->timer, jiffies + 1);
- 
- 	return 0;
- }
--- 
-2.43.0
-
+Thanks
+> 
+> yamllint warnings/errors:
+> ./Documentation/devicetree/bindings/timer/arm,sse_timer.yaml:43:111: [warning] line too long (145 > 110 characters) (line-length)
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/timer/arm,sse_timer.yaml: patternProperties:^frame@[0-9a-f]+$:properties:interrupts: 'oneOf' conditional failed, one must be fixed:
+> 	[{'description': 'timer irq'}] is too short
+> 	False schema does not allow 1
+> 	hint: "minItems" is only needed if less than the "items" list length
+> 	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+> 
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250821152429.26995-2-jszhang@kernel.org
+> 
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
+> 
 
