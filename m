@@ -1,86 +1,145 @@
-Return-Path: <linux-kernel+bounces-781450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A8B9B3129D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0611EB312A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13121606BBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:09:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA3EF606085
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491962EDD63;
-	Fri, 22 Aug 2025 09:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MCzM9VZo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBCE279334;
+	Fri, 22 Aug 2025 09:10:08 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7876E1A2396;
-	Fri, 22 Aug 2025 09:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E1D27814A
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755853746; cv=none; b=XQ1r/xTwSYZNQtC/YwDWvsrfsO4jDClKtds1V6X5FQkM64jzUZ400Wwdbfqodrtvzs70DBpPTtWxDUXGIwsYeKAMDnsLDDRiFy4q0rQtXzUgqfVxhTEtT1IWYxNySeNAWrVxcXxfmk/9wnIFXOGIm3pO1lKDU46kuwN7LTxniiI=
+	t=1755853808; cv=none; b=ZU3IfowgJXkGzSsPCnbXofMw1tbRmAWbIGmX8u7i1Wxx5acc/9cxkevwGE6HAcaLi8i3OwK6yM+DNgNjii6f7K/vsEwMVAoM4D74l9iafPAd/yjbpZ7RbVKnwRZWqFFAy1sgWdkS21J/89M5OTusqR55diu2jVmylHrA46/Dj7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755853746; c=relaxed/simple;
-	bh=IucueJiAAL234neKXbYq4LXBNtBd6wlQCkm5MsY8TOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BDtRhDLVqGbes1mAY32YOcaQIGbPdnrjQ4PF7KIydrjuP/Py8AJfM/kpUvAVt7B64vfUIOejwRSbFrbvXVLSIboPMQB8/bueC/7+f5hc1whQCVpbXREhO81U/jhZPsc4rdIX1zcUJg0WXCam4CPaLni+zL0vyKX72a7NH+xfFLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MCzM9VZo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CD76C4CEF1;
-	Fri, 22 Aug 2025 09:09:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755853746;
-	bh=IucueJiAAL234neKXbYq4LXBNtBd6wlQCkm5MsY8TOU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MCzM9VZoYglS2Mwi+fdR9iEqLsjPo6TjIBXD04Jkgt5RsZnWVRq+I+Lg/eZk7cOop
-	 ePx4AC4x3THPYaSa+RwaER4X4axQWHUqRCEJrthsBuH80y8g5yZenuJ/hHvHKwYYS6
-	 bDLMPUH42Iz9FZduxzKz45wm92qT0WKUeKkGPVeTYUR9hUkMzWtNbIfI4K0Cz+HXLM
-	 RBmNFXxh6fMHYPlDRGONHXAdcltS23KY/zQNjvWM9fF6pqMvsEphShE5bPDdPWk3yP
-	 EHEj0Hls7UqmlPs6IapHTBQ5yXmW1REe2Tl0qBBHQyJzMZ3OK0fPfZ52t7qYcrkoaD
-	 y1UUflV8nk+Ww==
-Date: Fri, 22 Aug 2025 14:38:52 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, James.Bottomley@hansenpartnership.com, 
-	martin.petersen@oracle.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: Re: [PATCH V3 2/5] ufs: ufs-qcom: Refactor MCQ register dump logic
-Message-ID: <3dp7gqh3lflz3y6vj4ya4lv35llmttte7oilsptei2m3yp6efm@h3wncsrgxztv>
-References: <20250821112403.12078-1-quic_rdwivedi@quicinc.com>
- <20250821112403.12078-3-quic_rdwivedi@quicinc.com>
+	s=arc-20240116; t=1755853808; c=relaxed/simple;
+	bh=H46ZsFdsi8wK5AHAYbNZ9rgx89+GHyKz/gD+2mfUP7Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HoqvvtoZqtOs78avrZdWx7MyjaW/19ZnfmOxoFsP9IrqR8CiiTdsqAPssv9omyKP++yb3LfnZTVXngKV/TVPoATAxTs73iMS/lkkKjQJZF88Fl1S6iAUXSNT7nzsrzwi0JfmDlhbI1AkGZ04hdODINsEmFzgjhLE3vJ/0WCBu1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1upNmQ-00034v-3v; Fri, 22 Aug 2025 11:09:50 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1upNmO-001YBY-25;
+	Fri, 22 Aug 2025 11:09:48 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1upNmO-00C2jk-1q;
+	Fri, 22 Aug 2025 11:09:48 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>
+Subject: [PATCH net-next v2 1/1] net: phy: Clear link-specific data on link down
+Date: Fri, 22 Aug 2025 11:09:47 +0200
+Message-Id: <20250822090947.2870441-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250821112403.12078-3-quic_rdwivedi@quicinc.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Aug 21, 2025 at 04:54:00PM GMT, Ram Kumar Dwivedi wrote:
-> From: Nitin Rawat <quic_nitirawa@quicinc.com>
-> 
-> Refactor MCQ register dump to align with the new resource mapping.
-> As part of refactor, below changes are done:
-> 
-> - Update ufs_qcom_dump_regs() function signature to accept direct
->   base address instead of resource ID enum
-> - Modify ufs_qcom_dump_mcq_hci_regs() to use hba->mcq_base and
->   calculated addresses from MCQ operation info
-> - Replace enum ufshcd_res with direct memory-mapped I/O addresses
-> 
-> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+When a network interface is brought down, the associated PHY is stopped.
+However, several link-specific parameters within the phy_device struct
+are not cleared. This leads to userspace tools like ethtool reporting
+stale information from the last active connection, which is misleading
+as the link is no longer active.
 
-Missing your s-o-b tag. Please spare some time to check these rudimentary rules
-before submitting.
+For example, after running `ip link set dev lan2 down`, ethtool might
+show the following outdated information, indicating a 1000Mb/s Full
+duplex link with a link partner, even though the link is detected as down:
 
-- Mani
+  # ethtool lan2
+  Settings for lan2:
+        Supported ports: [ TP MII ]
+        Supported link modes:   10baseT/Half 10baseT/Full
+                                100baseT/Half 100baseT/Full
+                                1000baseT/Full
+        ...
+        Link partner advertised link modes:  10baseT/Half 10baseT/Full
+                                             100baseT/Half 100baseT/Full
+                                             1000baseT/Full
+        ...
+        Speed: 1000Mb/s
+        Duplex: Full
+        Auto-negotiation: on
+        master-slave cfg: preferred master
+        master-slave status: slave
+        ...
+        Link detected: no
 
--- 
-மணிவண்ணன் சதாசிவம்
+This patch fixes the issue by clearing all outdated link parameters within
+the `phy_link_down()` function. This seems to be the correct place to reset
+this data, as it is called whenever the link transitions to a down state.
+
+The following parameters are now reset:
+- Speed and duplex are set to UNKNOWN.
+- Link partner advertising information is zeroed out.
+- Master/slave state is set to UNKNOWN.
+- MDI-X status is set to INVALID.
+- EEE active status is set to false.
+
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+changes v2:
+- rebase and resned against net-next
+
+ drivers/net/phy/phy.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+index 13df28445f02..6bdd49d93740 100644
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -83,6 +83,16 @@ static void phy_link_down(struct phy_device *phydev)
+ {
+ 	phydev->phy_link_change(phydev, false);
+ 	phy_led_trigger_change_speed(phydev);
++
++	/* Clear the outdated link parameters */
++	phydev->speed = SPEED_UNKNOWN;
++	phydev->duplex = DUPLEX_UNKNOWN;
++	if (phydev->master_slave_state != MASTER_SLAVE_STATE_UNSUPPORTED)
++		phydev->master_slave_state = MASTER_SLAVE_STATE_UNKNOWN;
++	phydev->mdix = ETH_TP_MDI_INVALID;
++	linkmode_zero(phydev->lp_advertising);
++	phydev->eee_active = false;
++
+ 	WRITE_ONCE(phydev->link_down_events, phydev->link_down_events + 1);
+ }
+
+--
+2.39.5
+
 
