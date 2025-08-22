@@ -1,65 +1,66 @@
-Return-Path: <linux-kernel+bounces-782664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28AC5B3235F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:07:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E7FB32360
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68A80B63B15
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:05:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B2D91D61FAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D942B2D660E;
-	Fri, 22 Aug 2025 20:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FDF2D77F6;
+	Fri, 22 Aug 2025 20:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cW75YYBH"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cFOpc0BF"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DD224679A
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 20:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A182D73A8
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 20:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755893243; cv=none; b=oYr42AQuiQDaPyubWfbYiSCqOiyI4ZXn7/pWNwnEI5c+sHxAto/jAUMw3SvmfTGopErVJYaFxriMLpV5kuM9UUz50Zzofu6FF+3nARLmiDCqHm07IGTaWszAWULpGEy8GP/9gIYvcvXRAmhEztgHVFV/0rVg/4eOzdj86N6lo7Q=
+	t=1755893246; cv=none; b=SwAzA6PZLkgb5T6GOKYmF9hB2sFYUiey0AQ1LndkSSuDtZjThxBXDsuuc1ncFvAzOJxroB5lEVnBNuYNeACg8WGtAgfOo/17AMa4s9zadwnQELzJ3HosGmtgsshpK7UJ4PysUL0F/YoJJQgcjScEjyE0KxGkP9LyylHjsR66EhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755893243; c=relaxed/simple;
-	bh=ozE1cSoy/uNFxRcyYjqiBF7w8Pa9CgIf75tou4tbpp8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cWwUgBQeKjnAfhdRctutswE8VHij1jIMXRkYnTj0h7oFbEg2ZIAyKJDUyedPHtOKm/I2kHa2puAADoOFlxgxg0fJP28jiwDlPbqJrx5d64toGkhWSmUXZDZq8sQAh844ddthIjZq4HIXkCcLOA7BQxJpQH36o6s1Hhcq8CignIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cW75YYBH; arc=none smtp.client-ip=192.198.163.19
+	s=arc-20240116; t=1755893246; c=relaxed/simple;
+	bh=K1xO6OVdfZLN64K8WYoauH/p+w/Rnsz0IbsLKltW1mw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=QTcFjQBUsZu5tbeiwpfVLp06ktJjl1xay7Xv66sm1qdhTurptWcwdCO4dkvfv8W4ol5s7L1m2rFmzi0ZuKVPl1C2/xQnLKV4qb3NICOF71eaFnG9yxLYo4Kf19dtTaWgqbm39JKgkjTPxgR0c34EJP92vZmRqXJIPVNkCgi+ZDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cFOpc0BF; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755893241; x=1787429241;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ozE1cSoy/uNFxRcyYjqiBF7w8Pa9CgIf75tou4tbpp8=;
-  b=cW75YYBHSh9t5bSG2JNWpygqDKpn/C6U3CJruhHq4B12ynWZjGploIHj
-   Hc7dkupqUSpQw+ihSsGn09HuArVMs3tYVHD2Nk2e2U783MxdQHrn036DS
-   iQeA90NJKeBQUDG7JlZJywUTBZxFjMNcOfZhW29aqkHJLl9HbSaDxUmGO
-   2B0pvvS+jUxihQPDl1oMNi6GFhDrdzM6cMpv161xKnGQ1VZ/RH+Wdz691
-   u5pMdYfnCQi6I7FeObersxNNiOzZKZXK121KqXaL2/dHh5/IhspXSZlSN
-   nWW4vtnSWhXNk64Tenh91LYuhM74W2c9yeh5HeLu4cxKSEtpn4IcV4jzf
+  t=1755893245; x=1787429245;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=K1xO6OVdfZLN64K8WYoauH/p+w/Rnsz0IbsLKltW1mw=;
+  b=cFOpc0BFLeaSiBBeuxx9d92bPpqE5Yo8OPFbUWLNcmfyE3+qQ3jw+wxq
+   78g32mi78UhMBpDqPUy6v0Qcf8WpI4aoJwYsbProQndJGBwNjqqzQpq9Y
+   veqRfeXqahkzKZLTWnZbOdtPJSSglVl6Om+jeyLli4SKXMlU/cazzYxpG
+   +tj8gSLn+hDlQoABjQLtgyCCzMR5+roksvdBjBtFY8ovF14280kFjvygG
+   v4tdUk6xMUiZbBLIxNuvlajiNC7VeswP2X+jzpplocfRQ1FyeA3RLHdEP
+   8pSaR0ahWYzs80fYQk3nHKlzxWYiJmNs1MegUhH9yWjENtt0nYVte/6UO
    A==;
-X-CSE-ConnectionGUID: ZFlQpre+STWrZXe4saQDwA==
-X-CSE-MsgGUID: 2OO7riPCRdqccvFiKtJoXg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="57224555"
+X-CSE-ConnectionGUID: O12tynCgQtKkcWYJRVJ4gQ==
+X-CSE-MsgGUID: klVaZd4WQ4iM8wVHCC0l2g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="57224574"
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="57224555"
+   d="scan'208";a="57224574"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 13:07:20 -0700
-X-CSE-ConnectionGUID: 9WgPgvd/Qa+gHZzcQdHGZA==
-X-CSE-MsgGUID: 6xZgs99RQQaFjaUORP9k/A==
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 13:07:24 -0700
+X-CSE-ConnectionGUID: 3nPKAdBVTNaieprWEs8c5g==
+X-CSE-MsgGUID: UNpFSBnNRO6H2hNoWvo1FQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="169145735"
+   d="scan'208";a="169145749"
 Received: from b04f130c83f2.jf.intel.com ([10.165.154.98])
-  by fmviesa008.fm.intel.com with ESMTP; 22 Aug 2025 13:07:19 -0700
+  by fmviesa008.fm.intel.com with ESMTP; 22 Aug 2025 13:07:21 -0700
 From: Tim Chen <tim.c.chen@linux.intel.com>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>,
+Cc: Vinicius Costa Gomes <vinicius.gomes@intel.com>,
 	Juri Lelli <juri.lelli@redhat.com>,
 	Dietmar Eggemann <dietmar.eggemann@arm.com>,
 	Ben Segall <bsegall@google.com>,
@@ -75,11 +76,13 @@ Cc: Tim Chen <tim.c.chen@linux.intel.com>,
 	K Prateek Nayak <kprateek.nayak@amd.com>,
 	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
 	Zhao Liu <zhao1.liu@intel.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Subject: [PATCH 0/2] Fix NUMA sched domain build errors for GNR-X and CWF-X
-Date: Fri, 22 Aug 2025 13:14:13 -0700
-Message-Id: <cover.1755893468.git.tim.c.chen@linux.intel.com>
+	Tim Chen <tim.c.chen@linux.intel.com>
+Subject: [PATCH 1/2] sched: topology: Fix topology validation error
+Date: Fri, 22 Aug 2025 13:14:14 -0700
+Message-Id: <a3de98387abad28592e6ab591f3ff6107fe01dc1.1755893468.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <cover.1755893468.git.tim.c.chen@linux.intel.com>
+References: <cover.1755893468.git.tim.c.chen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,27 +91,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-While testing Granite Rapids X (GNR-X) and Clearwater Forest X (CWF-X) in
-SNc-3 mode, we encountered sched domain build errors reported in dmesg.
-Asymmetric node distances from local node to to nodes in remote package
-was not expected by the scheduler domain code and also led to excessive
-number of sched domain hierachy levels.
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
 
-Fix the missing NUMA domain level set in topology_span_sane() check and
-also simplify the distance to nodes in remote package to retain distance
-symmetry and make the NUMA topology sane for GNR-X and CWF-X.
+As sd_numa_mask() (the function behind tl->mask() for the NUMA levels
+of the topology) depends on the value of sched_domains_curr_level,
+it's possible to be iterating over a level while, sd_numa_mask()
+thinks we are in another, causing the topology validation to fail (for
+valid cases).
 
-Tim Chen (1):
-  sched: Fix sched domain build error for GNR-X, CWF-X in SNC-3 mode
+Set sched_domains_curr_level to the current topology level while
+iterating.
 
-Vinicius Costa Gomes (1):
-  sched: topology: Fix topology validation error
+Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+---
+ kernel/sched/topology.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- arch/x86/kernel/smpboot.c      | 28 ++++++++++++++++++++++++++++
- include/linux/sched/topology.h |  1 +
- kernel/sched/topology.c        | 33 +++++++++++++++++++++++++++------
- 3 files changed, 56 insertions(+), 6 deletions(-)
-
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 977e133bb8a4..9a7ac67e3d63 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -2394,6 +2394,14 @@ static bool topology_span_sane(const struct cpumask *cpu_map)
+ 	for_each_sd_topology(tl) {
+ 		int tl_common_flags = 0;
+ 
++#ifdef CONFIG_NUMA
++		/*
++		 * sd_numa_mask() (one of the possible values of
++		 * tl->mask()) depends on the current level to work
++		 * correctly.
++		 */
++		sched_domains_curr_level = tl->numa_level;
++#endif
+ 		if (tl->sd_flags)
+ 			tl_common_flags = (*tl->sd_flags)();
+ 
 -- 
 2.32.0
 
