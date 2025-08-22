@@ -1,138 +1,113 @@
-Return-Path: <linux-kernel+bounces-781482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94A0EB3130F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:30:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 064F2B312EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E529D5C5FDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:26:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56D5C7BFFB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EF92ED870;
-	Fri, 22 Aug 2025 09:26:08 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65482E3B18;
+	Fri, 22 Aug 2025 09:25:51 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53AE2E54A8
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF80217F31;
+	Fri, 22 Aug 2025 09:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755854767; cv=none; b=GOfUEiDfbcbcEcQHLmv2B7J9pjQvggA6aaiVXZRl6MlDSmem5b2UWW50VJPi/IQocCJIJyMR6Lj8bGNM1ZcbEqgzFRcaG+7hpyXAmFsryDmr0rZb7VWP1VpejDU62Z0Td7tVYSykAF3pErWeyslOMsYI/N68dHEQ6qpHIwCoXDc=
+	t=1755854751; cv=none; b=I1rpmzwEeyy2yMVbAeWIo72sdlSKCH92IK4QFCQkIqDTvYCfacH5gC4AGRbrzrrbjXzaXpRkHrVfx7JXa3ymFsznGY6ZUPdsGI2/nqxmpoT8LqH3HJXc+LWIWLJhiQIz/rePGtOXDsAuc/PgVz3Czf8T4egxTeceHk5mkKfhf9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755854767; c=relaxed/simple;
-	bh=YaGZ8UzxreJ2bwW0ZV2jA1hQAGuHkwObCV6di1gkDww=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lk8MxYVcnM4sg0XTHsY7PjVx6lAzMwHHFkZnBxcVV32lJOMmt0J7tKRjtjUtfWCfUaZOJsFcLhrCo2DpDVBfvkBCM2lWjmgzef4frTq6yeptyiR3Z15dPrmLYhKIkmbW5xB9khnpUAKKVW9h05BKglzFC5zCxL88UEALHfO31dA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1upO21-00058x-1r; Fri, 22 Aug 2025 11:25:57 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1upO20-001YQ9-1H;
-	Fri, 22 Aug 2025 11:25:56 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1upO20-00C7Wz-12;
-	Fri, 22 Aug 2025 11:25:56 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Thangaraj Samynathan <Thangaraj.S@microchip.com>,
-	Rengarajan Sundararajan <Rengarajan.S@microchip.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: [PATCH net-next v1 1/1] net: usb: lan78xx: add support for generic net selftests via ethtool
-Date: Fri, 22 Aug 2025 11:25:55 +0200
-Message-Id: <20250822092555.2888870-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1755854751; c=relaxed/simple;
+	bh=Sskxxpf7pAkfsCjmaSxzRMPr+cHajhONtFolJ2RddB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=m8DaEUD3P5GSXu9Xh0mG8OGPC+xH2/eFl2NSaGDBu9kx67d0ZPSZZ5Rdg/QIknmSYNec8yTYBQ8/QRgDTNAYrPmxEpK/xceQ5Un0k4W1EsBhC+0FD9tYcEopG2iTjtvpRDxMWmnv7o28hb+m/cnFrfQ5AJNiZEUBKaVWiBmYlE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c7ZV54gqsz2VRPB;
+	Fri, 22 Aug 2025 17:22:53 +0800 (CST)
+Received: from dggpemf500011.china.huawei.com (unknown [7.185.36.131])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4C3DA140297;
+	Fri, 22 Aug 2025 17:25:45 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ dggpemf500011.china.huawei.com (7.185.36.131) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 22 Aug 2025 17:25:44 +0800
+Message-ID: <9fa1c126-00f1-95db-93a0-cee52a70062e@huawei.com>
+Date: Fri, 22 Aug 2025 17:25:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v6.6 RESEND 2/2] x86/irq: Plug vector setup race
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <prarit@redhat.com>,
+	<x86@kernel.org>, <stable@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250822033825.1096753-1-ruanjinjie@huawei.com>
+ <20250822033825.1096753-3-ruanjinjie@huawei.com>
+ <2025082243-urging-outdoors-aa35@gregkh>
+Content-Language: en-US
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <2025082243-urging-outdoors-aa35@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf500011.china.huawei.com (7.185.36.131)
 
-Integrate generic net_selftest framework by wiring up
-.get_strings, .get_sset_count, and .self_test ethtool ops.
 
-This enables execution of standard self-tests using
-`ethtool -t <dev>` on LAN78xx devices.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/net/usb/Kconfig   | 1 +
- drivers/net/usb/lan78xx.c | 6 ++++++
- 2 files changed, 7 insertions(+)
+On 2025/8/22 16:57, Greg KH wrote:
+> On Fri, Aug 22, 2025 at 03:38:25AM +0000, Jinjie Ruan wrote:
+>> From: Thomas Gleixner <tglx@linutronix.de>
+>>
+>> commit ce0b5eedcb753697d43f61dd2e27d68eb5d3150f upstream.
+>>
 
-diff --git a/drivers/net/usb/Kconfig b/drivers/net/usb/Kconfig
-index 0a678e31cfaa..856e648d804e 100644
---- a/drivers/net/usb/Kconfig
-+++ b/drivers/net/usb/Kconfig
-@@ -116,6 +116,7 @@ config USB_LAN78XX
- 	select PHYLINK
- 	select MICROCHIP_PHY
- 	select CRC32
-+	imply NET_SELFTESTS
- 	help
- 	  This option adds support for Microchip LAN78XX based USB 2
- 	  & USB 3 10/100/1000 Ethernet adapters.
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 1ff25f57329a..b56e2459ee3c 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -20,6 +20,7 @@
- #include <linux/mdio.h>
- #include <linux/phy.h>
- #include <net/ip6_checksum.h>
-+#include <net/selftests.h>
- #include <net/vxlan.h>
- #include <linux/interrupt.h>
- #include <linux/irqdomain.h>
-@@ -1702,12 +1703,16 @@ static void lan78xx_get_strings(struct net_device *netdev, u32 stringset,
- {
- 	if (stringset == ETH_SS_STATS)
- 		memcpy(data, lan78xx_gstrings, sizeof(lan78xx_gstrings));
-+	else if (stringset == ETH_SS_TEST)
-+		net_selftest_get_strings(data);
- }
- 
- static int lan78xx_get_sset_count(struct net_device *netdev, int sset)
- {
- 	if (sset == ETH_SS_STATS)
- 		return ARRAY_SIZE(lan78xx_gstrings);
-+	else if (sset == ETH_SS_TEST)
-+		return net_selftest_get_count();
- 	else
- 		return -EOPNOTSUPP;
- }
-@@ -1894,6 +1899,7 @@ static const struct ethtool_ops lan78xx_ethtool_ops = {
- 	.set_eeprom	= lan78xx_ethtool_set_eeprom,
- 	.get_ethtool_stats = lan78xx_get_stats,
- 	.get_sset_count = lan78xx_get_sset_count,
-+	.self_test	= net_selftest,
- 	.get_strings	= lan78xx_get_strings,
- 	.get_wol	= lan78xx_get_wol,
- 	.set_wol	= lan78xx_set_wol,
--- 
-2.39.5
+[...]
 
+>>  
+>>  /*
+>> @@ -273,7 +308,9 @@ DEFINE_IDTENTRY_IRQ(common_interrupt)
+>>  	/* entry code tells RCU that we're not quiescent.  Check it. */
+>>  	RCU_LOCKDEP_WARN(!rcu_is_watching(), "IRQ failed to wake up RCU");
+>>  
+>> -	call_irq_handler(vector, regs);
+>> +	if (unlikely(!call_irq_handler(vector, regs)))
+>> +		apic_eoi();
+>> +
+> 
+> This chunk does not look correct.  The original commit did not have
+> this, so why add it here?  Where did it come from?
+> 
+> The original patch said:
+> 	-       if (unlikely(call_irq_handler(vector, regs)))
+> 	+       if (unlikely(!call_irq_handler(vector, regs)))
+> 
+> And was not an if statement.
+> 
+> So did you forget to backport something else here?  Why is this not
+> identical to what the original was?
+
+The if statement is introduced in commit 1b03d82ba15e ("x86/irq: Install
+posted MSI notification handler") which is a patch in patch set
+https://lore.kernel.org/all/20240423174114.526704-1-jacob.jun.pan@linux.intel.com/,
+but it seems to be a performance optimization patch set, and this patch
+includes additional modifications. The context conflict is merely a
+simple refactoring, but the cost of the entire round of this patch set
+is too high.
+
+> 
+> thanks,
+> 
+> greg k-h
 
