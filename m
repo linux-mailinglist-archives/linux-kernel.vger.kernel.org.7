@@ -1,114 +1,126 @@
-Return-Path: <linux-kernel+bounces-781679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58115B31569
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:30:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA85B3156E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F73516EF1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:28:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 304621BC7754
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3856A2EF673;
-	Fri, 22 Aug 2025 10:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6v8eDwk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC0B2F49F0;
+	Fri, 22 Aug 2025 10:30:19 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9056219307F;
-	Fri, 22 Aug 2025 10:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAF52F49E4
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755858518; cv=none; b=p3EiBIhMYqWcYkuCDO1/OLDCXCHiUdzMZ39b4VG+O8K7ozMNSyqqR4/REDzITHWqqVWAIWZj6nadD2h3gUf9b2Z65ZpNp5cIJ/3lMc4hZq5dD9JtEA6UVYMLwCT//0+dKFZyKHzSS7h06ziJag/jm1lOB9tol167Y7o8tE8gh9M=
+	t=1755858619; cv=none; b=PujFJ6ggdDlhcI2emkekWyLkAILNXFoqZb4OpOEcyz4WBbyY2vRCGiDozUytzuFyjBBfVap65TWf84/kisS5y216tG8a4dWIxl4y556hBBmPzkS+4yNGNjWEUCt6ooHrdb426Ux/+i5ypB5dJvnnfsBZdqwTUL/16z33bT6bZzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755858518; c=relaxed/simple;
-	bh=UhhnLcGKdARCqcQkNb0PZAh2gumC9LMMptQdei1s5io=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=F0DIDRvXsSV7ICHZdXL3K+vtDiPYtiqLzfU1jxka8EE6vClXdE5pGlgtRLuvX7vHPuWF/wn3aTqBfuFyGHZ78rAzXX393/oIqiIvNT3KhMknxQJCG5qIpkSkObUFZ/ChmYTIAB4Qj6Y/ZSeu5syucNxblzWaRSJIhGNrPkXWDTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6v8eDwk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1A3A7C4CEED;
-	Fri, 22 Aug 2025 10:28:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755858518;
-	bh=UhhnLcGKdARCqcQkNb0PZAh2gumC9LMMptQdei1s5io=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=b6v8eDwk4t4M4v+Kkn5FVe+lZSC0Rimai9aqmkuRWXOxLCOqch5YpdKZMgrazAlOf
-	 /WT8WMqdKNfFTkQwOw1zbNM0Rodopx+mIHjFkXoyR7kbHZKt853iQqnY5EEELJDep8
-	 c7GMjxnzwmiWa6bFKSQTnjBskKm9kQ1A+V/FEujQIGUiZdk26Atw5mgPdSe84OPcgb
-	 m/QsKbYby3b7DlR0wVxpwvUCOu+n9bapkq8QJZpK1d2Z99jdcJhUx/gk704x90nu2+
-	 1DIjSwF0nnjgQ+nKJGyo2NDwwE+FOOrRso3ommdR8g1U1JZNg6sTIyTmLWtQw+Mg5L
-	 TjbiG3Ayr53lA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0554DCA0FE1;
-	Fri, 22 Aug 2025 10:28:38 +0000 (UTC)
-From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
-Date: Fri, 22 Aug 2025 18:28:33 +0800
-Subject: [PATCH] ASoC: codecs: idt821034: fix wrong log in
- idt821034_chip_direction_output()
+	s=arc-20240116; t=1755858619; c=relaxed/simple;
+	bh=N2MIGbNyxlDN+r9SnBla5fY5nVigW9XgjuVc2XXDEzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r1tpi7eOdt3QYe6rnF2A79xbXEwFNdVD9XLCAukoTeMgmAH5NDt0Ned0X//QMt+sKtxOuzsnsE93XSCL7ZIYg7C4HfOoJvcQZntyovSmkAN+ZZVzqygRIjH3myrre5aWi96di7pLxzTUwLKTcrmCXnC6U+ig0SLVTpMhbPg8Lc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1upP26-0006C3-2R; Fri, 22 Aug 2025 12:30:06 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1upP25-001Ysi-2H;
+	Fri, 22 Aug 2025 12:30:05 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1upP25-00A6R0-1o;
+	Fri, 22 Aug 2025 12:30:05 +0200
+Date: Fri, 22 Aug 2025 12:30:05 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Matthias Kaehlcke <mka@chromium.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [PATCH v3 3/4] dt-bindings: usb: microchip,usb2514: add support
+ for port vbus-supply
+Message-ID: <20250822103005.c7ba7dclbgdadyw7@pengutronix.de>
+References: <20250821-v6-16-topic-usb-onboard-dev-v3-0-6d2b38a5d818@pengutronix.de>
+ <20250821-v6-16-topic-usb-onboard-dev-v3-3-6d2b38a5d818@pengutronix.de>
+ <20250822-maize-elk-of-growth-2a30bb@kuoka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250822-idt821034-v1-1-e2bfffbde56f@uniontech.com>
-X-B4-Tracking: v=1; b=H4sIAFBGqGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDCyMjILfEwsjQwNhE1yDJNDnJwizJINnSTAmovqAoNS2zAmxWdGxtLQA
- pAZE0WwAAAA==
-X-Change-ID: 20250822-idt821034-0b5cb86b0c96
-To: Herve Codina <herve.codina@bootlin.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- guanwentao@uniontech.com, niecheng1@uniontech.com, zhanjun@uniontech.com, 
- Cryolitia PukNgae <cryolitia@uniontech.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755858517; l=1022;
- i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
- bh=Xf7JFZXRbt8rXAX/IFwN/P7Ba3v6XdLGbf2wZX2q3kI=;
- b=utMVbNOaZjz16DXuia93Q7alE05P+SVaph8G790DbgkFgWzfz6oObdvp6v+qBHq16mbFeEGLp
- kPtPjee41xpAEHHkEpSeIBuVuIH8Ij2y3+4IgS0Z4TyyvsTUSalebt9
-X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
- pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
-X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
- auth_id=474
-X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
-Reply-To: cryolitia@uniontech.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822-maize-elk-of-growth-2a30bb@kuoka>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+On 25-08-22, Krzysztof Kozlowski wrote:
+> On Thu, Aug 21, 2025 at 06:31:57PM +0200, Marco Felsch wrote:
+> > Some PCB designs don't connect the USB hub port power control GPIO and
+> > instead make use of a host controllable regulator. Add support for this
+> > use-case by introducing portX-vbus-supply property.
+> > 
+> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> > ---
+> >  Documentation/devicetree/bindings/usb/microchip,usb2514.yaml | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/usb/microchip,usb2514.yaml b/Documentation/devicetree/bindings/usb/microchip,usb2514.yaml
+> > index 4e3901efed3fcd4fbbd8cb777f9df4fcadf2ca00..ac1e5f1a5ea2e66c61ce92154385952b15e78e55 100644
+> > --- a/Documentation/devicetree/bindings/usb/microchip,usb2514.yaml
+> > +++ b/Documentation/devicetree/bindings/usb/microchip,usb2514.yaml
+> > @@ -49,6 +49,12 @@ patternProperties:
+> >      $ref: /schemas/usb/usb-device.yaml
+> >      additionalProperties: true
+> >  
+> > +  "^port[1-7]-vbus-supply$":
+> > +    type: object
+> > +    description:
+> > +      Regulator controlling the USB VBUS on portX. Only required if the host
+> > +      controls the portX VBUS.
+> 
+> Your commit msg should briefly describe status of previous discussion:
+> why Rob's comment was not applied. Otherwise we repeat: this looks like
+> property of specific port.
 
-Change `dir in` to `dir out`
+I answered Rob on my v1 but got no feedback. My v2 caused an issue found
+by Rob's test bot. Therefore I thought he is okay and applied the
+patchset for testing.
 
-Suggested-by: Jun Zhan <zhanjun@uniontech.com>
-Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
----
- sound/soc/codecs/idt821034.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+At least to me it's unclear when Rob's test bot is executed.
 
-diff --git a/sound/soc/codecs/idt821034.c b/sound/soc/codecs/idt821034.c
-index 6738cf21983b0dc58e162cbfaacaedb5edaaa245..a03d4e5e7d144195622ea0cbf6b6c6ba95642aa7 100644
---- a/sound/soc/codecs/idt821034.c
-+++ b/sound/soc/codecs/idt821034.c
-@@ -1067,7 +1067,7 @@ static int idt821034_chip_direction_output(struct gpio_chip *c, unsigned int off
- 
- 	ret = idt821034_set_slic_conf(idt821034, ch, slic_conf);
- 	if (ret) {
--		dev_err(&idt821034->spi->dev, "dir in gpio %d (%u, 0x%x) failed (%d)\n",
-+		dev_err(&idt821034->spi->dev, "dir out gpio %d (%u, 0x%x) failed (%d)\n",
- 			offset, ch, mask, ret);
- 	}
- 
+> The binding does not list ports now, but lists hard-wired devices, so my
+> question is now: is this per hard-wired device or per port (even if port
+> is hot-pluggable)?
 
----
-base-commit: 3957a5720157264dcc41415fbec7c51c4000fc2d
-change-id: 20250822-idt821034-0b5cb86b0c96
+Sorry but I don't get you. The binding lists the regulators required to
+enable/disable the hub downstream port VBUS. These regulators are
+controlled by an external party e.g. the CPU instead of the USB hub
+itself. The connection from the CPU to the regulator which controlls the
++5V usb-connector pin is hard-wired, yes.
 
-Best regards,
--- 
-Cryolitia PukNgae <cryolitia@uniontech.com>
-
-
+Regards,
+  Marco
 
