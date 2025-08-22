@@ -1,109 +1,132 @@
-Return-Path: <linux-kernel+bounces-782519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82BB0B32183
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:29:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06CFAB32185
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 575ED626E00
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:29:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B572EB22738
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BCE2882AC;
-	Fri, 22 Aug 2025 17:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65054308F3D;
+	Fri, 22 Aug 2025 17:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JtC8Rvsr"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MUzUaI8m"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06825219313;
-	Fri, 22 Aug 2025 17:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C027286411
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755883736; cv=none; b=kACgGXDwZh32u7Z6Ufr2msidB8ZYRPc2mKG7VA8woHAgh1YBbx/rmTZfxduMaul0u9nC6IkYfRoXIKGKXLGyD7kSflDPdjNcQ8/OIXohUWTDKUg3+OxQMRa0JXv3iuK1/Osaq+LfbdxPVFCrTR2zxcu5Pa3UgNBhQvYBOIaloIU=
+	t=1755883807; cv=none; b=lHQCttpTd+3kEJiaQiXTBr5c9bQARCtZ2CZPlsKv76sBYiZ56J5gq3WGjj6mbz64F0wYhoEhVn5bdVcFRElYCRPXC5uM1NziIviN3IlKYrTJU79syq147ZIBRoHDQoNYUiGrwOSwQZXHw5tzZ8+A5NQri1mqA5LlnWfYTNb5xUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755883736; c=relaxed/simple;
-	bh=6kkTEJU2KoS3hItv8UxJLyTW6fWkgAxIh9+PZ3UZpeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DLa8D6/b7blDdgxrEE4dPau9W7hG9qpV8kDD+RjdgAI83JFQLyF7iZRkIaVK9601f7byOyhI348aS/SN6qDMdHBKl8pJ0goi1iPzEejtCbJGVz67ZgWvZ7uNunqqVkOrZVE+o+SBT8whiFBG4LNCCuuNLRmslh6vaRH/ud5IS2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JtC8Rvsr; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A33E340E00DD;
-	Fri, 22 Aug 2025 17:28:52 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id vGEtOENMZAre; Fri, 22 Aug 2025 17:28:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755883728; bh=m9nlcpGWpSmcOO7EK2gBfDgg34w/p8Vzv8g6LEEVeVo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JtC8Rvsr8+qfEs1BE57IJs3CzLQUGAarOPpQFIPBWZR9qqED9tIDCxy07CTA6ay6w
-	 Aifw8l5rh8S2u9XEmpaJ4J1fU4j+T72Bno8qoU6dxgE1tpiRXPpVF0toiAveWYAQZX
-	 nmT0D9EqAoJCgZpzwEI8VkV9KzEvfnaEpT5J3yNiAXAr6cJj7j7GduoMgVzI31FRK6
-	 PiwoIXEYsSZOpyrHniwKyct7P2egWZzN7bh1HkQPNEQ16cLdU2if1FcE+5iSWXV3La
-	 z6kzGHxTucldi6WmT04TB5iqGQzdlkkUWeCc723RYAY5wkSamWZ5DIQicj794ofOtP
-	 weBsnZx3vwJ8/jCMCo7B5DfYHs9JqcrzADALBzcdCnvzdEqrvutNDRGLrEoMDI3WAx
-	 AUelRp/HJ6VghaV191P438bTFPyQz/6qWLdKMxkrbzAm3IUbEzbZUr1/Uc0SLkXEJm
-	 hs/O+wiPzi4KlpSzdSi9u0PCdwY5BQgX84UdTJMuUoHsk4yP6nO/BdX5Tf6onriTFP
-	 HUAzCDwsS4A1FPef2lC0pXZqbAtrcDnbb0/Hq18y/nKLZd9uZX6Y0+xa90xXkSzF2B
-	 2WESxZ1LRMuBwymP4giWcouLV8saxbdwYTca7ehnccaIXEZHKdx14ntx59Y++xQKq6
-	 X1qx5C72KSoVdYK4wYjrAAO8=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E57F440E0163;
-	Fri, 22 Aug 2025 17:28:25 +0000 (UTC)
-Date: Fri, 22 Aug 2025 19:28:20 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
-	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org,
-	kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
-	naveen.rao@amd.com, francescolavra.fl@gmail.com,
-	tiala@microsoft.com
-Subject: Re: [PATCH v9 09/18] x86/sev: Initialize VGIF for secondary VCPUs
- for Secure AVIC
-Message-ID: <20250822172820.GSaKiotPxNu-H9rYve@fat_crate.local>
-References: <20250811094444.203161-1-Neeraj.Upadhyay@amd.com>
- <20250811094444.203161-10-Neeraj.Upadhyay@amd.com>
+	s=arc-20240116; t=1755883807; c=relaxed/simple;
+	bh=dZXIUtMf3TDWiRiuLsGcHlQc9zxF8JnGlI2ARPPevpI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=tfTh4qsRgPpJVMyQtlQM6MKSPvY/TtbnbKi0jn1eJw5qOmzMTU17p4OrhXJg531Bkr6yi2L0waXXJW7R/J24RHWKVOBlXAGuiSe+kSByhaLo+C2M+3WwUWFkys5rOa6zRv/M/ioz7Bm/oEQoFEi7Jbsh7xrf4ZEZ5jb0Wm36gwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MUzUaI8m; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61a207a248cso791a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:30:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755883804; x=1756488604; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=252UfE/vBQ9r0TEDviOY2kI9MCQU3kCqK3n/Zyt8oR4=;
+        b=MUzUaI8mJTb04Cv1RizekLuSro6+E1RI7wOyeMPPe/Az9ioxgR3JS+xjdFk3D2sCVt
+         JqNcBqbz3rEhFSDG73wGd65c2VjOgX52aIQHxytyz69SkEuSaO4q1JEvdgkoJnkHRq+p
+         MyhF89IQ19MVb6HD04ooFlq32svTEbiRPT4cwyMkK9pjSsfYTgogmNpR7T8BAjHMes1U
+         yoz+brD9LIcloMHBxHxp10Qpi7wVzvRJaXYIACI3yNA0u+7lYs3iWHpNdBGfDa0jnblo
+         5oZMPRS4j2aZ6Y0GiUt1zyfTF9GKlTR5dgxm59qTjRKoeaEMCnDY+6U1hE7oi2wxbwrY
+         Hf4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755883804; x=1756488604;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=252UfE/vBQ9r0TEDviOY2kI9MCQU3kCqK3n/Zyt8oR4=;
+        b=aDvY0m2uhl7dSg7zrj/yCxfCX8nH746QP5JcQQGHdso70gLkj8Sw168Lf+Nxi2Qsg7
+         wPSlIVhtcSA4OsUDPdLXilZBYDG9fmcM897ulW78VibMzhxRAqYeB/Z/oTJziVo5r7Gg
+         OfMRRPDxMHFm3Zu7WN+8CWRKc0LrGQbCSAxt/mx7Bd50L2KBeWWnL+PgysGEV/WSQmLd
+         oAzWZJp0qooOE6wpZ7ImrFLzzfYjEqLpFlGEjeJs46DSr+dCq419fmWJxkcG/0acTXBB
+         OzG4lhTUt01tiorVGIQpo5E08TSc3kiSJ6mBa3eCZ26gPc3FAMZzNNQm4EEOr3/l2Ma2
+         IIMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXf0rDcxjw7ymsT2cn5ugGuN9gny7YYcCTCwnDGT70I7QoCQEv2TaEkaskXhM+GZ8e/TyUyV8BYFII2NJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6OUNbEUJofQI3mQNUPmOwwwz1x7iOF1cZfVFPwQLVtbvQGzCf
+	PyHGUhQGE9dq8o33Y2tVojlbkabHWQgVZY0fnWvFeC5aGNN9lKuan5NE3RoyOPvT4Kh7KFrrdzb
+	fXQaU6HTz8UBFJxmoh56+OR14Ul+jmrAbjv5/kHF4
+X-Gm-Gg: ASbGnctEx5k+LMlm2Wov8hwHkEpKSRlAsXNwkWuCFZAt/l8opG21Zr7aQR+xPb9Xwma
+	acc4opVEezxQDJULEPDIWCdrnSd4llffGPtEraLaxIioZTBIAnQG/ftRmfysIW4EQ7bwzVbY3qb
+	dcsPu5E8jXuHNj3G8J435x6+AHtcHU2RCrSFjxp1tpnT8gIptKJwskyyidzPREhEXKNCOq3/Ek7
+	IphmryEqdXvQBRToOIxPAvAeYtRvtJesJjmce4iznAm
+X-Google-Smtp-Source: AGHT+IHnj5c0AQcYtFrhkC1wYBFb2YmVQM0FxMX03JVK1XoHfCrOErryzWCv9sPurRICdZwmIRfZ9c2Qqy8fv/ZcGyg=
+X-Received: by 2002:aa7:c458:0:b0:61c:18b3:4e4c with SMTP id
+ 4fb4d7f45d1cf-61c1d7fd22bmr100263a12.5.1755883804135; Fri, 22 Aug 2025
+ 10:30:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250811094444.203161-10-Neeraj.Upadhyay@amd.com>
+From: Lokesh Gidra <lokeshgidra@google.com>
+Date: Fri, 22 Aug 2025 10:29:52 -0700
+X-Gm-Features: Ac12FXypkWhwPQn0ViSOI46R77FnBhepBanwmGZ60DMp2xuHG2FRINOwhF4PUNM
+Message-ID: <CA+EESO4Z6wtX7ZMdDHQRe5jAAS_bQ-POq5+4aDx5jh2DvY6UHg@mail.gmail.com>
+Subject: [DISCUSSION] Unconditionally lock folios when calling rmap_walk()
+To: David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Harry Yoo <harry.yoo@oracle.com>, Zi Yan <ziy@nvidia.com>, Barry Song <21cnbao@gmail.com>, 
+	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, Peter Xu <peterx@redhat.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
+	android-mm <android-mm@google.com>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	Jann Horn <jannh@google.com>, Rik van Riel <riel@surriel.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 11, 2025 at 03:14:35PM +0530, Neeraj Upadhyay wrote:
-> Subject: Re: [PATCH v9 09/18] x86/sev: Initialize VGIF for secondary VCPUs for Secure AVIC
+Hi all,
 
-"vCPU"
+Currently, some callers of rmap_walk() conditionally avoid try-locking
+non-ksm anon folios. This necessitates serialization through anon_vma
+write-lock elsewhere when folio->mapping and/or folio->index (fields
+involved in rmap_walk()) are to be updated. This hurts scalability due
+to coarse granularity of the lock. For instance, when multiple threads
+invoke userfaultfd=E2=80=99s MOVE ioctl simultaneously to move distinct pag=
+es
+from the same src VMA, they all contend for the corresponding
+anon_vma=E2=80=99s lock. Field traces for arm64 android devices reveal over
+30ms of uninterruptible sleep in the main UI thread, leading to janky
+user interactions.
 
-> From: Kishon Vijay Abraham I <kvijayab@amd.com>
-> 
-> Secure AVIC requires VGIF to be configured in VMSA. Configure
+Among all rmap_walk() callers that don=E2=80=99t lock anon folios,
+folio_referenced() is the most critical (others are
+page_idle_clear_pte_refs(), damon_folio_young(), and
+damon_folio_mkold()). The relevant code in folio_referenced() is:
 
-Please explain in one sentence here for the unenlightened among us what VGIF
-is.
+if (!is_locked && (!folio_test_anon(folio) || folio_test_ksm(folio))) {
+        we_locked =3D folio_trylock(folio);
+        if (!we_locked)
+                return 1;
+}
 
-Also, I can't find anyhwere in the APM the requirement that SAVIC requires
-VGIF. Do we need to document it?
+It=E2=80=99s unclear why locking anon_vma exclusively (when updating
+folio->mapping, like in uffd MOVE) is beneficial over walking rmap
+with folio locked. It=E2=80=99s in the reclaim path, so should not be a
+critical path that necessitates some special treatment, unless I=E2=80=99m
+missing something.
 
--- 
-Regards/Gruss,
-    Boris.
+Therefore, I propose simplifying the locking mechanism by ensuring the
+folio is locked before calling rmap_walk(). This helps avoid locking
+anon_vma when updating folio->mapping, which, for instance, will help
+eliminate the uninterruptible sleep observed in the field traces
+mentioned earlier. Furthermore, it enables us to simplify the code in
+folio_lock_anon_vma_read() by removing the re-check to ensure that the
+field hasn=E2=80=99t changed under us.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks,
+Lokesh
 
