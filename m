@@ -1,52 +1,44 @@
-Return-Path: <linux-kernel+bounces-780950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B95B30B85
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:07:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 857F1B30B89
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 352D83BB382
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:04:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7247F6803E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9AEA1DB12E;
-	Fri, 22 Aug 2025 01:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tarsnap.com header.i=@tarsnap.com header.b="Xfv2LuGQ";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="Cw1f21dR"
-Received: from a8-13.smtp-out.amazonses.com (a8-13.smtp-out.amazonses.com [54.240.8.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966EC22A1E6;
+	Fri, 22 Aug 2025 01:57:58 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA111A9F9B
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 01:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.8.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68981DE8A0;
+	Fri, 22 Aug 2025 01:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755827850; cv=none; b=acDX1oFA/9zsQQ85RcLaCRsywU9kfZEUksLakrwfD9K+UORDwq8eGMF+GY8tRd7hN5DIu6kT+o/SsYxHFJNHwopqimQydn33TXjuxfr8UjI+ePSNDAna8329d03TP5tZv10RzRTQIsJxRzWCmPZ2rSVW4E+EK2gRGJDyiP+wHRM=
+	t=1755827878; cv=none; b=GdceEzNCFIv4F7jKROpXJVSG+n1w5/YZkFY8nfdVPse4zXcAz2RGJAAXo9AtT5jkortocrnHHStwfdyppgL8i8oI/db9VG2KvnmwWiGoSgkMkR7EeosUYBKh0q1X9h81MSVbEGfmDVS97Lk3jVGaj3CQv/qEtn7llEimF3GA20k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755827850; c=relaxed/simple;
-	bh=rcREoXze/O2IhJBABpClvHm2RJLvQexLiYrJs+z2dQA=;
+	s=arc-20240116; t=1755827878; c=relaxed/simple;
+	bh=yRDbTmQNyPNYdmnA/vgKUgB0b/pHIH588KMyZCw5plA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hFDoJDUCS/B3ygJf26gkx4YsSKyp4f8JOZKwPW4fAyF+/p2KjUWOrLFpqR4zFB8oJRd1wm5r20RcVk+CeeTFb07KS+h6Lco1lriTzoMzOz/At0D5GJgj2fZiHOyUCit3XYA+RvRmQnspoueg7VuxQuKDC3DNzjjF2Zk1Q/EuaiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tarsnap.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (1024-bit key) header.d=tarsnap.com header.i=@tarsnap.com header.b=Xfv2LuGQ; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=Cw1f21dR; arc=none smtp.client-ip=54.240.8.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tarsnap.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=vnqrkfnvu6csdl6mwgk5t6ix3nnepx57; d=tarsnap.com; t=1755827847;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=rcREoXze/O2IhJBABpClvHm2RJLvQexLiYrJs+z2dQA=;
-	b=Xfv2LuGQSRbpdcnGcKo5xBeMLz2G6U6lV9QxAWd1xJ8bxOBcu89UhjnK/oDNCOa9
-	XJKcHT10GAYQ1TTc384GCPO8AA1MZCwQ29qRFTeNLKpG/NCo/96yQDHeTFwHIcgYWdk
-	2z2CgSkXkNaUObC3JJ3fJveEhV7tgNvHuhFHvkUo=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1755827847;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-	bh=rcREoXze/O2IhJBABpClvHm2RJLvQexLiYrJs+z2dQA=;
-	b=Cw1f21dRmiJvbYUkwTIGLHkGS687GyEPjfq9W7Z1YwauzLHrWrGVMNWZIzu1ybls
-	HlD1OsGgHygjr4iqkuZgYDj2Qnx2dCu0LFCHV/ukDQFVuLd0qcjYyUZCFyQ4D0CmqfL
-	RbT0OdN7fjcO8sn5ipJj6HeI0t7JJ5pND3wEvxT8=
-Message-ID: <01000198cf7ec03e-dfc78632-42ee-480b-8b51-3446fbb555d1-000000@email.amazonses.com>
-Date: Fri, 22 Aug 2025 01:57:27 +0000
+	 In-Reply-To:Content-Type; b=tJd39S76MJro7QcFg2z5tbPmjLwDUv6yvTznBWKkxH/gX2P/Bxf4N+YjteT2RLtxCZwpqhPl4ftEyTCBkNhGQM/n5gShSJGlRQNRJJsBkJtPCoLRflBr2n15NOpRr4GIQqk259/NYtEL1iIKvKZnjQfpB++jXztUjlYRRMpiKWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c7Ncf3V0TzYQtqB;
+	Fri, 22 Aug 2025 09:57:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 0FB161A158A;
+	Fri, 22 Aug 2025 09:57:53 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP4 (Coremail) with SMTP id gCh0CgC3fg+fzqdoemr_EQ--.16884S2;
+	Fri, 22 Aug 2025 09:57:52 +0800 (CST)
+Message-ID: <38ef3ff9-b380-44f0-9315-8b3714b0948d@huaweicloud.com>
+Date: Fri, 22 Aug 2025 09:57:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,103 +46,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] Support "generic" CPUID timing leaf as KVM guest
- and host
-To: David Woodhouse <dwmw2@infradead.org>, 
-	Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, graf@amazon.de, 
-	Ajay Kaher <ajay.kaher@broadcom.com>, 
-	Alexey Makhalov <alexey.makhalov@broadcom.com>
-References: <20250816101308.2594298-1-dwmw2@infradead.org>
- <aKdIvHOKCQ14JlbM@google.com>
- <933dc95ead067cf1b362f7b8c3ce9a72e31658d2.camel@infradead.org>
- <aKdzH2b8ShTVeWhx@google.com>
- <6783241f1bfadad8429f66c82a2f8810a74285a0.camel@infradead.org>
- <aKeGBkv6ZjwM6V9T@google.com>
- <fdcc635f13ddf5c6c2ce3d5376965c81ce4c1b70.camel@infradead.org>
+Subject: Re: [PATCH] kernfs: Fix UAF in PSI polling when open file is released
+To: Tejun Heo <tj@kernel.org>
+Cc: Baokun Li <libaokun1@huawei.com>, cgroups@vger.kernel.org,
+ chenridong@huawei.com, gregkh@linuxfoundation.org, hannes@cmpxchg.org,
+ linux-kernel@vger.kernel.org, lujialin4@huawei.com, mkoutny@suse.com,
+ peterz@infradead.org, zhouchengming@bytedance.com,
+ Yang Erkun <yangerkun@huawei.com>
+References: <20250815013429.1255241-1-chenridong@huaweicloud.com>
+ <0319ee9b-ce2c-4c02-a731-c538afcf008f@huawei.com>
+ <e485b38a-183b-42c8-9aed-9c2d939add0b@huaweicloud.com>
+ <aKUo7BuX-teh4IzF@slm.duckdns.org>
 Content-Language: en-US
-From: Colin Percival <cperciva@tarsnap.com>
-Autocrypt: addr=cperciva@tarsnap.com; keydata=
- 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
-In-Reply-To: <fdcc635f13ddf5c6c2ce3d5376965c81ce4c1b70.camel@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Feedback-ID: ::1.us-east-1.Lv9FVjaNvvR5llaqfLoOVbo2VxOELl7cjN0AOyXnPlk=:AmazonSES
-X-SES-Outgoing: 2025.08.22-54.240.8.13
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <aKUo7BuX-teh4IzF@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgC3fg+fzqdoemr_EQ--.16884S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7GFW8KrW7Jr13CryktF43Jrb_yoWDCwb_G3
+	y0yrZ8AwnrJa1xCa13JrsIvr92qay5ZFnxJw4rX3yxK3s5Aa4DJFyfXr93Wr15G3yUGr9x
+	KFnYqFyvy347ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On 8/21/25 14:10, David Woodhouse wrote:
-> On Thu, 2025-08-21 at 13:48 -0700, Sean Christopherson wrote:
->>> I think I'm a lot happier with the explicit CPUID leaf exposed by the
->>> hypervisor.
->>
->> Why?  If the hypervisor is ultimately the one defining the state, why does it
->> matter which CPUID leaf its in?
-> [...]
+
+
+On 2025/8/20 9:46, Tejun Heo wrote:
+> Hello,
 > 
-> If you tell me that 0x15 is *never* wrong when seen by a KVM guest, and
-> that it's OK to extend the hardware CPUID support up to 0x15 even on
-> older CPUs and there'll never be any adverse consequences from weird
-> assumptions in guest operating systems if we do the latter... well, for
-> a start, I won't believe you. And even if I do, I won't think it's
-> worth the risk. Just use a hypervisor leaf :)
+> On Mon, Aug 18, 2025 at 04:00:08PM +0800, Chen Ridong wrote:
+>>> A potential solution is to make the lifecycles of cgroup_file_ctx and
+>>> psi_trigger match the struct kernfs_open_file they're associated with.
+>>> Maybe we could just get rid of the kernfs_release_file call in
+>>> kernfs_drain_open_files?
+>>>
+>>
+>> Hi, Tj, what do you think about this solution?
+> 
+> So, I think it's really fragile for a killed (drained) kernfs_open_file to
+> be reused after the corresponding @kn is resurrected. Once killed, that file
+> should stay dead. I think it'd be best if we can do this in a generic manner
+> rather than trying to fix it only for poll.
+> 
+> kernfs_get_active() is the thing which gates active operations on the file.
+> Maybe we can add a wrapper, say, kernfs_get_active_of(struct
+> kernfs_open_file *of) which returns NULL if @of has already been killed or
+> the underlying @kn can't be activated?
+> 
+> Thanks.
+> 
 
-FreeBSD developer here.  I'm with David on this, we'll consult the 0x15/0x16
-CPUID leaves if we don't have anything better, but I'm not going to trust
-those nearly as much as the 0x40000010 leaf.
+Thank you Tj,
 
-Also, the 0x40000010 leaf provides the lapic frequency, which AFAIK is not
-exposed in any other way.
+This is reasonable, I will try.
 
 -- 
-Colin Percival
-FreeBSD Release Engineering Lead & EC2 platform maintainer
-Founder, Tarsnap | www.tarsnap.com | Online backups for the truly paranoid
+Best regards,
+Ridong
 
 
