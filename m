@@ -1,68 +1,51 @@
-Return-Path: <linux-kernel+bounces-781209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE89B30F2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:41:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5172B30EC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 999294E01EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:41:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A518173B73
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F41D2E6124;
-	Fri, 22 Aug 2025 06:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="lX79IJzn"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499BE2E54C8;
-	Fri, 22 Aug 2025 06:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466EA2E3B1A;
+	Fri, 22 Aug 2025 06:21:44 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0E02E3AE6;
+	Fri, 22 Aug 2025 06:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755844859; cv=none; b=TS0gjYFwS9b1ia4dNM2azPPvZjWI7zhBc7WlmYE25xC2Iyh5CtnCM5iGz99paUsg0qvVodAxsqVX+A7iB4YHVFDdkF0tTK9WqM8hRkgrqZ9bsVmwSInyehBHp9jJU9nIRkmjhHUaigQCuhOksvx1EKWj7olU7b1fROZTT/oXgLo=
+	t=1755843703; cv=none; b=EaD155DECtiOL+/VI/mgDk23NWJR+x0JUfsIvVuxrP6DnuFruQm71AjzZIcqJCJ1N0VbAQwoDlbSSULyOCLt6GEQ8DUlpTixOBovjjhjUHl2KC6RqikBPcc8tO+bYvBx0hSXOvo6f38UyzdHCc7WcKT+4tJAr1WFo1nD6jQoZTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755844859; c=relaxed/simple;
-	bh=zkIQ13/H9CnTVLK6A7Z4pxO6LqziG5oPt4Wp5fwiZIA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tzStmdmhr51HI+6Hoq+IQkV2GAQYR9C9Xy/CYOLjG4oLXiIT1du0kiVuVcchFCKzb9IRmlSb78io65HXpdjGTx0jd1xjSlg/VJQrzsmRgweM/oqXct1AUceUguKEsD09vtt9cBwStT0TTsIK6umZOElU0/qhNmdwVY7wlu9s2Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=lX79IJzn; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=h8
-	8O4dZwxfFg63Pi6AQ85/YvjoNhwX4BJiQNP+yOVJw=; b=lX79IJznDtGZJ4/KpD
-	vjNxpE4Si3NCrcoLhVQ8OmEX9vUSC0NMQYC5Ady/j0P0BhWwtcTeUGfmlycHFh3d
-	mXQPTzVAlI3p7/BkUOLWC+n927tp+yrSX3mPdwLDKWTzcOl0njbhc+2AqWdBH3gk
-	h2KzYceg6UGaZmEJuJVJxM5Ck=
-Received: from ProDesk.. (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PigvCgAn9_zCEKhoYtibAA--.23257S12;
-	Fri, 22 Aug 2025 14:40:28 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: dmitry.baryshkov@oss.qualcomm.com,
-	heiko@sntech.de
-Cc: hjc@rock-chips.com,
-	mripard@kernel.org,
-	naoki@radxa.com,
-	stephen@radxa.com,
-	cristian.ciocaltea@collabora.com,
-	neil.armstrong@linaro.org,
-	Laurent.pinchart@ideasonboard.com,
-	yubing.zhang@rock-chips.com,
-	krzk+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	robh@kernel.org,
-	sebastian.reichel@collabora.com,
-	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v7 10/10] arm64: dts: rockchip: Enable DP2HDMI for ROCK 5 ITX
-Date: Fri, 22 Aug 2025 14:39:54 +0800
-Message-ID: <20250822063959.692098-11-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250822063959.692098-1-andyshrk@163.com>
-References: <20250822063959.692098-1-andyshrk@163.com>
+	s=arc-20240116; t=1755843703; c=relaxed/simple;
+	bh=0Otq+2/vcanDsGkeffe7L/JarqW63r/YNxF07A5f51s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q83ykligOjKnQ6V8J7mxIsCUxL330XiRsZy5HsHEyuRwqLqYyABCysgsf68wDEQqYP8wcnW3vuHinQkWz4egHCIgMMKU5k/UDtDfvq0vMx+2p3uWoP7cE4IJJkXILilrTLphx8wGixPrOThi9WVvckiV4MH2Nt8xK9HICEuA+Iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c7VPg1sxbz2Dc7L;
+	Fri, 22 Aug 2025 14:18:47 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 44D181A0171;
+	Fri, 22 Aug 2025 14:21:38 +0800 (CST)
+Received: from huawei.com (10.50.159.234) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 22 Aug
+ 2025 14:21:37 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>, <dawid.osuchowski@linux.intel.com>
+Subject: [PATCH v2 net-next] ipv6: mcast: Add ip6_mc_find_idev() helper
+Date: Fri, 22 Aug 2025 14:40:51 +0800
+Message-ID: <20250822064051.2991480-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,127 +53,141 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PigvCgAn9_zCEKhoYtibAA--.23257S12
-X-Coremail-Antispam: 1Uf129KBjvJXoW7CrykKw18Xw43uF4kCrWkXrb_yoW8KrWrpF
-	nF9rs5GryxuryYqw1FvF1kZFs8Krs5ua93Jr1aqry0yFW7Xas5K3WrWr9YqFyjvF1xXw4a
-	yr4kXa4j93WDXFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j2iihUUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMxWxXmioB5f7BwAAsl
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-From: Andy Yan <andy.yan@rock-chips.com>
+Extract the same code logic from __ipv6_sock_mc_join() and
+ip6_mc_find_dev(), also add new helper ip6_mc_find_idev() to
+reduce redundancy and enhance readability.
 
-The HDMI0(Port next to Headphone Jack) is drived by DP1 on rk3588
-via RA620(a dp2hdmi converter).
+No functional changes intended.
 
-Add related dt nodes to enable it.
-
-Note: ROCKCHIP_VOP2_EP_DP1 is defined as 11 in dt-binding header,
-but it will trigger a dtc warning like "graph node unit address
-error, expected "b"" if we use it directly after endpoint, so we
-use "b" instead here.
-
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Reviewed-by: Dawid Osuchowski <dawid.osuchowski@linux.intel.com>
 ---
+v2: remove unneeded changes in ip6_mc_find_idev()
+    refine commit log
+---
+ net/ipv6/mcast.c | 67 ++++++++++++++++++++++--------------------------
+ 1 file changed, 31 insertions(+), 36 deletions(-)
 
-(no changes since v3)
-
-Changes in v3:
-- Add RA620 into bridge chain.
-
- .../boot/dts/rockchip/rk3588-rock-5-itx.dts   | 59 +++++++++++++++++++
- 1 file changed, 59 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
-index 7de17117df7ae..903ad42f97177 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
-@@ -57,6 +57,29 @@ analog-sound {
- 			  "Headphone", "Headphones";
- 	};
+diff --git a/net/ipv6/mcast.c b/net/ipv6/mcast.c
+index 36ca27496b3c..55c49dc14b1b 100644
+--- a/net/ipv6/mcast.c
++++ b/net/ipv6/mcast.c
+@@ -169,6 +169,29 @@ static int unsolicited_report_interval(struct inet6_dev *idev)
+ 	return iv > 0 ? iv : 1;
+ }
  
-+	bridge {
-+		compatible = "radxa,ra620";
++static struct net_device *ip6_mc_find_dev(struct net *net,
++					  const struct in6_addr *group,
++					  int ifindex)
++{
++	struct net_device *dev = NULL;
++	struct rt6_info *rt;
 +
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			port@0 {
-+				reg = <0>;
-+				hdmi_bridge_in: endpoint {
-+					remote-endpoint = <&dp1_out_con>;
-+				};
-+			};
++	if (ifindex == 0) {
++		rcu_read_lock();
++		rt = rt6_lookup(net, group, NULL, 0, NULL, 0);
++		if (rt) {
++			dev = dst_dev(&rt->dst);
++			dev_hold(dev);
++			ip6_rt_put(rt);
++		}
++		rcu_read_unlock();
++	} else {
++		dev = dev_get_by_index(net, ifindex);
++	}
 +
-+			port@1 {
-+				reg = <1>;
++	return dev;
++}
 +
-+				hdmi_bridge_out: endpoint {
-+					remote-endpoint = <&hdmi_con_in>;
-+				};
-+			};
-+		};
-+	};
-+
- 	gpio-leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -73,6 +96,17 @@ hdd-led2 {
- 		};
- 	};
+ /*
+  *	socket join on multicast group
+  */
+@@ -191,28 +214,13 @@ static int __ipv6_sock_mc_join(struct sock *sk, int ifindex,
+ 	}
  
-+	hdmi0-con {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_bridge_out>;
-+			};
-+		};
-+	};
-+
- 	hdmi1-con {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -268,6 +302,24 @@ &cpu_l3 {
- 	cpu-supply = <&vdd_cpu_lit_s0>;
- };
+ 	mc_lst = sock_kmalloc(sk, sizeof(struct ipv6_mc_socklist), GFP_KERNEL);
+-
+ 	if (!mc_lst)
+ 		return -ENOMEM;
  
-+&dp1 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&dp1m0_pins>;
-+};
-+
-+&dp1_in {
-+	dp1_in_vp2: endpoint {
-+		remote-endpoint = <&vp2_out_dp1>;
-+	};
-+};
-+
-+&dp1_out {
-+	dp1_out_con: endpoint {
-+		remote-endpoint = <&hdmi_bridge_in>;
-+	};
-+};
-+
- &gpu {
- 	mali-supply = <&vdd_gpu_s0>;
- 	status = "okay";
-@@ -1261,3 +1313,10 @@ vp1_out_hdmi1: endpoint@ROCKCHIP_VOP2_EP_HDMI1 {
- 		remote-endpoint = <&hdmi1_in_vp1>;
- 	};
- };
-+
-+&vp2 {
-+	vp2_out_dp1: endpoint@b {
-+		reg = <ROCKCHIP_VOP2_EP_DP1>;
-+		remote-endpoint = <&dp1_in_vp2>;
-+	};
-+};
+ 	mc_lst->next = NULL;
+ 	mc_lst->addr = *addr;
+ 
+-	if (ifindex == 0) {
+-		struct rt6_info *rt;
+-
+-		rcu_read_lock();
+-		rt = rt6_lookup(net, addr, NULL, 0, NULL, 0);
+-		if (rt) {
+-			dev = dst_dev(&rt->dst);
+-			dev_hold(dev);
+-			ip6_rt_put(rt);
+-		}
+-		rcu_read_unlock();
+-	} else {
+-		dev = dev_get_by_index(net, ifindex);
+-	}
+-
++	dev = ip6_mc_find_dev(net, addr, ifindex);
+ 	if (!dev) {
+ 		sock_kfree_s(sk, mc_lst, sizeof(*mc_lst));
+ 		return -ENODEV;
+@@ -302,27 +310,14 @@ int ipv6_sock_mc_drop(struct sock *sk, int ifindex, const struct in6_addr *addr)
+ }
+ EXPORT_SYMBOL(ipv6_sock_mc_drop);
+ 
+-static struct inet6_dev *ip6_mc_find_dev(struct net *net,
+-					 const struct in6_addr *group,
+-					 int ifindex)
++static struct inet6_dev *ip6_mc_find_idev(struct net *net,
++					  const struct in6_addr *group,
++					  int ifindex)
+ {
+-	struct net_device *dev = NULL;
++	struct net_device *dev;
+ 	struct inet6_dev *idev;
+ 
+-	if (ifindex == 0) {
+-		struct rt6_info *rt;
+-
+-		rcu_read_lock();
+-		rt = rt6_lookup(net, group, NULL, 0, NULL, 0);
+-		if (rt) {
+-			dev = dst_dev(&rt->dst);
+-			dev_hold(dev);
+-			ip6_rt_put(rt);
+-		}
+-		rcu_read_unlock();
+-	} else {
+-		dev = dev_get_by_index(net, ifindex);
+-	}
++	dev = ip6_mc_find_dev(net, group, ifindex);
+ 	if (!dev)
+ 		return NULL;
+ 
+@@ -374,7 +369,7 @@ int ip6_mc_source(int add, int omode, struct sock *sk,
+ 	if (!ipv6_addr_is_multicast(group))
+ 		return -EINVAL;
+ 
+-	idev = ip6_mc_find_dev(net, group, pgsr->gsr_interface);
++	idev = ip6_mc_find_idev(net, group, pgsr->gsr_interface);
+ 	if (!idev)
+ 		return -ENODEV;
+ 
+@@ -509,7 +504,7 @@ int ip6_mc_msfilter(struct sock *sk, struct group_filter *gsf,
+ 	    gsf->gf_fmode != MCAST_EXCLUDE)
+ 		return -EINVAL;
+ 
+-	idev = ip6_mc_find_dev(net, group, gsf->gf_interface);
++	idev = ip6_mc_find_idev(net, group, gsf->gf_interface);
+ 	if (!idev)
+ 		return -ENODEV;
+ 
 -- 
-2.43.0
+2.34.1
 
 
