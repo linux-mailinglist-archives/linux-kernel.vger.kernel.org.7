@@ -1,103 +1,165 @@
-Return-Path: <linux-kernel+bounces-782796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC08B32578
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:50:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54D16B3258E
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 193505E890C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:50:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1321D1CC6F7D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CF32D7DF7;
-	Fri, 22 Aug 2025 23:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B94D946C;
+	Sat, 23 Aug 2025 00:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZ19qIHO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WXnDpWft"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3601B041A;
-	Fri, 22 Aug 2025 23:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD48463B9;
+	Sat, 23 Aug 2025 00:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755906602; cv=none; b=jUwksJ2FtfEW/iPWzU8YcGXfPRKKARXTjb2JdPZS44c/KDyEsm3yY0zj0AhQCOoI38hNrQbtvcsps7jyepFDkHHme5BnyC2ql4gszTXg5h0nSXngvmS/vFEWkL7KH/8PWovIIVsmKC25445arnLCYxqpueZxLkS4/4/GwehZyv0=
+	t=1755907738; cv=none; b=XIpmepI1+irK/b65M8dYp51OHmwmzO5giZFVs3MXS8LLyUGyX+0oCmA92rxD0AuBzWLzO6b0bLGV8gKPs66AYCEAyr72P9DDXW4Qwyn6+ky/3lHoajk4y9f4xfavH0OpbsYqSgEpMnD9qFtwCFK6pkwlPWj3C+ZCPQTlgmslzBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755906602; c=relaxed/simple;
-	bh=BtHoDzLsQtbabuODA9kZ9CcqFcM6FFS7ZUaUTqJRMwE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=JepbhulNNCnxBxRsjh+rC4UgnC8i5q7EwyeVJNRlqbAewsixYJGkK67dNL2aLGolvVbXQljOVjy0bITsgMcj6eOPYlAx+ChXyWXtFRd1z6LVWHbEi+ORw/O2RftZpT07yPWXhZCRsWXOJeViaR0D3faKms194+TLMWqw3n4Posw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sZ19qIHO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACF51C4CEED;
-	Fri, 22 Aug 2025 23:50:01 +0000 (UTC)
+	s=arc-20240116; t=1755907738; c=relaxed/simple;
+	bh=OHLVldSEvpOKU6ViVH/A3lbMwY9KSL+2TO1MiXSUz7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SvV12t9jOKIzvV+rLghHO0l6rY3dJMRe7SZreQ/v2lld7qfcO8JrDHZhLXyDufJ7023mXhQ89E14RbM0m9fXK+LyyicDsNsnGogxq1/UKUZOrsTk1eKeh2TeNhxnd/SXcTXvcG8F16DuDdKqTStObRhfIe3QmSTK+Trr72wlTEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WXnDpWft; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9D7AC4CEED;
+	Sat, 23 Aug 2025 00:08:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755906601;
-	bh=BtHoDzLsQtbabuODA9kZ9CcqFcM6FFS7ZUaUTqJRMwE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=sZ19qIHOkWq6ssyeESgt4eSiUijQFAuhVPbXFQhE7b+HBetZ0TifnJDf0ZtS4rIXt
-	 VpFCDF4oHcQVsUPbU0n8hNLg5rU7hR0Rj5aCeMVnluF7+3OF3TXeph1ZqlYrBoNcoM
-	 XJQK28Us/3JK/m/nGMeWML78fdilJAxvPExHYfbt4S7hLLGqtILXIy9l/hVILQUnBD
-	 6TMv5CWfFJl7v9dDotCBIrTPOtra7/p08AvDcsyi3FnyRPvffFdnshjICoQKLm1mxD
-	 lEdTPRnGTCkDj6b3MV52WecCK25409HVMHnzsx8T/P+crez+jWfmuXOqKzGzjrZ+1o
-	 pV4RwZ7yyCT6w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF69383BF69;
-	Fri, 22 Aug 2025 23:50:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1755907738;
+	bh=OHLVldSEvpOKU6ViVH/A3lbMwY9KSL+2TO1MiXSUz7Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WXnDpWftAdI36ikFvCKxk2uk6NBrvDpm/BmnSiJNZuUHa9XO0kvnzOerakVNjh5ff
+	 KPUH4Hhxr3CVNtOxO5FUWWEvIaV025ggxDOsHE2mG0AXvg1CBu+D+ox/YwbVQhCZSW
+	 T7v1xaerEJMPX9oy9KVjIS5RWUmLZSa8uNQNaAvqm06iEBUwFPNTJYFlNHFpO5REVd
+	 5eUxA0htjkSVYcZALDarrIi6cNssxmP5c9WTMfnOQ8opzEQ73OYzmrD4oG7GnjLFfL
+	 THDioeIpRT2hWoMDEk8+k9HJd4BYKL4v3ZpIZYJO4ozGCfLrxeoknXPsYCMLSTIXys
+	 r7KE2QKGObEhw==
+Date: Sat, 23 Aug 2025 07:51:42 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH 1/2] i2c: designware: Avoid taking clk_prepare mutex in
+ PM callbacks
+Message-ID: <aKkCjjez7jQNrieT@xhacker>
+References: <20250820153125.22002-1-jszhang@kernel.org>
+ <20250820153125.22002-2-jszhang@kernel.org>
+ <aKXyVvFOvpsaAEAB@smile.fi.intel.com>
+ <aKX4xEYE29JC_g14@xhacker>
+ <7198221a-1f12-49cf-9d35-7498ae7389cd@linux.intel.com>
+ <aKcYw0Az1fYfNbBr@smile.fi.intel.com>
+ <aKdKOa1jFXDHK8uI@xhacker>
+ <aKg18p9Zf9hoZHPY@smile.fi.intel.com>
+ <aKg5j7hkxI2q1x0s@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2 0/4] rds: Fix semantic annotations
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175590661050.2033886.2550638437250545892.git-patchwork-notify@kernel.org>
-Date: Fri, 22 Aug 2025 23:50:10 +0000
-References: <20250820175550.498-1-ujwal.kundur@gmail.com>
-In-Reply-To: <20250820175550.498-1-ujwal.kundur@gmail.com>
-To: Ujwal Kundur <ujwal.kundur@gmail.com>
-Cc: allison.henderson@oracle.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
- linux-kernel@vger.kernel.org
+In-Reply-To: <aKg5j7hkxI2q1x0s@smile.fi.intel.com>
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 20 Aug 2025 23:25:46 +0530 you wrote:
-> This patchset addresses all semantic warnings flagged by Sparse for
-> net/rds.
+On Fri, Aug 22, 2025 at 12:34:07PM +0300, Andy Shevchenko wrote:
+> On Fri, Aug 22, 2025 at 12:18:43PM +0300, Andy Shevchenko wrote:
+> > On Fri, Aug 22, 2025 at 12:32:57AM +0800, Jisheng Zhang wrote:
+> > > On Thu, Aug 21, 2025 at 04:01:55PM +0300, Andy Shevchenko wrote:
+> > > > On Thu, Aug 21, 2025 at 03:45:43PM +0300, Jarkko Nikula wrote:
+> > > > > On 8/20/25 7:33 PM, Jisheng Zhang wrote:
+> > > > > > On Wed, Aug 20, 2025 at 07:05:42PM +0300, Andy Shevchenko wrote:
+> > > > > > > On Wed, Aug 20, 2025 at 11:31:24PM +0800, Jisheng Zhang wrote:
+> > > > > > > > This is unsafe, as the runtime PM callbacks are called from the PM
+> > > > > > > > workqueue, so this may deadlock when handling an i2c attached clock,
+> > > > > > > > which may already hold the clk_prepare mutex from another context.
+> > > > > > > 
+> > > > > > > Can you be more specific? What is the actual issue in practice?
+> > > > > > > Do you have traces and lockdep warnings?
+> > > > > > 
+> > > > > > Assume we use i2c designware to control any i2c based clks, e.g the
+> > > > > > clk-si5351.c driver. In its .clk_prepare, we'll get the prepare_lock
+> > > > > > mutex, then we call i2c adapter to operate the regs, to runtime resume
+> > > > > > the i2c adapter, we call clk_prepare_enable() which will try to get
+> > > > > > the prepare_lock mutex again.
+> > > > > > 
+> > > > > I'd also like to see the issue here. I'm blind to see what's the relation
+> > > > > between the clocks managed by the clk-si5351.c and clocks to the
+> > > > > i2c-designware IP.
+> > > 
+> > > The key here is: all clks in the system share the same prepare_lock
+> > > mutex, so the global prepare_lock mutex is locked by clk-si5351
+> > > .prepare(), then in this exact .prepare(), the i2c-designware's runtime
+> > > resume will try to lock the same prepare_lock again due to
+> > > clk_prepare_enable()
+> > > can you plz check clk_prepare_lock() in drivers/clk/clk.c?
+> > > 
+> > > And if we take a look at other i2c adapters' drivers, we'll see
+> > > some of them have ever met this issue and already fixed it, such
+> > > as 
+> > > 
+> > > i2c-exynos5, by commit 10ff4c5239a1 ("i2c: exynos5: Fix possible ABBA
+> > > deadlock by keeping I2C clock prepared")
+> > > 
+> > > i2c-imx, by commit d9a22d713acb ("i2c: imx: avoid taking clk_prepare
+> > > mutex in PM callbacks")
 > 
-> v1:
->  - https://lore.kernel.org/all/20250810171155.3263-1-ujwal.kundur@gmail.com/
+> > Why is this an I²C driver problem?
 > 
-> Ujwal Kundur (4):
->   rds: Replace POLLERR with EPOLLERR
->   rds: Fix endianness annotation of jhash wrappers
->   rds: Fix endianness annotation for RDS_MPATH_HASH
->   rds: Fix endianness annotations for RDS extension headers
+> I just read these two and one more referenced from one of the changes.
 > 
-> [...]
+> I do not think this is a correct fix. Seems to me like papering over a special
+> (corner case). I would agree on this change if and only if the CLK maintainers
+> tell us that there is no other way.
+> 
+> My understanding is that the I²C clock and client's clocks (when it's a clock
+> provider) are independent. There should not be such a clash to begin with. The
+> clock framework should operate on a clock subtrees and not having yet another
+> Global Kernel Lock.
+> 
+> That said, I think this is a design issue in CLK framework, we should not go and
 
-Here is the summary with links:
-  - [net-next,v2,1/4] rds: Replace POLLERR with EPOLLERR
-    https://git.kernel.org/netdev/net-next/c/9308987803bb
-  - [net-next,v2,2/4] rds: Fix endianness annotation of jhash wrappers
-    https://git.kernel.org/netdev/net-next/c/92b925297a2f
-  - [net-next,v2,3/4] rds: Fix endianness annotation for RDS_MPATH_HASH
-    https://git.kernel.org/netdev/net-next/c/77907a068717
-  - [net-next,v2,4/4] rds: Fix endianness annotations for RDS extension headers
-    https://git.kernel.org/netdev/net-next/c/bcb28bee987a
+After some thoughts, let me show you another case where this patch is
+needed and not related with CLK framework at all: As can be seen in
+patch2, atomic transfer support is added, but if IIRC, the
+clk_prepare_enable() can't be used in atomic context. Then how to
+support atomic transfer if patch1 is NAKed? Any comment is appreciated.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Thanks
 
-
+> "fix" all the drivers. Today it's I²C, tomorrow SPI and I³C and so on...
+> This is not a scalable solution.
+> 
+> Here is formal NAK until it will be worked with CLK maintainers to provide an
+> agreed roadmap for this(ese) issue(s).
+> 
+> > > > I believe they try to make an example when clk-si5351 is the provider of
+> > > > the clock to I²C host controller (DesignWare).
+> > > 
+> > > Nope, the example case is using i2c host controller to operate the clk-si5351
+> > 
+> > Okay, so that chip is controlled over I²C, but how their clocks even related to
+> > the I²C host controller clock?! I am sorry, I am lost here.
+> > 
+> > > > But I'm still not sure about the issues here... Without (even simulated with
+> > > > specific delay injections) lockdep warnings it would be rather theoretical.
+> > > 
+> > > No, it happened in real world.
+> > 
+> > Can you provide the asked traces and lockdep warnigns and/or other stuff to see
+> > what's going on there?
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
