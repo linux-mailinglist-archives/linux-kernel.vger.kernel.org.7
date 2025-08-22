@@ -1,98 +1,119 @@
-Return-Path: <linux-kernel+bounces-782655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D43EB32337
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:53:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C992B32339
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 160BDA081B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:53:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DFAD1C28524
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34042D641D;
-	Fri, 22 Aug 2025 19:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659BC2D640F;
+	Fri, 22 Aug 2025 19:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FdP8PGUG"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vyn9rIVT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VdWFdy1n"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CEC2D5C9B;
-	Fri, 22 Aug 2025 19:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8602D5C9B;
+	Fri, 22 Aug 2025 19:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755892385; cv=none; b=JTINg7S4Ak72rSUU62uG6DowEdozeL61zjg6xZQXo4FA2vXchgEi7Ddm5534JhWFiPNT/LedpFCCZhR7H/Bz/hmecs5BM6mGH4g3F82lL2/hg+RzGkUeZDPn/MD4+/TzsCbIMKlASw4AvYMDllsZSaaRmXzqoiZ65s2EzJJsUDY=
+	t=1755892401; cv=none; b=Jjxnkft6vQOwaZJVCHOXPUOHrbczgVzFQE6Y6U2fAQreaSPlzNdpnDyI9ftEO2/6bFXUkoZG/EkEWgj3Kz8/mDZWbvF6mQq39NOvK3bR9zdultR4STdGaTr5rWLnKp5g4CTkOb4ihfvE4ZRXRdrZIlF0vu9E8GU9NpFAUIM6G4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755892385; c=relaxed/simple;
-	bh=+tgHII2YdKPbcUDMlpuz2Tm/TQfTrZhtY75fIlZjeZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q/fm0DolEDracBOtprBAbFpQrLGxsPbFxZE531fbA6jBhi6mZhfza6dJqWQWOSRbEuOQ4DxbaebqP5PwW0rLZyEhAG6DTOMTsYB9Pbj35YwEVZmstkHxG6u6HtF/4U164KQ+CCf+vdrO425nU6RyR6KBffVN8O6EyU+0d/Xw1GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=FdP8PGUG; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=2L1EmpCK+ApiBjbxlq/uIrcSIfkloaPzamvTaIKo3ZI=; b=Fd
-	P8PGUGRkVDWu46BTFLj7gQKHLu9+n/JE5RBsqsd0WRxkeREUyBzFYl6/hwm2AIf6lhN3Gtxc+kVoX
-	6L4RdxF1ySTDGWu33YBJPpX9WW8e/Q3tfpfItZOY2oZb4P6ngy9e4tTCOw3KI7q/+c43t0v3SucOp
-	/XHTudITGTQBNxE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1upXoH-005blf-K0; Fri, 22 Aug 2025 21:52:25 +0200
-Date: Fri, 22 Aug 2025 21:52:25 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yibo Dong <dong100@mucse.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <d7a38afc-58c1-468a-be47-442cec6db728@lunn.ch>
-References: <20250818112856.1446278-1-dong100@mucse.com>
- <20250818112856.1446278-5-dong100@mucse.com>
- <39262c11-b14f-462f-b9c0-4e7bd1f32f0d@lunn.ch>
- <458C8E59A94CE79B+20250821024916.GF1742451@nic-Precision-5820-Tower>
- <47aa140e-552b-4650-9031-8931475f0719@lunn.ch>
- <7FCBCC1F18AFE0F3+20250821033253.GA1754449@nic-Precision-5820-Tower>
+	s=arc-20240116; t=1755892401; c=relaxed/simple;
+	bh=H3uGrUUzHrS3zFAm6jBW06/pIemOUH8HTl/FVvdz4SM=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=PyntiaZTCAEglGjM/nbm+9PtR8cnytYxk0VGyBU2OynRrzUH0ktVBBhCKVbREl2Yja/+sHJDkc918JX1YzH2rwgLrCMGPXNjBVOMspIAwAWyoP9B7onMUAZfAyvZBZAn3gIKuaVHHoaUoKSTkibi1+YF81EwzQ4/bMHcowH63jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vyn9rIVT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VdWFdy1n; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 22 Aug 2025 19:53:16 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755892397;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=X3+vufUYrcDlOURApxBLnSFe87VcKfZcefeiST0+zfA=;
+	b=vyn9rIVT/yiLcrH+VQJv4ouL3iK8OgZXXuy3aq8qyyk0Btkpm5D/SsHPbew3rWHwF+Zbac
+	5bofdFgoQVL2FkcYswUoFDT5EEJqGuMz5816fDBbLnTl9SsIhZ2IMqTWwT6QeKQZsktgxT
+	pY0rYFAtg4rO8rNDKYZ4vAegnCY52JcNuXqD7k63A5t0jczsmCQWl75c+qQyV/49I4d3xI
+	wHSVsG31xB/AN6dCvlRurxScsvBx6U17SnslH6LxsC1cf1kWGNQn6WjSBSniEauc5udp04
+	39vVM2h2LRQP0s51cjz3RPc6r7POaQM7ntpO8io7932tboYfTwJ5bszmVn7iNw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755892397;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=X3+vufUYrcDlOURApxBLnSFe87VcKfZcefeiST0+zfA=;
+	b=VdWFdy1nTpRhwfFuTlMeCScYBT3sKnaAbf+pkD1l1aEtrRg7172qJ602FiKiZH+DHQ//vF
+	BBf1dWWaZbWCM8AA==
+From: "tip-bot2 for Lukas Bulwahn" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/build] x86: Drop unused and needless config X86_64_SMP
+Cc: Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7FCBCC1F18AFE0F3+20250821033253.GA1754449@nic-Precision-5820-Tower>
+Message-ID: <175589239618.1420.10700126604519433794.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-> 'Update firmware operation' will take long time, maybe more than
-> 10s. If user use 'ethtool -f' to update firmware, and ^C before done?
-> If ^C before mucse_write_mbx, return as soon as possible. If after mucse_write_mbx,
-> wait until fw true response.
+The following commit has been merged into the x86/build branch of tip:
 
-And what happens if the firmware writing is interrupted? Could you end
-up with a brick? This is actually one of the operations i would not
-expect to be able to ^C.
+Commit-ID:     87d1911cca1e947fb444c158de9be358a1964df7
+Gitweb:        https://git.kernel.org/tip/87d1911cca1e947fb444c158de9be358a19=
+64df7
+Author:        Lukas Bulwahn <lukas.bulwahn@redhat.com>
+AuthorDate:    Wed, 23 Jul 2025 09:12:11 +02:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Fri, 22 Aug 2025 12:45:53 -07:00
 
-You might also want consider devlink flash.
+x86: Drop unused and needless config X86_64_SMP
 
-https://www.kernel.org/doc/html/latest/networking/devlink/devlink-flash.html
+As part of the commit 38a4968b3190 ("x86/percpu/64: Remove INIT_PER_CPU
+macros"), the only use of the config option X86_64_SMP in the kernel tree
+is removed. As this config option X86_64_SMP is just equivalent to
+X86_64 && SMP, the source code in the tree just uses that expression in the
+few places where needed. Note further that this option cannot be explicitly
+enabled or disabled when configuring the kernel build configuration.
 
- It replaces the older ethtool-flash mechanism, and doesn’t require
- taking any networking locks in the kernel to perform the flash
- update.
+Drop this needless and unused config option. No functional change.
 
-I assume this is meaning ethtool take RTNL, and while that is held, no
-other network configuration can be performed on any interface. devlink
-has its own lock so avoids this.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Link: https://lore.kernel.org/all/20250723071211.622802-1-lukas.bulwahn%40red=
+hat.com
+---
+ arch/x86/Kconfig | 4 ----
+ 1 file changed, 4 deletions(-)
 
-       Andrew
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 85b9126..99866e3 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -410,10 +410,6 @@ config HAVE_INTEL_TXT
+ 	def_bool y
+ 	depends on INTEL_IOMMU && ACPI
+=20
+-config X86_64_SMP
+-	def_bool y
+-	depends on X86_64 && SMP
+-
+ config ARCH_SUPPORTS_UPROBES
+ 	def_bool y
+=20
 
