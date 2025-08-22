@@ -1,357 +1,172 @@
-Return-Path: <linux-kernel+bounces-782682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B59D0B3238F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:26:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B47B32391
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 815771D62CC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:26:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CE7262349F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7463C2D73B1;
-	Fri, 22 Aug 2025 20:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8796F2D6621;
+	Fri, 22 Aug 2025 20:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jN8w/L6/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="owXANOZe"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5691DED5B;
-	Fri, 22 Aug 2025 20:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755894339; cv=fail; b=VUEE4wWZUXyxLwEuahKt9vxQmMdOVvXE+d+3/BR8yOCtr66leMtiRkr4AH8hrS2Zvh7573niSgxclgjcRY+9KUrKYhalR5AOxjmW6dNdLZPh/2LUdFsspJMrhlW3K0mqE4+jWvgyi+798eRnZKSHpnvhwoeQAMGl5HgdJn+00T4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755894339; c=relaxed/simple;
-	bh=xsk5FP3KlqqIfdTiGYcfN8yoouxDGThn0QtllUX/gDE=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Nueu0Ru2ifQsofY5jWQ/YOA+S4tjPZaaFcMqubOO8I4ReF4tSkAMBSuJgpkuf6mZpGCIMvRrCZsJJYKgHRdGBMi6mNW2BoycNm7AXKw9DWQ0/XWuFswprwqu8sTACvozc1cQpt1oHmX4h1XQ9JcEqcTO2GGdDVWMF5R8wLoYkAw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jN8w/L6/; arc=fail smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755894338; x=1787430338;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:mime-version;
-  bh=xsk5FP3KlqqIfdTiGYcfN8yoouxDGThn0QtllUX/gDE=;
-  b=jN8w/L6/3Z4MtrL5bPLaooTvXxVCft8ds8LograaESA/UdLHXFUsM8+V
-   NgI8mKYguapmsI/OIBCFkWk3a+Al9Nzd3VwVCIqkqiGW25G4lv6ydOqkj
-   dY3E9oN90uv5i0VMFFKmUXg/Qi43EXP9flCDms1+lRIijqtWLVhVOkSmt
-   TiFYSNljZ6hHjPKI+HWYi8LW5XA/XnCkLmAbFLhyZIqITKERrRHOOQUQ9
-   te2PyGwqieeSqM7PSRWLPcC/MfoEmxpufhWA9Jue89Rkr2d6BDqYwu8m9
-   RvdmOejIZKz/ixBavj6/zZGvsbWNfCPPIzCFTqZ6+cbcBrFiklxv+L4k6
-   Q==;
-X-CSE-ConnectionGUID: 9ILp8Tc0Qp6/Ed58JyrsVg==
-X-CSE-MsgGUID: 2r/1doyPSNmfDbhy/lblkw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58130443"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="asc'?scan'208";a="58130443"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 13:25:37 -0700
-X-CSE-ConnectionGUID: /18GVWKUSNe+7i0mtP1sNg==
-X-CSE-MsgGUID: 93OfLc23SSK0ygKTI++b5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="asc'?scan'208";a="169605983"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 13:25:36 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 22 Aug 2025 13:25:36 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Fri, 22 Aug 2025 13:25:36 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.47) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 22 Aug 2025 13:25:35 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NnmgW/InXrNGDyfo4HeYIwqkr6bKeCGKAQ+eZoJnTFWuHp/xpiF2dipB15+Bm/7KgWlInrZl1bo95gJj2bTKbAfepfnkQHPnXkiiYZEex40AKL5xONGhciGtwZW5xcRSxhignjPqvnrpl2hwYfejBLSnfPL9paVmCoShzaSFl+IqeiLyXhKqSha+01Hrwb9XqFstzvQevfhOvGyRedTa+9oyYLqPYVW8rPgHiRJOAgIhD2P7f9alvLRS46WxWhu1Ap0JwplDdOGbIIu01Yxh3LbPNJZ+Y0wl+b4bprMWWJVniOyGT+FWnmhrRx/tQsFM3NlRUAhzKIw5FrxbREz8sw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pD7FEhHPKLx+LQVP1vDgzzIq/OW8TePWPF1cYQv7pRM=;
- b=vH9yLP3bDljjlBuj40A0BCU8MxeTwf5XJcFTXb57MmL0r67ajzWTOJG2wha9pGRoZ0isRgq86buJiZdKc9dZRh+YGTKi50vvEhUCT+HSlmmaLPpXRjdbU/qb2yqhAUi3OmYdmEbqNFjaRE7m4lvs3kocnnEAX6xkN2eCE0FqVIwoOUxpLBKH4MzgKa9VceBsvo1H7TYsQjpEp5Zj3gy1A3e68iKsco5pc9UEnE9+Dhad3EaKu2TtfKCGflakRq5r+D3dFY+9nN9rikEDhioAeugnHlqb+yiUOA9sNoid8pngPkq0WCMULksqnMjuwsghuX5BBuqy6csodY+4KaD3+w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
- by DM4PR11MB8226.namprd11.prod.outlook.com (2603:10b6:8:182::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.17; Fri, 22 Aug
- 2025 20:25:33 +0000
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::81f7:c6c0:ca43:11c3]) by CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::81f7:c6c0:ca43:11c3%5]) with mapi id 15.20.9052.014; Fri, 22 Aug 2025
- 20:25:32 +0000
-Message-ID: <68ac693b-57f9-4403-85e9-8ce90d50aeb1@intel.com>
-Date: Fri, 22 Aug 2025 13:25:31 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH net] i40e: Prevent unwanted interface
- name changes
-To: Jakub Kicinski <kuba@kernel.org>, Calvin Owens <calvin@wbinvd.org>
-CC: Ivan Vecera <ivecera@redhat.com>, Przemek Kitszel
-	<przemyslaw.kitszel@intel.com>, <linux-kernel@vger.kernel.org>, "Jedrzej
- Jagielski" <jedrzej.jagielski@intel.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, Eric Dumazet <edumazet@google.com>, Tony Nguyen
-	<anthony.l.nguyen@intel.com>, <netdev@vger.kernel.org>,
-	<intel-wired-lan@lists.osuosl.org>, Paolo Abeni <pabeni@redhat.com>, "David
- S. Miller" <davem@davemloft.net>
-References: <94d7d5c0bb4fc171154ccff36e85261a9f186923.1755661118.git.calvin@wbinvd.org>
- <CADEbmW100menFu3KACm4p72yPSjbnQwnYumDCGRw+GxpgXeMJA@mail.gmail.com>
- <aKXqVqj_bUefe1Nj@mozart.vkv.me> <aKYI5wXcEqSjunfk@mozart.vkv.me>
- <e71fe3bf-ec97-431e-b60c-634c5263ad82@intel.com>
- <aKcr7FCOHZycDrsC@mozart.vkv.me>
- <8f077022-e98a-4e30-901b-7e014fe5d5b2@intel.com>
- <aKfwuFXnvOzWx5De@mozart.vkv.me> <20250822072326.725475ef@kernel.org>
-Content-Language: en-US
-From: Jacob Keller <jacob.e.keller@intel.com>
-Autocrypt: addr=jacob.e.keller@intel.com; keydata=
- xjMEaFx9ShYJKwYBBAHaRw8BAQdAE+TQsi9s60VNWijGeBIKU6hsXLwMt/JY9ni1wnsVd7nN
- J0phY29iIEtlbGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPsKTBBMWCgA7FiEEIEBU
- qdczkFYq7EMeapZdPm8PKOgFAmhcfUoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AA
- CgkQapZdPm8PKOiZAAEA4UV0uM2PhFAw+tlK81gP+fgRqBVYlhmMyroXadv0lH4BAIf4jLxI
- UPEL4+zzp4ekaw8IyFz+mRMUBaS2l+cpoBUBzjgEaFx9ShIKKwYBBAGXVQEFAQEHQF386lYe
- MPZBiQHGXwjbBWS5OMBems5rgajcBMKc4W4aAwEIB8J4BBgWCgAgFiEEIEBUqdczkFYq7EMe
- apZdPm8PKOgFAmhcfUoCGwwACgkQapZdPm8PKOjbUQD+MsPBANqBUiNt+7w0dC73R6UcQzbg
- cFx4Yvms6cJjeD4BAKf193xbq7W3T7r9BdfTw6HRFYDiHXgkyoc/2Q4/T+8H
-In-Reply-To: <20250822072326.725475ef@kernel.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="------------hfpDXnSIPbOLhor0a8RG205G"
-X-ClientProxiedBy: MW4PR04CA0110.namprd04.prod.outlook.com
- (2603:10b6:303:83::25) To CO1PR11MB5089.namprd11.prod.outlook.com
- (2603:10b6:303:9b::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AAB4230BCE
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 20:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755894418; cv=none; b=m82wXLwuOpw8FMPLWr3XgjW5ACNXQegWoJzxwNAq838G4qQoEuWV2/x0LPhqRRKqIULotgBJ+FFz0KFUmBHIQJeoNKMXTuKKPYbxqta5bMh5GPBWbV7vMPo3iSd5ou8/A6h/rZpzI3tieHZwfKPpqaNf1kanqkSsSQgaGs00/Z8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755894418; c=relaxed/simple;
+	bh=r+bCRhwqqwoB96EGu+SOIw3M/48tWE3cWj2qR0ZkJ4M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=G3Y1MI+hD+q/qXCpOdjTXrHNR0QC/3R0iwUpfoxM1nvk1Qdtuj9equUZ9jCgG4ka58+t3kQ/HE/Cgmxy1mc4NBggqMOvanULHL1agEWE3YVaMRYucWG39oz3VWoVyKWg0RcIpr8cL295YtTmX8saHgHckl+9f9oXBbjXIWvfGaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=owXANOZe; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MHZxTH005089
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 20:26:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=UgIXFJkpO+RIibSdUx0jxA
+	E3y3S+KknfeJwPxQEopYM=; b=owXANOZeCtAZGsKEHwDz8foML/ifHtGy2CXVRG
+	+WmtyUipbdvcF1DO5RTp+/zbunZDBpbjJcpuV7v2QAwINyGNluq5APg4KwHkbMjI
+	8Bk+hiySA1YdzR3UKuz8PK9c7olTGhk1QCxVIEjACsIIcnd/6m8wxM2cK3V19j4m
+	CBpvlJItwTdNXaQg7ZRg3rIDkHPaJ8uz24xxrWa/Cl8UqgG81w+9w5Qo/oYDqBzn
+	IcSpRrRk+L1iw6INmiOOEQbNWY9z0fb8BUFK3yzOp0uNZyuIFtDm1x3IrxJJQ5Vw
+	cpP0eraqPjhNbgqmGbtAt+E0v/trqoVKlrVLJ+DFMWV2+WdQ==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48pw3drd5g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 20:26:56 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b471758845dso2238564a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:26:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755894415; x=1756499215;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UgIXFJkpO+RIibSdUx0jxAE3y3S+KknfeJwPxQEopYM=;
+        b=c1fEIMouXZGYqG4hZVvuckpzgEr56XuBX9xoXpqL9GgbL08AYn2Oj1ysTXdCZJKv/2
+         5q4RuomEiAbOM34Qa9yh6adeXWYRup+C4mBDkOF1o2J3aRjKtRx+q/BvLqo/Yd0tn54d
+         hyA3SO+ThS1zYHjmrXuq8rp5OGSogJ84iQhyzHCchoJrcp+XpztlDqdg6YMjvDPtOdf2
+         OhSMJjM42QRWqYj3BWn4K0hpJK7C2it6GX7Mzg5OxuPk7w6zLCzISRsJ4gfk/h3bYq30
+         aUwamuRkU+NA/ydzSaIj2hKhu0FGxUETbxRxR4IeII+jTegyjMxACFw0Ie3hhEPWwL+L
+         iHLw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKZLaQPVuIPXxm66wwZyo+BsyqE9jMmdLJL52qsY2fAFOnx57LjxDkZmYHT1WT8i1J2R7EVXBJf74pzIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbFd/X7vmdG3mdWOdX64sasNd3kfmZLTwyGY89CjfgMTHsOC8o
+	ERUNTnF2dXWqhx0eB+n3uFNNUldzaY7lW0KnUWxu9hwTBCk3b3AAJGnKy5joyMh+XEgyj7LDXK+
+	kknRuk1uL8107E5+wzqb6GgoKtO0kyFk23XnwCof58BM4CVEmZ95pTH/q2oqPtBxZ5vBDG3s1MT
+	Y=
+X-Gm-Gg: ASbGncvnzEJTw4IijG5auq7k+BNfjKDrABKzxX8nM13cV4cX+Hq7tdVF0NojngZj0a/
+	ZNZY6n9Ez17RBrsp7XEheYmEXq4Z8XCGWgDPSnalcTbqPvNPanH54bdZDfog0BrnIXnwyGEzOBQ
+	S1y206clCHmAG3D4PtuuFJY63FC6X+l356gCCYBWP3bWe9XiIqI0MaxD1F0WFGZ68zzOZC03D9A
+	J4vN2ERovQ8aG4aMtlni+/cbctNk/E020PlfTyd/VPpsjR6pAdSZENMqPzWAW2B4vM1Hpyiaj1r
+	iezcmLcQYm/+ds5D4PiFQT7u81uLBbd2IAET0xv03jwyNSBjus70ZZI3d3S1TArQJLEyXz7BbkN
+	UNmRf7YPCnTivSJuzY+fj3ACfgw==
+X-Received: by 2002:a17:902:e841:b0:240:3c62:6194 with SMTP id d9443c01a7336-2462ee52164mr60159075ad.20.1755894415327;
+        Fri, 22 Aug 2025 13:26:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG47RS/L1I592eDMrwsjo+HxwT/fuLxsPYqoHAKRchQq78tSDNlrkN00v2RNhPxUTPJiWeE0w==
+X-Received: by 2002:a17:902:e841:b0:240:3c62:6194 with SMTP id d9443c01a7336-2462ee52164mr60158755ad.20.1755894414862;
+        Fri, 22 Aug 2025 13:26:54 -0700 (PDT)
+Received: from hu-kamalw-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466889e111sm4335005ad.145.2025.08.22.13.26.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 13:26:54 -0700 (PDT)
+From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+Date: Sat, 23 Aug 2025 01:56:39 +0530
+Subject: [PATCH] regulator: pm8008: fix probe failure due to negative
+ voltage selector
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|DM4PR11MB8226:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3c37ea44-9632-4115-9f2e-08dde1ba0b3a
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?QWgvR3VMZStlYlU0eG5SRjRoUHBUdlRZM3dkaTZiNjlxNklUSStuaWI4YlRs?=
- =?utf-8?B?OGRLSWxyV2lIR3E5bTRNMHhDbWZaQXc3NkE1eC9mMWRxTnNhY09hdUxZTGJw?=
- =?utf-8?B?QjlVQ2tKUFVQU2cweDNiS2JveU45SFpNTXVqbHMwRHhia1BUN05xWmxXMnRW?=
- =?utf-8?B?Q3BrWlkzcjQ1S1NWUWlDOHFXSzY2N1duVmx1VE5mVU5HVTZXMC94R2E5QzVB?=
- =?utf-8?B?QlpDbkZxeUprYzd2a210UjREdVFReHBvZ0hWcHFwcEY0MjRPTHlaUmtFYU9N?=
- =?utf-8?B?UFFuOUQvaGxnN2x3cmRZU25qY2R1VW5TUTV3Y2RvRkVNSWNlRTJtS1JvT3cy?=
- =?utf-8?B?Um9jWXA1SnFpa210MThIdnQvU2VldnI3R09SSjhPN3I2ejlad2pMWTNMOCtk?=
- =?utf-8?B?a0loYlR6ZDFIMVpGckxYbWhqTTlMRFV3TGhZbVA4dVh2TkpVeERua2ZudWR6?=
- =?utf-8?B?VzBBS1BRNHhLZ0dEM25pb3BTNDZsTDhES1lXUWNkV2xhMVl1SDhkdmx2dWtt?=
- =?utf-8?B?clV5RUJkcFR5cUI3MVZpcVpFQmgxOE1CRVE1YlM2OEVJdUxTQjM4OEJnNnRh?=
- =?utf-8?B?K3YrcGlZTlZFY3MvNnlhZWx6RVhZcGsxM0R4NGtERVVmUzNBRUFuMENHYm9a?=
- =?utf-8?B?R0E1TW10dFhoc1FQMjNHUGQyTGExbG5DemJnRVV0aStkWDRtaEkvQlRwNWkz?=
- =?utf-8?B?S1gybU9odk1mRjlYWHRaZ2RIKzUwL3BZa0gyZndDNG1RT0Z2UmNrTGxwSmFK?=
- =?utf-8?B?b0I2ZHIxNWt0UE5pU1BSdVRjTVhCMForZWdzdHVXVjByZVpyUnBKSkRMTmxP?=
- =?utf-8?B?dG9WellkbTlkZkdLMnU1RXVqRmlnSG9OMFRqVkZSMi9mbXZFeWNLeFFpVHRZ?=
- =?utf-8?B?U0c4aFlTbklEazRKQzJNNmRPKzVNME5kVnhPL0JuWm82TzRTUVFudUZNMVJ6?=
- =?utf-8?B?RTBaalpSNTFuQ0VGd0J3WWZ4R0ZTNm04UXNtRk16NUZTYlFjVzBuVlZnenFj?=
- =?utf-8?B?YUp5VzJnSkt6cjlNTHBla2FqTm9TdjVJQ1ArSWo5dkFRL0ZZdjFYY0JuZFFw?=
- =?utf-8?B?VGVWdEVGUGY2NC8ySlQxK0l6VGRuN0RDYzd2K3NKeno0MGVyeURxNThJVDFP?=
- =?utf-8?B?Z3hCbS9DRUtZcERzazczNmk5bDRBOWpYMGpoN25TbFFtRXEzOEM5WmlPa3J3?=
- =?utf-8?B?eE1BcGdBRktOaUFMK0NZRmNsb2JMTnFQb3B4bUJ1TTFseC85a3U3ZU4xUUV3?=
- =?utf-8?B?SkIvaVhiSFFIOHBqUVhEd2tjM0F5aUpRNm1PYUYyQ0NKdVE3T3pOVzR6NTUy?=
- =?utf-8?B?UWlyRHZ4UlZrTTBCZHRTVERJQU82UnJnM2tpQmhVY2xiYXNVNWxpUGdhZ1Fp?=
- =?utf-8?B?OTNUNUlERldBMzZvcm9lV21KaEtqYW9kRWswMVRsMHVSVUljQUVFeUlRSU8z?=
- =?utf-8?B?QTkycUo2S3BaeE04a29KeGJsalJYcHkwZnFWdG9MZHRXOTJPM1pGUjI5Qkpt?=
- =?utf-8?B?ckp6RXJCK2l0bnB0VXVnVUwvQzVNOVU3QjBKTWc5VkszZHlEZkJGS0JnL05L?=
- =?utf-8?B?TXQxZ0k0Tkd4NFVObXQxdmxYSytxbTBOdWFKTWtvdnRsOXF0SFE5N0VWL2pn?=
- =?utf-8?B?Tk9PYUw5a3RUNnBQRWVzdENwTHo5OVIyVmd4d1lILzJBRkRyeDRrQ0k4cmhJ?=
- =?utf-8?B?TEpqdVN2UTVxOHFTeS8ra0Q1eURETUw0ZnBWZDBWZXd5M0N1TmUzVmY3dHJR?=
- =?utf-8?B?a2IvbGk5YVprN09aQWhPM2crYTJsc0FOSTUzcHFrbWhRN2xCakkreFBNcDFH?=
- =?utf-8?B?aG9BZmV1UEJzRHRBS213NmlRbGxQZVV6Q2JUcU1Pc3VEcTNkbklPTkEzbTU1?=
- =?utf-8?B?MDFlanMydFF3YW8xT1ZhRE9hVzJYWG9MWWpMQUF4Q2FpT1h1ZVhqdzFxanJs?=
- =?utf-8?Q?lky9j9IsXCI=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?U3lkNy82emFDSlRhU1kwT0xWNTdDbGk5U0ZGUW1YYlcrWnNHbnFDb3JSUHJT?=
- =?utf-8?B?TndvYWtGLzRNbFEwc05yRzdmNjJ0RFdZbVRIOCtiaU8vVjNRWE04NDJFWkxu?=
- =?utf-8?B?aXd3elhsNkw2UTdKb0prbE9CTnIyTGltNGpPa3JjNytLVTBjcUNmenBnckc3?=
- =?utf-8?B?L1BoSTR3aU5xZTJBanhBUllxeEFzaHVyMXZzbjkrMUpvQ1NmRGtWL0xGSmRq?=
- =?utf-8?B?UkdXaU40SFFnV2VYUXdPaFpMODNrOEt3SWovQXlQcHlMSFUwci8zN1ZxUGpQ?=
- =?utf-8?B?M3NjekRiZDdMN1dvVlJkWGtWYlk2cGtBdGwrOEk4eUwyQTZzeE9jM29jSG9F?=
- =?utf-8?B?SWVDRURlOWQ1RFQ5S2JROU96d2hMb01vbVdMcE1SNnl5WFdoc1VkL1pDMFBP?=
- =?utf-8?B?MXhUakFRNXZjRTNEU2FrWEMwOTA5T29hTEI1VENIT1p1eTdTZzR0SklnS1RH?=
- =?utf-8?B?aGN2aUxZbG40Vnl5ckw0dVZqS0RyU3pvNnhmWklvczJGYnRZbDBESEdQZERn?=
- =?utf-8?B?MFZkVSs2Tlhha01oZHQ4ZWFpNUp6L3FzV3Y1eXJxVTNKVU1sTjNSdTg4SE8x?=
- =?utf-8?B?dEhkaUVMckR1WnQ4YUl2ZFVWYUp0cDFvdUo4YzM0bHpXK1FVNnMwMUlXRmJO?=
- =?utf-8?B?dHZGUEpqZXJQb1J3N0RCcnlMSWhWSHlOcnBpcmR2RGQ5bFo1N096ckxXNWdQ?=
- =?utf-8?B?S1RINHRmK1I1dnVXTGtpUFJvbXQ3WGVNMEtWR2tuQ1pvS2d5NlR6NG1iWVZa?=
- =?utf-8?B?cDRGYmNsRWY2N3ZVcEFmSTVDT2RXTHpiOGg1TEJ1UlZZQk5UTmZ2SnFLdStS?=
- =?utf-8?B?Y2RSSHJTZWJvSVBubm1aK2ZuWHAyLzdMd0IwT2p6b3pTLy9ScVBQVEpwUnQ4?=
- =?utf-8?B?dXZCZnZVNS9UNjBxNndPUHNWaGs3NDZQV2UvTU9wRVdnQklTMU1tcERiWjY2?=
- =?utf-8?B?ay9YYWxjbzJ4Tlkza0JCMXdwT2M2a1NaaFRtR0lmQnRvZkoySnhwaFFVRmx5?=
- =?utf-8?B?UDhVT0ZCelhidWZzRUw4UjBBVWp4aDJrTTVJZ01sRUNLTzFYd3M5RmNoOVBv?=
- =?utf-8?B?NUoyNUtabndObHJGTUU0MG55REhhTHpOUXNiU1RTbjBQZDU0KzNVaElTc28r?=
- =?utf-8?B?NkxNMTlTQUZmRTRKZG9OY3o1K0tZN2RnWGc0c1djZ3Nia0dIUnl0MVVieWVx?=
- =?utf-8?B?V2g5K05nUWFZUzEyb3I5RWlSUzlFZnN6KytibnUyYzBqY1RjeEJZejFMdUwv?=
- =?utf-8?B?VjBVTXUrcG1OTDFMT0ZPWGo0MHVwYm9ZSVI3U2pjSzlHc3hYTEdsa0JFS0tK?=
- =?utf-8?B?Q2NTdDZyZi9pYVpkRXpiL1JzNU9kYzhRakZvK28zeE5Ic0Z6WGtKUVVQWlNx?=
- =?utf-8?B?TW5lbFhOYTR5MkF1V2k5TVp1N2c4emxPczlUczFmQUhnUW84NVZGQnRRZnNJ?=
- =?utf-8?B?NjFBeUE3bHlEbEV1bVRtQm9Nb05VQmRJVithMTZmb0pmMStvdGR0VDRoN0c4?=
- =?utf-8?B?RmVGN3c0cWNqdzZZT1A4dzQ1aG9RckExZ0hhSE13U3Mxa3NXUmFlSVl4TGxp?=
- =?utf-8?B?ZkJNekhNK0JkRVZPeHIxam85N015aFVKdERGbXNhYkNWNzFKQUhlUllrY09G?=
- =?utf-8?B?anVOdVBsaS8wZUsxVnYyalVrV1FVc29aQ0pnNGF2OGw0b0NpMEZoWHBUWm9Z?=
- =?utf-8?B?aWZHQ1M0ZTFPRm5UWnR6QVdWdDRCMDBJOExyV3pnaUNraU52TjdZNXdmUkxt?=
- =?utf-8?B?T1hDNnZwTjlVNDhXMlgveW0xdStnUjl1c3NtK0UxK0lrTHJiM0Nyb2doR0JH?=
- =?utf-8?B?dWVyQUFBcEdFb21zUktSa2Y0QjlBMlFDZ3RDR0tkUm9hQTQ2aU5qUzFXdmJk?=
- =?utf-8?B?cU5kYTdHZSt1Zkk1a0t1cVFBVVVLakwwQzdIWGM2Y2t6YjZkSkQ5bmdJT3Ew?=
- =?utf-8?B?UHg4dGVVVG9OdmRhWTZqQkNLSWJNdUF0S3grVlh3TEgxRmtKeTJsUlEyZ282?=
- =?utf-8?B?UWwyZ2FocnRQNE9wKzZnOTNVSWMvdmpad24rQjhONHhOa1VOVE9XaVR5aVdp?=
- =?utf-8?B?ZTEyRW55MXEzbjltallNN1V6STJBL21QQWNQeS8xTGhEVVl0WEI2YmVyUzR0?=
- =?utf-8?B?eEttcEIySEgwR1lEZnFrbmNTMkdRR3hlTnF6SGJuOUk1eGliVEJXeWRlM21k?=
- =?utf-8?B?OFE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c37ea44-9632-4115-9f2e-08dde1ba0b3a
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 20:25:32.9005
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RBgurGGh/a6zTNzaHRIZLo1oh6ZmI6v7bxp6Ecf7JUFcYOCHskU/HWHSwdBykj9RznVYoXkpNCPLIm5SpKSFs5cVyyHFLdJWqjG90OjZJcE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8226
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250823-pm8008-negitive-selector-v1-1-52b026a4b5e8@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAH7SqGgC/x3MSw5AMBRG4a3IHbtJ1atsRQw8ftyEklZEIvauM
+ fwG5zzk4QSe6ughh0u87DYgiSMals7OYBmDSSudK6NTPjajlGGLWU65wB4rhnN3XCZFVlRl3mM
+ ChfxwmOT+1037vh/t4qtzagAAAA==
+X-Change-ID: 20250823-pm8008-negitive-selector-71646975befe
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        johan+linaro@kernel.org, quic_skakitap@quicinc.com,
+        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755894411; l=1517;
+ i=quic_kamalw@quicinc.com; s=20241018; h=from:subject:message-id;
+ bh=r+bCRhwqqwoB96EGu+SOIw3M/48tWE3cWj2qR0ZkJ4M=;
+ b=2yNUz1i7l84ts1ajeYFFAYgXjt83VbihnQUt81z5xL2suioZk9jrw5w58DGXXRAvfwxUMTEch
+ vReY+SKATQfDoeRAyfOhPa/PUUHVUrJ8CC1R5DErdME+ueN4002sshn
+X-Developer-Key: i=quic_kamalw@quicinc.com; a=ed25519;
+ pk=XbPE6DM5/mJi2tsiYwMCJCZ4O5XPMqColJRlGVcM7Hs=
+X-Proofpoint-GUID: BFLAl_OE2nxyqmoS4ccxXaip9AVJ-w7p
+X-Proofpoint-ORIG-GUID: BFLAl_OE2nxyqmoS4ccxXaip9AVJ-w7p
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIyMDE2MSBTYWx0ZWRfX1mTo/D82N7ZB
+ l2ToB3TIXj4GaWEnwDpcGn9mutqnRN6EzkKH+VdqZ2yKvuicyL0EXbOI61xexpvZ+6DNyGDeYER
+ +CADZ1EOHXb6bbqGpUQvMH550/M0Js0QQKupERUSHCHeUocp5Tov9V0x8f+8eNKWRsXdOmXuHxh
+ uHvYILnvUxXjd3rWJFZBqfnMSAJPAbG3GxBLxtRvDcdk1Tubc97Ecliinv5dbFqVGmRGw/kemRK
+ T1VKDsJBMbV976rURfkUpluUZfNHx6dndjpH8E7nTDXTI/G43IXP19oQJisfHI8my/yCtq7kKa/
+ LoPN2g37Bk28GsQA91ccm2ON2xK0+2ZvJoLH9Q1ptQBCwVa/jSjKlmSrEM4PCZM4290fwzrBTSm
+ tZt8aTGa
+X-Authority-Analysis: v=2.4 cv=WId/XmsR c=1 sm=1 tr=0 ts=68a8d290 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=qP3kmwz9wx84Yj0DIhIA:9 a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_05,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 clxscore=1015 adultscore=0 phishscore=0
+ bulkscore=0 impostorscore=0 priorityscore=1501 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508220161
 
---------------hfpDXnSIPbOLhor0a8RG205G
-Content-Type: multipart/mixed; boundary="------------YStY08v28PXaTJcAoZnxHd4K";
- protected-headers="v1"
-From: Jacob Keller <jacob.e.keller@intel.com>
-To: Jakub Kicinski <kuba@kernel.org>, Calvin Owens <calvin@wbinvd.org>
-Cc: Ivan Vecera <ivecera@redhat.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- linux-kernel@vger.kernel.org, Jedrzej Jagielski
- <jedrzej.jagielski@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Eric Dumazet <edumazet@google.com>, Tony Nguyen
- <anthony.l.nguyen@intel.com>, netdev@vger.kernel.org,
- intel-wired-lan@lists.osuosl.org, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>
-Message-ID: <68ac693b-57f9-4403-85e9-8ce90d50aeb1@intel.com>
-Subject: Re: [Intel-wired-lan] [PATCH net] i40e: Prevent unwanted interface
- name changes
-References: <94d7d5c0bb4fc171154ccff36e85261a9f186923.1755661118.git.calvin@wbinvd.org>
- <CADEbmW100menFu3KACm4p72yPSjbnQwnYumDCGRw+GxpgXeMJA@mail.gmail.com>
- <aKXqVqj_bUefe1Nj@mozart.vkv.me> <aKYI5wXcEqSjunfk@mozart.vkv.me>
- <e71fe3bf-ec97-431e-b60c-634c5263ad82@intel.com>
- <aKcr7FCOHZycDrsC@mozart.vkv.me>
- <8f077022-e98a-4e30-901b-7e014fe5d5b2@intel.com>
- <aKfwuFXnvOzWx5De@mozart.vkv.me> <20250822072326.725475ef@kernel.org>
-In-Reply-To: <20250822072326.725475ef@kernel.org>
+In the current design, the `pm8008_regulator_get_voltage_sel()` callback
+can return a negative value if the raw voltage value is read as 0 uV from
+the PMIC HW register. This can cause the probe to fail when the
+`machine_constraints_voltage()` check is called during the regulator
+registration flow.
 
---------------YStY08v28PXaTJcAoZnxHd4K
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Fix this by using the helper `regulator_map_voltage_linear_range()` to
+convert the raw value to a voltage selector inside the mentioned get
+voltage selector function. This ensures that the value returned is always
+within the defined range.
 
+Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+---
+ drivers/regulator/qcom-pm8008-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/regulator/qcom-pm8008-regulator.c b/drivers/regulator/qcom-pm8008-regulator.c
+index da017c1969d0cc2c6347b68c37518ea8a7ab44a3..90c78ee1c37bf9bf69f43e0bb7798fed94590e95 100644
+--- a/drivers/regulator/qcom-pm8008-regulator.c
++++ b/drivers/regulator/qcom-pm8008-regulator.c
+@@ -96,7 +96,7 @@ static int pm8008_regulator_get_voltage_sel(struct regulator_dev *rdev)
+ 
+ 	uV = le16_to_cpu(val) * 1000;
+ 
+-	return (uV - preg->desc.min_uV) / preg->desc.uV_step;
++	return regulator_map_voltage_linear_range(rdev, uV, INT_MAX);
+ }
+ 
+ static const struct regulator_ops pm8008_regulator_ops = {
 
-On 8/22/2025 7:23 AM, Jakub Kicinski wrote:
-> On Thu, 21 Aug 2025 21:23:20 -0700 Calvin Owens wrote:
->>>> If you actually have data on that, obviously that's different. But i=
-t
->>>> sounds like you're guessing just like I am. =20
->>>
->>> I could only guess about other OS Vendors, one could check it also
->>> for Ubuntu in their public git, but I don't think we need more data, =
-as
->>> ultimate judge here are Stable Maintainers =20
->>
->> Maybe I'm barking up the wrong tree, it's udev after all that decides =
-to
->> read the thing in /sys and name the interfaces differently because it'=
-s
->> there...
->=20
-> Yeah, that's my feeling. Ideally there should be a systemd-networkd
-> setting that let's user opt out of adding the phys_port_name on
-> interfaces. 99% of users will not benefit from these, new drivers or
-> old. We're kinda making everyone suffer for the 1% :(
+---
+base-commit: b9ddaa95fd283bce7041550ddbbe7e764c477110
+change-id: 20250823-pm8008-negitive-selector-71646975befe
 
-There already is, see my thread here:
+Best regards,
+-- 
+Kamal Wadhwa <quic_kamalw@quicinc.com>
 
-From
-https://lore.kernel.org/netdev/883ee734-b9bd-42be-b072-23640fd34fdb@intel=
-=2Ecom/
-
-> If you want to stop including the "np<N>" to the device names, I believ=
-e
-> you can set the ID_NET_NAME_ALLOW_PHYS_PORT_NAME=3D0 via udev propertie=
-s.
->=20
-> From what I can tell searching online, this can be done by setting an
-> appropriate entry in /etc/udev/hwdb.d/ .. i.e. adding this file:
->=20
-> /etc/udev/hwdb.d/50-net-naming-disable-phys-port-name.hwdb
-> net:naming:*
->   ID_NET_NAME_ALLOW_PHYS_PORT_NAME=3D0
->=20
-> after adding this file, you also need to update the hardware database w=
-ith
->=20
-> $ systemd-hwdb update
->=20
-> From here, you should be able to reboot and the physical port name woul=
-d
-> be removed from all devices which have it.
->=20
-> It appears to work on my test system running Fedora with systemd v256.
->=20
-> At any rate, this is fully an artifact of how systemd renames things an=
-d
-> I do not believe we should be working around that by modifying our driv=
-ers.
->=20
-
-I still stand by this, but I can understand the motivations and accept
-the changes to allow opting out of physical port names for the older
-devices.
-
-> You're unlikely to convince systemd folks to change defaults, but you
-> might be able to convince some distributions to change their defaults.
-> Either way, you are best to work around this on your system in whicheve=
-r
-> ways you see fit.
-
-I don't know why systemd changed the default, but that change has been
-there for sometime. At least a year or two in Fedora if my memory is
-accurate. The fact that the default has changed but gone unnoticed
-because it is only triggered by a kernel update is I think part of the
-challenge.
-
-We can keep applying this workaround to "legacy" devices so that at
-least those ones don't get changed randomly when we add devlink
-support... but I think the real problem is ultimately outside of our
-control in the hands of the systemd and userspace folks who chose to
-change the persistent naming scheme default.
-
-Personally, I agree the extra part of the name is useless for my setups,
-and I have since configured all my systems to exclude it.
-
---------------YStY08v28PXaTJcAoZnxHd4K--
-
---------------hfpDXnSIPbOLhor0a8RG205G
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQQgQFSp1zOQVirsQx5qll0+bw8o6AUCaKjSOwUDAAAAAAAKCRBqll0+bw8o6ISe
-AQDQkqB4xmZsxxxBHUxlfWtzpU4bFDgbZKzeUahflFzE+gEAuR01rl/sOppqmolgQkdIQ+TOu23J
-i6opX1CWD9HSXgg=
-=mIUe
------END PGP SIGNATURE-----
-
---------------hfpDXnSIPbOLhor0a8RG205G--
 
