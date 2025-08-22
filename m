@@ -1,150 +1,310 @@
-Return-Path: <linux-kernel+bounces-781238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98FC5B30FA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:55:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8DF1B30FB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 799281660D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:55:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A0685A7BC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D106C2C327D;
-	Fri, 22 Aug 2025 06:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YykTIPYK"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315592E62C3;
+	Fri, 22 Aug 2025 06:58:57 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22542E2281
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA3C296BD0;
+	Fri, 22 Aug 2025 06:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755845715; cv=none; b=Fab89mbtn0xCmy/hNNsPpzYqJny1gaDNiD3Hp72CZBdNZSxIkyaBI8ig9rdmUwUn6lmpTnyhccbffMXL2NaOXRzxWSjN6JNqEjHopYGJ10U1tgUG05kvPH/dOT2MJizVLS/IXGgBDkxRXwYzWAMVMXW3908Db837ElUKxInCFFo=
+	t=1755845936; cv=none; b=nOH12nYrDG/Xm9VY5RsIYU4J2w0qJhtvkS2w7S+WEBFwGT3VxcKNisLqYBycX1/HbEIRPORVS1QFlpMXZ68LtteCi6s16NJdY757FggEcEhc8VDD9huJVY0dh0UGCcfqiNZgQVigbXRkMi+TJYrZGj2T9qpHi1a5PxiWzVsC1V4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755845715; c=relaxed/simple;
-	bh=EWHdzyRT33IHKlwkAtAepytBgh5e0kzufrx+qy60ECY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fh1JpTuk9FXgqnrS0PC7ckTEXnBBWF/elxKh17iEt9KHwyi/3LKkj7CaDTd5GO4BKwniwO/tCk7rZWC7kvSWX0P18cu1OI65tsGzkmoPB6vMafeJS48LIIpAZkPmV+CnicK/yb1eckj6ovsfz9KMfc1VX0+91NCdca1Dy9uvI44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YykTIPYK; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e2ea79219so2197547b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 23:55:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755845713; x=1756450513; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bjicZI/1Nbr8qAa/3VcUbv7hfNRQcnbsv7M4jPSglw0=;
-        b=YykTIPYKV3nDmtOadZW4FF7zUtzPipM5DuFSrcLQZzI+iXYbd8bPHvItlkcBKVcNK2
-         ZvRiSCbi8ykK1ixRIqNVVdD6v9mZGRO8uQDVG9fMoM21VUU2pHwZPO1V3X+V4prUAcI1
-         EApeBiqvUT0UghRt5AtnghXMn1Ykm2iGXWADeUuf1/M4U/djhWNzfFszrtIyje+oB4hK
-         2sULttvrecfJXDQwP9C37eH/tbHo57Fb6rj8cR+WhEoKj0io8juZVrVtcdDCdAUHkyRc
-         /PpdjoRWuHS2z9IkZRl2EUrMawj4PDA/hzO3lFzOzQ5T2LiNz3+ryXRC6M50+PJ6jp7z
-         3WGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755845713; x=1756450513;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bjicZI/1Nbr8qAa/3VcUbv7hfNRQcnbsv7M4jPSglw0=;
-        b=miTY3P6ZAFGOBis9OntU3obS99SJjijxDsvuUdtXu1DOVfl+zvm55wT1owTSH70vrs
-         Li3WPj6U6VwV2MThMo095CvnY7ux13WZWh8ocvq15nhNzhu90l8SJ/AWfsNjhrh5DpwQ
-         1fGnbR/xrS+8YUfT93+FnNCFpdv2SMMU6DiCZ9HRHTXvtQ4deFMlP6xFPU7pK/fz8oH5
-         11zq22bb5BKcLECD2vUA9dc0ESEZZNSBapig0Wwxw02Pzg6I5Ljd90BLQ5ifsOqs+8Fz
-         rOUJGMTU68xw/3i4BOzSfEmLOzzJjtz35TmXLzJIRdiJ3jmD9wfky8DKovi8NLJP+xIo
-         pS6w==
-X-Forwarded-Encrypted: i=1; AJvYcCX4QxUZWq4+oIR29wKNyoyJOUAsCMDH0RySZuJiMtjwYXDVgpYsZtbdKy8JniTo75y8MnFguE9tyrrBn94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIqnku+Q6OugDi7mY3nVWjmIG2SOrxnZLc+y5VATGddV5tWtHX
-	zzL90UFrdv3ftnLNuV1JyFNPJlxCbPrB/AVaDHXfCctLIGLQqBcROXjEQcQ6ScsPtHI=
-X-Gm-Gg: ASbGncuMYb4X4CfXrDBEqjF0bShBhfofy30MRljMhm0t/wPK0uFoAiamQ1RtvLU8Wfz
-	mgnFaXpSTqtjEhQ3RhSCjD77TMG8xa++5O3zQXpARqEDJtOw2GBCVVHK/JO36BQNP6rJ4WaDQpG
-	oVPahDcKU8Qc06bcmksjj+LYkTjUY991xxlxltN7ZM4HHsYRL8C5BE2S1M7Dl4W4i82JmruPY2m
-	CJR65bPOu/0uZdM43uDLotL3sZjwNjT3GYprN2TZYKqDmsFg94v7EPOjRJXOKFMo4CBdylWmnn5
-	uxRoIwCzZ8XkWPfA4KM0s8+B3rXEN1re3tTwnNzOrNCPK1r4DFb961HxQ+ZlCh0gAliIYZ2GCyr
-	iyPiDyRpJjVVfb4oEG/q+z7Mp
-X-Google-Smtp-Source: AGHT+IFqTCtn1vTBHrNEXFDiI/RKgrZ8CU3yklaDBqhgIBX1zop4EhNr7+iPGnFTdss9iSbzazknMg==
-X-Received: by 2002:a05:6a00:2355:b0:76b:e0f7:42f with SMTP id d2e1a72fcca58-7702faaf381mr2736161b3a.19.1755845713053;
-        Thu, 21 Aug 2025 23:55:13 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d137dfbsm9903213b3a.44.2025.08.21.23.55.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 23:55:12 -0700 (PDT)
-Date: Fri, 22 Aug 2025 12:25:10 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Judith Mendez <jm@ti.com>
-Cc: Nishanth Menon <nm@ti.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Bryan Brattlof <bb@ti.com>, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/3] cpufreq: ti: Allow all silicon revisions to support
- OPPs
-Message-ID: <20250822065510.3vlbjwakt7ts75gk@vireshk-i7>
-References: <20250818192632.2982223-1-jm@ti.com>
- <20250818192632.2982223-3-jm@ti.com>
+	s=arc-20240116; t=1755845936; c=relaxed/simple;
+	bh=DtBOtyja9oaFsqArnMz5V4Hl/4aCTCe6Aw+SSt12Z80=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=fmUx6MRkGMj+kH+temoBVfILM++Z5WgJpYSv2MKg3nwEZmJvG6csheDVwS6b2k1PIqvosd/mknIRGsPRrUnkb2u4fjOT7/WemEwtTgONUH8yPm+oLAipowSHInLAMk8IqESXDMihKH5+pTF9IDVYa6iEDRCaAHV9J+E6hPhyvTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c7WHv1LsbzKHNXd;
+	Fri, 22 Aug 2025 14:58:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id AD0A11A1446;
+	Fri, 22 Aug 2025 14:58:50 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP3 (Coremail) with SMTP id _Ch0CgCXXNcpFaho8_HCEQ--.46529S2;
+	Fri, 22 Aug 2025 14:58:50 +0800 (CST)
+Message-ID: <a309c2b5-5425-428c-a034-d5ebc68cb304@huaweicloud.com>
+Date: Fri, 22 Aug 2025 14:58:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818192632.2982223-3-jm@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] cgroup: cgroup.stat.local time accounting
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: Tiffany Yang <ynaffit@google.com>, linux-kernel@vger.kernel.org
+Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Pavel Machek <pavel@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Chen Ridong <chenridong@huawei.com>, kernel-team@android.com,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+ cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20250822013749.3268080-6-ynaffit@google.com>
+ <20250822013749.3268080-7-ynaffit@google.com>
+ <552a7f82-2735-47a5-9abd-a9ae845f4961@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <552a7f82-2735-47a5-9abd-a9ae845f4961@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgCXXNcpFaho8_HCEQ--.46529S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Jry7tF48WF1UZr1xWFWUtwb_yoW3Aw47pa
+	yDA3W3tw4FqF12vr4Sy34qvFySgr48tw4UKr9rJa4xAFnIq3Wktr1xAr15WF1UAFZ7K3W8
+	Ja4Y9ryfCrnFvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On 18-08-25, 14:26, Judith Mendez wrote:
-> More silicon revisions are being defined for AM62x, AM62Px, and AM62ax
-> SoCs. These silicon may also support currently establishes OPPs, so remove
-> the revision limitation in ti-cpufreq and thus determine if an OPP applies
-> with speed grade efuse parsing.
+
+
+On 2025/8/22 14:14, Chen Ridong wrote:
 > 
-> Signed-off-by: Judith Mendez <jm@ti.com>
-> ---
->  drivers/cpufreq/ti-cpufreq.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-> index f7be09dc63e3..90c896d02649 100644
-> --- a/drivers/cpufreq/ti-cpufreq.c
-> +++ b/drivers/cpufreq/ti-cpufreq.c
-> @@ -311,9 +311,9 @@ static struct ti_cpufreq_soc_data am3517_soc_data = {
->  };
->  
->  static const struct soc_device_attribute k3_cpufreq_soc[] = {
-> -	{ .family = "AM62X", .revision = "SR1.0" },
-> -	{ .family = "AM62AX", .revision = "SR1.0" },
-> -	{ .family = "AM62PX", .revision = "SR1.0" },
-> +	{ .family = "AM62X", },
-> +	{ .family = "AM62AX", },
-> +	{ .family = "AM62PX", },
->  	{ /* sentinel */ }
->  };
+> On 2025/8/22 9:37, Tiffany Yang wrote:
+>> There isn't yet a clear way to identify a set of "lost" time that
+>> everyone (or at least a wider group of users) cares about. However,
+>> users can perform some delay accounting by iterating over components of
+>> interest. This patch allows cgroup v2 freezing time to be one of those
+>> components.
+>>
+>> Track the cumulative time that each v2 cgroup spends freezing and expose
+>> it to userland via a new local stat file in cgroupfs. Thank you to
+>> Michal, who provided the ASCII art in the updated documentation.
+>>
+>> To access this value:
+>>   $ mkdir /sys/fs/cgroup/test
+>>   $ cat /sys/fs/cgroup/test/cgroup.stat.local
+>>   freeze_time_total 0
+>>
+>> Ensure consistent freeze time reads with freeze_seq, a per-cgroup
+>> sequence counter. Writes are serialized using the css_set_lock.
+>>
+>> Signed-off-by: Tiffany Yang <ynaffit@google.com>
+>> Cc: Tejun Heo <tj@kernel.org>
+>> Cc: Michal Koutný <mkoutny@suse.com>
+>> ---
+>> v3 -> v4:
+>> * Replace "freeze_time_total" with "frozen" and expose stats via
+>>   cgroup.stat.local, as recommended by Tejun.
+>> * Use the same timestamp when freezing/unfreezing a cgroup as its
+>>   descendants, as suggested by Michal.
+>>
+>> v2 -> v3:
+>> * Use seqcount along with css_set_lock to guard freeze time accesses, as
+>>   suggested by Michal.
+>>
+>> v1 -> v2:
+>> * Track per-cgroup freezing time instead of per-task frozen time, as
+>>   suggested by Tejun.
+>> ---
+>>  Documentation/admin-guide/cgroup-v2.rst | 18 ++++++++++++++++
+>>  include/linux/cgroup-defs.h             | 17 +++++++++++++++
+>>  kernel/cgroup/cgroup.c                  | 28 +++++++++++++++++++++++++
+>>  kernel/cgroup/freezer.c                 | 16 ++++++++++----
+>>  4 files changed, 75 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+>> index 51c0bc4c2dc5..a1e3d431974c 100644
+>> --- a/Documentation/admin-guide/cgroup-v2.rst
+>> +++ b/Documentation/admin-guide/cgroup-v2.rst
+>> @@ -1001,6 +1001,24 @@ All cgroup core files are prefixed with "cgroup."
+>>  		Total number of dying cgroup subsystems (e.g. memory
+>>  		cgroup) at and beneath the current cgroup.
+>>  
+>> +  cgroup.stat.local
+>> +	A read-only flat-keyed file which exists in non-root cgroups.
+>> +	The following entry is defined:
+>> +
+>> +	  frozen_usec
+>> +		Cumulative time that this cgroup has spent between freezing and
+>> +		thawing, regardless of whether by self or ancestor groups.
+>> +		NB: (not) reaching "frozen" state is not accounted here.
+>> +
+>> +		Using the following ASCII representation of a cgroup's freezer
+>> +		state, ::
+>> +
+>> +			       1    _____
+>> +			frozen 0 __/     \__
+>> +			          ab    cd
+>> +
+>> +		the duration being measured is the span between a and c.
+>> +
+>>    cgroup.freeze
+>>  	A read-write single value file which exists on non-root cgroups.
+>>  	Allowed values are "0" and "1". The default is "0".
+>> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+>> index 6b93a64115fe..539c64eeef38 100644
+>> --- a/include/linux/cgroup-defs.h
+>> +++ b/include/linux/cgroup-defs.h
+>> @@ -433,6 +433,23 @@ struct cgroup_freezer_state {
+>>  	 * frozen, SIGSTOPped, and PTRACEd.
+>>  	 */
+>>  	int nr_frozen_tasks;
+>> +
+>> +	/* Freeze time data consistency protection */
+>> +	seqcount_t freeze_seq;
+>> +
+>> +	/*
+>> +	 * Most recent time the cgroup was requested to freeze.
+>> +	 * Accesses guarded by freeze_seq counter. Writes serialized
+>> +	 * by css_set_lock.
+>> +	 */
+>> +	u64 freeze_start_nsec;
+>> +
+>> +	/*
+>> +	 * Total duration the cgroup has spent freezing.
+>> +	 * Accesses guarded by freeze_seq counter. Writes serialized
+>> +	 * by css_set_lock.
+>> +	 */
+>> +	u64 frozen_nsec;
+>>  };
+>>  
+>>  struct cgroup {
+>> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+>> index 312c6a8b55bb..ab096b884bbc 100644
+>> --- a/kernel/cgroup/cgroup.c
+>> +++ b/kernel/cgroup/cgroup.c
+>> @@ -3763,6 +3763,27 @@ static int cgroup_stat_show(struct seq_file *seq, void *v)
+>>  	return 0;
+>>  }
+>>  
+>> +static int cgroup_core_local_stat_show(struct seq_file *seq, void *v)
+>> +{
+>> +	struct cgroup *cgrp = seq_css(seq)->cgroup;
+>> +	unsigned int sequence;
+>> +	u64 freeze_time;
+>> +
+>> +	do {
+>> +		sequence = read_seqcount_begin(&cgrp->freezer.freeze_seq);
+>> +		freeze_time = cgrp->freezer.frozen_nsec;
+>> +		/* Add in current freezer interval if the cgroup is freezing. */
+>> +		if (test_bit(CGRP_FREEZE, &cgrp->flags))
+>> +			freeze_time += (ktime_get_ns() -
+>> +					cgrp->freezer.freeze_start_nsec);
+>> +	} while (read_seqcount_retry(&cgrp->freezer.freeze_seq, sequence));
+>> +
+>> +	seq_printf(seq, "frozen_usec %llu\n",
+>> +		   (unsigned long long) freeze_time / NSEC_PER_USEC);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  #ifdef CONFIG_CGROUP_SCHED
+>>  /**
+>>   * cgroup_tryget_css - try to get a cgroup's css for the specified subsystem
+>> @@ -5354,6 +5375,11 @@ static struct cftype cgroup_base_files[] = {
+>>  		.name = "cgroup.stat",
+>>  		.seq_show = cgroup_stat_show,
+>>  	},
+>> +	{
+>> +		.name = "cgroup.stat.local",
+>> +		.flags = CFTYPE_NOT_ON_ROOT,
+>> +		.seq_show = cgroup_core_local_stat_show,
+>> +	},
+>>  	{
+>>  		.name = "cgroup.freeze",
+>>  		.flags = CFTYPE_NOT_ON_ROOT,
+>> @@ -5763,6 +5789,7 @@ static struct cgroup *cgroup_create(struct cgroup *parent, const char *name,
+>>  	 * if the parent has to be frozen, the child has too.
+>>  	 */
+>>  	cgrp->freezer.e_freeze = parent->freezer.e_freeze;
+>> +	seqcount_init(&cgrp->freezer.freeze_seq);
+>>  	if (cgrp->freezer.e_freeze) {
+>>  		/*
+>>  		 * Set the CGRP_FREEZE flag, so when a process will be
+>> @@ -5771,6 +5798,7 @@ static struct cgroup *cgroup_create(struct cgroup *parent, const char *name,
+>>  		 * consider it frozen immediately.
+>>  		 */
+>>  		set_bit(CGRP_FREEZE, &cgrp->flags);
+>> +		cgrp->freezer.freeze_start_nsec = ktime_get_ns();
+>>  		set_bit(CGRP_FROZEN, &cgrp->flags);
+>>  	}
+>>  
+>> diff --git a/kernel/cgroup/freezer.c b/kernel/cgroup/freezer.c
+>> index bf1690a167dd..6c18854bff34 100644
+>> --- a/kernel/cgroup/freezer.c
+>> +++ b/kernel/cgroup/freezer.c
+>> @@ -171,7 +171,7 @@ static void cgroup_freeze_task(struct task_struct *task, bool freeze)
+>>  /*
+>>   * Freeze or unfreeze all tasks in the given cgroup.
+>>   */
+>> -static void cgroup_do_freeze(struct cgroup *cgrp, bool freeze)
+>> +static void cgroup_do_freeze(struct cgroup *cgrp, bool freeze, u64 ts_nsec)
+>>  {
+>>  	struct css_task_iter it;
+>>  	struct task_struct *task;
+>> @@ -179,10 +179,16 @@ static void cgroup_do_freeze(struct cgroup *cgrp, bool freeze)
+>>  	lockdep_assert_held(&cgroup_mutex);
+>>  
+>>  	spin_lock_irq(&css_set_lock);
+>> -	if (freeze)
+>> +	write_seqcount_begin(&cgrp->freezer.freeze_seq);
+>> +	if (freeze) {
+>>  		set_bit(CGRP_FREEZE, &cgrp->flags);
+>> -	else
+>> +		cgrp->freezer.freeze_start_nsec = ts_nsec;
+>> +	} else {
+>>  		clear_bit(CGRP_FREEZE, &cgrp->flags);
+>> +		cgrp->freezer.frozen_nsec += (ts_nsec -
+>> +			cgrp->freezer.freeze_start_nsec);
+>> +	}
+>> +	write_seqcount_end(&cgrp->freezer.freeze_seq);
+>>  	spin_unlock_irq(&css_set_lock);
+>>
+> 
+> Hello Tiffany,
+> 
+> I wanted to check if there are any specific considerations regarding how we should input the ts_nsec
+> value.
+> 
+> Would it be possible to define this directly within the cgroup_do_freeze function rather than
+> passing it as a parameter? This approach might simplify the implementation and potentially improve
+> timing accuracy when it have lots of descendants.
+> 
 
-This got a minor conflict, fixed it as:
+I revisited v3, and this was Michal's point.
+	p
+     /  |  \
+    1  ...  n
+When we freeze the parent group p, is it expected that all descendant cgroups (1 to n) should share
+the same frozen timestamp?
 
-diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-index d6bd0d2dcf15..6ee76f5fe9c5 100644
---- a/drivers/cpufreq/ti-cpufreq.c
-+++ b/drivers/cpufreq/ti-cpufreq.c
-@@ -311,10 +311,10 @@ static struct ti_cpufreq_soc_data am3517_soc_data = {
- };
-
- static const struct soc_device_attribute k3_cpufreq_soc[] = {
--       { .family = "AM62X", .revision = "SR1.0" },
--       { .family = "AM62AX", .revision = "SR1.0" },
--       { .family = "AM62PX", .revision = "SR1.0" },
--       { .family = "AM62DX", .revision = "SR1.0" },
-+       { .family = "AM62X", },
-+       { .family = "AM62AX", },
-+       { .family = "AM62PX", },
-+       { .family = "AM62DX", },
-        { /* sentinel */ }
+If the cgroup tree structure is stable, the exact frozen time may not be really matter. However, if
+the tree is not stable, obtaining the same frozen time is acceptable?
 
 -- 
-viresh
+Best regards,
+Ridong
+
 
