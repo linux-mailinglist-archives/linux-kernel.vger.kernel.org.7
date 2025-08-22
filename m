@@ -1,56 +1,87 @@
-Return-Path: <linux-kernel+bounces-781624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D65B314B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:06:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85B08B314B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DF173BAB28
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:04:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA15B7A2F9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED90C2C0289;
-	Fri, 22 Aug 2025 10:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAA8296BB5;
+	Fri, 22 Aug 2025 10:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="opvHGLpI"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gFOV+fWL"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF154296BD3
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC7B285418
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755857064; cv=none; b=LNESNh3BE3R1J34eefLK/j7eP1mn3ChdWf8tDF5piMvOM7mZjaWYpw6Dsr8d59zk1wYCXPxSPCjrvf5XJKJNimBLaYxBVINvFHtzALd7EH2ADDpZaDNhs4Xy6DJVKLr8E/iP0olOr+pJ5dRwxOPalpNDTTb0LLhcuGBK2dDsD00=
+	t=1755857128; cv=none; b=rrHcClmZzKO4DfWBw72beNgJDMe5+8+EhGNITwjBP9yg6ATWBRpx5J4c9JZeG1B2lU/v4aUS4z2PnZtA9XvTengNa11u1PsfWIBzgEWkC1qgIgxuWX6DlurX2qkPATqVE6vrNrawu4mXAm1P3+IE7P0il9bdKNz/1CCWpuBJdTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755857064; c=relaxed/simple;
-	bh=TwZb08ZO1BMh3Y8n2PKN7yt4YKM+gVo/KKzkY1nmN20=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=N/flHIxNVz93qN0YfW2fAjAsZ8fBbx8kBHk8ju1ISo1TpOtr+RuqO1fihoAEtIjlSG5Na9Cw841gQENt3MggdDs+7hhPjdnfHuImvZMc4zTl/ZBxGiJoBX6q9DIjQ6etzqBWcsirqTGLNFIDMRgcpBHLhrFbpvak4e2n0ZIpkVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=opvHGLpI; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250822100420euoutp01d02d9395122a4adfaf85adbbc6fa4ad7~eDrF6DPz50393003930euoutp01B
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:04:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250822100420euoutp01d02d9395122a4adfaf85adbbc6fa4ad7~eDrF6DPz50393003930euoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755857060;
-	bh=3Ly30/KuqQxDcrwM6AN4DMFM25t8Rw8koKQas0VV1Zc=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=opvHGLpINycQ1IwancW74LKCE5tSEM+lCgmUpWBKrZ0ihkI7hejrVLegdKDFNgVhN
-	 odmzqz7Y/N2Nwf++0ECL95CDWXx1ixBD47ejieazgb///rOMcrosRnY+l3qr3ShOEV
-	 vmoA3FfBaFvXAiConaBPB9EBsT1Yb2XFr1QTsCtM=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250822100419eucas1p2d35b99f1451ab275a721424bb4222128~eDrFPTRbt2758327583eucas1p2O;
-	Fri, 22 Aug 2025 10:04:19 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250822100418eusmtip280d80887a1259aa2ad4227706883d851~eDrEMk51E1023110231eusmtip2x;
-	Fri, 22 Aug 2025 10:04:18 +0000 (GMT)
-Message-ID: <55e606c5-9ac0-4e0b-8506-5f88a6fc540e@samsung.com>
-Date: Fri, 22 Aug 2025 12:04:18 +0200
+	s=arc-20240116; t=1755857128; c=relaxed/simple;
+	bh=KivU5RnfA0zCwbsH7zhExGKtReC3rbkiFiOi0NUu8JU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=toOeQQ7Yr7ukfcw1vfisVGh42A+hUZ2xrNbpX0n/h4E2SrubbiIeKOZtCe41mlCQm9O66uVdMMEJJnfwHGILL9PStElnyfjUI/XDNaqQdQX/CMfeujLsoUHBIcSj7dvMxNNTbUpmYj7587prBKp4WU8Bw7TQAeA5DV47mQ/HhPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gFOV+fWL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57M8UIgx024021
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:05:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NCvb4E87MdnkwFWFQpgaGoK+/UWKLd0ckk9/uB8fxpI=; b=gFOV+fWLijaslLma
+	A9XqpoRAKL4OPj1l1BTVvFvigN6fQ/5oXcLvh1AkfQ1phE5QY85wqYHzG3EUAO4o
+	AajQcO5PCy9VAtP4uI/4dGv0ZzShI8AsgTwfq1xwFCLv/0LPmynBt5Smv/E3+R9D
+	SC6GYK/YDOPW+OTy2JbKDmuDNtfu4AjSbimMahTTqAJsOuW6oHxOg36wdINf/KxP
+	pnmCJMkgL+aSBAZ64BwF6mGNz9Dewgrjw1tD3EQG9HZYTq8C8kxbz9X49B4KgEpc
+	6tnGmO/fv9ZNLQwM1hTOwLEys2rXsFWep8nI6/TS1t/VKrN0Wg2O8kwkW9D38ykj
+	GV/MlA==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52agvpd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:05:26 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-24640dae139so5270355ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 03:05:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755857115; x=1756461915;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NCvb4E87MdnkwFWFQpgaGoK+/UWKLd0ckk9/uB8fxpI=;
+        b=ih/EScG2kYh6ROZwV4Be5i1xNKYtCshRCamlq0wbv/sf1RZQMnp42/zM36BIsj6Qn1
+         xZ1zezw7LnZ4qTNY6ygUl1s5QAIj7NAOcQP1qXKW34BKpKJt4WMYrOOsYiEcjNAkNeJG
+         8LScg/kQveXU7cKONmO8979Vw/wseyauFw3YjYCz0NYpajMIK3FDrgbN6KUoWa5UzfzD
+         i5yRxRKqeN7fxUzqmBhZPy7XWbSs0Z3Luz1maQusSGzX8MYENa2qY8GsUmAxnbke5lXf
+         3KNHMFvgTEMF6rDZfRpRmeb743zFxmrfUUiD5h8buwh/pt93tVDN6cevRL5ahgLFtqrg
+         DBFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEerWXk0ig423nuZjWEUJN/xeEcO/X3QL3CCYJhku7PtYmJffUyQ0SsmiyaNWLyNWIz+XDoEIhOQ+jRcg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3a/rCVBw2NyeCNo9VBlJ0LlR4ss2TB54zLLtx9eq3MdNfdU8K
+	2vGpeSOWO55pFtcnDuaRgjxXar3G0QChJf064vQ6WJnPgXJFNHrD7W0pCGY+cr6CstH8JvRDmN+
+	ARh8MUHNV0lDamxAjSoYGdt1X/Mq8E3rar2K+87PYj4IIukntB7rgYwUdAfjSkLfFqno=
+X-Gm-Gg: ASbGncvsixqUF1KvfVTTCGAnLiHzzQb91A1X46UQkd4872Eejo6DtCHRPDYP8VOpuAC
+	3gEtr3+WNDIFSr5dJ4YPcLmJJGAwSZ+HOJ6sm2oT/fWCcs7jFvC1IaeC/9A+3yIuknFIDdaFDBK
+	SXKtQtCRgmpCZVZ81Ar0rTSQHhO9DptT/vkCZ7wXKoGEy+2TjyYajQdSu/OZ/zAbODKNY5o1R9A
+	XkFju70FdgYqfmuYpfB+vj80l9NmJQK6d1YE6cqOwlXx3J5HwQRDyuazp7NbC2zgu3tqsJ5QTwm
+	eCoz2iwiQdnjZ7KE0M3ESbJpVv/x8lw/mrr6uRvtCf+ayyReWZFj3FFuzOQFd6PtLCGCo5FUS8i
+	84WPsZ6KprpI8WZE0UPEJ4MCb5Ire5z4=
+X-Received: by 2002:a17:903:22cc:b0:240:640a:c57b with SMTP id d9443c01a7336-2462ef1f7bamr36120215ad.37.1755857114852;
+        Fri, 22 Aug 2025 03:05:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHShlcLRCyxd3es3abUH//R1uFG+bwmxmXbbL+TYec1DVJUwY5M/qqhUXum/j4nkYom6lZREg==
+X-Received: by 2002:a17:903:22cc:b0:240:640a:c57b with SMTP id d9443c01a7336-2462ef1f7bamr36119655ad.37.1755857114355;
+        Fri, 22 Aug 2025 03:05:14 -0700 (PDT)
+Received: from [10.133.33.128] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32513902819sm2098106a91.14.2025.08.22.03.05.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Aug 2025 03:05:13 -0700 (PDT)
+Message-ID: <b43382fc-a2c3-4c6b-b462-0cabf7a2103d@oss.qualcomm.com>
+Date: Fri, 22 Aug 2025 18:05:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,465 +89,220 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 1/4] drm/imagination: Use pwrseq for TH1520 GPU
- power management
-To: Matt Coster <Matt.Coster@imgtec.com>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Frank Binns <Frank.Binns@imgtec.com>, Maarten
-	Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Paul Walmsley
-	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson
-	<ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Drew
-	Fustini <fustini@kernel.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v5 1/3] PCI: qcom: Add equalization settings for 8.0 GT/s
+ and 32.0 GT/s
+To: Manivannan Sadhasivam <mani@kernel.org>,
+        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+        lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
+        johan+linaro@kernel.org, vkoul@kernel.org, kishon@kernel.org,
+        neil.armstrong@linaro.org, abel.vesa@linaro.org, kw@linux.com,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, quic_krichai@quicinc.com,
+        quic_vbadigan@quicinc.com
+References: <20250819071649.1531437-1-ziyue.zhang@oss.qualcomm.com>
+ <20250819071649.1531437-2-ziyue.zhang@oss.qualcomm.com>
+ <z54p5x5u56u7dprrlv3obzhxotjgimbufa2spajoqvnlrevgdd@4dejnkmiegrh>
 Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <aa8d4ffb-4607-4bff-9d87-8635cd37d439@imgtec.com>
+From: Qiang Yu <qiang.yu@oss.qualcomm.com>
+In-Reply-To: <z54p5x5u56u7dprrlv3obzhxotjgimbufa2spajoqvnlrevgdd@4dejnkmiegrh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250822100419eucas1p2d35b99f1451ab275a721424bb4222128
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250821222020eucas1p20e40b85b991da0b4d867df76e55350ed
-X-EPHeader: CA
-X-CMS-RootMailID: 20250821222020eucas1p20e40b85b991da0b4d867df76e55350ed
-References: <20250822-apr_14_for_sending-v13-0-af656f7cc6c3@samsung.com>
-	<CGME20250821222020eucas1p20e40b85b991da0b4d867df76e55350ed@eucas1p2.samsung.com>
-	<20250822-apr_14_for_sending-v13-1-af656f7cc6c3@samsung.com>
-	<aa8d4ffb-4607-4bff-9d87-8635cd37d439@imgtec.com>
+X-Proofpoint-ORIG-GUID: o5f9Us4Pd88gh8IEX_GBXe_cmy37OT92
+X-Authority-Analysis: v=2.4 cv=B83gEOtM c=1 sm=1 tr=0 ts=68a840e6 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=uZ_Y6Hf0VBP1xoXJwNUA:9
+ a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-GUID: o5f9Us4Pd88gh8IEX_GBXe_cmy37OT92
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfXyj46TbycIu3A
+ tQXO7ewkyfMn2QbgeRtezQ3tWHcf5i1a06+JoZ8yuHuKZOxqh5b+Xfyala4UBzN9MMIkwqrBGtG
+ ijIuSlLXAJVbkj6E6D5nEcYBe4RN9o7AKk3Et7s1oCaVmiA3dXHJp/zkTtVtqPm0r4cdqddIXKm
+ zhNaY/WMDdhCBOkDuWhA6M4kc2ASJJLslk13ejxDpWQtBN5n0jT12w5ux1J71AVMG7s2oIJ+E7k
+ 9nCVTDobZU8IjoFuBBoy5QsOH6K5AS2X4RsP/Gma+WQq2O8sRTu2/PiqC9t1yaV97EF8QVPR2G0
+ fj2R+kdIbLLJxG5j6NouXp0LJ1SNvepNQZwUj0f8k+PGPekghrtLjkalWJWiRqZVeGGYcr0wYT8
+ uEmZIG9YWU5qFHrTnS4u7n/qocn/qA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_03,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 priorityscore=1501 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 adultscore=0 impostorscore=0 clxscore=1015 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
 
 
-On 8/22/25 11:28, Matt Coster wrote:
-> On 21/08/2025 23:20, Michal Wilczynski wrote:
->> Update the Imagination PVR DRM driver to leverage the pwrseq framework
->> for managing the complex power sequence of the GPU on the T-HEAD TH1520
->> SoC.
+On 8/22/2025 4:06 PM, Manivannan Sadhasivam wrote:
+> On Tue, Aug 19, 2025 at 03:16:46PM GMT, Ziyue Zhang wrote:
+>> Add lane equalization setting for 8.0 GT/s and 32.0 GT/s to enhance link
+>> stability and avoid AER Correctable Errors reported on some platforms
+>> (eg. SA8775P).
 >>
->> To cleanly separate platform-specific logic from the generic driver,
->> this patch introduces an `init` callback to the `pwr_power_sequence_ops`
->> struct. This allows for different power management strategies to be
->> selected at probe time based on the device's compatible string.
+> 
+> So this is fixing an issue, right? Then you should add relevant Fixes tag. I
+> guess the tag here would be the commit that added SA8775p.
+> 
+>> 8.0 GT/s, 16.0 GT/s and 32.0 GT/s require the same equalization setting.
+>> This setting is programmed into a group of shadow registers, which can be
+>> switched to configure equalization for different speeds by writing 00b,
+>> 01b and 10b to `RATE_SHADOW_SEL`.
 >>
->> A `pvr_device_data` struct, associated with each compatible in the
->> of_device_id table, points to the appropriate ops table (manual or
->> pwrseq).
+>> Hence program equalization registers in a loop using link speed as index,
+>> so that equalization setting can be programmed for 8.0 GT/s, 16.0 GT/s
+>> and 32.0 GT/s.
 >>
->> At probe time, the driver now calls the `->init()` op. For pwrseq-based
->> platforms, this callback calls `devm_pwrseq_get("gpu-power")`, deferring
->> probe if the sequencer is not yet available. For other platforms, it
->> falls back to the existing manual clock and reset handling. The runtime
->> PM callbacks continue to call the appropriate functions via the ops
->> table.
->>
->> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> 
-> Reviewed-by: Matt Coster <matt.coster@imgtec.com>
-> 
-> Would you like me to take the non-DTS changes via drm-misc-next?
-
-Yeah I think this would be appropriate.
-Thanks !
-
-> 
-> Cheers,
-> Matt
-> 
+>> Co-developed-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+>> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+>> Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
 >> ---
->>  drivers/gpu/drm/imagination/pvr_device.c |  22 +----
->>  drivers/gpu/drm/imagination/pvr_device.h |  17 ++++
->>  drivers/gpu/drm/imagination/pvr_drv.c    |  23 ++++-
->>  drivers/gpu/drm/imagination/pvr_power.c  | 158 +++++++++++++++++++++++--------
->>  drivers/gpu/drm/imagination/pvr_power.h  |  15 +++
->>  5 files changed, 176 insertions(+), 59 deletions(-)
+>>   drivers/pci/controller/dwc/pcie-designware.h  |  1 -
+>>   drivers/pci/controller/dwc/pcie-qcom-common.c | 58 +++++++++++--------
+>>   drivers/pci/controller/dwc/pcie-qcom-common.h |  2 +-
+>>   drivers/pci/controller/dwc/pcie-qcom-ep.c     |  6 +-
+>>   drivers/pci/controller/dwc/pcie-qcom.c        |  6 +-
+>>   5 files changed, 41 insertions(+), 32 deletions(-)
 >>
->> diff --git a/drivers/gpu/drm/imagination/pvr_device.c b/drivers/gpu/drm/imagination/pvr_device.c
->> index 8b9ba4983c4cb5bc40342fcafc4259078bc70547..294b6019b4155bb7fdb7de73ccf7fa8ad867811f 100644
->> --- a/drivers/gpu/drm/imagination/pvr_device.c
->> +++ b/drivers/gpu/drm/imagination/pvr_device.c
->> @@ -23,6 +23,7 @@
->>  #include <linux/firmware.h>
->>  #include <linux/gfp.h>
->>  #include <linux/interrupt.h>
->> +#include <linux/of.h>
->>  #include <linux/platform_device.h>
->>  #include <linux/pm_runtime.h>
->>  #include <linux/reset.h>
->> @@ -121,21 +122,6 @@ static int pvr_device_clk_init(struct pvr_device *pvr_dev)
->>  	return 0;
->>  }
->>  
->> -static int pvr_device_reset_init(struct pvr_device *pvr_dev)
->> -{
->> -	struct drm_device *drm_dev = from_pvr_device(pvr_dev);
->> -	struct reset_control *reset;
->> -
->> -	reset = devm_reset_control_get_optional_exclusive(drm_dev->dev, NULL);
->> -	if (IS_ERR(reset))
->> -		return dev_err_probe(drm_dev->dev, PTR_ERR(reset),
->> -				     "failed to get gpu reset line\n");
->> -
->> -	pvr_dev->reset = reset;
->> -
->> -	return 0;
->> -}
->> -
->>  /**
->>   * pvr_device_process_active_queues() - Process all queue related events.
->>   * @pvr_dev: PowerVR device to check
->> @@ -618,6 +604,9 @@ pvr_device_init(struct pvr_device *pvr_dev)
->>  	struct device *dev = drm_dev->dev;
->>  	int err;
->>  
->> +	/* Get the platform-specific data based on the compatible string. */
->> +	pvr_dev->device_data = of_device_get_match_data(dev);
->> +
->>  	/*
->>  	 * Setup device parameters. We do this first in case other steps
->>  	 * depend on them.
->> @@ -631,8 +620,7 @@ pvr_device_init(struct pvr_device *pvr_dev)
->>  	if (err)
->>  		return err;
->>  
->> -	/* Get the reset line for the GPU */
->> -	err = pvr_device_reset_init(pvr_dev);
->> +	err = pvr_dev->device_data->pwr_ops->init(pvr_dev);
->>  	if (err)
->>  		return err;
->>  
->> diff --git a/drivers/gpu/drm/imagination/pvr_device.h b/drivers/gpu/drm/imagination/pvr_device.h
->> index 7cb01c38d2a9c3fc71effe789d4dfe54eddd93ee..ab8f56ae15df6c2888feb16b1d87b59510961936 100644
->> --- a/drivers/gpu/drm/imagination/pvr_device.h
->> +++ b/drivers/gpu/drm/imagination/pvr_device.h
->> @@ -37,6 +37,9 @@ struct clk;
->>  /* Forward declaration from <linux/firmware.h>. */
->>  struct firmware;
->>  
->> +/* Forward declaration from <linux/pwrseq/consumer.h> */
->> +struct pwrseq_desc;
->> +
->>  /**
->>   * struct pvr_gpu_id - Hardware GPU ID information for a PowerVR device
->>   * @b: Branch ID.
->> @@ -57,6 +60,14 @@ struct pvr_fw_version {
->>  	u16 major, minor;
->>  };
->>  
->> +/**
->> + * struct pvr_device_data - Platform specific data associated with a compatible string.
->> + * @pwr_ops: Pointer to a structure with platform-specific power functions.
->> + */
->> +struct pvr_device_data {
->> +	const struct pvr_power_sequence_ops *pwr_ops;
->> +};
->> +
->>  /**
->>   * struct pvr_device - powervr-specific wrapper for &struct drm_device
->>   */
->> @@ -98,6 +109,9 @@ struct pvr_device {
->>  	/** @fw_version: Firmware version detected at runtime. */
->>  	struct pvr_fw_version fw_version;
->>  
->> +	/** @device_data: Pointer to platform-specific data. */
->> +	const struct pvr_device_data *device_data;
->> +
->>  	/** @regs_resource: Resource representing device control registers. */
->>  	struct resource *regs_resource;
->>  
->> @@ -148,6 +162,9 @@ struct pvr_device {
->>  	 */
->>  	struct reset_control *reset;
->>  
->> +	/** @pwrseq: Pointer to a power sequencer, if one is used. */
->> +	struct pwrseq_desc *pwrseq;
->> +
->>  	/** @irq: IRQ number. */
->>  	int irq;
->>  
->> diff --git a/drivers/gpu/drm/imagination/pvr_drv.c b/drivers/gpu/drm/imagination/pvr_drv.c
->> index b058ec183bb30ab5c3db17ebaadf2754520a2a1f..916b40ced7eb0408fe985ba1b83b3be2eb024bae 100644
->> --- a/drivers/gpu/drm/imagination/pvr_drv.c
->> +++ b/drivers/gpu/drm/imagination/pvr_drv.c
->> @@ -1480,15 +1480,33 @@ static void pvr_remove(struct platform_device *plat_dev)
->>  	pvr_power_domains_fini(pvr_dev);
->>  }
->>  
->> +static const struct pvr_device_data pvr_device_data_manual = {
->> +	.pwr_ops = &pvr_power_sequence_ops_manual,
->> +};
->> +
->> +static const struct pvr_device_data pvr_device_data_pwrseq = {
->> +	.pwr_ops = &pvr_power_sequence_ops_pwrseq,
->> +};
->> +
->>  static const struct of_device_id dt_match[] = {
->> -	{ .compatible = "img,img-rogue", .data = NULL },
->> +	{
->> +		.compatible = "thead,th1520-gpu",
->> +		.data = &pvr_device_data_pwrseq,
->> +	},
->> +	{
->> +		.compatible = "img,img-rogue",
->> +		.data = &pvr_device_data_manual,
->> +	},
->>  
->>  	/*
->>  	 * This legacy compatible string was introduced early on before the more generic
->>  	 * "img,img-rogue" was added. Keep it around here for compatibility, but never use
->>  	 * "img,img-axe" in new devicetrees.
->>  	 */
->> -	{ .compatible = "img,img-axe", .data = NULL },
->> +	{
->> +		.compatible = "img,img-axe",
->> +		.data = &pvr_device_data_manual,
->> +	},
->>  	{}
->>  };
->>  MODULE_DEVICE_TABLE(of, dt_match);
->> @@ -1513,4 +1531,5 @@ MODULE_DESCRIPTION(PVR_DRIVER_DESC);
->>  MODULE_LICENSE("Dual MIT/GPL");
->>  MODULE_IMPORT_NS("DMA_BUF");
->>  MODULE_FIRMWARE("powervr/rogue_33.15.11.3_v1.fw");
->> +MODULE_FIRMWARE("powervr/rogue_36.52.104.182_v1.fw");
->>  MODULE_FIRMWARE("powervr/rogue_36.53.104.796_v1.fw");
->> diff --git a/drivers/gpu/drm/imagination/pvr_power.c b/drivers/gpu/drm/imagination/pvr_power.c
->> index 187a07e0bd9adb2f0713ac2c8e091229f4027354..c6e7ff9e935d3b348eff6953c633c72410fdf507 100644
->> --- a/drivers/gpu/drm/imagination/pvr_power.c
->> +++ b/drivers/gpu/drm/imagination/pvr_power.c
->> @@ -18,6 +18,7 @@
->>  #include <linux/platform_device.h>
->>  #include <linux/pm_domain.h>
->>  #include <linux/pm_runtime.h>
->> +#include <linux/pwrseq/consumer.h>
->>  #include <linux/reset.h>
->>  #include <linux/timer.h>
->>  #include <linux/types.h>
->> @@ -234,6 +235,118 @@ pvr_watchdog_init(struct pvr_device *pvr_dev)
->>  	return 0;
->>  }
->>  
->> +static int pvr_power_init_manual(struct pvr_device *pvr_dev)
->> +{
->> +	struct drm_device *drm_dev = from_pvr_device(pvr_dev);
->> +	struct reset_control *reset;
->> +
->> +	reset = devm_reset_control_get_optional_exclusive(drm_dev->dev, NULL);
->> +	if (IS_ERR(reset))
->> +		return dev_err_probe(drm_dev->dev, PTR_ERR(reset),
->> +				     "failed to get gpu reset line\n");
->> +
->> +	pvr_dev->reset = reset;
->> +
->> +	return 0;
->> +}
->> +
->> +static int pvr_power_on_sequence_manual(struct pvr_device *pvr_dev)
->> +{
->> +	int err;
->> +
->> +	err = clk_prepare_enable(pvr_dev->core_clk);
->> +	if (err)
->> +		return err;
->> +
->> +	err = clk_prepare_enable(pvr_dev->sys_clk);
->> +	if (err)
->> +		goto err_core_clk_disable;
->> +
->> +	err = clk_prepare_enable(pvr_dev->mem_clk);
->> +	if (err)
->> +		goto err_sys_clk_disable;
->> +
->> +	/*
->> +	 * According to the hardware manual, a delay of at least 32 clock
->> +	 * cycles is required between de-asserting the clkgen reset and
->> +	 * de-asserting the GPU reset. Assuming a worst-case scenario with
->> +	 * a very high GPU clock frequency, a delay of 1 microsecond is
->> +	 * sufficient to ensure this requirement is met across all
->> +	 * feasible GPU clock speeds.
->> +	 */
->> +	udelay(1);
->> +
->> +	err = reset_control_deassert(pvr_dev->reset);
->> +	if (err)
->> +		goto err_mem_clk_disable;
->> +
->> +	return 0;
->> +
->> +err_mem_clk_disable:
->> +	clk_disable_unprepare(pvr_dev->mem_clk);
->> +
->> +err_sys_clk_disable:
->> +	clk_disable_unprepare(pvr_dev->sys_clk);
->> +
->> +err_core_clk_disable:
->> +	clk_disable_unprepare(pvr_dev->core_clk);
->> +
->> +	return err;
->> +}
->> +
->> +static int pvr_power_off_sequence_manual(struct pvr_device *pvr_dev)
->> +{
->> +	int err;
->> +
->> +	err = reset_control_assert(pvr_dev->reset);
->> +
->> +	clk_disable_unprepare(pvr_dev->mem_clk);
->> +	clk_disable_unprepare(pvr_dev->sys_clk);
->> +	clk_disable_unprepare(pvr_dev->core_clk);
->> +
->> +	return err;
->> +}
->> +
->> +const struct pvr_power_sequence_ops pvr_power_sequence_ops_manual = {
->> +	.init = pvr_power_init_manual,
->> +	.power_on = pvr_power_on_sequence_manual,
->> +	.power_off = pvr_power_off_sequence_manual,
->> +};
->> +
->> +static int pvr_power_init_pwrseq(struct pvr_device *pvr_dev)
->> +{
->> +	struct device *dev = from_pvr_device(pvr_dev)->dev;
->> +
->> +	pvr_dev->pwrseq = devm_pwrseq_get(dev, "gpu-power");
->> +	if (IS_ERR(pvr_dev->pwrseq)) {
->> +		/*
->> +		 * This platform requires a sequencer. If we can't get it, we
->> +		 * must return the error (including -EPROBE_DEFER to wait for
->> +		 * the provider to appear)
->> +		 */
->> +		return dev_err_probe(dev, PTR_ERR(pvr_dev->pwrseq),
->> +				     "Failed to get required power sequencer\n");
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int pvr_power_on_sequence_pwrseq(struct pvr_device *pvr_dev)
->> +{
->> +	return pwrseq_power_on(pvr_dev->pwrseq);
->> +}
->> +
->> +static int pvr_power_off_sequence_pwrseq(struct pvr_device *pvr_dev)
->> +{
->> +	return pwrseq_power_off(pvr_dev->pwrseq);
->> +}
->> +
->> +const struct pvr_power_sequence_ops pvr_power_sequence_ops_pwrseq = {
->> +	.init = pvr_power_init_pwrseq,
->> +	.power_on = pvr_power_on_sequence_pwrseq,
->> +	.power_off = pvr_power_off_sequence_pwrseq,
->> +};
->> +
->>  int
->>  pvr_power_device_suspend(struct device *dev)
->>  {
->> @@ -252,11 +365,7 @@ pvr_power_device_suspend(struct device *dev)
->>  			goto err_drm_dev_exit;
->>  	}
->>  
->> -	clk_disable_unprepare(pvr_dev->mem_clk);
->> -	clk_disable_unprepare(pvr_dev->sys_clk);
->> -	clk_disable_unprepare(pvr_dev->core_clk);
->> -
->> -	err = reset_control_assert(pvr_dev->reset);
->> +	err = pvr_dev->device_data->pwr_ops->power_off(pvr_dev);
->>  
->>  err_drm_dev_exit:
->>  	drm_dev_exit(idx);
->> @@ -276,53 +385,22 @@ pvr_power_device_resume(struct device *dev)
->>  	if (!drm_dev_enter(drm_dev, &idx))
->>  		return -EIO;
->>  
->> -	err = clk_prepare_enable(pvr_dev->core_clk);
->> +	err = pvr_dev->device_data->pwr_ops->power_on(pvr_dev);
->>  	if (err)
->>  		goto err_drm_dev_exit;
->>  
->> -	err = clk_prepare_enable(pvr_dev->sys_clk);
->> -	if (err)
->> -		goto err_core_clk_disable;
->> -
->> -	err = clk_prepare_enable(pvr_dev->mem_clk);
->> -	if (err)
->> -		goto err_sys_clk_disable;
->> -
->> -	/*
->> -	 * According to the hardware manual, a delay of at least 32 clock
->> -	 * cycles is required between de-asserting the clkgen reset and
->> -	 * de-asserting the GPU reset. Assuming a worst-case scenario with
->> -	 * a very high GPU clock frequency, a delay of 1 microsecond is
->> -	 * sufficient to ensure this requirement is met across all
->> -	 * feasible GPU clock speeds.
->> -	 */
->> -	udelay(1);
->> -
->> -	err = reset_control_deassert(pvr_dev->reset);
->> -	if (err)
->> -		goto err_mem_clk_disable;
->> -
->>  	if (pvr_dev->fw_dev.booted) {
->>  		err = pvr_power_fw_enable(pvr_dev);
->>  		if (err)
->> -			goto err_reset_assert;
->> +			goto err_power_off;
->>  	}
->>  
->>  	drm_dev_exit(idx);
->>  
->>  	return 0;
->>  
->> -err_reset_assert:
->> -	reset_control_assert(pvr_dev->reset);
->> -
->> -err_mem_clk_disable:
->> -	clk_disable_unprepare(pvr_dev->mem_clk);
->> -
->> -err_sys_clk_disable:
->> -	clk_disable_unprepare(pvr_dev->sys_clk);
->> -
->> -err_core_clk_disable:
->> -	clk_disable_unprepare(pvr_dev->core_clk);
->> +err_power_off:
->> +	pvr_dev->device_data->pwr_ops->power_off(pvr_dev);
->>  
->>  err_drm_dev_exit:
->>  	drm_dev_exit(idx);
->> diff --git a/drivers/gpu/drm/imagination/pvr_power.h b/drivers/gpu/drm/imagination/pvr_power.h
->> index ada85674a7ca762dcf92df40424230e1c3910342..b853d092242cc90cb98cf66100679a309055a1dc 100644
->> --- a/drivers/gpu/drm/imagination/pvr_power.h
->> +++ b/drivers/gpu/drm/imagination/pvr_power.h
->> @@ -41,4 +41,19 @@ pvr_power_put(struct pvr_device *pvr_dev)
->>  int pvr_power_domains_init(struct pvr_device *pvr_dev);
->>  void pvr_power_domains_fini(struct pvr_device *pvr_dev);
->>  
->> +/**
->> + * struct pvr_power_sequence_ops - Platform specific power sequence operations.
->> + * @init: Pointer to the platform-specific initialization function.
->> + * @power_on: Pointer to the platform-specific power on function.
->> + * @power_off: Pointer to the platform-specific power off function.
->> + */
->> +struct pvr_power_sequence_ops {
->> +	int (*init)(struct pvr_device *pvr_dev);
->> +	int (*power_on)(struct pvr_device *pvr_dev);
->> +	int (*power_off)(struct pvr_device *pvr_dev);
->> +};
->> +
->> +extern const struct pvr_power_sequence_ops pvr_power_sequence_ops_manual;
->> +extern const struct pvr_power_sequence_ops pvr_power_sequence_ops_pwrseq;
->> +
->>  #endif /* PVR_POWER_H */
->>
+>> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+>> index b5e7e18138a6..11de844428e5 100644
+>> --- a/drivers/pci/controller/dwc/pcie-designware.h
+>> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+>> @@ -123,7 +123,6 @@
+>>   #define GEN3_RELATED_OFF_GEN3_EQ_DISABLE	BIT(16)
+>>   #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT	24
+>>   #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK	GENMASK(25, 24)
+>> -#define GEN3_RELATED_OFF_RATE_SHADOW_SEL_16_0GT	0x1
+>>   
+>>   #define GEN3_EQ_CONTROL_OFF			0x8A8
+>>   #define GEN3_EQ_CONTROL_OFF_FB_MODE		GENMASK(3, 0)
+>> diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.c b/drivers/pci/controller/dwc/pcie-qcom-common.c
+>> index 3aad19b56da8..cb98e66d81d9 100644
+>> --- a/drivers/pci/controller/dwc/pcie-qcom-common.c
+>> +++ b/drivers/pci/controller/dwc/pcie-qcom-common.c
+>> @@ -8,9 +8,11 @@
+>>   #include "pcie-designware.h"
+>>   #include "pcie-qcom-common.h"
+>>   
+>> -void qcom_pcie_common_set_16gt_equalization(struct dw_pcie *pci)
+>> +void qcom_pcie_common_set_equalization(struct dw_pcie *pci)
+>>   {
+>>   	u32 reg;
+>> +	u16 speed;
+>> +	struct device *dev = pci->dev;
 > 
+> Reverse Xmas order please.
+> 
+>>   
+>>   	/*
+>>   	 * GEN3_RELATED_OFF register is repurposed to apply equalization
+>> @@ -19,32 +21,40 @@ void qcom_pcie_common_set_16gt_equalization(struct dw_pcie *pci)
+>>   	 * determines the data rate for which these equalization settings are
+>>   	 * applied.
+>>   	 */
+>> -	reg = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
+>> -	reg &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
+>> -	reg &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
+>> -	reg |= FIELD_PREP(GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK,
+>> -			  GEN3_RELATED_OFF_RATE_SHADOW_SEL_16_0GT);
+>> -	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, reg);
+>>   
+>> -	reg = dw_pcie_readl_dbi(pci, GEN3_EQ_FB_MODE_DIR_CHANGE_OFF);
+>> -	reg &= ~(GEN3_EQ_FMDC_T_MIN_PHASE23 |
+>> -		GEN3_EQ_FMDC_N_EVALS |
+>> -		GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA |
+>> -		GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA);
+>> -	reg |= FIELD_PREP(GEN3_EQ_FMDC_T_MIN_PHASE23, 0x1) |
+>> -		FIELD_PREP(GEN3_EQ_FMDC_N_EVALS, 0xd) |
+>> -		FIELD_PREP(GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA, 0x5) |
+>> -		FIELD_PREP(GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA, 0x5);
+>> -	dw_pcie_writel_dbi(pci, GEN3_EQ_FB_MODE_DIR_CHANGE_OFF, reg);
+>> +	for (speed = PCIE_SPEED_8_0GT; speed <= pcie_link_speed[pci->max_link_speed]; ++speed) {
+>> +		if (speed > PCIE_SPEED_32_0GT) {
+>> +			dev_warn(dev, "Skipped equalization settings for speeds higher than 32.0 GT/s\n");
+>> +			break;
+>> +		}
+>>   
+>> -	reg = dw_pcie_readl_dbi(pci, GEN3_EQ_CONTROL_OFF);
+>> -	reg &= ~(GEN3_EQ_CONTROL_OFF_FB_MODE |
+>> -		GEN3_EQ_CONTROL_OFF_PHASE23_EXIT_MODE |
+>> -		GEN3_EQ_CONTROL_OFF_FOM_INC_INITIAL_EVAL |
+>> -		GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC);
+>> -	dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, reg);
+>> +		reg = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
+>> +		reg &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
+>> +		reg &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
+>> +		reg |= FIELD_PREP(GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK,
+>> +			  speed - PCIE_SPEED_8_0GT);
+>> +		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, reg);
+>> +
+>> +		reg = dw_pcie_readl_dbi(pci, GEN3_EQ_FB_MODE_DIR_CHANGE_OFF);
+>> +		reg &= ~(GEN3_EQ_FMDC_T_MIN_PHASE23 |
+>> +			GEN3_EQ_FMDC_N_EVALS |
+>> +			GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA |
+>> +			GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA);
+>> +		reg |= FIELD_PREP(GEN3_EQ_FMDC_T_MIN_PHASE23, 0x1) |
+>> +			FIELD_PREP(GEN3_EQ_FMDC_N_EVALS, 0xd) |
+>> +			FIELD_PREP(GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA, 0x5) |
+>> +			FIELD_PREP(GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA, 0x5);
+>> +		dw_pcie_writel_dbi(pci, GEN3_EQ_FB_MODE_DIR_CHANGE_OFF, reg);
+>> +
+>> +		reg = dw_pcie_readl_dbi(pci, GEN3_EQ_CONTROL_OFF);
+>> +		reg &= ~(GEN3_EQ_CONTROL_OFF_FB_MODE |
+>> +			GEN3_EQ_CONTROL_OFF_PHASE23_EXIT_MODE |
+>> +			GEN3_EQ_CONTROL_OFF_FOM_INC_INITIAL_EVAL |
+>> +			GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC);
+>> +		dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, reg);
+>> +	}
+>>   }
+>> -EXPORT_SYMBOL_GPL(qcom_pcie_common_set_16gt_equalization);
+>> +EXPORT_SYMBOL_GPL(qcom_pcie_common_set_equalization);
+>>   
+>>   void qcom_pcie_common_set_16gt_lane_margining(struct dw_pcie *pci)
+>>   {
+>> diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.h b/drivers/pci/controller/dwc/pcie-qcom-common.h
+>> index 7d88d29e4766..7f5ca2fd9a72 100644
+>> --- a/drivers/pci/controller/dwc/pcie-qcom-common.h
+>> +++ b/drivers/pci/controller/dwc/pcie-qcom-common.h
+>> @@ -8,7 +8,7 @@
+>>   
+>>   struct dw_pcie;
+>>   
+>> -void qcom_pcie_common_set_16gt_equalization(struct dw_pcie *pci);
+>> +void qcom_pcie_common_set_equalization(struct dw_pcie *pci);
+>>   void qcom_pcie_common_set_16gt_lane_margining(struct dw_pcie *pci);
+>>   
+>>   #endif
+>> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+>> index 60afb4d0134c..aeb166f68d55 100644
+>> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
+>> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+>> @@ -511,10 +511,10 @@ static int qcom_pcie_perst_deassert(struct dw_pcie *pci)
+>>   		goto err_disable_resources;
+>>   	}
+>>   
+>> -	if (pcie_link_speed[pci->max_link_speed] == PCIE_SPEED_16_0GT) {
+>> -		qcom_pcie_common_set_16gt_equalization(pci);
+>> +	qcom_pcie_common_set_equalization(pci);
+>> +
+>> +	if (pcie_link_speed[pci->max_link_speed] == PCIE_SPEED_16_0GT)
+> 
+> This condition has existed even before this patch, but just noticing this
+> possible issue. So if 'max_link_speed' is > 16 GT/s, we do not need to set lane
+> margining? We used the same logic to set equalization setting earlier also.
+
+Lane margining is supported for 16 GT/s and 32 GT/s. The settings are
+dependent on phy design. For a specific phy, they have same settings
+for 16 GT/s and 32 GT/s. Perhaps we can get the settings from devicetree
+and program them in a loop.
+
+But I'm not sure why we need to program it. It will no affect singal
+quality and only required when user wants to collect margining info.
+
+- Qiang Yu
+
+> 
+> - Mani
 > 
 
-Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
 
