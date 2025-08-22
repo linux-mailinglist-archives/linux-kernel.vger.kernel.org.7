@@ -1,223 +1,298 @@
-Return-Path: <linux-kernel+bounces-782771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87818B32520
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:43:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6756B32523
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0E1CB60609
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:41:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97CC71C85309
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB3E2D027F;
-	Fri, 22 Aug 2025 22:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A001A2D8390;
+	Fri, 22 Aug 2025 22:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AgFlj0eF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nbuAsOE8"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49FF8248B
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 22:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755902572; cv=fail; b=j3s35zmcBSbXsY4DLmubvC4IGttbFgYE5YuGuKnduKyBFJrB9HPSGmUbzTC4Q1IqhbicVrvpG5vx+dzF7TR6w9xtQHdlGBQmDrYv9A0ysUkEckHAJ3z9BkbJWOXCbOgJGdAmD0Y4kI0M+6AjoHzIbw6OwofEk7d7HYzYivJBDjc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755902572; c=relaxed/simple;
-	bh=WCyuKtcrq1A9uCb7Egt8ON498SIQBJCWWCgiNHhvzMM=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=C0jJbAGdXQX79+lFSt3KcB0hl9GOHSgCIi4hl78SRS/nze5HPWqd7p1x6dQSvb9wkFdyawcEbp6H3r0P8h9MgCxpqyhkn4fq1JhS2BwITd5/SDHUI1uQ7/KgE3Rl9lZ1FOJPhGYU2FnDlhz4oxcChotVCtKM42lfXFQya6ZOkfg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AgFlj0eF; arc=fail smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755902571; x=1787438571;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=WCyuKtcrq1A9uCb7Egt8ON498SIQBJCWWCgiNHhvzMM=;
-  b=AgFlj0eFCPcRTyNKGwOk/CuqKQLmh+G4SXxg/bBcZ3Wl7hy9PZpqmrOZ
-   GmXtZCCgVVFzjSaOoLqGAt2NNm11CeC83wsCMOa1mmMlxXXGEsm2maGoT
-   Iwhvl+NS7WxMQD8WOL927usiP/HBqH8NRKEh2ZXmdoF7AiKIrX1e5h8lw
-   zsdFoimUGwJJWhZCzPU8JFRTNfV12mbo+Ik9foFDGmRGmbKdzkcxhwfpU
-   3If7VlerdOmA7pf9X8xUDkSupYtqbaeMI/KCQUcmcTnvnuXzkW67QDXRV
-   YasBxqD1B2VzPCP3ITdgYjlptAHbguH09+Do4hRTrNQI+FRua2UyRmzp5
-   w==;
-X-CSE-ConnectionGUID: VNjCVu6ESMKd21UGfzsFlw==
-X-CSE-MsgGUID: FdI1RRx5RyKXYjLgeyMCxw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="80813387"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="80813387"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 15:42:50 -0700
-X-CSE-ConnectionGUID: EmOwhm3gS26YxwkJddJHlQ==
-X-CSE-MsgGUID: PSAB0vaGTomLADyjmz2SnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="173005069"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 15:42:50 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 22 Aug 2025 15:42:49 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Fri, 22 Aug 2025 15:42:49 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.86)
- by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 22 Aug 2025 15:42:49 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uRuWIxKamneNAAw7H2zfrvzwgIWJk0OblVPJoKQxlALMjq7AsL3141IfRLUaOtx7pJg16mJAaz+1BPZm6QRH6kO0HnKSUcr/EWvptXcEkYn1PlhPbi+vxNSSYH88LwO2UfC/kX42qw7mm215/U85UQTh6Is1+8waRGdzAlrmp00dJmObQ/NvlVRHgDaOjlSDLHAroSv8cdCfGWbLyyjZ7bMJ34h//WctMeuU0DExCCTx/okbzrbNors75a3tzLcnA3Tm/W+EKebmPCFn4xces5MRkFhFRqmmGk1CZngw34AyHfAoQS28wWoum+10P0px1nMFs6DpBTgmuR49pzhIvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ktvTO9QUiNg31T2duchNW7GgaOIJ326F97kO936R0X8=;
- b=umID69UU+7sG75o0jWxBlXY6Qfj6+cVBHvpT/iQBRakMPT7O5ZyquI/oWY6wdmUlW7IQ0OKrdAKixo+J1+gFHbhzWEW+/DlTRKUrfvuVINRkLHSslMTWz25g0RGlq9F1Xb+JkFSsrrphVwmEEUsx0Vyckii9GKPI6dremne2Axi94GqXzq6rEuKZVRALkzrUFgzUVNYb27KjNJH1F5gi9KCJtQ8Uch+UVjQH2jz8kXihXN+VLjEjmMYctrylfke38m07swxz6Y4h9fMWlbIOxbb1Q18GRHkoolF2sQ9ycJyB3UENfsabTguXkzqfh/gicS3Sws5vgLAiC94nNogUMw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7925.namprd11.prod.outlook.com (2603:10b6:8:f8::18) by
- SN7PR11MB6752.namprd11.prod.outlook.com (2603:10b6:806:264::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.15; Fri, 22 Aug
- 2025 22:42:45 +0000
-Received: from DS0PR11MB7925.namprd11.prod.outlook.com
- ([fe80::b1ef:c95b:554d:19c9]) by DS0PR11MB7925.namprd11.prod.outlook.com
- ([fe80::b1ef:c95b:554d:19c9%5]) with mapi id 15.20.9052.013; Fri, 22 Aug 2025
- 22:42:45 +0000
-Message-ID: <5ff26455-b94e-463f-8f6e-e2a1375f4a9b@intel.com>
-Date: Fri, 22 Aug 2025 15:42:42 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] x86/microcode/intel: Enable staging when available
-To: Chao Gao <chao.gao@intel.com>
-CC: <x86@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <colinmitchell@google.com>,
-	<abusse@amazon.de>, <linux-kernel@vger.kernel.org>
-References: <20250409232713.4536-1-chang.seok.bae@intel.com>
- <20250813172649.15474-1-chang.seok.bae@intel.com>
- <20250813172649.15474-7-chang.seok.bae@intel.com>
- <aKLl010zQ1dFn/bk@intel.com>
-Content-Language: en-US
-From: "Chang S. Bae" <chang.seok.bae@intel.com>
-In-Reply-To: <aKLl010zQ1dFn/bk@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0295.namprd03.prod.outlook.com
- (2603:10b6:a03:39e::30) To DS0PR11MB7925.namprd11.prod.outlook.com
- (2603:10b6:8:f8::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDAC8248B;
+	Fri, 22 Aug 2025 22:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755902602; cv=none; b=qaRkO5U3J1Q9PjfTGjPSWe+Xh7wifwYX2h4Kg/Hd9cTMiqZ9jnGp6EwA3KGgt9JkV+mWtJuA2N2pKI2h01RRugMySwWjERipYSCvcuHnj1ERz2tzxe2JWSbjlpLQDZRz9gLMW4Bglz9M7x2WkcVvxkhRWN6f9dss57aZxCUlD/c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755902602; c=relaxed/simple;
+	bh=vMzq3+B9ubZ2mmOZzZaAGpF5kBREOwvbnK1Avyf3pgk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZsreWG8C2c9B4MhALUrGYw/GeH8ppENGUYa6+9EiX6VHF25qZYdkZVp2sAanunpo/Spm+E7USkCJj5Rpu/5L5SAtDZ1ZZPlXNERMODVr7nqCJ/lAOX3j0bUGw2ohniONYkZqH/y9LMOxz9Kb/XVxgODZ53xYx+7BrLt/HX89Q7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nbuAsOE8; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b474e8d6d01so1723462a12.0;
+        Fri, 22 Aug 2025 15:43:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755902600; x=1756507400; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VK1lbya6KoH6V7JAq8ojM6FRGpePfBbrYyV4HKtjK8o=;
+        b=nbuAsOE8WphHva85H6sHvhufElYSgeiJ+6xsuXiGhZ3wrsisrRcdO4HD8C1+GrIJ11
+         zOlEAMgHj/GuMAzEuRz+PhjlA/ZUKpjHJIN/ZqmC7XCaw4/lwj/kg94axBLMhLcTAMwB
+         sPPb/p8afG1ITx3iyMN3ap+sugk8Omw+oxfEPjtiG0nxkvPVUiWUXZmPUbhMjRiq5G31
+         m8Oz3IMdzD/88dYaKRAHkhcQ+UdsF6+n7NLL/RR1zmlvvjLEOuuVF4YPmZKgP180vFfc
+         J55WDn+TBQZyzZQOWYWFvPwZTDzIMOGBsQ4sSX31erXMCpoBFAm+JzD7OXgTsc8GrfcU
+         ZSwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755902600; x=1756507400;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VK1lbya6KoH6V7JAq8ojM6FRGpePfBbrYyV4HKtjK8o=;
+        b=aswdlHCdiONqjOFLXZXuQe+fMVLuWvvuoH0qCpB4nX8YAbZ8QONJ9lgLa7sFzGDdge
+         mqjrSo42c2xhRuz0HwY93mlrzG4IDCpnRjZVeVzDZTPQW9gJv9oP6SEL+LamVPfdgQZj
+         rBntQ5M31v2T7W8WtUSmWEbKAfQBzqLbEnLUqMJ0tQmQoX+Gk9VLBOmOws0zpWhyjbyN
+         e7Jxcszz1ffF5M0+XH3dglWRlHaKOIlME+Ybfek9LOLTRL1QoWMSqNC4mWSTO438SgYJ
+         qZx+xEGkwQqknRKTRdKQkH4LpGJYs+MnqpoFLTezaaO4S4FpDzJJiupv7DghCgkauVjt
+         rhJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUm9KUyMivd3VPUrozt0o7Nv+kNNlKqyydHluojlqNqCZrB3YigUTvpf1d+vwALFvpTMP4=@vger.kernel.org, AJvYcCWOQqRGaPCI4KzSOIKzyrk6peeoIH1srskHRqaLn8BRgSm1UNhuG2YmsaXq+4NZlqXQZS39wUMAmjKVfDWc@vger.kernel.org, AJvYcCX4jvjsLjXLB5Gs3Xp9nmXCbKtuUHbK23vxjEzGBZYMLF8BZstJITLfLixTWzqifN8M6DrYlL1ryec2oXpeLbLw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzpbtzj+to5Z7SOhIDpWHrh9dWIVTHpJIIVZJn+3kZ3GBTgbv3C
+	JK/LDroocrTyrQbazR84iUXu5gLjs+RdcPiDbVsxMASABb1HJKzEa3plcUjTzXU9sLmQs+O2cg3
+	c2RyQZhaqD1EoOZDwKOBRGuVplTpSrws=
+X-Gm-Gg: ASbGncvDpf8IE0Sf6QSgTVFEx9E2jX2crmyCPjwNZcssQ+BCbid8ET5SbHsgNkjm09L
+	YfNPC/h0wGPZ2Z1T0ThO1zwFo04s6eD4hHwdayIRtN2tX+vxMLr8zJZxUF9RKFPVnuY8L9dkAs/
+	o0W7Df6vVTwWyPj4LrgGYMPk841D5JQMvGVSaaWYnKEmTuLE6owmP4qdS1UrPaCpEUFg+VCBpuJ
+	275upiPU08nUeVx/TZBIVM=
+X-Google-Smtp-Source: AGHT+IE6/vTbooKfLf8kh+m4wm3vpWU0kf++qkaOeIf6RA1rKvHK+PMo1MsRZcM6zftXBaoXzDimbRnf/P/UsUxGlc0=
+X-Received: by 2002:a17:90b:2ccd:b0:321:4760:c65a with SMTP id
+ 98e67ed59e1d1-32517d1e054mr6004941a91.27.1755902600320; Fri, 22 Aug 2025
+ 15:43:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7925:EE_|SN7PR11MB6752:EE_
-X-MS-Office365-Filtering-Correlation-Id: 93008e31-a388-46a9-cec1-08dde1cd3607
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZzVCdXFWeDZDTmhDUHNLTGFCeVM0bEcwSjJGKzU2OEVONlJXS3JDWEFGLzFl?=
- =?utf-8?B?NVU0TWV2d01mdTEvMGlta1d6Y3MybkUvSEV1VlJ3dDdqd3k1ZHNHREhLM01D?=
- =?utf-8?B?UU9sYmNaV1ZVd1FqS3pkZ1Z2TStvaGVYU1VwbUM5dFpDdVBZcmRGcjhOOE9u?=
- =?utf-8?B?ai83QTRJSXAvRzFMYkpVMDhoZmxKSDNVcU15VUUxVVdZWFFMQnVNaGQ3TERt?=
- =?utf-8?B?aDFkaTFCcktRVzdETSt5MWl0Ymd3SHF1bU1lRy9PZTM5cEpXaHZQUlpMbUk3?=
- =?utf-8?B?QzJKRS9OaHBYOS9nb2kxV2Z2bkJOYWFINmxSN0l4K04xZEd6WEpoSDBJczRB?=
- =?utf-8?B?ZCtIN3lzOWovY2NUWXhhd3g5cnJmU3BkNmRyMDA4bEN0SFhRQkpxTmZzUVND?=
- =?utf-8?B?dnhka1FXWVMrVzRkVml1KzJWdC9YbHp5RVd0SG5CN21uWmprQjFLT05KbGJp?=
- =?utf-8?B?bm43d1JxMDNkYlc4bHlGd2hJbnhjY1EzRFMra2dYMXhqS01jOFcwdFF2bWtY?=
- =?utf-8?B?RFhER050NitvUVdpMCtkNWsvQ0UvNERNVXY5eGJ3OVBNTjBHaGJoOTVKS05C?=
- =?utf-8?B?RzZ1UHViUXhiTzBGWnVGTXZqcG0rZXVLZ1llamUyMkVvZWpSQmtOSG40MDNF?=
- =?utf-8?B?WUpoYjVGdjlLOXhRVnBOczRLSEdpVW0yUENlZStGMWkzcXlicjlTbStaaXNE?=
- =?utf-8?B?azNQdFd3T3E0YXZ4TldHQWNqdmhpVnNpMXQ3VjdudVN2Y09KMmIzSGcwdXVD?=
- =?utf-8?B?OGtaampmVmN2WVBtMDNHaDZDRllQdkVkTDU5WE94UXB5eTJwdjczSklnV1pp?=
- =?utf-8?B?L1gyd2FrSmlrNlN6ektaVUx3UUFiK2JTUGJ6cFU2M0N6UjJ6UHVEV09wOWE2?=
- =?utf-8?B?clZRZlZmK2FZWnRiL1kyNklxV1lNc3ozeXdpNFlnKzFyd1Q0dEVNU2dUd1o5?=
- =?utf-8?B?Y2wvZnNFY1AxTDUzdU9TcFlYZS9EV25MS3FRL3NzR3ZKalA2M3pjVmxxcGpq?=
- =?utf-8?B?VjJuVXZheHp4c0pVb0hzMUpXYTJFd3R1YmxnZ3RQQXZWemJDekYwM0RDck4v?=
- =?utf-8?B?M2ZKMk8wU1AxUWNObmwxcXlLTXJJMGgxUFpVSTM0UmtXTTNua0tsMmZEdjBD?=
- =?utf-8?B?SVl6VkdRZUNMZXJZNnZjQm1yZlpvUXJ0NnZUUGorcEd1WEZQZEk1eG9PemNL?=
- =?utf-8?B?bjhrWms0M0J1TjBkYW0vVWJiVXlnNEVNdGNGdCtZY0NuVFVJM29PR2lNV3Ji?=
- =?utf-8?B?U2l6MkNoQW1JazkvdUhiMkhnZUV2RWt1Q0o3Y3dCRjRKbTdwMDd1Q1JXc0pQ?=
- =?utf-8?B?aEtETE81TlVGWS9wUnVoZzJKOXU3OWhZSElOWHNMbll0bFduMHZRTWxOWUYz?=
- =?utf-8?B?TmtmMmw5bTNzdTNuWEtuR2JEc0xxZi9DQzh2Wld4ZWFzSkVPdU4wY2N5N1Jz?=
- =?utf-8?B?MmZMZXlsaW9MdTZXZ0NqbCtTenZMaUlhNENDMm1HUUNMbmhxRVRkcm1MV1ha?=
- =?utf-8?B?SnB1Z2ZDOFpLcVdEb2JDbFUxZUdwVnNXVjlucTFLZC9IekJXRWtNM21QUGlS?=
- =?utf-8?B?M3huc041WnlNY3NWR3hxViswWFZuOVBSL3FUamVDYlN6L2xubTBJTGVRdlpF?=
- =?utf-8?B?YWNHTXozSzdaODJwTEE2Z0ZlTHBaRnpFMzdid0F3OFhLNDM4N3F3Y1JKZEh1?=
- =?utf-8?B?d21hNncxNENhbGF4b01nTTl3Wll1bUZ6ekFUc0RWRDNPRXkrSHBUb3BCb3NE?=
- =?utf-8?B?TlcwcHRXYUNGVkR1QUQ2aHpXNk04bm9jL1NEaThRc05zYzRSTE1MdjQwTjJM?=
- =?utf-8?B?RnJaczUzRGttcE1ISE0yVXNERFRkVy9YQ0J4bHZqUVNVWFYyUUloNVpiSWNV?=
- =?utf-8?B?bTdlR0ZFUWs4OEtMbWlDcnY4N1FrSGVvSFlzOGl4SUdWYjQ1K3VQdWRha3pw?=
- =?utf-8?Q?5hhAeb36p+I=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7925.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NlBNNUt1KzNlZ2d3d0t0aXdybW1WZDVtMGlvSGJUOTRFMzNENnB3aER6Rnpo?=
- =?utf-8?B?dVhvUXdaZHFGVFptL2I2VUtQNVRyR0UvZERSVHhjOHpiY2ZRQVdGK1d0NHZ2?=
- =?utf-8?B?VXF0RTA1Y3p1bFN6Umw4djdYWU42U3ZYT1N3R2doVGRtRDIyVjAzYlpBa2px?=
- =?utf-8?B?RUxrUEcvcGU5K0hnY25uTlB2ZTlHSVlZVUtWUnFKekxiZ093b2pRaXRJd0li?=
- =?utf-8?B?ZGY3R01BQzA1R1h5N1FCdW9McGtSek1hNnpQeTkydFNTR0NycFdxQlFhU2ZN?=
- =?utf-8?B?ci9XN1RmWmR3L1hIVXFiZHBZS3ZEQXczY1RqK3dLZ2hEbTQ5T2hRcmNVOHJi?=
- =?utf-8?B?Zms2TU9mQkFLRU5lMXNOUWgxUzE1MTZzekU5YllFbGtqTk9RM1JYcW5DdWpZ?=
- =?utf-8?B?aVdwaHk1Um5BSVFjT0YyM2VUejlvY0dNbFYrOVdQR2Q3SUNWU0ZSWkhXNGhF?=
- =?utf-8?B?TFVKblRVL1MyQ2Q2L0RGb20yWWt6QUI1UEE0L1NLUXRPUEFoQ1FHL2dxakla?=
- =?utf-8?B?T0ZNek83aU5Ed0ZlOTNwbDRVVEJOb0g1dzcwQTROTzVSc3F3RUR6UDAzQ3Yz?=
- =?utf-8?B?dTM2cmVmTTFUTlNuVzZVMzFEOS9PbGRnc2NYWVdLeVhjSVBrWk1sSTVzV1lp?=
- =?utf-8?B?ZmxwL3NsWUpmdFBNZ1EzNVJIaEJZY3J1NkZ4cHVkQWxkUUwrV3lOQ0R2NzRS?=
- =?utf-8?B?V1J5VS9tUHNGQ21OeDdmRXNIejFXZ1hKUjBKUHZOYW5nR2JjcUdTOUNFeFRX?=
- =?utf-8?B?MTVaWHlQNDlPQ3ZxWnpZcDhZUGJFM3Bmb082RUdiQ2hwT29VV0hVYlV2Qzlu?=
- =?utf-8?B?Nko1VmdieTlvWGlwY0tnbVlvWlNuQW1kMkVFVzEwSDZBR2xydXVEZUNramJH?=
- =?utf-8?B?NmVRZ1pmRjFiMzZJdFgrcThpMjJGTFBlTnBOZjY1VnBVRlhBNWtrWWFaVEJx?=
- =?utf-8?B?S1RoSytaeS9saW96SjE1UGxMWHBJbGJjRGxhTGk3MGt2TnFtM0VrZ25PV0NG?=
- =?utf-8?B?Z2Z5enVkQzZRTUVmNjRpUVJIVTJqWE8zWnNLNHJjSGxZSjhsdU1WVTExMkhQ?=
- =?utf-8?B?SS9kWW5aTCtxOEsrZW0rNFpySVdwWVZMdnlYdFZDVXpWZGc4ZnpIVldEbDVY?=
- =?utf-8?B?S0VVZ09ReVZBdWdzaGNVeG1kQWcxcnhCSElwbVNkcUZiTGY0bzhEOGxlQ3E2?=
- =?utf-8?B?ZGdTaEcwcnAyTlNZcWNpTC93QVA3SFpEY0RrbVQ0RzRjQmdORjhtdC9zc3dh?=
- =?utf-8?B?SG90OGxQZDlZQWNncXZQSGZ3OFJ0YW1BMEY3L3MrMk04VGJRSWlsUGc0L0hy?=
- =?utf-8?B?SjV1SkhCNURjL251R0JtajFEbEN1dFlUcW9NMDJFRUg2aHRhUm8zMFlIM09h?=
- =?utf-8?B?cnVZY2x0UUFRb0JxWFVScGdJTFNaYmh4NTZ5WHpxU041SGN1dmZKOE1xSzBI?=
- =?utf-8?B?TnBMenBCOUJjUjRaOFJNRmpIN2gyb3VVTlg2VzZuQmVzMjVrUlFkelVWZmd6?=
- =?utf-8?B?L2dpUHFBZ2c1d2ZWVXNXWmhCamlneVc1WW9QUExrbnF6V3NSeHo2QmliNXZ1?=
- =?utf-8?B?Q29OdG00emQ1cHhteDZGVHRHZlUvTHNoNzhYZ2F6L1FlSCtoeDZZalA2YXJo?=
- =?utf-8?B?ZmRBazlyMlp2cHpLSmhCWEhUNk9obGhrSjIxS0FWZWszelhyQk5zbVdJak9n?=
- =?utf-8?B?WTIvMG5xc2xLVUJ5KzlOTXhwZlpiTmZtQnd1QjlEbmcwajhkTFo1SVJoMFd1?=
- =?utf-8?B?TjR6b2E0WFhnQkpmbW9ycC8zdCsxY3I5WWd2RVpyVnJnNzRYdVpuR09TZXo4?=
- =?utf-8?B?MmFaQmJiY0I1RzNna1pHRm1PWnZEb09pTXlKa1RFN1pHamFLTHFTOTE5S3NF?=
- =?utf-8?B?eTFacGhQd0tQQXR3SXdCNVh5L0JNL0xUNXZQU3VoZDMyL3lwUitLZjduUzRW?=
- =?utf-8?B?QUorZk1PanZsQUlmUHBXbW4wVEFxdGE0K0JqeHhuTjJZZ2JKdkVFTUlpcHdV?=
- =?utf-8?B?ZEVTczcxNWJIMVdOOEk5R0k0bzZBYXVKTjdHeEV5bmxJVmpWWFQyNHFJaFdB?=
- =?utf-8?B?RXozb2dpTWcwVmxsUVNzL0F0SGhwRzg2bjJUUE1VcFhnMEsrc2JCbVJXS2hw?=
- =?utf-8?B?bGl5WXplYWF5ekROZzJTcjlrbDRob0owUmVxdU5pVFhOaXZMY21IK2I0M25l?=
- =?utf-8?B?d0E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93008e31-a388-46a9-cec1-08dde1cd3607
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7925.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 22:42:44.9962
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uwLPAmmtFsXr8c2S92u8EMCiccECxAAMUQry+dLf+RGZfCeo3y1Vh+v/tO3nuNjHVYOj/pTTiZIJsB1rAYWIbQGQ4eQx3cwPFAlrj1o3PTk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6752
-X-OriginatorOrg: intel.com
+References: <20250822151611.1084244-1-phoenix500526@163.com> <20250822151611.1084244-2-phoenix500526@163.com>
+In-Reply-To: <20250822151611.1084244-2-phoenix500526@163.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 22 Aug 2025 15:43:06 -0700
+X-Gm-Features: Ac12FXyQNkHYmcbQ-ISYNAS-d6YGlVmunznK9bMY-22ab-q11Un65y8Nrqqva20
+Message-ID: <CAEf4BzZWd2zUC=U6uGJFF3EMZ7zWGLweQAG3CJWTeHy-5yFEPw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v13 1/2] libbpf: fix USDT SIB argument handling
+ causing unrecognized register error
+To: Jiawei Zhao <phoenix500526@163.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	yonghong.song@linux.dev, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/18/2025 1:35 AM, Chao Gao wrote:
-> 
-> Reviewed-by: Chao Gao <chao.gao@intel.com>
+On Fri, Aug 22, 2025 at 8:16=E2=80=AFAM Jiawei Zhao <phoenix500526@163.com>=
+ wrote:
+>
+> On x86-64, USDT arguments can be specified using Scale-Index-Base (SIB)
+> addressing, e.g. "1@-96(%rbp,%rax,8)". The current USDT implementation
+> in libbpf cannot parse this format, causing `bpf_program__attach_usdt()`
+> to fail with -ENOENT (unrecognized register).
+>
+> This patch fixes this by implementing the necessary changes:
+> - add correct handling for SIB-addressed arguments in `bpf_usdt_arg`.
+> - add adaptive support to `__bpf_usdt_arg_type` and
+>   `__bpf_usdt_arg_spec` to represent SIB addressing parameters.
+>
+> Signed-off-by: Jiawei Zhao <phoenix500526@163.com>
+> ---
+>  tools/lib/bpf/usdt.bpf.h | 47 ++++++++++++++++++++++++++++++--
+>  tools/lib/bpf/usdt.c     | 58 ++++++++++++++++++++++++++++++++++++----
+>  2 files changed, 98 insertions(+), 7 deletions(-)
+>
+> diff --git a/tools/lib/bpf/usdt.bpf.h b/tools/lib/bpf/usdt.bpf.h
+> index 2a7865c8e3fe..263168d57286 100644
+> --- a/tools/lib/bpf/usdt.bpf.h
+> +++ b/tools/lib/bpf/usdt.bpf.h
+> @@ -4,6 +4,7 @@
+>  #define __USDT_BPF_H__
+>
+>  #include <linux/errno.h>
+> +#include <asm/byteorder.h>
+>  #include "bpf_helpers.h"
+>  #include "bpf_tracing.h"
+>
+> @@ -34,13 +35,34 @@ enum __bpf_usdt_arg_type {
+>         BPF_USDT_ARG_CONST,
+>         BPF_USDT_ARG_REG,
+>         BPF_USDT_ARG_REG_DEREF,
+> +       BPF_USDT_ARG_SIB,
+>  };
+>
+> +/*
+> + * This struct layout is designed specifically to be backwards/forward
+> + * compatible between libbpf versions for ARG_CONST, ARG_REG, and
+> + * ARG_REG_DEREF modes. ARG_SIB requires libbpf v1.7+.
+> + */
+>  struct __bpf_usdt_arg_spec {
+>         /* u64 scalar interpreted depending on arg_type, see below */
+>         __u64 val_off;
+>         /* arg location case, see bpf_usdt_arg() for details */
+> -       enum __bpf_usdt_arg_type arg_type;
+> +       enum __bpf_usdt_arg_type arg_type: 8;
 
-Thanks.
+this needs to be inside the #if/#elif/#else, I believe. When it
+previously was a 4 byte field, BPF_USDT_ARG_REG =3D 1 would be `0x01,
+0x00, 0x00, 0x00` in memory on little endian and `0x00, 0x00, 0x00,
+0x01` on big endian. So you need to reorder it such that on big endian
+it's the last field.
 
->> +	rdmsrl(MSR_IA32_MCU_ENUMERATION, val);
-> 
-> nit: s/rdmsrl/rdmsrq
-> 
-> rdmsrl has been renamed to rdmsrq.
+pw-bot: cr
 
-Yeah, right. Thanks for the catch!
+
+> +#if defined(__LITTLE_ENDIAN_BITFIELD)
+
+I'm not sure whether compiler itself defines __LITTLE_ENDIAN_BITFIELD.
+Throughout libbpf we use #if __BYTE_ORDER__ =3D=3D
+__ORDER_LITTLE_ENDIAN__, let's do that here as well?
+
+> +       /* index register offset within struct pt_regs (high 12 bits) */
+> +       __u16   idx_reg_off: 12,
+> +       /* scale factor for index register (1, 2, 4, or 8) (low 4 bits) *=
+/
+> +               scale: 4;
+
+nit: don't do comma-separated bitfields. compiler will combine them as
+necessary, even if they are declared as separate fields. so just:
+
+#if __BYTE_ORDER__ =3D=3D __ORDER_LITTLE_ENDIAN__
+enum __bpf_usdt_arg_type arg_type: 8;
+__u16 idx_reg_off: 12;
+__u16 idx_reg_shift: 4;
+__u8 __reserved: 8;
+#else
+__u8 __reserved: 8;
+__u16 idx_reg_off: 12;
+__u16 idx_reg_shift: 4;
+enum __bpf_usdt_arg_type arg_type: 8;
+#endif
+
+
+Note that we don't need to change order of idx_reg_off and
+idx_reg_shift, as they are new additions (and they don't have to be
+consistent between big and little endian)
+
+> +#elif defined(__BIG_ENDIAN_BITFIELD)
+> +       /* scale factor for index register (1, 2, 4, or 8) (high 4 bits) =
+*/
+> +       __u16   scale: 4,
+> +       /* index register offset within struct pt_regs (low 12 bits) */
+> +               idx_reg_off: 12;
+> +#else
+> +#error "Please fix <asm/byteorder.h>"
+> +#endif
+
+let's drop the fix suggestion, isn't asm/byteorder.h kernel-specific
+header?.. I'm fine assuming only big or little endian system
+
+> +       /* reserved for future use, keeps reg_off offset stable */
+> +       __u8 reserved;
+>         /* offset of referenced register within struct pt_regs */
+>         short reg_off;
+>         /* whether arg should be interpreted as signed value */
+> @@ -149,7 +171,7 @@ int bpf_usdt_arg(struct pt_regs *ctx, __u64 arg_num, =
+long *res)
+>  {
+>         struct __bpf_usdt_spec *spec;
+>         struct __bpf_usdt_arg_spec *arg_spec;
+> -       unsigned long val;
+> +       unsigned long val, idx;
+>         int err, spec_id;
+>
+>         *res =3D 0;
+> @@ -202,6 +224,27 @@ int bpf_usdt_arg(struct pt_regs *ctx, __u64 arg_num,=
+ long *res)
+>                         return err;
+>  #if __BYTE_ORDER__ =3D=3D __ORDER_BIG_ENDIAN__
+>                 val >>=3D arg_spec->arg_bitshift;
+> +#endif
+> +               break;
+> +       case BPF_USDT_ARG_SIB:
+> +               /* Arg is in memory addressed by SIB (Scale-Index-Base) m=
+ode
+> +                * (e.g., "-1@-96(%rbp,%rax,8)" in USDT arg spec). We fir=
+st
+> +                * fetch the base register contents and the index registe=
+r
+> +                * contents from pt_regs. Then we calculate the final add=
+ress
+> +                * as base + (index * scale) + offset, and do a user-spac=
+e
+> +                * probe read to fetch the argument value.
+> +                */
+> +               err =3D bpf_probe_read_kernel(&val, sizeof(val), (void *)=
+ctx + arg_spec->reg_off);
+> +               if (err)
+> +                       return err;
+> +               err =3D bpf_probe_read_kernel(&idx, sizeof(idx), (void *)=
+ctx + arg_spec->idx_reg_off);
+> +               if (err)
+> +                       return err;
+> +               err =3D bpf_probe_read_user(&val, sizeof(val), (void *)(v=
+al + (idx * arg_spec->scale) + arg_spec->val_off));
+
+hm.. I thought we discussed recording the number of bits to shift by,
+no? It's not too big of a deal, we can afford 4 bits (instead of 2
+that would be enough for bit shift), but any specific reason you
+prefer multiplication here?
+
+> +               if (err)
+> +                       return err;
+> +#if __BYTE_ORDER__ =3D=3D __ORDER_BIG_ENDIAN__
+> +               val >>=3D arg_spec->arg_bitshift;
+>  #endif
+>                 break;
+>         default:
+
+[...]
+
+> -       if (sscanf(arg_str, " %d @ %ld ( %%%15[^)] ) %n", arg_sz, &off, r=
+eg_name, &len) =3D=3D 3) {
+> +               reg_off =3D calc_pt_regs_off(reg_name);
+> +               if (reg_off < 0)
+> +                       return reg_off;
+> +               arg->reg_off =3D reg_off;
+> +
+> +               idx_reg_off =3D calc_pt_regs_off(idx_reg_name);
+> +               if (idx_reg_off < 0)
+> +                       return idx_reg_off;
+> +               /* validate scale factor and set fields directly */
+> +               if (scale !=3D 1 && scale !=3D 2 && scale !=3D 4 && scale=
+ !=3D 8) {
+> +                       pr_warn("usdt: invalid SIB scale %d, expected 1,2=
+,4,8; defaulting to 1\n", scale);
+
+"defaulting to 1" is very confusing, why? (and please use spaces after comm=
+a)
+
+> +                       return -EINVAL;
+> +               }
+> +               arg->idx_reg_off =3D idx_reg_off;
+> +               arg->scale =3D scale;
+> +       } else if (sscanf(arg_str, " %d @ %ld ( %%%15[^)] ) %n",
+> +                               arg_sz, &off, reg_name, &len) =3D=3D 3) {
+>                 /* Memory dereference case, e.g., -4@-20(%rbp) */
+>                 arg->arg_type =3D USDT_ARG_REG_DEREF;
+>                 arg->val_off =3D off;
+> @@ -1306,6 +1353,7 @@ static int parse_usdt_arg(const char *arg_str, int =
+arg_num, struct usdt_arg_spec
+>         } else if (sscanf(arg_str, " %d @ %%%15s %n", arg_sz, reg_name, &=
+len) =3D=3D 2) {
+>                 /* Register read case, e.g., -4@%eax */
+>                 arg->arg_type =3D USDT_ARG_REG;
+> +               /* register read has no memory offset */
+>                 arg->val_off =3D 0;
+>
+>                 reg_off =3D calc_pt_regs_off(reg_name);
+> --
+> 2.43.0
+>
 
