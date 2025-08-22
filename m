@@ -1,131 +1,150 @@
-Return-Path: <linux-kernel+bounces-781748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21CBDB31636
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:21:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA931B31635
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37C1F1C86DAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:21:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89366AA4940
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7875C2F6181;
-	Fri, 22 Aug 2025 11:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE60284669;
+	Fri, 22 Aug 2025 11:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="1OjGNOk9"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KPqao8lk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5171E5B70
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDD61E5B70
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755861635; cv=none; b=Ow15JlpHLSXXLJGFROQwDNrCPV40OxI4F0kFY+r52SS+xOvmwSDaGQ5CAfMB+/l1a10Wm+5/rBluu8wTJCAnriJZV1V7FTpmZwArC3dD7gKu2x5h49oovCjz+9Ozy3iBDGSZh07TBJWU0ZUdBQ7wSnoQxuFTU5JXt+iKSqPvpeQ=
+	t=1755861683; cv=none; b=I+9FVHHEGEiU0fxk6GP3+ZkRG/GZ52omHEdXfDbQkccFvRaP/P1f9/Pj+wXyqZEGgzeZCf5ivCPzsX9xabrqLeXX0ODrysFmgf6vrsRXJUoz/jFlIoqaa/bUOIXsEPZl4dbAaYBrm5aK1UVtaOCGiKHCCeRC1K/muAqA8Jq8guk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755861635; c=relaxed/simple;
-	bh=c8WaWLL/LfS1u8VhVZZkyvB1L6L5PRqd9nkHdeBWsHU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BAy1PLLNJ77utIguK2QVcVA16QNFJhWSRXlkJFQvdT9Zv7OYjiuf+GXDkWG41c7DdqLP6nfMQKoWPemXdmrQ+uAU8bjGs+/uFlGKA8IqwZYiviLvpiUYaE3JnplQUkYkOL2g9xDYVwYcl4JePrHbLbpm0/grzRczR/irdvAAukE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=1OjGNOk9; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3e57010bc95so15358225ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 04:20:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1755861634; x=1756466434; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4/vfvb14CGNszwxeStpY4dH+U6nsuyg9PGBngcSjux8=;
-        b=1OjGNOk9jmpZdudtkoKhp3kk8hEOZ/UpjB/WLMIY5ZC3YK5sJlNhs6LEtxb4iapKoO
-         4ZdV7ihufMHtlydJTCFlFi7mRbBb1+SXMmOzSVpF+IN0mBPGDf1+Gke+IBKqYArVuR5P
-         LcJ3LHuEmIATM+v+SSMDzQcuxYZl/+Xp4nGYM/bIqyh12BktM3hXGEBjcO5bujcNLIwF
-         oazHMZHF2J/Rsps0jDpiXyKF49V6uD2GfLKZuwSiULuctfLzVv87xeQ2PgxrrkdNswbz
-         EtX0C35GD6aBWnzHLNVaCRZis8YdVIwhhRsMwnORWemxbgHmXzMRUEZbO5yjx3AXPIAz
-         hGPQ==
+	s=arc-20240116; t=1755861683; c=relaxed/simple;
+	bh=Ke5Bs1RSqo7dH0bQML7IfzQo5RoAdNMuGyO5ShXHmUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pJQ1iJeh4ypEsT9Trguho25Azwj/buqE2XqZ9zPmQ4Vfo/bcTqB6F2i2vfKefeNJTTVBTjhj9TNkKBghZiM8vCALMU6dYL5Mp2Pe85CqRMilSzF0qhXnkmuDi++zuJluaXpDr4FdfXt4CoH2mCuKgkGcHYXoJjdMC3PhIHhzoYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KPqao8lk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57M8UlJf030778
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:21:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=QOLeiRcyikkOXdelLFPCIu6K
+	rPpr4gBP2+IVs5G5Gec=; b=KPqao8lkZItBexfa14dNxgB1nx8C0I7M8940NUOI
+	xmTgTtKmyKHuInP/o4U00r4fSy6L+CNc8mXB8JqugryJDYw05opO2wyaFGtUd+i6
+	I4pMwbe0wZGke//Q3YINvVxaRMGdo59WkTL4owOv2oI3xrSZIxgRO/hdVhtR/tZS
+	IQojynUvjvBuE7vnxJJNAqskomWqSVoIeqgy4oUEXNpT+Vwr1eug1Xw+jKaZ6WL7
+	x98qQkx6KSxOJ/F6NJuN5Sdbdv+ofa/OAtQI+LnwTxKib97cd9m03dser6ak2e8M
+	InR/tlYGyqtg9PtxmP/gHccm3JiiDPEEV+yhSuL5lAOixw==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ngtdpuhd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:21:21 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b109bd3fa0so20271121cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 04:21:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755861634; x=1756466434;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4/vfvb14CGNszwxeStpY4dH+U6nsuyg9PGBngcSjux8=;
-        b=bs2sxjyp05wQRHn6ytL3tvVK4xNyHoYmot/zk4Q5A4r/4NLcw1Nmz++5Ig6CzEA85f
-         hmosjJFUnPPmLLh61S9CX4APj/Dz4WbczFftNxLYFv1Q92GZBEAQvBhFbqNLxW2wbAPW
-         DVDZvBsjvCPcIRLWOJa+5aMTPzTS8aIqOESO0TS/C/MhrndKnKYAr5pbrVY94pehFr/t
-         EfY7eKkMF2Foo5pYg/Kgd7A0bfYet0pQ3yJupbRMlVg7JSFWGJl69OyKl1teKqtJYny5
-         kuULqQK/nWJQkDDUEkeTkF2yxtwlzauoIxaymdgw2dD4eSfchAf5P5CZB54TqaHheVgm
-         LGSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvhlt8apikCkOc5zkQ/Vqob44sFrEVz8ZRdX/9H9bW6SvlMIwD653lI0UV2KwgOldlOqXY04wdP+6Q6lI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziyHrrFcFPRygLfPaVcRqdJBppqMTaMFM0MYj4zrSpEXEWJRnR
-	d4nxe5ZkR7Mm6yHzKeaRtWP2iBNuWEkXYRIb3het6yIXU4C1kaNUvRCcSN5HUQMRwNyQ5RI3R/y
-	0mL8XNlF91pL2AkpoI5Q3t0BRb80U1UMFzS7bmhyYFw==
-X-Gm-Gg: ASbGncvbYZBMOMXcWMLG9LyU1S+KuRWwwcTCWPVqM/sQNIITW1sLFAx+u8VlKEWYi84
-	ShqoOGch6gFbH45yWu8xE89Hy6Ff4rKnWvX1g8Wu3hIHlo8RHiOoru9TLlzNj9pJET9/NpKJir0
-	Lkp7JuXEz7vN5ACPB3Ykufeh8pRiUmFI7KX3cF3X0FGy7Y66/VKeQ8o/ihlNIusc8R72dQfu1eJ
-	nNeLKCO
-X-Google-Smtp-Source: AGHT+IH6sSUh2jwMrj6GuWBxvwwTPiTBYkovYilK1h5/YeKQYLbFNsHzLiFIEtHdGgUpX3elX/k9WeCcNC+wsnPHQ84=
-X-Received: by 2002:a05:6e02:1885:b0:3e6:6a43:1890 with SMTP id
- e9e14a558f8ab-3e91fc26d9amr43027185ab.4.1755861633631; Fri, 22 Aug 2025
- 04:20:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755861680; x=1756466480;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QOLeiRcyikkOXdelLFPCIu6KrPpr4gBP2+IVs5G5Gec=;
+        b=e6e0IGUNebJRpX9gxeRRSfr2tlV6cz4uevOfJKrN25KZ4U3upKFNhQzK7hMuHgHaVB
+         TkDkktupoPlTV/797sSJry8eoqU0q5eTLVBTxrsKC55FNJsYkbaLpFL9aU0/7b9HI9TC
+         lNNEJiLP7VmeYsz2W36a0juRJybTfnnkKDWxpJYtyecK7U4CYRb6GYR6h9kiKA7FYH3w
+         gJtgjrPvGxtWyxyEnHoy4Fznyx9/zZht5NfVRzhVe5bJr97s4BzUSHkHfoWdUbqgG+PS
+         Mld1xcEPRfWZojZyrtvkkHeImsStSxM0+727bc7xMpML2LDYDldxLQESgElDaF/8oPGh
+         3eVA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9qxdTLrnD2/aa2Q+NKo0OO4pT1SUD45UuQxlulaimuqxtQ3H7qq+8D3vWHycfGwys8QCHWtR2IDZxWv4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6shRgmJTGYAmsmJphTiHHR/iIZgeQVPCVyGD+z01iSCxDtuU5
+	ftNib0RBRzzXXFXvNufQGbsZcRS3nIK5nO3vhhRMADodepHF0A0NTk8nTOkKUqxbrzlNlOZGFry
+	z7vmYoO8zIaoKqwqaPUWAUl6blRqTl1aG9RwKWp9+As2VxIRxQbUMJCzQAkt/qQ9BsCQ=
+X-Gm-Gg: ASbGncsV3flQOpEFudrktdpC0A/Do5qoq2IdO7YsrRrZ6Fu/oEXUixArt8QezDpLe7x
+	wdTkzLSfyNvOozq7RtGgTttSfsI4PbOLNkZwXS7JcHXEE0Ca1/+GeW09MQwn+ZktnA1+uIXkaH2
+	t19zc2h5mltUa6o4GwJf68ovJQxmE7btK1WO4/k1wO4HhKL5H/VldneYyOV6kdFmfs457/pPT7G
+	36dhIv7Odeqak4k1hymQLZwsTVqzWI7wG6QTH00pCipK/9RjBVGnePoIUFD9NRD2FYcf9macPcT
+	N5BpHnZTM5IbYSAzKyghVsIi6gvqjdn6ZuyjXtc5LjWvQ5Fu/uWr8vVmAwhDWKGYIVVyzDcFaJ5
+	vlFFa2M8m2SDPgJdPA/Ep7Bgxmc+QZhQAiCS5GiZSrFypaoWJ5NUc
+X-Received: by 2002:ac8:7dc3:0:b0:4ab:5277:a5ab with SMTP id d75a77b69052e-4b2aaa3fa77mr27327181cf.6.1755861679703;
+        Fri, 22 Aug 2025 04:21:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFwEaOak01WwTjnUuienCHYk4SGhkFGQMG/CUgI7oUtTAemM/5tdVtKFnwof/wGNbh824CEIA==
+X-Received: by 2002:ac8:7dc3:0:b0:4ab:5277:a5ab with SMTP id d75a77b69052e-4b2aaa3fa77mr27326951cf.6.1755861679234;
+        Fri, 22 Aug 2025 04:21:19 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef351806sm3431010e87.13.2025.08.22.04.21.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 04:21:18 -0700 (PDT)
+Date: Fri, 22 Aug 2025 14:21:16 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Cc: broonie@kernel.org, perex@perex.cz, tiwai@suse.com, srini@kernel.org,
+        lgirdwood@gmail.com, linux-sound@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        krzysztof.kozlowski@linaro.org, neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 3/8] ASoC: codecs: wcd-common: move WCD_SDW_CH to
+ common
+Message-ID: <4jklfoinsr7ldw5gn66kmfh4vwl7hqrhvnodakirsd5vx4uzqe@axhf5e7ei5g2>
+References: <20250822104927.2621866-1-srinivas.kandagatla@oss.qualcomm.com>
+ <20250822104927.2621866-4-srinivas.kandagatla@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1754646071.git.zhouquan@iscas.ac.cn>
-In-Reply-To: <cover.1754646071.git.zhouquan@iscas.ac.cn>
-From: Anup Patel <anup@brainfault.org>
-Date: Fri, 22 Aug 2025 16:50:21 +0530
-X-Gm-Features: Ac12FXybuZh7H_EDZYZxjvBDpOJ1Lg5p3N7w9IhOsJAO1wqpnDrt-kCUdBS50To
-Message-ID: <CAAhSdy1n+R5q3F4Fw4npz3gOGEWueYd0tDuPyzjE1stPATMdfQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] RISC-V: KVM: Allow zicbop/bfloat16 exts for guests
-To: zhouquan@iscas.ac.cn
-Cc: ajones@ventanamicro.com, atishp@atishpatra.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822104927.2621866-4-srinivas.kandagatla@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=LexlKjfi c=1 sm=1 tr=0 ts=68a852b1 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=g_yewJXOhfjxRz4zaJMA:9 a=CjuIK1q_8ugA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-GUID: -JWO-CvD66QoUliAm6b4MGC7G4wTqdIU
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDEzNSBTYWx0ZWRfX2OiMa6lJvVik
+ 29XWV4OV4m6fNJIjUUi7gifTozttKCBSGAyif0W169nk621M+8nPRp3bdhgT646lZrKbh+39/Xe
+ jmdVan5ma3petkih2she5aHG+h/vKVLv/Ki9oep8onbfQ1gM+CIirhlY0STsTSoJv4dH3V0XU7m
+ KcwLrakQrslRxYr1rC5o2myf2Od0Ea4cj47lifWJQ07BDDyJ9iYiNyxWyerSgB6I2kt01M6GAYU
+ C41HGMNI2DrD13Uf+MCOygT3Sp3Cgiyy9A7/AF8/yQdOZEkzukKYqCnT2x6MaUqFH2J+kCzUvk2
+ PKm5SrKuh8wyn5GlIbHnlHD1FuBhYS4QoWnfdC7grkDw5F8Ue+8D2ZRhAe7ba5583GSD7zuNlT2
+ WW6I2dAAtBOysrHEqWlbBtDe/Snv4w==
+X-Proofpoint-ORIG-GUID: -JWO-CvD66QoUliAm6b4MGC7G4wTqdIU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0 malwarescore=0
+ spamscore=0 priorityscore=1501 suspectscore=0 clxscore=1015 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200135
 
-On Fri, Aug 8, 2025 at 4:00=E2=80=AFPM <zhouquan@iscas.ac.cn> wrote:
->
-> From: Quan Zhou <zhouquan@iscas.ac.cn>
->
-> Advertise zicbop/bfloat16 extensions to KVM guest when underlying
-> host supports it, and add them to get-reg-list test.
->
+On Fri, Aug 22, 2025 at 11:49:22AM +0100, Srinivas Kandagatla wrote:
+> sdw_ch_info and WCD_SDW_CH macro is duplicated across wcd937x, wcd938x,
+> wcd939x soundwire codec drivers. Move this to wcd common driver to
+> remove this code duplication.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
 > ---
-> Change since v1:
-> - update zicbom/zicboz/zicbop block size registers to depend on the host =
-isa.
-> - update the reg list filtering in copy_config_reg_indices() to use the h=
-ost isa.
-> - add reg list filtering for zicbop.
-> v1: https://lore.kernel.org/all/cover.1750164414.git.zhouquan@iscas.ac.cn=
-/
->
-> Quan Zhou (6):
->   RISC-V: KVM: Change zicbom/zicboz block size to depend on the host isa
->   RISC-V: KVM: Provide UAPI for Zicbop block size
->   RISC-V: KVM: Allow Zicbop extension for Guest/VM
->   RISC-V: KVM: Allow bfloat16 extension for Guest/VM
->   KVM: riscv: selftests: Add Zicbop extension to get-reg-list test
->   KVM: riscv: selftests: Add bfloat16 extension to get-reg-list test
+>  sound/soc/codecs/wcd-common.h  | 11 +++++++++++
+>  sound/soc/codecs/wcd937x-sdw.c |  4 ++--
+>  sound/soc/codecs/wcd937x.h     | 16 ++--------------
+>  sound/soc/codecs/wcd938x-sdw.c |  4 ++--
+>  sound/soc/codecs/wcd938x.c     |  2 +-
+>  sound/soc/codecs/wcd938x.h     | 13 +------------
+>  sound/soc/codecs/wcd939x-sdw.c |  4 ++--
+>  sound/soc/codecs/wcd939x.c     |  2 +-
+>  sound/soc/codecs/wcd939x.h     | 13 +------------
+>  9 files changed, 23 insertions(+), 46 deletions(-)
+> 
 
-Queued this series for Linux-6.18
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Thanks,
-Anup
 
->
->  arch/riscv/include/uapi/asm/kvm.h             |  5 +++
->  arch/riscv/kvm/vcpu_onereg.c                  | 34 +++++++++++++++----
->  .../selftests/kvm/riscv/get-reg-list.c        | 25 ++++++++++++++
->  3 files changed, 58 insertions(+), 6 deletions(-)
->
-> --
-> 2.34.1
->
+-- 
+With best wishes
+Dmitry
 
