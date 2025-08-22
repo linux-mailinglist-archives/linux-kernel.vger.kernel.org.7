@@ -1,115 +1,138 @@
-Return-Path: <linux-kernel+bounces-781483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5037CB31311
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A0EB3130F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:30:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11A5B5C19DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:26:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E529D5C5FDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D07C2ED17D;
-	Fri, 22 Aug 2025 09:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="I6gMCdUf"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EF92ED870;
+	Fri, 22 Aug 2025 09:26:08 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C43A2EE5FA
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53AE2E54A8
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755854771; cv=none; b=Zebh0xJzWdzj8AsjSETe22Kiqx8/O6wuFP8Zo7o8l/fO5yHSfWaHgchZ7sRLxMflLTREN3QOgS6H+XA1ZUjCCMPvsvkvqIa8CuHYep+Aco7MRFpsyEh0eUcDj3xsnf+6WRfeFrLF7jJmbhtjwtNc51Zk/nMhFNyt+8CoGrdkTgA=
+	t=1755854767; cv=none; b=GOfUEiDfbcbcEcQHLmv2B7J9pjQvggA6aaiVXZRl6MlDSmem5b2UWW50VJPi/IQocCJIJyMR6Lj8bGNM1ZcbEqgzFRcaG+7hpyXAmFsryDmr0rZb7VWP1VpejDU62Z0Td7tVYSykAF3pErWeyslOMsYI/N68dHEQ6qpHIwCoXDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755854771; c=relaxed/simple;
-	bh=zU0G/aUo6bfSJLPq+JRQFqKaqZJgVyzOmP1MHFt8paA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uYUBjDDErgzQudXU7B187yqYbq1TzT8JLy+7soP+cMnxn07Y2f7KasSxSDLXrjMTLJ4wErxgwGPB45FM1w2vxcu+qfTtTkaUQLrVU552JuTLFL6EvLfYpmz2gRpaArYUJuBnuwpCwZouISavHPEV1IYDn5LNP95a7xZ9YRS9WOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=I6gMCdUf; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 22 Aug 2025 02:25:43 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755854757;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SLjg8Y5myb/BfSTld+S05SbtufySosFInjHD1VZtzHU=;
-	b=I6gMCdUf8SOoxP9R+ovqkZBQ277HOocaX8dY7qeW8bj3T7YfmvoW4cJK2LJh5qGGjKu4hp
-	iTY2B2a0tfbAr84wJ5ZkiPqszexiJyLfb6wqC6+NOG9sDP5plAeS8V86HMQVRHjI0IsNpG
-	Cfc4/7w+XjmPGKZ2nS3NOPz8WDjM8VA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH] KVM: arm64: nv: Allow shadow stage 2 read fault
-Message-ID: <aKg3l23hheuQ1dJH@linux.dev>
-References: <20250822031853.2007437-1-r09922117@csie.ntu.edu.tw>
+	s=arc-20240116; t=1755854767; c=relaxed/simple;
+	bh=YaGZ8UzxreJ2bwW0ZV2jA1hQAGuHkwObCV6di1gkDww=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lk8MxYVcnM4sg0XTHsY7PjVx6lAzMwHHFkZnBxcVV32lJOMmt0J7tKRjtjUtfWCfUaZOJsFcLhrCo2DpDVBfvkBCM2lWjmgzef4frTq6yeptyiR3Z15dPrmLYhKIkmbW5xB9khnpUAKKVW9h05BKglzFC5zCxL88UEALHfO31dA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1upO21-00058x-1r; Fri, 22 Aug 2025 11:25:57 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1upO20-001YQ9-1H;
+	Fri, 22 Aug 2025 11:25:56 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1upO20-00C7Wz-12;
+	Fri, 22 Aug 2025 11:25:56 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Thangaraj Samynathan <Thangaraj.S@microchip.com>,
+	Rengarajan Sundararajan <Rengarajan.S@microchip.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: [PATCH net-next v1 1/1] net: usb: lan78xx: add support for generic net selftests via ethtool
+Date: Fri, 22 Aug 2025 11:25:55 +0200
+Message-Id: <20250822092555.2888870-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822031853.2007437-1-r09922117@csie.ntu.edu.tw>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Wei-Lin,
+Integrate generic net_selftest framework by wiring up
+.get_strings, .get_sset_count, and .self_test ethtool ops.
 
-You've been finding some good stuff with nested, thank you :)
+This enables execution of standard self-tests using
+`ethtool -t <dev>` on LAN78xx devices.
 
-On Fri, Aug 22, 2025 at 11:18:53AM +0800, Wei-Lin Chang wrote:
-> I am able to trigger this error with a modified L1 KVM, but I do realize
-> this requires L1 to be very strange (or even just wrong) so I understand
-> if we don't want to handle this kind of edge case. On the other hand,
-> could there also be other ways to trigger this that I have not thought
-> of?
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ drivers/net/usb/Kconfig   | 1 +
+ drivers/net/usb/lan78xx.c | 6 ++++++
+ 2 files changed, 7 insertions(+)
 
-The architecture is pretty unambiguous here that the stage-2 can
-represent a translation w/o read permission.
+diff --git a/drivers/net/usb/Kconfig b/drivers/net/usb/Kconfig
+index 0a678e31cfaa..856e648d804e 100644
+--- a/drivers/net/usb/Kconfig
++++ b/drivers/net/usb/Kconfig
+@@ -116,6 +116,7 @@ config USB_LAN78XX
+ 	select PHYLINK
+ 	select MICROCHIP_PHY
+ 	select CRC32
++	imply NET_SELFTESTS
+ 	help
+ 	  This option adds support for Microchip LAN78XX based USB 2
+ 	  & USB 3 10/100/1000 Ethernet adapters.
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index 1ff25f57329a..b56e2459ee3c 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -20,6 +20,7 @@
+ #include <linux/mdio.h>
+ #include <linux/phy.h>
+ #include <net/ip6_checksum.h>
++#include <net/selftests.h>
+ #include <net/vxlan.h>
+ #include <linux/interrupt.h>
+ #include <linux/irqdomain.h>
+@@ -1702,12 +1703,16 @@ static void lan78xx_get_strings(struct net_device *netdev, u32 stringset,
+ {
+ 	if (stringset == ETH_SS_STATS)
+ 		memcpy(data, lan78xx_gstrings, sizeof(lan78xx_gstrings));
++	else if (stringset == ETH_SS_TEST)
++		net_selftest_get_strings(data);
+ }
+ 
+ static int lan78xx_get_sset_count(struct net_device *netdev, int sset)
+ {
+ 	if (sset == ETH_SS_STATS)
+ 		return ARRAY_SIZE(lan78xx_gstrings);
++	else if (sset == ETH_SS_TEST)
++		return net_selftest_get_count();
+ 	else
+ 		return -EOPNOTSUPP;
+ }
+@@ -1894,6 +1899,7 @@ static const struct ethtool_ops lan78xx_ethtool_ops = {
+ 	.set_eeprom	= lan78xx_ethtool_set_eeprom,
+ 	.get_ethtool_stats = lan78xx_get_stats,
+ 	.get_sset_count = lan78xx_get_sset_count,
++	.self_test	= net_selftest,
+ 	.get_strings	= lan78xx_get_strings,
+ 	.get_wol	= lan78xx_get_wol,
+ 	.set_wol	= lan78xx_set_wol,
+-- 
+2.39.5
 
-> Another thing is that this change lets L1 get away with not flushing the
-> TLB, but TLBs are ephemeral so it's fine in this aspect, however I'm not
-> sure if there are other considerations.
-
-FEAT_ETS3 is an interesting one since it provides software with ordering
-expectations around MMU faults (including permission faults) and updates
-to the translation tables. For KVM's shadow stage-2 to comply we need to
-re-walk the guest's stage-2 before injecting the fault at L1.
-
-> ---
->  arch/arm64/kvm/mmu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> index 1c78864767c5c..41017ca579b19 100644
-> --- a/arch/arm64/kvm/mmu.c
-> +++ b/arch/arm64/kvm/mmu.c
-> @@ -1508,8 +1508,8 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  	exec_fault = kvm_vcpu_trap_is_exec_fault(vcpu);
->  	VM_BUG_ON(write_fault && exec_fault);
->  
-> -	if (fault_is_perm && !write_fault && !exec_fault) {
-> -		kvm_err("Unexpected L2 read permission error\n");
-> +	if (fault_is_perm && !write_fault && !exec_fault && !nested) {
-> +		kvm_err("Unexpected S2 read permission error\n");
->  		return -EFAULT;
->  	}
-
-Hmm... I'm also willing to just delete this check altogether. The
-likelihood of KVM creating a stage-2 PTE w/o read permission is rather
-low.
-
-Thanks,
-Oliver
 
