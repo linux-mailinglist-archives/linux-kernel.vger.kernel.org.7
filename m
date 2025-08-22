@@ -1,131 +1,116 @@
-Return-Path: <linux-kernel+bounces-782407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B972B32014
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:06:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21FAAB32030
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F7D7664F1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:59:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECB96621861
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C7D254AE7;
-	Fri, 22 Aug 2025 15:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6062777E8;
+	Fri, 22 Aug 2025 16:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a6wC64GY"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691B023D7C6;
-	Fri, 22 Aug 2025 15:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WkAsXT6K"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D592E54D2;
+	Fri, 22 Aug 2025 16:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755878284; cv=none; b=h8uTowkfEUIc2mJlf4XCP2pbUDcbggnPRzQ+Oqicl6fq6RupuDcDaXqpv0D7WOx437OsAFLjkjVLkNnVkcDzdiYcGIx5qrulY50llfJpVhtkQJNatp/fIqUl79yxvMNJWwRKqIexd0w6Xz8ITLcJAMTn/dU7bOhODDhLyQJPeSo=
+	t=1755878588; cv=none; b=Q/sAx8M91h0XfnTHHEj9yfT1QUlWS+SeyizB3VWMpTG7znD/ZvzUCn/X6vMzc76bVwuNUImOB5qDps0KzlotMO2O4d+pmBlrp06kkIvH7d7nEc0XLzuD0qtXqziySu+BilewGOsbBsn+Is54Z2UxR4ZsJDRyauqU3nvLKxUTdzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755878284; c=relaxed/simple;
-	bh=bF26FsPaTRyx6UsVlmBqbfbhZykwvFOLYLX/RnnTyR0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l+zYQYFSm5iESymvJs5KHn+Rxe8umQ9X4WoTxCGKp6vbkP9sKBDfnnkgYETZGQRt3nXylrYtffNvk5D3RJbaCjoVcIkQ6aeODEDc6gl9mbVoCXhhyb8J1SDTI0ZHhDD+dmOQ+mb1k1W9QLmUC1/HJas/aq3om/9HdsnMG/vrCXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a6wC64GY; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61c26f3cf6fso1124168a12.1;
-        Fri, 22 Aug 2025 08:58:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755878281; x=1756483081; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FWwhQvkwseWX89ZiDKOLJDX8HiWiWDKqSvWJ0KUmbz4=;
-        b=a6wC64GYnJUbpQPqdgtq4AgGNTLzzKYXg1wKjdJ2L4yn87hbaDqtNq389pr47EThl2
-         2SU3VmjiS0YbD0lXZ4UE1CG1v33JfeSIyiwb0tI95361oiQCz2rWZhgwckh5Km/rG12x
-         ERVSErSoW5Kp9DGROt4PZRn2Z6dstNI6DDqOAPbchLwNyu/5uX39B0Nr8k+Y1NaTN6qW
-         qPm5MAQ1s/CxeL7he7iytdjrJQNlbQXsRqa001X/6/WYWEVAzZpAmt8S/G3CegBBL6M0
-         0Cpf9E+s73IhMbVutphRPL1tyaN6L4420slhwYLzcfAvHQnZ7Hp4piMZvB/uWFcEUdr4
-         DpBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755878281; x=1756483081;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FWwhQvkwseWX89ZiDKOLJDX8HiWiWDKqSvWJ0KUmbz4=;
-        b=RIasRnWKQNR2ssuhmxXYzQGJD6/exfecuCmzpOxzBt5pLKqS+gkumC2GnaLeG1G4HF
-         jNqZ6MQZA/1eDMXi1TWq78cw8WwsJ5bi4WzZaNKv4ce5ti+NW4E0jNRdop7tWcbx0/z8
-         fPoAy1fepxqD65gVpRnVT/MmrVyEvGQ2b/fR1G5i7vMbY0XjXWWm9EdW7UsZOTtA4G2w
-         53CG9vA6xvpL38qSx2ALQ1Snwz6JFBsfoX29YUHcayLXBRrogi602orJMHqvPkj31DyA
-         vla4E0ZLgq3EthHair7csxHtL3FpkZSP9a9EMwXBeBfuEChCuAhzvXDd0u+5sWg22eCO
-         BO6g==
-X-Forwarded-Encrypted: i=1; AJvYcCV9MB3m6zHz62QEraNIhnhVIrc2qUtmyj4MDLVEBK9nM9tzUXjIqV+OknV4iKOgW9ESziaP7sd9i8GF@vger.kernel.org, AJvYcCXL2KgB8c4Hdm0ZuAW1uDDDkhinIuINV688MCDuAu1YjnNIbRrDutCBi8iZ8/d4T9HooYG5oX86tmD5UfWT@vger.kernel.org, AJvYcCXxPBiO+Nxqq1mPZBrx/ooQDdkGYrL/AHqv4nfKeTR5DxFLU908YMdUDu6GK4NGzGxt6wt4pqxghBcT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4PP9qoro9V/A/SPOB0DlPjsr+ZUhRQYLTO31waznhXOg1RDvi
-	CJbpAQXYBgaWtQXIBKyHjReUY1adXs7gqcpAs1m7iWPtzL7QdVIXf371jBTpRgjH7VM+bAsTiLN
-	sYDmvDWO93miFmmR0VOAw6qhS4FcpC4o=
-X-Gm-Gg: ASbGncsTOvsQ9fU/UlYc1J36BLMG/iBKLbLX2tXJBZnRnBwAjZE66vdqwtBAkp2XB9p
-	sozwoFLB5G947ulHd5Dc67bIyKG3NTmBLq4H3Js//azjK6r6NpJXgHSoxLBy0o2NAdc6lnBAnMG
-	eJ69qQt5jUqwuduTVEzTnLRx/Ab3sWrZGdcHSRs7pRfOt8GbYIALtya0CHguuL8xPbe1qCAizkT
-	mIYRaQAUA==
-X-Google-Smtp-Source: AGHT+IGjP/DxRM5ah8EzSR4iMCcnrsqNmIzUWo9jxC/gUjnoWEwdWH4+iMrPUUtpaAbWjm2z5h3MHcoHcz3CAtK+kXA=
-X-Received: by 2002:a17:907:3cc9:b0:afc:a190:848b with SMTP id
- a640c23a62f3a-afe2904652emr359004466b.39.1755878280397; Fri, 22 Aug 2025
- 08:58:00 -0700 (PDT)
+	s=arc-20240116; t=1755878588; c=relaxed/simple;
+	bh=SFx+xEXCps/MEjk6e6nCLSHOmv+Tx0NtwGUdwnZG4Ww=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lETXTeIRvdHGvB6pLmL5RKLKTepbwk+/Vp6gn/Xvd/ABjT00TTyoh2cHIxTXYKP6juH9A5n+bnDZDCLq9tbz1DrmJR3RseUcxcoZPkWgaVb3z3E5mnKQ4y26XFncSoVbDEixsJI6qMtIKZPGAmHfgFPzGn5Thb88mPMetZFMN/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WkAsXT6K; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Z4
+	lofPLCVpT9yH9KN2N7Nz+nTKVn7B8LeP9A7V7D8Gg=; b=WkAsXT6K8HUPo0RHJd
+	cnaXt0d/uhHQMna4r1hmRCwT0b+4bPevy9FnnhERoS1RMoVuXIKmiC7n/IJe62Ry
+	EkX86UW55Lx1Fr9hsT+kocFPRsvaqCE18IZl3q3urq1aQlo2DwSXYgX5QziAKUEK
+	mGyLOL05SJReBik/+hn0rpdiU=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgBnxDaplKho3jnHAA--.18200S2;
+	Sat, 23 Aug 2025 00:02:50 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: bhelgaas@google.com,
+	helgaas@kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Hans Zhang <18255117159@163.com>
+Subject: [PATCH v2 0/7] PCI: Replace short msleep() calls with more precise delay functions
+Date: Fri, 22 Aug 2025 23:59:01 +0800
+Message-Id: <20250822155908.625553-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822-upstream-changes-v8-0-40bb1739e3e2@watter.com> <20250822-upstream-changes-v8-4-40bb1739e3e2@watter.com>
-In-Reply-To: <20250822-upstream-changes-v8-4-40bb1739e3e2@watter.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 22 Aug 2025 18:57:23 +0300
-X-Gm-Features: Ac12FXxRRqM1DF36R8l2Q4NCibzIu2oWImr-siqGfaTPsAKKaQWGAPMonkcq55U
-Message-ID: <CAHp75VdMCY3=bL2t7zWw0D1WqtiLXrWi+ptjpaxK16b8J1KVSg@mail.gmail.com>
-Subject: Re: [PATCH v8 4/5] iio: mcp9600: Recognize chip id for mcp9601
-To: Ben Collins <bcollins@watter.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andrew Hepp <andrew.hepp@ahepp.dev>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PygvCgBnxDaplKho3jnHAA--.18200S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tFW7AFyruryUWFWDGFW3Jrb_yoW8ur47pa
+	98GFs0yF1xJFZ8ua17Za1IvFn09Fn7AFWj9F9xWasrXas8Aw1UGF4ftF1rWr12qrW0qw1U
+	Xa45Ja1rGay8AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pixhliUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWwWxo2iokSpKrwAAsS
 
-On Fri, Aug 22, 2025 at 4:24=E2=80=AFPM Ben Collins <bcollins@watter.com> w=
-rote:
->
-> The current driver works with mcp9601, but emits a warning because it
-> does not recognize the chip id.
->
-> MCP9601 is a superset of MCP9600. The drivers works without changes
-> on this chipset.
->
-> However, the 9601 chip supports open/closed-circuit detection if wired
-> properly, so we'll need to be able to differentiate between them.
->
-> Moved "struct mcp9600_data" up in the file since a later patch will
-> need it and chip_info before the declarations.
+This series replaces short msleep() calls (less than 20ms) with more
+precise delay functions (fsleep() and usleep_range()) throughout the
+PCI subsystem.
 
-...
+The msleep() function with small values can sleep longer than intended
+due to timer granularity, which can cause unnecessary delays in PCI
+operations such as link status checking, reset handling, and hotplug
+operations.
 
-> +struct mcp9600_data {
-> +       struct i2c_client *client;
-> +};
-> +
+These changes:
+- Use fsleep() for delays that require precise timing (1-2ms).
+- Use usleep_range() for delays that can benefit from a small range.
+- Add #defines for all delay values with references to PCIe specifications.
+- Update comments to reference the latest PCIe r7.0 specification.
 
-> -struct mcp9600_data {
-> -       struct i2c_client *client;
-> -};
-> -
+This improves the responsiveness of PCI operations while maintaining
+compliance with PCIe specifications.
 
-Seems we discussed this. And my suggestion was to defer the change to
-when it will be needed.
+---
+Changes for v2:
+https://patchwork.kernel.org/project/linux-pci/patch/20250820160944.489061-1-18255117159@163.com/
 
-...
+- According to the Maintainer's suggestion, it was modified to fsleep,
+  usleep_range, and macro definitions were used instead of hard code. (Bjorn)
+---
 
-The rest LGTM.
+Hans Zhang (7):
+  PCI: Replace msleep(2) with fsleep() for precise delay
+  PCI: Replace msleep(1) with fsleep() for precise link status checking
+  PCI: rcar-host: Replace msleep(1) with fsleep() for precise speed
+    change monitoring
+  PCI: brcmstb: Replace msleep(5) with usleep_range() for precise link
+    up checking
+  PCI: rcar: Replace msleep(5) with usleep_range() for precise PHY ready
+    checking
+  PCI: pciehp: Replace msleep(10) with usleep_range() for precise delays
+  PCI/DPC: Replace msleep(10) with usleep_range() for precise RP busy
+    checking
 
---=20
-With Best Regards,
-Andy Shevchenko
+ drivers/pci/controller/pcie-brcmstb.c   | 5 ++++-
+ drivers/pci/controller/pcie-rcar-host.c | 4 +++-
+ drivers/pci/controller/pcie-rcar.c      | 4 +++-
+ drivers/pci/hotplug/pciehp_hpc.c        | 6 +++++-
+ drivers/pci/pci.c                       | 9 +++------
+ drivers/pci/pci.h                       | 7 +++++++
+ drivers/pci/pcie/dpc.c                  | 5 ++++-
+ 7 files changed, 29 insertions(+), 11 deletions(-)
+
+
+base-commit: b19a97d57c15643494ac8bfaaa35e3ee472d41da
+-- 
+2.25.1
+
 
