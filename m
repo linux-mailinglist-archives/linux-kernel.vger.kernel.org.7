@@ -1,79 +1,64 @@
-Return-Path: <linux-kernel+bounces-781874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 184E6B3180C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:40:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67656B31821
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE9D9601250
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:40:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FCAC1CE378A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC6F2FB978;
-	Fri, 22 Aug 2025 12:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A752FC000;
+	Fri, 22 Aug 2025 12:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="3BYFJHp4"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="DWOSEnnd"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1003C2E8B74
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063B318DB35;
+	Fri, 22 Aug 2025 12:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755866408; cv=none; b=k4PHnosQUt4JgBw4SLYVodSOhxSsRSl4pII4ppmskgVZpl80yZSk0ixvivEFsBmGPlJOrqoFM+izeAxmYZeTBap4JBKaqyOa9FHC3Qor6wZehj5H5FVYLfCqHylngklhnnVlTs7WkJIsExKC0U1aCoqFX5UoxW1+k3mc4crmuGA=
+	t=1755866565; cv=none; b=cxPDrg/+DXbLEnAM8vt+3Pe9L2TqBv2hUsuIqRSMsE/UduQ5oYVwVQIl0++Wz+Arao2ZCm4YuncjPs1/DnB1Ru8i+h/OVSi19JFM7WM/iR5QtLp58C2z7wRfT/OOts9AarhVV/Y8J3JwSAoV3hocugTofx3PwdaV1gC6Ym0xdpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755866408; c=relaxed/simple;
-	bh=dph5PYREDD1pA0b8chqVFqGvC+vOsxLs/HqOrSPAUes=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X99y3x77dbnCVieiFl7n8Wl3mEKM/yYiL4xC79iTCAg8HgW7UCqxEpdg7gEDjRbx4RwFCozmD9osZ3YK4d1xqy/DqEFwHeQV8hbNvXwvRUZNdP5MEFwtoM1nLT6yufytgoPrxmPPu2u7NN59hjOq6qB/g+u77iy7qVPgxeaDSis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=3BYFJHp4; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b474a38b25cso1764075a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:40:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1755866406; x=1756471206; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B+yr9sRToH/PruAdIM7WqBdD3kL6ipM/1pLENcMhk1k=;
-        b=3BYFJHp4t8Uz2lOHeVi/WjBt60rnY+N2KcNxGq39dpJdpJTj5U5P6ezvTwrJUDU9l7
-         3Jb1iz+nD3Y+tkXLroqhSA6OEZfnaPRF79I7cLGR0WvunLaGZG3innM5YqJ8CFW4CGHq
-         JDy1qY/gpL0rctROy3bM5jEmA9JjIzr39ThsjIQa8vTWu1stkmeXc+HfwDRY/q1+dXAN
-         YLFCWaXJgrcE0bPYKCMuuJ/rvNl/mqedyse36M1i/+sq15UdBlAxvRaE74Eg7bZybk+s
-         gRFkt5Z6heJTOo+kH6YoZBuHFwwqIhFfDPGNyrjkEeUzkDsvdr9lKaMKhKSs9rbQ03Bj
-         6jnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755866406; x=1756471206;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B+yr9sRToH/PruAdIM7WqBdD3kL6ipM/1pLENcMhk1k=;
-        b=FcsBXyx2mF9vkEPFaa870lYaFrm3qj8NcX7SQb5sQf0o3v4bZWQJdj6RMzeMxybR/u
-         EgxHyvK3b97FeJu7lOPoOSg9z+1ajp3v76KYbjqmLWYkeCVvPL6Ga8IboLnraWLZQEEx
-         4b55JjlIJFRVJqubB98gmS9vSrN3ZeehwrR+A8gXGSIEhtcl8qJQEwEAYDG6NgTNbvNc
-         s92rTtdLmqY8nur47IWdbM+o+xujL12pTqXdbSYeHbo1mBsThxUbgMbNg8NFw/dfDHJ9
-         a4Fpye9rSdlVH16gBMjk8vyNFNmTZHTUzRxbuYkDr4wFM0mgfzWCKs4QB4ZIdrbET6Wo
-         Tvzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHYC/bCHaDDAYF+yidZvVWcVilsQoeHryMMmkOI+NTAHOIHx6EY0rl8Gl2PSddeC9sdoF1M0NY8XElaJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrtZqcE0AXbcJADzx3gnxi7kw5D6SJpVlcLYeVGT3sQNqIbLMn
-	zEe6DaOgJG/j2MoHMV99dGTEZSX4Bcdqmb0rzS0HgTNXeptJOmptVnXI6+FtNNmGqg==
-X-Gm-Gg: ASbGncsCalSgwkMJADYdRcvxTD+KeXewLHso84q/RvCAiH2Ba3V5Pq7VVbbxXO8NCBL
-	WMcpohn9qhgPtaBAE/JEjuhcU1l4JeU++9kavUE8AweHc3oleko+YxJfXWhUbYGsMWvJ22Mpoub
-	2LG26GIKtAeQdfDxKBQkMfjn7JBbN6URlFzNeD5kf+ZyhwgyD8adM4N+MVdBSyFqyzqTtmIki2o
-	pu+U9wwezabK5KJ84jasv3jpkYrSkdmQkxT1yJVUKxBk+gGg70GPfB1hGFHmCf3Mfh4d6p6SX9a
-	11zNpns601wKyRplUyScDS/FXlePiLmoB9usfY7peA3iziCn5NF32/kEjIv+1F5JN/tS4bInwwz
-	vGCK0aaDFmAsSTyhoGqBOTybHj3AsjO0omErRkeXUOghvl8mQqXSSVwnf/65OoyDpCD8l
-X-Google-Smtp-Source: AGHT+IH5GwW/1LtdiOxW1n+MhOlbTwJKo2G4oIdIoLQEQsy6aOmCo5AeIoYMEsOb8r546lNVBC0s3w==
-X-Received: by 2002:a05:6a20:7fa0:b0:21f:5598:4c2c with SMTP id adf61e73a8af0-24340b01969mr4479905637.13.1755866406259;
-        Fri, 22 Aug 2025 05:40:06 -0700 (PDT)
-Received: from ?IPV6:2804:7f1:e2c3:f78a:6c07:66e5:2cc3:7521? ([2804:7f1:e2c3:f78a:6c07:66e5:2cc3:7521])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-325132487b3sm2485980a91.11.2025.08.22.05.40.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 05:40:05 -0700 (PDT)
-Message-ID: <98c5d450-e766-45cd-a300-bbeaf31cb0b9@mojatatu.com>
-Date: Fri, 22 Aug 2025 09:40:01 -0300
+	s=arc-20240116; t=1755866565; c=relaxed/simple;
+	bh=eSVWW9/RsUR0779tf2GJNPnM0xohLh9XA+70HhSuETE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oq7vGwwP7OuiEs3NvkTj++480j1P9HEIsLYK3eDvhyFhq49oN/PTZEVTM4Kgc+5FrKf6KqidlPRasrVoVi7DfupBk1gWqi4xT7h6wQUlOfSZWg3+byEQcZXVgzN1xkdgsh2dOez/9G5FIfYvzFZ68eutIEsrzu9CSjcsFVPpjL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=DWOSEnnd; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MAlQTX029436;
+	Fri, 22 Aug 2025 14:42:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	twVR4aLcjBcIxVR1vTBIjLNrHaf5X700fq4KHmsJOG0=; b=DWOSEnndEyapOE0z
+	yWh2HktcvWlWZHVAPSNECRWV9xXMgfYF7sqZT8Z2rsta6lW0rXJw8LNtyBfBr88I
+	EjmcFYbHkTQo1adZ3IoFV9EbKceqAGe/Is5mk+s+UtPf1Ul4dnJ7R4gX8CLtAUaz
+	6D3xgF49WDwaxSKr1YsRUa1iAjNXnrMaaAk1UymjBCxqK7L+cIk/m2IDKOzMD/nR
+	t3xoV8acdLP+gFoBMdoEuih82fSSX6v+FFgzkvFqkDrPrrFr1mRGnwWl9n3s+Pnc
+	EokqKutOd6JyCkITN1c4i1AomgidgH6dX8ZFXPjoyKmFMFc/d9aecxFkeBwuf4Rh
+	33Q5/A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48np7n7656-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 14:42:27 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3126F4004A;
+	Fri, 22 Aug 2025 14:41:08 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6DC5F71CEE0;
+	Fri, 22 Aug 2025 14:40:14 +0200 (CEST)
+Received: from [10.48.87.178] (10.48.87.178) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 22 Aug
+ 2025 14:40:13 +0200
+Message-ID: <e2a69447-a34c-4e2e-9bbc-3975b9ef08b7@foss.st.com>
+Date: Fri, 22 Aug 2025 14:40:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,116 +66,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/2] tcp: Destroy TCP-AO, TCP-MD5 keys in
- .sk_destruct()
-To: dima@arista.com, Eric Dumazet <edumazet@google.com>,
- Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>,
- "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>
-Cc: Bob Gilligan <gilligan@arista.com>,
- Salam Noureddine <noureddine@arista.com>,
- Dmitry Safonov <0x7f454c46@gmail.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250822-b4-tcp-ao-md5-rst-finwait2-v1-0-25825d085dcb@arista.com>
- <20250822-b4-tcp-ao-md5-rst-finwait2-v1-1-25825d085dcb@arista.com>
+Subject: Re: [PATCH v4 02/13] dt-bindings: display: st,stm32-ltdc: add
+ access-controllers property
+To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+        Philippe Cornu
+	<philippe.cornu@foss.st.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Maxime
+ Coquelin" <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>
+CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250821-drm-misc-next-v4-0-7060500f8fd3@foss.st.com>
+ <20250821-drm-misc-next-v4-2-7060500f8fd3@foss.st.com>
 Content-Language: en-US
-From: Victor Nogueira <victor@mojatatu.com>
-In-Reply-To: <20250822-b4-tcp-ao-md5-rst-finwait2-v1-1-25825d085dcb@arista.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Yannick FERTRE <yannick.fertre@foss.st.com>
+In-Reply-To: <20250821-drm-misc-next-v4-2-7060500f8fd3@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
 
-On 8/22/25 01:55, Dmitry Safonov via B4 Relay wrote:
-> From: Dmitry Safonov <dima@arista.com>
-> 
-> Currently there are a couple of minor issues with destroying the keys
-> tcp_v4_destroy_sock():
-> 
-> 1. The socket is yet in TCP bind buckets, making it reachable for
->     incoming segments [on another CPU core], potentially available to send
->     late FIN/ACK/RST replies.
-> 
-> 2. There is at least one code path, where tcp_done() is called before
->     sending RST [kudos to Bob for investigation]. This is a case of
->     a server, that finished sending its data and just called close().
-> 
->     The socket is in TCP_FIN_WAIT2 and has RCV_SHUTDOWN (set by
->     __tcp_close())
-> 
->     tcp_v4_do_rcv()/tcp_v6_do_rcv()
->       tcp_rcv_state_process()            /* LINUX_MIB_TCPABORTONDATA */
->         tcp_reset()
->           tcp_done_with_error()
->             tcp_done()
->               inet_csk_destroy_sock()    /* Destroys AO/MD5 keys */
->       /* tcp_rcv_state_process() returns SKB_DROP_REASON_TCP_ABORT_ON_DATA */
->     tcp_v4_send_reset()                  /* Sends an unsigned RST segment */
-> 
->     tcpdump:
->> 22:53:15.399377 00:00:b2:1f:00:00 > 00:00:01:01:00:00, ethertype IPv4 (0x0800), length 74: (tos 0x0, ttl 64, id 33929, offset 0, flags [DF], proto TCP (6), length 60)
->>      1.0.0.1.34567 > 1.0.0.2.49848: Flags [F.], seq 2185658590, ack 3969644355, win 502, options [nop,nop,md5 valid], length 0
->> 22:53:15.399396 00:00:01:01:00:00 > 00:00:b2:1f:00:00, ethertype IPv4 (0x0800), length 86: (tos 0x0, ttl 64, id 51951, offset 0, flags [DF], proto TCP (6), length 72)
->>      1.0.0.2.49848 > 1.0.0.1.34567: Flags [.], seq 3969644375, ack 2185658591, win 128, options [nop,nop,md5 valid,nop,nop,sack 1 {2185658590:2185658591}], length 0
->> 22:53:16.429588 00:00:b2:1f:00:00 > 00:00:01:01:00:00, ethertype IPv4 (0x0800), length 60: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto TCP (6), length 40)
->>      1.0.0.1.34567 > 1.0.0.2.49848: Flags [R], seq 2185658590, win 0, length 0
->> 22:53:16.664725 00:00:b2:1f:00:00 > 00:00:01:01:00:00, ethertype IPv4 (0x0800), length 74: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto TCP (6), length 60)
->>      1.0.0.1.34567 > 1.0.0.2.49848: Flags [R], seq 2185658591, win 0, options [nop,nop,md5 valid], length 0
->> 22:53:17.289832 00:00:b2:1f:00:00 > 00:00:01:01:00:00, ethertype IPv4 (0x0800), length 74: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto TCP (6), length 60)
->>      1.0.0.1.34567 > 1.0.0.2.49848: Flags [R], seq 2185658591, win 0, options [nop,nop,md5 valid], length 0
-> 
->    Note the signed RSTs later in the dump - those are sent by the server
->    when the fin-wait socket gets removed from hash buckets, by
->    the listener socket.
-> 
-> Instead of destroying AO/MD5 info and their keys in inet_csk_destroy_sock(),
-> slightly delay it until the actual socket .sk_destruct(). As shutdown'ed
-> socket can yet send non-data replies, they should be signed in order for
-> the peer to process them. Now it also matches how AO/MD5 gets destructed
-> for TIME-WAIT sockets (in tcp_twsk_destructor()).
-> 
-> This seems optimal for TCP-MD5, while for TCP-AO it seems to have an
-> open problem: once RST get sent and socket gets actually destructed,
-> there is no information on the initial sequence numbers. So, in case
-> this last RST gets lost in the network, the server's listener socket
-> won't be able to properly sign another RST. Nothing in RFC 1122
-> prescribes keeping any local state after non-graceful reset.
-> Luckily, BGP are known to use keep alive(s).
-> 
-> While the issue is quite minor/cosmetic, these days monitoring network
-> counters is a common practice and getting invalid signed segments from
-> a trusted BGP peer can get customers worried.
-> 
-> Investigated-by: Bob Gilligan <gilligan@arista.com>
-> Signed-off-by: Dmitry Safonov <dima@arista.com>
+Hi Raphael,
+
+Thanks for the patch.
+
+Acked-by: Yannick Fertre <yannick.fertre@foss.st.com>
+
+
+Le 21/08/2025 à 13:08, Raphael Gallais-Pou a écrit :
+> access-controllers is an optional property that allows a peripheral to
+> refer to one or more domain access controller(s).
+>
+> This property is added when the peripheral is under the STM32 firewall
+> controller.  It allows an accurate representation of the hardware, where
+> the peripheral is connected to a firewall bus.  The firewall can then check
+> the peripheral accesses before allowing its device to probe.
+>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
 > ---
->   net/ipv4/tcp.c      | 31 +++++++++++++++++++++++++++++++
->   net/ipv4/tcp_ipv4.c | 25 -------------------------
->   2 files changed, 31 insertions(+), 25 deletions(-)
-> 
-> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-> index 71a956fbfc5533224ee00e792de2cfdccd4d40aa..4e996e937e8e5f0e75764caa24240e25006deece 100644
-> --- a/net/ipv4/tcp.c
-> +++ b/net/ipv4/tcp.c
-> @@ -412,6 +412,36 @@ static u64 tcp_compute_delivery_rate(const struct tcp_sock *tp)
->   	return rate64;
->   }
-> [...]
+>   Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml | 3 +++
+>   1 file changed, 3 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
+> index bcedcfef5427f5725a0473c09628e70d172c8f58..e27347acee5dacf56cb3971d4b62c34dfc64d7e2 100644
+> --- a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
+> +++ b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
+> @@ -41,6 +41,9 @@ properties:
+>     resets:
+>       maxItems: 1
+>   
+> +  access-controllers:
+> +    maxItems: 1
 > +
-> +static void tcp_destruct_sock(struct sock *sk)
-> +{
-> +	struct tcp_sock *tp = tcp_sk(sk);
-
-It looks like this variable is unused when CONFIG_TCP_MD5SIG is not set 
-
-and this is causing the test CI build to fail.
-
-net/ipv4/tcp.c: In function ‘tcp_destruct_sock’:
-net/ipv4/tcp.c:417:26: error: unused variable ‘tp’ [-Werror=unused-variable]
-   417 |         struct tcp_sock *tp = tcp_sk(sk);
-       |                          ^~
-cc1: all warnings being treated as errors
-make[4]: *** [scripts/Makefile.build:287: net/ipv4/tcp.
-
-cheers,
-Victor
+>     port:
+>       $ref: /schemas/graph.yaml#/properties/port
+>       description: |
+>
 
