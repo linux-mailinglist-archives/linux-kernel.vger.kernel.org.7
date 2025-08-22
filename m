@@ -1,479 +1,197 @@
-Return-Path: <linux-kernel+bounces-782527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E636AB32195
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:39:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7135AB3219E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 348755C7A6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:39:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B988FB23F1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2428E31DD98;
-	Fri, 22 Aug 2025 17:38:59 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73B5313558;
+	Fri, 22 Aug 2025 17:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="StjMwzwV"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD171E5710;
-	Fri, 22 Aug 2025 17:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D5A31DD98;
+	Fri, 22 Aug 2025 17:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755884338; cv=none; b=M/xekC1SZo5iCUk5qqPuc5EzGAS2N5IAOmBysZEyH278cdBTkNHQqDeqlLAO1E+sAO527bnPjJTjlLUHK8W/PripBqWR8Imt/CBvAaSV7ZmMqcr5dBY066T1xmVbgTJG3SVA/UEfJl2OaoTaOMvbL5D+Y3qE7CxFSyUxS3P9pZQ=
+	t=1755884372; cv=none; b=ahCkXDH4bSzP+fOZUuU0T8HpcDRqx0HBrmTA9Y+UAVBZc5k/omr436KQ+0RqeKMB35PcyRRw9CqQ1PHWWSbmAoA4nM2KmZ/kMQpm3A+V2vRNoQVhnzOnBqj9CvJrC6rj//QIxa241b/PCZPl0zI1WPp57fDDpvoXuA51H5HxG4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755884338; c=relaxed/simple;
-	bh=kSP9JAkK5fok56cR6T5ke7xjCSL5GmaUkHuf8xjqd30=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oPYo8yc+wbLzkWNtQaVD1rM0fhUMPcjKAq0pLjW3vdq/DIWVQdZZh3ggD1yXcNbPBRv5K5BHr5c8Ag12qMp0T9iP3KLemZncL11e/Puc4BsnHZ7qENj0FObUQBbxHMi8KWQY0h3mac13CbavswZWCsPQGMYNWPcGcVJyFY/K/6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1upVj2-0000000077v-1aem;
-	Fri, 22 Aug 2025 17:38:52 +0000
-Date: Fri, 22 Aug 2025 18:38:49 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Xu Liang <lxu@maxlinear.com>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] net: phy: mxl-86110: add basic support for MxL86111
- PHY
-Message-ID: <707fd83ec0e11ea620d37f2125a394e9dd1b27fa.1755884175.git.daniel@makrotopia.org>
-References: <58eeefc8c24e06cd2110d3cefbd4236b1a4f44a2.1755884175.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1755884372; c=relaxed/simple;
+	bh=oCzH+qVdplQ2pgD+ImK3bjogniiN7B27MVSHwO/I+4o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TPbW7zbqkb2ymRfxf0y0PEFkelm9H2qcMk4iTyXT715wX4HcYlMJ1prBvRbEEp1pWKJLycTmCP1l0xywxBvTkgZIXKXndSjFXfG1g8scbLIi2rH/qtyBNv81jWvZ2y/0Pu9expzt+pSPKLT1M1oplLc95u71sSBUw9skkLWCkqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=StjMwzwV; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57MHdDTg299741;
+	Fri, 22 Aug 2025 12:39:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755884353;
+	bh=EQHjqdGHZGwz5jlXpEQ4A8fr2g0aWp9TNlx/qZj0tAM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=StjMwzwVLVDe40mulHlLMB/LS+E0mfIWI6dPqG3qcqRYLkOXRNINtgiW0Yb3khtZP
+	 EcV3Mlx1iwu/KMlqC8SK3YRsG6wuS9hAeMjp6raftH98LLC2rP8sRun5DJ1jpfLgR+
+	 D1GFZjCuShnGbbCx8PnBcSOJGOjKWpGqis6t5168=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57MHdDpk3077731
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 22 Aug 2025 12:39:13 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 22
+ Aug 2025 12:39:12 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 22 Aug 2025 12:39:12 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57MHdCxq3898888;
+	Fri, 22 Aug 2025 12:39:12 -0500
+Message-ID: <c05c0a13-e7af-4fc0-9363-b629b2c48201@ti.com>
+Date: Fri, 22 Aug 2025 12:39:12 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <58eeefc8c24e06cd2110d3cefbd4236b1a4f44a2.1755884175.git.daniel@makrotopia.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] PATCH: firmware: ti_sci: Add trace events to TI SCI
+To: Jon Cormier <jcormier@criticallink.com>
+CC: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Santosh
+ Shilimkar <ssantosh@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami
+ Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers
+	<mathieu.desnoyers@efficios.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-trace-kernel@vger.kernel.org>
+References: <20250820-linux_master_ti_sci_trace-v1-0-2a69c0abf55e@criticallink.com>
+ <e11fd419-1095-471e-a57f-fc5ff7ce713a@ti.com>
+ <CADL8D3aR_ecr4q54cX7yfr_aDPA7NhXmLhkiHjUY9MjNZeg78Q@mail.gmail.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <CADL8D3aR_ecr4q54cX7yfr_aDPA7NhXmLhkiHjUY9MjNZeg78Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Add basic support for the MxL86111 PHY which in addition to the features
-of the MxL86110 also comes with an SGMII interface.
-Setup the interface mode and take care of in-band-an.
+On 8/22/25 11:05 AM, Jon Cormier wrote:
+> On Wed, Aug 20, 2025 at 4:04 PM Andrew Davis <afd@ti.com> wrote:
+>>
+>> On 8/20/25 1:10 PM, Jonathan Cormier wrote:
+>>> Add trace events to help debug and measure the speed of the
+>>> communication channel.
+>>>
+>>> Add parsing of the messages types but I am not sure how to parse the
+>>> flags, since the REQ and RESP flags conflict. Left as seperate commit to
+>>
+>> The REQ and RESP flags should be handled by different TRACE_EVENTs. Right
+>> now you only dump the content of the response messages (the ones in
+>> rx_callback), also tracing what is sent is just as important, so you
+>> might want to add slightly different ti_sci_msg_dump EVENT for the
+>> sending side which uses the different REQ flag parser.
+> 
+> 
+> Does it make sense to have seperate trace events, one that only decode
+> the hdrs and ones that also include the buffers?
+> 
+> I'm bothered by the code duplication, but am trying to convince myself
+> it doesn't matter.
+> 
+> Currently, with the above updates, if you enabled all the traces,
+> you'd see something like:
+> 
+> [15.579036] ti_sci_xfer_begin: type=SET_DEVICE_STATE host=0C seq=00
+> flags=00000402 status=0
+> [15.xxxxxxx] ti_sci_tx_msg_dump: type=SET_DEVICE_STATE host=0C seq=00
+> flags=00000402 data=<data>
+> [15.587595] ti_sci_rx_callback: type=SET_DEVICE_STATE host=0C seq=00
+> flags=00000002 status=0
+> [15.xxxxxxx] ti_sci_rx_msg_dump: type=SET_DEVICE_STATE host=0C seq=00
+> flags=00000002 data=<data>
+> [15.606135] ti_sci_xfer_end: type=SET_DEVICE_STATE host=0C seq=00
+> flags=00000002 status=0
+> 
+> Presumably if you were worried about timing, you'd disable the
+> msg_dumps, avoiding the extra memcpy's.  And if you only cared about
+> the data being sent, you'd only enable the msg_dumps.  Does this make
+> sense / is it worth the extra trace calls?
+> 
+> Or removing the buffer decoding in the msg_dumps, removes the duplication:
+> 
+> [15.579036] ti_sci_xfer_begin: type=SET_DEVICE_STATE host=0C seq=00
+> flags=00000402 status=0
+> [15.xxxxxxx] ti_sci_msg_dump: data=<data>
+> [15.587595] ti_sci_rx_callback: type=SET_DEVICE_STATE host=0C seq=00
+> flags=00000002 status=0
+> [15.xxxxxxx] ti_sci_msg_dump: data=<data>
+> [15.606135] ti_sci_xfer_end: type=SET_DEVICE_STATE host=0C seq=00
+> flags=00000002 status=0
+> 
 
-Currently only RGMII-to-UTP and SGMII-to-UTP modes are supported while the
-PHY would also support RGMII-to-1000Base-X, including automatic selection
-of the Fiber or UTP link depending on the presence of a link partner.
+I like this one ^^^ but I'd also just remove the `ti_sci_rx_callback`
+trace, the contents would always be the same as `ti_sci_xfer_end`.
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
----
-v4: no changes
-v3: fix kernel-doc comments
-v2:
- - move fixing indentation to separate patch
- - acutally use reg_page variable
+This way you have two sets of symmetrical trace events, a "begin" and "end"
+that can be used for timing measurements, and a dump message for "send" and
+"receive" that would help with debugging based on the message contents.
 
- drivers/net/phy/mxl-86110.c | 321 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 309 insertions(+), 12 deletions(-)
+As for the code duplication in the send/receive traces, I'm not sure
+what can be done, these trace macros already confuse me enough without
+trying to optimize them :)
 
-diff --git a/drivers/net/phy/mxl-86110.c b/drivers/net/phy/mxl-86110.c
-index ba25d5b01780..e5d137a37a1d 100644
---- a/drivers/net/phy/mxl-86110.c
-+++ b/drivers/net/phy/mxl-86110.c
-@@ -15,6 +15,7 @@
- 
- /* PHY ID */
- #define PHY_ID_MXL86110		0xc1335580
-+#define PHY_ID_MXL86111		0xc1335588
- 
- /* required to access extended registers */
- #define MXL86110_EXTD_REG_ADDR_OFFSET			0x1E
-@@ -22,7 +23,15 @@
- #define PHY_IRQ_ENABLE_REG				0x12
- #define PHY_IRQ_ENABLE_REG_WOL				BIT(6)
- 
--/* SyncE Configuration Register - COM_EXT SYNCE_CFG */
-+/* different pages for EXTD access for MXL86111 */
-+/* SerDes/PHY Control Access Register - COM_EXT_SMI_SDS_PHY */
-+#define MXL86111_EXT_SMI_SDS_PHY_REG			0xA000
-+#define MXL86111_EXT_SMI_SDS_PHYSPACE_MASK		BIT(1)
-+#define MXL86111_EXT_SMI_SDS_PHYFIBER_SPACE		(0x1 << 1)
-+#define MXL86111_EXT_SMI_SDS_PHYUTP_SPACE		(0x0 << 1)
-+#define MXL86111_EXT_SMI_SDS_PHY_AUTO			0xff
-+
-+/* SyncE Configuration Register - COM_EXT_SYNCE_CFG */
- #define MXL86110_EXT_SYNCE_CFG_REG			0xA012
- #define MXL86110_EXT_SYNCE_CFG_CLK_FRE_SEL		BIT(4)
- #define MXL86110_EXT_SYNCE_CFG_EN_SYNC_E_DURING_LNKDN	BIT(5)
-@@ -115,9 +124,67 @@
- 
- /* Chip Configuration Register - COM_EXT_CHIP_CFG */
- #define MXL86110_EXT_CHIP_CFG_REG			0xA001
-+#define MXL86111_EXT_CHIP_CFG_MODE_SEL_MASK		GENMASK(2, 0)
-+#define MXL86111_EXT_CHIP_CFG_MODE_UTP_TO_RGMII		0
-+#define MXL86111_EXT_CHIP_CFG_MODE_FIBER_TO_RGMII	1
-+#define MXL86111_EXT_CHIP_CFG_MODE_UTP_FIBER_TO_RGMII	2
-+#define MXL86111_EXT_CHIP_CFG_MODE_UTP_TO_SGMII		3
-+#define MXL86111_EXT_CHIP_CFG_MODE_SGPHY_TO_RGMAC	4
-+#define MXL86111_EXT_CHIP_CFG_MODE_SGMAC_TO_RGPHY	5
-+#define MXL86111_EXT_CHIP_CFG_MODE_UTP_TO_FIBER_AUTO	6
-+#define MXL86111_EXT_CHIP_CFG_MODE_UTP_TO_FIBER_FORCE	7
-+
-+#define MXL86111_EXT_CHIP_CFG_CLDO_MASK			GENMASK(5, 4)
-+#define MXL86111_EXT_CHIP_CFG_CLDO_3V3			0
-+#define MXL86111_EXT_CHIP_CFG_CLDO_2V5			1
-+#define MXL86111_EXT_CHIP_CFG_CLDO_1V8_2		2
-+#define MXL86111_EXT_CHIP_CFG_CLDO_1V8_3		3
-+#define MXL86111_EXT_CHIP_CFG_CLDO_SHIFT		4
-+#define MXL86111_EXT_CHIP_CFG_ELDO			BIT(6)
- #define MXL86110_EXT_CHIP_CFG_RXDLY_ENABLE		BIT(8)
- #define MXL86110_EXT_CHIP_CFG_SW_RST_N_MODE		BIT(15)
- 
-+/* Specific Status Register - PHY_STAT */
-+#define MXL86111_PHY_STAT_REG				0x11
-+#define MXL86111_PHY_STAT_SPEED_MASK			GENMASK(15, 14)
-+#define MXL86111_PHY_STAT_SPEED_OFFSET			14
-+#define MXL86111_PHY_STAT_SPEED_10M			0x0
-+#define MXL86111_PHY_STAT_SPEED_100M			0x1
-+#define MXL86111_PHY_STAT_SPEED_1000M			0x2
-+#define MXL86111_PHY_STAT_DPX_OFFSET			13
-+#define MXL86111_PHY_STAT_DPX				BIT(13)
-+#define MXL86111_PHY_STAT_LSRT				BIT(10)
-+
-+/* 3 phy reg page modes,auto mode combines utp and fiber mode*/
-+#define MXL86111_MODE_FIBER				0x1
-+#define MXL86111_MODE_UTP				0x2
-+#define MXL86111_MODE_AUTO				0x3
-+
-+/* FIBER Auto-Negotiation link partner ability - SDS_AN_LPA */
-+#define MXL86111_SDS_AN_LPA_PAUSE			(0x3 << 7)
-+#define MXL86111_SDS_AN_LPA_ASYM_PAUSE			(0x2 << 7)
-+
-+/* Miscellaneous Control Register - COM_EXT _MISC_CFG */
-+#define MXL86111_EXT_MISC_CONFIG_REG			0xa006
-+#define MXL86111_EXT_MISC_CONFIG_FIB_SPEED_SEL		BIT(0)
-+#define MXL86111_EXT_MISC_CONFIG_FIB_SPEED_SEL_1000BX	(0x1 << 0)
-+#define MXL86111_EXT_MISC_CONFIG_FIB_SPEED_SEL_100BX	(0x0 << 0)
-+
-+/* Phy fiber Link timer cfg2 Register - EXT_SDS_LINK_TIMER_CFG2 */
-+#define MXL86111_EXT_SDS_LINK_TIMER_CFG2_REG		0xA5
-+#define MXL86111_EXT_SDS_LINK_TIMER_CFG2_EN_AUTOSEN	BIT(15)
-+
-+/* default values of PHY register, required for Dual Media mode */
-+#define MII_BMSR_DEFAULT_VAL		0x7949
-+#define MII_ESTATUS_DEFAULT_VAL		0x2000
-+
-+/* Timeout in ms for PHY SW reset check in STD_CTRL/SDS_CTRL */
-+#define BMCR_RESET_TIMEOUT		500
-+
-+/* PL P1 requires optimized RGMII timing for 1.8V RGMII voltage
-+ */
-+#define MXL86111_PL_P1				0x500
-+
- /**
-  * __mxl86110_write_extended_reg() - write to a PHY's extended register
-  * @phydev: pointer to the PHY device structure
-@@ -585,22 +652,15 @@ static int mxl86110_enable_led_activity_blink(struct phy_device *phydev)
- }
- 
- /**
-- * mxl86110_config_init() - initialize the PHY
-+ * mxl86110_config_rgmii_delay() - configure RGMII delays
-  * @phydev: pointer to the phy_device
-  *
-  * Return: 0 or negative errno code
-  */
--static int mxl86110_config_init(struct phy_device *phydev)
-+static int mxl86110_config_rgmii_delay(struct phy_device *phydev)
- {
--	u16 val = 0;
- 	int ret;
--
--	phy_lock_mdio_bus(phydev);
--
--	/* configure syncE / clk output */
--	ret = mxl86110_synce_clk_cfg(phydev);
--	if (ret < 0)
--		goto out;
-+	u16 val;
- 
- 	switch (phydev->interface) {
- 	case PHY_INTERFACE_MODE_RGMII:
-@@ -642,17 +702,237 @@ static int mxl86110_config_init(struct phy_device *phydev)
- 	if (ret < 0)
- 		goto out;
- 
-+out:
-+	return ret;
-+}
-+
-+/**
-+ * mxl86110_config_init() - initialize the MXL86110 PHY
-+ * @phydev: pointer to the phy_device
-+ *
-+ * Return: 0 or negative errno code
-+ */
-+static int mxl86110_config_init(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	phy_lock_mdio_bus(phydev);
-+
-+	/* configure syncE / clk output */
-+	ret = mxl86110_synce_clk_cfg(phydev);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = mxl86110_config_rgmii_delay(phydev);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = mxl86110_enable_led_activity_blink(phydev);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = mxl86110_broadcast_cfg(phydev);
-+
-+out:
-+	phy_unlock_mdio_bus(phydev);
-+	return ret;
-+}
-+
-+/**
-+ * mxl86111_probe() - validate bootstrap chip config and set UTP page
-+ * @phydev: pointer to the phy_device
-+ *
-+ * Return: 0 or negative errno code
-+ */
-+static int mxl86111_probe(struct phy_device *phydev)
-+{
-+	int chip_config;
-+	u16 reg_page;
-+	int ret;
-+
-+	chip_config = mxl86110_read_extended_reg(phydev, MXL86110_EXT_CHIP_CFG_REG);
-+	if (chip_config < 0)
-+		return chip_config;
-+
-+	switch (chip_config & MXL86111_EXT_CHIP_CFG_MODE_SEL_MASK) {
-+	case MXL86111_EXT_CHIP_CFG_MODE_UTP_TO_SGMII:
-+	case MXL86111_EXT_CHIP_CFG_MODE_UTP_TO_RGMII:
-+		phydev->port = PORT_TP;
-+		reg_page = MXL86111_EXT_SMI_SDS_PHYUTP_SPACE;
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	ret = mxl86110_write_extended_reg(phydev,
-+					  MXL86111_EXT_SMI_SDS_PHY_REG,
-+					  reg_page);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+/**
-+ * mxl86111_config_init() - initialize the MXL86111 PHY
-+ * @phydev: pointer to the phy_device
-+ *
-+ * Return: 0 or negative errno code
-+ */
-+static int mxl86111_config_init(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	phy_lock_mdio_bus(phydev);
-+
-+	/* configure syncE / clk output */
-+	ret = mxl86110_synce_clk_cfg(phydev);
-+	if (ret < 0)
-+		goto out;
-+
-+	switch (phydev->interface) {
-+	case PHY_INTERFACE_MODE_100BASEX:
-+		ret = __mxl86110_modify_extended_reg(phydev,
-+						     MXL86111_EXT_MISC_CONFIG_REG,
-+						     MXL86111_EXT_MISC_CONFIG_FIB_SPEED_SEL,
-+						     MXL86111_EXT_MISC_CONFIG_FIB_SPEED_SEL_100BX);
-+		if (ret < 0)
-+			goto out;
-+		break;
-+	case PHY_INTERFACE_MODE_1000BASEX:
-+	case PHY_INTERFACE_MODE_SGMII:
-+		ret = __mxl86110_modify_extended_reg(phydev,
-+						     MXL86111_EXT_MISC_CONFIG_REG,
-+						     MXL86111_EXT_MISC_CONFIG_FIB_SPEED_SEL,
-+						     MXL86111_EXT_MISC_CONFIG_FIB_SPEED_SEL_1000BX);
-+		if (ret < 0)
-+			goto out;
-+		break;
-+	default:
-+		/* RGMII modes */
-+		ret = mxl86110_config_rgmii_delay(phydev);
-+		if (ret < 0)
-+			goto out;
-+		ret = __mxl86110_modify_extended_reg(phydev, MXL86110_EXT_RGMII_CFG1_REG,
-+						     MXL86110_EXT_RGMII_CFG1_FULL_MASK, ret);
-+
-+		/* PL P1 requires optimized RGMII timing for 1.8V RGMII voltage
-+		 */
-+		ret = __mxl86110_read_extended_reg(phydev, 0xf);
-+		if (ret < 0)
-+			goto out;
-+
-+		if (ret == MXL86111_PL_P1) {
-+			ret = __mxl86110_read_extended_reg(phydev, MXL86110_EXT_CHIP_CFG_REG);
-+			if (ret < 0)
-+				goto out;
-+
-+			/* check if LDO is in 1.8V mode */
-+			switch (FIELD_GET(MXL86111_EXT_CHIP_CFG_CLDO_MASK, ret)) {
-+			case MXL86111_EXT_CHIP_CFG_CLDO_1V8_3:
-+			case MXL86111_EXT_CHIP_CFG_CLDO_1V8_2:
-+				ret = __mxl86110_write_extended_reg(phydev, 0xa010, 0xabff);
-+				if (ret < 0)
-+					goto out;
-+				break;
-+			default:
-+				break;
-+			}
-+		}
-+		break;
-+	}
-+
- 	ret = mxl86110_enable_led_activity_blink(phydev);
- 	if (ret < 0)
- 		goto out;
- 
- 	ret = mxl86110_broadcast_cfg(phydev);
-+out:
-+	phy_unlock_mdio_bus(phydev);
-+
-+	return ret;
-+}
-+
-+/**
-+ * mxl86111_read_page() - read reg page
-+ * @phydev: pointer to the phy_device
-+ *
-+ * Return: current reg space of mxl86111 or negative errno code
-+ */
-+static int mxl86111_read_page(struct phy_device *phydev)
-+{
-+	int page;
-+
-+	page = __mxl86110_read_extended_reg(phydev, MXL86111_EXT_SMI_SDS_PHY_REG);
-+	if (page < 0)
-+		return page;
-+
-+	return page & MXL86111_EXT_SMI_SDS_PHYSPACE_MASK;
-+};
-+
-+/**
-+ * mxl86111_write_page() - Set reg page
-+ * @phydev: pointer to the phy_device
-+ * @page: The reg page to set
-+ *
-+ * Return: 0 or negative errno code
-+ */
-+static int mxl86111_write_page(struct phy_device *phydev, int page)
-+{
-+	return __mxl86110_modify_extended_reg(phydev, MXL86111_EXT_SMI_SDS_PHY_REG,
-+					      MXL86111_EXT_SMI_SDS_PHYSPACE_MASK, page);
-+};
-+
-+static int mxl86111_config_inband(struct phy_device *phydev, unsigned int modes)
-+{
-+	int ret;
-+
-+	ret = phy_modify_paged(phydev, MXL86111_EXT_SMI_SDS_PHYFIBER_SPACE,
-+			       MII_BMCR, BMCR_ANENABLE,
-+			       (modes == LINK_INBAND_DISABLE) ? 0 : BMCR_ANENABLE);
-+	if (ret < 0)
-+		goto out;
-+
-+	phy_lock_mdio_bus(phydev);
-+
-+	ret = __mxl86110_modify_extended_reg(phydev, MXL86111_EXT_SDS_LINK_TIMER_CFG2_REG,
-+					     MXL86111_EXT_SDS_LINK_TIMER_CFG2_EN_AUTOSEN,
-+					     (modes == LINK_INBAND_DISABLE) ? 0 :
-+					     MXL86111_EXT_SDS_LINK_TIMER_CFG2_EN_AUTOSEN);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = __mxl86110_modify_extended_reg(phydev, MXL86110_EXT_CHIP_CFG_REG,
-+					     MXL86110_EXT_CHIP_CFG_SW_RST_N_MODE, 0);
-+	if (ret < 0)
-+		goto out;
-+
-+	/* For fiber forced mode, power down/up to re-aneg */
-+	if (modes != LINK_INBAND_DISABLE) {
-+		__phy_modify(phydev, MII_BMCR, 0, BMCR_PDOWN);
-+		usleep_range(1000, 1050);
-+		__phy_modify(phydev, MII_BMCR, BMCR_PDOWN, 0);
-+	}
- 
- out:
- 	phy_unlock_mdio_bus(phydev);
-+
- 	return ret;
- }
- 
-+static unsigned int mxl86111_inband_caps(struct phy_device *phydev,
-+					 phy_interface_t interface)
-+{
-+	switch (interface) {
-+	case PHY_INTERFACE_MODE_100BASEX:
-+	case PHY_INTERFACE_MODE_1000BASEX:
-+	case PHY_INTERFACE_MODE_SGMII:
-+		return LINK_INBAND_DISABLE | LINK_INBAND_ENABLE;
-+	default:
-+		return 0;
-+	}
-+}
-+
- static struct phy_driver mxl_phy_drvs[] = {
- 	{
- 		PHY_ID_MATCH_EXACT(PHY_ID_MXL86110),
-@@ -665,17 +945,34 @@ static struct phy_driver mxl_phy_drvs[] = {
- 		.led_hw_control_get	= mxl86110_led_hw_control_get,
- 		.led_hw_control_set	= mxl86110_led_hw_control_set,
- 	},
-+	{
-+		PHY_ID_MATCH_EXACT(PHY_ID_MXL86111),
-+		.name			= "MXL86111 Gigabit Ethernet",
-+		.probe			= mxl86111_probe,
-+		.config_init		= mxl86111_config_init,
-+		.get_wol		= mxl86110_get_wol,
-+		.set_wol		= mxl86110_set_wol,
-+		.inband_caps		= mxl86111_inband_caps,
-+		.config_inband		= mxl86111_config_inband,
-+		.read_page		= mxl86111_read_page,
-+		.write_page		= mxl86111_write_page,
-+		.led_brightness_set	= mxl86110_led_brightness_set,
-+		.led_hw_is_supported	= mxl86110_led_hw_is_supported,
-+		.led_hw_control_get	= mxl86110_led_hw_control_get,
-+		.led_hw_control_set	= mxl86110_led_hw_control_set,
-+	},
- };
- 
- module_phy_driver(mxl_phy_drvs);
- 
- static const struct mdio_device_id __maybe_unused mxl_tbl[] = {
- 	{ PHY_ID_MATCH_EXACT(PHY_ID_MXL86110) },
-+	{ PHY_ID_MATCH_EXACT(PHY_ID_MXL86111) },
- 	{  }
- };
- 
- MODULE_DEVICE_TABLE(mdio, mxl_tbl);
- 
--MODULE_DESCRIPTION("MaxLinear MXL86110 PHY driver");
-+MODULE_DESCRIPTION("MaxLinear MXL86110/MXL86111 PHY driver");
- MODULE_AUTHOR("Stefano Radaelli");
- MODULE_LICENSE("GPL");
--- 
-2.50.1
+Andrew
+
+> Or do condense the trace calls so they all have the data into something like:
+> 
+> [15.579036] ti_sci_xfer_begin: type=SET_DEVICE_STATE host=0C seq=00
+> flags=00000402 status=0  data=<data>
+> [15.587595] ti_sci_rx_callback: type=SET_DEVICE_STATE host=0C seq=00
+> flags=00000002 status=0 data=<data>
+> [15.606135] ti_sci_xfer_end: type=SET_DEVICE_STATE host=0C seq=00
+> flags=00000002 status=0
+> 
+> Simplifying the code in the trace header.
+>>
+>>
+>> Andrew
+>>
+>>> make it easier to drop or make changes depending on comments.  The two
+>>> commits should squash easily.
+>>>
+>>> Nishanth Menon and Vignesh Raghavendra requested I send this patch
+>>> upstream.
+>>>
+>>> Signed-off-by: Jonathan Cormier <jcormier@criticallink.com>
+>>> ---
+>>> Jonathan Cormier (2):
+>>>         firmware: ti_sci: Add trace events
+>>>         firmware: ti_sci: trace: Decode message types
+>>>
+>>>    MAINTAINERS                     |   1 +
+>>>    drivers/firmware/Makefile       |   3 +
+>>>    drivers/firmware/ti_sci.c       |  11 +++
+>>>    drivers/firmware/ti_sci_trace.h | 146 ++++++++++++++++++++++++++++++++++++++++
+>>>    4 files changed, 161 insertions(+)
+>>> ---
+>>> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+>>> change-id: 20250709-linux_master_ti_sci_trace-91fd2af65dca
+>>>
+>>> Best regards,
+>>
+> 
+> 
+
 
