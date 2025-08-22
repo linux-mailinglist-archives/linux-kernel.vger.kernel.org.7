@@ -1,250 +1,234 @@
-Return-Path: <linux-kernel+bounces-782226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0050B31D0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:59:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A20B31D1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF14F1BA686D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:56:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95BF05863E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118153128BD;
-	Fri, 22 Aug 2025 14:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411783128A4;
+	Fri, 22 Aug 2025 14:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JnsMxJfG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Di4xZ6rU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B821D26AA83;
-	Fri, 22 Aug 2025 14:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755874564; cv=fail; b=UcL2ikiHmglHuGt1xBjB3VhEczDVe9rcVW1yeN7pzbH4glJPVGo50gB/9boaCWMQ64ofbpYmzbCjXZwzasNOnajOLMDNqZqBNz188Zg+/4Ly9oW/eZsAjjSPcQZ03Ij4hJWO2XoFp3d5g+rV2I10YtEJVgW1eQ68M28dwi73FKg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755874564; c=relaxed/simple;
-	bh=vDJE+2lsfuum0Yrgf8c16doshD5FkkpwznbdQNI04JQ=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gaWePt3Oh8J8BfOxsCPUiSLLe+RGyci9zgZZzs/NLTbF2pOBPbZC2CXJ/ISdoXJbGfNteAIQGXOKE6sd7TE6RaKOa/ELqHrL58tm4cBn4HIT414ec5BLUJZXM3chyHEqqJmJ22Wb9/KO20QiFnIchqQouzS2j+if95bx2uq2xHs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JnsMxJfG; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726F73128B1;
+	Fri, 22 Aug 2025 14:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755874580; cv=none; b=DKUw0TTN3pltMWELBQijrDDl2k6B/rpxoRvkE09AwdwM+zu1/FchqJLS3YeYRmc+3xXWw3vQkTJIg/fVACg/YXFasDS9eEtpkzzwHvK/9748cH1R/6qnINa8UMRHuRIQQcIM4pXM9r2s3YMBL9SzvIbLfJKXfnCegGwRhzRFnTw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755874580; c=relaxed/simple;
+	bh=RvRkItUYJ0ETFE5CancMO5F68qXMPOtLToh8/qa/woA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=NZU1bsKf6yyLv6IeZIfovvTYyP2RVflTXf1ZvawBqu1SvLJWRhQ68jAQmKSCm/Xlf4/tV+h4i7/1SCLaDa0+wgqXQu1/zqrMLUQCXcrflPqXsUudSkVxewD/tUqs9qz0AadboGZpWALYDlrpwB+u4QX4IB6LDXJ2MK4AvPjpvfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Di4xZ6rU; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755874561; x=1787410561;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=vDJE+2lsfuum0Yrgf8c16doshD5FkkpwznbdQNI04JQ=;
-  b=JnsMxJfGix9tu10qVhGsRo+CmCix3s2vROO+fmty0AjKSuhXHTDrOnrV
-   adU6vlhJhE/zTS6apyJgfQUD/uKv21f16vm79QnjUQmaomescF5/7bBOw
-   oW7alTAYyk9LrpIhe/Jn9hsffvWXkjzkPDhwrt2yHxRAkriJ2X39hgu60
-   EHO/SaOrQ8VZfCDhCpQMJBDYOy3v0MIou5+zX7p8EG/T/xodmex+tIExZ
-   BfoSgsUyKdiRdX41SFEwfxlqXPyyup8TDabpTb0llk9mUa0o+sdnOGD+Q
-   n3VtjRdvJvdSiaoQJEmq59SPdNJ8L8UC6XyPN4jNBfgstaszqQ18uCnsM
-   g==;
-X-CSE-ConnectionGUID: fA56aqwnQyyhvvBGCbYPNQ==
-X-CSE-MsgGUID: fSMIrSQuRD26lzFVXNkXaA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="57200901"
+  t=1755874579; x=1787410579;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=RvRkItUYJ0ETFE5CancMO5F68qXMPOtLToh8/qa/woA=;
+  b=Di4xZ6rUk0uNQSxjD8w/qt3PV0TX3UBA/I/Et1ysCF/cF/XYeacyZwMW
+   +zFPyp15LNfF9KPq0rp1A4EB16F7I9SnGjnGBSeDUwVCPpmHVLrBbnwX+
+   QiWRjGevZEdX2JD/twqBCKJ0O6jb5INZ0F9vZUrSGIh46h4iV0Y1neDnd
+   mYQbR3lG/x5iKJQnqBleVWaguklfLfF17M5HigNjdsSqHT0kKoMzXNBKV
+   IddLpktg2cfFc658FCmJfAHwT5cSXFPfRqReYHVMGnV7qr80dmqLL7Fuh
+   7bW5fWmtCUzKHQk4Tk/9tffoBhVTAlM7WSd4gXlfqRYHwz/ppirJXioue
+   w==;
+X-CSE-ConnectionGUID: mPLE1BxTS8qWYtXakDpVCw==
+X-CSE-MsgGUID: 8ey9AF37SY+GjFuPndTksQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="69552247"
 X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="57200901"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 07:54:29 -0700
-X-CSE-ConnectionGUID: i2rgHsaNTa+hrLvnRkcgjA==
-X-CSE-MsgGUID: AM4LqszfTZ2qI21R0qUuDA==
+   d="scan'208";a="69552247"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 07:56:17 -0700
+X-CSE-ConnectionGUID: xkRYlbZZQ0K+NwgRSu7KdQ==
+X-CSE-MsgGUID: 8+r9yxO9Rjy+vpGvbZE8yQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="172920649"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 07:54:29 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 22 Aug 2025 07:54:28 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Fri, 22 Aug 2025 07:54:28 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.62)
- by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 22 Aug 2025 07:54:28 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Eesjv+6BPHtmLzuNj4uhALTwUpv9TKRoGAIGMvGnRGVstVvoefRaxN83tjHzhYmAksYXToTBh4v0X5BJ0LfDDTpv8iSdgIfdZXa638R0PmaPpZ2wo3BspwyOiF2PKWtRsV8PP1uSJYpgsFSzLA7lpc3KtWVMLb7AfyNdJSZsqJLwnI7cVpbCE3xPuIeDk63D/gf9at8x04NKXCAKoqS3+MstHLsKhnYwzVXP1GZrIeizihP8V1nGyzr0JDTxE+0KS54zvcPhSePfLCYdaHqySXnvrGdXwvlx0RZavp7y4IPMXxSF4yIRPy7w0FdrLuOzIrW89gfkak/NNc29dBvXqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h+lu1HvKT0mO/4I0iLSuQiswO5yV/Q7vUPSmBVm7Bzc=;
- b=GG47nX7RbsMItQuX4KvOJX+0vJoJaqiYgxahuHi6UFYjKo2hBPC7u1GbmnJhUfxqKn+8nL2QG7JOJLCm89UggjnNrhgyIHPjBdAnO23aViUEFlRfjn4inzXl2QoxBgvBsYBq922YmZZVS3MEz64jJ3zK9KKruTfpUlKqHI3k67Dgz7Zn5Xl6ycAkmTWdwoWjxjfvRyM2WvJZxfmLpNpLRtqy3J9YoAWiJKdHhFbn/Ih+kcqoQshuMmoipZ4tic0gG+pjGu/vnP1J2Pgz779iFqBY9mPL4KUA/6u/bHBw6rO/8TbH5YXrNT059pTo2XUaanI/BbeqgHElL+ofUZXRrg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA1PR11MB7198.namprd11.prod.outlook.com (2603:10b6:208:419::15)
- by IA3PR11MB9254.namprd11.prod.outlook.com (2603:10b6:208:573::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.15; Fri, 22 Aug
- 2025 14:54:25 +0000
-Received: from IA1PR11MB7198.namprd11.prod.outlook.com
- ([fe80::eeac:69b0:1990:4905]) by IA1PR11MB7198.namprd11.prod.outlook.com
- ([fe80::eeac:69b0:1990:4905%5]) with mapi id 15.20.9052.014; Fri, 22 Aug 2025
- 14:54:25 +0000
-Message-ID: <fcadc80b-aefd-4a22-b910-70d9c97fa5b3@intel.com>
-Date: Fri, 22 Aug 2025 17:54:18 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND V2 1/2] x86/mce: Fix missing address mask in
- recovery for errors in TDX/SEAM non-root mode
-To: Borislav Petkov <bp@alien8.de>
-CC: Dave Hansen <dave.hansen@linux.intel.com>, Tony Luck
-	<tony.luck@intel.com>, <pbonzini@redhat.com>, <seanjc@google.com>,
-	<vannapurve@google.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>, <x86@kernel.org>, H Peter Anvin <hpa@zytor.com>,
-	<linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<kvm@vger.kernel.org>, <rick.p.edgecombe@intel.com>, <kai.huang@intel.com>,
-	<reinette.chatre@intel.com>, <xiaoyao.li@intel.com>,
-	<tony.lindgren@linux.intel.com>, <binbin.wu@linux.intel.com>,
-	<ira.weiny@intel.com>, <isaku.yamahata@intel.com>, Fan Du <fan.du@intel.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>, <yan.y.zhao@intel.com>,
-	<chao.gao@intel.com>
-References: <20250819162436.137625-1-adrian.hunter@intel.com>
- <20250819162436.137625-2-adrian.hunter@intel.com>
- <20250819213247.GJaKTtf1er-Ced_mzP@fat_crate.local>
- <10587d02-1133-45fa-9ec8-2288a8868b68@intel.com>
- <20250821132521.GDaKceQXfEWHVwrlxV@fat_crate.local>
- <441aaf76-977f-487e-9db8-80edcda6078f@intel.com>
- <20250822135422.GDaKh2jhb5ooQ6QOe9@fat_crate.local>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
- 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
- 4, Domiciled in Helsinki
-In-Reply-To: <20250822135422.GDaKh2jhb5ooQ6QOe9@fat_crate.local>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DUZPR01CA0104.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4bb::17) To IA1PR11MB7198.namprd11.prod.outlook.com
- (2603:10b6:208:419::15)
+   d="scan'208";a="167956179"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.115])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 07:56:12 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Andreas Larsson <andreas@gaisler.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Yinghai Lu <yinghai@kernel.org>,
+	Igor Mammedov <imammedo@redhat.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>
+Cc: linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH 00/24] PCI: Bridge window selection improvements
+Date: Fri, 22 Aug 2025 17:55:41 +0300
+Message-Id: <20250822145605.18172-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR11MB7198:EE_|IA3PR11MB9254:EE_
-X-MS-Office365-Filtering-Correlation-Id: cf2e32cf-af65-4198-7889-08dde18bc921
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?SVlVSUZ1RDdIQ3pvMm94SCtYRHRIR3JTSVdmSHNwY0ZaNDE4MTMrYWtybmhN?=
- =?utf-8?B?SUkyblZFTlUySDRwV0pxQy81Szh4VVptQnlYVlMzMGV4L3hoME1hRkhnR2to?=
- =?utf-8?B?empEdjZWaHg1RWl5SG43UHJMVzJQc1BuMGpqWU4xTXorSHFzUC9zeVpEcUor?=
- =?utf-8?B?T1JLa2VzcW1DK0E4bGVtUTB0MmY1Vng0VFA1a2N2NmFFWmIzTDZ1QmEvaGEv?=
- =?utf-8?B?NU1xS3NxYUJSSHd3YjR0eXNkRkR6SGo0TlBmWnlUaUVKZTRzWkVQV3FFSlM1?=
- =?utf-8?B?NUVVcFFtTnhkRDNmRlA2VjVaUUplK3pEeVljQ1VEUEo2enJ1L3VEN0NwanND?=
- =?utf-8?B?Q2Y4WVZMRnVXK0RacDVPL1BDT0NWZ2RvN2FheVZKTm9SM3dobTJncmRSL1NF?=
- =?utf-8?B?bndrSTBYOU1Fb1BYSld2dGpNYnBnbmNTVC9CUnZraFFmZDAwQVhJam1YYVEy?=
- =?utf-8?B?OHVZd1Q0S3R2aWY3VFZLTGs0V2dldk1oOHMrR0VUZkpCVG5nN0szUlEydzIz?=
- =?utf-8?B?clgzOWxRT2pCTzJkTFNUSUwrY3MvOVRDMnJqQm5hMHVmRnZPOW9mT1JpZDRh?=
- =?utf-8?B?eWY3OXh0TVJGUmdCSUFtQ0E1Z2d5ajlOSTRMZDkzaEJieHZWZnB6UzgvV1Ni?=
- =?utf-8?B?ejEwSU5UcXdQK3BSQjZKWVVkU3RJb0pKMW9DREdUWWo4RHcrVUVaSlVQdlJ2?=
- =?utf-8?B?b2oyNGVqU0szUGVKcHJ0MDJNdnB4M01FYmpVbm5yamZCaHlmOHFRVngrOHVh?=
- =?utf-8?B?RmhpTmdDUFloNFNIRk1JSkVWY1NKRHIzYXhYby9ibHJydTV3ajhjMW5zbzZ6?=
- =?utf-8?B?SHZYakRNamtpOUVxS2MzM2FHL2w4djVCVlBDWmlLQ2k2bGNlNmlGNHJyQ1Q2?=
- =?utf-8?B?d1lQb3BLVjJKWVZybTY2Q3RCNzZ0dlE1NFZpaTE5QnZCMk9WblY0enFZcG4v?=
- =?utf-8?B?MTZRR2JiMUxXbnkxNUU0SnpyQkcyVW92NTV2RDFFdE9LZU05VkJJTzN4UVE0?=
- =?utf-8?B?OTJhbTl5Z1E2emZWekFGTkFZUnEvU0tpcExNOUlDMjRCemZaMDE4MG1YMG5h?=
- =?utf-8?B?YjFIYk14YUhYbkIvYU81d0g0aFRHMXNxcy9NR2UyVjNqS0JVcU14SXFIRGUy?=
- =?utf-8?B?Y1V4WnpFNWEwbHpqcjY1VXIvUDB4QU1iL0ZaTVhtQXhiSjU1ZXJ1dHBrYjJN?=
- =?utf-8?B?dG00OWpXRWh5OHdBNmNBNW1WcXpiTFFGa0I5R2dvbHQ0elMvYjJaQ2ZZYnNh?=
- =?utf-8?B?Z0hpWi80UGRaamJTMW5hdW9TWWtjbUl4TytoVHFaWTRGbkJrRkcyZlpYYXM2?=
- =?utf-8?B?RFp4d3Fac3ByVE9sd1JoQ2daaU5SWHVnQmNKVXpLVGl0R3ZjSW5TZkxCbHlS?=
- =?utf-8?B?b3p5anAvUk8vaTVBbDdSZ21OUW94QU5TS2Qvd0NXTnF1aTloTVZlcEVpV3pT?=
- =?utf-8?B?ck1YeTlKOU9TNzVXZ2w3Q0ZLVGZGa1FKVlJqRW5SOTlpNlBYSG1SWXFFeWZD?=
- =?utf-8?B?Qm1URmh5ZjZ4aUp2aFFrcDMxWUFkSU5KNDhFYjdIc2p5dnVQWGJuK3NaWlJ2?=
- =?utf-8?B?cHl2NWtOMnF2U1R5RytUWXBleUxoMVFpYTFUM1NqNzRBaStZVEs3OVJBWmkz?=
- =?utf-8?B?ZFp2NmZBbitqUFBERVdNM2szck15ZDZYQjBNdmFZd0JmMG1NL0tuR2N0dkVR?=
- =?utf-8?B?REJWSVJ2LzNSaGU1bE9yNWhlcTVhN2xid1JjejMveXcwRFpBcHQyOUhNbnVF?=
- =?utf-8?B?SFhGY1E2UzFTTVRHM0NTWVNPNWYvTlZ2bnNrMGdZUi9YMFc1QWVXK3E2TGUy?=
- =?utf-8?B?NUxxcE1XTmRQK3RhcGQzV0sxRngyWnhQc1Bxdkt3KzhmcEQvbXkrbFdQWDhs?=
- =?utf-8?B?eUFwVmxoTWhIRmJhOVlIZWwzZ1V1TEs4YzlKTE95UXo5OVZzditDbHphSXlC?=
- =?utf-8?Q?HQ8aIIy1vDM=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7198.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?d3ltYmZsWjZvT3Z1TEhDbTlMdkdack5xWVd0NjQ3Yk15NTh4ZmROM2h5Z1dy?=
- =?utf-8?B?d3dmY0RUc0ZOaVBiYVRMV2FOeG5jWm1JN3ZxODJhZVJaNDVGQlNkVU1GOGJQ?=
- =?utf-8?B?OGZlVHlHZUVzbE1maGFJRngvNHVyVG1HdEp2VXNnSlJLQUloMDNmT2s3ZjNG?=
- =?utf-8?B?R0pYdWt5SzhJb1p1dEQwNEtrQTlsQVJQUDM2ZE91UVVJeVZ1MDBwT21za3B1?=
- =?utf-8?B?ZEpDSGZMSU1DbWxhQXkzV1hZRElsUE5MUnErQSsvNWxhREcvU1pXQmsvbU9u?=
- =?utf-8?B?cXkrWjNLeHZuWncxSjBPZSt2RnpyaHdCeXo4aG5UMzZMRmZrNno3VXNxK3Fy?=
- =?utf-8?B?K3dLWjAwVldNelpGcVpuZmw3ZTJzWkVoR2ZaSkdZTk9WT3N3anFrMWpvTHlo?=
- =?utf-8?B?M282U042VWp3Wno3TlluVHJxZ3kzQVpFYW9WMUg5YzVIeSttUDI1Q05SZmM2?=
- =?utf-8?B?QTBIZENiRjRZdlUzUk5WanJyWWFRRkNTcGVPNHFwUEJqSXJXbjdpRkhMVkd3?=
- =?utf-8?B?SkVMV3ZnQmJZUk9EUmdoZ21iY0kzQVlPM1JEV2lRT0JGVzBCcXFnejJpVVor?=
- =?utf-8?B?UjJHNldzRkhmUElSMzBtWU5ibVd2Z3R6WkpxN2dxWGttbzlKT05iQmpVK21v?=
- =?utf-8?B?OFJrempqdWN2UVZUTEw4OFZtVEFIdW9tRnY4NGFUaTVhOWE2Qkp6SzRiSnda?=
- =?utf-8?B?M2dYbm9QeFV5Slo2ZzgrTkQyY3ZwdTBXc1VMZDNnUGdpeVlQTGl1bjJnSG8z?=
- =?utf-8?B?RzJKQTVKak9laUdhUVlxNUs2dTcrLzAwZHZXa1lWbDQvWE1YTEFkaWNxUHhV?=
- =?utf-8?B?VFIyaEpjZ1BVNUdqaGtoZkJxN1I2VWpmbUpGdXVNRkhWaFBicXpKaGsyQlM1?=
- =?utf-8?B?d0xRWXJPZE0ycG8yMzJadmM3dEJva21ONzI1U2ZodC9tQnZVTEhUSGZoUDd1?=
- =?utf-8?B?czZVNXBaVUNBWE1XbzVWcnIvNE5MSjZ5K1AyNnhTYTFGNWJCNTZIWDZ1TWJ4?=
- =?utf-8?B?MFVoeTNyblMrR1VlV2lhdy9paWpuTW5YR0xubkYxOVJWdG5OTUd1MUtOdEYy?=
- =?utf-8?B?WU5SSGxpekFEODhzSTgvZHV2K3BNSmozQTBQNDZxRjhWTmRYdXVMcXczajlt?=
- =?utf-8?B?aS9HUlBoRHlEWm9kY21vOEszQWlXV1BXQnI5dU1NMDIydFoyb0M4Z2tFUnNF?=
- =?utf-8?B?ZnBmQ0p2UHpiSk5BbE1KMHh6RVdCZGt2bGtCNDFrZ1cwRFlJVWN5UStJVkkz?=
- =?utf-8?B?L3Z4Y25ONGs1WnZrVk5IamZYRVFzZEhrVjFIMC90RzJ1WUlKSXp1NWJLT3ZJ?=
- =?utf-8?B?VnJ3dy9WNWM0TG1EVC9UbXQ3V3FPTDVmS0t2U1poZ0pEUTJTcGtpeHVxTHk3?=
- =?utf-8?B?djVmWXVHZ0dnRjV6R0NnNXQvR3FzVUpaaE0wNXorN3ZNQk5oWmNnYmNuWE5I?=
- =?utf-8?B?QmFwVHF0MVpDNGlqTWU3Zmo0SklaMjduMlpseUFhaFVzWkdaVGl3UVd5M1VO?=
- =?utf-8?B?eXNsNEJNZ1ZlaFViT0NVbG9oczVab04rdFh3NnIzSkhuYzJNbjVubTRzRk5I?=
- =?utf-8?B?a0lBSkNNRkppcGREWk1MUUUybTdSanF2c1BpRExOU0d6QW1NL2FSSXZpQVcr?=
- =?utf-8?B?TEFuWUpCNkxhVTd5bUpvSjlGajFoMWRMUFBJRCtOck4vYmYwYnNJNUpVN3hX?=
- =?utf-8?B?MEhqTEJPYXczdzlsaVVjMXlZTDd6dmJnbERDRFlXKzdxckpuRUJsSlkrUmdI?=
- =?utf-8?B?WnFjSjVVVTV4ajd0R0hqeGVhd0NtRnM3ZVZYdkRueWNqbHNQZmc1UllDVmJW?=
- =?utf-8?B?MnlUVUxDU0c3eS9zZDc1QnRRZ1ZWbVNMVWRlalNkT3JvWWdoQzRveVV4VzZ5?=
- =?utf-8?B?bURMakZqYzhsVGRhRGY5QXZVZzV6K0hUZFJ0eGRZSlBzSXBmOHJqMElvK1RB?=
- =?utf-8?B?SUNaNWV5dDRicW1EanJjcGduUC8yQ21iaEwwYnZFWDIrRndxeW1MNEpWNEt0?=
- =?utf-8?B?MERBV1pGczFxUC9QQ0s2YzVCMjNLTy9INFF4bGhYSHhCNDdxVURkYlA3ZWdV?=
- =?utf-8?B?VjFMWEpWNU4yTHY3OVhQVmliVXB5b3QrNjhnVDd5UHQ3NzVLdFZFc0p1ZWJj?=
- =?utf-8?B?SEJLRnJPVnRsZUhFZWRHUVM1dlVWUkx6bXozNGZIZnUyZGJSeGJMUGVWemdz?=
- =?utf-8?B?Z3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf2e32cf-af65-4198-7889-08dde18bc921
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7198.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 14:54:25.0617
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fQCy68ZhuUpHkG38wUjfmpvKQrderOoHl8NzubnthDtpjjUU2+r4LWX86kgrqyg81xsmz+Iesb91meJLrZ/dRw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR11MB9254
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 22/08/2025 16:54, Borislav Petkov wrote:
-> On Fri, Aug 22, 2025 at 10:57:36AM +0300, Adrian Hunter wrote:
->> Not exactly.  I just want to fix the bug whereby the mce handler fails
->> to mark the affected page as poisoned because it does not remove the KeyID
->> from the address before looking-up the page.
-> 
-> Lemme ask this differently then: are you ever going to need KeyID in mci_addr?
+This series is based on top of the three resource fitting and
+assignment algorithm fixes (v3).
 
-No
+PCI resource fitting and assignment code needs to find the bridge
+window a resource belongs to in multiple places, yet, no common
+function for that exists. Thus, each site has its own version of
+the decision, each with their own corner cases, misbehaviors, and
+some resulting in complex interfaces between internal functions.
 
-> 
->> No one expects to find non-address bits in struct mce addr,
-> 
-> You're preaching to the choir - I don't know whose idea it was to shove
-> a key ID in an address value... it sure sounds silly.
-> 
->> However, it is allowed to extend struct mce, so adding KeyID or raw MCI ADDR
->> later is quite possible.
-> 
-> Why would you want to do that? Do you have a use case?
-> 
-> If not, you can drop that whole angle about adding KeyID later
+This series tries to rectify the situation by adding two new functions
+to select the bridge window. To support these functions, bridge windows
+must always contain their type information in flags which requires
+modifying the flags behavior for bridge window resources.
 
-Droppin' it.
+I've hit problems related to zeroed resource flags so many times by now
+that I've already lost count which has highlighted over and over again
+that clearing type information is not a good idea. As also proven by
+some changes of this series, retaining the flags for bridge windows
+ended up fixing existing issues (although kernel ended up recovering
+from the worst problem graciously and the other just results in dormant
+code).
+
+This series only changes resource flags behavior for bridge windows.
+The sensible direction is to make a similar change for the other
+resources as well eventually but making that change involves more
+uncertainty and is not strictly necessary yet. Driver code outside of
+PCI core could have assumptions about the flags, whereas bridge windows
+are mostly internal to PCI core code (or should be, sane endpoint
+drivers shouldn't be messing with the bridge windows). Thus, limiting
+the flags behavior changes to bridge windows for now is safer than
+attempting full behavioral change in a single step.
+
+
+I've tried to look out for any trouble that code under arch/ could
+cause after the flags start to behave differently and therefore ended
+up consolidating arch/ code to use pci_enable_resources(). My
+impression is that strictly speaking only the MIPS code would break
+similar to PCI core's copy of pci_enable_resources(), the others were
+much more lax in checking so they'd likely keep working but
+consolidation seemed still the best approach there as the enable checks
+seemed diverging for no apparent reason.
+
+Most sites are converted by this change. There are three known places
+that are not yet converted:
+
+  - fail_type based logic in __assign_resources_sorted():
+    I'm expecting to cover this along with the resizable BAR
+    changes as I need to change the fallback logic anyway (one
+    of the motivators what got me started with this series,
+    I need an easy way to acquire the bridge window during
+    retries/fallbacks if maximum sized BARs do not fit, which
+    is what this series provides).
+
+  - Failure detection after BAR resize: Keeps using the type
+    based heuristic for failure detection. It isn't very clear how
+    to decide which assignment failures should be counted and which
+    not. There could be pre-existing failures that keep happening
+    that end up blocking BAR resize but that's no worse than behavior
+    before this series. How to identify the relevant failures does
+    not look straightforward given the current structures. This
+    clearly needs more thought before coding any solution.
+
+  - resource assignment itself: This is a very complex change
+    due to bus and kernel resources abstractions and might not be
+    realistic any time soon.
+
+I'd have wanted to also get rid of pci_bridge_check_ranges() that
+(re)adds type information which seemed now unnecessary. It turns out,
+however, that root windows still require so it will have to wait for
+now.
+
+This change has been tested on a large number of machine I've access to
+which come with heterogeneous PCI configurations. Some resources
+retained their original addresses now also with pci=realloc because
+this series fixed the unnecessary release(+assign) of those resources.
+Other than that, nothing worth of note from that testing.
+
+
+My test coverage is x86 centric unfortunately so I'd appreciate if
+somebody with access to non-x86 archs takes the effort to test this
+series.
+
+Info for potential testers:
+
+Usually, it's enough to gather lspci -vvv pre and post the series, and
+use diff to see whether the resources remained the same and also check
+that the same drivers are still bound to the devices to confirm that
+devices got properly enabled (also shown by lspci -vvv). I normally
+test both with and without pci=realloc. In case of a trouble, besides
+lspci -vvv output, providing pre and post dmesg and /proc/iomem
+contents would be helpful, please take the dmesg with dyndbg="file
+drivers/pci/*.c +p" on the kernel cmdline.
+
+Ilpo Järvinen (24):
+  m68k/PCI: Use pci_enable_resources() in pcibios_enable_device()
+  sparc/PCI: Remove pcibios_enable_device() as they do nothing extra
+  MIPS: PCI: Use pci_enable_resources()
+  PCI: Move find_bus_resource_of_type() earlier
+  PCI: Refactor find_bus_resource_of_type() logic checks
+  PCI: Always claim bridge window before its setup
+  PCI: Disable non-claimed bridge window
+  PCI: Use pci_release_resource() instead of release_resource()
+  PCI: Enable bridge even if bridge window fails to assign
+  PCI: Preserve bridge window resource type flags
+  PCI: Add defines for bridge window indexing
+  PCI: Add bridge window selection functions
+  PCI: Fix finding bridge window in pci_reassign_bridge_resources()
+  PCI: Warn if bridge window cannot be released when resizing BAR
+  PCI: Use pbus_select_window() during BAR resize
+  PCI: Use pbus_select_window_for_type() during IO window sizing
+  PCI: Rename resource variable from r to res
+  PCI: Use pbus_select_window() in space available checker
+  PCI: Use pbus_select_window_for_type() during mem window sizing
+  PCI: Refactor distributing available memory to use loops
+  PCI: Refactor remove_dev_resources() to use pbus_select_window()
+  PCI: Add pci_setup_one_bridge_window()
+  PCI: Pass bridge window to pci_bus_release_bridge_resources()
+  PCI: Alter misleading recursion to pci_bus_release_bridge_resources()
+
+ arch/m68k/kernel/pcibios.c   |  39 +-
+ arch/mips/pci/pci-legacy.c   |  38 +-
+ arch/sparc/kernel/leon_pci.c |  27 --
+ arch/sparc/kernel/pci.c      |  27 --
+ arch/sparc/kernel/pcic.c     |  27 --
+ drivers/pci/bus.c            |   3 +
+ drivers/pci/pci-sysfs.c      |  27 +-
+ drivers/pci/pci.h            |   8 +-
+ drivers/pci/probe.c          |  35 +-
+ drivers/pci/setup-bus.c      | 798 ++++++++++++++++++-----------------
+ drivers/pci/setup-res.c      |  46 +-
+ include/linux/pci.h          |   5 +-
+ 12 files changed, 504 insertions(+), 576 deletions(-)
+
+
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+prerequisite-patch-id: 801e8dd3aa9847d4945cb7d8958574a6006004ab
+prerequisite-patch-id: 0233311f04e3ea013676b6cc00626410bbe11e41
+prerequisite-patch-id: 9841faf37d56c1acf1167559613e862ef62e509d
+-- 
+2.39.5
 
 
