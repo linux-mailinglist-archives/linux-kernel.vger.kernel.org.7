@@ -1,99 +1,124 @@
-Return-Path: <linux-kernel+bounces-782081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D81AB31ABA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:06:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B390B31AC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D71AF5E545F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:02:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 818A95E68CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E0F312800;
-	Fri, 22 Aug 2025 14:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C603112DD;
+	Fri, 22 Aug 2025 14:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pkOPw/WH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LmWYTT7G"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030E23126C3;
-	Fri, 22 Aug 2025 14:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525BA3043DF
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 14:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755871220; cv=none; b=KBjlqEfX9PSDN5MUH18b5dlKCVpACPeHDFIGy7qhPCXTO53QMqEK9LuEw6lmPv9HY8cU0LsTK7W9YHwD1ope0MRtl93WiF2sDi5HMXagOQ5uOtD2mmK07f+b4swRg9ClBFwBiexgs8qguy9r4nW56kPXo2fYpLB2ugpxNRRpecI=
+	t=1755871239; cv=none; b=GuYB7ZAjagHsPGOvpGZenHfsjT05vRYzBnTywxRhDrq79ZGW/S+NV/Zu6DOQu1JWaUEn13I40HuJm7qUxYXa9aHpUkr3uENaZTPVVc8z7DQCI3qb8SBP2FOvbuTPwAtBzJTLyYoDAQrVKWLGOJDu0K8JuKsyPCMokldFuSv0dcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755871220; c=relaxed/simple;
-	bh=NhcqNJcEWkTWGz8ovLpQi/hjQY3as5SmrOYUySgeg2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tssaeIDQcU/6ZrYYcKiRgxKs2gKhWuEwhmPsP6/jX7tpqrY4VhCGkIDLqrb//XNlrXvmtzvfevbDzcqv5ow0LhSr4PM7JQDcDkWQlPLJoPkPFNbecJgWpRbOtAzFoImfzFKSaRgnmfN+EKxqwXUUVFH9GfgR6sSmq6CYeg2lCRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pkOPw/WH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10A0DC4CEED;
-	Fri, 22 Aug 2025 14:00:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755871219;
-	bh=NhcqNJcEWkTWGz8ovLpQi/hjQY3as5SmrOYUySgeg2E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pkOPw/WHe5B9a4j3FhXTTUyx/m4orDiZW+owegOeFJg3JhJTsM/i/35kfS2vO1ujh
-	 i6vIKqxsz4hm02PfMUhJK6hKGbg4TBRldoCfDxzZJjZSoP1pbeGshY+mwMbolz612G
-	 W3jH/tu707bGd5eT0GLly11JcMATjFRVYt7U2FT5MW21iGAIulz+piRLK10Hb6+Dje
-	 zma9YLw9ntGnz/zU6iWzEp3CVo1MvOttpOV4jDw0rlUzKeeWihIr2aG42kyBc8QEuG
-	 Bq73EDU+U0BxDy9V8+uW+4eboZ+DnYkj/XYoPQepHoH1NOXVpc2yjAKo2M1FhyWsjA
-	 4rA4pDSw/WfBg==
-Date: Fri, 22 Aug 2025 07:00:18 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
-Cc: Rohan G Thomas via B4 Relay
- <devnull+rohan.g.thomas.altera.com@kernel.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Maxime
- Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Serge Semin <fancer.lancer@gmail.com>,
- Romain Gantois <romain.gantois@bootlin.com>, Jose Abreu
- <Jose.Abreu@synopsys.com>, Ong Boon Leong <boon.leong.ong@intel.com>,
- netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Matthew
- Gerlach <matthew.gerlach@altera.com>
-Subject: Re: [PATCH net-next v2 3/3] net: stmmac: Set CIC bit only for TX
- queues with COE
-Message-ID: <20250822070018.35692c26@kernel.org>
-In-Reply-To: <0f391b0a-6e9d-4581-9f3a-48e67ea90b31@altera.com>
-References: <20250816-xgmac-minor-fixes-v2-0-699552cf8a7f@altera.com>
-	<20250816-xgmac-minor-fixes-v2-3-699552cf8a7f@altera.com>
-	<20250819182207.5d7b2faa@kernel.org>
-	<22947f6b-03f3-4ee5-974b-aa4912ea37a3@altera.com>
-	<20250820085446.61c50069@kernel.org>
-	<20250820085652.5e4aa8cf@kernel.org>
-	<feb15456-2a16-4323-9d69-16aa842603f2@altera.com>
-	<20250821071739.2e05316a@kernel.org>
-	<0f391b0a-6e9d-4581-9f3a-48e67ea90b31@altera.com>
+	s=arc-20240116; t=1755871239; c=relaxed/simple;
+	bh=U5vB3jTLB/0YtaPU98NKvAcBNxrZMtOdgUeBiXaL9ro=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=CLC2CkxHV+EP5/+NhkcHCeHEAaq8VFudSUI9ZraM0C/P/A3GVe7EpcHJFOv7BefEA83S2FdAubGOSk/sbxuvb6zWss1WjBJeMe1kkop7hdIlQrOpEE/TdNFNroWLXWLJ7v2Jbj2+5lbLOMuuro6qviSj2hqdtZrM1PWQJtfkpeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LmWYTT7G; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250822140035epoutp02f63847d531790c97ad118a92658bd184~eG5XzXxq00398603986epoutp02R
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 14:00:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250822140035epoutp02f63847d531790c97ad118a92658bd184~eG5XzXxq00398603986epoutp02R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755871235;
+	bh=I3q54JPaEsRJCyuS492x1saEps2lZA8otnLyPxGwJho=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=LmWYTT7GwhV60aof6ADr7N8Qd+vuTM1Yx6Yz4T4eUYslzQhwlZ2vY/87kkEaoEP4m
+	 27Y3Tc1gAAsTnHRJdKQYUdsCibPG5AmIXryNyn4tZ60K7UQzpbflukgVZ0TmOr92+n
+	 0pPd767wl1aL9sOR8ckwStNPa1OG9Y/yg3cm/lJc=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250822140033epcas5p3fa5e592a3ee6654a259180b9d8f4a8de~eG5WT2gdF1315513155epcas5p3f;
+	Fri, 22 Aug 2025 14:00:33 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4c7hfT0FH1z2SSKY; Fri, 22 Aug
+	2025 14:00:33 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250822140032epcas5p23047c7ce5a1f89ab6a7c5a564c2529db~eG5Ur29Ct0779907799epcas5p23;
+	Fri, 22 Aug 2025 14:00:32 +0000 (GMT)
+Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250822140028epsmtip251a4acc1d4fb38f8f1054d3e0d6c3567~eG5Q_y8uc3153031530epsmtip25;
+	Fri, 22 Aug 2025 14:00:28 +0000 (GMT)
+From: "Inbaraj E" <inbaraj.e@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <s.hauer@pengutronix.de>,
+	<shawnguo@kernel.org>, <cw00.choi@samsung.com>, <rmfrfs@gmail.com>,
+	<laurent.pinchart@ideasonboard.com>, <martink@posteo.de>,
+	<mchehab@kernel.org>, <linux-fsd@tesla.com>, <will@kernel.org>,
+	<catalin.marinas@arm.com>, <pankaj.dubey@samsung.com>,
+	<shradha.t@samsung.com>, <ravi.patel@samsung.com>
+Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
+	<linux-samsung-soc@vger.kernel.org>, <kernel@puri.sm>,
+	<kernel@pengutronix.de>, <festevam@gmail.com>,
+	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <7b7f6958-3178-4c6f-8be3-f52ef77464f7@kernel.org>
+Subject: RE: [PATCH v2 03/12] dt-bindings: media: nxp: Add support for FSD
+ SoC
+Date: Fri, 22 Aug 2025 19:30:27 +0530
+Message-ID: <00d201dc136d$1fdd6bc0$5f984340$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQF6bLd9AsRKNAMBJ/ZVhAEp+FCyAvdCX9qyZ1l58A==
+Content-Language: en-in
+X-CMS-MailID: 20250822140032epcas5p23047c7ce5a1f89ab6a7c5a564c2529db
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250814141014epcas5p410d41ede7e8ae4f3cf8db6d041d03946
+References: <20250814140943.22531-1-inbaraj.e@samsung.com>
+	<CGME20250814141014epcas5p410d41ede7e8ae4f3cf8db6d041d03946@epcas5p4.samsung.com>
+	<20250814140943.22531-4-inbaraj.e@samsung.com>
+	<ac9769af-9ab6-4b48-9890-ec3bcda3b180@kernel.org>
+	<00d001dc136a$36ad7230$a4085690$@samsung.com>
+	<7b7f6958-3178-4c6f-8be3-f52ef77464f7@kernel.org>
 
-On Fri, 22 Aug 2025 18:19:01 +0530 G Thomas, Rohan wrote:
-> On 8/21/2025 7:47 PM, Jakub Kicinski wrote:
-> >> Currently, in the stmmac driver, even though tmo_request_checksum is not
-> >> implemented, checksum offloading is still effectively enabled for AF_XDP
-> >> frames, as CIC bit for tx desc are set, which implies checksum
-> >> calculation and insertion by hardware for IP packets. So, I'm thinking
-> >> it is better to keep it as false only for queues that do not support
-> >> COE.  
-> > Oh, so the device parses the packet and inserts the checksum whether
-> > user asked for it or not? Damn, I guess it may indeed be too late
-> > to fix, but that certainly_not_ how AF_XDP is supposed to work.
-> > The frame should not be modified without user asking for it..  
-> 
-> Yes, I also agreed. But since not sure, currently any XDP applications
-> are benefiting from hw checksum, I think it's more reasonable to keep
-> csum flag as false only for queues that do not support COE, while
-> maintaining current behavior for queues that do support it. Please let
-> me know if you think otherwise.
+> On 22/08/2025 15:39, Inbaraj E wrote:
+> >>>
+> >>>    power-domains:
+> >>>      maxItems: 1
+> >>>
+> >>> +  samsung,syscon-csis:
+> >>
+> >> samsung, so not nxp. Even more confusing.
+> >>
+> >
+> > I used samsung,syscon-csis because the system controller on Tesla FSD
+> > follows Samsung's sysreg design.
+>=20
+> OK, this is property for Tesla though, so please use tesla prefix.
 
-Agreed.
+Using tesla,syscon-csis results in a =22prefix not found=22 issue when runn=
+ing dtbs_check
+
+Regards,
+Inbaraj E
+
 
