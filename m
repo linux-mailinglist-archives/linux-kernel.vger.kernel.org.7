@@ -1,103 +1,153 @@
-Return-Path: <linux-kernel+bounces-780909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE70CB30AD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:35:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446F9B30ADB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FE03AE0A72
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:35:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDB5C1C8396F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B34186E2E;
-	Fri, 22 Aug 2025 01:35:49 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB6C35959;
+	Fri, 22 Aug 2025 01:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="negoLTiM"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7DF7261E;
-	Fri, 22 Aug 2025 01:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6579A13C3CD
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 01:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755826549; cv=none; b=ARCcjije5bt924QK4FpQhOARd0gall4ta5jVCjp4WmQy66oLrGKiFxmsT+AbpMm1ybdJ4vdxtVSEPj5kIi1hKdt/eWC1cVvcXT37emIog/YZf3Cxc3GGGHU4zrvTc+u52fnwqqSp4mfgEy68kruMhzUN8ER7bJ2KHCx78nWRw9Y=
+	t=1755826726; cv=none; b=hZdu/PjZLE99PERoMQjKgeUZuQfCS/SMWEvM3ALx8QiwjhefBKiD8D3xna6NwweedtsHIkEa6oRZUiiB6xHx2VpSIuAuXBqryPObcRsDL2Mxk8mpwxF6k7DCl0+GlfG1NV0oOlG7AG868DJonl3Bfc13hnBqXtG+NqU2qM1J6OU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755826549; c=relaxed/simple;
-	bh=JalOgAPy+10ijoEjkUyxw2IZaQ73SnV+0ZOBdc0KXz4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qgk6jV3Rs7jkhFCMVfCwZbXTi2Iingslmz9QcnIdIlnuLTdXEUYMNnNEZa8msZuwXUqSQR7o7cwvx9MeRZs5fMbl0M7zHg+uE/LsBcQLHSVtwkeHdULX6a8CB5KnGgGzNd1x/FHUyS6JwZNXHoBDx6zUi18vDNCYzKKHhgbUAEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c7N746wB9zKHMww;
-	Fri, 22 Aug 2025 09:35:44 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 763841A1724;
-	Fri, 22 Aug 2025 09:35:44 +0800 (CST)
-Received: from [10.67.110.36] (unknown [10.67.110.36])
-	by APP4 (Coremail) with SMTP id gCh0CgAX3w9vyadomKT9EQ--.7615S2;
-	Fri, 22 Aug 2025 09:35:44 +0800 (CST)
-Message-ID: <edc9900c-b2d9-49f9-bd12-cd44f11b89a1@huaweicloud.com>
-Date: Fri, 22 Aug 2025 09:35:43 +0800
+	s=arc-20240116; t=1755826726; c=relaxed/simple;
+	bh=A49EhjtovdcOMZSxAFwCEK81dRUbjpo5bkUejNjPW/A=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=QTr0NRW+u+CGrdEF8MMEadh3TDbq5izkDK9BKrIlKNiT831mhsP7+HjwbACc8qSUap0bQRK3y2/974Llpj69naIgG2VxvJeJevF1NKcGNnoC8UYcjBSD2BgICdWjOol9Fy0nQWi6l1503+hbI0pPebf9FnCZlVKLGaqd4oywQh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=negoLTiM; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2445805d386so19178645ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 18:38:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755826725; x=1756431525; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=W15LouMyj4vdHymi7TVZHUFLWipG+7CdV/EGR2TsyJU=;
+        b=negoLTiMhigrb4WOxUeYZwslBrPELMadcwzJr1Pf1HPZ8JFSZoYv9vWJAXh04/Gnx5
+         bUn6SOV+J2gD5heKMzK4PZKrxH4bVDsEFyV77Boyg3Rv0IGwnRc2O2FdQzCL7TblwEBE
+         EOtUyD6TBcVnoiRKLGwE/R5H6PTwD6CADLhpzs+lxiSlV8fkjlsJZCro4FSZTn/5Bt3U
+         zmQ1VgYo+NAoLcl0++2RE57NCr1cNpRK0cFjGn/ZRrcUaDPlewLBHlRkBu78wkKUhNHe
+         G5PZkRdGHmsxsxmai/5DCJVSAv0lbk5CaxIn8OJqGqGDGJUFPxn3N9M5a6cmXGacT3Ph
+         vvoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755826725; x=1756431525;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W15LouMyj4vdHymi7TVZHUFLWipG+7CdV/EGR2TsyJU=;
+        b=XG0GBRgSuatp2TjAx5gbRe1dUz2Yyw+RRm7El1C4OGaG47zWf5gsEa3bMgw7FaFoGD
+         XAsjyqbZt3e0GK7XExBvVDsJqfdvGC324dYnunzDMPbFh8eXaZKBwfI2o8QYbav+eLxk
+         LWuU48qNuQyz1O07lLKZqnFLLAG/FilDSQ9e+zKwUHovhrBBxdhg6VnxuUzBVy2l8DQi
+         +L00QsHviSMNRPcXpxSL1o7l695w/MLwrA9n0FfpTtmuci1/Hns4ORGZwMJbd5c4W5Ri
+         6vsAKdyBHSE1t10aXbXmIocQRHgYv+jl2q8AzMXtbtfn4QIBs9x3lGlrH+7QD9pYCRiD
+         4FFQ==
+X-Gm-Message-State: AOJu0YzMJUyjkMMuJ44hVeiPq7m8m1FcLQh3VyKN69FB1Srlolt3LBDN
+	sF85U5C6FLCkmwmwKTSNUPuadVoYR67SrHjx0c8aT3B4d7iUUJwak7zwTRzGyknhNefTaG0e5ck
+	CVMLZir8f5UJHsslITFxBClsJazWc3JSRISY+mEs7HUlnaXLT2cbkpo5CLiYscQcJJcqVuIqoVH
+	gpxY1dbUv2Q/sIT5r4YNtfTDniq6MpxYHDMe/bSiCEdZd9TwMipA==
+X-Google-Smtp-Source: AGHT+IHopvgy+NT1vyxHR0lL/IQJOLtwOt5TkxAJYqqhMkX+S6CNkIYHIk02Ok4PnPzh/BGnt+DyE+ktjcJP
+X-Received: from plbme14.prod.google.com ([2002:a17:902:fc4e:b0:240:1953:fa3])
+ (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:46c6:b0:246:1c6a:7025
+ with SMTP id d9443c01a7336-2462edec143mr21257215ad.12.1755826724580; Thu, 21
+ Aug 2025 18:38:44 -0700 (PDT)
+Date: Thu, 21 Aug 2025 18:37:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] ftrace: Fix potential warning in trace_printk_seq
- during ftrace_dump
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Ingo Molnar <mingo@elte.hu>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250820090017.2978279-1-wutengda@huaweicloud.com>
- <20250820101054.50c0b8b8@gandalf.local.home>
- <40bcf20b-e2e6-442f-bfd8-bb7ad6245397@huaweicloud.com>
- <20250821105113.1536d567@gandalf.local.home>
-Content-Language: en-US
-From: Tengda Wu <wutengda@huaweicloud.com>
-In-Reply-To: <20250821105113.1536d567@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAX3w9vyadomKT9EQ--.7615S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYb7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrwCF
-	54CYxVCY1x0262kKe7AKxVWUAVWUtwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UQzV
-	bUUUUU=
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.rc2.233.g662b1ed5c5-goog
+Message-ID: <20250822013749.3268080-6-ynaffit@google.com>
+Subject: [PATCH v4 0/2] cgroup: Track time in cgroup v2 freezer
+From: Tiffany Yang <ynaffit@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Stephen Boyd <sboyd@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, "=?UTF-8?q?Michal=20Koutn=C3=BD?=" <mkoutny@suse.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Chen Ridong <chenridong@huawei.com>, 
+	kernel-team@android.com, Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
+	cgroups@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hello,
 
+The cgroup v2 freezer controller is useful for freezing background
+applications so they don't contend with foreground tasks. However, this
+may disrupt any internal monitoring that the application is performing,
+as it may not be aware that it was frozen.
 
-On 2025/8/21 22:51, Steven Rostedt wrote:
-> On Thu, 21 Aug 2025 09:53:53 +0800
-> Tengda Wu <wutengda@huaweicloud.com> wrote:
-> 
->> There remains an edge case that concerns me: if size is 0, setting len to
->> size - 1 would cause an underflow. Should we handle this edge case?
-> 
-> When the trace_seq is allocated, the size is set to 8K. If size is ever
-> zero, then there would be no buffer. So no, we should not worry about that
-> edge case because if it happened then we have a lot of other things to
-> worry about.
-> 
-> -- Steve
+To illustrate, an application might implement a watchdog thread to
+monitor a high-priority task by periodically checking its state to
+ensure progress. The challenge is that the task only advances when the
+application is running, but watchdog timers are set relative to system
+time, not app time. If the app is frozen and misses the expected
+deadline, the watchdog, unaware of this pause, may kill a healthy
+process.
 
-Got it, thanks for the clarification.
+This series tracks the time that each cgroup spends "freezing" and
+exposes it via cgroup.stat.local. Include several basic selftests to
+demonstrate the expected behavior of this interface, including that:
+  1. Freeze time will increase while a cgroup is freezing, regardless of
+     whether it is frozen or not.
+  2. Each cgroup's freeze time is independent from the other cgroups in
+     its hierarchy.
 
--- Tengda
+Thanks,
+Tiffany
+
+Signed-off-by: Tiffany Yang <ynaffit@google.com>
+---
+v3: https://lore.kernel.org/all/20250805032940.3587891-4-ynaffit@google.com=
+/
+v2: https://lore.kernel.org/lkml/20250714050008.2167786-2-ynaffit@google.co=
+m/
+v1: https://lore.kernel.org/lkml/20250603224304.3198729-3-ynaffit@google.co=
+m/
+
+Cc: John Stultz <jstultz@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Koutn=C3=BD <mkoutny@suse.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Pavel Machek <pavel@kernel.org>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Chen Ridong <chenridong@huawei.com>
+Signed-off-by: Tiffany Yang <ynaffit@google.com>
+
+Tiffany Yang (2):
+  cgroup: cgroup.stat.local time accounting
+  cgroup: selftests: Add tests for freezer time
+
+ Documentation/admin-guide/cgroup-v2.rst       |  18 +
+ include/linux/cgroup-defs.h                   |  17 +
+ kernel/cgroup/cgroup.c                        |  28 +
+ kernel/cgroup/freezer.c                       |  16 +-
+ tools/testing/selftests/cgroup/test_freezer.c | 663 ++++++++++++++++++
+ 5 files changed, 738 insertions(+), 4 deletions(-)
+
+--=20
+2.51.0.rc2.233.g662b1ed5c5-goog
 
 
