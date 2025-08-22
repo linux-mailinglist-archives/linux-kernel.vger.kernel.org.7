@@ -1,130 +1,164 @@
-Return-Path: <linux-kernel+bounces-781730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03B78B315F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:57:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2EEEB315FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A811D0299D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:58:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5ABA6225F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA4D2F99A4;
-	Fri, 22 Aug 2025 10:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25F32F90EB;
+	Fri, 22 Aug 2025 10:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C+fVgKDh"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="WbQm/sZe"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106462F90CC
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24C4258EC2;
+	Fri, 22 Aug 2025 10:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755860250; cv=none; b=GSNg+oB9+w9hmXsrmyz5wYutHtBcH+9Nbgsnm3Zt17e185Yq2457aL5x4P/xT0IGirBNU9yNk1P6Wu/VatfT2dYkeqGh3JAdIAienc/PvfsZRW19LS+fF14z3e6/o+6dE91/8fsuRksV6Lpnd7A/evJsrE0cYvBd9X1BY77OXWk=
+	t=1755860323; cv=none; b=QGZOxPOqfsWhjctawtd6WJzBlZoqSxD+k/uuuWyhbLugC11IA8+hEN4AvK3ic+OTAVsDXTm5zh0cbdbjza0FeBbjKppdp26mBQLU4hesSciKCo5Q10kO3VDygiV88ih8iA7EJbPlO9UT+Hs7eZs+aeYa5YEbfQDxKCjuIpNUAx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755860250; c=relaxed/simple;
-	bh=ZTz83K7Cswt9cjSybe5vv3tPcAP/updXzpEtv7fbREU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=McjNH1Zk57mykZqKZXjRRI/TwU48CZyb8OnqWtuOIDMMhubA6wX0fIWT5pQg7yqUymyJUegBe8sX8FYzBCA0AIxHp+6pN47jr9R2l8d/hscAG88td/WFfdvc7lk4QqkGW+l2j9EJSJKFi7q0apGLcsjKV5mHF43BIKtK2IuquqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C+fVgKDh; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45a1b0b6466so13905565e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 03:57:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755860247; x=1756465047; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7HBMLCCpgWuee3qZa2JZqxXuB7kIiXGM9JL4gtORBiI=;
-        b=C+fVgKDhDSugs7c2ksYUO8oJG5TC2MRgOaHXUqhq24oFgk0785FBQrN2LRyeDnYuu4
-         7t0CdhwgNaSSS3IWK4Y62/p7Lg/CLApcA8y/j1QDsuNBI3GMCX0vb+69l7fKIpMJ8KUq
-         pdtfz24XwBGXqzqqvUXNg6HEbfNcvcrkWk0HTGQzy2EhXpxGk4JRr2dN1AK3ZKW0nuBI
-         /qFhWjWC/sxkv3XlWNmaZL9CYLEiGrkwCmugZ3YKQnqOq4O4FAINfNSj7jLuVuyhv1VA
-         Oj05lJ4NQrcupmT6dTz60MEx1vC5XH6ejFwYdAj1nU1WA8QDjPuwuLHnkmUEbT3/y8Hz
-         2RUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755860247; x=1756465047;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7HBMLCCpgWuee3qZa2JZqxXuB7kIiXGM9JL4gtORBiI=;
-        b=NfEkcqKkUCqUjF1Kil/9gEVnY4OCYQU/UOo/X+UEu5QDKGtfEllTLmRFLc0EFhkeDy
-         RPrWB5W4pSzH5E1ZzDxMVaU5JKNgUIJhUiPVO7R7zYm6pWf2qKX++tuhLTIKPfhrKNtE
-         KGv1sTwuqP0kRxG5oeRa2DFTzFtyHaVxz6p0b1n7NXYxiE+4p99/os5xjwLKbX1A5TAI
-         TJv/YPPjBGABqmYP/chekCsewJNRySRiOziEZX9YUgZrhhaDj1RSKPyK53Em9Rmo84Va
-         kN4hLf7Fn0w+e/iiRi/3+6Qi+RCyfvl23dW46Kbe9CBj7kVJSxHSKahllmONvszgfBuL
-         AjPg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3JskCEB7noX1POEw5g/z1RU7MjykSAVLdn4KbRGwU1EKEpow+kxj5X+mibRLKUEPgG+YA1zbOFdNP3XE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS09inz7dPzedD8aJJrh4N50D1giKAznFFh1Wu6Fa9D2+4wQDE
-	GMEBaK23M63AofaGlH/VpMSbsJO+fqT5zzCs398M+QY2MB1ZggBUy44D9m9qXHa7gfyCaiFbjCa
-	u//JiCzNGvQMEseng0w==
-X-Google-Smtp-Source: AGHT+IFtLd078KoINMXpDW22Ic3sXy4RycWnf1VLTnYuQE76dQbTyWnKjFD4VpOZLK/xGSJAqubgJ4a1/kyy7Zk=
-X-Received: from wrs7.prod.google.com ([2002:a05:6000:647:b0:3b8:dd13:ef41])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:3101:b0:3b5:f0aa:b1e5 with SMTP id ffacd0b85a97d-3c5dae060f2mr1770712f8f.19.1755860247490;
- Fri, 22 Aug 2025 03:57:27 -0700 (PDT)
-Date: Fri, 22 Aug 2025 10:57:26 +0000
-In-Reply-To: <20250822115221.24fffc2c@fedora>
+	s=arc-20240116; t=1755860323; c=relaxed/simple;
+	bh=O0JnXqEEImi8sn1roD3/rHbEpArDLGXrTJ+2Oc3+u0Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BW2SnAr5DJhf9nTJkduC2B0YZaXBCb8xkD4X7+Qg3IGJ7ze/2iBD7aw0XGgCyf9wSTX/7R2FUB7HQPjK8PMYslQI1eeDLW7yJ34iSKCsFnh2SzIFlUeODkJ5PuzREO81xD7+SkzjcYnDjYrByqvDhQLTTxt+YiMR/gBjRZTqgOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=WbQm/sZe; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LNU0mF014244;
+	Fri, 22 Aug 2025 03:58:20 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=0nymJqrIc02cPx9kfYRuZKZ
+	6xMF8PEWYJ0Fb4/lOEMA=; b=WbQm/sZelBwBzyh6g93+XPVrwRA9AHRxeQk7yxt
+	NeViv9JdpyUtbGBR7rYSPEsiP5+p3uPICOWymozWhSu5VsKwTHLhNsP5sGpEiFfi
+	rz8Hq8ONs21yjOLVE9pYF1+NiQjsMZG1+0xli3y4YC+DAjyE5Viju86gPBh7HxpE
+	27OrXf0AxEME9PKEDeJRhYc7SN43v1vysbDFonTvQQQCr/RDCUH8q3KQVwozMhcr
+	JEteNwt9UX9634mbIOg+2BBZhPJOPUpVlK1D8YN4IloXsv5CHfmWfRXJD87lswbI
+	yGKqi69YsF3opAtSXk30StUbgphdOc9td18a0OmuC4gWB2w==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48pd629540-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 03:58:20 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Fri, 22 Aug 2025 03:58:22 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Fri, 22 Aug 2025 03:58:22 -0700
+Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with ESMTP id 056C03F70CE;
+	Fri, 22 Aug 2025 03:58:14 -0700 (PDT)
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Hariprasad Kelam <hkelam@marvell.com>,
+        Sunil Goutham
+	<sgoutham@marvell.com>,
+        Linu Cherian <lcherian@marvell.com>,
+        Geetha sowjanya
+	<gakula@marvell.com>,
+        Jerin Jacob <jerinj@marvell.com>,
+        Subbaraya Sundeep
+	<sbhatta@marvell.com>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Subject: [net Patch] Octeontx2-af: Fix NIX X2P calibration failures
+Date: Fri, 22 Aug 2025 16:28:05 +0530
+Message-ID: <20250822105805.2236528-1-hkelam@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250822-gpuva-mutex-in-gem-v2-0-c41a10d1d3b9@google.com>
- <20250822-gpuva-mutex-in-gem-v2-1-c41a10d1d3b9@google.com> <20250822115221.24fffc2c@fedora>
-Message-ID: <aKhNFn7hdsLapLWO@google.com>
-Subject: Re: [PATCH v2 1/3] drm_gem: add mutex to drm_gem_object.gpuva
-From: Alice Ryhl <aliceryhl@google.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: 4BRydFj1vT1xqcVhEz63IpiTIDLOuZr-
+X-Authority-Analysis: v=2.4 cv=FYpuBJ+6 c=1 sm=1 tr=0 ts=68a84d4c cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=_86yT0qS0cJFdN9aZyUA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIyMDEwMyBTYWx0ZWRfXywcRO5RzcRqw z9Z++Nyi1gGwHm9Pnq2eTsRrLfxSaWd5Eb80il088soOlDV92GncMba6sQyNlGU9Bc5Wy91olKu VNsFnYfQAbHyFEgsbOa4GH53prTCaOI8YY3ID8iFRxT6QTbpoCdvz24L1RGwulTRUTQtwDUbAyt
+ eR7Dx7GR+OCzedqCOz4v7hEXY6KL45CMnYMv2+YZ8apVCgIrq3KuBHKAfPbZLYX0epWLkF8R2vr gbNa/GI9BzK2Ha3gVwkU6r5glKz11Q82D1r9AAImSn9637nnJV2tOY10LszPCo2s4EXCL2K7zJp ozE7aZR1bc2qcZSN3868ZDtzH4uxP/o+VbizxPrxzi1Ujti+IugKFozVMXIqtSDTICv76IlNF/Z
+ Y6+EV54ex7dGXtcCCpql/9ygwMKZ9WbUdOYX4R1VE90mhhOvEIR+MvDBHcimOseTvfugWGpd
+X-Proofpoint-GUID: 4BRydFj1vT1xqcVhEz63IpiTIDLOuZr-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_03,2025-08-20_03,2025-03-28_01
 
-On Fri, Aug 22, 2025 at 11:52:21AM +0200, Boris Brezillon wrote:
-> On Fri, 22 Aug 2025 09:28:24 +0000
-> 
-> Maybe it's time we start moving some bits of the gpuva field docs next
-> to the fields they describe:
-> 
-> 	/**
-> 	 * @gpuva: Fields used by GPUVM to manage mappings pointing to this GEM object.
-> 	 */
-> 	struct {
-> 		/**
-> 		 * @gpuva.list: list of GPU VAs attached to this GEM object.
-> 		 *
-> 		 * Drivers should lock list accesses with the GEMs &dma_resv lock
-> 		 * (&drm_gem_object.resv) or &drm_gem_object.gpuva.lock if the
-> 		 * list is being updated in places where the resv lock can't be
-> 		 * acquired (fence signalling path).
-> 		 */
-> 		struct list_head list;
+Before configuring the NIX block, the AF driver initiates the
+"NIX block X2P bus calibration" and verifies that NIX interfaces
+such as CGX and LBK are active and functioning correctly.
 
-This isn't a new issue, but it's somewhat confusing to call it a list of
-VAs when it's a list of vm_bos.
+On few silicon variants(CNF10KA and CNF10KB), X2P calibration failures
+have been observed on some CGX blocks that are not mapped to the NIX block.
 
-> 		/**
-> 		 * @gpuva.lock: lock protecting access to &drm_gem_object.gpuva.list
-> 		 * when the resv lock can't be used.
-> 		 *
-> 		 * Should only be used when the VM is being modified in a fence
-> 		 * signalling path, otherwise you should use &drm_gem_object.resv to
-> 		 * protect accesses to &drm_gem_object.gpuva.list.
-> 		 */
-> 		struct mutex lock;
-> 
-> 		...
-> 	};
-> 
+Since both NIX-mapped and non-NIX-mapped CGX blocks share the same
+VENDOR,DEVICE,SUBSYS_DEVID, it's not possible to skip probe based on
+these parameters.
 
-Alice
+This patch introuduces "is_cgx_mapped_to_nix" API to detect and skip
+probe of non NIX mapped CGX blocks.
+
+Fixes: aba53d5dbcea ("octeontx2-af: NIX block admin queue init")
+Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/af/cgx.c |  7 +++++++
+ drivers/net/ethernet/marvell/octeontx2/af/rvu.h | 14 ++++++++++++++
+ 2 files changed, 21 insertions(+)
+
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+index 4ff19a04b23e..0c46ba8a5adc 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+@@ -1978,6 +1978,13 @@ static int cgx_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		goto err_release_regions;
+ 	}
+ 
++	if (!is_cn20k(pdev) &&
++	    !is_cgx_mapped_to_nix(pdev->subsystem_device, cgx->cgx_id)) {
++		dev_notice(dev, "CGX %d not mapped to NIX, skipping probe\n",
++			   cgx->cgx_id);
++		goto err_release_regions;
++	}
++
+ 	cgx->lmac_count = cgx->mac_ops->get_nr_lmacs(cgx);
+ 	if (!cgx->lmac_count) {
+ 		dev_notice(dev, "CGX %d LMAC count is zero, skipping probe\n", cgx->cgx_id);
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
+index 7ee1fdeb5295..18c7bb39dbc7 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
+@@ -783,6 +783,20 @@ static inline bool is_cn10kb(struct rvu *rvu)
+ 	return false;
+ }
+ 
++static inline bool is_cgx_mapped_to_nix(unsigned short id, u8 cgx_id)
++{
++	/* On CNF10KA and CNF10KB silicons only two CGX blocks are connected
++	 * to NIX.
++	 */
++	if (id == PCI_SUBSYS_DEVID_CNF10K_A || id == PCI_SUBSYS_DEVID_CNF10K_B)
++		return cgx_id <= 1;
++
++	return !(cgx_id && !(id == PCI_SUBSYS_DEVID_96XX ||
++			     id == PCI_SUBSYS_DEVID_98XX ||
++			     id == PCI_SUBSYS_DEVID_CN10K_A ||
++			     id == PCI_SUBSYS_DEVID_CN10K_B));
++}
++
+ static inline bool is_rvu_npc_hash_extract_en(struct rvu *rvu)
+ {
+ 	u64 npc_const3;
+-- 
+2.34.1
+
 
