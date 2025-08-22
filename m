@@ -1,93 +1,66 @@
-Return-Path: <linux-kernel+bounces-781397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 781EBB311FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:42:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47EA4B3121F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CC6A54E4A81
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:42:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74B55AC17B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFD32EBDC9;
-	Fri, 22 Aug 2025 08:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5409027AC2A;
+	Fri, 22 Aug 2025 08:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fnd660/q"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Mrr/ECZ1"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A4021883E;
-	Fri, 22 Aug 2025 08:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC8119D880;
+	Fri, 22 Aug 2025 08:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755852143; cv=none; b=eqZxOkETQBiw2tEM8eKnAyWR3zjtscF8gJ8KnaYYBKYH52Cj3DnnjgRNbXWwtiVbZTdfQVBbldnnHj0GH4Iv6pSGsZRqGptZWfaTa7xWwqEm7Mb3qoULEwJPw8uulMa2IIWlgAuY6wF/jC42C0kx5wM+64Gc1iApAv/VRAmsXko=
+	t=1755852260; cv=none; b=EDR6ncOupxI/+McwEZBP19nCff/F3z00HgNloencoldHBaLaTgalc1nYIsXfnBPK3FDnEpG1dceYIcSpFpNePD26ofQAOEN4kfH+ARf3AW8MdAcfCiXnqD36hw4N5r3meoHBQciK722ddUnk/qfGsx84sR/pEWuUEZXHeD4AVkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755852143; c=relaxed/simple;
-	bh=gapPfIhJK1bTzJFdvEuISzA1Cg/e4/Xhxu+TVD+Yn/E=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q3DHba1mDCRkOjWSSLMckgfxAaD5V/8mLSrbHxkZczSSy7eU1zYsMwGHhJc9ALv2LIZdDuB2GNIOzF9/wYsrmMKNEL9bfTJ63aiUrk+aefI/fxJXDAZhzdk6DHv+nNm2gIw8zWHiShOeUQFjI3ANSUFX2Pi3DGwLHsMAA6Tzoow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fnd660/q; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afcb72d5409so279702266b.0;
-        Fri, 22 Aug 2025 01:42:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755852140; x=1756456940; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rv504gma5TkYLFiZ69knEjNBP63zFcWG5Dn65W5C1o8=;
-        b=Fnd660/qjWA9ExHJVrPHiORsX0Tv/GidyDIQ6pIo3prF0mZ9HDzhmeyUxiA1QyDBKl
-         ANR2mze30o/IL6ek/Zc+ZA2Ll7X8wIxslKkar8AwrmMtBYvY5kOVG9RIHeR2nWWGrCRR
-         5M+MqRndaZbHerC8D7NXrpz3qYK2ASOBkM8c9kkmkvZ2EGC/Brrpd7jVVZmVokqT5btt
-         iKvqpUKQJjjyXA7ZPPEIHEhYgj6vbBrRiguu7aDtn7Q0uS0HtxfogJRk+JaefJ/5Phvd
-         CfDPQOIaTUJqNyYDE1W025U0lp+3BKdxdA+cfdgXeNcfwC24PhWwWy8Vpi1VWslTsP2z
-         jR/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755852140; x=1756456940;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rv504gma5TkYLFiZ69knEjNBP63zFcWG5Dn65W5C1o8=;
-        b=JIZFlN82yZQCJnTx28S3UrSbgFHWb6qq9tKOvGG3BybBTLhGer+R+0n0L3zHzsR/Yl
-         34N5La9aISouqmzv02iUcFWTQ+kfOqDoF6Fr9GPx6Cvu+ZN6ojL+LvBL5OKzQIzBCoCU
-         XipSkYC5QUTvpq/DJb2pxojWQpBbAbQss9yMjJROxElH+DFCUJfQvptdSTiJYju0k0GH
-         m8U/PSHUCFnqypbIo4S5QIorxMbMBx5kQou8KzRuJUvj9x8NkNByhuyjCRK4YJR1GYel
-         jXC2DXGFGdhCxWSSZoRtQ2eoMg+jLrAFN11GLBcB36PKPxdBaPxyRW8mJZIqPSOHr8oF
-         OiqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXPHjl48anFjNU/xp+6WgT4o4tf45o0hyKKujvcUEbhgWQh0cNxihRx7VP8ZgPOo3rhio=@vger.kernel.org, AJvYcCVCZVdFnHC8F15nQj3hJwufrzfqc7HrPWmSryZ4jkAOCQDQDvunNVEjAIEIZSbxDQLwOvrsqb/Ydm2poWAx@vger.kernel.org, AJvYcCVIN64w/0ek23FL0yEtBNqZPGaDul4ThoPycjBXiobYtvKXzqRpfh4l9O43EJWCeU2hcNKB+Wcn6jNU+7Y9X78PtONR@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEeazpQeQ0T1p6G4qldsyHgbfxAFKA0u8IKOEHbQgdq0xevjkU
-	1Mu8WUyDZ6N/Kcyc7TO9aFr4O3gREs6TsV2gXEwQasqipA1czcMkD0EbaZ54gQ==
-X-Gm-Gg: ASbGncuWZVPy5+GzIzPZwb9m0K/gWV+Nmw4FSfo2ZklEhpKzh7kll8Jsbkl3c37vm3v
-	SfD7ocmrcmGhPNbZpwG/TwGay6TFg0cHzwu1KSSVnB2o7rcOnJHWkyB7qDj3QzKE8v8XRAYGRiK
-	nftZMsOfz1v1l7XzGcT6qaAkUlzgukAwQuX8KrPKif6B33pJmOSsr3xJ+rvQxNelFYg2ECwDj3n
-	BAWQgkMdR4Cm9A8JfPfCeaisX9RL92sL1Z9jEVNBfQReoRVjgQ14fbG3uNcLeUYQP7hvfNGVDqh
-	fRu/LnT5zRSeyUV2lPR6xsndw3RuUTDELaK0BLROoVAfj3u+8dJWIExxJeTvqWBEjw+hLlD7+6p
-	fxXJjZdNY9g==
-X-Google-Smtp-Source: AGHT+IGSf6+K2la/tSkUQ4GNOD/qo1AbJseKiNTlEmELE2J7QUmOoozQZ54HhPQKiE1W2oifM4sdcQ==
-X-Received: by 2002:a17:907:9304:b0:af6:a10a:d795 with SMTP id a640c23a62f3a-afe2968f34cmr190105566b.55.1755852140043;
-        Fri, 22 Aug 2025 01:42:20 -0700 (PDT)
-Received: from krava ([176.74.159.170])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded479868sm565612666b.58.2025.08.22.01.42.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 01:42:19 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 22 Aug 2025 10:42:17 +0200
-To: andrii@kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>, oleg@redhat.com,
-	mhiramat@kernel.org, Jiri Olsa <olsajiri@gmail.com>,
-	linux-kernel@vger.kernel.org, alx@kernel.org, eyal.birger@gmail.com,
-	kees@kernel.org, bpf@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
-	songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
-	haoluo@google.com, rostedt@goodmis.org, alan.maguire@oracle.com,
-	David.Laight@aculab.com, thomas@t-8ch.de, mingo@kernel.org,
-	rick.p.edgecombe@intel.com
-Subject: Re: [PATCH 0/6] uprobes/x86: Cleanups and fixes
-Message-ID: <aKgtaXHtQvJ0nm_b@krava>
-References: <20250821122822.671515652@infradead.org>
- <aKcqm023mYJ5Gv2l@krava>
+	s=arc-20240116; t=1755852260; c=relaxed/simple;
+	bh=i5MGaGPZFXaGix0CeJMOQeq3AS/r/2cOZSfHKXkBdqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M72BE/4MN1vW+A/uDQXnd2LMoxocZCnGZh4s9Iu5s9+6At7hLONcKib9w2l5Q5Hf8rngQaxycNsM2kN/KDC2+msyhtJU+inbDrPA1MYCcqDIQtPgb805tl0inHptHiwESXThqSqw0Wz9wsrNgsJYHljwnz0xP5kXvoj35/CTaTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Mrr/ECZ1; arc=none smtp.client-ip=220.197.32.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=YcyCpXC//LwKFU9yjAyJNXfcojjXsbo2azge4YgyYVc=;
+	b=Mrr/ECZ13cJlTtArHixXMkiu25wJJaamvKcsqFEDchBndXLXXtYkoq3en9d4SI
+	Ai7V6QkKTRYiNwm/SIhGD9mCkpNJOqGJlhody5pzkemMje/TdILct0kEEwQcH4CN
+	9S1FzV2e314/87B9dGhuPfnVdRH362k4EdTMeE9QxzQMk=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgCnZW9sLahoW3sVAw--.14819S3;
+	Fri, 22 Aug 2025 16:42:23 +0800 (CST)
+Date: Fri, 22 Aug 2025 16:42:20 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Joy Zou <joy.zou@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, peng.fan@nxp.com, richardcochran@gmail.com,
+	catalin.marinas@arm.com, will@kernel.org, ulf.hansson@linaro.org,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, frieder.schrempf@kontron.de,
+	primoz.fiser@norik.com, othacehe@gnu.org,
+	Markus.Niebel@ew.tq-group.com, alexander.stein@ew.tq-group.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux@ew.tq-group.com, netdev@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	Frank.Li@nxp.com
+Subject: Re: [PATCH v8 03/11] arm64: dts: freescale: move aliases from
+ imx93.dtsi to board dts
+Message-ID: <aKgtbDHjU6Ldku5T@dragon>
+References: <20250806114119.1948624-1-joy.zou@nxp.com>
+ <20250806114119.1948624-4-joy.zou@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,32 +69,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aKcqm023mYJ5Gv2l@krava>
+In-Reply-To: <20250806114119.1948624-4-joy.zou@nxp.com>
+X-CM-TRANSID:M88vCgCnZW9sLahoW3sVAw--.14819S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUorcfUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAQSxZWioHpAnjAAAs0
 
-On Thu, Aug 21, 2025 at 04:18:03PM +0200, Jiri Olsa wrote:
-> On Thu, Aug 21, 2025 at 02:28:22PM +0200, Peter Zijlstra wrote:
-> > Hi,
-> > 
-> > These are cleanups and fixes that I applied on top of Jiri's patches:
-> > 
-> >   https://lkml.kernel.org/r/20250720112133.244369-1-jolsa@kernel.org
-> > 
-> > The combined lot sits in:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git perf/core
-> > 
-> > Jiri was going to send me some selftest updates that might mean rebasing that
-> > tree, but we'll see. If this all works we'll land it in -tip.
-> > 
+On Wed, Aug 06, 2025 at 07:41:11PM +0800, Joy Zou wrote:
+> The aliases is board level property rather than soc property, so move
+> these to each boards.
 > 
-> hi,
-> sent the selftest fix in here:
->   https://lore.kernel.org/bpf/20250821141557.13233-1-jolsa@kernel.org/T/#u
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Joy Zou <joy.zou@nxp.com>
 
-Andrii,
-do we want any special logistic for the bpf/selftest changes or it could
-go through the tip tree?
+Joy,
 
-thanks,
-jirka
+Could you resend those DTS patches with a rebase, as they do not apply
+any more?
+
+Shawn 
+
 
