@@ -1,112 +1,140 @@
-Return-Path: <linux-kernel+bounces-780989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 109FBB30BFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:46:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C5BB30C04
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFBBDAC4A1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:46:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4FC5600CCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8015021D3C0;
-	Fri, 22 Aug 2025 02:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BF922127A;
+	Fri, 22 Aug 2025 02:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="S/BAgFdq"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A0B21ADB9;
-	Fri, 22 Aug 2025 02:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8/1Rn1w"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400F4393DC6;
+	Fri, 22 Aug 2025 02:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755830798; cv=none; b=mT33mbrKJgqaomIAGaBfKp/Cm6XVMfWWOliSxp15Gf/cL/dsAluYvrnWsge+GGNxDbUR7mFxmyQh3btYvfem0/6zE0fXdN1DRTkHQ8PqlUWhJET+topx7CYghMJnika58cHP/gYWFvA60MLkcH92ANQCrtn1WtJBhFOth2F5Yv4=
+	t=1755830898; cv=none; b=u+3IYbv7gg62RyZ1hVeWlDYwi1y6rvAv+mC1itJdgpuc+X0uqv8rTSGkMd56gCtcQITNsY37sSE01xsrNH1nOc3fPXwuD0sDKgmdszrvXizem17iV0cIznYrXmB2O6Zi4HLoeZtgGvTB+eemjS4Ksrn7joC2HzuPRe7tmum3xrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755830798; c=relaxed/simple;
-	bh=Ywx7e4h2sBHfe1jk7/s3AaNTx3ChkLUEFIgXEVyKgeo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T2LHBPNFBUgVoQOyU3V+8hM+fgMvYDAE6NBH7txGK+TiQcXUus3w0EegM25KU2bSv04fPfDOEQR+NJMAFHlSfI+y8SlhLLMqSqnQSDX//Q2mYL4huc3p6jg3skYnMAcRJ99woihASEC6gnz6SiUXXJW4j0N/PDQl4KtDgH6SCkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=S/BAgFdq; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=KD
-	wtmxqmQM9tsvXEIkX1bqnD+g/okK51Yr1LWmD6FtQ=; b=S/BAgFdq1KJgUy1iY3
-	ZV/J1xzDVVZEd97HLj8yqABh7m5xpW8TMtg7o4D9oWhf7dWCnId8krWsYGe2QxnK
-	NW4cpHsViHrb9y4l09bvlVxHbmKQNyZLywPd2KAkBbHoBFOsdnbeMBZUNodg+jB4
-	eHxOUURNEpM2B01NVXJZEU0HQ=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDHKo7t2adoOpKLDg--.63895S2;
-	Fri, 22 Aug 2025 10:46:06 +0800 (CST)
-From: ccc194101@163.com
-To: gregkh@linuxfoundation.org
-Cc: jannh@google.com,
-	stern@rowland.harvard.edu,
-	rex.nie@jaguarmicro.com,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chenchangcheng <chenchangcheng@kylinos.cn>
-Subject: [PATCH] usb: usbfs: Add reset_resume callback to usbfs.
-Date: Fri, 22 Aug 2025 10:46:02 +0800
-Message-Id: <20250822024602.42894-1-ccc194101@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1755830898; c=relaxed/simple;
+	bh=EFNiBrFJLR/JFecjGgoTl5VpOGAqZX9TuJDm6vuKLzo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iWx5NqxvyEM2ucGOz2oVlHpUtVlewoDcAsmdoQNqUTMGKybvDy1ZqLNAW/8IiCwZZ4PWUlWAmn8L83vADEMxU1JZrrB08Dx3ZmEM+Qv+BpbBKtl+dK7PnIWCwDkv4soraVIFCNi+MlDY44lQ9CVSK4LJyOeES3bUSv2wrcRKyCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J8/1Rn1w; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e1ff326bbso2110867b3a.1;
+        Thu, 21 Aug 2025 19:48:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755830896; x=1756435696; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qgJ77krSnGlw5W8K5Tzki1aZ7zfHIQLYeSjxCbIRvgo=;
+        b=J8/1Rn1wfxp8oTjQWZS37Ze14kBf8+Cu4JT4fIHIz5X/XpvITnxjmdes9K1TIHRLpz
+         Xp5GgfrwYd3PavSb4nbz+/jQialobHIj3vaHyKecqVS/Cw48JMLxyOl+lYR11jSjYkvY
+         WYTFnwovH4FdEpJDsvP7TG29OKheW3xgB2BPT+ljbE5CW7UvPj9yk97eTP1wosagJ/rs
+         v73R2HDjmLsjZNhDzgwyBv/VZi9mC6yAARML1iQ/QkTPtYjfmU3Cn/KiapVEJhlvVmkQ
+         iMJ/L/SX+eAZsyKVlMlrbNw9i7J/b4fMvemE+/k+1KvAyIZhfcTyGRD8ue2mQeRnIBZL
+         QHwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755830896; x=1756435696;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qgJ77krSnGlw5W8K5Tzki1aZ7zfHIQLYeSjxCbIRvgo=;
+        b=TXKmYkzqSu6HYol3Z4zuDt1a9wUWqlfD0+DaMOdD+NML6pVlgyXV0U81sQ2n3FBr4k
+         cQamhFaBObAHImRPwyQ830aIBZ9j/53RyxNcs7mYyTwZgdi4ubV7I03IArjCRtEgsUr+
+         QcW4Ar/UkNzyhfNcv2XM6Gt0HFOWqOGdx68sgphGw7vV8fVJcXMqSyQZS954PRWT3MGK
+         4/2aD5gGtcpVjVPLhrcEeLmhTEvmMAXdNjjubywUc+FDgSWoCL5yxkDS7aWOMg7F09vO
+         T3hg+BVP4DzKTzuSIBMnwcexEto69Rcu6a8pdh3Tssqceg2d9BXl14NaQs4IT0OBzkEX
+         iq6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUw6rakKOmh8FpEoI5Sv22rTWOHKpIutly6Y2nqYi8VYPBz7KEHjkGZ8VvobZG0INEqm64GzQ15XdPwGTBP@vger.kernel.org, AJvYcCVxpjIx8d2M2qA3Jh0o6pDgW57lHjVwdDQbkH8Akq7TRqFIzE4jSJQY89oGH3oIgr+UV9NSJPPtlhIeMQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEdPxtk7/ocCYUmaWShjHrFgvBRajeaEhvjlK6b/gRc/Qc1tpx
+	FfdMrnTfFHAw2xpF0PTOsz+mezgpli+5ifJRZRrkV2SOgvBwr7wiqh6xc6xeYQ==
+X-Gm-Gg: ASbGncu9LqOjCzn1JOIzKptO6E1dEZvcIY0ZyLZFios6tMMLpQOlcufid4id02iB1A3
+	qvGpvCr1PQQNY7LoEr123MIkWqN35HSxXnlcXyqQETGdqERxO9fkQVAfG1QvYms6GrPLCwf99TL
+	S5RwRRP8sypmLFCtfrSb5xNXbKQmy1IYURhcuXSkQcXjbIOQLhCWE1f2an/Kdv26LH1jDBwjY7q
+	LTip4/EIhfVNJjcLmiS2hoaL6Pqk2cTGDlPpaQ4SHVfJdz5OE3/2pP2q9FrYMs0G57gJaNcaGmM
+	xTEk1vuJ150hjDrH+xvVhfj3AUH/HgpI0VqMGmMwBDgIqwHFPCKO7nbqM5L6PLpvpvPcivn/y7N
+	0WEYwYCCRsoFNq7s3iMFBmw==
+X-Google-Smtp-Source: AGHT+IFuayoNpUGH/+BFnAo3GyPpJEn1Q9wL6HdoplAOHiy0cHKsqUQmM36YvTvmyaBTETwYd1esPg==
+X-Received: by 2002:a05:6a21:6d86:b0:243:25b0:232b with SMTP id adf61e73a8af0-24340bc48bfmr1828881637.9.1755830896293;
+        Thu, 21 Aug 2025 19:48:16 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:9cb2:179:b04b:be48])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32515451214sm1047599a91.19.2025.08.21.19.48.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 19:48:15 -0700 (PDT)
+Date: Thu, 21 Aug 2025 19:48:13 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: heiko@sntech.de, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: Remove dev_err_probe() if error is -ENOMEM
+Message-ID: <f6cioxjpfmre4vcru7b3m45cu6axdgpzx6b2qjfggl3r73nbm3@cst5hw7bg75e>
+References: <20250821094751.573411-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDHKo7t2adoOpKLDg--.63895S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Zw1UCF47Zw13tFWDGFyfJFb_yoW8Wr18pF
-	WYya9Fyr1UJr47WrsYyFn5ZFyrAanYyay2kry3Z39xua43J34xtF18tFy5J3WDKr129r9x
-	tF17Kwnxua4rGrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j7YFAUUUUU=
-X-CM-SenderInfo: 5fffimiurqiqqrwthudrp/1tbiYxyx3min1YSMSQAAsL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821094751.573411-1-zhao.xichao@vivo.com>
 
-From: chenchangcheng <chenchangcheng@kylinos.cn>
+Hi Xichao,
 
-When an Apple device is inserted into the host, and the host
-wakes up from S3/S4 power states, if the reset_resume process
-is triggered, the absence of a reset_resume callback in usbfs will
-cause the device to unbind.
-By adding a reset_resume callback to usbfs and reporting REMOVE and ADD
-uevents in reset_resume, the userspace is prompted to reissue commands
-to re-establish the binding with usbfs.
+On Thu, Aug 21, 2025 at 05:47:51PM +0800, Xichao Zhao wrote:
+> The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
+> Therefore, remove the useless call to dev_err_probe(), and just
+> return the value instead.
+> 
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+> ---
+>  drivers/input/misc/qnap-mcu-input.c   | 2 +-
+>  drivers/input/touchscreen/zforce_ts.c | 3 +--
 
-Signed-off-by: chenchangcheng <chenchangcheng@kylinos.cn>
----
- drivers/usb/core/devio.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Please split per-driver.
 
-diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
-index f6ce6e26e0d4..358850596b0d 100644
---- a/drivers/usb/core/devio.c
-+++ b/drivers/usb/core/devio.c
-@@ -749,6 +749,14 @@ static int driver_resume(struct usb_interface *intf)
- 	return 0;
- }
- 
-+static int driver_reset_resume(struct usb_interface *intf)
-+{
-+	struct usb_device *udev = interface_to_usbdev(intf);
-+
-+	kobject_uevent(&udev->dev.kobj, KOBJ_REMOVE);
-+	kobject_uevent(&udev->dev.kobj, KOBJ_ADD);
-+	return 0;
-+}
- #ifdef CONFIG_PM
- /* The following routines apply to the entire device, not interfaces */
- void usbfs_notify_suspend(struct usb_device *udev)
-@@ -776,6 +784,7 @@ struct usb_driver usbfs_driver = {
- 	.disconnect =	driver_disconnect,
- 	.suspend =	driver_suspend,
- 	.resume =	driver_resume,
-+	.reset_resume =	driver_reset_resume,
- 	.supports_autosuspend = 1,
- };
- 
+>  2 files changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/input/misc/qnap-mcu-input.c b/drivers/input/misc/qnap-mcu-input.c
+> index 76e62f0816c1..3be899bfc114 100644
+> --- a/drivers/input/misc/qnap-mcu-input.c
+> +++ b/drivers/input/misc/qnap-mcu-input.c
+> @@ -103,7 +103,7 @@ static int qnap_mcu_input_probe(struct platform_device *pdev)
+>  
+>  	input = devm_input_allocate_device(dev);
+>  	if (!input)
+> -		return dev_err_probe(dev, -ENOMEM, "no memory for input device\n");
+> +		return -ENOMEM;
+>  
+>  	idev->input = input;
+>  	idev->dev = dev;
+> diff --git a/drivers/input/touchscreen/zforce_ts.c b/drivers/input/touchscreen/zforce_ts.c
+> index df42fdf36ae3..a360749fa076 100644
+> --- a/drivers/input/touchscreen/zforce_ts.c
+> +++ b/drivers/input/touchscreen/zforce_ts.c
+> @@ -747,8 +747,7 @@ static int zforce_probe(struct i2c_client *client)
+>  
+>  	input_dev = devm_input_allocate_device(&client->dev);
+>  	if (!input_dev)
+> -		return dev_err_probe(&client->dev, -ENOMEM,
+> -				     "could not allocate input device\n");
+> +		return -ENOMEM;
+>  
+>  	ts->client = client;
+>  	ts->input = input_dev;
 
-base-commit: b19a97d57c15643494ac8bfaaa35e3ee472d41da
+Thanks.
+
 -- 
-2.25.1
-
+Dmitry
 
