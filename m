@@ -1,93 +1,108 @@
-Return-Path: <linux-kernel+bounces-782650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B351B32322
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:46:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07378B32330
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6327EB21D18
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:46:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DC13641105
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BBC2D1F40;
-	Fri, 22 Aug 2025 19:46:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DA72D5A13;
+	Fri, 22 Aug 2025 19:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="ZRHWKRPO"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959672C0274
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 19:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C295F1DE89B;
+	Fri, 22 Aug 2025 19:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755891967; cv=none; b=A1ezWzDJSw+X+cGYESNdyPMGPT25OkJHIaq9wg3Ey2rP/GFi5jXe6mSlz1+eQkw/Z7Egdtv1Tq9ZM0DuNDaFjO47l6zADT6iYEnDlowpj5QF5TyWkD8s9R5/YiJjnpeJnNa2hACQu1GOmE+v7p6Pkou6UKDz6NzrvY5ynSAUBng=
+	t=1755892072; cv=none; b=sN/jj3FGWqUOhXfpQVKJs4yg8N0YKsesmXna6gZqTmcYVY3qMRlp/SPgY37Ij431cZduZGlxf3fsqwNZ0eZFBjH0aC5VOcWDlZrP+8X8ZHtvaMhHojrz2ZC7QckpiNj6lNg4HbacwriBR/PJWvA9aAfhgf1Kv40NITMzQzbpHiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755891967; c=relaxed/simple;
-	bh=7NiEu3tkA6S8mPNtHs1Won+TKrSvzrKDenD6kfio+Uo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jvj44j7apT8EqNSFWF1KLn5fTLCM9GfaHWXYp+hc4B2hYR/ezt0wNOLbDdJgJ6+r3/+huLVcFEuVpo0+G6nogxqv7tufbb+rkIlA93FwKnvytFubP2+XyoPkb6etTsaj2RCc/QDv9G2DNsK+Eq7kYTIh6h5TCDTGIoCzrTWOVE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3e56ffe6c5cso22707225ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:46:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755891965; x=1756496765;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NqSC6tySboQLbJ5EI4n/KR+EKbtxNLb53k76lwO30Xw=;
-        b=EMfTXVbANw5bsmEwdYV+/ejkx5yGcLUR3Whs38tCMQ+NcwLcKeViQ2J+zSUMVeTjua
-         YfRf5I/R3/ENUPwbd2LPyb852MR+eJAoeqtrxX1q1dBL0qI7c1KAY3wz00nMQ/FkREo0
-         rm1TWfWyVmNe3mMNx3c6JkfYbzwgg2Rr0DA4Y9PZhckTDnLsdRIg2ebk05JeMw5GTcdO
-         6gcqXd8iQOrfM/GEuqZZuH83Zv2BTObVuickJY1AJ0xGnyKEEporwSs0QToquy5jlBwT
-         qTqRXyO3OEVd+iw9nOdHHYclEaqFqd/hMmTpj+ZQzOFFmvVBPw4O9wAbaCZvI42jpFFA
-         +LOw==
-X-Forwarded-Encrypted: i=1; AJvYcCX4b0RM5SB49qnb7lLMRRXgTjWaIYLBBZ5g52me/2NclJQwYZBLHGu/gW+yuj5WOLGFiHvuIRi5sli1zGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB9Xh8DHWnEPLD85EPVGV3A9P2Rpm+6mvVa6bsrj222ybvtYES
-	kZBsZe9YGGJUMjdIpWDxIA4GVPjTOfn2ge4Fj67/PFoyN5qOHSMpX/Kkc6AQYyS/a65RpnbtDkH
-	UCWdQJcSl2ITpJJbLWuKPkvw5I/IpOFK+OZ/ovAQ1Ob9H6PgCpESfcc0bb1Q=
-X-Google-Smtp-Source: AGHT+IFotciXfb2/EVLMWr2EFo9hzs2Nns60EL1F8NvVSxbaXh1nQaZZ6WdP4J/p9TwLul/qlKcoHIG9x8l4KEeaMNE3+39TEPH8
+	s=arc-20240116; t=1755892072; c=relaxed/simple;
+	bh=VFUz7WD1YgTNzevzRIp7UXr/xOtM/q4luKbzZz2jgLY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AhgrKlRCcMeblZMuhR530W9QY+qeUcUxmSANOYu4qwSkDVn0a8rx75ajPGp8PIgrukCOTDnmqF0urVqV+CITxNWcWmsw/Zk78xaD9oiNE2A5iRLElbJmXhHvIbM++5MWQ5CvpXF5cawesfUwdwpXMQQ2+l5GkMwMZ1tGMzLSwz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=ZRHWKRPO; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4c7rM95C3lzlgqxy;
+	Fri, 22 Aug 2025 19:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1755892068; x=1758484069; bh=MLBOiNYx24swkpiYJhVCDHw2
+	FrCecYca5CX2eV7uvAs=; b=ZRHWKRPOtPI7SJBbYJlx5MiYn1juOZi3tFOBmBnc
+	/yTo7Maudt8GRku4F7Wks1ad9oJFNTTM76r0taPNPR6Z1A2vhtfUXpwCFfQb0czY
+	2tjvQMFn+CM2gyQajM2dinM0hAcLDY1I7KNU63pnKkU84LAiu4YmoXdQemcL0G1y
+	giRGK6HAseVXQh96oCl2QIT26PyPObkn+2ndyK0yCmY7S03VDgSEudqbCp2xVhT/
+	dVf4+k+GgsF0H7RLqIkMeU4IhWQSKS47RKF7ZrIVpHTP4JKsEcTodFYlSrUOcOLR
+	OEl7LzKKJFNvTAB9yDvd7okhpQjpj5sRPH66BD3VNQAJ5g==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id ccTbk4axFGzl; Fri, 22 Aug 2025 19:47:48 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4c7rM45yNqzlgqxq;
+	Fri, 22 Aug 2025 19:47:43 +0000 (UTC)
+Message-ID: <660498d6-3526-4f1c-99d8-776fa9967747@acm.org>
+Date: Fri, 22 Aug 2025 12:47:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:156c:b0:3e5:2df0:4b7e with SMTP id
- e9e14a558f8ab-3e91fe19d9emr67355225ab.7.1755891964741; Fri, 22 Aug 2025
- 12:46:04 -0700 (PDT)
-Date: Fri, 22 Aug 2025 12:46:04 -0700
-In-Reply-To: <68a8bd20.050a0220.37038e.005a.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a8c8fc.a00a0220.3557d1.0014.GAE@google.com>
-Subject: Re: [syzbot] [erofs?] KASAN: global-out-of-bounds Read in z_erofs_decompress_queue
-From: syzbot <syzbot+5a398eb460ddaa6f242f@syzkaller.appspotmail.com>
-To: chao@kernel.org, dhavale@google.com, hsiangkao@linux.alibaba.com, 
-	jefflexu@linux.alibaba.com, lihongbo22@huawei.com, 
-	linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, xiang@kernel.org, zbestahu@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/2] scsi: sd: Fix build warning in
+ sd_revalidate_disk()
+To: Abinash Singh <abinashsinghlalotra@gmail.com>,
+ martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dlemoal@kernel.org
+References: <20250820144511.15329-1-abinashsinghlalotra@gmail.com>
+ <20250820144511.15329-2-abinashsinghlalotra@gmail.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250820144511.15329-2-abinashsinghlalotra@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-syzbot has bisected this issue to:
+On 8/20/25 7:45 AM, Abinash Singh wrote:
+> +	lim = kmalloc(sizeof(*lim), GFP_KERNEL);
+> +	if (!lim) {
+> +		sd_printk(KERN_WARNING, sdkp,
+> +			"sd_revalidate_disk: Disk limit allocation failure.\n");
+> +		goto out;
+> +	}
 
-commit df0ce6cefa453d2236381645e529a27ef2f0a573
-Author: Chao Yu <chao@kernel.org>
-Date:   Mon Jul 21 02:13:52 2025 +0000
+ From Documentation/process/coding-style.rst:
 
-    erofs: support to readahead dirent blocks in erofs_readdir()
+These generic allocation functions all emit a stack dump on failure when 
+used
+without __GFP_NOWARN so there is no use in emitting an additional failure
+message when NULL is returned.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12e047bc580000
-start commit:   3957a5720157 Merge tag 'cgroup-for-6.17-rc2-fixes' of git:..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=11e047bc580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16e047bc580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
-dashboard link: https://syzkaller.appspot.com/bug?extid=5a398eb460ddaa6f242f
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=151b07bc580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=131b07bc580000
+>   	buffer = kmalloc(SD_BUF_SIZE, GFP_KERNEL);
+>   	if (!buffer) {
+>   		sd_printk(KERN_WARNING, sdkp, "sd_revalidate_disk: Memory "
 
-Reported-by: syzbot+5a398eb460ddaa6f242f@syzkaller.appspotmail.com
-Fixes: df0ce6cefa45 ("erofs: support to readahead dirent blocks in erofs_readdir()")
+Has this example perhaps been followed? I think it is safe to remove
+this sd_printk() statement.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Otherwise this patch looks good to me.
+
+Thanks,
+
+Bart.
 
