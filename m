@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-782126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1554EB31B9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:31:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A135B31B73
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23818B40891
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:23:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B94B64340D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E5F320CA0;
-	Fri, 22 Aug 2025 14:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1943E31280D;
+	Fri, 22 Aug 2025 14:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oEEVSqQz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZPDDhWkt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902D53112C2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6013A2FE564;
 	Fri, 22 Aug 2025 14:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755872388; cv=none; b=f7casIFIac2wlqB6Gmp8v1IX4e8C0DWcJ/xmOxiSF0HLm/RQzJI9yt58HZDdTaZrgr+HJaBG5t4MvzWuZVevgGaHGcPW96ZkZ+CF6PGJm0ZRe8yU1U66LRzb84i46RtUnLSeEY7iVEgArPqckaMfGkCQwpf4ojwigZXbWXWPrcU=
+	t=1755872388; cv=none; b=CjF1jBPR9640pDqwZL5jY+oMZgPGimGqPRmCTKAJQYOp6cLpRsdxAPXCkK9GIgB7BEaXoroJkt3SGpqKlnAHyXydCk/yCTQBvK7h/LXgJHFKUOgu1UoH/t3OCXfxTcA3VUhj2d0JBssbkNZZKLG2Q3qLiJmS3dCo7VWLvfHlUrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755872388; c=relaxed/simple;
-	bh=HiN7NqutO6hirOm4EnCnsuZhXt+MMY3adGpEmCAC7NY=;
+	bh=xaVYPkTp3UCaFGLlpkZHV5Y3yGQI0qRfBiGX9ydW30c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tSi0TIbIGwmTxrdwYGOAH7sTmEINx6BhfCZa8T4bSehXsbb9yBcdoDpo6No+4slYxcoartzNPnFLhuh+YNaoyNf8asP8gXXY1GOMS0cDeiUFB/YkaJkg/DGyYr5L98NMdGfQcgTGNf8fWXjFyS8KKweM4QoahKKYOWNMlEwDzQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oEEVSqQz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DC11C19423;
+	 MIME-Version; b=Ltm+hbG7NGxuUVfp/FSKpO4/5G4sJNkoiqBx1Oh9lpZfUdg05iX0clmP7K9sfBHyWG05ckSfsSB/gtHeQr9kfUBK8c+E/irplrPN4hkHhYDjmuF8Pt9bl++0q7kjYtKkfoJsr3iN4ODCZEB/F+1NOA/7D4JdvrAaBc3UudWDa/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZPDDhWkt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B03BC19421;
 	Fri, 22 Aug 2025 14:19:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755872388;
-	bh=HiN7NqutO6hirOm4EnCnsuZhXt+MMY3adGpEmCAC7NY=;
+	bh=xaVYPkTp3UCaFGLlpkZHV5Y3yGQI0qRfBiGX9ydW30c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oEEVSqQz141kP3LMW9d5m0XBcOP2hUjvdJSzYCNaGBMzYEvn5sdUjpdzOy3bY6hyl
-	 HWeU8lxXxyzpZC9xCyN2r0YjI8NlVMRB3iSlmvlZPjNUJMspTE9QLLDzO5P3Hxdfoq
-	 C4dTq9+wYFjSGOMSvoW16chvgXjvYgnln5JBVEH7XYnNb6Z88REAikr/6eZo3KwDy0
-	 EFjU0CUUGCN9zj0SVL9uOkg2WK5RrNXaLjfV7kFCSLAh1YAwhL4+cY2HLSchS8EJCb
-	 DsOsBye9c5xvkrH6B4SJZGtDJYBgOTKkSIJypNBxwv+h0VowmDu1vVzx/55CpVxNfe
-	 rebz35QLGpnjg==
+	b=ZPDDhWktb4G+LquyVzJFUAueM1W0FMp3s2jOTA2CUSJFGdOfKE8/6iy//dlqvoTLh
+	 WrpIrRbxqnfj9gntTOgJsx9gaI12gZDTYdEp+zlSvzhZeeGfqHfkKnVPSCrqyIO2YA
+	 nsfBrEdMrxFuNP1/5f6TLeOIAB/Wd5DrSsx/d+VumIKqJvTpOWf4zPoIGuA4bJuEZ0
+	 DyNHP7+WFX0Q5FFPdiNnTcniubti+Oys12ag3XfaqzIjBarRXBPhXAe3MNjUv8JZJM
+	 XZat/DItWzK1WZ/3RgOfIHYVk52EAkUOndsWLX5VcjCofKU//QnxrJxdgr1O/Yshp/
+	 U5GpqeGd7vpLg==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1upScM-0000000CCr7-0t4P;
+	id 1upScM-0000000CCrB-0zmo;
 	Fri, 22 Aug 2025 16:19:46 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
@@ -50,9 +50,9 @@ To: Jonathan Corbet <corbet@lwn.net>,
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 04/24] docs: parse-headers.py: better handle @var arguments
-Date: Fri, 22 Aug 2025 16:19:16 +0200
-Message-ID: <8d06bb713d6ec8de65179dd93defe479715409b6.1755872208.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 05/24] docs: parse-headers.py: simplify the rules for hashes
+Date: Fri, 22 Aug 2025 16:19:17 +0200
+Message-ID: <0c011090272f7a1068545409222f970ddb1ed431.1755872208.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1755872208.git.mchehab+huawei@kernel.org>
 References: <cover.1755872208.git.mchehab+huawei@kernel.org>
@@ -65,47 +65,52 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-The kernel-doc markups inside headers may contain @var markups.
+Normal :ref domain accept either hashes or underscores, but
+c-domain ones don't. Fix it and remove unneeded places where
+we opt to disable underscore transformation.
 
-With the current rule, this would be converted into:
-
-     \* @:c:type:`DMX_BUFFER_FLAG_DISCONTINUITY_INDICATOR <dmx_buffer_flags>`\:
-
-Fix it adding a non-printed space if needed.
+Ideally, we should have a rule about the default, or change
+the way media docs have their references.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/sphinx/parse-headers.py | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ Documentation/sphinx/parse-headers.py | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/Documentation/sphinx/parse-headers.py b/Documentation/sphinx/parse-headers.py
-index 650f9c9a68d1..f4ab9c49d2f5 100755
+index f4ab9c49d2f5..344090ef259c 100755
 --- a/Documentation/sphinx/parse-headers.py
 +++ b/Documentation/sphinx/parse-headers.py
-@@ -120,12 +120,12 @@ class ParseHeader:
-         },
-         # This is the name of the enum itself
-         "enum": {
--            "prefix": "",
-+            "prefix": "\\ ",
-             "suffix": "\\ ",
-             "ref_type": ":c:type",
-         },
-         "struct": {
--            "prefix": "",
-+            "prefix": "\\ ",
-             "suffix": "\\ ",
-             "ref_type": ":c:type",
-         },
-@@ -390,6 +390,8 @@ class ParseHeader:
+@@ -162,7 +162,8 @@ class ParseHeader:
+                 if not ref_name:
+                     ref_name = symbol.lower()
  
-         # Remove "\ " where not needed: before spaces and at the end of lines
-         text = re.sub(r"\\ ([\n ])", r"\1", text)
-+        text = re.sub(r" \\ ", " ", text)
-+
+-                if replace_underscores:
++                # c-type references don't support hash
++                if ref_type == ":ref" and replace_underscores:
+                     ref_name = ref_name.replace("_", "-")
  
-         title = os.path.basename(file_in)
+                 ref_link = f"{ref_type}:`{symbol} <{ref_name}>`"
+@@ -258,8 +259,7 @@ class ParseHeader:
+                 if match:
+                     name = match.group(2).strip()
+                     symbol = match.group(3)
+-                    self.store_type("typedef", symbol, ref_name=name,
+-                                    replace_underscores=False)
++                    self.store_type("typedef", symbol, ref_name=name)
+                     continue
  
+                 for re_enum in self.RE_ENUMS:
+@@ -272,8 +272,7 @@ class ParseHeader:
+                 for re_struct in self.RE_STRUCTS:
+                     match = re_struct.match(line)
+                     if match:
+-                        self.store_type("struct", match.group(1),
+-                                        replace_underscores=False)
++                        self.store_type("struct", match.group(1))
+                         break
+ 
+     def process_exceptions(self, fname: str):
 -- 
 2.50.1
 
