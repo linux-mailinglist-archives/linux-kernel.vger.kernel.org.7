@@ -1,110 +1,95 @@
-Return-Path: <linux-kernel+bounces-781547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF57B313EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:47:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A12F7B313EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCAA11D20066
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:42:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93540640E6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA312F3628;
-	Fri, 22 Aug 2025 09:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cDsaz9+3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771F12F3637;
+	Fri, 22 Aug 2025 09:37:32 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C717F2F068E;
-	Fri, 22 Aug 2025 09:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD272F363F;
+	Fri, 22 Aug 2025 09:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755855375; cv=none; b=DO28k+e9FLmBLKB/BL06yKCVRmcqNXLo1w0cCOqqy922HZN8QryCRCgUda16+HhmW3kly8J09DbjTxVsnItSo79mmzqT/POU/LdwiB1dIPKOGDsM95X2+XUWPdMNSz/VtGaVrIyKqnOkxMfg2snS6eifELb7nLCGLNHe76P4qIw=
+	t=1755855452; cv=none; b=LmgeD79Tyt5bD+XpzkBwWqPVXDMgZUywF6Cr6gcqoIMSkuUNJpvuM2tJ86+IqJJOVeA/F/QFjAEj4He54XHvr/8oJeH3jPZE4DrvOO3ZqxNPxR145ptpCypJ9xnQK1owBVGhPHDyIGIDHWOyBrYHUB4+w4O1S+Xszw8Go8keRbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755855375; c=relaxed/simple;
-	bh=rXY2Zyhv7wbJPlQxeHTH9gfaadUzm0ipeM5O7Zztx3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H5pstm/TU2SkfG6fIjAeJIdWhWqGACuEpqutWqbjoKEjvcogaj/jrU2r0TnKPI8QMon4J7AJ8UeHgAgOmytACDtrkehPfMZKsIb37gmIg+9YenyJlONSTVBv57yIc4JclPJqhY7Y9NqfxIqibvwwbTjV/KdEHJKOpOMGICPUzuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cDsaz9+3; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755855374; x=1787391374;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rXY2Zyhv7wbJPlQxeHTH9gfaadUzm0ipeM5O7Zztx3c=;
-  b=cDsaz9+38CR+W+cU/BWs7iUabjS76FOzWhBtHnNK+5Ysh3AENq9DmU0B
-   Npfiw73xfSSbYq52DhxIjUzSSRCF1lKH5zzTNKZ3Xx47Ro/99mf05AD1j
-   UF0E2TYNLy8Z/frEXLFPncGupJ3AmslYlz/B5an65u6Eq3HID4jM4+KtZ
-   fKbO0tg/Ck+IDIM9JchyzXmBZq7q8yvoQqtKF7iO6URttWmGyqntSMjBj
-   V6oQHyMr9nzrUu9OzdBfJiQt0gRZilaJK15zgyNB77hLDi0Y4LBg9vpal
-   Tv810+qDyvoDXYZmN6lIcK1xCTXAmkT44vI1fp4tjPT4RPynu0ve4Yz1G
-   g==;
-X-CSE-ConnectionGUID: 5uxeXMT/TJ+/vUfboV/JPA==
-X-CSE-MsgGUID: SE2niaHPTFixfSWHsSW6bw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="68433201"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="68433201"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 02:36:13 -0700
-X-CSE-ConnectionGUID: lqVp1h1xS0SKP4Yjt2TPlg==
-X-CSE-MsgGUID: GAC3aRMdRwuebj5vMQkgWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="169029493"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 02:36:11 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1upOBr-00000007Tk3-3IyP;
-	Fri, 22 Aug 2025 12:36:07 +0300
-Date: Fri, 22 Aug 2025 12:36:07 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Zhang Heng <zhangheng@kylinos.cn>
-Cc: axboe@kernel.dk, phasta@kernel.org, broonie@kernel.org,
-	lizetao1@huawei.com, viro@zeniv.linux.org.uk,
-	fourier.thomas@gmail.com, anuj20.g@samsung.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] block: mtip32xx: Remove the redundant return
-Message-ID: <aKg6B6buH5xYlnxL@smile.fi.intel.com>
-References: <20250822024100.991144-1-zhangheng@kylinos.cn>
+	s=arc-20240116; t=1755855452; c=relaxed/simple;
+	bh=3kcuEqpYRVjS3cb7eMChzGnsx02O1gIRPccfxeniL38=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Enq4r8lbIzvuQsYcAN18lAoIXbfnRAaswMeg1XJNfHlXRqDcQI14uiBd8knE3Nfhewa7Klsq+czgKxjzIfLwILzMqgqaZc4BgrX7WljUIKLUfynsqu6CZFWDJgm3lEWqcSr5VKfKmi0hBsIdS4zmngfpJJWZpWnjOZ2x9sbyWE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c7ZpP111Jz6L5hS;
+	Fri, 22 Aug 2025 17:37:01 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id AD1F71402A4;
+	Fri, 22 Aug 2025 17:37:19 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 22 Aug
+ 2025 11:37:19 +0200
+Date: Fri, 22 Aug 2025 10:37:18 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Xing Guo <higuoxing@gmail.com>
+CC: <sfr@canb.auug.org.au>, <l.rubusch@gmail.com>,
+	<linux-kernel@vger.kernel.org>, <linux-next@vger.kernel.org>,
+	<shuah@kernel.org>, <linux-iio@vger.kernel.org>
+Subject: Re: [PATCH] docs: iio: Fix unexpected indentation for adxl345.
+Message-ID: <20250822103718.000062e1@huawei.com>
+In-Reply-To: <20250819065634.1154322-1-higuoxing@gmail.com>
+References: <20250818124124.5b978e64@canb.auug.org.au>
+	<20250819065634.1154322-1-higuoxing@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822024100.991144-1-zhangheng@kylinos.cn>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, Aug 22, 2025 at 10:41:00AM +0800, Zhang Heng wrote:
-> Remove the redundant return
+On Tue, 19 Aug 2025 14:56:34 +0800
+Xing Guo <higuoxing@gmail.com> wrote:
 
-Missing period.
+> Resolved the following building error:
+> 
+>  Documentation/iio/adxl345.rst:161: ERROR: Unexpected indentation. [docutils]
+> 
+> Fixes: fdcb9cb9178a ("docs: iio: add documentation for adxl345 driver")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Closes: https://lore.kernel.org/linux-next/20250818124124.5b978e64@canb.auug.org.au
+> Signed-off-by: Xing Guo <higuoxing@gmail.com>
 
-...
++CC linux-iio.
 
->  iomap_err:
->  	kfree(dd);
-
->  	pci_set_drvdata(pdev, NULL);
-
-I'm wondering if this also being redundant. I know about some corner cases, so
-is this one of them, or can it be removed as well?
-
-> -	return rv;
->  done:
->  	return rv;
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+> ---
+>  Documentation/iio/adxl345.rst | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/iio/adxl345.rst b/Documentation/iio/adxl345.rst
+> index 4bd038cb4a37..afdb35f8b72e 100644
+> --- a/Documentation/iio/adxl345.rst
+> +++ b/Documentation/iio/adxl345.rst
+> @@ -157,6 +157,7 @@ sensor terms, free-fall is defined using an inactivity period ranging from 0.000
+>  to 1.000 seconds.
+>  
+>  The driver behaves as follows:
+> +
+>  * If the configured inactivity period is 1 second or more, the driver uses the
+>    sensor's inactivity register. This allows the event to be linked with
+>    activity detection, use auto-sleep, and be either AC- or DC-coupled.
 
 
