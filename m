@@ -1,131 +1,153 @@
-Return-Path: <linux-kernel+bounces-781200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB78DB30EF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:32:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F545B30EEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11D0AAC5658
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:31:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF2F1601482
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63432E5B12;
-	Fri, 22 Aug 2025 06:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CF62E541C;
+	Fri, 22 Aug 2025 06:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="TW3GAKcV"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="laqojCAz"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890022459CD;
-	Fri, 22 Aug 2025 06:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDF22E5405
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755844296; cv=none; b=p6zipxZS00qBEWp2jpCjwtovzn1HbY9nPFqlrr93DLrexJ/XVQvxZc3bkhEgfhd5j10GLSu1RmQWHwHN9o2DYcRntCXGCsGQ95OfpxNzaZImGffefHdecTlKW839YD5bgxtqmBsm5zTWNGNqSna4ek+03KieJFmKn2wBJbVK97E=
+	t=1755844074; cv=none; b=KE0QF5kepWV3UTJ9eo2tei6vBSFFxT+xdTRcDsqV0pzHuAER6y+3uzQzdbcYyLUQUyFIiNX+pX7wiZ21UPhXqSv4Si4QG+rNi2fcjwRHrPfTP7+dGiV87IOCbQwssBhRGpSq2/lZBpZZa5ztAOxjUObLMIMCzGFAqbW0dxBezPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755844296; c=relaxed/simple;
-	bh=BfrIP2efQTPMIsUMGQ2GSf0G8ZxHl1U5ZvuSo5I4hyQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P/HEURU98k7A6NWUgjU60gtipPgGJxjwmuU2/UEgqtKt4psf5MAy8L3zVxyLRSxV/RvR32LJm0vQc4hBE6B+JfzbPw+k/9ui0ZO1IDdhoR0xgQFT6fK5ghO0oZnzlfDmrwyA7WeJmBUm2grAAHh7/OIvoj3Fi0kmNKq5ashxCno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=TW3GAKcV; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1755844294; x=1787380294;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BfrIP2efQTPMIsUMGQ2GSf0G8ZxHl1U5ZvuSo5I4hyQ=;
-  b=TW3GAKcVH44HdG3Zo6uvknw8Xguz8k1+JrGgn7TjnUwbsdt/eDkpkf3Q
-   opMUcqM7ecyMQdqQsaiGLsmPzNu24NTUUx+tyWm2+WVri10VZ1XhKEZSH
-   zYturIAWXvQ+tZNteymRjtHNnOCqJs4XUkS7puH/Kl79bAC3565FYHJir
-   JO6vb9cOE+ipvCcJ4ABtax5ghC4h4smmDj88BVbE9vVrBXGvtuFQz4BJs
-   q90COHOJbBDIRP5sPWWJtYcTm0nyrL/Lyu4z3C4SLInaxzLH3o64u0ATM
-   0iNe+hG20xN2ycevP9+ctCje/6UZUVbsR3LeUL/bc1scIyjDLwxRQNh5A
-   g==;
-X-CSE-ConnectionGUID: FwPxws7BQ9CIjc8APoX4aw==
-X-CSE-MsgGUID: uBBIn80iTQO67UXCd/9b1Q==
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="276910799"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Aug 2025 23:31:33 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 21 Aug 2025 23:30:53 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Thu, 21 Aug 2025 23:30:52 -0700
-Date: Fri, 22 Aug 2025 08:27:26 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>, <vladimir.oltean@nxp.com>,
-	<rmk+kernel@armlinux.org.uk>, <rosenp@gmail.com>,
-	<christophe.jaillet@wanadoo.fr>, <viro@zeniv.linux.org.uk>,
-	<atenart@kernel.org>, <quentin.schulz@bootlin.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net] phy: mscc: Fix when PTP clock is register and
- unregister
-Message-ID: <20250822062726.cv7bdoorf6c4wkvt@DEN-DL-M31836.microchip.com>
-References: <20250821104628.2329569-1-horatiu.vultur@microchip.com>
- <3f8cef10-fbfd-42b7-8ab7-f15d46938eb3@linux.dev>
+	s=arc-20240116; t=1755844074; c=relaxed/simple;
+	bh=9ATXq32utM4kfVagp8Kf92pg+poNWX+xRDXTF9eH0no=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qVBIuF1jV9E169pWlCJqIDovkvgectFhO3iBXWJu+vcnsWtZVOyAiZLwbNmD7sg45kanscG0sQaPQA2NJxhy00KUeyX0qjfgd6DlTpDKiITUxCU83t+QN+ggwCexmuVqrvncm38egPscM2cwYkrpEdcFEXr0BiRdfxy3VeCiFg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=laqojCAz; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2445806e03cso21753085ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 23:27:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755844072; x=1756448872; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a74RVsak1TLYR6bws4zrQXpjsmVG5raUd4MS/ii7fb8=;
+        b=laqojCAzLZa9/WRZm+IstdDYaLUAFmgD17Zw3GwUJIPkXuFXCkHz2IMrxXKVSGZUpw
+         iTS1o+4yGjzvm/0hi6JpbKv2LwdeCYT+Cs98B9x9JJvrH6K25PB31kiJRLP64Vy4suLy
+         4DigazfWlTPD1HizQ9XnWm/3PSQSBdBRLemI8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755844072; x=1756448872;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a74RVsak1TLYR6bws4zrQXpjsmVG5raUd4MS/ii7fb8=;
+        b=ETMpbiOTD6+zKpZ0SYx2XIoQ41QqKgHZ2EvJJtdhO5m1m5DnX8Vv6AMSikmdgzF4Y3
+         x1TwC27luvn+M9z/OR+g/x+dAYbhLexd/ObyeuoWxyT+kD8qY8h6keLNjgWgU1bwavZ+
+         7p5I9wKyxuNpCU4u68SSvCcxSfnFs+IUlDBvRuumtQn6q4L54dHBWqzGiCANb2jwHEGN
+         ylkNLjj4UMC0JybmWcHqrgUmL88oK1XddFg9Zup4+iRRTbuQGYVMElwW978nS2rrtmXx
+         QT4dOSG4YeN5RnkBI63D9EWXAhoE3r8nH7l51LREUGfBi8NlAY+zttFm50Q5FbODd4T/
+         ZCfA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzBmhuEYqGrXjt30EbSibrYyFUwAF73djdkwxAhoV6la8e2aX4lbFJjNKKB+O08jet0TKtqFu++hJz/hg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv8jmOdcSySF4CQXkub138m+sdmu7SwBccT71Wil9CUAe9t0CK
+	lXmhiiO3j5W0mlOTlc8/O0NAngd/wzvpC2adZSPikDcEauuxt9r3sJzR/iqy92Wqzw==
+X-Gm-Gg: ASbGncvwqaTQDPqGPHqd6A4iRopjoXCOAG0SEYswHEzSDp9gt4UNypNy/+ngndw3opG
+	BFgv5G+knMHPW7HtbysqsAOYYMOJ43mvSORek4H6toy90FykGBJrY/ud5thePFXkpspCmm3Ty/C
+	e1KWGCbZ63QnsK34q/L3A8AgJqNgFKl4371zN8u+PZxQvGfE35hF0Ra7BLnSAqVIi+V4QZV/lzf
+	VyFe1Hm7l8TDZmAZRPJJpdzn2jFbhZXBGhrnRbCMzxXauOaDNUqDap2LVpN0EWLNeuuiAc5HjKR
+	ZbUZz1P/tOS7VXDuHT0hKzjjw7PGkQoy2u5/+Wabs3h/xejaCz2OaYqG/FVUT+MbtSDDu+YnqME
+	3CHnKUsr4X/1NPDBLNPJs6lR14swXa/TPsY6rROJqbo2TLEcqShk=
+X-Google-Smtp-Source: AGHT+IF4m2GD74ARWQ90O62WKvsqVkiAGFVrRDGXDAa8grwxDZefBXzvdvCU1/9OIzJpcFb0Leq+aw==
+X-Received: by 2002:a17:902:c402:b0:246:464d:118a with SMTP id d9443c01a7336-246464d12bbmr7066525ad.46.1755844071478;
+        Thu, 21 Aug 2025 23:27:51 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:8278:5411:367e:2f11])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2463606470asm11813375ad.14.2025.08.21.23.27.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 23:27:51 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: mediatek: common: Switch to for_each_available_child_of_node_scoped()
+Date: Fri, 22 Aug 2025 14:27:37 +0800
+Message-ID: <20250822062738.2632746-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <3f8cef10-fbfd-42b7-8ab7-f15d46938eb3@linux.dev>
+Content-Transfer-Encoding: 8bit
 
-The 08/21/2025 14:50, Vadim Fedorenko wrote:
+Using for_each_available_child_of_node_scoped() allows us to get rid of
+of_node_put() calls from early returns or breaks in the loop. It also
+fixes issues with missing of_node_put() calls.
 
-Hi Vadim,
+Switch to for_each_available_child_of_node_scoped() in parse_dai_link_info().
+Also drop the braces around if blocks now that the inner block is just
+one statement.
 
-> 
-> On 21/08/2025 11:46, Horatiu Vultur wrote:
-> > +static void __vsc8584_deinit_ptp(struct phy_device *phydev)
-> > +{
-> > +     struct vsc8531_private *vsc8531 = phydev->priv;
-> > 
-> > -     vsc8531->ptp->ptp_clock = ptp_clock_register(&vsc8531->ptp->caps,
-> > -                                                  &phydev->mdio.dev);
-> > -     return PTR_ERR_OR_ZERO(vsc8531->ptp->ptp_clock);
-> > +     ptp_clock_unregister(vsc8531->ptp->ptp_clock);
-> > +     skb_queue_purge(&vsc8531->rx_skbs_list);
-> >   }
-> > 
-> >   void vsc8584_config_ts_intr(struct phy_device *phydev)
-> > @@ -1552,6 +1549,18 @@ int vsc8584_ptp_init(struct phy_device *phydev)
-> >       return 0;
-> >   }
-> > 
-> > +void vsc8584_ptp_deinit(struct phy_device *phydev)
-> > +{
-> > +     switch (phydev->phy_id & phydev->drv->phy_id_mask) {
-> > +     case PHY_ID_VSC8572:
-> > +     case PHY_ID_VSC8574:
-> > +     case PHY_ID_VSC8575:
-> > +     case PHY_ID_VSC8582:
-> > +     case PHY_ID_VSC8584:
-> > +             return __vsc8584_deinit_ptp(phydev);
-> 
-> void function has no return value. as well as it shouldn't return
-> anything. I'm not quite sure why do you need __vsc8584_deinit_ptp()
-> at all, I think everything can be coded inside vsc8584_ptp_deinit()
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+ .../soc/mediatek/common/mtk-soundcard-driver.c | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
-I understand, I can update not to return anything.
-Regarding __vsc8584_deinit_ptp, I have created that function just to be
-similar with the __vsc8584_init_ptp.
-
-> 
-> > +     }
-> > +}
-
+diff --git a/sound/soc/mediatek/common/mtk-soundcard-driver.c b/sound/soc/mediatek/common/mtk-soundcard-driver.c
+index 95a083939f3e..1e3b43fbb16f 100644
+--- a/sound/soc/mediatek/common/mtk-soundcard-driver.c
++++ b/sound/soc/mediatek/common/mtk-soundcard-driver.c
+@@ -95,34 +95,26 @@ int parse_dai_link_info(struct snd_soc_card *card)
+ 	int ret, i;
+ 
+ 	/* Loop over all the dai link sub nodes */
+-	for_each_available_child_of_node(dev->of_node, sub_node) {
++	for_each_available_child_of_node_scoped(dev->of_node, sub_node) {
+ 		if (of_property_read_string(sub_node, "link-name",
+-					    &dai_link_name)) {
+-			of_node_put(sub_node);
++					    &dai_link_name))
+ 			return -EINVAL;
+-		}
+ 
+ 		for_each_card_prelinks(card, i, dai_link) {
+ 			if (!strcmp(dai_link_name, dai_link->name))
+ 				break;
+ 		}
+ 
+-		if (i >= card->num_links) {
+-			of_node_put(sub_node);
++		if (i >= card->num_links)
+ 			return -EINVAL;
+-		}
+ 
+ 		ret = set_card_codec_info(card, sub_node, dai_link);
+-		if (ret < 0) {
+-			of_node_put(sub_node);
++		if (ret < 0)
+ 			return ret;
+-		}
+ 
+ 		ret = set_dailink_daifmt(card, sub_node, dai_link);
+-		if (ret < 0) {
+-			of_node_put(sub_node);
++		if (ret < 0)
+ 			return ret;
+-		}
+ 	}
+ 
+ 	return 0;
 -- 
-/Horatiu
+2.51.0.261.g7ce5a0a67e-goog
+
 
