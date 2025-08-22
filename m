@@ -1,238 +1,133 @@
-Return-Path: <linux-kernel+bounces-781810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7856B3170B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:08:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E69F9B31714
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A79E7BE305
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:06:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC5A3623EF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4ED302CD5;
-	Fri, 22 Aug 2025 12:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5472E2FDC29;
+	Fri, 22 Aug 2025 12:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LWd/+e9l"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m6+dkYrP"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5451C3009D0
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37AC2FB607;
+	Fri, 22 Aug 2025 12:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755864290; cv=none; b=JzgXDXIEw4ze7Ns/eiV1gY0sw1pQEomy+co10xRFNF4p3RZmsQfPODfLztyZWaazmVVIcfibvcD6/46zwWk/Tg+oVoFz7tP6bFNYF8rAFuH6Onx6j50gEkOdVS/T0fYJHms3HgaPtrcwoT87tO8fjXvSd46M939ksSJNPJeZ1T8=
+	t=1755864449; cv=none; b=TzxyTKMtb+ADyZiCJYhuusE9477rs3UX4+OdfjHhcXUvEK/GW1BKeXUnXyARV1ycvz6QdUDuzD9l6xJeVJ4bzqOzmM2SKiPPqJvS9cP7zCd8X8psuNJ8TlX+vgxM4xwvpqHsHIJHFCmvLFZwPZBVN2coze3TwWN40b68pts5wIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755864290; c=relaxed/simple;
-	bh=sf0Een9IScr9c0j6MFmqmJyBrBaYB5bJVup8dzyPFhE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cTmaO5K9SqpfszS9og4+sV3TUKdMcwgk4odSYalQiqWp8nrMiUIXuLZchV7CZ8ALWRs1hcoDMYuShx1eOKcWZazGQpQy2415qQDKHBSLTQUeRSFFGizbQdASlKfRLZlbeTCXg/wf51Fv6qGtQToeOmN8gO3W0FNcm+7PGHRmlhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LWd/+e9l; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61c297e8306so21941a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:04:48 -0700 (PDT)
+	s=arc-20240116; t=1755864449; c=relaxed/simple;
+	bh=w9LDDKbbCU32z8mFAmsc72r+haOmtzzbI1hp4FHEhZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iSAjNWQzBIUh5OPmNSXX/EGCBwBoAOlDuJ0xlKYDH0SLp1jBbhKCm88rLRwFZ5IJFLd6wjLuI1zaxHmGNJlFIqwFBqOA9e37q5HdZFc7YXgQZbr0GlJFyJm5z/RU6y3SJPzLeYsjqn9iBhy09IwtfztfaBEYNuRbAnzr5p325yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m6+dkYrP; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b9e7437908so1368383f8f.3;
+        Fri, 22 Aug 2025 05:07:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755864286; x=1756469086; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZvNy/mJryJIlPjRSQxP90NLnPA7/xQU0Cvx8YGHA4zU=;
-        b=LWd/+e9lWHANMffyl4wsZBPyvOTf4pWj9s+kr397ErolGmlUDftYxsIVxBnQCCo8LK
-         y8LdGV1Osm02qIrHnVs8QWZV3lVoiuZyMdmmP7oPdnN4OV3+vj4MqalsXsTHTiYa7f9E
-         haG9jMJ+FO2lgqZqEiWOdSZSoFHPJCXe+k/SKFp68rDbFalAc7p5FPlWF6EKOBjYoG/B
-         O6hgcf66xTYL5nXLA4ZHL1QIjypjGZc9+3gvyCnYwA6rWWWUzaxd5JsX+ttz4a+EO82w
-         rKr3hm220PGX6kJ4Elf3znGe+BiccxN+0R2AlkL/PUj300c9zdr/znf4AgX7njmVTyIu
-         DV5w==
+        d=gmail.com; s=20230601; t=1755864446; x=1756469246; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G8l8c6RdN9SEwzhMIPJOr5f2j416dT55akZSctyPtco=;
+        b=m6+dkYrPSdl4HDLTuMoH9qJhUVNvoMcYD+zpbuuF0vmKgglHm2rnboNewb0Sba6+QA
+         ydD0+3jHfidGfTM/CRyhCqosrVj8R5G9DbvBFMiHuzhYMuc/igPx5rQea6j5hXSlscUf
+         TzQPXFh35msrBxs1BUWmH8GLmeu/hDU246phHFfKq7jOByqvbmObZoorrBgPkuMO0PaC
+         8ZlriJolMHzuXAeZXA/m2hiR3TyeYVu4RBGz/5OYQVMOduQ2/S37r5o3kquAhYIWrEyI
+         6EheMNkw+dn4fg1kqigozjOY6eDl730J4aeu+l2i2yLrBZ5NrYvQEL68RO487BsnhxKW
+         TIHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755864286; x=1756469086;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755864446; x=1756469246;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZvNy/mJryJIlPjRSQxP90NLnPA7/xQU0Cvx8YGHA4zU=;
-        b=gA1YR07+Tf6w6Lk9w+Sh2nO4/7ghMqvCh99d4Fydx8oTu9fKB3/7QgVO5rMYOeJYIn
-         5ijuJwNJacm4sD1rJezLgzbaf/ihHrpw40pGZORzy7XKh4y2bNjoaYljCRUH/15sJy9w
-         bnKwTtiiYviACbCP5uP9cT2WsJzPxLypgugkkvHdI90bgItz2J3Iym4iAys9UO9Eg1bq
-         Qv7kxrrpoGgDoaZPVxPTx/c2zTBHUNPet8WV5EWNOTEoCgEXZzdUIMVJL1vGxsJ3/FgA
-         PvFjherlqKgfM2VPGXtuIj29/BKcq/5+qSm8Q+/+/fufzQ9u/DmpwBwFpEEFHqDQUICz
-         SOyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWT9adwIupaB4ZOT/o/5+1rv6psl+mmvWkfx0eBAn00HOTW9MI7lrE941LdEKWTD6WQ+EKLcxxzEnXyR4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySk2kgsoB5GuZjfTLBpOkxQITt+LflDtWRL2VCQheCqgkupfWY
-	PtpEshscKd5HQHZhaZuN9zmY2FTx7PNVgvwhnc4TjphgcWiaJdbMHntxMXwawl+Gyz0=
-X-Gm-Gg: ASbGnctL9g9DHZ65EwRl7LtO5bryriCSDgK3jKg6e7pOD/aTe68ynZL5igRUub4AlcZ
-	BziSKFzAQWqez/nMD7uVAXHsdyQ470ijAWZh/hKEXyrSbXfpaoowRnlSNT1UQTdkvGnPwCzUoYp
-	2JUkCFnqQoeyHXgqFtCMui0ZGJWNWFm4Yji9KHMfFHK+kycN4reuCOgPdf+1ZIklXRCgHMYdlEY
-	CkjJGjK2b1QTf/0fpAMh22xZQmrDPpcGWrImJHAa684DWzYRHxpScgS4WpvFJt0hURT5Ajl3qpe
-	85DN4BNOgrAgH8qZZ0MADm67FW8rQ164szzRD3nw6xnEPXbvEwKxSWvqp1ZjYOnKFLzfUYRAVbC
-	+yfDU7TrgCLdL4KRszTx3VC8WVi0fXnW9vofrphc=
-X-Google-Smtp-Source: AGHT+IFF86HwdLSKUEV9TX+7km7GrmwlLKALDJ8tID0cqOz1ePpFerMxa+ut7Yc5lbHRVZxiuVBfIg==
-X-Received: by 2002:a05:6402:354f:b0:607:eea1:1038 with SMTP id 4fb4d7f45d1cf-61c1b715cc3mr1072611a12.6.1755864286458;
-        Fri, 22 Aug 2025 05:04:46 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61a757b9b39sm6690444a12.48.2025.08.22.05.04.45
+        bh=G8l8c6RdN9SEwzhMIPJOr5f2j416dT55akZSctyPtco=;
+        b=FsZcDpIHoaCqiZPmaGaHa86PUndeoD82NXaBx8zvx8X4/t2xO+nndY+Y0W/p1PYFcg
+         uMv/soajR/eBNbP38dybmWsCIAUIF2wgLcyIq0U1jhvRcGk816WiRc9dnuB+QHAEf+AI
+         ighrxeWoHLAdfA8kbsICOSwTANItghaTh7uccPzFrAbcf+cVtfKHkAcdJHNURISeTx6N
+         ZiJcRzVrHKw3FXpAJFQFHM/GN+mzwdF4VE4Cq820D3ncWCGjOvPpuzBSKI0FbYX+trGQ
+         /lKT7bWHvlMa25dFVL+L2FU6NvT9PVvuQGwU730oTdw7izoR+isk6JhpAx0HHkPCo76g
+         Ez/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUCxEGTT5XsQkOAeicpVsd+dEPfB7EDUao9xdV7Rm5jemmSuVfcayoBwtIiEnICR9AZclQBl3dCXK7ite+89w==@vger.kernel.org, AJvYcCWaLbaLuBHcGQoi5a/dsOPk8SDjodIv3E+833+cOmxYAKDD3fT80tMZQrPTRJbmRzwwhfJLARYwB5mHlQ==@vger.kernel.org, AJvYcCX/MgQIW0L71/4jl+8qV+Hfg+EMSWp69rcnQmQq4rl/ZIm/X+mLRoIxfY+j/MUFUjMGCK71m/Yyij8ZNLEn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrvH4cw4eRHlNXlKs92s40R/1R6DvmK4zPIejTHd8N/wfxc/FN
+	pKjbkdNvZJ1JYiX7M0/BthVqdw8k4fkpAoPht/t2RPMzultC+b+o7Nov
+X-Gm-Gg: ASbGncuB2bEPKstd0LhF/R683NhYZQ49vOaYwehLPJl2Qpv9sjKQZgt+TE+6szEDaRb
+	bey6GeCirIrAWvn72uJrl8Ucv8g5uqFgUg2q4y1wtAVOGzKD6iJCP3U9YXbjnlZiOXHdXLfDePo
+	swx7LTKcq/B7gr3yeTwYT1gRJmC83JIMYJiASxzyIeIaR/1k+I2w7rAcmhhSKrL0z/uNgesw1r8
+	lL9HDGpIzGtColioLby0HeOGU0sTla7eb4PV89Hn/Wn7/mVTKJDCIAQ7E6F/E1x9GTGMHoBEXfe
+	181SFwHBHdyW+MJ6bTT1WD3xQIYox+O1ntiRMkDEvNl3TxjdbHQveodSvAqBRRhjtc/DsN8dz0f
+	BuwGoOI9COigNj3L37lrmLY5tNCccRNL3Ll5hp/cxWxfPiJgpjus+zv2bPZTacbPe
+X-Google-Smtp-Source: AGHT+IF32esv8LZscvwNHgYR6ljsLtgAqraMmy0VAs35rpd70926148m7dEBX/SFBT9exOpIVVtZSg==
+X-Received: by 2002:a5d:5d0f:0:b0:3b8:d0bb:7541 with SMTP id ffacd0b85a97d-3c5dc5426ccmr2223990f8f.40.1755864446093;
+        Fri, 22 Aug 2025 05:07:26 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c5393b797csm5054822f8f.39.2025.08.22.05.07.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 05:04:45 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 22 Aug 2025 14:04:15 +0200
-Subject: [PATCH 15/15] ARM: dts: qcom: Use GIC_SPI for interrupt-map for
- readability
+        Fri, 22 Aug 2025 05:07:25 -0700 (PDT)
+Date: Fri, 22 Aug 2025 13:04:20 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Madhavan Srinivasan <maddy@linux.ibm.com>, Alexander
+ Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Darren Hart
+ <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, "Andre
+ Almeida" <andrealmeid@igalia.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH v2 09/10] powerpc/32: Automatically adapt TASK_SIZE
+ based on constraints
+Message-ID: <20250822130420.6c6a3fce@pumpkin>
+In-Reply-To: <db7f9b12d731d88ac612a27e2caf4d99d76472d2.1755854833.git.christophe.leroy@csgroup.eu>
+References: <cover.1755854833.git.christophe.leroy@csgroup.eu>
+	<db7f9b12d731d88ac612a27e2caf4d99d76472d2.1755854833.git.christophe.leroy@csgroup.eu>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250822-dts-interrupt-address-cells-v1-15-d54d44b74460@linaro.org>
-References: <20250822-dts-interrupt-address-cells-v1-0-d54d44b74460@linaro.org>
-In-Reply-To: <20250822-dts-interrupt-address-cells-v1-0-d54d44b74460@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6292;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=sf0Een9IScr9c0j6MFmqmJyBrBaYB5bJVup8dzyPFhE=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoqFzHReLFhcdshtdcfJ07bK9Ry29zetbAQf5TI
- VgG3mDRrnaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKhcxwAKCRDBN2bmhouD
- 17IjD/4hm0evmDSi300QZDL18busBZPAAM1KRe7pXveom6+AbDprAK/XJLwF04TQiZJZcnZVt0z
- Utbxk2KN3N5oD5lQTlwUOiLx/An0ugg1RaDfSyLybTaKViZSNECrzUDv/ZOrbgDd1ygzdW/WUcX
- AtpF4WYH4LGNJJrxizdguuGFdqxkitiYsi9M8BzxGPuunfr/gAQn473VGIBnCsBDIEcj792LAFx
- A0pmgWfFj2cSpWdKfx6Msxj4Y+l567aZ/H6rpDt+PallwqEmZYftV0avQ7qQtysyWMvrW5Dse1q
- adwJO7RgO1cqOd5nSX1EuhJP2CHiDF2i9mk9q7SrOeFl/s4PFd0z5QKieJede5cSGnLXAmgAvB7
- b4NIKs1mB00O7CtfBj8/Ml/rsiKJw/40CkP9BemYQa9yYTAPKp+CZR15SNuhBwwgvufbU8Lb+9r
- GjUXEunJXCvjYW+DrryHibw/sWhqM4XgOpKsNZGxCZsqVM72k3bfU3z07lJxNF2tsYo19qSUJjy
- qLHl357IAClD6n9Um40+nCgrU7Y3PaxvtA0oLzrE00IFBMhAIKHTTjBKt4A43dOrGdnl3Re8iPg
- TS80TfBxenkR4Zi2/2+n1WaA3rAr84IWl6ESspSETFLE9/vzEDqB+r1N6tTYCx0QQhkSomeqioo
- iYC/b6LpFtctXTQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Decoding interrupt-map is tricky, because it consists of five
-components.  Use known GIC_SPI define in final interrupt specifier
-component makes easier to read.
+On Fri, 22 Aug 2025 11:58:05 +0200
+Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm/boot/dts/qcom/qcom-apq8064.dtsi |  8 ++++----
- arch/arm/boot/dts/qcom/qcom-ipq4019.dtsi |  8 ++++----
- arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi | 24 ++++++++++++------------
- arch/arm/boot/dts/qcom/qcom-sdx55.dtsi   |  8 ++++----
- 4 files changed, 24 insertions(+), 24 deletions(-)
+> At the time being, TASK_SIZE can be customized by the user via Kconfig
+> but it is not possible to check all constraints in Kconfig. Impossible
+> setups are detected at compile time with BUILD_BUG() but that leads
+> to build failure when setting crazy values. It is not a problem on its
+> own because the user will usually either use the default value or set
+> a well thought value. However build robots generate crazy random
+> configs that lead to build failures, and build robots see it as a
+> regression every time a patch adds such a constraint.
+> 
+> So instead of failing the build when the custom TASK_SIZE is too
+> big, just adjust it to the maximum possible value matching the setup.
+> 
+> Several architectures already calculate TASK_SIZE based on other
+> parameters and options.
+> 
+> In order to do so, move MODULES_VADDR calculation into task_size_32.h
+> and ensure that:
+> - On book3s/32, userspace and module area have their own segments (256M)
+> - On 8xx, userspace has its own full PGDIR entries (4M)
+> 
+> Then TASK_SIZE is garantied to be correct so remove related
+                    ^ guaranteed
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
-index 4c9743423ea880515a05148091ed97411f08e8a3..09062b2ad8ba550c3c2ee5849c96fb68fa2dff4b 100644
---- a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
-@@ -1351,10 +1351,10 @@ pcie: pcie@1b500000 {
- 			interrupt-names = "msi";
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0x7>;
--			interrupt-map = <0 0 0 1 &intc 0 36 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
--					<0 0 0 2 &intc 0 37 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
--					<0 0 0 3 &intc 0 38 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
--					<0 0 0 4 &intc 0 39 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-+			interrupt-map = <0 0 0 1 &intc GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-+					<0 0 0 2 &intc GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-+					<0 0 0 3 &intc GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-+					<0 0 0 4 &intc GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
- 			clocks = <&gcc PCIE_A_CLK>,
- 				 <&gcc PCIE_H_CLK>,
- 				 <&gcc PCIE_PHY_REF_CLK>;
-diff --git a/arch/arm/boot/dts/qcom/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom/qcom-ipq4019.dtsi
-index 5bf5027e1ad98fef92a012fefe0450c5a3df7e0f..8eeaab1c0be11175162b0ac17751ad48bcf293aa 100644
---- a/arch/arm/boot/dts/qcom/qcom-ipq4019.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-ipq4019.dtsi
-@@ -429,10 +429,10 @@ pcie0: pcie@40000000 {
- 			interrupt-names = "msi";
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0x7>;
--			interrupt-map = <0 0 0 1 &intc 0 142 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
--					<0 0 0 2 &intc 0 143 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
--					<0 0 0 3 &intc 0 144 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
--					<0 0 0 4 &intc 0 145 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-+			interrupt-map = <0 0 0 1 &intc GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-+					<0 0 0 2 &intc GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-+					<0 0 0 3 &intc GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-+					<0 0 0 4 &intc GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
- 			clocks = <&gcc GCC_PCIE_AHB_CLK>,
- 				 <&gcc GCC_PCIE_AXI_M_CLK>,
- 				 <&gcc GCC_PCIE_AXI_S_CLK>;
-diff --git a/arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi
-index 03299078fc5a2cdf9037770e9de2951efce9b487..adedcc6da1da5eafca3d403dc7a6547e2729ed98 100644
---- a/arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi
-@@ -1077,10 +1077,10 @@ pcie0: pcie@1b500000 {
- 			interrupt-names = "msi";
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0x7>;
--			interrupt-map = <0 0 0 1 &intc 0 36 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
--					<0 0 0 2 &intc 0 37 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
--					<0 0 0 3 &intc 0 38 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
--					<0 0 0 4 &intc 0 39 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-+			interrupt-map = <0 0 0 1 &intc GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-+					<0 0 0 2 &intc GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-+					<0 0 0 3 &intc GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-+					<0 0 0 4 &intc GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
- 
- 			clocks = <&gcc PCIE_A_CLK>,
- 				 <&gcc PCIE_H_CLK>,
-@@ -1138,10 +1138,10 @@ pcie1: pcie@1b700000 {
- 			interrupt-names = "msi";
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0x7>;
--			interrupt-map = <0 0 0 1 &intc 0 58 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
--					<0 0 0 2 &intc 0 59 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
--					<0 0 0 3 &intc 0 60 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
--					<0 0 0 4 &intc 0 61 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-+			interrupt-map = <0 0 0 1 &intc GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-+					<0 0 0 2 &intc GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-+					<0 0 0 3 &intc GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-+					<0 0 0 4 &intc GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
- 
- 			clocks = <&gcc PCIE_1_A_CLK>,
- 				 <&gcc PCIE_1_H_CLK>,
-@@ -1199,10 +1199,10 @@ pcie2: pcie@1b900000 {
- 			interrupt-names = "msi";
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0x7>;
--			interrupt-map = <0 0 0 1 &intc 0 72 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
--					<0 0 0 2 &intc 0 73 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
--					<0 0 0 3 &intc 0 74 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
--					<0 0 0 4 &intc 0 75 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-+			interrupt-map = <0 0 0 1 &intc GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-+					<0 0 0 2 &intc GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-+					<0 0 0 3 &intc GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-+					<0 0 0 4 &intc GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
- 
- 			clocks = <&gcc PCIE_2_A_CLK>,
- 				 <&gcc PCIE_2_H_CLK>,
-diff --git a/arch/arm/boot/dts/qcom/qcom-sdx55.dtsi b/arch/arm/boot/dts/qcom/qcom-sdx55.dtsi
-index 8d0aabfa1ee06f5bcebdbfd8ff620f500de7fb78..05b79281df571d1ac3b396588a43fa5558494426 100644
---- a/arch/arm/boot/dts/qcom/qcom-sdx55.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-sdx55.dtsi
-@@ -340,10 +340,10 @@ pcie_rc: pcie@1c00000 {
- 					  "msi8";
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0x7>;
--			interrupt-map = <0 0 0 1 &intc 0 141 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
--					<0 0 0 2 &intc 0 142 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
--					<0 0 0 3 &intc 0 143 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
--					<0 0 0 4 &intc 0 144 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-+			interrupt-map = <0 0 0 1 &intc GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-+					<0 0 0 2 &intc GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-+					<0 0 0 3 &intc GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-+					<0 0 0 4 &intc GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
- 
- 			clocks = <&gcc GCC_PCIE_PIPE_CLK>,
- 				 <&gcc GCC_PCIE_AUX_CLK>,
-
--- 
-2.48.1
-
+> BUILD_BUG()s.
 
