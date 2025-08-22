@@ -1,132 +1,169 @@
-Return-Path: <linux-kernel+bounces-781580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FFAAB31419
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:50:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0927DB3144F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:55:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 71B1B4E6652
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:50:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B55BB041A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABD12F3C20;
-	Fri, 22 Aug 2025 09:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515E02EDD7D;
+	Fri, 22 Aug 2025 09:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="AfOr5IcM"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YkWRe60c"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DFA2356B9;
-	Fri, 22 Aug 2025 09:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578792327A3;
+	Fri, 22 Aug 2025 09:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755855784; cv=none; b=BkGyartRJYr9wGQKhgC/Zu+Qd8TxZ8r6Vch2TF0cn6qJBMThzzJ4vTXn5pLJvwWmpH7ZUn0Z05pX734dD6YHOg4W23gjkonVI46ggdrFULOR/Rq9+G757+w2cxSCvxccm45BFhBZk2qxWW10s5CfFQRGr5XWBo5wPFgO7eKmjpI=
+	t=1755855782; cv=none; b=CNiGt5keIWVfdj1S7fdrOo4xAnecKtPn2DPQ1TfcD+Nl8RHMvSt+1qE/t6tnyMn9UmZMZAUPRRiKQcQKxyzqxP8MqkWNA+ydAEwYjN3MmpThW+o4HYX+nB4zM8J69yAyVuz23OeknlV8+IQdIsvAWEZTFqweMPF9i+VxBXyEXx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755855784; c=relaxed/simple;
-	bh=6lka0/62rfqpl6YPbKf8gI40GE/XAI9LCAAMWUiUkQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tUCMgm0wwhU8+vJAcU9g3BlpTU0f/0NRSQ/xbc4089WMgCQ+pTcUA60LmOgS5Xfu7IJs7JUPJKowraDbE4bybXFc3WJjSQhgi1AehK/CrAclqGwWJ3RN8EG4jbKoQJnmjl4PIKc+o4ifWHUwlzk2gh7ecMPhu+FzW3L59rmnQ7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=AfOr5IcM; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=IjUHb499RjZ87+IojyVt03OIRq/VU75xCa/jogdbmr4=; b=AfOr5IcMFlxzDrDJ51yRa8rSqL
-	6pdNeSgO9ess+gjUV5vQXuAfJcohDN8kCRClgEROg5DhfGM2JyHYZLRW76p3hzC6SInrJlUgnBdxO
-	BJVRlGcI0yA02lpwSmi53Bkjz8Ei3BuDXMJcVFkc7On0yj+fh25YhJ3Ywq6WJdnX3+e9XHs/0KUj+
-	pvQ9rLdvI3KE9+vK097gt2ivhgdamA/S8LxIKHnxa6NMF5hLLTwV7gl0XJrgL7qKaBeucbops+gzg
-	T4PiskbsMlag1fCFFV0tgN/69suvFXIcyIrB3FfbYPJAfKGHvp5pvQSllzOjPVrrkIMzygosIR9AA
-	Ist3leGg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48842)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1upOIR-000000002JK-15Ug;
-	Fri, 22 Aug 2025 10:42:56 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1upOIP-000000001ze-2mlq;
-	Fri, 22 Aug 2025 10:42:53 +0100
-Date: Fri, 22 Aug 2025 10:42:53 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v2 1/1] net: phy: Clear link-specific data on
- link down
-Message-ID: <aKg7nf8YczCT6N0O@shell.armlinux.org.uk>
-References: <20250822090947.2870441-1-o.rempel@pengutronix.de>
- <aKg2HHIBAR8t2CQW@shell.armlinux.org.uk>
- <aKg4XcM0vAIS4C-8@pengutronix.de>
+	s=arc-20240116; t=1755855782; c=relaxed/simple;
+	bh=GAAM0WfLy15KZaMv+Mv+m2ZoYa2aXG4Xc0Pkj8se6C0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KP3Mhx2QRafyRXf2lXrvLLKzG3GDSZm2Qasiv9Z2NU7IdL029tbKzicX3PHTsYAswwL/zzMME/UorCK708L8prlVWhh9hQ61JeZLMiPt2tX9HYlhdIb6DkMevthpHtSp+pVpn0MDeGzUA3eTOIBYt87/X184mXfyRC673X1gsO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YkWRe60c; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6188b5b7c72so2983108a12.0;
+        Fri, 22 Aug 2025 02:42:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755855778; x=1756460578; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3NhTENhPiBZ0gP5DTq0s9G1TB1DFx2wNSSAtIKfu88s=;
+        b=YkWRe60cvSN1MSWgeIHmqI9Y/0oMh//uN0f4Cr+/nrCvfHGrNkLPFd6Ft8V0YSqVCP
+         50dcJHzW75YRgihowdYyHLiEfPU0LliruWyCfw5+ZwlhVti9sCluIXKjNFs455uCGsj3
+         GpTR1nCttT8S0pXHAdMK82BE8f/9X3CazBgiJaUnzTMWh9gTHhLFgZKbpfKAF7y0lKtb
+         VkoHOjlCitBC69lHgsRSekEAl+Lh0Mp0tLzxI7OJ1W01n6/RhPhM5CIZbvDrbkNc43G2
+         mYiFokD0Ww+NGo1kfc6PGJgUk/rNiOMkCG8F2SaCOAEtl2Gv5gENrXkk6Lz2jIZ9kEia
+         Lc5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755855778; x=1756460578;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3NhTENhPiBZ0gP5DTq0s9G1TB1DFx2wNSSAtIKfu88s=;
+        b=GlWTUik7xGSTcOEBuES23xWcxq9N/cAT4yCEVHTbDP2WkpWkE+v/36coZcBxSkJnUT
+         ugQymC/fL3WJVjnvgRQtMJy8b/V1EfOb0CByCQz+DQxWsB6FwlRn1o/tNjfLvl4KjI2v
+         MkeLmTDhfapakEbBXDfXg49ljgmKL2xRcF7TRAG6wS+Cqs1NLr8CaEF7RRp7K1aZfTNS
+         u35zT05cCIsobqyGPRgpRAtKSjdiS5siEyKzoeKin4pqAdoarHHdVxCGDX7plUKGN1MY
+         K5KnZc9RaH56Bt4MXw94LJ9YxRU7Uwrk057rH3yaPNTbqqNWJWjPlSxAqgaB3E9X5a7z
+         Pj0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUCm34UwSiJcb5oaPBnMUE0eqe0OtG0awmdQl3ZkIFQHWCuTcA/fqsry3XOI9GTkpAGUta4Glzq3UObGMJN@vger.kernel.org, AJvYcCUWEUBWdTJCKfOkAhJrvafms9hfAmRTYwSL/xh1ODI8qKaEpdARK3zKl1rWri10qP71WzM6I3HGuUt69No=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxThrYpbG9M6DB/B1K4NvpU1kjHRhfzJk1nMgWJPvWPQj5H92wM
+	xUo4A9mD7DkBP/dR9LTqKwgg+4TCXyc3vHN9+k5mfFFUouKB2BukAN4k
+X-Gm-Gg: ASbGncukvKQTh4RTVcXlVUGPgO8ZxIskbZptdqAtRe+9FFBErdj6wEuViRtngJGXQPd
+	fN49W2xR7A4oBvtmJnrWrywELaEH1uDYoZ2+yWe2zw/LoxqZWGgYnBAD7nfIW9Xf9A+PXfm/KnE
+	zvurhAKlwA21G9yC/0ww3MDhfPLWRSk2rUpFhkRUxXz3dP+6F4igeKRrxH6TFGI9d9HkCnl2K4v
+	f8KQLKvmdFXtpfqVXevTirUmy8jqvT2SuEFYiZ7y+SPc0/GqcYMn2fST6A6sfUkjgBvSGRtCDtu
+	0kBpOEIUphiroRbRBcWN4x6URztCy1+IG/vSY2EewYSFF9iplJFbIjVmWrOaE77TVobVWyU7YXM
+	OmrOj/8XCM2LZl7xlJvCaFK/quGUJuQobBj2wWUBHRJoxHwB59f8ABDrPar7fORylrMc57MGrGG
+	OBeqt5J4XS8T1Jtrz5P62xuHP4yPed+RlK55jZaqS00ooGrPHUZb8DQMnm
+X-Google-Smtp-Source: AGHT+IHhfqov5J5/cpzmqY6Y2xL2af4c9MM6Q4X67R+acnF53o3WvCLTbsPzluFzQjt4kJ8MhOfkcw==
+X-Received: by 2002:a17:907:7f0b:b0:ade:44f8:569 with SMTP id a640c23a62f3a-afe29548f56mr209435166b.42.1755855777271;
+        Fri, 22 Aug 2025 02:42:57 -0700 (PDT)
+Received: from ?IPV6:2a02:908:1b0:afe0:2cf9:d2f0:ffe6:6e52? ([2a02:908:1b0:afe0:2cf9:d2f0:ffe6:6e52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afdf6ff14f8sm489424166b.67.2025.08.22.02.42.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Aug 2025 02:42:56 -0700 (PDT)
+Message-ID: <6503f380-1566-4efc-913d-125d316787d1@gmail.com>
+Date: Fri, 22 Aug 2025 11:42:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKg4XcM0vAIS4C-8@pengutronix.de>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] serial: 8250_core: fix coding style issue
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: jirislaby@kernel.org, ilpo.jarvinen@linux.intel.com, mingo@kernel.org,
+ john.ogness@linutronix.de, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20250822082311.16501-1-osama.abdelkader@gmail.com>
+ <2025082235-wriggly-wildcat-0477@gregkh>
+Content-Language: en-US
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+In-Reply-To: <2025082235-wriggly-wildcat-0477@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 22, 2025 at 11:29:01AM +0200, Oleksij Rempel wrote:
-> On Fri, Aug 22, 2025 at 10:19:24AM +0100, Russell King (Oracle) wrote:
-> > On Fri, Aug 22, 2025 at 11:09:47AM +0200, Oleksij Rempel wrote:
-> > > When a network interface is brought down, the associated PHY is stopped.
-> > > However, several link-specific parameters within the phy_device struct
-> > > are not cleared. This leads to userspace tools like ethtool reporting
-> > > stale information from the last active connection, which is misleading
-> > > as the link is no longer active.
-> > 
-> > This is not a good idea. Consider the case where the PHY has been
-> > configured with autoneg disabled, and phydev->speed etc specifies
-> > the desired speed.
-> > 
-> > When the link goes down, all that state gets cleared, and we lose
-> > the user's settings.
-> > 
-> > So no, I don't think this is appropriate.
-> > 
-> > I think it is appropriate to clear some of the state, but anything that
-> > the user can configure (such as ->speed and ->duplex) must not be
-> > cleared.
-> 
-> Hm... should it be cleared conditionally? If autoneg is used, clear the
-> speed and duplex?
 
-Actually no, you can't do any of this here.
+On 8/22/25 10:45 AM, Greg KH wrote:
+> On Fri, Aug 22, 2025 at 10:23:10AM +0200, Osama Abdelkader wrote:
+>> Fix a coding style issue in 8250_core.c:
+>>
+>> - Remove redundant NULL initialization of a global pointer
+>>
+>> Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
+>> ---
+>>  drivers/tty/serial/8250/8250_core.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
+>> index feb920c5b2e8..225bb7e4b89c 100644
+>> --- a/drivers/tty/serial/8250/8250_core.c
+>> +++ b/drivers/tty/serial/8250/8250_core.c
+>> @@ -307,7 +307,7 @@ static void univ8250_release_irq(struct uart_8250_port *up)
+>>  		serial_unlink_irq_chain(up);
+>>  }
+>>  
+>> -const struct uart_ops *univ8250_port_base_ops = NULL;
+>> +const struct uart_ops *univ8250_port_base_ops;
+>>  struct uart_ops univ8250_port_ops;
+>>  
+>>  static const struct uart_8250_ops univ8250_driver_ops = {
+>> -- 
+>> 2.43.0
+>>
+>>
+>
+> Hi,
+>
+> This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+> a patch that has triggered this response.  He used to manually respond
+> to these common problems, but in order to save his sanity (he kept
+> writing the same thing over and over, yet to different people), I was
+> created.  Hopefully you will not take offence and will fix the problem
+> in your patch and resubmit it so that it can be accepted into the Linux
+> kernel tree.
+>
+> You are receiving this message because of the following common error(s)
+> as indicated below:
+>
+> - This looks like a new version of a previously submitted patch, but you
+>   did not list below the --- line any changes from the previous version.
+>   Please read the section entitled "The canonical patch format" in the
+>   kernel file, Documentation/process/submitting-patches.rst for what
+>   needs to be done here to properly describe this.
+>
+> If you wish to discuss this problem further, or you have questions about
+> how to resolve this issue, please feel free to respond to this email and
+> Greg will reply once he has dug out from the pending patches received
+> from other developers.
+>
+> thanks,
+>
+> greg k-h's patch email bot
 
-Look at phy_ethtool_set_eee_noneg(). If the LPI configuration changes,
-it needs to inform the MAC of the change, and it does that by
-_simulating_ a brief loss of link by calling phy_link_down() followed
-by phy_link_up() - expecting all state to be preserved except that
-which needs to be modified.
+Hi All,
 
-Maybe we should do something in the PHY_HALTED state in
-_phy_state_machine() ?
+I forgot to include the changelog in v2.
 
-Note that in the usual case of link down, it is the responsibility of
-phy_read_status() to update most of what you're clearing, the
-exception is phydev->eee_active and phydev->enable_tx_lpi which are
-managed by phylib itself.
+v2:
 
-I think that both the PHY_HALTED and PHY_ERROR states should be
-clearing phydev->eee_active and phydev->enable_tx_lpi, so that
-should be in the existing if().
+- Dropped extra blank line after gpios declaration
 
-I'm not sure we want to clear out the remainder of the state on
-PHY_ERROR, as this would aid debugging when something goes wrong.
+Thanks,
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Osama
+
+
 
