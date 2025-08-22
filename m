@@ -1,407 +1,129 @@
-Return-Path: <linux-kernel+bounces-781879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2972B31825
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:44:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3876B31826
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA71417355A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:43:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 862F2AC3707
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835332FC01A;
-	Fri, 22 Aug 2025 12:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4AF2FC031;
+	Fri, 22 Aug 2025 12:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XyGVDa/y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AVrDvw56"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738062FB61F;
-	Fri, 22 Aug 2025 12:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4562FC024
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755866627; cv=none; b=G/0F/nZYOT/8g6ZGx9MTS3pIrCK0mgPsF5dMZLamk2bYvUgpA2FyDMDO9rty12dxoZiemKadeQItsjWJmB6Rqt3IQ6DbCgmreGr9xtZzzz7PXtQjb/UgVPLPn9+CEV6AhE7z4epdCOL7Cfl3sHj0+8rnHMS3ysappoNULWSRrq0=
+	t=1755866632; cv=none; b=BBD9wEJuiU+P2KKYE/ty0EEnkQ5ZK6+oJsMEBUSeXkE5FHkmFXZHTVwwpOxbI9A1GwQuymRwZnIG7s6FftFdq7Cpat7xxbTcXJraQ5VHD7nVTDjdI5kNM3Hx74o4QNsLLEoncwa5Tdu81JYAfzmgNygc3dNzFGnDdz72T+p4+gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755866627; c=relaxed/simple;
-	bh=Uu7zeUy3LSgXwtCG5DSemJUstJY3Hjvk5y4aCu4KEPc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uN/DgwA+a4zFk8Qsj+b2qtqrUX2MSOE07OCyJ13o97LPX9quDPug04x3ywQn6GzWKhmemvb0ir1ZFybZIQpmBMiT6bs503mTCvrFT/sHF48LDdI4QMTIWb7igqFZjA442zu1zF5eSLF7+PI4UzWhK8NGK7KEMs7JcYyXkCy4Dt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XyGVDa/y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB272C113D0;
-	Fri, 22 Aug 2025 12:43:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755866626;
-	bh=Uu7zeUy3LSgXwtCG5DSemJUstJY3Hjvk5y4aCu4KEPc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XyGVDa/yOjNEr0f/f6Zljb3CwTADIT0D3FIH5h1RjhfcNWKWAVgxQyNlA13ZgCKwa
-	 Uigzt9T4V4huCt6cH5DdXTVp1zKjyJyWTR6gszB8atdbeIi3jsFJHyl47BHzQuTYcE
-	 q3wLEbw9VrQBH2pUaa1gR3ydByahcBR89qGBp8VtDGNJRB1nbExnRqKfSDD+2m1i9L
-	 xQF1nCrbQrRG4jb/GA9JIQPetmzTGgr9oGyN0OqZVnpUhT1m1++GkeXjmfZ7czE6Oj
-	 8xpUyHc01wIOouRMVUtmxz3Gclp+kvaaWNbXVzzz8JN/v88WLpYGxmVKDJqERprLkB
-	 CbbncmcVDvWNA==
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-61d99c87d32so1017002eaf.1;
-        Fri, 22 Aug 2025 05:43:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUGiw64dunyAMx6TjiLS7sEf+PIDaBihZlkOT/6ZuoatwMPGNmmseB/GPkB5ZQqCN/yjthdcjAq+yvJOys=@vger.kernel.org, AJvYcCVoTW1EK0EcxTlKDfNASJM5cUBs14qTb7SbdrzA8nUxagkfSv45pvIfYyffIPydu7BYn5EmjYKPP8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBgyW+853gReoHguKWDOQP3+pWuKwXj2+uK7msGczJeuPrQhdB
-	/5GybulQs84gmhIMRIdNkTrOQCxgXY+ZvNecr20Os26TcHlMWOxRV+8ZGV4nEFm8GXUhZ28YA40
-	uL5PK3j7pNSFONzAfmdpOyKah+WVucZ8=
-X-Google-Smtp-Source: AGHT+IFMmem59JLbPdfkQ1UgYoJL5ctCEHvVETuCVKE+0gxTuyQO7ap/oaLsLqbsmAjE86p9RuWyLbx36b83Ypy4toY=
-X-Received: by 2002:a05:6808:4fe7:b0:437:7578:9c45 with SMTP id
- 5614622812f47-437852bafd6mr1595888b6e.43.1755866625182; Fri, 22 Aug 2025
- 05:43:45 -0700 (PDT)
+	s=arc-20240116; t=1755866632; c=relaxed/simple;
+	bh=uWyhkovo9u/RSrY8reiq6+PCibyXix46uqueqrb6UHw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sPsKB3DOuRhO0NB75mRjNZVN52JXJEgLGm8moF7WI6L3nFCOQ8+Txz7q9ajt646cjSbIiHiTqIXrGJoH0IKthaZv3wSzQWllC+xRPpqjE+J8drsSWN7JqYp7TYRr0jlBWkm2X1TGEt4eDwl40EIvStYJJDwNln24WUSGBd/ovrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AVrDvw56; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7e87068760bso236092185a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:43:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755866630; x=1756471430; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7esMtEw5QVw4oYW1X3ekJKoKg/sSv7ATs4TS+GU7jZk=;
+        b=AVrDvw56Dgx+z9TWas8oxpFjbl0KGo7YVtIT9WFtm12qPuL76/KT8FVmoOGeGpLXIK
+         /S9j7iSSF+TUhBYaL1Ckw0yckdLmLLLaUq+kEBG/bOLn84/LY/CauBx7IA/boGdR6Emy
+         2cTVfNpyK6l9A5/ZPedE/yc08qJUIYDZWrQ+aLLYBdqLP0Y4vM7cxRxOXXGPa+NlFT8Y
+         JQIwckoFpMbOj2o9Ey2lu8NgZ5SWwA47yCJY+iLHwKI9qg4oYCH7oaZXVIbvTk/duSsc
+         lmu1BkhDsOfhi5PbIkNypghEpSF60qZlFIw/REVtLN4bERCVIIRFbAQWwZhzcCKXikSI
+         Yq5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755866630; x=1756471430;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7esMtEw5QVw4oYW1X3ekJKoKg/sSv7ATs4TS+GU7jZk=;
+        b=LeSgxl15EXhvsgfN31Dh+DAvRMtBrhYCOItiI/vmxEbX3DYBIHiP006VFpTT32bmUO
+         wME/864J0w11l+KDMvqcacRqD7o3aKJaXoGOwClA1h0+WlKwuP1+2QjA7EvRQ15MEmut
+         2MDCtjyZlz6BRkHv8ljKoZLyTnGOvtW2A0kuonS9LFQPVyDYSJMY2HALw2bw6ecD+F3A
+         nyDnzO+XY2oE6pqs/PoQ4d3HwyzT9WW6MnJVAmickwyUSP6ZctsMC8m7cmdiQrnjfKwZ
+         6N9MM/FSKuWdM5nAXQUXF0b9qrAAINht8J3zbkp5qj3eWNda5fend/7jLdzbmrznaqdN
+         lTLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4L7WHIfrA2BbkbE0WjTFXHgqOSQeN67OVO5tnVUXxSx6xibW1Alx+k6mts4viZr+lPHiBFk8O2vZnvYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywpf8oGNIymimNB5NyqYoIFuuxDwk163HDscJAAPRy3lrgiwM7q
+	FibJJlkctskKGCDpi2YOjgSs/BjtHduyS4wUOtr69BRmO98LEEuamm2f
+X-Gm-Gg: ASbGncuDTgHyaKdmp7CkjYdZC1c2vCt9PBdhi+pgJ7zE5gE0x2FoQ1SJDWftGs9BnhH
+	mOr97k8dizXE2FaHOvzKmYAkutRQp375oS5RtMQxB4+6tunp3uUsanVg4xuucRe518HjCcnmB0J
+	oPPKlSGHCYno0TonKM5Pj4cmQm/zEXEeTm1wWB+4TKlUO728n15wkxqiK0mSS4ubYRWP4AB5Tvm
+	WdSg0jADHeD1RqbS3BhNBJdRH7UNSRm0R5Np8hm6V7cJrVLqyM125wM0BTQWTkE9KhJve1K30aT
+	cWMEiVZhUtH2P1SFOep+wuJGqpX2n8XSktZobqXOiyfkSuNq8BFPH4cKQ1lDmln7TByTvRb18H6
+	1Tn/flFo3B9BoYUPus2qX+kPDKOQkhHxVNi+9K8X/gqx+gx7dgIz5A3FBtjmPi4WpmQRA
+X-Google-Smtp-Source: AGHT+IFJvlSZLb/tgAdd91q76LLVRKtl204DpHq7u7KDDoCyrwGkQzx2iwb0ZjfCczYufx70JcLscA==
+X-Received: by 2002:a05:6214:4c02:b0:70d:9819:8788 with SMTP id 6a1803df08f44-70d98198c37mr17724006d6.22.1755866630054;
+        Fri, 22 Aug 2025 05:43:50 -0700 (PDT)
+Received: from cr-x-redhat96-nsd-2.fyre.ibm.com ([129.41.87.0])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70ba90b8dc7sm124756186d6.30.2025.08.22.05.43.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 05:43:49 -0700 (PDT)
+From: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
+To: ioana.ciornei@nxp.com
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
+Subject: [PATCH v2] bus: fsl-mc: Replace snprintf and sprintf with sysfs_emit in sysfs show functions
+Date: Fri, 22 Aug 2025 05:43:39 -0700
+Message-ID: <20250822124339.1739290-1-chelsyratnawat2001@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813185530.635096-1-srinivas.pandruvada@linux.intel.com> <20250813185530.635096-2-srinivas.pandruvada@linux.intel.com>
-In-Reply-To: <20250813185530.635096-2-srinivas.pandruvada@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 22 Aug 2025 14:43:33 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h-1ot-uXn8tzpYo+fXDjcD2Jj+LrpZgVqG+J6DsT0muA@mail.gmail.com>
-X-Gm-Features: Ac12FXw9xA0OH0ZZ9nUP934W7IrbwYYvfCPzaqrEpIqXR_LAxasoDRAKoXTZW24
-Message-ID: <CAJZ5v0h-1ot-uXn8tzpYo+fXDjcD2Jj+LrpZgVqG+J6DsT0muA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] thermal: intel: int340x: Add support for power slider
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: rafael@kernel.org, daniel.lezcano@linaro.org, lukasz.luba@arm.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 13, 2025 at 8:55=E2=80=AFPM Srinivas Pandruvada
-<srinivas.pandruvada@linux.intel.com> wrote:
->
-> Add support for system wide energy performance preference using a SoC
-> slider interface defined via processor thermal PCI device MMIO space.
->
-> Using Linux platform-profile class API, register a new platform profile.
-> Provide three platform power profile choices:
-> "performance", "balanced" and "low-power".
->
-> Profile sysfs is located at:
-> /sys/class/platform-profile/platform-profile-*
-> where attribute "name" is presented as "SoC Power Slider".
->
-> At boot by default the slider is set to balanced mode. This profile is
-> changed by user space based on user preference via power profile daemon
-> or directly writing to the "profile" sysfs attribute.
->
-> Add a CPU model specific processor thermal device feature
-> PROC_THERMAL_FEATURE_SOC_POWER_SLIDER. When enabled for a CPU model,
-> slider interface is registered.
->
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Use sysfs_emit() instead of snprintf()/sprintf()  when writing
+to sysfs buffers, as recommended by the kernel documentation.
 
-LGTM overall, a few minor nits below.
+Signed-off-by: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
+---
+Changes in v2: 
+ - replace sprintf() with sysfs_emit() in modalias_show()
+ - change commit msg to include the change for sprintf
 
-> ---
->  drivers/thermal/intel/int340x_thermal/Kconfig |   1 +
->  .../thermal/intel/int340x_thermal/Makefile    |   1 +
->  .../processor_thermal_device.c                |  10 +
->  .../processor_thermal_device.h                |   4 +
->  .../processor_thermal_soc_slider.c            | 171 ++++++++++++++++++
->  5 files changed, 187 insertions(+)
->  create mode 100644 drivers/thermal/intel/int340x_thermal/processor_therm=
-al_soc_slider.c
->
-> diff --git a/drivers/thermal/intel/int340x_thermal/Kconfig b/drivers/ther=
-mal/intel/int340x_thermal/Kconfig
-> index 4c699f0896b5..4ced7bdcd62c 100644
-> --- a/drivers/thermal/intel/int340x_thermal/Kconfig
-> +++ b/drivers/thermal/intel/int340x_thermal/Kconfig
-> @@ -12,6 +12,7 @@ config INT340X_THERMAL
->         select ACPI_THERMAL_LIB
->         select INTEL_SOC_DTS_IOSF_CORE
->         select INTEL_TCC
-> +       select ACPI_PLATFORM_PROFILE
->         select PROC_THERMAL_MMIO_RAPL if POWERCAP
->         help
->           Newer laptops and tablets that use ACPI may have thermal sensor=
-s and
-> diff --git a/drivers/thermal/intel/int340x_thermal/Makefile b/drivers/the=
-rmal/intel/int340x_thermal/Makefile
-> index 184318d1792b..436be34b21a9 100644
-> --- a/drivers/thermal/intel/int340x_thermal/Makefile
-> +++ b/drivers/thermal/intel/int340x_thermal/Makefile
-> @@ -14,5 +14,6 @@ obj-$(CONFIG_INT340X_THERMAL) +=3D processor_thermal_mb=
-ox.o
->  obj-$(CONFIG_INT340X_THERMAL)  +=3D processor_thermal_wt_req.o
->  obj-$(CONFIG_INT340X_THERMAL)  +=3D processor_thermal_wt_hint.o
->  obj-$(CONFIG_INT340X_THERMAL)  +=3D processor_thermal_power_floor.o
-> +obj-$(CONFIG_INT340X_THERMAL)  +=3D processor_thermal_soc_slider.o
->  obj-$(CONFIG_INT3406_THERMAL)  +=3D int3406_thermal.o
->  obj-$(CONFIG_ACPI_THERMAL_REL) +=3D acpi_thermal_rel.o
-> diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_devi=
-ce.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> index 29fcece48cad..4aea5c9baae9 100644
-> --- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> +++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> @@ -432,8 +432,18 @@ int proc_thermal_mmio_add(struct pci_dev *pdev,
->                 }
->         }
->
-> +       if (feature_mask & PROC_THERMAL_FEATURE_SOC_POWER_SLIDER) {
-> +               ret =3D proc_thermal_soc_power_slider_add(pdev, proc_priv=
-);
-> +               if (ret) {
-> +                       dev_err(&pdev->dev, "failed to add soc power effi=
-ciency slider\n");
+ drivers/bus/fsl-mc/fsl-mc-bus.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Maybe dev_info()?  I'm not sure if this failure is serious enough for dev_e=
-rr().
+diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
+index c1c0a4759c7e..88fea34a55b9 100644
+--- a/drivers/bus/fsl-mc/fsl-mc-bus.c
++++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
+@@ -176,8 +176,8 @@ static ssize_t modalias_show(struct device *dev, struct device_attribute *attr,
+ {
+ 	struct fsl_mc_device *mc_dev = to_fsl_mc_device(dev);
+ 
+-	return sprintf(buf, "fsl-mc:v%08Xd%s\n", mc_dev->obj_desc.vendor,
+-		       mc_dev->obj_desc.type);
++	return sysfs_emit(buf, "fsl-mc:v%08Xd%s\n", mc_dev->obj_desc.vendor,
++			mc_dev->obj_desc.type);
+ }
+ static DEVICE_ATTR_RO(modalias);
+ 
+@@ -203,7 +203,7 @@ static ssize_t driver_override_show(struct device *dev,
+ {
+ 	struct fsl_mc_device *mc_dev = to_fsl_mc_device(dev);
+ 
+-	return snprintf(buf, PAGE_SIZE, "%s\n", mc_dev->driver_override);
++	return sysfs_emit(buf, "%s\n", mc_dev->driver_override);
+ }
+ static DEVICE_ATTR_RW(driver_override);
+ 
+-- 
+2.47.3
 
-> +                       goto err_rem_wlt;
-> +               }
-> +       }
-> +
->         return 0;
->
-> +err_rem_wlt:
-> +       proc_thermal_wt_hint_remove(pdev);
->  err_rem_rfim:
->         proc_thermal_rfim_remove(pdev);
->  err_rem_ptc:
-> diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_devi=
-ce.h b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.h
-> index 49398794124a..ba3f64742f2f 100644
-> --- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.h
-> +++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.h
-> @@ -69,6 +69,7 @@ struct rapl_mmio_regs {
->  #define PROC_THERMAL_FEATURE_POWER_FLOOR       0x40
->  #define PROC_THERMAL_FEATURE_MSI_SUPPORT       0x80
->  #define PROC_THERMAL_FEATURE_PTC       0x100
-> +#define PROC_THERMAL_FEATURE_SOC_POWER_SLIDER  0x200
->
->  #if IS_ENABLED(CONFIG_PROC_THERMAL_MMIO_RAPL)
->  int proc_thermal_rapl_add(struct pci_dev *pdev, struct proc_thermal_devi=
-ce *proc_priv);
-> @@ -127,4 +128,7 @@ int proc_thermal_mmio_add(struct pci_dev *pdev,
->  void proc_thermal_mmio_remove(struct pci_dev *pdev, struct proc_thermal_=
-device *proc_priv);
->  int proc_thermal_ptc_add(struct pci_dev *pdev, struct proc_thermal_devic=
-e *proc_priv);
->  void proc_thermal_ptc_remove(struct pci_dev *pdev);
-> +
-> +int proc_thermal_soc_power_slider_add(struct pci_dev *pdev, struct proc_=
-thermal_device *proc_priv);
-> +
->  #endif
-> diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_=
-slider.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_slid=
-er.c
-> new file mode 100644
-> index 000000000000..c492ee937dc7
-> --- /dev/null
-> +++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_slider.=
-c
-> @@ -0,0 +1,171 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Processor Thermal Device Interface for Reading and Writing
-> + * SoC Power Slider Values from User Space.
-> + *
-> + * Operation:
-> + * The SOC_EFFICIENCY_SLIDER_0_0_0_MCHBAR register is accessed
-> + * using the MMIO (Memory-Mapped I/O) interface with an MMIO offset of 0=
-x5B38.
-> + * Although this register is 64 bits wide, only bits 7:0 are used,
-> + * and the other bits remain unchanged.
-> + *
-> + * Bit definitions
-> + *
-> + * Bits 2:0 (Slider value):
-> + * The SoC optimizer slider value indicates the system wide energy perfo=
-rmance
-> + * hint. The slider has no specific units and ranges from 0 (highest
-> + * performance) to 6 (highest energy efficiency). Value of 7 is reserved=
-.
-> + * Bits 3 : Reserved
-> + * Bits 6:4 (Offset)
-> + * Offset allows the SoC to automatically switch slider position in rang=
-e
-> + * [slider value (bits 2:0) + offset] to improve power efficiency based =
-on
-> + * internal SoC algorithms.
-> + * Bit 7 (Enable):
-> + * If this bit is set, the SoC Optimization sliders will be processed by=
- the
-> + * SoC firmware.
-> + *
-> + * Copyright (c) 2025, Intel Corporation.
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/pci.h>
-> +#include <linux/platform_profile.h>
-> +#include "processor_thermal_device.h"
-> +
-> +#define SOC_POWER_SLIDER_OFFSET        0x5B38
-> +
-> +enum power_slider_preference {
-> +       SOC_POWER_SLIDER_PERFORMANCE,
-> +       SOC_POWER_SLIDER_BALANCE,
-> +       SOC_POWER_SLIDER_POWERSAVE,
-> +};
-> +
-> +#define SOC_SLIDER_VALUE_MINIMUM       0x00
-> +#define SOC_SLIDER_VALUE_MAXIMUM       0x06
-> +#define SOC_SLIDER_VALUE_BALANCE       0x03
-
-I would sort these by value, lowest to highest.
-
-> +
-> +static u8 slider_values[] =3D {
-> +       [SOC_POWER_SLIDER_PERFORMANCE] =3D SOC_SLIDER_VALUE_MINIMUM,
-> +       [SOC_POWER_SLIDER_BALANCE] =3D SOC_SLIDER_VALUE_BALANCE,
-> +       [SOC_POWER_SLIDER_POWERSAVE] =3D SOC_SLIDER_VALUE_MAXIMUM,
-> +};
-> +
-> +/* Convert from platform power profile option to SoC slider value */
-> +static int convert_profile_to_power_slider(enum platform_profile_option =
-profile)
-> +{
-> +       switch (profile) {
-> +       case PLATFORM_PROFILE_LOW_POWER:
-> +               return slider_values[SOC_POWER_SLIDER_POWERSAVE];
-> +       case PLATFORM_PROFILE_BALANCED:
-> +               return slider_values[SOC_POWER_SLIDER_BALANCE];
-> +       case PLATFORM_PROFILE_PERFORMANCE:
-> +               return slider_values[SOC_POWER_SLIDER_PERFORMANCE];
-> +       default:
-> +               return -EOPNOTSUPP;
-
-I would use break here.
-
-> +       }
-> +
-> +       return -EOPNOTSUPP;
-> +}
-> +
-> +/* Convert to platform power profile option from SoC slider values */
-> +static int convert_power_slider_to_profile(u8 slider)
-> +{
-> +       if (slider =3D=3D slider_values[SOC_POWER_SLIDER_PERFORMANCE])
-> +               return PLATFORM_PROFILE_PERFORMANCE;
-> +       if (slider =3D=3D slider_values[SOC_POWER_SLIDER_BALANCE])
-> +               return PLATFORM_PROFILE_BALANCED;
-> +       if (slider =3D=3D slider_values[SOC_POWER_SLIDER_POWERSAVE])
-> +               return PLATFORM_PROFILE_LOW_POWER;
-> +
-> +       return -EOPNOTSUPP;
-> +}
-> +
-> +#define SLIDER_MASK            GENMASK_ULL(2, 0)
-> +#define SLIDER_ENABLE_BIT      7
-
-I'd move these up to where the other symbols are defined.
-
-> +
-> +static void set_soc_power_profile(struct proc_thermal_device *proc_priv,=
- int slider)
-> +{
-> +       u64 val;
-> +
-> +       val =3D readq(proc_priv->mmio_base + SOC_POWER_SLIDER_OFFSET);
-
-I would define a macro or static inline for the proc_priv->mmio_base +
-SOC_POWER_SLIDER_OFFSET computation.  It has enough characters and it
-is used enough times to get a separate wrapper IMV.
-
-> +       val &=3D ~SLIDER_MASK;
-> +       val |=3D FIELD_PREP(SLIDER_MASK, slider);
-> +       val |=3D BIT(SLIDER_ENABLE_BIT);
-
-The two statements above can be combined.
-
-> +       writeq(val, proc_priv->mmio_base + SOC_POWER_SLIDER_OFFSET);
-> +}
-> +
-> +/* profile get/set callbacks are called with a profile lock, so no need =
-for local locks */
-> +
-> +static int power_slider_platform_profile_set(struct device *dev,
-> +                                            enum platform_profile_option=
- profile)
-> +{
-> +       struct proc_thermal_device *proc_priv;
-> +       int slider;
-> +
-> +       proc_priv =3D dev_get_drvdata(dev);
-> +       if (!proc_priv)
-> +               return -EOPNOTSUPP;
-> +
-> +       slider =3D convert_profile_to_power_slider(profile);
-> +       if (slider < 0)
-> +               return slider;
-> +
-> +       set_soc_power_profile(proc_priv, slider);
-> +
-> +       return 0;
-> +}
-> +
-> +static int power_slider_platform_profile_get(struct device *dev,
-> +                                            enum platform_profile_option=
- *profile)
-> +{
-> +       struct proc_thermal_device *proc_priv;
-> +       int slider, ret;
-> +       u64 val;
-> +
-> +       proc_priv =3D dev_get_drvdata(dev);
-> +       if (!proc_priv)
-> +               return -EOPNOTSUPP;
-> +
-> +       val =3D readq(proc_priv->mmio_base + SOC_POWER_SLIDER_OFFSET);
-> +       slider =3D FIELD_GET(SLIDER_MASK, val);
-> +
-> +       ret =3D convert_power_slider_to_profile(slider);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       *profile =3D ret;
-> +
-> +       return 0;
-> +}
-> +
-> +static int power_slider_platform_profile_probe(void *drvdata, unsigned l=
-ong *choices)
-> +{
-> +       set_bit(PLATFORM_PROFILE_LOW_POWER, choices);
-> +       set_bit(PLATFORM_PROFILE_BALANCED, choices);
-> +       set_bit(PLATFORM_PROFILE_PERFORMANCE, choices);
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct platform_profile_ops power_slider_platform_profile_o=
-ps =3D {
-> +       .probe =3D power_slider_platform_profile_probe,
-> +       .profile_get =3D power_slider_platform_profile_get,
-> +       .profile_set =3D power_slider_platform_profile_set,
-> +};
-> +
-> +int proc_thermal_soc_power_slider_add(struct pci_dev *pdev, struct proc_=
-thermal_device *proc_priv)
-> +{
-> +       struct device *ppdev;
-> +
-> +       set_soc_power_profile(proc_priv, slider_values[SOC_POWER_SLIDER_B=
-ALANCE]);
-> +
-> +       ppdev =3D devm_platform_profile_register(&pdev->dev, "SoC Power S=
-lider", proc_priv,
-> +                                              &power_slider_platform_pro=
-file_ops);
-> +
-> +       return PTR_ERR_OR_ZERO(ppdev);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(proc_thermal_soc_power_slider_add, "INT340X_THERMAL=
-");
-> +
-> +MODULE_IMPORT_NS("INT340X_THERMAL");
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("Processor Thermal Power Slider Interface");
-> --
 
