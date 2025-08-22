@@ -1,220 +1,310 @@
-Return-Path: <linux-kernel+bounces-782161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D5D8B31BE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:38:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39BD0B31C03
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 094751D05940
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:31:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAEA46602B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7183277AA;
-	Fri, 22 Aug 2025 14:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B198B334379;
+	Fri, 22 Aug 2025 14:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="bScIB7eP"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011042.outbound.protection.outlook.com [52.101.65.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="LPGXRVaC";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="N4O6WpkF"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E496A31354D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABBA32779E
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 14:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755872709; cv=none; b=R7vcZSDUmeSBzVNZwTQMvnJCQoEX2W6fO1fy09LpH0sj9YizSX626H987d7M0KGHiowiwkym2/LRheMOKCDvV/NlCjVLSuH8L2IavtKZxQ4qEhL0UQmR4Ni5+MN/Tao9Yf516b/eYdyfNBsTbQQj7belND0X9CIqpGlY3/23Jrk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755872709; c=relaxed/simple;
+	bh=8YTQgAFVKnhHYQ1Q6q79wp+U6I02XgGNAva0c1MOPa4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PGlWM3iKDfVGWyiONsvRJs63sZ2bH1lU7wPh8ICjA2PKFOh+mG8jhdu4sS1dmPeT5UFoC0e2mAp1BmTefAsPexYl7S/wH15sNpTN8zzGNQJ7loJNYyj+Rg46q2GnkyeP2YSsEKJXzpPXoyfheFvliSPPs4yydaLHW4ZvHXfbOc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=LPGXRVaC; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=N4O6WpkF; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from pathway.suse.cz (unknown [IPv6:2a07:de40:b2bf:1a::1129])
+	by smtp-out2.suse.de (Postfix) with ESMTP id 247D31F38E;
 	Fri, 22 Aug 2025 14:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755872706; cv=fail; b=U5MERKTGxbIpmvokg11HhUHhZg4SdPXpvgUPTH+Mp+6huLhffh9QKF1cobt4V1GkyJkPiogNvGyrYepRoipsK7Jb4ZpjJ5N/2+owzpp1BAlHTjb3xrFzrPlbQazgeGryMycDfPiI+X1eMji8m/4A5YtryPKduQOoGFG92y++U1Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755872706; c=relaxed/simple;
-	bh=ddQaJGLp+A0HbB9LpRsj295dAUbhzDgzL5rtv+7IqBI=;
-	h=Date:From:To:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Q6uLjDWbop+iIE8oozFErLEnK+CPqrZC5xTpIqhUON/7BgmVKij+mjd9uIyPca4sUghR02iTOcfBeilnShx+GsZxRs3KI6mJyizrtKqbY/wG/01hNJJ8ZXNiHosqE2/qDqUCCFqjktxV0g3bmaUFutzgldTxh+NaHmdpPmr8rP0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=bScIB7eP; arc=fail smtp.client-ip=52.101.65.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Y2Se2oJMM8jj40B4c4/mF95VujdQnVaMVS3g/SrscWAw2l0eIDhRKC1A/cH1LXMjQRioL3POFZYNkTF3LIiEYgVHpWOMwGgCn9QPit8db5pX26855HpgYc2Rnb/JxqaAntNpK6TC8usn+dXOpZ0zP1cmYnCq9615eHzWgVRM96fW8qntj9541uqyjPCv7/Vnc2GFzVVky4/sZ94hSCqbrsVVJkzFP0V3A1EkEkzK61cYCvSRnxUmz+6fz3/hT3oHrffH5NScPQ6xLG7VlVA1k8seeUcN4fAIpgw9O0TPXCw6yA06QpW3LL/2FcQeeprlzpiXstWLuczbYei+6YlKMQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n/MRLf+/uqQ/um91M/VR1FX/Ncq2w4IndTvQXnXEklI=;
- b=E4P65bCX3NMYaaKvYs2baDyRHoFyF1f8ZBtgk/pfYdvjG4NvoKYNLboDk0806/MU0zfbY/oqOkjlZOhfZRYv3V9q9gOpyfMSjeljAZSgj7vF8OPXtUHmvdPPlITRzcgMaSLDnOvCbi6XL8M7IGkwzLRybnIC+CpMkmJ/L3cSyTz2QxrIjJ+f+ocM3G+iMtNKR5tC/Nwcra1ndxQsWRp2kn5CbLE52nanTjIsYCNBYNPJaQ0UFt8PhMw4H7YbBqLZeoZuXZPiUewxIGGGppGewuJucysurimRPh4u38d/bKBMotgrFLjDbq0XIC3JdS6biKeWvOmL3lg5V0/fjgmTcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n/MRLf+/uqQ/um91M/VR1FX/Ncq2w4IndTvQXnXEklI=;
- b=bScIB7ePV8I8TM9tCdXPSasch2Eva2ziS2+Zk8+SiK0oJumAtzSVWRgSFeYHNkaq+lI5w7SLnZWNBsnK2jPPHXt1d1e83q0oSIXrTB4onHwk/NYWcCQqD2HDTk84R6mX5bKokBVXQjhpdHD2Rg7m+68j1CHa8SqbpnwL0ER2C11p8pUTfFrCRqt5zkZjFDj6mAWsz7ubhevKnN/nRE+/zgwHgTZArxe0DqQr591nQs+ImGju3RkHZ0RPMniRUMwftf7ftDrKuPj9PLx0JjCth9w5+m7vS2kGViXxE8O+29hXzNdhwNIvXVIZD5jrytVtwNEWjyfrWV/KnVwSG0fzgg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by AS8PR04MB8166.eurprd04.prod.outlook.com (2603:10a6:20b:3fa::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Fri, 22 Aug
- 2025 14:25:02 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d%5]) with mapi id 15.20.9052.012; Fri, 22 Aug 2025
- 14:25:02 +0000
-Date: Fri, 22 Aug 2025 10:24:52 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Kishon Vijay Abraham I <kishon@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1755872705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=HuPQzNtbk6yN0wy8AslSqdT08Xq1kpv1h1dnrnbEasg=;
+	b=LPGXRVaCM8WPj8i5XdZ2Awz/VOTnu60DQayY0OnyVobD+cxQUrF715JZiofT//nC9v2A6h
+	IUyzaozIbFPr0HoKqmONzBzr229LDkgnv2+munr7VML3b6D03XVyGeidIRJyqdcnUhK5do
+	LN0WAMaX8ialC3BX2t6QApIxnGwuUeU=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=N4O6WpkF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1755872704; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=HuPQzNtbk6yN0wy8AslSqdT08Xq1kpv1h1dnrnbEasg=;
+	b=N4O6WpkFZKF1u5a8v1rMoEgYw3kaU1B4R0J9LOq2Z5TiTL+M97iVBwOqnEVf/4r5V08+HX
+	f0fuNhPdFT4Xe6eqRigHDbN1sfbW0GNGlilUYq0f7vtrDjJxGW/0bwJFozDtINmlxanWJ8
+	XCz1elf7ylxEZxKiGOLrH4fBuViJhuI=
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Anup Patel <apatel@ventanamicro.com>, Marc Zyngier <maz@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Shuah Khan <shuah@kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>, dlemoal@kernel.org,
-	jdmason@kudzu.us, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v21 9/9] arm64: dts: imx95: Add msi-map for pci-ep device
-Message-ID: <aKh9tPZOtxyvOcCg@lizhi-Precision-Tower-5810>
-References: <20250710-ep-msi-v21-0-57683fc7fb25@nxp.com>
- <20250710-ep-msi-v21-9-57683fc7fb25@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710-ep-msi-v21-9-57683fc7fb25@nxp.com>
-X-ClientProxiedBy: PH0PR07CA0010.namprd07.prod.outlook.com
- (2603:10b6:510:5::15) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	Esben Haabendal <esben@geanix.com>,
+	linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Tony Lindgren <tony@atomide.com>,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Serge Semin <fancer.lancer@gmail.com>
+Subject: [RFC 0/1] serial: 8250: nbcon_atomic_flush_pending() might trigger watchdog warnigns
+Date: Fri, 22 Aug 2025 16:25:01 +0200
+Message-ID: <20250822142502.69917-1-pmladek@suse.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AS8PR04MB8166:EE_
-X-MS-Office365-Filtering-Correlation-Id: 650ef085-fe38-4e21-2539-08dde187ae8f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|19092799006|376014|52116014|7416014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?KmIRLChX0iyM3fAwzTKy9f+V5JMDmhBcBQztlTGZih4eYIXzSI4pt/wln3r1?=
- =?us-ascii?Q?HtYBi6HMRzyzFsmtW8ZtE8jXr/GzeI+PUKGtLwHaGuTMTOfQOj97IrQY7PFA?=
- =?us-ascii?Q?hBMHWbjdoEtCw8iXIwR2z1OQwj+Hn3Rfrkv5rrpbbkkPKxX5NyIDmkYAiZGI?=
- =?us-ascii?Q?mJ47gr8U8Ve7kH3PEpXmm72gOTjja4GV/PpB/rThbiIvJ6cWCa/vqZdX/NKd?=
- =?us-ascii?Q?FDwjaEZvS16Raf3rhfltMn0FlUQVuow7bk4l5g5eAIrqBCZXq7L8W+PcOtCr?=
- =?us-ascii?Q?ow4b8VInMebpO09hEwkuWu95PFLS8sg2M6DYSKWDHBezhPud9xYkgiCs12Pr?=
- =?us-ascii?Q?eyFcLcoOd3z7MQum1hICjN/+SqIu80smJ6cut1RSRtTweNRSCWy3Tuk4hfG7?=
- =?us-ascii?Q?3x8m4CxCzygoseqztYUK/YuCVfceaizhI1UQj9cbeZIQWcADm7AVJHV+GGwv?=
- =?us-ascii?Q?UOoQoJMlZEBcBHIAHxyG9oEaayMXU3vXWA2pNBf+T0YwD3uvjpyNhEkxrcgV?=
- =?us-ascii?Q?mQh7ICACqzZHVQ+CDf5Qqv6Lv1tlrabm5oFYuYoEJ4gLito10zFBHNeBrIGU?=
- =?us-ascii?Q?rg85MQHzkLuxwdXYL8QYVCSFU50ljGdL696hBlzIp/17Y5Q0gsOGk+Z26aus?=
- =?us-ascii?Q?IV8R+2Uqrgpt/UBoGp56Ag//XjzPb0+erWA9c27674hJkE4N1fTBleKYj2cl?=
- =?us-ascii?Q?LdBPVIvaFFgkIlJZrwlLMrfZpNXTQCbDaFalJUtHmJ9PgVZyzYogrbHldu45?=
- =?us-ascii?Q?HgbQbOg0rphiFYJCEDoSGG0cFzTShtBK71wl97mNz5eJrmDHxqBuMtVU1MBy?=
- =?us-ascii?Q?jgNk461yHLf1rXTfp/zrdQ2DFa2jLwm+Q+5FYzjOzhKR79s25ZCtfF0SHZj2?=
- =?us-ascii?Q?6dOKuHokkEO7FEAcEkya63IKXFbgU7YdMn6CMYJ8u2hkSM+CWbcvV79X7Wv7?=
- =?us-ascii?Q?fqT3CCXZ2nqb/3I/a5yx+1KMs/oOWOFKreXZcAPlIsxhARHJhpECGu9sTgE1?=
- =?us-ascii?Q?A1IjXFVLpfTJtAGE4uE5Tx/3GeDKrhhraOsq30rd21Hh12b9KyhfhO06Utys?=
- =?us-ascii?Q?fAEiXyawgFq4U2W7g+3GWq8Qa3SfFenBNCSQRiFp3aFH6JeY1Pc8xmSHuytE?=
- =?us-ascii?Q?0Rp7F+QdMry8ZEWupqe5A70yXPxS378GfRD/g99PU0BCMt8GSt2XNCfh3O1F?=
- =?us-ascii?Q?tQg0viv7GMHSEfx6kEQHo2yxKPX3+K/Za9YZfMUkFtf5z+exeNe1182nbe70?=
- =?us-ascii?Q?M/sKgPSi+E1x17d/zf3NJpUj7wGSnhYb8B0Ti/g5TIcszos0s/euZLKV5Nna?=
- =?us-ascii?Q?QLKbYd7jTYQQ+8qvUKBnEKJW/3/sklqPQ9L+4sxoBWtwVbLbRbjAYFSEVGoz?=
- =?us-ascii?Q?t7oluTct/9TKNJN99EMVF/6qO3AteWul2wA6m7sIKFm2wCCDainOIh4yao0K?=
- =?us-ascii?Q?IqkkN2QyL6zhTRsbJs7gfBZLzut/IO+68mniKMCPK1SUtbb8VEVKKQ5aJ34L?=
- =?us-ascii?Q?GLVXhiPPZbTpeKk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(376014)(52116014)(7416014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bany5BYg2YRlCB5/6OVcpWg2B+xnrEp/wsKpWlIOBmzF6ZwsEUuNWo57BaCG?=
- =?us-ascii?Q?T3tk2u1H6FdCUdymvsxpLJuZkYtLlXRK3/r82FO0OmWVjsEzNL8aB354kjYC?=
- =?us-ascii?Q?4QPEILtteuDaTcdHl9V1lRWmPAm5udPzZqm+AqQv2tOBXYFt/CiWOVI6iLIu?=
- =?us-ascii?Q?BOv8SrxkOKV75qwYjEHEFc3wSMRnLWpsHNAM6PGUOq3PKJr7tVZu/AfbmsvE?=
- =?us-ascii?Q?zH0KpxpFGzJyARSnCVkPcxE+scUCCclREMjGx9ELW8xrxiCWxxX68j+soKkt?=
- =?us-ascii?Q?6vH/6gY5bmMCK837RUE/12EloPNjXcNSMoGMIvfxJCfUwSu3S+DpvKP+W/eL?=
- =?us-ascii?Q?9wGXGIBB5j1OfKCrU/29XjQZQM+ZQA6iJ84XItID5yHl7rsPwqKH2IB2v+GR?=
- =?us-ascii?Q?uwDZNa3UdSCWxOU9fLSbLd1X3DzF3yAzrKWZKFCk034N9SSGadLgeoD7Tq0o?=
- =?us-ascii?Q?NoP+m1dd3C3v5X/qWxB/Vbh9pTHze2aZC9DxsH3rbvZawHSSOZCnba8VqAOx?=
- =?us-ascii?Q?twUg15+TLrJHFt69ccNsMY4fiyrlblltqILRZIqRv4qmyRca2pRSjUIxREcJ?=
- =?us-ascii?Q?6wheP+N5+WzDcyF8ciGLBMGY9QR/WrRrkHTzH8MF0nbfrqsQY167NJ6drCkf?=
- =?us-ascii?Q?jCHFawbEBrw+GlsQmLNhnpfVT7464tZUxHpES/BIBTzoYTA1FO3zId9EVL3C?=
- =?us-ascii?Q?miHMHiHN50dnzImjDEqBIy+GdUZdvD8MgIMDGKurG8KKYo7P9mQIRm4yDdg+?=
- =?us-ascii?Q?JG4A7hjBSzBx6K0BIwzUL0tTY3UmMUWB1GojhpEa3AzeMza2BxBr1wdre63j?=
- =?us-ascii?Q?uFpF0M197WRTX+VWyYCpLhRgxBv40cy913th0QSKguN8UP7h620ZnsJN3CmU?=
- =?us-ascii?Q?4BeLqIArzw0RCWICs3G+NRHj4UkCj/Ax19Qb9ozz5kTHC7cwySS2Ci7+uUT4?=
- =?us-ascii?Q?BnhK8Ks9843AiB6QofRhwD0vJgxnTei5I2CF8BXw3kWIYGUGTDGW0OvGA+sL?=
- =?us-ascii?Q?pGeqYCiIjiko+XTO1CM+hCEAEJr9HDnQr9PEF0T64qNvaiLtbp54EJaQcGrA?=
- =?us-ascii?Q?CmJM/R3tDk+SnoJxApVnO88+k2D9GOyrUnzf6BWvZKoNFvAiHbAfl+F3kVLJ?=
- =?us-ascii?Q?h9FDxLPMu/DNfYEkIqcyOYbzMBItXOwRqV+MrnTf1tM1Mg1h7VKdG2VIaPgQ?=
- =?us-ascii?Q?GGQautNm9CgxgBBUqzaRqlyFl8q356/Pu5uO/ZnBbNXBt1gp/NkYUNj0Mn1C?=
- =?us-ascii?Q?gXMT+kmqzrUZuqJZLmdc4j7JGV5gPK43l6Y/vWFxgM4m/dJYM8uxgAw1A2lD?=
- =?us-ascii?Q?csHetHuJtPWFirmj+E6cyB6CLrv6we7yG7HKh4MiagincVaCYgrIoRIDGg6h?=
- =?us-ascii?Q?V72zskrg1MuoftvFZ2eMYyGES9vrKo1X/DyG0nn/6Cp/fifkkJdoBnS+tlND?=
- =?us-ascii?Q?BWiB6q2AbMN+I3wjKBotvIsl5ZlK1fzspFob48cAu/hY4vy2B1bmLl88vjrb?=
- =?us-ascii?Q?4jqFOSFRvfpSKv5t5YjWFeP8p+TdsQnvuqhhRcR6RQxwZzpGRkl7Jjt5KZxe?=
- =?us-ascii?Q?jtRJRx1lsSxVS+jGYXAVvAmv97hJIVIhjbRCRSKc?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 650ef085-fe38-4e21-2539-08dde187ae8f
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 14:25:02.3580
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HYN1MD0x1aA5uyGo+umCoMFdtV70Yp6lvwW32bsPiUYMy68+84v7m6k67JM0vXFXN3phvSry1ck7aOYVvDMxKw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8166
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: **************************
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [26.56 / 50.00];
+	BAYES_SPAM(5.10)[100.00%];
+	SPAM_FLAG(5.00)[];
+	NEURAL_SPAM_LONG(3.50)[1.000];
+	NEURAL_SPAM_SHORT(2.97)[0.990];
+	HFILTER_HOSTNAME_UNKNOWN(2.50)[];
+	RDNS_NONE(2.00)[];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ONCE_RECEIVED(1.20)[];
+	MID_CONTAINS_FROM(1.00)[];
+	HFILTER_HELO_IP_A(1.00)[pathway.suse.cz];
+	R_MISSING_CHARSET(0.50)[];
+	HFILTER_HELO_NORES_A_OR_MX(0.30)[pathway.suse.cz];
+	BAD_REP_POLICIES(0.10)[];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b2bf:1a::1129:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DIRECT_TO_MX(0.00)[git-send-email 2.50.1];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	GREYLIST(0.00)[pass,body];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid];
+	TAGGED_RCPT(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	FREEMAIL_CC(0.00)[linuxfoundation.org,kernel.org,suse.com,chromium.org,goodmis.org,linutronix.de,geanix.com,vger.kernel.org,linux.intel.com,arndb.de,atomide.com,linux.ibm.com,gmail.com];
+	DKIM_TRACE(0.00)[suse.com:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b2bf:1a::1129:from];
+	R_DKIM_ALLOW(0.00)[suse.com:s=susede1];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spamd-Bar: ++++++++++++++++++++++++++
+X-Rspamd-Queue-Id: 247D31F38E
+X-Rspamd-Action: add header
+X-Spam-Flag: YES
+X-Spam-Score: 26.56
+X-Spam: Yes
 
-On Thu, Jul 10, 2025 at 03:13:55PM -0400, Frank Li via B4 Relay wrote:
-> From: Frank Li <Frank.Li@nxp.com>
->
-> Add msi-map for pci-ep device.
+Hi,
 
-Shawn:
+this is a followup for the patchset which converted serial 8250
+console driver to nbcon [1]. It was added into upstream but
+the last two patches were later reverted because they caused
+regressions.
 
-	Other part already in v6.17-rc1. Can you pick last dts patch?
+We have seen the following hardlockup report when using the converted
+serial 8250 console driver:
 
-Frank
+[    0.000000][    T0] Command line: elfcorehdr=0x145f000000  mitigations=auto security=selinux selinux=1 console=ttyS0,115200 earlyprintk=ttyS0,115200 ignore_loglevel panic=13 intel_iommu=on sysrq=yes reset_devices acpi_no_memhotplug cgroup_disable=memory nokaslr numa=off irqpoll nr_cpus=4 root=kdump rootflags=bind rd.udev.children-max=8 disable_cpu_apicid=0  
+[...]
+[    3.771531][    T1] pci 0000:3e:08.1: [8086:324
+** replaying previous printk message **
+[    3.771531][    T1] pci 0000:3e:08.1: [8086:3246] type 00 class 0x088000 PCIe Root Complex Integrated Endpoint
+[ ... more than 2000 lines, about 200kB messages ... ]
+[    3.837752][    T1] pci 0000:20:01.0: Adding to iommu group 18
+[    3.837851][    T
+** replaying previous printk message **
+[    3.837851][    T1] pci 0000:20:03.0: Adding to iommu group 19
+[    3.837946][    T1] pci 0000:20:05.0: Adding to iommu group 20
+[ ... more than 500 messages for iommu groups 21-590 ...]
+[    3.912932][    T1] pci 0000:f6:00.1: Adding to iommu group 591
+[    3.913070][    T1] pci 0000:f6:00.2: Adding to iommu group 592
+[    3.913243][    T1] DMAR: Intel(R) Virtualization Technology for Directed I/O
+[    3.913245][    T1] PCI-DMA: Using software bounce buffering for IO (SWIOTLB)
+[    3.913245][    T1] software IO TLB: mapped [mem 0x000000004f000000-0x0000000053000000] (64MB)
+[    3.913324][    T1] RAPL PMU: API unit is 2^-32 Joules, 3 fixed counters, 655360 ms ovfl timer
+[    3.913325][    T1] RAPL PMU: hw unit of domain package 2^-14 Joules
+[    3.913326][    T1] RAPL PMU: hw unit of domain dram 2^-14 Joules
+[    3.913327][    T1] RAPL PMU: hw unit of domain psys 2^-0 Joules
+[    3.933486][    T1] ------------[ cut here ]------------
+[    3.933488][    T1] WARNING: CPU: 2 PID: 1 at arch/x86/events/intel/uncore.c:1156 uncore_pci_pmu_register+0x15e/0x180
+[    3.930291][    C0] watchdog: Watchdog detected hard LOCKUP on cpu 0
+[    3.930291][    C0] Modules linked in:
+[    3.930291][    C0] Supported: No, Unreleased kernel
+[    3.930291][    C0] CPU: 0 UID: 0 PID: 18 Comm: pr/ttyS0 Not tainted 6.12.0-160000.18-default #1 PREEMPT(voluntary) SLFO-1.2 (unreleased) dd174c2cca19586eee16eaccfeba02f4d5b57c67
+[    3.930291][    C0] Hardware name: HPE ProLiant DL560 Gen11/ProLiant DL560 Gen11, BIOS 2.48 03/11/2025
+[    3.930291][    C0] RIP: 0010:nbcon_reacquire_nobuf+0x11/0x50
+[    3.930291][    C0] Code: 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 53 48 89 fb eb 02 f3 90 <48> 89 df e8 b7 fc ff ff 84 c0 74 f2 48 8b 03 48 c7 43 28 00 00 00
+[    3.930291][    C0] RSP: 0000:ffa0000000147d38 EFLAGS: 00000046
+[    3.930291][    C0] RAX: 0000000000000000 RBX: ffa0000000147e78 RCX: 0000000000000001
+[    3.930291][    C0] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffa0000000147e78
+[    3.930291][    C0] RBP: ffa0000000147e78 R08: 0000000000000010 R09: 0000000000000000
+[    3.930291][    C0] R10: 312e38303a65333a R11: 3030303020696370 R12: ff1100145f53f032
+[    3.930291][    C0] R13: 0000000000000000 R14: ff1100145f53f032 R15: ff1100145f53f072
+[    3.930291][    C0] FS:  0000000000000000(0000) GS:ff1100147ea00000(0000) knlGS:0000000000000000
+[    3.930291][    C0] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    3.930291][    C0] CR2: ff1100147e402000 CR3: 000000147d238001 CR4: 0000000000f71ef0
+[    3.930291][    C0] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[    3.930291][    C0] DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
+[    3.930291][    C0] PKRU: 55555554
+[    3.930291][    C0] Call Trace:
+[    3.930291][    C0]  <NMI>
+[    3.930291][    C0]  ? watchdog_hardlockup_check.cold+0xe7/0xec
+[    3.930291][    C0]  ? __perf_event_overflow+0x11b/0x380
+[    3.930291][    C0]  ? handle_pmi_common+0x15c/0x3d0
+[    3.930291][    C0]  ? intel_pmu_handle_irq+0x10f/0x5b0
+[    3.930291][    C0]  ? perf_event_nmi_handler+0x2a/0x50
+[    3.930291][    C0]  ? nmi_handle+0x5e/0x120
+[    3.930291][    C0]  ? default_do_nmi+0x40/0x130
+[    3.930291][    C0]  ? exc_nmi+0x187/0x240
+[    3.930291][    C0]  ? end_repeat_nmi+0xf/0x53
+[    3.930291][    C0]  ? nbcon_reacquire_nobuf+0x11/0x50
+[    3.930291][    C0]  ? nbcon_reacquire_nobuf+0x11/0x50
+[    3.930291][    C0]  ? nbcon_reacquire_nobuf+0x11/0x50
+[    3.930291][    C0]  </NMI>
+[    3.930291][    C0]  <TASK>
+[    3.930291][    C0]  serial8250_console_write+0x16d/0x5c0
+[    3.930291][    C0]  ? asm_sysvec_apic_timer_interrupt+0x1a/0x20
+[    3.930291][    C0]  nbcon_emit_next_record+0x22c/0x250
+[    3.930291][    C0]  nbcon_emit_one+0x93/0xe0
+[    3.930291][    C0]  nbcon_kthread_func+0x13c/0x1c0
+[    3.930291][    C0]  ? __pfx_nbcon_kthread_func+0x10/0x10
+[    3.930291][    C0]  kthread+0xcd/0x110
+[    3.930291][    C0]  ? __pfx_kthread+0x10/0x10
+[    3.930291][    C0]  ret_from_fork+0x31/0x50
+[    3.930291][    C0]  ? __pfx_kthread+0x10/0x10
+[    3.930291][    C0]  ret_from_fork_asm+0x1a/0x30
+[    3.930291][    C0]  </TASK>
+[    3.930291][    C0] Kernel panic - not syncing: Hard LOCKUP
+[    3.930291][    C0] CPU: 0 UID: 0 PID: 18 Comm: pr/ttyS0 Not tainted 6.12.0-160000.18-default #1 PREEMPT(voluntary) SLFO-1.2 (unreleased) dd174c2cca19586eee16eaccfeba02f4d5b57c67
+[    3.930291][    C0] Hardware name: HPE ProLiant DL560 Gen11/ProLiant DL560 Gen11, BIOS 2.48 03/11/2025
+[    3.930291][    C0] Call Trace:
+[    3.930291][    C0]  <NMI>
+[    3.930291][    C0]  dump_stack_lvl+0x4b/0x70
+[    3.930291][    C0]  panic+0x106/0x2d3
+[    3.930291][    C0]  nmi_panic.cold+0xc/0xc
+[    3.930291][    C0]  watchdog_hardlockup_check.cold+0xca/0xec
+[    3.930291][    C0]  __perf_event_overflow+0x11b/0x380
+[    3.930291][    C0]  handle_pmi_common+0x15c/0x3d0
+[    3.930291][    C0]  intel_pmu_handle_irq+0x10f/0x5b0
+[    3.930291][    C0]  perf_event_nmi_handler+0x2a/0x50
+[    3.930291][    C0]  nmi_handle+0x5e/0x120
+[    3.930291][    C0]  default_do_nmi+0x40/0x130
+[    3.930291][    C0]  exc_nmi+0x187/0x240
+[    3.930291][    C0]  end_repeat_nmi+0xf/0x53
+[    3.930291][    C0] RIP: 0010:nbcon_reacquire_nobuf+0x11/0x50
+[    3.930291][    C0] Code: 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 53 48 89 fb eb 02 f3 90 <48> 89 df e8 b7 fc ff ff 84 c0 74 f2 48 8b 03 48 c7 43 28 00 00 00
+[    3.930291][    C0] RSP: 0000:ffa0000000147d38 EFLAGS: 00000046
+[    3.930291][    C0] RAX: 0000000000000000 RBX: ffa0000000147e78 RCX: 0000000000000001
+[    3.930291][    C0] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffa0000000147e78
+[    3.930291][    C0] RBP: ffa0000000147e78 R08: 0000000000000010 R09: 0000000000000000
+[    3.930291][    C0] R10: 312e38303a65333a R11: 3030303020696370 R12: ff1100145f53f032
+[    3.930291][    C0] R13: 0000000000000000 R14: ff1100145f53f032 R15: ff1100145f53f072
+[    3.930291][    C0]  ? nbcon_reacquire_nobuf+0x11/0x50
+[    3.930291][    C0]  ? nbcon_reacquire_nobuf+0x11/0x50
+[    3.930291][    C0]  </NMI>
+[    3.930291][    C0]  <TASK>
+[    3.930291][    C0]  serial8250_console_write+0x16d/0x5c0
+[    3.930291][    C0]  ? asm_sysvec_apic_timer_interrupt+0x1a/0x20
+[    3.930291][    C0]  nbcon_emit_next_record+0x22c/0x250
+[    3.930291][    C0]  nbcon_emit_one+0x93/0xe0
+[    3.930291][    C0]  nbcon_kthread_func+0x13c/0x1c0
+[    3.930291][    C0]  ? __pfx_nbcon_kthread_func+0x10/0x10
+[    3.930291][    C0]  kthread+0xcd/0x110
+[    3.930291][    C0]  ? __pfx_kthread+0x10/0x10
+[    3.930291][    C0]  ret_from_fork+0x31/0x50
+[    3.930291][    C0]  ? __pfx_kthread+0x10/0x10
+[    3.930291][    C0]  ret_from_fork_asm+0x1a/0x30
+[    3.930291][    C0]  </TASK>
+[    3.930291][    C0] Shutting down cpus with NMI
+[    3.930291][    C0] Rebooting in 13 seconds..  
 
->
-> Acked-by: Manivannan Sadhasivam <mani@kernel.org>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> change in v20
-> - add Manivannan's ACK
->
-> change from v14 to v16
-> - none
->
-> change from v13 to v14
-> - new patch
-> ---
->  arch/arm64/boot/dts/freescale/imx95.dtsi | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/dts/freescale/imx95.dtsi
-> index 632631a2911224cadc16a943cdb467e091e43384..c59d11eb7a581a500d381ef96f1e44533052c2a2 100644
-> --- a/arch/arm64/boot/dts/freescale/imx95.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
-> @@ -1797,6 +1797,7 @@ pcie1_ep: pcie-ep@4c380000 {
->  			assigned-clock-rates = <3600000000>, <100000000>, <10000000>;
->  			assigned-clock-parents = <0>, <0>,
->  						 <&scmi_clk IMX95_CLK_SYSPLL1_PFD1_DIV2>;
-> +			msi-map = <0x0 &its 0x98 0x1>;
->  			power-domains = <&scmi_devpd IMX95_PD_HSIO_TOP>;
->  			status = "disabled";
->  		};
->
-> --
-> 2.34.1
->
->
+
+There are clearly visible two points where nbcon_atomic_flush_pending()
+took over the ownership from a lover priority context. I believe that:
+
+  + 1st occurrence is triggered by the "WARNING: CPU: 2 PID: 1 at
+    arch/x86/..." line printed with NBCON_PRIO_EMERGENCY.
+
+  + 2nd occurrence is triggered by the "Kernel panic - not syncing:
+    Hard LOCKUP" line printed with NBCON_PRIO_PANIC.
+
+There were flushed more than 2500lines, about 240kB of characters,
+in the NBCON_PRIO_EMERGENCY before the hardlockup detector
+triggered panic.
+
+If I count it correctly, a serial console with the speed 115200 baud/sec
+would be able to emit about 11.5kB/sec. And it would take about 20sec
+to emit the 240kB of messages.
+
+=> softlockup is quite realistic
+
+Solution:
+
+IMHO, we really should flush all pending messages atomically.
+It means that the watchdog reports need to be prevented
+by touching the watchdog. It is not needed in
+univ8250_console_write_thread()
+
+=> put back touch_nmi_watchdog() into univ8250_console_write_atomic().
+
+
+Warning:
+
+The log shows report from the hardlockup report. And it triggered
+only after about 0.2 sec. It looks suspicious but the softlockup
+scenario seems realistic.
+
+Note that the kernel parameter "root=kdump". The problem happened
+when booting the crash kernel using __crash_kexec(). The original
+kernel was crashed by "SysRq C" for testing purposes.
+
+It means that it was a nested boot. There might be a bug in
+the hardlockup detector in the nested boot so that perf event
+was scheduled by the original kernel and happened too early.
+Or something like this. I am going to investigate this as
+well.
+
+But still, it seems that the softlockup in
+nbcon_atomic_flush_pending() is realistic and we should put
+back the touch_nmi_watchdog() in the write_atomic() callbacks.
+
+
+[1] https://lore.kernel.org/r/20250107212702.169493-1-john.ogness@linutronix.de
+
+Petr Mladek (1):
+  serial: 8250: Touch watchdogs in write_atomic()
+
+ drivers/tty/serial/8250/8250_core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+-- 
+2.50.1
+
 
