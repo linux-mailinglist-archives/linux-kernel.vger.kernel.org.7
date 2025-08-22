@@ -1,44 +1,47 @@
-Return-Path: <linux-kernel+bounces-780951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 857F1B30B89
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:07:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE30DB30B70
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7247F6803E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:04:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E75BEB645DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966EC22A1E6;
-	Fri, 22 Aug 2025 01:57:58 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B2C23A9BF;
+	Fri, 22 Aug 2025 01:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fwCb0/jz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68981DE8A0;
-	Fri, 22 Aug 2025 01:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99ED1B4156;
+	Fri, 22 Aug 2025 01:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755827878; cv=none; b=GdceEzNCFIv4F7jKROpXJVSG+n1w5/YZkFY8nfdVPse4zXcAz2RGJAAXo9AtT5jkortocrnHHStwfdyppgL8i8oI/db9VG2KvnmwWiGoSgkMkR7EeosUYBKh0q1X9h81MSVbEGfmDVS97Lk3jVGaj3CQv/qEtn7llEimF3GA20k=
+	t=1755827965; cv=none; b=gOloCEIf5slDyB0nq4UiZBmIR+SZtKD80AVFfc1aKwVXZuk7Nc25/rcT0EehgxZUmLFslDIDK/Fv1swc6kXvDDQM+cQCnDSaDv5zLa3eCcV29bhiUT86c8tjzjvB5mwEg2X7/bJ9PYv6hcnDLE6nkkWfbe9ALgBCDME2OdF16ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755827878; c=relaxed/simple;
-	bh=yRDbTmQNyPNYdmnA/vgKUgB0b/pHIH588KMyZCw5plA=;
+	s=arc-20240116; t=1755827965; c=relaxed/simple;
+	bh=hEGBgFk9rer7lwQXMpzjj4FPsIa17LEhE/UyLSIHv80=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tJd39S76MJro7QcFg2z5tbPmjLwDUv6yvTznBWKkxH/gX2P/Bxf4N+YjteT2RLtxCZwpqhPl4ftEyTCBkNhGQM/n5gShSJGlRQNRJJsBkJtPCoLRflBr2n15NOpRr4GIQqk259/NYtEL1iIKvKZnjQfpB++jXztUjlYRRMpiKWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c7Ncf3V0TzYQtqB;
-	Fri, 22 Aug 2025 09:57:54 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 0FB161A158A;
-	Fri, 22 Aug 2025 09:57:53 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP4 (Coremail) with SMTP id gCh0CgC3fg+fzqdoemr_EQ--.16884S2;
-	Fri, 22 Aug 2025 09:57:52 +0800 (CST)
-Message-ID: <38ef3ff9-b380-44f0-9315-8b3714b0948d@huaweicloud.com>
-Date: Fri, 22 Aug 2025 09:57:51 +0800
+	 In-Reply-To:Content-Type; b=c7mw/MYtK8gw5msnfyOehRtMPC8qkxC4SG+uYmQUopL000ai/rTcVLEmSODQeFN+lzRAqUQxzGUaBKqxxBtj7dN1aAQzBAV+oFg9ztcBhF07G7wniQa9/o+coSt3qaBTjwTL8UkoAgoOgDbUq9sSObT3yf35UiEDZC76BEsJlS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fwCb0/jz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0940C4CEEB;
+	Fri, 22 Aug 2025 01:59:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755827964;
+	bh=hEGBgFk9rer7lwQXMpzjj4FPsIa17LEhE/UyLSIHv80=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fwCb0/jzIQkNPwEVBU6dtHyOVey66bf/HcR/iNP6aS0AhxrgrvMe34HD6vjnkGUZf
+	 z1O8tLkMNZpr+UzcBZV9dLBbBCwOaf+NQwl5ntySvGabL1KCpUaRFv+wfDydW+poVi
+	 X5XvF2zmqSX16ZKS+hqRP+DFJCxEdKcM7wYo6L7tOqHJI3XrYsnweALvOp8+KSqJnD
+	 2bWhxr7953gGHvjXyBJUoUfk/Lgb2omKSw1C8cEO/Qv3yAqSEKl2XaKQVhYluUWO/h
+	 UsLkNxPauxpS9RjmwleNolFzOVx4bdRBpqA+ZD7ACyej3l0Oe7T142W2dhwsBnQaC9
+	 DSd2Q1+ARL+Zw==
+Message-ID: <3812ed9e-2a47-4c1c-bd69-f37768e62ad3@kernel.org>
+Date: Fri, 22 Aug 2025 10:59:15 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,74 +49,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kernfs: Fix UAF in PSI polling when open file is released
-To: Tejun Heo <tj@kernel.org>
-Cc: Baokun Li <libaokun1@huawei.com>, cgroups@vger.kernel.org,
- chenridong@huawei.com, gregkh@linuxfoundation.org, hannes@cmpxchg.org,
- linux-kernel@vger.kernel.org, lujialin4@huawei.com, mkoutny@suse.com,
- peterz@infradead.org, zhouchengming@bytedance.com,
- Yang Erkun <yangerkun@huawei.com>
-References: <20250815013429.1255241-1-chenridong@huaweicloud.com>
- <0319ee9b-ce2c-4c02-a731-c538afcf008f@huawei.com>
- <e485b38a-183b-42c8-9aed-9c2d939add0b@huaweicloud.com>
- <aKUo7BuX-teh4IzF@slm.duckdns.org>
+Subject: Re: [PATCH RFC 24/35] ata: libata-eh: drop nth_page() usage within SG
+ entry
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Niklas Cassel <cassel@kernel.org>, Alexander Potapenko
+ <glider@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
+ Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
+ Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>,
+ Tejun Heo <tj@kernel.org>, virtualization@lists.linux.dev,
+ Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, x86@kernel.org,
+ Zi Yan <ziy@nvidia.com>
+References: <20250821200701.1329277-1-david@redhat.com>
+ <20250821200701.1329277-25-david@redhat.com>
 Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <aKUo7BuX-teh4IzF@slm.duckdns.org>
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20250821200701.1329277-25-david@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgC3fg+fzqdoemr_EQ--.16884S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7GFW8KrW7Jr13CryktF43Jrb_yoWDCwb_G3
-	y0yrZ8AwnrJa1xCa13JrsIvr92qay5ZFnxJw4rX3yxK3s5Aa4DJFyfXr93Wr15G3yUGr9x
-	KFnYqFyvy347ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
+On 8/22/25 05:06, David Hildenbrand wrote:
+> It's no longer required to use nth_page() when iterating pages within a
+> single SG entry, so let's drop the nth_page() usage.
+> 
+> Cc: Damien Le Moal <dlemoal@kernel.org>
+> Cc: Niklas Cassel <cassel@kernel.org>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  drivers/ata/libata-sff.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/ata/libata-sff.c b/drivers/ata/libata-sff.c
+> index 7fc407255eb46..9f5d0f9f6d686 100644
+> --- a/drivers/ata/libata-sff.c
+> +++ b/drivers/ata/libata-sff.c
+> @@ -614,7 +614,7 @@ static void ata_pio_sector(struct ata_queued_cmd *qc)
+>  	offset = qc->cursg->offset + qc->cursg_ofs;
+>  
+>  	/* get the current page and offset */
+> -	page = nth_page(page, (offset >> PAGE_SHIFT));
+> +	page += offset / PAGE_SHIFT;
 
+Shouldn't this be "offset >> PAGE_SHIFT" ?
 
-On 2025/8/20 9:46, Tejun Heo wrote:
-> Hello,
-> 
-> On Mon, Aug 18, 2025 at 04:00:08PM +0800, Chen Ridong wrote:
->>> A potential solution is to make the lifecycles of cgroup_file_ctx and
->>> psi_trigger match the struct kernfs_open_file they're associated with.
->>> Maybe we could just get rid of the kernfs_release_file call in
->>> kernfs_drain_open_files?
->>>
->>
->> Hi, Tj, what do you think about this solution?
-> 
-> So, I think it's really fragile for a killed (drained) kernfs_open_file to
-> be reused after the corresponding @kn is resurrected. Once killed, that file
-> should stay dead. I think it'd be best if we can do this in a generic manner
-> rather than trying to fix it only for poll.
-> 
-> kernfs_get_active() is the thing which gates active operations on the file.
-> Maybe we can add a wrapper, say, kernfs_get_active_of(struct
-> kernfs_open_file *of) which returns NULL if @of has already been killed or
-> the underlying @kn can't be activated?
-> 
-> Thanks.
-> 
+>  	offset %= PAGE_SIZE;
+>  
+>  	/* don't overrun current sg */
+> @@ -631,7 +631,7 @@ static void ata_pio_sector(struct ata_queued_cmd *qc)
+>  		unsigned int split_len = PAGE_SIZE - offset;
+>  
+>  		ata_pio_xfer(qc, page, offset, split_len);
+> -		ata_pio_xfer(qc, nth_page(page, 1), 0, count - split_len);
+> +		ata_pio_xfer(qc, page + 1, 0, count - split_len);
+>  	} else {
+>  		ata_pio_xfer(qc, page, offset, count);
+>  	}
+> @@ -751,7 +751,7 @@ static int __atapi_pio_bytes(struct ata_queued_cmd *qc, unsigned int bytes)
+>  	offset = sg->offset + qc->cursg_ofs;
+>  
+>  	/* get the current page and offset */
+> -	page = nth_page(page, (offset >> PAGE_SHIFT));
+> +	page += offset / PAGE_SIZE;
 
-Thank you Tj,
+Same here, though this seems correct too.
 
-This is reasonable, I will try.
+>  	offset %= PAGE_SIZE;
+>  
+>  	/* don't overrun current sg */
+
 
 -- 
-Best regards,
-Ridong
-
+Damien Le Moal
+Western Digital Research
 
