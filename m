@@ -1,222 +1,126 @@
-Return-Path: <linux-kernel+bounces-782680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D631B3238B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:22:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 881D7B3238C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D189D1CC83DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:21:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6614C625176
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072F62C3257;
-	Fri, 22 Aug 2025 20:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208122D6E43;
+	Fri, 22 Aug 2025 20:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jmQigWxS"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2057.outbound.protection.outlook.com [40.107.223.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ghm3Az2g"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9AC8223DCE
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 20:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755894057; cv=fail; b=TbyEBILU/KAxs9byEDm+NqUvQIG6xdfx3Rn7r5tJZCDS570EVguCe7izxYc8Kfx4lqKsoVDUBuDZBtwwoFvaufqxUZUknU24RSMvj8+SsHG7vXEP+qsVNjimHflkLwRfxIs+UXxAFizCUx3hBZuqCHMEOMb41FNGKs+K5wx2S+0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755894057; c=relaxed/simple;
-	bh=yz9HnMlecYLKbt1f5VOL1WiM5fqg2D1Mim7Gz8njxus=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lbrKj7xGbDz7JDts0LIFsuhf4qeY7XXllC+LNisRIQS6D+D+7dK+Ubb9oxiGJxl7kqaavc7LlAFkdy/33ZEwV+Qm6GPFCEGuKAkSt8UckCeuJxQvxhSjEsccFZ2W8b3pLsJQ4mdiCOF41z8APLr8h0JWgYKBy9kuPUadAG4bEZA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jmQigWxS; arc=fail smtp.client-ip=40.107.223.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QAHCvYY3wb6gk0VWpTedcsHSfGSX4xrxBalRFSPfhURLz2j1RazeGicZdckrUMKe13cUiOnRLybV5mhf4W3rArjgHVI+TbOXHVQiLjM2yYUBzWkSLSfEwbNS6MX5VRJ40yJVeHAUAKSMzWKlPOPithZel2dFpXigmyh18uKTJ09W9yYa0erXoOf8nsZ8UkV/zSvnN5n8EU1ExIsvTooGbBorul/KvJ1xcfOjPnBzl1dZ8bNvN2pAuXT1DKBylEs6KAoffWYzg9F5xIcN3ifnZ9+xvYr0S5SVxP25T6JnOzGXulFqV1k8DxjvHjYx69CdhwajAGd4uCpg7vIYyANYpw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RHECeQLRSwUHtDGzvPudG9U2/+fOeGCvvy8hJsnMmgI=;
- b=i3w4VFgQ+1p46gJLpwk1ws+0i/zo2DOXsU13i2D3ZiE2W3fHC8OieY0Uk4/Yd6lyEe+YAl08cK/SVX/5VDzprYhnaBTc4gfOFcKMad2f0SLMGetAFnNNPdyfiLZE3cZ4mF+EwXqZ8oihTpwh7gkkNGGaIDY/qMwIGpW1wZf5kyxpiF6u7t+8wUxaJXihSVRfAlIlpVptsI+oXqgQlEmBXVMVjTV8UaP7t+2ocxrEdSyiKsq5vnc2bOjozK4b+WHB1rJfBTLfV6nN2zv+J9Zfziy84WDknU1vf/Oa2RNp7x98hwa8s+5L5/EaHRSnXNoR+lgaBZEKWVZdcnyL/LYRsw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RHECeQLRSwUHtDGzvPudG9U2/+fOeGCvvy8hJsnMmgI=;
- b=jmQigWxScKIsKzXxbf9dVVQdxRe1smbQIrOYURHt62Yxi6tROydrlYXSZWNLX94az02/gToKLuBxzuTHT96nQNrvKq+deJB4WTW3Z8A+M64m96sVkPsORwRDBnYwwoYWGy89KcY9mGzTbN3v2YLtYtKRaV8ZrcLE7BWmfllcpxPjipAZ7nKMMbJ9PvAnXj9xCU2u63K27p2zYkQWJy5LR/VCSSukziGb37cjGX/FP+2E+haHX4vzrhwhrcN1NDrVqtbQfD0wSQ1grSAHFHEk7VQpTXD2P2J3ShjU54xO8GOCjbzjzheNbZRHr0jZdLuTMQxP99lMOUPJZlU9dKbLvw==
-Received: from BL0PR0102CA0067.prod.exchangelabs.com (2603:10b6:208:25::44) by
- DM4PR12MB7765.namprd12.prod.outlook.com (2603:10b6:8:113::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.18; Fri, 22 Aug 2025 20:20:52 +0000
-Received: from BL02EPF0001A105.namprd05.prod.outlook.com
- (2603:10b6:208:25:cafe::b0) by BL0PR0102CA0067.outlook.office365.com
- (2603:10b6:208:25::44) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.16 via Frontend Transport; Fri,
- 22 Aug 2025 20:20:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BL02EPF0001A105.mail.protection.outlook.com (10.167.241.137) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.8 via Frontend Transport; Fri, 22 Aug 2025 20:20:52 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 22 Aug
- 2025 13:20:26 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 22 Aug
- 2025 13:20:26 -0700
-Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Fri, 22 Aug 2025 13:20:25 -0700
-Date: Fri, 22 Aug 2025 13:20:23 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-CC: <jgg@nvidia.com>, <linux-kernel@vger.kernel.org>, <robin.murphy@arm.com>,
-	<will@kernel.org>, <joro@8bytes.org>, <kevin.tian@intel.com>,
-	<jsnitsel@redhat.com>, <vasant.hegde@amd.com>, <iommu@lists.linux.dev>,
-	<santosh.shukla@amd.com>, <sairaj.arunkodilkar@amd.com>, <jon.grimm@amd.com>,
-	<prashanthpra@google.com>, <wvw@google.com>, <wnliu@google.com>,
-	<gptran@google.com>, <kpsingh@google.com>
-Subject: Re: [PATCH 8/8] iommu/amd: Add support for nested domain
- attach/detach
-Message-ID: <aKjRB5MqCrJ2Px7G@Asurada-Nvidia>
-References: <20250820113009.5233-1-suravee.suthikulpanit@amd.com>
- <20250820113009.5233-9-suravee.suthikulpanit@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334FD1FF7D7;
+	Fri, 22 Aug 2025 20:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755894270; cv=none; b=ZOE2nsf8+k7DQ7oxGGYG3GQkYOwqntAOLBo/OzgpPnk78eLcVGui3pPeUzu9vd9jhtFP6IIWt9UyxKZCO2x067/SdSzWAXgCM6Vk2CU89b15TjcvL0QtQpoJB6+GSWXhYNBwc60i3Z75G5eXGAovwzL0kJCVvAg3eo+fgF/cZxQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755894270; c=relaxed/simple;
+	bh=bxZG6p/T1fiVTFwYT8vShK9SXRLGGL4+keW8lCA2SUc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S4UCmY3Yujo3DCGCj4Y4zoBIaFbKhlUBTPSGFRVTGvQFVnzuggDMorNRh+6AKTAtVAnmMTILeNyEmstXi3Dc5jxaRHEvDp6dBB8rkeZvjnxvmPhGB0mZi/JZT4FU94/kigboVB6m48++I48W2yqVLHShlhz1G93FU+7z2HCFx2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ghm3Az2g; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b47173edabaso405754a12.1;
+        Fri, 22 Aug 2025 13:24:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755894268; x=1756499068; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z5BZAMJAdNinjmrqtXeK5zr85hiUnHNVxz9y9YGq0B8=;
+        b=ghm3Az2gD/pIkMWWUtU5ARnEE62+Bz+yrNrelhDX2lFkDTTQAkevS9+EPraEvsRlfb
+         ujf8Lxoz+OJsjrMG/CxaT9IRe2I/RMZZeR5Iq6vbYVncOjd8r1gtoqg3TnAVV049Sqmg
+         zP60jmBi01aAF98eyCjkneZYmwQ/gb65kPRf7FqiI1GK2zMvASXA+Ko2dVCn6kCs+S6h
+         IjoropjVt473VFAGgTXy88bTBTiRPHH0QwQpiqNC86sIestaodSg18wuw/4Uu+5iPxaA
+         tp75/rRu7kEmO1lPEWOz7dLEjDqtMZyVfMnlQQFjZ2Ra/guNDnfm62p+mEWBGAnsFCY9
+         3WjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755894268; x=1756499068;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z5BZAMJAdNinjmrqtXeK5zr85hiUnHNVxz9y9YGq0B8=;
+        b=wn2EwxQt5y4yX9CcTvfx2LniwewybJRN0AEqShis4CqxyQrpFaQJRusoYv+fH83RqA
+         Iiyeeto5GsPsRgSYSuHju0xVDv+WIIOkNpeB8wC28M7Bq7cEAVw9/NbVwWPfwWFIA5t1
+         3ILFgZ3VDOBUYswqVhavY37jfBblB9dPRrVynZS6rxR+GE/gZjMFt3FdeuEL/DBfKHfa
+         txrZIesRWIDucMaZ/KWh22m6tLRrcb357aUqLUxLWsJ3CL0oeNR42/sQ47snMRA692Lj
+         dQLEGJw6b/KAAcIGLn2k+Tlm4Qdpo2VVHVF48RiQU4DY5kUnpPFhLgA2kHe4VF8k1tQD
+         5XWg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+44cwemgSntBEYkS5K+v5a03NP0iZmsGEb7P07QjglTZxIBCA2hHmTkAU6DfhSOJnviv72XCsuWgS7ETlWno=@vger.kernel.org, AJvYcCUISOK2sVs3sMBAdvSecAycw3+thlkS+wjfUKTiajWrKghlPy0OF6hg8TnqxT+HA8cmpgJvz16pKXrE5lo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk9CuFACRLjaZtJGHhUFlxqjVrPYwccPX5bjBgp0cEZ9/hZUOY
+	J2lT819BtwkV7G3jEBQFDGqD77MNQlGilDozfRH+CsLwUkyKkb7VzPxWvmQDgHFgVmuHFM6FIR7
+	C4TRZKibIKdG+2IxsY8ZjYaYmbVASH/Q=
+X-Gm-Gg: ASbGncuVooCagf+ZOL2npOwrkKPnZvEo4oJerefdW3xDVvGjzZOqcerkKCw5j9XTscJ
+	5r7ZXr1eb95F9la3BG9r9ZBOuuaX/FCILbWSUj8DwONKGfyqTj3kexpuMyfUkCii9ADYjjGKB+h
+	t8EsfATuBMRhGNw0FJ6BxArxjy4o2NF6YEwRfei1CukqUSq4ExwGgDoOqrVHkznZue+QSZvrMlV
+	j0hj7bOwy2yPhMZN7lmIsRtTM1RSLUToL95wmp4/g2mlrPnKLPaqFhCs66MhaU2VIqrSvnNj1yn
+	hg0/3jxE8YYxKcMQVVxq0ih0aA==
+X-Google-Smtp-Source: AGHT+IHhYCS+i34yL8mwZtpaljVlQVFlFvjT7BlrbezunK05lKaSzGUBdYFxNjc5hrmCJehwC+1vQkt5CawSg2N0OZg=
+X-Received: by 2002:a17:902:db0c:b0:240:9dcd:94c0 with SMTP id
+ d9443c01a7336-2462edfb000mr29920735ad.2.1755894268437; Fri, 22 Aug 2025
+ 13:24:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250820113009.5233-9-suravee.suthikulpanit@amd.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A105:EE_|DM4PR12MB7765:EE_
-X-MS-Office365-Filtering-Correlation-Id: 032df5e3-dac9-4ffe-ceed-08dde1b9644b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|7416014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+T45q6UR4KfNzsciJl3Dpb80JQFublKUe6jmV075zMZgurIrRZQUYmMmlU8v?=
- =?us-ascii?Q?zSVXCwfDj6g+QNu1TUj+ULck+KiI7Skhf5Fk7M8wCpIivA/Aq1PLUf+9eYnv?=
- =?us-ascii?Q?3zqSSPMjUL+DQQ749Yyt+yKjvL5pkG5uRJaHs6BV6YszIn/SZWz73z5oVy2F?=
- =?us-ascii?Q?Ye1zyOdeSPYdOIC5QEyC5ZlG3ZR/JhhQQEy3GVyfhYM5Ac6pXlUHRY1ad7rU?=
- =?us-ascii?Q?Bu714c1iwqC7k1dyk8EVtSWUFhGk2bHRO5mjtP+rP8D8RWinugZcCTvMowpk?=
- =?us-ascii?Q?TGtMZSnh2hJWhYeetRgu6RaVDBOf7xuQBEUIPewvdFje7Rwucc7miNjZbQpN?=
- =?us-ascii?Q?gPCdWncppVA+TsWNlsq501MU1yVTcErgd6qL5+XK1FuVOwQT1D3ctedMSJDO?=
- =?us-ascii?Q?35xv1sxcixZCj58QCmE4ngUeBWZXs3AdB+cAVgm0ko1QMpd+R6PNREaotpF8?=
- =?us-ascii?Q?cWAG8rWp76OsKFhVwRFBkJ0lh7WWdQeTFWx9KXtZyx4PGXVy07XR69aTIKSb?=
- =?us-ascii?Q?Stut3w1+YIqgDa8MJLLKrHRgAq3gM2KftvtSFIsV+pobx7aLxhHJX0lJ6Pqs?=
- =?us-ascii?Q?5aywT2pup8zrf77Y2CCzy5Vl6EYLqOhCYjLtxZo6eDX+qGM/g+Yt8KjAEISX?=
- =?us-ascii?Q?DnAY9szWZAORIyo2LWEMob7BGYgx3VW/i3Q3jhqc1yHd5icNJaUcQOgwkq0z?=
- =?us-ascii?Q?0MASV/jvMjLwc8YbUa6RMqsyfaOLgaZWYxjORGYjtfzTUrb3Q5kJDfwsPBhL?=
- =?us-ascii?Q?Rk3lBEbDX2AtVRgL4Nq1+hLRe7ewas5m0fL4P1n0/qnBNl4Rw4fNGLSGfYNF?=
- =?us-ascii?Q?9BGpwYguH2MyIkR/TBPO2nFFhs6Yefoh1tqQmkOHZKZARaUIwdHQ/mfuh0nv?=
- =?us-ascii?Q?sZUnr2Gb5PHggB3bGtN1p8cve+JEYBhSu+CkXXRYSUGwYEzqlqBtN66zdTTn?=
- =?us-ascii?Q?T60sBMLxxP4wEtQ846k9Q2UAJwg9MCPw8ag5mgnnVbwgzw8uQ+cbplUKXoG8?=
- =?us-ascii?Q?HR1Ny2ooyvt0j+ChNiTLO0bsrtbDgmvzx9oFlqL95LHOU9ZiGa3wOKNkUZcq?=
- =?us-ascii?Q?Y75kFd7X78BS6ZRh1phEbIS6gbS1pFsVTsNMVVKFAHhhT+3Tb4xVCclo0FhM?=
- =?us-ascii?Q?NAd70rQ8y6gNXKemaUtlbr/EvoESilBS6TPKkwNrXaTDMXwiqzzz8+eDiBtX?=
- =?us-ascii?Q?FadvfG8E70JrhKaJvLu4+5tM6R9P9Ml+9sTxx4wUw7C7X86uom23aVeIIvUW?=
- =?us-ascii?Q?u/TkhfZScm+4F+H9zKQzbJR5JE9SDPWxrnSDFLoGJOIu7EYhOJsVAKVPC8NJ?=
- =?us-ascii?Q?5Iw7DliTORQARSP39fosZO8HHNoFQ7/9LEKpQ/oTVRU675r9+nGNF3ir4mRM?=
- =?us-ascii?Q?VwOumcS0AgslUWoyU4ovN+Thw8iUxsAceJ9rHMQiovvJu+7/BfKdhVATeE1Y?=
- =?us-ascii?Q?SHtMyEngC4vlA583StmQcsR3NTgMTDpiATb7tC8MdqnXCGYYbjzVSgsxn/to?=
- =?us-ascii?Q?DL47Bw4rh1B6cZqbnYJNT+2Mlvm3ti+uE0/d?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(7416014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 20:20:52.2343
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 032df5e3-dac9-4ffe-ceed-08dde1b9644b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A105.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7765
+References: <20250821091939.14019-1-work@onurozkan.dev> <CAH5fLggt4YJe93xo9KTr=hTQoj28=jjJtaxo=gFmnTbWmm8SRg@mail.gmail.com>
+ <20250822080252.773d6f54@nimda.home>
+In-Reply-To: <20250822080252.773d6f54@nimda.home>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 22 Aug 2025 22:24:17 +0200
+X-Gm-Features: Ac12FXym5dbFGOC1DxZTCMQvo6hwH20UjanpMh4Zi3nDBMHpqgm8FYGQmWowxbI
+Message-ID: <CANiq72mstOhnZREwLoO5OR7JdnoFnQ-PDD7wQkJgjm-0A52DkA@mail.gmail.com>
+Subject: Re: [PATCH] rust: uaccess: use to_result for error handling
+To: =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+Cc: Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, dakr@kernel.org, tamird@gmail.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 20, 2025 at 11:30:09AM +0000, Suravee Suthikulpanit wrote:
-> +static inline bool has_gcr3_table(struct gcr3_tbl_info *gcr3_info)
-> +{
-> +	if (!gcr3_info || (!gcr3_info->gcr3_tbl && !gcr3_info->trp_gpa))
-> +		return false;
+On Fri, Aug 22, 2025 at 7:03=E2=80=AFAM Onur =C3=96zkan <work@onurozkan.dev=
+> wrote:
+>
+> Nice catch. I could use `try_into().unwrap_or(0)` but that feels a bit
+> iffy since it would silently avoid the error if `isize` happens to be
+> much smaller than what `i32` can handle (though I am not sure if it's
+> possible in practice in the kernel codebase). Let's just ignore this
+> patch.
 
-"gcr3_info" seems always pointing to "&dev_data->gcr3_info", which
-can never be NULL.
+`isize` is at least 32-bit, but I am not sure that would be more readable.
 
-> @@ -2061,7 +2087,14 @@ static void set_dte_entry(struct amd_iommu *iommu,
->  	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
->  	struct dev_table_entry *dte = &get_dev_table(iommu)[dev_data->devid];
->  
-> -	if (gcr3_info && gcr3_info->gcr3_tbl)
-> +	/*
-> +	 * For nested domain, use parent domain to setup v1 table
-> +	 * information and domain id.
-> +	 */
-> +	if (amd_iommu_domain_is_nested(domain))
-> +		domain = domain->parent;
-> +
-> +	if (has_gcr3_table(gcr3_info))
->  		domid = dev_data->gcr3_info.domid;
+If we want to make all these cases go through a `to_result`-like
+function, then we may want to have variants of that and so on instead
+-- Onur created this related Zulip thread:
 
-There is already a local variable "gcr3_info".
+    https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/top=
+ic/returning.20.60Ok.28c_int.29.60.20instead.20of.20.60Ok.28.28.29.29.60.20=
+on.20.60to_result.60/near/535616940
 
-> +static int nested_gcr3_update(struct protection_domain *pdom, struct device *dev)
-> +{
-> +	struct iommu_dev_data *dev_data = dev_iommu_priv_get(dev);
-> +	struct iommu_hwpt_amd_v2 *hwpt = &pdom->guest_hwpt;
-> +	struct pci_dev *pdev = to_pci_dev(dev);
-> +
-> +	if (!pdev || !hwpt)
-> +		return -EINVAL;
+Similarly, we also may want to have a function or similar that allows
+to perform such infallible casts (that are not infallible in general
+Rust but are in the kernel); for reference, a similar recent
+discussion at:
 
-to_pci_dev is a container_of from the dev. !pdev indicates a !dev
-that should never happen in the path of an attach_dev op. Or, did
-you actually want to check if dev_is_pci(dev)?
+    https://lore.kernel.org/rust-for-linux/CANiq72nW=3DXuUFqOB-6XavOPXtpbkH=
+sagEkYvcD2JfCEiopYo=3DQ@mail.gmail.com/
 
-Also, hwpt is "&pdom->guest_hwpt", which would never be NULL.
+Thanks!
 
-> +static int amd_iommu_nested_attach_device(struct iommu_domain *dom, struct device *dev)
-> +{
-> +	struct iommu_dev_data *dev_data = dev_iommu_priv_get(dev);
-> +	struct protection_domain *pdom = to_pdomain(dom);
-> +	struct pci_dev *pdev;
-> +	int ret;
-> +
-> +	if (dev_data->domain == pdom)
-> +		return 0;
-> +
-> +	ret = nested_gcr3_update(pdom, dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (dev_data->domain)
-> +		amd_iommu_detach_device(dev);
-> +
-> +	ret = __amd_iommu_attach_device(dev, pdom);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pdev = dev_is_pci(dev_data->dev) ? to_pci_dev(dev_data->dev) : NULL;
-> +	if (pdev)
-> +		amd_iommu_pdev_enable_cap_ats(pdev);
-
-Is "dev_data->dev" expected to be "dev"?
-
-Nicolin
+Cheers,
+Miguel
 
