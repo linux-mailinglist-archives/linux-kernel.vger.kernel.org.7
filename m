@@ -1,354 +1,170 @@
-Return-Path: <linux-kernel+bounces-780967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61A1B30BB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:14:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E72BB30C02
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32D47566E30
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:13:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF2501D01D3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C346C1A9FBE;
-	Fri, 22 Aug 2025 02:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="dEyUYiOn"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F28F21E0BE;
+	Fri, 22 Aug 2025 02:47:17 +0000 (UTC)
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2117.outbound.protection.partner.outlook.cn [139.219.17.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D7D126C05;
-	Fri, 22 Aug 2025 02:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755828773; cv=none; b=bw1jkgNwtjZCXMhLJD6aFSVKtLbThVv2PKX9TNMhruR1iWSvFI+vW4g3btWyHckr5Sl1q2j+DrKMc29aFm6hd61ktTOh9JBTA3WI8dygkPiqJ5yfZ+h7Q0VOOgO2yi8CHcywMy1dxHxIMWgajTmV1UmP0W95xJDtZkxCNTIVBd8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755828773; c=relaxed/simple;
-	bh=dT/ppQboxokHmV6A4TDPBDaS0kRa89Nh5LmKkaPjLMI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=omLsjL4hIzMYg3XK1OnPDS/JCUaIy7OwKQb0OfFlNolLuyG3KssRCY4qJfpzkZccoc5kHedZHakhMa5j0bFjd8ICRAualSYcls9ZP6GuouYXI0agaPP/hSlM99v8/XQ/LYU4COixNO/Myukrn4hNcDW1q/lSvlwDxB+CIGQciIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=dEyUYiOn; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 7d09d76a7efd11f08729452bf625a8b4-20250822
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=O9q6iG++/55RQMII1NqU9QCk4wVuM1zE8AJlHawN1lw=;
-	b=dEyUYiOn04GMHS41JYdy0sRsL79X8ejWhgDp8pE81Pw4Jpz4hMxh2twI+mFIXGM9w52LDYzbGFGjC61Js9X6N78v/AfskIgdCkiraUxTsa/cYw223PEmIpSdE4QsV1y3QU5zu3L5t9ZX3gFcF4T2LiFDka6SKZc9L7Dko0WM7l4=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:8fb7cc2f-c5be-4468-8911-ae3d641e9d40,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:f1326cf,CLOUDID:c12abe44-18c5-4075-a135-4c0afe29f9d6,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:-5,Content:0|15|50,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 7d09d76a7efd11f08729452bf625a8b4-20250822
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
-	(envelope-from <jjian.zhou@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2118202920; Fri, 22 Aug 2025 10:12:43 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 22 Aug 2025 10:12:41 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 22 Aug 2025 10:12:40 +0800
-From: Jjian Zhou <jjian.zhou@mediatek.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Jjian Zhou
-	<Jjian.Zhou@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Jjian Zhou
-	<jjian.zhou@mediatek.com>
-Subject: [PATCH v5 2/2] mailbox: mediatek: Add mtk-vcp-mailbox driver
-Date: Fri, 22 Aug 2025 10:12:09 +0800
-Message-ID: <20250822021217.1598-3-jjian.zhou@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250822021217.1598-1-jjian.zhou@mediatek.com>
-References: <20250822021217.1598-1-jjian.zhou@mediatek.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AEE393DC6;
+	Fri, 22 Aug 2025 02:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.117
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755830836; cv=fail; b=PQiFWav0MXmYmmX4clTtkOsXVAq3KMjbQzj5HYHw6GCmod+LCQs9SVLicMX4AcsD1/CVnIIMlzZeyY+y/hr1/aiH2YNS0sQiA0kexKWipBm+jf7sfLHpRLeEtEr1rY3BlZ1X6t4J7T1TSxqh1Q5PbkVEsgbglo3uKZQ9Yb3J7Xk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755830836; c=relaxed/simple;
+	bh=fkGugi36vkKwmkDtB8Dk84tdNc0FOy9r8GBmyjQVdA8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HBuRGLXQy6LBZoRX8aeiDHnv7LKaJTKI8nH0IjH4IDuGHmDJk1WApTRzDzKc2kUkytzQyzJix8sAvGRFzczZjEVpujBpwASKt0Cw03PMLoby+ROp783MNfeu8B4QjgcKgmGR8udEHFLGM/w3zAKOAkgKxZfQUE7a0SP6gq8+sh0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CoJCk7JmXMu0Fyuaornn7NkhfH3EgFJIqfPyjTrjHOsqnUMqmvzdtoUJuxRcAO2vTw5qLN6bNu7HZWDOfM0pSRno2wc8CUs3k1Vd2T6KFII6yOS/6C89PAs0eHHqLoEnYEJSgeSnQhw9L8Ij4veWOOt8JR5EsUZk/ji5oFqB+5b7nDQ90G/DhVa/AlN+JrV/QTJ+eubUbluM/U0jJB1Hmu+mvLIkFKjozKhFKVEEjmhfpbPS3nYpHQVB7pN+XMbqY2tk1x63TG1XtxVrgNW5x8waUPkFb/QjmwYTSaZ94GMDSNv+I3G6xF0pACT/ui1moFz1sSUWqsjXxDJZqJXXxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fkGugi36vkKwmkDtB8Dk84tdNc0FOy9r8GBmyjQVdA8=;
+ b=Q7hYzDOqmFQgr2o5vfv3ah4224aPx0Boo4OGSRqtZgDrSHw/aFpMMhcGysrZS+Gu7DQzNsszC3O++Bpt4hRCaXFTRvdrte0m+ouHBNZkpTqAeQ/dhS0pIsUnu/QmnKTW+aw3NtHEZE1f7gw+bQDxdt/15x4ZSq7K4JUs+vwIeZfb+QdYPgUQx8F12P8W1p5lv3JNv+JVtCxs4YwAKKVf4QCKkyosgyOsmsxbWCH06G4DEWm3k7jjEgP2FDFk9pPoduUTVQLrPZc5J8a2WQW0sUgy4gjqR4/hyPj2v8/eRbo/GgfvwNyll1tlsCHTp6Hje7c7EqsFnNQuKcJo8y9ZdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:7::14) by ZQ2PR01MB1323.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:7::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.29; Fri, 22 Aug
+ 2025 02:13:35 +0000
+Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ ([fe80::2595:ef4d:fae:37d7]) by ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ ([fe80::2595:ef4d:fae:37d7%6]) with mapi id 15.20.9031.024; Fri, 22 Aug 2025
+ 02:13:34 +0000
+From: Hal Feng <hal.feng@starfivetech.com>
+To: Vivian Wang <wangruikang@iscas.ac.cn>, Conor Dooley <conor+dt@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>, Heinrich
+ Schuchardt <heinrich.schuchardt@canonical.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Palmer Dabbelt
+	<palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou
+	<aou@eecs.berkeley.edu>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC 3/3] riscv: dts: starfive: Add VisionFive 2 Lite board
+ device tree
+Thread-Topic: [RFC 3/3] riscv: dts: starfive: Add VisionFive 2 Lite board
+ device tree
+Thread-Index: AQHcEoPTVFgiZ2cNsUahDKGHWBxu8bRtJRKAgADI63A=
+Date: Fri, 22 Aug 2025 02:13:34 +0000
+Message-ID:
+ <ZQ2PR01MB1307E45973922C6C3BC31A7FE63D2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+References: <20250821100930.71404-1-hal.feng@starfivetech.com>
+ <20250821100930.71404-4-hal.feng@starfivetech.com>
+ <c1396997-fa92-47cd-9bc6-8dcb67e87eb8@iscas.ac.cn>
+In-Reply-To: <c1396997-fa92-47cd-9bc6-8dcb67e87eb8@iscas.ac.cn>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: ZQ2PR01MB1307:EE_|ZQ2PR01MB1323:EE_
+x-ms-office365-filtering-correlation-id: 7d8027b7-fda7-4560-0d71-08dde1217fa2
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|41320700013|366016|38070700018;
+x-microsoft-antispam-message-info:
+ k1ODaHAaXu3N+2Qw6s74jruJaGXkQb9hFufsNuNgkPHbNAn11GvDTEWlyBO4+gc5bX0oqxtz1Kl1LjN0LuSMLQiNQGN82sUbZ8nZzMSnqFDIuhkjekEd6RuRyLU2+6Ctv6Rll2QnUQEQp5bnzC3NCiiVFQRFvwrhWqpwZCy/psZT7MI5c+gC8RiOuBM4awDs065J0l04YT9EfpDzBa3vtkz6ca5pBSXRZvDmsKjajFLZRidy3yciyRsHt2uQz047HO0Fqqdfzg1m4MQ3rLL3SABM93RB0QZ5Y3RpI9CZ1SdGhPqTmlA1bK+6aFAKXqyTycrAhMy4naHQgQ9thPtr2nXqcD+XDvCIjEUwwNb2m8122ZP8qsS/mCRjQ+DWGm3VvHhf5E9yBUMS5utv2ouQG0ErbulNOp7kwNtnltSBA/TiqzsG+ltQt/Kn84cdp7xl3haunkk+GI5KkqRusFTFVDhFL6XLlIYpTCN4U3/BULpnFle6VcnrLmKiSOG2XbcCOHym3VAQ9LtmqEOVOuRA4IFSzbAFa/EXghcx1gBKSyI9yMwNaHa0X6Fql6sJDJ1jjAm0qOeWAKOj+bOqMWhnVNctSqmkw9iXcb9EZR79rKI=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(41320700013)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?ZlRhejdXbVpNam1qWmhScXlqMjdBRm5NMVp1bTZKUmtUaWY4SVlBUTkzMnVQ?=
+ =?utf-8?B?bW1NUGxBa25FNVZkSWNjaFQ2L1RadmNqOWhRd2JBQklYb2pmTU40OVMvNFFr?=
+ =?utf-8?B?ZlhZUWl1T09FVmxTTFdxNERiMnBNcFE2Nk9oNnk2bnFsb20rT3pVaVNLVlhE?=
+ =?utf-8?B?VjJNS3kyUWxwMnhJU09zOURuc3dvNXBNaTRaZEhRandpZUVDOGtTcW5JYVNL?=
+ =?utf-8?B?ckIwYkR3NG9vbmsrNGV6MDRNbzJRcEpqWG5jOVhZWlBBM0RWZ094VmpvcEYx?=
+ =?utf-8?B?SU9WbTMwRTZzeFdvdW9CbWpyWWFXY2oxY21jRzBIMTdUcUNOSTllZDdYenVS?=
+ =?utf-8?B?V2YzTWt1bkJZNmtLSlM5UFNtbEZGM3RQeTBaWW84TThpSGcxV3RZTXJNV1FD?=
+ =?utf-8?B?aTZFZDBieXF2UkpXczMreWNuekFqLytKZVo0SHJwZm5UNXl0WDBjY0ovTk96?=
+ =?utf-8?B?Q3Z6c1Zwb3ZKZ1V3bUNORU1nRElDM2Z1Z3JLVTYzNnlKMVEzNzMzeGl6UXl2?=
+ =?utf-8?B?bVFzTERJanc1ajZJU2NkdllpUmtqY3duTTlaUFpTNy9POTNLemRWSXhyaGFF?=
+ =?utf-8?B?TmwzUkhSNndlalhmOHZ3dXZweTFpaThYbjdydFIzWklQYWtaVTlVUlpicUo3?=
+ =?utf-8?B?empSdm9VNWM1M2xLMzNaOFBUV1pZNlBya3dMTzVIbDBpSDBHWi83NUVUWCtC?=
+ =?utf-8?B?TS9aQ0hxMmdSREhITHZBSjBOTkhBakJ5LzM1SWo5RHJ4aUpUZXBQb1dTNkx6?=
+ =?utf-8?B?dkJzcktncks5clRTeFVZR2d3MnFYWUJucVQ1L2NJYWxqN1RrTS9xZ3Z6Wm85?=
+ =?utf-8?B?cFJXQy9GeEoxMFlUL1NacEtBckpka2ZJZWRHWENSajdFckdBd1BvTndoVGlr?=
+ =?utf-8?B?UW9TeElXYXFUWXQ2clF4YXYyOTZHeWlhSjc5YkR3UEZ4TGgyT3RDcGp1bTNL?=
+ =?utf-8?B?RS9FbFZjUEdvWkRvdWNXVU95Q05XUkhzZGxnL1ByWnRId0dzbDFhMlkzMzl0?=
+ =?utf-8?B?QTdSTjlVZVRMNWU5Um8yU0ZuN0hRb2RUZWJIUkJEM2tRejA1NktUTXVOQi9I?=
+ =?utf-8?B?SG1BZ1VQY0hsNk10MmwwUTNMbkt2dy84QTBBQ1M2SklXM2VRb243UStmcjNz?=
+ =?utf-8?B?QzRVZzFTenFMa1oxT3VrMkIwQUFzTUFvd1dyLzZZNC93YzB4ai9BTWFyVldi?=
+ =?utf-8?B?VzlSbG01azhHelRmMHZZNFl2Mk4wMC9xVFQ1WWJmblloUDkyT0FTcy9JTWVo?=
+ =?utf-8?B?WlEzVDl4aFZ6OGNtRUdkc2hlZFpETjRxY2QyS3pCL2lwUXJKcUkwM09KRW9J?=
+ =?utf-8?B?cG02S29TSGt1UCtxUFZCVGNMOFIvMTBZMk5rOHZINHNFUEx3SVpUd2l1b05v?=
+ =?utf-8?B?MHRrRGRrWTNmcDJ3OFpISUlPSlFtSDVKV1FvZTJMU0dVY2JwSUROV2lTdDlp?=
+ =?utf-8?B?cjVMWmlPQVErd21HazR3RmxOaUkzY0VUV2NjMXZ6L0dxTjFRN2h2VVRKbTJF?=
+ =?utf-8?B?V1BKbmQ5WjgvWVUrS09Jc3dXY2l0Y1dJeCtpZEs2ZWJhakxkODlHanV3Uk9N?=
+ =?utf-8?B?WjVxeU9rdmtFQTJqMG9pUHJnR0grcDNSdEgxODVBWlFrV2pxUk5IZ01tZmxs?=
+ =?utf-8?B?c0ZTZG01L0NhRUExdkRTYzNnTHFLcWFjblZYUG9QdnNreEFXdUtrVkZFL2NM?=
+ =?utf-8?B?dW43SXBvNFQ4UVZUTS9raHpGWWk5YlRnbGFWcC9TSVdyTUVzVEJnMXpZbDg1?=
+ =?utf-8?B?MHdHQmJWWVFaWVh4K2JlbFZ2WGJITHRGd3VaUmg0Q0hseEthNmhPTlJ5aHFN?=
+ =?utf-8?B?UmNyZHdCbE5rZHNTR2JWdWJmQ2R2V3VlOXlWRE10YjlKZ0FlWW82NUsrOXlj?=
+ =?utf-8?B?WGtFTmRUT3lER3NwQ3ZOQXZaVU1OR0hRU3dGaGNPdlN4dHRRek5hMUs4ck9H?=
+ =?utf-8?B?bkFlNGdMdUkvcUxJT0U3Vzh3NlpVa01ROUxGUmlEVnZ3aVlDYlFFbzl4bWk2?=
+ =?utf-8?B?aUtpRm9rODIvYm8xeER6VXVIMThBUlFnNGVOeDJOTnhVRFBTVTNTZllzc0xo?=
+ =?utf-8?B?R2EvWC96cUhScWJDV3g4cTJpaHJuVGxQMlNjN2JTQkFJK29nNnBRNENTMTVn?=
+ =?utf-8?B?cnhod1pMZ0dqQTZmOWI1d0NIditXZ2dYOEd1SU1BVm9Ta2w0NVZoRzlrSzBN?=
+ =?utf-8?B?cnc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d8027b7-fda7-4560-0d71-08dde1217fa2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2025 02:13:34.7715
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zPcFiY+rlmdrTSMWykSUzViZfjupmnQvo3ysl7obSpaJQ0WItS8mRT90ZhRRQp0gzHiDrGHpd/CBrxJx41+/FeGbSamCPJng39/OEH72ilA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ2PR01MB1323
 
-Add mtk-vcp-mailbox driver to support the communication with
-VCP remote microprocessor.
-
-Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
----
- drivers/mailbox/Kconfig                 |   9 ++
- drivers/mailbox/Makefile                |   2 +
- drivers/mailbox/mtk-vcp-mailbox.c       | 174 ++++++++++++++++++++++++
- include/linux/mailbox/mtk-vcp-mailbox.h |  32 +++++
- 4 files changed, 217 insertions(+)
- create mode 100644 drivers/mailbox/mtk-vcp-mailbox.c
- create mode 100644 include/linux/mailbox/mtk-vcp-mailbox.h
-
-diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-index 02432d4a5ccd..c28bdb855663 100644
---- a/drivers/mailbox/Kconfig
-+++ b/drivers/mailbox/Kconfig
-@@ -294,6 +294,15 @@ config MTK_CMDQ_MBOX
- 	  critical time limitation, such as updating display configuration
- 	  during the vblank.
-
-+config MTK_VCP_MBOX
-+	tristate "MediaTek VCP Mailbox Support"
-+	depends on ARCH_MEDIATEK || COMPILE_TEST
-+	help
-+	  Say yes here to add support for the MediaTek VCP mailbox driver.
-+	  The mailbox implementation provides access from the application
-+	  processor to Video Companion Processor Unit.
-+	  If unsure say N.
-+
- config ZYNQMP_IPI_MBOX
- 	tristate "Xilinx ZynqMP IPI Mailbox"
- 	depends on ARCH_ZYNQMP && OF
-diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
-index 98a68f838486..07278871d254 100644
---- a/drivers/mailbox/Makefile
-+++ b/drivers/mailbox/Makefile
-@@ -63,6 +63,8 @@ obj-$(CONFIG_MTK_ADSP_MBOX)	+= mtk-adsp-mailbox.o
-
- obj-$(CONFIG_MTK_CMDQ_MBOX)	+= mtk-cmdq-mailbox.o
-
-+obj-$(CONFIG_MTK_VCP_MBOX)	+= mtk-vcp-mailbox.o
-+
- obj-$(CONFIG_ZYNQMP_IPI_MBOX)	+= zynqmp-ipi-mailbox.o
-
- obj-$(CONFIG_SUN6I_MSGBOX)	+= sun6i-msgbox.o
-diff --git a/drivers/mailbox/mtk-vcp-mailbox.c b/drivers/mailbox/mtk-vcp-mailbox.c
-new file mode 100644
-index 000000000000..6f48215896d2
---- /dev/null
-+++ b/drivers/mailbox/mtk-vcp-mailbox.c
-@@ -0,0 +1,174 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2025 MediaTek Corporation. All rights reserved.
-+ * Author: Jjian Zhou <jjian.zhou.@mediatek.com>
-+ */
-+
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/mailbox_controller.h>
-+#include <linux/mailbox/mtk-vcp-mailbox.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+struct mtk_vcp_mbox_priv {
-+	void __iomem *base;
-+	struct device *dev;
-+	struct mbox_controller mbox;
-+	const struct mtk_vcp_mbox_cfg *cfg;
-+	struct mtk_ipi_info ipi_recv;
-+};
-+
-+struct mtk_vcp_mbox_cfg {
-+	u32 set_in;
-+	u32 clr_out;
-+};
-+
-+static inline struct mtk_vcp_mbox_priv *get_mtk_vcp_mbox_priv(struct mbox_controller *mbox)
-+{
-+	return container_of(mbox, struct mtk_vcp_mbox_priv, mbox);
-+}
-+
-+static irqreturn_t mtk_vcp_mbox_irq_thread(int irq, void *data)
-+{
-+	struct mbox_chan *chan = data;
-+	struct mtk_vcp_mbox_priv *priv = get_mtk_vcp_mbox_priv(chan->mbox);
-+
-+	/* get irq status */
-+	priv->ipi_recv.irq_status = readl(priv->base + priv->cfg->clr_out);
-+
-+	__ioread32_copy(priv->ipi_recv.msg, priv->base, MBOX_SLOT_MAX_SIZE / 4);
-+
-+	mbox_chan_received_data(chan, &priv->ipi_recv);
-+
-+	/* clear irq status */
-+	writel(priv->ipi_recv.irq_status, priv->base + priv->cfg->clr_out);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static struct mbox_chan *mtk_vcp_mbox_xlate(struct mbox_controller *mbox,
-+					    const struct of_phandle_args *sp)
-+{
-+	if (sp->args_count)
-+		return NULL;
-+
-+	return mbox->chans;
-+}
-+
-+static int mtk_vcp_mbox_send_data(struct mbox_chan *chan, void *data)
-+{
-+	struct mtk_vcp_mbox_priv *priv = get_mtk_vcp_mbox_priv(chan->mbox);
-+	struct mtk_ipi_info *ipi_info = data;
-+	u32 status;
-+
-+	if (!ipi_info->msg) {
-+		dev_err(priv->dev, "msg buffer is NULL.\n");
-+		return -EINVAL;
-+	}
-+
-+	status = readl(priv->base + priv->cfg->set_in) & BIT(ipi_info->index);
-+	if (status) {
-+		dev_warn(priv->dev, "mailbox IPI %d is busy.\n", ipi_info->id);
-+		return -EBUSY;
-+	}
-+
-+	if (ipi_info->slot_ofs + ipi_info->len > MBOX_SLOT_MAX_SIZE)
-+		return -EINVAL;
-+	__iowrite32_copy(priv->base + ipi_info->slot_ofs, ipi_info->msg,
-+			 ipi_info->len);
-+
-+	writel(BIT(ipi_info->index), priv->base + priv->cfg->set_in);
-+
-+	return 0;
-+}
-+
-+static bool mtk_vcp_mbox_last_tx_done(struct mbox_chan *chan)
-+{
-+	struct mtk_ipi_info *ipi_info = chan->active_req;
-+	struct mtk_vcp_mbox_priv *priv = get_mtk_vcp_mbox_priv(chan->mbox);
-+
-+	return !(readl(priv->base + priv->cfg->set_in) & BIT(ipi_info->index));
-+}
-+
-+static const struct mbox_chan_ops mtk_vcp_mbox_chan_ops = {
-+	.send_data	= mtk_vcp_mbox_send_data,
-+	.last_tx_done	= mtk_vcp_mbox_last_tx_done,
-+};
-+
-+static int mtk_vcp_mbox_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct mtk_vcp_mbox_priv *priv;
-+	struct mbox_controller *mbox;
-+	int ret, irq;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = dev;
-+	mbox = &priv->mbox;
-+	mbox->dev = dev;
-+	mbox->ops = &mtk_vcp_mbox_chan_ops;
-+	mbox->txdone_irq = false;
-+	mbox->txdone_poll = true;
-+	mbox->of_xlate = mtk_vcp_mbox_xlate;
-+	mbox->num_chans = 1;
-+	mbox->chans = devm_kzalloc(dev, sizeof(*mbox->chans), GFP_KERNEL);
-+	if (!mbox->chans)
-+		return -ENOMEM;
-+
-+	priv->ipi_recv.msg = devm_kzalloc(dev, MBOX_SLOT_MAX_SIZE, GFP_KERNEL);
-+	if (!priv->ipi_recv.msg)
-+		return -ENOMEM;
-+
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	priv->cfg = of_device_get_match_data(dev);
-+	if (!priv->cfg)
-+		return -EINVAL;
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	ret = devm_request_threaded_irq(dev, irq, NULL,
-+					mtk_vcp_mbox_irq_thread, IRQF_ONESHOT,
-+					dev_name(dev), mbox->chans);
-+	if (ret < 0)
-+		return ret;
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	return devm_mbox_controller_register(dev, &priv->mbox);
-+}
-+
-+static const struct mtk_vcp_mbox_cfg mt8196_cfg = {
-+	.set_in		= 0x100,
-+	.clr_out	= 0x10C,
-+};
-+
-+static const struct of_device_id mtk_vcp_mbox_of_match[] = {
-+	{ .compatible = "mediatek,mt8196-vcp-mbox", .data = &mt8196_cfg },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, mtk_vcp_mbox_of_match);
-+
-+static struct platform_driver mtk_vcp_mbox_driver = {
-+	.probe		= mtk_vcp_mbox_probe,
-+	.driver = {
-+		.name	= "mtk_vcp_mbox",
-+		.of_match_table = mtk_vcp_mbox_of_match,
-+	},
-+};
-+module_platform_driver(mtk_vcp_mbox_driver);
-+
-+MODULE_AUTHOR("Jjian Zhou <jjian.zhou@mediatek.com>");
-+MODULE_DESCRIPTION("MTK VCP Mailbox Controller");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/mailbox/mtk-vcp-mailbox.h b/include/linux/mailbox/mtk-vcp-mailbox.h
-new file mode 100644
-index 000000000000..143fb0d06e30
---- /dev/null
-+++ b/include/linux/mailbox/mtk-vcp-mailbox.h
-@@ -0,0 +1,32 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-+/*
-+ * Copyright (c) 2025 MediaTek Inc.
-+ */
-+
-+#ifndef __MTK_VCP_MAILBOX_H__
-+#define __MTK_VCP_MAILBOX_H__
-+
-+#define MBOX_SLOT_MAX_SIZE	0x100 /* mbox max slot size */
-+
-+/**
-+ * struct mtk_ipi_info - mailbox message info for mtk-vcp-mailbox
-+ * @msg: The share buffer between IPC and mailbox driver
-+ * @len: Message length
-+ * @id: This is for identification purposes and not actually used
-+ *	by the mailbox hardware.
-+ * @index: The signal number of the mailbox message.
-+ * @slot_ofs: Data slot offset.
-+ * @irq_status: Captures incoming signals for the RX path.
-+ *
-+ * It is used between IPC with mailbox driver.
-+ */
-+struct mtk_ipi_info {
-+	void *msg;
-+	u32 len;
-+	u32 id;
-+	u32 index;
-+	u32 slot_ofs;
-+	u32 irq_status;
-+};
-+
-+#endif
---
-2.46.0
-
+PiBPbiAyMS4wOC4yNSAyMjowOCwgVml2aWFuIFdhbmcgd3JvdGU6DQo+IE9uIDgvMjEvMjUgMTg6
+MDksIEhhbCBGZW5nIHdyb3RlOg0KPiA+IFsuLi5dDQo+ID4gKysrIGIvYXJjaC9yaXNjdi9ib290
+L2R0cy9zdGFyZml2ZS9qaDcxMTBzLXN0YXJmaXZlLXZpc2lvbmZpdmUtMi1saXRlLg0KPiA+ICsr
+KyBkdHMNCj4gPiBAQCAtMCwwICsxLDE1MiBAQA0KPiA+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRp
+ZmllcjogR1BMLTIuMCBPUiBNSVQNCj4gPiArLyoNCj4gPiArICogQ29weXJpZ2h0IChDKSAyMDI1
+IFN0YXJGaXZlIFRlY2hub2xvZ3kgQ28uLCBMdGQuDQo+ID4gKyAqIENvcHlyaWdodCAoQykgMjAy
+NSBIYWwgRmVuZyA8aGFsLmZlbmdAc3RhcmZpdmV0ZWNoLmNvbT4gICovDQo+ID4gKw0KPiA+ICsv
+ZHRzLXYxLzsNCj4gPiArI2luY2x1ZGUgImpoNzExMC1jb21tb24uZHRzaSINCj4gPiArDQo+ID4g
+Ky8gew0KPiA+ICsJbW9kZWwgPSAiU3RhckZpdmUgVmlzaW9uRml2ZSAyIExpdGUiOw0KPiA+ICsJ
+Y29tcGF0aWJsZSA9ICJzdGFyZml2ZSx2aXNpb25maXZlLTItbGl0ZSIsICJzdGFyZml2ZSxqaDcx
+MTBzIjsgfTsNCj4gDQo+IE1pZ2h0IG5lZWQgdG8gYWRkIHN0YXJmaXZlLGpoNzExMHMgdG86DQo+
+IA0KPiAgIGRyaXZlcnMvY3B1ZnJlcS9jcHVmcmVxLWR0LXBsYXRkZXYuYw0KPiANCj4gU28gdGhh
+dCBpdCBjYW4gdXNlIHRoZSBvcHAgc3R1ZmYgaGVyZToNCg0KR29vZCBjYXRjaC4gVGhhbmtzIGZv
+ciB5b3VyIHJldmlldy4NCg0KQmVzdCByZWdhcmRzLA0KSGFsDQoNCj4gDQo+ID4gKw0KPiA+ICsm
+Y3B1X29wcCB7DQo+ID4gKwlvcHAtMzEyNTAwMDAwIHsNCj4gPiArCQlvcHAtaHogPSAvYml0cy8g
+NjQgPDMxMjUwMDAwMD47DQo+ID4gKwkJb3BwLW1pY3Jvdm9sdCA9IDw4MDAwMDA+Ow0KPiA+ICsJ
+fTsNCj4gPiArCW9wcC00MTcwMDAwMDAgew0KPiA+ICsJCW9wcC1oeiA9IC9iaXRzLyA2NCA8NDE3
+MDAwMDAwPjsNCj4gPiArCQlvcHAtbWljcm92b2x0ID0gPDgwMDAwMD47DQo+ID4gKwl9Ow0KPiA+
+ICsJb3BwLTYyNTAwMDAwMCB7DQo+ID4gKwkJb3BwLWh6ID0gL2JpdHMvIDY0IDw2MjUwMDAwMDA+
+Ow0KPiA+ICsJCW9wcC1taWNyb3ZvbHQgPSA8ODAwMDAwPjsNCj4gPiArCX07DQo+ID4gKwlvcHAt
+MTI1MDAwMDAwMCB7DQo+ID4gKwkJb3BwLWh6ID0gL2JpdHMvIDY0IDwxMjUwMDAwMDAwPjsNCj4g
+PiArCQlvcHAtbWljcm92b2x0ID0gPDEwMDAwMDA+Ow0KPiA+ICsJfTsNCj4gPiArfTsNCj4gPiAr
+PiBbLi4uXQ0KDQo=
 
