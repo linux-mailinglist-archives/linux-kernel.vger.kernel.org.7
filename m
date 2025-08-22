@@ -1,220 +1,154 @@
-Return-Path: <linux-kernel+bounces-782278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8A0B31E2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:20:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF0A0B31E42
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55FE9189827C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:15:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BB2E64397B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8275F23535E;
-	Fri, 22 Aug 2025 15:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532A022154B;
+	Fri, 22 Aug 2025 15:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lcdvgiT3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OaqKAvtg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D7F20E023;
-	Fri, 22 Aug 2025 15:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEAA213E90
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 15:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755875656; cv=none; b=axRJ3pS0V/XBLf9GpGC5iZSQFba9SLvzch1jqYIqUhTXOXpEGnbcRcLFVVtpSyShlqS1bkTotLql75PCV8S8RwcxPD3PCUaQp8lRXTksL7a+V7SugIV+MvLJ1AJDNP8TrcxrbI2NZdw//s3M9Cx7WqS0nFXdoplSxH4yZWsMndk=
+	t=1755875683; cv=none; b=mhQ7XB/QybT6cpCSFckcCbPCfoMIOAbNV939zS4w/lBbBnKtCTVqRkr78Z7xnRsf+pp3yGxtIOcKROKyWSXAZIFEUFMWj5jp3oB0li5XOteLCqwc5QT22UezhsIWWdb/1lyrXbKKhg+yB4cepC5lgFUiOi5abntk3kpX6AT2hOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755875656; c=relaxed/simple;
-	bh=LonE3rEgRMxIVsYfDjiHDPQfYMJ4W3TyT5tCihgHym0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hzp9wth/bJnR3S+qCsdGlz9n7zLHfQbmgJ4YrABAUo05s3QTAtrXtHITn9KF10zCmfwIphXAKxYaDzL2UWUxxf0pRbI4p2MrOlSRL68OGUXufQmzBkhZn3TVdJ7CqtYP/37kvgrVfhJrbnfvH9lTKr9XB9IxK6VkrQxwJu//N9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lcdvgiT3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28AE3C4CEED;
-	Fri, 22 Aug 2025 15:14:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755875656;
-	bh=LonE3rEgRMxIVsYfDjiHDPQfYMJ4W3TyT5tCihgHym0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lcdvgiT329HDpoh0VCPKjLOr0moxcH5cK28AAxLH4+gdXwe82hWMy5dQXf+hxi+SJ
-	 e5skJ6Ap3UNK0hxPe/1QnheFWVpdsPDuOEyu/CscLYWgU30HdVoKiMx0zfj5Wy/CwO
-	 cSBIRzhdLMkd6X6u2lLgcYTDtvl9pespreueOrlccrxtDtXBmjc4D3yOKhl7LjVwQ5
-	 WRahCkYy+4d50YdUNM+F8DB4LPVIQUwhjRHIh6Ac0h1fO7vCZVT1jWiRh9yW8JCFOw
-	 AZM9juQBSX/GvY2Z50e0J5uHQ1wlVf5cHwNZOkZXtCySwR9zTYxtOWABXBHT5B2nDf
-	 L8Yg2tntKVzEQ==
-Date: Fri, 22 Aug 2025 10:14:15 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
-	andrew-ct.chen@mediatek.com,
-	angelogioacchino.delregno@collabora.com, broonie@kernel.org,
-	chunkuang.hu@kernel.org, ck.hu@mediatek.com, conor+dt@kernel.org,
-	davem@davemloft.net, dmitry.torokhov@gmail.com, edumazet@google.com,
-	flora.fu@mediatek.com, houlong.wei@mediatek.com, jeesw@melfas.com,
-	jmassot@collabora.com, kernel@collabora.com, krzk+dt@kernel.org,
-	kuba@kernel.org, kyrie.wu@mediatek.corp-partner.google.com,
-	lgirdwood@gmail.com, linus.walleij@linaro.org,
-	louisalexis.eyraud@collabora.com, maarten.lankhorst@linux.intel.com,
-	matthias.bgg@gmail.com, mchehab@kernel.org,
-	minghsiu.tsai@mediatek.com, mripard@kernel.org,
-	p.zabel@pengutronix.de, pabeni@redhat.com, sean.wang@kernel.org,
-	simona@ffwll.ch, support.opensource@diasemi.com,
-	tiffany.lin@mediatek.com, tzimmermann@suse.de,
-	yunfei.dong@mediatek.com, devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v1 05/14] sound: dt-bindings: Convert MediaTek RT5650
- codecs bindings to YAML
-Message-ID: <20250822151415.GA3819434-robh@kernel.org>
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
- <20250820171302.324142-6-ariel.dalessandro@collabora.com>
+	s=arc-20240116; t=1755875683; c=relaxed/simple;
+	bh=ndBXV56/JnMZbVFfLRfT/MDSgZjGQBT+W627PMLsVgY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cxPDNIB5d9ullaD4sVPCHvpsEM1txQ4GF1X+9XTGMKIkFa+lTvI+AcwP3OclYBRevmk13p3nJCgZ7yhXukPDJGzvz0Pjhkx4p8ufy4CZUWQNaUl5HI12k2tNabGzre/AGzOO0EImYVI2NH0Fj4Z7CekEMKmGtlOrrYcqQ2lSITY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OaqKAvtg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755875680;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ls7O/lm/BXfNQorgLuw/zloVau5V617RIU+p8Fz6rMQ=;
+	b=OaqKAvtgRs0VQhzu1rzoDPtd2Pc6A2KkYHuh021QmcshT8aqQlqjrd2hcRkx3IfZ/NPA7Z
+	DzYEEbKx9hpFo1i5Am2GsrFyybCIORa+kOIJBTM/FFQ7BlMPEkKnOKk7pnFOpmtx9QHRgB
+	VTmDaYM2Rf1A4Io1axGJJkBgqO7YXqU=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-371-dU4SYOBLO863wRNOB1Tb0g-1; Fri, 22 Aug 2025 11:14:38 -0400
+X-MC-Unique: dU4SYOBLO863wRNOB1Tb0g-1
+X-Mimecast-MFC-AGG-ID: dU4SYOBLO863wRNOB1Tb0g_1755875678
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b1292b00cfso24160611cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 08:14:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755875677; x=1756480477;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ls7O/lm/BXfNQorgLuw/zloVau5V617RIU+p8Fz6rMQ=;
+        b=d8ABVmQDNA+b3E+D2pfHN6BGH9u6aOx+DC/3anGZVB1dEvcy3A2HQ3o9WaOW534fl/
+         qLEZwutHiGNoEpCXJJ+MWkCNAO7/T++vYijQaYeIuBE8YJCXxhaQw1rMcMTDCzqOlmTW
+         xG+5SnJsY4jTx3xoOSBfrWcIUZmmIHe50ZDLmPaA1kXUPpfQD0t/QXBwpF77UD7zTI06
+         r10dqILaMzosLFEW/gkpmGIvZIb86edrvDRWxkQ0ok2FHW/+AUCMhnRVC3e1d3DdNFPG
+         LzSv5BhBBtCOdaloLK96dfNmF32CA0r5U/yh4tbq7sSrFNE9FB4fqncuGS8DejN1/9KC
+         3QfA==
+X-Forwarded-Encrypted: i=1; AJvYcCXiQAgR0WjL1x1oc1d5UBuCP8JZt50rlwAURq2usIn5Gwaq8dqByCkAFXfi/Dvv+TQOA9aWuVeef0FPW2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5ZaGZvPa/2YNIWAvAmDozictvM8/k+Mb9Qlgrd7mEkS/5Esfx
+	ewGpG9NTfm3E0OTJLFcaqXDVmwuLUoHYD61JLFRUHF3KgT/s0c98MKbX+upS/FyojrPovAR3KhD
+	5qDyHCxm1J9PwJeRMNiAQ2UbcpTwoTuqvmn2LM7YNB1qKq6M9laIhWEIg3QznOHBHu4luigyvKK
+	vhlXbHE8RAscM+AWkIjF9v4NBeYc1jtFhKV7jZRhOrGvDUWDfyMoDEWA==
+X-Gm-Gg: ASbGncsCjXmm7CBJ8nAchGsY73jYlU7wrdL1PNaEwmjikcv8EKkTW93V5DPnJnB3BLZ
+	GP2EaFroddOmuVpN86IeoI7EzG5Sk6fXnmzIv9CpHsFY3sn32jfGpeRNOLhQ4FFWZNXW/pSZFGi
+	YwMwAmzaDEMpRsJYw9Zz+7
+X-Received: by 2002:a05:622a:1a12:b0:4b0:d8b9:22f3 with SMTP id d75a77b69052e-4b2aab20c15mr37601531cf.53.1755875677322;
+        Fri, 22 Aug 2025 08:14:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG9pCoWT0fl3h1MYiljbbJnSV+E4QG5CKKQDL1sCUg2hKHFDf8FMcARafsNBHxsZ0N4vIPiCdEaiaedG1Hp69c=
+X-Received: by 2002:a05:622a:1a12:b0:4b0:d8b9:22f3 with SMTP id
+ d75a77b69052e-4b2aab20c15mr37601001cf.53.1755875676765; Fri, 22 Aug 2025
+ 08:14:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820171302.324142-6-ariel.dalessandro@collabora.com>
+References: <20250821170419.70668-1-gpaoloni@redhat.com> <2025082126-sulfite-unwired-c58c@gregkh>
+In-Reply-To: <2025082126-sulfite-unwired-c58c@gregkh>
+From: Gabriele Paoloni <gpaoloni@redhat.com>
+Date: Fri, 22 Aug 2025 17:14:25 +0200
+X-Gm-Features: Ac12FXzjYP8h8ovwaEi3kjcSdlJTSvNY0SEARIvYtMMMGKzQdEQ170iKGAeXVmo
+Message-ID: <CA+wEVJZaJEXMwQ3E0WKqQCMUR4Fsa=83PuarT+72c6nA1qSKAQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] /dev/mem: Add initial documentation of memory_open()
+ and mem_fops
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: arnd@arndb.de, linux-kernel@vger.kernel.org, 
+	safety-architecture@lists.elisa.tech
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 20, 2025 at 02:12:53PM -0300, Ariel D'Alessandro wrote:
-> Convert the existing text-based DT bindings for Mediatek MT8173 RT5650
-> codecs to a YAML schema.
-> 
-> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-> ---
->  .../sound/mediatek,mt8173-rt5650.yaml         | 73 +++++++++++++++++++
->  .../bindings/sound/mt8173-rt5650.txt          | 31 --------
->  2 files changed, 73 insertions(+), 31 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/sound/mediatek,mt8173-rt5650.yaml
->  delete mode 100644 Documentation/devicetree/bindings/sound/mt8173-rt5650.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8173-rt5650.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8173-rt5650.yaml
-> new file mode 100644
-> index 0000000000000..36e4f9c4c3d62
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/mediatek,mt8173-rt5650.yaml
-> @@ -0,0 +1,73 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/mediatek,mt8173-rt5650.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Mediatek MT8173 with RT5650 codecs and HDMI via I2S
-> +
-> +maintainers:
-> +  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: "mediatek,mt8173-rt5650"
+On Thu, Aug 21, 2025 at 7:35=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> On Thu, Aug 21, 2025 at 07:04:19PM +0200, Gabriele Paoloni wrote:
+> > This patch proposes initial kernel-doc documentation for memory_open()
+> > and most of the functions in the mem_fops structure.
+> > The format used for the **Description** intends to define testable
+> > function's expectations and Assumptions of Use to be met by the
+> > user of the function.
+> >
+> > Signed-off-by: Gabriele Paoloni <gpaoloni@redhat.com>
+> > ---
+> > I have a couple of comments from this documentation activity:
+> > 1) Shouldn't the check in read_mem() <<if (p !=3D *ppos)>> return
+> >    -EFBIG (as done in write_mem())?
+>
+> I think that check implies you don't want to read any more memory,
+> right?  Try changing it and see what happens :)
 
-Drop quotes.
+Right I see, 0 is better to gracefully terminate a read routine of
+a program that may have read the whole physical range..
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  mediatek,audio-codec:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      The phandles of rt5650 codecs and of the HDMI encoder node.
-> +    minItems: 2
-> +
-> +  mediatek,platform:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      The phandle of MT8173 ASoC platform.
-> +
-> +  mediatek,mclk:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      The MCLK source.
-> +      0: external oscillator, MCLK = 12.288M
-> +      1: internal source from mt8173, MCLK = sampling rate * 256
-> +
-> +  codec-capture:
-> +    description: Subnode of rt5650 codec capture.
-> +    type: object
-> +
-> +    properties:
-> +      sound-dai:
-> +        maxItems: 1
-> +        description: phandle of the CPU DAI
-> +
-> +    additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - mediatek,audio-codec
-> +  - mediatek,platform
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    sound: sound {
+>
+> > 2) There is a note in memory_lseek() that states the return value
+> >    to be (0) for negative addresses, however I cannot see how that
+> >    would happen in the current implementation...
+>
+> How that you could have a negative address, or how you would return 0?
 
-Drop unused label.
+Today the note above memory_lseek() states
 
-> +        compatible = "mediatek,mt8173-rt5650";
-> +        mediatek,audio-codec = <&rt5650 &hdmi0>;
-> +        mediatek,platform = <&afe>;
-> +        pinctrl-names = "default";
-> +        pinctrl-0 = <&aud_i2s2>;
-> +
-> +        mediatek,mclk = <1>;
-> +        codec-capture {
-> +            sound-dai = <&rt5650 1>;
-> +        };
-> +    };
-> +
-> +...
-> diff --git a/Documentation/devicetree/bindings/sound/mt8173-rt5650.txt b/Documentation/devicetree/bindings/sound/mt8173-rt5650.txt
-> deleted file mode 100644
-> index 29dce2ac8773a..0000000000000
-> --- a/Documentation/devicetree/bindings/sound/mt8173-rt5650.txt
-> +++ /dev/null
-> @@ -1,31 +0,0 @@
-> -MT8173 with RT5650 CODECS and HDMI via I2S
-> -
-> -Required properties:
-> -- compatible : "mediatek,mt8173-rt5650"
-> -- mediatek,audio-codec: the phandles of rt5650 codecs
-> -                        and of the hdmi encoder node
-> -- mediatek,platform: the phandle of MT8173 ASoC platform
-> -
-> -Optional subnodes:
-> -- codec-capture : the subnode of rt5650 codec capture
-> -Required codec-capture subnode properties:
-> -- sound-dai: audio codec dai name on capture path
-> -  <&rt5650 0> : Default setting. Connect rt5650 I2S1 for capture. (dai_name = rt5645-aif1)
-> -  <&rt5650 1> : Connect rt5650 I2S2 for capture. (dai_name = rt5645-aif2)
-> -
-> -- mediatek,mclk: the MCLK source
-> -  0 : external oscillator, MCLK = 12.288M
-> -  1 : internal source from mt8173, MCLK = sampling rate*256
-> -
-> -Example:
-> -
-> -	sound {
-> -		compatible = "mediatek,mt8173-rt5650";
-> -		mediatek,audio-codec = <&rt5650 &hdmi0>;
-> -		mediatek,platform = <&afe>;
-> -		mediatek,mclk = <0>;
-> -		codec-capture {
-> -			sound-dai = <&rt5650 1>;
-> -		};
-> -	};
-> -
-> -- 
-> 2.50.1
-> 
+ * The memory devices use the full 32/64 bits of the offset, and so we cann=
+ot
+ * check against negative addresses: they are ok. The return value is weird=
+,
+ * though, in that case (0).
+
+I interpret this as "if offset and orig lead to an f_pos that is
+negative the function
+returns 0"....however I cannot see where this happen...
+
+>
+> Also, you should cc: the mm developers, they touch this file all the
+> time and know it quite well (recent changes to /dev/zero just got added
+> in the past few days from them.)
+
+Sorry, I just used the addresses returned by get_maintainers...
+would adding linux-mm@kvack.org work ok?
+
+Thanks
+Gab
+
+> thanks,
+>
+> greg k-h
+>
+
 
