@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-782601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DCD2B32293
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:04:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 254DCB32294
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBDF05862EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:03:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68F295C5C39
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA322D3228;
-	Fri, 22 Aug 2025 19:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AFC2D3A70;
+	Fri, 22 Aug 2025 19:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LRLBgq0g"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="V1tptwAk"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904072D1F72
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 19:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838CC2D29DB
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 19:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755889320; cv=none; b=GYAxpHImNTFw+IOx76/XujqAaU5Sdwcapqed5t26VRZXKOQwJ3nPQ+n/CVU6tza7tYqtvafyRp6Eku9GLPgJ08G5fXSOnivY8zis6rKCpwDU96ZbZjSi1yWmeqlUjuC/LDsyIZ17+l5f6TUusD6cW2vWJ7qbKalPFkpc3dZ/e0Q=
+	t=1755889322; cv=none; b=UVzmruFRyPVNpBsZ8tl4hSBfldfAafiZHj/N9AqJPDhTuoe5xLFOySgZHv39hftuGS5tIZzLOOOr+5uqNBP3DsTK+cGMSz3lrvoiJty8tpbMRLEKOUajCrxUjHw7LiYo4ayw5HkoUsSzzaJUjlr89WOLus9U5YbdSeb4wiHoDPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755889320; c=relaxed/simple;
-	bh=T9Xl7UOSJb9bzLmKUWoy6oZTyLj8Bqzr11x7wqMwQ3U=;
+	s=arc-20240116; t=1755889322; c=relaxed/simple;
+	bh=n6toBV9/E43mV3bFSotlKlEdZsvEcL1F7i2m03IpKuc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a5TQYpqQRQALkAv2UQ8Tqu/YbxcyCSfFZuDve3JtHF9AgSGmxeq87MYy1A2GB8CjGgvVbmB6xEVloHl0vg0U4NMGTLduSG++8irccKvmMZe+/vxeS3JCFzmGt7u1ezFDPa7VGOILP+nemt6OpOl0WaXSi8VpYWOrEgUCvdZJ+jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LRLBgq0g; arc=none smtp.client-ip=209.85.215.177
+	 MIME-Version; b=EqE0J5IwH1Tm/+igTKfhYGrCTfaLPBVO/of9xxfGzoMasWmQKMsI5O+EQcsQBmRuYodoMD9XOriXemH/0nOau+XrIQltmXc0vf6VMN/01TxpnE5r3jshTpzvs+LaxDvZsIghMMuA+ymAcZ414HXa645HIDgBGCgAeoMgGqgYhO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=V1tptwAk; arc=none smtp.client-ip=209.85.215.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b47475cf8ecso1748975a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:01:58 -0700 (PDT)
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b471754c159so1665804a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:02:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755889318; x=1756494118; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1755889320; x=1756494120; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qQFaJ4AT7s0VyfipZWYXejbB1s7k8OeAeFLkpqOojDk=;
-        b=LRLBgq0gWoq4oe33JtYY5EyN+MKqY2+G1BIP2Y0jY3XF4acKP0+xq8B8lYsSb9aSh9
-         XLgEPGqykvnnX09T6PsRK7Lb1KEKRcEUalp2bBGDqmnFZWw3VHoVG/QFGQZzwiU7AWKs
-         9WWno3bxXjeetiKUVz1m+j8PtrBE3A3CsOYek=
+        bh=Q2KczgQGxGJ8RIuPHcEG6UwnRo5SfqUAX44DQ5/YPlA=;
+        b=V1tptwAkrHo+XI2Oy5KCfSSuHgJFa3Da8djykD6hCv0urDVZH5kP8gIfuDfWHGF3Bf
+         1xikgeghIb32ibwPsERe8gCM9tFY86YxR+dxfBreQMWy/P/UOEFRgqCre+oOQ388/oKe
+         EaZabHCDeLNhmPDQymcq8H141kEi61iv2ksrQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755889318; x=1756494118;
+        d=1e100.net; s=20230601; t=1755889320; x=1756494120;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qQFaJ4AT7s0VyfipZWYXejbB1s7k8OeAeFLkpqOojDk=;
-        b=EckCeZDKdmpMuo3xw0FtscdU61HPe1CZbUhIflh2Lt14UFvfs649kjhhXUfECTasiV
-         5knGn7OfVxIrf6TziXq/m0TfNGUWNSj6x8IRkgOx8VDD5sALBEocJTHhIuvDk5Gf4AmL
-         1fpvQBg2iGgsBo5jFyCsyVDmXylAQwIzHA+KBWzsfNlxg/udQelVCXGTsCWP/++7TRY5
-         x/XeTWC5ORPMLTeS/shwb59geEP2IsGyslv3mOtkPveIkEzkaOgDEQoliE3UOJeFkMZ4
-         4F65oklNN7O5yipPAug7p/0+GooOUZEOjUeTReQ4Dg+dyHvKklNnILCbxY9QDMn6y5Qg
-         BWaw==
-X-Forwarded-Encrypted: i=1; AJvYcCW8Ubz9D7Juit2jZUMO/KT3dT89nljiwfVMVft1c2jEajXf22U9YqRCIZgo3bwUvqgcemC29VlxpGuf7do=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvF54LiSeaL8UQwMI7BnPt+/pLk19LDsqyrwRiQ9F5yVvBZ6v3
-	IOs0JgYuhxZeebIRu7Ld/cmFtaQ/4ID5tl6pG7X8/SDMXCDUG6tpt8Io8UCdlIr8Mw==
-X-Gm-Gg: ASbGncukTzOtKcPMKT6+8qgGhkTiShW+CjiZqn7YAx02NkrdnMVlr7c+yNP6IqmE0Mo
-	rHMoYK4EvHOl03XUYsnR35l3nQBo4AKRXu9RxXFl85dHbGYjPBdUhpFW3xOebbeDtF35zoZfJzN
-	WymwF0ckX6LIvCi/S9uvYhpxMFHYNc+8h6euoftJIA3r/CHpx1afOcEtNTLpk6bpxEA6sUbnAcV
-	tCU71xoleZ33jE3k5Bi50i8mD5XDpay5RsUw+95lTDvSuwSs83bOsdV6p9Ym/4R5Jod16g81pTM
-	SbdDw+Fs3BXyzy3IiNo2pe2Cuagv0DQPmxfoAfpfEn9tHJ32K0Mw4VcuwEAH3Gqm0021AkMqy5j
-	fJAxx8WAESu/ozWQg/E4FFkJ6zqA7Jx60zyY/QBZFhN2mlb/PHe3C3G84EHw=
-X-Google-Smtp-Source: AGHT+IE7/lr1yAQ07k6SksI7di9GFkZg/VTeRFaVY3AiRILkRCeCyUcKXcDhSV/7rbuWZWKVSC5mEA==
-X-Received: by 2002:a17:902:d592:b0:240:3f3d:fd37 with SMTP id d9443c01a7336-2462ee80b64mr49717985ad.27.1755889317735;
-        Fri, 22 Aug 2025 12:01:57 -0700 (PDT)
+        bh=Q2KczgQGxGJ8RIuPHcEG6UwnRo5SfqUAX44DQ5/YPlA=;
+        b=ES9jZvLR0IiIJBey6eyTfuzVZbmbNrLYZmxAjFilqi3fEuxldCVkc0OR8E5YlliUG/
+         3HUWoUuGC0dUkK+ro8mNcNsWzljhpt48qzYdM/coYSqzPNpE5eaZDgVTBKMceHym6jOC
+         /C7sCHx0W4eE6Vnw4Z3rOHlYvJuZGA+VxG499/ZNy4WyjNPvV40mS1NTlNkk65EFvbr+
+         tz4ZiwwCiYTjV5QPjpxxrQy4CCP3XqJe3e7HygOq2JDarsei/RBMFmYYDa/n+dcctRSm
+         yBJHpcvbqTnv/iKSTKq096UmdsQ968RKVBlCywolJrkznME+4JDd4StfS7N3RVFJ5tQv
+         uNDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXkE7Nm5ftFrvWx+wDfZuzgjYhM0VOueBLUqFhpjsqkATbvYRsi4uZbBDKnvAVpf64Sw062qO4iP8+d9HI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYnqD0R0tsDiSrLZSSrv+Z+O3zqLInTzl44BpSGU7MovlrE5Ln
+	ivCQGKMvktJlGzQpKUazW2ukZnGZGMCyKz69XkcEnIthUlED3JHAqRmEZIZ2EO67PQ==
+X-Gm-Gg: ASbGncuA/2lmvgZOu2oi3O++KRKr/vYlfq0yZUH3iT4LMvFDB8LCCUJKCrQiQq9hyfa
+	FXErjxJm/H9mejtpY3mlmUsIDa3sNYALbfOX9+PDr4V5U6ovS+sEXIzucgsRlpwm0SK5RT0QmNR
+	l+ndtxBHFlkZiGwdOxU915KsKtDwGI4qDdMLwsSucPF6/StJt87yETp+tn+CDXx7Cm8OJgnMoFu
+	1uqwRhVyADXDYDLQULGKXJbW4BpZEVpJTkozLmT2zq0GdogV21ZVz5h84qYwn8Tzb2Z+QewXYHE
+	j2IjZfKWkf6iIsJeqna1J+mI+9Mc5v7xSE/zbfJPuktP/4PJMb6EDRcOYPh44Y2mUbFJg7uSLPF
+	vh+WQwENqWXJesqMrR5C/I6w0UfgOrc1evFjMsxF6+kNkjnKPIuR2TvHSaZGdAD+D87Gbnw==
+X-Google-Smtp-Source: AGHT+IEkAYbFXJfvERFeRy+iBP0RnG0l2hEWY0aJzOQFI/VovM3OrRaH1jMB6Vh2mtc7UdBmAp8Gug==
+X-Received: by 2002:a17:903:228f:b0:246:61e:b562 with SMTP id d9443c01a7336-2462f1d5493mr52797145ad.59.1755889319635;
+        Fri, 22 Aug 2025 12:01:59 -0700 (PDT)
 Received: from localhost ([2a00:79e0:2e14:7:154c:8cf:f7d0:c083])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-246687af23fsm3346895ad.51.2025.08.22.12.01.56
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b49cb8b4b98sm472066a12.19.2025.08.22.12.01.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 12:01:56 -0700 (PDT)
+        Fri, 22 Aug 2025 12:01:58 -0700 (PDT)
 From: Brian Norris <briannorris@chromium.org>
 To: Thomas Gleixner <tglx@linutronix.de>
 Cc: David Gow <davidgow@google.com>,
@@ -77,9 +77,9 @@ Cc: David Gow <davidgow@google.com>,
 	Geert Uytterhoeven <geert@linux-m68k.org>,
 	kunit-dev@googlegroups.com,
 	Brian Norris <briannorris@chromium.org>
-Subject: [PATCH v2 5/6] genirq/test: Drop CONFIG_GENERIC_IRQ_MIGRATION assumptions
-Date: Fri, 22 Aug 2025 11:59:06 -0700
-Message-ID: <20250822190140.2154646-6-briannorris@chromium.org>
+Subject: [PATCH v2 6/6] genirq/test: Ensure CPU 1 is online for hotplug test
+Date: Fri, 22 Aug 2025 11:59:07 -0700
+Message-ID: <20250822190140.2154646-7-briannorris@chromium.org>
 X-Mailer: git-send-email 2.51.0.rc2.233.g662b1ed5c5-goog
 In-Reply-To: <20250822190140.2154646-1-briannorris@chromium.org>
 References: <20250822190140.2154646-1-briannorris@chromium.org>
@@ -91,28 +91,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Not all platforms use the generic IRQ migration code, even if they
-select GENERIC_IRQ_MIGRATION. (See, for example, powerpc /
-pseries_cpu_disable().)
+It's possible to run these tests on platforms that think they have a
+hotpluggable CPU1, but for whatever reason, CPU1 is not online and can't
+be brought online:
 
-If such platforms don't perform managed shutdown the same way, the IRQ
-may not actually shut down, and we'll fail these tests:
+    # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:210
+    Expected remove_cpu(1) == 0, but
+        remove_cpu(1) == 1 (0x1)
+CPU1: failed to boot: -38
+    # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:214
+    Expected add_cpu(1) == 0, but
+        add_cpu(1) == -38 (0xffffffffffffffda)
 
-[    4.357022][  T101]     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:211
-[    4.357022][  T101]     Expected irqd_is_activated(data) to be false, but is true
-[    4.358128][  T101]     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:212
-[    4.358128][  T101]     Expected irqd_is_started(data) to be false, but is true
-[    4.375558][  T101]     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:216
-[    4.375558][  T101]     Expected irqd_is_activated(data) to be false, but is true
-[    4.376088][  T101]     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:217
-[    4.376088][  T101]     Expected irqd_is_started(data) to be false, but is true
-[    4.377851][    T1]     # irq_cpuhotplug_test: pass:0 fail:1 skip:0 total:1
-[    4.377901][    T1]     not ok 4 irq_cpuhotplug_test
-[    4.378073][    T1] # irq_test_cases: pass:3 fail:1 skip:0 total:4
-
-Rather than test that PowerPC performs migration the same way as the IRQ
-core, let's just drop the state checks. The point of the test was to
-ensure we kept |depth| balanced, and we can still test for that.
+Check that CPU1 is actually online before trying to run the test.
 
 Fixes: 66067c3c8a1e ("genirq: Add kunit tests for depth counts")
 Reported-by: Guenter Roeck <linux@roeck-us.net>
@@ -122,27 +113,22 @@ Reviewed-by: David Gow <davidgow@google.com>
 
 (no changes since v1)
 
- kernel/irq/irq_test.c | 4 ----
- 1 file changed, 4 deletions(-)
+ kernel/irq/irq_test.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/kernel/irq/irq_test.c b/kernel/irq/irq_test.c
-index 56baeb5041d6..bbb89a3e1153 100644
+index bbb89a3e1153..e2d31914b3c4 100644
 --- a/kernel/irq/irq_test.c
 +++ b/kernel/irq/irq_test.c
-@@ -203,13 +203,9 @@ static void irq_cpuhotplug_test(struct kunit *test)
- 	KUNIT_EXPECT_EQ(test, desc->depth, 1);
+@@ -179,6 +179,8 @@ static void irq_cpuhotplug_test(struct kunit *test)
+ 		kunit_skip(test, "requires more than 1 CPU for CPU hotplug");
+ 	if (!cpu_is_hotpluggable(1))
+ 		kunit_skip(test, "CPU 1 must be hotpluggable");
++	if (!cpu_online(1))
++		kunit_skip(test, "CPU 1 must be online");
  
- 	KUNIT_EXPECT_EQ(test, remove_cpu(1), 0);
--	KUNIT_EXPECT_FALSE(test, irqd_is_activated(data));
--	KUNIT_EXPECT_FALSE(test, irqd_is_started(data));
- 	KUNIT_EXPECT_GE(test, desc->depth, 1);
- 	KUNIT_EXPECT_EQ(test, add_cpu(1), 0);
+ 	cpumask_copy(&affinity.mask, cpumask_of(1));
  
--	KUNIT_EXPECT_FALSE(test, irqd_is_activated(data));
--	KUNIT_EXPECT_FALSE(test, irqd_is_started(data));
- 	KUNIT_EXPECT_EQ(test, desc->depth, 1);
- 
- 	enable_irq(virq);
 -- 
 2.51.0.rc2.233.g662b1ed5c5-goog
 
