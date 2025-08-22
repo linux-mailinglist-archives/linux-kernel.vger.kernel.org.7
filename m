@@ -1,300 +1,313 @@
-Return-Path: <linux-kernel+bounces-782653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C1B3B32333
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:50:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59C2EB32334
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52B071781D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:50:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DAE917976F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17B62D63E4;
-	Fri, 22 Aug 2025 19:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0902D63FD;
+	Fri, 22 Aug 2025 19:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bt4OqasN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="a8bRa4Iw"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2050.outbound.protection.outlook.com [40.107.220.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078FC1DE89B;
-	Fri, 22 Aug 2025 19:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755892226; cv=none; b=JOC+8l3WwEpMR4MWqP18Lo6VBCGVgX+zwvSstWdihIk/2oGWDwsWWEzIFd3KRirslf8a2XzBYL2qHL6mh3lemaiJ5figTMSLsf3v7s8emyQoYJ3HWFWRBtZjW5tPxJnN6jAc24x5obFbtlbFF/LUDCWM2jg/KWlXL2eBO2KiQSM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755892226; c=relaxed/simple;
-	bh=P8XO6uxUJvu5PgaebbjGtObYHIiSkwF0nj+13YqWxF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VMl9iHLPHoDNSfQY7eJUPr0bd0jj33LZOAA8AuTTkh8UB138MHx1V2+BEa/Ym5jsacX8LrrHsIaoQBK7Wd98ZZzUjvdzVcY3PA3G86wo3kkptLuHSS5PpOTYL8RCGzkMhBrWM3MVi9A8XAmXzwXuQNoJFU/633tIgw3M9G4J3D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bt4OqasN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56E7EC4CEED;
-	Fri, 22 Aug 2025 19:50:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755892225;
-	bh=P8XO6uxUJvu5PgaebbjGtObYHIiSkwF0nj+13YqWxF8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bt4OqasNzVwIc2KD2Jlv+CxvCVOUJhbHjR9JSrl96qyqoNIDmu4iwD+qDKBBaHeeS
-	 lmHLWPAO+t0Pzl3Ig4/QX58p+EcdDxqFBv+sicoQVrKX9rsMKoqIoFGM5UKp1/yl5C
-	 HfUoISxfHenfbLPgr7jjlw5DeiHqXd8fi6ZsMN6C4AzOlj/R6bAroE1GufNY23/3Ki
-	 Auc4N+88uFGIsm60jnj4KycWzfsQdew4cm2VP0FxN6Jnuuqc6MLXZZaQkqSJF84VBc
-	 oWwilu7i8MANirmKsEmno33b8ZJMaWaxINnGcPqt/nO1eG/GuJzkrEK/g7cZulHm2d
-	 XFGj66aXHiNfw==
-Date: Fri, 22 Aug 2025 14:50:24 -0500
-From: Rob Herring <robh@kernel.org>
-To: Nino Zhang <ninozhang001@gmail.com>
-Cc: vkoul@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: dma: img-mdc-dma: convert to DT schema
-Message-ID: <20250822195024.GA194990-robh@kernel.org>
-References: <20250821150255.236884-1-ninozhang001@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D5F2D5C83
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 19:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755892296; cv=fail; b=DQC8u2N7XRn4SANJAUKiNWhT7UrT466mdS/GyzzLoxO9H9q/GKp7N4y3WgeaHyYr2Ygdq+YZ5AKKv0KGaQ1+YuJT2jAdtSmwVewhgUL9NCkmrbmgFAUDvUOeSUbIJwwLSW0wfkJFmhjzL5954KNscRQkYt6AB6U+8prKEOiR5d8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755892296; c=relaxed/simple;
+	bh=A4GqukvcfCxIKEncldft5pMSR4auZ0LNRBxV0VqAUO0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WVkismeJYg7ASKa/BkmZ+D660Hr5JGtfa7Js3qZB4PUS/vbfG+EdemHfG65oOcyAdPe8Vs77ZENLZDJ+5mDWrH879Pu08oXJ38bnqDQpYwUCPwdHU0f3aU4rEnyHwRKPH4m78DKzJBbrvPTFjE22Ydt95Obf9R0TAs0MyYIdxJg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=a8bRa4Iw; arc=fail smtp.client-ip=40.107.220.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=u/2sUg3BZDpFwMbBPSJ1KA+PRexrcqtdx3gDQ8NgJIqmmAMrSm7I6si7WBPAtJRNfjLnw9g7UNZ2R2OfYbFQXObprZyBIGLbIvOxHXxKXYKF6cabXJBm8bkv5R1Joqdu1wtB+nBmczwIWKvxEGe9Vd3nM7SOoSA58XqevogU0akVcsuRH4yDmXbFbQZt+lWJI2IfFKEhFKuHiO3K6/LCtwRmSbY7UD3clSWFgH0fUHqMrXlY3C7QkUmttwafZrcTOqUPec6EdmuwwgH66woxSUXYNhguhsWoTMGwy6hDLl6LiMqtuYLO/I22ujpNFpYFLWpiGLwReacl/Xet3xl5nA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TFh4xTY6sK5nmuSajX4lMMqG11jvhI4OFbO8p5C1dvA=;
+ b=mC8FvN1gwriMdo3I5D0nKh7ItrXvZsynbtywZujf9HPqY68TOVYo0778AWm5D0c/VMpzG3WUWv7tJwZyU1t8745dVuavBoUAhdbSNoxzEoKiqjnBAezKrnteZsoSEMDnVTpScNmozuDZpN33CDNmAg70C5FVFUAgr2UFUGmO3gx7PBDbrRWTzNeU3kgvC8Nbr59FLHmgo3ro8W7UaHpVjL9Bok1SOHu+n2mua8pj0ncSAwNlAlaS7Bob25KK3EcGwU+1/Bb4GQHTVVf2e7QJnJ4K+VSzYDjxUVZopDmUTKE8O/ncYidPHyAX9NGupfj6vIcfQuSESu/+mhaKmIpN5g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TFh4xTY6sK5nmuSajX4lMMqG11jvhI4OFbO8p5C1dvA=;
+ b=a8bRa4Iw0gnAPcIOi8knwWbX0Oooa3qmM5hoQ8WiNTd4aAiLnl+dsgvnZqfDXq9lIG5HCRg1AFoasjddoDncR8Jyi9GrKOrgZRzWt8ub5je+dXSaisyKYd4xV/5gY9gbYAzTrLqwV6Rix/NL89VR34O0IfkDsFymfIBIQUIKnliduEhM4X0IreMfSIsNMxcY5cN4Z73r4Kh7/utI9sFpXFwxDm51d1jYJPeHI/p/x+GbXC/V/mECH2nuQnRiurqjqkZZb8CuKOqX8GEqhcXfpjlbetRDCrhIuaj0H1Azt1gMs0u3rlZz+daFubvqtqOsAOULY2n0Z/Ao3JOwx3l6pQ==
+Received: from SJ0PR03CA0218.namprd03.prod.outlook.com (2603:10b6:a03:39f::13)
+ by IA0PR12MB8088.namprd12.prod.outlook.com (2603:10b6:208:409::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Fri, 22 Aug
+ 2025 19:51:28 +0000
+Received: from CO1PEPF000044F0.namprd05.prod.outlook.com
+ (2603:10b6:a03:39f:cafe::ff) by SJ0PR03CA0218.outlook.office365.com
+ (2603:10b6:a03:39f::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.19 via Frontend Transport; Fri,
+ 22 Aug 2025 19:51:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CO1PEPF000044F0.mail.protection.outlook.com (10.167.241.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.8 via Frontend Transport; Fri, 22 Aug 2025 19:51:27 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 22 Aug
+ 2025 12:51:05 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 22 Aug 2025 12:51:05 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Fri, 22 Aug 2025 12:51:04 -0700
+Date: Fri, 22 Aug 2025 12:51:02 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+CC: <jgg@nvidia.com>, <linux-kernel@vger.kernel.org>, <robin.murphy@arm.com>,
+	<will@kernel.org>, <joro@8bytes.org>, <kevin.tian@intel.com>,
+	<jsnitsel@redhat.com>, <vasant.hegde@amd.com>, <iommu@lists.linux.dev>,
+	<santosh.shukla@amd.com>, <sairaj.arunkodilkar@amd.com>, <jon.grimm@amd.com>,
+	<prashanthpra@google.com>, <wvw@google.com>, <wnliu@google.com>,
+	<gptran@google.com>, <kpsingh@google.com>
+Subject: Re: [PATCH 7/8] iommu/amd: Add support for nested domain allocation
+Message-ID: <aKjKJhblxtnlrrPG@Asurada-Nvidia>
+References: <20250820113009.5233-1-suravee.suthikulpanit@amd.com>
+ <20250820113009.5233-8-suravee.suthikulpanit@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250821150255.236884-1-ninozhang001@gmail.com>
+In-Reply-To: <20250820113009.5233-8-suravee.suthikulpanit@amd.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F0:EE_|IA0PR12MB8088:EE_
+X-MS-Office365-Filtering-Correlation-Id: cce52715-1fab-4690-88d6-08dde1b5486c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|36860700013|1800799024|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?yi0/zmMQyErGm8h4gK4o4cYf0fMesJY9kEp5mNaCsAk0PkX7Nk7mwRKU6BaL?=
+ =?us-ascii?Q?I9KYqUsKA9O4OXpC6Mn1JLGQOvqoopQnJWjnK0tC4pTaODyepa/lbGmeQd+O?=
+ =?us-ascii?Q?GkPFuXP6DbxmUixHvurgtonvE4lUOuFs7iMEi1XB6Va6uHiak8oZG2S0CxE0?=
+ =?us-ascii?Q?XPut0+D5IAVZQtTiFRfFpJgos6sRAEmpvr7At7oRx01eotugb5U1aK4AvUkA?=
+ =?us-ascii?Q?0slO2PMSx17n9Ca79/zLjEOfDXldHiKhJJb+mHlfq7e5emYiM2wso28OGXb3?=
+ =?us-ascii?Q?1iLIRSkP1d+c4gmmCDtowy8n2FBOUDggdKh8sacxHTH9PlDukt5hAyReiU8K?=
+ =?us-ascii?Q?XyHL7jTC6q2JzedCKBBNfkj1yqsuzq/xmUB8g+ItBmBKEqgniZFSv+hxgp2y?=
+ =?us-ascii?Q?PxM50hpPwUXzZ0BGcZ0TpUD/NGuj9xBftHgTg/4rj5cFM/w+QdGZMUvHvmVR?=
+ =?us-ascii?Q?IPDC7lOGDnEo8nrzBuKtwVKkvdXZq87qYb9TtndR2WAkvF68ByzcMZI/yj+1?=
+ =?us-ascii?Q?TI0xgtAvanNSzYDdakGsMCLoiarx0JPxbzZa5fVhE4ACAPwin94EnQKRN3R4?=
+ =?us-ascii?Q?BfNfe9oZ3phNdnk5hJKzq5BvsFjLoF1LZ7L2iOtbUBj04OFT9hF57armSbeG?=
+ =?us-ascii?Q?ux5EbW/RwrOF6qfMdu7erajND+PQ6Jhtfti0x+GespChJfKcbiQ92+fhISqK?=
+ =?us-ascii?Q?Kxb7OdYmNNfHvG+RbkJq3RCXItF7eYKdOjZMT6Vlsc2boXD9Mtid4145Qbjh?=
+ =?us-ascii?Q?I8PowFQq8r3PsjDWDrB/rZUjGeOfVKm7jEuVLl6dR/9kg+ZSE/NS7OhrxswJ?=
+ =?us-ascii?Q?pKvhv2jcWefMbd0UvWi7Guo94jTMxkBYUkDZJy7PcFgU8cj2c4ZS8WZTy1sY?=
+ =?us-ascii?Q?6U6wHwVsg3Rw6RV/MEYWx6zhUcCNQFSP1pBhIync8pt+zHwbeyknMxz1Pk3R?=
+ =?us-ascii?Q?JCneCP4Y3GWlbEVIhnSqkpzulnxgKp4GQjzmWldnuoxWn29g54iqAn1r/jNb?=
+ =?us-ascii?Q?DC/IQtHWUHb93EF6pCE+cySbxHQsYj5X5f4gRzcuifhtB8rkkNNOKFj9QPhy?=
+ =?us-ascii?Q?TKVdvhx0tD52e6KdT41fQrXLGeBKkcHdpELEpAo+xqIJz4+AFdC8YM6bnDhj?=
+ =?us-ascii?Q?8jQ4IrsssomM4mxgJg1BVxtleFlTcQMQYJmRu69mwM/XNxVKk3bPsbJQXcvS?=
+ =?us-ascii?Q?ZCuTE+gJzxGjIo7guasTVuLuNjHbByTMlEv/dvol97RAsT+70WMXjxffY5B6?=
+ =?us-ascii?Q?aX8kVPcooUsZZRq5D8oUVMMpTEu8NkrVhaQllMaIJa0dQB4+MN51SH8KBSCE?=
+ =?us-ascii?Q?Tuw/q2/NI5oXNI/PNv1Q/4KMz0mtA0sewTxHS20wAqTP2cEfx0hds6YEuDam?=
+ =?us-ascii?Q?ZDljlcu7BFWEIc1temjCOVK+Q+FtiuCz3vmCwu7aQWbFC0jhhXmQ8Xm0nara?=
+ =?us-ascii?Q?WI/yNXmuDpMpWr9TqTLCubB1JTS6XZndtga6aDcGRtsTHRJjnUf14pmImay/?=
+ =?us-ascii?Q?4hNm/aUMV4U0sABLq+UcLm/Pdjb0+ZNxLGEB?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 19:51:27.5946
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cce52715-1fab-4690-88d6-08dde1b5486c
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F0.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8088
 
-On Thu, Aug 21, 2025 at 11:02:55PM +0800, Nino Zhang wrote:
-> Convert the img-mdc-dma binding from txt to YAML schema.
-> No functional changes except dropping the consumer node
-> (spi@18100f00) from the example, which belongs to the
-> consumer binding instead.
-> 
-> Tested with 'make dt_binding_check'.
-
-No need to say that in the commit msg. It is assumed you did this.
-
-> 
-> Signed-off-by: Nino Zhang <ninozhang001@gmail.com>
-> ---
->  .../devicetree/bindings/dma/img-mdc-dma.txt   | 57 -----------
->  .../devicetree/bindings/dma/img-mdc-dma.yaml  | 98 +++++++++++++++++++
->  2 files changed, 98 insertions(+), 57 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/dma/img-mdc-dma.txt
->  create mode 100644 Documentation/devicetree/bindings/dma/img-mdc-dma.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/img-mdc-dma.txt b/Documentation/devicetree/bindings/dma/img-mdc-dma.txt
-> deleted file mode 100644
-> index 28c1341db346..000000000000
-> --- a/Documentation/devicetree/bindings/dma/img-mdc-dma.txt
-> +++ /dev/null
-> @@ -1,57 +0,0 @@
-> -* IMG Multi-threaded DMA Controller (MDC)
-> -
-> -Required properties:
-> -- compatible: Must be "img,pistachio-mdc-dma".
-> -- reg: Must contain the base address and length of the MDC registers.
-> -- interrupts: Must contain all the per-channel DMA interrupts.
-> -- clocks: Must contain an entry for each entry in clock-names.
-> -  See ../clock/clock-bindings.txt for details.
-> -- clock-names: Must include the following entries:
-> -  - sys: MDC system interface clock.
-> -- img,cr-periph: Must contain a phandle to the peripheral control syscon
-> -  node which contains the DMA request to channel mapping registers.
-> -- img,max-burst-multiplier: Must be the maximum supported burst size multiplier.
-> -  The maximum burst size is this value multiplied by the hardware-reported bus
-> -  width.
-> -- #dma-cells: Must be 3:
-> -  - The first cell is the peripheral's DMA request line.
-> -  - The second cell is a bitmap specifying to which channels the DMA request
-> -    line may be mapped (i.e. bit N set indicates channel N is usable).
-> -  - The third cell is the thread ID to be used by the channel.
-> -
-> -Optional properties:
-> -- dma-channels: Number of supported DMA channels, up to 32.  If not specified
-> -  the number reported by the hardware is used.
-> -
-> -Example:
-> -
-> -mdc: dma-controller@18143000 {
-> -	compatible = "img,pistachio-mdc-dma";
-> -	reg = <0x18143000 0x1000>;
-> -	interrupts = <GIC_SHARED 27 IRQ_TYPE_LEVEL_HIGH>,
-> -		     <GIC_SHARED 28 IRQ_TYPE_LEVEL_HIGH>,
-> -		     <GIC_SHARED 29 IRQ_TYPE_LEVEL_HIGH>,
-> -		     <GIC_SHARED 30 IRQ_TYPE_LEVEL_HIGH>,
-> -		     <GIC_SHARED 31 IRQ_TYPE_LEVEL_HIGH>,
-> -		     <GIC_SHARED 32 IRQ_TYPE_LEVEL_HIGH>,
-> -		     <GIC_SHARED 33 IRQ_TYPE_LEVEL_HIGH>,
-> -		     <GIC_SHARED 34 IRQ_TYPE_LEVEL_HIGH>,
-> -		     <GIC_SHARED 35 IRQ_TYPE_LEVEL_HIGH>,
-> -		     <GIC_SHARED 36 IRQ_TYPE_LEVEL_HIGH>,
-> -		     <GIC_SHARED 37 IRQ_TYPE_LEVEL_HIGH>,
-> -		     <GIC_SHARED 38 IRQ_TYPE_LEVEL_HIGH>;
-> -	clocks = <&system_clk>;
-> -	clock-names = "sys";
-> -
-> -	img,max-burst-multiplier = <16>;
-> -	img,cr-periph = <&cr_periph>;
-> -
-> -	#dma-cells = <3>;
-> -};
-> -
-> -spi@18100f00 {
-> -	...
-> -	dmas = <&mdc 9 0xffffffff 0>, <&mdc 10 0xffffffff 0>;
-> -	dma-names = "tx", "rx";
-> -	...
-> -};
-> diff --git a/Documentation/devicetree/bindings/dma/img-mdc-dma.yaml b/Documentation/devicetree/bindings/dma/img-mdc-dma.yaml
-> new file mode 100644
-> index 000000000000..b635125d7ae3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/dma/img-mdc-dma.yaml
-
-Use the compatible string for the filename.
-
-> @@ -0,0 +1,98 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/dma/img-mdc-dma.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+On Wed, Aug 20, 2025 at 11:30:08AM +0000, Suravee Suthikulpanit wrote:
+> diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
+> index 46682c8ba28d..ea790a8997ee 100644
+> --- a/drivers/iommu/amd/iommu.c
+> +++ b/drivers/iommu/amd/iommu.c
+> @@ -2616,6 +2616,7 @@ amd_iommu_domain_alloc_paging_flags(struct device *dev, u32 flags,
+>  				    const struct iommu_user_data *user_data)
+>  
+>  {
+> +	struct iommu_domain *dom = ERR_PTR(-EOPNOTSUPP);
+>  	struct iommu_dev_data *dev_data = dev_iommu_priv_get(dev);
+>  	struct amd_iommu *iommu = get_amd_iommu_from_dev(dev);
+>  	const u32 supported_flags = IOMMU_HWPT_ALLOC_DIRTY_TRACKING |
+> @@ -2626,29 +2627,31 @@ amd_iommu_domain_alloc_paging_flags(struct device *dev, u32 flags,
+>  	if ((flags & ~supported_flags) || user_data || !is_nest_parent_supported(flags))
+>  		return ERR_PTR(-EOPNOTSUPP);
+>  
+> -	pr_debug("%s: IOMMU devid=%#x, flags=%#x\n", __func__, dev_data->devid, flags);
+> +	pr_debug("%s: IOMMU devid=%#x, flags=%#x, supported_flags=%#x\n", __func__, dev_data->devid, flags, supported_flags);
+>  
+>  	switch (flags & supported_flags) {
+>  	case IOMMU_HWPT_ALLOC_DIRTY_TRACKING:
+>  	case IOMMU_HWPT_ALLOC_DIRTY_TRACKING | IOMMU_HWPT_ALLOC_NEST_PARENT:
+>  	case IOMMU_HWPT_ALLOC_NEST_PARENT:
+>  		/* Allocate domain with v1 page table for dirty tracking */
+> -		if (!amd_iommu_hd_support(iommu))
+> -			break;
+> -		return do_iommu_domain_alloc(dev, flags, PD_MODE_V1);
+> +		if (amd_iommu_hd_support(iommu))
+> +			dom = do_iommu_domain_alloc(dev, flags, PD_MODE_V1);
+> +		break;
+>  	case IOMMU_HWPT_ALLOC_PASID:
+>  		/* Allocate domain with v2 page table if IOMMU supports PASID. */
+> -		if (!amd_iommu_pasid_supported())
+> -			break;
+> -		return do_iommu_domain_alloc(dev, flags, PD_MODE_V2);
+> +		if (amd_iommu_pasid_supported())
+> +			dom = do_iommu_domain_alloc(dev, flags, PD_MODE_V2);
+> +		break;
+>  	case 0:
+>  		/* If nothing specific is required use the kernel commandline default */
+> -		return do_iommu_domain_alloc(dev, 0, amd_iommu_pgtable);
+> +		dom = do_iommu_domain_alloc(dev, 0, amd_iommu_pgtable);
+> +		break;
+>  	default:
+>  		pr_err("%s: Unhandled flag : 0x%x\n", __func__, flags);
+>  		break;
+>  	}
+> -	return ERR_PTR(-EOPNOTSUPP);
 > +
-> +title: IMG Multi-threaded DMA Controller (MDC)
+> +	return dom;
+
+These seem better to be a preparatory patch.
+
+> @@ -3113,6 +3116,7 @@ const struct iommu_ops amd_iommu_ops = {
+>  	.release_domain = &release_domain,
+>  	.identity_domain = &identity_domain.domain,
+>  	.domain_alloc_paging_flags = amd_iommu_domain_alloc_paging_flags,
+> +	.domain_alloc_nested = amd_iommu_domain_alloc_nested,
+>  	.domain_alloc_sva = amd_iommu_domain_alloc_sva,
+>  	.probe_device = amd_iommu_probe_device,
+>  	.release_device = amd_iommu_release_device,
+
+This will be an HWPT-based nesting support, v.s. vIOMMU-based.
+
+If AMD wants to enable its Command/Event Buffers, I think this
+should follow the vIOMMU model instead.
+
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2023 Advanced Micro Devices, Inc.
+> + */
 > +
-> +maintainers:
-> +  - Vinod Koul <vkoul@kernel.org>
+> +#define pr_fmt(fmt)     "AMD-Vi: " fmt
+> +#define dev_fmt(fmt)    pr_fmt(fmt)
+> +
+> +#include <linux/iommu.h>
+> +#include <uapi/linux/iommufd.h>
+> +
+> +#include "amd_iommu.h"
+> +#include "amd_iommu_types.h"
 
-No, must be someone with this h/w and cares about this h/w.
+It seems that you already included the uapi header in "amd_iommu.h".
+
+> +static int udata_to_iommu_hwpt_amd_v2(const struct iommu_user_data *user_data,
+> +				       struct iommu_hwpt_amd_v2 *hwpt)
+> +{
+> +	if (!user_data)
+> +		return -EINVAL;
+> +
+> +	if (user_data->type != IOMMU_HWPT_DATA_AMD_V2)
+> +		return -EOPNOTSUPP;
+> +
+
+iommu_copy_struct_from_user() internally checks these two already.
+
+> +	return iommu_copy_struct_from_user(hwpt, user_data,
+> +					   IOMMU_HWPT_DATA_AMD_V2,
+> +					   dte);
+> +}
+> +
+> +struct iommu_domain *
+> +amd_iommu_domain_alloc_nested(struct device *dev, struct iommu_domain *parent,
+> +			      u32 flags, const struct iommu_user_data *user_data)
+> +{
+> +	int ret;
+> +	struct iommu_hwpt_amd_v2 hwpt;
+> +	struct protection_domain *pdom;
+> +
+> +	if (parent->ops != amd_iommu_ops.default_domain_ops)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	ret = udata_to_iommu_hwpt_amd_v2(user_data, &hwpt);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	pdom = kzalloc(sizeof(*pdom), GFP_KERNEL);
+> +	if (IS_ERR(pdom))
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	pdom->id = amd_iommu_pdom_id_alloc();
+> +	if (!pdom->id)
+> +		goto out_err;
+
+This seems incorrect. amd_iommu_pdom_id_alloc() is a wrapper of the
+ida_alloc_range() that would return -ENOMEM or -ENOSPC on failure.
+
+Also, -EINVAL in out_err isn't nice to replace either of them.
+
+So, I think this should be:
+
+	if (pdom->id <= 0) {
+		ret = pdom->id;
+		goto out_err;
+	}
 
 > +
-> +allOf:
-> +  - $ref: /schemas/dma/dma-controller.yaml#
+> +	pr_debug("%s: Allocating nested domain with parent domid=%#x\n",
+> +		 __func__, to_pdomain(parent)->id);
 > +
-> +properties:
-> +  compatible:
-> +    description: Must be "img,pistachio-mdc-dma".
-
-Drop. The schema says that. Same goes for all the other descriptions, so 
-I won't repeat it everywhere.
-
-> +    const: img,pistachio-mdc-dma
+> +	spin_lock_init(&pdom->lock);
+> +	INIT_LIST_HEAD(&pdom->dev_list);
+> +	INIT_LIST_HEAD(&pdom->dev_data_list);
+> +	xa_init(&pdom->iommu_array);
 > +
-> +  reg:
-> +    description:
-> +      Must contain the base address and length of the MDC registers.
+> +	pdom->pd_mode = PD_MODE_V2;
+> +	pdom->iop.pgtbl.cfg.amd.nid = NUMA_NO_NODE;
+> +	pdom->parent = to_pdomain(parent);
+> +	pdom->domain.ops = &nested_domain_ops;
+> +	pdom->domain.type = IOMMU_DOMAIN_NESTED;
+> +	pdom->domain.geometry.aperture_start = 0;
+> +	pdom->domain.geometry.aperture_end = ((1ULL << PM_LEVEL_SHIFT(amd_iommu_gpt_level)) - 1);
+> +	pdom->domain.geometry.force_aperture = true;
+> +	pdom->domain.pgsize_bitmap = pdom->iop.pgtbl.cfg.pgsize_bitmap;
+> +	memcpy(&pdom->guest_hwpt, &hwpt, sizeof(struct iommu_hwpt_amd_v2));
 
-Drop.
+How about just hold a "struct dev_table_entry guest_dte" in the
+pdom, instead of holding a uAPI structure?
 
-> +    minItems: 1
-
-maxItems instead.
-
-> +
-> +  interrupts:
-> +    description:
-> +      Must contain all the per-channel DMA interrupts.
-
-Must define how many.
-
-> +
-> +  clocks:
-> +    description: |
-> +      Must contain an entry for each entry in clock-names.
-> +      See clock/clock.yaml for details.
-
-Drop.
-
-Must define how many clocks and what they are.
-
-> +
-> +  clock-names:
-> +    description: |
-> +      Must include the following entries:
-> +        - sys: MDC system interface clock.
-
-Drop. The schema says that.
-
-> +    minItems: 1
-> +    contains: { const: sys }
-
-Must be exact list of values, not 'sys' plus anything else you want.
-
-> +
-> +  img,cr-periph:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: |
-
-Drop '|'. Not needed if no formatting to maintain.
-
-
-> +      Must contain a phandle to the peripheral control syscon node
-> +      which contains the DMA request to channel mapping registers.
-> +
-> +  img,max-burst-multiplier:
-> +    description: |
-> +      Must be the maximum supported burst size multiplier.
-> +      The maximum burst size is this value multiplied by the
-> +      hardware-reported bus width.
-
-Wrap lines at 80 and drop '|'.
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-
-constraints?
-
-> +
-> +  "#dma-cells":
-> +    description: |
-> +      Must be 3:
-> +        - The first cell is the peripheral's DMA request line.
-> +        - The second cell is a bitmap specifying to which channels the DMA request
-> +          line may be mapped (i.e. bit N set indicates channel N is usable).
-> +        - The third cell is the thread ID to be used by the channel.
-> +    const: 3
-> +
-> +  dma-channels:
-> +    description: |
-> +      Number of supported DMA channels, up to 32. If not specified
-> +      the number reported by the hardware is used.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-
-Drop. Already has a type defined.
-
-> +    maximum: 32
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - "img,cr-periph"
-> +  - "img,max-burst-multiplier"
-
-Don't need quotes.
-
-> +  - "#dma-cells"
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/mips-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    mdc: dma-controller@18143000 {
-
-Drop 'mdc'
-
-> +      compatible = "img,pistachio-mdc-dma";
-> +      reg = <0x18143000 0x1000>;
-> +      interrupts = <GIC_SHARED 27 IRQ_TYPE_LEVEL_HIGH>,
-> +            <GIC_SHARED 28 IRQ_TYPE_LEVEL_HIGH>;
-> +      clocks = <&system_clk>;
-> +      clock-names = "sys";
-> +
-> +      img,max-burst-multiplier = <16>;
-> +      img,cr-periph = <&cr_periph>;
-> +
-> +      #dma-cells = <3>;
-> +    };
-> -- 
-> 2.43.0
-> 
+Nicolin
 
