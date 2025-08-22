@@ -1,282 +1,127 @@
-Return-Path: <linux-kernel+bounces-781851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6DE5B3179C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:23:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 981A9B31790
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 002A5B0680C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:20:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 527B2189A839
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37D7309DCC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2047A3093BC;
 	Fri, 22 Aug 2025 12:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Po+xr1kJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="vK5SYRbK"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DF93093A6;
-	Fri, 22 Aug 2025 12:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142F82FC007;
+	Fri, 22 Aug 2025 12:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755864979; cv=none; b=NBQ4EQq7nRHI0dwLSZJuiJwp4MtCQteHW3hTlM56vf4sIl/f2PJqAAGqExQRzvtMoZyWO+/TJloc5x5dennQZhE4yvtqPgJv71QPAutjtLozF9hxYh2HvQS815M8OV2GGIP1BSy8a/eA6JBYhK9ysdhNGnFy5tRxCl3gkNRkmZs=
+	t=1755864978; cv=none; b=UnVbgHM/azXULeyzfpc5ajfwq+xr9nKMYq2n8RXAlEFZ3ujrT45KELB/itYT1cID2X6rzIt4/L0MdYhGjz6jfmu4EpCXefqhYhNV6Dol5AXik9xNV3NwrvYFt5hDe1RQwqi4d0ZDVtXNvN01Qq5Hxp88qHyv8hSmga0gKPXHKEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755864979; c=relaxed/simple;
-	bh=OzYLZcoR2X2ar16/GYPn46bn5FFs0TT9hSw7MAwyKy0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lcn1kFuXOIZcIj4ked8+P/Nj3G57MhA2WkaD4bYCZ7up8hHCcAxNJpWzfD9HFsMjlO0O5f8lAquD+aiYEVwmWwI/9KzQk/B3+ZtynLc0HaNnOk+6NCTPok9l1Inwp1LyinSIkas/aWPS8ZAFWPQG6cm+zhGIQ2JMyQtR7FaxMqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Po+xr1kJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12C51C4CEED;
-	Fri, 22 Aug 2025 12:16:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755864978;
-	bh=OzYLZcoR2X2ar16/GYPn46bn5FFs0TT9hSw7MAwyKy0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Po+xr1kJaQN1T2m1C8jqLNFgZsBbLa+lSQdi84iOJxr7Mr1W/8kPLLGK9OqwUoX4v
-	 UeQCeTxa+29nq6ApUVS6iCrRGxH0W4OjHIjpqx1iIjhOuzyxx8ZiFvm8uQaLHPq7nA
-	 FL+o9pJH6xMZuj4Vg18PXH7YYVt+S6W6l/3tEv6DLVYcmMVdLhaWlxMTPZRcut/h8w
-	 qXKxHmAIMArPKuEQpFfKr2Q8Lh/99Rwweoe/Ut7KmT/pJsJvhtWmOFd+4VTCAx3pjy
-	 YSl3vW2+KA5pdvY9ys7gXWj3piyg7rqSGsie2I4soxkUC0xD/AfVqj/YZF3BYZDeP4
-	 2zZObObkvDKKw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Fri, 22 Aug 2025 14:14:54 +0200
-Subject: [PATCH v6 18/18] rnull: add soft-irq completion support
+	s=arc-20240116; t=1755864978; c=relaxed/simple;
+	bh=3Ea7W0dwKnTlVfxRkgXHCe2WVUuOP11xif5wEmfOclM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LQZ1jICEBMNzx4+Z+kpdEESDIeQUqdN4iRxKdDzQrT4DSDhWiAp3dY3we1h4FdY9S/J3/oYKzJvZqolzcHkVbiZ5Ckf519+EE4KYfmLTXpeSSxwKpioswf6iP8UW3Yl25SfuC+eIItIMGnnyaPCbClyIpsjRU+mBL0+d+tDJ+OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=vK5SYRbK; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1755864978; x=1787400978;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=3Ea7W0dwKnTlVfxRkgXHCe2WVUuOP11xif5wEmfOclM=;
+  b=vK5SYRbKb8No+twO1Sq/8UVyGGoMYlqLdRLXXXu9ztsq6jncKmbOo6+1
+   shICueE5ZQ4WPleKmL/zDvaZghDlWQaE+u9ieMCIsnjUwRoNB5xSsFAML
+   13tsQRaR8XKfOhdjh1jl1S8g3/fiqGnUhenhPxrauL5K01M5yW2mZPavj
+   lCkvcCYxzC0deYNxd9Z7//5REpw3fq1Qvs5xMI3OM5y/p0f/CcAtMZJLs
+   V46810FIpF5xktsoxzvJlpvRyJvTGG8Ag5PxjKcJuU8CqUVHg8g11yZKD
+   UMs6z8VDWk+nnVcFfK3JLbqdLTYlUOSMzcOe/LUnGDlTEudkfjk/8ZcOg
+   A==;
+X-CSE-ConnectionGUID: jcwXdTWwTtyRRk6+L1Fb/g==
+X-CSE-MsgGUID: /sDrhHoERLykyKvbaKhrcg==
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="276922450"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Aug 2025 05:16:13 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Fri, 22 Aug 2025 05:15:51 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Fri, 22 Aug 2025 05:15:47 -0700
+Message-ID: <bc7b0167-7514-4aad-a4dd-bd1d9929e99b@microchip.com>
+Date: Fri, 22 Aug 2025 14:15:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] dt-bindings: net: cdns,macb: Add compatible for
+ Raspberry Pi RP1
+To: Stanimir Varbanov <svarbanov@suse.de>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-rpi-kernel@lists.infradead.org>, Broadcom internal kernel review list
+	<bcm-kernel-feedback-list@broadcom.com>
+CC: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+	Andrea della Porta <andrea.porta@suse.com>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>, Phil Elwell <phil@raspberrypi.com>, Jonathan Bell
+	<jonathan@raspberrypi.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Andrew Lunn <andrew@lunn.ch>, Conor Dooley <conor.dooley@microchip.com>
+References: <20250822093440.53941-1-svarbanov@suse.de>
+ <20250822093440.53941-3-svarbanov@suse.de>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Content-Language: en-US, fr
+Organization: microchip
+In-Reply-To: <20250822093440.53941-3-svarbanov@suse.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250822-rnull-up-v6-16-v6-18-ec65006e2f07@kernel.org>
-References: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
-In-Reply-To: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
- Jens Axboe <axboe@kernel.dk>, Breno Leitao <leitao@debian.org>
-Cc: linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6372; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=OzYLZcoR2X2ar16/GYPn46bn5FFs0TT9hSw7MAwyKy0=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBoqF9CEw3x/wP6LFyggIIgSviVsPb85GCgiEaau
- Mt5L6d3SSSJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaKhfQgAKCRDhuBo+eShj
- d/aEEACrZFNVeRnnwzbNU9bsVXC6SOQ9PeQzgDNcR5APm1K90vavLZtiVvFIYQMb1sIyREVkhDL
- nz0Cadgcb6ipuj1T+SF7BoXy6vAr8LKEjtqBgqguFErS2CmlqMg4/tirtPDjd7HLLS2CagQkyVv
- YAum7ai/cb2FRO+eN+Ps75/Yx7W15kLpUSmK1d7QCdxcrtmSkqCHYHN00JTVg5GV7IqYET8pGLM
- AmETYYUVuYb8d77ywUd7m4kx8bgO1WapFUfQ7UK3Iw7ioUNYP45+CiuQkol1f0QEqXWKePknGsa
- PhmTIvYm2nDYbJmC8ECNW+Fjn45WwWHj1FbIvuR+qIpnumvnwjZTmOmmrfY1lVj8uahi/57oJci
- uGscKuVGXLSJvT+neKvDf34vaiu9dB6Gqidgx14LCZsyfzhwEmY538/LpyeQek+7tmToC6Lq75J
- 8cONxUfT0mlMuJqxLuHzOl4JWg2qgWwZUSqMu6gwKLO5fAjiyiMbTvoF3BURdA27FwSea7LPqu0
- 6FKKC4ZRnuLEy4b0JAWDNbAhRA5/bSBzbZlZpTKK8PPhPG7xvC1a0F3gXlxGti2Zl8SWd3O+HNt
- bxykHH8so8hRAiV2J8gx5lcA9ZPQdXoV3SjoR0/nWzw5mFqS7CxrMS2RZvZ8BRszFy/8ekcW+V4
- cvuKxOCotTtQ/pQ==
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-rnull currently only supports direct completion. Add option for completing
-requests across CPU nodes via soft IRQ or IPI.
+On 22/08/2025 at 11:34, Stanimir Varbanov wrote:
+> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> 
+> The Raspberry Pi RP1 chip has the Cadence GEM ethernet
+> controller, so add a compatible string for it.
+> 
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
----
- drivers/block/rnull/configfs.rs | 59 +++++++++++++++++++++++++++++++++++++++--
- drivers/block/rnull/rnull.rs    | 32 ++++++++++++++--------
- 2 files changed, 78 insertions(+), 13 deletions(-)
+Reviewed-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-diff --git a/drivers/block/rnull/configfs.rs b/drivers/block/rnull/configfs.rs
-index 46710a1e1af4..8498e9bae6fd 100644
---- a/drivers/block/rnull/configfs.rs
-+++ b/drivers/block/rnull/configfs.rs
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- use super::{NullBlkDevice, THIS_MODULE};
--use core::fmt::Write;
-+use core::fmt::{Display, Write};
- use kernel::{
-     block::mq::gen_disk::{GenDisk, GenDiskBuilder},
-     c_str,
-@@ -36,7 +36,7 @@ impl AttributeOperations<0> for Config {
- 
-     fn show(_this: &Config, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
-         let mut writer = kernel::str::Formatter::new(page);
--        writer.write_str("blocksize,size,rotational\n")?;
-+        writer.write_str("blocksize,size,rotational,irqmode\n")?;
-         Ok(writer.bytes_written())
-     }
- }
-@@ -58,6 +58,7 @@ fn make_group(
-                 blocksize: 1,
-                 rotational: 2,
-                 size: 3,
-+                irqmode: 4,
-             ],
-         };
- 
-@@ -72,6 +73,7 @@ fn make_group(
-                     rotational: false,
-                     disk: None,
-                     capacity_mib: 4096,
-+                    irq_mode: IRQMode::None,
-                     name: name.try_into()?,
-                 }),
-             }),
-@@ -79,6 +81,34 @@ fn make_group(
-     }
- }
- 
-+#[derive(Debug, Clone, Copy)]
-+pub(crate) enum IRQMode {
-+    None,
-+    Soft,
-+}
-+
-+impl TryFrom<u8> for IRQMode {
-+    type Error = kernel::error::Error;
-+
-+    fn try_from(value: u8) -> Result<Self> {
-+        match value {
-+            0 => Ok(Self::None),
-+            1 => Ok(Self::Soft),
-+            _ => Err(EINVAL),
-+        }
-+    }
-+}
-+
-+impl Display for IRQMode {
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+        match self {
-+            Self::None => f.write_str("0")?,
-+            Self::Soft => f.write_str("1")?,
-+        }
-+        Ok(())
-+    }
-+}
-+
- #[pin_data]
- pub(crate) struct DeviceConfig {
-     #[pin]
-@@ -92,6 +122,7 @@ struct DeviceConfigInner {
-     block_size: u32,
-     rotational: bool,
-     capacity_mib: u64,
-+    irq_mode: IRQMode,
-     disk: Option<GenDisk<NullBlkDevice>>,
- }
- 
-@@ -121,6 +152,7 @@ fn store(this: &DeviceConfig, page: &[u8]) -> Result {
-                 guard.block_size,
-                 guard.rotational,
-                 guard.capacity_mib,
-+                guard.irq_mode,
-             )?);
-             guard.powered = true;
-         } else if guard.powered && !power_op {
-@@ -205,3 +237,26 @@ fn store(this: &DeviceConfig, page: &[u8]) -> Result {
-         Ok(())
-     }
- }
-+
-+#[vtable]
-+impl configfs::AttributeOperations<4> for DeviceConfig {
-+    type Data = DeviceConfig;
-+
-+    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
-+        let mut writer = kernel::str::Formatter::new(page);
-+        writer.write_fmt(fmt!("{}\n", this.data.lock().irq_mode))?;
-+        Ok(writer.bytes_written())
-+    }
-+
-+    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
-+        if this.data.lock().powered {
-+            return Err(EBUSY);
-+        }
-+
-+        let text = core::str::from_utf8(page)?.trim();
-+        let value = text.parse::<u8>().map_err(|_| EINVAL)?;
-+
-+        this.data.lock().irq_mode = IRQMode::try_from(value)?;
-+        Ok(())
-+    }
-+}
-diff --git a/drivers/block/rnull/rnull.rs b/drivers/block/rnull/rnull.rs
-index a19c55717c4f..1ec694d7f1a6 100644
---- a/drivers/block/rnull/rnull.rs
-+++ b/drivers/block/rnull/rnull.rs
-@@ -4,6 +4,7 @@
- 
- mod configfs;
- 
-+use configfs::IRQMode;
- use kernel::{
-     block::{
-         self,
-@@ -53,35 +54,44 @@ fn new(
-         block_size: u32,
-         rotational: bool,
-         capacity_mib: u64,
-+        irq_mode: IRQMode,
-     ) -> Result<GenDisk<Self>> {
-         let tagset = Arc::pin_init(TagSet::new(1, 256, 1), GFP_KERNEL)?;
- 
-+        let queue_data = Box::new(QueueData { irq_mode }, GFP_KERNEL)?;
-+
-         gen_disk::GenDiskBuilder::new()
-             .capacity_sectors(capacity_mib << (20 - block::SECTOR_SHIFT))
-             .logical_block_size(block_size)?
-             .physical_block_size(block_size)?
-             .rotational(rotational)
--            .build(fmt!("{}", name.to_str()?), tagset, ())
-+            .build(fmt!("{}", name.to_str()?), tagset, queue_data)
-     }
- }
- 
-+struct QueueData {
-+    irq_mode: IRQMode,
-+}
-+
- #[vtable]
- impl Operations for NullBlkDevice {
--    type QueueData = ();
-+    type QueueData = KBox<QueueData>;
- 
-     #[inline(always)]
--    fn queue_rq(_queue_data: (), rq: ARef<mq::Request<Self>>, _is_last: bool) -> Result {
--        mq::Request::end_ok(rq)
--            .map_err(|_e| kernel::error::code::EIO)
--            // We take no refcounts on the request, so we expect to be able to
--            // end the request. The request reference must be unique at this
--            // point, and so `end_ok` cannot fail.
--            .expect("Fatal error - expected to be able to end request");
--
-+    fn queue_rq(queue_data: &QueueData, rq: ARef<mq::Request<Self>>, _is_last: bool) -> Result {
-+        match queue_data.irq_mode {
-+            IRQMode::None => mq::Request::end_ok(rq)
-+                .map_err(|_e| kernel::error::code::EIO)
-+                // We take no refcounts on the request, so we expect to be able to
-+                // end the request. The request reference must be unique at this
-+                // point, and so `end_ok` cannot fail.
-+                .expect("Fatal error - expected to be able to end request"),
-+            IRQMode::Soft => mq::Request::complete(rq),
-+        }
-         Ok(())
-     }
- 
--    fn commit_rqs(_queue_data: ()) {}
-+    fn commit_rqs(_queue_data: &QueueData) {}
- 
-     fn complete(rq: ARef<mq::Request<Self>>) {
-         mq::Request::end_ok(rq)
-
--- 
-2.47.2
-
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>   Documentation/devicetree/bindings/net/cdns,macb.yaml | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/cdns,macb.yaml b/Documentation/devicetree/bindings/net/cdns,macb.yaml
+> index 559d0f733e7e..0591da97d434 100644
+> --- a/Documentation/devicetree/bindings/net/cdns,macb.yaml
+> +++ b/Documentation/devicetree/bindings/net/cdns,macb.yaml
+> @@ -54,6 +54,7 @@ properties:
+>             - cdns,np4-macb             # NP4 SoC devices
+>             - microchip,sama7g5-emac    # Microchip SAMA7G5 ethernet interface
+>             - microchip,sama7g5-gem     # Microchip SAMA7G5 gigabit ethernet interface
+> +          - raspberrypi,rp1-gem       # Raspberry Pi RP1 gigabit ethernet interface
+>             - sifive,fu540-c000-gem     # SiFive FU540-C000 SoC
+>             - cdns,emac                 # Generic
+>             - cdns,gem                  # Generic
+> --
+> 2.47.0
+> 
 
 
