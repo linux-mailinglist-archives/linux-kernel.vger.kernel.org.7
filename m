@@ -1,216 +1,322 @@
-Return-Path: <linux-kernel+bounces-781181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BA6FB30E98
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:14:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B659FB30EA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A997AA80C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:14:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53FDF1CE1118
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7E02E2F0E;
-	Fri, 22 Aug 2025 06:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="t5cw1Jpb"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2080.outbound.protection.outlook.com [40.107.93.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614CE2E3AEF;
+	Fri, 22 Aug 2025 06:14:36 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6002E2833;
-	Fri, 22 Aug 2025 06:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755843272; cv=fail; b=q9hxL6ScudY/NIpEQeoWE1ew6oV3OoJw0pYaarWH3S+UpTfPXwIS7Qt/8zp4IgeKzlfpE8Sc7PbIUYUW2sNZKbolxmuRYkyaVlqJyiWeQYAwCrISFwpCZclEKKu13VhLGpAMSQNcFB8H09C3bNK+t3yXJgEACFIru0rlfXlw/7Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755843272; c=relaxed/simple;
-	bh=YadmVgoTo2IPDJGS0KJ5q4vVT6ZTgrzhqrHHM9UcQkE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=niklan+kwm7yiXkXrJgMsutxSAJsMt9C2nHiGLbWPH6BgZEppptoeBJVkKt41FUjDGqXMpg9tHh70Dh+5FC17Xj+m8e6D9d430IVwN45tRNuJ+3BbbNGSD9cRw7Uf2rnVbiIAirD8YIl0Ve2BTIvhFP3+PKcasZyy/jDYfqPSiU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=t5cw1Jpb; arc=fail smtp.client-ip=40.107.93.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SkrnCsbPJItYSA44cv+Q3qGS+D1a/iu3bFFDwqt5JtFCNb+JjAEY/9qE5Rnle+cjTjldIMTRa1V5hAChHdvdTBCy0HDXz04G28aNqzswBGG9b3z4IfXqhgd5JL5Vq3I4VuMM/11z4Vcku3bbptxCPfGyiFpnBkWbTlFPI5RjCuUSP5vltffsAZQ1R0sVPmN8EMQWI7yXhiwF4U4q9L+WuveIRvSfZOr5rPiMYFtRrKwEDSDL8vi8NYZaCYzoTBw1BLsAGr04SjSla+Wx21OBg+EieH5J2hhid60aaBXDdIXsDmN3Ujx1Uh+cfSwNwyzsGG0x23LyQPH/eaAKXSd5aQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TgRqmJtyyZZKh40pf/48v4y890uKqUZvohs/c2O01aE=;
- b=JTJhRPILZUpC7RruSmzGErNjnjPM3dJUFL2Qe+BqYvNqytozQTDbMF4ILdS+I4BTqRAGfi+zgqvHNE5FDgXygFbA/Aa6hQjhFqGByXlwKCPRRDrBC6VGwEteWBHnN4MBLhS70pBWlCetIsjaDULFcMTDM5FI7vePZLbSX0mC58jGV1oxqq9idCPZDf5RTemq3XLdVE9O+3BEmPF+KXGIUGLrQRj8rTh8lHHIskVtMevKcnpwc8Yy+IJAEQThYWKxXVkBqD5V0yEUlfzJ854RukCyBaLhowroYOI1Kf+qX1q8WnFLCwr9gp4W+T8W7PSbvpNJXFuyiZLnZ2ZhxQiPuA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TgRqmJtyyZZKh40pf/48v4y890uKqUZvohs/c2O01aE=;
- b=t5cw1JpbZ2aD1ppKt9P6Fsd/GmIqh59FgdjYOTKhbb9GoPfvpBmsQJIlhWjiX7AjWArAFXFX6JvjUNne/5NbxN1whyQ0uePg34iWTelVemwSw+qdV+vA30CGc3BEmcm6GCRuC2rr5rJz8GXtXU+CWXZ4Q/Ih8zTDTFr3mpAqFkITN4YToyMzN4309sVt99erWc95RC5rKSDsi7MdGpFUPvJAaLiC8FaFOFHVqS/i0xzCjTj92fPf8hfS1LogmloWb68Pu/trKfrfVbKwKcdGwnNib6MPx85DTDEdkcCLWZgJhTPWI9fX9od+lchk6MgIEEvh8Nqg/MgxLw61wfmBcw==
-Received: from DM5PR07CA0054.namprd07.prod.outlook.com (2603:10b6:4:ad::19) by
- DM4PR12MB5795.namprd12.prod.outlook.com (2603:10b6:8:62::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.15; Fri, 22 Aug 2025 06:14:27 +0000
-Received: from DS1PEPF00017094.namprd03.prod.outlook.com
- (2603:10b6:4:ad:cafe::93) by DM5PR07CA0054.outlook.office365.com
- (2603:10b6:4:ad::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.16 via Frontend Transport; Fri,
- 22 Aug 2025 06:14:27 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS1PEPF00017094.mail.protection.outlook.com (10.167.17.137) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.8 via Frontend Transport; Fri, 22 Aug 2025 06:14:27 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 21 Aug
- 2025 23:14:13 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 21 Aug
- 2025 23:14:12 -0700
-Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Thu, 21 Aug 2025 23:14:10 -0700
-Date: Thu, 21 Aug 2025 23:14:09 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Ethan Zhao <etzhao1900@gmail.com>
-CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <bhelgaas@google.com>,
-	<jgg@nvidia.com>, <will@kernel.org>, <robin.clark@oss.qualcomm.com>,
-	<yong.wu@mediatek.com>, <matthias.bgg@gmail.com>,
-	<angelogioacchino.delregno@collabora.com>, <thierry.reding@gmail.com>,
-	<vdumpa@nvidia.com>, <jonathanh@nvidia.com>, <rafael@kernel.org>,
-	<lenb@kernel.org>, <kevin.tian@intel.com>, <yi.l.liu@intel.com>,
-	<baolu.lu@linux.intel.com>, <linux-arm-kernel@lists.infradead.org>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-tegra@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <patches@lists.linux.dev>,
-	<pjaroszynski@nvidia.com>, <vsethi@nvidia.com>, <helgaas@kernel.org>
-Subject: Re: [PATCH v3 5/5] pci: Suspend iommu function prior to resetting a
- device
-Message-ID: <aKgKsXmVWS5NZdUn@Asurada-Nvidia>
-References: <cover.1754952762.git.nicolinc@nvidia.com>
- <3749cd6a1430ac36d1af1fadaa4d90ceffef9c62.1754952762.git.nicolinc@nvidia.com>
- <550635db-00ce-410e-add0-77c1a75adb11@gmail.com>
- <aKTzq6SLGB22Xq5b@Asurada-Nvidia>
- <d6b852bc-328a-41af-b125-e250c72c0d22@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481C42E2DDC;
+	Fri, 22 Aug 2025 06:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755843275; cv=none; b=W+3atl1qTE5IiTn12pu/6QRyIhfGZgNXeygmdnbB4T9qfj5QcGMoam7pJrGbeP8sZ8CmzDl9AaicKExO1TGIuW/Z6MndpyDHwWyjDA5wjdsSIHErM6GepY3DOx1Etjv4UWLou8Go+EVOfrIrdaEkij4/vUr26ph23uzcUPzLJhc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755843275; c=relaxed/simple;
+	bh=qyQp3sN+0AaapsjkGZrdF0UuXYklXfELoX5jeIZ9sx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vBZjcO3gql7gf15cO9Sd388E6vVA1dZ4RNWI0SnQbr8yvsY5q15SBbxXH3ExP2cSS4cRhQqK5MXCU4XH85zgdkiNjYbLCNUZMVccquqmn6ATFxr6EwnG8UIsUi+5Vz2XuA/khu1rQnvgj8LYHShmkK5pyUcUHBVTKpNAIX/Uq5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c7VJk5D52zYQvRZ;
+	Fri, 22 Aug 2025 14:14:30 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 48C5D1A19AE;
+	Fri, 22 Aug 2025 14:14:29 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP1 (Coremail) with SMTP id cCh0CgDno6_DCqho9M68EQ--.38688S2;
+	Fri, 22 Aug 2025 14:14:29 +0800 (CST)
+Message-ID: <552a7f82-2735-47a5-9abd-a9ae845f4961@huaweicloud.com>
+Date: Fri, 22 Aug 2025 14:14:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <d6b852bc-328a-41af-b125-e250c72c0d22@gmail.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF00017094:EE_|DM4PR12MB5795:EE_
-X-MS-Office365-Filtering-Correlation-Id: 20684c77-740c-4935-81a9-08dde1432609
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?c7EWgqX+O0j6epS8boWfDsSkn5d4PDsY34sDQ+458CqtPwaiOaaGppl9eNLI?=
- =?us-ascii?Q?909LalIX46dBHkAR4rInJH9XoTmLjoe6ByCidCSvtQSR+cjjLWEC9X64Snz3?=
- =?us-ascii?Q?EFBzHPQAnEBx+4LCH0d7CQPuh8F27vpnHiQOQn0/GeZ9Xea59EOz1jKpDVUe?=
- =?us-ascii?Q?tWa+Ny7eRQ9EXF5yqKlRSyfKo6sNC978+a+rsgRvIHQtfNyTotj9/w40egZe?=
- =?us-ascii?Q?6WFlwmCQPCYQ+XZlifFOSLlpxectizqTqM49rZ2ASkK9Se8FftJIHX6UXqp5?=
- =?us-ascii?Q?TzRj0aaUBDOfgOhFwKDZ52X4aiWlNbzBCD854h60tTxDaeaxlihNlBHfiNY3?=
- =?us-ascii?Q?fuajqPs8Gk24SI6EkagRbkEkE6P4L8ihztO2RIFRkNkpDNC7uCOluV/inGbU?=
- =?us-ascii?Q?6Rt0E6Cm1XtXCrgR+0KkXbJv6xnPfJs700m+ImPs3cQVA3cUkMXnlXjEqq+C?=
- =?us-ascii?Q?GEITzsa1qJZy4ecZMeH9k/lHwavsQ7BkYuK/sr74HksZo6RzzGFiCTmZuSRA?=
- =?us-ascii?Q?5Ln4qBZXDEm8PHe5mOommJqVmXN6FyidRenNK/xuC7hnEFoIojX/cKx1HY+P?=
- =?us-ascii?Q?uT0GGHqPHg99dBUzflDxazbqQEh2dJu9kjslcJOvIXRfYLHAtB+kH07oOB6G?=
- =?us-ascii?Q?yz6NakqB8xBErm0rnchZ87WxeWXo1YKRKNEcJvpVIJC2m2bP7IekE46AcUkE?=
- =?us-ascii?Q?lVVtxAKO9ggK3Y+eYxdcGsYNY/LMYxQKioJ+rFZDslQuPysXrc7uB03uG42K?=
- =?us-ascii?Q?lB0S6yMEv9QoTaG9N5aIEYOEzgtx+9sqDxkY7bdZGkjM32TJrYc2WPhd21WY?=
- =?us-ascii?Q?Bkh1EhEGK1qrIJtWWBwK0yccjHOAt5EwK3kGMxGVET2Qzc1af8Q2nQqxQ8Ve?=
- =?us-ascii?Q?IAq8kRBezFe2CYiwjCwomosMlbzclav0RJf6JBUp4GrRJTRzwU2yaGNtXXoA?=
- =?us-ascii?Q?ROvtnCHIAtAFbBONmY6NDDG06bOGG8JAc4GkHgi4FPZO4cIwax6gMcf5ALBl?=
- =?us-ascii?Q?oxkfxlhp6jmQ+XOUlyeVvq/t4j682wSa1/QEQB6IecSvkcDUUMLqGAW5sPSc?=
- =?us-ascii?Q?4JtsVDjrDyu7w9TgggeTihGokJjXGKokxDoiqkk7lpfohlrcU5sI8yjggHET?=
- =?us-ascii?Q?cQK5Qo2siv0W74fk+SEBeRejGO9xvRcvdlUrE6DZ5hfYibfiTYat3tNiELTv?=
- =?us-ascii?Q?UB4zF1db22XVz8u1ePgiSZ+0JWSu8MTVlkoC+gvGKu+9Js1hq4HyGgDiqvrp?=
- =?us-ascii?Q?h6cfFdHe0OBwl9i8hq266VBp9nougMPj/q1fGSR+tzHapS3tMGuNRph+A6nh?=
- =?us-ascii?Q?X902Bz9dN/OZDlYhuTm5OMykX/c3fomc63LNdzbNqApO3RsvshzKsPp3bVxe?=
- =?us-ascii?Q?OwL2eGjdhsgdkLagIhgCYiKyUaRyeLjwTqhM/fH46ogsSd3+p21RAd84aDYJ?=
- =?us-ascii?Q?znxsWYCngoa9LcWLWArr1tS/LG8wOy/FaoJa7EFGnOTzqHqrM8Vs0/0b9yUv?=
- =?us-ascii?Q?8c6Q8vm62zVarmiedEtMRALvPnaI2ZV6hCLW?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 06:14:27.2134
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 20684c77-740c-4935-81a9-08dde1432609
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF00017094.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5795
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] cgroup: cgroup.stat.local time accounting
+To: Tiffany Yang <ynaffit@google.com>, linux-kernel@vger.kernel.org
+Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Pavel Machek <pavel@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Chen Ridong <chenridong@huawei.com>, kernel-team@android.com,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+ cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20250822013749.3268080-6-ynaffit@google.com>
+ <20250822013749.3268080-7-ynaffit@google.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <20250822013749.3268080-7-ynaffit@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgDno6_DCqho9M68EQ--.38688S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Jw47JrWDXF45Aw15XrW5Wrg_yoW3CrWrpa
+	1DAw13tw4FyF12grsay34qvF1Sgr48Jw4UGr9rJ348AFnxX3Wvqr1xCr15GF1UArZ7Ka4U
+	J3WY9rWfCrnFvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Wed, Aug 20, 2025 at 11:18:52AM +0800, Ethan Zhao wrote:
-> On 8/20/2025 5:59 AM, Nicolin Chen wrote:
-> >   b) multiple pci_devs; single RID
-> > 
-> >      In this case, FLR only resets one device, while the IOMMU-
-> >      level reset will block the entire RID (i.e. all devices),
-> >      since they share the single translation tunnel. This could
-> >      break the siblings, if they aren't also being reset along.
 
-> Yup, such alias devices might not have ATS cap. because of they
-> are PCI devices or they share the RID(BDF), so checking ATS cap
-> condition might be useful here to skip the prepare()/done()
 
-Yea, I agree, yet I think we need it to be "sure" than "might"?
-
-So perhaps we should check alias too. Given that all alias devices
-in this case share the same RID and reside in the same iommu_group,
-we could iterate the group devices for pci_devs_are_dma_aliases().
-
-> > > 2. Reset PF when its VFs are actvie.
-> > 
-> >   c) multiple pci_devs with their own RIDs
-> > 
-> >      In this case, either FLR or IOMMU only resets the PF. That
-> >      being said, VFs might be affected since PF is resetting?
-> >      If there is an issue, I don't see it coming from the IOMMU-
-> >      level reset..
-
-> Each of the PF and its VFs has it owns RID(BDF), but the VFs' life
-> depends on the living of PF, resetting PF, means all its VFs are
-> lost.
+On 2025/8/22 9:37, Tiffany Yang wrote:
+> There isn't yet a clear way to identify a set of "lost" time that
+> everyone (or at least a wider group of users) cares about. However,
+> users can perform some delay accounting by iterating over components of
+> interest. This patch allows cgroup v2 freezing time to be one of those
+> components.
 > 
-> There is no processing logic about PF and its VFs in FLR() yet.
-> my understanding the upper layer callers should consider the
-> complexity of such case.
+> Track the cumulative time that each v2 cgroup spends freezing and expose
+> it to userland via a new local stat file in cgroupfs. Thank you to
+> Michal, who provided the ASCII art in the updated documentation.
 > 
-> While we introducing the connection of IOMMU & device in FLR(),
-> seems we brought some of the logic from the outside to the inside
-> part.
+> To access this value:
+>   $ mkdir /sys/fs/cgroup/test
+>   $ cat /sys/fs/cgroup/test/cgroup.stat.local
+>   freeze_time_total 0
 > 
-> One method might we don't handle PF either by explicit checking its
-> VF configuration existing to skip prepare()/done() ? till we have
-> much clearer handling logic about it.
+> Ensure consistent freeze time reads with freeze_seq, a per-cgroup
+> sequence counter. Writes are serialized using the css_set_lock.
+> 
+> Signed-off-by: Tiffany Yang <ynaffit@google.com>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Michal Koutný <mkoutny@suse.com>
+> ---
+> v3 -> v4:
+> * Replace "freeze_time_total" with "frozen" and expose stats via
+>   cgroup.stat.local, as recommended by Tejun.
+> * Use the same timestamp when freezing/unfreezing a cgroup as its
+>   descendants, as suggested by Michal.
+> 
+> v2 -> v3:
+> * Use seqcount along with css_set_lock to guard freeze time accesses, as
+>   suggested by Michal.
+> 
+> v1 -> v2:
+> * Track per-cgroup freezing time instead of per-task frozen time, as
+>   suggested by Tejun.
+> ---
+>  Documentation/admin-guide/cgroup-v2.rst | 18 ++++++++++++++++
+>  include/linux/cgroup-defs.h             | 17 +++++++++++++++
+>  kernel/cgroup/cgroup.c                  | 28 +++++++++++++++++++++++++
+>  kernel/cgroup/freezer.c                 | 16 ++++++++++----
+>  4 files changed, 75 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+> index 51c0bc4c2dc5..a1e3d431974c 100644
+> --- a/Documentation/admin-guide/cgroup-v2.rst
+> +++ b/Documentation/admin-guide/cgroup-v2.rst
+> @@ -1001,6 +1001,24 @@ All cgroup core files are prefixed with "cgroup."
+>  		Total number of dying cgroup subsystems (e.g. memory
+>  		cgroup) at and beneath the current cgroup.
+>  
+> +  cgroup.stat.local
+> +	A read-only flat-keyed file which exists in non-root cgroups.
+> +	The following entry is defined:
+> +
+> +	  frozen_usec
+> +		Cumulative time that this cgroup has spent between freezing and
+> +		thawing, regardless of whether by self or ancestor groups.
+> +		NB: (not) reaching "frozen" state is not accounted here.
+> +
+> +		Using the following ASCII representation of a cgroup's freezer
+> +		state, ::
+> +
+> +			       1    _____
+> +			frozen 0 __/     \__
+> +			          ab    cd
+> +
+> +		the duration being measured is the span between a and c.
+> +
+>    cgroup.freeze
+>  	A read-write single value file which exists on non-root cgroups.
+>  	Allowed values are "0" and "1". The default is "0".
+> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+> index 6b93a64115fe..539c64eeef38 100644
+> --- a/include/linux/cgroup-defs.h
+> +++ b/include/linux/cgroup-defs.h
+> @@ -433,6 +433,23 @@ struct cgroup_freezer_state {
+>  	 * frozen, SIGSTOPped, and PTRACEd.
+>  	 */
+>  	int nr_frozen_tasks;
+> +
+> +	/* Freeze time data consistency protection */
+> +	seqcount_t freeze_seq;
+> +
+> +	/*
+> +	 * Most recent time the cgroup was requested to freeze.
+> +	 * Accesses guarded by freeze_seq counter. Writes serialized
+> +	 * by css_set_lock.
+> +	 */
+> +	u64 freeze_start_nsec;
+> +
+> +	/*
+> +	 * Total duration the cgroup has spent freezing.
+> +	 * Accesses guarded by freeze_seq counter. Writes serialized
+> +	 * by css_set_lock.
+> +	 */
+> +	u64 frozen_nsec;
+>  };
+>  
+>  struct cgroup {
+> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+> index 312c6a8b55bb..ab096b884bbc 100644
+> --- a/kernel/cgroup/cgroup.c
+> +++ b/kernel/cgroup/cgroup.c
+> @@ -3763,6 +3763,27 @@ static int cgroup_stat_show(struct seq_file *seq, void *v)
+>  	return 0;
+>  }
+>  
+> +static int cgroup_core_local_stat_show(struct seq_file *seq, void *v)
+> +{
+> +	struct cgroup *cgrp = seq_css(seq)->cgroup;
+> +	unsigned int sequence;
+> +	u64 freeze_time;
+> +
+> +	do {
+> +		sequence = read_seqcount_begin(&cgrp->freezer.freeze_seq);
+> +		freeze_time = cgrp->freezer.frozen_nsec;
+> +		/* Add in current freezer interval if the cgroup is freezing. */
+> +		if (test_bit(CGRP_FREEZE, &cgrp->flags))
+> +			freeze_time += (ktime_get_ns() -
+> +					cgrp->freezer.freeze_start_nsec);
+> +	} while (read_seqcount_retry(&cgrp->freezer.freeze_seq, sequence));
+> +
+> +	seq_printf(seq, "frozen_usec %llu\n",
+> +		   (unsigned long long) freeze_time / NSEC_PER_USEC);
+> +
+> +	return 0;
+> +}
+> +
+>  #ifdef CONFIG_CGROUP_SCHED
+>  /**
+>   * cgroup_tryget_css - try to get a cgroup's css for the specified subsystem
+> @@ -5354,6 +5375,11 @@ static struct cftype cgroup_base_files[] = {
+>  		.name = "cgroup.stat",
+>  		.seq_show = cgroup_stat_show,
+>  	},
+> +	{
+> +		.name = "cgroup.stat.local",
+> +		.flags = CFTYPE_NOT_ON_ROOT,
+> +		.seq_show = cgroup_core_local_stat_show,
+> +	},
+>  	{
+>  		.name = "cgroup.freeze",
+>  		.flags = CFTYPE_NOT_ON_ROOT,
+> @@ -5763,6 +5789,7 @@ static struct cgroup *cgroup_create(struct cgroup *parent, const char *name,
+>  	 * if the parent has to be frozen, the child has too.
+>  	 */
+>  	cgrp->freezer.e_freeze = parent->freezer.e_freeze;
+> +	seqcount_init(&cgrp->freezer.freeze_seq);
+>  	if (cgrp->freezer.e_freeze) {
+>  		/*
+>  		 * Set the CGRP_FREEZE flag, so when a process will be
+> @@ -5771,6 +5798,7 @@ static struct cgroup *cgroup_create(struct cgroup *parent, const char *name,
+>  		 * consider it frozen immediately.
+>  		 */
+>  		set_bit(CGRP_FREEZE, &cgrp->flags);
+> +		cgrp->freezer.freeze_start_nsec = ktime_get_ns();
+>  		set_bit(CGRP_FROZEN, &cgrp->flags);
+>  	}
+>  
+> diff --git a/kernel/cgroup/freezer.c b/kernel/cgroup/freezer.c
+> index bf1690a167dd..6c18854bff34 100644
+> --- a/kernel/cgroup/freezer.c
+> +++ b/kernel/cgroup/freezer.c
+> @@ -171,7 +171,7 @@ static void cgroup_freeze_task(struct task_struct *task, bool freeze)
+>  /*
+>   * Freeze or unfreeze all tasks in the given cgroup.
+>   */
+> -static void cgroup_do_freeze(struct cgroup *cgrp, bool freeze)
+> +static void cgroup_do_freeze(struct cgroup *cgrp, bool freeze, u64 ts_nsec)
+>  {
+>  	struct css_task_iter it;
+>  	struct task_struct *task;
+> @@ -179,10 +179,16 @@ static void cgroup_do_freeze(struct cgroup *cgrp, bool freeze)
+>  	lockdep_assert_held(&cgroup_mutex);
+>  
+>  	spin_lock_irq(&css_set_lock);
+> -	if (freeze)
+> +	write_seqcount_begin(&cgrp->freezer.freeze_seq);
+> +	if (freeze) {
+>  		set_bit(CGRP_FREEZE, &cgrp->flags);
+> -	else
+> +		cgrp->freezer.freeze_start_nsec = ts_nsec;
+> +	} else {
+>  		clear_bit(CGRP_FREEZE, &cgrp->flags);
+> +		cgrp->freezer.frozen_nsec += (ts_nsec -
+> +			cgrp->freezer.freeze_start_nsec);
+> +	}
+> +	write_seqcount_end(&cgrp->freezer.freeze_seq);
+>  	spin_unlock_irq(&css_set_lock);
+> 
 
-That sounds a good one to start with.
+Hello Tiffany,
 
-The prepare()/done() functions can internally bypass for devices:
+I wanted to check if there are any specific considerations regarding how we should input the ts_nsec
+value.
 
-	if (!pci_ats_supported(pci_dev) || pci_sriov_get_totalvfs(pci_dev))
-		return 0;
-	/* And check alias too */
+Would it be possible to define this directly within the cgroup_do_freeze function rather than
+passing it as a parameter? This approach might simplify the implementation and potentially improve
+timing accuracy when it have lots of descendants.
 
-Thanks
-Nicolin
+-- 
+Best regards,
+Ridong
+
+>  	if (freeze)
+> @@ -260,6 +266,7 @@ void cgroup_freeze(struct cgroup *cgrp, bool freeze)
+>  	struct cgroup *parent;
+>  	struct cgroup *dsct;
+>  	bool applied = false;
+> +	u64 ts_nsec;
+>  	bool old_e;
+>  
+>  	lockdep_assert_held(&cgroup_mutex);
+> @@ -271,6 +278,7 @@ void cgroup_freeze(struct cgroup *cgrp, bool freeze)
+>  		return;
+>  
+>  	cgrp->freezer.freeze = freeze;
+> +	ts_nsec = ktime_get_ns();
+>  
+>  	/*
+>  	 * Propagate changes downwards the cgroup tree.
+> @@ -298,7 +306,7 @@ void cgroup_freeze(struct cgroup *cgrp, bool freeze)
+>  		/*
+>  		 * Do change actual state: freeze or unfreeze.
+>  		 */
+> -		cgroup_do_freeze(dsct, freeze);
+> +		cgroup_do_freeze(dsct, freeze, ts_nsec);
+>  		applied = true;
+>  	}
+>  
+
 
