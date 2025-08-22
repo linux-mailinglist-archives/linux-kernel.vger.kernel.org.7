@@ -1,163 +1,185 @@
-Return-Path: <linux-kernel+bounces-781089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C764B30D70
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:16:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBD7EB30D6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E52E6824FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:16:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD008172B7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173B928A3F8;
-	Fri, 22 Aug 2025 04:15:59 +0000 (UTC)
-Received: from zg8tmty1ljiyny4xntuumtyw.icoremail.net (zg8tmty1ljiyny4xntuumtyw.icoremail.net [165.227.155.160])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC2018C031;
-	Fri, 22 Aug 2025 04:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=165.227.155.160
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AC627A92A;
+	Fri, 22 Aug 2025 04:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B6RmuPoK"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B22F14A09C;
+	Fri, 22 Aug 2025 04:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755836158; cv=none; b=Vl+GnWDsIJU+2DniBib80634xA39sW9mx9qODPIG2wjLhs6Pk7jnkRxnsQaReBiS0Ccx7y74Fo55unkCfEPZCUDiCiOjyKtB90xCEEpFK59Bs6xPr2jsYlqJrbCUK2GvscDcgFd4WFZTfaRcDK4OUGFpITgxLJE8YrFpQvDbNbA=
+	t=1755836134; cv=none; b=TQFIL1Mll0SIdQkQnSgNVhYmTt+biExZtN43DV/j3rwjeK1LnxCcsVvrvDDGCrUXyIlu7k5wAOB9ubt6TpZHcw3EiR5O+2HLM0dRX87Ko9VRtxOtRLq8ZwI64xEuoj3s0juspE+FP4ge84wjUSCyanB9iK4VngT6kqrCo3WtEF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755836158; c=relaxed/simple;
-	bh=yHZW6QAYcecxeMX4vd5Y5vERSVULekZvJqL0CUduSSY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=ewsPFTEzxO656S6ZP8TE9uwccCc38/JDpaR73QiHyDvh9OEJHycG9eOzzK+RtC5d+iVeR8mts7C8B2c7wrnjWVncivxgNrTyPMv0DhK7y4QyestFSCHOrgF77yr60HgZXy6OETFQKbuIL8INN2qJumsiW+4FE33T5qfSgOzlIys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=165.227.155.160
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from zju.edu.cn (unknown [218.12.21.37])
-	by mtasvr (Coremail) with SMTP id _____wAX4mnV7qdoDAV6AQ--.6421S3;
-	Fri, 22 Aug 2025 12:15:18 +0800 (CST)
-Received: from duoming$zju.edu.cn ( [218.12.21.37] ) by
- ajax-webmail-mail-app3 (Coremail) ; Fri, 22 Aug 2025 12:15:16 +0800
- (GMT+08:00)
-Date: Fri, 22 Aug 2025 12:15:16 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: duoming@zju.edu.cn
-To: "Arend van Spriel" <arend.vanspriel@broadcom.com>
-Cc: brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-	mingo@kernel.org, tglx@linutronix.de
-Subject: Re: [PATCH] brcmfmac: btcoex: Fix use-after-free when rescheduling
- brcmf_btcoex_info work
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.3-cmXT6 build
- 20250620(94335109) Copyright (c) 2002-2025 www.mailtech.cn zju.edu.cn
-In-Reply-To: <d071faf8-e800-4169-a670-8971d57b6997@broadcom.com>
-References: <20250821043202.21263-1-duoming@zju.edu.cn>
- <d071faf8-e800-4169-a670-8971d57b6997@broadcom.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1755836134; c=relaxed/simple;
+	bh=A0GL3Vdq+WZd6o1+ddSu+zVjBJnzZZwNj3g5IAqTNW0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kL89bgvu2zbjlnNGMGSXhgbEOMo0wfaLn5YdTFj3vtHytWGE89hc8p34qGmPMd4jkU4oAqQHTCvGf9RIG3Jim7BVc5BriqBzg80kswbP00q1hrebYYQnj6Du938CGAvBNeAkP6hwsrpy92imIwZCnremNvf1F+/MtHIyrdGKJsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B6RmuPoK; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b49c0c5f4dfso167589a12.1;
+        Thu, 21 Aug 2025 21:15:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755836131; x=1756440931; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y9PgfzlZAvSWVRluzRE+sTTXFHsSdjHEV58R22WBfMQ=;
+        b=B6RmuPoKVerRdq4tLMQA8YvsJgaDRc9oGd84xGPfpg3xTayIBax5lIVf684RInMDXf
+         OLKPqvQOGQjSFoZWwiVFWxCkJjT3EgDFkXYW+dond1vigGUsMGJpgVt5EmWQIsWMvtMb
+         5hIWrhn88cXjIQ3RaMd5NUO2dV+Aa0G+vSbkx/p2ptgx7FymZJy0QWUIiOKUEtoWxVfi
+         XPU9DwxUJIPLRAG6bo4HUEuf7uBHtMtSP1g/dwGRM41J0qotp1BEvA4YA87hykBuwVSy
+         yJKu2Z3iywgEeK4CzHO1J7KjRFiIFzWBZqUIuUbHOZ5vszcwUHsBKkmI15ri6tUHMjYL
+         n23w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755836131; x=1756440931;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y9PgfzlZAvSWVRluzRE+sTTXFHsSdjHEV58R22WBfMQ=;
+        b=nOq5yPTPcJkZErmJrg6wnVxK9IbCfL3MgnqPyylPhNgCUBfKWbF+JcY0SBX3F862ZB
+         LlMOLJ6KSwAKzljuvFeSMOcrsJihbOjl9T71SxEe7NJ1S26ran/h7hoQc3iashs2O8Qv
+         MQ23TtKc/5zhPWLhulSR3RElXLgJg841OduB4k8QLLNZ24QLW15s54dAHSiTBobTzea+
+         VwBrnWytqLzq594Dg/MyakPJzNUEimpoVf8EWR1+8n2LjbxVAL8aVAAWxeiiPYZ2pPnQ
+         Kg2UwW4e6E66W8JvOdg8ABoNRjf17U90qwVAP5f89C2kTzEdKzdSSMv0FJTJr3fBiF23
+         t0oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVD62tD/W22IRkFN8t5LclvT3c6x1i8/DC/MaSjS9oXY7uydg8gcUxXQ7gdnQejtKHaJrj73b01xIUuaFE=@vger.kernel.org, AJvYcCWK6pMqnkAdMlS29/OQBs8cy0JYnggvE10i+qCr9gMxke50RjoP1ialNL1xxdBLWAOKfWOKjZou@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPozgYIrKXqJbFBZe6Tjb8OafPqNHlz2rN6ig3nUAj6/T9E4aT
+	Kk8UDiB0LNXIpo1NjdEbZDTLbacpbfoTVTB6MYUqjKyhqvvnJsdyWnDLvxqC3R7KkK0=
+X-Gm-Gg: ASbGncv/QbTo6FBog2WIEE4cm4o52Kjpfgq4kNuEzP3zu7MiVnMoyUgkyB1oC2R2SU2
+	Oz9SjDFiVA686f+F8oh8nwpwmrdnSiBWtl4NQMMMgcLcPY38tbThqm3WfyviCPKog34yXQ+svx2
+	8UcK68nsDJxGGGZFZrFvX5Kkz/HhP5fcs14J20EdOWH8P7Med8XW5pWpcEdTuzuIph5w8JkHLdv
+	h9IGCbsTrJB1j6Kx+ZZ5tbuh0IuEyLdNM7XnA5Vi71LbGsJpJsGXTeFf8pl/TZU+NxeHzDltggw
+	Lfw87BZFMy3Aa/TC0LYQkrpPavP5GRDJipk0+tu0KtDa2cuGZvcUMdlyMuaP3WIfFkU1DiHqVXK
+	LrH5ee+wuiNQhAAEeP5V6G+9PaZ7PgJ2BiHn0h+R0CG+2jvYu4uuXmFQJgi5resM8BClQnfOc
+X-Google-Smtp-Source: AGHT+IF2iOxGEWh6lnAwzbIYm3vEYhNMhGnrxwiHW2mktl6Jf+S+uzXvJvANfSUHzslgaQzZWAH6DQ==
+X-Received: by 2002:a17:903:2282:b0:242:abc2:7f1e with SMTP id d9443c01a7336-2462ee02c31mr22915745ad.22.1755836130612;
+        Thu, 21 Aug 2025 21:15:30 -0700 (PDT)
+Received: from luna.turtle.lan ([2601:1c2:c184:dc00:ba38:b533:dcf5:1e7a])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-325123e4751sm1189587a91.1.2025.08.21.21.15.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 21:15:30 -0700 (PDT)
+From: Sam Edwards <cfsworks@gmail.com>
+X-Google-Original-From: Sam Edwards <CFSworks@gmail.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Marc Zyngier <maz@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Baruch Siach <baruch@tkos.co.il>,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Sam Edwards <CFSworks@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] arm64/boot: Zero-initialize idmap PGDs before use
+Date: Thu, 21 Aug 2025 21:15:26 -0700
+Message-ID: <20250822041526.467434-1-CFSworks@gmail.com>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <5c6b3d94.1a56d.198cffcee28.Coremail.duoming@zju.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:zS_KCgA3N2rV7qdoXHfcAQ--.33238W
-X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwcGAWindnkDHwABse
-X-CM-DELIVERINFO: =?B?5vsP6AXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
-	CR1+zuF684oMJgko7VNBv0xCqybbqAGDzvdPubGTDTDeKon0hvnfTSJoXn8JLOYbgBWidP
-	Q67ZDg0KXq4zAMyK1BVyjQfHArfj8LgopAbg/4K1qnuLrCoaw9QcDzIskPmDXA==
-X-Coremail-Antispam: 1Uk129KBj93XoWxXF48GF47Zr4kXFy8ZF4DZFc_yoWrGFW8pF
-	W3Ja43trWkt3yakrsrJFn3Xry5KwsrGF1qyrn5Wr43urZIqF4xtFW8trn09ay7CF10v3WI
-	yF4Fvay3trs0yFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUmvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
-	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
-	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
-	AKI48G6xCjnVAKz4kxM4xvF2IEb7IF0Fy264kE64k0F24lFcxC0VAYjxAxZF0Ex2IqxwAK
-	zVCY07xG64k0F24l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r12
-	6r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UMVCEFcxC0VAYjxAxZFUvcSsGvf
-	C2KfnxnUUI43ZEXa7IU848BUUUUUU==
+Content-Transfer-Encoding: 8bit
 
-T24gVGh1LCAyMSBBdWcgMjAyNSAyMDo0NDoyMSArMDIwMCBBcmVuZCB2YW4gU3ByaWVsIHdyb3Rl
-Ogo+ID4gVGhlIGJyY21mX2J0Y29leF9kZXRhY2goKSBvbmx5IHNodXRzIGRvd24gdGhlIGJ0Y29l
-eCB0aW1lciwgaWYgdGhlCj4gPiBmbGFnIHRpbWVyX29uIGlzIGZhbHNlLiBIb3dldmVyLCB0aGUg
-YnJjbWZfYnRjb2V4X3RpbWVyZnVuYygpLCB3aGljaAo+ID4gcnVucyBhcyB0aW1lciBoYW5kbGVy
-LCBzZXRzIHRpbWVyX29uIHRvIGZhbHNlLiBUaGlzIGNyZWF0ZXMgYSBjcml0aWNhbAo+ID4gcmFj
-ZSBjb25kaXRpb246Cj4gPiAKPiA+IDEuSWYgYnJjbWZfYnRjb2V4X2RldGFjaCgpIGlzIGNhbGxl
-ZCB3aGlsZSBicmNtZl9idGNvZXhfdGltZXJmdW5jKCkKPiA+IGlzIGV4ZWN1dGluZywgaXQgbWF5
-IG9ic2VydmUgdGltZXJfb24gYXMgZmFsc2UgYW5kIHNraXAgdGhlIGNhbGwgdG8KPiA+IHRpbWVy
-X3NodXRkb3duX3N5bmMoKS4KPiA+IAo+ID4gMi5UaGUgYnJjbWZfYnRjb2V4X3RpbWVyZnVuYygp
-IG1heSB0aGVuIHJlc2NoZWR1bGUgdGhlIGJyY21mX2J0Y29leF9pbmZvCj4gPiB3b3JrZXIgYWZ0
-ZXIgdGhlIGNhbmNlbF93b3JrX3N5bmMoKSBoYXMgYmVlbiBleGVjdXRlZC4KPiA+IAo+ID4gMy5T
-dWJzZXF1ZW50bHksIHRoZSBicmNtZl9idGNvZXhfaW5mbyBzdHJ1Y3R1cmUgaXMgZnJlZWQuCj4g
-PiAKPiA+IDQuRmluYWxseSwgdGhlIHJlc2NoZWR1bGVkIHdvcmtlciBhdHRlbXB0cyB0byBleGVj
-dXRlLCBsZWFkaW5nIHRvCj4gPiB1c2UtYWZ0ZXItZnJlZSBidWdzIGJ5IGFjY2Vzc2luZyB0aGUg
-ZnJlZWQgYnJjbWZfYnRjb2V4X2luZm8gb2JqZWN0Lgo+IAo+IFRoYW5rcyBmb3IgdGhlIHBhdGNo
-LiBCZWluZyBhIG5pdCBwaWNrZXIganVzdCB3YW50ZWQgdG8gZGF5IHRoYXQgdGhlIAo+IHVzZS1h
-ZnRlci1mcmVlIGhhcHBlbnMgYSBiaXQgZWFybGllciBhcyB0aGUgd29ya2VyIGl0c2VsZiBpcyBj
-b250YWluZWQgCj4gaW4gc3RydWN0IGJyY21mX2J0Y29leF9pbmZvLiBBbHNvIHRoZSBkaWFncmFt
-IGJlbG93IGRvZXMgbm90IGFkZCBtdWNoIAo+IG1vcmUgdGhhbiB0aGUgdGV4dHVhbCBkZXNjcmlw
-dGlvbiBhYm92ZS4KClRoYW5rIHlvdSB2ZXJ5IG11Y2ggZm9yIHlvdXIgZ3VpZGFuY2UuCgpUaGUg
-dXNlLWFmdGVyLWZyZWUgYnVncyBvY2N1ciBpbiB0d28gZGlzdGluY3Qgc2NlbmFyaW9zLCBkZXBl
-bmRpbmcgb24gCnRoZSB0aW1pbmcgb2Ygd2hlbiB0aGXCoGJyY21mX2J0Y29leF9pbmZvwqBzdHJ1
-Y3QgaXMgZnJlZWQgcmVsYXRpdmUgdG8gCnRoZSBleGVjdXRpb24gb2YgaXRzIHdvcmtlciB0aHJl
-YWQuCgpTY2VuYXJpbyAxOiBGcmVlZCBiZWZvcmUgdGhlIHdvcmtlciBpcyBzY2hlZHVsZWQKClRo
-ZcKgYnJjbWZfYnRjb2V4X2luZm8gaXMgZGVhbGxvY2F0ZWTCoGJlZm9yZcKgdGhlIHdvcmtlciBp
-cyBzY2hlZHVsZWQuIApBIHJhY2UgY29uZGl0aW9uIGNhbiBvY2N1ciB3aGVuwqBzY2hlZHVsZV93
-b3JrKCZidF9sb2NhbC0+d29yaynCoGlzIApjYWxsZWQgYWZ0ZXIgdGhlIHRhcmdldCBtZW1vcnkg
-aGFzIGJlZW4gZnJlZWQuIFRoZSBzZXF1ZW5jZSBvZiBldmVudHMgCmlzIGRldGFpbGVkIGJlbG93
-OgoKQ1BVMCAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgQ1BVMQpicmNtZl9idGNvZXhfZGV0
-YWNoICAgICAgICAgICAgfCBicmNtZl9idGNvZXhfdGltZXJmdW5jCiAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICB8ICAgYnRfbG9jYWwtPnRpbWVyX29uID0gZmFsc2U7CiAgaWYgKGNmZy0+
-YnRjb2V4LT50aW1lcl9vbikgICB8CiAgICAuLi4gICAgICAgICAgICAgICAgICAgICAgICB8CiAg
-Y2FuY2VsX3dvcmtfc3luYygpOyAgICAgICAgICB8CiAgLi4uICAgICAgICAgICAgICAgICAgICAg
-ICAgICB8CiAga2ZyZWUoY2ZnLT5idGNvZXgpOyAvLyBGUkVFICB8CiAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICB8ICAgc2NoZWR1bGVfd29yaygmYnRfbG9jYWwtPndvcmspOyAvLyBVU0UK
-ClNjZW5hcmlvIDI6IEZyZWVkIGFmdGVyIHRoZSB3b3JrZXIgaXMgc2NoZWR1bGVkCgpUaGXCoGJy
-Y21mX2J0Y29leF9pbmZvIGlzIGZyZWVkwqBhZnRlcsKgdGhlIHdvcmtlciBoYXMgYmVlbiBzY2hl
-ZHVsZWQgCmJ1dMKgYmVmb3JlwqBvcsKgZHVyaW5nwqBpdHMgZXhlY3V0aW9uLiBJbiB0aGlzIGNh
-c2UsIHN0YXRlbWVudHMgd2l0aGluIAp0aGXCoGJyY21mX2J0Y29leF9oYW5kbGVyKCnCoHdvcmtl
-ciDigJQgc3VjaCBhcyB0aGXCoGNvbnRhaW5lcl9vZsKgbWFjcm8gCmFuZCBzdWJzZXF1ZW50IGRl
-cmVmZXJlbmNlcyBvZiB0aGXCoGJyY21mX2J0Y29leF9pbmZvwqBvYmplY3Qgd2lsbCAKY2F1c2Ug
-YSB1c2UtYWZ0ZXItZnJlZSBhY2Nlc3MuIFRoZSBmb2xsb3dpbmcgdGltZWxpbmUgaWxsdXN0cmF0
-ZXMKdGhpcyBzY2VuYXJpbzoKCkNQVTAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCBDUFUx
-CmJyY21mX2J0Y29leF9kZXRhY2ggICAgICAgICAgICAgfCBicmNtZl9idGNvZXhfdGltZXJmdW5j
-CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIGJ0X2xvY2FsLT50aW1lcl9vbiA9
-IGZhbHNlOwogIGlmIChjZmctPmJ0Y29leC0+dGltZXJfb24pICAgIHwKICAgIC4uLiAgICAgICAg
-ICAgICAgICAgICAgICAgICB8CiAgY2FuY2VsX3dvcmtfc3luYygpOyAgICAgICAgICAgfAogIC4u
-LiAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICBzY2hlZHVsZV93b3JrKCZidF9sb2NhbC0+
-d29yayk7IC8vIFJlc2NoZWR1bGUKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8CiAg
-a2ZyZWUoY2ZnLT5idGNvZXgpOyAvLyBGUkVFICAgfCAgIGJyY21mX2J0Y29leF9oYW5kbGVyKCkg
-Ly8gV29ya2VyCiAgLyogICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgICAgYnRjaSA9IGNv
-bnRhaW5lcl9vZiguLi4uKTsgLy8gVVNFCiAgIFRoZSBrZnJlZSgpIGFib3ZlIGNvdWxkICAgICAg
-fCAgICAgLi4uCiAgIGFsc28gb2NjdXIgYXQgYW55IHBvaW50ICAgICAgfCAgICAgYnRjaS0+dmlm
-OyAvLyBVU0UKICAgZHVyaW5nIHRoZSB3b3JrZXIncyBleGVjdXRpb258IAogICAqLyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIHwKCkkgd291bGQgbGlrZSB0byBzdWJtaXQgYSB2MiBwYXRjaCB0
-byBtYWtlIHRoZSBkZXNjcmlwdGlvbiBjbGVhcmVyLgoKPiA+IFRoZSBmb2xsb3dpbmcgZGlhZ3Jh
-bSBpbGx1c3RyYXRlcyB0aGlzIHNlcXVlbmNlIG9mIGV2ZW50czoKPiA+IAo+ID4gY3B1MCAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBjcHUxCj4gPiBicmNtZl9idGNvZXhfZGV0YWNoICAgICAg
-ICAgIHwgIGJyY21mX2J0Y29leF90aW1lcmZ1bmMKPiA+ICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHwgICAgYnRfbG9jYWwtPnRpbWVyX29uID0gZmFsc2U7Cj4gPiAgICBpZiAoY2ZnLT5i
-dGNvZXgtPnRpbWVyX29uKSB8Cj4gPiAgICAgIC4uLiAgICAgICAgICAgICAgICAgICAgICB8Cj4g
-PiAgICBjYW5jZWxfd29ya19zeW5jKCk7ICAgICAgICB8Cj4gPiAgICAuLi4gICAgICAgICAgICAg
-ICAgICAgICAgICB8ICAgIHNjaGVkdWxlX3dvcmsoKSAvL3Jlc2NoZWR1bGUKPiA+ICAgIGtmcmVl
-KGNmZy0+YnRjb2V4KTsvL2ZyZWUgIHwKPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IHwgICAgYnJjbWZfYnRjb2V4X2hhbmRsZXIoKSAvL3dvcmtlcgo+ID4gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgfCAgICBidGNpLT4gLy91c2UKPiA+IAo+ID4gVG8gcmVzb2x2ZSB0aGlz
-IHJhY2UgY29uZGl0aW9uLCBkcm9wIHRoZSBjb25kaXRpb25hbCBjaGVjayBhbmQgY2FsbAo+ID4g
-dGltZXJfc2h1dGRvd25fc3luYygpIGRpcmVjdGx5LiBJdCBjYW4gZGVhY3RpdmF0ZSB0aGUgdGlt
-ZXIgcmVsaWFibHksCj4gPiByZWdhcmRsZXNzIG9mIGl0cyBjdXJyZW50IHN0YXRlLiBPbmNlIHN0
-b3BwZWQsIHRoZSB0aW1lcl9vbiBzdGF0ZSBpcwo+ID4gdGhlbiBzZXQgdG8gZmFsc2UuCj4gCj4g
-SG93ZXZlciwgbm8gcmVhc29uIHRvIHN0b3AgdGhpcyBwYXRjaCBmcm9tIGdvaW5nIGluIHNvLi4u
-Cj4gCj4gQWNrZWQtYnk6IEFyZW5kIHZhbiBTcHJpZWwgPGFyZW5kLnZhbnNwcmllbEBicm9hZGNv
-bS5jb20+Cj4gCj4gPiBGaXhlczogNjE3MzBkNGRmZmZjICgiYnJjbWZtYWM6IHN1cHBvcnQgY3Jp
-dGljYWwgcHJvdG9jb2wgQVBJIGZvciBESENQIikKPiA+IFNpZ25lZC1vZmYtYnk6IER1b21pbmcg
-WmhvdSA8ZHVvbWluZ0B6anUuZWR1LmNuPgo+ID4gLS0tCj4gPiAgIGRyaXZlcnMvbmV0L3dpcmVs
-ZXNzL2Jyb2FkY29tL2JyY204MDIxMS9icmNtZm1hYy9idGNvZXguYyB8IDYgKystLS0tCj4gPiAg
-IDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pCgpCZXN0IHJl
-Z2FyZHMsCkR1b21pbmcgWmhvdQo=
+In early boot, Linux creates identity virtual->physical address mappings
+so that it can enable the MMU before full memory management is ready.
+To ensure some available physical memory to back these structures,
+vmlinux.lds reserves some space (and defines marker symbols) in the
+middle of the kernel image. However, because they are defined outside of
+PROGBITS sections, they aren't pre-initialized -- at least as far as ELF
+is concerned.
+
+In the typical case, this isn't actually a problem: the boot image is
+prepared with objcopy, which zero-fills the gaps, so these structures
+are incidentally zero-initialized (an all-zeroes entry is considered
+absent, so zero-initialization is appropriate).
+
+However, that is just a happy accident: the `vmlinux` ELF output
+authoritatively represents the state of memory at entry. If the ELF
+says a region of memory isn't initialized, we must treat it as
+uninitialized. Indeed, certain bootloaders (e.g. Broadcom CFE) ingest
+the ELF directly -- sidestepping the objcopy-produced image entirely --
+and therefore do not initialize the gaps. This results in the early boot
+code crashing when it attempts to create identity mappings.
+
+Therefore, add boot-time zero-initialization for the following:
+- __pi_init_idmap_pg_dir..__pi_init_idmap_pg_end
+- idmap_pg_dir
+- reserved_pg_dir
+- tramp_pg_dir # Already done, but this patch corrects the size
+
+Note, swapper_pg_dir is already initialized (by copy from idmap_pg_dir)
+before use, so this patch does not need to address it.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+---
+ arch/arm64/kernel/head.S | 12 ++++++++++++
+ arch/arm64/mm/mmu.c      |  3 ++-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+index ca04b338cb0d..0c3be11d0006 100644
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
+@@ -86,6 +86,18 @@ SYM_CODE_START(primary_entry)
+ 	bl	record_mmu_state
+ 	bl	preserve_boot_args
+ 
++	adrp	x0, reserved_pg_dir
++	add	x1, x0, #PAGE_SIZE
++0:	str	xzr, [x0], 8
++	cmp	x0, x1
++	b.lo	0b
++
++	adrp	x0, __pi_init_idmap_pg_dir
++	adrp	x1, __pi_init_idmap_pg_end
++1:	str	xzr, [x0], 8
++	cmp	x0, x1
++	b.lo	1b
++
+ 	adrp	x1, early_init_stack
+ 	mov	sp, x1
+ 	mov	x29, xzr
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 34e5d78af076..aaf823565a65 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -761,7 +761,7 @@ static int __init map_entry_trampoline(void)
+ 	pgprot_val(prot) &= ~PTE_NG;
+ 
+ 	/* Map only the text into the trampoline page table */
+-	memset(tramp_pg_dir, 0, PGD_SIZE);
++	memset(tramp_pg_dir, 0, PAGE_SIZE);
+ 	__create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS,
+ 			     entry_tramp_text_size(), prot,
+ 			     pgd_pgtable_alloc_init_mm, NO_BLOCK_MAPPINGS);
+@@ -806,6 +806,7 @@ static void __init create_idmap(void)
+ 	u64 end   = __pa_symbol(__idmap_text_end);
+ 	u64 ptep  = __pa_symbol(idmap_ptes);
+ 
++	memset(idmap_pg_dir, 0, PAGE_SIZE);
+ 	__pi_map_range(&ptep, start, end, start, PAGE_KERNEL_ROX,
+ 		       IDMAP_ROOT_LEVEL, (pte_t *)idmap_pg_dir, false,
+ 		       __phys_to_virt(ptep) - ptep);
+-- 
+2.49.1
 
 
