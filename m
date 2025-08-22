@@ -1,139 +1,123 @@
-Return-Path: <linux-kernel+bounces-781784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA30DB316B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:50:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CABAAB316BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F2725A48D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:50:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66AAB6211F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDB22F8BF4;
-	Fri, 22 Aug 2025 11:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3E02EFDB2;
+	Fri, 22 Aug 2025 11:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="a03O7Z6u"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4i4J8bT3"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48562DCF47
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9C52DCF47
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755863422; cv=none; b=foTE7imnu9VpAE/0ry3umOmgMUopEw2ts7kR2n2JKzs0/mrH9JWYMF5GFLhvKprzzfDFnHkjI1ShztsoLlUV33+gThezqd/ey00YKXI9I61qstfeNV//3pWZGALXWyAZ2mOouqsOxnULRinTHv+57ck2fyUCk3p3h+grnBlPa1g=
+	t=1755863550; cv=none; b=CBi0XPO8H08dl8+btEAlGUaU6dm5UoslG0XhVIeJwoBmBVKP8A2PqIIW3Jxq1BGqG66uUeG7sFc3xKqo6ipqd/tDR7kLExruS/hAk+hDoIAbSVCiTajWKN4JY+Bv7mngeCHKFhN9Sl4IAdwPrRQG+nfHH79ykf0MGCNma48i4Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755863422; c=relaxed/simple;
-	bh=AUceWVg4cmUX+EOnNIi2iW2pokVMopg0Mk5hfK83ZNk=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=dPJnTSV6emR/sj7Riia+mkoEdRd3IrRVatqbNC8js/1lsjRqq5d2VcsFFtU3WztO9nOQ8hY/+40MatHvOGbda2Oog2RcmHyvleSRHP8tmbR/oJbowuBKKSQTZS7U2SeAPcAfTZQBSDlPMXngloUWwH1x5i/I9fiSmf4N4z9O8C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=a03O7Z6u; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250822115018epoutp04c6c207580096bce2c7f7ef7b3ae0d36a~eFHoAR3tw1483714837epoutp04F
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:50:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250822115018epoutp04c6c207580096bce2c7f7ef7b3ae0d36a~eFHoAR3tw1483714837epoutp04F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755863418;
-	bh=w2pjATg3JKKJ2idLOP2lpbZQuTVp7H7ONvzjqtbWJc4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=a03O7Z6u1dmM9+lj9QIfAF2b9/LXsS7W5yjHlsRINlcVATBDb8k30freJxRAyQNgW
-	 zLwVeBw6RO8jcqU5P0TVBBwt6nhPEOUSTd/Tksqhoa5r3cBfNFdWvfJwhpwSzO+cIp
-	 A416ekmKuy22lEuBoJWnbkBrT8c5N1DYe+1l5fxY=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250822115017epcas5p371083af5a6c2202a80fbdfca7b60f2db~eFHmn9RLY2494424944epcas5p3a;
-	Fri, 22 Aug 2025 11:50:17 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.87]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4c7dm83LXgz6B9mC; Fri, 22 Aug
-	2025 11:50:16 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250822115015epcas5p40c0dad62af3fe03fa959d801a92ab15c~eFHlJzcqY2572625726epcas5p4W;
-	Fri, 22 Aug 2025 11:50:15 +0000 (GMT)
-Received: from FDSFTE411 (unknown [107.122.81.184]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250822115010epsmtip11f59577f929b28e42a40e14193d643aa~eFHgclH-C2666626666epsmtip1h;
-	Fri, 22 Aug 2025 11:50:10 +0000 (GMT)
-From: "Ravi Patel" <ravi.patel@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <jesper.nilsson@axis.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <s.nawrocki@samsung.com>,
-	<cw00.choi@samsung.com>, <alim.akhtar@samsung.com>,
-	<linus.walleij@linaro.org>, <tomasz.figa@gmail.com>,
-	<catalin.marinas@arm.com>, <will@kernel.org>, <arnd@arndb.de>
-Cc: <ksk4725@coasia.com>, <kenkim@coasia.com>, <pjsin865@coasia.com>,
-	<gwk1013@coasia.com>, <hgkim05@coasia.com>, <mingyoungbo@coasia.com>,
-	<smn1196@coasia.com>, <pankaj.dubey@samsung.com>, <shradha.t@samsung.com>,
-	<inbaraj.e@samsung.com>, <swathi.ks@samsung.com>,
-	<hrishikesh.d@samsung.com>, <dj76.yang@samsung.com>,
-	<hypmean.kim@samsung.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-arm-kernel@axis.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<soc@lists.linux.dev>
-In-Reply-To: <1096f050-f617-4e86-8948-1fc8c3936b04@kernel.org>
-Subject: RE: [PATCH v2 00/10] Add support for the Axis ARTPEC-8 SoC
-Date: Fri, 22 Aug 2025 17:20:09 +0530
-Message-ID: <000101dc135a$ece160d0$c6a42270$@samsung.com>
+	s=arc-20240116; t=1755863550; c=relaxed/simple;
+	bh=NYWk5SfWOfQAb6AMBv49qjcUp+Ysp7H89dXQyPpUYtc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kDZVLJVZjsiFNOc7MbNGAiYKidgC9r06qpdShxkqYTd7M21Y1mK+9lQx6NT3ymnjZoTW2brRKp1eDf12qLFkxfkICec1IAtRIf13cTioWC8KHZ9IPHxPzylueW6O6CpfF1sSrG+Z5IqYVji7ePtKOC0JFyakn49GkFRHO+ZQodI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4i4J8bT3; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-618b3c750baso1588480a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 04:52:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755863547; x=1756468347; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vWE2u+V4DHsHDV1hUcE542M/RK8uRUyoG7ZrTnqEVZc=;
+        b=4i4J8bT3LyYed0QZrOy3se26pRxmJrSFWKXFPe4azHw0pYYL3TINOsqtRWsGmN/ZtY
+         KB0ryO/GbxJnHVbwAQdBu+VpYc0SrJnqMZr5IEktHsBrHOUTzee6iKZUYLFeRLxGur1h
+         3MndcGXXt/13JPXuW+OsmNr7LPcl33LQmQEMWZbkDUyz3emtSfovJyGHgxC1r53omlWO
+         umYeFZBt2LpOKrkv6pAjQo1RdhgNu2jU+OcsSk7mzMeUebjZv/ajt2nIBz92QwRrP1jq
+         i5Qt/KXxkWNNFy3N3wXNh+LQS48FmEnWBgQqfro+L+ojiloXk3IJL6z8Ihp0jLxwcpP/
+         iT3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755863547; x=1756468347;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vWE2u+V4DHsHDV1hUcE542M/RK8uRUyoG7ZrTnqEVZc=;
+        b=Et/UT2jqGQeSfNI8D4suCLvCQaxmn9fioVWcKHER61dqLh1rj/WVhBF7bxtgojpqGB
+         bfs6oLu3ed88bcBNiUVZpgjiMfv/I7eV0ihGJhsEXp+Sfj9z2al74aV95S7q6nyMv8fQ
+         6R8y72N/ym2vUvHVEtw/wQj/T1mhXIYdDzkAoQ7ov1kFDOsEXVg6EPzE0D2r8phP2GvX
+         IabRG5odCbTV44ppcVlGyKWHlT8+L7Pb8DoJMFlHTelmlEy9QDcRc57SAUiWpxgXtst8
+         qy/GMxxUEcl45ImkuzGXEpLOWuoS/E1u6MPXnDsYrQmltnOEdPkvIXaOK0cuil4wEToK
+         EgjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVwgfWjK7A2hhWSzCsln+Kw0DqUyCm1Zu0gKyyZjeV3QDFHNuJaIHD9cwheKHsT3TP/+L4MUX6+foYvToI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt+ePvdlTYOc3r/h+Al/0da1PYyz+PDtE2dpX01M9Xi/nu1hjU
+	oVmDNEO4Q2kUO0EG57f1bKRCHNqEHof82Tvu6JRvT9pxP6FmrD9VBg0duBuJJ68u0IWWzarDAw9
+	OGHi8LWVJuQXXz88gZw==
+X-Google-Smtp-Source: AGHT+IGDJ6gPmpwLZbTPQqbylfkKv8yf9Kn7ERiTzNBo46ivNRLyyUa3U5N3GV6j0VP102lLjPtn7S3NennpbNg=
+X-Received: from ede27.prod.google.com ([2002:a05:6402:20db:b0:61c:467:142d])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:1d4b:b0:618:1250:ac5e with SMTP id 4fb4d7f45d1cf-61c1b6f982amr2086418a12.19.1755863543632;
+ Fri, 22 Aug 2025 04:52:23 -0700 (PDT)
+Date: Fri, 22 Aug 2025 11:52:22 +0000
+In-Reply-To: <DC8XLP6C3E5I.10QJQVI4LORSF@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGJY/8wx4BImu0YLFPVfwpfqUmFNgLoPtc+AoauMBoBa5GkcbTdGWdQ
-Content-Language: en-in
-X-CMS-MailID: 20250822115015epcas5p40c0dad62af3fe03fa959d801a92ab15c
-X-Msg-Generator: CA
+Mime-Version: 1.0
+References: <20250820165431.170195-1-dakr@kernel.org> <20250820165431.170195-4-dakr@kernel.org>
+ <aKhYCf6wgSztcdXU@google.com> <DC8XLP6C3E5I.10QJQVI4LORSF@kernel.org>
+Message-ID: <aKhZ9jdiNS2SAZv2@google.com>
+Subject: Re: [PATCH v2 3/5] rust: scatterlist: Add type-state abstraction for sg_table
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: akpm@linux-foundation.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu, 
+	abdiel.janulgue@gmail.com, acourbot@nvidia.com, jgg@ziepe.ca, 
+	lyude@redhat.com, robin.murphy@arm.com, daniel.almeida@collabora.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250821124014epcas5p12bacab10aac378f8d011fe7d2e04c8fa
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
-	<CGME20250821124014epcas5p12bacab10aac378f8d011fe7d2e04c8fa@epcas5p1.samsung.com>
-	<20250821123310.94089-1-ravi.patel@samsung.com>
-	<1096f050-f617-4e86-8948-1fc8c3936b04@kernel.org>
 
-
-
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: 22 August 2025 11:56
-> To: Ravi Patel <ravi.patel@samsung.com>; jesper.nilsson@axis.com; mturquette@baylibre.com; sboyd@kernel.org;
-> robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
-> alim.akhtar@samsung.com; linus.walleij@linaro.org; tomasz.figa@gmail.com; catalin.marinas@arm.com; will@kernel.org;
-> arnd@arndb.de
-> Cc: ksk4725@coasia.com; kenkim@coasia.com; pjsin865@coasia.com; gwk1013@coasia.com; hgkim05@coasia.com;
-> mingyoungbo@coasia.com; smn1196@coasia.com; pankaj.dubey@samsung.com; shradha.t@samsung.com;
-> inbaraj.e@samsung.com; swathi.ks@samsung.com; hrishikesh.d@samsung.com; dj76.yang@samsung.com;
-> hypmean.kim@samsung.com; linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-
-> soc@vger.kernel.org; linux-arm-kernel@axis.com; linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> gpio@vger.kernel.org; soc@lists.linux.dev
-> Subject: Re: [PATCH v2 00/10] Add support for the Axis ARTPEC-8 SoC
-> 
-> On 21/08/2025 14:32, Ravi Patel wrote:
+On Fri, Aug 22, 2025 at 01:48:47PM +0200, Danilo Krummrich wrote:
+> On Fri Aug 22, 2025 at 1:44 PM CEST, Alice Ryhl wrote:
+> >> +impl<P> Owned<P>
+> >> +where
+> >> +    for<'a> P: page::AsPageIter<Iter<'a> = VmallocPageIter<'a>> + 'static,
+> >> +{
+> >> +    fn new(
+> >> +        dev: &Device<Bound>,
+> >> +        mut pages: P,
+> >> +        dir: dma::DataDirection,
+> >> +        flags: alloc::Flags,
+> >> +    ) -> Result<impl PinInit<Self, Error> + '_> {
+> >> +        let page_iter = pages.page_iter();
+> >> +        let size = page_iter.size();
 > >
-> > Link to v1: https://lore.kernel.org/all/20250710002047.1573841-1-ksk4725@coasia.com/
-> > NOTE: The first version has been sent by Coasia.
-> >       After that, it has been agreed between Coasia and Samsung that Samsung will take
-> >       ownership of upstreaming ARTPEC-8 and ARTPEC-9 platforms.
+> > Variable naming here is confusing. There's another variable called size
+> > in an inner scope, and then afterwards in RawSGTable you use *this* size
+> > variable again.
 > 
-> Do not attach (thread) your patchsets to some other threads (unrelated
-> or older versions). This buries them deep in the mailbox and might
-> interfere with applying entire sets.
+> I can change the size in the assignment block of max_segment to max_size, or do
+> you have other suggestions?
 
-Sure, I will remove "--in-reply-to" while sending next version.
+How about just this?
 
-Thanks,
-Ravi
+let max_segment = {
+    // SAFETY: `dev.as_raw()` is a valid pointer to a `struct device`.
+    let max_segment = unsafe { bindings::dma_max_mapping_size(dev.as_raw()) };
+    if max_segment == 0 {
+        u32::MAX
+    } else {
+        u32::try_from(max_segment).unwrap_or(u32::MAX)
+    }
+};
 
-> 
-> Best regards,
-> Krzysztof
-
+Alice
 
