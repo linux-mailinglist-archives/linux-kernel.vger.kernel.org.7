@@ -1,251 +1,198 @@
-Return-Path: <linux-kernel+bounces-781231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD00B30F8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:50:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE9DFB30F91
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3288B587F21
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:50:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46CD33B5A4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDC92E54D0;
-	Fri, 22 Aug 2025 06:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27622E5B13;
+	Fri, 22 Aug 2025 06:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MX/sGEZf"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j17RBcsD"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C462E3AEA
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CADC15E90;
+	Fri, 22 Aug 2025 06:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755845432; cv=none; b=rLjlj4EpnK23tRXOItSfESk3yDlgDbCw+6Yr6fH1YNfn2tByQ7EBugoU7bvc7fCTXEQ0kO2QWXkCcqgk/fuQaXHlhpZiyE5hu44deJgZSJVMK1o0IkRF7qs4YLyG4pRMxF85k/IQGZIvOe7b2LgxL+AFVWOHBz/4nEG4nKiofW4=
+	t=1755845473; cv=none; b=LsoRSjLzEZLXrJRQZIaqCM0BIPwF1HyHIX98x2Tmk/hGeG0iJ/vpwBPkmi4ujAKiE5qyCi74sai0KgGgLz2uo6CVKKazaav3ZeoB/BSZxcH6NuAA3L31otDorGP0QQadlJQUDlp2cvhxFNLjjoS2+IeGaGWITAqWGun2vci2vGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755845432; c=relaxed/simple;
-	bh=DuqjwUZ0I0wbqeZg4eSLBetmOHd1tcp0S+RZur3J6SU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MKHmNMoFaouCOUwwvCTv08OXcyJ5t5YSz/ZX7ASmgQwzPeSDIyn/2Iu94+Pqxxskfz2MovgkejqoxOt/jS8vsMwCFhxYLRXxttO9r4TcYTC3le5i3dLPpRwLtspGdHhUFgs/tA+HrpnUl46LWP9pin6+WhbZVX7ZcwNZEbJx/90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MX/sGEZf; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24456ce0b96so18749955ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 23:50:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755845430; x=1756450230; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ac9oBg+zAj6kXtu216Jjjabie+kjofFUW2rsHnH5Bqk=;
-        b=MX/sGEZfNy9iQcvjl7FFBF1vsjt8G6QeSkTRRHFyMssJtFS3fwWqYNAB4hqoi7wnil
-         /ePRZXcTc4PPbpNcazpUzo3T9llgN5AXyyG3lo4buW0/UE5HxJxNZqGrgt83KKhCM66V
-         1OUrvBF7EwH5HNXZcWer4EGeaVvBZ1NvQXjFDZynTrCEr7M7pYjbQTdMjVBkVDCCEZ42
-         o26jdkQnQDDe8RhdGJP0y2ekKfMIvmI/KszLzrmDP02WfHDbC//yl3R0gY1Cf7OAvxsJ
-         zuEys1rTKqi8BMyazR8gG7bRZyekxK7kxeWPdUVYEpFhzK7OdhcDcFpSg6GhhSAkbHnm
-         uA1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755845430; x=1756450230;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ac9oBg+zAj6kXtu216Jjjabie+kjofFUW2rsHnH5Bqk=;
-        b=pZmXZtqC8f8Q0/3F4MvC9LCaOsZrSjDzzQxAnp+4TfQ3rTEh90P8cmCAOMO/PBJu9X
-         4zDRqzzS2C5ZSuj4sH0ly17UUKb/AMEs6OZPanCoGR2aA0hm59uTV7bJwSk63rA/i7qe
-         gUYuNNEmbfyHIwHU/rL3ta6WaOsvrrQZb8HeByNKctoukR6eq2X3iBKEgGK1NbNcG4vp
-         WgTfNY6V+ZX5XrPMbD43MNDDElCwkVxDZKPT4vGhYuGL4rGAePyTAdPV6od+yLoXjKLL
-         cnoRzMVs6jnR6U3CasyMqcm1zgixaJgF7Jgn/MgkXnGQF67e6lwFnLKCLjiBcRvv9mUc
-         yZYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJVed/Qg48AjG/SXY+yi4u95pCkOnES+U+V3K6vT+rynGGPL5xir9KDX1zE9U5O4oe/k1CcR9i3h/RNQ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn6A99CzL1Nj3rj/UcZaedUZioArTXytTAIvvdKlu/ynJ1HCWf
-	F53kzKuZf0BcJMFU6p0iXNIIpFkuklxNsQ8jAQGGrGA0+fRI9R59CDU3dNRyEimEJnc=
-X-Gm-Gg: ASbGncsNM/pTWzP12nO+EIzjqwkJIR2lMm8Y0ZTU7wN5oIuqjTbQ/aMrCKNNeGKV1z2
-	L3Rmk8pQKd2bZ3VDyQmUo6Uxc6vYVDt47o6JBWrxA5qDgktAGyXlEUNwBMNsk5OhpMxrd20NrT5
-	AuhlBXPFkUwYT1tnAnuK47nJ5/gc1jd9SEgwy7v6iU12VIoSv3BdrXGHetkvw0mN6NaeLCB39o8
-	S3GulK2MGOgiNeIKKFre7Fv65HJWAahGHaj3mIWiYpT9eDegg4/nHB3mvkSxesyXS0iEZ1qDVa4
-	YeSPH/4n1urFhhYM0B1U1TwA8ZjPJRVQRxFiaWgsPhjlKm1E6JSSiP21zYHACDnKiEwmUmsLSdj
-	jdGFBoGO3nWmUkAESjaVv2n+7
-X-Google-Smtp-Source: AGHT+IHgwZxe9A1mdJuJEAilKFh6/5WCjKikIYsvxCBNTe/vWqdxRw/EgUKt2pMsNi1wJJYtqOnVBA==
-X-Received: by 2002:a17:902:e888:b0:240:4d19:8774 with SMTP id d9443c01a7336-24633d6a31amr23345995ad.24.1755845429661;
-        Thu, 21 Aug 2025 23:50:29 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed33df68sm74340735ad.21.2025.08.21.23.50.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 23:50:29 -0700 (PDT)
-Date: Fri, 22 Aug 2025 12:20:26 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 1/7] OPP: Add support to find OPP for a set of keys
-Message-ID: <20250822065026.2ve2uscdjfismm7v@vireshk-i7>
-References: <20250820-opp_pcie-v4-0-273b8944eed0@oss.qualcomm.com>
- <20250820-opp_pcie-v4-1-273b8944eed0@oss.qualcomm.com>
+	s=arc-20240116; t=1755845473; c=relaxed/simple;
+	bh=JCJe22NBnh/Ohku/c/jURhYMPWhOcCrL/i6Ia6jiF3I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GpN0xA4zEg4CpMkbGI/HOvMaiHfHeE8ImFiAcNUPv+nYboozqpABuID7686LcvtkVc8ZQkhSPuTlrFiGcFryVZiyDBAEeU5alXKN9xLrzneAJ9HwhJvc6xFdYSLrPyz9FLUcaiWf0MVaDtkuzErUUGuvbwNoKSqK3Nr/Zx6grNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j17RBcsD; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=IrjTn5lxjgH6PT63JNA+B4QI+udrzjtftEznNof8LA0=; b=j17RBcsD4qSuOv6w/CU/WxHpFF
+	IUY594dwVhdfBDbQGOv/tKSfMsm0NAXG1Md63nkJNodbRDDk8nW85G6B2OB7xQTA4CYrfAHA3MtQJ
+	6fR1Ko1vfc8+DXbMEJWnMc+JPvB3m9SyDhWLFY94FS9FNO+CVHBVhJfjMdLlt2k5wPS3ZmXInAlMo
+	Yd/DMzJdv4+lN7VYpp0Kveb9yEnELMp1djT3fv3kLMnXUFlH6Ba9vdZOXO0xIvUuhyD3CJDAY0+1R
+	bC6jGsswDCYcR+XRRagP4v+i5j6hl4KC1BjvFwfFUO80GQLv5SLQ6ntdvHQ7Lrjwoa8/ZmJMX1pTo
+	lADwTdoA==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1upLc4-00000001kK4-2FVr;
+	Fri, 22 Aug 2025 06:51:00 +0000
+Message-ID: <f87145e5-5a86-4ccf-96ac-61e16e894b81@infradead.org>
+Date: Thu, 21 Aug 2025 23:50:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820-opp_pcie-v4-1-273b8944eed0@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 11/29] KVM: arm64: Document the KVM ABI for SME
+To: Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Will Deacon <will@kernel.org>,
+ Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Shuah Khan <shuah@kernel.org>
+Cc: Dave Martin <Dave.Martin@arm.com>, Fuad Tabba <tabba@google.com>,
+ Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250822-kvm-arm64-sme-v7-0-7a65d82b8b10@kernel.org>
+ <20250822-kvm-arm64-sme-v7-11-7a65d82b8b10@kernel.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250822-kvm-arm64-sme-v7-11-7a65d82b8b10@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 20-08-25, 13:58, Krishna Chaitanya Chundru wrote:
-> Some clients, such as PCIe, may operate at the same clock frequency
-> across different data rates by varying link width. In such cases,
-> frequency alone is not sufficient to uniquely identify an OPP.
-> To support these scenarios, introduce a new API
-> dev_pm_opp_find_key_exact() that allows OPP lookup with different
-> set of keys like freq, level & bandwidth.
+
+
+On 8/21/25 6:53 PM, Mark Brown wrote:
+> SME, the Scalable Matrix Extension, is an arm64 extension which adds
+> support for matrix operations, with core concepts patterned after SVE.
 > 
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> SVE introduced some complication in the ABI since it adds new vector
+> floating point registers with runtime configurable size, the size being
+> controlled by a prameter called the vector length (VL). To provide control
+
+                  parameter
+
+> of this to VMMs we offer two phase configuration of SVE, SVE must first be
+> enabled for the vCPU with KVM_ARM_VCPU_INIT(KVM_ARM_VCPU_SVE), after which
+> vector length may then be configured but the configurably sized floating
+> point registers are inaccessible until finalized with a call to
+> KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_SVE) after which the configurably sized
+> registers can be accessed.
+> 
+...
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 > ---
->  drivers/opp/core.c     | 97 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/pm_opp.h | 30 ++++++++++++++++
->  2 files changed, 127 insertions(+)
+>  Documentation/virt/kvm/api.rst | 117 +++++++++++++++++++++++++++++------------
+>  1 file changed, 82 insertions(+), 35 deletions(-)
+> 
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> index 6aa40ee05a4a..71f46b342641 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
 
-Applied with this diff:
+> @@ -2600,12 +2600,12 @@ Specifically:
+>    0x6020 0000 0010 00d5 FPCR        32  fp_regs.fpcr
+>  ======================= ========= ===== =======================================
+>  
+> -.. [1] These encodings are not accepted for SVE-enabled vcpus.  See
+> -       :ref:`KVM_ARM_VCPU_INIT`.
+> +.. [1] These encodings are not accepted for SVE enabled vcpus.  See
 
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index a36c3daac39c..bba4f7daff8c 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -476,7 +476,8 @@ static unsigned long _read_bw(struct dev_pm_opp *opp, int index)
-        return opp->bandwidth[index].peak;
- }
+                                               SVE-enabled
+was good.
 
--static unsigned long _read_opp_key(struct dev_pm_opp *opp, int index, struct dev_pm_opp_key *key)
-+static unsigned long _read_opp_key(struct dev_pm_opp *opp, int index,
-+                                  struct dev_pm_opp_key *key)
- {
-        key->bw = opp->bandwidth ? opp->bandwidth[index].peak : 0;
-        key->freq = opp->rates[index];
-@@ -518,12 +519,13 @@ static bool _compare_floor(struct dev_pm_opp **opp, struct dev_pm_opp *temp_opp,
-        return false;
- }
+> +       :ref:`KVM_ARM_VCPU_INIT`.  They are also not accepted when SME is
+> +       enabled without SVE and the vcpu is in streaming mode.
+>  
 
--static bool _compare_opp_key_exact(struct dev_pm_opp **opp, struct dev_pm_opp *temp_opp,
--                                  struct dev_pm_opp_key opp_key, struct dev_pm_opp_key key)
-+static bool _compare_opp_key_exact(struct dev_pm_opp **opp,
-+               struct dev_pm_opp *temp_opp, struct dev_pm_opp_key *opp_key,
-+               struct dev_pm_opp_key *key)
- {
--       bool level_match = (key.level == OPP_LEVEL_UNSET || opp_key.level == key.level);
--       bool freq_match = (key.freq == 0 || opp_key.freq == key.freq);
--       bool bw_match = (key.bw == 0 || opp_key.bw == key.bw);
-+       bool level_match = (key->level == OPP_LEVEL_UNSET || opp_key->level == key->level);
-+       bool freq_match = (key->freq == 0 || opp_key->freq == key->freq);
-+       bool bw_match = (key->bw == 0 || opp_key->bw == key->bw);
+> @@ -2665,19 +2675,25 @@ follows::
+>  	/* Vector length vq * 16 bytes not supported */
+>  
+>  .. [2] The maximum value vq for which the above condition is true is
+> -       max_vq.  This is the maximum vector length available to the guest on
+> -       this vcpu, and determines which register slices are visible through
+> -       this ioctl interface.
+> +       max_vq.  This is the maximum vector length currently available to
+> +       the guest on this vcpu, and determines which register slices are
+> +       visible through this ioctl interface.
+> +
+> +       If SME is supported then the max_vq used for the Z and P registers
+> +       then while SVCR.SM is 1 this vector length will be the maximum SME
 
-        if (freq_match && level_match && bw_match) {
-                *opp = temp_opp;
-@@ -570,7 +572,7 @@ static struct dev_pm_opp *_opp_table_find_opp_key(struct opp_table *opp_table,
-                unsigned long (*read)(struct dev_pm_opp *opp, int index,
-                                      struct dev_pm_opp_key *key),
-                bool (*compare)(struct dev_pm_opp **opp, struct dev_pm_opp *temp_opp,
--                               struct dev_pm_opp_key opp_key, struct dev_pm_opp_key key),
-+                               struct dev_pm_opp_key *opp_key, struct dev_pm_opp_key *key),
-                bool (*assert)(struct opp_table *opp_table, unsigned int index))
- {
-        struct dev_pm_opp *temp_opp, *opp = ERR_PTR(-ERANGE);
-@@ -585,9 +587,8 @@ static struct dev_pm_opp *_opp_table_find_opp_key(struct opp_table *opp_table,
-        list_for_each_entry(temp_opp, &opp_table->opp_list, node) {
-                if (temp_opp->available == available) {
-                        read(temp_opp, 0, &temp_key);
--                       if (compare(&opp, temp_opp, temp_key, *key)) {
-+                       if (compare(&opp, temp_opp, &temp_key, key)) {
-                                /* Increment the reference count of OPP */
--                               *key = temp_key;
-                                dev_pm_opp_get(opp);
-                                break;
-                        }
-@@ -689,20 +690,20 @@ struct dev_pm_opp *dev_pm_opp_find_freq_exact(struct device *dev,
- EXPORT_SYMBOL_GPL(dev_pm_opp_find_freq_exact);
+I'm having trouble parsing the 2 lines above.
 
- /**
-- * dev_pm_opp_find_key_exact() - Search for an exact OPP key
-- * @dev:                Device for which the OPP is being searched
-- * @key:                OPP key to match
-- * @available:          true/false - match for available OPP
-+ * dev_pm_opp_find_key_exact() - Search for an OPP with exact key set
-+ * @dev:               Device for which the OPP is being searched
-+ * @key:               OPP key set to match
-+ * @available:         true/false - match for available OPP
-  *
-- * Search for an exact match the OPP key in the OPP table.
-+ * Search for an exact match of the key set in the OPP table.
-  *
-- * Return: matching *opp, else returns ERR_PTR in case of error and should
-- * be using IS_ERR. Error return values can be:
-- * EINVAL:      for bad pointer
-- * ERANGE:      no match found for search
-- * ENODEV:      if device not found in list of registered devices
-+ * Return: A matching opp on success, else ERR_PTR in case of error.
-+ * Possible error values:
-+ * EINVAL:     for bad pointers
-+ * ERANGE:     no match found for search
-+ * ENODEV:     if device not found in list of registered devices
-  *
-- * Note: 'available' is a modifier for the search. If 'available'=true,
-+ * Note: 'available' is a modifier for the search. If 'available' == true,
-  * then the match is for exact matching key and is available in the stored
-  * OPP table. If false, the match is for exact key which is not available.
-  *
-@@ -713,7 +714,7 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_find_freq_exact);
-  * use.
-  */
- struct dev_pm_opp *dev_pm_opp_find_key_exact(struct device *dev,
--                                            struct dev_pm_opp_key key,
-+                                            struct dev_pm_opp_key *key,
-                                             bool available)
- {
-        struct opp_table *opp_table __free(put_opp_table) = _find_opp_table(dev);
-@@ -724,8 +725,9 @@ struct dev_pm_opp *dev_pm_opp_find_key_exact(struct device *dev,
-                return ERR_CAST(opp_table);
-        }
+> +       vector length available for the guest, otherwise it will be the
+> +       maximum SVE vector length available.
+>  
+>  (See Documentation/arch/arm64/sve.rst for an explanation of the "vq"
+>  nomenclature.)
+>  
 
--       return _opp_table_find_opp_key(opp_table, &key, available, _read_opp_key,
--                                      _compare_opp_key_exact, assert_single_clk);
-+       return _opp_table_find_opp_key(opp_table, key, available,
-+                                      _read_opp_key, _compare_opp_key_exact,
-+                                      assert_single_clk);
- }
- EXPORT_SYMBOL_GPL(dev_pm_opp_find_key_exact);
+> @@ -3520,7 +3537,7 @@ Possible features:
+>  	        initial value of this pseudo-register indicates the best set of
+>  	        vector lengths possible for a vcpu on this host.
+>  
+> -	   * Before KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_SVE):
+> +	   * Before KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_VEC}):
 
-diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index 5d244bf97489..789406d95e69 100644
---- a/include/linux/pm_opp.h
-+++ b/include/linux/pm_opp.h
-@@ -151,7 +151,7 @@ struct dev_pm_opp *dev_pm_opp_find_freq_exact(struct device *dev,
-                                              bool available);
+		Why the inserted '}', please?
 
- struct dev_pm_opp *dev_pm_opp_find_key_exact(struct device *dev,
--                                            struct dev_pm_opp_key key,
-+                                            struct dev_pm_opp_key *key,
-                                             bool available);
+>  
+>  	      - KVM_RUN and KVM_GET_REG_LIST are not available;
+>  
+> @@ -3533,11 +3550,40 @@ Possible features:
+>  	        KVM_SET_ONE_REG, to modify the set of vector lengths available
+>  	        for the vcpu.
+>  
+> -	   * After KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_SVE):
+> +	   * After KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_VEC):
+>  
+>  	      - the KVM_REG_ARM64_SVE_VLS pseudo-register is immutable, and can
+>  	        no longer be written using KVM_SET_ONE_REG.
+>  
+> +	- KVM_ARM_VCPU_SME: Enables SME for the CPU (arm64 only).
+> +	  Depends on KVM_CAP_ARM_SME.
+> +	  Requires KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_VEC):
+> +
+> +	   * After KVM_ARM_VCPU_INIT:
+> +
+> +	      - KVM_REG_ARM64_SME_VLS may be read using KVM_GET_ONE_REG: the
+> +	        initial value of this pseudo-register indicates the best set of
+> +	        vector lengths possible for a vcpu on this host.
+> +
+> +	   * Before KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_VEC}):
 
- struct dev_pm_opp *
-@@ -313,7 +313,7 @@ static inline struct dev_pm_opp *dev_pm_opp_find_freq_exact(struct device *dev,
- }
+	ditto: inserted '}'
 
- static inline struct dev_pm_opp *dev_pm_opp_find_key_exact(struct device *dev,
--                                                          struct dev_pm_opp_key key,
-+                                                          struct dev_pm_opp_key *key,
-                                                           bool available)
- {
-        return ERR_PTR(-EOPNOTSUPP);
+> +
+> +	      - KVM_RUN and KVM_GET_REG_LIST are not available;
+> +
+> +	      - KVM_GET_ONE_REG and KVM_SET_ONE_REG cannot be used to access
+> +	        the scalable architectural SVE registers
+> +	        KVM_REG_ARM64_SVE_ZREG(), KVM_REG_ARM64_SVE_PREG() or
+> +	        KVM_REG_ARM64_SVE_FFR, the matrix register
+> +		KVM_REG_ARM64_SME_ZA() or the LUT register KVM_REG_ARM64_ZT();
+> +
+> +	      - KVM_REG_ARM64_SME_VLS may optionally be written using
+> +	        KVM_SET_ONE_REG, to modify the set of vector lengths available
+> +	        for the vcpu.
+> +
+> +	   * After KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_VEC):
 
 -- 
-viresh
+~Randy
+
 
