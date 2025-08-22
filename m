@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-782389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062D7B31FD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:59:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F28FDB31FDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72DC866635A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:52:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9E83AA8320
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514C125333F;
-	Fri, 22 Aug 2025 15:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AC0230BFF;
+	Fri, 22 Aug 2025 15:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NLkvEcDi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dISNGYsW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE1F2206AF;
-	Fri, 22 Aug 2025 15:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D40F2206AF
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 15:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755877844; cv=none; b=Yzq2lBJ/UVwrI/ZobCaz7qfVXVxWzoXr4hpgzPTuJqvFlFBn16ntMKsCx6NdCcVRFLrk+4tHkYQRD0u5sGh+gELIvTdkTx2CWiBiwhMJkiDAEgD22WCchUzxkSN+/cxDhRAu6GZD/KEYRURLkoL5GTcWtlj1BpYUAdeAZdc6Zds=
+	t=1755877969; cv=none; b=c9oYiIaQx4J9kPro1ztTqYGwRoQhflAgp8a7DeOq7IpGsbZ/88Tzj3x7vwfB3UKdHaP0W+Xp8DzbekYtl/awNu54VwxuOOktiQfgpPpTMFThN9Fmf7Wf9ammtMSpwpZdBHJpC0ALuVg2Bjr5pdpGZc9Uq+wt57Rcwhg6WW9vEX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755877844; c=relaxed/simple;
-	bh=PRjr1oyN1prDBOKUZ34iupM5Ee2Kn6LvfPBZpedTizo=;
+	s=arc-20240116; t=1755877969; c=relaxed/simple;
+	bh=8jiqxKcTQFnXGxn3hNE6OwU4CsdOECgb7lkMtk00LGk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpfLAFT+/6liDRh8alUoNZrdd0PzRhA2I1IwO7NpHbZ15t2vR/4qbIoDZiqqJRmddB1owjO+2q3aK1whcbq/gFk6v1zYWbnWsHUiydAI50zHBlWlzjNIZBEejv7r4PgB0R7rer+xjmeaTX3P60YWt55mpb8E1TLmi2qCXJlofXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NLkvEcDi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13BF9C4CEED;
-	Fri, 22 Aug 2025 15:50:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755877844;
-	bh=PRjr1oyN1prDBOKUZ34iupM5Ee2Kn6LvfPBZpedTizo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NLkvEcDi7va6d8wofQYB7lrrIzy/EqQpNAQJUXQsL0j3e4syTR+r96SoHaJ3jAtJR
-	 7ZckKnr3dczWN36y3PWZAxXyGK69AGZvU7vIBerBELyyjgoLDbNNAcCkA8nodPxDjG
-	 o1EdFfnjI81c9N6hD5URN/3efElktMnJn31DHEJ4tSXKO/4iuxY9Zquzh9Lsue3hJv
-	 Q28Oexi2b1PJzAUXESiyT7HeH2V0N8GEeoQZVSqffF15OnUhUTMiLeyN1JcqQQOYJK
-	 1CcJOJM3mQhb74Hc88k0wxqQw9O3jxOtLRx8iGcXvDWmSZ17ssaR/zBJ0ECkedrAtH
-	 kWisP7d7d+0oQ==
-Date: Fri, 22 Aug 2025 10:50:42 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, mripard@kernel.org, mchehab@kernel.org,
-	airlied@gmail.com, amergnat@baylibre.com,
-	linux-sound@vger.kernel.org, p.zabel@pengutronix.de,
-	linux-gpio@vger.kernel.org, matthias.bgg@gmail.com,
-	kyrie.wu@mediatek.corp-partner.google.com,
-	linux-input@vger.kernel.org, kuba@kernel.org, conor+dt@kernel.org,
-	linux-mediatek@lists.infradead.org, yunfei.dong@mediatek.com,
-	kernel@collabora.com, lgirdwood@gmail.com,
-	minghsiu.tsai@mediatek.com, edumazet@google.com,
-	jmassot@collabora.com, simona@ffwll.ch,
-	louisalexis.eyraud@collabora.com, support.opensource@diasemi.com,
-	chunkuang.hu@kernel.org, andrew-ct.chen@mediatek.com,
-	dmitry.torokhov@gmail.com, andrew+netdev@lunn.ch,
-	tzimmermann@suse.de, maarten.lankhorst@linux.intel.com,
-	jeesw@melfas.com, broonie@kernel.org, davem@davemloft.net,
-	houlong.wei@mediatek.com, flora.fu@mediatek.com, pabeni@redhat.com,
-	linux-clk@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	angelogioacchino.delregno@collabora.com, sean.wang@kernel.org,
-	tiffany.lin@mediatek.com, ck.hu@mediatek.com, krzk+dt@kernel.org,
-	linus.walleij@linaro.org
-Subject: Re: [PATCH v1 12/14] dt-bindings: soc: mediatek: pwrap: Add
- power-domains property
-Message-ID: <175587784167.3865517.1055280782148729337.robh@kernel.org>
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
- <20250820171302.324142-13-ariel.dalessandro@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bi18l/268p4OOZcn0ZzdVslnGZC0XOMjkVBjd6FtU1SP7UF3l7okVBH3XkYqoc6mUuOA5S5MYBvFL0Z7qUNbU+dgJXKIzoXwfOL7IvgAyMopSD1dj9pwFwHfI/GUuSHYfHp3xanXEQNbqg9oKapFIKID1cJP3fFPZqZWjs3FeKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dISNGYsW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755877967;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mYRySiryXy1ygKi86fAgkp72E4RJ1lkZ+6KjdD+UoBA=;
+	b=dISNGYsWb3fI903BInmHhYP33xfVjaIWE2MUptI+99HifQiBugWkcaBwktJWbZk5INciVD
+	FootRYzZr2gdSoNx1iqM9lbpwqKsQ2cpidKogICfitTNtEE3Yb4q7GaDXrdKObevw4q/kT
+	/jtod/VgIa/cqNeGMoQVg72qyShElvc=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-629-GIJgJcYWMtGJh7-xXoNtFA-1; Fri,
+ 22 Aug 2025 11:52:41 -0400
+X-MC-Unique: GIJgJcYWMtGJh7-xXoNtFA-1
+X-Mimecast-MFC-AGG-ID: GIJgJcYWMtGJh7-xXoNtFA_1755877959
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6BDBE1956096;
+	Fri, 22 Aug 2025 15:52:38 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.227])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 06D6B1800296;
+	Fri, 22 Aug 2025 15:52:25 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 22 Aug 2025 17:51:18 +0200 (CEST)
+Date: Fri, 22 Aug 2025 17:51:05 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: jolsa@kernel.org, andrii@kernel.org, mhiramat@kernel.org,
+	linux-kernel@vger.kernel.org, alx@kernel.org, eyal.birger@gmail.com,
+	kees@kernel.org, bpf@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
+	songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+	haoluo@google.com, rostedt@goodmis.org, alan.maguire@oracle.com,
+	David.Laight@ACULAB.COM, thomas@t-8ch.de, mingo@kernel.org,
+	rick.p.edgecombe@intel.com
+Subject: Re: [PATCH 0/6] uprobes/x86: Cleanups and fixes
+Message-ID: <20250822155104.GA32136@redhat.com>
+References: <20250821122822.671515652@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,20 +79,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250820171302.324142-13-ariel.dalessandro@collabora.com>
+In-Reply-To: <20250821122822.671515652@infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
+On 08/21, Peter Zijlstra wrote:
+>
+> These are cleanups and fixes that I applied on top of Jiri's patches:
+>
+>   https://lkml.kernel.org/r/20250720112133.244369-1-jolsa@kernel.org
 
-On Wed, 20 Aug 2025 14:13:00 -0300, Ariel D'Alessandro wrote:
-> Currently, the DT bindings for Mediatek PMIC Wrapper is missing the
-> power-domains property, which is used in the MT8173 E1 evaluation board
-> as it needs USB power domain.
-> 
-> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-> ---
->  .../bindings/soc/mediatek/mediatek,pwrap.yaml     | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
+Can't review 4/6 due to the lack of knowledge.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Other changes look good to me, FWIW
+
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 
 
