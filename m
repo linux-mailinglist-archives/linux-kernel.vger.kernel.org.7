@@ -1,161 +1,134 @@
-Return-Path: <linux-kernel+bounces-782764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 695DFB32518
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:37:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8939B32519
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:37:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6814E1B66D5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:36:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624CA1B673E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358D82D7817;
-	Fri, 22 Aug 2025 22:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W4ltF1m+"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022E32C2363;
+	Fri, 22 Aug 2025 22:36:12 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B23F1E5705;
-	Fri, 22 Aug 2025 22:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB851E5705;
+	Fri, 22 Aug 2025 22:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755902158; cv=none; b=SNKvk6FrNheK88RJPqbI3fIxlOh2GyTN4vVpUSI55ue7PwNHtx0mJOpCigfHnzn4PLJqoz1/Sh/2a4VjTyLOsM4LzFeVZ/nQxFkomHeBlKsw9HOla2LWQik9waV6QoO0rvpNiYIgd8wyOEjiDDFVzCjsNQsqkws6X8HLslPkCv4=
+	t=1755902171; cv=none; b=QpOJVq9+WO5KXDtTIit3BlXcPeM7apwzFFtBZZLo+5WzJNlIhueoc9eo5x5MamqgG4wO3691BatuHCXLukbYfDQ8eMi908p94XdFHxiF+u5a+Y3vbHLREofLG2K8faJCpuxuhJj27ECi6eBOGSiugwZPeJvQ1novPKyrwpo0LVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755902158; c=relaxed/simple;
-	bh=Lhwv9UQUrS2xvVCkZM2LZ1wXZlHrl5i/oZNWX1nu4AY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VwvgJkFzpHfeFXpCgXzH/RAXEfwx6S06vlt0lrMzveUT2y5UVfEKyrMhrZktFujvrxawEn8xvgxmjwiNOmkv51pjqXqZzy6kUPbwb7SEB+YEazg1TSdXHJAIyTCU7MxPTGB+QVzDfzTUmC9eSkYTxDg5VuwS52O3Ysy4ehVZM24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W4ltF1m+; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-76e2eb3726cso1906366b3a.3;
-        Fri, 22 Aug 2025 15:35:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755902156; x=1756506956; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0FwDTbQ/G9GOnQP/jL8VoYGNnb8b98LqDD6ErxzxZ3A=;
-        b=W4ltF1m+sbZLaUoCKO9JjIiUIqKuwfDwKijRR2u2N1DM/pHWPwUFFh0PiUWWzKYkrB
-         ktNq5zID08UUQWXv06yknV3BprkyWK/CBiUPDXYWLTQ0oDK9zbunk/tuUJGoqwSr/Rpj
-         9eO8c0nEoDZlXTvac45QjiKWTC9gpN26mWemUhA8Aeep6V2lExb0fdJnh96g71lDlBEa
-         f9xLiT248uzUbaItrExn+z/s1dQsW62DM4Eyp92FauTqyaBYvdnCX2Ba6SBA5vV2ZxXJ
-         ZJDRuVkJkaBhO4kitOi/CZdAHCcu+uGMltLZZrKfkK2UhaNNpqgEtrw4pk07UKlLrg07
-         mz9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755902156; x=1756506956;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0FwDTbQ/G9GOnQP/jL8VoYGNnb8b98LqDD6ErxzxZ3A=;
-        b=t3sNa6UTVrX6dOB+/vk0I1ZcoRRXsogOyNSGhOyptzrlO35rkZRvxv5+5MN++ig8vl
-         9t2BS3TyXGMWHNy0ifw4L2EZ87+ojCizMbGP2VZoh5VZaTj5Y7M9F9KhMzMkHQlJUOJ9
-         n0YX+C7/i6aAtWNXj6Dl0CJ+OdCEVmvmLcnrjQ1FI07nvkJzkAkEJCuDenAVBu/6a4WK
-         1nv6qQ7y7C6qEC0ouX1b7GWJicLquozzWzK7gB82py0SKCjonrKR3C2bjgaVCM2DSxIN
-         4zz5hdY8uJM/uWDfNgl76i2BWiGH/8ak0FlppShHX4g2fnoKp9Tl5M+xRbI/Jg32wBmX
-         axCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLJrdxjDbHpPq5scKCp1CoND+PhSCjfclAtKxYgAk4unr1eqC2jdtH+nXEaYkHZoy69PL19c15pRoGnK8j@vger.kernel.org, AJvYcCWfpHMNIdGRQ/0lhh/O/Umv6ne4M19isb/0jhcwUZntryU9OjlKZOPc2k+e5pVsMeRSqV2P@vger.kernel.org, AJvYcCWtUJo/wEHkHBQy8kmWQY+6ZMWi0i0eYRhGLvnmy7wIv/cFKAabay0qepefHcOjP4T230OQ52ac8rC0@vger.kernel.org, AJvYcCX0WPQEx/X+rGPqiN9FYbzXRlTcHyl+3W7ZiT+LXpRMBEm0KI95pjv9IlYCDfzFj/UzK7fV6f4bvqCs@vger.kernel.org, AJvYcCXxPXVI7v/S+LLqoW1KQpI3qSdeSyhN1IQ+nf3CrADvMRasR5lrOt7ri90o9GolHTBds/eMhcNhBpnLb5jERFZJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcnZ5w6apazYOAwCT1o3ich9Yy8GZr60GrIUVTUfq4JYuQG+Ms
-	Aytq0j7qjRmL1257gKZzzK2ZLVR0R1S25eR/5ywLVULfjdFUq+UCLjSG
-X-Gm-Gg: ASbGncskW30UaHVDRLT3Qve0c/crj91ZSRivsAstgNAoAedroGXns4mtir3I0QyDg/z
-	JCjQr4GRmn84cwKTDINgBS3520/2c9m+1GTA83rXKLWPQmo+q1R1WgpgYg4JlTieeS5umbAkGR2
-	VzJny8JbfiD0XCTi9KwwYvPmonxzfclnUnQ2OHhEbJhwRZqOTtxgDNQXcSajf7b9u8472tGYTkS
-	Z1dt6IHB3tJggHVIQj56SKezLGjvOxDI6FieGuUfS01zDMuRG0jjpQhw6cXupntWca8I1dqBBCB
-	KbXVYk5xTM5niqzwJFWfMGJTcnE+CDpiz68QxHkZ+RsUg9+Be8X11KMZqabnrkjbmYd7Ei1qXmt
-	bwhqZ1jwqJWaSiWXL+bW/lw==
-X-Google-Smtp-Source: AGHT+IEYCh8C0L6ZZn0L/gbp+7wJ7PcWlxjsVE+Dj4tzEhoWhx2t2CE2bxPom3RqYKmnOJkBIwjJZA==
-X-Received: by 2002:a05:6a21:32a8:b0:240:3c3:7ffa with SMTP id adf61e73a8af0-24340dc8405mr7563526637.43.1755902156183;
-        Fri, 22 Aug 2025 15:35:56 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3254aa4f9e6sm802727a91.16.2025.08.22.15.35.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 15:35:55 -0700 (PDT)
-Date: Sat, 23 Aug 2025 06:34:56 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Pincheng Wang <pincheng.plct@isrc.iscas.ac.cn>, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, anup@brainfault.org, 
-	pbonzini@redhat.com, shuah@kernel.org, cyan.yang@sifive.com, cleger@rivosinc.com, 
-	charlie@rivosinc.com, cuiyunhui@bytedance.com, samuel.holland@sifive.com, 
-	namcao@linutronix.de, jesse@rivosinc.com, inochiama@gmail.com, 
-	yongxuan.wang@sifive.com, ajones@ventanamicro.com, parri.andrea@gmail.com, 
-	mikisabate@gmail.com, yikming2222@gmail.com, thomas.weissschuh@linutronix.de
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, devicetree@vger.kernel.org, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v1 RESEND 1/5] dt-bidings: riscv: add Zilsd and Zclsd
- extension descriptions
-Message-ID: <znik7dcyeipf57xerlm5gwjszcaaeujoukr7g4a7wt7lsfu366@skany6k7agt4>
-References: <20250821140131.225756-1-pincheng.plct@isrc.iscas.ac.cn>
- <20250821140131.225756-2-pincheng.plct@isrc.iscas.ac.cn>
+	s=arc-20240116; t=1755902171; c=relaxed/simple;
+	bh=Ipf4PtHnqlo2qX/ocDyeGiklut+RT2J+azU0jfIZmxs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qZtJIIZnsKyWHWUUc+zIJ9BjgvLANw29vJJPYA8ItHmwvFvYoMg1CrVsh3HAf9BNbJZSB8UfmafamLnJj2bN0htMIVc0q5JN8coo+tVOIFG6u2t31SkXGLXEPpWzS1joL9/eXJMwALSe6EzbTB9wHq0EdD/DnEVp52pSV9Or87M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id 31316C037C;
+	Fri, 22 Aug 2025 22:36:07 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id 5F11B2D;
+	Fri, 22 Aug 2025 22:36:05 +0000 (UTC)
+Date: Fri, 22 Aug 2025 18:36:06 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Tengda Wu <wutengda@huaweicloud.com>,
+ Nathan Chancellor <nathan@kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>
+Subject: [PATCH v2] ftrace: Also allocate and copy hash for reading of
+ filter files
+Message-ID: <20250822183606.12962cc3@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821140131.225756-2-pincheng.plct@isrc.iscas.ac.cn>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: g4ahir68hhuz96ha3j3etkrun58ojgkz
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 5F11B2D
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19SOC8s4mzrVc5VaOGJ4F6I9pk4caogj6g=
+X-HE-Tag: 1755902165-964812
+X-HE-Meta: U2FsdGVkX1+UXTpAxPWCoYB17PTkoRVdZABOHyJjYnowMMdJfCsugcYr3NBipySINUMjU0kXSz6K6joI+N4MNzlYH2m18VDdl+gRpvSkCf4xGal4Ve47/JVwEvAufEdtgKVLQuQ8Di2nWaXH2mwq3O8kaiQTX9qRBSPNjAn3rlSGBgKh0SXwkP0zNB0d6s51XCLXR8yOWHmBh5lx+MFW4q1BCViCsmIJTt9XhoznehFa+gatwtWUrxN8SIUzzLB6HJGeyu/7uG0i+tzTHSNYmD6mGBxCTk+HwBia/RXBeYahoRT6Jpu7yCPVppE+t5S/Ym+USDVWXfLrI3V71nuZ5RTOzC+oz9WGfNBHB3+DlyWiSmguUFGBUR/RG23uky+cT50gxC4HQ67DUrzbd+uDYBCPl1dZF9Qwn2+/1COdZzM=
 
-On Thu, Aug 21, 2025 at 10:01:27PM +0800, Pincheng Wang wrote:
-> Add descriptions for the Zilsd (Load/Store pair instructions) and
-> Zclsd (Compressed Load/Store pair instructions) ISA extensions
-> which were ratified in commit f88abf1 ("Integrating load/store
-> pair for RV32 with the main manual") of the riscv-isa-manual.
-> 
-> Signed-off-by: Pincheng Wang <pincheng.plct@isrc.iscas.ac.cn>
-> ---
->  .../devicetree/bindings/riscv/extensions.yaml | 39 +++++++++++++++++++
->  1 file changed, 39 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> index ede6a58ccf53..d72ffe8f6fa7 100644
-> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> @@ -366,6 +366,20 @@ properties:
->              guarantee on LR/SC sequences, as ratified in commit b1d806605f87
->              ("Updated to ratified state.") of the riscv profiles specification.
->  
-> +        - const: zilsd
-> +          description:
-> +            The standard Zilsd extension which provides support for aligned
-> +            register-pair load and store operations in 32-bit instruction
-> +            encodings, as ratified in commit f88abf1 ("Integrating
-> +            load/store pair for RV32 with the main manual") of riscv-isa-manual.
-> +
-> +        - const: zclsd
-> +          description:
-> +            The Zclsd extension implements the compressed (16-bit) version of the
-> +            Load/Store Pair for RV32. As with Zilsd, this extension was ratified
-> +            in commit f88abf1 ("Integrating load/store pair for RV32 with the
-> +            main manual") of riscv-isa-manual.
-> +
->          - const: zk
->            description:
->              The standard Zk Standard Scalar cryptography extension as ratified
-> @@ -847,6 +861,16 @@ properties:
->              anyOf:
->                - const: v
->                - const: zve32x
+From: Steven Rostedt <rostedt@goodmis.org>
 
-> +      # Zclsd depends on Zilsd and Zca
-> +      - if:
-> +          contains:
-> +            anyOf:
-> +              - const: zclsd
-> +        then:
-> +          contains:
-> +            anyOf:
-> +              - const: zilsd
-> +              - const: zca
->  
+Currently the reader of set_ftrace_filter and set_ftrace_notrace just adds
+the pointer to the global tracer hash to its iterator. Unlike the writer
+that allocates a copy of the hash, the reader keeps the pointer to the
+filter hashes. This is problematic because this pointer is static across
+function calls that release the locks that can update the global tracer
+hashes. This can cause UAF and similar bugs.
 
-Should be allOf? I see the comment says "Zclsd" requires both "Zilsd"
-and "Zca".
+Allocate and copy the hash for reading the filter files like it is done
+for the writers. This not only fixes UAF bugs, but also makes the code a
+bit simpler as it doesn't have to differentiate when to free the
+iterator's hash between writers and readers.
 
-Regards,
-Inochi
+Cc: stable@vger.kernel.org
+Fixes: c20489dad156 ("ftrace: Assign iter->hash to filter or notrace hashes on seq read")
+Closes: https://lore.kernel.org/all/20250813023044.2121943-1-wutengda@huaweicloud.com/
+Link: https://lore.kernel.org/all/20250822192437.GA458494@ax162/
+Reported-by: Tengda Wu <wutengda@huaweicloud.com>
+Tested-by: Tengda Wu <wutengda@huaweicloud.com>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+Changes since v1: https://lore.kernel.org/20250820091913.146b77ea@gandalf.local.home
+
+- Assign iter->hash to EMPTY_HASH if hash is NULL (Nathan Chancellor)
+
+
+ kernel/trace/ftrace.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 00b76d450a89..a69067367c29 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -4661,13 +4661,17 @@ ftrace_regex_open(struct ftrace_ops *ops, int flag,
+ 	        } else {
+ 			iter->hash = alloc_and_copy_ftrace_hash(size_bits, hash);
+ 		}
++	} else {
++		if (hash)
++			iter->hash = alloc_and_copy_ftrace_hash(hash->size_bits, hash);
++		else
++			iter->hash = EMPTY_HASH;
++	}
+ 
+-		if (!iter->hash) {
+-			trace_parser_put(&iter->parser);
+-			goto out_unlock;
+-		}
+-	} else
+-		iter->hash = hash;
++	if (!iter->hash) {
++		trace_parser_put(&iter->parser);
++		goto out_unlock;
++	}
+ 
+ 	ret = 0;
+ 
+@@ -6543,9 +6547,6 @@ int ftrace_regex_release(struct inode *inode, struct file *file)
+ 		ftrace_hash_move_and_update_ops(iter->ops, orig_hash,
+ 						      iter->hash, filter_hash);
+ 		mutex_unlock(&ftrace_lock);
+-	} else {
+-		/* For read only, the hash is the ops hash */
+-		iter->hash = NULL;
+ 	}
+ 
+ 	mutex_unlock(&iter->ops->func_hash->regex_lock);
+-- 
+2.50.1
 
 
