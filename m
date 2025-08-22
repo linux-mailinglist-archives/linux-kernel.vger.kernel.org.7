@@ -1,122 +1,174 @@
-Return-Path: <linux-kernel+bounces-782050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39B4DB31A56
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:56:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E64B31A46
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C033AE69F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:51:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A62189974B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158FD28643B;
-	Fri, 22 Aug 2025 13:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E029303CBD;
+	Fri, 22 Aug 2025 13:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="otWE+VW1"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eSNG6X4P"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6625A3043D6
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC5E2FD7B8
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755870681; cv=none; b=YLKfHAPPukG7KPFzHRb/qdgOC9KkkcS/zJx3VodmvRKWOMPRzuovnDHCV3WZPBxugQ31f+XVCsnadnmw1oJykqagrFAcPXAZiucJ+RvZ0z3Ix0U0YoBAvQuaXnhAJZdi2avyrsZaRHsVAeHkd8trohxiFxtrRSFmZB2Gvh4We98=
+	t=1755870652; cv=none; b=PcvNAqeJdGZVxNXHjEKKOGruNH9PfJwFU7WitbwFXHghpMfscS2752BIEAQ5TCnwMzbUNfTEMt09zRRV+PdMpxa4045+qdX7fzsJJwnIB1K6WJdGdKqDFejsb70/rIYSsDtSY++w3OLDxHcbg2uthyb1Xvbp0xHnIG/jLNSTfkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755870681; c=relaxed/simple;
-	bh=PoKu8cetijpbo+YzllTWuCf4Q4G3t0TM8w0o7LKcXZE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i4hA6D64FRHAt/5e+8ulfMc+g1SNmtJMHc8+nqmc8HGiyKLaNf3PmXerJjIlrTVI1RYJ1q1jnxYMN3c1GT+qb7y+pYcZuNb0toblrZSjHb4arJCZujO2PwsBfRP5CC/W3odPMkiFF+o+WoK3Q9G0peucfPWT8Tgr/ZAXoAw/Dcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=otWE+VW1; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57MDoq52730853;
-	Fri, 22 Aug 2025 08:50:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755870652;
-	bh=vQpJb33UAMvr55isOHCAnuBgcUtJ7lvapZEPEFi8rGA=;
-	h=From:To:CC:Subject:Date;
-	b=otWE+VW1+KmfubKRMmslDNvfL171KXOwAEaqG+dzUKYW7iKnd+ZhdkhH0Mmj9EjjF
-	 OYUStcTy1oWcag1JomHw4HzZAeDAw+UWc8Uf2rkdLFS2IFZJI66SVC5OTq1Bh12ziW
-	 pjtfUl7TYFQUd9q3hkTnzjDl1DBrXlZRVkOpv6HY=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57MDop833317935
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 22 Aug 2025 08:50:51 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 22
- Aug 2025 08:50:51 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 22 Aug 2025 08:50:51 -0500
-Received: from LT5CG31242FY.dhcp.ti.com ([10.250.161.79])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57MDolZ13918264;
-	Fri, 22 Aug 2025 08:50:47 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <tiwai@suse.de>
-CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
-        <13564923607@139.com>, <13916275206@139.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <baojun.xu@ti.com>, <Baojun.Xu@fpt.com>, <jesse-ji@ti.com>,
-        Shenghao Ding <shenghao-ding@ti.com>
-Subject: [PATCH v1] ALSA: hda/tas2781: Fix EFI name for calibration beginning with 1 instead of 0
-Date: Fri, 22 Aug 2025 21:50:42 +0800
-Message-ID: <20250822135043.517-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1755870652; c=relaxed/simple;
+	bh=b9DISnBr80iRSH4AeTVqCopXwygyz1xeiBqPwwcXcn8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=E+j3FSr7a5INmsNM2nuFRIiX600bJuH3eqaDbaqsvAvpobOBWt3ZYCAabGaKvy/FUtatc1hF9LESWcZUap/dk2z5OXZE8fQNSRmNn2OJyv2+IPma4x7XKEmbrwDSizpV8VZ8BRCbbWfsxptGSXGzydFiWe1sGAymojpF0D7nrxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eSNG6X4P; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3c69724519fso49580f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:50:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755870649; x=1756475449; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mGhO3kmVIYGRWufT14ynMiV/yGtuvvh15Hsd9JEr9n8=;
+        b=eSNG6X4PARfT7PkNGD0b89kfLvvtMESUb2TsR345vHjhwEPpi8CGMjKTT8BYpUm34A
+         dIiDJ0Py+HCCuGRIwnSHUx98OzdQqHeVJfEVS4eS6PPXmpGncvFLhwnGs4iKQMauj4XW
+         CnjFcOmawh9GQbdrwleUzpkpeujrJN+fFsNsgIzdWTT/ikVADAgX1OeFt/ZPKPGyC3OL
+         LqPhro9S0w/8Qszb1hJG1d6Vpc7ouggVKsdb0na9iLm2WUpUp8e3pSn8p6fwa0Mqko9G
+         q+u2H4WBFmrih3HI8LxH/0Zd7P9rcjtFSib5Ru79h79t/cY7ncZCLkVvUfA3Zmjd/RV2
+         9Q+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755870649; x=1756475449;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mGhO3kmVIYGRWufT14ynMiV/yGtuvvh15Hsd9JEr9n8=;
+        b=YczzOb7Vur0m/ZMhxobiDCJZ41qhiSPsE6Cck27FuJVx88WdUeGjNk4oxAA5639PoG
+         aZJhNb9AohEpEKdbWO/Va1w4/wcr1ey9Ht7S28anovJjjdk+nzKe16xSdDkoPfDdqxkq
+         YiYcY/sprq/JNZ+UDTiS80uroXw9TQX3DLfr//eTp/Iuq0ksJGU3kwiyta2y7pnbQ0wO
+         zoIJiGz6HzUDCuKURn+tQhaOcrcbYnSEQy6n4gFHkAzNWdOboWrt2sh8BcxsiXmRN9k7
+         zWB7RL42Wi8mfmzhAZFXUc8bWw3K/0Mx5SCjjS11MZxp6nilHa24KVUgIbIzaFoku/JV
+         WqXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRXuBuUjKo40SbJwwqSU4IQcJ1AFWp/P9duJltAN+5m+1OYg614df1iRy3Sonet5CG1gefIgNrq9YXWyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIrvFtQ3InFyDDG7ehvsX6mhHcfJo+hhB1jCTsN9WtTiKUT+WD
+	He4KJxC6M0PhvXbiKtXkvp1Kodrni5oCj97KDAEbHLbCR7Fw5qcX+5wu
+X-Gm-Gg: ASbGncstY5kFE4erx+GqBxNN5RmVBBVOiklCJ9kmcmDmyBnNCwjdmU0iYmrE3/avH8V
+	n6dnxVmIQvmDE7Wm4eJ4ifNyBq5WOYN7D0Eh+3lFL8VbFH82gMXTcDemYdbqBQGoHPbcntmFzzc
+	Rxws2GKpECcDjWb6MgaySk1ECnlDDerlY70eaPGlQqoGpUyE7I8UhMmZBCQ6P9grnSoeAhSgiaS
+	nKFz9HC0UDXjXrVJZ72ydrosvnOjfrkkbWmnVTa0aFIlWoVZfi5qKNvNGYeyppIhppste1wOsrH
+	bWi1HfhKxz1stMMYxVvyaUcyiLOvM844yDWo64SJE1D5c5lGAaWpLhheMfyHgA7RqgCacA0eZBR
+	CIYW8Vp2GD/WiUHfjTIdwZwygs33+lNhzCqqyD5zYL87I7IKQ+BKRvKX/pOA6SucTPs4m/myNxi
+	gbD0lgPwd3mRAZl2nWtqI=
+X-Google-Smtp-Source: AGHT+IFgLJnsa2QDWZ7yy8ttoVwSdR672VRHn6w/2d2eIUK/l081Cm2xTXQ1WfEHFk7l29E3EP1adg==
+X-Received: by 2002:a05:6000:240c:b0:3c3:c280:d43c with SMTP id ffacd0b85a97d-3c5d7ea4ba8mr1184915f8f.0.1755870648896;
+        Fri, 22 Aug 2025 06:50:48 -0700 (PDT)
+Received: from [192.168.100.6] ([149.3.87.76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c6e2d3f2aesm165454f8f.58.2025.08.22.06.50.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Aug 2025 06:50:48 -0700 (PDT)
+Message-ID: <4391e3f5-e0a5-4920-bd50-05337b7764e7@gmail.com>
+Date: Fri, 22 Aug 2025 17:50:47 +0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: lirongqing@baidu.com
+Cc: akpm@linux-foundation.org, david@redhat.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, muchun.song@linux.dev,
+ osalvador@suse.de, xuwenjie04@baidu.com
+References: <20250822112828.2742-1-lirongqing@baidu.com>
+Subject: Re: [PATCH] mm/hugetlb: two-phase hugepage allocation when
+ reservation is high
+Content-Language: en-US
+From: Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>
+In-Reply-To: <20250822112828.2742-1-lirongqing@baidu.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-A bug reported by one of my customers that EFI name beginning with 0
-instead of 1, and code clean for the string checking.
+Hi there. The 90% split is solid. Would it make sense to (a) log a 
+one-time warning if the second pass is triggered, so operators know why 
+boot slowed, and (b) make the 90% cap a Kconfig default ratio, so 
+distros can lower it without patching? Both are low-risk and don’t 
+change the ABI
 
-Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-data getting function for SPI and I2C into the tas2781_hda lib")
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
-
----
-v1:
- - Fix EFI name beginning with 1 instead of 0
- - Code clean for the string checking
- - Add extra comments on EFI name for calibration
- - Remove an extra space
----
- sound/hda/codecs/side-codecs/tas2781_hda_i2c.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-index ed7771ab9475..fecd5eac739b 100644
---- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-+++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-@@ -340,16 +340,17 @@ static int tas2563_save_calibration(struct tas2781_hda *h)
- 		data[offset] = i;
- 		offset++;
- 		for (j = 0; j < TASDEV_CALIB_N; ++j) {
--			ret = snprintf(var8, sizeof(var8), vars[j], i);
-+			/* EFI name for calibration started with 1, not 0 */
-+			ret = snprintf(var8, sizeof(var8), vars[j], i + 1);
- 
--			if (ret < 0 || ret >= sizeof(var8) - 1) {
-+			if (ret != strlen(var8)) {
- 				dev_err(p->dev, "%s: Read %s failed\n",
- 					__func__, var8);
- 				return -EINVAL;
- 			}
- 			/*
- 			 * Our variable names are ASCII by construction, but
--			 * EFI names are wide chars.  Convert and zero-pad.
-+			 * EFI names are wide chars. Convert and zero-pad.
- 			 */
- 			memset(efi_name, 0, sizeof(efi_name));
- 			for (k = 0; k < sizeof(var8) && var8[k]; k++)
--- 
-2.43.0
+Thanks
+On 8/22/2025 3:28 PM, lirongqing wrote:
+> From: Li RongQing <lirongqing@baidu.com>
+> 
+> When the total reserved hugepages account for 95% or more of system RAM
+> (common in cloud computing on physical servers), allocating them all in one
+> go can lead to OOM or fail to allocating huge page during early boot.
+> 
+> The previous hugetlb vmemmap batching change (91f386bf0772) can worsen
+> peak memory pressure under these conditions by deferring page frees,
+> exacerbating allocation failures. To prevent this, split the allocation
+> into two equal batches whenever
+> 	huge_reserved_pages >= totalram_pages() * 90 / 100.
+> 
+> This change does not alter the number of padata worker threads per batch;
+> it merely introduces a second round of padata_do_multithreaded(). The added
+> overhead of restarting the worker threads is minimal.
+> 
+> Before:
+> [    8.423187] HugeTLB: allocation took 1584ms with hugepage_allocation_threads=48
+> [    8.431189] HugeTLB: allocating 385920 of page size 2.00 MiB failed.  Only allocated 385296 hugepages.
+> 
+> After:
+> [    8.740201] HugeTLB: allocation took 1900ms with hugepage_allocation_threads=48
+> [    8.748266] HugeTLB: registered 2.00 MiB page size, pre-allocated 385920 pages
+> 
+> Fixes: 91f386bf0772 ("hugetlb: batch freeing of vmemmap pages")
+> 
+> Co-developed-by: Wenjie Xu <xuwenjie04@baidu.com>
+> Signed-off-by: Wenjie Xu <xuwenjie04@baidu.com>
+> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> ---
+>   mm/hugetlb.c | 21 +++++++++++++++++++--
+>   1 filechanged <https://lore.kernel.org/linux-mm/20250822112828.2742-1-lirongqing@baidu.com/#related>, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c index 753f99b..a86d3a0 100644 
+> --- a/mm/hugetlb.c +++ b/mm/hugetlb.c @@ -3587,12 +3587,23 @@ static 
+> unsigned long __init hugetlb_pages_alloc_boot(struct hstate *h)  		.numa_aware	= true
+>   	};
+>   
+> + unsigned long huge_reserved_pages = h->max_huge_pages << h->order; + 
+> unsigned long huge_pages, remaining, total_pages;  	unsigned long jiffies_start;
+>   	unsigned long jiffies_end;
+>   
+> + total_pages = totalram_pages() * 90 / 100; + if (huge_reserved_pages > 
+> total_pages) { + huge_pages = h->max_huge_pages * 90 / 100; + remaining 
+> = h->max_huge_pages - huge_pages; + } else { + huge_pages = h- 
+>  >max_huge_pages; + remaining = 0; + } +  	job.thread_fn	= hugetlb_pages_alloc_boot_node;
+>   	job.start	= 0;
+> - job.size = h->max_huge_pages; + job.size = huge_pages;  
+>   	/*
+>   	 * job.max_threads is 25% of the available cpu threads by default.
+> @@ -3616,10 +3627,16 @@ static unsigned long __init 
+> hugetlb_pages_alloc_boot(struct hstate *h)  	}
+>   
+>   	job.max_threads	= hugepage_allocation_threads;
+> - job.min_chunk = h->max_huge_pages / hugepage_allocation_threads; + 
+> job.min_chunk = huge_pages / hugepage_allocation_threads;  
+>   	jiffies_start = jiffies;
+>   	padata_do_multithreaded(&job);
+> + if (remaining) { + job.start = huge_pages; + job.size = remaining; + 
+> job.min_chunk = remaining / hugepage_allocation_threads; + 
+> padata_do_multithreaded(&job); + }  	jiffies_end = jiffies;
+>   
+>   	pr_info("HugeTLB: allocation took %dms with hugepage_allocation_threads=%ld\n",
+> -- 
+> 2.9.4
+> 
+> 
 
 
