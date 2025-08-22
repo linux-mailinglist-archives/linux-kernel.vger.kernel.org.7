@@ -1,156 +1,98 @@
-Return-Path: <linux-kernel+bounces-781110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C436DB30DA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:44:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A46EB30DAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94F051CE1AA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:44:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 999EF1CC7C68
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D43222580;
-	Fri, 22 Aug 2025 04:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD71278E7B;
+	Fri, 22 Aug 2025 04:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fnkKtM9l"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VUag2PQi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3057B3207;
-	Fri, 22 Aug 2025 04:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC68223507C;
+	Fri, 22 Aug 2025 04:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755837845; cv=none; b=RGsWRssV0WhNT3xiGyaAeQxcA0lAK0hF3nzOHBMHc6i4CRhR9bQFDhP5miLI6L1gxBwIMxnQa24qkWNyPKJv1JrtEb6gq6nqxxZBv8b00eDe0lMavJY+Pwro0F0N7n7FrGX7mkV1vykyTXSPsxntg2bRU41LSkAfk/y9cBd8Ers=
+	t=1755837910; cv=none; b=clLX65kSxwGgGyTRFoustmCvpUtyjHfdMZRs//UY+8scx0cju0VSBDj6yT/bxIrn7cTHEF734ly75YZM9A2JxzyOVr5Agv0xeBHMUMfevjxVoG9So+rurBh7n9ogQa5Tm/oTZ97D5ftPL6gP7tI42HAZJVhLyAFikwCNjnOoG3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755837845; c=relaxed/simple;
-	bh=bBFDWPqnmliNbgpYd/Ecxh9lrCjH3iR1zG7ocsQC33A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X5CnvOw6+7uIKTiKXRXtxwDEmKYtyvZok6qsPGk6iNnGijmKHI1gOBz9CHEUovwr+9NPiu6wSpIv7zfsWKCK7BqzTolpoBmw96kt6KQxfbfqPl9xdVyY90Cpex+Wm19oeg8VANbCN395GV+cYvrg3J1Ji6J4OXGKvl7OoHPWqN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fnkKtM9l; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-24458242b33so18172045ad.3;
-        Thu, 21 Aug 2025 21:44:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755837843; x=1756442643; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aJ8xmRhWvHBeY/6eJ7QFNbZvGCD85H+wlWlvcUtXk7E=;
-        b=fnkKtM9lq32svoHyauwzdftHMw6FSAGIPPu9Xdyeu2m1ncjdpTZtleLsgw9Ra0arjG
-         kx5/HUOHGtg2BQlHCNkHKe2ZftoZR94bJ6/wY7TnBvUqvFV1jcCpsljngBvMq4Am3iL4
-         cVmP1oKGAh9UA95YJT/Yp4UFsl7Tvvz6fNEqdTwyimzCWG67/vpQpfVGSxY/o4tunYzl
-         5JXkFn27rrKTCSRpfOXdIpabnaeULEfLmSvnYZt9uz+3f+gZfoRcvSmo86eH16nZFyuy
-         4+ZYO/gV9pSX9BlpI9jE7jodTux8sfiNJOc9nh02dY3ae1htB9yPxougK+2rlDFkzdtB
-         JYFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755837843; x=1756442643;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aJ8xmRhWvHBeY/6eJ7QFNbZvGCD85H+wlWlvcUtXk7E=;
-        b=bsXzgxBkaSo/S/+/34rk6171/jSZQIiqHWbAkQEQCT8ZKX5lhAC324YZXPWNtSG6Ov
-         Zs/xKvJx5ubEJrhRvTpzPe+L8OuyiM2rk2jMktX7EGLecpKoJiKcxx0uh223InzjVCG5
-         N0WLgr/6XgJ8jCSHfNNtGfoSobud8nslDVgMMw2fpTzGSgYIzw/8oGaKALGHRApcS4in
-         OCmc14o+Nms5RflIaZyOKvkhddI+jWri24w6Q0ZngYVpUtkjy/WG+kTtFjeDcLl6gjKj
-         a6gqaNSCyhpB7ww0Vu7hJGAsOXDQzhzzx3XuKi7sUYnvtBKJ9mJnKiiVMAXAZ0SO8kq5
-         dsLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGsnm3O4iF2Zs6Q/8xCtVoBzIoVo7kAPwO8YBr1zm+fnhlkewAp0QbsbLdwqNfBRsVwSrxIYQNSzw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5ja+2uPz7FUbrjaQc65JToyFnbiyKl2aanWNd10D/L3RoFfwJ
-	maemgY/fCd2En0EHgpC2ZQ+EcfjDP7EsEH24b+mG6D//zZjVPPZoC92P
-X-Gm-Gg: ASbGncs98/5Wg64+3ytgEGewJfM0C/SfVDAoZGrCsruRiheaakQrEj6/NJlKt+Eka86
-	Vm/HP7ssi/WYxWNPQEA96sSJR/Gv092P6vaYJ4odQTphUxcTqlisryyjwrS9Ed73mbTTrJJXzwW
-	58Jh+xmxiD8Mxw0T15jt3vVu5blI9bIBxhHwrxAbvyrGCdDmYURrXLAHlZuvYxzaAvW8WS7ucuE
-	q6hjHbbk911fb9KeTFMPLodsF0jPuhTsBkVQ8vQH9igPsS2fJDsLxJi8ekNz8+or1DFarsF8xVl
-	cdQp7d3iGXwhqvfwjjJsYL7OY96ptXM2BG+2+TiPL0xiSQYLRIg9gUPZJTjEYhMnCwQ3p2A/0rT
-	aZocRSXe1CknxlOH+u+LlYjPhIjoECqMUcvGveATbs2mcJlY=
-X-Google-Smtp-Source: AGHT+IGRj9Ccg19k4Bwyhj4OpEoF+6whrC1KfFkJO3Kv9AK4y1/ToXYp0Yl9gDK9sSjH4KnpHgEQrg==
-X-Received: by 2002:a17:903:24f:b0:242:9bc6:6bc0 with SMTP id d9443c01a7336-2462ef8e7c5mr20101545ad.55.1755837843324;
-        Thu, 21 Aug 2025 21:44:03 -0700 (PDT)
-Received: from paradiselost.local (lohr.com.br. [187.58.145.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24629bb5f5csm14392925ad.130.2025.08.21.21.44.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 21:44:03 -0700 (PDT)
-From: "Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
-To: rafael.v.volkmer@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	ukleinek@kernel.org
-Subject: [PATCH v5 2/6] pwm: tiehrpwm: use FIELD_PREP()/FIELD_GET() for prescalers
-Date: Fri, 22 Aug 2025 01:43:08 -0300
-Message-ID: <20250822044308.4052-1-rafael.v.volkmer@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250822044024.4015-1-rafael.v.volkmer@gmail.com>
-References: <20250822044024.4015-1-rafael.v.volkmer@gmail.com>
+	s=arc-20240116; t=1755837910; c=relaxed/simple;
+	bh=xr9HAgxXfe1LuG2e1xdt+RJHcAoEpm5QP45MW7qu8PA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iEWaYC1r/K4P1YIZRCgmuXjuFA68yHJpOZBufSfgjZ2tjl90/kVT/LXhdLj8TInFGTGBYVIKzN7jLnDonZhGspFPpnVhjhxQCvTLrhMaTcBJry1leVRFyVckUo1ia6hfFYnD7yyfXuMwPCAh8ItgBZUHhmLbPmqMJ0cxtnhHxa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VUag2PQi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BD8CC4CEF1;
+	Fri, 22 Aug 2025 04:45:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755837909;
+	bh=xr9HAgxXfe1LuG2e1xdt+RJHcAoEpm5QP45MW7qu8PA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VUag2PQikMSCxt+pmRY4xpu1udTUdmHuBtHqKJ9v96X2xES9SDzV8aSu422xN0QNB
+	 XXFuG7cwtAAPuf2asy46I+O84+dS6U9PLr0Zh/35HcS7puEXGmu8Ck83Fb3qZVt2Oh
+	 hOw+QQHOFaSjrmRRC9IU7fVVJf7/j4xP5GHA+hQY=
+Date: Fri, 22 Aug 2025 06:45:04 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: William Wu <william.wu@rock-chips.com>
+Cc: Chris.Wulff@biamp.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, frank.wang@rock-chips.com,
+	jianwei.zheng@rock-chips.com, yue.long@rock-chips.com
+Subject: Re: [PATCH] usb: gadget: f_hid: Fix zero length packet transfer
+Message-ID: <2025082235-fondness-destruct-f8f6@gregkh>
+References: <1755828118-21640-1-git-send-email-william.wu@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1755828118-21640-1-git-send-email-william.wu@rock-chips.com>
 
-Replace manual CLKDIV/HSPCLKDIV handling with GENMASK() and
-FIELD_PREP()/FIELD_GET(). Introduce TBCTL_PRESCALE_MASK to update both
-fields in a single ehrpwm_modify() call, and drop the unused SHIFT
-macros.
+On Fri, Aug 22, 2025 at 10:01:58AM +0800, William Wu wrote:
+> If the hid transfer with size divisible to EPs max packet
+> size, it needs to set the req->zero to true, then the usb
+> controller can transfer a zero length packet at the end
+> according to the USB 2.0 spec.
+> 
+> Signed-off-by: William Wu <william.wu@rock-chips.com>
+> ---
+>  drivers/usb/gadget/function/f_hid.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/gadget/function/f_hid.c b/drivers/usb/gadget/function/f_hid.c
+> index 8e1d1e8..8021af3 100644
+> --- a/drivers/usb/gadget/function/f_hid.c
+> +++ b/drivers/usb/gadget/function/f_hid.c
+> @@ -511,7 +511,7 @@ static ssize_t f_hidg_write(struct file *file, const char __user *buffer,
+>  	}
+>  
+>  	req->status   = 0;
+> -	req->zero     = 0;
+> +	req->zero     = ((count % hidg->in_ep->maxpacket) == 0);
+>  	req->length   = count;
+>  	req->complete = f_hidg_req_complete;
+>  	req->context  = hidg;
+> @@ -967,7 +967,7 @@ static int hidg_setup(struct usb_function *f,
+>  	return -EOPNOTSUPP;
+>  
+>  respond:
+> -	req->zero = 0;
+> +	req->zero = ((length % cdev->gadget->ep0->maxpacket) == 0);
+>  	req->length = length;
+>  	status = usb_ep_queue(cdev->gadget->ep0, req, GFP_ATOMIC);
+>  	if (status < 0)
 
-This improves readability and lowers chances of off-by-shift errors.
+What commit id does this fix?
 
-No functional change intended.
+thanks,
 
-Signed-off-by: Rafael V. Volkmer <rafael.v.volkmer@gmail.com>
----
- drivers/pwm/pwm-tiehrpwm.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
-index 8509dd587..d140814a1 100644
---- a/drivers/pwm/pwm-tiehrpwm.c
-+++ b/drivers/pwm/pwm-tiehrpwm.c
-@@ -25,7 +25,9 @@
- #define TBCTL_PRDLD_SHDW	FIELD_PREP(TBCTL_PRDLD_MASK, 0)
- #define TBCTL_PRDLD_IMDT	FIELD_PREP(TBCTL_PRDLD_MASK, 1)
- 
--#define TBCTL_CLKDIV_MASK	GENMASK(12, 7)
-+#define TBCTL_CLKDIV_MASK	GENMASK(12, 10)
-+#define TBCTL_HSPCLKDIV_MASK	GENMASK(9, 7)
-+#define TBCTL_PRESCALE_MASK	(TBCTL_CLKDIV_MASK | TBCTL_HSPCLKDIV_MASK)
- 
- #define TBCTL_CTRMODE_MASK	GENMASK(1, 0)
- #define TBCTL_CTRMODE_UP	FIELD_PREP(TBCTL_CTRMODE_MASK, 0)
-@@ -33,9 +35,6 @@
- #define TBCTL_CTRMODE_UPDOWN	FIELD_PREP(TBCTL_CTRMODE_MASK, 2)
- #define TBCTL_CTRMODE_FREEZE	FIELD_PREP(TBCTL_CTRMODE_MASK, 3)
- 
--#define TBCTL_HSPCLKDIV_SHIFT	7
--#define TBCTL_CLKDIV_SHIFT	10
--
- #define CLKDIV_MAX		7
- #define HSPCLKDIV_MAX		7
- #define PERIOD_MAX		0xFFFF
-@@ -173,8 +172,8 @@ static int set_prescale_div(unsigned long rqst_prescaler, u16 *prescale_div,
- 			*prescale_div = (1 << clkdiv) *
- 					(hspclkdiv ? (hspclkdiv * 2) : 1);
- 			if (*prescale_div > rqst_prescaler) {
--				*tb_clk_div = (clkdiv << TBCTL_CLKDIV_SHIFT) |
--					(hspclkdiv << TBCTL_HSPCLKDIV_SHIFT);
-+				*tb_clk_div = FIELD_PREP(TBCTL_CLKDIV_MASK, clkdiv) |
-+					FIELD_PREP(TBCTL_HSPCLKDIV_MASK, hspclkdiv);
- 				return 0;
- 			}
- 		}
-@@ -280,7 +279,7 @@ static int ehrpwm_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	pm_runtime_get_sync(pwmchip_parent(chip));
- 
- 	/* Update clock prescaler values */
--	ehrpwm_modify(pc->mmio_base, TBCTL, TBCTL_CLKDIV_MASK, tb_divval);
-+	ehrpwm_modify(pc->mmio_base, TBCTL, TBCTL_PRESCALE_MASK, tb_divval);
- 
- 	/* Update period & duty cycle with presacler division */
- 	period_cycles = period_cycles / ps_divval;
--- 
-2.43.0
-
+greg k-h
 
