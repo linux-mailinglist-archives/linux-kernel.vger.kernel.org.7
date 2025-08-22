@@ -1,258 +1,202 @@
-Return-Path: <linux-kernel+bounces-782415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F3C0B3202B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:09:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C205EB3202F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FCCB1D40A58
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:04:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5683B1D25509
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979512877CA;
-	Fri, 22 Aug 2025 16:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133EF288C2B;
+	Fri, 22 Aug 2025 16:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e2XcsNJC"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PiVc7+0f"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71CB286D53
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CEC25DAE7;
+	Fri, 22 Aug 2025 16:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755878564; cv=none; b=igWm2J3n9nsH2xIUtFIBjASTFAsu5luE+Qx5l2MbdQ3xRkiFX6/7t1EHonKSzK+d5dqTY1KE31JKe4aSE5eykq771fPICapABTdtYUJCFU4RcmfnR+uQvZTqSwZRZ+5iqG4TJq3hkAGbV7nizNKLUS3FpcHtiNMJ2nthPDGbXH8=
+	t=1755878568; cv=none; b=UzeoCxxQ8mH02pJNtxu2MnBmXyFlmJdrjJnxlMtCWpxho+0uT1ewfzyh8ZzfFhxnY9othJAqEudGO0hMsQ43QSfS6/Q1GIIKNEwdogI9CRW769nrDCj3E/rZ+WJm1iPNvrhyus1OGkMIWtootRhKTjKpnYW2RGQq+NmP74T39pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755878564; c=relaxed/simple;
-	bh=6j2wVSC1eY0LNYrhjKWMbjy4LYJKfEoSAUxyGf+TkRM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G+DG3NbQ0F7vHhiPI22sU4SnHzsdWAnsQaz/hcBf5xUFwQ3yg1cgJzwSKB79VxIYFNfK8LQwB4kqKIRuJJ+yP3eLNiLaN3muDqL9st+UKP3BVy1I12rLaKswcj5TS0KgKNtJH862E1BQQr54Q7ul56Cenp69cG+zRzGn0ELWRNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e2XcsNJC; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b916fda762so1527877f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:02:41 -0700 (PDT)
+	s=arc-20240116; t=1755878568; c=relaxed/simple;
+	bh=ix73bSoNn7yvd8cn3z1HdCW0ZY0XpvKwTxIznMfcvLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SJrti5uf8JelK2OgLeM7OMF/jk9gTWYohQxnjFs7ihVvQmKiIKPWZxRZjxx8szw4bKekCxaUgs4htSLp4J1asIl2VKwf6ABgrb7R/Grx7k3/H2XSZE3P9sp7CjHA0KQoYIKd8tV/nXoeBxaIx1m2vUqJWRlWYqct41+TDVvjR3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PiVc7+0f; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55f34d792c4so61285e87.3;
+        Fri, 22 Aug 2025 09:02:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755878560; x=1756483360; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u6uIOvK2yrojSK1BrIKyE65F98CHI8uQnPckjILUm/E=;
-        b=e2XcsNJCUcyRtkXxzPoqqOkwBj4GlrtOeZevyDxI5LSfZZOCmpGScyLuoxaj9SMatV
-         tv/x7zCuW67Sn6EyJ+kCIYs3rwP8Rhoz6KsDhyxIyYT735sTU62ezEJFsxMbsJs1hsPt
-         I9yBMhhAoDCi3cCPBSHHFwTIlqamuX778g/gFzncwNptTgSb79Ko9cj8qAmBNEXSQBq1
-         tCKTYk9RKLg79uuNtum+uoDe+jz5LBoxxJ3a9mb9CXGt0Z2D4VMJEghsbsJleMe76u+E
-         6dIBvpt7o7ZFPvxn2s4M3Sy4aOHMuWFWMK0Qtu5IrpJglDj6n+Y7i/lsG+GvSpGjbhBr
-         UyzA==
+        d=gmail.com; s=20230601; t=1755878564; x=1756483364; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x+hhnaziEbvfcvK+nslqj/VWqrGu2JLJjIG2S0rWuqQ=;
+        b=PiVc7+0fLRSGjiYBuSZPamCvyujMhSPcA3xBJSg0+VqfnvmRFaQeb2nFfy5szPCikd
+         A8zQtQbQSALxFfxbIn6GSntw9RdTHdTFgQ/6FxyECO70Kg8xk0ijNZitRxLzclNa9PcO
+         AbvMURGyyggjMAxv6zg+C9Pi33LJCZimYuEokyPorYycA0YRbU9BjIH8v9RGac9dGQQ3
+         vpjJIF9yeRSV9V9adZTdfDhJ1RpxQ2pNewkmRQPQXqBv+FqzRG/VHrnCyk9bqMU3el3h
+         loIkqhqcJ8aTNdHseVhvt1SuRaYEX1Xgypqw3QxA3zsZtfjNrT5HAiW7s9ukY/mKGVyo
+         LtIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755878560; x=1756483360;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u6uIOvK2yrojSK1BrIKyE65F98CHI8uQnPckjILUm/E=;
-        b=nxThr0h8rbN+FzDyzM6bn4tSaHG39exzn1l/Y0gMiXGUcmQKb8rvG5w/Ffel9wUgH9
-         mCMEuRayByA1wL1zHAcSyWGKlHiZEIedu5/wuwQ1IccO6+WJwHDXmacAi0p4gPtNTD9j
-         TaIF4uX3dJb9c/9jubfkqjXfXaKWJG7rkh9HF9U0S5LKPskA6UBipiYwnn0RsSMwxUle
-         k1I4LVU6GEJxOfptc/ZXQoRekn07sk7xOAefiKEv1Mrd28hB2DqzUpMFdprtLvlKHr3y
-         s/L0w5du1WG8dgoMc0lL1L5+J6P0HoAZdxTdN49PVFzxk2upRz/ZS0Fe32AuMbxVfxyT
-         Q2lw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzFoEvdn0v2g9QNv8/J/o+nTmx/qTTrrnbfBCP2HEEplzGk5h3vnX4ON9Bi7GgRAuO6zN1PjCxt3uIfeU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuHTe810a1BJrOyn75ynrsHMaN3Zpb8KjgktXzYbGLwJUejW/d
-	e3tJNoPyH/AcuqwXN0xqsg7X86GTP1GWtOgBiCqQrJ2ZYikBPR0x6q5f1+FTusICZEVWvN116e2
-	p0wxh0BqeJEPU1z7jFTxqS/VllI0l3SbYZnbWamER
-X-Gm-Gg: ASbGncs2FWz/7Oz8h7qRjLT515znAnFX/veneSgzPyI7p24u2XiUe56y24LRcOK8tCi
-	KKj8yLEOHiDE2+mrhlmy1HRfJ1f/9bpkYBrIII0IqVl2pAZh/BQjVA6qmLvE341me6ZNY8BwbMF
-	LII7+Ws1m1geSJuLtFNMTutK+Kjn5Obj5ST/8DG4cnk/6d8m2dhfN6IRFF39R6aU3OlkXo6g3lC
-	PWifnYGX4zkFPV7FYH/d5LogzDQF0zoPdQ=
-X-Google-Smtp-Source: AGHT+IHy+0GrlNeJA6rIuVVSrxezkgWo24V2J7OrpAtJYKHx3aM+NyvHVhAwt3nKQNrGTxbTgOXS6zxhQjzYrqsL3SQ=
-X-Received: by 2002:a05:6000:2c05:b0:3b6:5d0d:9826 with SMTP id
- ffacd0b85a97d-3c4b082654cmr5273385f8f.21.1755878558965; Fri, 22 Aug 2025
- 09:02:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755878564; x=1756483364;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x+hhnaziEbvfcvK+nslqj/VWqrGu2JLJjIG2S0rWuqQ=;
+        b=uft/VNRTcpeM7y2H8BY9VEFrXS/bEVHAYTk/5d6g/NxIGrbbLL6l1Zf5zu607aR75h
+         65M52ytOAaVv5MYdbFMteeHOsN4pU+2hJE7U+eWOKgzjrIWcxxnkC5kTIpcMnkpRdXvW
+         I1ICHIqALh0Qwau3n6Mts9Lj26rfXk1QJjsx4+Cu+TcdvVPwTXgmK+ooMlGZDIPsErre
+         sDyLauE83oDnluYT+GjKkzAu4uXq30qRVED0TGM7jvQbgZ5JBN5bRlQt38bMEjhoLW2O
+         wOLBVwqqLftCQFtCNUiDf+yg4cfNGy8iTCqpyqBwYdLw1DC8b+J1Kq62ZWQEMe9jkW1d
+         hdpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8hdu3g+Lqdij5Tv3f6W2GB0ZpO6SYJQ+hGnCPviK+ndi7huCb20JwLvfZDxOwcmjP9W9Bkw95@vger.kernel.org, AJvYcCUfvRPhuhp5YnZAn0RiEE8JbM8ADIC+4ARTyPb/k9wjAuVhfkvGI5Qk940dHNF3HVL8xj/v9rQI9U1Q@vger.kernel.org, AJvYcCXENbh3fki6I4awF52RGQ0tdKEBz1uuxntXH9Cpv6GCYq85zojC1lBa8kKSli7UQm3xNKT5s4/SvUFdNpXx@vger.kernel.org
+X-Gm-Message-State: AOJu0YztootUYyk+HosBxCET9hipQw+f0SX7rwbnY7zY0p4KI/VRcasm
+	whIWK6RqPkvuXxFqfM/orOxC/uSnU5kcRYmboLtfQ8NN9uEy7a5NdnHr
+X-Gm-Gg: ASbGnctthQbVDB6C+9x0EQ/dqkdocBvN6e4GS1TpTzHy+iqEZw1Y0dfn6GEtdb7eJET
+	NDfGLCJlRI9ZchpEXCBDQQYYiSeNJFPTzurwzdTcNbYRxCASfVA+m76D7vYmBRLwRnnYATRqNsL
+	2sE6fk/f2vjJoQjNDvhKSXeRNnLq+BNkOfG3hwoAcjRKRvcnVU5+j0nehLS/DtHNXtdk8XFj+lv
+	i2DqPelXOPOQsSMxjjn6ULwAMqSFIyMiV9OBBH3CvPoqfTGTpH+UlI5fd1jp0Yx4H1VqpcgAwjb
+	qaLgStXzDnrNPvE1gkOJQbVwEeHagpAMSGiPoVMpKLE3LbGf/eErEjXwwb15PDCeRKkRIaeiHIs
+	dOTct71w9IDxNsi10o6b9xM0DJgH7
+X-Google-Smtp-Source: AGHT+IGQszajDGNQAKf7QN48qEfm9n4yUiAaOTXLuqd4oLvJ2QirlJ8t5DPSvNvccFn1KcRv53kJsg==
+X-Received: by 2002:a05:6512:220f:b0:55b:2242:a9d8 with SMTP id 2adb3069b0e04-55f0d36fademr679617e87.7.1755878564032;
+        Fri, 22 Aug 2025 09:02:44 -0700 (PDT)
+Received: from [10.214.35.248] ([80.93.240.68])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35c02c89sm37612e87.34.2025.08.22.09.02.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Aug 2025 09:02:43 -0700 (PDT)
+Message-ID: <2fb52098-3952-48f1-b6c3-bbc95ce00d8d@gmail.com>
+Date: Fri, 22 Aug 2025 18:02:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822060254.74708-1-mii.w@linux.alibaba.com> <CANn89iLYHdtAFSjSW+cSN0Td_V3B+V05hHnGeop5Y+hjWEt_HA@mail.gmail.com>
-In-Reply-To: <CANn89iLYHdtAFSjSW+cSN0Td_V3B+V05hHnGeop5Y+hjWEt_HA@mail.gmail.com>
-From: Yuchung Cheng <ycheng@google.com>
-Date: Fri, 22 Aug 2025 09:02:02 -0700
-X-Gm-Features: Ac12FXxBZ2hBC8VfYiO98CAitgGa1e2IFQ2I30ERv-IptpnUB4wFdmjuC-ZT7NE
-Message-ID: <CAK6E8=fG69i1eCFJtu-r19Wt=A-nx_Y5Q4gAum_T1v-42foFPA@mail.gmail.com>
-Subject: Re: [RFC net] tcp: Fix orphaned socket stalling indefinitely in FIN-WAIT-1
-To: Eric Dumazet <edumazet@google.com>
-Cc: MingMing Wang <mii.w@linux.alibaba.com>, ncardwell@google.com, kuniyu@google.com, 
-	davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, 
-	horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dust Li <dust.li@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: fix KASAN build error due to p*d_populate_kernel()
+To: Harry Yoo <harry.yoo@oracle.com>, Dave Hansen <dave.hansen@intel.com>
+Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org, andreyknvl@gmail.com,
+ aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, apopple@nvidia.com,
+ ardb@kernel.org, arnd@arndb.de, bp@alien8.de, cl@gentwo.org,
+ dave.hansen@linux.intel.com, david@redhat.com, dennis@kernel.org,
+ dev.jain@arm.com, dvyukov@google.com, glider@google.com,
+ gwan-gyeong.mun@intel.com, hpa@zyccr.com, jane.chu@oracle.com,
+ jgross@suse.de, jhubbard@nvidia.com, joao.m.martins@oracle.com,
+ joro@8bytes.org, kas@kernel.org, kevin.brodsky@arm.com,
+ linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, lorenzo.stoakes@oracle.com, luto@kernel.org,
+ maobibo@loongson.cn, mhocko@suse.com, mingo@redhat.com, osalvador@suse.de,
+ peterx@redhat.com, peterz@infradead.org, rppt@kernel.org,
+ ryan.roberts@arm.com, stable@vger.kernel.org, surenb@google.com,
+ tglx@linutronix.de, thuth@redhat.com, tj@kernel.org, urezki@gmail.com,
+ vbabka@suse.cz, vincenzo.frascino@arm.com, x86@kernel.org,
+ zhengqi.arch@bytedance.com
+References: <20250821093542.37844-1-harry.yoo@oracle.com>
+ <20250821115731.137284-1-harry.yoo@oracle.com>
+ <3976ef5d-a959-408a-b538-7feba1f0ab7a@intel.com> <aKfDrKBaMc24cNgC@hyeyoo>
+Content-Language: en-US
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+In-Reply-To: <aKfDrKBaMc24cNgC@hyeyoo>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 22, 2025 at 1:53=E2=80=AFAM Eric Dumazet <edumazet@google.com> =
-wrote:
->
-> On Thu, Aug 21, 2025 at 11:04=E2=80=AFPM MingMing Wang <mii.w@linux.aliba=
-ba.com> wrote:
-> >
-> > From: MingMing Wang <mii.w@linux.alibaba.com>
-> >
-> > An orphaned TCP socket can stall indefinitely in FIN-WAIT-1
-> > if the following conditions are met:
-> > 1. net.ipv4.tcp_retries2 is set to a value =E2=89=A4 8;
-> > 2. The peer advertises a zero window, and the window never reopens.
-> >
-> > Steps to reproduce:
-> > 1. Set up two instances with nmap installed: one will act as the server
-> >    the other as the client
-> > 2. Execute on the server:
-> >    a. lower rmem : `sysctl -w net.ipv4.tcp_rmem=3D"16 32 32"`
-> >    b. start a listener: `nc -l -p 1234`
-> > 3. Execute on the client:
-> >    a. lower tcp_retries2: `sysctl -w net.ipv4.tcp_retries2=3D8`
-> >    b. send pakcets: `cat /dev/zero | nc <server-ip> 1234`
-> >    c. after five seconds, stop the process: `killall nc`
-> > 4. Execute on the server: `killall -STOP nc`
-> > 5. Expected abnormal result: using `ss` command, we'll notice that the
-> >    client connection remains stuck in the FIN_WAIT1 state, and the
-> >    backoff counter always be 8 and no longer increased, as shown below:
-> >    ```
->
-> Hi MingMing
->
-> Please prepare and share with us a packetdrill test, instead of this
-> 'repro', which is the old way of describing things :/
->
-> - This will be easier for us to understand the issue.
->
-> - It will be added to existing tests in tools/testing/selftests/net/packe=
-tdrill
-> if your patch is accepted, so that we can make sure future changes are
-> not breaking this again.
->
-> Ideally, you should attach this packetdrill test in a second patch
-> (thus sending a series of two patches)
->
-> Thank you.
->
-> >    FIN-WAIT-1 0      1389    172.16.0.2:50316    172.16.0.1:1234
-> >          cubic wscale:2,7 rto:201 backoff:8 rtt:0.078/0.007 mss:36
-> >                  ... other fields omitted ...
-> >    ```
-> > 6. If we set tcp_retries2 to 15 and repeat the steps above, the FIN_WAI=
-T1
-> >    state will be forcefully reclaimed after about 5 minutes.
-> >
-> > During the zero-window probe retry process, it will check whether the
-> > current connection is alive or not. If the connection is not alive and
-> > the counter of retries exceeds the maximum allowed `max_probes`, retry
-> > process will be terminated.
-> >
-> > In our case, when we set `net.ipv4.tcp_retries2` to 8 or a less value,
-> > according to the current implementation, the `icsk->icsk_backoff` count=
-er
-> > will be capped at `net.ipv4.tcp_retries2`. The value calculated by
-> > `inet_csk_rto_backoff` will always be too small, which means the
-> > computed backoff duration will always be less than rto_max. As a result=
-,
-> > the alive check will always return true. The condition before the
-> > `goto abort` statement is an logical AND condition, the abort branch
-> > can never be reached.
-> >
-> > So, the TCP retransmission backoff mechanism has two issues:
-> >
-> > 1. `icsk->icsk_backoff` should monotonically increase during probe
-> >    transmission and, upon reaching the maximum backoff limit, the
-> >    connection should be terminated. However, the backoff value itself
-> >    must not be capped prematurely =E2=80=94 it should only control when=
- to abort.
-> >
-> > 2. The condition for orphaned connection abort was incorrectly based on
-> >    connection liveness and probe count. It should instead consider whet=
-her
-> >    the number of orphaned probes exceeds the intended limit.
-> >
-> > To fix this, introduce a local variable `orphan_probes` to track orphan
-> > probe attempts separately from `max_probes`, which is used for RTO
-> > retransmissions. This decouples the two counters and prevents accidenta=
-l
-> > overwrites, ensuring correct timeout behavior for orphaned connections.
-> >
-> > Fixes: b248230c34970 ("tcp: abort orphan sockets stalling on zero windo=
-w probes")
-Thanks for catching this corner case. Feel free to add a Acked-by:
-<ycheng@google.com> after the packetdrill test in your respin
 
-> > Co-developed-by: Dust Li <dust.li@linux.alibaba.com>
-> > Signed-off-by: Dust Li <dust.li@linux.alibaba.com>
-> > Co-developed-by: MingMing Wang <mii.w@linux.alibaba.com>
-> > Signed-off-by: MingMing Wang <mii.w@linux.alibaba.com>
-> >
-> > ---
-> > We couldn't determine the rationale behind the following check in tcp_s=
-end_probe0():
-> > ```
-> > if (icsk->icsk_backoff < READ_ONCE(net->ipv4.sysctl_tcp_retries2))
-> >     icsk->icsk_backoff++;
-> > ```
-> >
-> > This condition appears to be the root cause of the observed stall.
-> > However, it has existed in the kernel for over 20 years =E2=80=94 which=
- suggests
-> > there might be a historical or subtle reason for its presence.
-> >
-> > We would greatly appreciate it if anyone could shed
-> > ---
-> >  net/ipv4/tcp_output.c | 4 +---
-> >  net/ipv4/tcp_timer.c  | 4 ++--
-> >  2 files changed, 3 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-> > index caf11920a878..21795d696e38 100644
-> > --- a/net/ipv4/tcp_output.c
-> > +++ b/net/ipv4/tcp_output.c
-> > @@ -4385,7 +4385,6 @@ void tcp_send_probe0(struct sock *sk)
-> >  {
-> >         struct inet_connection_sock *icsk =3D inet_csk(sk);
-> >         struct tcp_sock *tp =3D tcp_sk(sk);
-> > -       struct net *net =3D sock_net(sk);
-> >         unsigned long timeout;
-> >         int err;
-> >
-> > @@ -4401,8 +4400,7 @@ void tcp_send_probe0(struct sock *sk)
-> >
-> >         icsk->icsk_probes_out++;
-> >         if (err <=3D 0) {
-> > -               if (icsk->icsk_backoff < READ_ONCE(net->ipv4.sysctl_tcp=
-_retries2))
-> > -                       icsk->icsk_backoff++;
-> > +               icsk->icsk_backoff++;
->
-> I think we need to have a cap, otherwise we risk overflows in
-> inet_csk_rto_backoff()
->
->
-> >                 timeout =3D tcp_probe0_when(sk, tcp_rto_max(sk));
-> >         } else {
-> >                 /* If packet was not sent due to local congestion,
-> > diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
-> > index a207877270fb..4dba2928e1bf 100644
-> > --- a/net/ipv4/tcp_timer.c
-> > +++ b/net/ipv4/tcp_timer.c
-> > @@ -419,9 +419,9 @@ static void tcp_probe_timer(struct sock *sk)
-> >         if (sock_flag(sk, SOCK_DEAD)) {
-> >                 unsigned int rto_max =3D tcp_rto_max(sk);
-> >                 const bool alive =3D inet_csk_rto_backoff(icsk, rto_max=
-) < rto_max;
-> > +               int orphan_probes =3D tcp_orphan_retries(sk, alive);
-> >
-> > -               max_probes =3D tcp_orphan_retries(sk, alive);
-> > -               if (!alive && icsk->icsk_backoff >=3D max_probes)
-> > +               if (!alive || icsk->icsk_backoff >=3D orphan_probes)
-> >                         goto abort;
-> >                 if (tcp_out_of_resources(sk, true))
-> >                         return;
-> > --
-> > 2.46.0
-> >
+
+On 8/22/25 3:11 AM, Harry Yoo wrote:
+> On Thu, Aug 21, 2025 at 10:36:12AM -0700, Dave Hansen wrote:
+>> On 8/21/25 04:57, Harry Yoo wrote:
+>>> However, {pgd,p4d}_populate_kernel() is defined as a function regardless
+>>> of the number of page table levels, so the compiler may not optimize
+>>> them away. In this case, the following linker error occurs:
+> 
+> Hi, thanks for taking a look, Dave!
+> 
+> First of all, this is a fix-up patch of a mm-hotfixes patch series that
+> fixes a bug (I should have explained that in the changelog) [1].
+> 
+> [1] https://lore.kernel.org/linux-mm/20250818020206.4517-1-harry.yoo@oracle.com
+> 
+> I think we can continue discussing it and perhaps do that as part of
+> a follow-up series, because the current patch series need to be backported
+> to -stable and your suggestion to improve existing code doesn't require
+> -stable backports.
+> 
+> Does that sound fine?
+> 
+>> This part of the changelog confused me. I think it's focusing on the
+>> wrong thing.
+>>
+>> The code that's triggering this is literally:
+>>
+>>>                         pgd_populate(&init_mm, pgd,
+>>>                                         lm_alias(kasan_early_shadow_p4d));
+>>
+>> It sure _looks_ like it's unconditionally referencing the
+>> 'kasan_early_shadow_p4d' symbol. I think it's wrong to hide that with
+>> macro magic and just assume that the macros won't reference it.
+>>
+>> If a symbol isn't being defined, it shouldn't be referenced in C code.:q
+
+
+That's not exactly the case for the kernel. It historically relied on being
+compiled with optimization and compiler being able to eliminate unused references.
+AFAIR BUILD_BUG_ON() works like that, there are also plenty of code like
+
+if  (IS_ENABLED(CONFIG_SOMETHING))
+	ptr = &something;
+else
+	ptr = &something_else; 
+
+e.g. irq_remaping_prepare();
+
+
+> 
+> A fair point, and that's what KASAN code has been doing for years.
+> 
+>> The right way to do it is to have an #ifdef in a header that avoids
+>> compiling in the reference to the symbol.
+> 
+> You mean defining some wrapper functions for p*d_populate_kernel() in
+> KASAN with different implementations based on ifdeffery?
+> 
+> Just to clarify, what should be the exact ifdeffery to cover these cases?
+> #if CONFIG_PGTABLE_LEVELS == 4 and 5, or
+> #ifdef __PAGETABLE_P4D_FOLDED and __PAGETABLE_PUD_FOLDED ?
+> 
+
+I think ifdef should be the same as for symbol, so '#if CONFIG_PGTABLE_LEVELS > 4'
+for *_p4d and '#if CONFIG_PGTABLE_LEVELS > 3' for *_pud
+
+
+> I have no strong opinion on this, let's hear what KASAN folks think.
+> 
+
+So, I think we have following options:
+
+1. Macros as you did.
+2. Hide references in function under  '#if CONFIG_PGTABLE_LEVELS > x', like Dave suggested.
+3. It should be enough to just add if in code like
+            if (CONFIG_PGTABLE_LEVELS > 4)
+		pgd_populate_kernel(addr, pgd,
+                                          lm_alias(kasan_early_shadow_p4d));
+Compiler should be able to optimize it away.
+
+4. I guess that the link error is due to enabled CONFIG_DEBUG_VIRTUAL=y
+lm_alias() ends up with __phys_addr_symbol() function call which compiler can't optimize away.
+Technically we can declare __phys_addr_symbol() with __attribute__((pure)), so compiler will
+be able to optimize away this call, because the result should be unused.
+But I'm not sure we really want that, because it's debug function and even if the result is unused
+we might want to still have a check if symbol address is correct.
+
+
+I would probably prefer 3rd option, but I don't really have very strong opinion, so either way is fine.
+
 
