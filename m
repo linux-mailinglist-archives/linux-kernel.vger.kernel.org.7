@@ -1,94 +1,90 @@
-Return-Path: <linux-kernel+bounces-780913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893B4B30AE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:40:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BD20B30AE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 83E2A4E289B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:40:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74A631BA70F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9F51A9F95;
-	Fri, 22 Aug 2025 01:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ko97MS/b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982641A2C0B;
+	Fri, 22 Aug 2025 01:41:39 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C363A13C3CD;
-	Fri, 22 Aug 2025 01:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC20686340
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 01:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755826798; cv=none; b=ALnY7tYB8HFJAxRL3WJrn6jktJLFdmpXLGuJFnq+KiMTlM+bgfrqf9iVbnq/NfSdv5zFiOLBM/5+ualTV7+Xly80zWGCZhVjl6B/OyPEUohC9OH6RE6z3WoKBANCoYfaXE5rMWJeVQ58JNXg7//QrMjFcIr3LYViACGpi/rVpXg=
+	t=1755826899; cv=none; b=Uw/LxQxYuib812PnEEfc5S2NPNPBrl/WR/uUQNPuSPo+d/jIs6dwvxgcuZoyg0J4uh9sZ5+voGSfnoC58MTixiu37gWCTk4YmM9yJa7el/ouYFJ28qmZflMsOnN9eaGQ9REk5123okXdi1W8rhMlPld1CKTQW1nOYbYaenQnWc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755826798; c=relaxed/simple;
-	bh=R+BHVqEnxiMmDPHAswPzWQZsOsUJ9CnDeaoxQZLgph8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=aiqbMecV79YPazjHrwHDrGpykCk9HOo2irfUdccSEAz/kqieMe0jMtQFDUqD2LAgB9TnENibILMbNmwu7Rx1MtOargzExaUr5eGF1DkiCtNqSvEN3l1T3TFQhqs/qEpVdeXIfD20VRFtmR61YSR/hufTyqFTe2pV/1cVDb+Y5GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ko97MS/b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 580C5C4CEEB;
-	Fri, 22 Aug 2025 01:39:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755826798;
-	bh=R+BHVqEnxiMmDPHAswPzWQZsOsUJ9CnDeaoxQZLgph8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Ko97MS/b0HcDVXn7IBaMTy692/dgJlNZ8LDXkwF7vWvNHYkaPFtaSqqWwR1kBQ2jn
-	 x+JN5qZQNnXrZxQ18TkmG6s+iuePKZS+A+9qJ50oogCiSkMzNcCrUBFYBGG/cvBY3B
-	 aLkiVaaIJM2m8PkFSmSpFsEBUcpO3QwNcAuLn4rgmTzGOat84Et9Q5t6llBZs6QURe
-	 DenToQ97SeRCt0TnjkHNZU3xuuJWTKuOsRPpSDCGWwPve0DGScn2lmcpo4TmJ2rLa0
-	 0GDBhOg162RqUfSmfgf4+iFTozdiBroQ8wbWqNVRxfskf7MNnGUm+r/cD1Arfhm5xj
-	 Dhc2RktRjHKMQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE694383BF68;
-	Fri, 22 Aug 2025 01:40:08 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1755826899; c=relaxed/simple;
+	bh=ZlMbDuTIaOtSBuyKyXfp79QP3D7NXD43H4a5JZtqDCs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=tu6br/Usaq+eiRXLBr9Ap++xeIopHjVhJDhTN9uBKrP5A0n3M1ny4pNb3k0ORD5d7jwa6cLu6OQBRoQgLYxIogrHpEIUO014FKAP+zxS+nMDV2k7m+uBGD74BTJaA7yOyetXOB77ImFMxWQ9Cx0otQ28o2i5aUUupNpx9XjJfUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88432da036bso165832939f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 18:41:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755826897; x=1756431697;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+rs6BJL90Yxsp2vHaIqlNvTGpI49bEiUly2bA2t65LE=;
+        b=CmluXp0OncJoWOQnmW/6PmAkt3kEWU9FFtGkZZi2CrzYPkUdwuws07bDM5SxT0dZ8B
+         NZW/k1+4+HgNHLiDpAx7bw4rsEfQBMFaLDfBd10FnyrAl05M/zohPTgpn6IUvjPWOnOq
+         YoyK/C343RYoHkjLapUyFxPStcA2lM5e/KCr+3+Oz5Z0Vl0CLIw4xG4FtPRZvm6n9DTQ
+         kMtXeiYD50Qenm1HUBKO/Xd0Z7jAzbf4NAO3kmN1SQ4Ey65EMrH2OT1V6j/FeB5yTIy2
+         N+lU9BEKpNMENWbY51r5LW1P5i8cMIS0ucg+4wT48bTST4uHEy3Zde48ezOaePnuA3A3
+         dtRA==
+X-Gm-Message-State: AOJu0YxuGW38pjLqz5jLl0XS7k7eu9oOBm9zqOga1PDHcHk/PgMkpSqU
+	2XwvOJAY3vf91CTnUMV+lpYpbh/PbeyaTwPRoALqHZT8lVD5NQVMmxqEiOMMg+vci+BEyM+3FK0
+	7/tjYEWJjQq+0U9Nxqtx0Az3e+UZ7XJUDA7SmU7LQMH2tkmvrpqvTz8V1Cto=
+X-Google-Smtp-Source: AGHT+IFS4atHsfex4xybOuZXEkm5XRUnLZtYVJ2kiP523EaS+AhjCMGREqSnFlpDTSe9U+Aiqe6PkJ5blrNiQDwWjbbLCR2gdfYe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [net-next Patch] Octeontx2-af: Broadcast XON on all channels
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175582680750.1267692.8437808790654557210.git-patchwork-notify@kernel.org>
-Date: Fri, 22 Aug 2025 01:40:07 +0000
-References: <20250820064625.1464361-1-hkelam@marvell.com>
-In-Reply-To: <20250820064625.1464361-1-hkelam@marvell.com>
-To: Hariprasad Kelam <hkelam@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
- jerinj@marvell.com, sbhatta@marvell.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+X-Received: by 2002:a05:6e02:184e:b0:3e5:6bc6:4dcf with SMTP id
+ e9e14a558f8ab-3e9209c64a8mr25144255ab.7.1755826896981; Thu, 21 Aug 2025
+ 18:41:36 -0700 (PDT)
+Date: Thu, 21 Aug 2025 18:41:36 -0700
+In-Reply-To: <68a7b69f.050a0220.37038e.0047.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a7cad0.050a0220.37038e.0048.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [media?] general protection fault in su3000_i2c_transfer
+From: syzbot <syzbot+d99f3a288cc7d8ef60fb@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+***
 
-On Wed, 20 Aug 2025 12:16:25 +0530 you wrote:
-> The NIX block receives traffic from multiple channels, including:
-> 
-> MAC block (RPM)
-> Loopback module (LBK)
-> CPT block
-> 
->                      RPM
->                       |
-> 
-> [...]
+Subject: Re: [syzbot] [media?] general protection fault in su3000_i2c_transfer
+Author: lizhi.xu@windriver.com
 
-Here is the summary with links:
-  - [net-next] Octeontx2-af: Broadcast XON on all channels
-    https://git.kernel.org/netdev/net-next/c/a7bd72158063
+#syz test
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+index e9577f920286..17b0bec53e21 100644
+--- a/drivers/i2c/i2c-dev.c
++++ b/drivers/i2c/i2c-dev.c
+@@ -257,7 +257,7 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
+ 	res = 0;
+ 	for (i = 0; i < nmsgs; i++) {
+ 		/* Limit the size of the message to a sane amount */
+-		if (msgs[i].len > 8192) {
++		if (msgs[i].len > 8192 || msgs[i].len == 0) {
+ 			res = -EINVAL;
+ 			break;
+ 		}
 
