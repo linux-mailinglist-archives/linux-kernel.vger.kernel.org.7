@@ -1,514 +1,240 @@
-Return-Path: <linux-kernel+bounces-781341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8241B31132
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:06:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B689B3114A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD02FB651B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:05:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E260E3A6989
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB4B2EBB9C;
-	Fri, 22 Aug 2025 08:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EE62EAD19;
+	Fri, 22 Aug 2025 08:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xr43KDVn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="v5A87za5"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2080.outbound.protection.outlook.com [40.107.223.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3E12AD20;
-	Fri, 22 Aug 2025 08:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755849833; cv=none; b=MbrXqqoa1T2iFwkN+aRRun9AzKw4mccTnIVWGEvAZce4ddQu+G9Lrp3pJ+4cnN1NAKABIbRjjigcK4dZ34TvpFcmrawOxSkXuyHBnNSw7dgsTquwpdit2KtK+1U5CptVhWWcRaexYMWJQrvjxK5/olww486rQgm/Zg6FLgXtq/0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755849833; c=relaxed/simple;
-	bh=PncTHgIjF3nJ8qLaY+C8va7O1RZ8dN4JMH8eZV6EYQk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qRZwQrQ4gIkgfUJIgfInaTJp6aF0WvlV4IvtjFFtw9Jq4kSSkC8iI1EQiHam9mXjisMQa6cthGLtys50q/eo8+wK2aG3xJDuAfgqDHqisC8j5QO5sQHa0J4p+jg9k4YcmdbrJVJzwIUxaNf9UtQMFOk7cqhsZLRqiQjtF/I7G9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xr43KDVn; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755849831; x=1787385831;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=PncTHgIjF3nJ8qLaY+C8va7O1RZ8dN4JMH8eZV6EYQk=;
-  b=Xr43KDVnxF4ztN6/KUxsD8LQr6F+maFhfQIhoiG7y0TdQNUPNyYqYXO7
-   nLEv8JYw3dO3X8KkfUyS7SJGdGuge+PQ/2emAbgf9g9nxlX2V/9DjouQW
-   dQgLuoJKiSjKLWxq0/0XWNgpzH/0Lx1ouUaiiDz0F6rrvbWj3sseGRed9
-   SeJodb+3nSazorPWZzKKQv9peAM7atNiw1+VTysOlh4JpGVDQ98kPx66G
-   Xc//9JPZln5sNu3HDfbAvxh6iTcITIBb0+x5/Jm1sNYmZ+nMB+NK+ek7G
-   /8abPF9tqldlXog1kUWRqBuHBtRH97Qw+IqXYN6qWumxaCFqDqpwicIig
-   Q==;
-X-CSE-ConnectionGUID: QOr3fXixQM+GsGGfmOR3Bg==
-X-CSE-MsgGUID: 6eqt+MQ1TJmLIgsqI6T+Lg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="75610814"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="75610814"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 01:03:50 -0700
-X-CSE-ConnectionGUID: oF4KtcS9Rg2bgbcEi4LMBQ==
-X-CSE-MsgGUID: J8sXjZpqQlmiblrnSKWjUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="168555292"
-Received: from yzhao56-desk.sh.intel.com ([10.239.47.19])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 01:03:49 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: peterx@redhat.com,
-	rick.p.edgecombe@intel.com,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH v3 3/3] KVM: selftests: Test resetting dirty ring in gmem slots in protected VMs
-Date: Fri, 22 Aug 2025 16:03:04 +0800
-Message-ID: <20250822080304.27304-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20250822080100.27218-1-yan.y.zhao@intel.com>
-References: <20250822080100.27218-1-yan.y.zhao@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137121F463C;
+	Fri, 22 Aug 2025 08:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755849955; cv=fail; b=HdBpWvlCBHXSAFlFswh6KYu04hfq5sqcMmsGX3TwV2U8HyibNKG5tsg0FBzcd5uh2LbMd1qIAeolw4ooAWoWuMQaSQW/T1ulAW0xk5b4vJkG1MzJJDmAFSACfmI1gF2mhoZrPVAl9tTyvFgmtYhLv9ZYsd+6K5+O08cNLWrUpzI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755849955; c=relaxed/simple;
+	bh=QAm5tzfHndHEdnLpDCTlEZx0JdMPg6Au6nNDFfuc9R0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=sUZ0AdQxU3TOYHU8/qMexGHQlQvK0phnm3Ulrrk3+00Un4/u55GfPn3/36q/iOz46uM6aDUrCb7NqHYUVzUHPCDnZsgCnAsuKrk7IOkvflWcEE8jJicAfwqEHu/K2Px0cFtbo7q2p5CtivlJXBl2TbO6dQXP5Q12lcIzeDwSzJA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=v5A87za5; arc=fail smtp.client-ip=40.107.223.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X5iXMHnWy72AIaQP+VqDbnd46jcStEFOyYL9HWuapJFy5DyXTOxLwsodcmwgIiGvm7LFFjz2ZsnauF6B33v4q0jCT2zwfH771rJFbYM0M44GZIuPThPnQPbC35vxWQx6ODMJugpbiQtW1ss1uqHg9MQmbRpzBOY6xjRGQ4drb3DsX9I9LcBbq2uUbgWfIQftPXD3UxTE2nlfueMstSMMC4bm24SGKO2eQ5QKcvjm0m/50WghNsk/9z8aQsGJSG5/G6Ycb3mo6bZeQbbJqnHYdz/3FYnapvv6ABcnwh9pu0y+SuDxN098rHptWjjiPAEuOVLtjQUT7E7vwM8NdMmRAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QAm5tzfHndHEdnLpDCTlEZx0JdMPg6Au6nNDFfuc9R0=;
+ b=w3GKsoMkQOqU5fPeSF7doxIiXtV/OVKdNOePH/+Mp/sFwvP8f8OLHageyg2zp62Pf3WIyq5OTB1NSy0f0iOTrKsdPwWoEmSMx6tVJO1e789mnC+gP+yJvTCpXYMoajHemH3y8XiaZoBlY6qOIvxJ6vJgumini9MMMU0bufFuJPwSLybodPrmRyhpg1PT51xDXKHu8nTALNHarM/i2ISgnssg6oahAE3nYPKKcQF8k4PKJaNDzz7NntDnlAwMn+Xk1k32ibqQ8JPU0keVWztpistq8/KTB7GKMEnOktxIfzBuw+ih7QEU09OJFUuDZsyWvzIEzEPxXzqIQWhESxN8yw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QAm5tzfHndHEdnLpDCTlEZx0JdMPg6Au6nNDFfuc9R0=;
+ b=v5A87za5/Zkxf+x/sohlZDRiLrzMGQtn00wBiJR7qkGxS7YY2lFO3N47Yp78FvpCAYy6SSFjIVRsOl8MZAMeb1Du12knbKVRodGZGb6umfC9R18hKG/+89n9/VNkvHs6qS1OqT7JWdLMhxiwy28FLEYUVrZd2UyFghTt9dqHviy4ig2p1VjyYvhggcuToE5Ks+ViTwJw4bJGbaiFtJ1LGxGms9qbTADEDtnhLYSNNDHIIFVVW9dT41DgIv+kCfkI7klO63QthBkqOCW80YAAHJ3JkLv16UhVFo4QkKyArogC1UU7F/lgzzglGSzSTx/wfF9SDY6aCLUSh8oD7UjGQA==
+Received: from SA1PR11MB8278.namprd11.prod.outlook.com (2603:10b6:806:25b::19)
+ by PH0PR11MB5952.namprd11.prod.outlook.com (2603:10b6:510:147::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Fri, 22 Aug
+ 2025 08:05:50 +0000
+Received: from SA1PR11MB8278.namprd11.prod.outlook.com
+ ([fe80::84fa:e267:e389:fa9]) by SA1PR11MB8278.namprd11.prod.outlook.com
+ ([fe80::84fa:e267:e389:fa9%7]) with mapi id 15.20.8989.011; Fri, 22 Aug 2025
+ 08:05:50 +0000
+From: <Parthiban.Veerasooran@microchip.com>
+To: <dong100@mucse.com>
+CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>, <corbet@lwn.net>,
+	<gur.stavi@huawei.com>, <maddy@linux.ibm.com>, <mpe@ellerman.id.au>,
+	<danishanwar@ti.com>, <lee@trager.us>, <gongfan1@huawei.com>,
+	<lorenzo@kernel.org>, <geert+renesas@glider.be>, <lukas.bulwahn@redhat.com>,
+	<alexanderduyck@fb.com>, <richardcochran@gmail.com>, <kees@kernel.org>,
+	<gustavoars@kernel.org>, <netdev@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-hardening@vger.kernel.org>
+Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
+Thread-Topic: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
+Thread-Index: AQHcEw1/LwXdpHe+ukGdpS5U/+GtHLRuGj+AgAANZQCAAAhvgIAADDUAgAAUwYA=
+Date: Fri, 22 Aug 2025 08:05:50 +0000
+Message-ID: <bb6826d4-2e17-4cdd-a64f-26d346224805@microchip.com>
+References: <20250822023453.1910972-1-dong100@mucse.com>
+ <20250822023453.1910972-5-dong100@mucse.com>
+ <9fc58eb7-e3d8-4593-9d62-82ec40d4c7d2@microchip.com>
+ <7D780BA46B65623F+20250822053740.GC1931582@nic-Precision-5820-Tower>
+ <8fc334ac-cef8-447b-8a5b-9aa899e0d457@microchip.com>
+ <A1F3F9E0764A4308+20250822065132.GA1942990@nic-Precision-5820-Tower>
+In-Reply-To:
+ <A1F3F9E0764A4308+20250822065132.GA1942990@nic-Precision-5820-Tower>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR11MB8278:EE_|PH0PR11MB5952:EE_
+x-ms-office365-filtering-correlation-id: 06e81864-c1e1-4523-a12d-08dde152b56e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?NnFDK0J0TmdHbGR1SkltREwvYm85SlNSZ0QvQldDdHp4NGZRZG81ZUFqcStH?=
+ =?utf-8?B?MXJ3NWJraHhUUldFc0JwZXJTQmFLZmFMMXZJVnF3M05RaURiWWc3bjYzb3Vs?=
+ =?utf-8?B?cEJEU3B4c3VNdDgybll0WHhCUE9lTkorUE5MY29LZERSMWhrRXNybW5OWjdI?=
+ =?utf-8?B?VVkzaXBjTDBoSUtoc1AxcVl0MnJUdTBMTGlZMXVsQkUzL1Z2OElsWk83NFJu?=
+ =?utf-8?B?ODFaYlVqZDkrNm1Xb3BSOC9qaHJoQk0wR2pSUFg0VTNkY3ZYOVpoR2kyWUly?=
+ =?utf-8?B?V1M2UnI2TGhkV2ZJZ2U4M2hqbXhSZGFxQWVac2V3MHZSelhRU21KejM2ZmJl?=
+ =?utf-8?B?aThmOElTOHF3S2FzazRJcHRlYngzYXZEajJGOFI2Nmg0TzJ1bkZPTVhJT01F?=
+ =?utf-8?B?TVdkZjFLZkxTME53NEpaSlVDamZVRHdWTm5hb1pvQjRzR3BlYVFMc0N3UG1r?=
+ =?utf-8?B?ekg2MXNKaitKUWs4UVlRTWVDV1J4emMvUkV4WXplcXRudktlRitMRkFwN0xT?=
+ =?utf-8?B?UitUNTY1bWw5WnIwWitSMjJuVnRuckV0U3N5ZUZvVi8wbk1EQ1g1RVdMYXhk?=
+ =?utf-8?B?RExYbXI3UWo4Q09FL0toYWd1Q2JIRC8xVnRpRXFOcnFpK2ZibVBQbkFRWGQ0?=
+ =?utf-8?B?d09mS3RmTVZzWDlxWGR5S3VmbU5HNHYvUzcwNUJham80WWZSL2N3YWg4RHNL?=
+ =?utf-8?B?RU9kcGlvQXVVY2hlVGpsaEZLNW02MXZjZkQxSlczQzRVYVJncVE1eW9VZXA5?=
+ =?utf-8?B?SHEvQVRkelBGVmdraExNNUhtT2Jlc1FLVnZEcm1zWTRWemlZMlNSN2F5RVMw?=
+ =?utf-8?B?V05UbG5ldGZCSE5ENU9adDU4WjZ6eklNeXZpWWJzTkR0SmJUZjNGbnVRQ2cy?=
+ =?utf-8?B?TUpIRi9pejlXMldjckVMdGpaNXNSN212Z0tBK1B2cE9VdU9NdFhNclFmbmx4?=
+ =?utf-8?B?cmxONEpxdmxFeXY4aGFrTWVLOVdYdWRUMS9QQ0c2Zng5d1FydzZOZjBCejRw?=
+ =?utf-8?B?NkdmNHVYbnFQanI3SWdHeFAxbmNQamVwQlZrU1FVNzROZzY1d1RNQUl6M2t4?=
+ =?utf-8?B?MVl4NWZ6NUwxa01RVExRZjF3WTZocDBVa21RS3FQejU5NUtsQ0pHNVZLSDVq?=
+ =?utf-8?B?dWs2QVcvWVVnc1RQNm0yaHpaQjVQdm9UR0lYeDRFamtxUmpDWnE3TFg5N1V2?=
+ =?utf-8?B?ZnAwS0l3QjBHSHBmdEw5WkZhdDBiTitabVF4dDdRN3UyYUp3ekNXUTdPbXlK?=
+ =?utf-8?B?SUl3T3V4MjhrZm9PS3c1a2I5T1lSNHNtNlhrVXlML2oySzYwYnBBMG9wNGZj?=
+ =?utf-8?B?ODNLajkvSFdUQ1ZtYlJuZmxUbnZneVR4Y3had3JFQ2liOGcxYk1XVGE0Tm8w?=
+ =?utf-8?B?UjlJVEl5a09sQkhQbzlJb0grbTdDNktYcWpVczlDMENyN1BQWGZmbkNLMFFn?=
+ =?utf-8?B?dWdEZGFQTUd2Z2F0U2RTd21Hc0QxNjl5YWJvQ05JU2tZRElDT2g2ak5JcmR5?=
+ =?utf-8?B?Q3h6M213c1JRQzdMUEREN21laTkzUmovVWZWMktJejdIemZnZXc0UWlZMTRP?=
+ =?utf-8?B?dWM2ek1zUktxSjZTamdkR3kvVmgxK2JmTU12RFdJcVV6ME5Nck9pSDFtelRE?=
+ =?utf-8?B?R0dPTURtM1hDRk0reWU4cVBNcTF1UWFCMURhMFlhWFptYS95WDFHSitQY2NP?=
+ =?utf-8?B?cG9UZXRqZkd4VkQrOXJuSmd1NHRmM0xyWDZ3RzdJOE0rdENBejZNUnFwSmtG?=
+ =?utf-8?B?U2c1MUJKMmRiL1N1aElEb1Fvb2VpV05yS2pNZkp2M2JmYitPaFo0R1dOekV3?=
+ =?utf-8?B?TmJESmVqRnJKTFVXYUliRFVzdkk4Sk84bWJDQ1JuR3V4b21hRUdXbHMyMllO?=
+ =?utf-8?B?aUFkZlYzMzVIL0FjbDNtVmV5QmVadnIyT0xsTlc3RSsrald6c1l0M3RhZjBT?=
+ =?utf-8?B?NWVsRzdQT3I5ZXZvUUpUZW5JQm1BS3dqUEtFa2duMVR1bU5PSUp4UWZTM2Ry?=
+ =?utf-8?B?dy9ldjlFT1hRPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB8278.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?RVpSOUczRHBLb21BclQ5NGtVZFdVZHJxNU9QQldwSkJaM3V5emxKNGZHbjdK?=
+ =?utf-8?B?dFl0aXl4a1NFWEhpR2Q2aTJMZE9ZVTl6L2NETUU4aERXd1RLV2N0dWRFNXNO?=
+ =?utf-8?B?TkR4RHI3bW1iaEJTbWxCUkN2SHdhcm9qNWNwNGVJczBpY0x1akJ2eUNBNG1T?=
+ =?utf-8?B?M3JDYkZjRFByOXc3bzJaYVpFWUtsQ0FtNWtVeE1DWUdMSklpOU83L3FIMXQr?=
+ =?utf-8?B?U3NtWDlFV0ZhcTYzRmI3Y09yVm5lRHh3ajFFeC9HZFZXYVgyWnBWVDRhQm8w?=
+ =?utf-8?B?K2lKbXBNTndJTysyL3dXdzVQM2JQTnl5U0tndTdFV3lnSElkbVNDZ1lYT3ds?=
+ =?utf-8?B?cXRZNDdZWXRFSDNtQ1crZjN3b3pzVXpUcUF1Wkpsdmp4WnZkdDFzTmFkdUhh?=
+ =?utf-8?B?UGMzbFpUSHU4eml2S01XeTBRWkh6N3gwQStJQk5VeGZvejR5OHdYTmM3VUIr?=
+ =?utf-8?B?Q3R0dGRVRkJkV1Y4cmkyR0Fzak15YU4yanB2WGxPcXljQ0VlSzhRcU50NDZm?=
+ =?utf-8?B?N3ROV3cwdTFSRDNCVllEOUNLd3Jkb1Fod2Z2VCt4MXRpOHFNYXkxUHg3ZDYw?=
+ =?utf-8?B?SWJWUlN5RXEzMXdmNEVIRlRsZW1ZaFJKakNqSERUb3FUVU81c2lZVEdQWXNJ?=
+ =?utf-8?B?M0FDYTFlSXpMK3ZjUUFBQ3YrQks5aGJjbjcxZncyQmhyZ0RxNkRIN09pS3JU?=
+ =?utf-8?B?NDFoeUJ2Y1ZTMDNPWEZ5bE03WjRPTC9OdjBKSGdUNjk2VDJYZG56UmVXQ3A2?=
+ =?utf-8?B?eXRhT1N1ZnRndnZ4QWhxdno0RktoN3lVQjFRbVZvWk1aT2VIS0pKaW0xeG1h?=
+ =?utf-8?B?YTBmajg2K2dNUENlc0JZR2FwVW12SVJZNzVPN092RmZDR2VtM0JaRUZVMUFO?=
+ =?utf-8?B?dzlhRmpkMy9tQlZPc2MweHpzTnZ5MVlFRzMzWEdJZmFqaGl1akxTenZjU2Zt?=
+ =?utf-8?B?a1ZTZFhSZUd0VFg1NjZrdURCQ3VQSFNWcDJ4dGt0Q2Q4anlZRm5CZFFhZXB2?=
+ =?utf-8?B?Ynl4K0RYOGFDT3ZhTVNtNXczU2h3czBkaXlYR2RDMzZxajhVK3ZQQjhQU0Nx?=
+ =?utf-8?B?UCtUOVovZ2IvOWJKTThSa2JMUjVSTTVUNEtCdmZycythOUJrc09WSmtyMGxj?=
+ =?utf-8?B?N2xJc1FQTWJUSEJyNWpaTUZxM1RlNEh1dHlDWTloMURpek1CYndqTTI4d2dD?=
+ =?utf-8?B?TTYzMEpFVGFGbGsvaS85QlM3MlY2VVhtUTJnVVJQdityTDBoMk9XYmdSTm92?=
+ =?utf-8?B?VEV3ZVVNanV3RXJKNVlMZUR1cERmRkpPOUtzbCsrQjk1MHhCM1dWZGM2SjQ5?=
+ =?utf-8?B?ak91aURPUUl2Q21Yc2UxcGR1Tkk5dzBFdUoySE1SUkhIdExURXBIeGZxdlFM?=
+ =?utf-8?B?U3EweTN3R0FLSnZCWE43RnNyQzVXVytEeWhjcEFRLzFVbFRJZFNHVjA0Mmk0?=
+ =?utf-8?B?Yzl0cmQ5Z29ySHpJQms1TVlUdlJJZFVSL01RZGp2M29HT3FnaVNuS2JBdEQ3?=
+ =?utf-8?B?ZnRsM3kwWUxjYWdKTEtjRjhxcG5GM1JUVk16OUd1cm9Nd3F2Q2p3UkgvbTFE?=
+ =?utf-8?B?V045a1hQOVdYNmhjSEV6OWladmttWEVNOE5OWEhyL0ZXYkVGeXR0ZE40MUdu?=
+ =?utf-8?B?MVlYWTRWejhGMEY5N0NRcTB1K3NnTlVJc2JiNk15dkkxZkdjdVZMNm9JLy9m?=
+ =?utf-8?B?a05SN29vMTNlendtNTJ2cDRqVkFSZThSMmpMOGdGemdwNkJTT0Y0aEowUlZi?=
+ =?utf-8?B?T0xCaTFVQllRN2JacXd5Vm83aWdHeW16ZmZmSE41eG5qb3dvR0ZLaG9zY2hi?=
+ =?utf-8?B?aUErTWJwMytVS3I2WVRaYXQrRlZLMlgrSEFNS1RYb1RPc0VUWGdLbFFWNFBk?=
+ =?utf-8?B?R29ZSFcrMGUwenl2OXpGdnZRVUtadzIyR3JGdllqcUVpTDU2WDc2Q3R0Sm1a?=
+ =?utf-8?B?TVYyanRwQTlSNTJBWW9yL21UTjFCbk5Ub2FQVTBsUW1CYURhajkzQlJ0aFh4?=
+ =?utf-8?B?bnUrV1Y5MmdVaktiSFdJbGUxK1d6d1UyTzU4d3Q0OS9oVEVSdkE5bW4ybFJj?=
+ =?utf-8?B?OXE5UERoTUlVOHBxWkNnOTk2STlISDc2Sml4bTNXd05WZWgwd0lhWDBhZVlp?=
+ =?utf-8?B?b1pFVVp5eC9QQWVONUdjMGhoRzZHWlBjUXRISTFlSng4U09ycm5ORlR5cHA4?=
+ =?utf-8?Q?l8VXEgZXj1rUxLQ4ux8yol4=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D22099E1AD411E41A74D8BB70B4D450B@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: microchip.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB8278.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 06e81864-c1e1-4523-a12d-08dde152b56e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2025 08:05:50.3516
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Y2sQGmtNW5wWGDGDPs+8dIuX4T90EWnkKTcBTzjrcoUjXcshVuxWJHtzdcGxGifm374q0eBwIcoc1uBr795ndWU2jw+g10N/HPW1ddHX4iBxGWTZP5qCSNT+s5V8Ac28
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5952
 
-Test resetting dirty ring in slots with the KVM_MEM_GUEST_MEMFD flag in
-KVM_X86_SW_PROTECTED_VM VMs.
-
-Purposely resetting dirty ring entries incorrectly to point to a gmem slot.
-
-Unlike in TDX VMs, where resetting the dirty ring in a gmem slot could
-trigger KVM_BUG_ON(), there are no obvious errors for
-KVM_X86_SW_PROTECTED_VM VMs. Therefore, detect SPTE changes by reading
-trace messages with the kvm_tdp_mmu_spte_changed event enabled.
-Consequently, the test is conducted only when tdp_mmu is enabled and
-tracing is available.
-
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
- tools/testing/selftests/kvm/Makefile.kvm      |   1 +
- .../kvm/x86/reset_dirty_ring_on_gmem_test.c   | 392 ++++++++++++++++++
- 2 files changed, 393 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/x86/reset_dirty_ring_on_gmem_test.c
-
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-index f6fe7a07a0a2..ebd1d829c3f9 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -136,6 +136,7 @@ TEST_GEN_PROGS_x86 += x86/max_vcpuid_cap_test
- TEST_GEN_PROGS_x86 += x86/triple_fault_event_test
- TEST_GEN_PROGS_x86 += x86/recalc_apic_map_test
- TEST_GEN_PROGS_x86 += x86/aperfmperf_test
-+TEST_GEN_PROGS_x86 += x86/reset_dirty_ring_on_gmem_test
- TEST_GEN_PROGS_x86 += access_tracking_perf_test
- TEST_GEN_PROGS_x86 += coalesced_io_test
- TEST_GEN_PROGS_x86 += dirty_log_perf_test
-diff --git a/tools/testing/selftests/kvm/x86/reset_dirty_ring_on_gmem_test.c b/tools/testing/selftests/kvm/x86/reset_dirty_ring_on_gmem_test.c
-new file mode 100644
-index 000000000000..cf1746c0149f
---- /dev/null
-+++ b/tools/testing/selftests/kvm/x86/reset_dirty_ring_on_gmem_test.c
-@@ -0,0 +1,392 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Test reset dirty ring on gmem slot on x86.
-+ * Copyright (C) 2025, Intel, Inc.
-+ *
-+ * The slot flag KVM_MEM_GUEST_MEMFD is incompatible with the flag
-+ * KVM_MEM_LOG_DIRTY_PAGES, which means KVM does not permit dirty page tracking
-+ * on gmem slots.
-+ *
-+ * When dirty ring is enabled, although KVM does not mark GFNs in gmem slots as
-+ * dirty, userspace can reset and write arbitrary data into the dirty ring
-+ * entries shared between KVM and userspace. This can lead KVM to incorrectly
-+ * clear write permission or dirty bits on SPTEs of gmem slots.
-+ *
-+ * While this might be harmless for non-TDX VMs, it could cause inconsistencies
-+ * between the mirror SPTEs and the external SPTEs in hardware, or even trigger
-+ * KVM_BUG_ON() for TDX.
-+ *
-+ * Purposely reset dirty ring incorrectly on gmem slots (gmem slots do not allow
-+ * dirty page tracking) to verify malbehaved userspace cannot cause any SPTE
-+ * permission reduction change.
-+ *
-+ * Steps conducted in this test:
-+ * 1. echo nop > ${TRACING_ROOT}/current_tracer
-+ *    echo 1 > ${TRACING_ROOT}/events/kvmmmu/kvm_tdp_mmu_spte_changed/enable
-+ *    echo > ${TRACING_ROOT}/set_event_pid
-+ *    echo > ${TRACING_ROOT}/set_event_notrace_pid
-+ *
-+ * 2. echo "common_pid == $tid && gfn == 0xc0400" > \
-+ *    ${TRACING_ROOT}/events/kvmmmu/kvm_tdp_mmu_spte_changed/filter
-+ *
-+ * 3. echo 0 > ${TRACING_ROOT}/tracing_on
-+ *    echo > ${TRACING_ROOT}/trace
-+ *    echo 1 > ${TRACING_ROOT}/tracing_on
-+ *
-+ * 4. purposely reset dirty ring incorrectly
-+ *
-+ * 5. cat ${TRACING_ROOT}/trace
-+ */
-+#include <linux/kvm.h>
-+#include <asm/barrier.h>
-+#include <test_util.h>
-+#include <kvm_util.h>
-+#include <processor.h>
-+
-+#define DEBUGFS "/sys/kernel/debug/tracing"
-+#define TRACEFS "/sys/kernel/tracing"
-+
-+#define TEST_DIRTY_RING_GPA (0xc0400000)
-+#define TEST_DIRTY_RING_GVA (0x90400000)
-+#define TEST_DIRTY_RING_REGION_SLOT 11
-+#define TEST_DIRTY_RING_REGION_SIZE 0x200000
-+#define TEST_DIRTY_RING_COUNT 4096
-+#define TEST_DIRTY_RING_GUEST_WRITE_MAX_CNT 3
-+
-+static const char *PATTEN = "spte_changed";
-+static char *tracing_root;
-+
-+static int open_path(char *subpath, int flags)
-+{
-+	static char path[100];
-+	int count, fd;
-+
-+	count = snprintf(path, sizeof(path), "%s/%s", tracing_root, subpath);
-+	TEST_ASSERT(count > 0, "Incorrect path\n");
-+	fd = open(path, flags);
-+	TEST_ASSERT(fd >= 0, "Cannot open %s\n", path);
-+
-+	return fd;
-+}
-+
-+static void setup_tracing(void)
-+{
-+	int fd;
-+
-+	/* set current_tracer to nop */
-+	fd = open_path("current_tracer", O_WRONLY);
-+	test_write(fd, "nop\n", 4);
-+	close(fd);
-+
-+	/* turn on event kvm_tdp_mmu_spte_changed */
-+	fd = open_path("events/kvmmmu/kvm_tdp_mmu_spte_changed/enable", O_WRONLY);
-+	test_write(fd, "1\n", 2);
-+	close(fd);
-+
-+	/* clear set_event_pid & set_event_notrace_pid */
-+	fd = open_path("set_event_pid", O_WRONLY | O_TRUNC);
-+	close(fd);
-+
-+	fd = open_path("set_event_notrace_pid", O_WRONLY | O_TRUNC);
-+	close(fd);
-+}
-+
-+static void filter_event(void)
-+{
-+	int count, fd;
-+	char buf[100];
-+
-+	fd = open_path("events/kvmmmu/kvm_tdp_mmu_spte_changed/filter",
-+		       O_WRONLY | O_TRUNC);
-+
-+	count = snprintf(buf, sizeof(buf), "common_pid == %d && gfn == 0x%x\n",
-+			 gettid(), TEST_DIRTY_RING_GPA >> PAGE_SHIFT);
-+	TEST_ASSERT(count > 0, "Incorrect number of data written\n");
-+	test_write(fd, buf, count);
-+	close(fd);
-+}
-+
-+static void enable_tracing(bool enable)
-+{
-+	char *val = enable ? "1\n" : "0\n";
-+	int fd;
-+
-+	if (enable) {
-+		/* clear trace log before enabling */
-+		fd = open_path("trace", O_WRONLY | O_TRUNC);
-+		close(fd);
-+	}
-+
-+	fd = open_path("tracing_on", O_WRONLY);
-+	test_write(fd, val, 2);
-+	close(fd);
-+}
-+
-+static void reset_tracing(void)
-+{
-+	enable_tracing(false);
-+	enable_tracing(true);
-+}
-+
-+static void detect_spte_change(void)
-+{
-+	static char buf[1024];
-+	FILE *file;
-+	int count;
-+
-+	count = snprintf(buf, sizeof(buf), "%s/trace", tracing_root);
-+	TEST_ASSERT(count > 0, "Incorrect path\n");
-+	file = fopen(buf, "r");
-+	TEST_ASSERT(file, "Cannot open %s\n", buf);
-+
-+	while (fgets(buf, sizeof(buf), file))
-+		TEST_ASSERT(!strstr(buf, PATTEN), "Unexpected SPTE change %s\n", buf);
-+
-+	fclose(file);
-+}
-+
-+/*
-+ * Write to a gmem slot and exit to host after each write to allow host to check
-+ * dirty ring.
-+ */
-+void guest_code(void)
-+{
-+	uint64_t count = 0;
-+
-+	while (count < TEST_DIRTY_RING_GUEST_WRITE_MAX_CNT) {
-+		count++;
-+		memset((void *)TEST_DIRTY_RING_GVA, 1, 8);
-+		GUEST_SYNC(count);
-+	}
-+	GUEST_DONE();
-+}
-+
-+/*
-+ * Verify that KVM_MEM_LOG_DIRTY_PAGES cannot be set on a memslot with flag
-+ * KVM_MEM_GUEST_MEMFD.
-+ */
-+static void verify_turn_on_log_dirty_pages_flag(struct kvm_vcpu *vcpu)
-+{
-+	struct userspace_mem_region *region;
-+	int ret;
-+
-+	region = memslot2region(vcpu->vm, TEST_DIRTY_RING_REGION_SLOT);
-+	region->region.flags |= KVM_MEM_LOG_DIRTY_PAGES;
-+
-+	ret = __vm_ioctl(vcpu->vm, KVM_SET_USER_MEMORY_REGION2, &region->region);
-+
-+	TEST_ASSERT(ret, "KVM_SET_USER_MEMORY_REGION2 incorrectly succeeds\n");
-+	region->region.flags &= ~KVM_MEM_LOG_DIRTY_PAGES;
-+}
-+
-+static inline bool dirty_gfn_is_dirtied(struct kvm_dirty_gfn *gfn)
-+{
-+	return smp_load_acquire(&gfn->flags) == KVM_DIRTY_GFN_F_DIRTY;
-+}
-+
-+static inline void dirty_gfn_set_collected(struct kvm_dirty_gfn *gfn)
-+{
-+	smp_store_release(&gfn->flags, KVM_DIRTY_GFN_F_RESET);
-+}
-+
-+static bool dirty_ring_empty(struct kvm_vcpu *vcpu)
-+{
-+	struct kvm_dirty_gfn *dirty_gfns = vcpu_map_dirty_ring(vcpu);
-+	struct kvm_dirty_gfn *cur;
-+	int i;
-+
-+	for (i = 0; i < TEST_DIRTY_RING_COUNT; i++) {
-+		cur = &dirty_gfns[i];
-+
-+		if (dirty_gfn_is_dirtied(cur))
-+			return false;
-+	}
-+	return true;
-+}
-+
-+/*
-+ * Purposely reset the dirty ring incorrectly by resetting a dirty ring entry
-+ * even when KVM does not report the entry as dirty.
-+ *
-+ * In the kvm_dirty_gfn entry, specify the slot to the gmem slot that does not
-+ * allow dirty page tracking and has no flag KVM_MEM_LOG_DIRTY_PAGES.
-+ */
-+static void reset_dirty_ring(struct kvm_vcpu *vcpu, int *reset_index)
-+{
-+	struct kvm_dirty_gfn *dirty_gfns = vcpu_map_dirty_ring(vcpu);
-+	struct kvm_dirty_gfn *cur = &dirty_gfns[*reset_index];
-+	uint32_t cleared;
-+
-+	reset_tracing();
-+
-+	cur->slot = TEST_DIRTY_RING_REGION_SLOT;
-+	cur->offset = 0;
-+	dirty_gfn_set_collected(cur);
-+	cleared = kvm_vm_reset_dirty_ring(vcpu->vm);
-+	*reset_index += cleared;
-+	TEST_ASSERT(cleared == 1, "Unexpected cleared count %d\n", cleared);
-+
-+	detect_spte_change();
-+}
-+
-+/*
-+ * The vCPU worker to loop vcpu_run(). After each vCPU access to a GFN, check if
-+ * the dirty ring is empty and reset the dirty ring.
-+ */
-+static void reset_dirty_ring_worker(struct kvm_vcpu *vcpu)
-+{
-+	struct kvm_run *run = vcpu->run;
-+	struct ucall uc;
-+	uint64_t cmd;
-+	int index = 0;
-+
-+	filter_event();
-+	while (1) {
-+		vcpu_run(vcpu);
-+
-+		if (run->exit_reason == KVM_EXIT_IO) {
-+			cmd = get_ucall(vcpu, &uc);
-+			if (cmd != UCALL_SYNC)
-+				break;
-+
-+			TEST_ASSERT(dirty_ring_empty(vcpu),
-+				    "Guest write should not cause GFN dirty\n");
-+
-+			reset_dirty_ring(vcpu, &index);
-+		}
-+	}
-+}
-+
-+static struct kvm_vm *create_vm(unsigned long vm_type, struct kvm_vcpu **vcpu,
-+				bool private)
-+{
-+	unsigned int npages = TEST_DIRTY_RING_REGION_SIZE / getpagesize();
-+	const struct vm_shape shape = {
-+		.mode = VM_MODE_DEFAULT,
-+		.type = vm_type,
-+	};
-+	struct kvm_vm *vm;
-+
-+	vm = __vm_create(shape, 1, 0);
-+	vm_enable_dirty_ring(vm, TEST_DIRTY_RING_COUNT * sizeof(struct kvm_dirty_gfn));
-+	*vcpu = vm_vcpu_add(vm, 0, guest_code);
-+	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
-+				    TEST_DIRTY_RING_GPA,
-+				    TEST_DIRTY_RING_REGION_SLOT,
-+				    npages, KVM_MEM_GUEST_MEMFD);
-+	vm->memslots[MEM_REGION_TEST_DATA] = TEST_DIRTY_RING_REGION_SLOT;
-+	virt_map(vm, TEST_DIRTY_RING_GVA, TEST_DIRTY_RING_GPA, npages);
-+	if (private)
-+		vm_mem_set_private(vm, TEST_DIRTY_RING_GPA,
-+				   TEST_DIRTY_RING_REGION_SIZE);
-+	return vm;
-+}
-+
-+struct test_config {
-+	unsigned long vm_type;
-+	bool manual_protect_and_init_set;
-+	bool private_access;
-+	char *test_desc;
-+};
-+
-+void test_dirty_ring_on_gmem_slot(struct test_config *config)
-+{
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_vm *vm;
-+
-+	if (config->vm_type &&
-+	    !(kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(config->vm_type))) {
-+		ksft_test_result_skip("\n");
-+		return;
-+	}
-+
-+	vm = create_vm(config->vm_type, &vcpu, config->private_access);
-+
-+	/*
-+	 * Let KVM detect that kvm_dirty_log_manual_protect_and_init_set() is
-+	 * true in kvm_arch_mmu_enable_log_dirty_pt_masked() to check if
-+	 * kvm_mmu_slot_gfn_write_protect() will be called on a gmem memslot.
-+	 */
-+	if (config->manual_protect_and_init_set) {
-+		u64 manual_caps;
-+
-+		manual_caps = kvm_check_cap(KVM_CAP_MANUAL_DIRTY_LOG_PROTECT2);
-+
-+		manual_caps &= (KVM_DIRTY_LOG_MANUAL_PROTECT_ENABLE |
-+				KVM_DIRTY_LOG_INITIALLY_SET);
-+
-+		if (!manual_caps)
-+			return;
-+
-+		vm_enable_cap(vm, KVM_CAP_MANUAL_DIRTY_LOG_PROTECT2, manual_caps);
-+	}
-+
-+	verify_turn_on_log_dirty_pages_flag(vcpu);
-+
-+	reset_dirty_ring_worker(vcpu);
-+
-+	kvm_vm_free(vm);
-+	ksft_test_result_pass("\n");
-+}
-+
-+static bool dirty_ring_supported(void)
-+{
-+	return (kvm_has_cap(KVM_CAP_DIRTY_LOG_RING) ||
-+		kvm_has_cap(KVM_CAP_DIRTY_LOG_RING_ACQ_REL));
-+}
-+
-+static bool has_tracing(void)
-+{
-+	if (faccessat(AT_FDCWD, DEBUGFS, F_OK, AT_EACCESS) == 0) {
-+		tracing_root = DEBUGFS;
-+		return true;
-+	}
-+
-+	if (faccessat(AT_FDCWD, TRACEFS, F_OK, AT_EACCESS) == 0) {
-+		tracing_root = TRACEFS;
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+static struct test_config tests[] = {
-+	{
-+		.vm_type = KVM_X86_SW_PROTECTED_VM,
-+		.manual_protect_and_init_set = false,
-+		.private_access = true,
-+		.test_desc = "SW_PROTECTED_VM, manual_protect_and_init_set=false, private access",
-+	},
-+	{
-+		.vm_type = KVM_X86_SW_PROTECTED_VM,
-+		.manual_protect_and_init_set = true,
-+		.private_access = true,
-+		.test_desc = "SW_PROTECTED_VM, manual_protect_and_init_set=true, private access",
-+	},
-+};
-+
-+int main(int argc, char **argv)
-+{
-+	int test_cnt = ARRAY_SIZE(tests);
-+
-+	ksft_print_header();
-+	ksft_set_plan(test_cnt);
-+
-+	TEST_REQUIRE(get_kvm_param_bool("tdp_mmu"));
-+	TEST_REQUIRE(has_tracing());
-+	TEST_REQUIRE(dirty_ring_supported());
-+
-+	setup_tracing();
-+
-+	for (int i = 0; i < test_cnt; i++) {
-+		pthread_t vm_thread;
-+
-+		pthread_create(&vm_thread, NULL,
-+			       (void *(*)(void *))test_dirty_ring_on_gmem_slot,
-+			       &tests[i]);
-+		pthread_join(vm_thread, NULL);
-+	}
-+
-+	ksft_finished();
-+	return 0;
-+}
--- 
-2.43.2
-
+T24gMjIvMDgvMjUgMTI6MjEgcG0sIFlpYm8gRG9uZyB3cm90ZToNCj4gRVhURVJOQUwgRU1BSUw6
+IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3Uga25vdyB0
+aGUgY29udGVudCBpcyBzYWZlDQo+IA0KPiBPbiBGcmksIEF1ZyAyMiwgMjAyNSBhdCAwNjowNzo1
+MUFNICswMDAwLCBQYXJ0aGliYW4uVmVlcmFzb29yYW5AbWljcm9jaGlwLmNvbSB3cm90ZToNCj4+
+IE9uIDIyLzA4LzI1IDExOjA3IGFtLCBZaWJvIERvbmcgd3JvdGU6DQo+Pj4gRVhURVJOQUwgRU1B
+SUw6IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3Uga25v
+dyB0aGUgY29udGVudCBpcyBzYWZlDQo+Pj4NCj4+PiBPbiBGcmksIEF1ZyAyMiwgMjAyNSBhdCAw
+NDo0OTo0NEFNICswMDAwLCBQYXJ0aGliYW4uVmVlcmFzb29yYW5AbWljcm9jaGlwLmNvbSB3cm90
+ZToNCj4+Pj4gT24gMjIvMDgvMjUgODowNCBhbSwgRG9uZyBZaWJvIHdyb3RlOg0KPj4+Pj4gKy8q
+Kg0KPj4+Pj4gKyAqIG11Y3NlX21ieF9nZXRfY2FwYWJpbGl0eSAtIEdldCBodyBhYmlsaXRpZXMg
+ZnJvbSBmdw0KPj4+Pj4gKyAqIEBodzogcG9pbnRlciB0byB0aGUgSFcgc3RydWN0dXJlDQo+Pj4+
+PiArICoNCj4+Pj4+ICsgKiBtdWNzZV9tYnhfZ2V0X2NhcGFiaWxpdHkgdHJpZXMgdG8gZ2V0IGNh
+cGFiaXRpZXMgZnJvbQ0KPj4+Pj4gKyAqIGh3LiBNYW55IHJldHJ5cyB3aWxsIGRvIGlmIGl0IGlz
+IGZhaWxlZC4NCj4+Pj4+ICsgKg0KPj4+Pj4gKyAqIEByZXR1cm46IDAgb24gc3VjY2VzcywgbmVn
+YXRpdmUgb24gZmFpbHVyZQ0KPj4+Pj4gKyAqKi8NCj4+Pj4+ICtpbnQgbXVjc2VfbWJ4X2dldF9j
+YXBhYmlsaXR5KHN0cnVjdCBtdWNzZV9odyAqaHcpDQo+Pj4+PiArew0KPj4+Pj4gKyAgICAgICBz
+dHJ1Y3QgaHdfYWJpbGl0aWVzIGFiaWxpdHkgPSB7fTsNCj4+Pj4+ICsgICAgICAgaW50IHRyeV9j
+bnQgPSAzOw0KPj4+Pj4gKyAgICAgICBpbnQgZXJyID0gLUVJTzsNCj4+Pj4gSGVyZSB0b28geW91
+IG5vIG5lZWQgdG8gYXNzaWduIC1FSU8gYXMgaXQgaXMgdXBkYXRlZCBpbiB0aGUgd2hpbGUuDQo+
+Pj4+DQo+Pj4+IEJlc3QgcmVnYXJkcywNCj4+Pj4gUGFydGhpYmFuIFYNCj4+Pj4+ICsNCj4+Pj4+
+ICsgICAgICAgd2hpbGUgKHRyeV9jbnQtLSkgew0KPj4+Pj4gKyAgICAgICAgICAgICAgIGVyciA9
+IG11Y3NlX2Z3X2dldF9jYXBhYmlsaXR5KGh3LCAmYWJpbGl0eSk7DQo+Pj4+PiArICAgICAgICAg
+ICAgICAgaWYgKGVycikNCj4+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgIGNvbnRpbnVlOw0K
+Pj4+Pj4gKyAgICAgICAgICAgICAgIGh3LT5wZnZmbnVtID0gbGUxNl90b19jcHUoYWJpbGl0eS5w
+Zm51bSkgJiBHRU5NQVNLX1UxNig3LCAwKTsNCj4+Pj4+ICsgICAgICAgICAgICAgICByZXR1cm4g
+MDsNCj4+Pj4+ICsgICAgICAgfQ0KPj4+Pj4gKyAgICAgICByZXR1cm4gZXJyOw0KPj4+Pj4gK30N
+Cj4+Pj4+ICsNCj4+Pg0KPj4+IGVyciBpcyB1cGRhdGVkIGJlY2F1c2UgJ3RyeV9jbnQgPSAzJy4g
+QnV0IHRvIHRoZSBjb2RlIGxvZ2ljIGl0c2VsZiwgaXQgc2hvdWxkDQo+Pj4gbm90IGxlYXZlIGVy
+ciB1bmluaXRpYWxpemVkIHNpbmNlIG5vIGd1YXJhbnRlZSB0aGF0IGNvZGVzICd3aHRoaW4gd2hp
+bGUnDQo+Pj4gcnVuIGF0IGxlYXN0IG9uY2UuIFJpZ2h0Pw0KPj4gWWVzLCBidXQgJ3RyeV9jbnQn
+IGlzIGhhcmQgY29kZWQgYXMgMywgc28gdGhlICd3aGlsZSBsb29wJyB3aWxsIGFsd2F5cw0KPj4g
+ZXhlY3V0ZSBhbmQgZXJyIHdpbGwgZGVmaW5pdGVseSBiZSB1cGRhdGVkLg0KPj4NCj4+IFNvIGlu
+IHRoaXMgY2FzZSwgdGhlIGNoZWNrIGlzbuKAmXQgbmVlZGVkIHVubGVzcyB0cnlfY250IGlzIGJl
+aW5nIG1vZGlmaWVkDQo+PiBleHRlcm5hbGx5IHdpdGggdW5rbm93biB2YWx1ZXMsIHdoaWNoIGRv
+ZXNu4oCZdCBzZWVtIHRvIGJlIGhhcHBlbmluZyBoZXJlLg0KPj4NCj4+IEJlc3QgcmVnYXJkcywN
+Cj4+IFBhcnRoaWJhbiBWDQo+Pj4NCj4+PiBUaGFua3MgZm9yIHlvdXIgZmVlZGJhY2suDQo+Pj4N
+Cj4+Pg0KPj4NCj4gDQo+IElzIGl0IGZpbmUgaWYgSSBhZGQgc29tZSBjb21tZW50IGxpa2UgdGhp
+cz8NCj4gLi4uLi4NCj4gLyogSW5pdGlhbGl6ZWQgYXMgYSBkZWZlbnNpdmUgbWVhc3VyZSB0byBo
+YW5kbGUgZWRnZSBjYXNlcw0KPiAgICogd2hlcmUgdHJ5X2NudCBtaWdodCBiZSBtb2RpZmllZA0K
+PiAgICovDQo+ICAgaW50IGVyciA9IC1FSU87DQo+IC4uLi4uDQo+IA0KPiBBZGRpdGlvbmFsbHks
+IGtlZXBpbmcgdGhpcyBpbml0aWFsaXphdGlvbiBlbnN1cmVzIHdl4oCZbGwgbm8gbmVlZCB0byBj
+b25zaWRlcg0KPiBpdHMgaW1wYWN0IGV2ZXJ5IHRpbWUgJ3RyeV9jbnQnIGlzIG1vZGlmaWVkIChB
+bHRob3VnaCB0aGlzIHNpdHVhdGlvbiBpcw0KPiBhbG1vc3QgaW1wb3NzaWJsZSkuDQpJZiB5b3Un
+cmUgY29uY2VybmVkIHRoYXQgJ3RyeV9jbnQnIG1pZ2h0IGJlIG1vZGlmaWVkLCB0aGVuIGxldCdz
+IGtlZXAgDQp0aGUgZXhpc3RpbmcgaW1wbGVtZW50YXRpb24gYXMgaXMuIEkgYWxzbyB0aGluayB0
+aGUgY29tbWVudCBtaWdodCBub3QgYmUgDQpuZWNlc3NhcnksIHNvIGZlZWwgZnJlZSB0byBpZ25v
+cmUgbXkgZWFybGllciBzdWdnZXN0aW9uLg0KDQpCZXN0IHJlZ2FyZHMsDQpQYXJ0aGliYW4gVg0K
+PiANCj4gVGhhbmtzIGZvciB5b3VyIGZlZWRiYWNrLg0KPiANCj4gDQoNCg==
 
