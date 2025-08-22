@@ -1,150 +1,242 @@
-Return-Path: <linux-kernel+bounces-782610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D08B322B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:17:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D54B322B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6894B6270EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:17:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF5786271FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4BB276022;
-	Fri, 22 Aug 2025 19:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E462C3265;
+	Fri, 22 Aug 2025 19:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WTdjADyY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hiWhIYhG"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98D7253B4C
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 19:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3B84A1A;
+	Fri, 22 Aug 2025 19:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755890223; cv=none; b=JbFSa6YZ0g/ZXNJNOE/JbZoMxAlQ0m5yUTmmuoRvGFO9R7iXe5CLtkvsRl7h8i3WGVETs5ng/mKOaLHv6GUVh/aV0MwNsVqgEG7RmFwD5KI8QjFwwAIc0SEnHOBa88IS667ov3LBkUD0Yw6789NnGhlGJUY37VmCEawjU3idfOg=
+	t=1755890268; cv=none; b=cvXz6/+lI9h380T6tzgjORC5+bInYDT/0QPyULXNUyMY8D8KiF+kBqtXPUCMNqpv00OrHyZkpRtFGdr2GuxEHKbCcqLIkHuDNMFRcgt4SNZvRHWkf3t1NPsZkp/hI+zHuNO/7szqVy96EX7dK2MnAocv1YE0O+l1n2jlncrCDpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755890223; c=relaxed/simple;
-	bh=aXgjxnO7XzJhKZgk6dyRlEqrtwsBEtsQp6ewvnQHFgA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e4AqCwcrTDTsNAKtaG4XdVykeCxee5M/uRPCbrcTFtI0jtyDvTdovnLn8UHMAf2MGW24Kv0fOIWtFtUUMl68/yGpyxlxlQZH3vrPE7GFE6wo7BeRYRvqehEGDJjLCHLDI7PdcrMcvpoAOvR+FTSX6fxgW/0EfVoKm6A2xzfaPG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WTdjADyY; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755890222; x=1787426222;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=aXgjxnO7XzJhKZgk6dyRlEqrtwsBEtsQp6ewvnQHFgA=;
-  b=WTdjADyYwYDaOQ4T7H6pMB8Ft2ptIrYYHkZ6aJAUMXD3GDPoHpGMi3mT
-   qEy6+wzV8LpvkydE40gncoXVJJKTNXsVDYFybET6et4K4TfPa3ey9b+if
-   gmp0nHe6gKhQ1X7DSWxXFmcm70DBxRRN2IE9Ls/gKMCLBTySaCHKFLUms
-   BFpoVZI8QKzDXWL5wo+wiAtLTnXuPDoTYwPed0LY50vO7y3T5eVEaIOej
-   q+YWjBevsudj7pG1RFQbab5kU7fypzOW6mKRkPPQjQN5vU3aMzgBZAknW
-   j6f4yEwrOUKVT4mxAEfCPkeq18U+pkYcVEbfPl4fN917w+Dv0nZ2jknn6
-   A==;
-X-CSE-ConnectionGUID: zop4HH9kQw6P/yWEj7GOAw==
-X-CSE-MsgGUID: byQycq08S4OWSzWanSc/PA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58126712"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="58126712"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 12:17:01 -0700
-X-CSE-ConnectionGUID: 6WsrwmeDQoil0DW9QYQQMg==
-X-CSE-MsgGUID: 0eJnyCVgRGKzZDd8xTeVbw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="169140387"
-Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.125.108.168]) ([10.125.108.168])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 12:17:00 -0700
-Message-ID: <2d677e21-a5a7-4b68-b11c-e73473bab0a6@intel.com>
-Date: Fri, 22 Aug 2025 12:16:59 -0700
+	s=arc-20240116; t=1755890268; c=relaxed/simple;
+	bh=wtmrm3SlogUZY0B6QIjgXv6Nxv/tDCgOKbQjkjBaS/4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ptvy2IUVPO2m5tI4OBlLKRj05oWt4zf0mZU7WvrHPOcqmWwtih1scEBRdEe9PQavF2lDabQ4toI4aeG7CCmOtgZEZL/Mjg+tMbW+4NifMvIF17Ab7I75Pcp9oMdG5Ax1DnlPAW8oPqWnJggJ/rejIQRCzocwfwkBrSDbj8OBy6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hiWhIYhG; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-61c325a4da7so334634a12.0;
+        Fri, 22 Aug 2025 12:17:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755890265; x=1756495065; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TT8q3dFJx82OGrDjwv4DuH2nv0k4ZyhLsh1+5pGUjYw=;
+        b=hiWhIYhG/7BXBSXGn0NWi+puQoustqJm4LzcxzUIf/RkBVSjLi5gd5N2H1UgtsLxzy
+         P5ApHY+k+rhCTUNs0BOAbU8NEFguH4Xv3OTQ9jQJFxpySERvMfLpKxo0adq+H+OynGSR
+         Z61ToNPUhCF9VJ1knARZ4EvTudg0VGgiLXG0Lo4uJlsgYUWqxxIXctOsKgzh3SJhx9Bf
+         lRxtUJt1B3UGCQvUxJdwC7BmNM32yoTdh8HZLVKTTF9ELziERxwhWIDD5OtkObCqjWjJ
+         uVdE5pXxh6tKkMNWm6P96gPLwBQ7J8uMQW3fK2C+aS0qjQ1bonhoSTb/0ICpfOeqob+R
+         MbVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755890265; x=1756495065;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TT8q3dFJx82OGrDjwv4DuH2nv0k4ZyhLsh1+5pGUjYw=;
+        b=blJm65/qRVhcf7qXHG1Gqc0YX/Wx37mbC2Hfr9+pXAWGExOzRpoGbxrbN2jyJRT1/x
+         Jms0pRm2gKfISZbGaRHnkntKRPGJNqgge2KCASbSn9P+hA31U9tOvQFv8MbtHoZO8biN
+         bcmPFmdIqIoEdAo38l10DiYglCS/gm6Pho2YZTx7Y9NgVwVnNLaCDH+vkmGrdBl4wSs3
+         M7LbEeBMzBu26WVZ34UDTmidum9JoXKX00x7kIpSAO3LnE344eble19AHBbV94kwnx5m
+         YtTLKrrmKwmF04CCUhKbIJpv32K3LPa3J4Ko94+N1MwJtnPScjQkic2u9bK5S9EuSy4W
+         eCqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVaPYHHcaPy/x+bZ7CBEi1mX7fGsVX9CuLrKbj22HXCYJkqLO3P2biWBkp/VqFwy6bAmoVjYPdlRVzTj13nQ==@vger.kernel.org, AJvYcCWxlUjamZkeWf7duj+A2WyKfYw0Jp3jh1hcnlp6BW8JEBlD0e5Q6fxvrFHWhEUBeFd5hMFhDyxqays05/wq@vger.kernel.org, AJvYcCXpAxElxSESLO9umUX319xSfpbRK6aT/PBQSl6ghDgXhqNwzLo/8KbrGBCDsnioavcSznWbOZ9SJBpWh7O9@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIuEx2FTFhs7t1Yesczy8L4xhl0yLPy5XJ0HEzphTSrAZmRweq
+	zDvN28n92edpCfVm1Y+AwWl4Ibhy6YVV2EAi9HVCFJfI5Q0tWmwCSVq/6vgHmjNcFIsCHa9+L0y
+	61OwP6V8mD8wYDcKMSIlXUxoPQrOkQWo=
+X-Gm-Gg: ASbGnct4rPoxLgkeildruv/Mu74qkAdwsP2sUPbncTMoM2EvxU5bBcwdpBjcfl1oYax
+	a+1XfvI1/+PBMXFEVcjtaX1zATcVJ4JIRconnPYauxNk6XTh9jwG5nQUSAKtbFvCUXxjCKTCic7
+	tRMxi3l+d0jTG9r/HQ3P9pB1/CZhBJRsxqNNf97UG0W7uMHXor8g2C8LDzWc94HK7K88Q7Aq8vG
+	M0tLl4=
+X-Google-Smtp-Source: AGHT+IHhmqoQvn0cd1f/XP4lUOTKGjfXbpQoBd+ct3x9NSbHCLHf6cPpl09ZK6p5eOK9Tv9ihmAOxpo1ctvyorl60YM=
+X-Received: by 2002:a05:6402:358b:b0:618:6e15:d059 with SMTP id
+ 4fb4d7f45d1cf-61c1b6f3da7mr3070883a12.21.1755890264400; Fri, 22 Aug 2025
+ 12:17:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] scripts/x86/intel: Add a script to update the minimum
- ucode revisions
-To: Borislav Petkov <bp@alien8.de>
-Cc: Sohil Mehta <sohil.mehta@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Nikolay Borisov <nik.borisov@suse.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>, linux-kernel@vger.kernel.org
-References: <20250822004422.2908427-1-sohil.mehta@intel.com>
- <20250822100949.GAaKhB7ZlYxjpfcIit@fat_crate.local>
- <aaed72a9-8dc8-4744-96ae-ac3db9fb4d01@intel.com>
- <20250822182447.GHaKi176wVuSsNMmi4@fat_crate.local>
- <4d5a17d5-f26a-4682-ab7b-5a3b05b5af3a@intel.com>
- <20250822190622.GIaKi_rpJxdNGsbDlf@fat_crate.local>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250822190622.GIaKi_rpJxdNGsbDlf@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
+ <20250822-tonyk-overlayfs-v6-9-8b6e9e604fa2@igalia.com> <CAOQ4uxhWE=5_+DBx7OJ94NVCZXztxf1d4sxyMuakDGKUmbNyTg@mail.gmail.com>
+ <62e60933-1c43-40c2-a166-91dd27b0e581@igalia.com>
+In-Reply-To: <62e60933-1c43-40c2-a166-91dd27b0e581@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 22 Aug 2025 21:17:33 +0200
+X-Gm-Features: Ac12FXxA4hDlRo2Zy9Q8fWppUIDFMO1wV5FDA9csi7wKgVOWLLI0oOtm44XjVCU
+Message-ID: <CAOQ4uxjgp20vQuMO4GoMxva_8yR+kcW3EJxDuB=T-8KtvDr4kg@mail.gmail.com>
+Subject: Re: [PATCH v6 9/9] ovl: Support mounting case-insensitive enabled layers
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
+	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/22/25 12:06, Borislav Petkov wrote:
-> So as long as it unmistakenly specifies who updates the header, the script can
-> be anywhere.
-> 
-> I hope I'm making more sense.
+On Fri, Aug 22, 2025 at 6:47=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
+lia.com> wrote:
+>
+> Em 22/08/2025 13:34, Amir Goldstein escreveu:
+> > On Fri, Aug 22, 2025 at 4:17=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid=
+@igalia.com> wrote:
+> >>
+> >> Drop the restriction for casefold dentries lookup to enable support fo=
+r
+> >> case-insensitive layers in overlayfs.
+> >>
+> >> Support case-insensitive layers with the condition that they should be
+> >> uniformly enabled across the stack and (i.e. if the root mount dir has
+> >> casefold enabled, so should all the dirs bellow for every layer).
+> >>
+> >> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> >> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> >> ---
+> >> Changes from v5:
+> >> - Fix mounting layers without casefold flag
+> >> ---
+> >>   fs/overlayfs/namei.c | 17 +++++++++--------
+> >>   fs/overlayfs/util.c  | 10 ++++++----
+> >>   2 files changed, 15 insertions(+), 12 deletions(-)
+> >>
+> >> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+> >> index 76d6248b625e7c58e09685e421aef616aadea40a..e93bcc5727bcafdc18a499=
+b47a7609fd41ecaec8 100644
+> >> --- a/fs/overlayfs/namei.c
+> >> +++ b/fs/overlayfs/namei.c
+> >> @@ -239,13 +239,14 @@ static int ovl_lookup_single(struct dentry *base=
+, struct ovl_lookup_data *d,
+> >>          char val;
+> >>
+> >>          /*
+> >> -        * We allow filesystems that are case-folding capable but deny=
+ composing
+> >> -        * ovl stack from case-folded directories. If someone has enab=
+led case
+> >> -        * folding on a directory on underlying layer, the warranty of=
+ the ovl
+> >> -        * stack is voided.
+> >> +        * We allow filesystems that are case-folding capable as long =
+as the
+> >> +        * layers are consistently enabled in the stack, enabled for e=
+very dir
+> >> +        * or disabled in all dirs. If someone has modified case foldi=
+ng on a
+> >> +        * directory on underlying layer, the warranty of the ovl stac=
+k is
+> >> +        * voided.
+> >>           */
+> >> -       if (ovl_dentry_casefolded(base)) {
+> >> -               warn =3D "case folded parent";
+> >> +       if (ofs->casefold !=3D ovl_dentry_casefolded(base)) {
+> >> +               warn =3D "parent wrong casefold";
+> >>                  err =3D -ESTALE;
+> >>                  goto out_warn;
+> >>          }
+> >> @@ -259,8 +260,8 @@ static int ovl_lookup_single(struct dentry *base, =
+struct ovl_lookup_data *d,
+> >>                  goto out_err;
+> >>          }
+> >>
+> >> -       if (ovl_dentry_casefolded(this)) {
+> >> -               warn =3D "case folded child";
+> >> +       if (ofs->casefold !=3D ovl_dentry_casefolded(this)) {
+> >> +               warn =3D "child wrong casefold";
+> >>                  err =3D -EREMOTE;
+> >>                  goto out_warn;
+> >>          }
+> >> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> >> index a33115e7384c129c543746326642813add63f060..52582b1da52598fbb14866=
+f8c33eb27e36adda36 100644
+> >> --- a/fs/overlayfs/util.c
+> >> +++ b/fs/overlayfs/util.c
+> >> @@ -203,6 +203,8 @@ void ovl_dentry_init_flags(struct dentry *dentry, =
+struct dentry *upperdentry,
+> >>
+> >>   bool ovl_dentry_weird(struct dentry *dentry)
+> >>   {
+> >> +       struct ovl_fs *ofs =3D OVL_FS(dentry->d_sb);
+> >> +
 
-Ahh, gotcha. Should we slap something like this in the script?
+FWIW this was a bug that hits
+WARN_ON_ONCE(sb->s_type !=3D &ovl_fs_type)
+because dentry is NOT an ovl dentry.
 
-	This script is intended to be run in response to releases of the
-	official Intel microcode github repository[link]. Typically,
-	someone at Intel would see a new release, run this script,
-	refresh the intel-ucode-defs.h file and send a patch upstream to
-	update the mainline and stable versions.
+> >>          if (!d_can_lookup(dentry) && !d_is_file(dentry) && !d_is_syml=
+ink(dentry))
+> >>                  return true;
+> >>
+> >> @@ -210,11 +212,11 @@ bool ovl_dentry_weird(struct dentry *dentry)
+> >>                  return true;
+> >>
+> >>          /*
+> >> -        * Allow filesystems that are case-folding capable but deny co=
+mposing
+> >> -        * ovl stack from case-folded directories.
+> >> +        * Exceptionally for layers with casefold, we accept that they=
+ have
+> >> +        * their own hash and compare operations
+> >>           */
+> >> -       if (sb_has_encoding(dentry->d_sb))
+> >> -               return IS_CASEFOLDED(d_inode(dentry));
+> >> +       if (ofs->casefold)
+> >> +               return false;
+> >
+> > I think this is better as:
+> >          if (sb_has_encoding(dentry->d_sb))
+> >                  return false;
+> >
 
+And this still fails the test "Casefold enabled" for me.
 
+Maybe you are confused because this does not look like
+a test failure. It looks like this:
+
+generic/999 5s ...  [19:10:21][  150.667994] overlayfs: failed lookup
+in lower (ovl-lower/casefold, name=3D'subdir', err=3D-116): parent wrong
+casefold
+[  150.669741] overlayfs: failed lookup in lower (ovl-lower/casefold,
+name=3D'subdir', err=3D-116): parent wrong casefold
+[  150.760644] overlayfs: failed lookup in lower (/ovl-lower,
+name=3D'casefold', err=3D-66): child wrong casefold
+ [19:10:24] [not run]
+generic/999 -- overlayfs does not support casefold enabled layers
+Ran: generic/999
+Not run: generic/999
+Passed all 1 tests
+
+I'm not sure I will keep the test this way. This is not very standard nor
+good practice, to run half of the test and then skip it.
+I would probably split it into two tests.
+The first one as it is now will run to completion on kenrels >=3D v6.17
+and the Casefold enable test will run on kernels >=3D v6.18.
+
+In any case, please make sure that the test is not skipped when testing
+Casefold enabled layers
+
+And then continue with the missing test cases.
+
+When you have a test that passes please send the test itself or
+a fstest branch for me to test.
+
+Thanks,
+Amir.
 
