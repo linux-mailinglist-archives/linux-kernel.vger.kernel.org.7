@@ -1,115 +1,172 @@
-Return-Path: <linux-kernel+bounces-781856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60581B317BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:27:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8122B317C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ABA91882382
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:25:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A81BA168659
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1C52ED866;
-	Fri, 22 Aug 2025 12:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8C6284682;
+	Fri, 22 Aug 2025 12:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VhdXkx9+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RxWGqOSz"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71892765ED;
-	Fri, 22 Aug 2025 12:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009A72D7DC5;
+	Fri, 22 Aug 2025 12:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755865478; cv=none; b=XQrzueMMwk/doWUsZ9yam8OG2EadHGi5TdiQa2Wi0+SBuSqROUFpU8d9dyp63Yd2OYpba35M+hLOZgOB3ewk4DoHNmy3EC9LhCXPLNMbHsXfFCdRp1rL4IKpgE6HsCsEBsU4mzWemIs2TARXyaAJS6f4wR5Xuco7eUyXQ0u7/y0=
+	t=1755865573; cv=none; b=iXjJBYlq/m5cRkEtg67OUl3fAG60bjmRBJwsYVMxeaSLwKRWyx/IWbHd7NAZVGh4jcChYPIoUdPAY+Jsr197dljRlFpV/ibufrw48nKtPs6e/dB+ehHvVxjlvWsrblrR0HGSaNCuj+/oNUhZWKGyeWf7Tv+TJNgwl3Ko0mz/MCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755865478; c=relaxed/simple;
-	bh=tQ0rGBwSIgf406O7Tk4ojsslaN/E9jMzCbSFx4XmZDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AK/Stv89w4KNd1LtiqY948PBI9j34BX3F5oIjx8nS0Fw7zuHwuiaSqLe+F/O8JQYR88cKz+lRmiUb/9v75CqakxWAD3JYu9C+SYKb7QBEvXyk1n/HQZnOjqayXWzNH9CYuWdIeiSsevlwf1XkXfeUMauXa8vLo6RpNWT2Mn9yUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VhdXkx9+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87C48C4CEED;
-	Fri, 22 Aug 2025 12:24:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755865475;
-	bh=tQ0rGBwSIgf406O7Tk4ojsslaN/E9jMzCbSFx4XmZDk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VhdXkx9+pm0D1pxUcZ1AEhgH5ox8qPyYX0qKoiER7mcGMeVwZOVmS2C3cZCmELh+s
-	 jcTJfUDRPVjZaZuEVlpBwMurQAdCdnpKqnUUzF+wMLGRHhJgJLn7fSg/YajFjLk8y2
-	 8jVaCk6bjCSM3iIHsgI/9m+V8Te8vYllKTE62N6KKzmei087Z3FTlHUPzoZIdK2/Wd
-	 ychdMdP319ZZ8nwURME5iWwMLINu117o0un64gumBqpotmuwL3TQWaLLna1C+cMyG+
-	 KBy19IuHwVHsitIM3TWSVBD4z+rnrvirsbz31lEnX+NN2t3EJDjwIOGNlLttLN10mQ
-	 pwZbIkw19dBxA==
-Date: Fri, 22 Aug 2025 11:24:30 -0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, 
-	linux-i2c <linux-i2c@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
-Subject: [GIT PULL] i2c-host-fixes for v6.17-rc3
-Message-ID: <hw4vxalm4vifwdgt5stle53eierogvrslxsyckwbfd3inkjzu6@74qfsxp47vtl>
+	s=arc-20240116; t=1755865573; c=relaxed/simple;
+	bh=UY/L2tRKcOALJRVQf2k9KAYHGNaFT19Gm20vR020zPw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ri9Vy0XaRzJUkrIVChAje805+1P4Bm4Z8Zsh2zUKOA6y9hT0sTwn40j9ssUHnuWVWX+8jMtRtw6AjXRY1CFfsSY8+2B0cXgCYxnLtFMEIAxcy6yYBR5PlREZudnVz45vl/3XOkWJUTA+5i8YpDkZDpi4cmQFEt2nhFUs4P75eIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RxWGqOSz; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57M7pStI012363;
+	Fri, 22 Aug 2025 12:25:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=HJ26CL98BAEdjjPC26V3xabEO8vZWHtSFpQwDNtDX
+	ak=; b=RxWGqOSz0te8m2Ixjfu8QPZNIpaQoJ9DP8fJ0JUbvkCrSfPZDTVmqXgcn
+	x0WPMoaTGlOyoFzxXcsi2+VNOPbmMVp28nk51ic0E/JiVXC0V/uSCQyuV1EzQn7Z
+	RVcMAj3dyb9u0EdYsS3K7CB+lX99PvXd2ulxMrz+2I3mhboINUkaCVA3C66uIEf0
+	Nlm6U3HbXNefzW6xrYwn4hJ+ybhkXxudSkk7S5KOqXSxuoloAhga3pM4XO7uhZ+D
+	wUufm2nsVFauFZC8rGvneuZ2d9NM1JykWQ/tlW7tIwnFsZdgxRk9Pokhz0ggF4r2
+	b9F84fkK6hvj+RQe2HcFty1FZ4+Qw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vx7fy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 12:25:54 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57MCMVGQ001349;
+	Fri, 22 Aug 2025 12:25:54 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vx7fx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 12:25:54 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57MCIWUt024740;
+	Fri, 22 Aug 2025 12:25:53 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48my5w56ra-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 12:25:53 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57MCPn1P29557460
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 22 Aug 2025 12:25:49 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 53A6B20043;
+	Fri, 22 Aug 2025 12:25:49 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 272C020040;
+	Fri, 22 Aug 2025 12:25:49 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 22 Aug 2025 12:25:49 +0000 (GMT)
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
+        blakejones@google.com
+Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        hca@linux.ibm.com, japo@linux.ibm.com,
+        Thomas Richter <tmricht@linux.ibm.com>
+Subject: [Ping][PATCH] perf test: Checking BPF metadata collection fails on version string
+Date: Fri, 22 Aug 2025 14:25:39 +0200
+Message-ID: <20250822122540.4104658-1-tmricht@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDIyMiBTYWx0ZWRfX4+kIeLuQeUpb
+ AYE7fZ5YQTv9hAJyu3bCTEMDboH12QuNBZCgV5WgLb5S9Sy5hvGLVIPl8eHlyFEePLc1HpvOYjQ
+ evb1cDMa23OG4IGAvk/watRqAJNRc1GCabnl5QaeuCxbL1KfRw90wJ7odrdSJRX2QTMZGju801w
+ DERruEWBzs5iaWBzljbL71q9UTC7Xf0UxV+hcoF0nbHl3jVLWCivL4WhqziC54MOdWcmHP59gvm
+ gcVFmJwG0nFGVkfi/yo+LqCKnTLnJR6UZX32owU4Yb31yv7iuxFw0mY8oP5+OI//ubuUz+y4NRj
+ lqfearS11BCeY9zgBB8NNXATFrAbfuB9wG4F+VKBNKBRSfztIqJYY3K7xvQuGcQ+J8YC3OpmnYn
+ HjRZ+ZoA61Zn71oDZ7mfR4HpBckFPA==
+X-Proofpoint-ORIG-GUID: KisYOD35_syNFIe_H5JHe_L_1NJm5-wu
+X-Authority-Analysis: v=2.4 cv=T9nVj/KQ c=1 sm=1 tr=0 ts=68a861d2 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=1XWaLZrsAAAA:8 a=UquQ6J-m-umW9Fh778UA:9
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: 9vGB0RlN6JaLlk2fVT6EpBrqly0DtsSl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 phishscore=0 spamscore=0 clxscore=1015
+ bulkscore=0 suspectscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508190222
 
-Hi Wolfram,
+commit edf2cadf01e8f ("perf test: add test for BPF metadata collection")
 
-Here is the pull request for this week. A big part comes from
-the rtl9300 controller, which has gone through several rounds
-and finally made it in. One last patch completes the work from
-Sven, but that already went into i2c/i2c-host.
+fails consistently on the version string check. The perf version
+string on some of the constant integration test machines contains
+characters with special meaning in grep's extended regular expression
+matching algorithm. The output of perf version is:
 
-With summer ending, I hope the rhythm will soon return to the
-normal pace.
+ # perf version
+ perf version 6.17.0-20250814.rc1.git20.24ea63ea3877.63.fc42.s390x+git
+ #
 
-I wish you a great weekend, and the same to everyone flying
-back home.
+and the '+' character has special meaning in egrep command.
+Also the use of egrep is deprecated.
 
-Andi
+Change the perf version string check to fixed character matching
+and get rid of egrep's warning being deprecated. Use grep -F instead.
 
-The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
+Output before:
+ # perf test -F 102
+ Checking BPF metadata collection
+ egrep: warning: egrep is obsolescent; using grep -E
+ Basic BPF metadata test [Failed invalid output]
+ 102: BPF metadata collection test             : FAILED!
+ #
 
-  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
+Output after:
+ # perf test -F 102
+ Checking BPF metadata collection
+ Basic BPF metadata test [Success]
+ 102: BPF metadata collection test             : Ok
+ #
 
-are available in the Git repository at:
+Fixes: edf2cadf01e8f ("perf test: add test for BPF metadata collection")
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Acked-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+Cc: Blake Jones <blakejones@google.com>
+---
+ tools/perf/tests/shell/test_bpf_metadata.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.17-rc3
+diff --git a/tools/perf/tests/shell/test_bpf_metadata.sh b/tools/perf/tests/shell/test_bpf_metadata.sh
+index 69e3c2055134..be67d56e0f09 100755
+--- a/tools/perf/tests/shell/test_bpf_metadata.sh
++++ b/tools/perf/tests/shell/test_bpf_metadata.sh
+@@ -61,7 +61,7 @@ test_bpf_metadata() {
+ 		/perf_version/ {
+ 			if (entry) print $NF;
+ 		}
+-	' | egrep "$VERS" > /dev/null
++	' | grep -qF "$VERS"
+ 	then
+ 		echo "Basic BPF metadata test [Failed invalid output]"
+ 		err=1
+-- 
+2.50.1
 
-for you to fetch changes up to 82b350dd8185ce790e61555c436f90b6501af23c:
-
-  i2c: rtl9300: Add missing count byte for SMBus Block Ops (2025-08-19 20:21:03 -0100)
-
-----------------------------------------------------------------
-i2c-host-fixes for v6.17-rc3
-
-i2c-host-fixes for v6.17-rc3
-
-- hisi: update maintainership
-- rtl9300: fix several issues in xfer
-  - check message length boundaries
-  - correct multi-byte value composition on write
-  - increase polling timeout
-  - fix block transfer protocol
-
-----------------------------------------------------------------
-Alex Guo (1):
-      i2c: rtl9300: Fix out-of-bounds bug in rtl9300_i2c_smbus_xfer
-
-Devyn Liu (1):
-      MAINTAINERS: i2c: Update i2c_hisi entry
-
-Harshal Gohel (1):
-      i2c: rtl9300: Fix multi-byte I2C write
-
-Sven Eckelmann (2):
-      i2c: rtl9300: Increase timeout for transfer polling
-      i2c: rtl9300: Add missing count byte for SMBus Block Ops
-
- MAINTAINERS                      |  2 +-
- drivers/i2c/busses/i2c-rtl9300.c | 20 ++++++++++++--------
- 2 files changed, 13 insertions(+), 9 deletions(-)
 
