@@ -1,98 +1,114 @@
-Return-Path: <linux-kernel+bounces-781296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BC0BB310A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:40:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2551B310A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DD3660086F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:40:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71A871BA230D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042A62E92C3;
-	Fri, 22 Aug 2025 07:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEE82E8E1E;
+	Fri, 22 Aug 2025 07:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kmc7cpXd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EisSpCke"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592CE22DA1F;
-	Fri, 22 Aug 2025 07:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5332A2853EE;
+	Fri, 22 Aug 2025 07:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755848398; cv=none; b=aPjhz5B2azH+9P7jUMrPtM+bZq7S2cb+F7vm0yZ/9W8eV5rltC9N5H3NNYZxJdLFl0pNUEIALuA7glUxIIZEhWAACU92lP3qL5OxXOdqSqskI3niXJNuB6HTFlGS+C0eFJwO0SIB5Gm/dakH+0JS4PW5lloHymbWhIukqQ7TeQ4=
+	t=1755848541; cv=none; b=BSJOrabJp5NQnGZqhcufaeog3qghSZsimN+x1xcrMYdktYR0sxV/MivPNYZ6M7uuiEi20kGc/kU3BRPc5FEGfSmKNaFcoQC+61/zupDQsEgVAXXjAVw7kFpQNsoG1PLs1pFbA6IODQseObfp+BYis5idowb/7rUMhCxrSQdO0AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755848398; c=relaxed/simple;
-	bh=UKWp4AA0CoI5oo1H9FVbI9d5QTPf9qUqjpMKzipa+cY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b6KMG7H8vD7KcRaD8lExBTfVfrtxnVuYQuN6xmvm3a2Zsps0+HTVUIa1u/Bu2T1mUuXlcg7g9BvlUUluqgwjc9loCX+1GcEc+Nim8gG9QsJPp7Tqict5FC3cPpTqydTW17UD/OcTiNH0klDezDIkw+F3Jgeh+nooZGp7DWgN9DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kmc7cpXd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 742A4C4CEF1;
-	Fri, 22 Aug 2025 07:39:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755848398;
-	bh=UKWp4AA0CoI5oo1H9FVbI9d5QTPf9qUqjpMKzipa+cY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kmc7cpXdlCmXsn6v5t5fPB5KmIiQaQrgamHPSwPctLWmQgRqmmFOHy+XUQG5fnwLE
-	 vTJhCNHTYVK9sqU1rRvXK9mSYswd88i5Kp1/KeOpP7f5EbpKK6K0TTK8RG7RqSQNDc
-	 BSiLLjRoAo0J6wjE+PXgTaHNja/Gli6RX1oMg3HrDBxMAd4KFwAkepqVi5jFUlCgil
-	 T70omHybsgWbkF5r6gEHewPN6JYwAPT8EAh/H66v6adUCLdErli/KExhxpn3Ye3oFe
-	 FO3uri/xvxc/NDLde2F0Qes4FBMgm2bXdauyut0vQtB+WM1LnQAt/9PII8FJwFYNLz
-	 twzMeiqt+FKbA==
-Message-ID: <f02f049f-efa3-481b-b681-cf75308bfbc4@kernel.org>
-Date: Fri, 22 Aug 2025 16:39:53 +0900
+	s=arc-20240116; t=1755848541; c=relaxed/simple;
+	bh=Y4Ju8Ubc+V678E//72dW9Gb7LL72XIy9O0AWP8HbfuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RRBlXS+3hYn9Vh63ljhuJfziUt+9a4/VeOhV9qWnnC+CbW86cPVKdRd6fGOKebTzyQUo1byA1ZrFOzXSRl8uOfBeYMMTJ6p1mmRlypXXMyceVNDoHdnaRi3mF9rNoSGdROtjUvd/Nf81CpdCTX9ZTYQNH02cRRY0GsXRIBQcZL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EisSpCke; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755848540; x=1787384540;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Y4Ju8Ubc+V678E//72dW9Gb7LL72XIy9O0AWP8HbfuI=;
+  b=EisSpCkeE2QnIaiUg93sEmGM6zer5NXr8chbHFnGROUoQ+NbQOwj36rT
+   MVWMsxsE6A738V3Gux4l2wkBVKNjRCSZY/tOX7Ob8t6U6yXehnrI5fxIU
+   5MnJSK2UReJIjxoh2s53FZmoJSMmOc7IPEcKYBHTDQb4u0mkOty6C5PpG
+   MEsTX8OxzzsSSRf41GXaDxNvQgZ0sfsxW3z1cOizOSyyRwCJu2hbZ5Jlr
+   VvJC7qVB/nWsSPw6Zxw1GitJj+xgjjofmwQAnPEcOw+zbei+15Gf3smYa
+   yJPu+dR97hU5B49ZVzTme1nFb5zhIjyT79GxB5kCDYuhKf3+fpsMJqoBQ
+   Q==;
+X-CSE-ConnectionGUID: 1LaR906GSBeNPalA+tovzQ==
+X-CSE-MsgGUID: yEKcv9abSeWe7vwtxlNrqQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="69524331"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="69524331"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 00:42:20 -0700
+X-CSE-ConnectionGUID: B2tTkImKSMCALA9i2pukwg==
+X-CSE-MsgGUID: MJ+xkVLBRmmCGp8LNMXqhA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="173060037"
+Received: from cpetruta-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.97])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 00:42:17 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 16336121F7B;
+	Fri, 22 Aug 2025 10:42:14 +0300 (EEST)
+Date: Fri, 22 Aug 2025 10:42:14 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Dafna Hirschfeld <dafna@fastmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Keke Li <keke.li@amlogic.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Dan Scally <dan.scally@ideasonboard.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 5/8] media: v4l2-common: Introduce v4l2-params.c
+Message-ID: <aKgfVrbGGRuWS24i@kekkonen.localdomain>
+References: <20250819-extensible-parameters-validation-v3-0-9dc008348b30@ideasonboard.com>
+ <20250819-extensible-parameters-validation-v3-5-9dc008348b30@ideasonboard.com>
+ <aKT4vz-XeTgSo125@kekkonen.localdomain>
+ <bl4xncjiy3b777xdni7kb22hwxgm5sqrpd2jrctmdi2valtrec@zr2bfen5drx5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/14] scsi: scsi_error: Introduce new error handle
- mechanism
-To: JiangJianJun <jiangjianjun3@huawei.com>,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
- linux-scsi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, hare@suse.de, bvanassche@acm.org,
- michael.christie@oracle.com, hch@infradead.org, haowenchao22@gmail.com,
- john.g.garry@oracle.com, hewenliang4@huawei.com, yangyun50@huawei.com,
- wuyifeng10@huawei.com, wubo40@huawei.com, yangxingui@h-partners.com
-References: <20250816112417.3581253-1-jiangjianjun3@huawei.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20250816112417.3581253-1-jiangjianjun3@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bl4xncjiy3b777xdni7kb22hwxgm5sqrpd2jrctmdi2valtrec@zr2bfen5drx5>
 
-On 8/16/25 20:24, JiangJianJun wrote:
-> It's unbearable for systems with large scale scsi devices share HBAs to
-> block all devices' IOs when handle error commands, we need a new error
-> handle mechanism to address this issue.
+Hi Jacopo,
+
+On Wed, Aug 20, 2025 at 09:11:06AM +0200, Jacopo Mondi wrote:
+> Hi Sakari
 > 
-> I consulted about this issue a year ago, the discuss link can be found in
-> refenence. Hannes replied about why we have to block the SCSI host
-> then perform error recovery kindly. I think it's unnecessary to block
-> SCSI host for all drivers and can try a small level recovery(LUN based for
-> example) first to avoid block the SCSI host.
+> On Wed, Aug 20, 2025 at 01:20:47AM +0300, Sakari Ailus wrote:
+> > Hi Jacopo,
+> >
+> > In the subject:
+> >
+> > s/common/params/
 > 
-> The new error handle mechanism introduced in this patchset has been
-> developed and tested with out self developed hardware since one year
-> ago, now we want this mechanism can be used by more drivers.
-> 
-> Drivers can decide if using the new error handle mechanism and how to
-> handle error commands when scsi_device are scanned,the new mechanism
-> makes SCSI error handle more flexible.
+> I actually meant "media: v4l2-core:"
 
-Barely half of your emails have made it through for me and they landed in my
-spam folder. So please check your email setup.
-
-Also, was this all tested with libata and libsas attached devices as well ?
-They all depend on scsi EH.
-
+We've usually referred to the more specific part under
+drivers/media/v4l2-core if a patch is touching just one of them, e.g.
+v4l2-fwnode or v4l2-common.
 
 -- 
-Damien Le Moal
-Western Digital Research
+Regards,
+
+Sakari Ailus
 
