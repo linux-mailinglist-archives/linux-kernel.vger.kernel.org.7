@@ -1,163 +1,160 @@
-Return-Path: <linux-kernel+bounces-781894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9E8B31853
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:51:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C51B318B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8FF094E3188
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:51:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CF4F3AEFC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476512FC016;
-	Fri, 22 Aug 2025 12:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0106A30498E;
+	Fri, 22 Aug 2025 12:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1yxazY5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cON6UGpj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F3B2ECE8F;
-	Fri, 22 Aug 2025 12:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3793043B2
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755867062; cv=none; b=AoPWuMwDjo22BkeX1sk5Rxw1L7BUGllWb4JXGiFk2IWvcWjUoI++JT5fWXaHyV/IELSffyBdFIUdQuZuz+BuVS1ie8kyxhykUYaPzZkHIGSMY/iU1EuTFkg9k77xko+oNMm2iKRDOqk2Pz3DJOyrvD4w4PtPbvKBzHdD1yYM7pI=
+	t=1755867320; cv=none; b=CpckeU5EqHgt2DIpGSmBmMWjlvYOnpCuFaVSVFHUlaSwJGkSd7tkr7wfIHx2g9MYToQTlwMYrjBdJC4wEJjPf3k2G1D340VTSB3vvDUZM43q03hYDH98mc8Kq2JTLW43Vr5oCaBam2hJqCoTVCwZqMjp8HYMNUL8vJtjO9kbOF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755867062; c=relaxed/simple;
-	bh=62L/Xc8PMFF3fvmTu93PaFJyJD9WQMobEpBD9EWjLB0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BSTGzgEuxj+YdGXrdwVQFgowwi62PAlytInzfjXmPf4Fz0PNK0FkBBu6KLQTwyg1aKc9h5p1C+dVGdJWgOPqCstz4p4hOaMLzrxQkoavBRdSFCniJba2uHMWPfQGKZCO8nWXdyL1W9cXLmX3+aRPY3XxNNEIH1EYQs/htKI+9G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O1yxazY5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E9DFC4CEED;
-	Fri, 22 Aug 2025 12:51:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755867062;
-	bh=62L/Xc8PMFF3fvmTu93PaFJyJD9WQMobEpBD9EWjLB0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=O1yxazY5MJCsReRUfP6WNlfY2rRh9qlmd2JeN9rQA7zlyIfReweAVTlOQl6steOJu
-	 Nt+780GihMEo+H03Drdd3r37zBMA4+tZPO8B5GOhvLauj1M+3GiJ8dQqqYlH4dTz0K
-	 kKkiA7NwrKGBGv20FujnsUST/HSsHOrxjkC4/VhJXJzuJpqGyU3LkNNeeZDMBcxcks
-	 sLKKmhXJdZ52SBn0WSr4c+qDEKtmlmsBf3Nlhima4XEiijThYajYM8UQORUzZUT+Cm
-	 39auTfd5YuuAeW1tFbh5ex1VXltsUGGAY31iVyMxWeDbru0jkdFLcDdllg5HIO5oPv
-	 odjYLRonNfrtw==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-30cce5cb708so1438623fac.0;
-        Fri, 22 Aug 2025 05:51:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW6PAw9CNHsIB9kSrvRfamcoFyDaArtbAkDB2BJRPq8c/r4igNceQhcz/PcOta3KfUORBlyk9fXz6k=@vger.kernel.org, AJvYcCWDCkBKu0Nl0ckCBIfXv2El0htbpiZRSp8U5UN5PBW0gNfLKkLd6At+zGYSZk+f9Kzh/eSi4fVRQ+dkV20=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFWCEVN8s+CSJza7sDIE3hYu3zfdSJryqdufDbUWd+rrloBzR/
-	tEIKUCC0o9k+sRfdMGhbq9pVVlB7TrOppYS734PjGlhCf/UhkbyNe6tDTdHc30wfB6iWQbCu7ak
-	4JaEW1OLCKT9+en5amw9q1qgyNrahXgU=
-X-Google-Smtp-Source: AGHT+IFL9dntZ4Kq7JegAnYSa68sNCLfWKru9JguUim257NjBCxrSj6SmH2KH26Sk8rcYUY0laYzDCzO0yMX4+y3WmM=
-X-Received: by 2002:a05:6870:e242:b0:2ff:8bc7:44a9 with SMTP id
- 586e51a60fabf-314dcc311c7mr1315348fac.21.1755867061407; Fri, 22 Aug 2025
- 05:51:01 -0700 (PDT)
+	s=arc-20240116; t=1755867320; c=relaxed/simple;
+	bh=D0Y8ClmFtbC92N5dy5LowiIeylAzezGQNFrxr/qJCB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=P/qHQ6F4fdRtR4cLfP8LlaPDjV2eAzNdACJxnK2uYBX7hZmAiTvlQngKji+O5wuq3Z0Cr6HeU4C0Sts4d/ENSYO9P6UYQ1dl5zF07IIdjJfOJ3T6dLjZ2H/PwAiQ59WANrvp2ZwVCkwVES0Fze01qRO+HUR48KyOHG3NfKhwQt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cON6UGpj; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755867318; x=1787403318;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=D0Y8ClmFtbC92N5dy5LowiIeylAzezGQNFrxr/qJCB8=;
+  b=cON6UGpjykTarrvt+zLu5cgvWJ1ULxa4Fasoaq7SAE4KA2m7qHBlVH5J
+   +sOhkJkxV3iuzim6v/45g4oC/sMmrZF+HC1Mke3fa6xb9ustExz3FqMJW
+   U0k9XRUtObZ/ewIi8mYdVGlu5ANO5XjH32Mkv8/c15lJ9cfZfIGbaaGv5
+   ybdYgqqQHyoMWjKE2/OD2sOFY6xBIpqS9BNoTy4IuZhVaijPE8lBojg6S
+   UdKEcaeIte5k6Ly+5+J31bwQlsnX/MoKy1WuWM7m1JEGAI+JyOmuk2BIZ
+   AvZ2wH+MmStcTb/mDewtRNQ07uZAG9N+YVtPTPcV4A71Xq0/3GlTpyLkN
+   w==;
+X-CSE-ConnectionGUID: nJs4l++5Rp2vprvd88udKQ==
+X-CSE-MsgGUID: uJvHMM5lRQalNQ87Qu9GjA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="45744621"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="45744621"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 05:55:18 -0700
+X-CSE-ConnectionGUID: 21kgHvcnQ6mrBHpJYuFfbA==
+X-CSE-MsgGUID: lqx03yzaQ72kc64pnTB5Ng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="168208087"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 22 Aug 2025 05:55:16 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1upRIY-000LI5-1B;
+	Fri, 22 Aug 2025 12:55:14 +0000
+Date: Fri, 22 Aug 2025 20:51:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Marc Zyngier <maz@kernel.org>
+Subject: drivers/irqchip/irq-gic-v5-irs.c:571 gicv5_irs_init_bases() warn:
+ inconsistent indenting
+Message-ID: <202508222051.ebaxHZ4Z-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813185530.635096-1-srinivas.pandruvada@linux.intel.com> <20250813185530.635096-4-srinivas.pandruvada@linux.intel.com>
-In-Reply-To: <20250813185530.635096-4-srinivas.pandruvada@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 22 Aug 2025 14:50:50 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ht1Z0dDxW1hfDUBoQOWXRBD+XHTph0juRhRCAvy=Z61Q@mail.gmail.com>
-X-Gm-Features: Ac12FXwuQ-mTXPcre9cCSCDFWmzBm1aGuMluKtr_dmcwOAT1o7Gs6jf2FxOMeqE
-Message-ID: <CAJZ5v0ht1Z0dDxW1hfDUBoQOWXRBD+XHTph0juRhRCAvy=Z61Q@mail.gmail.com>
-Subject: Re: [PATCH 3/5] thermal: intel: int340x: Add module parameter for
- balanced Slider
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: rafael@kernel.org, daniel.lezcano@linaro.org, lukasz.luba@arm.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, Aug 13, 2025 at 8:55=E2=80=AFPM Srinivas Pandruvada
-<srinivas.pandruvada@linux.intel.com> wrote:
->
-> By default, the SoC slider value for the "balanced" platform profile is
-> set to 3. A new module parameter is introduced to allow users to change
-> this default value. After modifying the module parameter, users must call
-> an update to the "profile" sysfs attribute for the change to take effect.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   3957a5720157264dcc41415fbec7c51c4000fc2d
+commit: 53bb952a625fd3247647c7a28366ce990a579415 arm64: Kconfig: Enable GICv5
+date:   6 weeks ago
+config: arm64-randconfig-r071-20250822 (https://download.01.org/0day-ci/archive/20250822/202508222051.ebaxHZ4Z-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
 
-This last bit is slightly confusing.  What exactly do they need to do
-for this purpose?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508222051.ebaxHZ4Z-lkp@intel.com/
 
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> ---
->  .../processor_thermal_soc_slider.c            | 41 +++++++++++++++++++
->  1 file changed, 41 insertions(+)
->
-> diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_=
-slider.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_slid=
-er.c
-> index c492ee937dc7..ffc538c9b9e3 100644
-> --- a/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_slider.=
-c
-> +++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_slider.=
-c
-> @@ -50,6 +50,43 @@ static u8 slider_values[] =3D {
->         [SOC_POWER_SLIDER_POWERSAVE] =3D SOC_SLIDER_VALUE_MAXIMUM,
->  };
->
-> +/* Lock to protect module param updates */
-> +static DEFINE_MUTEX(slider_param_lock);
-> +
-> +static int slider_balanced_param =3D SOC_SLIDER_VALUE_BALANCE;
-> +
-> +static int slider_def_balance_set(const char *arg, const struct kernel_p=
-aram *kp)
-> +{
-> +       u8 slider_val;
-> +       int ret;
-> +
-> +       guard(mutex)(&slider_param_lock);
-> +
-> +       ret =3D kstrtou8(arg, 16, &slider_val);
-> +       if (!ret) {
-> +               if (slider_val > SOC_SLIDER_VALUE_MAXIMUM)
-> +                       return -EINVAL;
-> +
-> +               slider_balanced_param =3D slider_val;
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +static int slider_def_balance_get(char *buf, const struct kernel_param *=
-kp)
-> +{
-> +       guard(mutex)(&slider_param_lock);
-> +       return sysfs_emit(buf, "%02x\n", slider_values[SOC_POWER_SLIDER_B=
-ALANCE]);
-> +}
-> +
-> +static const struct kernel_param_ops slider_def_balance_ops =3D {
-> +       .set =3D slider_def_balance_set,
-> +       .get =3D slider_def_balance_get,
-> +};
-> +
-> +module_param_cb(slider_balance, &slider_def_balance_ops, NULL, 0644);
-> +MODULE_PARM_DESC(slider_balance, "Set slider default value for balance."=
-);
-> +
->  /* Convert from platform power profile option to SoC slider value */
->  static int convert_profile_to_power_slider(enum platform_profile_option =
-profile)
->  {
-> @@ -106,6 +143,10 @@ static int power_slider_platform_profile_set(struct =
-device *dev,
->         if (!proc_priv)
->                 return -EOPNOTSUPP;
->
-> +       guard(mutex)(&slider_param_lock);
-> +
-> +       slider_values[SOC_POWER_SLIDER_BALANCE] =3D slider_balanced_param=
-;
-> +
->         slider =3D convert_profile_to_power_slider(profile);
->         if (slider < 0)
->                 return slider;
-> --
-> 2.43.0
->
+smatch warnings:
+drivers/irqchip/irq-gic-v5-irs.c:571 gicv5_irs_init_bases() warn: inconsistent indenting
+drivers/irqchip/irq-gic-v5-its.c:267 gicv5_its_create_itt_two_level() warn: always true condition '(i >= 0) => (0-u32max >= 0)'
+drivers/irqchip/irq-gic-v5-its.c:267 gicv5_its_create_itt_two_level() warn: always true condition '(i >= 0) => (0-u32max >= 0)'
+
+vim +571 drivers/irqchip/irq-gic-v5-irs.c
+
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  542  
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  543  static void __init gicv5_irs_init_bases(struct gicv5_irs_chip_data *irs_data,
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  544  					void __iomem *irs_base,
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  545  					struct fwnode_handle *handle)
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  546  {
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  547  	struct device_node *np = to_of_node(handle);
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  548  	u32 cr0, cr1;
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  549  
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  550  	irs_data->fwnode = handle;
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  551  	irs_data->irs_base = irs_base;
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  552  
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  553  	if (of_property_read_bool(np, "dma-noncoherent")) {
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  554  		/*
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  555  		 * A non-coherent IRS implies that some cache levels cannot be
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  556  		 * used coherently by the cores and GIC. Our only option is to mark
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  557  		 * memory attributes for the GIC as non-cacheable; by default,
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  558  		 * non-cacheable memory attributes imply outer-shareable
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  559  		 * shareability, the value written into IRS_CR1_SH is ignored.
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  560  		 */
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  561  		cr1 = FIELD_PREP(GICV5_IRS_CR1_VPED_WA, GICV5_NO_WRITE_ALLOC)	|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  562  			FIELD_PREP(GICV5_IRS_CR1_VPED_RA, GICV5_NO_READ_ALLOC)	|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  563  			FIELD_PREP(GICV5_IRS_CR1_VMD_WA, GICV5_NO_WRITE_ALLOC)	|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  564  			FIELD_PREP(GICV5_IRS_CR1_VMD_RA, GICV5_NO_READ_ALLOC)	|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  565  			FIELD_PREP(GICV5_IRS_CR1_VPET_RA, GICV5_NO_READ_ALLOC)	|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  566  			FIELD_PREP(GICV5_IRS_CR1_VMT_RA, GICV5_NO_READ_ALLOC)	|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  567  			FIELD_PREP(GICV5_IRS_CR1_IST_WA, GICV5_NO_WRITE_ALLOC)	|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  568  			FIELD_PREP(GICV5_IRS_CR1_IST_RA, GICV5_NO_READ_ALLOC)	|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  569  			FIELD_PREP(GICV5_IRS_CR1_IC, GICV5_NON_CACHE)		|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  570  			FIELD_PREP(GICV5_IRS_CR1_OC, GICV5_NON_CACHE);
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03 @571  			irs_data->flags |= IRS_FLAGS_NON_COHERENT;
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  572  	} else {
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  573  		cr1 = FIELD_PREP(GICV5_IRS_CR1_VPED_WA, GICV5_WRITE_ALLOC)	|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  574  			FIELD_PREP(GICV5_IRS_CR1_VPED_RA, GICV5_READ_ALLOC)	|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  575  			FIELD_PREP(GICV5_IRS_CR1_VMD_WA, GICV5_WRITE_ALLOC)	|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  576  			FIELD_PREP(GICV5_IRS_CR1_VMD_RA, GICV5_READ_ALLOC)	|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  577  			FIELD_PREP(GICV5_IRS_CR1_VPET_RA, GICV5_READ_ALLOC)	|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  578  			FIELD_PREP(GICV5_IRS_CR1_VMT_RA, GICV5_READ_ALLOC)	|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  579  			FIELD_PREP(GICV5_IRS_CR1_IST_WA, GICV5_WRITE_ALLOC)	|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  580  			FIELD_PREP(GICV5_IRS_CR1_IST_RA, GICV5_READ_ALLOC)	|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  581  			FIELD_PREP(GICV5_IRS_CR1_IC, GICV5_WB_CACHE)		|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  582  			FIELD_PREP(GICV5_IRS_CR1_OC, GICV5_WB_CACHE)		|
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  583  			FIELD_PREP(GICV5_IRS_CR1_SH, GICV5_INNER_SHARE);
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  584  	}
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  585  
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  586  	irs_writel_relaxed(irs_data, cr1, GICV5_IRS_CR1);
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  587  
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  588  	cr0 = FIELD_PREP(GICV5_IRS_CR0_IRSEN, 0x1);
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  589  	irs_writel_relaxed(irs_data, cr0, GICV5_IRS_CR0);
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  590  	gicv5_irs_wait_for_idle(irs_data);
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  591  }
+5cb1b6dab2def3 Lorenzo Pieralisi 2025-07-03  592  
+
+:::::: The code at line 571 was first introduced by commit
+:::::: 5cb1b6dab2def316671ea2565291a86ad58b884c irqchip/gic-v5: Add GICv5 IRS/SPI support
+
+:::::: TO: Lorenzo Pieralisi <lpieralisi@kernel.org>
+:::::: CC: Marc Zyngier <maz@kernel.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
