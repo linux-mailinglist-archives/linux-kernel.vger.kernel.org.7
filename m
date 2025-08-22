@@ -1,95 +1,113 @@
-Return-Path: <linux-kernel+bounces-782197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F68B31C3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:42:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F4A4B31C9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54CFFB612E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:40:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EF84647768
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E415930AAC2;
-	Fri, 22 Aug 2025 14:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBE63112BD;
+	Fri, 22 Aug 2025 14:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/84M/Ij"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="h9VcjKIh"
+Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230363128C9;
-	Fri, 22 Aug 2025 14:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B623093C9
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 14:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755873642; cv=none; b=KZhgLAoTgXSvbHqP7SuLS/IeCEkVMkW6ni1tua7y+ovMaIFnxIZtEWqdPGAl3jmYAFlUfK+n5FiIE9/Q1r9N7+NwmiqDaqSyPxIQkMS0iObp4cYatE06NZz7hSbHrJnXbtHcsPiIIfODfveDLwOdqlKzrTWJICkfLAVAHxboRcc=
+	t=1755873684; cv=none; b=JptLhppg9tBgwA2Pj/NjHOxcYeoRjpLyMS5W08IAKziINN+MzcnNpX6567nPDZv7JLO6n/RiDExCmEwotKHU2z0C486rWLs2qP4Q4XYzIKvC0y652do1safkHym5/73JQWgunur6pTp5StqLO0/IMlhykBwd7yTwmiCKJLhLAGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755873642; c=relaxed/simple;
-	bh=bhSe5dlYJAdq6mjCeG2oMHDgFoB39cQ6nyMGPbyEMp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H97wkYkIrjWvTP8er9MjbcA/O0Y150ldRtFK/aisE3ItgcgJlPahGVmZHj36q44LNDV3EIyq7FV+/SUmFEbW1hKt8tYDUiSVMjS/9dc04FjaIgpRpTb5H9LYGAsNn5IAIesk0ezXOOcG6hco46psP2avNclodeXbWYwdiGnXZhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e/84M/Ij; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1942C4CEED;
-	Fri, 22 Aug 2025 14:40:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755873642;
-	bh=bhSe5dlYJAdq6mjCeG2oMHDgFoB39cQ6nyMGPbyEMp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e/84M/IjqLSUe0+HMVanzoXlDpTCK+nKqW9JtOBOWuLgU7/06OXafn7g3HKLAGHrR
-	 6Gy6En5shwo8oZlNxTddq8gaz0m80j55IqHfKG+w8X5eHTOl1RzD7GJUTSTOJf2PlW
-	 n0ttSArSzWQ40eIDMLf8+nMbwN3ZXe0/e3JjrBzYY5ZW8vKgzuFnTuXwA1Ru1iS3kk
-	 KP3HblmM7yMjRbIkTinI9AouRLWqlrwnUwb7ub/dB8m95/jMEUp2Mzr3WZpYkXoF32
-	 kZjuMW1TzyfNZku3dVYyTpgTjKQWjn+qxWfuSmq3O4ae6Kj8/uWIuOOtsyaEc2Fa3N
-	 73QoCyUUCVYzg==
-Date: Fri, 22 Aug 2025 09:40:40 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Julien Massot <julien.massot@collabora.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel@collabora.com,
-	Mark Brown <broonie@kernel.org>,
-	Eugen Hristev <eugen.hristev@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Chen-Yu Tsai <wenst@chromium.org>, Sean Wang <sean.wang@kernel.org>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>, Ikjoon Jang <ikjn@chromium.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Julien Massot <jmassot@collabora.com>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Weiyi Lu <weiyi.lu@mediatek.com>, linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	Enric Balletbo i Serra <eballetbo@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v2 3/6] dt-bindings: arm: mediatek: Support
- mt8183-audiosys binding variant
-Message-ID: <175587364044.3744053.7111449158430262490.robh@kernel.org>
-References: <20250820-mtk-dtb-warnings-v2-0-cf4721e58f4e@collabora.com>
- <20250820-mtk-dtb-warnings-v2-3-cf4721e58f4e@collabora.com>
+	s=arc-20240116; t=1755873684; c=relaxed/simple;
+	bh=wrqna0sZ6RMPU8gTT3h+3xAxYsH60khbZNhU4KLyBMo=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ndzg1oyh70U0P3eTNM5pm3mdQoRq81vhzAI2CJn0g7FGLbjK0nQJERBGrDfeYvppj4NIGriKSihavtH2KyUc46P0T4xaT8+TSJKw4XgHMIhPKW9yz93YWsAoQUIY/KpTnt9Wtb+LcswYPurDIbN4Myj5UAqWUPbfEu6zVF2PFAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=h9VcjKIh; arc=none smtp.client-ip=203.205.221.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1755873674; bh=AXtNgOCqWlXjJdTGIg/SbLr8Fg0oT7SoDt9nlF0FA/g=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=h9VcjKIhDFof0UpTm7x75ZEdJIeR7mshNt0X8MXdqtvddplu0c+DYhPhTte3B29Ju
+	 S0Lhoc3MsYmjwBa1llqLJUptPmQMfM5299IdlueXLqH6G0mW/8UaJ9Kw9Y8jjwQuem
+	 8QKcPk2RSLYZ0bsd06Qg57e9qwvAXDJtjDq1WPeM=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id A4812659; Fri, 22 Aug 2025 22:41:08 +0800
+X-QQ-mid: xmsmtpt1755873668tq8zjx9lz
+Message-ID: <tencent_074BFE748F778366103D0B36E0971837E809@qq.com>
+X-QQ-XMAILINFO: NAuAIaytDrXpvt3VlSnxhCwwyEuILRU9s99sYUUY10cqaSBidHw7OgAT7VZ6/C
+	 oIKGWH7S4O7gdFiqDoV90uTYbfsmJAEckQdyAhLNgb2itk3KsG+OaBgActIDxPMI3Bl36tMpoSbQ
+	 enuNwb9nQf1+TrpT35vXKrkny3jytaWoXyFou32BIptza9kPKpuoqcsEQC9Xf4a2DSDphqnvshES
+	 I85vJPLQvz6j3dVgeuf+UPk3dTaxB+y7tKRemfbfUhFm6kyEwWOLPL0hFl2bhdIVHibCBnoBmN8Y
+	 /VvlSp1bfUP1J274u5+3E+lOj0V0ev4RQgrvWS10OSqgDAAFi76XzDy1pz3bqv0xI21w1JstMtv3
+	 JqAXVSY1juTyuGS5eEXtEA2RN/yZsoBTxt0Tjv8BXAFgSJVdj0OMTOoChWa+9e5DHOOmUztPqOPt
+	 Q52xerPK6lnQjbL4TtOvrtSP9SaLrOpGluV7lELEJttDxncc/pHaMn9F2N44C9yuapqCASDnsfHB
+	 E6jw3nKRn/qh+X9wZdDVxwdW6K+liVeG5LilK7L49QUYlsVWkAIU9IT+q00MbgxOTAUMLviMyCdd
+	 FIzsgZQT9y58XyUil2cFtUdcdnTw4Zi7UvD8N6N0B+TdNCl7TAxzBynJRG17gWjf8KHC6zItC7eJ
+	 PUK5dj70UzEsv82nhsB2rlPqrFR1DdzcaayIpNEgSdiLPoEhpNOnd7bIA1ILNPbf62D6unjOwg/g
+	 rG1eGzrK/gyu7TXBXn/1M2+JHEyjhRQAm8MQ2b4uhFKnnTl+QiI4UVM4lH75/K8LIaQnl4nONoDY
+	 budczJgbtrmhsozpYh5towqS3UGhFQLkB8KjLkRMbs6eMLtvSk5nxmtFZQQO+Aa+tzrVF9StEgyj
+	 JalrNoV4IUDHEqpw9iSx5Miknmbf6/5L1gty/7d2K17OADZM2ILHr+08XHD49CvrmDHIed1hukWH
+	 1PZHEZx8gOiMzi/EnDQRX0amQcAcCMK7I25tT6hyhZLXnJxlaZZk9vzdwPVfqj
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com
+Cc: asmadeus@codewreck.org,
+	ericvh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux_oss@crudebyte.com,
+	lucho@ionkov.net,
+	syzkaller-bugs@googlegroups.com,
+	v9fs@lists.linux.dev
+Subject: [PATCH next] 9p: Correct the session info
+Date: Fri, 22 Aug 2025 22:41:06 +0800
+X-OQ-MSGID: <20250822144105.2424847-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <68a68b57.050a0220.3d78fd.0012.GAE@google.com>
+References: <68a68b57.050a0220.3d78fd.0012.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820-mtk-dtb-warnings-v2-3-cf4721e58f4e@collabora.com>
+Content-Transfer-Encoding: 8bit
 
+syz report a shift-out-of-bounds in v9fs_get_tree.
 
-On Wed, 20 Aug 2025 15:44:54 +0200, Julien Massot wrote:
-> Update the mediatek,audsys binding to support the mt8183-audiosys
-> compatible, which uses a different audio controller binding
-> (mediatek,mt8183-audio.yaml) compared to the legacy mt2701-audio
-> controller.
-> 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Julien Massot <julien.massot@collabora.com>
-> ---
->  .../bindings/arm/mediatek/mediatek,audsys.yaml           | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
+This is because the maxdata value is 0, causing fls to return 32, meaning
+the s_blocksize_bits value is 32, which causes an out of bounds error.
+The root cause of this is incorrect session information obtained during
+fill super. Since v9ses is stored in sb, it is used directly.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Fixes: 4d18c32a395d ("9p: convert to the new mount API")
+Reported-by: syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=30c83da54e948f6e9436
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/9p/vfs_super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/9p/vfs_super.c b/fs/9p/vfs_super.c
+index f6065b5e0e5d..cc2056dd0bef 100644
+--- a/fs/9p/vfs_super.c
++++ b/fs/9p/vfs_super.c
+@@ -50,7 +50,7 @@ static int v9fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ {
+ 	int ret;
+ 	struct v9fs_context	*ctx = fc->fs_private;
+-	struct v9fs_session_info *v9ses = &ctx->v9ses;
++	struct v9fs_session_info *v9ses = sb->s_fs_info;
+ 
+ 	sb->s_maxbytes = MAX_LFS_FILESIZE;
+ 	sb->s_blocksize_bits = fls(v9ses->maxdata - 1);
+-- 
+2.43.0
 
 
