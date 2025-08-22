@@ -1,223 +1,218 @@
-Return-Path: <linux-kernel+bounces-782590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD8EB3227C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:56:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC267B3227E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22C0AB21CE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:56:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A832D1D63323
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FAC22C1586;
-	Fri, 22 Aug 2025 18:56:30 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EB42C08D9;
+	Fri, 22 Aug 2025 18:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ilCwU178";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OTyH5+F1";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GH66rmLv";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uUXJRvfN"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA5E2C11D9
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E7D2C11D9
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755888989; cv=none; b=dXziHJlJLoyZvra/aH/xUoT9AvSymanvhqWUmylRfRJBs4VT5QzHW2l78eMJlnjqSIhr0kEh9/q7P6etmIGvrV0+HTUv++D/GmdCScNE0ubDvExTpLHiQarXtp9Y8K1WvZ6dblz2UEt6l9bWSEX/5fjuvXY4TMHOBnpdZtXLUGw=
+	t=1755889035; cv=none; b=o4X849fuAsaW7OK7Ybj20IBLQJpyS/ZdJiMRDubyepSCNPaiyTsYh9v2ZLJRnb11ER33ywATJ0Tew/n7c8wkHqM9FRigT5T7X8DVfCpUDrqMPIyaSjipMXk7nvjgVNl03q+cWI90T5soo8AbTuRsk2m+xqMHx1VqFC7qWjsRCig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755888989; c=relaxed/simple;
-	bh=Ry+ZP2Os2x/BMl5i1bh1GquxYlmGZDwRyRK5ppziU4M=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EbDXjPECXiaNnxuRsqTh0U5Yr0gHZtOkSCcsLjbVsqHMVMkAvNzpRMaFcTROvrKkN5rA0EzWolS5ihFQKMYKGOmY0GsNEY6a8UX/cRtUBqTDzS65LaxVXY37+6E0cix5Z7h4m8ff5gLuH/q3AnkvPbTaW0949W7FGTZuL2PB8lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3e66b7e4a94so66025945ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:56:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755888987; x=1756493787;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gO1uvurb7E5+bUOrRjbFRLqMNNGI5Dg/3J6JpBb+3S4=;
-        b=qbDmpE3kZkuownbLpcSjohxXaFLQmttFAf06AeCMLdflfvsamvGKRKaqi2Iz6LuRDK
-         x/N10tvAtYMD8nRZlZ4ArCgr5+XM/ha9GAbm0CuBUFZy3RBrMQEpc3ToUwiGEI2wiIRt
-         1OqheFVAtNPZiHAlZaprMzh56AsuEkbuARkelnFdn1mVakrN20gr+b9CPsS/2AxFObwe
-         +oD0GasXqswYMLM7AgKgJ1q5TqsQKDGwM0EBjkTAL/mDkWq1o0E8dJhglqVtJNhObTaj
-         hOy/Hpxx4BqQjXWzvY7Ny0MlC57nRxTQMyXFgQGXdOhriHt0sgViM02qhBJkQ20iB4hU
-         vC7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUkbhq2dRMMOdYTXRTNVKKoTTr+Xei1VELouS/OMyQCDa6NP+Pz3mMJPyZkJS/q2hUagiXy7k0YmxOJfvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkqmZIZ8In3Fc023KbiFBzL14ZTe8mmcW5hbxC2ka8fqfbImjk
-	toAoS3S7nusNPwGnUiZV9OITlYyuRv+eINu4kDIM5gAlXJ5UoCMuGy3h5V8DweORRAJ5Xm9RJkw
-	69i8c60ugVxtPAZc0aVkO4x7mPTQk/Gr4EkchB1OHNZym9o1wpdhoHh6u1oo=
-X-Google-Smtp-Source: AGHT+IHi9yUm+mHc7c+4BkmiVIW0r739bRnAUSs/tGpm9X2Og6PI9yNeLlFrST7C92Vb5wK7Gh0RIh+tkupOJKun9IlH1ypM8ODG
+	s=arc-20240116; t=1755889035; c=relaxed/simple;
+	bh=giCDMKL30qx4q34dX7Ti3B3plQfg8pbwQSppFciOMIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HXnj6cdTgVuzefs5zFkoqU43UsHbJrxRvwHumvujZf4A/fs+VLQU7tTWzNRvJBwAq2DgKiIKR0FiBtfCDtGgUq/8C6OpcSWQgWA196xpEE8pWZiqiYZbaMuQUyLHJmY2/6h8cG+Q8MI+BZwIp8rCkPjZcflJ2ZvmBh+3wbEwNds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ilCwU178; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OTyH5+F1; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GH66rmLv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uUXJRvfN; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 86FA31F385;
+	Fri, 22 Aug 2025 18:57:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1755889031;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K4uodZWsRYCDKGfrW7HeEdKVmutQppzEqk1lt9/yb2w=;
+	b=ilCwU178QTXZH2gkJCGDoeRvDP+tzuHiEOpzic4l79wxbK9zXorfvHK5RWxNUO15LFdDoj
+	JiP6M0XfxR99bSbb0vx2HtxdVZDOk40BCNwmT2uT0OEfau3Ix1qfMxXB1VXyQ20HjL/qcK
+	Z7zNM9ic9sgLg4oC++P1Fr28RFFSQJs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1755889031;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K4uodZWsRYCDKGfrW7HeEdKVmutQppzEqk1lt9/yb2w=;
+	b=OTyH5+F1aIfOjSRlGdAfFtd4es4heFne9ESVY4byu/N3NbMw7ExCWUeN50RY2PBBkzGWI9
+	vGh4RygISsepJtAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=GH66rmLv;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=uUXJRvfN
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1755889030;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K4uodZWsRYCDKGfrW7HeEdKVmutQppzEqk1lt9/yb2w=;
+	b=GH66rmLvSXKI2WtmIE8s4kJDJrlH6xVlj5+gH3/VFXOOjyDaNhX+NV3dGCVhjArSYwZoMC
+	Bq7IyD3dgMPOFojC+1qJEXNo2m4BolJT3yB/+8vbDA5k6IbhoQx02/5+OZ116QO0gBjvc/
+	ERijMiObVW9QJnSr8IUvHpW6jqDcFQc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1755889030;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K4uodZWsRYCDKGfrW7HeEdKVmutQppzEqk1lt9/yb2w=;
+	b=uUXJRvfNSi+5hDgDoJdIhVR5SU+/q//jCZzbVSByylOvb159LZm5EDWP5uAMDsKaxA9S5p
+	uIBM4fsaYSRMqIAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5D32E13931;
+	Fri, 22 Aug 2025 18:57:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cYqWFoa9qGgeVQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Fri, 22 Aug 2025 18:57:10 +0000
+Date: Fri, 22 Aug 2025 20:57:09 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Calvin Owens <calvin@wbinvd.org>
+Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>, Sun YangKai <sunk67188@gmail.com>,
+	clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	neelx@suse.com
+Subject: Re: [PATCH] btrfs: Accept and ignore compression level for lzo
+Message-ID: <20250822185709.GY22430@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <2022221.PYKUYFuaPT@saltykitkat>
+ <810d2b19-47ed-4902-bd8d-eb69bacbf0c6@gmx.com>
+ <aKiSpTytAOXgHan5@mozart.vkv.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:184c:b0:3e9:eec4:9b7e with SMTP id
- e9e14a558f8ab-3e9eec49f8amr30758855ab.29.1755888987328; Fri, 22 Aug 2025
- 11:56:27 -0700 (PDT)
-Date: Fri, 22 Aug 2025 11:56:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a8bd5b.050a0220.37038e.005b.GAE@google.com>
-Subject: [syzbot] [f2fs?] INFO: task hung in f2fs_llseek
-From: syzbot <syzbot+942fb6ce3ac2843a1420@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aKiSpTytAOXgHan5@mozart.vkv.me>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 86FA31F385
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmx.com,gmail.com,fb.com,suse.com,toxicpanda.com,vger.kernel.org];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[wbinvd.org:email,suse.cz:dkim,suse.cz:mid,suse.cz:replyto]
+X-Spam-Score: -4.21
 
-Hello,
+On Fri, Aug 22, 2025 at 08:54:13AM -0700, Calvin Owens wrote:
+> On Friday 08/22 at 19:53 +0930, Qu Wenruo wrote:
+> > 在 2025/8/22 19:50, Sun YangKai 写道:
+> > > > The compression level is meaningless for lzo, but before commit
+> > > > 3f093ccb95f30 ("btrfs: harden parsing of compression mount options"),
+> > > > it was silently ignored if passed.
+> > > > 
+> > > > After that commit, passing a level with lzo fails to mount:
+> > > >      BTRFS error: unrecognized compression value lzo:1
+> > > > 
+> > > > Restore the old behavior, in case any users were relying on it.
+> > > > 
+> > > > Fixes: 3f093ccb95f30 ("btrfs: harden parsing of compression mount options")
+> > > > Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+> > > > ---
+> > > > 
+> > > >   fs/btrfs/super.c | 2 +-
+> > > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> > > > index a262b494a89f..7ee35038c7fb 100644
+> > > > --- a/fs/btrfs/super.c
+> > > > +++ b/fs/btrfs/super.c
+> > > > @@ -299,7 +299,7 @@ static int btrfs_parse_compress(struct btrfs_fs_context
+> > > > *ctx,>
+> > > >   		btrfs_set_opt(ctx->mount_opt, COMPRESS);
+> > > >   		btrfs_clear_opt(ctx->mount_opt, NODATACOW);
+> > > >   		btrfs_clear_opt(ctx->mount_opt, NODATASUM);
+> > > > 
+> > > > -	} else if (btrfs_match_compress_type(string, "lzo", false)) {
+> > > > +	} else if (btrfs_match_compress_type(string, "lzo", true)) {
+> > > > 
+> > > >   		ctx->compress_type = BTRFS_COMPRESS_LZO;
+> > > >   		ctx->compress_level = 0;
+> > > >   		btrfs_set_opt(ctx->mount_opt, COMPRESS);
+> > > > 
+> > > > --
+> > > > 2.47.2
+> > > 
+> > > A possible improvement would be to emit a warning in
+> > > btrfs_match_compress_type() when @may_have_level is false but a
+> > > level is still provided. And the warning message can be something like
+> > > "Providing a compression level for {compression_type} is not supported, the
+> > > level is ignored."
+> > > 
+> > > This way:
+> > > 1. users receive a clearer hint about what happened,
+> > 
+> > I'm fine with the extra warning, but I do not believe those kind of users
+> > who provides incorrect mount option will really read the dmesg.
+> > 
+> > > 2. existing setups relying on this behavior continue to work,
+> > 
+> > Or let them fix the damn incorrect mount option.
+> 
+> You're acting like I'm asking for "compress=lzo:iamafancyboy" to keep
+> working here. I think what I proposed is a lot more reasonable than
+> that, I'm *really* surprised you feel so strongly about this.
+> 
+> In my case it was actually little ARM boards with an /etc/fstab
+> generated by templating code that didn't understand lzo is special.
+> 
+> I'm not debating that it's incorrect (I've already fixed it). But given
+> that passing the level has worked forever,
 
-syzbot found the following issue on:
-
-HEAD commit:    3957a5720157 Merge tag 'cgroup-for-6.17-rc2-fixes' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13e20c42580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
-dashboard link: https://syzkaller.appspot.com/bug?extid=942fb6ce3ac2843a1420
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17db07bc580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12f62a34580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c5cbe8650b9a/disk-3957a572.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/51911bea9855/vmlinux-3957a572.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b07279b5fcc2/bzImage-3957a572.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/f35e0e9a079a/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=10a5dfa2580000)
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+942fb6ce3ac2843a1420@syzkaller.appspotmail.com
-
-INFO: task syz.1.23:6086 blocked for more than 143 seconds.
-      Tainted: G        W           syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.1.23        state:D stack:29352 pid:6086  tgid:6081  ppid:6062   task_flags:0x400040 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- rt_mutex_schedule+0x77/0xf0 kernel/sched/core.c:7339
- rt_mutex_slowlock_block kernel/locking/rtmutex.c:1647 [inline]
- __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
- __rt_mutex_slowlock_locked+0x1e04/0x25e0 kernel/locking/rtmutex.c:1760
- __rwbase_read_lock+0xbc/0x180 kernel/locking/rwbase_rt.c:114
- rwbase_read_lock kernel/locking/rwbase_rt.c:147 [inline]
- __down_read kernel/locking/rwsem.c:1466 [inline]
- down_read+0x127/0x1f0 kernel/locking/rwsem.c:1539
- inode_lock_shared include/linux/fs.h:884 [inline]
- f2fs_seek_block fs/f2fs/file.c:458 [inline]
- f2fs_llseek+0x1e5/0x1840 fs/f2fs/file.c:545
- vfs_llseek fs/read_write.c:389 [inline]
- ksys_lseek fs/read_write.c:402 [inline]
- __do_sys_lseek fs/read_write.c:412 [inline]
- __se_sys_lseek fs/read_write.c:410 [inline]
- __x64_sys_lseek+0x155/0x1f0 fs/read_write.c:410
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7c9077ebe9
-RSP: 002b:00007f7c8fdcd038 EFLAGS: 00000246 ORIG_RAX: 0000000000000008
-RAX: ffffffffffffffda RBX: 00007f7c909a6090 RCX: 00007f7c9077ebe9
-RDX: 0000000000000004 RSI: 0000000000000008 RDI: 0000000000000004
-RBP: 00007f7c90801e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f7c909a6128 R14: 00007f7c909a6090 R15: 00007fffeb5fe138
- </TASK>
-INFO: lockdep is turned off.
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 39 Comm: khungtaskd Tainted: G        W           syzkaller #0 PREEMPT_{RT,(full)} 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
- watchdog+0xf93/0xfe0 kernel/hung_task.c:491
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 6274 Comm: syz.3.43 Tainted: G        W           syzkaller #0 PREEMPT_{RT,(full)} 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:unwind_next_frame+0x175d/0x2390 arch/x86/kernel/unwind_orc.c:648
-Code: 28 84 c0 0f 85 19 0b 00 00 48 89 d0 48 c1 e8 03 0f b6 04 28 84 c0 0f 85 2b 0b 00 00 48 0f bf 03 49 01 c4 49 8d 56 40 4c 89 f7 <4c> 89 e6 eb 5d 49 8d 5e 40 48 89 d8 48 c1 e8 03 80 3c 28 00 74 08
-RSP: 0018:ffffc90003b06438 EFLAGS: 00000283
-RAX: fffffffffffffff0 RBX: ffffffff8fd32106 RCX: 0000000000000000
-RDX: ffffc90003b06548 RSI: 0000000000000001 RDI: ffffc90003b06508
-RBP: dffffc0000000000 R08: ffffc90003b06567 R09: 0000000000000000
-R10: ffffc90003b06558 R11: fffff52000760cad R12: ffffc90003b069d0
-R13: ffffc90003b06558 R14: ffffc90003b06508 R15: 1ffffffff1fa6421
-FS:  00007f0008c3c6c0(0000) GS:ffff8881268c4000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8cae82bf98 CR3: 000000005b1bc000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- arch_stack_walk+0x11c/0x150 arch/x86/kernel/stacktrace.c:25
- stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
- kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
- kasan_record_aux_stack+0xbd/0xd0 mm/kasan/generic.c:548
- slab_free_hook mm/slub.c:2378 [inline]
- slab_free mm/slub.c:4680 [inline]
- kmem_cache_free+0x3ef/0x510 mm/slub.c:4782
- f2fs_read_end_io+0x398/0x9d0 fs/f2fs/data.c:-1
- f2fs_submit_page_read+0x116/0x190 fs/f2fs/data.c:1110
- f2fs_get_read_data_folio+0x4a4/0x7d0 fs/f2fs/data.c:1268
- gc_data_segment fs/f2fs/gc.c:1641 [inline]
- do_garbage_collect+0x3898/0x6410 fs/f2fs/gc.c:1826
- f2fs_gc+0xca9/0x2580 fs/f2fs/gc.c:1931
- f2fs_balance_fs+0x5fb/0x7f0 fs/f2fs/segment.c:466
- f2fs_map_blocks+0x345f/0x4130 fs/f2fs/data.c:1792
- f2fs_expand_inode_data+0x5b1/0xa60 fs/f2fs/file.c:1923
- f2fs_fallocate+0x4f8/0x990 fs/f2fs/file.c:2026
- vfs_fallocate+0x672/0x7f0 fs/open.c:342
- ioctl_preallocate fs/ioctl.c:290 [inline]
- file_ioctl+0x61d/0x780 fs/ioctl.c:-1
- do_vfs_ioctl+0xb36/0x1440 fs/ioctl.c:577
- __do_sys_ioctl fs/ioctl.c:596 [inline]
- __se_sys_ioctl+0x82/0x170 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f000960ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f0008c3c038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f0009836180 RCX: 00007f000960ebe9
-RDX: 0000200000000000 RSI: 0000000040305828 RDI: 0000000000000005
-RBP: 00007f0009691e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f0009836218 R14: 00007f0009836180 R15: 00007ffee123ac28
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Which is the reason to restore accepting the level, it's observable
+behaviour and it also has impact on functionality when the mount fails.
 
