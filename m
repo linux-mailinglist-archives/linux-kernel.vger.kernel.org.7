@@ -1,195 +1,436 @@
-Return-Path: <linux-kernel+bounces-781792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3736B316CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:02:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED5EFB316D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 347767B23E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:00:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9228AE7EE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B71F2F90ED;
-	Fri, 22 Aug 2025 12:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6022FABE8;
+	Fri, 22 Aug 2025 12:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="D05sy7mU"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VcljSDg6"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B31E17B402;
-	Fri, 22 Aug 2025 12:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB9F28AB1E
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755864131; cv=none; b=bIp4w8Z9ot0Bumkgj6i90BDW5+yPderlxJfH24wVLY+6ZWD1hBRf2Nl4VH6YP1myyG1m/kRcIGSYDx3HVZHSd5WwbrCOlJSC6wTQpY055qtizI7vo9XVpmngkz+OhpdUw4Fz6Ax/TXdqO6WG6QZaZTmQrIexcQDkAaiLTQVvugE=
+	t=1755864141; cv=none; b=YfMrOHnPlmoe0M0i/IC4RQ+2+4ccGKoHzuTgH0rGyv2o2z79scoi1eQQDRfs8kAC1J2Mmuh9yaY8/ZHsjX+8nNqLhtJUk7Vy3TwB25jxM9WWKc5v1vykFrxFQQ02IZbrF5Bj9AgFTS3puNypJrnA1nHizfOodNomWVjL94VzX0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755864131; c=relaxed/simple;
-	bh=oiw6zqSGckEv8r9kq0C9HN50WKjtTtL9z1NPZus69jg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uVSCLoHcDMBcqY9jLfiF/ucyrYLyCHNSSjSYqHPKWN15kMevQaH0wRXM4Ri7jfVhYwjU+tzA6x4/j40HfAZqRPX5EX6XSVowfC2PrEInG+fx3lbgtTaxaNgJRWgDAFpvlx+5lXeHKyDHtik1ONNnIKWGy+pLV6gCBh5iCBP1jqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=D05sy7mU; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1755864127; x=1756468927; i=w_armin@gmx.de;
-	bh=oiw6zqSGckEv8r9kq0C9HN50WKjtTtL9z1NPZus69jg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=D05sy7mUI7fSb4wD3Qya0nOJqpZK31kBzZtlfVWW7lKxt302e9AdFtbtGwI8u3iI
-	 HmtT+KSlz1GsXojPr2CUdzn8OlvL0W5gQXKGUzanew9eGgBfm9DK98jNFQU0rde5k
-	 cvZdCOFlMomjoDBiz0As1F8ld3QSPlHweUfUcAJ927GS+S1C4RdOZRJBCHCp1FbqT
-	 xxZFCaX7OYGZ4+hCn9BG5Uux36FX7nWssFHSl3el+BpZYuGh0Li1NpoKp5YJLJBJN
-	 /iY0wXGIAfauWCbOanvrgaz1mwAmILblc1AX4ZzBFYngjFrHRUokeh22pgpR7MCz+
-	 SMiSgOg0cUTSkNk01w==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [10.189.91.1] ([176.5.63.45]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1McH5a-1uFFli3HDw-00cJgF; Fri, 22
- Aug 2025 14:02:07 +0200
-Message-ID: <400ad8a1-eb7f-4737-9434-62aad120ef4a@gmx.de>
-Date: Fri, 22 Aug 2025 14:02:01 +0200
+	s=arc-20240116; t=1755864141; c=relaxed/simple;
+	bh=hmsFha62hBYxNEmWQE2a9XRWH3IZz4cwWzWGkhDYQzc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ka0eP8cyNpJICmd8c2vb+gzyXUtKKnMrP7iUVU98etJdJV2RthhfA6q4D25cxp9qcoeYcRrPhBkpJUl2ToUoEA29PpNHkEwnBAOBgBOjyHyFKPCf+DvLqajJT6U1NXQx+RvlrggkDMceCeI60uinCwI+UfM1YacUPt6frflJi7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VcljSDg6; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a20c51c40so16609675e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:02:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755864136; x=1756468936; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8SWI9DLP5lStpnCjpTkxBn8nTBRDdls4+/CPBAumrqk=;
+        b=VcljSDg6BnWlwsB+FGhsr+W8tbUYtad0qSheSAaBGsTHBWyb07eOCUfqUt3aYlLGfc
+         tcj9UBXLpTQl3Z0NRoYnk3DEuAUcawV/VjJQZR0tjOzd7Y7t0Cjz3oBpNaB4M3ou92uc
+         aQAffZa2RHSqC1nx38VzPK2mQotxMHRlDDPBcmH0cbhsrmyRvUE3dFi04dppMUQ8l1If
+         x9Daqj1jUqM7RGOv5MsmVGDx2EFgCYUL1+nbakS27t7v3gTe/Am5waWClVn6bSgVMz5+
+         Q0SwRC2R/SMrpTlGM3PHnvTDhs9O97MIA9NdyryI8ifJAWa1x9N+IdMykL8v3z3tHxUh
+         FkKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755864136; x=1756468936;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8SWI9DLP5lStpnCjpTkxBn8nTBRDdls4+/CPBAumrqk=;
+        b=iuxZjPuaGAYdML7jU5zcVAzFOkdRkw8nXsNcjvL0xculY18zIVBIgTeY6GMCYUiR7L
+         gjNqM0SuZLPRKfASstL+nLAYLcnqfXEgX5ppLsUdCbhphjMU8yAuGHzHwMZ9hLo+qPJL
+         sUkzQJf67pAVaQslwZBaIMcjq3cJHgX2iYUhZK9fcDRmVQFkLzCVM9A+ALnj+7k+gbOa
+         4FfYZchIg5ajUT+1XrShqZygbxHNt5rZ3AxvRf/edf196/3OmQN3GgI62zsLfXX4NjjD
+         tdOptMdw6UyZ7WiIub6t4EWEUszJnuJF2QTVS0s++PLg6qpzyC2j54JAPXmVULdoCCqM
+         OJsA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjx1L7SkjsJMdx6nIpc4XVwh6Yg2gHjxJgG16S+w1DDzYTG8voL6UDAd1rks6QqqkL4WDiJ0mew6aQOP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywpn09NTM3Vc8wS6703p3xsqWqxT9PfmNyAFymFjy1PASuHl8dH
+	bLZ4FSCY54wHWn0dv98dtYfB1KY/6vnSmrcq46Zdq2xPPTpao4JkwrPGTXs49r1AQa4=
+X-Gm-Gg: ASbGncsgN588JeolIANZe0wua/+5AX6Add8U/k32aZjc/UIUiPSL2092jr4NZtNw9tc
+	T4fg7FADwH9LCvkFRbev5hNGv6AJ6vReL+jhS1MlLkgGAZzWGNP0/Ap5dQZtGEFQPapdaTBmeXJ
+	+ApW0uNBpCDC7l7ZEeUeyx2pHst9UxBo/8YCfklMzEgIly2F2uoPYxDCVBnuCnpZ1urV5j7lyTh
+	xso+CWM7IIAa0xmrietsyrgddA7fRYMAfcjYBJ42IoSWHi1JH60foHRUmfjwKukpEzW5unwGiZv
+	JU1/gJp5hQKhFgpaqgDkuEmLtYqsp+7hc3RRucUhva0vF0m5aZgtsEP/R6Eyf5kySg/LHKlZsjF
+	Q+tRSG43CkYZeX/N3+qRwzjig6WfL3b5PfK8NEMs2KXc=
+X-Google-Smtp-Source: AGHT+IH83B7ODFHyYMcRtllawZ/lAAKJpqszR+2hPDA2zmKCFTwOE62vwh3/S58f0KI5rcPBHd6VVg==
+X-Received: by 2002:a05:600c:1912:b0:453:8bc7:5cbb with SMTP id 5b1f17b1804b1-45b517d2885mr23835645e9.25.1755864135688;
+        Fri, 22 Aug 2025 05:02:15 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b50e2fb15sm36836465e9.12.2025.08.22.05.02.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 05:02:14 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Fri, 22 Aug 2025 14:02:10 +0200
+Subject: [PATCH] media: iris: add VPU33 specific encoding buffer
+ calculation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 0/3] platform/x86: acer-wmi: Add fan control
- support
-To: Fa-Iz Faadhillah Ibrahim <faiz.faadhillah@gmail.com>
-Cc: basak.sb2006@gmail.com, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com, jlee@suse.com, kuurtb@gmail.com,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- rayanmargham4@gmail.com
-References: <f5d8b82d-c711-4611-b257-b4297f172bb1@gmx.de>
- <81e92b2d-825d-4455-9042-474c66c91120@gmail.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <81e92b2d-825d-4455-9042-474c66c91120@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:KPqD7HeKhqi+dKBzLfcTvRJZQjT+kNBJreepmXI5/Zlp/7qCb8z
- sx62zcXwhMyLnMtdv0w0YO+1Y9qX554gIx4KdFEhTUHKnFXgk2fXwcSRdY8gJY/BZaOTGqJ
- +8HQ1OWIz4eLk0ruyvVQVDBUV4PZ1T0MVRsVftS4FDEfJ8uYIneK21/W+ilo+dsoPSZkybG
- jZwO+n/+vw+ULkb+PLwvw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:vGbGaNJEPhM=;UzgWxI4ZvaIW+MbNzVahe/FZRcD
- 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
- O2xzsCQ=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250822-topic-sm8x50-iris-encoder-v3-hevc-debug-v1-1-633d904ff7d3@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAEJcqGgC/x3NywrCMBBG4Vcps3YgF4vBVxEXmvxtZ2FSMjYUS
+ t/d4PLbnHOQogqU7sNBFU1USu6wl4Hi8sozWFI3OeNGE5zjb1klsn7CPhqWKsrIsSRUbp4XtMg
+ J721ma+zNT9fgAzz12loxyf4/PZ7n+QO9hskIeQAAAA==
+X-Change-ID: 20250822-topic-sm8x50-iris-encoder-v3-hevc-debug-10173f4838e3
+To: Vikash Garodia <quic_vgarodia@quicinc.com>, 
+ Dikshita Agarwal <quic_dikshita@quicinc.com>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=14244;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=hmsFha62hBYxNEmWQE2a9XRWH3IZz4cwWzWGkhDYQzc=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBoqFxFuAG85JO+w/yQnIH5DAQjGs5Anai9Nbhl9DEj
+ bo9bW8iJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaKhcRQAKCRB33NvayMhJ0S4rEA
+ C2AIq8pfqC150XrD7K1L/9Px7X3KTEN97Enuqy2Xh1YHbYQQLsFUH0CdkXN+U36TptNO91aDPs+vJg
+ Qq1FjBFHqo1mDwlWBDxjhPV9F8ull7pEnau0uzV5fi3DtIp8VwLDLrSPSTKZ+bBp5bB7TUXr/59b0I
+ NOcvwRnCSY3TQInBBQl+MPC5G0fwEk0QK33sVo7WJV7N6HMvmOp/ArbWLEp/vIL8QmcKsNjPmd83fQ
+ ijSb7NNBGOMR/W3pbSh2SUrnzQr6v/mLtDke0x+kdqVf+NGr5kod25Zx3XRfAcBxK6MXhJmgEy/5RR
+ E3BbeggmeWn7jLwZ1lL0527Bg7KHS82HTt+2dIuyezqevmnvjoEC92Zz0w6IdzmF+H4ME7DRX9c/vt
+ pOxKshhVtle5/Ed+UYUKY78eeEgl3oRZKPDmmrBHu5E69XeieBTtX1KAvrI6S78CU2wTLrI+tcbcn4
+ qDMBy/nYGsC6XDGakjbGpl8TdHgfed6vbMIVEOK4x0C1LgNtuUFS9ZiBGx/T8QvFZMZc/81W6rxISr
+ De9nFfb4dS7xHBS3hmO2Q/NmBP8QkYJMcgDCofZJeDsDyLA5c0ZO0d6fNTD/giUudpCCoTbcASJ2rP
+ /9zPSkMvco/HXygpW1GU79Ha1id9rAtqWEuIl+bqZrPKMHIwCBucw5LTW0Tg==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-Am 15.08.25 um 08:17 schrieb Fa-Iz Faadhillah Ibrahim:
+The VPU33 found in the SM8650 Platform requires some slighly different
+buffer calculation for encoding to allow working with the latest
+firwware uploaded on linux-firmware at [1].
 
->> > This experimental patch series aims to add fan control support to=20
->> the > acer-wmi driver. The patches are compile-tested only and need=20
->> to be > tested on real hardware to verify that they actually work. >=20
->> > I CCed two users who requested support for this feature. I would be=
-=20
->> > very happy if both of you could test those patches and report back.=
-=20
->> > > I am ready to help you both with compiling a custom linux kernel=20
->> for > testing this series.
->> Any updates from the two people with Acer hardware?
->>
->> Thanks,
->> Armin Wolf
->
-> Hello, I've tried your patch on my Predator Helios Neo 16 (PHN16-72)
-> using quirks from PH16-72 and it looks like fan control works just fine.
-> On other note, can you please add PHN16-72 to the quirk table?
-> if you need anything to test please do notify.
->
-> Thanks,
-> Fa-Iz Faadhillah Ibrahim
->
-Hi,
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/commit/?id=ece445af91bbee49bf0d8b23c2b99b596ae6eac7
 
-sorry for taking a bit long to respond, i am currently on vacation. Nice t=
-o know that the experimental patches work :).
-Can you send me the output of "acpidump" on your machine?
+Suggested-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+[2] https://lore.kernel.org/all/20250820-iris-video-encoder-v3-0-80ab0ba58b3d@quicinc.com/
+---
+ drivers/media/platform/qcom/iris/iris_buffer.c     |   2 +-
+ .../platform/qcom/iris/iris_hfi_gen1_command.c     |   2 +-
+ .../platform/qcom/iris/iris_platform_common.h      |   2 +
+ .../media/platform/qcom/iris/iris_platform_gen2.c  |   4 +
+ .../platform/qcom/iris/iris_platform_sm8250.c      |   2 +
+ drivers/media/platform/qcom/iris/iris_vpu_buffer.c | 118 ++++++++++++++++++++-
+ drivers/media/platform/qcom/iris/iris_vpu_buffer.h |   4 +-
+ 7 files changed, 127 insertions(+), 7 deletions(-)
 
-Thanks,
-Armin Wolf
+diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/media/platform/qcom/iris/iris_buffer.c
+index 8891a297d384b018b3cc8313ad6416db6317798b..c0900038e7defccf7de3cb60e17c71e36a0e8ead 100644
+--- a/drivers/media/platform/qcom/iris/iris_buffer.c
++++ b/drivers/media/platform/qcom/iris/iris_buffer.c
+@@ -284,7 +284,7 @@ static void iris_fill_internal_buf_info(struct iris_inst *inst,
+ {
+ 	struct iris_buffers *buffers = &inst->buffers[buffer_type];
+ 
+-	buffers->size = iris_vpu_buf_size(inst, buffer_type);
++	buffers->size = inst->core->iris_platform_data->get_vpu_buffer_size(inst, buffer_type);
+ 	buffers->min_count = iris_vpu_buf_count(inst, buffer_type);
+ }
+ 
+diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+index 29cf392ca2566da286ea3e928ce4a22c2e970cc8..e1788c266bb1080921f17248fd5ee60156b3143d 100644
+--- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
++++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+@@ -911,7 +911,7 @@ static int iris_hfi_gen1_set_bufsize(struct iris_inst *inst, u32 plane)
+ 
+ 	if (iris_split_mode_enabled(inst)) {
+ 		bufsz.type = HFI_BUFFER_OUTPUT;
+-		bufsz.size = iris_vpu_buf_size(inst, BUF_DPB);
++		bufsz.size = inst->core->iris_platform_data->get_vpu_buffer_size(inst, BUF_DPB);
+ 
+ 		ret = hfi_gen1_set_property(inst, ptype, &bufsz, sizeof(bufsz));
+ 		if (ret)
+diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
+index 96fa7b1bb592441e85664da408ea4ba42c9a15b5..7057c4cd1a9ebefa02c855014e5f19993da58e38 100644
+--- a/drivers/media/platform/qcom/iris/iris_platform_common.h
++++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
+@@ -7,6 +7,7 @@
+ #define __IRIS_PLATFORM_COMMON_H__
+ 
+ #include <linux/bits.h>
++#include "iris_buffer.h"
+ 
+ struct iris_core;
+ struct iris_inst;
+@@ -189,6 +190,7 @@ struct iris_platform_data {
+ 	void (*init_hfi_command_ops)(struct iris_core *core);
+ 	void (*init_hfi_response_ops)(struct iris_core *core);
+ 	struct iris_inst *(*get_instance)(void);
++	u32 (*get_vpu_buffer_size)(struct iris_inst *inst, enum iris_buffer_type buffer_type);
+ 	const struct vpu_ops *vpu_ops;
+ 	void (*set_preset_registers)(struct iris_core *core);
+ 	const struct icc_info *icc_tbl;
+diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+index cf4b92f534b272a0a1ac2a0e7bb9316501374332..78a04e76de7c00703b84bd3c1c6e9a884ee7cebe 100644
+--- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
++++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+@@ -8,6 +8,7 @@
+ #include "iris_hfi_gen2.h"
+ #include "iris_hfi_gen2_defines.h"
+ #include "iris_platform_common.h"
++#include "iris_vpu_buffer.h"
+ #include "iris_vpu_common.h"
+ 
+ #include "iris_platform_qcs8300.h"
+@@ -738,6 +739,7 @@ struct iris_platform_data sm8550_data = {
+ 	.get_instance = iris_hfi_gen2_get_instance,
+ 	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
+ 	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
++	.get_vpu_buffer_size = iris_vpu_buf_size,
+ 	.vpu_ops = &iris_vpu3_ops,
+ 	.set_preset_registers = iris_set_sm8550_preset_registers,
+ 	.icc_tbl = sm8550_icc_table,
+@@ -827,6 +829,7 @@ struct iris_platform_data sm8650_data = {
+ 	.get_instance = iris_hfi_gen2_get_instance,
+ 	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
+ 	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
++	.get_vpu_buffer_size = iris_vpu33x_buf_size,
+ 	.vpu_ops = &iris_vpu33_ops,
+ 	.set_preset_registers = iris_set_sm8550_preset_registers,
+ 	.icc_tbl = sm8550_icc_table,
+@@ -916,6 +919,7 @@ struct iris_platform_data qcs8300_data = {
+ 	.get_instance = iris_hfi_gen2_get_instance,
+ 	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
+ 	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
++	.get_vpu_buffer_size = iris_vpu_buf_size,
+ 	.vpu_ops = &iris_vpu3_ops,
+ 	.set_preset_registers = iris_set_sm8550_preset_registers,
+ 	.icc_tbl = sm8550_icc_table,
+diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+index 978d0130d43b5f6febb65430a9bbe3932e8f24df..16486284f8acccf6a95a27f6003e885226e28f4d 100644
+--- a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
++++ b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+@@ -9,6 +9,7 @@
+ #include "iris_resources.h"
+ #include "iris_hfi_gen1.h"
+ #include "iris_hfi_gen1_defines.h"
++#include "iris_vpu_buffer.h"
+ #include "iris_vpu_common.h"
+ 
+ #define BITRATE_MIN		32000
+@@ -317,6 +318,7 @@ struct iris_platform_data sm8250_data = {
+ 	.get_instance = iris_hfi_gen1_get_instance,
+ 	.init_hfi_command_ops = &iris_hfi_gen1_command_ops_init,
+ 	.init_hfi_response_ops = iris_hfi_gen1_response_ops_init,
++	.get_vpu_buffer_size = iris_vpu_buf_size,
+ 	.vpu_ops = &iris_vpu2_ops,
+ 	.set_preset_registers = iris_set_sm8250_preset_registers,
+ 	.icc_tbl = sm8250_icc_table,
+diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+index 7337d8d33715810669399d9f86b864d0eb002897..5658acf371506d1190e885986d362b2731b0660e 100644
+--- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
++++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+@@ -867,6 +867,34 @@ u32 size_vpss_line_buf(u32 num_vpp_pipes_enc, u32 frame_height_coded,
+ 		      (((((max_t(u32, (frame_width_coded),
+ 				 (frame_height_coded)) + 3) >> 2) << 5) + 256) * 16)), 256);
+ }
++static inline
++u32 size_vpss_line_buf_vpu33x(u32 num_vpp_pipes_enc, u32 frame_height_coded,
++			      u32 frame_width_coded)
++{
++	u32 vpss_4tap_top = 0, vpss_4tap_left = 0, vpss_div2_top = 0;
++	u32 vpss_div2_left = 0, vpss_top_lb = 0, vpss_left_lb = 0;
++	u32 size_left = 0, size_top = 0;
++
++	vpss_4tap_top = (max_t(u32, frame_width_coded, frame_height_coded) * 2) + 3;
++	vpss_4tap_top >>= 2;
++	vpss_4tap_top <<= 4;
++	vpss_4tap_top += 256;
++	vpss_4tap_left = (((8192 + 3) >> 2) << 5) + 64;
++	vpss_div2_top = max_t(u32, frame_width_coded, frame_height_coded) + 3;
++	vpss_div2_top >>= 2;
++	vpss_div2_top <<= 4;
++	vpss_div2_top += 256;
++	vpss_div2_left = (max_t(u32, frame_width_coded, frame_height_coded) * 2) + 3;
++	vpss_div2_left >>= 2;
++	vpss_div2_left <<= 5;
++	vpss_div2_left += 64;
++	vpss_top_lb = (frame_width_coded + 1) << 3;
++	vpss_left_lb = (frame_height_coded << 3) * num_vpp_pipes_enc;
++	size_left = (vpss_4tap_left + vpss_div2_left) * 2 * num_vpp_pipes_enc;
++	size_top = (vpss_4tap_top + vpss_div2_top) * 2;
++
++	return ALIGN(size_left + size_top + vpss_top_lb + vpss_left_lb, DMA_ALIGNMENT);
++}
+ 
+ static inline
+ u32 size_top_line_buf_first_stg_sao(u32 frame_width_coded)
+@@ -975,9 +1003,17 @@ static u32 iris_vpu_enc_non_comv_size(struct iris_inst *inst)
+ 				       lcu_size, HFI_CODEC_ENCODE_AVC);
+ }
+ 
++static u32 iris_vpu33x_enc_non_comv_size(struct iris_inst *inst)
++{
++	if (inst->codec == V4L2_PIX_FMT_HEVC)
++		return iris_vpu_enc_non_comv_size(inst) + SIZE_ONE_SLICE_BUF;
++
++	return iris_vpu_enc_non_comv_size(inst);
++}
++
+ static inline
+-u32 hfi_buffer_line_enc(u32 frame_width, u32 frame_height, bool is_ten_bit,
+-			u32 num_vpp_pipes_enc, u32 lcu_size, u32 standard)
++u32 hfi_buffer_line_enc_base(u32 frame_width, u32 frame_height, bool is_ten_bit,
++			     u32 num_vpp_pipes_enc, u32 lcu_size, u32 standard)
+ {
+ 	u32 width_in_lcus = ((frame_width) + (lcu_size) - 1) / (lcu_size);
+ 	u32 height_in_lcus = ((frame_height) + (lcu_size) - 1) / (lcu_size);
+@@ -1017,10 +1053,38 @@ u32 hfi_buffer_line_enc(u32 frame_width, u32 frame_height, bool is_ten_bit,
+ 		line_buff_recon_pix_size +
+ 		size_left_linebuff_ctrl_fe(frame_height_coded, num_vpp_pipes_enc) +
+ 		size_line_buf_sde(frame_width_coded) +
+-		size_vpss_line_buf(num_vpp_pipes_enc, frame_height_coded, frame_width_coded) +
+ 		size_top_line_buf_first_stg_sao(frame_width_coded);
+ }
+ 
++static inline
++u32 hfi_buffer_line_enc(u32 frame_width, u32 frame_height, bool is_ten_bit,
++			u32 num_vpp_pipes_enc, u32 lcu_size, u32 standard)
++{
++	u32 width_in_lcus = ((frame_width) + (lcu_size) - 1) / (lcu_size);
++	u32 height_in_lcus = ((frame_height) + (lcu_size) - 1) / (lcu_size);
++	u32 frame_height_coded = height_in_lcus * (lcu_size);
++	u32 frame_width_coded = width_in_lcus * (lcu_size);
++
++	return hfi_buffer_line_enc_base(frame_width, frame_height, is_ten_bit,
++					num_vpp_pipes_enc, lcu_size, standard) +
++		size_vpss_line_buf(num_vpp_pipes_enc, frame_height_coded, frame_width_coded);
++}
++
++static inline
++u32 hfi_buffer_line_enc_vpu33x(u32 frame_width, u32 frame_height, bool is_ten_bit,
++			       u32 num_vpp_pipes_enc, u32 lcu_size, u32 standard)
++{
++	u32 width_in_lcus = ((frame_width) + (lcu_size) - 1) / (lcu_size);
++	u32 height_in_lcus = ((frame_height) + (lcu_size) - 1) / (lcu_size);
++	u32 frame_height_coded = height_in_lcus * (lcu_size);
++	u32 frame_width_coded = width_in_lcus * (lcu_size);
++
++	return hfi_buffer_line_enc_base(frame_width, frame_height, is_ten_bit,
++					num_vpp_pipes_enc, lcu_size, standard) +
++		size_vpss_line_buf_vpu33x(num_vpp_pipes_enc, frame_height_coded,
++					  frame_width_coded);
++}
++
+ static u32 iris_vpu_enc_line_size(struct iris_inst *inst)
+ {
+ 	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
+@@ -1039,6 +1103,24 @@ static u32 iris_vpu_enc_line_size(struct iris_inst *inst)
+ 				   lcu_size, HFI_CODEC_ENCODE_AVC);
+ }
+ 
++static u32 iris_vpu33x_enc_line_size(struct iris_inst *inst)
++{
++	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
++	struct v4l2_format *f = inst->fmt_dst;
++	u32 height = f->fmt.pix_mp.height;
++	u32 width = f->fmt.pix_mp.width;
++	u32 lcu_size = 16;
++
++	if (inst->codec == V4L2_PIX_FMT_HEVC) {
++		lcu_size = 32;
++		return hfi_buffer_line_enc_vpu33x(width, height, 0, num_vpp_pipes,
++						  lcu_size, HFI_CODEC_ENCODE_HEVC);
++	}
++
++	return hfi_buffer_line_enc_vpu33x(width, height, 0, num_vpp_pipes,
++					  lcu_size, HFI_CODEC_ENCODE_AVC);
++}
++
+ static inline
+ u32 hfi_buffer_dpb_enc(u32 frame_width, u32 frame_height, bool is_ten_bit)
+ {
+@@ -1386,7 +1468,7 @@ struct iris_vpu_buf_type_handle {
+ 	u32 (*handle)(struct iris_inst *inst);
+ };
+ 
+-int iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type)
++u32 iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type)
+ {
+ 	const struct iris_vpu_buf_type_handle *buf_type_handle_arr = NULL;
+ 	u32 size = 0, buf_type_handle_size = 0, i;
+@@ -1430,6 +1512,34 @@ int iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type)
+ 	return size;
+ }
+ 
++u32 iris_vpu33x_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type)
++{
++	u32 size = 0, i;
++
++	static const struct iris_vpu_buf_type_handle enc_internal_buf_type_handle[] = {
++		{BUF_BIN,         iris_vpu_enc_bin_size         },
++		{BUF_COMV,        iris_vpu_enc_comv_size        },
++		{BUF_NON_COMV,    iris_vpu33x_enc_non_comv_size },
++		{BUF_LINE,        iris_vpu33x_enc_line_size     },
++		{BUF_ARP,         iris_vpu_enc_arp_size         },
++		{BUF_VPSS,        iris_vpu_enc_vpss_size        },
++		{BUF_SCRATCH_1,   iris_vpu_enc_scratch1_size    },
++		{BUF_SCRATCH_2,   iris_vpu_enc_scratch2_size    },
++	};
++
++	if (inst->domain == DECODER)
++		return iris_vpu_buf_size(inst, buffer_type);
++
++	for (i = 0; i < ARRAY_SIZE(enc_internal_buf_type_handle); i++) {
++		if (enc_internal_buf_type_handle[i].type == buffer_type) {
++			size = enc_internal_buf_type_handle[i].handle(inst);
++			break;
++		}
++	}
++
++	return size;
++}
++
+ static u32 internal_buffer_count(struct iris_inst *inst,
+ 				 enum iris_buffer_type buffer_type)
+ {
+diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.h b/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
+index 1ff1b07ecbaa85345ca948affeb1c4a1c55e36b0..e4fd1fcf2dbf25e69d55599a8fd4ad775f9e6575 100644
+--- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
++++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
+@@ -41,6 +41,7 @@ struct iris_inst;
+ #define SIZE_SLIST_BUF_H265 (BIT(10))
+ #define H265_DISPLAY_BUF_SIZE (3072)
+ #define H265_NUM_FRM_INFO (48)
++#define SIZE_ONE_SLICE_BUF 256
+ 
+ #define VP9_NUM_FRAME_INFO_BUF 32
+ #define VP9_NUM_PROBABILITY_TABLE_BUF (VP9_NUM_FRAME_INFO_BUF + 4)
+@@ -145,7 +146,8 @@ static inline u32 size_h264d_qp(u32 frame_width, u32 frame_height)
+ 	return DIV_ROUND_UP(frame_width, 64) * DIV_ROUND_UP(frame_height, 64) * 128;
+ }
+ 
+-int iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type);
++u32 iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type);
++u32 iris_vpu33x_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type);
+ int iris_vpu_buf_count(struct iris_inst *inst, enum iris_buffer_type buffer_type);
+ 
+ #endif
 
->>
->> > Changes since v2: > - remove duplicate include and replace=20
->> hwmon_pwm_mode with > hwmon_pwm_enable in second patch > > Armin Wolf=
-=20
->> (3): > platform/x86: acer-wmi: Fix setting of fan behavior >=20
->> platform/x86: acer-wmi: Add fan control support > platform/x86:=20
->> acer-wmi: Enable fan control for PH16-72 and PT14-51 > >=20
->> drivers/platform/x86/acer-wmi.c | 298=20
->> +++++++++++++++++++++++++++++--- > 1 file changed, 273 insertions(+),=
-=20
->> 25 deletions(-) > > -- > 2.39.5 > >
->> -----------------------------------------------------------------------=
--
->
->
+---
+base-commit: 3390731fe7686441519f59d7599962e0abbca7d6
+change-id: 20250822-topic-sm8x50-iris-encoder-v3-hevc-debug-10173f4838e3
+
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
+
 
