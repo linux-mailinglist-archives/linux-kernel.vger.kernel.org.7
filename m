@@ -1,132 +1,96 @@
-Return-Path: <linux-kernel+bounces-781167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD34B30E5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:59:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC3D1B30E61
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7B327AA2A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:58:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCF6E5E1776
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E010284B25;
-	Fri, 22 Aug 2025 05:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8742D3EEA;
+	Fri, 22 Aug 2025 05:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/bWOY5p"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="CD4BCs1P"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5CD21B9DE
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285F28F49
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755842368; cv=none; b=IEKDNjBowQLxSTwgsHiXt/3a3A12O/xUsZDbmn2f6fY894oeQ33rKc4Y2uSPQwW5IIAKVxuzkVVARBG1rx/Yal6bJTwy9QM3OMGB3PHjQ6a1unCEh0HNGEQ6aucPrqSjLrve+k5mTjhiwvA2WCSXggkqnfkaROfPZs1vO0JJ7Tw=
+	t=1755842393; cv=none; b=JhPnCZq/AolCWtxOD8jHzzSbf9+WbFlPwc1GZpbvCd1c4HKvfxNtRnLsyjqMazWeEDGomvZw4LYDWSWHiAc6GlOiIEOdh/VH/79LAMELzHUZ+PbBBt6hsQi3pW3x+tX5QdDXpTLMVJEizuSpfmI3/D9fuD198dZjIIJraX9AxM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755842368; c=relaxed/simple;
-	bh=TG1Ri7tXxCAgGlmNAFId2EXEAgonDUGmJkvItsCtkk0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lk1de0+FdxG4vREjvwDUYEXh26W3nXrlb3tOhN/FIn4oet7+diSLkUGDKu+nimQpLImQjB2DZcRWnlY1IFwnIAmQVNPg8GePVVYHmZeo2na09OC7utgQOMSrjHf8JzeJjKKOFF6E/Wan5+WCbekfn5tiRDGrfK2XfS5hnz9DBvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/bWOY5p; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b471740e488so1422792a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 22:59:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755842366; x=1756447166; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/0/YH7tpqD6R0a1Qoz2f15khTHHnT14HYSHBnDr+ltc=;
-        b=a/bWOY5pK9WkKCFf0jasBH6y5p91n/hn1CWhO/wAQz2VwvocL+zYsFpJqvUD7T3i2k
-         0Eq/7ZLJLaJrTZbDahl+HT/NXrxy/ZF5VzI/B5pVd5VmvNhsjt0XI0yPWb8hWSUKwPhJ
-         9revAMEHqC7LJ/d5Sh+o5J/hurXABq+o9GywdVEilopZjETL8W9mb/aMirsvh1EikzG6
-         MQbBZDdj0ZPJSEBKeiBSWDKqUjvstYMYgcR0QF+FSLQy4xBn3SH1FnqQ2UWYbc88368V
-         ION7RrrJyxobzybSGjv1ZZjGdn7UT71pdV3+pUuU70Kk3Ef3WXYEyZMv8qYDs9e63LcS
-         R9EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755842366; x=1756447166;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/0/YH7tpqD6R0a1Qoz2f15khTHHnT14HYSHBnDr+ltc=;
-        b=mseLtiqF53bG2Ve2RHWzhat9gjbupEnNs9comlJ8ozL0rXNyRg7euclbdipA/n7STN
-         LKhf9NwIkYyZkOiR9OwNrjL73mrk6wN0+OGx+CAOSYwYsZcpDmdPRcPoJCLC+fRXPdo6
-         iHLrny2PNzLWWab5KW4SUqOTbtw0URPEnEomdcE9z+a328pb6ohKnL2WJHvReAOh38Qp
-         2KXPdhgl3gjL/+bA028+swjVdMhdwgHmy7SmTHrSoFZzIMVcd84mGP8tEeXfJ5R6G8HU
-         +Sh6PDelVUquTel5lcnxK3QUrOEhT2oDpuDBI2GSbHjVuMf234/5CmTIvlOILQ4po7LC
-         aw/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWxQ7OrBIEaCp4/xKJcNeZ4pvpxo9uq2P7njZi6bOvloZSypMoLQE7sAjJLbNbndjcaJB+YdqpxeAZqL88=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKyz+pn9DDZddSaLcfqFJZ8apXiusyNDH9C8Nh5A571F3o11RN
-	P9ggTy4SxS/hrUjmmUKMbB1MdHC9O3y90o8cW2ZwvKb8QYvFIKT7NdJC
-X-Gm-Gg: ASbGncuPo++ynxPTw++YEzORH8VfInN1NrZV2FD6rCzM4a3qK4sGHBeeCsxlUE+yhRe
-	4T2QRpHGWKiukjPcc7CFtCObl+H/zcvqIqwuNyYvPqJ0eXjwrlfa0nGVDqpRDKwcHjLE6gMRv5v
-	AZq/yX2CTk9WPQ/Tr3iSWms2lt8qPdZ1MsNOfTiH2Pmmz+Btc7VveStLkMWQHqmn9Owq2PM9MBv
-	GlH7Amd6CCp9g9yojKhVVlYGOexvsessZwxBBIpIY/0Rt8HR6LLIaWuQKafT2AWdiNUR7uceAxW
-	RbCmoIuJNRmqdkXSpxIHbQbK4Zlmg0NCGIJFx9lRlx9Fx/hm/Kk+CIYqJgXJXJc2b0FjACRhUQG
-	/Mal3vwDOhRnp1ZBUFDkd7UbToDd0k1OFRjH0+NtbPChIdY1t6A==
-X-Google-Smtp-Source: AGHT+IHu9AgiKmSd6Ip9ikRTzrXIGUl52NPjCcqZHHIbtsA0QL36We+giK2O+7PzugyFlXTU3i/w3w==
-X-Received: by 2002:a05:6a20:3948:b0:240:16af:401a with SMTP id adf61e73a8af0-24340cd32b2mr2634360637.32.1755842366455;
-        Thu, 21 Aug 2025 22:59:26 -0700 (PDT)
-Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d4f7cf7sm9891448b3a.69.2025.08.21.22.59.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 22:59:26 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: muchun.song@linux.dev,
-	osalvador@suse.de,
-	david@redhat.com,
-	akpm@linux-foundation.org
-Cc: leitao@debian.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+417aeb05fd190f3a6da9@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH] mm/hugetlb: add missing hugetlb_lock in __unmap_hugepage_range()
-Date: Fri, 22 Aug 2025 14:58:57 +0900
-Message-Id: <20250822055857.1142454-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755842393; c=relaxed/simple;
+	bh=Lv4OXvThRZ3aaC9Yk63c3r3UXiEApaGmTnynlaWwLlQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s9EIDfEAfuZYbYiChijifmD5kFut82Opb+tTgqUw8czFyyrQvWIZV/+a/3nhP5ygV+iPpKsHbGGVhaTh8ZW/2zNKfdU4IJj94VHGDvUdlUCshXTH5X+tP7MYUI9iIsItJlj4fSHwt1KK47IyYcpcFnN4dXJT1FKfiAwDP9lHGGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=CD4BCs1P; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=muTL
+	R+uO1apVyAZkBbYYZe6gE3Jd5HWWcO3c7R6cA9g=; b=CD4BCs1PRkjTCCYhPycc
+	34kdjEOjYanOh4U654+aGn6BZHBbuPF+jcC/cv2aS8DWV8Jct4EOIkwCUOs0WgHR
+	seR6tPavlBgjL3wwmOISzO9W8uvnhAJHNUDRBxm9pN1dgVA4fdyTjunEhDCnUokO
+	tB00CVhfMFWHhQFHD9kg91SWyAdPqZ7J6pkoslduLsz/z0M74LR7DRpikfxMuYt2
+	q6OmOHPTWk+doXL6W57nrnVLbA53X+sSSnl1a/j0gTKB8/gaEo4t6+3HReiK0Rjj
+	pSHe2u2FILIEH55eX2T0BF8My1ZxsW2P74nrg0vyNFnzpHHZUKfn4Y2OEMkK3JDt
+	2A==
+Received: (qmail 3778719 invoked from network); 22 Aug 2025 07:59:46 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Aug 2025 07:59:46 +0200
+X-UD-Smtp-Session: l3s3148p1@KHGr6e08GtDUtcd1
+Date: Fri, 22 Aug 2025 07:59:45 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-actions@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 02/21] clk: remove unneeded 'fast_io' parameter in
+ regmap_config
+Message-ID: <aKgHUXzK_iSfjP7Q@shikoro>
+References: <20250813161517.4746-1-wsa+renesas@sang-engineering.com>
+ <20250813161517.4746-3-wsa+renesas@sang-engineering.com>
+ <aKeTq1lJ549a2jnQ@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKeTq1lJ549a2jnQ@x1>
 
-When restoring a reservation for an anonymous page, we need to check to
-freeing a surplus. However, __unmap_hugepage_range() causes data race
-because it reads h->surplus_huge_pages without the protection of
-hugetlb_lock.
+Hi Brian,
 
-Therefore, we need to add missing hugetlb_lock.
+> These all look good to me.
+> 
+> Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-Reported-by: syzbot+417aeb05fd190f3a6da9@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=417aeb05fd190f3a6da9
-Fixes: df7a6d1f6405 ("mm/hugetlb: restore the reservation if needed")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- mm/hugetlb.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thank you!
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 753f99b4c718..e8d95a314df2 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -5951,6 +5951,8 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		 * If there we are freeing a surplus, do not set the restore
- 		 * reservation bit.
- 		 */
-+		spin_lock_irq(&hugetlb_lock);
-+
- 		if (!h->surplus_huge_pages && __vma_private_lock(vma) &&
- 		    folio_test_anon(folio)) {
- 			folio_set_hugetlb_restore_reserve(folio);
-@@ -5958,6 +5960,7 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 			adjust_reservation = true;
- 		}
- 
-+		spin_unlock_irq(&hugetlb_lock);
- 		spin_unlock(ptl);
- 
- 		/*
---
+> Should drivers/clk/sprd/common.c also be updated as well?
+
+Yes. I wrote in the cover-letter that a few occasions couldn't be
+automated with my coccinelle script because of the indirection. I will
+fix the remaining few ones manually, but I didn't get to that until now.
+
+Happy hacking,
+
+   Wolfram
+
 
