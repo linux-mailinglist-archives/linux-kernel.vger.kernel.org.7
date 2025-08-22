@@ -1,218 +1,248 @@
-Return-Path: <linux-kernel+bounces-781430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D67CDB31265
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:56:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D97CEB31251
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6733C3A7797
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:52:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0DC27A93F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490F91FECAD;
-	Fri, 22 Aug 2025 08:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E620F2EACE8;
+	Fri, 22 Aug 2025 08:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens-energy.com header.i=@siemens-energy.com header.b="uHP5ho/8"
-Received: from FR6P281CU001.outbound.protection.outlook.com (mail-germanywestcentralazon11010020.outbound.protection.outlook.com [52.101.171.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gi+PdxMj"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD9B2EC569
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 08:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.171.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755852758; cv=fail; b=RuiULscoUWbDlUbj24cHTwUtlgzM+kz8RTuG5mL5yiv0Kyfz43+OkVU+otlAFqlKqn8bMDdioA4DZbojwitzgZqEVdZdKhlU8rdbbJ+6ztP9HZOE0ByUCliPp8N0NAIItw5AMIlEgYwDWtalWUEB9YfrN2VuIofDewGMvtJs+Dk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755852758; c=relaxed/simple;
-	bh=tLqW/vX/eYSQIbKQAPPB1O4CVcAsXRnCpEGVpaUfNvw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tiuHLgFTByzw/MhqfZWQDEEnT1visKwuGe42EY+hh1aPnbw73RM9kbbr82w9m/zX+D6/9CManmOoa8YxzUKivviJBuBG/MmZDFWoOp4WqMReWR3nBUbD+jVNkKDhXSt0bspqLD/Usx4UV78hKTDCep+fWhBaRNqBpiif80cg+rI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens-energy.com; spf=pass smtp.mailfrom=siemens-energy.com; dkim=pass (2048-bit key) header.d=siemens-energy.com header.i=@siemens-energy.com header.b=uHP5ho/8; arc=fail smtp.client-ip=52.101.171.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens-energy.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens-energy.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KUXGtg5+iIfcX/2EM1q/ydwfoE5694Av/kKIBc/rzllOEEaK//G79q9BwCDGNyiUXB/zqhOeaR9OiwYDwXJLTl7fRDfbjF68f8Vb2kCx3XZZBadGtPgTWHBdG+izvaXyDke+C7ssgQveJHr5VURsD1h+6VaU8+UiRcVvSslyE9DVLzYefOegJ4qGkagyuqkaeFKc6iZlIg5AJlvgs3mBl33DpcGqYrK4/b8lzTy7EQ2cgnGdkqkL6tNsnM8sLjOujcytJO3Q/Ff+OL7Qvq/u6VaiZZPyk8KW9HyIqwZ56up7q2+7FwH8h/lqWXooTAAg0VB5GE12jyO3CnLcx4SzAQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tLqW/vX/eYSQIbKQAPPB1O4CVcAsXRnCpEGVpaUfNvw=;
- b=pfTNX4cuRT25BDQjQpIGHE/X9Tx/TAbGDMGpPeW2F/SzIuJ2yISEhNqj5HoBgXtwtj3apaj+MilC8xybuCqyVyY0qsaNcdMlrs8+pwPlpcyy//mpQGLkJRP9iIsmoYLoQeTksH+nZrQElo3sq6WnuqCJFmg9o/8BGFawgQEY/myeP0wZMdbkguqQb7j1uVPukAEz+ojUGobeognpzXvz+xlCRPNlosVmi6vkcVgjppNM0qnHGNUMMkSfKBXF5Q0+lslepDe0Ru5TnDb/pii0YrVnV74ET/O6zomm3e6blMwZIDkk2elMUq9RFaNuUnIB/EtxhWU/X/M+hoSHGB0J6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens-energy.com; dmarc=pass action=none
- header.from=siemens-energy.com; dkim=pass header.d=siemens-energy.com;
- arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens-energy.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tLqW/vX/eYSQIbKQAPPB1O4CVcAsXRnCpEGVpaUfNvw=;
- b=uHP5ho/8K1ugs0UwLnSGT2bSbKVXRjvSgjBpgKjQuDpjJcB0/a/yjGJO9JvedDxiEBbr9bo5UgsUoD3WBYB7u3jTIzlw1qtEZqtCog5nCdEppXl7M6rUMWTZ9Njsu1cyY/+KGCazlQLrt/AiznMpUdK2726AicjNaWqqx/3rx06Qg4fI+lbd35xkuTYMPtz9XyfOT/FwLe8p1UyyW4HQTtLeLxrkq31hjAn13KvtbfjORboxSgPJm776K2HHKN5wFSWQqVJr93MHK8dcZW84wa5tC9MQZbbPAaAKQpH6TUTKSoPOrhFhSVRbH3nfnbFmIgqEd4MTRRQXfxQQfTGYbw==
-Received: from FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:91::10)
- by FR2P281MB1768.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:8f::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.17; Fri, 22 Aug
- 2025 08:52:30 +0000
-Received: from FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM
- ([fe80::5233:e398:feb8:a20e]) by FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM
- ([fe80::5233:e398:feb8:a20e%5]) with mapi id 15.20.9052.014; Fri, 22 Aug 2025
- 08:52:30 +0000
-From: "schuster.simon@siemens-energy.com" <schuster.simon@siemens-energy.com>
-To: David Hildenbrand <david@redhat.com>
-CC: "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@kernel.org>, Christian
- Brauner <brauner@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton
-	<akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
-	<vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan
-	<surenb@google.com>, Michal Hocko <mhocko@suse.com>, Ingo Molnar
-	<mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
-	<juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
-	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Kees Cook
-	<kees@kernel.org>
-Subject: Re: [PATCH 1/2] copy_process: Handle architectures where
- sizeof(unsigned long) < sizeof(u64)
-Thread-Topic: [PATCH 1/2] copy_process: Handle architectures where
- sizeof(unsigned long) < sizeof(u64)
-Thread-Index: AQHcEo6g5ujZ/0rMIka16XkPmN24cbRtnASAgADDDWA=
-Date: Fri, 22 Aug 2025 08:52:30 +0000
-Message-ID:
- <FR2P281MB15445D806CF865A0E1CD8FFCB53DA@FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM>
-References:
- <20250821-nios2-implement-clone3-v1-0-1bb24017376a@siemens-energy.com>
- <20250821-nios2-implement-clone3-v1-1-1bb24017376a@siemens-energy.com>
- <8c6239a9-8414-469c-9b94-a43735b4e882@redhat.com>
-In-Reply-To: <8c6239a9-8414-469c-9b94-a43735b4e882@redhat.com>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_36791f77-3d39-4d72-9277-ac879ec799ed_ActionId=efdb3f77-d482-4c35-ad16-2ce44847be96;MSIP_Label_36791f77-3d39-4d72-9277-ac879ec799ed_ContentBits=0;MSIP_Label_36791f77-3d39-4d72-9277-ac879ec799ed_Enabled=true;MSIP_Label_36791f77-3d39-4d72-9277-ac879ec799ed_Method=Standard;MSIP_Label_36791f77-3d39-4d72-9277-ac879ec799ed_Name=restricted-default;MSIP_Label_36791f77-3d39-4d72-9277-ac879ec799ed_SetDate=2025-08-22T06:58:45Z;MSIP_Label_36791f77-3d39-4d72-9277-ac879ec799ed_SiteId=254ba93e-1f6f-48f3-90e6-e2766664b477;MSIP_Label_36791f77-3d39-4d72-9277-ac879ec799ed_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens-energy.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: FR2P281MB1544:EE_|FR2P281MB1768:EE_
-x-ms-office365-filtering-correlation-id: 2ba831a6-a5d6-4803-7347-08dde1593a88
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?dFAzeVZ4bzVvMWZ1bDNCNmVDKzhkUTJraDNGeUp6aXhmTWtMWUpySk1RdU12?=
- =?utf-8?B?VFpRZTFnMzhGTWNtb3k3d0ZSeFMrb1lwOUVaMlFuN284clZ0bVIwZ0I5b3Jx?=
- =?utf-8?B?T0Y5YnQ1S0YzTnkyS2ZNTGZCVFdJdXFUOWhnMXhlSjIvazhpODBCb3ZUQ2Zx?=
- =?utf-8?B?VWpQdTNuKzN5MjFNamlXaUNOQ1loSXJjNGVTNjV4cThocExnc3hJaTBYMlIv?=
- =?utf-8?B?YTFDa0NVR0Rsb2dMNXNBUzBBYmNWQmRJZkdpS1lseVpnUjd6cGc0a0lKWHZI?=
- =?utf-8?B?TldDN1BUc2Q1emtHVEVYdjV4VW1ZSEZtRWc2UWVvTVFTZGhnOEUyOW9xQUZZ?=
- =?utf-8?B?eWg1VDh2d0ZDcWJBYW1zejNCeU5GUU03YmJaQUNaaE94Yk1UZy9oNVNza0NG?=
- =?utf-8?B?OE1UUk9RS2tpRHlpcmc3NjNESTg4TjZ2dVg4bFZWOXpVM2NmZ3QxWXVUNVVE?=
- =?utf-8?B?S3JvdzNPQ0FYazdXZG85RWpMR0UzSm9TczlDbmt4UVMzRVFJOFUxd3JoRHIv?=
- =?utf-8?B?eDIxTld3V1lBWkJ1ZkdYakNMRzV6QzlDVzhsZUJvV2ovWENCMndGQkhVWEY5?=
- =?utf-8?B?VXYva2o0SXAvU1FzNXhWOEdraXV4a3lYYytHRmRFdHRNNGl4MnBKb0oxVTZ2?=
- =?utf-8?B?Y2FNZzlvVmhsaThpbW1XcXl2Sk85NVM5MndvanRrWXlYZU03U1QvMDczU2RL?=
- =?utf-8?B?OE0rYXlmOWs4Slp3VVRDNFgzb2JkTDVEUlcxdVF4Z3BJc2w2Yk9GKzA5WENi?=
- =?utf-8?B?MDVnQ1luTE9LMElMamRHVXFRaTExdnBhbmlrUjJNRG8rd1dreFU3NElub21F?=
- =?utf-8?B?cG84d05QRW4xU2dSL1VwT1NKMklneXpwdW93N0dZc253OWJERFJtbmlUSkpB?=
- =?utf-8?B?ZTNlNEtjYWcycEM5VmtmUWpsR3k1WURYWlVMeTRjN1ZNeTNMQVZJSUVNUm9x?=
- =?utf-8?B?UW93L09QU0xmOUo3SktQSWgrVTVWUGx2dWtnTTkwbkp6VXlZSElHd0J6dlFh?=
- =?utf-8?B?YzQyOEVkN1NVZHRiWnl4OHFiZitxZUtka0VZOFhtSHkrMlY0WWdlKzk5eHNj?=
- =?utf-8?B?dElyQ3l1Wms3ZTVyb3Z2YlhMK2twRlBFS0dFTG93WHVzN0RYTjB0a3NSYVFv?=
- =?utf-8?B?ekZDbXgvOWRSMExMeVZlQjJFRjZPTzIzdzl6OGlDcHRHZ21jdDd3N0F0c3h5?=
- =?utf-8?B?OTdSLzlaaFY0UDBEQkdtRlArem9YWUdsVldjZnZwaldEUTVESDJvNW9BM0M0?=
- =?utf-8?B?TTJmcC9rMjg2MGJubDREV0NFdlhqdUlwT2poUEMrYzdCSkJuZU9RZUtaQ3BK?=
- =?utf-8?B?RkMyMUZ5ZERsOVVmZkxZUlpBWld6aUdkNnI3RUcyMURJK2VuZ3FJMjI3djJZ?=
- =?utf-8?B?TjhlODU5OWl1UDdtSS9zWW1qNWlLOXBxVEhGWkxpTGJPWDVOOHkzS0huTUpH?=
- =?utf-8?B?UTlsMHg0VmZIUmJSbUhyRG0yWTBNS0NqNzE3emNuVzBuaEphTGY5ZGhJR0x4?=
- =?utf-8?B?YTdzaXdJcFR3WXEwSXppSEljbGpyZDZ3OTJYL0lVK0ZKN1pFaGNsYUFMTnMz?=
- =?utf-8?B?cUNReFY1enBCS1hMM2VVcTI0bEo5UUd6MUJBb2Z5UURBVi9BY3lXYlA4cE52?=
- =?utf-8?B?UjNtNXpCaWVGLzRpcTdkNkVQaFlwN2RUTUdRUEtZUlRnZW40UUQ2Tlc2N244?=
- =?utf-8?B?Q3JUbTFvdXIrSHRIZW9HWVI3bEdWNnExQy9hQmtrbEU5T1c4WkpELy80UVUz?=
- =?utf-8?B?UnVRQWNGN2QvendMcnhjTEw0WE41bnFoZnJ2dTFFSFdpRDVlazZkQnBOeEJC?=
- =?utf-8?B?bHAzdlZyOTJhQ01scVkzWjZKS3R4OHVadUwzb09kanlLVWEyWFR3c0NwTE1u?=
- =?utf-8?B?Qzc0U1EyZTZsV2F2SmFVdE00Zk02YWREZ1pZZEJiVUZrYlFKQ0QxOVJGajRy?=
- =?utf-8?B?TDlHSjFuUEFORlBiQXE2WVcxQ1JyR2NiSUVKUFZwNFBzNlFFcmhqTHF1RVEr?=
- =?utf-8?B?T0h1bTJYNE1RPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?N1hzMXRMSW9YQndPeEpEOHBkUUIxemlZNnZuRDUzM3h6eVVVNWVIUElxMWVp?=
- =?utf-8?B?ZWdYKzFOS29Cd0dST2VneEowVklKQ2pOS1FjTXJxd3Y3RTRLMlVrMWJFdEN5?=
- =?utf-8?B?cXRMMmZYSlhIeVFMK1FiSXZRNGdGUTRMa1VmdHgvVW4zczFIVlZZTDhCc0xq?=
- =?utf-8?B?K2hTVE9BeHI3d0FHc0w0UXBweVJxK0p0Ty9raWZpVkFjQklVWHZsZ2VDZDJI?=
- =?utf-8?B?blNmdFlpTnI5SFpvYUZiQUc5VThYakE5VkFQNU5tNTNRQVFDWEZEc2NCNXpI?=
- =?utf-8?B?NTJJbSt1dzUxVCtoNXVUWG1QQUpMQjNzL2ZnZVVUaHdnUVZxVkRTNlZuV1VE?=
- =?utf-8?B?b1EwdUR0VHpqbHI1Qkk3bjdwaCtPSytDdkthNG5udlErVXdSQjhsS2h4VlN2?=
- =?utf-8?B?WVV5UzFMencxMUtFL3VkN2RLRGRsWVZneVhiY21jZ1ZPL2VEVzh3eGpQMTFC?=
- =?utf-8?B?SFc1ZTZMdm1GcEZSbHc2VkorMFplc2tvczdUSGZwKzdFczdtbURkV3NMdk5Q?=
- =?utf-8?B?bEhiNmJ4Q0tPdDYrMGNjcy8rVUh4VHNMMWJsTW9oVUhDTlZwTkhMdnducGhB?=
- =?utf-8?B?ajRnRS9keXJ3VHNCUEpBVG9ReUtLV1gzcE1hbDl1ekJXbUVJRHpmSWxuUkpG?=
- =?utf-8?B?L0pXbEM2WVZpaDlkQ0dJWHZGSEk4UEhvSCsvR2trenpybDBQZk1Lc0dmcmJ5?=
- =?utf-8?B?WlhlMVpkckFrKzI4anI3MjBkQ2R5S01tblM1dytRRDZFeURQallQRktpdyto?=
- =?utf-8?B?VXc2eUROUXc0bm05eXVKQzduRXkzeis2OVdZYTFDeHZmQUhqVGxUUk9ZaEtY?=
- =?utf-8?B?RXBUZ3d3UXZ5blJiVlFuZjduNXd1LzNzTUltRVdsVGJrV1JDOUpGd3VoMmsy?=
- =?utf-8?B?dS9lRUk0cjBveE5kRVhUVXY3U3ZNdkl4ZzlzdWoxM2ZSZUZtMVZGWHVnM1lL?=
- =?utf-8?B?bWtLbHR6aUFmc1pMUnhDdnVJOGtxU0RGWW1CTmFQTkRHWGtmRFBycEFVdWI0?=
- =?utf-8?B?STVWcXRDTW5KRmtBWjJOVWxMMUttbTY3ZDN6a0xraWJpcHVCdFNablh1MVZL?=
- =?utf-8?B?NHVTaDVwdkJCWWtXUWxSemFhYlZaTEowN1NROElZY1hYUUxjS0hvM3RleVk3?=
- =?utf-8?B?YWowOUJaVTBjckRFQ2FFU0FEVVNqaE10MjJ4UHc3eG5UL3R2aVR0RjRIeVB0?=
- =?utf-8?B?ZXVlZE05a01LS2ZTb2pweTlPUXRqK1gzT3NoY3B5cGt1T0FlQWdCVERqMm4w?=
- =?utf-8?B?TjVRRmRoZjViV3paVGxZbG5oVnBFTVZrZTJtYy9vK20vcG4xd0E4UXN3anBT?=
- =?utf-8?B?Rk5UdmFWS2RZaHRCU0szOGEwZ3lUZmVmNENoRndIb3Bmbkxqb3JGQ1hTakFi?=
- =?utf-8?B?TzljUnFDV1QzUDVjV2lNbCtiZlA4ZkZtSGd3RzEzcDEzcjYzMHFLcHN0N2Vj?=
- =?utf-8?B?V1NZVUlPTTd2dVVBQm5TRGNQNisvTkpSMGg2SElJdW1oRGwzWDBKQmozVEdZ?=
- =?utf-8?B?N3pYMVNzQ3dmWThrNFlhUWRiNVJvYnVwZGtJblpBdlFURVNVZ3Zlejkxei9S?=
- =?utf-8?B?S0tNT21tMVEzZEE2R20rYTloVFk3S0phaE5PWmpHRS9tVk0xTnpUSGlCYysw?=
- =?utf-8?B?Y0VvRGFDVGtzUktEbGlWYjNUTUdyV3NzRlVnMkRoazY4aGtsWkV4MmFCWTIw?=
- =?utf-8?B?V3BqY21vMWxtbFNJVTBVU2R3bkxqWE1UQ2Q1Q2JJbUdqcmp2YTNHSWwzbjZH?=
- =?utf-8?B?NVNhOTY3SDJFL0I4a3duVWhiNGd0aTFKZ1hhdmhtZmZhRWdWMkZDemgydTA3?=
- =?utf-8?B?SkRwSC9ZOXBoLzdCY3FNSWU4bGdLZ0ZsdU84WXMwTmcxSmpQZ0hNcWRqaTAz?=
- =?utf-8?B?bG1yVVNqcldPaVRLaDdaSGUzd29zb2lCemllMWd2bStOY01ydDNkbHJJTEdm?=
- =?utf-8?B?SUI3ckJtSDRFZUt6YjNzUWVzaXUxYWNjNjZ1dmt0QkdpSk1zS25pK3hGYTlL?=
- =?utf-8?B?dDJFRG1rSElQdmJ2K3NSbVV1SVlZY1QvM1NVK3M1ZXpSMlNkQ3hVaEZMZmlu?=
- =?utf-8?B?OXdPMTJzRDRReGhMeTZEYzNjeFNIMndoTmM1R04wdWw2YVBrb256ZzZzN3M1?=
- =?utf-8?B?UTNhb1FCTlFGQTdXMUJxVi8zWFprN1M4VG9NOTZpNnR1WUFVY3VueXA3Y1Vy?=
- =?utf-8?B?OEE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7689C1EA65
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 08:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755852833; cv=none; b=Gx15Xu8Y2CZUPiddSYrTGBRXnDIQTzllLfcv6AhXfj+hkoaCcubxtuGFB2bk45DC048w/Im1HZMJO8cBlG6TlW8Gsh2JM9ByHs4nySFC5W6JCT5p+5SL4dWbV69M+TigCMMlv5tdrvOv4jeU4qeQkKDto8D2Dra6nDbAGYJiLtU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755852833; c=relaxed/simple;
+	bh=2+bRuuIzI9S+oIj5Db0h0yF3G+mLElAksm4w4Lz8vS8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QJdSegSQOE3n9pz3VnucEe2X7srSUVlAUhLP82/B9JOCZqF2L0JR0OrOUEjXNBzlfW2jY0kI46FmPx888BC/GokwJJm43izg4+olGsmUMKCGtOgUb4Rz25L91jdchdlD+2hUQrXj4K3k+3HUYstPAuGrsmeaFsEs7Od8qvNeOOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gi+PdxMj; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b297962b24so19022561cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 01:53:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755852830; x=1756457630; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VwnXI8Q4i5E1F2kA0OUxgOWXMwST0o08T6okrD/DYYA=;
+        b=Gi+PdxMjVe+HTSaNV0YCLDx/qmsE49KJHKQiXwsQu4zOnOLBlKg7qP98/n4hUcQ5Yt
+         lNg2WRevgu8mEPLML5M09QKlaUrRBSnezQQ7+oC7+FELBrhMcoGighbqEMIXJMwOnYdo
+         aTYI1wnqi3TbsgyKc9CQn0ZlZvrJ75rdea0JY0OBDOWHipUM73i1/S/q7uFeI4enRJS+
+         3CAAXumVv7cwLieHnD9Q6HeC5oiRwZi5lM3fXYfxALTrPvEvC5NexdytuM0ByeAstjKd
+         +8Ci5ryqlXk3oPBMwYGhnXHmHV9c52izsjEWO4ALFA6T7R4isAGD+VPgwKFo58WWzisC
+         7Vkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755852830; x=1756457630;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VwnXI8Q4i5E1F2kA0OUxgOWXMwST0o08T6okrD/DYYA=;
+        b=WHQoVerSVmraBMeyQDcKHr6owaRrihOZCAOto/0toD7L1A1R9S82v30aejb0W+VBeX
+         wn0J0DrLe98dbLKRYWBf6fPLxd8NhussODjngrwAERT7PTIAaYZhmPh73QJh8TgGC2TS
+         Sbv3f+Y0wzrD0NkF+7mZ1CRZwbOVy5aa6zSfr2P2MWlHqVWrdF8FkQ90MJki1cie/jEW
+         1YsR3yXZjfDuVRU9+QrGpH1nvM4r9EEZi4O+LaZVL+ggs4ws/J2wzpV3NnolrBgaj9zE
+         /AIehpO3jM1sSTVUQcEEh2k0oL47AmM0fvjino+bCqw3fIPwTVSaF/aCXpXFlrsYwmcP
+         UA+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXPiHmhAeXvKBXc+YNLMN1690zvrlvjPLSbbFP74TjGa21NwVNBV03raYZKSk83cTKHK3Ps2qUsL7xRuaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx20PsD5THfi8Rsjyfkf/ymrU11cDIXYsv2IZw+ZVPsbXlYFcUx
+	d4MJNWSV1uDdPf4RYk8Z0AzeR78iEebQ4pZpUHs+xHtPJwmv6luZzi4Rx+o9A+EXPZShfR5aw4u
+	nE3eohkj7jGkByqpXkaK/HJ7gMUdeW91YsjRawwSZ
+X-Gm-Gg: ASbGncuJxrxkqTk+QP8aLIFIBFBJGG5rwrX2D7gBXhIGnrT/N+4ZlMs6encWXRLeo3S
+	9+5K4ixhJ10k/AHB3BEeh36yEZ8lquaczMptLPrjaRSiZsdVPqe/hpBtfDZaUimNUrvFCImU5G+
+	6SFURDi26MlJwkA0hfE4r4+XH5rwTiKwoX3Uenw+FbiMwtjH3YESml72MLVxDGG1MDcVtB2kGY1
+	vX18yhtdCR5knU=
+X-Google-Smtp-Source: AGHT+IFJCOD9ED9ZQtQim2+n+wKW3ngXRFg4cSckRxMhx5RX7rC8DBvYjQpn3RQUBVTBx47wLJ0ZQpKyrA52UTxR1KI=
+X-Received: by 2002:ac8:5956:0:b0:4b1:103b:bb72 with SMTP id
+ d75a77b69052e-4b2aab26a18mr27843471cf.64.1755852829840; Fri, 22 Aug 2025
+ 01:53:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: siemens-energy.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ba831a6-a5d6-4803-7347-08dde1593a88
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2025 08:52:30.6732
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 254ba93e-1f6f-48f3-90e6-e2766664b477
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: chDnJWhjineV8+GHami9Cx9svUCErKFZ3/LWegBrOgIDk99bcsUyr6pTN7KXvckBlDSUlr37o/dzlaLi6/tMAa/fj35b9YYA/iBVp5xTzmqNjKetIjjvSB569qVX19ZH
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FR2P281MB1768
+References: <20250822060254.74708-1-mii.w@linux.alibaba.com>
+In-Reply-To: <20250822060254.74708-1-mii.w@linux.alibaba.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 22 Aug 2025 01:53:38 -0700
+X-Gm-Features: Ac12FXxVs71jQnan2ses4SoCzFVxcC4m-okhoTzkf2IeSW992nOUWQViEMHGDkQ
+Message-ID: <CANn89iLYHdtAFSjSW+cSN0Td_V3B+V05hHnGeop5Y+hjWEt_HA@mail.gmail.com>
+Subject: Re: [RFC net] tcp: Fix orphaned socket stalling indefinitely in FIN-WAIT-1
+To: MingMing Wang <mii.w@linux.alibaba.com>
+Cc: ncardwell@google.com, kuniyu@google.com, davem@davemloft.net, 
+	dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	ycheng@google.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dust Li <dust.li@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gVGh1LCBBdWcgMjEsIDIwMjUgYXQgMTE6MTQ6MDBQTSArMDIwMCwgRGF2aWQgSGlsZGVuYnJh
-bmQgd3JvdGU6DQo+IFNvdW5kcyByZWFzb25hYmxlLg0KPg0KPiBCdXQgaXMgdGhpcyBhY3R1YWxs
-eSBzb21ldGhpbmcgdGhhdCBpcyBhbHJlYWR5IGV4cG9zZWQgYmVmb3JlIHBhdGNoIzINCj4gb24g
-b3RoZXIgYXJjaGl0ZWN0dXJlcz8NCg0KSSdtIG5vdCBzdXJlLCBidXQgSSB3b3VsZCBhc3N1bWUg
-c28sIGFzIGUuZy4sIGFyY2gvYXJtIHNlZW1zIHRvIGhhdmUNCnN1cHBvcnQgZm9yIGNsb25lMywg
-YnV0IGFsc28gc2VlbXMgdG8gdXNlIDMyYml0IHVuc2lnbmVkIGxvbmdzIGFzIGZhciBhcw0KSSBj
-YW4gdGVsbCBhbmQsIHRodXMsIHNob3VsZCBhbHNvIGJlIGFmZmVjdGVkOg0KDQokIGNhdCAvdG1w
-L3ByaW50dWxzaXplLmMNCiNpbmNsdWRlIDxzdGRpby5oPg0KDQppbnQgbWFpbih2b2lkKSB7DQoJ
-cHJpbnRmKCJzaXplb2YodW5zaWduZWQgbG9uZyk6ICV6dVxuIiwgc2l6ZW9mKHVuc2lnbmVkIGxv
-bmcpKTsNCn0NCiQgYXJtLWxpbnV4LWdudWVhYmktZ2NjLTEyIC90bXAvcHJpbnR1bHNpemUuYyAt
-byBwcmludHVsc2l6ZQ0KJCBxZW11LWFybSAtTCAvdXNyL2FybS1saW51eC1nbnVlYWJpIC4vcHJp
-bnR1bHNpemUNCnNpemVvZih1bnNpZ25lZCBsb25nKTogNA0KDQpJcyB0aGUgYWJvdmUgdGVzdCBl
-bm91Z2ggdG8gd2FycmFudCBhICJGaXhlczogIiwgb3IgZG8gd2UgbmVlZCBhDQpyZXByb2R1Y2Vk
-IGtzZWxmdGVzdCBmYWlsdXJlIG9uIHNvbWUgYXJjaCBmb3IgdGhhdD8NCg0KPiAoSSBhc3N1bWUg
-YWJvdmUgb3V0cHV0IGlzIHdpdGggcGF0Y2ggIzIgYnV0IHdpdGhvdXQgcGF0Y2ggIzEpDQoNClll
-cywgc29ycnksIHRoYXQgb25lIGlzIG9uIG1lOyBJJ3ZlIG5hdHVyYWxseSBmaXJzdCBpbXBsZW1l
-bnRlZCBzdXBwb3J0DQpmb3IgY2xvbmUzIG9uIG5pb3MyIGFuZCB0aGVuIGludmVzdGlnYXRlZCB0
-aGUgdGVzdCBmYWlsdXJlcywgYnV0IHNvbWVob3cNCmRlZW1lZCBpdCB3aXNlIGZvciB3aGF0ZXZl
-ciByZWFzb24gdG8gc3dpdGNoIHRoZSBjb21taXQgb3JkZXIgaW4gdGhlDQpwYXRjaCBzdWJtaXNz
-aW9uLi4uDQoNCkJlc3QgcmVnYXJkcywNClNpbW9uDQo=
+On Thu, Aug 21, 2025 at 11:04=E2=80=AFPM MingMing Wang <mii.w@linux.alibaba=
+.com> wrote:
+>
+> From: MingMing Wang <mii.w@linux.alibaba.com>
+>
+> An orphaned TCP socket can stall indefinitely in FIN-WAIT-1
+> if the following conditions are met:
+> 1. net.ipv4.tcp_retries2 is set to a value =E2=89=A4 8;
+> 2. The peer advertises a zero window, and the window never reopens.
+>
+> Steps to reproduce:
+> 1. Set up two instances with nmap installed: one will act as the server
+>    the other as the client
+> 2. Execute on the server:
+>    a. lower rmem : `sysctl -w net.ipv4.tcp_rmem=3D"16 32 32"`
+>    b. start a listener: `nc -l -p 1234`
+> 3. Execute on the client:
+>    a. lower tcp_retries2: `sysctl -w net.ipv4.tcp_retries2=3D8`
+>    b. send pakcets: `cat /dev/zero | nc <server-ip> 1234`
+>    c. after five seconds, stop the process: `killall nc`
+> 4. Execute on the server: `killall -STOP nc`
+> 5. Expected abnormal result: using `ss` command, we'll notice that the
+>    client connection remains stuck in the FIN_WAIT1 state, and the
+>    backoff counter always be 8 and no longer increased, as shown below:
+>    ```
+
+Hi MingMing
+
+Please prepare and share with us a packetdrill test, instead of this
+'repro', which is the old way of describing things :/
+
+- This will be easier for us to understand the issue.
+
+- It will be added to existing tests in tools/testing/selftests/net/packetd=
+rill
+if your patch is accepted, so that we can make sure future changes are
+not breaking this again.
+
+Ideally, you should attach this packetdrill test in a second patch
+(thus sending a series of two patches)
+
+Thank you.
+
+>    FIN-WAIT-1 0      1389    172.16.0.2:50316    172.16.0.1:1234
+>          cubic wscale:2,7 rto:201 backoff:8 rtt:0.078/0.007 mss:36
+>                  ... other fields omitted ...
+>    ```
+> 6. If we set tcp_retries2 to 15 and repeat the steps above, the FIN_WAIT1
+>    state will be forcefully reclaimed after about 5 minutes.
+>
+> During the zero-window probe retry process, it will check whether the
+> current connection is alive or not. If the connection is not alive and
+> the counter of retries exceeds the maximum allowed `max_probes`, retry
+> process will be terminated.
+>
+> In our case, when we set `net.ipv4.tcp_retries2` to 8 or a less value,
+> according to the current implementation, the `icsk->icsk_backoff` counter
+> will be capped at `net.ipv4.tcp_retries2`. The value calculated by
+> `inet_csk_rto_backoff` will always be too small, which means the
+> computed backoff duration will always be less than rto_max. As a result,
+> the alive check will always return true. The condition before the
+> `goto abort` statement is an logical AND condition, the abort branch
+> can never be reached.
+>
+> So, the TCP retransmission backoff mechanism has two issues:
+>
+> 1. `icsk->icsk_backoff` should monotonically increase during probe
+>    transmission and, upon reaching the maximum backoff limit, the
+>    connection should be terminated. However, the backoff value itself
+>    must not be capped prematurely =E2=80=94 it should only control when t=
+o abort.
+>
+> 2. The condition for orphaned connection abort was incorrectly based on
+>    connection liveness and probe count. It should instead consider whethe=
+r
+>    the number of orphaned probes exceeds the intended limit.
+>
+> To fix this, introduce a local variable `orphan_probes` to track orphan
+> probe attempts separately from `max_probes`, which is used for RTO
+> retransmissions. This decouples the two counters and prevents accidental
+> overwrites, ensuring correct timeout behavior for orphaned connections.
+>
+> Fixes: b248230c34970 ("tcp: abort orphan sockets stalling on zero window =
+probes")
+> Co-developed-by: Dust Li <dust.li@linux.alibaba.com>
+> Signed-off-by: Dust Li <dust.li@linux.alibaba.com>
+> Co-developed-by: MingMing Wang <mii.w@linux.alibaba.com>
+> Signed-off-by: MingMing Wang <mii.w@linux.alibaba.com>
+>
+> ---
+> We couldn't determine the rationale behind the following check in tcp_sen=
+d_probe0():
+> ```
+> if (icsk->icsk_backoff < READ_ONCE(net->ipv4.sysctl_tcp_retries2))
+>     icsk->icsk_backoff++;
+> ```
+>
+> This condition appears to be the root cause of the observed stall.
+> However, it has existed in the kernel for over 20 years =E2=80=94 which s=
+uggests
+> there might be a historical or subtle reason for its presence.
+>
+> We would greatly appreciate it if anyone could shed
+> ---
+>  net/ipv4/tcp_output.c | 4 +---
+>  net/ipv4/tcp_timer.c  | 4 ++--
+>  2 files changed, 3 insertions(+), 5 deletions(-)
+>
+> diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+> index caf11920a878..21795d696e38 100644
+> --- a/net/ipv4/tcp_output.c
+> +++ b/net/ipv4/tcp_output.c
+> @@ -4385,7 +4385,6 @@ void tcp_send_probe0(struct sock *sk)
+>  {
+>         struct inet_connection_sock *icsk =3D inet_csk(sk);
+>         struct tcp_sock *tp =3D tcp_sk(sk);
+> -       struct net *net =3D sock_net(sk);
+>         unsigned long timeout;
+>         int err;
+>
+> @@ -4401,8 +4400,7 @@ void tcp_send_probe0(struct sock *sk)
+>
+>         icsk->icsk_probes_out++;
+>         if (err <=3D 0) {
+> -               if (icsk->icsk_backoff < READ_ONCE(net->ipv4.sysctl_tcp_r=
+etries2))
+> -                       icsk->icsk_backoff++;
+> +               icsk->icsk_backoff++;
+
+I think we need to have a cap, otherwise we risk overflows in
+inet_csk_rto_backoff()
+
+
+>                 timeout =3D tcp_probe0_when(sk, tcp_rto_max(sk));
+>         } else {
+>                 /* If packet was not sent due to local congestion,
+> diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
+> index a207877270fb..4dba2928e1bf 100644
+> --- a/net/ipv4/tcp_timer.c
+> +++ b/net/ipv4/tcp_timer.c
+> @@ -419,9 +419,9 @@ static void tcp_probe_timer(struct sock *sk)
+>         if (sock_flag(sk, SOCK_DEAD)) {
+>                 unsigned int rto_max =3D tcp_rto_max(sk);
+>                 const bool alive =3D inet_csk_rto_backoff(icsk, rto_max) =
+< rto_max;
+> +               int orphan_probes =3D tcp_orphan_retries(sk, alive);
+>
+> -               max_probes =3D tcp_orphan_retries(sk, alive);
+> -               if (!alive && icsk->icsk_backoff >=3D max_probes)
+> +               if (!alive || icsk->icsk_backoff >=3D orphan_probes)
+>                         goto abort;
+>                 if (tcp_out_of_resources(sk, true))
+>                         return;
+> --
+> 2.46.0
+>
 
