@@ -1,252 +1,225 @@
-Return-Path: <linux-kernel+bounces-782572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8673FB32247
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:30:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7032B32246
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14342687B53
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:30:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74DFE1D61EB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1262C033C;
-	Fri, 22 Aug 2025 18:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18CC2C027B;
+	Fri, 22 Aug 2025 18:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b="GJx3k4zY"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WTRApP/2"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39F1296BC2
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EB52BEC5F;
+	Fri, 22 Aug 2025 18:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755887425; cv=none; b=WqBbC43291v7/wfS+X3pQ0076YYYep9UvwCRtCsWuvVx6+63ghG+CkFPvl/WIPJ7wHaBS9Gfmz8WYC3ChImz/AJK7MgKzsX2zGxoQL7vwR6Ew7eq+BVoc9nGFaEe7Dzr/9xNa525eOzpmHRrAlctw8j4ePvF8UPkzUafFBwIyfY=
+	t=1755887423; cv=none; b=edAOY9A5M84PCmRIu10BxlvQrezR2wO0eVMDBxU9g8I2TTHau76CiY2Z4j5Lj6NpJEFC2UG/1Fko/h85t2PckuwO2kRoXCeulZk2+o40MnllLmxaIG0OAXExhAzFvQxXc279ZsmlwbA3QlEZ22ZuLibn5esf1uecL9OQ260fgfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755887425; c=relaxed/simple;
-	bh=KOTjvo5Uz94OrGKZwMmoKy2q23bXBZzAMoEvTsB4Qr8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UtN1oZWou1cX3O3dFjEcjwn3nSi7uENmz7gIEaPnaD2X8Ug1PfA6TashO21Vy5lVr5+vnIqKNFxgxHvRVN+yJtnY3iXWxbPomAqZ7mQCQNX0V2q+0zg61xqBnvrZxRu7id2T3+gWV3bdPJEBFiDTUXC3UtqSH005GWiAy7Ur+XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com; spf=pass smtp.mailfrom=criticallink.com; dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b=GJx3k4zY; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=criticallink.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e94dfbf7ba1so2358780276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:30:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=criticallink.com; s=google; t=1755887421; x=1756492221; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VAVbxvKFmubmCFIV/MmqSVaMXCvHJLOw/8uDYKGFsdk=;
-        b=GJx3k4zYkiC+UXBbMEF1Q+wxn2W9jyOyV3Ay3T0OQlxYhbDcqgKIL18/i76WdYtmhO
-         KRv86c2C6+UajfE31oL5rW55NhIkuo9xbW1fx3xN/SjU3DRX2yocqy2bNpzYSrH+414S
-         72ZBElOZD+ZvrSIl8F5emfOGKDJ5kRF3EpwOcGJRVKRkseHX8fhQvonjGHe4vAJkehE1
-         Ba6YBR89P/9uXMJuRY8ihzhdUHGk3S0ME+yY8rrdXhgDOKsy1ZtTN5XgEpqtusd+R+Sz
-         3E+D2g/Kf6UW8Jw5rlY/JqeOT+amHhFDIT6lm61WBgKTfFnppgzIlz2+LzDwBu1UR1NE
-         AlnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755887421; x=1756492221;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VAVbxvKFmubmCFIV/MmqSVaMXCvHJLOw/8uDYKGFsdk=;
-        b=hBtg0KxSg7Q+3ds99DGuf67qHcoehZr9Yw9waiG8wjUnKABLhYucg9LNtEEYaWtgu4
-         dWGRhlZPnrxqWB7/ZonqNxFVGeFrX8yZVOvNpX8cKAASYebw6zie6l/cYniHQddZYDFc
-         /kpEEA9C59LsXARfHAPCZk6YD8II1612adQyYRPntcSwDEsV/dNJR/a1M+rjvK3yY4HF
-         aXXV4Ur4BwciM+Y4MNWEUQ2gXR1bfRHE7pUWYh/PRjhCEop26192e/wHlBgXCPqENgdU
-         nBPEncDMeMSVG6WONmSsbnZr/F5CVQoW/rCRccv+20dqry8POnAY2W2BxsUzwhTjPZMu
-         PyKw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3IdHtgdJh4BnoLTkielvyo7r7/WToZ1+GNcxn5d2BTq/4+SPJCUqni0I92zDPGL+qMgpriHOUU/aoRUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlA1wVhfXVPj8s0440zcZD6aURkZJixaaDQl3DhDZ5xPfWEARb
-	CuXdrf+14qXgD8aptImbiaRynLYV3kFDEWegN3fTdxqVAQnp82taszhanbDa1RKoaRVTnIoJjAk
-	6oDQELW9zzoO/JM1WMS9wrgrpiGye1a0DF6wQ+fey
-X-Gm-Gg: ASbGncv/W2P2O+N2axSZYG0PoJ4b0pKr2Sp+iuVFC3OkVE7+IX2mAVErRahvj/nACu7
-	oG1R4OPoDPeKhvm3AqbOuh+Lg5AI2//GYwFh9Jz6Kuu4C4zJqW+B6KST3lwSpdRoRAxWVLK5V72
-	9PCTOyqYJWmmOuraJXt9uyCPKcpmxTwp2tlUdwkCFJBPa2ZKW1GS1xN/+8wEqpTzPKDxGchWvtG
-	COSMhXXXGuJWoX9
-X-Google-Smtp-Source: AGHT+IFpulQoP2yus1YpJjiAq8SECqslg0G79YGF/MlaiCfrGmAd1Wfa+eDPH6ROAf0AXOkQJfJYAMY5NjQ+s8WZELw=
-X-Received: by 2002:a05:6902:1285:b0:e8f:e526:fda9 with SMTP id
- 3f1490d57ef6-e951c23d0femr4833724276.22.1755887421462; Fri, 22 Aug 2025
- 11:30:21 -0700 (PDT)
+	s=arc-20240116; t=1755887423; c=relaxed/simple;
+	bh=k5FuKShODqfmNvsBm4qpnzT8Fh6g6jPj1b1L781qUhQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FiuydREJzj6XCFVRa4BKD5VOLLHSljTHAHMQDajkMnLtLLCfbDwJPVIwupOkxwfm69zCe21dg0nNPBFyR99tcMK9SjpM6UsyIPFxG74W0exqHLwB63MsminzomCwVRlwe5X2LtddZBzZDDo42Xp5OFWtnI9Jw2ot/AQSTu3GibQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WTRApP/2; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57MIUFZF307579;
+	Fri, 22 Aug 2025 13:30:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755887415;
+	bh=aDdnfXoloJINmIvwfPzsYTluOC1eKh/fWFgnitumSSw=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=WTRApP/29ZNup8OZNgqOVK0SmeEKWVz8r/P0dgJH5Gk/fqzZsJ7BISEiCVTWtJsW0
+	 PxqVMdcYemAm5ZbJnC6wmn7VUHd1TrTbLNkYBcJg4zw4QNAZnK7cIyZjfGGKokpbSi
+	 MIwwyqvg7W8+ord4gn/dP4zbSQn7GifqaAvVKamk=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57MIUFx13467809
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 22 Aug 2025 13:30:15 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 22
+ Aug 2025 13:30:14 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 22 Aug 2025 13:30:14 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57MIUEv5047367;
+	Fri, 22 Aug 2025 13:30:14 -0500
+Date: Fri, 22 Aug 2025 13:30:14 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Paresh Bhagat <p-bhagat@ti.com>
+CC: <vigneshr@ti.com>, <praneeth@ti.com>, <kristo@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <khasim@ti.com>, <v-singh1@ti.com>,
+        <afd@ti.com>, <bb@ti.com>, <s-k6@ti.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am62d2-evm: Add support for OSPI flash
+Message-ID: <20250822183014.apyvqws4afiqiymb@specks>
+References: <20250813090300.733295-1-p-bhagat@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820-linux_master_ti_sci_trace-v1-0-2a69c0abf55e@criticallink.com>
- <e11fd419-1095-471e-a57f-fc5ff7ce713a@ti.com> <CADL8D3aR_ecr4q54cX7yfr_aDPA7NhXmLhkiHjUY9MjNZeg78Q@mail.gmail.com>
- <c05c0a13-e7af-4fc0-9363-b629b2c48201@ti.com>
-In-Reply-To: <c05c0a13-e7af-4fc0-9363-b629b2c48201@ti.com>
-From: Jon Cormier <jcormier@criticallink.com>
-Date: Fri, 22 Aug 2025 14:30:09 -0400
-X-Gm-Features: Ac12FXwko-lHWrKeX_HXwKQRgoNpj8lFRexnA4jkRYcVCsmVQHRfYtBjR82Lv-o
-Message-ID: <CADL8D3aMOcuWY+5wy92Vvd=WK4kgOiSz2z+OEoUtwL_6Z8CDVw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] PATCH: firmware: ti_sci: Add trace events to TI SCI
-To: Andrew Davis <afd@ti.com>
-Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Santosh Shilimkar <ssantosh@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250813090300.733295-1-p-bhagat@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Aug 22, 2025 at 1:39=E2=80=AFPM Andrew Davis <afd@ti.com> wrote:
->
-> On 8/22/25 11:05 AM, Jon Cormier wrote:
-> > On Wed, Aug 20, 2025 at 4:04=E2=80=AFPM Andrew Davis <afd@ti.com> wrote=
-:
-> >>
-> >> On 8/20/25 1:10 PM, Jonathan Cormier wrote:
-> >>> Add trace events to help debug and measure the speed of the
-> >>> communication channel.
-> >>>
-> >>> Add parsing of the messages types but I am not sure how to parse the
-> >>> flags, since the REQ and RESP flags conflict. Left as seperate commit=
- to
-> >>
-> >> The REQ and RESP flags should be handled by different TRACE_EVENTs. Ri=
-ght
-> >> now you only dump the content of the response messages (the ones in
-> >> rx_callback), also tracing what is sent is just as important, so you
-> >> might want to add slightly different ti_sci_msg_dump EVENT for the
-> >> sending side which uses the different REQ flag parser.
-> >
-> >
-> > Does it make sense to have seperate trace events, one that only decode
-> > the hdrs and ones that also include the buffers?
-> >
-> > I'm bothered by the code duplication, but am trying to convince myself
-> > it doesn't matter.
-> >
-> > Currently, with the above updates, if you enabled all the traces,
-> > you'd see something like:
-> >
-> > [15.579036] ti_sci_xfer_begin: type=3DSET_DEVICE_STATE host=3D0C seq=3D=
-00
-> > flags=3D00000402 status=3D0
-> > [15.xxxxxxx] ti_sci_tx_msg_dump: type=3DSET_DEVICE_STATE host=3D0C seq=
-=3D00
-> > flags=3D00000402 data=3D<data>
-> > [15.587595] ti_sci_rx_callback: type=3DSET_DEVICE_STATE host=3D0C seq=
-=3D00
-> > flags=3D00000002 status=3D0
-> > [15.xxxxxxx] ti_sci_rx_msg_dump: type=3DSET_DEVICE_STATE host=3D0C seq=
-=3D00
-> > flags=3D00000002 data=3D<data>
-> > [15.606135] ti_sci_xfer_end: type=3DSET_DEVICE_STATE host=3D0C seq=3D00
-> > flags=3D00000002 status=3D0
-> >
-> > Presumably if you were worried about timing, you'd disable the
-> > msg_dumps, avoiding the extra memcpy's.  And if you only cared about
-> > the data being sent, you'd only enable the msg_dumps.  Does this make
-> > sense / is it worth the extra trace calls?
-> >
-> > Or removing the buffer decoding in the msg_dumps, removes the duplicati=
-on:
-> >
-> > [15.579036] ti_sci_xfer_begin: type=3DSET_DEVICE_STATE host=3D0C seq=3D=
-00
-> > flags=3D00000402 status=3D0
-> > [15.xxxxxxx] ti_sci_msg_dump: data=3D<data>
-> > [15.587595] ti_sci_rx_callback: type=3DSET_DEVICE_STATE host=3D0C seq=
-=3D00
-> > flags=3D00000002 status=3D0
-> > [15.xxxxxxx] ti_sci_msg_dump: data=3D<data>
-> > [15.606135] ti_sci_xfer_end: type=3DSET_DEVICE_STATE host=3D0C seq=3D00
-> > flags=3D00000002 status=3D0
-> >
->
-> I like this one ^^^ but I'd also just remove the `ti_sci_rx_callback`
+On 14:33-20250813, Paresh Bhagat wrote:
+> AM62D2 EVM has S28HS512T 64 MiB Octal SPI NOR flash connected to the
+> OSPI interface. Add support for the flash and describe the partition
+> information as per bootloader.
+> 
+> Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
+> ---
+> Boot logs
+> https://gist.github.com/paresh-bhagat12/262d8c64e692d22c4e48363d246fb083
 
-Sounds good
->
-> trace, the contents would always be the same as `ti_sci_xfer_end`.
+We already have issues with am62d that needs fixing:
+cpu cpu0: _of_add_opp_table_v2: no supported OPPs
+cpu cpu0: OPP table can't be empty
 
+and
 
-So in TI's 6.12 branch, there is a response_expected variable which
-skips waiting for a response message. Indicating that there won't
-always be a rx buffer.  If I keep the rx_callback scheme, it cleanly
-handles both cases without changes.
-However if I change xfer_end to track the rx buffer, sometimes it
-won't have a header to parse. Or sometimes it will use the TX header
-and sometimes it would be the RX header, which would be confusing.
+Please enable defconfig for this device
+arch/arm64/boot/dts/ti/k3-am62d2-evm.dts:       typec_pd0: usb-power-controller@3f {
 
-I could keep and move the ti_sci_rx_callback trace into ti_sci_do_xfer
-(-> ti_sci_xfer_rx), right after the completion and timeout check.
-This would keep all the tracing in this one function, though if
-someone wanted to know if there is lost time in waiting on the
-completion it wouldn't be tracked.
+We can look at adding features for am62d after the above are done.
+> 
+> Tech Ref Manual-https://www.ti.com/lit/pdf/sprujd4
+> Schematics Link-https://www.ti.com/lit/zip/sprcal5
+> 
+>  arch/arm64/boot/dts/ti/k3-am62d2-evm.dts | 86 ++++++++++++++++++++++++
+>  1 file changed, 86 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts b/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
+> index daea18b0bc61..aa943ef52fb5 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
+> @@ -25,6 +25,7 @@ aliases {
+>  		rtc0 = &wkup_rtc0;
+>  		ethernet0 = &cpsw_port1;
+>  		ethernet1 = &cpsw_port2;
+> +		spi0 = &ospi0;
+>  	};
+>  
+>  	chosen {
+> @@ -367,6 +368,26 @@ usr_led_pins_default: usr-led-default-pins {
+>  			AM62DX_IOPAD(0x0244, PIN_INPUT, 7) /* (D18) MMC1_SDWP.GPIO1_49 */
+>  		>;
+>  	};
+> +
+> +	ospi0_pins_default: ospi0-default-pins {
+> +		pinctrl-single,pins = <
+> +			AM62DX_IOPAD(0x0000, PIN_OUTPUT, 0) /* (L22) OSPI0_CLK */
+> +			AM62DX_IOPAD(0x002c, PIN_OUTPUT, 0) /* (H21) OSPI0_CSn0 */
+> +			AM62DX_IOPAD(0x0030, PIN_OUTPUT, 0) /* (G19) OSPI0_CSn1 */
+> +			AM62DX_IOPAD(0x0034, PIN_OUTPUT, 0) /* (K20) OSPI0_CSn2 */
+> +			AM62DX_IOPAD(0x0038, PIN_OUTPUT, 0) /* (G20) OSPI0_CSn3 */
+> +			AM62DX_IOPAD(0x000c, PIN_INPUT, 0) /* (J21) OSPI0_D0 */
+> +			AM62DX_IOPAD(0x0010, PIN_INPUT, 0) /* (J18) OSPI0_D1 */
+> +			AM62DX_IOPAD(0x0014, PIN_INPUT, 0) /* (J19) OSPI0_D2 */
+> +			AM62DX_IOPAD(0x0018, PIN_INPUT, 0) /* (H18) OSPI0_D3 */
+> +			AM62DX_IOPAD(0x001c, PIN_INPUT, 0) /* (K21) OSPI0_D4 */
+> +			AM62DX_IOPAD(0x0020, PIN_INPUT, 0) /* (H19) OSPI0_D5 */
+> +			AM62DX_IOPAD(0x0024, PIN_INPUT, 0) /* (J20) OSPI0_D6 */
+> +			AM62DX_IOPAD(0x0028, PIN_INPUT, 0) /* (J22) OSPI0_D7 */
+> +			AM62DX_IOPAD(0x0008, PIN_INPUT, 0) /* (L21) OSPI0_DQS */
+> +		>;
+> +		bootph-all;
+> +	};
+>  };
+>  
+>  &mcu_gpio0 {
+> @@ -613,3 +634,68 @@ &c7x_0 {
+>  &main_rti4 {
+>  	status = "reserved";
+>  };
+> +
+> +&fss {
+> +	status = "okay";
+> +};
+> +
+> +&ospi0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&ospi0_pins_default>;
+> +	status = "okay";
+> +
+> +	flash@0{
+> +		compatible = "jedec,spi-nor";
+> +		reg = <0x0>;
+> +		spi-tx-bus-width = <8>;
+> +		spi-rx-bus-width = <8>;
+> +		spi-max-frequency = <25000000>;
+> +		cdns,tshsl-ns = <60>;
+> +		cdns,tsd2d-ns = <60>;
+> +		cdns,tchsh-ns = <60>;
+> +		cdns,tslch-ns = <60>;
+> +		cdns,read-delay = <4>;
+> +
+> +		partitions {
+> +			compatible = "fixed-partitions";
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +
+> +			partition@0 {
+> +				label = "ospi.tiboot3";
+> +				reg = <0x0 0x80000>;
+> +			};
+> +
+> +			partition@80000 {
+> +				label = "ospi.tispl";
+> +				reg = <0x80000 0x200000>;
+> +			};
+> +
+> +			partition@280000 {
+> +				label = "ospi.u-boot";
+> +				reg = <0x280000 0x400000>;
+> +			};
+> +
+> +			partition@680000 {
+> +				label = "ospi.env";
+> +				reg = <0x680000 0x40000>;
+> +			};
+> +
+> +			partition@6c0000 {
+> +				label = "ospi.env.backup";
+> +				reg = <0x6c0000 0x40000>;
+> +			};
+> +
+> +			partition@800000 {
+> +				label = "ospi.rootfs";
+> +				reg = <0x800000 0x37c0000>;
+> +			};
+> +
+> +			partition@3fc0000 {
+> +				label = "ospi.phypattern";
+> +				reg = <0x3fc0000 0x40000>;
+> +				bootph-all;
+> +			};
+> +		};
+> +	};
+> +};
+> -- 
+> 2.34.1
+> 
+> 
 
-https://lore.kernel.org/all/20241220114118.uwi5bsefxnue46re@lcpd911/
->
->
-> This way you have two sets of symmetrical trace events, a "begin" and "en=
-d"
-> that can be used for timing measurements, and a dump message for "send" a=
-nd
-> "receive" that would help with debugging based on the message contents.
->
-> As for the code duplication in the send/receive traces, I'm not sure
-> what can be done, these trace macros already confuse me enough without
-> trying to optimize them :)
->
-> Andrew
->
-> > Or do condense the trace calls so they all have the data into something=
- like:
-> >
-> > [15.579036] ti_sci_xfer_begin: type=3DSET_DEVICE_STATE host=3D0C seq=3D=
-00
-> > flags=3D00000402 status=3D0  data=3D<data>
-> > [15.587595] ti_sci_rx_callback: type=3DSET_DEVICE_STATE host=3D0C seq=
-=3D00
-> > flags=3D00000002 status=3D0 data=3D<data>
-> > [15.606135] ti_sci_xfer_end: type=3DSET_DEVICE_STATE host=3D0C seq=3D00
-> > flags=3D00000002 status=3D0
-> >
-> > Simplifying the code in the trace header.
-> >>
-> >>
-> >> Andrew
-> >>
-> >>> make it easier to drop or make changes depending on comments.  The tw=
-o
-> >>> commits should squash easily.
-> >>>
-> >>> Nishanth Menon and Vignesh Raghavendra requested I send this patch
-> >>> upstream.
-> >>>
-> >>> Signed-off-by: Jonathan Cormier <jcormier@criticallink.com>
-> >>> ---
-> >>> Jonathan Cormier (2):
-> >>>         firmware: ti_sci: Add trace events
-> >>>         firmware: ti_sci: trace: Decode message types
-> >>>
-> >>>    MAINTAINERS                     |   1 +
-> >>>    drivers/firmware/Makefile       |   3 +
-> >>>    drivers/firmware/ti_sci.c       |  11 +++
-> >>>    drivers/firmware/ti_sci_trace.h | 146 ++++++++++++++++++++++++++++=
-++++++++++++
-> >>>    4 files changed, 161 insertions(+)
-> >>> ---
-> >>> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-> >>> change-id: 20250709-linux_master_ti_sci_trace-91fd2af65dca
-> >>>
-> >>> Best regards,
-> >>
-> >
-> >
->
-
-
---=20
-Jonathan Cormier
-Senior Software Engineer
-
-Voice:  315.425.4045 x222
-
-http://www.CriticalLink.com
-6712 Brooklawn Parkway, Syracuse, NY 13211
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://ti.com/opensource
 
