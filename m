@@ -1,108 +1,220 @@
-Return-Path: <linux-kernel+bounces-781161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31B85B30E4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:54:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFFADB30E4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFE3B720135
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:52:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEB457A8EB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52AAF296BAA;
-	Fri, 22 Aug 2025 05:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEE32C326B;
+	Fri, 22 Aug 2025 05:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KKSkw1h+"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JyXKE16e"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514872E2DD2
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B16433AC;
+	Fri, 22 Aug 2025 05:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755841958; cv=none; b=GXsMfKiakqz2heGpMJjGztjyTIvOiLGEMWEDOcgvJClF63P7pXt5zzG3kXwww/p0bwaVIPY8XAA+R0jYj3lnOdO0jnlY/rV5njX4DS1/O8Vc0FL+FBm1wc5maVYfXnHYCV0iC6lAyudVUc/Y9yxDltAYtPeTU+Sz6bH+l8kd4FI=
+	t=1755842030; cv=none; b=brOKsvz7IaVOpPLNo5//jveTtv+kW3Ay2No3GlFPcG2FRzmW1QMLbSx1oFSObNlhI2Z5+/d8w1W8G31SRLhKJ0cEQllEGbImkcg8vT0gAKUVljyw+BBdBEeJyERezs3dtYRIY0+IvSaRX2D670qaUzSXxfvVzFzUCSjP029gEX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755841958; c=relaxed/simple;
-	bh=7uX8JWTac+f6ksh/wu4QfEa5tteH904VkAXQGClcFe4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h1LIJ2jpKVu86O7cO/SWcbV3tx2JkR+ELZlQuCD3lNb8FStzaNz9rAEUO7pUD/bpenYWKhFv1ASXvIX1/u2mfZB7VqIcVwL+jexcXe0n2UeD974k9two8bh1MbJT1APCOQfxnzEWuDxegS4cZWv6tb6lP21lsdaa01QO81KaTs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KKSkw1h+; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76e2ea79219so2145496b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 22:52:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755841957; x=1756446757; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YovWw4m77QAU1eZq6mNcpwZ3XWg61x3JgwqV7QjcnZU=;
-        b=KKSkw1h+PeDrRCNUpBjn9Oqzl16HrJGciNVN5EjJl6uArPltvVdH3aHPGYrZVrJgHC
-         G/0RJtFz2xDAJPrGw+g1f3D2IRD+lBMWOaugUk8WCgU/bjQfNYG5VmKGc1Cg3Tom9xTO
-         mnMDX5a+ycrKegNJmNqpOuBBF6pnfGoWvTRfMEUZ5aJtGDBrgOGSAZh4oCb7j9cpE5Pv
-         kFRUZ+lWSVEgxowrDI8mMeGhr2srFCuqvAN6g+4JYv4c+9SrQFDUCZ+/T+RrZjJV9dF7
-         PnEj2FfIMy/qGQ4H9N5c7YebPPecPc3++DCRR2HnyjL3wGVlxgr5rkPUABZchDKzhvA2
-         yqeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755841957; x=1756446757;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YovWw4m77QAU1eZq6mNcpwZ3XWg61x3JgwqV7QjcnZU=;
-        b=gGY/jT866uxVay8/rMHPQ9GZ6GQLsHBypczNDRnRvufPFPmOJeOZvghzXiQKK39BSD
-         7lTN0SZ4ZR3bLJHEDEtg2L3RYCXyB9VRIpug/fhqjDSILfI6bFgejCFFcMC98vZrrWaJ
-         rD6O49Ic3ZRdrXpOFmd0l29EmizEo8p9UN9dx17pDPmahfU67k02zUkJlq0aOCEPwJ/Q
-         o/hoJmDyxNkfHhClD/jVe7oG7x/W+48L0lQppJAI6MHA/aaeD50xsn6jx9yP6u5Fu19+
-         nisnwMuCrOoe23ltnVVODf6C1M6/BXc3bJwi7PN0WSnyxnrSpQveogDouu9LUWursiDb
-         E1IA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5BHHfxJRB1CbdGvlurTF47rnLjdtTBNcAj1S2fPmsXcvN/ilYskVYFWH54IE1+3V2D4FyR63xzhSMmHk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPWWXNMzmfvdILhPQF9eUOvHt3Y201UAXRvsUMtK+HcxRy2IN1
-	ENueD0p0y4aG0ZSgmCXA/ngK1r8rwbNtADlt+vWS11F2D8YJCIpbQlZZXxZGxLfY9pw=
-X-Gm-Gg: ASbGncuV9/VJWB6ZijH8gZPhEoBg+0HffpdJHcMXW9CLTzR/vjiOE7hvCwWFZv9JptM
-	wW4mgES24OBcKHNlHcBvDZmXZ4DKG8e5BcsnNzwxn5zyrRal/4zwRYoDmISropLJ/WsJnclhNvR
-	9TOdM2GED2TVOYvDCwXpBqo1jBW18QIQLdiqk4UoSqkkD1n5jepoxbvLRiK1nzGeufjVsTpaZim
-	dyJvUn66ls1RQFjm/PKlmsNAOwG7Egqijj5eoKweRIKa1CSdwl7cIUGU5qtrIr8+JBYzcESOkxn
-	Q2uwdtc2sp62K4qNTrHCuq2xTql9pBt7wUq/FfHbBOPRvRbJ1OkbwpKkjk0tBfa7Y3vYkhvjjHd
-	z7d10bWTCmsd0OYeXOpVzCn7g4PbLYMHcgAg=
-X-Google-Smtp-Source: AGHT+IERMmQ5QIMLdzGNTUZWTWABVarbRh+hsNdg9Eto0PuDHGxQR+AsczHzwOmYsK59MW3cwZ9ykw==
-X-Received: by 2002:a05:6a21:3299:b0:232:fcfc:7209 with SMTP id adf61e73a8af0-24340e197afmr2543328637.35.1755841956381;
-        Thu, 21 Aug 2025 22:52:36 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77037ae065dsm199357b3a.4.2025.08.21.22.52.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 22:52:35 -0700 (PDT)
-Date: Fri, 22 Aug 2025 11:22:33 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Onur =?utf-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
-Cc: rust-for-linux@vger.kernel.org, vireshk@kernel.org, nm@ti.com,
-	sboyd@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com,
-	tmgross@umich.edu, dakr@kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: opp: use to_result for error handling
-Message-ID: <20250822055233.otexzvta35jjnqrb@vireshk-i7>
-References: <20250821091606.7470-1-work@onurozkan.dev>
- <20250821092137.wttiixhiidt27hnq@vireshk-i7>
- <20250822081343.4041a3d5@nimda.home>
+	s=arc-20240116; t=1755842030; c=relaxed/simple;
+	bh=c9WJsWaGNUFYZCfPMuakUC2AuRlRWNv+aDPUmdh7rBE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Ux0/BzUu0Nns3g3uLXAvkqB4venj95iLBgQro1s5NDCJirKOaw77EC6C8w2isbwHuXRbbcf6s8A5RHLne7PXZI8I5T2M34to9jHGsGltq85BjjhXffAP50snZDTJWoCTDfb1YENzqwsiMUycJrJ3kvwMBoe5XlXzJIor+NS9Q4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JyXKE16e; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LI9GfE002743;
+	Fri, 22 Aug 2025 05:53:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=TivjgjuKQ4ZLa6o5fHO7TO
+	9+vNk9/33184c0LWa9Ccg=; b=JyXKE16e0OPOUvE+ui0P2dViqBuNKNL70qRlRc
+	ownKHsyZrElNYJZBlMVMXz7lEYr0OMnDd/1iOX4aHcugmgqNqp5CL5Y1iqPzU6HW
+	tOOoS3qeBZVPTT3IT/h/3oDz6oI9RF56FDCCXWguUZ/y59wFaNmIjn9jQ3aXYlSZ
+	7+BcsxWxhCt1urHqXMemVHAMOtjLYiqJ89nIKBa4+KOxUt3oGlKtFvpaKV3LIBPZ
+	hfB4UTtru6OUAfRrbFkxTu7xzO+ISWn9GLLq8btw+/upGd6eo5/je9gjZdRYucaM
+	4kcpHgv0+AKKqytZSGdXTO0DcHhtJIippNcfxoc4wGZavLrw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ngtdntdn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 05:53:43 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57M5rhs7021027
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 05:53:43 GMT
+Received: from hu-dikshita-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Thu, 21 Aug 2025 22:53:40 -0700
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Date: Fri, 22 Aug 2025 11:23:30 +0530
+Subject: [PATCH v4] media: iris: vpu3x: Add MNoC low power handshake during
+ hardware power-off
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250822081343.4041a3d5@nimda.home>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250822-sm8650-power-sequence-fix-v4-1-e3d587e1f9e6@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIANkFqGgC/43NTQ7CIBCG4asY1mJgKAiuvIdxQadTy6J/oFVje
+ nfRVY2Jcfl+yTzzYIlioMR2qweLNIUU+i5HsV4xbHx3Ih6q3AwEaGEl8NRaowUf+itFnmi8UIf
+ E63DjpXfegXAWlGL5foiU57d9OOZuQjr38f5+NcnX+o86SS6515K2tXOoDe7HS8DQ4Qb7lr3cC
+ ZaW+mVBthxVokbAQmP5bamFBfKXpbJlCm2lKb2yYD6teZ6fk5Nb/lwBAAA=
+X-Change-ID: 20250812-sm8650-power-sequence-fix-ba9a92098233
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal
+	<quic_dikshita@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755842020; l=3964;
+ i=quic_dikshita@quicinc.com; s=20240917; h=from:subject:message-id;
+ bh=c9WJsWaGNUFYZCfPMuakUC2AuRlRWNv+aDPUmdh7rBE=;
+ b=NeOlaN3mnM0k389lQxCDuvw+ghkiAUEnAnCVR5wCgUme9B5KkUjwg00l4Kq9N2OqNstN+UU1i
+ X2tLlVzNx/bCu8Af/RRevrJ7F4mmngdOeH5thzvS8t/mMHz7oR0LMuJ
+X-Developer-Key: i=quic_dikshita@quicinc.com; a=ed25519;
+ pk=EEvKY6Ar1OI5SWf44FJ1Ebo1KuQEVbbf5UNPO+UHVhM=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=LexlKjfi c=1 sm=1 tr=0 ts=68a805e7 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=4jNVkGc5x75itkM4wVYA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: 8UHiWJ3dz68tugddcvyEwb1NrBD461nX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDEzNSBTYWx0ZWRfX810tJ06RMFAi
+ PkPeJRuiFImF/BxUP8FMyoAvRZJogN2CgKEwhNSfMu0hmClwI7IPAn/1JdGs/vmAfbimSY16fMW
+ XQWpobyWgYdBMGOIzQi5uR78leIkVSr5Hp+LKpCicQY8xw1DOJY0mUpmpVGTIi/KBUm8XZ11GrC
+ Fc+roLqOQyZHgMiT3FgvqApcPb6OwNwtoSkG2RZolIeGGQGcl8Xp9Lrsf491BI8N9/vTtJ+yxBR
+ 8pyxpVUcarZR6IXvVN+NjaO9jaokrsBuY/SSX5TdU7UH2KSjzxYmArFCrkHZi81wTh8HksBbmuh
+ NP+bzxp3e0Z38ZznIq82Y4x+cr4cECnYaV16xGtVzy/Tk0srkP2pS6XRi1cpp1QvakEhLW6zc1v
+ Lu/9X2+oSOtZ9mqt/2X0LP29UuYSVA==
+X-Proofpoint-ORIG-GUID: 8UHiWJ3dz68tugddcvyEwb1NrBD461nX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_01,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0 malwarescore=0
+ spamscore=0 priorityscore=1501 suspectscore=0 clxscore=1015 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200135
 
-On 22-08-25, 08:13, Onur Özkan wrote:
-> `ret` is returned at the end unlike other `to_result` usages in other
-> functions.
+Add the missing write to AON_WRAPPER_MVP_NOC_LPI_CONTROL before
+reading the LPI status register. Introduce a handshake loop to ensure
+MNoC enters low power mode reliably during VPU3 hardware power-off with
+timeout handling.
 
-Ahh, I missed that to_result() doesn't return `ret` at all.
+Fixes: 02083a1e00ae ("media: platform: qcom/iris: add support for vpu33")
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+---
+Changes in v4:
+- Added fixes tag (Bryan)
+- Link to v3: https://lore.kernel.org/r/20250821-sm8650-power-sequence-fix-v3-1-645816ba3826@quicinc.com
 
+Changes in v3:
+- Fixed the loop to capture the  success of the last power-on command (Bryan)
+- Link to v2: https://lore.kernel.org/r/20250813-sm8650-power-sequence-fix-v2-1-9ed0fc2c45cb@quicinc.com
+
+Changes in v2:
+- Restructured loop for readability (Jorge)
+- Used defines for bits (Konrad, Jorge)
+- Used udelay for short waits (Konrad)
+- Link to v1: https://lore.kernel.org/r/20250812-sm8650-power-sequence-fix-v1-1-a51e7f99c56c@quicinc.com
+---
+ drivers/media/platform/qcom/iris/iris_vpu3x.c | 32 +++++++++++++++++++++++++--
+ 1 file changed, 30 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/qcom/iris/iris_vpu3x.c b/drivers/media/platform/qcom/iris/iris_vpu3x.c
+index 9b7c9a1495ee2f51c60b1142b2ed4680ff798f0a..bfc52eb04ed0e1c88efe74a8d27bb95e8a0ca331 100644
+--- a/drivers/media/platform/qcom/iris/iris_vpu3x.c
++++ b/drivers/media/platform/qcom/iris/iris_vpu3x.c
+@@ -19,6 +19,9 @@
+ #define WRAPPER_IRIS_CPU_NOC_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x5C)
+ #define REQ_POWER_DOWN_PREP			BIT(0)
+ #define WRAPPER_IRIS_CPU_NOC_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x60)
++#define NOC_LPI_STATUS_DONE			BIT(0) /* Indicates the NOC handshake is complete */
++#define NOC_LPI_STATUS_DENY			BIT(1) /* Indicates the NOC handshake is denied */
++#define NOC_LPI_STATUS_ACTIVE		BIT(2) /* Indicates the NOC is active */
+ #define WRAPPER_CORE_CLOCK_CONFIG		(WRAPPER_BASE_OFFS + 0x88)
+ #define CORE_CLK_RUN				0x0
+ 
+@@ -109,7 +112,9 @@ static void iris_vpu3_power_off_hardware(struct iris_core *core)
+ 
+ static void iris_vpu33_power_off_hardware(struct iris_core *core)
+ {
++	bool handshake_done = false, handshake_busy = false;
+ 	u32 reg_val = 0, value, i;
++	u32 count = 0;
+ 	int ret;
+ 
+ 	if (iris_vpu3x_hw_power_collapsed(core))
+@@ -128,13 +133,36 @@ static void iris_vpu33_power_off_hardware(struct iris_core *core)
+ 			goto disable_power;
+ 	}
+ 
++	/* Retry up to 1000 times as recommended by hardware documentation */
++	do {
++		/* set MNoC to low power */
++		writel(REQ_POWER_DOWN_PREP, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
++
++		udelay(15);
++
++		value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS);
++
++		handshake_done = value & NOC_LPI_STATUS_DONE;
++		handshake_busy = value & (NOC_LPI_STATUS_DENY | NOC_LPI_STATUS_ACTIVE);
++
++		if (handshake_done || !handshake_busy)
++			break;
++
++		writel(0, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
++
++		udelay(15);
++
++	} while (++count < 1000);
++
++	if (!handshake_done && handshake_busy)
++		dev_err(core->dev, "LPI handshake timeout\n");
++
+ 	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS,
+ 				 reg_val, reg_val & BIT(0), 200, 2000);
+ 	if (ret)
+ 		goto disable_power;
+ 
+-	/* set MNoC to low power, set PD_NOC_QREQ (bit 0) */
+-	writel(BIT(0), core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
++	writel(0, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+ 
+ 	writel(CORE_BRIDGE_SW_RESET | CORE_BRIDGE_HW_RESET_DISABLE,
+ 	       core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
+
+---
+base-commit: d968e50b5c26642754492dea23cbd3592bde62d8
+change-id: 20250812-sm8650-power-sequence-fix-ba9a92098233
+
+Best regards,
 -- 
-viresh
+Dikshita Agarwal <quic_dikshita@quicinc.com>
+
 
