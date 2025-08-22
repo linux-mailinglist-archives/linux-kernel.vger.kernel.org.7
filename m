@@ -1,130 +1,263 @@
-Return-Path: <linux-kernel+bounces-782163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1034CB31C08
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:39:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D95ACB31B9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86B8F1D6315A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:32:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1164FB40E3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E9E337692;
-	Fri, 22 Aug 2025 14:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104DC326D75;
+	Fri, 22 Aug 2025 14:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="eTjjxCbk"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lu/d3ZW4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7B527AC43;
-	Fri, 22 Aug 2025 14:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7876311C21;
+	Fri, 22 Aug 2025 14:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755872723; cv=none; b=MBPEYQy6/kkue5E+Vpu7rIoMdbkVUFfr54X1tC0NS42dYokefD7KeHS5ZWof4RTp3MCtImffEjm5/dCWHnJonlg8epk3lRebrWu6fxBUucpm/XaZ4cZGXiQOW9rqddMQerSRMGVwdf9q4cN9kzQEO+xS0ua6+S6e6RP5acOP1GY=
+	t=1755872388; cv=none; b=oiJKpzPlrIb0pMWNKCY/FiRKqnajV4GYNfPID0A4VF69YCW6sKbgjgj1NjzNPHO3efQvOdB3xHowM/RT9Gre/J2v1w21Op0TsyIDGnOPy3VQ17iiArIPJ6qTW1/KDXW3dp7WZ3BrZdtp1tLrgPBiYN7QoauBLgK4yTabf0WHtCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755872723; c=relaxed/simple;
-	bh=xb5TOEehY2vIAhaP312qMAw6NVGL99DD0VXXKP45u2Y=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kGB7pXoLYgxAC1QjQQPTa69nlm65JMHlZArXYg3FxwrGDoF2OEPb3GYR2FQ7Ae142VJ1NICD7wbA/SJVkhA2ryimLcl8VGioHJXacJv7KBpjl2MfGl9YyjKtanZS9vSftSOK7IgywHkdw/zQZh79IudEHD6Lkf5epaDhlF4m/LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=eTjjxCbk; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MBtbtR002505;
-	Fri, 22 Aug 2025 16:24:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=3LeisAj1Cwd8ZHYc3VbqAj
-	scWGD/Uc/4Za/fl9paTp0=; b=eTjjxCbkO343Al1uCRDS42GMaZzbXxH2BYhSFg
-	lIvoh3f8adhmPYHz20R+FKBkXFX99TD9rq5gK2RIxN6GAc8qIOXQMbhztYRoDsMA
-	WQHaZf9h0XSMHtia7O+jaf5iP8qrB2epg6pAVGzqij8O0Ll7xrWD3xxgjLOGeVD/
-	JT2V4UvMM0dwjl0urBcdgBI9tPn005dAazZYVMPXfO5CyJdM4Tl01SgxGXSsXghF
-	QWV/hGXITO0vcXs4arRV94305menIabMEj77MVv20zc9Z61t/BEvZrpoStkyqOxJ
-	EdLHKbjAlASzKhKIqNRUbGw/DwzY1hwJEBgG5UJmxzUZU/fw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48n754kemw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Aug 2025 16:24:54 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 23BDB40045;
-	Fri, 22 Aug 2025 16:23:22 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 572F26C9834;
-	Fri, 22 Aug 2025 16:22:19 +0200 (CEST)
-Received: from localhost (10.130.74.180) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 22 Aug
- 2025 16:22:19 +0200
-From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby
-	<jirislaby@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
-        Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>,
-        "Maciej W. Rozycki" <macro@orcam.me.uk>,
-        Douglas Anderson <dianders@chromium.org>,
-        Zong Jiang
-	<quic_zongjian@quicinc.com>,
-        Robert Marko <robert.marko@sartura.hr>,
-        "Thierry
- Bultel" <thierry.bultel.yh@bp.renesas.com>,
-        Raphael Gallais-Pou
-	<raphael.gallais-pou@foss.st.com>,
-        Kartik Rajput <kkartik@nvidia.com>,
-        "Peter
- Hurley" <peter@hurleysoftware.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Vladimir Zapolskiy
-	<vladimir_zapolskiy@mentor.com>,
-        Antonio Borneo <antonio.borneo@foss.st.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <stable@vger.kernel.org>
-Subject: [PATCH v2] serial: stm32: allow selecting console when the driver is module
-Date: Fri, 22 Aug 2025 16:19:23 +0200
-Message-ID: <20250822141923.61133-1-raphael.gallais-pou@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1755872388; c=relaxed/simple;
+	bh=UW2xelo4TnzX16OxyxtwPo8LfwSKWCjViRI3KVdm6R4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DnAT5ufSU6x8p1hWBm/O60KHY2As637uzYyefY4moSoGK5xjILQusSZT4GgdHkoYt6vHaERC3xlPDkmR0ayuZPimdUuIRK5id4uPj0VsXzZpJKX1J1U7L6XTJkIihRnP1LQ6ODAsEiG/aQMrPfA2L/k/4lE2drZxviOS9jweWz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lu/d3ZW4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35F26C2BCB3;
+	Fri, 22 Aug 2025 14:19:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755872388;
+	bh=UW2xelo4TnzX16OxyxtwPo8LfwSKWCjViRI3KVdm6R4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Lu/d3ZW4YxqP5K5h0db1aASen4oTPyXhAKssWGNSB9hYF0X2zKftJAbYuzdLI/QL7
+	 qCrE7p9Ccl+MKlWAgZ0ZmknLKlGe7uEkzgdmyJrEjUvLreh3b+w7I7jEH7dV0L5XpO
+	 YgAReR7HZlGPgBidfp00g03da5IGsEEWe5TBmnCsKafU5T3+ybpmOnTBGJRfFhtmba
+	 lTUnMfwLhq882ezmYeqocAW8rGIsUb0eWSpeIo2e3m062DCEySs0vVm/O3oleoa5yM
+	 +GVxGk8YOWSJ3wTsHIGrMuau5kAtceiIHcii9W07rWhEdJUJf5tvrtW6gWTDAvLULK
+	 wQiNly3ci8XkA==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1upScM-0000000CCrd-1m7g;
+	Fri, 22 Aug 2025 16:19:46 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+	Kees Cook <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 12/24] docs: kernel_include.py: generate warnings for broken refs
+Date: Fri, 22 Aug 2025 16:19:24 +0200
+Message-ID: <73be9a198746421687e2eee916ccf8bf67980b7d.1755872208.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <cover.1755872208.git.mchehab+huawei@kernel.org>
+References: <cover.1755872208.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Console can be enabled on the UART compile as module.
-Change dependency to allow console mode when the driver is built as module.
+In the past, Sphinx used to warn about broken references. That's
+basically the rationale for adding media uAPI files: to get
+warnings about missed symbols.
 
-Fixes: 48a6092fb41fa ("serial: stm32-usart: Add STM32 USART Driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+This is not true anymore. So, we need to explicitly check them
+after doctree-resolved event.
+
+While here, move setup() to the end, to make it closer to
+what we do on other extensions.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
-Changes in v2:
-- Cced stable tree
----
- drivers/tty/serial/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/sphinx/kernel_include.py | 108 ++++++++++++++++++++-----
+ 1 file changed, 89 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index e661f5951f558..1e27a822c1cba 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -1420,7 +1420,7 @@ config SERIAL_STM32
+diff --git a/Documentation/sphinx/kernel_include.py b/Documentation/sphinx/kernel_include.py
+index fc37e6fa9d96..0a3e5377dd1e 100755
+--- a/Documentation/sphinx/kernel_include.py
++++ b/Documentation/sphinx/kernel_include.py
+@@ -26,7 +26,7 @@
+     environment variable name. Malformed variable names and references to
+     non-existing variables are left unchanged.
  
- config SERIAL_STM32_CONSOLE
- 	bool "Support for console on STM32"
--	depends on SERIAL_STM32=y
-+	depends on SERIAL_STM32
- 	select SERIAL_CORE_CONSOLE
- 	select SERIAL_EARLYCON
+-    This extension overrides Sphinx include directory, adding two extra
++    This extension overrides Sphinx include directory, adding some extra
+     arguments:
  
+     1. :generate-cross-refs:
+@@ -35,14 +35,20 @@
+         class, which converts C data structures into cross-references to
+         be linked to ReST files containing a more comprehensive documentation;
+ 
+-        Don't use it together with :start-line: and/or :end-line:, as
+-        filtering input file line range is currently not supported.
+-
+     2. :exception-file:
+ 
+-        Used together with :generate-cross-refs:. Points to a file containing
+-        rules to ignore C data structs or to use a different reference name,
+-        optionally using a different reference type.
++        Used together with :generate-cross-refs
++
++        Points to a file containing rules to ignore C data structs or to
++        use a different reference name, optionally using a different
++        reference type.
++
++    3. :warn-broken:
++
++        Used together with :generate-cross-refs:
++
++        Detect if the auto-generated cross references doesn't exist.
++
+ """
+ 
+ # ==============================================================================
+@@ -50,6 +56,7 @@
+ # ==============================================================================
+ 
+ import os.path
++import re
+ import sys
+ 
+ from docutils import io, nodes, statemachine
+@@ -58,23 +65,18 @@ from docutils.parsers.rst import directives
+ from docutils.parsers.rst.directives.body import CodeBlock, NumberLines
+ from docutils.parsers.rst.directives.misc import Include
+ 
++from sphinx.util import logging
++
+ srctree = os.path.abspath(os.environ["srctree"])
+ sys.path.insert(0, os.path.join(srctree, "tools/docs/lib"))
+ 
+ from parse_data_structs import ParseDataStructs
+ 
+ __version__ = "1.0"
++logger = logging.getLogger(__name__)
+ 
+-
+-# ==============================================================================
+-def setup(app):
+-    """Setup Sphinx exension"""
+-    app.add_directive("kernel-include", KernelInclude)
+-    return {
+-        "version": __version__,
+-        "parallel_read_safe": True,
+-        "parallel_write_safe": True,
+-    }
++RE_DOMAIN_REF = re.compile(r'\\ :(ref|c:type|c:func):`([^<`]+)(?:<([^>]+)>)?`\\')
++RE_SIMPLE_REF = re.compile(r'`([^`]+)`')
+ 
+ 
+ # ==============================================================================
+@@ -86,6 +88,7 @@ class KernelInclude(Include):
+ 
+     option_spec.update({
+         'generate-cross-refs': directives.flag,
++        'warn-broken': directives.flag,
+         'exception-file': directives.unchanged,
+     })
+ 
+@@ -103,9 +106,9 @@ class KernelInclude(Include):
+         env.note_dependency(os.path.abspath(path))
+ 
+         # return super(KernelInclude, self).run() # won't work, see HINTs in _run()
+-        return self._run()
++        return self._run(env)
+ 
+-    def _run(self):
++    def _run(self, env):
+         """Include a file as part of the content of this reST file."""
+ 
+         # HINT: I had to copy&paste the whole Include.run method. I'am not happy
+@@ -151,6 +154,10 @@ class KernelInclude(Include):
+ 
+             if "code" not in self.options:
+                 rawtext = ".. parsed-literal::\n\n" + rawtext
++
++            # Store references on a symbol dict to be used at check time
++            if 'warn-broken' in self.options:
++                env._xref_files.add(path)
+         else:
+             try:
+                 self.state.document.settings.record_dependencies.add(path)
+@@ -239,3 +246,66 @@ class KernelInclude(Include):
+             return codeblock.run()
+         self.state_machine.insert_input(include_lines, path)
+         return []
++
++# ==============================================================================
++
++reported = set()
++
++def check_missing_refs(app, env, node, contnode):
++    """Check broken refs for the files it creates xrefs"""
++    if not node.source:
++        return None
++
++    try:
++        xref_files = env._xref_files
++    except AttributeError:
++        logger.critical("FATAL: _xref_files not initialized!")
++        raise
++
++    # Only show missing references for kernel-include reference-parsed files
++    if node.source not in xref_files:
++        return None
++
++    target = node.get('reftarget', '')
++    domain = node.get('refdomain', 'std')
++    reftype = node.get('reftype', '')
++
++    msg = f"can't link to: {domain}:{reftype}:: {target}"
++
++    # Don't duplicate warnings
++    data = (node.source, msg)
++    if data in reported:
++        return None
++    reported.add(data)
++
++    logger.warning(msg, location=node, type='ref', subtype='missing')
++
++    return None
++
++def merge_xref_info(app, env, docnames, other):
++    """
++    As each process modify env._xref_files, we need to merge them back.
++    """
++    if not hasattr(other, "_xref_files"):
++        return
++    env._xref_files.update(getattr(other, "_xref_files", set()))
++
++def init_xref_docs(app, env, docnames):
++    """Initialize a list of files that we're generating cross references¨"""
++    app.env._xref_files = set()
++
++# ==============================================================================
++
++def setup(app):
++    """Setup Sphinx exension"""
++
++    app.connect("env-before-read-docs", init_xref_docs)
++    app.connect("env-merge-info", merge_xref_info)
++    app.add_directive("kernel-include", KernelInclude)
++    app.connect("missing-reference", check_missing_refs)
++
++    return {
++        "version": __version__,
++        "parallel_read_safe": True,
++        "parallel_write_safe": True,
++    }
 -- 
-2.25.1
+2.50.1
 
 
