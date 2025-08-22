@@ -1,188 +1,93 @@
-Return-Path: <linux-kernel+bounces-782697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1584DB323CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:54:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42208B323D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA8B44E062A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:54:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ACFB5635C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33982FCBF7;
-	Fri, 22 Aug 2025 20:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5719C303CAF;
+	Fri, 22 Aug 2025 20:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tCNXTSfN"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="DJQSXnrc"
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75E82BCF46
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 20:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884AD2BCF46;
+	Fri, 22 Aug 2025 20:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755896079; cv=none; b=a3+gsL/Zq0Cy8nEbq+Hkad1BndbuJzvEcU6yMap/sOSUnlD1Go/4YfGpQCGXJaLBmxL8d3kU47QkWWHSCVT8DkcgOdxLI54XA+USvCSpB1LNSrPDcdfcKXF+5KVmBEr2aI3I2QMD1c2vIkbeiPt/8ATIUSwZM1j+cgvv782fHvo=
+	t=1755896170; cv=none; b=CAOVvPzFwk/66bMWiGJbK412+uI9SLyGVDn4Erj7T3OYBKs07iHdxSASHd53kUCZKlNw9E5MDkhzelsV7XWIUI9bww5TLTlwrzsyJn4W2H/L/YmU8REWj5r8+JXM7Ng/C4a8NqKq5GcwTSX8Yg91wFlJ/iTwjdUefMm+RUuPao8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755896079; c=relaxed/simple;
-	bh=1ml9cP/F8jht6mr/WdPwrpiZvX/USpp6ahfk4q7p+7E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XcJCGWswcbEPtnQ5Bj0JWg5AppvFSo5PuXUMSDgpjFAZz2XAxzorm9vpiFAZ/znJmjqf82otVjbID8uQ2mB579AfXPaEDDiOChRA8oMP/K404jRNlYqNYttCeW+BZ0UaQNHmjbly1QTOSPAiuJ+5jTrB28FTqbJ8QLQfqAm4Q6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tCNXTSfN; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24457ef983fso50908985ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:54:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755896077; x=1756500877; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5qoGsok8ax9ANgqhEfYfFzNj29eee9JEF8TtR6Jw5Ls=;
-        b=tCNXTSfNS/4nWekX/t4EfpDVgr8a4HoOfKrQ0V1Zi91Hx80SvDQPLavlBwh65/NDUo
-         nOnn0zlkPJ8PxTY7YG0JLIuO7JFO7+/rkj7RWClS0qTPGMYmWEmxkDhVtcMrD2LXqog1
-         xMJqq3QyKmAV7OquExxXhEfDIMREgGXIFpoJ7+xUEL4I4nGbKAiXd2t3u9eE50FDXoLX
-         eOOYJf3WCb3gb1vaA2I/u/3Y/Lklz/8EGbIWmJMtNwSjRkhRSgRjP6KNGt1Mg2lDO7Jb
-         yfukZZrNuF0QBzjn0LSMIoHt0ya03DoFEjJ3ljW5aF7FXKK6Fgi/NfBY/XjlWXWHc7TX
-         swEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755896077; x=1756500877;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5qoGsok8ax9ANgqhEfYfFzNj29eee9JEF8TtR6Jw5Ls=;
-        b=XWDJsxMu4eZxHWvf9Cxchk5eIS6TByQWJE1lfB4vGGscGSSUAYUz723dH7e9NxmTpi
-         icB8Ul3nMPY3To/rzR4pBF0f2dbr32v8xmv9q6Xs0auxLjn/FqgPFAAmfTpyWGVLQmCZ
-         C9a75WZDopoMHcDoY7HIXgzMAuKdW9HdC1bJncQzES0rCwmTHDICBgbH6DYDbFWkie1C
-         He86J2Y0PQYBWh0LYck4FKuwuH0/x8zp1XgeBoQWJVqhJH7SKVC87/dtm7IC1DNP/B08
-         A/GIgh+yIJNUaPhfAWn3qG8f1oyF0LS6ouWWD5Injc8BRtH5SDjADSIp3231fGyFnStE
-         q0Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCUV/5ajEB74Ytapr877emENMP+sECYLnhg4Ee4o/Gciqtem6JkzU4Bj/AfIE3aWqa0JsubC63hpcNrbqNs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEaA+UosxaUs8A63rHKf/3UfIFJn2hFEDXxU9DRavL7Ih+MQaR
-	bhvpDcsYDemrpFKA4KFuWSYloPzjEbL9t5zivFXGaslAc/i4dUQjdCmTns6CbTTVpNvVrx55Xhi
-	kQglF0Q==
-X-Google-Smtp-Source: AGHT+IHGCqV6hiRFqaBvONeHtVVp5VM1BXrYesclvI0pJ5OQl5SzJOVxJ8kHtf3elBS4oakmh5ZQVoFZp8Y=
-X-Received: from pjvb16.prod.google.com ([2002:a17:90a:d890:b0:31f:b2f:aeed])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1249:b0:240:3dbb:7603
- with SMTP id d9443c01a7336-2462edf1af9mr69750505ad.19.1755896077020; Fri, 22
- Aug 2025 13:54:37 -0700 (PDT)
-Date: Fri, 22 Aug 2025 13:54:35 -0700
-In-Reply-To: <zx4aiu65mmk72mo2kooj52q4k3vsp43znlrdadajivsw6ns7ou@7xtzfms3de66>
+	s=arc-20240116; t=1755896170; c=relaxed/simple;
+	bh=PHG0D5CzDDTIfrFFxjd2HcsgBLjTrNlrvcq+F1lz+2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AIaUPFYQwCcX9W0gKpk1T7J1DBeapwWghSE0tFa17ZKZHRAblHCG2WGJq+d+JiBLwasjh5AtvTefgX88wLuR2OixzRR2Uol29t89NdEjLfL5YbDVT2GDCIC/8D5P03Dyny1PhpZb3/4+yRGWkbUTGSCxoqa3rvpe3nYgffDvCTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=DJQSXnrc; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+DKIM-Signature: a=rsa-sha256; bh=jfIU0fuoE9yXlwzwCsY58yVMK25YpgK8FBL6dKXlTGM=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1755896103; v=1; x=1756328103;
+ b=DJQSXnrcX1KtXFD8wN/IsWAeXiCKnnn69GH/KEJ8BExviuHhDhgNduzZ4liRcUICrKbL8W2N
+ pO8i7R+txU/wZSYMNRNtNWYFPdDbJ3Z1IIsaRL2ln0OdCUQglEMuQI2pA3Rm91tZPhTiW8OI/vi
+ BLgWP8MoT8TQCaiBDXJB2kdBLl28Yt2TL5osaCRM4ZYKKfPB3HarwCjt9pkDDw0L15SQZJZ0qPk
+ 098W7wjKzHXepBiTHHF3EpS9d9FU3erH5/TcFi58UNKCPONunJkaBtN7rgvvK/VdifKBsAkBghW
+ tdwOVaFmp/ScFDObBX+vJ5gMSk5hKIH9+r2X/V5UQGLsQ==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id b22c5fac; Fri, 22 Aug 2025 22:55:03 +0200
+From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>,
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] clk: mmp: Add PXA1908 power domain driver
+Date: Fri, 22 Aug 2025 22:55:02 +0200
+Message-ID: <6193521.lOV4Wx5bFT@radijator>
+In-Reply-To:
+ <CAPDyKFoHWNuSmnN0e=QR73r0Ea-XJogbB8S3K+_=VRovzXL2Sw@mail.gmail.com>
+References:
+ <20250821-pxa1908-genpd-v2-0-eba413edd526@dujemihanovic.xyz>
+ <20250821-pxa1908-genpd-v2-3-eba413edd526@dujemihanovic.xyz>
+ <CAPDyKFoHWNuSmnN0e=QR73r0Ea-XJogbB8S3K+_=VRovzXL2Sw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1755609446.git.maciej.szmigiero@oracle.com>
- <2b2cfff9a2bd6bcc97b97fee7f3a3e1186c9b03c.1755609446.git.maciej.szmigiero@oracle.com>
- <aKeDuaW5Df7PgA38@google.com> <zx4aiu65mmk72mo2kooj52q4k3vsp43znlrdadajivsw6ns7ou@7xtzfms3de66>
-Message-ID: <aKjZC3peGKPj9NPq@google.com>
-Subject: Re: [PATCH 1/2] KVM: SVM: Sync TPR from LAPIC into VMCB::V_TPR when
- setting LAPIC regs
-From: Sean Christopherson <seanjc@google.com>
-To: Naveen N Rao <naveen@kernel.org>
-Cc: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>, 
-	Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Aug 22, 2025, Naveen N Rao wrote:
-> On Thu, Aug 21, 2025 at 01:38:17PM -0700, Sean Christopherson wrote:
-> > On Tue, Aug 19, 2025, Maciej S. Szmigiero wrote:
-> > > +	/*
-> > > +	 * Sync TPR from LAPIC TASKPRI into V_TPR field of the VMCB.
-> > > +	 *
-> > > +	 * When AVIC is enabled the normal pre-VMRUN sync in sync_lapic_to_cr8()
-> > > +	 * is inhibited so any set TPR LAPIC state would not get reflected
-> > > +	 * in V_TPR.
-> > 
-> > Hmm, I think that code is straight up wrong.  There's no justification, just a
-> > claim:
-> > 
-> >   commit 3bbf3565f48ce3999b5a12cde946f81bd4475312
-> >   Author:     Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
-> >   AuthorDate: Wed May 4 14:09:51 2016 -0500
-> >   Commit:     Paolo Bonzini <pbonzini@redhat.com>
-> >   CommitDate: Wed May 18 18:04:31 2016 +0200
-> > 
-> >     svm: Do not intercept CR8 when enable AVIC
-> >     
-> >     When enable AVIC:
-> >         * Do not intercept CR8 since this should be handled by AVIC HW.
-> >         * Also, we don't need to sync cr8/V_TPR and APIC backing page.   <======
-> >     
-> >     Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-> >     [Rename svm_in_nested_interrupt_shadow to svm_nested_virtualize_tpr. - Paolo]
-> >     Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> > 
-> > That claim assumes APIC[TPR] will _never_ be modified by anything other than
-> > hardware. 
+On Friday, 22 August 2025 11:36:02 Central European Summer Time Ulf Hansson 
+wrote:
+> By looking at the implementation of the power-domain code below, it
+> seems to me that this code is better maintained within the pmdomain
+> subsystem (drivers/pmdomain/pxa perhaps). May I suggest that you move
+> it there.
 > 
-> It also isn't clear to me why only sync_lapic_to_cr8() was gated when 
-> AVIC was enabled, while sync_cr8_to_lapic() continues to copy V_TRP to 
-> the backing page. If AVIC is enabled, then the AVIC hardware updates 
-> both the backing page and V_TPR on a guest write to TPR.
-> 
-> > That's obviously false for state restore from userspace, and it's also
-> > technically false at steady state, e.g. if KVM managed to trigger emulation of a
-> > store to the APIC page, then KVM would bypass the automatic harware sync.
-> 
-> Do you mean emulation due to AVIC being inhibited? I initially thought 
-> this could be a problem, but in this scenario, AVIC would be disabled on 
-> the next VMRUN, so we will end up sync'ing TPR from the lapic to V_TPR.
+> I guess the easiest way to do this is to export the
+> pxa1908_pd_register() function - but you could explore using the
+> auxiliary bus too, to instantiate a power-domain driver as an
+> auxiliary driver.
 
-No, if emulation is triggered when AVIC isn't inhibited.  E.g. a contrived but
-entirely possible situation would be if MOVBE isn't supported in hardware, KVM
-is emulating MOVBE for emulation, and the guest sets the TPR via MOVBE.  The MOVBE
-#UDs, KVM emulates in response to the #UD, and Bob's your uncle.
+The auxiliary bus was exactly what I needed, thanks. As for the path, I think 
+drivers/pmdomain/marvell would be a better fit and I'll go with that if you 
+don't object.
 
-There are other scenarios where KVM would emulate, though they're even more
-contrived.
+Regards,
+--
+Duje
 
-> > There's also the comically ancient KVM_SET_VAPIC_ADDR, which AFAICT appears to
-> > be largely dead code with respect to vTPR (nothing sets KVM_APIC_CHECK_VAPIC
-> > except for the initial ioctl), but could again set APIC[TPR] without updating
-> > V_TPR.
-> >
-> > So, rather than manually do the update during state restore, my vote 
-> > is to restore the sync logic.  And if we want to optimize that code 
-> > (seems unnecessary), then we should hook all TPR writes.
-> 
-> I guess you mean apic_set_tpr()? 
 
-Yep.
-
-> We will need to hook into that in addition to updating
-> avic_apicv_post_state_restore() since KVM_SET_LAPIC just does a memcpy of the
-> register state.
-
-Yeah, or explicitly call the hook, e.g. like kvm_apic_set_state() does for
-hwapic_isr_update().  But I don't think we should add a hook unless someone
-proves that unconditionally synchronizing before VMRUN affects performance.
-
-> > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> > index d9931c6c4bc6..1bfebe40854f 100644
-> > --- a/arch/x86/kvm/svm/svm.c
-> > +++ b/arch/x86/kvm/svm/svm.c
-> > @@ -4046,8 +4046,7 @@ static inline void sync_lapic_to_cr8(struct kvm_vcpu *vcpu)
-> >         struct vcpu_svm *svm = to_svm(vcpu);
-> >         u64 cr8;
-> >  
-> > -       if (nested_svm_virtualize_tpr(vcpu) ||
-> > -           kvm_vcpu_apicv_active(vcpu))
-> > +       if (nested_svm_virtualize_tpr(vcpu))
-> >                 return;
-> >  
-> >         cr8 = kvm_get_cr8(vcpu);
-> 
-> I agree that this is a simpler fix, so would be good to do for backport 
-> ease.
-> 
-> The code in sync_lapic_to_cr8 ends up being a function call to 
-> kvm_get_cr8() and ~6 instructions, which isn't that much. But if we can 
-> gate sync'ing V_TPR to the backing page in sync_cr8_to_lapic() as well, 
-> then it might be good to do so.
-> 
-> 
-> - Naveen
-> 
 
