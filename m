@@ -1,329 +1,207 @@
-Return-Path: <linux-kernel+bounces-781102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 617C5B30D8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:24:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E072DB30D8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16CE25A3945
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:24:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC38CA04B78
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A3328B3E7;
-	Fri, 22 Aug 2025 04:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A75128D8DA;
+	Fri, 22 Aug 2025 04:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HViUmzux"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="FqAJJnIV"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2056.outbound.protection.outlook.com [40.107.220.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D3C199230
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 04:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755836677; cv=none; b=cy4D8OpbjBu2gR7rd9OCvOL2AuEaUIYYeEUMHQdxQ6SAKB+Gp0nFk3I/B41Mm9oJQ4a+EXhouEZQZPl2WL77g4DLmtCO9HQuso4boVJrbtUjXYfYam4F1s8dU8ar+m1KX/2Zrws7XmGLaakXhzr6J6whsg61zcHLBneiwPd3moQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755836677; c=relaxed/simple;
-	bh=hdLoUiaBln2CymuyFiOoxDrvSdJ66u+W+Zz2ftDs/sw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U3PvMi/YkYczuomxinRl3ydHWOtj6xVLG/AVWYPTKTaQKSdm3iz4ODQooYe/l/AxERf6wLmbYmq/JePxMztQWdFr3nptw6dmDTfXgW3mpyow85c3gtDIzGhTCnjkgFYVoYW6KxrNDIqgqdh/KQBxabatXRQ9bPoErTa7Bv6P4LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HViUmzux; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6317FC116B1
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 04:24:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755836676;
-	bh=hdLoUiaBln2CymuyFiOoxDrvSdJ66u+W+Zz2ftDs/sw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HViUmzux+L3CSQ5OI5x5mjezVk8X6RXATvD4SScmPhIxMtkiNnPzOSTiCAZQnGc6w
-	 12yO6RO6lg83om+Ol7U20Hg19fVN+7bQvA7bW5jNA/qyrad8MmLE7QgbFc64lGLqeJ
-	 A8YjAFPBysqMiWCZjUL/mcZwslpyUizXcn3nh45ZxsuFs9vox4m6ulJQfdZQlw7RAk
-	 V+Se4folcGspnc40Lw415v2wZWTDS6XVN9lKAecx0l7twkI/zIPidyEUrq1Ync3spf
-	 WZo8vDjBB71txDVEY2+s1j/3l0nb/fRI5uBHnWiE4OeAh1J7c806ji4xp4oN0rKvvW
-	 +68FJUPGkdBTw==
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6197efa570eso3259910a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 21:24:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWnh5qTeef351SzuyNtUiRxB1IxpWnb0J29fvsTjLpJng40aK/NQPF5bxv8FleOeXyq1qOVp0Ri/aD7mPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyORAlXs3+XG9fzM4GJKozkMg0+FL4ndot4cihjwNwgl2TaeSh
-	xnK7ptl9KATc1R/LCFIRPFihG1rLnz25Y4hzTtw5yeTjP7xwvbPe4WVJA79NREBr/VnjhP8wvin
-	ivzPI6ZwjPieYi2BBRuF2J64eXencCnQ=
-X-Google-Smtp-Source: AGHT+IHqs2pTkwgnH9/nSe+JpzBsNJVcaFHlAqfyAEAHmVa871mLL0ucnP3YWPNa5R1jHM7EdP/XNH3A/HhSkS/3jGg=
-X-Received: by 2002:a05:6402:270c:b0:61b:fabb:6d0e with SMTP id
- 4fb4d7f45d1cf-61c1b705498mr1253509a12.19.1755836674942; Thu, 21 Aug 2025
- 21:24:34 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840EE28CF49;
+	Fri, 22 Aug 2025 04:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755836682; cv=fail; b=cHs9U4vMRqi6MdykKnWJgIIG/dgMdWScHY8lU6gryre/MfJ9aId84OBki8QAkakntvXGf/9NHiXwInyBaRTBFhev94hKuZ7fB2yBjoNKd3AK8153t7r07MchHGBa1s+EJcxfT62y2m77rtPHa4Leiq5gURQXA+LaPWGOf7dkkVo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755836682; c=relaxed/simple;
+	bh=d22V3BNBq95G9xuSaQkeTmuTMSUJ4w1Ee+Nd8eZWGZ8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=nx9e9HBWSxat+K47IaWgw7EgXwWYMGII+n2frbqSzvm4KQxnt2Reo127LdUD9xpNqMnYen3SYiXEJMXgdoR2T+llGjki+Conu0MuTs88UfyiqvTv4en09RdbycUt9zlA0cTzJrlyQGVOammwDsWRKrPbAT9mnkayq7eFulyXpTw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=FqAJJnIV; arc=fail smtp.client-ip=40.107.220.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HhnN57PhII5xHSccrNrjyPtWkJJ8eMTiJcOWqXWk0AG4ntnSwRETCkote9NuU3i+7y8VRnHXyExICdRkVJc9d9D3HOjMbocIwlFjVl6KWUyDt/v4eU/8FjOHaV09AvVxBfMNM3nkmuqayCki13hOwBOdxcSXF3XvG2D/7XhNaoIO8Ao5NOLXXHbBemtV5AaFaQsuwB82FWM70+L9Rxnh8szsXhV3Exo3LBqORwDUywSRn+9R/HaieDu/J7Reh3J6hQy5HvIa0NXHZsk/UXBnUG5CH/eyiU32ew49vV9yXXua8BXW3t4HKI/Qj71rmh3kSzZFsF0lHK8zY9Q0K8b6SA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d22V3BNBq95G9xuSaQkeTmuTMSUJ4w1Ee+Nd8eZWGZ8=;
+ b=YpDclRClaHiS3Ue9e4hVG44Calz8vVCKTOoMTfFwFWQYp56NwOXHRyjj2Nt/tV4jfqCeaQivfUgpRpDPahkj8j6t6r1JCTWqcKlxJwg4KzCYL4I5lOapGkeOr8Q/kRPnd6wcy5nk2RLKX3w3sLVATk3ugIpdxNTNprr15z8b3f50I6hJKfRyWaYhJJ96aRGwDWaXutc+Ag36e3KoeVX+833LAhWYNTPsR0Tj7it8nreTVOL4hekJkhMnXZiuqO0mpSOnpJd5mJGybrFpoC41TtIkHaHUXY9UM4Lrd2620jlsW6E97ozwiwt2ewWaxsyGKenxd4yYr8rNh3ccZ6vM3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d22V3BNBq95G9xuSaQkeTmuTMSUJ4w1Ee+Nd8eZWGZ8=;
+ b=FqAJJnIV3ohO833fLpx+HUdrrY//C6A/EwhG8Wrby4G9YgrahloSEeYbH1PR4ZAC3Z8bjZX9roeANabVT10sPgIupfgYb/7qgpnE6d1F1dXFr5eqXdD+OwOQqk/G/Pfdv4PsAwf5X9B1AlWx6rD4QzoWW01TEo4HhEM3sd1jynPdv8jJqyWPVKRJQD2K8UzssN+TGtPBoJPW8hoIcuibjA7UsCBDslPPYwN/m+REnccVRQanj0d85CHASV9EIxQ/2910OgwkZPm9+Q6xfa1GmXJzyaLRjuI4Z9N6FOSYlX4wDnYfiiahBoNJBPbQopV5OWVNswz3tQPV+NuKB5eUWA==
+Received: from SA1PR11MB8278.namprd11.prod.outlook.com (2603:10b6:806:25b::19)
+ by SJ2PR11MB7453.namprd11.prod.outlook.com (2603:10b6:a03:4cb::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Fri, 22 Aug
+ 2025 04:24:36 +0000
+Received: from SA1PR11MB8278.namprd11.prod.outlook.com
+ ([fe80::84fa:e267:e389:fa9]) by SA1PR11MB8278.namprd11.prod.outlook.com
+ ([fe80::84fa:e267:e389:fa9%7]) with mapi id 15.20.8989.011; Fri, 22 Aug 2025
+ 04:24:36 +0000
+From: <Parthiban.Veerasooran@microchip.com>
+To: <andrew@lunn.ch>
+CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net] microchip: lan865x: fix missing ndo_eth_ioctl handler
+ to support PHY ioctl
+Thread-Topic: [PATCH net] microchip: lan865x: fix missing ndo_eth_ioctl
+ handler to support PHY ioctl
+Thread-Index: AQHcEnWbR+tCBESmtUqmTIms15S55LRtz2IAgABFB4A=
+Date: Fri, 22 Aug 2025 04:24:36 +0000
+Message-ID: <4a2e6ca1-7ae9-4959-a394-c84aab4b4c02@microchip.com>
+References: <20250821082832.62943-1-parthiban.veerasooran@microchip.com>
+ <204b8b3d-e981-41fa-b65c-46b012742bfe@lunn.ch>
+In-Reply-To: <204b8b3d-e981-41fa-b65c-46b012742bfe@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR11MB8278:EE_|SJ2PR11MB7453:EE_
+x-ms-office365-filtering-correlation-id: baae5d5d-3b55-4057-5c1c-08dde133cd5e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?WHpRSkk2N3JmdUJBRmpBdFp4cU15UUtsRnNlUXVud0FObVEwWVRiRENtYkRC?=
+ =?utf-8?B?ZVE2V09NV0pkVjR5R2ZVRU5GMk95NThOeUlod1lvSW9EVHdaM2ZTL1RYT2pO?=
+ =?utf-8?B?N1krd0xBTkVQTmY0YkRhd1dmMGI4NmVubXdVNE5YbEovNExMU2traUxaOUo5?=
+ =?utf-8?B?QWsrNUFtVUl0blNCSVhDbDM1TDBid1dpMDd0S09ic1Y1bmZTSXJSVXJRT2dC?=
+ =?utf-8?B?ZmNWWnlROXJRdjQ1Q21ZMkJWZUd3K2kxS2JibE5DOFZsUjFGb1pCTHZReTdV?=
+ =?utf-8?B?Y2JvTjN6cHJZSHRNOS9UNHo5Z0lwYk9UTFJkbHJabEJUUTVjQnN5b1VTTzVl?=
+ =?utf-8?B?Uk1WNytFQWFoSFkvL09yemF3a0NRRW9rMlNra21sMzZlYzI3OFNSeW1RYWdE?=
+ =?utf-8?B?WkJYUlY4cTFXL3FXS2hENDJoczVxbk5LcmU2a3JsSi92RFZuWHdia0xwN010?=
+ =?utf-8?B?NkFQU2VVbFFmaGlOVGtjWHRDaUVLbDhwaEg5dzlrN3F1MVpGek4rcjM3dGVx?=
+ =?utf-8?B?c0JGcnA3OUd6UldaWFc5ZmZ5VHl6Q0hsTTM0Qy91Q3BHZ2dOZFlCOGNmZDRU?=
+ =?utf-8?B?ZVMyK1JBZERBb1AzbEFhaG84ZGM3UzBVV1JJbmRHcW9zUzNOTnJNd1dtbkEw?=
+ =?utf-8?B?bEhDV1g2Ti9XaThnUE90ZUpEcFJuOVNBTWtZNkl5ZVVHTUhTQUovc2d6aVpP?=
+ =?utf-8?B?aGtOSVhIV080d2RkWmNCbkxxMlNOK0d3ZTI5Mi9yS0g4YjJpblE4SXRJd2I1?=
+ =?utf-8?B?Wm1GbCtnbnJuSUZBczk0REJGSWVaNk9QTW9kM0g3TS9Ea3lJUHNqeGs2eFpr?=
+ =?utf-8?B?Qnp0czMzNEdFYjl5Q1FLRzhCbE9EeUpqcUZnVUZNazQ5OGkxQ2lzcjlSeStv?=
+ =?utf-8?B?THRtYWFmREE3cDZ4UjUrREZIbzU2dDg4dkJBaGhvQXZsLzVkcHB1UU5sUzRu?=
+ =?utf-8?B?WW8xeStORVdRRFJhTi95RHYxYkJrY2o2bGo0SGVxbm9tUFNTV1BGc0JZSlJq?=
+ =?utf-8?B?dHAwWStsNGtqSVB1RE5KOTVxeUQ3UGpwT2FBTnhPTnpKQ0d3RWJYck9yV2tk?=
+ =?utf-8?B?R29WWGtxaHYrc0J2QzU3QVZZdXFDV0hwcGVXL1hkL3htV3U3aFRMaTBrMldB?=
+ =?utf-8?B?cG5wKytLWmdvaE5hOEk3bVB5NHZmdExlOUtZM1F4ZmhwZkRueHVaR2FvdUJU?=
+ =?utf-8?B?dGVrY1ZpM3NUTmpwQ1l6citySDZXTXFVRTVmdGpVU0Q0a1lrODlXTzNDejhT?=
+ =?utf-8?B?RTZJWHllYnFxUnBLWEJJMXN2N0NaNUF1enZURFljVWFiL3ZNQzdmSVErQUxS?=
+ =?utf-8?B?d3hjZUpzMDg2bW1OQnY0L0lVY1hsSjQ2b2dDTW1IQ21CeTE5WjhzU0l0cGRU?=
+ =?utf-8?B?amtpVkdSSW83VkxVSlJHcDlNbi8rL1FGWHl2UU1JOU5mSU1MUk1Ta1ZNUHBk?=
+ =?utf-8?B?N2FzanloeXNmSFJ3bzRLWFFmdHBscTBianU0Y21NdXVzUWlzbEJtV1E2WUVs?=
+ =?utf-8?B?OXFYWDRzaVB2cDBLenVUWnVZQ0wvRko2Q2RCZno3Z1YvS1paTDlMUWdHVy8y?=
+ =?utf-8?B?N09TRFdoUHlCVTBaVlhwR25ZNkdZcGFubDBOYnU1NVREb01FZGZnT2hpcDZJ?=
+ =?utf-8?B?ZFRRTHZwd0gyOVRkMy81ZXAvNGhsTmh2dk5USE13SHZTNE1YdUlCYWNFUTJW?=
+ =?utf-8?B?eUNWSjhTdmpmNCtqSnVmemxVVTk1SHpWZlNnbElLdk15V2I5dC9Ebk4wb2RH?=
+ =?utf-8?B?a1FQVEFkeGp4ejZ1eXVEb2g3YVBWc2EzQ3NYaWZ2QSthcHN0a2pqam9TQldQ?=
+ =?utf-8?B?OUhsQ2NZTFFTMkhKYXkrTFVEbjVXNTRNKzBpajV4aDdHYWtPZkQvSWF1RWwy?=
+ =?utf-8?B?bnpRRU05M1BSNnE5SnQ4TFVLTTZNMjRFTSsrcHhQMzczb3pYQ0U3dUppcjlC?=
+ =?utf-8?B?blpxVE81NXh2QUx2R0Q0QlJTc0lUcEpUSjhjVGtFT1FlZU1rS2dWTGhUcjBi?=
+ =?utf-8?B?bHVFYzFjMGdnPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB8278.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?ODZJdFJlbkhSZ2QyYkJhTVZyMXVtVkpzaFlsMlM2bWhZVEFTdGw2citZQUM4?=
+ =?utf-8?B?ZEh1d3ZuSEYvTWR4UEdqSE9nZnRyWDZBN3ZxTzB2T0hMLzkrUlVPVllxamo5?=
+ =?utf-8?B?aWtDeTYrYUlUNUpNMGdnVXU1Zkc4NFRURURTRFVsd3BQZ1RicUhhT1pleUtU?=
+ =?utf-8?B?dHRRUFhKdWp1ZTJlTEF1V09qODZCS21tSnZEWWhrNnAyQ2pYYTlwbmpvOW1B?=
+ =?utf-8?B?eUw2UzlKOThwdG1wSHpYSzlSZWs4KzVSY1RnazBidkd0c1FwaG0yck43bkNh?=
+ =?utf-8?B?dmZya0gxd0kzYkRnZ1J3TzkrV050aDhxNkkzZ3JlVi83Mk8zdTVRYWlVbnNi?=
+ =?utf-8?B?WjMvZ3EyeUdJWUNYUFR4bFpuNTVYaTRtUUJUbXBGaW5EZmh4cVpjejJraWta?=
+ =?utf-8?B?KzdPd0NURUJ6Vis4WEFPV3M1SWU4cXFqRERxeUtKTUZkR0lES2FGVW5JQytw?=
+ =?utf-8?B?K095aXRnb3RWTEZqWDdhTG5TYWdoSnZFUmovRnRPOXVXRDNlbGZ6ZnhxWml1?=
+ =?utf-8?B?UStTcTJnQkN6dmt2UWtUdVdsOUNJK3F6MmVmSmRCVzJTeW8rOHM1ZUJpS0FP?=
+ =?utf-8?B?R0FiQnFzUVZWR29pa2lTc3g1QjNrTFpPQnRyTlR4bThTUDNyK0RBY3NVRUVO?=
+ =?utf-8?B?N29kcGhHeUlSb0d2S0NkYTI0dGsxWDkwcnBSRG1IUHkxMlZyaSt4bHRlM3FB?=
+ =?utf-8?B?U3JEVDAzdmlyOHBJSWlaTDZ0YWFleVVldlRIeVVIRHFCM0plWDJ1YzZhRDlQ?=
+ =?utf-8?B?aW0wcG1YQnpFUHFhSmp5MTB6cTFqTm85bVR4cE9zM0w2OW5sNUlJNXM3UzRq?=
+ =?utf-8?B?dGc5SU9PN3U4MGlNcS90NjJSZzFuUEVwdUVpenBhVlI1Mlo0TzdLcWtVZ25C?=
+ =?utf-8?B?TERESi96eVdRTmRIa2czdFBBbXgwVkkwU2ZLK0NSc3hpbG55Q29NTTZiNU9j?=
+ =?utf-8?B?UXd1NmdaVEdYYVFXbEZBTDQzMlNVY3l1TzV4bUlqSWVMY0hwaTVtMDBpc2k4?=
+ =?utf-8?B?RzBzYnJ2N2crN1dsdkhCLzluNEhPUjBPZXJZYXpMWTlsYjcvTHNocVpEcVE2?=
+ =?utf-8?B?VVBES0JpN2NsQ1BqRXN3RHZyaTNSQUxqNStZUzFjZng0bUZuUHRobzFPYXpE?=
+ =?utf-8?B?enBWdE5CU21XTFV0NGtwQlI3Q1FKMnVqYkg0ODUrTWlZWndva2tjSnovY3Rm?=
+ =?utf-8?B?bGdLcG5uM05ESzFlSStqV29uZG82SExkTWU3enZiQjVuNFNZcWFKUm1INEkz?=
+ =?utf-8?B?aE5XZzZaSEhIRkhYN0VFb2hkbG9lclhvSUtLcFV0UWJlbndKdXVPVTJPdUdt?=
+ =?utf-8?B?YlhHYWZ4RzkrSTBYTVkrYjZXU0tBZ2lIUDZmc2ZmT2VXaGQ0MlNqTitvcHM2?=
+ =?utf-8?B?VXRlU0xuazdTQ0FwZUplYXdOalJiUXB3OVZaZ2xHSG1YSzFlNkUwUzIzMjd6?=
+ =?utf-8?B?NmRVcG9kVUM4a2h3VnhDMUZ1cytMYmVsamNPWkpUMlBsdWRDVG9OcnZhVEcz?=
+ =?utf-8?B?L0hlNkhHWXhsSXVKaFd2dVREQ1ZQamFtUlI4ektJOTkya1dWREVmUUlndzAw?=
+ =?utf-8?B?WVNxNGpRYUpYbmd2Z3RjMW14UEtsWXBEckVIWWpDakpxWDNpTzJDZk1IUkhy?=
+ =?utf-8?B?dWk5b0JNR2ljMUdCbmxYVjc4T0JVUU9PQysvTDdSL0ZDV1RGWmpqODVTQy9H?=
+ =?utf-8?B?U0laU01DN1R0UjZNeDM3LzlKaWFZOFF5T2Q2TW9HMzhiSHZQZGhWdUdVL0FR?=
+ =?utf-8?B?b2tVcDhKcTAvMFNXN1R2c0hZcmI4L0xEYjZnSFZQcDVlN3oyRml4VVYwUUw3?=
+ =?utf-8?B?SGlIYStGSFEwK1lmOHlOUUpJL0RqQTVQMmcrSHBhVklZYXJBUEhDZmhldnpu?=
+ =?utf-8?B?VWp0aTRTdEtzWmZPOUM2M1RnRzFvSlVkTWJPWnJJSzdEMDdlT2c3dG9EK3Ji?=
+ =?utf-8?B?REp1Mm43dUpsanN4d3p4NjUwbXpaaGZKQXJIVDR3M0E3Q2E4RC95ak91YktD?=
+ =?utf-8?B?VUxTUVFHVnVFZDBTSTcwSGZEblZnRGlqTk1wLzRZNFlmWGl6N3RwRHpmT0FZ?=
+ =?utf-8?B?K0J5RFVlUEVFQkE3MVFlVGFYdEgrU1FvYXZXYzhEQ3dsMTNlblV0dEZBMkJZ?=
+ =?utf-8?B?eC9RVGo4WnZhSlRrNHBZM1JYQmUyRm83dmZZSWhhUUU3cVhHdHVyNWFpUThD?=
+ =?utf-8?B?QVE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C2C8E5E43C4DDE4EB4A255B1682F0CC0@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820055700.24344-1-youling.tang@linux.dev>
- <20250820055700.24344-3-youling.tang@linux.dev> <aKVwHOM9KNEpUZF4@pie>
- <5f6eeefb-681a-424e-9a6b-2e91eaf87571@linux.dev> <aKWt63S_wD3zeMYU@pie> <00a013bd-f30f-4b13-8019-f97a4d2eabb2@linux.dev>
-In-Reply-To: <00a013bd-f30f-4b13-8019-f97a4d2eabb2@linux.dev>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 22 Aug 2025 12:24:21 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7jr4HuizZvNSAnmoo9z8D1Txe1_jnEgWDwWMmu0q8fLg@mail.gmail.com>
-X-Gm-Features: Ac12FXz8S1QEwTy9vLsdEgi58FBIWe3h9tyYMzLwsskThXpPLmQNF7Rc6jf_69I
-Message-ID: <CAAhV-H7jr4HuizZvNSAnmoo9z8D1Txe1_jnEgWDwWMmu0q8fLg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] LoongArch: Add kexec_file support
-To: Youling Tang <youling.tang@linux.dev>
-Cc: Yao Zi <ziyao@disroot.org>, WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>, 
-	kexec@lists.infradead.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: microchip.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB8278.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: baae5d5d-3b55-4057-5c1c-08dde133cd5e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2025 04:24:36.1320
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vMO5RQTXKSSE/OjcjCsslMfGqidCnTOYIsIooAoBcUdeWD/8VqzNOl2cMBrIF7blNIqQyBA8S8SSUcyQJrAmLS51UtplWb1O2zWGovv9wHIxpOTWe1h8i+2jd8MyGUEU
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7453
 
-On Thu, Aug 21, 2025 at 9:20=E2=80=AFAM Youling Tang <youling.tang@linux.de=
-v> wrote:
->
-> On 2025/8/20 19:13, Yao Zi wrote:
->
-> > On Wed, Aug 20, 2025 at 05:13:27PM +0800, Youling Tang wrote:
-> >> Hi, Yao
-> >>
-> >> On 2025/8/20 14:50, Yao Zi wrote:
-> >>
-> >>> On Wed, Aug 20, 2025 at 01:56:57PM +0800, Youling Tang wrote:
-> >>>> From: Youling Tang <tangyouling@kylinos.cn>
-> >>>>
-> >>>> This patch adds support for kexec_file on LoongArch.
-> >>>>
-> >>>> The efi_kexec_load() as two parts:
-> >>>> - the first part loads the kernel image (vmlinuz.efi or vmlinux.efi)
-> >>>> - the second part loads other segments (eg: initrd, cmdline)
-> >>>>
-> >>>> This initrd will be passed to the second kernel via the command line
-> >>>> 'initrd=3Dstart,size'.
-> >>>>
-> >>>> Currently, pez(vmlinuz.efi) and pei(vmlinux.efi) format images are s=
-upported,
-> >>>> but ELF format is not supported.
-> >>>>
-> >>>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
-> >>>> ---
-> >>>>    arch/loongarch/Kconfig                     |   9 ++
-> >>>>    arch/loongarch/include/asm/image.h         |  17 +++
-> >>>>    arch/loongarch/include/asm/kexec.h         |  12 +++
-> >>>>    arch/loongarch/kernel/Makefile             |   1 +
-> >>>>    arch/loongarch/kernel/kexec_efi.c          | 111 ++++++++++++++++=
-+++
-> >>>>    arch/loongarch/kernel/machine_kexec.c      |  33 ++++--
-> >>>>    arch/loongarch/kernel/machine_kexec_file.c | 117 ++++++++++++++++=
-+++++
-> >>>>    7 files changed, 289 insertions(+), 11 deletions(-)
-> >>>>    create mode 100644 arch/loongarch/kernel/kexec_efi.c
-> >>>>    create mode 100644 arch/loongarch/kernel/machine_kexec_file.c
-> >>> ...
-> >>>
-> >>>> diff --git a/arch/loongarch/include/asm/image.h b/arch/loongarch/inc=
-lude/asm/image.h
-> >>>> index 1f090736e71d..655d5836c4e8 100644
-> >>>> --- a/arch/loongarch/include/asm/image.h
-> >>>> +++ b/arch/loongarch/include/asm/image.h
-> >>>> @@ -36,5 +36,22 @@ struct loongarch_image_header {
-> >>>>            uint32_t pe_header;
-> >>>>    };
-> >>>> +static const uint8_t loongarch_image_pe_sig[2] =3D {'M', 'Z'};
-> >>>> +
-> >>>> +/**
-> >>>> + * loongarch_header_check_pe_sig - Helper to check the loongarch im=
-age header.
-> >>>> + *
-> >>>> + * Returns non-zero if 'MZ' signature is found.
-> >>>> + */
-> >>>> +
-> >>>> +static inline int loongarch_header_check_pe_sig(const struct loonga=
-rch_image_header *h)
-> >>>> +{
-> >>>> +  if (!h)
-> >>>> +          return 0;
-> >>>> +
-> >>>> +  return (h->pe_sig[0] =3D=3D loongarch_image_pe_sig[0]
-> >>>> +          && h->pe_sig[1] =3D=3D loongarch_image_pe_sig[1]);
-> >>>> +}
-> >>> This check is still too weak and doesn't improve comparing to v1.
-> >>>
-> >>>> This could be simplified with a memcmp(). Also, this check isn't
-> >>>> strict enough: PE files for any architectures, and even legacy MS-DO=
-S
-> >>>> COM executables all start with "MZ".
-> >>> I've pointed this out in my previous reply[1].
-> >> Previously, I had considered adding a specific LoongArch magic
-> >> number (such as "Loongson") in the loongarch_image_header, but
-> >> this is incompatible with older versions of the kernel, so it
-> >> remains the same without further checks.
-> > All PE images ship a PE signature with offset 0x3c[1] and you could
-> > locate the PE header[2] by the offset provided by
-> > loongarch_image_header.pe_header and check its machine field[3], which
-> > should be 0x6264 for 64-bit LoongArch executables and 0x6232 for 32-bit
-> > ones. At least this ensures it's a LoongArch kernel image.
-> I mentioned this judgment to Huacai before. Huacai, what do you think?
-> If necessary, I will add this judgment.
-I think we can assume that users know what they are doing, so we can
-just distinguish an EFI kernel and ELF kernel, no more checking is
-necessary.
-
-Huacai
-
->
-> Thanks,
-> Youling.
-> >
-> >>>>    #endif /* __ASSEMBLY__ */
-> >>>>    #endif /* __ASM_IMAGE_H */
-> >>> ...
-> >>>
-> >>>> diff --git a/arch/loongarch/kernel/kexec_efi.c b/arch/loongarch/kern=
-el/kexec_efi.c
-> >>>> new file mode 100644
-> >>>> index 000000000000..7741f1139a12
-> >>>> --- /dev/null
-> >>>> +++ b/arch/loongarch/kernel/kexec_efi.c
-> >>> ...
-> >>>
-> >>>> +static void *efi_kexec_load(struct kimage *image,
-> >>>> +                          char *kernel, unsigned long kernel_len,
-> >>>> +                          char *initrd, unsigned long initrd_len,
-> >>>> +                          char *cmdline, unsigned long cmdline_len)
-> >>>> +{
-> >>>> +  struct loongarch_image_header *h;
-> >>>> +  struct kexec_buf kbuf;
-> >>>> +  unsigned long text_offset, kernel_segment_number;
-> >>>> +  struct kexec_segment *kernel_segment;
-> >>>> +  int ret;
-> >>>> +
-> >>>> +  h =3D (struct loongarch_image_header *)kernel;
-> >>>> +  if (!h->image_size)
-> >>>> +          return ERR_PTR(-EINVAL);
-> >>>> +
-> >>>> +  /* Load the kernel */
-> >>>> +  kbuf.image =3D image;
-> >>>> +  kbuf.buf_max =3D ULONG_MAX;
-> >>>> +  kbuf.top_down =3D false;
-> >>>> +
-> >>>> +  kbuf.buffer =3D kernel;
-> >>>> +  kbuf.bufsz =3D kernel_len;
-> >>>> +  kbuf.mem =3D KEXEC_BUF_MEM_UNKNOWN;
-> >>>> +  kbuf.memsz =3D le64_to_cpu(h->image_size);
-> >>>> +  text_offset =3D le64_to_cpu(h->text_offset);
-> >>>> +  kbuf.buf_min =3D text_offset;
-> >>>> +  kbuf.buf_align =3D SZ_2M;
-> >>>> +
-> >>>> +  kernel_segment_number =3D image->nr_segments;
-> >>>> +
-> >>>> +  /*
-> >>>> +   * The location of the kernel segment may make it impossible to s=
-atisfy
-> >>>> +   * the other segment requirements, so we try repeatedly to find a
-> >>>> +   * location that will work.
-> >>>> +   */
-> >>>> +  while ((ret =3D kexec_add_buffer(&kbuf)) =3D=3D 0) {
-> >>>> +          /* Try to load additional data */
-> >>>> +          kernel_segment =3D &image->segment[kernel_segment_number]=
-;
-> >>>> +          ret =3D load_other_segments(image, kernel_segment->mem,
-> >>>> +                                    kernel_segment->memsz, initrd,
-> >>>> +                                    initrd_len, cmdline, cmdline_le=
-n);
-> >>>> +          if (!ret)
-> >>>> +                  break;
-> >>>> +
-> >>>> +          /*
-> >>>> +           * We couldn't find space for the other segments; erase t=
-he
-> >>>> +           * kernel segment and try the next available hole.
-> >>>> +           */
-> >>>> +          image->nr_segments -=3D 1;
-> >>>> +          kbuf.buf_min =3D kernel_segment->mem + kernel_segment->me=
-msz;
-> >>>> +          kbuf.mem =3D KEXEC_BUF_MEM_UNKNOWN;
-> >>>> +  }
-> >>>> +
-> >>>> +  if (ret) {
-> >>>> +          pr_err("Could not find any suitable kernel location!");
-> >>>> +          return ERR_PTR(ret);
-> >>>> +  }
-> >>>> +
-> >>>> +  kernel_segment =3D &image->segment[kernel_segment_number];
-> >>>> +
-> >>>> +  /* Make sure the second kernel jumps to the correct "kernel_entry=
-". */
-> >>>> +  image->start =3D kernel_segment->mem + h->kernel_entry - text_off=
-set;
-> >>> And this still assumes the loaded, secondary kernel is relocatable,
-> >>> with neither extra check nor comment explaining its limitation.
-> >>>
-> >>> Please see my previous reply[2] that explains why loading a
-> >>> non-relocatble kernel with kexec_file API is reasonable.
-> >> LoongArch is a non-position independent (non-PIE) kernel when
-> >> the RELOCATABLE option is not enabled, the kernel contains certain
-> >> instructions such as la.abs, which prevent it from being relocated to
-> >> arbitrary memory addresses for execution. As a result, limitations
-> >> exist that make features like kdump or kexec_file dependent on
-> >> the RELOCATABLE option.
-> >>
-> >> Strictly speaking, we need to add additional checks: if the kernel is
-> >> non-relocatable, the loading operation should fail directly.
-> > Agree.
-> >
-> >> For a
-> >> running kernel, we can easily determine this by calling
-> >> kallsyms_lookup_name("relocate_kernel"). However, for a kernel
-> >> that is being loaded but has not yet started execution, it is difficul=
-t
-> >> to easily determine whether the currently loaded kernel has the
-> >> RELOCATABLE configuration option enabled.
-> > I understand the difficulty, thus IMHO a comment is helpful here to
-> > remind the reader of lack of relocatability checks.
-> >
-> > Best regards,
-> > Yao Zi
-> >
-> >> For ELF format images, we can determine whether the loaded image
-> >> contains the ".la_abs" section in the following way:
-> >> static struct mem_shdr *laabs_section(const struct mem_ehdr *ehdr)
-> >> {
-> >>          struct mem_shdr *shdr, *shdr_end;
-> >>          unsigned char *strtab;
-> >>
-> >>          strtab =3D (unsigned char *)ehdr->e_shdr[ehdr->e_shstrndx].sh=
-_data;
-> >>          shdr_end =3D &ehdr->e_shdr[ehdr->e_shnum];
-> >>          for (shdr =3D ehdr->e_shdr; shdr !=3D shdr_end; shdr++) {
-> >>                  if (shdr->sh_size &&
-> >>                          strcmp((char *)&strtab[shdr->sh_name], ".la_a=
-bs") =3D=3D
-> >> 0) {
-> >>                          return shdr;
-> >>                  }
-> >>          }
-> >>
-> >>          return NULL;
-> >> }
-> >>
-> >> Thanks,
-> >> Youling.
-> >>>> +  kexec_dprintk("Loaded kernel at 0x%lx bufsz=3D0x%lx memsz=3D0x%lx=
-\n",
-> >>>> +                kernel_segment->mem, kbuf.bufsz,
-> >>>> +                kernel_segment->memsz);
-> >>>> +
-> >>>> +  return NULL;
-> >>>> +}
-> >>>> +
-> >>>> +const struct kexec_file_ops kexec_efi_ops =3D {
-> >>>> +  .probe =3D efi_kexec_probe,
-> >>>> +  .load =3D efi_kexec_load,
-> >>>> +};
-> >>> Thanks,
-> >>> Yao Zi
-> >>>
-> >>> [1]: https://lore.kernel.org/all/aJojDiHWi8cgvA2W@pie/
-> >>> [2]: https://lore.kernel.org/all/aJwFa8x5BQMouB1y@pie/
-> > [1]: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#si=
-gnature-image-only
-> > [2]: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#co=
-ff-file-header-object-and-image
-> > [3]: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#ma=
-chine-types
+SGkgQW5kcmV3LA0KDQpUaGFuayB5b3UgZm9yIHJldmlld2luZyB0aGlzIHBhdGNoLg0KDQpPbiAy
+Mi8wOC8yNSA1OjQ3IGFtLCBBbmRyZXcgTHVubiB3cm90ZToNCj4gRVhURVJOQUwgRU1BSUw6IERv
+IG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3Uga25vdyB0aGUg
+Y29udGVudCBpcyBzYWZlDQo+IA0KPiBPbiBUaHUsIEF1ZyAyMSwgMjAyNSBhdCAwMTo1ODozMlBN
+ICswNTMwLCBQYXJ0aGliYW4gVmVlcmFzb29yYW4gd3JvdGU6DQo+PiBUaGUgTEFOODY1eCBFdGhl
+cm5ldCBkcml2ZXIgaXMgbWlzc2luZyBhbiAubmRvX2V0aF9pb2N0bCBpbXBsZW1lbnRhdGlvbiwN
+Cj4+IHdoaWNoIGlzIHJlcXVpcmVkIHRvIGhhbmRsZSBzdGFuZGFyZCBNSUkgaW9jdGwgY29tbWFu
+ZHMgc3VjaCBhcw0KPj4gU0lPQ0dNSUlSRUcgYW5kIFNJT0NTTUlJUkVHLiBUaGVzZSBjb21tYW5k
+cyBhcmUgdXNlZCBieSB1c2Vyc3BhY2UgdG9vbHMNCj4+IChlLmcuLCBldGh0b29sLCBtaWktdG9v
+bCkgdG8gYWNjZXNzIGFuZCBjb25maWd1cmUgUEhZIHJlZ2lzdGVycy4NCj4+DQo+PiBUaGlzIHBh
+dGNoIGFkZHMgdGhlIGxhbjg2NXhfZXRoX2lvY3RsKCkgZnVuY3Rpb24gdG8gcGFzcyBpb2N0bCBj
+YWxscyB0bw0KPj4gdGhlIFBIWSBsYXllciB2aWEgcGh5X21paV9pb2N0bCgpIHdoZW4gdGhlIGlu
+dGVyZmFjZSBpcyB1cC4NCj4+DQo+PiBXaXRob3V0IHRoaXMgaGFuZGxlciwgTUlJIGlvY3RsIG9w
+ZXJhdGlvbnMgcmV0dXJuIC1FSU5WQUwsIGJyZWFraW5nIFBIWQ0KPj4gZGlhZ25vc3RpY3MgYW5k
+IGNvbmZpZ3VyYXRpb24gZnJvbSB1c2Vyc3BhY2UuDQo+IA0KPiBJJ20gbm90IHN1cmUgdGhpcyBj
+bGFzc2VzIGFzIGEgZml4LiBUaGlzIElPQ1RMIGlzIG9wdGlvbmFsLCBub3QNCj4gbWFuZGF0b3J5
+LiBSZXR1cm5pbmcgRUlOVkFMIGlzIHZhbGlkIGJlaGF2aW91ci4gU28gZm9yIG1lLCB0aGlzIGlz
+DQo+IGp1c3Qgb25nb2luZyBkZXZlbG9wbWVudCB3b3JrLCBhZGRpbmcgbW9yZSBmZWF0dXJlcyB0
+byB0aGUgZHJpdmVyLg0KPiANCj4gUGxlYXNlIHN1Ym1pdCB0byBuZXQtbmV4dC4NClN1cmUgSSB3
+aWxsIHN1Ym1pdCBpdCB0byBuZXQtbmV4dCBhcyBpdCBpcyBhIGZlYXR1cmUuDQoNCkJ5IHRoZSB3
+YXksIGlzIHRoZXJlIGEgcG9zc2liaWxpdHkgdG8gc3VibWl0IG9yIGFwcGx5IHRoaXMgcGF0Y2gg
+dG8gdGhlIA0Kb2xkZXIgc3RhYmxlIGtlcm5lbHMgYXMgd2VsbCwgc28gdGhhdCB1c2VycyBvbiB0
+aG9zZSB2ZXJzaW9ucyBjYW4gYWxzbyANCmJlbmVmaXQgZnJvbSB0aGlzIGZlYXR1cmU/DQoNCkJl
+c3QgcmVnYXJkcywNClBhcnRoaWJhbiBWDQo+IA0KPiAgICAgIEFuZHJldw0KPiANCj4gLS0tDQo+
+IHB3LWJvdDogY3INCg0K
 
