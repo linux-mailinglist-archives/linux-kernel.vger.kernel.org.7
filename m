@@ -1,132 +1,114 @@
-Return-Path: <linux-kernel+bounces-781121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C73B7B30DBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:53:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25D7DB30DC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FC9356789D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:53:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 161531CE3DDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF239270EA5;
-	Fri, 22 Aug 2025 04:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FCE285CA2;
+	Fri, 22 Aug 2025 04:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHcvRGL0"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjjyKMv4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B650A17F4F6;
-	Fri, 22 Aug 2025 04:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FD3266B67;
+	Fri, 22 Aug 2025 04:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755838411; cv=none; b=NszrCEOpVF5MaLGiTzPZcs4Kdf9Eb6ZxlxygELoGS7YvQovDPqIyIZg9nFKY+kTVaR1IIOU0aLcMqkDPCuGLK96QWdw8BJg6uWwh4x4rT7tDqNpOkLaqQKqZ/0swFXM3avp36NYJyXN70BdlQnhTH9DXaXiMXZWWSLjVmA9Tvkg=
+	t=1755838568; cv=none; b=cBnZszQiEWFcHGcl1UgtmnuvrdCgIfkYwZvAHbFtzdn5i0pKjSWWeC5S6faz23M6CFRyz8J0qayRlFqzK6fQzoPwNY9AR1TlGuewxtJA1Aq1QbIlKeEOEO/JqQK3cFTDY0D2dxrJGW4aA53p1tWYQ9VAkUWNQrhrYD1Ijyc1470=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755838411; c=relaxed/simple;
-	bh=WpEvVOdRTcvaF4LSv4kVn0QHVVnO+lhQ4DgcdibW3mQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FQlpVbnHQXB62gT+1ErGAqLinn8fzoobL8Df22chH76SVtwmJtypTMsk+avNO5nb0EGTyN56aBcnjo0aKMKo84LASxv85OVvXm4hz9pCICQk9NcvlN/SLMpYNDgWoMUYx7/2bEm8G06+7xVlmmcQtNJC/AWR+dppf85EIoqBij8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DHcvRGL0; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2463d8a4235so1602675ad.0;
-        Thu, 21 Aug 2025 21:53:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755838409; x=1756443209; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UkOfY2Vc2mQA4/qf0NhvJ/W8ykcnBxlMav1OYvf5kKc=;
-        b=DHcvRGL0rL3/CXlooAyS0L65D2TJoEvYMKLjEYXTuX4a75DgSJIBLaXUMOmDOLDxyh
-         qq2fPefrT8JLsEM3u6AReblIR+UWYu1rpvc0XncCoy+1db1BrbFWF2+FmGCeV76pSpdq
-         TektAbkpW7x+xRZq7tODEaJeIlEeG9DbzdbQGBmyiTO8O7oH2BfsM2zke1oYdqJuL1Er
-         6uoICz8q2X6rF/UYDugU50lJVTyJiD/tjJRz9ko98wL8J8AY4essPoNIZrMJAqOvFcX5
-         wDanozpqL0PoqnWqZzJIwq23MEzfHGG+JoAoeZlQfaq8SJFxM1rD10+GJeuAdVWtvbPQ
-         5XVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755838409; x=1756443209;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UkOfY2Vc2mQA4/qf0NhvJ/W8ykcnBxlMav1OYvf5kKc=;
-        b=wdAxjemTb+RmJS4b3TDBT8tDqtmZW7utwsjT11X9393weWu9uIHwgc6t4QA0tuodRt
-         y8wTTrvYgmG/PR9DQQuG4dzJxeJkYCNEMGCKYbqfFVPZnLaFItMxknJo2lw5KdNc12Ri
-         FGrfQsjuuOvOE9w0w7DAReUmRdf4TKXaaSoVK0eMS3sURKil1I6RAQ0d1d7PsW85jFGJ
-         Xb5ay4uAEOiXxM+7vL6zgdJgIwK4WWSxwYlQU5mPPdFrXoel5cPwXBVPl4j41K1NG142
-         ShqFcIHg1AIzjW0qANo8AiTWAySOXxqpEAze9VIAiXwiF3zaA8r2KSVDS62v2sVsF/Fe
-         tDiw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3KMkctxjUdwSmZwOOiU6HfaGLJdYhscHVnyz7Onw3+xhec8rRpB93vSvbMPT5hwPLmUkbDNCbL8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN+VkbZ/bCvU2EciV3YYikHAeMKexlWyHSp5wAyM2RQ5aGfamt
-	oARYLrnAtKnDGYAQXcAh0j7Yu4wshbfDwCOIH9DgCZr0mm2yss3P+7lC
-X-Gm-Gg: ASbGncvyAFFJUX0JKid/TOzHbgbh8G6stS/h2ucKM3g2EINoUKrmSn5NeNUXPWBZ9xr
-	wUSqDkl8wbTkm0VEW+4t0i0lZJS3Qi94PkEfGlcUMBOHgdCKqYxGw6RW+er0/koiPusn145VDii
-	6rTsOKVZAH1lrLe0fd7MLLibYzpBCYNAqxTQR5w+T0qbJHvZYrkRmstnRr/sxJbnenSSqn618ya
-	CXmhkHHDvcjVCAKb61Nv6WuhzM9PYDXVHgvjDDJSVXCSdaoQ3M9cn2UU1sVPHee+l7tnmH6wlTf
-	bRScRV45yuao4u2tPYnxtBLYkmHSwi/yHlPf4/gJ5Ks2r3ZNP3gl2EYys4YKb5syvmkDPevAkH9
-	mltfXwj6+fVxiUU5H94fbtCDspb8kLzlNdbFlofRKyEVtyak=
-X-Google-Smtp-Source: AGHT+IEaCyaG1Ji7jaAOLne9b6lBfbfYTNKKXnUdPEF8NB5oS/DCActGE8hW4Okwt/Qxd9RV4fQcrw==
-X-Received: by 2002:a17:902:e54b:b0:234:ba37:879e with SMTP id d9443c01a7336-2462ef1f310mr23899795ad.38.1755838408997;
-        Thu, 21 Aug 2025 21:53:28 -0700 (PDT)
-Received: from paradiselost.local (lohr.com.br. [187.58.145.178])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b47640d0be0sm6140074a12.51.2025.08.21.21.53.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 21:53:28 -0700 (PDT)
-From: "Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
-To: rafael.v.volkmer@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	ukleinek@kernel.org
-Subject: [PATCH v5 6/6] pwm: tiehrpwm: tidy prescale calculation style
-Date: Fri, 22 Aug 2025 01:52:23 -0300
-Message-ID: <20250822045223.4150-1-rafael.v.volkmer@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250822045005.4127-1-rafael.v.volkmer@gmail.com>
-References: <20250822045005.4127-1-rafael.v.volkmer@gmail.com>
+	s=arc-20240116; t=1755838568; c=relaxed/simple;
+	bh=eoIgmp6rOubH/7RKU/oUjCoxUtaCvNYc3/qZX5mbECY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P3qGQ1bU+fYEmcwD+FVAd86KkbEiJcZN88MlMlbwXmDNZBurUC6vGIDakcWaAH6zdeSFPGoA7N9Slqyhkw6+kSc+u0vkXwZO3aEQK6BkHSSH3n5m3NpX2WvQwxN+juM1IVZofg2sE2vq2yq5DuAJUq4nFycmhD/ROAVxhwK81WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjjyKMv4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 39489C4CEF1;
+	Fri, 22 Aug 2025 04:56:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755838568;
+	bh=eoIgmp6rOubH/7RKU/oUjCoxUtaCvNYc3/qZX5mbECY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=TjjyKMv4MhaYVSiw/o7fdidoYZsXN8e3xDjjp2+ifc5beIYfOz8HKaexnQYxKOgua
+	 X6zZ8cJ9QQyBXAsNBFfyjY8UlReCPGvgtGG2ynMAIed6sg8icjD7YkiZ8Vd2wRVsSS
+	 iQnKefP8i67a3ra9OploTPc3c03saJ61OPMlTUQmJeSAZnOtcEZIJWt08sqLVRlp44
+	 HIMTYW9u00W6Eu+QyDnAbyG9r2wOQBBMX+iyfsen8X4CEOJkpZfsrkr1R2UjKWW7Ry
+	 RIa644vTYBtrQAqigiEtsgvWEOziaMykoeNLlGBfp1Ph1kBjKWChUKqFQDZpICCkFd
+	 NlENJXQFZFL6Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A0D4CA0EFC;
+	Fri, 22 Aug 2025 04:56:08 +0000 (UTC)
+From: Dmitry Safonov via B4 Relay <devnull+dima.arista.com@kernel.org>
+Subject: [PATCH net-next 0/2] tcp: Destroy TCP-AO, TCP-MD5 keys in
+ .sk_destruct()
+Date: Fri, 22 Aug 2025 05:55:35 +0100
+Message-Id: <20250822-b4-tcp-ao-md5-rst-finwait2-v1-0-25825d085dcb@arista.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEf4p2gC/zXMTQrCMBBA4auUWTtYx0aCVxEX+ZnYWXRaklALp
+ Xc3Ci4fD74dCmfhAvduh8yrFJm1xeXUQRidvhgltgbqyfSWCP2ANSzoZpyiwVwqJtG3k0rItyv
+ 5IdpkbIQGLJmTbD/8AcoVlbcKz3a8K4w+Ow3jF/+/8+RE4Tg+x1DtpZYAAAA=
+X-Change-ID: 20250822-b4-tcp-ao-md5-rst-finwait2-e632b4d8f58d
+To: Eric Dumazet <edumazet@google.com>, 
+ Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
+ "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>
+Cc: Bob Gilligan <gilligan@arista.com>, 
+ Salam Noureddine <noureddine@arista.com>, 
+ Dmitry Safonov <0x7f454c46@gmail.com>, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Dmitry Safonov <dima@arista.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755838557; l=1080;
+ i=dima@arista.com; s=20250521; h=from:subject:message-id;
+ bh=eoIgmp6rOubH/7RKU/oUjCoxUtaCvNYc3/qZX5mbECY=;
+ b=LN8PbXzzYXo4S4BAjItS0hsDu4M1iUFgtaq0ivYwRq/KQGMfYxcckMoR/8bQSr5ja/dWExc7j
+ LrLWHLh1eBqD1dpwSAMoDnbBo4SBtVO76wXXTOt9AAOPu21rqKIvVrl
+X-Developer-Key: i=dima@arista.com; a=ed25519;
+ pk=/z94x2T59rICwjRqYvDsBe0MkpbkkdYrSW2J1G2gIcU=
+X-Endpoint-Received: by B4 Relay for dima@arista.com/20250521 with
+ auth_id=405
+X-Original-From: Dmitry Safonov <dima@arista.com>
+Reply-To: dima@arista.com
 
-Tidy ehrpwm_pwm_config(): drop redundant parentheses, keep the condition
-on a single line, and add spacing around the division operator to follow
-kernel style.
+On one side a minor/cosmetic issue, especially nowadays when
+TCP-AO/TCP-MD5 signature verification failures aren't logged to dmesg.
 
-This change addresses a style warning reported by checkpatch.pl.
-No functional change intended.
+Yet, I think worth addressing for two reasons:
+- unsigned RST gets ignored by the peer and the connection is alive for
+  longer (keep-alive interval)
+- netstat counters increase and trace events report that trusted BGP peer
+  is sending unsigned/incorrectly signed segments, which can ring alarm
+  on monitoring.
 
-Signed-off-by: Rafael V. Volkmer <rafael.v.volkmer@gmail.com>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- drivers/pwm/pwm-tiehrpwm.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Dmitry Safonov (2):
+      tcp: Destroy TCP-AO, TCP-MD5 keys in .sk_destruct()
+      tcp: Free TCP-AO/TCP-MD5 info/keys without RCU
 
-diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
-index a801912be..35c7ee801 100644
---- a/drivers/pwm/pwm-tiehrpwm.c
-+++ b/drivers/pwm/pwm-tiehrpwm.c
-@@ -277,8 +277,7 @@ static int ehrpwm_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	 * same period register for multiple channels.
- 	 */
- 	for (i = 0; i < NUM_PWM_CHANNEL; i++) {
--		if (pc->period_cycles[i] &&
--				(pc->period_cycles[i] != period_cycles)) {
-+		if (pc->period_cycles[i] && pc->period_cycles[i] != period_cycles) {
- 			/*
- 			 * Allow channel to reconfigure period if no other
- 			 * channels being configured.
-@@ -296,7 +295,7 @@ static int ehrpwm_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	pc->period_cycles[pwm->hwpwm] = period_cycles;
- 
- 	/* Configure clock prescaler to support Low frequency PWM wave */
--	if (set_prescale_div(period_cycles/PERIOD_MAX, &ps_divval,
-+	if (set_prescale_div(period_cycles / PERIOD_MAX, &ps_divval,
- 			     &tb_divval)) {
- 		dev_err(pwmchip_parent(chip), "Unsupported values\n");
- 		return -EINVAL;
+ net/ipv4/tcp.c           | 18 ++++++++++++++++++
+ net/ipv4/tcp_ao.c        |  5 ++---
+ net/ipv4/tcp_ipv4.c      | 29 ++---------------------------
+ net/ipv4/tcp_minisocks.c | 19 +++++--------------
+ 4 files changed, 27 insertions(+), 44 deletions(-)
+---
+base-commit: a7bd72158063740212344fad5d99dcef45bc70d6
+change-id: 20250822-b4-tcp-ao-md5-rst-finwait2-e632b4d8f58d
+
+Best regards,
 -- 
-2.43.0
+Dmitry Safonov <dima@arista.com>
+
 
 
