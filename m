@@ -1,78 +1,95 @@
-Return-Path: <linux-kernel+bounces-781868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65241B317F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:37:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE54BB317FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:38:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20DBB5A2935
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:36:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6693601F76
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0604E2FC022;
-	Fri, 22 Aug 2025 12:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780E72FB983;
+	Fri, 22 Aug 2025 12:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Mw64tLfn"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gL9uhbjg"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE12E2FAC05;
-	Fri, 22 Aug 2025 12:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D2F2FB62D;
+	Fri, 22 Aug 2025 12:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755866178; cv=none; b=JXmhsGUSRv0tbCywgihDnRkYiy8vjLLJY53g09NcOdL0r8Bd+sQ6RsnTKB3VtPbjtqW9tx8hRPaj8tu5TgKnAdChq342JDEEB7DAy7FEKzfMGRfWV/5HSXvC8Ll98T85OmHSc3l5M2Rl5VitrfsRkB5Z30bbBv/L6CvKsVpIhVU=
+	t=1755866206; cv=none; b=haS/nUH8Vwgzvu5+j/lvHyfeR0YEvhsrPXJd3QtAFJ26avGfooEhLY2v1v7R1+QMCpHY9P+to6s51xdSOFLD1vSJk9xM3qYrAkajEoxhvbJBnhSgbslUzN27H2xlfW8tX+kZowe6aorG1y/XXHpYaTWNOHnUxJPQRhSactfBPkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755866178; c=relaxed/simple;
-	bh=2Pcen3q4foG/eRUKPISujfcNjIjScKd45S56kiA20oc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=L2VWaroWe95Zf5QKzMCsVSW8GomjkoXDXqV9p6YNycHiSiE4Gk+AR/PEY+BSTu6avwLFlj9xr2Q2RVMw/RQawvP8K9UUFn1puYb0YJ4ztpoOytPlF79bAH45jbFjtMVH283APO0qnkSkfLTvpE/In4vPBqTJBmFhiyoVylXLbLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Mw64tLfn; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57M7wc2Z017900;
-	Fri, 22 Aug 2025 12:36:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:message-id:mime-version:subject:to; s=
-	pp1; bh=VqYJdzYdyS6foVhsU/DoXgnLdWVkJv9bPd1pUCDC2Dw=; b=Mw64tLfn
-	DK9Jb+81HkV0+fm1epmtGO8nEOYaRdn8+6bk46NrLSD1L58VLRbgikoc2zx4Pfol
-	ycPjLG4RF8hpRoEBJBW8XYBxFygAltBp3dAnHjkVUBPA1u4S+gIis9vufzMVlCUb
-	GQDx5T2i8VnI0XEBl/tJ3SwNfbCRI5CULR+2Ac8wGSpIW0VCKGg8oOu4SMHu6lww
-	Hb/lT6KIpdwk7S+SXWl9A//FCELp8fEP8UP7xok++/wA7F8DklNc9jY0Aw+4D2WQ
-	qNkTagEXWDWxRRFor5hZHfU4TAJPTMPKpDd9PqCcOGJSDRc2pBurfQVePVM8hzDj
-	JmBa/uCU5eJv1w==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vxeff-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Aug 2025 12:36:14 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57M8gIek016030;
-	Fri, 22 Aug 2025 12:36:14 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 48my42d93h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Aug 2025 12:36:13 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57MCaA4t16777498
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 22 Aug 2025 12:36:10 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3BCB920043;
-	Fri, 22 Aug 2025 12:36:10 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 204D220040;
-	Fri, 22 Aug 2025 12:36:10 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 22 Aug 2025 12:36:10 +0000 (GMT)
-Date: Fri, 22 Aug 2025 14:36:08 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] s390 fixes for 6.17-rc3
-Message-ID: <20250822123608.142112A72-agordeev@linux.ibm.com>
+	s=arc-20240116; t=1755866206; c=relaxed/simple;
+	bh=oIde0TlaVmSW9RW3Vxdsr4fR2WlErknPKwu1GrYxy5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ew3Ul3kCapmf1QJK+qkgx8lOb/Tk4m7lpshZIwsNinJOSTj9oVubTuQDANGup3FL0kdUYU10twn47JDcdqxMBVCHSNsVnntkCPQDabDNkUdV38BKg/UGfdOShucUTJPZwfpdFNtPjq47lANqeMnRuqWlXGDmNhglE/zYUe8t4Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gL9uhbjg; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b4a25ccceso11745245e9.3;
+        Fri, 22 Aug 2025 05:36:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755866203; x=1756471003; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bx/4A3+Gx2aFj8IGwK89M2ZsIpiYLL8axuyOuMZrEXE=;
+        b=gL9uhbjgBk0aAtCVndPg5PlNAVfioJz80qFEXgXnZw4oHxVpsxqBXkBElEpUXFw43e
+         hp2HmDTs9gmw5d6M6ZFfbYD0trS2z5Njc3jftXRCPa06QNX5RXWqX+P1mAS5Lkv+N1Ro
+         nNscCSVaZ8BJYBWxMDwExlOrufAEvlCc/QFXzKI+sfYWBnBLbgB0Y/RxwBggPSQ5gV6m
+         gJw6D9CLiwSX+BQZYQMF3GTfdPGho8lH6gP7azhDgJCyNLptteWHOZlm5VrdyU2iX6jm
+         GAeK37UsQwcxtJS4VKqr3uIylJ03Pn+cOjhCPAunpw/DShjPkSs0m4We3cw01p1RYO9F
+         YQQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755866203; x=1756471003;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bx/4A3+Gx2aFj8IGwK89M2ZsIpiYLL8axuyOuMZrEXE=;
+        b=MS5F2exYAMfWcHxudY0wQwkiHkY/KUBue9ojN9dN9REpvN5CdG+w2Ee7gax+809JHp
+         jNnDt4wOil0/k/9DkiU6/7opLYWBQ7egWhVL7dLVyjSL0q9U/T9VivRTXQTBS4s2Qsuu
+         iYnkHAhBanMJsv2MF2HBUCPghjCN4g/Ln5T6n7J0LGc9ndZd0T5jpvVzqfdhsvKZnyHh
+         nzpz7doE2D0mcnREUZn/QEnSDPukmccuSkEZ0+QCqrkilX2BuEwEjK5VmOCNH/n8EptL
+         DxmtPWxWMX/npwSAkreDrvTbt68HkkbBREGcLI8sJL9qNbsntHjlRSUKCm5znWeBli80
+         VGuw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhGfts2oKs8qnZCUaq7b4IKqAU8YBwrxaygewN/pPT1LpeFgKIvg8XGDVX3daPEhlf21LgFv9OprmDEmfI@vger.kernel.org, AJvYcCVs0yc62ULWhHu/ZqE4nPT/pNIGIWyQZbX0y85gSmYRQcrYEpK570m8P0PDv4YyDFNzoy0e0lzpZcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFbJLsYiFedXWRg3NLkBbQlO6s6FOw3pq8AGVoVeXJ4zO7V4re
+	ZXHH9afn5oc3DqvxzIL2JtoieboV+9yCoh8vTkMSkqnE1PKG2EmblteE
+X-Gm-Gg: ASbGncuY+HvLMauRbvEDMVTuFv8iX9CRnihAkbr0Y25+l8PBLNyjgdcoObdtJV5gAWH
+	XJeK7/kuBNct/pCPEdVXbNINElC0pnnMRwV09PBerNENCpgtmiDOtFiS9/JLyQrvL1KJZFRvuCx
+	zhTdWG8SYHcrfCDbxYZ5WFefd+aCRkW6xxlLHmRVWFur+BoZaF90qBXKXavm46v5vYkVX/vXh+y
+	mR7xU+xP6PmpGkzwyYpsFRCVrCnkEvsRwh9RN3advtxXXiLehKhFHg8J92W+0ZXaSJk8tLpWjDh
+	+94mEm1lbNNs+UWX20y61amOSq8a5YKdJu8xQqZamKJD0ORn6HDAW6ILfCsHDutIfCWjQzUT51j
+	8k6kZpL2VeyJp5UyB1mHY
+X-Google-Smtp-Source: AGHT+IGLHePYvKetdZF0ttglnEALzl+yrK+mHjXKOrhefcCSe1sTmJGdI5xkl0FH1V6Q5aDp/8oHxA==
+X-Received: by 2002:a05:600c:1c87:b0:456:173c:8a53 with SMTP id 5b1f17b1804b1-45b5179cdd5mr19741695e9.2.1755866203245;
+        Fri, 22 Aug 2025 05:36:43 -0700 (PDT)
+Received: from legfed1 ([2a00:79c0:65a:1400:1ebe:eb51:3a97:3b47])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b50dc4c55sm36618485e9.4.2025.08.22.05.36.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 05:36:42 -0700 (PDT)
+Date: Fri, 22 Aug 2025 14:36:41 +0200
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: dimitri.fedrau@liebherr.com,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Li peiyu <579lpy@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Chris Lesiak <chris.lesiak@licorbio.com>
+Subject: Re: [PATCH 1/2] iio: humditiy: hdc3020: fix units for temperature
+ and humidity measurement
+Message-ID: <20250822123641.GA19315@legfed1>
+References: <20250821-hdc3020-units-fix-v1-0-6ab0bc353c5e@liebherr.com>
+ <20250821-hdc3020-units-fix-v1-1-6ab0bc353c5e@liebherr.com>
+ <aKc-2WHDTtGcXmCJ@smile.fi.intel.com>
+ <aKc-_j84oUwCquHk@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,79 +98,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ABcUcuYgFeLH5SRvBDzyqTIe2YtbTaUe
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDIyMiBTYWx0ZWRfX6UQ0oOLWMBkK
- kKrqn8wF1B5VTNkb3Rf2BUgyR629ArHxrwdqY0LroqilrrEFucaETnoH+BrvTxM+FZyK6guhQws
- 45ik64SYVQvA3J9TJ3eoWJZLVLNog2EPpUIe7KA9ACDO5jDq9u/yF7RlVpJ1yVeqk2Mo9gDOxBY
- BJDrMfyDzyznG3X2YMK6Ltl4b8wGVUA4/OyRE/26/o1vBsDeSGQsJzP5mFtumg5dJeE7pEUgmqj
- kLka9bKzhUaJyRPZhlihg8X6JnBb69Rh2e8yqfo1ZyER9L2yK30DjJynh5eT1Kx2jdxkNsj2Psz
- W+7BsQwYxHlGjItBbx0CrPWsKg5dmSvdQVBJGQQ9yg1wi3l3xP3tcHy1ZMOpaaDRCfhYFhxgD+T
- 76fCLe8w86KSyQ8sjlmcSk6nzmQorw==
-X-Proofpoint-GUID: ABcUcuYgFeLH5SRvBDzyqTIe2YtbTaUe
-X-Authority-Analysis: v=2.4 cv=KPwDzFFo c=1 sm=1 tr=0 ts=68a8643f cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=zGN_lDc1xwhrvwUN7M0A:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0
- bulkscore=0 priorityscore=1501 suspectscore=0 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508190222
+In-Reply-To: <aKc-_j84oUwCquHk@smile.fi.intel.com>
 
-Hi Linus,
+Am Thu, Aug 21, 2025 at 06:45:02PM +0300 schrieb Andy Shevchenko:
+> On Thu, Aug 21, 2025 at 06:44:25PM +0300, Andy Shevchenko wrote:
+> > On Thu, Aug 21, 2025 at 05:23:54PM +0200, Dimitri Fedrau via B4 Relay wrote:
+> 
+> ...
+> 
+> > >  		if (chan->type == IIO_TEMP)
+> > > -			*val = 175;
+> > > +			*val = 175000;
+> > >  		else
+> > > -			*val = 100;
+> > > +			*val = 100000;
+> 
+> > Perhaps  use " * MILL" uin both cases?
+> 
+> Perhaps  use " * MILLI" in both cases?
+> 
+>
+Ok.
 
-please pull s390 fixes for 6.17-rc3.
-
-Thanks,
-Alexander
-
-The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
-
-  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.17-3
-
-for you to fetch changes up to 3868f910440c47cd5d158776be4ba4e2186beda7:
-
-  s390/hypfs: Enable limited access during lockdown (2025-08-21 17:46:14 +0200)
-
-----------------------------------------------------------------
-s390 fixes for 6.17-rc3
-
-- When kernel lockdown is active userspace tools that rely on read
-  operations only are unnecessarily blocked. Fix that by avoiding
-  ioctl registration during lockdown
-
-- Invalid NULL pointer accesses succeed due to the lowcore is always
-  mapped the identity mapping pinned to zero. To fix that never map
-  the first two pages of physical memory with identity mapping
-
-- Fix invalid SCCB present check in the SCLP interrupt handler
-
-- Update defconfigs
-
-----------------------------------------------------------------
-Heiko Carstens (3):
-      s390/configs: Update defconfigs
-      s390/configs: Set HZ=1000
-      s390/mm: Do not map lowcore with identity mapping
-
-Peter Oberparleiter (3):
-      s390/sclp: Fix SCCB present check
-      s390/hypfs: Avoid unnecessary ioctl registration in debugfs
-      s390/hypfs: Enable limited access during lockdown
-
- arch/s390/boot/vmem.c                |  3 +++
- arch/s390/configs/debug_defconfig    | 33 ++++++++++++++++-----------------
- arch/s390/configs/defconfig          | 34 +++++++++++++++-------------------
- arch/s390/configs/zfcpdump_defconfig |  3 ++-
- arch/s390/hypfs/hypfs_dbfs.c         | 19 ++++++++++++-------
- drivers/s390/char/sclp.c             | 11 +++++++++--
- 6 files changed, 57 insertions(+), 46 deletions(-)
+Best regards,
+Dimitri Fedrau
 
