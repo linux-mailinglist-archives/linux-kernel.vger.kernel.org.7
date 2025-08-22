@@ -1,141 +1,120 @@
-Return-Path: <linux-kernel+bounces-781911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67152B318A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:00:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363EEB3189D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19786624B20
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:57:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C651A1D234AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818A52FE58B;
-	Fri, 22 Aug 2025 12:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828EC2FD1D1;
+	Fri, 22 Aug 2025 12:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="O9i05IB8";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QJf9FCrO"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fpzh8o+b"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4892FD1BB;
-	Fri, 22 Aug 2025 12:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF39199FAC;
+	Fri, 22 Aug 2025 12:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755867286; cv=none; b=qbI0r/cMbLqPeQsq4TqMv5jsP2356oBgSuE1C0lhS5NiVwBK8OMy1N6BjRbTyOjg8cG5wJ6zHeU4z7Ks19vjLYxhuqEN5YQboeN/5VGBS0jE2k0jrJI8jvlu7x+cFrBhCQT1Or/Spu//dMloys4/PYpw7VJn20I3EtNVUdljy60=
+	t=1755867311; cv=none; b=Qp2sKS2g59Xs3nqRQulzHbBboNY1QgCYSiMa0GUYj63WHALiFrt3R2fGxfCChnGeQ3eO/IK6H7vdAU1T9tJ1GuIipJnhFrYOj/rK/8QRhrB3Q17mOFLTRJWCzI1is2udeKACEvFdlHLUrn7jCxLO4MQiZAHRycVPQ1YAP9phsCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755867286; c=relaxed/simple;
-	bh=9WM5jNaY2Wf4YG1NJEB50AfU0AlRHyDxQ+QQLN1yREI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=O+tBeuzD13nskyzvn+eHvAwfe2VzPQTnEiHnwxAeGUefnLD0vH+0cT9beLi0jUwEtW+gDyTP6GKJhKSIqaxHRrb2XD/w/K8G4dw387xYdXWV4vfgSO7flyKGFV4Sc4U1yArJk/nPEOk9B/XStm4pmW/w5hcFiOvJbgFAfGiDn5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=O9i05IB8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QJf9FCrO; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfout.stl.internal (Postfix) with ESMTP id 1E5251D00234;
-	Fri, 22 Aug 2025 08:54:43 -0400 (EDT)
-Received: from phl-imap-08 ([10.202.2.84])
-  by phl-compute-12.internal (MEProxy); Fri, 22 Aug 2025 08:54:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1755867282;
-	 x=1755953682; bh=aRZ2w4aRXo6qUfdO68AWObxskrE0DCs20pt2DafQLDY=; b=
-	O9i05IB8zSotgJBhPcH917nbpHH/qgqfnnFgsj4vfqka64s9qF4kPKS/O6VC0ic6
-	AAe8nf4dUWW27Kr3n8WQlNPVBvEYxNHOtY3RCaVxX28xivHTuWlMl6orHvowzh6n
-	G2CXDCjtp50AojrgnWYvQOINiw8LfWeWlUWP4OxSEs5Xo6u+6PFtXi63/tRXPPR6
-	laCFNlrTbwwOxKXFI5YGdH5zQwGuCMlQIS+NuEylXhUcsb2sIZP7XyvCCfcYEChh
-	Hhf03wja9RAShRYoojScQG6Ltgl0UeoEJfHGip7aHX2wbBxpDYwuJF4RG1mmQE2Q
-	EE/g/Xv66RnZ6VWazcUFgg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755867282; x=
-	1755953682; bh=aRZ2w4aRXo6qUfdO68AWObxskrE0DCs20pt2DafQLDY=; b=Q
-	Jf9FCrO4swUngwR9t6qnHdFLxYD9lJFCVeDsnmwr742WBgL0im5dWqXN6q/ETZ+r
-	wL16Uo4/slFz6TFJB8U6br4Ep5OVchTB5AwtR9Jjk77FaEmzbi6rMK3kwbpiHW0N
-	1Xhe/+PCFsv25DNN1+ToDWxINJP75qqAcz3ICMGbqSItW6yTt2FWyfZVz4Kv4DE6
-	PL0bblRMbtrHHIeYO58mroytKXUw6FN8+Z4trhqvZXaiYp9gOI/Ee417BunzNE7Q
-	OQx5A4O0JTCkQLdbg0wqEYnlZeUaNR1iY6Gx6ZoH8jnvioCoR9aXQ/q2rYwU0cCt
-	72gLWFn8zKMR7MZ8pP7SA==
-X-ME-Sender: <xms:kmioaP9U_Se6dGPj_PDiMrw-8NA6u4uQNknJv8YXUJOue_N3gtzphg>
-    <xme:kmioaLtmRGYTzVwkqVZm96sK0Odoj3ClLMOCCjQ2fJd-8gEMlqZUAL2kwfBODM1yQ
-    DKqP7JD7GGcyj1Ku0Y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieefkeduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfofgrrhhk
-    ucfrvggrrhhsohhnfdcuoehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtg
-    grqeenucggtffrrghtthgvrhhnpefhuedvheetgeehtdehtdevheduvdejjefggfeijedv
-    geekhfefleehkeehvdffheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrpdhn
-    sggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehhvghikh
-    hkihdrkhhrohhgvghruhhssehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohep
-    ghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplh
-    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    lhhinhhugidquhhssgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:kmioaL_aU2PGTjjy-D1D4lKNo8mtFcZ1nvqwKg5mvTYTLrGW9Q0_Iw>
-    <xmx:kmioaDNQYo5OiBu3lKEa22pxYQ2N3rWNrp_f6IpNTAwbjPqeXJpj-Q>
-    <xmx:kmioaPchj6JjjIYTl54JF72vc07_LFJhb7QNkhX0qLZl-QMsheQpWw>
-    <xmx:kmioaCUdP4ZzuX0-vhC1NZnY5-36TCMDhYNrT_Sjj81erVPnq2wAoA>
-    <xmx:kmioaJvfIWkvGDTph2iSPqb6xKTpUMSNtN6EGAM93zOJ6Uam9RKCOkEu>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 501182CE0071; Fri, 22 Aug 2025 08:54:42 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1755867311; c=relaxed/simple;
+	bh=O+dmbiGEj8F46QTVyVP57VP1t3B7/OZvoSp/KF+0DlY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g0brTVauRiyu7SaaV7JP+f2lWqFTygMgpcOh9jynchQc2PFfh9A396w6nsm25HV0W/jqG7ggxnOFQFv3N4dCXLSI132uNQ5eZ3hA975CixErKUmghiPackLsVgRsNawsx3iXDZcn7mWUFuSrH/gJNwwvVgDYySuRG8QS99uACio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fpzh8o+b; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b4717330f9eso1448404a12.1;
+        Fri, 22 Aug 2025 05:55:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755867310; x=1756472110; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YeEm17f+SxN+MAIvXYQ6rN85sdmuGJRyZf4VEhc4oUU=;
+        b=Fpzh8o+bgXx7VkVR2jAuLfGYkkcH5S6WK+flWtjDo65Ht6DbmiOImY6zsXT+XIC2XZ
+         OGEtMkLI/mti05Hn+Og9PCXb2dTdEfzmb1A6CUf+NyEWt3OvSQ+upDzfkId4J/Bk4VqJ
+         oBgWZJoR2L3BnJOmyvllw9PlJsWhXDE2t5BeMChF95zjmUxJvBuOOpDpy9X3Kgu9SnQN
+         DuIDHqG5ALyT3javrPpY6Ijr+otEXvgR5EA+Eo1DuUy4mGRmIjxMC3LMBvXFROCPbDEB
+         lK4KaC2hm9bDKSekTQl4xD/GwH8WNM0XSl0q8llSaWzJGylHGWg3Yyso2HVOpeg+TkI4
+         0RIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755867310; x=1756472110;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YeEm17f+SxN+MAIvXYQ6rN85sdmuGJRyZf4VEhc4oUU=;
+        b=p/CjSgJ3tD5D1XypMw22OYEAMWFgwXZtE3F+p2ATUhIJI7RmRWtSkEPNoT8UjTWWQG
+         wJnwnvVNDlr5dgpU5L+iOT3RkLunkfAkcxc/IAt5CiCmU0fL/2DIYrHT6i28KHHb4Q4m
+         UuW4MvAiltZHqL0fnYRV0c+4qCRSoncZf6g4/hI3Z5IRHCncT9v3PfKLe+vxtAskmHXj
+         rnfdprY7vXN4vvSuycX2p7tSWpkXn8q7DZQNQpTq1XY+mARQHTv7WpQv6qiuDp4ettGl
+         rwJrSceAMSfFtBvXqM4BrfTS34DD5J2MVR1Pi4XSyJRKSjn5hJe9cshtfeVJV/E8ebBf
+         UFIw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1yn9Cz6jFJkB3fOSJif4i76wUVK3+3+IZtqS9PnwojG8LxQP5RJ+rWELqmXukcg4+j27cxuIssIpMCLk=@vger.kernel.org, AJvYcCV6luGR0zJ9xSeUiJOtoRIQkAr3D9n3CbCUNyqK/pr7wE8CID2RQ9/gXJGpaZJiTgljkv9o57RS+hKqewTriA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz060gCcltqEE50IAHA4mUwkfw47JnwyCDmu0aqj74QySAgaoQX
+	zcAFVcISJehvLniiI4i3tBj7Y5T1gy/CLDg0NRgpJGhC02DW3Lb3HSpJ
+X-Gm-Gg: ASbGncub+/Zhq1d6KKtkElkmTanDGu7sJ9KKJuNzDZD22aW1J82vs6OFVkMcAbm0xR4
+	DXaXMtoo0LA6AdepD18qsVCtkNGTF4gK39jVUUQCEzGz9tlGND1t8XugVMK2xA7NRfB+xtE8muU
+	Vw774T1QwxR4klLnuduZ1dn4P2T86VCNwqgEIpLh5dBQ9xpy0ZTVkCa5yZ3Xeb58HVORNEIMaNY
+	hDiLVm3Dpw5ByBvIi9xVavF56ltjpIWeVYditraTZlLCl7HPKN9cQys+jDbWFXIeO36W+WYhYiW
+	S5XKUbXFjjhe7aLsBRAS8VSkUvJ1qICI0yh3oyGuSSUcL90AXlDsMZIN+wApWBnXgZDkFPnVFyA
+	jHbR1memM8iqowQS+O3JwMCkoeyEqJZ1IVtdzZKGiTUv0M9Aa5VP8kZniF129/hU1LzUpcM0+MZ
+	A=
+X-Google-Smtp-Source: AGHT+IFgOU+qUZBP02uevKCYNqgjB3GnS0PwtJ2Pjgl76CyFA+zLtwYIxb9Gb7VERWn+wtTilxreIg==
+X-Received: by 2002:a17:903:1251:b0:234:a139:11fb with SMTP id d9443c01a7336-2462ee88d12mr37661165ad.27.1755867309657;
+        Fri, 22 Aug 2025 05:55:09 -0700 (PDT)
+Received: from localhost.localdomain ([114.242.33.243])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed377843sm83617285ad.57.2025.08.22.05.55.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 05:55:09 -0700 (PDT)
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jinchao Wang <wangjinchao600@gmail.com>
+Subject: [PATCH 0/5] Module loading error handling improvements
+Date: Fri, 22 Aug 2025 20:54:49 +0800
+Message-ID: <20250822125454.1287066-1-wangjinchao600@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: ADpVV-8_W703
-Date: Fri, 22 Aug 2025 08:54:22 -0400
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Greg KH" <gregkh@linuxfoundation.org>
-Cc: "Heikki Krogerus" <heikki.krogerus@linux.intel.com>,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <0ac78125-a028-4d99-b106-d792d8660d0f@app.fastmail.com>
-In-Reply-To: <2025082213-antacid-correct-53b1@gregkh>
-References: <mpearson-lenovo@squebb.ca>
- <20250821185319.2585023-1-mpearson-lenovo@squebb.ca>
- <2025082213-antacid-correct-53b1@gregkh>
-Subject: Re: [PATCH] usb: typec: ucsi: Handle incorrect num_connectors capability
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Greg,
+This series addresses several issues related to module loading error
+handling, particularly around force loading and signature verification.
 
-On Fri, Aug 22, 2025, at 12:51 AM, Greg KH wrote:
-> On Thu, Aug 21, 2025 at 02:53:07PM -0400, Mark Pearson wrote:
->> The UCSI spec states that the num_connectors field is 7 bits, and the
->> 8th bit is reserved and should be set to zero.
->> Some buggy FW has been known to set this bit, and it can lead to a
->> system not booting.
->> Flag that the FW is not behaving correctly, and auto-fix the value
->> so that the system boots correctly.
->> 
->> Found on Lenovo P1 G8 during Linux enablement program. The FW will
->> be fixed, but seemed worth addressing in case it hit platforms that
->> aren't officially Linux supported.
->> 
->> Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
->
-> Any hints as to what commit id this fixes?
->
-> thanks,
->
-> greg k-h
+The most critical fix is in patch 1, which resolves a bug where signed
+modules were incorrectly rejected when loaded with the -f flag (force
+load).
 
-Maybe 3cf657f ('Remove all bit-fields')?
+The others improve the user experience when troubleshooting
+module loading issues while maintaining the security guarantees of
+module signing.
 
-The commit there states that 'We can't use bit fields with data that is received or send
-to/from the device.'
-Not sure why that is, but I assumed this means we shouldn't change the structure to use 7 bits for num_connectors, which was my original plan.
+Jinchao Wang (5):
+  module: Fix module_sig_check() for modules with ignored modversions/vermagic
+  module: signing: Use pr_err for signature rejection
+  module: show why force load fails
+  module: centralize no-versions force load check
+  module: separate vermagic and livepatch checks
 
-After that, we go all the way back to the file creation (c1b0bc2) where it was defined as 8 bit.
+ kernel/module/main.c    | 13 +++++++------
+ kernel/module/signing.c | 15 +++++----------
+ kernel/module/version.c |  9 +++++----
+ 3 files changed, 17 insertions(+), 20 deletions(-)
 
-Mark
+-- 
+2.43.0
+
 
