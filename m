@@ -1,122 +1,99 @@
-Return-Path: <linux-kernel+bounces-781614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC1DB314A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:03:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79FA0B31490
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D0B63BA75E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:57:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB0B71CE5D38
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6417F2E3AE2;
-	Fri, 22 Aug 2025 09:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043A1214232;
+	Fri, 22 Aug 2025 09:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iR6M0zai"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="T4DxzR7t"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4FE1BFE00;
-	Fri, 22 Aug 2025 09:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801E7393DE3;
+	Fri, 22 Aug 2025 09:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755856552; cv=none; b=Fgzhqe6ElfxwEJHsY8O6Si2py5uVdwHdKjjFRTlmViuydQ9/jpLajY4i5jcaD8uEDmP3w8BqoqlNkMoDo1IqF9Eoro7zUHJWL0kgYgNtgPC5j2ZZI+tfeZP2n3bD9/mH4zMBtNSU7egCv9Lo1PWU442Xg/tBJAtH6DEjEs5ONpo=
+	t=1755856591; cv=none; b=mN3K1cktAbcOzWenQWNK/ofSOPdR84oXrKkuQddzDHHGEHPwmnJZ3udnN4qfFNIuj5x/VSFGodkjmyflu28r3h9MobfHUMAy1axRSzStKN6dxNMvRcAhKlntJNLIhM5L25Oy0ZwC4RSiIt8G/nbv8UHMfXrlIM+POZ4M2ne8Rs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755856552; c=relaxed/simple;
-	bh=wDBEFLPmjwZ34IQiVCdIlZcm6IWKZupOgrJpMtnNCHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nWvdz8zjYtirom0diw/deYc7ays0SaXUuJpK+wtp0vw0+DkGmlu8Ez3nRIClJtrmsRSycokmmpgaQAhzAZ3SN1sqSSaOJkQXoZnN0wCqygCEJjDrWkpnVsTbMvKozbqyhh9mnVn9lA3ct0hDGbIAmpuKdYsrx5GSVFhWEdJ19rI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iR6M0zai; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1755856548;
-	bh=wDBEFLPmjwZ34IQiVCdIlZcm6IWKZupOgrJpMtnNCHw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iR6M0zaiYMA2yFuALx82u4oDmOKHGSeEiIhs1GHiUYYJLl7nht3XMF+wws8gbctsH
-	 ACcPY4iR09B18G6iNAP2inGyRxrD6LDxe8NLjau3ZTjRfNdCBomeQezyOqiNwKkhlK
-	 JG96pLqUosQ62t1qgM1RWyOBSZg3dgxWwyde6XFuIwnrR7+xM2B8gOG03Awrv46Pej
-	 4olr90PnPypIbb/fF9ka1mSJ+ywWLUpqZV+0SYopofXo5d/UqquFYNFU+xzeTiDG25
-	 ZRYHaIXYyrQRdeSGDQT9KWiPeznzrNOkzRyIJnCcvQSYEtxYQcJwiOs6ecdrph4Q4x
-	 PDCAZJW1/nP3Q==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id CEFB517E0C54;
-	Fri, 22 Aug 2025 11:55:47 +0200 (CEST)
-Date: Fri, 22 Aug 2025 11:55:43 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Danilo Krummrich
- <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, Steven
- Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Rob Clark
- <robin.clark@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, Miguel Ojeda
- <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
- <gary@garyguo.net>, "=?UTF-8?B?QmrDtnJu?= Roy Baron"
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas
- Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] gpuvm: remove gem.gpuva.lock_dep_map
-Message-ID: <20250822115543.62094f53@fedora>
-In-Reply-To: <20250822-gpuva-mutex-in-gem-v2-3-c41a10d1d3b9@google.com>
-References: <20250822-gpuva-mutex-in-gem-v2-0-c41a10d1d3b9@google.com>
-	<20250822-gpuva-mutex-in-gem-v2-3-c41a10d1d3b9@google.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1755856591; c=relaxed/simple;
+	bh=tgckGPbISKEcEPYGCd8ujBQHXdjyOsreicDQ4ji0UDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lL1qDKNc7aggIaGc6lyOJzApClimbEUULwNZVG4azNaK9kME8tD9M+R8yNMSS/xuyyN5WIMdb6awsPy97ygLk6KMCQYnIUDmpP6myXVluNdLdxaMRMzr2X9aNsjSj7b3f9imD6Ceds3gUEywl0XPRqiZqQPqUynBVr92BCmGAyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=T4DxzR7t; arc=none smtp.client-ip=1.95.21.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=+yjDaQyPgYqGebRjvxpL8l2neia8BuLCnzPQdpLeVTM=;
+	b=T4DxzR7tcHi98ViJJbeBYKPBhulpgzrgyRYi9kbKin+yVnymIXkjdpdEyJqEMs
+	i88NIHdHaTxrjy1l/JGbjWcw5++tAVsZAgeYppk1DK17rMyoGTv5N8OQMBnjBT/C
+	yx1sRWoDEVkTcJwmtCzSPokv6ddQ7nIikD1bnHNh6ObVc=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgDHFG6vPqhobTYWAw--.11247S3;
+	Fri, 22 Aug 2025 17:56:01 +0800 (CST)
+Date: Fri, 22 Aug 2025 17:55:59 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH v2 0/7] ARM: dts: clean up most ls1021a CHECK_DTB warning
+Message-ID: <aKg-r76oH34VAH1i@dragon>
+References: <20250820-ls1021a_dts_warning-v2-0-2e39648a32b7@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820-ls1021a_dts_warning-v2-0-2e39648a32b7@nxp.com>
+X-CM-TRANSID:M88vCgDHFG6vPqhobTYWAw--.11247S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Xw17GF4kXFyfWryUXFW3Awb_yoWkuwc_WF
+	43tF4xGF4UCrW2ka15GFyqvryvk3yqyFsxGFy3Cwn8JF9xJF13Wan0y3Wjq3WjgrWFv34q
+	9r9rCr42q34FyjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8VwZ7UUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIhIAZWioPrISGQAA3S
 
-On Fri, 22 Aug 2025 09:28:26 +0000
-Alice Ryhl <aliceryhl@google.com> wrote:
+On Wed, Aug 20, 2025 at 12:36:50PM -0400, Frank Li wrote:
+> clean up most ls1021a CHECK_DTB warning.
+> 
+> Old uboot check esdhc@1560000. The new uboot already switch to check both
+> esdhc@1560000 and mmc@1560000. So we can rename it now.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Changes in v2:
+> - squash rename to flash patches
+> - remove duplicate patches already post in
+> https://lore.kernel.org/linux-devicetree/20250725061339.266125-1-alexander.stein@ew.tq-group.com/
+> - Link to v1: https://lore.kernel.org/r/20250818-ls1021a_dts_warning-v1-0-7a79b6b4a0e2@nxp.com
+> 
+> ---
+> Frank Li (7):
+>       ARM: dts: ls1021a: Rename node name nor to flash
+>       ARM: dts: ls1021a: Rename 'mdio-mux-emi1' to 'mdio-mux@54'
+>       ARM: dts: ls1021a: Rename esdhc@1560000 to mmc@1560000
+>       ARM: dts: ls1021a: Rename node name power-controler to wakeup-controller
+>       ARM: dts: ls1021a: remove big-endian for mmc modes
+>       ARM: dts: ls1021a-tsn: Remove redundant #address-cells for ethernet-switch@1
+>       ARM: dts: ls1021a-tqmls1021a-mbls1021a-rgb-cdtech: Remove fallback compatible string edt,edt-ft5x06
 
-> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
-> index 5934d8dc267a65aaf62d2d025869221cd110b325..85a25bbb387c4590678e4ba243b51acd94b008ed 100644
-> --- a/include/drm/drm_gem.h
-> +++ b/include/drm/drm_gem.h
-> @@ -402,17 +402,22 @@ struct drm_gem_object {
->  	 *
->  	 * Provides the list of GPU VAs attached to this GEM object.
->  	 *
-> -	 * Drivers should lock list accesses with the GEMs &dma_resv lock
-> -	 * (&drm_gem_object.resv) or a custom lock if one is provided. The
-> -	 * mutex inside this struct may be used as the custom lock.
-> +	 * When DRM_GPUVM_IMMEDIATE_MODE is set, this list is protected by the
-> +	 * mutex. Otherwise, the list is protected by the GEMs &dma_resv lock.
-> +	 *
-> +	 * Note that all entries in this list must agree on whether
-> +	 * DRM_GPUVM_IMMEDIATE_MODE is set.
->  	 */
->  	struct {
->  		struct list_head list;
->  
-> +		/**
-> +		 * @gpuva.lock: Only used when DRM_GPUVM_IMMEDIATE_MODE is set.
-> +		 * It should be safe to take this mutex during the fence
-> +		 * signalling path, so do not allocate memory while holding
-> +		 * this lock.
-> +		 */
+Frank,
 
-To follow-up on my comment on patch 1: this makes
-drm_gem_object::gpuva::list the only field to not have a proper doc.
-This patch is
+Could you rebase on imx/dt branch?
 
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+Shawn
 
-regardless.
-
-Thanks,
-
-Boris
 
