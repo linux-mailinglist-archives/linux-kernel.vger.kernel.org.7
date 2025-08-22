@@ -1,159 +1,159 @@
-Return-Path: <linux-kernel+bounces-782735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 252AAB324A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:34:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4534B324A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF595AC64FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:32:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EB306833CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0403375CF;
-	Fri, 22 Aug 2025 21:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DA02D322F;
+	Fri, 22 Aug 2025 21:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="is+XQGpH"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W3tJtXk0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF86337685;
-	Fri, 22 Aug 2025 21:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E961531C8;
+	Fri, 22 Aug 2025 21:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755898194; cv=none; b=U/m+BXOyJCSQ9Jdyd7Af1qJ+SFKKHb90diCTFV4kMpL1NRTG05Qb/vFPWf+LiQmxpSroBawznq3m8IYlp1ITRzhJkPFQlt4LpBOgrW8ocA5fyH5G4yq9HKbbvzwtR72du4uuAhFYR7EY+w4N7JMiknTF7Y3H5uFonPqeff0kLyA=
+	t=1755898315; cv=none; b=d9Y173nU56z7N275EnrF1Kofw/Lasd1ncAzhSRAZP4HN2KICZamscbBQ9wSZmFSBB/wm2TH/YFUDm31WaPLS8SRd0HIFwGfH3YJH0mfXbAp8r6qxSrP/sZNPZsuLF8IBRNw2nN8n5d7qD8dn4PaptHTnihCLVmaPQGx8Ie9Y5N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755898194; c=relaxed/simple;
-	bh=dZ8zvioxb4sJxNiQfPrAxtevAW+fEIgRQ19rSOWqLrs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uKOVY5Lwyi2ONixnGIgxPogAZVhAcBUFMut34cmBr+5HkMc8U1SKg6D5v33lWaN/ZppGzF/zFcopz5wkGufMYyAiiqXlVQ8fqFNaycaGGdoHnIhVR+FvajVkMI75qM+BHiBEtyuUl+ma1A57pdnROiq5IAnRGcghv/91ba0Ai3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=is+XQGpH; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7e870689dedso193462685a.3;
-        Fri, 22 Aug 2025 14:29:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755898191; x=1756502991; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=s8Ovyun/TMHM0pGVPmWlNx8ggduSwJfwBzcRUmzf8AQ=;
-        b=is+XQGpHzgCs94dYZZAF1BH/dX6v1Wsmhk/PP42BongXXvoB/aWdr60/+VXievALYf
-         faZtbDCLEvcBSnWmukmJkEBa7tGPlaPrZcL87s6OColm8vlQAQZbFM79vVl9cTUae4Ab
-         jrKRFRpcghaoBv7cYfZp03UsqXxhdHbNPUCiQRZ42iClwmQTquFcotlS6L5VfacDLa5b
-         z2XPPPwG4W23vUMazwH214KVN70x4wthhb4AmZayaMT1cHa3QJq+r+XwI9JazFK4PW+4
-         xc916wJWjyAnXaqJYZJyjZs0u7RZwRGtuND2RFq6zQvglcN7I+orRbS+BtZhfhmUaQeT
-         Je2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755898191; x=1756502991;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s8Ovyun/TMHM0pGVPmWlNx8ggduSwJfwBzcRUmzf8AQ=;
-        b=HsnIyQYJp0p/7GD5Qg0ArwkkRUZR+LveSUxlDSuoCFBhac8jDnGySruTrPatmt8SkG
-         J+jc0arj5uSeeXcmLWUzv5ONE+nWbTy/MMcTgKFAKsrD+h4MELVnQtWkNmCILavUqFSD
-         NtEgboqYn3jPGsB0NnGlUxPiv/Gjod+SqwYrXKqZ6s9PsLP1h16omXJch6ISvLcuCHzE
-         Lw7CpkvN9l3S5RRDqrXrPqXlfgmeT66lFv9uN1FTGvPzm3xlCk1xj2FK/t51v9pTQZY9
-         TZQt3/cO83Honxl71TRyuEMp8jiNK4lx9vk6GRgia3f5sJCuXw/HgkkpZrtAjNkqPXKj
-         aLzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSJuptt/qEM3oj6XdQQe5pbOx7sSsY05nFVqLF1bSwDPrJYjJYRzDEFKg+OV5oF7NCOzoNKFzPaMfQBHM=@vger.kernel.org, AJvYcCWbN6u9PNM99h8pT7m7oKb+RynlQejYM1lIMaXquJduJxGCdCgj4Peo0CIacY21DoIxXlz6W4OC@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTDU462dMLPUm0onOjkK6UsNWyxKsdmC+2LsicT23lF5Hp4sEa
-	ubawYXz3ZcRWC5xYxIycHnT4P73vdP2I2G9mygmmRsNPTTXaZHAxaANI
-X-Gm-Gg: ASbGnctPjaPOgS9JD0UXtp/zAJmi6bo2SarEZaYEamo5c3xJppqg1TTWhl4n6Q8RviI
-	hlNGXaaw5fE26n/DMwDkGNK3EHl9eziC7qdnTZ6AASmRTN0VCIeMBLSKBybZ9h3siGGhapmQJfy
-	qZwRXLeaoF7TMAEhENUOAIGvfE0bsr7UOdsQmXyDdpN2jVrVpTMYGnDkcYq224CfeHv2kZnN6hN
-	kJ/djblz2RPQDWj2AQrf14c4qrL0kEOBy+kVJWtNUSWixkbnmBr1LzE0/ZL6Io3m3H1Z8DBpasf
-	E5kcO5P3uGq5SGtv5bK2OValPCgaT4wY59deZbqgdGx4TMvcZI9jcFMb447M5q1YpeBfWXlPQZ6
-	FIU9VCgw0AW5CBd/y15rQ5LBqNNI717gY8Bu7QhblJmtLnjrieQ==
-X-Google-Smtp-Source: AGHT+IExax3cGMrlhEhiqNxmeTvgqTbOi1ULNWqjINBGIC0YZHoo0Ccq8YR+33e1OpILQbT/tjYrpw==
-X-Received: by 2002:a05:620a:3715:b0:7e8:598f:bc5b with SMTP id af79cd13be357-7ea10f7470amr498407685a.4.1755898190970;
-        Fri, 22 Aug 2025 14:29:50 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ebf2b50789sm49375985a.42.2025.08.22.14.29.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 14:29:50 -0700 (PDT)
-Message-ID: <56a2abfb-365e-4160-b42e-618eba3bc35c@gmail.com>
-Date: Fri, 22 Aug 2025 14:29:37 -0700
+	s=arc-20240116; t=1755898315; c=relaxed/simple;
+	bh=OZDL56ts6cpMtHv06rx//Jcb9k8kAprl1hOGapCSJ0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sgMGq2II0+psxFX7K9j+GjMIOG/DJo7vvoTgmyAkjRsqjZWidFHttMZdIoWrM6yenzyl05HvqKC+5htbV4VqzLoX+Rm52IHLEvHCAGwkiTCkSCNIlUcCErfhp6zUxUrOnZkpd7KPpo9JeW2tZRn0PwHy1UC1bSvBrGcW/GNJIH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W3tJtXk0; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755898313; x=1787434313;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OZDL56ts6cpMtHv06rx//Jcb9k8kAprl1hOGapCSJ0Y=;
+  b=W3tJtXk0BZBu1kK8CBEcoCLf3CgoN+QntPapomfRhevR8zpXMj+xWEj4
+   RHVFG39JNPNRvu7uvZNEDGLG2i96H3Yn8XgfP5bGA0hxJBYClMA7KdyhA
+   OiRi7M0ZrcEONoJSYIP75CvvMb3FGqpsLLDdvQPYWyKETC15trNxp/5jm
+   m+9lzGVxh2YD7CG1YPHAjZitDL0jnEn2pJ9Bc8/xpmtrtShOYcF1f33R6
+   Y3qPnt3OmPTI3Qn6H34O+Vy40BYFDJ94MrqYJQ4J6HHCdH5nTPf95QnPu
+   AFCT+jJhYvHMA3QVyE/9M7KcUQtKp2UlmEfZAzb4hDEGn+Jo2cGWEtYB4
+   A==;
+X-CSE-ConnectionGUID: UCVV9SJvSYunO5LFKn+T1w==
+X-CSE-MsgGUID: weyx3vo7QQiY3sozM2uVbQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="45784567"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="45784567"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 14:31:52 -0700
+X-CSE-ConnectionGUID: JxdUFZ2jTJWTdC23usu6cA==
+X-CSE-MsgGUID: yb+VR08XSSGzNFcTO+jxnA==
+X-ExtLoop1: 1
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 22 Aug 2025 14:31:49 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1upZM0-000LqR-01;
+	Fri, 22 Aug 2025 21:31:27 +0000
+Date: Sat, 23 Aug 2025 05:31:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: oe-kbuild-all@lists.linux.dev, Chen-Yu Tsai <wenst@chromium.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: mediatek: common: Switch to
+ for_each_available_child_of_node_scoped()
+Message-ID: <202508230528.DeD3hVns-lkp@intel.com>
+References: <20250822062738.2632746-1-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.16 0/9] 6.16.3-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20250822123516.780248736@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- WlfRzlpjIPmdjgoicA==
-In-Reply-To: <20250822123516.780248736@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822062738.2632746-1-wenst@chromium.org>
 
-On 8/22/25 05:37, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.16.3 release.
-> There are 9 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 24 Aug 2025 12:35:08 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.3-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Chen-Yu,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on broonie-sound/for-next]
+[also build test WARNING on broonie-spi/for-next linus/master v6.17-rc2 next-20250822]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Yu-Tsai/ASoC-mediatek-common-Switch-to-for_each_available_child_of_node_scoped/20250822-142918
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+patch link:    https://lore.kernel.org/r/20250822062738.2632746-1-wenst%40chromium.org
+patch subject: [PATCH] ASoC: mediatek: common: Switch to for_each_available_child_of_node_scoped()
+config: x86_64-buildonly-randconfig-001-20250823 (https://download.01.org/0day-ci/archive/20250823/202508230528.DeD3hVns-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250823/202508230528.DeD3hVns-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508230528.DeD3hVns-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   sound/soc/mediatek/common/mtk-soundcard-driver.c: In function 'parse_dai_link_info':
+>> sound/soc/mediatek/common/mtk-soundcard-driver.c:92:29: warning: unused variable 'sub_node' [-Wunused-variable]
+      92 |         struct device_node *sub_node;
+         |                             ^~~~~~~~
 
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+vim +/sub_node +92 sound/soc/mediatek/common/mtk-soundcard-driver.c
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+c0e7390e6d3f42b Trevor Wu    2023-05-26   88  
+4302187d955f166 Trevor Wu    2023-01-16   89  int parse_dai_link_info(struct snd_soc_card *card)
+4302187d955f166 Trevor Wu    2023-01-16   90  {
+4302187d955f166 Trevor Wu    2023-01-16   91  	struct device *dev = card->dev;
+4302187d955f166 Trevor Wu    2023-01-16  @92  	struct device_node *sub_node;
+4302187d955f166 Trevor Wu    2023-01-16   93  	struct snd_soc_dai_link *dai_link;
+4302187d955f166 Trevor Wu    2023-01-16   94  	const char *dai_link_name;
+4302187d955f166 Trevor Wu    2023-01-16   95  	int ret, i;
+4302187d955f166 Trevor Wu    2023-01-16   96  
+4302187d955f166 Trevor Wu    2023-01-16   97  	/* Loop over all the dai link sub nodes */
+bd1311e421261f6 Chen-Yu Tsai 2025-08-22   98  	for_each_available_child_of_node_scoped(dev->of_node, sub_node) {
+4302187d955f166 Trevor Wu    2023-01-16   99  		if (of_property_read_string(sub_node, "link-name",
+bd1311e421261f6 Chen-Yu Tsai 2025-08-22  100  					    &dai_link_name))
+4302187d955f166 Trevor Wu    2023-01-16  101  			return -EINVAL;
+4302187d955f166 Trevor Wu    2023-01-16  102  
+4302187d955f166 Trevor Wu    2023-01-16  103  		for_each_card_prelinks(card, i, dai_link) {
+4302187d955f166 Trevor Wu    2023-01-16  104  			if (!strcmp(dai_link_name, dai_link->name))
+4302187d955f166 Trevor Wu    2023-01-16  105  				break;
+4302187d955f166 Trevor Wu    2023-01-16  106  		}
+4302187d955f166 Trevor Wu    2023-01-16  107  
+bd1311e421261f6 Chen-Yu Tsai 2025-08-22  108  		if (i >= card->num_links)
+4302187d955f166 Trevor Wu    2023-01-16  109  			return -EINVAL;
+4302187d955f166 Trevor Wu    2023-01-16  110  
+4302187d955f166 Trevor Wu    2023-01-16  111  		ret = set_card_codec_info(card, sub_node, dai_link);
+bd1311e421261f6 Chen-Yu Tsai 2025-08-22  112  		if (ret < 0)
+4302187d955f166 Trevor Wu    2023-01-16  113  			return ret;
+c0e7390e6d3f42b Trevor Wu    2023-05-26  114  
+c0e7390e6d3f42b Trevor Wu    2023-05-26  115  		ret = set_dailink_daifmt(card, sub_node, dai_link);
+bd1311e421261f6 Chen-Yu Tsai 2025-08-22  116  		if (ret < 0)
+c0e7390e6d3f42b Trevor Wu    2023-05-26  117  			return ret;
+c0e7390e6d3f42b Trevor Wu    2023-05-26  118  	}
+4302187d955f166 Trevor Wu    2023-01-16  119  
+4302187d955f166 Trevor Wu    2023-01-16  120  	return 0;
+4302187d955f166 Trevor Wu    2023-01-16  121  }
+4302187d955f166 Trevor Wu    2023-01-16  122  EXPORT_SYMBOL_GPL(parse_dai_link_info);
+4302187d955f166 Trevor Wu    2023-01-16  123  
+
 -- 
-Florian
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
