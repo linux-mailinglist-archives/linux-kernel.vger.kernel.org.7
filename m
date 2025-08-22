@@ -1,159 +1,172 @@
-Return-Path: <linux-kernel+bounces-781473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67A2DB312F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:26:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9024AB312EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFB1E7231D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:24:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E8636084D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5282EDD70;
-	Fri, 22 Aug 2025 09:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0C02E3AE5;
+	Fri, 22 Aug 2025 09:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JarX3u1N"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xpxs5VXL"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D665129E10F;
-	Fri, 22 Aug 2025 09:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EFE2820A3
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755854626; cv=none; b=L9/t8IzuwCKD++pRlR7VAS/Vr3ODFG7xvigz1xVkOURG+Dw1n49l378tPi7Rs5bBbuWfMw0QwswO6NZ3jVDBC4KxlGFgWc00QNDgvJqss6UbRk0gI+l0+7z4u1KLWvQJ5SgeJKqoGQRKn5oLKA2bRskGKg5bYyJMrgOrGeNspBA=
+	t=1755854657; cv=none; b=pQdFBPQ0M/ATKhzUBrd1T10BxFpr+u3madQWhKNfQhRhtZO2rj0U1s2w+Su5VnJq0xv2PKj/kb6TnQ09YQAxgkHL1bY67Dx5+Kb8JOHGIcMprvSYmGLymkSh/AYGrpEbC6SfdrdE0JGcL6ELbBmWCHEYQCZIP4mixxfYj1IXSIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755854626; c=relaxed/simple;
-	bh=kYXpNa0/O5F2E4mtT7HmzydM7FRm2oH//LuQw09Ui4o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hiUeXyxy4OXWnouD0v6X5gx0kuy88946WQQU4F3bFUw5CdMKXjIvPlJOevWC4YQH+QG8tNk3yv9som1OyGDNdc7hCt93nwQ/o6/P8v9jaotPYQfCdTm+pH46tsX8fs+YKrBXXKy5QZzchklijvt+39bctAxFRWzRqvUAVE7Ofhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JarX3u1N; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57M8UJE0020865;
-	Fri, 22 Aug 2025 09:23:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gX61FoazzEu2dfspbNtw7L4e4zRSy/lHaPgZlW4iuU4=; b=JarX3u1NTmzTg/3A
-	rqCY4qeE9MZHXvqA8VrR+WySD3gGGxdKi/oD/ZVsioZDRo/pih1/+5Pt+rcdEXeG
-	88dvtn+h3RLPbI3hBN5vJqsX67AALG4DRpbKwxD3uz9UV2RZkS6Evtze5uu5yw8i
-	fsOvYFCXyqzcqcF4E5scpdPuvSUShT5juDMzXCojloeg4tjCDJNN/QZVk8G4Hbif
-	7XPFi/gjwa20K/Ib5B/kOXIlHSOUM5rPFLP3Mr0I6B6hwc3unhy9X/n3dObOliYW
-	Z/W0to+8lx4RUBcZmFwPv3B2Owe6eAi4gBLE/EOvuIGXj9Ov2fLsBX2lV3ob1x14
-	WrX9ZQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n5290pf2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Aug 2025 09:23:39 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57M9NcrG026076
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Aug 2025 09:23:38 GMT
-Received: from [10.216.22.206] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 22 Aug
- 2025 02:23:35 -0700
-Message-ID: <2635ced4-b91f-4c79-ae2a-079f06bbb8a9@quicinc.com>
-Date: Fri, 22 Aug 2025 14:53:31 +0530
+	s=arc-20240116; t=1755854657; c=relaxed/simple;
+	bh=QZ1yMwiRS/edAk9yh784lz6Yhaw2nWEa1VIzlMHI840=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=YufmXVRewer2fnlFd6NEqNAUgRbI98TWcAFXnOYWb23gf9RseYDEbYuDMTa69sUrht5PrXXtVwohH8CIlruPmU/1wO8BPJJJ71so5gyrj/QhgHU3WGDU6vCbzfDbjl1o/3NCZSFuJ6dTeQsom1RBMiBAqQeIJwjo9PqqPuutkKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xpxs5VXL; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76e2eac5c63so1875131b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 02:24:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755854655; x=1756459455; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VyilXqTlTSUumeHDAFKTKU4l+yIbGUl58kzVG3ScM4s=;
+        b=xpxs5VXLk1T3mSKw48Z8zPeSmND+wwF/17996a0osPFMT6owKG0ABtqK5qkKxIMdav
+         t2ftKDoOdhzqnKWv6SgN+kzpV7Xm9WOV5a1IWWyTN30ZeQHM0jKQJBnlkUMhhJkPAdYo
+         YUh+TWBZ/U4vrPKTgTW3QhMa5gGvtbVLsTWa2xMpXvXS4mLMQ7qoS83SwF71viG29GXP
+         voJRTjarV3xvRh5c49vwJah8yGTKDfb1dsJHj3VPq7P30eWOBs0XSU7Nh/XCzUusOq3B
+         GvEafmZ3o7VKjUZ7vIbXTtaWjeTsJLHjZJl0qiy6hjh2ulb08q0wjYX2Tm6x2EgttloA
+         IAqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755854655; x=1756459455;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VyilXqTlTSUumeHDAFKTKU4l+yIbGUl58kzVG3ScM4s=;
+        b=i2wp1pfU1fv89/3Uq0lsdUPmdWKDf5jTqFVb2BhtbxH70NDEyDP4vkYT9uMpxo7XEy
+         C7JVAiawK/oXTP6NFZjGesltRPvhFuLtK2Ddti8+wAn0U5+zLASUVtYl6o+COCForViR
+         04TQpOMD7V234xM7nawV92IYpe5F7UvjMclxbk3ye0v0TjN46Ca7bhkA+BznQIcP1v5e
+         0+VJffzNiWuXZL84VN3x4oDWQyWVuuOo3FEQ/BE39t0ILZm2EcbhRupcjtuf+gzBAXoD
+         jgdgdgaHhoKLhTW8omSSNYMPlqAiDP2qCKEyuoV+xKXZ31+saIhTr+diRpjCmxXOKiLJ
+         bs8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVvZK1+5nnQq/Y0nwW/a4ou0jXpJyzIWZ71nCLbNwwWSS4sxSJ2AVScReqks545kq5/9NCKhTgVs8U2feM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8g+lCphgdABhpEkUA+hULYFFN/wSp+phlnFfmmx/pV4uLZlGf
+	P9aXx3JITsPGWQlD31f9EtMk62ZJkAWu/K2GWg5iFP76aT6mAvLGatX1/XeraT8dGYiSrDG6MBz
+	74sCo9A==
+X-Google-Smtp-Source: AGHT+IFjuPEKgVHXW9Ji15b2ymMDqqhJVr4Gn2I/XEBmf7Wb1DPa881urd/0sgYFstDva6Z7VUAN8u5wjXc=
+X-Received: from pgcv16.prod.google.com ([2002:a05:6a02:5310:b0:b1f:9534:4f55])
+ (user=khtsai job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6300:8b0f:b0:243:78a:8299
+ with SMTP id adf61e73a8af0-24340e068d0mr3373683637.50.1755854654776; Fri, 22
+ Aug 2025 02:24:14 -0700 (PDT)
+Date: Fri, 22 Aug 2025 17:23:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 2/2] phy: qcom-qmp-ufs: Add regulator loads for SM8650
- and SM8750
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        "Manivannan
- Sadhasivam" <mani@kernel.org>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250819222832.8471-1-quic_nitirawa@quicinc.com>
- <20250819222832.8471-3-quic_nitirawa@quicinc.com>
- <ger4kizeltjwalfuwu4dpfjiskrv2okgo5c7d6n3pb24yaxgfo@nkcndblyx3il>
- <xir3u3hlmcvfu6uasijz6g2oialoasmuu4bno6ctxpscqcebz6@6kw6xpm5bxbd>
- <761c97bb-ee90-4ace-acd3-08349831aade@oss.qualcomm.com>
-Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <761c97bb-ee90-4ace-acd3-08349831aade@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=I4c8hNgg c=1 sm=1 tr=0 ts=68a8371b cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
- a=3vFY76kdcj1CIDOknBYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: XfsU-EhmgXv_0IHsY4LYIOFZEA96EXrq
-X-Proofpoint-ORIG-GUID: XfsU-EhmgXv_0IHsY4LYIOFZEA96EXrq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX4UUL2xrAk2kz
- uvd3m5dNMtxCRIK4tWLkarYROGzkgov3/Q+B8ByHYTeESsDYdnIgZgHiwpcKvgGF3dMQ+RFDxlA
- NLMQNOlX4sZQoHSDmjtxnV1HvHuY42yquzkGY9Z1A0lvJGNWgDmps8uFdOkAAWH7x6DeoGy3fvX
- pcmhew8toRhCgTYZq75DvKitfdGR/rrjLbk4HiqT9TzypnQMRDuAVP9oKggFBGSYIljP++JHe9E
- ltyPmROTnGU8Rg0lM/mJ6RaXBEwW70C1q3oNvzAVCm+46z3VANPI51e0+dAQ9tQIquTvP6boE8h
- tAh/JyISwooS/uiu0S5qBzhJeDVosPQHeeP8d37s4CT2ewNU6nR+4e6xjD+GuEqd+5atr+tspQL
- k7PiuMYkZtIShujb12CLV2+572EG1Q==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-22_03,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1015 malwarescore=0 spamscore=0 priorityscore=1501
- lowpriorityscore=0 phishscore=0 impostorscore=0 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
+Message-ID: <20250822092411.173519-1-khtsai@google.com>
+Subject: [PATCH v2 1/2] usb: dwc3: Add trace event for dwc3_set_prtcap
+From: Kuen-Han Tsai <khtsai@google.com>
+To: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kuen-Han Tsai <khtsai@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Changes to the port capability can be indirectly observed by tracing
+register writes to DWC3_GCTL. However, this requires interpreting the
+raw value, which is neither intuitive nor precise for debugging.
+Monitoring these mode changes is essential for resolving issues related
+to USB role switching and enumeration.
 
+Introduce a dedicated trace event to provide a human-readable log when
+the port capability is configured.
 
-On 8/22/2025 2:45 PM, Dmitry Baryshkov wrote:
-> On 22/08/2025 11:53, Manivannan Sadhasivam wrote:
->> On Wed, Aug 20, 2025 at 03:49:31AM GMT, Dmitry Baryshkov wrote:
->>> On Wed, Aug 20, 2025 at 03:58:26AM +0530, Nitin Rawat wrote:
->>>> Add regulator load voting support for SM8650 and SM8750 platforms by
->>>> introducing dedicated regulator bulk data arrays with their load
->>>> values.
->>>>
->>>> The load requirements are:
->>>> - SM8650: vdda-phy (205mA), vdda-pll (17.5mA)
->>>> - SM8750: vdda-phy (213mA), vdda-pll (18.3mA)
->>>>
->>>> This ensures stable operation and proper power management for these
->>>> platforms where regulators are shared between the QMP USB PHY and
->>>> other IP blocks by setting appropriate regulator load currents 
->>>> during PHY
->>>> operations.
->>>>
->>>> Configurations without specific load requirements will continue to work
->>>> unchanged, as init_load_uA remains zero-initialized when .init_load_uA
->>>> is not provided.
->>>
->>> Can we please get configuration for the rest of the platforms?
->>>
->>
->> Only if the rest of the platforms require setting the load... It is 
->> not very
->> clear if the older platforms share the regulators with other IPs or not.
-> 
-> Yes, they are usually shared. USB. PCIe and DSI frequently sit on the 
-> same voltage rails.
+Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
+Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+---
+v1 -> v2: Updated the @mode description and added the Acked-by tag.
 
-Yes, it’s typically shared across multiple clients.
+ drivers/usb/dwc3/core.c  |  1 +
+ drivers/usb/dwc3/debug.h | 18 ++++++++++++++++++
+ drivers/usb/dwc3/trace.h | 17 +++++++++++++++++
+ 3 files changed, 36 insertions(+)
 
-However, as I mentioned earlier, in the current upstream codebase, the 
-"regulator-allow-set-load" property is defined only for SM8750 and 
-SM8650 within the PMIC PHY and PLL device tree nodes. This means that 
-even if the UFS PHY driver is updated to vote for this configuration on 
-other platforms, it will have no effect, as the property is not 
-supported there.
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 8002c23a5a02..370fc524a468 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -156,6 +156,7 @@ void dwc3_set_prtcap(struct dwc3 *dwc, u32 mode, bool ignore_susphy)
+ 	dwc3_writel(dwc->regs, DWC3_GCTL, reg);
 
+ 	dwc->current_dr_role = mode;
++	trace_dwc3_set_prtcap(mode);
+ }
 
-> 
-> 
+ static void __dwc3_set_mode(struct work_struct *work)
+diff --git a/drivers/usb/dwc3/debug.h b/drivers/usb/dwc3/debug.h
+index 09d703852a92..6e1cdcdce7cc 100644
+--- a/drivers/usb/dwc3/debug.h
++++ b/drivers/usb/dwc3/debug.h
+@@ -13,6 +13,24 @@
+
+ #include "core.h"
+
++/**
++ * dwc3_mode_string - returns mode name
++ * @mode: GCTL.PrtCapDir value
++ */
++static inline const char *dwc3_mode_string(u32 mode)
++{
++	switch (mode) {
++	case DWC3_GCTL_PRTCAP_HOST:
++		return "host";
++	case DWC3_GCTL_PRTCAP_DEVICE:
++		return "device";
++	case DWC3_GCTL_PRTCAP_OTG:
++		return "otg";
++	default:
++		return "UNKNOWN";
++	}
++}
++
+ /**
+  * dwc3_gadget_ep_cmd_string - returns endpoint command string
+  * @cmd: command code
+diff --git a/drivers/usb/dwc3/trace.h b/drivers/usb/dwc3/trace.h
+index bdeb1aaf65d8..b6ba984bafcd 100644
+--- a/drivers/usb/dwc3/trace.h
++++ b/drivers/usb/dwc3/trace.h
+@@ -19,6 +19,23 @@
+ #include "core.h"
+ #include "debug.h"
+
++DECLARE_EVENT_CLASS(dwc3_log_set_prtcap,
++	TP_PROTO(u32 mode),
++	TP_ARGS(mode),
++	TP_STRUCT__entry(
++		__field(u32, mode)
++	),
++	TP_fast_assign(
++		__entry->mode = mode;
++	),
++	TP_printk("mode %s", dwc3_mode_string(__entry->mode))
++);
++
++DEFINE_EVENT(dwc3_log_set_prtcap, dwc3_set_prtcap,
++	TP_PROTO(u32 mode),
++	TP_ARGS(mode)
++);
++
+ DECLARE_EVENT_CLASS(dwc3_log_io,
+ 	TP_PROTO(void *base, u32 offset, u32 value),
+ 	TP_ARGS(base, offset, value),
+--
+2.51.0.261.g7ce5a0a67e-goog
 
 
