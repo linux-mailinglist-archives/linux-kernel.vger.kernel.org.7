@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-781211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BABB2B30F38
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:42:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F2BB30F39
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D58F58554C
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF90B585855
 	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1614E2E7BDB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FBB2E7BDD;
 	Fri, 22 Aug 2025 06:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HbEYuUzW"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1156E2E54C5;
-	Fri, 22 Aug 2025 06:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SZXXeno0"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1702E54D0;
+	Fri, 22 Aug 2025 06:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755844860; cv=none; b=ddZhRdPsrFD9XSN+H6pQ1TW/ehMzrj5eIh2HAnW5Wytx9ykZ0NS3Opq8RLD0OWhhjzXp04flNt6dNkUyeQymfzoVT2HsmejFAh3HhjW2zTYMeJBwgOetZPM9wvuSXJ7Mkp0Z5e54IkNFlC8j4RGcmuePtKerUfuPkx9bop7FmwY=
+	t=1755844861; cv=none; b=Scx3cc4PceROVNMHrLwYs6itT6NnuS+8U2z0YNquS9XTC5RwmRGNDN/sNCptk6UDqX/mmzoOSymmX9Zf/YtbnduPFQZbEVgOi+cMfNNIYIQ+GYTAEWXgGttMdqMb0b31YUl1cE+IWZ6tDp6fsOGpoYpXKUuEysS07IjS8eYDQ4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755844860; c=relaxed/simple;
-	bh=qGRc9yhLBLb/AMxs7EjYX9iByhqQp0GA6bDte/6ji2s=;
+	s=arc-20240116; t=1755844861; c=relaxed/simple;
+	bh=MI0EvgwnGCqqqaLGee0kziad6WH0JVTghagP3K8gkyQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=B4gnsCK9qvmw8aTGTVBaNkHWZ7qbzZCSWurnnlw1r/RX6AyOzmsnk6wpAWZsq1ENAA8QBiGn3rHCeD4Ecmbxpj+nvQKvpLBLpMwsm17JDkKwfoNmfPgC4DheL6mut8y4p4b8IYU6VlODZbzA8uq2qLaQFvLReHut6LeINzIFmio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HbEYuUzW; arc=none smtp.client-ip=220.197.31.4
+	 MIME-Version; b=M4RB/RoT4m/Enly4DQjKGhN4nZ8WlAldY49ok4XXlGxo2/ZQlfilJKoDaytLnRUkloLSsPkyEQajIooavgG94YqRDSMJ+RV+LKLMlE9jHgOYfQyJOwbBSJuBCsYF0rJAMku6nLBk1RMl4KTYoIb9E9I7stx6MfoE1MYtAPZ/pjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=SZXXeno0; arc=none smtp.client-ip=117.135.210.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=vB
-	8wLIz0WHvujVMHowKC0Q/8HNa8Qgp3eo7drb5rVz4=; b=HbEYuUzWyYvZFnk9Ui
-	Qr+ESbU85K/WGsI1ioQY8ekkpNtSJS6d3WKn17qa/aSmga29et++dqBhNNzn11o4
-	fbLMKB044YCb4QR8Z9KwkTd3h69ECyjYyXSWwH4ljNGW5JABnBBpLMM43uXKuYUb
-	AnYrDHI++qt1TMYS+RL4tO47E=
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Ih
+	Uhybn59/7JyTet/HSgHCP7nZWxnFr2AfvIvVQ/is4=; b=SZXXeno0JfZsDoyuKO
+	xW0a66tP2f+rZ9CPGzvHVeHp3jTyzXvtSLZpTrSqsu//OKl9nAEJiNZg13gy3qUB
+	qwIzJQ8hiySC6cf7KTRWXQqiEpuvrcM4+r7uDqJLf1zqzXrgjBAdhujyC9s91pnp
+	U2p55RFf3Da4Mo9pY5m/+Pr34=
 Received: from ProDesk.. (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PigvCgAn9_zCEKhoYtibAA--.23257S7;
-	Fri, 22 Aug 2025 14:40:22 +0800 (CST)
+	by gzsmtp3 (Coremail) with SMTP id PigvCgAn9_zCEKhoYtibAA--.23257S8;
+	Fri, 22 Aug 2025 14:40:23 +0800 (CST)
 From: Andy Yan <andyshrk@163.com>
 To: dmitry.baryshkov@oss.qualcomm.com,
 	heiko@sntech.de
@@ -56,11 +56,10 @@ Cc: hjc@rock-chips.com,
 	linux-rockchip@lists.infradead.org,
 	robh@kernel.org,
 	sebastian.reichel@collabora.com,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v7 05/10] dt-bindings: display: simple-bridge: Add ra620 compatible
-Date: Fri, 22 Aug 2025 14:39:49 +0800
-Message-ID: <20250822063959.692098-6-andyshrk@163.com>
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH v7 06/10] drm/bridge: simple-bridge: Add support for radxa ra620
+Date: Fri, 22 Aug 2025 14:39:50 +0800
+Message-ID: <20250822063959.692098-7-andyshrk@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250822063959.692098-1-andyshrk@163.com>
 References: <20250822063959.692098-1-andyshrk@163.com>
@@ -71,45 +70,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PigvCgAn9_zCEKhoYtibAA--.23257S7
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZw1UZrWxKw4DCw4kKF18Grg_yoWDAFc_X3
-	Z7Aw1UJr1FqasYgFs8ZFs7Gry3Xw48KrWrCr10yrs7Ar4S934DKa97J34rGr1rAF1I9Fn7
-	ur1fW39rCwsrujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8NdbUUUUUU==
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMx2xXmioB5f6TAAAsn
+X-CM-TRANSID:PigvCgAn9_zCEKhoYtibAA--.23257S8
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Gw47tr48Jr4ftr4xKrWUtwb_yoWkKrc_ZF
+	na9ryUJr45AF95KF43Zw43AryIva18urZ7Wr1vgrZ3Aws3Zr47GwnrZr9xZ34fAF10yF9F
+	y3W3JFWayr17ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnbAw7UUUUU==
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0gqxXmioDHlxZQAAsW
 
 From: Andy Yan <andy.yan@rock-chips.com>
 
-RA620 is a DP to HDMI bridge converter from RADXA, which first
-found be used on ROCK 5 ITX.
+The RA620 is an active DP to HDMI converter chip, basically
+no software is involved to drive it.
 
-This chip can be used without involving software.
+Add it to simple bridge to make it can be find by the drm bridge chain.
 
 Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 ---
 
-(no changes since v3)
+Changes in v7:
+- Fix a typo in subject: s/birdge/bridge/
 
 Changes in v3:
 - First introduced in this version.
 
- .../devicetree/bindings/display/bridge/simple-bridge.yaml        | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/bridge/simple-bridge.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml b/Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml
-index 43cf4df9811a5..421f99ca42d9b 100644
---- a/Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml
-@@ -28,6 +28,7 @@ properties:
-       - enum:
-           - adi,adv7123
-           - dumb-vga-dac
-+          - radxa,ra620
-           - ti,opa362
-           - ti,ths8134
-           - ti,ths8135
+diff --git a/drivers/gpu/drm/bridge/simple-bridge.c b/drivers/gpu/drm/bridge/simple-bridge.c
+index 3d15ddd394703..1f16d568bcc4e 100644
+--- a/drivers/gpu/drm/bridge/simple-bridge.c
++++ b/drivers/gpu/drm/bridge/simple-bridge.c
+@@ -261,6 +261,11 @@ static const struct of_device_id simple_bridge_match[] = {
+ 			.timings = &default_bridge_timings,
+ 			.connector_type = DRM_MODE_CONNECTOR_VGA,
+ 		},
++	}, {
++		.compatible = "radxa,ra620",
++		.data = &(const struct simple_bridge_info) {
++			.connector_type = DRM_MODE_CONNECTOR_HDMIA,
++		},
+ 	}, {
+ 		.compatible = "ti,opa362",
+ 		.data = &(const struct simple_bridge_info) {
 -- 
 2.43.0
 
