@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-782131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B330B31B97
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:30:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50EEAB31BA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EFF81D61864
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:24:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 229CB1D06A15
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67DF322763;
-	Fri, 22 Aug 2025 14:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF84340DAE;
+	Fri, 22 Aug 2025 14:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="miAKsje/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TeGepcH5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56CA31197D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1FC3126B0;
 	Fri, 22 Aug 2025 14:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755872388; cv=none; b=F//AVQtH4fcPehIUxjNrO3oMqAdmYMFB9ViSBiH6OiE6bba1rfCLAFgr+5TVjeBKrgZKegaiwg+MbugvtsCvYVweUvaISN2XmLFIW6UR77gm7ihR/zqw2a9f8KNAvFDOB71wn0UC8iK6YQrbDEDQljvStSEh0XS8mu8qt8e7kBc=
+	t=1755872388; cv=none; b=sOLX1+VKJdU1Kblk2zUBGvw6IM5RDQE4LD/5L1Oxtnqrb+elzJvTgfIOKF10Tgbhv2CvUtmZhEqZx4+1XU4pNmZsdJD7wY9W0qZrX+sHH4LHg+bmd1d0/KW8CkZhIk4gc96/p8Cs1k56hBqDHevqvMSPZ9wg2v5KgK9BMeXWKuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755872388; c=relaxed/simple;
-	bh=6KNyilChtfEfKAJL2KTz7S3+EmJ+UL4s3OTBvprovpQ=;
+	bh=QHi7tmIl6nunuTAnM3ij6+YulhA5kpLqxpviwyDbWAA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y68VDYw/nomqRSEOub7Cx5CcJ9yCLS8faowqiHd+BMOi2t5dRgyMUJkF1ZtCPycfpXfQHLqqdgKVh7+imfoLPudKvE+JyYiMEBMy7mWPgapqHRu8EFwX4CWzTl88X/+5XYwypIRtxA+i5YHZ28f+pTAk8w8txWwFBfs5vCR1/iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=miAKsje/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BACEC2BC87;
+	 MIME-Version; b=RkLNEYDelZHJBiAu9xW5z0NLNKSYIScaR17okbZ6mqGBEA9Hfwa2Olb98SsYShJ8Z/zVR39YyHP1KPtP8yd59HnSYgK7euAKYjOZiXjvmvUfe+UWXCeS5BlJsEJERUneTswasYeQUIPOrqBN5E06BYPJRpebFm9kgArtWYCh4H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TeGepcH5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 231EAC19422;
 	Fri, 22 Aug 2025 14:19:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755872388;
-	bh=6KNyilChtfEfKAJL2KTz7S3+EmJ+UL4s3OTBvprovpQ=;
+	bh=QHi7tmIl6nunuTAnM3ij6+YulhA5kpLqxpviwyDbWAA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=miAKsje/nfOyunqaqtj4aa3jGRjwdsh3CVfqAUM0XNA7e0ukqTN/HJRKYVxST7EKs
-	 t9pvMB9/OHsSZdQz45SC4OmGD0xlWXWqE+jZ+qMTps+sItb44S3lgN8P/lS47ZlxVX
-	 X4Ew8ZEUoS5/7QS8bLEGVWi6ZxR8nVUwW8fa5755zdn6LMHYVmc9klkFyweHuzld+r
-	 Ff5G2Xybd23mxysIMlDrEONskhMZguzx63hxuYVCmMMdWGl6jO9XkWfX5PsXyJyai0
-	 5rut41JyxHalBAXtdAbgzJqjolHU++Bo6vrIXx0IedNx+hTeJwuJWPXRH2pyeei0BX
-	 kqzRlP4qFg3Iw==
+	b=TeGepcH5/5qli8litD44Aq0Yhvo7gooOdf6YxyWLW14sag1XnYh9sXlY5+rNfENRG
+	 k/5uhjfW8odFPXY5jpTmW8p+O5j+9jIqIRc36zxprsRN2RV1P5LE9fK4gCE3o+wl+u
+	 pHllJS+D3v/XpGrxcIkdsCIzJLCEZWToimYSt7VKAJ1SDCAuToP2+XCTLHcQgk+ebh
+	 Lryuxo0EHAwm9FaluZ8RO5GuIuAbvzDujETiRNeKG5ShxMwXf3GQE5D0Y1Lfpu0Cew
+	 moKCbkodchFj16iHEz9WLUa901oOmlyNGX7lhZBaTeqScmt5UlfMqu8kyEvNHYcwTb
+	 uFIyH9QBh5zBQ==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1upScM-0000000CCrR-1RxK;
+	id 1upScM-0000000CCrV-1Yej;
 	Fri, 22 Aug 2025 16:19:46 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org
-Subject: [PATCH v2 09/24] docs: uapi: media: Makefile: use parse-headers.py
-Date: Fri, 22 Aug 2025 16:19:21 +0200
-Message-ID: <7025759744f74058eee55c35e8cd8cb5a2953fca.1755872208.git.mchehab+huawei@kernel.org>
+	Kees Cook <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 10/24] docs: kernel_include.py: Update its coding style
+Date: Fri, 22 Aug 2025 16:19:22 +0200
+Message-ID: <f64c3af47fdfd632bb5f8eb88e3c7d94b0b84a66.1755872208.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1755872208.git.mchehab+huawei@kernel.org>
 References: <cover.1755872208.git.mchehab+huawei@kernel.org>
@@ -66,26 +66,216 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Now that we have a new parser, use it.
+With the help of tools like black, pylint, autopep8 and flake,
+improve the code style in preparation for further changes.
+
+No functional changes.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/userspace-api/media/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/sphinx/kernel_include.py | 100 ++++++++++++-------------
+ 1 file changed, 47 insertions(+), 53 deletions(-)
 
-diff --git a/Documentation/userspace-api/media/Makefile b/Documentation/userspace-api/media/Makefile
-index 3d8aaf5c253b..accc734d045a 100644
---- a/Documentation/userspace-api/media/Makefile
-+++ b/Documentation/userspace-api/media/Makefile
-@@ -3,7 +3,7 @@
- # Rules to convert a .h file to inline RST documentation
+diff --git a/Documentation/sphinx/kernel_include.py b/Documentation/sphinx/kernel_include.py
+index 1e566e87ebcd..1212786ac516 100755
+--- a/Documentation/sphinx/kernel_include.py
++++ b/Documentation/sphinx/kernel_include.py
+@@ -1,7 +1,6 @@
+ #!/usr/bin/env python3
+-# -*- coding: utf-8; mode: python -*-
+ # SPDX-License-Identifier: GPL-2.0
+-# pylint: disable=R0903, C0330, R0914, R0912, E0401
++# pylint: disable=R0903, R0912, R0914, R0915, C0209,W0707
  
- SRC_DIR=$(srctree)/Documentation/userspace-api/media
--PARSER = $(srctree)/Documentation/sphinx/parse-headers.pl
-+PARSER = $(srctree)/tools/docs/parse-headers.py
- UAPI = $(srctree)/include/uapi/linux
- KAPI = $(srctree)/include/linux
+ """
+     kernel-include
+@@ -40,41 +39,38 @@ from docutils.parsers.rst import directives
+ from docutils.parsers.rst.directives.body import CodeBlock, NumberLines
+ from docutils.parsers.rst.directives.misc import Include
  
+-__version__  = '1.0'
++__version__ = "1.0"
++
+ 
+ # ==============================================================================
+ def setup(app):
+-# ==============================================================================
+-
++    """Setup Sphinx exension"""
+     app.add_directive("kernel-include", KernelInclude)
+-    return dict(
+-        version = __version__,
+-        parallel_read_safe = True,
+-        parallel_write_safe = True
+-    )
++    return {
++        "version": __version__,
++        "parallel_read_safe": True,
++        "parallel_write_safe": True,
++    }
++
+ 
+ # ==============================================================================
+ class KernelInclude(Include):
+-# ==============================================================================
+-
+     """KernelInclude (``kernel-include``) directive"""
+ 
+     def run(self):
+         env = self.state.document.settings.env
+-        path = os.path.realpath(
+-            os.path.expandvars(self.arguments[0]))
++        path = os.path.realpath(os.path.expandvars(self.arguments[0]))
+ 
+         # to get a bit security back, prohibit /etc:
+         if path.startswith(os.sep + "etc"):
+-            raise self.severe(
+-                'Problems with "%s" directive, prohibited path: %s'
+-                % (self.name, path))
++            raise self.severe('Problems with "%s" directive, prohibited path: %s' %
++                              (self.name, path))
+ 
+         self.arguments[0] = path
+ 
+         env.note_dependency(os.path.abspath(path))
+ 
+-        #return super(KernelInclude, self).run() # won't work, see HINTs in _run()
++        # return super(KernelInclude, self).run() # won't work, see HINTs in _run()
+         return self._run()
+ 
+     def _run(self):
+@@ -87,41 +83,39 @@ class KernelInclude(Include):
+ 
+         if not self.state.document.settings.file_insertion_enabled:
+             raise self.warning('"%s" directive disabled.' % self.name)
+-        source = self.state_machine.input_lines.source(
+-            self.lineno - self.state_machine.input_offset - 1)
++        source = self.state_machine.input_lines.source(self.lineno -
++                                                       self.state_machine.input_offset - 1)
+         source_dir = os.path.dirname(os.path.abspath(source))
+         path = directives.path(self.arguments[0])
+-        if path.startswith('<') and path.endswith('>'):
++        if path.startswith("<") and path.endswith(">"):
+             path = os.path.join(self.standard_include_path, path[1:-1])
+         path = os.path.normpath(os.path.join(source_dir, path))
+ 
+         # HINT: this is the only line I had to change / commented out:
+-        #path = utils.relative_path(None, path)
++        # path = utils.relative_path(None, path)
+ 
+-        encoding = self.options.get(
+-            'encoding', self.state.document.settings.input_encoding)
+-        e_handler=self.state.document.settings.input_encoding_error_handler
+-        tab_width = self.options.get(
+-            'tab-width', self.state.document.settings.tab_width)
++        encoding = self.options.get("encoding",
++                                    self.state.document.settings.input_encoding)
++        e_handler = self.state.document.settings.input_encoding_error_handler
++        tab_width = self.options.get("tab-width",
++                                     self.state.document.settings.tab_width)
+         try:
+             self.state.document.settings.record_dependencies.add(path)
+-            include_file = io.FileInput(source_path=path,
+-                                        encoding=encoding,
++            include_file = io.FileInput(source_path=path, encoding=encoding,
+                                         error_handler=e_handler)
+-        except UnicodeEncodeError as error:
++        except UnicodeEncodeError:
+             raise self.severe('Problems with "%s" directive path:\n'
+                               'Cannot encode input file path "%s" '
+-                              '(wrong locale?).' %
+-                              (self.name, SafeString(path)))
++                              "(wrong locale?)." % (self.name, SafeString(path)))
+         except IOError as error:
+-            raise self.severe('Problems with "%s" directive path:\n%s.' %
+-                      (self.name, ErrorString(error)))
+-        startline = self.options.get('start-line', None)
+-        endline = self.options.get('end-line', None)
++            raise self.severe('Problems with "%s" directive path:\n%s.'
++                              % (self.name, ErrorString(error)))
++        startline = self.options.get("start-line", None)
++        endline = self.options.get("end-line", None)
+         try:
+             if startline or (endline is not None):
+                 lines = include_file.readlines()
+-                rawtext = ''.join(lines[startline:endline])
++                rawtext = "".join(lines[startline:endline])
+             else:
+                 rawtext = include_file.read()
+         except UnicodeError as error:
+@@ -129,43 +123,43 @@ class KernelInclude(Include):
+                               (self.name, ErrorString(error)))
+         # start-after/end-before: no restrictions on newlines in match-text,
+         # and no restrictions on matching inside lines vs. line boundaries
+-        after_text = self.options.get('start-after', None)
++        after_text = self.options.get("start-after", None)
+         if after_text:
+             # skip content in rawtext before *and incl.* a matching text
+             after_index = rawtext.find(after_text)
+             if after_index < 0:
+                 raise self.severe('Problem with "start-after" option of "%s" '
+-                                  'directive:\nText not found.' % self.name)
+-            rawtext = rawtext[after_index + len(after_text):]
+-        before_text = self.options.get('end-before', None)
++                                  "directive:\nText not found." % self.name)
++            rawtext = rawtext[after_index + len(after_text) :]
++        before_text = self.options.get("end-before", None)
+         if before_text:
+             # skip content in rawtext after *and incl.* a matching text
+             before_index = rawtext.find(before_text)
+             if before_index < 0:
+                 raise self.severe('Problem with "end-before" option of "%s" '
+-                                  'directive:\nText not found.' % self.name)
++                                  "directive:\nText not found." % self.name)
+             rawtext = rawtext[:before_index]
+ 
+         include_lines = statemachine.string2lines(rawtext, tab_width,
+                                                   convert_whitespace=True)
+-        if 'literal' in self.options:
++        if "literal" in self.options:
+             # Convert tabs to spaces, if `tab_width` is positive.
+             if tab_width >= 0:
+                 text = rawtext.expandtabs(tab_width)
+             else:
+                 text = rawtext
+             literal_block = nodes.literal_block(rawtext, source=path,
+-                                    classes=self.options.get('class', []))
++                                                classes=self.options.get("class", [])
++            )
+             literal_block.line = 1
+             self.add_name(literal_block)
+-            if 'number-lines' in self.options:
++            if "number-lines" in self.options:
+                 try:
+-                    startline = int(self.options['number-lines'] or 1)
++                    startline = int(self.options["number-lines"] or 1)
+                 except ValueError:
+-                    raise self.error(':number-lines: with non-integer '
+-                                     'start value')
++                    raise self.error(":number-lines: with non-integer start value")
+                 endline = startline + len(include_lines)
+-                if text.endswith('\n'):
++                if text.endswith("\n"):
+                     text = text[:-1]
+                 tokens = NumberLines([([], text)], startline, endline)
+                 for classes, value in tokens:
+@@ -177,12 +171,12 @@ class KernelInclude(Include):
+             else:
+                 literal_block += nodes.Text(text, text)
+             return [literal_block]
+-        if 'code' in self.options:
+-            self.options['source'] = path
++        if "code" in self.options:
++            self.options["source"] = path
+             codeblock = CodeBlock(self.name,
+-                                  [self.options.pop('code')], # arguments
++                                  [self.options.pop("code")],  # arguments
+                                   self.options,
+-                                  include_lines, # content
++                                  include_lines,  # content
+                                   self.lineno,
+                                   self.content_offset,
+                                   self.block_text,
 -- 
 2.50.1
 
