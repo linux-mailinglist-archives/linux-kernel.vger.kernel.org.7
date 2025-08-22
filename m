@@ -1,133 +1,116 @@
-Return-Path: <linux-kernel+bounces-781097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD3FFB30D7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:20:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A26CB30D85
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D494AC71EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:20:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBDB6188D3BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 04:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45C9287514;
-	Fri, 22 Aug 2025 04:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CADBA28C2CE;
+	Fri, 22 Aug 2025 04:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MfHejMS3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I7Oa/cUb"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160352773FC;
-	Fri, 22 Aug 2025 04:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35FC285C9C;
+	Fri, 22 Aug 2025 04:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755836423; cv=none; b=V6fTJfayrBJxJzVS6Stwm3Z92tZi+Y5dbt637r3UYzOf0YhvPGZZneXgsFCEL+saP+N1CLM2J3qZsw1UoMjrAmN0egupHmNqb8K2RRMbhcVs4MvG6jv5P+tIPU+3w8nnGlRvXbg6L+wULzBlXTmogyxBf5csjgyYMmAsT832cjM=
+	t=1755836627; cv=none; b=T1/OGt3FXjjx/7MIUxXWrVVEKVc8qE2wKs95+0yfDRclsjeU/Q0J1SkX9CdYj8Eu2rb0HOFuKNSe9SDphfLofPvmlSyMez+3hvfUhEFujUXARCAo4RrGN8hv31shrcCQWsDzHKHyLrL/fO8gdJxFL6bmAujWoAcBh2b6ScbaYLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755836423; c=relaxed/simple;
-	bh=c7clcNTOHnVcV07Jm6ADKttVFlAb0YyQm3vN5dktUpE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=carpggXQ1ZZIkm69mbZb/xpiAcq6LqrWJj4lDg07WqU5LsRe/2HBqwmrkwH0b5PVUoWxmuPRiMTpENv0ue9dlLElTW65rs74Dw2krXtv9Xs5W4cldfrB0Xq5qQLmkBxXTikaf8hmEyDZF1xomSlCLlDECq4baR+jv51+fzgDomg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MfHejMS3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C25A8C116C6;
-	Fri, 22 Aug 2025 04:20:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755836422;
-	bh=c7clcNTOHnVcV07Jm6ADKttVFlAb0YyQm3vN5dktUpE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MfHejMS3/kC/l1yCAHnY+47xjpP5rb6wfuaWiF49btZG1JnH0gjDQ+YGaQwqOAZya
-	 sygSadTTL7Tbp+CMyh0z8BzQkDtXqxjEVa0HKcE/SswJncjsSXPwdvPoGl1AOYBYEQ
-	 yKhyTzEMNo6EOdP97vPRNHKanemN9Kw8z3MuG51VeJJBnC3Hp3LFc0J1q6GhFiftlN
-	 xbNZAiTL5d0iAxpaC4e2ZqRDPiZdYfx64frG3Iu6ReFk9fVhGQH2pTjFrJN3Ts3LAe
-	 s1i/qj1x8jrbXitMO704qhslnF1UZ26hx2px42Oerxy6Br7IxhHzqhODebwK3sVwpu
-	 Suv3P2vnBgOrg==
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61a2a5b0689so2857340a12.1;
-        Thu, 21 Aug 2025 21:20:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWGqANko8bWC/cGOuQQFrPKGF6bjpZqMCmMjo33Ipo0HTSz6k53IhciG/i2ApHkgVbdjJtX12Ojhcx2fQg=@vger.kernel.org, AJvYcCXx+iLf5zWJVeTKWu7ZcE3uGW/Z5SNnZOCZ44Ex2DX7rfycxhKj8Oe3ObIMFavRAQlibF43w1SltMKQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZRSEUEmWUHp15hRskncMc4nC8YvXcl0753qGqR9dybWRxbl6x
-	HfkcEz9+OuurMzhOMaNNyS1J5g/0vTsz77sCSzzw5SsCJqKPspgMc3UPKvuWd2CMQLFq6Fh8e0M
-	JpmeavrmqQlK7mBsdfI41R27IMKLDab4=
-X-Google-Smtp-Source: AGHT+IEG3XkMGLYYUFNOnIxHgEkEqaiYWX1wQiOsPjrFST1kTMeIwA+nNlaOja9ZvgqsjwhgJp4TpgO6Va/IT9Y7QQ4=
-X-Received: by 2002:a05:6402:44d2:b0:61a:8941:2686 with SMTP id
- 4fb4d7f45d1cf-61c1b41157bmr975277a12.15.1755836421285; Thu, 21 Aug 2025
- 21:20:21 -0700 (PDT)
+	s=arc-20240116; t=1755836627; c=relaxed/simple;
+	bh=gP0rXgjhpCPf7ylSxeH8ZaBiWNO53fpSn9XZ6RQEH5Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AjaZTtgkBi60iAg54zuAm7Oj+h4p1Pn2SexlMisceTFvyVJes5Xby7sZoKSNhzd3hgbxMcB5H+kMbzho5zOtIWooFlUnaloHISq8X9LDBzmuBOK5LudcaLjI8i23u/YSfqf/5mFgGcGvpZvYFXeHO8QlwdikX9e/npZmTw85GxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I7Oa/cUb; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LI9SKx003225;
+	Fri, 22 Aug 2025 04:23:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=VXlqGaKtcKhzKogscbNKi9
+	Z5HdX5Z+Krckpm7oXyOEY=; b=I7Oa/cUbn+1D9hA5jmakZ7cgmtrJfVjMzCVI54
+	Oyaqq/fdVqx52DeShzm+hAgezpgJvm/T0MHpxLb2y43xUWvq4odaZGBLnyuZJTCw
+	aJju2NEuFAEF5cJ1R5zjkN6+sYbGGk8zEfN1+nQWbL9odpem8uzpBPzLJzrVzTmc
+	Wu779bZj8aOo3cllCvzhSCi7Ee9t5hHoSi9sG0vxsGmXT4CflZWTnZjuMNokPje0
+	48wZ99qrnnWCugDEgkC19iha+Kl+WpF3aRKHnmQYq3ptlsEWeN2k57M78RB8MtAo
+	pSBUvvRPcen3gx04d7AwlSrocYQuBINzljKu3DzJfaJLE/rQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n5297sfh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 04:23:37 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57M4NaAe020154
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 04:23:36 GMT
+Received: from hu-gkohli-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Thu, 21 Aug 2025 21:23:32 -0700
+From: Gaurav Kohli <quic_gkohli@quicinc.com>
+To: <amitk@kernel.org>, <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <quic_manafm@quicinc.com>,
+        Gaurav Kohli
+	<quic_gkohli@quicinc.com>
+Subject: [PATCH v1 0/2] Enable TSENS and thermal zone for QCS8300 SoC
+Date: Fri, 22 Aug 2025 09:53:14 +0530
+Message-ID: <20250822042316.1762153-1-quic_gkohli@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250816104904.4779-2-xry111@xry111.site> <n5kdswq7oduruqiruyup4rcdwrs76tlinz26swotzeqklterey@off5cbv5i4e5>
- <CAMpQs4LqEWSoMUZpcbyknuEvf48FMMgra+Jffk0AXvTiZYjANg@mail.gmail.com>
- <bssxtcjtp4pnt3cymcrqnuwdzgdhwk5udnqwsh3xvmo2kkd567@5ovlk34bb4or> <CAMpQs4+GHczLuu6dAE=Qo2sRXWZvQYktMPSgx6FFjnN5SO8BDg@mail.gmail.com>
-In-Reply-To: <CAMpQs4+GHczLuu6dAE=Qo2sRXWZvQYktMPSgx6FFjnN5SO8BDg@mail.gmail.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 22 Aug 2025 12:20:07 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4TixH+zuprLotf_MYkN0G3E1gcccySU=GbySWohMVnkw@mail.gmail.com>
-X-Gm-Features: Ac12FXyquurfJfvK0OIRoUdcY4Q7806urVYoobaIeT8YSAGQRYyHCc5mOrVIOb4
-Message-ID: <CAAhV-H4TixH+zuprLotf_MYkN0G3E1gcccySU=GbySWohMVnkw@mail.gmail.com>
-Subject: Re: [PATCH] pwm: loongson: Fix LOONGSON_PWM_FREQ_DEFAULT
-To: Binbin Zhou <zhoubb.aaron@gmail.com>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Xi Ruoyao <xry111@xry111.site>, Binbin Zhou <zhoubinbin@loongson.cn>, 
-	Juxin Gao <gaojuxin@loongson.cn>, Xuerui Wang <kernel@xen0n.name>, linux-pwm@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: sRy3zFzk1tjhD5pa4O2YQgCXJ6ih4t_R
+X-Proofpoint-ORIG-GUID: sRy3zFzk1tjhD5pa4O2YQgCXJ6ih4t_R
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX+Z87NADmiP8c
+ a29SdRPq7MK0FlfvK75lC2/QuTxhHXpNRjdgDYhxNjEsrfg3siNjNVA7uwb/5KnY8LIAzG/wfpZ
+ mlGHDyKb+XFMZDOvzhBP+Bg6VreWkByv+Mdfe6jFqC/oVmpOgFBc+iy+xqJV282Bxmmm6cH5oVD
+ h5Wzhb+0Uaip7mtDz6O8OiujSF8Lwib9l/YoVQEvw7UVr4XPn1aTxYTxXP9FjD8B+3TEC5JljR6
+ AjDQM7ukhRG4gXCwEy1micpVEiBjUFSRFnLZ42h0FRZTUUHNeQCvg33Krrs77kHiTitcJ/rPKVI
+ 1jSDVL4Jrev43N2/3HDutvHdyaUGw6Me3s2cx/mhooHVQiIMFgdAJTMjy720Tqyf0XjTLf3Eq+s
+ yY+iY3RzyLxDIosbp5RqQxeG8fMI6A==
+X-Authority-Analysis: v=2.4 cv=SPkblOvH c=1 sm=1 tr=0 ts=68a7f0c9 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=2OwXVqhp2XgA:10 a=4mZqo6zMBS7fLbI5uYcA:9
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_01,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
+ impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-On Wed, Aug 20, 2025 at 3:34=E2=80=AFPM Binbin Zhou <zhoubb.aaron@gmail.com=
-> wrote:
->
-> Hi Uwe:
->
-> On Wed, Aug 20, 2025 at 2:36=E2=80=AFPM Uwe Kleine-K=C3=B6nig <ukleinek@k=
-ernel.org> wrote:
-> >
-> > Hi Binbin,
-> >
-> > On Mon, Aug 18, 2025 at 05:38:34PM +0800, Binbin Zhou wrote:
-> > > On Sun, Aug 17, 2025 at 6:59=E2=80=AFPM Uwe Kleine-K=C3=B6nig <uklein=
-ek@kernel.org> wrote:
-> > > >
-> > > > Hello,
-> > > >
-> > > > [adding Juxin Gao to Cc:]
-> > > >
-> > > > On Sat, Aug 16, 2025 at 06:49:05PM +0800, Xi Ruoyao wrote:
-> > > > > Per the 7A1000 and 7A2000 user manual, the clock frequency of the=
-ir
-> > > > > PWM controllers is 50 MHz, not 50 kHz.
-> > > > >
-> > > > > Fixes: 2b62c89448dd ("pwm: Add Loongson PWM controller support")
-> > >
-> > > I have confirmed once again that this was indeed my mistake. Thank yo=
-u again!
-> > >
-> > > Reviewed-by: Binbin Zhou <zhoubinbin@loongson.cn>
-> >
-> > Thanks for your confirmation.
-> >
-> > My gut feeling is that this isn't very urgent and taking this as merge
-> > window material for 6.18-rc1 is fine. I still applied it to
-> > https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/=
-fixes
-> > and will send it along if something more urgent pops up. Please tell me
-> > if you think I should bother Linus with it and get it into 6.17.
->
-> I don't think it's urgent either, so just take it as the merge window
-> material for 6.18-rc1.
-My opinion, if there are other pwm fix patches, this one can go into
-6.17 together; otherwise just go into 6.18.
+Adding compatible string in TSENS dt-bindings, device node
+for TSENS controller and Thermal zone support.
 
-And if not too late, just add
-Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+Gaurav Kohli (2):
+  dt-bindings: thermal: tsens: Add QCS8300 compatible
+  arm64: dts: qcom: qcs8300: Enable TSENS support for QCS8300 SoC
 
-Huacai
+ .../bindings/thermal/qcom-tsens.yaml          |   1 +
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi         | 526 ++++++++++++++++++
+ 2 files changed, 527 insertions(+)
 
-> >
-> > Best regards
-> > Uwe
->
-> --
-> Thanks.
-> Binbin
+-- 
+2.34.1
+
 
