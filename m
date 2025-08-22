@@ -1,281 +1,175 @@
-Return-Path: <linux-kernel+bounces-780919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D998B30AFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:54:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C701B30AFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:53:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF4FF686859
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:54:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C21A31C27F04
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053131B4257;
-	Fri, 22 Aug 2025 01:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9261B4236;
+	Fri, 22 Aug 2025 01:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nAxBeZ+S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gvMD08bF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06ED81A294;
-	Fri, 22 Aug 2025 01:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5564A2D
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 01:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755827668; cv=none; b=hN6pCZesfMI21+CYcvnlJzKd8TR145nknZj8mO7ksBufsV9fTnMV52xGEnKWM07oj6NOmN8HNE2qk5vdExBBPZc0T7g4sCFwjj1NcrOfRZrIOGKXsIO1aWc0b1CW1bc0l4BDKE8pfed+EtLzVKNefxwzRGkWv+KejvaTEe7ILes=
+	t=1755827622; cv=none; b=WWvj6wQAGgtH8BysfWglp1yccRyYP5BBRdq4tgmFCWrtfKsGeZCKxmz9tFdfYbeWz79mIVQMXbPBQlT4lUE60TuauVy0Qdmmt6+uzTWH4jEj6GI0KdiD2+1awtcoi+5PgpI36gyOKm1ubexWa/93fJ9PqNNmjCzyJbNm9E7gYiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755827668; c=relaxed/simple;
-	bh=RNtaMbZ2x4QLJdtSV131dRyufCLa7xFY2p4/ptgxCeY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HV+2AzKYsIH6VsTvrj+zYg+/frc3IkOVLe4ydZo0+0ctV1BzKoMolMYiwdPqFWnqcJXugmNDD0G4Y1EQtwqqvN5qJQxxPMv+LhD3fP+tjS81TZoWKMOrTdUlhPIQduILv5K3A7eXuZFzu9L7KN5AvqR5+6uRG0KICxhFQ0w/w50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nAxBeZ+S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31D8FC4CEEB;
-	Fri, 22 Aug 2025 01:54:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755827667;
-	bh=RNtaMbZ2x4QLJdtSV131dRyufCLa7xFY2p4/ptgxCeY=;
-	h=From:Subject:Date:To:Cc:From;
-	b=nAxBeZ+ScJCPg8sfuC4+HreXmkxX/b9hzP0U4bN6mKOpkpef2SNRtoihbmkTUU28u
-	 0DA4qbaaoT9aT3A5tFTeuiu6qw+uCScIeNmOn1e0CyAsB5N7nsO93kMMEFG08UNPTW
-	 xd9+O+LyUK1SR1qKhj4pRnTbD/nth41h3CruL3vWhRum8yTO98m/E/a/Ts1G/O3Uza
-	 akwnjRAswqO3QNG4ntRsP+BubWHEH0IBX9h1vMoClmb4cIRDCcBfqJYDAJOZDGXu8/
-	 F2h5H6oO2ofuqiG/fFra6vXtm8AnpNcGBVx862NPVe1EvyyaOp2PRFi0Kovh0lwMao
-	 xwFzWe+7kIktQ==
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH v7 00/29] KVM: arm64: Implement support for SME
-Date: Fri, 22 Aug 2025 02:53:29 +0100
-Message-Id: <20250822-kvm-arm64-sme-v7-0-7a65d82b8b10@kernel.org>
+	s=arc-20240116; t=1755827622; c=relaxed/simple;
+	bh=lcRbF4s/PQ23VSgcKM0p1j1KRQGCkTB/i7Aw1lz8Rf8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X4k1ZKVRy6THrfkK/1PCsBwBBQ/ghh3OZCxBBjChisprHZh23ehVvisaUlUMb1ZLgLAvOvlu/p0kEhZeAyYCMjOnN+39rBr9/dyqxQr789KGefrZFOxbh9RHMkfciV6gJjLFC7mfimIsArssjW8YdSodcptRBIgeubr7eBMcGAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gvMD08bF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LI92NP003002
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 01:53:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fQ6jAh+MsWJrW0ys+uDSW5pSsMHNRIQOD8QB3d9ba7w=; b=gvMD08bFuD3rSToW
+	SecdwBe6Lj5LswT69wQ/2Tf715JQYvBfIZncY3lXN3AVpABeqNlCmW0mMIrc2/ue
+	8EMe+e0Zw+uGiSXhwNl0cEeV/uayB1EfB/kzaXMQoJFqLWiwoRtxeJ32nyPYnlye
+	9D1HD4kpSRFh7nRVI/tpk3u3HY6RLPMtaP4SXFuyPaOpoACFeq18GxVD1/jtQPSX
+	byYb84Dqsjn9FIEXITDzjxbfFvvj/HhyyZl41ihq6nRVFjyRUrfQtHHlOESst1oB
+	2QPZBSZkp4KUNmmFQJtwTQ8YwYRexFbwRhS/cCYKAl1/ZuY5bUl6DbIhi95mBg3o
+	VwAUmw==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n5297efa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 01:53:38 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32515e8e4b3so425677a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 18:53:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755827618; x=1756432418;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fQ6jAh+MsWJrW0ys+uDSW5pSsMHNRIQOD8QB3d9ba7w=;
+        b=KJXCrCKWckval1tP5/oRnRUx8rz4uaHQU8l1ge+i0hymD/64KJ6+s5H+PNRK5rHLYY
+         BIRJlFo8RTGalL+X8nbKWQ307AAsw5YLvxEqKcl1w/8AisjZLCyOH/OUD4x8P3p+MDLv
+         6Qz3eQBfnc/F7kcv50cWcRamPiE0IFXCqzRlwN3ld8OyLJUEQBMrNwJ56nCMRr5jkGOE
+         FT5BFi/q5oviKeD/j3rwH1cT/MAdutBfGCpjxuNlH3HHFk5yuO3sCFr+cDvV+p5490+U
+         I+qfYneKaQMAc1VI1SxI1lnK6paDH5pe0osG/+v+6qvyzZDswr4Tsem/Y2ckDmhZTjGE
+         HA1g==
+X-Forwarded-Encrypted: i=1; AJvYcCX/7Jw9LUSS7F4w9x69JCiRJuPSjew3Mx8YopMTkcUkEZofdRQ8h9BX/wllBqeMcx0alWNdT4AC0ahOpCA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoAqWiNdDCYs3X5E3yLWPU9CJ8oUq2rHADtexzxk0sNUPWhA3f
+	/mP4qZOYHoNwedg4JXyWFW73RHhC5gOX6wp49ffpKYxLLpWh1x0PYzQFmgGg/kjPNApk4jtwmUY
+	Q5DA4PQ2A9tbK6yhunl50LfDdKdThYcHH6mDe/2nwVAlpmjlG6iSLS2ZjAkt9OHUbnE8=
+X-Gm-Gg: ASbGnctgSmx/i1Y5q4n6rSAeLgcbv5LHpw4lUglUOa6j0d7Gfzp3MEgGOdPDOIbG7pJ
+	XB52qpDdhh7v06xq/u/eeKAjxtWycmcBpXxIOR9zjNQOprK9FRUCXjVKVCnPVdB3nv92lxUhFZR
+	yuXEPs3FxkSUqYXcQU3S3W+xxV9vXwOohDT7xbgRgdXDACuqdERfyQMu459MpE42a3eeqHVGRAK
+	O4yPuW6U4bUPFKaQgJ7WTNMmESAdC9oXTpFuUzDqePcnoYSeEllSdPYYga7j1NQJ519q6fsPhDV
+	JrJRBvxqGzMY202m5fScEtyvb8HQu09snf7UWAbgLnea+U3/42u5U7P5vo3yaLhXc0ipK3nU0Oz
+	Ft4pO9wJXGOV6s/4Mr5h7lzOl+555yA==
+X-Received: by 2002:a17:90b:2ec7:b0:2fe:85f0:e115 with SMTP id 98e67ed59e1d1-32517b2f78dmr2092817a91.26.1755827617887;
+        Thu, 21 Aug 2025 18:53:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG9I9vJOh+MwLycDuGMJzFuq4TmcBJ+szXaNAIctyyZVVpI/P68vxK3Jv34spYw+h3HbRLGtw==
+X-Received: by 2002:a17:90b:2ec7:b0:2fe:85f0:e115 with SMTP id 98e67ed59e1d1-32517b2f78dmr2092783a91.26.1755827617441;
+        Thu, 21 Aug 2025 18:53:37 -0700 (PDT)
+Received: from [10.249.96.170] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-325129aa68fsm1012282a91.7.2025.08.21.18.53.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 18:53:37 -0700 (PDT)
+Message-ID: <74bbf915-23cf-46c3-b9f8-48bb43ce9c56@oss.qualcomm.com>
+Date: Fri, 22 Aug 2025 09:53:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] phy: qcom: qmp-pcie: Add support for Glymur PCIe
+ Gen5x4 PHY
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        konrad.dybcio@oss.qualcomm.com, qiang.yu@oss.qualcomm.com,
+        Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+References: <20250821-glymur_pcie5-v2-0-cd516784ef20@oss.qualcomm.com>
+ <20250821-glymur_pcie5-v2-4-cd516784ef20@oss.qualcomm.com>
+ <bm3cp2vyw4rpllkwoxoxwrvsjxrtolcroqwx76bkpwmcdvx7ag@b6hvybyouq7m>
+Content-Language: en-US
+From: "Wenbin Yao (Consultant)" <wenbin.yao@oss.qualcomm.com>
+In-Reply-To: <bm3cp2vyw4rpllkwoxoxwrvsjxrtolcroqwx76bkpwmcdvx7ag@b6hvybyouq7m>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJvNp2gC/2XRzW6DMAwH8FdBOS9VbBIDPe09ph3yWaIO6AJDm
- 6q++0JRVw2OtvKzHf2vbPQp+pEdiytLfo5jHPpcVC8Fs63uT55Hl2uGAktRCuDnueM6dST52Hk
- uSANKciWVxLIxevTcJN3bdlFTd1m6l+RD/L5veXvPdRvHaUg/96UzLN11foO4mT8DFzwEqF0lD
- TbevZ596v3HYUgntoya8Y8D7jlm7jQiWQO1MGbHyweXmYstLzMXygioLYTg91w+uBIIcsvlsp2
- kphq0sxZ3XD25hGrL1fJ3SY1Gp4Kq5I7TkxOqLafMAaQNQebbxX9+W2NJ/vMrZz6t2azx2aHr4
- nQsZjrkm5KF/Pr2C3Kn8agpAgAA
-X-Change-ID: 20230301-kvm-arm64-sme-06a1246d3636
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, Will Deacon <will@kernel.org>, 
- Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
- Shuah Khan <shuah@kernel.org>
-Cc: Dave Martin <Dave.Martin@arm.com>, Fuad Tabba <tabba@google.com>, 
- Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org, 
- kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-cff91
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10103; i=broonie@kernel.org;
- h=from:subject:message-id; bh=RNtaMbZ2x4QLJdtSV131dRyufCLa7xFY2p4/ptgxCeY=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBop824Crwk4I+3H8DwqjMBFey8V+yMjbGKqda0V
- PJlavtfYdiJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaKfNuAAKCRAk1otyXVSH
- 0AxyB/0QPj0pEasZ8zfuSsrsSEhgz4tK1DLW2a5aDmzyrAmq4YY2MteCRzA53bkr1FooVPXBGpC
- kYppAh3SHez1InKhf7twJYONZJ6VOW0V6tkJEcQdVnIi9qLNHBAap5+Aa0+BV9Bvr1DZOqly+CO
- oSU1R+iRGkBEhcSm2tMDi2ql+rLA7cii3jxTXvvQ40QBQJVDRMb/p22yrtJxDqyOAc4uUAKqcyN
- bsgg4btykdOXvgUbqfly/EiCfCW66RbgNXvlYtGcrycq0+nzaGBnRq4xFOdaeapRfoD62YQq3NN
- M04k2/UYubiefdfJZTfDNy0RKzC4DEqaPpAJKEkgsetUChDj
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+X-Proofpoint-GUID: yALpv4o-JdAjbJLGvOof3fn8A6DrtmCc
+X-Proofpoint-ORIG-GUID: yALpv4o-JdAjbJLGvOof3fn8A6DrtmCc
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX1zO9lZbY4HEw
+ dE47OZZ1uG3LBAGMiRzBXPbBfm+zSiOmVheVYF9cmkje1OgHSbboGQTeM34zSx2NOJD1YjPKpZu
+ 43gj8ku9Ce7G/8qmC9uWA4OTPi6sRLvBcnsLassJDfcmQduaLcURqhpHu0LptCGaf5W1m0b9JPR
+ uVew3QWZlyq3MUKl5ttmr56lWhwjgIg0WPrWr0+/M0shy6/hUgSbCFCnicZCGxJ5rZ7tGD1nZXx
+ 6TZJeHM/Of9KwbwahgVuSoeuJiNu8oehvlWoZTaJzxeAzS2mscTVdWR7hu53N3lT0BRezTzu5sw
+ cYzA8B5Hq7QQ/nIh47S20r+0NqwLVcY1C3TjQGjhZY1m/Rr8ujni+7hgJosPMvDo1w3NIfjXZQR
+ 6gyd4A5WT2Xi3WEZcSBe9OTS9uEHxA==
+X-Authority-Analysis: v=2.4 cv=SPkblOvH c=1 sm=1 tr=0 ts=68a7cda2 cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=AsWi3nSQ2um4y-UoW74A:9 a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_04,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
+ impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-I've removed the RFC tag from this version of the series, but the items
-that I'm looking for feedback on remains the same:
+On 8/21/2025 5:57 PM, Dmitry Baryshkov wrote:
+> On Thu, Aug 21, 2025 at 02:44:31AM -0700, Wenbin Yao wrote:
+>> From: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+>>
+>> Add support for Gen5 x4 PCIe QMP PHY found on Glymur platform.
+>>
+>> Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+>> Signed-off-by: Wenbin Yao <wenbin.yao@oss.qualcomm.com>
+>> ---
+>>   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 32 ++++++++++++++++++++++++++++++++
+>>   1 file changed, 32 insertions(+)
+>> @@ -5114,6 +5143,9 @@ static const struct of_device_id qmp_pcie_of_match_table[] = {
+>>   	}, {
+>>   		.compatible = "qcom,x1p42100-qmp-gen4x4-pcie-phy",
+>>   		.data = &qmp_v6_gen4x4_pciephy_cfg,
+>> +	}, {
+>> +		.compatible = "qcom,glymur-qmp-gen5x4-pcie-phy",
+>> +		.data = &glymur_qmp_gen5x4_pciephy_cfg,
+> Please keep the array sorted. LGTM otherwise.
 
- - The userspace ABI, in particular:
-  - The vector length used for the SVE registers, access to the SVE
-    registers and access to ZA and (if available) ZT0 depending on
-    the current state of PSTATE.{SM,ZA}.
-  - The use of a single finalisation for both SVE and SME.
+OK, will fix it.
 
- - The addition of control for enabling fine grained traps in a similar
-   manner to FGU but without the UNDEF, I'm not clear if this is desired
-   at all and at present this requires symmetric read and write traps like
-   FGU. That seemed like it might be desired from an implementation
-   point of view but we already have one case where we enable an
-   asymmetric trap (for ARM64_WORKAROUND_AMPERE_AC03_CPU_38) and it
-   seems generally useful to enable asymmetrically.
-
-This series implements support for SME use in non-protected KVM guests.
-Much of this is very similar to SVE, the main additional challenge that
-SME presents is that it introduces a new vector length similar to the
-SVE vector length and two new controls which change the registers seen
-by guests:
-
- - PSTATE.ZA enables the ZA matrix register and, if SME2 is supported,
-   the ZT0 LUT register.
- - PSTATE.SM enables streaming mode, a new floating point mode which
-   uses the SVE register set with the separately configured SME vector
-   length.  In streaming mode implementation of the FFR register is
-   optional.
-
-It is also permitted to build systems which support SME without SVE, in
-this case when not in streaming mode no SVE registers or instructions
-are available.  Further, there is no requirement that there be any
-overlap in the set of vector lengths supported by SVE and SME in a
-system, this is expected to be a common situation in practical systems.
-
-Since there is a new vector length to configure we introduce a new
-feature parallel to the existing SVE one with a new pseudo register for
-the streaming mode vector length.  Due to the overlap with SVE caused by
-streaming mode rather than finalising SME as a separate feature we use
-the existing SVE finalisation to also finalise SME, a new define
-KVM_ARM_VCPU_VEC is provided to help make user code clearer.  Finalising
-SVE and SME separately would introduce complication with register access
-since finalising SVE makes the SVE registers writeable by userspace and
-doing multiple finalisations results in an error being reported.
-Dealing with a state where the SVE registers are writeable due to one of
-SVE or SME being finalised but may have their VL changed by the other
-being finalised seems like needless complexity with minimal practical
-utility, it seems clearer to just express directly that only one
-finalisation can be done in the ABI.
-
-Access to the floating point registers follows the architecture:
-
- - When both SVE and SME are present:
-   - If PSTATE.SM == 0 the vector length used for the Z and P registers
-     is the SVE vector length.
-   - If PSTATE.SM == 1 the vector length used for the Z and P registers
-     is the SME vector length.
- - If only SME is present:
-   - If PSTATE.SM == 0 the Z and P registers are inaccessible and the
-     floating point state accessed via the encodings for the V registers.
-   - If PSTATE.SM == 1 the vector length used for the Z and P registers
- - The SME specific ZA and ZT0 registers are only accessible if SVCR.ZA is 1.
-
-The VMM must understand this, in particular when loading state SVCR
-should be configured before other state.  It should be noted that while
-the architecture refers to PSTATE.SM and PSTATE.ZA these PSTATE bits are
-not preserved in SPSR_ELx, they are only accessible via SVCR.
-
-There are a large number of subfeatures for SME, most of which only
-offer additional instructions but some of which (SME2 and FA64) add
-architectural state. These are configured via the ID registers as per
-usual.
-
-Protected KVM supported, with the implementation maintaining the
-existing restriction that the hypervisor will refuse to run if streaming
-mode or ZA is enabled.  This both simplfies the code and avoids the need
-to allocate storage for host ZA and ZT0 state, there seems to be little
-practical use case for supporting this and the memory usage would be
-non-trivial.
-
-The new KVM_ARM_VCPU_VEC feature and ZA and ZT0 registers have not been
-added to the get-reg-list selftest, the idea of supporting additional
-features there without restructuring the program to generate all
-possible feature combinations has been rejected.  I will post a separate
-series which does that restructuring.
-
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
-Changes in v7:
-- Rebase onto v6.17-rc1.
-- Handle SMIDR_EL1 as a VM wide ID register and use this in feat_sme_smps().
-- Expose affinity fields in SMIDR_EL1.
-- Remove SMPRI_EL1 from vcpu_sysreg, the value is always 0 currently.
-- Prevent userspace writes to SMPRIMAP_EL2.
-- Link to v6: https://lore.kernel.org/r/20250625-kvm-arm64-sme-v6-0-114cff4ffe04@kernel.org
-
-Changes in v6:
-- Rebase onto v6.16-rc3.
-- Link to v5: https://lore.kernel.org/r/20250417-kvm-arm64-sme-v5-0-f469a2d5f574@kernel.org
-
-Changes in v5:
-- Rebase onto v6.15-rc2.
-- Add pKVM guest support.
-- Always restore SVCR.
-- Link to v4: https://lore.kernel.org/r/20250214-kvm-arm64-sme-v4-0-d64a681adcc2@kernel.org
-
-Changes in v4:
-- Rebase onto v6.14-rc2 and Mark Rutland's fixes.
-- Expose SME to nested guests.
-- Additional cleanups and test fixes following on from the rebase.
-- Flush register state on VMM PSTATE.{SM,ZA}.
-- Link to v3: https://lore.kernel.org/r/20241220-kvm-arm64-sme-v3-0-05b018c1ffeb@kernel.org
-
-Changes in v3:
-- Rebase onto v6.12-rc2.
-- Link to v2: https://lore.kernel.org/r/20231222-kvm-arm64-sme-v2-0-da226cb180bb@kernel.org
-
-Changes in v2:
-- Rebase onto v6.7-rc3.
-- Configure subfeatures based on host system only.
-- Complete nVHE support.
-- There was some snafu with sending v1 out, it didn't make it to the
-  lists but in case it hit people's inboxes I'm sending as v2.
-
----
-Mark Brown (29):
-      arm64/sysreg: Update SMIDR_EL1 to DDI0601 2025-06
-      arm64/fpsimd: Update FA64 and ZT0 enables when loading SME state
-      arm64/fpsimd: Decide to save ZT0 and streaming mode FFR at bind time
-      arm64/fpsimd: Check enable bit for FA64 when saving EFI state
-      arm64/fpsimd: Determine maximum virtualisable SME vector length
-      KVM: arm64: Introduce non-UNDEF FGT control
-      KVM: arm64: Pay attention to FFR parameter in SVE save and load
-      KVM: arm64: Pull ctxt_has_ helpers to start of sysreg-sr.h
-      KVM: arm64: Move SVE state access macros after feature test macros
-      KVM: arm64: Rename SVE finalization constants to be more general
-      KVM: arm64: Document the KVM ABI for SME
-      KVM: arm64: Define internal features for SME
-      KVM: arm64: Rename sve_state_reg_region
-      KVM: arm64: Store vector lengths in an array
-      KVM: arm64: Implement SME vector length configuration
-      KVM: arm64: Support SME control registers
-      KVM: arm64: Support TPIDR2_EL0
-      KVM: arm64: Support SME identification registers for guests
-      KVM: arm64: Support SME priority registers
-      KVM: arm64: Provide assembly for SME register access
-      KVM: arm64: Support userspace access to streaming mode Z and P registers
-      KVM: arm64: Flush register state on writes to SVCR.SM and SVCR.ZA
-      KVM: arm64: Expose SME specific state to userspace
-      KVM: arm64: Context switch SME state for guests
-      KVM: arm64: Handle SME exceptions
-      KVM: arm64: Expose SME to nested guests
-      KVM: arm64: Provide interface for configuring and enabling SME for guests
-      KVM: arm64: selftests: Add SME system registers to get-reg-list
-      KVM: arm64: selftests: Add SME to set_id_regs test
-
- Documentation/virt/kvm/api.rst                   | 117 +++++++----
- arch/arm64/include/asm/fpsimd.h                  |  26 +++
- arch/arm64/include/asm/kvm_emulate.h             |   6 +
- arch/arm64/include/asm/kvm_host.h                | 169 ++++++++++++---
- arch/arm64/include/asm/kvm_hyp.h                 |   5 +-
- arch/arm64/include/asm/kvm_pkvm.h                |   2 +-
- arch/arm64/include/asm/vncr_mapping.h            |   2 +
- arch/arm64/include/uapi/asm/kvm.h                |  33 +++
- arch/arm64/kernel/cpufeature.c                   |   2 -
- arch/arm64/kernel/fpsimd.c                       |  89 ++++----
- arch/arm64/kvm/arm.c                             |  10 +
- arch/arm64/kvm/config.c                          |   8 +-
- arch/arm64/kvm/fpsimd.c                          |  28 ++-
- arch/arm64/kvm/guest.c                           | 252 ++++++++++++++++++++---
- arch/arm64/kvm/handle_exit.c                     |  14 ++
- arch/arm64/kvm/hyp/fpsimd.S                      |  28 ++-
- arch/arm64/kvm/hyp/include/hyp/switch.h          | 175 ++++++++++++++--
- arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h       | 110 ++++++----
- arch/arm64/kvm/hyp/nvhe/hyp-main.c               |  86 ++++++--
- arch/arm64/kvm/hyp/nvhe/pkvm.c                   |  85 ++++++--
- arch/arm64/kvm/hyp/nvhe/switch.c                 |   4 +-
- arch/arm64/kvm/hyp/nvhe/sys_regs.c               |   6 +
- arch/arm64/kvm/hyp/vhe/switch.c                  |  17 +-
- arch/arm64/kvm/hyp/vhe/sysreg-sr.c               |   7 +
- arch/arm64/kvm/nested.c                          |   3 +-
- arch/arm64/kvm/reset.c                           | 156 ++++++++++----
- arch/arm64/kvm/sys_regs.c                        | 141 ++++++++++++-
- arch/arm64/tools/sysreg                          |   8 +-
- include/uapi/linux/kvm.h                         |   1 +
- tools/testing/selftests/kvm/arm64/get-reg-list.c |  15 +-
- tools/testing/selftests/kvm/arm64/set_id_regs.c  |  27 ++-
- 31 files changed, 1328 insertions(+), 304 deletions(-)
----
-base-commit: 062b3e4a1f880f104a8d4b90b767788786aa7b78
-change-id: 20230301-kvm-arm64-sme-06a1246d3636
-
-Best regards,
---  
-Mark Brown <broonie@kernel.org>
+>
+>>   	},
+>>   	{ },
+>>   };
+>>
+>> -- 
+>> 2.34.1
+>>
+-- 
+With best wishes
+Wenbin
 
 
