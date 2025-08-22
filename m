@@ -1,193 +1,86 @@
-Return-Path: <linux-kernel+bounces-781544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13358B313E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:47:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73F5B313B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03C9AAE4F6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:41:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD7C71CC0BF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0BD2FA0FE;
-	Fri, 22 Aug 2025 09:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB9D2F546E;
+	Fri, 22 Aug 2025 09:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FUlBe9oD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XYDerVas";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FUlBe9oD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XYDerVas"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="shU/8NSU"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49B82F90EB
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AFA2EFD9C;
+	Fri, 22 Aug 2025 09:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755855334; cv=none; b=ud02hhOmQHPCTKLAoAehQ2tWtkVR7gBNVBX7w3bcyum7G0ybebdFxgSLlEX7v1meKgx6XiiPj1AeWiCzWTyRVIMykBAiE2nGbXRmyijMfPyscS5/CL9J7djzwJEx7rKFW0HpEitNvVcu4eeM4/75pNQ2w7eRSPt6KfsiSYqgFkU=
+	t=1755855304; cv=none; b=BLL+oDRJfk+7E689FffJV4hFFaRhOdJoIqLGa8X1Hf9hBZGaejQnFXggn0Zgwq7YsxsVSGClQFrA8VKMewB45H+/mw3GwcTdeTTCoQ6AE1fQwA5L2zx+Am9f4AhhhGit9HLVOef85IESeMtn16HIhjUFddOMt4qOedWZCVzzNbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755855334; c=relaxed/simple;
-	bh=eSnmXWts4lneydS0K/gTCRVPllwqwqUG5QtbWvHQzRg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K0nGQ1RJ3zgf88F6mrP1+adCqUTRkVHyyKgNYpc/dbNzpZkE1KUGFFdG/GAA8y2RkU3vETkxP/6WkOEftyfMA08W8m222/M3Qmddbd872bqoNNS71c7E5oBdQ4JpTyicmPDed3IU7n1Hir6Uaul9/qm5+WJFUTVHJ0Dz090sfig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FUlBe9oD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XYDerVas; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FUlBe9oD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XYDerVas; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4CB4221EF7;
-	Fri, 22 Aug 2025 09:35:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755855315; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x3cvBSh7xfmCgersmZjZ++hf/VLsBTmIFoCXCaq9iVA=;
-	b=FUlBe9oD26o0XZdtDyHCgjBg62Z0OGVJO5zSxXGPr7Wz8cTYQnTti9yOvKF/S3OB/VDugC
-	tunprtW+mUJyBNWWyo0gHHlZRr3ZxpTMPjaZDX7Fp6G0rdG8hEeAH9kHuxivjZFbQ9fvUk
-	82Sgu1aMjrUsG9rq8MJLy0jjFDvPomg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755855315;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x3cvBSh7xfmCgersmZjZ++hf/VLsBTmIFoCXCaq9iVA=;
-	b=XYDerVasOgVrlHTFHZVf9HKe46rgSqVEXgEyQ84aN+Nwp4pV3qm0CZK7iOMIM5f9RIg9vP
-	pcFtzOSdxAjxNMDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755855315; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x3cvBSh7xfmCgersmZjZ++hf/VLsBTmIFoCXCaq9iVA=;
-	b=FUlBe9oD26o0XZdtDyHCgjBg62Z0OGVJO5zSxXGPr7Wz8cTYQnTti9yOvKF/S3OB/VDugC
-	tunprtW+mUJyBNWWyo0gHHlZRr3ZxpTMPjaZDX7Fp6G0rdG8hEeAH9kHuxivjZFbQ9fvUk
-	82Sgu1aMjrUsG9rq8MJLy0jjFDvPomg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755855315;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x3cvBSh7xfmCgersmZjZ++hf/VLsBTmIFoCXCaq9iVA=;
-	b=XYDerVasOgVrlHTFHZVf9HKe46rgSqVEXgEyQ84aN+Nwp4pV3qm0CZK7iOMIM5f9RIg9vP
-	pcFtzOSdxAjxNMDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4660C13A31;
-	Fri, 22 Aug 2025 09:35:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wK3sDtI5qGihMAAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Fri, 22 Aug 2025 09:35:14 +0000
-From: Stanimir Varbanov <svarbanov@suse.de>
-To: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Jonathan Bell <jonathan@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH v2 5/5] arm64: dts: broadcom: Enable RP1 ethernet for Raspberry Pi 5
-Date: Fri, 22 Aug 2025 12:34:40 +0300
-Message-ID: <20250822093440.53941-6-svarbanov@suse.de>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250822093440.53941-1-svarbanov@suse.de>
-References: <20250822093440.53941-1-svarbanov@suse.de>
+	s=arc-20240116; t=1755855304; c=relaxed/simple;
+	bh=36P3LtQsFqeWWr29JzUlsFPBbbcRBBm0rlngp1lZyz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=abhLvW/8k0W3fO2JM0orePSUb3IWb7xaDHuZyMVbu8Wyt+8KXocU3HnDXYmkiFRq6gthV0/Vklff78mzu451L3G9fyr8WzpJR7PjCQLRqoXYVIipUp7/Mel5hcB9FOXC6OBaU0el3aqhXCqtzi2/8gJ68SzrrPOirtSz0ftFxEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=shU/8NSU; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=t/Kcct6sgBpDZexPxzMTI4phQMJW9fQfj62vTbH9DXM=; b=shU/8NSUsVco6SpdjyINrFHoJ9
+	15aOSQwO04O5dGOZEb3NjhiBRO7oVFaib9wts0ZmLAyWr+xZr9YKjNRGq7YqS1qTSAsIhO3Mp0npd
+	KxLBgLnLOwATpceC90OTIMmzNw5obhdBuJrighZ+Fk+SlEdPfTxA3McsoKLbrhVEHBEPUzatV4wS/
+	9967ottcAf0T+h/z6pJPtqXbEf+lePYLkehn0TU080YaPPVGPropKCLWMpGtKRxZbyogmU9BeLBAN
+	jjdrHZXuTTlup3LfFEY79ahXPghwn1mF79Z0iYxHtJ35e7c9tnU05/fQyljsUiJSLuAJgVihqoseX
+	t+7NgyIA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1upNvC-00GN7Z-0P;
+	Fri, 22 Aug 2025 17:34:51 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 22 Aug 2025 17:34:50 +0800
+Date: Fri, 22 Aug 2025 17:34:50 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Yunseong Kim <ysk@kzalloc.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	John Allen <john.allen@amd.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: ccp: Fix typo in psp_populate_hsti function name
+Message-ID: <aKg5uqxlJgVOy46k@gondor.apana.org.au>
+References: <20250816143028.1111603-2-ysk@kzalloc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-5.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[dt,netdev];
-	DBL_PROHIBIT(0.00)[0.0.0.1:email];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL7mwea5a3cdyragbzqhrtit3y)];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -5.30
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250816143028.1111603-2-ysk@kzalloc.com>
 
-Enable RP1 ethernet DT node for Raspberry Pi 5.
+On Sat, Aug 16, 2025 at 02:30:29PM +0000, Yunseong Kim wrote:
+> The function "psp_poulate_hsti" was misspelled. This patch corrects
+> the typo to "psp_populate_hsti" in both the function definition and
+> its call site within psp_init_hsti().
+> 
+> Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+> ---
+>  drivers/crypto/ccp/hsti.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
----
- .../boot/dts/broadcom/bcm2712-rpi-5-b.dts      | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-index a70a9b158df3..c70d1cb7f3b6 100644
---- a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-+++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-@@ -23,3 +23,21 @@ &pcie1 {
- &pcie2 {
- 	status = "okay";
- };
-+
-+&rp1_eth {
-+	status = "okay";
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&phy1>;
-+
-+	mdio {
-+		reg = <0x1>;
-+		reset-gpios = <&rp1_gpio 32 GPIO_ACTIVE_LOW>;
-+		reset-delay-us = <5000>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		phy1: ethernet-phy@1 {
-+			reg = <0x1>;
-+		};
-+	};
-+};
+Patch applied.  Thanks.
 -- 
-2.47.0
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
