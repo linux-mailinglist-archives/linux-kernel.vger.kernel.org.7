@@ -1,246 +1,200 @@
-Return-Path: <linux-kernel+bounces-780871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEF43B30A45
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:24:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 511F6B30A47
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 02:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DCCD1CE83A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:24:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E82A53ABF85
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD5D7464;
-	Fri, 22 Aug 2025 00:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC592F50F;
+	Fri, 22 Aug 2025 00:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2xxZwe7Z"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pnLYEIrv"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2046.outbound.protection.outlook.com [40.107.212.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D8E4A3E
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 00:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755822270; cv=none; b=aR+rET+lZDzSxoIVcdI/FfwZZxZ4nBfkiVNpsnEsLt+uBxj57orO5HaD98qGAZUwD3X/yhNX+6o+3QVlhl/vdzHdtvWlHYxi3GbCq0ghbdyHAxS/X4LlF9eTSyQcpE6RsiCkrBKXUdsc6/jJWs9YO5+mF6N/2a5Kr73oGbEJTAk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755822270; c=relaxed/simple;
-	bh=g2H703HIDYfbEY+rrEgFD1cXFrZOynHCF3jxRypLixA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CDhIQTQOEStTDQ2MAqAaK5h6EHw3iQtKVytsgMuoTO1V5EApw1wIkaLBWgLoUWthM1gBB2jD/U5gmnqMhkkzQInlWL14+AoAKcODSpgFOknxVQOOjm06HEW7rU4lGFVKT0nC7vSyaw++BADa2yBDYLGYucRX37S1g/mBRpCGppU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2xxZwe7Z; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-459fc675d11so17155e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 17:24:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755822266; x=1756427066; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sCSTC0WIj5wZxnOAo09AXpNhmufPIU9VpSHbeth6h8Y=;
-        b=2xxZwe7ZislKSR7aLi63ZpnsP9Hht+Ks9TiilqEpli+mn0yPlTiTYIpRWbPwfpqi8j
-         1YPcpDzIZHWdKIU+bhLfvJetvRYgXSJY0vPXC4CTBtXS31kqDccolQYcLUlZZfpjGBW0
-         UNriDPngmDKvdwzhZvlBlKB9G8Btm7nYpNQhMhEs5NUUouvBNArVN0BuPNrhnNxt5Hgv
-         ysKpd5r+SqMZK8FIxR3akFzDONiz6rKf1SHZRosQEGDZ1GUrqPageLoAZc+V3rmECWi2
-         MLCuWX3jn1JNjp5Mw2c1EXWPBbIKVTbpz8WVW4BoaT4PGm3NCQAiu5aC4a1S/MRHBT7d
-         ShYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755822266; x=1756427066;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sCSTC0WIj5wZxnOAo09AXpNhmufPIU9VpSHbeth6h8Y=;
-        b=lD6c9373mnOWj++CcpqtRKcrbt3BG5aaNJg0wAYXZj7hqTe0SQBUinGK0wQhJIyXjO
-         WuXWbrSfy7KY4t9ssf4s5vXNz6I+/VHdXeyySPckT22a+TZ2viR86cepJfzHZzeBpt25
-         seGAzhDUW62nChKtrcnlMiVjIys7o0QqD7+BJX9xfUlB0LSSyR/d+XFUUv0sLe1pfEy1
-         wutDKor9t8RbjOwgB4RMR5N2jAzERSnD6XZfHzmReV0B7NbBx7PE4Ycg8cnGNxbbts06
-         n6c8OO4OyJrYc7oTYKmZ8gez/or0EWcr5MSvQhJssvkfbg/LUhObDnH75LqN+fb8IN7H
-         n5Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCXY1lQ3dBI21WfK7DM/7zjWS9phMcQIFF5W8nxh6bxvNrXeJhjLt6M1ueOmjgcTI13SofukD08/LjhijQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrRGTPev1rixU9dnKbMmtbHJwjW1uUhc7y4n1UkSgkn1Dw4Nbr
-	5b11Nh1TZ+BQu8/+fsFYyV0Xc9jU5aNnKPt9PaVjUaby8+1xKzx0/I/rplv6lRux25EpHd93mKV
-	ZczFSo8YEtcZRKJ3QdwxD2viEGofdtZYZKxvn1GxH
-X-Gm-Gg: ASbGncvbFBsSacVlGap4eXbJQ2eMJI0SE8S3iMWR9k8/4c5rZeTt89c2xYlbdzAzcBn
-	b9vbyeYJ3ksSOMQzTvERWCAj+N9W4Rxp7QXpxuSXU7AeAvnnQcsHqpDmWWdRy62hF1TTKQ+vtwD
-	aJqkG8EMd7QRa9lqJpnevldtWN75Jc0fYqvI2vKfc0n2XPVEAL3rsXTw8YIRSZFY3D3jfyqRe/d
-	leI6kgG1t/OxvelSZ6GPad0M7aRJY8r6pctC/BzVhUK
-X-Google-Smtp-Source: AGHT+IGH3NeXHDM/VzClhYP4trwtkdeO3+yJ+kVPFdTAwoZ40UPilU+wF+IASK3XljS4g/6haDSsaWYELnnhb5+t924=
-X-Received: by 2002:a05:600c:4b9a:b0:453:65f4:f4c8 with SMTP id
- 5b1f17b1804b1-45b52119e54mr240435e9.3.1755822265590; Thu, 21 Aug 2025
- 17:24:25 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79BE6FBF;
+	Fri, 22 Aug 2025 00:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755822423; cv=fail; b=ez4qui3z9X9YXEiEh7+Mlq8PHTZF+Ra3oLzfnpMtw1YcLrLyDasdGG8kjs4ygKDJHqbNTI8OIumzm8veGUEbXVbWaVC8jOSKyxUOqOMLpW8O7nJI90++3SHF4zEaTQJBU8ZpDXvPc4tSrAt491E8zMIl5Sk0fbo7KS0WPN2Qnpw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755822423; c=relaxed/simple;
+	bh=WR6ugRuBMlOLsrAD115TV/21mDSf+XD8jwax1bgs7ho=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=atIHuRJxACce82rfSEQDFQUgt5OIt4/b1f8ngE/1jVWQ4m6ap0I71fCL7WTucF5bX+tBqg9UBOsyolB94kKVZ5Go2TSvvxE7OC7KZ7ULRELdAhWBn+B0Rt2fDx/Jx77YubaPYmTiqK1l7gozAESPSX4bbICGz8BZRKbJ1PECxCk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pnLYEIrv; arc=fail smtp.client-ip=40.107.212.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=n2DWvKDRp7KDuI21uBzeal7P/vG4o4fELMcu7usmS9isNLjnc+fJLuSMj8b0QcmWhovuFDE6GpkfeVlvitzzQMPbqhf35pI+WkHIQrEZXbI8xdP/GvRN08bmtVA+V6S4WDQz+DbFqJT1xddMn4IBthRgye3i2RZTNht2brM1sWM4CoCzD6XpO6/jsJMKYpv+n6dWSO5Lel/EG2IV8UnSQgNQ5N9EABfheRnge29U6hm7koDABEuAxlvwp5qpDA1OhvKFIU4BHmjnMJMFiSjAtymyacKmLCgdJ1OjigEnuANyVWrDe9qLasjpMgV1cF77fHRHskcqUAJiuwqNWAggZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WR6ugRuBMlOLsrAD115TV/21mDSf+XD8jwax1bgs7ho=;
+ b=RkAul1XHgrUlUoRDVlyEFl1NUq40aqq0rfLdcaZSKkEsw5pmiTogfvRbmz8xGKNLB3h5Dy0t3x84YEPOIm15zXvmjhGpLCe8BDc4O9Lk9MTaU5YGcWWGrQjqJ0Dr2WkOHNu1SDLHCSAnfpY5Gr6yyknDqae53G+YCdUmsKkqqWhwnI5cW/f6EgZithLX89jbifmSKszgebmF3KFoxtgYso4fvDVEfOEJupYLwguEtnbpU1+mdN6wyHvGwp2uXW/6JEDM0fnPs0x26NBzcj8gS82eEyKv/0NVBrcceiweACNLQvJOFi85iLWluGAqby4HwEQuN8ysLFfMBxIrutePUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WR6ugRuBMlOLsrAD115TV/21mDSf+XD8jwax1bgs7ho=;
+ b=pnLYEIrvvQIdpwvQW9qjiu4b800LGpn9keb87CwKxFphBOI0Am2u5lsRxTxeZGh67XBXGpk3JvR6REIHi0i0+DRMx7wjndyU5sgpIxVsAVlDT8PegV+GBhp4nLQNtYOO/TkTnIFDdugduXzjFkZNO6EbkYqUQHOlSXhvn5X/FDKrywZHg9F5mfLJEGNpIZOYpVM5Ylu/rg0qQTQaLDgyQQDu0P54TMcM+5AKwjS54nkmQuPDrjW9l7pJr64qsSt9zynGEFNAYLmLDiE/0EuyXRctaBxRdEvR4oGV4/yvjTO6Nbt0rmFuhKXRm0fvnczrHFqFB0/2WmHtcR6TxoKhSg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CY5PR12MB6204.namprd12.prod.outlook.com (2603:10b6:930:23::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.16; Fri, 22 Aug
+ 2025 00:26:56 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9031.023; Fri, 22 Aug 2025
+ 00:26:56 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 22 Aug 2025 09:26:52 +0900
+Message-Id: <DC8J3KO6Q4I9.1YUAGOIYC2TOH@nvidia.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Abdiel Janulgue"
+ <abdiel.janulgue@gmail.com>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, "Robin Murphy" <robin.murphy@arm.com>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Christian S. Lima" <christiansantoslima21@gmail.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 0/2] rust: transmute: add `as_bytes(_mut)` methods
+ for `AsBytes` trait
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>, "Danilo Krummrich"
+ <dakr@kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250801-as_bytes-v5-0-975f87d5dc85@nvidia.com>
+ <a327ff52-c37d-4f51-8d19-d6b1cc858d79@kernel.org>
+ <CANiq72=LhwvvsN4A1F+3CffTF59=Gpq-B0hzQOszMPhTVo0hug@mail.gmail.com>
+In-Reply-To: <CANiq72=LhwvvsN4A1F+3CffTF59=Gpq-B0hzQOszMPhTVo0hug@mail.gmail.com>
+X-ClientProxiedBy: TYXPR01CA0061.jpnprd01.prod.outlook.com
+ (2603:1096:403:a::31) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821164445.14467-1-kyle.meyer@hpe.com> <CACw3F53KmKRJyH+ajicyDUgGbPZT=U3VE4n+Jt3E62BxEiiCGA@mail.gmail.com>
- <aKd1K3ueTacGTf1W@hpe.com>
-In-Reply-To: <aKd1K3ueTacGTf1W@hpe.com>
-From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Thu, 21 Aug 2025 17:24:13 -0700
-X-Gm-Features: Ac12FXxEDY6SrAotIEMY6iY0lvmtqJulbKla6z5zGMm5JvGnSkWnazlZYTp7qjU
-Message-ID: <CACw3F527M-x=UeB0tN_sjCgp_YP_8yLkVRCLP2dLO2bzXrqWsA@mail.gmail.com>
-Subject: Re: [PATCH] mm/memory-failure: Do not call action_result() on already
- poisoned pages
-To: Kyle Meyer <kyle.meyer@hpe.com>, linmiaohe@huawei.com
-Cc: akpm@linux-foundation.org, david@redhat.com, tony.luck@intel.com, 
-	bp@alien8.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-edac@vger.kernel.org, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
-	mhocko@suse.com, nao.horiguchi@gmail.com, jane.chu@oracle.com, 
-	osalvador@suse.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CY5PR12MB6204:EE_
+X-MS-Office365-Filtering-Correlation-Id: e294cbb7-7088-411c-d4ea-08dde11299b9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SDBERTluMnBYY3ZyY0xmTjhLY201QTVjSHlLbjliY1BQRXRLVVZnZkVIbFVv?=
+ =?utf-8?B?dU92WWR4QTJURWdqVDVXL3l5ZkE3S0drTC9GUFA5L0Fsb3luQ1JGenRGNTZK?=
+ =?utf-8?B?Y1A2RTNLc1BZMDMzRXY4VkJLalFFNW1VZ1VKYzlQOHZTaWcwQS8vNmRXSFI2?=
+ =?utf-8?B?OFFZWWdVaXRTamdDaXZGZjU2ekhFbDY5MDhLZ2tnZzBzOThyKzVwL2VsMFlh?=
+ =?utf-8?B?UnR1QXhQb0taWitHMS9rak9USWdHbytnOExmQSttenNuVld4a21iQ0ZvZmZs?=
+ =?utf-8?B?cE5mOUNVSmlHd2pERVBaWlBQOGpjcDdPUzBPQy9nTTFzOFFtYUg5M3BRTTRq?=
+ =?utf-8?B?NjljM3hIKzJUeHNmTDRNa2w3enhsSWhvbmVybVJKb2lLQ1ZrTnU5S005dUlE?=
+ =?utf-8?B?WHdCblg5TU5Zd0ZnWjh4bFYvNG1Xbkh5L01jaVJjaWMzTDNaWEd1b0VKRGIz?=
+ =?utf-8?B?c2RhSk1VamVRWERJSU5lTis1QTVUbE51SzVtYWRiV3VSNHgvZTMrYU9PQjhI?=
+ =?utf-8?B?SDRYU0QxOTAyWUdpMVhwZEROdStSeVhCQTE2cGtOYnVQRUNra2FtaHJJR2Z4?=
+ =?utf-8?B?M1d5REpjMEJkK0I1NS9sazQzNWNUR2V4RmtvZkR4a3A2UldmZWpZY1dJRW9w?=
+ =?utf-8?B?YlcxNDVELzVRQ1d2VVBHVnBUVThqL3NmSERhM1dlR25IaTY2Q0pGOHpTZUpC?=
+ =?utf-8?B?czlYMGd0M3BNQWVPNDlrenVPTVl1cnhqSGwzd210RDVoYjlHdzdZdTVGRkN0?=
+ =?utf-8?B?Q25aYkEyTHpSTGppRmdJZUk3SlFiQlNIb0c0UUpSM09qYzZuRTdJOXBTNk1E?=
+ =?utf-8?B?dWt1b0lwM05Zb1JUalkvKzhhVTE0UExub3p0R3Z4RzFoY3BRSVY4SkgwTFhx?=
+ =?utf-8?B?akJZQkwybEdHYWJKK3NOUWU0cVNudnp5YXcwK0ZwN0pCSmFlNlJGRElqR0Vs?=
+ =?utf-8?B?VVk5R0dsTXpML0RHcW5JMjdSVHZreTBsR0U1dHZiOG11MFpjM3pmVitHMDBi?=
+ =?utf-8?B?bC9uTW1iZmZxdzJMZ3dWcU1ZSm1OU3owV1RSSVc0YTNyWGtvL1hOaE5aUVlP?=
+ =?utf-8?B?T2NMeG9MczZwdXM5eGdoNWthRytqTUpZckFUYkk0eTlLdFB0YVE0dktSVXBM?=
+ =?utf-8?B?Yk5sbW0xQzdUMFIrTjhnZ0lpb0krWmh6dXFRcEdicUYwZGhaNkU0R3o2aFFT?=
+ =?utf-8?B?VGdIUkV6czB0RklXeG4rRTVYZThmMmYvVmRwYzhKVzl5WkpWbUR2SGFSNk1S?=
+ =?utf-8?B?dFB5TG45dFdyODIzSnF1OUI5aWowczRiL1N4b0tHbGUrOEs0VVkvU0pqSVZZ?=
+ =?utf-8?B?V2U3TWdwUExCamxvWXhpQ0tOTUtQMmRHN3MyZTlaOEpPNU9rU0FpV0VOUnlC?=
+ =?utf-8?B?SEFnWmg5cDVVUEZ2UkFTT0I2dFhaQWxCZmJiMk42aU1lQ3FlaTE0VUZEWTJR?=
+ =?utf-8?B?YVhaOWhoS0FpRk5uTktxcGZxY2MveXVwYlBJL09pb1NkK1BOQWJvRFRuM1Iw?=
+ =?utf-8?B?Sk1lejVkOE8ybkNFdmpaa0lBZnY1OTlWYklnUHJKcjduMy9YcXRKWnhqeEtZ?=
+ =?utf-8?B?TnJWT1cweXFSSmV3ZERkNUFKN2pjVFc4aHJsalRmbHIyK1VNYkJmcXA2YkRu?=
+ =?utf-8?B?NC9DUjdDQW8wYjl2Z05GRC9hZ2FtVnErNGVoUncxT0M1NkRvSmYzS2dudk5x?=
+ =?utf-8?B?TUZtOGxvYmZtaXBaeW5BS0ZGcU5GckxFbW94R2taaUhldEFsdFA0aGRUQktu?=
+ =?utf-8?B?dHdncFVvMnpNeTZwekl2ZC9ROSt0YWIvWU9OdnNENEJRL1Znamw3dzNIWXhS?=
+ =?utf-8?B?TmRNVFg3UDJGMzRuWndtc2V3MUUycVA4dnRaNlRHMGsreU5uS2N1M1pFVGY3?=
+ =?utf-8?B?RzlOQng5RDlyblBVc3g0OWtPbm1wc28xUjVSVHVERTF2ME9rUlN1Szh0dzh2?=
+ =?utf-8?Q?UZKcsPNnhm4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bTk3eTlqamh4NXVFRzBjWkM1bGZjTElhVFRad2NYVkRHWlQ3aUpVRHBhYjIv?=
+ =?utf-8?B?dDBNS0xvZmFCMzhmNU4vNExweFJDTUNKcXN2YXhaRTc4UlE5QktDNkN6ZllE?=
+ =?utf-8?B?V002QkExbVVrUHlXWk53SlphOW5zSzVWQXlLekJMcWNiR25TSVZ2UW5VKzNE?=
+ =?utf-8?B?ZVB2R1YyL2s4MHFBeXdaWG4zM3g4bUZXYmlYY3hFeXYweXhSbmtlK3E1ZXZY?=
+ =?utf-8?B?TTdxZitYbUZpOTE1cVZReGQvL1h4cHQrYnFVRWp0SytZRDJRZ2RZbVRQUUJv?=
+ =?utf-8?B?Z0VQQU8zVjlTUUVxZGVDZ1g0aG5DWjNUSmRNOHpzaVQyazM2Nm1hTU9PZEk5?=
+ =?utf-8?B?aTBkcm9KbTd2cTNqV0dJcUxublErSVpKRkZLUGo1aThBV1FQdVB5bGlUVDZH?=
+ =?utf-8?B?a0VHNGdSTjRESnd1WllmaUVhVGk3eTlQendBSWxaWXJROGJ2eXNKU3JEOVpS?=
+ =?utf-8?B?VVQ0WjMzM2g0MW5NMkxuazV0clpwRWdDY0IzWWtpRTRHMWJsaVpPcEpFMm5S?=
+ =?utf-8?B?TjNRWEgzZnFwVHJJSHR5MDFlZ3dPL0RCZDVVU2dsM3JsVmFlbWhKQTdWZ0dy?=
+ =?utf-8?B?WkE5WDFQMlRCVjIvRzczUVcycHRDWTV3RDFDbExTVDcrRnVhcHdySWVjaFIy?=
+ =?utf-8?B?WTFSY29pZGQzYnM2aGlEMzJLRzZIbXJWMWRJSStqSHI0ZnoybXVuL3BPRU9n?=
+ =?utf-8?B?eWtQU3NZSDRuN05aMXVSR0hhelNmdGZxOXpLU1R2eG0yR2g3bW5UOU02aHNo?=
+ =?utf-8?B?cXFGL0lBTTJYVk8yQmhyTkxKZHVSd29vb2xlZkJMVlVadVFzdkRkYjNVU3or?=
+ =?utf-8?B?dkdGNjNZYktqckhla25CSWlLVEc3b3pMOXF2WU5adFMwMU5MZjgwcER4VFlY?=
+ =?utf-8?B?RlA2OEU1WjRaNTB6V3pTZ29wWXJGMVNHUDh5d2E2bnl2T0hYK2V0dklNN1FX?=
+ =?utf-8?B?UWswYlYrZHEybUQ2ekM0bGVpdFUvQjNTa25vNjk3TEZkVmFzamJFL2p2MzZV?=
+ =?utf-8?B?TUVSS2cycm1YYlhsbUhoREE4RW9wNEpNWmpWSU1KR2R6WjZyUVRzSC9BWThO?=
+ =?utf-8?B?S3p2VFFjZnJibnlsTmxmb0lnVXpaK3BPT1N1OVhGaFVDMXlkRVNyVFkrcUJv?=
+ =?utf-8?B?SnlyQ3VkbS9OMVRQejJib2tBMGVnNGU1UmxuQitqWk44Rm5PV2U0cGcxZ1Uz?=
+ =?utf-8?B?czlaQVVqeThmdG83T2hzdURhZDJKbFFkWHRsRnorcFJjbVhwWVJTZjR6U1Z4?=
+ =?utf-8?B?S0QvTzBlMTlxM0ZSaDE5N1dzelFsWjd0N3ZlS2dQcWpFbU03YkJYN1ZwUkhk?=
+ =?utf-8?B?UlpkczhpbGsrSWN6WTU0bmlUY2haRkJtZDRBSk9mWVFvTDk1eXJ1UUJ5UTJL?=
+ =?utf-8?B?dG5yZmNLdGNCWDNlcVNGVlpENmFCcHNMcXhsckFnR0RTM001R2E0My93YWJy?=
+ =?utf-8?B?dVdRMDBBT0t3TlRQSGdFZ2pXZC84NzUzR3djOHBNMmtlcTU0WWpENU1CSXFQ?=
+ =?utf-8?B?aXBFVXNIV2ZpYmxRLzRic1FIRmZFTkN6NmViejNBUWZ5U3ZiUkt0WEJHbHRu?=
+ =?utf-8?B?T1pzMVZxN2llT3d1QXU3b0ltcGp4dDZJRmEvdXFSUWkvbTFQY3EybnZPdllK?=
+ =?utf-8?B?ektOcG5XRmtEaWtHZ0h5dThacmdSR3Y0Y2lrT2lTRVZMK3luNDZQb3FHYXBT?=
+ =?utf-8?B?RXFHenJkQ1YxSUhWZ2xLVjVDeGk5VWlGOEFyRkIxRlU0cyszNDhpckxKejF5?=
+ =?utf-8?B?dWdPTEpQQzVjMDc1Vys2NFRyZWVKSDU0NlpWMlJQcmZZcGQraDVRVHBzZEdi?=
+ =?utf-8?B?TmltNktRY2FDTm5SOWdnZkxmb01QVDd3a3RpWG95L3NuM3o4UCtqWDJ5WHNp?=
+ =?utf-8?B?L283WmxRb05FMVU3eDI4Wk9jVVZTdzNhUFRHU1k3UVFyS3BZR2xkbzFIZTRv?=
+ =?utf-8?B?dHBtdnFJaGlyNEZHNFdFYWQrd0RzZnYvWi9aeE5VZ3Q3QkZLaGptd0dVeFpz?=
+ =?utf-8?B?bGxDMzhkallraWxheEdjSjNUVUlzL0RrQkx0VGhDQ282Y3ZDelYvR0NUTXdp?=
+ =?utf-8?B?ODU4dVRUOERheGE2SVZyYi9NR245cUVoSGJ2MEI5NGs3NmlIcFlMQWRaVFFi?=
+ =?utf-8?B?SmVPWUdhNmVwT3NIblBGZklJUU56TFcwT1FxVGJkWTlyNEx4djJ6NERWM0lu?=
+ =?utf-8?Q?zZbxY+PkwfluVAMPkCvpt31P9lQ6wu/HeDllZI0ShLO/?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e294cbb7-7088-411c-d4ea-08dde11299b9
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 00:26:56.4911
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mqXF9ZRT7QlekbQgvpoFgTAs+nlnOgHBXITqH6/TGTxszYpCZmjmVj0u5+iGZq0n8Nmjeu9MF1JhFvJFGMKqQA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6204
 
-On Thu, Aug 21, 2025 at 12:36=E2=80=AFPM Kyle Meyer <kyle.meyer@hpe.com> wr=
-ote:
+On Thu Aug 21, 2025 at 11:38 PM JST, Miguel Ojeda wrote:
+> On Tue, Aug 19, 2025 at 11:49=E2=80=AFAM Danilo Krummrich <dakr@kernel.or=
+g> wrote:
+>>
+>> Miguel, any concerns taking this through the nova tree?
 >
-> On Thu, Aug 21, 2025 at 11:23:48AM -0700, Jiaqi Yan wrote:
-> > On Thu, Aug 21, 2025 at 9:46=E2=80=AFAM Kyle Meyer <kyle.meyer@hpe.com>=
- wrote:
-> > >
-> > > Calling action_result() on already poisoned pages causes issues:
-> > >
-> > > * The amount of hardware corrupted memory is incorrectly incremented.
-> > > * NUMA node memory failure statistics are incorrectly updated.
-> > > * Redundant "already poisoned" messages are printed.
-> >
-> > All agreed.
-> >
-> > >
-> > > Do not call action_result() on already poisoned pages and drop unused
-> > > MF_MSG_ALREADY_POISONED.
-> >
-> > Hi Kyle,
-> >
-> > Patch looks great to me, just one thought...
-> >
-> > Alternatively, have you thought about keeping MF_MSG_ALREADY_POISONED
-> > but changing action_result for MF_MSG_ALREADY_POISONED?
-> > - don't num_poisoned_pages_inc(pfn)
-> > - don't update_per_node_mf_stats(pfn, result)
-> > - still pr_err("%#lx: recovery action for %s: %s\n", ...)
-> > - meanwhile remove "pr_err("%#lx: already hardware poisoned\n", pfn)"
-> > in memory_failure and try_memory_failure_hugetlb
+> If it is needed for something this same cycle in Nova, then please go ahe=
+ad:
 >
-> I did consider that approach but I was concerned about passing
-> MF_MSG_ALREADY_POISONED to action_result() with MF_FAILED. The message is=
- a
-> bit misleading.
+> Acked-by: Miguel Ojeda <ojeda@kernel.org>
 
-Based on my reading the documentation for MF_* in static const char
-*action_name[]...
+Thanks Miguel! Yes, we are planning use it this cycle in Nova.
 
-Yeah, for file mapped pages, kernel may not have hole-punched or
-truncated it from the file mapping (shmem and hugetlbfs for example)
-but that still considered as MF_RECOVERED, so touching a page with
-HWPoison flag doesn't mean that page was failed to be recovered
-previously.
-
-For pages intended to be taken out of the buddy system, touching a
-page with HWPoison flag does imply it isn't isolated and hence
-MF_FAILED.
-
-In summary, seeing the HWPoison flag again doesn't necessarily
-indicate what the recovery result was previously; it only indicate
-kernel won't re-attempt to recover?
-
->
-> How about introducing a new MF action result? Maybe MF_NONE? The message =
-could
-> look something like:
-
-Adding MF_NONE sounds fine to me, as long as we correctly document its
-meaning, which can be subtle.
-
-Let's see what Miaohe's thoughts are.
-
->
-> Memory failure: 0xXXXXXXXX: recovery action for already poisoned page: No=
-ne
->
-> > This way, all the MF recovery result kernel logs out will be sitting
-> > in one place, action_result, instead of scattering around all over the
-> > place.
->
-> That sounds better to me.
->
-> > >
-> > > Fixes: b8b9488d50b7 ("mm/memory-failure: improve memory failure actio=
-n_result messages")
-> > > Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
-> > > ---
-> > >  include/linux/mm.h      | 1 -
-> > >  include/ras/ras_event.h | 1 -
-> > >  mm/memory-failure.c     | 3 ---
-> > >  3 files changed, 5 deletions(-)
-> > >
-> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > > index 1ae97a0b8ec7..09ce81ef7afc 100644
-> > > --- a/include/linux/mm.h
-> > > +++ b/include/linux/mm.h
-> > > @@ -4005,7 +4005,6 @@ enum mf_action_page_type {
-> > >         MF_MSG_BUDDY,
-> > >         MF_MSG_DAX,
-> > >         MF_MSG_UNSPLIT_THP,
-> > > -       MF_MSG_ALREADY_POISONED,
-> > >         MF_MSG_UNKNOWN,
-> > >  };
-> > >
-> > > diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
-> > > index c8cd0f00c845..f62a52f5bd81 100644
-> > > --- a/include/ras/ras_event.h
-> > > +++ b/include/ras/ras_event.h
-> > > @@ -374,7 +374,6 @@ TRACE_EVENT(aer_event,
-> > >         EM ( MF_MSG_BUDDY, "free buddy page" )                       =
-   \
-> > >         EM ( MF_MSG_DAX, "dax page" )                                =
-   \
-> > >         EM ( MF_MSG_UNSPLIT_THP, "unsplit thp" )                     =
-   \
-> > > -       EM ( MF_MSG_ALREADY_POISONED, "already poisoned" )           =
-   \
-> > >         EMe ( MF_MSG_UNKNOWN, "unknown page" )
-> > >
-> > >  /*
-> > > diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> > > index e2e685b971bb..7839ec83bc1d 100644
-> > > --- a/mm/memory-failure.c
-> > > +++ b/mm/memory-failure.c
-> > > @@ -948,7 +948,6 @@ static const char * const action_page_types[] =3D=
- {
-> > >         [MF_MSG_BUDDY]                  =3D "free buddy page",
-> > >         [MF_MSG_DAX]                    =3D "dax page",
-> > >         [MF_MSG_UNSPLIT_THP]            =3D "unsplit thp",
-> > > -       [MF_MSG_ALREADY_POISONED]       =3D "already poisoned",
-> > >         [MF_MSG_UNKNOWN]                =3D "unknown page",
-> > >  };
-> > >
-> > > @@ -2090,7 +2089,6 @@ static int try_memory_failure_hugetlb(unsigned =
-long pfn, int flags, int *hugetlb
-> > >                 if (flags & MF_ACTION_REQUIRED) {
-> > >                         folio =3D page_folio(p);
-> > >                         res =3D kill_accessing_process(current, folio=
-_pfn(folio), flags);
-> > > -                       action_result(pfn, MF_MSG_ALREADY_POISONED, M=
-F_FAILED);
-> > >                 }
-> > >                 return res;
-> > >         } else if (res =3D=3D -EBUSY) {
-> > > @@ -2283,7 +2281,6 @@ int memory_failure(unsigned long pfn, int flags=
-)
-> > >                         res =3D kill_accessing_process(current, pfn, =
-flags);
-> > >                 if (flags & MF_COUNT_INCREASED)
-> > >                         put_page(p);
-> > > -               action_result(pfn, MF_MSG_ALREADY_POISONED, MF_FAILED=
-);
-> > >                 goto unlock_mutex;
-> > >         }
-> > >
-> > > --
-> > > 2.50.1
-> > >
-> > >
+I'll push this into nova-next later today.
 
