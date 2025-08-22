@@ -1,202 +1,196 @@
-Return-Path: <linux-kernel+bounces-782416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C205EB3202F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:10:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64563B32039
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:13:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5683B1D25509
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:05:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51BAB1C81B66
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133EF288C2B;
-	Fri, 22 Aug 2025 16:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27D7267F58;
+	Fri, 22 Aug 2025 16:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PiVc7+0f"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b="In8n0jpJ"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CEC25DAE7;
-	Fri, 22 Aug 2025 16:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89D625B1DC
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755878568; cv=none; b=UzeoCxxQ8mH02pJNtxu2MnBmXyFlmJdrjJnxlMtCWpxho+0uT1ewfzyh8ZzfFhxnY9othJAqEudGO0hMsQ43QSfS6/Q1GIIKNEwdogI9CRW769nrDCj3E/rZ+WJm1iPNvrhyus1OGkMIWtootRhKTjKpnYW2RGQq+NmP74T39pE=
+	t=1755878724; cv=none; b=d3CcmaK6Bb9HYYknA8BJaFF8DWuYRTxzLqmTONvR3QJZzeRUhBUGyAyYTZDl3Rkv7bea2wvK+k8CF4H3hwH4iWriDr7nTJIaX5qfZhNmcO3Jfd8mxJ92hRWvwJVQ5vIVhdxAs/9U0eRMDnnxRtNBLO4kE7eRJBmLpVR8h3u++eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755878568; c=relaxed/simple;
-	bh=ix73bSoNn7yvd8cn3z1HdCW0ZY0XpvKwTxIznMfcvLI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SJrti5uf8JelK2OgLeM7OMF/jk9gTWYohQxnjFs7ihVvQmKiIKPWZxRZjxx8szw4bKekCxaUgs4htSLp4J1asIl2VKwf6ABgrb7R/Grx7k3/H2XSZE3P9sp7CjHA0KQoYIKd8tV/nXoeBxaIx1m2vUqJWRlWYqct41+TDVvjR3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PiVc7+0f; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55f34d792c4so61285e87.3;
-        Fri, 22 Aug 2025 09:02:46 -0700 (PDT)
+	s=arc-20240116; t=1755878724; c=relaxed/simple;
+	bh=4HGGhjzaXgljPlrVoiWkH/usNNNrz/eCJBhuP08RQBs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jjZef33XlJKp6jtsBwgBrev9wuTr01LAqVvTujCypHKBgGWrMAKjkmPp9HSL9jmxb+JGTiMWdS4vKAU4qPPJ2DYvIFT5Tv785MDHWNK78fPxKMKx4UtglGx/tlcCf2EbLTOCEQ7DH/ObXg40R02HsCBQEGgzluZZOsEp/UtF1to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com; spf=pass smtp.mailfrom=criticallink.com; dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b=In8n0jpJ; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=criticallink.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e933a69651dso2112477276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:05:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755878564; x=1756483364; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x+hhnaziEbvfcvK+nslqj/VWqrGu2JLJjIG2S0rWuqQ=;
-        b=PiVc7+0fLRSGjiYBuSZPamCvyujMhSPcA3xBJSg0+VqfnvmRFaQeb2nFfy5szPCikd
-         A8zQtQbQSALxFfxbIn6GSntw9RdTHdTFgQ/6FxyECO70Kg8xk0ijNZitRxLzclNa9PcO
-         AbvMURGyyggjMAxv6zg+C9Pi33LJCZimYuEokyPorYycA0YRbU9BjIH8v9RGac9dGQQ3
-         vpjJIF9yeRSV9V9adZTdfDhJ1RpxQ2pNewkmRQPQXqBv+FqzRG/VHrnCyk9bqMU3el3h
-         loIkqhqcJ8aTNdHseVhvt1SuRaYEX1Xgypqw3QxA3zsZtfjNrT5HAiW7s9ukY/mKGVyo
-         LtIA==
+        d=criticallink.com; s=google; t=1755878722; x=1756483522; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z9ay14s/9V/qQ+ANLBTM1wZMlblZsd2ot35thfa768U=;
+        b=In8n0jpJeZw3IerTldJywqjCxyAgysO/HvdzNYUGcsnZ795H5g3mDLMMoD/kTwuYJv
+         dNL8V6j7rxcSnlJZ/63LIEb3DMZ+81gcExDdShyDWF2lIBXVY2FYwNPDzMgvZp/Gs/pG
+         Wue/PC+eNHjHv8Bki+x5CeO/JcmTzUd/JMTM+KMvgLCoKx8tOVo8UnPCDP1qw4ZXGgWK
+         q7KstIYDlmKdToeb62tgrlyH557Em1lxgZrXQbsaQtHcV5aQlFlJi6gk2finmJCeOUcE
+         qnM9GRV46pk6C5jqcfoEuqlwpCe/ItXrfzPT8znv2xjsmpRQJ5iHO8V90dWmEFqopjaK
+         /cKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755878564; x=1756483364;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x+hhnaziEbvfcvK+nslqj/VWqrGu2JLJjIG2S0rWuqQ=;
-        b=uft/VNRTcpeM7y2H8BY9VEFrXS/bEVHAYTk/5d6g/NxIGrbbLL6l1Zf5zu607aR75h
-         65M52ytOAaVv5MYdbFMteeHOsN4pU+2hJE7U+eWOKgzjrIWcxxnkC5kTIpcMnkpRdXvW
-         I1ICHIqALh0Qwau3n6Mts9Lj26rfXk1QJjsx4+Cu+TcdvVPwTXgmK+ooMlGZDIPsErre
-         sDyLauE83oDnluYT+GjKkzAu4uXq30qRVED0TGM7jvQbgZ5JBN5bRlQt38bMEjhoLW2O
-         wOLBVwqqLftCQFtCNUiDf+yg4cfNGy8iTCqpyqBwYdLw1DC8b+J1Kq62ZWQEMe9jkW1d
-         hdpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8hdu3g+Lqdij5Tv3f6W2GB0ZpO6SYJQ+hGnCPviK+ndi7huCb20JwLvfZDxOwcmjP9W9Bkw95@vger.kernel.org, AJvYcCUfvRPhuhp5YnZAn0RiEE8JbM8ADIC+4ARTyPb/k9wjAuVhfkvGI5Qk940dHNF3HVL8xj/v9rQI9U1Q@vger.kernel.org, AJvYcCXENbh3fki6I4awF52RGQ0tdKEBz1uuxntXH9Cpv6GCYq85zojC1lBa8kKSli7UQm3xNKT5s4/SvUFdNpXx@vger.kernel.org
-X-Gm-Message-State: AOJu0YztootUYyk+HosBxCET9hipQw+f0SX7rwbnY7zY0p4KI/VRcasm
-	whIWK6RqPkvuXxFqfM/orOxC/uSnU5kcRYmboLtfQ8NN9uEy7a5NdnHr
-X-Gm-Gg: ASbGnctthQbVDB6C+9x0EQ/dqkdocBvN6e4GS1TpTzHy+iqEZw1Y0dfn6GEtdb7eJET
-	NDfGLCJlRI9ZchpEXCBDQQYYiSeNJFPTzurwzdTcNbYRxCASfVA+m76D7vYmBRLwRnnYATRqNsL
-	2sE6fk/f2vjJoQjNDvhKSXeRNnLq+BNkOfG3hwoAcjRKRvcnVU5+j0nehLS/DtHNXtdk8XFj+lv
-	i2DqPelXOPOQsSMxjjn6ULwAMqSFIyMiV9OBBH3CvPoqfTGTpH+UlI5fd1jp0Yx4H1VqpcgAwjb
-	qaLgStXzDnrNPvE1gkOJQbVwEeHagpAMSGiPoVMpKLE3LbGf/eErEjXwwb15PDCeRKkRIaeiHIs
-	dOTct71w9IDxNsi10o6b9xM0DJgH7
-X-Google-Smtp-Source: AGHT+IGQszajDGNQAKf7QN48qEfm9n4yUiAaOTXLuqd4oLvJ2QirlJ8t5DPSvNvccFn1KcRv53kJsg==
-X-Received: by 2002:a05:6512:220f:b0:55b:2242:a9d8 with SMTP id 2adb3069b0e04-55f0d36fademr679617e87.7.1755878564032;
-        Fri, 22 Aug 2025 09:02:44 -0700 (PDT)
-Received: from [10.214.35.248] ([80.93.240.68])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35c02c89sm37612e87.34.2025.08.22.09.02.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 09:02:43 -0700 (PDT)
-Message-ID: <2fb52098-3952-48f1-b6c3-bbc95ce00d8d@gmail.com>
-Date: Fri, 22 Aug 2025 18:02:40 +0200
+        d=1e100.net; s=20230601; t=1755878722; x=1756483522;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z9ay14s/9V/qQ+ANLBTM1wZMlblZsd2ot35thfa768U=;
+        b=f5WjCbjQMFY4cnK3u22kqtF3iYchDzsSfdaiuatuOvje78ufYJlpPuO4PyvBnNFT6i
+         hT/zJpqqyKHDiMqsdQqY3Kw3jamZLujhTXiOSyDB+DM+9iSBw6dZj5itoW4BcfUWd05L
+         pFeN7W6h5Lk7kptME4uq0Q+gMAIq55ErLNFgpM/n/ZOOIS2ylbLB04kGiZYtdSUcM1WF
+         7HkMcthcRhd06zUayDNFOj/AzjRo94nWPJSmIPzXq1lqHOrPKSk1atE8RWmjCNpsb7FE
+         ohTD5cYbQ4p7jAlxmUOm25/4l4dCO5hMWLs2J1gJLlXp8XF3bwD/k4cKNCIAUCHkahKb
+         nNJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrbnRT6/oGpk3buQpSXV5RDzv+AMwENDYTbx4vNhLBgLe5CajihnY8+KNL2nBPQaUff671Ou4LklT0z5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2U60r/iMeLn7JFaaEcdffSebgKPWuUxsYyRT+IvU8s9Y71HjV
+	IQ87wryaE3wfvIAooLiknxmsrYSAwUBf40r0ZTYkyzPEURUvOuddvR17HNUpYvO6/U+nxriLy9A
+	1WZ+ZsP1hj40qDCu8Rq1Tao9pGtqrY3qgpgOOm2fG
+X-Gm-Gg: ASbGnctTHWiAcKA9B53fd+JFtoNIkPEkWFI5hOsQePtMCUPFxrhrwjXsZ+Y/ypEYGgl
+	oH3E+bVNqGa1isrzlUGUAY/sci2j779kUjaAYkFKULUzBTUPor8fcEH1fKLFwF5zTSspSqRSSKS
+	QJppmTpdBw4oQYIfjkVlTFa3SBXlnRv+eb/izayxTRGdHuu4i3gpSfjj34p14YAJXnRF1VO2OYb
+	z1lXiGAcCaeGYzk
+X-Google-Smtp-Source: AGHT+IHgFTGiiSlutHh4BL3I8depbE5xMZ+e6c8q12fxs01ieSpD8QPNtz+yDLXoQoUT5WYYo25pHgJxdtdfDhYXg48=
+X-Received: by 2002:a05:6902:6b11:b0:e94:dac7:25a1 with SMTP id
+ 3f1490d57ef6-e951c3d6404mr4039931276.37.1755878721193; Fri, 22 Aug 2025
+ 09:05:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: fix KASAN build error due to p*d_populate_kernel()
-To: Harry Yoo <harry.yoo@oracle.com>, Dave Hansen <dave.hansen@intel.com>
-Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org, andreyknvl@gmail.com,
- aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, apopple@nvidia.com,
- ardb@kernel.org, arnd@arndb.de, bp@alien8.de, cl@gentwo.org,
- dave.hansen@linux.intel.com, david@redhat.com, dennis@kernel.org,
- dev.jain@arm.com, dvyukov@google.com, glider@google.com,
- gwan-gyeong.mun@intel.com, hpa@zyccr.com, jane.chu@oracle.com,
- jgross@suse.de, jhubbard@nvidia.com, joao.m.martins@oracle.com,
- joro@8bytes.org, kas@kernel.org, kevin.brodsky@arm.com,
- linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, lorenzo.stoakes@oracle.com, luto@kernel.org,
- maobibo@loongson.cn, mhocko@suse.com, mingo@redhat.com, osalvador@suse.de,
- peterx@redhat.com, peterz@infradead.org, rppt@kernel.org,
- ryan.roberts@arm.com, stable@vger.kernel.org, surenb@google.com,
- tglx@linutronix.de, thuth@redhat.com, tj@kernel.org, urezki@gmail.com,
- vbabka@suse.cz, vincenzo.frascino@arm.com, x86@kernel.org,
- zhengqi.arch@bytedance.com
-References: <20250821093542.37844-1-harry.yoo@oracle.com>
- <20250821115731.137284-1-harry.yoo@oracle.com>
- <3976ef5d-a959-408a-b538-7feba1f0ab7a@intel.com> <aKfDrKBaMc24cNgC@hyeyoo>
-Content-Language: en-US
-From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-In-Reply-To: <aKfDrKBaMc24cNgC@hyeyoo>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250820-linux_master_ti_sci_trace-v1-0-2a69c0abf55e@criticallink.com>
+ <e11fd419-1095-471e-a57f-fc5ff7ce713a@ti.com>
+In-Reply-To: <e11fd419-1095-471e-a57f-fc5ff7ce713a@ti.com>
+From: Jon Cormier <jcormier@criticallink.com>
+Date: Fri, 22 Aug 2025 12:05:08 -0400
+X-Gm-Features: Ac12FXzPWOvD617AZlYm2nxRItTWDQkM1o-McCwfQKhcE5NzzuigmYKXVsFHZVI
+Message-ID: <CADL8D3aR_ecr4q54cX7yfr_aDPA7NhXmLhkiHjUY9MjNZeg78Q@mail.gmail.com>
+Subject: Re: [PATCH 0/2] PATCH: firmware: ti_sci: Add trace events to TI SCI
+To: Andrew Davis <afd@ti.com>
+Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Aug 20, 2025 at 4:04=E2=80=AFPM Andrew Davis <afd@ti.com> wrote:
+>
+> On 8/20/25 1:10 PM, Jonathan Cormier wrote:
+> > Add trace events to help debug and measure the speed of the
+> > communication channel.
+> >
+> > Add parsing of the messages types but I am not sure how to parse the
+> > flags, since the REQ and RESP flags conflict. Left as seperate commit t=
+o
+>
+> The REQ and RESP flags should be handled by different TRACE_EVENTs. Right
+> now you only dump the content of the response messages (the ones in
+> rx_callback), also tracing what is sent is just as important, so you
+> might want to add slightly different ti_sci_msg_dump EVENT for the
+> sending side which uses the different REQ flag parser.
 
 
+Does it make sense to have seperate trace events, one that only decode
+the hdrs and ones that also include the buffers?
 
-On 8/22/25 3:11 AM, Harry Yoo wrote:
-> On Thu, Aug 21, 2025 at 10:36:12AM -0700, Dave Hansen wrote:
->> On 8/21/25 04:57, Harry Yoo wrote:
->>> However, {pgd,p4d}_populate_kernel() is defined as a function regardless
->>> of the number of page table levels, so the compiler may not optimize
->>> them away. In this case, the following linker error occurs:
-> 
-> Hi, thanks for taking a look, Dave!
-> 
-> First of all, this is a fix-up patch of a mm-hotfixes patch series that
-> fixes a bug (I should have explained that in the changelog) [1].
-> 
-> [1] https://lore.kernel.org/linux-mm/20250818020206.4517-1-harry.yoo@oracle.com
-> 
-> I think we can continue discussing it and perhaps do that as part of
-> a follow-up series, because the current patch series need to be backported
-> to -stable and your suggestion to improve existing code doesn't require
-> -stable backports.
-> 
-> Does that sound fine?
-> 
->> This part of the changelog confused me. I think it's focusing on the
->> wrong thing.
->>
->> The code that's triggering this is literally:
->>
->>>                         pgd_populate(&init_mm, pgd,
->>>                                         lm_alias(kasan_early_shadow_p4d));
->>
->> It sure _looks_ like it's unconditionally referencing the
->> 'kasan_early_shadow_p4d' symbol. I think it's wrong to hide that with
->> macro magic and just assume that the macros won't reference it.
->>
->> If a symbol isn't being defined, it shouldn't be referenced in C code.:q
+I'm bothered by the code duplication, but am trying to convince myself
+it doesn't matter.
 
+Currently, with the above updates, if you enabled all the traces,
+you'd see something like:
 
-That's not exactly the case for the kernel. It historically relied on being
-compiled with optimization and compiler being able to eliminate unused references.
-AFAIR BUILD_BUG_ON() works like that, there are also plenty of code like
+[15.579036] ti_sci_xfer_begin: type=3DSET_DEVICE_STATE host=3D0C seq=3D00
+flags=3D00000402 status=3D0
+[15.xxxxxxx] ti_sci_tx_msg_dump: type=3DSET_DEVICE_STATE host=3D0C seq=3D00
+flags=3D00000402 data=3D<data>
+[15.587595] ti_sci_rx_callback: type=3DSET_DEVICE_STATE host=3D0C seq=3D00
+flags=3D00000002 status=3D0
+[15.xxxxxxx] ti_sci_rx_msg_dump: type=3DSET_DEVICE_STATE host=3D0C seq=3D00
+flags=3D00000002 data=3D<data>
+[15.606135] ti_sci_xfer_end: type=3DSET_DEVICE_STATE host=3D0C seq=3D00
+flags=3D00000002 status=3D0
 
-if  (IS_ENABLED(CONFIG_SOMETHING))
-	ptr = &something;
-else
-	ptr = &something_else; 
+Presumably if you were worried about timing, you'd disable the
+msg_dumps, avoiding the extra memcpy's.  And if you only cared about
+the data being sent, you'd only enable the msg_dumps.  Does this make
+sense / is it worth the extra trace calls?
 
-e.g. irq_remaping_prepare();
+Or removing the buffer decoding in the msg_dumps, removes the duplication:
 
+[15.579036] ti_sci_xfer_begin: type=3DSET_DEVICE_STATE host=3D0C seq=3D00
+flags=3D00000402 status=3D0
+[15.xxxxxxx] ti_sci_msg_dump: data=3D<data>
+[15.587595] ti_sci_rx_callback: type=3DSET_DEVICE_STATE host=3D0C seq=3D00
+flags=3D00000002 status=3D0
+[15.xxxxxxx] ti_sci_msg_dump: data=3D<data>
+[15.606135] ti_sci_xfer_end: type=3DSET_DEVICE_STATE host=3D0C seq=3D00
+flags=3D00000002 status=3D0
 
-> 
-> A fair point, and that's what KASAN code has been doing for years.
-> 
->> The right way to do it is to have an #ifdef in a header that avoids
->> compiling in the reference to the symbol.
-> 
-> You mean defining some wrapper functions for p*d_populate_kernel() in
-> KASAN with different implementations based on ifdeffery?
-> 
-> Just to clarify, what should be the exact ifdeffery to cover these cases?
-> #if CONFIG_PGTABLE_LEVELS == 4 and 5, or
-> #ifdef __PAGETABLE_P4D_FOLDED and __PAGETABLE_PUD_FOLDED ?
-> 
+Or do condense the trace calls so they all have the data into something lik=
+e:
 
-I think ifdef should be the same as for symbol, so '#if CONFIG_PGTABLE_LEVELS > 4'
-for *_p4d and '#if CONFIG_PGTABLE_LEVELS > 3' for *_pud
+[15.579036] ti_sci_xfer_begin: type=3DSET_DEVICE_STATE host=3D0C seq=3D00
+flags=3D00000402 status=3D0  data=3D<data>
+[15.587595] ti_sci_rx_callback: type=3DSET_DEVICE_STATE host=3D0C seq=3D00
+flags=3D00000002 status=3D0 data=3D<data>
+[15.606135] ti_sci_xfer_end: type=3DSET_DEVICE_STATE host=3D0C seq=3D00
+flags=3D00000002 status=3D0
 
-
-> I have no strong opinion on this, let's hear what KASAN folks think.
-> 
-
-So, I think we have following options:
-
-1. Macros as you did.
-2. Hide references in function under  '#if CONFIG_PGTABLE_LEVELS > x', like Dave suggested.
-3. It should be enough to just add if in code like
-            if (CONFIG_PGTABLE_LEVELS > 4)
-		pgd_populate_kernel(addr, pgd,
-                                          lm_alias(kasan_early_shadow_p4d));
-Compiler should be able to optimize it away.
-
-4. I guess that the link error is due to enabled CONFIG_DEBUG_VIRTUAL=y
-lm_alias() ends up with __phys_addr_symbol() function call which compiler can't optimize away.
-Technically we can declare __phys_addr_symbol() with __attribute__((pure)), so compiler will
-be able to optimize away this call, because the result should be unused.
-But I'm not sure we really want that, because it's debug function and even if the result is unused
-we might want to still have a check if symbol address is correct.
+Simplifying the code in the trace header.
+>
+>
+> Andrew
+>
+> > make it easier to drop or make changes depending on comments.  The two
+> > commits should squash easily.
+> >
+> > Nishanth Menon and Vignesh Raghavendra requested I send this patch
+> > upstream.
+> >
+> > Signed-off-by: Jonathan Cormier <jcormier@criticallink.com>
+> > ---
+> > Jonathan Cormier (2):
+> >        firmware: ti_sci: Add trace events
+> >        firmware: ti_sci: trace: Decode message types
+> >
+> >   MAINTAINERS                     |   1 +
+> >   drivers/firmware/Makefile       |   3 +
+> >   drivers/firmware/ti_sci.c       |  11 +++
+> >   drivers/firmware/ti_sci_trace.h | 146 +++++++++++++++++++++++++++++++=
++++++++++
+> >   4 files changed, 161 insertions(+)
+> > ---
+> > base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+> > change-id: 20250709-linux_master_ti_sci_trace-91fd2af65dca
+> >
+> > Best regards,
+>
 
 
-I would probably prefer 3rd option, but I don't really have very strong opinion, so either way is fine.
+--=20
+Jonathan Cormier
+Senior Software Engineer
 
+Voice:  315.425.4045 x222
+
+http://www.CriticalLink.com
+6712 Brooklawn Parkway, Syracuse, NY 13211
 
