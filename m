@@ -1,55 +1,75 @@
-Return-Path: <linux-kernel+bounces-781021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F588B30C68
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:17:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D09B30C6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1FA77B597A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:15:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 741301BA3C69
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC67E289E13;
-	Fri, 22 Aug 2025 03:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B759C28A1D5;
+	Fri, 22 Aug 2025 03:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="b+F0ocoU"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="5OuwMnFk"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57E5271447;
-	Fri, 22 Aug 2025 03:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1ED22578A;
+	Fri, 22 Aug 2025 03:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755832612; cv=none; b=BrqSUzsB4QYxvIChyrvlBEAFAOqadF3Yb20RHMnyujfDo5jJreVKWcqYCSLL3KJnXEBcK9MYId3D+LP6B+D01VSPOR6x3FyZf36d0DSNe70FhBWLZZnIwsVVVBTdeqe/RI/Ef57rBmxEJ66EAmW2EEja2rUnfrL+5ImHzyb65s4=
+	t=1755832672; cv=none; b=lswpjXUpDyMqGHp+ompfrH2xGvJD6sCuypj5JzSECRW0mSVO4Wdb9NTxnl2wWWSL2brf+ECob/mCu6Tc/wXP/60kBDHIam498FY/IpEKa6lfFQtDHa4LfNdAl4QFQYxbPRYrvXi0CjdZIQvJ7lc197qRiaVOG46j86c1rFyaNuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755832612; c=relaxed/simple;
-	bh=L1H0EdWPh644U3jURwUkeyJqGTXjRwksAEYYAUbMyPY=;
+	s=arc-20240116; t=1755832672; c=relaxed/simple;
+	bh=U91kuvG7t2D2eG/kbuTSn6ZjVILpojBxiIDh8I8Ofbw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lzVZRajRtbS+sFiFvBoYWxejRuy1uxRn7V1wwkQYMejDUtiKiX+dcbbIHK6mCffJr0LOxFeI+BuQBd7I4JXxAsfN/DYu3NaSueN0mxabhLiJvQ3auozDrhXwYGBgQ/oGf46mtha+G3hBDGkYvz26rx+SX8ScNtcMz0HNM4q9e8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=b+F0ocoU; arc=none smtp.client-ip=1.95.21.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=9Y5z/0H5fJJc4dRc+K5nieP3CrPw2M6u68DtSwXj2A4=;
-	b=b+F0ocoUgiT/Md9GnxolGWs1nmad/3q4h/fpptL8K/uxxdKpuCEVVd7Jyw0QrW
-	AhiZgN3GOfcCs03MhJjaRisD6xWaQLtDjGKhMJwjUUeiXoXP9lWUVNUnDxYwCXmI
-	g/3N+7FCo/3KtpM1TUL48BGbJyfKpCotJR5oefyBgdfjQ=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDnHvf74KdoHr0kAw--.6236S3;
-	Fri, 22 Aug 2025 11:16:12 +0800 (CST)
-Date: Fri, 22 Aug 2025 11:16:10 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/10] ls1021 DT fixes
-Message-ID: <aKfg-nqgbsBX-i2y@dragon>
-References: <20250725061339.266125-1-alexander.stein@ew.tq-group.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tz8Gn04RPH41IzdOIAWn8LV9z6CtIH9vpxziO9Cpk/JMXuNFZryUpjgHdAjKEtuvVF632g/JKj6tKKSFSek5UyvOE4TiCqlvOK+MMF6EAf7zUREuGfmqa7T8M67K4y653NIZY4ZgeSHNBh1ndGM0HrI+p4H3YALGYPkUb8wj/Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=5OuwMnFk; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=FQHWCj2G7uE0VQTePlKYzggszJQgMhjnofu5HSi2Vew=; b=5OuwMnFk8XspHeSWT5qjK0jRrg
+	C0ctkC7F0t/TaaLvA8Rr/qlr4y6DSI/6ALz5iiVOM4Uf4PUAurNE49I9LOCAHJClYQK3D+vGHkPse
+	NOT9YoUvBtM6e8cRThEI7IZ4FAJqJrCOXw5YOaKpl45cH8SYNgZzrHQ8wAVoZsVq7jno=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1upIHZ-005X48-JB; Fri, 22 Aug 2025 05:17:37 +0200
+Date: Fri, 22 Aug 2025 05:17:37 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: =?utf-8?B?5p2O5b+X?= <lizhi2@eswincomputing.com>
+Cc: weishangjuan@eswincomputing.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, rmk+kernel@armlinux.org.uk,
+	yong.liang.choong@linux.intel.com, vladimir.oltean@nxp.com,
+	jszhang@kernel.org, jan.petrous@oss.nxp.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
+	boon.khai.ng@altera.com, dfustini@tenstorrent.com, 0x1207@gmail.com,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, ningyu@eswincomputing.com,
+	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: Re: Re: Re: Re: Re: [PATCH v3 2/2] ethernet: eswin: Add eic7700
+ ethernet driver
+Message-ID: <548973df-2fa8-4502-9f7c-668d0eeb16c6@lunn.ch>
+References: <c212c50e-52ae-4330-8e67-792e83ab29e4@lunn.ch>
+ <7ccc507d.34b1.1980d6a26c0.Coremail.lizhi2@eswincomputing.com>
+ <e734f2fd-b96f-4981-9f00-a94f3fd03213@lunn.ch>
+ <6c5f12cd.37b0.1982ada38e5.Coremail.lizhi2@eswincomputing.com>
+ <6b3c8130-77f0-4266-b1ed-2de80e0113b0@lunn.ch>
+ <006c01dbfafb$3a99e0e0$afcda2a0$@eswincomputing.com>
+ <28a48738-af05-41a4-be4c-5ca9ec2071d3@lunn.ch>
+ <2b4deeba.3f61.1985fb2e8d4.Coremail.lizhi2@eswincomputing.com>
+ <bad83fec-afca-4c41-bee4-e4e4f9ced57a@lunn.ch>
+ <3261748c.629.198cfa3bc10.Coremail.lizhi2@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,30 +78,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250725061339.266125-1-alexander.stein@ew.tq-group.com>
-X-CM-TRANSID:Ms8vCgDnHvf74KdoHr0kAw--.6236S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Gr4rZrW8Gr1rWw13uF1kAFb_yoWxZwc_G3
-	ZxG3WxAr1UC3yjyr45Was2vF9rKr4q9r43GFy3CrnxJF9xKF43Was0y3W5uF1UZFZavr9r
-	Jrs5CryjqryavjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjahF7UUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNB174Gin4P0QdwAA3H
+In-Reply-To: <3261748c.629.198cfa3bc10.Coremail.lizhi2@eswincomputing.com>
 
-On Fri, Jul 25, 2025 at 08:13:25AM +0200, Alexander Stein wrote:
-> Alexander Stein (10):
->   ARM: dts: ls1021a: Fix gic node unit address
->   ARM: dts: ls1021a: Fix qspi node unit address
->   ARM: dts: ls1021a: Fix sai DMA order
->   ARM: dts: ls1021a: Fix FTM node
->   ARM: dts: ls1021a: Add reg property to enet nodes
->   ARM: dts: ls1021a: Remove superfluous address and size cells for
->     queue-group
->   ARM: dts: ls1021a: remove undocumented 'big-endian' for
->     memory-controller node
->   ARM: dts: ls1021a: Fix watchdog node
->   ARM: dts: ls1021a: remove property 'snps,host-vbus-glitches'
->   ARM: dts: ls1021a: remove undocumented 'big-endian' for
->     memory-controller node
+> We re-tuned and verified that setting the TXD and RXD delays to 0 and
+> configuring TXEN and RXDV to 0 yielded the same hardware performance as
+> long as we only applied delays (e.g. 200ps) to TXCLK and RXCLK.
 
-Applied all, thanks!
+This is in addition to phy-mode = 'rgmii-id'?
 
+> Therefore, in the next patch, we will drop the vendor-specific properties
+> (e.g. eswin,dly-param-*) and keep only the standard attributes, namely
+> rx-internal-delay-ps and tx-internal-delay-ps.
+> Is this correct?
+
+Yes, 200ps is a small tuning value, when the PHY adds the 2ns. This is
+O.K.
+
+	Andrew
 
