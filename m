@@ -1,199 +1,1312 @@
-Return-Path: <linux-kernel+bounces-781298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B155B310A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:43:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96D6B310B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6CEC1CE1B14
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:43:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22FD8AC4A0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368FF2E92BF;
-	Fri, 22 Aug 2025 07:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F5B2E9EB9;
+	Fri, 22 Aug 2025 07:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sXX1IQoq"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="R3sNsn+b"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B532E229D;
-	Fri, 22 Aug 2025 07:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7692E762C
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 07:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755848596; cv=none; b=HTYwZSnsrmlcXN5b8mMkf5k0GPZz79XWVtbmUWMOxNFEbX5hqTWO/+AnCR652ETUF/mUxhuR8iIn/NgLvsAsKnSR8KGTPi6xAhg12q5cgDhCZY1YTvUH2kE/4Aw7ytuxzAhKaa7k8sVvmAtn6wqQe1VVEc8ilYjVxqsDhl3l6d8=
+	t=1755848620; cv=none; b=gd0WvvTmaJJc7l8lYWm6tWIQ7LuAocTlSz9ACz32PftSYGMtY6d57DOMvLTSGHgOjVTNMki0RZwkUF7A25KVr4Uwv+02xRsowwvx0eG3pwssKPNZqo4w0oZW15Bt1+wVY8Tc3CMn3B67hVGvpoKfGLoYgHEW6XWV4GAPR4134Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755848596; c=relaxed/simple;
-	bh=EbV5ZwK76yRaX2YU8pGwtU6PlsHCYwIkBZ8tDvvy2Ks=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IOeorxC2e1OnR3ThSy0AaKKk8qNuiieOPrfBvXKTRTFc4yxUWEllm6Dznzjl9Jj6YUjbDdbq+nDjNqbBBt3d8/UWaJFqrPrvZJnYiSwgAwErwj6fpAzrPUMLdHeMgyxnI1QysKM7OhTfHAAugD2ecOD+ICPqBIVif4TirjzcWMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sXX1IQoq; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EbV5ZwK76yRaX2YU8pGwtU6PlsHCYwIkBZ8tDvvy2Ks=; b=sXX1IQoqarGErQo+lsy64ywPXi
-	FObIEuHZw1P2rKpuU3OZS/B5d/X7o9UEGTrlxJKku9RrUtaLyVfg9nTn3eTkT6vrWj+yjsa4FMj75
-	OID4YRitCDg8gsDmNi5WEz8YO/VsYcioknChj3lRx6CWQwgbrfXzJpbnWi7W1MF/5zCHel07kMCJ9
-	4dG5FDQvwdwAgzSrNOEy1i3kbzQcMReh916AN5gcpRp9qQRU5taLpG88tf/fxLKdSDHH+1nvlDkrh
-	RxSNYRWDTsjBYbOAc4m7YWQuFz2+iQnl0UwWrpXrgISqu8xPF9bRjtsIy7pJXA3U91b3bKAAM1Rm3
-	n77uX1iA==;
-Received: from 54-240-197-235.amazon.com ([54.240.197.235] helo=u09cd745991455d.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1upMQQ-000000055P2-479b;
-	Fri, 22 Aug 2025 07:43:03 +0000
-Message-ID: <0086c70c375089245b5abd120f22c0af8b6cf0c2.camel@infradead.org>
-Subject: Re: [PATCH net-next v4] ptp: add Alibaba CIPU PTP clock driver
-From: David Woodhouse <dwmw2@infradead.org>
-To: Wen Gu <guwen@linux.alibaba.com>, Richard Cochran
- <richardcochran@gmail.com>,  Jakub Kicinski <kuba@kernel.org>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	pabeni@redhat.com, xuanzhuo@linux.alibaba.com, dust.li@linux.alibaba.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner
-	 <tglx@linutronix.de>
-Date: Fri, 22 Aug 2025 08:43:02 +0100
-In-Reply-To: <b4c54718-648b-44e6-baed-2a08f287c24a@linux.alibaba.com>
-References: <20250812115321.9179-1-guwen@linux.alibaba.com>
-	 <20250815113814.5e135318@kernel.org> <aKd8AtiXq0o09pba@hoboy.vegasvil.org>
-	 <91008c3cd2502b3726992b0f490aac54a1efa186.camel@infradead.org>
-	 <b4c54718-648b-44e6-baed-2a08f287c24a@linux.alibaba.com>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-YEI+uQnV9/cfSWuUlOWe"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1755848620; c=relaxed/simple;
+	bh=Ikwh/K19QoCjnCMMmxyLPcXDn5VqsTxkEdUWHnJ7+qI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h3PmigP7HiJsL6LL4aDNav5g08fCwX0qB1BQQA8xN8A+88cJnwJgbCn1C/vtFeSlVWiIF12uMRMswhpPpBl8j3+PC/By0QhYV2SY3Zp41fCteMB3olfxqXiLlBUatqHAZr0RLAdfhxbPi9uNOTpxpkx0JIXc/USDsfLVtqBxQc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=R3sNsn+b; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57M6ugOa021883
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 07:43:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	AQRqNZG2//DZ3wJyjNxPaUfJ1tg1vlmdck5Ls1pNlhw=; b=R3sNsn+bX2usV0xN
+	mktwoxJ0C3iTiSIFrWH9+Ygc7NU+fbuTVqhZVsfSQ78oPE4zflWtX4KaUwYYVk6E
+	2uQrdvVmmbY2CyUq6pNW1foMzYwMLVrDwDyCWVrbBg/ynYRMQykEzI0fSkgKdyEB
+	4f1hHVV0iULwsK8XCNRo+1xVnas15cwJuwiF2nZRLNDfjCf4yY7qq6TZZTrT2Aej
+	Q409SmVQ65qlvwRc3IjXpSb6JB4MRvtRv3L/+usdbDpaSXTs95T/wVNKRHoxsoVa
+	mxsAAEsWJlni7Li7E4IUlA0UqQeoWb+Div9vvzfkr7MD2k829/Yg/S3X1PsE0O9+
+	JUXuZA==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52agbqr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 07:43:36 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-246164c4743so27092855ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 00:43:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755848616; x=1756453416;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AQRqNZG2//DZ3wJyjNxPaUfJ1tg1vlmdck5Ls1pNlhw=;
+        b=XDRZK7W8V5Q0lCNNf800NLv+hAq24fA+4FjrZZMSeBOjiUHiayes25DvrpFg3xrtEQ
+         cQn3bp1vpWFkXPi8QCf9ZaXmglaTX1Wrv2uNEGzTmoV9Xg97j2p6Vu/8llETMd36a9qE
+         LSlexswXwg3LfNUYYsTme8pOU1iw0O2tbatZH1Vnz5gWVc+Z0kOMUiOO0VVx58cArsrz
+         seZWl/K2uINRVxBmri/lf44ZLmyQ9f89AgCk6Kwgm8cNVqeURyKDZ08rf+zTv7ubTvRK
+         NqNDSNvP7TA6JNRV/sKCOSkk10Wv/nldbsd/DkFiuJHE4P+O24kccXb1F0U9VJFRIPDd
+         uHbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrNNG8n7STIYRyfR8wwHnLAmJQfpBrBeL1yyr9Gae5bIzG8j47DI74Wk9UhHuuv1PHfXhXw6KvFAlRxE4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx012jZPavkRlnJqHGgFGuH5faYlzSqfw84Mqqus7b34I89A8Cf
+	NDRl8bSzUhVyIX9tH9myUwMCLhvd06/u2GdVmZHh0Q7/FzgIkbfZ/DyoX/bP0xTiTKr6sxKTZY/
+	an7M8lUKdKSghev0eEV7CH2/gZBw2APcasGpQB0WncmL+fX/rbGPG0xaeRDr2G5TiCbc=
+X-Gm-Gg: ASbGncsqSybP5LF6DjGMJBkLEX4HWdchWaqeF+jxj8/v9SW2eBQ+zecM7QoBx7SHgVf
+	3y8KLyrcHl6Pb6l8gIhpmvpuKpO5TR76J30xWoBNSRQ8ZCChLw1V0RvruQ/tL9XJFg6mdQMWQpv
+	4F4D5euHkH+ktNNB0Mc7IPY2qRTdrngnXMsBRb33KOGCOqhmHmjhGSh+S/8p3gzGGY1eg7wOTgf
+	vbIwxGkTCU/lnKpLgPMuDXgypjnpPBC6GHJE0zzVGoBTQljbB8Q3YpXKNXPCh/sYORGHZwbn0k2
+	H9VG5qPzTw2HuHMGSjQo1ZDwkHRmXvvogs7hIY7DcNyLN9B5Xd7UBAHLI4Z5lQ/54rIEf/IenTO
+	c
+X-Received: by 2002:a17:903:187:b0:235:ec11:f0ee with SMTP id d9443c01a7336-2462eded8bbmr27447225ad.14.1755848615479;
+        Fri, 22 Aug 2025 00:43:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE20e6UZA+wXJUvCPjYKw02691NqvNTrPfWOFo46crrppUBx58+9yfDjIfusZlXR55rnIHKyw==
+X-Received: by 2002:a17:903:187:b0:235:ec11:f0ee with SMTP id d9443c01a7336-2462eded8bbmr27446825ad.14.1755848614618;
+        Fri, 22 Aug 2025 00:43:34 -0700 (PDT)
+Received: from [192.168.0.107] ([49.205.250.143])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed33c5d7sm75718195ad.10.2025.08.22.00.43.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Aug 2025 00:43:34 -0700 (PDT)
+Message-ID: <cc84140e-744f-dc45-6911-3cd949e8af36@oss.qualcomm.com>
+Date: Fri, 22 Aug 2025 13:13:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH v5 2/5] soc: qcom: geni-se: Add support to load QUP SE
+ Firmware via Linux subsystem
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        konradybcio@kernel.org, johan+linaro@kernel.org, dianders@chromium.org,
+        agross@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-spi@vger.kernel.org, mukesh.savaliya@oss.qualcomm.com,
+        quic_anupkulk@quicinc.com
+References: <20250624095102.1587580-1-viken.dadhaniya@oss.qualcomm.com>
+ <20250624095102.1587580-3-viken.dadhaniya@oss.qualcomm.com>
+ <urxfw4jpbj6vp2rkem5iz6bweckwengtpgnndc7manqn4r6ant@md757inw7j6w>
+Content-Language: en-US
+From: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+In-Reply-To: <urxfw4jpbj6vp2rkem5iz6bweckwengtpgnndc7manqn4r6ant@md757inw7j6w>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: GrB8O2EA_KFhNt0Ca1E--WjmRoriTLIC
+X-Authority-Analysis: v=2.4 cv=B83gEOtM c=1 sm=1 tr=0 ts=68a81fa8 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=KwJHXYY1KWTUxMs9SQcMCA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=D9LgZbeUODRVa_6OM3sA:9 a=Qd2liiofRktpUZN0:21
+ a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: GrB8O2EA_KFhNt0Ca1E--WjmRoriTLIC
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX5O4NTL1pip3W
+ noxgSoV9kLnNnS25V4UFLzpbbV5+a+hHq0JglqPxkHecS6olF9OODHVYAwmUwO+Jh3m2/a0V9QE
+ fnDPjEZX/r/nKq3ChJlddUpK1/BpE3GR7VNEqFZ/wsM82lTLarx5XhV/l1Tf2MBY70jzjAKENv9
+ MHP2ovE1D0MqhG5nRxnofrUargK3LBwLwKVC/fD07ZZnNH9FGXuC2gggeKwWPCe/BM89H7GQINR
+ YdxOtry8d3W0DmCwSQCWNKWh1QowyApXXk/JVztK0Z3MQUShVyzPpWj+bG6faCBsvWC+OcA/wAv
+ HwjJ+TFwdltg9ndJrxnw4k8AHMyvLEWh7bSx0uJdc4VItY2qABAM1aa46/tUbrwKV909PXtCcD3
+ 3waU5KWyX6b3tRq7kVT8emuxT2k+pw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_02,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 priorityscore=1501 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 adultscore=0 impostorscore=0 clxscore=1015 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
 
---=-YEI+uQnV9/cfSWuUlOWe
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-08-22 at 10:07 +0800, Wen Gu wrote:
->=20
-> Hi David,
->=20
-> How does vmclock work in a bare=E2=80=91metal scenario, given that there =
-is no
-> guest=E2=80=93hypervisor architecture?
->=20
-> You mentioned "vmclock over PCI", do you mean passing a PCI device to the
-> bare=E2=80=91metal? What is this PCI device, and which driver does it use=
-?
+On 7/17/2025 4:57 AM, Bjorn Andersson wrote:
+> On Tue, Jun 24, 2025 at 03:20:59PM +0530, Viken Dadhaniya wrote:
+>> In Qualcomm SoCs, firmware loading for Serial Engines (SE) within the QUP
+>> hardware has traditionally been managed by TrustZone (TZ). This restriction
+>> poses a significant challenge for developers, as it limits their ability to
+>> enable various protocols on any of the SEs from the Linux side, reducing
+>> flexibility.
+>>
+>> Load the firmware to QUP SE based on the 'firmware-name' property specified
+>> in devicetree at bootup time.
+>>
+>> Co-developed-by: Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>
+>> Signed-off-by: Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>
+>> Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+>> ---
+>> v4 -> v5:
+>>
+>> - Resolved kernel test robot error by including the missing bitfield header file.
+>> - Updated the SE firmware ELF structure name for consistency.
+>> - Specified _leb4 format for the magic number definition.
+>> - Updated the email domain from 'quic' to 'oss'.
+>>
+>> v4 Link: https://lore.kernel.org/all/20250503111029.3583807-3-quic_vdadhani@quicinc.com/
+>>
+>> v3 -> v4:
+>>
+>> - Update the commit message.
+>> - Resolve kernel test robot warnings.
+>> - Add a multiline comment in the Copyright section.
+>> - Remove valid_seg_size and geni_config_common_control functions, and add the code inline.
+>> - Rename read_elf function to geni_read_elf.
+>> - Add a firmware size check.
+>> - Assign *pelfseg after finding a match.
+>> - Break one large condition check into multiple checks to improve code readability.
+>> - Remove return type documentation for void functions.
+>> - Update error messages to be more descriptive.
+>> - Correct indentation.
+>> - Rename geni_flash_fw_revision function to geni_write_fw_revision.
+>> - Remove __func__ from all print statements.
+>> - Move resource_on to the appropriate section after parsing the firmware file.
+>> - Update variable names and function arguments as suggested.
+>> - Use FIELD_GET, FIELD_PREP, and GENMASK.
+>> - Use memcpy_toio() instead of memcpy.
+>> - Remove duplicate registers and bitmask macros.
+>> - Remove rsc struct and add required variables in geni_se struct.
+>>
+>> v3 Link: https://lore.kernel.org/linux-arm-msm/20250303124349.3474185-7-quic_vdadhani@quicinc.com/
+>>
+>> v2 -> v3:
+>>
+>> - Remove code related to the 'qcom,xfer-mode' property.
+>> - Add logic to read the boolean property 'qcom,gsi-dma-allowed' and select the transfer mode.
+>> - Hardcode FIFO mode for the serial driver as GSI mode is currently not supported.
+>> - Update function descriptions as suggested.
+>> - Enhance error handling and remove redundant if conditions.
+>> - Drop the ternary operator.
+>>
+>> v2 Link: https://lore.kernel.org/linux-arm-msm/20250124105309.295769-6-quic_vdadhani@quicinc.com/
+>>
+>> v1 -> v2:
+>>
+>> - Remove the fixed firmware path and add logic to read the path from the device tree.
+>> - Remove code related to the 'qcom,load-firmware' property.
+>> - Resolve kernel test robot warnings.
+>> - Update the commit message.
+>> - Update Copyright year.
+>>
+>> v1 Link: https://lore.kernel.org/linux-kernel/20241204150326.1470749-5-quic_vdadhani@quicinc.com/
+>> ---
+>> ---
+>>  drivers/soc/qcom/qcom-geni-se.c      | 407 +++++++++++++++++++++++++--
+>>  include/linux/soc/qcom/geni-se.h     |  32 ++-
+>>  include/linux/soc/qcom/qup-fw-load.h |  93 ++++++
+>>  3 files changed, 510 insertions(+), 22 deletions(-)
+>>  create mode 100644 include/linux/soc/qcom/qup-fw-load.h
+>>
+>> diff --git a/drivers/soc/qcom/qcom-geni-se.c b/drivers/soc/qcom/qcom-geni-se.c
+>> index 4cb959106efa..ef4997a5fd63 100644
+>> --- a/drivers/soc/qcom/qcom-geni-se.c
+>> +++ b/drivers/soc/qcom/qcom-geni-se.c
+>> @@ -1,11 +1,15 @@
+>>  // SPDX-License-Identifier: GPL-2.0
+>> -// Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+>> +/*
+>> + *  Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+>> + *  Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+> 
+> Please use our updated Copyright header.
 
-It would need PCIe PTM to synchronize against the host's arch timer or
-TSC, which you said you don't have on the CIPU. We don't have PTM
-either, so there is no existing defined PCI device.
+Updated in v6.
 
-I'm in the process of writing up a specification for the vmclock
-device. It doesn't really contain much information that isn't already
-in the QEMU and Linux code; it'll just be an easier way to find it
-rather than reading GPL'd code, which is problematic for some.
+> 
+>> + */
+>>  
+>>  /* Disable MMIO tracing to prevent excessive logging of unwanted MMIO traces */
+>>  #define __DISABLE_TRACE_MMIO__
+>>  
+>>  #include <linux/acpi.h>
+>>  #include <linux/clk.h>
+>> +#include <linux/firmware.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/dma-mapping.h>
+>>  #include <linux/io.h>
+>> @@ -15,6 +19,7 @@
+>>  #include <linux/pinctrl/consumer.h>
+>>  #include <linux/platform_device.h>
+>>  #include <linux/soc/qcom/geni-se.h>
+>> +#include <linux/soc/qcom/qup-fw-load.h>
+>>  
+>>  /**
+>>   * DOC: Overview
+>> @@ -80,9 +85,9 @@
+>>   * common to all the serial engines and are independent of serial interfaces.
+>>   */
+>>  
+>> -#define MAX_CLK_PERF_LEVEL 32
+>> -#define MAX_CLKS 2
+>> -
+>> +#define MAX_CLK_PERF_LEVEL	32
+>> +#define MAX_CLKS		2
+>> +#define MAX_PROTOCOL		6
+>>  /**
+>>   * struct geni_wrapper - Data structure to represent the QUP Wrapper Core
+>>   * @dev:		Device pointer of the QUP wrapper core
+>> @@ -110,28 +115,23 @@ struct geni_se_desc {
+>>  static const char * const icc_path_names[] = {"qup-core", "qup-config",
+>>  						"qup-memory"};
+>>  
+>> +static const char * const protocol_name[MAX_PROTOCOL] = { "None", "SPI", "UART",
+>> +							  "I2C", "I3C", "SPI SLAVE"};
+>> +
+>>  #define QUP_HW_VER_REG			0x4
+>>  
+>>  /* Common SE registers */
+>> -#define GENI_INIT_CFG_REVISION		0x0
+>> -#define GENI_S_INIT_CFG_REVISION	0x4
+>> -#define GENI_OUTPUT_CTRL		0x24
+> 
+> It would be nice if you did the rename and register cleanup in one
+> "dumb" patch and then introduced the new functionality in a second
+> patch.
+> 
 
-I *could* add a PCI transport, but I figured it was easy enough to do
-that later if anyone implements one.
+Created a separate patch and posted v6.
 
---=-YEI+uQnV9/cfSWuUlOWe
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+>> -#define GENI_CGC_CTRL			0x28
+>>  #define GENI_CLK_CTRL_RO		0x60
+>> -#define GENI_FW_S_REVISION_RO		0x6c
+>>  #define SE_GENI_BYTE_GRAN		0x254
+>>  #define SE_GENI_TX_PACKING_CFG0		0x260
+>>  #define SE_GENI_TX_PACKING_CFG1		0x264
+>>  #define SE_GENI_RX_PACKING_CFG0		0x284
+>>  #define SE_GENI_RX_PACKING_CFG1		0x288
+>> -#define SE_GENI_M_GP_LENGTH		0x910
+>> -#define SE_GENI_S_GP_LENGTH		0x914
+>>  #define SE_DMA_TX_PTR_L			0xc30
+>>  #define SE_DMA_TX_PTR_H			0xc34
+>>  #define SE_DMA_TX_ATTR			0xc38
+>>  #define SE_DMA_TX_LEN			0xc3c
+>>  #define SE_DMA_TX_IRQ_EN		0xc48
+>> -#define SE_DMA_TX_IRQ_EN_SET		0xc4c
+>>  #define SE_DMA_TX_IRQ_EN_CLR		0xc50
+>>  #define SE_DMA_TX_LEN_IN		0xc54
+>>  #define SE_DMA_TX_MAX_BURST		0xc5c
+>> @@ -140,9 +140,7 @@ static const char * const icc_path_names[] = {"qup-core", "qup-config",
+>>  #define SE_DMA_RX_ATTR			0xd38
+>>  #define SE_DMA_RX_LEN			0xd3c
+>>  #define SE_DMA_RX_IRQ_EN		0xd48
+>> -#define SE_DMA_RX_IRQ_EN_SET		0xd4c
+>>  #define SE_DMA_RX_IRQ_EN_CLR		0xd50
+>> -#define SE_DMA_RX_LEN_IN		0xd54
+>>  #define SE_DMA_RX_MAX_BURST		0xd5c
+>>  #define SE_DMA_RX_FLUSH			0xd60
+>>  #define SE_GSI_EVENT_EN			0xe18
+>> @@ -179,7 +177,7 @@ static const char * const icc_path_names[] = {"qup-core", "qup-config",
+>>  /* SE_DMA_GENERAL_CFG */
+>>  #define DMA_RX_CLK_CGC_ON		BIT(0)
+>>  #define DMA_TX_CLK_CGC_ON		BIT(1)
+>> -#define DMA_AHB_SLV_CFG_ON		BIT(2)
+>> +#define DMA_AHB_SLV_CLK_CGC_ON		BIT(2)
+>>  #define AHB_SEC_SLV_CLK_CGC_ON		BIT(3)
+>>  #define DUMMY_RX_NON_BUFFERABLE		BIT(4)
+>>  #define RX_DMA_ZERO_PADDING_EN		BIT(5)
+>> @@ -220,12 +218,12 @@ static void geni_se_io_init(void __iomem *base)
+>>  {
+>>  	u32 val;
+>>  
+>> -	val = readl_relaxed(base + GENI_CGC_CTRL);
+>> +	val = readl_relaxed(base + SE_GENI_CGC_CTRL);
+> 
+> Per above comment, this change has nothing to do with firmware loading.
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
-ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
-AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
-BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
-MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
-a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
-jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
-GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
-aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
-nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
-8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
-IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
-KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
-BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
-QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
-QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
-ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
-/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
-uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
-xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
-W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
-c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
-VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
-NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
-DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
-sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
-w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
-i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
-kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
-0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
-ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
-blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
-hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
-VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
-HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
-ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
-AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
-cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
-cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
-AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
-aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
-hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
-iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
-8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
-JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
-xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
-EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
-B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
-MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
-KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
-Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
-nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
-WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
-W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
-nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
-g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
-9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
-9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
-sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
-a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
-ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
-AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
-dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
-MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
-YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
-4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
-6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
-QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
-nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
-MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
-VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
-ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDgyMjA3NDMw
-MlowLwYJKoZIhvcNAQkEMSIEIMMhkHzrVUAWVoPvW/TvZO6qdel3SSpCMOQNQiUrgED9MGQGCSsG
-AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
-cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
-VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
-cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAX3In0XDeovCA
-Vq68tvjYNSRordPWApq967YKlOMSXdd0383cncMP5SKJohy+FphSPDqu8Et/RQYFiXfk0p94b0Bo
-JcQiRBXzcoQEDytYweQZ6LRne+uIkYY/FdqBDwocmWU2byNfUJnBisrM/M7caf34QgBP887CMebD
-0i38UdMlBzpdX3q5tyBmdD1mPRc/vy1ywxJJbUVPEi3z/Ct5R7IewkjyimUpDHpmqerm6ZhGGDZx
-6xsYsBDFA4mNUo1jC9N90PwDc0sbp/lmlytz4LHQ4tX46O9K0i1/g6fe9f2TQit8WksJMR5PseXD
-opX1pL7AigMLzBhlSXKRZVP4aR+pd4AfgPbvFmxSq/R3lvNkIQhgiaK2Io2WzmXeYyMBQ+p7X2e9
-pqHGtrVf8XSMjNDDbLMJaJPTurHCnAj4eOlqGiljwLyyIwJJXBr5+yLpbRk36yEsKv7xcFkEIG2b
-AgDAWoObcoqjeA6DAe/zeGkeP74UGcyJ2REn0RyZp2bv1vHpV7Rj89PtLsKN9RcMSEgB9x0Xg1TP
-ae6iAD/BXjawfIjjTfFXwdQZp4WDmg70trEQv10zZWacY6LTwIe1gLqnO3QMP/47iUEVNM9Zfcg5
-SJXuZP79ZhWE42FhPwgZkKdPUN5DdUnoAb1WSRb926ElPqBy4CCvI/iKFgLfP6MAAAAAAAA=
+Created a separate patch and posted v6.
 
+> 
+>>  	val |= DEFAULT_CGC_EN;
+>> -	writel_relaxed(val, base + GENI_CGC_CTRL);
+>> +	writel_relaxed(val, base + SE_GENI_CGC_CTRL);
+>>  
+>>  	val = readl_relaxed(base + SE_DMA_GENERAL_CFG);
+>> -	val |= AHB_SEC_SLV_CLK_CGC_ON | DMA_AHB_SLV_CFG_ON;
+>> +	val |= AHB_SEC_SLV_CLK_CGC_ON | DMA_AHB_SLV_CLK_CGC_ON;
+>>  	val |= DMA_TX_CLK_CGC_ON | DMA_RX_CLK_CGC_ON;
+>>  	writel_relaxed(val, base + SE_DMA_GENERAL_CFG);
+>>  
+>> @@ -891,6 +889,379 @@ int geni_icc_disable(struct geni_se *se)
+>>  }
+>>  EXPORT_SYMBOL_GPL(geni_icc_disable);
+>>  
+>> +/**
+>> + * geni_read_elf() - Read an ELF file.
+> 
+> Not only does it "read an ELF"...
 
---=-YEI+uQnV9/cfSWuUlOWe--
+Updated in v6.
+
+> 
+>> + * @se: Pointer to the SE resources structure.
+>> + * @fw: Pointer to the firmware buffer.
+>> + * @pelfseg: Pointer to the SE-specific ELF header.
+>> + *
+>> + * Read the ELF file and output a pointer to the header data, which
+>> + * contains the firmware data and any other details.
+> 
+> ...and not only does it output a pointer to _the_ header data. But it
+> actually finds the SE firmware for the protocol that has been requested
+> by the caller^4.
+> 
+> I think this function should be:
+> 
+>   static const struct se_fw_hdr *geni_find_protocol_fw(fw, protocol)
+> 
+> Which from just the prototype looks like a function that takes a
+> firmware pointer, and somehow find the relevant SE firmware header for
+> the requested protocol.
+>
+
+ 
+Updated in v6.
+
+>> + *
+>> + * Return: 0 if successful, otherwise return an error value.
+>> + */
+>> +static int geni_read_elf(struct geni_se *se, const struct firmware *fw, struct se_fw_hdr **pelfseg)
+>> +{
+>> +	const struct elf32_hdr *ehdr;
+>> +	struct elf32_phdr *phdrs, *phdr;
+>> +	const struct se_fw_hdr *elfseg;
+> 
+> This doesn't represent any ELF segment, but rather the SE firmware in an
+> ELF segment. So, I think it would be better if this was named sefw;
+> 
+> Same thing, you don't really return an "ELF segment", but rather a
+> pointer to the SE firmware.
+> 
+
+Updated in v6.
+
+>> +	const u8 *addr;
+>> +	int i;
+>> +
+>> +	if (!fw || fw->size < sizeof(struct elf32_hdr))
+>> +		return -EINVAL;
+>> +
+>> +	ehdr = (struct elf32_hdr *)fw->data;
+>> +	phdrs = (struct elf32_phdr *)(ehdr + 1);
+> 
+> Sorry for being sloppy when I wrote the code that you copied this
+> from... This should be:
+> 
+> phdrs = (struct elf32_phdr *)(fw->data + ehdr->e_phoff);
+> 
+>> +
+>> +	if (ehdr->e_phnum < 2)
+> 
+> Why?
+
+The firmware is expected to have at least two program headers (segments),
+One for metadata and the other for the actual protocol-specific firmware.
+
+Added comment in v6.
+
+> 
+>> +		return -EINVAL;
+>> +
+>> +	for (i = 0; i < ehdr->e_phnum; i++) {
+>> +		phdr = &phdrs[i];
+>> +
+>> +		if (fw->size < phdr->p_offset + phdr->p_filesz)
+>> +			return -EINVAL;
+>> +
+>> +		if (phdr->p_type != PT_LOAD || !phdr->p_memsz)
+>> +			continue;
+>> +
+>> +		if (MI_PBT_PAGE_MODE_VALUE(phdr->p_flags) != MI_PBT_NON_PAGED_SEGMENT ||
+>> +		    MI_PBT_SEGMENT_TYPE_VALUE(phdr->p_flags) == MI_PBT_HASH_SEGMENT ||
+>> +		    MI_PBT_ACCESS_TYPE_VALUE(phdr->p_flags) == MI_PBT_NOTUSED_SEGMENT ||
+>> +		    MI_PBT_ACCESS_TYPE_VALUE(phdr->p_flags) == MI_PBT_SHARED_SEGMENT)
+>> +			continue;
+>> +
+>> +		if (phdr->p_filesz < sizeof(struct se_fw_hdr))
+>> +			continue;
+>> +
+>> +		addr = fw->data + phdr->p_offset;
+>> +		elfseg = (const struct se_fw_hdr *)addr;
+> 
+> 		elfseg = (const struct se_fw_hdr *)(fw->data + phdr->p_offset);
+> 
+> And then you can drop addr.
+
+Updated in v6.
+
+> 
+>> +
+>> +		if (cpu_to_le32(elfseg->magic) != MAGIC_NUM_SE || elfseg->version != 1)
+> 
+> As LKP pointed out you're converting this __le32 in the wrong direction
+> (i.e. use le32_to_cpu()).
+> 
+>> +			continue;
+>> +
+>> +		if (phdr->p_filesz < elfseg->fw_offset +
+>> +				     elfseg->fw_size_in_items * sizeof(u32) ||
+>> +		    phdr->p_filesz < elfseg->cfg_idx_offset +
+>> +				     elfseg->cfg_size_in_items * sizeof(u8) ||
+>> +		    phdr->p_filesz < elfseg->cfg_val_offset +
+>> +				     elfseg->cfg_size_in_items * sizeof(u32))
+>> +			continue;
+> 
+> Even if this isn't the firmware for the protocol you're looking for, I'd
+> say that if you have determined that you've found a valid SE FW segment
+> and any of these checks doesn't pass, you have a truncated/corrupt
+> firmware file. I think a error print is warranted here.
+> 
+> 
+> Looks like you can squeeze these lines in under 100 characters if you
+> remove the line wrap - that will make this chunk easier to read, so
+> please unwrap them.
+> 
+> 
+> Stylistic, I prefer the variable to be on the left of the comparator and
+> the constant to the right; i.e. "elfseg->fw_offset + ... > phdr->p_filesz"
+> 
+>> +
+>> +		if (elfseg->serial_protocol != se->protocol)
+>> +			continue;
+> 
+> The key part of this loop is that you're looking for a SE firmware or
+> the right protocol.
+> 
+> The fact that the segment must be big enough etc is a secondary sanity
+> check to ensure you're not consuming bad firmware.
+> 
+>> +
+>> +		*pelfseg = (struct se_fw_hdr *)addr;
+> 
+> *pelfseg = elfseg;
+> 
+> Although, this function only has two "return paths", either it return
+> -EINVAL or it return 0 with *pelfseg assigned.
+> 
+> So, rather than using a pointer argument to return the result, make the
+> return value const struct *se_fw_hdr and return elfseg here.
+
+Updated in v6.
+
+> 
+>> +		return 0;
+>> +	}
+>> +	return -EINVAL;
+>> +}
+>> +
+>> +/**
+>> + * geni_configure_xfer_mode() - Set the transfer mode.
+>> + * @se: Pointer to a structure representing SE-related resources.
+>> + *
+>> + * Set the transfer mode to either FIFO or DMA according to the mode specified by the protocol
+>> + * driver.
+> 
+> This can be wrapped to 80 characters without loss of readability.
+
+Updated in v6.
+
+> 
+>> + *
+>> + * Return: 0 if successful, otherwise return an error value.
+>> + */
+>> +static int geni_configure_xfer_mode(struct geni_se *se)
+>> +{
+>> +	/* Configure SE FIFO, DMA or GSI mode. */
+>> +	switch (se->mode) {
+>> +	case GENI_GPI_DMA:
+>> +		geni_setbits32(se->base + SE_GENI_DMA_MODE_EN, GENI_DMA_MODE_EN);
+>> +		writel_relaxed(0x0, se->base + SE_IRQ_EN);
+>> +		writel_relaxed(DMA_RX_EVENT_EN | DMA_TX_EVENT_EN |
+>> +			       GENI_M_EVENT_EN | GENI_S_EVENT_EN,
+>> +			       se->base + SE_GSI_EVENT_EN);
+>> +		break;
+>> +
+>> +	case GENI_SE_FIFO:
+>> +		geni_clrbits32(se->base + SE_GENI_DMA_MODE_EN, GENI_DMA_MODE_EN);
+>> +		writel_relaxed(DMA_RX_IRQ_EN | DMA_TX_IRQ_EN | GENI_M_IRQ_EN | GENI_S_IRQ_EN,
+>> +			       se->base + SE_IRQ_EN);
+>> +		writel_relaxed(0x0, se->base + SE_GSI_EVENT_EN);
+>> +		break;
+>> +
+>> +	case GENI_SE_DMA:
+>> +		geni_setbits32(se->base + SE_GENI_DMA_MODE_EN, GENI_DMA_MODE_EN);
+>> +		writel_relaxed(DMA_RX_IRQ_EN | DMA_TX_IRQ_EN | GENI_M_IRQ_EN | GENI_S_IRQ_EN,
+>> +			       se->base + SE_IRQ_EN);
+>> +		writel_relaxed(0x0, se->base + SE_GSI_EVENT_EN);
+>> +		break;
+>> +
+>> +	default:
+>> +		dev_err(se->dev, "Invalid geni-se transfer mode: %d\n", se->mode);
+>> +		return -EINVAL;
+>> +	}
+>> +	return 0;
+>> +}
+>> +
+>> +/**
+>> + * geni_enable_interrupts() - Enable interrupts.
+>> + * @se: Pointer to a structure representing SE-related resources.
+>> + *
+>> + * Enable the required interrupts during the firmware load process.
+>> + *
+>> + */
+>> +static void geni_enable_interrupts(struct geni_se *se)
+>> +{
+>> +	u32 reg_value;
+> 
+> "val" has the same amount of information, but is shorter and easier to
+> read...
+
+Updated in v6.
+
+> 
+>> +
+>> +	/* Enable required interrupts. */
+>> +	writel_relaxed(M_COMMON_GENI_M_IRQ_EN, se->base + SE_GENI_M_IRQ_EN);
+> 
+> Don't you need/want a wmb() before this (or use one writel()), to ensure
+> previous programming is performed before you enable IRQs?
+
+Updated in v6.
+
+> 
+>> +
+>> +	reg_value = S_CMD_OVERRUN_EN | S_ILLEGAL_CMD_EN |
+>> +		    S_CMD_CANCEL_EN | S_CMD_ABORT_EN |
+>> +		    S_GP_IRQ_0_EN | S_GP_IRQ_1_EN |
+>> +		    S_GP_IRQ_2_EN | S_GP_IRQ_3_EN |
+>> +		    S_RX_FIFO_WR_ERR_EN | S_RX_FIFO_RD_ERR_EN;
+>> +	writel_relaxed(reg_value, se->base + SE_GENI_S_IRQ_ENABLE);
+>> +
+>> +	/* DMA mode configuration. */
+>> +	reg_value = RESET_DONE_EN | SBE_EN | DMA_DONE_EN;
+>> +	writel_relaxed(reg_value, se->base + SE_DMA_TX_IRQ_EN_SET);
+>> +	reg_value = FLUSH_DONE_EN | RESET_DONE_EN | SBE_EN | DMA_DONE_EN;
+>> +	writel_relaxed(reg_value, se->base + SE_DMA_RX_IRQ_EN_SET);
+>> +}
+>> +
+>> +/**
+>> + * geni_write_fw_revision() - Write the firmware revision.
+>> + * @se: Pointer to a structure representing SE-related resources.
+>> + * @serial_protocol: serial protocol type.
+>> + * @fw_version: QUP firmware version.
+>> + *
+>> + * Write the firmware revision and protocol into the respective register.
+>> + *
+>> + * Return: None.
+>> + */
+>> +static void geni_write_fw_revision(struct geni_se *se, u16 serial_protocol, u16 fw_version)
+>> +{
+>> +	u32 reg_value;
+>> +
+>> +	reg_value = FIELD_PREP(FW_REV_PROTOCOL_MSK, serial_protocol);
+>> +	reg_value |= FIELD_PREP(FW_REV_VERSION_MSK, fw_version);
+>> +
+>> +	writel_relaxed(reg_value, se->base + SE_GENI_FW_REVISION);
+>> +	writel_relaxed(reg_value, se->base + SE_S_FW_REVISION);
+>> +}
+>> +
+>> +/**
+>> + * geni_load_se_fw() - Load Serial Engine specific firmware.
+>> + * @se: Pointer to a structure representing SE-related resources.
+>> + * @fw: Pointer to the firmware structure.
+>> + *
+>> + * Load the protocol firmware into the IRAM of the Serial Engine.
+>> + *
+>> + * Return: 0 if successful, otherwise return an error value.
+>> + */
+>> +static int geni_load_se_fw(struct geni_se *se, const struct firmware *fw)
+>> +{
+>> +	const u32 *fw_data, *cfg_val_arr;
+>> +	const u8 *cfg_idx_arr;
+>> +	u32 i, reg_value, ramn_cnt;
+>> +	int ret;
+>> +	struct se_fw_hdr *hdr;
+>> +
+>> +	ret = geni_read_elf(se, fw, &hdr);
+>> +	if (ret) {
+>> +		dev_err(se->dev, "ELF parsing failed ret: %d\n", ret);
+> 
+> If you move this error print to geni_read_elf() you can make it more
+> useful - i.e. you can distinguish between not finding a sefw or the file
+> being truncated etc.
+
+Updated in v6.
+
+> 
+>> +		return ret;
+>> +	}
+>> +
+>> +	ramn_cnt = hdr->fw_size_in_items;
+>> +	if (hdr->fw_size_in_items % 2 != 0)
+>> +		ramn_cnt++;
+>> +
+>> +	if (ramn_cnt >= MAX_GENI_CFG_RAMn_CNT)
+> 
+> I presume it's unlikely that there will be an odd number of
+> fw_size_in_items, that is less than MAX_GENI_CFG_RAMn_CNT, but the
+> validation in geni_read_elf() only accounted for that you will access
+> fw_size_in_items number of items from fw->data; not the rounded up
+> value.
+> 
+> Also, it would probably be helpful to the user if you provided an error
+> message about corrupt firmware here.
+
+Updated in v6.
+
+> 
+>> +		return -EINVAL;
+>> +
+>> +	ret = geni_icc_set_bw(se);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = geni_icc_enable(se);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = geni_se_resources_on(se);
+>> +	if (ret)
+>> +		goto err;
+>> +
+>> +	ramn_cnt = hdr->fw_size_in_items;
+> 
+> These adjustments and checks was performed 19 lines above as well, but
+> before the hardware was spun up.
+
+Removed duplicate check and updated in v6.
+
+> 
+>> +	if (hdr->fw_size_in_items % 2 != 0)
+>> +		ramn_cnt++;
+>> +
+>> +	if (ramn_cnt >= MAX_GENI_CFG_RAMn_CNT)
+>> +		goto err_resource;
+>> +
+>> +	fw_data = (const u32 *)((u8 *)hdr + hdr->fw_offset);
+>> +	cfg_idx_arr = (const u8 *)hdr + hdr->cfg_idx_offset;
+>> +	cfg_val_arr = (const u32 *)((u8 *)hdr + hdr->cfg_val_offset);
+>> +
+>> +	/* Disable high priority interrupt until current low priority interrupts are handled. */
+>> +	geni_setbits32(se->wrapper->base + QUPV3_COMMON_CFG, FAST_SWITCH_TO_HIGH_DISABLE);
+>> +
+>> +	/* Set AHB_M_CLK_CGC_ON to indicate hardware controls se-wrapper cgc clock. */
+>> +	geni_setbits32(se->wrapper->base + QUPV3_SE_AHB_M_CFG, AHB_M_CLK_CGC_ON);
+>> +
+>> +	/* Let hardware to control common cgc. */
+>> +	geni_setbits32(se->wrapper->base + QUPV3_COMMON_CGC_CTRL, COMMON_CSR_SLV_CLK_CGC_ON);
+>> +
+>> +	/* Allows to drive corresponding data according to hardware value. */
+> 
+> What does this sentence mean?
+
+Enhanced comment and updated in v6.
+
+> 
+>> +	writel_relaxed(0x0, se->base + GENI_OUTPUT_CTRL);
+>> +
+>> +	/* Set SCLK and HCLK to program RAM */
+>> +	geni_setbits32(se->base + SE_GENI_CGC_CTRL, PROG_RAM_SCLK_OFF | PROG_RAM_HCLK_OFF);
+>> +	writel_relaxed(0x0, se->base + SE_GENI_CLK_CTRL);
+>> +	geni_clrbits32(se->base + SE_GENI_CGC_CTRL, PROG_RAM_SCLK_OFF | PROG_RAM_HCLK_OFF);
+>> +
+>> +	/* Enable required clocks for DMA CSR, TX and RX. */
+>> +	reg_value = AHB_SEC_SLV_CLK_CGC_ON | DMA_AHB_SLV_CLK_CGC_ON |
+>> +		    DMA_TX_CLK_CGC_ON | DMA_RX_CLK_CGC_ON;
+>> +	geni_setbits32(se->base + SE_DMA_GENERAL_CFG, reg_value);
+>> +
+>> +	/* Let hardware control CGC by default. */
+>> +	writel_relaxed(DEFAULT_CGC_EN, se->base + SE_GENI_CGC_CTRL);
+>> +
+>> +	/* Set version of the configuration register part of firmware. */
+>> +	writel_relaxed(hdr->cfg_version, se->base + SE_GENI_INIT_CFG_REVISION);
+>> +	writel_relaxed(hdr->cfg_version, se->base + SE_GENI_S_INIT_CFG_REVISION);
+>> +
+>> +	/* Configure GENI primitive table. */
+>> +	for (i = 0; i < hdr->cfg_size_in_items; i++)
+>> +		writel_relaxed(cfg_val_arr[i],
+>> +			       se->base + SE_GENI_CFG_REG0 + (cfg_idx_arr[i] * sizeof(u32)));
+>> +
+>> +	/* Configure condition for assertion of RX_RFR_WATERMARK condition. */
+>> +	reg_value = geni_se_get_rx_fifo_depth(se);
+>> +	writel_relaxed(reg_value - 2, se->base + SE_GENI_RX_RFR_WATERMARK_REG);
+>> +
+>> +	/* Let hardware control CGC */
+>> +	geni_setbits32(se->base + GENI_OUTPUT_CTRL, DEFAULT_IO_OUTPUT_CTRL_MSK);
+>> +
+>> +	ret = geni_configure_xfer_mode(se);
+>> +	if (ret)
+>> +		goto err_resource;
+>> +
+>> +	geni_enable_interrupts(se);
+>> +
+>> +	geni_write_fw_revision(se, hdr->serial_protocol, hdr->fw_version);
+>> +
+>> +	ramn_cnt = hdr->fw_size_in_items;
+> 
+> hdr-.fw_size_in_items shouldn't have changed since you validated it 60
+> and 79 lines above, right?
+
+Removed duplicate check and updated in v6.
+
+> 
+>> +	if (hdr->fw_size_in_items % 2 != 0)
+>> +		ramn_cnt++;
+>> +
+>> +	if (ramn_cnt >= MAX_GENI_CFG_RAMn_CNT)
+>> +		goto err_resource;
+> 
+> I suspect that you're going to remove this check and return, but at this
+> point you have enabled a bunch of hardware and you're exiting without
+> cleaning up...
+
+Moved this check to geni_find_protocol_fw and updated in v6.
+
+> 
+>> +
+>> +	/* Program RAM address space. */
+>> +	memcpy_toio(se->base + SE_GENI_CFG_RAMN, fw_data, ramn_cnt * sizeof(u32));
+>> +
+>> +	/* Put default values on GENI's output pads. */
+>> +	writel_relaxed(0x1, se->base + GENI_FORCE_DEFAULT_REG);
+>> +
+>> +	/* High to low SCLK and HCLK to finish RAM. */
+> 
+> "finish RAM <what>"?
+
+Enhanced comment and updated in v6.
+
+> 
+>> +	geni_setbits32(se->base + SE_GENI_CGC_CTRL, PROG_RAM_SCLK_OFF | PROG_RAM_HCLK_OFF);
+>> +	geni_setbits32(se->base + SE_GENI_CLK_CTRL, SER_CLK_SEL);
+>> +	geni_clrbits32(se->base + SE_GENI_CGC_CTRL, PROG_RAM_SCLK_OFF | PROG_RAM_HCLK_OFF);
+> 
+> All these IO accesses are relaxed, allowing the compiler and the CPU to
+> reorder them. Isn't there a point here where the QUP will start running
+> the newly loaded firmware - and you want to make sure that all the setup
+> (and the firmware loading) isn't reordered past that point?
+> 
+> Or is the ordering of access to all these registers govern by something
+> else?
+
+Replaced writel_relaxed with writel in v6.
+
+> 
+>> +
+>> +	/* Serial engine DMA interface is enabled. */
+>> +	geni_setbits32(se->base + SE_DMA_IF_EN, DMA_IF_EN);
+>> +
+>> +	/* Enable or disable FIFO interface of the serial engine. */
+>> +	if (se->mode == GENI_SE_FIFO)
+>> +		geni_clrbits32(se->base + SE_FIFO_IF_DISABLE, FIFO_IF_DISABLE);
+>> +	else
+>> +		geni_setbits32(se->base + SE_FIFO_IF_DISABLE, FIFO_IF_DISABLE);
+>> +
+>> +err_resource:
+> 
+> Rename this out_resources_off
+
+updated in v6.
+
+> 
+>> +	geni_se_resources_off(se);
+>> +err:
+> 
+> And this out_icc_disable
+> 
+> That way one can understand how the exit will look like without jumping
+> here
+updated in v6.
+
+> 
+>> +	geni_icc_disable(se);
+>> +	return ret;
+>> +}
+>> +
+>> +/**
+>> + * qup_fw_load() - Initiate firmware load.
+>> + * @se: Pointer to a structure representing SE-related resources.
+>> + * @fw_name: Name of the firmware.
+>> + *
+>> + * Load the firmware into a specific SE. Read the associated ELF file,
+>> + * copy the data into a buffer in kernel space using the request_firmware API, write the
+>> + * data into the SE's IRAM register, and then free the buffers. Handle firmware loading
+>> + * and parsing for a specific protocol.
+>> + *
+> 
+> Wrap all your kernel-doc bodies to 80 characters, please.
+
+updated in v6.
+
+> 
+>> + * Return: 0 if successful, otherwise return an error value.
+>> + */
+>> +static int qup_fw_load(struct geni_se *se, const char *fw_name)
+> 
+> All other functions in this driver are prefixed "geni_". Please keep the
+> naming consistent.
+> 
+> That said, moving the content of this function into
+> geni_load_se_firmware() wouldn't worsen that function much and you
+> remove a dummy intermediate function. So, please inline this.
+
+updated in v6.
+
+> 
+>> +{
+>> +	int ret;
+>> +	const struct firmware *fw;
+>> +	struct device *dev = se->dev;
+>> +
+>> +	ret = request_firmware(&fw, fw_name, dev);
+>> +	if (ret) {
+>> +		dev_err(dev, "request_firmware failed for %d: %d\n", se->protocol, ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = geni_load_se_fw(se, fw);
+>> +
+>> +	release_firmware(fw);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +/**
+>> + * geni_load_se_firmware() - Initiate firmware loading.
+> 
+> Is this really "initiate firmware loading"? Isn't it actually completing
+> the firmware loading? I.e. this comment should be "Load SE firmware" or
+> such?
+
+updated in v6.
+
+> 
+>> + * @se: Serial engine details.
+>> + * @protocol: Protocol (SPI, I2C, or UART) for which the firmware is to be loaded.
+>> + *
+>> + * If the device tree properties are configured to load QUP firmware and the firmware
+>> + * is not already loaded, start the firmware loading process. If the device tree properties
+>> + * are not defined, skip loading the firmware, assuming it is already loaded by TZ.
+> 
+> This too talks about start firmware loading, but I don't see any code
+> that would "finish" it.
+> 
+> The short form comment for qup_fw_load() above also says "Initiate", but
+> the longer description indicates that it concludes the load.
+> 
+>> + *
+>> + * Return: 0 if successful, otherwise return an error value.
+>> + */
+>> +int geni_load_se_firmware(struct geni_se *se, enum geni_se_protocol_type protocol)
+>> +{
+>> +	const char *fw_name;
+>> +	int ret;
+>> +
+>> +	if (protocol >= MAX_PROTOCOL) {
+> 
+> The only place I can see where this is important is in below dev_dbg()
+> print, to avoid reading outside protocol_name[]. You can make that
+> clearer by comparing with ARRAY_SIZE(protocol_name) instead.
+
+updated in v6.
+
+> 
+>> +		dev_err(se->dev, "Invalid geni-se protocol: %d", protocol);
+>> +		return  -EINVAL;
+> 
+> There are two spaces between return and -EINVAL.
+
+updated in v6.
+
+> 
+>> +	}
+>> +
+>> +	ret = device_property_read_string(se->wrapper->dev, "firmware-name", &fw_name);
+>> +	if (ret)
+>> +		return  -EINVAL;
+> 
+> Two more spaces
+
+updated in v6.
+
+> 
+>> +
+>> +	se->protocol = protocol;
+> 
+> You assign se->protocol here, and it's read in geni_read_elf()...
+
+updated in v6.
+
+> 
+>> +
+>> +	if (of_property_read_bool(se->dev->of_node, "qcom,enable-gsi-dma"))
+>> +		se->mode = GENI_GPI_DMA;
+>> +	else
+>> +		se->mode = GENI_SE_FIFO;
+> 
+> ...and you assign se->mode here and it's read in geni_configure_xfer_mode()
+> and geni_load_se_fw().
+> 
+> But the callstack looks like:
+>   geni_load_se_firmware()
+>     qup_fw_load()
+>       geni_load_se_fw()
+>         geni_read_elf()
+>         geni_configure_xfer_mode()
+> 
+> So, both protocol and mode are only used in the scope of this function.
+> Passing them around using struct geni_se only obfuscates this fact.
+> 
+> Please pass them as arguments instead to make this clear.
+
+updated in v6.
+
+> 
+>> +
+>> +	/* GSI mode is not supported by the UART driver; therefore, setting FIFO mode */
+>> +	if (protocol == GENI_SE_UART)
+>> +		se->mode = GENI_SE_FIFO;
+>> +
+>> +	ret = qup_fw_load(se, fw_name);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	dev_dbg(se->dev, "Firmware load for %s protocol is successful for xfer mode %d\n",
+>> +		protocol_name[se->protocol], se->mode);
+> 
+> Use the protocol and mode from the stack.
+
+updated in v6.
+
+> 
+>> +	return 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(geni_load_se_firmware);
+>> +
+>>  static int geni_se_probe(struct platform_device *pdev)
+>>  {
+>>  	struct device *dev = &pdev->dev;
+>> diff --git a/include/linux/soc/qcom/geni-se.h b/include/linux/soc/qcom/geni-se.h
+>> index 2996a3c28ef3..6b75171d65ec 100644
+>> --- a/include/linux/soc/qcom/geni-se.h
+>> +++ b/include/linux/soc/qcom/geni-se.h
+>> @@ -1,11 +1,13 @@
+>>  /* SPDX-License-Identifier: GPL-2.0 */
+>>  /*
+>>   * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+>> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+>>   */
+>>  
+>>  #ifndef _LINUX_QCOM_GENI_SE
+>>  #define _LINUX_QCOM_GENI_SE
+>>  
+>> +#include <linux/bitfield.h>
+>>  #include <linux/interconnect.h>
+>>  
+>>  /**
+>> @@ -36,6 +38,7 @@ enum geni_se_protocol_type {
+>>  	GENI_SE_I2C,
+>>  	GENI_SE_I3C,
+>>  	GENI_SE_SPI_SLAVE,
+>> +	GENI_SE_INVALID_PROTO = 255,
+>>  };
+>>  
+>>  struct geni_wrapper;
+>> @@ -61,6 +64,8 @@ struct geni_icc_path {
+>>   * @num_clk_levels:	Number of valid clock levels in clk_perf_tbl
+>>   * @clk_perf_tbl:	Table of clock frequency input to serial engine clock
+>>   * @icc_paths:		Array of ICC paths for SE
+>> + * @mode:		Transfer mode se fifo, dma or gsi.
+>> + * @protocol:		Protocol spi or i2c or serial.
+>>   */
+>>  struct geni_se {
+>>  	void __iomem *base;
+>> @@ -70,24 +75,32 @@ struct geni_se {
+>>  	unsigned int num_clk_levels;
+>>  	unsigned long *clk_perf_tbl;
+>>  	struct geni_icc_path icc_paths[3];
+>> +	enum geni_se_xfer_mode mode;
+>> +	enum geni_se_protocol_type protocol;
+>>  };
+>>  
+>>  /* Common SE registers */
+>> +#define SE_GENI_INIT_CFG_REVISION	0x0
+>> +#define SE_GENI_S_INIT_CFG_REVISION	0x4
+>>  #define GENI_FORCE_DEFAULT_REG		0x20
+>>  #define GENI_OUTPUT_CTRL		0x24
+>> +#define SE_GENI_CGC_CTRL		0x28
+>>  #define SE_GENI_STATUS			0x40
+>>  #define GENI_SER_M_CLK_CFG		0x48
+>>  #define GENI_SER_S_CLK_CFG		0x4c
+>>  #define GENI_IF_DISABLE_RO		0x64
+>> -#define GENI_FW_REVISION_RO		0x68
+>> +#define SE_GENI_FW_REVISION_RO		0x68
+>> +#define SE_GENI_S_FW_REVISION_RO	0x6c
+>>  #define SE_GENI_CLK_SEL			0x7c
+>>  #define SE_GENI_CFG_SEQ_START		0x84
+>> +#define SE_GENI_CFG_REG0		0x100
+>>  #define SE_GENI_DMA_MODE_EN		0x258
+>>  #define SE_GENI_M_CMD0			0x600
+>>  #define SE_GENI_M_CMD_CTRL_REG		0x604
+>>  #define SE_GENI_M_IRQ_STATUS		0x610
+>>  #define SE_GENI_M_IRQ_EN		0x614
+>>  #define SE_GENI_M_IRQ_CLEAR		0x618
+>> +#define SE_GENI_S_IRQ_ENABLE		0x644
+>>  #define SE_GENI_M_IRQ_EN_SET		0x61c
+>>  #define SE_GENI_M_IRQ_EN_CLEAR		0x620
+>>  #define SE_GENI_S_CMD0			0x630
+>> @@ -109,13 +122,22 @@ struct geni_se {
+>>  #define SE_GENI_S_GP_LENGTH		0x914
+>>  #define SE_DMA_TX_IRQ_STAT		0xc40
+>>  #define SE_DMA_TX_IRQ_CLR		0xc44
+>> +#define SE_DMA_TX_IRQ_EN_SET		0xc4c
+>>  #define SE_DMA_TX_FSM_RST		0xc58
+>>  #define SE_DMA_RX_IRQ_STAT		0xd40
+>>  #define SE_DMA_RX_IRQ_CLR		0xd44
+>> +#define SE_DMA_RX_IRQ_EN_SET		0xd4c
+>>  #define SE_DMA_RX_LEN_IN		0xd54
+>>  #define SE_DMA_RX_FSM_RST		0xd58
+>>  #define SE_HW_PARAM_0			0xe24
+>>  #define SE_HW_PARAM_1			0xe28
+>> +#define SE_DMA_GENERAL_CFG		0xe30
+>> +#define SE_GENI_FW_REVISION		0x1000
+>> +#define SE_S_FW_REVISION		0x1004
+>> +#define SE_GENI_CFG_RAMN		0x1010
+>> +#define SE_GENI_CLK_CTRL		0x2000
+>> +#define SE_DMA_IF_EN			0x2004
+>> +#define SE_FIFO_IF_DISABLE		0x2008
+>>  
+>>  /* GENI_FORCE_DEFAULT_REG fields */
+>>  #define FORCE_DEFAULT	BIT(0)
+>> @@ -137,7 +159,7 @@ struct geni_se {
+>>  
+>>  /* GENI_FW_REVISION_RO fields */
+>>  #define FW_REV_PROTOCOL_MSK		GENMASK(15, 8)
+>> -#define FW_REV_PROTOCOL_SHFT		8
+>> +#define FW_REV_VERSION_MSK		GENMASK(7, 0)
+>>  
+>>  /* GENI_CLK_SEL fields */
+>>  #define CLK_SEL_MSK			GENMASK(2, 0)
+>> @@ -325,9 +347,9 @@ static inline u32 geni_se_read_proto(struct geni_se *se)
+> 
+> It is assumed that this function will return an enum
+> geni_se_protocol_type.
+> 
+> I think you should follow up with a patch to not throw this around as a
+> u32.
+> 
+>>  {
+>>  	u32 val;
+>>  
+>> -	val = readl_relaxed(se->base + GENI_FW_REVISION_RO);
+>> +	val = readl_relaxed(se->base + SE_GENI_FW_REVISION_RO);
+>>  
+>> -	return (val & FW_REV_PROTOCOL_MSK) >> FW_REV_PROTOCOL_SHFT;
+>> +	return FIELD_GET(FW_REV_PROTOCOL_MSK, val);
+> 
+> Nice, but unrelated to firmware loading.
+
+updated in v6.
+
+> 
+>>  }
+>>  
+>>  /**
+>> @@ -531,5 +553,7 @@ void geni_icc_set_tag(struct geni_se *se, u32 tag);
+>>  int geni_icc_enable(struct geni_se *se);
+>>  
+>>  int geni_icc_disable(struct geni_se *se);
+>> +
+>> +int geni_load_se_firmware(struct geni_se *se, enum geni_se_protocol_type protocol);
+>>  #endif
+>>  #endif
+>> diff --git a/include/linux/soc/qcom/qup-fw-load.h b/include/linux/soc/qcom/qup-fw-load.h
+> 
+> As this is only going to be used from qcom-geni-se.c, I think you should
+> just put this content in that file directly.
+
+updated in v6.
+
+> 
+>> new file mode 100644
+>> index 000000000000..94a6c4c10bcf
+>> --- /dev/null
+>> +++ b/include/linux/soc/qcom/qup-fw-load.h
+>> @@ -0,0 +1,93 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +#ifndef _LINUX_QCOM_QUP_FW_LOAD
+>> +#define _LINUX_QCOM_QUP_FW_LOAD
+>> +
+>> +#include <linux/kernel.h>
+>> +
+>> +/*Magic numbers*/
+>> +#define MAGIC_NUM_SE			0x57464553
+> 
+> Please make "SE" the prefix, rather than suffix.
+
+updated in v6.
+
+> 
+>> +
+>> +#define MAX_GENI_CFG_RAMn_CNT		455
+>> +
+>> +#define MI_PBT_NON_PAGED_SEGMENT	0x0
+>> +#define MI_PBT_HASH_SEGMENT		0x2
+>> +#define MI_PBT_NOTUSED_SEGMENT		0x3
+>> +#define MI_PBT_SHARED_SEGMENT		0x4
+>> +
+>> +#define MI_PBT_FLAG_PAGE_MODE		BIT(20)
+>> +#define MI_PBT_FLAG_SEGMENT_TYPE	GENMASK(26, 24)
+>> +#define MI_PBT_FLAG_ACCESS_TYPE		GENMASK(23, 21)
+>> +
+>> +#define MI_PBT_PAGE_MODE_VALUE(x) FIELD_GET(MI_PBT_FLAG_PAGE_MODE, x)
+>> +
+>> +#define MI_PBT_SEGMENT_TYPE_VALUE(x) FIELD_GET(MI_PBT_FLAG_SEGMENT_TYPE, x)
+>> +
+>> +#define MI_PBT_ACCESS_TYPE_VALUE(x) FIELD_GET(MI_PBT_FLAG_ACCESS_TYPE, x)
+>> +
+>> +#define M_COMMON_GENI_M_IRQ_EN	(GENMASK(6, 1) | \
+>> +				M_IO_DATA_DEASSERT_EN | \
+> 
+> These constants are defined in geni-se.h, so if someone includes this
+> file before that one, this won't compile.
+
+updated in v6.
+
+> 
+>> +				M_IO_DATA_ASSERT_EN | M_RX_FIFO_RD_ERR_EN | \
+>> +				M_RX_FIFO_WR_ERR_EN | M_TX_FIFO_RD_ERR_EN | \
+>> +				M_TX_FIFO_WR_ERR_EN)
+>> +
+>> +/* DMA_TX/RX_IRQ_EN fields */
+>> +#define DMA_DONE_EN		BIT(0)
+> 
+> There's already a GENI_SE_DMA_DONE_EN define in qcom-geni-se.c, used for
+> the SE_DMA_TX_IRQ_EN_SET register.
+
+updated in v6.
+
+> 
+>> +#define SBE_EN			BIT(2)
+> 
+> And this bit is today called GENI_SE_DMA_AHB_ERR_EN. Did the name
+> change, does different hardware have different functionality for this
+> one bit? If so, how would one know that geni_se_tx_init_dma() and
+> geni_enable_interrupts() uses incompatible bit definitions?
+> 
+> This shows why it's important that you don't mix renames and functional
+> additions!
+
+updated in v6.
+
+> 
+>> +#define RESET_DONE_EN		BIT(3)
+>> +#define FLUSH_DONE_EN		BIT(4)
+>> +
+>> +/* GENI_CLK_CTRL fields */
+>> +#define SER_CLK_SEL		BIT(0)
+>> +
+>> +/* GENI_DMA_IF_EN fields */
+>> +#define DMA_IF_EN		BIT(0)
+>> +
+>> +#define QUPV3_COMMON_CFG		0x120
+> 
+> Group this with QUP_HW_VER_REG, to indicate that it belongs to that
+> register space and not the SE space.
+
+updated in v6.
+
+> 
+>> +#define FAST_SWITCH_TO_HIGH_DISABLE	BIT(0)
+>> +
+>> +#define QUPV3_SE_AHB_M_CFG		0x118
+>> +#define AHB_M_CLK_CGC_ON		BIT(0)
+>> +
+>> +#define QUPV3_COMMON_CGC_CTRL		0x21C
+>> +#define COMMON_CSR_SLV_CLK_CGC_ON	BIT(0)
+>> +
+>> +/* access ports */
+> 
+> There are no "ports"...
+
+updated in v6.
+
+> 
+>> +#define geni_setbits32(_addr, _v) writel_relaxed(readl_relaxed(_addr) |  (_v), _addr)
+>> +#define geni_clrbits32(_addr, _v) writel_relaxed(readl_relaxed(_addr) & ~(_v), _addr)
+>> +
+>> +/**
+>> + * struct se_fw_hdr - Serial Engine firmware configuration header
+>> + *
+>> + * This structure defines metadata for the Serial Engine (SE) firmware
+>> + * configuration. Although it is embedded within an ELF segment, it is
+>> + * not part of the ELF format itself.
+> 
+> Perhaps:
+> 
+> """
+> This structure defines the SE firmware header, which together with the
+> firmware payload is stored in individual ELF segments.
+
+updated in v6.
+
+> """
+> 
+>> + *
+>> + * @magic: Set to 'SEFW'
+>> + * @version: Structure version number
+>> + * @core_version: QUPV3 hardware version
+>> + * @serial_protocol: Encoded in GENI_FW_REVISION
+>> + * @fw_version: Firmware version, from GENI_FW_REVISION
+>> + * @cfg_version: Configuration version, from GENI_INIT_CFG_REVISION
+>> + * @fw_size_in_items: Number of 32-bit words in GENI_FW_RAM
+>> + * @fw_offset: Byte offset to GENI_FW_RAM array
+>> + * @cfg_size_in_items: Number of GENI_FW_CFG index/value pairs
+>> + * @cfg_idx_offset: Byte offset to GENI_FW_CFG index array
+>> + * @cfg_val_offset: Byte offset to GENI_FW_CFG values array
+>> + */
+>> +struct se_fw_hdr {
+>> +	__le32 magic;
+> 
+> Kudos for specifying the endianess of this member, but what about the
+> rest? How come magic is little endian but the other members are
+> magically native endian?
+> 
+> Preferable you define them all with proper endian annotation.
+
+updated in v6.
+
+> 
+> Regards,
+> Bjorn
+> 
+>> +	u32 version;
+>> +	u32 core_version;
+>> +	u16 serial_protocol;
+>> +	u16 fw_version;
+>> +	u16 cfg_version;
+>> +	u16 fw_size_in_items;
+>> +	u16 fw_offset;
+>> +	u16 cfg_size_in_items;
+>> +	u16 cfg_idx_offset;
+>> +	u16 cfg_val_offset;
+>> +};
+>> +#endif /* _LINUX_QCOM_QUP_FW_LOAD */
+>> -- 
+>> 2.34.1
+>>
 
