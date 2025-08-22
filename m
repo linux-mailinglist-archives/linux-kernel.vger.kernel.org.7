@@ -1,150 +1,265 @@
-Return-Path: <linux-kernel+bounces-781946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFFB8B31902
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:15:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB92B3190D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C651A1CE601F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:13:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E5A4165F9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98062FDC37;
-	Fri, 22 Aug 2025 13:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C452FDC35;
+	Fri, 22 Aug 2025 13:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="U19nGedy"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hpzartIM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F982FC02E
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2682D2FC021;
+	Fri, 22 Aug 2025 13:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755868410; cv=none; b=iCh8Vx7pVwidl5DRfXqpIoNTwhsl6MYCOMEaX3tX2DGWVphMgLqvU6zEdJtA9sBYqdYoFUPF+eEyyiogM5BJKb5QfTmXO1iQmRXorw0pb95XacvDJ96rpNJpctrVqUxA5JIJ2Ij1qJx1o911vZ7bEvkfhl5yX6ygw6YBuIUm8eQ=
+	t=1755868484; cv=none; b=oqXWUuarK5Pf/HB0xOZ8Pi8bRODHCI4KG2RkBMynfMmBLGU5BKaz4YvHKNjN29Aj8RRVFUxX4+YSLIoQ+ZZh4HnOs6ZB3TB3+S89F+g94kEpspOzxsvcCUcTVqxvjW9AbsY0X4OLft4AC6EYb6p8SVnJ7/KrxR6qwlOkr0xC54k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755868410; c=relaxed/simple;
-	bh=xwmQglZ4ynQpUcBnG3RnegQ8txT3zm/VD+oLXC5P7xc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lpF1yxebpPvhxPobRtK+P4HcmNBVmpa7kZkY1gdl6HoU7RdokeEnkWKRvs2imGVuOomBpICnPdUkAFgUQ2xkwxvvJ2WA3r4Ge+69PHRGdNEh7Vu3h5FYG+d1Tn5XthSInkoRh4dk9aMlR/yz5+gqJujti4kASOtTXFc8QmY+ZtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=U19nGedy; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 952E3C6B3A2;
-	Fri, 22 Aug 2025 13:13:12 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 40A4B604AD;
-	Fri, 22 Aug 2025 13:13:26 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4E2881C22D64F;
-	Fri, 22 Aug 2025 15:13:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1755868405; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=/Xt9kUxaqedEzy7mb2YdVsoY32BQaXwaTEeI7OTr1mI=;
-	b=U19nGedyT/NWgRKxA+WD/R29xrHhG9nr2wfXWNXFRyfnhV+d4gf5yMaIoz++E9KbH66fbz
-	Gq83IrRY5ZpSoJkHctNTLoTUzse7acZVa+0y53sGJxW0ywSMbI+HHL5QC+yFZI5OgRvr19
-	oFIz9UTxepVGWNHzGbRYsfmzVKr2vo92txZAkHxiNgc7gcWEVyfTKYUveLhJHEaYO3Z4wI
-	YbJn4nTCc7iVAa2odeR6jGBFA270hfJdlfnZzfuVFKRdfectOn9QPH3IXywP7QLgsEXgSb
-	7R2KTV5sU04iw5L47uEkjilULQ1nCvCf/nvUVWmldT1tqpDEJgv/Ei5ZMQKgiQ==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Andrew Lunn
- <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] arm64: dts: marvell: Minor whitespace cleanup
-In-Reply-To: <20250819131633.86478-2-krzysztof.kozlowski@linaro.org>
-References: <20250819131633.86478-2-krzysztof.kozlowski@linaro.org>
-Date: Fri, 22 Aug 2025 15:13:22 +0200
-Message-ID: <87plcn5wjx.fsf@BLaptop.bootlin.com>
+	s=arc-20240116; t=1755868484; c=relaxed/simple;
+	bh=DzXyLBZ7QPagtt1qn6sgzGt1lv1clT6z3MmdtXAvGK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PLSMNuI+fto4si0BnioHOZqvidqgDZe4G+qLoTHAQItD2MiVSA5Z1MkANMYm4TKnM6Wfgcb7QRYr54wCg1lIFZdMcgZTK+Kia5MOs2iVWZFX1DF3ZKYdB7FSW2+dVz4SKAC0xT4b9f1P2emJDsYhOfjzgUY8QC2mlCYHkXxvAu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hpzartIM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4F8EC4CEED;
+	Fri, 22 Aug 2025 13:14:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755868483;
+	bh=DzXyLBZ7QPagtt1qn6sgzGt1lv1clT6z3MmdtXAvGK8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hpzartIMsfjSTMmq6S3F6xaJKmmCnwiFz19U8qxEwdk5zkVC29SLlSo8HMXUYjXZu
+	 2AZ93yl7VBVUj4ILfAilqS97axJu+T9zJWjSKWtW3PJ7s3WE/vMPSXgOnJs/FKR74f
+	 SbAUyuJZyygJnzODW5U/a/77vGJDhe2hOvYBBrGcOOIyRShUQL2nkhjVhE6IZbDDv7
+	 Q5VkZnGMjaWDB5wpxahqK/e00W7yFiYdMhg4QhKlD6rl1dXhFqNJNB3ni4gV7MB/yp
+	 49/v7XL/AsVUDempxX8jEVXs88oGoBU9PoduB84uCSMsoAEJ/2sT+CjdlmLOVCA5Un
+	 xRpZdV3csM5hQ==
+Date: Fri, 22 Aug 2025 15:14:39 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+Cc: Ray Liu <ray.liu@airoha.com>, Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Frieder Schrempf <frieder.schrempf@kontron.de>
+Subject: Re: [PATCH v3 00/14] spi: airoha: driver fixes & improvements
+Message-ID: <aKhtP1G7as9b2c4f@lore-rh-laptop>
+References: <20250820123317.728148-1-mikhail.kshevetskiy@iopsys.eu>
+ <aKbDjIZhJuWo3yFu@lore-rh-laptop>
+ <7bca8089-09ad-4550-93d1-35a365bcd167@iopsys.eu>
+ <aKcEYn_hX0ZIusne@lore-rh-laptop>
+ <eaea681a-cda8-4066-a58b-61a35e2b8b55@iopsys.eu>
+ <aKgSY7bOrC8-qZE3@lore-rh-laptop>
+ <1d053317-24a6-4bba-aa30-ad42460ec19b@iopsys.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="LEAJ68iQGD2dyhpF"
+Content-Disposition: inline
+In-Reply-To: <1d053317-24a6-4bba-aa30-ad42460ec19b@iopsys.eu>
+
+
+--LEAJ68iQGD2dyhpF
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> writes:
+>=20
+> On 22.08.2025 09:46, Lorenzo Bianconi wrote:
+> >> On 21.08.2025 14:34, Lorenzo Bianconi wrote:
+> >>>> On 21.08.2025 09:58, Lorenzo Bianconi wrote:
+> >>>>>> This patch series greatly improve airoha snfi driver and fix a
+> >>>>>> number of serious bug.
+> >>>>>>
+> >>>>>> Fixed bugs:
+> >>>>>>  * Fix reading/writing of flashes with more than one plane per lun
+> >>>>>>  * Fix inability to read/write oob area
+> >>>>>>  * Fill the buffer with 0xff before writing
+> >>>>>>  * Fix reading of flashes supporting continuous reading mode
+> >>>>>>  * Fix error paths
+> >>>>>>
+> >>>>>> Improvements:
+> >>>>>>  * Add support of dual/quad wires spi modes in exec_op().
+> >>>>>>  * Support of dualio/quadio flash reading commands
+> >>>>>>  * Remove dirty hack that reads flash page settings from SNFI regi=
+sters
+> >>>>>>    during driver startup
+> >>>>>>
+> >>>>>> Unfortunately I am unable to test the driver with linux at the mom=
+ent,
+> >>>>>> so only the following testing was done:
+> >>>>> It seems to me this is quite an important rework of the driver. I w=
+ould prefer
+> >>>>> to have some test results for this series. Are you able to run mtd_=
+test kernel
+> >>>>> module for testing?
+> >>>> I'll try to build latest openwrt with this patches=A0 and mtd_test k=
+ernel
+> >>>> module and try it on one of our boards.
+> >>> what board are you using for testing? If it is based on Airoha-7581 y=
+ou could
+> >>> use the following repo for testing.
+> >>>
+> >>> https://github.com/Ansuel/openwrt/tree/openwrt-24.10-airoha-an7581-st=
+able
+> >>>
+> >>> Regards,
+> >>> Lorenzo
+> >> What tests do you suggest to run?
+> > IIRC I run all of them. Can you please report even if there are some
+> > improvements (or penalties) in read/write speed
+> Do you mean to run it twice? with patches and without?
 
-> The DTS code coding style expects exactly one space around '=3D'
-> character.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I mean I would suggest to check if there are any difference in read/write
+speed (so yes, you need a baseline).
 
-Applied on mvebu/dt64
+Regards,
+Lorenzo
 
-Thanks,
+> >
+> >> I have a single flash I boot from. It have only 2 mtd partitions:
+> >>
+> >> [=A0=A0=A0 2.980849] spi-nand spi0.0: Micron SPI NAND was found.
+> >> [=A0=A0=A0 2.986102] spi-nand spi0.0: 256 MiB, block size: 128 KiB, pa=
+ge size:
+> >> 2048, OOB size: 128
+> >> [=A0=A0=A0 2.994493] 2 fixed-partitions partitions found on MTD device=
+ spi0.0
+> >> [=A0=A0=A0 3.000856] Creating 2 MTD partitions on "spi0.0":
+> >> [=A0=A0=A0 3.005651] 0x000000000000-0x000000020000 : "bl2"
+> >> [=A0=A0=A0 3.011247] 0x000000020000-0x000010000000 : "ubi"
+> >>
+> >> Most of tests are destructive. So If I use "bl2" or "ubi" partition for
+> >> test, next time I will be unable to boot :-(
+> > yes, I flashed the device after carrying out the test.
+> >
+> > Regards,
+> > Lorenzo
+> >
+> >> Do you suggest to patch u-boot & linux to have more mtd partitions?
+> >>
+> >> This is the results of the only read-only test I found.
+> >>
+> >> root@OpenWrt:/lib/modules/6.6.79# insmod mtd_test.ko
+> >> root@OpenWrt:/lib/modules/6.6.79# insmod mtd_readtest.ko dev=3D1
+> >> [=A0 159.121706]
+> >> [=A0 159.123220] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+> >> [=A0 159.129053] mtd_readtest: MTD device: 1
+> >> [=A0 159.132898] mtd_readtest: MTD device size 268304384, eraseblock s=
+ize
+> >> 131072, page size 2048, count of eraseblocks 2047, pages per eraseblock
+> >> 64, OOB size 128
+> >> [=A0 159.147008] mtd_test: scanning for bad eraseblocks
+> >> [=A0 159.152141] mtd_test: scanned 2047 eraseblocks, 0 are bad
+> >> [=A0 159.157549] mtd_readtest: testing page read
+> >>
+> >> Mikhail
+> >>
+> >>>> Actually patches can be divided on to parts:
+> >>>> * fixes of current driver (patches 1-10)
+> >>>> * change of behavior to avoid reading flash page settings from SNFI
+> >>>> registers during driver startup (patches 11-14)
+> >>>>
+> >>>> The changes are based on the code we are using for more than 3 years=
+=2E I
+> >>>> adapt it to latest linux/u-boot code.
+> >>>>
+> >>>> Up to now the only known issue appears on en7523 chips only. Here a
+> >>>> corresponding patch description (not added to this series)
+> >>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D spi: airoha:
+> >>>> en7523: workaround flash damaging if UART_TXD was short to GND We fo=
+und
+> >>>> that some serial console may pull TX line to GROUND during board boot
+> >>>> time. Airoha uses TX line as one of it's BOOT pins. This will lead to
+> >>>> booting in RESERVED boot mode. It was found that some flashes operat=
+es
+> >>>> incorrectly in RESERVED mode. Micron and Skyhigh flashes are definit=
+ely
+> >>>> affected by the issue, Winbond flashes are NOT affected. Details:
+> >>>> -------- DMA reading of odd pages on affected flashes operates
+> >>>> incorrectly. Page reading offset (start of the page) on hardware lev=
+el
+> >>>> is replaced by 0x10. Thus results in incorrect data reading. Usage of
+> >>>> UBI make things even worse. Any attempt to access UBI leads to ubi
+> >>>> damaging. As result OS loading becomes impossible. Non-DMA reading is
+> >>>> OK. =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>>>
+> >>>> Regards,
+> >>>> Mikhail
+> >>>>
+> >>>>
+> >>>>> Regards,
+> >>>>> Lorenzo
+> >>>>>
+> >>>>>>  * Driver compiles without error.
+> >>>>>>  * All changes were tested with corresponding u-boot driver. U-Boot
+> >>>>>>    SpiNAND driver was modified as well to match linux-6.17-rc2 with
+> >>>>>>    additional fixes for continuous mode.
+> >>>>>>
+> >>>>>> Changes v2:
+> >>>>>>  * minor fix
+> >>>>>>  * add comments to code
+> >>>>>>
+> >>>>>> Changes v3:
+> >>>>>>  * add patch to prevent continuous reading
+> >>>>>>
+> >>>>>> Mikhail Kshevetskiy (14):
+> >>>>>>   spi: airoha: return an error for continuous mode dirmap creation=
+ cases
+> >>>>>>   spi: airoha: remove unnecessary restriction length
+> >>>>>>   spi: airoha: add support of dual/quad wires spi modes
+> >>>>>>   spi: airoha: remove unnecessary switch to non-dma mode
+> >>>>>>   spi: airoha: unify dirmap read/write code
+> >>>>>>   spi: airoha: switch back to non-dma mode in the case of error
+> >>>>>>   spi: airoha: fix reading/writing of flashes with more than one p=
+lane
+> >>>>>>     per lun
+> >>>>>>   spi: airoha: support of dualio/quadio flash reading commands
+> >>>>>>   spi: airoha: allow reading/writing of oob area
+> >>>>>>   spi: airoha: buffer must be 0xff-ed before writing
+> >>>>>>   spi: airoha: avoid setting of page/oob sizes in REG_SPI_NFI_PAGE=
+FMT
+> >>>>>>   spi: airoha: reduce the number of modification of REG_SPI_NFI_CN=
+FG and
+> >>>>>>     REG_SPI_NFI_SECCUS_SIZE registers
+> >>>>>>   spi: airoha: set custom sector size equal to flash page size
+> >>>>>>   spi: airoha: avoid reading flash page settings from SNFI registe=
+rs
+> >>>>>>     during driver startup
+> >>>>>>
+> >>>>>>  drivers/spi/spi-airoha-snfi.c | 508 +++++++++++++++++------------=
+-----
+> >>>>>>  1 file changed, 260 insertions(+), 248 deletions(-)
+> >>>>>>
+> >>>>>> --=20
+> >>>>>> 2.50.1
+> >>>>>>
 
-Gregory
+--LEAJ68iQGD2dyhpF
+Content-Type: application/pgp-signature; name=signature.asc
 
-> ---
->  arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi   | 2 +-
->  arch/arm64/boot/dts/marvell/cn9132-clearfog.dts | 4 ++--
->  arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi | 2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi b/arch/arm64/b=
-oot/dts/marvell/ac5-98dx25xx.dtsi
-> index 605f5be1538c..4878773883c9 100644
-> --- a/arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi
-> @@ -322,7 +322,7 @@ spi1: spi@805a8000 {
->=20=20
->  		nand: nand-controller@805b0000 {
->  			compatible =3D "marvell,ac5-nand-controller";
-> -			reg =3D  <0x0 0x805b0000 0x0 0x00000054>;
-> +			reg =3D <0x0 0x805b0000 0x0 0x00000054>;
->  			#address-cells =3D <0x1>;
->  			#size-cells =3D <0x0>;
->  			interrupts =3D <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
-> diff --git a/arch/arm64/boot/dts/marvell/cn9132-clearfog.dts b/arch/arm64=
-/boot/dts/marvell/cn9132-clearfog.dts
-> index 0f53745a6fa0..c872c8eca518 100644
-> --- a/arch/arm64/boot/dts/marvell/cn9132-clearfog.dts
-> +++ b/arch/arm64/boot/dts/marvell/cn9132-clearfog.dts
-> @@ -559,7 +559,7 @@ led@2 {
->  };
->=20=20
->  &cp2_ethernet {
-> -	status =3D  "okay";
-> +	status =3D "okay";
->  };
->=20=20
->  /* SRDS #2 - 5GE */
-> @@ -572,7 +572,7 @@ &cp2_eth0 {
->  };
->=20=20
->  &cp2_gpio1 {
-> -	pinctrl-names=3D "default";
-> +	pinctrl-names =3D "default";
->  	pinctrl-0 =3D <&cp2_rsvd9_pins>;
->=20=20
->  	/* J21 */
-> diff --git a/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi b/arch/arm64=
-/boot/dts/marvell/cn9132-sr-cex7.dtsi
-> index afc041c1c448..1c9996d8cb24 100644
-> --- a/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi
-> @@ -442,7 +442,7 @@ tpm@0 {
->  		reg =3D <0>;
->  		compatible =3D "infineon,slb9670", "tcg,tpm_tis-spi";
->  		spi-max-frequency =3D <10000000>;
-> -		pinctrl-names  =3D "default";
-> +		pinctrl-names =3D "default";
->  		pinctrl-0 =3D <&cp1_tpm_irq_pins>;
->  		interrupt-parent =3D <&cp1_gpio1>;
->  		interrupts =3D <17 IRQ_TYPE_LEVEL_LOW>;
-> --=20
-> 2.48.1
->
+-----BEGIN PGP SIGNATURE-----
 
---=20
-Gr=C3=A9gory CLEMENT, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaKhtPAAKCRA6cBh0uS2t
+rNtoAP45qevD9fzswegzdm4QNheBWtzMmFfN6H5SL30tWFHTCgEA7XYEgYXlmkSy
+qAkG0JIXX5OXzfE7JomcgI+UAg5pcgA=
+=9+YL
+-----END PGP SIGNATURE-----
+
+--LEAJ68iQGD2dyhpF--
 
