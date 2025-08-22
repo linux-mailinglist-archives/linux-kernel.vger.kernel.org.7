@@ -1,92 +1,92 @@
-Return-Path: <linux-kernel+bounces-782296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073BAB31E62
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:26:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E90BAB31E8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0AF5B655D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:24:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61973188BFF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0BD23D7D7;
-	Fri, 22 Aug 2025 15:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED1E20298C;
+	Fri, 22 Aug 2025 15:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="F/U8ol7e";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jhagOTyE"
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="Yenpndzr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="b+xxT02e"
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7646D21ABA8;
-	Fri, 22 Aug 2025 15:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D893621254A;
+	Fri, 22 Aug 2025 15:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755876359; cv=none; b=REsMkFFgkoYMhh1m9QTUYhA3dLxmbelXbB5hPO99WYMdY1wMVUQHG6Y7i8rPgHVb464FNiVEtJRnLNT+AItEzzhjanT386yfzURgGNnGbBCX5asI/Q2s3VA81OkvtEfkpv4mtsFoXREbLqvbWIt713KbUYilBkOlwdyq48jFBNc=
+	t=1755876360; cv=none; b=ORw8A9qcD3hlmmBcBiShLW9SHpOQHDWmuYya3aZ4p0DktcV7tGY14Hoj/9mTeGC0lfJFMWIceaac7FIqlaBL4RDcd1+gdZxLvUH3Xm9XfwE4cuFL7/G7zxp97sGOWJQl177Mz+0VxtZfBVeNSG7eswr6dXPuamNC8Uz7XGQOcl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755876359; c=relaxed/simple;
-	bh=j44W+aIoXAAx3RS/tFCac2WzsjbpWnN05kP062k2ltU=;
+	s=arc-20240116; t=1755876360; c=relaxed/simple;
+	bh=NL/W/utMPWninrmvm8DXq5yrvSIcf7Ed6Tynv2e9lSc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ffsbOiGOQPNIkxBupSGptTp2fkDFg71NnaLgPZnjOc8R04eN5CAiAldHlHZDnE70ikqC5AufEtPECRpzLdCFejRB+QiYIXsMYCubld7jH29wdTiIh+NJp+zqaxNaZBMgmuujsAKQY4QIjBEIF8cROObbjXoFPH6Egs8V4DVDBVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=F/U8ol7e; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jhagOTyE; arc=none smtp.client-ip=202.12.124.150
+	 MIME-Version; b=oPiR4m3oUysKm6hxgkohvZMDBXYO9xRCJ5Z/44yVJbRNsZ8H4vMzv05n34U3gdLJYiPYURepaU6oYdUWGiMJLVIS0DV07E/IP0G6XEbitkuoERhzuB6by2jQig0v3YmicPQGMiEsnM9t1kAGW8Jz6uuNYDN6zocFFGO/DC8uQtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=Yenpndzr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=b+xxT02e; arc=none smtp.client-ip=202.12.124.154
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfout.stl.internal (Postfix) with ESMTP id 77AED1D000BE;
-	Fri, 22 Aug 2025 11:25:56 -0400 (EDT)
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 992977A0177;
+	Fri, 22 Aug 2025 11:25:57 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Fri, 22 Aug 2025 11:25:56 -0400
+  by phl-compute-11.internal (MEProxy); Fri, 22 Aug 2025 11:25:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1755876356;
-	 x=1755962756; bh=ZR5uE8tX9eu0gc/UQqkv4MWrUQKLpU2DobAQM4kJuX8=; b=
-	F/U8ol7eGWuR312MiviED0DN+5DQaq+xVP4UB0Ll0bNHzesQzAOFbIHDWOTF/H3X
-	VkIrC4snHi5uyYkSaJ7YdYL1iIAd5xUZB1QX4Zg1gNH7aHilJjNqBkVNZ/uFBTOu
-	rjB/AqcZykPam6Eh/euLvVClNQjZ1B0UkpEc9Lls3/PBrh9lIdmbtiqtNUO2HazN
-	+DdCkPrVceh85HMHHrx48rQvNrghLZLS0+VQUjclvF6QjgcfsU7TGqz4z7jWHToW
-	Mhjab/LUiv7SpdrsxaAiq3NG0WFBbUaLsSPqCr+tqRmixaZbiyaeGtHAICFrDjXE
-	Eduf9TU7OVdhmogN/I5jxw==
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1755876357; x=
+	1755962757; bh=grzAHivETRpGMXXqdSnkF8kQyC1Zp+WK/i2ZJytw0LA=; b=Y
+	enpndzr0mNKQO05+ooPoIjk/lHvtoKcv3Dh2jB2CCyA1tqQe/olaKqKrXz7hBf22
+	rkafT+zA8f/5Kb/8aNFuAFwaiGic/sKj8u4GMes/jwpgoB28Wbdm/s2i6p9MKKtS
+	iqTBTpo8SzMab0Xx/zpBlFzayLg9cD9JKqC3MU/8n6HNzomenODVqbbuDYPJoQyl
+	pUn7rRWGlLig6qzjA8PnQWFoEg/8gF1gsHTAU6q5KlqtvVcnjtszTwgEswTujAAO
+	DnMS7iQtFA0NG/T+6CK2G/nSwyeB38cK2fX1ekqE3C/KWgul3b6+avGSYcDmHA8j
+	hXebzr1aSeWX6x9U3YJ3w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755876356; x=
-	1755962756; bh=ZR5uE8tX9eu0gc/UQqkv4MWrUQKLpU2DobAQM4kJuX8=; b=j
-	hagOTyEShJsCNXjN8vLtmrH5wLKMIO8zWq6WKAARHjbhTmZVZSHpL2jd1TdrCttQ
-	/B+KQJtxsJV/yuw9xT1f/DW53d0nxloxY3cpVo8DM51vuN5L4NN6xSDYEP5QQeRD
-	sEnXPCm6OQqmUXbs3mhnPuJzeOitc6pEFUbESPe3UFqtP4uMUyYNJV8OtyGmfUB6
-	ERL09oevcCb8tYVAB3XKqhI9clUdUAKi+Zy0gJZArKIELBUmn+9WlXpcP/RH7M9C
-	sC1Ab/bqbxD4z1wclIbalQ0lWr2gvXhN5WMw7lQqgGghCKyKYys7N+nFLCLWSYRV
-	kNsP+/Pg4a59RrCjLlyVg==
-X-ME-Sender: <xms:BIyoaBPcF7tPqrUZnPl3MCQYyUIXy029KY9m2yBNdVRquR5nCQ1aRw>
-    <xme:BIyoaLU8boJW1Hwor_80-gBPcpcSf8WrFLn2WofDfry643EALmEmBfdenSZ1AVWES
-    alrX4xaSP_kebjAmMU>
-X-ME-Received: <xmr:BIyoaF17JH-QO9SgJkKmvgQ-QeS4OX9AALwov5qbfpdKAC5l0KRY9Ts-7xZsbTgGnG5kUXH4qbmgzJktXM5jpf_3qqQ>
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm3; t=1755876357; x=1755962757; bh=g
+	rzAHivETRpGMXXqdSnkF8kQyC1Zp+WK/i2ZJytw0LA=; b=b+xxT02eixBh840iY
+	bGHzS5S0qfzkxxOTDMZ+vcpJsx0VwuiNiZet8rzaoSW88O1rdEvcqIUotDWa66Ue
+	Ij60I6wmVueKoRD8JOqn8poIRX90dvI2BE2IG7MAgScJecUrylpsD6F48FaFBZ0W
+	ZuMBrUYRbE1sw3A0xr3ytx6cLGyTU0roKyZXygF6C5i672rLObiQYvPYgXpRPgFo
+	KmVMjrecqxmDVqhQML5MTgC03gek1DuSyZ2pUY7MbJ77GHfQ3POuJOmAvOsWMwuX
+	vByN4rvEA7T0h4CddqvyysY9gWYpwTmic7TGyTLEmngKUdjZ+TusJizQ8OZswn6r
+	16A7A==
+X-ME-Sender: <xms:BYyoaOwSy9e2dcGMdgruvYrgeDKISEBr4uYVB36DBgE56UxnEYGOWg>
+    <xme:BYyoaBqND3w31F5VNzS8JlKVQ0cM_HE45Mle6pesMpVO6eDdXpTudS-639hjDW4Kh
+    NF8MHtpufbEjGK-k5o>
+X-ME-Received: <xmr:BYyoaF50Kmp4U_cRHa54B6L7G191ROfhNDFJQwcOqSjaM1DLTygoF-QZfwrR3_cvqIKO9D5PjZFZDykyrMoPytE2i34>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieegudduucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucgoteeftdduqddtudculdduhedmnecujfgurhephffvve
-    fufffkofgjfhggtgfgsehtkeertdertdejnecuhfhrohhmpeforghrkhcurfgvrghrshho
-    nhcuoehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrqeenucggtffrrg
-    htthgvrhhnpeffffefudeuueduueduhfefkeeiueeihfdukeeuffekfffhheeigfehveek
-    hefhhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrpdhnsggprhgtphhtthho
-    peeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmphgvrghrshhonhdqlhgvnh
-    hovhhosehsqhhuvggssgdrtggrpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnhes
-    lhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehhrghnshhgsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehkvggrnhdttdegkeesghhmrghilhdrtghomhdprhgtphht
-    thhopehplhgrthhfohhrmhdqughrihhvvghrqdigkeeisehvghgvrhdrkhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhg
-X-ME-Proxy: <xmx:BIyoaJrwXTRtnO5ne2pXSrKbAvErL-q7FaeWTTqcfiH90jgS-OTpCw>
-    <xmx:BIyoaMU70ZoCqgixlUeRhy6GvJyzDnKEJBLTq2ueNm1vcM55mVyf2A>
-    <xmx:BIyoaEZFGh53dZ2FxjvSqOxJFpBkRfPEd3lVnN6OTq9okZJGqoWuxg>
-    <xmx:BIyoaJfCQU539x99yFhHozisgSOstptKQ4uBtE2ZY9omSmGVaaoT9w>
-    <xmx:BIyoaImJ4ewh34lX3fLu6U0jpRuVpKHxmiDMRZZIBeH2yf57TwcUbRhM>
+    fufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrrhhkucfrvggrrhhsohhn
+    uceomhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgtrgeqnecuggftrfgrth
+    htvghrnhepfedtvdejfeelffevhffgjeejheduteetieeguefgkefhhfegjeduueethefg
+    vdffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    hpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgtrgdpnhgspghrtghpthhtohep
+    iedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhpvggrrhhsohhnqdhlvghnoh
+    hvohesshhquhgvsggsrdgtrgdprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehl
+    ihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohephhgrnhhsgheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohepkhgvrghntddtgeeksehgmhgrihhlrdgtohhmpdhrtghpthht
+    ohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekieesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrgh
+X-ME-Proxy: <xmx:BYyoaAfciw4atyzbEzj7EEjMpRyFjDtXi6wcVwWuQgcPj7Lgenifqw>
+    <xmx:BYyoaC5nXlANgtfZpQHJcdrf4nCkuWb-VUA51b3gZSLiYg-waDnABA>
+    <xmx:BYyoaPsWAlNYeZzQT5L5w5SZWpFwjI8_JNjEwNt_6CJQcVzPFQS_Mg>
+    <xmx:BYyoaKiqOmQhYsG2Epaixf4WTbzz1hdrrJUrVXPbB-tVfsrWSexK0w>
+    <xmx:BYyoaJKCJAm1xhDhI7oNa49hutdOEXXtODr4IJg6vT0EXYGwQ6xNQA1J>
 Feedback-ID: ibe194615:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 22 Aug 2025 11:25:55 -0400 (EDT)
+ 22 Aug 2025 11:25:56 -0400 (EDT)
 From: Mark Pearson <mpearson-lenovo@squebb.ca>
 To: mpearson-lenovo@squebb.ca
 Cc: ilpo.jarvinen@linux.intel.com,
@@ -94,136 +94,173 @@ Cc: ilpo.jarvinen@linux.intel.com,
 	kean0048@gmail.com,
 	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] platform/x86: think-lmi: Add certificate GUID structure
-Date: Fri, 22 Aug 2025 11:25:41 -0400
-Message-ID: <20250822152549.4077684-1-mpearson-lenovo@squebb.ca>
+Subject: [PATCH v2 2/3] platform/x86: think-lmi: Certificate support for ThinkCenter
+Date: Fri, 22 Aug 2025 11:25:42 -0400
+Message-ID: <20250822152549.4077684-2-mpearson-lenovo@squebb.ca>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <mpearson-lenovo@squebb.ca>
+In-Reply-To: <20250822152549.4077684-1-mpearson-lenovo@squebb.ca>
 References: <mpearson-lenovo@squebb.ca>
+ <20250822152549.4077684-1-mpearson-lenovo@squebb.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add a certificate GUID structure to make it easier to add different
-options for other platforms that need different GUIDs.
+ThinkCenter platforms use a different set of GUIDs along with some
+differences in implementation details for their support of
+certificate based authentication.
 
-Suggested-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+Update the think-lmi driver to work correctly on these platforms.
+
+Tested on M75q Gen 5.
+
+Signed-off-by: Kean Ren <kean0048@gmail.com>
 Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
 ---
- drivers/platform/x86/lenovo/think-lmi.c | 41 ++++++++++++++++++++-----
- 1 file changed, 33 insertions(+), 8 deletions(-)
+ drivers/platform/x86/lenovo/think-lmi.c | 51 ++++++++++++++++++++++---
+ drivers/platform/x86/lenovo/think-lmi.h |  1 +
+ 2 files changed, 46 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/platform/x86/lenovo/think-lmi.c b/drivers/platform/x86/lenovo/think-lmi.c
-index 0992b41b6221..88bae5b33c57 100644
+index 88bae5b33c57..f7843f3a3325 100644
 --- a/drivers/platform/x86/lenovo/think-lmi.c
 +++ b/drivers/platform/x86/lenovo/think-lmi.c
-@@ -177,6 +177,28 @@ MODULE_PARM_DESC(debug_support, "Enable debug command support");
- #define TLMI_CERT_SVC BIT(7) /* Admin Certificate Based */
- #define TLMI_CERT_SMC BIT(8) /* System Certificate Based */
+@@ -119,6 +119,7 @@ MODULE_PARM_DESC(debug_support, "Enable debug command support");
+  * You must reboot the computer before the changes will take effect.
+  */
+ #define LENOVO_SET_BIOS_CERT_GUID    "26861C9F-47E9-44C4-BD8B-DFE7FA2610FE"
++#define LENOVO_TC_SET_BIOS_CERT_GUID "955aaf7d-8bc4-4f04-90aa-97469512f167"
  
-+struct tlmi_cert_guids {
-+	char *thumbprint;
-+	char *set_bios_setting;
-+	char *save_bios_setting;
-+	char *cert_to_password;
-+	char *clear_bios_cert;
-+	char *update_bios_cert;
-+	char *set_bios_cert;
+ /*
+  * Name: UpdateBiosCert
+@@ -128,6 +129,7 @@ MODULE_PARM_DESC(debug_support, "Enable debug command support");
+  * You must reboot the computer before the changes will take effect.
+  */
+ #define LENOVO_UPDATE_BIOS_CERT_GUID "9AA3180A-9750-41F7-B9F7-D5D3B1BAC3CE"
++#define LENOVO_TC_UPDATE_BIOS_CERT_GUID "5f5bbbb2-c72f-4fb8-8129-228eef4fdbed"
+ 
+ /*
+  * Name: ClearBiosCert
+@@ -137,6 +139,8 @@ MODULE_PARM_DESC(debug_support, "Enable debug command support");
+  * You must reboot the computer before the changes will take effect.
+  */
+ #define LENOVO_CLEAR_BIOS_CERT_GUID  "B2BC39A7-78DD-4D71-B059-A510DEC44890"
++#define LENOVO_TC_CLEAR_BIOS_CERT_GUID  "97849cb6-cb44-42d1-a750-26a596a9eec4"
++
+ /*
+  * Name: CertToPassword
+  * Description: Switch from certificate to password authentication.
+@@ -145,6 +149,7 @@ MODULE_PARM_DESC(debug_support, "Enable debug command support");
+  * You must reboot the computer before the changes will take effect.
+  */
+ #define LENOVO_CERT_TO_PASSWORD_GUID "0DE8590D-5510-4044-9621-77C227F5A70D"
++#define LENOVO_TC_CERT_TO_PASSWORD_GUID "ef65480d-38c9-420d-b700-ab3d6c8ebaca"
+ 
+ /*
+  * Name: SetBiosSettingCert
+@@ -153,6 +158,7 @@ MODULE_PARM_DESC(debug_support, "Enable debug command support");
+  * Format: "Item,Value,Signature"
+  */
+ #define LENOVO_SET_BIOS_SETTING_CERT_GUID  "34A008CC-D205-4B62-9E67-31DFA8B90003"
++#define LENOVO_TC_SET_BIOS_SETTING_CERT_GUID  "19ecba3b-b318-4192-a89b-43d94bc60cea"
+ 
+ /*
+  * Name: SaveBiosSettingCert
+@@ -161,6 +167,7 @@ MODULE_PARM_DESC(debug_support, "Enable debug command support");
+  * Format: "Signature"
+  */
+ #define LENOVO_SAVE_BIOS_SETTING_CERT_GUID "C050FB9D-DF5F-4606-B066-9EFC401B2551"
++#define LENOVO_TC_SAVE_BIOS_SETTING_CERT_GUID "0afaf46f-7cca-450a-b455-a826a0bf1af5"
+ 
+ /*
+  * Name: CertThumbprint
+@@ -197,6 +204,16 @@ static struct tlmi_cert_guids thinkpad_cert_guid = {
+ 	LENOVO_SET_BIOS_CERT_GUID
+ };
+ 
++static struct tlmi_cert_guids thinkcenter_cert_guid = {
++	NULL,
++	LENOVO_TC_SET_BIOS_SETTING_CERT_GUID,
++	LENOVO_TC_SAVE_BIOS_SETTING_CERT_GUID,
++	LENOVO_TC_CERT_TO_PASSWORD_GUID,
++	LENOVO_TC_CLEAR_BIOS_CERT_GUID,
++	LENOVO_TC_UPDATE_BIOS_CERT_GUID,
++	LENOVO_TC_SET_BIOS_CERT_GUID
 +};
 +
-+static struct tlmi_cert_guids thinkpad_cert_guid = {
-+	LENOVO_CERT_THUMBPRINT_GUID,
-+	LENOVO_SET_BIOS_SETTING_CERT_GUID,
-+	LENOVO_SAVE_BIOS_SETTING_CERT_GUID,
-+	LENOVO_CERT_TO_PASSWORD_GUID,
-+	LENOVO_CLEAR_BIOS_CERT_GUID,
-+	LENOVO_UPDATE_BIOS_CERT_GUID,
-+	LENOVO_SET_BIOS_CERT_GUID
-+};
-+
-+static struct tlmi_cert_guids *cert_guid = &thinkpad_cert_guid;
-+
+ static struct tlmi_cert_guids *cert_guid = &thinkpad_cert_guid;
+ 
  static const struct tlmi_err_codes tlmi_errs[] = {
- 	{"Success", 0},
- 	{"Not Supported", -EOPNOTSUPP},
-@@ -668,7 +690,10 @@ static ssize_t cert_thumbprint(char *buf, const char *arg, int count)
- 	const union acpi_object *obj;
- 	acpi_status status;
+@@ -871,8 +888,16 @@ static ssize_t certificate_store(struct kobject *kobj,
+ 			return -EACCES;
+ 		}
+ 		guid = cert_guid->set_bios_cert;
+-		/* Format: 'Certificate, password' */
+-		auth_str = cert_command(setting, new_cert, setting->password);
++		if (tlmi_priv.thinkcenter_mode) {
++			/* Format: 'Certificate, password, encoding, kbdlang' */
++			auth_str = kasprintf(GFP_KERNEL, "%s,%s,%s,%s", new_cert,
++					     setting->password,
++					     encoding_options[setting->encoding],
++					     setting->kbdlang);
++		} else {
++			/* Format: 'Certificate, password' */
++			auth_str = cert_command(setting, new_cert, setting->password);
++		}
+ 	}
+ 	kfree(new_cert);
+ 	if (!auth_str)
+@@ -1608,6 +1633,16 @@ static int tlmi_analyze(struct wmi_device *wdev)
+ 		wmi_has_guid(LENOVO_SAVE_BIOS_SETTING_CERT_GUID))
+ 		tlmi_priv.certificate_support = true;
  
--	status = wmi_evaluate_method(LENOVO_CERT_THUMBPRINT_GUID, 0, 0, &input, &output);
-+	if (!cert_guid->thumbprint)
-+		return -EOPNOTSUPP;
++	/* ThinkCenter uses different GUIDs for certificate support */
++	if (wmi_has_guid(LENOVO_TC_SET_BIOS_CERT_GUID) &&
++	    wmi_has_guid(LENOVO_TC_SET_BIOS_SETTING_CERT_GUID) &&
++	    wmi_has_guid(LENOVO_TC_SAVE_BIOS_SETTING_CERT_GUID)) {
++		tlmi_priv.certificate_support = true;
++		tlmi_priv.thinkcenter_mode = true;
++		cert_guid = &thinkcenter_cert_guid;
++		pr_info("ThinkCenter modified support being used\n");
++	}
 +
-+	status = wmi_evaluate_method(cert_guid->thumbprint, 0, 0, &input, &output);
- 	if (ACPI_FAILURE(status)) {
- 		kfree(output.pointer);
- 		return -EIO;
-@@ -751,7 +776,7 @@ static ssize_t cert_to_password_store(struct kobject *kobj,
- 		kfree_sensitive(passwd);
- 		return -ENOMEM;
+ 	/*
+ 	 * Try to find the number of valid settings of this machine
+ 	 * and use it to create sysfs attributes.
+@@ -1753,10 +1788,14 @@ static int tlmi_analyze(struct wmi_device *wdev)
  	}
--	ret = tlmi_simple_call(LENOVO_CERT_TO_PASSWORD_GUID, auth_str);
-+	ret = tlmi_simple_call(cert_guid->cert_to_password, auth_str);
- 	kfree(auth_str);
- 	kfree_sensitive(passwd);
  
-@@ -797,7 +822,7 @@ static ssize_t certificate_store(struct kobject *kobj,
- 		if (!auth_str)
- 			return -ENOMEM;
- 
--		ret = tlmi_simple_call(LENOVO_CLEAR_BIOS_CERT_GUID, auth_str);
-+		ret = tlmi_simple_call(cert_guid->clear_bios_cert, auth_str);
- 		kfree(auth_str);
- 
- 		return ret ?: count;
-@@ -834,7 +859,7 @@ static ssize_t certificate_store(struct kobject *kobj,
- 			kfree(new_cert);
- 			return -EACCES;
- 		}
--		guid = LENOVO_UPDATE_BIOS_CERT_GUID;
-+		guid = cert_guid->update_bios_cert;
- 		/* Format: 'Certificate,Signature' */
- 		auth_str = cert_command(setting, new_cert, signature);
- 	} else {
-@@ -845,7 +870,7 @@ static ssize_t certificate_store(struct kobject *kobj,
- 			kfree(new_cert);
- 			return -EACCES;
- 		}
--		guid = LENOVO_SET_BIOS_CERT_GUID;
-+		guid = cert_guid->set_bios_cert;
- 		/* Format: 'Certificate, password' */
- 		auth_str = cert_command(setting, new_cert, setting->password);
+ 	if (tlmi_priv.certificate_support) {
+-		tlmi_priv.pwd_admin->cert_installed =
+-			tlmi_priv.pwdcfg.core.password_state & TLMI_CERT_SVC;
+-		tlmi_priv.pwd_system->cert_installed =
+-			tlmi_priv.pwdcfg.core.password_state & TLMI_CERT_SMC;
++		if (tlmi_priv.thinkcenter_mode) {
++			tlmi_priv.pwd_admin->cert_installed = tlmi_priv.pwdcfg.core.password_mode;
++		} else {
++			tlmi_priv.pwd_admin->cert_installed =
++				tlmi_priv.pwdcfg.core.password_state & TLMI_CERT_SVC;
++			tlmi_priv.pwd_system->cert_installed =
++				tlmi_priv.pwdcfg.core.password_state & TLMI_CERT_SMC;
++		}
  	}
-@@ -1071,13 +1096,13 @@ static ssize_t current_value_store(struct kobject *kobj,
- 			goto out;
- 		}
+ 	return 0;
  
--		ret = tlmi_simple_call(LENOVO_SET_BIOS_SETTING_CERT_GUID, set_str);
-+		ret = tlmi_simple_call(cert_guid->set_bios_setting, set_str);
- 		if (ret)
- 			goto out;
- 		if (tlmi_priv.save_mode == TLMI_SAVE_BULK)
- 			tlmi_priv.save_required = true;
- 		else
--			ret = tlmi_simple_call(LENOVO_SAVE_BIOS_SETTING_CERT_GUID,
-+			ret = tlmi_simple_call(cert_guid->save_bios_setting,
- 					       tlmi_priv.pwd_admin->save_signature);
- 	} else if (tlmi_priv.opcode_support) {
- 		/*
-@@ -1282,7 +1307,7 @@ static ssize_t save_settings_store(struct kobject *kobj, struct kobj_attribute *
- 				ret = -EINVAL;
- 				goto out;
- 			}
--			ret = tlmi_simple_call(LENOVO_SAVE_BIOS_SETTING_CERT_GUID,
-+			ret = tlmi_simple_call(cert_guid->save_bios_setting,
- 					       tlmi_priv.pwd_admin->save_signature);
- 			if (ret)
- 				goto out;
+diff --git a/drivers/platform/x86/lenovo/think-lmi.h b/drivers/platform/x86/lenovo/think-lmi.h
+index 9b014644d316..c805ee312539 100644
+--- a/drivers/platform/x86/lenovo/think-lmi.h
++++ b/drivers/platform/x86/lenovo/think-lmi.h
+@@ -109,6 +109,7 @@ struct think_lmi {
+ 	enum save_mode save_mode;
+ 	bool save_required;
+ 	bool reboot_required;
++	bool thinkcenter_mode;
+ 
+ 	struct tlmi_attr_setting *setting[TLMI_SETTINGS_COUNT];
+ 	struct device *class_dev;
 -- 
 2.43.0
 
