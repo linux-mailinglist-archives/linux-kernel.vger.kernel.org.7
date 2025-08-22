@@ -1,239 +1,394 @@
-Return-Path: <linux-kernel+bounces-781159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F72EB30E45
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:45:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A213B30E47
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17747B605FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:44:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAF793BA75E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1FB2E282D;
-	Fri, 22 Aug 2025 05:45:30 +0000 (UTC)
-Received: from lgeamrelo07.lge.com (lgeamrelo07.lge.com [156.147.51.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8856A2E2DCE;
+	Fri, 22 Aug 2025 05:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BUJqgqnW"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9299217A2E6
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914902E1F07
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755841530; cv=none; b=QG90zEfOIchL7fLXu2+Tw2h4gM9LHpttB30q3A3GRJTkrXu1IsgkdMIJodvVPTkvhKlnkiN9/FfAxGGHh8RFXFJPfUdESM6/Hec3mGT9HekClXu+w3St3eG7vztmy1pfKt5ZpH4uWqftqdysB5JmYwY3pDGN+GVVM82fF1nQhik=
+	t=1755841726; cv=none; b=EbeNJfZBZc2by5EZNAG55Qo36iLcq0FbEyKRo3SCwYq+OuTqlOEYRYln7JtM0C1kQieBSZenpTTz2DBACyIMeFqYSrzKkUloUFMvMr06C6MLjXCjQJPfjBAg115OD4S8KYLKHDW09DAIcrAuet48FvqOtIhGVlqwmmycS17tp90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755841530; c=relaxed/simple;
-	bh=C6zhtBJR1m/7kPOv2gYNp0w5HSgKglOjWakItYQ+OTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z7jG0y+DkQi6DNjUccA0PrMo+JL9YWJ/8XmW70ZeWlU5yvprUr1WiHBSMAucmJ5OWMUHKi9yAzvdWxwyYjT76sQkGhHSqWgkXaBi10PcM/EmV4zxwA3KtRSYJ7yfftKYjWTTyn8VxIGwzCUSm5R4tCsWjgfjoQ3Lj3ZesjgSY/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
-	by 156.147.51.103 with ESMTP; 22 Aug 2025 14:45:18 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-Date: Fri, 22 Aug 2025 14:45:18 +0900
-From: YoungJun Park <youngjun.park@lge.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, shikemeng@huaweicloud.com,
-	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
-	baohua@kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, gunho.lee@lge.com,
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
-	Matthew Wilcox <willy@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Kairui Song <ryncsn@gmail.com>
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-Message-ID: <aKgD7nZy7U+rHt9X@yjaykim-PowerEdge-T330>
-References: <aH+apAbBCmkMGPlO@yjaykim-PowerEdge-T330>
- <aH/baxIgrBI3Z1Hl@yjaykim-PowerEdge-T330>
- <uyxkdmnmvjipxuf7gagu2okw7afvzlclomfmc6wb6tygc3mhv6@736m7xs6gn5q>
- <CAF8kJuMo3yNKOZL9n5UkHx_O5cTZts287HOnQOu=KqQcnbrMdg@mail.gmail.com>
- <aKC+EU3I/qm6TcjG@yjaykim-PowerEdge-T330>
- <CAF8kJuNuNuxxTbtkCb3Opsjfy-or7E+0AwPDi7L-EgqoraQ3Qg@mail.gmail.com>
- <aKROKZ9+z2oGUJ7K@yjaykim-PowerEdge-T330>
- <CAF8kJuPUouN4c6V-CaG7_WQUAvRxBg02WRxsMtL56_YTdTh1Jg@mail.gmail.com>
- <aKXeLCr9DgQ2YfCq@yjaykim-PowerEdge-T330>
- <CAF8kJuM4f2W6w29VcHY5mgXVMYmTF4yORKaFky6bCjS1xRek9Q@mail.gmail.com>
+	s=arc-20240116; t=1755841726; c=relaxed/simple;
+	bh=VvDF/q3zCaZ77aMVZ9htfP40TC1A+WQCr3bovyMHE70=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g6TVV6iAStnTCr3QEt0OiXsMaH9BE3Szr0oPhIED9SGMAy5jdL9cN7oQfUB99jzbFjx3CEefa3i0lSO3eDYFbCcdkLM5vMbdjAGw5h9guHelZUzaRhNoGII+BCgAMxSjQj/d63Km/dArnhXyokIUsxAVWNBt665RbyGCrazEbmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BUJqgqnW; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55e041f6da0so1457519e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 22:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755841723; x=1756446523; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JoZdK50/K/LczwYuf75UT/ft4tdjCZI9J4+8Ndo+nls=;
+        b=BUJqgqnW4+zlqVW21Qh4iq8oKIh2O/y9o578rP6Alko3Zh0TZx5p/beFT/SPyV9rND
+         PxN2SY4jSaJp6HETsPRoCDurrGY9/JOVfEjnNvs22ZI0FsHSPFe0Wjyb2Y5LC8zeRomA
+         0BZcmbSQcxKIcoAaq8SF4AUMTyeIl7twJ3lUU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755841723; x=1756446523;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JoZdK50/K/LczwYuf75UT/ft4tdjCZI9J4+8Ndo+nls=;
+        b=fvm8qwNclEdXjetUqvmJR63IIMuNPsOBHJJYP6QRWHO/5NGSNt9q9ItonCVPKSHUJB
+         e2d+H3QIW/xvRyldWxhWfPqK5UgphfuFiezYE8GQscIaKNg5u1g8Y1C4efy/X3klgKxY
+         X4qIBrxWiUzsLGUUGdnaiqx8dI2L4ByEwrfNrMTnw5F8TsbBB1cXXDgzu8RFsiy0kPw0
+         ZSej52Jt2Q8XYBoQ+D+6gEamSGkfM65f+xKNvPHiWrQvlOjqtpW68KCWtlDbnoSziVpv
+         ocjQpLIXnQgaqQUuBPfP2K+141070G64Kj+TuG9ORPjxLlj/Fb9/2ZZHeQepRhZ7Q49o
+         o9fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3SinvCh2JJeuw9AvELIK54tfNwaoOIG/X/PnFQSgAxrpQpSagLe1H5gXNJE6PDTpS//Nr8BN8O5UoNsY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEMbUB2TaqEY9/PwvukMBaAQC98uGKl76rc9+bjZ3kYXRB1U9I
+	4CNKpdz3farEuCpt13zjZX7gT76MZBWNJZ+mMAS7emxfqXk0TB2HXM694BmgBK62gbaAts3zpzM
+	njWHN41GTNRB+K4DUwzMjcYYN9SwpW/Gq1g/WvSZo
+X-Gm-Gg: ASbGncvhNN1keYcSTVINlfPvdvWcjm8ZQ74C5nJXyR2JxTgLVPLtEOOhnlOwU/Tzysu
+	ESva+EkTrFPd5YkJxTmeBidYJltEYTd+cf5VjB7JFkE3bJzT6VvnAOD5njsgzHhk9Eq6Tl5GeXg
+	pov09cXNW2BfGR1oY5FaE7BBh6a8wj4CaMW4x9mPR1PUncpT806fgbeQLT9bTr350y2nCGQSoZ1
+	1vXiUTFfqIx4xrjJbdBQIv9tmzF4sFT0Lw=
+X-Google-Smtp-Source: AGHT+IEOuz9T18C75t4W7tyeC9lnODFUjUpRpgTCCiVHNHFZ4PPPT3oCCCaMJRon2fKjlUHHOi/9WQ3aPKorH0u9spA=
+X-Received: by 2002:a05:6512:3186:b0:55b:9796:5d5a with SMTP id
+ 2adb3069b0e04-55f0cd0ab86mr647597e87.26.1755841722615; Thu, 21 Aug 2025
+ 22:48:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF8kJuM4f2W6w29VcHY5mgXVMYmTF4yORKaFky6bCjS1xRek9Q@mail.gmail.com>
+References: <20250822021217.1598-1-jjian.zhou@mediatek.com> <20250822021217.1598-3-jjian.zhou@mediatek.com>
+In-Reply-To: <20250822021217.1598-3-jjian.zhou@mediatek.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Fri, 22 Aug 2025 13:48:31 +0800
+X-Gm-Features: Ac12FXyAx8hC-gVdNoD4NtkuABbLquAi1UhZ0eVGRrEels7y4nJgdo90ksrJ3Zs
+Message-ID: <CAGXv+5GHSinkMHhBxRekfCxFK8my8JqeeRBsGXGuWDqH=MjmTQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] mailbox: mediatek: Add mtk-vcp-mailbox driver
+To: Jjian Zhou <jjian.zhou@mediatek.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I still believe that the priority based approach has more flexibility,
-and can cover more usage scenarios. That opinion has not changed.
-
-However, from this discussion I came to clearly understand and agree on
-three points:
-
-1. The swap.tier idea can be implemented in a much simpler way, and
-2. It can cover the most important use cases I initially needed, as well
-   as common performance scenarios, without causing LRU inversion.
-3. The really really needed usage scenario of arbitrary ordering does not exist.
-the usage scenario I suggest is imaginary.(just has possibility)
-
-I have also considered the situation where I might need to revisit my
-original idea in the future. I believe this would still be manageable
-within the swap.tier framework. For example:
-
-* If after swap.tier is merged, an arbitrate ordering use case arises
-  (which you do not consider concrete), it could be solved by allowing
-  cgroups to remap the tier order individually.
-
-* If reviewers later decide to go back to the priority based direction,
-  I think it will still be possible. By then, much of the work would
-  already be done in patch v2, so switching back would not be
-  impossible.
-
-And also, since I highly respect you for long-time contributions and
-deep thinking in the swap layer, I decided to move the idea forward
-based on swap.tier.
-
-For now, I would like to share the first major direction change I am
-considering, and get feedback on how to proceed. If you think this path
-is promising, please advise whether I should continue as patch v2, or
-send a new RFC series or new patch series.
-
------------------------------------------------------------------------
-1. Interface
------------------------------------------------------------------------
-
-In the initial thread you replied with the following examples:
-
-> Here are a few examples:
-> e.g. consider the following cgroup hierarchy a/b/c/d, a as the first
-> level cgroup.
-> a/swap.tiers: "- +compress_ram"
-> it means who shall not be named is set to opt out, optin in
-> compress_ram only, no ssd, no hard.
-> Who shall not be named, if specified, has to be the first one listed
-> in the "swap.tiers".
+On Fri, Aug 22, 2025 at 10:12=E2=80=AFAM Jjian Zhou <jjian.zhou@mediatek.co=
+m> wrote:
 >
-> a/b/swap.tiers: "+ssd"
-> For b cgroup, who shall not be named is not specified, the tier is
-> appended to the parent "a/swap.tiers". The effective "a/b/swap.tiers"
-> become "- +compress_ram +ssd"
-> a/b can use both zswap and ssd.
+> Add mtk-vcp-mailbox driver to support the communication with
+> VCP remote microprocessor.
 >
-> Every time the who shall not be named is changed, it can drop the
-> parent swap.tiers chain, starting from scratch.
+> Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
+
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+
+A couple minor comments below.
+
+> ---
+>  drivers/mailbox/Kconfig                 |   9 ++
+>  drivers/mailbox/Makefile                |   2 +
+>  drivers/mailbox/mtk-vcp-mailbox.c       | 174 ++++++++++++++++++++++++
+>  include/linux/mailbox/mtk-vcp-mailbox.h |  32 +++++
+>  4 files changed, 217 insertions(+)
+>  create mode 100644 drivers/mailbox/mtk-vcp-mailbox.c
+>  create mode 100644 include/linux/mailbox/mtk-vcp-mailbox.h
 >
-> a/b/c/swap.tiers: "-"
+> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+> index 02432d4a5ccd..c28bdb855663 100644
+> --- a/drivers/mailbox/Kconfig
+> +++ b/drivers/mailbox/Kconfig
+> @@ -294,6 +294,15 @@ config MTK_CMDQ_MBOX
+>           critical time limitation, such as updating display configuratio=
+n
+>           during the vblank.
 >
-> For c, it turns off all swap. The effective "a/b/c/swap.tiers" become
-> "- +compress_ram +ssd -" which simplify as "-", because the second "-"
-> overwrites all previous optin/optout results.
-> In other words, if the current cgroup does not specify the who shall
-> not be named, it will walk the parent chain until it does. The global
-> "/" for non cgroup is on.
+> +config MTK_VCP_MBOX
+> +       tristate "MediaTek VCP Mailbox Support"
+> +       depends on ARCH_MEDIATEK || COMPILE_TEST
+> +       help
+> +         Say yes here to add support for the MediaTek VCP mailbox driver=
+.
+> +         The mailbox implementation provides access from the application
+> +         processor to Video Companion Processor Unit.
+> +         If unsure say N.
+> +
+>  config ZYNQMP_IPI_MBOX
+>         tristate "Xilinx ZynqMP IPI Mailbox"
+>         depends on ARCH_ZYNQMP && OF
+> diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
+> index 98a68f838486..07278871d254 100644
+> --- a/drivers/mailbox/Makefile
+> +++ b/drivers/mailbox/Makefile
+> @@ -63,6 +63,8 @@ obj-$(CONFIG_MTK_ADSP_MBOX)   +=3D mtk-adsp-mailbox.o
 >
-> a/b/c/d/swap.tiers: "- +hdd"
-> For d, only hdd swap, nothing else.
+>  obj-$(CONFIG_MTK_CMDQ_MBOX)    +=3D mtk-cmdq-mailbox.o
 >
-> More example:
-> "- +ssd +hdd -ssd" will simplify to: "- +hdd", which means hdd only.
-> "+ -hdd": No hdd for you! Use everything else.
+> +obj-$(CONFIG_MTK_VCP_MBOX)     +=3D mtk-vcp-mailbox.o
+> +
+>  obj-$(CONFIG_ZYNQMP_IPI_MBOX)  +=3D zynqmp-ipi-mailbox.o
 >
-> Let me know what you think about the above "swap.tiers"(name TBD)
-> proposal.
+>  obj-$(CONFIG_SUN6I_MSGBOX)     +=3D sun6i-msgbox.o
+> diff --git a/drivers/mailbox/mtk-vcp-mailbox.c b/drivers/mailbox/mtk-vcp-=
+mailbox.c
+> new file mode 100644
+> index 000000000000..6f48215896d2
+> --- /dev/null
+> +++ b/drivers/mailbox/mtk-vcp-mailbox.c
+> @@ -0,0 +1,174 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2025 MediaTek Corporation. All rights reserved.
+> + * Author: Jjian Zhou <jjian.zhou.@mediatek.com>
+> + */
+> +
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mailbox_controller.h>
+> +#include <linux/mailbox/mtk-vcp-mailbox.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+> +struct mtk_vcp_mbox_priv {
+> +       void __iomem *base;
+> +       struct device *dev;
+> +       struct mbox_controller mbox;
+> +       const struct mtk_vcp_mbox_cfg *cfg;
+> +       struct mtk_ipi_info ipi_recv;
+> +};
+> +
+> +struct mtk_vcp_mbox_cfg {
+> +       u32 set_in;
+> +       u32 clr_out;
+> +};
+> +
+> +static inline struct mtk_vcp_mbox_priv *get_mtk_vcp_mbox_priv(struct mbo=
+x_controller *mbox)
+> +{
+> +       return container_of(mbox, struct mtk_vcp_mbox_priv, mbox);
+> +}
+> +
+> +static irqreturn_t mtk_vcp_mbox_irq_thread(int irq, void *data)
+> +{
+> +       struct mbox_chan *chan =3D data;
+> +       struct mtk_vcp_mbox_priv *priv =3D get_mtk_vcp_mbox_priv(chan->mb=
+ox);
 
-My opinion is that instead of mapping priority into named concepts, it
-may be simpler to represent it as plain integers. 
-(The integers are assigned in sequential order, as explained in the following reply.)
-This would make the interface almost identical to the cpuset style suggested by Koutný.
+Since there's only one mailbox, you can just pass the private data,
+instead of passing the mbox_chan.
 
-For example:
+> +
+> +       /* get irq status */
+> +       priv->ipi_recv.irq_status =3D readl(priv->base + priv->cfg->clr_o=
+ut);
+> +
+> +       __ioread32_copy(priv->ipi_recv.msg, priv->base, MBOX_SLOT_MAX_SIZ=
+E / 4);
+> +
+> +       mbox_chan_received_data(chan, &priv->ipi_recv);
+> +
+> +       /* clear irq status */
+> +       writel(priv->ipi_recv.irq_status, priv->base + priv->cfg->clr_out=
+);
+> +
+> +       return IRQ_HANDLED;
+> +}
+> +
+> +static struct mbox_chan *mtk_vcp_mbox_xlate(struct mbox_controller *mbox=
+,
+> +                                           const struct of_phandle_args =
+*sp)
+> +{
+> +       if (sp->args_count)
+> +               return NULL;
+> +
+> +       return mbox->chans;
+> +}
+> +
+> +static int mtk_vcp_mbox_send_data(struct mbox_chan *chan, void *data)
+> +{
+> +       struct mtk_vcp_mbox_priv *priv =3D get_mtk_vcp_mbox_priv(chan->mb=
+ox);
+> +       struct mtk_ipi_info *ipi_info =3D data;
+> +       u32 status;
+> +
+> +       if (!ipi_info->msg) {
+> +               dev_err(priv->dev, "msg buffer is NULL.\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       status =3D readl(priv->base + priv->cfg->set_in) & BIT(ipi_info->=
+index);
+> +       if (status) {
+> +               dev_warn(priv->dev, "mailbox IPI %d is busy.\n", ipi_info=
+->id);
+> +               return -EBUSY;
+> +       }
+> +
+> +       if (ipi_info->slot_ofs + ipi_info->len > MBOX_SLOT_MAX_SIZE)
+> +               return -EINVAL;
+> +       __iowrite32_copy(priv->base + ipi_info->slot_ofs, ipi_info->msg,
+> +                        ipi_info->len);
+> +
+> +       writel(BIT(ipi_info->index), priv->base + priv->cfg->set_in);
+> +
+> +       return 0;
+> +}
+> +
+> +static bool mtk_vcp_mbox_last_tx_done(struct mbox_chan *chan)
+> +{
+> +       struct mtk_ipi_info *ipi_info =3D chan->active_req;
+> +       struct mtk_vcp_mbox_priv *priv =3D get_mtk_vcp_mbox_priv(chan->mb=
+ox);
+> +
+> +       return !(readl(priv->base + priv->cfg->set_in) & BIT(ipi_info->in=
+dex));
+> +}
+> +
+> +static const struct mbox_chan_ops mtk_vcp_mbox_chan_ops =3D {
+> +       .send_data      =3D mtk_vcp_mbox_send_data,
+> +       .last_tx_done   =3D mtk_vcp_mbox_last_tx_done,
+> +};
+> +
+> +static int mtk_vcp_mbox_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+> +       struct mtk_vcp_mbox_priv *priv;
+> +       struct mbox_controller *mbox;
+> +       int ret, irq;
+> +
+> +       priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +       if (!priv)
+> +               return -ENOMEM;
+> +
+> +       priv->dev =3D dev;
+> +       mbox =3D &priv->mbox;
+> +       mbox->dev =3D dev;
+> +       mbox->ops =3D &mtk_vcp_mbox_chan_ops;
+> +       mbox->txdone_irq =3D false;
+> +       mbox->txdone_poll =3D true;
+> +       mbox->of_xlate =3D mtk_vcp_mbox_xlate;
+> +       mbox->num_chans =3D 1;
+> +       mbox->chans =3D devm_kzalloc(dev, sizeof(*mbox->chans), GFP_KERNE=
+L);
+> +       if (!mbox->chans)
+> +               return -ENOMEM;
+> +
+> +       priv->ipi_recv.msg =3D devm_kzalloc(dev, MBOX_SLOT_MAX_SIZE, GFP_=
+KERNEL);
+> +       if (!priv->ipi_recv.msg)
+> +               return -ENOMEM;
+> +
+> +       priv->base =3D devm_platform_ioremap_resource(pdev, 0);
+> +       if (IS_ERR(priv->base))
+> +               return PTR_ERR(priv->base);
+> +
+> +       priv->cfg =3D of_device_get_match_data(dev);
+> +       if (!priv->cfg)
+> +               return -EINVAL;
+> +
+> +       irq =3D platform_get_irq(pdev, 0);
+> +       if (irq < 0)
+> +               return irq;
+> +
+> +       ret =3D devm_request_threaded_irq(dev, irq, NULL,
+> +                                       mtk_vcp_mbox_irq_thread, IRQF_ONE=
+SHOT,
+> +                                       dev_name(dev), mbox->chans);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       platform_set_drvdata(pdev, priv);
+> +
+> +       return devm_mbox_controller_register(dev, &priv->mbox);
+> +}
+> +
+> +static const struct mtk_vcp_mbox_cfg mt8196_cfg =3D {
+> +       .set_in         =3D 0x100,
+> +       .clr_out        =3D 0x10C,
 
-  echo 1-8,9-10 > a/swap.tier   # parent allows tier range 1–8 and 9-10
-  echo 1-4,9    > a/b/swap.tier # child uses tier 1-4 and 9 within parent's range
-  echo 20   > a/b/swap.tier # invalid: parent only allowed 1-8 and 9-10
+                                ^ use lowercase for hex numbers.
 
-named concepts can be dealt with by some userland based software solution.
-kernel just gives simple integer mapping concept. 
-userland software can abstract it as a "named" tier to user.
-
-Regarding the mapping of names to ranges, as you also mentioned:
-
-> There is a simple mapping of global swap tier names into priority
-> range
-> The name itself is customizable.
-> e.g. 100+ is the "compress_ram" tier. 50-99 is the "SSD" tier,
-> 0-55 is the "hdd" tier.
-> The detailed mechanization and API is TBD.
-> The end result is a simple tier name lookup will get the priority
-> range.
-> By default all swap tiers are available for global usage without
-> cgroup. That matches the current global swap on behavior.
-
-One idea would be to provide a /proc/swaptier interface:
-
-  echo "100 40" > /proc/swaptier
-
-This would mean:
-* >=100 : tier 1
-* 40–99 : tier 2
-* <40   : tier 3
-
-How do you feel about this approach?
-
------------------------------------------------------------------------
-2. NUMA autobind
------------------------------------------------------------------------
-
-If NUMA autobind is in use, perhaps it is best to simply disallow
-swaptier settings. I expect workloads depending on autobind would rely
-on it globally, rather than per-cgroup. Therefore, when a negative
-priority is present, tier grouping could reject the configuration.
-
------------------------------------------------------------------------
-3. Implementation
------------------------------------------------------------------------
-
-My initial thought is to implement a simple bitmask check. That is, in
-the slow swap path, check whether the cgroup has selected the given
-tier. This is simple, but I worry it might lose the optimization of the
-current priority list, where devices are dynamically tracked as they
-become available or unavailable.
-
-So perhaps a better design is to make swap tier an object, and have
-each cgroup traverse only the priority list of the tiers it selected. I
-would like feedback on whether this design makes sense.
-
------------------------------------------------------------------------
-
-Finally, I want to thank all reviewers for the constructive feedback.
-Even if we move to the swap.tier approach, the reviews from Kairui, Nhat
-Pham and Koutný are still valid and will remain relevant.
-
-Kairui, Nhat Pham
-* Regarding per-cgroup per-cluster feedback: this would likely need to
-  be adapted to tier-based design.
-* Regarding passing percpu info along the allocation path: since tier is
-  selected per-cgroup, this may still be needed, depending on
-  implementation.
-
-Koutný
-* Regarding NUMA autobind complexity: as explained above, I intend to
-  design the mechanism so that autobind does not affect it. Parent-child
-  semantics will remain essentially identical to cpuset. If the proposed
-  interface is accepted, its usage would be like cpuset, which should be
-  less controversial.
-
----
-
-Thank you again for the suggestions. I will continue to review while
-waiting for your feedback.
-
-Best Regards,
-Youngjun Park
+> +};
+> +
+> +static const struct of_device_id mtk_vcp_mbox_of_match[] =3D {
+> +       { .compatible =3D "mediatek,mt8196-vcp-mbox", .data =3D &mt8196_c=
+fg },
+> +       {},
+> +};
+> +MODULE_DEVICE_TABLE(of, mtk_vcp_mbox_of_match);
+> +
+> +static struct platform_driver mtk_vcp_mbox_driver =3D {
+> +       .probe          =3D mtk_vcp_mbox_probe,
+> +       .driver =3D {
+> +               .name   =3D "mtk_vcp_mbox",
+> +               .of_match_table =3D mtk_vcp_mbox_of_match,
+> +       },
+> +};
+> +module_platform_driver(mtk_vcp_mbox_driver);
+> +
+> +MODULE_AUTHOR("Jjian Zhou <jjian.zhou@mediatek.com>");
+> +MODULE_DESCRIPTION("MTK VCP Mailbox Controller");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/mailbox/mtk-vcp-mailbox.h b/include/linux/mail=
+box/mtk-vcp-mailbox.h
+> new file mode 100644
+> index 000000000000..143fb0d06e30
+> --- /dev/null
+> +++ b/include/linux/mailbox/mtk-vcp-mailbox.h
+> @@ -0,0 +1,32 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> +/*
+> + * Copyright (c) 2025 MediaTek Inc.
+> + */
+> +
+> +#ifndef __MTK_VCP_MAILBOX_H__
+> +#define __MTK_VCP_MAILBOX_H__
+> +
+> +#define MBOX_SLOT_MAX_SIZE     0x100 /* mbox max slot size */
+> +
+> +/**
+> + * struct mtk_ipi_info - mailbox message info for mtk-vcp-mailbox
+> + * @msg: The share buffer between IPC and mailbox driver
+> + * @len: Message length
+> + * @id: This is for identification purposes and not actually used
+> + *     by the mailbox hardware.
+> + * @index: The signal number of the mailbox message.
+> + * @slot_ofs: Data slot offset.
+> + * @irq_status: Captures incoming signals for the RX path.
+> + *
+> + * It is used between IPC with mailbox driver.
+> + */
+> +struct mtk_ipi_info {
+> +       void *msg;
+> +       u32 len;
+> +       u32 id;
+> +       u32 index;
+> +       u32 slot_ofs;
+> +       u32 irq_status;
+> +};
+> +
+> +#endif
+> --
+> 2.46.0
+>
 
