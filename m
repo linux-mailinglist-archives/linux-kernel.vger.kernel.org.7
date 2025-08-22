@@ -1,523 +1,219 @@
-Return-Path: <linux-kernel+bounces-782679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6BD7B3238A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:22:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91504B32385
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48621A06941
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:20:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 763C11CC36EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1712D836A;
-	Fri, 22 Aug 2025 20:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EE92D6E4B;
+	Fri, 22 Aug 2025 20:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="K2YeL26Y"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzO9EgdR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35A7223DCE
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 20:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32832877CA;
+	Fri, 22 Aug 2025 20:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755894035; cv=none; b=uPJsjWh9t86+DGQsrQdfDONIUiVbBIsqq8nTFJaq/4yRnYVuYrrNdTr7QsLhhyoY5v7wme6mVkayQR31QOrwnC/tsXFlS+tPwIX3Ax1MTv3VFYXvTjctxabSjIx4z300VINKya0uflhUIHGe98TEB5RlsJ6ky9QKM71+Xrj8whQ=
+	t=1755894018; cv=none; b=aXErY0OPag3ncOXbzA9adXI0PXJ8u4vLWdK14K6lyzUw2E+vgBtzPfohNXbEECucka+wPWAqe+1ods/gFAvhuHEV9/ZwxmNlP6lvDbgMLTn1Ul0LYsmpsDpJjWTdjrsB2vJFeCA5R3OlGkRJm78XBZg26U2u7QSXSEqWvCBdkX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755894035; c=relaxed/simple;
-	bh=gxzFO2D4eysttkHE1Ux3TZ95rNmSMQtNgyhC0dcYJeg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Y1R93t3oeCYn2bgDLgj6PjjZdvJr8amlV4x45krOTSUtycPix4S2/m58YqS0GNjTu1pD5xK6wrHY6EI4EJDiluM5bSfZgMotib1ww1QnLlJcfdflgrR3dU7n7A1J8jWgnhoQ08910mwLFPuFuh7IuIqiVL1y+SBfa5yXIIglDmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=K2YeL26Y; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-70d7c7e9653so28240316d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:20:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zetier.com; s=gm; t=1755894033; x=1756498833; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+l70WFhqycv5nkPU3UrRJ6EMYeZQABqO3XZ+ctox0Og=;
-        b=K2YeL26YPD7zDfJGjDTvXYeDYyGPHuA21Fvg/vl17fZR280xLEupB5z6ic1kv/L+yT
-         KbWWKpBk2+k6LjAcTzBCFLlLe66z2wY8vr9S3OZGo7O2LxWuY2X7LDOLUtQRnuzFJYYI
-         2w0XSAHpA37bOBLMqL79R6XLUKEtHvgHZrRSqxeQ7B7JeEFeNTE8f/5eILBBKGeaNp1l
-         lcZc3v1l8IyOt7GELIFiRURHkULbJcFEA4LRtIEpJImblFUKrP0WQ3TVyNHMqijaAiAn
-         TA0NTK8YMuL4KxTlrY/eNI3NTy4rD27vp4SOalPSs13RNsi8AshPdjA7ANevUqw/AXa9
-         Muhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755894033; x=1756498833;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+l70WFhqycv5nkPU3UrRJ6EMYeZQABqO3XZ+ctox0Og=;
-        b=KdWCh4X4dORiyp5VvESqlCGZ/hvObNMhlYNBPzfw9r1An21RxN63XUP3o0UoEx8eEw
-         Mn3XxnjWedRX8lYOV7OMXhraLHvR8cJyDAE7Cw1fuECyl5GaYV+xFeO9HolKfCvzozBn
-         /CVrVdHO/z4ZhSNGK6zhFRC/WniDzFcqL+yXELv3yeZV1eOGiL3P0Rs21uENawUkQSeU
-         roK94RsL+22Y+fsfTVf/uC3NEmvwhOx8mC3W+wRS8TSjizxpfVi36qYhDjH7MrfZZIqI
-         EwQh5aFEReREU13s8GNfSPg2x/wyCpharErNmuyQ3ZEKgLj+5qUT8r2BKuZUdkXDdyIj
-         kSsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWIWYM1dcq3jmCNIpG3pMaLg2Wkv65UJ5Y+dQJFnSiX3sUwmoJmazJzSLCjpafRN7zeLNo/gBivlZ5Ud5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx85WxwwkgYKeGp9t9CiJSqMf6nTKMSA+BEH3AHRc3O0WIiuLl2
-	daZgvArbXO9lfN8mlfCrJ5yKZFhSCf/AC8wIeC5Zn1xWsiSz7k1/54h7Iw95HBuRv1Q=
-X-Gm-Gg: ASbGncv0TDRVkmCZSnqcrla9CgUA05P6/IhSw5HRlLFcWgqyN3DVlw2xCKvo5Yc3nL8
-	4jAPTm1MfstaY9g7CORKJ4+1utuBstWqv/vJmV85/ev/VoJlckYUNIca5+1SIP5y+PeAe0ePc5k
-	vleY+PLV81Zxb4P1nZcz7dns7sxLV7DX8YpkOugxam1qBbymoV3qrGC+QCDPq26A66195svCwXt
-	UQ52RXHRe0tFGCXLesBRjgmF+iIA2cF2eKZRSYix0gemxZEuG1s3XAVtwJLCf9lNsDmLR8gM6el
-	b2VeNyf9FXvV5XhhpqPQFb5SJzCpSswtqF+YK+a+0OqRkoo9511eDPIoKspHJuRP+LB5hT1Z1yM
-	RUxF5DN9seoc+uFEtbKYWICGoE70SgGq55E61ZQ==
-X-Google-Smtp-Source: AGHT+IHQdbGLB27VeQHL8oHYYGFfha5KkRMdhoMV8SHncYyU1CT3gPJWp55L2FxdpgtyRQp5wzV1PA==
-X-Received: by 2002:ad4:5cad:0:b0:70d:774e:942a with SMTP id 6a1803df08f44-70d9710c391mr55114966d6.19.1755894032425;
-        Fri, 22 Aug 2025 13:20:32 -0700 (PDT)
-Received: from ethanf.zetier.com ([65.222.209.234])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70da714dc98sm4944206d6.12.2025.08.22.13.20.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 13:20:32 -0700 (PDT)
-From: Ethan Ferguson <ethan.ferguson@zetier.com>
-To: linkinjeon@kernel.org,
-	sj1557.seo@samsung.com,
-	yuezhang.mo@sony.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ethan Ferguson <ethan.ferguson@zetier.com>
-Subject: [PATCH v4 1/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
-Date: Fri, 22 Aug 2025 16:20:10 -0400
-Message-Id: <20250822202010.232922-2-ethan.ferguson@zetier.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250822202010.232922-1-ethan.ferguson@zetier.com>
-References: <20250822202010.232922-1-ethan.ferguson@zetier.com>
+	s=arc-20240116; t=1755894018; c=relaxed/simple;
+	bh=tdtNSs8Kpu/sExAf4TXBpIT5C7B1P4VkLkgrDCZvGXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HXv5THMj+L50p2ZuUFyljeCNDUrRH/D/o8aYvbUmEy5rED4NLwtEq37bZDUMMQacBqgon9XFoMu9PQPJT0PA1Jj1cOKzPHWZew59yTb/TCFtdj64MxfGreCktgcgxdg9+ze48PP7lDGOOI40DyRigqyk8bS2JgkUQHJu/KFv7sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzO9EgdR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 465F5C4CEED;
+	Fri, 22 Aug 2025 20:20:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755894017;
+	bh=tdtNSs8Kpu/sExAf4TXBpIT5C7B1P4VkLkgrDCZvGXY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lzO9EgdR7yAAuw4MAy6NAMcNJzNOxchSLb3UDks+Vx5t7khko1bBwoZ/Hmcha3ssz
+	 k79MgQNMwMESniJJjNMVsXab1fagt/Zhnujwgfprcjsbz9vFPTX5GQRCKq2IpNRXap
+	 qw5mPkeerbyapNE6B1EGb+o/IOJQJYILe4/RYgB15qVc9u72TV/X5C4xf6dZ1b6ZL3
+	 3it0/Qlz2keHGvwb8gfbXrsHyuAkZViFeamL0PN9tAZqAqk9C383YnnfwhfeI992KG
+	 sBg8dhwAUePwlIhTc1eid85HyubEsiiz7yNyDZKt6Ur/KW5Fayyr7DcaP8NluVVLld
+	 tNg2tK94rkk5g==
+Date: Fri, 22 Aug 2025 15:20:16 -0500
+From: Rob Herring <robh@kernel.org>
+To: Baojun Xu <baojun.xu@ti.com>
+Cc: broonie@kernel.org, tiwai@suse.de, andriy.shevchenko@linux.intel.com,
+	13916275206@139.com, alsa-devel@alsa-project.org,
+	shenghao-ding@ti.com, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
+	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+	k-yi@ti.com, henry.lo@ti.com, robinchen@ti.com, jesse-ji@ti.com,
+	will-wang@ti.com
+Subject: Re: [PATCH v2 2/2] ASoC: tas2781: Add tas2118, tas2x20, tas5825
+ support
+Message-ID: <20250822202016.GA297320-robh@kernel.org>
+References: <20250822051410.1732-1-baojun.xu@ti.com>
+ <20250822051410.1732-2-baojun.xu@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822051410.1732-2-baojun.xu@ti.com>
 
-Add support for reading / writing to the exfat volume label from the
-FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls
+On Fri, Aug 22, 2025 at 01:14:09PM +0800, Baojun Xu wrote:
+> Update ti,tas2781.yaml for added tas2118, tas2x20, tas5825.
+> 
+> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+> 
+> ---
+> v2:
+>  - Update the mail list for maintainers of yaml file
+> ---
+>  .../devicetree/bindings/sound/ti,tas2781.yaml | 73 ++++++++++++++++++-
+>  1 file changed, 72 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/ti,tas2781.yaml b/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
+> index 5ea1cdc593b5..fb57b63a00a2 100644
+> --- a/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
+> +++ b/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> -# Copyright (C) 2022 - 2023 Texas Instruments Incorporated
+> +# Copyright (C) 2022 - 2025 Texas Instruments Incorporated
+>  %YAML 1.2
+>  ---
+>  $id: http://devicetree.org/schemas/sound/ti,tas2781.yaml#
+> @@ -11,30 +11,62 @@ maintainers:
+>    - Shenghao Ding <shenghao-ding@ti.com>
+>  
+>  description: |
+> +  The TAS2118/TAS2X20 is mono, digital input Class-D audio amplifier
+> +  optimized for efficiently driving high peak power into small loudspeakers.
+> +  Integrated speaker voltage and current sense provides for
+> +  real time monitoring of loudspeaker behavior.
+>    The TAS2563/TAS2781 is a mono, digital input Class-D audio
+>    amplifier optimized for efficiently driving high peak power into
+>    small loudspeakers. An integrated on-chip DSP supports Texas
+>    Instruments Smart Amp speaker protection algorithm. The
+>    integrated speaker voltage and current sense provides for real time
+>    monitoring of loudspeaker behavior.
+> +  The TAS5825 is a stereo, digital input Class-D audio
+> +  amplifier optimized for efficiently driving high peak power into
+> +  small loudspeakers. An integrated on-chip DSP supports Texas
+> +  Instruments Smart Amp speaker protection algorithm. The
+> +  integrated speaker voltage and current sense provides for real time
+> +  monitoring of loudspeaker behavior.
+>  
+>    Specifications about the audio amplifier can be found at:
+> +    https://www.ti.com/lit/gpn/tas2120
+> +    https://www.ti.com/lit/gpn/tas2320
+>      https://www.ti.com/lit/gpn/tas2563
+>      https://www.ti.com/lit/gpn/tas2781
+> +    https://www.ti.com/lit/gpn/tas5825m
+>  
+>  properties:
+>    compatible:
+>      description: |
+> +      ti,tas2020: 3.2-W Mono Digital Input Class-D Speaker Amp with 5.5V PVDD
+> +      Support.
+> +
+> +      ti,tas2118: 5-W Mono Digital Input Class-D Speaker Amp with Integrated
+> +      8.4-V Class-H Boost.
+> +
+> +      ti,tas2120: 8.2-W Mono Digital Input Class-D Speaker Amp with
+> +      Integrated 14.75V Class-H Boost.
+> +
+> +      ti,tas2320: 15-W Mono Digital Input Class-D Speaker Amp with 15V Support.
+> +
+>        ti,tas2563: 6.1-W Boosted Class-D Audio Amplifier With Integrated
+>        DSP and IV Sense, 16/20/24/32bit stereo I2S or multichannel TDM.
+>  
+>        ti,tas2781: 24-V Class-D Amplifier with Real Time Integrated Speaker
+>        Protection and Audio Processing, 16/20/24/32bit stereo I2S or
+>        multichannel TDM.
+> +
+> +      ti,tas5825: 38-W Stereo, Inductor-Less, Digital Input, Closed-Loop 4.5V
+> +      to 26.4V Class-D Audio Amplifier with 192-kHz Extended Audio Processing.
+>      oneOf:
+>        - items:
+>            - enum:
+> +              - ti,tas2020
+> +              - ti,tas2118
+> +              - ti,tas2120
+> +              - ti,tas2320
+>                - ti,tas2563
+> +              - ti,tas5825
+>            - const: ti,tas2781
+>        - enum:
+>            - ti,tas2781
+> @@ -61,6 +93,27 @@ required:
+>  
+>  allOf:
+>    - $ref: dai-common.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - ti,tas2020
+> +              - ti,tas2118
+> +              - ti,tas2120
+> +              - ti,tas2320
+> +    then:
+> +      properties:
+> +        reg:
+> +          description:
+> +            I2C address, in multiple-AMP case, all the i2c address
+> +            aggregate as one Audio Device to support multiple audio slots.
+> +          maxItems: 4
+> +          minItems: 1
 
-Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
----
- fs/exfat/exfat_fs.h  |   5 +
- fs/exfat/exfat_raw.h |   6 ++
- fs/exfat/file.c      |  88 +++++++++++++++++
- fs/exfat/super.c     | 224 +++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 323 insertions(+)
+1 is already the min items, so drop.
 
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index f8ead4d47ef0..ed4b5ecb952b 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -267,6 +267,7 @@ struct exfat_sb_info {
- 	struct buffer_head **vol_amap; /* allocation bitmap */
- 
- 	unsigned short *vol_utbl; /* upcase table */
-+	unsigned short *volume_label; /* volume name */
- 
- 	unsigned int clu_srch_ptr; /* cluster search pointer */
- 	unsigned int used_clusters; /* number of used clusters */
-@@ -431,6 +432,10 @@ static inline loff_t exfat_ondisk_size(const struct inode *inode)
- /* super.c */
- int exfat_set_volume_dirty(struct super_block *sb);
- int exfat_clear_volume_dirty(struct super_block *sb);
-+int exfat_read_volume_label(struct super_block *sb);
-+int exfat_write_volume_label(struct super_block *sb,
-+			     struct exfat_uni_name *uniname,
-+			     struct inode *root_inode);
- 
- /* fatent.c */
- #define exfat_get_next_cluster(sb, pclu) exfat_ent_get(sb, *(pclu), pclu)
-diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h
-index 971a1ccd0e89..4082fa7b8c14 100644
---- a/fs/exfat/exfat_raw.h
-+++ b/fs/exfat/exfat_raw.h
-@@ -80,6 +80,7 @@
- #define BOOTSEC_OLDBPB_LEN		53
- 
- #define EXFAT_FILE_NAME_LEN		15
-+#define EXFAT_VOLUME_LABEL_LEN		11
- 
- #define EXFAT_MIN_SECT_SIZE_BITS		9
- #define EXFAT_MAX_SECT_SIZE_BITS		12
-@@ -159,6 +160,11 @@ struct exfat_dentry {
- 			__le32 start_clu;
- 			__le64 size;
- 		} __packed upcase; /* up-case table directory entry */
-+		struct {
-+			__u8 char_count;
-+			__le16 volume_label[EXFAT_VOLUME_LABEL_LEN];
-+			__u8 reserved[8];
-+		} __packed volume_label; /* volume label directory entry */
- 		struct {
- 			__u8 flags;
- 			__u8 vendor_guid[16];
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index 538d2b6ac2ec..970e3ee57c43 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -12,6 +12,7 @@
- #include <linux/security.h>
- #include <linux/msdos_fs.h>
- #include <linux/writeback.h>
-+#include "../nls/nls_ucs2_utils.h"
- 
- #include "exfat_raw.h"
- #include "exfat_fs.h"
-@@ -486,10 +487,93 @@ static int exfat_ioctl_shutdown(struct super_block *sb, unsigned long arg)
- 	return exfat_force_shutdown(sb, flags);
- }
- 
-+static int exfat_ioctl_get_volume_label(struct super_block *sb, unsigned long arg)
-+{
-+	int ret;
-+	char utf8[FSLABEL_MAX] = {0};
-+	struct exfat_uni_name *uniname;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+
-+	uniname = kmalloc(sizeof(struct exfat_uni_name), GFP_KERNEL);
-+	if (!uniname)
-+		return -ENOMEM;
-+
-+	ret = exfat_read_volume_label(sb);
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	memcpy(uniname->name, sbi->volume_label,
-+	       EXFAT_VOLUME_LABEL_LEN * sizeof(short));
-+	uniname->name[EXFAT_VOLUME_LABEL_LEN] = 0x0000;
-+	uniname->name_len = UniStrnlen(uniname->name, EXFAT_VOLUME_LABEL_LEN);
-+
-+	ret = exfat_utf16_to_nls(sb, uniname, utf8, FSLABEL_MAX);
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	if (copy_to_user((char __user *)arg, utf8, FSLABEL_MAX)) {
-+		ret = -EFAULT;
-+		goto cleanup;
-+	}
-+
-+	ret = 0;
-+
-+cleanup:
-+	kfree(uniname);
-+	return ret;
-+}
-+
-+static int exfat_ioctl_set_volume_label(struct super_block *sb,
-+					unsigned long arg,
-+					struct inode *root_inode)
-+{
-+	int ret, lossy;
-+	char utf8[FSLABEL_MAX];
-+	struct exfat_uni_name *uniname;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	uniname = kmalloc(sizeof(struct exfat_uni_name), GFP_KERNEL);
-+	if (!uniname)
-+		return -ENOMEM;
-+
-+	if (copy_from_user(utf8, (char __user *)arg, FSLABEL_MAX)) {
-+		ret = -EFAULT;
-+		goto cleanup;
-+	}
-+
-+	if (utf8[0]) {
-+		ret = exfat_nls_to_utf16(sb, utf8, strnlen(utf8, FSLABEL_MAX),
-+					 uniname, &lossy);
-+		if (ret < 0)
-+			goto cleanup;
-+		else if (lossy & NLS_NAME_LOSSY) {
-+			ret = -EINVAL;
-+			goto cleanup;
-+		}
-+	} else {
-+		uniname->name[0] = 0x0000;
-+		uniname->name_len = 0;
-+	}
-+
-+	if (uniname->name_len > EXFAT_VOLUME_LABEL_LEN) {
-+		exfat_info(sb, "Volume label length too long, truncating");
-+		uniname->name_len = EXFAT_VOLUME_LABEL_LEN;
-+	}
-+
-+	ret = exfat_write_volume_label(sb, uniname, root_inode);
-+
-+cleanup:
-+	kfree(uniname);
-+	return ret;
-+}
-+
- long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
- 	u32 __user *user_attr = (u32 __user *)arg;
-+	struct inode *root_inode = filp->f_path.mnt->mnt_root->d_inode;
- 
- 	switch (cmd) {
- 	case FAT_IOCTL_GET_ATTRIBUTES:
-@@ -500,6 +584,10 @@ long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return exfat_ioctl_shutdown(inode->i_sb, arg);
- 	case FITRIM:
- 		return exfat_ioctl_fitrim(inode, arg);
-+	case FS_IOC_GETFSLABEL:
-+		return exfat_ioctl_get_volume_label(inode->i_sb, arg);
-+	case FS_IOC_SETFSLABEL:
-+		return exfat_ioctl_set_volume_label(inode->i_sb, arg, root_inode);
- 	default:
- 		return -ENOTTY;
- 	}
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index 8926e63f5bb7..7931cdb4a1d1 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -18,6 +18,7 @@
- #include <linux/nls.h>
- #include <linux/buffer_head.h>
- #include <linux/magic.h>
-+#include "../nls/nls_ucs2_utils.h"
- 
- #include "exfat_raw.h"
- #include "exfat_fs.h"
-@@ -573,6 +574,228 @@ static int exfat_verify_boot_region(struct super_block *sb)
- 	return 0;
- }
- 
-+static int exfat_get_volume_label_ptrs(struct super_block *sb,
-+				       struct buffer_head **out_bh,
-+				       struct exfat_dentry **out_dentry,
-+				       struct inode *root_inode)
-+{
-+	int i, ret;
-+	unsigned int type, old_clu;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	struct exfat_chain clu;
-+	struct exfat_dentry *ep, *deleted_ep = NULL;
-+	struct buffer_head *bh, *deleted_bh;
-+
-+	clu.dir = sbi->root_dir;
-+	clu.flags = ALLOC_FAT_CHAIN;
-+
-+	while (clu.dir != EXFAT_EOF_CLUSTER) {
-+		for (i = 0; i < sbi->dentries_per_clu; i++) {
-+			ep = exfat_get_dentry(sb, &clu, i, &bh);
-+
-+			if (!ep) {
-+				ret = -EIO;
-+				goto end;
-+			}
-+
-+			type = exfat_get_entry_type(ep);
-+			if (type == TYPE_DELETED && !deleted_ep && root_inode) {
-+				deleted_ep = ep;
-+				deleted_bh = bh;
-+				continue;
-+			}
-+
-+			if (type == TYPE_UNUSED) {
-+				if (!root_inode) {
-+					brelse(bh);
-+					ret = -ENOENT;
-+					goto end;
-+				}
-+
-+				if (deleted_ep) {
-+					brelse(bh);
-+					goto end;
-+				}
-+
-+				if (i < sbi->dentries_per_clu - 1) {
-+					deleted_ep = ep;
-+					deleted_bh = bh;
-+
-+					ep = exfat_get_dentry(sb, &clu,
-+							      i + 1, &bh);
-+					memset(ep, 0,
-+					       sizeof(struct exfat_dentry));
-+					ep->type = EXFAT_UNUSED;
-+					exfat_update_bh(bh, true);
-+					brelse(bh);
-+
-+					goto end;
-+				}
-+
-+				// Last dentry in cluster
-+				clu.size = 0;
-+				old_clu = clu.dir;
-+				ret = exfat_alloc_cluster(root_inode, 1,
-+							  &clu, true);
-+				if (ret < 0) {
-+					brelse(bh);
-+					goto end;
-+				}
-+
-+				ret = exfat_ent_set(sb, old_clu, clu.dir);
-+				if (ret < 0) {
-+					exfat_free_cluster(root_inode, &clu);
-+					brelse(bh);
-+					goto end;
-+				}
-+
-+				ret = exfat_zeroed_cluster(root_inode, clu.dir);
-+				if (ret < 0) {
-+					exfat_free_cluster(root_inode, &clu);
-+					brelse(bh);
-+					goto end;
-+				}
-+
-+				deleted_ep = ep;
-+				deleted_bh = bh;
-+				goto end;
-+			}
-+
-+			if (type == TYPE_VOLUME) {
-+				*out_bh = bh;
-+				*out_dentry = ep;
-+
-+				if (deleted_ep)
-+					brelse(deleted_bh);
-+
-+				return 0;
-+			}
-+
-+			brelse(bh);
-+		}
-+
-+		if (exfat_get_next_cluster(sb, &(clu.dir))) {
-+			ret = -EIO;
-+			goto end;
-+		}
-+	}
-+
-+	ret = -EIO;
-+
-+end:
-+	if (deleted_ep) {
-+		*out_bh = deleted_bh;
-+		*out_dentry = deleted_ep;
-+		memset((*out_dentry), 0, sizeof(struct exfat_dentry));
-+		(*out_dentry)->type = EXFAT_VOLUME;
-+		return 0;
-+	}
-+
-+	*out_bh = NULL;
-+	*out_dentry = NULL;
-+	return ret;
-+}
-+
-+static int exfat_alloc_volume_label(struct super_block *sb)
-+{
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+
-+	if (sbi->volume_label)
-+		return 0;
-+
-+
-+	mutex_lock(&sbi->s_lock);
-+	sbi->volume_label = kcalloc(EXFAT_VOLUME_LABEL_LEN,
-+						     sizeof(short), GFP_KERNEL);
-+	mutex_unlock(&sbi->s_lock);
-+
-+	if (!sbi->volume_label)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
-+int exfat_read_volume_label(struct super_block *sb)
-+{
-+	int ret, i;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	struct buffer_head *bh = NULL;
-+	struct exfat_dentry *ep = NULL;
-+
-+	ret = exfat_get_volume_label_ptrs(sb, &bh, &ep, NULL);
-+	// ENOENT signifies that a volume label dentry doesn't exist
-+	// We will treat this as an empty volume label and not fail.
-+	if (ret < 0 && ret != -ENOENT)
-+		goto cleanup;
-+
-+	ret = exfat_alloc_volume_label(sb);
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	mutex_lock(&sbi->s_lock);
-+	if (!ep)
-+		memset(sbi->volume_label, 0, EXFAT_VOLUME_LABEL_LEN);
-+	else
-+		for (i = 0; i < EXFAT_VOLUME_LABEL_LEN; i++)
-+			sbi->volume_label[i] = le16_to_cpu(ep->dentry.volume_label.volume_label[i]);
-+	mutex_unlock(&sbi->s_lock);
-+
-+	ret = 0;
-+
-+cleanup:
-+	if (bh)
-+		brelse(bh);
-+
-+	return ret;
-+}
-+
-+int exfat_write_volume_label(struct super_block *sb,
-+			     struct exfat_uni_name *uniname,
-+			     struct inode *root_inode)
-+{
-+	int ret, i;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	struct buffer_head *bh = NULL;
-+	struct exfat_dentry *ep = NULL;
-+
-+	if (uniname->name_len > EXFAT_VOLUME_LABEL_LEN) {
-+		ret = -EINVAL;
-+		goto cleanup;
-+	}
-+
-+	ret = exfat_get_volume_label_ptrs(sb, &bh, &ep, root_inode);
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	ret = exfat_alloc_volume_label(sb);
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	memcpy(sbi->volume_label, uniname->name,
-+	       uniname->name_len * sizeof(short));
-+
-+	mutex_lock(&sbi->s_lock);
-+	for (i = 0; i < uniname->name_len; i++)
-+		ep->dentry.volume_label.volume_label[i] =
-+			cpu_to_le16(sbi->volume_label[i]);
-+	// Fill the rest of the str with 0x0000
-+	for (; i < EXFAT_VOLUME_LABEL_LEN; i++)
-+		ep->dentry.volume_label.volume_label[i] = 0x0000;
-+
-+	ep->dentry.volume_label.char_count = uniname->name_len;
-+	mutex_unlock(&sbi->s_lock);
-+
-+	ret = 0;
-+
-+cleanup:
-+	if (bh) {
-+		exfat_update_bh(bh, true);
-+		brelse(bh);
-+	}
-+
-+	return ret;
-+}
-+
- /* mount the file system volume */
- static int __exfat_fill_super(struct super_block *sb,
- 		struct exfat_chain *root_clu)
-@@ -791,6 +1014,7 @@ static void delayed_free(struct rcu_head *p)
- 
- 	unload_nls(sbi->nls_io);
- 	exfat_free_upcase_table(sbi);
-+	kfree(sbi->volume_label);
- 	exfat_free_sbi(sbi);
- }
- 
--- 
-2.34.1
+> +          items:
+> +            minimum: 0x48
+> +            maximum: 0x4b
+> +
+>    - if:
+>        properties:
+>          compatible:
+> @@ -97,6 +150,24 @@ allOf:
+>              minimum: 0x38
+>              maximum: 0x3f
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - ti,tas5825
+> +    then:
+> +      properties:
+> +        reg:
+> +          description:
+> +            I2C address, in multiple-AMP case, all the i2c address
+> +            aggregate as one Audio Device to support multiple audio slots.
 
+You've duplicated this. Does it belong at the top level 'reg'?
+
+> +          maxItems: 4
+> +          minItems: 1
+
+Same here.
+
+> +          items:
+> +            minimum: 0x4c
+> +            maximum: 0x4f
+> +
+>  additionalProperties: false
+>  
+>  examples:
+> -- 
+> 2.43.0
+> 
 
