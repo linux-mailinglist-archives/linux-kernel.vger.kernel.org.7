@@ -1,87 +1,77 @@
-Return-Path: <linux-kernel+bounces-782786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4914DB32553
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:13:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C50F3B32557
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26F6D1CE0E01
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:13:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 809623BEA4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1782C2361;
-	Fri, 22 Aug 2025 23:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0347A279915;
+	Fri, 22 Aug 2025 23:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UietGIt3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u29cAhBs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647E419DF62;
-	Fri, 22 Aug 2025 23:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601F32E413
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 23:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755904392; cv=none; b=fGc72AnrPbyqq7Z/8i12NbgUQgyEmzK/p+XdybL4vAtRMLh2PFmTBbTF5pHO+SMIdkKne+ptvFxFJIffMpDWAyqbyxF31ZCor78Yl/oQ0Te2nDu9ibDxM9XHfD476NGAAClFriQ1Ssb8R3LKgFL9a0fIpFCTaTOvf8S4sbUlvTg=
+	t=1755904447; cv=none; b=Rr7gxofiAce3mwkPT5QavSEMBKQJ556j94+1vhHtvJCdRgSQ8lKSYdPGI81AR86i5qTWDs//WsYuCNy8IeVTHDMQMkoYGYuYdUDNbgvXdVfKwQi6acGH9Sly2hC3btxnPcMe65CEv/LV3cVd6MSivbFK6RWPtPzaIrFyH8hfL3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755904392; c=relaxed/simple;
-	bh=I5xOOlTlsl1gEAyBnvuWnA9gnCaou1eiZGWyj04CjLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=d/sMGjjE/y4c8p8rR3Z5TzDRXFrvl/AjaPyNyju3waU/JS7gHGyzrCfs3r516YchKPP96SiKsEycglZtacNSONP7qw2zZPdJuv2jEylhy65rNeA2uNMUlrMs1FCv8UOBZVCKmriHMBRyVPhHzKafs2bFsOwzVHdDQZWz9RNM96Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UietGIt3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C891AC4CEED;
-	Fri, 22 Aug 2025 23:13:09 +0000 (UTC)
+	s=arc-20240116; t=1755904447; c=relaxed/simple;
+	bh=FW2UlUHWBGIjYX/nRcZEwXb3PwT/VeIoEnBl3k5Bj5I=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=rDdE9KFo5FkBL0CfkgtJoTnm0RliWPPJFf8zOBebLzGJPkDFZSmX4dxO45UT5JqxsERr3ZPr01IhuYD9MC2TAhm0Hiv7Fqi/hQNAsyU+nJ0uTgkmrYVgjCcTEViR/Y0JJGeu2FOgAsDgaeWHQtbv8a5pKgZEvU9rwP26I2+IVlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u29cAhBs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55D75C4CEED;
+	Fri, 22 Aug 2025 23:14:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755904392;
-	bh=I5xOOlTlsl1gEAyBnvuWnA9gnCaou1eiZGWyj04CjLU=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=UietGIt3h77y7zuiq7YFhM0VrpywFhju+K18giWmvLQWsvo2dxbQ029RiXYcXPVkV
-	 sTlj4fug4t6/d35KEWd17rr32OB3DJvf12ijkKS/Jb/s7Dz6xX2dwQ+hvuzOWmGRXs
-	 u7zHlaqmxMkMZt0w4dqOZ2E4WgPm2+prJDKCeydXHZEirmCIP6tFEzCkdQpbh619Ji
-	 bW5OQZYmqxI/RmYefQTiCxiAeZpkDvXDUvgS5b1nXARoR64pTOqy8SlqbgOk0+Hy27
-	 4UuMtVTdrUItneUpNqVHyBTj9WMqiONRd8eTjOHmQoU/6SmCktcnRwFAgK3Vvgpk/z
-	 SuzXpPfTRlrFQ==
-Message-ID: <5489a439-e628-47a1-b3e9-e1d0f877b7d0@kernel.org>
-Date: Sat, 23 Aug 2025 00:13:07 +0100
+	s=k20201202; t=1755904446;
+	bh=FW2UlUHWBGIjYX/nRcZEwXb3PwT/VeIoEnBl3k5Bj5I=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=u29cAhBs+icIFmHq/CrbnR4BFguZMLeFfdShAziZuWk40Jw4Ijn2FcdgD3HgfknUV
+	 qaidWALIH5FlovLlKxft/O2Q1j/DG6G64PXYjjcQ0DOljfYPbMeF8vGCBeqKvJDjpR
+	 IIvl/rABJs0ZAgZBSuCd9Mo9yP+kaL0k9lpmN/2neiaSLY/XvMqFREs7KZWoALup5H
+	 w+P08YwTK9id1mBZyuB/jr/mJcs859WR8IMO+uFdGDPflgmZJbt/hLG4iG+cUPE8YK
+	 kFgi6QCGrIxAogGtw7fgnj9r6rc2zq1D3JSsPyd/gyxXLj0PuULVYT1Hd0PFYiLq2t
+	 jEkTroc8UNXfg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/11] firmware: qcom_scm: Add shmbridge support to
- pas_init/release function
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <20250819165447.4149674-6-mukesh.ojha@oss.qualcomm.com>
- <de4b4872-061c-4f03-ae1d-1ad93b35ed71@linaro.org>
- <Qfxl6YfI0Dz_tCk9ukTFlrQpwm06pE4E4DCyITA5T3qnF2lsXpwAvLSttPsnMQb60UyKLpC8Koz4aSYwuoP4Qw==@protonmail.internalid>
- <20250821170337.y7vzhtiugaeydqmh@hu-mojha-hyd.qualcomm.com>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250821170337.y7vzhtiugaeydqmh@hu-mojha-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 23 Aug 2025 01:14:03 +0200
+Message-Id: <DC9C6DFLG1PE.1AWR6TCF6800W@kernel.org>
+Subject: Re: [PATCH 2/3] drm/nouveau/disp: Always accept linear modifier
+Cc: "Lyude Paul" <lyude@redhat.com>, "Faith Ekstrand"
+ <faith.ekstrand@collabora.com>, <nouveau@lists.freedesktop.org>,
+ <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Joel
+ Fernandes" <joelagnelf@nvidia.com>
+To: "James Jones" <jajones@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250811220017.1337-1-jajones@nvidia.com>
+ <20250811220017.1337-3-jajones@nvidia.com>
+In-Reply-To: <20250811220017.1337-3-jajones@nvidia.com>
 
-On 21/08/2025 18:03, Mukesh Ojha wrote:
->> Please review the error paths here especially WRT to qcom_mdt_pas_init();
-> Sure, will send the fix patch for the existing bug.
+On Tue Aug 12, 2025 at 12:00 AM CEST, James Jones wrote:
+> On some chipsets, which block-linear modifiers are
+> supported is format-specific. However, linear
+> modifiers are always be supported. The prior
+> modifier filtering logic was not accounting for
+> the linear case.
+>
+> Fixes: c586f30bf74c ("drm/nouveau/kms: Add format mod prop to base/ovly/n=
+vdisp")
+> Signed-off-by: James Jones <jajones@nvidia.com>
 
-In which case please structure your next submission with bugfixes coming 
-first in the series with Fixes: tags and then apply your changes on top 
-as a progressive set of changes so we can apply this fix to -stable.
-
-Don't forget to Cc: stable
-
----
-bod
+Applied to drm-misc-fixes, thanks!
 
