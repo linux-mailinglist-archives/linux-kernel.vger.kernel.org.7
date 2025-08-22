@@ -1,146 +1,143 @@
-Return-Path: <linux-kernel+bounces-782011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF33B319E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:41:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5B32B319EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33838177E61
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:37:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9DF417CC66
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238D23126BA;
-	Fri, 22 Aug 2025 13:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A553312815;
+	Fri, 22 Aug 2025 13:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gTXH9Azp"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="RyoCBZAS"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A41C3093AA
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56793126B1;
+	Fri, 22 Aug 2025 13:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755869643; cv=none; b=nCj8W2LdJzpS2JBOfCHtAq1Fl6v3JyFp8mubaUJKPBZw33qzrYo2RUD+RLt1F3OD3iAh60IwRikVfXAgdIIi6k/qpTQZfFLnG1vG45ILxIym3EF2smOb9RAIavRE2wnQ2vk7XyYy9Ww7YKQBh8FT9pxh1rljEC3tN2byZfMmguc=
+	t=1755869645; cv=none; b=JJwEhkKy76R1TmJ+OjybgLk8IvYvKz2iq375SgvZ7nRp/A4YUCFq7BmuRWOi0I7fJvNtc1X7tdaTxpRCAOOaClr37wlHSL5ICFhJNyOQGHJU+Hqx4Z1mrfblEJ9ZL6l10UajpG+qjqaEB20VqdRjq4kWamNptLe1v/sKjkNBsHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755869643; c=relaxed/simple;
-	bh=gtHwwV3RKSc0NdIoaehkWO49HXFd1zQTXe+JxXko4Kc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jPHcJrPOfyH8cI3a6AtdOLX4EoyqKTaz7TOFrdlaKUv0RG0Jd+j+xX62XHghiSk3yq7f7OSaYeV8FeQJZ3/msIKa2jLCc3pZvvlLOGdtlt7qEcUaNtF2GezTm0Z15g3BOUzHmjSLpHVRG+9CwCqrEowK5p+/VGoHgrIHeQ+XpEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gTXH9Azp; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61c1d397fffso93162a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:34:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755869639; x=1756474439; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7InwlD2Vsu/SAdPgoVwsVcZID6Hbo3ljVtynaU9CsMQ=;
-        b=gTXH9Azp0kt6dQJHPWlCTMR0HVkn8hvHjYWLsscnEpCMgJFx1iMzP94/01s0AJe3vW
-         rr6vAFrDgGAzib6Jyy8hiSLiEj/U2xKF+fTluryXGE1HnI5ERgWmp2HmLs/46hMxX4di
-         VfpP3imU8n40W7ASj66qLxuy2pLMnuATKWAx3jCRahGJhTvwnUxqxpOJocaymfqycNbn
-         QYalkoaa52kg3GXvbjOlIzin0CKw/TUS1h4FNiIpYFZJWBypNjE9H44fGJeDPLDzt2x1
-         gKS7lH8fPRl2DDjlPsuOt4tDcE0ADAbEigm+TpdJg3uoKZMVH3LE2Ie0JOzY5Up9rXDQ
-         EXNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755869639; x=1756474439;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7InwlD2Vsu/SAdPgoVwsVcZID6Hbo3ljVtynaU9CsMQ=;
-        b=U4FcqGojtxenNR0iz/unhPpbWcdeKUKcZwanq0epLoEzL5ywDWv8H+jxOArz5msNc6
-         cG8oeSsNKQ9E9U0//oLBw0Teua/x/qROotqSfA14yvGSM+xT+AG2rz7NgKXsBhy1QUQN
-         YL+GmUbGsGQhHoud5hVGtks81haOSkUD6kxL9NYhOzZvdFOPHMtMPV/ZDEVFrTmgPkJy
-         Kh9Vsj9DUthvUwpKyMAfzttRNS0I3LMSrP3yIuzS+3MmiTIdmPmhrrbjT7eb6wCr5bhT
-         JiYEdzU0dyUmBBxCp6KYrXtQIjRIx8DbtcUIw7UAMLtj/SG1W0AaydDUZkGVfRIXPgcW
-         qm0w==
-X-Forwarded-Encrypted: i=1; AJvYcCX92uv4ybwQU8bUvR76/QQaF8J7+254KfRFNDuLQAEzLfrI6wAxRKXSS/2dcbmi6a++ufgJXIaVtDTnMQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCEQY9G4HMSMG32Ua56KXh3hT/X4V1M52ThsQcXeQJvUF43Q/G
-	3JhOUrBq8LJWOI7e2I6mIRcQhqdakRYinGSH5ViJyEaYAvNaHBvOWdsMwb6ZUmpUwZo=
-X-Gm-Gg: ASbGnct0dZZeGTVyUB4AF9PgpgnOX/BSZA8V3LQZg+FNuwOkMg8cflRUiZc3xzs5ccl
-	skbFgjrgZfLBApRE3KnRc1u1mI94uzyUZyNak5yOz3W4mdevXXAy3RDoZy23sBmEMeumj8yaIu9
-	oRKf8pN1sWzm0+ufOKf+vLCGxO8+7k+Pw5poN8JnU0DuxQkuyKaGQbeZMKmChCmJWCkO4RpQhJ1
-	dmhoTR0cZoQt0S27qlBsiIuCQi4MuYggvlZoIlyhYmfB+zP99GHMwrfd6/V7U639NAlyDMEwWLw
-	Klph9VzN8Vqy8t49QsK6nxF9B2QrHhvv1YaAf7tpifzpT2qq00J7ins0ktiV/S8l5vmLUeFYAk+
-	BsVmjxIo49yyGRxThSCLKjZQX8RGlGawYTQ==
-X-Google-Smtp-Source: AGHT+IFnfyj7hyi0/c09cbjBoTYvL6saQhuWyCyJd0OxPggzM8rvrTPHBbrWyfLXtAnNNs+IcOqPpQ==
-X-Received: by 2002:a17:907:3fa5:b0:ade:902e:7b4b with SMTP id a640c23a62f3a-afe29446218mr156790866b.7.1755869638582;
-        Fri, 22 Aug 2025 06:33:58 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded537f98sm606493066b.104.2025.08.22.06.33.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 06:33:58 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/4] arm64: tegra: Add default GIC address cells on Tegra186
-Date: Fri, 22 Aug 2025 15:33:53 +0200
-Message-ID: <20250822133351.312424-6-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250822133351.312424-5-krzysztof.kozlowski@linaro.org>
-References: <20250822133351.312424-5-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1755869645; c=relaxed/simple;
+	bh=DAI+FrUvCc1nd3XaCp1uUHDjiklJsHkKKQ/vP8igNbE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LuDltHzZrxaqzKSryofh7adCty6DBrn9BgNJ4WeSrq5Wu32yEmBA4boaps7rRdicPZRGvC6JW8CqpZenWlwMehSEIc1RF5vvsFnMEEqnE5n/5F2PCaSeAQuYtA8gdPW9R/Wmc989KXNokPLHmztm3Ew4DYfPC2mTa2OeVJEgyKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=RyoCBZAS; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1755869643; x=1787405643;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=DAI+FrUvCc1nd3XaCp1uUHDjiklJsHkKKQ/vP8igNbE=;
+  b=RyoCBZASwahxxp3tQbXfutaPQeH68Va56Ox+XnuhBcnzagPCJk/Mr18c
+   adz1N3l9bYxlLbs2/ArAMAZQuMyJ9xTrHIiSIGuuFWBHMzyLCXOT3RAge
+   dWD+CTawduPequLzyS8MDHZLo5C6FeIndv/4jGw/AcsPJuON/FwBRU1vf
+   h1oRMObKfG0RLNoG8qERrKrzz+9TL4SYj6Q36EKXV6D6foJCMCHVOY2qW
+   /+ZSRU29BsOF8rG6on+J+7tTaQddzhHFWQTFoMA+Pd/SivuvW0q+w8/vD
+   0wv28fZmk/+/2ngDHkctA57531I5B89cQLIABGY5M30QMehNDrMRehX4m
+   g==;
+X-CSE-ConnectionGUID: FmqUXuSUTY2CcxMMwy3LVw==
+X-CSE-MsgGUID: KxaEALsWRxybjjejTicLnQ==
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="51133476"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Aug 2025 06:34:02 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Fri, 22 Aug 2025 06:33:58 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Fri, 22 Aug 2025 06:33:54 -0700
+Message-ID: <a59d20d0-5bf5-4bea-9636-1a1afc7cf54a@microchip.com>
+Date: Fri, 22 Aug 2025 15:33:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1230; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=gtHwwV3RKSc0NdIoaehkWO49HXFd1zQTXe+JxXko4Kc=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoqHHAvQa+zloR+7x5BoZNSjCzszRxYAuAtuQZC
- RR1wxd4X9iJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKhxwAAKCRDBN2bmhouD
- 1xCcD/98E6YrGSofW4XO+nzWaMgShPd+Zag2gRZVtq7olJtSfvHwILrXf6GenyxOzXBqKH/4ece
- wlHSULleesg4wtuJi8B2PeM21wVzDCDq+8857UXiugy7o3wtmxBHnIpalU9vwk4DXF58t8Wa6RB
- dsDZY0ZQhhef+AlrtqsqjSqovnzVz0a9L4q/olTgsjGZH7iVxPRDrrTv38ORkcxy+uMvL1rwzFD
- IzWc3828FLdu4KRL+uRBS7QBjR6gmeCfBZ18qBCi473ZhP8pFqFgiG+rkej7BEk6ACdf25cvecw
- u6oP8d7469TyZf3Ny7jvGSvAOW3BlhA48YfYjRqnDSOmJU7r4ct01yiUCsyGC7trYmiwuqgkeVr
- QzQfTs4Y4x1YsmlKR6kDvCxHEuIepfIApaWFtWK65y+O7CGFFs03aR2vSiq44EltXXmVxV/JZMH
- bMc80xfH2O7Hnc9uzE0/JGBAR6g5OcMyUe8ddYwRkltGoTgX6hWCwFzkWbk6vf6KzaeRfQPR4Pi
- USSXs+N2stx4OwgGSlyjzCONgoY793e+QUbmeRuksaVWzECOVyDA3e/n5XmbFh0GJ8h/9ZS9qT3
- vgJasVhf405Z9eixCZG+YrBcaRuYAQe7jBd2O+uAl0NX1pb91PGsFufAo/VNTm6RUa2qLykTQGd B/qW2yFHbRrlxWA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 0/9] arm64: lan969x: Add support for Microchip LAN969x
+ SoC
+To: Robert Marko <robert.marko@sartura.hr>, <linux@armlinux.org.uk>,
+	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <olivia@selenic.com>,
+	<herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+	<andi.shyti@kernel.org>, <lee@kernel.org>, <broonie@kernel.org>,
+	<gregkh@linuxfoundation.org>, <jirislaby@kernel.org>, <arnd@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-crypto@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+	<linux-spi@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+	<o.rempel@pengutronix.de>, <daniel.machon@microchip.com>
+CC: <luka.perkov@sartura.hr>
+References: <20250813174720.540015-1-robert.marko@sartura.hr>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Content-Language: en-US, fr
+Organization: microchip
+In-Reply-To: <20250813174720.540015-1-robert.marko@sartura.hr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add missing address-cells 0 to GIC interrupt node to silence W=1
-warning:
+On 13/08/2025 at 19:44, Robert Marko wrote:
+> This patch series adds basic support for Microchip LAN969x SoC.
+> 
+> It introduces the SoC ARCH symbol itself under the ARCH_MICROCHIP symbol
+> which allows to avoid the need to change dependencies of the drivers that
+> are shared for Microchip SoC-s in the future.
+> 
+> DTS and further driver will be added in follow-up series.
+> 
+> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
 
-  tegra186.dtsi:1355.3-41: Warning (interrupt_map): /pcie@10003000:interrupt-map:
-    Missing property '#address-cells' in node /interrupt-controller@3881000, using 0 as fallback
+I added explicitly my Ack to the 3 first patches of the series to be 
+super-specific, but for the whole series:
 
-Value '0' is correct because:
-1. GIC interrupt controller does not have children,
-2. interrupt-map property (in PCI node) consists of five components and
-   the fourth component "parent unit address", which size is defined by
-   '#address-cells' of the node pointed to by the interrupt-parent
-   component, is not used (=0)
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for your work on this Robert, it's highly appreciated. Best regards,
+   Nicolas
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 5778c93af3e6..7601f5818f6d 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -1173,6 +1173,7 @@ fuse@3820000 {
- 
- 	gic: interrupt-controller@3881000 {
- 		compatible = "arm,gic-400";
-+		#address-cells = <0>;
- 		#interrupt-cells = <3>;
- 		interrupt-controller;
- 		reg = <0x0 0x03881000 0x0 0x1000>,
--- 
-2.48.1
+> ---
+> Changes in v9:
+> * Make ARCH_MICROCHIP hidden symbol that is selected by SparX-5 and LAN969x
+> directly, this avoids breaking existing configs with ARCH_SPARX5
+> 
+> Changes in v8:
+> * Move to using ARCH_MICROCHIP as suggested by Arnd
+> * Dropped any review tags due to changes
+> 
+> Robert Marko (9):
+>    arm64: Add config for Microchip SoC platforms
+>    ARM: at91: select ARCH_MICROCHIP
+>    arm64: lan969x: Add support for Microchip LAN969x SoC
+>    mfd: at91-usart: Make it selectable for ARCH_MICROCHIP
+>    tty: serial: atmel: make it selectable for ARCH_MICROCHIP
+>    spi: atmel: make it selectable for ARCH_MICROCHIP
+>    i2c: at91: make it selectable for ARCH_MICROCHIP
+>    char: hw_random: atmel: make it selectable for ARCH_MICROCHIP
+>    crypto: atmel-aes: make it selectable for ARCH_MICROCHIP
+> 
+>   arch/arm/mach-at91/Kconfig     |  4 +++
+>   arch/arm64/Kconfig.platforms   | 51 ++++++++++++++++++++++++----------
+>   drivers/char/hw_random/Kconfig |  2 +-
+>   drivers/crypto/Kconfig         |  2 +-
+>   drivers/i2c/busses/Kconfig     |  2 +-
+>   drivers/mfd/Kconfig            |  2 +-
+>   drivers/spi/Kconfig            |  2 +-
+>   drivers/tty/serial/Kconfig     |  2 +-
+>   8 files changed, 47 insertions(+), 20 deletions(-)
+> 
+> --
+> 2.50.1
+> 
 
 
