@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-782598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31C32B32291
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:03:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B77FB32290
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A42325648CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:02:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B71AD189CBF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9862D12F5;
-	Fri, 22 Aug 2025 19:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461EF2D23B5;
+	Fri, 22 Aug 2025 19:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QF6T6KQJ"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k0Yu2GqY"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686C52D0C75
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 19:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305DA2D190C
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 19:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755889315; cv=none; b=bEPiX3s81nnx1HP9Loi3tSZ31oGpAvSr1CnLxA2Q1qEOHuLHIe1SYGctHr0KPPhLqZ0xEJVA2u0UAltX5C8dVXGsHtGhniZRXgJP37/DlEhCtqB9O7mHUIiWtersxrUNN6r5Gw582vq//L49EEWBJLceeUTzrYrocOZ62HnVW4w=
+	t=1755889318; cv=none; b=o3onK0P8hf78kT4gppBnNrgg88xLTx+QPGi0dp5AdzdaWu8zC2ai/L+uP5t+cSXC04Url7FlIkHXzsuOxw91qsPhehhW8onVYXos48uE24GGLR4DTUWiTv4pV46Tlj5+1B4xqfwjg4pr+mdIVzAbG4gqTrmjyvuqnPP9a4dtWRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755889315; c=relaxed/simple;
-	bh=cWxJVSCR6Z5YpDq7Nb824hJk5EnRMEes73DhMMFvzTw=;
+	s=arc-20240116; t=1755889318; c=relaxed/simple;
+	bh=Z9+YIhD1uTOT5saJkNAsez0Hs6ARMCMfX4GIc4ITcto=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DmJkjsMI27hUOglxLGZRn4ZcQj+XWO636wKAin3rK3DsiY0/I9phgTIWpZ3qV97Ep4BIqiKlIKa2tlBxpG8BrpQj66xrIuFPRF6RjCakLYSZi75I3Pcoaahjfzcc46G2drZZtB7yzvjOiyaNa9GjSgkdiStplzfzSlKZEOtznFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QF6T6KQJ; arc=none smtp.client-ip=209.85.210.173
+	 MIME-Version; b=FclqWrKea9F/pSYChd7/rplhqBT58ko0SCOPhZIW2atPfjOpFF6q5DsrU4X020saiidE+G1dOKpp3cLwPXodJghmQs/mo65H8HujFTyw5SfPeBbqMBlJVc+w3GFQquLIU5VTKh2ybeC0mr8Gzjy/iP3pXl+aP3dELR3ptPm5mTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=k0Yu2GqY; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-76e2ea94c7cso2327839b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:01:54 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-32326e5f0bfso2026758a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:01:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755889314; x=1756494114; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1755889316; x=1756494116; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0JBmJP/TLWjJ8U7y1ITV3vUcgsR6oiKteW9+ZGeDW40=;
-        b=QF6T6KQJYWo4pKAAkJ/Fu3+kaz1iYauZz6IJ+nuMQ/F96tUeFzG9hmNiNca7+1QDBb
-         UxVrcHK6VPla6gc3Vu7LP0D2FIRTFphJEw0sXYLOfXj9WazEGQe7kjpK3z5ZSSYRBEI1
-         Et4ItcBQ8aKRZuwGZaryd9RjjKLkwH4ZQO2W4=
+        bh=ysw+3hrIgiJrYdQABB3+Dt5DgMOw9tDOT9yOl9vUjGI=;
+        b=k0Yu2GqYzip6XibRR2bsbzbHDosvwNLw/QIWNcCeGnor08Kpu7TEc+iPR3qLEfwoDT
+         D2zgIey6Hv+3HkYouZcWD3M7h5z8h0A9Bdhh4kF0zKTgYAe0PnsrIVP86yenoFiGbeOx
+         NYE8x2OX/Nldivgptk10mEhmdSWY//gFq1QhA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755889314; x=1756494114;
+        d=1e100.net; s=20230601; t=1755889316; x=1756494116;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0JBmJP/TLWjJ8U7y1ITV3vUcgsR6oiKteW9+ZGeDW40=;
-        b=ovo3Mwx1jkShzW5VsUWLzm1sY62CGrwuPZFAgtNM6lgJgFWolMjoNyEagQ4fy4a4PE
-         +gi0Ea8OLuftjBOsvXUgF6TDeeocPs6m15zQlIRcix0Zwbn0+kGrOVSugf9dguDEUK4T
-         ICwMK9A1Q0OmMKL57z+IrPQv4nIM9+T+Kv04zHWqhEsOz+bMIBnRSdWxHSMupCjwARyk
-         KGMLac86e1smg01SeOQQzqo7QaJv7gdoM5paAbC2IR87W9T1+z832ACEc7Rm9LQIHChe
-         PQpbiEagigDqh9mv/t79etcxud0yBvHvATR1pPa6Kn5FAUN1l58WE8cocDXKU6CrBxY5
-         BfkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUit4BmXop/u1UfAGhqcaZsWhha98YPHS++v5MQ5ct8VxyB75K6Jc/hJBLtP3MWAqQpuMNZImni1Q5axQs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYfR3dU6EPvx6rFbOqzTArBj2o/XBodD8ttARWX6ZJBHa7Lits
-	Q3qIZUxvTFnzb0/khlywadx41lA5y6CTWZzVy9BWmqmjXq3l58z2/79lF3Sp+HSkvw==
-X-Gm-Gg: ASbGncu33fUDlsSPFWEglJoDEqNnXS0GpKxMyoUNuzlAMjqpITuNWtwkq5n7lgV715F
-	ssY2jmKduWlsZ+8hI1TlU8a65l/E9lEr4ybtWZ5nrQtWqNXvO+hIjFYazPGKSdZtjjWvwkyOqCU
-	V5Q30ETpcHMa1PwKmOTlZl8C9NWAt9y6wZQxmkCYEzPPt+BZEu9Wz6pOnPDuI9zoZtFKrkcFxk8
-	/3yzpvBwaGNGawu1ANHuWYVvceZPMVPW4TrzcAiB2Vu1EAcuaVSpTi5FCVjtGijLN+0oEdkdILA
-	eY1/2K9KzL3gOGffFAp6iaahWKoIlMDCN+hQiZec4uE+rgpDldxPmHxHnaDJJcqUH3I+vLO9Bvv
-	T59WWV1b0KKPL7HPcXJl8c6kE0D5zZQ8g+7H8HQ0zoer2sUlJpSJNzcnCy4E=
-X-Google-Smtp-Source: AGHT+IEYMj43iQarvl5ZATwez4b8yP9DJINCX4H7ZcT6d/vhB9KinVjiExt4tW5yIdovYyH/SKo4PQ==
-X-Received: by 2002:a05:6a20:2449:b0:239:a3b:33e5 with SMTP id adf61e73a8af0-24340d91844mr6212979637.39.1755889313625;
-        Fri, 22 Aug 2025 12:01:53 -0700 (PDT)
+        bh=ysw+3hrIgiJrYdQABB3+Dt5DgMOw9tDOT9yOl9vUjGI=;
+        b=cwRooqWYBufOfadqBPrvqcLmeyaUlk6p4zMi1PDKeI6XWgHtyP+wJDXSHA8Xduqu15
+         cu0S9ui9xwtys+adCsKTVBlJGFdgemzMH92HNIjO8XmYBgZ9OI0etbvxTTN5b3iqzC8m
+         cqB+68DiRq6uVTFMqOWvPR29IYl5Hm0B5Ui6oGzwvKNIQZ8GjX5oWL1ci7i5IOXaz5P3
+         ceJqvxHxPlinUBpqBxSFxYEGxq1QUsC5vlaGCeTL2X0I+jDjeEN9Hcl2M3Sd2A5HjrKR
+         MvLKrehbAMWL/2+JDuNjtOtdgFnmC95mqBVwQbz3U7C4DuV6NITOIn5tp/85czMPxcB/
+         XGQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqM3jCNSVGWEauzLSE4CMIzbF+8Vd/SgM8XXo/dMzuXGN5EitQbZAl6O/vJAsPn9K58eYkUsDvhPAp7Zc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEnxTqtahhH6KBxn3/aXwDlQK5oN5Xmi0RJbx75859Dz6/jtQj
+	rKinbo+jpI6Aw8M5eXCrSF/tpWHdErB2hphlu6tM/z/KeuFUSBpZrKSsd5uUP+mA5w==
+X-Gm-Gg: ASbGncvixsoocp64U5pMlqYpY9z3SfmdrBgsTRZF9uur/3mtAcKIB0IrNQw9B9BrcJi
+	TNnwKNrWjttpw5j5QxSW1pBju15M2tj2zX2exR9hgn1lVQOc1eHh3Bk77qEFd4DJSvBUIeiZIFz
+	yZAgr18NMxkFGgvgkSvmNttnghtDb5oW35w2zju/MxCN27yw6+nX2wt7D2hoJ3CZFDjXYqs7qS1
+	7YlwBVUJYJoVLdQepFJk7TeGg9dUfIQOCQ6lXwqvjjZnFqKTSD6VwJT8Qrh5s5xxPZhCQhRvK/5
+	/WF0RfyOQc5KC0iUk8y6R3iSt76VcDjXRgTWYV9w/gEpS1orxzhO/ceA9uai7Eqa/DZEeuBS1+f
+	HFMIn803wUVtwwGEH1xXKfjKgZgXlVtH2pXJBOi2czSALM25cqfQZtxMjGZLVwFnODe2opQ==
+X-Google-Smtp-Source: AGHT+IEqFAw76Lki0zkjH8qAF8RoMhFiXS9rdvzirdsLGc0PWioCNOpwr2TSYXdI2BqzX0XONe8bMQ==
+X-Received: by 2002:a17:90b:1dce:b0:315:af43:12ee with SMTP id 98e67ed59e1d1-32515ef8aebmr6307614a91.16.1755889315976;
+        Fri, 22 Aug 2025 12:01:55 -0700 (PDT)
 Received: from localhost ([2a00:79e0:2e14:7:154c:8cf:f7d0:c083])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3254aa4fa20sm537789a91.17.2025.08.22.12.01.52
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3254ae898fdsm401806a91.7.2025.08.22.12.01.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 12:01:52 -0700 (PDT)
+        Fri, 22 Aug 2025 12:01:55 -0700 (PDT)
 From: Brian Norris <briannorris@chromium.org>
 To: Thomas Gleixner <tglx@linutronix.de>
 Cc: David Gow <davidgow@google.com>,
@@ -77,9 +77,9 @@ Cc: David Gow <davidgow@google.com>,
 	Geert Uytterhoeven <geert@linux-m68k.org>,
 	kunit-dev@googlegroups.com,
 	Brian Norris <briannorris@chromium.org>
-Subject: [PATCH v2 3/6] genirq/test: Fail early if we can't request an IRQ
-Date: Fri, 22 Aug 2025 11:59:04 -0700
-Message-ID: <20250822190140.2154646-4-briannorris@chromium.org>
+Subject: [PATCH v2 4/6] genirq/test: Depend on SPARSE_IRQ
+Date: Fri, 22 Aug 2025 11:59:05 -0700
+Message-ID: <20250822190140.2154646-5-briannorris@chromium.org>
 X-Mailer: git-send-email 2.51.0.rc2.233.g662b1ed5c5-goog
 In-Reply-To: <20250822190140.2154646-1-briannorris@chromium.org>
 References: <20250822190140.2154646-1-briannorris@chromium.org>
@@ -91,68 +91,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Requesting the IRQ is part of basic setup of the test. If it fails, most
-of the subsequent tests are likely to fail, and the output gets noisy.
-Use "assert" to fail early.
+Some architectures have a rather static IRQ layout, with a limited
+NR_IRQS. Without SPARSE_IRQ, we may not be able to allocate any new fake
+IRQs, and the test will fail. (This occurs on ARCH=m68k, for example.)
 
+Additionally, managed-affinity is only supported with
+CONFIG_SPARSE_IRQ=y, so irq_shutdown_depth_test() and
+irq_cpuhotplug_test() would fail without it.
+
+Add a 'SPARSE_IRQ' dependency to avoid these problems.
+
+Many architectures 'select SPARSE_IRQ', so this is easy to miss.
+
+Notably, this also excludes ARCH=um from running any of these tests,
+even though some of them might work.
+
+Fixes: 66067c3c8a1e ("genirq: Add kunit tests for depth counts")
+Reported-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Brian Norris <briannorris@chromium.org>
-Reviewed-by: David Gow <davidgow@google.com>
 ---
 
-(no changes since v1)
+Changes in v2:
+ * Make all tests depend on SPARSE_IRQ, not just a few (resolves
+   ARCH=m68k issues)
 
- kernel/irq/irq_test.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ kernel/irq/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/irq/irq_test.c b/kernel/irq/irq_test.c
-index f8f4532c2805..56baeb5041d6 100644
---- a/kernel/irq/irq_test.c
-+++ b/kernel/irq/irq_test.c
-@@ -71,7 +71,7 @@ static void irq_disable_depth_test(struct kunit *test)
- 	KUNIT_ASSERT_PTR_NE(test, desc, NULL);
- 
- 	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
--	KUNIT_EXPECT_EQ(test, ret, 0);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
- 
- 	KUNIT_EXPECT_EQ(test, desc->depth, 0);
- 
-@@ -95,7 +95,7 @@ static void irq_free_disabled_test(struct kunit *test)
- 	KUNIT_ASSERT_PTR_NE(test, desc, NULL);
- 
- 	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
--	KUNIT_EXPECT_EQ(test, ret, 0);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
- 
- 	KUNIT_EXPECT_EQ(test, desc->depth, 0);
- 
-@@ -106,7 +106,7 @@ static void irq_free_disabled_test(struct kunit *test)
- 	KUNIT_EXPECT_GE(test, desc->depth, 1);
- 
- 	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
--	KUNIT_EXPECT_EQ(test, ret, 0);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
- 	KUNIT_EXPECT_EQ(test, desc->depth, 0);
- 
- 	free_irq(virq, NULL);
-@@ -134,7 +134,7 @@ static void irq_shutdown_depth_test(struct kunit *test)
- 	KUNIT_ASSERT_PTR_NE(test, data, NULL);
- 
- 	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
--	KUNIT_EXPECT_EQ(test, ret, 0);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
- 
- 	KUNIT_EXPECT_TRUE(test, irqd_is_activated(data));
- 	KUNIT_EXPECT_TRUE(test, irqd_is_started(data));
-@@ -191,7 +191,7 @@ static void irq_cpuhotplug_test(struct kunit *test)
- 	KUNIT_ASSERT_PTR_NE(test, data, NULL);
- 
- 	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
--	KUNIT_EXPECT_EQ(test, ret, 0);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
- 
- 	KUNIT_EXPECT_TRUE(test, irqd_is_activated(data));
- 	KUNIT_EXPECT_TRUE(test, irqd_is_started(data));
+diff --git a/kernel/irq/Kconfig b/kernel/irq/Kconfig
+index 08088b8e95ae..a75df2bb9db6 100644
+--- a/kernel/irq/Kconfig
++++ b/kernel/irq/Kconfig
+@@ -147,6 +147,7 @@ config GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD
+ config IRQ_KUNIT_TEST
+ 	bool "KUnit tests for IRQ management APIs" if !KUNIT_ALL_TESTS
+ 	depends on KUNIT=y
++	depends on SPARSE_IRQ
+ 	default KUNIT_ALL_TESTS
+ 	select IRQ_DOMAIN
+ 	imply SMP
 -- 
 2.51.0.rc2.233.g662b1ed5c5-goog
 
