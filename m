@@ -1,312 +1,148 @@
-Return-Path: <linux-kernel+bounces-782581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EDA9B32258
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:37:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E7EB3225D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 308997B1D7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:36:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E3CB2164C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C2C2BEC5C;
-	Fri, 22 Aug 2025 18:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FF02BF015;
+	Fri, 22 Aug 2025 18:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Qn+CCUV/"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="bJT6xkOJ"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960172BEFEF
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB68F19D07A
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755887831; cv=none; b=dRZEkxkwLqqhUc2mXTdqWMyMHm2NQHYzaBo3GKpveQefygoYaoO8lDRPJadSDUgaEkEmMI0yvDQUq53IK4lBIZT5Y4w+dw9sMssJLhW0DuhbGIJNBduPA/SYRnGhI//mKR7Qqsys7bw2v7C84NGbAhAFXq45/xJcRDZG3sO/9q0=
+	t=1755888173; cv=none; b=rs02Vxw0WEnp6Xq2tfhhN0jZ69yqJhU0r3wLcggcjHTp/TVvFFyoJAntLNq5R9QgH/yL+64JGXhGFBDx1TNEmoa3VWurLCppA1ETLRTuhHt9dfflX0VZn/J8e8CxGeYlX1JTr6elEVmJ+lDyLa8t98Pt7blmP4/mC20qrMPwWHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755887831; c=relaxed/simple;
-	bh=WoYBS+suj62us0oVK02xkfT8Ry303QosUdXUG5V5o+s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DzS1LLuaISMG1LfKkOlHWA5zXFGpM7XswFvtRLLO4esk2kfDhnCe0yX817E0bV1Q38DhukEtRysPZcQJVbviEshWU1Im/SN/Gkz60WRh2pOVz3FVd4wslghtfJtcunEt41TH5FsUqIDH9LGelW7dQiCvXPJjSmshjCmRyXyvK6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Qn+CCUV/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1755887828;
-	bh=WoYBS+suj62us0oVK02xkfT8Ry303QosUdXUG5V5o+s=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Qn+CCUV/8f0B211PQEIZ3ASGTBtreAbGZUgjGTj0oNYjtUraf6QXNcC/4t3NsI3o7
-	 v9OEIe2saKYvd9+raIU5ENp1g9NAL9Qx2Ea/6ya9nzp8YooSlv6Ekv0f5IALcLL9Kx
-	 sn+cq93AW2B49ksS2SCYWiLBk0sX1GYHqyiExbRHP7E926Ha4R+X6vHgcHwyGAGlzG
-	 Mrt5s/RVuUeVI1gT8IA9SjyIOgEbAaw+p0mtSEuQmNh0UyKVbIofc+u3gF5VjaaBSY
-	 TdeRPDR991v1g/voBpo3RV70ffswkZsDVr3pf9ICxPkgnZ8a7VPzEsnM3fNZqTNsHm
-	 4GYkF5elPocZw==
-Received: from [127.0.1.1] (unknown [IPv6:2600:4041:5b1a:9400:62f0:406e:ac79:4a96])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id AF06617E37EB;
-	Fri, 22 Aug 2025 20:37:02 +0200 (CEST)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Fri, 22 Aug 2025 14:36:15 -0400
-Subject: [PATCH RFC 5/5] drm/mediatek: gamma: Support post-blend color
- pipeline API
+	s=arc-20240116; t=1755888173; c=relaxed/simple;
+	bh=HMDU6qnc6XToakMxvLwKRSmVgASNQEzig+IwPzLgNjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=As9OP8eRlK40OUmFITJgaXzUJ8LVcpR7UUCySls1fkY7ZR2sNkt+lHjalsDQHosb574ZdQPqWLo1vQKaKSg3Nl8h4/QfS/ju1+sTaHYpkFVNyF8ZWX28Op1oDqJudrL8x4b4JgF3yXOMhg2NsUhY8XJFk7beG9a5AUnjK2yuQUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=bJT6xkOJ; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b471740e488so2004314a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:42:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=wbinvd.org; s=wbinvd; t=1755888170; x=1756492970; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VRqezcJ9J5RPvnfO+uIE5EjJo7z/UAP8PQZlBAlk17k=;
+        b=bJT6xkOJEjXFEdRV+M8HSmrKE/fXB2oHLgCgcd4NEc4LqV2+bYbPZ+8qERBydfXFuS
+         foV8Ij3jM6CmFkm6HRVy3ZKMVehL3ifxH0flXVkeYrZ6De27I2iA61NoKwY7XIl1UhyV
+         7knwdJnBheOxgSf8Lkw4R8jj31Gei94XUkwzAWHA/Uj6eNmaCRtLHR4bjkQZIPH5sl4O
+         /c31c4HBTD/W9u7PoLRZmqPYVa4KZRadw2tN9hNVoy3pe/TU9ashTdyCWo9StNckOZ6x
+         IlLwzAWyzdehA+GnvF8K9kuTW+stLhghVy/HV+GuYmDatgDzUUkRog3Mpody1YdJER+D
+         wCdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755888170; x=1756492970;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VRqezcJ9J5RPvnfO+uIE5EjJo7z/UAP8PQZlBAlk17k=;
+        b=EvVv2oHpT9j9nua83iMSCeMr8dsbtl7E3CIw8ks1AFSI5OssmFn9QGc7imXH3XNPbu
+         KPcBODByGtYVIXneEn6K6Kqpt9nGdygz27+hChj87i+6Mw8ZHc4ItDYk0KeTqPjmcYtP
+         +tbhOjdA9FqrodanrKhSmbe8Z4zvUfLmukKXpoF0h1wWQiolNDYMNmNNMIax12cMyCr7
+         N16Qh3MgaXDi3tcKSN8NvdjEvAUbf82fzJeosmGGt28lPbbAWqj9uSC5vvI8hyiMmZbK
+         hu1/NQpdRrvoPp9OMa+ZwQu0pCyD6WxUmOzM7SRnKL23BRx0+cn6VtiSq3vegfSGPZ9+
+         jhWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzGohk1hL+Bko+DELLpSi8tE4HLG/ksiyGdS/LGxrzQWnNJ+Miw/jfRh4eT4dDMy+rVNwxqOGC7PQVvtw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV5iFAYvZiTu/CiWS98r4xvk25saCUuHozqs6tfuNN3Cck6vOf
+	FQsIOJLF7NdZVENl3E58KXibDeCp4ltZGsHYe2HzogqktBwAHpom6Yof+HViU+4W0us=
+X-Gm-Gg: ASbGncsNZ2nJOckIC4xaxpVg6kXuVLWgEWCvYCjvOrGgsh+8fUdSW5+fTzm6TolQdRV
+	sRzrBhS0U3JE96O6tUTMNMMp035xbnvcT1RUWBMEl40Xvr9s8ruinH2bgIyEr3bYnnW6nwl3mLi
+	PeJSqE/D25Ln2K2YweXCxWp2EBFZApBRZ9BWPiGil1EMD+eWTYYTLUH6MmqUtQHNjg7ZM+8ITBC
+	0PRxI4nY7QzId9M/Ty4ejBHt60MlwnMhb8XD6rHA27aa/vI2X7lYmoA4pK+aJHvvJ6cGg/n6zhc
+	eArrxSx3v1gFf99hFqG4+nSbjBYHYWyR7kWI+BUIgA+nFG+KcWcwtbDLlcWoeRpwckfxgL612XE
+	TywqmgZLdFc8f89MuSnKNwMJx
+X-Google-Smtp-Source: AGHT+IHXhgusmCBljx9j0ynCx//dG3+DQIdpERkIhWbIeVVT8KWK7G8ICDAak5hLnXpQf+JKlRArKA==
+X-Received: by 2002:a17:902:dad1:b0:242:befb:b04e with SMTP id d9443c01a7336-2462ee9cbfcmr55698485ad.25.1755888170055;
+        Fri, 22 Aug 2025 11:42:50 -0700 (PDT)
+Received: from mozart.vkv.me ([192.184.167.117])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324f3908fe3sm2553320a91.1.2025.08.22.11.42.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 11:42:49 -0700 (PDT)
+Date: Fri, 22 Aug 2025 11:42:47 -0700
+From: Calvin Owens <calvin@wbinvd.org>
+To: Sun YangKai <sunk67188@gmail.com>
+Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	neelx@suse.com, quwenruo.btrfs@gmx.com
+Subject: Re: [PATCH] btrfs: Accept and ignore compression level for lzo
+Message-ID: <aKi6J2IkGOytAggj@mozart.vkv.me>
+References: <a5e0515b8c558f03ba2a9613c736d65f2b36b5fe.1755848139.git.calvin@wbinvd.org>
+ <2022221.PYKUYFuaPT@saltykitkat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250822-mtk-post-blend-color-pipeline-v1-5-a9446d4aca82@collabora.com>
-References: <20250822-mtk-post-blend-color-pipeline-v1-0-a9446d4aca82@collabora.com>
-In-Reply-To: <20250822-mtk-post-blend-color-pipeline-v1-0-a9446d4aca82@collabora.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Alex Hung <alex.hung@amd.com>, wayland-devel@lists.freedesktop.org, 
- harry.wentland@amd.com, leo.liu@amd.com, ville.syrjala@linux.intel.com, 
- pekka.paalanen@collabora.com, contact@emersion.fr, mwen@igalia.com, 
- jadahl@redhat.com, sebastian.wick@redhat.com, shashank.sharma@amd.com, 
- agoins@nvidia.com, joshua@froggi.es, mdaenzer@redhat.com, aleixpol@kde.org, 
- xaver.hugl@gmail.com, victoria@system76.com, uma.shankar@intel.com, 
- quic_naseer@quicinc.com, quic_cbraga@quicinc.com, quic_abhinavk@quicinc.com, 
- marcan@marcan.st, Liviu.Dudau@arm.com, sashamcintosh@google.com, 
- chaitanya.kumar.borah@intel.com, louis.chauvet@bootlin.com, 
- mcanal@igalia.com, kernel@collabora.com, daniels@collabora.com, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- Simona Vetter <simona.vetter@ffwll.ch>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2022221.PYKUYFuaPT@saltykitkat>
 
-Implement the gamma_set_color_pipeline DDP component function to allow
-configuring the gamma LUT through the post-blend color pipeline API.
+On Friday 08/22 at 18:20 +0800, Sun YangKai wrote:
+> > The compression level is meaningless for lzo, but before commit
+> > 3f093ccb95f30 ("btrfs: harden parsing of compression mount options"),
+> > it was silently ignored if passed.
+> > 
+> > After that commit, passing a level with lzo fails to mount:
+> >     BTRFS error: unrecognized compression value lzo:1
+> > 
+> > Restore the old behavior, in case any users were relying on it.
+> > 
+> > Fixes: 3f093ccb95f30 ("btrfs: harden parsing of compression mount options")
+> > Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+> > ---
+> > 
+> >  fs/btrfs/super.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> > index a262b494a89f..7ee35038c7fb 100644
+> > --- a/fs/btrfs/super.c
+> > +++ b/fs/btrfs/super.c
+> > @@ -299,7 +299,7 @@ static int btrfs_parse_compress(struct btrfs_fs_context
+> > *ctx,> 
+> >  		btrfs_set_opt(ctx->mount_opt, COMPRESS);
+> >  		btrfs_clear_opt(ctx->mount_opt, NODATACOW);
+> >  		btrfs_clear_opt(ctx->mount_opt, NODATASUM);
+> > 
+> > -	} else if (btrfs_match_compress_type(string, "lzo", false)) {
+> > +	} else if (btrfs_match_compress_type(string, "lzo", true)) {
+> > 
+> >  		ctx->compress_type = BTRFS_COMPRESS_LZO;
+> >  		ctx->compress_level = 0;
+> >  		btrfs_set_opt(ctx->mount_opt, COMPRESS);
+> > 
+> > --
+> > 2.47.2
+> 
+> A possible improvement would be to emit a warning in
+> btrfs_match_compress_type() when @may_have_level is false but a
+> level is still provided. And the warning message can be something like 
+> "Providing a compression level for {compression_type} is not supported, the 
+> level is ignored."
+> 
+> This way:
+> 1. users receive a clearer hint about what happened,
+> 2. existing setups relying on this behavior continue to work,
+> 3. the @may_have_level semantics remain consistent.
 
-The color pipeline API uses a 32-bit long, rather than 16-bit long, LUT,
-so also update the functions to handle both cases.
+Thanks Sun, sorry for not acknowledging your suggestion in my last
+response. Repeating what I said there: if it helps get this in, I'm
+happy to do it, but it sounds like Qu is pretty fundamentally opposed
+to keeping the old behavior.
 
-Also make sure to enable or disable the LUT function depending on
-whether the block should be bypassed or not.
-
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- drivers/gpu/drm/mediatek/mtk_ddp_comp.c   |   3 +-
- drivers/gpu/drm/mediatek/mtk_disp_drv.h   |   3 +-
- drivers/gpu/drm/mediatek/mtk_disp_gamma.c | 107 +++++++++++++++++++++++++-----
- 3 files changed, 94 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-index c873b527423f51733058cbc3d0ad2a719e26bfe1..d253906546506ecf1f1e2a23123b80e774e981ae 100644
---- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-@@ -327,7 +327,8 @@ static const struct mtk_ddp_comp_funcs ddp_gamma = {
- 	.clk_enable = mtk_gamma_clk_enable,
- 	.clk_disable = mtk_gamma_clk_disable,
- 	.gamma_get_lut_size = mtk_gamma_get_lut_size,
--	.gamma_set = mtk_gamma_set,
-+	.gamma_set = mtk_gamma_set_legacy,
-+	.gamma_set_color_pipeline = mtk_gamma_set_color_pipeline,
- 	.config = mtk_gamma_config,
- 	.start = mtk_gamma_start,
- 	.stop = mtk_gamma_stop,
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_drv.h b/drivers/gpu/drm/mediatek/mtk_disp_drv.h
-index ac84cf579150fd0535c79f43ad5942f8d412d450..7795aa5bc057fc09597cbd582f04e4dc76d3ecba 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_drv.h
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_drv.h
-@@ -58,7 +58,8 @@ void mtk_gamma_config(struct device *dev, unsigned int w,
- 		      unsigned int h, unsigned int vrefresh,
- 		      unsigned int bpc, struct cmdq_pkt *cmdq_pkt);
- unsigned int mtk_gamma_get_lut_size(struct device *dev);
--void mtk_gamma_set(struct device *dev, struct drm_crtc_state *state);
-+void mtk_gamma_set_legacy(struct device *dev, struct drm_crtc_state *state);
-+void mtk_gamma_set_color_pipeline(struct device *dev, struct drm_color_lut32 *lut);
- void mtk_gamma_start(struct device *dev);
- void mtk_gamma_stop(struct device *dev);
- 
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_gamma.c b/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
-index 8afd15006df2a21f3f52fe00eca3c5501f4fb76a..dec9eeb53cb8539e49ecc1087e037645c792ee3d 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
-@@ -87,13 +87,34 @@ unsigned int mtk_gamma_get_lut_size(struct device *dev)
- 	return 0;
- }
- 
--static bool mtk_gamma_lut_is_descending(struct drm_color_lut *lut, u32 lut_size)
-+static bool mtk_gamma_lut_is_descending(void *lut, bool bits32, u32 lut_size)
- {
- 	u64 first, last;
- 	int last_entry = lut_size - 1;
-+	u32 lutr_first, lutg_first, lutb_first, lutr_last, lutg_last, lutb_last;
-+	struct drm_color_lut32 *lut32;
-+	struct drm_color_lut *lut16;
-+
-+	if (bits32) {
-+		lut32 = (struct drm_color_lut32 *)lut;
-+		lutr_first = lut32[0].red;
-+		lutg_first = lut32[0].green;
-+		lutb_first = lut32[0].blue;
-+		lutr_last = lut32[last_entry].red;
-+		lutg_last = lut32[last_entry].green;
-+		lutb_last = lut32[last_entry].blue;
-+	} else {
-+		lut16 = (struct drm_color_lut *)lut;
-+		lutr_first = lut16[0].red;
-+		lutg_first = lut16[0].green;
-+		lutb_first = lut16[0].blue;
-+		lutr_last = lut16[last_entry].red;
-+		lutg_last = lut16[last_entry].green;
-+		lutb_last = lut16[last_entry].blue;
-+	}
- 
--	first = lut[0].red + lut[0].green + lut[0].blue;
--	last = lut[last_entry].red + lut[last_entry].green + lut[last_entry].blue;
-+	first = lutr_first + lutg_first + lutb_first;
-+	last = lutr_last + lutg_last + lutb_last;
- 
- 	return !!(first > last);
- }
-@@ -113,7 +134,7 @@ static bool mtk_gamma_lut_is_descending(struct drm_color_lut *lut, u32 lut_size)
-  *     - 12-bits LUT supported
-  *     - 10-its LUT not supported
-  */
--void mtk_gamma_set(struct device *dev, struct drm_crtc_state *state)
-+static void mtk_gamma_set(struct device *dev, void *lut, bool bits32)
- {
- 	struct mtk_disp_gamma *gamma = dev_get_drvdata(dev);
- 	void __iomem *lut0_base = gamma->regs + DISP_GAMMA_LUT;
-@@ -121,19 +142,20 @@ void mtk_gamma_set(struct device *dev, struct drm_crtc_state *state)
- 	u32 cfg_val, data_mode, lbank_val, word[2];
- 	u8 lut_bits = gamma->data->lut_bits;
- 	int cur_bank, num_lut_banks;
--	struct drm_color_lut *lut;
- 	unsigned int i;
--
--	/* If there's no gamma lut there's nothing to do here. */
--	if (!state->gamma_lut)
--		return;
-+	struct drm_color_lut32 *lut32;
-+	struct drm_color_lut *lut16;
- 
- 	num_lut_banks = gamma->data->lut_size / gamma->data->lut_bank_size;
--	lut = (struct drm_color_lut *)state->gamma_lut->data;
- 
- 	/* Switch to 12 bits data mode if supported */
- 	data_mode = FIELD_PREP(DISP_GAMMA_BANK_DATA_MODE, !!(lut_bits == 12));
- 
-+	if (bits32)
-+		lut32 = (struct drm_color_lut32 *)lut;
-+	else
-+		lut16 = (struct drm_color_lut *)lut;
-+
- 	for (cur_bank = 0; cur_bank < num_lut_banks; cur_bank++) {
- 
- 		/* Switch gamma bank and set data mode before writing LUT */
-@@ -146,10 +168,21 @@ void mtk_gamma_set(struct device *dev, struct drm_crtc_state *state)
- 		for (i = 0; i < gamma->data->lut_bank_size; i++) {
- 			int n = cur_bank * gamma->data->lut_bank_size + i;
- 			struct drm_color_lut diff, hwlut;
-+			u32 lutr, lutg, lutb;
-+
-+			if (bits32) {
-+				lutr = lut32[n].red;
-+				lutg = lut32[n].green;
-+				lutb = lut32[n].blue;
-+			} else {
-+				lutr = lut16[n].red;
-+				lutg = lut16[n].green;
-+				lutb = lut16[n].blue;
-+			}
- 
--			hwlut.red = drm_color_lut_extract(lut[n].red, lut_bits);
--			hwlut.green = drm_color_lut_extract(lut[n].green, lut_bits);
--			hwlut.blue = drm_color_lut_extract(lut[n].blue, lut_bits);
-+			hwlut.red = drm_color_lut_extract(lutr, lut_bits);
-+			hwlut.green = drm_color_lut_extract(lutg, lut_bits);
-+			hwlut.blue = drm_color_lut_extract(lutb, lut_bits);
- 
- 			if (!gamma->data->lut_diff || (i % 2 == 0)) {
- 				if (lut_bits == 12) {
-@@ -162,13 +195,25 @@ void mtk_gamma_set(struct device *dev, struct drm_crtc_state *state)
- 					word[0] |= FIELD_PREP(DISP_GAMMA_LUT_10BIT_B, hwlut.blue);
- 				}
- 			} else {
--				diff.red = lut[n].red - lut[n - 1].red;
-+				u32 lutr_prev, lutg_prev, lutb_prev;
-+
-+				if (bits32) {
-+					lutr_prev = lut32[n-1].red;
-+					lutg_prev = lut32[n-1].green;
-+					lutb_prev = lut32[n-1].blue;
-+				} else {
-+					lutr_prev = lut16[n-1].red;
-+					lutg_prev = lut16[n-1].green;
-+					lutb_prev = lut16[n-1].blue;
-+				}
-+
-+				diff.red = lutr - lutr_prev;
- 				diff.red = drm_color_lut_extract(diff.red, lut_bits);
- 
--				diff.green = lut[n].green - lut[n - 1].green;
-+				diff.green = lutg - lutg_prev;
- 				diff.green = drm_color_lut_extract(diff.green, lut_bits);
- 
--				diff.blue = lut[n].blue - lut[n - 1].blue;
-+				diff.blue = lutb - lutb_prev;
- 				diff.blue = drm_color_lut_extract(diff.blue, lut_bits);
- 
- 				if (lut_bits == 12) {
-@@ -191,7 +236,7 @@ void mtk_gamma_set(struct device *dev, struct drm_crtc_state *state)
- 
- 	if (!gamma->data->has_dither) {
- 		/* Descending or Rising LUT */
--		if (mtk_gamma_lut_is_descending(lut, gamma->data->lut_size - 1))
-+		if (mtk_gamma_lut_is_descending(lut, bits32, gamma->data->lut_size - 1))
- 			cfg_val |= FIELD_PREP(GAMMA_LUT_TYPE, 1);
- 		else
- 			cfg_val &= ~GAMMA_LUT_TYPE;
-@@ -206,6 +251,34 @@ void mtk_gamma_set(struct device *dev, struct drm_crtc_state *state)
- 	writel(cfg_val, gamma->regs + DISP_GAMMA_CFG);
- }
- 
-+void mtk_gamma_set_legacy(struct device *dev, struct drm_crtc_state *state)
-+{
-+	struct drm_color_lut *lut = (struct drm_color_lut *)state->gamma_lut->data;
-+
-+	/* If there's no gamma lut there's nothing to do here. */
-+	if (!state->gamma_lut)
-+		return;
-+
-+	mtk_gamma_set(dev, lut, false);
-+}
-+
-+void mtk_gamma_set_color_pipeline(struct device *dev, struct drm_color_lut32 *lut)
-+{
-+	struct mtk_disp_gamma *gamma = dev_get_drvdata(dev);
-+	u32 cfg_val;
-+
-+	/* Configure block to be bypassed */
-+	if (!lut) {
-+		cfg_val = readl(gamma->regs + DISP_GAMMA_CFG);
-+		cfg_val &= ~GAMMA_LUT_EN;
-+		cfg_val |= GAMMA_RELAY_MODE;
-+		writel(cfg_val, gamma->regs + DISP_GAMMA_CFG);
-+		return;
-+	}
-+
-+	mtk_gamma_set(dev, lut, true);
-+}
-+
- void mtk_gamma_config(struct device *dev, unsigned int w,
- 		      unsigned int h, unsigned int vrefresh,
- 		      unsigned int bpc, struct cmdq_pkt *cmdq_pkt)
-
--- 
-2.47.2
-
+> 
 
