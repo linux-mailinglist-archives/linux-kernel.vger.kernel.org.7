@@ -1,77 +1,56 @@
-Return-Path: <linux-kernel+bounces-782151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9FEDB31BBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:35:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCCA9B31B91
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E73EB17B7B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:28:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBF177AECED
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5873126BD;
-	Fri, 22 Aug 2025 14:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0170A313559;
+	Fri, 22 Aug 2025 14:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaMeOYRl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7wztDtc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2644311598;
-	Fri, 22 Aug 2025 14:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46674305E2B;
+	Fri, 22 Aug 2025 14:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755872551; cv=none; b=SAZ++34CmdRkoTYqR0+bPsorkJLYnFTcI6TORopgVGSnB+Iv2N5c4zMmiILGJn+LidOFG8FGaFq1e4PiUAg+aRxqXqHCd+R+oR1USW+eUxdWRjQwoN0wLNl+0eYqSmn9anCXRsa0LIY3X3yV5L/8pZCdjRKsOzZAb48+U2F0kjM=
+	t=1755872604; cv=none; b=WIDzQfpwMV9OhyMBhTNnjCWajRB5TBxTv4zInO0GfsrjmNV8Qd24N4DPVFMgCLqCCE4eZVbPSZqDS8EhSLPGzMrhftcocq/OGJ0vKk7FP4uCXl7iQbzUlqElCx3ISphz40WxCTJenobU4I2FtLudbRKO4zAjelT7OBBPTqID3Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755872551; c=relaxed/simple;
-	bh=Jfs2aObCoc6/9U+QUowqTuZJPGKpl9EHfkAakKt01fA=;
+	s=arc-20240116; t=1755872604; c=relaxed/simple;
+	bh=p12u8vR8qiv7q0T3C6sATwxvsQ21DT4TNvgeIZFALCw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lc+b4DINo46kzu+eSQ1pALfZ3Am+ucThNWVQ/jSzD1uhAcJeRUaHBIGsnbXtzRb42OsP+kfE7OqYRJ3Gz6q0UkFIahAX3o8PPu49jPbrsmEg9L7vIUomVtcs8xcuuwwr7FXzSp6WCWV/vvh29bIkVgURLfYs76VIPNgP1YRACm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaMeOYRl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39066C4CEED;
-	Fri, 22 Aug 2025 14:22:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=p93z2zMHflhaSFAq6q1pVtY3o0exs54Sp6P5I3cxGh7M7+nq13TpCi5CVjfh8febt8OTgDtQq9lJ7WLb7pSgE/Y7DImCc4vc800QxG0zkZYHo1W0DiPG4ErIrw6mUph2mtSsrAkbd0szXIsS5rYuG9h2AH3hMfwY1aiFnDcwxGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n7wztDtc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60A69C4CEED;
+	Fri, 22 Aug 2025 14:23:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755872551;
-	bh=Jfs2aObCoc6/9U+QUowqTuZJPGKpl9EHfkAakKt01fA=;
+	s=k20201202; t=1755872603;
+	bh=p12u8vR8qiv7q0T3C6sATwxvsQ21DT4TNvgeIZFALCw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qaMeOYRlR4Wv/Qpfazr+fo0Yo7+OBcRJGW62A3b4/mgjwe9k/g3rOj6w0V6+obcSO
-	 YwUvSrcRG9N16SjtpKOJ245+NA/KDnGZ8/Flkm2gy06fvsfE1pUYx55oo0EJdYouBR
-	 5OaUow07gdPvg7YjN9xh4t7cZoroh7XWXR8hVT+ordFWaXUhQjXXFIOk4C7vKd3Vrb
-	 KeXDdrxgd6taY8hNG6Ro96WkMwQ115uk/0SmE5YCfZcy5oORlqyxpCFZNO4iU92Q0R
-	 LOJM9aJrkloBRtFQ1N0+m+r5o3LwqtQBi0TkEcMn5/igGCqMpEgMrEfdEjzEgi2DVY
-	 wfA3Lm/2ip+/Q==
-Date: Fri, 22 Aug 2025 09:22:30 -0500
-From: Rob Herring <robh@kernel.org>
-To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kuogee Hsieh <quic_khsieh@quicinc.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-	fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
-	tingwei.zhang@oss.qualcomm.com,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	quic_lliu6@quicinc.com
-Subject: Re: [PATCH v3 02/14] dt-bindings: phy: Add QMP USB3+DP PHY for QCS615
-Message-ID: <20250822142230.GA3591699-robh@kernel.org>
-References: <20250820-add-displayport-support-for-qcs615-platform-v3-0-a43bd25ec39c@oss.qualcomm.com>
- <20250820-add-displayport-support-for-qcs615-platform-v3-2-a43bd25ec39c@oss.qualcomm.com>
+	b=n7wztDtcoLnf4euD7YyiSJ6Cdw+vq/HiDC9PejmzhDILhI5g/hqEWfEcH/TSTfLCQ
+	 g2UNAq+U18UTfNxZDh2bE1OW9Lms79Y+NQeyEbH3ud8oGwfFz3eBAQr6bSdhW7rV0l
+	 sr0FF7pECu1A11xgznHzRZitNnzwMdlsry+l1gqRRQkG7q45UQ2RO40dQvXmpHT3Cw
+	 d1fuNYFlmygAZ7kLZC1R1w0I9LT6tfq92XQCOoWYG8oJoYtzuZlLDPtC1iufG1R7Qc
+	 4Mlc0O6v9m9egfm9IuuSQ73DJllJbjPQnSJ3hI5LdqM/kHAtoBNBotcXP2FlvbzqVH
+	 jmToV1ArHKQvQ==
+Date: Fri, 22 Aug 2025 09:23:22 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Salih Erim <salih.erim@amd.com>
+Cc: jic23@kernel.org, devicetree@vger.kernel.org, andy@kernel.org,
+	linux-kernel@vger.kernel.org, conall.ogriofa@amd.com,
+	nuno.sa@analog.com, dlechner@baylibre.com, krzk@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
+	michal.simek@amd.com
+Subject: Re: [PATCH v2] MAINTAINERS: Update xilinx-ams driver maintainers
+Message-ID: <175587260151.3622268.4895714822866786813.robh@kernel.org>
+References: <20250820100519.2272509-1-salih.erim@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,144 +59,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250820-add-displayport-support-for-qcs615-platform-v3-2-a43bd25ec39c@oss.qualcomm.com>
+In-Reply-To: <20250820100519.2272509-1-salih.erim@amd.com>
 
-On Wed, Aug 20, 2025 at 05:34:44PM +0800, Xiangxu Yin wrote:
-> Add device tree binding documentation for the Qualcomm QMP USB3+DP PHY
-> on QCS615 Platform. This PHY supports both USB3 and DP functionality
-> over USB-C, with PHY mode switching capability. It does not support
-> combo mode.
+
+On Wed, 20 Aug 2025 11:05:19 +0100, Salih Erim wrote:
+> Anand left AMD/Xilinx some time ago. Salih and Connall are new
+> maintainers of xilinx-ams driver.
 > 
-> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+> Signed-off-by: Salih Erim <salih.erim@amd.com>
 > ---
->  .../bindings/phy/qcom,qcs615-qmp-usb3dp-phy.yaml   | 108 +++++++++++++++++++++
->  1 file changed, 108 insertions(+)
+>  Documentation/devicetree/bindings/iio/adc/xlnx,zynqmp-ams.yaml | 3 ++-
+>  MAINTAINERS                                                    | 3 ++-
+>  2 files changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/qcom,qcs615-qmp-usb3dp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,qcs615-qmp-usb3dp-phy.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..c2b1fbab2930f0653f4ddb95f7b54d8fe994f92d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/qcom,qcs615-qmp-usb3dp-phy.yaml
-> @@ -0,0 +1,108 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/qcom,qcs615-qmp-usb3dp-phy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm QMP USB3-DP PHY controller (DP, QCS615)
-> +
-> +maintainers:
-> +  - Vinod Koul <vkoul@kernel.org>
 
-No, this should be someone who has the h/w.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-> +
-> +description:
-> +  The QMP PHY controller supports physical layer functionality for both
-> +  USB3 and DisplayPort over USB-C. While it enables mode switching
-> +  between USB3 and DisplayPort, but does not support combo mode.
-
-Wrap at 80 chars.
-
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,qcs615-qmp-usb3-dp-phy
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: cfg_ahb
-> +      - const: ref
-> +
-> +  resets:
-> +    maxItems: 2
-> +
-> +  reset-names:
-> +    items:
-> +      - const: phy_phy
-
-phy_phy?
-
-> +      - const: dp_phy
-> +
-> +  vdda-phy-supply: true
-> +
-> +  vdda-pll-supply: true
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +    description:
-> +      See include/dt-bindings/phy/phy-qcom-qmp.h
-> +
-> +  "#phy-cells":
-> +    const: 1
-> +    description:
-> +      See include/dt-bindings/phy/phy-qcom-qmp.h
-> +
-> +  qcom,tcsr-reg:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    items:
-> +      - items:
-> +          - description: phandle to TCSR hardware block
-> +          - description: offset of the VLS CLAMP register
-> +      - items:
-> +          - description: phandle to TCSR hardware block
-> +          - description: offset of the DP PHY mode register
-> +    description: Clamp and PHY mode register present in the TCSR
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - vdda-phy-supply
-> +  - vdda-pll-supply
-> +  - "#clock-cells"
-> +  - "#phy-cells"
-> +  - qcom,tcsr-reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,qcs615-gcc.h>
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +
-> +    phy@88e8000 {
-> +      compatible = "qcom,qcs615-qmp-usb3-dp-phy";
-> +      reg = <0x88e8000 0x2000>;
-> +
-> +      clocks = <&gcc GCC_AHB2PHY_WEST_CLK>,
-> +               <&gcc GCC_USB3_SEC_CLKREF_CLK>;
-> +      clock-names = "cfg_ahb",
-> +                    "ref";
-> +
-> +      resets = <&gcc GCC_USB3PHY_PHY_SEC_BCR >,
-> +               <&gcc GCC_USB3_DP_PHY_SEC_BCR>;
-> +      reset-names = "phy_phy",
-> +                    "dp_phy";
-> +
-> +      vdda-phy-supply = <&vreg_l11a>;
-> +      vdda-pll-supply = <&vreg_l5a>;
-> +
-> +      #clock-cells = <1>;
-> +      #phy-cells = <1>;
-> +
-> +      qcom,tcsr-reg = <&tcsr 0xbff0>,
-> +                      <&tcsr 0xb24c>;
-> +    };
-> 
-> -- 
-> 2.34.1
-> 
 
