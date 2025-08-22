@@ -1,471 +1,418 @@
-Return-Path: <linux-kernel+bounces-782476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BBDEB320D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:53:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EE89B320E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8031E6401FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:53:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F203EAE51F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F1C3101BD;
-	Fri, 22 Aug 2025 16:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBBB3126CB;
+	Fri, 22 Aug 2025 16:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="J+AOPIm6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LYr25e8t"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A172472A5
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DBC23D7D4;
+	Fri, 22 Aug 2025 16:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755881570; cv=none; b=e989SvoFoBeDIj4EpmI8JV5q0L5ddY7QuCwP6R2u0WI/GcT/afVMduPv46tYBHtZvdnqssv93c3ugy2ecfkQeJVCnG/qrzx07VKUBfYz0/rh9KQXya7BvfUw4XUNRE0CsO5bPjO/XGH99G8u+mg3A/7Y0+nYwEaVUV/uS6ZWxKg=
+	t=1755881616; cv=none; b=eZkOJOQ91sfrg1GGwgBG1027rgISdkXxe99CfK/2bNLOU2lTwK56r2bjDPtODyXo0qXP35XXGm59r58W8+xeL7SpTWvUSGz+SIZADKVnjPMYsez7LrL5HoL4oEcoGGYo9XI+fL1eA5TobptPNPPiry9bEZcohx3KLl7Kq+yvN6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755881570; c=relaxed/simple;
-	bh=axrZyMKofibmbGxYLFsSpEwUDnu3XhuMVS6WsqX56Wo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EpoE0qdbkQPkSzt0t9hn0p2Dry6/FZYoRp++awgcF6T528Mq8gHyMPQ0sEOuxyiPoZS1O/4qisfuAq+3Y5UT4ch1gnFa9ssBJCcgjExByMbJv2UFlWBldyt478lPTr6RrH5zD3N8nnQlH9OApwFlvHb7zv4yA6T9IyWHsTDu03w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=J+AOPIm6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MEL4Qq009173
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:52:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Y9wPGqZNvncckZvIAEYt+eG8B2TwIHRqaRE1CVjxYTI=; b=J+AOPIm6btB0Qsly
-	XY/BD9hI0wtzZpbYoWzXToY7YFvRdaPHI3QenotAPDjRHLLtt2+N2mjylF5OoQxx
-	xjHdmMqrABrThcfW9N/J1XcChGoPqDkqI3BkT6RPJBpiYWc7ZGyxdyG+MRfHWdiP
-	8pHe2ZRKUhYJSafA2BRabfoZ9OI8MQBZsOupE8plDnDJ9Gppqk24XLxiDwqBC7T2
-	N9F+qFzu/8+36X0kZaXwNtqsp5zUaUl/PejafYGR66AJQSxQIlETHh3vdsfVA6C2
-	N3oYifQ3WAm7YH2ctdC95lF6YV0OeAM6YbK0AKJC5mSU8sthxG6w7T3I4X+rYPDi
-	XHO+Mg==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48pt7vgf3h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:52:47 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-76e2e890901so4068785b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:52:46 -0700 (PDT)
+	s=arc-20240116; t=1755881616; c=relaxed/simple;
+	bh=v0KLKGk6Owdd8Zj574QjQel3qf53+K5W14mGX5GjALE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K6KyK1nIOB+P6vaMXxJ8NMbxmkAigDlioXwqsRUtaEK7CC0WpO895TaUwi81EmsBBAPKcTbP3S2ClnEtUzECVny1WyJZl+g8zSsrEBUnDlTTPRvdQTdNs6p6CJ24qmWJBO8gEprrHPvNHilKOYg3k2yWlI33vQMOxPQSk5OQ3O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LYr25e8t; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad681so3212636a12.0;
+        Fri, 22 Aug 2025 09:53:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755881613; x=1756486413; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=slgHuffTEn7c1vy4b+fQXSvlwJ7sYn0p5p9oEVi/KlE=;
+        b=LYr25e8t/DEQQVNUAL00bux0/nIfTR0/UR4juu5zhxzSQrXI3KtJX/F50VEckPEw1y
+         WRyKC3I4rMOfRN4q5IhlwoCjtx5+x7adyKx5OJncHxxFOJn7PeqluSmB5uVj4KA5NFCp
+         7oGOGQ8pbV+IKNnoMLvtKHyCRoyDntxnFXv64s62XMkfOG/9dAa4PyPJkM/Yx6Ebjct1
+         zmLFFQtH4uOVqrwV7GEFQhP06tnenHTGAx7/L0/71GByAGxRcxPKLa1K4FU+NKmBm0C1
+         Ro0C/Bju5/CZ5Il8tmgW1dQs2ustm9UXq83gFwUU1wjw+MFn7gDZeVHcEorpTFljxSfE
+         riJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755881566; x=1756486366;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y9wPGqZNvncckZvIAEYt+eG8B2TwIHRqaRE1CVjxYTI=;
-        b=o37jrscUBr7IHF2eV84WPNHdUi5xs9/6sIQbgFF6yVXUzWhiU47BUq4pG48YmTkzRX
-         MsJztJupKIbnNW8mzRSsmfTT0f8AhG9/hMKytfuJfO7nvOebWgUgmjiG+QWGPmhsShio
-         w+SlwpT2SGuZiKjCKSBpBeNzNmkJDIwCDBHAjIRfM5cYeEjUo9uIISjQE54x8/VoLYTc
-         AXz0zGyDXIYMWoD8796B5U34Rz/HMnwkd6W/+JsnGkc5JLXp/1J0iI7oBtMIEI4a+c0C
-         D3y9VeWqde204Vw+hgpmW29U9k6ElUD3Umq2Q+UmaOdLLeCxXRc6ZF3WQQ3OPyCqXAkr
-         bq3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVOialESwNrKG7QpjHwKLA+DWaSJQMh6mD5lhXtgfTCPI9e3M4hUNVmHTqOLFgrIsi/wxp/y0kbSUaoFfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNC6j3Ilb5kCb1AQOY3kf9flwt7shIYl1r3vlQ1HJ+mu1b0zJm
-	OabScMCl9GPBbcSYIqpqlStFDZ3A5H21W1eqE1vA62iGP3DnNr24Cb3+T6kjbgjpp+Lam/jNKIA
-	jqTcwO/QQmzpJGVw2sCM9r9HMgAhJtnhZJwUc0Ke/7WbOo1kX1AApXBtctTWMbFsgj10=
-X-Gm-Gg: ASbGncsyVKdEc+MU8MlRZ3NlP4BfjSMqP+8092QoNhhx5PjorHh3gND1ze3pZEoYN0D
-	f3CK9INXDEJEo9yX1dA2cx+i3aYzWw/Zm9gkNYVy+XRKts4TNE2+qQ/iwIGW/Oy7HDJOEhW4ZAp
-	ib8t+RfcysP+AqHIWcj3a22oHmapTOunz922SgjdPwCu+hLKyVqiM3tW//YNwx2drz1z6cxhnne
-	buTe/fgjo/XEevnt2y7RrSXwuE3qIgaxqRGImZsswv8qRLsIT0Mu8LYSu1cXUxh8Wuim/UZDWq5
-	ihbSN+G9gyQ0T/mqmfz/g4q1Pl/rhscqHGVx7FuF/7ZcUX17R8GZp73+IL7UTHKEeEE=
-X-Received: by 2002:a05:6a20:1582:b0:240:22a0:f23d with SMTP id adf61e73a8af0-24340ca5793mr5340956637.15.1755881565656;
-        Fri, 22 Aug 2025 09:52:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IElCiySNnsgRKrjBd1ikSgIv2xnBEpiq+H+51uXWMpi/z136OJJTBWbV9rhbkODYBFC1llurQ==
-X-Received: by 2002:a05:6a20:1582:b0:240:22a0:f23d with SMTP id adf61e73a8af0-24340ca5793mr5340927637.15.1755881565075;
-        Fri, 22 Aug 2025 09:52:45 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-770401f29c7sm364882b3a.81.2025.08.22.09.52.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 09:52:44 -0700 (PDT)
-Date: Fri, 22 Aug 2025 22:22:38 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v2 05/11] firmware: qcom_scm: Add shmbridge support to
- pas_init/release function
-Message-ID: <20250822165238.ayslhgrjrbipojjk@hu-mojha-hyd.qualcomm.com>
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <20250819165447.4149674-6-mukesh.ojha@oss.qualcomm.com>
- <de4b4872-061c-4f03-ae1d-1ad93b35ed71@linaro.org>
- <20250821170337.y7vzhtiugaeydqmh@hu-mojha-hyd.qualcomm.com>
+        d=1e100.net; s=20230601; t=1755881613; x=1756486413;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=slgHuffTEn7c1vy4b+fQXSvlwJ7sYn0p5p9oEVi/KlE=;
+        b=ustzsE8fA/hWaR2RPhffF52AA5Ie3xl7WxvRBNWhHNUJGsjlPziVzF7VfE//qvTgAK
+         fWk/S8oRLwnpKrJZtS8c+TPTmvvGSc+0OIjXqdCyH3EsUp0ms9znWQvi/xozHtf2aXGy
+         QrVw1TjxRIZ3thZrKzS/HtLEf+HrJEb6U8JZakPxwypu2xuYA+IU3mz5T3XuFj2bj7tu
+         AsEYhR/hHXd9rixAGYOIckr8/QrXk3Q+T5N3KBTpZdoAx2E4KuXrH7BlD0OkuI2Wx7ql
+         hbi+7yeq4Pmi3x2Pxqs3zppjthxJx5kPjvubt+HG+nz53xA2KnN5563YmsEpHtOwqfHA
+         xjMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAHOIx3+OmLMWlDZsFOWUrpWvQ+sS709RvokOEB8x250TEBi3OXrT0IX6Jo9y5EyGIK3m4sPDpx3vr5G1m@vger.kernel.org, AJvYcCVkVxg6rH39mrqNs9i7h/fPuXoMvFMRHYwPvAR0iL9224/6DV++QZnYalFS9eRKlpl3sJAWFlaZ7RSOmQLQ@vger.kernel.org, AJvYcCWrEw43yuYq+Rat72bmDr3LQMvfjeUTMlRektassGEDHJ7TfvaZSzIw65afLxmktBz6LV8jEJvr4gijZcJEog==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/zTCYWPo7IXD1YxEzDNMrxsUou4kDLUoKMaTtoijo/OHneTVp
+	ZFCHqZ5iAlbpZwunUSYi8ah6zMW50XeLm2l+uht1/RTt/aM+jZtgQIf4qH0e7u7Zux2FWqjOiHm
+	84eYjEjOAbvgsiS/4ZMXIfBkejGGuXr0=
+X-Gm-Gg: ASbGncvWSaGDLYTBVkQUh/smqam8CWeKmzvJIlp6gNzNKLOvK0ycGZ6oqwazMvf2LEF
+	5PtiZyMA3SekT6vL/D+VtXbY1gPbGW6NoWlH0YSR575sj8TxBRC5U+l2D6VasB97f+CJ0wGZ+/V
+	q8CPZpLR2kbsNjcpwfhtAfBS/WuWb7sdQl2e5Cn93ZNkTYOjevtGQE6/9qKv6DQzmYddPrEceCP
+	XyiZRU=
+X-Google-Smtp-Source: AGHT+IGNyPZYASwO0sJmnQ76GoCBnN67oQPWQ8NwlDT36KIeh5FKychF9EVlou+eUSe6VobY/qd6SfpUclxbp9jxybg=
+X-Received: by 2002:a05:6402:210c:b0:615:5563:548e with SMTP id
+ 4fb4d7f45d1cf-61c1b45bd8dmr2990524a12.7.1755881612890; Fri, 22 Aug 2025
+ 09:53:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250821170337.y7vzhtiugaeydqmh@hu-mojha-hyd.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=ao/rySZV c=1 sm=1 tr=0 ts=68a8a05f cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=w0KPkksJRfO9XYSnt20A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-ORIG-GUID: gbC80xEMU0JaeAXlhTsdvrMPwM94x1aV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIyMDEyOCBTYWx0ZWRfX880pPVARnwnm
- /PhtbILqDDh3TiCoO2T43YWbKWjimeWmXzYdJ/W57aXXRRzrg4g1x8KhCCVAisV6QOEdrvo5xRX
- UTkkKHhno8omIL9czSqPm2QCQrS13iMRzBmXK/h/YXthA2NQ9rtckkQMXPdnecmV8kNSOVEscpg
- O4h7jJfwmIXqpLPh/H/+Oq197Byzr2qYMVIXzdUnkxCDz3evofDWP3mXpHn5QijRraT6Ws96Dp7
- MtNlqBhD3Nb9EcdSSrJ54dvpfSyMJzxTZ8amI8KEk6UlTxuue8onHimi2s+QkayOWJZNRMj7euA
- bu0l5L77YKuF7W/SZHdw1KU5mkanec1oE1s55UtMa8TcsH5jY5/aDD0f9d4Cm9zeXbKJfBFznU6
- AiDmxGap0NbX/etdWM1wESSFaLYqYw==
-X-Proofpoint-GUID: gbC80xEMU0JaeAXlhTsdvrMPwM94x1aV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
- bulkscore=0 priorityscore=1501 clxscore=1015 phishscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508220128
+References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com> <20250822-tonyk-overlayfs-v6-4-8b6e9e604fa2@igalia.com>
+In-Reply-To: <20250822-tonyk-overlayfs-v6-4-8b6e9e604fa2@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 22 Aug 2025 18:53:21 +0200
+X-Gm-Features: Ac12FXw_k3EzAsjyfkTL5NnteB1vrgP3nwburCZTGBRF4TdolD0utomj-QglgVs
+Message-ID: <CAOQ4uxjG9+Vwpn6n=j2-PrK8u5DMA_oVmnZvbSpstWAMVBOsPg@mail.gmail.com>
+Subject: Re: [PATCH v6 4/9] ovl: Create ovl_casefold() to support casefolded strncmp()
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
+	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 21, 2025 at 10:33:37PM +0530, Mukesh Ojha wrote:
-> On Thu, Aug 21, 2025 at 04:23:53PM +0100, Bryan O'Donoghue wrote:
-> > On 19/08/2025 17:54, Mukesh Ojha wrote:
-> > > Qualcomm SoCs running with QHEE (Qualcomm Hypervisor Execution
-> > > Environment—a library present in the Gunyah hypervisor) utilize the
-> > > Peripheral Authentication Service (PAS) from Qualcomm TrustZone (TZ)
-> > > also called QTEE(Qualcomm Trusted Execution Environment firmware)
-> > > to securely authenticate and reset remote processors via a sequence
-> > > of SMC calls such as qcom_scm_pas_init_image(), qcom_scm_pas_mem_setup(),
-> > > and qcom_scm_pas_auth_and_reset().
-> > > 
-> > > For memory passed to Qualcomm TrustZone, it must either be part of a
-> > > pool registered with TZ or be directly registered via SHMbridge SMC
-> > > calls.
-> > > 
-> > > When QHEE is present, PAS SMC calls from Linux running at EL1 are
-> > > trapped by QHEE (running at EL2), which then creates or retrieves memory
-> > > from the SHM bridge for both metadata and remoteproc carveout memory
-> > > before passing them to TZ. However, when the SoC runs with a
-> > > non-QHEE-based hypervisor, Linux must create the SHM bridge for both
-> > > metadata (before it is passed to TZ in qcom_scm_pas_init_image()) and
-> > > for remoteproc memory (before the call is made to TZ in
-> > > qcom_scm_pas_auth_and_reset()).
-> > > 
-> > > For the qcom_scm_pas_init_image() call, metadata content must be copied
-> > > to a buffer allocated from the SHM bridge before making the SMC call.
-> > > This buffer should be freed either immediately after the call or during
-> > > the qcom_scm_pas_metadata_release() function, depending on the context
-> > > parameter passed to qcom_scm_pas_init_image(). Convert the metadata
-> > > context parameter to use PAS context data structure so that it will also
-> > > be possible to decide whether to get memory from SHMbridge pool or not.
-> > > 
-> > > When QHEE is present, it manages the IOMMU translation context so, in
-> > > absence of it device driver will be aware through device tree that its
-> > > translation context is managed by Linux and it need to create SHMbridge
-> > > before passing any buffer to TZ, So, remote processor driver should
-> > > appropriately set ctx->has_iommu to let PAS SMC function to take care of
-> > > everything ready for the call to work.
-> > > 
-> > > Lets convert qcom_scm_pas_init_image() and qcom_scm_pas_metadata_release()
-> > > to have these awareness.
-> > 
-> > I like the effort in the commit log here but its also a bit too long.
-> > 
-> > Please go through these paragraphs and try to reduce down the amount of text
-> > you are generating.
-> 
-> I was writing to set context for each commit and for the record and hence, the
-> repetition of text you would see in some of the lines used.
-> 
-> I will take your suggestion and reduce it.
-> 
-> > 
-> > > 
-> > > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> > > ---
-> > >   drivers/firmware/qcom/qcom_scm.c       | 71 +++++++++++++++++++++-----
-> > >   drivers/remoteproc/qcom_q6v5_pas.c     | 14 ++---
-> > >   drivers/soc/qcom/mdt_loader.c          |  4 +-
-> > >   include/linux/firmware/qcom/qcom_scm.h |  9 ++--
-> > >   4 files changed, 73 insertions(+), 25 deletions(-)
-> > > 
-> > > diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> > > index 7827699e277c..301d440f62f3 100644
-> > > --- a/drivers/firmware/qcom/qcom_scm.c
-> > > +++ b/drivers/firmware/qcom/qcom_scm.c
-> > > @@ -616,6 +616,35 @@ static int __qcom_scm_pas_init_image(u32 peripheral, dma_addr_t mdata_phys,
-> > >   	return ret;
-> > >   }
-> > > +static int qcom_scm_pas_prep_and_init_image(struct qcom_scm_pas_ctx *ctx,
-> > > +					    const void *metadata, size_t size)
-> > > +{
-> > > +	struct qcom_scm_pas_metadata *mdt_ctx;
-> > > +	struct qcom_scm_res res;
-> > > +	phys_addr_t mdata_phys;
-> > > +	void *mdata_buf;
-> > > +	int ret;
-> > > +
-> > > +	mdt_ctx = ctx->metadata;
-> > > +	mdata_buf = qcom_tzmem_alloc(__scm->mempool, size, GFP_KERNEL);
-> > > +	if (!mdata_buf)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	memcpy(mdata_buf, metadata, size);
-> > > +	mdata_phys = qcom_tzmem_to_phys(mdata_buf);
-> > > +
-> > > +	ret = __qcom_scm_pas_init_image(ctx->peripheral, mdata_phys, mdata_buf, size, &res);
-> > > +	if (ret < 0 || !mdt_ctx) {
-> > 
-> > if ret is an error or mdt_ctx is null free the memory
-> > 
-> > > +		qcom_tzmem_free(mdata_buf);
-> > > +	} else if (mdt_ctx) {
-> > 
-> > if mdt_ctx is valid do this
-> 
-> Nothing change, it is similar to the earlier code.
-> 
-> > 
-> > > +		mdt_ctx->ptr = mdata_buf;
-> > > +		mdt_ctx->addr.phys_addr = mdata_phys;
-> > > +		mdt_ctx->size = size;
-> > > +	}
-> > > +
-> > > +	return ret ? : res.result[0];
-> > 
-> > so we can have ctx_mtd valid but return the value at ret but also mtd valid
-> > and return the res.result[0]
-> > 
-> > That seems like an odd choice - surely if you are enumerating the
-> > data-structure the result code we care about is res.result[0] instead of ret
-> > ?
-> > 
-> > OK I see this return logic comes from below..
-> > 
-> > But
-> > 
-> > drivers/soc/qcom/mdt_loader.c::qcom_mdt_pas_init
-> > 
-> > ret = qcom_scm_pas_init_image(pas_id, metadata, metadata_len, ctx);
-> > kfree(metadata);
-> > if (ret) {
-> >     /* Invalid firmware metadata */
-> >     dev_err(dev, "error %d initializing firmware %s\n", ret, fw_name);
-> >     goto out;
-> > }
-> > 
-> > So if ret as returned from your function is > 0 you will leak the memory
-> > allocated @ mdata_buf ..
-> > 
-> > Do you expect something else to come along and call
-> > qcom_scm_pas_metadata_release() ?
-> 
-> You just identified a bug in the existing code where qcom_mdt_pas_init()
-> does not call qcom_scm_pas_metadata_release() for firmware image for
-> failure case from qcom_q6v5_pas().
+On Fri, Aug 22, 2025 at 4:17=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
+lia.com> wrote:
+>
+> To add overlayfs support casefold layers, create a new function
+> ovl_casefold(), to be able to do case-insensitive strncmp().
+>
+> ovl_casefold() allocates a new buffer and stores the casefolded version
+> of the string on it. If the allocation or the casefold operation fails,
+> fallback to use the original string.
+>
+> The case-insentive name is then used in the rb-tree search/insertion
+> operation. If the name is found in the rb-tree, the name can be
+> discarded and the buffer is freed. If the name isn't found, it's then
+> stored at struct ovl_cache_entry to be used later.
+>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> ---
+> Changes from v6:
+>  - Last version was using `strncmp(... tmp->len)` which was causing
+>    regressions. It should be `strncmp(... len)`.
+>  - Rename cf_len to c_len
+>  - Use c_len for tree operation: (cmp < 0 || len < tmp->c_len)
+>  - Remove needless kfree(cf_name)
+> ---
+>  fs/overlayfs/readdir.c | 113 ++++++++++++++++++++++++++++++++++++++++---=
+------
+>  1 file changed, 94 insertions(+), 19 deletions(-)
+>
+> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+> index b65cdfce31ce27172d28d879559f1008b9c87320..dfc661b7bc3f87efbf14991e9=
+7cee169400d823b 100644
+> --- a/fs/overlayfs/readdir.c
+> +++ b/fs/overlayfs/readdir.c
+> @@ -27,6 +27,8 @@ struct ovl_cache_entry {
+>         bool is_upper;
+>         bool is_whiteout;
+>         bool check_xwhiteout;
+> +       const char *c_name;
+> +       int c_len;
+>         char name[];
+>  };
+>
+> @@ -45,6 +47,7 @@ struct ovl_readdir_data {
+>         struct list_head *list;
+>         struct list_head middle;
+>         struct ovl_cache_entry *first_maybe_whiteout;
+> +       struct unicode_map *map;
+>         int count;
+>         int err;
+>         bool is_upper;
+> @@ -66,6 +69,27 @@ static struct ovl_cache_entry *ovl_cache_entry_from_no=
+de(struct rb_node *n)
+>         return rb_entry(n, struct ovl_cache_entry, node);
+>  }
+>
+> +static int ovl_casefold(struct unicode_map *map, const char *str, int le=
+n, char **dst)
+> +{
+> +       const struct qstr qstr =3D { .name =3D str, .len =3D len };
+> +       int cf_len;
+> +
+> +       if (!IS_ENABLED(CONFIG_UNICODE) || !map || is_dot_dotdot(str, len=
+))
+> +               return 0;
+> +
+> +       *dst =3D kmalloc(NAME_MAX, GFP_KERNEL);
+> +
+> +       if (dst) {
+> +               cf_len =3D utf8_casefold(map, &qstr, *dst, NAME_MAX);
+> +
+> +               if (cf_len > 0)
+> +                       return cf_len;
+> +       }
+> +
+> +       kfree(*dst);
+> +       return 0;
+> +}
+> +
+>  static bool ovl_cache_entry_find_link(const char *name, int len,
+>                                       struct rb_node ***link,
+>                                       struct rb_node **parent)
+> @@ -79,10 +103,10 @@ static bool ovl_cache_entry_find_link(const char *na=
+me, int len,
+>
+>                 *parent =3D *newp;
+>                 tmp =3D ovl_cache_entry_from_node(*newp);
+> -               cmp =3D strncmp(name, tmp->name, len);
+> +               cmp =3D strncmp(name, tmp->c_name, len);
+>                 if (cmp > 0)
+>                         newp =3D &tmp->node.rb_right;
+> -               else if (cmp < 0 || len < tmp->len)
+> +               else if (cmp < 0 || len < tmp->c_len)
+>                         newp =3D &tmp->node.rb_left;
+>                 else
+>                         found =3D true;
+> @@ -101,10 +125,10 @@ static struct ovl_cache_entry *ovl_cache_entry_find=
+(struct rb_root *root,
+>         while (node) {
+>                 struct ovl_cache_entry *p =3D ovl_cache_entry_from_node(n=
+ode);
+>
+> -               cmp =3D strncmp(name, p->name, len);
+> +               cmp =3D strncmp(name, p->c_name, len);
+>                 if (cmp > 0)
+>                         node =3D p->node.rb_right;
+> -               else if (cmp < 0 || len < p->len)
+> +               else if (cmp < 0 || len < p->c_len)
+>                         node =3D p->node.rb_left;
+>                 else
+>                         return p;
+> @@ -145,6 +169,7 @@ static bool ovl_calc_d_ino(struct ovl_readdir_data *r=
+dd,
+>
+>  static struct ovl_cache_entry *ovl_cache_entry_new(struct ovl_readdir_da=
+ta *rdd,
+>                                                    const char *name, int =
+len,
+> +                                                  const char *c_name, in=
+t c_len,
+>                                                    u64 ino, unsigned int =
+d_type)
+>  {
+>         struct ovl_cache_entry *p;
+> @@ -167,6 +192,14 @@ static struct ovl_cache_entry *ovl_cache_entry_new(s=
+truct ovl_readdir_data *rdd,
+>         /* Defer check for overlay.whiteout to ovl_iterate() */
+>         p->check_xwhiteout =3D rdd->in_xwhiteouts_dir && d_type =3D=3D DT=
+_REG;
+>
+> +       if (c_name && c_name !=3D name) {
+> +               p->c_name =3D c_name;
+> +               p->c_len =3D c_len;
+> +       } else {
+> +               p->c_name =3D p->name;
+> +               p->c_len =3D len;
+> +       }
+> +
+>         if (d_type =3D=3D DT_CHR) {
+>                 p->next_maybe_whiteout =3D rdd->first_maybe_whiteout;
+>                 rdd->first_maybe_whiteout =3D p;
+> @@ -174,48 +207,55 @@ static struct ovl_cache_entry *ovl_cache_entry_new(=
+struct ovl_readdir_data *rdd,
+>         return p;
+>  }
+>
+> -static bool ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
+> -                                 const char *name, int len, u64 ino,
+> +/* Return 0 for found, 1 for added, <0 for error */
+> +static int ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
+> +                                 const char *name, int len,
+> +                                 const char *c_name, int c_len,
+> +                                 u64 ino,
+>                                   unsigned int d_type)
+>  {
+>         struct rb_node **newp =3D &rdd->root->rb_node;
+>         struct rb_node *parent =3D NULL;
+>         struct ovl_cache_entry *p;
+>
+> -       if (ovl_cache_entry_find_link(name, len, &newp, &parent))
+> -               return true;
+> +       if (ovl_cache_entry_find_link(c_name, c_len, &newp, &parent))
+> +               return 0;
+>
+> -       p =3D ovl_cache_entry_new(rdd, name, len, ino, d_type);
+> +       p =3D ovl_cache_entry_new(rdd, name, len, c_name, c_len, ino, d_t=
+ype);
+>         if (p =3D=3D NULL) {
+>                 rdd->err =3D -ENOMEM;
+> -               return false;
+> +               return -ENOMEM;
+>         }
+>
+>         list_add_tail(&p->l_node, rdd->list);
+>         rb_link_node(&p->node, parent, newp);
+>         rb_insert_color(&p->node, rdd->root);
+>
+> -       return true;
+> +       return 1;
+>  }
+>
+> -static bool ovl_fill_lowest(struct ovl_readdir_data *rdd,
+> +/* Return 0 for found, 1 for added, <0 for error */
+> +static int ovl_fill_lowest(struct ovl_readdir_data *rdd,
+>                            const char *name, int namelen,
+> +                          const char *c_name, int c_len,
+>                            loff_t offset, u64 ino, unsigned int d_type)
+>  {
+>         struct ovl_cache_entry *p;
+>
+> -       p =3D ovl_cache_entry_find(rdd->root, name, namelen);
+> +       p =3D ovl_cache_entry_find(rdd->root, c_name, c_len);
+>         if (p) {
+>                 list_move_tail(&p->l_node, &rdd->middle);
+> +               return 0;
+>         } else {
+> -               p =3D ovl_cache_entry_new(rdd, name, namelen, ino, d_type=
+);
+> +               p =3D ovl_cache_entry_new(rdd, name, namelen, c_name, c_l=
+en,
+> +                                       ino, d_type);
+>                 if (p =3D=3D NULL)
+>                         rdd->err =3D -ENOMEM;
+>                 else
+>                         list_add_tail(&p->l_node, &rdd->middle);
+>         }
+>
+> -       return rdd->err =3D=3D 0;
+> +       return rdd->err ?: 1;
+>  }
+>
+>  void ovl_cache_free(struct list_head *list)
+> @@ -223,8 +263,11 @@ void ovl_cache_free(struct list_head *list)
+>         struct ovl_cache_entry *p;
+>         struct ovl_cache_entry *n;
+>
+> -       list_for_each_entry_safe(p, n, list, l_node)
+> +       list_for_each_entry_safe(p, n, list, l_node) {
+> +               if (p->c_name !=3D p->name)
+> +                       kfree(p->c_name);
+>                 kfree(p);
+> +       }
+>
+>         INIT_LIST_HEAD(list);
+>  }
+> @@ -260,12 +303,36 @@ static bool ovl_fill_merge(struct dir_context *ctx,=
+ const char *name,
+>  {
+>         struct ovl_readdir_data *rdd =3D
+>                 container_of(ctx, struct ovl_readdir_data, ctx);
+> +       struct ovl_fs *ofs =3D OVL_FS(rdd->dentry->d_sb);
+> +       const char *c_name =3D NULL;
+> +       char *cf_name =3D NULL;
+> +       int c_len =3D 0, ret;
+> +
+> +       if (ofs->casefold)
+> +               c_len =3D ovl_casefold(rdd->map, name, namelen, &cf_name)=
+;
+> +
+> +       if (c_len <=3D 0) {
+> +               c_name =3D name;
+> +               c_len =3D namelen;
+> +       } else {
+> +               c_name =3D cf_name;
+> +       }
+>
+>         rdd->count++;
+>         if (!rdd->is_lowest)
+> -               return ovl_cache_entry_add_rb(rdd, name, namelen, ino, d_=
+type);
+> +               ret =3D ovl_cache_entry_add_rb(rdd, name, namelen, c_name=
+, c_len, ino, d_type);
+>         else
+> -               return ovl_fill_lowest(rdd, name, namelen, offset, ino, d=
+_type);
+> +               ret =3D ovl_fill_lowest(rdd, name, namelen, c_name, c_len=
+, offset, ino, d_type);
+> +
+> +       /*
+> +        * If ret =3D=3D 1, that means that c_name is being used as part =
+of struct
+> +        * ovl_cache_entry and will be freed at ovl_cache_free(). Otherwi=
+se,
+> +        * c_name was found in the rb-tree so we can free it here.
+> +        */
+> +       if (ret !=3D 1 && c_name !=3D name)
+> +               kfree(c_name);
+> +
+> +       return ret >=3D 0;
+>  }
+>
+>  static int ovl_check_whiteouts(const struct path *path, struct ovl_readd=
+ir_data *rdd)
+> @@ -357,12 +424,18 @@ static int ovl_dir_read_merged(struct dentry *dentr=
+y, struct list_head *list,
+>                 .list =3D list,
+>                 .root =3D root,
+>                 .is_lowest =3D false,
+> +               .map =3D NULL,
+>         };
+>         int idx, next;
+>         const struct ovl_layer *layer;
+> +       struct ovl_fs *ofs =3D OVL_FS(dentry->d_sb);
+>
+>         for (idx =3D 0; idx !=3D -1; idx =3D next) {
+>                 next =3D ovl_path_next(idx, dentry, &realpath, &layer);
+> +
+> +               if (ofs->casefold)
+> +                       rdd.map =3D sb_encoding(realpath.dentry->d_sb);
+> +
+>                 rdd.is_upper =3D ovl_dentry_upper(dentry) =3D=3D realpath=
+.dentry;
+>                 rdd.in_xwhiteouts_dir =3D layer->has_xwhiteouts &&
+>                                         ovl_dentry_has_xwhiteouts(dentry)=
+;
+> @@ -555,7 +628,7 @@ static bool ovl_fill_plain(struct dir_context *ctx, c=
+onst char *name,
+>                 container_of(ctx, struct ovl_readdir_data, ctx);
+>
+>         rdd->count++;
+> -       p =3D ovl_cache_entry_new(rdd, name, namelen, ino, d_type);
+> +       p =3D ovl_cache_entry_new(rdd, name, namelen, NULL, 0, ino, d_typ=
+e);
+>         if (p =3D=3D NULL) {
+>                 rdd->err =3D -ENOMEM;
+>                 return false;
+> @@ -1023,6 +1096,8 @@ int ovl_check_empty_dir(struct dentry *dentry, stru=
+ct list_head *list)
+>
+>  del_entry:
+>                 list_del(&p->l_node);
+> +               if (p->c_name !=3D p->name)
+> +                       kfree(p->c_name);
+>                 kfree(p);
 
-This could be bug only if some odd firmware return > 0 response code
-even if the SMC was a success.
+OK I thought this was contained in ovl_cache_free().
+If we need to repeat this check, we need a helper
+ovl_cache_entry_free() to use instead of kfree(p)
+everywhere even in ovl_dir_read_impure() when it won't
+actually be needed.
 
-> 
-> 
-> > 
-> > > +}
-> > > +
-> > >   /**
-> > >    * qcom_scm_pas_init_image() - Initialize peripheral authentication service
-> > >    *			       state machine for a given peripheral, using the
-> > > @@ -625,7 +654,7 @@ static int __qcom_scm_pas_init_image(u32 peripheral, dma_addr_t mdata_phys,
-> > >    *		and optional blob of data used for authenticating the metadata
-> > >    *		and the rest of the firmware
-> > >    * @size:	size of the metadata
-> > > - * @ctx:	optional metadata context
-> > > + * @ctx:	optional pas context
-> > >    *
-> > >    * Return: 0 on success.
-> > >    *
-> > > @@ -634,13 +663,19 @@ static int __qcom_scm_pas_init_image(u32 peripheral, dma_addr_t mdata_phys,
-> > >    * qcom_scm_pas_metadata_release() by the caller.
-> > >    */
-> > >   int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
-> > > -			    struct qcom_scm_pas_metadata *ctx)
-> > > +			    struct qcom_scm_pas_ctx *ctx)
-> > >   {
-> > > +	struct qcom_scm_pas_metadata *mdt_ctx;
-> > >   	struct qcom_scm_res res;
-> > >   	dma_addr_t mdata_phys;
-> > >   	void *mdata_buf;
-> > >   	int ret;
-> > > +	if (ctx && ctx->has_iommu) {
-> > > +		ret = qcom_scm_pas_prep_and_init_image(ctx, metadata, size);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > >   	/*
-> > >   	 * During the scm call memory protection will be enabled for the meta
-> > >   	 * data blob, so make sure it's physically contiguous, 4K aligned and
-> > > @@ -663,10 +698,11 @@ int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
-> > >   	ret = __qcom_scm_pas_init_image(peripheral, mdata_phys, mdata_buf, size, &res);
-> > >   	if (ret < 0 || !ctx) {
-> > >   		dma_free_coherent(__scm->dev, size, mdata_buf, mdata_phys);
-> > > -	} else if (ctx) {
-> > > -		ctx->ptr = mdata_buf;
-> > > -		ctx->phys = mdata_phys;
-> > > -		ctx->size = size;
-> > > +	} else if (ctx->metadata) {
-> > > +		mdt_ctx = ctx->metadata;
-> > > +		mdt_ctx->ptr = mdata_buf;
-> > > +		mdt_ctx->addr.dma_addr = mdata_phys;
-> > > +		mdt_ctx->size = size;
-> > >   	}
-> > >   	return ret ? : res.result[0];
-> > 
-> > is this return path still valid now that you've functionally decomposed into
-> > qcom_sm_pas_prep_and_init ?
+I can make this change on commit no need to repost.
 
-Yes, should be the same as it was earlier.
-
-I believe, there is a duplication but its worth it to avoid confusion to
-among different allocators used here one is DMA and other is TZmem.
-
-> > 
-> > > @@ -675,18 +711,27 @@ EXPORT_SYMBOL_GPL(qcom_scm_pas_init_image);
-> > >   /**
-> > >    * qcom_scm_pas_metadata_release() - release metadata context
-> > > - * @ctx:	metadata context
-> > > + * @ctx:	pas context
-> > >    */
-> > > -void qcom_scm_pas_metadata_release(struct qcom_scm_pas_metadata *ctx)
-> > > +void qcom_scm_pas_metadata_release(struct qcom_scm_pas_ctx *ctx)
-> > >   {
-> > > -	if (!ctx->ptr)
-> > > +	struct qcom_scm_pas_metadata *mdt_ctx;
-> > > +
-> > > +	mdt_ctx = ctx->metadata;
-> > > +	if (!mdt_ctx->ptr)
-> > >   		return;
-> > > -	dma_free_coherent(__scm->dev, ctx->size, ctx->ptr, ctx->phys);
-> > > +	if (ctx->has_iommu) {
-> > > +		qcom_tzmem_free(mdt_ctx->ptr);
-> > > +		mdt_ctx->addr.phys_addr = 0;
-> > > +	} else {
-> > > +		dma_free_coherent(__scm->dev, mdt_ctx->size, mdt_ctx->ptr,
-> > > +				  mdt_ctx->addr.dma_addr);
-> > > +		mdt_ctx->addr.dma_addr = 0;
-> > > +	}
-> > > -	ctx->ptr = NULL;
-> > > -	ctx->phys = 0;
-> > > -	ctx->size = 0;
-> > > +	mdt_ctx->ptr = NULL;
-> > > +	mdt_ctx->size = 0;
-> > >   }
-> > >   EXPORT_SYMBOL_GPL(qcom_scm_pas_metadata_release);
-> > > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> > > index e376c0338576..09cada92dfd5 100644
-> > > --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> > > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> > > @@ -209,9 +209,9 @@ static int qcom_pas_unprepare(struct rproc *rproc)
-> > >   	 * auth_and_reset() was successful, but in other cases clean it up
-> > >   	 * here.
-> > >   	 */
-> > > -	qcom_scm_pas_metadata_release(pas->pas_ctx->metadata);
-> > > +	qcom_scm_pas_metadata_release(pas->pas_ctx);
-> > >   	if (pas->dtb_pas_id)
-> > > -		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx->metadata);
-> > > +		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
-> > >   	return 0;
-> > >   }
-> > > @@ -244,7 +244,7 @@ static int qcom_pas_load(struct rproc *rproc, const struct firmware *fw)
-> > >   	return 0;
-> > >   release_dtb_metadata:
-> > > -	qcom_scm_pas_metadata_release(pas->dtb_pas_ctx->metadata);
-> > > +	qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
-> > >   	release_firmware(pas->dtb_firmware);
-> > >   	return ret;
-> > > @@ -313,9 +313,9 @@ static int qcom_pas_start(struct rproc *rproc)
-> > >   		goto release_pas_metadata;
-> > >   	}
-> > > -	qcom_scm_pas_metadata_release(pas->pas_ctx->metadata);
-> > > +	qcom_scm_pas_metadata_release(pas->pas_ctx);
-> > >   	if (pas->dtb_pas_id)
-> > > -		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx->metadata);
-> > > +		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
-> > >   	/* firmware is used to pass reference from qcom_pas_start(), drop it now */
-> > >   	pas->firmware = NULL;
-> > > @@ -323,9 +323,9 @@ static int qcom_pas_start(struct rproc *rproc)
-> > >   	return 0;
-> > >   release_pas_metadata:
-> > > -	qcom_scm_pas_metadata_release(pas->pas_ctx->metadata);
-> > > +	qcom_scm_pas_metadata_release(pas->pas_ctx);
-> > >   	if (pas->dtb_pas_id)
-> > > -		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx->metadata);
-> > > +		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
-> > >   disable_px_supply:
-> > >   	if (pas->px_supply)
-> > >   		regulator_disable(pas->px_supply);
-> > > diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-> > > index 509ff85d9bf6..a1718db91b3e 100644
-> > > --- a/drivers/soc/qcom/mdt_loader.c
-> > > +++ b/drivers/soc/qcom/mdt_loader.c
-> > > @@ -240,7 +240,7 @@ EXPORT_SYMBOL_GPL(qcom_mdt_read_metadata);
-> > >    */
-> > >   static int __qcom_mdt_pas_init(struct device *dev, const struct firmware *fw,
-> > >   			       const char *fw_name, int pas_id, phys_addr_t mem_phys,
-> > > -			       struct qcom_scm_pas_metadata *ctx)
-> > > +			       struct qcom_scm_pas_ctx *ctx)
-> > >   {
-> > >   	const struct elf32_phdr *phdrs;
-> > >   	const struct elf32_phdr *phdr;
-> > > @@ -491,7 +491,7 @@ int qcom_mdt_pas_load(struct qcom_scm_pas_ctx *ctx, const struct firmware *fw,
-> > >   	int ret;
-> > >   	ret = __qcom_mdt_pas_init(ctx->dev, fw, firmware, ctx->peripheral,
-> > > -				  ctx->mem_phys, ctx->metadata);
-> > > +				  ctx->mem_phys, ctx);
-> > >   	if (ret)
-> > >   		return ret;
-> > > diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
-> > > index a31006fe49a9..bd3417d9c3f9 100644
-> > > --- a/include/linux/firmware/qcom/qcom_scm.h
-> > > +++ b/include/linux/firmware/qcom/qcom_scm.h
-> > > @@ -68,7 +68,10 @@ int qcom_scm_set_remote_state(u32 state, u32 id);
-> > >   struct qcom_scm_pas_metadata {
-> > >   	void *ptr;
-> > > -	dma_addr_t phys;
-> > > +	union {
-> > > +		dma_addr_t dma_addr;
-> > > +		phys_addr_t phys_addr;
-> > > +	} addr;
-> > >   	ssize_t size;
-> > >   };
-> > > @@ -85,8 +88,8 @@ struct qcom_scm_pas_ctx {
-> > >   void *qcom_scm_pas_ctx_init(struct device *dev, u32 peripheral, phys_addr_t mem_phys,
-> > >   			    size_t mem_size, bool save_mdt_ctx);
-> > >   int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
-> > > -			    struct qcom_scm_pas_metadata *ctx);
-> > > -void qcom_scm_pas_metadata_release(struct qcom_scm_pas_metadata *ctx);
-> > > +			    struct qcom_scm_pas_ctx *ctx);
-> > > +void qcom_scm_pas_metadata_release(struct qcom_scm_pas_ctx *ctx);
-> > >   int qcom_scm_pas_mem_setup(u32 peripheral, phys_addr_t addr, phys_addr_t size);
-> > >   int qcom_scm_pas_prepare_and_auth_reset(struct qcom_scm_pas_ctx *ctx);
-> > >   int qcom_scm_pas_auth_and_reset(u32 peripheral);
-> > 
-> > Please review the error paths here especially WRT to qcom_mdt_pas_init();
-> 
-> Sure, will send the fix patch for the existing bug.
-
-For existing code, consider a bug only if it is buggy firmware.
-
-> 
-> > 
-> > ---
-> > bod
-> 
-> -- 
-> -Mukesh Ojha
-
--- 
--Mukesh Ojha
+Thanks,
+Amir.
 
