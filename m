@@ -1,131 +1,269 @@
-Return-Path: <linux-kernel+bounces-782291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18BBAB31E68
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:26:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B3FEB31E6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFE8E623272
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:19:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90C331897D08
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A673F2E1F1C;
-	Fri, 22 Aug 2025 15:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9412211A11;
+	Fri, 22 Aug 2025 15:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="Ij8kuW7T"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A981D211A11;
-	Fri, 22 Aug 2025 15:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LltHfBbd"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD18220B1F4
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 15:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755875920; cv=none; b=S1bVogznnubNLAlvcLDw7CmnBD6ntYZtGQdg1+tbfVrNl2NC4+VdzxKliJfwALJ+/lveoe/dhn5BV0jSDKVgPdXgnRUlSD04MPidlY6EUhEigvW5EAdiIWkX+zVN3XPQfF4Z57hyJUs7u3jcnhVeToP8++TpPxFYDXgWed1BZ+8=
+	t=1755875922; cv=none; b=XC03MMTgAx9pzVwYkC7zsLuZdZlkqfQWWlT6uC+DECYQhi+Scq7U6TgMEhtILnIB0mTs3K6K5iliDag+bEPXfW1vSQDoUlDwX6eqGn+PJG4avlQO40sRtlHkO1b+whI+YAYHHkmJvadXVR/HNVT8zS2X63JVJ6aZvOiw84ltPRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755875920; c=relaxed/simple;
-	bh=AsisFzk5RpZGo2qHEIH2RFjIZWGpxDMznki/isvR0fY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=TDVCYkdI3fLZRCvXXR7xNsid1cacWH6pJJVzAW7ZLwcWTAl8hJF549E2/S55vJOC1sSVa6mGBqkrp41MOXN1k+6ErEaaFFwhRGMJgTdz+b8+XaMQ3uDuJFzRK7Ezw31Z09xYv2nd/nnGPsP9cK5W+RfgyqfUfalkhtzJkpsQ4yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=Ij8kuW7T reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=BsZS4lEWMC63rdXE3QSmsW25yOWeMoC6tKATE9okz+Y=; b=I
-	j8kuW7TnUPouiKhqvVKCIqRou381+Qf6vrNjxlnEkN6Pzn/PCwN14jSOhphpk50m
-	G8j6zOr5kX542yIZxtmr9cbjLB/bVDXVRBFBbqcdsnxIp6XiaeviapCueby8hZrI
-	W1C57LfFmIKJvoMjUy5MUPXNTXvEdm5or4+F/eBlWQ=
-Received: from phoenix500526$163.com ( [120.230.124.83] ) by
- ajax-webmail-wmsvr-40-140 (Coremail) ; Fri, 22 Aug 2025 23:18:03 +0800
- (CST)
-Date: Fri, 22 Aug 2025 23:18:03 +0800 (CST)
-From: =?GBK?B?1dS80ey/?= <phoenix500526@163.com>
-To: "Jiri Olsa" <olsajiri@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	yonghong.song@linux.dev, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH bpf-next v12 0/2] libbpf: fix USDT SIB argument
- handling causing unrecognized register error
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <aKhuA0xklnLCIbsv@krava>
-References: <20250821152713.1024982-1-phoenix500526@163.com>
- <aKhuA0xklnLCIbsv@krava>
-X-NTES-SC: AL_Qu2eB/ScukAj5SGdZukfmUsVh+o9X8K1vfsk3oZfPJp+jB/o8AU8Z1lMJ1nW+euOIgmlrheYSRJPzuZ6Z7ZSWYANxeMs2NJchFmQHO4hDfC67w==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1755875922; c=relaxed/simple;
+	bh=IYZgQKI03y918eQONBx3DSU7odWFvqMkWz41EDgh3RU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XczONIgoDjULV7QBQ2i8yVIpxzoy3kBRNX3twPMsaoKEzDdl1T7DROCWnA8DfN8a8t5+YURVJp0VJRv9HmV4YbrnV07W+CdXsVRk67D7RlLb2MbNYFFeNyW8n2azGpuXU6v+YL08BFvY1gvRCEmZN11IEtj7eWM3GYXXkYazf8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LltHfBbd; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <da53a828-137a-4efc-a192-a2b49a06d050@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755875917;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ua95879Pvf7zkEEiHm84qVrH3woQsPV7xcvpBpzaf28=;
+	b=LltHfBbd51kCb/JqRAhlGV+CykdU8zUVSQDvgeb2hPFCCaQW93l/o6Puid1U8VecGOa7YW
+	h+ELdUfWHxXBWkccaOtTFchVBV2wAzFZfSXiDt4tOePGrtS0Mz463jA+mgQE7SMV1L8FWe
+	gnqWLBNGElOGXyA1BE875hnvwAgIr9Y=
+Date: Fri, 22 Aug 2025 23:18:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <7078a326.98e2.198d25bb89b.Coremail.phoenix500526@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:jCgvCgDXf48siqhoEgYgAA--.2681W
-X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/1tbiFBqxiGiogESwtQABs3
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Subject: Re: [PATCH v5 2/3] hung_task: show the blocker task if the task is
+ hung on semaphore
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>, senozhatsky@chromium.org,
+ mhiramat@kernel.org
+Cc: akpm@linux-foundation.org, will@kernel.org, peterz@infradead.org,
+ mingo@redhat.com, longman@redhat.com, anna.schumaker@oracle.com,
+ boqun.feng@gmail.com, joel.granados@kernel.org, kent.overstreet@linux.dev,
+ leonylgao@tencent.com, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+ tfiga@chromium.org, amaindex@outlook.com, jstultz@google.com,
+ Mingzhe Yang <mingzhe.yang@ly.com>, Eero Tamminen <oak@helsinkinet.fi>,
+ linux-m68k <linux-m68k@lists.linux-m68k.org>,
+ Lance Yang <ioworker0@gmail.com>
+References: <20250414145945.84916-1-ioworker0@gmail.com>
+ <20250414145945.84916-3-ioworker0@gmail.com>
+ <CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-CgoKCgoKCgoKT2ssIGRvbmUuCgoKCgoKCgpBdCAyMDI1LTA4LTIyIDIxOjE3OjU1LCAiSmlyaSBP
-bHNhIiA8b2xzYWppcmlAZ21haWwuY29tPiB3cm90ZToKPk9uIFRodSwgQXVnIDIxLCAyMDI1IGF0
-IDAzOjI3OjEwUE0gKzAwMDAsIEppYXdlaSBaaGFvIHdyb3RlOgo+PiBXaGVuIHVzaW5nIEdDQyBv
-biB4ODYtNjQgdG8gY29tcGlsZSBhbiB1c2R0IHByb2cgd2l0aCAtTzEgb3IgaGlnaGVyCj4+IG9w
-dGltaXphdGlvbiwgdGhlIGNvbXBpbGVyIHdpbGwgZ2VuZXJhdGUgU0lCIGFkZHJlc3NpbmcgbW9k
-ZSBmb3IgZ2xvYmFsCj4+IGFycmF5IGFuZCBQQy1yZWxhdGl2ZSBhZGRyZXNzaW5nIG1vZGUgZm9y
-IGdsb2JhbCB2YXJpYWJsZSwKPj4gZS5nLiAiMUAtOTYoJXJicCwlcmF4LDgpIiBhbmQgIi0xQDQr
-dDEoJXJpcCkiLgo+PiAKPj4gVGhlIGN1cnJlbnQgVVNEVCBpbXBsZW1lbnRhdGlvbiBpbiBsaWJi
-cGYgY2Fubm90IHBhcnNlIHRoZXNlIHR3byBmb3JtYXRzLAo+PiBjYXVzaW5nIGBicGZfcHJvZ3Jh
-bV9fYXR0YWNoX3VzZHQoKWAgdG8gZmFpbCB3aXRoIC1FTk9FTlQKPj4gKHVucmVjb2duaXplZCBy
-ZWdpc3RlcikuCj4+IAo+PiBUaGlzIHBhdGNoIHNlcmllcyBhZGRzIHN1cHBvcnQgZm9yIFNJQiBh
-ZGRyZXNzaW5nIG1vZGUgaW4gVVNEVCBwcm9iZXMuCj4+IFRoZSBtYWluIGNoYW5nZXMgaW5jbHVk
-ZToKPj4gLSBhZGQgY29ycmVjdCBoYW5kbGluZyBsb2dpYyBmb3IgU0lCLWFkZHJlc3NlZCBhcmd1
-bWVudHMgaW4KPj4gICBgcGFyc2VfdXNkdF9hcmdgLgo+PiAtIGFkZCBhbiB1c2R0X28yIHRlc3Qg
-Y2FzZSB0byBjb3ZlciBTSUIgYWRkcmVzc2luZyBtb2RlLgo+PiAKPj4gVGVzdGluZyBzaG93cyB0
-aGF0IHRoZSBTSUIgcHJvYmUgY29ycmVjdGx5IGdlbmVyYXRlcyA4QCglcmN4LCVyYXgsOCkgCj4+
-IGFyZ3VtZW50IHNwZWMgYW5kIHBhc3NlcyBhbGwgdmFsaWRhdGlvbiBjaGVja3MuCj4+IAo+PiBU
-aGUgbW9kaWZpY2F0aW9uIGhpc3Rvcnkgb2YgdGhpcyBwYXRjaCBzZXJpZXM6Cj4+IENoYW5nZSBz
-aW5jZSB2MToKPj4gLSByZWZhY3RvciB0aGUgY29kZSB0byBtYWtlIGl0IG1vcmUgcmVhZGFibGUK
-Pj4gLSBtb2RpZnkgdGhlIGNvbW1pdCBtZXNzYWdlIHRvIGV4cGxhaW4gd2h5IGFuZCBob3cKPj4g
-Cj4+IENoYW5nZSBzaW5jZSB2MjoKPj4gLSBmaXggdGhlIGBzY2FsZWAgdW5pbml0aWFsaXplZCBl
-cnJvcgo+PiAKPj4gQ2hhbmdlIHNpbmNlIHYzOgo+PiAtIGZvcmNlIC1PMiBvcHRpbWl6YXRpb24g
-Zm9yIHVzZHQudGVzdC5vIHRvIGdlbmVyYXRlIFNJQiBhZGRyZXNzaW5nIHVzZHQKPj4gICBhbmQg
-cGFzcyBhbGwgdGVzdCBjYXNlcy4KPj4gCj4+IENoYW5nZSBzaW5jZSB2NDoKPj4gLSBzcGxpdCB0
-aGUgcGF0Y2ggaW50byB0d28gcGFydHMsIG9uZSBmb3IgdGhlIGZpeCBhbmQgdGhlIG90aGVyIGZv
-ciB0aGUKPj4gICB0ZXN0Cj4+IAo+PiBDaGFuZ2Ugc2luY2UgdjU6Cj4+IC0gT25seSBlbmFibGUg
-b3B0aW1pemF0aW9uIGZvciB4ODYgYXJjaGl0ZWN0dXJlIHRvIGdlbmVyYXRlIFNJQiBhZGRyZXNz
-aW5nCj4+ICAgdXNkdCBhcmd1bWVudCBzcGVjLgo+PiAKPj4gQ2hhbmdlIHNpbmNlIHY2Ogo+PiAt
-IEFkZCBhbiB1c2R0X28yIHRlc3QgY2FzZSB0byBjb3ZlciBTSUIgYWRkcmVzc2luZyBtb2RlLgo+
-PiAtIFJlaW5zdGF0ZSB0aGUgdXNkdC5jIHRlc3QgY2FzZS4KPj4gCj4+IENoYW5nZSBzaW5jZSB2
-NzoKPj4gLSBSZWZhY3RvciBtb2RpZmljYXRpb25zIHRvIF9fYnBmX3VzZHRfYXJnX3NwZWMgdG8g
-YXZvaWQgaW5jcmVhc2luZyBpdHMgc2l6ZSwKPj4gICBhY2hpZXZpbmcgYmV0dGVyIGNvbXBhdGli
-aWxpdHkKPj4gLSBGaXggc29tZSBtaW5vciBjb2RlIHN0eWxlIGlzc3Vlcwo+PiAtIFJlZmFjdG9y
-IHRoZSB1c2R0X28yIHRlc3QgY2FzZSwgcmVtb3Zpbmcgc2VtYXBob3JlIGFuZCBhZGRpbmcgR0ND
-IGF0dHJpYnV0ZQo+PiAgIHRvIGZvcmNlIC1PMiBvcHRpbWl6YXRpb24KPj4gCj4+IENoYW5nZSBz
-aW5jZSB2ODoKPj4gLSBSZWZhY3RvciB0aGUgdXNkdF9vMiB0ZXN0IGNhc2UsIHVzaW5nIGFzc2Vt
-Ymx5IHRvIGZvcmNlIFNJQiBhZGRyZXNzaW5nIG1vZGUuCj4+IAo+PiBDaGFuZ2Ugc2luY2Ugdjk6
-Cj4+IC0gT25seSBlbmFibGUgdGhlIHVzZHRfbzIgdGVzdCBjYXNlIG9uIHg4Nl82NCBhbmQgaTM4
-NiBhcmNoaXRlY3R1cmVzIHNpbmNlIHRoZQo+PiAgIFNJQiBhZGRyZXNzaW5nIG1vZGUgaXMgb25s
-eSBzdXBwb3J0ZWQgb24geDg2XzY0IGFuZCBpMzg2Lgo+PiAKPj4gQ2hhbmdlIHNpbmNlIHYxMDoK
-Pj4gLSBSZXBsYWNlIGBfX2F0dHJpYnV0ZV9fKChvcHRpbWl6ZSgiTzIiKSkpYCB3aXRoIGAjcHJh
-Z21hIEdDQyBvcHRpbWl6ZSgiTzEiKWAKPj4gICB0byBmaXggdGhlIGlzc3VlIHdoZXJlIHRoZSBv
-cHRpbWl6ZWQgY29tcGlsYXRpb24gY29uZGl0aW9uIHdvcmtzIGltcHJvcGVybHkuIAo+PiAtIFJl
-bmFtZWQgdGVzdCBjYXNlIHVzZHRfbzIgYW5kIHJlbGV2YW50IGZpbGVzIG5hbWUgdG8gdXNkdF9v
-MSBpbiB0aGF0IE8xCj4+ICAgbGV2ZWwgb3B0aW1pemF0aW9uIGlzIGVub3VnaCB0byBnZW5lcmF0
-ZSBTSUIgYWRkcmVzc2luZyB1c2R0IGFyZ3VtZW50IHNwZWMuCj4+IAo+PiBDaGFuZ2Ugc2luY2Ug
-djExOgo+PiAtIFJlcGxhY2UgYFNUQVBfUFJPQkUxYCB3aXRoIGBTVEFQX1BST0JFX0FTTWAKPj4g
-LSBVc2UgYml0IGZpZWxkcyBpbnN0ZWFkIG9mIGJpdCBzaGlmdGluZyBvcGVyYXRpb25zCj4+IC0g
-TWVyZ2UgdGhlIHVzZHRfbzEgdGVzdCBjYXNlIGludG8gdGhlIHVzZHQgdGVzdCBjYXNlCj4KPmhp
-LAo+SSBjYW4gc2VlIHBhdGNoc2V0IHYxMiB0d2ljZSB3aXRoIGRpZmZlcmVudCBzdGF0cy4uIHRo
-aXMgb25lJ3MgdGhlIGxhdHRlciwKPmJ1dCB5b3UgbWlnaHQgd2FudCB0byByZXNlbmQgd2l0aCBu
-ZXcgdmVyc2lvbgo+Cj5qaXJrYQo+Cj4KPj4gCj4+IEppYXdlaSBaaGFvICgyKToKPj4gICBsaWJi
-cGY6IGZpeCBVU0RUIFNJQiBhcmd1bWVudCBoYW5kbGluZyBjYXVzaW5nIHVucmVjb2duaXplZCBy
-ZWdpc3Rlcgo+PiAgICAgZXJyb3IKPj4gICBzZWxmdGVzdHMvYnBmOiBFbnJpY2ggc3VidGVzdF9i
-YXNpY191c2R0IGNhc2UgaW4gc2VsZnRlc3RzIHRvIGNvdmVyCj4+ICAgICBTSUIgaGFuZGxpbmcg
-bG9naWMKPj4gCj4+ICB0b29scy9saWIvYnBmL3VzZHQuYnBmLmggICAgICAgICAgICAgICAgICAg
-ICAgfCA0NyArKysrKysrKysrKysrKy0KPj4gIHRvb2xzL2xpYi9icGYvdXNkdC5jICAgICAgICAg
-ICAgICAgICAgICAgICAgICB8IDU4ICsrKysrKysrKysrKysrKysrLS0KPj4gIHRvb2xzL3Rlc3Rp
-bmcvc2VsZnRlc3RzL2JwZi9wcm9nX3Rlc3RzL3VzZHQuYyB8IDQ0ICsrKysrKysrKysrKystCj4+
-ICB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvcHJvZ3MvdGVzdF91c2R0LmMgfCAzMCArKysr
-KysrKysrCj4+ICA0IGZpbGVzIGNoYW5nZWQsIDE3MCBpbnNlcnRpb25zKCspLCA5IGRlbGV0aW9u
-cygtKQo+PiAKPj4gLS0gCj4+IDIuNDMuMAo+PiAKPj4gCg==
+Hi Geert,
+
+Thanks a lot for bisecting and reporting!
+
+On 2025/8/22 15:38, Geert Uytterhoeven wrote:
+> Hi Lance,
+> 
+> (this time the right email thread, I hope ;-)
+> 
+> On Mon, 14 Apr 2025 at 17:23, Lance Yang <ioworker0@gmail.com> wrote:
+>> Inspired by mutex blocker tracking[1], this patch makes a trade-off to
+>> balance the overhead and utility of the hung task detector.
+>>
+>> Unlike mutexes, semaphores lack explicit ownership tracking, making it
+>> challenging to identify the root cause of hangs. To address this, we
+>> introduce a last_holder field to the semaphore structure, which is
+>> updated when a task successfully calls down() and cleared during up().
+>>
+>> The assumption is that if a task is blocked on a semaphore, the holders
+>> must not have released it. While this does not guarantee that the last
+>> holder is one of the current blockers, it likely provides a practical hint
+>> for diagnosing semaphore-related stalls.
+>>
+[...]
+> 
+> Thanks for your patch, which is now commit 194a9b9e843b4077
+> ("hung_task: show the blocker task if the task is hung on
+> semaphore") in v6.16-rc1.
+> 
+> Eero reported [1] two WARNINGS seen with v6.16 on emulated Atari.
+> I managed to reproduce it on ARAnyM using the provided config (it does
+> not happen with atari_defconfig), and bisected it to this commit:
+
+The two warnings are directly related, and the first one
+is the root cause, IIUC.
+
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 39 at include/linux/hung_task.h:48
+
+The first warning at hung_task.h:48 is triggered because
+WARN_ON_ONCE(lock_ptr & BLOCKER_TYPE_MASK) check fails.
+
+static inline void hung_task_set_blocker(void *lock, unsigned long type)
+{
+	unsigned long lock_ptr = (unsigned long)lock;
+
+	WARN_ON_ONCE(!lock_ptr);
+	WARN_ON_ONCE(READ_ONCE(current->blocker));
+
+	/*
+	 * If the lock pointer matches the BLOCKER_TYPE_MASK, return
+	 * without writing anything.
+	 */
+	if (WARN_ON_ONCE(lock_ptr & BLOCKER_TYPE_MASK)) <- here
+		return;
+
+This logic assumes the lock pointer is sufficiently aligned,
+allowing the lower bits to be used for the lock type. But it
+appears we are being passed an unaligned lock pointer,
+unfortunately.
+
+	WRITE_ONCE(current->blocker, lock_ptr | type);
+}
+
+Because the check fails, hung_task_set_blocker() returns
+early without setting current->blocker, which directly
+leads to the second warning at hung_task.h:56
+
+> __down_common+0x13a/0x1be
+> CPU: 0 UID: 0 PID: 39 Comm: getty Not tainted
+> 6.15.0-rc6hatari-00018-g194a9b9e843b #1986 NONE
+> Stack from 01633d00:
+>          01633d00 00366e9e 00366e9e 00000000 002c9762 00360cb5 01633d24 0000873e
+>          00366e9e 01633d40 0002e0d4 00360cb5 00000030 00000009 0039c79a 00061408
+>          01633d78 000028e0 00360cb5 00000030 002c9762 00000009 00000000 00000000
+>          7fffffff 00000002 1185d266 01633eb0 01326c58 00000080 01633dc0 002c9762
+>          00360cb5 00000030 00000009 00000000 00002014 01326c00 1185d266 01633eb0
+>          002c93ea 00053d60 00061408 01326c58 0038db90 0038db90 01633e32 01633fb8
+> Call Trace: [<002c9762>] __down_common+0x13a/0x1be
+>   [<0000873e>] dump_stack+0x10/0x16
+>   [<0002e0d4>] __warn+0x7a/0xbc
+>   [<00061408>] msleep+0x0/0x2c
+>   [<000028e0>] warn_slowpath_fmt+0x42/0x62
+>   [<002c9762>] __down_common+0x13a/0x1be
+>   [<002c9762>] __down_common+0x13a/0x1be
+>   [<00002014>] arch_local_irq_enable+0xe/0x22
+>   [<002c93ea>] mutex_lock+0x0/0x28
+>   [<00053d60>] other_cpu_in_panic+0x0/0x26
+>   [<00061408>] msleep+0x0/0x2c
+>   [<002c97fc>] __down+0x16/0x1e
+>   [<002c9832>] down+0x2e/0x30
+>   [<00053dac>] console_lock+0x26/0x4c
+>   [<001aae4e>] do_con_write+0x3a/0x16d4
+>   [<002c93ea>] mutex_lock+0x0/0x28
+>   [<0004fa70>] __add_wait_queue+0x3a/0x6a
+>   [<001ac520>] con_write+0x1a/0x30
+>   [<0019cafa>] n_tty_write+0x2c6/0x35e
+>   [<00199456>] signal_pending+0x0/0x26
+>   [<000aba2a>] __kvmalloc_node_noprof+0x3a/0x114
+>   [<00004cc0>] io_uring_try_cancel_requests+0x98/0x318
+>   [<0004fb2e>] woken_wake_function+0x0/0x24
+>   [<0019a180>] file_tty_write.isra.0+0x144/0x1b8
+>   [<0019a206>] tty_write+0x12/0x16
+>   [<000b97c2>] vfs_write+0xec/0x148
+>   [<00028000>] fp_getdest+0x1b8/0x224
+>   [<00010000>] g_trace+0x16/0x28
+>   [<000b9916>] ksys_write+0x54/0x8a
+>   [<000b9962>] sys_write+0x16/0x1a
+>   [<000093da>] syscall+0x8/0xc
+>   [<0000c001>] arch_dma_prep_coherent+0x51/0x58
+> 
+> ---[ end trace 0000000000000000 ]---
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 39 at include/linux/hung_task.h:56
+
+Later, when hung_task_clear_blocker() is called, its
+WARN_ON_ONCE triggers because it finds current->blocker
+is still zero from the earlier failure.
+
+static inline void hung_task_clear_blocker(void)
+{
+	WARN_ON_ONCE(!READ_ONCE(current->blocker)); <- here
+
+	WRITE_ONCE(current->blocker, 0UL);
+}
+
+So, the unaligned lock pointer appears to be the root cause,
+breaking the assumptions of the blocker tracking mechanism.
+
+> __down_common+0x17a/0x1be
+> CPU: 0 UID: 0 PID: 39 Comm: getty Tainted: G        W
+> 6.15.0-rc6hatari-00018-g194a9b9e843b #1986 NONE
+> Tainted: [W]=WARN
+> Stack from 01633d00:
+>          01633d00 00366e9e 00366e9e 00000000 002c97a2 00360cb5 01633d24 0000873e
+>          00366e9e 01633d40 0002e0d4 00360cb5 00000038 00000009 0039c79a 01633db2
+>          01633d78 000028e0 00360cb5 00000038 002c97a2 00000009 00000000 00000000
+>          00000000 00000002 00000000 00000000 01326c58 0039c79a 01633dc0 002c97a2
+>          00360cb5 00000038 00000009 00000000 00002014 01326c00 1185d266 01633eb0
+>          002c93ea 00053d60 00061408 01326c58 00380000 01000000 01220162 b64001b8
+> Call Trace: [<002c97a2>] __down_common+0x17a/0x1be
+>   [<0000873e>] dump_stack+0x10/0x16
+>   [<0002e0d4>] __warn+0x7a/0xbc
+>   [<000028e0>] warn_slowpath_fmt+0x42/0x62
+>   [<002c97a2>] __down_common+0x17a/0x1be
+>   [<002c97a2>] __down_common+0x17a/0x1be
+>   [<00002014>] arch_local_irq_enable+0xe/0x22
+>   [<002c93ea>] mutex_lock+0x0/0x28
+>   [<00053d60>] other_cpu_in_panic+0x0/0x26
+>   [<00061408>] msleep+0x0/0x2c
+>   [<002c97fc>] __down+0x16/0x1e
+>   [<002c9832>] down+0x2e/0x30
+>   [<00053dac>] console_lock+0x26/0x4c
+>   [<001aae4e>] do_con_write+0x3a/0x16d4
+>   [<002c93ea>] mutex_lock+0x0/0x28
+>   [<0004fa70>] __add_wait_queue+0x3a/0x6a
+>   [<001ac520>] con_write+0x1a/0x30
+>   [<0019cafa>] n_tty_write+0x2c6/0x35e
+>   [<00199456>] signal_pending+0x0/0x26
+>   [<000aba2a>] __kvmalloc_node_noprof+0x3a/0x114
+>   [<00004cc0>] io_uring_try_cancel_requests+0x98/0x318
+>   [<0004fb2e>] woken_wake_function+0x0/0x24
+>   [<0019a180>] file_tty_write.isra.0+0x144/0x1b8
+>   [<0019a206>] tty_write+0x12/0x16
+>   [<000b97c2>] vfs_write+0xec/0x148
+>   [<00028000>] fp_getdest+0x1b8/0x224
+>   [<00010000>] g_trace+0x16/0x28
+>   [<000b9916>] ksys_write+0x54/0x8a
+>   [<000b9962>] sys_write+0x16/0x1a
+>   [<000093da>] syscall+0x8/0xc
+>   [<0000c001>] arch_dma_prep_coherent+0x51/0x58
+> 
+> ---[ end trace 0000000000000000 ]---
+> 
+> It still happens on v6.17-rc2.  Reverting commits 77da18de55ac6417
+> ("hung_task: extend hung task blocker tracking to rwsems") and
+> 194a9b9e843b4077 ("hung_task: show the blocker task if the task is
+> hung on semaphore") fixes the issue for me.
+
+Thanks! I'm looking into it.
+
+Lance
+
+> 
+> Thanks!
+> 
+> [1] "v6.16 console issues on Atari Falcon"
+>      https://lore.kernel.org/all/92518308-c763-4591-96ef-6b38c5d8f434@helsinkinet.fi
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
+> 
+
 
