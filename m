@@ -1,158 +1,149 @@
-Return-Path: <linux-kernel+bounces-781891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C75B3184C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:50:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 905A4B31861
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51D35AC8247
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:50:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 042831C82738
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DAC2FC023;
-	Fri, 22 Aug 2025 12:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A95D2FC035;
+	Fri, 22 Aug 2025 12:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SDESnmyJ"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fY2Ll00Z"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE65F2FD1C0;
-	Fri, 22 Aug 2025 12:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07AC2FC00E;
+	Fri, 22 Aug 2025 12:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755866971; cv=none; b=pzgYlaxmPv2qaI5EsoZ+sLYYeg5RhdFTTGp2BK/LQf1dvAGI1XeiHGtGl1sSOV//uF+3npzep10YHfd2TvGVhhqYC3//v6q7RLxOzUtEOpK2C9dbdkD8o6B6IkxepJ4OnDqb3RXdchI9LlSVQgpWqfZx+bSVODZzORIhpSQvemQ=
+	t=1755867165; cv=none; b=HczlzOJIPXztTDV/Sxf23XyV7h+Y2VcUAEGhdEL1U+G5E7aEtVaPzwHEA29WYm4LM62x0r2fTbn4iT3I2AS1TSuAyAh/RNuywUNVLKjWLZk2fvQuyEZl98glgbkS0e+DASiA5pBY2xDNawhuFUe3F5RiFKjM3RnTifpNh1nCD3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755866971; c=relaxed/simple;
-	bh=hqPSW8gjRuHQDQ+i6kbMnBBBnlr60fdu7FJ683wtg9E=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=EdzVhyfLOVGIusZdccc1mmyqc4UkkvTgCeh3InmdCoaO66JUzFYzkbjUd01QgTby4P9krZGgqKxsQyQjaNSqPDWR+vwKjbi30ND3cRIk8cLeYh3+IAkgTDYNjqx3q5cC2AdO7BYL6KoLm6KJ81wMRvhSo8gtAoPgTGaMYwhDPl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SDESnmyJ; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 774161A0D48;
-	Fri, 22 Aug 2025 12:49:22 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 45D03604AD;
-	Fri, 22 Aug 2025 12:49:22 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 58D961C22DAC7;
-	Fri, 22 Aug 2025 14:49:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1755866961; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Ua42caSIreMTSgZq76zsnJuAIzw5ug7AfcH2QBcncRU=;
-	b=SDESnmyJ/kgcZDMS117RQSYG6rtBD/JCv3cYBZOa9cHLPlLtCFuEa5ocMI/hx9RFSDNbG7
-	L2Sewj3/uIebW3MjKm87ZtSWD0uuJ9wy8pyVSDDdmKN2ZOGdHqmEk6CVZbYXeqqGvOXaz3
-	VU2ejhHOYZUxXIj2xWhYJOt9atBG7jK/AgR0LKXDK+s1YqGhLKGbb1MojYTW3wmMzNpvGD
-	U3I9ZAbTNFdzR6nu9DKlol+72VaLaT5Q5yrJN8plgt7jpNOrZd9DtH4QtId4+zMdz630LJ
-	yL3mgzLzGsLAhOKUkLYGGxNtx89sBeu+Mho/QbCpLdG0PBEA/zUVHgA9DRP/xg==
+	s=arc-20240116; t=1755867165; c=relaxed/simple;
+	bh=SPEn7P3mjkWhID617eIY0l+bYfag61lfCySYeoLUzIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B/tq37sia6aiSiqwiYTe2VKYADioplFzc/q7vQoVjCqRDrZZv6vGA1qGUrwXqkQvK1IJOmdBpKIREH/A1HWTCVeEcZfzof9OXY8PbCn3HDdQ5bIbrPswSL/txIulfir7JP+qsRWQUjLsKC5Dn7Fykz8hMbK5NeweWkbqGiSV18A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fY2Ll00Z; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755867162; x=1787403162;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SPEn7P3mjkWhID617eIY0l+bYfag61lfCySYeoLUzIs=;
+  b=fY2Ll00Ze4JaH0RsxomjY5kF9BZ0PuFxwBhZfOePPf6o66mir7004RHa
+   CD2zpaYt1Iq85O0SELHBuS1WFvs0dgRzdChsK1ZO/Mr98WRNJfwH0A9xW
+   ReJWJMoHizc0B3z7Rfg3iVnYo3VPNHBYhl1DVjbiHhWumyxMC6Y0SH1Xe
+   37WEbDZ95Urn6OkxIrJlC4+nl3wXsczFhUr1QimgI4CpEeBDk8jYdvE1o
+   92KrL4j3PpplTcX1T6bx+QEFbN6xcb/AOvu1HnDWzEAkrwRqSSW3Javip
+   72sTienAisroHCoTwMIIA01Uh+pO8RTtncBHQBGS+jmptldyS3hOPdcjZ
+   A==;
+X-CSE-ConnectionGUID: CKpvkZe2RZ6GbQTzIGqgmw==
+X-CSE-MsgGUID: MrUdWte5Qh22Uz7TknZuJA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="57191227"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="57191227"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 05:52:42 -0700
+X-CSE-ConnectionGUID: Z3/yPDQiRuS5zxcdPa/slQ==
+X-CSE-MsgGUID: W3HnWrRlQDmSxTL4bCDOWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="169104621"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 22 Aug 2025 05:52:40 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1upRFQ-000LHr-1P;
+	Fri, 22 Aug 2025 12:52:07 +0000
+Date: Fri, 22 Aug 2025 20:50:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v2 03/16] Introduce wake_up_key()
+Message-ID: <202508222051.JpjiLYJb-lkp@intel.com>
+References: <20250822000818.1086550-4-neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 22 Aug 2025 14:49:10 +0200
-Message-Id: <DC8YVXKCZAE4.5QJM9MP4HJZ5@bootlin.com>
-Subject: Re: [PATCH v13 04/10] pwm: max7360: Add MAX7360 PWM support
-Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>, "Michael Walle"
- <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, <andriy.shevchenko@intel.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Andy Shevchenko"
- <andriy.shevchenko@linux.intel.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-X-Mailer: aerc 0.19.0-0-gadd9e15e475d
-References: <20250811-mdb-max7360-support-v13-0-e79fcabff386@bootlin.com>
- <20250811-mdb-max7360-support-v13-4-e79fcabff386@bootlin.com>
- <l5crrk3ugpo2ggjtykcy5eretclgntebyq52xuouekoimbrsvh@u4koyu5z2wwi>
-In-Reply-To: <l5crrk3ugpo2ggjtykcy5eretclgntebyq52xuouekoimbrsvh@u4koyu5z2wwi>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822000818.1086550-4-neil@brown.name>
 
-On Mon Aug 18, 2025 at 11:05 AM CEST, Uwe Kleine-K=C3=B6nig wrote:
-> Hello,
->
-> On Mon, Aug 11, 2025 at 12:46:22PM +0200, Mathieu Dubois-Briand wrote:
->> From: Kamel Bouhara <kamel.bouhara@bootlin.com>
->>=20
->> Add driver for Maxim Integrated MAX7360 PWM controller, supporting up to
->> 8 independent PWM outputs.
->>=20
->> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
->> Co-developed-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.co=
-m>
->> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
->> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> ---
->> ...
->> +static int max7360_pwm_round_waveform_tohw(struct pwm_chip *chip,
->> +					   struct pwm_device *pwm,
->> +					   const struct pwm_waveform *wf,
->> +					   void *_wfhw)
->> +{
->> +	struct max7360_pwm_waveform *wfhw =3D _wfhw;
->> +	u64 duty_steps;
->> +
->> +	/*
->> +	 * Ignore user provided values for period_length_ns and duty_offset_ns=
-:
->> +	 * we only support fixed period of MAX7360_PWM_PERIOD_NS and offset of=
- 0.
->> +	 * Values from 0 to 254 as duty_steps will provide duty cycles of 0/25=
-6
->> +	 * to 254/256, while value 255 will provide a duty cycle of 100%.
->> +	 */
->> +	if (wf->duty_length_ns >=3D MAX7360_PWM_PERIOD_NS) {
->> +		duty_steps =3D MAX7360_PWM_MAX;
->> +	} else {
->> +		duty_steps =3D (u32)wf->duty_length_ns * MAX7360_PWM_STEPS / MAX7360_=
-PWM_PERIOD_NS;
->> +		if (duty_steps =3D=3D MAX7360_PWM_MAX)
->> +			duty_steps =3D MAX7360_PWM_MAX - 1;
->> +	}
->> +
->> +	wfhw->duty_steps =3D min(MAX7360_PWM_MAX, duty_steps);
->> +	wfhw->enabled =3D !!wf->period_length_ns;
->> +
->> +	if (wf->period_length_ns < MAX7360_PWM_PERIOD_NS)
->
-> I know this code was suggested as is by me, but I think we need:
->
-> 	if (wf->period_length_ns && wf->period_length_ns < MAX7360_PWM_PERIOD_NS=
-)
->
-> here to prevent to trigger a PWM_DEBUG warning. Sorry to spot this only
-> now.
->
+Hi NeilBrown,
 
-Right, this does make sense. I will send a new version shortly.
+kernel test robot noticed the following build errors:
 
->> +		return 1;
->> +	else
->> +		return 0;
->> +}
->
-> Best regards
-> Uwe
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on trondmy-nfs/linux-next linus/master v6.17-rc2 next-20250822]
+[cannot apply to tip/sched/core]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Best regards,
-Mathieu
+url:    https://github.com/intel-lab-lkp/linux/commits/NeilBrown/VFS-discard-err2-in-filename_create/20250822-081444
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20250822000818.1086550-4-neil%40brown.name
+patch subject: [PATCH v2 03/16] Introduce wake_up_key()
+config: sh-randconfig-r073-20250822 (https://download.01.org/0day-ci/archive/20250822/202508222051.JpjiLYJb-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250822/202508222051.JpjiLYJb-lkp@intel.com/reproduce)
 
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508222051.JpjiLYJb-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+   drivers/gpio/gpiolib-cdev.c: In function 'linereq_put_event':
+>> drivers/gpio/gpiolib-cdev.c:596:2: error: 'else' without a previous 'if'
+     596 |  else
+         |  ^~~~
+   drivers/gpio/gpiolib-cdev.c: In function 'lineevent_irq_thread':
+   drivers/gpio/gpiolib-cdev.c:2018:2: error: 'else' without a previous 'if'
+    2018 |  else
+         |  ^~~~
+   drivers/gpio/gpiolib-cdev.c: In function 'lineinfo_changed_func':
+   drivers/gpio/gpiolib-cdev.c:2536:2: error: 'else' without a previous 'if'
+    2536 |  else
+         |  ^~~~
+
+
+vim +596 drivers/gpio/gpiolib-cdev.c
+
+a0dda508bd66b9e Bartosz Golaszewski 2023-08-17  581  
+73e0341992b68bb Kent Gibson         2020-09-28  582  static void linereq_put_event(struct linereq *lr,
+73e0341992b68bb Kent Gibson         2020-09-28  583  			      struct gpio_v2_line_event *le)
+73e0341992b68bb Kent Gibson         2020-09-28  584  {
+73e0341992b68bb Kent Gibson         2020-09-28  585  	bool overflow = false;
+73e0341992b68bb Kent Gibson         2020-09-28  586  
+0ebeaab4d59eb37 Kent Gibson         2023-12-19  587  	scoped_guard(spinlock, &lr->wait.lock) {
+73e0341992b68bb Kent Gibson         2020-09-28  588  		if (kfifo_is_full(&lr->events)) {
+73e0341992b68bb Kent Gibson         2020-09-28  589  			overflow = true;
+73e0341992b68bb Kent Gibson         2020-09-28  590  			kfifo_skip(&lr->events);
+73e0341992b68bb Kent Gibson         2020-09-28  591  		}
+73e0341992b68bb Kent Gibson         2020-09-28  592  		kfifo_in(&lr->events, le, 1);
+0ebeaab4d59eb37 Kent Gibson         2023-12-19  593  	}
+73e0341992b68bb Kent Gibson         2020-09-28  594  	if (!overflow)
+73e0341992b68bb Kent Gibson         2020-09-28  595  		wake_up_poll(&lr->wait, EPOLLIN);
+73e0341992b68bb Kent Gibson         2020-09-28 @596  	else
+73e0341992b68bb Kent Gibson         2020-09-28  597  		pr_debug_ratelimited("event FIFO is full - event dropped\n");
+73e0341992b68bb Kent Gibson         2020-09-28  598  }
+73e0341992b68bb Kent Gibson         2020-09-28  599  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
