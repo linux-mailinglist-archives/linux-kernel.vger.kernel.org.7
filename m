@@ -1,137 +1,235 @@
-Return-Path: <linux-kernel+bounces-781811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23C38B3170C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:08:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C934B31719
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE594B61AB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:06:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C03B04305
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EF93043AA;
-	Fri, 22 Aug 2025 12:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859CC2FB633;
+	Fri, 22 Aug 2025 12:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Is6KVeWU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="no7xRGAM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="I0Sn6igw"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E743E303CB5;
-	Fri, 22 Aug 2025 12:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CA22737E8
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755864299; cv=none; b=NjDOO5yvZB3wXjxGPFcsJw6pmTFZoho5KO5R7Ex+nmHIlSY5yAIwGhO47vSv7xjHmqpZj4yxsLEqhsZ9pJPoBaU43JtGkyPBU3kBDp7PhVetiP8Dx60ERTkRQDTl0ZeuRTl3mJ0wsbvXrfhfG7drL6f9mVcVbBo7swm2Ibs2AlY=
+	t=1755864324; cv=none; b=VRnIqG2gnOUPJ25DEzXJwbCRLzaFmjnFsOqKqaEltCE889Z65aljtOcBbQgAJ9eSgEx3WY5cJW2R4TNmwZfzoO548VtC3BT8PnpJEYtO1B9zi5YUobm/2ItgBTPPTX94ypSyXZfIKQ8FK4ItAbvG6b+ZUBu6D5glos4slLBfRTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755864299; c=relaxed/simple;
-	bh=wXoAflquMnJ9fOAtd5oQsiYZ6SWkFwfvGG0Jut4ud1E=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=uAS3rm5PG4kqubhMfeWYI5S62SBGVlN8e8vw12lAm62I7s0SZyte/SATmKAt43sEhFUK8ZOUMnvm8qWCgqfQFwu1Op+oOwAkHCo0EYFiVeShh2oIYiWfaXyEjizu0ADvm3S4ffdPqMc8rKQV1/DI/gmbDqu5+0j7ybgF4urUe7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Is6KVeWU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=no7xRGAM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 22 Aug 2025 12:04:53 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755864295;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1LUj+JUxdqYa592kSYtdWok934ugg29P4ZPqPNucb7k=;
-	b=Is6KVeWU725Jo5zZsvXY0UjaVdhdzwOQJdBZbAiYDIA2a6H2fEqBZHQ3AkqCQk6OBMy9im
-	Xrx87m8ddZriTwiAfONNcxn3eJOhC26PEGAT6mGVOV8lMlYKvhsAedO+BxmCUZJEhW4NBG
-	DW5d95nGbKw5+Xjz3jtRkZWoEjgiE+3h4uqjpST21PRX2c/WxTHoNtq4667Kve6BmL6ysn
-	N4NiEqRSthazdIoDueoDIKs5xDr9yQwc781eOyEiGA0D+f8ZkW20Sp3y86xTZJTB0O5IDS
-	RVUMwN6boyls9G+mBdViAN++EYHF9M9kxVEA03Co1urTdgeNj+eJrPT8hsxK5A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755864295;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1LUj+JUxdqYa592kSYtdWok934ugg29P4ZPqPNucb7k=;
-	b=no7xRGAMSNIsfXxcqxNqbvH8N7fclFtOej5TTd+82U9MlFaakwKIvussemrcOdVxdHSCBb
-	8odauuZg+sziBiCw==
-From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86/idle: Use MONITORX and MWAITX mnemonics in
- <asm/mwait.h>
-Cc: Uros Bizjak <ubizjak@gmail.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250616083056.157460-1-ubizjak@gmail.com>
-References: <20250616083056.157460-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1755864324; c=relaxed/simple;
+	bh=d5+LINuQqI6Knzdks1L1FwlP6Jr6+x7OXqo2LxI4C28=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lFlX9+oNxhFlhbVSxE6eDCglNZWf4OaMFBLuLh5SG1grY+m4DYnzmW+DipKdDSIgOgOi83oQf+pfTLIzb+R4/7NXAWSUI3SqTd2bXVsEGgAlayXER996DOVdlXlFUU1ZnfKwwaWCDHdAZP4T/MKg4mij8+D6uu+LrCw9EY2FzgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=I0Sn6igw; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 43001e0a7f5011f08729452bf625a8b4-20250822
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=HSw7u892uK9pOwYfNWTezRSyhoIRXLbpe9Q0DR9kRpo=;
+	b=I0Sn6igwBT/XXd4G3ztU+ZPM5rkzoDYgyzMfL0PNgjnJPpQ6bO6VhqsE/x0KaLWOjKt8kyrCAG7RdCfsAJ0Hx0r5w4ZchniWkNq0lyrf1vwpRvkGCSmM7uMFPtrG6xLluRoMSCTUR00y75HImANIaDNMMz3CxEfxazvJd1WpePQ=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:c6ea9b82-0ace-44f8-ba52-c62c2f9ee096,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:f1326cf,CLOUDID:84d837f4-66cd-4ff9-9728-6a6f64661009,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:-3,IP:
+	nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
+	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 43001e0a7f5011f08729452bf625a8b4-20250822
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+	(envelope-from <liankun.yang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 635372200; Fri, 22 Aug 2025 20:05:14 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Fri, 22 Aug 2025 20:05:12 +0800
+Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Fri, 22 Aug 2025 20:05:11 +0800
+From: Liankun Yang <liankun.yang@mediatek.com>
+To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <mac.shen@mediatek.com>,
+	<peng.liu@mediatek.com>, <liankun.yang@mediatek.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 1/1] drm/mediatek: Adjust bandwidth limit for DP
+Date: Fri, 22 Aug 2025 20:04:54 +0800
+Message-ID: <20250822120506.15486-1-liankun.yang@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175586429393.1420.14916636191217721438.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-The following commit has been merged into the x86/cleanups branch of tip:
+By adjusting the order of link training and relocating it to HPD,
+link training can identify the usability of each lane in the current link.
 
-Commit-ID:     d20a5d96eddb95b4faa33247ec653a580c48fdfa
-Gitweb:        https://git.kernel.org/tip/d20a5d96eddb95b4faa33247ec653a580c4=
-8fdfa
-Author:        Uros Bizjak <ubizjak@gmail.com>
-AuthorDate:    Mon, 16 Jun 2025 10:30:41 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Fri, 22 Aug 2025 13:52:21 +02:00
+It also supports handling signal instability and weakness due to
+environmental issues, enabling the acquisition of a stable bandwidth
+for the current link. Subsequently, DP work can proceed based on
+the actual maximum bandwidth.
 
-x86/idle: Use MONITORX and MWAITX mnemonics in <asm/mwait.h>
+It should training in the hpd event thread.
+Check the mode with lane count and link rate of training.
 
-Current minimum required version of binutils is 2.30, which supports MONITORX
-and MWAITX instruction mnemonics.
+If we're eDP and capabilities were already parsed we can skip
+reading again because eDP panels aren't hotpluggable hence the
+caps and training information won't ever change in a boot life
 
-Replace the byte-wise specification of MONITORX and MWAITX with these proper
-mnemonics.
+Therefore, bridge typec judgment is required for edp training in
+atomic_enable function.
 
-No functional change intended.
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/20250616083056.157460-1-ubizjak@gmail.com
+Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
 ---
- arch/x86/include/asm/mwait.h | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Change in V6:
+- Fixed power on in atomic enable.
+- Fixed parse capability for edp.
+Per suggestion from the previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20250630080824.7107-1-liankun.yang@mediatek.com/
 
-diff --git a/arch/x86/include/asm/mwait.h b/arch/x86/include/asm/mwait.h
-index 6ca6516..e4815e1 100644
---- a/arch/x86/include/asm/mwait.h
-+++ b/arch/x86/include/asm/mwait.h
-@@ -36,9 +36,7 @@ static __always_inline void __monitor(const void *eax, u32 =
-ecx, u32 edx)
-=20
- static __always_inline void __monitorx(const void *eax, u32 ecx, u32 edx)
+Change in V5:
+- Fixed the issue that the 4th version of the patch caused DP to have no screen.
+Per suggestion from the previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20250625095446.31726-1-liankun.yang@mediatek.com/
+
+Change in V4:
+- Tested the internal eDP display on MT8195 Tomato and it is fine.
+Per suggestion from the previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20250318140236.13650-2-liankun.yang@mediatek.com/
+
+Change in V3:
+- Remove 'mtk_dp->enabled = false" in atomic disable.
+- Remove 'mtk_dp->enabled = true" in atomic enable.
+Per suggestion from the previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20241025083036.8829-4-liankun.yang@mediatek.com/
+
+Change in V2:
+- Adjust DP training timing.
+- Adjust parse capabilities timing.
+- Add power on/off for connect/disconnect.
+Per suggestion from the previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20240315015233.2023-1-liankun.yang@mediatek.com/
+---
+ drivers/gpu/drm/mediatek/mtk_dp.c | 41 ++++++++++++++++++++++++-------
+ 1 file changed, 32 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
+index bef6eeb30d3e..384496e49118 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dp.c
++++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+@@ -1976,6 +1976,7 @@ static irqreturn_t mtk_dp_hpd_event_thread(int hpd, void *dev)
+ 	struct mtk_dp *mtk_dp = dev;
+ 	unsigned long flags;
+ 	u32 status;
++	int ret;
+ 
+ 	if (mtk_dp->need_debounce && mtk_dp->train_info.cable_plugged_in)
+ 		msleep(100);
+@@ -1994,9 +1995,28 @@ static irqreturn_t mtk_dp_hpd_event_thread(int hpd, void *dev)
+ 			memset(&mtk_dp->info.audio_cur_cfg, 0,
+ 			       sizeof(mtk_dp->info.audio_cur_cfg));
+ 
++			mtk_dp->enabled = false;
++			/* power off aux */
++			mtk_dp_update_bits(mtk_dp, MTK_DP_TOP_PWR_STATE,
++					   DP_PWR_STATE_BANDGAP_TPLL,
++					   DP_PWR_STATE_MASK);
++
+ 			mtk_dp->need_debounce = false;
+ 			mod_timer(&mtk_dp->debounce_timer,
+ 				  jiffies + msecs_to_jiffies(100) - 1);
++		} else {
++			mtk_dp_aux_panel_poweron(mtk_dp, true);
++
++			ret = mtk_dp_parse_capabilities(mtk_dp);
++			if (ret)
++				drm_err(mtk_dp->drm_dev, "Can't parse capabilities\n");
++
++			/* Training */
++			ret = mtk_dp_training(mtk_dp);
++			if (ret)
++				drm_err(mtk_dp->drm_dev, "Training failed, %d\n", ret);
++
++			mtk_dp->enabled = true;
+ 		}
+ 	}
+ 
+@@ -2167,7 +2187,8 @@ static const struct drm_edid *mtk_dp_edid_read(struct drm_bridge *bridge,
+ 	 * Parse capability here to let atomic_get_input_bus_fmts and
+ 	 * mode_valid use the capability to calculate sink bitrates.
+ 	 */
+-	if (mtk_dp_parse_capabilities(mtk_dp)) {
++	if (mtk_dp->bridge.type == DRM_MODE_CONNECTOR_eDP &&
++	    mtk_dp_parse_capabilities(mtk_dp)) {
+ 		drm_err(mtk_dp->drm_dev, "Can't parse capabilities\n");
+ 		drm_edid_free(drm_edid);
+ 		drm_edid = NULL;
+@@ -2355,6 +2376,7 @@ static void mtk_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+ 					struct drm_atomic_state *state)
  {
--	/* "monitorx %eax, %ecx, %edx" */
--	asm volatile(".byte 0x0f, 0x01, 0xfa"
--		     :: "a" (eax), "c" (ecx), "d"(edx));
-+	asm volatile("monitorx" :: "a" (eax), "c" (ecx), "d"(edx));
- }
-=20
- static __always_inline void __mwait(u32 eax, u32 ecx)
-@@ -80,9 +78,7 @@ static __always_inline void __mwaitx(u32 eax, u32 ebx, u32 =
-ecx)
+ 	struct mtk_dp *mtk_dp = mtk_dp_from_bridge(bridge);
++	bool enabled = mtk_dp->enabled;
+ 	int ret;
+ 
+ 	mtk_dp->conn = drm_atomic_get_new_connector_for_encoder(state,
+@@ -2365,13 +2387,16 @@ static void mtk_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+ 		return;
+ 	}
+ 
+-	mtk_dp_aux_panel_poweron(mtk_dp, true);
++	if (!enabled)
++		mtk_dp_aux_panel_poweron(mtk_dp, true);
+ 
+-	/* Training */
+-	ret = mtk_dp_training(mtk_dp);
+-	if (ret) {
+-		drm_err(mtk_dp->drm_dev, "Training failed, %d\n", ret);
+-		goto power_off_aux;
++	if (mtk_dp->data->bridge_type == DRM_MODE_CONNECTOR_eDP) {
++		/* Training */
++		ret = mtk_dp_training(mtk_dp);
++		if (ret) {
++			drm_err(mtk_dp->drm_dev, "Training failed, %d\n", ret);
++			goto power_off_aux;
++		}
+ 	}
+ 
+ 	ret = mtk_dp_video_config(mtk_dp);
+@@ -2391,7 +2416,6 @@ static void mtk_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+ 		       sizeof(mtk_dp->info.audio_cur_cfg));
+ 	}
+ 
+-	mtk_dp->enabled = true;
+ 	mtk_dp_update_plugged_status(mtk_dp);
+ 
+ 	return;
+@@ -2406,7 +2430,6 @@ static void mtk_dp_bridge_atomic_disable(struct drm_bridge *bridge,
  {
- 	/* No need for TSA buffer clearing on AMD */
-=20
--	/* "mwaitx %eax, %ebx, %ecx" */
--	asm volatile(".byte 0x0f, 0x01, 0xfb"
--		     :: "a" (eax), "b" (ebx), "c" (ecx));
-+	asm volatile("mwaitx" :: "a" (eax), "b" (ebx), "c" (ecx));
- }
-=20
- /*
+ 	struct mtk_dp *mtk_dp = mtk_dp_from_bridge(bridge);
+ 
+-	mtk_dp->enabled = false;
+ 	mtk_dp_update_plugged_status(mtk_dp);
+ 	mtk_dp_video_enable(mtk_dp, false);
+ 	mtk_dp_audio_mute(mtk_dp, true);
+-- 
+2.45.2
+
 
