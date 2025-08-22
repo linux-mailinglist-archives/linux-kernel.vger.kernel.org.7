@@ -1,126 +1,251 @@
-Return-Path: <linux-kernel+bounces-782681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 881D7B3238C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:24:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49177B32390
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6614C625176
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:24:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4E08682C8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208122D6E43;
-	Fri, 22 Aug 2025 20:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220442D7DF1;
+	Fri, 22 Aug 2025 20:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ghm3Az2g"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yylgeXSC"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334FD1FF7D7;
-	Fri, 22 Aug 2025 20:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5E92D7817
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 20:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755894270; cv=none; b=ZOE2nsf8+k7DQ7oxGGYG3GQkYOwqntAOLBo/OzgpPnk78eLcVGui3pPeUzu9vd9jhtFP6IIWt9UyxKZCO2x067/SdSzWAXgCM6Vk2CU89b15TjcvL0QtQpoJB6+GSWXhYNBwc60i3Z75G5eXGAovwzL0kJCVvAg3eo+fgF/cZxQ=
+	t=1755894345; cv=none; b=Ymxki2jHpBwtxj78NbQY0EnjcUEGuo8e5hN6M47IcFMLaRRsxBIFIDGDjC5yc6+YY+UyS2IEZOe9mtSbOwJgSmae2KUY6DnJ8uJfZnCVNbxU1JDyGl/UAdsv/T3LpdreMb7muDIoBl6VjUOpeyNGXo4PYdV9b8rUBWVewCT4bQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755894270; c=relaxed/simple;
-	bh=bxZG6p/T1fiVTFwYT8vShK9SXRLGGL4+keW8lCA2SUc=;
+	s=arc-20240116; t=1755894345; c=relaxed/simple;
+	bh=VAV7N4y5pNAS0jZ5TBhEfldqKhwyq7wrJhDdA6aeLjM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S4UCmY3Yujo3DCGCj4Y4zoBIaFbKhlUBTPSGFRVTGvQFVnzuggDMorNRh+6AKTAtVAnmMTILeNyEmstXi3Dc5jxaRHEvDp6dBB8rkeZvjnxvmPhGB0mZi/JZT4FU94/kigboVB6m48++I48W2yqVLHShlhz1G93FU+7z2HCFx2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ghm3Az2g; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b47173edabaso405754a12.1;
-        Fri, 22 Aug 2025 13:24:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=UJkgtQCBUfjVU9Soja2Lb84ER608Z2wd4ga0YEsOU5Zd6hLNBjekR/hKTeAtjwaAkZ3o1y7DSj+t5gjsaxfx/pYp/Pt/VYH1WTCOmaVyYlRMUf0yoQrxTVfriM+h/2pllocsXh2rLpTri3jV+SJg24HLpqbuU972praJKwjLlbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yylgeXSC; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b0bd88ab8fso67881cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:25:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755894268; x=1756499068; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1755894342; x=1756499142; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=z5BZAMJAdNinjmrqtXeK5zr85hiUnHNVxz9y9YGq0B8=;
-        b=ghm3Az2gD/pIkMWWUtU5ARnEE62+Bz+yrNrelhDX2lFkDTTQAkevS9+EPraEvsRlfb
-         ujf8Lxoz+OJsjrMG/CxaT9IRe2I/RMZZeR5Iq6vbYVncOjd8r1gtoqg3TnAVV049Sqmg
-         zP60jmBi01aAF98eyCjkneZYmwQ/gb65kPRf7FqiI1GK2zMvASXA+Ko2dVCn6kCs+S6h
-         IjoropjVt473VFAGgTXy88bTBTiRPHH0QwQpiqNC86sIestaodSg18wuw/4Uu+5iPxaA
-         tp75/rRu7kEmO1lPEWOz7dLEjDqtMZyVfMnlQQFjZ2Ra/guNDnfm62p+mEWBGAnsFCY9
-         3WjQ==
+        bh=lnLeUyDCv69RBYB1LT6B3iM9eFzgxTxAmCOD+3zz5xw=;
+        b=yylgeXSCBGiER90ZvH4GURxtNZjKy/IEKDb27fUneh1VBK9R6jUdTVoIQkpDJ9qx18
+         Nm81zyWuzPZXbVQnVrp+kbIyKB8gFMiGAiD5TFCcjpsbebYRtZC8Ss0ieNTppzxyA+Zg
+         +IaG+FH8lOB79qJeee8KLn2sjpuXCmBFbK24vc1+ZCaBFQVErCT06rmVwOcd54Ml/gL6
+         ot3TanAJNi+D89F3EkRS0IKo6k7EZsIiQrgHMUQtoWYNLJiTqKMnWgEqbIQturnw7kA0
+         7r3MfseguCwIy0kxatEOKNPgq6zENec+lNMtOWVcBaXlTyzZMEufLnB2XL+ESsPW6FlM
+         klMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755894268; x=1756499068;
+        d=1e100.net; s=20230601; t=1755894342; x=1756499142;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=z5BZAMJAdNinjmrqtXeK5zr85hiUnHNVxz9y9YGq0B8=;
-        b=wn2EwxQt5y4yX9CcTvfx2LniwewybJRN0AEqShis4CqxyQrpFaQJRusoYv+fH83RqA
-         Iiyeeto5GsPsRgSYSuHju0xVDv+WIIOkNpeB8wC28M7Bq7cEAVw9/NbVwWPfwWFIA5t1
-         3ILFgZ3VDOBUYswqVhavY37jfBblB9dPRrVynZS6rxR+GE/gZjMFt3FdeuEL/DBfKHfa
-         txrZIesRWIDucMaZ/KWh22m6tLRrcb357aUqLUxLWsJ3CL0oeNR42/sQ47snMRA692Lj
-         dQLEGJw6b/KAAcIGLn2k+Tlm4Qdpo2VVHVF48RiQU4DY5kUnpPFhLgA2kHe4VF8k1tQD
-         5XWg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+44cwemgSntBEYkS5K+v5a03NP0iZmsGEb7P07QjglTZxIBCA2hHmTkAU6DfhSOJnviv72XCsuWgS7ETlWno=@vger.kernel.org, AJvYcCUISOK2sVs3sMBAdvSecAycw3+thlkS+wjfUKTiajWrKghlPy0OF6hg8TnqxT+HA8cmpgJvz16pKXrE5lo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk9CuFACRLjaZtJGHhUFlxqjVrPYwccPX5bjBgp0cEZ9/hZUOY
-	J2lT819BtwkV7G3jEBQFDGqD77MNQlGilDozfRH+CsLwUkyKkb7VzPxWvmQDgHFgVmuHFM6FIR7
-	C4TRZKibIKdG+2IxsY8ZjYaYmbVASH/Q=
-X-Gm-Gg: ASbGncuVooCagf+ZOL2npOwrkKPnZvEo4oJerefdW3xDVvGjzZOqcerkKCw5j9XTscJ
-	5r7ZXr1eb95F9la3BG9r9ZBOuuaX/FCILbWSUj8DwONKGfyqTj3kexpuMyfUkCii9ADYjjGKB+h
-	t8EsfATuBMRhGNw0FJ6BxArxjy4o2NF6YEwRfei1CukqUSq4ExwGgDoOqrVHkznZue+QSZvrMlV
-	j0hj7bOwy2yPhMZN7lmIsRtTM1RSLUToL95wmp4/g2mlrPnKLPaqFhCs66MhaU2VIqrSvnNj1yn
-	hg0/3jxE8YYxKcMQVVxq0ih0aA==
-X-Google-Smtp-Source: AGHT+IHhYCS+i34yL8mwZtpaljVlQVFlFvjT7BlrbezunK05lKaSzGUBdYFxNjc5hrmCJehwC+1vQkt5CawSg2N0OZg=
-X-Received: by 2002:a17:902:db0c:b0:240:9dcd:94c0 with SMTP id
- d9443c01a7336-2462edfb000mr29920735ad.2.1755894268437; Fri, 22 Aug 2025
- 13:24:28 -0700 (PDT)
+        bh=lnLeUyDCv69RBYB1LT6B3iM9eFzgxTxAmCOD+3zz5xw=;
+        b=iu1XdJxm+4gj9OBtCTcHd2SbNJvtIdrkuQRkRpguDGBVbEGjtoTyAMcPD4obGcTAQB
+         KFvLMnULWnSLkhplmY5CfGtOuloZIJgQNrHIBN5KN0eZisZjb/Dy+8Nb8HkAgRFgAeCX
+         78TTKkqx0T+E0Bl169KdZNKzGapPA2PkzW9JO9JKckusdvwCfr5octaklZiYepD/vyR4
+         3ykBVjiEMc93tXc1zwH32F4yyf3bt7JaRMwNYlEFoXKzucLz3jUKN9K3M7mkGbLSSxoa
+         pn5PEay+zWGQtgGT3v5HNe1RqlpNBK6u8NrXx9QSbmWnDOOFBvpDsvAdzqk8AXEk1IBk
+         4DMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUX3QWsfZyRmcE4wwFD8JELIL7NaP38EGTrQKAXjWkYAccsxeR0I/POFFaQVxB4G6f9DjZBJ8cJyBUMO3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUI1BAoy/sPWZC0syfEdKAicttRfbOoyFYLqgQPkz2Bmbhl61a
+	G3YSjaOZZhhclKpyoOFcV/Xc00DOzsmh0MY/a3wQoVr53CN6TftlvnopOOiXe4m4C2O6GAS88Xh
+	rrybNHo+PQVEZAxm13SD7mYVkVN6/3WGX6QM8M8qx
+X-Gm-Gg: ASbGncuffQFLrEvgJhCMH03MXgnPSlxzjjSZD80eweZguH9C528Nqwgtega9BkGAz6D
+	4nTDNKjJolWRmNmMC6/4QawSf2LgqCovs5mVHjakhxaza4si3LQOEqT13G+/CMP3hABm7OTmp5k
+	8d5mtQi1Hh1P7PU0d7HFwpaW80dhQIugS/cNWk6q7ZzrpumhoXGw6iB4P7+FVDfBMONlQ/I0oVT
+	DroSCtsgJQa
+X-Google-Smtp-Source: AGHT+IHpcbSNYEbG4dMf2Ur+EvgyoAGIN6Q8D39CISAhHgiGDM6Pv/YSxa4huZIle8BMgUbZsNIx8jQJ2T56bctuf1U=
+X-Received: by 2002:ac8:5885:0:b0:4b2:9b79:e700 with SMTP id
+ d75a77b69052e-4b2ba6f09bdmr904771cf.4.1755894342112; Fri, 22 Aug 2025
+ 13:25:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821091939.14019-1-work@onurozkan.dev> <CAH5fLggt4YJe93xo9KTr=hTQoj28=jjJtaxo=gFmnTbWmm8SRg@mail.gmail.com>
- <20250822080252.773d6f54@nimda.home>
-In-Reply-To: <20250822080252.773d6f54@nimda.home>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 22 Aug 2025 22:24:17 +0200
-X-Gm-Features: Ac12FXym5dbFGOC1DxZTCMQvo6hwH20UjanpMh4Zi3nDBMHpqgm8FYGQmWowxbI
-Message-ID: <CANiq72mstOhnZREwLoO5OR7JdnoFnQ-PDD7wQkJgjm-0A52DkA@mail.gmail.com>
-Subject: Re: [PATCH] rust: uaccess: use to_result for error handling
-To: =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
-Cc: Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	tmgross@umich.edu, dakr@kernel.org, tamird@gmail.com, 
-	linux-kernel@vger.kernel.org
+References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz> <20250723-slub-percpu-caches-v5-13-b792cd830f5d@suse.cz>
+In-Reply-To: <20250723-slub-percpu-caches-v5-13-b792cd830f5d@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 22 Aug 2025 13:25:31 -0700
+X-Gm-Features: Ac12FXwIfUzsXFwXr2_zQQKQgHFazg_c-46Y0QfxCWOo6vu0LHzTb5q0mxFp2Dg
+Message-ID: <CAJuCfpEjaw+4Ay-Yx=unHev+M4M9FmNmz_PSYmtsFn3EToLBxg@mail.gmail.com>
+Subject: Re: [PATCH v5 13/14] maple_tree: Add single node allocation support
+ to maple state
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter <cl@gentwo.org>, 
+	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
+	maple-tree@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 22, 2025 at 7:03=E2=80=AFAM Onur =C3=96zkan <work@onurozkan.dev=
-> wrote:
+On Wed, Jul 23, 2025 at 6:35=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
 >
-> Nice catch. I could use `try_into().unwrap_or(0)` but that feels a bit
-> iffy since it would silently avoid the error if `isize` happens to be
-> much smaller than what `i32` can handle (though I am not sure if it's
-> possible in practice in the kernel codebase). Let's just ignore this
-> patch.
+> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+>
+> The fast path through a write will require replacing a single node in
+> the tree.  Using a sheaf (32 nodes) is too heavy for the fast path, so
+> special case the node store operation by just allocating one node in the
+> maple state.
+>
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  include/linux/maple_tree.h |  4 +++-
+>  lib/maple_tree.c           | 47 ++++++++++++++++++++++++++++++++++++++++=
+------
+>  2 files changed, 44 insertions(+), 7 deletions(-)
+>
+> diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
+> index 3cf1ae9dde7ce43fa20ae400c01fefad048c302e..61eb5e7d09ad0133978e3ac4b=
+2af66710421e769 100644
+> --- a/include/linux/maple_tree.h
+> +++ b/include/linux/maple_tree.h
+> @@ -443,6 +443,7 @@ struct ma_state {
+>         unsigned long min;              /* The minimum index of this node=
+ - implied pivot min */
+>         unsigned long max;              /* The maximum index of this node=
+ - implied pivot max */
+>         struct slab_sheaf *sheaf;       /* Allocated nodes for this opera=
+tion */
+> +       struct maple_node *alloc;       /* allocated nodes */
+>         unsigned long node_request;
+>         enum maple_status status;       /* The status of the state (activ=
+e, start, none, etc) */
+>         unsigned char depth;            /* depth of tree descent during w=
+rite */
+> @@ -491,8 +492,9 @@ struct ma_wr_state {
+>                 .status =3D ma_start,                                    =
+ \
+>                 .min =3D 0,                                              =
+ \
+>                 .max =3D ULONG_MAX,                                      =
+ \
+> -               .node_request=3D 0,                                      =
+ \
+>                 .sheaf =3D NULL,                                         =
+ \
+> +               .alloc =3D NULL,                                         =
+ \
+> +               .node_request=3D 0,                                      =
+ \
+>                 .mas_flags =3D 0,                                        =
+ \
+>                 .store_type =3D wr_invalid,                              =
+ \
+>         }
+> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+> index 3c3c14a76d98ded3b619c178d64099b464a2ca23..9aa782b1497f224e7366ebbd6=
+5f997523ee0c8ab 100644
+> --- a/lib/maple_tree.c
+> +++ b/lib/maple_tree.c
+> @@ -1101,16 +1101,23 @@ static int mas_ascend(struct ma_state *mas)
+>   *
+>   * Return: A pointer to a maple node.
+>   */
+> -static inline struct maple_node *mas_pop_node(struct ma_state *mas)
+> +static __always_inline struct maple_node *mas_pop_node(struct ma_state *=
+mas)
+>  {
+>         struct maple_node *ret;
+>
+> +       if (mas->alloc) {
+> +               ret =3D mas->alloc;
+> +               mas->alloc =3D NULL;
+> +               goto out;
+> +       }
+> +
+>         if (WARN_ON_ONCE(!mas->sheaf))
+>                 return NULL;
+>
+>         ret =3D kmem_cache_alloc_from_sheaf(maple_node_cache, GFP_NOWAIT,=
+ mas->sheaf);
+> -       memset(ret, 0, sizeof(*ret));
+>
+> +out:
+> +       memset(ret, 0, sizeof(*ret));
+>         return ret;
+>  }
+>
+> @@ -1121,9 +1128,34 @@ static inline struct maple_node *mas_pop_node(stru=
+ct ma_state *mas)
+>   */
+>  static inline void mas_alloc_nodes(struct ma_state *mas, gfp_t gfp)
+>  {
+> -       if (unlikely(mas->sheaf)) {
+> -               unsigned long refill =3D mas->node_request;
+> +       if (!mas->node_request)
+> +               return;
+> +
+> +       if (mas->node_request =3D=3D 1) {
+> +               if (mas->sheaf)
+> +                       goto use_sheaf;
+> +
+> +               if (mas->alloc)
+> +                       return;
+>
+> +               mas->alloc =3D mt_alloc_one(gfp);
+> +               if (!mas->alloc)
+> +                       goto error;
+> +
+> +               mas->node_request =3D 0;
+> +               return;
+> +       }
+> +
+> +use_sheaf:
+> +       if (unlikely(mas->alloc)) {
 
-`isize` is at least 32-bit, but I am not sure that would be more readable.
+When would this condition happen? Do we really need to free mas->alloc
+here or it can be reused for the next 1-node allocation?
 
-If we want to make all these cases go through a `to_result`-like
-function, then we may want to have variants of that and so on instead
--- Onur created this related Zulip thread:
-
-    https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/top=
-ic/returning.20.60Ok.28c_int.29.60.20instead.20of.20.60Ok.28.28.29.29.60.20=
-on.20.60to_result.60/near/535616940
-
-Similarly, we also may want to have a function or similar that allows
-to perform such infallible casts (that are not infallible in general
-Rust but are in the kernel); for reference, a similar recent
-discussion at:
-
-    https://lore.kernel.org/rust-for-linux/CANiq72nW=3DXuUFqOB-6XavOPXtpbkH=
-sagEkYvcD2JfCEiopYo=3DQ@mail.gmail.com/
-
-Thanks!
-
-Cheers,
-Miguel
+> +               mt_free_one(mas->alloc);
+> +               mas->alloc =3D NULL;
+> +       }
+> +
+> +       if (mas->sheaf) {
+> +               unsigned long refill;
+> +
+> +               refill =3D mas->node_request;
+>                 if(kmem_cache_sheaf_size(mas->sheaf) >=3D refill) {
+>                         mas->node_request =3D 0;
+>                         return;
+> @@ -5386,8 +5418,11 @@ void mas_destroy(struct ma_state *mas)
+>         mas->node_request =3D 0;
+>         if (mas->sheaf)
+>                 mt_return_sheaf(mas->sheaf);
+> -
+>         mas->sheaf =3D NULL;
+> +
+> +       if (mas->alloc)
+> +               mt_free_one(mas->alloc);
+> +       mas->alloc =3D NULL;
+>  }
+>  EXPORT_SYMBOL_GPL(mas_destroy);
+>
+> @@ -6074,7 +6109,7 @@ bool mas_nomem(struct ma_state *mas, gfp_t gfp)
+>                 mas_alloc_nodes(mas, gfp);
+>         }
+>
+> -       if (!mas->sheaf)
+> +       if (!mas->sheaf && !mas->alloc)
+>                 return false;
+>
+>         mas->status =3D ma_start;
+>
+> --
+> 2.50.1
+>
 
