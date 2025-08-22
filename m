@@ -1,133 +1,101 @@
-Return-Path: <linux-kernel+bounces-782439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DBE5B3205D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:21:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 608E3B32060
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F52856178A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:17:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E55C05834C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5327261B9E;
-	Fri, 22 Aug 2025 16:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7014265623;
+	Fri, 22 Aug 2025 16:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gfxstrand-net.20230601.gappssmtp.com header.i=@gfxstrand-net.20230601.gappssmtp.com header.b="Dt+cUg77"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDU2rvAm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A603E537E9
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BC11A9FB9;
+	Fri, 22 Aug 2025 16:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755879448; cv=none; b=Ps44ZwuROxY79tvseatM+/meQTM9JNxS10T/lc8j0nbv1PYasc9ZJ3TJQFxKMVTDB1I7oUEmomS1cjgCwD/AEMdrs5QbzsxX4adeXoq70yQqDZFR6X2Cf6x408sCnpal2KrBo4wG/C2BfDlE7Uj1XNSs8n+LUfwQf7/UTjfPjLA=
+	t=1755879510; cv=none; b=KUfQ8L3fLq9hph8RfwEbt5ZIrcsg84q0lRadUU9SMuPTt9sZQSj/0QWfxayvAIwuztgFsVxWS4XXpKSGTTlVRuEJRuEuESzVX5c9rSLIdxIGlMQxGqatiuzWdjYUrwBgEzXQOiVn/FPKQoo0gOV6s5RvlSb5vr0sWLLIAOM2aY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755879448; c=relaxed/simple;
-	bh=9xZFE6t3K0AB2P7C5JCK+h3dwtQwyGwLIK7hLb2Y9t0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CPfqbBw3MIkmH1iUAqIlVgntooB7zQr8V1z6fibe1a0WaFLzCth8//rkMslbTxEuePCKwV3Pt4ss8vPjbd/52/mWq1Ea8euWKnD5467kGHfQSWxUaQhZaP+4BPZp69i3aoVAjf+kZiEp2StGQn5rzXOrKXGMAKk/w/hEZjpIync=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gfxstrand.net; spf=fail smtp.mailfrom=gfxstrand.net; dkim=pass (2048-bit key) header.d=gfxstrand-net.20230601.gappssmtp.com header.i=@gfxstrand-net.20230601.gappssmtp.com header.b=Dt+cUg77; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gfxstrand.net
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gfxstrand.net
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b47174c8e45so2138883a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:17:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gfxstrand-net.20230601.gappssmtp.com; s=20230601; t=1755879446; x=1756484246; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dXrBj7czlnifHIIbHLhwjoziAY7MsV3SxS2LubZ5kMI=;
-        b=Dt+cUg77fJhPI46tWqj7MeWDRutOWeDMO5Zt/eN4jHVvMvTYKE8oPLGslXJAAXq+Bo
-         UBsVJiXzMV6PJe7F1Yri6Xt00LjiM3JqRg2QAfmhcl9PiZ/0ktGo23q7bqDfGANb6AMo
-         SBRA+8yJzwT6Ss2i2i/IJ0J6BXyGGKpTSbtzv2N8uAptakaSym+6xlM0M9zF/YzYBAeU
-         8rJlw4KNGmdk95aB3uCvE8RAgBQK2Z+tLqhhB0+Lo+cI/4y4AGI+lH8DGWn8VYC6hYU8
-         AZJTsHgbRDbFR/M9DoXRgubhcTo2Wh5GIUbTSQ8CAvG1OZprG47C9nCofqqKNqJusTJ/
-         Kzyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755879446; x=1756484246;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dXrBj7czlnifHIIbHLhwjoziAY7MsV3SxS2LubZ5kMI=;
-        b=h4NY7OvqinvZwf9JllTQ6bXO2ltGW/CLq3O/08jLSSlRlxq/nDVbsouLrtuYsrQSSr
-         Z3El9NswdwDkHwFL8OfzLpL334SbXCvNrAcEGGLAS0Kmp8Qyj979p+V6TQPHcADF3o0v
-         jgYEjCnJ8w9n/SJC56xVmu/AfpuipXfsCjY8NBauDslos6wPXp+IuWIjkYEhTzBAZsgO
-         rbW7m38HQLR+h3paxm+7arv9eDjTvZdTc9IJBotALvnWUEbz/eNtF+Inl/VGiWx/IKre
-         638dJqO3XJs+w2Q2QKWswZiyPW9TZ8QgUXg1qWmhNhMl6yu/2y+PIlI3zHpqyCrZ3jNp
-         Z7uw==
-X-Forwarded-Encrypted: i=1; AJvYcCXeDSj0OluHyQ7ytIwZ3swHDZbdYQDtKAfI0ENPZzM99fWeeT6rkj9NaDqp32pqEY7OWiYgAtTGe7kfmBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmSNJjOCPpAzKnngZNenDFl4ikwWrbQto7zgzFb1+GRUcZx/U0
-	mvs/NMoM4IKzdiH6vxfZ8y12N2UoN4kxfCzLu4utgFFSGSIYOCXHivhOostMIhptuVLVBHD7fDD
-	8gYGEoWD/v1BmKr7FTZepJK4V3Cq1mJKD8mYOCMSISg==
-X-Gm-Gg: ASbGncveh+x/H74GMq3h1lA59nUYJWPWZyNc3eTXjmpvAOWupaBysGd6KBxXudnsGr6
-	8yUUcAr09HNMro9UhMtCen9k5LTFo+TFXHNzfkocdn3L4KkyFWrvusUk74AQvKeoWV/gthJ/nb0
-	q6LZFmUxJnOdOACYoMBKC5fSP0KqqbcmAVgVOl5/0WL/cU7gkpWPco9FLFyCAytuiEP2Ygcih0r
-	2JrJ2g=
-X-Google-Smtp-Source: AGHT+IGKWtnF8OMUPJUOBvgQeqNkELMzDuHtBwU+4iu0PtZ/qxp4Qh7KY9Mf/HhXhmKEYahJdPwQFQh0rwo7p48KCm8=
-X-Received: by 2002:a17:902:ced0:b0:246:4e37:e8e0 with SMTP id
- d9443c01a7336-2464e37e9e9mr25615135ad.38.1755879445875; Fri, 22 Aug 2025
- 09:17:25 -0700 (PDT)
+	s=arc-20240116; t=1755879510; c=relaxed/simple;
+	bh=YHS/oTRhurrO0NtuvfArtyVRbEqEjh/ZB1xiPazD29Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AU9sicsfdz6pxVARdUiGz9g0temQ8fuZdPQm9MwUqk9iGFKHdCeSB3suMHI5T7+C5VEeU/t4fLCdG3r8on6CG000h/gvuRXpvboDKSgaOdBL3krWUkGACJg85JE7BkcUg4TRYWB3zRR8zaNUHKM+6M8ymUL7J8s3hPmDWsuG0E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EDU2rvAm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55908C4CEED;
+	Fri, 22 Aug 2025 16:18:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755879509;
+	bh=YHS/oTRhurrO0NtuvfArtyVRbEqEjh/ZB1xiPazD29Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EDU2rvAmbrdsQmwDOOf46wZpKyL79qRomVIeWW1n6gS+yGd2aa3KJt0xVHllb94fb
+	 2/RJfy54Qd2giI2kVNErQ5hLopgJdVaiOBJPLcpVlhWZDKCN2qHxjj1F3p/6FzIuqD
+	 cCL0MFjAhJUrdB8XJWpraXU7FAvF3KAotwPbxoGwx+qAoWM+iepoHi5GQ1qdPm5ary
+	 4NQEekp8Ifz4NSKy7pPjz2ojCvad7wU0KHnFqMnEVC9Z8bnrkNmp5weCUQAnARUWEe
+	 7qqkU+kHH/Giaa0T7uEwdskfo/gTaGOeb0VtMfHIRGX26IBnMTzkhlBER0NTF6l/oi
+	 gUQm++Qs+Oi4Q==
+Date: Fri, 22 Aug 2025 11:18:28 -0500
+From: Rob Herring <robh@kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Conor Dooley <conor@kernel.org>, "biju.das.au" <biju.das.au@gmail.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	"magnus.damm" <magnus.damm@gmail.com>,
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 03/11] dt-bindings: phy: renesas: Document Renesas RZ/G3E
+ USB3.0 PHY
+Message-ID: <20250822161828.GA3905962-robh@kernel.org>
+References: <20250820171812.402519-1-biju.das.jz@bp.renesas.com>
+ <20250820171812.402519-4-biju.das.jz@bp.renesas.com>
+ <20250820-primer-shaded-66da9fa4bcae@spud>
+ <20250820-commodity-curator-1f580789885b@spud>
+ <TY3PR01MB113467039A598C0EDC284AE198632A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811220017.1337-1-jajones@nvidia.com> <20250811220017.1337-3-jajones@nvidia.com>
-In-Reply-To: <20250811220017.1337-3-jajones@nvidia.com>
-From: Faith Ekstrand <faith@gfxstrand.net>
-Date: Fri, 22 Aug 2025 12:17:14 -0400
-X-Gm-Features: Ac12FXzLE4N5nRMxFA42E8ma-vDPWeG1DvDUBRrSAZcCpMWQJqqBY0NIR6FzHhY
-Message-ID: <CAOFGe96j4+j4=3gcPH2k3aA7ST=ZS13O8woLUER2rKyF6xEgwA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] drm/nouveau/disp: Always accept linear modifier
-To: James Jones <jajones@nvidia.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Lyude Paul <lyude@redhat.com>, 
-	Faith Ekstrand <faith.ekstrand@collabora.com>, nouveau@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Joel Fernandes <joelagnelf@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY3PR01MB113467039A598C0EDC284AE198632A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
-On Mon, Aug 11, 2025 at 5:57=E2=80=AFPM James Jones <jajones@nvidia.com> wr=
-ote:
->
-> On some chipsets, which block-linear modifiers are
-> supported is format-specific. However, linear
-> modifiers are always be supported. The prior
-> modifier filtering logic was not accounting for
-> the linear case.
->
-> Fixes: c586f30bf74c ("drm/nouveau/kms: Add format mod prop to base/ovly/n=
-vdisp")
-> Signed-off-by: James Jones <jajones@nvidia.com>
+On Thu, Aug 21, 2025 at 07:18:59AM +0000, Biju Das wrote:
+> Hi Conor,
+> 
+> Thanks for the feedback.
+> 
+> > -----Original Message-----
+> > From: Conor Dooley <conor@kernel.org>
+> > Sent: 20 August 2025 21:13
+> > Subject: Re: [PATCH 03/11] dt-bindings: phy: renesas: Document Renesas RZ/G3E USB3.0 PHY
+> > 
+> > On Wed, Aug 20, 2025 at 09:10:07PM +0100, Conor Dooley wrote:
+> > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > 
+> > Now that I look again, same applies here with the different filename and compatible. Copypaste mistake?
+> > Or why does the compatible not match the filename?
+> > 
+> 
+> r9a09g047 is SoC part number which also known as RZ/G3E SoC.
+> 
+> I just followed the convention used in [1] and [2].
+> Please let me know, should I change rzg3e-usb3-phy.yaml.yaml-> r9a09g047-usb3-phy.yaml ?
 
-Reviewed-by: Faith Ekstrand <faith.ekstrand@collabora.com>
+I think it is fine as-is.
 
-> ---
->  drivers/gpu/drm/nouveau/dispnv50/wndw.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/gpu/drm/nouveau/dispnv50/wndw.c b/drivers/gpu/drm/no=
-uveau/dispnv50/wndw.c
-> index 11d5b923d6e7..e2c55f4b9c5a 100644
-> --- a/drivers/gpu/drm/nouveau/dispnv50/wndw.c
-> +++ b/drivers/gpu/drm/nouveau/dispnv50/wndw.c
-> @@ -795,6 +795,10 @@ static bool nv50_plane_format_mod_supported(struct d=
-rm_plane *plane,
->         struct nouveau_drm *drm =3D nouveau_drm(plane->dev);
->         uint8_t i;
->
-> +       /* All chipsets can display all formats in linear layout */
-> +       if (modifier =3D=3D DRM_FORMAT_MOD_LINEAR)
-> +               return true;
-> +
->         if (drm->client.device.info.chipset < 0xc0) {
->                 const struct drm_format_info *info =3D drm_format_info(fo=
-rmat);
->                 const uint8_t kind =3D (modifier >> 12) & 0xff;
-> --
-> 2.50.1
->
+Rob
 
