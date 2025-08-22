@@ -1,442 +1,134 @@
-Return-Path: <linux-kernel+bounces-782710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70323B323F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:09:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F3AEB323F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 284E67B02E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:07:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96CE87ADCE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0450308F39;
-	Fri, 22 Aug 2025 21:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6FF31E115;
+	Fri, 22 Aug 2025 21:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="DDf155oi"
-Received: from relay10.grserver.gr (relay10.grserver.gr [37.27.248.198])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IQb3uoCx"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EB72C031B;
-	Fri, 22 Aug 2025 21:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.27.248.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C303128CC
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 21:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755896941; cv=none; b=hiEIVQrhKHb0B0xb1W1aS855TKWgXexOfjiITHU8G7Yj+Y+q43WDHhHeglxiir8piVKknLoavhxtRElGj4JPSitgYKibuFSYo+8oYWGr9lkEhoUxAREtybUXunujeT8v9jRHDMmJpdStru1LVRCLVB+g8jpVjiNXmqIs0xCe7iA=
+	t=1755897112; cv=none; b=EBYFoxaelM0TBiyDHpA7WmSb+3ymIbe3hwndQPTDuymug7SaCkQQ5umT7FtdrkuAL+MUGiXL5YbjqdQZ6NuXHu0skcVj5V29QG5EP7R6wwZ8k2JNM+vy/dEQO4JHiYozHyG0qJ5AleFrYA4gUMU7NG3qAcMNiHpurDeV8HJgTJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755896941; c=relaxed/simple;
-	bh=aj5L2TX2iwz2NiltJHcPmFvBlvtRm7L7Q9nIczpF//U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=egksKfZCxWrm7AG6FQQRkqrF4cxNl2kRLgsPjXXWQj1ByDKKvi7z40s6sIJ/8E3aeQlUYzXKdduRrlxf9L2yAMh/IT8AozICD3WwhoyqOfXw4Zqvd3ct3l4BvBlfbqZ1DA6yFq7JnIjDrergS3HGVeJfs6KHCXhVYL3EG/Yt+o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=DDf155oi; arc=none smtp.client-ip=37.27.248.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay10 (localhost.localdomain [127.0.0.1])
-	by relay10.grserver.gr (Proxmox) with ESMTP id B5E933EAE6;
-	Sat, 23 Aug 2025 00:08:57 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	s=arc-20240116; t=1755897112; c=relaxed/simple;
+	bh=akdSKAL7tVI8pIQYJXa6n3Pb4+YuTDZ9DIiQXpW+W1o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MRLQTzsvEgbzjUb8/yKvJEGkc7WshotbP7LJPchybdAgrxiC+G4ykkFwg6/2V8qTlDAkRGZzHSi00F5Qapkd0unfhW6GGtAvJ5RhLWeCj5AhVhm5j10FAuamasTn9r4Wdidafc7p0ArptKBfy96Aj+Pd9CxHoHQe0Np7YAjwLes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IQb3uoCx; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755897108;
+	bh=akdSKAL7tVI8pIQYJXa6n3Pb4+YuTDZ9DIiQXpW+W1o=;
+	h=From:Date:Subject:To:Cc:From;
+	b=IQb3uoCxgz9EJgxgtyL9YBHM6u3VY1izwzCzUz0KK2cwUAPbTU0kSYamyGVroOLP5
+	 DxJ28/l3zj531dJw1MlvxyCo0V5m9980qVJ14TOdjnXtk+lcd+ytXTvyP12HkUmSvI
+	 rY2pE3G9hq/tJquJDoZpM7xBaZ01bo12pyW+hZ04oZGgiPPIsmArVuUKMNLW7VH1TB
+	 hIbFcSmratRRLpyOq0AIJjfPzu4ZkQR7NER2RReOMUpI7G41rWkdqkfGxbVfKaeOXD
+	 PlG5KvHts0xf2LoNziU84xmFxKaU+nbCP9RE65xhWN1WW3uwigy5ZXxmj5bkY8DPjb
+	 JTnxxf/74/NQw==
+Received: from localhost (unknown [82.79.138.60])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by relay10.grserver.gr (Proxmox) with ESMTPS id 912D63EA45;
-	Sat, 23 Aug 2025 00:08:56 +0300 (EEST)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id E53421FF777;
-	Sat, 23 Aug 2025 00:08:55 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1755896936;
-	bh=tXVCoDJ1dJ54wtQS60wSOykNa185qcgeAq3DOhnPMhs=;
-	h=Received:From:Subject:To;
-	b=DDf155oiRfB76iP1UdFhdIY5GftS03gplGMBIuz/wrVNmR3L4ByAKfgvxLkuTOjiX
-	 BXQo9SEZPcC8gqpsu6KsYErlAhsEJffGBEnTOoPk2wT1F8m1TGVj201LlM+I4WxxzY
-	 Y6OFR4W2jGn5PhhVJnnlxKr0eBzJM6MZ6PDN8rWMm+8Vobi3hiFPN2sjgPmujdLyqq
-	 UVRpao8oOehArCQ3TEDsJhU3xwm/rjeMoWH0SNvhwbNPfGJWzWHiWW/BRjgOsc7FTQ
-	 b7WzpOnv6fc/AQvmX/wWZtmZedquGVcQwh+QgIYWYXZIvGCW7Tavwtr0ssXo/JxXLS
-	 blRO3iG1J4ULw==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.180) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f180.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f180.google.com with SMTP id
- 38308e7fff4ca-33663076b32so219011fa.0;
-        Fri, 22 Aug 2025 14:08:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCX0MRGW41VexXAxAmYS8mDDye5KAfEJ+OyjAEfPU6WU1/vhmcpKYPj14IjwdNF+KBFHeWt4RKDC+FpHxsTV@vger.kernel.org,
- AJvYcCXAr+EZ/kF0ChU8jV1GPj+nOWo5OIL0TqCRZ702yQpq7fL5I4ZTFi2bXnue8CaFNzcdBBN/1DKFwIwdCA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZWdIaaYrkN3qFJgYdJxDjC2VoT1VGabQHNMjbHBJpmdHXOhXQ
-	TUAod5qwekbDoGa9tKGkDQJtzKV+i9USz81GsfNWKPZQVvqm2gwnaZi/wsXDvWPW8yQfcSck+wV
-	Nf8GZYV4KzhLnSvO8g4ol8nJX4ZGY1IU=
-X-Google-Smtp-Source: 
- AGHT+IF0BJB6744loVNX9J+VwPM1e6/x0rlPnAt+1tlz4WNIs7TXIXJk6wwdyAdLAtLweu9PnvPLhONcJMteVKG5dio=
-X-Received: by 2002:a2e:a9a9:0:b0:32b:4773:7a80 with SMTP id
- 38308e7fff4ca-33650f3e3c5mr13863411fa.25.1755896935419; Fri, 22 Aug 2025
- 14:08:55 -0700 (PDT)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 35A3D17E0C54;
+	Fri, 22 Aug 2025 23:11:48 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Date: Sat, 23 Aug 2025 00:11:35 +0300
+Subject: [PATCH] drm/amdgpu: Fix kernel-doc comments for some LUT
+ properties
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820160628.99678-1-lkml@antheas.dev>
- <20250820160628.99678-5-lkml@antheas.dev>
- <aaf9682d-f48f-4d43-b8fe-87a93b353fa7@gmx.de>
-In-Reply-To: <aaf9682d-f48f-4d43-b8fe-87a93b353fa7@gmx.de>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Fri, 22 Aug 2025 23:08:44 +0200
-X-Gmail-Original-Message-ID: 
- <CAGwozwE8hr=kDFvMdkoq7mkc8nV9xrY-5OQG+CjPg14ok88Zow@mail.gmail.com>
-X-Gm-Features: Ac12FXz09FfCZBkF-EGxQ6-31MMY1qBnsIDBcAzL5UzPEiL3YjYLI0tUrZ0OxJ8
-Message-ID: 
- <CAGwozwE8hr=kDFvMdkoq7mkc8nV9xrY-5OQG+CjPg14ok88Zow@mail.gmail.com>
-Subject: Re: [PATCH v1 4/5] platform/x86: ayaneo-ec: Add controller power and
- modules attributes
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, Hans de Goede <hansg@kernel.org>,
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Derek John Clark <derekjohn.clark@gmail.com>,
-	=?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
-	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <175589693614.2814910.11317773422842162509@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250823-amdgpu-fix-kdoc-lut-v1-1-306bcad41267@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAAbdqGgC/x2MWwqAIBAArxL73UIZonSV6KN0s6UnWhGId0/6H
+ IaZCIE8U4C2iODp4cDHnqEuCzDzsDtCtplBVEJWWjQ4bNadN0784mIPg+t9YSOVHfUo1UQEuTw
+ 9Zf9fuz6lDwwD8VhlAAAA
+X-Change-ID: 20250823-amdgpu-fix-kdoc-lut-357db8b57fee
+To: Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Harry Wentland <harry.wentland@amd.com>, Melissa Wen <mwen@igalia.com>
+Cc: kernel@collabora.com, amd-gfx@lists.freedesktop.org, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-On Fri, 22 Aug 2025 at 14:41, Armin Wolf <W_Armin@gmx.de> wrote:
->
-> Am 20.08.25 um 18:06 schrieb Antheas Kapenekakis:
->
-> > The Ayaneo 3 features hot-swappable controller modules. The ejection
-> > and management is done through HID. However, after ejecting the modules,
-> > the controller needs to be power cycled via the EC to re-initialize.
-> >
-> > For this, the EC provides a variable that holds whether the left or
-> > right modules are connected, and a power control register to turn
-> > the controller on or off. After ejecting the modules, the controller
-> > should be turned off. Then, after both modules are reinserted,
-> > the controller may be powered on again to re-initialize.
-> >
-> > This patch introduces two new firmware attributes:
-> >   - `controller_modules`: a read-only attribute that indicates whether
-> >     the left and right modules are connected (none, left, right, both).
-> >   - `controller_power`: a read-write attribute that allows the user
-> >     to turn the controller on or off (with 'on'/'off').
-> >
-> > Therefore, after ejection is complete, userspace can power off the
-> > controller, then wait until both modules have been reinserted
-> > (`controller_modules` will return 'both') to turn on the controller.
->
-> I do not think that those controls should be exposed as firmware attributes,
-> as they are live values not persistent across power cycles. Better use
-> sysfs attributes instead.
+The following members of struct amdgpu_mode_info do not have valid
+references in the related kernel-doc sections:
 
-Isn't there precedent for this with SPL/SPPT/FPPT? I remember having a
-long form discussion with you about how this interface is appropriate
-for this, which is why I used it here.
+ - plane_shaper_lut_property
+ - plane_shaper_lut_size_property,
+ - plane_lut3d_size_property
 
-The controller_modules attribute is read only and reports which
-modules are connected, which is somewhat useful. As for power, it can
-likewise be used by users to toggle the controller on and off. Indeed,
-the attribute is not long lasting though.
+Correct all affected comment blocks.
 
-Best,
-Antheas
+Fixes: f545d82479b4 ("drm/amd/display: add plane shaper LUT and TF driver-specific properties")
+Fixes: 671994e3bf33 ("drm/amd/display: add plane 3D LUT driver-specific properties")
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-> Thanks,
-> Armin Wolf
->
-> >
-> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > ---
-> >   drivers/platform/x86/ayaneo-ec.c | 235 ++++++++++++++++++++++++++++++-
-> >   1 file changed, 234 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/ayaneo-ec.c
-> > index a4bdc6ae7af7..eb7f9ae03b4f 100644
-> > --- a/drivers/platform/x86/ayaneo-ec.c
-> > +++ b/drivers/platform/x86/ayaneo-ec.c
-> > @@ -16,6 +16,10 @@
-> >   #include <linux/platform_device.h>
-> >   #include <acpi/battery.h>
-> >
-> > +#include "firmware_attributes_class.h"
-> > +
-> > +#define DRIVER_NAME "ayaneo-ec"
-> > +
-> >   #define AYANEO_PWM_ENABLE_REG        0x4A
-> >   #define AYANEO_PWM_REG               0x4B
-> >   #define AYANEO_PWM_MODE_AUTO         0x00
-> > @@ -30,20 +34,60 @@
-> >   #define AYANEO_CHARGE_VAL_AUTO              0xaa
-> >   #define AYANEO_CHARGE_VAL_INHIBIT   0x55
-> >
-> > +#define AYANEO_POWER_REG     0x2d
-> > +#define AYANEO_POWER_OFF     0xfe
-> > +#define AYANEO_POWER_ON              0xff
-> > +#define AYANEO_MODULE_REG    0x2f
-> > +#define AYANEO_MODULE_LEFT   BIT(0)
-> > +#define AYANEO_MODULE_RIGHT  BIT(1)
-> > +
-> > +enum ayaneo_fw_attr_id {
-> > +     AYANEO_ATTR_CONTROLLER_MODULES,
-> > +     AYANEO_ATTR_CONTROLLER_POWER,
-> > +};
-> > +
-> > +static const char *const ayaneo_fw_attr_name[] = {
-> > +     [AYANEO_ATTR_CONTROLLER_MODULES] = "controller_modules",
-> > +     [AYANEO_ATTR_CONTROLLER_POWER] = "controller_power",
-> > +};
-> > +
-> > +static const char *const ayaneo_fw_attr_desc[] = {
-> > +     [AYANEO_ATTR_CONTROLLER_MODULES] =
-> > +             "Which controller Magic Modules are connected (none, left, right, both)",
-> > +     [AYANEO_ATTR_CONTROLLER_POWER] = "Controller power state (on, off)",
-> > +};
-> > +
-> > +#define AYANEO_ATTR_ENUM_MAX_ATTRS 7
-> > +#define AYANEO_ATTR_LANGUAGE_CODE "en_US.UTF-8"
-> > +
-> >   struct ayaneo_ec_quirk {
-> >       bool has_fan_control;
-> >       bool has_charge_control;
-> > +     bool has_magic_modules;
-> > +     bool has_controller_power;
-> >   };
-> >
-> >   struct ayaneo_ec_platform_data {
-> >       struct platform_device *pdev;
-> >       struct ayaneo_ec_quirk *quirks;
-> >       struct acpi_battery_hook battery_hook;
-> > +     struct device *fw_attrs_dev;
-> > +     struct kset *fw_attrs_kset;
-> > +};
-> > +
-> > +struct ayaneo_fw_attr {
-> > +     struct ayaneo_ec_platform_data *data;
-> > +     enum ayaneo_fw_attr_id fw_attr_id;
-> > +     struct attribute_group attr_group;
-> > +     struct kobj_attribute display_name;
-> > +     struct kobj_attribute current_value;
-> >   };
-> >
-> >   static const struct ayaneo_ec_quirk ayaneo3 = {
-> >       .has_fan_control = true,
-> >       .has_charge_control = true,
-> > +     .has_magic_modules = true,
-> > +     .has_controller_power = true,
-> >   };
-> >
-> >   static const struct dmi_system_id dmi_table[] = {
-> > @@ -260,6 +304,159 @@ static int ayaneo_remove_battery(struct power_supply *battery,
-> >       return 0;
-> >   }
-> >
-> > +static void ayaneo_kset_unregister(void *data)
-> > +{
-> > +     struct kset *kset = data;
-> > +
-> > +     kset_unregister(kset);
-> > +}
-> > +
-> > +static void ayaneo_fw_attrs_dev_unregister(void *data)
-> > +{
-> > +     struct device *fw_attrs_dev = data;
-> > +
-> > +     device_unregister(fw_attrs_dev);
-> > +}
-> > +
-> > +static ssize_t display_name_language_code_show(struct kobject *kobj,
-> > +                                            struct kobj_attribute *attr,
-> > +                                            char *buf)
-> > +{
-> > +     return sysfs_emit(buf, "%s\n", AYANEO_ATTR_LANGUAGE_CODE);
-> > +}
-> > +
-> > +static struct kobj_attribute fw_attr_display_name_language_code =
-> > +     __ATTR_RO(display_name_language_code);
-> > +
-> > +static ssize_t display_name_show(struct kobject *kobj,
-> > +                              struct kobj_attribute *attr, char *buf)
-> > +{
-> > +     struct ayaneo_fw_attr *fw_attr =
-> > +             container_of(attr, struct ayaneo_fw_attr, display_name);
-> > +
-> > +     return sysfs_emit(buf, "%s\n", ayaneo_fw_attr_desc[fw_attr->fw_attr_id]);
-> > +}
-> > +
-> > +static ssize_t current_value_show(struct kobject *kobj,
-> > +                               struct kobj_attribute *attr, char *buf)
-> > +{
-> > +     struct ayaneo_fw_attr *fw_attr =
-> > +             container_of(attr, struct ayaneo_fw_attr, current_value);
-> > +     bool left, right;
-> > +     char *out;
-> > +     int ret;
-> > +     u8 tmp;
-> > +
-> > +     switch (fw_attr->fw_attr_id) {
-> > +     case AYANEO_ATTR_CONTROLLER_MODULES:
-> > +             ret = ec_read(AYANEO_MODULE_REG, &tmp);
-> > +             if (ret)
-> > +                     return ret;
-> > +             left = !(tmp & AYANEO_MODULE_LEFT);
-> > +             right = !(tmp & AYANEO_MODULE_RIGHT);
-> > +
-> > +             if (left && right)
-> > +                     out = "both";
-> > +             else if (left)
-> > +                     out = "left";
-> > +             else if (right)
-> > +                     out = "right";
-> > +             else
-> > +                     out = "none";
-> > +
-> > +             return sysfs_emit(buf, "%s\n", out);
-> > +     case AYANEO_ATTR_CONTROLLER_POWER:
-> > +             ret = ec_read(AYANEO_POWER_REG, &tmp);
-> > +             if (ret)
-> > +                     return ret;
-> > +
-> > +             if (tmp == AYANEO_POWER_OFF)
-> > +                     out = "off";
-> > +             else
-> > +                     out = "on";
-> > +
-> > +             return sysfs_emit(buf, "%s\n", out);
-> > +     }
-> > +     return -EINVAL;
-> > +}
-> > +
-> > +static ssize_t current_value_store(struct kobject *kobj,
-> > +                                struct kobj_attribute *attr, const char *buf,
-> > +                                size_t count)
-> > +{
-> > +     struct ayaneo_fw_attr *fw_attr =
-> > +             container_of(attr, struct ayaneo_fw_attr, current_value);
-> > +     int ret;
-> > +
-> > +     switch (fw_attr->fw_attr_id) {
-> > +     case AYANEO_ATTR_CONTROLLER_POWER:
-> > +             if (sysfs_streq(buf, "on"))
-> > +                     ret = ec_write(AYANEO_POWER_REG, AYANEO_POWER_ON);
-> > +             else if (sysfs_streq(buf, "off"))
-> > +                     ret = ec_write(AYANEO_POWER_REG, AYANEO_POWER_OFF);
-> > +             if (ret)
-> > +                     return ret;
-> > +             return count;
-> > +     case AYANEO_ATTR_CONTROLLER_MODULES:
-> > +             return -EINVAL;
-> > +     }
-> > +     return -EINVAL;
-> > +}
-> > +
-> > +static ssize_t type_show(struct kobject *kobj, struct kobj_attribute *attr,
-> > +                      char *buf)
-> > +{
-> > +     return sysfs_emit(buf, "string\n");
-> > +}
-> > +
-> > +static struct kobj_attribute fw_attr_type_string = {
-> > +     .attr = { .name = "type", .mode = 0444 },
-> > +     .show = type_show,
-> > +};
-> > +
-> > +static int ayaneo_fw_attr_init(struct ayaneo_ec_platform_data *data,
-> > +                            const enum ayaneo_fw_attr_id fw_attr_id,
-> > +                            bool read_only)
-> > +{
-> > +     struct ayaneo_fw_attr *fw_attr;
-> > +     struct attribute **attrs;
-> > +     int idx = 0;
-> > +
-> > +     fw_attr = devm_kzalloc(&data->pdev->dev, sizeof(*fw_attr), GFP_KERNEL);
-> > +     if (!fw_attr)
-> > +             return -ENOMEM;
-> > +
-> > +     attrs = devm_kcalloc(&data->pdev->dev, AYANEO_ATTR_ENUM_MAX_ATTRS + 1,
-> > +                          sizeof(*attrs), GFP_KERNEL);
-> > +     if (!attrs)
-> > +             return -ENOMEM;
-> > +
-> > +     fw_attr->data = data;
-> > +     fw_attr->fw_attr_id = fw_attr_id;
-> > +     fw_attr->attr_group.name = ayaneo_fw_attr_name[fw_attr_id];
-> > +     fw_attr->attr_group.attrs = attrs;
-> > +
-> > +     attrs[idx++] = &fw_attr_type_string.attr;
-> > +     attrs[idx++] = &fw_attr_display_name_language_code.attr;
-> > +
-> > +     sysfs_attr_init(&fw_attr->display_name.attr);
-> > +     fw_attr->display_name.attr.name = "display_name";
-> > +     fw_attr->display_name.attr.mode = 0444;
-> > +     fw_attr->display_name.show = display_name_show;
-> > +     attrs[idx++] = &fw_attr->display_name.attr;
-> > +
-> > +     sysfs_attr_init(&fw_attr->current_value.attr);
-> > +     fw_attr->current_value.attr.name = "current_value";
-> > +     fw_attr->current_value.attr.mode = read_only ? 0444 : 0644;
-> > +     fw_attr->current_value.show = current_value_show;
-> > +     fw_attr->current_value.store = current_value_store;
-> > +     attrs[idx++] = &fw_attr->current_value.attr;
-> > +
-> > +     attrs[idx] = NULL;
-> > +     return sysfs_create_group(&data->fw_attrs_kset->kobj,
-> > +                               &fw_attr->attr_group);
-> > +}
-> > +
-> >   static int ayaneo_ec_probe(struct platform_device *pdev)
-> >   {
-> >       const struct dmi_system_id *dmi_entry;
-> > @@ -295,12 +492,48 @@ static int ayaneo_ec_probe(struct platform_device *pdev)
-> >                       return ret;
-> >       }
-> >
-> > +     if (data->quirks->has_magic_modules || data->quirks->has_controller_power) {
-> > +             data->fw_attrs_dev = device_create(&firmware_attributes_class, NULL,
-> > +                                             MKDEV(0, 0), NULL, "%s",
-> > +                                             DRIVER_NAME);
-> > +             if (IS_ERR(data->fw_attrs_dev))
-> > +                     return PTR_ERR(data->fw_attrs_dev);
-> > +
-> > +             ret = devm_add_action_or_reset(&data->pdev->dev,
-> > +                                     ayaneo_fw_attrs_dev_unregister,
-> > +                                     data->fw_attrs_dev);
-> > +             if (ret)
-> > +                     return ret;
-> > +
-> > +             data->fw_attrs_kset = kset_create_and_add("attributes", NULL,
-> > +                                                     &data->fw_attrs_dev->kobj);
-> > +             if (!data->fw_attrs_kset)
-> > +                     return -ENOMEM;
-> > +
-> > +             ret = devm_add_action_or_reset(&data->pdev->dev, ayaneo_kset_unregister,
-> > +                                     data->fw_attrs_kset);
-> > +
-> > +             if (data->quirks->has_magic_modules) {
-> > +                     ret = ayaneo_fw_attr_init(
-> > +                             data, AYANEO_ATTR_CONTROLLER_MODULES, true);
-> > +                     if (ret)
-> > +                             return ret;
-> > +             }
-> > +
-> > +             if (data->quirks->has_controller_power) {
-> > +                     ret = ayaneo_fw_attr_init(
-> > +                             data, AYANEO_ATTR_CONTROLLER_POWER, false);
-> > +                     if (ret)
-> > +                             return ret;
-> > +             }
-> > +     }
-> > +
-> >       return 0;
-> >   }
-> >
-> >   static struct platform_driver ayaneo_platform_driver = {
-> >       .driver = {
-> > -             .name = "ayaneo-ec",
-> > +             .name = DRIVER_NAME,
-> >       },
-> >       .probe = ayaneo_ec_probe,
-> >   };
->
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
+index 6da4f946cac008ac865cd6d8a06fb0bd84d646d5..c3ad371658065388c10b7cfc45377b0465bd24ca 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
+@@ -366,15 +366,15 @@ struct amdgpu_mode_info {
+ 
+ 	struct drm_property *plane_ctm_property;
+ 	/**
+-	 * @shaper_lut_property: Plane property to set pre-blending shaper LUT
+-	 * that converts color content before 3D LUT. If
+-	 * plane_shaper_tf_property != Identity TF, AMD color module will
++	 * @plane_shaper_lut_property: Plane property to set pre-blending
++	 * shaper LUT that converts color content before 3D LUT.
++	 * If plane_shaper_tf_property != Identity TF, AMD color module will
+ 	 * combine the user LUT values with pre-defined TF into the LUT
+ 	 * parameters to be programmed.
+ 	 */
+ 	struct drm_property *plane_shaper_lut_property;
+ 	/**
+-	 * @shaper_lut_size_property: Plane property for the size of
++	 * @plane_shaper_lut_size_property: Plane property for the size of
+ 	 * pre-blending shaper LUT as supported by the driver (read-only).
+ 	 */
+ 	struct drm_property *plane_shaper_lut_size_property;
+@@ -398,10 +398,10 @@ struct amdgpu_mode_info {
+ 	 */
+ 	struct drm_property *plane_lut3d_property;
+ 	/**
+-	 * @plane_degamma_lut_size_property: Plane property to define the max
+-	 * size of 3D LUT as supported by the driver (read-only). The max size
+-	 * is the max size of one dimension and, therefore, the max number of
+-	 * entries for 3D LUT array is the 3D LUT size cubed;
++	 * @plane_lut3d_size_property: Plane property to define the max size
++	 * of 3D LUT as supported by the driver (read-only). The max size is
++	 * the max size of one dimension and, therefore, the max number of
++	 * entries for 3D LUT array is the 3D LUT size cubed.
+ 	 */
+ 	struct drm_property *plane_lut3d_size_property;
+ 	/**
+
+---
+base-commit: 0f4c93f7eb861acab537dbe94441817a270537bf
+change-id: 20250823-amdgpu-fix-kdoc-lut-357db8b57fee
 
 
