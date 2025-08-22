@@ -1,137 +1,141 @@
-Return-Path: <linux-kernel+bounces-782506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4689BB32162
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:17:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE6EDB32163
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4725D3A37BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:16:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CFFB687331
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F03C23F26B;
-	Fri, 22 Aug 2025 17:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0D1275AFF;
+	Fri, 22 Aug 2025 17:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dd0uS5m0"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H58es/lH"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5BF235355
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FFC1D5CFB
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755883004; cv=none; b=Q4wWnfYrp9POFdHshKMTKGQ0wRSV60C5e+qsXk3vLwv26O+O4CEzUk09bOKljSlCvTMMH82oLoXXJqlk3ZuXD2OFf05ijJ2a9wRNs+SK5hoH53qg4oGg4JQtMLDlJF4aagLEVcU74yMvxIRjLk79xD25s6e82cQ8KGaZfN0FD7E=
+	t=1755883052; cv=none; b=nwKpnQZ+Cu2FkPOEBokQnECsP/RtTjt+LEeNLCGj4YTB55aXIS/f4J72nuP3L9BKGRRgs/R7hhUah5v4nz+Jn057apn4ED8Q6tRjOlKj/IjehtlEJ6eRZMKt57CtT6p7CXcqWBr6aM5z5jqffAYc+fpwykWQnfQep9ZVY3IH0aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755883004; c=relaxed/simple;
-	bh=Reiqrhs0SwE9AhkJDRm2RhHstOruGMKD+ubZZAq37oQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b70FfKWZNd6OsQNa3koA9+sbx+SLoos8bF7L5HZC7QZVWvnSCj7nHPL0lXVWNFchm//8WT7jMW5pl9JQ7vFIbtp0ISP2xL4rnoLmrkfG+B6RDE3tT01uEf/hw+Z4XSSJ1bZCwE3E1TA0umXsZidW0/Y4KfKiQWYP0BVG80Urzds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dd0uS5m0; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61c169a9720so541a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:16:41 -0700 (PDT)
+	s=arc-20240116; t=1755883052; c=relaxed/simple;
+	bh=5Udo/f8ent/K3o9ISDeOwIWa6pto6XFRhDz1qdZBK/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=teMX6xenwqJo6Cz5Y2lHnvHzE4YCrAD9ByVKm5M4RglBiEegyE9d5FenhGQBQu2WXIPvLb3quMtmMxGlyqovS+QCdHNOBqoK94fdbxLDIh413q6LBjXkr4YZNthXQmfurOrOC7ddOW9/BIS6ji+800ptoE1UIjV07snHUZHk+0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H58es/lH; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45a1b05fe23so14100805e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:17:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755883000; x=1756487800; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Reiqrhs0SwE9AhkJDRm2RhHstOruGMKD+ubZZAq37oQ=;
-        b=dd0uS5m0ko2ZbXKJj8ztYqUX5axaA+J9Ghv+3kKwe4nICiiWiffUxCzj823XDA6ZAd
-         XMIBb7luZcNviZ161tGjblVzq1rpvsKIMY1jDBbohNFqOqQ4NvWFaGUDEtNzrgWNNVab
-         g1qcEn2uLrR4p58DMSvF5uV/6UCSIUVx22zY6Y31/DPFUNMZm6EkmJpZd1h2b8jQnYVl
-         xG9GI5nv1peaFbE/sYqABgTplDMTFf/ywTnAp6LbK0oFBBN1Gt6vkXIYghjQ6FxnaSMb
-         +dnSRikpwOVGZ8qDX8/KB0JeWqBGOW8SdbemSdnWZWQmb54z9AtAXejbwJZEEcRHu13V
-         7g9Q==
+        d=linaro.org; s=google; t=1755883049; x=1756487849; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nG60mJTcfDhZrN0Chr9ou2fiLnhkow+tZ1jRLbxcJ6I=;
+        b=H58es/lHKvLkGOUNkdCCn1kAqRZjWMIe6TnktkO+odkdjU7qbzNQSf/vBL2VT8R6HQ
+         nRDNFwSImMkWdFvqsPIjVab2mN0RnBBYJQ/GUsCkcWl7hOCNWL2PVbsU/wSBpqY8b1+v
+         lIme8MLwV4N/swwnOMA9/CBZ4emKSsBHZs6Bfy2YI7ao6r9vUBO1ckoucptoxz0NuHDK
+         Ol2tyXpEmN7H6caLVaRxH5JXNm93WQx6lx1Fua63elHQLffffx/c2oc+K/AuEdSSrLqR
+         pDPL336ffOHhTTuNzMKBL8Km6DoQp4Ozuqs4cNbdZ2Y2plyNSGjrFvk7L1Gli/80PKC/
+         2Ihg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755883000; x=1756487800;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Reiqrhs0SwE9AhkJDRm2RhHstOruGMKD+ubZZAq37oQ=;
-        b=UDNZMY1qOdLVGoUnDuazKRFwsTs3tidydO6KGHVaP7V14qJnpNT24NoM1ugVIuquoR
-         G6zuRg6nj6esRZfzMKB0OLtSicalKf2kqODsWhNwdScpALcbmHsckB+nDh6+X4QyaIpn
-         hEhXu4SJ+i0WcGxfNwnrJmuAXodtXUX/FzTodT4xgTgLSO/i3n2q8kgqWWxnANN9xcLC
-         m19htmHzfCWmYE7roZ601hjm5Mk0uto9YHrY88U3zjPVOtxCMGXUFD8Ic5vtHizO02n4
-         qBNvAaiYvZocfr1lQ+MLYsFdq6KM11LReOMql0TchNcVgLhRkk8viS5eVgYuza3loUMC
-         Vovw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoQ0NB2y5G0/3oxGVagIp6u10oQ0ZeVn5yCV2OvocKWW/Dnsf4Rogg5gYyFyfmzPxcyXgPLl/chjKWP7A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDhJA+mqW3EN6IgXb26OzgInpn+/3srNDoE/B370RJUG/Yq+F2
-	ANV0QzBwefd/48YL3Wqi/xgR8Kkc69I2zyNAAFCFAg6yNOOc7i0WChvjE5ZaRV6dL3blQf+ofIr
-	OUC2a9Ntd7T6+S3O6+dsdnnwuxeJpORrMM73Y1Q88
-X-Gm-Gg: ASbGncsZNaMePHbumUyx70Ver9ANuV/fOcSzTubkZYyRdfftaIIvG1s+qINOacwOhdl
-	9JVgcCQ7HCA80ironpy32a1tUkKZUQHU0wz2g0f3MKTkfxUrUf2OMzgis+537vcLGTflmNBEfK9
-	+lqk9+P2Dv2sxj5NQjPbcOCj/ED2+VBIMi3gzClj9Av1GDASfNttktqzxDMaetDnmyqUEqfABxE
-	xmmEIZQubiNfldBASpi8fyi7dWYLrOlJZkotV5roPpE
-X-Google-Smtp-Source: AGHT+IFXIGut26LOc1CQf/XCARjxaINOLYEDzaorWnc/UwNjcbcHiAwfR23VgucQGTTwO2zZuZmzdzyyz3t2YgMZl5k=
-X-Received: by 2002:a50:d69e:0:b0:61b:f987:42d9 with SMTP id
- 4fb4d7f45d1cf-61c1a3c18aemr96810a12.2.1755883000214; Fri, 22 Aug 2025
- 10:16:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755883049; x=1756487849;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nG60mJTcfDhZrN0Chr9ou2fiLnhkow+tZ1jRLbxcJ6I=;
+        b=AoAaT1GXjzmevRKrdkwd/xZhXsnh5PuUgArCzjjaYvyg6cDKx/CNPQ3iSNtiHkoV+R
+         bNDP6x6x0tnAUppT2Pjoi52WkTjWifntTSVs7mICdd6XJitpIqFjrmPxVOv1lcIfJwsw
+         OhSg/hXeKAZYjNBr3nvnXldYPjenxnUHJ8ZocryzU0/3Lpx9xR5LOslMeU78IGcyW6r9
+         i8ignByWM3RmH0z0vEmdP5kW8QwHhEWMqOTdX6gWvJry7y60ahKMiRA5p8FAYHzXGO05
+         FrUDkTxCHc/gBCuRFELUJl8058Fyr52hXMw2JVx2GBXRCv6rBM8px+sHJXvhlDT3BDy7
+         JjHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUABpr62z5ZDKerTJ4xD/vm79w6kQMB38+bjJH9wZHO/g642mVwyU+iq0RH73PQKlsYZa8KUZKVXrDixVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7UlDGEA16UYSq19dLzv3N2xiWQdKx8wyKfM/qxDkiz8KX2joq
+	OtIQBv9r+sesP1ZhtAHkeVNYVlWPW6HFDzpVx4wDklBb0U8otmaY2b/++yUHPTfYdCM=
+X-Gm-Gg: ASbGncsMWqYNz7k9u8196sp51YR67Kl9FkYpuKFQMxPyRcm0dOIjcxfKUcO3u3Kp5Ju
+	4nfSHBh5R4he5vyre/XcUw/nACJEAXtC54VRTdkF4W2WE4Al4jnj7wGCRTvKR4YFcy6i+83GXQF
+	JdULMeh1tZjylyEBM59P5Oc3/IonxgVxw/9OpCoX6cs1Wbkd6yfewtLfcWQiYnuTns/OqHIbS6g
+	Mp10AevZBz3BU5LrL0xLC92HDyEJjY2oCAdygOyo8GWIjKSACh6NXmZuA52eaSiz0SNWCFwntlA
+	Nm1AdKHzKRnyeWpZrpBk4H7ld7D738GENEl0BVbsa6B9qzI3HHWrwho+X4yYufjHMyp8mqH+gsh
+	eHIXRFvFh2hx9YyoUBvr21iukVTM=
+X-Google-Smtp-Source: AGHT+IE6I2k6xPHD429XkzRqTgiEYzD1yR/BB8fOScRUjLp3oce39ToFkb+CldfR2IO0M4Ry6HmIRg==
+X-Received: by 2002:a05:600c:4fcb:b0:458:bc58:850c with SMTP id 5b1f17b1804b1-45b5179f436mr29795645e9.1.1755883049157;
+        Fri, 22 Aug 2025 10:17:29 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c7117d5977sm207666f8f.51.2025.08.22.10.17.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 10:17:28 -0700 (PDT)
+Date: Fri, 22 Aug 2025 20:17:25 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Rob Clark <robdclark@chromium.org>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Antonino Maniscalco <antomani103@gmail.com>
+Subject: drivers/gpu/drm/msm/msm_iommu.c:778 msm_iommu_gpu_new() error: we
+ previously assumed 'adreno_smmu' could be null (see line 767)
+Message-ID: <202508230010.dMoERmOs-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+EESO6dR5=4zaecmYqQqOX4702wwGSTX=4+Ani_Q9+o+WUnQA@mail.gmail.com>
- <CA+EESO6iqowMAOnBPJjERqZym_qvd6kx8BDMQG8+3xQSrNFytw@mail.gmail.com>
- <CAGsJ_4xccre0rz5zgRTA=NbFzF4FLS-ZUohgLFnfTGY9Jdequg@mail.gmail.com>
- <3133F0B4-4684-4EC7-81FC-BC12A430E4C2@nvidia.com> <CA+EESO7_-64GU5v1FTMXbemQixPX+xo6SGm8r0txohZJLs97cA@mail.gmail.com>
- <aKhIL3OguViS9myH@hyeyoo> <3972cb48-2684-4ba6-ab78-66460a939929@lucifer.local>
-In-Reply-To: <3972cb48-2684-4ba6-ab78-66460a939929@lucifer.local>
-From: Lokesh Gidra <lokeshgidra@google.com>
-Date: Fri, 22 Aug 2025 10:16:28 -0700
-X-Gm-Features: Ac12FXx5T0E12LSSvBocUhz1H5FP9e1ihWkMaGNO3Tf3CJxonVxzYrWcs24n3UE
-Message-ID: <CA+EESO5nE4uLhqgGaGTbSf_ke+TnZjw+ijJqys6omNpaaEF9Lg@mail.gmail.com>
-Subject: Re: [RFC] Unconditionally lock folios when calling rmap_walk()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Harry Yoo <harry.yoo@oracle.com>, Zi Yan <ziy@nvidia.com>, Barry Song <21cnbao@gmail.com>, 
-	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, Peter Xu <peterx@redhat.com>, 
-	David Hildenbrand <david@redhat.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Kalesh Singh <kaleshsingh@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	android-mm <android-mm@google.com>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	Jann Horn <jannh@google.com>, Rik van Riel <riel@surriel.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, Aug 22, 2025 at 3:50=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> Lokesh, this is a mess :/
->
-> I've been a reverse mapping co-maintainer for 4 months now, please check
-> MAINTAINERS before sending this stuff out. It's not really impressive to
-> learn about this 2nd hand...
->
-> Also I cannot get lei to get this mail to me, no matter how hard I try. S=
-o
-> it's _really hard_ for me to respond to this.
->
-> And you label this '[RFC]' but I can't find any code (unless it's lost in
-> the thread somehow). It should be '[DISCUSSION]'.
->
-> rmap locking is _extremely_ sensitive and the discussion needs careful
-> attention.
->
-> It's hard for me to even track what's going on here or join the discussio=
-n,
-> could you just please resend, correctly cc'ing the maintainers/reviewers =
-of
-> rmap, and prefix with '[DISCUSSION]'?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   cf6fc5eefc5bbbbff92a085039ff74cdbd065c29
+commit: e601ea31d66ba83d565cae9cfa45cbbcdd8286dd drm/msm: Support pgtable preallocation
+config: arm64-randconfig-r071-20250822 (https://download.01.org/0day-ci/archive/20250823/202508230010.dMoERmOs-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
 
-Sincere apologies. I'll resend correcting both the mistakes.
->
-> You've already got responses here so we're inevitably going to fork the
-> conversation, but unfortunately I don't see any way around this, because
-> I'm going to miss all the conversation that I'm not cc'd on.
->
-> Anwyay I simply can't engage on this as-is, and I really _want to_, becau=
-se
-> rmap and the locking around it are issues of PRIMARY importance to me.
->
-> Please try to make my life easier :)
->
-> Thanks, Lorenzo
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202508230010.dMoERmOs-lkp@intel.com/
+
+smatch warnings:
+drivers/gpu/drm/msm/msm_iommu.c:778 msm_iommu_gpu_new() error: we previously assumed 'adreno_smmu' could be null (see line 767)
+
+vim +/adreno_smmu +778 drivers/gpu/drm/msm/msm_iommu.c
+
+8cceb773f565f3 Dmitry Baryshkov 2023-02-14  756  struct msm_mmu *msm_iommu_gpu_new(struct device *dev, struct msm_gpu *gpu, unsigned long quirks)
+8cceb773f565f3 Dmitry Baryshkov 2023-02-14  757  {
+8cceb773f565f3 Dmitry Baryshkov 2023-02-14  758  	struct adreno_smmu_priv *adreno_smmu = dev_get_drvdata(dev);
+8cceb773f565f3 Dmitry Baryshkov 2023-02-14  759  	struct msm_iommu *iommu;
+8cceb773f565f3 Dmitry Baryshkov 2023-02-14  760  	struct msm_mmu *mmu;
+8cceb773f565f3 Dmitry Baryshkov 2023-02-14  761  
+8cceb773f565f3 Dmitry Baryshkov 2023-02-14  762  	mmu = msm_iommu_new(dev, quirks);
+db40d2928d245f Luca Weiss       2023-05-08  763  	if (IS_ERR_OR_NULL(mmu))
+8cceb773f565f3 Dmitry Baryshkov 2023-02-14  764  		return mmu;
+8cceb773f565f3 Dmitry Baryshkov 2023-02-14  765  
+8cceb773f565f3 Dmitry Baryshkov 2023-02-14  766  	iommu = to_msm_iommu(mmu);
+e601ea31d66ba8 Rob Clark        2025-06-29 @767  	if (adreno_smmu && adreno_smmu->cookie) {
+                                                            ^^^^^^^^^^^
+Check for NULL.  Hopefully this can be removed.
+
+e601ea31d66ba8 Rob Clark        2025-06-29  768  		const struct io_pgtable_cfg *cfg =
+e601ea31d66ba8 Rob Clark        2025-06-29  769  			adreno_smmu->get_ttbr1_cfg(adreno_smmu->cookie);
+e601ea31d66ba8 Rob Clark        2025-06-29  770  		size_t tblsz = get_tblsz(cfg);
+e601ea31d66ba8 Rob Clark        2025-06-29  771  
+e601ea31d66ba8 Rob Clark        2025-06-29  772  		iommu->pt_cache =
+e601ea31d66ba8 Rob Clark        2025-06-29  773  			kmem_cache_create("msm-mmu-pt", tblsz, tblsz, 0, NULL);
+e601ea31d66ba8 Rob Clark        2025-06-29  774  	}
+f66f3cf6bc42ab Abhinav Kumar    2025-02-19  775  	iommu_set_fault_handler(iommu->domain, msm_gpu_fault_handler, iommu);
+8cceb773f565f3 Dmitry Baryshkov 2023-02-14  776  
+8cceb773f565f3 Dmitry Baryshkov 2023-02-14  777  	/* Enable stall on iommu fault: */
+8cceb773f565f3 Dmitry Baryshkov 2023-02-14 @778  	if (adreno_smmu->set_stall)
+                                                            ^^^^^^^^^^^^^^^^^^^^^^
+Because otherwise we are toasted.
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
