@@ -1,164 +1,150 @@
-Return-Path: <linux-kernel+bounces-781204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C24B30F16
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:40:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA20B30F12
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BACDC686693
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:37:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E0361CC0411
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D292E54CC;
-	Fri, 22 Aug 2025 06:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A899E2E5B01;
+	Fri, 22 Aug 2025 06:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AzrP7DC/"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ipy6AnWM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601611C2324;
-	Fri, 22 Aug 2025 06:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E243E42048;
+	Fri, 22 Aug 2025 06:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755844670; cv=none; b=ctfuA7TIUGGV+ISqHaXVS99YFBsxYUVfBSGyWn4SvK2VIeHh/cPPW9TBppxca78QLXTUz4hipHrkiA7SLMvxlhE+lTQAb6pRXqeLvjao7VRafZtRhI+9RHEDTZkbfc8w4ENzwigAaSLTf7+IOA6d/MioJU45Z2ZO9FstcVtkfII=
+	t=1755844748; cv=none; b=RmWNmZUcb0Y+6Lw2GzYaFqSm9yr0XXTn+Saz3UhTDcqjPX1NiIuq+3o7hhjF3Jv38SmOlGLVzhDGoBLS3oYmSjtAHKoslCZgDPzm6Cpx7jbX9Cjfr51TwXOrEi6O+nKjlH0+FwvTe1J+p9ATDNj1Y97FsraD4ljBc0QoUfL6jSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755844670; c=relaxed/simple;
-	bh=3ptJvRkorx30o/nmj79EaSDid0byC9I3VNPmVg+/Eqg=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=Jeds1DRXg3qImQ8owoN5EZUalw/NL1w+x0tt7hKm5MaEa5DNJbyqMqROai+V0aWtnlfRHzaMer4nshHlZKhhnM6hEWQlfhYm2CsE1E5Gi/433jHiw/hqvZJaznplvPF4WxHCUjE3xlUyyCQrQ8LbuSnglj9BlXuz8rem98WNZSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AzrP7DC/; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b109bcceb9so21817181cf.2;
-        Thu, 21 Aug 2025 23:37:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755844668; x=1756449468; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ksGVMnBHOv+KVHUZNMSVUIxA0uiJlyV/kU3aXFvzdl0=;
-        b=AzrP7DC/X6drB5ee8bCYKslliZ1hKM0MN0Fga1dkOKbvfEkXWwcjdeIi4nm8owT/GH
-         O93dKtMe/gYB5FSD0n4LSNzoeoR19q6uKEQsV99ay4ANHmp0dUGUCXudUpLIxNaAZm+Q
-         8Tv7MZq/OCqbxFrD2ZAky09by8qhYAqAzkM9PWWuPLV6p7lx8aCrsShNy1m7bJT5d8YK
-         X423AZ//wfjzKtdv9EoZ3crQNWs9G5+ByYWLh1A0x9ACoprALI1aTYQ64W6PdZEpur4I
-         xKE7J+gwmQgrPE7PPsNX3wtvg2IDUkd0MznxQ5n9OO8n8HoWQhbgTGaN9TubAjglxJ/1
-         Q+fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755844668; x=1756449468;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ksGVMnBHOv+KVHUZNMSVUIxA0uiJlyV/kU3aXFvzdl0=;
-        b=XSGry6fJ+n4sitcLskriGIXd1HMG/gqme2iGpt5n8W5OCZDYpQlaZ1Ku3N0HeW6KeS
-         cw8VP2AWCpljv5Pf4z/bajq0h9+bPeWX2B3bjNLQY3WtVX6jLmqrqpjcebWndZJZM5H+
-         NTGREKNxOUMD3FOkr/CIIx3GBhvT1bYR0H55/rppZiXNEJOWbf1N4i98Y2jv59perFs6
-         0eQRJAHfNNVRB/TAZIH1Ndq73ky6i08Ze7+p415d8UULSTsjEi71YsCsOB9s0lj4CT+1
-         DLEhifedfFZx719GrgVzDrgQOu+WjmtSHAlxkAfmEneJHUzDGeYjK4ZrQG0tAE6KEuny
-         M0Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1/1V8bajXSzzI1ldC2PMU7tBtPODbba1VSLas5LXU3rFzetorq/Fw5UhX/HgsnJknVYpx2ifEzIsYmds=@vger.kernel.org, AJvYcCXT1Jvvc7cqDltsmqnIUzu/bk4uh/Vk4nPgYybFXphZ626g7UD5UWs7f0+0JK/+6IDCu+s2QKdS@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGkeYWmibMS3M0qd0noPybz5mhTUdyg2eKjOnYH4SagPt3tIFL
-	Zujo4VnIypq387CzjdARRpySVCVtW/Jrql7hXvXLw9DgLcvZ2CskrKpZ
-X-Gm-Gg: ASbGnct/MNVXBJu62OtXEhkjxEgMiT0mvgfdejQXZk2TIjAp+2SqYvpdgGr/8U1OiAK
-	odOAl1U8xIwIZXidHNyfs/00ZvPRidCP7sfpE6ha+ylegHHqlz1f1nrl8JnJG9qvgyR8aNQVNTy
-	VDQYIVOtIvJIcg5wfysq3SLkof+gWZigwmhS9H4dkjisSwUJ0+NDfoZ0vLKX12tkIV5P+C9dPlO
-	7IKUXA+cqmqYFAmszndtNShUZ9NNqZmPdevSS4OPrVoVormHLxkvtrQgz8Nae3mJWpL5wlul7X/
-	QAjsCzIwpQd/eaiT8EwMJkOvIMq7AAnqkprRHNIzUE5nlznDbwQuiECR4SzHmOR735PNPiXYBiL
-	y95YTeKmqnx9H0EGDw48cG+UcnlGR8tC3vZFuvEkOI5ixBLNfvBs6ChBeLu5gHsitdddnMw==
-X-Google-Smtp-Source: AGHT+IF2PXmBBcwCdu2yhQ0+8QZamETgDCeN5gb9pcPrOutvGtnte/i38ECCZbepNGyT8JslDhUUUg==
-X-Received: by 2002:ac8:5e12:0:b0:4ae:6b72:2ae2 with SMTP id d75a77b69052e-4b2aaacef55mr19784391cf.40.1755844668104;
-        Thu, 21 Aug 2025 23:37:48 -0700 (PDT)
-Received: from gmail.com (128.5.86.34.bc.googleusercontent.com. [34.86.5.128])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4b27e7810f0sm70469551cf.47.2025.08.21.23.37.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 23:37:47 -0700 (PDT)
-Date: Fri, 22 Aug 2025 02:37:45 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Xin Zhao <jackzxcui1989@163.com>, 
- willemdebruijn.kernel@gmail.com, 
- edumazet@google.com, 
- ferenc@fejes.dev
-Cc: davem@davemloft.net, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- horms@kernel.org, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Message-ID: <willemdebruijn.kernel.60ba954529f7@gmail.com>
-In-Reply-To: <20250821153017.3607708-1-jackzxcui1989@163.com>
-References: <20250821153017.3607708-1-jackzxcui1989@163.com>
-Subject: Re: [PATCH net-next v6] net: af_packet: Use hrtimer to do the retire
- operation
+	s=arc-20240116; t=1755844748; c=relaxed/simple;
+	bh=9dBmEU03SovoA9hX+z1h03ERnwmP9cygR1p8I8nnokY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fm7UxrdJNhyzieUmUl0UKWkCbXYJmHfWOLFIQL27Bj1yFmHEtcWA29+g9PlGB6AIWj4m8uVWYQxKhEHMAfW1YGNQHaPlz2JKvkvYlupiezQqXqYPWqb3hZg7b5JmCx/nZLdprIP/iVLUp3Bp2vsPMtqZI5SWQoSScEpl29oBkGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ipy6AnWM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4775C4CEF1;
+	Fri, 22 Aug 2025 06:38:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755844747;
+	bh=9dBmEU03SovoA9hX+z1h03ERnwmP9cygR1p8I8nnokY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ipy6AnWM1qZQ5VjH5qsEC0y62f3B3BG/JPjKUSNfD+jZsnUHdTNOQzrLpFi26hwzz
+	 BgbnhjeiPd2mt7/XSiwvJYqCoSKMx8u5X3EvD/T6Lv8WSLvXUQ7k3U7CRMUL3NRksb
+	 ypwYu7N02o3aLeGjwjSCFrC6tsNbjHRnaKCYjCUL+/L70ayISAlryVkErSN5vVg6Ka
+	 D8wN886AkmxNI4ET/dnR4b+qYZwDSHbOXO4PTAuS6bU4kpo9xL0GzojCPtroUO8J1w
+	 /E8ZgyiXnQpsi553fH/p1Em5uIMuJx1hSKJwPWH4r3G38cRgK3hhb/PYJTEzGMv5Rh
+	 IeDfiqIRjI7cQ==
+Message-ID: <3a936b3b-0599-4b0a-83a8-52b899c24125@kernel.org>
+Date: Fri, 22 Aug 2025 08:38:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/10] arm64: dts: exynos: axis: Add initial ARTPEC-8
+ SoC support
+To: Ravi Patel <ravi.patel@samsung.com>, jesper.nilsson@axis.com,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org,
+ tomasz.figa@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+ arnd@arndb.de
+Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
+ gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
+ smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
+ inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com,
+ dj76.yang@samsung.com, hypmean.kim@samsung.com,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, soc@lists.linux.dev
+References: <20250710002047.1573841-1-ksk4725@coasia.com>
+ <20250821123310.94089-1-ravi.patel@samsung.com>
+ <CGME20250821124055epcas5p4d1072e9b4ef29587e0fd8606bc1abc4f@epcas5p4.samsung.com>
+ <20250821123310.94089-9-ravi.patel@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250821123310.94089-9-ravi.patel@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Xin Zhao wrote:
-> On Thu, 2025-08-21 at 22:32 +0800, Willem wrote:
+On 21/08/2025 14:32, Ravi Patel wrote:
+> From: SungMin Park <smn1196@coasia.com>
 > 
-> > Thanks for the analysis.
-> > 
-> > Using hrtimer_start from within the callback that returns
-> > HRTIMER_RESTART does not sound in line with the intention of the API
-> > to me.
-> > 
-> > I think we should just adjust and restart from within the callback and
-> > hrtimer_start from tpacket_rcv iff the timer is not yet queued.
-> > 
-> > Since all these modifications are made while the receive queue lock is
-> > held I don't immediately see why we would need additional mutual
-> > exclusion beyond that.
+> Add initial device tree support for Axis ARTPEC-8 SoC.
 > 
+> This SoC contains 4 Cortex-A53 CPUs and several other peripheral IPs.
 > 
-> The hrtimer callback is called by __run_hrtimer, if we only use hrtimer_forward_now in the callback,
-> it will not restart the time within the callback. The timer will be enqueued after the callback
-> return. So when the timer is being enqueued, it is not protected by sk_receive_queue.lock.
+> Signed-off-by: SungMin Park <smn1196@coasia.com>
+> Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+...
 
-I see.
- 
-> Consider the following timing sequence:
-> timer   cpu0 (softirq context, hrtimer timeout)                cpu
-> 0       hrtimer_run_softirq
-> 1         __hrtimer_run_queues
-> 2           __run_hrtimer
-> 3             prb_retire_rx_blk_timer_expired
-> 4               spin_lock(&po->sk.sk_receive_queue.lock);
-> 5               _prb_refresh_rx_retire_blk_timer
-> 6                 hrtimer_forward_now
-> 7               spin_unlock(&po->sk.sk_receive_queue.lock)
-> 8             raw_spin_lock_irq(&cpu_base->lock);              tpacket_rcv
-> 9             enqueue_hrtimer                                    spin_lock(&sk->sk_receive_queue.lock);
-> 10                                                               packet_current_rx_frame
-> 11                                                                 __packet_lookup_frame_in_block
-> 12            finish enqueue_hrtimer                                 prb_open_block
-> 13                                                                     _prb_refresh_rx_retire_blk_timer
-> 14                                                                       hrtimer_is_queued(&pkc->retire_blk_timer) == true
-> 15                                                                       hrtimer_forward_now
-> 16                                                                         WARN_ON
-> 
-> On cpu0 in the timing sequence above, enqueue_hrtimer is not protected by sk_receive_queue.lock,
-> while the hrtimer_forward_now is not protected by raw_spin_lock_irq(&cpu_base->lock).
-> 
-> It will cause WARN_ON if we only use 'hrtimer_is_queued(&pkc->retire_blk_timer) == true' to check
-> whether to call hrtimer_forward_now.
+> +
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
 
-One way around this may be to keep the is_timer_queued state inside
-tpacket_kbdq_core protected by a relevant lock, like the receive queue
-lock. Similar to pkc->delete_blk_timer.
+No CPU mask?
 
-Admittedly I have not given this much thought yet. Am traveling for a
-few days, have limited time.
- 
-> 
-> Thanks
-> Xin Zhao
-> 
+> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
+> +	};
+> +};
 
 
+Best regards,
+Krzysztof
 
