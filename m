@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-781796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57562B316DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:04:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534ACB316E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D5A8621623
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:04:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACF8F7BCD49
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2A72FAC1B;
-	Fri, 22 Aug 2025 12:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12C32FC027;
+	Fri, 22 Aug 2025 12:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DuOD/CJx"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zjtfmi1S"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DB72F99AE
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BCA2FB602
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755864271; cv=none; b=sSCReRGl7ME+EWmJmpdwiJJy57HlbVMSX93E8NfN9gVx0obm68TCF3xiZm5j5O0bHCrT9cQFb6+/Fkiz3mTMyO4Ze31KCHxxSj7MovRrg6qO9FIi79VcFzOAnGiqX56yPSLBdDAcrd1E1wozWtbCcgMVywFAe8TvD17dqXbVMoI=
+	t=1755864276; cv=none; b=l3T8CamIabRr2HL6vd+e2Z162y0B3oO07cQ/oc2iX/vDzodHtQjCZ138fv2nhZonXo7r3TfNnocz3iBUgXPt1Aa73GB6vQtUctooOKKWipsW22dglQnallyQo/twOfRzgS7kJl4L44EwJ6oJ/R3Ad+g2vjYVcDevaC46mWwaVSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755864271; c=relaxed/simple;
-	bh=zToJz+p9rv3GdnoEI/nZ4O+DZManZb2L43VdqSFTMtQ=;
+	s=arc-20240116; t=1755864276; c=relaxed/simple;
+	bh=/b5Zazjl+99qC3Qy+yEPozMfJljMU0yUYb3X5nUTek8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BEBovGZsGz7vgdk6jlys4+kNqOOJh+pyolABiMiN+/NsbqHHMzzn5kekTRikqjjq9SPAACLsd8G3SrxDwO2nNiH2ocqvIPwh//whT95AUfBBGLbwGOn1XJfIH6Lj/NGE+dxieDxUwGxbLraFWFa8og92/lYZAeKGog+KqoqseYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DuOD/CJx; arc=none smtp.client-ip=209.85.208.49
+	 In-Reply-To:To:Cc; b=HlSs3zcSWKm7oEjrZDjyR87kTNHZhPA6elEpADHPUHO0ufTRXAFYWJw5Squl+Quebg04Knoj4UbtTf34eFMS9FpgcQwZ6CZeFzylxKGGCbxZlG1qjVPQGpwjSiZS5YuncgwLVe+tlXn7YZbSv6Vmu8ZzwBXpj0osdMOGVDj1mig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zjtfmi1S; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61c20df01a9so84981a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:04:29 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6188b6f5f9aso276046a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:04:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755864268; x=1756469068; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755864269; x=1756469069; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tQUEQCWwleF9niyj1YQkMXb4VJN0Wpw2LOAupwB0aEo=;
-        b=DuOD/CJxwtWLIAFI/pzNgDfQ6lfbk5FrkwUc95qFvjC7Gl0HDdtx5ZF5BkAPmUdYA1
-         KLXRsg1KNtXrMUqOA1AgfLRkat+G6OvpWQDFnhB0NhUE6Xgjx56zf4hxVCjUlIqunkVb
-         HFotrHVN1IxdrDYYJ35jmrVSoNz4I1hk3R2ElBUHKpDV3emO1X8yyoDApQUS77gSjtTH
-         2ovDEJsysjatqW44aLS3WF6a0UFnoYs0hUEDByJeaQrTlDScya6b5ktaYYapNZIhlGtW
-         KHXRFaBo8lJL/oOQgxD1xliMUhZQWoud20udeX9Vihb+8f0iGxmq9rX3iXbp8MsASQsY
-         fJZA==
+        bh=xkhMBlBL1V4MbzC6fWXXMTH9/XMHxxc/1U+aAD903p8=;
+        b=Zjtfmi1S0zVlsLVkEjk3SPQ2BRqjs0f+CznC5A5B06/qJ5Xo0DLbAyrkkObE+SyEgc
+         Oh24fjtK1i19hgI/pnLj+Ab9nbQGQwA0+O83Km24Lfxq1Ip27qkXUoiTcKF+rY8LBHv9
+         0yOtCSykuHzP5wa36QYvnn9hOzO3VsHq3zdxN8+omkRJ3Swd8AEf8RO3kLeoUPMDByda
+         4YbwZXpMSUibvuoRLR0kLFID7TBKOtsjB0eisruXkqCipCmh/iFhoqUIm+jejSdm40FQ
+         8r907JyrE4f6K465ujHb19yA6W0Vi2axwFubsDZye+LJXvGr//K9vxIeI0x5pT323/yQ
+         qzLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755864268; x=1756469068;
+        d=1e100.net; s=20230601; t=1755864269; x=1756469069;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tQUEQCWwleF9niyj1YQkMXb4VJN0Wpw2LOAupwB0aEo=;
-        b=ssmpsbHXNfMVnrwhrl7R5o6EZ9OKUqhzheN1rvToTnWDkQjNpmcsTlCVEALl+HkOK6
-         QS2JQUjLwY5gZUtObWiWVt9yP2fABftEXf1gNwj+VW5/JNT5dL2FHrPo2qK0G3ev/Uqs
-         Rni6J/x8TaSPUUiV4OZBA2g9s+YTSsjBScitCF2Cub5J84HmZm1g8Z5cMDuv3q1XC1Ip
-         wsCW/ulKIEvHsSNW/SjzXeyds9JAlIRTBDfEZOPrfO8bqHqveIuUhH9eozHVm5hXc3m0
-         l4C5fSkSuM3mNGyCpELCrgTEu5l79LRFPxhgRmia8SzAxqsPq594of/stsNZ/Gzs5Sjw
-         fQKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYMs3nAzBdT29WdcuNuDO6ebu0uly3wzzFwjpJRXBPfAlaOUkQXVcn5R+PnsXbg6mdGx9Tjr7+HApwTRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycXuWnJ6cD9utyIlQr1oJ8m4UII4O+BsbVVyj7zf0t23wMhaOy
-	QUssr0TTdnbToGJuAUtGypLmZvnPoiT7WLk+wykZ+JwpBjy94WYpUbja3GQqtcRvOZ4=
-X-Gm-Gg: ASbGncuHKXJuTN8KKEEaZoyMO2d0oeqeRPpp6AI8Aa6wIXLZmvGJnu4Qkw0zarAbvdL
-	2PgwQX5AAzavdnjKxZi9FSpDCTXZQLOQrUyOANT0qR+HTlDOwHvDZJQrIl73WrQuf1UD1hDYxBG
-	+8V8GEnGmd9DlpjBuZZBUOs0ghk5OYVd8b4nT0K4okjRgpr6Xg2U0HRqhrNKK0SRBbTnFHh+bdI
-	tImk1lV4QNHIZaa9YfhHMlqE+8RJdI9nLyBxe8JtL0DzhKV3984RjKLwhqFi/nxdVlFLO53p1tK
-	TjZOq0FdRg41QCYQMq6a6v9F8DPxY9xUnu/rcNyMo+4xxiGGzCsbO+MTrr0shLEsboNibB/lFrs
-	8OPj43b+ndFde8ZGXD40qdAwiGIb2QiqTsCfcySCic0iAa3+lvA==
-X-Google-Smtp-Source: AGHT+IGgj6tLSA3iPOzIjZcGBAModSY46RekEbNEJwMEgjowetU7kTnE61E1A3VMDX3pIZ9P/oD+GQ==
-X-Received: by 2002:a05:6402:274e:b0:61a:927b:a79c with SMTP id 4fb4d7f45d1cf-61c1b703ddfmr1092208a12.8.1755864267845;
-        Fri, 22 Aug 2025 05:04:27 -0700 (PDT)
+        bh=xkhMBlBL1V4MbzC6fWXXMTH9/XMHxxc/1U+aAD903p8=;
+        b=S3TwzLDsRahpuSSJShHxgBaH98o6x3/GL1hvqUzxLgEayiLq1dYiQj5lh8FYjeCFNX
+         4slOmg6huk8m4GDtEKyzkz7Qo9S1cFCRDXjhxAqyBJN0sMQkw5Fp6LBq2OEZv0vAtqhP
+         LBnevg1sXWvK1mgmOWtBoXHwKl0isFTWF7FNEp43jfO+CnAHluARE9yuTDV1Ed4THJLo
+         STuX+MFpuNIMC2ofRwk1sXclByoghUFzIpNi7jvMPxsNt9NlrQ1Kk7Zyti+AFBfT25qZ
+         rAlMrJKPGWOUrmtrUjOVhvk35bPmqiW4MP2KewZNKUUvqXmbLoxqRtFoCvkCKoqF/kOV
+         tnVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWyXMhzazJ1alx/lMko+qRPCcZJPGfmMnQnYpbQOWfjzE8JKkkLHWWp1wRaji7HE5EVo/LI5vH3hz7dUwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy42oTZItZh/BykolR4lF4y2DRbseuQckQarXETgYbTpvOALlea
+	aCY39tcxhKPW6E6JRoL92RzM+e9exwOTzcvWpRWg/uP0wmN+HABthWq1/8K51Ebi8do=
+X-Gm-Gg: ASbGncsx9jU3Z/ZGlpBnEo2JAqwYAXKZl6v2YMCRJwGAhNzYl6E/+QwcQwbS1lK3u+S
+	iUgG19IpeR0S51Iisz5kMDW1FnfGzpK+58mcfes/hhRJHxrq13oEzFHtiZyFZcs6WCfWoeD/3lA
+	x0MR1dyB7mYv2pYhPRp3q1IwdGPSMe8u4Uyb4qtXejtSRKjZSBBhQoJJGlN6DLDNwCHYGMUY2F7
+	WicJznpa1OppmNyt76KvlJ80Jrttgf3OWN5wSQef0f/fv5R7kabPAZI3S//dcVYK2/BQwOtyF6f
+	14U50kQe26sLbhL3pFE4uTeTS0f3XYox1w0aphvnleQgq+AhJiAYrnbymxSMfrDbQ6ZoppIQ8Qb
+	DlzL/McY4Qrm7yL14eGJ/m8GlMG6YIYmDDvym2Ds=
+X-Google-Smtp-Source: AGHT+IHO9WGYVdkgtVyjF3FtPCnvvXecLAswmBNxyYIMX+vuVg32YmANKpoKwd5qMd3GFwOppYLtEA==
+X-Received: by 2002:a05:6402:234b:b0:618:1835:faa4 with SMTP id 4fb4d7f45d1cf-61c1b4d0198mr1457381a12.3.1755864269185;
+        Fri, 22 Aug 2025 05:04:29 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61a757b9b39sm6690444a12.48.2025.08.22.05.04.26
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61a757b9b39sm6690444a12.48.2025.08.22.05.04.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 05:04:27 -0700 (PDT)
+        Fri, 22 Aug 2025 05:04:28 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 22 Aug 2025 14:04:01 +0200
-Subject: [PATCH 01/15] arm64: dts: qcom: ipq5424: Add default GIC address
+Date: Fri, 22 Aug 2025 14:04:02 +0200
+Subject: [PATCH 02/15] arm64: dts: qcom: lemans: Add default GIC address
  cells
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250822-dts-interrupt-address-cells-v1-1-d54d44b74460@linaro.org>
+Message-Id: <20250822-dts-interrupt-address-cells-v1-2-d54d44b74460@linaro.org>
 References: <20250822-dts-interrupt-address-cells-v1-0-d54d44b74460@linaro.org>
 In-Reply-To: <20250822-dts-interrupt-address-cells-v1-0-d54d44b74460@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -95,29 +95,29 @@ Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1373;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1393;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=zToJz+p9rv3GdnoEI/nZ4O+DZManZb2L43VdqSFTMtQ=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoqFy7bd8hwGt2/MER8/sSJdKyUV/OXlXLZZneo
- T7rAIFEV5qJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKhcuwAKCRDBN2bmhouD
- 114mD/4zUcZvH5mchbbsnX3KuG35h5GH7jz12oMyIeHEG/jVEja5ZFW2f1boZA7zZqISeWb5XHZ
- b6i73251WGMAQVZm6+x6zdD1Gj7ewV/cgVmiuT5Upd8+i3OIDPpQzSjryh7qreiP+1PhEEFCB9w
- fkHDpDwflD7NjXwBPSE/N0864XzVSq9kZ3yVZoLGMsZ1XXrYHf/Nh2yNW7V86gKxSENUIjvT1yn
- zGNGZVwHOcBDhIt5gpOBCN1qTDOgBdYe7XvuZnZy9MOF/lwz4vYjDSkDS7CyuHtVZQ5PIWAoV6D
- xvv+1CZ0+pAQ62K5+N2l+vXYhEV/rKTLrhJlW0UpyJaRjQcKxYt7m5hha1y/LJZe4AfLYW8ajuZ
- 5hUvcjZs4+H5CiZLLonQfnMiDfx30Py+PBTphVDJDSINi1GLBv5RQRUm/QFNOOXKRppr98fUif4
- yBS8ix3YW2r0larG9BH+6zt6g6XvWsoWs36SWSWcM58ACemAH0lI+hL16ez4skI5831UC7OnqdT
- pRYNfMpE9uymti1Q/8p4WFE/GdfzZRPqz7deK23C7k/SvuIM4eIZAfbYjXUYjCoOKrd9hYwMOrD
- 1Q4VjE0nNCqX5JBMLh2NM8ihhQHy+27vJ4bn8aFGho8Hl5Il6aVUf5v/h3GcCTVjcE6WTchgxrV
- GHCI+QfA+nxr3YQ==
+ bh=/b5Zazjl+99qC3Qy+yEPozMfJljMU0yUYb3X5nUTek8=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoqFy8fwO/4blwnQnNg7cR0tlGlGzM5kBEH6CQg
+ YxwXDJxIBKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKhcvAAKCRDBN2bmhouD
+ 19LxD/9t1AapJFiNmaYTBr+fbqAXDUCayFUZ7If4gI9XeZ1IyNixz5QtUU9ul0ya6ANh1cgtC7H
+ VKT5qi7zHttMBZ6msMm5nkMOXpMtcvRpKzEF0JuEVllff2NvYeKIKfIRfgejTQS3ZtB3eEGCxYM
+ zwlCbgsIFtmngh1+jqFzNzGDkhGtHeO7H56/PESD4NIoWdr4MjpxaP8s8pSZzcZHQTiZHRIKAFV
+ Ew+qOKMjZNmhW0wJqbwrm7kVK2dBfEIk63uWRSP2iRCBLlkLRm8d9vuuAqFiknKxteGcMf65ZyH
+ Da6BarrcCS3/9LsG18TC3dELHCuBHqzY0duWqBiPhN6kb+1+b5rqEGun3TdJTZYu1iLHec35kAE
+ rsMUtyq/5AOKHHAdGZFU1dxwJ5II7PPf5/BI9CRDAi4kMEVcOeA6BW8wvNQGxRIQvv/gXhj/GWJ
+ uH8UEZnm/Httx67ZegPj862x6o8K1ZtTGtPWGp5r8GfgXsdu+5wyBKgHrsi4pHbDG82xx8NjaMc
+ JS165yCZxAjEXdymgZ8bN87dJj/OM65gduyBcFpY4z1OooOIilFpbMud6PnST7B/qC+qFpIuEbh
+ j7Rs2+0T1xpPJe5D1JX4fh/lulNBmL+R7EQIMOauW3M8T6gJSv5gPW3C8nfRGqUnAXX2VZR+tpr
+ drNfkdiC4dNtpOg==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
 Add missing address-cells 0 to GIC interrupt node to silence W=1
 warning:
 
-  ipq5424.dtsi:961.4-964.30: Warning (interrupt_map): /soc@0/pcie@50000000:interrupt-map:
-    Missing property '#address-cells' in node /soc@0/interrupt-controller@f200000, using 0 as fallback
+  lemans.dtsi:7623.3-7626.29: Warning (interrupt_map): /pcie@1c00000:interrupt-map:
+    Missing property '#address-cells' in node /soc@0/interrupt-controller@17a00000, using 0 as fallback
 
 Value '0' is correct because:
 1. GIC interrupt controller does not have children,
@@ -128,20 +128,20 @@ Value '0' is correct because:
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/ipq5424.dtsi | 1 +
+ arch/arm64/boot/dts/qcom/lemans.dtsi | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-index bbb539dbdf5c6827e228ac324f995108f9e7922b..b1a86b54c30f30fbb66057cf4e79ada6ebc29d89 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-@@ -565,6 +565,7 @@ intc: interrupt-controller@f200000 {
- 			compatible = "arm,gic-v3";
- 			reg = <0 0xf200000 0 0x10000>, /* GICD */
- 			      <0 0xf240000 0 0x80000>; /* GICR * 4 regions */
-+			#address-cells = <0>;
- 			#interrupt-cells = <0x3>;
+diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
+index 64f5378c6a4770cee2c7d76cde1098d7df17a24a..55eb2bc36b23dd61aae65f0160074637c8e7e1a2 100644
+--- a/arch/arm64/boot/dts/qcom/lemans.dtsi
++++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
+@@ -5866,6 +5866,7 @@ intc: interrupt-controller@17a00000 {
+ 			reg = <0x0 0x17a00000 0x0 0x10000>,     /* GICD */
+ 			      <0x0 0x17a60000 0x0 0x100000>;    /* GICR * 8 */
  			interrupt-controller;
++			#address-cells = <0>;
+ 			#interrupt-cells = <3>;
+ 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
  			#redistributor-regions = <1>;
 
 -- 
