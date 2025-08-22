@@ -1,177 +1,239 @@
-Return-Path: <linux-kernel+bounces-781158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF77B30E43
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:44:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F72EB30E45
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9FEEA08568
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:43:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17747B605FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8B92E267A;
-	Fri, 22 Aug 2025 05:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N6KSbXwh"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1FB2E282D;
+	Fri, 22 Aug 2025 05:45:30 +0000 (UTC)
+Received: from lgeamrelo07.lge.com (lgeamrelo07.lge.com [156.147.51.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4091D284B39
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9299217A2E6
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755841414; cv=none; b=d3J8g6lKun2xoKP9/IOwD0wZ2Zi5nJ6lvmIUvpuYkjID/6bfYc2V8JM6JQtjWzXJHO7PJPpvxHO00+S5eM2zbfpswTYM/QXAZc+0l/1GMzoUBwcvCjNGaLN+1/v583Jav6QWpfp9SRCvYeVZXVhrnddPf9D/4sPi+nNbCkIaMd8=
+	t=1755841530; cv=none; b=QG90zEfOIchL7fLXu2+Tw2h4gM9LHpttB30q3A3GRJTkrXu1IsgkdMIJodvVPTkvhKlnkiN9/FfAxGGHh8RFXFJPfUdESM6/Hec3mGT9HekClXu+w3St3eG7vztmy1pfKt5ZpH4uWqftqdysB5JmYwY3pDGN+GVVM82fF1nQhik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755841414; c=relaxed/simple;
-	bh=nO2U9VG3vDM0Ed6fA8bpfu9wUGd9SkPGGleuZgl0xxc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WLuzBLRk0s6RX4cGlH7VdqS3oTdKx884cAPUZbKWizVhg5YKK0lc6GjuWF/F4YiCpSZqLhswd1IvV17tDZqXVMrprAzCsZDP6J/lX4nMgc/XsQvtJqGj5msG7woR6tEOYoAU90UuxGvyxwEPPPYe4V3yQaPK9b63uHQeEUjcza8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=N6KSbXwh; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55ce528022eso1684584e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 22:43:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755841410; x=1756446210; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+GPy/kVr5xy7hBpohKijiQplg8+R4/OMAuZ4Oz2BeiQ=;
-        b=N6KSbXwhNOtbLJ2vzqOZ8Ky0Kpx9aabVC87pxDBN83XJITWLz4IEs0JFTXkjTptX9P
-         ynTNWrD+HL4kLlrTyo0wTzxFFm8AEAs1+e095SCxHTBgigplc35wTDYoYJOtdCArFxlT
-         oGFBTBsGPABUuYvAy0ZxadDTZHjrS1FiBuRzM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755841410; x=1756446210;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+GPy/kVr5xy7hBpohKijiQplg8+R4/OMAuZ4Oz2BeiQ=;
-        b=q8TkXDh9frDhTxMhbG2hUIMJvgTJgWtB2eYf1cBFUidb/b7j0Q4He9ybmYdYnvsDOJ
-         NM0xt7pelX6vlKPweP/3ozbyQ9ZBTglK0mkpJZ6RnL3yqrFAzSQTWg7ZxDmanhpvYvjA
-         JV7x8vLP2Eq5Yd/Lk/+BqOxSpX5UUGBHyODHK1ce3fK3VLU5hlwJDHxvIrvBWF7RdGFQ
-         s9Yc8W2CTJ+zIHQMXH/QwJUduE1B9NiYLq3+b9uV4lstnffdlwmL1+8ZKVtJ8S+6h1sw
-         /FvEzR4C3F6CeS2nVl1vRNQo+v4/5opIvnf0c8rN6gojMzMs5nS/EwFjLcyRCYNN1Hlh
-         ZtMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlJWbkz6MC9rJDLe/MuGP2oU4L/SN8C6ZPFkAyacmc+OzlLyKlXrzNy+GAAIRAN40wzV+btI0nwDtih74=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYfgpCY3TPZVClrBeABefEfOaA9Tj2aT1ljCP61DiMl+/HKaXZ
-	Yi7arzug2ZhEIanQtBwBegqTIaG6HWPUQwJm8urdgNhGXePPs56KJPE3qpVemauTZeHfzMSHfo5
-	oCbr7oqMHdu6+8g0kL8pHcm+0RGFPNmm5wBhKjYW0
-X-Gm-Gg: ASbGnctopVFLrouXfu/nE7bKN12jv9kzo6mAwmdW3Q74S94YcZCnceFKvFLSUvvzpfn
-	tZ3DFolP6GrPS9PVntFd1YSRzQiqMmIdHFmlpPc+NGYzGVHNlNUxorAQqBVbsyL/E51x+QFaCjK
-	jxIyGbHOPJrcSLwFCgveSRjyhj6nPeIRqoIkzEdpREW/kBxO1N4o6/GcZX+nZPFuHQit3Ai5iKI
-	kLBjHyMjtfS0Du9rwMf8ail7MhLq7I8obvNrm9Osb51Qg==
-X-Google-Smtp-Source: AGHT+IFh5F3sidBrknoS9iUxLce5fNJWzSFlFRbwYLI9hnCBtdEdWgKvCBxO6tc3R2KJHkeILhOZP6kccNtfJIF4ra4=
-X-Received: by 2002:a05:6512:2399:b0:55b:7683:110e with SMTP id
- 2adb3069b0e04-55f0d38200cmr562995e87.46.1755841410309; Thu, 21 Aug 2025
- 22:43:30 -0700 (PDT)
+	s=arc-20240116; t=1755841530; c=relaxed/simple;
+	bh=C6zhtBJR1m/7kPOv2gYNp0w5HSgKglOjWakItYQ+OTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z7jG0y+DkQi6DNjUccA0PrMo+JL9YWJ/8XmW70ZeWlU5yvprUr1WiHBSMAucmJ5OWMUHKi9yAzvdWxwyYjT76sQkGhHSqWgkXaBi10PcM/EmV4zxwA3KtRSYJ7yfftKYjWTTyn8VxIGwzCUSm5R4tCsWjgfjoQ3Lj3ZesjgSY/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
+	by 156.147.51.103 with ESMTP; 22 Aug 2025 14:45:18 +0900
+X-Original-SENDERIP: 10.177.112.156
+X-Original-MAILFROM: youngjun.park@lge.com
+Date: Fri, 22 Aug 2025 14:45:18 +0900
+From: YoungJun Park <youngjun.park@lge.com>
+To: Chris Li <chrisl@kernel.org>
+Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, shikemeng@huaweicloud.com,
+	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
+	baohua@kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, gunho.lee@lge.com,
+	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
+	Matthew Wilcox <willy@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Kairui Song <ryncsn@gmail.com>
+Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
+ cgroup-based swap priority
+Message-ID: <aKgD7nZy7U+rHt9X@yjaykim-PowerEdge-T330>
+References: <aH+apAbBCmkMGPlO@yjaykim-PowerEdge-T330>
+ <aH/baxIgrBI3Z1Hl@yjaykim-PowerEdge-T330>
+ <uyxkdmnmvjipxuf7gagu2okw7afvzlclomfmc6wb6tygc3mhv6@736m7xs6gn5q>
+ <CAF8kJuMo3yNKOZL9n5UkHx_O5cTZts287HOnQOu=KqQcnbrMdg@mail.gmail.com>
+ <aKC+EU3I/qm6TcjG@yjaykim-PowerEdge-T330>
+ <CAF8kJuNuNuxxTbtkCb3Opsjfy-or7E+0AwPDi7L-EgqoraQ3Qg@mail.gmail.com>
+ <aKROKZ9+z2oGUJ7K@yjaykim-PowerEdge-T330>
+ <CAF8kJuPUouN4c6V-CaG7_WQUAvRxBg02WRxsMtL56_YTdTh1Jg@mail.gmail.com>
+ <aKXeLCr9DgQ2YfCq@yjaykim-PowerEdge-T330>
+ <CAF8kJuM4f2W6w29VcHY5mgXVMYmTF4yORKaFky6bCjS1xRek9Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822021217.1598-1-jjian.zhou@mediatek.com> <20250822021217.1598-2-jjian.zhou@mediatek.com>
-In-Reply-To: <20250822021217.1598-2-jjian.zhou@mediatek.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 22 Aug 2025 13:43:18 +0800
-X-Gm-Features: Ac12FXzfrL5PN_m3940D8QUKJ9xD917EzZ80ftFHhvgwSSGeG17u4a187tR07YY
-Message-ID: <CAGXv+5GaJdWPFigVs-XyDZms_0Yvo+58p7N5e+-jwnyAhsO7bQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: mailbox: mediatek,mt8196-vcp-mbox:
- add mtk vcp-mbox document
-To: Jjian Zhou <jjian.zhou@mediatek.com>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAF8kJuM4f2W6w29VcHY5mgXVMYmTF4yORKaFky6bCjS1xRek9Q@mail.gmail.com>
 
-On Fri, Aug 22, 2025 at 10:12=E2=80=AFAM Jjian Zhou <jjian.zhou@mediatek.co=
-m> wrote:
->
-> The MTK VCP mailbox enables the SoC to communicate with the VCP by passin=
-g
-> messages through 64 32-bit wide registers. It has 32 interrupt vectors in
-> either direction for signalling purposes.
->
-> This adds a binding for Mediatek VCP mailbox.
->
-> Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
+I still believe that the priority based approach has more flexibility,
+and can cover more usage scenarios. That opinion has not changed.
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+However, from this discussion I came to clearly understand and agree on
+three points:
 
-> ---
->  .../mailbox/mediatek,mt8196-vcp-mbox.yaml     | 49 +++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/mediatek,mt=
-8196-vcp-mbox.yaml
+1. The swap.tier idea can be implemented in a much simpler way, and
+2. It can cover the most important use cases I initially needed, as well
+   as common performance scenarios, without causing LRU inversion.
+3. The really really needed usage scenario of arbitrary ordering does not exist.
+the usage scenario I suggest is imaginary.(just has possibility)
+
+I have also considered the situation where I might need to revisit my
+original idea in the future. I believe this would still be manageable
+within the swap.tier framework. For example:
+
+* If after swap.tier is merged, an arbitrate ordering use case arises
+  (which you do not consider concrete), it could be solved by allowing
+  cgroups to remap the tier order individually.
+
+* If reviewers later decide to go back to the priority based direction,
+  I think it will still be possible. By then, much of the work would
+  already be done in patch v2, so switching back would not be
+  impossible.
+
+And also, since I highly respect you for long-time contributions and
+deep thinking in the swap layer, I decided to move the idea forward
+based on swap.tier.
+
+For now, I would like to share the first major direction change I am
+considering, and get feedback on how to proceed. If you think this path
+is promising, please advise whether I should continue as patch v2, or
+send a new RFC series or new patch series.
+
+-----------------------------------------------------------------------
+1. Interface
+-----------------------------------------------------------------------
+
+In the initial thread you replied with the following examples:
+
+> Here are a few examples:
+> e.g. consider the following cgroup hierarchy a/b/c/d, a as the first
+> level cgroup.
+> a/swap.tiers: "- +compress_ram"
+> it means who shall not be named is set to opt out, optin in
+> compress_ram only, no ssd, no hard.
+> Who shall not be named, if specified, has to be the first one listed
+> in the "swap.tiers".
 >
-> diff --git a/Documentation/devicetree/bindings/mailbox/mediatek,mt8196-vc=
-p-mbox.yaml b/Documentation/devicetree/bindings/mailbox/mediatek,mt8196-vcp=
--mbox.yaml
-> new file mode 100644
-> index 000000000000..7b1c5165e64e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mailbox/mediatek,mt8196-vcp-mbox.=
-yaml
-> @@ -0,0 +1,49 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mailbox/mediatek,mt8196-vcp-mbox.yaml=
-#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek Video Companion Processor (VCP) mailbox
-> +
-> +maintainers:
-> +  - Jjian Zhou <Jjian.Zhou@mediatek.com>
-> +
-> +description:
-> +  The MTK VCP mailbox enables the SoC to communicate with the VCP by pas=
-sing
-> +  messages through 64 32-bit wide registers. It has 32 interrupt vectors=
- in
-> +  either direction for signalling purposes.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - mediatek,mt8196-vcp-mbox
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  "#mbox-cells":
-> +    const: 0
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - "#mbox-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    mailbox@31b80000 {
-> +        compatible =3D "mediatek,mt8196-vcp-mbox";
-> +        reg =3D <0x31b80000 0x1000>;
-> +        interrupts =3D <GIC_SPI 789 IRQ_TYPE_LEVEL_HIGH 0>;
-> +        #mbox-cells =3D <0>;
-> +    };
-> --
-> 2.46.0
+> a/b/swap.tiers: "+ssd"
+> For b cgroup, who shall not be named is not specified, the tier is
+> appended to the parent "a/swap.tiers". The effective "a/b/swap.tiers"
+> become "- +compress_ram +ssd"
+> a/b can use both zswap and ssd.
 >
+> Every time the who shall not be named is changed, it can drop the
+> parent swap.tiers chain, starting from scratch.
+>
+> a/b/c/swap.tiers: "-"
+>
+> For c, it turns off all swap. The effective "a/b/c/swap.tiers" become
+> "- +compress_ram +ssd -" which simplify as "-", because the second "-"
+> overwrites all previous optin/optout results.
+> In other words, if the current cgroup does not specify the who shall
+> not be named, it will walk the parent chain until it does. The global
+> "/" for non cgroup is on.
+>
+> a/b/c/d/swap.tiers: "- +hdd"
+> For d, only hdd swap, nothing else.
+>
+> More example:
+> "- +ssd +hdd -ssd" will simplify to: "- +hdd", which means hdd only.
+> "+ -hdd": No hdd for you! Use everything else.
+>
+> Let me know what you think about the above "swap.tiers"(name TBD)
+> proposal.
+
+My opinion is that instead of mapping priority into named concepts, it
+may be simpler to represent it as plain integers. 
+(The integers are assigned in sequential order, as explained in the following reply.)
+This would make the interface almost identical to the cpuset style suggested by Koutný.
+
+For example:
+
+  echo 1-8,9-10 > a/swap.tier   # parent allows tier range 1–8 and 9-10
+  echo 1-4,9    > a/b/swap.tier # child uses tier 1-4 and 9 within parent's range
+  echo 20   > a/b/swap.tier # invalid: parent only allowed 1-8 and 9-10
+
+named concepts can be dealt with by some userland based software solution.
+kernel just gives simple integer mapping concept. 
+userland software can abstract it as a "named" tier to user.
+
+Regarding the mapping of names to ranges, as you also mentioned:
+
+> There is a simple mapping of global swap tier names into priority
+> range
+> The name itself is customizable.
+> e.g. 100+ is the "compress_ram" tier. 50-99 is the "SSD" tier,
+> 0-55 is the "hdd" tier.
+> The detailed mechanization and API is TBD.
+> The end result is a simple tier name lookup will get the priority
+> range.
+> By default all swap tiers are available for global usage without
+> cgroup. That matches the current global swap on behavior.
+
+One idea would be to provide a /proc/swaptier interface:
+
+  echo "100 40" > /proc/swaptier
+
+This would mean:
+* >=100 : tier 1
+* 40–99 : tier 2
+* <40   : tier 3
+
+How do you feel about this approach?
+
+-----------------------------------------------------------------------
+2. NUMA autobind
+-----------------------------------------------------------------------
+
+If NUMA autobind is in use, perhaps it is best to simply disallow
+swaptier settings. I expect workloads depending on autobind would rely
+on it globally, rather than per-cgroup. Therefore, when a negative
+priority is present, tier grouping could reject the configuration.
+
+-----------------------------------------------------------------------
+3. Implementation
+-----------------------------------------------------------------------
+
+My initial thought is to implement a simple bitmask check. That is, in
+the slow swap path, check whether the cgroup has selected the given
+tier. This is simple, but I worry it might lose the optimization of the
+current priority list, where devices are dynamically tracked as they
+become available or unavailable.
+
+So perhaps a better design is to make swap tier an object, and have
+each cgroup traverse only the priority list of the tiers it selected. I
+would like feedback on whether this design makes sense.
+
+-----------------------------------------------------------------------
+
+Finally, I want to thank all reviewers for the constructive feedback.
+Even if we move to the swap.tier approach, the reviews from Kairui, Nhat
+Pham and Koutný are still valid and will remain relevant.
+
+Kairui, Nhat Pham
+* Regarding per-cgroup per-cluster feedback: this would likely need to
+  be adapted to tier-based design.
+* Regarding passing percpu info along the allocation path: since tier is
+  selected per-cgroup, this may still be needed, depending on
+  implementation.
+
+Koutný
+* Regarding NUMA autobind complexity: as explained above, I intend to
+  design the mechanism so that autobind does not affect it. Parent-child
+  semantics will remain essentially identical to cpuset. If the proposed
+  interface is accepted, its usage would be like cpuset, which should be
+  less controversial.
+
+---
+
+Thank you again for the suggestions. I will continue to review while
+waiting for your feedback.
+
+Best Regards,
+Youngjun Park
 
