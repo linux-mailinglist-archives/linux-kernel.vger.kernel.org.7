@@ -1,113 +1,131 @@
-Return-Path: <linux-kernel+bounces-781146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E0EB30DFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:30:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65471B30DFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:31:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDF39688A35
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:30:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 420D6189437C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C152D46C8;
-	Fri, 22 Aug 2025 05:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86B92E1F0A;
+	Fri, 22 Aug 2025 05:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z1RDQZ8l"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="SMnpxR49";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Yest83Kc"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F0F2D3ECA;
-	Fri, 22 Aug 2025 05:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3322217BB35
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755840594; cv=none; b=Im6bJqyTuxE+5Ki8/vCyKrP7o7hZ+hNBu6tzjUe+jAKfYoS+4GUgAk4xMx47PZL+W+mYswJvDs/cAVhZA2Tos8jtEubG6JS2AjusIWnXJKiOzbTFh+lGTXY5mGtAx2ZmHxG5g01zEaApsqe7BgDK51oRg1FxI4PB3d9FbEgHOA8=
+	t=1755840686; cv=none; b=CTVzIIW4u3JSRMwCSZLR2iitX7gldbaXSgC79yuyq2iUDle3oSlBQKATvFG3s3aX5sZLBMTBOPZx/oAUN5Rsq6xlJ1W70SAh1EaWJTyUfB2O0wpTOqMuamVCjd+Rc58X85YOg1l2qz9HgL7Gf+f+rR8ttSSvzxl+lHniYjILKMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755840594; c=relaxed/simple;
-	bh=/nXu4w0k897yAOJJIe2N1Qn1CS/A7dJnTaBLKSnh+wc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yuhvs27IhxTS+1ipkytbgvMlnHHrU17Zz7SrIz1CgaNRby04QUs1wtcakLcSgvH4P2fQsfs71SyVpGcyvLPOVJqOaYqzW6r4kNPjxdteodNyWdfP2hyU1bDf5y+DKI/h7jw7VFzah4ncfapf/SJMZGka8wdOfN1u6p0OhbR8Ajk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z1RDQZ8l; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755840593; x=1787376593;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=/nXu4w0k897yAOJJIe2N1Qn1CS/A7dJnTaBLKSnh+wc=;
-  b=Z1RDQZ8lGpZCoCb+TP0N+KubvuCRwianF/OJQB/1KbiIedS2cTkn8BcN
-   5l9kEYoUkF/vqHcl0W78QFk1bPyp80UZypqJpPCdbdhEk2OkE2vDRHusj
-   rxGs0Bha/rbwpWJpNrXuU5xMsTBVJGIKgGfNwqAPwgRBusjtR2mpg8gfc
-   Xh8nhd3NHEkSUrSiYzsBmpTAcgg9Ed4Rhr+I4ilNYAWiXHTNCUxdrRoVq
-   gJ7KnUwAK75wmdASI9aqX19uQutnjPKGKJzVdzhCXofwC3VazKJhWU49L
-   ziQR/RJhJXrMKWut89wOKcNdfgK3B9j4p3puXljdG27yrec6ABppq8SuM
-   w==;
-X-CSE-ConnectionGUID: jMySDED3Q9uwx2g9MAF/7A==
-X-CSE-MsgGUID: pjGEJlcDQ1e8co8OzGycIQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="75600627"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="75600627"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 22:29:52 -0700
-X-CSE-ConnectionGUID: LgIeqKrzQX+bhXwMHTWsyg==
-X-CSE-MsgGUID: 5bynulpPS0S9ZePpWB94Lw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="199496143"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.233.125]) ([10.124.233.125])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 22:29:48 -0700
-Message-ID: <64ef97eb-018d-4948-8544-87150f47ab38@linux.intel.com>
-Date: Fri, 22 Aug 2025 13:29:46 +0800
+	s=arc-20240116; t=1755840686; c=relaxed/simple;
+	bh=dTkGEsDxuHxvzQ/zuRn7NlikI8/ywmvZmlgu+WQIL+I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Go99dw8/lDIKY6nIdB9U3w6rP+yosF81IPoXVKs5EHJbaaSv9gBTTSnUtHn+aNOpdL2uBcXRz1kKmdqKXIjtXkVo0PxLUzGxhYK4g4uYZalH0U/YJz/1IHYl6dIEYeWLXYvZnK7jN+Y/9zCWOUbht7zGBCk/9dirphj/ArTSIVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=SMnpxR49; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Yest83Kc; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 038D721E3E;
+	Fri, 22 Aug 2025 05:31:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1755840682; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=t4yhiDG7pnnHGOYG9tLhM3AjIpjpSUErxIas3N0XuJI=;
+	b=SMnpxR49bglg7Ftr94YtzbFpS+ikumwhs8a31QVXR9JNF0o0koOLWKPifkHIovXu2muxnY
+	IaIaIQikXW8gDqlbMzMgJLEu6jcEvmBVzW1oF+m7YCsztmraHc4RRkyFRgbYZB7tsxPcWS
+	i2SXhnfgqnz+55uUigQJuNaReR79JJE=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1755840681; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=t4yhiDG7pnnHGOYG9tLhM3AjIpjpSUErxIas3N0XuJI=;
+	b=Yest83Kc32HjMHUx6dp+KZogufXEiwF3G+PR8Hh+5SvZuTqH2O98QPzmTzGqpJ/8IemS5O
+	yZKgNNY2EQMoF+70QSHoIJBMzZj0sXykTlRHBFoknDndIRz4/DYYAadRJCYgqsWp/bMv48
+	s+egS5cNKgcEpPjkxKxHRge+DlSZ8jM=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B95B8139B3;
+	Fri, 22 Aug 2025 05:31:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3fotK6gAqGgxaAAAD6G6ig
+	(envelope-from <jgross@suse.com>); Fri, 22 Aug 2025 05:31:20 +0000
+From: Juergen Gross <jgross@suse.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	sstabellini@kernel.org
+Subject: [GIT PULL] xen: branch for v6.17-rc3
+Date: Fri, 22 Aug 2025 07:31:20 +0200
+Message-ID: <20250822053120.31771-1-jgross@suse.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v3 0/7] x86 perf bug fixes and optimization
-To: Peter Zijlstra <peterz@infradead.org>,
- "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250820023032.17128-1-dapeng1.mi@linux.intel.com>
- <75fbe025-214f-4b2c-8077-a8dbfa34a5c2@linux.intel.com>
- <20250821133915.GQ4067720@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250821133915.GQ4067720@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+
+Linus,
+
+Please git pull the following tag:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-6.17-rc3-tag
+
+xen: branch for v6.17-rc3
+
+It contains 2 small cleanups which are both relevant only when running as
+a Xen guest.
 
 
-On 8/21/2025 9:39 PM, Peter Zijlstra wrote:
-> On Wed, Aug 20, 2025 at 08:55:24AM -0700, Liang, Kan wrote:
->
->>> Dapeng Mi (7):
->>>   perf/x86/intel: Use early_initcall() to hook bts_init()
->>>   perf/x86/intel: Fix IA32_PMC_x_CFG_B MSRs access error
->>>   perf/x86: Check if cpuc->events[*] pointer exists before accessing it
->>>   perf/x86: Add PERF_CAP_PEBS_TIMING_INFO flag
->>>   perf/x86/intel: Change macro GLOBAL_CTRL_EN_PERF_METRICS to
->>>     BIT_ULL(48)
->>>   perf/x86/intel: Add ICL_FIXED_0_ADAPTIVE bit into
->>>     INTEL_FIXED_BITS_MASK
->>>   perf/x86: Print PMU counters bitmap in x86_pmu_show_pmu_cap()
->>>
->> The series looks good to me.
->>
->> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
-> I've picked up all but patch 3 -- I really don't think that does the
-> right thing.
+Thanks.
 
-Thanks. I would rewrite the patch 3 and aggregate it into the arch-PEBS
-enabling series.
+Juergen
 
+ arch/x86/include/asm/xen/hypercall.h |  5 +++--
+ drivers/xen/xenbus/xenbus_xs.c       | 23 -----------------------
+ include/linux/compiler.h             |  8 --------
+ 3 files changed, 3 insertions(+), 33 deletions(-)
 
+Jan Beulich (1):
+      compiler: remove __ADDRESSABLE_ASM{_STR,}() again
+
+Juergen Gross (1):
+      drivers/xen/xenbus: remove quirk for Xen 3.x
 
