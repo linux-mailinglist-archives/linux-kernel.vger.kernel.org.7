@@ -1,153 +1,147 @@
-Return-Path: <linux-kernel+bounces-781671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ECAAB31566
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:29:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E75EB3156C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48EEE3AD399
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:24:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 757D7167C1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D162C028E;
-	Fri, 22 Aug 2025 10:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DbOyIrT0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637D32EFDB2;
+	Fri, 22 Aug 2025 10:29:48 +0000 (UTC)
+Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECD62E762A
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EC42EFD8B
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755858240; cv=none; b=ffyntKhWRLGz13VSuQgFyF6SMOcyTFon3zkngeoEyBAQvHphcCUN6i+7ALwAroXxMHMjaAg2CYhU7qAupgsKp8tYApu4J2Jox8pPk0j6vbKWkBNQ1h3ffVtrh7709pizcEZGTuySnt+A21W4E+S9cJmNK58VWpJY3W/qvXkRt0g=
+	t=1755858588; cv=none; b=TdTZEsWilG6sz3A2MS8SFgDpwFbADbCzJ79TEx7jrQ2aUhgQeMOu87OGnw9STfX1+Zsy8EHWaikuUI+Fc0gYy2x9koFKzTPpKuqrqCevBjszg9fbXTRVyEi/QN1hDXfFYUmPhTXDR0UmWHVfo7uFmB/T0jKYOJCYLzEe3iLwdNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755858240; c=relaxed/simple;
-	bh=Pi24T1VzeRTeyxb78iSx9eOfruahP8bbLgZ7xrrxp9M=;
+	s=arc-20240116; t=1755858588; c=relaxed/simple;
+	bh=kB0xCrcZ1sA4vsR286bIAX6688rH45wxCTl4GDxP2S4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fbDQcjRuOPSLiEG6XQDFACMNA2QSBoM2VoMQCmD5i3mkT4VVipknLbaXBxAj9+jLoNc16SovmW1JQebXwY9OvWcU17071RQ4hQXHUC19VgLH4GIFp57CsJL44NY6QNiqvqtF7SjIVBEoMv6F/CxtZDX0aQfx8Pp/gFie383FdrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DbOyIrT0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755858237;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eJvTKEyEbzhmekaQhrASqnfJY8OZgIJPjxsG4VBPz2I=;
-	b=DbOyIrT0oo3LaxWkFj22kgDGX32LmZAJ6K90PumU/WTQ1QrCv57MdnQJWOEVVRJ2RYkUhX
-	07wLcaedNudYfRpzD50tdzwd5JJVEoQrnMcOrG0vPRwAxIKcrBoHHQYvwkyj4OI8d5hOfo
-	fC9Mc8reo21nbwEfUbVMSXfPd0nQzHY=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-UhmJbf1EMAOvnloM6pUJQg-1; Fri, 22 Aug 2025 06:23:56 -0400
-X-MC-Unique: UhmJbf1EMAOvnloM6pUJQg-1
-X-Mimecast-MFC-AGG-ID: UhmJbf1EMAOvnloM6pUJQg_1755858236
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7e864817cb8so812063485a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 03:23:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755858236; x=1756463036;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eJvTKEyEbzhmekaQhrASqnfJY8OZgIJPjxsG4VBPz2I=;
-        b=kHcCTb8CmnHGbsxOKGR8SIjoPX9BMTlAKS7nJGSMb1e+ufHkFRq+jBbZFhcrzRkLv/
-         Ai13Z4YqY3xuLFyfhFVDBSr2L5mBLDosz+t83VAyoZiL+pS2lOmXJpiTGTbZqY6C+nEH
-         OfPWKRrkrxG8i3fxvpnEWg2OkIw4AdsHVg1nlUc2F986U3Lsrky/aHOUCszOhgduWSCs
-         2q/UobKK7ZSwDmhaetQRx5VSEiCl19AaDBgJkEqfTgIYZ/QzShwzrJjV6QGOQUM8ISfq
-         Hh+qnSNIhQD/i4Y/mf40doXL9hF6m8tSMDDAmkNhQVc17Hk7bQbcAuw8PGafrNCZnGjJ
-         mhSw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7TK2TxocJnjJL/WiMV8I2O4c94HQrLkiUSlbP4GwJPHVrXACBmylKJt9wdZkVqCicMd3FbGXZhARN0xM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyoy0yfZ3b5/aWniORs2vwymqTDaJbmezL/A9mdvqSiKVyrj1eg
-	vbfKvHmtg+qqQ0CqxhFXTBh+HUZNepZuIJ4eUBfGHdhwx/rYZkHAEDnbO9EeySTJ8LP7LE9h8IA
-	pNhUpbBz3M5YRp9RhiJFev81978pvJ1Te6Zyvo2flYY4Mik/vkPYl6ubXgqakarNLdA==
-X-Gm-Gg: ASbGncs/8Ki3YGzun1BJZdA6ZvD3FLKiSwszhl/7kYy4kU+tQUip6FWQakQZ7K8oDqo
-	vsVMSAqhrfPh3o9hZ+mb/VejqpmEjKARTHgJoeSoexJRMSqxKi7EQn0N3EKymZmV4hYlVW6JAHq
-	8/NnQipoeTokMtGbv4craA2WsJz0SltUjCVApqN3Yc2Yv0shahXN8TXqLhzU1Ea+Ve3cJTmtY/z
-	58Ncn9za5+7OmczsN7L1Fn7LlXoWTki6QhMRB3ZAbp/JWOR0DLCB+70qgm2OTJ8w+VY3TXHgJ+o
-	YHR7r5XAhNQEZbER/x1QehrC4MsJuxHbNoO5MY8+50Wk9HJ0qEF2C6c1zPrioARISNxpg0NlnCF
-	56ZyIokclGVsNuEg+rsI=
-X-Received: by 2002:a05:620a:2985:b0:7ea:61e:3ce with SMTP id af79cd13be357-7ea11515112mr250142985a.4.1755858235958;
-        Fri, 22 Aug 2025 03:23:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGzbF5my1f7sWP1hvt+Ae8lWAWkUFPWkmMGpX8yUvMXDR4PmNo9Qp3wmQyKLcPE30uIWwQ98Q==
-X-Received: by 2002:a05:620a:2985:b0:7ea:61e:3ce with SMTP id af79cd13be357-7ea11515112mr250139985a.4.1755858235417;
-        Fri, 22 Aug 2025 03:23:55 -0700 (PDT)
-Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7eb1123ce2asm16520885a.65.2025.08.22.03.23.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 03:23:54 -0700 (PDT)
-Date: Fri, 22 Aug 2025 06:23:52 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	willmcvicker@google.com, kernel-team@android.com
-Subject: Re: [PATCH 3/3] clk: samsung: add Exynos ACPM clock driver
-Message-ID: <aKhFOHFGKPYXgIri@x1>
-References: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
- <20250819-acpm-clk-v1-3-6bbd97474671@linaro.org>
- <aKdmurrT1pFtLSI8@x1>
- <720799b1-04ce-46da-b643-1adbdfc661e6@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fO3Szvx2h+446hXSyG7sV31LITgnhnEnQ16VFuZE7KCgRDtMPbrN3R1Re5MwuslDXYHKWPaMhqX7K0sYW7FcBH0ZVy6kA7l1HvxpDtywgNbQFbVoo6FKrmOdeU6kQ/j1m1teoupk5p+SKTkWnj1rE4bmXj0+HlHHIoq0NNQdDE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
+Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
+	by leonov.paulk.fr (Postfix) with ESMTPS id 505F91F0006A
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:24:04 +0000 (UTC)
+Received: by laika.paulk.fr (Postfix, from userid 65534)
+	id ECEECB01C62; Fri, 22 Aug 2025 10:24:01 +0000 (UTC)
+X-Spam-Level: 
+Received: from shepard (unknown [192.168.1.1])
+	by laika.paulk.fr (Postfix) with ESMTPSA id C43A7B01C52;
+	Fri, 22 Aug 2025 10:23:59 +0000 (UTC)
+Date: Fri, 22 Aug 2025 12:23:57 +0200
+From: Paul Kocialkowski <paulk@sys-base.io>
+To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Samuel Holland <samuel@sholland.org>
+Subject: Re: [PATCH] drm/sun4i: Cleanup v3s mixer config fields ordering and
+ indentation
+Message-ID: <aKhFPRP8ILNkKAvy@shepard>
+References: <20250704154149.3464461-1-paulk@sys-base.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="MlV5q36HRY4ckIBP"
 Content-Disposition: inline
-In-Reply-To: <720799b1-04ce-46da-b643-1adbdfc661e6@linaro.org>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+In-Reply-To: <20250704154149.3464461-1-paulk@sys-base.io>
 
-Hi Tudor,
 
-On Fri, Aug 22, 2025 at 09:14:03AM +0100, Tudor Ambarus wrote:
-> On 8/21/25 7:34 PM, Brian Masney wrote:
-> > On Tue, Aug 19, 2025 at 11:45:38AM +0000, Tudor Ambarus wrote:
-> >> +static long acpm_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-> >> +				unsigned long *parent_rate)
-> >> +{
-> >> +	/*
-> >> +	 * We can't figure out what rate it will be, so just return the
-> >> +	 * rate back to the caller. acpm_clk_recalc_rate() will be called
-> >> +	 * after the rate is set and we'll know what rate the clock is
-> >> +	 * running at then.
-> >> +	 */
-> >> +	return rate;
-> >> +}
-> > 
-> > ...
-> > 
-> >> +
-> >> +static const struct clk_ops acpm_clk_ops = {
-> >> +	.recalc_rate = acpm_clk_recalc_rate,
-> >> +	.round_rate = acpm_clk_round_rate,
-> >> +	.set_rate = acpm_clk_set_rate,
-> >> +};
-> > 
-> > The round_rate clk op is deprecated. Please convert this over to use
-> > determine_rate.
-> 
-> I can do that, sure. Shall I also update the kdoc for round_rate(), mark it
-> as deprecated and add your Suggested-by tag? It would help other newcomers.
+--MlV5q36HRY4ckIBP
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I am working to remove round_rate from the clk core and the various
-drivers. Your driver just needs to be updated similar to this:
+Hi,
 
-https://lore.kernel.org/all/20250710-clk-imx-round-rate-v1-10-5726f98e6d8d@redhat.com/
+On Fri 04 Jul 25, 17:41, Paul Kocialkowski wrote:
+> The v3s mixer config definition is a bit messy. Tidy it up.
+> No function change is intended.
 
-Brian
+This patch didn't make it in the previous cycle.
+Would it be possible to pick it up this time?
 
+Thanks!
+
+Paul
+
+> Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
+> ---
+>  drivers/gpu/drm/sun4i/sun8i_mixer.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/=
+sun8i_mixer.c
+> index 8b41d33baa30..674b55f218fc 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> @@ -670,12 +670,12 @@ static const struct sun8i_mixer_cfg sun8i_r40_mixer=
+1_cfg =3D {
+>  };
+> =20
+>  static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg =3D {
+> -	.vi_num =3D 2,
+> -	.ui_num =3D 1,
+> -	.scaler_mask =3D 0x3,
+> -	.scanline_yuv =3D 2048,
+> -	.ccsc =3D CCSC_MIXER0_LAYOUT,
+> -	.mod_rate =3D 150000000,
+> +	.ccsc		=3D CCSC_MIXER0_LAYOUT,
+> +	.mod_rate	=3D 150000000,
+> +	.scaler_mask	=3D 0x3,
+> +	.scanline_yuv	=3D 2048,
+> +	.ui_num		=3D 1,
+> +	.vi_num		=3D 2,
+>  };
+> =20
+>  static const struct sun8i_mixer_cfg sun20i_d1_mixer0_cfg =3D {
+> --=20
+> 2.49.0
+>=20
+
+--=20
+Paul Kocialkowski,
+
+Independent contractor - sys-base - https://www.sys-base.io/
+Free software developer - https://www.paulk.fr/
+
+Expert in multimedia, graphics and embedded hardware support with Linux.
+
+--MlV5q36HRY4ckIBP
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmioRT0ACgkQhP3B6o/u
+lQzkTg//WFiyxqhfUY6FczVWL/ImHTtICZrkvrBZX0dJV2uHqYzypnnyT6NxmMxk
+SDXCSLmVFsSMoND1aiqS5dc4eYOPlSmo/hpJib1+nfo+1VTrB7dgafngaUpgcEXh
+JBfaN92tUfhO+Aw/XSDY3Bh1vdYJt4LH/IfSpN7OFnULBw6/VVwVkOYUm/UvSFzf
+RUGZ3WCqf/N9pVUDCTV8uRU104hhbZk8l6N4afTKcR3X6ol399SLZzZz+7y0UJWl
+fU9229JlB9ndl1Pg5LsQz/eclJA0KFNAe6+EN1lHxDqReaiAtziTtIVzgdQLtpga
+AUYSqY9oVinh0Bl2ENP5MmFFCBTduNN6/HK6IXH6wPIdMUpmU24w/Rw+MtUl/c4+
+xkZ5L6U5idcFfEW/R+Tv8fyOVeCLXxDGg0gAhyo6wcf9k2HKDI1IV/FVeCaCs5wD
+ztKSieqm6mr6xBIvdL9vKeLEAik1AmlNkpYQo4HFirxRCr+M/UlUeFf3NSlWhfx4
+9WyDwMcctDD8ESW3V2Q3oYAPmQPh84oX2uMDyd19djNwcy+rxwvWmQc4X4ESFZDe
+nE7BYg6g1UvJlLBIpWxEACNoX+oBJ/AIVtReJmmWB2wXFpTTZo5jOobrDnYHxOe1
+ck45AXtCLJVrvt+LfBPR3XxAYalBQfW6zYsLjXUh+OlC7yq9Giw=
+=aSaL
+-----END PGP SIGNATURE-----
+
+--MlV5q36HRY4ckIBP--
 
