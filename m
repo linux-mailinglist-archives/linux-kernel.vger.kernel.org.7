@@ -1,134 +1,204 @@
-Return-Path: <linux-kernel+bounces-782765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8939B32519
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:37:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E21AB3251B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624CA1B673E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:36:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 326FEAC34A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022E32C2363;
-	Fri, 22 Aug 2025 22:36:12 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8872C2363;
+	Fri, 22 Aug 2025 22:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ikqrQ93p"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB851E5705;
-	Fri, 22 Aug 2025 22:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A942E23505F
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 22:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755902171; cv=none; b=QpOJVq9+WO5KXDtTIit3BlXcPeM7apwzFFtBZZLo+5WzJNlIhueoc9eo5x5MamqgG4wO3691BatuHCXLukbYfDQ8eMi908p94XdFHxiF+u5a+Y3vbHLREofLG2K8faJCpuxuhJj27ECi6eBOGSiugwZPeJvQ1novPKyrwpo0LVw=
+	t=1755902374; cv=none; b=GT3ZRDgwDXC2/yaqwYCVpVSPkW2PMDLgBcGWoZSt+EA7RfoEYKbJjicJqlM8jWb1gJuLHyX+CFjV/h9Wi7JsTY5FzmNHQXR6bLnz57ghJd+62B6+pIDOy8j2P2nkur0GXzEF+SMTP2kKpq+V8m5OoHgEUwr+GUQ9w0I0YukPoKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755902171; c=relaxed/simple;
-	bh=Ipf4PtHnqlo2qX/ocDyeGiklut+RT2J+azU0jfIZmxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qZtJIIZnsKyWHWUUc+zIJ9BjgvLANw29vJJPYA8ItHmwvFvYoMg1CrVsh3HAf9BNbJZSB8UfmafamLnJj2bN0htMIVc0q5JN8coo+tVOIFG6u2t31SkXGLXEPpWzS1joL9/eXJMwALSe6EzbTB9wHq0EdD/DnEVp52pSV9Or87M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay10.hostedemail.com (Postfix) with ESMTP id 31316C037C;
-	Fri, 22 Aug 2025 22:36:07 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id 5F11B2D;
-	Fri, 22 Aug 2025 22:36:05 +0000 (UTC)
-Date: Fri, 22 Aug 2025 18:36:06 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Tengda Wu <wutengda@huaweicloud.com>,
- Nathan Chancellor <nathan@kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>
-Subject: [PATCH v2] ftrace: Also allocate and copy hash for reading of
- filter files
-Message-ID: <20250822183606.12962cc3@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755902374; c=relaxed/simple;
+	bh=lrTM1OaZCtPbgLTz46pJyWikxkY80TLQuvEvcUrUM+g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ASmXFIpINEmaw42MPL2l8hvToQ5VNl5zE8TGcYYrYCv2HxWni1TAErhtpHPJKV4tqqiu34lSjFmSsudcFNIK6OiRZ3jwzlCgVf94tJzYIAiqqVujQCEojrkpEB50iSuiYNIlWa/R+oyfUv+uEjVtM5vO1OY9rjd3rvf31TUwav0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ikqrQ93p; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755902373; x=1787438373;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=lrTM1OaZCtPbgLTz46pJyWikxkY80TLQuvEvcUrUM+g=;
+  b=ikqrQ93pbCArPvM68wF28gglzG1tUBMh6u8rNhU+suDp32VjmPiPZLvE
+   uRiiIDdrEdIkVTEpadY4vK8DoH+CixovzEXIfv6yidBSc+X1rymKyXIkO
+   lxevaClqQHyMHjF+st3RusoNw5QqADCbVh5ZVeM7qi6+SlBxSu2oQ7G7u
+   pHmw1D3e3O7YRYtpmwx6r1FlnelmsHuqIdgemlvndMiIUEGSor6CtLVhN
+   M83EoQnUOJk5ggATXDqRRYa+vFvZmOpcB084juI5pP0gfjtcZXHDDdjSI
+   hZjMkef76NSBtemc5xH63NRNqeZH0Xa7sCPR9woP4q6NoqxSkWP8o2oM1
+   Q==;
+X-CSE-ConnectionGUID: IifK6F6HTD6d3kk7jj6GKg==
+X-CSE-MsgGUID: FJEzEdwnRcy2EKyguqzUNg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="75800158"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="75800158"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 15:39:32 -0700
+X-CSE-ConnectionGUID: NPU3C3FXR5CwGC12OgHOIw==
+X-CSE-MsgGUID: acfT6cBoR0ScYM31DdQg7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="168716205"
+Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.124.135.148])
+  by orviesa007.jf.intel.com with ESMTP; 22 Aug 2025 15:39:31 -0700
+From: "Chang S. Bae" <chang.seok.bae@intel.com>
+To: dave.hansen@linux.intel.com,
+	x86@kernel.org
+Cc: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	colinmitchell@google.com,
+	chao.gao@intel.com,
+	abusse@amazon.de,
+	chang.seok.bae@intel.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/cpu/topology: Make primary thread mask available with SMP=n
+Date: Fri, 22 Aug 2025 15:39:29 -0700
+Message-ID: <20250822223929.12483-1-chang.seok.bae@intel.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <04cb59cb-e9ed-489c-b36f-6c6209b2e93f@intel.com>
+References: <04cb59cb-e9ed-489c-b36f-6c6209b2e93f@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: g4ahir68hhuz96ha3j3etkrun58ojgkz
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 5F11B2D
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19SOC8s4mzrVc5VaOGJ4F6I9pk4caogj6g=
-X-HE-Tag: 1755902165-964812
-X-HE-Meta: U2FsdGVkX1+UXTpAxPWCoYB17PTkoRVdZABOHyJjYnowMMdJfCsugcYr3NBipySINUMjU0kXSz6K6joI+N4MNzlYH2m18VDdl+gRpvSkCf4xGal4Ve47/JVwEvAufEdtgKVLQuQ8Di2nWaXH2mwq3O8kaiQTX9qRBSPNjAn3rlSGBgKh0SXwkP0zNB0d6s51XCLXR8yOWHmBh5lx+MFW4q1BCViCsmIJTt9XhoznehFa+gatwtWUrxN8SIUzzLB6HJGeyu/7uG0i+tzTHSNYmD6mGBxCTk+HwBia/RXBeYahoRT6Jpu7yCPVppE+t5S/Ym+USDVWXfLrI3V71nuZ5RTOzC+oz9WGfNBHB3+DlyWiSmguUFGBUR/RG23uky+cT50gxC4HQ67DUrzbd+uDYBCPl1dZF9Qwn2+/1COdZzM=
+Content-Transfer-Encoding: 8bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+cpu_primary_thread_mask is only defined when CONFIG_SMP=y. However, even
+in UP kernels there is always exactly one CPU, which can reasonably be
+treated as the primary thread.
 
-Currently the reader of set_ftrace_filter and set_ftrace_notrace just adds
-the pointer to the global tracer hash to its iterator. Unlike the writer
-that allocates a copy of the hash, the reader keeps the pointer to the
-filter hashes. This is problematic because this pointer is static across
-function calls that release the locks that can update the global tracer
-hashes. This can cause UAF and similar bugs.
+Historically, topology_is_primary_thread() always returned true with
+CONFIG_SMP=n. A recent commit:
 
-Allocate and copy the hash for reading the filter files like it is done
-for the writers. This not only fixes UAF bugs, but also makes the code a
-bit simpler as it doesn't have to differentiate when to free the
-iterator's hash between writers and readers.
+  4b455f59945aa ("cpu/SMT: Provide a default topology_is_primary_thread()")
 
-Cc: stable@vger.kernel.org
-Fixes: c20489dad156 ("ftrace: Assign iter->hash to filter or notrace hashes on seq read")
-Closes: https://lore.kernel.org/all/20250813023044.2121943-1-wutengda@huaweicloud.com/
-Link: https://lore.kernel.org/all/20250822192437.GA458494@ax162/
-Reported-by: Tengda Wu <wutengda@huaweicloud.com>
-Tested-by: Tengda Wu <wutengda@huaweicloud.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+replaced it with a generic implementation with the note:
+
+  "When disabling SMT, the primary thread of the SMT will remain
+   enabled/active. Architectures that have a special primary thread (e.g.
+   x86) need to override this function. ..."
+
+For consistency and clarity, make the primary thread mask available
+regardless of SMP, similar to cpu_possible_mask and cpu_present_mask.
+
+Move __cpu_primary_thread_mask into common code to prevent build issues.
+Let cpu_mark_primary_thread() configure the mask even for UP kernels,
+alongside other masks. Then, topology_is_primary_thread() can
+consistently reference it.
+
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 ---
-Changes since v1: https://lore.kernel.org/20250820091913.146b77ea@gandalf.local.home
+This improvement was identified from feedback on a feature-enabling
+series [*], where a user of this mask is introduced. It is posted here as
+a standalone patch for clarity and self-containment. The next revision of
+that series will depend on this.
 
-- Assign iter->hash to EMPTY_HASH if hash is NULL (Nathan Chancellor)
+[*] https://lore.kernel.org/lkml/20250813172649.15474-1-chang.seok.bae@intel.com/
+---
+ arch/x86/include/asm/topology.h       | 12 ++++++------
+ arch/x86/kernel/cpu/topology.c        |  4 ----
+ arch/x86/kernel/cpu/topology_common.c |  3 +++
+ arch/x86/kernel/smpboot.c             |  3 ---
+ 4 files changed, 9 insertions(+), 13 deletions(-)
 
-
- kernel/trace/ftrace.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
-
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 00b76d450a89..a69067367c29 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -4661,13 +4661,17 @@ ftrace_regex_open(struct ftrace_ops *ops, int flag,
- 	        } else {
- 			iter->hash = alloc_and_copy_ftrace_hash(size_bits, hash);
- 		}
-+	} else {
-+		if (hash)
-+			iter->hash = alloc_and_copy_ftrace_hash(hash->size_bits, hash);
-+		else
-+			iter->hash = EMPTY_HASH;
-+	}
+diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
+index 6c79ee7c0957..281252af6e9d 100644
+--- a/arch/x86/include/asm/topology.h
++++ b/arch/x86/include/asm/topology.h
+@@ -218,6 +218,12 @@ static inline unsigned int topology_amd_nodes_per_pkg(void)
+ 	return __amd_nodes_per_pkg;
+ }
  
--		if (!iter->hash) {
--			trace_parser_put(&iter->parser);
--			goto out_unlock;
--		}
--	} else
--		iter->hash = hash;
-+	if (!iter->hash) {
-+		trace_parser_put(&iter->parser);
-+		goto out_unlock;
-+	}
++#else /* CONFIG_SMP */
++static inline int topology_phys_to_logical_pkg(unsigned int pkg) { return 0; }
++static inline int topology_max_smt_threads(void) { return 1; }
++static inline unsigned int topology_amd_nodes_per_pkg(void) { return 1; }
++#endif /* !CONFIG_SMP */
++
+ extern struct cpumask __cpu_primary_thread_mask;
+ #define cpu_primary_thread_mask ((const struct cpumask *)&__cpu_primary_thread_mask)
  
- 	ret = 0;
+@@ -231,12 +237,6 @@ static inline bool topology_is_primary_thread(unsigned int cpu)
+ }
+ #define topology_is_primary_thread topology_is_primary_thread
  
-@@ -6543,9 +6547,6 @@ int ftrace_regex_release(struct inode *inode, struct file *file)
- 		ftrace_hash_move_and_update_ops(iter->ops, orig_hash,
- 						      iter->hash, filter_hash);
- 		mutex_unlock(&ftrace_lock);
--	} else {
--		/* For read only, the hash is the ops hash */
--		iter->hash = NULL;
- 	}
+-#else /* CONFIG_SMP */
+-static inline int topology_phys_to_logical_pkg(unsigned int pkg) { return 0; }
+-static inline int topology_max_smt_threads(void) { return 1; }
+-static inline unsigned int topology_amd_nodes_per_pkg(void) { return 1; }
+-#endif /* !CONFIG_SMP */
+-
+ static inline void arch_fix_phys_package_id(int num, u32 slot)
+ {
+ }
+diff --git a/arch/x86/kernel/cpu/topology.c b/arch/x86/kernel/cpu/topology.c
+index dcf05c64dd82..6a76caf813d6 100644
+--- a/arch/x86/kernel/cpu/topology.c
++++ b/arch/x86/kernel/cpu/topology.c
+@@ -75,15 +75,11 @@ bool arch_match_cpu_phys_id(int cpu, u64 phys_id)
+ 	return phys_id == (u64)cpuid_to_apicid[cpu];
+ }
  
- 	mutex_unlock(&iter->ops->func_hash->regex_lock);
+-#ifdef CONFIG_SMP
+ static void cpu_mark_primary_thread(unsigned int cpu, unsigned int apicid)
+ {
+ 	if (!(apicid & (__max_threads_per_core - 1)))
+ 		cpumask_set_cpu(cpu, &__cpu_primary_thread_mask);
+ }
+-#else
+-static inline void cpu_mark_primary_thread(unsigned int cpu, unsigned int apicid) { }
+-#endif
+ 
+ /*
+  * Convert the APIC ID to a domain level ID by masking out the low bits
+diff --git a/arch/x86/kernel/cpu/topology_common.c b/arch/x86/kernel/cpu/topology_common.c
+index b5a5e1411469..71625795d711 100644
+--- a/arch/x86/kernel/cpu/topology_common.c
++++ b/arch/x86/kernel/cpu/topology_common.c
+@@ -16,6 +16,9 @@ EXPORT_SYMBOL_GPL(x86_topo_system);
+ unsigned int __amd_nodes_per_pkg __ro_after_init;
+ EXPORT_SYMBOL_GPL(__amd_nodes_per_pkg);
+ 
++/* CPUs which are the primary SMT threads */
++struct cpumask __cpu_primary_thread_mask __read_mostly;
++
+ void topology_set_dom(struct topo_scan *tscan, enum x86_topology_domains dom,
+ 		      unsigned int shift, unsigned int ncpus)
+ {
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index 33e166f6ab12..7804175d2d87 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -103,9 +103,6 @@ EXPORT_PER_CPU_SYMBOL(cpu_core_map);
+ DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_die_map);
+ EXPORT_PER_CPU_SYMBOL(cpu_die_map);
+ 
+-/* CPUs which are the primary SMT threads */
+-struct cpumask __cpu_primary_thread_mask __read_mostly;
+-
+ /* Representing CPUs for which sibling maps can be computed */
+ static cpumask_var_t cpu_sibling_setup_mask;
+ 
 -- 
-2.50.1
+2.48.1
 
 
