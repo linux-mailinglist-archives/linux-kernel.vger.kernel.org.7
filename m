@@ -1,179 +1,168 @@
-Return-Path: <linux-kernel+bounces-782394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2ADB31FE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:01:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D223B31FF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94A6C1CE6BFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5C36845FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9E8238C3A;
-	Fri, 22 Aug 2025 15:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3E72441A0;
+	Fri, 22 Aug 2025 15:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="Ck8AGqnU"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="icnBgfel"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF55520371E
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 15:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C442B233712
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 15:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755878059; cv=none; b=I2FHtRqN8s1mWVE0iiSAK8hW9AXbHyitwu70OsonQ/b9lTSeuj+MxeGh7E/C8Gt+RMngfxQ7516qc/6yC29m8XXhlpK2nW2vN/xwb/Sw5v6KxXct1JzrdRAEo5ASsVIu2uOmOmNypOiUtqz045KUra5h+rS7wDxA+oGD1DC8T1k=
+	t=1755878220; cv=none; b=PFtxhlMvyzPYxgIGkc0H8IZtlqFPA5eQtegSg7kpJhOJAEJPs8L24pB0c389kVJsuqac/wujoT0g04UVsMwyOYuJGEp8yB2WMKZb2lEslpcRxjYFvFoVJk1kyMD/koMe3UETnjwAoE7FVkQaDBHnOZtyK5KEDfCz8IlJpXqEjLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755878059; c=relaxed/simple;
-	bh=E8IPpbz4CqvSwDJYcSuyd5RflZNdftOYlnNwRQVksa0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VOa5WeQPUZU0MzwpWQenzMCEkruxRd76f2YKVvPfzAKGr+fiOq5FAB2gMcgHzrItYvGyfwK27F/0SB+Dm4wI9opTk41T+DQW6Fke4kDmn78h+H2BCaCORFESfZgW+3l0gWMWY+/8kD2Dt0wzwzoD5bi3uegcFEOP4DZhC9XpCRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=Ck8AGqnU; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e2eb09041so2170637b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 08:54:16 -0700 (PDT)
+	s=arc-20240116; t=1755878220; c=relaxed/simple;
+	bh=bFbkXWGJmm2SJsxrU4hHphoEIzK8Alyv2GhqPrtMwXM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZeUIJdx3BJSW39GELwlM3/29wE9BwCl/9Fft4MLxBL8i9SZ+OutIdG5WXBcJyfQvoDB4FFJ4gFWfh/vV5GKqVT4cTJRpRbqH5x7it+f1Yi3XxdxzP1f2l9nSwEBobjSQQjIppYimSucQVDr2YPFF3hOgKs+tq3Ptv8eQ3E0Je5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=icnBgfel; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b004954so15716005e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 08:56:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1755878056; x=1756482856; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=aFSKEiFb2/LkRiYnMxR7soDvPVRVjcdcP0MBXJaSzfY=;
-        b=Ck8AGqnU/jK4pMQKogIA8JOIMAsy0fhNKIr3LJqGIQ6w/Tz2Ib3pQnWWU6IZq6uiSQ
-         uc7xHGXYsQ999g37nEn0lHJdnsLbz9JuIoBVKC5IpUnchnaJE6xNZz7RQRiXBCUjNBKj
-         bkFt30UeQDB8zV3DccBguyHvtTrvAUJVZQy7bNDnng7yOFm7+vRHIPahp7cQQNiQ1HOk
-         SV8YOhAS6dV1NN/8PlcOgE2MuM8nYDtbMkY4JzniQPu633iauQMnaRc//AHC0bh09gs0
-         o0Z95onRNyTDVyfBfirdalFfUrTXT4KVtbu+LRSSdIIEHljNaLkzAZfzNs7lyN5ECEBW
-         4afg==
+        d=linaro.org; s=google; t=1755878217; x=1756483017; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QacgOb2ZgVuvvk6y//Vt2Nw6LEN08WKlZ4aG0uscgHg=;
+        b=icnBgfelaSTTwkjcXGruJgvAu/aRRnraJlPcIuNwbZvdoTbWDBUEN0PBi3Y11TV3AX
+         HfoNznzj4H2gdIKsTLQ/WTpwWebDgiGS/nWctozo5L6M2gSaqNdbBHg2iV4kH8GXnm3b
+         bJ5jCBcivDQVdEmtJdYMmyArkoznqKZm/FXvP7sxE0AKU+zkscnYoB2L4A2Za0xE2JlD
+         laAtrUtcoSwuhOMa6VJr2jR6dmMXxg1hP+WHdf2UjfMG0GjaGRwHzoy5XXFrBtK9pejn
+         lrfkSuNdYgGYwYkrFUEyakDAJBnQ2M+Ra2NkcobH/dat9i9opXA58ofg59LXZldKTBu1
+         yPkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755878056; x=1756482856;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aFSKEiFb2/LkRiYnMxR7soDvPVRVjcdcP0MBXJaSzfY=;
-        b=hoEMYb09pmfMOB+gtrJy9ltpEEtkbtTvBH+ZzG9xSRWWGNceHoU3rn6eq8sqKjYqmO
-         B5zbB4eeK7WcnfP5GtLzo9VRPJ9deEH+pSEW6seC9R0Bnt5a6Q6v+/GLnxf40NPZ60ya
-         li9yYwcWEPpHRMvx+4MkLtz3N/PSMQQ1Eno7pjl2BF8YEevQXREExzIL9wHrqlA6KUz8
-         sJhIUThqaZqOsd1sdTieMTUwL5zzV2NZcaI3SY3P2QCJ4bd4FdJeT24UBLUutAxqIyIy
-         Njhs9IJvHeTomrWEKFB9FR1M6t+HZ13PmEhAj2YaF6OL2xIGBYB3PFdwR7yeIBNCL9Gb
-         BtKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVR2tXgqbZlf/NuRWMSfYCo2OaLGEe5pcFwxVMEtRe4N30odJhxZI5qtA5n1rZ78B3ccVb+bP+SHoqMzq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGdoDGGkCWQC7W72qmbKsTx1F3Si/si6NioXA+6jr7RxBuuh5h
-	zblGGxgy034dMCrcVaPpc2I3yN9WUKYK3txLsh2K+r7kyrr0d34ucn/OQkaYLj2nKmk=
-X-Gm-Gg: ASbGncsSrAyV0tIYhwabNDixt7xCKW7A9Gh2o8nGJTsOwepR/ffblBtv12aqanx0VrO
-	YLgx3zVIQPhG3uv7ujVBHChAwT1oTiDx3/bNUhWWy8ZbAAGzvwiku05v/ZCbYmRNDwdPUnT8bV4
-	Wr8oas+SeoQwqM4iC3KfuUth/ewnIn3FhPbh/E+yEkwMxPHd52/HxgVAcqOiuAQwxqVNLXnT60O
-	aiaaUZWf74ZrANcmPCGC2DGzF1X8+dojlGJDoxCkcsLLC09lV/DQoCs1NWT30HwUFEe9gvwgeUG
-	iomm/koLr45RJDWSyNnPL/GryMgCodp1eBrc1ErIBE3rtMwJLJZbYyGCtP8t0X8yBz+mGs/ZyIh
-	8aRsJckBmE/MrYTdfhUwLBu04
-X-Google-Smtp-Source: AGHT+IFM4p6lMZNVLC0jFnDTCPAyZHgETTKFHiT1zCcgafDpM4NLL77NZoZHbblr2jsx9i3vSP1Ibw==
-X-Received: by 2002:a05:6a20:5493:b0:243:755:58b7 with SMTP id adf61e73a8af0-24340d92b54mr5564480637.56.1755878056120;
-        Fri, 22 Aug 2025 08:54:16 -0700 (PDT)
-Received: from mozart.vkv.me ([192.184.167.117])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cbbaca53sm156320a12.48.2025.08.22.08.54.15
+        d=1e100.net; s=20230601; t=1755878217; x=1756483017;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QacgOb2ZgVuvvk6y//Vt2Nw6LEN08WKlZ4aG0uscgHg=;
+        b=akX/N5x5par+3IxWuMwaoZ+d3BVgwLlllJsC5MwLSFWAEgjE+kmmYY0q3Gtm+BQpeA
+         98U1xf+bhFIK87s70qlUWqIwowwZyA1ZQYzrPr4HJf7mXeVT4sBQIDzLuwIce9UpNYf4
+         kVGjhd6blokzQI0nrVddLe1dy2L0wM6ZV4ahgi4IQE8J+g9cIzlkfoA9B5j1POm6AsjZ
+         wUAwZQVlaFUGrFDWulUOWX+pUdmQQa7+1ydHCrwOTQ68p40Rwgh8eNjugFEDAzjz1YfY
+         6Sw07xAKr9Iy/Q/VeQuRIvb5frgy+LLMIZnWymmhtC/bi2UW727F/aYppWr6j8THNWSP
+         IVyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfoH7kbI4s1fQMKLwTGCNg0KxjzXq8XUN0xPPDBUCR8+o0s8r7ThKQ+7wFLgI/gCMivk9U7fcoMRfCqnA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUCRI2QMP70iyJsb6ux9MXf3Bbc2jxDwxbZt+feEfzckGa29Ow
+	yu9mIsAEEmq3rEt98llrNwdJNJfXoLYuE4BUlDD+Wm4RZ5SXLj4bu2mbD1a2BRxEaGs=
+X-Gm-Gg: ASbGncsaxZGM5oA4oVd11fPzjl/WYrOiWj7YJd+dnrtEvV92gIn/AB8ClGQhgG9bVe7
+	BeC/fwqN1GqtuNQfej2hoRr89iLKOBBRP9x/ziRZG0WeZ8njDGWilixp4m+YWGl4dZ8UKkcAKDh
+	ZNjSzDMNgYwbeAuX8lLh+ARj1YpQgLaCJqEiaj7bgvtS2ZKpSQ1NIm8kLMfAluXLMOebgXCd+9p
+	+YW6kWAMsgD2a0RaIHXYIxGD3aVZO5vVJQrAoq/eEUTz0D/S3XbUllVPbKrGb9vmMtEMuGJpx5T
+	GlNXXfp3dQZd3Vy+hhpXMAKTgTaaQCA2JZg1ShyrgXbOXpYrVk4BWVuLzrzYie0c+Lo6xdzS19A
+	Xt8U3VTW72UGxq7Ql3Mjzca48T+0CmR6BmQskgZfz3nE=
+X-Google-Smtp-Source: AGHT+IGq0ThWPZKJH0HgcylK4MA0Mh5QW4qLOf30E2AzLsWgCITzX5gUoWjudf83Dh263NPF8feg6A==
+X-Received: by 2002:a05:600c:1d14:b0:456:2a9:f815 with SMTP id 5b1f17b1804b1-45b51798fe4mr31006065e9.4.1755878217019;
+        Fri, 22 Aug 2025 08:56:57 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c3c89cd4d4sm10095765f8f.42.2025.08.22.08.56.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 08:54:15 -0700 (PDT)
-Date: Fri, 22 Aug 2025 08:54:13 -0700
-From: Calvin Owens <calvin@wbinvd.org>
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: Sun YangKai <sunk67188@gmail.com>, clm@fb.com, dsterba@suse.com,
-	josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, neelx@suse.com
-Subject: Re: [PATCH] btrfs: Accept and ignore compression level for lzo
-Message-ID: <aKiSpTytAOXgHan5@mozart.vkv.me>
-References: <2022221.PYKUYFuaPT@saltykitkat>
- <810d2b19-47ed-4902-bd8d-eb69bacbf0c6@gmx.com>
+        Fri, 22 Aug 2025 08:56:56 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH v3 0/9] arm64: dts: qcom: Set up 4-lane DP for sm8[56]50 &
+ x1e boards
+Date: Fri, 22 Aug 2025 17:56:48 +0200
+Message-Id: <20250822-topic-x1e80100-4lanes-v3-0-5363acad9e32@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <810d2b19-47ed-4902-bd8d-eb69bacbf0c6@gmx.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEGTqGgC/4XNQQ6CMBCF4auQrq2ZGUDAlfcwLgotMIlpSUsaD
+ OHuFla6MC7/l8w3qwjGswnimq3Cm8iBnU2RnzLRjcoORrJOLQiohJpQzm7iTi5oakAAWTyVNUG
+ qWuuqx06Xl0ak28mbnpfDvT9Sjxxm51/Hm4j7+k+MKEFCiwo0NHmCb0+2yruz84PYyUifDP1iK
+ DFFS5hX1GID+MVs2/YGtDFO9AIBAAA=
+X-Change-ID: 20250821-topic-x1e80100-4lanes-a8dd7f1cd569
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2677;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=bFbkXWGJmm2SJsxrU4hHphoEIzK8Alyv2GhqPrtMwXM=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBoqJNECmzXuqOivdxSTNpCT/23prVqjvyOsvvUQay+
+ ULepHcKJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaKiTRAAKCRB33NvayMhJ0YDNEA
+ CHBQ88C5b8M7VgSHDqDzRSu6rGwZnuA4NuUjclCGCzUYaRqIwYB6bjltIxg1kKFsyerGbHC9BUiXlb
+ jI7EtivHqFfltpfep6nU0JImt0wj8FCyNUEsWR8JaACf8Tw2qNmv7DQ998lSW+Frv2WOB0cCYdpkGC
+ Q/0RvU4XzOA94Hmp6Npaph5zT/8XO39XBef13g1qtAKxzsZp22BuZY/KLQWKV7gWqdCKA8E4FFY0Il
+ p/fcw3w/4L30U2qsZQV6Ft1tSDACRqM91gzXPYU5cgdgLZx5GfW8xeBLYJkXvAtDfPUfuS5UF2CI97
+ +0Dr1Mrl2bUPB2mYMVi8jpzW5/xIjqRjzd1G/GiCnTu5POUGUkbcwVWlGJM5ZLrVYUowTnSw6eU41S
+ zW+1nnkq7w9yBaBULnZBCcxB5VWS5+3qPxllqWJJoxvNbf0fP6YNIB8mtiZtMIKfFZsWK7mAoMxZ8V
+ 0Q12HTZjmTNXBDx6Bztf/TGFYah2VYVIwTkd/uc1J16cCtDlTd1IUPh4qDZORvFc1yrVkWxDV9ju3q
+ lI0oS8cz6llK+o1uwLFqlTAIyVHI5kQVzvc6iclOXcgOmeuBvw/bfKUIir0uRKHaLOLJAu7fVg4La4
+ HglOQAwt8EyYxmKaU4Tm5lizKV718e0Ub2cQpY+olw5we8VeRvtYTgiKIk/A==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-On Friday 08/22 at 19:53 +0930, Qu Wenruo wrote:
-> 在 2025/8/22 19:50, Sun YangKai 写道:
-> > > The compression level is meaningless for lzo, but before commit
-> > > 3f093ccb95f30 ("btrfs: harden parsing of compression mount options"),
-> > > it was silently ignored if passed.
-> > > 
-> > > After that commit, passing a level with lzo fails to mount:
-> > >      BTRFS error: unrecognized compression value lzo:1
-> > > 
-> > > Restore the old behavior, in case any users were relying on it.
-> > > 
-> > > Fixes: 3f093ccb95f30 ("btrfs: harden parsing of compression mount options")
-> > > Signed-off-by: Calvin Owens <calvin@wbinvd.org>
-> > > ---
-> > > 
-> > >   fs/btrfs/super.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-> > > index a262b494a89f..7ee35038c7fb 100644
-> > > --- a/fs/btrfs/super.c
-> > > +++ b/fs/btrfs/super.c
-> > > @@ -299,7 +299,7 @@ static int btrfs_parse_compress(struct btrfs_fs_context
-> > > *ctx,>
-> > >   		btrfs_set_opt(ctx->mount_opt, COMPRESS);
-> > >   		btrfs_clear_opt(ctx->mount_opt, NODATACOW);
-> > >   		btrfs_clear_opt(ctx->mount_opt, NODATASUM);
-> > > 
-> > > -	} else if (btrfs_match_compress_type(string, "lzo", false)) {
-> > > +	} else if (btrfs_match_compress_type(string, "lzo", true)) {
-> > > 
-> > >   		ctx->compress_type = BTRFS_COMPRESS_LZO;
-> > >   		ctx->compress_level = 0;
-> > >   		btrfs_set_opt(ctx->mount_opt, COMPRESS);
-> > > 
-> > > --
-> > > 2.47.2
-> > 
-> > A possible improvement would be to emit a warning in
-> > btrfs_match_compress_type() when @may_have_level is false but a
-> > level is still provided. And the warning message can be something like
-> > "Providing a compression level for {compression_type} is not supported, the
-> > level is ignored."
-> > 
-> > This way:
-> > 1. users receive a clearer hint about what happened,
-> 
-> I'm fine with the extra warning, but I do not believe those kind of users
-> who provides incorrect mount option will really read the dmesg.
-> 
-> > 2. existing setups relying on this behavior continue to work,
-> 
-> Or let them fix the damn incorrect mount option.
+Now the 4lanes support in the QMP Combo PHY has been merged in [1],
+add the required plumbing in DT.
 
-You're acting like I'm asking for "compress=lzo:iamafancyboy" to keep
-working here. I think what I proposed is a lot more reasonable than
-that, I'm *really* surprised you feel so strongly about this.
+[1] https://lore.kernel.org/all/20250807-topic-4ln_dp_respin-v4-0-43272d6eca92@oss.qualcomm.com/
 
-In my case it was actually little ARM boards with an /etc/fstab
-generated by templating code that didn't understand lzo is special.
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Changes in v3:
+- Move the data-lanes in the SoC dtsi, and update it there
+- Link to v2: https://lore.kernel.org/r/20250822-topic-x1e80100-4lanes-v2-0-4b21372b1901@linaro.org
 
-I'm not debating that it's incorrect (I've already fixed it). But given
-that passing the level has worked forever, I'm sure this thing sitting
-on my desk right now is not the only thing in the world that assumed it
-would keep working...
+Changes in v2:
+- Add missing x1-asus-zenbook-a14 & x1-crd
+- Link to v1: https://lore.kernel.org/r/20250821-topic-x1e80100-4lanes-v1-0-0b1a0d093cd5@linaro.org
 
-> I'm fine with warning, but the mount should still fail.
-> Or those people will never learn to read the doc.
+---
+Neil Armstrong (9):
+      arm64: dts: qcom: sm8550: allow mode-switch events to reach the QMP Combo PHY
+      arm64: dts: qcom: sm8650: allow mode-switch events to reach the QMP Combo PHY
+      arm64: dts: qcom: x1e80100: allow mode-switch events to reach the QMP Combo PHYs
+      arm64: dts: qcom: sm8550: move dp0 data-lanes to SoC dtsi
+      arm64: dts: qcom: sm8650: move dp0 data-lanes to SoC dtsi
+      arm64: dts: qcom: x1e80100: move dp0/1/2 data-lanes to SoC dtsi
+      arm64: dts: qcom: sm8550: Set up 4-lane DP
+      arm64: dts: qcom: sm8650: Set up 4-lane DP
+      arm64: dts: qcom: x1e80100: Set up 4-lane DP
 
-The warning is pointless IMHO, it's already obvious why it failed. My
-only goal was to avoid breaking existing systems in the real world when
-they upgrade the kernel.
+ arch/arm64/boot/dts/qcom/sm8550-hdk.dts                     | 4 ----
+ arch/arm64/boot/dts/qcom/sm8550-mtp.dts                     | 4 ----
+ arch/arm64/boot/dts/qcom/sm8550-qrd.dts                     | 4 ----
+ arch/arm64/boot/dts/qcom/sm8550.dtsi                        | 2 ++
+ arch/arm64/boot/dts/qcom/sm8650-hdk.dts                     | 4 ----
+ arch/arm64/boot/dts/qcom/sm8650-qrd.dts                     | 4 ----
+ arch/arm64/boot/dts/qcom/sm8650.dtsi                        | 2 ++
+ arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi           | 2 --
+ arch/arm64/boot/dts/qcom/x1-crd.dtsi                        | 3 ---
+ arch/arm64/boot/dts/qcom/x1e001de-devkit.dts                | 3 ---
+ arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi | 2 --
+ arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts       | 2 --
+ arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts       | 2 --
+ arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts    | 3 ---
+ arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi    | 2 --
+ arch/arm64/boot/dts/qcom/x1e80100-qcp.dts                   | 3 ---
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi                      | 6 ++++++
+ 17 files changed, 10 insertions(+), 42 deletions(-)
+---
+base-commit: 7fa4d8dc380fbd81a9d702a855c50690c9c6442c
+change-id: 20250821-topic-x1e80100-4lanes-a8dd7f1cd569
 
-If you'd take a patch that makes it work with a WARN(), I'll happily
-send you that. But I'm not going to add the WARN() and keep it failing:
-if that's all you'll accept, let's just drop it.
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
 
-Thanks,
-Calvin
-
-> > 3. the @may_have_level semantics remain consistent.
-> > 
-> > 
 
