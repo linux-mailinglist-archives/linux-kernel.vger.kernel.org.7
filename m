@@ -1,177 +1,134 @@
-Return-Path: <linux-kernel+bounces-782694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78230B323C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:44:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2307CB323C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C448B05AD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:44:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 048001CE76EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 20:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA892D838F;
-	Fri, 22 Aug 2025 20:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E4F2FB632;
+	Fri, 22 Aug 2025 20:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gfxstrand-net.20230601.gappssmtp.com header.i=@gfxstrand-net.20230601.gappssmtp.com header.b="K3K2zKD/"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D6ITf2XT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A38A2D1F42
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 20:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AF32EB861;
+	Fri, 22 Aug 2025 20:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755895466; cv=none; b=UfDdnfl9PNTnoRgujJB3vTgz1X4SURb/MzgZajqWOQ/3723WCNaff54IJo68d+ooZFcc1EgxXRw9e+bow+hVBCwbhZtRDX3gJPHeRv+gbYmF8FKCEksWhHQP+5G3NHlDWWmTCYFurbxMCMZFYCWVp7HSKNaS+T3/TLvZvXqRYKA=
+	t=1755895774; cv=none; b=m9fFgFzZr7gqfnEA5Aq876vIb+vc+Y3vqleSoJ7VA/S8n5tIGPu5aT59sRi9tBmxWmfwAbvfbvk9tcbZET0bIbKp36KGePeqbHC5id2w5s7xiMunneH5x15JtYEJlvRB5v9k8wjyjRLQ1Es5lPwFiKRk1yNWSQaFSx9ct372Rjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755895466; c=relaxed/simple;
-	bh=ZOqglHGNAfTTYJ7NDuA/b8Wo2BY73y7roGqiI7tuX7o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TF7QEo9gj7fONFfpdVGbyciFqt5ehdtV9Ao63u56G5aHgnKq6Yi0c/M2YpfdfmzTF3dwOLC+kZnUFuD5MxUVon03PnUI3MlI5uVTvHdd9spAbBYAClvaL/Z0gf0C4/xWe88mcSSRjyj7AEDSxYi7it4o/5Pk6qviLLQyGUFezVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gfxstrand.net; spf=fail smtp.mailfrom=gfxstrand.net; dkim=pass (2048-bit key) header.d=gfxstrand-net.20230601.gappssmtp.com header.i=@gfxstrand-net.20230601.gappssmtp.com header.b=K3K2zKD/; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gfxstrand.net
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gfxstrand.net
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-32326e69f1dso2763667a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:44:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gfxstrand-net.20230601.gappssmtp.com; s=20230601; t=1755895464; x=1756500264; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M5ITqkT50q+m4T1anWHEezwcrjeL1XAGQxsPrHmnZXE=;
-        b=K3K2zKD/xKNjr0SL2DVjNkRCgZ2K/t7gOAKZWFCP6I1cNeQJqMMlaVf3CpKtmELQ4u
-         QPAHVkIWCKFF9bVO4TK/nlDrDs67U8J4bztdoEIKu+TKT1H5/gI9DkkeaCZXTuCIFt9R
-         rv/pFto5NvZoBlppibmSn/t47s7SMBTxb3BCbaYxIq1GZW30eqZFAJUvEsyOx56xEEvl
-         dBLdILuH6Om7XTEsDa2mRwk74c6Wa6E5qngMOebfiWZBQNAK1F+xbAEsfGGwZNn9o7iF
-         9dZh+83E2CbPCqSA6WitDPxtxBuKHWpsBS1PyqiY5JWND/CNIkOwTlRVBu+BlYca3QpL
-         M2iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755895464; x=1756500264;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M5ITqkT50q+m4T1anWHEezwcrjeL1XAGQxsPrHmnZXE=;
-        b=Am7VctksUGS7wI4rv7ePXBb++qh4oVH3kPJ1wMfDY2fednkAHrpJnt2S/5Xwypslt4
-         b0Z9jAvoAtAxhw3a6CShwXTJ1zLI4lG17ErYsNVRTgguCkOGTlS1sQq+uEMgHN0TtRiD
-         vhrNMNobCvl3k0dxMuEG/js//tmbcb90/HnksEQmK0EFSgOdbeVo6clXhGVgstjfzfUu
-         bn/QulGRQf+XZ51j9r7+6zW8nU4r5khWhPNVsn2Ml59p9FNN/oVsmyx79YYS3E03Bfxa
-         7mmrZY424+0TelXvtee1fw28/deA9vdgfWg6NYrC5nYG11EHwXi4GTYsg0U4VQ3kKS2e
-         iDyw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhVa0mY1KqZw+Ra2rh78uJE/OrNzUIXVRNrg3hl5ss85K42KfH3Ar2s2dHwigbBj8TVsw8DGnHu9siC3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzegKBQGrhA3v3LHJmAmnp5Mc5tFEZxZ0AlStQpDSpGj+xkpEkt
-	96FpbS5BXxiHyf0+Ix2lQSuxWVsgwlfkRX0/ugcaWPc+scAoH4X/EpmIIFiGJFgMe0A3JSLCE18
-	3cBaTTkohtDbsgeUIkyoWlwHnkNlXZZ5QWSyyN+HSc4zgCGmZwm9xGhM=
-X-Gm-Gg: ASbGncv1aLpTQDCY2fIwPTUnmQlGrH2Bmy60EijDadFaNuIzMNcf2P9dlvdt2uiKQFB
-	cufhXTjeOZfDfBNbtou83h7zSD/6hdtE2XhQgQ1mlOQ1vGHUIwiFrzjSmZVXE2HLH+9xSFvXALu
-	FGuHqh5TTPwuq2iHBCov0pSwR5Ok6Mm/IbO3DlxNckFNct7ZgKMD85YG6mdqAPZDNcMwHaVJdd/
-	+fc5+Q=
-X-Google-Smtp-Source: AGHT+IFTpzOZWfzIfZ6aN86j5dGy9+t8X2AWl9e5HS+Cov9GjFJp/s0Sqsh+erThOaCtBqoKlWVXVAsBpE/sHdqOctw=
-X-Received: by 2002:a17:90b:1d51:b0:311:e605:f60e with SMTP id
- 98e67ed59e1d1-3251774b34bmr6269470a91.20.1755895463766; Fri, 22 Aug 2025
- 13:44:23 -0700 (PDT)
+	s=arc-20240116; t=1755895774; c=relaxed/simple;
+	bh=T6qRJEDHnq+mnjsWtsK8R7/Xtst4O7SL4dK318Mo5qM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PTfsrSIiccR8VMW5V8soTZrQ7jiuUdZkJZwF8RGWR/Xvv9walY/R6thVoI0rydJjgvmCNbjhAH/YOVcSj8PgaPm1Db4O6l1ka959VwaetDv7RwbH2jzPH0CwLgEoaeFvv3wqJWg+POWBr6emcvZwNiHEzZcoZU3FIK8uBwBiipY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D6ITf2XT; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755895771; x=1787431771;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=T6qRJEDHnq+mnjsWtsK8R7/Xtst4O7SL4dK318Mo5qM=;
+  b=D6ITf2XTVFDv10Y1q6lQvn4tTyTkKJ/WBOqlr6pk0275CJqb9ndGckli
+   QZqI3EfBU78w7Moh72ki7r8RslL1eDZY/Yv4hSE6Kmf4Pkgz2aAqgyAgN
+   EUrn4dtR7941AoJo54zpZECsKJdwUbUBUxl0ENUNox26lS5cQyw43xZQI
+   15I/HCAisuGNrgB0g7bHZbd7kWdyipig/m1BtjktcQyz3ybVpe7N3Z09O
+   wb2DrpCoYMYYNedj/ADf2fAMuWJ4ZBpmXTHxhUI8T4d16BsMM9SgQmT0g
+   Zc73xI+c33E2zKOh0TpCAKQ8C1np4YECZUk5HSa5gRnP7jDsqgD/OXNF/
+   A==;
+X-CSE-ConnectionGUID: Ip7h6ZrpQXyU/NvlvUc3Iw==
+X-CSE-MsgGUID: do0eAljOSKOHvlswFB33Bg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58356631"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="58356631"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 13:49:30 -0700
+X-CSE-ConnectionGUID: n/+zYlt0RPqPyOa2rQ36qA==
+X-CSE-MsgGUID: m+IUK9QUTnelV4MFBQJK3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="168399112"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 22 Aug 2025 13:49:28 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1upYhR-000Lp5-2X;
+	Fri, 22 Aug 2025 20:49:25 +0000
+Date: Sat, 23 Aug 2025 04:48:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: mediatek: clk-mux: Do not pass flags to
+ clk_mux_determine_rate_flags()
+Message-ID: <202508230416.OIwROhOT-lkp@intel.com>
+References: <20250822062854.2633133-1-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811220017.1337-1-jajones@nvidia.com>
-In-Reply-To: <20250811220017.1337-1-jajones@nvidia.com>
-From: Faith Ekstrand <faith@gfxstrand.net>
-Date: Fri, 22 Aug 2025 16:44:11 -0400
-X-Gm-Features: Ac12FXzMjozDkVA5Izgtx2pdN-ajBpFeBw-jnrsAAZtPGCcPbJCcjgOt-BOScks
-Message-ID: <CAOFGe972S7S23LGKxEmVq_beyRMpDJE-2rMt0aobPj4HnmWSXw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] drm/nouveau: Advertise correct modifiers on GB20x
-To: James Jones <jajones@nvidia.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Lyude Paul <lyude@redhat.com>, 
-	Faith Ekstrand <faith.ekstrand@collabora.com>, nouveau@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Joel Fernandes <joelagnelf@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822062854.2633133-1-wenst@chromium.org>
 
-On Mon, Aug 11, 2025 at 5:57=E2=80=AFPM James Jones <jajones@nvidia.com> wr=
-ote:
->
-> This series adds new format modifiers for 8 and 16-bit formats on GB20x
-> GPUs, preventing them from mistakenly sharing block-linear surfaces
-> using these formats with prior GPUs that use a different layout.
->
-> There are a few ways the parameteric format modifier definition
-> could have been altered to handle the new layouts:
->
-> -The GOB Height and Page Kind field has a reserved value that could
->  have been used. However, the GOB height and page kind enums did
->  not change relative to prior chips, so this is sort of a lie.
->  However, this is the least-invasive change.
->
-> -An entirely new field could have been added. This seems
->  inappropriate given the presence of an existing appropriate field.
->  The advantage here is it avoids splitting the sector layout field
->  across two bitfields.
->
-> The chosen approach is the logically consistent one, but has the
-> downside of being the most complex, and that it causes the
-> DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D() macro to evaluate its 's'
-> parameter twice. However, utilizing simple helper functions in
-> client code when accessing the parameteric format modifier fields
-> easily addresses the complexity, and I have audited the relevant code
-> and do not believe the double evaluation should cause any problems in
-> practice.
->
-> Tested on GB20x and TU10x cards using the following:
->
-> -kmscube w/NVK+Zink built with these patches applied:
->
->    https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/36336
+Hi Chen-Yu,
 
-Both the Mesa and kernel pieces are now reviewed so I think we're good
-to start landing. I've independently tested with kmscube to verify.
+kernel test robot noticed the following build warnings:
 
-~Faith
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on linus/master v6.17-rc2 next-20250822]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->
->  with various manually specified formats
->  and both manually specified and automatically
->  selected modifiers.
->
-> -drmfmtmods, a tiny test program that lists modifiers:
->
->    https://github.com/cubanismo/drmfmtmods
->
-> Changes since the RFC version here:
->
->   https://lore.kernel.org/nouveau/20250703223658.1457-1-jajones@nvidia.co=
-m/
->
-> -Dropped the helper macros & static inlines in
->  drm_fourcc.h as requested by Faith Ekstrand,
->  who noted these aren't helpful for UMD code,
->  which is all written in rust now. I may re-
->  introduce some of these in a subsequent series,
->  but we both agreed we do not want to delay
->  progress on the modifiers themselves while we
->  debate the details of those cometic details.
->
-> -Reserved an extra bit for future sector
->  layouts.
->
-> -Fixed handling of linear modifiers on GB20x
->  and NV5x/G8x/G9x/GT2xx chips.
->
-> James Jones (3):
->   drm: define NVIDIA DRM format modifiers for GB20x
->   drm/nouveau/disp: Always accept linear modifier
->   drm/nouveau: Advertise correct modifiers on GB20x
->
->  drivers/gpu/drm/nouveau/dispnv50/disp.c     |  3 ++
->  drivers/gpu/drm/nouveau/dispnv50/disp.h     |  1 +
->  drivers/gpu/drm/nouveau/dispnv50/wndw.c     | 25 ++++++++++++++--
->  drivers/gpu/drm/nouveau/dispnv50/wndwca7e.c | 33 +++++++++++++++++++++
->  include/uapi/drm/drm_fourcc.h               | 25 ++++++++++------
->  5 files changed, 76 insertions(+), 11 deletions(-)
->
-> --
-> 2.50.1
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Yu-Tsai/clk-mediatek-clk-mux-Do-not-pass-flags-to-clk_mux_determine_rate_flags/20250822-143106
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20250822062854.2633133-1-wenst%40chromium.org
+patch subject: [PATCH] clk: mediatek: clk-mux: Do not pass flags to clk_mux_determine_rate_flags()
+config: x86_64-buildonly-randconfig-004-20250823 (https://download.01.org/0day-ci/archive/20250823/202508230416.OIwROhOT-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250823/202508230416.OIwROhOT-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508230416.OIwROhOT-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/clk/mediatek/clk-mux.c:149:22: warning: unused variable 'mux' [-Wunused-variable]
+     149 |         struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+         |                             ^~~
+   1 warning generated.
+
+
+vim +/mux +149 drivers/clk/mediatek/clk-mux.c
+
+a3ae549917f163 Owen Chen                  2019-03-05  145  
+b05ea3314390e9 AngeloGioacchino Del Regno 2022-10-11  146  static int mtk_clk_mux_determine_rate(struct clk_hw *hw,
+b05ea3314390e9 AngeloGioacchino Del Regno 2022-10-11  147  				      struct clk_rate_request *req)
+b05ea3314390e9 AngeloGioacchino Del Regno 2022-10-11  148  {
+b05ea3314390e9 AngeloGioacchino Del Regno 2022-10-11 @149  	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+b05ea3314390e9 AngeloGioacchino Del Regno 2022-10-11  150  
+6c66f834fd3bf9 Chen-Yu Tsai               2025-08-22  151  	return clk_mux_determine_rate_flags(hw, req, 0);
+b05ea3314390e9 AngeloGioacchino Del Regno 2022-10-11  152  }
+b05ea3314390e9 AngeloGioacchino Del Regno 2022-10-11  153  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
