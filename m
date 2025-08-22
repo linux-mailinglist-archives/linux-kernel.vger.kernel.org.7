@@ -1,308 +1,282 @@
-Return-Path: <linux-kernel+bounces-781625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85B08B314B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:05:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BEC2B314B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA15B7A2F9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:04:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 506B3B67E39
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAA8296BB5;
-	Fri, 22 Aug 2025 10:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gFOV+fWL"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114252C0260;
+	Fri, 22 Aug 2025 10:05:43 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC7B285418
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510F4291C3F
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755857128; cv=none; b=rrHcClmZzKO4DfWBw72beNgJDMe5+8+EhGNITwjBP9yg6ATWBRpx5J4c9JZeG1B2lU/v4aUS4z2PnZtA9XvTengNa11u1PsfWIBzgEWkC1qgIgxuWX6DlurX2qkPATqVE6vrNrawu4mXAm1P3+IE7P0il9bdKNz/1CCWpuBJdTQ=
+	t=1755857142; cv=none; b=kP7BHvOUCulFbyFC8o+FHTHsjFtr3u2Rosgk5TBv5B1aWU2ymzpxT3PGkyNenvoaLhgf05vA7u7p78oeuTGxGZ+FOjzcx0Dj2IWAvl2IAPl+Ze/zH76e9a8zU/xggQZCMiLKjtmOmP7lBvrRFqK5DHRHhHC+EFcTHPK0pyVXlw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755857128; c=relaxed/simple;
-	bh=KivU5RnfA0zCwbsH7zhExGKtReC3rbkiFiOi0NUu8JU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=toOeQQ7Yr7ukfcw1vfisVGh42A+hUZ2xrNbpX0n/h4E2SrubbiIeKOZtCe41mlCQm9O66uVdMMEJJnfwHGILL9PStElnyfjUI/XDNaqQdQX/CMfeujLsoUHBIcSj7dvMxNNTbUpmYj7587prBKp4WU8Bw7TQAeA5DV47mQ/HhPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gFOV+fWL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57M8UIgx024021
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:05:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NCvb4E87MdnkwFWFQpgaGoK+/UWKLd0ckk9/uB8fxpI=; b=gFOV+fWLijaslLma
-	A9XqpoRAKL4OPj1l1BTVvFvigN6fQ/5oXcLvh1AkfQ1phE5QY85wqYHzG3EUAO4o
-	AajQcO5PCy9VAtP4uI/4dGv0ZzShI8AsgTwfq1xwFCLv/0LPmynBt5Smv/E3+R9D
-	SC6GYK/YDOPW+OTy2JbKDmuDNtfu4AjSbimMahTTqAJsOuW6oHxOg36wdINf/KxP
-	pnmCJMkgL+aSBAZ64BwF6mGNz9Dewgrjw1tD3EQG9HZYTq8C8kxbz9X49B4KgEpc
-	6tnGmO/fv9ZNLQwM1hTOwLEys2rXsFWep8nI6/TS1t/VKrN0Wg2O8kwkW9D38ykj
-	GV/MlA==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52agvpd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:05:26 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-24640dae139so5270355ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 03:05:25 -0700 (PDT)
+	s=arc-20240116; t=1755857142; c=relaxed/simple;
+	bh=a3muh3rL5VyUL97AINRZ4oq9t9ey4aN1fwiASR6VVRI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HTqkZZYwb/uoH8VJpCUPOiFCuLvWJUNFWH8WrcX+by/H5xvsSwL/CyHrOlQ23hujvKUGvoGMth9DL9NBqKDUVH26SHbm8kGkgTMED8abl8ZAINNIybW0/h8vDdeCCLbIMIbPghenmWB0vhVGU2JjDos5tXJvh+BU9wlatixyVdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3e67df0ee00so47253205ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 03:05:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755857115; x=1756461915;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NCvb4E87MdnkwFWFQpgaGoK+/UWKLd0ckk9/uB8fxpI=;
-        b=ih/EScG2kYh6ROZwV4Be5i1xNKYtCshRCamlq0wbv/sf1RZQMnp42/zM36BIsj6Qn1
-         xZ1zezw7LnZ4qTNY6ygUl1s5QAIj7NAOcQP1qXKW34BKpKJt4WMYrOOsYiEcjNAkNeJG
-         8LScg/kQveXU7cKONmO8979Vw/wseyauFw3YjYCz0NYpajMIK3FDrgbN6KUoWa5UzfzD
-         i5yRxRKqeN7fxUzqmBhZPy7XWbSs0Z3Luz1maQusSGzX8MYENa2qY8GsUmAxnbke5lXf
-         3KNHMFvgTEMF6rDZfRpRmeb743zFxmrfUUiD5h8buwh/pt93tVDN6cevRL5ahgLFtqrg
-         DBFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVEerWXk0ig423nuZjWEUJN/xeEcO/X3QL3CCYJhku7PtYmJffUyQ0SsmiyaNWLyNWIz+XDoEIhOQ+jRcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3a/rCVBw2NyeCNo9VBlJ0LlR4ss2TB54zLLtx9eq3MdNfdU8K
-	2vGpeSOWO55pFtcnDuaRgjxXar3G0QChJf064vQ6WJnPgXJFNHrD7W0pCGY+cr6CstH8JvRDmN+
-	ARh8MUHNV0lDamxAjSoYGdt1X/Mq8E3rar2K+87PYj4IIukntB7rgYwUdAfjSkLfFqno=
-X-Gm-Gg: ASbGncvsixqUF1KvfVTTCGAnLiHzzQb91A1X46UQkd4872Eejo6DtCHRPDYP8VOpuAC
-	3gEtr3+WNDIFSr5dJ4YPcLmJJGAwSZ+HOJ6sm2oT/fWCcs7jFvC1IaeC/9A+3yIuknFIDdaFDBK
-	SXKtQtCRgmpCZVZ81Ar0rTSQHhO9DptT/vkCZ7wXKoGEy+2TjyYajQdSu/OZ/zAbODKNY5o1R9A
-	XkFju70FdgYqfmuYpfB+vj80l9NmJQK6d1YE6cqOwlXx3J5HwQRDyuazp7NbC2zgu3tqsJ5QTwm
-	eCoz2iwiQdnjZ7KE0M3ESbJpVv/x8lw/mrr6uRvtCf+ayyReWZFj3FFuzOQFd6PtLCGCo5FUS8i
-	84WPsZ6KprpI8WZE0UPEJ4MCb5Ire5z4=
-X-Received: by 2002:a17:903:22cc:b0:240:640a:c57b with SMTP id d9443c01a7336-2462ef1f7bamr36120215ad.37.1755857114852;
-        Fri, 22 Aug 2025 03:05:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHShlcLRCyxd3es3abUH//R1uFG+bwmxmXbbL+TYec1DVJUwY5M/qqhUXum/j4nkYom6lZREg==
-X-Received: by 2002:a17:903:22cc:b0:240:640a:c57b with SMTP id d9443c01a7336-2462ef1f7bamr36119655ad.37.1755857114355;
-        Fri, 22 Aug 2025 03:05:14 -0700 (PDT)
-Received: from [10.133.33.128] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32513902819sm2098106a91.14.2025.08.22.03.05.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 03:05:13 -0700 (PDT)
-Message-ID: <b43382fc-a2c3-4c6b-b462-0cabf7a2103d@oss.qualcomm.com>
-Date: Fri, 22 Aug 2025 18:05:04 +0800
+        d=1e100.net; s=20230601; t=1755857139; x=1756461939;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=juGpK4kSjchRc2LkFcW3uTYahVs1DyJubiPrfmsEuGA=;
+        b=GNhJx2bQKTGEnqe1qI5LA0X/ANrC15S5m6L75K4/NgMKMaIlR9w9PxJjGpQmSJXCZj
+         Ohkr0KadsPQb/qDuV6VUHycAIp6t8B22d0KgEWkc15c/RwvXn1HIgj++rXmkmdUdqt1d
+         le62J6bT5YoD55tNI8HwlLojs2r1aYfXyAvJyeaVGkjUh1eToA9HZfjz1suaKv3/zVxY
+         DofKJickt22mVOU7iqQ+6h3NeaxcUqjFE4TLOwe9aeVJEjcwTXMl5JNPqn0Nkk76C4wF
+         8T/ZFOnlHh0oL4mke1c46If8JDJ+odjJUfY8FMW8n4v6VYDkjD8mVLkz45DYG3GHbdco
+         cFhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXy0lXc0VDzURyEmaBdbmDsAg047iiaHtpIY/xc+koFgcFjb/5TsytRi6DpDmYZDo9K+m3nVwlck3Fi5yw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN4+lj4GzzdfIWBpTzit+DLOO/pPxXi/3a0j9270LI5fOGI8k+
+	DuFOdNNmj+1ibY1ybK6Cp7xI0wd8uiST6mjhVU/sDZO8wzAxSgwyfO00V/moBh2eCBlUfg0YJZy
+	1nOcka138VSPfCW5xN+HOz7T3qzPvGY2xJeYHUM09LKwfa54PBSg3323cX64=
+X-Google-Smtp-Source: AGHT+IFYX/e/xC4ZNjaIIOYEvn5cXgmC4kzJH9oM9hp/VYR/NxaQ2PWTZUn4QxbO6a2fPsikd4K3KaLvGysC2Z5Sb/XvJw/yL8e8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] PCI: qcom: Add equalization settings for 8.0 GT/s
- and 32.0 GT/s
-To: Manivannan Sadhasivam <mani@kernel.org>,
-        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
-        lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
-        johan+linaro@kernel.org, vkoul@kernel.org, kishon@kernel.org,
-        neil.armstrong@linaro.org, abel.vesa@linaro.org, kw@linux.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, quic_krichai@quicinc.com,
-        quic_vbadigan@quicinc.com
-References: <20250819071649.1531437-1-ziyue.zhang@oss.qualcomm.com>
- <20250819071649.1531437-2-ziyue.zhang@oss.qualcomm.com>
- <z54p5x5u56u7dprrlv3obzhxotjgimbufa2spajoqvnlrevgdd@4dejnkmiegrh>
-Content-Language: en-US
-From: Qiang Yu <qiang.yu@oss.qualcomm.com>
-In-Reply-To: <z54p5x5u56u7dprrlv3obzhxotjgimbufa2spajoqvnlrevgdd@4dejnkmiegrh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: o5f9Us4Pd88gh8IEX_GBXe_cmy37OT92
-X-Authority-Analysis: v=2.4 cv=B83gEOtM c=1 sm=1 tr=0 ts=68a840e6 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=uZ_Y6Hf0VBP1xoXJwNUA:9
- a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-GUID: o5f9Us4Pd88gh8IEX_GBXe_cmy37OT92
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfXyj46TbycIu3A
- tQXO7ewkyfMn2QbgeRtezQ3tWHcf5i1a06+JoZ8yuHuKZOxqh5b+Xfyala4UBzN9MMIkwqrBGtG
- ijIuSlLXAJVbkj6E6D5nEcYBe4RN9o7AKk3Et7s1oCaVmiA3dXHJp/zkTtVtqPm0r4cdqddIXKm
- zhNaY/WMDdhCBOkDuWhA6M4kc2ASJJLslk13ejxDpWQtBN5n0jT12w5ux1J71AVMG7s2oIJ+E7k
- 9nCVTDobZU8IjoFuBBoy5QsOH6K5AS2X4RsP/Gma+WQq2O8sRTu2/PiqC9t1yaV97EF8QVPR2G0
- fj2R+kdIbLLJxG5j6NouXp0LJ1SNvepNQZwUj0f8k+PGPekghrtLjkalWJWiRqZVeGGYcr0wYT8
- uEmZIG9YWU5qFHrTnS4u7n/qocn/qA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-22_03,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 bulkscore=0 priorityscore=1501 suspectscore=0 malwarescore=0
- lowpriorityscore=0 adultscore=0 impostorscore=0 clxscore=1015 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
+X-Received: by 2002:a05:6e02:1fe1:b0:3e5:7e26:2f90 with SMTP id
+ e9e14a558f8ab-3e922504b72mr41859795ab.24.1755857139359; Fri, 22 Aug 2025
+ 03:05:39 -0700 (PDT)
+Date: Fri, 22 Aug 2025 03:05:39 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a840f3.a00a0220.33401d.0255.GAE@google.com>
+Subject: [syzbot] [serial?] KASAN: slab-out-of-bounds Read in vc_do_resize (2)
+From: syzbot <syzbot+23804718314de4b145d4@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    8d561baae505 Merge tag 'x86_urgent_for_v6.17_rc2' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=105f6ba2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4a59f5ce3f5878f0
+dashboard link: https://syzkaller.appspot.com/bug?extid=23804718314de4b145d4
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3c8e63656e52/disk-8d561baa.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/19f4251b8bfd/vmlinux-8d561baa.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/aca2c5602160/bzImage-8d561baa.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+23804718314de4b145d4@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in scr_memcpyw include/linux/vt_buffer.h:38 [inline]
+BUG: KASAN: slab-out-of-bounds in vc_do_resize+0x80a/0x10e0 drivers/tty/vt/vt.c:1245
+Read of size 64 at addr ffff88807b47bfc0 by task syz.3.748/14193
+
+CPU: 0 UID: 0 PID: 14193 Comm: syz.3.748 Not tainted 6.17.0-rc1-syzkaller-00224-g8d561baae505 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xcd/0x630 mm/kasan/report.c:482
+ kasan_report+0xe0/0x110 mm/kasan/report.c:595
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0x100/0x1b0 mm/kasan/generic.c:189
+ __asan_memcpy+0x23/0x60 mm/kasan/shadow.c:105
+ scr_memcpyw include/linux/vt_buffer.h:38 [inline]
+ vc_do_resize+0x80a/0x10e0 drivers/tty/vt/vt.c:1245
+ vt_resizex drivers/tty/vt/vt_ioctl.c:717 [inline]
+ vt_ioctl+0x2ca4/0x30a0 drivers/tty/vt/vt_ioctl.c:937
+ tty_ioctl+0x65e/0x1680 drivers/tty/tty_io.c:2792
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl fs/ioctl.c:584 [inline]
+ __x64_sys_ioctl+0x18b/0x210 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0ffab8ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f0ffba5a038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f0ffadb6090 RCX: 00007f0ffab8ebe9
+RDX: 0000000000000038 RSI: 000000000000560a RDI: 0000000000000003
+RBP: 00007f0ffac11e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f0ffadb6128 R14: 00007f0ffadb6090 R15: 00007ffeb7398ce8
+ </TASK>
+
+Allocated by task 5857:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:405
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4365 [inline]
+ __kvmalloc_node_noprof+0x27b/0x620 mm/slub.c:5052
+ kvmalloc_array_node_noprof include/linux/slab.h:1065 [inline]
+ __ptr_ring_init_queue_alloc_noprof include/linux/ptr_ring.h:471 [inline]
+ ptr_ring_init_noprof include/linux/ptr_ring.h:489 [inline]
+ skb_array_init_noprof include/linux/skb_array.h:182 [inline]
+ pfifo_fast_init+0x125/0x3b0 net/sched/sch_generic.c:869
+ qdisc_create_dflt+0x122/0x490 net/sched/sch_generic.c:1019
+ attach_one_default_qdisc net/sched/sch_generic.c:1178 [inline]
+ netdev_for_each_tx_queue include/linux/netdevice.h:2660 [inline]
+ attach_default_qdiscs net/sched/sch_generic.c:1196 [inline]
+ dev_activate+0x63f/0x12d0 net/sched/sch_generic.c:1255
+ __dev_open+0x432/0x7c0 net/core/dev.c:1691
+ __dev_change_flags+0x55d/0x720 net/core/dev.c:9537
+ netif_change_flags+0x8d/0x160 net/core/dev.c:9600
+ do_setlink.constprop.0+0xb53/0x4380 net/core/rtnetlink.c:3143
+ rtnl_changelink net/core/rtnetlink.c:3761 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3920 [inline]
+ rtnl_newlink+0x1446/0x2000 net/core/rtnetlink.c:4057
+ rtnetlink_rcv_msg+0x95b/0xe90 net/core/rtnetlink.c:6946
+ netlink_rcv_skb+0x155/0x420 net/netlink/af_netlink.c:2552
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x5aa/0x870 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ __sock_sendmsg net/socket.c:729 [inline]
+ __sys_sendto+0x4a3/0x520 net/socket.c:2228
+ __do_sys_sendto net/socket.c:2235 [inline]
+ __se_sys_sendto net/socket.c:2231 [inline]
+ __x64_sys_sendto+0xe0/0x1c0 net/socket.c:2231
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88807b478000
+ which belongs to the cache kmalloc-8k of size 8192
+The buggy address is located 8320 bytes to the right of
+ allocated 8000-byte region [ffff88807b478000, ffff88807b479f40)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7b478
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+anon flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801b842280 ffffea0001ea8000 0000000000000005
+raw: 0000000000000000 0000000000020002 00000000f5000000 0000000000000000
+head: 00fff00000000040 ffff88801b842280 ffffea0001ea8000 0000000000000005
+head: 0000000000000000 0000000000020002 00000000f5000000 0000000000000000
+head: 00fff00000000003 ffffea0001ed1e01 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0x528c0(GFP_NOWAIT|__GFP_IO|__GFP_FS|__GFP_NORETRY|__GFP_COMP), pid 5857, tgid 5857 (syz-executor), ts 75907413730, free_ts 75889157643
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1851
+ prep_new_page mm/page_alloc.c:1859 [inline]
+ get_page_from_freelist+0x132b/0x38e0 mm/page_alloc.c:3858
+ __alloc_frozen_pages_noprof+0x261/0x23f0 mm/page_alloc.c:5148
+ alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:2487 [inline]
+ allocate_slab mm/slub.c:2655 [inline]
+ new_slab+0x247/0x330 mm/slub.c:2709
+ ___slab_alloc+0xcf2/0x1740 mm/slub.c:3891
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3981
+ __slab_alloc_node mm/slub.c:4056 [inline]
+ slab_alloc_node mm/slub.c:4217 [inline]
+ __do_kmalloc_node mm/slub.c:4364 [inline]
+ __kvmalloc_node_noprof+0x3b1/0x620 mm/slub.c:5052
+ kvmalloc_array_node_noprof include/linux/slab.h:1065 [inline]
+ __ptr_ring_init_queue_alloc_noprof include/linux/ptr_ring.h:471 [inline]
+ ptr_ring_init_noprof include/linux/ptr_ring.h:489 [inline]
+ skb_array_init_noprof include/linux/skb_array.h:182 [inline]
+ pfifo_fast_init+0x125/0x3b0 net/sched/sch_generic.c:869
+ qdisc_create_dflt+0x122/0x490 net/sched/sch_generic.c:1019
+ attach_one_default_qdisc net/sched/sch_generic.c:1178 [inline]
+ netdev_for_each_tx_queue include/linux/netdevice.h:2660 [inline]
+ attach_default_qdiscs net/sched/sch_generic.c:1196 [inline]
+ dev_activate+0x63f/0x12d0 net/sched/sch_generic.c:1255
+ __dev_open+0x432/0x7c0 net/core/dev.c:1691
+ __dev_change_flags+0x55d/0x720 net/core/dev.c:9537
+ netif_change_flags+0x8d/0x160 net/core/dev.c:9600
+ do_setlink.constprop.0+0xb53/0x4380 net/core/rtnetlink.c:3143
+ rtnl_changelink net/core/rtnetlink.c:3761 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3920 [inline]
+ rtnl_newlink+0x1446/0x2000 net/core/rtnetlink.c:4057
+page last free pid 5854 tgid 5854 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1395 [inline]
+ __free_frozen_pages+0x7d5/0x10f0 mm/page_alloc.c:2895
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x4d/0x120 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:340
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4180 [inline]
+ slab_alloc_node mm/slub.c:4229 [inline]
+ __kmalloc_cache_noprof+0x1f1/0x3e0 mm/slub.c:4391
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ vlan_info_alloc net/8021q/vlan_core.c:153 [inline]
+ vlan_vid_add+0x2ee/0x750 net/8021q/vlan_core.c:329
+ vlan_vid0_add net/8021q/vlan.c:370 [inline]
+ vlan_device_event+0x1a39/0x2620 net/8021q/vlan.c:411
+ notifier_call_chain+0xbc/0x410 kernel/notifier.c:85
+ call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:2229
+ call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
+ call_netdevice_notifiers net/core/dev.c:2281 [inline]
+ __dev_notify_flags+0x12c/0x2e0 net/core/dev.c:9576
+ netif_change_flags+0x108/0x160 net/core/dev.c:9605
+ do_setlink.constprop.0+0xb53/0x4380 net/core/rtnetlink.c:3143
+ rtnl_changelink net/core/rtnetlink.c:3761 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3920 [inline]
+ rtnl_newlink+0x1446/0x2000 net/core/rtnetlink.c:4057
+ rtnetlink_rcv_msg+0x95b/0xe90 net/core/rtnetlink.c:6946
+ netlink_rcv_skb+0x155/0x420 net/netlink/af_netlink.c:2552
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x5aa/0x870 net/netlink/af_netlink.c:1346
+
+Memory state around the buggy address:
+ ffff88807b47be80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88807b47bf00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88807b47bf80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                                           ^
+ ffff88807b47c000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff88807b47c080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 8/22/2025 4:06 PM, Manivannan Sadhasivam wrote:
-> On Tue, Aug 19, 2025 at 03:16:46PM GMT, Ziyue Zhang wrote:
->> Add lane equalization setting for 8.0 GT/s and 32.0 GT/s to enhance link
->> stability and avoid AER Correctable Errors reported on some platforms
->> (eg. SA8775P).
->>
-> 
-> So this is fixing an issue, right? Then you should add relevant Fixes tag. I
-> guess the tag here would be the commit that added SA8775p.
-> 
->> 8.0 GT/s, 16.0 GT/s and 32.0 GT/s require the same equalization setting.
->> This setting is programmed into a group of shadow registers, which can be
->> switched to configure equalization for different speeds by writing 00b,
->> 01b and 10b to `RATE_SHADOW_SEL`.
->>
->> Hence program equalization registers in a loop using link speed as index,
->> so that equalization setting can be programmed for 8.0 GT/s, 16.0 GT/s
->> and 32.0 GT/s.
->>
->> Co-developed-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
->> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
->> Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
->> ---
->>   drivers/pci/controller/dwc/pcie-designware.h  |  1 -
->>   drivers/pci/controller/dwc/pcie-qcom-common.c | 58 +++++++++++--------
->>   drivers/pci/controller/dwc/pcie-qcom-common.h |  2 +-
->>   drivers/pci/controller/dwc/pcie-qcom-ep.c     |  6 +-
->>   drivers/pci/controller/dwc/pcie-qcom.c        |  6 +-
->>   5 files changed, 41 insertions(+), 32 deletions(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
->> index b5e7e18138a6..11de844428e5 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware.h
->> +++ b/drivers/pci/controller/dwc/pcie-designware.h
->> @@ -123,7 +123,6 @@
->>   #define GEN3_RELATED_OFF_GEN3_EQ_DISABLE	BIT(16)
->>   #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT	24
->>   #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK	GENMASK(25, 24)
->> -#define GEN3_RELATED_OFF_RATE_SHADOW_SEL_16_0GT	0x1
->>   
->>   #define GEN3_EQ_CONTROL_OFF			0x8A8
->>   #define GEN3_EQ_CONTROL_OFF_FB_MODE		GENMASK(3, 0)
->> diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.c b/drivers/pci/controller/dwc/pcie-qcom-common.c
->> index 3aad19b56da8..cb98e66d81d9 100644
->> --- a/drivers/pci/controller/dwc/pcie-qcom-common.c
->> +++ b/drivers/pci/controller/dwc/pcie-qcom-common.c
->> @@ -8,9 +8,11 @@
->>   #include "pcie-designware.h"
->>   #include "pcie-qcom-common.h"
->>   
->> -void qcom_pcie_common_set_16gt_equalization(struct dw_pcie *pci)
->> +void qcom_pcie_common_set_equalization(struct dw_pcie *pci)
->>   {
->>   	u32 reg;
->> +	u16 speed;
->> +	struct device *dev = pci->dev;
-> 
-> Reverse Xmas order please.
-> 
->>   
->>   	/*
->>   	 * GEN3_RELATED_OFF register is repurposed to apply equalization
->> @@ -19,32 +21,40 @@ void qcom_pcie_common_set_16gt_equalization(struct dw_pcie *pci)
->>   	 * determines the data rate for which these equalization settings are
->>   	 * applied.
->>   	 */
->> -	reg = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
->> -	reg &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
->> -	reg &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
->> -	reg |= FIELD_PREP(GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK,
->> -			  GEN3_RELATED_OFF_RATE_SHADOW_SEL_16_0GT);
->> -	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, reg);
->>   
->> -	reg = dw_pcie_readl_dbi(pci, GEN3_EQ_FB_MODE_DIR_CHANGE_OFF);
->> -	reg &= ~(GEN3_EQ_FMDC_T_MIN_PHASE23 |
->> -		GEN3_EQ_FMDC_N_EVALS |
->> -		GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA |
->> -		GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA);
->> -	reg |= FIELD_PREP(GEN3_EQ_FMDC_T_MIN_PHASE23, 0x1) |
->> -		FIELD_PREP(GEN3_EQ_FMDC_N_EVALS, 0xd) |
->> -		FIELD_PREP(GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA, 0x5) |
->> -		FIELD_PREP(GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA, 0x5);
->> -	dw_pcie_writel_dbi(pci, GEN3_EQ_FB_MODE_DIR_CHANGE_OFF, reg);
->> +	for (speed = PCIE_SPEED_8_0GT; speed <= pcie_link_speed[pci->max_link_speed]; ++speed) {
->> +		if (speed > PCIE_SPEED_32_0GT) {
->> +			dev_warn(dev, "Skipped equalization settings for speeds higher than 32.0 GT/s\n");
->> +			break;
->> +		}
->>   
->> -	reg = dw_pcie_readl_dbi(pci, GEN3_EQ_CONTROL_OFF);
->> -	reg &= ~(GEN3_EQ_CONTROL_OFF_FB_MODE |
->> -		GEN3_EQ_CONTROL_OFF_PHASE23_EXIT_MODE |
->> -		GEN3_EQ_CONTROL_OFF_FOM_INC_INITIAL_EVAL |
->> -		GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC);
->> -	dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, reg);
->> +		reg = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
->> +		reg &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
->> +		reg &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
->> +		reg |= FIELD_PREP(GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK,
->> +			  speed - PCIE_SPEED_8_0GT);
->> +		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, reg);
->> +
->> +		reg = dw_pcie_readl_dbi(pci, GEN3_EQ_FB_MODE_DIR_CHANGE_OFF);
->> +		reg &= ~(GEN3_EQ_FMDC_T_MIN_PHASE23 |
->> +			GEN3_EQ_FMDC_N_EVALS |
->> +			GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA |
->> +			GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA);
->> +		reg |= FIELD_PREP(GEN3_EQ_FMDC_T_MIN_PHASE23, 0x1) |
->> +			FIELD_PREP(GEN3_EQ_FMDC_N_EVALS, 0xd) |
->> +			FIELD_PREP(GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA, 0x5) |
->> +			FIELD_PREP(GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA, 0x5);
->> +		dw_pcie_writel_dbi(pci, GEN3_EQ_FB_MODE_DIR_CHANGE_OFF, reg);
->> +
->> +		reg = dw_pcie_readl_dbi(pci, GEN3_EQ_CONTROL_OFF);
->> +		reg &= ~(GEN3_EQ_CONTROL_OFF_FB_MODE |
->> +			GEN3_EQ_CONTROL_OFF_PHASE23_EXIT_MODE |
->> +			GEN3_EQ_CONTROL_OFF_FOM_INC_INITIAL_EVAL |
->> +			GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC);
->> +		dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, reg);
->> +	}
->>   }
->> -EXPORT_SYMBOL_GPL(qcom_pcie_common_set_16gt_equalization);
->> +EXPORT_SYMBOL_GPL(qcom_pcie_common_set_equalization);
->>   
->>   void qcom_pcie_common_set_16gt_lane_margining(struct dw_pcie *pci)
->>   {
->> diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.h b/drivers/pci/controller/dwc/pcie-qcom-common.h
->> index 7d88d29e4766..7f5ca2fd9a72 100644
->> --- a/drivers/pci/controller/dwc/pcie-qcom-common.h
->> +++ b/drivers/pci/controller/dwc/pcie-qcom-common.h
->> @@ -8,7 +8,7 @@
->>   
->>   struct dw_pcie;
->>   
->> -void qcom_pcie_common_set_16gt_equalization(struct dw_pcie *pci);
->> +void qcom_pcie_common_set_equalization(struct dw_pcie *pci);
->>   void qcom_pcie_common_set_16gt_lane_margining(struct dw_pcie *pci);
->>   
->>   #endif
->> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
->> index 60afb4d0134c..aeb166f68d55 100644
->> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
->> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
->> @@ -511,10 +511,10 @@ static int qcom_pcie_perst_deassert(struct dw_pcie *pci)
->>   		goto err_disable_resources;
->>   	}
->>   
->> -	if (pcie_link_speed[pci->max_link_speed] == PCIE_SPEED_16_0GT) {
->> -		qcom_pcie_common_set_16gt_equalization(pci);
->> +	qcom_pcie_common_set_equalization(pci);
->> +
->> +	if (pcie_link_speed[pci->max_link_speed] == PCIE_SPEED_16_0GT)
-> 
-> This condition has existed even before this patch, but just noticing this
-> possible issue. So if 'max_link_speed' is > 16 GT/s, we do not need to set lane
-> margining? We used the same logic to set equalization setting earlier also.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Lane margining is supported for 16 GT/s and 32 GT/s. The settings are
-dependent on phy design. For a specific phy, they have same settings
-for 16 GT/s and 32 GT/s. Perhaps we can get the settings from devicetree
-and program them in a loop.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-But I'm not sure why we need to program it. It will no affect singal
-quality and only required when user wants to collect margining info.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-- Qiang Yu
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-> 
-> - Mani
-> 
-
+If you want to undo deduplication, reply with:
+#syz undup
 
