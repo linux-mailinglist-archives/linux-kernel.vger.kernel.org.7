@@ -1,132 +1,176 @@
-Return-Path: <linux-kernel+bounces-781240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D66AB30FBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:01:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1799B30FC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 462EE5C10F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:59:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE4F35C39C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9C52E62C9;
-	Fri, 22 Aug 2025 06:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982DF2E62C9;
+	Fri, 22 Aug 2025 06:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lkWZuFLX"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="L/brIPPp"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344802E3376;
-	Fri, 22 Aug 2025 06:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543FA2E5B08;
+	Fri, 22 Aug 2025 06:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755845955; cv=none; b=aEgGa/EALqbsaEGfzGpBwboF1JnJfTarKdv+9L5AGoYjOFv+WRRN5oaGO6gyWJCOhCI3IHHaS3Fs9gcXZqeSx1B2Vty6c1SNDvgwEL51tBcJvKI0cSviOIPt713uk+wFNdyNeJ1kvIVhnBvOG3CdojHZfibVMOUmRJ8mqDLeSCY=
+	t=1755845986; cv=none; b=nHVAYym6+rfGz/ecQwcgHGQYsyi73asShSKeET+MewnAsx2lHjPVYtD+yhJ9YaS+Zma+RiTbEC1iJhCTbGKgzbfL0V3Xi2aEnVOqJiOD9D6Bzfc/WIrkZQ9hVmby1OI95OOvOjTqh44izJzF5RG7KhwLnJtryFRd5ABN7KXsnn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755845955; c=relaxed/simple;
-	bh=rUj/yfCKcqTqtUi4Y7Y/wwWhuggIn0a6BUKAM1IKSWI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uPn4VwkRMb4NZzA14HROjz7qO8Iv2wOZ6LhQtuYVBJGFGjhYUeRcZjLVUlDCl8cugBMfaPdMtBoVtCm7Nw3+xPG0p15iuz3o9hDDfDLii/YJ79ZZtVQPpwipRJpZKuT5mja7zoLR3kEVO+62NQppVAiMZekmo6Z/fz/X6ovO/tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lkWZuFLX; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4755f37c3eso1489564a12.3;
-        Thu, 21 Aug 2025 23:59:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755845953; x=1756450753; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4thhVB+q3+L84MtJwszNBDIjH2Zey5SbGCUKuXXACAo=;
-        b=lkWZuFLXF+BiuNSggTtg0y5CLuHV76riwmb/GT9BYKp7IU1RjXOwPhu9SOwOJKgWYN
-         zpYxU/QPBEo1eJEDSQMjINCPbc3Qqi6cAZvM/rgzcNYvGGbSxA2w3C6aKjdEl9wvkv55
-         RRlJYsUZwLCgrqbdUkzBwwzz2O7awEB43rOQLYhWGPxaHkkJ4KUW7zQl4LxDzAG6hNrk
-         GxOQIhas4BGwFnS2c0klWKAAXpSbyQVw+J5kpr1LvsTvc8yqYakLTUBQ7/5HfvUSd1DR
-         MhH+kLowcC6TL8e6DKHY/J5CVJiSms21jHi1Tg2kMjGEQObvF+d0KtHYda2gcB6mGloI
-         fP0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755845953; x=1756450753;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4thhVB+q3+L84MtJwszNBDIjH2Zey5SbGCUKuXXACAo=;
-        b=riyaNbPHyIPETjVDxChkC/n4LpJ77GUSfyQWxlvTEPlmzR+ywRQT5hLcJxisTdNlOI
-         trAiSnJZJjt5SEiLpcpz2LrqxQryO/lxcyZUWh8L53RwooNRRVSgbbdg9cyq8JISH4Kg
-         BdfH/6nTPA8+I+qG12CAU9BTsx6ueVag3sKeobFivblsw7i6nkMISVURfXn8o6yMa3pS
-         s0jHKsh/4dvTR25rsNpqqCk+MC8awrS2EVKGbVLz2vzcDtttY9iWOmEE4KliTuhk9Wz9
-         +41UlapGAG5598wveKJXPBtS88gVh39tJCc6wuuNSgUEd9jxPWijWo23s47cbov7ihh0
-         7xfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlL4lgqxWrHZbz9Rbz8Ez73dBvbK4kkLPL+C7wR7IgpvWWk4b7I0cRY3tI67Q0TBS1Vtqr1JJ9sUO6KQs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeRAXZm1d5DdUgPGCk1LEVf8sLSKZSeAwNyS5iP/w8liN0GaFj
-	Myz/z2Ns0N5PPxTIBxGFoa1pocTR1Kk0JM1M3BZLkOTNBp5ePQN9NI1o
-X-Gm-Gg: ASbGnctQIE9hBslOQakEaRozunlwXIS7gfu9Aud0WSaNF3r/93ipdNkcbb4uaX9R8mq
-	Y8GmjhObtkk+rbW6FdPt3hq7deakqSgox1Qsav3P6MNKJj8BfWKlEUoLRxSnQ3ZtNHjxu2UllQC
-	5oIMcePDogzQyvTR6oHSTn6LOEyDEFA/2ECert3Ut2qdT5zkmvk7q0h6BZRgSgb+Gs9bVCmylcb
-	1erFph1dkLPC3/ewD8WZsp3aSUR+IxSu2THE+4M8JE5vcN6nHorwLGcIf/U5PfdihsLFAl8c4aF
-	qZPsph5uF2NcJka7e50ZEe6ajJy6c6WJrDphDMPD/5v7wbLlOh4K+ozYt6Yusqrm6PUYWeVBpc6
-	pfk6+hdjwMTS2tFSpDlaarggM4K9l0lKoM6aTeT37e1aw6QMIzg==
-X-Google-Smtp-Source: AGHT+IErBkF/SFoXIWhW8kxR8e1qpeLK0vSULa1gxTblBwP4ZJFloNeCmzda5LeV6C3Aqq3fX7dPGw==
-X-Received: by 2002:a17:903:1a2c:b0:234:a139:11f0 with SMTP id d9443c01a7336-2462edab80amr33174755ad.7.1755845953241;
-        Thu, 21 Aug 2025 23:59:13 -0700 (PDT)
-Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24626b2ab19sm19747265ad.72.2025.08.21.23.59.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 23:59:12 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: dwlsalmeida@gmail.com,
-	mchehab@kernel.org
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+1d9c0edea5907af239e0@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH] media: vidtv: fix to initialize local pointers upon transfer of memory ownership
-Date: Fri, 22 Aug 2025 15:58:49 +0900
-Message-Id: <20250822065849.1145572-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755845986; c=relaxed/simple;
+	bh=Uy5vBO8psVXG0UKZHrZHg1PImkJWgCbcwnHvjRqYzzc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MlScNKN2nJtseSJWCZWSf0Wqxn0H/pYCK7W0HZsmwzKd0BKoxXUFacSo5x7HqA9qC6lnS7YzVZ78F7wEXQ2LVyKojZ/aDr4ZOvEEpg4aI0rBA3W3aVaK4eHQCZC4miEtZvV24/EE88Ph7QAHRNo+PzCnFB+kCCrVCx9H6gTU8tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=L/brIPPp; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1755845973; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=YkM4XdDBFAdRbT5J+s3/gC6XHNJgFJP15TsoieCtwm0=;
+	b=L/brIPPp0+mMFJnyW98o1Dd0P5d/w3Wul5CR4iFkqbyXx3Q+cDQZoMrdn3fA0rtJn/KFoBaaiLgmjTzMGXW5t59lrtxhhH/deiYmbEc30wzItYwbF0cziBh9BT+Z99XaLtMeMi6EYVnOiyEWzKRRxRRvRq+DEoYb+zz2tigiGkU=
+Received: from 30.74.144.125(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WmIuUdM_1755845969 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 22 Aug 2025 14:59:30 +0800
+Message-ID: <0269b6d4-23ce-416f-8c44-907478c3d6dd@linux.alibaba.com>
+Date: Fri, 22 Aug 2025 14:59:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 10/13] khugepaged: kick khugepaged for enabling
+ none-PMD-sized mTHPs
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Nico Pache <npache@redhat.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ david@redhat.com, ziy@nvidia.com, Liam.Howlett@oracle.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
+ peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
+ sunnanyong@huawei.com, vishal.moola@gmail.com,
+ thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
+ kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
+ anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
+ will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org, hughd@google.com
+References: <20250819134205.622806-1-npache@redhat.com>
+ <20250819134205.622806-11-npache@redhat.com>
+ <d9a02ed5-0d6e-41e6-985d-23f5a2de093d@lucifer.local>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <d9a02ed5-0d6e-41e6-985d-23f5a2de093d@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-vidtv_channel_si_init() transfers ownership of each object to the correct
-table through functions such as vidtv_psi_*_assign().
 
-However, since it does not set the local pointer to NULL afterwards, if it
-fails for various reasons and jumps to a place such as free_*it, memory
-that was freed in vidtv_psi_*_table_destroy() will be accessed and freed
-again, resulting in use-after-free and double-free vuln.
 
-Therefore, local pointers that have completed ownership transfer must be
-initialized to NULL to prevent re-access to already freed memory.
+On 2025/8/21 22:18, Lorenzo Stoakes wrote:
+> On Tue, Aug 19, 2025 at 07:42:02AM -0600, Nico Pache wrote:
+>> From: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>
+>> When only non-PMD-sized mTHP is enabled (such as only 64K mTHP enabled),
+> 
+> I don't think this example is very useful, probably just remove it.
+> 
+> Also 'non-PMD-sized mTHP' implies there is such a thing as PMD-sized mTP :)
+> 
+>> we should also allow kicking khugepaged to attempt scanning and collapsing
+> 
+> What is kicking? I think this should be rephrased to something like 'we should
+> also allow khugepaged to attempt scanning...'
+> 
+>> 64K mTHP. Modify hugepage_pmd_enabled() to support mTHP collapse, and
+> 
+> 64K mTHP -> "of mTHP ranges". Put the 'Modify...' bit in a new paragraph to
+> be clear.
+> 
+>> while we are at it, rename it to make the function name more clear.
+> 
+> To make this clearer let me suggest:
+> 
+> 	In order for khugepaged to operate when only mTHP sizes are
+> 	specified in sysfs, we must modify the predicate function that
+> 	determines whether it ought to run to do so.
+> 
+> 	This function is currently called hugepage_pmd_enabled(), this
+> 	patch renames it to hugepage_enabled() and updates the logic to
+> 	check to determine whether any valid orders may exist which would
+> 	justify khugepaged running.
 
-Reported-by: syzbot+1d9c0edea5907af239e0@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=1d9c0edea5907af239e0
-Fixes: 3be8037960bc ("media: vidtv: add error checks")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- drivers/media/test-drivers/vidtv/vidtv_channel.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks. This looks good to me.
 
-diff --git a/drivers/media/test-drivers/vidtv/vidtv_channel.c b/drivers/media/test-drivers/vidtv/vidtv_channel.c
-index f3023e91b3eb..3541155c6fc6 100644
---- a/drivers/media/test-drivers/vidtv/vidtv_channel.c
-+++ b/drivers/media/test-drivers/vidtv/vidtv_channel.c
-@@ -461,12 +461,15 @@ int vidtv_channel_si_init(struct vidtv_mux *m)
- 
- 	/* assemble all programs and assign to PAT */
- 	vidtv_psi_pat_program_assign(m->si.pat, programs);
-+	programs = NULL;
- 
- 	/* assemble all services and assign to SDT */
- 	vidtv_psi_sdt_service_assign(m->si.sdt, services);
-+	services = NULL;
- 
- 	/* assemble all events and assign to EIT */
- 	vidtv_psi_eit_event_assign(m->si.eit, events);
-+	events = NULL;
- 
- 	m->si.pmt_secs = vidtv_psi_pmt_create_sec_for_each_pat_entry(m->si.pat,
- 								     m->pcr_pid);
--- 
+>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> Signed-off-by: Nico Pache <npache@redhat.com>
+> 
+>> ---
+>>   mm/khugepaged.c | 20 ++++++++++----------
+>>   1 file changed, 10 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>> index 2cadd07341de..81d2ffd56ab9 100644
+>> --- a/mm/khugepaged.c
+>> +++ b/mm/khugepaged.c
+>> @@ -430,7 +430,7 @@ static inline int collapse_test_exit_or_disable(struct mm_struct *mm)
+>>   		mm_flags_test(MMF_DISABLE_THP_COMPLETELY, mm);
+>>   }
+>>
+>> -static bool hugepage_pmd_enabled(void)
+>> +static bool hugepage_enabled(void)
+>>   {
+>>   	/*
+>>   	 * We cover the anon, shmem and the file-backed case here; file-backed
+>> @@ -442,11 +442,11 @@ static bool hugepage_pmd_enabled(void)
+> 
+> The comment above this still references PMD-sized, please make sure to update
+> comments when you change the described behaviour, as it is now incorrect:
+> 
+> 	/*
+> 	 * We cover the anon, shmem and the file-backed case here; file-backed
+> 	 * hugepages, when configured in, are determined by the global control.
+> 	 * Anon pmd-sized hugepages are determined by the pmd-size control.
+> 	 * Shmem pmd-sized hugepages are also determined by its pmd-size control,
+> 	 * except when the global shmem_huge is set to SHMEM_HUGE_DENY.
+> 	 */
+> 
+> Please correct this.
+
+Sure. How about:
+
+/*
+  * We cover the anon, shmem and the file-backed case here; file-backed
+  * hugepages, when configured in, are determined by the global control.
+  * Anon hugepages are determined by its per-size mTHP control.
+  * Shmem pmd-sized hugepages are also determined by its pmd-size control,
+  * except when the global shmem_huge is set to SHMEM_HUGE_DENY.
+  */
+
+>>   	if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
+>>   	    hugepage_global_enabled())
+>>   		return true;
+>> -	if (test_bit(PMD_ORDER, &huge_anon_orders_always))
+>> +	if (READ_ONCE(huge_anon_orders_always))
+>>   		return true;
+>> -	if (test_bit(PMD_ORDER, &huge_anon_orders_madvise))
+>> +	if (READ_ONCE(huge_anon_orders_madvise))
+>>   		return true;
+>> -	if (test_bit(PMD_ORDER, &huge_anon_orders_inherit) &&
+>> +	if (READ_ONCE(huge_anon_orders_inherit) &&
+>>   	    hugepage_global_enabled())
+> 
+> I guess READ_ONCE() is probably sufficient here as memory ordering isn't
+> important here, right?
+
+Yes, I think so.
 
