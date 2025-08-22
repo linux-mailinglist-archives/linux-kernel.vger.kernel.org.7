@@ -1,185 +1,202 @@
-Return-Path: <linux-kernel+bounces-781895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8CFB3185F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:53:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EF46B31871
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB9E61C81828
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:52:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB1FA585374
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B924B2FC02B;
-	Fri, 22 Aug 2025 12:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F232FCBE8;
+	Fri, 22 Aug 2025 12:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="STDm5/53"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="keyaL7QO"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934002FAC04
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92ED2FC008;
+	Fri, 22 Aug 2025 12:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755867140; cv=none; b=fMnmyGTYJIbcEcgrnnrLUc6i1hyy92763mFXNl+sLsOR+LpKTfdG/1Mv9N5a6bXX+L8PW6sVAdbWALPxVp8fP7nEEUW+sFxmjGHIHVOgHnJ4WTmlrLWi+OR6PHVV/dDl72ozw33QIUznNnDbOzmYkehSr6r0Y417d6Vz1c9H2eM=
+	t=1755867207; cv=none; b=nBlqqNxEnIEHrnuZmNg6PzrYpSfqFXwM63BfqBh4iDNYwhkDycQ1mP/Xsq/fx8Vve9UVF3LAp6NTH7166imeurl4KBIdaVLufxgvvm6n7xK/A0ZCZi36yui2MBnyrdFMNYU1tP0kTT1Oh1K1N6LOJO88XTog2fUq6q5lSVYx1JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755867140; c=relaxed/simple;
-	bh=Qvkm8ZvcKVj/gdX6BAq0K2JgptBY3L/xiu5D9dt3b90=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gPG+mwZUUx0+wmDCpzixmpRW9BQSZhJtEP5hxNQUCqLqaWj85kSm093dqConbPW95Hx6ztykzS8WrnSO5x+GInXE4zftUqfCsswyKC6EeSO8oPOd8xjf2EJ3vD6/E7R14xAnOhEhNK+0v7OxBIwHBtV+yu7KuN9/3ZnWt9QZ96A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=STDm5/53; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7702fc617e9so711278b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:52:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755867138; x=1756471938; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yPWZ0k713TIq/QYfMNdmSvfN5q6KC+M5vfGH3Fh2z5k=;
-        b=STDm5/53EXT1VljXn6BGfCspYCVEX2AZpq506mI8kXtBAAxGhHiYkO345XzmHjhH+b
-         bx0hJN12V3NAFUXu4uNF+xu4WnaOvZ9MFvn6sK26XKIdguvCvZFB3a8Wsp/FY7oZg6rC
-         KcgnTenKiLi78N1FGLwD7BlWlDbrEpNiMD5Ys=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755867138; x=1756471938;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yPWZ0k713TIq/QYfMNdmSvfN5q6KC+M5vfGH3Fh2z5k=;
-        b=q67hBFfhVbBrrgZhHAJ3mHCxPXQM8NggyuNPoSpDpneskx2e6ie5w0F/KVFfKNZaHK
-         GdN573EAJL2hJPneFJmxSxkMQ4VaZoS3ufhwjw2hkgWoNc2wfbxXxVjLG9AIBKF+uzJW
-         z4EjHHIrKyLRQvCHDgYmW4CTCymS4e2riU92/SP148u1tjg2qEfOHdXwhywXMhdShLvB
-         MN3WhBa393JmDH98E72Zh/PmzY9+lah3h+XPjXA/pThuUckyuzipG4Ha89Bt42ftVePK
-         n2OcYpqzYx6FqbjCPNVzfcTDgjqaOd62IsSkT9D4Cmi/XnhGtmGFZXdkrHLwoqe3JOWH
-         AyBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVp2NfPMklcvCvTDpJekJvA13lauckR6gEMlyCbNwipkQRz2r1ulVQVriu+PKLoKFbk8q//uAgOR88bWHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywsqnia0y7HmhL8lXbnp/7e8Im7sDE4871+a4ti+TP29X2YZiI7
-	K8BQhtFJkEsTUByty8PJk19QFG1oPeXC8lVs1ICOxdE+uEFD/wSYp1bmCAp+9RI1p4VoKlPcv6S
-	wFkOVT8NuNYkFCffKgjJMRd3tB7opOxM8dZ7bQ5j2
-X-Gm-Gg: ASbGncsNFxV+LZzCncE9Hv+FsMq6Y9u0zlFp6bYVgDy03eqVd9cQddgNlGtQ9hajMAy
-	vVbwobsAGOZll8vOUxIKLk41EY9wyEpm/Md0KXjjhl1OmLJQQUfeb0Weut4Zs9cZ49u1+MmtOlG
-	ruB5Bl50Y9HOCUx/S0JtiJi6j5fHKqSHSoH7NEYGzHjmSjadY7nrGNrfPrl835FFNRG1K0/Sc8b
-	wqLkopZfJ1NsD8E7i8xz7d0R/5t9UBNtH3vd3xce62D
-X-Google-Smtp-Source: AGHT+IGRt7T15g4J9TtJHeozRsfP6YTUMgnhVNdFI3+HALeg7CoNfApLp63yXeFIxoeJ6WrrgpylLU3LPWYlGugAkhs=
-X-Received: by 2002:a05:6a20:430b:b0:23d:54bd:92e6 with SMTP id
- adf61e73a8af0-24340d02428mr4351745637.29.1755867137998; Fri, 22 Aug 2025
- 05:52:17 -0700 (PDT)
+	s=arc-20240116; t=1755867207; c=relaxed/simple;
+	bh=PLU7Jy+4Idnvc1wYz0kN+QAM+kuaOgeNMCbhEi1tcJc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oTstRToFP9EwtM1Tkqmmk2meTvAiQKnMPjW0Biy7IfqQmxJaCb37WKOIXtWCyZTRoBYgtNQAhu9MNOH4CzUAKaHtxgkGbl6f1pO9hBzRHgViOANW2wWEI9j/gFYtJPNcePKMi9GfNTHfEWdrfdZEwigAqYFXsW1h+6rEKl9iILI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=keyaL7QO; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: fa8c272a7f5611f0b33aeb1e7f16c2b6-20250822
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=gdrKdZ51IexfRxyYh9eQjGmdG6o5t0ED4W3C8AISUc8=;
+	b=keyaL7QOfXRiAu0qbA6h3ulRSnAWmYhVkTofO8RvB/kxM8HAPDWVg25iIYoHjYAiVanjphn2u2hnPp0v83bE7G3fUbE7VYDbe7zrVfOOHQzbnvyhInr9amNJ8mls6Jd5sOavdiFZMqX/ByN03TQV0Q7Y6RqfPOKy0WFExmtT7gY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:ecee648e-dd5a-428c-bae7-8cc573aef1a4,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:f1326cf,CLOUDID:e2f6c344-18c5-4075-a135-4c0afe29f9d6,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|102,TC:-5,Content:0|15|50,EDM:-3,
+	IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
+	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: fa8c272a7f5611f0b33aeb1e7f16c2b6-20250822
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <darren.ye@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1089959311; Fri, 22 Aug 2025 20:53:19 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Fri, 22 Aug 2025 20:53:17 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Fri, 22 Aug 2025 20:53:16 +0800
+From: Darren.Ye <darren.ye@mediatek.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>, Darren Ye
+	<darren.ye@mediatek.com>
+Subject: [PATCH v7 00/10] ASoC: mediatek: Add support for MT8196 SoC
+Date: Fri, 22 Aug 2025 20:52:29 +0800
+Message-ID: <20250822125301.12333-1-darren.ye@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814184455.723170-1-akuchynski@chromium.org>
- <20250814184455.723170-5-akuchynski@chromium.org> <aKbwby7OYdUpLvhA@kuha.fi.intel.com>
- <aKb_rwVqqzipHHqf@kuha.fi.intel.com>
-In-Reply-To: <aKb_rwVqqzipHHqf@kuha.fi.intel.com>
-From: Andrei Kuchynski <akuchynski@chromium.org>
-Date: Fri, 22 Aug 2025 14:52:05 +0200
-X-Gm-Features: Ac12FXx3ANTUMIa8Fow-ciMNUPql3vLmAiHYubi-qOYKb8F15LFr1nZlCVhH7cs
-Message-ID: <CAMMMRMc6YYpQMo0hDqvjVwg28tTazJxxxgQ5j9iUq-ZWeYg6qA@mail.gmail.com>
-Subject: Re: [PATCH v1 4/5] usb: typec: Implement alternate mode priority handling
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Benson Leung <bleung@chromium.org>, 
-	Jameson Thies <jthies@google.com>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, Guenter Roeck <groeck@chromium.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, "Christian A. Ehrhardt" <lk@c--e.de>, 
-	Venkat Jayaraman <venkat.jayaraman@intel.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-MTK: N
 
-On Thu, Aug 21, 2025 at 1:15=E2=80=AFPM Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
->
-> Hi again,
->
-> On Thu, Aug 21, 2025 at 01:09:57PM +0300, Heikki Krogerus wrote:
-> > > diff --git a/drivers/usb/typec/mode_selection.c b/drivers/usb/typec/m=
-ode_selection.c
-> > > new file mode 100644
-> > > index 000000000000..8a54639b86bf
-> > > --- /dev/null
-> > > +++ b/drivers/usb/typec/mode_selection.c
-> > > @@ -0,0 +1,127 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +/*
-> > > + * Copyright 2025 Google LLC.
-> > > + */
-> > > +
-> > > +#include <linux/usb/typec_altmode.h>
-> > > +#include <linux/slab.h>
-> > > +#include <linux/list.h>
-> > > +#include "mode_selection.h"
-> > > +#include "class.h"
-> > > +
-> > > +static const char * const mode_names[TYPEC_ALTMODE_MAX] =3D {
-> > > +   [TYPEC_ALTMODE_DP] =3D "DisplayPort",
-> > > +   [TYPEC_ALTMODE_TBT] =3D "Thunderbolt3",
-> > > +   [TYPEC_ALTMODE_USB4] =3D "USB4",
-> > > +};
-> >
-> > You only need string for USB4. The altmode names come from the drivers.
->
-> Sorry, that won't work with port altmode. But you can still do the
-> lookup with just the sid.
->
+From: Darren Ye <darren.ye@mediatek.com>
 
-Hi Heikki,
+This series of patches adds support for Mediatek AFE of MT8196 SoC.
+Patches are based on broonie tree "for-next" branch.
 
-I can get names from altmode partner. Names are only needed to
-provide results of entering the mode. No partner - no results.
+Changes since v6:
+ - optimize mtk_afe_pcm_pointer interface and improved logic checks.
+ - update mt8196_afe_private structure by removing unused member variables.
+ - only reference clocks directly supplied to afe and set required frequencies directly.
+ - update adda driver according to reviewer suggestions.
+ - update i2s driver according to reviewer suggestions.
+ - update tdm driver according to reviewer suggestions.
+ - optimize platform driver and update widget rotues.
+ - move the sof route from platform driver to the machine driver, and moved pinctrl to platform driver.
+ - update the afe yaml file to remove unnecessary clock references.
 
->
-> I think this needs to be simplified. You don't need this elaborate
-> implementation in the beginning.
->
-> I'm going to do some suggestions. I don't know if all of them work,
-> but hopefully you get the idea how I would like to see the initial
-> support to be implemented.
->
+Changes since v5:
+ - restore the commit message for mediatek,mt8196-afe.yaml and only remove the string document.
+ - add reviewed owner for mediatek,mt8196-nau8825.yaml.
+ - use SND_JACK_AVOUT as jack status.
+ - use GENMASK_ULL to support 64-bit address masks.
+ - modify the afe platform and i2s dai driver code based on reviewer's suggestions.
 
-I checked your suggestions. It looks like all of them should
-work. Thank you!
+Changes since v4:
+ - modify the mediatek,mt8196-afe.yaml commit message and add reviewed owner.
+ - modify the mediatek,mt8196-nau8825.yaml commit message.
+ - modify the audio common code based on reviewer's suggestions.
+ - add reviewed and tested owners in the audio common code submission message.
+ - fix cm update cnt calculation issue.
 
-- priority is a member to struct typec_altmode
-- use svid instead of enum typec_mode_type
-- no list or other variables in struct typec_port.
-- struct mode_selection_state will be introduced in other series
+Changes since v3:
+ - the AFE TOP CG index is added to the common header.
+ - remove the audsys clk register and directly read and write to the regmap of afe cg clk.
+ - modify the clk logic according to the suggestions.
+ - remove the macro definition of MTKAIF4
+ - remove the tdm cg event and directly read and write the tdm cg reg form the widget.
+ - remove the i2s and cm cg event and directly read and write cg reg.
+ - afe hopping and f26m clk cg are placed in remap_register_patch and enable.
+ - the yaml file is modified according to the suggestions.
+ - replace SND_SOC_DAIFMT_CBS_CFS with SND_SOC_DAIFMT_CBC_CFC.
 
->
-> The default priorities is an array of svids. And I really think that
-> the highest priority should be 1 not 0.
->
+Changes since v2:
+  - remove the mtk_memif_set_channel interface modify.
+  - remove duplicate definitions from the header file.
+  - move the afe gate clk to the audio driver for management and registration
+    and manage the afe clk gate in each dai driver.
+  - delete the useless clk source.
+  - the i2s driver adds i2s clk gate management, removes the additional dts
+    configuration of i2s4.
+  - the afe and i2s dai driver,memif and irq data structs are encapsulated using
+    macros to reduce the amount of code.
+  - the volatile reg is modified as suggested.
+  - mt6681 codec is not supported, the mt6681 keyword is removed.
+  - the name of the machine driver is changed from mt8196-mt6681.c to mt8196-nau8825.c
+  - remove the i2s4 configuration from mt8196-afe.yaml and make the modifications as suggested.
+  - change the mt8196-mt6681.yaml to mt8196-nau8825.yaml and make the modifications as suggested.
 
-I think your idea of setting priorities based on the order of
-port altmod registrations is better. We don't really need default
-priorities in this case.
+Changes since v1:
+  - modify mtk_memif_set_channel and mtk_afe_pcm_pointer interfaces
+    are improved to support mt8196.
+  - remove duplicate definitions in the mt8196 common header file.
+  - cm logic is merge into the afe platform driver.
+  - modify afe clk to return judgment logic and remove useless clk sources.
+  - refactor the mt8196 adda dai driver.
+  - remove the gpio module and use SND_SOC_DAPM_PINCTRL to manage it.
+  - removes CONNSYS_I2S related functions that are not supported in i2s dai driver.
+  - fixed mt8196-afe.yaml and mt8196-mt6681.yaml syntax issues.
+  - modify log printing in all modules.
+  - optimize the header file included for machine driver.
 
->
-> No driver so you would need to use the mode_names, but instead of
-> doing that, just don't limit this at all.
->
-> If there is no name for the mode, use the svid.
->
-> thanks,
->
-> --
-> heikki
+Darren Ye (10):
+  ASoC: mediatek: common: modify mtk afe platform driver for mt8196
+  ASoC: mediatek: mt8196: add common header
+  ASoC: mediatek: mt8196: support audio clock control
+  ASoC: mediatek: mt8196: support ADDA in platform driver
+  ASoC: mediatek: mt8196: support I2S in platform driver
+  ASoC: mediatek: mt8196: support TDM in platform driver
+  ASoC: mediatek: mt8196: add platform driver
+  ASoC: dt-bindings: mediatek,mt8196-afe: add audio AFE
+  ASoC: mediatek: mt8196: add machine driver with nau8825
+  ASoC: dt-bindings: mediatek,mt8196-nau8825: Add audio sound card
 
-What if we later create typec_USB4 driver, similar to the
-existing typec_displayport and typec_thunderbolt?
-This approach could unify how various modes are handled,
-eliminating exceptions for USB4 or any other mode.
+ .../bindings/sound/mediatek,mt8196-afe.yaml   |   113 +
+ .../sound/mediatek,mt8196-nau8825.yaml        |   100 +
+ sound/soc/mediatek/Kconfig                    |    30 +
+ sound/soc/mediatek/Makefile                   |     1 +
+ .../mediatek/common/mtk-afe-platform-driver.c |    56 +-
+ .../mediatek/common/mtk-afe-platform-driver.h |     2 +
+ sound/soc/mediatek/mt8196/Makefile            |    14 +
+ sound/soc/mediatek/mt8196/mt8196-afe-clk.c    |   580 +
+ sound/soc/mediatek/mt8196/mt8196-afe-clk.h    |    64 +
+ sound/soc/mediatek/mt8196/mt8196-afe-common.h |   205 +
+ sound/soc/mediatek/mt8196/mt8196-afe-pcm.c    |  2497 ++++
+ sound/soc/mediatek/mt8196/mt8196-dai-adda.c   |   845 ++
+ sound/soc/mediatek/mt8196/mt8196-dai-i2s.c    |  2613 ++++
+ sound/soc/mediatek/mt8196/mt8196-dai-tdm.c    |   675 +
+ .../mediatek/mt8196/mt8196-interconnection.h  |   121 +
+ sound/soc/mediatek/mt8196/mt8196-nau8825.c    |   868 ++
+ sound/soc/mediatek/mt8196/mt8196-reg.h        | 12068 ++++++++++++++++
+ 17 files changed, 20834 insertions(+), 18 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/mediatek,mt8196-afe.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/mediatek,mt8196-nau8825.yaml
+ create mode 100644 sound/soc/mediatek/mt8196/Makefile
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-afe-clk.c
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-afe-clk.h
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-afe-common.h
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-afe-pcm.c
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-dai-adda.c
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-dai-i2s.c
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-dai-tdm.c
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-interconnection.h
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-nau8825.c
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-reg.h
 
-The port altmode would contain priority and support "enter" and
-"exit" operations, while partner altmode would handle "activate"
-and name field. I've explored this approach with cros_ec_typec
-driver, and it appears to be a promising way to manage USB4 as
-alternate mode.
+-- 
+2.45.2
 
-Thanks,
-
-Andrei
 
