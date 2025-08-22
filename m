@@ -1,116 +1,151 @@
-Return-Path: <linux-kernel+bounces-781172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D2C8B30E6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:04:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE32B30E82
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 08:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45260AA70EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:04:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2C971CE366D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 06:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5232323909F;
-	Fri, 22 Aug 2025 06:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F48C23909F;
+	Fri, 22 Aug 2025 06:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/fOlzxj"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iXk0uX+a"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6955F7262F;
-	Fri, 22 Aug 2025 06:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6F920B80D;
+	Fri, 22 Aug 2025 06:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755842668; cv=none; b=MvlcU2yw2f9Bw2IvtPbCOSAWRbrP0peYgqAHPQfUGFNrMKFqu6r9+eHXvD5s/JaQFv/pgVWQ2J5cikeWv2MPSjfS8JIyy2MfRIjOJShHu9071zBBYZ7aGEjSpNhe39x+4db/sWHt5xESYL8mjWuDvR5pPOP5lz9GjfuAnIvDi+w=
+	t=1755842768; cv=none; b=DCSNf8pHYhDssqRCOgSWKj4emgd+KI5pOajJJRDNnB5gUVhoOJ0gXw8uj2qFYosYK4BDVjnFrXOvwzs636GUtJBAbZ2YFSrHtIOSUMHz4qAUH5plkKR+IX4cJSfZgoXajqHQRpzBmoJbBK7AMgOz9KKoUi4HYRyTAEttqWWZEI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755842668; c=relaxed/simple;
-	bh=UiUYReCj5NOMEOAHaFcJU7PwriRUfom/Ix6fZbdArBM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iBuwzwx434WLVngm9Tb5UoRCqfWWTIh9JcF47TlU8Hz/8ZXNEuRmAFsChlmsZnpRj/HGQUqytm3poEFIeP8ZRzCRmiNgRrFsn8u2Gon6i2XlajA6bfDOOEO7GarkMVjuS9DSbsT+s5zpS1cvJzx7sKBc1SecZS8yrTtpypPh93o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E/fOlzxj; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2460757107bso13652565ad.2;
-        Thu, 21 Aug 2025 23:04:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755842667; x=1756447467; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sWgKWHd/sc4pjgErj4aUjUcK4gHol/ug73h3HW8zsiU=;
-        b=E/fOlzxj57ctRj5QCu3bHJQMLIxwg5VpQ08hqnqq1PlKQL7y4XTcQGYfXruj/0fqUd
-         MXVeksB8Q4fn3CSJ+8vnZMgXS3jTsB33H7jSeTefUJ7vmyeniHpVsmXhR6lD+mTT5II4
-         lUMt7OG5IsWku4jf+K51LcrZgQTwu2TkeCAlXL8qcJIWxAL31SdGZtVa2bTT0hWdfJxd
-         gtHYVmyWKHt6F9jl5yKKPYLaeeqfx891cGguR4tqzPhdCmp6C4h0S3O0eh4XBFGEguGu
-         A8Mr9SwfXC+CgsU+LgneR7+nxPubWxjwiStY+w9pWt1/5MKhHFrmVxl8uQAnX0gKaLHo
-         2ZUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755842667; x=1756447467;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sWgKWHd/sc4pjgErj4aUjUcK4gHol/ug73h3HW8zsiU=;
-        b=Lya+EX0XxNu7m2D425XdInh3euSVHaSAkOwa+gzO6dFzNYx/8BUgu+fNxExLE3+tui
-         cVb8Sv7v/+x59bNTJQdfIncrEkcA4wtMKLVRQ8/dV+5+PS5qlbTY1EnQLeNgcC6wrzaR
-         xXrpdQ/MCDiVZx70lQNeC6T5n2kanH7RMkIfaBUXwOSPSI7/QYczaeRrqkxPCanzuawf
-         fJRtqig1c6e5LCUy3U3DVxuRO1yGD9dtXLnYyBp19pH9Ec3YM79VY419Pr76PH53Iv8W
-         +52oL2CHyIdsbAbcr3HyFRzcZ1bDqj1tn87f3tJ3rp5CBRHxOwiTqT+SkXfGYXWjG+ew
-         3F0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWCa1h1JZfNvjyv2Y3NH5hxUJ5Tdm3sqtBlbnxwjCWlOggIQBHzNTnYjyASH2eoHMfvJGxIl28l360KMgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr5wewFsKedCtnev5ZjbfM79jbCXKqz6P0Oun5JLh0OxjQ+5Jn
-	dWG/YIflRQf0BVj034qtQPJ1hAOJDXw1JCgROcd1XKTwbYIsAeP4Z3v/
-X-Gm-Gg: ASbGncuGu+SjgUCBstVDCcJVEokmGY3Xu14SAYSNAETwfKqcUzq0+s2Vhe1673G+SEb
-	zpa1IgJtspQVnqcdbby45b5Yj/IsFgPk7inJQ7W1O+8FkScdUkmpkU+M66fTyjf7U9lSdBvfTyy
-	7TaIIkcpEt8udOXP3WLHJjgagURcSpbbgif8jI0abnOr8fvHPtLFvPgHK83IgOdCsToN9lbkb7N
-	KkBncx+8wvE55+IxEXc6rQpBXn03E3woDisOHfrMs9wPrpEcYego8H8B1TmcEgSzgUJbyVbXFOT
-	gCKKtiuuLOr54sOVm8SjLlF0El0gQYoDKheq63L97EBR9YU5klDeMF1D/6FKgrBIPIfwA8vaWK0
-	wkijnUAinUKAaMdYobZ8PY8/K8kOJyBFqW/srNeiG4j9ICVSjyhynHg==
-X-Google-Smtp-Source: AGHT+IFpLU6XrEIPrFgTF4JVMX6edxo2lc6RP29jAi2GsYoM3sNOLe6c4U6XTtz35e6YcOLq5XSf2g==
-X-Received: by 2002:a17:902:fc4f:b0:240:6fda:582a with SMTP id d9443c01a7336-2462ee0a951mr25812385ad.23.1755842666530;
-        Thu, 21 Aug 2025 23:04:26 -0700 (PDT)
-Received: from fedora ([172.59.161.146])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed33a727sm73267685ad.1.2025.08.21.23.04.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 23:04:26 -0700 (PDT)
-From: Alex Tran <alex.t.tran@gmail.com>
-To: robh@kernel.org,
-	saravanak@google.com
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alex Tran <alex.t.tran@gmail.com>
-Subject: [PATCH] scripts/dtc/flattree.c: stringtable_insert optimization
-Date: Thu, 21 Aug 2025 23:04:17 -0700
-Message-ID: <20250822060417.52935-1-alex.t.tran@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755842768; c=relaxed/simple;
+	bh=avaUdtd8uIq7wFou8OzSkuIra5wtAQyyi9R4rOMTRDE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=t/flaZQ4xZc9eiNxkqfRwZTVCjSlNLMtqfe+WvFxc38BOC0FAjg+hd4LdbzWxRemuRawlM9Ihg4xhEa01VNijkZHn2cjRqX4y6bq89gCLnoYJ+u3b7hutzx/Oai6oAJ3ITR5ObA3X0uexlQzF5lniC1AHlLbWXxX1zyppXWNcRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=iXk0uX+a; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57M65cf9183015;
+	Fri, 22 Aug 2025 01:05:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755842738;
+	bh=nEe6gWDkfZ9f0+KLOCH9wNiWwtvjebZTmJiRwDqdgs0=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=iXk0uX+aWiYJwGCDH9zEt0Oz43gHcXph91uQsqo1F6mIGvVfWpkzEXXpuLMfhFGEl
+	 aV9JcJ5w0gAYw3fq0o9TrQuNmAozmvvbp9wNZEkx3raX5mkbX+XcD7Bc2Rsg3qWYK5
+	 h+YCZeJQuy/qAVa+Dq9qhwZvmamLsxWIoilRuAo4=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57M65cY72495184
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 22 Aug 2025 01:05:38 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 22
+ Aug 2025 01:05:38 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 22 Aug 2025 01:05:37 -0500
+Received: from [172.24.233.254] (santhoshkumark.dhcp.ti.com [172.24.233.254])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57M65XPJ3071881;
+	Fri, 22 Aug 2025 01:05:34 -0500
+Message-ID: <59c49efa-20b9-4d81-b66e-e9a363322274@ti.com>
+Date: Fri, 22 Aug 2025 11:35:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 01/10] spi: spi-mem: Introduce support for tuning
+ controller
+To: Mark Brown <broonie@kernel.org>
+CC: <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
+        <tudor.ambarus@linaro.org>, <pratyush@kernel.org>, <mwalle@kernel.org>,
+        <p-mantena@ti.com>, <linux-spi@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <a-dutta@ti.com>, <u-kumar1@ti.com>, <praneeth@ti.com>, <s-k6@ti.com>
+References: <20250811193219.731851-1-s-k6@ti.com>
+ <20250811193219.731851-2-s-k6@ti.com>
+ <6c35baad-a332-4b0a-96ca-1cdb3840ad94@sirena.org.uk>
+ <20487e7f-33dd-4b65-b1a8-5bb8a06ef859@ti.com>
+ <2f051eae-61c7-4bff-9f85-cf37b02a7ea3@sirena.org.uk>
+Content-Language: en-US
+From: Santhosh Kumar K <s-k6@ti.com>
+In-Reply-To: <2f051eae-61c7-4bff-9f85-cf37b02a7ea3@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Increment string by string instead of character by character.
 
-Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
----
- scripts/dtc/flattree.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/scripts/dtc/flattree.c b/scripts/dtc/flattree.c
-index 1bcd8089c5b9..156ca5da89b2 100644
---- a/scripts/dtc/flattree.c
-+++ b/scripts/dtc/flattree.c
-@@ -222,9 +222,7 @@ static int stringtable_insert(struct data *d, const char *str)
- {
- 	unsigned int i;
- 
--	/* FIXME: do this more efficiently? */
--
--	for (i = 0; i < d->len; i++) {
-+	for (i = 0; i < d->len; i += strlen(d->val + i) + 1) {
- 		if (streq(str, d->val + i))
- 			return i;
- 	}
--- 
-2.50.1
+On 14/08/25 18:04, Mark Brown wrote:
+> On Thu, Aug 14, 2025 at 05:04:33PM +0530, Santhosh Kumar K wrote:
+>> On 14/08/25 01:56, Mark Brown wrote:
+> 
+>>> Should we have something that blocks these tuning required modes without
+>>> the appropriate tuning, and/or allows discovery of which modes require
+>>> this tuning?  This all feels very landmineish - client drivers just have
+>>> to know when tuning is required.
+> 
+>> The flash's maximum operating frequency determines whether PHY tuning is
+>> required, as we need tuning in case of Cadence controller for frequencies
+>> over 50 MHz.
+> 
+> That's entirely specific to the Candence controller from the sounds of
+> it, that makes it hard to write a client driver if you need to know
+> exactly what the controller you're dealing with is and what it's
+> requirements are.
 
+PHY tuning is not very specific to the Cadence controller; this has been 
+added for other controllers as well. [1] - [3]
+
+spi_mem simply verifies the execute_tuning hook within the controller's 
+mem_ops and invokes it if it exists, and the tuning implementation is 
+entirely controller-dependent - ranging from straightforward parameter 
+configuration of PHY registers to advanced tuning algorithms such as the 
+one implemented in this tuning series.
+
+Currently, spi_mem_execute_tuning() is called by default from flash. In 
+the future, this could be improved by asking the controller if tuning is 
+actually needed (considering different factors such as frequency), 
+similar to *_get_tuning_params implementation. Let me know your opinion 
+in this.
+
+The get_tuning_params and execute_tuning hooks in spi_mem can also be 
+utilized by any non-MTD spi-mem users.
+
+> 
+>> And we do check for this condition - see Patch 07/10,
+>> cqspi_phy_op_eligible_sdr(), which currently verifies the flash frequency
+>> against 166 MHz. This logic can be improved by implementing both min and max
+>> frequency checks, will update in the following version.
+> 
+> I can't actually tell how that verifies if the tuning has been done
+> appropriately TBH, at least not without more effort than I'd care to
+
+The *_execute_tuning function takes the read_op as an argument from 
+flash, and considering flash continues to utilize the same read_op and 
+frequency, it should make sure the tuning is appropriately completed. In 
+the Cadence controller, the tuning process is validated by performing a 
+read-back of a pre-defined tuning pattern using the read_op provided by 
+flash.
+
+> (and the tuning only gets added in patch 10?).
+
+Patches 7 and 8 add PHY read/write support, and patch 9 adds tuning. 
+These three patches could be squashed into one, but kept them separate 
+to make it more granular for the reviewers.
+
+[1] https://lore.kernel.org/linux-spi/20220509175616.1089346-1-clg@kaod.org/
+[2] https://lore.kernel.org/all/20230322090451.3179431-2-haibo.chen@nxp.com/
+[3] 
+https://lore.kernel.org/all/20241128174316.3209354-1-csokas.bence@prolan.hu/
 
