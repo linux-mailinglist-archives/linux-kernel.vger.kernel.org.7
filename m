@@ -1,186 +1,139 @@
-Return-Path: <linux-kernel+bounces-782511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2F8AB32169
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:20:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 944EDB3216D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 19:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE47B1D62D3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:20:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1411D189B431
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520052820C7;
-	Fri, 22 Aug 2025 17:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02900278E7B;
+	Fri, 22 Aug 2025 17:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZsKQAFhx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mLGWl0EF"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94ACA1096F;
-	Fri, 22 Aug 2025 17:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53F01A0BE0
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755883192; cv=none; b=W3yYWW7jS3LmtilXZfXvAeWC+DJW9p0/DzILJ8TTBY2iY4C+PB3wURJPmE7UCOvUzk3LGUrUQ/ilfo8d2YeVPIFwu7O+jXa6za46br060XVkdMwe8CazlPjvYW/VPCVX1fVs6Q+dZL/UZpMnRxAxFeIKG/ONkI0bgt1Lc6XUljc=
+	t=1755883232; cv=none; b=C/6MxMIajiSquYG8dSTu/wwz6D90yyDPiCGakNHnRGFW/0PQyig+cSZrzhJySGkLY5wkFnn0EsA+U8bT1fblV+9GQv/lL36AIWU8QKE3pKUoHYbncAyqe3sRwYMiRBYhQKYUtREgSGG19GCPWwsdmTkqaB7pYuSoL2249vAnlTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755883192; c=relaxed/simple;
-	bh=L7VZUdX3MLspbO+BuCJOeSCnsEFhb0f9Kl8vZtDysSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=drdztylgrJvpovhdy1ti8lTQO+3XkpXOuEkDVBwOwRglPOl+4bJTxxGm52e4b2b8BTm6jtf/a2PuJorBotYDiOH85M/fVviHS+X9vggU+6c2UL/opi6xDBR0SFzz6u6BHdzItipqMFRxg2Q1wYGWKa7nPEuH2y7jcvbOlj0bXgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZsKQAFhx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00BA0C4CEED;
-	Fri, 22 Aug 2025 17:19:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755883192;
-	bh=L7VZUdX3MLspbO+BuCJOeSCnsEFhb0f9Kl8vZtDysSU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZsKQAFhxdGePNlkVD4aEm20sTIPjMYYfRa6stb19nSTj9HjxHmB9goFCBQ92LmWew
-	 X62qmO8SQICVukO3DyipX380hqA3IHaKf6ZQbymLkikdit4oohE7wNEBatKmhToLqp
-	 sKYWiY4ty2IdRGPQBOx3ISVrCwxBjyr3DQeKcuSWy/FfHOZ/B5gV5mLVzBOrKf0gIT
-	 PuILVn3n7Wr+Z1axv+T3JTzh1qwp3Vd1NRa49yHmB5yrrUNsnVoAbcVIbMA7X1/0+F
-	 3ScSpZjtIo9xgr6SI4kulLAH/F0oCugR0cukDQne76w3rCAFPRrvy9xsNdZL/Dzx6z
-	 MMUwh0vaHlfCg==
-Date: Fri, 22 Aug 2025 22:49:39 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Vivek.Pernamitta@quicinc.com
-Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Vivek Pernamitta <quic_vpernami@quicinc.com>
-Subject: Re: [PATCH] bus: mhi: host: Add uevent support in MHI driver
-Message-ID: <6g32g3zqzsdoo3h6d232jbtatp34tm3s5m6huc37h5sfir2bnf@syyou6tqyuxy>
-References: <20250822-uevent_vdev_next-20250821-v1-1-9ed3a8162194@quicinc.com>
+	s=arc-20240116; t=1755883232; c=relaxed/simple;
+	bh=X4Bwa471mvdLFgQpjwEvYNyvuNvBAos1wzWCBTWg0tA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ryzSjpYc8X1LFA3X7qSqa48519zbbpORdxEBe/3X7Pix4nAf2PmAj7WYuON0I+cZTL5htrUaXmSO2NS/SWvq2Bx7vfr3C9FuvDNs5k7GQCG3fCwNn6k6trNBtov6u1AzdLwjCn9HjVk3CIcIG6aJHNQevPqiaE4/N9/pXcrN2kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mLGWl0EF; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45a1b05d31cso12235865e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:20:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755883229; x=1756488029; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hAIfYRgGwZxY2d+J+2Tw9OQSooCUHaphp7wteQwPLhs=;
+        b=mLGWl0EFgBGLPJiv+wuVYSvl/Eq5RdUvCUbNhMIe7DBhAlYCY8tvoimpw6X4GNUi6G
+         JJ0M+gJ/V8UykM8ZRQ8atHAc6ATKap1KSOX/cwAW6p3VSe5gDfDQhCNWx1nsh5RcJRDc
+         kldQgksOxZjP9tm482pO2CuBtiLQdgw0VONlF/8dDU338FxqKD7Ic3sRhhA4MRG4mNNi
+         JwWbxNO6v8Abqf7OEYnMo8gKtzvDpmErxQhVTW8aK1ySBNU7WP+3Zm/Vx6al7VksfOwg
+         5iDJy8RBW3kkmxlQhqT1eTJ0nGBQ9NF5xlGymrd5UxE5qxXY0T455xz6aNgJPQbYpQEK
+         e/cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755883229; x=1756488029;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hAIfYRgGwZxY2d+J+2Tw9OQSooCUHaphp7wteQwPLhs=;
+        b=JPrUU2l40/K/VaJ+au3IlTiw+rvDtXAlE9qpBSDQcGbkQyyFORM2h3w7RV874cB1Se
+         soBKNt5KLe6mo7YBDYD46cw1Fhm9DH27vEDC+oBw5IO4NMQzsXM1Gx7gCBhH6FvSfaiU
+         9XknDJrv0fvazWi7xQ8fgGwUtHPk7ie7Mj+C7tFRUot0yv7O0n8QeqFNP+vBMi+RogXI
+         OF/8pqw3HIIRUCtwCl5ZZvCIBoITlx9NqzK3MnZOHyns7qU+bdCrgsejl3Oi40j4j9IW
+         dLTAltiTaQVR9d0qTRjSQJBX+iMsfSkqzjbz/vRbDRjja3amcom2V2t2KM81TR/6gadG
+         hwZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVC1aFxiMGdbgWB94SSyUp2TOskhSucMX3Ku714yx2lj/TH0nQqO7MZDPhdet7LXoDo2nCY9rdZ5CLBbQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/GObZ/5re/z550ZC7CvfmJ4AMvL+HitbgLP5DXTMZw3ra7qEk
+	wb26c9s2m1y6M62krudxfqCLTYkHa9Fl+VLXObTDl4R6/44VdUZAKdaBVrfWtQTaCkZNjR1MbY+
+	PPLBZ9xmlyBwzbg==
+X-Google-Smtp-Source: AGHT+IGAQ3nKBaK3QO/Ktb7KuI028hAduXrZ22Qu6Xo0zqvcqENW+BUAAlbLyqUJ713Bt/ANAuJrBwMOcBFf1A==
+X-Received: from wmbes27.prod.google.com ([2002:a05:600c:811b:b0:459:db77:fc89])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1f95:b0:456:1846:6566 with SMTP id 5b1f17b1804b1-45b517d903amr28510805e9.29.1755883229001;
+ Fri, 22 Aug 2025 10:20:29 -0700 (PDT)
+Date: Fri, 22 Aug 2025 17:20:28 +0000
+In-Reply-To: <aKihQv8fWzZIgnAW@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250822-uevent_vdev_next-20250821-v1-1-9ed3a8162194@quicinc.com>
+Mime-Version: 1.0
+References: <20250812173109.295750-1-jackmanb@google.com> <cdccc1a6-c348-4cae-ab70-92c5bd3bd9fd@lucifer.local>
+ <DC83J9RSZZ0E.3VKGEVIDMSA2R@google.com> <aKihQv8fWzZIgnAW@pc636>
+X-Mailer: aerc 0.20.1
+Message-ID: <DC94NN6SM15D.3DQVRLO2E282W@google.com>
+Subject: Re: [Discuss] First steps for ASI (ASI is fast again)
+From: Brendan Jackman <jackmanb@google.com>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, <peterz@infradead.org>, <bp@alien8.de>, 
+	<dave.hansen@linux.intel.com>, <mingo@redhat.com>, <tglx@linutronix.de>, 
+	<akpm@linux-foundation.org>, <david@redhat.com>, <derkling@google.com>, 
+	<junaids@google.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, 
+	<reijiw@google.com>, <rientjes@google.com>, <rppt@kernel.org>, 
+	<vbabka@suse.cz>, <x86@kernel.org>, <yosry.ahmed@linux.dev>, 
+	Matthew Wilcox <willy@infradead.org>, Liam Howlett <liam.howlett@oracle.com>, 
+	"Kirill A. Shutemov" <kas@kernel.org>, Harry Yoo <harry.yoo@oracle.com>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Andy Lutomirski <luto@kernel.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 22, 2025 at 10:22:03AM GMT, Vivek.Pernamitta@quicinc.com wrote:
-> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
-> 
-> Notify the MHI device's Execution Environment (EE) state via uevent,
-> enabling applications to receive real-time updates and take appropriate
-> actions based on the current state of MHI.
-> 
-> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
-> ---
-> Notify the MHI device's Execution Environment (EE) state via uevent,
-> enabling applications to receive real-time updates and take appropriate
-> actions based on the current state.
-> 
-> Signed-off-by:
-> ---
-> Usage:
-> 
-> Enabling 16 virtual fucntions for SRIOV device QDU100 once device reached
-> mission mode from systemd service file
-> 
-> SUBSYSTEM=="mhi", ENV{EXEC_ENV}=="MISSION MODE", SUBSYSTEMS=="pci", ATTRS{device}=="0x0601",ATTR{../sriov_numvfs}="16"
-> ---
-> 
-> ---
->  drivers/bus/mhi/host/internal.h |  1 +
->  drivers/bus/mhi/host/main.c     |  1 +
->  drivers/bus/mhi/host/pm.c       | 22 ++++++++++++++++++++++
->  3 files changed, 24 insertions(+)
-> 
-> diff --git a/drivers/bus/mhi/host/internal.h b/drivers/bus/mhi/host/internal.h
-> index 034be33565b78eff9bdefd93faa4f3ce93825bad..d455f0bf00133775fa23882a727782275640e43b 100644
-> --- a/drivers/bus/mhi/host/internal.h
-> +++ b/drivers/bus/mhi/host/internal.h
-> @@ -403,6 +403,7 @@ int mhi_process_data_event_ring(struct mhi_controller *mhi_cntrl,
->  				struct mhi_event *mhi_event, u32 event_quota);
->  int mhi_process_ctrl_ev_ring(struct mhi_controller *mhi_cntrl,
->  			     struct mhi_event *mhi_event, u32 event_quota);
-> +void mhi_uevent_notify(struct mhi_controller *mhi_cntrl, enum mhi_ee_type ee);
->  
->  /* ISR handlers */
->  irqreturn_t mhi_irq_handler(int irq_number, void *dev);
-> diff --git a/drivers/bus/mhi/host/main.c b/drivers/bus/mhi/host/main.c
-> index 52bef663e182de157e50f64c1764a52545c70865..8615512743199a59a58c3756d9cc3407079cee7e 100644
-> --- a/drivers/bus/mhi/host/main.c
-> +++ b/drivers/bus/mhi/host/main.c
-> @@ -512,6 +512,7 @@ irqreturn_t mhi_intvec_threaded_handler(int irq_number, void *priv)
->  		if (mhi_cntrl->rddm_image && mhi_is_active(mhi_cntrl)) {
->  			mhi_cntrl->status_cb(mhi_cntrl, MHI_CB_EE_RDDM);
->  			mhi_cntrl->ee = ee;
-> +			mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
->  			wake_up_all(&mhi_cntrl->state_event);
->  		}
->  		break;
-> diff --git a/drivers/bus/mhi/host/pm.c b/drivers/bus/mhi/host/pm.c
-> index 33d92bf2fc3ed48db5f7fe80e4f0ef9fe2d2f2ab..1b849f334c49e52636821ed7587865a9254e9118 100644
-> --- a/drivers/bus/mhi/host/pm.c
-> +++ b/drivers/bus/mhi/host/pm.c
-> @@ -418,6 +418,7 @@ static int mhi_pm_mission_mode_transition(struct mhi_controller *mhi_cntrl)
->  	device_for_each_child(&mhi_cntrl->mhi_dev->dev, &current_ee,
->  			      mhi_destroy_device);
->  	mhi_cntrl->status_cb(mhi_cntrl, MHI_CB_EE_MISSION_MODE);
-> +	mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
->  
->  	/* Force MHI to be in M0 state before continuing */
->  	ret = __mhi_device_get_sync(mhi_cntrl);
-> @@ -631,6 +632,8 @@ static void mhi_pm_sys_error_transition(struct mhi_controller *mhi_cntrl)
->  	/* Wake up threads waiting for state transition */
->  	wake_up_all(&mhi_cntrl->state_event);
->  
-> +	mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
-> +
->  	if (MHI_REG_ACCESS_VALID(prev_state)) {
->  		/*
->  		 * If the device is in PBL or SBL, it will only respond to
-> @@ -829,6 +832,8 @@ void mhi_pm_st_worker(struct work_struct *work)
->  			mhi_create_devices(mhi_cntrl);
->  			if (mhi_cntrl->fbc_download)
->  				mhi_download_amss_image(mhi_cntrl);
-> +
-> +			mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
->  			break;
->  		case DEV_ST_TRANSITION_MISSION_MODE:
->  			mhi_pm_mission_mode_transition(mhi_cntrl);
-> @@ -838,6 +843,7 @@ void mhi_pm_st_worker(struct work_struct *work)
->  			mhi_cntrl->ee = MHI_EE_FP;
->  			write_unlock_irq(&mhi_cntrl->pm_lock);
->  			mhi_create_devices(mhi_cntrl);
-> +			mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
->  			break;
->  		case DEV_ST_TRANSITION_READY:
->  			mhi_ready_state_transition(mhi_cntrl);
-> @@ -1240,6 +1246,8 @@ static void __mhi_power_down(struct mhi_controller *mhi_cntrl, bool graceful,
->  	write_unlock_irq(&mhi_cntrl->pm_lock);
->  	mutex_unlock(&mhi_cntrl->pm_mutex);
->  
-> +	mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
-> +
->  	if (destroy_device)
->  		mhi_queue_state_transition(mhi_cntrl,
->  					   DEV_ST_TRANSITION_DISABLE_DESTROY_DEVICE);
-> @@ -1338,3 +1346,17 @@ void mhi_device_put(struct mhi_device *mhi_dev)
->  	read_unlock_bh(&mhi_cntrl->pm_lock);
->  }
->  EXPORT_SYMBOL_GPL(mhi_device_put);
-> +
-> +void mhi_uevent_notify(struct mhi_controller *mhi_cntrl, enum mhi_ee_type ee)
-> +{
-> +	struct device *dev = &mhi_cntrl->mhi_dev->dev;
-> +	char *buf[2];
-> +	int ret;
-> +
-> +	buf[0] = kasprintf(GFP_KERNEL, "EXEC_ENV=%s", TO_MHI_EXEC_STR(ee));
-> +	buf[1] = NULL;
-> +
-> +	ret = kobject_uevent_env(&dev->kobj, KOBJ_CHANGE, buf);
-> +	if (ret)
-> +		dev_err(dev, "Failed to send %s uevent\n", TO_MHI_EXEC_STR(ee));
+On Fri Aug 22, 2025 at 4:56 PM UTC, Uladzislau Rezki wrote:
+>> >> 2. The ephmap implementation is extremely stupid. It only works for the simple
+>> >>    shmem usecase. I don't think this is really important though, whatever we end
+>> >>    up with needs to be very simple, and it's not even clear that we actually
+>> >>    want a whole new subsystem anyway. (e.g. maybe it's better to just adapt
+>> >>    kmap_local_page() itself).
+>> >
+>> > Right just testing stuff out, fair enough. Obviously not an upstremable thing
+>> > but sort of test case right?
+>> 
+>> Yeah exactly. 
+>> 
+>> Maybe worth adding here that I explored just using vmalloc's allocator
+>> for this. My experience was that despite looking quite nicely optimised
+>> re avoiding synchronisation, just the simple fact of traversing its data
+>> structures is too slow for this usecase (at least, it did poorly on my
+>> super-sensitive FIO benchmark setup).
+>> 
+> Could you please elaborate here? Which test case and what is a problem
+> for it?
 
-You are leaking buf[0] here.
+What I'm trying to do here is allocate some virtual space, map some
+memory into it, read it through that mapping, then tear it down again.
+The test case was an FIO benchmark reading 4k blocks from tmpfs, which I
+think is a pretty tight loop. Maybe this is the kinda thing where the
+syscall overhead is pretty significant, so that it's an unrealistic
+workload, I'm not too sure. But it was a nice way to get a maximal
+measure of the ASI perf hit on filesystem access.
 
-- Mani
+I didn't make careful notes but I vaguely remember I was seeing
+something like 10% hits to this workload that I attributed to the
+vmalloc calls based on profiling with perf.
 
--- 
-மணிவண்ணன் சதாசிவம்
+I didn't interpret this as "vmalloc is bad" but rather "this is an abuse
+of vmalloc". Allocating anything at all for this usecase is quite
+unfortunate really.
+
+Anyway, the good news is I don't think we actually need a general
+purpose allocator here. I think we can just have something very simple,
+stack based and completely CPU-local. I just tried vmalloc() at the
+beginning coz it was the hammer I happened to be holding at the time!
+
+> You can fragment the main KVA space where we use a rb-tree to manage
+> free blocks. But the question is how important your use case and
+> workload for you?
+
 
