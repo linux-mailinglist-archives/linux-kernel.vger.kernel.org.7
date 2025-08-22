@@ -1,159 +1,206 @@
-Return-Path: <linux-kernel+bounces-782085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F30C6B31AD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:10:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED17AB31ADB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 197DC1C82D1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:05:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4E4F18974C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466D82F1FDC;
-	Fri, 22 Aug 2025 14:04:44 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE93E303CBE;
+	Fri, 22 Aug 2025 14:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JYNz7ovy"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2075.outbound.protection.outlook.com [40.107.243.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D7F2EDD51;
-	Fri, 22 Aug 2025 14:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755871483; cv=none; b=ZltuBxqTd3mTpZIEJHcvmM7SahKl08hbYsHky5g8wKsuxW5GTSQb6PQmA21qEcQxtu7SjW2sRYLEKEFFZtd2pqjymZNGrhhX+B4ngA/qwsfAohu1LpZkwroXf80KsU8NG0ah1atULsCOuquUkYk53bQr2pn02AoSACl/WDbGex0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755871483; c=relaxed/simple;
-	bh=Xbkb7aPZQmlevLNqWJsrOMl50Zv01PZBojl6c0eh+RU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XwVtAICQoohvA3MbLKvnheYEfJKcbuw/rdRf1TuyQl86uBPeGmWRpzvaZoow5+8J7ERNVGHq07A1Jr94V08aVmVi+hdqZuk6SnSewD6FoKoU48YpM4U5ebjv5vCPkVgxGqcUq1aKntdLrrLBsHqQBPD0r4KDPLUYKSyUauSDWQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf17.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 8417B82AC0;
-	Fri, 22 Aug 2025 14:04:39 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf17.hostedemail.com (Postfix) with ESMTPA id D53261D;
-	Fri, 22 Aug 2025 14:04:35 +0000 (UTC)
-Date: Fri, 22 Aug 2025 10:04:42 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Xiang Gao <gxxa03070307@gmail.com>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com, andrii@kernel.org,
- mingo@kernel.org, oleg@redhat.com, akpm@linux-foundation.org,
- gmonaco@redhat.com, ricardo.neri-calderon@linux.intel.com,
- libo.chen@oracle.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, gaoxiang17 <gaoxiang17@xiaomi.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Juri
- Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH] tracing/sched: add 'next_policy' to trace_sched_switch
-Message-ID: <20250822100442.79691ab2@gandalf.local.home>
-In-Reply-To: <20250822100209.7b1c5acf@gandalf.local.home>
-References: <20250822105113.1102099-1-gxxa03070307@gmail.com>
-	<20250822100209.7b1c5acf@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1A62E3B0D;
+	Fri, 22 Aug 2025 14:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755871562; cv=fail; b=G85h19Qc8aR8WBocvzPG9CoCtFHjaRCKCNEc0hskxdo9fjvQkh9A3nb1Z2vOfKPPxAgGw/TEgQt4pgPKkuB7Hf2BcIZyGLX9ZHEK7I+FS9o0KYxoTXJ2wY2jVA1ycbY7WdQw++PK0iXlbxeozxqztQOglqE0ENi/o+xTTZurMA8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755871562; c=relaxed/simple;
+	bh=D/48RgtKjrSOqrVvvTSAEtlv29Cro1upvO+MbmTxY0w=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=tj3R4/KcjEk8fxkM277b3cKj3bJFfjzhoYjw0WKO5pYOJt/zmutM3Py9HLrKlc3XZozDnpJWqCSk1Zf+hZEVQ9BlW23RIjcxCyTTquqCsNLEZK6JDGExylQ9fZoOmv1dYQuKKHnpNySqS0etOHfzWwjB4tG/zAeqJuFio1T7nJQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JYNz7ovy; arc=fail smtp.client-ip=40.107.243.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ls1CN7pC4+wArved8pw/lQc+bCv5eBR6CX2ovFLSnFzA0YLHQraMd5oihGTmCz0SV8NfHgMfnDGZ2nCSbbVhQ936uAXv2lO2IBGhfzlFhE0sLhpU1P1RzaOMTj1dOTAo1e5gR9D1bqg723cSjY2d045AXjL+SBF9PnYK05cWC1OfO+Hzlh+NRO9FGT/bms8pqQtAmleKl/05intvLNq3umJnAH7sAucpYkL5K50MCpNSkwZq7BSDyqcF3irBzGhaTTEF0qb8sV4pqW0fprxk1R5FI7j3Zk22L1sWzKDo4OYq6yd4eGQ2GfbkjwKXojRA/vic+l6yDnuun5FNfRUx/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K9UJI/uMMY7jNfqVvyYU1d0CCMjZ+N79ff7Mcf9R7B4=;
+ b=GiwAetqygZCYjs3MyjWukIgjDdleuJJQk/xHDnHPtKNkGz7tuklQuZyX4ZxY5B5rmStFqhkGiZGkxZxf3nCHU/uJI8uz+ZLJWRXVC3H8uI2GNdWaGxzGH78tnvvzc7gXIlmBByA+DaJZJq2RHdO1JygROb3WrdbWlAzm7UHG9gTyNxvXJWTJEHGRBqzkhasUaDKiIWilVLRfVXqnVnEtHfpM/8z9U/cYkxPjFEz8helQtisdKo9pCCP+Mul4Atf6rAOxsJ+r7EWfZlUh1w+3AUUApk7jjRGrQgVMmNaT/UNyBi0f5nVF+7NYZC1N93IuXjsXI3x2Ijl9tjKoERB7kQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K9UJI/uMMY7jNfqVvyYU1d0CCMjZ+N79ff7Mcf9R7B4=;
+ b=JYNz7ovySCSZbY9RoGiYy8dZi0TYs1kS/Lwfxs5c1H4pd1oH2tktfmYgOUGtFXJgC/owzBY1nRvN+7Kuiw679D+jl3JPhY+3bqLHNs1PuUmyD4UsgEL+0H6Vxffj2UC9kjqhr+42K00XCyBS1H+h+F5mQYkSBFjn8jTyByvVD9WZZJSDxeU4q14G3mMNSePJkqnBG+0u/1YbMf0epFwh/O394gDSTw5pUA6Id0a0Y8NCYIaJgaBcVrD2Xo6lx4RCKj18Tc3pqlN/hr2baeW5sCKqcseK+xslXJ2Mygm3CIkrs6FLXA5O/kDNiNphc5cHiHSBr14LPW3+hmZ/X3JwaQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by SA1PR12MB8597.namprd12.prod.outlook.com (2603:10b6:806:251::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Fri, 22 Aug
+ 2025 14:05:57 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.9052.014; Fri, 22 Aug 2025
+ 14:05:57 +0000
+From: Andrea Righi <arighi@nvidia.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	David Vernet <void@manifault.com>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] bpf: Mark kfuncs as __noclone
+Date: Fri, 22 Aug 2025 16:05:53 +0200
+Message-ID: <20250822140553.46273-1-arighi@nvidia.com>
+X-Mailer: git-send-email 2.50.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MI2P293CA0005.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:45::12) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: D53261D
-X-Stat-Signature: ij14jijodrczfxirtf443x44yo74jfwt
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18GKu2VDGi8bRXrue672Ec2iTLLeZfIeJQ=
-X-HE-Tag: 1755871475-287915
-X-HE-Meta: U2FsdGVkX1/DXovB48xGmUKZoUhgh6TpW2UkSAhOxmNgdsRp8g/NoGSsiJw5TEW7PJOieMYXyk70CVcwA/f45aohbyF6ZOmGe4r9UxJmW9d0MkJjdQCvGMDpZJ7nr6+oIlJdeifZMYLEwZTQmXNp7Pl32JvXoCXClvekVx2HujvOQR4SEMXkdhlN0diHAyQwztPZ0I/3FEhXKe06f8epihII1IqOnjjKfsXLiznkZ86Z9eobEBLjRiUMGVTyBN4wSXWF1LiwJxseaeYxz/PGxDGYtMpjKXgfF130FQDJqOJHkbEE2kptL0py9lMhlEyy3BILp/6DdWfFWyCTc7moMmGQx93jHsK4lY9cBLCuAch4ux2wnnOCict4pobwqL6ANFRTyALw6aKRKXWqYscnixZgZ+blUAdD4+8ePJtK+PItqNvV08tGPZR2WwaICKLcItV7SVrO0a8o4/Kjx+jVz7EePI+3s5Ch
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SA1PR12MB8597:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e590e7d-a544-450c-2be8-08dde1850404
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?XhOgpDg0QZf4h78cM1L+2lUGMxhPzzwbptJDaEgXWvsgUKbELaLhmOGTriUI?=
+ =?us-ascii?Q?H8OBqsYUrg3k51UkQC42vjrvWLwkoCdE2hCOkp5j9mM0gIleJUj6JQvoSUzU?=
+ =?us-ascii?Q?MSPEaGFmDCe67JJzUhybK+b5ehjCY8e7q/rJ5BZjOtA/Q9zh3mD2t0F21D1+?=
+ =?us-ascii?Q?t4nLmxjEKU/FDMi8eFzBUMxI+EiDYh9P8UGJrXWiu76996jF24ofrenz7ede?=
+ =?us-ascii?Q?LYF1MtuDt18DSi7PVsvNFwlBhc/dD5YxVSNXbZ1j76erkeSakwIaKu7Psjp5?=
+ =?us-ascii?Q?mrLjIyHDfgt8cdemYRrlr1RtCNkrTrV/EZbDy8/OCMzoiPPCs+4zO/gnr++J?=
+ =?us-ascii?Q?gmiTWB2gEg4EkihbY6e5ZJf8kuZkyGQKXW/PlVl6a93ldb46l66kf0Q1QNP8?=
+ =?us-ascii?Q?Urs10z7B4vyvIkmxsG6EoQIhehcqUy5/tbFQbEr5o0P2Un5Md0fTe11uZuvA?=
+ =?us-ascii?Q?rNwCojGWadyYXXws2jl4Dj492NitLtkN8MMX29P30DOwpBfLMqiHOTZoGsOS?=
+ =?us-ascii?Q?+SdfOH3OvDtmG+isY3cjDcySGdDbFxBvgxbRPZykMerMKUAbnhU2y2WzJjkD?=
+ =?us-ascii?Q?7WGT7bQPNDTjxMOL3+WMYIrKxc85MN5LgSOx9UEdeH92L5dXGPF/htpLCUsq?=
+ =?us-ascii?Q?lIrZd56MA+siNSaunOiMf1+5QhBywyPryfGYcn0fraYVF2U3XXusAXedqIKA?=
+ =?us-ascii?Q?lPgcXNzFNQNFvZLvLTGdW8Ah3uIEMNAer20cjQydohtTR1Yk6SG75MRKEjyY?=
+ =?us-ascii?Q?xQxLR4DR1vjrInNjKG573TFE2B+UiLWtYV8k4KjO/IGmb2ms/+Rg/R5iYqKn?=
+ =?us-ascii?Q?xFnS8nOUOox2jn4kgEwFleA4K32JLHa93i/zKvk7PmzqxbQV7+MC646DyMDZ?=
+ =?us-ascii?Q?FW/jvzAguV9kWgGI7NKDSwESiaG6wT229SP3fKwOLgNDVv9tnD8REGZtstEW?=
+ =?us-ascii?Q?HmkuOSkQM3+//5ToWpmgweySCjEZQKYtn78mBiCOzhg5EvTKUH8UuVLqD6W5?=
+ =?us-ascii?Q?veKfIMlsSX7u3UVsyn91PRMJvCyG7t17wg8OakxKAK+jLtGxEfHfoCAdY0wq?=
+ =?us-ascii?Q?hYkp86TfRknmrFXxDnE/tp1m7duLe5738csLCFdSEib2ZRJznRQxwU5sbLc6?=
+ =?us-ascii?Q?rLV7lhCSscDPZ65ZBd2ajhdJL6RPJPSW3Pg1TtCFzh5cYp/bnqU6KPf1S5wH?=
+ =?us-ascii?Q?DaRvhJkze4XR/TO2C+fbAEo0jOBfsItVs5fyCV4N2wO9xTIrMMxcFVfgpPVv?=
+ =?us-ascii?Q?AT/YFFlVn6G4CGw77EarMh8jTwcv8dSXcgVyMnEYn1BfRBx6/ljlKhPgV4Ek?=
+ =?us-ascii?Q?Wm8s5DVZKAi67ErUjO65IU3ZjPj3taNcmn6lsCC6u1mGLEFf6ic6Rwdp5GBi?=
+ =?us-ascii?Q?OciuwAom96Oni4/GBErF6ZI9bj8/uFFN1X3pGqVlzyY4yq9rz4p2Yb74hhL3?=
+ =?us-ascii?Q?KG3Ey8h5bcg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?OIVyBSoXRWcZETQWqnLGpt9xtPGbK9w6NzOrgcp8l0yCzvdFV7obGTmGpC97?=
+ =?us-ascii?Q?M+CED+hFKpkj9oWsOQnxdpofcm2Rat2kl8K7lZREYFbtZfRkmxzuAgnNtFXz?=
+ =?us-ascii?Q?nWhoYBlPCUb3j89NcEMA1CFizAkwSmPzs7BFvXmoDBiPhLhcBoi5sYdpLF4O?=
+ =?us-ascii?Q?Y2r6jAA9cpRAbG//k0bX1oT/67Z4LpAg4rhg0+GVQ6YoaeCoilnqbyPrtekW?=
+ =?us-ascii?Q?22KN6z6PlMufq66YdKyqup1Ggy8ZejXu1gtwzp0pU7zJx2M7fT5NTKptUnUy?=
+ =?us-ascii?Q?o/QntZ4JJKo7ziAfALwc7NUszglfCt0IwKZtzXLnGP0l71IutAtZqpivuoiZ?=
+ =?us-ascii?Q?jdRewHLE1SyHd7SESeSUADKI3oa71mPmB2pSVMJJZojc1u6Nh+LK+ophyNAb?=
+ =?us-ascii?Q?rz2m4xTzVp59yd6ow8ZEUicYPxfbO0989xlfiquwqh4hxchP4SzdDLeKqevZ?=
+ =?us-ascii?Q?NhMVuso8LonmqAjYH0IWtrSbBp/MB4KwGX90cskvry2Cp/3DBvblxO8FnL1J?=
+ =?us-ascii?Q?ayxBuNuL33OVAs+8dfmQZZZ+8W48lOBGh8Khw3tZA4iQOR7l+cHKjWQ9IKka?=
+ =?us-ascii?Q?Ij0f0HJQyL/zk8KQJ8oGU7XISGgUgPHQOQvyEOJyVO8SVmMkq+0eGYSb38D6?=
+ =?us-ascii?Q?KEEP1lRq3dcEqK1QXFG9/AlOaowNh57OoMDNS5oEACgPdFiMhzNadvrR00AK?=
+ =?us-ascii?Q?RlnodQDJjgI+unYe5DN+pVwdyv5xvjP46tSKzrCwD5mcLCnSL8zv+WOM31bS?=
+ =?us-ascii?Q?FY9bS+AfOXKx6Vy8gtD7M6xvV/zbrum02yo7bXDyQhLjZYafz4qJfQvjRNTA?=
+ =?us-ascii?Q?vBWyBZTpm7/VwfWSvGIqUZLY26yr8JA/FTQ1bE8YKLMijTC1OOsVWZLZaORm?=
+ =?us-ascii?Q?+IOjn+sCm/vj2KjdSvh4hfR6LgdAIBdK5udMtZPZZAGmhAzK/JP6tGK3N8lv?=
+ =?us-ascii?Q?tqHgukNNj89hocRdQRm6f+0QTWWPrfkuAuj8VbTzlfa6AWRagZwFlp6AyvVg?=
+ =?us-ascii?Q?N1In0v0w19GX6vrw4LK63U9vRwSeD/NQ1Y5An0FpUed+f78lgAdlgE916giN?=
+ =?us-ascii?Q?o3GDKH2i7RIxqYFGHCQtqGXjqZEvQRtDhgtQ8quu+o+DvsdxXWyKwanTpgMn?=
+ =?us-ascii?Q?11aESeNGQurq6xeJdnELLaW1rFgnom9anDEZEePOOvvMoxTnjnnkQ8XqVpJV?=
+ =?us-ascii?Q?XkGwxnukpPsED8Xum5MS+PSs5i3LXnfvUo8SY7AR56W3siZSnx/GJ3ZS2GQy?=
+ =?us-ascii?Q?ouWtPaKHeEYeKSm89aVeTPEtCrabmkH2m7sRCDtuc41+tzabFOv8SxOGMC49?=
+ =?us-ascii?Q?2+Oti7GvlmD1NqECfNNE2tSExNggRCn/D6qldWYvx4DVrXbXBlRgNag+RfXH?=
+ =?us-ascii?Q?zYeP38+005yPPniTPNfDwfK1yyB3KCqMXGUVB5xafQpLKr7BJ+1Si+E3nndp?=
+ =?us-ascii?Q?w9GGmZyf6WQKA52ewsZQvbS5viroC907+Fp4Voi9ijPbzi8a8hcqNul1MaP4?=
+ =?us-ascii?Q?uQ5gXNe7bvbS6/oErGVy8Fs4XfFnuidAb1qB09JakIgQcbrn8IKcQ+s4EHgt?=
+ =?us-ascii?Q?Gmm3toHax9zZpA2UcNRAWcu+gTXm4YxB+8cQKzt2?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e590e7d-a544-450c-2be8-08dde1850404
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 14:05:57.2356
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LzpRQ9n1tPsYbM6dd9/ChCmJz6mGjKrIbBnqRnlBv95bpYDAHhuMK03Wp+UXkdXLgb1c1rTDZctVsV0c5wKcpw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8597
 
+Some distributions (e.g., CachyOS) support building the kernel with -O3,
+but doing so may break kfuncs, resulting in their symbols not being
+properly exported.
 
-[ Adding scheduler maintainers ]
+In fact, with gcc -O3, some kfuncs may be optimized away despite being
+annotated as noinline. This happens because gcc can still clone the
+function during IPA optimizations, e.g., by duplicating or inlining it
+into callers, and then dropping the standalone symbol. This breaks BTF
+ID resolution since resolve_btfids relies on the presence of a global
+symbol for each kfunc.
 
-On Fri, 22 Aug 2025 10:02:09 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Currently, this is not an issue for upstream, because we don't allow
+building the kernel with -O3, but it may be safer to address it anyway,
+to prevent potential issues in the future if compilers become more
+aggressive with optimizations.
 
-> On Fri, 22 Aug 2025 18:51:13 +0800
-> Xiang Gao <gxxa03070307@gmail.com> wrote:
-> 
-> > From: gaoxiang17 <gaoxiang17@xiaomi.com>
-> > 
-> > Sometimes, when analyzing some real-time process issues, it is necessary to know the sched policy.
-> > 
-> > Show up in the trace as:
-> > 
-> >       113.457176: sched_switch: prev_comm=kcompactd0 prev_pid=30 prev_prio=120 prev_state=S ==> next_comm=kworker/u4:1 next_pid=27 next_prio=120 next_policy=0
-> >       113.457282: sched_switch: prev_comm=kworker/u4:1 prev_pid=27 prev_prio=120 prev_state=I ==> next_comm=swapper/0 next_pid=0 next_prio=120 next_policy=0
-> >       113.461166: sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=kworker/u4:1 next_pid=27 next_prio=120 next_policy=0
-> > 
-> > Signed-off-by: gaoxiang17 <gaoxiang17@xiaomi.com>
-> > ---
-> >  include/trace/events/sched.h | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-> > index 7b2645b50e78..b416b7bafee4 100644
-> > --- a/include/trace/events/sched.h
-> > +++ b/include/trace/events/sched.h
-> > @@ -234,6 +234,7 @@ TRACE_EVENT(sched_switch,
-> >  		__array(	char,	next_comm,	TASK_COMM_LEN	)
-> >  		__field(	pid_t,	next_pid			)
-> >  		__field(	int,	next_prio			)
-> > +		__field(	unsigned int,	next_policy	)
-> >  	),
-> >  
-> >  	TP_fast_assign(
-> > @@ -244,10 +245,11 @@ TRACE_EVENT(sched_switch,
-> >  		memcpy(__entry->next_comm, next->comm, TASK_COMM_LEN);
-> >  		__entry->next_pid	= next->pid;
-> >  		__entry->next_prio	= next->prio;
-> > +		__entry->next_policy	= next->policy;
-> >  		/* XXX SCHED_DEADLINE */
-> >  	),
-> >  
-> > -	TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d",
-> > +	TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d next_policy=%u",
-> >  		__entry->prev_comm, __entry->prev_pid, __entry->prev_prio,
-> >  
-> >  		(__entry->prev_state & (TASK_REPORT_MAX - 1)) ?
-> > @@ -263,7 +265,7 @@ TRACE_EVENT(sched_switch,
-> >  		  "R",
-> >  
-> >  		__entry->prev_state & TASK_REPORT_MAX ? "+" : "",
-> > -		__entry->next_comm, __entry->next_pid, __entry->next_prio)
-> > +		__entry->next_comm, __entry->next_pid, __entry->next_prio, __entry->next_policy)
-> 
-> 
-> I'm fine with this change, but I'm not sure how Peter feels about updating
-> scheduler tracepoints. That said, why not show the policy name?
+Therefore, add __noclone to __bpf_kfunc to ensure kfuncs are never
+cloned and remain distinct, globally visible symbols, regardless of
+the optimization level.
 
-Oh, and trace events are owned by the subsystem maintainers not the tracing
-maintainers. You need to Cc them.
+Fixes: 57e7c169cd6af ("bpf: Add __bpf_kfunc tag for marking kernel functions as kfuncs")
+Signed-off-by: Andrea Righi <arighi@nvidia.com>
+---
+ include/linux/btf.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- Steve
-
-
-> 
-> 	TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d next_policy=%s",
-> 	[..]
-> 		__entry->next_comm, __entry->next_pid, __entry->next_prio,
-> 		__print_symbolic(__entry->next_policy,
-> 			{ SCHED_NORMAL,		"normal" },
-> 			{ SCHED_FIFO,		"FIFO" },
-> 			{ SCHED_RR,		"RR" },
-> 			{ SCHED_BATCH,		"batch" },
-> 			{ SCHED_IDLE,		"idle" },
-> 			{ SCHED_DEADLINE,	"deadline" },
-> 			{ SCHED_EXT,		"sched_ext"}))
-> 
-> -- Steve
-> 
-> 
-> 
-> 
-> 
-> 
-> >  );
-> >  
-> >  /*
-> 
+diff --git a/include/linux/btf.h b/include/linux/btf.h
+index 9eda6b113f9b4..f06976ffb63f9 100644
+--- a/include/linux/btf.h
++++ b/include/linux/btf.h
+@@ -86,7 +86,7 @@
+  * as to avoid issues such as the compiler inlining or eliding either a static
+  * kfunc, or a global kfunc in an LTO build.
+  */
+-#define __bpf_kfunc __used __retain noinline
++#define __bpf_kfunc __used __retain __noclone noinline
+ 
+ #define __bpf_kfunc_start_defs()					       \
+ 	__diag_push();							       \
+-- 
+2.50.1
 
 
