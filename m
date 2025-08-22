@@ -1,225 +1,129 @@
-Return-Path: <linux-kernel+bounces-782052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EF4EB31A63
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:57:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B51B31A6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7462C566EE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:53:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9D83B99B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119CD2FDC59;
-	Fri, 22 Aug 2025 13:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0097303CBE;
+	Fri, 22 Aug 2025 13:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZoovnXqi";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0AwV7GHi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjo6vm5J"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2D121B8F5;
-	Fri, 22 Aug 2025 13:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C59D2737E8
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755870831; cv=none; b=HCLz01Y+j17JuRAZXV19b/Txn8tTnDG4DzGAkkCVFTIpJ//7nHXjXlFHvfYoxeOLr/raydd0GAd6xJIDadDGRD03jCLO8ZjI9nCIetQCk3bk6PYA0Xv7jefo2GkrNu6/dEwBAwVELd6lzFQW247x9mjBfmNIX+/T8bdbJpZFQNE=
+	t=1755870913; cv=none; b=C/aHVOxJY3ZCSPS213PC+j/vIrwJhq4WgXuB3exekBvRI0N+eAEaOy+0MQG3NDmdTrqKKsy+AurJjCKxh1I8J+7zXmSVk4nKxGZnBPNrpWt7rk7tWqDJtgS/RByWb2hQOik2KqEoR0tTuRa5AuQUN5tdYR8zDpMT05zDzo3SofY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755870831; c=relaxed/simple;
-	bh=lQnCEomINcmRwqFVrSFkbJFiEN2HEFfkl3EyOM0zHyA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Az9KodLuAqn25zjz3QvrjEbPqtrB4FW0mo/e/K5lrpY2tFYcHQCFEp8jyW28cVNrmZPmKWQQbgItIESY2/Qfe98AiB/rOqu35OOaHTucS4gZEt39wD6qs3IcwXTA8rKEgmy0pT7Ez0rG1R5GbYRuuEdLBXhtGM8jVkZIxII1E3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZoovnXqi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0AwV7GHi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 22 Aug 2025 13:53:44 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755870826;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Qw9GeRVvudcvzCBIiVnUrrVOxoWIb8HOF0UiilCY8Us=;
-	b=ZoovnXqiAJM5kMA8NAx+o0Q4jrsbtAHy8dGmJ271IY+SDoBDiSuDol5FudaQwuIHoHN3oU
-	b8jakMdL3MbHMc8FG31FnJ59DoC2OVaFR5U9rpOheLYdhk6UgqcCO6Ab05hE3O1TsBu3pN
-	pSz3FAFaXkgLwveUFnB5ewkniEURnaaHXtbLNyoHJvW6SNvxd0igLij6bEVn7rfl8j2bUe
-	4Z+z4YChE/LS5hpTESfCX0zYNzWKD/45yH6N0ufpbSPp3teOosKAFv8JmEBgSE0B0eiktv
-	2w71VjV+TtZ4sCHqJU5bQx3J+X3kU6wHvxuMFx7wvrbJPld4D3bBog9gxU5S1g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755870826;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Qw9GeRVvudcvzCBIiVnUrrVOxoWIb8HOF0UiilCY8Us=;
-	b=0AwV7GHiJTp0KQYOTBg2mVl0EZmI4W+Ut9jdyi2z1T1Ow2TtIAtf0zsfRP09aIoQWBceol
-	osbuURpqj0j0gRBA==
-From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/bugs] x86/its: Move ITS indirect branch thunks to
- .text..__x86.indirect_thunk
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To:
- <67a17ed2fc8d12111e76504c8364b1597657c29a.1749228881.git.jpoimboe@kernel.org>
-References:
- <67a17ed2fc8d12111e76504c8364b1597657c29a.1749228881.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1755870913; c=relaxed/simple;
+	bh=X1AqrYiDlVBIXj3hu70zjXFgy/CPWMahbDfE1UFj7e8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z3R0FzkBf7iVQhL65GRDP5OUb3VqqLrlDCblGbuIKVDFHl3j9gnsSQrljZwFmXnMJtG8V+wdwuhwox1MA98Nk4YP13dFcY0iO7iXsfHd5++Hd7siU4Zwd8LTNvTSWzhgjuyoM6Pq4jU5Mcdv+FuF78n8Y9eo0zQDiSexNuf4OgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fjo6vm5J; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb78c66dcso311944266b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:55:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755870910; x=1756475710; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rj+HgtxduluJorTLjvqhqXUN+0cIHtQzCLrC7EzM7J0=;
+        b=fjo6vm5JHtzuU0DfhjyOW6o6FYgvakDyEEsyqkoKnok7OCORYPFyLFeo0saMdyz+0O
+         X6Wi6hLG7Kbz97AFYEkbiXa8HAncEUe3xJ39CB4+mNusFYjK2gWoVHGufoHdbLuBnLts
+         BKi7ny71N1kk26GbFSeM0ziG5xbsUboOqEbeXWvt09/W43ZV10H0hOejteul9bW/umuA
+         unLez/ZQWEHfaFO0A45og0KzqMTDBOmYPZpbVAC+IAMD8HaHvR83nVwi2Kn+wfiSpgJG
+         Efej2K0jW7wiWE7nS2lAyrgIm6kWaRXwvr71aJapWuHjqLsP6AP+vI7GH9CurM61klcR
+         8TSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755870910; x=1756475710;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rj+HgtxduluJorTLjvqhqXUN+0cIHtQzCLrC7EzM7J0=;
+        b=gyMdAJ5L5ppv1txQjPEhcw+y3m4kkBGnhIKh673RudUfbgcxLBv2MSSWxoFYRdoqSn
+         6XbvM3WIzsaJceERkaQ4HCy460PhetN/A3DwbvpodZwKsHh5mxVl9+1ZE1o/zGfjnvm6
+         AdbUr69+hJWr5LWjJjtLSv8dYbkUn4hg6Uoiz78/0IHRLzgJu+l+O9dK/ddfwawf6HKK
+         O4352Y9Y9bQn7vzviRbXYJ3FVMT8xzaQ5Jh+qfY3fWWmbjak1GqNRhAoYJ2D5jQPIxdF
+         EQXbWZQShMgL3kUQLQphvKnF9YYU062vQMNxcRPI1DDV6o11g6/wY47xjCaNeLMAn2rc
+         Op1A==
+X-Forwarded-Encrypted: i=1; AJvYcCXYRoH2Id39RHct25MYwde+nUJNJDMmGPqzyaU5/jIcX8HjJR765hTETa0OwyA7bA1AUkq0xoBdAsKqodk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6Iaofs6bw0psp86b0EakwY/OF2wwe+4sLOHFTnYLGsp+ieo/O
+	0wJ+Vj5IHmom6n82QK85+GAMorcHamAIb5yiV2vJ1GM56LtB66XQGK3i
+X-Gm-Gg: ASbGncukeq8INAY2V90ih5KgQaY254P7JG3wc/xE92fexfYRO1Do/4ilIiMXlGMQP1m
+	BLns4rn9ItuFaf2XM8qshkrx7C0FHiIyqLZPHJoFI5yQGTn7HmBg4uExUCg70sIEXTl67Ie8zQl
+	+8kaDHemcNXMseDxXDqqOHN5c+qeagRprCmtfhyJvKz31rcy78uO3q2pZe7p1hJWWZx76JopuaB
+	jaiAIpFwXf0EvN3ypFLLw2ZEowloFRwtDStFFlVb+khhSz8hXCwV6Kqyo6TGYiJjG96haZ/tsNR
+	1ngJhJKTxw5rtDbfjzMDL76Og2ssc8sXQzpXAm04mgQs6pt0SwJq2jqYa57UXlor8xqdsQM9vWT
+	DAVajYyE/OJGHDRuQEsIyhIOg2Q==
+X-Google-Smtp-Source: AGHT+IGViA0WcJpMqUWyH0PlxyeUQx7RR2prGZEhfZG1uikO48f6AeQtIov1nSstrlCfYu3rGvzfQA==
+X-Received: by 2002:a17:907:86ab:b0:af4:11e1:f877 with SMTP id a640c23a62f3a-afe28f162a8mr287292266b.21.1755870910341;
+        Fri, 22 Aug 2025 06:55:10 -0700 (PDT)
+Received: from tumbleweed ([95.90.184.246])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded307138sm612353866b.45.2025.08.22.06.55.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 06:55:09 -0700 (PDT)
+From: Michael Straube <straube.linux@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: hdegoede@redhat.com,
+	Larry.Finger@lwfinger.net,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 00/13] staging: rtl8723bs: get rid of os_dep/recv_linux.c
+Date: Fri, 22 Aug 2025 15:54:05 +0200
+Message-ID: <20250822135418.118115-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175587082441.1420.8704991891461178860.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/bugs branch of tip:
+This series moves/merges the functions/functionality of os_dep/recv_linux.c
+into the corresponding parts of the driver in the core directory to reduce
+"os dependent" code.
 
-Commit-ID:     6bca6b9d414c8127350341f193caa11944ce6fa9
-Gitweb:        https://git.kernel.org/tip/6bca6b9d414c8127350341f193caa11944c=
-e6fa9
-Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Fri, 06 Jun 2025 09:55:02 -07:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Fri, 22 Aug 2025 15:35:57 +02:00
+The patches have been compile-tested only due to lack of hardware.
 
-x86/its: Move ITS indirect branch thunks to .text..__x86.indirect_thunk
+Michael Straube (13):
+  staging: rtl8723bs: remove wrapper rtw_init_recv_timer
+  staging: rtl8723bs: move rtw_recv_indicatepkt to rtw_recv.c
+  staging: rtl8723bs: move rtw_handle_tkip_mic_err to rtw_recv.c
+  staging: rtl8723bs: merge rtw_os_free_recvframe into rtw_recv.c
+  staging: rtl8723bs: merge rtw_os_recv_resource_alloc into rtw_recv.c
+  staging: rtl8723bs: merge rtw_os_recv_resource_free into rtw_recv.c
+  staging: rtl8723bs: merge rtw_os_recvbuf_resource_free into
+    rtl8723bs_recv.c
+  staging: rtl8723bs: move rtw_os_alloc_msdu_pkt to rtw_recv.c
+  staging: rtl8723bs: rename rtw_os_alloc_msdu_pkt
+  staging: rtl8723bs: move rtw_os_recv_indicate_pkt to rtw_recv.c
+  staging: rtl8723bs: rename rtw_os_recv_indicate_pkt
+  staging: rtl8723bs: remove os_dep/recv_linux.c
+  staging: rtl8723bs: remove include/recv_osdep.h
 
-The ITS mitigation includes both indirect branch thunks and return
-thunks.  Both are currently placed in .text..__x86.return_thunk, which is
-appropriate for the latter but not the former.
+ drivers/staging/rtl8723bs/Makefile            |   1 -
+ drivers/staging/rtl8723bs/core/rtw_recv.c     | 194 ++++++++++++++-
+ drivers/staging/rtl8723bs/core/rtw_sta_mgt.c  |   4 +-
+ .../staging/rtl8723bs/hal/rtl8723bs_recv.c    |   6 +-
+ drivers/staging/rtl8723bs/include/drv_types.h |   1 -
+ .../staging/rtl8723bs/include/recv_osdep.h    |  40 ----
+ drivers/staging/rtl8723bs/include/rtw_recv.h  |   4 +
+ drivers/staging/rtl8723bs/os_dep/recv_linux.c | 225 ------------------
+ 8 files changed, 199 insertions(+), 276 deletions(-)
+ delete mode 100644 drivers/staging/rtl8723bs/include/recv_osdep.h
+ delete mode 100644 drivers/staging/rtl8723bs/os_dep/recv_linux.c
 
-For consistency with other mitigations, move the indirect branch thunks to
-.text..__x86.indirect_thunk.
+-- 
+2.51.0
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Link: https://lore.kernel.org/67a17ed2fc8d12111e76504c8364b1597657c29a.174922=
-8881.git.jpoimboe@kernel.org
----
- arch/x86/lib/retpoline.S | 75 ++++++++++++++++++++-------------------
- 1 file changed, 40 insertions(+), 35 deletions(-)
-
-diff --git a/arch/x86/lib/retpoline.S b/arch/x86/lib/retpoline.S
-index d78d769..f513d33 100644
---- a/arch/x86/lib/retpoline.S
-+++ b/arch/x86/lib/retpoline.S
-@@ -15,7 +15,6 @@
-=20
- 	.section .text..__x86.indirect_thunk
-=20
--
- .macro POLINE reg
- 	ANNOTATE_INTRA_FUNCTION_CALL
- 	call    .Ldo_rop_\@
-@@ -73,6 +72,7 @@ SYM_CODE_END(__x86_indirect_thunk_array)
- #undef GEN
-=20
- #ifdef CONFIG_MITIGATION_CALL_DEPTH_TRACKING
-+
- .macro CALL_THUNK reg
- 	.align RETPOLINE_THUNK_SIZE
-=20
-@@ -126,7 +126,45 @@ SYM_CODE_END(__x86_indirect_jump_thunk_array)
- #define GEN(reg) __EXPORT_THUNK(__x86_indirect_jump_thunk_ ## reg)
- #include <asm/GEN-for-each-reg.h>
- #undef GEN
--#endif
-+
-+#endif /* CONFIG_MITIGATION_CALL_DEPTH_TRACKING */
-+
-+#ifdef CONFIG_MITIGATION_ITS
-+
-+.macro ITS_THUNK reg
-+
-+/*
-+ * If CFI paranoid is used then the ITS thunk starts with opcodes (0xea; jne=
- 1b)
-+ * that complete the fineibt_paranoid caller sequence.
-+ */
-+1:	.byte 0xea
-+SYM_INNER_LABEL(__x86_indirect_paranoid_thunk_\reg, SYM_L_GLOBAL)
-+	UNWIND_HINT_UNDEFINED
-+	ANNOTATE_NOENDBR
-+	jne 1b
-+SYM_INNER_LABEL(__x86_indirect_its_thunk_\reg, SYM_L_GLOBAL)
-+	UNWIND_HINT_UNDEFINED
-+	ANNOTATE_NOENDBR
-+	ANNOTATE_RETPOLINE_SAFE
-+	jmp *%\reg
-+	int3
-+	.align 32, 0xcc		/* fill to the end of the line */
-+	.skip  32 - (__x86_indirect_its_thunk_\reg - 1b), 0xcc /* skip to the next =
-upper half */
-+.endm
-+
-+/* ITS mitigation requires thunks be aligned to upper half of cacheline */
-+.align 64, 0xcc
-+.skip 29, 0xcc
-+
-+#define GEN(reg) ITS_THUNK reg
-+#include <asm/GEN-for-each-reg.h>
-+#undef GEN
-+
-+	.align 64, 0xcc
-+SYM_FUNC_ALIAS(__x86_indirect_its_thunk_array, __x86_indirect_its_thunk_rax)
-+SYM_CODE_END(__x86_indirect_its_thunk_array)
-+
-+#endif /* CONFIG_MITIGATION_ITS */
-=20
- #ifdef CONFIG_MITIGATION_RETHUNK
-=20
-@@ -370,39 +408,6 @@ SYM_FUNC_END(call_depth_return_thunk)
-=20
- #ifdef CONFIG_MITIGATION_ITS
-=20
--.macro ITS_THUNK reg
--
--/*
-- * If CFI paranoid is used then the ITS thunk starts with opcodes (0xea; jne=
- 1b)
-- * that complete the fineibt_paranoid caller sequence.
-- */
--1:	.byte 0xea
--SYM_INNER_LABEL(__x86_indirect_paranoid_thunk_\reg, SYM_L_GLOBAL)
--	UNWIND_HINT_UNDEFINED
--	ANNOTATE_NOENDBR
--	jne 1b
--SYM_INNER_LABEL(__x86_indirect_its_thunk_\reg, SYM_L_GLOBAL)
--	UNWIND_HINT_UNDEFINED
--	ANNOTATE_NOENDBR
--	ANNOTATE_RETPOLINE_SAFE
--	jmp *%\reg
--	int3
--	.align 32, 0xcc		/* fill to the end of the line */
--	.skip  32 - (__x86_indirect_its_thunk_\reg - 1b), 0xcc /* skip to the next =
-upper half */
--.endm
--
--/* ITS mitigation requires thunks be aligned to upper half of cacheline */
--.align 64, 0xcc
--.skip 29, 0xcc
--
--#define GEN(reg) ITS_THUNK reg
--#include <asm/GEN-for-each-reg.h>
--#undef GEN
--
--	.align 64, 0xcc
--SYM_FUNC_ALIAS(__x86_indirect_its_thunk_array, __x86_indirect_its_thunk_rax)
--SYM_CODE_END(__x86_indirect_its_thunk_array)
--
- .align 64, 0xcc
- .skip 32, 0xcc
- SYM_CODE_START(its_return_thunk)
 
