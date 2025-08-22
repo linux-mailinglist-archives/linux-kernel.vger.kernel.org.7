@@ -1,214 +1,122 @@
-Return-Path: <linux-kernel+bounces-782029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4FB5B31A1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:48:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D62FB319E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5940DA04C09
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:41:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D457BA4324
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4BD303C91;
-	Fri, 22 Aug 2025 13:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1332FC037;
+	Fri, 22 Aug 2025 13:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YpMiv/9z"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUU75Hmf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4A222DA02
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD952FE57D;
+	Fri, 22 Aug 2025 13:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755869990; cv=none; b=DpY0h6DMnzJXdhv/o1ZycJtGQRqpqGxvCPPgtG2CmOYAMhipsUCeC/Sfza3gd2B54D8u2OJfGL6w8kSxSQS8n+EaNUs+0FQ8udlnu9L4tx4gnY+yCMV8g7FB4/csJoH4by3ViwOjkvCAaK7bMThaalaC2rg1ln5Ui4wPd61G9p8=
+	t=1755869989; cv=none; b=WJegwgIF5Yq67GmtKzAVfVFheA7WAxprIBP16slGDXYO2HCk4iHB9KzoNa34fq0Tcul7eMQrADFUVdTp2/UPICkdOy+0Y1AXkC/61osE0yvRSfVRSqJJwtp+/pP0pUMhy7rQ070egMB5Kv9VgkJE6jDyY6vLgFp5wECho5Yb2V8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755869990; c=relaxed/simple;
-	bh=CA66BcBYt8100hRqu+e6ER5OVlN6pGDYn+4HZgMWABA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=GCeR3qOm8vPUhTCUhgpHM08+pmrj4bv8xCY5p2e7ty6edmWFQ1DpHPuCk2LlmS82vthDCSv7Ub1dtTaoTOchaLHwcr6jkydCrZpwoBtYxoSgif9fRwOFgcBPSTBwUb0mohHyuLu6DYbIU2DbVPa1ELMI5nrd2GL1LSzBC31UlRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YpMiv/9z; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250822133945epoutp017db0d51d0411edac9dc26cd1b4ea0889~eGnLPISgJ0586505865epoutp01Q
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:39:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250822133945epoutp017db0d51d0411edac9dc26cd1b4ea0889~eGnLPISgJ0586505865epoutp01Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755869985;
-	bh=u1nIEzQAHzexEwe1eBw6VP9QOhuA5DOvKet0k5mUpZU=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=YpMiv/9zvNnJVVTqDCQFz8ApOBDdjhGp5prNSGmskCpeGTCMbkWiyn3wFR5uZuKXD
-	 J8bh6I+edk0r0H1aJ8MTy2GLsjoE3hQcgepGQ+L9bfurpJbtGDWb1soIpc0GV/w/lc
-	 dKW1V/MRwVJlxcj/SO9oZASAAVnPikD0WB2KRNNg=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250822133943epcas5p3db3194b4f778165c369f994cc9fb349f~eGnKIRpRe2325823258epcas5p3h;
-	Fri, 22 Aug 2025 13:39:43 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4c7hBR05d6z6B9m4; Fri, 22 Aug
-	2025 13:39:43 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250822133942epcas5p37a9e03d4cefed84c9f458f47b648d929~eGnIVLNXg2325823258epcas5p3c;
-	Fri, 22 Aug 2025 13:39:42 +0000 (GMT)
-Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250822133937epsmtip1fcccb1ff7946a18f9bda033b67ce9139~eGnEmK2i82772327723epsmtip1D;
-	Fri, 22 Aug 2025 13:39:37 +0000 (GMT)
-From: "Inbaraj E" <inbaraj.e@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <s.hauer@pengutronix.de>,
-	<shawnguo@kernel.org>, <cw00.choi@samsung.com>, <rmfrfs@gmail.com>,
-	<laurent.pinchart@ideasonboard.com>, <martink@posteo.de>,
-	<mchehab@kernel.org>, <linux-fsd@tesla.com>, <will@kernel.org>,
-	<catalin.marinas@arm.com>, <pankaj.dubey@samsung.com>,
-	<shradha.t@samsung.com>, <ravi.patel@samsung.com>
-Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
-	<linux-samsung-soc@vger.kernel.org>, <kernel@puri.sm>,
-	<kernel@pengutronix.de>, <festevam@gmail.com>,
-	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <ac9769af-9ab6-4b48-9890-ec3bcda3b180@kernel.org>
-Subject: RE: [PATCH v2 03/12] dt-bindings: media: nxp: Add support for FSD
- SoC
-Date: Fri, 22 Aug 2025 19:09:36 +0530
-Message-ID: <00d001dc136a$36ad7230$a4085690$@samsung.com>
+	s=arc-20240116; t=1755869989; c=relaxed/simple;
+	bh=6lls2PNqv82LA24JN17rWOxhT+KBp/xw1JLS07INPPU=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Vy9dKpLesp4MKPiLHp6YntVO+GuaShS7o0r+5/FoVuwxPCOYzjfIP/dvatTnl0OmlWDsPFZW3XIO6p3dk314djpabR8sVxJlFbSP4Qq5XsV4erqU6BcftMfPLnDcfAnBdVWd9tfU0O55CKGp5iTxKlDLEHYvPazUpp5qoPPYvvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUU75Hmf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C458C113CF;
+	Fri, 22 Aug 2025 13:39:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755869988;
+	bh=6lls2PNqv82LA24JN17rWOxhT+KBp/xw1JLS07INPPU=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=hUU75Hmf/NOkMXHK7mzYKoStE7q2Eza75mREBzEjUfXfoP3AIklheGU0FjV2eHAEY
+	 UPq585Ft6/G4Xhv52F43ySLRyr38rI0KBLlBaUMNk2FiDzXXNkD2g4iL4W0e2KPCXw
+	 NSZIY+cZKT8qdyeCmwhpdFMh3eXcH9b/XruFvadtJ+B6GO0asik1ftd517tzTqM64a
+	 tYI/beKAXzv9c9Ek2kVq/2iC6Cn/ktdAbHTJ5uQLO44Sn34QsAff1zbIb51LvaGucQ
+	 Z0hdip00uq0aogFSKCplh8qU/MD891lGqh1NN6a25ZK/HHllQQvtRQHefJB2BlsPSA
+	 hz1e7uW29jRTA==
+Date: Fri, 22 Aug 2025 08:39:47 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQF6bLd9AsRKNAMBJ/ZVhLKIV+Nw
-Content-Language: en-in
-X-CMS-MailID: 20250822133942epcas5p37a9e03d4cefed84c9f458f47b648d929
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250814141014epcas5p410d41ede7e8ae4f3cf8db6d041d03946
-References: <20250814140943.22531-1-inbaraj.e@samsung.com>
-	<CGME20250814141014epcas5p410d41ede7e8ae4f3cf8db6d041d03946@epcas5p4.samsung.com>
-	<20250814140943.22531-4-inbaraj.e@samsung.com>
-	<ac9769af-9ab6-4b48-9890-ec3bcda3b180@kernel.org>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+ linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>, 
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Peter Yin <peteryin.openbmc@gmail.com>
+In-Reply-To: <20250822061454.2610386-1-peteryin.openbmc@gmail.com>
+References: <20250822061454.2610386-1-peteryin.openbmc@gmail.com>
+Message-Id: <175586978615.3467242.392732396361998421.robh@kernel.org>
+Subject: Re: [PATCH v2 0/2] Revise Meta(Facebook) Harma BMC(AST2600)
 
 
-Hi Krzysztof,
+On Fri, 22 Aug 2025 14:14:50 +0800, Peter Yin wrote:
+> Summary:
+> Revise linux device tree entry related to Meta(Facebook) Harma
+> specific devices connected to BMC(AST2600) SoC.
+> 
+> commit-id: 2236141ed3d6f31f53147c26208dafef6051ae43
+> 
+> v1 -> v2
+>   - Patch 0002 - add power-12v-memory-good
+> 
+> v1
+>   - Patch 0001 - add power monitor support
+>   - Patch 0002 - revise gpio name
+> 
+> Peter Yin (2):
+>   ARM: dts: aspeed: harma: add power monitor support
+>   ARM: dts: aspeed: harma: revise gpio name
+> 
+>  .../dts/aspeed/aspeed-bmc-facebook-harma.dts  | 27 ++++++++++++-------
+>  1 file changed, 18 insertions(+), 9 deletions(-)
+> 
+> --
+> 2.43.0
+> 
+> 
+> 
 
-Thanks for the review.
 
->=20
-> Explain the hardware.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-I'll explain in the next patchset.
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
->=20
-> >
-> > Signed-off-by: Inbaraj E <inbaraj.e=40samsung.com>
-> > ---
-> >  .../bindings/media/nxp,imx-mipi-csi2.yaml     =7C 88 ++++++++++++++---=
---
-> >  1 file changed, 68 insertions(+), 20 deletions(-)
-> >
-> > diff --git
-> > a/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
-> > b/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
-> > index 03a23a26c4f3..802fb1bd150d 100644
-> > --- a/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
-> > +++ b/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
-> > =40=40 -14,7 +14,7 =40=40 description: =7C-
-> >    The NXP i.MX7 and i.MX8 families contain SoCs that include a MIPI CS=
-I-2
-> >    receiver IP core named CSIS. The IP core originates from Samsung, an=
-d
-> may be
-> >    compatible with some of the Exynos4 and S5P SoCs. i.MX7 SoCs use
-> > CSIS version
-> > -  3.3, and i.MX8 SoCs use CSIS version 3.6.3.
-> > +  3.3, i.MX8 SoCs use CSIS version 3.6.3 and FSD SoC uses CSIS version=
- 4.3.
-> >
-> >    While the CSI-2 receiver is separate from the MIPI D-PHY IP core, th=
-e PHY
-> is
-> >    completely wrapped by the CSIS and doesn't expose a control
-> > interface of its =40=40 -26,6 +26,7 =40=40 properties:
-> >        - enum:
-> >            - fsl,imx7-mipi-csi2
-> >            - fsl,imx8mm-mipi-csi2
-> > +          - tesla,fsd-mipi-csi2
->=20
->=20
-> Isn't this Samsung CSI IP?=20
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-Yes, it is Samsung CSI IP.
+  pip3 install dtschema --upgrade
 
-Why are you adding it to NXP?
 
-Samsung CSIS IP core present in Exynos(samsung/exynos4-is/mipi-csis.c) seri=
-es is
-completely different from the one in the Tesla FSD SoC. However, it is comp=
-atible
-with the samsung CSIS IP used in the NXP SoC. For better code reusability, =
-I am
-integrating it with the NXP imx-mipi-csis driver.
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/v6.17-rc1-14-g326d25198112 (exact match)
 
-=20
-> Nothing in commit, msg helps me to understand that.
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
 
-I'll explain the same in commit description as well.
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/aspeed/' for 20250822061454.2610386-1-peteryin.openbmc@gmail.com:
 
->=20
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/apb/display@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2600-gfx', 'syscon']
 
-> >        - items:
-> >            - enum:
-> >                - fsl,imx8mp-mipi-csi2
-> > =40=40 -38,24 +39,21 =40=40 properties:
-> >      maxItems: 1
-> >
-> >    clocks:
-> > -    minItems: 3
-> > -    items:
-> > -      - description: The peripheral clock (a.k.a. APB clock)
-> > -      - description: The external clock (optionally used as the pixel =
-clock)
-> > -      - description: The MIPI D-PHY clock
-> > -      - description: The AXI clock
-> > +    minItems: 2
-> > +    maxItems: 4
-> >
-> >    clock-names:
-> > -    minItems: 3
-> > -    items:
-> > -      - const: pclk
-> > -      - const: wrap
-> > -      - const: phy
-> > -      - const: axi
-> > +    minItems: 2
-> > +    maxItems: 4
-> >
-> >    power-domains:
-> >      maxItems: 1
-> >
-> > +  samsung,syscon-csis:
->=20
-> samsung, so not nxp. Even more confusing.
->=20
 
-I used samsung,syscon-csis because the system controller on Tesla FSD
-follows Samsung's sysreg design.
 
->=20
-> Best regards,
-> Krzysztof
 
-Regards,
-Inbaraj E
 
 
