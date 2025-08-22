@@ -1,154 +1,223 @@
-Return-Path: <linux-kernel+bounces-782255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D7BAB31D7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:09:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 200D4B31D9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 038461D2043E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:04:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25E96B42399
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D75A289367;
-	Fri, 22 Aug 2025 14:59:56 +0000 (UTC)
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2ED313529;
+	Fri, 22 Aug 2025 14:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KrvTPCvq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BC933471E;
-	Fri, 22 Aug 2025 14:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7803431FD;
+	Fri, 22 Aug 2025 14:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755874796; cv=none; b=ggwy8Kv09aYsl0Hz55K8V1NRfVCHMAC3tF/VUoThGL7lbWn6BPRQK1DEQ9Zid9d/AOyq7/rfTR2gHgKPDhkUem5eMpo0IQV7tRnezhv2fpSntRbJqlSOOIbWg2AdjqJ424a2dUd4pmzJFkeVittxz7/pLay0vE0tzUnWrYo/oR8=
+	t=1755874778; cv=none; b=P97gdk+SOxfyIWxdIHe7foxS/CNHZdc4c+c5Ih/XCcOlgle8GU0lswmWIqqIYx5Drdf9wc2Vrgjac4EKU9462BFAKxqleZl4xt2NdPNDI3BVySnXvKqgnOJMS2L0qyp6QlfqG7DmHe62nRrfvaZImGEYygPC4JQMPKUBmSAYBZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755874796; c=relaxed/simple;
-	bh=/xCek3fDaugS9j14gmmxhpU2Pg36DmMgVepdkfNgU9o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XpW0irjR0GZ01T8bD8gtoh9ASV2d9bzV6sfXpnHmnr8Hb2QR0gSbUf4W8RsY1fJf8ovNiuJ57ReV0rRauTaP0E27zLZQNZzdzr14yWt7sgOY1Jz3KwI2asiBIKAH53DdAsSEWHU58zLYeAi6FhoT0hLrP23Sk9DwK4CR0x5aYm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-770351ba0beso18459b3a.1;
-        Fri, 22 Aug 2025 07:59:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755874794; x=1756479594;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FEvn+Gbfb0UDIIFxIedzzNWMkkwAYLkahWLt3v36TAg=;
-        b=e6JT3PdJziEpew6zRgCOVLW6f7JmFQyQ4TfZcPtyEcwl2LSyWYTppWttHwiuJkQmls
-         jYrOL4XLgdtdT6gAIkNicUelh4QMoRk4r9eXe11wA8F0/oqqiUo48Ey3IphtmJEaAnoY
-         SV/+2gemVjo+SDIHChTsnGeXc/x7mY7CxhAUi0YipTxzYakiMrbb/XzUjVwwQdGjgF6U
-         AAoCrX7T94F7IsPHzR2huM6JaMigjD2cevl0x5bGbG/9oQgVV73HWBth727KXW1IEvvB
-         +Tr5OWt7+tCU1BnDyGP0A6V2JEbSRvcDjYwfbcbC2SNgQrVpYmpbUzjBmdy8wHQCXMvE
-         8cog==
-X-Forwarded-Encrypted: i=1; AJvYcCVn6ycQVJ8LXvaV0nY2H6HOVh7P/HkiwFHirlchqYhYxT05ybNeiSVlpl9vTL7W4Mhi7MoYvE3OcakaCq4=@vger.kernel.org, AJvYcCXHioK/JIgc9O0b05cUZT+ESVbeAD8jwt2R67vk8nKxZpTF9MT4V1q7xgR7kc8eZ/r18vv+feLdejcbSxF5qfy8uw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR4tTmUhBXKWDbPyhM3Ro2Z0dnCtFoYN1GzrRl93Fmyw2JgrBO
-	V2x7VvRJ87CvDVkHlptMyCePm269Cpml8KwAGQJZ1W6eLAMV82lxKd+b
-X-Gm-Gg: ASbGncuTMQO3R+YDJVZyVqPOpCczI9571+p7IjKE/xe5Tkw1UEocOMvYr3gK7Oy5Vt3
-	LShpreu968C0vxrA0suvSVMDwaLaE3xXR7+R22YvLutPHHxO8nHMtLFvX4Qmp23//9JxHtJnrHi
-	DVOrgP4aC+jg8T9BnkbVyua7+24l0We3xuEqxW3enSUUnRhbfadESA39QBuPcBp/oUbbL6r8/uJ
-	5ZXFNtIFn0doEImu+OrBoKsN77wRUBpAz/3DyOb/DyhreF4doXDymW1Btc+YhZiRAgkx7WQoJ5j
-	HlJ9SrsGk3GXCJfwnhK8mhqxq3tbHts0OlH8OCYebl6a50KkPASQ+T5rv379H/S7i7m1ZVoJqjh
-	ytK8dpOlEE0KHv4cVb3dcV+2x9HIWnpiH2apB7Nll45rl+1nGMfCmPPX6Jopvc3duo29GVHh2dg
-	Zm
-X-Google-Smtp-Source: AGHT+IEdY6GYMUDXUE6DhIkIlb1bJoH8Ip1ND56GcMjAbMwyaSQzX1SxHfEzJmSA3OVl515mt8xfPQ==
-X-Received: by 2002:a05:6a00:391f:b0:730:87b2:e848 with SMTP id d2e1a72fcca58-7702fb0043emr2208518b3a.5.1755874793688;
-        Fri, 22 Aug 2025 07:59:53 -0700 (PDT)
-Received: from Mac ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7703ffb477dsm184978b3a.17.2025.08.22.07.59.48
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 22 Aug 2025 07:59:53 -0700 (PDT)
-From: Yunseong Kim <ysk@kzalloc.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Leo Yan <leo.yan@linux.dev>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yunseong Kim <ysk@kzalloc.com>
-Subject: [PATCH v2] perf: arm64: Sync ESR_ELx_EC_* macros in arm64_exception_types.h with esr.h
-Date: Fri, 22 Aug 2025 23:58:56 +0900
-Message-ID: <20250822145855.53071-2-ysk@kzalloc.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755874778; c=relaxed/simple;
+	bh=QiIs1pkIuMyELjCt2/wzjrK99v47E1KfFEUFDvAoA+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LqXaRM/7XrHT88oS/mXN93ddKGkFncKCz6n61ZPLd++wcLBjQ3XcqOcHC3UHtCv4bWHkY8OLvCKf3/Bho0RQY62TTtIzeAIn4O58GfQS/fy4Y6RtgeMqZLky5IvBRVVXgkbQYiyxSGmW+NDzwTRM9WRjdgj8DAmFkBqIakxYeT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KrvTPCvq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FF5AC4CEED;
+	Fri, 22 Aug 2025 14:59:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755874775;
+	bh=QiIs1pkIuMyELjCt2/wzjrK99v47E1KfFEUFDvAoA+0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KrvTPCvqxasOYk65yKmYn7lc/TcvBvmKohNLldcr/oPoO7OMyNaZuJTg2rm4kAW+h
+	 sqAv/ThuDyXTmk+f1LigOr804JFCW9zYXwNncd3aTv+1uBvjbgJwWSt/4+2HJEN1dl
+	 YWJB1i6RWhwLFY+djvibe8bjiBp9S1bRuJEvp+VpvPmxCQDSF1lW1HAadgUvxEPfjZ
+	 op9VlFZUqi1M/f3k6oJcRf1S+Fc/eLK79phhKjNdrNmikUHyLrqTf5PQmiOZ74zmJW
+	 XKQE71hMzis6/z8R1OvFITmzMP3VExwUX6MrWaldcuFtjSInANv9b2iDiOmDjM4Hd+
+	 TwcjGf+8gvQkQ==
+Date: Fri, 22 Aug 2025 09:59:34 -0500
+From: Rob Herring <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/9] dt-bindings: memory: Document Tegra114 Memory
+ Controller
+Message-ID: <20250822145934.GA3791610-robh@kernel.org>
+References: <20250820151323.167772-1-clamor95@gmail.com>
+ <20250820151323.167772-3-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820151323.167772-3-clamor95@gmail.com>
 
-Update perf util arm64_exception_types.h to match the exception class
-macros defined in tools/arch/arm64/include/asm/esr.h. This ensures
-consistency between perf tooling and the kernel header definitions for
-ESR_ELx_EC_* values.
+On Wed, Aug 20, 2025 at 06:13:16PM +0300, Svyatoslav Ryhel wrote:
+> Add Tegra114 suffort into existing Tegra124 MC schema with the most notable
+> difference in the amount of EMEM timings.
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../nvidia,tegra124-mc.yaml                   | 106 +++++++++++++-----
+>  1 file changed, 80 insertions(+), 26 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+> index 7b18b4d11e0a..e2568040213d 100644
+> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+> @@ -19,7 +19,9 @@ description: |
+>  
+>  properties:
+>    compatible:
+> -    const: nvidia,tegra124-mc
+> +    enum:
+> +      - nvidia,tegra114-mc
+> +      - nvidia,tegra124-mc
+>  
+>    reg:
+>      maxItems: 1
+> @@ -62,31 +64,7 @@ patternProperties:
+>              minimum: 1000000
+>              maximum: 1066000000
+>  
+> -          nvidia,emem-configuration:
+> -            $ref: /schemas/types.yaml#/definitions/uint32-array
 
-In v2, ESR_ELx_EC_OTHER and ESR_ELx_EC_GCS, which were missing in v1, were
-included.
+The type should stay here. It is not conditional.
 
-Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
----
- .../perf/arch/arm64/util/arm64_exception_types.h  | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+> -            description: |
+> -              Values to be written to the EMEM register block. See section
+> -              "15.6.1 MC Registers" in the TRM.
+> -            items:
+> -              - description: MC_EMEM_ARB_CFG
+> -              - description: MC_EMEM_ARB_OUTSTANDING_REQ
+> -              - description: MC_EMEM_ARB_TIMING_RCD
+> -              - description: MC_EMEM_ARB_TIMING_RP
+> -              - description: MC_EMEM_ARB_TIMING_RC
+> -              - description: MC_EMEM_ARB_TIMING_RAS
+> -              - description: MC_EMEM_ARB_TIMING_FAW
+> -              - description: MC_EMEM_ARB_TIMING_RRD
+> -              - description: MC_EMEM_ARB_TIMING_RAP2PRE
+> -              - description: MC_EMEM_ARB_TIMING_WAP2PRE
+> -              - description: MC_EMEM_ARB_TIMING_R2R
+> -              - description: MC_EMEM_ARB_TIMING_W2W
+> -              - description: MC_EMEM_ARB_TIMING_R2W
+> -              - description: MC_EMEM_ARB_TIMING_W2R
+> -              - description: MC_EMEM_ARB_DA_TURNS
+> -              - description: MC_EMEM_ARB_DA_COVERS
+> -              - description: MC_EMEM_ARB_MISC0
+> -              - description: MC_EMEM_ARB_MISC1
+> -              - description: MC_EMEM_ARB_RING1_THROTTLE
+> +          nvidia,emem-configuration: true
+>  
+>          required:
+>            - clock-frequency
+> @@ -109,6 +87,82 @@ required:
+>    - "#iommu-cells"
+>    - "#interconnect-cells"
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - nvidia,tegra114-mc
+> +    then:
+> +      patternProperties:
+> +        "^emc-timings-[0-9]+$":
+> +          patternProperties:
+> +            "^timing-[0-9]+$":
+> +              properties:
+> +                nvidia,emem-configuration:
+> +                  $ref: /schemas/types.yaml#/definitions/uint32-array
+> +                  description: |
 
-diff --git a/tools/perf/arch/arm64/util/arm64_exception_types.h b/tools/perf/arch/arm64/util/arm64_exception_types.h
-index 27c981ebe401..bf827f19ace0 100644
---- a/tools/perf/arch/arm64/util/arm64_exception_types.h
-+++ b/tools/perf/arch/arm64/util/arm64_exception_types.h
-@@ -31,9 +31,10 @@
- #define ESR_ELx_EC_FP_ASIMD	(0x07)
- #define ESR_ELx_EC_CP10_ID	(0x08)	/* EL2 only */
- #define ESR_ELx_EC_PAC		(0x09)	/* EL2 and above */
--/* Unallocated EC: 0x0A - 0x0B */
-+#define ESR_ELx_EC_OTHER	(0x0A)
-+/* Unallocated EC: 0x0B */
- #define ESR_ELx_EC_CP14_64	(0x0C)
--/* Unallocated EC: 0x0d */
-+#define ESR_ELx_EC_BTI		(0x0D)
- #define ESR_ELx_EC_ILL		(0x0E)
- /* Unallocated EC: 0x0F - 0x10 */
- #define ESR_ELx_EC_SVC32	(0x11)
-@@ -46,7 +47,10 @@
- #define ESR_ELx_EC_SYS64	(0x18)
- #define ESR_ELx_EC_SVE		(0x19)
- #define ESR_ELx_EC_ERET		(0x1a)	/* EL2 only */
--/* Unallocated EC: 0x1b - 0x1E */
-+/* Unallocated EC: 0x1B */
-+#define ESR_ELx_EC_FPAC		(0x1C)	/* EL1 and above */
-+#define ESR_ELx_EC_SME		(0x1D)
-+/* Unallocated EC: 0x1E */
- #define ESR_ELx_EC_IMP_DEF	(0x1f)	/* EL3 only */
- #define ESR_ELx_EC_IABT_LOW	(0x20)
- #define ESR_ELx_EC_IABT_CUR	(0x21)
-@@ -55,11 +59,12 @@
- #define ESR_ELx_EC_DABT_LOW	(0x24)
- #define ESR_ELx_EC_DABT_CUR	(0x25)
- #define ESR_ELx_EC_SP_ALIGN	(0x26)
--/* Unallocated EC: 0x27 */
-+#define ESR_ELx_EC_MOPS		(0x27)
- #define ESR_ELx_EC_FP_EXC32	(0x28)
- /* Unallocated EC: 0x29 - 0x2B */
- #define ESR_ELx_EC_FP_EXC64	(0x2C)
--/* Unallocated EC: 0x2D - 0x2E */
-+#define ESR_ELx_EC_GCS		(0x2D)
-+/* Unallocated EC: 0x2E */
- #define ESR_ELx_EC_SERROR	(0x2F)
- #define ESR_ELx_EC_BREAKPT_LOW	(0x30)
- #define ESR_ELx_EC_BREAKPT_CUR	(0x31)
--- 
-2.50.1
+Drop '|'.
 
+> +                    Values to be written to the EMEM register block. See section
+> +                    "20.11.1 MC Registers" in the TRM.
+> +                  items:
+> +                    - description: MC_EMEM_ARB_CFG
+> +                    - description: MC_EMEM_ARB_OUTSTANDING_REQ
+> +                    - description: MC_EMEM_ARB_TIMING_RCD
+> +                    - description: MC_EMEM_ARB_TIMING_RP
+> +                    - description: MC_EMEM_ARB_TIMING_RC
+> +                    - description: MC_EMEM_ARB_TIMING_RAS
+> +                    - description: MC_EMEM_ARB_TIMING_FAW
+> +                    - description: MC_EMEM_ARB_TIMING_RRD
+> +                    - description: MC_EMEM_ARB_TIMING_RAP2PRE
+> +                    - description: MC_EMEM_ARB_TIMING_WAP2PRE
+> +                    - description: MC_EMEM_ARB_TIMING_R2R
+> +                    - description: MC_EMEM_ARB_TIMING_W2W
+> +                    - description: MC_EMEM_ARB_TIMING_R2W
+> +                    - description: MC_EMEM_ARB_TIMING_W2R
+> +                    - description: MC_EMEM_ARB_DA_TURNS
+> +                    - description: MC_EMEM_ARB_DA_COVERS
+> +                    - description: MC_EMEM_ARB_MISC0
+> +                    - description: MC_EMEM_ARB_RING1_THROTTLE
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - nvidia,tegra124-mc
+> +    then:
+> +      patternProperties:
+> +        "^emc-timings-[0-9]+$":
+> +          patternProperties:
+> +            "^timing-[0-9]+$":
+> +              properties:
+> +                nvidia,emem-configuration:
+> +                  $ref: /schemas/types.yaml#/definitions/uint32-array
+> +                  description: |
+> +                    Values to be written to the EMEM register block. See section
+> +                    "15.6.1 MC Registers" in the TRM.
+> +                  items:
+> +                    - description: MC_EMEM_ARB_CFG
+> +                    - description: MC_EMEM_ARB_OUTSTANDING_REQ
+> +                    - description: MC_EMEM_ARB_TIMING_RCD
+> +                    - description: MC_EMEM_ARB_TIMING_RP
+> +                    - description: MC_EMEM_ARB_TIMING_RC
+> +                    - description: MC_EMEM_ARB_TIMING_RAS
+> +                    - description: MC_EMEM_ARB_TIMING_FAW
+> +                    - description: MC_EMEM_ARB_TIMING_RRD
+> +                    - description: MC_EMEM_ARB_TIMING_RAP2PRE
+> +                    - description: MC_EMEM_ARB_TIMING_WAP2PRE
+> +                    - description: MC_EMEM_ARB_TIMING_R2R
+> +                    - description: MC_EMEM_ARB_TIMING_W2W
+> +                    - description: MC_EMEM_ARB_TIMING_R2W
+> +                    - description: MC_EMEM_ARB_TIMING_W2R
+> +                    - description: MC_EMEM_ARB_DA_TURNS
+> +                    - description: MC_EMEM_ARB_DA_COVERS
+> +                    - description: MC_EMEM_ARB_MISC0
+> +                    - description: MC_EMEM_ARB_MISC1
+> +                    - description: MC_EMEM_ARB_RING1_THROTTLE
+
+I imagine every SoC is going to be slightly different. I really don't 
+care to know what are all the magic registers in the list, so I would 
+just drop all this and just document the length. Just treat it as opaque 
+data like calibration data we have in other bindings.
+
+Rob
 
