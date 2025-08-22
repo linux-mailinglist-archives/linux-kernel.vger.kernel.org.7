@@ -1,111 +1,124 @@
-Return-Path: <linux-kernel+bounces-781303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ABEFB310B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:45:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C77B310B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDAC4604A46
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:45:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75CA5604758
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 07:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D5C2EA47D;
-	Fri, 22 Aug 2025 07:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2202EA172;
+	Fri, 22 Aug 2025 07:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="ijoLieHq"
-Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="JcM74I65"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5980B2EA172
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 07:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FBA2E229D
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 07:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755848696; cv=none; b=p+V+7ll+OhvU5q5nWPQkv8ntM5EWrEP0NrSbdZUN2g1IvLhA5kcWC3KwHfIMTa2TYk6MhAsvZpme2XxFmGvtw8tjDGoPJ/vMKxNcx+yq8iHv1BdPjEC3bm9g/TItYrhs8xJNuD26NjULnbk5FLFQZ3ulLcfYZ3YTSz2xgRM691I=
+	t=1755848738; cv=none; b=fEZ1thhXKolPNPEV7sduE1yhNbHhfqiOpK7VVJcPthrAxDI2x0JOAGzEh6RB9uQdd2IxLkZ1+YK5DAjdP69zAh1IE6ES3T2z+dzLny0DyLKNaF48qR5+A7gpsMSTd13N/PhY4sEx6d+h7BK3GpTm6N1mVmln2ZG/8fd5NvWySbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755848696; c=relaxed/simple;
-	bh=aO+BEQYJGFxiIbIwxLA23dTGTDkoeiaPCQsOtr9mmdY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tNLC+Hgk0o/isE1+NmoX5+L9aUPcTaA3wJ2mYwnkO1lEH53shQsLuamNJl09MZAqmh6JKFk/o+pRwKohuJBW4r/SQ48FH8UuJdLSBkXaJM0mEkVcnUqbzjdWTHTypH0AT6KEpB73oJGlhGZP814LZyNu0FKH4/RxvZNs+6wVk/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=ijoLieHq; arc=none smtp.client-ip=212.77.101.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 40998 invoked from network); 22 Aug 2025 09:44:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1755848690; bh=7OdtT1Jfm2sPdVO2zP3rvPoNlCqI3vZd/g7+k+Deqa8=;
-          h=From:To:Cc:Subject;
-          b=ijoLieHqN1HXGX0ClsjbRPSbMbB6jxoUfylSSk6l9VPe3KQGrUlf1ed2jP26USZpD
-           bFLmZRJHL2dQH8T0NmNERhMlDWZX3YbE6vzWdmjjdf6W/spA0zA4J80M+wUfDLKoIx
-           YHRzS42Q64e2dW6SYUI/Wd2c9xgZ9IZCqYg/exsCjbDHE40/PhNPJmdFmCO1tCs/3v
-           Z7lDuyFFNx3Jgwys3T+4JWC4vNSHlSTGXCLrneP5rqotWvK5Bk1mhYsNAgOB/b2HFZ
-           ZG6r+Vq8AZSg8SrTNa2FNQGkj8tMIrf5ZtH8DjbUbayKOFpvs7iZbnNZ6s7z7h7lQU
-           ZUsS4cZvZM/eg==
-Received: from 89-64-9-131.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.9.131])
-          (envelope-sender <stf_xl@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <zhao.xichao@vivo.com>; 22 Aug 2025 09:44:50 +0200
-Date: Fri, 22 Aug 2025 09:44:50 +0200
-From: Stanislaw Gruszka <stf_xl@wp.pl>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] wifi: rt2x00: Remove the use of dev_err_probe()
-Message-ID: <20250822074450.GB46129@wp.pl>
-References: <20250820085843.397945-1-zhao.xichao@vivo.com>
+	s=arc-20240116; t=1755848738; c=relaxed/simple;
+	bh=pOYY8IbzykKlajiaUqPlg+H5I7fYOHJ6et8LTF9TFWM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e/4rnPMUF5rp0v4myatAS6nSuqTAfLuWs3xZwEWJCX3AGn9NU5iAVJZRcM8KmMA47eAkImzSEiDtBvSp44+4uB7iWExomYL5I2W3c8c/lglovxAL5DjxhazyTvh6iW1DEjK9mCse9UqfzhytRSSXt/qJN1zJctWuUizLUCpny3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=JcM74I65; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-24456ce0b96so19128715ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 00:45:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=wbinvd.org; s=wbinvd; t=1755848736; x=1756453536; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zQda6eBqVzSr9dgydh5Dkc6Xy9AQWu6zr5QDxwU9nZY=;
+        b=JcM74I65aYL72jFTsppLeS89J9u4CON34oJH7Tc48hRjcn047nM0FCbkhUkDKksgT1
+         l00sGRGCbjYiNsUcUPZ0rYSebJxJ6sx0Ln55SLa4DfCUXZBR9uk+lpCnauATjqI/0yCv
+         VnvJowIW54FjV2OR4uxgsRhg85jzHb2mTGf92wPIoNXQILCTeDzPLLFDAek4OycQklUO
+         cu+dnlnJ+ZnfqqXR1SWUBJ2Qt5UR95yLUeiJUkN0FrdD/s+srEhcVEsLh7RG3wtcy5iI
+         rWoP4DPWtKwiNb1yMMRm78r6H3w7p1ErppQwnEaZaSqFl3zMhh/cnAlRA9pCX/QRK/Vw
+         56Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755848736; x=1756453536;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zQda6eBqVzSr9dgydh5Dkc6Xy9AQWu6zr5QDxwU9nZY=;
+        b=MqSy4fPpplQB1kQoPGzbOBDWpx06v6aBX5r4fHtLfMcHAfDBYAXEEGt7p/5yU+r0at
+         cgF3DWclpGlQ51YRECOVu7hOZ4f3Yfqy72GXsr9mxfjnI7nIPCQM2QekKXsx0Ob0JjdY
+         Ud3z3yANGtfrDoREOfGvA8ob64p6JQ7r7UFr5cuZibYhJo15eoVExqZUNuRbU2fZIxfE
+         KmOZdYjnQU6FMsS/kDAZpvEBrzmmFJ2AcSaQjmbDmNiKu4EibYsx0S5UEYWNFaBUHCoi
+         PiaIgmiMdwd9pmPxyrD22IBGlcLgc34va3myKy5d6zimqtE2U9fYP9frm5qDo8/fwiua
+         v77w==
+X-Gm-Message-State: AOJu0YxUV3CXbJKwfOjSmxni1lB6uO7674z7N/JesMwNdH9EwrlYTh4M
+	H9YAfsjFk+xRPWbzEo0mN/v2oz3QpZifFWENdDl1+o6yUQVzAkf1GySTg8Sasf/WV1UmT40LC3k
+	1qavT
+X-Gm-Gg: ASbGnct+BIeRXfBDu4MJEImLCQ+OdnlSBgwnoWrSkMdneQJZQTXe1ID/xcgfvF0kPT5
+	uWh6wkmTbxiyOjXtlACcoaJwfUKeUqR9NVZjgSHe1mPG03LNZegEg5Tr8L6VdQsvhQULfzTerD7
+	mbNmqzqZGfAheHzerxc/wVkdP/ImADbzTaXH8umUYRcxHVx7H5duH99Ip+Imh0Sb6hKrjzHZFue
+	3NuXK6wJc7VoukKnzDPX/vscZ8SwIJmTiAu83hgsct8hYoQQW7trdPLGaVIRLo0/6ZH35vDCvLZ
+	L+HXHkB2cBtC1PcZCee5vspV/76CA2PIh7Qqo4hHib77JZOeFXAinW7p+q3cBDY7CvtQzfAOD8O
+	ObG+FvayIsE+huqkb/1NlMxU0
+X-Google-Smtp-Source: AGHT+IHXHQCF6vOrnsai6HbfSjEV2wNbQ9TB3wyUJIrIpWJasLsSLJwatr/p//AVc6F3BVE5eLBqcA==
+X-Received: by 2002:a17:902:f707:b0:240:ac96:e054 with SMTP id d9443c01a7336-246337acf34mr23872025ad.23.1755848735931;
+        Fri, 22 Aug 2025 00:45:35 -0700 (PDT)
+Received: from mozart.vkv.me ([192.184.167.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24646229d6bsm8245885ad.23.2025.08.22.00.45.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 00:45:35 -0700 (PDT)
+From: Calvin Owens <calvin@wbinvd.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-btrfs@vger.kernel.org,
+	Daniel Vacek <neelx@suse.com>,
+	David Sterba <dsterba@suse.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Chris Mason <clm@fb.com>
+Subject: [PATCH] btrfs: Accept and ignore compression level for lzo
+Date: Fri, 22 Aug 2025 00:45:31 -0700
+Message-ID: <a5e0515b8c558f03ba2a9613c736d65f2b36b5fe.1755848139.git.calvin@wbinvd.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820085843.397945-1-zhao.xichao@vivo.com>
-X-WP-MailID: e9e16a532b3768f79eedd2e7c2c1c36e
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000000 [YbMB]                               
+Content-Transfer-Encoding: 8bit
 
-Hi
+The compression level is meaningless for lzo, but before commit
+3f093ccb95f30 ("btrfs: harden parsing of compression mount options"),
+it was silently ignored if passed.
 
-On Wed, Aug 20, 2025 at 04:58:43PM +0800, Xichao Zhao wrote:
-> The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
-> Therefore, remove the useless call to dev_err_probe(), and just
-> return the value instead.
+After that commit, passing a level with lzo fails to mount:
 
-There is this comment regarding dev_err_probe:
+    BTRFS error: unrecognized compression value lzo:1
 
- * Using this helper in your probe function is totally fine even if @err
- * is known to never be -EPROBE_DEFER.
- * The benefit compared to a normal dev_err() is the standardized format
- * of the error code, which is emitted symbolically (i.e. you get "EAGAIN"
- * instead of "-35"), and having the error code returned allows more
- * compact error paths.
+Restore the old behavior, in case any users were relying on it.
 
-If you want this change you have please justify it better, i.e.
-we don't need to print error message because ...
+Fixes: 3f093ccb95f30 ("btrfs: harden parsing of compression mount options")
+Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+---
+ fs/btrfs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards
-Stanislaw
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index a262b494a89f..7ee35038c7fb 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -299,7 +299,7 @@ static int btrfs_parse_compress(struct btrfs_fs_context *ctx,
+ 		btrfs_set_opt(ctx->mount_opt, COMPRESS);
+ 		btrfs_clear_opt(ctx->mount_opt, NODATACOW);
+ 		btrfs_clear_opt(ctx->mount_opt, NODATASUM);
+-	} else if (btrfs_match_compress_type(string, "lzo", false)) {
++	} else if (btrfs_match_compress_type(string, "lzo", true)) {
+ 		ctx->compress_type = BTRFS_COMPRESS_LZO;
+ 		ctx->compress_level = 0;
+ 		btrfs_set_opt(ctx->mount_opt, COMPRESS);
+-- 
+2.47.2
 
-
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-> ---
->  drivers/net/wireless/ralink/rt2x00/rt2800soc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800soc.c b/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
-> index 8f510a84e7f1..e5c99fc6509b 100644
-> --- a/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
-> +++ b/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
-> @@ -289,7 +289,7 @@ static int rt2x00soc_probe(struct platform_device *pdev, const struct rt2x00_ops
->  
->  	hw = ieee80211_alloc_hw(sizeof(struct rt2x00_dev), ops->hw);
->  	if (!hw)
-> -		return dev_err_probe(&pdev->dev, -ENOMEM, "Failed to allocate hardware");
-> +		return -ENOMEM;
->  
->  	platform_set_drvdata(pdev, hw);
->  
-> -- 
-> 2.34.1
-> 
 
