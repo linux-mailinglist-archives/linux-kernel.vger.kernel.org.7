@@ -1,185 +1,155 @@
-Return-Path: <linux-kernel+bounces-781641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70FDDB314E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:15:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A72B3150C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4240717B98D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:15:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F13333B7E09
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 10:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A8C27602E;
-	Fri, 22 Aug 2025 10:15:36 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E92285CBA;
+	Fri, 22 Aug 2025 10:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M7JyqnPu"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A411B041A
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE3122DF9E
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 10:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755857736; cv=none; b=WXdKisl3l2cP8oyPdxyTVtxEw/4IEKqkuV8w93tamH0G1stoOOmLYBRWIJPo9k67/MXOjN1DpqbTjgvAvzXL3L83Q7j9H/LxJCBpE21i7DT+zjGRTfH/iZvKMl94ya5mB148ax1wwFc4hSPbyGMGIHol9qh4QARYqcfX+uUTNtE=
+	t=1755857780; cv=none; b=O5iyMkl3CVcmkF89GOvLDm2/Wod9H3K3QLqMScI16ygkuOgDJjFitKk44WqQhQm2xC38h4WQMX07HxWbOVmg5CWh9lDhUJnNQAjlgIDs6nQMTA8XQQkg74KlIhxIlvQG7VDmnbuylCtSptLyGWVZusyp+dGq7e/0ACiM/N0vmP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755857736; c=relaxed/simple;
-	bh=EljbnmUNDXNka0Oz5VifHG2IvAOabE3hwKd1cZCxSTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KjkwCcwi5nlyfaHVkXIfe/a9yc25ReN59kOpAYDkElKHlvLcGDLT7eH3W2RMRWCTXSn3ZDzuB1v7wWJL0Sgi0d0EU/XiDsiXKaor1/alXgWhGNSidHn0QmutG90U6pogYmdsiRPgbIXGKcaJzhxHC/V1aJXBOpPxMtw1zVCmduA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1upOns-0004Vk-Hx; Fri, 22 Aug 2025 12:15:24 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1upOnq-001YrU-0r;
-	Fri, 22 Aug 2025 12:15:22 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1upOnq-00A6Ga-0S;
-	Fri, 22 Aug 2025 12:15:22 +0200
-Date: Fri, 22 Aug 2025 12:15:22 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Sumit Garg <sumit.garg@kernel.org>
-Cc: Jens Wiklander <jens.wiklander@linaro.org>,
-	Matthew Wilcox <willy@infradead.org>, vbabka@suse.cz,
-	akpm@linux-foundation.org, kernel@pengutronix.de,
-	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tee: shm: fix slab page refcounting
-Message-ID: <20250822101522.wlwmdal5f4sqydjq@pengutronix.de>
-References: <20250325200740.3645331-1-m.felsch@pengutronix.de>
- <Z-Pc6C1YUqLyej3Z@casper.infradead.org>
- <20250326110718.qzbwpmaf6xlcb4xf@pengutronix.de>
- <CAHUa44FUK_73oKSaqGdiPqB3geZbTNDFsC1Mh=KN3YPWr9=7gQ@mail.gmail.com>
- <Z-TXMIXzaro0w60M@sumit-X1>
- <CAHUa44HEsMkzQHZZufdwutQyZRtig6e0qWomhwgDZAhy2qDyhg@mail.gmail.com>
- <20250821174124.b6pco3izkns4qt2r@pengutronix.de>
- <aKgvywfzQsi7b1wW@sumit-X1>
+	s=arc-20240116; t=1755857780; c=relaxed/simple;
+	bh=n+uuSrn8u6juOkuP9SvbxcjWBcwiQZYJvcqO5SL+OHk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fbF8PEDmPKBQ+6MI8THqawVQJUjdYVf52S+ZAKjRj/Jmjc9YnkNPlAC29L2xF3RbDHCuGzkK/uLV5AEyDnWTke/v7LEFVdCxqttOLZ/Uy67KUQgjoY7Uuwp16sLGSbAz0BjE8RspJiNy1Eout3hsGY93lE+vIo0UBOVBZJDrClk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M7JyqnPu; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-71d605c6501so17838437b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 03:16:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755857777; x=1756462577; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lDx2DLdAKNYscUVXgj1y9NZCkQ1KxqDufjQBp2yX34A=;
+        b=M7JyqnPu+O8cZWILnOQMIvqe1HARXGpYOJpoDxtuxwaEjp4h3s6gRSjSwnxdPZru6L
+         0iGsWQlVvRmuPVFzHFxEDxeiB3tL/7aIEbAPjsK1zYN/4h8ROgqVMCQtcZGa5t1EtbT3
+         L4Royvs4vBPt//rrmBa/qGx1LXTtbqyX3p/dvm9DWaK0Absi+hkxSVHmVXOIy9cCDPdd
+         IyweBJQ43gzMok5fgAyoCrc6gvkTOMLrMkKqACMcxbAmtEIowHgL6IiJbR0fzn2uw7DX
+         kgOp7NoRTU2WSt3Akd7pZ0YBofJB2ZZKPlUkVcIknKZoUYWL3EKrzZ19r9N0pSU8948K
+         1ZSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755857777; x=1756462577;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lDx2DLdAKNYscUVXgj1y9NZCkQ1KxqDufjQBp2yX34A=;
+        b=CZo2rsF+YLd/I15lfjOXlMNz5oONloUN4BIOIftt3/SVW12q+srFV1oJIFysq6TxIx
+         5Avx/x2TMW7gdgkwE5SdLWEtq20czQAJoYHH16t+3ULkTXWyZMgBRIOtPp7Rtj1gM18O
+         dae9ZKDS8frtzxtEy8tV29C1s0JFGAUomsu1PSOBk7XEWw/W2RPAoK1oVEL2ZleYIR1G
+         e+fBgfO1oifAa3pUl1Hn/8WypMa+xcOr+pUeSwDeYzmCK3ENpnewpsFgGlc62QylnzX+
+         K1iW1Z6loe3oYw8YfqGHjxZp0xcGRSJZ7wONVbIE1+pECrQF1ERNZklOXqjjiWGB7vBa
+         Y6Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCWiInr8i1b4wqUnf+KD7Miq8BwLN/3ijNQBM823UpMTuzQHpfD/ihZ+yknTnIE4mcWNUHDzH0BBZWcM/aE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpbXvVCamYY7fSFpJCilCnNKU0v4vl9FmzugUd4ApCI0ghcHhT
+	BwJ0ijx2/MLLljZGQzI69GpIhL0JhTG1DkjYzmOkeYgbEUVGxKmCRSssqAgh7InhAUKYdfizKg5
+	z/LLOSqX8lrm5WICaWGT1pIUhODiDJV9r6Uj93+VJzA==
+X-Gm-Gg: ASbGncug01rmjgx+KBdqk1BpxN0WAcwZEHi/+H8Xr9KA7+kvMGyUf2QMytZhgcgJFSS
+	oi7EZrHHUENrzFZhCQ+Ryn4LOTm2/WUk7P63i8YrGRUHcSTMoHwiUtaUjyxV5cBHXVh7i7OAPDs
+	TT4ShEeD5HsPXPkr5gCthRSFEvl8fvO96v/+ViFCDBrbOvbF89UHEzX+nugtLxchY3o+yO1/lyK
+	DPCllPz
+X-Google-Smtp-Source: AGHT+IGisCuaDpdsoUYA9pYgVpfMQpgdPrniDusu9dQcSD5V9YeojvAiAiIby9Q5FLmBXxfa6GuF5BNA8l3vdExQZ3w=
+X-Received: by 2002:a05:690c:ec8:b0:71e:7ee9:839a with SMTP id
+ 00721157ae682-71fdc2f17e3mr24348107b3.2.1755857776818; Fri, 22 Aug 2025
+ 03:16:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aKgvywfzQsi7b1wW@sumit-X1>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20250821-pxav3-uhs-v4-0-bb588314f3c3@dujemihanovic.xyz>
+In-Reply-To: <20250821-pxav3-uhs-v4-0-bb588314f3c3@dujemihanovic.xyz>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 22 Aug 2025 12:15:40 +0200
+X-Gm-Features: Ac12FXyMkjhCU6n4TOiSQhHwXlqNLt3Ozl6PlHCodFGyP-HnVszxTjH0MYaKHjU
+Message-ID: <CAPDyKFpGW58HSQkodWQqHaNU02OcaY2E7C1Kt=caLCdXkOvvuA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] mmc: sdhci-pxav3: pinctrl setting for fast bus clocks
+To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25-08-22, Sumit Garg wrote:
-> On Thu, Aug 21, 2025 at 07:41:24PM +0200, Marco Felsch wrote:
-> > Hi all,
-> > 
-> > is this issue fixed with 6.17? I ran:
-> > 
-> >   git log v6.14...v6.17-rc1 drivers/tee/tee_shm.c
-> > 
-> > and saw no changes.
-> 
-> Care to send a proper patch regarding what Matthew proposed in this
-> thread?
+On Thu, 21 Aug 2025 at 13:20, Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz> =
+wrote:
+>
+> Hello,
+>
+> This small series adds a pinctrl setting for fast MMC bus clocks to the
+> pxav3 driver. On bus clocks above 100 MHz, driving the data pins at a
+> higher current helps maintain signal quality.
+>
+> This series is related to Marvell PXA1908 SoC support merged into v6.17.
+>
+> Signed-off-by: Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
 
-I'm still not sure if the IOVs can be backed by other allocators too
-because the OP-TEE API allows arbitrary sizes. Therefore my hope was
-that one of the OP-TEE maintainers is taking care of this problem.
+Applied for next, thanks!
 
-I also wonder why no one spotted/reported this issue too.
-
-Regards,
-  Marco
+Kind regards
+Uffe
 
 
-> 
-> -Sumit
-> 
-> > 
-> > Regards,
-> >   Marco
-> > 
-> > On 25-04-28, Jens Wiklander wrote:
-> > > On Thu, Mar 27, 2025 at 5:42 AM Sumit Garg <sumit.garg@kernel.org> wrote:
-> > > >
-> > > > On Wed, Mar 26, 2025 at 02:47:46PM +0100, Jens Wiklander wrote:
-> > > > > On Wed, Mar 26, 2025 at 12:07 PM Marco Felsch <m.felsch@pengutronix.de> wrote:
-> > > > > >
-> > > > > > On 25-03-26, Matthew Wilcox wrote:
-> > > > > > > On Tue, Mar 25, 2025 at 09:07:39PM +0100, Marco Felsch wrote:
-> > > > > > > > Skip manipulating the refcount in case of slab pages according commit
-> > > > > > > > b9c0e49abfca ("mm: decline to manipulate the refcount on a slab page").
-> > > > > > >
-> > > > > > > This almost certainly isn't right.  I know nothing about TEE, but that
-> > > > > > > you are doing this indicates a problem.  The hack that we put into
-> > > > > > > networking should not be blindly replicated.
-> > > > > > >
-> > > > > > > Why are you taking a reference on the pages to begin with?  Is it copy
-> > > > > > > and pasted from somewhere else, or was there actual thought put into it?
-> > > > > >
-> > > > > > Not sure, this belongs to the TEE maintainers.
-> > > > >
-> > > > > I don't know. We were getting the user pages first, so I assume we
-> > > > > just did the same thing when we added support for kernel pages.
-> > > > >
-> > > > > >
-> > > > > > > If it's "prevent the caller from freeing the allocation", well, it never
-> > > > > > > accomplished that with slab allocations.  So for callers that do kmalloc
-> > > > > > > (eg setup_mm_hdr()  in drivers/firmware/efi/stmm/tee_stmm_efi.c), you
-> > > > > > > have to rely on them not freeing the allocation while the TEE driver
-> > > > > > > has it.
-> > > >
-> > > > It's not just about the TEE driver but rather if the TEE implementation
-> > > > (a trusted OS) to whom the page is registered with. We don't want the
-> > > > trusted OS to work on registered kernel pages if they gets free somehow
-> > > > in the TEE client driver. Having a reference in the TEE subsystem
-> > > > assured us that won't happen. But if you say slab allocations are still
-> > > > prone the kernel pages getting freed even after refcount then can you
-> > > > suggest how should we handle this better?
-> > > >
-> > > > As otherwise it can cause very hard to debug problems if trusted OS can
-> > > > manipulate kernel pages that are no longer available.
-> > > 
-> > > We must be able to rely on the kernel callers to have the needed
-> > > references before calling tee_shm_register_kernel_buf() and to keep
-> > > those until after calling tee_shm_free().
-> > > 
-> > > 
-> > > >
-> > > > > > >
-> > > > > > > And if that's your API contract, then there's no point in taking
-> > > > > > > refcounts on other kinds of pages either; it's just unnecessary atomic
-> > > > > > > instructions.  So the right patch might be something like this:
-> > > > > > >
-> > > > > > > +++ b/drivers/tee/tee_shm.c
-> > > > > > > @@ -15,29 +15,11 @@
-> > > > > > >  #include <linux/highmem.h>
-> > > > > > >  #include "tee_private.h"
-> > > > > >
-> > > > > > I had the same diff but didn't went this way since we can't be sure that
-> > > > > > iov's are always slab backed. As far as I understood IOVs. In
-> > > > > > 'worst-case' scenario an iov can be backed by different page types too.
-> > > > >
-> > > > > We're only using kvec's. Briefly, before commit 7bdee4157591 ("tee:
-> > > > > Use iov_iter to better support shared buffer registration") we checked
-> > > > > with is_vmalloc_addr() || is_kmap_addr(). I like Matthew's suggestion,
-> > > > > it's nice to fix problems by deleting code. :-)
-> > > > >
-> > > > > Sumit, you know the callers better. What do you think?
-> > > >
-> > > > If we don't have a sane way to refcont registered kernel pages in TEE
-> > > > subsystem then yeah we have to solely rely on the client drivers to
-> > > > behave properly. Nevertheless, it's still within the kernel boundaries
-> > > > which we can rely upon.
-> > > 
-> > > Yes.
-> > > 
-> > > Cheers,
-> > > Jens
+> ---
+> Changes in v4:
+> - Address maintainer comments:
+>   - Fix if-else braces
+> - Rebase on v6.17-rc2
+> - Update trailers
+> - Link to v3: https://lore.kernel.org/r/20250806-pxav3-uhs-v3-0-2f03fee38=
+0b0@dujemihanovic.xyz
+>
+> Changes in v3:
+> - Address maintainer comments:
+>   - Refactor driver patch
+> - Remove RFC tag
+> - Update trailers
+> - Link to v2: https://lore.kernel.org/r/20250801-pxav3-uhs-v2-0-afc1c428c=
+776@dujemihanovic.xyz
+>
+> Changes in v2:
+> - Address maintainer comments:
+>   - Newline between properties in if:
+>   - Don't try to lookup pinstates if pinctrl is NULL
+>   - Only change pinstates if both are valid
+>   - Replace dev_warn() with dev_dbg()
+> - Link to v1: https://lore.kernel.org/r/20250718-pxav3-uhs-v1-0-2e451256f=
+1f6@dujemihanovic.xyz
+>
+> ---
+> Duje Mihanovi=C4=87 (2):
+>       dt-bindings: mmc: sdhci-pxa: add state_uhs pinctrl
+>       mmc: sdhci-pxav3: add state_uhs pinctrl setting
+>
+>  .../devicetree/bindings/mmc/sdhci-pxa.yaml         | 29 +++++++++++++--
+>  drivers/mmc/host/sdhci-pxav3.c                     | 41 ++++++++++++++++=
++++++-
+>  2 files changed, 66 insertions(+), 4 deletions(-)
+> ---
+> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+> change-id: 20250718-pxav3-uhs-d956bfed13f0
+>
+> Best regards,
+> --
+> Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
+>
 
