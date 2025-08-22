@@ -1,232 +1,131 @@
-Return-Path: <linux-kernel+bounces-780893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B146B30AAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:11:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E55BB30AAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87444688662
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:11:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251B23A6B06
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADA7393DCB;
-	Fri, 22 Aug 2025 01:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F37619D07A;
+	Fri, 22 Aug 2025 01:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hHSqCCiB"
-Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l9xMrYXs"
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E75774040;
-	Fri, 22 Aug 2025 01:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1E3393DCB
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 01:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755825092; cv=none; b=S0AEPfH+S6N8oJdAC8QR8Tv7NqaBj9x7nRQ4PO5/v1kMKJ3eK+N1ozSm2vb8hCPHgmAYeufDroXLIqzsSoEUfYGRAid7PwTV/OL5uZrs0BMes6CEMRrGHrAYxsJo9LqvPNcZxTtHUEoypX+PIFpZmGWUhiIrYl2v8Nv+9jfe9jg=
+	t=1755825142; cv=none; b=tTz/2tMBH1lBNXgka7C22tQcMrqmQeN10g6vxszVNqGPTLAGXSD8VDmW7MZRHuxiL0155RvT1neM94iIl0csBIA8R2x8myDTHrbAScD1xpM1iHsYOtSvisht+W1astCy7DkkynpWgfEera0Qp+JmZG+oq0wJyWcJHujtqXSBDbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755825092; c=relaxed/simple;
-	bh=ZZw1Gi5SlK07TGgYQuoVdyVOJgmxZ6EJHyu6KbbhO3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RYvOKBCS81JbRR3HCVuu1WWVdp8Z426fHZnN5mNE9VhEaC5eA0W01Q9UDh52Re3OuLNprfRDl6s/JnT0R04kl8/h2ElBi8gsl6oBDQUiNVjXruapEqDGeHPupp+nKrddHHp3s1ql/LKXXhS69Nn4kjTItb1EQuvgVl5WlQswldM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hHSqCCiB; arc=none smtp.client-ip=209.85.128.67
+	s=arc-20240116; t=1755825142; c=relaxed/simple;
+	bh=1w9ZQo1QuUIFGK9ero+dpXtPi/S9+pvO89f42HIseyU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HRUASqh0LY7T6RVIVrff8mj+PC9Y9NkS/lsqlr6eLBuLwh+GFpPrbke9LEnhGnJ1T1qI2EnQdf4lckKfnvGkMROKhazArRdnTrlxhSt+gonIIXjlz9PsZYxJ+6UpRUADf9nemlmSx7BwWw0FfG79pu2sIQ9jnZSeV8d2cDDWWsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l9xMrYXs; arc=none smtp.client-ip=209.85.222.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-45a1b0bde14so8562175e9.2;
-        Thu, 21 Aug 2025 18:11:30 -0700 (PDT)
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-89018eb083eso822049241.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 18:12:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755825089; x=1756429889; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xz6hDvWf0PXsi+emFDG8/Y7AYRpkSFBEs3I/9AbaJzQ=;
-        b=hHSqCCiB6YMvVlQzA/HS3SvzDWln13ELXED3fEUJQ1dqaOG1vLARbmdALgcMg/FvNL
-         n7e8iChjnfwpklkXbbMPeM/sIcKKPoZRPanSfWHduAoVB5IsKK5IXBwJwdBprCaMTrZx
-         0O+qj9Yfe4iBqLtcQcOUvNVy6KDPtLbHCZLsCADzeG9E/zUYUqq6GDdiqjWVNQPPcj18
-         C77EWQ5OwMSSFD9vVhEl9a4KOAy4xkkxEmn+bng0TNHpij4UaghJ6AIISd67D5TrRlnf
-         vffqhcivpX2d1Kbiv43xJiodXgYmT6LM9/lz0a8tmt6Wd1xD3dhy16dffoLCxZH3F6fe
-         O99w==
+        d=gmail.com; s=20230601; t=1755825138; x=1756429938; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=d0FcD/oVxoPQ77T4biPgELeumlOupiV5BH4VUwkpTs8=;
+        b=l9xMrYXsynwnDOKQlylYQRI9BKbdrGrr4NpbFTQK6uWuuS7nYlqq9Jig6JK1lNawzO
+         IC1enjm2+5Zt6M92nPDEVToTdvMZLiqGRvtp2k/+Xj1dxaP5tJyw1Gjtw+N16skCkH1R
+         9EEpKs8cmu3owmAa2aV/BusMyMjXOC8S2qFiWOgwX1hY1nc7l+L6lknxDY2c2pTOfSEn
+         kYA9Qb8TaTb7BHInqAOFOD5JTyc9SMJCH39Ns9OMR+A5cnEiErodmHf9Cdoq1LEhPbDu
+         9IoRiK8TPevGiFvyXtpyilKtUnbZ+MZd4jtXOTt3AvakuF7vwnxMi02yp+AY7lpmWsCU
+         jOYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755825089; x=1756429889;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xz6hDvWf0PXsi+emFDG8/Y7AYRpkSFBEs3I/9AbaJzQ=;
-        b=YKUJ16XeieFDH6UPBuFqnqp3XPZhLYYYcF1OVfIxMqqpl5P+bLEpTxOOR1zeXIulES
-         jPS6NHzAuM+lEu8sJVzb1/OFcAEKL/jU8s7hj3tleOKd8rZM7zL9pdFOp/GnBNpsp4mi
-         FozhKTuM7j/TbEOyohJi6eHOHfK1PIcVfjp5d0sieK/bWu9LQrnikNzJifr+6947DGXB
-         mr2kUuPj3S9m09+RkLIegRqvHOhdkjklyRy3EgfMHkZOjzS5hi5nkSXGqx3p8jX3zc4D
-         NcaUbhwBiCfMuqDz4zvH1bObBjzYrtQB9n/acLb3CD94ypP/oexw1+SSA2D4kTBO66Ob
-         RMGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMqKo7+lB8kpUzHb8ZrPsGzvPYEF5TXJVsyhM+eKhhJuA4bs3iX7RwkzyYu6ndmhRd1gcRNzyE0mNe@vger.kernel.org, AJvYcCV3ryS5ip6VgsN/U0IlHwd0fMtq83Ou43S6go5Z2tDl57JY20P7q4oTidvj1DWjBJlCdIX8BF0TtP1kr3c=@vger.kernel.org, AJvYcCWHLwh1RAjNpIIUh01pF2GgnTDiDHxYVVFsPqmO7hKHEU/k6muJhEpjo5aARrYG4n46qwg6Zuaj@vger.kernel.org
-X-Gm-Message-State: AOJu0YzODixu/eDs489KcEB0oi7IY4aPvkmCuucgeTtslf0Agf/2IJpU
-	NYJizEuBPd0quQM7WGrZKzlCj+kE2Zu+fbMh4iYjHJvTIzErwTMVmpdR1c5hBVw+
-X-Gm-Gg: ASbGncvlyHvbPxCNsiJrCdKFouQD2e+uv6LsXz003wgJStvt/daqIGLXLnDnylMJKFJ
-	KITT0PRhNJFBu8cFyhf6GorJyxuUsKebWgLhTFbTLRGKTfdtaQXQw0s7zFpLm+j4wPZYvz7hj4v
-	oEr65uXggvlruUXWukjpscsrXKw3iK65gMgnmHrvmCLi7N/85l2CuJvT2y/8GYjf3uc3z2icLEB
-	fdHYMDW8MaIrQRXRw9U2RaEGqTJB/7Ylbbjvc61reWiE0ttCo6IbybdKZJwEgC/jstffDBhL9r5
-	fDdebsHTkVs71iK6EnFrWkIHUgOMNxFNAA/4oKKRbnjCOlWFR/A8f0Mkb/YCIVTse0cGla+lQla
-	uWdqcSBMhdQYB9uuTSRxP54fAfQLcDtzw3VeteCHLkpUmFewEfd/d/WWJGnhSBVCD74CQqpa291
-	vuKK3lGiXs5KVE6Htg8aqslCEQtzZ1q0qts3lYiGHRO9kzExftJw==
-X-Google-Smtp-Source: AGHT+IFhFpnfdSnJarsN3EZ625iyVag3gHCiBziDcw+PdU2/iLw9spk21RyJ98AyLzMnK2/mbPMRxg==
-X-Received: by 2002:a05:600c:1f0d:b0:458:bbed:a812 with SMTP id 5b1f17b1804b1-45b517b961cmr7837455e9.17.1755825088210;
-        Thu, 21 Aug 2025 18:11:28 -0700 (PDT)
-Received: from [26.26.26.1] (ec2-3-126-215-244.eu-central-1.compute.amazonaws.com. [3.126.215.244])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b50e3a587sm17402245e9.18.2025.08.21.18.11.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Aug 2025 18:11:27 -0700 (PDT)
-Message-ID: <da46b882-0cd3-48cd-b4fc-b118b25e1e7e@gmail.com>
-Date: Fri, 22 Aug 2025 09:11:25 +0800
+        d=1e100.net; s=20230601; t=1755825138; x=1756429938;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d0FcD/oVxoPQ77T4biPgELeumlOupiV5BH4VUwkpTs8=;
+        b=VR2ielsLwpHjd2AAb03BpbKBxn5zNiPkXT2MAcHakieUHLo6YS0LlKU6CRbgyywJzY
+         KFD9ddmQR6mlggPt7b1qTu6hfW8c/9LJ9tmCYcGG2b3n85GqcbnwNtKk8+ZFc46YY2na
+         +bbhsxJIyiu+9Ehv/p+b6dNkgFWMrzyHR2O6Yoiab5JAeqvIKtFvbR5iQNswywu2pYJN
+         4/lSagvD4UAjYWCiI/bDQlxUxMTkJhqd6L/YW0aiEN5xfu8M0WkX945E6asZN0EMAPjK
+         VKpiX7q5wVpCxkrvj8K8eo2p+BbbohOdoE4CWLoVwRxxyvXYGhrlyJElgH1KGzmo4wg+
+         4pHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAMkfHTgx/LysLfbL6kXXGjX6QIPMTQ0zyMHF42i7/87c6Za5E1V/+szfzzkb8VPxq1bMym3semd1l7HQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjolaDMoYddx38ogBnuwa6sUbtvx6t5CUQRpeSTbIJM4+B6clR
+	a4O8iENK03YVJHPQy54OQkn02JiOPr20CXRB+HzwnTKHsRNv1o14zbziof+Dj44tjvLamP9Z5iS
+	AiitO7zac5PWAlydl6kE15+POrKqJuZU3w0Ma
+X-Gm-Gg: ASbGncuqHNrBRXdc7LseQsS6IxfXNUdNz1R+EWM487AYRnu1ZPXqjlg+LmHRvBJBEZg
+	PF2W+Io4HFBjYkaHpUKrlaDx5bZ2LoF/pbQdC9cxnW0+6LYu0vynnt2G+OrjSd9zDb54RXe7B+j
+	3AbRtkS9geb5M2+AIWtUThK/0lEJ3qr2muB0oBGIzcTNXdIYCFp9Ajc1KvyXqBkME5F1kuImweL
+	V8PHBw3
+X-Google-Smtp-Source: AGHT+IH3U767Rp80SVggumPoivWmgdeHwUStS+Or4TCpoL0Ia6zXuibuvpTiss1BdGLdf5LixcZUj41iKPJE7Mtj9ns=
+X-Received: by 2002:a05:6102:5129:b0:4e5:9628:9e39 with SMTP id
+ ada2fe7eead31-51d0c8cbb87mr352736137.6.1755825138452; Thu, 21 Aug 2025
+ 18:12:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI/sysfs: Ensure devices are powered for config reads
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, stable@vger.kernel.org
-References: <20250820102607.1.Ibb5b6ca1e2c059e04ec53140cd98a44f2684c668@changeid>
- <dfdc655e-1e06-42df-918f-7d56f26a7473@gmail.com>
- <aKaK4WS0pY0Nb2yi@google.com>
- <048bd3c4-887c-4d17-9636-354cc626afa3@gmail.com>
- <aKc7D78owL_op3Ei@google.com>
-Content-Language: en-US
-From: Ethan Zhao <etzhao1900@gmail.com>
-In-Reply-To: <aKc7D78owL_op3Ei@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250814133527.2679261-1-xiaqinxin@huawei.com>
+ <20250814133527.2679261-2-xiaqinxin@huawei.com> <CAGsJ_4wbgqGavjQNXtbFVeMw8j8oSCEVSdL4BrBVWEuNHzomPg@mail.gmail.com>
+ <8db50f47-9295-4c7c-8bbc-dbbbd3fb5f79@huawei.com> <CAGsJ_4xXt2uEtAohcq+3XF_cKdsZiWsRaRh+ZK4nj0-Zw-yWYw@mail.gmail.com>
+ <ca162322-b97e-4ec1-828e-dad7b09f4735@huawei.com>
+In-Reply-To: <ca162322-b97e-4ec1-828e-dad7b09f4735@huawei.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 22 Aug 2025 13:12:07 +1200
+X-Gm-Features: Ac12FXxiFSDe23vD-Fzg0TGuSF7N4Xb4HsknEZzp6c-G8nrF2HXfK9UVG3NKtj4
+Message-ID: <CAGsJ_4yTOPoO98TTh3oQ4t6rag==yqeYP8HQ1wKvYdvg4e1RTQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] tools/dma: move dma_map_benchmark from selftests to tools/dma
+To: Qinxin Xia <xiaqinxin@huawei.com>
+Cc: m.szyprowski@samsung.com, robin.murphy@arm.com, 
+	jonathan.cameron@huawei.com, prime.zeng@huawei.com, fanghao11@huawei.com, 
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com, yangyicong@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+
+>
+> Does usr/include have header files? Did you run make headers_install
+> before make?
+> [xiaqinxin@localhost linux]$ make headers_install
+>    HOSTCC  scripts/basic/fixdep
+>    HOSTCC  scripts/unifdef
+>    WRAP    arch/arm64/include/generated/uapi/asm/socket.h
+>    SYSHDR  arch/arm64/include/generated/uapi/asm/unistd_64.h
+>    HDRINST usr/include/asm-generic/mman.h
+>    HDRINST usr/include/asm-generic/stat.h
+>    HDRINST usr/include/asm-generic/ucontext.h
+>    HDRINST usr/include/asm-generic/int-ll64.h
+>    HDRINST usr/include/asm-generic/unistd.h
+>    HDRINST usr/include/asm-generic/kvm_para.h
+>    HDRINST usr/include/asm-generic/types.h
+>    HDRINST usr/include/asm-generic/ipcbuf.h
+>    HDRINST usr/include/asm-generic/termbits-common.h
+> ...
+> [xiaqinxin@localhost linux]$ cd tools/dma/
+> [xiaqinxin@localhost dma]$ make
+> cc -I../../usr/include -I../../include dma_map_benchmark.c -o
+> dma_map_benchmark
+
+This is really frustrating. Why do other parts not need this, but
+dma_map_benchmark does? It is also not acceptable to hardcode the
+path to usr/include.
+
+It is also not good practice to access a kernel header directly from a
+userspace tool - such as -I../../include.
+
+Shouldn't map_benchmark.h be a proper UAPI header that gets installed
+into the toolchain like the others?
+
+>
+> My test is ok.
 
 
-
-On 8/21/2025 11:28 PM, Brian Norris wrote:
-> Hi Ethan,
-> 
-> Note: I'm having a hard time reading your emails sometimes, because you
-> aren't really adding in appropriate newlines that separate your reply
-> from quoted text. So your own sentences just run together with parts of
-> my sentences at times. I've tried to resolve this as best I can.
-> 
-> On Thu, Aug 21, 2025 at 08:41:28PM +0800, Ethan Zhao wrote:
->>
->>
->> On 8/21/2025 10:56 AM, Brian Norris wrote:
->>> On Thu, Aug 21, 2025 at 08:54:52AM +0800, Ethan Zhao wrote:
->>>> On 8/21/2025 1:26 AM, Brian Norris wrote:
->>>>> From: Brian Norris <briannorris@google.com>
->>>>>
->>>>> max_link_speed, max_link_width, current_link_speed, current_link_width,
->>>>> secondary_bus_number, and subordinate_bus_number all access config
->>>>> registers, but they don't check the runtime PM state. If the device is
->>>>> in D3cold, we may see -EINVAL or even bogus values.
->>>> My understanding, if your device is in D3cold, returning of -EINVAL is
->>>> the right behavior.
->>>
->>> That's not the guaranteed result though. Some hosts don't properly
->>> return PCIBIOS_DEVICE_NOT_FOUND, for one. But also, it's racy -- because
->>> we don't even try to hold a pm_runtime reference, the device could
->>> possibly enter D3cold while we're in the middle of reading from it. If
->>> you're lucky, that'll get you a completion timeout and an all-1's
->>> result, and we'll return a garbage result.
->>>
->>> So if we want to purposely not resume the device and retain "I can't
->>> give you what you asked for" behavior, we'd at least need a
->>> pm_runtime_get_noresume() or similar.
->> I understand you just want the stable result of these caps,
-> 
-> Yes, I'd like a valid result, not EINVAL. Why would I check this file if
-> I didn't want the result?
-> 
->> meanwhile
->> you don't want the side effect either.
-> 
-> Personally, I think side effect is completely fine. Or, it's just as
-> fine as it is for the 'config' attribute or for 'resource_N_size'
-> attributes that already do the same.
-> 
->>>>> Wrap these access in pci_config_pm_runtime_{get,put}() like most of the
->>>>> rest of the similar sysfs attributes.
->>>>>
->>>>> Fixes: 56c1af4606f0 ("PCI: Add sysfs max_link_speed/width, current_link_speed/width, etc")
->>>>> Cc: stable@vger.kernel.org
->>>>> Signed-off-by: Brian Norris <briannorris@google.com>
->>>>> Signed-off-by: Brian Norris <briannorris@chromium.org>
->>>>> ---
->>>>>
->>>>>     drivers/pci/pci-sysfs.c | 32 +++++++++++++++++++++++++++++---
->>>>>     1 file changed, 29 insertions(+), 3 deletions(-)
->>>>>
->>>>> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
->>>>> index 5eea14c1f7f5..160df897dc5e 100644
->>>>> --- a/drivers/pci/pci-sysfs.c
->>>>> +++ b/drivers/pci/pci-sysfs.c
->>>>> @@ -191,9 +191,16 @@ static ssize_t max_link_speed_show(struct device *dev,
->>>>>     				   struct device_attribute *attr, char *buf)
->>>>>     {
->>>>>     	struct pci_dev *pdev = to_pci_dev(dev);
->>>>> +	ssize_t ret;
->>>>> +
->>>>> +	pci_config_pm_runtime_get(pdev);
->>>> This function would potentially change the power state of device,
->>>> that would be a complex process, beyond the meaning of
->>>> max_link_speed_show(), given the semantics of these functions (
->>>> max_link_speed_show()/max_link_width_show()/current_link_speed_show()/
->>>> ....),
->>>> this cannot be done !
->>>
->>> What makes this different than the 'config' attribute (i.e., "read
->>> config register")? Why shouldn't that just return -EINVAL? I don't
->>> really buy your reasoning -- "it's a complex process" is not a reason
->> It is a reason to know there is side effect to be taken into account.
-> 
-> OK, agreed, there's a side effect. I don't think you've convinced me the
-> side effect is bad though.
-> 
->>> not
->>> to do something. The user asked for the link speed; why not give it?
->>> If the user wanted to know if the device was powered, they could check
->>> the 'power_state' attribute instead.
->>>
->>> (Side note: these attributes don't show up anywhere in Documentation/,
->>> so it's also a bit hard to declare "best" semantics for them.)
->>>
->>> To flip this question around a bit: if I have a system that aggressively
->>> suspends devices when there's no recent activity, how am I supposed to
->>> check what the link speed is? Probabilistically hammer the file while
->>> hoping some other activity wakes the device, so I can find the small
->>> windows of time where it's RPM_ACTIVE? Disable runtime_pm for the device
->>> while I check?
->> Hold a PM reference by pci_config_pm_runtime_get() and then write some
->> data to the PCIe config space, no objection.
->>
->> To know about the linkspeed etc capabilities/not status, how about
->> creating a cached version of these caps, no need to change their
->> power state.
-> 
-> For static values like the "max" attributes, maybe that's fine.
-> 
-> But Linux is not always the one changing the link speed. I've seen PCI
-> devices that autonomously request link-speed changes, and AFAICT, the
-> only way we'd know in host software is to go reread the config
-> registers. So caching just produces cache invalidation problems.
-Maybe you meant the link-speed status, that would be volatile based on
-link retraining.
-Here we are talking about some non-volatile capabilities value no
-invalidation needed to their cached variables.>
->> If there is aggressive power saving requirement, and the polling
->> of these caps will make up wakeup/poweron bugs.
-> 
-> If you're worried about wakeup frequency, I think that's a matter of
-> user space / system administraction to decide -- if it doesn't want to
-> potentially wake up the link, it shouldn't be poking at config-based
-IMHO, sysfs interface is part of KABI, you change its behavior , you
-definitely would break some running binaries. there is alternative
-way to avoid re-cooking binaries or waking up administrator to modify
-their configuration/script in the deep night. you already got it.
-
-Thanks,
-Ethan  > sysfs attributes.
-> 
-> Brian
-
+Thanks
+Barry
 
