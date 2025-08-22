@@ -1,97 +1,142 @@
-Return-Path: <linux-kernel+bounces-782716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1EEB32408
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:17:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8CEB3240D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 23:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84F58B0632D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:16:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4450D4E2091
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 21:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679053218AE;
-	Fri, 22 Aug 2025 21:16:37 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12ACA2ED153;
+	Fri, 22 Aug 2025 21:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="arYkT+sL"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCDF283C9D
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 21:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FBF283C9D
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 21:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755897397; cv=none; b=IvEnamtqRqO7iVgpzyn2LBxzVkEuLHfQs+BvR0EdK5WV6JkwZQQgq5M3C/MBKzy5brC/Tmc2gyhL1NxVi2B1KzsqQUdeWa96MHubHpl30G0wVimH5Lae88BZmR3GfXqZY0wl/x4F+IRBZNqTeQUQzO/wIsdnvr8joJc4xoSfnI4=
+	t=1755897617; cv=none; b=gHZhBZ+P/FziTQsR3ltU+1qJckKeyO07vEFkVyl8OgzdKDmI+i1rECYVHkzo3OQ8PePetZMG2jCamcpxkZ7ptxZBDrH8kDR/cA84k3ACOoGizvy3v/9hbz725vkT0/ANdDw3ggzuLOC0rQmskP4EGm4K3N8NJBKqGRmiEqlm4b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755897397; c=relaxed/simple;
-	bh=S3WdWKxD+OrHvdwVR5qi1NaCJN9OU12JkKzxkr/eBQU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WmDbrphfWFqOevtztG/cD1McxcdQYQWpu64tSyhjSUo8THdZl2SPg0JKKc5QE1dv/FkuumDavV+sUV78P4XDw+zsCfdMrd5R+NVUMeiZwCu48Ery9UjtoSMyaM2pzitkeYotdDZZU9eURK1azh7bpvukCeigMmnHY6dPQi3nYM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id EFE22138819;
-	Fri, 22 Aug 2025 21:16:32 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 7A3B36000C;
-	Fri, 22 Aug 2025 21:16:30 +0000 (UTC)
-Date: Fri, 22 Aug 2025 17:16:37 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML
- <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Mark Rutland
- <mark.rutland@arm.com>, Andrew Morton <akpm@linux-foundation.org>, Liao
- Yuanhong <liaoyuanhong@vivo.com>, Pu Lehui <pulehui@huawei.com>, Tao Chen
- <chen.dylane@linux.dev>, Tengda Wu <wutengda@huaweicloud.com>, Ye Weihua
- <yeweihua4@huawei.com>
-Subject: Re: [GIT PULL] tracing: Fixes for v6.17
-Message-ID: <20250822171637.7ee1cf7e@gandalf.local.home>
-In-Reply-To: <20250822170808.5ce49cc3@gandalf.local.home>
-References: <20250822124933.74965607@gandalf.local.home>
-	<20250822192437.GA458494@ax162>
-	<20250822170808.5ce49cc3@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755897617; c=relaxed/simple;
+	bh=9fA0yHG8SS2Fd7s3upe/4ZWUaSmlKYSByXORV1ojuDI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lA4adQwgE7k/brQMPwja5of3tMyjThdkd8k2dPRrj91XW7RR0kbe0n/Qy23qJzpT30m1Nv/MLuA2QglmdnDP5qI5DgLv7HInYkolYjKq/gtjxZaLs1gGxvSjq1Ohdvqx9HfiOjaI9CIOdMXnON4UwmPmYBi4Q2mqRG7fWsi6ZS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=arYkT+sL; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=9uZLhzPEmMwp8D7S73NTMgQyO+O6LpYFyWrFqzJc7vM=; b=arYkT+sLUfSekCdSUtkDWfZFab
+	/M5zuPdpjW/R27iXLK8WNRIWl1Ma6ocvoAs55hPqAi8Q8XUU051sgda0oFwjEWS1mCv3tQNCd28XS
+	VTyiOUyneFP84wycyt9kGYGh75Q71oKNffNiTBXFZ6VbhisqKq0HXRNxpdT2UklJYUHcK2PUuHcC6
+	n+bXpbb0yfgS8mL6w7xPzlotyQQNQmAIygHo5FTErKtzY3y/U8MuAWxgm0hjmHbcvuZaVqvsZdWBv
+	wqPsrbWcJJk7hNGabw+/kpTBcD7Xnc1/Pdbfl3zz+6wGZLTm/KTXmfTI+i/4F3xrWf+4JiQo5l3Pm
+	H1+E86Cg==;
+Received: from [189.6.13.79] (helo=[192.168.31.42])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1upZB5-000I7b-Rv; Fri, 22 Aug 2025 23:20:04 +0200
+Message-ID: <9c544984-7b73-46df-a63a-fc8820d2ccba@igalia.com>
+Date: Fri, 22 Aug 2025 18:19:58 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/amdgpu: Fix kernel-doc comments for some LUT
+ properties
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Harry Wentland <harry.wentland@amd.com>
+Cc: kernel@collabora.com, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250823-amdgpu-fix-kdoc-lut-v1-1-306bcad41267@collabora.com>
+Content-Language: en-US
+From: Melissa Wen <mwen@igalia.com>
+In-Reply-To: <20250823-amdgpu-fix-kdoc-lut-v1-1-306bcad41267@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 7A3B36000C
-X-Stat-Signature: bjntq5z7yo4madp6uhdrzgp9jsuwpj8f
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/m0l6OLZFMVM2FQkMXW8Qr1vpQ5EeQv1E=
-X-HE-Tag: 1755897390-7031
-X-HE-Meta: U2FsdGVkX1/qeSxceh1NNPOnHYDKLfS9ik63obbfsIKjqVhFsSw6BciglIfIiIkA35nV5nmvmluA4fdgSthirzm1uSjiZ431FBSbZgix6tnpHIsOnF17PY8fqh0N5EgS+R9uYbGexTYQHau8cLE5Zh6V/HG/6OOzZAKV4DSIyycF/oGIFhNu9h27as2fBHbM/SwlRJESHj2YToX5G7u1sguW+AWNrGXkW0gQ9+rmazu92Aq7Ny1hptzUqElSiUlKzORb5laUG7QgL1Sc65Ie6Wg07LWqWCuEUgvq2EnqyzGzC8AJai3vM9E6Nkwd4rL5OQbiArfxjRTcto5xW0xZS7O/somouyCygR6FcojZCgY/Vsw2Gicb9s3+DrcoEHOF
-
-On Fri, 22 Aug 2025 17:08:08 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> > 
-> > If there is any other information I can provide or patches I can test, I
-> > am happy to do so.  
-> 
-> Can you send me your .config file?
-
-Actually, can you see if this fixes the bug you are seeing?
-
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index f992a5eb878e..2b570e057ba3 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -4662,7 +4662,8 @@ ftrace_regex_open(struct ftrace_ops *ops, int flag,
- 			iter->hash = alloc_and_copy_ftrace_hash(size_bits, hash);
- 		}
- 	} else {
--		iter->hash = alloc_and_copy_ftrace_hash(hash->size_bits, hash);
-+		if (hash)
-+			iter->hash = alloc_and_copy_ftrace_hash(hash->size_bits, hash);
- 	}
- 
- 	if (!iter->hash) {
 
 
--- Steve
+
+On 22/08/2025 18:11, Cristian Ciocaltea wrote:
+> The following members of struct amdgpu_mode_info do not have valid
+> references in the related kernel-doc sections:
+>
+>   - plane_shaper_lut_property
+>   - plane_shaper_lut_size_property,
+>   - plane_lut3d_size_property
+>
+> Correct all affected comment blocks.
+>
+> Fixes: f545d82479b4 ("drm/amd/display: add plane shaper LUT and TF driver-specific properties")
+> Fixes: 671994e3bf33 ("drm/amd/display: add plane 3D LUT driver-specific properties")
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Nice catch. Thanks for reviewing docs and fixing them.
+
+Reviewed-by: Melissa Wen <mwen@igalia.com>
+
+> ---
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h | 16 ++++++++--------
+>   1 file changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
+> index 6da4f946cac008ac865cd6d8a06fb0bd84d646d5..c3ad371658065388c10b7cfc45377b0465bd24ca 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
+> @@ -366,15 +366,15 @@ struct amdgpu_mode_info {
+>   
+>   	struct drm_property *plane_ctm_property;
+>   	/**
+> -	 * @shaper_lut_property: Plane property to set pre-blending shaper LUT
+> -	 * that converts color content before 3D LUT. If
+> -	 * plane_shaper_tf_property != Identity TF, AMD color module will
+> +	 * @plane_shaper_lut_property: Plane property to set pre-blending
+> +	 * shaper LUT that converts color content before 3D LUT.
+> +	 * If plane_shaper_tf_property != Identity TF, AMD color module will
+>   	 * combine the user LUT values with pre-defined TF into the LUT
+>   	 * parameters to be programmed.
+>   	 */
+>   	struct drm_property *plane_shaper_lut_property;
+>   	/**
+> -	 * @shaper_lut_size_property: Plane property for the size of
+> +	 * @plane_shaper_lut_size_property: Plane property for the size of
+>   	 * pre-blending shaper LUT as supported by the driver (read-only).
+>   	 */
+>   	struct drm_property *plane_shaper_lut_size_property;
+> @@ -398,10 +398,10 @@ struct amdgpu_mode_info {
+>   	 */
+>   	struct drm_property *plane_lut3d_property;
+>   	/**
+> -	 * @plane_degamma_lut_size_property: Plane property to define the max
+> -	 * size of 3D LUT as supported by the driver (read-only). The max size
+> -	 * is the max size of one dimension and, therefore, the max number of
+> -	 * entries for 3D LUT array is the 3D LUT size cubed;
+> +	 * @plane_lut3d_size_property: Plane property to define the max size
+> +	 * of 3D LUT as supported by the driver (read-only). The max size is
+> +	 * the max size of one dimension and, therefore, the max number of
+> +	 * entries for 3D LUT array is the 3D LUT size cubed.
+>   	 */
+>   	struct drm_property *plane_lut3d_size_property;
+>   	/**
+>
+> ---
+> base-commit: 0f4c93f7eb861acab537dbe94441817a270537bf
+> change-id: 20250823-amdgpu-fix-kdoc-lut-357db8b57fee
+>
+
 
