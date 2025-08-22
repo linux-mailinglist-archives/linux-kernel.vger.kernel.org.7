@@ -1,305 +1,434 @@
-Return-Path: <linux-kernel+bounces-782472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9613B320C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:51:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D95E4B320C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16AD01781D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:49:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C9B16225FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821553126C9;
-	Fri, 22 Aug 2025 16:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UDHCK4Sa"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2043.outbound.protection.outlook.com [40.107.94.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814A0302740;
+	Fri, 22 Aug 2025 16:49:41 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26B92367DF;
-	Fri, 22 Aug 2025 16:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755881327; cv=fail; b=hAUFX7JzlDsWI53MK2yF6AGDhELJNJ+n+++fIu/u8IcSzMnaCgiofOO+AFgvIDu+rBzWe483S+3SRTvGsY8nY4Nql4c2raxPGm0lkRajK04E3Txx7jVeanh93AR5ufkVksKu7HQLWCNgPBpXw3cKTw3nLfnT5Fle5QxMTIVUm9w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755881327; c=relaxed/simple;
-	bh=Aa7dYJ/O4mk88AQjUU5lyQKvvDUMsXLMYWyb7udB+6Y=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RMswDYbQFOSmS8Vgar0UILGXBBihFanjCILdA5uJGyxFS2zqTR/rCc64hmAU1C3RLDrRu352Uu5w0dCtrBypVW0L/EsLYQ5R9n7QcO/ccvLE+PewPrFZDpg1ybEXIjfv2QeMKr8jkKf8MtT7qzfhxjDSeezGRHkk8FG+FA2nb50=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UDHCK4Sa; arc=fail smtp.client-ip=40.107.94.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=djopB6avZCSTZyySd0sE+MfRQFjeM8E+D3LdfU56KaYc851Xdo7NZduYFvw9w3xIHhfb8b832yybvTfgM16scjAIBkxFqE2qS8MhWw9ajircR7bHlpapXKOVrc3I6qgSApY2Aa0o7JiGJHklMWCIwyOl2tt6TyVCY8epb83Bk9L5hZwRbyq3Ux5tBIdIqr7Ff00pNWuFLFjePZtT6HOXSAzq1XQfc2GLhel5B1CXpGWYUxhrlf5rK1xj8Jj0OCAZv9DUqapsMBrNeXhZSJip+cw3luW3jQO1VopUTBBPU8/1FdUf6m0IIiJEjJ2W9+tpT+/ukGbYaHmf8UxelLC+xg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Fhvoxnv+WL8nWtz1PovFHGs11d07OUmXaOdxmJWqrXQ=;
- b=o2IqwtfuzksiR7FKPWj4a8q98VFqvAZb5kxiIN0IUTC94AoCjIenE0tX72pReFrqmJ973rePxhdxnAAwKq9Sphix3LaBM0x0TSggMRyB/72jwI+nFOwTGS6YDPNow32tXlb6ywXURM0pjcwjBHlZqaAU10cOrn+H5kObOsk1eHlooebGRv2pC2A7nbZxfzBKUnTVWGTTIhHQnSlOZmdD+w4VLS5DF3/bb+YfcJxi9Jir8o/pu6dj9R/qhHzH5uqnfo85ymBgSoJyXaysRw7nVtCADAhMT8lp01bhCWVLVh2sZL6OdJx01WHvKssAAWLo/Hx0Vw8wGwrdf7xFIeQvcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fhvoxnv+WL8nWtz1PovFHGs11d07OUmXaOdxmJWqrXQ=;
- b=UDHCK4SaQWn/TMBf21zrnAp5XSMHDPSrNXdvz11royeNPNXzvloivhKYSoDPcXs1qN6PgNSOMWQC/zHFmV3NKNfAFoErfTx/KkhwTg1r5hALFZoNPcdBZk20AJ/0y4eVoR8Kwod/53w+GrJ3hTyOul0e+GN6Y7L3lp9wXoHGpGA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5062.namprd12.prod.outlook.com (2603:10b6:208:313::6)
- by SN7PR12MB8145.namprd12.prod.outlook.com (2603:10b6:806:350::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.15; Fri, 22 Aug
- 2025 16:48:43 +0000
-Received: from BL1PR12MB5062.namprd12.prod.outlook.com
- ([fe80::fe03:ef1f:3fee:9d4a]) by BL1PR12MB5062.namprd12.prod.outlook.com
- ([fe80::fe03:ef1f:3fee:9d4a%5]) with mapi id 15.20.9031.024; Fri, 22 Aug 2025
- 16:48:43 +0000
-Message-ID: <3eae371b-929b-4615-a8f2-cb89281fb175@amd.com>
-Date: Fri, 22 Aug 2025 11:48:40 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/4] crypto: ccp: Skip SEV and SNP INIT for kdump boot
-To: Ashish Kalra <Ashish.Kalra@amd.com>, joro@8bytes.org,
- suravee.suthikulpanit@amd.com, Sairaj.ArunKodilkar@amd.com,
- Vasant.Hegde@amd.com, herbert@gondor.apana.org.au
-Cc: seanjc@google.com, pbonzini@redhat.com, will@kernel.org,
- robin.murphy@arm.com, john.allen@amd.com, davem@davemloft.net,
- michael.roth@amd.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-crypto@vger.kernel.org, kvm@vger.kernel.org
-References: <cover.1753911773.git.ashish.kalra@amd.com>
- <71e80dca138ed59bd2a948d7b79c01c30515d789.1753911773.git.ashish.kalra@amd.com>
-Content-Language: en-US
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Autocrypt: addr=thomas.lendacky@amd.com; keydata=
- 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
- vFkWitqCJg==
-In-Reply-To: <71e80dca138ed59bd2a948d7b79c01c30515d789.1753911773.git.ashish.kalra@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DM6PR03CA0036.namprd03.prod.outlook.com
- (2603:10b6:5:40::49) To BL1PR12MB5062.namprd12.prod.outlook.com
- (2603:10b6:208:313::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1D6222593
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755881380; cv=none; b=WwE98m42uvNrsvmsJq8EzejGVxjWAk4x1WMEY4+F6nLHW2ppwftxLAMWGSeJ9qeqhuzOMZjC5CatBzBm55PA6IyeDpk42tEUl2UZyQBVc2hmJBLm5dTubUQimvR6HFp8LQEeH2UbV2Zte6ndyT7EyP0viNkGvUoescZvZwX1Qkw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755881380; c=relaxed/simple;
+	bh=5i7wiKBO+SRU6NsjkH8B8cYa7PQXcxj15HFgmVAA/zY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=n6LWn3iw93iIveOmT/JcE1+9OHEwOTenR2y+vKjYpBxKPp/zOxCFhafef9J1dl0hf1gYbi5ojwCcpBqaAEtCt2vDy7E5wE8kgeIRPu1JzAkuhA3RN/QTM8gQXGnWm9tixGCJOSazs33UJXsFB9+QrDwZY2JkUajIc3If+ZeTh0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf13.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 6D8F21DBC6F;
+	Fri, 22 Aug 2025 16:49:30 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf13.hostedemail.com (Postfix) with ESMTPA id 2A9382000E;
+	Fri, 22 Aug 2025 16:49:28 +0000 (UTC)
+Date: Fri, 22 Aug 2025 12:49:33 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Mark Rutland <mark.rutland@arm.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Liao Yuanhong <liaoyuanhong@vivo.com>, Pu
+ Lehui <pulehui@huawei.com>, Tao Chen <chen.dylane@linux.dev>, Tengda Wu
+ <wutengda@huaweicloud.com>, Ye Weihua <yeweihua4@huawei.com>
+Subject: [GIT PULL] tracing: Fixes for v6.17
+Message-ID: <20250822124933.74965607@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5062:EE_|SN7PR12MB8145:EE_
-X-MS-Office365-Filtering-Correlation-Id: 60fca6ab-5d1f-4db1-8986-08dde19bc140
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?V1Rpa1ZjVG5FVGJFRmdiLzRrUW9YYklDL1ZKUU1mUmxRNVhNK3BESEFtdkVs?=
- =?utf-8?B?cHAzMCtQbVBRNXNwWGVNMUJsN3ZYWkkrS1NoSmk3c1dOZm1TN2N1NGs4bXYr?=
- =?utf-8?B?ek5LeFBpRDdFWER4M2poM0ladXlESGQxRlYvVkhXQmkxMUZBd3RaK0ZNV3cv?=
- =?utf-8?B?SnR5UzMyNm5iNUhmZWhsTDJMV090ZWlsZ05zLys0RnVsb0I0OHlIUmhuYTRo?=
- =?utf-8?B?NWlQekZEN09ZRXRjZzUyek1TNzhua1pxSjlpUXc3bmNUbWUwUUcxcEY4di9E?=
- =?utf-8?B?bFVsZFBrVDJOVVpMemJNMVlSblVhV1B1ZWdwRjhHbXZkNjFpNy80QkJGb2lt?=
- =?utf-8?B?MUxGVGFsL0RCQ252d3RYUjRSTi9KdmhHeGFzUWdpVElibmRzMFFRYXFNbUxm?=
- =?utf-8?B?aCtVcXBlK3JnSG95dzduMlN3bTVENVNuR1pjL1dpeXBHanJQQlRrMlkrQXF6?=
- =?utf-8?B?UGJMQTloNDRXUjFORkwrWGo1Y3JrSHZ3dk1UZFFEblEwU2JBOHBNRjhNSDYw?=
- =?utf-8?B?TUxUVVhUMVU4TTB4QlBBS1FvbUZRZmk1cnI0dlp1cFozcUszNVlaaDlsV2NW?=
- =?utf-8?B?ME9RbENTeWl3ZGt2UUZOZ1Z1MVRUQ2RITitwajRyd1QyQ2h1V0Jnb2txYms3?=
- =?utf-8?B?V0ZQWmRGd1VtaHZZSG9HSHVwdzl0ZGsydk9tVm5BRU5yOEQxcXFHeTgxSnRF?=
- =?utf-8?B?bXRxVHgwYlN3MVExUVBLZTVLMnk3UGlWcU5IemZiYTVxWVlIWVNxcCtIeGhl?=
- =?utf-8?B?aU1jLy9IVm1HeDJGM1dadUl6VDNFUW5XZ0N0Z21FR0dyaDFtWVIvTXJ6Y1U1?=
- =?utf-8?B?ci9YNi83L25XQy9YSkE2aC9ZMUYwN3R2WDlJMm9tVzhGZkY0Uy9GT3BrZWNR?=
- =?utf-8?B?NG05SHAzbk9DeXRsdDRuMGJtMTlFRGo0K1V6RDBoRUdGVm5nVXcwQUdndW1Q?=
- =?utf-8?B?QXQwVXgrQnR3Q2dxQWZIMHRZQm5xanpZNjA1ZzJUY291THA2YXE1dnFSU2pX?=
- =?utf-8?B?RzFqd0thWHVLUXJBLzRIZVFNeS96Znh6VzB0b1J4SHdpdDl2c0xUSmltc3kz?=
- =?utf-8?B?SDZrazhvRHdDMG83NzFBRFJKblR3d1NhS09JbEVLWDBrVXZubjlSb3pBZlRo?=
- =?utf-8?B?SUxZTUtwR2V4V0lCZm9EZGJxYjBBWTExckx6a3Y3UC84QTVFMDYxQ255WGpY?=
- =?utf-8?B?Qjlnb0tQSkYwUGdwM0lzSzI5ZHd4eEJlZHROVzkrSGdOOUROd2M0clcyTGNY?=
- =?utf-8?B?YTYra0tydmZsNkVYMzB6SFcxSzJGaTZUaWd4R05RY3h0c1FQUmRWZkl2Rmh6?=
- =?utf-8?B?c2plT3Y0YVVDMFFUTHNXTXBKRFFEWER4YXFMVURRUlA4QWZ6RHljVTI4VWpt?=
- =?utf-8?B?U3RWVWVKMDgyTjNHR3BpWGRzUkE3QTE1UWdMMStjSDM4TTNIdlFHZS94cGVK?=
- =?utf-8?B?NUgxMytvdEg2dUlQK0tOYXFCYkt6WncvZEhRMXowRk1xZGowekJ2N2J1SnRZ?=
- =?utf-8?B?QVAydjdYejBHRVc4cWZrYjhQT0NHZEZsZ3hTR3FrV2xlYjJ0M3hXYUlmK2ls?=
- =?utf-8?B?dDAwbzlHdzRWVFlJTGdDTmpwd0IxV1ZMUGZ6Q295YUtSS3ZsUFNKL1ArTC9m?=
- =?utf-8?B?RGJ6enN2b2dTbW1IVGI0MkFJUlFpL2hoa2FSK0Z3eXI2dWZXbThPQ1RvcGYw?=
- =?utf-8?B?azB3bmhYY2V2RnpjblkwOE9CNkdIeXdTL3N4RVRGWUp3Yk9oZFFhSmFsYy9w?=
- =?utf-8?B?UG9TMndmNW9jSE1OOFFodC9nYXVCb1BnWGRxNGpNRzNnQ0dVTW40TXNnazB3?=
- =?utf-8?B?cGE5aDRGSUdLTDk0YXFwY3ZKaWVGVndLMXVWczgvQUNjQ1FGalp2VmkzeHZU?=
- =?utf-8?B?RHhCVjZZMFY2OFQvZkhPUU5UQW5FRE1PcnVsNnZ4REdZRXBUa0pRVTBQL3FM?=
- =?utf-8?Q?lmUz55RmDrg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5062.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MFBBOE5oQ01TeHlvMjlpT05CV2t6RUtZZ1Y3UWV2Vi93TEs1OGhVV214MnBQ?=
- =?utf-8?B?bmVRa01xOVlxbmkvTGRkUFpCQmdFU2xtbnhFNDVWbENET0I3M3QwSmtWMU9Y?=
- =?utf-8?B?c3lJMlc5OU9TejlWbXlmU1NSN24xYnFBWnlyUGJCVmJxRHJiUEd4Qlk4bVRu?=
- =?utf-8?B?QkNuZ0dhRzBGcTkxa3E2cUIvQUI1QUUvOUZhbjc2dk1iYWpMcHVHV2NOc05z?=
- =?utf-8?B?UlZ2WnAwSVJueitwNGdnV29aYzRmTnRBbVlHWSsxZjlhQjdWcWFJVmNwWHFw?=
- =?utf-8?B?UW1scXd4ZEY4d0JlVTQ5MGpEdURPdUtuank1L2NEVG5icVpNeEhUajQ0MldQ?=
- =?utf-8?B?amU5bTFsYy81ZHBObzcxVXFDV21SZTJISFBPZExlb2o0LzhPbkZ4NWZ2TGpi?=
- =?utf-8?B?MUh6empldWJVanorL280enFxVk9ENWg3b2JLNG42WXRZN3F1S0RrWUxOSEQ2?=
- =?utf-8?B?RUlEZEo5blpQZjdXdnllbmtXbzV5eTF3WWVsUHNQMml3TkVZTGVpVUk1dVlN?=
- =?utf-8?B?Rkd0c01vZDNTTXNDem9QWEZVVCtjeCtDaG1vSzd4TTY0L0J3dmJZNGxXUGpp?=
- =?utf-8?B?WTlIaGN0UFIxZlNoaWJtY1VmaVp5dVlnc1EraEUrSTFKTk9GbmlabkE3Z0xw?=
- =?utf-8?B?Y0cxV2p4cFFBZVJtUGVHY1JlZ3VYRkw2K0tCNi9xY1RVU0paa2sxb0pqVCtj?=
- =?utf-8?B?Sm00dGRDK0o0T1dUQ1J5TjlFcGNuWVp6RGJtQlBocVBKWnU1bk5waUhWWmZU?=
- =?utf-8?B?VnhsQlRWU1hvWFhxNWpMZS8venR0SUZld09UZFdwU1M1OEdxcGJiakFFZVE2?=
- =?utf-8?B?T0MxTzc5U2Y4VVkrcDBFZUU1SmtJVDFLVXkxRitRaXFyREJZeENrUW9sdGlE?=
- =?utf-8?B?ZkRnU2pZRjk1SzNFZDlaMk03WDdZd2hJSlljYm1IczdobjlnWUNMT0dTUW1U?=
- =?utf-8?B?cTNTdVNlV2htRnN5U3htUnBPM05mTDNJV1hrMjZKYUgvKzVWQWFHVVBNam83?=
- =?utf-8?B?SHZ6eFoxdjFCa1hVRmE5SUVwRzFEbElERy9Rc3FzbjJNaVRFN002NlJVaVd5?=
- =?utf-8?B?K0Frbk0xNTBlVEdrbkY3blVlREY5SWY0M2pvakh2ZmtpNVdSNFVDUnN2Q3Vx?=
- =?utf-8?B?aERpN0NtWkZyb2dKeWNMYnVyem1seTJrOVhqR3dwUHowTmFlZWdrK0NhL25m?=
- =?utf-8?B?a3J6TXBzZG13dm5xYVRPZWZlM3pSWkNCVjJMWTgrdFBTbW5mZVJtVENlN21Q?=
- =?utf-8?B?OWtHbDJFYkdyd1BhanJRMGI1YitreVdFOTZBbTQ0SjNabUNmblVPdzBEelht?=
- =?utf-8?B?L0Q2UVNvS2NIQzZ3QkoxUEZReTBNS05oM09tcnRoMGh6aFNINms0R3VSMlJo?=
- =?utf-8?B?bjdDdzQvN2hQeHg1aS9PSDc5M2poM2xpTFdsY0FuQlJaQmVGQm9ROHZmaWhH?=
- =?utf-8?B?d3NieTdwSmxlbVVFemd2Mm9nYlkxSDZBTFdYZW1WSjFvaUtuSElLN3I0MnNH?=
- =?utf-8?B?eS9QckxZSDMwcHM1clNBR1VzaXRkK3MrSDRWVkp2eFhzMlZralZFUWNUVnBH?=
- =?utf-8?B?NFh1aTZWNzR5dS85Q3kyT1R0OTcxa3h6dTlzWU14MnYvOEVFTFFSOW5xcHYx?=
- =?utf-8?B?OXphcmRBdzVENzBWZzJ0RVhtYmJFWTdCTi84bUR5M0p6REZadlBYRnV6SjlO?=
- =?utf-8?B?MGVaRlBTYk9EWHFFblpENHd6Y2MrV05xaWZQcHJ1MWd6dW4rMG5MajJVaC8x?=
- =?utf-8?B?U1l6aTkyTUt4TDBDdCswcVBsTk1qYnJCRWZzYWxpQ2ZvKzVuaGpQRDJOSVI0?=
- =?utf-8?B?cU9kMmhwSDcrMUt4dXVhMW5RRWpEVnBIRlhtYnpEVFRvWExPYnBqOW9aSTVC?=
- =?utf-8?B?dGxVeVdBbkM1eVRQc0NaTWNpOVRIRW1IUmZjUEltOGhjMHVzQXFyT0JVVUsw?=
- =?utf-8?B?OFp6emd2TFc2eHhKeEJLSTY4Tng0NzJkaXFvNmtOcGVGTDZqNHhJMkphSjA5?=
- =?utf-8?B?aDNhL2wrU1lDUHFDdzUrakI5MkpZTUFmRno1WDRrbEZUVHdQUk5UMzRSQ3pv?=
- =?utf-8?B?QjVuR25CU3JmNlFXS3JkVDRPZEdIMXB3azlidXJxRHh3VFYwM2NXZXh1SHNZ?=
- =?utf-8?Q?7CDA4zhH5JRmDKRLuEQqlcysJ?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60fca6ab-5d1f-4db1-8986-08dde19bc140
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5062.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 16:48:43.6447
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oMsx0+MpJu4db+zuMboockzI03UOKDwDzgMyWO2iS1w9KUd+UGFQFg5P8mW2CJcNGDwE2TKuu2DJOkjmHCPLdw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8145
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: qb4d5hgs4h8kmemsokrdebhxisooxikm
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 2A9382000E
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+RwzOO4jZk8fW6WjIL97/RvyvM7NqFS8k=
+X-HE-Tag: 1755881368-953416
+X-HE-Meta: U2FsdGVkX18RS9gCHuPRxpka88ffgQkOuEMLEoOZHyMyElRP7gptLwt66N5ILEzKhWlX14NWQGmNFK+o5hjwbvGP4r7zQYTuRy7IEYH+Of0tK2E1ncHCr30smUnCSkwoNAfqNzWBRqhHi424NtVUdQ62d/G3NvB5j+4wZFQ5Hz4NhUVNF2CgjF6BghT/E4XDlM3qkC4UW6kq8Jps7kn7Yo7kGbZyEu/6D3ISkq/fuxsstYQRrLc8PAHFX8idZJaaW5BAi56/ZyaP+jQ00QeXyg3VKz7KGJQCscVztpfOEf+3hqdbvX2ersm5jH7zjnAYOzIFpTbSvx8fySWcPhxqmuV6Xy4WA/9r
 
-On 7/30/25 16:56, Ashish Kalra wrote:
-> From: Ashish Kalra <ashish.kalra@amd.com>
-> 
-> If SNP is enabled and initialized in the previous kernel then SNP is
-> already initialized for kdump boot and attempting SNP INIT again
 
-s/for/during/
+Linus,
 
-s/SNP INIT/to initialize SNP/
+tracing fixes for v6.17-rc2:
 
-> during kdump boot causes SNP INIT failure and eventually leads to
+- Fix rtla and latency tooling pkg-config errors
 
-s/during kdump boot/in the kdump kernel/
-s/causes SNP INIT failure/results in an SNP initialization failure/
-s/ and eventually/. This leads to/
+  If libtraceevent and libtracefs is installed, but their corresponding '.pc'
+  files are not installed, it reports that the libraries are missing and
+  confuses the developer. Instead, report that the pkg-config files are
+  missing and should be installed.
 
-> IOMMU failures.
+- Fix overflow bug of the parser in trace_get_user()
 
-s/IOMMU failures/IOMMU initialization failure/
+  trace_get_user() uses the parsing functions to parse the user space strings.
+  If the parser fails due to incorrect processing, it doesn't terminate the
+  buffer with a nul byte. Add a "failed" flag to the parser that gets set when
+  parsing fails and is used to know if the buffer is fine to use or not.
 
-> 
-> For SEV avoid SEV INIT failure warnings during kdump boot if SEV
-> is enabled and initialized in the previous kernel.
-> 
-> Skip SNP and SEV INIT if doing kdump boot.
+- Remove a semicolon that was at an end of a comment line
 
-These last two paragraphs seem disjointed. Make a single paragraph that
-combines the sentences and says why you're doing what you're doing, e.g.:
+- Fix register_ftrace_graph() to unregister the pm notifier on error
 
-Since SEV guests will not be run under a kdump kernel, there is no reason
-to attempt initialization of SEV or SNP. This can prevent initialization
-errors that leads to IOMMU initialization failure if SEV or SNP were
-previously initialized.
+  The register_ftrace_graph() registers a pm notifier but there's an error
+  path that can exit the function without unregistering it. Since the function
+  returns an error, it will never be unregistered.
 
-Massage as needed.
+- Allocate and copy ftrace hash for reader of ftrace filter files
 
-> 
-> Tested-by: Sairaj Kodilkar <sarunkod@amd.com>
-> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-> ---
->  drivers/crypto/ccp/sev-dev.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
-> index e058ba027792..c204831ca4a6 100644
-> --- a/drivers/crypto/ccp/sev-dev.c
-> +++ b/drivers/crypto/ccp/sev-dev.c
-> @@ -28,6 +28,7 @@
->  #include <linux/fs_struct.h>
->  #include <linux/psp.h>
->  #include <linux/amd-iommu.h>
-> +#include <linux/crash_dump.h>
->  
->  #include <asm/smp.h>
->  #include <asm/cacheflush.h>
-> @@ -1345,6 +1346,13 @@ static int _sev_platform_init_locked(struct sev_platform_init_args *args)
->  	if (!psp_master || !psp_master->sev_data)
->  		return -ENODEV;
->  
-> +	/*
-> +	 * Skip SNP/SEV INIT for kdump boot as SEV/SNP is already initialized
+  When the set_ftrace_filter or set_ftrace_notrace files are open for read,
+  an iterator is created and sets its hash pointer to the associated hash that
+  represents filtering or notrace filtering to it. The issue is that the hash
+  it points to can change while the iteration is happening. All the locking
+  used to access the tracer's hashes are released which means those hashes can
+  change or even be freed. Using the hash pointed to by the iterator can cause
+  UAF bugs or similar.
 
-s/INIT for kdump boot/initialization under a kdump kernel/
-s/is already/may already be/
+  Have the read of these files allocate and copy the corresponding hashes and
+  use that as that will keep them the same while the iterator is open. This
+  also simplifies the code as opening it for write already does an allocate
+  and copy, and now that the read is doing the same, there's no need to check
+  which way it was opened on the release of the file, and the iterator hash
+  can always be freed.
 
-> +	 * in previous kernel if SEV/SNP is enabled.
+- Fix function graph to copy args into temp storage
 
-s/in previous/in the previous/
-s/ if SEV/SNP is enabled//
+  The output of the function graph tracer shows both the entry and the exit of
+  a function. When the exit is right after the entry, it combines the two
+  events into one with the output of "function();", instead of showing:
 
-Also state here that since no guests will be run under a kdump kernel it
-is ok do skip initialization.
+  function() {
+  }
 
-Thanks,
-Tom
+  In order to do this, the iterator descriptor that reads the events includes
+  storage that saves the entry event while it peaks at the next event in
+  the ring buffer. The peek can free the entry event so the iterator must
+  store the information to use it after the peek.
 
-> +	 */
-> +	if (is_kdump_kernel())
-> +		return 0;
-> +
->  	sev = psp_master->sev_data;
->  
->  	if (sev->state == SEV_STATE_INIT)
+  With the addition of function graph tracer recording the args, where the
+  args are a dynamic array in the entry event, the temp storage does not save
+  them. This causes the args to be corrupted or even cause a read of unsafe
+  memory.
 
+  Add space to save the args in the temp storage of the iterator.
+
+- Fix race between ftrace_dump and reading trace_pipe
+
+  ftrace_dump() is used when a crash occurs where the ftrace buffer will be
+  printed to the console. But it can also be triggered by sysrq-z. If a
+  sysrq-z is triggered while a task is reading trace_pipe it can cause a race
+  in the ftrace_dump() where it checks if the buffer has content, then it
+  checks if the next event is available, and then prints the output
+  (regardless if the next event was available or not). Reading trace_pipe
+  at the same time can cause it to not be available, and this triggers a
+  WARN_ON in the print. Move the printing into the check if the next event
+  exists or not.
+
+
+Please pull the latest trace-v6.17-rc2 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace-v6.17-rc2
+
+Tag SHA1: 287d6057ddf2299a17a90c35fbeec04a5ea88fe5
+Head SHA1: c1e730442be2902ad5f9acc244ffc6e6400b981a
+
+
+Liao Yuanhong (1):
+      ring-buffer: Remove redundant semicolons
+
+Pu Lehui (1):
+      tracing: Limit access to parser->buffer when trace_get_user failed
+
+Steven Rostedt (2):
+      ftrace: Also allocate and copy hash for reading of filter files
+      fgraph: Copy args in intermediate storage with entry
+
+Tao Chen (2):
+      tools/latency-collector: Check pkg-config install
+      rtla: Check pkg-config install
+
+Tengda Wu (1):
+      ftrace: Fix potential warning in trace_printk_seq during ftrace_dump
+
+Ye Weihua (1):
+      trace/fgraph: Fix the warning caused by missing unregister notifier
+
+----
+ kernel/trace/fgraph.c                 |  1 +
+ kernel/trace/ftrace.c                 | 16 +++++++---------
+ kernel/trace/ring_buffer.c            |  2 +-
+ kernel/trace/trace.c                  | 22 ++++++++++++++--------
+ kernel/trace/trace.h                  |  8 +++++++-
+ kernel/trace/trace_functions_graph.c  | 22 ++++++++++++++++------
+ tools/tracing/latency/Makefile.config |  8 ++++++++
+ tools/tracing/rtla/Makefile.config    |  8 ++++++++
+ 8 files changed, 62 insertions(+), 25 deletions(-)
+---------------------------
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index f4d200f0c610..2a42c1036ea8 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -1397,6 +1397,7 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+ 		ftrace_graph_active--;
+ 		gops->saved_func = NULL;
+ 		fgraph_lru_release_index(i);
++		unregister_pm_notifier(&ftrace_suspend_notifier);
+ 	}
+ 	return ret;
+ }
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 00b76d450a89..f992a5eb878e 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -4661,13 +4661,14 @@ ftrace_regex_open(struct ftrace_ops *ops, int flag,
+ 	        } else {
+ 			iter->hash = alloc_and_copy_ftrace_hash(size_bits, hash);
+ 		}
++	} else {
++		iter->hash = alloc_and_copy_ftrace_hash(hash->size_bits, hash);
++	}
+ 
+-		if (!iter->hash) {
+-			trace_parser_put(&iter->parser);
+-			goto out_unlock;
+-		}
+-	} else
+-		iter->hash = hash;
++	if (!iter->hash) {
++		trace_parser_put(&iter->parser);
++		goto out_unlock;
++	}
+ 
+ 	ret = 0;
+ 
+@@ -6543,9 +6544,6 @@ int ftrace_regex_release(struct inode *inode, struct file *file)
+ 		ftrace_hash_move_and_update_ops(iter->ops, orig_hash,
+ 						      iter->hash, filter_hash);
+ 		mutex_unlock(&ftrace_lock);
+-	} else {
+-		/* For read only, the hash is the ops hash */
+-		iter->hash = NULL;
+ 	}
+ 
+ 	mutex_unlock(&iter->ops->func_hash->regex_lock);
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index bb71a0dc9d69..43460949ad3f 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -7666,7 +7666,7 @@ static __init int test_ringbuffer(void)
+ 	rb_test_started = true;
+ 
+ 	set_current_state(TASK_INTERRUPTIBLE);
+-	/* Just run for 10 seconds */;
++	/* Just run for 10 seconds */
+ 	schedule_timeout(10 * HZ);
+ 
+ 	kthread_stop(rb_hammer);
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 4283ed4e8f59..1b7db732c0b1 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -1816,7 +1816,7 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 
+ 	ret = get_user(ch, ubuf++);
+ 	if (ret)
+-		return ret;
++		goto fail;
+ 
+ 	read++;
+ 	cnt--;
+@@ -1830,7 +1830,7 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 		while (cnt && isspace(ch)) {
+ 			ret = get_user(ch, ubuf++);
+ 			if (ret)
+-				return ret;
++				goto fail;
+ 			read++;
+ 			cnt--;
+ 		}
+@@ -1848,12 +1848,14 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 	while (cnt && !isspace(ch) && ch) {
+ 		if (parser->idx < parser->size - 1)
+ 			parser->buffer[parser->idx++] = ch;
+-		else
+-			return -EINVAL;
++		else {
++			ret = -EINVAL;
++			goto fail;
++		}
+ 
+ 		ret = get_user(ch, ubuf++);
+ 		if (ret)
+-			return ret;
++			goto fail;
+ 		read++;
+ 		cnt--;
+ 	}
+@@ -1868,11 +1870,15 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 		/* Make sure the parsed string always terminates with '\0'. */
+ 		parser->buffer[parser->idx] = 0;
+ 	} else {
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto fail;
+ 	}
+ 
+ 	*ppos += read;
+ 	return read;
++fail:
++	trace_parser_fail(parser);
++	return ret;
+ }
+ 
+ /* TODO add a seq_buf_to_buffer() */
+@@ -10632,10 +10638,10 @@ static void ftrace_dump_one(struct trace_array *tr, enum ftrace_dump_mode dump_m
+ 			ret = print_trace_line(&iter);
+ 			if (ret != TRACE_TYPE_NO_CONSUME)
+ 				trace_consume(&iter);
++
++			trace_printk_seq(&iter.seq);
+ 		}
+ 		touch_nmi_watchdog();
+-
+-		trace_printk_seq(&iter.seq);
+ 	}
+ 
+ 	if (!cnt)
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 1dbf1d3cf2f1..be6654899cae 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1292,6 +1292,7 @@ bool ftrace_event_is_function(struct trace_event_call *call);
+  */
+ struct trace_parser {
+ 	bool		cont;
++	bool		fail;
+ 	char		*buffer;
+ 	unsigned	idx;
+ 	unsigned	size;
+@@ -1299,7 +1300,7 @@ struct trace_parser {
+ 
+ static inline bool trace_parser_loaded(struct trace_parser *parser)
+ {
+-	return (parser->idx != 0);
++	return !parser->fail && parser->idx != 0;
+ }
+ 
+ static inline bool trace_parser_cont(struct trace_parser *parser)
+@@ -1313,6 +1314,11 @@ static inline void trace_parser_clear(struct trace_parser *parser)
+ 	parser->idx = 0;
+ }
+ 
++static inline void trace_parser_fail(struct trace_parser *parser)
++{
++	parser->fail = true;
++}
++
+ extern int trace_parser_get_init(struct trace_parser *parser, int size);
+ extern void trace_parser_put(struct trace_parser *parser);
+ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+index 66e1a527cf1a..a7f4b9a47a71 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -27,14 +27,21 @@ struct fgraph_cpu_data {
+ 	unsigned long	enter_funcs[FTRACE_RETFUNC_DEPTH];
+ };
+ 
++struct fgraph_ent_args {
++	struct ftrace_graph_ent_entry	ent;
++	/* Force the sizeof of args[] to have FTRACE_REGS_MAX_ARGS entries */
++	unsigned long			args[FTRACE_REGS_MAX_ARGS];
++};
++
+ struct fgraph_data {
+ 	struct fgraph_cpu_data __percpu *cpu_data;
+ 
+ 	/* Place to preserve last processed entry. */
+ 	union {
+-		struct ftrace_graph_ent_entry	ent;
++		struct fgraph_ent_args		ent;
++		/* TODO allow retaddr to have args */
+ 		struct fgraph_retaddr_ent_entry	rent;
+-	} ent;
++	};
+ 	struct ftrace_graph_ret_entry	ret;
+ 	int				failed;
+ 	int				cpu;
+@@ -627,10 +634,13 @@ get_return_for_leaf(struct trace_iterator *iter,
+ 			 * Save current and next entries for later reference
+ 			 * if the output fails.
+ 			 */
+-			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT))
+-				data->ent.rent = *(struct fgraph_retaddr_ent_entry *)curr;
+-			else
+-				data->ent.ent = *curr;
++			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT)) {
++				data->rent = *(struct fgraph_retaddr_ent_entry *)curr;
++			} else {
++				int size = min((int)sizeof(data->ent), (int)iter->ent_size);
++
++				memcpy(&data->ent, curr, size);
++			}
+ 			/*
+ 			 * If the next event is not a return type, then
+ 			 * we only care about what type it is. Otherwise we can
+diff --git a/tools/tracing/latency/Makefile.config b/tools/tracing/latency/Makefile.config
+index 0fe6b50f029b..6efa13e3ca93 100644
+--- a/tools/tracing/latency/Makefile.config
++++ b/tools/tracing/latency/Makefile.config
+@@ -1,7 +1,15 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ 
++include $(srctree)/tools/scripts/utilities.mak
++
+ STOP_ERROR :=
+ 
++ifndef ($(NO_LIBTRACEEVENT),1)
++  ifeq ($(call get-executable,$(PKG_CONFIG)),)
++    $(error Error: $(PKG_CONFIG) needed by libtraceevent/libtracefs is missing on this system, please install it)
++  endif
++endif
++
+ define lib_setup
+   $(eval LIB_INCLUDES += $(shell sh -c "$(PKG_CONFIG) --cflags lib$(1)"))
+   $(eval LDFLAGS += $(shell sh -c "$(PKG_CONFIG) --libs-only-L lib$(1)"))
+diff --git a/tools/tracing/rtla/Makefile.config b/tools/tracing/rtla/Makefile.config
+index 5f2231d8d626..07ff5e8f3006 100644
+--- a/tools/tracing/rtla/Makefile.config
++++ b/tools/tracing/rtla/Makefile.config
+@@ -1,10 +1,18 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ 
++include $(srctree)/tools/scripts/utilities.mak
++
+ STOP_ERROR :=
+ 
+ LIBTRACEEVENT_MIN_VERSION = 1.5
+ LIBTRACEFS_MIN_VERSION = 1.6
+ 
++ifndef ($(NO_LIBTRACEEVENT),1)
++  ifeq ($(call get-executable,$(PKG_CONFIG)),)
++    $(error Error: $(PKG_CONFIG) needed by libtraceevent/libtracefs is missing on this system, please install it)
++  endif
++endif
++
+ define lib_setup
+   $(eval LIB_INCLUDES += $(shell sh -c "$(PKG_CONFIG) --cflags lib$(1)"))
+   $(eval LDFLAGS += $(shell sh -c "$(PKG_CONFIG) --libs-only-L lib$(1)"))
 
