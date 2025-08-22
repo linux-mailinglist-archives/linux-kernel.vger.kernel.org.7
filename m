@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-782758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1AA4B324E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:14:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F211FB32504
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F8AAC5BAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:14:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9891C1D215D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 22:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8C827E076;
-	Fri, 22 Aug 2025 22:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FE42BF01D;
+	Fri, 22 Aug 2025 22:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="DrqJdFUz"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kg5vkRsw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D7620322
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 22:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE26915539A;
+	Fri, 22 Aug 2025 22:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755900841; cv=none; b=EtJzf4zNnhtJXZcCtiftgjClS4tNtd0u+lJ3Zk30ncrOSSnrhHp0ptkOQoodca4kGB13KE2owh/X1baayxFy3z5FU/2M9wIcnm/n2tz/hog764SS2qbOeLGt9rAIUU+rTZn0fFsUKl624o1TP43JF+7zUIsLDpoe3fIV3XIAsW0=
+	t=1755901269; cv=none; b=r+9xCRCkeKk2Klq7lFizeWg7rk1Bs8EkhCbgnEAPDZvK5+3f6h2zbm/Wv8SPBVKjB9Xye4So3VGvjfm6zvpnI2OfjUHSanukcyEsEdFxFTkXysMXYkzGCwk7+yIMoN4G1RF+3rG/E6LAz0+YYWhg1eYxZ6f4hEr3c6x7obAuKTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755900841; c=relaxed/simple;
-	bh=GNoFskWN/XDsfbpOZ4rbYH7UgxZKXCrEqCuXK6N6GQc=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=MQxJhU5oSYeCWYftU9TRhf6CT4pTifYytup6831GistRUgUEwpVLOWVTrND5dTTJTTUtV7sYmUZiBtVDfBgqvdkaP0QGEVfb47XrFzEDVxogYqIWuq4Py+F4+VlYMXOPwJ9oRwgoNXFmce8vWa0lFBYDPZQdJJUETO5b8AV8glQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=DrqJdFUz; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPv6:::1] ([172.59.163.242])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57MMD9gY2134849
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 22 Aug 2025 15:13:10 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57MMD9gY2134849
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1755900792;
-	bh=l63OcdEGqYfRVzBx6EEgt5utd/dvSEkRemwDqryJ+Fo=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=DrqJdFUzM8zggpn1PEgISYbBKktjC6P8VkzK2u/u72oclbd0oOUJTR8tPemHHgV0e
-	 067Od9VXlTXe6x/M32uQT/afRXhGv/waX1+N2iliJTVMMGPzazVxNPRGwH0wz6gWlr
-	 +DbB8R8OLC+Llk3RpATF2KKvCNHx8uRK9QbIyd7N+fBxifdMTPoJ21Pdsb56SNk4KF
-	 Yb2SZlU5UXt8OILZDiWszKbTd6tZgQPyXrcAfDHHPf/u1NdmUZQo8l8/tVEkvExh2R
-	 SkT+paj73CikFmBEVti1St6FjUpgdAMCF7hCsiVjFIiqTxrzgFAW17FGphE5xLuHy9
-	 ezzJ1TmbpM3QQ==
-Date: Fri, 22 Aug 2025 15:12:55 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-        Marcos Del Sol Vives <marcos@orca.pet>
-CC: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        Brian Gerst <brgerst@gmail.com>, Uros Bizjak <ubizjak@gmail.com>,
-        Ard Biesheuvel <ardb@kernel.org>, David Kaplan <david.kaplan@amd.com>,
-        "Ahmed S. Darwish" <darwi@linutronix.de>, Kees Cook <kees@kernel.org>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Oleg Nesterov <oleg@redhat.com>, "Xin Li (Intel)" <xin@zytor.com>,
-        Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Subject: Re: [PATCH] x86: add hintable NOPs emulation
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250821124804.GP3289052@noisy.programming.kicks-ass.net>
-References: <20250820013452.495481-1-marcos@orca.pet> <20250821124804.GP3289052@noisy.programming.kicks-ass.net>
-Message-ID: <C187B3AC-2582-4B07-8735-7F11B887F008@zytor.com>
+	s=arc-20240116; t=1755901269; c=relaxed/simple;
+	bh=1Z6GTjqZUoYLu0n+fPRDRUch1MWREiojl8WgKrm2nTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bvpj0iUZ0ulg564qcY2Q1OYEE02cSHNNaPngdmzjB7LmNB83c+0enpyH4sQ1lg7rZBNEwbDAEwueQIyOaBPJtXrXIeBR+9NrNBWQSMoVwP9NvNvIodpVPuhLs3nP2V0bHUFKa99nMobuoLXz1K/FgEySvGgRxi4IQrVhs4HxjcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kg5vkRsw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3EDCC4CEED;
+	Fri, 22 Aug 2025 22:21:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755901269;
+	bh=1Z6GTjqZUoYLu0n+fPRDRUch1MWREiojl8WgKrm2nTA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Kg5vkRswA36yWTffqxPpqyX8aeCy5H23GTbocMTenTyn+62tB7/2WaVT/o6edzngS
+	 Vuugl1X+g3nFRKIJ1dRWNYXIh45ybI0CqLG4iqNG3nnBfCMljAX6giNtxjITG3B/ft
+	 tKgHJsMhwvUypZ4Qh1m0dZ5sZ8oehuMs7ysYpxDXp48cT7Tk3n/D+EzLRjmQ6FU3aG
+	 8+hhlM5BI1gORlM7kSGryfxIuyNrITooB27Ux15cXG1amO0Z/0IZC2du2Q7Jg0NE5H
+	 +j/m7D0Ru8ShnxfigLFxX9MZ/eTfQSSDV2DDBLjKcFrJ0yF5T1Xjq0QmJGggUXdtLg
+	 U2V1hoDBZrP2w==
+Date: Fri, 22 Aug 2025 15:21:08 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mihai Moldovan <ionic@ionic.de>
+Cc: linux-arm-msm@vger.kernel.org, Manivannan Sadhasivam <mani@kernel.org>,
+ Denis Kenzior <denkenz@gmail.com>, Eric Dumazet <edumazet@google.com>,
+ Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Willem de Bruijn <willemb@google.com>, "David S . Miller"
+ <davem@davemloft.net>, Simon Horman <horms@kernel.org>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v5 01/11] net: qrtr: ns: validate msglen before ctrl_pkt
+ use
+Message-ID: <20250822152108.323af5e5@kernel.org>
+In-Reply-To: <d5ae397b-a33a-42c9-91a1-5ba3fcc367a5@ionic.de>
+References: <cover.1754962436.git.ionic@ionic.de>
+	<161d8d203f17fde87ac7dd2c9c24be6d1f35a3c1.1754962436.git.ionic@ionic.de>
+	<20250815110900.2da8f3c5@kernel.org>
+	<d5ae397b-a33a-42c9-91a1-5ba3fcc367a5@ionic.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On August 21, 2025 5:48:04 AM PDT, Peter Zijlstra <peterz@infradead=2Eorg> =
-wrote:
->On Wed, Aug 20, 2025 at 03:34:46AM +0200, Marcos Del Sol Vives wrote:
->> +static bool handle_hnop(struct pt_regs *regs)
->> +{
->> +	struct thread_struct *t =3D &current->thread;
->> +	unsigned char buf[MAX_INSN_SIZE];
->> +	unsigned long nr_copied;
->> +	struct insn insn;
->> +
->> +	nr_copied =3D insn_fetch_from_user(regs, buf);
->> +	if (nr_copied <=3D 0)
->> +		return false;
->> +
->> +	if (!insn_decode_from_regs(&insn, regs, buf, nr_copied))
->> +		return false;
->> +
->> +	/* Hintable NOPs cover 0F 18 to 0F 1F */
->> +	if (insn=2Eopcode=2Ebytes[0] !=3D 0x0F ||
->> +		insn=2Eopcode=2Ebytes[1] < 0x18 || insn=2Eopcode=2Ebytes[1] > 0x1F)
->> +		return false;
->
->FWIW, you need to check for insn=2Eopcode=2Enbytes =3D=3D 2=2E
->
->> +	if (!t->hnop_warn) {
->> +		pr_warn_ratelimited("%s[%d] emulating hintable NOP, ip:%lx\n",
->> +		       current->comm, task_pid_nr(current), regs->ip);
->> +		t->hnop_warn =3D 1;
->> +	}
->> +
->> +	regs->ip +=3D insn=2Elength;
->> +	return true;
->> +}
+On Fri, 22 Aug 2025 21:08:47 +0200 Mihai Moldovan wrote:
+> >> diff --git a/net/qrtr/ns.c b/net/qrtr/ns.c
+> >> index 3de9350cbf30..2bcfe539dc3e 100644
+> >> --- a/net/qrtr/ns.c
+> >> +++ b/net/qrtr/ns.c
+> >> @@ -619,6 +619,9 @@ static void qrtr_ns_worker(struct work_struct *work)
+> >>   			break;
+> >>   		}
+> >>   
+> >> +		if ((size_t)msglen < sizeof(*pkt))
+> >> +			break;  
+> > 
+> > why not continue?  
+> 
+> I don't really know and am not familiar with the QRTR protocol, but here's my 
+> best guess:
+> 
+> Since we're using non-blocking I/O, it doesn't seem to make sense to continue, 
+> because the next receive call would just break out anyway once it returns no 
+> data at all. Notice that we're also breaking out for -EAGAIN.
+> 
+> Also, if we somehow got a short read, and we're currently dropping the buffer we 
+> just read, any additional data after a subsequent receive would be garbage to us 
+> anyway. We'd probably have to keep the old buffer content around and concatenate 
+> it with data returned from a new receive call.
 
-No, hintable noops apply to any modr/m=2E
+Okay, I don't know this proto and driver either. Just reading the
+existing code it seemed like it's only breaks if the socket itself
+has an error. If the command is not recognized or garbage the loop
+will at most print an error and carry on looping..
 
