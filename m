@@ -1,174 +1,204 @@
-Return-Path: <linux-kernel+bounces-781477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E71A7B312E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:25:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F66B312F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E16FE7BF7F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:23:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86650587C2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 09:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242DC2EB872;
-	Fri, 22 Aug 2025 09:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="khDL7oO4"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4ECA2E3B18;
+	Fri, 22 Aug 2025 09:24:58 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D085329ACF0;
-	Fri, 22 Aug 2025 09:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6481E5705;
+	Fri, 22 Aug 2025 09:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755854685; cv=none; b=GYskt8txPs/Eld27hwZiJiM/wC98VA9VLN0zsC+9jFBmFT22A6HEYEzNKcSwuLzLw+Sghps1CvPViMZkVBSMb6GRT+ZBRArSkn39eRkhyiQF9/dV0sjR+8q9urDbqqk+IWv5XH6s8MsQx7++hqnAx2o12s2DQYPlImjBPgAE0kU=
+	t=1755854698; cv=none; b=ftwgazw2fM2KYirkpALp2xkULSkGSSI+5Xf8xSiSgBfCgP749TscGhckx1anpvjrk6+Y3sKNGYrJrO4ZCcDyFGmZw8PSewW/9d8YKPPiln3zDlRP+Box3hM4XufjZuJYPRlo54FnUgGF1OYdERMmMP1GSc3IAEIjQuFhkwcWbLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755854685; c=relaxed/simple;
-	bh=4H3CSlZbt2YKASmV8QNlaFgG034FjBGOLnkZFuH48iM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NtcTxBg5ffY6TS/8iABtAxBLw72iR3TqfotX7k2zzctmRGqSGxrQS5SUqgFkL3ze6K2Grretv6GTccs6QFE2U0x/V6jRD/X56bnVAYtGsTcwOPMo1jJEFFgCivWgKnPYKnkZmK1RJAznnsrZwdlZ/Pm1zC4ZnluArCIxMnHi/Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=khDL7oO4; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost (unknown [5.228.116.177])
-	by mail.ispras.ru (Postfix) with UTF8SMTPSA id 6111940643C9;
-	Fri, 22 Aug 2025 09:24:32 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 6111940643C9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1755854672;
-	bh=NC0e5OuHN3V1zBWdiEUAkeRkuP4dlYl3iTTfrLZTkNg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=khDL7oO4F+OfTZzrlYicYCN/ZsdoG2y7hhoOiy28YZ30Dpx/i7+4nqMivO/0/68RE
-	 nOLywZ+1VBoOuDvXS9GCNi9mIADMevCvx3oUGYshacu6g3rLrC5TlT5xqk58L+1+/M
-	 5xWMCETTac1UVRJ4fHOrHTI3GswaQZGuwk3/8/F8=
-Date: Fri, 22 Aug 2025 12:24:32 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Melissa Wen <mwen@igalia.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Harry Wentland <harry.wentland@amd.com>, 
-	Rodrigo Siqueira <siqueira@igalia.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Hans de Goede <hansg@kernel.org>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] drm/amd/display: fix leak of probed modes
-Message-ID: <20250822113609-348b2697616f3b82d6768feb-pchelkin@ispras>
-References: <20250819184636.232641-1-pchelkin@ispras.ru>
- <20250819184636.232641-3-pchelkin@ispras.ru>
- <e3b1f1bb-eeee-4887-a0f9-d6aa1f725ff4@igalia.com>
+	s=arc-20240116; t=1755854698; c=relaxed/simple;
+	bh=BULFlRWxvLdsXE7+yDn84bx4LmK7ZPfx4lUDx3Vbot8=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=W0gQ7+zoUevrq7zFYG/FEXjqbvaBv9doDbgDyEMgwjFCWDHHm6fwugM9Y41ngstF/af3eZVc3rCJlygoShF52yXFo0MR+Ao7rIVcn0reooKjg59bEkJODrrarbHFHg/7aXGs5n8KPA3VQ8ZZNUUz7GW6PV/yVONGbfJ4LmonMl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4c7ZXK5NcFz5B0pT;
+	Fri, 22 Aug 2025 17:24:49 +0800 (CST)
+Received: from xaxapp02.zte.com.cn ([10.88.97.241])
+	by mse-fl2.zte.com.cn with SMTP id 57M9Oc8S054932;
+	Fri, 22 Aug 2025 17:24:39 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp05[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Fri, 22 Aug 2025 17:24:41 +0800 (CST)
+Date: Fri, 22 Aug 2025 17:24:41 +0800 (CST)
+X-Zmail-TransId: 2afc68a83759ffffffffa64-de116
+X-Mailer: Zmail v1.0
+Message-ID: <20250822172441192C6nZlg4i6evhuAZgR_K0F@zte.com.cn>
+In-Reply-To: <20250822171232584GYKo3tPbZNfE3VsK7dvM0@zte.com.cn>
+References: 20250822171232584GYKo3tPbZNfE3VsK7dvM0@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e3b1f1bb-eeee-4887-a0f9-d6aa1f725ff4@igalia.com>
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <shao.mingyin@zte.com.cn>
+Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>,
+        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
+        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIHYzIDQvN10gRG9jcy96aF9DTjogVHJhbnNsYXRlIGdmczItdWV2ZW50cy5yc3QgdG8gU2ltcGxpZmllZMKgQ2hpbmVzZQ==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 57M9Oc8S054932
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Fri, 22 Aug 2025 17:24:49 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68A83761.001/4c7ZXK5NcFz5B0pT
 
-Hi,
+From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-On Wed, 20. Aug 13:00, Melissa Wen wrote:
-> On 19/08/2025 15:46, Fedor Pchelkin wrote:
-> > amdgpu_dm_connector_ddc_get_modes() reinitializes a connector's probed
-> > modes list without cleaning it up. First time it is called during the
-> > driver's initialization phase, then via drm_mode_getconnector() ioctl.
-> > The leaks observed with Kmemleak are as following:
-> > 
-> > unreferenced object 0xffff88812f91b200 (size 128):
-> >    comm "(udev-worker)", pid 388, jiffies 4294695475
-> >    hex dump (first 32 bytes):
-> >      ac dd 07 00 80 02 70 0b 90 0b e0 0b 00 00 e0 01  ......p.........
-> >      0b 07 10 07 5c 07 00 00 0a 00 00 00 00 00 00 00  ....\...........
-> >    backtrace (crc 89db554f):
-> >      __kmalloc_cache_noprof+0x3a3/0x490
-> >      drm_mode_duplicate+0x8e/0x2b0
-> >      amdgpu_dm_create_common_mode+0x40/0x150 [amdgpu]
-> >      amdgpu_dm_connector_add_common_modes+0x336/0x488 [amdgpu]
-> >      amdgpu_dm_connector_get_modes+0x428/0x8a0 [amdgpu]
-> >      amdgpu_dm_initialize_drm_device+0x1389/0x17b4 [amdgpu]
-> >      amdgpu_dm_init.cold+0x157b/0x1a1e [amdgpu]
-> >      dm_hw_init+0x3f/0x110 [amdgpu]
-> >      amdgpu_device_ip_init+0xcf4/0x1180 [amdgpu]
-> >      amdgpu_device_init.cold+0xb84/0x1863 [amdgpu]
-> >      amdgpu_driver_load_kms+0x15/0x90 [amdgpu]
-> >      amdgpu_pci_probe+0x391/0xce0 [amdgpu]
-> >      local_pci_probe+0xd9/0x190
-> >      pci_call_probe+0x183/0x540
-> >      pci_device_probe+0x171/0x2c0
-> >      really_probe+0x1e1/0x890
-> > 
-> > Found by Linux Verification Center (linuxtesting.org).
-> > 
-> > Fixes: acc96ae0d127 ("drm/amd/display: set panel orientation before drm_dev_register")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
-> > ---
-> >   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 3 +++
-> >   1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > index cd0e2976e268..7ec1f9afc081 100644
-> > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > @@ -8227,9 +8227,12 @@ static void amdgpu_dm_connector_ddc_get_modes(struct drm_connector *connector,
-> >   {
-> >   	struct amdgpu_dm_connector *amdgpu_dm_connector =
-> >   			to_amdgpu_dm_connector(connector);
-> > +	struct drm_display_mode *mode, *t;
-> >   	if (drm_edid) {
-> >   		/* empty probed_modes */
-> > +		list_for_each_entry_safe(mode, t, &connector->probed_modes, head)
-> > +			drm_mode_remove(connector, mode);
-> >   		INIT_LIST_HEAD(&connector->probed_modes);
-> >   		amdgpu_dm_connector->num_modes =
-> >   				drm_edid_connector_add_modes(connector);
-> 
-> What if you update the connector with the drm_edid data and skip the
-> INIT_LIST_HEAD instead?
+translate the "gfs2-uevents.rst" into Simplified Chinese.
 
-Yep, getting rid of INIT_LIST_HEAD eliminates the leak, too.
-drm_edid_connector_add_modes() comments do also strongly recommend calling
-drm_edid_connector_update() before the function.
+Update to commit 5b7ac27a6e2c("docs: filesystems: convert
+gfs2-uevents.txt to ReST")
 
-One thing remaining strange is that there'd be several different objects
-in the probed_modes list describing the same things I guess.
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+Signed-off-by: yang tao <yang.tao172@zte.com.cn>
+---
+ .../zh_CN/filesystems/gfs2-uevents.rst        | 97 +++++++++++++++++++
+ .../translations/zh_CN/filesystems/index.rst  |  1 +
+ 2 files changed, 98 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst
 
-> 
-> Something like:
-> 
-> if (drm_edid) {
+diff --git a/Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst b/Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst
+new file mode 100644
+index 000000000000..f5c3337ae9f9
+--- /dev/null
++++ b/Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst
+@@ -0,0 +1,97 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++.. include:: ../disclaimer-zh_CN.rst
++
++:Original: Documentation/filesystems/gfs2-uevents.rst
++
++:翻译:
++
++   邵明寅 Shao Mingyin <shao.mingyin@zte.com.cn>
++
++:校译:
++
++   - 杨涛 yang tao <yang.tao172@zte.com.cn>
++
++===============
++uevents 与 GFS2
++===============
++
++在 GFS2 文件系统的挂载生命周期内，会生成多个 uevent。
++本文档解释了这些事件的含义及其用途（被 gfs2-utils 中的 gfs_controld 使用）。
++
++GFS2 uevents 列表
++=================
++
++1. ADD
++------
++
++ADD 事件发生在挂载时。它始终是新建文件系统生成的第一个 uevent。如果挂载成
++功，随后会生成 ONLINE uevent。如果挂载失败，则随后会生成 REMOVE uevent。
++
++ADD uevent 包含两个环境变量：SPECTATOR=[0|1] 和 RDONLY=[0|1]，分别用
++于指定文件系统的观察者状态（一种未分配日志的只读挂载）和只读状态（已分配日志）。
++
++2. ONLINE
++---------
++
++ONLINE uevent 在成功挂载或重新挂载后生成。它具有与 ADD uevent 相同的环
++境变量。ONLINE uevent 及其用于标识观察者和 RDONLY 状态的两个环境变量是较
++新版本内核引入的功能（2.6.32-rc+ 及以上），旧版本内核不会生成此事件。
++
++3. CHANGE
++---------
++
++CHANGE uevent 在两种场景下使用。一是报告第一个节点成功挂载文件系统时
++（FIRSTMOUNT=Done）。这作为信号告知 gfs_controld，此时集群中其他节点可以
++安全挂载该文件系统。
++
++另一个 CHANGE uevent 用于通知文件系统某个日志的日志恢复已完成。它包含两个
++环境变量：JID= 指定刚恢复的日志 ID，RECOVERY=[Done|Failed] 表示操作成
++功与否。这些 uevent 会在每次日志恢复时生成，无论是在初始挂载过程中，还是
++gfs_controld 通过 /sys/fs/gfs2/<fsname>/lock_module/recovery 文件
++请求特定日志恢复的结果。
++
++由于早期版本的 gfs_controld 使用 CHANGE uevent 时未检查环境变量以确定状
++态，若为其添加新功能，存在用户工具版本过旧导致集群故障的风险。因此，在新增用
++于标识成功挂载或重新挂载的 uevent 时，选择了使用 ONLINE uevent。
++
++4. OFFLINE
++----------
++
++OFFLINE uevent 仅在文件系统发生错误时生成，是 "withdraw" 机制的一部分。
++当前该事件未提供具体错误信息，此问题有待修复。
++
++5. REMOVE
++---------
++
++REMOVE uevent 在挂载失败结束或卸载文件系统时生成。所有 REMOVE uevent
++之前都至少存在同一文件系统的 ADD uevent。与其他 uevent 不同，它由内核的
++kobject 子系统自动生成。
++
++
++所有 GFS2 uevents 的通用信息（uevent 环境变量）
++===============================================
++
++1. LOCKTABLE=
++--------------
++
++LOCKTABLE 是一个字符串，其值来源于挂载命令行（locktable=）或 fstab 文件。
++它用作文件系统标签，并为 lock_dlm 类型的挂载提供加入集群所需的信息。
++
++2. LOCKPROTO=
++-------------
++
++LOCKPROTO 是一个字符串，其值取决于挂载命令行或 fstab 中的设置。其值将是
++lock_nolock 或 lock_dlm。未来可能支持其他锁管理器。
++
++3. JOURNALID=
++-------------
++
++如果文件系统正在使用日志（观察者挂载不分配日志），则所有 GFS2 uevent 中都
++会包含此变量，其值为数字形式的日志 ID。
++
++4. UUID=
++--------
++
++在较新版本的 gfs2-utils 中，mkfs.gfs2 会向文件系统超级块写入 UUID。若存
++在 UUID，所有与该文件系统相关的 uevent 中均会包含此信息。
+diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
+index 37968fb91f1a..291d7a46e8ab 100644
+--- a/Documentation/translations/zh_CN/filesystems/index.rst
++++ b/Documentation/translations/zh_CN/filesystems/index.rst
+@@ -29,4 +29,5 @@ Linux Kernel中的文件系统
+    ubifs
+    ubifs-authentication
+    gfs2
++   gfs2-uevents
 
-At this point we already have the modes in the list added with the
-previous call to amdgpu_dm_connector_get_modes() from
-amdgpu_set_panel_orientation() - during the driver initialization phase.
-
->    drm_edid_connector_update(connector, drm_edid);
->    amdgpu_drm_connector->num_modes =
-> drm_edid_connector_add_modes(connector);
-
-Here we add them again (as new objects) to the list.  By the way it leads
-to amdgpu_drm_connector->num_modes be less than the actual number of
-elements present in probed_modes list.
-
-As far as I understand, *_get_modes() are supposed to be called only via
-drm_mode_get_connector ioctl, and not all things go as expected if they're
-firstly called in another path, as e.g. in amdgpu case through
-amdgpu_set_panel_orientation().
-
-But it seems commit acc96ae0d127 ("drm/amd/display: set panel orientation
-before drm_dev_register") added that call deliberately.
-
-I think we may update the connector with the drm_edid data and skip the
-INIT_LIST_HEAD part as you've suggested, but also need to flush the list -
-it might contain something left from the first amdgpu_dm_connector_get_modes()
-call.
-
-If no objections, I'll send it out as v3 soon.
-
-> [...]
-> }
-> 
-> Isn't it enough?
-
+-- 
+2.25.1
 
