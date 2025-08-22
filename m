@@ -1,363 +1,202 @@
-Return-Path: <linux-kernel+bounces-781869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 125D7B317FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:38:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A191EB317F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 445401CE2073
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:37:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 068355880FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC342FC034;
-	Fri, 22 Aug 2025 12:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46512FB997;
+	Fri, 22 Aug 2025 12:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="M61PcQbQ"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CC8LMj+o"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346BB1B4141;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6381A01BF;
 	Fri, 22 Aug 2025 12:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755866178; cv=none; b=pw42hufG+O/EtsPy6axY+Is5EvKAPeog3HnTVoAUtHS9K54742VRNEkrRIt1zJ4p29l6+803bnxOpafYzCF6JrDvm0OMHmnrqxIaJ0E/c7TcA8CZ7VJIpoCtxbJkxJ5XoKzPcAq0jNzg4OsS1urGgbgunkJa91a5h1Y3VwHvCKE=
+	t=1755866176; cv=none; b=H1KEd/shYhKUWOXRog3bRRiT6ogJq5xwbQue+FqD8yYRaxPa6ljm+Z7e1Ad0CK46ieNx0+OTVtaxxx2IlTPqLCesqhDIkhsqt/pgUQUdpqAGnfPdN1e2WxQ/Y1MJH0vhIaKo/izx7dPGLHrWTCXVFgwjvS810kicbjBp5AJczcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755866178; c=relaxed/simple;
-	bh=GTN5iYlm2NEQay0j4m/2nggl3gFYu+Zq/0taUpgFTTc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EhEJvoYefTdJkA2TrDfyxcWbW0NbjN6CysjNZERRWVpE8+AUQj7Elb0KPMZ/sTzb9BFVIz9e2Mijpovhye/8tr18+voANyO7teF1tlgvtLK660ohYDMU3wOYWBwrukp3uSVDb0uX9sNtQT3T4GAjD3Q2eDlBnfp44gzPl26sE8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=M61PcQbQ; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1755866147; x=1756470947; i=w_armin@gmx.de;
-	bh=J7hewAWeourx/jg/PVIZSpVWmzGcoNnw8uXDRNSjrO0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=M61PcQbQduenzU/nZPp573xAyDb06FxYKZTgKzOU/bOa4GMPq6DBrpFptZ9pn5BM
-	 p/kZTwMOQjG/cDJHu0U7HM2sB+Xlo+WLu8DK116E3Own1HO24CC783u3MRmJhohlA
-	 dY16OHYp7dRQrvyImMPWnc+gjzxNJOTDbWY7LnGCPe+txV4XEY6vE/yFPt0gqu+VZ
-	 77QiYzOPVz2cqNJ84ceb1WoCvPiXD+TGxctjMPzcKO9dRPKZtwYWiGCk6mVHaTDFL
-	 3c/ElblZEPBhCUavgynpn2qTxVl6FmH8NAcu6Wi84LC5F02vEWn3xSseX6TVI7zHJ
-	 wEkUS894f9Qjtvt1Yg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [10.189.91.1] ([176.5.63.45]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1ML9yS-1v7W6r07k2-00LaqK; Fri, 22
- Aug 2025 14:35:47 +0200
-Message-ID: <44404f92-fd30-400c-9f80-64c5649d9849@gmx.de>
-Date: Fri, 22 Aug 2025 14:35:42 +0200
+	s=arc-20240116; t=1755866176; c=relaxed/simple;
+	bh=QtAhiozZVc+OzM8G92D6AyUI1Z74irkiPB9et8iXAp4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F+MGBXlhPuiWXHO+L+qGkbRL1AaHGnVZCn8R0+OGrE5X8mrhHyRqxxDxPloCufyuG7MSsPSvNSfD3ngMe2re2gHh8FSixpR2PncbSRZC+bveY8m7r7oncc3qMVx3fOHDOoVjGSxLqo0ZJYReRnKEeRVGZfbU43pI/gEq+wc0kpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CC8LMj+o; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57M8UuGa001675;
+	Fri, 22 Aug 2025 12:36:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=8bpDpKP/qGjGh6KYAATVkMhEaOqdynSbq5Z
+	tkMVFRcY=; b=CC8LMj+oEmz8q+9T9jzNK48lURsrVsagSVpEU/5f5Bu2IHXekwP
+	FrBIYxySfkQXdKRKENomJOPmutzfvnXAMAhUBKeogiJQCJebjBg9de9wsGHNwgdD
+	vlLGuYq+D9F+1kch8OS3d8syg66F/zdMW/tLSBh6eJXHlzKHRBtKbGae5xncWrEy
+	v4oTr3GNX6BY/HLvrfoRtF3ASO761tMTqdQssmeFO4EjMp+nVdgEu8RUTu2IHY8M
+	FVtNTZgl2etFIsZDOY/NQTzKCUjE+nHEPiLSedFdCrmpVqrFC9Oa+2WqekOzSPtB
+	3I4zWAiBT6FLmxQYrQ5pwKqnAfVKN1Q1csA==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n529975g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 12:36:11 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57MCa9UW014427;
+	Fri, 22 Aug 2025 12:36:09 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 48mv0f98jd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 12:36:09 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57MCa97S014422;
+	Fri, 22 Aug 2025 12:36:09 GMT
+Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 57MCa8db014421
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Aug 2025 12:36:09 +0000
+Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
+	id 04A7121D6A; Fri, 22 Aug 2025 20:36:08 +0800 (CST)
+From: Shuai Zhang <quic_shuaz@quicinc.com>
+To: dmitry.baryshkov@oss.qualcomm.com, marcel@holtmann.org,
+        luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org, stable@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_chejiang@quicinc.com, Shuai Zhang <quic_shuaz@quicinc.com>
+Subject: [PATCH v8] Bluetooth: hci_qca: Fix SSR (SubSystem Restart) fail when BT_EN is pulled up by hw
+Date: Fri, 22 Aug 2025 20:36:05 +0800
+Message-Id: <20250822123605.757306-1-quic_shuaz@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/5] platform/x86: ayaneo-ec: Add hwmon support
-To: Antheas Kapenekakis <lkml@antheas.dev>,
- platform-driver-x86@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- Hans de Goede <hansg@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Derek John Clark <derekjohn.clark@gmail.com>,
- =?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
-References: <20250820160628.99678-1-lkml@antheas.dev>
- <20250820160628.99678-3-lkml@antheas.dev>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20250820160628.99678-3-lkml@antheas.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:c7jDHJY+Lv9by1x2l0SUCLZ4APxK3hCKgGNWAk3IrvcGj1woqUq
- azh6HPLcqY4hCquFO0MyNVizmCM/NgYapoPPE8h+C+JzeXZu5uBtGwZoQ5Hs59fHT0DhkU4
- oTzIMxG2cjo2BCOSIsBKcdQhFl1mJVZyX/0Oqw8hCPXAc6aadPif/ztt/OWtqW1sSNUpVoT
- KI4y7gaNCE+Eno1Mrw6yg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/2dCdsgYZ5Q=;kEb59JWISmup0lXnFJ82wIyo5lU
- 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
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: lDUSRJyzeVotR3Nhtocac3GsC7DJQDFh
+X-Proofpoint-ORIG-GUID: lDUSRJyzeVotR3Nhtocac3GsC7DJQDFh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfXwrx/sznr6/7s
+ 02TD/JYvCl/SGymLJCV7RHjk/fqa/gjHVdKUjQdJxQi7YnZ8/tjr6658COlLV1ZCwxgLnp1qjuP
+ S0AtRauDxBtSk+hgobQxTng+puGFmbo0NV2khV7pfbeI10nhJ1JgZsT0taGfzledevY4YmlIMYq
+ jOygg11jnOmoXEfMnDJkyfCtr/DQGdq0/Dpb2lWGBNZWz9lrJoA6mRMA+v9CQy0ewxysjyrc2ju
+ Mop6ot855DviDnBlzmAGz9KTDXjp79u/85TdRYUAOTFaaLZA/ug0ngNojzRXDL9R0GHQwhkUd/Z
+ WflXKDPN8E0DvB2dm08ZDV6DvxmulmZJXpFrIwB7CkJkJ3VxfEx1NQ+3JWDvNHrynDhHiHVzDLF
+ R5l97WLKq6dCqtYqMYHbpuZk7Qnj+A==
+X-Authority-Analysis: v=2.4 cv=SPkblOvH c=1 sm=1 tr=0 ts=68a8643b cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=Zh3eq0SbisOj6M6HGuUA:9
+ a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
+ impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1011
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-Am 20.08.25 um 18:06 schrieb Antheas Kapenekakis:
+When the host actively triggers SSR and collects coredump data,
+the Bluetooth stack sends a reset command to the controller. However, due
+to the inability to clear the QCA_SSR_TRIGGERED and QCA_IBS_DISABLED bits,
+the reset command times out.
 
-> Add hwmon single fan sensor reads and control for Ayaneo devices.
-> The register and method of access is the same for all devices.
->
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->   drivers/platform/x86/Kconfig     |   2 +
->   drivers/platform/x86/ayaneo-ec.c | 132 +++++++++++++++++++++++++++++++
->   2 files changed, 134 insertions(+)
->
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 6d4a33791cc1..0a7ca2c78456 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -307,6 +307,8 @@ config ASUS_TF103C_DOCK
->   config AYANEO_EC
->   	tristate "Ayaneo EC platform control"
->   	depends on X86
-> +	depends on ACPI_EC
-> +	depends on HWMON
->   	help
->   	  Enables support for the platform EC of Ayaneo devices. This
->   	  includes fan control, fan speed, charge limit, magic
-> diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/aya=
-neo-ec.c
-> index 90b86527ab0d..8b1902706b81 100644
-> --- a/drivers/platform/x86/ayaneo-ec.c
-> +++ b/drivers/platform/x86/ayaneo-ec.c
-> @@ -7,13 +7,23 @@
->    * Copyright (C) 2025 Antheas Kapenekakis <lkml@antheas.dev>
->    */
->  =20
-> +#include <linux/acpi.h>
->   #include <linux/dmi.h>
-> +#include <linux/hwmon.h>
->   #include <linux/init.h>
->   #include <linux/kernel.h>
->   #include <linux/module.h>
->   #include <linux/platform_device.h>
->  =20
-> +#define AYANEO_PWM_ENABLE_REG	 0x4A
-> +#define AYANEO_PWM_REG		 0x4B
-> +#define AYANEO_PWM_MODE_AUTO	 0x00
-> +#define AYANEO_PWM_MODE_MANUAL	 0x01
-> +
-> +#define AYANEO_FAN_REG		 0x76
-> +
->   struct ayaneo_ec_quirk {
-> +	bool has_fan_control;
->   };
->  =20
->   struct ayaneo_ec_platform_data {
-> @@ -22,6 +32,7 @@ struct ayaneo_ec_platform_data {
->   };
->  =20
->   static const struct ayaneo_ec_quirk ayaneo3 =3D {
-> +	.has_fan_control =3D true,
->   };
->  =20
->   static const struct dmi_system_id dmi_table[] =3D {
-> @@ -35,10 +46,124 @@ static const struct dmi_system_id dmi_table[] =3D {
->   	{},
->   };
->  =20
-> +/* Callbacks for hwmon interface */
-> +static umode_t ayaneo_ec_hwmon_is_visible(const void *drvdata,
-> +				       enum hwmon_sensor_types type, u32 attr,
-> +				       int channel)
-> +{
-> +	switch (type) {
-> +	case hwmon_fan:
-> +		return 0444;
-> +	case hwmon_pwm:
-> +		return 0644;
-> +	default:
-> +		return 0;
-> +	}
-> +}
-> +
-> +static int ayaneo_ec_read(struct device *dev, enum hwmon_sensor_types t=
-ype,
-> +			     u32 attr, int channel, long *val)
-> +{
-> +	u8 tmp;
-> +	int ret;
-> +
-> +	switch (type) {
-> +	case hwmon_fan:
-> +		switch (attr) {
-> +		case hwmon_fan_input:
-> +			ret =3D ec_read(AYANEO_FAN_REG, &tmp);
-> +			if (ret)
-> +				return ret;
-> +			*val =3D tmp << 8;
-> +			ret =3D ec_read(AYANEO_FAN_REG + 1, &tmp);
-> +			if (ret)
-> +				return ret;
-> +			*val +=3D tmp;
-> +			return 0;
-> +		default:
-> +			break;
-> +		}
-> +		break;
-> +	case hwmon_pwm:
-> +		switch (attr) {
-> +		case hwmon_pwm_input:
-> +			ret =3D ec_read(AYANEO_PWM_REG, &tmp);
-> +			if (ret)
-> +				return ret;
-> +			*val =3D (255 * tmp) / 100;
-> +			if (*val < 0 || *val > 255)
-> +				return -EINVAL;
-> +			return 0;
-> +		case hwmon_pwm_enable:
-> +			ret =3D ec_read(AYANEO_PWM_ENABLE_REG, &tmp);
-> +			if (ret)
-> +				return ret;
-> +			if (tmp =3D=3D AYANEO_PWM_MODE_MANUAL)
-> +				*val =3D 1;
-> +			else
-> +				*val =3D 2;
-> +			return 0;
-> +		default:
-> +			break;
-> +		}
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static int ayaneo_ec_write(struct device *dev, enum hwmon_sensor_types =
-type,
-> +			      u32 attr, int channel, long val)
-> +{
-> +	switch (type) {
-> +	case hwmon_pwm:
-> +		switch (attr) {
-> +		case hwmon_pwm_enable:
-> +			if (val =3D=3D 1)
-> +				return ec_write(AYANEO_PWM_ENABLE_REG,
-> +						AYANEO_PWM_MODE_MANUAL);
-> +			else if (val =3D=3D 2)
-> +				return ec_write(AYANEO_PWM_ENABLE_REG,
-> +						AYANEO_PWM_MODE_AUTO);
-> +			else
-> +				return -EINVAL;
+To address this, this patch clears the QCA_SSR_TRIGGERED and
+QCA_IBS_DISABLED flags and adds a 50ms delay after SSR, but only when
+HCI_QUIRK_NON_PERSISTENT_SETUP is not set. This ensures the controller
+completes the SSR process when BT_EN is always high due to hardware.
 
-Consider using a switch statement here.
+For the purpose of HCI_QUIRK_NON_PERSISTENT_SETUP, please refer to
+the comment in `include/net/bluetooth/hci.h`.
 
-> +		case hwmon_pwm_input:
-> +			if (val < 0 || val > 255)
-> +				return -EINVAL;
-> +			return ec_write(AYANEO_PWM_REG, (val * 100) / 255);
+The HCI_QUIRK_NON_PERSISTENT_SETUP quirk is associated with BT_EN,
+and its presence can be used to determine whether BT_EN is defined in DTS.
 
-Better use fixp_linear_interpolate() for that. Also you need to restore th=
-ose registers
-after suspend. I suggest that you use regmap for that.
+After SSR, host will not download the firmware, causing
+controller to remain in the IBS_WAKE state. Host needs
+to synchronize with the controller to maintain proper operation.
 
-Thanks,
-Armin Wolf
+Multiple triggers of SSR only first generate coredump file,
+due to memcoredump_flag no clear.
 
-> +		default:
-> +			break;
-> +		}
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static const struct hwmon_ops ayaneo_ec_hwmon_ops =3D {
-> +	.is_visible =3D ayaneo_ec_hwmon_is_visible,
-> +	.read =3D ayaneo_ec_read,
-> +	.write =3D ayaneo_ec_write,
-> +};
-> +
-> +static const struct hwmon_channel_info *const ayaneo_ec_sensors[] =3D {
-> +	HWMON_CHANNEL_INFO(fan, HWMON_F_INPUT),
-> +	HWMON_CHANNEL_INFO(pwm, HWMON_PWM_INPUT | HWMON_PWM_ENABLE),
-> +	NULL,
-> +};
-> +
-> +static const struct hwmon_chip_info ayaneo_ec_chip_info =3D {
-> +	.ops =3D &ayaneo_ec_hwmon_ops,
-> +	.info =3D ayaneo_ec_sensors,
-> +};
-> +
->   static int ayaneo_ec_probe(struct platform_device *pdev)
->   {
->   	const struct dmi_system_id *dmi_entry;
->   	struct ayaneo_ec_platform_data *data;
-> +	struct device *hwdev;
->  =20
->   	dmi_entry =3D dmi_first_match(dmi_table);
->   	if (!dmi_entry)
-> @@ -52,6 +177,13 @@ static int ayaneo_ec_probe(struct platform_device *p=
-dev)
->   	data->quirks =3D dmi_entry->driver_data;
->   	platform_set_drvdata(pdev, data);
->  =20
-> +	if (data->quirks->has_fan_control) {
-> +		hwdev =3D devm_hwmon_device_register_with_info(
-> +			&pdev->dev, "ayaneo_ec", NULL, &ayaneo_ec_chip_info, NULL);
-> +		if (IS_ERR(hwdev))
-> +			return PTR_ERR(hwdev);
-> +	}
-> +
->   	return 0;
->   }
->  =20
+add clear coredump flag when ssr completed.
+
+When the SSR duration exceeds 2 seconds, it triggers
+host tx_idle_timeout, which sets host TX state to sleep. due to the
+hardware pulling up bt_en, the firmware is not downloaded after the SSR.
+As a result, the controller does not enter sleep mode. Consequently,
+when the host sends a command afterward, it sends 0xFD to the controller,
+but the controller does not respond, leading to a command timeout.
+
+So reset tx_idle_timer after SSR to prevent host enter TX IBS_Sleep mode.
+
+Changes since v6-7:
+- Merge the changes into a single patch.
+- Update commit.
+
+Changes since v1-5:
+- Add an explanation for HCI_QUIRK_NON_PERSISTENT_SETUP.
+- Add commments for msleep(50).
+- Update format and commit.
+
+Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
+---
+ drivers/bluetooth/hci_qca.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index 4e56782b0..9dc59b002 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -1653,6 +1653,39 @@ static void qca_hw_error(struct hci_dev *hdev, u8 code)
+ 		skb_queue_purge(&qca->rx_memdump_q);
+ 	}
+ 
++	/*
++	 * If the BT chip's bt_en pin is connected to a 3.3V power supply via
++	 * hardware and always stays high, driver cannot control the bt_en pin.
++	 * As a result, during SSR (SubSystem Restart), QCA_SSR_TRIGGERED and
++	 * QCA_IBS_DISABLED flags cannot be cleared, which leads to a reset
++	 * command timeout.
++	 * Add an msleep delay to ensure controller completes the SSR process.
++	 *
++	 * Host will not download the firmware after SSR, controller to remain
++	 * in the IBS_WAKE state, and the host needs to synchronize with it
++	 *
++	 * Since the bluetooth chip has been reset, clear the memdump state.
++	 */
++	if (!test_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks)) {
++		/*
++		 * When the SSR (SubSystem Restart) duration exceeds 2 seconds,
++		 * it triggers host tx_idle_delay, which sets host TX state
++		 * to sleep. Reset tx_idle_timer after SSR to prevent
++		 * host enter TX IBS_Sleep mode.
++		 */
++		mod_timer(&qca->tx_idle_timer, jiffies +
++				  msecs_to_jiffies(qca->tx_idle_delay));
++
++		/* Controller reset completion time is 50ms */
++		msleep(50);
++
++		clear_bit(QCA_SSR_TRIGGERED, &qca->flags);
++		clear_bit(QCA_IBS_DISABLED, &qca->flags);
++
++		qca->tx_ibs_state = HCI_IBS_TX_AWAKE;
++		qca->memdump_state = QCA_MEMDUMP_IDLE;
++	}
++
+ 	clear_bit(QCA_HW_ERROR_EVENT, &qca->flags);
+ }
+ 
+-- 
+2.34.1
+
 
