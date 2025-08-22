@@ -1,76 +1,75 @@
-Return-Path: <linux-kernel+bounces-781923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E215B318C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:05:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5A56B318BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41502AC0C38
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:59:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC6B3640592
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 12:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFFF3074A5;
-	Fri, 22 Aug 2025 12:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F362C2FDC3B;
+	Fri, 22 Aug 2025 12:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="M72lKuoK"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="gAJKGmdK"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F402FD7BC
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83A4307490
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 12:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755867408; cv=none; b=sCsIHYNOt0y0uV49H4n6mhhCfajvN79ynTq7JbnuCN+zMWbl1nwkto4IjkVaD2JV9KRuseGt95MrenuFq21LIYvRy3Szk0A36JIeJReWGGFfu4qQufGOl3y1dlklPc1oxaYC8jamnyaJEHY6Ps8a6RTI7k2w7GHV1TtI52EE5lc=
+	t=1755867411; cv=none; b=QEVtuNx1nA1itEjgaTZ6/vGM7dTBjqrPS8qM0UtdAZs6O75zq1WRK0RtE/B9eqFblIz4zANo+ShOyO9LdN3kjwlqsw8mQLhUugwTf6Q9jUrwtohsMmKXOjd0qYExKgUCNKZbfFQkafZBK+ydzWng0hp7hpT+mG+RWlDki7YYR90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755867408; c=relaxed/simple;
-	bh=NV6+rJDxkCRhM79mHIfKFRRwVUmLGb/zYkCLHClc0as=;
+	s=arc-20240116; t=1755867411; c=relaxed/simple;
+	bh=Kgha9M2aktOgnDSytFmmY+NS6OnOUezCcL8YMo7VSnY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nOktr7am6t4+DK4/QVCpnC8fMEok/1WTLx5fTPIOkUT5l2j9l0yXYMhM1uQywH8x6qx6yQkeMi81wv+dWFV5S2cc5uXD7S7aTGVJ7IOvkpxAOoLl33rbZgulKGuJQ34vnruVU8wfT3zJuQDD8ddtsYjV97f1aQtTP5dYkpPP0ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=M72lKuoK; arc=none smtp.client-ip=209.85.215.169
+	 MIME-Version; b=Dr2aYsWyajWRrEMAODQXP5xFNdjUYH4EVMuMdOFt0PwDwUkwkbDJb6EXxp5jRa9D1FBUU65UIurYUMisDRtoO2itLdL74iWTSXqtvbhRLNyE4FblhLDJ2F6y+E0OcoCTpkILYKM3qNMC1zEUdeYIlkxhlyYk/AgqcMt6iMVkq3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=gAJKGmdK; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b474e8d6d04so1812673a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:56:45 -0700 (PDT)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76e34c4ce54so1907890b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 05:56:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1755867405; x=1756472205; darn=vger.kernel.org;
+        d=furiosa.ai; s=google; t=1755867409; x=1756472209; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PvQIwb1NNcq0g0gNIsMaMiMcUpYuzVOnVto3+pLplyI=;
-        b=M72lKuoKsB4FnfcvL5JS+VjNYxyT4xryr5Qj1GIy9mlx22AgT3ePm+vFxl8NPQ9Ghe
-         OtWkgMeUHDL4yyzAFPqg7Ky6tNKJcnJBvigOt1SnsWz5e4Cjvt+IDy00EwblH2m1ps8K
-         sQwJEtw0FpTbTg7lUwz76jTCaOjEsO/vaGkp4=
+        bh=Fpc3G4jkNpPP+8gbkzeuRuDbKnBFZfB7UrIuz+P/mto=;
+        b=gAJKGmdKnDBU/z1X6hNTP4jUPFXoiSJCsx2GxsWmYl3fDO0WYvP2uJj2j8I32acloV
+         cygrRrktHOCubpd+blNL1p9nUdDdrOnS8Kx4LwyUTgRhUPh+2E7/NViaIJF7K7MCEJ9p
+         wRfEqjNXCGKn+C9n1uozPKVRCBjR9OgS0//VU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755867405; x=1756472205;
+        d=1e100.net; s=20230601; t=1755867409; x=1756472209;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PvQIwb1NNcq0g0gNIsMaMiMcUpYuzVOnVto3+pLplyI=;
-        b=OVkrktUh/xpIveLPO3ok2YZViO9bbyg5YALE5NqdXHN+CV7ljxdZOaimMHzv9CAz0C
-         O+hg+CQ13YbqBORKBIikwOTAxWAy/nv92HaGSwAb2LhPLjbLk0ZVGYogbDCkxgm0nolO
-         o/KLb217djAyZITDjtPLRZxPbVwvzHzeFovYyoo+fJIxVfZsjE3T6zgjTSmG7ql23OwD
-         w1U04Y9TOIgqmX+dok5hxjoyYYhqu+N3LYQwQd00AuDOr6FwP+2dqjW8KLO3VNpPQHAH
-         XQqM/dkPW4IdG3yMek78cK75ZH/EwhoNr2EGjR/Snfa4hmzx2qqSmC5ztVcsM6aEOEfv
-         rcQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWx7wR8qDodYX2Zu1/9Ed1HlnU/SmsKWW2Jkrtc0/+vJk9gb+FmT91DWShOjMroar8n2+2FzeZhIwMTjU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6bGb2fsmwUiIrYXJXduSnZwBzKq41N34t9qvHpMyrJArA1epZ
-	HLcdEbl7OVq3rK/C2220mPd64opiyn2XqX3hxPZpp/Uww3o5gNtc8UV8hMVuR8jfIrTwfmhfVMz
-	e3y6N
-X-Gm-Gg: ASbGncuEzlJElSPIl7zZZan0BMbxhVsS+5ciQ+Tjk+lEcU2xZYLHyUn6ALYZeS5r5Lm
-	O5hePdJfCs92BfFsyo3CzJJsrPbRBpykJA6l7dXAf8dspJbU4JObxTSw6YifzI/6cs0rtg+1itY
-	Qkh2mZiHxxrMiyNOhz4YR9q9Id5aHIeCZVA/qSzRFxZDk0H982bvWLGIcwB26N1RG9vLMMz/LJu
-	Zz2PjShd6tEdBSyY1PGF3R3eLxMzbDXCC2ceAxujN5CFFfuKcvyWYXXCrcG9ke25u3zLYoqCiD6
-	UtYS+i9OUVWtijBEJg8EEiUU8e5y0bC1VzfVn6YrprId/Tm7qk7LY/fcB/DF8wJDTX2DksYNxT7
-	xYO/+eJDoxQZoA1jOcMkNqrox6HGU8fgIPer0FkVfXy0ptZiM8fWtRSK7D8UspWepSwtoB6ub1A
-	NM6sqPMFQ=
-X-Google-Smtp-Source: AGHT+IFUsehCGOfZistHEaN6+J+4p2f5uUzKwncvYpuYdsFqJWvzkLLRlUScB/Cvtgvlof1Oz+7Xvg==
-X-Received: by 2002:a17:903:320d:b0:245:f53f:f7bc with SMTP id d9443c01a7336-2462edee95bmr32712685ad.9.1755867405306;
-        Fri, 22 Aug 2025 05:56:45 -0700 (PDT)
+        bh=Fpc3G4jkNpPP+8gbkzeuRuDbKnBFZfB7UrIuz+P/mto=;
+        b=Dh/L6JPKy/uQuIQ1FfkzWX1iVqkcMqy6CkmPSWb1Pd8sNBUSsSXmSsD+HLanutfX1y
+         Z28nUhIMXRs8dbSuwTL3L6by6cBCDLjz9SUhXpItE1DNjbw0N137JyttomWU/pkU7/W9
+         4iV847dKdK6g8mCW2NcfHgC/3fzxu4KBLUpvpmiI0gU/KWMduVbNgeC91WPxbcCOevwE
+         3y8z/m3lwnWcgG0NRr4C/yIpUBOoluqu3mORBWxzPjuHlUbCt2aDM6zUuASLRjVQWbMw
+         L97dbJRytGu3s7qGQZAYPVsyS17DkQ96XGNjfvMqShahdiv3zlG9Ynvauk3MNDk4Nq/s
+         ZjjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpdbN/tnkvWJmepa+CbLINSKOovdWweVrQ7jxzSKQ5CxWliP9wlwpTmFb8+qJ9fvYhTZ35ANxbkn34Ng0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLGrRbrHyGUN368+tJ2apekZHz7kzrbwmLsOtWR2KWwqYNBdYu
+	kRLMbWizMIgrPlyuMfijkhYd/GHJ2gOlFNJkWWh+kHxeJf6QaaJ8WPWNfdXfc/Pk+ADy1kePdtF
+	nAzLL
+X-Gm-Gg: ASbGncsu85z0DProCPG6MdLX4s29L6I0KQUkgRdwsoJ+bNJp4V4QlTTYY0Vj6nAwB+r
+	QFTTrjbMjAcS5Mfh7T5AKpd3rnLLvZfIGve2sZPEu3DaiGSAHzccoKh0Yug19LdhAyeLuUz0f4M
+	okcxaTXyXz/VRrKhQTH2JLI8uzypfUFrLR7logYfibOMfnDk44wr1ThlhFM7jip/Y3P8PbZkuvY
+	FAtgE0svedKZxNbbWofhefooqWZdX9gxMPYumCWCWVR0WNUCUXfWk5ubJEWDZw1COOzkJM9fQl2
+	Uo92i7HGBMb6eYkrOSo6Wbig8AZdWvjnH6mgZXd1S6+mRfF8mncTOeRj5hQtzlUNAiEFTopy13F
+	zKGkDkYy0TWGHEhmOuVPUIg6qbBvNHMJeNlTzCc+6loFnyDW7xQC9wmRc5/RZx6pD9sL4QtO1
+X-Google-Smtp-Source: AGHT+IEKR0Ev77BkY8PeWKbKpMu9lsAQ4CC61YA/ParYg5pJ6IvbBCFoZtzUSMCIDkhNoiLwiTh+1g==
+X-Received: by 2002:a05:6a21:3297:b0:243:78a:82c5 with SMTP id adf61e73a8af0-243302e2cfcmr8212059637.26.1755867408937;
+        Fri, 22 Aug 2025 05:56:48 -0700 (PDT)
 Received: from sidong.sidong.yang.office.furiosa.vpn ([175.195.128.78])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4764003537sm7194544a12.25.2025.08.22.05.56.41
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4764003537sm7194544a12.25.2025.08.22.05.56.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 05:56:44 -0700 (PDT)
+        Fri, 22 Aug 2025 05:56:48 -0700 (PDT)
 From: Sidong Yang <sidong.yang@furiosa.ai>
 To: Jens Axboe <axboe@kernel.dk>,
 	Daniel Almeida <daniel.almeida@collabora.com>,
@@ -83,9 +82,9 @@ Cc: Miguel Ojeda <ojeda@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	Sidong Yang <sidong.yang@furiosa.ai>
-Subject: [RFC PATCH v3 3/5] rust: io_uring: introduce rust abstraction for io-uring cmd
-Date: Fri, 22 Aug 2025 12:55:53 +0000
-Message-ID: <20250822125555.8620-4-sidong.yang@furiosa.ai>
+Subject: [RFC PATCH v3 4/5] rust: miscdevice: Add `uring_cmd` support
+Date: Fri, 22 Aug 2025 12:55:54 +0000
+Message-ID: <20250822125555.8620-5-sidong.yang@furiosa.ai>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250822125555.8620-1-sidong.yang@furiosa.ai>
 References: <20250822125555.8620-1-sidong.yang@furiosa.ai>
@@ -97,350 +96,113 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implment the io-uring abstractions needed for miscdevicecs and other
-char devices that have io-uring command interface.
+This patch introduces support for `uring_cmd` to the `miscdevice`
+framework. This is achieved by adding a new `uring_cmd` method to the
+`MiscDevice` trait and wiring it up to the corresponding
+`file_operations` entry.
 
-* `io_uring::IoUringCmd` : Rust abstraction for `io_uring_cmd` which
-  will be used as arg for `MiscDevice::uring_cmd()`. And driver can get
-  `cmd_op` sent from userspace. Also it has `flags` which includes option
-  that is reissued.
+The `uring_cmd` function provides a mechanism for `io_uring` to issue
+commands to a device driver.
 
-* `io_uring::IoUringSqe` : Rust abstraction for `io_uring_sqe` which
-  could be get from `IoUringCmd::sqe()` and driver could get `cmd_data`
-  from userspace. Also `IoUringSqe` has more data like opcode could be used in
-  driver.
+The new `uring_cmd` method takes the device, an `IoUringCmd` object,
+and issue flags as arguments. The `IoUringCmd` object is a safe Rust
+abstraction around the raw `io_uring_cmd` struct.
+
+To enable `uring_cmd` for a specific misc device, the `HAS_URING_CMD`
+constant must be set to `true` in the `MiscDevice` implementation.
 
 Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
 ---
- rust/kernel/io_uring.rs | 306 ++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs      |   1 +
- 2 files changed, 307 insertions(+)
- create mode 100644 rust/kernel/io_uring.rs
+ rust/kernel/miscdevice.rs | 53 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 52 insertions(+), 1 deletion(-)
 
-diff --git a/rust/kernel/io_uring.rs b/rust/kernel/io_uring.rs
-new file mode 100644
-index 000000000000..61e88bdf4e42
---- /dev/null
-+++ b/rust/kernel/io_uring.rs
-@@ -0,0 +1,306 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// SPDX-FileCopyrightText: (C) 2025 Furiosa AI
+diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+index 6373fe183b27..fcef579218ba 100644
+--- a/rust/kernel/miscdevice.rs
++++ b/rust/kernel/miscdevice.rs
+@@ -11,9 +11,10 @@
+ use crate::{
+     bindings,
+     device::Device,
+-    error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
++    error::{from_result, to_result, Error, Result, VTABLE_DEFAULT_ERROR},
+     ffi::{c_int, c_long, c_uint, c_ulong},
+     fs::File,
++    io_uring::IoUringCmd,
+     mm::virt::VmaNew,
+     prelude::*,
+     seq_file::SeqFile,
+@@ -180,6 +181,21 @@ fn show_fdinfo(
+     ) {
+         build_error!(VTABLE_DEFAULT_ERROR)
+     }
 +
-+//! Abstractions for io-uring.
-+//!
-+//! This module provides types for implements io-uring interface for char device.
-+//!
-+//!
-+//! C headers: [`include/linux/io_uring/cmd.h`](srctree/include/linux/io_uring/cmd.h) and
-+//! [`include/linux/io_uring/io_uring.h`](srctree/include/linux/io_uring/io_uring.h)
-+
-+use core::{mem::MaybeUninit, pin::Pin};
-+
-+use crate::error::from_result;
-+use crate::transmute::{AsBytes, FromBytes};
-+use crate::{fs::File, types::Opaque};
-+
-+use crate::prelude::*;
-+
-+/// io-uring opcode
-+pub mod opcode {
-+    /// opcode for uring cmd
-+    pub const URING_CMD: u32 = bindings::io_uring_op_IORING_OP_URING_CMD;
-+}
-+
-+/// A Rust abstraction for the Linux kernel's `io_uring_cmd` structure.
-+///
-+/// This structure is a safe, opaque wrapper around the raw C `io_uring_cmd`
-+/// binding from the Linux kernel. It represents a command structure used
-+/// in io_uring operations within the kernel.
-+/// This type is used internally by the io_uring subsystem to manage
-+/// asynchronous I/O commands.
-+///
-+/// This type should not be constructed or manipulated directly by
-+/// kernel module developers.
-+///
-+/// # INVARIANT
-+/// - `self.inner` always points to a valid, live `bindings::io_uring_cmd`.
-+#[repr(transparent)]
-+pub struct IoUringCmd {
-+    /// An opaque wrapper containing the actual `io_uring_cmd` data.
-+    inner: Opaque<bindings::io_uring_cmd>,
-+}
-+
-+impl IoUringCmd {
-+    /// Returns the cmd_op with associated with the `io_uring_cmd`.
-+    #[inline]
-+    pub fn cmd_op(&self) -> u32 {
-+        // SAFETY: `self.inner` is guaranteed by the type invariant to point
-+        // to a live `io_uring_cmd`, so dereferencing is safe.
-+        unsafe { (*self.inner.get()).cmd_op }
-+    }
-+
-+    /// Returns the flags with associated with the `io_uring_cmd`.
-+    #[inline]
-+    pub fn flags(&self) -> u32 {
-+        // SAFETY: `self.inner` is guaranteed by the type invariant to point
-+        // to a live `io_uring_cmd`, so dereferencing is safe.
-+        unsafe { (*self.inner.get()).flags }
-+    }
-+
-+    /// Reads protocol data unit as `T` that impl `FromBytes` from uring cmd
++    /// Handler for uring_cmd.
 +    ///
-+    /// Fails with [`EFAULT`] if size of `T` is bigger than pdu size.
-+    #[inline]
-+    pub fn read_pdu<T: FromBytes>(&self) -> Result<T> {
-+        // SAFETY: `self.inner` is guaranteed by the type invariant to point
-+        // to a live `io_uring_cmd`, so dereferencing is safe.
-+        let inner = unsafe { &mut *self.inner.get() };
-+
-+        let len = size_of::<T>();
-+        if len > inner.pdu.len() {
-+            return Err(EFAULT);
-+        }
-+
-+        let mut out: MaybeUninit<T> = MaybeUninit::uninit();
-+        let ptr = &raw mut inner.pdu as *const c_void;
-+
-+        // SAFETY:
-+        // * The `ptr` is valid pointer from `self.inner` that is guaranteed by type invariant.
-+        // * The `out` is valid pointer that points `T` which impls `FromBytes` and checked
-+        //   size of `T` is smaller than pdu size.
-+        unsafe {
-+            core::ptr::copy_nonoverlapping(ptr, out.as_mut_ptr().cast::<c_void>(), len);
-+        }
-+
-+        // SAFETY: The read above has initialized all bytes in `out`, and since `T` implements
-+        // `FromBytes`, any bit-pattern is a valid value for this type.
-+        Ok(unsafe { out.assume_init() })
++    /// This function is invoked when userspace process submits an uring_cmd op
++    /// on io-uring submission queue. The `device` is borrowed instance defined
++    /// by `Ptr`. The `io_uring_cmd` would be used for get arguments cmd_op, sqe,
++    /// cmd_data. The `issue_flags` is the flags includes options for uring_cmd.
++    /// The options are listed in `kernel::io_uring::cmd_flags`.
++    fn uring_cmd(
++        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
++        _io_uring_cmd: Pin<&mut IoUringCmd>,
++        _issue_flags: u32,
++    ) -> Result<i32> {
++        build_error!(VTABLE_DEFAULT_ERROR)
 +    }
-+
-+    /// Writes the provided `value` to `pdu` in uring_cmd `self`
-+    ///
-+    /// Fails with [`EFAULT`] if size of `T` is bigger than pdu size.
-+    #[inline]
-+    pub fn write_pdu<T: AsBytes>(&mut self, value: &T) -> Result<()> {
-+        // SAFETY: `self.inner` is guaranteed by the type invariant to point
-+        // to a live `io_uring_cmd`, so dereferencing is safe.
-+        let inner = unsafe { &mut *self.inner.get() };
-+
-+        let len = size_of::<T>();
-+        if len > inner.pdu.len() {
-+            return Err(EFAULT);
-+        }
-+
-+        let src = (value as *const T).cast::<c_void>();
-+        let dst = &raw mut inner.pdu as *mut c_void;
-+
-+        // SAFETY:
-+        // * The `src` is points valid memory that is guaranteed by `T` impls `AsBytes`
-+        // * The `dst` is valid. It's from `self.inner` that is guaranteed by type invariant.
-+        // * It's safe to copy because size of `T` is no more than len of pdu.
-+        unsafe {
-+            core::ptr::copy_nonoverlapping(src, dst, len);
-+        }
-+
-+        Ok(())
-+    }
-+
-+    /// Constructs a new [`IoUringCmd`] from a raw `io_uring_cmd`
-+    ///
+ }
+ 
+ /// A vtable for the file operations of a Rust miscdevice.
+@@ -337,6 +353,36 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+         T::show_fdinfo(device, m, file);
+     }
+ 
 +    /// # Safety
 +    ///
-+    /// The caller must guarantee that:
-+    /// - `ptr` is non-null, properly aligned, and points to a valid
-+    ///   `bindings::io_uring_cmd`.
-+    /// - The pointed-to memory remains initialized and valid for the entire
-+    ///   lifetime `'a` of the returned reference.
-+    /// - While the returned `Pin<&'a mut IoUringCmd>` is alive, the underlying
-+    ///   object is **not moved** (pinning requirement).
-+    /// - **Aliasing rules:** the returned `&mut` has **exclusive** access to the same
-+    ///   object for its entire lifetime:
-+    ///   - No other `&mut` **or** `&` references to the same `io_uring_cmd` may be
-+    ///     alive at the same time.
-+    ///   - There must be no concurrent reads/writes through raw pointers, FFI, or
-+    ///     other kernel paths to the same object during this lifetime.
-+    ///   - If the object can be touched from other contexts (e.g. IRQ/another CPU),
-+    ///     the caller must provide synchronization to uphold this exclusivity.
-+    /// - This function relies on `IoUringCmd` being `repr(transparent)` over
-+    ///   `bindings::io_uring_cmd` so the cast preserves layout.
-+    #[inline]
-+    pub unsafe fn from_raw<'a>(ptr: *mut bindings::io_uring_cmd) -> Pin<&'a mut IoUringCmd> {
-+        // SAFETY:
-+        // * The caller guarantees that the pointer is not dangling and stays
-+        //   valid for the duration of 'a.
-+        // * The cast is okay because `IoUringCmd` is `repr(transparent)` and
-+        //   has the same memory layout as `bindings::io_uring_cmd`.
-+        // * The returned `Pin` ensures that the object cannot be moved, which
-+        //   is required because the kernel may hold pointers to this memory
-+        //   location and moving it would invalidate those pointers.
-+        unsafe { Pin::new_unchecked(&mut *ptr.cast()) }
++    /// The caller must ensure that:
++    /// - The pointer `ioucmd` is not null and points to a valid `bindings::io_uring_cmd`.
++    unsafe extern "C" fn uring_cmd(
++        ioucmd: *mut bindings::io_uring_cmd,
++        issue_flags: ffi::c_uint,
++    ) -> c_int {
++        // SAFETY: `file` referenced by `ioucmd` is valid pointer. It's assigned in
++        // uring cmd preparation. So dereferencing is safe.
++        let raw_file = unsafe { (*ioucmd).file };
++
++        // SAFETY: `private_data` is guaranteed that it has valid pointer after
++        // this file opened. So dereferencing is safe.
++        let private = unsafe { (*raw_file).private_data }.cast();
++
++        // SAFETY: `ioucmd` is not null and points to valid memory `bindings::io_uring_cmd`
++        // and the memory pointed by `ioucmd` is valid and will not be moved or
++        // freed for the lifetime of returned value `ioucmd`
++        let ioucmd = unsafe { IoUringCmd::from_raw(ioucmd) };
++
++        // SAFETY: This call is safe because `private` is returned by
++        // `into_foreign` in [`open`]. And it's guaranteed
++        // that `from_foreign` is called by [`release`] after the end of
++        // the lifetime of `device`
++        let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
++
++        from_result(|| T::uring_cmd(device, ioucmd, issue_flags))
 +    }
 +
-+    /// Returns the file that referenced by uring cmd self.
-+    #[inline]
-+    pub fn file(&self) -> &File {
-+        // SAFETY: `self.inner` is guaranteed by the type invariant to point
-+        // to a live `io_uring_cmd`, so dereferencing is safe.
-+        let file = unsafe { (*self.inner.get()).file };
-+
-+        // SAFETY:
-+        // * The `file` points valid file.
-+        // * refcount is positive after submission queue entry issued.
-+        // * There is no active fdget_pos region on the file on this thread.
-+        unsafe { File::from_raw_file(file) }
-+    }
-+
-+    /// Returns an reference to the [`IoUringSqe`] associated with this command.
-+    #[inline]
-+    pub fn sqe(&self) -> &IoUringSqe {
-+        // SAFETY: `self.inner` is guaranteed by the type invariant to point
-+        // to a live `io_uring_cmd`, so dereferencing is safe.
-+        let sqe = unsafe { (*self.inner.get()).sqe };
-+        // SAFETY: The call guarantees that the `sqe` points valid io_uring_sqe.
-+        unsafe { IoUringSqe::from_raw(sqe) }
-+    }
-+
-+    /// Completes an this [`IoUringCmd`] request that was previously queued.
-+    ///
-+    /// # Safety
-+    ///
-+    /// - This function must be called **only** for a command whose `uring_cmd`
-+    ///   handler previously returned **`-EIOCBQUEUED`** to io_uring.
-+    ///
-+    /// # Parameters
-+    ///
-+    /// - `ret`: Result to return to userspace.
-+    /// - `res2`: Extra for big completion queue entry `IORING_SETUP_CQE32`.
-+    /// - `issue_flags`: Flags associated with this request, typically the same
-+    ///   as those passed to the `uring_cmd` handler.
-+    #[inline]
-+    pub fn done(self: Pin<&mut IoUringCmd>, ret: Result<i32>, res2: u64, issue_flags: u32) {
-+        let ret = from_result(|| ret) as isize;
-+        // SAFETY: The call guarantees that `self.inner` is not dangling and stays valid
-+        unsafe {
-+            bindings::io_uring_cmd_done(self.inner.get(), ret, res2, issue_flags);
-+        }
-+    }
-+}
-+
-+/// A Rust abstraction for the Linux kernel's `io_uring_sqe` structure.
-+///
-+/// This structure is a safe, opaque wrapper around the raw C [`io_uring_sqe`](srctree/include/uapi/linux/io_uring.h)
-+/// binding from the Linux kernel. It represents a Submission Queue Entry
-+/// used in io_uring operations within the kernel.
-+///
-+/// # Type Safety
-+///
-+/// The `#[repr(transparent)]` attribute ensures that this wrapper has
-+/// the same memory layout as the underlying `io_uring_sqe` structure,
-+/// allowing it to be safely transmuted between the two representations.
-+///
-+/// # Fields
-+///
-+/// * `inner` - An opaque wrapper containing the actual `io_uring_sqe` data.
-+///             The `Opaque` type prevents direct access to the internal
-+///             structure fields, ensuring memory safety and encapsulation.
-+///
-+/// # Usage
-+///
-+/// This type represents a submission queue entry that describes an I/O
-+/// operation to be executed by the io_uring subsystem. It contains
-+/// information such as the operation type, file descriptor, buffer
-+/// pointers, and other operation-specific data.
-+///
-+/// Users can obtain this type from [`IoUringCmd::sqe()`] method, which
-+/// extracts the submission queue entry associated with a command.
-+///
-+/// This type should not be constructed or manipulated directly by
-+/// kernel module developers.
-+///
-+/// # INVARIANT
-+/// - `self.inner` always points to a valid, live `bindings::io_uring_sqe`.
-+#[repr(transparent)]
-+pub struct IoUringSqe {
-+    inner: Opaque<bindings::io_uring_sqe>,
-+}
-+
-+impl IoUringSqe {
-+    /// Reads and interprets the `cmd` field of an `bindings::io_uring_sqe` as a value of type `T`.
-+    ///
-+    /// # Safety & Invariants
-+    /// - Construction of `T` is delegated to `FromBytes`, which guarantees that `T` has no
-+    ///   invalid bit patterns and can be safely reconstructed from raw bytes.
-+    /// - **Limitation:** This implementation does not support `IORING_SETUP_SQE128` (larger SQE entries).
-+    ///   Only the standard `io_uring_sqe` layout is handled here.
-+    ///
-+    /// # Errors
-+    /// * Returns `EINVAL` if the `self` does not hold a `opcode::URING_CMD`.
-+    /// * Returns `EFAULT` if the command buffer is smaller than the requested type `T`.
-+    ///
-+    /// # Returns
-+    /// * On success, returns a `T` deserialized from the `cmd`.
-+    /// * On failure, returns an appropriate error as described above.
-+    pub fn cmd_data<T: FromBytes>(&self) -> Result<T> {
-+        // SAFETY: `self.inner` guaranteed by the type invariant to point
-+        // to a live `io_uring_sqe`, so dereferencing is safe.
-+        let sqe = unsafe { &*self.inner.get() };
-+
-+        if u32::from(sqe.opcode) != opcode::URING_CMD {
-+            return Err(EINVAL);
-+        }
-+
-+        // SAFETY: Accessing the `sqe.cmd` union field is safe because we've
-+        // verified that `sqe.opcode == IORING_OP_URING_CMD`, which guarantees
-+        // that this union variant is initialized and valid.
-+        let cmd = unsafe { sqe.__bindgen_anon_6.cmd.as_ref() };
-+        let cmd_len = size_of_val(&sqe.__bindgen_anon_6.bindgen_union_field);
-+
-+        if cmd_len < size_of::<T>() {
-+            return Err(EFAULT);
-+        }
-+
-+        let cmd_ptr = cmd.as_ptr() as *mut T;
-+
-+        // SAFETY: `cmd_ptr` is valid from `self.inner` which is guaranteed by
-+        // type variant. And also it points to initialized `T` from userspace.
-+        let ret = unsafe { core::ptr::read_unaligned(cmd_ptr) };
-+
-+        Ok(ret)
-+    }
-+
-+    /// Constructs a new `IoUringSqe` from a raw `io_uring_sqe`.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The caller must guarantee that:
-+    /// - `ptr` is non-null, properly aligned, and points to a valid initialized
-+    ///   `bindings::io_uring_sqe`.
-+    /// - The pointed-to memory remains valid (not freed or repurposed) for the
-+    ///   entire lifetime `'a` of the returned reference.
-+    /// - **Aliasing rules (for `&T`):** while the returned `&'a IoUringSqe` is
-+    ///   alive, there must be **no mutable access** to the same object through any
-+    ///   path (no `&mut`, no raw-pointer writes, no FFI/IRQ/other-CPU writers).
-+    ///   Multiple `&` is fine **only if all of them are read-only** for the entire
-+    ///   overlapping lifetime.
-+    /// - This relies on `IoUringSqe` being `repr(transparent)` over
-+    ///   `bindings::io_uring_sqe`, so the cast preserves layout.
-+    #[inline]
-+    pub unsafe fn from_raw<'a>(ptr: *const bindings::io_uring_sqe) -> &'a IoUringSqe {
-+        // SAFETY: The caller guarantees that the pointer is not dangling and stays valid for the
-+        // duration of 'a. The cast is okay because `IoUringSqe` is `repr(transparent)` and has the
-+        // same memory layout as `bindings::io_uring_sqe`.
-+        unsafe { &*ptr.cast() }
-+    }
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index ed53169e795c..d38cf7137401 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -91,6 +91,7 @@
- pub mod fs;
- pub mod init;
- pub mod io;
-+pub mod io_uring;
- pub mod ioctl;
- pub mod jump_label;
- #[cfg(CONFIG_KUNIT)]
+     const VTABLE: bindings::file_operations = bindings::file_operations {
+         open: Some(Self::open),
+         release: Some(Self::release),
+@@ -359,6 +405,11 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+         } else {
+             None
+         },
++        uring_cmd: if T::HAS_URING_CMD {
++            Some(Self::uring_cmd)
++        } else {
++            None
++        },
+         // SAFETY: All zeros is a valid value for `bindings::file_operations`.
+         ..unsafe { MaybeUninit::zeroed().assume_init() }
+     };
 -- 
 2.43.0
 
