@@ -1,241 +1,197 @@
-Return-Path: <linux-kernel+bounces-782462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB6AB320A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:40:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2A6B320B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 18:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 724584E1E5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:40:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1EF8A06630
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC6C307AF0;
-	Fri, 22 Aug 2025 16:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3BD305E04;
+	Fri, 22 Aug 2025 16:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WlVSsqjN"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Qwm4Atk6"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2054.outbound.protection.outlook.com [40.107.94.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77042FE58F
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755880843; cv=none; b=kckDQOk9pntUtx7oNQGHWb2OuUTvlPBXrHFGv1UKUePdWqpCgtbXg9RuMs+QWEVFiZO+LhuWQJGnfomqjywrg7fx2COHtKM1WiCfPpmQ9JFhGfR0Ra8egwIdOdh1pmQtdCNVmxY9SSVJDsQAlI2DvCeUIqQCDx3XpKqoUddmdyQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755880843; c=relaxed/simple;
-	bh=xubAxbbDRYNiZbdFeA8Ljpottt4POVcjOrKAqDCgqZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NloXaeMAwkVYyb7lvqLWBUrXfdLKJ7SsCtSnsQwWuBCY6XnuxR7knlGGs68OFUgM8ysbf1BqquDdg18Cte7p01MSlPVm5Z/8Bc87iPXNTIKFE024RYe1dGIo1Dy4BhmX1UVW0gHzxt8vxQfDh+cJ3oNoJ5uAsERyIU+NJ3aoOb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WlVSsqjN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57M8UJ2X017907
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:40:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=UV18A0jtIPe5KheJnTPIfioZ
-	/Uu+K0mhwyAiYELY2E8=; b=WlVSsqjN/iByvs9mxxiUm1dueQh5J3Cw7oS9eXIP
-	0W/dJSIj2dsoiTLMZMsQYPBuEun5OYGz3onVMvsjTwu6W+yW/S/O9POArj7gUIq0
-	JhM8UcEMkuWYHckel9fruqDOBjtiRDlPSFUB0kWjgUGMq6iGIVkZ07RDAzH2UQps
-	oG255dFhH+Fi2E7QFD16z40TOL5AhpR8YDF0bgV1hHGQlkelu0d4yB62fSZFsz0B
-	Gl2iPE2dUSUeS5pcfuIVwCdoQ8vC1UVi5DuJ43I/1pysbxHkfVfiBTXPV90ho1h2
-	7fsZaqMOSXj5a4WVV7DVaFSkbZEXpGMseXxKOo92WRLTAQ==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52b1rxd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:40:40 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-24636484391so10979045ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 09:40:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755880839; x=1756485639;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UV18A0jtIPe5KheJnTPIfioZ/Uu+K0mhwyAiYELY2E8=;
-        b=dmMUzQErqtcx1/qi4yOzuH1qmOXclk/mjnGfRPLfhqEecdQFRO3Ajrrei3ZI2rCius
-         azS0c2gJ/eRZqnDcVM7Ste4OlhlyDIUI3ocQiMyn+n/0yS+s7rxNxxDtQULUQLDsPHJF
-         Ig5cnUnkrewa+s/uMsj1kIIgbWJEk6O9MxolIgvDCOmpyE+9u8T/jaLApsJnrBMmg4+w
-         ipOl96bedC7iyT1Zj22oNYP3CbJ7BXPLTG0RMNrE2G56DlGnDN94MpzVn/VgiDReQjTI
-         3UE0zSej2DXUJiI5UozWpaYN0gWYw0oTcl9Thq3Bf/OQXW6Lo9xeMNPbNIgP95Cutzv5
-         VANw==
-X-Forwarded-Encrypted: i=1; AJvYcCU22w1VEFrwb8pbLjpMcUGJoduL2SVFus/2WmaFjDZ0LowiWz5zptu/5lU2cUNWwLg2439lFITLZUVQlm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt3JujI77sulu9ewrxzilKzI3vmkenFRu3nLt79+SUCEHCCS1q
-	pxx1tOKVmosC3kDz+XUGDmTxD2bX7vf0u5w8TE2rZ56T+qwR8J8bGYturKQLVIdN+ZVFAf/nPKy
-	rBRHiQAnYhPWTV6Zoj0FbuUGpspIM//D9OiG32WQwj7TKa/8gWZ1iMkMgotgk/Kke1iKYXBxTfS
-	E=
-X-Gm-Gg: ASbGncv2WRaPWW5CNBIs6jR1Fi0Uxl/6c5efppdkaLcsmQ9kiEQBZkoVbmPOOQ30nE0
-	EC3bIId77+ohWTNv6QIMlMIXVVwByitJcAYNR6lR+Ny1q0K4trhscjcTosyDYL1xHjZ64+rHMth
-	QCT54C9zet/6GqPtGhl5zzYpVuhCGhE+eLqHpS2nBvNivib+qh78WlHyxrsLMWHK7EihiWblm4U
-	lJ2iCksDD5JLnoucoNHBXFAK1IXOyt5LjnN01yYnOLgfrvmsnfXDehnZXvBQzzhWjPjoWNtcDxF
-	QxiyK89gbR69N0Eh9/j4DAaSqX96zfv6U+cn0pNDYj2vrsjFdRAchyWYzo4/NCoWSGA=
-X-Received: by 2002:a17:902:dac8:b0:234:f4da:7ecf with SMTP id d9443c01a7336-2462edeec65mr49684125ad.8.1755880838798;
-        Fri, 22 Aug 2025 09:40:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGBxORcblFYIMB3vXkJZZK8X/Eo5uICk0ZWAnhXTZSCDRjX9ONjWZvDSODHd560pcHI6HYGmg==
-X-Received: by 2002:a17:902:dac8:b0:234:f4da:7ecf with SMTP id d9443c01a7336-2462edeec65mr49683865ad.8.1755880838296;
-        Fri, 22 Aug 2025 09:40:38 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32549fe6654sm350664a91.3.2025.08.22.09.40.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 09:40:37 -0700 (PDT)
-Date: Fri, 22 Aug 2025 22:10:30 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v2 11/11] media: iris: Enable Secure PAS support with
- IOMMU managed by Linux
-Message-ID: <20250822164030.6gubbs24raeg6kbx@hu-mojha-hyd.qualcomm.com>
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <20250819165447.4149674-12-mukesh.ojha@oss.qualcomm.com>
- <aKWLZwYVPJBABhRI@linaro.org>
- <20250820115659.kkngraove46wemxv@hu-mojha-hyd.qualcomm.com>
- <aKXQAoXZyR6SRPAA@linaro.org>
- <f25b6cb4-666d-e3e1-0540-b2d7fad86407@quicinc.com>
- <aKguXNGneBWqSMUe@linaro.org>
- <20250822150611.ryixx2qeuhyk72u3@hu-mojha-hyd.qualcomm.com>
- <aKiaKwkpdKHSH9YS@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D243C2EA49A
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 16:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755880938; cv=fail; b=pn+MKSMxSH3JE13oQJYw1oH5yu2p0RyWY74MlMslUXwYMv1X5EpE/FZwYzcEhfdW2PKMB8VdL0eFfCSPBEgUci3lUIMFtCjO9uuiClRD2pW+Tr6fUmGThR0uEg0c8lyDwDyE5HaECwphLiTZm8F64vl4dyUgnDxktR1GhX3XzfA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755880938; c=relaxed/simple;
+	bh=+LlQggGIot8ZwLe/rGVNzfuwhSX8ksrZxE7MbWLyE/Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qzltz+z3I82WzjDYwB742G7Cr6V0k7HpVTcoEkodtQL7jOgfDeoeZnVY5GQqCSWCg7FTii5xLFI92AxsJ8lpCrulKVizqIXKwVEs6d5JO8osSntV6Xy6t4rBEgu2Rp4uxtnqEG013NbC2VxwikBGaUndFjHCaTE3QLAKArpvtiM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Qwm4Atk6; arc=fail smtp.client-ip=40.107.94.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Xm6DYQ/UV9Qv+L49hGTvQQlc+hyHQ4q+sBkO+E/T5wUGdSfAonxYUk8NLsA38jn9LbcRg2Lv96y+je2w2RyukIRSj+XZyykWtzZDw9gQtux0JFciEqiwxCe1MPwNrjuxmLvCUBmR4GpWlT/U3r74zAzEjLTV57YZVHvB1PYQX+617HR2wtS49ZdyH0NZ3BJAMt5xGa7ot/D4VL9yGHsg1bKYaORaPD/8UUtgrSCi7scvS2cKojmBGmc9A5w5W2JDNsch+hVlv268noeJJEgVQStdHS8/RScsWagofchb24FLij3Q7OqV2kMrduOYZDOGuYLovljbBforjG1HTXPvKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E994qr6YvfDZn2hVSBEApOB67HdCdeIBqUBypviInHk=;
+ b=UpzKMPhyEV5fpZ1MlGAwloKri2NxUYCbxhWf/28KblVvQL1wbZHLjiJkWGPKVA6hGxRpMN0MMj6xVHadBgQO+zwjgLRSbkwH5hPYPvfBIV6H6vtno98UqPPanOuvpLjRV/g7e8WphLLie1Wyhc9Hiz2u1vIddndb4cPTN6vAN2YIQ2vWsrd9tEAgAHr6e0LywXeaAh5mjRfCBcQsDjq44+4VMIlRFIpSihNR924x44So77x8zzAcy+ldtLPH4jqX51SCCNYs550+lZpNbU6k6MaMB5tOdkQ9mHEzkfc8dojH4ZdSbxf7qH+N2/4yfk0D2yxHqNXlmUn7P7MQacfZtA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E994qr6YvfDZn2hVSBEApOB67HdCdeIBqUBypviInHk=;
+ b=Qwm4Atk6gHmsoTmLxXcg3/0ADvX330usn3ApMviqHx9IJGsfg1J1DR7xScgCoaFJDk3sp6Ct6OiQ6Ye5KvsjS+q1K6LvbwfBvriGKMgF7I7d4nPTBnpKVXPg4KFyyxdpFaWiaklnaUhzuDBB/8RtAQ3rNpkYoCQXnW2B4q3pHO0=
+Received: from MN0PR04CA0013.namprd04.prod.outlook.com (2603:10b6:208:52d::18)
+ by SA0PR12MB4432.namprd12.prod.outlook.com (2603:10b6:806:98::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.19; Fri, 22 Aug
+ 2025 16:42:13 +0000
+Received: from BN3PEPF0000B072.namprd04.prod.outlook.com
+ (2603:10b6:208:52d:cafe::f9) by MN0PR04CA0013.outlook.office365.com
+ (2603:10b6:208:52d::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.19 via Frontend Transport; Fri,
+ 22 Aug 2025 16:42:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN3PEPF0000B072.mail.protection.outlook.com (10.167.243.117) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9052.8 via Frontend Transport; Fri, 22 Aug 2025 16:42:13 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 22 Aug
+ 2025 11:42:13 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 22 Aug
+ 2025 11:42:13 -0500
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Fri, 22 Aug 2025 11:42:12 -0500
+Message-ID: <09906ca7-62c7-2ca7-5436-662a6c4b19f5@amd.com>
+Date: Fri, 22 Aug 2025 09:42:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKiaKwkpdKHSH9YS@linaro.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX3cPSa0kxd6jQ
- xBfUI5/y0nzA+yToDPhl7bmKyw0QR1tvmaKYgyg+Ut/dT7tI4tq/KYMsTORjjXHBu3C30QPx98G
- mK0CEPT7DVk0ZnFmVzDKCAo/7ylStbFGu7OBzmzPwwqWmQcXKVUShwrgTfgV15l7ENa0eCPqkeR
- ULrmDd1rvTiWDM+wGM85BKMjYX8viaitjpTq2E5QBLixU2rIRVilK1V7RQu6Kvn7YHHReB52zkn
- wSUTl8+GffCoXUevBuLUCnU0fbTp5ikrN5cJNWXk5nR4VBJtGSOTHYxm4Utfe32BUS8dM44K49z
- 5EATiuf1kcu0Y8LLutZUEAYxZQ27iSCp4ePVQjdFP0XXREeK9iddzmUyKCaFvLnNvl+xSCm8dD/
- VlNto/4qr1qnJTR2b77siRJUDNHQ6w==
-X-Authority-Analysis: v=2.4 cv=TIIci1la c=1 sm=1 tr=0 ts=68a89d88 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=Ut50iLFDtCw7cpum4CUA:9
- a=CjuIK1q_8ugA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-ORIG-GUID: ABLD-6oPH7bsT1t1QybEGInNMrqz7q4m
-X-Proofpoint-GUID: ABLD-6oPH7bsT1t1QybEGInNMrqz7q4m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-22_04,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1015 phishscore=0
- bulkscore=0 impostorscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] MAINTAINERS: Update Min Ma's email for AMD XDNA driver
+Content-Language: en-US
+To: Min Ma <mamin506@gmail.com>, <ogabbay@kernel.org>,
+	<quic_jhugo@quicinc.com>, <jacek.lawrynowicz@linux.intel.com>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>
+References: <96e9e5b9-d7f2-4527-baf2-f7519ffbb612@gmail.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <96e9e5b9-d7f2-4527-baf2-f7519ffbb612@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB05.amd.com: lizhi.hou@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B072:EE_|SA0PR12MB4432:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3863dcb1-fda5-4361-7191-08dde19ad8ed
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Wm4xTGhrTjBRR29lV3NhVW1mVjFybDdsVGpZd1Z5YjFhK0FpeXZpQndQOXJv?=
+ =?utf-8?B?S0tpNXg4R2dSNXJGSFhGbHd1anpIN2t3aENRRmFuSmVuTHpscXVEZWdwaGRt?=
+ =?utf-8?B?ZFNtK1R1ODY5dnZibkhFd3NWRWM3ZDBwZmdCSU10Nk9XNUFjc1l1ZGJpaWlR?=
+ =?utf-8?B?cUZzUGFZcWpOaGJMQ0ZsWlNEMkZBbUxtdXc0cEtKZVBIdC9PdndkbUpneWJO?=
+ =?utf-8?B?TjZKUjk1RGs5bENPWjNiV0lKUWtZVHRvcHlCaVN4NVhQNTJsNENpMmxtclpw?=
+ =?utf-8?B?SEFJWGhNbXluWnFqeGpvWEZFeXVHUUpHSXB2emhQWEN0WGhZUXFqZFliTy9B?=
+ =?utf-8?B?U2k5TGkwak55WFMzSGZrNnA3Y2QzdFhEWE1rVDRlRnQ3SGhJeTlwRGZkVE5T?=
+ =?utf-8?B?TTR4VTRnS1A3MllsRm01c1pDOU11ODQzNndBcEVQKzd6elJ4YXRUc0oyb1U2?=
+ =?utf-8?B?MzgzSWI4b0UxZEppeXdpL1UxdHNlc3lMdlVMcWR1QWZuR0VHMG9Wbm1INmFH?=
+ =?utf-8?B?VHMzTHdDNGsvWEdvZTBvam03SGtLc1lmOHU0SFRsN1FObE5PaHpyekwvZHQv?=
+ =?utf-8?B?b1NObnZrNEN4Q2lpanliSnF5Ui9DN1pkYWpiSzZYMGw3YWk3K2k5ZU5KK0pi?=
+ =?utf-8?B?VzRSQXk2bUtNK2d6Sjh4OXF2Y3F5UVphQUVFckpPVC9IeEJWb25USnNzcGVy?=
+ =?utf-8?B?RnU4K1BraVVvNEpyQkI5Z0UxeC9XSGZSQThneVliSEJjcWkxcXo3dGllc0ov?=
+ =?utf-8?B?T1RYTHh5OHAvNGY1bUxTc2hNZlI4KzlSTlYzVU1Za0VvNDZZNTg5Z3VpMWZx?=
+ =?utf-8?B?VS9ZK2Zva1Z5elFPK0JETXZOY2ZkdFNabDkxbEM2ZzFYQ0xPTnl3OElUUE5F?=
+ =?utf-8?B?UmZqWEpqbE9iS1p4MVdBTTIyRU5TSmx4NURjZ2l4WTQ2QmVhbmxsaDRobnJw?=
+ =?utf-8?B?NkU2NTlESHRsQVJ1UnJUZS9rK3c3blVWcDhsNGl0QWhqUTVHOUdhUnBXSkJM?=
+ =?utf-8?B?dXRla2txUDA4QWsrbHBZbFJGYzc3NGtOZkYrTmpZSGxjNjB4bExMY0xickVh?=
+ =?utf-8?B?ZG5vOVZmNm9yVHpKUllESTh4VCtaTWN0aEdmYUtZWlY5YWZYUWZCdWdIcUJo?=
+ =?utf-8?B?YlNOS2U1QjRXWlJLbzlSSXhYbWl2aURWOFE4eUlFMW0wSmtkQ0lHUW9oSW5o?=
+ =?utf-8?B?TmtGNnptME9XbUY3MUdkTkJacnZWc241Tm41MkdmM3ljM3B0VDVZVmVpSCs1?=
+ =?utf-8?B?TEZYMlpMWTNId0FSTDF4MHdHMUk4NVVxMWFtazJGRkl6ZDBmWmw1VzgzNHR2?=
+ =?utf-8?B?QU1rczRFWUJBTEhDWVhmMWNkajA1eUsvRmljM0NtWUpYOXhPbTdvaHpkUmJ0?=
+ =?utf-8?B?OXVhOEVMV3A3d2pOcU5hRk44YlM3eHBvRXU3b2trcU9OSk1OTGcyanpHWi85?=
+ =?utf-8?B?c01mLys3SW5kT3cwRVBxVDM4SGVHVVBWSWpEZHE0Y0tvYUVkOEpnTHpuS29h?=
+ =?utf-8?B?NUpSQ1JzQjVIU1BMazd2Wk5MOGdKWVNJVkZpTVVoYVpNWktxRkJoT2NCMGp1?=
+ =?utf-8?B?bXhLWjdxLzdnSHQ5c3p3SUcwUnhybzYyZzZPcUliWU1SdU0wcXI1bVZ1K1h1?=
+ =?utf-8?B?a0pFOEZZcDRBN1hpbDFZT3p3a0VTd21BWDdBRmdId2o0bFg0Y0NlODQ1VTRk?=
+ =?utf-8?B?NGRLdW9heXY5VjBsakdSUE9NamMzSUtPVEltdXR6UlFpcktpSWNHSVY3dHRi?=
+ =?utf-8?B?aGozWG4rb1VDalBlZkpiNTQ5ZmkvNFlrMjF5TFhhVFUycnAyNHhKNVpBdTlq?=
+ =?utf-8?B?Ry8ya1N3NlhDUHVtcGpJVFd6SUtUSTVmL0ZRQkd4c3VlRUdVRy80dm1oSUFZ?=
+ =?utf-8?B?UldsQTRoaCtPb1kyRGg3TlAvNEU4ZENWZnVxTkd1MUdCci9mSDd5MWpnNWJ0?=
+ =?utf-8?B?RWVFZG1TWHdnN3dUb2pqUUhxdlBLK2w5NGlkdHlNejVQdXNyVkdGVEw4L1dn?=
+ =?utf-8?B?L1NOaUVBRGFSTHNzUGlxVlZHRTlIOEcyeXNqZXZrRHM0MHNCNjFSMXNRTjJV?=
+ =?utf-8?Q?EHlGzi?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 16:42:13.6693
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3863dcb1-fda5-4361-7191-08dde19ad8ed
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B072.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4432
 
-On Fri, Aug 22, 2025 at 06:26:19PM +0200, Stephan Gerhold wrote:
-> On Fri, Aug 22, 2025 at 08:36:11PM +0530, Mukesh Ojha wrote:
-> > On Fri, Aug 22, 2025 at 10:46:20AM +0200, Stephan Gerhold wrote:
-> > > On Fri, Aug 22, 2025 at 09:56:49AM +0530, Vikash Garodia wrote:
-> > > > On 8/20/2025 7:09 PM, Stephan Gerhold wrote:
-> > > > >>>> +int iris_fw_init(struct iris_core *core)
-> > > > >>>> +{
-> > > > >>>> +	struct platform_device_info info;
-> > > > >>>> +	struct iommu_domain *iommu_dom;
-> > > > >>>> +	struct platform_device *pdev;
-> > > > >>>> +	struct device_node *np;
-> > > > >>>> +	int ret;
-> > > > >>>> +
-> > > > >>>> +	np = of_get_child_by_name(core->dev->of_node, "video-firmware");
-> > > > >>>> +	if (!np)
-> > > > >>>> +		return 0;
-> > > > >>> You need a dt-bindings change for this as well. This is documented only
-> > > > >>> for Venus.
-> > > > >> You are right, wanted to send device tree and binding support separately.
-> > > > >> But if required, will add with the series in the next version.
-> > > > >>
-> > > > > You can send device tree changes separately, but dt-binding changes
-> > > > > always need to come before the driver changes.
-> > > > 
-> > > > Do you mean to update the examples section[1] with the firmware subnode,
-> > > > something similar to venus schema[2] ?
-> > > > 
-> > > 
-> > > Sorry, I missed the fact that the "video-firmware" subnode is already
-> > > documented for iris as well through qcom,venus-common.yaml (which is
-> > > included for qcom,sm8550-iris). I don't think it's strictly required to
-> > > add every possibility to the examples of the schema, since we'll also
-> > > have the actual DTBs later to test this part of the schema.
-> > > 
-> > > I would recommend to extend the description of the "video-firmware" node
-> > > in qcom,venus-common.yaml a bit. You do use the reset functionality of
-> > > TrustZone, so the description there doesn't fit for your use case.
-> > > 
-> > > I think we will also have to figure out how to handle the old
-> > > "ChromeOS"/"non_tz" use case (that resets Iris directly with the
-> > > registers) vs the EL2 PAS use case (that resets Iris in TZ but still
-> > > handles IOMMU from Linux). Simply checking for the presence of the
-> > > "video-firmware" node is not enough, because that doesn't tell us if the
-> > > PAS support is present in TZ.
-> > > 
-> > > I have been experimenting with a similar patch that copies the "non_tz"
-> > > code paths from Venus into Iris. We need this to upstream the Iris DT
-> > > patch for X1E without regressing the community-contributed x1-el2.dtso,
-> > > which doesn't have functional PAS when running in EL2.
-> > > 
-> > > Perhaps we could check for __qcom_scm_is_call_available() with the new
-> > > QCOM_SCM_PIL_PAS_GET_RSCTABLE to choose between invoking reset via PAS
-> > > or directly with the registers. I don't have a device with the new
-> > > firmware to verify if that works.
-> > 
-> > You can check QCOM_SCM_PIL_PAS_GET_RSCTABLE with __qcom_scm_is_call_available() 
-> > but there is a possibility that QCOM_SCM_PIL_PAS_GET_RSCTABLE SMC call will be
-> > used even for Gunyah. So, I believe, __qcom_scm_is_call_available() and
-> > video-firmware's iommu property is also important.
-> > 
-> 
-> Yeah, this sounds good.
-> 
-> > > 
-> > > I'll try to send out my patch soon, so you can better see the context.
-> > 
-> > Are you saying that you are going to send patch to support IRIS on
-> > x1-el2.dtso in non-secure way i.e., non-PAS way.
-> > 
-> 
-> The background is the following: I have a pending patch to add iris to
-> x1e80100.dtsi, but that currently breaks x1-el2.dtso. My original plan
-> was to disable &iris in x1-el2.dtso (because the PAS way seems to be
-> just broken), but then I saw that e.g. sc7180-el2.dtso does have working
-> Venus with the "video-firmware" node. Copy-pasting the "no_tz"(/non-PAS)
-> code as-is from venus into iris works just fine for x1-el2.dtso, so
-> disabling &iris in x1-el2.dtso just because the "no_tz" code is
-> currently missing in iris doesn't sound right.
-> 
-> As far as I understand the approach you use in this series does not work
-> without the TZ changes for older platforms like X1E(?), so adding that
-> code in iris seems to be the best way to move forward.
+Hi Min,
 
-Yes, this series has dependency on firmware and will not work for older
-platforms.
+Please fix the patch and make sure checkpatch is passed. I can not apply it.
 
-> 
-> I started working on a patch for this a while ago, it just needs a bit
-> more cleanup. I'll try to finish it up and post it so we can discuss it
-> further. I think the IOMMU management in my patch would even work as-is
-> for you, you would just need to toggle a boolean to use the PAS instead
-> of accessing the registers directly.
+Applying: MAINTAINERS: Update Min Ma's email for AMD XDNA driver
+error: corrupt patch at line 10
+error: could not build fake ancestor
 
-Sounds like a plan.
-Thanks, please cc me when you send the patches; So, I could test along
-with my changes and make dependency on it.
+Lizhi
 
-> 
-> Thanks,
-> Stephan
-
--- 
--Mukesh Ojha
+On 7/22/25 23:38, Min Ma wrote:
+> I recently left AMD and would like to continue participating in
+> the review and maintenance of the XDNA driver using my personal email 
+> address.
+> This commit updates my contact information accordingly.
+>
+> Signed-off-by: Min Ma <mamin506@gmail.com>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 10850512c118..6eefa494000c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1231,7 +1231,7 @@ F:        drivers/spi/spi-amd.c
+>  F:     drivers/spi/spi-amd.h
+>
+>  AMD XDNA DRIVER
+> -M:     Min Ma <min.ma@amd.com>
+> +M:     Min Ma <mamin506@gmail.com>
+>  M:     Lizhi Hou <lizhi.hou@amd.com>
+>  L: dri-devel@lists.freedesktop.org
+>  S:     Supported
+> -- 
+> 2.43.0
+>
 
