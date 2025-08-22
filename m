@@ -1,128 +1,118 @@
-Return-Path: <linux-kernel+bounces-782256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9DCDB31D3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:04:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D65BB31D5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 17:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F50CBA4F8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 15:02:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD43CAA6206
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 14:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FD934AAE7;
-	Fri, 22 Aug 2025 15:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32E1320CD8;
+	Fri, 22 Aug 2025 14:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R91WdgkA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="jp+mSv00"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DFE3128C8;
-	Fri, 22 Aug 2025 15:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93AE320CDB;
+	Fri, 22 Aug 2025 14:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755874803; cv=none; b=XJO7VsT7QCvw8LU47muFonKpeTdCWABTfpNG/YFp7vK1Yw1+64Wf01My0eEhiO8FZTBF+/2OGqk67V1o9ZZB4YLxzQzGf4R8bRLN668ORvZu5fzz/B1+UT0KK5LVG/xD/0Pl7pJfTGyDSrsyfuT2TCiRbFYrB1lt8+hptLlvfMU=
+	t=1755874638; cv=none; b=cbm6alVFeGtEe/PGcJLdN6R/PzmMyvSmIAA/O4k9KOlfJMy+xuQA4yDM4KnYRhjfAoyMjyewD3xYVhABD4ruC+hltDgU5FTeCetZUb75AtUhI8nwhrcXhnTMUStJazafAaRn228JTa1pqODFcwVkHHrIeWVPe9gOBM8GsCUm6yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755874803; c=relaxed/simple;
-	bh=EK5M2izVE5p40XIaVUFrZSmUkgoozndw/itQ2SrR1Ew=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mf5eLJXaG3+w9NO19gIvsqx+KOfy8g0wGF1pz3lN4p5de2lhX22T7UNZwHw7zb9ZIba+SidQhYLkkKVUrERvJp1msVOc7Lixt62zXgQq3a3wP0gyhDXTwiTXWzfQc953xxFWKN+Ezp5MfRULqy6qvZ2GgSxAKPWRFwilup82nWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R91WdgkA; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1755874638; c=relaxed/simple;
+	bh=NX2EmAHptM0cpfbEil35UWdEA2+irxa/S467sbBJ+F8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XJMIrgkix0YGAK+83efpb+PlmwChA2/4OEvp2IhKBe/7A73zn1Z/KlJSCFdw0uSkYbOdu3Fb1+Wav24+bE0S/OBLa2Fi+6qz+Byst4P7ZpZxmq8HJecWldpWSzlCEtR1xpTYc+LsJ2E4MmbDHoC7oyayDiOANij1LugUhXlfpCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=jp+mSv00; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755874802; x=1787410802;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=EK5M2izVE5p40XIaVUFrZSmUkgoozndw/itQ2SrR1Ew=;
-  b=R91WdgkAOa9/1Jz1EiE36E4dJCmMDFBS0vs3jEHAc5IZ6AJwlO/faiT6
-   vVT+suVhEBrwrsk17pBfPVXFiJJX7Lh5XRrlz2lrZLdZFOfmF9GpLaZrq
-   /m6ut+U/wsE94lrZhwNPtyi64z/w37LgKf7Z7XUwXW5HtnWAYksl+q0CE
-   VHgAMqS3FVFyvYtnxdfxC9dGEpgggMZvPmun7P/O9jPgWIDdn/AB13iuM
-   x20b/NnmmVZSlW18tYNW7fxSiurOzCbIJJNtScfH8vk4HTU1HRL5uguKU
-   0ltxq25C7ryQ+0qL7pYFTmwYLOGm1VBQwj5VX8Civwuw110x3WSQnyMih
-   A==;
-X-CSE-ConnectionGUID: h/wuobybT0+ycmdCzmCUGQ==
-X-CSE-MsgGUID: xu8tuuBTS8WERaScdsV3cw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="62016122"
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1755874636; x=1787410636;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=NX2EmAHptM0cpfbEil35UWdEA2+irxa/S467sbBJ+F8=;
+  b=jp+mSv00uScIjwRrxZzRHWzXN5X/G1A4/9OWf8XyVnUNuXRjwcsBZduh
+   wEFMG70PBz/NUeLjVbW1PY0FQMQcqtJi/azic2/oyoKvAB8HTMzsju7Xo
+   GOqUCxiRN3BI7tHoei2h8nhKJ3RQMLDp+C2L6WdX26KJuzzHFpJer3HqB
+   EwW4N4CVkPgGAen6284F9Yf5QTBBvipoaomnWMGQbldJNUK63IjeUuHJO
+   SRKkRf4uPDMEkFQtermPIJu3bspyBOkTXZ7G+15jNsIY/X3MDvYXd7QsQ
+   T3L/YjHLf+t7mcn8rytCsCttc4O9z8U0I/upoWyiXO3E5ErNhImXvSPag
+   g==;
+X-CSE-ConnectionGUID: G8MtUZCmTuS7MMvct1brrg==
+X-CSE-MsgGUID: 9da9UzP/RpGB51ZixKeqdw==
 X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="62016122"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 08:00:01 -0700
-X-CSE-ConnectionGUID: SF7XkM7uRzyQinj/cT/aBA==
-X-CSE-MsgGUID: 4p1p4yJ2RJyg+8Th6VhtFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="173994924"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.115])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 07:59:56 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Andreas Larsson <andreas@gaisler.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Yinghai Lu <yinghai@kernel.org>,
-	Igor Mammedov <imammedo@redhat.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 24/24] PCI: Alter misleading recursion to pci_bus_release_bridge_resources()
-Date: Fri, 22 Aug 2025 17:56:05 +0300
-Message-Id: <20250822145605.18172-25-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250822145605.18172-1-ilpo.jarvinen@linux.intel.com>
-References: <20250822145605.18172-1-ilpo.jarvinen@linux.intel.com>
+   d="scan'208";a="44987207"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Aug 2025 07:57:09 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Fri, 22 Aug 2025 07:56:38 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Fri, 22 Aug 2025 07:56:36 -0700
+Message-ID: <b7089f9a-92d9-4652-b571-b749637c609f@microchip.com>
+Date: Fri, 22 Aug 2025 16:56:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: dts: microchip: sama7d65: Force SDMMC Legacy mode
+To: <Ryan.Wanner@microchip.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, Aubin Constans <Aubin.Constans@microchip.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250819170528.126010-1-Ryan.Wanner@microchip.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Content-Language: en-US, fr
+Organization: microchip
+In-Reply-To: <20250819170528.126010-1-Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Recursing into pci_bus_release_bridge_resources() should not alter
-rel_type because it makes no sense to change the release type within
-the recursion call chain. A literal "whole_subtree" is passed into the
-recursion instead of "rel_type" parameter which is misleading as the
-release type should remain the same throughout the entire operation.
+On 19/08/2025 at 19:05, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+> 
+> The SDMMC in this IP currently only supports legacy mode
 
-This is not a correctness issue because of the preceding if () that
-only allows the recursion to happen if rel_type is "whole_subtree".
-Still, replace the non-intuitive parameter with direct passing of
-"rel_type".
+... but we're working on it ;-)
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/pci/setup-bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> due to a hardware quirk, setting the flags to reflect the limitation.
+> 
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-index 9c69a84f2b23..0fbdb031bc3d 100644
---- a/drivers/pci/setup-bus.c
-+++ b/drivers/pci/setup-bus.c
-@@ -1855,7 +1855,7 @@ static void pci_bus_release_bridge_resources(struct pci_bus *bus,
- 			if (res->parent != b_win)
- 				continue;
- 
--			pci_bus_release_bridge_resources(b, res, whole_subtree);
-+			pci_bus_release_bridge_resources(b, res, rel_type);
- 		}
- 	}
- 
--- 
-2.39.5
+That's fair enough for the time being:
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+
+Regards,
+   Nicolas
+
+> ---
+>   arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+> index 7eaf6ca233ec..d086437f5e6f 100644
+> --- a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+> +++ b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+> @@ -387,6 +387,8 @@ &rtt {
+>   
+>   &sdmmc1 {
+>   	bus-width = <4>;
+> +	no-1-8-v;
+> +	sdhci-caps-mask = <0x0 0x00200000>;
+>   	pinctrl-names = "default";
+>   	pinctrl-0 = <&pinctrl_sdmmc1_default>;
+>   	status = "okay";
 
 
