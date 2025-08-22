@@ -1,216 +1,108 @@
-Return-Path: <linux-kernel+bounces-781041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B251CB30CAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:40:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA47B30CA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 05:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 843876059B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:40:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AC33AA2935
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 03:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0766028FFF6;
-	Fri, 22 Aug 2025 03:40:09 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D9D28A73A;
+	Fri, 22 Aug 2025 03:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="CPzj808T"
+Received: from mail-m3282.qiye.163.com (mail-m3282.qiye.163.com [220.197.32.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C68422F74E;
-	Fri, 22 Aug 2025 03:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DED1684B4;
+	Fri, 22 Aug 2025 03:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755834008; cv=none; b=JB+4sBM6uemZUtoh0wZgTjFufk1lblC+hLEAnbyj+5rjpJ+zeoxtJ1KFj4izTCGMbohhsd53NAMeUmBoXx6OQ3FLkUu29TRQsOn21MXJAaLOLaiEZVr3OwmYfkpahXFnkRsMlY8+eFmdNRNXmJCLPfswtgDb0qNTGkklZdtQzjs=
+	t=1755833786; cv=none; b=rmroafN6iNh5wbfrk59h/bXjbCETH0hFn7wkZy25syh/1y2wCPhaPdx4HUAH1B3zz3Fd5F5MeC17rZUU2p/8MU8ZoNuXkNnPVRlm6eDgc3p6OHFDdGDAjiLs/O5bUGBe9+pEYSj1ns+oA48BC2POdWTNdZN2TISAY+XqFZ9qm8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755834008; c=relaxed/simple;
-	bh=8CBD+ofFcWSQllEJ2EbjzdAgpR1iEW+k2AnNO+4Wh50=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FZyf3YIoeV/XS+TtQWNbYuloqT+efurlLdkKLd46xly2heVmQz6ggD9NtEUiUDBJTdEdasdIWCgLWt6WTV/VTOEE0PqxuXX55c+/5AeCu//aFneMte01zEXzZZBTUr5twDcvLh5dUr+A/LUtd9o8f1cpCaz8bQrj4x6kk8YnX/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c7QtR395wz14MR8;
-	Fri, 22 Aug 2025 11:39:59 +0800 (CST)
-Received: from dggpemf500011.china.huawei.com (unknown [7.185.36.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id 03FF31402DF;
-	Fri, 22 Aug 2025 11:40:04 +0800 (CST)
-Received: from huawei.com (10.67.174.55) by dggpemf500011.china.huawei.com
- (7.185.36.131) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 22 Aug
- 2025 11:40:03 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <prarit@redhat.com>,
-	<gregkh@linuxfoundation.org>, <x86@kernel.org>, <stable@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH v5.15 RESEND 2/2] x86/irq: Plug vector setup race
-Date: Fri, 22 Aug 2025 03:36:08 +0000
-Message-ID: <20250822033608.1096607-3-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250822033608.1096607-1-ruanjinjie@huawei.com>
-References: <20250822033608.1096607-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1755833786; c=relaxed/simple;
+	bh=rM1ahS6a2B8+/PWLYl+bW846eAp8FZu42OwordjjBKA=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=q2sWWO66uRAwuQAt89N8Zkzsl2CKgTmKYHbJXvWzUsG5QcJ6hVrO09EimQR1ehp8nWsMrxzVOVd6QIuKfpJZURdIgNcoCzIZGncHIhgVVWnKe7cWvNpryca0iC0/FlXL2B7F+nkXMeDvRSAiaHhtODzC7GSIGqqgqx3FeKvs7Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=CPzj808T; arc=none smtp.client-ip=220.197.32.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from localhost.localdomain (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 20397154d;
+	Fri, 22 Aug 2025 11:36:11 +0800 (GMT+08:00)
+From: William Wu <william.wu@rock-chips.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	william.wu@rock-chips.com,
+	frank.wang@rock-chips.com,
+	jianwei.zheng@rock-chips.com,
+	yue.long@rock-chips.com
+Subject: [PATCH] usb: gadget: configfs: Correctly set use_os_string at bind
+Date: Fri, 22 Aug 2025 11:36:09 +0800
+Message-Id: <1755833769-25434-1-git-send-email-william.wu@rock-chips.com>
+X-Mailer: git-send-email 2.0.0
+X-HM-Tid: 0a98cfd9271009d4kunm74fcece015f95ec
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUIeGVZCT0gaTktJQx8aTEtWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=CPzj808TVqFupTStMStpwMw0ZjUufp+iz2JziOQ6PsgoX10QbK7qmI4eFrKNfSu7VbefOGYdkMqZ8l1zCXEdY+aVrGpNDgHcBPwy9xUCKUFTkDyqp1apCfs3txItWOVMl4HZ6GXXHNIOmiSAiLS/1eczAv4T4UAKfQeqaP8RxPY=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=9EwhBvf+CZi7anqyyhJMIJS9Q2jTsfhtrsAiA+38Igc=;
+	h=date:mime-version:subject:message-id:from;
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf500011.china.huawei.com (7.185.36.131)
 
-From: Thomas Gleixner <tglx@linutronix.de>
+Once the use_os_string flag is set to true for some functions
+(e.g. adb/mtp) which need to response the OS string, and then
+if we re-bind the ConfigFS gadget to use the other functions
+(e.g. hid) which should not to response the OS string, however,
+because the use_os_string flag is still true, so the usb gadget
+response the OS string descriptor incorrectly, this can cause
+the USB device to be unrecognizable on the Windows system.
 
-commit ce0b5eedcb753697d43f61dd2e27d68eb5d3150f upstream.
+An example of this as follows:
 
-Hogan reported a vector setup race, which overwrites the interrupt
-descriptor in the per CPU vector array resulting in a disfunctional device.
+echo 1 > os_desc/use
+ln -s functions/ffs.adb configs/b.1/function0
+start adbd
+echo "<udc device>" > UDC   #succeed
 
-CPU0				CPU1
-				interrupt is raised in APIC IRR
-				but not handled
-  free_irq()
-    per_cpu(vector_irq, CPU1)[vector] = VECTOR_SHUTDOWN;
+stop adbd
+rm configs/b.1/function0
+echo 0 > os_desc/use
+ln -s functions/hid.gs0 configs/b.1/function0
+echo "<udc device>" > UDC  #fail to connect on Windows
 
-  request_irq()			common_interrupt()
-  				  d = this_cpu_read(vector_irq[vector]);
+This patch sets the use_os_string flag to false at bind if
+the functions not support OS Descriptors.
 
-    per_cpu(vector_irq, CPU1)[vector] = desc;
-
-    				  if (d == VECTOR_SHUTDOWN)
-				    this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
-
-free_irq() cannot observe the pending vector in the CPU1 APIC as there is
-no way to query the remote CPUs APIC IRR.
-
-This requires that request_irq() uses the same vector/CPU as the one which
-was freed, but this also can be triggered by a spurious interrupt.
-
-Interestingly enough this problem managed to be hidden for more than a
-decade.
-
-Prevent this by reevaluating vector_irq under the vector lock, which is
-held by the interrupt activation code when vector_irq is updated.
-
-To avoid ifdeffery or IS_ENABLED() nonsense, move the
-[un]lock_vector_lock() declarations out under the
-CONFIG_IRQ_DOMAIN_HIERARCHY guard as it's only provided when
-CONFIG_X86_LOCAL_APIC=y.
-
-The current CONFIG_IRQ_DOMAIN_HIERARCHY guard is selected by
-CONFIG_X86_LOCAL_APIC, but can also be selected by other parts of the
-Kconfig system, which makes 32-bit UP builds with CONFIG_X86_LOCAL_APIC=n
-fail.
-
-Can we just get rid of this !APIC nonsense once and forever?
-
-Fixes: 9345005f4eed ("x86/irq: Fix do_IRQ() interrupt warning for cpu hotplug retriggered irqs")
-Cc: stable@vger.kernel.org#5.15.x
-Cc: gregkh@linuxfoundation.org
-Reported-by: Hogan Wang <hogan.wang@huawei.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Hogan Wang <hogan.wang@huawei.com>
-Link: https://lore.kernel.org/all/draft-87ikjhrhhh.ffs@tglx
-[ Conflicts in arch/x86/kernel/irq.c because call_irq_handler() has been
-  refactored to do apic_eoi() according to the return value.
-  Conflicts in arch/x86/include/asm/hw_irq.h because (un)lock_vector_lock()
-  are already controlled by CONFIG_X86_LOCAL_APIC. ]
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Signed-off-by: William Wu <william.wu@rock-chips.com>
 ---
- arch/x86/kernel/irq.c | 65 +++++++++++++++++++++++++++++++++----------
- 1 file changed, 51 insertions(+), 14 deletions(-)
+ drivers/usb/gadget/configfs.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
-index 11d7233397df..065251fa3e40 100644
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@ -235,24 +235,59 @@ static __always_inline void handle_irq(struct irq_desc *desc,
- 		__handle_irq(desc, regs);
- }
- 
--static __always_inline void call_irq_handler(int vector, struct pt_regs *regs)
-+static struct irq_desc *reevaluate_vector(int vector)
- {
--	struct irq_desc *desc;
-+	struct irq_desc *desc = __this_cpu_read(vector_irq[vector]);
-+
-+	if (!IS_ERR_OR_NULL(desc))
-+		return desc;
-+
-+	if (desc == VECTOR_UNUSED)
-+		pr_emerg_ratelimited("No irq handler for %d.%u\n", smp_processor_id(), vector);
-+	else
-+		__this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
-+	return NULL;
-+}
-+
-+static __always_inline bool call_irq_handler(int vector, struct pt_regs *regs)
-+{
-+	struct irq_desc *desc = __this_cpu_read(vector_irq[vector]);
- 
--	desc = __this_cpu_read(vector_irq[vector]);
- 	if (likely(!IS_ERR_OR_NULL(desc))) {
- 		handle_irq(desc, regs);
--	} else {
--		ack_APIC_irq();
--
--		if (desc == VECTOR_UNUSED) {
--			pr_emerg_ratelimited("%s: %d.%u No irq handler for vector\n",
--					     __func__, smp_processor_id(),
--					     vector);
--		} else {
--			__this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
--		}
-+		return true;
+diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
+index f94ea19..6bcac85 100644
+--- a/drivers/usb/gadget/configfs.c
++++ b/drivers/usb/gadget/configfs.c
+@@ -1750,6 +1750,8 @@ static int configfs_composite_bind(struct usb_gadget *gadget,
+ 		cdev->use_os_string = true;
+ 		cdev->b_vendor_code = gi->b_vendor_code;
+ 		memcpy(cdev->qw_sign, gi->qw_sign, OS_STRING_QW_SIGN_LEN);
++	} else {
++		cdev->use_os_string = false;
  	}
-+
-+	/*
-+	 * Reevaluate with vector_lock held to prevent a race against
-+	 * request_irq() setting up the vector:
-+	 *
-+	 * CPU0				CPU1
-+	 *				interrupt is raised in APIC IRR
-+	 *				but not handled
-+	 * free_irq()
-+	 *   per_cpu(vector_irq, CPU1)[vector] = VECTOR_SHUTDOWN;
-+	 *
-+	 * request_irq()		common_interrupt()
-+	 *				  d = this_cpu_read(vector_irq[vector]);
-+	 *
-+	 * per_cpu(vector_irq, CPU1)[vector] = desc;
-+	 *
-+	 *				  if (d == VECTOR_SHUTDOWN)
-+	 *				    this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
-+	 *
-+	 * This requires that the same vector on the same target CPU is
-+	 * handed out or that a spurious interrupt hits that CPU/vector.
-+	 */
-+	lock_vector_lock();
-+	desc = reevaluate_vector(vector);
-+	unlock_vector_lock();
-+
-+	if (!desc)
-+		return false;
-+
-+	handle_irq(desc, regs);
-+	return true;
- }
  
- /*
-@@ -266,7 +301,9 @@ DEFINE_IDTENTRY_IRQ(common_interrupt)
- 	/* entry code tells RCU that we're not quiescent.  Check it. */
- 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "IRQ failed to wake up RCU");
- 
--	call_irq_handler(vector, regs);
-+	if (unlikely(!call_irq_handler(vector, regs)))
-+		ack_APIC_irq();
-+
- 	set_irq_regs(old_regs);
- }
- 
+ 	if (gadget_is_otg(gadget) && !otg_desc[0]) {
 -- 
-2.34.1
+2.0.0
 
 
