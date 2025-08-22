@@ -1,78 +1,165 @@
-Return-Path: <linux-kernel+bounces-781778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-781779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3CF6B316A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:47:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A62DBB316B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:50:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8D881D05336
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:46:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2504B3B9779
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 11:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF432E8E19;
-	Fri, 22 Aug 2025 11:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EECB2F3C33;
+	Fri, 22 Aug 2025 11:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jxZyNUTA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="d74udDNd"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8AA21255D;
-	Fri, 22 Aug 2025 11:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17FE2D7DF5
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755863171; cv=none; b=cTrDOcwywOjEkLIhyC4yqvQknmKXDUGRlUFQACn/2rjcooTFb9oySLGCk95r8qQTodUV5TV8ZiqO8COIb873+2//T7vPTkH1J0RO+F+Lcwx/wNTnu222E+La3iUFlfr5W9oqI9Ao0wHQUuwPtcE9dpZvrV2IUemRPLKXjVyJ1AI=
+	t=1755863311; cv=none; b=XzWk5/LlKVAjrMEupMF+2XoGZfS9/nk00M/516E/uyPJdXg1NtjHVdmJ56XMJvfAh4yDnLJArTBTdpmHvi3j5Jtj9MjOPinBeE2Va/kcPOKi0ft2e7M6c19M25G6FGUAH3zo7jnvaTuIQMWJfGKCD8j8RBRjWTY3SgfkA6+NyCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755863171; c=relaxed/simple;
-	bh=AIARX0YENOFc2FlWerL+nadOCvhdnZEf8W7BMc8W2ag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Npe1vU3r8lkS56mmD6bJMrO1XblXESENHlOLYVAZjRCZ55C7XE28Z6V6R3D5IAq+S69t5XuYiuq/4qNSl+COXPjB9IhLWu3QKimtNmep1P0lIC9pwrsuD2Yy1I1EFEN6znDoUsN57hJdvNHRNmJm2HdLy4PiSOmss0Ql7fUt6nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jxZyNUTA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5C9EC4CEED;
-	Fri, 22 Aug 2025 11:46:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755863171;
-	bh=AIARX0YENOFc2FlWerL+nadOCvhdnZEf8W7BMc8W2ag=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jxZyNUTANHNe+LLw1XjsZbVLAAvXAr1atgSnwtyRHg7jiMGl9hgI94G7iV20FRaZz
-	 4nSTTXhdbxmfe1cnQHTqhFC252Lp7vzK6a2tn9IKqzCL4LrWpUBAJxaVAuhIIC3rOA
-	 hqhrjrhAO0mjxhCVBRJpUWoo6mKN7k43TZD3m+70=
-Date: Fri, 22 Aug 2025 13:46:07 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Chenghai Huang <huangchenghai2@huawei.com>
-Cc: zhangfei.gao@linaro.org, wangzhou1@hisilicon.com,
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
-	linux-crypto@vger.kernel.org, fanghao11@huawei.com,
-	shenyang39@huawei.com, qianweili@huawei.com,
-	linwenkai6@hisilicon.com, liulongfang@huawei.com
-Subject: Re: [PATCH 3/4] uacce: implement mremap in uacce_vm_ops to return
- -EPERM
-Message-ID: <2025082208-coauthor-pagan-e72c@gregkh>
-References: <20250822103904.3776304-1-huangchenghai2@huawei.com>
- <20250822103904.3776304-4-huangchenghai2@huawei.com>
+	s=arc-20240116; t=1755863311; c=relaxed/simple;
+	bh=JsmbBh9zOMLHqHK84o+JX7ZaGFFwKJOvdPNpFTm5Ock=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=XjGcjjUJPY3VAoM2+0OtKxspi6yTK7BsnSAymFzMwxP9bpgweaJovqj/72238bUYrC9fr+E8Mqv6F56kQDC/pU0V+jhUhoaTTKk0IMnvXM4qlOJsM2BhZWqys9YPNA9vQe4kqvS3ymxBEKgkwhesrjsT3zcr6+jdKkiuVPurK54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=d74udDNd; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250822114827epoutp046dd830c45c29eca3394258f3d0b29274~eFGAhjy_W1164111641epoutp04U
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 11:48:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250822114827epoutp046dd830c45c29eca3394258f3d0b29274~eFGAhjy_W1164111641epoutp04U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755863307;
+	bh=ujFd4Giejy/I8yLtIBnVKvcKVCgcw/eNDX6Exvhq7UA=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=d74udDNdRLlEbqqumXK4rJgpifPriLPXzz9b0W+Aas1YiC5aN5I3DGXbT8IjmiMzL
+	 qHLFdlv5mr9p9wCaIkmTO7YvYUH5KI9gWiGQltIY3HJSofgO3gWufJC200A20nG460
+	 shvObn4sAShELbef1IenGujP9Pf+zN1+8DEdG5Qk=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250822114826epcas5p3a9642723b496f7b1b96daf8adfdf6de2~eFF-roZFA0540505405epcas5p3v;
+	Fri, 22 Aug 2025 11:48:26 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.95]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4c7dk12S6Mz2SSKX; Fri, 22 Aug
+	2025 11:48:25 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250822114824epcas5p2aa289a9a1e75e075c3ccc31f4f2ccb12~eFF9IW-Rj0864208642epcas5p2Q;
+	Fri, 22 Aug 2025 11:48:24 +0000 (GMT)
+Received: from FDSFTE411 (unknown [107.122.81.184]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250822114819epsmtip1c9b4c65341b860acb88b9ac5f2783f81~eFF4r4n5q2807728077epsmtip1l;
+	Fri, 22 Aug 2025 11:48:19 +0000 (GMT)
+From: "Ravi Patel" <ravi.patel@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <jesper.nilsson@axis.com>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <s.nawrocki@samsung.com>,
+	<cw00.choi@samsung.com>, <alim.akhtar@samsung.com>,
+	<linus.walleij@linaro.org>, <tomasz.figa@gmail.com>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <arnd@arndb.de>
+Cc: <ksk4725@coasia.com>, <kenkim@coasia.com>, <pjsin865@coasia.com>,
+	<gwk1013@coasia.com>, <hgkim05@coasia.com>, <mingyoungbo@coasia.com>,
+	<smn1196@coasia.com>, <pankaj.dubey@samsung.com>, <shradha.t@samsung.com>,
+	<inbaraj.e@samsung.com>, <swathi.ks@samsung.com>,
+	<hrishikesh.d@samsung.com>, <dj76.yang@samsung.com>,
+	<hypmean.kim@samsung.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-arm-kernel@axis.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+	<soc@lists.linux.dev>
+In-Reply-To: <3a936b3b-0599-4b0a-83a8-52b899c24125@kernel.org>
+Subject: RE: [PATCH v2 08/10] arm64: dts: exynos: axis: Add initial ARTPEC-8
+ SoC support
+Date: Fri, 22 Aug 2025 17:18:18 +0530
+Message-ID: <000001dc135a$aa6b10c0$ff413240$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822103904.3776304-4-huangchenghai2@huawei.com>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGJY/8wx4BImu0YLFPVfwpfqUmFNgKGrjAaAh8NcQIA49H5zwGbeAXBtNq/wGA=
+Content-Language: en-in
+X-CMS-MailID: 20250822114824epcas5p2aa289a9a1e75e075c3ccc31f4f2ccb12
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250821124055epcas5p4d1072e9b4ef29587e0fd8606bc1abc4f
+References: <20250710002047.1573841-1-ksk4725@coasia.com>
+	<20250821123310.94089-1-ravi.patel@samsung.com>
+	<CGME20250821124055epcas5p4d1072e9b4ef29587e0fd8606bc1abc4f@epcas5p4.samsung.com>
+	<20250821123310.94089-9-ravi.patel@samsung.com>
+	<3a936b3b-0599-4b0a-83a8-52b899c24125@kernel.org>
 
-On Fri, Aug 22, 2025 at 06:39:03PM +0800, Chenghai Huang wrote:
-> From: Yang Shen <shenyang39@huawei.com>
+
+
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: 22 August 2025 12:09
+> To: Ravi Patel <ravi.patel@samsung.com>; jesper.nilsson@axis.com; mturquette@baylibre.com; sboyd@kernel.org;
+> robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
+> alim.akhtar@samsung.com; linus.walleij@linaro.org; tomasz.figa@gmail.com; catalin.marinas@arm.com; will@kernel.org;
+> arnd@arndb.de
+> Cc: ksk4725@coasia.com; kenkim@coasia.com; pjsin865@coasia.com; gwk1013@coasia.com; hgkim05@coasia.com;
+> mingyoungbo@coasia.com; smn1196@coasia.com; pankaj.dubey@samsung.com; shradha.t@samsung.com;
+> inbaraj.e@samsung.com; swathi.ks@samsung.com; hrishikesh.d@samsung.com; dj76.yang@samsung.com;
+> hypmean.kim@samsung.com; linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-
+> soc@vger.kernel.org; linux-arm-kernel@axis.com; linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> gpio@vger.kernel.org; soc@lists.linux.dev
+> Subject: Re: [PATCH v2 08/10] arm64: dts: exynos: axis: Add initial ARTPEC-8 SoC support
 > 
-> The current uacce_vm_ops does not support the mremap operation of
-> vm_operations_struct. Implement .mremap to return -EPERM to remind
-> users
+> On 21/08/2025 14:32, Ravi Patel wrote:
+> > From: SungMin Park <smn1196@coasia.com>
+> >
+> > Add initial device tree support for Axis ARTPEC-8 SoC.
+> >
+> > This SoC contains 4 Cortex-A53 CPUs and several other peripheral IPs.
+> >
+> > Signed-off-by: SungMin Park <smn1196@coasia.com>
+> > Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
+> > Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> ...
+> 
+> > +
+> > +	timer {
+> > +		compatible = "arm,armv8-timer";
+> > +		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+> 
+> No CPU mask?
 
-Why is this needed?  If mremap is not set, what is the value returned?
+Thanks for review and pointing out.
 
-And why is -EPERM the correct value to return here?  That's not what the
-man pages say is valid :(
+Yes. You are right.
+I will add GIC_CPU_MASK_SIMPLE(4) in next version as this uses GICv2 (gic-400) not GICv3.
 
-thanks,
+This may be carried out from other exynos/fsd platforms
 
-greg k-h
+I found below 2 related links.
+https://lkml.org/lkml/2025/6/13/1073
+https://lkml.org/lkml/2023/11/28/403
+
+Thanks,
+Ravi
+
+> 
+> > +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+> > +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+> > +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
+> > +	};
+> > +};
+> 
+> 
+> Best regards,
+> Krzysztof
+
 
