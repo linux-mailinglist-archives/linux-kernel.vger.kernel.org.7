@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-782060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEB3BB31A78
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:00:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8679EB31A7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 16:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A99B8A2568A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:56:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB0581D253E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 13:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60867309DAF;
-	Fri, 22 Aug 2025 13:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183D230EF87;
+	Fri, 22 Aug 2025 13:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uf/i0dZT"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B7fL1/25"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A8930499D
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5F7257820
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 13:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755870919; cv=none; b=r6SP7ZU7dku/Da27OR3UKErSt/uLwuadwNfDKAG0/L8c8Jkp5rBlbjgGkbUG61kClJWtTWqSWFaNh+OdY2nfBdMVFDBVce5Gdb8RVE48PbTYRnXcee3zkQxSO/EdwCKq2hrmA5jeZT3RWgaVoWVBccu9wMWDE3QR8gIBaeLwJzE=
+	t=1755870921; cv=none; b=EAfCHW6y0v4knNAOnjG+eMjcBbPuGJs+y3/7/nze6UQ0app4w0astRSVHME4uGiyKO1w1RSSo+YS3WZg8gKcv8JSPLHlyx9jELxgPsp5Q8Fft5Z1R4HZoFbXXLkKsOJHfqEvu89n71ekq0Bs4QwFs7q17PvSD+Ok6caiKv0My6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755870919; c=relaxed/simple;
-	bh=Nr3xhHihjC0qMrhqZcnzSmaV5aQGyXYcc350MW8rvbM=;
+	s=arc-20240116; t=1755870921; c=relaxed/simple;
+	bh=utP1enymQOWYdzzMJg+XO+S1ofOs3Yc/33ydjTF2pI0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gya9qPQre95G+ELBzdIgxPd/5JwhwmSxmQHPmv/TyczXdAODajtCVdswQmaoyLUfKvA/iJ7pzCdHM5vkvOgioY9jmQ77bn87Ub0w4FNstFE9LIDHkG130ko0qxU5mFtzKoVIDNXMzqJOHTUdtdjPkmiF4/N5kEKGK729fjU6KCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uf/i0dZT; arc=none smtp.client-ip=209.85.218.54
+	 MIME-Version; b=Jum3mSNp2ZI9kNK45gHyjKAGFpT0+gAurkqSLAqO2ary2e0e8OrGVKRDK86rni+gn7LqS6GVssm+jDDHLTKfGKRYpHz1LD8t1GY6yvBosSuyLsPLet4PcgeeLuGrr+XkBOyz9IMlN0mtOUczG64jblxsKBxjr/bx92pp8H5te4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B7fL1/25; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7aea37cso280323266b.3
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61a8b640e34so4491424a12.1
         for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 06:55:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1755870915; x=1756475715; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TudkP+MdAfUYxvKb4s3Kf+ZXOaz3bPOWVY9e1wwKFCY=;
-        b=Uf/i0dZTRc+jp0ydFCFwle8u7kLiKv+gPnbvghHmTLmnQWX/9fco9t4pb1yKWUEzfq
-         v8LBfwv6MWF3N/Czz9PVlumYX4H0JCh8HL7bbj0c1SvA1YrF/Qhb+7twOcDZj8fxtw8y
-         h/eGcJ61UWq5daWeyVAJeDFo8BNk+AD5eQy9Y24LThv1Q+0Pq062MQiAAbXVF0Ga2zQN
-         OvGT/9f3ra+WbWsoLhSr9zWno5HHpAmEp6cJAekYzraZmmOWgLl/3AHWvL8CpHGTpd3+
-         Eb3e0ZOVwhNmVNiWTy70enp+Bd5ZWuN3mTp1L9DCelhxEkyDLS8QYqA4pMKrmlgnM6nT
-         kG9w==
+        bh=n6A7evPtMaphzVeoghc8+RfaVdSDwr1jUwsy0Dt/40M=;
+        b=B7fL1/25JZtcJHBoM8U9bIT2FmEWagKI6nZHtipZtKkbvoJ45VDBdZ6ODqQOraDyrV
+         DgwRJZiAoJWIPSZQzE+6BfzaHL0d01hghmioWab+IqH62z4l1GaWyJFXpmWATs069VZL
+         My3DC6CgZSlApvEa1dFTNvXGBoAY29dw+BHVeHYmF//kIfCm3teQ4dvANfmAmm37QOsn
+         QdDpBrONjuJOmgNtPKxn0/oWLcKvNcB676jTdAC/uCsD6fzCEGTEpbRqXmNcs61H8OEn
+         fxpShfJOdYHTk/RlMvn2ED2o5I7x44DmvKFC0PnQRRFR+UR32qq2/QgDIKauchffdD4V
+         vMeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1755870915; x=1756475715;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TudkP+MdAfUYxvKb4s3Kf+ZXOaz3bPOWVY9e1wwKFCY=;
-        b=Xut1xTJJdZTQhyyUnxYvxapYcNZ8nNL79+A1hpF74JpxJol/MSUoMg9Bz9JnHvI8+A
-         UOIOvktPVLmaPidd+P198MfgvsK6iWwbu/MxVDgNWfkF0uxHIhMZQ2HUY1y04/ScKxar
-         96jwg3hHutanesG9ybGXy1maXHIXRveaCIPBwAzlrLR99QSv2YykJRjUMfE94Gvg1atQ
-         AlVv1uyoMmRW0EcclumH5Wa2Zk/WbULiUQ287H6LnYetvkB/h1+d7+kUpZie8zfYSC2p
-         yf15US+ZFX6OdaDnuabsjmzEB5IXgQoL9tp3+wIRhm1gweLAhmIOW+YBXGK01jugOcLH
-         LKpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8jAe+AND32Jsj0oi+tzjpGyFu2FrhSLUPb003Q/XWgYUu8WUK1c8fS6xhcexc5oQqnxaUT0X6cGlOUFc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEx5g6/m38EJmJ4UcRHqO0X7Bj+sfGNzAORu3ij5ULdRrRxc7d
-	PIYqIMktdWB6lLcV2Dum0XTle9j+/RcyYUzdnlKvasyM+RIQbRwNfsQDqSueAA==
-X-Gm-Gg: ASbGncsnB63dF54RalzGg0aPL6Myy7f5mEq5CGI4mr+HywRaj4pSh/xhFo8ie73JyX5
-	MMOqPG7qtBibcAPyFz8TbwTK7qJ9r7rB+c2QZ3+sLDAhwRuXLsm/zfTPf7PXsnyO77I+vlCNrJD
-	nijqaxud3XgD8W9eyJYF2bvxdnHMCfbLvmS/TeqX80UEa5ij8bGTCGoFuVW6Hy9zmAFOrKKMjRx
-	EXxroVZwqHhrXKuhF10vQpTbvx7sqD8DXyEPdLZfGk3UBw+QqcttwUuHw2t6RybV1AeB1Qp6HmV
-	dzE03Cuh34fT/E6Sd2izSKeCYFK3SRa/4Fuys/SwBEY65yTImLTz5PVMoRvUFzGoLh3jPnPRvUu
-	+y7f1j4o5tFBmpfShpk4Uh9X5WA==
-X-Google-Smtp-Source: AGHT+IH2J8EFlu7yKogGmtXwx99Gdp4kwTSuKSx7zkh/EHIdnOCRoomd52edYMKS13WQvMZoZg4Ozg==
-X-Received: by 2002:a17:907:1b08:b0:af9:6e4a:3b31 with SMTP id a640c23a62f3a-afe2963818fmr292264866b.46.1755870914622;
-        Fri, 22 Aug 2025 06:55:14 -0700 (PDT)
+        bh=n6A7evPtMaphzVeoghc8+RfaVdSDwr1jUwsy0Dt/40M=;
+        b=IG8qfpVwoOlMOPHC/GoPNju1zBjt9T/eyX17XOo8N++yDafvqWgVWmu1fdhFDJLW4j
+         Q40TQNr3CTE3iwlhNreLHfgcp8Y5geCOZkmxcrfpnZx4XI5heiuPA0cIIDL/kZhoXz5n
+         E8dTjrcGexlf2WPP722c83Yzfdo9npJNNa1uGtZwUGWVHnIAAf27jIORSuYq4Xagwfj/
+         wgo+ubvPKzk4N5xJc5V153PEyPGr7nwgUrembs3D6p0Gml4NAf425H1fWanhz2jVTc8m
+         CqU2kPRgvxeTbqNwblzrhrR2pO7KQiGYbU0tMNvuxRQApMH/OCQPu768gnPHs/K65Oif
+         rNYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWAY5QWmOFu+WTh8e696K2QOEtjgtN57BnG7sspf8EFCStPAbnz0TKjYqdvpWirX8Tw2Fioy6XrHDpsn3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya0ynR0SkwMV0c453kb0Y65ebbTTGhtZejBqYkp7tTlD+OhYMf
+	fTSr0M/bgK31qCHBKU93ZU3JCA37bmGOr856N8B2qpRHEEmTjOd22aVq
+X-Gm-Gg: ASbGnctAtc+FXFL9ihssV26hSVV4ylP8hvMGHuE0pg/12SmMM/XmkhS/W+ruKbVm9SE
+	JEYnCEiMD5cpKl0L5g64ArTMPbWFAmcv8XTfLXLMKan9R5WmAVrRSyQ8WQndZ6J+LYi7g/LUEWn
+	0yEIXh0fJ6RhpEZwD8ZxaMULEY1tYDSzp7mZwGEBFjEgw4x/fsaiFviKbTTqJKRPSeTbEH8cnlM
+	ne6Lh5OBP6Ohq/SL0SMDsBruopxETwipqv4mbOuuqF2tEGt0kK+2MQXa5u+u3YjvnMJnINX8S2A
+	QIYCIoNy5vx5Xa0XFG6Ll/HaU6MgkmeWs43Swwul+Jnp5r/O0kD7FzijW88oEMMWv5ALBy7UQ2A
+	zPFAHhCz2Xz9uOYG0YtsRz6jkhA==
+X-Google-Smtp-Source: AGHT+IGU7sy/pKzJ00e6fQ5Px6JIl9af9XWJZ5whF3tCatP/hSD/bH6jHYxOj7b6rMBX1whEym4WGg==
+X-Received: by 2002:a17:907:d2a:b0:ae0:e065:ddfb with SMTP id a640c23a62f3a-afe29048018mr290926466b.18.1755870915375;
+        Fri, 22 Aug 2025 06:55:15 -0700 (PDT)
 Received: from tumbleweed ([95.90.184.246])
         by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded307138sm612353866b.45.2025.08.22.06.55.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 06:55:14 -0700 (PDT)
+        Fri, 22 Aug 2025 06:55:15 -0700 (PDT)
 From: Michael Straube <straube.linux@gmail.com>
 To: gregkh@linuxfoundation.org
 Cc: hdegoede@redhat.com,
@@ -79,9 +79,9 @@ Cc: hdegoede@redhat.com,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 07/13] staging: rtl8723bs: merge rtw_os_recvbuf_resource_free into rtl8723bs_recv.c
-Date: Fri, 22 Aug 2025 15:54:12 +0200
-Message-ID: <20250822135418.118115-8-straube.linux@gmail.com>
+Subject: [PATCH 08/13] staging: rtl8723bs: move rtw_os_alloc_msdu_pkt to rtw_recv.c
+Date: Fri, 22 Aug 2025 15:54:13 +0200
+Message-ID: <20250822135418.118115-9-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250822135418.118115-1-straube.linux@gmail.com>
 References: <20250822135418.118115-1-straube.linux@gmail.com>
@@ -93,71 +93,130 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Merge rtw_os_recvbuf_resource_free into rtl8723bs_init_recv_priv and into
-rtl8723bs_free_recv_priv to reduce code in the os_dep directory.
+Move the function rtw_os_alloc_msdu_pkt from os_dep/recv_linux.c to
+core/rtw_recv.c to reduce code in the os_dep directory.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c | 6 ++++--
- drivers/staging/rtl8723bs/include/recv_osdep.h | 2 --
- drivers/staging/rtl8723bs/os_dep/recv_linux.c  | 7 -------
- 3 files changed, 4 insertions(+), 11 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_recv.c     | 40 +++++++++++++++++++
+ .../staging/rtl8723bs/include/recv_osdep.h    |  1 -
+ drivers/staging/rtl8723bs/os_dep/recv_linux.c | 40 -------------------
+ 3 files changed, 40 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-index 28c914ec2604..399edfbf8ec6 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-@@ -431,7 +431,8 @@ s32 rtl8723bs_init_recv_priv(struct adapter *padapter)
- 		precvpriv->free_recv_buf_queue_cnt = 0;
- 		for (i = 0; i < n ; i++) {
- 			list_del_init(&precvbuf->list);
--			rtw_os_recvbuf_resource_free(padapter, precvbuf);
-+			if (precvbuf->pskb)
-+				dev_kfree_skb_any(precvbuf->pskb);
- 			precvbuf++;
- 		}
- 		precvpriv->precv_buf = NULL;
-@@ -467,7 +468,8 @@ void rtl8723bs_free_recv_priv(struct adapter *padapter)
- 		precvpriv->free_recv_buf_queue_cnt = 0;
- 		for (i = 0; i < NR_RECVBUFF; i++) {
- 			list_del_init(&precvbuf->list);
--			rtw_os_recvbuf_resource_free(padapter, precvbuf);
-+			if (precvbuf->pskb)
-+				dev_kfree_skb_any(precvbuf->pskb);
- 			precvbuf++;
- 		}
- 		precvpriv->precv_buf = NULL;
+diff --git a/drivers/staging/rtl8723bs/core/rtw_recv.c b/drivers/staging/rtl8723bs/core/rtw_recv.c
+index cda51aab752d..4947099d8595 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_recv.c
++++ b/drivers/staging/rtl8723bs/core/rtw_recv.c
+@@ -1622,6 +1622,46 @@ static signed int wlanhdr_to_ethhdr(union recv_frame *precvframe)
+ 	return _SUCCESS;
+ }
+ 
++static struct sk_buff *rtw_os_alloc_msdu_pkt(union recv_frame *prframe, u16 nSubframe_Length, u8 *pdata)
++{
++	u16 eth_type;
++	struct sk_buff *sub_skb;
++	struct rx_pkt_attrib *pattrib;
++
++	pattrib = &prframe->u.hdr.attrib;
++
++	sub_skb = rtw_skb_alloc(nSubframe_Length + 12);
++	if (!sub_skb)
++		return NULL;
++
++	skb_reserve(sub_skb, 12);
++	skb_put_data(sub_skb, (pdata + ETH_HLEN), nSubframe_Length);
++
++	eth_type = get_unaligned_be16(&sub_skb->data[6]);
++
++	if (sub_skb->len >= 8 &&
++		((!memcmp(sub_skb->data, rfc1042_header, SNAP_SIZE) &&
++		eth_type != ETH_P_AARP && eth_type != ETH_P_IPX) ||
++		!memcmp(sub_skb->data, bridge_tunnel_header, SNAP_SIZE))) {
++		/*
++		 * remove RFC1042 or Bridge-Tunnel encapsulation and replace
++		 * EtherType
++		 */
++		skb_pull(sub_skb, SNAP_SIZE);
++		memcpy(skb_push(sub_skb, ETH_ALEN), pattrib->src, ETH_ALEN);
++		memcpy(skb_push(sub_skb, ETH_ALEN), pattrib->dst, ETH_ALEN);
++	} else {
++		__be16 len;
++		/* Leave Ethernet header part of hdr and full payload */
++		len = htons(sub_skb->len);
++		memcpy(skb_push(sub_skb, 2), &len, 2);
++		memcpy(skb_push(sub_skb, ETH_ALEN), pattrib->src, ETH_ALEN);
++		memcpy(skb_push(sub_skb, ETH_ALEN), pattrib->dst, ETH_ALEN);
++	}
++
++	return sub_skb;
++}
++
+ static int amsdu_to_msdu(struct adapter *padapter, union recv_frame *prframe)
+ {
+ 	int	a_len, padding_len;
 diff --git a/drivers/staging/rtl8723bs/include/recv_osdep.h b/drivers/staging/rtl8723bs/include/recv_osdep.h
-index 9b3f4e8293ee..227e172bf1c3 100644
+index 227e172bf1c3..1e332ea63207 100644
 --- a/drivers/staging/rtl8723bs/include/recv_osdep.h
 +++ b/drivers/staging/rtl8723bs/include/recv_osdep.h
-@@ -18,8 +18,6 @@ extern void rtw_recv_returnpacket(struct net_device *cnxt, struct sk_buff *pretu
+@@ -18,7 +18,6 @@ extern void rtw_recv_returnpacket(struct net_device *cnxt, struct sk_buff *pretu
  int	rtw_init_recv_priv(struct recv_priv *precvpriv, struct adapter *padapter);
  void rtw_free_recv_priv(struct recv_priv *precvpriv);
  
--void rtw_os_recvbuf_resource_free(struct adapter *padapter, struct recv_buf *precvbuf);
--
- struct sk_buff *rtw_os_alloc_msdu_pkt(union recv_frame *prframe, u16 nSubframe_Length, u8 *pdata);
+-struct sk_buff *rtw_os_alloc_msdu_pkt(union recv_frame *prframe, u16 nSubframe_Length, u8 *pdata);
  void rtw_os_recv_indicate_pkt(struct adapter *padapter, struct sk_buff *pkt, struct rx_pkt_attrib *pattrib);
  
+ #endif /*  */
 diff --git a/drivers/staging/rtl8723bs/os_dep/recv_linux.c b/drivers/staging/rtl8723bs/os_dep/recv_linux.c
-index c71e0c762f4f..ebe169507dc8 100644
+index ebe169507dc8..4d3a42f6f9ad 100644
 --- a/drivers/staging/rtl8723bs/os_dep/recv_linux.c
 +++ b/drivers/staging/rtl8723bs/os_dep/recv_linux.c
-@@ -9,13 +9,6 @@
+@@ -9,46 +9,6 @@
  #include <net/cfg80211.h>
  #include <linux/unaligned.h>
  
--/* free os related resource in struct recv_buf */
--void rtw_os_recvbuf_resource_free(struct adapter *padapter, struct recv_buf *precvbuf)
+-struct sk_buff *rtw_os_alloc_msdu_pkt(union recv_frame *prframe, u16 nSubframe_Length, u8 *pdata)
 -{
--	if (precvbuf->pskb)
--		dev_kfree_skb_any(precvbuf->pskb);
+-	u16 eth_type;
+-	struct sk_buff *sub_skb;
+-	struct rx_pkt_attrib *pattrib;
+-
+-	pattrib = &prframe->u.hdr.attrib;
+-
+-	sub_skb = rtw_skb_alloc(nSubframe_Length + 12);
+-	if (!sub_skb)
+-		return NULL;
+-
+-	skb_reserve(sub_skb, 12);
+-	skb_put_data(sub_skb, (pdata + ETH_HLEN), nSubframe_Length);
+-
+-	eth_type = get_unaligned_be16(&sub_skb->data[6]);
+-
+-	if (sub_skb->len >= 8 &&
+-		((!memcmp(sub_skb->data, rfc1042_header, SNAP_SIZE) &&
+-		  eth_type != ETH_P_AARP && eth_type != ETH_P_IPX) ||
+-		 !memcmp(sub_skb->data, bridge_tunnel_header, SNAP_SIZE))) {
+-		/*
+-		 * remove RFC1042 or Bridge-Tunnel encapsulation and replace
+-		 * EtherType
+-		 */
+-		skb_pull(sub_skb, SNAP_SIZE);
+-		memcpy(skb_push(sub_skb, ETH_ALEN), pattrib->src, ETH_ALEN);
+-		memcpy(skb_push(sub_skb, ETH_ALEN), pattrib->dst, ETH_ALEN);
+-	} else {
+-		__be16 len;
+-		/* Leave Ethernet header part of hdr and full payload */
+-		len = htons(sub_skb->len);
+-		memcpy(skb_push(sub_skb, 2), &len, 2);
+-		memcpy(skb_push(sub_skb, ETH_ALEN), pattrib->src, ETH_ALEN);
+-		memcpy(skb_push(sub_skb, ETH_ALEN), pattrib->dst, ETH_ALEN);
+-	}
+-
+-	return sub_skb;
 -}
 -
- struct sk_buff *rtw_os_alloc_msdu_pkt(union recv_frame *prframe, u16 nSubframe_Length, u8 *pdata)
+ void rtw_os_recv_indicate_pkt(struct adapter *padapter, struct sk_buff *pkt, struct rx_pkt_attrib *pattrib)
  {
- 	u16 eth_type;
+ 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
 -- 
 2.51.0
 
