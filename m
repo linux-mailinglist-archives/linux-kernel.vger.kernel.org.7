@@ -1,103 +1,215 @@
-Return-Path: <linux-kernel+bounces-782852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D4A0B32609
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:54:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5B9BB3260A
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27F4F688FCC
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:54:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72A7A688FF2
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7577B13EFE3;
-	Sat, 23 Aug 2025 00:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72D7157A6B;
+	Sat, 23 Aug 2025 00:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="aqPvsGjg"
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R6cbKchF"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC7A2DF68
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 00:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EAA2DF68;
+	Sat, 23 Aug 2025 00:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755910444; cv=none; b=IIi4gnPANb6cntIOJEtvUsl6PGYvbjKJt8ndFUux/GbCeVqcoEw7J5BgEcUq9SdLitU9q5aDlwRYOAH9W+KwuwUkSlAEoE3kUHE1mSWTEU/SumZp0cEE2qPHXJM+tDbn2BGM9/6Gb4TBOjcyaBPUVUmLVl/ZzNAObUrzeKcCKpk=
+	t=1755910452; cv=none; b=JExuoch7ikdVZS9Geo/F8kZDky/9fPUOZBTs5wMkNdVW2Q7SWqa5nAIswmXeLFDfWWRhWO8hBk1CqD28rPW2ctfeUVkbX73MB0hmuzEkM2GNAClX0J4+Ul61WRWH7pdHP6tpHAqJ+RELbqady96tZQbYN+jwUafRcrJk7MeDV2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755910444; c=relaxed/simple;
-	bh=lovTvfo7AG4MLzQzwwRpAlgVo+bEghoWziyvz0qc58Q=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=QGG021kJ4ywd5GjBODkd3VL4HC6BRRWDkUrStq99UD7bk+A00JRfvZoPsPpc1M3AGgF4xQeziSSk/R6oBnAgyoXIAyc8/icE/d5fCGC+kpgxiJdi0byggESA6b3cEc7fMfOfWpdwe+NJWHh/dgr6t+jBava0fpq0lEO6OlYb9ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=aqPvsGjg; arc=none smtp.client-ip=203.205.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1755910438; bh=vH5IURM0DMtsJBGcbVf7Cjs7RVT2vu+dky6ZeaLAMXo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=aqPvsGjglBRDAytLeXs9LXOsvtcerIwi400ix/rONRGiPkyTFrBf9vcQJdWvBVAgB
-	 TU31/14rXvy/orrVgRMBnGF2H0pyBfJ68K37QtXXdbLI5Y7807gxf+w9KG3ltRgV8X
-	 Ne9/IaXfdzq2ZV2XiJzPULqLqa8kMb5O9wid52Yw=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
-	id D77B1072; Sat, 23 Aug 2025 08:53:55 +0800
-X-QQ-mid: xmsmtpt1755910435tuv4mku00
-Message-ID: <tencent_2BECEECECC7B926C782CC96EB897BCE8DE0A@qq.com>
-X-QQ-XMAILINFO: N/WmRbclY25GPuPwqF7rm7S9HiLwk49AWa06qpoXh86nHBf5MDzTMx9twUuZtg
-	 mQz5gcuQqQipU+BttVQKIJhwwKR/jhwBBNy04DW1VsNlhXzIxPOELcUXXmNj1RPhD6p26rcLP3JV
-	 KBDRyWapHDZ0acI8Nkw6AkhEqMI7OYC+TWjXcLFNLYwr+mugBN2Ke+gzlllbTydNjJFXq+YO6eQJ
-	 QhAfmdHezaQep8RVNre59iHZ5+f0jbxefZq1J3J9exkufPyhSjjgPXYF/4UWUysjWKSb0LTNbwLc
-	 wakET1is/BDYDOGQMF8g4WASlLRzdQxSWflqCZHw1P4N7g04nq+6WnU7Tyjrhgh45D3O7SNryTAq
-	 Keg85pf+6bQHHjTWSIknKrsSXWFKkRR1A+Qnda1gsJ8jKSMB5PPsuHCtS0/LjyQzaChJRRerVZMW
-	 xNpXeOTBITN6CH1auhHP5leWwlhu9NWRF37mZhXtHG+YSJqUmqssp/w9cgx+Gfe06ezPA4c5xqKl
-	 uJPfWVQxp0u6lSugswcM28QjYT3UEeM1csdjyXtEGBkjkVlWComWiQHaAedqEtxA+rH/SK/WZNrO
-	 yvtbGzPMMK4KmWTcu7Oc/+qmPe+ErZPXxBgKU16/dO/hK1/DHWHRJD4Oyo1oczWlfyx4dyNCO+EF
-	 YBYLR+hMy3wk3IvMZs47dtUZPpmW7CCcTRgJk7Qx+a7ZemeOdjY85CZnbKWo1pLPlp6CIYoAKRMm
-	 NKF/5fa9Z+16cJr101wCU1exQud0tlZRYkma0FwE6Ya9W3oHRg5b3SDxF/edMptS7fqAIl8+EvPG
-	 5PArDBttSsKv8HCyqTORQYjpQPLeCtlno1xRJiH8KYjdxidS/bvqF7WxN7lKV+0tEwqr6USP4x/y
-	 3Vsw2ecn1jImDDi6KSyTNrsFL0o06ln7370D+6950Wu5Rbx25VYkfnZ1zOANItWyDLk2/+PkLHTg
-	 iQcY7qYCurI5X/hk1QxHE6qiyV1B1aF10QqAeFov9Zq6jKv4pFQ40dfExahReE
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+5a398eb460ddaa6f242f@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [erofs?] KASAN: global-out-of-bounds Read in z_erofs_decompress_queue
-Date: Sat, 23 Aug 2025 08:53:53 +0800
-X-OQ-MSGID: <20250823005353.2602746-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <68a8bd20.050a0220.37038e.005a.GAE@google.com>
-References: <68a8bd20.050a0220.37038e.005a.GAE@google.com>
+	s=arc-20240116; t=1755910452; c=relaxed/simple;
+	bh=TOvtwkvLXbhmk+7X8flgWnWXgBUdF+/gzHPzLJMg2cs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LUJlKyAJgU1mC3w2prL8bwm+7dafv4NbNGUkkQKgz8Ze+7l5SVIhzKGffGUW7WzS4+mm9X8t35ReIpTEiQLPxw+TLvKb1I8Vrr9I3kGAxETZxDgfPDkrR/DYV7tr1yQvIBaJxYGGA782giPqGN9ehJOpX6DYkRXX0Rm6/iF7jGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R6cbKchF; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b297962525so24511391cf.1;
+        Fri, 22 Aug 2025 17:54:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755910449; x=1756515249; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=53GjFjykpPBqD5WgL54wNUpUBUx+3gxukD1+nTnxWog=;
+        b=R6cbKchF2nrHss7ygZ/6AxPiDi6ZEVYf5Tmhp6V/OSwVHeeBr7FVYIXwB2Bx7TOhqe
+         ESvFRK8P+ozB38BGU3Srrm1B/5r/2GFRtmFQNC+aZUD2/jWbiwbi4LAMHGgiGOMdHcCj
+         lShLRDmHQkGOliLpomPLUa8q/b9KGFwfqOXPJJn69E6vWALc7Yqpl/Ibnc/VRVp5vg12
+         JwK7Q3raoWHS4wqQfoLC19TnLT8PjkO043RaQAyXMPeziei5POv30ZbIH0nZWYOAjyTn
+         esaiKry9zESz4TYu5zAd6gBQs5D9xQ/R82PHqIfrjxGmX86mI38jYnEgMeTazx6RaHGz
+         M4tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755910449; x=1756515249;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=53GjFjykpPBqD5WgL54wNUpUBUx+3gxukD1+nTnxWog=;
+        b=FTWLU+2hYBAMuiiDagpXogDWMX6uqLyt3GG6XEUl9XbYBpGvP56ExMx3LHUjoDIBm/
+         GLZBm78TZXcosTugvRajuWE9CgelWmLCCXmVgQuFkhh5M1WmCJuqiiPpNzeVXdNgKi1v
+         uEA56i/GuYXAx0jdbExa1Ax0DekRNEYDoHgXOazb0PTVU/WNe079pFQTTuFYPlXQWdNt
+         KDFjFgGTHgJLGi5MaXGNGYZyQUzlDed1KyhyeUMqAC3XhCjrcRVB3jNzhSDoBZ/rGHeN
+         XB85miXCx7dbO/oTdn2Pecyr8m4VZunkixk//vzhspve8c+4RGyj/8J6DceJhuS6Kr7V
+         vReA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcC7jSkRwytBT2yL2PM+h0XFtwdqFRndq/xlIsNZW6EmJMmQPoz1gr2Vc/WAK5O8EcKWJJl8vCJ3jFSS0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAd0hM93O9I6BXtBgKeFIcDdP4o+X0FrBy7OEDxaY1Z1WaqKj2
+	Hyl9qRiY1Fi5BGchqvDHjSPFo6Yc6b0X9CGJzoaqqN6uOW6Ngyx2WTAe5+pWFtYxST3cUUEXKdY
+	BefC64bQMMWyJnDkSq//GfHhBzuMIIVc=
+X-Gm-Gg: ASbGncufu6SMeiA+MeGkl3Dp0+TSZ9WmkaCrz/smxelkYBdQxgKAT2BikHNT8w77CS9
+	RNY4cfJpl83ohPNb0+KretFKmTzFnjRAXLQJhwKpBOaPk2voL7O1Yt9hTDSCmfnPFxZWKzSbuID
+	SqFclfgX7fVGmdilHEM65uuBWk3gfePm+PtL4NP3CdawjAXLhxmgUKL7vCFDXrcp0YpFc4w/wG8
+	6gewIFB
+X-Google-Smtp-Source: AGHT+IFHms8iyND1wi//Z1dZcvUEce1eZQqqkPGz+r6Yfau+D9asJnAr08DF/wv6dZF01ZM+kZkKPL0XCJNGeRSY2k4=
+X-Received: by 2002:a05:622a:581a:b0:4af:4bac:e539 with SMTP id
+ d75a77b69052e-4b2aae2e387mr77427581cf.3.1755910449130; Fri, 22 Aug 2025
+ 17:54:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <68a8f5db.a00a0220.33401d.02e1.GAE@google.com>
+In-Reply-To: <68a8f5db.a00a0220.33401d.02e1.GAE@google.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 22 Aug 2025 17:53:57 -0700
+X-Gm-Features: Ac12FXykfvJlT3U4O50PYkeJ9A-cM0Cr4LFU_PlCErQyFP1u9wxCcYdE2rFp1VI
+Message-ID: <CAJnrk1bSD+HfwLqbFv8gsRsPt0kRsr8JZcEXdqBWuKh2Qnz_yA@mail.gmail.com>
+Subject: Re: [syzbot] [fuse?] KASAN: slab-out-of-bounds Write in fuse_dev_do_write
+To: syzbot <syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-#syz test
+On Fri, Aug 22, 2025 at 4:24=E2=80=AFPM syzbot
+<syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    cf6fc5eefc5b Merge tag 's390-6.17-3' of git://git.kernel.=
+o..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D15348c4258000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Db7511150b112b=
+9c3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D2d215d165f9354b=
+9c4ea
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for D=
+ebian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D147a5062580=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D139caa3458000=
+0
+>
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d=
+900f083ada3/non_bootable_disk-cf6fc5ee.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a27518272e48/vmlinu=
+x-cf6fc5ee.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/cf3f4cc06dfd/b=
+zImage-cf6fc5ee.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KASAN: slab-out-of-bounds in fuse_retrieve fs/fuse/dev.c:1911 [inlin=
+e]
+> BUG: KASAN: slab-out-of-bounds in fuse_notify_retrieve fs/fuse/dev.c:1959=
+ [inline]
+> BUG: KASAN: slab-out-of-bounds in fuse_notify fs/fuse/dev.c:2067 [inline]
+> BUG: KASAN: slab-out-of-bounds in fuse_dev_do_write+0x308b/0x3420 fs/fuse=
+/dev.c:2158
+> Write of size 4 at addr ffff88803b8fc6dc by task syz.0.17/6135
+>
+> CPU: 0 UID: 0 PID: 6135 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(f=
+ull)
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.=
+16.3-2~bpo12+1 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+>  print_address_description mm/kasan/report.c:378 [inline]
+>  print_report+0xcd/0x630 mm/kasan/report.c:482
+>  kasan_report+0xe0/0x110 mm/kasan/report.c:595
+>  fuse_retrieve fs/fuse/dev.c:1911 [inline]
+>  fuse_notify_retrieve fs/fuse/dev.c:1959 [inline]
+>  fuse_notify fs/fuse/dev.c:2067 [inline]
+>  fuse_dev_do_write+0x308b/0x3420 fs/fuse/dev.c:2158
+>  fuse_dev_write+0x155/0x1e0 fs/fuse/dev.c:2242
+>  new_sync_write fs/read_write.c:593 [inline]
+>  vfs_write+0x7d3/0x11d0 fs/read_write.c:686
+>  ksys_write+0x12a/0x250 fs/read_write.c:738
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f440eb8ebe9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f=
+7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f440f9e1038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 00007f440edb5fa0 RCX: 00007f440eb8ebe9
+> RDX: 0000000000000030 RSI: 0000200000000140 RDI: 0000000000000004
+> RBP: 00007f440ec11e19 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007f440edb6038 R14: 00007f440edb5fa0 R15: 00007ffddcd08da8
+>  </TASK>
 
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 2d73297003d2..11f59bc2db8e 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -752,6 +752,10 @@ static int z_erofs_register_pcluster(struct z_erofs_frontend *fe)
- 
- 	lockref_init(&pcl->lockref); /* one ref for this request */
- 	pcl->algorithmformat = map->m_algorithmformat;
-+	if (pcl->algorithmformat >= Z_EROFS_COMPRESSION_MAX) {
-+		err = -EINVAL;
-+		goto out;
-+	}
- 	pcl->pclustersize = map->m_plen;
- 	pcl->length = 0;
- 	pcl->partial = true;
-@@ -796,6 +800,7 @@ static int z_erofs_register_pcluster(struct z_erofs_frontend *fe)
- 
- err_out:
- 	mutex_unlock(&pcl->lock);
-+out:
- 	z_erofs_free_pcluster(pcl);
- 	return err;
- }
+Thanks for the report. I think the issue arises in cases where the
+calculation for num_pages has to get rounded down to fc->max_pages and
+a non-zero offset is passed in.
 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+
+#syz test: upstream cf6fc5eefc5bbbbff92a085039ff74cdbd065c29
+
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index e80cd8f2c049..e84e05de9cdb 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1893,7 +1893,7 @@ static int fuse_retrieve(struct fuse_mount *fm,
+struct inode *inode,
+
+        index =3D outarg->offset >> PAGE_SHIFT;
+
+-       while (num) {
++       while (num && num_pages) {
+                struct folio *folio;
+                unsigned int folio_offset;
+                unsigned int nr_bytes;
+@@ -1914,6 +1914,7 @@ static int fuse_retrieve(struct fuse_mount *fm,
+struct inode *inode,
+
+                offset =3D 0;
+                num -=3D nr_bytes;
++               num_pages -=3D nr_pages;
+                total_len +=3D nr_bytes;
+                index +=3D nr_pages;
+        }
 
