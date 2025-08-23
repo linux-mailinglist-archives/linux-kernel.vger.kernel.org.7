@@ -1,145 +1,156 @@
-Return-Path: <linux-kernel+bounces-783103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4C7B32965
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:47:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E97F4B32967
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E306E1893914
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:45:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C61D517642A
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF0D21B8F5;
-	Sat, 23 Aug 2025 14:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224D12E62CB;
+	Sat, 23 Aug 2025 14:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="truQuPMy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="X0xJpitM"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821222135D1
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 14:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8A02E54AD;
+	Sat, 23 Aug 2025 14:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755960313; cv=none; b=SdSfz6dedWv+nd6aai+J/JZjKZ4JbOndiSep4Yyr+dhGFEKko6Abx56XBKwLqb3wbtN2p5TpECZDp3sHlUWJqmcpTWC83u9jOwV0qtYKIL2jSpILjcGer8cu523CnbsxYUF5GWFK0zGaxArMPUAeNlDkVAmekCqu91qCLJVTZNQ=
+	t=1755960422; cv=none; b=nRJc/4E3dROvedyp+KmN2RSDBQ6hQXzUphM+zDsHq7XGCCOmX18KhEXb0AND5L4tjLS8xQDPcxURz5oA/vVJeJxS9v6DqboEdxCZPq0LoPwCH/R88Z8Q8uhLFzEYyS6hQDDJ+AMIciZgeAHXZcTO/Hw5iv1a7+oRYG5r6ZMg/Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755960313; c=relaxed/simple;
-	bh=i/F8Fwe6uYBrP8vNdDFheItSGQyFXOJkkIi52nL/IPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=k4/3du26sBzULqNStb0O7VDwDIJh2uTS9bi0Gw2BXZ84GyI3dWUMJt8N3i7psP/bLhNuSKA04pH0/1+wf8VNuEWQbVPq1h7InrwYDqaHAfNQ7VaNrT+47WKExAhU9pyEZ3UbRzEV7Sx2RbZdKV0S54x60FHTtx0+Qcn5U3x4fJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=truQuPMy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2DC9C4CEF4;
-	Sat, 23 Aug 2025 14:45:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755960313;
-	bh=i/F8Fwe6uYBrP8vNdDFheItSGQyFXOJkkIi52nL/IPE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=truQuPMyBls82wZK36J5GbpvsC86kmXzTO4+hIVprdGz0EOSoXlrmyHumLQaViShO
-	 /YHiaKoUZS8Qs41UGyEM7T02AZFJZ+SUW8QKA7Auhnh9wv6SJs4h0WiDXw98PSiSFM
-	 wOBtw0G0L6TY6NRJdipNgUvZppDHnGP4Sc4+M56Q=
-Date: Sat, 23 Aug 2025 16:45:10 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Char/Misc/IIO driver fixes for 6.17-rc3
-Message-ID: <aKnT9goiCOPLVeZe@kroah.com>
+	s=arc-20240116; t=1755960422; c=relaxed/simple;
+	bh=cenfpGkljjvV4+pZBLnL38Jo0Mb2RZGK5lB4/sLKQFE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=r/rAJEJHrkvbsjHnE3rpLkOSStwarXLy7+9G56xg+DWuCFOZ9BLTKqsNJVA9bkKfNudCw6PCSYp3gp/+OOb+c39gSwAfI75vMOplzy0o0BulDi7QkEIh4bXqAIDyJZfzZ8o0QirEW+F4t5iiysk277hkaHn9wkSsLPZ3qT++xOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=X0xJpitM; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1755960408; x=1756565208; i=markus.elfring@web.de;
+	bh=cenfpGkljjvV4+pZBLnL38Jo0Mb2RZGK5lB4/sLKQFE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=X0xJpitMfpYJKUmrk7s/+b7A1YAzra7ryTKmNaJgYQL2kCsf4wLWFEOFPpChdJhV
+	 pJUsO3m0BgpWOsrfYhNzL6cItgo1MxJbhp1NN6ew+97qXh3icLGWieVLS6bICUBEL
+	 uOKzaNpKyR5pV2cnVFgiw73w+pxe2A6A72K9facMu73NhytH7OGecCLkxWeXGnqjO
+	 dHhfM6bxYzu3IIc7L5qGHr8kic54pvcFdjpLwa5RnFIBMP+IgQw3FsldViKCi8soz
+	 frmB2ElsNYwarq4ms8xQ++NoxdUSze8nMvQgJRHVDWQiiuxDZJn//HCaEnCixYMkH
+	 T55OEKq5tPWt3+CvTg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.194]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MTvw0-1uz9Ao3A5S-00QYCD; Sat, 23
+ Aug 2025 16:46:48 +0200
+Message-ID: <cac66cc0-c5f1-4bfe-ac43-5ece4a47cf15@web.de>
+Date: Sat, 23 Aug 2025 16:46:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+To: "H. Nikolaus Schaller" <hns@goldelico.com>, linux-pm@vger.kernel.org,
+ kernel@pyra-handheld.com, letux-kernel@openphoenux.org,
+ Jerry Lv <Jerry.Lv@axis.com>, Sebastian Reichel <sre@kernel.org>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Andreas Kemnade <andreas@kemnade.info>, =?UTF-8?Q?Pali_Roh=C3=A1r?=
+ <pali@kernel.org>
+References: <692f79eb6fd541adb397038ea6e750d4de2deddf.1755945297.git.hns@goldelico.com>
+Subject: Re: [PATCH v2 1/2] power: supply: bq27xxx: fix error return in case
+ of no bq27000 hdq battery
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <692f79eb6fd541adb397038ea6e750d4de2deddf.1755945297.git.hns@goldelico.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:sDVZphkx/6Md0rgKCmdtwnMM6aRWlnVWYeNj8n4jRZZcSnDaOR9
+ 3htZw9EPf5QOV0/VrUl0+oulSXVCCcmJka0O3Y9MUkPVr3sT5TRztMBZCWHOEhVtMdhODgU
+ 923Mf6AwyT3zWYZ3j78hP9imW3u6sYND4GRhRpJlGMclK48D4d6Vi0GrypyhLgVXekveEEP
+ lQCCg9dU0vbIG+aVmp/Kw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:yzGP26p5vys=;ZzCkxTZWDhy9WKmQSw8TJ8pBZo5
+ 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
 
-The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
+=E2=80=A6
+> So we change the detection of missing bq27000 battery to simply set
+=E2=80=A6
 
-  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.17-rc2#n94
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-6.17-rc3
-
-for you to fetch changes up to fe85261d7d554f54693f205898260ef1d44cbd8b:
-
-  Merge tag 'iio-fixes-for-6.17a' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/jic23/iio into char-misc-linus (2025-08-20 11:05:00 +0200)
-
-----------------------------------------------------------------
-Char/Misc/IIO fixes for 6.17-rc3
-
-Here are a small number of char/misc/iio and other driver fixes for
-6.17-rc3.  Included in here are:
-  - IIO driver bugfixes for reported issues
-  - bunch of comedi driver fixes
-  - most core bugfix
-  - fpga driver bugfix
-  - cdx driver bugfix
-
-All of these have been in linux-next this week with no reported issues.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Claudiu Beznea (2):
-      iio: adc: rzg2l: Cleanup suspend/resume path
-      iio: adc: rzg2l_adc: Set driver data before enabling runtime PM
-
-David Lechner (6):
-      iio: accel: sca3300: fix uninitialized iio scan data
-      iio: proximity: isl29501: fix buffered read on big-endian systems
-      iio: adc: ad7173: prevent scan if too many setups requested
-      iio: temperature: maxim_thermocouple: use DMA-safe buffer for spi_read()
-      iio: adc: ad7124: fix channel lookup in syscalib functions
-      iio: adc: ad7380: fix missing max_conversion_rate_hz on adaq4381-4
-
-Edward Adam Davis (1):
-      comedi: pcl726: Prevent invalid irq number
-
-Greg Kroah-Hartman (1):
-      Merge tag 'iio-fixes-for-6.17a' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/jic23/iio into char-misc-linus
-
-Ian Abbott (2):
-      comedi: Fix use of uninitialized memory in do_insn_ioctl() and do_insnlist_ioctl()
-      comedi: Make insn_rw_emulate_bits() do insn->n samples
-
-Jean-Baptiste Maneyrol (1):
-      iio: imu: inv_icm42600: change invalid data error to -EBUSY
-
-Jonathan Cameron (1):
-      iio: light: as73211: Ensure buffer holes are zeroed
-
-Matti Vaittinen (1):
-      iio: adc: bd79124: Add GPIOLIB dependency
-
-Miaoqian Lin (1):
-      most: core: Drop device reference after usage in get_channel()
-
-Salah Triki (1):
-      iio: pressure: bmp280: Use IS_ERR() in bmp280_common_probe()
-
-Thorsten Blum (1):
-      cdx: Fix off-by-one error in cdx_rpmsg_probe()
-
-Xu Yilun (1):
-      fpga: zynq_fpga: Fix the wrong usage of dma_map_sgtable()
-
- drivers/cdx/controller/cdx_rpmsg.c               |  3 +-
- drivers/comedi/comedi_fops.c                     |  5 ++
- drivers/comedi/drivers.c                         | 27 ++++----
- drivers/comedi/drivers/pcl726.c                  |  3 +-
- drivers/fpga/zynq-fpga.c                         |  8 +--
- drivers/iio/accel/sca3300.c                      |  2 +-
- drivers/iio/adc/Kconfig                          |  2 +-
- drivers/iio/adc/ad7124.c                         | 14 ++--
- drivers/iio/adc/ad7173.c                         | 87 ++++++++++++++++++++----
- drivers/iio/adc/ad7380.c                         |  1 +
- drivers/iio/adc/rzg2l_adc.c                      | 33 +++------
- drivers/iio/imu/inv_icm42600/inv_icm42600_temp.c |  6 +-
- drivers/iio/light/as73211.c                      |  2 +-
- drivers/iio/pressure/bmp280-core.c               |  9 +--
- drivers/iio/proximity/isl29501.c                 | 14 ++--
- drivers/iio/temperature/maxim_thermocouple.c     | 26 ++++---
- drivers/most/core.c                              |  2 +-
- 17 files changed, 159 insertions(+), 85 deletions(-)
+Regards,
+Markus
 
