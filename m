@@ -1,271 +1,170 @@
-Return-Path: <linux-kernel+bounces-783328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B5F7B32BB2
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 21:36:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 147CDB32BB5
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 21:38:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B6617B65F4
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE9E2A06B2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09B02E7BDC;
-	Sat, 23 Aug 2025 19:36:38 +0000 (UTC)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5172EA46D;
+	Sat, 23 Aug 2025 19:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lXrTgQr6"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773CB2135B9;
-	Sat, 23 Aug 2025 19:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22661FDE09
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 19:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755977798; cv=none; b=DgD1VPcBqpjtbB5KouaHa/8H7ZUF2gtJLryLpWZ13JcpAs/xzRf8QALPvAE+DKJYh46dKseeqzdvy6FEVLctdGFLq9ET3l69WNg4vDxuz76swuZstaug90tMN2C/6Qh4WgZjcVlpFJsyf5t9x0ogpjnaQ0Cjsh4E/7UX2kM+0Y8=
+	t=1755977914; cv=none; b=pRF6YoN8pBYzrsPWbo20S4It2L+/WPb5ok27iyzm0WIXaOwkv8rlmMX+ACMKUG9VyUk4BEpcq5yhv/OAgcVnoANdxefZBtPLUF9DTwkXhAOVGY0teHplKqsAIxzY+6Esm/LSpDsUahi07fd8b4ydPPsnbaFN1OiRzeJO9kEH7VI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755977798; c=relaxed/simple;
-	bh=SIYKZFyZgSgisDDcUSksBznfpx6FJl8DfN0755hl+tg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Pr4uVkdBGYdBwqIYTwp1aVP2NC98lJ/hl3GiT2Rd2fUb2wIfCfD4Vp5ronLz7W96wTJRWOax5UVAl4L/ayA67I53DJw+1xEDNb6pVpY1uXuW104mvpbU73frdQ0U88rI6uZpGKHKVuhGVhiOreq4JWZRJm+Ktiqc4OUiAhLPiT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24687bbe3aaso1040525ad.2;
-        Sat, 23 Aug 2025 12:36:36 -0700 (PDT)
+	s=arc-20240116; t=1755977914; c=relaxed/simple;
+	bh=9H5EWBk4yVKoWb98oK8R5kJWtyTvHlhBWPggxu4SXn0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lSa8seei9d/Z2ClHwTVQp4czdnGfXcqTGASmHLJmSIIdh+gyhK+7ti1LUb4E5asQdm/IiKrGFijs0slVjfbLP3WPOM6ladc3+jWGNd6osMRq//jnbfg1kYrUjVI8URcl9/r5Ur4Xa1SJ1vwC2U++I1lgFBBH2iAnlmvgPP+t+fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lXrTgQr6; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e34c4ce54so2737080b3a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 12:38:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755977911; x=1756582711; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vFoZeto/FDI3HbNA3+yLmKkVSsUZjUZFotfhVBL12vM=;
+        b=lXrTgQr6JhIISSPI/TtVrVlmguy8BHG8uXDzcqkFX6zsY7Al1UgdklHiI/03eLuwGn
+         3i2EvUT5VPG/86ibT1WOjbVGpfzQa1NLHc9hRxz6+sd85PFNF6FU0QMi9Ibzkb4Lqj4O
+         8etasAsGJzw5sinGD11CFVSH+HfTD8L3/N7jc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755977796; x=1756582596;
+        d=1e100.net; s=20230601; t=1755977911; x=1756582711;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0O+b2vBnqczSLnhJinmV1D7gYMBZXOlj/8VEyeAf29c=;
-        b=PIVVlrCRPfxoguLTxqprTSkw6JioDh9JSu9lu5X+kDggiQ13jvpZ4678Z/do5nNQ9Z
-         O4rHwWV2wa+QTjavaIjdYAjtkJG/IhFfkURPwzypP1dvv+9/VT7rpW79e8ZjHEa1fWtn
-         ZGGVclbzyGgR+lhidCcsxYUslVIZ8IlKqKiBBHrPJvu7xrOb4mpFSOTCQysOqpgIOmb0
-         UUctCU2xwbUwWuKLcYjWie8ObYR596FCBtqX6s0z40bICvLMalgajgIX9+gH0PO95Igw
-         sbB6Z9P07toXNDt4UjXFsp505pzAp+5cBl3abSbMa563RyYlxpoTXiMU9ogU4i0ajSLZ
-         C01A==
-X-Forwarded-Encrypted: i=1; AJvYcCVAn3Y3U/2Ynjyscwr9Nv8SMUbG2Ue5RXExjzVJxbO1kRjFOS+P6FqoHzJZmDEAkYx3lhO++XPIWtk=@vger.kernel.org, AJvYcCWT/zKZcOkYZSGnvSeSMdYuOopTr2Mw+eUG8z0Om2PqLrEZHVCAN5iJS1viGJIm0DiOiVEKULZX1oiR1R+g@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZBPpYq/eJHtSxxWIHZvMK9BkmWSjsGKPnk/KN/B3kvX4021xn
-	wY15wDFuVjPsqYAtyfH8R1M6+TtPgefvKp5hKwKB2Gi5rsbF5w3VVnED1uQKdg==
-X-Gm-Gg: ASbGncvflWzKAXLpKuZIL1Sc51Wd1SeD3SFkEJqcdUIbTFVN/LfopGcohsDcjJVQPzp
-	jUvWt+7loXb3NqplcbM5nFaOXmWBls1udxFq9DgoYUadqG2jAm2hUdDbNd5d0qRmF1thRkAYzTq
-	EqoEUnLo9uqwQ7+mjTTF5qZImT0hNuMo+IfzVDr+dx8VynABqEMREov/TV7Jy0ibhePNcp91Y67
-	X+YpmcAvZLoEGuUnx8f1e1Cohqi4V4bnBEbg+/a0TCDw2FxDtj9TSGxjHaqdQCpjoITR/vG499w
-	opt1nuKWMPHMZmv0nR/knyJSqGL/fy8aIDgw2varRmo+m+JUBOAWQo5oImcLvoCIDaOUP+RNXCW
-	3nDjvk2xMdwsk3VMpquaDCv233geUq4hO4imS2KCqZ+H+4rW2rb/Yfey7wSm31o7+NtoqqCJJbh
-	rF
-X-Google-Smtp-Source: AGHT+IFllehiiKNUC4WO82eqR0nOQqM1Js6IGMhmDFXdOF8mN9pVEItxnT5L9OCmJHx2NqvfhQ4jCw==
-X-Received: by 2002:a17:903:244c:b0:240:8fd6:f798 with SMTP id d9443c01a7336-2462eec637bmr55993025ad.4.1755977795479;
-        Sat, 23 Aug 2025 12:36:35 -0700 (PDT)
-Received: from Mac ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466885efeasm28097205ad.81.2025.08.23.12.36.29
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 23 Aug 2025 12:36:35 -0700 (PDT)
-From: Yunseong Kim <ysk@kzalloc.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Tejun Heo <tj@kernel.org>,
-	Minchan Kim <minchan@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Hyunchul Lee <cheol.lee@lge.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	SeongJae Park <sj@kernel.org>,
-	Minwoo Im <minwoo.im@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Chanho Min <chanho.min@lge.com>,
-	Taehee Yoo <ap420073@gmail.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	gwan-gyeong.mun@intel.com,
-	yeoreum.yun@arm.com,
-	Mingi Cho <mgcho.minic@gmail.com>,
-	Hyunwoo Kim <imv4bel@gmail.com>,
-	austindh.kim@gmail.com,
-	pmnxis@gmail.com,
-	linux-doc@vger.kernel.org,
+        bh=vFoZeto/FDI3HbNA3+yLmKkVSsUZjUZFotfhVBL12vM=;
+        b=CmSXoirM6mtup4V94A+dbPVBqTxuWm7VHHsCrS4vlfgDTnTsQExZC+hltU8T/5cMzY
+         dAORkLIJzaWejYvp/JGEKGn3GgPMbAGFR2ADzYjggOw2K/uWq4FvtM+8CvldwOG+VUhw
+         WDiAP6oYJUtFBcdAhXpVONjSjiB+rGdtDfJy02tECNfZWT1yRfrjK8NP4uBZNuqB/8XI
+         K2asYndg4LRXdCh0WFLTWiRAUTsmpCedY0GNuEmVvGr32io+tq5QSlnRyJ0aFjGfAW5S
+         hzlpibmtjXML3xTSyq9zan57SnwYXIrmbXuR59Rcnh6PXc6cRzllggClpLsax95q2Tv1
+         7T0A==
+X-Forwarded-Encrypted: i=1; AJvYcCU7slBQtVG6pqSrKJmqAygxn7f2ZQu7YkjpmT+fUl4AjyAO226pZMsBkkOlEeHTJyezIH3f4Ww0+9palNw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypZNXkOwcQ7zFEzeQKROSYvfJAyAtObjn8+OVq1yAtOnnRhDI4
+	Sq9jhXCPlzPqVtCEfHiW1ke7GF1r1rwfYQI4UtiXtbm/RxFs+5CBLZPWOgIogRqW5A==
+X-Gm-Gg: ASbGncvnRgALAOKmhz976AxKcKqwjjaWwbBP6Q1LmXe6uYHQYZ73zTFkz9XA0jUF9hC
+	48MslkL41LZLD/h77gLcopUIgHD6AibTMqOSF3R6IxIfu0r9idx17TnHkTFUjRWQPqJ8KIeFIAh
+	gpNOBIQwl8kHv/znl5RJvZdBXEncjWv4vtjRX817mVnMDewZ5cicgW1v3XuCC8wufq3QLmEy89p
+	5sac0ufwK2IzzEj9FBsHza2Y3sLWc450wd/7H4HejAcFNEh9htkOwvNdXdNpK6EcCD8rPMak60D
+	Ra4Z3VCJgSbj6LmjOg6bqcXSzLKQNLgKXK+k31QChh+VMhWarlqe2lBmwxVv73QPWYMAH8wZWcY
+	OIc6UMIoYCjoE0V/2kEEQd9JtcBaDU/Gt85h5Hpj+PBKKZb6V/fLgmBl7Pht3
+X-Google-Smtp-Source: AGHT+IHZgEfPSgrzNcfJP0y8VFbZ/mI9XmL1DW5PZYFaB2PJIzNbSTWb31bEH3e4F4au31IY+qw7iw==
+X-Received: by 2002:a05:6a20:258a:b0:23f:f729:2e72 with SMTP id adf61e73a8af0-24340b5832dmr8588883637.1.1755977911137;
+        Sat, 23 Aug 2025 12:38:31 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:dde2:2ecc:d200:6390])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7704025ef80sm3093608b3a.108.2025.08.23.12.38.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 23 Aug 2025 12:38:30 -0700 (PDT)
+From: Brian Norris <briannorris@chromium.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Georgi Djakov <djakov@kernel.org>,
+	Odelu Kukatla <quic_okukatla@quicinc.com>
+Cc: Douglas Anderson <dianders@chromium.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Yunseong Kim <ysk@kzalloc.com>
-Subject: [PATCH v7] Documentation: cve Korean translation
-Date: Sun, 24 Aug 2025 04:35:16 +0900
-Message-ID: <20250823193516.19485-2-ysk@kzalloc.com>
-X-Mailer: git-send-email 2.50.1
+	devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Brian Norris <briannorris@chromium.org>
+Subject: [RFC PATCH] arm64: dts: qcom: sc7280: Drop aggre{1,2}_noc QOS clocks on Herobrine
+Date: Sat, 23 Aug 2025 12:37:18 -0700
+Message-ID: <20250823123718.RFC.1.Idebf1d8bd8ff507462fef9dc1ff47e84c01e9b60@changeid>
+X-Mailer: git-send-email 2.51.0.rc2.233.g662b1ed5c5-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Understanding the Linux kernel's CVE handling process is becoming
-increasingly critical. This is especially important for Korean companies
-exporting products to regions like Europe, as they must comply with
-regulations such as the Cyber Resilience Act (CRA).
+Ever since these two commits
 
-This translation aims to raise awareness among Korean kernel developers and
-companies, helping them better understand and adhere to the kernel
-community's security practices.
+  fbd908bb8bc0 ("interconnect: qcom: sc7280: enable QoS configuration")
+  2b5004956aff ("arm64: dts: qcom: sc7280: Add clocks for QOS configuration")
 
-The translation is based on the contributor's direct experience with the
-Linux kernel security bug process and obtaining CVEs. Furthermore,
-completion of the security training program provided by the Linux
-Foundation ensures the necessary accuracy for this documentation.
+Herobrine systems fail to boot due to crashes like the following:
 
-I have refined the context that was present in v6. The review comments from
-Seongjae have been incorporated.
+[    0.243171] Kernel panic - not syncing: Asynchronous SError Interrupt
+[    0.243173] CPU: 7 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0 #1 c5464041cff584ced692726af2c4400fa2bde1db
+[    0.243178] Hardware name: Qualcomm Technologies, Inc. sc7280 CRD platform (rev5+) (DT)
+[    0.243180] Call trace:
+[    0.243182]  dump_backtrace+0x104/0x128
+[    0.243194]  show_stack+0x24/0x38
+[    0.243202]  __dump_stack+0x28/0x38
+[    0.243208]  dump_stack_lvl+0x28/0xb8
+[    0.243211]  dump_stack+0x18/0x30
+[    0.243215]  panic+0x134/0x340
+[    0.243219]  nmi_panic+0x48/0x98
+[    0.243227]  arm64_serror_panic+0x6c/0x80
+[    0.243245]  arm64_is_fatal_ras_serror+0xd8/0xe0
+[    0.243261]  do_serror+0x5c/0xa8
+[    0.243265]  el1h_64_error_handler+0x34/0x48
+[    0.243272]  el1h_64_error+0x7c/0x80
+[    0.243285]  regmap_mmio_read+0x5c/0xc0
+[    0.243289]  _regmap_bus_reg_read+0x78/0xf8
+[    0.243296]  regmap_update_bits_base+0xec/0x3a8
+[    0.243300]  qcom_icc_rpmh_probe+0x2d4/0x490
+[    0.243308]  platform_probe+0xb4/0xe0
+[...]
 
-Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
-Reviewed-by: SeongJae Park <sj@kernel.org>
+Specifically, they fail in qcom_icc_set_qos() when trying to write the
+QoS settings for qhm_qup1. Several of the previous nodes (qhm_qspi,
+qhm_qup0, ...) seem to configure without crashing.
+
+I don't really know what's unique about Herobrine systems vs other
+sc7280 systems that presumably work fine. I'd guess there's some
+conflict with something configured by the boot firmware.
+
+I'm submitting as an RFC just to get thoughts from people who hopefully
+know better than me what might be going wrong here.
+
+Fixes: fbd908bb8bc0 ("interconnect: qcom: sc7280: enable QoS configuration")
+Fixes: 2b5004956aff ("arm64: dts: qcom: sc7280: Add clocks for QOS configuration")
+Signed-off-by: Brian Norris <briannorris@chromium.org>
 ---
- Documentation/translations/ko_KR/index.rst    |   1 +
- .../translations/ko_KR/process/cve.rst        | 125 ++++++++++++++++++
- 2 files changed, 126 insertions(+)
- create mode 100644 Documentation/translations/ko_KR/process/cve.rst
 
-diff --git a/Documentation/translations/ko_KR/index.rst b/Documentation/translations/ko_KR/index.rst
-index a20772f9d61c..0bf8f775a215 100644
---- a/Documentation/translations/ko_KR/index.rst
-+++ b/Documentation/translations/ko_KR/index.rst
-@@ -12,6 +12,7 @@
-    :maxdepth: 1
+ arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+index 2ba4ea60cb14..59203ce58c61 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+@@ -394,6 +394,16 @@ &vreg_l2c_1p8 {
  
-    process/howto
-+   process/cve
-    core-api/wrappers/memory-barriers.rst
+ /* ADDITIONS TO NODES DEFINED IN PARENT DEVICE TREE FILES */
  
- .. raw:: latex
-diff --git a/Documentation/translations/ko_KR/process/cve.rst b/Documentation/translations/ko_KR/process/cve.rst
-new file mode 100644
-index 000000000000..d8d011547877
---- /dev/null
-+++ b/Documentation/translations/ko_KR/process/cve.rst
-@@ -0,0 +1,125 @@
-+.. SPDX-License-Identifier: GPL-2.0
++/* QoS seems to have conflicts with boot firmware on these devices. */
++&aggre1_noc {
++	/delete-property/ clocks;
++};
 +
-+NOTE:
-+This is a version of Documentation/process/cve.rst translated into Korean.
-+This document is maintained by Yunseong Kim <ysk@kzalloc.com>.
-+If you find any difference between this document and the original file or
-+a problem with the translation, please contact the maintainer of this file.
++/* QoS seems to have conflicts with boot firmware on these devices. */
++&aggre2_noc {
++	/delete-property/ clocks;
++};
 +
-+Please also note that the purpose of this file is to be easier to
-+read for non English (read: Korean) speakers and is not intended as
-+a fork.  So if you have any comments or updates for this file please
-+update the original English file first.  The English version is
-+definitive, and readers should look there if they have any doubt.
-+
-+================================================================
-+이 문서는
-+Documentation/process/cve.rst
-+의 한글 번역입니다.
-+
-+:역자: 김윤성 <ysk@kzalloc.com>
-+:감수: 박진우 <pmnxis@gmail.com>, 김동현 <austindh.kim@gmail.com>
-+
-+================================================================
-+
-+=================
-+CVE 항목들 (CVEs)
-+=================
-+
-+공통 취약점 및 노출(Common Vulnerabilities and Exposure, CVE®) 번호는 공개적으로
-+알려진 보안 취약점을 식별, 정의하고 목록화하기 위한 명확한 방법으로
-+개발되었습니다. 하지만 시간이 지나면서 커널 프로젝트에서는 그 유용성이
-+감소했으며, CVE 번호가 부적절한 방식과 이유로 할당되는 경우가 매우 많았습니다.
-+이 때문에 커널 개발 커뮤니티는 CVE 사용을 꺼리는 경향이 있었습니다. 그러나
-+CVE 및 기타 보안 식별자 할당에 대한 지속적인 압력과, 커널 커뮤니티 외부의
-+개인 및 회사들의 지속적인 남용이 결합되면서, 커널 커뮤니티가 이러한 할당에
-+대한 통제권을 가져야 한다는 점이 명확해졌습니다.
-+
-+리눅스 커널 개발팀은 잠재적인 리눅스 커널 보안 이슈에 대해 CVE를 할당할 수
-+있습니다. 이 할당은 :doc:`일반적인 리눅스 커널 보안 버그 보고
-+절차<Documentation/process/security-bugs>`와는 독립적으로 이루어집니다.
-+
-+리눅스 커널에 할당된 모든 CVE 목록은 linux-cve 메일링 리스트 아카이브
-+(https://lore.kernel.org/linux-cve-announce/)에서 확인할 수 있습니다.
-+할당된 CVE에 대한 알림을 받으려면 해당 메일링 리스트를
-+`구독<https://subspace.kernel.org/subscribing.html>`_ 하시기 바랍니다.
-+
-+할당 절차 (Process)
-+===================
-+
-+일반적인 안정(stable) 릴리스 프로세스의 일부로, 잠재적으로 보안 이슈가 될 수
-+있는 커널 변경 사항은 CVE 번호 할당 담당 개발자가 식별하여 자동으로 CVE 번호가
-+할당됩니다. 이러한 할당 내역은 linux-cve-announce 메일링 리스트에 공지사항으로
-+빈번하게 게시됩니다.
-+
-+참고로, 리눅스 커널이 시스템에서 차지하는 계층의 특성상 거의 모든 버그가 커널
-+보안을 침해하는 데 악용될 수 있지만, 버그가 수정될 당시에는 악용 가능성이
-+명확하지 않은 경우가 많습니다. 이 때문에 CVE 할당 팀은 매우 신중하게
-+접근하며(overly cautious), 식별한 모든 버그 수정(bugfix)에 CVE 번호를
-+할당합니다. 이는 리눅스 커널 팀이 발행하는 CVE의 수가 겉보기에 많아 보이는
-+이유를 설명합니다.
-+
-+만약 CVE 할당 팀이 놓친 특정 수정 사항에 대해 CVE가 할당되어야 한다고 생각되면,
-+<cve@kernel.org>로 이메일을 보내주십시오. 담당 팀이 협력할 것입니다.
-+이 이메일 주소는 이미 릴리스된 커널 트리에 포함된 수정 사항에 대한 CVE 할당
-+전용이며, 잠재적인 보안 이슈를 보내서는 안 된다는 점에 유의하십시오.
-+아직 수정되지 않은 보안 이슈를 발견했다고 생각되면 :doc:`일반적인 리눅스
-+커널 보안 버그 보고 절차<Documentation/process/security-bugs>` 를 따르십시오.
-+
-+리눅스 커널의 수정되지 않은 보안 이슈에 대해서는 CVE가 자동으로 할당되지
-+않습니다. 할당은 수정 사항이 제공되고 안정(stable) 커널 트리에 적용된 후에만
-+자동으로 이루어지며, 원본 수정 사항의 git 커밋 ID로 추적됩니다. 커밋으로
-+이슈가 해결되기 전에 CVE를 할당받고자 하는 경우, 커널 CVE 할당
-+팀(<cve@kernel.org>)에 연락하여 예약된 식별자 목록에서 할당받을 수 있습니다.
-+
-+현재 안정/장기 지원 버전(Stable/LTS) 담당 커널 팀이 적극적으로 지원하지 않는
-+커널 버전에서 발견된 이슈에 대해서는 CVE가 할당되지 않습니다. 현재 지원되는
-+커널 브랜치 목록은 https://kernel.org/releases.html 에서 확인할 수 있습니다.
-+
-+할당된 CVE에 대한 이의 제기 (Disputes)
-+======================================
-+
-+특정 커널 변경 사항에 할당된 CVE에 대해 이의를 제기하거나 수정할 권한은 오직
-+영향을 받는 관련 서브시스템의 메인테이너에게만 있습니다. 이 원칙은 취약점
-+보고의 높은 정확성과 책임성을 보장합니다. 서브시스템에 대한 깊은 전문 지식과
-+긴밀한 이해(intimate knowledge)를 가진 개인만이 보고된 취약점의 유효성과
-+범위를 효과적으로 평가하고 적절한 CVE 지정을 결정할 수 있습니다. 이 지정된
-+권한 밖에서 CVE를 수정하거나 이의를 제기하려는 시도는 혼란, 부정확한 보고,
-+그리고 궁극적으로 시스템 침해로 이어질 수 있습니다.
-+
-+무효한 CVE (Invalid CVEs)
-+=========================
-+
-+리눅스 배포판이 자체적으로 적용한 변경 사항 때문에 해당 배포판에서만 지원되는
-+리눅스 커널에서 보안 이슈가 발견된 경우, 또는 배포판이 더 이상 kernel.org에서
-+지원하는 않는 커널 버전을 사용하여 보안 이슈가 발견된 경우, 리눅스 커널 CVE
-+팀은 CVE를 할당할 수 없으며 해당 리눅스 배포판에 직접 요청해야 합니다.
-+
-+현재 공식 지원 중인 커널 버전에 대해, 커널 CVE 할당 팀 외 다른 그룹이 지정한
-+CVE는 유효한 CVE로 인정되어선 안 됩니다. 커널 CVE 할당 팀(<cve@kernel.org>)에
-+알려주시면 CNA(CVE Numbering Authority) 시정(remediation) 절차를 통해 해당
-+항목을 무효화 조치할 것입니다.
-+
-+특정 CVE의 적용 가능성 (Applicability)
-+======================================
-+
-+리눅스 커널은 다양한 방식으로 사용될 수 있으며, 외부 사용자가 접근하는 방식도
-+다양하거나 아예 접근이 없을 수도 있습니다. 따라서 특정 CVE의 적용 가능성(해당
-+여부)은 CVE 할당 팀이 아닌 리눅스 사용자가 결정해야 합니다. 특정 CVE의 적용
-+가능성을 판단하기 위해 저희에게 연락하지 마십시오.
-+
-+또한, 소스 트리는 매우 방대하고 개별 시스템은 소스 트리의 작은 부분 집합만을
-+사용하므로, 리눅스 사용자는 할당된 수많은 CVE가 자신의 시스템과 관련이 없다는
-+점을 인지해야 합니다.
-+
-+요컨대, 저희는 귀하의 사용 사례(use case)를 알지 못하며 귀하가 커널의 어느
-+부분을 사용하는지 알지 못하므로, 특정 CVE가 귀하의 시스템과 관련이 있는지
-+판단할 방법이 없습니다.
-+
-+언제나 그렇듯이, 개별적으로 선별된 변경 사항이 아니라, 많은 커뮤니티 구성원들에
-+의해 통합된 전체로서 함께 테스트된 모든 릴리스된 커널 변경 사항을 적용하는 것이
-+가장 좋습니다. 또한 많은 버그의 경우, 전체 문제에 대한 해결책은 단일 변경 사항이
-+아니라 서로 중첩된 많은 수정 사항의 합으로 발견된다는 점에 유의하십시오.
-+이상적으로는 모든 이슈에 대한 모든 수정 사항에 CVE가 할당되지만, 때때로 저희가
-+수정 사항을 인지하지 못할 수 있습니다. 따라서 CVE가 할당되지 않은 일부 변경
-+사항도 적용하는 것이 관련 있을 수 있다고 가정하십시오.
+ &edp_panel {
+ 	/* Our board provides power to the qcard for the eDP panel. */
+ 	power-supply = <&vreg_edp_3p3>;
 -- 
-2.50.1
+2.51.0.rc2.233.g662b1ed5c5-goog
 
 
