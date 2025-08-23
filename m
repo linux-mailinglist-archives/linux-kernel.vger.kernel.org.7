@@ -1,147 +1,130 @@
-Return-Path: <linux-kernel+bounces-783128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43AC9B329DA
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:47:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D1CB329DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F9C717611D
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 15:46:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9EA9E83A1
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 15:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7022E92C3;
-	Sat, 23 Aug 2025 15:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222E12DC320;
+	Sat, 23 Aug 2025 15:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNe05jh/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H7DpLjua"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722442C15BF;
-	Sat, 23 Aug 2025 15:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2747412B93
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 15:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755963987; cv=none; b=Gllx27QGwVDzHueVKVPsVZW0cA9fJFsj/aRm8bvPBPufhmVYeVPkAkZvXZHRfz4jDaK+BvWubG0JdgHZ4UR+fP0sMIVkASiWXt8Yi6ReI2uYRsQiEqCCm/f3oNkdqAOYy0tux5Ssk5ejRFe0Yo/TbKD9eVXD00VoCbc4lTLe+MY=
+	t=1755964341; cv=none; b=ApTzgYSPyoy+wMCckFS5AmmPYEEXnvuA0o5DNUbWEN0nOrWBuE0lquWGP6L+t4W2zAUu66HOYoXp3uGeKHkFNZwPtTJeYY41AbjMHTCjBH6Z+lTpCdVALQXvJCuZmdQDvIWRmf7/DQRtoikFh/Cf7Ob/5EBodF+iufOxPMPxAVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755963987; c=relaxed/simple;
-	bh=eQyyL7ybO6aHzA5ozfZURhJz0aik9E4XhrvbStktFdw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gxx66D2OM24rqUNLbhlE0ZT9Q77C0S/H58Plii7AmVV9Gp+acyJVNfQEPBfJf6NGMbQCWCokYTpmPt+4pQkKWNBXBP8Z/HPn2dJDlQQqMhZYaClK92U/jBygDDSIlWblIdXgoYwedrooYmK0TPj+jSU0YaebRZo+o4+Fa85xhPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNe05jh/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14AD0C4CEE7;
-	Sat, 23 Aug 2025 15:46:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755963986;
-	bh=eQyyL7ybO6aHzA5ozfZURhJz0aik9E4XhrvbStktFdw=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=HNe05jh/zoDGwog9PqX4KTKpyFT1ULSXx3IciWCZpsheJGHdxbwr4mX7zdQepLMEN
-	 U24lMszj6XnZTOvDmI9uwAy7FSq0B0EiOFvUcTP9nzh423FzA/UEUrJ0Gd6Gd0jxKw
-	 nT8swORPjgJ+mbe8NErfUGvstuQA+/CGOGBsU8MKSN6a4r1bm9OdNqkAVxPaNpaP3m
-	 HAK8Mv8eTTcqP+bB1T+X4Rhqr3AbneNqCxJN2pQ8oftgwvFn7MvBKrv+XlmoNOgPH5
-	 D+P2/86kkerUUAHkN1RHaWqgub/oyHI0cJDKNoGAi89NtDuoG71UHQqVEPNBPFiQbl
-	 1yiKWVC8c3hZA==
-Message-ID: <538ed0a4-fbf9-47c3-bbc2-3263d869e21c@kernel.org>
-Date: Sat, 23 Aug 2025 17:46:22 +0200
+	s=arc-20240116; t=1755964341; c=relaxed/simple;
+	bh=3B2BEQSFKo5adIPpDlaf0ZuW9wCYQwTd0hHNU98ZyCI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u7Xc1XnOymPD0ZD026HF0GqPZejYRNxDoIyoz9P+bf5IYFA30k2FVqgBpIW57FQQiH0r877kZFskvO6/AYRAWh16SymIljqRMcF3Ctmh6IbRiinNdU8EVkRnTR8X5eVbkRdmRedRn/1GmUAhTmv9DJVwEN+MQgzrjaa+0/0742o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H7DpLjua; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755964339; x=1787500339;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=3B2BEQSFKo5adIPpDlaf0ZuW9wCYQwTd0hHNU98ZyCI=;
+  b=H7DpLjuaWUylyb12P8GZRc9wzhh9nDS0W8P38TtVf1+SbCZK+er9rI0G
+   8ciZlMNS399RMkCmfTGkEGtgIOB2A3lW0M9yBo+DoOBsg91O6DM86SG+S
+   HkVwC6oGObN5VcC/UjK5VZqaB9faGCfd3/OfSrZoj4T6ZSDBZx28SB2kp
+   ODmipiyyG2O52RQFPPR948B/uEpOsy+JdWJ1G/45kBDVtspl81xOlh74o
+   mobSbhXgfkO2FiOe3EEysgHubP183/WTrqm1Fnc/vmY+rxzI4ZkcV+rIo
+   cGOTF4hk1yeWmSghHONjLimvreuRMAoGMkeXIId17UkMydb9a57jcfD0C
+   A==;
+X-CSE-ConnectionGUID: UxWD/0bITW2meoSZ3yuAkQ==
+X-CSE-MsgGUID: KeCvTcYkQ5W9ZPpoiPzwrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="75832785"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="75832785"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2025 08:52:18 -0700
+X-CSE-ConnectionGUID: 2EHdQvXxQJaBK5h6Pi7eZw==
+X-CSE-MsgGUID: TjBdDtopQFixz5eWIM10EQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="169748217"
+Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.124.85.190])
+  by fmviesa010.fm.intel.com with ESMTP; 23 Aug 2025 08:52:17 -0700
+From: "Chang S. Bae" <chang.seok.bae@intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	chao.gao@intel.com,
+	abusse@amazon.de,
+	chang.seok.bae@intel.com
+Subject: [PATCH v5 0/7] x86: Support for Intel Microcode Staging Feature
+Date: Sat, 23 Aug 2025 08:52:03 -0700
+Message-ID: <20250823155214.17465-1-chang.seok.bae@intel.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250813172649.15474-1-chang.seok.bae@intel.com>
+References: <20250813172649.15474-1-chang.seok.bae@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/11] media: iris: Enable Secure PAS support with
- IOMMU managed by Linux
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <20250819165447.4149674-12-mukesh.ojha@oss.qualcomm.com>
- <e18ac460-dcbb-4ac0-9c5e-3aaadf3485fd@kernel.org>
- <20250822151346.skwtsh5abr3tmrjz@hu-mojha-hyd.qualcomm.com>
- <46013223-5463-4164-9f61-87ea5ce2412c@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <46013223-5463-4164-9f61-87ea5ce2412c@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 23/08/2025 17:41, Krzysztof Kozlowski wrote:
-> On 22/08/2025 17:13, Mukesh Ojha wrote:
->> On Fri, Aug 22, 2025 at 10:45:50AM +0200, Krzysztof Kozlowski wrote:
->>> On 19/08/2025 18:54, Mukesh Ojha wrote:
->>>> +int iris_fw_init(struct iris_core *core)
->>>> +{
->>>> +	struct platform_device_info info;
->>>> +	struct iommu_domain *iommu_dom;
->>>> +	struct platform_device *pdev;
->>>> +	struct device_node *np;
->>>> +	int ret;
->>>> +
->>>> +	np = of_get_child_by_name(core->dev->of_node, "video-firmware");
->>>
->>> Undocumented ABI.
->>>
->>> If you tested your DTS, you would notice warnings.
->>
->> qcom,venus-common.yaml is documenting video-firmware and getting included in
->> Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
-> 
-> Uh, why? Why does qcom keep this legacy pattern also for iris?
+Hi all,
 
-I will remove it btw, because it is a fake device node (not for a real
-device).
+This is another iteration -- changes since v4 [*]:
 
-Best regards,
-Krzysztof
+  * Reworked the preparatory change before referencing
+    cpu_primary_thread_mask, based on Dave’s feedback. This is now patch1.
+
+  * Incorporated further feedback from Dave on the staging code, mainly
+    to improve clarity, reduce ambiguity, and fix minor issues. Each
+    patch includes some details.
+
+  * Collected Chao’s review tag (thanks!) for the first and last patches.
+
+As usual, the series is also available here:
+  git://github.com/intel-staging/microcode.git staging_v5
+
+[*] https://lore.kernel.org/lkml/20250813172649.15474-1-chang.seok.bae@intel.com/
+
+Thanks,
+Chang
+
+Chang S. Bae (7):
+  x86/cpu/topology: Make primary thread mask available with SMP=n
+  x86/microcode: Introduce staging step to reduce late-loading time
+  x86/microcode/intel: Establish staging control logic
+  x86/microcode/intel: Define staging state struct
+  x86/microcode/intel: Implement staging handler
+  x86/microcode/intel: Support mailbox transfer
+  x86/microcode/intel: Enable staging when available
+
+ arch/x86/include/asm/msr-index.h         |   9 +
+ arch/x86/include/asm/topology.h          |  12 +-
+ arch/x86/kernel/cpu/microcode/core.c     |  11 +
+ arch/x86/kernel/cpu/microcode/intel.c    | 386 +++++++++++++++++++++++
+ arch/x86/kernel/cpu/microcode/internal.h |   4 +-
+ arch/x86/kernel/cpu/topology.c           |   4 -
+ arch/x86/kernel/cpu/topology_common.c    |   3 +
+ arch/x86/kernel/smpboot.c                |   3 -
+ 8 files changed, 418 insertions(+), 14 deletions(-)
+
+
+base-commit: 7182bf4176f93be42225d2ef983894febfa4a1b1
+-- 
+2.48.1
+
 
