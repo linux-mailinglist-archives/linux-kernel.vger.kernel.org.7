@@ -1,164 +1,172 @@
-Return-Path: <linux-kernel+bounces-783271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B470B32B18
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:49:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E25BB32B20
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5FC11888850
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1AC6A2864D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492C71FDE14;
-	Sat, 23 Aug 2025 16:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562C023909F;
+	Sat, 23 Aug 2025 16:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pp0P7H8d"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qO1BhwyL"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FC38635C
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 16:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A591F22172D
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 16:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755967764; cv=none; b=p7023r4rI9lTYFIcFDWZ2OtzFqBUplisyDpxkBRkEvhygJqu+NQxyu1Rs4wSms82G1m3GnWs1UPueUCNtKkT+LkABSK3iBREYkNDLdh6Oj0frGD6lfXI4fWQwfYkmhFhKejCzU4JXcW3S3Rh37rS3Xdsq3YUlLVZyWMPgl8nnFE=
+	t=1755967849; cv=none; b=Psnyl82vuwEnMRpXKeZRusROLgKuJoRKpdENAyDEMnRjEtVncFH3c8/L/ABG3Bj9OHVlRS99AxfAtWvRl+W+n/1AL6+LYO/OVKsHcXL6LeSh57V0fDTPHfDL1uOTaa48OcpPm03elD7C8XWlG698G2ZEPS5fnGdet8zB+7s3S0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755967764; c=relaxed/simple;
-	bh=8YpxJPRMsJBkynas/VbqXASvJV+LVskvWZ5lioILCQw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H91kckXE8/oTDgtczImZo2T72fDl56C48c3Nj+PWFDVVlqqNNE+I/rEh6/wix1LTq0s9asLcrtIcCORz/W6VkPH4Sr0x6xrW8k+pr6/LC9OQJQT5oS5jpIDR3JYVThVehLzOIWTD9LVylZNg6icuK7RMK3SjibeOw8BNgb1T/+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pp0P7H8d; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-246257e49c8so125485ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 09:49:22 -0700 (PDT)
+	s=arc-20240116; t=1755967849; c=relaxed/simple;
+	bh=D4l/bK6NOcyRlgfuSTYFAZkY/V6CNxkCV8wyOCE4M8Y=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=d9vSu9Po5R41UeiuhH94YTcYF+CWMmFP7edOk8jlaFaqjmIMofY+jzAV74If3+TdyJl5GUExvdrFLCjhaM7hDpEMHdNJn933TFeMpSVFMvdOWTJ49JT5D4TFQQ+B/UaCKvCcpXFXSBmfuV8gpaRZuYoYgk7+WzTCbmie6WdyUWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qO1BhwyL; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb7a96309so43316166b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 09:50:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755967762; x=1756572562; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1755967846; x=1756572646; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8YpxJPRMsJBkynas/VbqXASvJV+LVskvWZ5lioILCQw=;
-        b=pp0P7H8dG/khRsKBG3fY035Vq/ukNYIfFWKuBVC/kDd2lyjs/z4sIDMFfPOwdubAVx
-         yx4JVCdlp8ExSYDzyMeFLFBVBYxj8uyZBAlvryFxeQeVro+4l3so+DZo2HNJlK5zPHh3
-         qz1glcaq0X2ph+FuV8s5XUKFYDttu9cEBuYw8IzdGZhMbWu49yrlq6sdDPUy1Bt4hgIc
-         PGl6km7+A6WaC9VGX9PWEztmVlCwYzzbUj7iabyCl1wmJh4C8XJR5tHRIUN4SDd58CPL
-         7EZMPYR59jGltEHVgwY+rdiRHpqjfjTNFtAUAp4nW16AyI9vl9AIjBkw4lP2J4uRMhrm
-         sM3g==
+        bh=sNq2Nibqdx+evdv5zNaDNJtsHifnmrRlp9CMMl4pZuI=;
+        b=qO1BhwyLNkGuK6PH9KoWStrKpkImbcOlq4WZ9n9VAIia82M0e612FabpjtB5PBbtHc
+         lTKuCHv9NjI4DSx0VHXW/CYUa9yapqoH6bxaGxgeiWv8bwVRtAYZ8kPOkrFWGo3xNLLe
+         uBKsBUP81G8fN1pvKG20dXCZUMPWrUnZ6lncqKeN1fnAN4wNeYa27lrDHdSa3iS3L8Z5
+         q8b1dq2uXUW83ml4fLMvqhpbfN0tq0qBnFMBsrJVl3zazVpaFqPNjM29BlgUMlOOAdVW
+         eZCSuMyFYu/5LtZ40JBjLdB+bQg7XM/7x8HNPstlAB+fv2/vQplqEKNq40bfRZl4ViFj
+         1tRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755967762; x=1756572562;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755967846; x=1756572646;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8YpxJPRMsJBkynas/VbqXASvJV+LVskvWZ5lioILCQw=;
-        b=h4epQzNkeIZbzTnjaFlFFFSj9+JzCXqp+9TnmGcZZG05tqbPL/qrIMNDNcCg08kvfp
-         p18pzGbl2m8P8ZE6+QGl0VSea4FXb0wWnw25lDhuN1tjkSRYJ7a3VfCP65GAeSynxZqK
-         XpNkVKId4g+aG+niENde+MR9EkUSP7fFVwxVxob5wGCw9hJg6W3GroGOOoAN1U4hWGVl
-         3sk+TY7n3N6mb82wqb2t1/2wH9xaqahw+FuUyFTr3vZi6eSBmGI7L61lFcQ45QdXnu14
-         6z7WNkTx2r9gSy3QAuAgALpxLJgMQ6wg79L+JRIhEcmWAyl4IkrqEsn5j+enn9QpJ9nS
-         iiUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFSzmPSlAZB+/ocIY7G6yAUY1VXAK3/tKyKJRcyUuEKGtuvFiwJTTEVN5PfyxqSJrN6ZmgNdudH83IKXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzDfkTX9ID/6+olBZJTwlMyJMeZqOxpqY/Y+yD2aF/+m95H9jc
-	gML4DJsF/x9A4f8VvlMpS1UVxeA+D3OnGq6W4D7e9oRkziwunp5x6i8fw5VMeDYiVLw8mhu6bh9
-	Ax8mllYFNEz1oCXFmpCtpwt5ETPJk9H9xai9wpW0u
-X-Gm-Gg: ASbGnctJ3DiJcODdIB4uU3woxbw4fpprOBRRwSNfH01zm2vfNYUTDd/X8jl5XpBdMdQ
-	gWOevY7F6YfFpEb7fCtTMW3PCs6rtSPnvMrx4S1WF0/8bPZp8VdmxcViawRyb1dofUO629wUumC
-	Ou3A0r0m32s+tHtEqYJeDfXOkSTRehpsi+mDYmjvj9FGWSO27omJ1Z08jeywqR66sgE7Gud84Ow
-	d2zW/UXta4jzw==
-X-Google-Smtp-Source: AGHT+IGGKzyig0sJhIDWW/nSQxj4OQzvDA0OPRGfLHvzMGNVvjSyeTmmkEB5lOEbZ5yCPiIdJ8wlqYpa3Scf59bznr8=
-X-Received: by 2002:a17:903:2f82:b0:240:520b:3cbc with SMTP id
- d9443c01a7336-2466fa251e2mr2803115ad.14.1755967761957; Sat, 23 Aug 2025
- 09:49:21 -0700 (PDT)
+        bh=sNq2Nibqdx+evdv5zNaDNJtsHifnmrRlp9CMMl4pZuI=;
+        b=opgygsUK5spaEYRr7Mgm0VMPT5E4Pj7NJw9vX43qqrbYY19lrHctMp0QvYl3zt9RjL
+         RN6alUXhsZ1EqtVusICE82akOexB5F1c/DcgFDp5B9ZnDdDsm+/YeBg+87gH70ibbOuP
+         4EZvKnPWSaOOfijEOIq7cg5WdJnE+4Nfigo9Ipd7uzd+r4x+UE9PUTuBTJU6/IPYC4F/
+         I999eFu/GqxFg1vL7JRuH5qMPOYBSmn9z+vOMqWyfjFbeugrjGInYpHJHE/IN9+2ogoE
+         G0sM6Wf51mqgGGI0RjEEIsxH+fHx4B13scRujeqikjSdqF9s9k3w6LEOXuIwtwoThwaN
+         Y05Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWfvyLtGYb4RWsgmlTQdt+WD/XIZ01FHsbSi6NwT229RUtnwe/G3kpSMf2uVd+YuLu4Qfj/R/Mt3a3XIuI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6v+xJQNLmnigDCo3a+I9gQfPSQRPMt+ze4LKSYKYKq4nnhqMO
+	FwV/piCX8hd3BgN1cYs/SNsElSS1WzgWPc4pIAafY1Uv8FYDJMnX9zyqsWkSK+Ja5ls=
+X-Gm-Gg: ASbGncuAx8S+PYP6c2liJg4UxjyRo+NEhiEqnCcQ+c/aDGaAJGJkAVuZhfdX3i/yRSZ
+	RrsD5jHlwZWX2mb7WE/k9+kSmRWXbuo3v03cIM0e0u395yt7kASF++LJkRMVtYIrIpylsDV4Yl3
+	T0j1ViJe2K2/FRtDt8mQ06jYOnQty8fzLXRu/VbFHDJrHF1f1n+M1sli7QDo8G58cIqBj6QfsfC
+	6VFuGu7KUMCPWS+tz4v5okn4ViqnvT/1SIQ55MMP+Q8YCCSlXzSpK29uWjFPrQlyqG736+ZmZJQ
+	+dOOg1kbctnsCTg9ECp6Nyww/D/xROSkkB7t1jlX2RrZSP0PD//D6mBpNTPVOrvbujoy2JPMnrH
+	Lzk+Ot/N6OiTKaos+SaOPULMff70y1er2vlQ5Xh0=
+X-Google-Smtp-Source: AGHT+IHHFRcZ2uWc450cm6YGSWLLm41zFn8yMlhrRzRS5mz16K/9Ne7EtPYoZsI+yYfZ3MDyCa6PPQ==
+X-Received: by 2002:a05:6402:358d:b0:615:7ba6:4876 with SMTP id 4fb4d7f45d1cf-61c1b91089cmr2916571a12.8.1755967845817;
+        Sat, 23 Aug 2025 09:50:45 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c312c4cdesm1797880a12.23.2025.08.23.09.50.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Aug 2025 09:50:44 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
+ Cristian Marussi <cristian.marussi@arm.com>, 
+ Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Paul Cercueil <paul@crapouillou.net>, 
+ Keguang Zhang <keguang.zhang@gmail.com>, 
+ Taichi Sugaya <sugaya.taichi@socionext.com>, 
+ Takao Orito <orito.takao@socionext.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Jacky Huang <ychuang3@nuvoton.com>, 
+ Shan-Chun Hung <schung@nuvoton.com>, Vladimir Zapolskiy <vz@mleia.com>, 
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Samuel Holland <samuel.holland@sifive.com>, Yixun Lan <dlan@gentoo.org>, 
+ Steen Hegelund <Steen.Hegelund@microchip.com>, 
+ Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
+ Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Michal Simek <michal.simek@amd.com>, Maxime Ripard <mripard@kernel.org>, 
+ =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+ Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>, 
+ Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Neal Gompa <neal@gompa.dev>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Max Filippov <jcmvbkbc@gmail.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Daniel Palmer <daniel@thingy.jp>, Romain Perier <romain.perier@gmail.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Heiko Stuebner <heiko@sntech.de>, 
+ Andrea della Porta <andrea.porta@suse.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>, 
+ Ulf Hansson <ulf.hansson@linaro.org>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Alex Helms <alexander.helms.jy@renesas.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, Liviu Dudau <liviu.dudau@arm.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, 
+ Brian Masney <bmasney@redhat.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ sophgo@lists.linux.dev, linux-mips@vger.kernel.org, imx@lists.linux.dev, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
+ linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
+ linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-98-b3bf97b038dc@redhat.com>
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+ <20250811-clk-for-stephen-round-rate-v1-98-b3bf97b038dc@redhat.com>
+Subject: Re: (subset) [PATCH 098/114] clk: samsung: cpu: convert from
+ round_rate() to determine_rate()
+Message-Id: <175596784123.52468.6703738128182958997.b4-ty@linaro.org>
+Date: Sat, 23 Aug 2025 18:50:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87ldnacz33.fsf@gentoo.org> <87cy8mcyy4.fsf@gentoo.org>
-In-Reply-To: <87cy8mcyy4.fsf@gentoo.org>
-From: Ian Rogers <irogers@google.com>
-Date: Sat, 23 Aug 2025 09:49:10 -0700
-X-Gm-Features: Ac12FXx_I9TlyYoS8Acvvq3h2swrT6lD-bRfYeprBApJYtrL-ohu-WwZy8Q9SnA
-Message-ID: <CAP-5=fV+-VZ+SsGL1SJGYMEv-gwkv1AKk_6MZJ4tLBrCXFnMQA@mail.gmail.com>
-Subject: Re: [PATCH v5 00/19] Support dynamic opening of capstone/llvm remove BUILD_NONDISTRO
-To: Sam James <sam@gentoo.org>
-Cc: acme@kernel.org, adityag@linux.ibm.com, adrian.hunter@intel.com, 
-	ak@linux.intel.com, alexander.shishkin@linux.intel.com, amadio@gentoo.org, 
-	atrajeev@linux.vnet.ibm.com, bpf@vger.kernel.org, chaitanyas.prakash@arm.com, 
-	changbin.du@huawei.com, charlie@rivosinc.com, dvyukov@google.com, 
-	james.clark@linaro.org, jolsa@kernel.org, justinstitt@google.com, 
-	kan.liang@linux.intel.com, kjain@linux.ibm.com, lihuafei1@huawei.com, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	llvm@lists.linux.dev, mark.rutland@arm.com, mhiramat@kernel.org, 
-	mingo@redhat.com, morbo@google.com, namhyung@kernel.org, nathan@kernel.org, 
-	nick.desaulniers+lkml@gmail.com, peterz@infradead.org, sesse@google.com, 
-	song@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Fri, Aug 22, 2025 at 11:52=E2=80=AFPM Sam James <sam@gentoo.org> wrote:
->
-> > A few months ago, objdump was the only way to get
-> > source line support [0]. Is that still the case?
->
-> ... or is this perhaps handled by "[PATCH v5 18/19] perf srcline:
-> Fallback between addr2line implementations", in which case, shouldn't
-> that really land first so people can try the LLVM impl and use the
-> binutils one if it fails?
 
-So my opinion, BUILD_NON_DISTRO isn't supported and the code behind it
-should go away. Please don't do anything to the contrary or enable it
-for your distribution - this was supposed to be implied by the name.
-The forking and running addr2line gets around the license issue that
-is GPLv3* but comes with a performance overhead. It also has a
-maintenance overhead supporting llvm and binutil addr2line, when the
-addr2line output changes things break, etc. (LLVM has been evolving
-their output but I'm not aware of it breaking things yet). We should
-(imo) delete the forking and running addr2line support, it fits the
-billing of something we can do when capstone and libLLVM support
-aren't there but the code is a hot mess and we don't do exhaustive
-testing against the many addr2line flavors, the best case is buyer
-beware. Capstone is derived from libLLVM, I'm not sure it makes sense
-having 2 libraries for this stuff. There's libLLVM but what it
-provides through a C API is a mess requiring the C++ shimming. Tbh, I
-think most of what these libraries provide we should just get over
-ourselves and provide in perf itself. For example, does it make sense
-to be trying to add type annotations to objdump output, to just update
-objdump or have a disassembler library where we can annotate things as
-we see fit? Library bindings don't break when text output formats get
-tweaked. Given we're doing so much dwarf processing, do we need a
-library for that or should that just be in-house? We can side step
-most of this mess by starting again in python as is being shown in the
-textual changes that bring with it stuff like console flame graphs:
-https://lore.kernel.org/lkml/CAP-5=3DfU=3Dz8kcY4zjezoxSwYf9vczYzHztiMSBvJxd=
-wwBPVWv2Q@mail.gmail.com/
-So I think long term we make the perf tool minimal with minimal
-dependencies (ie no addr2line, libLLVM, etc.), we work on having nice
-stuff in the python stuff where we can reuse or build new libraries
-for addr2line, objdump-ing, etc. Use >1 thread, use asyncio, etc.
+On Mon, 11 Aug 2025 11:19:30 -0400, Brian Masney wrote:
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
+> 
+> 
 
-For where we are now, ie no python stuff, BUILD_NON_DISTRO should go
-away as nobody is maintaining it and hasn't for 2 years (what happens
-when libbfd and libiberty change?). We should focus on making the best
-of what we have via libraries/tools that are supported - while not
-forcing the libraries to be there or making the perf binary massive by
-dragging in say libLLVM. The patch series pushes in that direction and
-I commend it to the reader.
+Applied, thanks!
 
-No, reordering the patches to compare performance of binutils doesn't
-make sense, just build with and without the patch series if you want
-to do this, but also don't do this as BUILD_NON_DISTRO should go away.
+[098/114] clk: samsung: cpu: convert from round_rate() to determine_rate()
+          https://git.kernel.org/krzk/linux/c/05c58c9415d1369387aedd28518fd0fdaeabd178
 
-Thanks,
-Ian
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-* (As I understand the issue IANAL) GPLv3 and GPLv2 can't be linked
-together. Why not just use GPLv3? A major issue for me is that GPLv3
-adds a requirement for =E2=80=9CInstallation Information=E2=80=9D to be pro=
-vided,
-which means placing a binary in a cryptographically signed OS
-partition you'd need to reveal the signing key which defeats the
-purpose of signing the partition to ensure you aren't hacked. I like
-open source and using the code, I don't want to be hacked by giving to
-the hackers my signing keys.
 
