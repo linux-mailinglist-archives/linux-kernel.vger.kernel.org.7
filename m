@@ -1,205 +1,156 @@
-Return-Path: <linux-kernel+bounces-783098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E2FFB32955
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:42:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64450B32962
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A17F3BA01E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:42:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FED51885FDD
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5383D2727F9;
-	Sat, 23 Aug 2025 14:40:04 +0000 (UTC)
-Received: from vs81.iboxed.net (vs10.datenmanufaktur-hosting.net [213.160.73.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F75229B77C;
+	Sat, 23 Aug 2025 14:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GZ0U1lwO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B99261B6C;
-	Sat, 23 Aug 2025 14:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79A429CB56;
+	Sat, 23 Aug 2025 14:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755960003; cv=none; b=CdcdRoM9ves7iPWWF9JigS8/2XjHFFLDRcTC9CW+dwPRu4xuSDECYgYQGgdoHpza9hbdBN/rIvmeDwt46piGs7URjX6prSDsg5OL6DKqvAfw1ALlKxtTxp8lVN/fq5ptl6r/mUnBhy9Nti9SL+TlcAMvyzrvdDOFeqBGHs0RYwk=
+	t=1755960289; cv=none; b=EgvLz52ft1syfxsQ5shKaOyShAZ2HsBMEtJ5kB+SXSUxR117KhufVXTAJfEzCrHMfbfNRCWH9m3T5x3hz1urLGAjsJFMlRt2+LiBtjA9RiINA2wp0qDfmlkWtKxSfXzP4HLtZSDUDmQ02BTe31dq6lEt777h2UvYDPeXm8dNz5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755960003; c=relaxed/simple;
-	bh=+beTnrHFYYAkbuJ6t6U2fN6G9ThH7Eu8ABD5TMXa9yM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aieEZSejHezBqNzIdWwdtbpPjskMru+hGodH+B1IL8wsVMpawEVhlQ5forAZoF16nciK93DW8hSXFbklxleXMWVjcu5actjGpHeUiTB1ipXWrute/+QsmDzYhCk1ZaB5wo8ZRRp+rbu2q0+B+EYwzb2ZffO3p2QHhzF6UMoelb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de; spf=pass smtp.mailfrom=blala.de; arc=none smtp.client-ip=213.160.73.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blala.de
-Received: from blala.de (localhost [127.0.0.1])
-	by vs81.iboxed.net (8.15.2/8.15.2/Debian-14~deb10u1) with ESMTP id 57NEiuNq012771;
-	Sat, 23 Aug 2025 14:44:56 GMT
-Received: (from akurz@localhost)
-	by blala.de (8.15.2/8.15.2/Submit) id 57NEiuXF012766;
-	Sat, 23 Aug 2025 14:44:56 GMT
-From: Alexander Kurz <akurz@blala.de>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Dzmitry Sankouski <dsankouski@gmail.com>,
-        "Dr. David Alan Gilbert" <linux@treblig.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-        devicetree@vger.kernel.org, linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Alexander Kurz <akurz@blala.de>
-Subject: [PATCH v2 9/9] Input: mc13783-pwrbutton: add OF support
-Date: Sat, 23 Aug 2025 14:44:41 +0000
-Message-Id: <20250823144441.12654-10-akurz@blala.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250823144441.12654-1-akurz@blala.de>
-References: <20250823144441.12654-1-akurz@blala.de>
+	s=arc-20240116; t=1755960289; c=relaxed/simple;
+	bh=XLNrun7kIQT0mqwRRQMKsvdopi3C5S5qwDroaXv6eG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=PV1ZN6KMpXTIIiOtLYCFe6D5g9KArZdsWKh29Uj5LU1jZf6Gi4+DazNysRIgnptWbHqxATHDYZARCSvQdg6SPbR1tzGqv7DWOMWK6cvYfAqcKA0cuxz6RyHG/JuflnND3/aZKquAwdHxSwbqVpdDKmM7QF1YDpY92/pEPNVqglY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GZ0U1lwO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E44D5C4CEE7;
+	Sat, 23 Aug 2025 14:44:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755960289;
+	bh=XLNrun7kIQT0mqwRRQMKsvdopi3C5S5qwDroaXv6eG0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GZ0U1lwOKx2sLU1WmkoD6So2eMp9mWJ16iqwQxRUgZNwJMlUAgG3d5BseorFi9YPe
+	 sS8QZsjaWHnhjR6BLzrTBsleSjqZVkANwyAinIn7PQFm3y0u7ZgYrBuDkE/xF2ngXV
+	 1yOuoSe+zTavB/ewPWaeYGfxEZp4dIVkY7Zvty90=
+Date: Sat, 23 Aug 2025 16:44:46 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [GIT PULL] USB driver fixes for 6.17-rc3
+Message-ID: <aKnT3gmJbnYFoALE@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add OF support for the mc13783-pwrbutton so that it can be used with
-modern DT based systems.
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-Signed-off-by: Alexander Kurz <akurz@blala.de>
----
- drivers/input/misc/mc13783-pwrbutton.c | 94 +++++++++++++++++++++++---
- 1 file changed, 86 insertions(+), 8 deletions(-)
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-diff --git a/drivers/input/misc/mc13783-pwrbutton.c b/drivers/input/misc/mc13783-pwrbutton.c
-index c9eea57ceedd..f06d993b231c 100644
---- a/drivers/input/misc/mc13783-pwrbutton.c
-+++ b/drivers/input/misc/mc13783-pwrbutton.c
-@@ -27,6 +27,7 @@
- #include <linux/interrupt.h>
- #include <linux/platform_device.h>
- #include <linux/mfd/mc13783.h>
-+#include <linux/property.h>
- #include <linux/sched.h>
- #include <linux/slab.h>
- 
-@@ -109,8 +110,82 @@ static irqreturn_t button3_irq(int irq, void *_priv)
- 	return button_irq(MC13783_IRQ_ONOFD3, _priv);
- }
- 
--static int mc13783_pwrbutton_probe(struct platform_device *pdev)
-+#ifdef CONFIG_OF
-+static struct mc13xxx_buttons_platform_data __init *mc13xxx_pwrbutton_probe_dt(
-+	struct platform_device *pdev)
- {
-+	struct mc13xxx_buttons_platform_data *pdata;
-+	struct fwnode_handle *child;
-+	struct device *dev = &pdev->dev;
-+	struct mc13xxx_button_devtype *devtype =
-+		(struct mc13xxx_button_devtype *)platform_get_device_id(pdev)->driver_data;
-+
-+	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-+	if (!pdata)
-+		return ERR_PTR(-ENOMEM);
-+
-+	struct fwnode_handle *parent __free(fwnode_handle) =
-+		device_get_named_child_node(dev->parent, "buttons");
-+	if (!parent)
-+		return ERR_PTR(-ENODATA);
-+
-+	fwnode_for_each_child_node(parent, child) {
-+		u32 idx;
-+		u8 dbnc = MC13783_BUTTON_DBNC_30MS;
-+		u16 dbnc_ms;
-+
-+		if (fwnode_property_read_u32(child, "reg", &idx))
-+			continue;
-+
-+		if (idx > devtype->button_id_max) {
-+			dev_warn(dev, "reg out of range\n");
-+			continue;
-+		}
-+
-+		fwnode_property_read_u16(child, "debounce-delay-ms", &dbnc_ms);
-+		switch (dbnc_ms) {
-+		case 0:
-+			dbnc = MC13783_BUTTON_DBNC_0MS;
-+			break;
-+		case 30:
-+			dbnc = MC13783_BUTTON_DBNC_30MS;
-+			break;
-+		case 150:
-+			dbnc = MC13783_BUTTON_DBNC_150MS;
-+			break;
-+		case 750:
-+			dbnc = MC13783_BUTTON_DBNC_750MS;
-+			break;
-+		default:
-+			dev_warn(dev, "invalid debounce-delay-ms value\n");
-+			continue;
-+		}
-+
-+		if (fwnode_property_read_u32(child, "linux,code", &pdata->b_on_key[idx]))
-+			continue;
-+
-+		if (fwnode_property_read_bool(child, "active-low"))
-+			pdata->b_on_flags[idx] |= MC13783_BUTTON_POL_INVERT;
-+
-+		if (fwnode_property_read_bool(child, "fsl,enable-reset"))
-+			pdata->b_on_flags[idx] |= MC13783_BUTTON_RESET_EN;
-+
-+		pdata->b_on_flags[idx] |= MC13783_BUTTON_ENABLE | dbnc;
-+	}
-+
-+	return pdata;
-+}
-+#else
-+static inline struct mc13xxx_buttons_platform_data __init *mc13xxx_pwrbutton_probe_dt(
-+	struct platform_device *pdev)
-+{
-+	return ERR_PTR(-ENODEV);
-+}
-+#endif
-+
-+static int __init mc13783_pwrbutton_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
- 	const struct mc13xxx_buttons_platform_data *pdata;
- 	struct mc13xxx *mc13783 = dev_get_drvdata(pdev->dev.parent);
- 	struct mc13xxx_button_devtype *devtype =
-@@ -121,9 +196,13 @@ static int mc13783_pwrbutton_probe(struct platform_device *pdev)
- 	int reg = 0;
- 
- 	pdata = dev_get_platdata(&pdev->dev);
--	if (!pdata) {
--		dev_err(&pdev->dev, "missing platform data\n");
--		return -ENODEV;
-+	if (dev->parent->of_node) {
-+		pdata = mc13xxx_pwrbutton_probe_dt(pdev);
-+		if (IS_ERR(pdata))
-+			return PTR_ERR(pdata);
-+	} else if (!pdata) {
-+		dev_err(dev, "missing platform data\n");
-+		return -ENODATA;
- 	}
- 
- 	pwr = devm_input_allocate_device(&pdev->dev);
-@@ -290,15 +369,14 @@ static const struct platform_device_id mc13xxx_pwrbutton_idtable[] = {
- };
- 
- static struct platform_driver mc13783_pwrbutton_driver = {
--	.id_table	= mc13xxx_pwrbutton_idtable,
--	.probe		= mc13783_pwrbutton_probe,
--	.remove		= mc13783_pwrbutton_remove,
- 	.driver		= {
- 		.name	= "mc13783-pwrbutton",
- 	},
-+	.id_table	= mc13xxx_pwrbutton_idtable,
-+	.remove		= mc13783_pwrbutton_remove,
- };
- 
--module_platform_driver(mc13783_pwrbutton_driver);
-+module_platform_driver_probe(mc13783_pwrbutton_driver, mc13783_pwrbutton_probe);
- 
- MODULE_ALIAS("platform:mc13783-pwrbutton");
- MODULE_DESCRIPTION("MC13783 Power Button");
--- 
-2.39.5
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.17-rc3
+
+for you to fetch changes up to ff9a09b3e09c7b794b56f2f5858f5ce42ba46cb3:
+
+  usb: xhci: fix host not responding after suspend and resume (2025-08-19 16:12:13 +0200)
+
+----------------------------------------------------------------
+USB fixes for 6.17-rc3
+
+Here are some small USB driver fixes for 6.17-rc3 to resolve a bunch of
+reported issues.  Included in here are:
+  - typec driver fixes
+  - dwc3 new device id
+  - dwc3 driver fixes
+  - new usb-storage driver quirks
+  - xhci driver fixes
+  - other tiny USB driver fixes to resolve bugs
+
+All of these have been in linux-next this week with no reported issues.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Alan Stern (1):
+      USB: core: Update kerneldoc for usb_hcd_giveback_urb()
+
+Amit Sunil Dhamne (2):
+      usb: typec: maxim_contaminant: disable low power mode when reading comparator values
+      usb: typec: maxim_contaminant: re-enable cc toggle if cc is open and port is clean
+
+Heikki Krogerus (1):
+      usb: dwc3: pci: add support for the Intel Wildcat Lake
+
+Kuen-Han Tsai (1):
+      usb: dwc3: Ignore late xferNotReady event to prevent halt timeout
+
+Mael GUERIN (1):
+      USB: storage: Add unusual-devs entry for Novatek NTK96550-based camera
+
+Marek Vasut (1):
+      usb: renesas-xhci: Fix External ROM access timeouts
+
+Miao Li (1):
+      usb: quirks: Add DELAY_INIT quick for another SanDisk 3.2Gen1 Flash Drive
+
+Niklas Neronin (1):
+      usb: xhci: fix host not responding after suspend and resume
+
+Russell King (Oracle) (1):
+      usb: gadget: tegra-xudc: fix PM use count underflow
+
+Sebastian Andrzej Siewior (1):
+      kcov, usb: Don't disable interrupts in kcov_remote_start_usb_softirq()
+
+Sebastian Reichel (1):
+      usb: typec: fusb302: Revert incorrect threaded irq fix
+
+Selvarasu Ganesan (1):
+      usb: dwc3: Remove WARN_ON for device endpoint command timeouts
+
+Thorsten Blum (1):
+      usb: storage: realtek_cr: Use correct byte order for bcs->Residue
+
+Weitao Wang (1):
+      usb: xhci: Fix slot_id resource race conflict
+
+Xu Yang (2):
+      usb: core: hcd: fix accessing unmapped memory in SINGLE_STEP_SET_FEATURE test
+      usb: chipidea: imx: improve usbmisc_imx7d_pullup()
+
+Zenm Chen (1):
+      USB: storage: Ignore driver CD mode for Realtek multi-mode Wi-Fi dongles
+
+ drivers/usb/chipidea/ci_hdrc_imx.c         |  3 +-
+ drivers/usb/chipidea/usbmisc_imx.c         | 23 ++++++++----
+ drivers/usb/core/hcd.c                     | 28 ++++++++-------
+ drivers/usb/core/quirks.c                  |  1 +
+ drivers/usb/dwc3/dwc3-pci.c                |  2 ++
+ drivers/usb/dwc3/ep0.c                     | 20 ++++++++---
+ drivers/usb/dwc3/gadget.c                  | 19 ++++++++--
+ drivers/usb/gadget/udc/tegra-xudc.c        |  9 +++--
+ drivers/usb/host/xhci-hub.c                |  3 +-
+ drivers/usb/host/xhci-mem.c                | 22 ++++++------
+ drivers/usb/host/xhci-pci-renesas.c        |  7 ++--
+ drivers/usb/host/xhci-ring.c               |  9 +++--
+ drivers/usb/host/xhci.c                    | 23 ++++++++----
+ drivers/usb/host/xhci.h                    |  3 +-
+ drivers/usb/storage/realtek_cr.c           |  2 +-
+ drivers/usb/storage/unusual_devs.h         | 29 +++++++++++++++
+ drivers/usb/typec/tcpm/fusb302.c           | 12 ++++---
+ drivers/usb/typec/tcpm/maxim_contaminant.c | 58 ++++++++++++++++++++++++++++++
+ drivers/usb/typec/tcpm/tcpci_maxim.h       |  1 +
+ include/linux/kcov.h                       | 47 +++++-------------------
+ 20 files changed, 224 insertions(+), 97 deletions(-)
 
