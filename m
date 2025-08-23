@@ -1,156 +1,265 @@
-Return-Path: <linux-kernel+bounces-783291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 046EFB32B62
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:51:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74FB2B32B67
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82435879E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:51:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FC841BC753E
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CD521C18C;
-	Sat, 23 Aug 2025 17:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5092245014;
+	Sat, 23 Aug 2025 17:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QH2jvMs6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z1fbEupo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QxeoWd6/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3429A14B977;
-	Sat, 23 Aug 2025 17:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475B3213E89;
+	Sat, 23 Aug 2025 17:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755971457; cv=none; b=MajZd+jeIxN+ggIh6GtJ5L4+Tj2kymRd8GQPiFPMUlkA7t6LCwuGzX7Z4Gp/qfykd4yLAsMpaqdfr0Sd9+kXQSW4OZwiMexwanv016PgBCbp1GHpDZYi2ulSzqLHH60WD14PjOPdtNrDyVbV4Z9ZLRchUnATyH+JivqBrAd1Rpo=
+	t=1755971724; cv=none; b=ua4A65nErU8qGOqN/yB/riBMVq9so3Rpu+EAyKqqIOtbNYwHeTxTO66nkA8BRcgqfW4sxtu0y4BAMiLG0gTE4OpsyEPY3mHVhacShWTMEYQiDy1z6gfiwkf4YdpUrBa3irgZu4/X9qHeYmcCzv4VnXZjs1myC2+iHfviC27ksSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755971457; c=relaxed/simple;
-	bh=txzlLeYiPpB99xDmZQRsO/J4/cTOU3DJxupm2sLARdQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=bLpBttRLYCBwcIaund7Rj0KDnkFoSL/ggoj+lJxvlrU3Lb87D6VCFBhhXPbUPhoRX6HAPgbC3MK5rmR367vgZh2zK1LfiKR/JBgjmVbKzyqJBLiv2FYTcIPmOR+gFdAvMXphEPslPOEJZY2fspevW9FsmRm87WDKmwcM40TK3lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QH2jvMs6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z1fbEupo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 23 Aug 2025 17:50:48 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755971452;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Uc4K79MJ5uZqd7GnSFfTQgT4k222vGcOr7FsmAft/Eg=;
-	b=QH2jvMs6gP5deJ+ScfdK1O6G6IwMKSQUBow6DYzZMIgQ5oENCvp+AHs3V7HrHwPXfJf//i
-	JSHfXBL2d253r6+4GvZz9hh5SSB2vegMYKwyLSktYVq81taFu4K+FXFXJTnrbYzP+PmhyF
-	ELSvqJv9fQayjlHyi+dQaeEKu9cEm9VyOPrJjtqQfmvemMqw6vYZJ0/ObOAqpmDUFNdVfa
-	RTtJ/Aot5UwhOwpcOBa4jwrlmSqMhE5mrq7ni6sD3Sg54MLC0yYKR5rgf4J7JgqkkjVDNA
-	PJo0KIz/T5t2UI2luSyazUBjp5xKQdVbMfFBuU6rRyblEM9qIyGE8ZA//PQY+Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755971452;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Uc4K79MJ5uZqd7GnSFfTQgT4k222vGcOr7FsmAft/Eg=;
-	b=z1fbEupo7x3gYMz6sGIRD73EG/bNOXWjYWwQdiUsTlYK5tLQ7Au80zA/gm6Dy7T0BOU51U
-	rvqhQh9ywnFqLbDQ==
-From: "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] genirq: Remove GENERIC_IRQ_LEGACY
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20250814165949.hvtP03r4@linutronix.de>
-References: <20250814165949.hvtP03r4@linutronix.de>
+	s=arc-20240116; t=1755971724; c=relaxed/simple;
+	bh=fBJPHujQaTfeJ/QhlahQ1Q7Dchv0xfwiZ8tXvM4XPX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S2ovaL2+bTpBFBwIlg8D1YORN+E6GZdHkLy+mRqMVdAGU80llnBUKtEhHIS4iln3KN7XMOoCPt+noDRY7s62X4onmCfvt7LJQjTMJfWemC6brlbKmlFzfLyle/eCeH6ZCjxpcKjCf3g1YD/c72bmVmqfyJ7KfNp2DY1eSFWkMR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QxeoWd6/; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755971722; x=1787507722;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fBJPHujQaTfeJ/QhlahQ1Q7Dchv0xfwiZ8tXvM4XPX0=;
+  b=QxeoWd6/3MHXFG4x8t/RwE2HhgGuDNUvIH5Hg7neBdYyYeuJy8AuDJ+K
+   n2Adq7APdT3vKqQtslwE9Hc34B9hIceq4iQyU8pFS3sAWGH8riGMGsWbT
+   U4323NG+TUW0KxM1Ergsx7yLBkRmzDWn5slHC4QANCtsaLRZNGPZzpVk2
+   7QQDmnXzvjaFUNuuH9a4kN2tHk6RWujgnOoogpOx5HRc7NV0vX1gRvCfJ
+   g9GE1DSig9zS5leA08NEAK575Zf6MmsxXVwbNMKoqCHiF9eObouHSnvgv
+   x0XNDjhC6uChfzL7bo7PaNZOTE3++wOdsB/RHpDc5NLrcxCRr5tiPRauM
+   w==;
+X-CSE-ConnectionGUID: TAotLZoLSse9abtFWkBieg==
+X-CSE-MsgGUID: QM4k7DnHSMuKbzVoC/cORw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="75699940"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="75699940"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2025 10:55:21 -0700
+X-CSE-ConnectionGUID: aWklkkZATGyZegBWr3QXJg==
+X-CSE-MsgGUID: 4XPQOh4hSRmImI3tNEsAzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="174247581"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 23 Aug 2025 10:55:17 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1upsSQ-000MUB-0W;
+	Sat, 23 Aug 2025 17:55:14 +0000
+Date: Sun, 24 Aug 2025 01:54:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH v6 2/3] tracing: Add a tracepoint verification check at
+ build time
+Message-ID: <202508240152.kQo4DBMl-lkp@intel.com>
+References: <20250820174828.080947631@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175597144887.1420.4853522268284047883.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820174828.080947631@kernel.org>
 
-The following commit has been merged into the irq/core branch of tip:
+Hi Steven,
 
-Commit-ID:     3c716487936aa54083c130d46ad5747769695e09
-Gitweb:        https://git.kernel.org/tip/3c716487936aa54083c130d46ad57477696=
-95e09
-Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate:    Thu, 14 Aug 2025 18:59:49 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 23 Aug 2025 19:46:04 +02:00
+kernel test robot noticed the following build warnings:
 
-genirq: Remove GENERIC_IRQ_LEGACY
+[auto build test WARNING on trace/for-next]
+[also build test WARNING on akpm-mm/mm-everything linus/master v6.17-rc2 next-20250822]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-IA64 is gone and with it the last GENERIC_IRQ_LEGACY user.
+url:    https://github.com/intel-lab-lkp/linux/commits/Steven-Rostedt/sorttable-Move-ELF-parsing-into-scripts-elf-parse-ch/20250821-015048
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/20250820174828.080947631%40kernel.org
+patch subject: [PATCH v6 2/3] tracing: Add a tracepoint verification check at build time
+config: x86_64-randconfig-003-20250823 (https://download.01.org/0day-ci/archive/20250824/202508240152.kQo4DBMl-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250824/202508240152.kQo4DBMl-lkp@intel.com/reproduce)
 
-Remove GENERIC_IRQ_LEGACY.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508240152.kQo4DBMl-lkp@intel.com/
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250814165949.hvtP03r4@linutronix.de
+All warnings (new ones prefixed by >>):
 
----
- include/linux/irq.h  | 4 ----
- kernel/irq/Kconfig   | 4 ----
- kernel/irq/irqdesc.c | 7 -------
- 3 files changed, 15 deletions(-)
+   warning: tracepoint 'nfsd_cb_setup_err' is unused.
+   warning: tracepoint 'nfsd_cb_setup' is unused.
+   warning: tracepoint 'nfsd_cb_rpc_release' is unused.
+   warning: tracepoint 'nfsd_cb_rpc_done' is unused.
+   warning: tracepoint 'nfsd_cb_rpc_prepare' is unused.
+   warning: tracepoint 'nfsd_cb_shutdown' is unused.
+   warning: tracepoint 'nfsd_cb_lost' is unused.
+   warning: tracepoint 'nfsd_cb_probe' is unused.
+   warning: tracepoint 'nfsd_cb_new_state' is unused.
+   warning: tracepoint 'nfsd_cb_start' is unused.
+   warning: tracepoint 'nfsd_cb_nodelegs' is unused.
+   warning: tracepoint 'nfsd_cb_args' is unused.
+   warning: tracepoint 'nfsd_clid_confirmed_r' is unused.
+   warning: tracepoint 'nfsd_clid_fresh' is unused.
+   warning: tracepoint 'nfsd_clid_verf_mismatch' is unused.
+   warning: tracepoint 'nfsd_clid_cred_mismatch' is unused.
+   warning: tracepoint 'nfsd_grace_complete' is unused.
+   warning: tracepoint 'nfsd_grace_start' is unused.
+   warning: tracepoint 'nfsd_mark_client_expired' is unused.
+   warning: tracepoint 'nfsd_clid_stale' is unused.
+   warning: tracepoint 'nfsd_clid_renew' is unused.
+   warning: tracepoint 'nfsd_clid_purged' is unused.
+   warning: tracepoint 'nfsd_clid_replaced' is unused.
+   warning: tracepoint 'nfsd_clid_admin_expired' is unused.
+   warning: tracepoint 'nfsd_clid_destroyed' is unused.
+   warning: tracepoint 'nfsd_clid_confirmed' is unused.
+   warning: tracepoint 'nfsd_clid_reclaim_complete' is unused.
+   warning: tracepoint 'nfsd_clid_expire_unconf' is unused.
+   warning: tracepoint 'nfsd_slot_seqid_sequence' is unused.
+   warning: tracepoint 'nfsd_slot_seqid_unconf' is unused.
+   warning: tracepoint 'nfsd_slot_seqid_conf' is unused.
+   warning: tracepoint 'nfsd_seq4_status' is unused.
+   warning: tracepoint 'nfsd_stateowner_replay' is unused.
+   warning: tracepoint 'nfsd_stid_revoke' is unused.
+   warning: tracepoint 'nfsd_open_confirm' is unused.
+   warning: tracepoint 'nfsd_preprocess' is unused.
+   warning: tracepoint 'nfsd_deleg_return' is unused.
+   warning: tracepoint 'nfsd_deleg_write' is unused.
+   warning: tracepoint 'nfsd_deleg_read' is unused.
+   warning: tracepoint 'nfsd_open' is unused.
+   warning: tracepoint 'nfsd_layout_recall_release' is unused.
+   warning: tracepoint 'nfsd_layout_recall_fail' is unused.
+   warning: tracepoint 'nfsd_layout_recall_done' is unused.
+   warning: tracepoint 'nfsd_layout_recall' is unused.
+   warning: tracepoint 'nfsd_layout_return_lookup_fail' is unused.
+   warning: tracepoint 'nfsd_layout_commit_lookup_fail' is unused.
+   warning: tracepoint 'nfsd_layout_get_lookup_fail' is unused.
+   warning: tracepoint 'nfsd_layoutstate_free' is unused.
+   warning: tracepoint 'nfsd_layoutstate_unhash' is unused.
+   warning: tracepoint 'nfsd_layoutstate_alloc' is unused.
+   warning: tracepoint 'nfsd_delegret_wakeup' is unused.
+   warning: tracepoint 'nfsd_clone_file_range_err' is unused.
+   warning: tracepoint 'nfsd_compound_encode_err' is unused.
+   warning: tracepoint 'nfsd_compound_op_err' is unused.
+   warning: tracepoint 'nfsd_compound_decode_err' is unused.
+   warning: tracepoint 'nfsd_compound_status' is unused.
+   warning: tracepoint 'nfsd_compound' is unused.
+   warning: tracepoint 'xfs_metadir_link' is unused.
+   warning: tracepoint 'xfs_metadir_start_link' is unused.
+   warning: tracepoint 'xfs_file_dax_write' is unused.
+   warning: tracepoint 'xfs_file_dax_read' is unused.
+   warning: tracepoint 'xrep_done' is unused.
+   warning: tracepoint 'xrep_attempt' is unused.
+   warning: tracepoint 'cachefiles_ondemand_fd_release' is unused.
+   warning: tracepoint 'cachefiles_ondemand_fd_write' is unused.
+   warning: tracepoint 'cachefiles_ondemand_cread' is unused.
+   warning: tracepoint 'cachefiles_ondemand_read' is unused.
+   warning: tracepoint 'cachefiles_ondemand_close' is unused.
+   warning: tracepoint 'cachefiles_ondemand_copen' is unused.
+   warning: tracepoint 'cachefiles_ondemand_open' is unused.
+   warning: tracepoint 'ocfs2_encode_fh_begin' is unused.
+   warning: tracepoint 'ocfs2_duplicate_clusters_by_jbd' is unused.
+   warning: tracepoint 'zonefs_file_dio_append' is unused.
+   warning: tracepoint 'edma_readb' is unused.
+   warning: tracepoint 'edma_readw' is unused.
+   warning: tracepoint 'xe_exec_queue_supress_resume' is unused.
+   warning: tracepoint 'xe_vm_restart' is unused.
+   warning: tracepoint 'xe_vma_userptr_rebind_exec' is unused.
+   warning: tracepoint 'xe_vma_userptr_rebind_worker' is unused.
+   warning: tracepoint 'xe_vma_flush' is unused.
+   warning: tracepoint 'dma_fence_emit' is unused.
+   warning: tracepoint 'scsi_zone_wp_update' is unused.
+   warning: tracepoint 'scsi_prepare_zone_append' is unused.
+   warning: tracepoint 'ata_sff_flush_pio_task' is unused.
+   warning: tracepoint 'atapi_send_cdb' is unused.
+   warning: tracepoint 'atapi_pio_transfer_data' is unused.
+   warning: tracepoint 'ata_sff_pio_transfer_data' is unused.
+   warning: tracepoint 'ata_sff_port_intr' is unused.
+   warning: tracepoint 'ata_sff_hsm_command_complete' is unused.
+   warning: tracepoint 'ata_sff_hsm_state' is unused.
+   warning: tracepoint 'ata_bmdma_status' is unused.
+   warning: tracepoint 'ata_bmdma_stop' is unused.
+   warning: tracepoint 'ata_bmdma_start' is unused.
+   warning: tracepoint 'ata_bmdma_setup' is unused.
+   warning: tracepoint 'ata_exec_command' is unused.
+   warning: tracepoint 'ata_tf_load' is unused.
+   warning: tracepoint 'ice_tx_tstamp_complete' is unused.
+   warning: tracepoint 'ice_tx_tstamp_fw_done' is unused.
+   warning: tracepoint 'ice_tx_tstamp_fw_req' is unused.
+   warning: tracepoint 'ice_tx_tstamp_request' is unused.
+>> warning: tracepoint 'mlx5e_rep_neigh_update' is unused.
+   warning: tracepoint 'xhci_dbc_giveback_request' is unused.
+   warning: tracepoint 'xhci_dbc_queue_request' is unused.
+   warning: tracepoint 'xhci_dbc_free_request' is unused.
+   warning: tracepoint 'xhci_dbc_alloc_request' is unused.
+   warning: tracepoint 'xhci_dbc_gadget_ep_queue' is unused.
+   warning: tracepoint 'xhci_dbc_handle_transfer' is unused.
+   warning: tracepoint 'xhci_dbc_handle_event' is unused.
+   warning: tracepoint 'musb_req_deq' is unused.
+   warning: tracepoint 'musb_req_enq' is unused.
+   warning: tracepoint 'musb_req_start' is unused.
+   warning: tracepoint 'musb_req_free' is unused.
+   warning: tracepoint 'musb_req_alloc' is unused.
+   warning: tracepoint 'musb_req_rx' is unused.
+   warning: tracepoint 'musb_req_tx' is unused.
+   warning: tracepoint 'musb_req_gb' is unused.
+   warning: tracepoint 'ufshcd_wl_resume' is unused.
+   warning: tracepoint 'ufshcd_wl_suspend' is unused.
+   warning: tracepoint 'ufshcd_system_resume' is unused.
+   warning: tracepoint 'ufshcd_system_suspend' is unused.
+   warning: tracepoint 'br_mdb_full' is unused.
+   warning: tracepoint 'tcp_hash_md5_mismatch' is unused.
+   warning: tracepoint 'tcp_hash_md5_unexpected' is unused.
+   warning: tracepoint 'devlink_hwerr' is unused.
+   warning: tracepoint 'rpc_socket_reset_connection' is unused.
+   warning: tracepoint 'rxrpc_rxgk_rekey' is unused.
+   warning: tracepoint 'rxrpc_drop_ack' is unused.
+   warning: tracepoint 'rxrpc_rx_response' is unused.
+   warning: tracepoint 'rxrpc_rx_challenge' is unused.
+   warning: tracepoint 'rxrpc_tx_challenge' is unused.
+   warning: tracepoint 'cfg80211_return_u32' is unused.
+   warning: tracepoint 'cfg80211_return_uint' is unused.
+   warning: tracepoint 'cfg80211_chandef_dfs_required' is unused.
+   warning: tracepoint 'cfg80211_send_rx_auth' is unused.
+   warning: tracepoint 'rdev_return_void_tx_rx' is unused.
+   warning: tracepoint 'rdev_resume' is unused.
+   warning: tracepoint 'rdev_suspend' is unused.
+   warning: tracepoint 'tipc_node_dump' is unused.
+   warning: tracepoint '802154_rdev_resume' is unused.
+   warning: tracepoint '802154_rdev_suspend' is unused.
+   warning: tracepoint '802154_new_scan_event' is unused.
+   warning: tracepoint '802154_drv_set_pan_coord' is unused.
+>> warning: tracepoint 'batadv_dbg' is unused.
 
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index 1d6b606..c9bcdbf 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -976,10 +976,6 @@ static inline void irq_free_desc(unsigned int irq)
- 	irq_free_descs(irq, 1);
- }
-=20
--#ifdef CONFIG_GENERIC_IRQ_LEGACY
--void irq_init_desc(unsigned int irq);
--#endif
--
- /**
-  * struct irq_chip_regs - register offsets for struct irq_gci
-  * @enable:	Enable register offset to reg_base
-diff --git a/kernel/irq/Kconfig b/kernel/irq/Kconfig
-index 1da5e9d..3667364 100644
---- a/kernel/irq/Kconfig
-+++ b/kernel/irq/Kconfig
-@@ -6,10 +6,6 @@ menu "IRQ subsystem"
- config MAY_HAVE_SPARSE_IRQ
-        bool
-=20
--# Legacy support, required for itanic
--config GENERIC_IRQ_LEGACY
--       bool
--
- # Enable the generic irq autoprobe mechanism
- config GENERIC_IRQ_PROBE
- 	bool
-diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-index b64c57b..db714d3 100644
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -653,13 +653,6 @@ void irq_mark_irq(unsigned int irq)
- 	irq_insert_desc(irq, irq_desc + irq);
- }
-=20
--#ifdef CONFIG_GENERIC_IRQ_LEGACY
--void irq_init_desc(unsigned int irq)
--{
--	free_desc(irq);
--}
--#endif
--
- #endif /* !CONFIG_SPARSE_IRQ */
-=20
- int handle_irq_desc(struct irq_desc *desc)
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
