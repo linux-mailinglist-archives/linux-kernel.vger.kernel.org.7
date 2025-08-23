@@ -1,192 +1,155 @@
-Return-Path: <linux-kernel+bounces-782959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FCB0B327A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 10:36:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7475BB327AD
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 10:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EB101BA15D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:36:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53212601518
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36D723AB9F;
-	Sat, 23 Aug 2025 08:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED55A23ABB3;
+	Sat, 23 Aug 2025 08:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPgTCDfF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="czjZfWS0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C9221576E;
-	Sat, 23 Aug 2025 08:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8BD225A59
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 08:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755938185; cv=none; b=J4EFNIrJiAqyhtq/HQbCKQdwXGAkxpxdaybuNnyn3WWUp47J6DRwWUYVTLyMhJQJhWzbdm4jfpgFV7BYOTuzrGl8n95aYIpE4MKJTTlC3dMKxg3CP4hRUv4jfhjgMKyQK8KfcEX7Nwbq6qhEazcTN+8e2RSP49UvwUL0FrQKgGY=
+	t=1755938587; cv=none; b=EFMfyQExssg++QmHWYnzM0h8W4KKJ5tq8QcBOgSeZc0yvGzUvsv97pIItinU7vS5K9nm30OJW74s7Ph1GZQvNZspqeUAUWvrC7yFrgxIWtbKV2Ox4VCV4PWUkK9GYA9OzRf8bIrtno3b/nDHNMFz6+O055tslyfQOh04yogZ2QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755938185; c=relaxed/simple;
-	bh=9HXgfwsXlpHGuE4MNNyqKCJCXrlDF0GP047HKDxcEJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SYaCshBMLy5NWLbu7r3tR5cOwT8kPJovBBvLDQrq7viR1RruJBx+NfuZuUyGDkov3f2lLBWG2qp+gBrzpkwcgVIHQFgAP4X9RT632rHkSb+BxaBXFWQnVkO6JmIzpFbAvfiai9pVMqJ4jElPY5V5+pmDVXvrInMgvlnokZ0kRG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dPgTCDfF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5661BC4CEE7;
-	Sat, 23 Aug 2025 08:36:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755938184;
-	bh=9HXgfwsXlpHGuE4MNNyqKCJCXrlDF0GP047HKDxcEJY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dPgTCDfFlfFyx/PiB1QzQKBlavWtGGDch+zyjkzeztX3onwKjHYSxZTiS5AoI1svs
-	 R1nARjQtYYAzrnTAIZGXlli987Qzi2Yd3EBW6B/Jro0gWM11ZpO0yR++Z4/0EFtFb8
-	 LMrybYiucqExh5Ff5VlSmHlLSE5H3M29bkY3gCtKGrFV8/m4IT3YdKpXtx55RQzgIU
-	 /Z08CMRa1HVDcufEVrkpNKOOn62koeSgbRdKRFeOoBH2MQLiyiSLENoOymL0BmZ3cG
-	 z/B9puxop6U6Xvv/Y6aAmzZ6ubfSkqKcEpPX8tb32OvL7yb6cwt1UnME8Hg7GWVJGp
-	 YSC3nQOxx4W3g==
-Date: Sat, 23 Aug 2025 10:36:20 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Cc: Ray Liu <ray.liu@airoha.com>, Mark Brown <broonie@kernel.org>,
-	Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>,
-	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 07/13] spi: airoha: fix reading/writing of flashes
- with more than one plane per lun
-Message-ID: <aKl9hOx2hcZUfg-k@lore-rh-laptop>
-References: <aKgSY7bOrC8-qZE3@lore-rh-laptop>
- <20250823001626.3641935-1-mikhail.kshevetskiy@iopsys.eu>
- <20250823001626.3641935-8-mikhail.kshevetskiy@iopsys.eu>
+	s=arc-20240116; t=1755938587; c=relaxed/simple;
+	bh=37X3jjXwUHjejovSWpjADkwKpBcCQqf/BM1PK964nAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GQJUqel01dd8u5Q7ffWhOiPXQE56TLNP70CQcsPbX265uMKAObmpZFiRGe18DwA6jMlcvfQMo+Y8YYdZYILzqIzWz9GSfusUQXKQs8bPTblFCXSLSFi9ksMRz0I4+DF4WIm5zaEYf2sx+zNCI3sqhVDNSbt71X0uR+Nc4amT4PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=czjZfWS0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755938580;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6FnRHJFSV3SreC1w0p6QNKVoKyAgLeDGHlww9MpDPB0=;
+	b=czjZfWS066rfOUrX6mq7EKcjUYQyFuDfdbDGRWuBERX+oxy6VpPDEQiX85jVMTHPVy/Fwk
+	5alLGQNownGFB7WaUpDOxLkR8Ne44+wfGKbmkiCBE58Gn04dpuTPEsuvU0H8Fnzn5fEFS1
+	k9J1Go1MJ6RWlKJ96ZC2MzMD3svKzzI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-522--YDIAWJhOrCVtEj0BBmQHA-1; Sat, 23 Aug 2025 04:42:58 -0400
+X-MC-Unique: -YDIAWJhOrCVtEj0BBmQHA-1
+X-Mimecast-MFC-AGG-ID: -YDIAWJhOrCVtEj0BBmQHA_1755938577
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45a1b05a59cso20190705e9.1
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 01:42:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755938577; x=1756543377;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6FnRHJFSV3SreC1w0p6QNKVoKyAgLeDGHlww9MpDPB0=;
+        b=r0Nqo1TMlyeUmoXq/VLp5vHgPqMoa6148UZWIrH0Y/CJL6MxdY+0226A/6zvtx62FV
+         huIzpXN9y39Ptj0GnRdZUqIVzC7NPFyGW8xyxXMnMfMWNKfK2gVVldEFS6m7fGvgmKPs
+         e0P46ZuTBWtlTWsVFLkXUXm9ZvoMV2PA5mJ66csA1Kk4/40G3sKLF9S1mN38WDa9tVPb
+         M4lyzsKgnyCuD6m2OMfSa6kcbjZpgiTeuLVK7rHOsiuh5X6H+UJTdR+/UENO0r7QMVCj
+         0bd3yR3eguvnouZKBDMHCMxwkgLNew362aNEnnyvfvGWAXe1Yx8Qv3gzUG8yRbbqEr7v
+         Y9GA==
+X-Forwarded-Encrypted: i=1; AJvYcCXE1kXyeMszcug1orcIRv6TsG8uRcZ8/jXFUZVbAI4EHBolCU0gwpblHp3t9ezhbL9rd6tQqAVcoxqLdV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwisYV7g/1TaqnobfVL5UV+8rKYYTqmqBrt95xmU8phWruPLt3S
+	qor0cCZQ77GGkcKe6OlvwYf8viPFeAZ7Gu8fABzAzNiNf7RQ9J6lXt+h7PuxwRZWf2Z0fMz3O82
+	uyYHtfkiYuCeKt7SQdUjXTxddd1uypSa0J+A4TJ+dvDO5MkiGwkTBJMjKKoSpE4avDg==
+X-Gm-Gg: ASbGncuryoyQi9nZs6JW125ODqM+BfV/DQgheWrwBEenGk/Z0GXaXGw2k2JMnHPI9ZI
+	mEPVxw5PdpIGPba3nsxeza/PTkGINKz6ha2ToC/Y62jAA3h9C6QGSnOrGY+94nA4QguNC5rekR/
+	VxsaXAQgOEDcp7OFs2r7DnFaC9hKt9xtGVWHIk9oPogLjn9NNkJ7gZGG6QVYevq7LahWGm1u2aV
+	YxE4K12sYslfBvQJJd+ozF0EibGbzJKQg1/oKKZmS6bp8fsdaqdHVOMAeL7/b9cJbmcUUH8hXrK
+	+kBhlT/55BafMiP+Qg3ioYp0Rk/xtqQne2LuzW5FxFGrFNefuS4=
+X-Received: by 2002:a05:600c:5493:b0:459:d709:e5a1 with SMTP id 5b1f17b1804b1-45b53af6c77mr48705515e9.6.1755938576703;
+        Sat, 23 Aug 2025 01:42:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH6NjHGHYqMJ8ulZ9is0JehUqd1MHmd37Qkuu9GJeF/qPZl1+eYwVAU/3Y3IK1AImm7nVQHsw==
+X-Received: by 2002:a05:600c:5493:b0:459:d709:e5a1 with SMTP id 5b1f17b1804b1-45b53af6c77mr48705185e9.6.1755938576230;
+        Sat, 23 Aug 2025 01:42:56 -0700 (PDT)
+Received: from maya.myfinge.rs (ifcgrfdd.trafficplex.cloud. [2a10:fc81:a806:d6a9::1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b57444963sm31535055e9.3.2025.08.23.01.42.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Aug 2025 01:42:55 -0700 (PDT)
+Date: Sat, 23 Aug 2025 10:42:51 +0200
+From: Stefano Brivio <sbrivio@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, wangzijie
+ <wangzijie1@honor.com>, Alexey Dobriyan <adobriyan@gmail.com>, Christian
+ Brauner <brauner@kernel.org>, passt-dev@passt.top, Al Viro
+ <viro@zeniv.linux.org.uk>, Ye Bin <yebin10@huawei.com>, Alexei Starovoitov
+ <ast@kernel.org>, "Rick P . Edgecombe" <rick.p.edgecombe@intel.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH] proc: Bring back lseek() operations for /proc/net
+ entries
+Message-ID: <20250823104251.49a8caba@elisabeth>
+In-Reply-To: <20250822160904.6c5468bce2200cf8561970d7@linux-foundation.org>
+References: <20250822172335.3187858-1-sbrivio@redhat.com>
+	<20250822160904.6c5468bce2200cf8561970d7@linux-foundation.org>
+Organization: Red Hat
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LN76RXLjGbIEDXVw"
-Content-Disposition: inline
-In-Reply-To: <20250823001626.3641935-8-mikhail.kshevetskiy@iopsys.eu>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Fri, 22 Aug 2025 16:09:04 -0700
+Andrew Morton <akpm@linux-foundation.org> wrote:
 
---LN76RXLjGbIEDXVw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Fri, 22 Aug 2025 19:23:35 +0200 Stefano Brivio <sbrivio@redhat.com> wrote:
+> 
+> > Commit ff7ec8dc1b64 ("proc: use the same treatment to check proc_lseek
+> > as ones for proc_read_iter et.al") breaks lseek() for all /proc/net
+> > entries, as shown for instance by pasta(1), a user-mode network
+> > implementation using those entries to scan for bound ports:
+> > 
+> >   $ strace -e openat,lseek -e s=none pasta -- true
+> >   [...]
+> >   openat(AT_FDCWD, "/proc/net/tcp", O_RDONLY|O_CLOEXEC) = 12
+> >   openat(AT_FDCWD, "/proc/net/tcp6", O_RDONLY|O_CLOEXEC) = 13
+> >   lseek(12, 0, SEEK_SET)                  = -1 ESPIPE (Illegal seek)
+> >   lseek() failed on /proc/net file: Illegal seek
+> >   lseek(13, 0, SEEK_SET)                  = -1 ESPIPE (Illegal seek)
+> >   lseek() failed on /proc/net file: Illegal seek
+> >   openat(AT_FDCWD, "/proc/net/udp", O_RDONLY|O_CLOEXEC) = 14
+> >   openat(AT_FDCWD, "/proc/net/udp6", O_RDONLY|O_CLOEXEC) = 15
+> >   lseek(14, 0, SEEK_SET)                  = -1 ESPIPE (Illegal seek)
+> >   lseek() failed on /proc/net file: Illegal seek
+> >   lseek(15, 0, SEEK_SET)                  = -1 ESPIPE (Illegal seek)
+> >   lseek() failed on /proc/net file: Illegal seek
+> >   [...]
+> > 
+> > That's because PROC_ENTRY_proc_lseek isn't set for /proc/net entries,
+> > and it's now mandatory for lseek(). In fact, flags aren't set at all
+> > for those entries because pde_set_flags() isn't called for them.
+> > 
+> > As commit d919b33dafb3 ("proc: faster open/read/close with "permanent"
+> > files") introduced flags for procfs directory entries, along with the
+> > pde_set_flags() helper, they weren't relevant for /proc/net entries,
+> > so the lack of pde_set_flags() calls in proc_create_net_*() functions
+> > was harmless.
+> > 
+> > Now that the calls are strictly needed for lseek() functionality,
+> > add them.  
+> 
+> Thanks.  We already have
+> https://lkml.kernel.org/r/20250821105806.1453833-1-wangzijie1@honor.com
+> - does that look suitable?
 
-> Reading UBI on the flash with more than one plane per lun will lead to
-> the following error:
->=20
-> ubi0: default fastmap WL pool size: 50
-> ubi0: attaching mtd2
-> ubi0 error: ubi_add_to_av: two LEBs with same sequence number 403
-> eraseblock attaching information dump:
->         ec       1
->         pnum     538
->         lnum     0
->         scrub    0
->         sqnum    403
-> Volume identifier header dump:
->         magic     55424921
->         version   1
->         vol_type  1
->         copy_flag 0
->         compat    0
->         vol_id    1
->         lnum      0
->         data_size 0
->         used_ebs  0
->         data_pad  0
->         sqnum     403
->         hdr_crc   c8418a31
-> Volume identifier header hexdump:
-> 00000000: 55 42 49 21 01 01 00 00 00 00 00 01 00 00 00 00 00 00 00 00 00 =
-00 00 00 00 00 00 00 00 00 00 00  UBI!............................
-> 00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 93 00 00 00 00 00 =
-00 00 00 00 00 00 00 c8 41 8a 31  .............................A.1
-> ubi0 error: ubi_attach_mtd_dev: failed to attach mtd2, error -22
-> UBI error: cannot attach mtd2
-> UBI error: cannot initialize UBI, error -22
-> UBI init error 22
->=20
-> looking to spi_mem_no_dirmap_read() code we'll see:
->=20
-> 	static ssize_t spi_mem_no_dirmap_read(struct spi_mem_dirmap_desc *desc,
-> 					      u64 offs, size_t len, void *buf)
-> 	{
-> 		struct spi_mem_op op =3D desc->info.op_tmpl;
-> 		int ret;
->=20
-> // --- see here ---
-> 		op.addr.val =3D desc->info.offset + offs;
-> //-----------------
-> 		op.data.buf.in =3D buf;
-> 		op.data.nbytes =3D len;
-> 		ret =3D spi_mem_adjust_op_size(desc->mem, &op);
-> 		if (ret)
-> 		return ret;
->=20
-> 		ret =3D spi_mem_exec_op(desc->mem, &op);
-> 		if (ret)
-> 			return ret;
->=20
-> 		return op.data.nbytes;
-> 	}
->=20
-> The similar happens for spi_mem_no_dirmap_write(). Thus spi read address =
-should
-> take in the account the desc->info.offset.
->=20
-> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+Sorry, I didn't spot that one. It sure does!
 
-Missing Fixes tag.
+-- 
+Stefano
 
-Regards,
-Lorenzo
-
-> ---
->  drivers/spi/spi-airoha-snfi.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/spi/spi-airoha-snfi.c b/drivers/spi/spi-airoha-snfi.c
-> index 3431a9c84679..df2d3d717c00 100644
-> --- a/drivers/spi/spi-airoha-snfi.c
-> +++ b/drivers/spi/spi-airoha-snfi.c
-> @@ -727,8 +727,9 @@ static ssize_t airoha_snand_dirmap_read(struct spi_me=
-m_dirmap_desc *desc,
->  	if (err)
->  		goto error_dma_unmap;
-> =20
-> -	/* set read addr */
-> -	err =3D regmap_write(as_ctrl->regmap_nfi, REG_SPI_NFI_RD_CTL3, 0x0);
-> +	/* set read addr: zero page offset + descriptor read offset */
-> +	err =3D regmap_write(as_ctrl->regmap_nfi, REG_SPI_NFI_RD_CTL3,
-> +			   desc->info.offset);
->  	if (err)
->  		goto error_dma_unmap;
-> =20
-> @@ -872,7 +873,9 @@ static ssize_t airoha_snand_dirmap_write(struct spi_m=
-em_dirmap_desc *desc,
->  	if (err)
->  		goto error_dma_unmap;
-> =20
-> -	err =3D regmap_write(as_ctrl->regmap_nfi, REG_SPI_NFI_PG_CTL2, 0x0);
-> +	/* set write addr: zero page offset + descriptor write offset */
-> +	err =3D regmap_write(as_ctrl->regmap_nfi, REG_SPI_NFI_PG_CTL2,
-> +			   desc->info.offset);
->  	if (err)
->  		goto error_dma_unmap;
-> =20
-> --=20
-> 2.50.1
->=20
-
---LN76RXLjGbIEDXVw
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaKl9ggAKCRA6cBh0uS2t
-rNEzAP9Qd8XxGGaG44w/Yv1yxymd6mE+vW15GyHs8Zjiv/dEsAD6AvgUJ/iXlYAj
-4sbGzifvI0iy8Pslf9mIRvj9KGVXcws=
-=Ju9w
------END PGP SIGNATURE-----
-
---LN76RXLjGbIEDXVw--
 
