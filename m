@@ -1,116 +1,125 @@
-Return-Path: <linux-kernel+bounces-783076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98071B3291A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:22:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73ECB3291D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 507401C8524C
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:22:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D609B1699C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160731E3DE5;
-	Sat, 23 Aug 2025 14:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C511E0E14;
+	Sat, 23 Aug 2025 14:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N82ZZf3B"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="pb4FEzOe"
+Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A92B3BB48;
-	Sat, 23 Aug 2025 14:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F221ADC7E;
+	Sat, 23 Aug 2025 14:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755958946; cv=none; b=d6Mx2lF56ZOj51JGB/UNY8z15XAOaXfMYiD4foUfEow/2WRLmyTfyMN/V/eRVQRGYk66s1pVl5xIH3nVztKoHzjq1DXJM3oo+WchWY8au0s6dPVQZ42t1Y/5iAz+AOI05vLaNiZmOFcEObhj+xudohgHk4G+6uNTgFtkNTDWqdU=
+	t=1755959037; cv=none; b=T7LEQ3dfVWu3hJx5ErJDcE6tM57datWqser7toYh4v6WeobDuSVkZrPjCSHaW99Xbcyw2Wun372kThEeXkVzsZXair9tn0V1tIVEhqLT9fQ+7bnk7B+QCY/OOjmEwHeCafIQDUsgJrWzJ8d0p4xAiXZ55KdvNVF4KZ7VHVkxERA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755958946; c=relaxed/simple;
-	bh=C/1iNPBSdG7umnedy/flwGy8EOjLG/X0pyL6b5D2UCA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qxQKxdh5nKL9QctIDtEOvo/yGmePSFCcn9b5hy2ZH6PuPQcpVG/PBFLKhJLp+w2GWoblNPqI6wYke7x6Pog6+meu91UDtduSIOy4SWB8g5ZcmI7NYKfd1HoutLO+pFIDuxRQSZcmLlvTnU/YFnIhbWxFH1oJ5SsNr8LKOp6KJF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N82ZZf3B; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b47052620a6so2991492a12.1;
-        Sat, 23 Aug 2025 07:22:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755958944; x=1756563744; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=B2pLZ6fneCyOAbhDYEuecMxHBI+84kQqLbWExnfJAcU=;
-        b=N82ZZf3BrYbUiLL3+R01nf7xLAzol+BqQACLKlQ9Veq48jzyTw6KKRTNtFC4OZEQbX
-         gm6eTmtwsNz42UGKGkTzUzgZjS9ahrpKtTAP1cUTbvLCEaY88ex58NxrrMUZV6sUlGBS
-         QVqS1dKTYBpbTJ6RWVIPDPJqWO5J76cJxSyIFgb+GEvxCHRVE187CJBuMdjDR4ge7YXX
-         dwa2Htbmci3gPc4VoPQGgZ6ouyoz6v4a+RQTQFcrv8e+AuV6Wi0avBFjZ/zD3CRoATGG
-         l71k6yU9eJTwGKy5VVddyIp7EAkFBAIFSKn8m5QPZygRuRHaWKYcfFPUC4dKA44pJbqu
-         R0Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755958944; x=1756563744;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B2pLZ6fneCyOAbhDYEuecMxHBI+84kQqLbWExnfJAcU=;
-        b=W6+mnv4M+zk/sGMBW4dQxbHZgXU8EI2LsVTnBxWE8uaZZd8ldE/FiKaig+gLO59Nou
-         VWldOxj4Z/EZrIl9fNWfCa53sZRVAQJrnZSurZ8ae76D5tHlACYBrBiDbiUbwkmwYdMS
-         VprpBq5juK0Key7dQmbXK/53q2V8UimliY4ZIkxKOdOSK/vE4yeUV4Nt9dDV0HArWxju
-         tVsXODX0mwbtPpgxQm6r8NjFLUp6i3XEV7lIgZ1CBn/jvg0kM0FT5q/7dSzu0jaAgH+Q
-         fp0XeiNgMEy1j1LsIWqStGxUUOcNBiyxFOKuvHUnJnjTOsq/c18UeAEoJqhgw3z8pu2v
-         lNOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUifSs1qivCqd11KRz9GZHwKZAIF2bjh+FMOY29cHF5Q3HsC5zA4sZIA9345TGj0j9KclYnCu2NyWI8BMz3@vger.kernel.org, AJvYcCXVDBPZ+y9sqrTvsWuqozQpH+YJ68g6wvzvX8u+Wr4rg3Z+xWqP3ZFBJAnKVDob/EMghSYdqTQCwuGL5aRw@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzqPN0Wtnpa2hHn1mzN7ztaHxxjV/RSeOmZwa5zoYFb1FauqPT
-	fxPC6NUWXFDcn61KDYQr24mEC1Vw5fXFzf0zOZ3t1mD3u3oFCBLb/JfB
-X-Gm-Gg: ASbGnct8EGIz1YQzSwshbRnblLBLAQB/xSN5wXRt9X+peXKYxT9rtC5t3jJCbEgrEXS
-	iHI5nNXs8IAWim2rtV/YJEEhGpoIQIDJqbuOUMHFonkjykreqUTO6yvZ1EZ++goXev/gPnmt+5S
-	mw+OXxTC4lXRHY38vuJP7Dl53tfoTkIpmrGY4SX/bABJjur9gF5dcP/pFjeLDmuQwDHi8JHJEc2
-	KweyWmi7LpN53QXGJVr/o68NizHWVUpPfzfc5Ja86lV9/uqH4tXKoRLbvEICnx7a6JUAMtaETmI
-	s/v7Nk4hOp5lL8kgHtBfQvB5t6QiOyGy2D2cRwQituMbICC61hC9FWD7k3NRFxFVlg9iuXeAqQK
-	ykYhxYvNSjN1mStYgr/pubLUJY77aOA4Lxn137e9qaDLsXkkJ
-X-Google-Smtp-Source: AGHT+IEOFX/aSCAjZmA0Wf96xLKSsK8y7GeKGOE4IS1zqaRJ9wp1aNZoMYqmpn6W7dylWmaTBAfVAA==
-X-Received: by 2002:a17:902:ef50:b0:244:5bbe:acde with SMTP id d9443c01a7336-246340540ffmr81583055ad.28.1755958944287;
-        Sat, 23 Aug 2025 07:22:24 -0700 (PDT)
-Received: from localhost.localdomain ([114.79.178.78])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687b0feasm23688255ad.46.2025.08.23.07.22.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Aug 2025 07:22:23 -0700 (PDT)
-From: Prithvi Tambewagh <activprithvi@gmail.com>
-To: skhan@linuxfoundation.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: Prithvi Tambewagh <activprithvi@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: Document 'name' parameter in name_contains_dotdot()
-Date: Sat, 23 Aug 2025 19:52:08 +0530
-Message-Id: <20250823142208.10614-1-activprithvi@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755959037; c=relaxed/simple;
+	bh=R34OGeCiu/IPda8je9GL6U6dsszdH++pAXr6iT4gB6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=urJ/RDuQ95G5EeiCInk8ONAi9+25kaiwURvBS6V2MV1fhxGa0nh+N6eHSnuYyNK+hNtUG64BMmxerX+mDbQ2Ka7XLlIm7d2Ef0eeCYQc3ndVGv2tm5AFu5pEthDQ2VY0mfILxX0T/PipwrU8PIt0Uz82YzyIpzk05jPogUOu1Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=pb4FEzOe; arc=none smtp.client-ip=195.181.215.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
+	t=1755959033; bh=R34OGeCiu/IPda8je9GL6U6dsszdH++pAXr6iT4gB6Y=;
+	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
+	b=pb4FEzOeilNegfspE7/aewKwoiawHbo+Rf4DUXKz6hPTbgJ5iP5IvIsBtQlva0cP4
+	 BEklA73ynyazlNcuhkeeoh/HA0zAP+HAOkkqtDHDygeE/68qm/xSQI/4qKXJaM0g97
+	 MIjPIl1kOMgfbtfndoKDGtlxVpcHR3FtHBmlN8ro=
+Date: Sat, 23 Aug 2025 16:23:52 +0200
+From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
+To: maud_spierings@hotmail.com
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64: dts: rockchip: Enable HDMI receiver on
+ orangepi 5 plus
+Message-ID: <wc4mcm5nywfrzafexagun4kaw3hzb3avtunh4idg22ctuz6r2h@xjgqo6ihiyey>
+Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
+	maud_spierings@hotmail.com, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
+References: <20250823-orangepi5-v1-0-ae77dd0e06d7@hotmail.com>
+ <20250823-orangepi5-v1-2-ae77dd0e06d7@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250823-orangepi5-v1-2-ae77dd0e06d7@hotmail.com>
 
-Add documentation for the 'name' parameter in name_contains_dotdot()
+On Sat, Aug 23, 2025 at 02:43:51PM +0200, Maud Spierings via B4 Relay wrote:
+> From: Maud Spierings <maud_spierings@hotmail.com>
+> 
+> Enable support for the HDMI input port found on the orangepi 5 plus.
+> 
+> Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
 
-Signed-off-by: Prithvi Tambewagh <activprithvi@gmail.com>
----
- include/linux/fs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Ondřej Jirman <megi@xff.cz>
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d7ab4f96d705..64e3c99d60f6 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3281,7 +3281,7 @@ static inline bool is_dot_dotdot(const char *name, size_t len)
- 
- /**
-  * name_contains_dotdot - check if a file name contains ".." path components
-- *
-+ * @name: file name to  check
-  * Search for ".." surrounded by either '/' or start/end of string.
-  */
- static inline bool name_contains_dotdot(const char *name)
--- 
-2.34.1
+Thank you,
+	o.
 
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+> index 8222f1fae8fadc5cbb4ef16b3db5ed975ed43915..9950d1147e129dc866cfde62ddd636b082ae1926 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+> @@ -160,6 +160,17 @@ &hdmi1_sound {
+>  	status = "okay";
+>  };
+>  
+> +&hdmi_receiver_cma {
+> +	status = "okay";
+> +};
+> +
+> +&hdmi_receiver {
+> +	hpd-gpios = <&gpio1 RK_PC6 GPIO_ACTIVE_LOW>;
+> +	pinctrl-0 = <&hdmim1_rx_cec &hdmim1_rx_hpdin &hdmim1_rx_scl &hdmim1_rx_sda &hdmirx_hpd>;
+> +	pinctrl-names = "default";
+> +	status = "okay";
+> +};
+> +
+>  &hdptxphy0 {
+>  	status = "okay";
+>  };
+> @@ -279,6 +290,12 @@ blue_led_pin: blue-led {
+>  		};
+>  	};
+>  
+> +	hdmirx {
+> +		hdmirx_hpd: hdmirx-5v-detection {
+> +			rockchip,pins = <1 RK_PC6 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +	};
+> +
+>  	ir-receiver {
+>  		ir_receiver_pin: ir-receiver-pin {
+>  			rockchip,pins = <4 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
+> 
+> -- 
+> 2.50.1
+> 
+> 
 
