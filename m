@@ -1,106 +1,195 @@
-Return-Path: <linux-kernel+bounces-782875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44DE6B32647
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:47:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67BE5B32649
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E7E3B03AD2
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:47:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABB1768491B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063CE1E5B95;
-	Sat, 23 Aug 2025 01:47:09 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E790E1E5B95;
+	Sat, 23 Aug 2025 01:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nkpZrRQa"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E733987D;
-	Sat, 23 Aug 2025 01:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F93191F7E;
+	Sat, 23 Aug 2025 01:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755913628; cv=none; b=TZ8A7UKBcIQYvvqO60KX7mEq/bWGqyZfHK+6beevn79yHAPuudJfj9o9/j7rb9QylSqXabkQ95dyGpg13hdd1COMUOJwsnXhn/WRhaZ5bfUHWfGcAa3U0bXXjgiQJSA9qfHTa6bY5/324q0A9nKE+it0lsYJByhDlb4bj4SNvWU=
+	t=1755913879; cv=none; b=QE44kwOIxpsxtKCSWLRsqRBcLUPn+9KDLcZx9GLXz1ZxwQdc7KkU2iW+ENj/280fXxcTo1hLYwdQxgU2ficRj1WcGwWCR0VTbsdFqv6E/T7K0SvfzOx6ROkdc3oUfasmmVbAU12LoNrYYuVY2v8CJoOUQ8XM9UBd3Y5e5BbWow8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755913628; c=relaxed/simple;
-	bh=j+i8Xbizla3YxcV+EPa2HULHUGXLyHMqJNjzWhnx5ms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f6hJkq6cN2qZIp5CauKMu/sGaEotvwKhXjIk+fK1SiPrU69QX6Huj7S2/MAE5RRv6rTrShhRhzHmUs0ekDU4ipBV2f6whxFbqTAu32nYN4XDzZ57qhxOhZ54wyXqtVhCnFeZi2Pg13lCx5yU/Qqn2dT/P5FcylrZv2tiQJRiCSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c80Kj2VMpzYQvCx;
-	Sat, 23 Aug 2025 09:47:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id DEBAF1A12D3;
-	Sat, 23 Aug 2025 09:47:03 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP2 (Coremail) with SMTP id Syh0CgDn87WXHalo_A8tEg--.58363S2;
-	Sat, 23 Aug 2025 09:47:03 +0800 (CST)
-Message-ID: <48d7be9c-6645-4426-9415-10ea5bc780f0@huaweicloud.com>
-Date: Sat, 23 Aug 2025 09:47:03 +0800
+	s=arc-20240116; t=1755913879; c=relaxed/simple;
+	bh=9IL82+ZMHtNoUMUQCmi6SqEPo7vkl78u6IFjldBhIXE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GdzQ8PQqwpo+TdB5VogP1KhRg6B/ckMk8xbcaIuc40a/a+Y6I27lptoVQqJIxFCSia7ZfpHlrKPqFEIntwkXM8rR6eXJo12G9k1Ia6/e2Tk/fOSTkpG5mMli/vvxK1dBe7w7uXezmAQCtkcrMaxSB3ublcblQ85mv2Tw31zWZ8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nkpZrRQa; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b109a95f09so19989811cf.1;
+        Fri, 22 Aug 2025 18:51:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755913876; x=1756518676; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8SwRRHTQP0nBTdGAqIgIiFDxBUOe4QX/ARyfuI/2piY=;
+        b=nkpZrRQaUFsOa3DyjKFUA9ddyS8s5WUapD6ZttOFDFEwURmJs+UK+QP0b2HC00I7cR
+         l3YAJ46T1bqNn8lTdroajk71GLEdt3e1BypAkfCkf19iDonvqi5O3fINpj5sSdklWFtm
+         4H+XKfbibPx2lxiBxfEPPQ/Y01Pj6/3soxysb6NqpcTnelzFN5Nfuh7KSIjFmjynOImR
+         kA4oaSmgz1ow2f2LOJ2DWu92a6Hor0xRSVCIN40Er1N3NNlJiCFhl89IOg4f1Y14DX5A
+         kkqXbvtJSKBUj2d9RsxduSs9ody9FwdUF2XWSl1xDx2OPeuOMTmCcv6RD61R5H8yhf4Z
+         REvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755913876; x=1756518676;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8SwRRHTQP0nBTdGAqIgIiFDxBUOe4QX/ARyfuI/2piY=;
+        b=IqrTNfjDlyLJlBp+1YuJOIgCto68T4S9behSO8auKuVc/tLiSwHY7PGxXmp53I+KIo
+         GucRCwVQrHmPKEUyQFhiFfPVTyTEU+BSQD9xaxXSHa97QcOl/an1EGZ5kXIc3FLLuUo3
+         VoXEnl/R7dxStftkkiojIXdRFJ23oq4Wt7tucOzseShQcBjQJGt5K6TK0ysLLSmuHWDD
+         m+DHCqHTz3NY0GMm8UEtnmT+RZEFa+L/PulJI2kUewBhFA7wseeSliHTw4Sqg3+fH7Wb
+         ayI5Wdy3sPC5tqBMWiUIxpL+YZF72cW5pQrEJ5/pBCbpBhECCIOuftzm6eKrDla1rIBi
+         3GWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZN18z7JtwK0DRecnrDZzJWnZDwubYSlZgZK6YrORCC11cw+mVOZ7ZpN8SGHBHGOpOM/9T/lsGQUi7BxY=@vger.kernel.org, AJvYcCVPcLgbQW+2pVGBPJ9X0Vatkxhdf59tD1lTRHacwNjLyNxvJgP/DpsIFOM7RRP/UawpBwlIihP3/XNLiQgrNfXs/9xN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJNWBEd1MDWTJGHhAIlFuzCp1m1PC4oUeHXmo4VN3tAs3CoTnb
+	rYBwC1RwB8cuWqSISvF/dk0CKWdQRgjo4mJ2ewdUq6jeNVqtCe8aJV3bEQhd9Zeo7kkS63L6iJl
+	51+G06t41WFPGWGbx6GW42A+dQpVluL8=
+X-Gm-Gg: ASbGnctWIBG5w+Z3DUzQ7L7DXlyW6ug9GGYuWECp7pv60mFo6wmIUup8OGyUM7ZFJxz
+	FvaAVmLoWnWH1X3g+9jWWIIzeeyTLkEcHc41Gfnr4yMkdsDXEQ8PWfpzzW7kwaao42Jdrhd09n+
+	mvgIwP3YmKoTL1Eypp1ZmABaEtuz9SLAHMxFGJgamiq3/dYiHikKnCmJXQO9QCBE4wLnGF1uHEq
+	/B2OqSo
+X-Google-Smtp-Source: AGHT+IGs6gfyAjG2cAAtRWPgy4RZGMnSfLQFo8U3vfmfRrLb2XjrMHkj0jS212n0qWRQkwoVboPKFqUgJAxPNhLR1Tc=
+X-Received: by 2002:ac8:5a50:0:b0:4b0:bc43:dd90 with SMTP id
+ d75a77b69052e-4b2aab20de1mr52908911cf.48.1755913876311; Fri, 22 Aug 2025
+ 18:51:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] cgroup: selftests: Add tests for freezer time
-To: Tiffany Yang <ynaffit@google.com>
-Cc: linux-kernel@vger.kernel.org, John Stultz <jstultz@google.com>,
- Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Pavel Machek <pavel@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
- Chen Ridong <chenridong@huawei.com>, kernel-team@android.com,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
- cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20250822013749.3268080-6-ynaffit@google.com>
- <20250822013749.3268080-8-ynaffit@google.com>
- <bad4609b-4427-48ff-80e9-70cb3066253e@huaweicloud.com>
- <dbx8sehj8a25.fsf@ynaffit-andsys.c.googlers.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <dbx8sehj8a25.fsf@ynaffit-andsys.c.googlers.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgDn87WXHalo_A8tEg--.58363S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYV7kC6x804xWl14x267AKxVW5JVWrJwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
-	c2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVW8ZVWrXwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UdxhLUUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+References: <20250820112621.4045-1-xuewen.yan@unisoc.com> <CAJuCfpE1pJ8qhHgqvExktsMeTBbtVSK2rkE5SfeTE2nOYrNozQ@mail.gmail.com>
+In-Reply-To: <CAJuCfpE1pJ8qhHgqvExktsMeTBbtVSK2rkE5SfeTE2nOYrNozQ@mail.gmail.com>
+From: Xuewen Yan <xuewen.yan94@gmail.com>
+Date: Sat, 23 Aug 2025 09:51:05 +0800
+X-Gm-Features: Ac12FXyvEdmW-vCosNzcSpd6FMkQLKvDG84TYFc__CWuj8riz8C-TCCMP7KXRPM
+Message-ID: <CAB8ipk8ywWv8j8OGugXjhwcZXj567LKULhLz7HS8Btx-_27yBQ@mail.gmail.com>
+Subject: Re: [RFC PATCH V2] sched: psi: Add psi events trace point
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, hannes@cmpxchg.org, peterz@infradead.org, 
+	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
+	mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
+	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de, 
+	vschneid@redhat.com, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, ke.wang@unisoc.com, yuming.han@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Suren,
 
+Thanks for your review:)
 
-On 2025/8/23 2:50, Tiffany Yang wrote:
->> Perhaps we can simply use if (curr != 0) for the condition?
-> 
-> 
-> Here we have 2 separate conditions because in the case where curr < 0,
-> it means that the interface is not available and we should skip this
-> test instead of failing it. In the case where curr > 0, the feature is
-> not working correctly, and the test should fail as a result.
+On Thu, Aug 21, 2025 at 3:51=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Wed, Aug 20, 2025 at 4:28=E2=80=AFAM Xuewen Yan <xuewen.yan@unisoc.com=
+> wrote:
+> >
+> > Add trace point to psi triggers. This is useful to
+> > observe the psi events in the kernel space.
+> >
+> > One use of this is to monitor memory pressure.
+> > When the pressure is too high, we can kill the process
+> > in the kernel space to prevent OOM.
+> >
+> > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+> > ---
+> > v2:
+> > -fix compilation error;
+> > -export the tp;
+> > -add more commit message;
+> > ---
+> >  include/trace/events/sched.h | 5 +++++
+> >  kernel/sched/psi.c           | 4 ++++
+> >  2 files changed, 9 insertions(+)
+> >
+> > diff --git a/include/trace/events/sched.h b/include/trace/events/sched.=
+h
+> > index 7b2645b50e78..d54db5fcbca2 100644
+> > --- a/include/trace/events/sched.h
+> > +++ b/include/trace/events/sched.h
+> > @@ -896,6 +896,11 @@ DECLARE_TRACE(sched_set_need_resched,
+> >         TP_PROTO(struct task_struct *tsk, int cpu, int tif),
+> >         TP_ARGS(tsk, cpu, tif));
+> >
+> > +struct psi_trigger;
+> > +DECLARE_TRACE(psi_event,
+>
+> DECLARE_TRACE will create a tracepoint but will not export it in the
+> tracefs. Why should we not have it in the tracefs?
 
-Thank you for your explanation.
-See now.
+I haven't figured out what content should be displayed in the trace yet.
+Until this is fully determined, I think it might be a better option to
+just export the tracepoint and let users add their own hooks to print
+the content they need.
 
--- 
-Best regards,
-Ridong
+>
+> > +       TP_PROTO(struct psi_trigger *t),
+> > +       TP_ARGS(t));
+> > +
+> >  #endif /* _TRACE_SCHED_H */
+> >
+> >  /* This part must be outside protection */
+> > diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+> > index 59fdb7ebbf22..f06eb91a1250 100644
+> > --- a/kernel/sched/psi.c
+> > +++ b/kernel/sched/psi.c
+> > @@ -141,6 +141,8 @@
+> >  #include <linux/psi.h>
+> >  #include "sched.h"
+> >
+> > +EXPORT_TRACEPOINT_SYMBOL_GPL(psi_event_tp);
+>
+> So, are you planning to attach some handler to this trace event in your d=
+river?
 
+Yes, our modules would attach a handler to observe the memory pressure.
+
+>
+> > +
+> >  static int psi_bug __read_mostly;
+> >
+> >  DEFINE_STATIC_KEY_FALSE(psi_disabled);
+> > @@ -509,6 +511,8 @@ static void update_triggers(struct psi_group *group=
+, u64 now,
+> >                 if (now < t->last_event_time + t->win.size)
+> >                         continue;
+> >
+> > +               trace_psi_event_tp(t);
+>
+> This should only be done if the below cmpxchg() check is true, right?
+> Otherwise it will not match with what userspace is receiving.
+
+If we put it below cmpxchg() check, we may lose some event before the
+user space repose the signal.
+Because the t->event needs to be set to 0 again.
+In order to ensure that all events are displayed, it is better to put
+it before the cmpxchg.
+
+Thanks!
+
+>
+> > +
+> >                 /* Generate an event */
+> >                 if (cmpxchg(&t->event, 0, 1) =3D=3D 0) {
+> >                         if (t->of)
+> > --
+> > 2.25.1
+> >
 
