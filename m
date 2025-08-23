@@ -1,109 +1,169 @@
-Return-Path: <linux-kernel+bounces-782909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21B59B326B5
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 05:47:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D7F9B326B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 05:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02F491B6868E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:47:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F8AE1B6861B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D0B1CBEB9;
-	Sat, 23 Aug 2025 03:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E531A9FAF;
+	Sat, 23 Aug 2025 03:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z54Yyu2C"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="at7p+bfG"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A63446B5
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 03:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A659393DD9;
+	Sat, 23 Aug 2025 03:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755920844; cv=none; b=iTRPo6v4XWX5r1nfEJ6uDaZXeTTS1cmAjPY5zAbcbNgZebUwmKWqLMf/slZ96FlTdZ05g5YcXjgslgtp0JVUtpQe9f7DDiHyGsE4LKcNRLqpdtqJVLchtcC+QjC7GPZT+HefJAf/gKPV6vF5nJvNTSSKE1z9yDAUXNvthlK8irs=
+	t=1755920747; cv=none; b=Y92H9u8M7EsPCzirGdAliUVeiMwD29+PluP/ROOhMHjZFou5eMF+4j2eY4GQT6tMm+6+yftWVq9qdTs1DheWEdsV4zBqLi5w8uikIMADvldNlOLUUByZtfDC/Qk6YCzdEPKOx9rmOU9CifEwTkQn1aoH4EH+OOtR+wRmuv8MCMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755920844; c=relaxed/simple;
-	bh=0nyhD8ODgHUuuwUd8vt/pjP54jo3/9XkG4PLtD+l3Dw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SIJc18L59mJyJ5CnO9c7Rjk2QHaFrVGBepn0kNx+ZRTgm3ni+uQh/QN3zEdmDc3ZEydL0feAIbtaiDBnsIthXgTSwZCIfb6df4OFxbHBe8StHCMDhvwiBWEjkXp2x275FdnSYdPtwKW5rgIK44CNrK35hmVWlq8y0ceRqz6pAkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z54Yyu2C; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755920842; x=1787456842;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=0nyhD8ODgHUuuwUd8vt/pjP54jo3/9XkG4PLtD+l3Dw=;
-  b=Z54Yyu2CAJNLZ2PIU3KXfGhz6vHcZ8j3a7RMvyN/4wV18TrBIpFT6nOL
-   82VLUuU678QdWXdH1Aa51XW+g4D2zdtSGYz0MX4Z9Bi5jYCIbEFE+7VJq
-   7nmX5akC29V3SPiNbYXHU5IV5koUswqDecoiUim3/3YeWeLqtOeN4S8QW
-   zDCZCiu1Nzvz8bCPNaCdtRSFMfPP5TGsE+q7WLHAWNBycwB/yidFhC/jI
-   6u0z173CG/7SOFRhdsTxoDrwnIhhzbPaWI5nhroYVMDpSiYIj/wZOAVI+
-   evNlHfuxWXLt1sKqRVMOgOfUyaXVb6/bk0dThrxww/Q3GtUJciFDNMxWQ
-   g==;
-X-CSE-ConnectionGUID: z1Lm4wevToS+TeoMdiGB0g==
-X-CSE-MsgGUID: mssIbnLVRjqXsSXM6b94BA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="62057511"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62057511"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 20:47:22 -0700
-X-CSE-ConnectionGUID: iSesEWHbSKGS4dMOd7EYww==
-X-CSE-MsgGUID: 509+ki/1QTWfXQdPung9wg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="169208577"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 22 Aug 2025 20:47:20 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1upfDN-000M3y-1O;
-	Sat, 23 Aug 2025 03:47:01 +0000
-Date: Sat, 23 Aug 2025 11:45:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>
-Subject: kismet: WARNING: unmet direct dependencies detected for
- SND_SOC_WM9712 when selected by SND_MPC52xx_SOC_PCM030
-Message-ID: <202508231140.J9SEP853-lkp@intel.com>
+	s=arc-20240116; t=1755920747; c=relaxed/simple;
+	bh=9x3y2/yFeBdmCFCxQj/2LG3T69P0gQUJaXx5PB0FGdY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=XTeq91IPDNp/z4mlwILW8kIAHFc1zi8zI6HOLIdqGen7E6uO72YDw0FiebCizzTPyHQqwnMKW4gSNmt3yC5vWnnHVNXRDChGOY0NK5frPoKdebpy/vg9OZI25RIrHX9OvU0WezmDA72+wLSg0zQUt+UuzLcHxm5POg+w8wb3T+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=at7p+bfG; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b47174c3817so1839239a12.2;
+        Fri, 22 Aug 2025 20:45:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755920745; x=1756525545; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oN54dxueBLE8GyKLooKDuOn8pGWg59XPMNzuBOQXkMU=;
+        b=at7p+bfGjlVOJpbMQNnRClp0uHSNlA4e8MSk4ata2lzFLwRI/XRxjHapraWCbB8Z++
+         qnU5xRrp4i4WGxeHj6n26cTfSqCbpp58pznzancKpCWu9yh/Ui4Et2ygiKfTHLnUomJj
+         mPkmq9MuETI6snlanZqRt6YFbLFRTx5jSwEYBXNdeK1VEIBwAS0aSj9KmP0IwKc/7PXA
+         q3CVmKhroK1gPCYoCLc+zS8rhM6XLOCxrp1ZjNHVIoNhch3kq4iQ+5IO8IQZF3rf42e3
+         5D4QY3bGW+xihJbDxvzfDL+Xlc60I9vkkhjz7Wd7C6c/z8MjeSrxUyp2sBqV1kyCsCm2
+         z7ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755920745; x=1756525545;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oN54dxueBLE8GyKLooKDuOn8pGWg59XPMNzuBOQXkMU=;
+        b=jPiZA9u8cQM6xoYESFNtS98ytHnqzNxGavWkxBDKATu+7Oqf8p2JXzNPMoSH6kvLuK
+         rBXsEyIkSD1GlVCEd98YnqvNaD2oAnBKCcTLWCUBCTiTvJBLzomcvOIqHTV7Z98JJn7N
+         DjFGXZI59RfthKchEtlzw/ZsDg3YQYAUbR14C1ryTc5xOoAES3JB3nKYXj3+0xbRyufV
+         Ktxc59/5NNjkSy8OUZOJFwTm7kh395pLrRcjPLSQskqGvnA63LQxcq8MPxX2q2/mT4hO
+         fNyZfRC7opfqcyYyux/pTdSP2DwGOJhQKAqmO2Bpy9MQAxm9Vvg078Rl6Fu07PWMTasW
+         SOnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVosJr66TuvCuPG7fwBoC7PW858JG1EgLxqBDWLDWK3EjyKxDY55tbvTGtAIlx7faCNKcLMf6/ZP8OP/c=@vger.kernel.org, AJvYcCVpNR7I9v/Tle/169dbvhy+LCEisOBvLJP5i8oMSuni7mnK/o8WkT6icY1anI2OwzB8y/TZtMFwfwLAOBtjSDr/BK90@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa/uNxr608O0YeFb0MMFH1ayT1NrmzRaIJ9Gro5dskInpGyZKV
+	pBxm4FAu4omg6QMIvuNpUYtwt0w/K/nFtkJHpeQ1iQO7aHigh5A9p4T5
+X-Gm-Gg: ASbGncsvbtq1rGjw+W0b50p40TYAb6IG6uvmgEKLFa4YsH8zTHeuqwM9WOYmgmA0lwy
+	A5YGFrucWWen8efTjhyhceLI7kKE5lTHPRthv46TfbLQixq8L/dmdaLT+ZuCQ2UrYZMWDU6JFpl
+	eAUL2Dw+PkiFDevpe3W3cFfFjlHBFIfJM+aumtMkSFXxOy5iYum7afW4lWFqsO5w749hQe10p4s
+	bOTjnndlaG/5oV+xUcxgQDYesJD1xomUkcp9dTUyz+TOaRuQUE/3c/3vfcgkFFW0fJ61e4Cyf6V
+	FgnQXJFx5gNgvSylRlHUvApcJ4gmPuG0SB896VTyBQHrBeI8JvOXq8EdHrL7ESCN8icVjHeOq2f
+	Xlr8kD/TBbxL2AZ/nixPuCzGhwVei+nuf
+X-Google-Smtp-Source: AGHT+IES+3yASvnpwBwvDfVDi+wAH8UfWJUE+JZiAoKr3xxgdCSHs8AWlNbUdWcBxkPh5MnRLIl1iA==
+X-Received: by 2002:a05:6a20:7f9a:b0:243:78a:82bb with SMTP id adf61e73a8af0-24340da1088mr7556049637.53.1755920745443;
+        Fri, 22 Aug 2025 20:45:45 -0700 (PDT)
+Received: from xiao.mioffice.cn ([43.224.245.230])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cb891bdesm1163698a12.12.2025.08.22.20.45.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 20:45:44 -0700 (PDT)
+From: Xiang Gao <gxxa03070307@gmail.com>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org
+Cc: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	mathieu.desnoyers@efficios.com,
+	andrii@kernel.org,
+	mingo@kernel.org,
+	oleg@redhat.com,
+	akpm@linux-foundation.org,
+	gmonaco@redhat.com,
+	ricardo.neri-calderon@linux.intel.com,
+	libo.chen@oracle.com,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	gaoxiang17 <gaoxiang17@xiaomi.com>
+Subject: [PATCH v2 1/1] tracing/sched: add 'next_policy' to trace_sched_switch
+Date: Sat, 23 Aug 2025 11:45:35 +0800
+Message-Id: <ad2236efd94c1b061934b3ca2c4c82123dace1ab.1755920363.git.gaoxiang17@xiaomi.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1755920363.git.gaoxiang17@xiaomi.com>
+References: <cover.1755920363.git.gaoxiang17@xiaomi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   6debb69041724bae8a8a4d0ac60502754c1cd945
-commit: 5a309875787db47d69610e45f00a727ef9e62aa0 ASoC: Fix SND_SOC_ALL_CODECS imply ac97 fallout
-date:   6 years ago
-config: powerpc-kismet-CONFIG_SND_SOC_WM9712-CONFIG_SND_MPC52xx_SOC_PCM030-0-0 (https://download.01.org/0day-ci/archive/20250823/202508231140.J9SEP853-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20250823/202508231140.J9SEP853-lkp@intel.com/reproduce)
+From: gaoxiang17 <gaoxiang17@xiaomi.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508231140.J9SEP853-lkp@intel.com/
+Sometimes, when analyzing some real-time process issues, it is necessary to know the sched policy.
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for SND_SOC_WM9712 when selected by SND_MPC52xx_SOC_PCM030
-   WARNING: unmet direct dependencies detected for SND_SOC_MPC5200_AC97
-     Depends on [n]: SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_POWERPC_SOC [=y] && PPC_MPC52xx [=y] && PPC_BESTCOMM [=n]
-     Selected by [y]:
-     - SND_MPC52xx_SOC_PCM030 [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_POWERPC_SOC [=y] && PPC_MPC5200_SIMPLE [=y]
-   
-   WARNING: unmet direct dependencies detected for SND_SOC_WM9712
-     Depends on [n]: SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_SOC_AC97_BUS [=n]
-     Selected by [y]:
-     - SND_MPC52xx_SOC_PCM030 [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_POWERPC_SOC [=y] && PPC_MPC5200_SIMPLE [=y]
+Show up in the trace as:
 
+	 72.267374: sched_switch: prev_comm=grep prev_pid=67 prev_prio=19 prev_state=S ==> next_comm=cat next_pid=66 next_prio=120 next_policy=normal
+	 72.267594: sched_switch: prev_comm=cat prev_pid=66 prev_prio=120 prev_state=R+ ==> next_comm=grep next_pid=67 next_prio=19 next_policy=RR
+	562.192567: sched_switch: prev_comm=grep prev_pid=85 prev_prio=19 prev_state=S ==> next_comm=cat next_pid=84 next_prio=120 next_policy=normal
+	562.192944: sched_switch: prev_comm=cat prev_pid=84 prev_prio=120 prev_state=R+ ==> next_comm=grep next_pid=85 next_prio=19 next_policy=FIFO
+
+Signed-off-by: gaoxiang17 <gaoxiang17@xiaomi.com>
+---
+ include/trace/events/sched.h | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+index 7b2645b50e78..00336211aca6 100644
+--- a/include/trace/events/sched.h
++++ b/include/trace/events/sched.h
+@@ -234,6 +234,7 @@ TRACE_EVENT(sched_switch,
+ 		__array(	char,	next_comm,	TASK_COMM_LEN	)
+ 		__field(	pid_t,	next_pid			)
+ 		__field(	int,	next_prio			)
++		__field(	unsigned int,	next_policy	)
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -244,10 +245,11 @@ TRACE_EVENT(sched_switch,
+ 		memcpy(__entry->next_comm, next->comm, TASK_COMM_LEN);
+ 		__entry->next_pid	= next->pid;
+ 		__entry->next_prio	= next->prio;
++		__entry->next_policy	= next->policy;
+ 		/* XXX SCHED_DEADLINE */
+ 	),
+ 
+-	TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d",
++	TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d next_policy=%s",
+ 		__entry->prev_comm, __entry->prev_pid, __entry->prev_prio,
+ 
+ 		(__entry->prev_state & (TASK_REPORT_MAX - 1)) ?
+@@ -263,7 +265,16 @@ TRACE_EVENT(sched_switch,
+ 		  "R",
+ 
+ 		__entry->prev_state & TASK_REPORT_MAX ? "+" : "",
+-		__entry->next_comm, __entry->next_pid, __entry->next_prio)
++		__entry->next_comm, __entry->next_pid, __entry->next_prio,
++		__print_symbolic(__entry->next_policy,
++				{ SCHED_NORMAL,         "normal" },
++				{ SCHED_FIFO,           "FIFO" },
++				{ SCHED_RR,             "RR" },
++				{ SCHED_BATCH,          "batch" },
++				{ SCHED_IDLE,           "idle" },
++				{ SCHED_DEADLINE,       "deadline" },
++				{ SCHED_EXT,            "sched_ext"})
++	)
+ );
+ 
+ /*
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
