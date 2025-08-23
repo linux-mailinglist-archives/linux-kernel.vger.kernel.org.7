@@ -1,150 +1,229 @@
-Return-Path: <linux-kernel+bounces-783330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C32B32BBC
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 21:52:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 098D4B32BBE
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 21:53:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 189C6683691
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:52:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34D761B683FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96410261593;
-	Sat, 23 Aug 2025 19:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433232E8E1C;
+	Sat, 23 Aug 2025 19:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rqCwiQnI";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/CqxUERT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="UxWnQz8Q"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011051.outbound.protection.outlook.com [52.101.70.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A281F130B;
-	Sat, 23 Aug 2025 19:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755978759; cv=none; b=roQtDCe67aiX0YTXYUBMcHjNxkYaeYrNplvRCdpUz25WbBJs+7QDtFsIgkfDsbLEj2ZQowT5kwZOrg+b+lD0wa+6+l8ZHmWKNfXc8QdyKgHbr6aSORBQk/f6AC8393sIuppPl31Xb1zRxbSAYXp+QoMj6IaogMmcsHpEcwyArbc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755978759; c=relaxed/simple;
-	bh=v1wEZO56GummziL9neBU05SCWlnDR9yrnpOCiGuKjSI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ZLdOREDkj3q41skLd2010BQXSiX4Lqw1OHQIEZoAH2m3hMi4D+zEec98qnZl91KA8CwSQULRjzzpABmqJAttzJOnC+uk8nQ7+x7LFTgHuVxljdQA+THf14VtXkXT9BYhaounB7FzzAFHsFTacersAwZqPC2WnKlgPX3qR8isCu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rqCwiQnI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/CqxUERT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 23 Aug 2025 19:52:34 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755978755;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=372pLaahYYJmldtEcJ4oI81lqSmNiu7/wEcN5YmqmXs=;
-	b=rqCwiQnI+Vo8G1DyP/9+29utVopncvk/SM/g8s72fyausDi33QlAcR82glTcumKPRbmlI3
-	ZVzo0Wwh+gdptcMt0OHJi/C64rpoZa5IUSiBDDukXGkZ2JI0Ni4dJNapFHCVbApPfLSQo2
-	9UviUvzeqnF3b/B+qXsKdjJva9RfQ81dKIlarJNVBJ+y0XL5K7UiHcwwOdGDtoI6TFSxk5
-	ogne/gnMf4+hS/2cshih8EJmT7pgnAYD+fGlHj0HxmKFnxJxAVdKaaCdw2EnU/Wopyhr7F
-	BWIQ7ikl0tQfcz55/wEp7AwfPxcmURZqaH1TKC5MPQ5dp5NCIyLHzZnpyu6nSQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755978755;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=372pLaahYYJmldtEcJ4oI81lqSmNiu7/wEcN5YmqmXs=;
-	b=/CqxUERTfY+jAUZ+fuE399HVXrv2UhhHenJXmTkPKLFpwPIQlqfsOEfmITfjURpay5nvnD
-	3ChgbosKQdSCjIBQ==
-From: "tip-bot2 for Edgar Bonet" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/urgent] irqchip/atmel-aic[5]: Fix incorrect lock guard conversion
-Cc: Edgar Bonet <bonet@grenoble.cnrs.fr>, Thomas Gleixner <tglx@linutronix.de>,
- Geert Uytterhoeven <geert+renesas@glider.be>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <280dd506-e1fc-4d2e-bdc4-98dd9dca6138@grenoble.cnrs.fr>
-References: <280dd506-e1fc-4d2e-bdc4-98dd9dca6138@grenoble.cnrs.fr>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6502521B9DA;
+	Sat, 23 Aug 2025 19:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755978823; cv=fail; b=gDMPOj8OlgSq5GJfiPN7hDu6YJkGJC6PRfdsMMn2Yu0GYz3zxMi95ppjEKVNpbidpYhRH6IdarN9BfioqZ1WSbVhCrXszyDAupBCw/AOJfgNm0yhpXsV3a4Rdi6Xalxb14orz4utfc+BhooAxKXdan1RbFVOzSLEealRohcojgA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755978823; c=relaxed/simple;
+	bh=eQsoxxEEj9bDlk4e4pF3g3GEjOfBOpCzY3oUmTDc9V0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=YXfpKq/X+1/8vZxZj8zrbfmr8CjNLaZ7p0EBGM5q0ZmkarC/FBaKdsEdphwu7IF8m5wfdB16LHnHySXKh7w38l0nR5ojeP76E/E11+xKeQDn5envAMJ7UGZ9akkVsxMwuWYJFabqlsbuZCn3+U4yVm5OiZWUyXtFECB6heVN2YM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=UxWnQz8Q; arc=fail smtp.client-ip=52.101.70.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U2AixYOgqulhGaaTcYZl6Y5SG5gs66wDaJSm3+0uQSNWv9z+jVi9gEXcuxkaAoVy36GdeQRVNdym+RuPdVzJwGj3qFoHDu7mbWpksMrU7VYhGMTkbbzEqik3PEkAUXW7idoi3YZljK6MsjNisZCFOxjB7vF1T78PmqXLPDjtmIlE0bK01zYjU0tmDsOm0uFHcLV1llNiJ+pDzFn0SZoalythSAJSrSsxMdzehZCUr2IIXbLOYXtE5MaY+h/yc3RXVO1Z59AxOvWlFb2QXaLzaCX/HMuVTkXc2j8V2Et7t2bNCJbkfJ5R95llO0xNwLkZ1xK1KZDgtIux208qvWzcNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lhfcr1PeoDyUdex85YQXM1CAsVMdr4OmqoUohgBhPSU=;
+ b=O+qVrnM2+VPt/KfhJFWGDFO7x5Nt7ckjLxbVNMejGQTTHsGF8H6j/x2e2qeYMWSpNA906ikv0JJMjSOGEpmEKDhzJ29bdKu9pNztT0CqcvI/8i+0985/0k4238g83LS8m/N9I0ef+0VFs3yvTCptkxTYzYrWhsDrRqnzKHXo+m5DbHzaMYEY8qWEs92d+9zTEz9YD1LidbAeoR/qCStjlXL32LdDW/QbJyCTbQMdjQH4k+5YiMVDsAU1k56BP9T+HolSNd3evtUna7blhw2np3t21VqjKPn2Fu+L+FqD3H5ZqvdOjMuWxH6MzN6ByRmTV2nAKQderOwkXj5dI17zYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lhfcr1PeoDyUdex85YQXM1CAsVMdr4OmqoUohgBhPSU=;
+ b=UxWnQz8QzwPHbIshD+1DJMOrZ3gUpCbRNOMLE1ubtenhnEVwMRCJI+5w4Q6K8fRnm3A0CfNdSSwICvxC7NBvWUXsFqsHAkK5QvQTK6mVSJk3WqxcOZ9cYTJxe7jaTnckqf9tlTR2WZ04UjX1SqfoT/cyFUsET497FUBJ4Ac41CtYuF/5ae6pmWvyAbZND/4HFWtyToYTZTJ8DO0OZsY21H/iXFYJqGUksPTzAFM/4KYvsVW9NapWDrWO288x5JM+JdNA/7jx0xYTX/rKyMobiosB0YBo0P40wU7AL6QZqfKaH+XdSYbTRui4isVut2qlQ/MVZiyZ8j3UobGoUSRN2g==
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
+ by AM0PR04MB6801.eurprd04.prod.outlook.com (2603:10a6:208:18d::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.17; Sat, 23 Aug
+ 2025 19:53:38 +0000
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612%7]) with mapi id 15.20.9073.009; Sat, 23 Aug 2025
+ 19:53:38 +0000
+From: Shenwei Wang <shenwei.wang@nxp.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Wei Fang <wei.fang@nxp.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Alexei
+ Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jesper
+ Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+	Clark Wang <xiaoning.wang@nxp.com>, Stanislav Fomichev <sdf@fomichev.me>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v3 net-next 5/5] net: fec: enable the Jumbo frame support
+ for i.MX8QM
+Thread-Topic: [PATCH v3 net-next 5/5] net: fec: enable the Jumbo frame support
+ for i.MX8QM
+Thread-Index: AQHcFGed3jgFadvm/UWIjbgZVrZcXg==
+Date: Sat, 23 Aug 2025 19:53:37 +0000
+Message-ID:
+ <PAXPR04MB9185AAF36A7FB42C4D00CBDE893CA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+References: <20250823190110.1186960-1-shenwei.wang@nxp.com>
+ <20250823190110.1186960-6-shenwei.wang@nxp.com>
+ <fd9af170-fb59-43fa-9eea-ff147f4a84a7@lunn.ch>
+In-Reply-To: <fd9af170-fb59-43fa-9eea-ff147f4a84a7@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB9185:EE_|AM0PR04MB6801:EE_
+x-ms-office365-filtering-correlation-id: e46f0f75-3f0f-4326-648e-08dde27ec082
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|19092799006|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?B+Tmj+d1Vhv3XseZkkwpnPJdRnAryKRTwTuEqPtVgDERu8YhSAhzigX8TDAv?=
+ =?us-ascii?Q?LUY7tCujpH0byNN7wHdZaAS9j6QL+cpDZtwXUV3lbf5U3yALLiHfaKdxZlbK?=
+ =?us-ascii?Q?DLXkGDAMDyQJ2hYuhpfou39Y6ga9RKCS6pmwLsiXgw14dFh1YSAOBfZlAeHl?=
+ =?us-ascii?Q?ZlJ/4/DUfE1427e5gTq9TXfo3RCuoNSRMsUzX5lxiWoAfjVAZ91fcvFbyH31?=
+ =?us-ascii?Q?+xVLH4e+IHYR96u38pqEo+wkprUkjRqlhDJgEpcFi6YKuyecn9vx3nX8WM3+?=
+ =?us-ascii?Q?ppjoAbh5oyhIsK4dgCYaikG9UFoQaeS1cw4D/GCoHpixvnXKziRRIidkQEKA?=
+ =?us-ascii?Q?REF/Dkoj6H+btVtptICcQRNW88SR1smQ0FGMY2YuNdB7S9Sm4zKcJh+5o3vE?=
+ =?us-ascii?Q?M/v5C6aXbE5p39mVrYTHB5v3pb769NNNfA/gVITK9Cb6cav7ZKOjlycm+3fp?=
+ =?us-ascii?Q?tBXFRH83dh308nfvlSxomMdxY1TS/O33T/ytD1UJASEGSEdJr96uzSkUtCvj?=
+ =?us-ascii?Q?xYRo3WkpMaaynKckKj2zxeOVe8DnXQ2NTFJBH61j3TNhI0ITWU0nLD/YJGZf?=
+ =?us-ascii?Q?ytonW6eZYYSUQraO8cT4w42rkbpl+OwNfs0jveFR9cjquRU8qBuAXetrS/ZF?=
+ =?us-ascii?Q?RwKyIf/3bqiJ/6mFs3KcCym+K8mSMolxocxtyXKsHgOma0YElzctmhavo5fL?=
+ =?us-ascii?Q?EARD0sCcF8brB6LuQMjuLWS4DbKyxQ//mAcZq1LHxuWEYvbM3eeCKi4eOwfX?=
+ =?us-ascii?Q?C7iTFDeVi/je4hQnmRDPhJvWqbQxJELbDSiS4EB4ygNHA3+1iuBIeBDSSmcI?=
+ =?us-ascii?Q?NUDmSRA4MtYGNXdTwhckxxOzWlp/yj77d953umZyQFr1RWQTpidhBYmZl49a?=
+ =?us-ascii?Q?DF5TSsReJuEHqRs23Sv9Yz+3+MOYbuKmEAAHy/rn8aBQ5uxicngAT273iUoI?=
+ =?us-ascii?Q?z6E6TxMu5wu1G3CymUrUaRKt3QDCCyB9UzgOTgoyonGXfsw7RZ1Jx75CHKio?=
+ =?us-ascii?Q?bTsNwTWHntwZ+icepY2YPHxpfFGFJwhlO7Ub5JxVjsboZAZpPneNDfDTLi8N?=
+ =?us-ascii?Q?aCTUQp4LhuXL2S8G5sljN/v2q2JAgagRCq+0xOgnBVMYCroV/dW2A8oFSNjt?=
+ =?us-ascii?Q?pHJLCZDH4qpPLd7CIyIBZgoTUdyqo9OAQWDeBqR2LEQyScwnulZ3iYRGi/QF?=
+ =?us-ascii?Q?OyubgaNUBo3RkRWFupL6NNIUjtDduKJtI23H+RmIGz2fWqdwN0yqsxeL2wY/?=
+ =?us-ascii?Q?9sAzao4P9LT+WcXm0hxDtDSPuRDJsTqxuuVqE1Lf4BmHprohF4KBLI6/aj7U?=
+ =?us-ascii?Q?pU2v3HItJqkOiECwlR6QsW/hs9RbtlyElB+JMNCBVolcsU+KNeUO6gOzkZnD?=
+ =?us-ascii?Q?cKTgts7PmnPgWqlxEY9FHM7wfLn9SCwR8IQzb+Hhh8TdNDgEiiBiNscg81L6?=
+ =?us-ascii?Q?5A6ftF1pUeVqlnkEYR5b2O38980xY9b/+mG7hw69cik5xlUKLl1z3A=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(19092799006)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?id/1u4dXpiNXW0gTYNCDUik8qrN25/VPEDWcuqsz2PiVN22gBLXU5XSnXjhA?=
+ =?us-ascii?Q?S0X3qYKsCcrhN7inDsjfIWUqpHear4M0uFcEY8SnhhS/clM3mg7NRR5eSYIo?=
+ =?us-ascii?Q?EuUyKB1Ax6RgXIprzbnT/+FqnZ/ORg4GcDjhAAdN30RXjepZ4jAMF80ZKOrM?=
+ =?us-ascii?Q?P/ojNlkg1gcG+wgJlIBYOFG0omXNYTSaAOObe4guWbyHZ1Q+hx9Vye8xZmN+?=
+ =?us-ascii?Q?OIqsVsPd9i7rsGrFnz2/yo7fSK/C5PLB8RhNqNi+d7LGdmdbLjeQ/Aoe+/aV?=
+ =?us-ascii?Q?70EVWwnDPyXo7/o+utoQN6PB+/2WZ21M7SDDpEa/g79k2nkIaW8iXLGwMS4V?=
+ =?us-ascii?Q?rM2ujvek7NFwOfa6KrmDzveq9I531e+eEvFZOr8JqGNbmfKsL1hnTdDEDmHa?=
+ =?us-ascii?Q?dNorzmHyzPtZStKNaJH2hKb+aWV6K56arKthmO5ABsjNtr2OtL11I1421Cng?=
+ =?us-ascii?Q?XP0cPkW9fZ/heACTAwJc46p0wAUwyY98CSJfBTAW+29NkW13AW+U5kwM2V66?=
+ =?us-ascii?Q?+74Y3BDfSUfl/vUNaMiwXni+RCJdoN0CYGldiCn2yt50h/FwRBTDUYFTuBQc?=
+ =?us-ascii?Q?jbMcBbCJUSnfFFj1WDw9yQrhXPzl4ht9oGz3W4bsQzXAyAB7MCFVMmUN9wBN?=
+ =?us-ascii?Q?VHmq4H5QtCC3suBuJUwe1eTo2jzGo0X3ignkMejra3vo1A+ANFMg2wSfCZxp?=
+ =?us-ascii?Q?RbKH8/dw+ta/MtJLmkR0zUNuydxZfmxYqFZKOxG9P24oeGWv+y666F1+/MTz?=
+ =?us-ascii?Q?aiaMkZCRQ7Rx7zhj1URockJL6+GgXD36Pfg3dLVN7bAAtudWdAEjl5NKxZuM?=
+ =?us-ascii?Q?3eft2oYQGXN02dqpOtr26oR5e6ORIKdjuY9kUzVjZPCV68F/0288KTX0AkCX?=
+ =?us-ascii?Q?sT4dcd7eBvsMqwu5v7V04a9eauXXuHc/CDOb375S4gMcrYBqVJYkb/Xl6DhZ?=
+ =?us-ascii?Q?Lrk4WJd7BpQiMc+SaY9CUHGFd6ZhTv7XdWppwIWfobf5VavbdUT0OSbj2ivy?=
+ =?us-ascii?Q?YUvdYSrXCWth72DYfp4+yVmpnSQn4IIg8kR2QgxGaVNrCwr//7A/EecPmYrO?=
+ =?us-ascii?Q?2w4pAGzbIc3OHCEW7kplZI6S7dWTAHmU21dd+NH2z9XGEYIhUWNXSwoec+Vg?=
+ =?us-ascii?Q?EF1vFW+cy87XR0mB7MPFAfLrIeCzqY/mA1UciFyx9DGGTAd8Q1/O60R7kNCh?=
+ =?us-ascii?Q?2v5bgpRgzH4augzawvyefoBoBXb6+UWDvfiBge0I9dvIpaOeIvvvUL6d20Yv?=
+ =?us-ascii?Q?fBFCldVf/9Uo1VyDcO46PNyM+BL6vA84KGmqVo2FYRO2YJ3x+pu8vicMxfQm?=
+ =?us-ascii?Q?iSniyUmNTyPdG9Sx1xqAfD6OsnNKG5+nxXTkRU3zf6GQWbUHkx6GDXIwU8vq?=
+ =?us-ascii?Q?CRFDfHw+XXVOr/EuGAwvSPqgsTKQexgOcs1KsEUxY0UrR6SqAUMAdq2uBl8f?=
+ =?us-ascii?Q?N03Tk9EUp3tk/cNuzZdXOqvOefuSiiRpqXYNbhcMsEbw1DFHtMfekHlTWlJJ?=
+ =?us-ascii?Q?/lKUHeveaKzPKXMZy1DBkZfmBe/dYwg5m6roytF5UzXN0vRRVjH0CZzoZ47g?=
+ =?us-ascii?Q?KEdu7wDpFDx/IuMV8BE=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175597875409.1420.7808650911707523725.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e46f0f75-3f0f-4326-648e-08dde27ec082
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2025 19:53:37.9598
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jK3SFBaGyRRIwX4HSurtDVzISl85j/yiMPVaT/SLnx/ranF9ohgj7OArLm+kHmODre8Tz8FzeTHLKOFnhEhxCQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6801
 
-The following commit has been merged into the irq/urgent branch of tip:
 
-Commit-ID:     c2bac68067bba5edda09112c09f2f670792dcdc8
-Gitweb:        https://git.kernel.org/tip/c2bac68067bba5edda09112c09f2f670792=
-dcdc8
-Author:        Edgar Bonet <bonet@grenoble.cnrs.fr>
-AuthorDate:    Thu, 14 Aug 2025 14:59:42 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 23 Aug 2025 21:41:07 +02:00
 
-irqchip/atmel-aic[5]: Fix incorrect lock guard conversion
+> -----Original Message-----
+> From: Andrew Lunn <andrew@lunn.ch>
+> Sent: Saturday, August 23, 2025 2:26 PM
+> To: Shenwei Wang <shenwei.wang@nxp.com>
+> Cc: Wei Fang <wei.fang@nxp.com>; Andrew Lunn <andrew+netdev@lunn.ch>;
+> David S. Miller <davem@davemloft.net>; Eric Dumazet
+> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
+> <pabeni@redhat.com>; Alexei Starovoitov <ast@kernel.org>; Daniel Borkmann
+> <daniel@iogearbox.net>; Jesper Dangaard Brouer <hawk@kernel.org>; John
+> Fastabend <john.fastabend@gmail.com>; Clark Wang
+> <xiaoning.wang@nxp.com>; Stanislav Fomichev <sdf@fomichev.me>;
+> imx@lists.linux.dev; netdev@vger.kernel.org; linux-kernel@vger.kernel.org=
+; dl-
+> linux-imx <linux-imx@nxp.com>
+> Subject: [EXT] Re: [PATCH v3 net-next 5/5] net: fec: enable the Jumbo fra=
+me
+> support for i.MX8QM
+> > -             /* enable ENET store and forward mode */
+> > -             writel(FEC_TXWMRK_STRFWD, fep->hwp + FEC_X_WMRK);
+> > +
+> > +             /* When Jumbo Frame is enabled, the FIFO may not be large=
+ enough
+> > +              * to hold an entire frame. In this case, configure the i=
+nterface
+> > +              * to operate in cut-through mode, triggered by the FIFO =
+threshold.
+> > +              * Otherwise, enable the ENET store-and-forward mode.
+> > +              */
+> > +             if (fep->quirks & FEC_QUIRK_JUMBO_FRAME)
+> > +                     writel(0xF, fep->hwp + FEC_X_WMRK);
+>=20
+> The quirk indicates the hardware is capable of jumbo frames, not that jum=
+bo
+> frames are enabled. Don't you need to compare the mtu with ETH_FRAME_LEN =
++
+> ETH_FCS_LEN to say jumbo is enabled?
+>=20
 
-Commit b00bee8afaca ("irqchip: Convert generic irqchip locking to guards")
-replaced calls to irq_gc_lock_irq{save,restore}() with
-guard(raw_spinlock_irq).
+The comments here do have some confusion. The goal is to enable cut-through=
+ mode=20
+when the hardware supports Jumbo frames.  But we can limit the scope to ena=
+ble it
+only when MTU is less than 2k bytes.=20
 
-However, in irq-atmel-aic5.c and irq-atmel-aic.c, the xlate callback is
-used in the early boot process, before interrupts are initially enabled.
-As its destructor enables interrupts, this triggers the warning in
-start_kernel():
+> Is there a counter or other indication that the FIFO experienced an under=
+flow?
+>=20
 
-    WARNING: CPU: 0 PID: 0 at init/main.c:1024 start_kernel+0x4d0/0x5dc
-    Interrupts were enabled early
+There is a Underrun bit in the status field in the TX buffer descriptor. Th=
+e hardware=20
+supports retransmit frames if high memory latency is encountered due to oth=
+er=20
+high-priority bus masters.
 
-Fix this by using guard(raw_spinlock_irqsave) instead.
+Thanks,
+Shenwei
 
-[ tglx: Folded the equivivalent fix for atmel-aic ]
-
-Fixes: b00bee8afaca ("irqchip: Convert generic irqchip locking to guards")
-Signed-off-by: Edgar Bonet <bonet@grenoble.cnrs.fr>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/all/280dd506-e1fc-4d2e-bdc4-98dd9dca6138@grenob=
-le.cnrs.fr
-
----
- drivers/irqchip/irq-atmel-aic.c  | 2 +-
- drivers/irqchip/irq-atmel-aic5.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/irqchip/irq-atmel-aic.c b/drivers/irqchip/irq-atmel-aic.c
-index 03aeed3..1dcc527 100644
---- a/drivers/irqchip/irq-atmel-aic.c
-+++ b/drivers/irqchip/irq-atmel-aic.c
-@@ -188,7 +188,7 @@ static int aic_irq_domain_xlate(struct irq_domain *d,
-=20
- 	gc =3D dgc->gc[idx];
-=20
--	guard(raw_spinlock_irq)(&gc->lock);
-+	guard(raw_spinlock_irqsave)(&gc->lock);
- 	smr =3D irq_reg_readl(gc, AT91_AIC_SMR(*out_hwirq));
- 	aic_common_set_priority(intspec[2], &smr);
- 	irq_reg_writel(gc, smr, AT91_AIC_SMR(*out_hwirq));
-diff --git a/drivers/irqchip/irq-atmel-aic5.c b/drivers/irqchip/irq-atmel-aic=
-5.c
-index 60b00d2..1f14b40 100644
---- a/drivers/irqchip/irq-atmel-aic5.c
-+++ b/drivers/irqchip/irq-atmel-aic5.c
-@@ -279,7 +279,7 @@ static int aic5_irq_domain_xlate(struct irq_domain *d,
- 	if (ret)
- 		return ret;
-=20
--	guard(raw_spinlock_irq)(&bgc->lock);
-+	guard(raw_spinlock_irqsave)(&bgc->lock);
- 	irq_reg_writel(bgc, *out_hwirq, AT91_AIC5_SSR);
- 	smr =3D irq_reg_readl(bgc, AT91_AIC5_SMR);
- 	aic_common_set_priority(intspec[2], &smr);
+>         Andrew
 
