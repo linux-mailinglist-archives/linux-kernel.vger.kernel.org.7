@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-783241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D974B32AEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:41:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF7AB32AF4
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 052547ADB39
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:39:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 422163AAE9F
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682FE2ED165;
-	Sat, 23 Aug 2025 16:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656512EDD7B;
+	Sat, 23 Aug 2025 16:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0gCHuE4R";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mY3IBPWP"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bzoOKFvK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s04sxqff"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555272ED15A
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 16:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2083E2ED86F
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 16:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755967178; cv=none; b=nMztt7Jr3TkPpz7t8dYpCMOTLT+mOJwKYW75C8G41WsdASWjmfjYwMunZRQ+h+rovNErOkSJxWnpel3hD19u2NgT/lfHGu+CTPyBd6Lg8xJeQRizjOywOXXrAeHWUlmlvvGo5yArElX6AJGkNvdQVorbOXOKoTSaef7Fk4xZQLM=
+	t=1755967182; cv=none; b=J9zUePtByDvpFCisAtagkHU0XGTx7WaVQMMN4kPHBMXWnBhZKM07DDN2C5lY1JeJERYaZqEPsdnaKN8dCExDdu/4Z1ADK3OlsTkIHnrxetKnus4XpbYTuUlja1+mCd9ksmbUPOZ1Wska7xY7mKhwnHbjhCFOjBLSB4ED8EsLUjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755967178; c=relaxed/simple;
-	bh=McxjK3YF4Tk0aC4xps1tzuK+1uuQYOoVjRa/x0Onvgk=;
+	s=arc-20240116; t=1755967182; c=relaxed/simple;
+	bh=zWogiLI32y56lyIiiKjVJfTGiLOGPR+uyhBbkbNIWZU=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=oi8k0WTP0r9gXULwIWTWx0zlCJ/uCf1vicfZXIAP7rmn6cQm+j5N80YWrXLSS3xo/tGik/xuzS+xCSlM2fLfA350iYkReLy4/ONYNU8tvC3dnjNdGbsnIcyWzHXjWAgzTbjXo4VYcdwzH0oxC5//W7cVOXnjwyeBp3W5ECnAfbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0gCHuE4R; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mY3IBPWP; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=B9n3FBbVd7uYdQm6dtEqlKQO14jEeexnrqq/fFv2BIir+WowmMLI/o/Eym2CjViCmsdy4cWuBuYyKqhZi5rwDcdefxwdbA+uglKl16TCcak/z4TxgyZr9LplxryDLyr/OM0DkX2rRwmUAhs8AEjNvvUTlotAnPz4xCEhrCxDUmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bzoOKFvK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s04sxqff; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250823161654.038904706@linutronix.de>
+Message-ID: <20250823161654.102905434@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755967175;
+	s=2020; t=1755967178;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=bXk/MLZ59A3tXGHauPbjPR/7KVfuJVMFZfmg9sxAdmE=;
-	b=0gCHuE4RZRRREvcViajQ433BhvQ+p+oNSmPk2JaWLnCVf5pcWl9C0x5SToXS1w5T9v5tcF
-	GhD18hqX/7+mikc3VU8zKav9rXFhv60UvfHZSZUeHK9g7arOKWxZyN7WEGA2T1Tb//KmEp
-	4I56rdEmdRN6vSRVuOeyfEe9gvkFY3Hdkfvj+R3Teha/FZAm4F0GFPPimT0kPFTh57Rb1d
-	PvliT2WK5+gopTnRtjiYbUxnnf/2KdXu3dR7Ty8WpTWfWikc145m8OchwmovzTfcLjaiqB
-	8oS89R/fi/6/+5KpHTaLMFTOwEt27w2pd1QIsTORAqJUv6kLGZ8SCzz+ugudkA==
+	 references:references; bh=vB4qNxPbyFropiAHJLd8M6UT1xH4V1GwhPc78Lrvq8o=;
+	b=bzoOKFvKS6x7oIJF2E8Zc1xUcD0AXATAT+E4ENkA66f1DYETeUKpxtL53H9Gx5/tlUhx4B
+	UM1ckkI9CZhVVYSTzuihY9ajUgPnqsUdFu2h+Oihls27MX3PG1jCwojbt+nlUvpftvYuVp
+	vOzVIdkh9OX6Ld38FFWAAMfDN4tGYyXbJcHPW2WpkbsCWZ91udIQlVtQq7sQJP84U61pVy
+	1/30Im5sfTf5749rhaM28ndEDq7V6kcsJpQbqra+SNRiBg75OHEq3kq6y3EUK8h/IHD9w4
+	QSERRQgbF4fse6oljCBKa2p08bnD8k+ib+uGN3GG8X3IGp5ZkFrpwZe4AAly9A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755967175;
+	s=2020e; t=1755967178;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=bXk/MLZ59A3tXGHauPbjPR/7KVfuJVMFZfmg9sxAdmE=;
-	b=mY3IBPWPV5HkX56rM1yOw76MQoU2yjzCo56V53UnksfApNVPC9rAsRQhubiBqi0djzEvU9
-	nVFVv2DdhWWoESAA==
+	 references:references; bh=vB4qNxPbyFropiAHJLd8M6UT1xH4V1GwhPc78Lrvq8o=;
+	b=s04sxqffLOX+qMiFotU4AoDHxscXxMxQthDN+rOaLSDCr5p6ZObTqk7hXmhCzmziPg6X1s
+	+vrzWFulbcrNcPDA==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Jens Axboe <axboe@kernel.dk>,
@@ -68,8 +68,7 @@ Cc: Jens Axboe <axboe@kernel.dk>,
  Huacai Chen <chenhuacai@kernel.org>,
  Paul Walmsley <paul.walmsley@sifive.com>,
  Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [patch V2 12/37] entry: Inline
- irqentry_enter/exit_from/to_user_mode()
+Subject: [patch V2 13/37] sched: Move MM CID related functions to sched.h
 References: <20250823161326.635281786@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,68 +77,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Sat, 23 Aug 2025 18:39:34 +0200 (CEST)
+Date: Sat, 23 Aug 2025 18:39:37 +0200 (CEST)
 
-There is no point to have this as a function which just inlines
-enter_from_user_mode(). The function call overhead is larger than the
-function itself.
+There is nothing mm specific in that and including mm.h can cause header
+recursion hell.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- include/linux/irq-entry-common.h |   13 +++++++++++--
- kernel/entry/common.c            |   13 -------------
- 2 files changed, 11 insertions(+), 15 deletions(-)
+ include/linux/mm.h    |   25 -------------------------
+ include/linux/sched.h |   26 ++++++++++++++++++++++++++
+ 2 files changed, 26 insertions(+), 25 deletions(-)
 
---- a/include/linux/irq-entry-common.h
-+++ b/include/linux/irq-entry-common.h
-@@ -278,7 +278,10 @@ static __always_inline void exit_to_user
-  *
-  * The function establishes state (lockdep, RCU (context tracking), tracing)
-  */
--void irqentry_enter_from_user_mode(struct pt_regs *regs);
-+static __always_inline void irqentry_enter_from_user_mode(struct pt_regs *regs)
-+{
-+	enter_from_user_mode(regs);
-+}
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2310,31 +2310,6 @@ struct zap_details {
+ /* Set in unmap_vmas() to indicate a final unmap call.  Only used by hugetlb */
+ #define  ZAP_FLAG_UNMAP              ((__force zap_flags_t) BIT(1))
  
- /**
-  * irqentry_exit_to_user_mode - Interrupt exit work
-@@ -293,7 +296,13 @@ void irqentry_enter_from_user_mode(struc
-  * Interrupt exit is not invoking #1 which is the syscall specific one time
-  * work.
-  */
--void irqentry_exit_to_user_mode(struct pt_regs *regs);
-+static __always_inline void irqentry_exit_to_user_mode(struct pt_regs *regs)
-+{
-+	instrumentation_begin();
-+	exit_to_user_mode_prepare(regs);
-+	instrumentation_end();
-+	exit_to_user_mode();
-+}
- 
- #ifndef irqentry_state
- /**
---- a/kernel/entry/common.c
-+++ b/kernel/entry/common.c
-@@ -62,19 +62,6 @@ void __weak arch_do_signal_or_restart(st
- 	return ti_work;
- }
- 
--noinstr void irqentry_enter_from_user_mode(struct pt_regs *regs)
+-#ifdef CONFIG_SCHED_MM_CID
+-void sched_mm_cid_before_execve(struct task_struct *t);
+-void sched_mm_cid_after_execve(struct task_struct *t);
+-void sched_mm_cid_fork(struct task_struct *t);
+-void sched_mm_cid_exit_signals(struct task_struct *t);
+-static inline int task_mm_cid(struct task_struct *t)
 -{
--	enter_from_user_mode(regs);
+-	return t->mm_cid;
 -}
--
--noinstr void irqentry_exit_to_user_mode(struct pt_regs *regs)
+-#else
+-static inline void sched_mm_cid_before_execve(struct task_struct *t) { }
+-static inline void sched_mm_cid_after_execve(struct task_struct *t) { }
+-static inline void sched_mm_cid_fork(struct task_struct *t) { }
+-static inline void sched_mm_cid_exit_signals(struct task_struct *t) { }
+-static inline int task_mm_cid(struct task_struct *t)
 -{
--	instrumentation_begin();
--	exit_to_user_mode_prepare(regs);
--	instrumentation_end();
--	exit_to_user_mode();
+-	/*
+-	 * Use the processor id as a fall-back when the mm cid feature is
+-	 * disabled. This provides functional per-cpu data structure accesses
+-	 * in user-space, althrough it won't provide the memory usage benefits.
+-	 */
+-	return raw_smp_processor_id();
 -}
+-#endif
 -
- noinstr irqentry_state_t irqentry_enter(struct pt_regs *regs)
- {
- 	irqentry_state_t ret = {
+ #ifdef CONFIG_MMU
+ extern bool can_do_mlock(void);
+ #else
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -2309,4 +2309,30 @@ static __always_inline void alloc_tag_re
+ #define alloc_tag_restore(_tag, _old)		do {} while (0)
+ #endif
+ 
++/* Avoids recursive inclusion hell */
++#ifdef CONFIG_SCHED_MM_CID
++void sched_mm_cid_before_execve(struct task_struct *t);
++void sched_mm_cid_after_execve(struct task_struct *t);
++void sched_mm_cid_fork(struct task_struct *t);
++void sched_mm_cid_exit_signals(struct task_struct *t);
++static inline int task_mm_cid(struct task_struct *t)
++{
++	return t->mm_cid;
++}
++#else
++static inline void sched_mm_cid_before_execve(struct task_struct *t) { }
++static inline void sched_mm_cid_after_execve(struct task_struct *t) { }
++static inline void sched_mm_cid_fork(struct task_struct *t) { }
++static inline void sched_mm_cid_exit_signals(struct task_struct *t) { }
++static inline int task_mm_cid(struct task_struct *t)
++{
++	/*
++	 * Use the processor id as a fall-back when the mm cid feature is
++	 * disabled. This provides functional per-cpu data structure accesses
++	 * in user-space, althrough it won't provide the memory usage benefits.
++	 */
++	return task_cpu(t);
++}
++#endif
++
+ #endif
 
 
