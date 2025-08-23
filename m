@@ -1,257 +1,372 @@
-Return-Path: <linux-kernel+bounces-783065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2EF4B328FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:03:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA4BB328FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9EBC1B68166
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:03:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FF46A215B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3591E22FC;
-	Sat, 23 Aug 2025 14:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526B4255E23;
+	Sat, 23 Aug 2025 14:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O96QFiqa"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="bLcvBQEd";
+	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="bLcvBQEd"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11021123.outbound.protection.outlook.com [52.101.70.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB781B4248
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 14:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755957772; cv=none; b=DhJ0ZcfC1+u1PV7HdMVJog3IuS2aQ1xgAf1hcDpBIB3HSs7Ehqlya8XfznsSymcGgIl6JKLACEqYu3QcBzsLKp+SVHtywYNdcs+jvdLrgdopMeSxwXiHDAeofQ9Ix0dc1UvUtKdSgv2yId9rSLC8gHTdpfhdHa4cCuBK15swkxs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755957772; c=relaxed/simple;
-	bh=G5fd7cdRcXsw3R0TRmk1yTpamLF0smd4Y8CPaHSTnVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVRIlcP3goUeeP8OZdFMmdIGFTOe6+WC7YZ1kczG0lWfT4mtgbHtLlMsU8toEpwR1Wb3i7LxCYaIscJGx2y7PFlfdlmojFcEenYWmq/IFygjGGJV3SKzLGx8Wufepx6M0Hen//M9WAZDOpoud9OW2yeyRaEOrzR+CBEmHuAai74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O96QFiqa; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57N40CZ4015188
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 14:02:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OCRZx1xTVWUQojCBm1JLKKB98oSSv8fRJ7NiR1/l7Lk=; b=O96QFiqat4QPLZSu
-	dkNSWguMMiiqftIPsCe3tf9OQ5Fcqx+mTZ5lIAK1fZCvoJflVvNw/gbBQAjgsWp/
-	ZfVT4TmpFrQ0kFdXBitBFe4GRiOyH9+SFwWRg8vwyZQB8+Qsfaa8aZYsmomeVixJ
-	0XxH/oCxSGcxsSpWq7j6QcqwwSXfV7lGTOqYXA7qSdF4aJEcyv/qQzedfNEMPfCm
-	0oQB2F6243uzOBVgh8y69Gt+aVnqrR3h/CtHet6G/bBJtevEVd7pV8dwYhWKi/yi
-	oemlcab/BaYyArA6SKTG+LWz+8RLAOOKoEHayTPypdXgiUwHKGxfHsDGfEI9p/Hj
-	wxO+zA==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5um0xvg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 14:02:49 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b109ae72caso69143161cf.1
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 07:02:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755957768; x=1756562568;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OCRZx1xTVWUQojCBm1JLKKB98oSSv8fRJ7NiR1/l7Lk=;
-        b=rnpsl32trSsdEoNKUoi0CsQ2VFsfV9niETsKXAT4IMgFFLaXtZCzEhne87/+tBdmyH
-         pfUV0JAwVyfRo9Aoa7U5NW2SCxv6gpPq+eY7unbgU1By1ctL8bxGiI2Grxxp1uv9xEvA
-         O8nXTmxxisGZKsV9US213kL3HpKEQJwdoCGovY/tz34mzQGl/gq76yGoQoblv5qIjpT5
-         5uvT61DuDxECdyBGCIu77KAvLSfKkuMkP7vReHusTqE36stjpn66C+k6GxfAAjz7x7Hn
-         xwcbB4u7uanQrouT0rp+z8SDa/5qFeHA+IbRCqOqVv9bDqea2wcqjscW7tTjMtfmIC/a
-         +4rw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwr3NZ5xL0W0nltMMgKRoDlSibVDp2xnQUWQ0chfso6K8EcGjnbJRBeyB87MQ7YDp3Tttag6JOp5kunMc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEv0KA9OTagsjz8n22Zrxm1bTjEaVXALt6bKlb1emuO1bbojIl
-	32/7iYSsnxyFrVfG7NQao+olnLJtxW0E3FObZ9B8oRk27CpNdt4hjIv+59GF09eb1ib3I4ShEb7
-	ytKGMWysW16uQNuVAuH41+8IZ9R102ruYjD0wVSPaHaiW5p/ihgO/OrSYN9F7hUBH+k8=
-X-Gm-Gg: ASbGncvCVWvwNuxITdPXTMHLrGGlm4l7T08MjWrg77lkBTZM2jayziGopLxwCYTszgU
-	ZthMoDzyyKEsWes6r67kbgPb90COjoqUN2sHrx059k1MIUU/J1jZJS3sIBy+YUfRlV/cvjamXR/
-	zaXY+nj2o8wPcXr074fOJfGAyZppKsnZohYx7F1an/A20o8cbN0+YOl2ZAu+LXfxvnYy9jjpiqw
-	EK47OrSZfyxIstOK4dyZ8u1HNp8+YHYubF/TbMuaPNCMa+90LErYVh01mBipV1ZXeyohbRRxHlz
-	S6ppYyvPMHH3eY9kJPKgIPReEK4DbxSyKxf6Pr3aWIyhdpMo/RpsENLzmgxgYDrJYGBj3ZOrnBS
-	xAUvAdlOIRBAgT6lQcGlB/VELAZR+eoknRyiiJzjSQlth0f13MxPh
-X-Received: by 2002:a05:622a:1a29:b0:4b2:8ac5:2581 with SMTP id d75a77b69052e-4b2aab767cbmr78243351cf.72.1755957767178;
-        Sat, 23 Aug 2025 07:02:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEuxkgrNE8H6oitbqT5fcV9B40V5lDNZqFSqo148MvQDpZXw6ohwF9nhCLlg15uxNzY4nVbeg==
-X-Received: by 2002:a05:622a:1a29:b0:4b2:8ac5:2581 with SMTP id d75a77b69052e-4b2aab767cbmr78242621cf.72.1755957766556;
-        Sat, 23 Aug 2025 07:02:46 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35bffae3sm532128e87.31.2025.08.23.07.02.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Aug 2025 07:02:45 -0700 (PDT)
-Date: Sat, 23 Aug 2025 17:02:43 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Xilin Wu <sophon@radxa.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/3] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp-phy:
- Document default phy mode
-Message-ID: <k736p6h6dzy5ywepcgcr64llusqkrrsknf5h4o2e6zcpcyqpz5@7k7kmhumzcw5>
-References: <20250821-topic-x1e80100-hdmi-v1-0-f14ad9430e88@linaro.org>
- <20250821-topic-x1e80100-hdmi-v1-1-f14ad9430e88@linaro.org>
- <yc7ceoq3bn3lkxdwkrk64ecubej64vblpwlwzyj5cuep2wmjui@nln2t2yicu7o>
- <018751b8-8b9c-4966-94e2-f3ec8625f87d@linaro.org>
- <8A7C126C22789C9B+f30def47-302a-45ee-8f76-64ef277f773f@radxa.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C965324500A;
+	Sat, 23 Aug 2025 14:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.123
+ARC-Seal:i=4; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755957868; cv=fail; b=r/15G5pbNAY67nWSyQ7DPitWkwe18eBWOpM+zSaxLzpaVKrv3W6u/gn3zzspDEccQNMyT3gNgTYXz5J3HtbFLKl3qChe7fnwiGufw/98qM3KcMVE6Fbpz8SHGJth9eSsvmoplk/fWRrRmG0DfrirKLj40qsMbW5yD0X4TKVr+Tg=
+ARC-Message-Signature:i=4; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755957868; c=relaxed/simple;
+	bh=own6X2o3CNPjIf7/ii7zOibV1WTDjbfKa8oAlENdtuQ=;
+	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=RIxQm6l0U8u8l2cf0ENCw7P9toDaLBecBFGlnXPgUMBknoT9tC+GbxV+6/C4GLd5zOUIImIjqz1w48MHAKohtbn+ZxorLifgTVUuIMtyBPHpCZDc5aGfEDRyqGll9nbwhOR5Rqf0MOlZnaZMymgrpsZxPE2zb5SlHiEqWYDVAao=
+ARC-Authentication-Results:i=4; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=bLcvBQEd; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=bLcvBQEd; arc=fail smtp.client-ip=52.101.70.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
+ARC-Seal: i=3; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=Ox96QA0fq8o7Zg+dFZ91Y/y/5aTansFuo8ahciWQ7Vh2wgtdVJwQayYeP9cfdxTGzEdgaKVY+d7AZGc+LpActpTLQS151iFJpGam/5sxa1BQI5Y6qPOGQpS30AOwwDWyK5smrnEoLmwPLbJfMKiemEUT80WY/qIqEcfchh1zpy7XM1BXoag54biFftg6yEMZxpFn0FlORtxMOcsFGzJ251+R/x8ULBmpPRAflSoNOe399kLRg4y7CFQqCYoVJta02FMev0rNgUgLylCZtgcIcBrs6KOy7CKX+99WQwISBB/3zO5+bXj5BVLe7WADiKrnZv/zjD8xAok0pYyQYkPybA==
+ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LQK1lBeCc/0ugb5+7/moJkDzuBtmAiVUN3sF0IKtNs4=;
+ b=fao+y8uSEktctUZ3Q+SwHusQOWSf1qI/oWup4F2THc1RsV1NA/WCV4vqpmv8swI0OcXVwYsfzEn+xWmbU7QDdQRstbHgNaFNdJb/+rQGrpb3pf7cgdFtsJw8PD7+T82N6KWqkIU6Ty1KqIike3yjuZ60qSzaWFeCbr/oqaOiUiKCfqsW5XqkZyeECudYVnt0Hw7eJ9+giT6YbdfrpZQP4padk791xNFn5sChPEfuIs195Vr69UcuMMJ8ppXQmuXpMpV515npW55mAAvTLxH8WcVlnot2WVQIkex8xffbKmkBEmPJuwdTo1lz1scs27mTYjpafFKp8qOVkLP5irx+gA==
+ARC-Authentication-Results: i=3; mx.microsoft.com 1; spf=fail (sender ip is
+ 52.17.62.50) smtp.rcpttodomain=armlinux.org.uk smtp.mailfrom=solid-run.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=solid-run.com;
+ dkim=pass (signature was verified) header.d=solidrn.onmicrosoft.com; arc=pass
+ (0 oda=1 ltdi=1 spf=[1,1,smtp.mailfrom=solid-run.com]
+ dkim=[1,1,header.d=solid-run.com] dmarc=[1,1,header.from=solid-run.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LQK1lBeCc/0ugb5+7/moJkDzuBtmAiVUN3sF0IKtNs4=;
+ b=bLcvBQEddGNeoLK6IxbnNOKYWhsN1f1sZSZFEG+f19t4GMEAYVyYYbURdvoRF01cMUrs8AUd8eiFxUb7ZBE+ZIi/7xLblQNdgKDn8X3USM6P9rE+sxEfe7FueaYBpopRWa5QC/wJL7mPWmLJvYk+pqQfs1Tpvh/lydD3i7VU08E=
+Received: from PR1P264CA0011.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:19e::16)
+ by GV1PR04MB10127.eurprd04.prod.outlook.com (2603:10a6:150:1ad::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.12; Sat, 23 Aug
+ 2025 14:04:20 +0000
+Received: from AMS1EPF0000004A.eurprd04.prod.outlook.com
+ (2603:10a6:102:19e:cafe::e6) by PR1P264CA0011.outlook.office365.com
+ (2603:10a6:102:19e::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.20 via Frontend Transport; Sat,
+ 23 Aug 2025 14:04:20 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 52.17.62.50)
+ smtp.mailfrom=solid-run.com; dkim=pass (signature was verified)
+ header.d=solidrn.onmicrosoft.com;dmarc=fail action=none
+ header.from=solid-run.com;
+Received-SPF: Fail (protection.outlook.com: domain of solid-run.com does not
+ designate 52.17.62.50 as permitted sender) receiver=protection.outlook.com;
+ client-ip=52.17.62.50; helo=eu-dlp.cloud-sec-av.com;
+Received: from eu-dlp.cloud-sec-av.com (52.17.62.50) by
+ AMS1EPF0000004A.mail.protection.outlook.com (10.167.16.134) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.8
+ via Frontend Transport; Sat, 23 Aug 2025 14:04:19 +0000
+Received: from emails-2415305-12-mt-prod-cp-eu-2.checkpointcloudsec.com (ip-10-20-6-236.eu-west-1.compute.internal [10.20.6.236])
+	by mta-outgoing-dlp-467-mt-prod-cp-eu-2.checkpointcloudsec.com (Postfix) with ESMTPS id 426E77FEF8;
+	Sat, 23 Aug 2025 14:04:19 +0000 (UTC)
+ARC-Authentication-Results: i=2; mx.checkpointcloudsec.com; arc=pass;
+  dkim=none header.d=none
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed;
+ d=checkpointcloudsec.com; s=arcselector01; t=1755957859; h=from : to :
+ subject : date : message-id : content-type : mime-version;
+ bh=LQK1lBeCc/0ugb5+7/moJkDzuBtmAiVUN3sF0IKtNs4=;
+ b=WgW9dYd8gSOC6Eo7NvobsVwqJeBs52VggaKm1g+0z9/9z+bcxvvYmickvFFO1Wf4IP600
+ Hv+HEoSOuFSIT0F9oNqzx05bdjOfhEgloz/Id81bTVz0CXxntQJk/21fYLnkLtsy2w5q+02
+ +wB64OUCBYPgWfItsCcZGv3fy7GVl6Y=
+ARC-Seal: i=2; cv=pass; a=rsa-sha256; d=checkpointcloudsec.com;
+ s=arcselector01; t=1755957859;
+ b=e/FbL5e2oHmK9Y+Xg9aKOTTS55O4+I+V4QTitFfq7Ha7bXbXsC2O8MbmRHSfw/1FG4qxr
+ VMhkEcmHLsRTxwQ9quCU6svnWbETCTCnNxYI4YLnsCYj2QoMrzkSWJ9tazDWfeYjVzlCk3z
+ o3Ae2iR6Q2zlSW+LJF7RGdDx79BBJ18=
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kJ+x19qtZ6Ux6+T76kAT5ku6poYOAi+khbe3qC7JGK4pI2hcw6QjUp3jlJv1ktulzGL9lMlZLHR/acGBU3+G/WhfWCK+RBaRpnhgdYkDn7TcQ/ihiaXw9xswhiECslYxQGFApGuvDIeKKYQo0KonrQVa1nZL/cc6ZaSBWnFlCkf/zGJlD7HH6jZDgDL7wV0fuaRkiBOYohX6h6aj/7Epolh2vTNGz29Inciu6Eh0z+W/45CmfeAx/jOj6SmF8v7xuimsc33dXJzBxWCBrKxU630nw4HF0ARj/HB1OL70VD//c4u6ggY27hNcs2RcsahTEwllut3M39XvhlYcQiG9ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LQK1lBeCc/0ugb5+7/moJkDzuBtmAiVUN3sF0IKtNs4=;
+ b=FiX89GyV/iwf0t9S2upxgeNZrFlTQszkkZ6D/T14X0VQjndJdJTdu/yjmnxfGr2T88IpPmaBZ2p+WIWODpohoa4D49tdShdroZwlMMI9B4SHcRg/4BaYtU8nhSDsioX0BHGfzQbHeigNc4UZmsS/79ReTo7w2Ya+/VQVGgarW/Gh6EYrtU3nshkekdtNsPJwDweazwsAkg1UUA7DRe+iaiEdbnmLYeg0ergNlHeoJpvwH57TEy5kgJK13d/ht6cVXMjCy8ykpdDJr/lQu8YrFGQ0AiY+yzHvjD90wVdhgCZrjSbB3V7OP4rsWKMas8U5DEoxVE9VkkMUzWnQZRr2tw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=solid-run.com; dmarc=pass action=none
+ header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LQK1lBeCc/0ugb5+7/moJkDzuBtmAiVUN3sF0IKtNs4=;
+ b=bLcvBQEddGNeoLK6IxbnNOKYWhsN1f1sZSZFEG+f19t4GMEAYVyYYbURdvoRF01cMUrs8AUd8eiFxUb7ZBE+ZIi/7xLblQNdgKDn8X3USM6P9rE+sxEfe7FueaYBpopRWa5QC/wJL7mPWmLJvYk+pqQfs1Tpvh/lydD3i7VU08E=
+Received: from PAXPR04MB8749.eurprd04.prod.outlook.com (2603:10a6:102:21f::22)
+ by DBAPR04MB7223.eurprd04.prod.outlook.com (2603:10a6:10:1a4::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.10; Sat, 23 Aug
+ 2025 14:04:09 +0000
+Received: from PAXPR04MB8749.eurprd04.prod.outlook.com
+ ([fe80::aa83:81a0:a276:51f6]) by PAXPR04MB8749.eurprd04.prod.outlook.com
+ ([fe80::aa83:81a0:a276:51f6%4]) with mapi id 15.20.9073.009; Sat, 23 Aug 2025
+ 14:04:09 +0000
+From: Josua Mayer <josua@solid-run.com>
+Date: Sat, 23 Aug 2025 16:03:12 +0200
+Subject: [PATCH RFC net-next] net: phy: marvell: 88e1111: define gigabit
+ features
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250823-cisco-1g-sfp-phy-features-v1-1-3b3806b89a22@solid-run.com>
+X-B4-Tracking: v=1; b=H4sIAB/KqWgC/x2MQQ6CMBAAv0L27CZLFQGvJj7Aq+FA2i3spTTda
+ jCEv1s8ziQzGygnYYVbtUHij6gsoUB9qsDOY5gYxRUGQ6ahzpzRitoF6wnVR4zzFz2P+Z1Y0VJ
+ /JddfGkctlD4m9rL+3y94Pu6HC5wx8Jph2PcfqaZe2XwAAAA=
+X-Change-ID: 20250823-cisco-1g-sfp-phy-features-c0960d945d07
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Russell King <rmk+kernel@armlinux.org.uk>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Josua Mayer <josua@solid-run.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: FR2P281CA0157.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:99::18) To PAXPR04MB8749.eurprd04.prod.outlook.com
+ (2603:10a6:102:21f::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8A7C126C22789C9B+f30def47-302a-45ee-8f76-64ef277f773f@radxa.com>
-X-Authority-Analysis: v=2.4 cv=VtIjA/2n c=1 sm=1 tr=0 ts=68a9ca09 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
- a=2OwXVqhp2XgA:10 a=ksxQWNrZAAAA:8 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8
- a=KKAkSRfTAAAA:8 a=ygyPkNainPlaNWTsy8gA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
- a=dawVfQjAaf238kedN5IG:22 a=l7WU34MJF0Z5EO9KEJC3:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMiBTYWx0ZWRfX2x9ZOxehtnkG
- iedg5/0bnkcFyaIlfbysnTx974TFe+Pfj0EYZIVo5aIinjNLlS+DNHAobztVwOPjNshVD/IFNg7
- +DYHpzOMBOGjTPtzdQ6uRknzaIAYCHs2q2MpBHRJ+CwT2wcYddQy5Twfhn/eDz0kE+Y0QgpvteJ
- yqtMVCwNqiPWlsyhXlRTKf7cOJHHwlsmWK2Rio2L9yzoAgwqf7iaIy9ugJQ3A9vnlSnVZm1Iz4i
- CoBTB8QlOYGpBC1PGxk0n2tLXnwVifFPI/JSnqvrGS3/3aipoq0uPkocNa7skIXkrlQDNieECB+
- NeMwG2USZoHaw/AJ9DKiIQfN/8faiLwVkkmWrD6v1UCGTPPJyxwnFZeIlZDGvSBwHaKaFFX6BZ5
- fPL/LZ6i
-X-Proofpoint-GUID: L12QzEdXMTTL6MQnN21qdPzWyzY4C7jf
-X-Proofpoint-ORIG-GUID: L12QzEdXMTTL6MQnN21qdPzWyzY4C7jf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-23_01,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- suspectscore=0 malwarescore=0 adultscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508230032
+X-MS-TrafficTypeDiagnostic:
+	PAXPR04MB8749:EE_|DBAPR04MB7223:EE_|AMS1EPF0000004A:EE_|GV1PR04MB10127:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b379798-4469-41d6-15cb-08dde24df45d
+X-CLOUD-SEC-AV-Info: solidrun,office365_emails,sent,inline
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?VEF2VE44YXN3TFhZM3VPN1h3bGxvMHhwUHYxNzJTRGhGUnlLMzdSaXMyT0Vq?=
+ =?utf-8?B?Wkg0K3RGZldtTFoyZEg2K25UVkxwM0hxekhydThHU0trOHJXYmZEQmVkNlpM?=
+ =?utf-8?B?bmdvUVg4V1hBK08yTWx2MmhYOXNTUy80SEE4UGtZVEUrY3lwVkNMemVPVGZU?=
+ =?utf-8?B?c0V5Kyt6ejBscU5ESzBlc1ZUYjhUNXdVbisxZUJ0MW11eUdYOHhmalRZeDRX?=
+ =?utf-8?B?YTd5aUNPYjVIczdwQXhDMWZiQ1FRdkpIRkFlSTQ1K2RuVjlrc3JCdEk3Y3lN?=
+ =?utf-8?B?NmtrRXNCYlBYS09YbG5NcytPajVyYUYvMlhUZTFFQXIzaXFGSjV6blpBc1l5?=
+ =?utf-8?B?cGczWGdVZWw2eHB6N0ttaFpDN1NtL09icWRIS0VYeWdmWFpPUGkrWHVEanZ1?=
+ =?utf-8?B?aXZDUUZ4dHg0azNOaG4va3NwckVuUWdLUVluc3VwbjY2aCt3cEhRRE5PV3Bz?=
+ =?utf-8?B?cnJqUXUyZTZpQlR2VWdGaVc3TXlkU3FBNkQ0V3RoTGVRYk1uMUNQbnVzZ3dD?=
+ =?utf-8?B?clFDVGUzbTBEY1RTTUdsQVlDN0VhVDNDOUV6WUMrVi85YnpTTVRDUmhYVTcz?=
+ =?utf-8?B?RytmeU5uWHd0WlMxc2x1dWpocExLVzMvUTc0WHpKNXlNWWVmME9EczMrMjNR?=
+ =?utf-8?B?ZGs3SHZTTUhRbllMWXpDaGE4Qit3UlovNU9JMDl0ZmVUaVMyVnBnb3F3TFFo?=
+ =?utf-8?B?YlJOcWZRaGpnbDlYblBRTjRCeVh5V3IzSFhYS2VhNXdScmNsSThzUk9qcE9P?=
+ =?utf-8?B?VWp4K29MTmpFWEpESGhEaDRUdHY1RGswTVE4TWc2N3RoUHdrUHhkQzVza0JB?=
+ =?utf-8?B?clFkYi9FVGpOcjFOREF1YU1SbWFYRXltS1dKZk4rS2dMaHZIWDVKRU1YVjZs?=
+ =?utf-8?B?LzUrWGx2WFEvVTIyVnJWYmFKVEpEeGVhNXQybWxrR0ZNdWlpMmVPQzRxYzRG?=
+ =?utf-8?B?aS94M0YrVWx3cjEyUkRCSTc0TkhwdytHZE9CS1VOZ1I4NTh6YVUzMmU1VkZh?=
+ =?utf-8?B?VG4rNkd3a1Fxbkl6djBSNVRuclFaTDdWbzVQZmgzNXFybzB3ekY4MmxJMGUz?=
+ =?utf-8?B?c1dRV2srd3pQSTJacVNGbHREVzBVL1JXbkM0WEhLemFwWTErNG8yRzBlZERY?=
+ =?utf-8?B?aE9lVTRKTkxJT0F4cGtlUlFFZjBHVVJkYWZldU0vTVRwQzAvQmU5czNTVnlx?=
+ =?utf-8?B?WitSaDRtb0tZTDJsa0xDd0cyb09DQ29OSWFTZzJoUFhJNkJHTFBNLzlKYWpm?=
+ =?utf-8?B?dlVsUEdBRldyQWJZV0c1WStPekFqL2NpbGxEVG5Rc2ttTDQzcENlK0NDR01j?=
+ =?utf-8?B?Q2xneUJLbWVzSDNoUTYycmozZ085cWxtMW5LT0VaTE9uTlNUMDF4WVk1aEU2?=
+ =?utf-8?B?TUkzUXkrVmxJVDdETm9GNzQreGpmTmVUM0ZJYytIRWgwN2hwcWZqVVhzSXhz?=
+ =?utf-8?B?WVdiWklTcFVMSVhQaFhjbzA0dTMrYnh1aFk4cnFXZVRmTkowM0tZTWlNVTFL?=
+ =?utf-8?B?VTVwWG1KWGRjOHdYOEQrWFNOSzhSU0hCTVE3U0JmZnBUb2s2b3R3NG1teTM1?=
+ =?utf-8?B?UkdnZU1RRTZBcFMwN1dxNXdWYlVnNVY3ZFJtN1llWnZsUG5WbkZlTlJ0MUt5?=
+ =?utf-8?B?Zy95N2lTZjZ2SFhxM29oZ0lwdy9XdXRyU0FwNXVXYWJpN1F1WStXNW5pemxX?=
+ =?utf-8?B?WWJDbUNYenY0OWwzNGI4SUNUclBoTGlRcEJER2FkVGZ2azFXSlM5eDBwZ3M3?=
+ =?utf-8?B?czZ0Vi9rMWErRjVyYVBsU01jb28yYzBIaWpGRUZSWmRVeXExQjRYbmhzNWll?=
+ =?utf-8?B?eWZaTGtJbEJMNU1Tdzk1MDM2Sk5FakJqUVVYNDFKenpDUTRmMUtyTmJ4dWRa?=
+ =?utf-8?B?dWlDWXhsMmFmdU1taCtIYm1tbEFEVEwzbjZYYkFnaktneWJDbng1dERIKzJ0?=
+ =?utf-8?B?MTFMdFExaVVDV3R0OW13N0EzSFFERGJscmhUZ2VDTllpbGVtaTNvM3VXWmpH?=
+ =?utf-8?B?SXFCTTIyMzVBPT0=?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8749.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7223
+X-CLOUD-SEC-AV-INT-Relay: sent<mta-outgoing-dlp-mt-prod-cp-eu-2.checkpointcloudsec.com>
+X-CLOUD-SEC-AV-UUID: c5d8807fc23c4e798ed3fe715c4d6030:solidrun,office365_emails,sent,inline:3543046d6dcd52ebe74ff387f2f8ac99
+Authentication-Results-Original: mx.checkpointcloudsec.com; arc=pass;
+ dkim=none header.d=none
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AMS1EPF0000004A.eurprd04.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	618ca881-9cb5-4220-da9e-08dde24dee2b
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|14060799003|376014|7416014|36860700013|35042699022;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VzJmNXc3ZDN0OGNkQjl0RUI5SjV3cVFHUDZndlF4RkdZN0NtU0x0RjlqUC9V?=
+ =?utf-8?B?TFViWURGc2N3NmpCOE5nc00vUVhCYlJUWG5xYVQwWk8vSW1PRFY4OEJVSi9T?=
+ =?utf-8?B?SnF1UnZIUGVhQnpZMGs0YUFPMi9zK3U1NTh0V1pneW9lSXRjYmFObHVDdGF1?=
+ =?utf-8?B?WTRKWFgvN2tENjNJSUtnQXFvbHVmRHRQVzYvT3lXQ0thS0NNV1VmQlduREVB?=
+ =?utf-8?B?TVphWjBUdDk5ZHpXNXNzbndKQlhsMkNJbWdRdnNHSy9aU0FVQ2dxS1ZKKy9F?=
+ =?utf-8?B?VUpRelEyUlFrTk04aURVOU9TU2QxS2l4bWh1R0tRRWhXekdYd3R5ZXNyMWN3?=
+ =?utf-8?B?aW1TV1J5cnZnM3BoM0dxN3pid2g3eUozdXZhWGROUVR0MFBJb0k4V1kvMEpx?=
+ =?utf-8?B?TnZ4QUcvUGpBMnBKUVhIRHd4T3dIakpNc2xrWUxuYjdWN3M2T1VHTERSY1k0?=
+ =?utf-8?B?NlozYkFKU1pyWmJMNGxBUVJFMVUyL1RCc3JzWVd3UFZpL285WkxuVmRoNkpO?=
+ =?utf-8?B?VWJSODJlZUY3cFRsbU9lN01seFRaQjFzdjVpOG1KNUdFT0JkNmhDVHpsSi9i?=
+ =?utf-8?B?cTh1NFJNeXRZWmxkSG5jUWtCQXJ0NnVibktIVkF5ZDRiZmVvaE5JZHdKTE0r?=
+ =?utf-8?B?VnVaclJnUlA1dFpHdERZdE1ZdWVhc0pKellldGF6WGJxUm11Z2xSNmp1U1Uy?=
+ =?utf-8?B?bDBoaTNEMkZ3YzNSRGJzYm0wVmZSVWc1cWtHaGhETVpJc2lyRldPZ0twSzg0?=
+ =?utf-8?B?NUtKcVVKbzZLc08yb1BCbWZia0N2NlFmSmJ5L3hmcy9MK0RRb3JOQ1BlMGpB?=
+ =?utf-8?B?VG1LOW9FTFovN1JVMUFiY2FTMm1DdjcyYWJkaHQ2R3gvNW03T2gyMUwvWUFj?=
+ =?utf-8?B?OGN2TFdCaUQ4VXdVeG5FR0FsdHZYZ2ZJTktrR0E3dVlGRlBuR1dzT0l4UnY4?=
+ =?utf-8?B?WmlWV1FkUnowZDNKQmdxZm1HS0lCeVUwWTQzcElleVM0Z3cyMzNVSzBSeEtB?=
+ =?utf-8?B?c3RFQkEzNWtFSGNHODZqWkovY1FOU1dCQ29ia3dDVGhGSVhCZEFGUFpJWGJ5?=
+ =?utf-8?B?eUZFTzZpZHNkNTAyNXJ5ajZhY1MvajNRUnR0dksvN2JaY3VwSE5hNytZbWcv?=
+ =?utf-8?B?bStBNEoxSUViQUgwak9TMnBXVHpCNDE5N1NJa2FJWkQxbGZ0OEJKL3prZDR1?=
+ =?utf-8?B?QURFbXpOS25kNjdHTllKdFlKVFJKN1JiWlFacnNWTHhHSXBnQWpzR1dDTCs4?=
+ =?utf-8?B?Y3hPVHNlbi9WYjBLTVQwQXlINnZHRS9IN0FTdEU1cDZJMmZoMzlJamhBQXBZ?=
+ =?utf-8?B?WHI5d0UzT0Fhc2RCbyt1VUl4WmNvS3g3ejM2Nkhad2s1RjZ0Y2p0L3JRc1po?=
+ =?utf-8?B?Tmhia3BZRjV3bW9IL3pWazhHWURpQ1JaNCtJTmJvTkNJTWhSeS9ha1NHUGtO?=
+ =?utf-8?B?VkFtYk9LMkR2VVp1WVpwNThGV2YxNUJJVXp1ZUFOTUlGT2hlVlllN0Rrb0s2?=
+ =?utf-8?B?OXVGSnBNK25HYXlDZkc4YVlQMUtKbGVydXhsVGswbDZzQVRwemh1RVdWajBM?=
+ =?utf-8?B?QnduZ2xWVlVKRXNyVnAzekVib1JVcGdDWWZmOUZkdXZrVUpmQlppQXFENWxT?=
+ =?utf-8?B?SmJnTTNKSk5ROEN3bjIvVVpNMlB2dlFEQmlyUkhJOEVQcWtOU21MUHFqdTQ0?=
+ =?utf-8?B?ZmtUUUZFTUQzUjBvUDBYS2w5ajJiK2hlS2dLRldaSVZzdTZ0RG5lNDVFMjhU?=
+ =?utf-8?B?QlhTVGd3MXFFUzZZRG5uRWd6dmppY01jdVlqY3JiSmNvdU1MZElBVjlWaGtE?=
+ =?utf-8?B?czRQM0VWZFBQSi9udTArL2dGNDIwNDZMU0tJWTd0U3o2Nzl5QitjRmhFaGdS?=
+ =?utf-8?B?ZlZMcE4rNnFKaVV2cDhYUVlha2h0aTloSGdMTVk4REMvNGNTeHEydVVEN3Rq?=
+ =?utf-8?B?S2FBRWxIekkvUE50OEJmeHk5cDAzMm9pK0hLM2pHTFhzMGtoY0dORERCbkhK?=
+ =?utf-8?B?NmJxN1VvdGhleVQ0Lzd1dzczSnV5Y1F4V0szNDR1Y1VxcFhSUVVIcmg2eVRv?=
+ =?utf-8?Q?XoSRko?=
+X-Forefront-Antispam-Report:
+	CIP:52.17.62.50;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:eu-dlp.cloud-sec-av.com;PTR:eu-dlp.cloud-sec-av.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(14060799003)(376014)(7416014)(36860700013)(35042699022);DIR:OUT;SFP:1102;
+X-OriginatorOrg: solid-run.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2025 14:04:19.5686
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b379798-4469-41d6-15cb-08dde24df45d
+X-MS-Exchange-CrossTenant-Id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a4a8aaf3-fd27-4e27-add2-604707ce5b82;Ip=[52.17.62.50];Helo=[eu-dlp.cloud-sec-av.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS1EPF0000004A.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10127
 
-On Sat, Aug 23, 2025 at 02:22:56PM +0800, Xilin Wu wrote:
-> On 2025/8/22 19:02:21, Neil Armstrong wrote:
-> > On 22/08/2025 12:57, Dmitry Baryshkov wrote:
-> > > On Thu, Aug 21, 2025 at 03:53:26PM +0200, Neil Armstrong wrote:
-> > > > The QMP USB3/DP Combo PHY hosts an USB3 phy and a DP PHY on top
-> > > > of a combo glue to route either lanes to the 4 shared physical lanes.
-> > > > 
-> > > > The routing of the lanes can be:
-> > > > - 2 DP + 2 USB3
-> > > > - 4 DP
-> > > > - 2 USB3
-> > > > 
-> > > > And the layout of the lanes can be swpped depending of an
-> > > > eventual USB-C connector orientation.
-> > > > 
-> > > > Nevertheless those QMP Comby PHY can be statically used to
-> > > > drive a DisplayPort connector, DP->HDMI bridge, USB3 A Connector...
-> > > > 
-> > > > But if a 4lanes DP->HDMI bridge is directly connected to the
-> > > > QMP Comby PHY lanes, in the default routing 2 or the 4 lanes would
-> > > > probbaly be USB3, making the DP->HDMI bridge non functional.
-> > > > 
-> > > > Add a property to hint in which layout mode the QMP Comby PHY
-> > > > should be as startup.
-> > > > 
-> > > > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > > > ---
-> > > >   .../bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml         |
-> > > > 13 ++ +++++++++++
-> > > >   1 file changed, 13 insertions(+)
-> > > > 
-> > > > diff --git
-> > > > a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-
-> > > > usb43dp-phy.yaml b/Documentation/devicetree/bindings/phy/
-> > > > qcom,sc8280xp-qmp-usb43dp-phy.yaml
-> > > > index c8bc512df08b5694c8599f475de78679a4438449..129475a1d9527733e43ded5a38aad766f9810fe7
-> > > > 100644
-> > > > --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-
-> > > > usb43dp-phy.yaml
-> > > > +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-
-> > > > usb43dp-phy.yaml
-> > > > @@ -76,6 +76,19 @@ properties:
-> > > >     mode-switch: true
-> > > >     orientation-switch: true
-> > > > +  qcom,combo-initial-mode:
-> > > > +    description:
-> > > > +      Describe the initial mode of the Combo PHY configuration.
-> > > > +      The Combo PHY is a wrapper on top of a DP PHY and an USB3 PHY,
-> > > > +      sharing the same SuperSpeed lanes with either DisplayPort over
-> > > > +      the 4 lanes (dp), USB3 on a pair of lanes (usb3) or both
-> > > > +      technologies in a 2+2 configuration (usb3+dp) as default.
-> > > 
-> > > SPecifying this as an initial mode means that it can be switched later.
-> > > Should we generalize this and desribe it as bus-type (from
-> > > video-interfaces.yaml) and allow it to be present only if there is no
-> > > mode-switch property?
-> > 
-> > I was not sure about that, and yes we should do that instead but I'm not
-> > sure about how.
-> > 
-> > bus-type sounds great, but the numbering doesn't match so I was thinking
-> > instead
-> > something like phy-type with a string or use the numbers from include/
-> > dt-bindings/phy/phy.h
-> > 
-> > The thing is, do we want to keep the dual dp+usb3 as static ? I think
-> > it's very possible
-> > a board would connect the combo phy to an USB3 A connector and a 2lanes
-> > DisplayPort connector.
-> 
-> Yes, our board (Radxa Dragon Q6A) is using such design, but with usb3 and dp
-> lanes swapped. [1] I think this patch series could be extended to handle
-> such configuration.
-> 
-> Currently I just change the default orientation to reverse in
-> qmp_combo_probe. [2] It works flawlessly. But of course, it's not an
-> upstreamable solution :)
+When connecting RJ45 SFP modules to Linux an ethernet phy is expected -
+and probed on the i2c bus when possible. Once the PHY probed, phylink
+populates the supported link modes for the netdev based on bmsr
+register bits set at the time (see phy_device.c: phy_probe).
 
-I thought about using data-lanes in the QMP PHY, but then I realised
-that there is no way to use that property to correctly describe all
-these variants. So, I think it should be the bus-type of some kind.
+Marvell phy driver probe function only allocates memory, leaving actual
+configuration for config_init callback.
+This means the supported link modes of the netdev depend entirely on the
+power-on status of the phy bmsr register.
 
-> 
-> FWIW, Rockchip usbdp phy binding [3] has a property called
-> `rockchip,dp-lane-mux` to support such configuration.
-> 
-> [1] https://dl.radxa.com/q6a/hw/RADXA%20Dragon%20Q6A%20V1.20%20Schematic%2020250621.pdf
-> 
-> [2] https://github.com/strongtz/linux-next/commit/928cd166ce81aca7f8e051c72eccbd84ad896d98
-> 
-> [3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml#n53
-> 
-> > 
-> > Neil
-> > 
-> > > 
-> > > 
-> > > > +    default: usb3+dp
-> > > > +    enum:
-> > > > +      - usb3+dp
-> > > > +      - usb3
-> > > > +      - dp
-> > > > +
-> > > >     ports:
-> > > >       $ref: /schemas/graph.yaml#/properties/ports
-> > > >       properties:
-> > > > 
-> > > > -- 
-> > > > 2.34.1
-> > > > 
-> > > 
-> > 
-> 
-> 
-> -- 
-> Best regards,
-> Xilin Wu <sophon@radxa.com>
+Certain Cisco SFP modules such as GLC-T and GLC-TE have invalid
+configuration at power-on: MII_M1111_HWCFG_MODE_COPPER_1000X_AN
+This means fiber with automatic negotiation to copper. As the module
+exhibits a physical RJ45 connector this configuration is wrong.
+As a consequence after power-on the bmsr does not set bits for 10/100
+modes.
 
+During config_init marvell phy driver identifies the correct intended
+MII_M1111_HWCFG_MODE_SGMII_NO_CLK which means sgmii with automatic
+negotiation to copper, and configures the phy accordingly.
+
+At this point the bmsr register correctly indicates support for 10/100
+link modes - however the netedev supported modes bitmask is never
+updated.
+
+Hence the netdev fails to negotiate or link-up at 10/100
+speeds, limiting to 1000 links only.
+
+Explicitly define features for 88e1111 phy to ensure that all supported
+modes are available at runtime even when phy power-on configuration was
+invalid.
+
+[1] known functional 1Gbps RJ45 SFP module with 88E1111 PHY
+[   75.117858] sfp c2-at-sfp: module LINKTEL          LX1801CNR        rev 1.0  sn 1172623934       dc 170628
+[   75.127723] drivers/net/phy/sfp-bus.c:284: sfp_parse_support: 1000baseT_Half
+[   75.134779] drivers/net/phy/sfp-bus.c:285: sfp_parse_support: 1000baseT_Full
+[   75.141831] phylink_sfp_module_insert: sfp_may_have_phy - delaying phylink_sfp_config
+[   75.204100] drivers/net/phy/phy_device.c:2942: phy_probe
+[   75.212828] drivers/net/phy/phy_device.c:2961: phy_probe: phydev->drv->probe
+[   75.228017] drivers/net/phy/phy_device.c:2983: phy_probe: genphy_read_abilities
+[   75.246019] drivers/net/phy/phy_device.c:2502: genphy_read_abilities: MII_MARVELL_PHY_PAGE: 0x00
+[   75.263045] drivers/net/phy/phy_device.c:2507: genphy_read_abilities: MII_BMSR: 0x7949
+[   75.279282] sfp_add_phy
+[   75.287150] phylink_sfp_connect_phy: calling phylink_sfp_config with phy settings
+[   75.302778] drivers/net/phy/sfp-bus.c:445: sfp_select_interface: PHY_INTERFACE_MODE_SGMII
+[   75.302778]
+[   75.320600] m88e1111_config_init
+[   75.334333] drivers/net/phy/marvell.c:905: m88e1111_config_init: MII_M1111_PHY_EXT_SR: 0x8084
+[   75.348694] m88e1111_config_init: sgmii
+[   75.364329] drivers/net/phy/marvell.c:787: m88e1111_config_init_hwcfg_mode: MII_M1111_PHY_EXT_SR: 0x8084
+[   75.450737] fsl_dpaa2_eth dpni.0 eth0: PHY [i2c:c2-at-sfp:16] driver [Marvell 88E1111] (irq=POLL)
+[   75.461329] sfp_sm_probe_for_phy: tried to probe clause 22 phy: 0
+[   75.461333] phy detected after 0 retries
+Settings for eth0:
+        Supported ports: [ TP MII FIBRE ]
+        Supported link modes:   10baseT/Full
+                                100baseT/Full
+                                1000baseT/Full
+        Supports auto-negotiation: Yes
+        Advertised link modes:  10baseT/Full
+                                100baseT/Full
+                                1000baseT/Full
+        Advertised pause frame use: Symmetric Receive-only
+        Advertised auto-negotiation: Yes
+[   77.445537] sfp c2-at-sfp: module removed
+
+[2] problematic 1Gbps RJ45 SFP module with 88E1111 PHY before this patch
+[   84.463372] sfp c2-at-sfp: module CISCO-AVAGO      ABCU-5710RZ-CS2  rev      sn AGM1131246C      dc 070803
+[   84.473218] drivers/net/phy/sfp-bus.c:284: sfp_parse_support: 1000baseT_Half
+[   84.480267] drivers/net/phy/sfp-bus.c:285: sfp_parse_support: 1000baseT_Full
+[   84.487314] sfp c2-at-sfp: Unknown/unsupported extended compliance code: 0x01
+[   84.487316] phylink_sfp_module_insert: sfp_may_have_phy - delaying phylink_sfp_config
+[   84.548557] drivers/net/phy/phy_device.c:2942: phy_probe
+[   84.557011] drivers/net/phy/phy_device.c:2961: phy_probe: phydev->drv->probe
+[   84.572223] drivers/net/phy/phy_device.c:2983: phy_probe: genphy_read_abilities
+[   84.589831] drivers/net/phy/phy_device.c:2502: genphy_read_abilities: MII_MARVELL_PHY_PAGE: 0x00
+[   84.606107] drivers/net/phy/phy_device.c:2507: genphy_read_abilities: MII_BMSR: 0x149
+[   84.622177] sfp_add_phy
+[   84.631256] phylink_sfp_connect_phy: calling phylink_sfp_config with phy settings
+[   84.631261] drivers/net/phy/sfp-bus.c:445: sfp_select_interface: PHY_INTERFACE_MODE_SGMII
+[   84.631261]
+[   84.650011] m88e1111_config_init
+[   84.667424] drivers/net/phy/marvell.c:905: m88e1111_config_init: MII_M1111_PHY_EXT_SR: 0x9088
+[   84.676137] m88e1111_config_init: sgmii
+[   84.697088] drivers/net/phy/marvell.c:787: m88e1111_config_init_hwcfg_mode: MII_M1111_PHY_EXT_SR: 0x9084
+[   84.794983] fsl_dpaa2_eth dpni.0 eth0: PHY [i2c:c2-at-sfp:16] driver [Marvell 88E1111] (irq=POLL)
+[   84.805537] sfp_sm_probe_for_phy: tried to probe clause 22 phy: 0
+[   84.819781] phy detected after 0 retries
+Settings for eth4:
+       Supported ports: [ TP MII ]
+       Supported link modes:   1000baseT/Full
+                               1000baseX/Full
+       Supports auto-negotiation: Yes
+       Advertised link modes:  1000baseT/Full
+                               1000baseX/Full
+[   86.149536] sfp c2-at-sfp: module removed
+
+Signed-off-by: Josua Mayer <josua@solid-run.com>
+---
+ drivers/net/phy/marvell.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
+index 623292948fa706a2b0d8b98919ead8b609bbd949..2da4b845ef4c854a445be2888c3776e44f24fb33 100644
+--- a/drivers/net/phy/marvell.c
++++ b/drivers/net/phy/marvell.c
+@@ -3717,7 +3717,7 @@ static struct phy_driver marvell_drivers[] = {
+ 		.phy_id = MARVELL_PHY_ID_88E1111,
+ 		.phy_id_mask = MARVELL_PHY_ID_MASK,
+ 		.name = "Marvell 88E1111",
+-		/* PHY_GBIT_FEATURES */
++		.features = PHY_GBIT_FIBRE_FEATURES,
+ 		.flags = PHY_POLL_CABLE_TEST,
+ 		.probe = marvell_probe,
+ 		.inband_caps = m88e1111_inband_caps,
+
+---
+base-commit: b1c92cdf5af3198e8fbc1345a80e2a1dff386c02
+change-id: 20250823-cisco-1g-sfp-phy-features-c0960d945d07
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Josua Mayer <josua@solid-run.com>
+
 
