@@ -1,206 +1,149 @@
-Return-Path: <linux-kernel+bounces-782881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D37B32652
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:56:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D457B32656
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB8DF189ED01
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:55:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E14B3B0041
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321DC1F0E24;
-	Sat, 23 Aug 2025 01:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uc7Egc9k"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469341F2C34;
+	Sat, 23 Aug 2025 01:58:48 +0000 (UTC)
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550C31E520B
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 01:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850F7191F7E;
+	Sat, 23 Aug 2025 01:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755914109; cv=none; b=b7eEKfJfn/0QfRMOtT0tAkM8q/Qwr2cfxAFed7Gx//YfItgC0J62kPY3ZyUxOgkzLlWRHoPHj9hYCuJdI1+1N9CsAzmjdVkxkIz8vD+zGgeaRKPVKF37seXHr2Zjd7pGbJhaTHBXQOhlopm0/piqw4DWbsPWUWw0JTrXJwihH/Y=
+	t=1755914327; cv=none; b=efibYTva+dOduuyJ/k2Ixe7uKC8pB32NU8ItTH3iQj7yk5sdH3Lqw5SK3UrufcwzpJ6hty9Ju20u0isBDrNxBLYe0JTLmtP+aYRUfwz4dLPmHsxQH1UWNLmN2CYZtMe/r+w/orZ5Ek+oGyiVy6ApBcL8GBFUZ8IGKfu1nxThfKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755914109; c=relaxed/simple;
-	bh=Oilq80xlpQKrMrP3dOuNaR+z1TjFVmKmhc+hfCqlbXc=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=hKCeZS7j7lFxrMUWpu+u597i7XRyXLhhNPKdL06uhVJoKhCvJxmxGTFmz7xQ9dxwgA9XOho9DWsOo7wRfls9FVTqPQGy52RcO4q5HyHme2A1bLS2Wop0adm7F5mZ3Wz+k3vu2yh5u1zI6UW2z4OtrCgMcxy+EYCzCMhNKIytM8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uc7Egc9k; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250823015505epoutp0364d7f35e17bc51e5f4b145699e786f65~eQpNXYF6q1373413734epoutp03e
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 01:55:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250823015505epoutp0364d7f35e17bc51e5f4b145699e786f65~eQpNXYF6q1373413734epoutp03e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755914105;
-	bh=asCGKjBvcLIXcXUvTDB/pRmft2VEgqJkRU+ozd+V3kw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=uc7Egc9knMcegX8j9Ul8mLWHa6t1jfGt6qQY2GMWWC/IRukYxrJk0iO9lvX26z0X7
-	 d2yWSk23ksCEUfCloabZ9I/u0ESTMG9ld+hUsO50JW2D5rV+7ceQy1InglVFew1i6L
-	 hTp3o5jIkBoIs2K8XljStzZIPU2NFdcHVoz9Sx0o=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250823015503epcas5p4f37cf633ec897cf5cab6117f191d17a5~eQpLZM0vF1982919829epcas5p4q;
-	Sat, 23 Aug 2025 01:55:03 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.86]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4c80Vt1xfPz6B9m6; Sat, 23 Aug
-	2025 01:55:02 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250823015501epcas5p2edc67128fded208772b700d6b811c948~eQpJfftO53272832728epcas5p2D;
-	Sat, 23 Aug 2025 01:55:01 +0000 (GMT)
-Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250823015457epsmtip1ec063c01134a62dda47169229eba2da7~eQpFx0Y6c0879208792epsmtip17;
-	Sat, 23 Aug 2025 01:54:57 +0000 (GMT)
-From: "Inbaraj E" <inbaraj.e@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <s.hauer@pengutronix.de>,
-	<shawnguo@kernel.org>, <cw00.choi@samsung.com>, <rmfrfs@gmail.com>,
-	<laurent.pinchart@ideasonboard.com>, <martink@posteo.de>,
-	<mchehab@kernel.org>, <linux-fsd@tesla.com>, <will@kernel.org>,
-	<catalin.marinas@arm.com>, <pankaj.dubey@samsung.com>,
-	<shradha.t@samsung.com>, <ravi.patel@samsung.com>
-Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
-	<linux-samsung-soc@vger.kernel.org>, <kernel@puri.sm>,
-	<kernel@pengutronix.de>, <festevam@gmail.com>,
-	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <67199625-13d2-4510-bbbd-3dd2f61c62fd@kernel.org>
-Subject: RE: [PATCH v2 10/12] dt-bindings: media: fsd: Document CSIS DMA
- controller
-Date: Sat, 23 Aug 2025 07:24:55 +0530
-Message-ID: <00d301dc13d0$efb4ef90$cf1eceb0$@samsung.com>
+	s=arc-20240116; t=1755914327; c=relaxed/simple;
+	bh=DL7lJvSlF2uYNjqhrn7rHxrrv9ZYt7wI4V1rmKzypqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KikkzyCgjpIFaWEdy2fUQAN7oGp6TFVJOJtahMhCQxsZ2LXcaZyVDMWv0BLSRojG/RvxlMqZnX/Hb7DRAX9NJCDHU/EnqXEBth26nWL9dLJ5Nfzw/oKQEkxWyZIrkLzFjoTcRBevP2v7l9PBcgSWAV/bFizEbaXXw0tGVLxElJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpsz20t1755914306t18ac98e2
+X-QQ-Originating-IP: 9m1i3pwX/AtOIuG45fGnU9FcBbfvOkYiHnLZOR3b2Mo=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sat, 23 Aug 2025 09:58:24 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 8408012566057604248
+Date: Sat, 23 Aug 2025 09:58:24 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
+	gustavoars@kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <C2BF8A6A8A79FB29+20250823015824.GB1995939@nic-Precision-5820-Tower>
+References: <20250822023453.1910972-1-dong100@mucse.com>
+ <20250822023453.1910972-5-dong100@mucse.com>
+ <a066746c-2f12-4e70-b63a-7996392a9132@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQIMxZSZAiExi2YBbREwJ7KHhpcw
-Content-Language: en-in
-X-CMS-MailID: 20250823015501epcas5p2edc67128fded208772b700d6b811c948
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250814141051epcas5p14dccee388087372973988aeebcb872cf
-References: <20250814140943.22531-1-inbaraj.e@samsung.com>
-	<CGME20250814141051epcas5p14dccee388087372973988aeebcb872cf@epcas5p1.samsung.com>
-	<20250814140943.22531-11-inbaraj.e@samsung.com>
-	<67199625-13d2-4510-bbbd-3dd2f61c62fd@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a066746c-2f12-4e70-b63a-7996392a9132@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: N4bqf7uc8PW19XP0trQQ+Rsb3QZc/woXInVpXcYjV9mq0x7aKC3grbok
+	nJu2P5DHHsQE4wPSEwK7S4Hq3iXRkE8CTW7EwRir3Skhp8aNYYv0TYF0N2LWiWNUFJF+a/7
+	LQ2gZkDYlUXSTtpezb4RS/+KamnaURkPHZf8hWsuNIuY5hNlTamZRDDt8fU+EMovNtxJrb1
+	OfsBnDNUcY/Eqt+5XT/f3ojtlUmzAgOk5XpK/OgmGYiPwMQ5/Fzju0UfpP0pUw/5KtnJKm9
+	NV03yknEXLUeHMyVKypZHCFm/+ChUYhl7uBgqCmUrKYVlxoaSoe6n5v0La864E4GMVtGWii
+	z5Ykg1pyHwYYMaTBZDFFQF+lbf2gOEEfMHGoPty4/ExbLEGSdfBMIR+RWB5C4tPifa1IBUI
+	sQMGL149hzPmfSN12ytVKsRfc1QGMnb3OLgLFm/C9oLXW5197HQ0TzS3hNEMi0tf2Y0X03n
+	z6rn5UrPCqIA+kB5eSGdEK16XBC8vHjaAZVDRMfiMf+uyUeqJ1R0NqDh4yeg2U3B1kf1ZZW
+	KmAe6AOn5bCbBa4LuYNl1f8ycWY0Y7aD1gSECDOA6tcOWECsdH/q6zKuyRLNHOtC13b+4fz
+	gEDURwbGRfpaAMzBJ/DQ++fCZdzUkoYrtM/pNZeE7wfsgcazLwOfmLWQwVNDW/hrct3n9VT
+	V++1W2YMzrn/lx0xE9/t12AaFIird+BnFFO49FsWZH4CtwSE9uAuXIjkcrU5iz1X4AagKHm
+	t9nzDeSFa3ECFun491qYTn90irbTUowuhyS0QluvLqEq49VqYc/h4FK+xQWxqkUH7tSBl/a
+	KXMqj8MrTtQjSv0aX/tsMoxmMhR3EI+uRPdL9CrQXY1qG5vbeFEPCePpZd1/XluE26T4Tup
+	nHsQaXYULFT80wvGVcOoGftBohNEos7hWbcJLNGXrhV0qlC5VEqDvFwoKId4+xQ9hMDmFHj
+	WodB1kV7ZV7zL+DaRalZQUet6E6nGWkTbsI0n0+vST5aQRK/cDoXy3Eip8lGV/XBU+7E=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-Hi Krzysztof,
+On Fri, Aug 22, 2025 at 04:43:16PM +0200, Andrew Lunn wrote:
+> > +/**
+> > + * mucse_mbx_get_capability - Get hw abilities from fw
+> > + * @hw: pointer to the HW structure
+> > + *
+> > + * mucse_mbx_get_capability tries to get capabities from
+> > + * hw. Many retrys will do if it is failed.
+> > + *
+> > + * @return: 0 on success, negative on failure
+> > + **/
+> > +int mucse_mbx_get_capability(struct mucse_hw *hw)
+> > +{
+> > +	struct hw_abilities ability = {};
+> > +	int try_cnt = 3;
+> > +	int err = -EIO;
+> > +
+> > +	while (try_cnt--) {
+> > +		err = mucse_fw_get_capability(hw, &ability);
+> > +		if (err)
+> > +			continue;
+> > +		hw->pfvfnum = le16_to_cpu(ability.pfnum) & GENMASK_U16(7, 0);
+> > +		return 0;
+> > +	}
+> > +	return err;
+> > +}
+> 
+> Please could you add an explanation why it would fail? Is this to do
+> with getting the driver and firmware in sync? Maybe you should make
+> this explicit, add a function mucse_mbx_sync() with a comment that
+> this is used once during probe to synchronise communication with the
+> firmware. You can then remove this loop here.
 
-Thanks for the review.
+It is just get some fw capability(or info such as fw version).
+It is failed maybe:
+1. -EIO: return by mucse_obtain_mbx_lock_pf. The function tries to get
+pf-fw lock(in chip register, not driver), failed when fw hold the lock.
+2. -ETIMEDOUT: return by mucse_poll_for_xx. Failed when timeout.
+3. -ETIMEDOUT: return by mucse_fw_send_cmd_wait. Failed when wait
+response timeout.
+4. -EIO: return by mucse_fw_send_cmd_wait. Failed when error_code in
+response.
+5. err return by mutex_lock_interruptible.
 
 > 
-> On 14/08/2025 16:09, Inbaraj E wrote:
-> > Document bindings for the FSD CSIS DMA controller.
-> >
-> > Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
-> > ---
-> >  .../bindings/media/tesla,fsd-csis-media.yaml  | 74
-> > +++++++++++++++++++
+> I would also differentiate between different error codes. It is
+> pointless to try again with ENOMEM, EINVAL, etc. These are real errors
+> which should be reported. However TIMEDOUT might makes sense to
+> retry.
 > 
-> Your patchset is organized in total mess. First clock, then media bindings,
-> then arm64,  then media drivers, then media bindings, then arm64... Please
-> organize it in standard way - about independent subsystems I mentioned, so
-> within media first bindings, then driver. Not intermixed.
+> 	Andrew
+> 
 
-I'll update in next patchset.
+Yes, I didn't differentiate between different error codes. But it cost
+~0 to ask firmware again. And error will be reported after 'try_cnt' times
+retry to the function caller.
+Maybe can simply handle error codes link this?
 
-> 
-> 
-> 
-> >  1 file changed, 74 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/media/tesla,fsd-csis-media.yaml
-> >
-> > diff --git
-> > a/Documentation/devicetree/bindings/media/tesla,fsd-csis-media.yaml
-> > b/Documentation/devicetree/bindings/media/tesla,fsd-csis-media.yaml
-> > new file mode 100644
-> > index 000000000000..ce6c2e58ed4e
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/media/tesla,fsd-csis-
-> media.yam
-> > +++ l
-> > @@ -0,0 +1,74 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
-> > +---
-> > +$id:
-> > +https://protect2.fireeye.com/v1/url?k=21cb70d9-4129ed84-21cafb96-
-> 000b
-> > +abd9f1ba-63c99c5193b8964e&q=1&e=f7087d49-8d33-4468-9323-
-> 67fa9fa72e40&
-> >
-> +u=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fmedia%2Ftesla%2Cfsd-
-> csis-me
-> > +dia.yaml%23
-> > +$schema:
-> > +https://protect2.fireeye.com/v1/url?k=4db8909d-2d5a0dc0-4db91bd2-
-> 000b
-> > +abd9f1ba-be3588ecc45596c1&q=1&e=f7087d49-8d33-4468-9323-
-> 67fa9fa72e40&
-> > +u=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23
-> > +
-> > +title: Tesla FSD SoC MIPI CSI-2 DMA (Bridge device) receiver
-> > +
-> > +maintainers:
-> > +  - Inbaraj E <inbaraj.e@samsung.com>
-> > +
-> > +description: |-
-> 
-> Drop |-
-> 
-> > +  The FSD MIPI CSI-2 (Camera Serial Interface 2) have internal DMA
-> > + engine to  capture frames originating from the sensor.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: tesla,fsd-csis-media
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    maxItems: 3
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: aclk
-> > +      - const: pclk
-> > +      - const: pll
-> > +
-> > +  iommus:
-> > +    maxItems: 1
-> > +
-> > +  port:
-> > +    $ref: /schemas/graph.yaml#/properties/port
-> 
-> Don't you need second port to CSIS block?
+Thanks for your feedback.
 
-No, one port is sufficient.
-This port represent CSIS DMA and connected to CSIS (imx-mipi-csis node)
 
- I guess this one is input from the
-> sensor?
 
-No, it is input from CSIS(imx-mipi-csis).
 
-Regards,
-Inbaraj E
 
 
