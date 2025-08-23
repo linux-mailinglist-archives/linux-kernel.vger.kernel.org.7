@@ -1,122 +1,161 @@
-Return-Path: <linux-kernel+bounces-783073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 799E5B32911
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:21:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E5D7B32918
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D7FD7B285B
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:19:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4518AAA070E
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0756236454;
-	Sat, 23 Aug 2025 14:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8682025B1FF;
+	Sat, 23 Aug 2025 14:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b6xyp3MZ"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="AMgkdmbq"
+Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B70C3BB48;
-	Sat, 23 Aug 2025 14:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECCD15ECCC;
+	Sat, 23 Aug 2025 14:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755958865; cv=none; b=uCD9x4zSvK/GHjjzygmm28HA6HjA1WW6hBj6a2JQDFxJKcBWCfwxHVmt/LfyDhfxB45T1viL8q0/uWR45zSczfn7Axuw6GSF1QMguuGZfbll/ra65Nk35E1h0LuSxbCuBnI/sVcNwXF3miUcWBofiTLRdL0DTK3TzTvKGqmfPFE=
+	t=1755958868; cv=none; b=TBoE/PsA8sxLJ8t6U50EtV62fLNrxT+LCls+F9fTTh7nquemz6VltaXlFR5AqzA28G7WrHX23gnDbf9K4vs7WwFLLmW9Lm443d8/Xo6uE7gZUZuh9cz0SGDJ4ghkexJxMDAnV1WeaNBi3JjRzij2cDDy5CfKduxlufRVEUDW44I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755958865; c=relaxed/simple;
-	bh=FKS13Ls82GgTKoYQ+noL3pXMTArz0NPS6LMA322WeXw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cP50unmPZten8KFHunGC4r9Knq11NPo6qo03ZFNQdsqBRE2qPwwdk3eG5STo5f3hnBgJSwXRsgDcKHCkpzITtYDpujvNKDkJMSjFfzzQzSOw9HTbx7f6WYTGC7MQDBy/YI5PV9kcmk236uqn+XlNRMDa/fu6tCU8MR3ZAmUHmBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b6xyp3MZ; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2467e454c46so237525ad.2;
-        Sat, 23 Aug 2025 07:21:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755958862; x=1756563662; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FKS13Ls82GgTKoYQ+noL3pXMTArz0NPS6LMA322WeXw=;
-        b=b6xyp3MZroKJQKnUoTyn6vanxh/h3dOl76IjO93PJDuxCA6cSjIYJ5AsowCF+4QX+3
-         BJ+sXCkP/sJYLPzH4TYcXEVudrp0g42n5lC2naK7MryX2I7+zby7sIFh6hOLB9z4KETL
-         qoLxgga+YohtXwNAhA4kJxjMxYuLvAJnv4NKqBGMonrTc4zIAb2l0byRyUlvIWu10U2b
-         6wnUhncILheTAvJsTBvYLHxMBqSgiFsyTGUBCcy2Ov/hcoe3/SNzqW99H+XDgxaTkUkv
-         pK78WgsjCbEoYBqjTe1+QSBaSZBHp664ExNtgr5YcEKeCxhRe7XsLOQOUyVw+aOGFfwM
-         eNCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755958862; x=1756563662;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FKS13Ls82GgTKoYQ+noL3pXMTArz0NPS6LMA322WeXw=;
-        b=JSbLs/FyvJkH5cN4FaR8FIt+MgtGeLdzq8jWFA9hwE6d/GDMkE5FnFWtmpKwI+IM4C
-         c8R50S1Q4H3/MF04Vtf7UYYRY+MI6I27YokT7X3GBxUju7VMesS+AT8RXls5TlGo0Laj
-         LxBKsoo/Yjxkw6nCOIkBoZRde0BMZKDAVvOy33KT9W8WfFyfLabNVatPWOygnHgOORxG
-         BAztflV6sgsPOTyXn2GFBrGtMc7qLyiaVpjoFGSBoQZ+yl+mIoLgj+BCaS+k6TU9VE60
-         q3cYFvlid8ZD6MKd5MFf297ZJklRokQoWppEx/sLtHWASL+k8128gHB+IZjSV/osx8KO
-         TOww==
-X-Forwarded-Encrypted: i=1; AJvYcCUORXHeuV6sc8q9RULPerBhfdyZnFLg94cDZRTbmacWP6qPnPncVblKW6wKqAih26haSXQCKXK5+grjSInv@vger.kernel.org, AJvYcCW2rNQHkemQoHLIv20j+nrXoauIxrpXJtAKoMrr9TyBhtaCKzQXYyoKsvDfGsCLvCh4m5EUIoj6x0Ek@vger.kernel.org, AJvYcCWmwxtykAHLmxYO2A5/IjBf5VNWlPyrUiP+BbDpCx41DkAmTdNfhHJnAWtK4Nr1tA40UFoMWGKAaGipqa/uuWc=@vger.kernel.org, AJvYcCWxvFZOpCVJIsZ8PyjDvKcutm7CPgHjCj/JwoSng22slVnVNfaUf7i9lsq1WuUHwvJhTNx6B1/JXA/K@vger.kernel.org
-X-Gm-Message-State: AOJu0YxILpsImYWZOejiC5qfFx9PKBm8Kg7RYejy3RaV+/bXbK6wja0v
-	E9bSIb5CAVpaGyQl8RWSIjhvfnEAv7UxiuerqZ9g742x9NpCCZyOVPLlRLJz28MjYk2otmpkr3U
-	zsg1byeVz4cF3hTUNKz7PmZwLING/fSM=
-X-Gm-Gg: ASbGncszc2t5xQt+oLHXbc+1Yg0tU63U+YK61KVcxmOfy8IKr05uRkPGAQ3bcDnSEtR
-	N3sCBFx2LIsjjEnnyQZnBZ0ziER/Le4Y1DT0yhYUW3x8xM5ktxwa+fFqM/D6HHboO2tmE+VNtMI
-	0g78PxDU1wEePg64veGN6bb9mK2yUqlrxliQNySsFjFaVzvwCfCZwVHUXwG7GCKD7l9wuys8nam
-	+smt6MIlwcW5PKyFkThCFRLEmbYaAQegGoJO1O86S/HlHQ0ueVXf5x7cQmD/FzCW70vDLFes3IJ
-	QCbFLSPoqNzt8OKNvOLQlyy4gw==
-X-Google-Smtp-Source: AGHT+IGVLaR8SAQwEUxUiy2CqfQseM2OkihMRfGlZd9/MU0z/dJwNrzQwurGCFk0ttB0GCjmTXBnJ39be3FpGZZbACA=
-X-Received: by 2002:a17:902:e5d1:b0:246:9df4:d10 with SMTP id
- d9443c01a7336-2469df4127fmr3166135ad.8.1755958862532; Sat, 23 Aug 2025
- 07:21:02 -0700 (PDT)
+	s=arc-20240116; t=1755958868; c=relaxed/simple;
+	bh=JFft/FXSDO4ypbrVZyw9DalUpokF7DX877H6dzJtP5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mFR16MU27yuXLabyq5yW4EAcZAxIUICP6MC5UjV02ySjPCblBugpnZX2Bm/77vqHEG+o25zMNdJZ8do/ySWppaxdnIUwe1/cmgcpZxd7lG3KmLP/4w2ld/tQIFka365mlXZ2b85lUOyjS/iq+5GAdl52yP3nidWTCots6fvUuE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=AMgkdmbq; arc=none smtp.client-ip=195.181.215.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
+	t=1755958862; bh=JFft/FXSDO4ypbrVZyw9DalUpokF7DX877H6dzJtP5M=;
+	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
+	b=AMgkdmbqw9szbcTxLUoM0Fk6qJABiZaHCQDOw5kh3AvOHXt8XXdfaHQQvu6K2E8DU
+	 r43TrBxW+re8qLO6i4qNvIDOVHOBXGbDx1wVCdHhnACiR/OgVKXImOZu6YKHNPGcOD
+	 q3YD51V9w55J9q5XNGJOyK/hvX60iy6V2d3BGjH0=
+Date: Sat, 23 Aug 2025 16:21:01 +0200
+From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
+To: maud_spierings@hotmail.com
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Enable the NPU on the orangepi
+ 5 boards
+Message-ID: <7mt62weitabjzhuqnqkfonztxzx4on23nbexw7xygl622r43bj@tfs47k6aohu6>
+Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
+	maud_spierings@hotmail.com, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
+References: <20250823-orangepi5-v1-0-ae77dd0e06d7@hotmail.com>
+ <20250823-orangepi5-v1-3-ae77dd0e06d7@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820-rust-next-pwm-working-fan-for-sending-v14-0-df2191621429@samsung.com>
- <CGME20250820083548eucas1p2a40775d53dfd9f8608671cc20003fd7d@eucas1p2.samsung.com>
- <20250820-rust-next-pwm-working-fan-for-sending-v14-7-df2191621429@samsung.com>
- <aKjXzyyYd9QneIKf@x1> <3aa6f79e-2ebf-4aff-a23c-7e79929a85f9@samsung.com>
-In-Reply-To: <3aa6f79e-2ebf-4aff-a23c-7e79929a85f9@samsung.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 23 Aug 2025 16:20:51 +0200
-X-Gm-Features: Ac12FXxJkYUU9nh5gGCQzR8dqN6e3fVSP-8HKfD18-Z-F1n5Giy4FK7WbmAKogU
-Message-ID: <CANiq72kAVmfSyAs71pmmVCq8f-rA1BECZ9iCTcTxiLfsO9-V6g@mail.gmail.com>
-Subject: Re: [PATCH v14 7/7] riscv: dts: thead: Add PWM fan and thermal control
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Drew Fustini <fustini@kernel.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>, 
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250823-orangepi5-v1-3-ae77dd0e06d7@hotmail.com>
 
-On Sat, Aug 23, 2025 at 12:14=E2=80=AFPM Michal Wilczynski
-<m.wilczynski@samsung.com> wrote:
->
-> However as pointed in the discussion currently Rust
-> requires LLVM, so people compiling with gcc will not be able to compile
-> the driver for some time until the gcc support becomes better.
+Hello Maud,
 
-In case it helps/clarifies: the C side can be built with GCC (i.e.
-building without `LLVM=3D1`, with Rust using its LLVM backend), but it
-is a best-effort hack and the goal is to eventually use
-`rustc_codegen_gcc` and/or GCC Rust. Some users/distributions use it
-nevertheless.
+On Sat, Aug 23, 2025 at 02:43:52PM +0200, Maud Spierings via B4 Relay wrote:
+> From: Maud Spierings <maud_spierings@hotmail.com>
+> 
+> Enable the NPU and the PMIC that powers it.
 
-Cheers,
-Miguel
+Reviewed-by: Ondřej Jirman <megi@xff.cz>
+
+> Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
+> ---
+>  .../arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi | 56 ++++++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi
+> index 91d56c34a1e456e18db31e1bbe7252b7e4632588..ac1df223d6a25f3059ce33970953745e402ef695 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi
+> @@ -258,6 +258,28 @@ regulator-state-mem {
+>  	};
+>  };
+>  
+> +&i2c1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&i2c1m2_xfer>;
+> +	status = "okay";
+> +
+> +	vdd_npu_s0: regulator@42 {
+> +		compatible = "rockchip,rk8602";
+> +		reg = <0x42>;
+> +		fcs,suspend-voltage-selector = <1>;
+> +		regulator-name = "vdd_npu_s0";
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <550000>;
+> +		regulator-max-microvolt = <950000>;
+> +		regulator-ramp-delay = <2300>;
+> +		vin-supply = <&vcc5v0_sys>;
+> +		regulator-state-mem {
+> +			regulator-off-in-suspend;
+> +		};
+> +	};
+> +};
+> +
+>  &i2c6 {
+>  	clock-frequency = <400000>;
+>  	status = "okay";
+> @@ -352,6 +374,40 @@ &pd_gpu {
+>  	domain-supply = <&vdd_gpu_s0>;
+>  };
+>  
+> +&pd_npu {
+> +	domain-supply = <&vdd_npu_s0>;
+> +};
+> +
+> +&rknn_core_0 {
+> +	npu-supply = <&vdd_npu_s0>;
+> +	sram-supply = <&vdd_npu_s0>;
+> +	status = "okay";
+> +};
+> +
+> +&rknn_core_1 {
+> +	npu-supply = <&vdd_npu_s0>;
+> +	sram-supply = <&vdd_npu_s0>;
+> +	status = "okay";
+> +};
+> +
+> +&rknn_core_2 {
+> +	npu-supply = <&vdd_npu_s0>;
+> +	sram-supply = <&vdd_npu_s0>;
+> +	status = "okay";
+> +};
+> +
+> +&rknn_mmu_0 {
+> +	status = "okay";
+> +};
+> +
+> +&rknn_mmu_1 {
+> +	status = "okay";
+> +};
+> +
+> +&rknn_mmu_2 {
+> +	status = "okay";
+> +};
+> +
+>  &saradc {
+>  	vref-supply = <&vcc_1v8_s0>;
+>  	status = "okay";
+> 
+> -- 
+> 2.50.1
+> 
+> 
 
