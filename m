@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-782971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91552B327C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 10:59:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3657B327D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 11:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74C9F18986AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:59:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AAF1188E3B9
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 09:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFCFF23D7C6;
-	Sat, 23 Aug 2025 08:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F86241661;
+	Sat, 23 Aug 2025 08:59:32 +0000 (UTC)
 Received: from freeshell.de (freeshell.de [116.202.128.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C426223C51D;
-	Sat, 23 Aug 2025 08:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B2923ABAA;
+	Sat, 23 Aug 2025 08:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755939564; cv=none; b=HbCB4/BiE4SxB+ElWopIZRf05LmHmB57Trgi+Ecz+QwLZrkIEdk3wp4GWhuBqK207hzUxqVb7G3JaZe9Odbk9rOT6wZST3wr4DlnvZqnXDzyAzRwPo8LB6hRwYTctLrpzO2uzWoVcSoR2ra22+h1GQ1A/f/nRrcNtsyGfyIkqwY=
+	t=1755939572; cv=none; b=jfiULVL/xzT6+Ys25WmTIRMlLEjer3JVF155xMnhICgOOcYaRboSrSKCnDVSFiKa6v5CuG/m+aA05ZDDjGXhO0tHapems/mEuDhYHl7EFh41J2/fWw5bgLki6q3tQpxj3mXv2qVrqzUyA3r5xZhXsxglFNBjwSRsEUjCSD0XmFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755939564; c=relaxed/simple;
-	bh=V0gZbguz6xs9WFtpOVv8iGW574l1xkCUBM2m+4GVyBQ=;
+	s=arc-20240116; t=1755939572; c=relaxed/simple;
+	bh=muCsQMBJuH1IBu5vrYmS7dMlZAliz70CJjXAoWKj4tM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YKrL15cntOwV1vCzTOBaI+k+JoueVizLXvDaENEwoBfzFfrr8Ro1SHZfnvL4uqdgJbRrBNcHFFFnzdr5rpwq5HS3G4/aVT/x9ruEcDcgwUOsSf+brADvLcvZ7UaaENOyhosU/hSte1Dnxqp1SPYXh3zIpioJudTG0f3SXJHVQKI=
+	 MIME-Version; b=pIR9Yd7x5hTPEY6Kn6xuyaI+zhmYkX9RNQzUYl28KEloprCLyK2X7vkbkjtMR5cZ1rin4BdQKbmkntVMCfLN+Aq7c+hQIyiPv4XCGpYpQ6d7dsYjlrvs+YD/C6L44fClEs6SuoBy91KOXUDDbqjwuU778oRrlXORD1vgd9XIwIE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
 Received: from hay.lan (unknown [IPv6:2605:59c0:2078:cf00:6ecf:39ff:fe00:8375])
 	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id 6A05EB4E0023;
-	Sat, 23 Aug 2025 10:59:18 +0200 (CEST)
+	by freeshell.de (Postfix) with ESMTPSA id 6CCDBB4E0039;
+	Sat, 23 Aug 2025 10:59:25 +0200 (CEST)
 From: E Shattow <e@freeshell.de>
 To: Emil Renner Berthing <kernel@esmil.dk>,
 	Conor Dooley <conor@kernel.org>,
@@ -47,9 +47,9 @@ Cc: devicetree@vger.kernel.org,
 	Minda Chen <minda.chen@starfivetech.com>,
 	E Shattow <e@freeshell.de>,
 	linux-riscv@lists.infradead.org
-Subject: [PATCH v3 2/3] riscv: dts: starfive: jh7110: add DMC memory controller
-Date: Sat, 23 Aug 2025 01:58:01 -0700
-Message-ID: <20250823085818.203263-3-e@freeshell.de>
+Subject: [PATCH v3 3/3] riscv: dts: starfive: jh7110: bootph-pre-ram hinting needed by boot loader
+Date: Sat, 23 Aug 2025 01:58:02 -0700
+Message-ID: <20250823085818.203263-4-e@freeshell.de>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250823085818.203263-1-e@freeshell.de>
 References: <20250823085818.203263-1-e@freeshell.de>
@@ -61,7 +61,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add JH7110 SoC DDR external memory controller.
+Add bootph-pre-ram hinting to jh7110.dtsi:
+  - CPU interrupt controller(s)
+  - gmac1_rgmii_rxin fixed-clock (dependency of syscrg)
+  - gmac1_rmii_refin fixed-clock (dependency of syscrg)
+  - oscillator
+  - core local interrupt timer
+  - syscrg clock-controller
+  - pllclk clock-controller (dependency of syscrg)
+  - DDR memory controller
 
 Signed-off-by: E Shattow <e@freeshell.de>
 ---
@@ -69,28 +77,104 @@ Signed-off-by: E Shattow <e@freeshell.de>
  1 file changed, 12 insertions(+)
 
 diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-index 0ba74ef04679..f3876660c07f 100644
+index f3876660c07f..6e56e9d20bb0 100644
 --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
 +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-@@ -931,6 +931,18 @@ watchdog@13070000 {
- 				 <&syscrg JH7110_SYSRST_WDT_CORE>;
- 		};
+@@ -35,6 +35,7 @@ S7_0: cpu@0 {
  
-+		memory-controller@15700000 {
-+			compatible = "starfive,jh7110-dmc";
-+			reg = <0x0 0x15700000 0x0 0x10000>,
-+			      <0x0 0x13000000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_PLLCLK_PLL1_OUT>;
-+			clock-names = "pll";
-+			resets = <&syscrg JH7110_SYSRST_DDR_AXI>,
-+				 <&syscrg JH7110_SYSRST_DDR_OSC>,
-+				 <&syscrg JH7110_SYSRST_DDR_APB>;
-+			reset-names = "axi", "osc", "apb";
-+		};
-+
- 		crypto: crypto@16000000 {
- 			compatible = "starfive,jh7110-crypto";
- 			reg = <0x0 0x16000000 0x0 0x4000>;
+ 			cpu0_intc: interrupt-controller {
+ 				compatible = "riscv,cpu-intc";
++				bootph-pre-ram;
+ 				interrupt-controller;
+ 				#interrupt-cells = <1>;
+ 			};
+@@ -68,6 +69,7 @@ U74_1: cpu@1 {
+ 
+ 			cpu1_intc: interrupt-controller {
+ 				compatible = "riscv,cpu-intc";
++				bootph-pre-ram;
+ 				interrupt-controller;
+ 				#interrupt-cells = <1>;
+ 			};
+@@ -101,6 +103,7 @@ U74_2: cpu@2 {
+ 
+ 			cpu2_intc: interrupt-controller {
+ 				compatible = "riscv,cpu-intc";
++				bootph-pre-ram;
+ 				interrupt-controller;
+ 				#interrupt-cells = <1>;
+ 			};
+@@ -134,6 +137,7 @@ U74_3: cpu@3 {
+ 
+ 			cpu3_intc: interrupt-controller {
+ 				compatible = "riscv,cpu-intc";
++				bootph-pre-ram;
+ 				interrupt-controller;
+ 				#interrupt-cells = <1>;
+ 			};
+@@ -167,6 +171,7 @@ U74_4: cpu@4 {
+ 
+ 			cpu4_intc: interrupt-controller {
+ 				compatible = "riscv,cpu-intc";
++				bootph-pre-ram;
+ 				interrupt-controller;
+ 				#interrupt-cells = <1>;
+ 			};
+@@ -273,12 +278,14 @@ gmac0_rmii_refin: gmac0-rmii-refin-clock {
+ 
+ 	gmac1_rgmii_rxin: gmac1-rgmii-rxin-clock {
+ 		compatible = "fixed-clock";
++		bootph-pre-ram;
+ 		clock-output-names = "gmac1_rgmii_rxin";
+ 		#clock-cells = <0>;
+ 	};
+ 
+ 	gmac1_rmii_refin: gmac1-rmii-refin-clock {
+ 		compatible = "fixed-clock";
++		bootph-pre-ram;
+ 		clock-output-names = "gmac1_rmii_refin";
+ 		#clock-cells = <0>;
+ 	};
+@@ -321,6 +328,7 @@ mclk_ext: mclk-ext-clock {
+ 
+ 	osc: oscillator {
+ 		compatible = "fixed-clock";
++		bootph-pre-ram;
+ 		clock-output-names = "osc";
+ 		#clock-cells = <0>;
+ 	};
+@@ -354,6 +362,7 @@ soc {
+ 		clint: timer@2000000 {
+ 			compatible = "starfive,jh7110-clint", "sifive,clint0";
+ 			reg = <0x0 0x2000000 0x0 0x10000>;
++			bootph-pre-ram;
+ 			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc 7>,
+ 					      <&cpu1_intc 3>, <&cpu1_intc 7>,
+ 					      <&cpu2_intc 3>, <&cpu2_intc 7>,
+@@ -880,6 +889,7 @@ qspi: spi@13010000 {
+ 		syscrg: clock-controller@13020000 {
+ 			compatible = "starfive,jh7110-syscrg";
+ 			reg = <0x0 0x13020000 0x0 0x10000>;
++			bootph-pre-ram;
+ 			clocks = <&osc>, <&gmac1_rmii_refin>,
+ 				 <&gmac1_rgmii_rxin>,
+ 				 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
+@@ -904,6 +914,7 @@ sys_syscon: syscon@13030000 {
+ 
+ 			pllclk: clock-controller {
+ 				compatible = "starfive,jh7110-pll";
++				bootph-pre-ram;
+ 				clocks = <&osc>;
+ 				#clock-cells = <1>;
+ 			};
+@@ -935,6 +946,7 @@ memory-controller@15700000 {
+ 			compatible = "starfive,jh7110-dmc";
+ 			reg = <0x0 0x15700000 0x0 0x10000>,
+ 			      <0x0 0x13000000 0x0 0x10000>;
++			bootph-pre-ram;
+ 			clocks = <&syscrg JH7110_PLLCLK_PLL1_OUT>;
+ 			clock-names = "pll";
+ 			resets = <&syscrg JH7110_SYSRST_DDR_AXI>,
 -- 
 2.50.0
 
