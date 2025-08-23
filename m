@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-783113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DE6B32984
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:18:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95CCDB32986
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFEB61C216D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 15:18:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D78E9E2C6B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 15:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1192E763A;
-	Sat, 23 Aug 2025 15:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A88C2E719D;
+	Sat, 23 Aug 2025 15:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="YVZFquyw"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RwSZSjsh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E112AD4B;
-	Sat, 23 Aug 2025 15:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27E9261593;
+	Sat, 23 Aug 2025 15:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755962309; cv=none; b=LOjquCGXP2raFClOEkKWu+Bf2eyPrUUIDkJC8Q0yQTVuXr+wqn9p1cGpz5b6Bi3lnF0JqyobZI8ojLiFbShLyQ/9sSP9x9WjNRsonut88khLrgGc2NWinEN4OusdISaSQgtqBDFqn5OcR27STp/wKF+8sr/l4CnaOQneFYcUmLo=
+	t=1755962407; cv=none; b=SXWKthMgkKu07Rj9YEfAKnVzOU1V7W+w8i/FcBAI8XQ71RgsW6OAdy0ixv76OKeabPWSijoBIjqvPRLBpwOZKiwHW27es68cCUG5ctpRDBa7suxIZ/9Q01aEi0NX6b3PHeKqJxXrzj4OYLXAE6RKwiVtm32nbOAKiBfx4F9fidw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755962309; c=relaxed/simple;
-	bh=7JQkkt9dbMiHhXVQ6vItdJAZtW4rgJX33IpJrH+8jdY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H+yb7NTa+2I/nNMx2jKW2gda9/SuzhC/clVR7ClgXSYvYOR8Gcz+o5GK+pHBRyBt6ON9HDHzq3j/RIopy4pCJLydJIb8SmiKenn4Vane0/3C/+99s4Wvo8L9/1CqdnPAINZhtEQarZh85YFwAkXsH31hU6vVfK7USOvfOfIheZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=YVZFquyw; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=6zbniq+Y33seUhQtkKnh8NN5RiVXcMAU2k6LfyetQpU=; b=YVZFquyw09UpAMBzf0gvl484W6
-	eqhTLx3nF5S40Cv+Y/y1oqp8Q7OAzxJjfrjMcd6Hp3GI26GZlV9oXKxHXrPZErTGG7RBdTxFfB1i9
-	Vo63trBrsfFyJRyKO/xegtH6K+CxG+FN3n9GRgzPX74ydnujS9Z4BtWwoZtzxKoUy/hY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1upq01-005lV0-92; Sat, 23 Aug 2025 17:17:45 +0200
-Date: Sat, 23 Aug 2025 17:17:45 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yibo Dong <dong100@mucse.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <f375e4bf-9b0b-49ca-b83d-addeb49384b8@lunn.ch>
-References: <20250822023453.1910972-1-dong100@mucse.com>
- <20250822023453.1910972-5-dong100@mucse.com>
- <a066746c-2f12-4e70-b63a-7996392a9132@lunn.ch>
- <C2BF8A6A8A79FB29+20250823015824.GB1995939@nic-Precision-5820-Tower>
+	s=arc-20240116; t=1755962407; c=relaxed/simple;
+	bh=lBf991ZvGcpGafI+brvV7j+drtIcox/nU4hUyq688bU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eZ3E/EiKuX/HbWobcdP/9xYd75AMrcQfi0e2o1M6UdkkW58krILtPZIiRc9W9ZqnxXtIvYGYbIeGn1OAUM1BZYVQ7PSSSK2r5ApbSUuoYMXZZ3R6InNCmIO1GxgaDB86vFAN5sbEzcb4P45mG90joyI/Sf6cqQe2/p8kGpHeWEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RwSZSjsh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71CD7C4CEE7;
+	Sat, 23 Aug 2025 15:20:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755962407;
+	bh=lBf991ZvGcpGafI+brvV7j+drtIcox/nU4hUyq688bU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RwSZSjshFs2szoMB96HGmrR3pVbYijhPVDqXXHvcLbmqnZEw3TZ3L8jXlGJpnlx0S
+	 cErNIYSx3c9Bt5ae+lKqXvB3JCP7FQQzs+YXSVW6zHtVZje3qqEtggjvZHsjCPcj1e
+	 pb/Rj4jei1Yv2Fzg2xIKOR9gua4DiYa9LRenKrAEX8xukSOpIBGsg8A0isIlE/4mKa
+	 BuaM4mUVw6h0grKk6+b5SgUswzmISa4hX870y8forjKyjU0M3A/aJKmoFMthzG7GEo
+	 zt/Dq2uMc8PkDoPeYu4oNyHAJ0l0heom6SsiqE71rpjJ/Dbx+B3w8Dif7y0DtkJn+I
+	 K1oeytv5fBeYg==
+Message-ID: <fc90c450-cdb2-4bb0-bb36-5a4ccd9ba325@kernel.org>
+Date: Sat, 23 Aug 2025 17:20:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <C2BF8A6A8A79FB29+20250823015824.GB1995939@nic-Precision-5820-Tower>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: memory-controllers: add StarFive
+ JH7110 SoC DMC
+To: E Shattow <e@freeshell.de>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hal Feng <hal.feng@starfivetech.com>,
+ Minda Chen <minda.chen@starfivetech.com>
+References: <20250823085818.203263-1-e@freeshell.de>
+ <20250823085818.203263-2-e@freeshell.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250823085818.203263-2-e@freeshell.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 23, 2025 at 09:58:24AM +0800, Yibo Dong wrote:
-> On Fri, Aug 22, 2025 at 04:43:16PM +0200, Andrew Lunn wrote:
-> > > +/**
-> > > + * mucse_mbx_get_capability - Get hw abilities from fw
-> > > + * @hw: pointer to the HW structure
-> > > + *
-> > > + * mucse_mbx_get_capability tries to get capabities from
-> > > + * hw. Many retrys will do if it is failed.
-> > > + *
-> > > + * @return: 0 on success, negative on failure
-> > > + **/
-> > > +int mucse_mbx_get_capability(struct mucse_hw *hw)
-> > > +{
-> > > +	struct hw_abilities ability = {};
-> > > +	int try_cnt = 3;
-> > > +	int err = -EIO;
-> > > +
-> > > +	while (try_cnt--) {
-> > > +		err = mucse_fw_get_capability(hw, &ability);
-> > > +		if (err)
-> > > +			continue;
-> > > +		hw->pfvfnum = le16_to_cpu(ability.pfnum) & GENMASK_U16(7, 0);
-> > > +		return 0;
-> > > +	}
-> > > +	return err;
-> > > +}
-> > 
-> > Please could you add an explanation why it would fail? Is this to do
-> > with getting the driver and firmware in sync? Maybe you should make
-> > this explicit, add a function mucse_mbx_sync() with a comment that
-> > this is used once during probe to synchronise communication with the
-> > firmware. You can then remove this loop here.
+On 23/08/2025 10:58, E Shattow wrote:
+> Describe JH7110 SoC DDR external memory interface.
 > 
-> It is just get some fw capability(or info such as fw version).
-> It is failed maybe:
-> 1. -EIO: return by mucse_obtain_mbx_lock_pf. The function tries to get
-> pf-fw lock(in chip register, not driver), failed when fw hold the lock.
+> Signed-off-by: E Shattow <e@freeshell.de>
 
-If it cannot get the lock, isn't that fatal? You cannot do anything
-without the lock.
+Don't send the same patch multiple times. To which one people should
+respond?
 
-> 2. -ETIMEDOUT: return by mucse_poll_for_xx. Failed when timeout.
-> 3. -ETIMEDOUT: return by mucse_fw_send_cmd_wait. Failed when wait
-> response timeout.
-
-If its dead, its dead. Why would it suddenly start responding?
-
-> 4. -EIO: return by mucse_fw_send_cmd_wait. Failed when error_code in
-> response.
-
-Which should be fatal. No retries necessary.
-
-> 5. err return by mutex_lock_interruptible.
-
-So you want the user to have to ^C three times?
-
-And is mucse_mbx_get_capability() special, or will all interactions
-with the firmware have three retries?
-
-	Andrew
+Best regards,
+Krzysztof
 
