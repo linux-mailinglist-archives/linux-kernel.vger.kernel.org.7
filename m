@@ -1,90 +1,90 @@
-Return-Path: <linux-kernel+bounces-782865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B91CB32628
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:14:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5AC7B32629
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE2054E28C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:14:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6C5CA0536B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78F819D071;
-	Sat, 23 Aug 2025 01:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A1B19CCEC;
+	Sat, 23 Aug 2025 01:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQqmTc7l"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="beGOdJ79"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3FC1B4F2C
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 01:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03B118FDDB
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 01:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755911638; cv=none; b=SatnbqzLFJGpS3Oj5RGbd0PJLgWdw8fjYRRmmOrmMTcVREHwv6zer9+OFISliEP5mIqhhMbX3lne/AOXnxd0wCUK1DRPE4f1n/N737ycG/TCqR1mIfr5vMb6tIeKx7z9nVxuFZTPpJftykH9mQvCh4Bf/UUkFZFW8klMxbLwKhk=
+	t=1755911646; cv=none; b=sD+yqbpBFj32+vcN5Zely5SsjMmMY42xMqH07EU+zizku9wx+r0Azva/0GYedWCMEcoFcTKzt6iIGCpMvE3segW+k/ZDIERgDW15QvzacUA9ZoPh8ejQC8CciJGcSNyr8VgDcTz1dndZYwsddv45K9NLnjYhXOI0mSFoJ8q/t20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755911638; c=relaxed/simple;
-	bh=oe4PKEz/cvP7KV7ko0mimaA79f+hZFnaqwxwVJ45Jm4=;
+	s=arc-20240116; t=1755911646; c=relaxed/simple;
+	bh=YfOjR7UvaZ9De8gsdS8Su04B4dDcI7rLzFDfiwGqOhk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xw/yQwo5S6hA1zqqpu70VR+H4yMsChTjc0y6yQyylSOBbkYLdMRQanojtHv3jy262coOEdPgCZh7MKvTh7ORUzO7hlmEnps5bWpx/wYrwV+NUyk3sjSvbCgAAZW5gQCPY/NnOQ9c4acx8sLJUFxxwU3vwlyOweqvoCWQS2rAB5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQqmTc7l; arc=none smtp.client-ip=209.85.215.170
+	 Content-Type:Content-Disposition:In-Reply-To; b=jOYg/UmkgUiKj74FRBDaV2gd92yUYdPjEvZCBO/RWETVjQWr3LDmpdRCxT849KhuiUDOF4rfJLNx4SH1p9pry3M24Rra3hTNcfN7vPN7TKltjkZsbbYfpvg3kzo2fvZfYsrxUuMJzKyu+xRvosKxmO829VPU2yRvKE8kUjYVymE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=beGOdJ79; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b4716fa7706so1795778a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:13:56 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e2ea79219so3271108b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:14:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755911635; x=1756516435; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755911644; x=1756516444; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5fZDhLqfuS6uJdGNm+qE8o+l+LEzoDjlacSLv+bvJJw=;
-        b=cQqmTc7lH3oV1ztRNEz3w7KcU5mEjFlQzjWOjtOIfF7za5Mnj9dRgpum2gem0Rg1uk
-         dFxX7EPis+sPf9LVE9jpkXiSwWDo1cZS9Ay5YvpALNQWuhAiEmtQiIrhLVt/cwIIXnjR
-         2heqkl+6APmU9trXkeyGuTwI8Ey+5lAznDN9/MNUhDLIpgdThTKsmTfkgV/FsG5vrPHb
-         +84oJqb0DGGavAaCxjYM2UQ4yCXlz3FpkVbVFSxS7Mwo5ZOB7i5Zp65xeL8To9vmRpZ/
-         WRqGpdZ3yAnZvXq2fSzcmVnjBDwb2gcGmy8mLyoMiuU4tlCAtgXZnylSzDHA6MlQkc8t
-         LCwg==
+        bh=fy9Bs8rrSIcWnwkTqkxwoQvPQ5jLwYik1L1rP59aq20=;
+        b=beGOdJ79isfLmDblCPiXvBBsws4FjT8IjztWZRV25weCNQiyAjfmcHnC5iieZYXA3/
+         h81sL78Em2RgISTpkEo1KtC6/+fU2q1oH/QY0o8baFz8M4eEIhlO/dF+uI87H3nFB2oZ
+         emZnbD8f9WgslPV2uji9sa3a6nU3VkjWvR8uDp+qEsUHfP/7Uym80SBJKLUv2QbS7Mql
+         Ucy5yL4d83v+T6Sn1NZWpz6v5uWzHdYuYtcR8q+edAEkQsVbWTbU1Ibd1zaW14/uS2tu
+         wBtIiRY3jJlgQ/g8v8nDPK4nE+JJtLP2fq0UbkctH0PopodUagfJub6AmLEjDK22di1J
+         CG3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755911635; x=1756516435;
+        d=1e100.net; s=20230601; t=1755911644; x=1756516444;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5fZDhLqfuS6uJdGNm+qE8o+l+LEzoDjlacSLv+bvJJw=;
-        b=SDYTUnSazVa7m98BvCVxOZu3P+Xo3pkUT65DX/9CAow6z4N2dOiO9ISIoYN42fL61n
-         cAqh8iVteTJEeMY0gVqeUWWX1NCi4II/q6MSUtSIIjmsliQPl5edLvEPfk+tx35PX2tD
-         4cIxKPvmqo0YbyWEJn3SnCwb3Lt5byLPDVP3fxBez+fdF1AM2rbYEZqmhSOH8Eje40hH
-         pNZAs407GAD2twvm5I+jgz8GhxJIPG0g+pcl6+UVsIXvQQydajmU2LIVjX7nx0FlTUbe
-         EFqM5z9bfyyw985T0vQVrb7hsEpcqRNvuGImG6oALp8lLphPREszjEJP0M4vSAAGilA1
-         9v6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUjUX68rqlKxFxekZGcfNCJiMdx3HGZ5MVWPTkiMwJ9afcw77cBs40ei0ZUlJ/SHEMcuTWjMlzHgWhgRFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMfaaky4/chPcnnTwIJlVDa3lu61e63tBGJKwsEsIDJIiBCD1k
-	YVTx2GSAYYOVL+8UNHGo9jZk1mYk593w5wg1I1Z/vCK9dkrrB4hw4JaM
-X-Gm-Gg: ASbGnctznbBRR+rZEu1W+G8VAvtqVAm7hF5HBlVdijlkTVIjuPEIfJ6b3E50F1vbj9i
-	QCNjKtbt1Y/GFuZbUC8YHFDnMnLJaxv3Geiynw9X+VZlc24qVjSePYVmHBvXYf25s2lDZS+y3wi
-	bfHAb7aONuSFPq/X6Or41+OmS3hs7htqXVw36K/XsWqTKEEMP+wYJZd/u3lgZ1eyj7acDOeYjQn
-	5p15a2vzQ2c7CqAeyYihmkyM2KjVg+XjrAd6jSOnCrXnBtQHAjOK2Fo7OPLIshq34KsoE2Dg2qa
-	/icZvkwX5RifDPF9vCvOTjjPq7yPXrKm/l6/ouwUFVUhorR8pGqCLFnv27EHHWB4fyQWPj+6TpT
-	mkggEjflOKyufySRqEPBwqDeDggcLJA9+P8ofCvjdrF8/jg==
-X-Google-Smtp-Source: AGHT+IG4z+jZeq1yjJy3Ti/gLn3mMpWd8Kx6Qn4z/mzv9vrTQJUrkSBDG/jxlLpzthmjUB8AgQcPyg==
-X-Received: by 2002:a17:903:22c9:b0:246:6f78:1fd2 with SMTP id d9443c01a7336-2466f7821c0mr17109055ad.34.1755911635529;
-        Fri, 22 Aug 2025 18:13:55 -0700 (PDT)
+        bh=fy9Bs8rrSIcWnwkTqkxwoQvPQ5jLwYik1L1rP59aq20=;
+        b=O6lTPZ7u9Vo7InLuX0CfwypNaj9ZvIl4oyV1/oIxKyjdLZaGgVDnQp4FPzikFloIoF
+         uTXWlwxTQJZ9Kf+4xmhtyig43lVxZ3NdFNJLHWZWlvOSSmkGO2k5MsXwzy/hsUZ2oc/j
+         1IGQAHe3/mYjuJ4rGSvED9GSJlh5TWWO5tCslI5PdowUNkFLk7PH0fIo3foAxaFSXaOT
+         qHHmHGjYZJKShd7qbD26TWI33QC/8TY9fNsDZ2qTXCdJC0VVXC0hZ91CxN1J3OSMBjvm
+         x6oTwgNBT2B9OcpF70UDgx+/0ePR5eG/7ZJESFHvIn1V0mJpjnr4BfW16mzWuSFZs934
+         FhTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWbqGXar6JZOSx3BwhBPSQKt8U7acBnF+ciwSJx0++Uw0bdTEjOs7GN+8RvqJbOUrrwuV93WSl3LXSSvU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9mzEek36amfO9W8PP53gUJyNLU10JRtc8xtk62/Rp0f0aKLc9
+	a5qHCG9DdsMmB/LmHdkw3iD0mHM0x89EI9bPAgCY96A/bvXYnFD5eBrf
+X-Gm-Gg: ASbGncspmASDbDMbza1QxixwEKy0zMYHvHSiag1IZkJmhQZKJuVskmtLHCHMJCbp40g
+	WeQhgEz5/JVdLvX3t++B9YffiR7LMnpV7UagmhyklJcdcvB+Drq7U+JMQezdMzWwXW6EdVZ5zU8
+	4HGe1KkKNt2f1CnZHp7EqN7MbnigMP8WVvBhsp0F4tu7MRoa83NBzrbTEpV2ofLeadnw2/uVScU
+	+bBwdjJe7FsUazRFm11yMyiM6ut3aTX9DrzWfl/nrZIBWMYK6NEi9kDT+fBEarDdAk1+r9x9am3
+	NvelgnJZdKgWZwTTWpsj8wKlUGfdZTDK/X6K9pIB3In/IlQBUxur2w+fPQ+UfW5pxVvEyAzyVh4
+	yXLblFLp+JdkhFUzI8mHyRHPGOHNcQ2g+508=
+X-Google-Smtp-Source: AGHT+IHwHjpPW2GRNHjnVhT4leoWNTk7qTMOx4cXEo4m4PS0FFzjuPxRd6J5vLIlDaLEXv5QV2eQYw==
+X-Received: by 2002:a05:6a21:328a:b0:243:257b:e9f9 with SMTP id adf61e73a8af0-24340c225c6mr7651960637.10.1755911644177;
+        Fri, 22 Aug 2025 18:14:04 -0700 (PDT)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687b0ca3sm8254125ad.57.2025.08.22.18.13.54
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cbbaca53sm914979a12.48.2025.08.22.18.14.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Aug 2025 18:13:55 -0700 (PDT)
+        Fri, 22 Aug 2025 18:14:03 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 22 Aug 2025 18:13:54 -0700
+Date: Fri, 22 Aug 2025 18:14:03 -0700
 From: Guenter Roeck <linux@roeck-us.net>
 To: Brian Norris <briannorris@chromium.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>, David Gow <davidgow@google.com>,
 	linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert@linux-m68k.org>,
 	kunit-dev@googlegroups.com
-Subject: Re: [PATCH v2 5/6] genirq/test: Drop CONFIG_GENERIC_IRQ_MIGRATION
- assumptions
-Message-ID: <5073cad4-d960-40c1-a777-1f597a4ca999@roeck-us.net>
+Subject: Re: [PATCH v2 6/6] genirq/test: Ensure CPU 1 is online for hotplug
+ test
+Message-ID: <480daaea-a5e5-4e93-bab2-91ac6edc0213@roeck-us.net>
 References: <20250822190140.2154646-1-briannorris@chromium.org>
- <20250822190140.2154646-6-briannorris@chromium.org>
+ <20250822190140.2154646-7-briannorris@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,31 +93,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250822190140.2154646-6-briannorris@chromium.org>
+In-Reply-To: <20250822190140.2154646-7-briannorris@chromium.org>
 
-On Fri, Aug 22, 2025 at 11:59:06AM -0700, Brian Norris wrote:
-> Not all platforms use the generic IRQ migration code, even if they
-> select GENERIC_IRQ_MIGRATION. (See, for example, powerpc /
-> pseries_cpu_disable().)
+On Fri, Aug 22, 2025 at 11:59:07AM -0700, Brian Norris wrote:
+> It's possible to run these tests on platforms that think they have a
+> hotpluggable CPU1, but for whatever reason, CPU1 is not online and can't
+> be brought online:
 > 
-> If such platforms don't perform managed shutdown the same way, the IRQ
-> may not actually shut down, and we'll fail these tests:
+>     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:210
+>     Expected remove_cpu(1) == 0, but
+>         remove_cpu(1) == 1 (0x1)
+> CPU1: failed to boot: -38
+>     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:214
+>     Expected add_cpu(1) == 0, but
+>         add_cpu(1) == -38 (0xffffffffffffffda)
 > 
-> [    4.357022][  T101]     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:211
-> [    4.357022][  T101]     Expected irqd_is_activated(data) to be false, but is true
-> [    4.358128][  T101]     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:212
-> [    4.358128][  T101]     Expected irqd_is_started(data) to be false, but is true
-> [    4.375558][  T101]     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:216
-> [    4.375558][  T101]     Expected irqd_is_activated(data) to be false, but is true
-> [    4.376088][  T101]     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:217
-> [    4.376088][  T101]     Expected irqd_is_started(data) to be false, but is true
-> [    4.377851][    T1]     # irq_cpuhotplug_test: pass:0 fail:1 skip:0 total:1
-> [    4.377901][    T1]     not ok 4 irq_cpuhotplug_test
-> [    4.378073][    T1] # irq_test_cases: pass:3 fail:1 skip:0 total:4
-> 
-> Rather than test that PowerPC performs migration the same way as the IRQ
-> core, let's just drop the state checks. The point of the test was to
-> ensure we kept |depth| balanced, and we can still test for that.
+> Check that CPU1 is actually online before trying to run the test.
 > 
 > Fixes: 66067c3c8a1e ("genirq: Add kunit tests for depth counts")
 > Reported-by: Guenter Roeck <linux@roeck-us.net>
@@ -130,27 +121,22 @@ Tested-by: Guenter Roeck <linux@roeck-us.net>
 > 
 > (no changes since v1)
 > 
->  kernel/irq/irq_test.c | 4 ----
->  1 file changed, 4 deletions(-)
+>  kernel/irq/irq_test.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 > diff --git a/kernel/irq/irq_test.c b/kernel/irq/irq_test.c
-> index 56baeb5041d6..bbb89a3e1153 100644
+> index bbb89a3e1153..e2d31914b3c4 100644
 > --- a/kernel/irq/irq_test.c
 > +++ b/kernel/irq/irq_test.c
-> @@ -203,13 +203,9 @@ static void irq_cpuhotplug_test(struct kunit *test)
->  	KUNIT_EXPECT_EQ(test, desc->depth, 1);
+> @@ -179,6 +179,8 @@ static void irq_cpuhotplug_test(struct kunit *test)
+>  		kunit_skip(test, "requires more than 1 CPU for CPU hotplug");
+>  	if (!cpu_is_hotpluggable(1))
+>  		kunit_skip(test, "CPU 1 must be hotpluggable");
+> +	if (!cpu_online(1))
+> +		kunit_skip(test, "CPU 1 must be online");
 >  
->  	KUNIT_EXPECT_EQ(test, remove_cpu(1), 0);
-> -	KUNIT_EXPECT_FALSE(test, irqd_is_activated(data));
-> -	KUNIT_EXPECT_FALSE(test, irqd_is_started(data));
->  	KUNIT_EXPECT_GE(test, desc->depth, 1);
->  	KUNIT_EXPECT_EQ(test, add_cpu(1), 0);
+>  	cpumask_copy(&affinity.mask, cpumask_of(1));
 >  
-> -	KUNIT_EXPECT_FALSE(test, irqd_is_activated(data));
-> -	KUNIT_EXPECT_FALSE(test, irqd_is_started(data));
->  	KUNIT_EXPECT_EQ(test, desc->depth, 1);
->  
->  	enable_irq(virq);
 > -- 
 > 2.51.0.rc2.233.g662b1ed5c5-goog
 > 
