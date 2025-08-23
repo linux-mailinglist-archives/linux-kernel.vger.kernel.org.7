@@ -1,121 +1,89 @@
-Return-Path: <linux-kernel+bounces-783286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DCFCB32B56
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:42:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC96AB32B57
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47C4E7B8A43
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:40:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88656563CD5
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E57F2E92A0;
-	Sat, 23 Aug 2025 17:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872232E7BDC;
+	Sat, 23 Aug 2025 17:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="di46d+5c"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F9ieONYA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tbvuSH0L"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB15E552;
-	Sat, 23 Aug 2025 17:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889CE14B977;
+	Sat, 23 Aug 2025 17:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755970915; cv=none; b=W6Wmu0MC4vqcpOt2zRUllI6e314qZjg8NobbfrKcYNdbJXXUV5hfc6zRXCURtuf38xvIu1cfHsbLiU3ZOIsJC09KqYfbmBckvjsy2USjYT92KYOC8EhZD7xBTVDm8T3qFI13yIo9WTxxlhl7Xm2aE0c/QG8hHFyBSspHJK7HvsY=
+	t=1755970950; cv=none; b=n/GJV7nwEQZiAF6Bbl2pZWCyFYUkw352VdjtqvjR+MrrBRdQe+xTweSSDckoJW03P3xYPgKk5c2OPM1XSnYOP5unq9cSpfojR1MIMy87BQYNjxwC6z0JG2moo0gyVVqedrbLtiEFubiDPwAy6h1rYpZvzc8XVYQ1mMhUs9zjRp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755970915; c=relaxed/simple;
-	bh=Vqsur2y8RSmKY5nLbktYvL+6enfobV0AVZknVfAmh40=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fqgz7L4cSXERZQvMK9HP4cJsK36KCKgCPWq/G7USLADcaklFgOkQTAztFt8JrvIkfq8AnY2xWmjnSxd6vDnQudXOrCailuw0mAejXEOPE4CvGUeE8BuMmwZ87WvIZre1R6bk38uexfTdaztcg326LxiprVZzNxn1IrHq8sfuGZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=di46d+5c; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-61bd4e002afso999652eaf.2;
-        Sat, 23 Aug 2025 10:41:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755970912; x=1756575712; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ITqdo3Ifd8N3LbhIbwmmh+G/PmOUjB4de9aY4Vzo3DI=;
-        b=di46d+5c/rnMywhS6qPT3o06me8AnvefOfouRZoLJvR8xmCeR672vrkIS/posc2kRG
-         A9mH0e0CSQ/t0K/tl+Aez0VHQeTvbeXhnoIAR9pxYa3Tj2K1hHDeDbX3vdZE0uObHpHm
-         1J4dLBZtUyIETrxmRMWGsXptbf9a6cu6YsYrY7ueVLdjK/mj5OU0VwFPIhGTsYyNrXfk
-         m+t9AhjGv39kzd327Guf+GB1SSBDtRDsj77Xsj8CCrYPfvzYCCihN/VW1up2nsASbbN7
-         d2TiuUZ0L/XNcSpHffdDf+jtHQs6x2VABOxjQW/IiYpaCoWk9hOsqMKXW0lnnOKng7UB
-         m/xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755970912; x=1756575712;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ITqdo3Ifd8N3LbhIbwmmh+G/PmOUjB4de9aY4Vzo3DI=;
-        b=DRl1N2N7o1K6Rhz/nf3Rp3BflLpDodS2vxSTJjnpEOzsuj7hI9ZYTCJIPolP6Oxjb3
-         V6xclLMr30nN54RSrTlmFz7ddvezWGaTpcInnX+f7ZeeL4efqKsHJZtavUHbk5KsU4rc
-         /cIRNaXGhj+yexwQkQEIpgXsFM1CXiKhoHNZHPuQJQsQZD5Tud6JdNFXyLH8sZa2Gzp3
-         KYAfOd0zj8ElgjauctMCOxFfLyNl1rUVOJKBnlsl9CYcVCLTn2pJ+vs3RwmdXEuvqbu+
-         nKVLTZ2FLNwQGPkwY9fdFCweuBB7DuQ2nd4QxNCDaNqSy4rDS7anTj3rrGlESnH//Nk0
-         EOfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUA/YIA7Lf46zyIhPmdEDgmcjCFq1Dl3RJFntAUnV3vXbNI8mRV+Jo+x7d6uaCKa2azzpzfGyviI1cYSDw=@vger.kernel.org, AJvYcCV5at2ZNyI9J5B9ZZ8aEux2kJZM5dnpIaZ17L7dBD36dBSvmOpBlB15J6oNfDtYrATHjZcYndvLcl6g@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgEK4fGJjqc7UsXidfy8eREJiq5zkJSSDyOCo5EqHZ0pWrgCuq
-	86yO76T0HhVqg1VgVkPUmrnebESPR/MMOch2CLy1z5dG6Cx6CrQTVPaOCITfMhBC7LrG06AD3th
-	hX45hS6yYt9yRKV3zzCIVrlBaEJ12gMc=
-X-Gm-Gg: ASbGncvfY+x9udNbixbAb7hu0tPwyQeajMtJo1+l5o1ceT0xrh1I8l4zizcuZbT3rPt
-	kzZocnFdsxII0R8i/qe1g/5CgzQuwAQzKttz7IwFVrBXd2JtfYXLrNywMslmC4d9teT7Mo//S/R
-	f0Jh3T5l87zuqyQi3C0DiORtwnAWsWLCFxcBA4cot4gzU2HWQ8fkOif8F6eUoQiE6hh8RElNWn9
-	+lvtQUtrn9csSB5AG8=
-X-Google-Smtp-Source: AGHT+IGzZeNIqe9P5PGqgBcOWCG/DtxycER6I/XwHnz+4/6S9/11ldzzr2W81ivO38l/U5UWp3jfUPRuWo6itDksOMY=
-X-Received: by 2002:a05:6808:1907:b0:433:fd1b:73f1 with SMTP id
- 5614622812f47-43785261777mr2782955b6e.6.1755970911987; Sat, 23 Aug 2025
- 10:41:51 -0700 (PDT)
+	s=arc-20240116; t=1755970950; c=relaxed/simple;
+	bh=ys3E9OHMdP5Us8PZ5LuM+YUcdr7+gk8Grt+IehxAW3k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nfI8oJWyWuG24n59WIbknYJB361qEIeI1cIkyU6bdPXqzJt+fcPWNrd2NRIZNeXztngwWXMnADhCjKGiqAcAOPV3twLPrxlUZw4FCcYn1iD+GligO/D90LpTH8J1cfkBCJjY/B4W9zlFye68mPQz3diJ2WzC22TCxTWMBddbM7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F9ieONYA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tbvuSH0L; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755970946;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/de6x57hRmjghuW5hRj9wc3ZOTI+jL2dLeu0jXGpYYw=;
+	b=F9ieONYAcUJiOYjMB94+sz+tM86drtSx1mvJVtdt83RYRfz5mL1TuhScahgNxVgHpdDWaf
+	A/b61UshtHooa2kN8B4sDgB+4Y+pA1270N8i8hwT+GsFyoNSzfqklxPG6tPi4rC8EZZ9lf
+	B+UGbPAoSuuuODwx2yjojKUGJuYhkctchNGHvZr4/Z0uEoZfg+MkV/r2Rc8NSWGDF3LBog
+	rvwsnnWPdC2xKA0atcgy97LeYW+F6u19uIF6si1TTYQgBdAndLRZRc6cVf0v45QG+1Wfo1
+	wvsnT/48UG3q1HFrNx5/Dv0IhUyR0F+XmCacd3s1w6ywzy2P8ijvV1oam/BVNA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755970946;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/de6x57hRmjghuW5hRj9wc3ZOTI+jL2dLeu0jXGpYYw=;
+	b=tbvuSH0LmGaBIHWvaaAJko0FrtGSXoISrr2V22oRgAmY2nUmt9uZZ4JSaNJwVil+53BkA3
+	ut5Va+LEuqNTRdCQ==
+To: Greg KH <gregkh@linuxfoundation.org>, Sumanth Gavini
+ <sumanth.gavini@yahoo.com>
+Cc: rostedt@goodmis.org, mhiramat@kernel.org, jstultz@google.com,
+ clingutla@codeaurora.org, mingo@kernel.org, sashal@kernel.org,
+ boqun.feng@gmail.com, ryotkkr98@gmail.com, kprateek.nayak@amd.com,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, "J . Avila"
+ <elavila@google.com>
+Subject: Re: [PATCH 6.1] softirq: Add trace points for tasklet entry/exit
+In-Reply-To: <2025082257-smirk-backside-6d93@gregkh>
+References: <20250812161755.609600-1-sumanth.gavini.ref@yahoo.com>
+ <20250812161755.609600-1-sumanth.gavini@yahoo.com>
+ <2025082257-smirk-backside-6d93@gregkh>
+Date: Sat, 23 Aug 2025 19:42:25 +0200
+Message-ID: <87ldnavsse.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250817155053.15856-1-marcelomoreira1905@gmail.com>
- <aKKvjVfm9IPw9UAg@infradead.org> <CAPZ3m_g+KcJt_wxBjdmvyW+FqXAcEfVDUuHkp8iZ6XiUZ+6x-w@mail.gmail.com>
- <aKbdFONDSYp0FxSg@infradead.org>
-In-Reply-To: <aKbdFONDSYp0FxSg@infradead.org>
-From: Marcelo Moreira <marcelomoreira1905@gmail.com>
-Date: Sat, 23 Aug 2025 14:41:40 -0300
-X-Gm-Features: Ac12FXxOrdRfL4gdqoXJWo3pkqhcKRZcNxkx1s5GRciO1CYupAllcGOQWi05-dw
-Message-ID: <CAPZ3m_gdi5Mo_N-L-M0nQoGy99m=krv1R=nb2ucj6mbcRJXTig@mail.gmail.com>
-Subject: Re: [PATCH v2] xfs: Replace strncpy with memcpy
-To: Christoph Hellwig <hch@infradead.org>
-Cc: cem@kernel.org, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Em qui., 21 de ago. de 2025 =C3=A0s 05:47, Christoph Hellwig
-<hch@infradead.org> escreveu:
+On Fri, Aug 22 2025 at 15:07, Greg KH wrote:
+> On Tue, Aug 12, 2025 at 11:17:54AM -0500, Sumanth Gavini wrote:
 >
-> On Wed, Aug 20, 2025 at 10:47:17AM -0300, Marcelo Moreira wrote:
-> > Hmm, I've sent the same link to other people, and none of them
-> > reported any issues with the SSL certificate. In my case, I'm using
-> > Let's Encrypt. It could be an outdated certificate in your Firefox.
->
-> Turns out I was connect to a corporate VPN which had some man in the
-> middle thing checking for "bad" websites, and they somehow considered
-> your bad, and their redirection didn't work.  Sorry for the blame :)
+> And I'm with John, this makes no sense as to why you need/want these.  I
+> think that the syzbot report is bogus, sorry.  Please prove me wrong :)
 
-Oh, ok haha, don't worry :)
->
-> > Regarding sending it to the official xfstests README, it would be a
-> > good idea! If anyone here is involved in the xfstests project and
-> > thinks the post is good, I can send it to the official README :D
->
-> I think for the README itself it's probably a bit too specific.
-> But I'd love adding it as a new HOWTO file linked from README.
+It was validated by AI (Absense of Intelligence) that adding tracepoints
+makes the problem go away! So why do you want extra proof?
 
-Hmm, cool, I can submit a patch to
-git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git adding this new HOWTO
-file :D
-Thanks!
+Thanks,
 
---=20
-Cheers,
-Marcelo Moreira
+        tglx
+
 
