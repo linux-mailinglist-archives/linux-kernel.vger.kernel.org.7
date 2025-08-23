@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-783134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC761B329DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:53:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97271B329E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78EC61BC1BB5
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 15:53:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23D937B9B9D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 15:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B397E2EA47C;
-	Sat, 23 Aug 2025 15:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F5D2EA737;
+	Sat, 23 Aug 2025 15:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QVgq9snX"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D8yx24Ye"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F09F2E972E
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 15:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C1E2E9EB6
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 15:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755964345; cv=none; b=SNDbQaJBYFFAG5T29BQ0+/g61dh2wSojWMsRqTHaHXrWi/Ew780ZW7Jl2csARJ1kyzQpkp9lthlnNDQqcJVih9vfrY532vQO8dhmFZZsrT5WirelIOp6nIZsO/W/YJBv3/44HnrTN3qrZJmj8Wi4dr9oaA0Ueo46Ph/ykYW1Ygo=
+	t=1755964346; cv=none; b=M/DFYdfnLQs6If9UrkhRatTbSkHwOzWjKujD/XBKHpdHyhQuMGx0aXIduDbx4HbDb93bgtmwW0cDhVUU5klHSwjem6GVxnkMejnJSHrFsZf7oKvF1A/TWSFNM+t7UybYXUKk5HEdF5qVvVc8wDCdY+wlrBJQscrJJJT3p5ceaAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755964345; c=relaxed/simple;
-	bh=+NHb2Cj+YRmDz2jUfs/X7Xja6xMCOyN80MXM0sfpC5Y=;
+	s=arc-20240116; t=1755964346; c=relaxed/simple;
+	bh=oOCHdwhJ2hlEVHdewE67M/hBZ7Bq05iNcMK6LOevBAQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ew/ktuAPqtcFcC6tMQooTA6nTyA2XaxlkxcqV6xknv1/PrY7zt8+DFv8bIVSfHwOXr1//igIna8iL0bgLkZLs20DT74CdOhJKC2Tv/JQlRrBewtMivKfag/p3iUOZ6ECC5KTl1XC/mvnYI/Hkg7pe2OE0FUNg1rDWDyuo5xo6N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QVgq9snX; arc=none smtp.client-ip=192.198.163.8
+	 MIME-Version; b=SAJieKvhwG2eXsTDP8YnYxUcvfzTqNZ6bLe3d6sD9x+c1Q2NECuGBrpfkts1k5v5d4IdCLaaeaabIuznNh2I6SKBTTAFM8fZuQkhmpCE4MdjuFo27Rtos5el5Nh9MSO4P3IqmZONhqXtPuwJChGj8l32px5MVRoQneH/i8g77WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D8yx24Ye; arc=none smtp.client-ip=192.198.163.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755964344; x=1787500344;
+  t=1755964345; x=1787500345;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=+NHb2Cj+YRmDz2jUfs/X7Xja6xMCOyN80MXM0sfpC5Y=;
-  b=QVgq9snXMLajtnLmgc2HQpP3QCGbpqjK4eIQ3BR7Thqu/roKPXGfY66c
-   HNilrnj5V9OJE5SouQNLBoQ0g6gkvHjt5loTT43J7njjETgiuc9f6anbZ
-   /IOuCSm0MfFqPvIHV/1b1B/fg9S9rYn/gT3wPfyEoC5u8c/Bvw42aO8Bl
-   0HpiTyGCQZXyOgFXpyBH/DuGuev/pgOmWoRVIuddpxF9M5pPoH5Xxvej9
-   ZfmAIRTOJMmIyj2OLtpanhE8d+cdQXAB7j3w1WJQxximYgVuu8B4ClJk6
-   n+2keMCfnTt2ryF3PY3XZIcxH5QzIN/I6h/sRDSp1+as1ICNd9llE3HUo
-   Q==;
-X-CSE-ConnectionGUID: +bP+vbo0Qo+lMZjH5b+oaw==
-X-CSE-MsgGUID: VLzhhDh7SEyb9Y7qKCjk2Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="75832818"
+  bh=oOCHdwhJ2hlEVHdewE67M/hBZ7Bq05iNcMK6LOevBAQ=;
+  b=D8yx24Yedvjm8daUjlbx+5dnUBNKVh6LNFeUaWJS1HE7u8YdVjqXFA0Z
+   ffCWV7kAfdZBVveAWHi85gRbcHOrhbAv4HOwf4Imdx7jwefpQr3sCDjQy
+   BSKYQLWvQKgYcXcT3Ih0zGf7R8PN/lFzyWlXK9hsbklwAn6A6r2SOiHB5
+   Zi7eAmR5IhyL+ox1G82JBzhObVanNyBhVHMJem0OUdobYXn9uHJ3sQKUw
+   adAPCO+WA9HmaOsby/Ombn+P9S8TCEulKX7ap3CZvOANIGR1BNmfX5UlQ
+   fhX8dM8oIf9mfAs+FmOAtTzIlGyj69Vlz3pW8WivWRPO/NSRsH6BLFCxZ
+   g==;
+X-CSE-ConnectionGUID: pQg7VnQFQkm2xC+VOSgEnQ==
+X-CSE-MsgGUID: qJkM+pVtQx2nj2RgGc4hLw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="75832825"
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="75832818"
+   d="scan'208";a="75832825"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2025 08:52:23 -0700
-X-CSE-ConnectionGUID: yRUoPYvkQ1q52skpGzjaOw==
-X-CSE-MsgGUID: r/6VSp3zQJ2HGYemLQGjxQ==
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2025 08:52:24 -0700
+X-CSE-ConnectionGUID: Nfh+ptDhRTS6vjQ40Cnt9A==
+X-CSE-MsgGUID: 5ECjXZgBS0+xtuMJG+900A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="169748239"
+   d="scan'208";a="169748243"
 Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.124.85.190])
-  by fmviesa010.fm.intel.com with ESMTP; 23 Aug 2025 08:52:23 -0700
+  by fmviesa010.fm.intel.com with ESMTP; 23 Aug 2025 08:52:24 -0700
 From: "Chang S. Bae" <chang.seok.bae@intel.com>
 To: linux-kernel@vger.kernel.org
 Cc: x86@kernel.org,
@@ -67,9 +67,9 @@ Cc: x86@kernel.org,
 	chao.gao@intel.com,
 	abusse@amazon.de,
 	chang.seok.bae@intel.com
-Subject: [PATCH v5 5/7] x86/microcode/intel: Implement staging handler
-Date: Sat, 23 Aug 2025 08:52:08 -0700
-Message-ID: <20250823155214.17465-6-chang.seok.bae@intel.com>
+Subject: [PATCH v5 6/7] x86/microcode/intel: Support mailbox transfer
+Date: Sat, 23 Aug 2025 08:52:09 -0700
+Message-ID: <20250823155214.17465-7-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250823155214.17465-1-chang.seok.bae@intel.com>
 References: <20250813172649.15474-1-chang.seok.bae@intel.com>
@@ -82,230 +82,322 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Previously, per-package staging invocations and their associated state
-data were established. The next step is to implement the actual staging
-handler according to the specified protocol. Below are key aspects to
-note:
+Previously, the functions for sending microcode data and retrieving the
+next offset were placeholders, as they required handling the specific
+mailbox format. Implement them as following:
 
-  (a)  Each staging process must begin by resetting the staging hardware.
+== Mailbox Format ==
 
-  (b)  The staging hardware processes up to a page-sized chunk of the
-       microcode image per iteration, requiring software to submit data
-       incrementally.
+The staging mailbox consists of two primary sections: 'header' and
+'data'. While the microcode must be transferred following this format,
+the actual data transfer mechanism involves reading and writing to
+specific MMIO registers.
 
-  (c)  Once a data chunk is processed, the hardware responds with an
-       offset in the image for the next chunk.
+== Mailbox Data Registers ==
 
-  (d) The offset may indicate completion or request retransmission of an
-       already transferred chunk. As long as the total transferred data
-       remains within the predefined limit (twice the image size),
-       retransmissions should be acceptable.
+Unlike conventional interfaces that allocate MMIO space for each data
+chunk, the staging interface features a "narrow" interface, using only
+two dword-sized registers for read and write operations.
 
-With that, incorporate these code sequences to the staging handler:
+For example, if writing 2 dwords of data to a device. Typically, the
+device would expose 2 dwords of "wide" MMIO space. To send the data to
+the device:
 
-  1.  Initialization: Map the MMIO space via ioremap(). Reset the staging
-      hardware and initialize software state, ensuring a fresh staging
-      process aligned with (a).
+	writel(buf[0], io_addr + 0);
+	writel(buf[1], io_addr + 1);
 
-  2.  Processing Loop: Introduce a loop iterating over data chunk,
-      following (b), with proper termination conditions established from
-      (d) -- stop staging when the hardware signals completion, or if the
-      total transmitted data exceeds the predefined limit.
+But, this interface is a bit different. Instead of having a "wide"
+interface where there is separate MMIO space for each word in a
+transaction, it has a "narrow" interface where several words are written
+to the same spot in MMIO space:
 
-  3.  Loop Body: Finally, compose the loop body with two steps --
-      transmitting a data chunk and retrieving the next offset from the
-      hardware response, aligning with (b) and (c).
+	writel(buf[0], io_addr);
+	writel(buf[1], io_addr);
 
-Since data transmission and mailbox format handling require additional
-details, they are implemented separately in next changes.
+The same goes for the read side.
+
+== Implementation Summary ==
+
+Given that, introduce two layers of helper functions at first:
+
+  * Low-level helpers for reading and writing to data registers directly.
+  * Wrapper functions for handling mailbox header and data sections.
+
+Using them, implement send_data_chunk() and fetch_next_offset()
+functions. Add explicit error and timeout handling routine in
+wait_for_transaction(), finishing up the transfer.
+
+Both hardware error states and implicit errors -- invalid header or
+offset -- result in UCODE_ERROR. Emit a clear message for the latter.
+
+Note: The kernel has support for similar mailboxes. But none of them are
+compatible with this one. Trying to share code resulted in a bloated
+mess, so this code is standalone.
 
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 Tested-by: Anselm Busse <abusse@amazon.de>
 ---
-V4 -> V5:
-* Convert helper functions to return error codes (Dave)
-* Consolidate loop-control logic
-* Refactor next-chunk calculation/check for clarity
-* Remove offset sanity check (moved to next patch)
+V4 -> V5: Addressed Dave's feedback
+* fetch_next_offset():
+  - Make dword reads explicit
+  - Consolidate offset validation -- adding another user for the
+    end-offset checker
+  - Convert WARN_* with pr_err_once()
+* Simplify transaction waiting logic a bit
 
 V2 -> V3:
-* Rework code to eliminate global variables (Dave)
-* Remove redundant variable resets (Chao)
+* Update code to reflect the removal of a global variable (Dave).
 
 V1 -> V2:
-* Re-write the changelog for clarity (Dave).
-* Move staging handling code into intel.c (Boris).
-* Add extensive comments to clarify staging logic and hardware
-  interactions, along with function renaming (Dave).
+* Add lots of code comments and edit the changelog (Dave).
+* Encapsulate register read/write operations for processing header and
+  data sections.
 ---
- arch/x86/kernel/cpu/microcode/intel.c | 137 +++++++++++++++++++++++++-
- 1 file changed, 133 insertions(+), 4 deletions(-)
+ arch/x86/kernel/cpu/microcode/intel.c | 186 +++++++++++++++++++++++++-
+ 1 file changed, 179 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index 3ca22457d839..a1b13202330d 100644
+index a1b13202330d..f6b365eba6a2 100644
 --- a/arch/x86/kernel/cpu/microcode/intel.c
 +++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -20,6 +20,8 @@
- #include <linux/cpu.h>
- #include <linux/uio.h>
+@@ -22,6 +22,7 @@
  #include <linux/mm.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
+ #include <linux/delay.h>
+ #include <linux/io.h>
++#include <linux/pci_ids.h>
  
  #include <asm/cpu_device_id.h>
  #include <asm/processor.h>
-@@ -33,6 +35,16 @@ static const char ucode_path[] = "kernel/x86/microcode/GenuineIntel.bin";
+@@ -42,8 +43,31 @@ static const char ucode_path[] = "kernel/x86/microcode/GenuineIntel.bin";
  
- #define UCODE_BSP_LOADED	((struct microcode_intel *)0x1UL)
+ #define MBOX_CONTROL_OFFSET	0x0
+ #define MBOX_STATUS_OFFSET	0x4
++#define MBOX_WRDATA_OFFSET	0x8
++#define MBOX_RDDATA_OFFSET	0xc
  
-+/* Defines for the microcode staging mailbox interface */
+ #define MASK_MBOX_CTRL_ABORT	BIT(0)
++#define MASK_MBOX_CTRL_GO	BIT(31)
 +
-+#define MBOX_REG_NUM		4
-+#define MBOX_REG_SIZE		sizeof(u32)
++#define MASK_MBOX_STATUS_ERROR	BIT(2)
++#define MASK_MBOX_STATUS_READY	BIT(31)
 +
-+#define MBOX_CONTROL_OFFSET	0x0
-+#define MBOX_STATUS_OFFSET	0x4
++#define MASK_MBOX_RESP_SUCCESS	BIT(0)
++#define MASK_MBOX_RESP_PROGRESS	BIT(1)
++#define MASK_MBOX_RESP_ERROR	BIT(2)
 +
-+#define MASK_MBOX_CTRL_ABORT	BIT(0)
++#define MBOX_CMD_LOAD		0x3
++#define MBOX_OBJ_STAGING	0xb
++#define MBOX_HEADER(size)	((PCI_VENDOR_ID_INTEL)    | \
++				 (MBOX_OBJ_STAGING << 16) | \
++				 ((u64)((size) / sizeof(u32)) << 32))
 +
++/* The size of each mailbox header */
++#define MBOX_HEADER_SIZE	sizeof(u64)
++/* The size of staging hardware response */
++#define MBOX_RESPONSE_SIZE	sizeof(u64)
++
++#define MBOX_XACTION_TIMEOUT_MS	(10 * MSEC_PER_SEC)
+ 
  /* Current microcode patch used in early patching on the APs. */
  static struct microcode_intel *ucode_patch_va __read_mostly;
- static struct microcode_intel *ucode_patch_late __read_mostly;
-@@ -319,13 +331,130 @@ static __init struct microcode_intel *scan_microcode(void *data, size_t size,
+@@ -330,6 +354,49 @@ static __init struct microcode_intel *scan_microcode(void *data, size_t size,
+ 	return size ? NULL : patch;
+ }
+ 
++static inline u32 read_mbox_dword(void __iomem *mmio_base)
++{
++	u32 dword = readl(mmio_base + MBOX_RDDATA_OFFSET);
++
++	/* Acknowledge read completion to the staging hardware */
++	writel(0, mmio_base + MBOX_RDDATA_OFFSET);
++	return dword;
++}
++
++static inline void write_mbox_dword(void __iomem *mmio_base, u32 dword)
++{
++	writel(dword, mmio_base + MBOX_WRDATA_OFFSET);
++}
++
++static inline u64 read_mbox_header(void __iomem *mmio_base)
++{
++	u32 high, low;
++
++	low  = read_mbox_dword(mmio_base);
++	high = read_mbox_dword(mmio_base);
++
++	return ((u64)high << 32) | low;
++}
++
++static inline void write_mbox_header(void __iomem *mmio_base, u64 value)
++{
++	write_mbox_dword(mmio_base, value);
++	write_mbox_dword(mmio_base, value >> 32);
++}
++
++static void write_mbox_data(void __iomem *mmio_base, u32 *chunk, unsigned int chunk_bytes)
++{
++	int i;
++
++	/*
++	 * The MMIO space is mapped as Uncached (UC). Each write arrives
++	 * at the device as an individual transaction in program order.
++	 * The device can then resemble the sequence accordingly.
++	 */
++	for (i = 0; i < chunk_bytes / sizeof(u32); i++)
++		write_mbox_dword(mmio_base, chunk[i]);
++}
++
+ /*
+  * Prepare for a new microcode transfer: reset hardware and record the
+  * image size.
+@@ -385,6 +452,14 @@ static bool can_send_next_chunk(struct staging_state *ss)
+ 	return true;
+ }
+ 
++/*
++ * The hardware indicates completion by returning a sentinel end offset
++ */
++static inline bool is_end_offset(u32 offset)
++{
++	return offset == UINT_MAX;
++}
++
+ /*
+  * Determine whether staging is complete: either the hardware signaled
+  * the end offset, or no more transactions are permitted (retry limit
+@@ -392,18 +467,73 @@ static bool can_send_next_chunk(struct staging_state *ss)
+  */
+ static inline bool staging_is_complete(struct staging_state *ss)
+ {
+-	return (ss->offset == UINT_MAX) || !can_send_next_chunk(ss);
++	return is_end_offset(ss->offset) || !can_send_next_chunk(ss);
++}
++
++/*
++ * Wait for the hardware to complete a transaction.
++ * Return 0 on success, or an error code on failure.
++ */
++static int wait_for_transaction(struct staging_state *ss)
++{
++	u32 timeout, status;
++
++	/* Allow time for hardware to complete the operation: */
++	for (timeout = 0; timeout < MBOX_XACTION_TIMEOUT_MS; timeout++) {
++		msleep(1);
++
++		status = readl(ss->mmio_base + MBOX_STATUS_OFFSET);
++		/* Break out early if the hardware is ready: */
++		if (status & MASK_MBOX_STATUS_READY)
++			break;
++	}
++
++	/* Check for explicit error response */
++	if (status & MASK_MBOX_STATUS_ERROR) {
++		ss->state = UCODE_ERROR;
++		return -EPROTO;
++	}
++
++	/*
++	 * Hardware is neither responded to the action nor signaled any
++	 * error. Treat this as timeout.
++	 */
++	if (!(status & MASK_MBOX_STATUS_READY)) {
++		ss->state = UCODE_TIMEOUT;
++		return -ETIMEDOUT;
++	}
++
++	ss->state = UCODE_OK;
++	return 0;
  }
  
  /*
-- * Handle the staging process using the mailbox MMIO interface.
-- * Return the result state.
-+ * Prepare for a new microcode transfer: reset hardware and record the
-+ * image size.
-+ */
-+static void init_stage(struct staging_state *ss)
-+{
-+	ss->ucode_len = get_totalsize(&ucode_patch_late->hdr);
-+
-+	/*
-+	 * Abort any ongoing process, effectively resetting the device.
-+	 * Unlike regular mailbox data processing requests, this
-+	 * operation does not require a status check.
-+	 */
-+	writel(MASK_MBOX_CTRL_ABORT, ss->mmio_base + MBOX_CONTROL_OFFSET);
-+}
-+
-+/*
-+ * Return PAGE_SIZE, or remaining bytes if this is the final chunk
-+ */
-+static inline unsigned int calc_next_chunk_size(unsigned int ucode_len, unsigned int offset)
-+{
-+	return min(PAGE_SIZE, ucode_len - offset);
-+}
-+
-+/*
-+ * Update the chunk size and decide whether another chunk can be sent.
-+ * This accounts for remaining data and retry limits.
-+ */
-+static bool can_send_next_chunk(struct staging_state *ss)
-+{
-+	ss->chunk_size = calc_next_chunk_size(ss->ucode_len, ss->offset);
-+	/*
-+	 * Each microcode image is divided into chunks, each at most
-+	 * one page size. A 10-chunk  image would typically require 10
-+	 * transactions.
-+	 *
-+	 * However, the hardware managing the mailbox has limited
-+	 * resources and may not cache the entire image, potentially
-+	 * requesting the same chunk multiple times.
-+	 *
-+	 * To tolerate this behavior, allow up to twice the expected
-+	 * number of transactions (i.e., a 10-chunk image can take up to
-+	 * 20 attempts).
-+	 *
-+	 * If the number of attempts exceeds this limit, the hardware is
-+	 * likely stuck and mark the state as timeout.
-+	 */
-+	if (ss->bytes_sent + ss->chunk_size > ss->ucode_len * 2) {
-+		ss->state = UCODE_TIMEOUT;
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+/*
-+ * Determine whether staging is complete: either the hardware signaled
-+ * the end offset, or no more transactions are permitted (retry limit
-+ * reached).
-+ */
-+static inline bool staging_is_complete(struct staging_state *ss)
-+{
-+	return (ss->offset == UINT_MAX) || !can_send_next_chunk(ss);
-+}
-+
-+/*
-+ * Transmit a chunk of the microcode image to the hardware.
-+ * Return 0 on success, or an error code on failure.
-+ */
-+static int send_data_chunk(struct staging_state *ss, void *ucode_ptr __maybe_unused)
-+{
-+	pr_debug_once("Staging mailbox loading code needs to be implemented.\n");
-+	ss->state = UCODE_ERROR;
-+	return -EPROTONOSUPPORT;
-+}
-+
-+/*
-+ * Retrieve the next offset from the hardware response.
-+ * Return 0 on success, or an error code on failure.
-+ */
-+static int fetch_next_offset(struct staging_state *ss)
-+{
-+	pr_debug_once("Staging mailbox response handling code needs to be implemented.\n\n");
-+	ss->state = UCODE_ERROR;
-+	return -EPROTONOSUPPORT;
-+}
-+
-+/*
-+ * Handle the staging process using the mailbox MMIO interface. The
-+ * microcode image is transferred in chunks until completion. Return the
-+ * result state.
+  * Transmit a chunk of the microcode image to the hardware.
+  * Return 0 on success, or an error code on failure.
   */
- static enum ucode_state do_stage(u64 mmio_pa)
+-static int send_data_chunk(struct staging_state *ss, void *ucode_ptr __maybe_unused)
++static int send_data_chunk(struct staging_state *ss, void *ucode_ptr)
  {
--	pr_debug_once("Staging implementation is pending.\n");
--	return UCODE_ERROR;
-+	struct staging_state ss = {};
-+	int err;
-+
-+	ss.mmio_base = ioremap(mmio_pa, MBOX_REG_NUM * MBOX_REG_SIZE);
-+	if (WARN_ON_ONCE(!ss.mmio_base))
-+		return UCODE_ERROR;
-+
-+	init_stage(&ss);
-+
-+	/* Perform the staging process while within the retry limit */
-+	while (!staging_is_complete(&ss)) {
-+		/* Send a chunk of microcode each time: */
-+		err = send_data_chunk(&ss, ucode_patch_late);
-+		if (err)
-+			break;
-+		/*
-+		 * Then, ask the hardware which piece of the image it
-+		 * needs next. The same piece may be sent more than once.
-+		 */
-+		err = fetch_next_offset(&ss);
-+		if (err)
-+			break;
-+	}
-+
-+	iounmap(ss.mmio_base);
+-	pr_debug_once("Staging mailbox loading code needs to be implemented.\n");
+-	ss->state = UCODE_ERROR;
+-	return -EPROTONOSUPPORT;
++	u32 *src_chunk = ucode_ptr + ss->offset;
++	u16 mbox_size;
 +
 +	/*
-+	 * The helpers update ss.state on error. The final state is
-+	 * returned to the caller.
++	 * Write a 'request' mailbox object in this order:
++	 *  1. Mailbox header includes total size
++	 *  2. Command header specifies the load operation
++	 *  3. Data section contains a microcode chunk
++	 *
++	 * Thus, the mailbox size is two headers plus the chunk size.
 +	 */
-+	return ss.state;
++	mbox_size = MBOX_HEADER_SIZE * 2 + ss->chunk_size;
++	write_mbox_header(ss->mmio_base, MBOX_HEADER(mbox_size));
++	write_mbox_header(ss->mmio_base, MBOX_CMD_LOAD);
++	write_mbox_data(ss->mmio_base, src_chunk, ss->chunk_size);
++	ss->bytes_sent += ss->chunk_size;
++
++	/* Notify the hardware that the mailbox is ready for processing. */
++	writel(MASK_MBOX_CTRL_GO, ss->mmio_base + MBOX_CONTROL_OFFSET);
++
++	return wait_for_transaction(ss);
  }
  
- static void stage_microcode(void)
+ /*
+@@ -412,9 +542,51 @@ static int send_data_chunk(struct staging_state *ss, void *ucode_ptr __maybe_unu
+  */
+ static int fetch_next_offset(struct staging_state *ss)
+ {
+-	pr_debug_once("Staging mailbox response handling code needs to be implemented.\n\n");
++	const u64 expected_header = MBOX_HEADER(MBOX_HEADER_SIZE + MBOX_RESPONSE_SIZE);
++	u32 offset, status;
++	u64 header;
++	int err;
++
++	/*
++	 * The 'response' mailbox returns three fields, in order:
++	 *  1. Header
++	 *  2. Next offset in the microcode image
++	 *  3. Status flags
++	 */
++	header = read_mbox_header(ss->mmio_base);
++	offset = read_mbox_dword(ss->mmio_base);
++	status = read_mbox_dword(ss->mmio_base);
++
++	/* All valid responses must start with the expected header. */
++	if (header != expected_header) {
++		pr_err_once("staging: invalid response header\n");
++		err = -EINVAL;
++		goto err_out;
++	}
++
++	/*
++	 * Verify the offset: If not at the end marker, it must not
++	 * exceed the microcode image length
++	 */
++	if (!is_end_offset(offset) && offset > ss->ucode_len) {
++		pr_err_once("staging: invalid response offset\n");
++		err = -EINVAL;
++		goto err_out;
++	}
++
++	/* Hardware may report errors explicitly in the status field */
++	if (status & MASK_MBOX_RESP_ERROR) {
++		err = -EPROTO;
++		goto err_out;
++	}
++
++	ss->offset = offset;
++	ss->state  = UCODE_OK;
++	return 0;
++
++err_out:
+ 	ss->state = UCODE_ERROR;
+-	return -EPROTONOSUPPORT;
++	return err;
+ }
+ 
+ /*
 -- 
 2.48.1
 
