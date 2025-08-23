@@ -1,337 +1,164 @@
-Return-Path: <linux-kernel+bounces-782914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC5EB326DC
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 06:41:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B6D6B326DD
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 06:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63B6A5C8217
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 04:41:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EFBF7AB5E9
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 04:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E00202F70;
-	Sat, 23 Aug 2025 04:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8411F0E3E;
+	Sat, 23 Aug 2025 04:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="roeSj/PA"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IgT8iM9x"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184CA54791
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 04:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FE01C8621
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 04:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755924085; cv=none; b=VPn2iWlGU0/++FlCER45m8hfGz95SEB6m6PCjQDs5HND5IBTzEFNaRoDWJaQmEkqMm79+cWJhD2DeKvyiFB2PqKY/PbmBLmzKgj6uqSyq0EZMx5cftCexg0LoUDCmOtWumHRdCm3cZeH6Eh/9LKSDnmYJqBv+JkcWFX3qDfkRDU=
+	t=1755924512; cv=none; b=DLtou9dQyS4naVopWmSX+DWlbnlndK/z0tsyQ+ccNxNl5G47tvoxHutAf0MDPMmmko5z5QneKpiHckDsNI51THoOiQI/D5Myfrh58CPE4VzUwlE+RK47E/uUhPKJhsMRy3IH6OkZAAfgo+xyzFcmH2t1gR5kF9OlpMpnmvdYJ2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755924085; c=relaxed/simple;
-	bh=geH/2/dEmefYTs8LsKskD5hMbxIdV69fdN0JKHDYKzY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MggAUBWuB6+KNrPlG6O3CSblQ8YVEtMSlK3Qpbp4wyDhTcoV4siHvy2X0IVYG5zlqaKkdE8GzcFLKwD/JKUKRqTBtDyWffQsd6MnciciVrWacoPIoQiqXUqj+A9OQG6pZDlxGLomwi+CSqtKMgzzGRMHKhjkaMTGKW9cOu9TYpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=roeSj/PA; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57N4egak864535;
-	Fri, 22 Aug 2025 23:40:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755924042;
-	bh=KKZnIH6gv75VfTKwVgLDkiUmzBQdoIwEj6j1RUMmWgE=;
-	h=From:To:Subject:Date;
-	b=roeSj/PAelxQ4ZiI6ElMnIvvFPyWeag5Fx/u9ZXSSxZzj5F+mup4TrlJY8cpa561x
-	 SRwzykAOnhTxQKEt73KY7WPHHd0MgP1uJUAkxiqzxaiuNtgCmXj+YucIdyvm4NMRZN
-	 p7nyk0PbdZJhaT2tksKY8ZMi7JrVM/Bqns8RZsFU=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57N4ef6t3407323
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 22 Aug 2025 23:40:42 -0500
-Received: from DLEE204.ent.ti.com (157.170.170.84) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 22
- Aug 2025 23:40:42 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE204.ent.ti.com
- (157.170.170.84) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.1748.24; Fri, 22 Aug
- 2025 23:40:41 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 22 Aug 2025 23:40:41 -0500
-Received: from uda0513920.dhcp.ti.com (uda0513920.dhcp.ti.com [10.24.68.114])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57N4eYoe357347;
-	Fri, 22 Aug 2025 23:40:35 -0500
-From: vishnu singh <v-singh1@ti.com>
-To: <mark.rutland@arm.com>, <maz@kernel.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <jstultz@google.com>, <sboyd@kernel.org>,
-        <akpm@linux-foundation.org>, <chenhuacai@kernel.org>,
-        <pmladek@suse.com>, <agordeev@linux.ibm.com>, <bigeasy@linutronix.de>,
-        <urezki@gmail.com>, <Llillian@star-ark.net>, <francesco@valla.it>,
-        <guoweikang.kernel@gmail.com>, <alexander.shishkin@linux.intel.com>,
-        <rrangel@chromium.org>, <kpsingh@kernel.org>,
-        <anna-maria@linutronix.de>, <mingo@kernel.org>, <frederic@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [RFC PATCH] time: introduce BOOT_TIME_TRACKER and minimal boot timestamp
-Date: Sat, 23 Aug 2025 10:10:34 +0530
-Message-ID: <20250823044034.189939-1-v-singh1@ti.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755924512; c=relaxed/simple;
+	bh=YTygal563vIa8BBT4fhes3EZZbMXyy3wCtNeW8Kh1Pc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TQzgaKgAuKD5Z1IdZynbp7rghjbeOPrcuCq/hbxW1+DuCJj1i1yF1Svmv88RM5cgqx4XJu4t3y+ITtNAHXGY/Q0qpoCd6Y48HrBgrxWLQ0JEcVvszQXzdSxjXONimKDl2qWnhgKgwQ6WTEqja8ZCrHkdKX30hQXHuVHuYdycYyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IgT8iM9x; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f79735e1-1625-4746-98ce-a3c40123c5af@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755924507;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/rx1zRUogywbxWLbR+OhpeeJ+9zD0zkYG0vUZZmhs38=;
+	b=IgT8iM9xBhNEdSP3/oO4BB+/GQhKvP1SlCFJ0EgX/4qLk0DkPQpC9lrNkz1U/Jjk58TXYd
+	0TndKED8dRkL2id8BmXfD9ADsQhrlyYvdYzh1f4YdlQtmYMcKH5e1C3LEXtLHT3BW+0b6o
+	YD4ckqV2M3lxG3qejP/YBcdE96vpvPk=
+Date: Sat, 23 Aug 2025 12:47:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v5 2/3] hung_task: show the blocker task if the task is
+ hung on semaphore
+Content-Language: en-US
+To: Finn Thain <fthain@linux-m68k.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, mhiramat@kernel.org
+Cc: akpm@linux-foundation.org, will@kernel.org, peterz@infradead.org,
+ mingo@redhat.com, longman@redhat.com, anna.schumaker@oracle.com,
+ boqun.feng@gmail.com, joel.granados@kernel.org, kent.overstreet@linux.dev,
+ leonylgao@tencent.com, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+ tfiga@chromium.org, amaindex@outlook.com, jstultz@google.com,
+ Mingzhe Yang <mingzhe.yang@ly.com>, Eero Tamminen <oak@helsinkinet.fi>,
+ linux-m68k <linux-m68k@lists.linux-m68k.org>,
+ Lance Yang <ioworker0@gmail.com>, senozhatsky@chromium.org
+References: <20250414145945.84916-1-ioworker0@gmail.com>
+ <20250414145945.84916-3-ioworker0@gmail.com>
+ <CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com>
+ <da53a828-137a-4efc-a192-a2b49a06d050@linux.dev>
+ <CAMuHMdVTBSq2D+-rzGTr+Fz52sDFeeApUcG=LdDYBO5sY+rQxQ@mail.gmail.com>
+ <d0fe3163-32d9-4d81-81bb-d964f2f43f17@linux.dev>
+ <6ec95c3f-365b-e352-301b-94ab3d8af73c@linux-m68k.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <6ec95c3f-365b-e352-301b-94ab3d8af73c@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-Migadu-Flow: FLOW_OUT
 
-From: Vishnu Singh <v-singh1@ti.com>
+Hi Finn,
 
-Part of BOOT SIG Initiative, This patch adds a tiny,opt-in facility to
-help measure kernel boot duration without full tracing:
+On 2025/8/23 08:27, Finn Thain wrote:
+> 
+> On Sat, 23 Aug 2025, Lance Yang wrote:
+> 
+>>>
+>>> include/linux/hung_task.h-/*
+>>> include/linux/hung_task.h- * @blocker: Combines lock address and blocking type.
+>>> include/linux/hung_task.h- *
+>>> include/linux/hung_task.h- * Since lock pointers are at least 4-byte aligned(32-bit) or 8-byte
+>>> include/linux/hung_task.h- * aligned(64-bit). This leaves the 2 least bits (LSBs) of the pointer
+>>> include/linux/hung_task.h- * always zero. So we can use these bits to encode the specific blocking
+>>> include/linux/hung_task.h- * type.
+>>> include/linux/hung_task.h- *
+> 
+> That comment was introduced in commit e711faaafbe5 ("hung_task: replace
+> blocker_mutex with encoded blocker"). It's wrong and should be fixed.
 
-New CONFIG_BOOT_TIME_TRACKER in kernel/time/Kconfig.
-When enabled, the kernel logs two boot markers:
-    1. kernel entry in start_kernel()
-    2. first userspace start in kernel_init() before run_init_process()
+Right, the problematic assumption was introduced in that commit ;)
 
-These markers are intended for post-boot parsers to compute coarse
-kernel boot time and to merge with bootloader/MCU/DSP records into
-a unified timeline.
+> 
+>>> include/linux/hung_task.h- * Type encoding:
+>>> include/linux/hung_task.h- * 00 - Blocked on mutex
+>>>    (BLOCKER_TYPE_MUTEX)
+>>> include/linux/hung_task.h- * 01 - Blocked on semaphore
+>>>    (BLOCKER_TYPE_SEM)
+>>> include/linux/hung_task.h- * 10 - Blocked on rw-semaphore as READER
+>>>    (BLOCKER_TYPE_RWSEM_READER)
+>>> include/linux/hung_task.h- * 11 - Blocked on rw-semaphore as WRITER
+>>>    (BLOCKER_TYPE_RWSEM_WRITER)
+>>> include/linux/hung_task.h- */
+>>> include/linux/hung_task.h-#define BLOCKER_TYPE_MUTEX            0x00UL
+>>> include/linux/hung_task.h-#define BLOCKER_TYPE_SEM              0x01UL
+>>> include/linux/hung_task.h-#define BLOCKER_TYPE_RWSEM_READER     0x02UL
+>>> include/linux/hung_task.h-#define BLOCKER_TYPE_RWSEM_WRITER     0x03UL
+>>> include/linux/hung_task.h-
+>>> include/linux/hung_task.h:#define BLOCKER_TYPE_MASK             0x03UL
+>>>
+>>> On m68k, the minimum alignment of int and larger is 2 bytes.
+>>
+>> Ah, thanks, that's good to know! It clearly explains why the
+>> WARN_ON_ONCE() is triggering.
+>>
+>>> If you want to use the lowest 2 bits of a pointer for your own use,
+>>> you must make sure data is sufficiently aligned.
+>>
+>> You're right. Apparently I missed that :(
+>>
+>> I'm wondering if there's a way to check an architecture's minimum
+>> alignment at compile-time. If so, we could disable this feature on
+>> architectures that don't guarantee 4-byte alignment.
+>>
+> 
+> As Geert says, the compiler can give you all the bits you need, so you
+> won't have to contort your algorithm to fit whatever free bits happen to
+> be available. Please see for example, commit 258a980d1ec2 ("net: dst:
+> Force 4-byte alignment of dst_metrics").
 
-Core helper u64 boot_time_now() in kernel/time/boot_time_now.c,
-exporting a counter‑derived timestamp via small per-arch primitives.
-This series includes an initial arm64 primitive that uses CNTVCT_EL0
-as the source, other architectures can wire up equivalents.
+Yes, thanks, it's a helpful example!
 
-Files touched:
-kernel/time/Kconfig, kernel/time/Makefile
-kernel/time/boot_time_now.c (new core helper)
-arch/arm64/include/asm/boot_time_primitives.h (arm64 primitive)
-include/linux/boot_time_now.h (public API + IDs)
-init/main.c (print two markers)
+I see your point that explicitly enforcing alignment is a very clean
+solution for the lock structures supported by the blocker tracking
+mechanism.
 
-This complements U-Boot’s stashed bootstage records so a userspace tool
-can build a system-wide boot timeline across SPL, U-Boot, kernel and other
-subsystems.
+However, I'm thinking about the "principle of minimal impact" here.
+Forcing alignment on the core lock types themselves — like struct
+semaphore — feels like a broad change to fix an issue that's local to the
+hung task detector :)
 
-Reference boot-time parser utility:
-     https://github.com/v-singh1/boot-time-parser
+> 
+>> If not, the fallback is to adjust the runtime checks.
+>>
+> 
+> That would be a solution to a different problem.
 
-Sample boot time report:
-+--------------------------------------------------------------------+
-                 am62xx-evm Boot Time Report
-+--------------------------------------------------------------------+
-Device Power On         : 0 ms
-SPL Time                : 843 ms
-U-Boot Time             : 2173 ms
-Kernel handoff time     : 462 ms
-Kernel Time             : 2522 ms
-Total Boot Time         : 6000 ms
-+--------------------------------------------------------------------+
+For that reason, I would prefer to simply adjust the runtime checks within
+the hung task detector. It feels like a more generic and self-contained
+solution. It works out-of-the-box for the majority of architectures and
+provides a safe fallback for those that aren't.
 
-+--------------------------------------------------------------------+
-                 Bootloader and Kernel Boot Records
-+--------------------------------------------------------------------+
-BOOTSTAGE_AWAKE                =      0 ms (+  0 ms)
-BOOTSTAGE_START_UBOOT_F        =    843 ms (+  0 ms)
-BOOTSTAGE_ACCUM_DM_F           =    843 ms (+  0 ms)
-BOOTSTAGE_START_UBOOT_R        =   1951 ms (+1108 ms)
-BOOTSTAGE_ACCUM_DM_R           =   1951 ms (+  0 ms)
-BOOTSTAGE_NET_ETH_START        =   2032 ms (+ 81 ms)
-BOOTSTAGE_NET_ETH_INIT         =   2053 ms (+ 21 ms)
-BOOTSTAGE_MAIN_LOOP            =   2055 ms (+  2 ms)
-BOOTSTAGE_START_MCU            =   2661 ms (+606 ms)
-BOOTSTAGE_BOOTM_START          =   2959 ms (+298 ms)
-BOOTSTAGE_RUN_OS               =   3016 ms (+ 57 ms)
-BOOTSTAGE_BOOTM_HANDOFF        =   3016 ms (+  0 ms)
-BOOTSTAGE_KERNEL_START         =   3478 ms (+462 ms)
-BOOTSTAGE_KERNEL_END           =   6000 ms (+2522 ms)
-+--------------------------------------------------------------------+
+Happy to hear what you and others think about this trade-off. Perhaps
+there's a perspective I'm missing ;)
 
-+--------------------------------------------------------------------+
-                 MCU Boot Records
-+--------------------------------------------------------------------+
-MCU_AWAKE                      =   2661 ms (+  0 ms)
-BOARD_PERIPHERALS_INIT         =   2661 ms (+  0 ms)
-MAIN_TASK_CREATE               =   2661 ms (+  0 ms)
-FIRST_TASK                     =   2662 ms (+  1 ms)
-DRIVERS_OPEN                   =   2662 ms (+  0 ms)
-BOARD_DRIVERS_OPEN             =   2662 ms (+  0 ms)
-IPC_SYNC_FOR_LINUX             =   6636 ms (+3974 ms)
-IPC_REGISTER_CLIENT            =   6636 ms (+  0 ms)
-IPC_SUSPEND_TASK               =   6636 ms (+  0 ms)
-IPC_RECEIVE_TASK               =   6636 ms (+  0 ms)
-IPC_SYNC_ALL                   =   6787 ms (+151 ms)
-+--------------------------------------------------------------------+
-
-Signed-off-by: Vishnu Singh <v-singh1@ti.com>
----
- MAINTAINERS                                   |  3 +++
- arch/arm64/include/asm/boot_time_primitives.h | 14 ++++++++++++++
- include/linux/boot_time_now.h                 | 16 ++++++++++++++++
- init/main.c                                   | 13 +++++++++++++
- kernel/time/Kconfig                           | 10 ++++++++++
- kernel/time/Makefile                          |  1 +
- kernel/time/boot_time_now.c                   | 13 +++++++++++++
- 7 files changed, 70 insertions(+)
- create mode 100644 arch/arm64/include/asm/boot_time_primitives.h
- create mode 100644 include/linux/boot_time_now.h
- create mode 100644 kernel/time/boot_time_now.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e913c1edd1fd..e5273b338814 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1994,6 +1994,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- F:	arch/arm/include/asm/arch_timer.h
- F:	arch/arm64/include/asm/arch_timer.h
-+F:	arch/arm64/include/asm/boot_time_primitives.h
- F:	drivers/clocksource/arm_arch_timer.c
- F:	drivers/clocksource/arm_arch_timer_mmio.c
- 
-@@ -25466,6 +25467,7 @@ R:	Stephen Boyd <sboyd@kernel.org>
- L:	linux-kernel@vger.kernel.org
- S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
-+F:	include/linux/boot_time_now.h
- F:	include/linux/clocksource.h
- F:	include/linux/time.h
- F:	include/linux/timekeeper_internal.h
-@@ -25474,6 +25476,7 @@ F:	include/linux/timex.h
- F:	include/uapi/linux/time.h
- F:	include/uapi/linux/timex.h
- F:	kernel/time/alarmtimer.c
-+F:	kernel/time/boot_time_now.c
- F:	kernel/time/clocksource*
- F:	kernel/time/ntp*
- F:	kernel/time/time.c
-diff --git a/arch/arm64/include/asm/boot_time_primitives.h b/arch/arm64/include/asm/boot_time_primitives.h
-new file mode 100644
-index 000000000000..9bbbd500a95d
---- /dev/null
-+++ b/arch/arm64/include/asm/boot_time_primitives.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __ASM_BOOT_TIME_PRIMITIVES_H
-+#define __ASM_BOOT_TIME_PRIMITIVES_H
-+
-+#include <asm/arch_timer.h>
-+#include <linux/math64.h>
-+
-+static inline u64 arch_boot_counter_now(void)
-+{
-+	return ((arch_timer_read_cntvct_el0() * 1000000) / arch_timer_get_cntfrq());
-+}
-+
-+#endif
-diff --git a/include/linux/boot_time_now.h b/include/linux/boot_time_now.h
-new file mode 100644
-index 000000000000..a18a1809057f
---- /dev/null
-+++ b/include/linux/boot_time_now.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef _LINUX_BOOT_TRACKER_H
-+#define _LINUX_BOOT_TRACKER_H
-+
-+#include <linux/types.h>
-+
-+enum kernel_bootstage_id {
-+	BOOTSTAGE_ID_KERNEL_START = 300,
-+	BOOTSTAGE_ID_KERNEL_END = 301,
-+};
-+
-+/* Return boot time in nanoseconds using hardware counter */
-+u64 boot_time_now(void);
-+
-+#endif
-diff --git a/init/main.c b/init/main.c
-index 9b5150166bcf..76eb8098ab20 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -115,6 +115,10 @@
- 
- #include <kunit/test.h>
- 
-+#ifdef CONFIG_BOOT_TIME_TRACKER
-+#include <linux/boot_time_now.h>
-+#endif
-+
- static int kernel_init(void *);
- 
- /*
-@@ -929,6 +933,11 @@ void start_kernel(void)
- 	page_address_init();
- 	pr_notice("%s", linux_banner);
- 	setup_arch(&command_line);
-+
-+#ifdef CONFIG_BOOT_TIME_TRACKER
-+	pr_info("[BOOT TRACKER] - ID:%d, %s = %llu\n",
-+		BOOTSTAGE_ID_KERNEL_START, __func__, boot_time_now());
-+#endif
- 	/* Static keys and static calls are needed by LSMs */
- 	jump_label_init();
- 	static_call_init();
-@@ -1503,6 +1512,10 @@ static int __ref kernel_init(void *unused)
- 
- 	do_sysctl_args();
- 
-+#ifdef CONFIG_BOOT_TIME_TRACKER
-+	pr_info("[BOOT TRACKER] - ID:%d, %s = %llu\n",
-+		BOOTSTAGE_ID_KERNEL_END, __func__, boot_time_now());
-+#endif
- 	if (ramdisk_execute_command) {
- 		ret = run_init_process(ramdisk_execute_command);
- 		if (!ret)
-diff --git a/kernel/time/Kconfig b/kernel/time/Kconfig
-index 7c6a52f7836c..aadfd66d5d69 100644
---- a/kernel/time/Kconfig
-+++ b/kernel/time/Kconfig
-@@ -221,4 +221,14 @@ config POSIX_AUX_CLOCKS
- 	  and other clock domains, which are not correlated to the TAI/NTP
- 	  notion of time.
- 
-+config BOOT_TIME_TRACKER
-+	bool "boot time tracking support"
-+	help
-+	  Prints boot timestamps at the beginning of the kernel and when the
-+	  first user-space process is launched. This helps measure basic
-+	  boot latency for embedded and multi-core systems.
-+
-+	  The messages appear using printk and can be parsed by boot
-+	  instrumentation tools or console logs.
-+
- endmenu
-diff --git a/kernel/time/Makefile b/kernel/time/Makefile
-index e6e9b85d4db5..f7c115a385bb 100644
---- a/kernel/time/Makefile
-+++ b/kernel/time/Makefile
-@@ -32,3 +32,4 @@ obj-$(CONFIG_TEST_UDELAY)			+= test_udelay.o
- obj-$(CONFIG_TIME_NS)				+= namespace.o
- obj-$(CONFIG_TEST_CLOCKSOURCE_WATCHDOG)		+= clocksource-wdtest.o
- obj-$(CONFIG_TIME_KUNIT_TEST)			+= time_test.o
-+obj-$(CONFIG_BOOT_TIME_TRACKER) 		+= boot_time_now.o
-diff --git a/kernel/time/boot_time_now.c b/kernel/time/boot_time_now.c
-new file mode 100644
-index 000000000000..6dc12d454be0
---- /dev/null
-+++ b/kernel/time/boot_time_now.c
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: LGPL-2.0
-+
-+#include <linux/boot_time_now.h>
-+#include <asm/boot_time_primitives.h>
-+
-+u64 boot_time_now(void)
-+{
-+	return arch_boot_counter_now();
-+}
-+EXPORT_SYMBOL_GPL(boot_time_now);
-+
-+MODULE_DESCRIPTION("boot time tracker");
-+MODULE_LICENSE("GPL");
--- 
-2.50.1
-
+Thanks,
+Lance
 
