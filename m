@@ -1,150 +1,155 @@
-Return-Path: <linux-kernel+bounces-782974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6BC1B327DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 11:02:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE662B327E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 11:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 149A91C22241
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 09:00:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCFC45C887E
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 09:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8808D22B8B0;
-	Sat, 23 Aug 2025 09:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C58923C8D5;
+	Sat, 23 Aug 2025 09:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iYOgm18d"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eqD2vk/h"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FA123D7D6
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 09:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEE71A9FB9;
+	Sat, 23 Aug 2025 09:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755939621; cv=none; b=a2lDo30eAKVSjNnvHEGhLBmnBZsorAe2UpnFmNVUsraTTA4NCxGQ22n8MwSMbcFz9/YM4yDBzEZeSxiqT2r5jDw3rLyWQTnxMBSwKccTkEvWv2zp6UK285IKSlfpTDnWmBL+NMQNuOkd1jKjE/7zC+CnWLZ4az85/d17xWwBmFE=
+	t=1755939997; cv=none; b=DApuELP5C0XJj6BrwsKw2/lTIBeXzQ6PPl50jMa1/8TKIeciYo+x8/yYDMWspPxRzMZ6zLj4dWBZxIb0PihYEwjSNX8s4I0HamdRUJKxpdeftqOsePa3PwdEXHbUWmiqrECk3Tntfd6EzvrPbtnVpstBhycqhZ0n9zEaDwe9Yyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755939621; c=relaxed/simple;
-	bh=FudAgAKSc+eWc2hWehqLWzQsASEKKgo0Nzb21vtErnQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kHJkH61jFb4NDacr9mj9+ww1ociuHnkIMXQ7X3SzmUHorSnj4uFLbtFudCaPJEz+b0VR1dydxwDGKlYN9v24/m2SyhOoFxIy0ZKcgX2vMcQ9qksmDArweEcgha1wRzZoNPGHCFJity/CLNBmy6MyXGUjMTfwNqEZ4ZhKJVi0rk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iYOgm18d; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb7aecf92so49471866b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 02:00:19 -0700 (PDT)
+	s=arc-20240116; t=1755939997; c=relaxed/simple;
+	bh=qYHz7RGWqHQbMsXb55U+KPH+NaSz1JOHrq0bnpnBaHk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hYvDBrxK4QP7tPqROH+qjtdjuFDZ+OD5gTne96F9zODAPoJKXtMJlfBBGn2Ba/PAKzBpESWY+vbgFJ5duPsYA3RiMZIGQD8Fczb4ABewBCcFWOWm51uXSmczOLDhxxGdFDdqmuwrEHkE55w6h/M+CpkJbV4cvtMbUqy5H/HrelY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eqD2vk/h; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb78fb04cso383182166b.1;
+        Sat, 23 Aug 2025 02:06:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755939618; x=1756544418; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=FudAgAKSc+eWc2hWehqLWzQsASEKKgo0Nzb21vtErnQ=;
-        b=iYOgm18dIxJnejFqrAZw1FyzuU4Vk5UU07A/k30atGiZcwPsHrJ9nVlypFUW0jPs1n
-         KfFU5tF/Zzi0+VLy9NF08WaDYwK1plCWKyPcZdOaUSErvdXOrMuGyArVV3VF9rs2/uwn
-         mhzjkPkENP6G2E2SeYEY5Ey6TKSTx4KXs6Fx5Av79W54xLuF2rutD2HuTRKEt1dx4gMO
-         x4fdFV7XF3lqWNj/KVKGlW1ydSI/8PhjuTc2E+F7GtsLRsc8gYpR2CXdwLBZFTZZzkiy
-         FTbswGOsnGf4mbmdg7NRk84Uo8gTYZTJiNfuJ5iSmi0dIDukeIuCyc8pq2IieN87YFRQ
-         /qhQ==
+        d=gmail.com; s=20230601; t=1755939994; x=1756544794; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FmJmWx0DAk+hGzcYT5+wTZzSsQqxJwu6ekfF9Qdad9A=;
+        b=eqD2vk/hnct2ydtwwLo6vi9yEiAdmXqtP98ANXtqf7h9enzPEOz307SDlFI8tsDgWS
+         q9EPZ+vT7wDY8X4s18kQnumRZEuXkSxM1v7BTSq8KViXSHMKNP6RDMn9+kmdWmjoEwGX
+         sdptWHnoFgcG1F54yTpfiDWfW/rs2NGs+33x571q3Ufqutvv9FM19PSrEEyhWVqRk22n
+         Ub6ZrjcF+0ZTqTnmyWLSvO288N5oY5AjMyeY1KNzKeljGjzEWcwjzmc8CotgRFwRRA4r
+         tmzRD4iF1UGE4Nh4b03KVnOJKeqCiuWUpAU5vGUdRZ7D4trDRCv4lTjU5oyicOYnQt89
+         4sxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755939618; x=1756544418;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1755939994; x=1756544794;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FudAgAKSc+eWc2hWehqLWzQsASEKKgo0Nzb21vtErnQ=;
-        b=YOjd4z9dzt2At92BfbCBnYnyHxmLy39LZq0PQdERpWsRdDrE9n0w3jYPbLI/Jtkojk
-         n5TtCv6KrBUdnvhpkDqwKg0UWQClfHMew+YF6zdWwLLFyEOyw1YlS9HhsnHXo7hfaGIh
-         uisjqc/2SGxEt1AkrhMini3NLCuEhHkcayR7HUgDInw8KbKpDcu/CIpjeTHyBev0kKfe
-         wSazJg5NQ6miVZ4JVhfjPGsVwrRXn7V0DUnxas98twakzZCCULQffP5TTJFie+zppdHx
-         FYvC2n3z+0KL4jjDZw6RQSJJo3Y8UBiGa5qahh2Pbu+CluyInHf9uIJLbz2cNvccdA0T
-         p3nA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsxDxWtZQcmK426tEDE8mD4EgzSa0Xn++47KjajHlPgn11gO08AWMQbFxn0NGkHZyVuukur4Yg3v87ueA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzvj563dEr67tisrr1e+cfq0EyTcqToG6hR0MYj1VGZJsuaX16u
-	2M6x98LYN5gjL5K4qez77gvI1avcJmLDVCOvnYUeH49mjB5TOX11daUuCGByClrdyvQ=
-X-Gm-Gg: ASbGncuO/584vfrq+ATRpej2v/+xfXINnVj4mxr1E9SAOinoSn079/ulIj87CJUXt72
-	ntLDbuJdxyhFp2FzZEUORQJj2WgToWjtSmvhbh7aUjJjwSSGYe/1Iol8vVwqhOddzq1UPeYncri
-	hsfLGSPvq2UHzUNBXbqyQ4XU0gUJrVpgNaQPd3VHyD+qC/zBx57sQVPMdaCPQfPSOTWdevzjcDV
-	1fA/1ybKUvSvi9lZx5/jJjdlTbsZHh6TpS/cxfE/efNfdBSRWYS42MKAxKUhWzIt2bWBMwOMKgB
-	jJttqVWzV0WtUrVY+Gz3w79vUFUxYAtrdGarE36HeZq9jZSz5kbMBXxi+UzKZ1VzQzAIsOBnLey
-	l7OkVQNAnTfxbhno/xP0Gy3gS0Rz8S4a6G68yY+5yXPQ=
-X-Google-Smtp-Source: AGHT+IFF6ycqlUrRBwaFvrj2Xr+Cw2HS4eO7rMsYmrCv8MGa2LJQxfuJYSOOsmb0nfzRpn4jiuGIxg==
-X-Received: by 2002:a05:6402:13c5:b0:617:b5bf:f03f with SMTP id 4fb4d7f45d1cf-61c1b4d013fmr2702207a12.4.1755939618290;
-        Sat, 23 Aug 2025 02:00:18 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c3174f6f6sm1205522a12.51.2025.08.23.02.00.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Aug 2025 02:00:17 -0700 (PDT)
-Message-ID: <a20d4a67-abef-4f97-95df-bcbeb0eb7d67@linaro.org>
-Date: Sat, 23 Aug 2025 11:00:16 +0200
+        bh=FmJmWx0DAk+hGzcYT5+wTZzSsQqxJwu6ekfF9Qdad9A=;
+        b=OFUVgUUEQoobPVwuqGM2w6yqqNBIjHQvBNoOMRdCqgBHsLsy+98Mn/X/ixt/t8m7bh
+         7m6v4tbPhcWELQleedX3jeoDbCuKj6qGf4N0uOqAiHsqZsXPPscvD8B5EwQTHMrKjSDi
+         e1bs90AvmivRRLtbICtaMjno5fFhdokIl+qQlVUC8zslTMFJl/eyjByyQmTi83zTZGMY
+         0r3aqJxrGhXSs23k5wmylUlKfUL+wQn3tDfjJXJM/9XVbRoqiH2mqU0hZ0kX95Q5rMpM
+         UaQakgw3EDYYyuSlsbXcXoWMeQM1vmJyATeoHHzLpxsSkf48yIagBxT8J4XpTl9OYg1/
+         6qqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmRPc75EHuSpVvWP5SqkxzIcQyzCzM0ac8wE3gzYO1ENl2ozYrIPycRojbO+v8+ONwIXwPoUkrlp9V0mw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyFAQoXgFE2uwVMSZJAMOj8K8Qk8iNYfrfvVaeYBU9p8EoO6La
+	co7fP9HsjU+WM259uEh64kIASM2w0f12Iq9Wk5TPWHei6clxawbp004U
+X-Gm-Gg: ASbGncvgaX82csBDrg6VfIJmWEeKijsFO0AiwCs6hnUuS/cl4nImHIkVHtEXzwpKdOA
+	66cDw05LWWGb9EyRZR75i1ThZ9yddTngDJdzZrp6QQJjAufVe4Q9/c2WIVFzUhgF757CBT9iGbY
+	GlWkU/E69qJKUVC5jFC86znKSfLaHHbYffxlQKEZe37hU57pKDwVqnCemRXiE17X2pRDxwoT7i4
+	etVKHWBjoQ1HKbVI9z7BjC+STqOykSS0oMO9Ca+cASNptkKsIlTjaVfvftD1WqpA+bax4aI/7Yz
+	v8fVWkFguK+nOR6c9eDEqDT+B9zmmqLSvJVHtNqwci03KOhBJqAlt0Xw74dGfd6QTv1aKu/Z/Dx
+	7OulyALsvOiqvIapBYbP0cGZfOMPNoNnkoaVrrw2Wt8aaJGVUnmXj09rZ10mH2e8CXbNxB2bF4W
+	CRa1l6pTsRfnsT
+X-Google-Smtp-Source: AGHT+IHthF7+Z6tDYBK7vk8ZYlfLxXUztPbzWF1S9xXsI6UVd6WbTDRlcV08HFp7HETOH8bQMU0Vng==
+X-Received: by 2002:a17:906:f584:b0:ae0:c7b4:b797 with SMTP id a640c23a62f3a-afe2963b058mr488047366b.45.1755939994195;
+        Sat, 23 Aug 2025 02:06:34 -0700 (PDT)
+Received: from localhost (dslb-002-205-018-108.002.205.pools.vodafone-ip.de. [2.205.18.108])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe49310d7csm134947566b.83.2025.08.23.02.06.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Aug 2025 02:06:33 -0700 (PDT)
+From: Jonas Gorski <jonas.gorski@gmail.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jonas Gorski <jonas.gorski@gmail.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] net: dsa: b53: fix ageing time for BCM53101
+Date: Sat, 23 Aug 2025 11:06:16 +0200
+Message-ID: <20250823090617.15329-1-jonas.gorski@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: axiado: Add missing UART aliases
-To: Harshit Shah <hshah@axiado.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250822-axiado-ax3000-missing-serial-alias-v2-1-54052d75467b@axiado.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <20250822-axiado-ax3000-missing-serial-alias-v2-1-54052d75467b@axiado.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 22/08/2025 21:15, Harshit Shah wrote:
-> Fixes: 1f7055779001 ("arm64: dts: axiado: Add initial support for AX3000 SoC and eval board")
+For some reason Broadcom decided that BCM53101 uses 0.5s increments for
+the ageing time register, but kept the field width the same [1]. Due to
+this, the actual ageing time was always half of what was configured.
 
+Fix this by adapting the limits and value calculation for BCM53101.
 
-Completely misplaced tag. Please follow submitting patches.
+[1] https://github.com/Broadcom-Network-Switching-Software/OpenMDK/blob/master/cdk/PKG/chip/bcm53101/bcm53101_a0_defs.h#L28966
 
-Best regards,
-Krzysztof
+Fixes: e39d14a760c0 ("net: dsa: b53: implement setting ageing time")
+Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+---
+Lacking matching hardware, this is only run-tested on non-matching
+(BCM53115).
+
+ drivers/net/dsa/b53/b53_common.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
+index 829b1f087e9e..b85ca17e8fdd 100644
+--- a/drivers/net/dsa/b53/b53_common.c
++++ b/drivers/net/dsa/b53/b53_common.c
+@@ -1273,9 +1273,16 @@ static int b53_setup(struct dsa_switch *ds)
+ 	 */
+ 	ds->untag_vlan_aware_bridge_pvid = true;
+ 
+-	/* Ageing time is set in seconds */
+-	ds->ageing_time_min = 1 * 1000;
+-	ds->ageing_time_max = AGE_TIME_MAX * 1000;
++
++	if (dev->chip_id == BCM53101_DEVICE_ID) {
++		/* BCM53101 uses 0.5 second increments */
++		ds->ageing_time_min = 1 * 500;
++		ds->ageing_time_max = AGE_TIME_MAX * 500;
++	} else {
++		/* Everything else uses 1 second increments */
++		ds->ageing_time_min = 1 * 1000;
++		ds->ageing_time_max = AGE_TIME_MAX * 1000;
++	}
+ 
+ 	ret = b53_reset_switch(dev);
+ 	if (ret) {
+@@ -2559,7 +2566,10 @@ int b53_set_ageing_time(struct dsa_switch *ds, unsigned int msecs)
+ 	else
+ 		reg = B53_AGING_TIME_CONTROL;
+ 
+-	atc = DIV_ROUND_CLOSEST(msecs, 1000);
++	if (dev->chip_id == BCM53101_DEVICE_ID)
++		atc = DIV_ROUND_CLOSEST(msecs, 500);
++	else
++		atc = DIV_ROUND_CLOSEST(msecs, 1000);
+ 
+ 	if (!is5325(dev) && !is5365(dev))
+ 		atc |= AGE_CHANGE;
+
+base-commit: ec79003c5f9d2c7f9576fc69b8dbda80305cbe3a
+-- 
+2.43.0
+
 
