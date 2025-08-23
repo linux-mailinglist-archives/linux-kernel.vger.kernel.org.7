@@ -1,125 +1,130 @@
-Return-Path: <linux-kernel+bounces-783077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73ECB3291D
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:24:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB83EB32920
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D609B1699C4
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:24:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B55151C8531F
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C511E0E14;
-	Sat, 23 Aug 2025 14:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB04B1E3DE5;
+	Sat, 23 Aug 2025 14:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="pb4FEzOe"
-Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="WyEtgVxm"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F221ADC7E;
-	Sat, 23 Aug 2025 14:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5801DF756;
+	Sat, 23 Aug 2025 14:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755959037; cv=none; b=T7LEQ3dfVWu3hJx5ErJDcE6tM57datWqser7toYh4v6WeobDuSVkZrPjCSHaW99Xbcyw2Wun372kThEeXkVzsZXair9tn0V1tIVEhqLT9fQ+7bnk7B+QCY/OOjmEwHeCafIQDUsgJrWzJ8d0p4xAiXZ55KdvNVF4KZ7VHVkxERA=
+	t=1755959065; cv=none; b=R6Oo+t0PWDjpXH4W9QP0PaTAuGmyT3ksFYMrJt60dXfsWjm+nWoyXKLD4wTiJA38v1UUDiADXH5WFEXvdISFp1Bq96jpd4oXqi4LUFc9Xb78gManIXSixUK85z/gUPIXzD4Vqz3CoCKSwZxJBSb4g6gIuhGrTI87n8HpVr6YBtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755959037; c=relaxed/simple;
-	bh=R34OGeCiu/IPda8je9GL6U6dsszdH++pAXr6iT4gB6Y=;
+	s=arc-20240116; t=1755959065; c=relaxed/simple;
+	bh=d4KRSvpm6IFTz3lYPyYZ6DVLrPoMUFcpAfLIPktkdVs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=urJ/RDuQ95G5EeiCInk8ONAi9+25kaiwURvBS6V2MV1fhxGa0nh+N6eHSnuYyNK+hNtUG64BMmxerX+mDbQ2Ka7XLlIm7d2Ef0eeCYQc3ndVGv2tm5AFu5pEthDQ2VY0mfILxX0T/PipwrU8PIt0Uz82YzyIpzk05jPogUOu1Ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=pb4FEzOe; arc=none smtp.client-ip=195.181.215.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
-	t=1755959033; bh=R34OGeCiu/IPda8je9GL6U6dsszdH++pAXr6iT4gB6Y=;
-	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
-	b=pb4FEzOeilNegfspE7/aewKwoiawHbo+Rf4DUXKz6hPTbgJ5iP5IvIsBtQlva0cP4
-	 BEklA73ynyazlNcuhkeeoh/HA0zAP+HAOkkqtDHDygeE/68qm/xSQI/4qKXJaM0g97
-	 MIjPIl1kOMgfbtfndoKDGtlxVpcHR3FtHBmlN8ro=
-Date: Sat, 23 Aug 2025 16:23:52 +0200
-From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-To: maud_spierings@hotmail.com
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] arm64: dts: rockchip: Enable HDMI receiver on
- orangepi 5 plus
-Message-ID: <wc4mcm5nywfrzafexagun4kaw3hzb3avtunh4idg22ctuz6r2h@xjgqo6ihiyey>
-Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
-	maud_spierings@hotmail.com, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
-References: <20250823-orangepi5-v1-0-ae77dd0e06d7@hotmail.com>
- <20250823-orangepi5-v1-2-ae77dd0e06d7@hotmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ddtv4M4HidVLcw4qhGt35M791TNNZr77CVhuis+/KwOIbyY2r0SquOmsj4T/NBrpEvmnQqX6cGhHA0i9f+TRgxzg6mQiu60labsjDXaBlezIU/YEIs4VVcS6lvzzOI5NY3ewON4FTRox5ew1qfLHMiYaJ2ct56pALCmOvYogGrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=WyEtgVxm; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=9jD+xDE70g8iGy1GF2aioLLMzeI9ldwxuhRXoKaVxYo=; b=WyEtgVxmgm9N6EtHKhv/I2E+H8
+	vtJ2uWdMrDGWlypDSgz+uWqfOqWDgBM9uwFCKhUUARN/ILf2+hkphUXUdgKfrC6JwrSqUn9tjh1X7
+	rf2QwzWtzrzVDsh/PFr352KUUi7COPQUXHsKVEhBiABmowxvQNkG6sSFnPelICGL7M04flEEBBNpf
+	PQmJEztkfGh9SA2IjCsQaJHFeTDz3UYw8zi9Pf2DxSsTg19J3AU914gNp2o4nkQT3dbEuwU6GZoPj
+	D4jYD4qcoQAzR08lEAA+rdnb0C079Z+x/b5LZQUr9CpDpczkHl2AAM8v0AnvEAfZY2Jy4pJ/fWzF6
+	Sq87tjwQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43170)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uppA5-000000004ok-1hdC;
+	Sat, 23 Aug 2025 15:24:05 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uppA1-000000003A4-2Sji;
+	Sat, 23 Aug 2025 15:24:01 +0100
+Date: Sat, 23 Aug 2025 15:24:01 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Josua Mayer <josua@solid-run.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC net-next] net: phy: marvell: 88e1111: define gigabit
+ features
+Message-ID: <aKnPAamqRIDS-5kP@shell.armlinux.org.uk>
+References: <20250823-cisco-1g-sfp-phy-features-v1-1-3b3806b89a22@solid-run.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250823-orangepi5-v1-2-ae77dd0e06d7@hotmail.com>
+In-Reply-To: <20250823-cisco-1g-sfp-phy-features-v1-1-3b3806b89a22@solid-run.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Sat, Aug 23, 2025 at 02:43:51PM +0200, Maud Spierings via B4 Relay wrote:
-> From: Maud Spierings <maud_spierings@hotmail.com>
-> 
-> Enable support for the HDMI input port found on the orangepi 5 plus.
-> 
-> Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
+On Sat, Aug 23, 2025 at 04:03:12PM +0200, Josua Mayer wrote:
+> When connecting RJ45 SFP modules to Linux an ethernet phy is expected -
+> and probed on the i2c bus when possible. Once the PHY probed, phylink
+> populates the supported link modes for the netdev based on bmsr
+> register bits set at the time (see phy_device.c: phy_probe).
 
-Reviewed-by: Ondřej Jirman <megi@xff.cz>
+No, phy*lib* does this.
 
-Thank you,
-	o.
+> Marvell phy driver probe function only allocates memory, leaving actual
+> configuration for config_init callback.
+> This means the supported link modes of the netdev depend entirely on the
+> power-on status of the phy bmsr register.
+> 
+> Certain Cisco SFP modules such as GLC-T and GLC-TE have invalid
+> configuration at power-on: MII_M1111_HWCFG_MODE_COPPER_1000X_AN
+> This means fiber with automatic negotiation to copper. As the module
+> exhibits a physical RJ45 connector this configuration is wrong.
+> As a consequence after power-on the bmsr does not set bits for 10/100
+> modes.
+> 
+> During config_init marvell phy driver identifies the correct intended
+> MII_M1111_HWCFG_MODE_SGMII_NO_CLK which means sgmii with automatic
+> negotiation to copper, and configures the phy accordingly.
+> 
+> At this point the bmsr register correctly indicates support for 10/100
+> link modes - however the netedev supported modes bitmask is never
+> updated.
+> 
+> Hence the netdev fails to negotiate or link-up at 10/100
+> speeds, limiting to 1000 links only.
+> 
+> Explicitly define features for 88e1111 phy to ensure that all supported
+> modes are available at runtime even when phy power-on configuration was
+> invalid.
 
-> ---
->  arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-> index 8222f1fae8fadc5cbb4ef16b3db5ed975ed43915..9950d1147e129dc866cfde62ddd636b082ae1926 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-> @@ -160,6 +160,17 @@ &hdmi1_sound {
->  	status = "okay";
->  };
->  
-> +&hdmi_receiver_cma {
-> +	status = "okay";
-> +};
-> +
-> +&hdmi_receiver {
-> +	hpd-gpios = <&gpio1 RK_PC6 GPIO_ACTIVE_LOW>;
-> +	pinctrl-0 = <&hdmim1_rx_cec &hdmim1_rx_hpdin &hdmim1_rx_scl &hdmim1_rx_sda &hdmirx_hpd>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +};
-> +
->  &hdptxphy0 {
->  	status = "okay";
->  };
-> @@ -279,6 +290,12 @@ blue_led_pin: blue-led {
->  		};
->  	};
->  
-> +	hdmirx {
-> +		hdmirx_hpd: hdmirx-5v-detection {
-> +			rockchip,pins = <1 RK_PC6 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +	};
-> +
->  	ir-receiver {
->  		ir_receiver_pin: ir-receiver-pin {
->  			rockchip,pins = <4 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
-> 
-> -- 
-> 2.50.1
-> 
-> 
+So we have a PHY which changes what it's capable of depending on its
+configuration, which gives us a chicken-and-egg problem when it comes
+to working out whether a PHY (on a SFP module) can be used with a
+MAC, because it's not clear from reading its abilities what it might
+actually be capable of.
+
+So yes, I think this is the right approach for the common case - but
+if we really do have a PHY that's using 1000base-X -to- Copper mode,
+this change will be wrong.
+
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+
+Thanks!
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
