@@ -1,166 +1,206 @@
-Return-Path: <linux-kernel+bounces-782880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78D66B32650
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:55:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D37B32652
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A15A9584BA5
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:54:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB8DF189ED01
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C161EDA1E;
-	Sat, 23 Aug 2025 01:54:20 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321DC1F0E24;
+	Sat, 23 Aug 2025 01:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uc7Egc9k"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A301E9B3A;
-	Sat, 23 Aug 2025 01:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550C31E520B
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 01:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755914059; cv=none; b=Yp6U4hlzKaXRovhDP2g3cYG91SnyliL5WwTGzmLHFlk2rOGhrxsEqJ871TikRoflMVT/mJvPJ7cIyvmgCsuG5ktx/ySTo017c6p/0CTK2NbRFGFRfH5cLzcKcHHmmN5nNWtG09HX//bXjDmjXZpmG28/gLGU45F3ea3c/UvebEA=
+	t=1755914109; cv=none; b=b7eEKfJfn/0QfRMOtT0tAkM8q/Qwr2cfxAFed7Gx//YfItgC0J62kPY3ZyUxOgkzLlWRHoPHj9hYCuJdI1+1N9CsAzmjdVkxkIz8vD+zGgeaRKPVKF37seXHr2Zjd7pGbJhaTHBXQOhlopm0/piqw4DWbsPWUWw0JTrXJwihH/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755914059; c=relaxed/simple;
-	bh=DgTo2BZfWzgSjCLXwCnWeSheHL00fFzbA5pcQ7qaLMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BkoBFVwUWDXO5JEFj+iAhOmTSI9NqFXKNmWFMly+FJd+1KBknCexadxFRLthj3zCxQL51UKOIsfXg88/8U5xzuLE3q8gI4RmAHlTerYph4F2okORi/tLmW/NI1Ha/OC1NoxOWgvyhnHS/kWagHPePwXsC5FhfY58KODZt+Y+PyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c80Ty2Q0fzKHMXN;
-	Sat, 23 Aug 2025 09:54:14 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id D6A591A142F;
-	Sat, 23 Aug 2025 09:54:13 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgBn4hJDH6loiZ1xEg--.61271S3;
-	Sat, 23 Aug 2025 09:54:13 +0800 (CST)
-Message-ID: <725043ad-2d50-be78-7cc3-8c565ab364e0@huaweicloud.com>
-Date: Sat, 23 Aug 2025 09:54:11 +0800
+	s=arc-20240116; t=1755914109; c=relaxed/simple;
+	bh=Oilq80xlpQKrMrP3dOuNaR+z1TjFVmKmhc+hfCqlbXc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=hKCeZS7j7lFxrMUWpu+u597i7XRyXLhhNPKdL06uhVJoKhCvJxmxGTFmz7xQ9dxwgA9XOho9DWsOo7wRfls9FVTqPQGy52RcO4q5HyHme2A1bLS2Wop0adm7F5mZ3Wz+k3vu2yh5u1zI6UW2z4OtrCgMcxy+EYCzCMhNKIytM8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uc7Egc9k; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250823015505epoutp0364d7f35e17bc51e5f4b145699e786f65~eQpNXYF6q1373413734epoutp03e
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 01:55:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250823015505epoutp0364d7f35e17bc51e5f4b145699e786f65~eQpNXYF6q1373413734epoutp03e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755914105;
+	bh=asCGKjBvcLIXcXUvTDB/pRmft2VEgqJkRU+ozd+V3kw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=uc7Egc9knMcegX8j9Ul8mLWHa6t1jfGt6qQY2GMWWC/IRukYxrJk0iO9lvX26z0X7
+	 d2yWSk23ksCEUfCloabZ9I/u0ESTMG9ld+hUsO50JW2D5rV+7ceQy1InglVFew1i6L
+	 hTp3o5jIkBoIs2K8XljStzZIPU2NFdcHVoz9Sx0o=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250823015503epcas5p4f37cf633ec897cf5cab6117f191d17a5~eQpLZM0vF1982919829epcas5p4q;
+	Sat, 23 Aug 2025 01:55:03 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.86]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4c80Vt1xfPz6B9m6; Sat, 23 Aug
+	2025 01:55:02 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250823015501epcas5p2edc67128fded208772b700d6b811c948~eQpJfftO53272832728epcas5p2D;
+	Sat, 23 Aug 2025 01:55:01 +0000 (GMT)
+Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250823015457epsmtip1ec063c01134a62dda47169229eba2da7~eQpFx0Y6c0879208792epsmtip17;
+	Sat, 23 Aug 2025 01:54:57 +0000 (GMT)
+From: "Inbaraj E" <inbaraj.e@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <s.hauer@pengutronix.de>,
+	<shawnguo@kernel.org>, <cw00.choi@samsung.com>, <rmfrfs@gmail.com>,
+	<laurent.pinchart@ideasonboard.com>, <martink@posteo.de>,
+	<mchehab@kernel.org>, <linux-fsd@tesla.com>, <will@kernel.org>,
+	<catalin.marinas@arm.com>, <pankaj.dubey@samsung.com>,
+	<shradha.t@samsung.com>, <ravi.patel@samsung.com>
+Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
+	<linux-samsung-soc@vger.kernel.org>, <kernel@puri.sm>,
+	<kernel@pengutronix.de>, <festevam@gmail.com>,
+	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <67199625-13d2-4510-bbbd-3dd2f61c62fd@kernel.org>
+Subject: RE: [PATCH v2 10/12] dt-bindings: media: fsd: Document CSIS DMA
+ controller
+Date: Sat, 23 Aug 2025 07:24:55 +0530
+Message-ID: <00d301dc13d0$efb4ef90$cf1eceb0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2 1/3] md/raid1,raid10: don't broken array on failfast
- metadata write fails
-To: Kenta Akagi <k@mgml.me>, Song Liu <song@kernel.org>,
- Yu Kuai <yukuai3@huawei.com>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
- Guoqing Jiang <jgq516@gmail.com>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250817172710.4892-1-k@mgml.me>
- <20250817172710.4892-2-k@mgml.me>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <20250817172710.4892-2-k@mgml.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBn4hJDH6loiZ1xEg--.61271S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxGr1xuF4DJFykKF47Jr45GFg_yoW5Aw15pF
-	ZrAayDCrWqq34Dt3WUAFyxWa909r4FkrZxK34fC347urn8Wr1xKFs0ga4jqryqy34fuw1U
-	Xa98Z3y7AFyjgwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU90b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487
-	Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aV
-	AFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xF
-	o4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
-	VFxhVjvjDU0xZFpf9x07UMnQUUUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQIMxZSZAiExi2YBbREwJ7KHhpcw
+Content-Language: en-in
+X-CMS-MailID: 20250823015501epcas5p2edc67128fded208772b700d6b811c948
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250814141051epcas5p14dccee388087372973988aeebcb872cf
+References: <20250814140943.22531-1-inbaraj.e@samsung.com>
+	<CGME20250814141051epcas5p14dccee388087372973988aeebcb872cf@epcas5p1.samsung.com>
+	<20250814140943.22531-11-inbaraj.e@samsung.com>
+	<67199625-13d2-4510-bbbd-3dd2f61c62fd@kernel.org>
 
+Hi Krzysztof,
 
+Thanks for the review.
 
-在 2025/8/18 1:27, Kenta Akagi 写道:
-> A super_write IO failure with MD_FAILFAST must not cause the array
-> to fail.
 > 
-> Because a failfast bio may fail even when the rdev is not broken,
-> so IO must be retried rather than failing the array when a metadata
-> write with MD_FAILFAST fails on the last rdev.
+> On 14/08/2025 16:09, Inbaraj E wrote:
+> > Document bindings for the FSD CSIS DMA controller.
+> >
+> > Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
+> > ---
+> >  .../bindings/media/tesla,fsd-csis-media.yaml  | 74
+> > +++++++++++++++++++
 > 
-> A metadata write with MD_FAILFAST is retried after failure as
-> follows:
-> 
-> 1. In super_written, MD_SB_NEED_REWRITE is set in sb_flags.
-> 
-> 2. In md_super_wait, which is called by the function that
-> executed md_super_write and waits for completion,
-> -EAGAIN is returned because MD_SB_NEED_REWRITE is set.
-> 
-> 3. The caller of md_super_wait (such as md_update_sb)
-> receives a negative return value and then retries md_super_write.
-> 
-> 4. The md_super_write function, which is called to perform
-> the same metadata write, issues a write bio without MD_FAILFAST
-> this time.
-> 
-> When a write from super_written without MD_FAILFAST fails,
-> the array may broken, and MD_BROKEN should be set.
-> 
-> After commit 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10"),
-> calling md_error on the last rdev in RAID1/10 always sets
-> the MD_BROKEN flag on the array.
-> As a result, when failfast IO fails on the last rdev, the array
-> immediately becomes failed.
-> 
-> This commit prevents MD_BROKEN from being set when a super_write with
-> MD_FAILFAST fails on the last rdev, ensuring that the array does
-> not become failed due to failfast IO failures.
-> 
-> Failfast IO failures on any rdev except the last one are not retried
-> and are marked as Faulty immediately. This minimizes array IO latency
-> when an rdev fails.
-> 
-> Fixes: 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10")
-> Signed-off-by: Kenta Akagi <k@mgml.me>
+> Your patchset is organized in total mess. First clock, then media bindings,
+> then arm64,  then media drivers, then media bindings, then arm64... Please
+> organize it in standard way - about independent subsystems I mentioned, so
+> within media first bindings, then driver. Not intermixed.
 
+I'll update in next patchset.
 
-[...]
+> 
+> 
+> 
+> >  1 file changed, 74 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/media/tesla,fsd-csis-media.yaml
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/media/tesla,fsd-csis-media.yaml
+> > b/Documentation/devicetree/bindings/media/tesla,fsd-csis-media.yaml
+> > new file mode 100644
+> > index 000000000000..ce6c2e58ed4e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/media/tesla,fsd-csis-
+> media.yam
+> > +++ l
+> > @@ -0,0 +1,74 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> > +---
+> > +$id:
+> > +https://protect2.fireeye.com/v1/url?k=21cb70d9-4129ed84-21cafb96-
+> 000b
+> > +abd9f1ba-63c99c5193b8964e&q=1&e=f7087d49-8d33-4468-9323-
+> 67fa9fa72e40&
+> >
+> +u=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fmedia%2Ftesla%2Cfsd-
+> csis-me
+> > +dia.yaml%23
+> > +$schema:
+> > +https://protect2.fireeye.com/v1/url?k=4db8909d-2d5a0dc0-4db91bd2-
+> 000b
+> > +abd9f1ba-be3588ecc45596c1&q=1&e=f7087d49-8d33-4468-9323-
+> 67fa9fa72e40&
+> > +u=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23
+> > +
+> > +title: Tesla FSD SoC MIPI CSI-2 DMA (Bridge device) receiver
+> > +
+> > +maintainers:
+> > +  - Inbaraj E <inbaraj.e@samsung.com>
+> > +
+> > +description: |-
+> 
+> Drop |-
+> 
+> > +  The FSD MIPI CSI-2 (Camera Serial Interface 2) have internal DMA
+> > + engine to  capture frames originating from the sensor.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: tesla,fsd-csis-media
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 3
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: aclk
+> > +      - const: pclk
+> > +      - const: pll
+> > +
+> > +  iommus:
+> > +    maxItems: 1
+> > +
+> > +  port:
+> > +    $ref: /schemas/graph.yaml#/properties/port
+> 
+> Don't you need second port to CSIS block?
 
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -1746,8 +1746,12 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
->    *	- recovery is interrupted.
->    *	- &mddev->degraded is bumped.
->    *
-> - * @rdev is marked as &Faulty excluding case when array is failed and
-> - * &mddev->fail_last_dev is off.
-> + * If @rdev is marked with &FailfastIOFailure, it means that super_write
-> + * failed in failfast and will be retried, so the @mddev did not fail.
-> + *
-> + * @rdev is marked as &Faulty excluding any cases:
-> + *	- when @mddev is failed and &mddev->fail_last_dev is off
-> + *	- when @rdev is last device and &FailfastIOFailure flag is set
->    */
->   static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
->   {
-> @@ -1758,6 +1762,10 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
->   
->   	if (test_bit(In_sync, &rdev->flags) &&
->   	    (conf->raid_disks - mddev->degraded) == 1) {
-> +		if (test_bit(FailfastIOFailure, &rdev->flags)) {
-> +			spin_unlock_irqrestore(&conf->device_lock, flags);
-> +			return;
-> +		}
->   		set_bit(MD_BROKEN, &mddev->flags);
->   
->   		if (!mddev->fail_last_dev) {
+No, one port is sufficient.
+This port represent CSIS DMA and connected to CSIS (imx-mipi-csis node)
 
-At this point, users who try to fail this rdev will get a successful return
-without Faulty flag. Should we consider it?
+ I guess this one is input from the
+> sensor?
 
--- 
-Thanks,
-Nan
+No, it is input from CSIS(imx-mipi-csis).
+
+Regards,
+Inbaraj E
 
 
