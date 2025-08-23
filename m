@@ -1,91 +1,124 @@
-Return-Path: <linux-kernel+bounces-782950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB85DB32786
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 10:01:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C788B3278A
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 10:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A04894E1647
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:01:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C885E5CD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F552264C9;
-	Sat, 23 Aug 2025 08:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F87224898;
+	Sat, 23 Aug 2025 08:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yDJxjKX6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t90gH+3h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54ED91662E7
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 08:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E451A5BB1;
+	Sat, 23 Aug 2025 08:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755936066; cv=none; b=tP9492YpkibgROIuhJOQ2ZQPcM8HxWjTEz1hs1xSISAYi/AxLb2ZWPnb2+0VQFffuN1apTntRrcjriPPUbjkHjd6UujMVheoNt8VS/vUXviSwNkon1cJssJtIPaNPN5V2Rn0crxp7BqR9mjEOqkZzXX4h5ItT2snBkH2rIoAN28=
+	t=1755936263; cv=none; b=oVPWex2JuBVjm4KHdUFQZe6Nn6vEHmm4zzOcHAQ4WQpYTl8xT+gQ9JPt29NZQb0gRx2UGrcptsZ59g8TunkoyFeJbWjArcuz9RoC9qb8V6wQDHprYSj7ZMm9czNCcap6NwXDveQPqXNC8jBF76y4kwahJDfD+38qrab5M7txL3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755936066; c=relaxed/simple;
-	bh=984FHb5AOhpvcvvYgScRhcwhRLkuDooutUv6huPZH10=;
+	s=arc-20240116; t=1755936263; c=relaxed/simple;
+	bh=G+/OUbMjRjtJ1O+gXrVBKFF97ndR0d3t/eZa2Y6qmhU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W12RtARQut7cYEhc1CyNCQCpSaBSRCOER31WFbF176ZyleI6az0zbJr9LiX81ud6OqQqIsKKFGNCWc553fsJD0vZb2SeQskpKb9mQ0TiKgBSKJfE84JVprJ+Z5BvZq9aW7JxOu/t6kyXrLe65vKBOxlT3oZ2sZeeAJGSdTgUHbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yDJxjKX6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82B86C4CEE7;
-	Sat, 23 Aug 2025 08:01:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755936065;
-	bh=984FHb5AOhpvcvvYgScRhcwhRLkuDooutUv6huPZH10=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=ILs+W3nqa5btdoxr5+T1IUyIgX8BGlRBgtepFx6d7snItaLaUFi61EhRTGERn05ZCo5C5kcq79tFmDdQQ5MeQ0dy56wI3zgLTwHQezsT0F75rQSZunIEtwMMgThNEekIe2oD2PRlSPlO3euBDbiv4LALuv8c+VzxvYF1gWvTQWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t90gH+3h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADAF4C4CEE7;
+	Sat, 23 Aug 2025 08:04:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755936263;
+	bh=G+/OUbMjRjtJ1O+gXrVBKFF97ndR0d3t/eZa2Y6qmhU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=yDJxjKX67efN94aIAtWa/UTkWdTFZJuQ8IfI/EE3oQWcz0Ke90LzBQr98Gx4f9Chk
-	 ZhmsOVOEpkb2zRe4mKdG0gb6C2XhxsQ6hcPNPMk93JOx9MPlwj7r+wnIKqRC14NsSs
-	 Hy6xG1XhRtXM4qbtMNmM8bPK1qIfwRPq9WYP2APQ=
-Date: Sat, 23 Aug 2025 10:01:03 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Gabriele Paoloni <gpaoloni@redhat.com>
-Cc: arnd@arndb.de, linux-kernel@vger.kernel.org,
-	safety-architecture@lists.elisa.tech,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [RFC PATCH] /dev/mem: Add initial documentation of memory_open()
- and mem_fops
-Message-ID: <2025082352-ending-immerse-fee4@gregkh>
-References: <20250821170419.70668-1-gpaoloni@redhat.com>
- <2025082120-emptiness-pencil-6d28@gregkh>
- <CA+wEVJb-yBYZqnVs_D4VYvqYsG1k=BFsPzp3ms1=646q3dCLKA@mail.gmail.com>
- <2025082209-laborer-hesitate-76cc@gregkh>
- <CA+wEVJZntQ6Fx8VWzL-PpKWw7=vxKQewxkUfu_f01Px2EFtRZQ@mail.gmail.com>
+	b=t90gH+3hoMY/CvsA6myg9IfjKSLYRDiavSi2Oad1Np+0HfzFG+PBoABOSZne/+OR7
+	 0Li6poNEV/s00yeRKXrL1o4edJmZShyhOCh3+my/hGh/uuJM2NvDmrdGNClRHaE5xt
+	 ZmOFKH0zdGmu5ZUJZQiUhHM0Hdqz8I1bywoXvmfGdR636JieasLNmyELUHwroqrOcn
+	 z9ZJh53rqEmBZbVcn8TdKAdQNqLiF+9N37ZlbU5vCxz15zgxpHFQvMXXAUjkPhBtuQ
+	 sfiFKEi8c5E57AfYmibJWTaria+qazsQFzwwKsH3b8Uc2BErZoX7e3IlWWLecW0s5i
+	 CQqqC3K2YcqKw==
+Date: Sat, 23 Aug 2025 10:04:19 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+Cc: Ray Liu <ray.liu@airoha.com>, Mark Brown <broonie@kernel.org>,
+	Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>,
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Frieder Schrempf <frieder.schrempf@kontron.de>
+Subject: Re: [PATCH v4 01/13] spi: airoha: return an error for continuous
+ mode dirmap creation cases
+Message-ID: <aKl2Awfe4CIV2O44@lore-rh-laptop>
+References: <aKgSY7bOrC8-qZE3@lore-rh-laptop>
+ <20250823001626.3641935-1-mikhail.kshevetskiy@iopsys.eu>
+ <20250823001626.3641935-2-mikhail.kshevetskiy@iopsys.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="IsRgQG7emvDuB06q"
+Content-Disposition: inline
+In-Reply-To: <20250823001626.3641935-2-mikhail.kshevetskiy@iopsys.eu>
+
+
+--IsRgQG7emvDuB06q
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+wEVJZntQ6Fx8VWzL-PpKWw7=vxKQewxkUfu_f01Px2EFtRZQ@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 23, 2025 at 09:48:32AM +0200, Gabriele Paoloni wrote:
-> > > > > + * - The file position '*ppos' shall be advanced by the number of bytes
-> > > > > + *   successfully copied from user space (including skipped bytes).
-> > > >
-> > > > No short summary first of what the function is supposed to do normally?
-> > > > Or are you relying on the few words at the top to summarize that?
-> > >
-> > > Function's expectations would define the testable behaviours (so they
-> > > are broken down into detailed expectations); nothing prevents to provide
-> > > an informative intro above "Function's expectations"; I could clarify this
-> > > in the patch for the doc-guide  and revisit this patch with informative intros
-> > > for all the functions....
-> >
-> > "testable behavior" is going to be very hard given that you are
-> > describing an internal-to-the-kernel function.  Good luck!
-> 
-> Well that is something to be figured out (step by step :-) )
+> This driver can accelerate single page operations only, thus
+> continuous reading mode should not be used.
+>=20
+> Continuous reading will use sizes up to the size of one erase block.
+> This size is much larger than the size of single flash page. Use this
+> difference to identify continuous reading and return an error.
+>=20
+> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+> Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-Well what is your end-goal here?  Do you need/want all functions in the
-kernel to be documented like this, or do you only want those that are
-describing user-visable functionality?
+I guess here we need to add the proper Fixes tag:
 
-What is the requirement that is causing you to do this work?
+Fixes: a403997c12019 ("spi: airoha: add SPI-NAND Flash controller driver")
 
-thanks,
+> ---
+>  drivers/spi/spi-airoha-snfi.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/drivers/spi/spi-airoha-snfi.c b/drivers/spi/spi-airoha-snfi.c
+> index dbe640986825..043a03cd90a1 100644
+> --- a/drivers/spi/spi-airoha-snfi.c
+> +++ b/drivers/spi/spi-airoha-snfi.c
+> @@ -618,6 +618,10 @@ static int airoha_snand_dirmap_create(struct spi_mem=
+_dirmap_desc *desc)
+>  	if (desc->info.offset + desc->info.length > U32_MAX)
+>  		return -EINVAL;
+> =20
+> +	/* continuous reading is not supported */
+> +	if (desc->info.length > SPI_NAND_CACHE_SIZE)
+> +		return -E2BIG;
+> +
+>  	if (!airoha_snand_supports_op(desc->mem, &desc->info.op_tmpl))
+>  		return -EOPNOTSUPP;
+> =20
+> --=20
+> 2.50.1
+>=20
 
-greg k-h
+--IsRgQG7emvDuB06q
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaKl2AAAKCRA6cBh0uS2t
+rFmPAP4wEbp3RP2BlAiOqtIlSxliBwk5YgWRY2Lrl4Q+hJS/+QD/QK/uStPNob1E
+lJW0noeR0NSGRRFK7R5EqNwGP22jbgU=
+=FuF8
+-----END PGP SIGNATURE-----
+
+--IsRgQG7emvDuB06q--
 
