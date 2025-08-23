@@ -1,164 +1,201 @@
-Return-Path: <linux-kernel+bounces-782915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B6D6B326DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 06:48:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4EE0B326E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 06:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EFBF7AB5E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 04:47:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6AC97BC141
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 04:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8411F0E3E;
-	Sat, 23 Aug 2025 04:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7CE1F9A89;
+	Sat, 23 Aug 2025 04:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IgT8iM9x"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SEOHZ3zr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FE01C8621
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 04:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907831D9A54
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 04:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755924512; cv=none; b=DLtou9dQyS4naVopWmSX+DWlbnlndK/z0tsyQ+ccNxNl5G47tvoxHutAf0MDPMmmko5z5QneKpiHckDsNI51THoOiQI/D5Myfrh58CPE4VzUwlE+RK47E/uUhPKJhsMRy3IH6OkZAAfgo+xyzFcmH2t1gR5kF9OlpMpnmvdYJ2g=
+	t=1755924979; cv=none; b=F6448xQKLU/cUGMqVXH5mQe0ycxoKNVK81RE94aOT1bOD8hq0LAIGdKF3k3rakeuYt4tGVN5lgSHWiEM3XoqLWRDjvv00XWcey7837pjlGs2Xf03ywW3LFU396B/5E034sQXbecRKHo1IT0TyDRjVYnwRyZ9Ioqt7FeoaNT19gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755924512; c=relaxed/simple;
-	bh=YTygal563vIa8BBT4fhes3EZZbMXyy3wCtNeW8Kh1Pc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TQzgaKgAuKD5Z1IdZynbp7rghjbeOPrcuCq/hbxW1+DuCJj1i1yF1Svmv88RM5cgqx4XJu4t3y+ITtNAHXGY/Q0qpoCd6Y48HrBgrxWLQ0JEcVvszQXzdSxjXONimKDl2qWnhgKgwQ6WTEqja8ZCrHkdKX30hQXHuVHuYdycYyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IgT8iM9x; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f79735e1-1625-4746-98ce-a3c40123c5af@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755924507;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/rx1zRUogywbxWLbR+OhpeeJ+9zD0zkYG0vUZZmhs38=;
-	b=IgT8iM9xBhNEdSP3/oO4BB+/GQhKvP1SlCFJ0EgX/4qLk0DkPQpC9lrNkz1U/Jjk58TXYd
-	0TndKED8dRkL2id8BmXfD9ADsQhrlyYvdYzh1f4YdlQtmYMcKH5e1C3LEXtLHT3BW+0b6o
-	YD4ckqV2M3lxG3qejP/YBcdE96vpvPk=
-Date: Sat, 23 Aug 2025 12:47:49 +0800
+	s=arc-20240116; t=1755924979; c=relaxed/simple;
+	bh=zMM2t6QVcmg2BKrAak2z57J5k2XkktmUXDFSRdw4wXw=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=I/8PoKsLX/adzp6stJCCfdNldAWL0JY8GfNXGrjmiHKWFWOmfJXW19deIQBPq7k02OD2PBRDarbIqQr4B1RwRKDRQI82YJciKWB54ULrphw1am6kDX0TzcUP/tW9ZN49AsIq2wqruQWoL0BPFhlqk2zUz8N3Z3oOWmFh06NriLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SEOHZ3zr; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755924978; x=1787460978;
+  h=date:from:to:cc:subject:message-id;
+  bh=zMM2t6QVcmg2BKrAak2z57J5k2XkktmUXDFSRdw4wXw=;
+  b=SEOHZ3zrRK+gL4Y2NHbf2qDMqnr4T2jomBxxmReB/ludjx0wAUQkoLwN
+   2M2lvbKwmuQ327qjHiqI4u06aLFCmcnk9QI9RdPS8CfzB+yhJlVVO1ruP
+   gX9sIPZlBiXxhpx3WzVV5tiX7xEbX0YE3ch2ZHclZnCBfcVTnPv3BuOY6
+   WXQDkkefxb0bzQCkcVJhB5JJKdltDqXj6FZ/0+tD/KfNq5Tpvimtd9WD0
+   g5m1lC+NJ1svRnhPNyvnE3L2tr2zEZmssWUtYW9nX7Mm7WO8AHUYmizgI
+   6/sFPZ+DbLRGWRdfdR68OK3rpBRSTatgNyV6APrga+M8FPkHenLgJAUMF
+   g==;
+X-CSE-ConnectionGUID: 8Eaf2BbLR1ulPoXUBQTr5Q==
+X-CSE-MsgGUID: tzevljmBQNSkAXp4GXGAfQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="68931640"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="68931640"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 21:56:17 -0700
+X-CSE-ConnectionGUID: qIjpK8X/RyqoK+5MUhXvAg==
+X-CSE-MsgGUID: cj6Q2Y0CTfuW5+8PbCmMBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="168457844"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 22 Aug 2025 21:56:16 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1upgIM-000M5h-2r;
+	Sat, 23 Aug 2025 04:56:04 +0000
+Date: Sat, 23 Aug 2025 12:54:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ 9d9ace93079af7fae60816c8d677dab962713904
+Message-ID: <202508231234.qF1jSgrC-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH v5 2/3] hung_task: show the blocker task if the task is
- hung on semaphore
-Content-Language: en-US
-To: Finn Thain <fthain@linux-m68k.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>, mhiramat@kernel.org
-Cc: akpm@linux-foundation.org, will@kernel.org, peterz@infradead.org,
- mingo@redhat.com, longman@redhat.com, anna.schumaker@oracle.com,
- boqun.feng@gmail.com, joel.granados@kernel.org, kent.overstreet@linux.dev,
- leonylgao@tencent.com, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
- tfiga@chromium.org, amaindex@outlook.com, jstultz@google.com,
- Mingzhe Yang <mingzhe.yang@ly.com>, Eero Tamminen <oak@helsinkinet.fi>,
- linux-m68k <linux-m68k@lists.linux-m68k.org>,
- Lance Yang <ioworker0@gmail.com>, senozhatsky@chromium.org
-References: <20250414145945.84916-1-ioworker0@gmail.com>
- <20250414145945.84916-3-ioworker0@gmail.com>
- <CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com>
- <da53a828-137a-4efc-a192-a2b49a06d050@linux.dev>
- <CAMuHMdVTBSq2D+-rzGTr+Fz52sDFeeApUcG=LdDYBO5sY+rQxQ@mail.gmail.com>
- <d0fe3163-32d9-4d81-81bb-d964f2f43f17@linux.dev>
- <6ec95c3f-365b-e352-301b-94ab3d8af73c@linux-m68k.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <6ec95c3f-365b-e352-301b-94ab3d8af73c@linux-m68k.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Hi Finn,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: 9d9ace93079af7fae60816c8d677dab962713904  Merge branch into tip/master: 'x86/misc'
 
-On 2025/8/23 08:27, Finn Thain wrote:
-> 
-> On Sat, 23 Aug 2025, Lance Yang wrote:
-> 
->>>
->>> include/linux/hung_task.h-/*
->>> include/linux/hung_task.h- * @blocker: Combines lock address and blocking type.
->>> include/linux/hung_task.h- *
->>> include/linux/hung_task.h- * Since lock pointers are at least 4-byte aligned(32-bit) or 8-byte
->>> include/linux/hung_task.h- * aligned(64-bit). This leaves the 2 least bits (LSBs) of the pointer
->>> include/linux/hung_task.h- * always zero. So we can use these bits to encode the specific blocking
->>> include/linux/hung_task.h- * type.
->>> include/linux/hung_task.h- *
-> 
-> That comment was introduced in commit e711faaafbe5 ("hung_task: replace
-> blocker_mutex with encoded blocker"). It's wrong and should be fixed.
+elapsed time: 1460m
 
-Right, the problematic assumption was introduced in that commit ;)
+configs tested: 109
+configs skipped: 6
 
-> 
->>> include/linux/hung_task.h- * Type encoding:
->>> include/linux/hung_task.h- * 00 - Blocked on mutex
->>>    (BLOCKER_TYPE_MUTEX)
->>> include/linux/hung_task.h- * 01 - Blocked on semaphore
->>>    (BLOCKER_TYPE_SEM)
->>> include/linux/hung_task.h- * 10 - Blocked on rw-semaphore as READER
->>>    (BLOCKER_TYPE_RWSEM_READER)
->>> include/linux/hung_task.h- * 11 - Blocked on rw-semaphore as WRITER
->>>    (BLOCKER_TYPE_RWSEM_WRITER)
->>> include/linux/hung_task.h- */
->>> include/linux/hung_task.h-#define BLOCKER_TYPE_MUTEX            0x00UL
->>> include/linux/hung_task.h-#define BLOCKER_TYPE_SEM              0x01UL
->>> include/linux/hung_task.h-#define BLOCKER_TYPE_RWSEM_READER     0x02UL
->>> include/linux/hung_task.h-#define BLOCKER_TYPE_RWSEM_WRITER     0x03UL
->>> include/linux/hung_task.h-
->>> include/linux/hung_task.h:#define BLOCKER_TYPE_MASK             0x03UL
->>>
->>> On m68k, the minimum alignment of int and larger is 2 bytes.
->>
->> Ah, thanks, that's good to know! It clearly explains why the
->> WARN_ON_ONCE() is triggering.
->>
->>> If you want to use the lowest 2 bits of a pointer for your own use,
->>> you must make sure data is sufficiently aligned.
->>
->> You're right. Apparently I missed that :(
->>
->> I'm wondering if there's a way to check an architecture's minimum
->> alignment at compile-time. If so, we could disable this feature on
->> architectures that don't guarantee 4-byte alignment.
->>
-> 
-> As Geert says, the compiler can give you all the bits you need, so you
-> won't have to contort your algorithm to fit whatever free bits happen to
-> be available. Please see for example, commit 258a980d1ec2 ("net: dst:
-> Force 4-byte alignment of dst_metrics").
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Yes, thanks, it's a helpful example!
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    gcc-15.1.0
+arc                   randconfig-001-20250822    gcc-8.5.0
+arc                   randconfig-002-20250822    gcc-8.5.0
+arm                               allnoconfig    clang-22
+arm                              allyesconfig    gcc-15.1.0
+arm                   randconfig-001-20250822    clang-22
+arm                   randconfig-002-20250822    gcc-8.5.0
+arm                   randconfig-003-20250822    clang-22
+arm                   randconfig-004-20250822    gcc-8.5.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250822    clang-22
+arm64                 randconfig-002-20250822    clang-22
+arm64                 randconfig-003-20250822    clang-17
+arm64                 randconfig-004-20250822    gcc-8.5.0
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20250822    gcc-9.5.0
+csky                  randconfig-002-20250822    gcc-15.1.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-22
+hexagon               randconfig-001-20250822    clang-22
+hexagon               randconfig-002-20250822    clang-22
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250822    gcc-12
+i386        buildonly-randconfig-002-20250822    clang-20
+i386        buildonly-randconfig-003-20250822    gcc-12
+i386        buildonly-randconfig-004-20250822    gcc-12
+i386        buildonly-randconfig-005-20250822    gcc-12
+i386        buildonly-randconfig-006-20250822    gcc-12
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch             randconfig-001-20250822    clang-22
+loongarch             randconfig-002-20250822    gcc-15.1.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-11.5.0
+nios2                               defconfig    gcc-11.5.0
+nios2                 randconfig-001-20250822    gcc-11.5.0
+nios2                 randconfig-002-20250822    gcc-11.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250822    gcc-9.5.0
+parisc                randconfig-002-20250822    gcc-12.5.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                          allyesconfig    clang-22
+powerpc               randconfig-001-20250822    clang-22
+powerpc               randconfig-002-20250822    gcc-11.5.0
+powerpc               randconfig-003-20250822    clang-18
+powerpc64             randconfig-001-20250822    gcc-13.4.0
+powerpc64             randconfig-002-20250822    clang-22
+powerpc64             randconfig-003-20250822    gcc-8.5.0
+riscv                            allmodconfig    clang-22
+riscv                             allnoconfig    gcc-15.1.0
+riscv                 randconfig-001-20250823    clang-22
+riscv                 randconfig-002-20250823    gcc-8.5.0
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                  randconfig-001-20250823    gcc-9.5.0
+s390                  randconfig-002-20250823    clang-22
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                    randconfig-001-20250823    gcc-15.1.0
+sh                    randconfig-002-20250823    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250823    gcc-8.5.0
+sparc                 randconfig-002-20250823    gcc-8.5.0
+sparc64               randconfig-001-20250823    gcc-8.5.0
+sparc64               randconfig-002-20250823    clang-22
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    gcc-12
+um                    randconfig-001-20250823    clang-22
+um                    randconfig-002-20250823    clang-22
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250822    clang-20
+x86_64      buildonly-randconfig-002-20250822    gcc-12
+x86_64      buildonly-randconfig-003-20250822    clang-20
+x86_64      buildonly-randconfig-004-20250822    clang-20
+x86_64      buildonly-randconfig-005-20250822    clang-20
+x86_64      buildonly-randconfig-006-20250822    gcc-12
+x86_64                              defconfig    gcc-11
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250823    gcc-15.1.0
+xtensa                randconfig-002-20250823    gcc-13.4.0
 
-I see your point that explicitly enforcing alignment is a very clean
-solution for the lock structures supported by the blocker tracking
-mechanism.
-
-However, I'm thinking about the "principle of minimal impact" here.
-Forcing alignment on the core lock types themselves — like struct
-semaphore — feels like a broad change to fix an issue that's local to the
-hung task detector :)
-
-> 
->> If not, the fallback is to adjust the runtime checks.
->>
-> 
-> That would be a solution to a different problem.
-
-For that reason, I would prefer to simply adjust the runtime checks within
-the hung task detector. It feels like a more generic and self-contained
-solution. It works out-of-the-box for the majority of architectures and
-provides a safe fallback for those that aren't.
-
-Happy to hear what you and others think about this trade-off. Perhaps
-there's a perspective I'm missing ;)
-
-Thanks,
-Lance
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
