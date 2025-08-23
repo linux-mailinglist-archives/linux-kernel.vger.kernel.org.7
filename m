@@ -1,83 +1,67 @@
-Return-Path: <linux-kernel+bounces-782928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D5CB32718
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:44:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7AB7B3271A
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0452A23A05
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 06:44:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DED82AA4C1D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 06:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175E020FA9C;
-	Sat, 23 Aug 2025 06:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="N6DBQntd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB6322259D;
+	Sat, 23 Aug 2025 06:49:14 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F59A20296C;
-	Sat, 23 Aug 2025 06:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A91821A457;
+	Sat, 23 Aug 2025 06:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755931432; cv=none; b=Lhte6SHNkqrsS1ZHJfGXBpbehvFIIhJC3wtS6woJZc51m0rIWmkjTjSVtLMZpL0Z71Lb60io9wq9wlhjQmg4JKfgIzK8eC7AiLaXTWMSYVA8nRXFNcOkguIwEd0hIlo54BMkXhDwsGG8CCjldhBI7OD875GJ5undGRgA//XyOWk=
+	t=1755931753; cv=none; b=L11/OYc3vLDnRX2ONr40VkL6q02bTRMKAweFwYEuh/wAhzbEPmPxxFRUcBIZODB/FCem4SbOhDrL53FN0/nlMrF7y21TcRuE/pYObzCh7JY1kHMKnKaXhbnJRj8XUv75Hqmc3E2LCgXCPzZTgNwddGvydqHRLQIDvmhWO+cXyOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755931432; c=relaxed/simple;
-	bh=+mwJRjb6klKc8Mg0ZGKn17yA7SD4nT8yEamguhUTaqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nC+V3KU5o1nrECKJ1T+rbNGPdUz+W7RCn1hfavWKpdFdDjLlqQD/uqUrExlpo+8wXFCMnFEIH4bAhO/kbs8P8wuDnQf6YOkIvVKiCI3XCn1Fgk5IleItY9p9i45rCM/Z/aICpA/8F7YYUEO0uzRZgOFxn1OerknjFLdAM4vrXCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=N6DBQntd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B4E3C4CEE7;
-	Sat, 23 Aug 2025 06:43:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755931432;
-	bh=+mwJRjb6klKc8Mg0ZGKn17yA7SD4nT8yEamguhUTaqU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N6DBQntdKXP21s9ka4NNO4PaJTgjQdDhLFQPoS+7EsSB2sFdmHEvT9UX8Y2XW+fti
-	 yWqs6DsKzeQnjU1eFuNgjmzIw9VXJnYELuFGOG9wDxdtdjBuSViecokwwduRkMh42e
-	 WXM0AulZ8NzaylL+uy/P9BEVl4K5ZTixoND9+6ws=
-Date: Sat, 23 Aug 2025 08:43:48 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Chen Ridong <chenridong@huaweicloud.com>, hannes@cmpxchg.org,
-	mkoutny@suse.com, peterz@infradead.org, zhouchengming@bytedance.com,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	lujialin4@huawei.com, chenridong@huawei.com, libaokun1@huawei.com
-Subject: Re: [PATCH v2 2/2] cgroup/psi: Set of->priv to NULL upon file release
-Message-ID: <2025082322-canopener-snugness-14e3@gregkh>
-References: <20250822070715.1565236-1-chenridong@huaweicloud.com>
- <20250822070715.1565236-3-chenridong@huaweicloud.com>
- <aKitWH39wpfTF5st@slm.duckdns.org>
+	s=arc-20240116; t=1755931753; c=relaxed/simple;
+	bh=JuPmb3uHuzsOvpA/Et1mzggjy+NHYvPepLmklmkPxAw=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=XRMQeuV0W7v3IvZaY4AaGFTlMl6zRIL3CrFLD+cMlsLTjJ9bCSwCdl/eS+r2J6pYC7y5gs6gVcv+De4ri+/1fQi0fzsBz3rJUt8ezte5XXvUr1giLbzU8ZGIp+ghdKo431Rg25Sc03QFTs9eP7fMGuHwnjIuLXe5d5mfqDUvKkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from mop.sam.mop (2.8.3.0.0.0.0.0.0.0.0.0.0.0.0.0.a.5.c.d.c.d.9.1.0.b.8.0.1.0.0.2.ip6.arpa [IPv6:2001:8b0:19dc:dc5a::382])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sam)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 13BC0340D54;
+	Sat, 23 Aug 2025 06:49:06 +0000 (UTC)
+From: Sam James <sam@gentoo.org>
+To: irogers@google.com, amadio@gentoo.org
+Cc: acme@kernel.org,adityag@linux.ibm.com,adrian.hunter@intel.com,ak@linux.intel.com,alexander.shishkin@linux.intel.com,atrajeev@linux.vnet.ibm.com,bpf@vger.kernel.org,chaitanyas.prakash@arm.com,changbin.du@huawei.com,charlie@rivosinc.com,dvyukov@google.com,james.clark@linaro.org,jolsa@kernel.org,justinstitt@google.com,kan.liang@linux.intel.com,kjain@linux.ibm.com,lihuafei1@huawei.com,linux-kernel@vger.kernel.org,linux-perf-users@vger.kernel.org,llvm@lists.linux.dev,mark.rutland@arm.com,mhiramat@kernel.org,mingo@redhat.com,morbo@google.com,namhyung@kernel.org,nathan@kernel.org,nick.desaulniers+lkml@gmail.com,peterz@infradead.org,sesse@google.com,song@kernel.org
+Subject: Re: [PATCH v5 00/19] Support dynamic opening of capstone/llvm
+ remove BUILD_NONDISTRO
+In-Reply-To: <20250823003216.733941-1-irogers@google.com>
+Organization: Gentoo
+User-Agent: mu4e 1.12.12; emacs 31.0.50
+Date: Sat, 23 Aug 2025 07:49:04 +0100
+Message-ID: <87ldnacz33.fsf@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKitWH39wpfTF5st@slm.duckdns.org>
+Content-Type: text/plain
 
-On Fri, Aug 22, 2025 at 07:48:08AM -1000, Tejun Heo wrote:
-> On Fri, Aug 22, 2025 at 07:07:15AM +0000, Chen Ridong wrote:
-> > From: Chen Ridong <chenridong@huawei.com>
-> > 
-> > Setting of->priv to NULL when the file is released enables earlier bug
-> > detection. This allows potential bugs to manifest as NULL pointer
-> > dereferences rather than use-after-free errors[1], which are generally more
-> > difficult to diagnose.
-> > 
-> > [1] https://lore.kernel.org/cgroups/38ef3ff9-b380-44f0-9315-8b3714b0948d@huaweicloud.com/T/#m8a3b3f88f0ff3da5925d342e90043394f8b2091b
-> > Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> 
-> Applied to cgroup/for-6.17-fixes.
+> As this has been opt-in for nearly 2 years, commit dd317df07207 ("perf build: Make binutil libraries opt
+> in"), remove the code to simplify the code base.
 
-Both or just this second patch?  Should I take the first through the
-driver-core tree, or do you want to take it through the cgroup tree?  No
-objection from me for you to take both :)
+I don't think this is a reason to remove it by itself. We've been
+enabling it in Gentoo and happily using it.
 
-thanks,
+Anyway, my main concern (though I have a few) is that annotate support
+will be lacking. A few months ago, objdump was the only way to get
+source line support [0]. Is that still the case?
 
-greg k-h
+[0] https://lore.kernel.org/all/Z_S_JB_L_t9viciV@google.com/
 
