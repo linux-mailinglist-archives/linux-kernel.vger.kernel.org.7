@@ -1,338 +1,260 @@
-Return-Path: <linux-kernel+bounces-782911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A8F1B326CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 06:20:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16727B326CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 06:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D1477BBB9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 04:18:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCD6A1C22885
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 04:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB3C212569;
-	Sat, 23 Aug 2025 04:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA10121C9E3;
+	Sat, 23 Aug 2025 04:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TNDxbOIw"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="HpUHe+2r"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2087.outbound.protection.outlook.com [40.107.96.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57353393DF4
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 04:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755922819; cv=none; b=GjAipfOIS+4/HaspgOBtgpw36Kxy9PYMaHGPkEH7zslNkI/NcL2EpVAwLne5wHI4g/WG2AI/FqV/YFjRdyVmLGYLq49T9d2HuXYbcrFNiC9vwQBzccgUxWutj6lN1++YzvviWvigXQw1uR3UAbcOZXbyGCZ2b5poBF+RpPnXpRs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755922819; c=relaxed/simple;
-	bh=geH/2/dEmefYTs8LsKskD5hMbxIdV69fdN0JKHDYKzY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V/+ihdt/TN3KL9kyJ3E87S2zmf00GBafPPh3IFoJcoY0hzwrcDCK3NhTvmBIWZfhWVKJExieKEHlRCn78oh22g1PKG8q+qBj2PsuRTxGGKuIduxykwmQk+kW6mTn0bR/BQ9JdvdaN6Akipaz+7XUh/Nt1smjOJIqTrtGKDUsWdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TNDxbOIw; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57N4JYlf854535;
-	Fri, 22 Aug 2025 23:19:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755922774;
-	bh=KKZnIH6gv75VfTKwVgLDkiUmzBQdoIwEj6j1RUMmWgE=;
-	h=From:To:Subject:Date;
-	b=TNDxbOIwtxNxv79RoMAuKp21EZurcVbeJ8aOI7tMJshe5wuVdM0bpXO/zFjruuPRZ
-	 sxDpMnN3sJwwP1jBW2yK5UoIuteyvSBvk6oLfwmz7V+je+gdtwf6DbZYutKM6sX+U2
-	 D9FlMLZRKqukkjWmrGmHKlA5BPD8ntUuN6CXLTYo=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57N4JXgt3180198
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 22 Aug 2025 23:19:33 -0500
-Received: from DLEE208.ent.ti.com (157.170.170.97) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 22
- Aug 2025 23:19:33 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE208.ent.ti.com
- (157.170.170.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.1748.24; Fri, 22 Aug
- 2025 23:19:33 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 22 Aug 2025 23:19:33 -0500
-Received: from uda0513920.dhcp.ti.com (uda0513920.dhcp.ti.com [10.24.68.114])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57N4JQST624491;
-	Fri, 22 Aug 2025 23:19:26 -0500
-From: vishnu singh <v-singh1@ti.com>
-To: <mark.rutland@arm.com>, <maz@kernel.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <jstultz@google.com>, <Ttglx@linutronix.de>,
-        <sboyd@kernel.org>, <akpm@linux-foundation.org>,
-        <chenhuacai@kernel.org>, <pmladek@suse.com>, <agordeev@linux.ibm.com>,
-        <bigeasy@linutronix.de>, <urezki@gmail.com>, <Llillian@star-ark.net>,
-        <francesco@valla.it>, <guoweikang.kernel@gmail.com>,
-        <alexander.shishkin@linux.intel.com>, <rrangel@chromium.org>,
-        <kpsingh@kernel.org>, <anna-maria@linutronix.de>, <mingo@kernel.org>,
-        <frederic@kernel.org>, <boe@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [RFC PATCH] time: introduce BOOT_TIME_TRACKER and minimal boot timestamp
-Date: Sat, 23 Aug 2025 09:49:25 +0530
-Message-ID: <20250823041925.153091-1-v-singh1@ti.com>
-X-Mailer: git-send-email 2.50.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F8C393DF4;
+	Sat, 23 Aug 2025 04:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755922835; cv=fail; b=q3LUxaPu/4oBIVxzqSvMcuToXGANBxTmZg9JadOR2YtTWJVr+dOk0sUzrIo4tj3xLQtkO2RgfTbqFYIXU9N9r8pJ5Dmr0mLPLkYAzAK0fKaVSwool7XUGwo2aXd2QOuX05tJ2eoVt/IEc175T/v7ujp7JCufv55BPQKZNoxN4Ds=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755922835; c=relaxed/simple;
+	bh=1xmuWgk7P+M91fUW81l+4nesEm6cNw3wnzAwbcThdqc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=bqCGArryyj1U4h/uwA1OvJVQT51PHxsBEukS+Pf4Cl1gtvckCo57gNTrKpx1Zo8JxNgwG/3F2cdjIaey0pu9QkSsNTGSAeNa3Te9Z3uQ9IXWFJ04jvQPydohlsWQrhjENRCX+8/MVCpZizgNHDG9dSJkox0hTdiLg03XcfBvcRc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=HpUHe+2r; arc=fail smtp.client-ip=40.107.96.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yawfbwp23oU0qLWM8AdwiOyEPgPPY68Ca5rBGfJBltUAT4WlHYdcyLyDU1IKMubTwqnRvwj5jcUTpQlUAAkDIg9MSH+ItnzuloQOvoGX61/4Qnk8Nd7dIgj47fvCu7dU3axHNYcvPt9EtB4ekH1YiuaLpHt4P/Oq5wvxEs/jx8i/e0chWXZ5TOI8xGtC+I/ASibBDXEbZOget76cg68YW7xhTHYHZ1XBZNlyPQB0DBzXas+ZlwN/Lvk+zxgALugcxDcCK/JcSHmp8ls4EK3PenHDydMAd38XxnW3E/OU89sV305EwVEUD1jyayjNnnPwNhxJEMqvPhfkWX9C9pUEOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U9c8PmbS1xhGuRy8mk1tyb2gY5yQtAZjaVWnhKtq/pc=;
+ b=PopoHSXHyftbUKo5qzxDTsiGQhGof/Nz+npEu4QLJpuW5D9NxGnZAgdA2gfwSXWBxnqzEita9zP4WWg/6zDGNd3ljYP+peK419YehPqOtH/ipKWjG+rbARxc7Pyx6wv9AXN8w7YnY4zEzlrGETNAAF4AaGUXcZofNoGL0wUKJca5BYFJJwm6C/Wtj97r/niptngRrYQsL42kySNQamNqaIVXX1OfmIjcXah7IgwmYt8Cgz1nbFWICa1OkMvIgO1OPmxH0KJS7ycRnJJoMhmHtqz97+LFxK/o9LlecBaiFtmzBdYr4KLGGRbEeTZmu5+T61AMYeuKKzb4+Hxc8GhS/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U9c8PmbS1xhGuRy8mk1tyb2gY5yQtAZjaVWnhKtq/pc=;
+ b=HpUHe+2rdUEz77grHw6aB4QmtBcKfLK158jc4kznxt+8zbvhsYBK3F4W8lruNp9DGe7MQzNX4d3rjSH6l0W2R9DHKgL44k7SPq6DLmJYmArQ1b22nXHW5IFZcnnObVgo8884gHxKXbsPMgGgBjoPRs0R9FGysCnv/vzY2P0wDNE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6608.namprd12.prod.outlook.com (2603:10b6:8:d0::10) by
+ DM4PR12MB6542.namprd12.prod.outlook.com (2603:10b6:8:89::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.17; Sat, 23 Aug 2025 04:20:31 +0000
+Received: from DS0PR12MB6608.namprd12.prod.outlook.com
+ ([fe80::b71d:8902:9ab3:f627]) by DS0PR12MB6608.namprd12.prod.outlook.com
+ ([fe80::b71d:8902:9ab3:f627%5]) with mapi id 15.20.9052.017; Sat, 23 Aug 2025
+ 04:20:30 +0000
+Message-ID: <38a97d8c-ab5e-4d47-b379-5d114ac66c09@amd.com>
+Date: Sat, 23 Aug 2025 09:50:18 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 07/18] x86/apic: Add support to send IPI for Secure
+ AVIC
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, nikunj@amd.com,
+ Santosh.Shukla@amd.com, Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com,
+ David.Kaplan@amd.com, x86@kernel.org, hpa@zytor.com, peterz@infradead.org,
+ seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
+ kirill.shutemov@linux.intel.com, huibo.wang@amd.com, naveen.rao@amd.com,
+ francescolavra.fl@gmail.com, tiala@microsoft.com
+References: <20250811094444.203161-1-Neeraj.Upadhyay@amd.com>
+ <20250811094444.203161-8-Neeraj.Upadhyay@amd.com>
+ <20250820154638.GOaKXt3vTcSd2320tm@fat_crate.local>
+ <29dd4494-01a8-45bf-9f88-1d99d6ff6ac0@amd.com>
+ <20250822171441.GRaKilgR4XCm_v-ow_@fat_crate.local>
+Content-Language: en-US
+From: "Upadhyay, Neeraj" <neeraj.upadhyay@amd.com>
+In-Reply-To: <20250822171441.GRaKilgR4XCm_v-ow_@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BMXP287CA0010.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:b00:2c::20) To DS0PR12MB6608.namprd12.prod.outlook.com
+ (2603:10b6:8:d0::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6608:EE_|DM4PR12MB6542:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6506df2-b7e8-4cf4-55fd-08dde1fc6541
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S3dtdlAzN2FLMlc2RVFibUdiVWxYazMwRFdNRFJ5SFBncGdXa0ZYTHRpWVg3?=
+ =?utf-8?B?a2l3VHBLS0Y0cm00dTE4SHFKNmFXdXJ6Nkw4bzFDMTk0MVQyZDltUldNM0NJ?=
+ =?utf-8?B?TVAvWE8rUm5lNHJnZjlwSVJycXJDdmZZQlpCN3NjdGtySVZNemJraVBuY0pi?=
+ =?utf-8?B?NGFBTG1GSXpYZjJ5UWtIRElMNk8rcE1sUE1UNDM3NS9leVRnQmV5UjRsS1di?=
+ =?utf-8?B?R2lERlBvbW9USURZSHV2T1pyOFI5ME54bEF6ZjBkeVRCdytZUDByVlhCMHd1?=
+ =?utf-8?B?RzJWYmZWVHNIbU5lckQreWgvY2F1dDZZdEZ5anh0U2tOSFRXYjBVTEFpaVlU?=
+ =?utf-8?B?aXVkSVZLNVhtNkF5djd3QVI0M2kzbHlIWXVNbTkxSmhDZVNsZjhhalEveHpL?=
+ =?utf-8?B?TlU1MjFlUitCcnc4dDBEYVl2U0g4elZablZ0eml1Q1g1WnE3dVBWVjhINlhu?=
+ =?utf-8?B?VDh2QWFTNmxKQU9PMFpXMEp3ZjNvSWp0MVV5R2t5cE1nMXcrYndhc3d2NGRo?=
+ =?utf-8?B?ckJoYWcwc0lkSnVYQUxLMUFnL1JKYkw1cW9Sb1cwVGwzYkFhSWYwOUxIUEJH?=
+ =?utf-8?B?bU9FMitubjRhUmc3c1BkRXJxODQ3eFA2bzMyUTJIMlhZK1Nldm9zY1FmeExr?=
+ =?utf-8?B?MG41MG45KzEyT1NmQjhGSUJUeU82V1NiSmtlOFovaWF5Qk5xcXRpWmhWZGFq?=
+ =?utf-8?B?clA0RWJ3TVZ5OWxuVW0rYVFURjA2UGN5REo2SEM2cVpzWXEwS0hzd2JzU3Fa?=
+ =?utf-8?B?QUcwbWRVS2tpU2FxeFBnQzVvZ3gyUGtqVTlwUXk2S05NRGtIcTA4ajl0Q0I4?=
+ =?utf-8?B?dFFUVlFQMUhTeExFY2tySzVmN3FocGJWN0N1TzNEaFdRampKeHNJTmVlN01B?=
+ =?utf-8?B?WWFtSU1CaFFEZXJtVmFBbjBhZjN1TWk5UHA3K1o2U0g5WVcyQk81WjFRVkIr?=
+ =?utf-8?B?RHhmVGFDWmg0bDd0R2EvSTJPYXBDajRMczhiaE1rMmdlYlhGbDNJTFJXS25l?=
+ =?utf-8?B?bVRUWXhpdVhZai9pU2ZmbEU2SmVPUTlRcmI4VWs4UU1WS01PWHltTnR0S3Zn?=
+ =?utf-8?B?Vm5ndVBGSlFRZE81eEUxZ2Q1UTRzVVhRaGhBSUYzRStldFFUOUgwajZ2bWFt?=
+ =?utf-8?B?bEVXbCtCRjBSVThnY1BXV1IvQ2FEUmdhUVdjVXZVMzRSd0J2ZEZ0S3pCSXNT?=
+ =?utf-8?B?T2NNM0lyNUNHcy9HRFhzTkdaNDBqSHlGay9YM2FDWFBFeThNcFQ2bzJ6Mm1L?=
+ =?utf-8?B?Qy9HY0Y0bGFCQkNzU1JvUGVJM0dHdUdhMitmZjV3TndvUHIxcnFWaDUwdVI2?=
+ =?utf-8?B?SWt4VGRaNit6cHlSRkhQQnVBcmNEdXM1RDN6YUR1b1BvY3JaTkVhUThKekVM?=
+ =?utf-8?B?WldlTURZeGJFZVFqR055WDlpOXcrN3ZEMDBiRkdkc2grT0RQQURSdnhKaWVS?=
+ =?utf-8?B?UGV6Ri80emJtY2d6OGJOU3dnSnBWdlpZeEhHQXg1QllXbE5iNmplWTZMaEtE?=
+ =?utf-8?B?U00zTk9OQ1RUWitFOHVOVjRSY2pWQnVLSE0xcDlVS2pkRHZxM2JEY213OUVi?=
+ =?utf-8?B?MUQ3UFNEcUpic2Noa3hCS25OYk13NmIzMzNnNTFCREZlQm1UcitZVjB1bTF3?=
+ =?utf-8?B?cWVLS3hPRTJNU1NLaGJZYnNCNE5OYy81NVBZRGt0RFM4eG4xQzdCenNBMmgx?=
+ =?utf-8?B?c2x4a3I2L3VVRm5YWFNUYkZjcUV4NGFZbm1melU1YktHakpCZURhdm9pNHA1?=
+ =?utf-8?B?ZWtudlVwajJWWDlZVlJEME1QWkdNZjhiOHhlS3FIdktsV1JPbjNMNDlxRTN1?=
+ =?utf-8?B?MlFXelFNSCtjWWt0clNlTUFYLzhVdFZJSmxuQzcrdlBYWnU2d3hVSEhFQ3Nh?=
+ =?utf-8?B?UjE0QVBoWjNvUmw0YnY2VU0rT0dDb2tOeTlXV0RacHRCOUNkL2JETTVzbXVO?=
+ =?utf-8?Q?N9y/0yNAVgA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6608.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RUNWM1gwY1BObU1GSEVUUFBtQU9ScWNFUEtxT0kvQ0g1YlpyeFVnUW5aZisy?=
+ =?utf-8?B?bERPUmRROThaaStKRCtJcVYxYitQRWpMaHhpeVFzdVdDbjIwcm4xalBRc3VD?=
+ =?utf-8?B?NXI0SXBudzUyVjdLTFVVRlRzUGtiajZyWVc1UG9KL0hxSGVlM3VwdjFwV2Iz?=
+ =?utf-8?B?ZFkxbTJybS9lL21vRUdQa3FWVW1QR3k5dDZlUVBldGQ3ZmJ3VktMYkxqbWJ4?=
+ =?utf-8?B?ZUMrSzBkOGlyQTA4VmNnUkNPRWxTYkFrWkRVRW1pVVNVN0xNcmVydU5FNUVm?=
+ =?utf-8?B?bWVZY0JyQzZ2Rlp0MHhqZWtGaWJ2QkQva3FCTmYvaWwxb1Brb2QwQVdvUncz?=
+ =?utf-8?B?YVFFTytkSnpaNmZYQ28rbE4xL3Yya2tEcHZxOEc4eGQ1UUR0Q2w4cFFSemdR?=
+ =?utf-8?B?THF1cUt0M3V6SjZFNGxaWXlMOUdiZXpqZE5DTFhweXZ0Ykd2V3Q2MUhSV013?=
+ =?utf-8?B?dXBZOVZtT0ZIN0ZTdjFWVFdHcVlHTFRzcWl5QTkybVpqMFRMVENSSWsrVnBh?=
+ =?utf-8?B?SUNlWks0TW9qME1qakQrS1J0N2xpNFRpWDdFMXZkWWFmUStUUUxMSW9MSjRL?=
+ =?utf-8?B?NUI4MWdwSmc1THJ1a2JyRVRrZWQ1NlBMSno4WCtndDRkU0FkckROOFpVSHJL?=
+ =?utf-8?B?d2VkS1N5STBhYnhuMi80UVBEakxwWTlkQ3VyRlNZTDFYeGZUR2ptWWE4ZExW?=
+ =?utf-8?B?UjRvVXZBdTNwZjl1c0RtZ2s3TkJJS2c0SVBDQSsvUU03RkRUQ0dzYzZ4b3Ju?=
+ =?utf-8?B?UE1wRHVyN01WbUR4VnM1VG5sZ2hRVUhENFlDWTE0U0VSanBzVTlaczM4QWlw?=
+ =?utf-8?B?elpQN04ySDdTb0lkNlRrU0dQSWs2L3hMN3pXQW9OZFh4bU1SRFdhSmF6aEFM?=
+ =?utf-8?B?eHpjWnZBRndRcy9sRzM2S1RLSHpva1RsTENYTUd2eVkvdmsreXFVV0Q3Zmcw?=
+ =?utf-8?B?UTlJMmh1WDhlVUIwYVBkNTR1OHZ3WVlNWWNLRVBXZmJvYU5OdUR3K3Z5d0pq?=
+ =?utf-8?B?c2RYbFhUTTIwek0xRk05aStWdzVRSzh2eVpPVktIeVE4YVZGdUhPenZEbEkr?=
+ =?utf-8?B?K1V1VFJkK0xWSy9VVld5QjdZVkNOaXV1QlZrZUU2eVlpN3I2TTBUQ0J3Z1BI?=
+ =?utf-8?B?V0dseUZRRlpialpFWkk0cnJab0kzQmJtcUoxVVplRUQxenlDOHlEd0FTTVhZ?=
+ =?utf-8?B?alNnN213ZS91SWpaL2hDTmJJL1dMMVlXWFFrbXNDT0FzekhXTDY5S2RJTHBs?=
+ =?utf-8?B?ZGcyMXhhQlVZSVhIUmJOR0trdm9VODRnTFRnNkdPVUR5TnorNWVrTzRwRnBw?=
+ =?utf-8?B?NzhUeWo1V3BLWVlzRm1BS2pEcWJnVnR0OExzUURna3lLWTZEcGM2eitFZ0pN?=
+ =?utf-8?B?K1FodlhaSFNibU0xMkMzTDNDZWppZTNpOG92R1lrUDlqVC9jVDRPampJV3dS?=
+ =?utf-8?B?ZHhydTJRSXA5MStQa0loOVFhY21UY2lpdS9yeUZWRE15Zm43Z3c5L2F5WU9Q?=
+ =?utf-8?B?T0UyQklQSVpwSkJJQmZ0eFhYMnhydlVFSjlQcUdIenlBcDlEeXMxUG1WZnFL?=
+ =?utf-8?B?OXo3cnVtdld3VzFTVDVNVFFvZ3dweVZGVTUyT3dBNk5odlM3OXpHcG1LOHBm?=
+ =?utf-8?B?WWRjSGNGcGNyWEZwd3ZkRXNVajRtMU5ZcVpnQWVWdlFrZGF5bm8xY2Z0TmNq?=
+ =?utf-8?B?YVVBNnFRTHpEeTFxRTk4c1VTOTg1SGlBNlpWWWJ1V3JwOGZYVVRjVXJXbVk5?=
+ =?utf-8?B?SG04dGNGelNJbWxUREFPRllWTm8zc2l5YWRxZkwveXl5SFppcU5ZaFpzQTYw?=
+ =?utf-8?B?ODVKZmw5cXA4dTAxUkE5YkQrb3M3VTR3VXp0T3AwL05hNmJKc1BLdkN6b0p5?=
+ =?utf-8?B?OWxVMXAxSjFnUm16Zyt3QkVvdFpiQkhiOE1kcHVvZnA0RzdLT2ZpZDcxWkVH?=
+ =?utf-8?B?Nloza0lXZG8zdzMzaDhweVBGWTR0QWlneVE1TGFLcmlUNExoaFNpS09OdU5p?=
+ =?utf-8?B?NkFCWVpndlFPbWJqNklNbUxOTlBpVzRrSllaUzIvSmtLejFXejN1MjNGWGZy?=
+ =?utf-8?B?cGJwQ2MvaWxqUmtLdHdBWmVXZnNVOEZEaXRzR1RRS29YOVNOMTk5dnBseCtj?=
+ =?utf-8?Q?gRiG++Tr8pWmXpxXwulL5K1fG?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6506df2-b7e8-4cf4-55fd-08dde1fc6541
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6608.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2025 04:20:30.7269
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nMrGLgRafM0txSFi60nAN2DuTi89ynimglnOwF9E4yW2x3hbIv8gO9lySKEjh8mSWGIaZnHYLRkJFRi8+XPAGQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6542
 
-From: Vishnu Singh <v-singh1@ti.com>
 
-Part of BOOT SIG Initiative, This patch adds a tiny,opt-in facility to
-help measure kernel boot duration without full tracing:
 
-New CONFIG_BOOT_TIME_TRACKER in kernel/time/Kconfig.
-When enabled, the kernel logs two boot markers:
-    1. kernel entry in start_kernel()
-    2. first userspace start in kernel_init() before run_init_process()
+On 8/22/2025 10:44 PM, Borislav Petkov wrote:
+> On Thu, Aug 21, 2025 at 10:57:24AM +0530, Upadhyay, Neeraj wrote:
+>> Is below better?
+> 
+> I was only reacting to that head-spinning, conglomerate of abbreviations "AVIC
+> GHCB APIC MSR".
+> 
 
-These markers are intended for post-boot parsers to compute coarse
-kernel boot time and to merge with bootloader/MCU/DSP records into
-a unified timeline.
+Ah ok. I thought you were not happy with the commit message 
+wording/structure.
 
-Core helper u64 boot_time_now() in kernel/time/boot_time_now.c,
-exporting a counter‑derived timestamp via small per-arch primitives.
-This series includes an initial arm64 primitive that uses CNTVCT_EL0
-as the source, other architectures can wire up equivalents.
+>> x86/apic: Add support to send IPI for Secure AVIC
+>>
+>> Secure AVIC hardware only accelerates Self-IPI, i.e. on WRMSR to
+>> APIC_SELF_IPI and APIC_ICR (with destination shorthand equal to Self)
+>> registers, hardware takes care of updating the APIC_IRR in the APIC
+>> backing page of the vCPU. For other IPI types (cross-vCPU, broadcast IPIs),
+>> software needs to take care of updating the APIC_IRR state of the target
+>> CPUs and to ensure that the target vCPUs notice the new pending interrupt.
+>>
+>> Add new callbacks in the Secure AVIC driver for sending IPI requests. These
+>> callbacks update the IRR in the target guest vCPU's APIC backing page. To
+>> ensure that the remote vCPU notices the new pending interrupt, reuse the
+>> GHCB MSR handling code in vc_handle_msr() to issue APIC_ICR MSR-write GHCB
+>> protocol event to the hypervisor. For Secure AVIC guests, on APIC_ICR write
+>> MSR exits, the hypervisor notifies the target vCPU by either sending an AVIC
+>> doorbell (if target vCPU is running) or by waking up the non-running target
+>> vCPU.
+> 
+> But I'll take a definitely better commit message too! :-)
+> 
 
-Files touched:
-kernel/time/Kconfig, kernel/time/Makefile
-kernel/time/boot_time_now.c (new core helper)
-arch/arm64/include/asm/boot_time_primitives.h (arm64 primitive)
-include/linux/boot_time_now.h (public API + IDs)
-init/main.c (print two markers)
+Cool!
 
-This complements U-Boot’s stashed bootstage records so a userspace tool
-can build a system-wide boot timeline across SPL, U-Boot, kernel and other
-subsystems.
+>> Ok moving it to x2apic_savic.c requires below 4 sev-internal declarations to
+>> be moved to arch/x86/include/asm/sev.h
+>>
+>> struct ghcb_state;
+>> struct ghcb *__sev_get_ghcb(struct ghcb_state *state);
+>> void __sev_put_ghcb(struct ghcb_state *state);
+>> enum es_result sev_es_ghcb_handle_msr(...);
+> 
+> Well, do you anticipate needing any more sev* facilities for SAVIC?
+>
 
-Reference boot-time parser utility:
-     https://github.com/v-singh1/boot-time-parser
+At this point I do not anticipate adding new functions for new SAVIC
+features.
 
-Sample boot time report:
-+--------------------------------------------------------------------+
-                 am62xx-evm Boot Time Report
-+--------------------------------------------------------------------+
-Device Power On         : 0 ms
-SPL Time                : 843 ms
-U-Boot Time             : 2173 ms
-Kernel handoff time     : 462 ms
-Kernel Time             : 2522 ms
-Total Boot Time         : 6000 ms
-+--------------------------------------------------------------------+
+> If so, you probably should carve them out into arch/x86/coco/sev/savic.c
+> 
+> If only 4 functions, I guess they're probably still ok in .../sev/core.c
+> 
 
-+--------------------------------------------------------------------+
-                 Bootloader and Kernel Boot Records
-+--------------------------------------------------------------------+
-BOOTSTAGE_AWAKE                =      0 ms (+  0 ms)
-BOOTSTAGE_START_UBOOT_F        =    843 ms (+  0 ms)
-BOOTSTAGE_ACCUM_DM_F           =    843 ms (+  0 ms)
-BOOTSTAGE_START_UBOOT_R        =   1951 ms (+1108 ms)
-BOOTSTAGE_ACCUM_DM_R           =   1951 ms (+  0 ms)
-BOOTSTAGE_NET_ETH_START        =   2032 ms (+ 81 ms)
-BOOTSTAGE_NET_ETH_INIT         =   2053 ms (+ 21 ms)
-BOOTSTAGE_MAIN_LOOP            =   2055 ms (+  2 ms)
-BOOTSTAGE_START_MCU            =   2661 ms (+606 ms)
-BOOTSTAGE_BOOTM_START          =   2959 ms (+298 ms)
-BOOTSTAGE_RUN_OS               =   3016 ms (+ 57 ms)
-BOOTSTAGE_BOOTM_HANDOFF        =   3016 ms (+  0 ms)
-BOOTSTAGE_KERNEL_START         =   3478 ms (+462 ms)
-BOOTSTAGE_KERNEL_END           =   6000 ms (+2522 ms)
-+--------------------------------------------------------------------+
+Ok. I will keep them in sev/core.c for now and move to sev/savic.c if
+anything new comes up in future.
 
-+--------------------------------------------------------------------+
-                 MCU Boot Records
-+--------------------------------------------------------------------+
-MCU_AWAKE                      =   2661 ms (+  0 ms)
-BOARD_PERIPHERALS_INIT         =   2661 ms (+  0 ms)
-MAIN_TASK_CREATE               =   2661 ms (+  0 ms)
-FIRST_TASK                     =   2662 ms (+  1 ms)
-DRIVERS_OPEN                   =   2662 ms (+  0 ms)
-BOARD_DRIVERS_OPEN             =   2662 ms (+  0 ms)
-IPC_SYNC_FOR_LINUX             =   6636 ms (+3974 ms)
-IPC_REGISTER_CLIENT            =   6636 ms (+  0 ms)
-IPC_SUSPEND_TASK               =   6636 ms (+  0 ms)
-IPC_RECEIVE_TASK               =   6636 ms (+  0 ms)
-IPC_SYNC_ALL                   =   6787 ms (+151 ms)
-+--------------------------------------------------------------------+
+>> This comment explains why WRMSR is sufficient for sending SELF_IPI. On
+>> WRMSR by vCPU, Secure AVIC hardware takes care of updating APIC_IRR in
+>> backing page. Hardware also ensures that new APIC_IRR state is evaluated
+>> for new pending interrupts. So, WRMSR is hardware-accelerated.
+>>
+>> For non-self-IPI case, software need to do APIC_IRR update and sending of
+>> wakeup-request/doorbell to the target vCPU.
+> 
+> Yeah, you need to rewrite it like the commit message above - it needs to say
+> that upon the MSR write, hw does this and that and therefore accelerates this
+> type of IPI.
+> 
+> Then it is clear what you mean by "acceleration."
+> 
 
-Signed-off-by: Vishnu Singh <v-singh1@ti.com>
----
- MAINTAINERS                                   |  3 +++
- arch/arm64/include/asm/boot_time_primitives.h | 14 ++++++++++++++
- include/linux/boot_time_now.h                 | 16 ++++++++++++++++
- init/main.c                                   | 13 +++++++++++++
- kernel/time/Kconfig                           | 10 ++++++++++
- kernel/time/Makefile                          |  1 +
- kernel/time/boot_time_now.c                   | 13 +++++++++++++
- 7 files changed, 70 insertions(+)
- create mode 100644 arch/arm64/include/asm/boot_time_primitives.h
- create mode 100644 include/linux/boot_time_now.h
- create mode 100644 kernel/time/boot_time_now.c
+Got it. Will update. Thanks!
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e913c1edd1fd..e5273b338814 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1994,6 +1994,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- F:	arch/arm/include/asm/arch_timer.h
- F:	arch/arm64/include/asm/arch_timer.h
-+F:	arch/arm64/include/asm/boot_time_primitives.h
- F:	drivers/clocksource/arm_arch_timer.c
- F:	drivers/clocksource/arm_arch_timer_mmio.c
- 
-@@ -25466,6 +25467,7 @@ R:	Stephen Boyd <sboyd@kernel.org>
- L:	linux-kernel@vger.kernel.org
- S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
-+F:	include/linux/boot_time_now.h
- F:	include/linux/clocksource.h
- F:	include/linux/time.h
- F:	include/linux/timekeeper_internal.h
-@@ -25474,6 +25476,7 @@ F:	include/linux/timex.h
- F:	include/uapi/linux/time.h
- F:	include/uapi/linux/timex.h
- F:	kernel/time/alarmtimer.c
-+F:	kernel/time/boot_time_now.c
- F:	kernel/time/clocksource*
- F:	kernel/time/ntp*
- F:	kernel/time/time.c
-diff --git a/arch/arm64/include/asm/boot_time_primitives.h b/arch/arm64/include/asm/boot_time_primitives.h
-new file mode 100644
-index 000000000000..9bbbd500a95d
---- /dev/null
-+++ b/arch/arm64/include/asm/boot_time_primitives.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __ASM_BOOT_TIME_PRIMITIVES_H
-+#define __ASM_BOOT_TIME_PRIMITIVES_H
-+
-+#include <asm/arch_timer.h>
-+#include <linux/math64.h>
-+
-+static inline u64 arch_boot_counter_now(void)
-+{
-+	return ((arch_timer_read_cntvct_el0() * 1000000) / arch_timer_get_cntfrq());
-+}
-+
-+#endif
-diff --git a/include/linux/boot_time_now.h b/include/linux/boot_time_now.h
-new file mode 100644
-index 000000000000..a18a1809057f
---- /dev/null
-+++ b/include/linux/boot_time_now.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef _LINUX_BOOT_TRACKER_H
-+#define _LINUX_BOOT_TRACKER_H
-+
-+#include <linux/types.h>
-+
-+enum kernel_bootstage_id {
-+	BOOTSTAGE_ID_KERNEL_START = 300,
-+	BOOTSTAGE_ID_KERNEL_END = 301,
-+};
-+
-+/* Return boot time in nanoseconds using hardware counter */
-+u64 boot_time_now(void);
-+
-+#endif
-diff --git a/init/main.c b/init/main.c
-index 9b5150166bcf..76eb8098ab20 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -115,6 +115,10 @@
- 
- #include <kunit/test.h>
- 
-+#ifdef CONFIG_BOOT_TIME_TRACKER
-+#include <linux/boot_time_now.h>
-+#endif
-+
- static int kernel_init(void *);
- 
- /*
-@@ -929,6 +933,11 @@ void start_kernel(void)
- 	page_address_init();
- 	pr_notice("%s", linux_banner);
- 	setup_arch(&command_line);
-+
-+#ifdef CONFIG_BOOT_TIME_TRACKER
-+	pr_info("[BOOT TRACKER] - ID:%d, %s = %llu\n",
-+		BOOTSTAGE_ID_KERNEL_START, __func__, boot_time_now());
-+#endif
- 	/* Static keys and static calls are needed by LSMs */
- 	jump_label_init();
- 	static_call_init();
-@@ -1503,6 +1512,10 @@ static int __ref kernel_init(void *unused)
- 
- 	do_sysctl_args();
- 
-+#ifdef CONFIG_BOOT_TIME_TRACKER
-+	pr_info("[BOOT TRACKER] - ID:%d, %s = %llu\n",
-+		BOOTSTAGE_ID_KERNEL_END, __func__, boot_time_now());
-+#endif
- 	if (ramdisk_execute_command) {
- 		ret = run_init_process(ramdisk_execute_command);
- 		if (!ret)
-diff --git a/kernel/time/Kconfig b/kernel/time/Kconfig
-index 7c6a52f7836c..aadfd66d5d69 100644
---- a/kernel/time/Kconfig
-+++ b/kernel/time/Kconfig
-@@ -221,4 +221,14 @@ config POSIX_AUX_CLOCKS
- 	  and other clock domains, which are not correlated to the TAI/NTP
- 	  notion of time.
- 
-+config BOOT_TIME_TRACKER
-+	bool "boot time tracking support"
-+	help
-+	  Prints boot timestamps at the beginning of the kernel and when the
-+	  first user-space process is launched. This helps measure basic
-+	  boot latency for embedded and multi-core systems.
-+
-+	  The messages appear using printk and can be parsed by boot
-+	  instrumentation tools or console logs.
-+
- endmenu
-diff --git a/kernel/time/Makefile b/kernel/time/Makefile
-index e6e9b85d4db5..f7c115a385bb 100644
---- a/kernel/time/Makefile
-+++ b/kernel/time/Makefile
-@@ -32,3 +32,4 @@ obj-$(CONFIG_TEST_UDELAY)			+= test_udelay.o
- obj-$(CONFIG_TIME_NS)				+= namespace.o
- obj-$(CONFIG_TEST_CLOCKSOURCE_WATCHDOG)		+= clocksource-wdtest.o
- obj-$(CONFIG_TIME_KUNIT_TEST)			+= time_test.o
-+obj-$(CONFIG_BOOT_TIME_TRACKER) 		+= boot_time_now.o
-diff --git a/kernel/time/boot_time_now.c b/kernel/time/boot_time_now.c
-new file mode 100644
-index 000000000000..6dc12d454be0
---- /dev/null
-+++ b/kernel/time/boot_time_now.c
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: LGPL-2.0
-+
-+#include <linux/boot_time_now.h>
-+#include <asm/boot_time_primitives.h>
-+
-+u64 boot_time_now(void)
-+{
-+	return arch_boot_counter_now();
-+}
-+EXPORT_SYMBOL_GPL(boot_time_now);
-+
-+MODULE_DESCRIPTION("boot time tracker");
-+MODULE_LICENSE("GPL");
--- 
-2.50.1
+- Neeraj
 
+> Thx.
+> 
 
