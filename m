@@ -1,86 +1,157 @@
-Return-Path: <linux-kernel+bounces-782937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D577EB3272E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 09:14:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AFCFB32732
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 09:19:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94D75AA8438
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 07:14:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1704868644A
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 07:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBFF2253B0;
-	Sat, 23 Aug 2025 07:14:17 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4F51E260C;
-	Sat, 23 Aug 2025 07:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D5A2253FE;
+	Sat, 23 Aug 2025 07:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Vag11rd6"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADEF81E4AB;
+	Sat, 23 Aug 2025 07:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755933257; cv=none; b=uof/18dFHM/E40gd1jW3VrgWj8V3LCfmQPWtBY6lr83i/il98tDPp358lSXEeJ+RmF2Hxx1tq6ow4MUyX1mIbV79tvoWQ8fZIGuRpvoJqnIdSB5rJN6/fSYAGRssYw+Bc43bk4KwejDNT7uu+5KAHhGLFfR2TMb7xo9VK1VFX78=
+	t=1755933555; cv=none; b=bsjN3Zw8llEqzW/0LC4EJLeq2fk7xZyhLDSyj2+dTGi1hcxxNyUE6sPOjxOU9ZfUqDEcJgvWD29RH04VpASqDp6oCmacOSV6H/LKnhbHs26Iurupgu3j1qSocOjRg9X/1tqkCWIewmrGOJrcBiEuYVgiVxb4cwvqrylf3bNP0yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755933257; c=relaxed/simple;
-	bh=DZ3hYx1rkMQxEOBSciXm3TiSc5s1BU9Ol0clHp0RWfk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RiO3krQKw9CDKQ8qnxE3G5sOX2kh9luFrXJKPS8RvOcBakTnhHrbaR4bbQ9BE46y7HEneXs6jAH0ftqc3+T/IOTGBxtFWUgg1vsFjpta7IRTMzNFCCpvFWrp6gC42EdDHBcTSgxh96sW4D6TE+HxsbfOiho4Hvk7s927P/ITTgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 913522C06841;
-	Sat, 23 Aug 2025 09:14:06 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 7FC2C54C67; Sat, 23 Aug 2025 09:14:06 +0200 (CEST)
-Date: Sat, 23 Aug 2025 09:14:06 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: liziyao@uniontech.com
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-	niecheng1@uniontech.com, zhanjun@uniontech.com,
-	guanwentao@uniontech.com, Kexy Biscuit <kexybiscuit@aosc.io>,
-	Lain Fearyncess Yang <fsf@live.com>, Mingcong Bai <jeffbai@aosc.io>,
-	Ayden Meng <aydenmeng@yeah.net>
-Subject: Re: [PATCH RESEND] PCI: Override PCIe bridge supported speeds for
- older Loongson 3C6000 series steppings
-Message-ID: <aKlqPoa6jeoNJEPc@wunner.de>
-References: <20250822-loongson-pci1-v1-1-39aabbd11fbd@uniontech.com>
+	s=arc-20240116; t=1755933555; c=relaxed/simple;
+	bh=KitFibol2Aae7q/65u4KChsF9jZ+Luq0MZlvtX1tHAA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p4dWgEmPNlBSliLHspGGKwQbhjKcZaYIILLTPcgDcadAy2cxEsFxwICbXZ7dED0wKct9fqLatSSncgHQ4Cvc4P9qGhrAF00OCvPbncwOatX0on6NRSSxQBQgRJ14MxXmBpBS+Xmo1rZ/TCrJWmfzmsGZdBtVeCIVwnHrncITSuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Vag11rd6; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=OI
+	Z18m9fJcHtCDCLIheqxHmmUxmgzQxXPzdeaAhEmr8=; b=Vag11rd6X7YDF1TntE
+	Rj62heAmp9mt4NbloFqpfxoxJe2mZUIMVL6fs2l2wVn1BOGX+82yFfP7+3HDrnHj
+	ZH5H46IJOOjS/nIcKWUsCWyYGWVai9rtjVFBlZjW7f/WQEsn2lZIyVkV0p4n4C8W
+	RYmY4aqY+ZOrl0TgqcXxckXmc=
+Received: from phoenix.. (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgBHfPRQa6loSD0TAQ--.40650S2;
+	Sat, 23 Aug 2025 15:18:42 +0800 (CST)
+From: Jiawei Zhao <phoenix500526@163.com>
+To: ast@kernel.org
+Cc: daniel@iogearbox.net,
+	andrii@kernel.org,
+	yonghong.song@linux.dev,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v15 0/2] libbpf: fix USDT SIB argument handling causing unrecognized register error
+Date: Sat, 23 Aug 2025 07:18:37 +0000
+Message-ID: <20250823071839.1191350-1-phoenix500526@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822-loongson-pci1-v1-1-39aabbd11fbd@uniontech.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PygvCgBHfPRQa6loSD0TAQ--.40650S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWw4ktFy5Zr1xJr4UGF1UGFg_yoW5uw1rpF
+	WrWws8trWqyas7GFsxWr42yw43Wan5GF4UJrn2qw1Yvr4rGF17Ar4Igr15GrnxWa97X34Y
+	vFs8tFs8GasYvw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jrdb8UUUUU=
+X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/xtbBawqyiGipYPOxzgAAs2
 
-On Fri, Aug 22, 2025 at 05:15:58PM +0800, Ziyao via B4 Relay wrote:
-> Older steppings of the Loongson 3C6000 series incorrectly report the
-> supported link speeds on their PCIe bridges (device IDs 3c19, 3c29) as
-> only 2.5 GT/s, despite the upstream bus supporting speeds from 2.5 GT/s
-> up to 16 GT/s.
+When using GCC on x86-64 to compile an usdt prog with -O1 or higher
+optimization, the compiler will generate SIB addressing mode for global
+array and PC-relative addressing mode for global variable,
+e.g. "1@-96(%rbp,%rax,8)" and "-1@4+t1(%rip)".
 
-I assume these bridges (Root Ports?) are only found on LS3C6000 CPUs?
+The current USDT implementation in libbpf cannot parse these two formats,
+causing `bpf_program__attach_usdt()` to fail with -ENOENT
+(unrecognized register).
 
-If so, please put the quirk in arch/loongarch/pci/pci.c or
-drivers/pci/controller/pci-loongson.c alongside the existing fixups there.
+This patch series adds support for SIB addressing mode in USDT probes.
+The main changes include:
+- add correct handling logic for SIB-addressed arguments in
+  `parse_usdt_arg`.
+- add an usdt_o2 test case to cover SIB addressing mode.
 
-drivers/pci/quirks.c is compiled on all arches and if these bridges
-only exist on certain Loongson CPUs, the quirk isn't needed on other
-arches and wastes memory.
+Testing shows that the SIB probe correctly generates 8@(%rcx,%rax,8) 
+argument spec and passes all validation checks.
 
-Also, please consider adding entries for 3c19, 3c29 to the PCI IDs
-database:
+The modification history of this patch series:
+Change since v1:
+- refactor the code to make it more readable
+- modify the commit message to explain why and how
 
-https://admin.pci-ids.ucw.cz/read/PC/0014
+Change since v2:
+- fix the `scale` uninitialized error
 
-Thanks,
+Change since v3:
+- force -O2 optimization for usdt.test.o to generate SIB addressing usdt
+  and pass all test cases.
 
-Lukas
+Change since v4:
+- split the patch into two parts, one for the fix and the other for the
+  test
+
+Change since v5:
+- Only enable optimization for x86 architecture to generate SIB addressing
+  usdt argument spec.
+
+Change since v6:
+- Add an usdt_o2 test case to cover SIB addressing mode.
+- Reinstate the usdt.c test case.
+
+Change since v7:
+- Refactor modifications to __bpf_usdt_arg_spec to avoid increasing its size,
+  achieving better compatibility
+- Fix some minor code style issues
+- Refactor the usdt_o2 test case, removing semaphore and adding GCC attribute
+  to force -O2 optimization
+
+Change since v8:
+- Refactor the usdt_o2 test case, using assembly to force SIB addressing mode.
+
+Change since v9:
+- Only enable the usdt_o2 test case on x86_64 and i386 architectures since the
+  SIB addressing mode is only supported on x86_64 and i386.
+
+Change since v10:
+- Replace `__attribute__((optimize("O2")))` with `#pragma GCC optimize("O1")`
+  to fix the issue where the optimized compilation condition works improperly. 
+- Renamed test case usdt_o2 and relevant files name to usdt_o1 in that O1
+  level optimization is enough to generate SIB addressing usdt argument spec.
+
+Change since v11:
+- Replace `STAP_PROBE1` with `STAP_PROBE_ASM`
+- Use bit fields instead of bit shifting operations
+- Merge the usdt_o1 test case into the usdt test case
+
+Change since v12:
+- This patch is same with the v12 but with a new version number.
+
+Change since v13(resolve some review comments):
+- https://lore.kernel.org/bpf/CAEf4BzZWd2zUC=U6uGJFF3EMZ7zWGLweQAG3CJWTeHy-5yFEPw@mail.gmail.com/
+- https://lore.kernel.org/bpf/CAEf4Bzbs3hV_Q47+d93tTX13WkrpkpOb4=U04mZCjHyZg4aVdw@mail.gmail.com/
+
+Change since v14:
+- fix a typo in __bpf_usdt_arg_spec
+
+Jiawei Zhao (2):
+  libbpf: fix USDT SIB argument handling causing unrecognized register
+    error
+  selftests/bpf: Enrich subtest_basic_usdt case in selftests to cover
+    SIB handling logic
+
+ tools/lib/bpf/usdt.bpf.h                      | 44 ++++++++++++-
+ tools/lib/bpf/usdt.c                          | 57 +++++++++++++++--
+ tools/testing/selftests/bpf/prog_tests/usdt.c | 62 ++++++++++++++++++-
+ tools/testing/selftests/bpf/progs/test_usdt.c | 32 ++++++++++
+ 4 files changed, 186 insertions(+), 9 deletions(-)
+
+-- 
+2.43.0
+
 
