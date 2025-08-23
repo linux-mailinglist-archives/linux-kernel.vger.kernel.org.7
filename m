@@ -1,170 +1,150 @@
-Return-Path: <linux-kernel+bounces-783329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 147CDB32BB5
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 21:38:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C32B32BBC
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 21:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE9E2A06B2C
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:38:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 189C6683691
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5172EA46D;
-	Sat, 23 Aug 2025 19:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96410261593;
+	Sat, 23 Aug 2025 19:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lXrTgQr6"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rqCwiQnI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/CqxUERT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22661FDE09
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 19:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A281F130B;
+	Sat, 23 Aug 2025 19:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755977914; cv=none; b=pRF6YoN8pBYzrsPWbo20S4It2L+/WPb5ok27iyzm0WIXaOwkv8rlmMX+ACMKUG9VyUk4BEpcq5yhv/OAgcVnoANdxefZBtPLUF9DTwkXhAOVGY0teHplKqsAIxzY+6Esm/LSpDsUahi07fd8b4ydPPsnbaFN1OiRzeJO9kEH7VI=
+	t=1755978759; cv=none; b=roQtDCe67aiX0YTXYUBMcHjNxkYaeYrNplvRCdpUz25WbBJs+7QDtFsIgkfDsbLEj2ZQowT5kwZOrg+b+lD0wa+6+l8ZHmWKNfXc8QdyKgHbr6aSORBQk/f6AC8393sIuppPl31Xb1zRxbSAYXp+QoMj6IaogMmcsHpEcwyArbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755977914; c=relaxed/simple;
-	bh=9H5EWBk4yVKoWb98oK8R5kJWtyTvHlhBWPggxu4SXn0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lSa8seei9d/Z2ClHwTVQp4czdnGfXcqTGASmHLJmSIIdh+gyhK+7ti1LUb4E5asQdm/IiKrGFijs0slVjfbLP3WPOM6ladc3+jWGNd6osMRq//jnbfg1kYrUjVI8URcl9/r5Ur4Xa1SJ1vwC2U++I1lgFBBH2iAnlmvgPP+t+fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lXrTgQr6; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e34c4ce54so2737080b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 12:38:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755977911; x=1756582711; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vFoZeto/FDI3HbNA3+yLmKkVSsUZjUZFotfhVBL12vM=;
-        b=lXrTgQr6JhIISSPI/TtVrVlmguy8BHG8uXDzcqkFX6zsY7Al1UgdklHiI/03eLuwGn
-         3i2EvUT5VPG/86ibT1WOjbVGpfzQa1NLHc9hRxz6+sd85PFNF6FU0QMi9Ibzkb4Lqj4O
-         8etasAsGJzw5sinGD11CFVSH+HfTD8L3/N7jc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755977911; x=1756582711;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vFoZeto/FDI3HbNA3+yLmKkVSsUZjUZFotfhVBL12vM=;
-        b=CmSXoirM6mtup4V94A+dbPVBqTxuWm7VHHsCrS4vlfgDTnTsQExZC+hltU8T/5cMzY
-         dAORkLIJzaWejYvp/JGEKGn3GgPMbAGFR2ADzYjggOw2K/uWq4FvtM+8CvldwOG+VUhw
-         WDiAP6oYJUtFBcdAhXpVONjSjiB+rGdtDfJy02tECNfZWT1yRfrjK8NP4uBZNuqB/8XI
-         K2asYndg4LRXdCh0WFLTWiRAUTsmpCedY0GNuEmVvGr32io+tq5QSlnRyJ0aFjGfAW5S
-         hzlpibmtjXML3xTSyq9zan57SnwYXIrmbXuR59Rcnh6PXc6cRzllggClpLsax95q2Tv1
-         7T0A==
-X-Forwarded-Encrypted: i=1; AJvYcCU7slBQtVG6pqSrKJmqAygxn7f2ZQu7YkjpmT+fUl4AjyAO226pZMsBkkOlEeHTJyezIH3f4Ww0+9palNw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypZNXkOwcQ7zFEzeQKROSYvfJAyAtObjn8+OVq1yAtOnnRhDI4
-	Sq9jhXCPlzPqVtCEfHiW1ke7GF1r1rwfYQI4UtiXtbm/RxFs+5CBLZPWOgIogRqW5A==
-X-Gm-Gg: ASbGncvnRgALAOKmhz976AxKcKqwjjaWwbBP6Q1LmXe6uYHQYZ73zTFkz9XA0jUF9hC
-	48MslkL41LZLD/h77gLcopUIgHD6AibTMqOSF3R6IxIfu0r9idx17TnHkTFUjRWQPqJ8KIeFIAh
-	gpNOBIQwl8kHv/znl5RJvZdBXEncjWv4vtjRX817mVnMDewZ5cicgW1v3XuCC8wufq3QLmEy89p
-	5sac0ufwK2IzzEj9FBsHza2Y3sLWc450wd/7H4HejAcFNEh9htkOwvNdXdNpK6EcCD8rPMak60D
-	Ra4Z3VCJgSbj6LmjOg6bqcXSzLKQNLgKXK+k31QChh+VMhWarlqe2lBmwxVv73QPWYMAH8wZWcY
-	OIc6UMIoYCjoE0V/2kEEQd9JtcBaDU/Gt85h5Hpj+PBKKZb6V/fLgmBl7Pht3
-X-Google-Smtp-Source: AGHT+IHZgEfPSgrzNcfJP0y8VFbZ/mI9XmL1DW5PZYFaB2PJIzNbSTWb31bEH3e4F4au31IY+qw7iw==
-X-Received: by 2002:a05:6a20:258a:b0:23f:f729:2e72 with SMTP id adf61e73a8af0-24340b5832dmr8588883637.1.1755977911137;
-        Sat, 23 Aug 2025 12:38:31 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:dde2:2ecc:d200:6390])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7704025ef80sm3093608b3a.108.2025.08.23.12.38.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Aug 2025 12:38:30 -0700 (PDT)
-From: Brian Norris <briannorris@chromium.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Georgi Djakov <djakov@kernel.org>,
-	Odelu Kukatla <quic_okukatla@quicinc.com>
-Cc: Douglas Anderson <dianders@chromium.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Brian Norris <briannorris@chromium.org>
-Subject: [RFC PATCH] arm64: dts: qcom: sc7280: Drop aggre{1,2}_noc QOS clocks on Herobrine
-Date: Sat, 23 Aug 2025 12:37:18 -0700
-Message-ID: <20250823123718.RFC.1.Idebf1d8bd8ff507462fef9dc1ff47e84c01e9b60@changeid>
-X-Mailer: git-send-email 2.51.0.rc2.233.g662b1ed5c5-goog
+	s=arc-20240116; t=1755978759; c=relaxed/simple;
+	bh=v1wEZO56GummziL9neBU05SCWlnDR9yrnpOCiGuKjSI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=ZLdOREDkj3q41skLd2010BQXSiX4Lqw1OHQIEZoAH2m3hMi4D+zEec98qnZl91KA8CwSQULRjzzpABmqJAttzJOnC+uk8nQ7+x7LFTgHuVxljdQA+THf14VtXkXT9BYhaounB7FzzAFHsFTacersAwZqPC2WnKlgPX3qR8isCu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rqCwiQnI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/CqxUERT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 23 Aug 2025 19:52:34 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755978755;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=372pLaahYYJmldtEcJ4oI81lqSmNiu7/wEcN5YmqmXs=;
+	b=rqCwiQnI+Vo8G1DyP/9+29utVopncvk/SM/g8s72fyausDi33QlAcR82glTcumKPRbmlI3
+	ZVzo0Wwh+gdptcMt0OHJi/C64rpoZa5IUSiBDDukXGkZ2JI0Ni4dJNapFHCVbApPfLSQo2
+	9UviUvzeqnF3b/B+qXsKdjJva9RfQ81dKIlarJNVBJ+y0XL5K7UiHcwwOdGDtoI6TFSxk5
+	ogne/gnMf4+hS/2cshih8EJmT7pgnAYD+fGlHj0HxmKFnxJxAVdKaaCdw2EnU/Wopyhr7F
+	BWIQ7ikl0tQfcz55/wEp7AwfPxcmURZqaH1TKC5MPQ5dp5NCIyLHzZnpyu6nSQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755978755;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=372pLaahYYJmldtEcJ4oI81lqSmNiu7/wEcN5YmqmXs=;
+	b=/CqxUERTfY+jAUZ+fuE399HVXrv2UhhHenJXmTkPKLFpwPIQlqfsOEfmITfjURpay5nvnD
+	3ChgbosKQdSCjIBQ==
+From: "tip-bot2 for Edgar Bonet" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: irq/urgent] irqchip/atmel-aic[5]: Fix incorrect lock guard conversion
+Cc: Edgar Bonet <bonet@grenoble.cnrs.fr>, Thomas Gleixner <tglx@linutronix.de>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <280dd506-e1fc-4d2e-bdc4-98dd9dca6138@grenoble.cnrs.fr>
+References: <280dd506-e1fc-4d2e-bdc4-98dd9dca6138@grenoble.cnrs.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <175597875409.1420.7808650911707523725.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ever since these two commits
+The following commit has been merged into the irq/urgent branch of tip:
 
-  fbd908bb8bc0 ("interconnect: qcom: sc7280: enable QoS configuration")
-  2b5004956aff ("arm64: dts: qcom: sc7280: Add clocks for QOS configuration")
+Commit-ID:     c2bac68067bba5edda09112c09f2f670792dcdc8
+Gitweb:        https://git.kernel.org/tip/c2bac68067bba5edda09112c09f2f670792=
+dcdc8
+Author:        Edgar Bonet <bonet@grenoble.cnrs.fr>
+AuthorDate:    Thu, 14 Aug 2025 14:59:42 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sat, 23 Aug 2025 21:41:07 +02:00
 
-Herobrine systems fail to boot due to crashes like the following:
+irqchip/atmel-aic[5]: Fix incorrect lock guard conversion
 
-[    0.243171] Kernel panic - not syncing: Asynchronous SError Interrupt
-[    0.243173] CPU: 7 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0 #1 c5464041cff584ced692726af2c4400fa2bde1db
-[    0.243178] Hardware name: Qualcomm Technologies, Inc. sc7280 CRD platform (rev5+) (DT)
-[    0.243180] Call trace:
-[    0.243182]  dump_backtrace+0x104/0x128
-[    0.243194]  show_stack+0x24/0x38
-[    0.243202]  __dump_stack+0x28/0x38
-[    0.243208]  dump_stack_lvl+0x28/0xb8
-[    0.243211]  dump_stack+0x18/0x30
-[    0.243215]  panic+0x134/0x340
-[    0.243219]  nmi_panic+0x48/0x98
-[    0.243227]  arm64_serror_panic+0x6c/0x80
-[    0.243245]  arm64_is_fatal_ras_serror+0xd8/0xe0
-[    0.243261]  do_serror+0x5c/0xa8
-[    0.243265]  el1h_64_error_handler+0x34/0x48
-[    0.243272]  el1h_64_error+0x7c/0x80
-[    0.243285]  regmap_mmio_read+0x5c/0xc0
-[    0.243289]  _regmap_bus_reg_read+0x78/0xf8
-[    0.243296]  regmap_update_bits_base+0xec/0x3a8
-[    0.243300]  qcom_icc_rpmh_probe+0x2d4/0x490
-[    0.243308]  platform_probe+0xb4/0xe0
-[...]
+Commit b00bee8afaca ("irqchip: Convert generic irqchip locking to guards")
+replaced calls to irq_gc_lock_irq{save,restore}() with
+guard(raw_spinlock_irq).
 
-Specifically, they fail in qcom_icc_set_qos() when trying to write the
-QoS settings for qhm_qup1. Several of the previous nodes (qhm_qspi,
-qhm_qup0, ...) seem to configure without crashing.
+However, in irq-atmel-aic5.c and irq-atmel-aic.c, the xlate callback is
+used in the early boot process, before interrupts are initially enabled.
+As its destructor enables interrupts, this triggers the warning in
+start_kernel():
 
-I don't really know what's unique about Herobrine systems vs other
-sc7280 systems that presumably work fine. I'd guess there's some
-conflict with something configured by the boot firmware.
+    WARNING: CPU: 0 PID: 0 at init/main.c:1024 start_kernel+0x4d0/0x5dc
+    Interrupts were enabled early
 
-I'm submitting as an RFC just to get thoughts from people who hopefully
-know better than me what might be going wrong here.
+Fix this by using guard(raw_spinlock_irqsave) instead.
 
-Fixes: fbd908bb8bc0 ("interconnect: qcom: sc7280: enable QoS configuration")
-Fixes: 2b5004956aff ("arm64: dts: qcom: sc7280: Add clocks for QOS configuration")
-Signed-off-by: Brian Norris <briannorris@chromium.org>
+[ tglx: Folded the equivivalent fix for atmel-aic ]
+
+Fixes: b00bee8afaca ("irqchip: Convert generic irqchip locking to guards")
+Signed-off-by: Edgar Bonet <bonet@grenoble.cnrs.fr>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/all/280dd506-e1fc-4d2e-bdc4-98dd9dca6138@grenob=
+le.cnrs.fr
+
 ---
+ drivers/irqchip/irq-atmel-aic.c  | 2 +-
+ drivers/irqchip/irq-atmel-aic5.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
- arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
-index 2ba4ea60cb14..59203ce58c61 100644
---- a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
-@@ -394,6 +394,16 @@ &vreg_l2c_1p8 {
- 
- /* ADDITIONS TO NODES DEFINED IN PARENT DEVICE TREE FILES */
- 
-+/* QoS seems to have conflicts with boot firmware on these devices. */
-+&aggre1_noc {
-+	/delete-property/ clocks;
-+};
-+
-+/* QoS seems to have conflicts with boot firmware on these devices. */
-+&aggre2_noc {
-+	/delete-property/ clocks;
-+};
-+
- &edp_panel {
- 	/* Our board provides power to the qcard for the eDP panel. */
- 	power-supply = <&vreg_edp_3p3>;
--- 
-2.51.0.rc2.233.g662b1ed5c5-goog
-
+diff --git a/drivers/irqchip/irq-atmel-aic.c b/drivers/irqchip/irq-atmel-aic.c
+index 03aeed3..1dcc527 100644
+--- a/drivers/irqchip/irq-atmel-aic.c
++++ b/drivers/irqchip/irq-atmel-aic.c
+@@ -188,7 +188,7 @@ static int aic_irq_domain_xlate(struct irq_domain *d,
+=20
+ 	gc =3D dgc->gc[idx];
+=20
+-	guard(raw_spinlock_irq)(&gc->lock);
++	guard(raw_spinlock_irqsave)(&gc->lock);
+ 	smr =3D irq_reg_readl(gc, AT91_AIC_SMR(*out_hwirq));
+ 	aic_common_set_priority(intspec[2], &smr);
+ 	irq_reg_writel(gc, smr, AT91_AIC_SMR(*out_hwirq));
+diff --git a/drivers/irqchip/irq-atmel-aic5.c b/drivers/irqchip/irq-atmel-aic=
+5.c
+index 60b00d2..1f14b40 100644
+--- a/drivers/irqchip/irq-atmel-aic5.c
++++ b/drivers/irqchip/irq-atmel-aic5.c
+@@ -279,7 +279,7 @@ static int aic5_irq_domain_xlate(struct irq_domain *d,
+ 	if (ret)
+ 		return ret;
+=20
+-	guard(raw_spinlock_irq)(&bgc->lock);
++	guard(raw_spinlock_irqsave)(&bgc->lock);
+ 	irq_reg_writel(bgc, *out_hwirq, AT91_AIC5_SSR);
+ 	smr =3D irq_reg_readl(bgc, AT91_AIC5_SMR);
+ 	aic_common_set_priority(intspec[2], &smr);
 
