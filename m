@@ -1,181 +1,144 @@
-Return-Path: <linux-kernel+bounces-783354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF0FB32C1A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 23:48:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A860B32C24
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 23:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24A9D7B51C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 21:46:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D8C49E29C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 21:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B58224AF7;
-	Sat, 23 Aug 2025 21:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF19C2EBDE3;
+	Sat, 23 Aug 2025 21:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="okdJjChS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F1RBuD+U"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCCBAD4B;
-	Sat, 23 Aug 2025 21:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18C715C0;
+	Sat, 23 Aug 2025 21:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755985683; cv=none; b=NemPwrIIJfvgHo6X+abIOU+R/cdtSkartJI2zcSxcV3xihs7T0NLTVwkzBiqkfA7+lkVgTXdxwf0nKjFpg5jzuj00tIymsZAkdW1kWig3qlwBFXdYM51QSbiYecIdtil/9BF9Eo92e4cRToX2mOqtJuWcGNd04YyT59l0FqG3eE=
+	t=1755986033; cv=none; b=SQ6AT6nLgrif3P0/tZOKoLcXMIoWL69uMRs/eVdO0hEKNp0aDXRKlLyWJ97SludagXPfv71uhiEVKQ7DH2t5mR2lgIdH04lFYqnWsHPnz0V/RAoKr6W/HYxZetVf9kKbtw1dhkAww+A1s3HPRsOnxY3q6Z1axOpX7zDRZJCZ02w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755985683; c=relaxed/simple;
-	bh=f+2e1mjfdrM4u6c20rSZEJrXZ7DiDa0vXieudZxMy4s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ya5bxJBTEZZB0Re3d0XC2pGEnZYkdvdfyrAcKB6so2EVY3hPJ1eYCSBqKwwPlABL41+LphgyKKepQAx8tUflhke/65chH4b5TtnC+CdgLNWztTeDh3VgpPtQc7uLs2Llx4IR6ncLc8r6E4ulNdLIQXFE0HSwy2qL4swRYaAJ4O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=okdJjChS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD629C116D0;
-	Sat, 23 Aug 2025 21:48:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755985682;
-	bh=f+2e1mjfdrM4u6c20rSZEJrXZ7DiDa0vXieudZxMy4s=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=okdJjChS8xDJKozutDClByY1QI8HxqsxfRLN6XIOhW4F/CD2Vmv8revUE77i4D9b7
-	 YLiPtKcKWgfl455V3ZjOLSEw02BJCLdhrnl5bIKjFB+nyPwFDemhrqxOFfdFBFy6r1
-	 SW0aUch9FILfVp+0p24u5UAwhERO/pGUQViOJlqLu58EG72cNvs5Aiz1ifThpzFCQC
-	 0wYPPkHothpsuuu0sPoBd/RDnfS1segsfiwrGEw7i9TeP1bnsvJp433DhH5bAz5axK
-	 /xzW7BQTM6AA+njIvacRoJWNR4OQkq8PK/u3O877KELm4+FphSMcl9XeXSf4fgF95d
-	 1IJ+hgeBIqE8A==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55ce5097638so3416770e87.0;
-        Sat, 23 Aug 2025 14:48:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWK8sirszlngt/VpuH6XHJkAECZXksO9I1K5k2+GT9nGsxUaCn1LKxP9arMwm8mlpqcX9GEYfd0LnC+BcvJ@vger.kernel.org, AJvYcCWd7mYb0+oCwzEen/3j8hQ2NcX9Rmf9pX+6e/ixq61Lhgm6MvrAaKPg43i7oGBGPM+9TqAWs4pAkOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXZ3mseVIKBDylgxhLUDuc3spm7KbZWs1HhvirenG8F3T+clje
-	7dG9eDVilyeCfHUHEpVInsugUN2kTXHGHYSBRVHoPn8ptitEE7mjtxuVdFwcyG4Va2KiqY/YxEE
-	086IP2bwFkCNbJDIQCP3c2x7bH4zpMds=
-X-Google-Smtp-Source: AGHT+IHpU7xCroubPXDWGgYJBrip4rxJYyc1NgWuY2GTM1r2YZ/KwreaPY1ko02JrW08q1BaBbIhh9myTEwFob0bbAM=
-X-Received: by 2002:a05:6512:61d0:20b0:55f:34e8:b1b0 with SMTP id
- 2adb3069b0e04-55f34e8ca18mr774083e87.15.1755985681198; Sat, 23 Aug 2025
- 14:48:01 -0700 (PDT)
+	s=arc-20240116; t=1755986033; c=relaxed/simple;
+	bh=9BXIzaov3cIKsITFD2kYAmNOig9QKsNDG5ar116bKPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aSoRrGJcLfrMmt7NXjWPQVpW0Q4TjxXLoCB9QSvnRf8yFzaJnOvARJhYJsEud6DTXh77usNJDVJZX3sVDn7+vk9VVjraphPh/2Z5OfBLGaMKR77rK4g61MJf8TdM8oHXwZsyV/yplXqWG6w6Q2YwZfgxk2LYFwI/IjkiOQPSyBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F1RBuD+U; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755986031; x=1787522031;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9BXIzaov3cIKsITFD2kYAmNOig9QKsNDG5ar116bKPs=;
+  b=F1RBuD+UGGawQMj0uVGegqI/GFe/9guSB/nSFH4JF2N4tgCYSa0xmuwZ
+   IMlL+vWVYx7NG7Bg9Ci52oUdDjdJyQvb5/Myyf7LVOwJwknCW7dlGkHSe
+   KMz/ET+Kj42chNncvI5fjoIS3fR/4E02lBsu/qSkDwc/vY1YCqlx1j6l1
+   9RrOgimZg/SD0impyqhVAJ6Vz3gTt37pEwZiu1p+kksz1zJCaUqA+GJs7
+   B9SZJMVp3f0M4GmMZ5JJr2tbN9/4B35UXpD6a8YRNXncZjLxGMwd3ZVqP
+   6XSfyiAUfawIZZmXYROxTlRdiSP39AIKjhZusAfC8RD2oynwbtICAVUZr
+   A==;
+X-CSE-ConnectionGUID: Tra55mtVT72rtchuTamBmQ==
+X-CSE-MsgGUID: N9rN2BaEQ5OB4EEfQf7Xdw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="58319421"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="58319421"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2025 14:53:50 -0700
+X-CSE-ConnectionGUID: XxiiGVKgSbGjo2/uo1qaBQ==
+X-CSE-MsgGUID: RpzRL/2pTRGLvAstCrrpKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="168210962"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 23 Aug 2025 14:53:44 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1upwBB-000Mch-25;
+	Sat, 23 Aug 2025 21:53:41 +0000
+Date: Sun, 24 Aug 2025 05:53:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org,
+	fthain@linux-m68k.org, geert@linux-m68k.org, mhiramat@kernel.org,
+	senozhatsky@chromium.org
+Cc: oe-kbuild-all@lists.linux.dev, lance.yang@linux.dev,
+	amaindex@outlook.com, anna.schumaker@oracle.com,
+	boqun.feng@gmail.com, ioworker0@gmail.com, joel.granados@kernel.org,
+	jstultz@google.com, kent.overstreet@linux.dev,
+	leonylgao@tencent.com, linux-kernel@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org, longman@redhat.com,
+	mingo@redhat.com, mingzhe.yang@ly.com, oak@helsinkinet.fi,
+	rostedt@goodmis.org, tfiga@chromium.org, will@kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] hung_task: fix warnings by enforcing alignment on
+ lock structures
+Message-ID: <202508240539.ARmC1Umu-lkp@intel.com>
+References: <20250823074048.92498-1-lance.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755721529.git.epetron@amazon.de> <b34da9fd50c89644cd4204136cfa6f5533445c56.1755721529.git.epetron@amazon.de>
-In-Reply-To: <b34da9fd50c89644cd4204136cfa6f5533445c56.1755721529.git.epetron@amazon.de>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 24 Aug 2025 07:47:49 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXFQwOHyQg2LtabMA3qxiBn_AVV_JNfki2WPSg8u_XbBcg@mail.gmail.com>
-X-Gm-Features: Ac12FXzn0qCCniv9JuLvANrQaphyB7rl0h7KLf3cn0PE7oJ7DT-dRyUUwZAdnF8
-Message-ID: <CAMj1kXFQwOHyQg2LtabMA3qxiBn_AVV_JNfki2WPSg8u_XbBcg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] efi: Support booting with kexec handover (KHO)
-To: Evangelos Petrongonas <epetron@amazon.de>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Mike Rapoport <rppt@kernel.org>, Alexander Graf <graf@amazon.com>, 
-	Changyuan Lyu <changyuanl@google.com>, Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org, 
-	linux-mm@kvack.org, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nh-open-source@amazon.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250823074048.92498-1-lance.yang@linux.dev>
 
-(cc Ilias)
+Hi Lance,
 
-Note to akpm: please drop this series for now.
+kernel test robot noticed the following build warnings:
 
-On Fri, 22 Aug 2025 at 04:00, Evangelos Petrongonas <epetron@amazon.de> wrote:
->
-> When KHO (Kexec HandOver) is enabled, it sets up scratch memory regions
-> early during device tree scanning. After kexec, the new kernel
-> exclusively uses this region for memory allocations during boot up to
-> the initialization of the page allocator
->
-> However, when booting with EFI, EFI's reserve_regions() uses
-> memblock_remove(0, PHYS_ADDR_MAX) to clear all memory regions before
-> rebuilding them from EFI data. This destroys KHO scratch regions and
-> their flags, thus causing a kernel panic, as there are no scratch
-> memory regions.
->
-> Instead of wholesale removal, iterate through memory regions and only
-> remove non-KHO ones. This preserves KHO scratch regions, which are
-> good known memory, while still allowing EFI to rebuild its memory map.
->
-> Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Signed-off-by: Evangelos Petrongonas <epetron@amazon.de>
-> ---
-> Changes in v3:
->         - Improve the code comments, by stating that the scratch regions are
->         good known memory
->
-> Changes in v2:
->         - Replace the for loop with for_each_mem_region
->         - Fix comment indentation
->         - Amend commit message to specify that scratch regions
->         are known good regions
->
->  drivers/firmware/efi/efi-init.c | 29 +++++++++++++++++++++++++----
->  1 file changed, 25 insertions(+), 4 deletions(-)
->
+[auto build test WARNING on tip/locking/core]
+[also build test WARNING on akpm-mm/mm-everything sysctl/sysctl-next linus/master v6.17-rc2 next-20250822]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I'd rather drop the memblock_remove() entirely if possible. Could we
-get some insight into whether memblocks are generally already
-populated at this point during the boot?
+url:    https://github.com/intel-lab-lkp/linux/commits/Lance-Yang/hung_task-fix-warnings-by-enforcing-alignment-on-lock-structures/20250823-164122
+base:   tip/locking/core
+patch link:    https://lore.kernel.org/r/20250823074048.92498-1-lance.yang%40linux.dev
+patch subject: [PATCH 1/1] hung_task: fix warnings by enforcing alignment on lock structures
+config: x86_64-buildonly-randconfig-001-20250823 (https://download.01.org/0day-ci/archive/20250824/202508240539.ARmC1Umu-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250824/202508240539.ARmC1Umu-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508240539.ARmC1Umu-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from sound/soc/codecs/mt6660.c:15:
+>> sound/soc/codecs/mt6660.h:28:1: warning: alignment 1 of 'struct mt6660_chip' is less than 8 [-Wpacked-not-aligned]
+      28 | };
+         | ^
+>> sound/soc/codecs/mt6660.h:25:22: warning: 'io_lock' offset 49 in 'struct mt6660_chip' isn't aligned to 8 [-Wpacked-not-aligned]
+      25 |         struct mutex io_lock;
+         |                      ^~~~~~~
 
 
-> diff --git a/drivers/firmware/efi/efi-init.c b/drivers/firmware/efi/efi-init.c
-> index a00e07b853f2..a65c2d5b9e7b 100644
-> --- a/drivers/firmware/efi/efi-init.c
-> +++ b/drivers/firmware/efi/efi-init.c
-> @@ -12,6 +12,7 @@
->  #include <linux/efi.h>
->  #include <linux/fwnode.h>
->  #include <linux/init.h>
-> +#include <linux/kexec_handover.h>
->  #include <linux/memblock.h>
->  #include <linux/mm_types.h>
->  #include <linux/of.h>
-> @@ -164,12 +165,32 @@ static __init void reserve_regions(void)
->                 pr_info("Processing EFI memory map:\n");
->
->         /*
-> -        * Discard memblocks discovered so far: if there are any at this
-> -        * point, they originate from memory nodes in the DT, and UEFI
-> -        * uses its own memory map instead.
-> +        * Discard memblocks discovered so far except for KHO scratch
-> +        * regions. Most memblocks at this point originate from memory nodes
-> +        * in the DT and UEFI uses its own memory map instead. However, if
-> +        * KHO is enabled, scratch regions, which are good known memory
-> +        * must be preserved.
->          */
->         memblock_dump_all();
-> -       memblock_remove(0, PHYS_ADDR_MAX);
-> +
-> +       if (is_kho_boot()) {
-> +               struct memblock_region *r;
-> +
-> +               /* Remove all non-KHO regions */
-> +               for_each_mem_region(r) {
-> +                       if (!memblock_is_kho_scratch(r)) {
-> +                               memblock_remove(r->base, r->size);
-> +                               r--;
-> +                       }
-> +               }
-> +       } else {
-> +               /*
-> +                * KHO is disabled. Discard memblocks discovered so far:
-> +                * if there are any at this point, they originate from memory
-> +                * nodes in the DT, and UEFI uses its own memory map instead.
-> +                */
-> +               memblock_remove(0, PHYS_ADDR_MAX);
-> +       }
->
->         for_each_efi_memory_desc(md) {
->                 paddr = md->phys_addr;
-> --
-> 2.47.3
->
->
->
->
-> Amazon Web Services Development Center Germany GmbH
-> Tamara-Danz-Str. 13
-> 10243 Berlin
-> Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
-> Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-> Sitz: Berlin
-> Ust-ID: DE 365 538 597
->
+vim +28 sound/soc/codecs/mt6660.h
+
+f289e55c6eeb43 Jeff Chang 2020-01-16  19  
+f289e55c6eeb43 Jeff Chang 2020-01-16  20  struct mt6660_chip {
+f289e55c6eeb43 Jeff Chang 2020-01-16  21  	struct i2c_client *i2c;
+f289e55c6eeb43 Jeff Chang 2020-01-16  22  	struct device *dev;
+f289e55c6eeb43 Jeff Chang 2020-01-16  23  	struct platform_device *param_dev;
+f289e55c6eeb43 Jeff Chang 2020-01-16  24  	struct mt6660_platform_data plat_data;
+f289e55c6eeb43 Jeff Chang 2020-01-16 @25  	struct mutex io_lock;
+f289e55c6eeb43 Jeff Chang 2020-01-16  26  	struct regmap *regmap;
+f289e55c6eeb43 Jeff Chang 2020-01-16  27  	u16 chip_rev;
+f289e55c6eeb43 Jeff Chang 2020-01-16 @28  };
+f289e55c6eeb43 Jeff Chang 2020-01-16  29  #pragma pack(pop)
+f289e55c6eeb43 Jeff Chang 2020-01-16  30  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
