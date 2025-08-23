@@ -1,181 +1,172 @@
-Return-Path: <linux-kernel+bounces-782868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11972B3262C
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:16:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D26B3262D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 423A1680E8F
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:15:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 09E104E2AAC
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5431993B9;
-	Sat, 23 Aug 2025 01:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F3A191F9C;
+	Sat, 23 Aug 2025 01:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AMXf2+Dq"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OnCzMbG8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0E228F4
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 01:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F66428F4
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 01:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755911750; cv=none; b=qK0qUg58//C1Tbu2vken60TLu4vw2zwF2dJ5KTc94QbTrho0a55IP3iGKJ+Bf1bni0KfDVkSm9r5nwwcHkpYksX81mQcSUFwZoErfiu4GPXFp1H5ECWtUGkpWjLAhWtcvA3w6vCrz5JnUmZcUBzeklX6mq84wPoT/viURZsr02Q=
+	t=1755911814; cv=none; b=feKIrg31RFt5w5izg1ph3NM7LQuyamuy6T8lLjVt2oFKsIlK4nUKgZO+jvauSUQ+vCfDjqmlTcOaZ5o3G303XrMZ8NgOeQSiOIh8a8b8riYHEP1h2k4ANB+RcujECVQFAeEfV5KLu9T3PZD0KrN3NqrOPNmJcv3yl/8PucrmSNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755911750; c=relaxed/simple;
-	bh=2TJf8u3FXhuCOAUX9JWR/xOPNDOZHYXw/yjbAHVWGFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IRYLdp+NJvzasRLh1qZ+ku/eWlPoFIVRGF6AL7xc61juOCjXRAgmtYvHpCLdREQ1ttDFUQYyShtspli4ScjeeUdIj6ZCS+di09v6q8u4zeS01dSm5B1o/sPlvBE4ZB3Lu+Od2sWbJ7I622ERukz41q+B7j40UG+dqPuLQNpsDQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AMXf2+Dq; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-32326e8005bso2836657a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:15:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755911748; x=1756516548; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=SQPiCTgZZSRUhOTTutOFH4iVS/KapPommMHwl1cv0T4=;
-        b=AMXf2+Dqn3QxmdMEEMkEdmcYhmlC6L8WXBukKAWXaHU3ulcEopnXcSg/6P78nrkC3F
-         JUQETIb5X1ydyMVgLsFOwflTpLdk3NNXPDMawztT6AKZrNBO58vjQyv/Bwouk1nZQdH8
-         UsgPaShG5rsx/b5KBSAboMtu+GDNI4/ubwpJW/FsYGvKYlYhD2KL/iioVuzPn9mhL2dF
-         SaMo39+pgrQVB6RXLNFHlWgvGHpxB2SbCGlDXIeTEvimTR4AngkNzGay0/I9L+RzidCT
-         E06iOR1ARpwbIT9FwNfYPvwSxxw6ZefAK4DonE/jklJLvFTjajLkwHEC4qtkKIMAEh9R
-         o+Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755911748; x=1756516548;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SQPiCTgZZSRUhOTTutOFH4iVS/KapPommMHwl1cv0T4=;
-        b=Ow3w2rNeDIFCSelskaCIqxAH0WSsUQELPIbYm1XbMyB82HXfV0olLRvZ1sXK3U2fjV
-         3DmjPTasjghK98NoXqcbCDhDsMEX/2emVEdGajMbsBaAW6FUGXgwcXTz5G8HceB1dnax
-         3Q2HwokdY6o5F8NP2RYRjK6QZJYVo8rhj0f4ZnKOunlMhrYLUdLIOgtWgA/XTVknlYTc
-         slASjwkb3BSNGOrbKgNQBxTgGOarRhg41uFxlX5KcFJi8XnNMRLZgcDI7YhkgSoougdw
-         HyVwtVhV7KYKEbXjyUX5jFfHZWidJDKFR2sGBZEKuwlpEF9SdTLVzXMfr/jnMR9ANami
-         d6wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUd6JKDIKnmWP49Z9PcTEi/dKo1L9CsWIAWuWB9e2pxqv2ketkDZmmRoasauPCQNIQsC69Uag3H1b70IvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZWWEfRJKjtFlVO5BAG+N6tk3axdgZNZrnwl3/rLLvMGgRBWVR
-	yI3kuQ/4FdxPUg0/IpZIA+uHeeTiEAbv4oP6dfA4zW82O10cmeCrJq/p
-X-Gm-Gg: ASbGnctPNdS0jN6pfsSzIJH083hN1CB39g293QS4gweq5qM19FUorwsAVVdvcMjmxan
-	GhJzxpJkWD3ZMl7ecqchSdQg2jSo+RbhAhmw/LAnjxaX4+wFoTkhWlLzIl4loFJ5C8ULIrfzFVz
-	toNQiduYe3JBFROgIt0egCyXiRQ6P+9tegjVcGTgZYgYJqQIEHIh+tZoaiV8p7MPCOhwOdK976m
-	rsY0Qgmyv9s1BVUKOFCiWTQWHXwwAYMxN5gHnlSZIHdeewfeHB3ASX61/tqxUXF5dAPfSceoBbj
-	h7Noucn+pBaFJ2Gx6VXXRUUnkbM1Aq5LhlAgFK/G5cg1rSmbCfOBpXECyL2g22ub11wTyxGivO1
-	ux0mJqEQXhZu2l4qzmKojbRJ0Cd4tnGLkOxgQvssQuLcoOK6BGrsysAsZrjIWgfsHAUtkSVA=
-X-Google-Smtp-Source: AGHT+IF5kIFtsXH5MjU/UoyZrAGqieVQWhe+ovjJ3m1DuZW21DFUKhJjTneGtZPeOcVghqi4t11OFg==
-X-Received: by 2002:a17:90b:3d4e:b0:325:2584:b403 with SMTP id 98e67ed59e1d1-3252584b664mr5195218a91.18.1755911748050;
-        Fri, 22 Aug 2025 18:15:48 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3254ad9321bsm888141a91.0.2025.08.22.18.15.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 18:15:47 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <8e317b46-0179-457e-bd33-8843323b79fa@roeck-us.net>
-Date: Fri, 22 Aug 2025 18:15:46 -0700
+	s=arc-20240116; t=1755911814; c=relaxed/simple;
+	bh=rfoy8dUwVIazm6d2GUzv32yXVdoTMdUG6m95Bx7lLD4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=HcXgAmIVr9He/BUAVOCItKjSOlFjlouCTezeLq41GoHYpAsPiVMfVTDbE/jXImXwyrkdrvMqeOH8jKCy5mc49Ov3poUsu5MI3fHZp8crRajJCLHoQv2C7vUqa5p6hKxwCIjdeuhW5MlbM8hwFGI7FZ7ohaiu16ZUYNBZbWNrsTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OnCzMbG8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFFFCC4CEED;
+	Sat, 23 Aug 2025 01:16:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1755911814;
+	bh=rfoy8dUwVIazm6d2GUzv32yXVdoTMdUG6m95Bx7lLD4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OnCzMbG8BtPUs5b7VgQBWOaxM9mYQLdnuvEtBt5p69Z+QYGc0QnWZHVbikSJ1455z
+	 reI6IDL2IFI5hbKcDqyxgzY+gmbD9A6ihJ8o6kMgi7ISKmVGt8Yi8ojcBK5PUvOvtw
+	 DHq+SPW8KSTwsJRAmk2MQKh1qOfmHQ9PLas+3Rlc=
+Date: Fri, 22 Aug 2025 18:16:53 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: syzbot <syzbot+49a796ed2c9709652f1e@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ pasha.tatashin@soleen.com, syzkaller-bugs@googlegroups.com, Andrew
+ Donnellan <ajd@linux.ibm.com>
+Subject: Re: [syzbot] [mm?] kernel BUG in page_table_check_set
+Message-Id: <20250822181653.cd2024360870ef94cdb7db07@linux-foundation.org>
+In-Reply-To: <68a7ef20.050a0220.37038e.004d.GAE@google.com>
+References: <68a7ef20.050a0220.37038e.004d.GAE@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] genirq/test: Platform/architecture fixes
-To: Brian Norris <briannorris@chromium.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: David Gow <davidgow@google.com>, linux-kernel@vger.kernel.org,
- Geert Uytterhoeven <geert@linux-m68k.org>, kunit-dev@googlegroups.com
-References: <20250822190140.2154646-1-briannorris@chromium.org>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250822190140.2154646-1-briannorris@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 8/22/25 11:59, Brian Norris wrote:
-> The new kunit tests at kernel/irq/irq_test.c were primarily tested on
-> x86_64, with QEMU and with ARCH=um builds. Naturally, there are other
-> architectures that throw complications in the mix, with various CPU
-> hotplug and IRQ implementation choices.
-> 
-> Guenter has been dutifully noticing and reporting these errors, in
-> places like:
-> https://lore.kernel.org/all/b4cf04ea-d398-473f-bf11-d36643aa50dd@roeck-us.net/
-> 
-> I hope I've addressed all the failures, but it's hard to tell when I
-> don't have cross-compilers and QEMU setups for all of these
-> architectures.
-> 
-> I've tested what I could on arm, arm64, m68k, powerpc64, x86_64, and um
-> ARCH. (Notably, patch 4 ("genirq/test: Depend on SPARSE_IRQ") drops
-> support for ARCH=um and ARCH=m68k.)
-> 
-> This series is based on David's patch for these tests:
-> 
-> [PATCH] genirq/test: Fix depth tests on architectures with NOREQUEST by default.
-> https://lore.kernel.org/all/20250816094528.3560222-2-davidgow@google.com/
-> 
-> Changes in v2:
->   * Make all tests depend on SPARSE_IRQ, not just a few (resolves
->     ARCH=m68k issues)
->   * Add David's Reviewed-by on unchanged patches
-> 
+On Thu, 21 Aug 2025 21:16:32 -0700 syzbot <syzbot+49a796ed2c9709652f1e@syzkaller.appspotmail.com> wrote:
 
-My test system says:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15f926f0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
+> dashboard link: https://syzkaller.appspot.com/bug?extid=49a796ed2c9709652f1e
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> userspace arch: arm64
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15faa7a2580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=144143bc580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/disk-8f5ae30d.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmlinux-8f5ae30d.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff/Image-8f5ae30d.gz.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+49a796ed2c9709652f1e@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> kernel BUG at mm/page_table_check.c:118!
 
-Qemu test results
-	total: 637 pass: 637 fail: 0
-Unit tests:
-	pass: 640359 fail: 0
+Thanks.
 
-I sent Tested-by: tags for all patches of the series.
+Presumably due to the series "Support page table check on PowerPC". 
+Andrew, could you please take a look?
 
-Guenter
+The series has been in mm.git for a week so I guess the impact of this
+is small.  I won't drop it at this time, but prompt attention would be
+appreciated.
 
+> Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 6740 Comm: syz.0.17 Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0 PREEMPT 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+> pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+> pc : page_table_check_set+0x584/0x590 mm/page_table_check.c:118
+> lr : page_table_check_set+0x584/0x590 mm/page_table_check.c:118
+> sp : ffff80009c9674c0
+> x29: ffff80009c9674d0 x28: ffff80008fae0000 x27: 0000000000000002
+> x26: ffff0000c079ca80 x25: 0000000000000001 x24: 0000000000000001
+> x23: ffff0000c079ca80 x22: 000000000012b950 x21: 0000000000000001
+> x20: 0000000000000003 x19: 1ffff00012eb65b0 x18: 0000000000000000
+> x17: 0000000000000000 x16: ffff800080528a28 x15: 0000000000000001
+> x14: 1fffe000180f3950 x13: 0000000000000000 x12: 0000000000000000
+> x11: ffff6000180f3951 x10: 0000000000ff0100 x9 : 0000000000000000
+> x8 : ffff0000cdb05b80 x7 : ffff800080d16554 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000000000 x3 : ffff800080d15b5c
+> x2 : 0000000000000001 x1 : 0000000000000002 x0 : 0000000000000001
+> Call trace:
+>  page_table_check_set+0x584/0x590 mm/page_table_check.c:118 (P)
+>  __page_table_check_ptes_set+0x2a8/0x2e0 mm/page_table_check.c:209
+>  page_table_check_ptes_set include/linux/page_table_check.h:76 [inline]
+>  __set_ptes_anysz arch/arm64/include/asm/pgtable.h:709 [inline]
+>  __set_ptes+0x4a0/0x504 arch/arm64/include/asm/pgtable.h:741
+>  contpte_set_ptes+0x120/0x188 arch/arm64/mm/contpte.c:464
+>  set_ptes arch/arm64/include/asm/pgtable.h:1794 [inline]
+>  modify_prot_commit_ptes+0x4e4/0x694 arch/arm64/mm/mmu.c:1556
+>  prot_commit_flush_ptes mm/mprotect.c:197 [inline]
+>  commit_anon_folio_batch mm/mprotect.c:246 [inline]
+>  set_write_prot_commit_flush_ptes mm/mprotect.c:273 [inline]
+>  change_pte_range mm/mprotect.c:354 [inline]
+>  change_pmd_range mm/mprotect.c:570 [inline]
+>  change_pud_range mm/mprotect.c:633 [inline]
+>  change_p4d_range mm/mprotect.c:659 [inline]
+>  change_protection_range mm/mprotect.c:687 [inline]
+>  change_protection+0x1e84/0x3ff0 mm/mprotect.c:721
+>  mprotect_fixup+0x504/0x744 mm/mprotect.c:837
+>  do_mprotect_pkey+0x864/0xb30 mm/mprotect.c:993
+>  __do_sys_mprotect mm/mprotect.c:1014 [inline]
+>  __se_sys_mprotect mm/mprotect.c:1011 [inline]
+>  __arm64_sys_mprotect+0x80/0x98 mm/mprotect.c:1011
+>  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+>  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+>  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+>  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+>  el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+>  el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+>  el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+> Code: d4210000 97e865fd d4210000 97e865fb (d4210000) 
+> ---[ end trace 0000000000000000 ]---
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
