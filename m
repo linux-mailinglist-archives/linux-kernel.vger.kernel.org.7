@@ -1,153 +1,174 @@
-Return-Path: <linux-kernel+bounces-783268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AFCBB32B19
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:49:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F4FB32B16
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B35B3179355
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:46:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D8653ACFA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159CF293B73;
-	Sat, 23 Aug 2025 16:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615A724292E;
+	Sat, 23 Aug 2025 16:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="VDwQcKNf"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOXXqNd5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB794481DD;
-	Sat, 23 Aug 2025 16:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3628635C;
+	Sat, 23 Aug 2025 16:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755967418; cv=none; b=fXaLQRIkkkVJrjwKxRqPldDLGm0UpWRGMQWIZqVPlbH757/GspD48u/g/FhbgA61cA3NI/YbopbLxxa8OHxk6fi50rj69Lkro4fMVPCUWLO1lT0yfpdo072Ebfwx3vUlyLdncgb6O2vXPT6lzFHyhFyam028qte5HNAGWFbZtkw=
+	t=1755967720; cv=none; b=KfHix44yTJW9KycVxJABF0UfP400twopue5UnWvU9+xMpxjmqvt4VTb+a/i4litA5z8iGyINbfjmWsk4vRCC4cCOjws7BnBWG53KHw+xy/BxOEHN6aUzK6ZYvwKANcBKUpWI2ZUp6Vfq3/x6iNAxAuibeA5QOHwAybXTW45CLgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755967418; c=relaxed/simple;
-	bh=4Og8yNETlVlq7K3HbRNBFTfh1ekXURDTYRiAcTqmXz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jzRXshmHo6iW2b0Ix/KlECxtp1pSiXZ/vakgTtQQtoXBoCnEa8y/oVP3TUV98y1pz2usXT2UScVrprB2jJYKc0RPFrpzgqGeCh8IeAIie86r+362a6NPro2+bQQivIs5LBXjY2axECOPG4+7XRD//kiM4PTFl/Ani9gCwotFdok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=VDwQcKNf; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id A770F22BD1;
-	Sat, 23 Aug 2025 18:43:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1755967406;
-	bh=al4cMcBWRH9QgIUZIz9Q7Wj6h73BaDiii1apCj2i8oI=;
-	h=Received:Received:From:To:Subject;
-	b=VDwQcKNfKWVRs3Ur1vxksqe0mDrvIRYusFgqfjqnoWR4gfhuN2nVjF2k664KWqZ92
-	 1iw/Vyy+i86F6UAE+Bsu7BUP4KkgDvepAuMwAyveFyXIKtSBtJCk+nylsDtp5CKPXf
-	 PnIEe2Jd8w2WqFP4cJN1vkLpbGHVots+a4HgbTcbqn9TC4Ri5hpB0m5ZNRweKGmRLB
-	 56qtB+TLS2SREtdusePEGjXBPk67NLt7amc2eJDLgxSq0dGe8kNCJnG+PruISc75S/
-	 yHJEiLUR9DM4jE9x7N7ClfovxOJHn2OvpUmQUOlcZqLqorZmg4m9+3lBIPl9D1QwbX
-	 vCxc3pE3MfWyQ==
-Received: from livingston (unknown [192.168.42.11])
-	by gaggiata.pivistrello.it (Postfix) with ESMTP id 608B67F996;
-	Sat, 23 Aug 2025 18:43:26 +0200 (CEST)
-Received: from pivi by livingston with local (Exim 4.96)
-	(envelope-from <francesco@dolcini.it>)
-	id 1uprKw-0002Hl-0k;
-	Sat, 23 Aug 2025 18:43:26 +0200
-Date: Sat, 23 Aug 2025 18:43:26 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Beleswar Prasad Padhi <b-padhi@ti.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>, nm@ti.com, vigneshr@ti.com,
-	kristo@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, afd@ti.com, u-kumar1@ti.com, hnagalla@ti.com,
-	jm@ti.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
-	Parth Pancholi <parth.pancholi@toradex.com>,
-	Jo_o Paulo Gon_alves <joao.goncalves@toradex.com>
-Subject: Re: [PATCH 16/33] arm64: dts: ti: k3-am62p-verdin: Add missing cfg
- for TI IPC Firmware
-Message-ID: <aKnvrh2TSksb_39i@livingston.pivistrello.it>
-References: <20250814223839.3256046-1-b-padhi@ti.com>
- <20250814223839.3256046-17-b-padhi@ti.com>
- <20250821060629.GB7503@francesco-nb>
- <ecff956d-1019-41d0-9bfc-b0bdc30e87ba@ti.com>
+	s=arc-20240116; t=1755967720; c=relaxed/simple;
+	bh=PDfxYI4xJFYmIUFeVYOEcKsGHc9UOGEej4nxqYpMpgE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YJXd/0X+nxxH7UFkTaE5luG6MrJ40SI02k7Ht2TobRqdZNPBbFDc+UkJkX89FtOEIjPHqPG7YV8WQJzGi7MNn42hTxwckQ7eViVQUiJM6axAd7HCcBRC/CWeyflsrxcbPwao0uh6QjK0av/2fYbYUdNGAOo8cguu88VNHMpK9/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOXXqNd5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3333C4CEE7;
+	Sat, 23 Aug 2025 16:48:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755967718;
+	bh=PDfxYI4xJFYmIUFeVYOEcKsGHc9UOGEej4nxqYpMpgE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HOXXqNd5ZbNFfXhPJvOSJpuLPaIFgLCHSTOAh/B1wd0Q2+30Sz2yxhHeQ70I+6ira
+	 0Y5NvdqZewIGHh3fkbPEhG731f/9TGrKaqfi79StYlzLt0GkPuc4NLdiVOkkkxLTNj
+	 lCF/coYvgjNcuwJWCN2zhq4sqXhpK39/OUs5pH4vNM0y+kq4UP444vgPGrnlvtOBZ3
+	 vWypYT/Tu9R0zxIRm9lNFsGdK0gPihI1EbGXWDeLh+oYTOkC391/3865/PLGswrKR0
+	 ci3Jz3vltoNG+fME7+Z7D1Hi98pBVKINaG1l8/tKH5WKRXP5EgThnk9ap13vHnwjWY
+	 WyuxowF5X6EHQ==
+Message-ID: <64c311f7-1cc1-4d0d-9f9d-b586050b8fec@kernel.org>
+Date: Sat, 23 Aug 2025 18:48:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ecff956d-1019-41d0-9bfc-b0bdc30e87ba@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 000/114] clk: convert drivers from deprecated round_rate()
+ to determine_rate()
+To: bmasney@redhat.com, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+ Cristian Marussi <cristian.marussi@arm.com>,
+ Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Paul Cercueil <paul@crapouillou.net>, Keguang Zhang
+ <keguang.zhang@gmail.com>, Taichi Sugaya <sugaya.taichi@socionext.com>,
+ Takao Orito <orito.takao@socionext.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Jacky Huang <ychuang3@nuvoton.com>,
+ Shan-Chun Hung <schung@nuvoton.com>, Vladimir Zapolskiy <vz@mleia.com>,
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>, Yixun Lan <dlan@gentoo.org>,
+ Steen Hegelund <Steen.Hegelund@microchip.com>,
+ Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com,
+ Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Michal Simek <michal.simek@amd.com>, Maxime Ripard <mripard@kernel.org>,
+ =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+ Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>,
+ Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Neal Gompa <neal@gompa.dev>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Daniel Palmer <daniel@thingy.jp>, Romain Perier <romain.perier@gmail.com>,
+ Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Heiko Stuebner <heiko@sntech.de>, Andrea della Porta
+ <andrea.porta@suse.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Alex Helms <alexander.helms.jy@renesas.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Liviu Dudau <liviu.dudau@arm.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ sophgo@lists.linux.dev, linux-mips@vger.kernel.org, imx@lists.linux.dev,
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+ linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com,
+ linux-actions@lists.infradead.org, asahi@lists.linux.dev,
+ linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 22, 2025 at 10:09:48PM +0530, Beleswar Prasad Padhi wrote:
+On 11/08/2025 17:17, Brian Masney via B4 Relay wrote:
+> The round_rate() clk ops is deprecated in the clk framework in favor
+> of the determine_rate() clk ops, so let's go ahead and convert the
+> various clk drivers using the Coccinelle semantic patch posted below.
+> I did a few minor cosmetic cleanups of the code in a few cases.
 > 
-> On 8/21/2025 11:36 AM, Francesco Dolcini wrote:
-> > On Fri, Aug 15, 2025 at 04:08:22AM +0530, Beleswar Padhi wrote:
-> > > The wkup_r5fss0_core0_memory_region is used to store the text/data
-> > > sections of the Device Manager (DM) firmware itself and is necessary for
-> > > platform boot. Whereas the wkup_r5fss0_core0_dma_memory_region is used
-> > > for allocating the Virtio buffers needed for IPC with the DM core which
-> > > could be optional. The labels were incorrectly used in the
-> > > k3-am62p-verdin.dtsi file. Correct the firmware memory region label.
-> > > 
-> > > Currently, only mailbox node is enabled with FIFO assignment. However,
-> > > there are no users of the enabled mailboxes. Add the missing carveouts
-> > > for WKUP and MCU R5F remote processors, and enable those by associating
-> > > to the above carveout and mailboxes. This config aligns with other AM62P
-> > > boards and can be refactored out later.
-> > > 
-> > > Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> > > ---
-> > > Cc: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > > Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
-> > > Cc: Parth Pancholi <parth.pancholi@toradex.com>
-> > > Cc: Jo_o Paulo Gon_alves <joao.goncalves@toradex.com>
-> > > Requesting for a review/test.
-> > > 
-> > >   arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi | 42 ++++++++++++++++++++-
-> > >   1 file changed, 41 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
-> > > index 6a04b370d149..0687debf3bbb 100644
-> > > --- a/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
-> > > +++ b/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
-> > > @@ -162,7 +162,25 @@ secure_ddr: optee@9e800000 {
-> > >   			no-map;
-> > >   		};
-> > > -		wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
-> > > +		mcu_r5fss0_core0_dma_memory_region: mcu-r5fss-dma-memory-region@9b800000 {
-> > > +			compatible = "shared-dma-pool";
-> > > +			reg = <0x00 0x9b800000 0x00 0x100000>;
-> > > +			no-map;
-> > > +		};
-> > > +
-> > > +		mcu_r5fss0_core0_memory_region: mcu-r5fss-memory-region@9b900000 {
-> > Node name should be generic, `memory@9b900000` ?
-> 
-> 
-> Humm, that memory is reserved and has the 'no-map' property. So it
-> technically is only used by the node which references it (a particular
-> rproc in this case), and never used by Linux for any allocations. So it
-> is not generic memory per say...
-> 
-> So I was inclined for putting the specific node name which uses the
-> carveout in the label. What do you think?
+@Stephen,
 
-My understanding is that the node name must be generic, as required by
-the DT specification. What matters is that this is memory, not what is used
-for.
+There will be dependencies/conflicts for Samsung, so I will take the two
+Samsung patches. Let me know if you disagree.
 
-
-So it should be something like
-
-
-mcu_r5fss0_core0_dma_memory: memory@9c900000 {
-	compatible = "shared-dma-pool";
-	reg = <0x00 0x9b800000 0x00 0x100000>;
-	no-map;
-};
-
-
-Francesco
-
+Best regards,
+Krzysztof
 
