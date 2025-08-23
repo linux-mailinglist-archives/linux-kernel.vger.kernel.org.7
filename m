@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-783255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32EE6B32AFD
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:43:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E132CB32AFF
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 136FE7A8C8F
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:42:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCD731C20466
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8802EA47E;
-	Sat, 23 Aug 2025 16:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49922F39A9;
+	Sat, 23 Aug 2025 16:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DBoMFfY8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7Oa26scQ"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sN/W+LJA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JbRX0sYR"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B552EA499
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 16:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDDC2F3614
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 16:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755967213; cv=none; b=JkbQ+BFyuH53Z1Eh/f71MpFBfO61A4Li7SErfhPyMijFsxuVz+BLk4bx1XIsJqZZjut9Y3sBNWAs/LO7cI+MiytxxqHzBvF88OoEUICUAiFLK76oHYxDus4FFMmCd20A5F96Fr1QmIvG7OKyxVwocQR94zOKBS0A2IEjo1w3Z2k=
+	t=1755967216; cv=none; b=jkU+gr2dBcv97qbIPiVwquU3hl34NKtYG4yUbRasn4/uTst/YAzGFeo5yKgTH3SlV84Nk/1jUUxKmegyEeR+kC+BFZ8le4+qdy+gKtGPjH1yXX84qRAfpNbELvAF824BjHkYx/1HZ40p951A5evJGyyW6YRe11FnXk755iuK+RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755967213; c=relaxed/simple;
-	bh=JIO/8P1XZxdDWBrLrh41OLmkhf9i3/wHJLeNBSy0xA0=;
+	s=arc-20240116; t=1755967216; c=relaxed/simple;
+	bh=3p2/g003XF+HmFJBfgiq9b9e6a1sNqWLnuTWzRUtmh4=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=ZFK/vdwVubG8SjEgN6BVnvPT0+lssy0lhmUv5a1Y4Hl4SJExkwpER6hLoWdluOU3vU5Int20V7QzcjhHIO97ex2+neXzyxcuU3mhJTwbHEmaJulGa8+b6oUaJ1piAC5Sg7mqIH8XsaxLKaJWon5C+hIJEJyzDwFI8aCeo0YdMR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DBoMFfY8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7Oa26scQ; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=RFfEWkhiDQgfhDH86caaXgtCeyIYCC2NGzzPgEI5VV/xdOHVsyUv45NdYpR/r7fCUlzp8wapvnFpw45UTPfrbBdgE8GL02lRWDB/eR3maabCatdqvgrUGRaf2d3eh65PViaZ+MTIrnkBKzDV1AA29sK6mQejn5LSmVpmGos5ATw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sN/W+LJA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JbRX0sYR; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250823161654.869197102@linutronix.de>
+Message-ID: <20250823161654.935413328@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755967210;
+	s=2020; t=1755967213;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=wmILpI4Ja998LxCNN22+E8ZtCKeqchcvcaXrbRm5AWw=;
-	b=DBoMFfY8mFn1BtsjmohTdENncBqsWKa0ib7zpc5ujA1nPTfQBwEh8En7HfybyKQGqAllxa
-	GlMGk7uhokniKRhVuSzfqo1x4GExco7Lv7jnC5iWKrvCWIjE5jhiQwxS+azYlDXgLcB3SM
-	rwNkM2CQNg/UAHIe+crD1aSnj8wDhXEOizc/5vZh6xULtMQuMJbTxDu+kU/J4n38ehlre7
-	Qy1cIGIohPs15b69ckFxqO+hj30xsisN3/4DntZEDP2duboXJLl7K4Wmxojy4AzO9dqda4
-	QmJIsqxFpwK0m40SF/LNMDnQTeApLiUSImk4h1baaqXuNPqH+BWTe/eRlEZJFg==
+	 references:references; bh=U5yXWVTT7HpJWEiQLE8bFwfE6SLIRsYcHvPjnHv5KDw=;
+	b=sN/W+LJACF/YHLnFnxtrcUrP59WsayBM6p/E0b0vETvqgRGqC7V0f8i7xrN5BF/dYDrZXF
+	Y+ABgF4m3uDh+35BCI6jC8uPHZYFwW0rrdkUmJoeOEYm1aX/+zFk087buP0wqL8ZEBTZVM
+	lug8UEE9yW0x9Lduyq5V6s1Gx9pC/0pkVR9gQ5v69GqyaKFTH290MSxyYlCiIH39ETexjp
+	W5wrsl+Nijw7DgeAlQK1eT2MP+l8PXUAk4/r0b6ZDEh4QaQnIxhtaypCS78KVkCsS+hMy2
+	261K9ogquLguZWRm4RbuWoBl5KHlp7HIZ1WKMPKhDrO7mvg0SaMInbnuhLVt8Q==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755967210;
+	s=2020e; t=1755967213;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=wmILpI4Ja998LxCNN22+E8ZtCKeqchcvcaXrbRm5AWw=;
-	b=7Oa26scQM4Ij8PRXHud7b4aJU95D0svh98oiLmf2DiUsVvENwxfLqgGPiG292HlfQ1OgHd
-	X3apGIJm52BRIPDg==
+	 references:references; bh=U5yXWVTT7HpJWEiQLE8bFwfE6SLIRsYcHvPjnHv5KDw=;
+	b=JbRX0sYRT5BLsOcnxQxKgkYUxKFRRQV7ZOGzY7sq+Xlh1QIzPfo7KLToioJU7PXQ+h33nU
+	cPmjO2u/Js52RpAg==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Jens Axboe <axboe@kernel.dk>,
@@ -68,7 +68,7 @@ Cc: Jens Axboe <axboe@kernel.dk>,
  Huacai Chen <chenhuacai@kernel.org>,
  Paul Walmsley <paul.walmsley@sifive.com>,
  Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [patch V2 25/37] rseq: Rework the TIF_NOTIFY handler
+Subject: [patch V2 26/37] rseq: Optimize event setting
 References: <20250823161326.635281786@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -77,130 +77,252 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Sat, 23 Aug 2025 18:40:09 +0200 (CEST)
+Date: Sat, 23 Aug 2025 18:40:12 +0200 (CEST)
 
-Replace the whole logic with the new implementation, which is shared with
-signal delivery and the upcoming exit fast path.
+After removing the various condition bits earlier it turns out that one
+extra information is needed to avoid setting event::sched_switch and
+TIF_NOTIFY_RESUME unconditionally on every context switch.
+
+The update of the RSEQ user space memory is only required, when either
+
+  the task was interrupted in user space and schedules
+
+or
+
+  the CPU or MM CID changes in schedule() independent of the entry mode
+
+Right now only the interrupt from user information is available.
+
+Add a event flag, which is set when the CPU or MM CID or both change.
+
+Evaluate this event in the scheduler to decide whether the sched_switch
+event and the TIF bit need to be set.
+
+It's an extra conditional in context_switch(), but the downside of
+unconditionally handling RSEQ after a context switch to user is way more
+significant. The utilized boolean logic minimizes this to a single
+conditional branch.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- kernel/rseq.c |   78 +++++++++++++++++++++++++---------------------------------
- 1 file changed, 34 insertions(+), 44 deletions(-)
+ fs/exec.c                  |    2 -
+ include/linux/rseq.h       |   81 +++++++++++++++++++++++++++++++++++++++++----
+ include/linux/rseq_types.h |   11 +++++-
+ kernel/rseq.c              |    2 -
+ kernel/sched/core.c        |    7 +++
+ kernel/sched/sched.h       |    5 ++
+ 6 files changed, 95 insertions(+), 13 deletions(-)
 
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -82,12 +82,6 @@
- #define CREATE_TRACE_POINTS
- #include <trace/events/rseq.h>
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1775,7 +1775,7 @@ static int bprm_execve(struct linux_binp
+ 		force_fatal_sig(SIGSEGV);
  
--#ifdef CONFIG_MEMBARRIER
--# define RSEQ_EVENT_GUARD	irq
--#else
--# define RSEQ_EVENT_GUARD	preempt
--#endif
--
- DEFINE_STATIC_KEY_MAYBE(CONFIG_RSEQ_DEBUG_DEFAULT_ENABLE, rseq_debug_enabled);
+ 	sched_mm_cid_after_execve(current);
+-	rseq_sched_switch_event(current);
++	rseq_force_update();
+ 	current->in_execve = 0;
  
- static inline void rseq_control_debug(bool on)
-@@ -236,38 +230,15 @@ static bool rseq_handle_cs(struct task_s
- 	return rseq_update_user_cs(t, regs, csaddr);
+ 	return retval;
+--- a/include/linux/rseq.h
++++ b/include/linux/rseq.h
+@@ -9,7 +9,8 @@ void __rseq_handle_notify_resume(struct
+ 
+ static inline void rseq_handle_notify_resume(struct pt_regs *regs)
+ {
+-	if (current->rseq_event.has_rseq)
++	/* '&' is intentional to spare one conditional branch */
++	if (current->rseq_event.sched_switch & current->rseq_event.has_rseq)
+ 		__rseq_handle_notify_resume(regs);
  }
  
--/*
-- * This resume handler must always be executed between any of:
-- * - preemption,
-- * - signal delivery,
-- * and return to user-space.
-- *
-- * This is how we can ensure that the entire rseq critical section
-- * will issue the commit instruction only if executed atomically with
-- * respect to other threads scheduled on the same CPU, and with respect
-- * to signal handlers.
-- */
--void __rseq_handle_notify_resume(struct pt_regs *regs)
-+static void rseq_slowpath_update_usr(struct pt_regs *regs)
- {
-+	/* Preserve rseq state and user_irq state for exit to user */
-+	const struct rseq_event evt_mask = { .has_rseq = true, .user_irq = true, };
- 	struct task_struct *t = current;
- 	struct rseq_ids ids;
- 	u32 node_id;
- 	bool event;
- 
--	/*
--	 * If invoked from hypervisors before entering the guest via
--	 * resume_user_mode_work(), then @regs is a NULL pointer.
--	 *
--	 * resume_user_mode_work() clears TIF_NOTIFY_RESUME and re-raises
--	 * it before returning from the ioctl() to user space when
--	 * rseq_event.sched_switch is set.
--	 *
--	 * So it's safe to ignore here instead of pointlessly updating it
--	 * in the vcpu_run() loop.
--	 */
--	if (!regs)
--		return;
--
- 	if (unlikely(t->flags & PF_EXITING))
- 		return;
- 
-@@ -291,26 +262,45 @@ void __rseq_handle_notify_resume(struct
- 	 * with the result handed in to allow the detection of
- 	 * inconsistencies.
- 	 */
--	scoped_guard(RSEQ_EVENT_GUARD) {
--		event = t->rseq_event.sched_switch;
--		t->rseq_event.sched_switch = false;
-+	scoped_guard(irq) {
- 		ids.cpu_id = task_cpu(t);
- 		ids.mm_cid = task_mm_cid(t);
-+		event = t->rseq_event.sched_switch;
-+		t->rseq_event.all &= evt_mask.all;
+@@ -31,12 +32,75 @@ static inline void rseq_signal_deliver(s
  	}
+ }
  
--	if (!IS_ENABLED(CONFIG_DEBUG_RSEQ) && !event)
-+	if (!event)
- 		return;
- 
--	if (!rseq_handle_cs(t, regs))
--		goto error;
--
- 	node_id = cpu_to_node(ids.cpu_id);
--	if (!rseq_set_uids(t, &ids, node_id))
--		goto error;
--	return;
- 
--error:
--	force_sig(SIGSEGV);
-+	if (unlikely(!rseq_update_usr(t, regs, &ids, node_id))) {
+-/* Raised from context switch and exevce to force evaluation on exit to user */
+-static inline void rseq_sched_switch_event(struct task_struct *t)
++static inline void rseq_raise_notify_resume(struct task_struct *t)
+ {
+-	if (t->rseq_event.has_rseq) {
+-		t->rseq_event.sched_switch = true;
+-		set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
++	set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
++}
++
++/* Invoked from context switch to force evaluation on exit to user */
++static __always_inline void rseq_sched_switch_event(struct task_struct *t)
++{
++	struct rseq_event *ev = &t->rseq_event;
++
++	if (IS_ENABLED(CONFIG_GENERIC_IRQ_ENTRY)) {
 +		/*
-+		 * Clear the errors just in case this might survive magically, but
-+		 * leave the rest intact.
++		 * Avoid a boat load of conditionals by using simple logic
++		 * to determine whether NOTIFY_RESUME needs to be raised.
++		 *
++		 * It's required when the CPU or MM CID has changed or
++		 * the entry was from user space.
 +		 */
-+		t->rseq_event.error = 0;
-+		force_sig(SIGSEGV);
++		bool raise = (ev->user_irq | ev->ids_changed) & ev->has_rseq;
++
++		if (raise) {
++			ev->sched_switch = true;
++			rseq_raise_notify_resume(t);
++		}
++	} else {
++		if (ev->has_rseq) {
++			t->rseq_event.sched_switch = true;
++			rseq_raise_notify_resume(t);
++		}
 +	}
 +}
 +
-+void __rseq_handle_notify_resume(struct pt_regs *regs)
++/*
++ * Invoked from __set_task_cpu() when a task migrates to enforce an IDs
++ * update.
++ *
++ * This does not raise TIF_NOTIFY_RESUME as that happens in
++ * rseq_sched_switch_event().
++ */
++static __always_inline void rseq_sched_set_task_cpu(struct task_struct *t, unsigned int cpu)
++{
++	t->rseq_event.ids_changed = true;
++}
++
++/*
++ * Invoked from switch_mm_cid() in context switch when the task gets a MM
++ * CID assigned.
++ *
++ * This does not raise TIF_NOTIFY_RESUME as that happens in
++ * rseq_sched_switch_event().
++ */
++static __always_inline void rseq_sched_set_task_mm_cid(struct task_struct *t, unsigned int cid)
 +{
 +	/*
-+	 * If invoked from hypervisors before entering the guest via
-+	 * resume_user_mode_work(), then @regs is a NULL pointer.
-+	 *
-+	 * resume_user_mode_work() clears TIF_NOTIFY_RESUME and re-raises
-+	 * it before returning from the ioctl() to user space when
-+	 * rseq_event.sched_switch is set.
-+	 *
-+	 * So it's safe to ignore here instead of pointlessly updating it
-+	 * in the vcpu_run() loop.
++	 * Requires a comparison as the switch_mm_cid() code does not
++	 * provide a conditional for it readily. So avoid excessive updates
++	 * when nothing changes.
 +	 */
-+	if (!regs)
-+		return;
++	if (t->rseq_ids.mm_cid != cid)
++		t->rseq_event.ids_changed = true;
++}
 +
-+	rseq_slowpath_update_usr(regs);
++/* Enforce a full update after RSEQ registration and when execve() failed */
++static inline void rseq_force_update(void)
++{
++	if (current->rseq_event.has_rseq) {
++		current->rseq_event.ids_changed = true;
++		current->rseq_event.sched_switch = true;
++		rseq_raise_notify_resume(current);
+ 	}
  }
  
- void __rseq_signal_deliver(int sig, struct pt_regs *regs)
+@@ -53,7 +117,7 @@ static inline void rseq_sched_switch_eve
+ static inline void rseq_virt_userspace_exit(void)
+ {
+ 	if (current->rseq_event.sched_switch)
+-		set_tsk_thread_flag(current, TIF_NOTIFY_RESUME);
++		rseq_raise_notify_resume(current);
+ }
+ 
+ /*
+@@ -90,6 +154,9 @@ static inline void rseq_execve(struct ta
+ static inline void rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs) { }
+ static inline void rseq_signal_deliver(struct ksignal *ksig, struct pt_regs *regs) { }
+ static inline void rseq_sched_switch_event(struct task_struct *t) { }
++static inline void rseq_sched_set_task_cpu(struct task_struct *t, unsigned int cpu) { }
++static inline void rseq_sched_set_task_mm_cid(struct task_struct *t, unsigned int cid) { }
++static inline void rseq_force_update(void) { }
+ static inline void rseq_virt_userspace_exit(void) { }
+ static inline void rseq_fork(struct task_struct *t, unsigned long clone_flags) { }
+ static inline void rseq_execve(struct task_struct *t) { }
+--- a/include/linux/rseq_types.h
++++ b/include/linux/rseq_types.h
+@@ -10,20 +10,27 @@ struct rseq;
+  * struct rseq_event - Storage for rseq related event management
+  * @all:		Compound to initialize and clear the data efficiently
+  * @events:		Compund to access events with a single load/store
+- * @sched_switch:	True if the task was scheduled out
++ * @sched_switch:	True if the task was scheduled and needs update on
++ *			exit to user
++ * @ids_changed:	Indicator that IDs need to be updated
+  * @user_irq:		True on interrupt entry from user mode
+  * @has_rseq:		True if the task has a rseq pointer installed
+  * @error:		Compound error code for the slow path to analyze
+  * @fatal:		User space data corrupted or invalid
++ *
++ * @sched_switch and @ids_changed must be adjacent and the combo must be
++ * 16bit aligned to allow a single store, when both are set at the same
++ * time in the scheduler.
+  */
+ struct rseq_event {
+ 	union {
+ 		u64				all;
+ 		struct {
+ 			union {
+-				u16		events;
++				u32		events;
+ 				struct {
+ 					u8	sched_switch;
++					u8	ids_changed;
+ 					u8	user_irq;
+ 				};
+ 			};
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -459,7 +459,7 @@ SYSCALL_DEFINE4(rseq, struct rseq __user
+ 	 * are updated before returning to user-space.
+ 	 */
+ 	current->rseq_event.has_rseq = true;
+-	rseq_sched_switch_event(current);
++	rseq_force_update();
+ 
+ 	return 0;
+ }
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5150,7 +5150,6 @@ prepare_task_switch(struct rq *rq, struc
+ 	kcov_prepare_switch(prev);
+ 	sched_info_switch(rq, prev, next);
+ 	perf_event_task_sched_out(prev, next);
+-	rseq_sched_switch_event(prev);
+ 	fire_sched_out_preempt_notifiers(prev, next);
+ 	kmap_local_sched_out();
+ 	prepare_task(next);
+@@ -5348,6 +5347,12 @@ context_switch(struct rq *rq, struct tas
+ 	/* switch_mm_cid() requires the memory barriers above. */
+ 	switch_mm_cid(rq, prev, next);
+ 
++	/*
++	 * Tell rseq that the task was scheduled in. Must be after
++	 * switch_mm_cid() to get the TIF flag set.
++	 */
++	rseq_sched_switch_event(next);
++
+ 	prepare_lock_switch(rq, next, rf);
+ 
+ 	/* Here we just switch the register state and the stack. */
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2181,6 +2181,7 @@ static inline void __set_task_cpu(struct
+ 	smp_wmb();
+ 	WRITE_ONCE(task_thread_info(p)->cpu, cpu);
+ 	p->wake_cpu = cpu;
++	rseq_sched_set_task_cpu(p, cpu);
+ #endif /* CONFIG_SMP */
+ }
+ 
+@@ -3778,8 +3779,10 @@ static inline void switch_mm_cid(struct
+ 		mm_cid_put_lazy(prev);
+ 		prev->mm_cid = -1;
+ 	}
+-	if (next->mm_cid_active)
++	if (next->mm_cid_active) {
+ 		next->last_mm_cid = next->mm_cid = mm_cid_get(rq, next, next->mm);
++		rseq_sched_set_task_mm_cid(next, next->mm_cid);
++	}
+ }
+ 
+ #else /* !CONFIG_SCHED_MM_CID: */
 
 
