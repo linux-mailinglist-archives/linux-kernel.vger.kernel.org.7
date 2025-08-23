@@ -1,114 +1,111 @@
-Return-Path: <linux-kernel+bounces-783350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE7F4B32C0B
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 22:55:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C31B32C0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 23:06:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08A667ABE26
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 20:53:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EED03B05A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 21:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770F923D7C4;
-	Sat, 23 Aug 2025 20:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E052E92B5;
+	Sat, 23 Aug 2025 21:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="R7TFMhS6"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=cs.stanford.edu header.i=@cs.stanford.edu header.b="nSGaTYUB"
+Received: from smtp1.cs.Stanford.EDU (smtp1.cs.stanford.edu [171.64.64.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B46213E90;
-	Sat, 23 Aug 2025 20:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139F7213E90
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 21:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=171.64.64.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755982496; cv=none; b=P6H3rj5iO7MA4SMII3ncsZitHbNbbTyhK5CcCiHfouk4nZaLCnWthGozk/fIp58icfl+c+i+AyAIDKG9VGaClpu4Kno2EUD5uqEeUjH/pqpXkuJ9Un9yz7s1jFforl15zcNVpwB3suoHG/36q4Vf937O2Vrz0BsqHFbfzrWbEW8=
+	t=1755983195; cv=none; b=W//R2khRJE4XRbzsm+QVZuYV1XHJntyl4d/7oisP+t0uoo9sZ9VuX7m80TG8IDcdZ1z3dBLVQaZzY79J5HaUE4EuUU1Rcvpc9RvrldW7rMBcjZxOvyL52xNNlDa3m2J0b0lmsZ9U9Ujpw5z7U3e5h51WHQEmBk4ZN+651/TkkMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755982496; c=relaxed/simple;
-	bh=cDnslnfSXUm9JhtnaqVysvm10aThDmnIwSrrtWOi9ZM=;
+	s=arc-20240116; t=1755983195; c=relaxed/simple;
+	bh=w2Y8BhIqnFAcjJWZ/auiuC4b/Bhkbxw+gMln4m6xS/s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sAlp73oB1DRQMx3QZvAzrIfQQs5by+W+hzK1gD4z2XMQLEDjC6OBWoaJr4VUGrH7Jjt99T0vnC1uy5bAfs6GXuKY+MKkcJhZaZ8tATZOxtyyDiuAZ0DopVlAkYiyU0Fk4ogDWuKoymLSI+zsujPhAyWfU1FHae7AxXTTeLhSGVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=R7TFMhS6; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=h47+xFVHXbIgALIjR/zBQJ6iHlr5VVdQjZd4WztFu3U=; b=R7TFMhS6VrySrdB7TFaG27rRiF
-	ASjT3dL9q1alq+EAmGsZcUmqW1kBotFQKd+QOHthl7gNYrK/+0+NtY3boQd1FOxBSKsy9+ua5rTuq
-	BFOO1V6lNjhCI2IpwRk+KZIBZtYBbdcra1Ur194fZaBTd95gnQL0HBBgMDRAofQbu+Iw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1upvG8-005mQI-Di; Sat, 23 Aug 2025 22:54:44 +0200
-Date: Sat, 23 Aug 2025 22:54:44 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Wei Fang <wei.fang@nxp.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v3 net-next 3/5] net: fec: add rx_frame_size to support
- configurable RX length
-Message-ID: <6b1f5bcd-e4d7-4309-becc-de4a12bdf363@lunn.ch>
-References: <20250823190110.1186960-1-shenwei.wang@nxp.com>
- <20250823190110.1186960-4-shenwei.wang@nxp.com>
- <0abb2c91-3786-4926-b0e3-30b9e222424d@lunn.ch>
- <PAXPR04MB918577F27FD6521B23601219893CA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QOseJR/mCchxirQRPfOm+WX0H8tmLZc3pPJCkvRGyaRBxEnk7zILRB9J4XpuNFeBg0T68aDdCgApzKLXCEOE1d5NkcF4upeBY65j+2eq8PyO1fde7kh+lgnYlktX/83VNUl3yZwnr+57JWWY4pTClgK6oQeUegKJfuFTEimtLmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.stanford.edu; spf=pass smtp.mailfrom=cs.stanford.edu; dkim=pass (2048-bit key) header.d=cs.stanford.edu header.i=@cs.stanford.edu header.b=nSGaTYUB; arc=none smtp.client-ip=171.64.64.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.stanford.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs.stanford.edu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=cs.stanford.edu; s=cs2308; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=UsEx+wWbaYXxf1X4RrpL4XO4TRuu/zW9VtYBS7i83KY=; t=1755983194; x=1756847194; 
+	b=nSGaTYUBjlJOiRXpuvNsvKvzQ4Iy9HitT9nqtXg6VxQ6S4vkm2F1zMrHXQw8kG7Wcs6v/gdQR3r
+	9TNovLNZVpXlyw4g7Mt5R9HGpgKrVQ/08lZxZ/KR5hxo4yVuNATYXjQ1nFQdLRnmcy6HEuQyRIhkv
+	ogicXmfLNtLpxv+Y+v/8mn86qaIhiTu/XBXzLTVjL7GN/74TCdseYup3Nt92DNe+dnEhMTzSvRWPy
+	Aks/p+m8AxxvZfXKJrlx0yuuy/LGXqNPRUf1qaj2ij9EZ1DgMn0gJxgd46hMwsVZYREo8BFQE8TQY
+	q6/vyIcLJbafCQbwJSCCFzd3rYtFqFQCtpbA==;
+Received: from 135-180-5-199.fiber.dynamic.sonic.net ([135.180.5.199]:50426 helo=macbookair.lan)
+	by smtp1.cs.Stanford.EDU with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <jgnieto@cs.stanford.edu>)
+	id 1upvRP-0001Sv-Se; Sat, 23 Aug 2025 14:06:24 -0700
+Date: Sat, 23 Aug 2025 14:05:42 -0700
+From: Javier Nieto <jgnieto@cs.stanford.edu>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: luiz.dentz@gmail.com, marcel@holtmann.org,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Bluetooth: hci_h5: avoid sending two SYNC messages
+Message-ID: <aKotJuaUB2V6zdKc@macbookair.lan>
+References: <20250822003912.41754-1-jgnieto@cs.stanford.edu>
+ <06787d51-5d5e-4f74-bda6-b80cead5ed6d@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <PAXPR04MB918577F27FD6521B23601219893CA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <06787d51-5d5e-4f74-bda6-b80cead5ed6d@molgen.mpg.de>
+X-Spam-Score: 0.8
+X-Scan-Signature: 993826b9125cbf1b907f71dc54053338
 
-> > > Add a new rx_frame_size member in the fec_enet_private structure to
-> > > decouple frame size configuration from max_buf_size. This allows more
-> > > precise control over RX frame length settings. It is particularly
-> > > useful for Jumbo frame support because the RX frame size may possible
-> > > larger than the allocated RX buffer.
-> > 
-> > Please could you extend that a little. What happens if the received frame is bigger
-> > than the buffer? Does the hardware fragment it over two buffers?
-> > 
-> 
-> The hardware doesn't have the capability to fragment received frames that exceed the MAX_FL 
-> value. Instead, it flags an overrun error in the status register when such frames are encountered.
+Dear Paul,
 
-And how is this useful for jumbo? Why would i want the RX frame size
-bigger than the RX buffer size?
+> Great commit message, thank you. I´d appreciate it if you documented your
+> test environment, and maybe paste the logs (for the timestamps) before and
+> after, so others could easily reproduce the issue.
 
-> > >
-> > > Configure TRUNC_FL (Frame Truncation Length) based on the RX buffer size.
-> > > Frames exceeding this limit will be treated as error packets and dropped.
-> > 
-> > This bit confuses me. You want to allow rx_frame_size to be bigger than the
-> > buffer size, but you also want to discard frames bigger than the buffer size?
-> > 
-> 
-> MAX_FL defines the maximum allowable frame length, while TRUNC_FL specifies the 
-> threshold beyond which frames are truncated.  
-> 
-> Here, TRUNC_FL is configured based on the RX buffer size, allowing the hardware to 
-> handle oversized frame errors automatically without requiring software intervention.
+Appologies for that. My test environment is a MangoPi MQ-Pro board
+(with a Realtek RTL8723DS Bluetooth chip) running the tip of
+bluetooth-next, although I also observed this issue on 6.8 kernel.
+Originally, I spotted it using a logic analyzer on the UART PCB traces.
+I added a temporary log message to h5_link_control(), which prints the
+first byte and the length of the packet being sent. Here is the relevant
+part before the patch:
 
-Please could you expand the commit message.
+[   67.328445] Bluetooth: h5_link_control sending 1 with len 2
+[   67.432393] Bluetooth: h5_link_control sending 1 with len 2
+[   67.436424] Bluetooth: h5_link_control sending 3 with len 3
+[   67.436592] Bluetooth: h5_link_control sending 2 with len 2
+[   67.436693] Bluetooth: h5_link_control sending 3 with len 3
+[   67.439510] Bluetooth: h5_link_control sending 2 with len 2
+[   67.440004] Bluetooth: h5_link_control sending 4 with len 2
+[   67.440030] Bluetooth: h5_link_control sending 3 with len 3
 
-I still don't quite get it. Why not set MAX_FL = TRUNC_FL = RX buffer
-size?
+And here after the patch:
 
-	Andrew
+[   67.498228] Bluetooth: h5_link_control sending 1 with len 2
+[   67.501444] Bluetooth: h5_link_control sending 3 with len 3
+[   67.501615] Bluetooth: h5_link_control sending 2 with len 2
+[   67.504976] Bluetooth: h5_link_control sending 2 with len 2
+[   67.505141] Bluetooth: h5_link_control sending 4 with len 2
+[   67.505168] Bluetooth: h5_link_control sending 3 with len 3
+
+Notice that in the first case, two SYNC packets (type 1) are sent, one 100ms
+after the other, while in the second case only one is sent. In both
+cases, using bluetoothctl to connect to a device later on works fine.
+
+Thanks for the feedback,
+
+Javier
 
