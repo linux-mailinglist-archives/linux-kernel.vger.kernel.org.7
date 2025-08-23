@@ -1,116 +1,228 @@
-Return-Path: <linux-kernel+bounces-783364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1926B32C90
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 01:34:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C8FCB32C99
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 01:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B1F768877D
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 23:34:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 275915A70FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 23:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117F424679F;
-	Sat, 23 Aug 2025 23:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C115253931;
+	Sat, 23 Aug 2025 23:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bcr34Lfp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmlIRdGB"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D537F15747D;
-	Sat, 23 Aug 2025 23:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D77192B7D;
+	Sat, 23 Aug 2025 23:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755992055; cv=none; b=JC7mVC3CpN7v4Wp2IoeAe/gjIvYJQx8qFenJJxEUh8vtvNhlp/2EUG44C8+tb1BpsEa9Co6aQQFOzw6JpYwUWGAT2rBgqqwzDjd5VdWoeUQUi9fV5YJtoa79bSJ3uzOAxy4y0ac5jASsxHd2xGbkrrVE/LaxO6iGaroAB6mQV2A=
+	t=1755993359; cv=none; b=BzRWD6odnOfHywGzaVbH2/S54SVeltwWP2AOA/zqNB1pb0KC/YMnEThwRBEgVa3rSg1alEKC11PxAvsYAXTwYoqfvPPDS29HQV89JmNI5lt8NMgEHgjEUrMhrmTElvUTxliSZrv8bzqOEDqN1uRl6Mhs89z0SVcQIe3w8r0EwAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755992055; c=relaxed/simple;
-	bh=Ou3GlU1zQOJmmU8eVp2MTK0zN6BUCjEfv4fi+1eMtfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FWhVU/tXsH7mDSNGM7I994De+SGMALfBa+Bx1wQbRy0Wa/LkEWfPIIy6/qQGY1KqGpkvdKO3Lj5ZIXBKtk/cAnlFQoSZm5KcN3OeMigGfQOzvi5vCkrkpiRayCNyC3/CGqWtg49vla3zkO5nlFyFJSrQv2VpvcF+3HrIt7XySQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bcr34Lfp; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755992054; x=1787528054;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Ou3GlU1zQOJmmU8eVp2MTK0zN6BUCjEfv4fi+1eMtfw=;
-  b=Bcr34Lfpdm0vT/cd4AeZygOGwO6Gp+pTP4ydVS82TgV65pZgHO9/23LI
-   hVbsGuV1W/pq7nq+/dkJH9SE1DOY1+0wUPQclnr+kd181O+YJi1DiT0zM
-   ukoyD28f4FKfLfky69XvCgINU3u1xBdB9i6KY50ZCK7b7P7yKsTWIQqZ5
-   +HrSFHtl//2Q3I7i2C2Lm++QSb6NGpExZbycwlckCEAycfRopPN1LDyaX
-   H592LAmRbpzltguZxWzF+iVNjJNdqZJL5ivIkdXCrrfwCs68f5YhMvah6
-   YVuIZzMX1Wujgl27H/9IxWJMS3I7TNlb4BteGqDXo5uTmArbClQ/wJhet
-   Q==;
-X-CSE-ConnectionGUID: tEsf2KUjRHKivExVJLJObw==
-X-CSE-MsgGUID: WYgvD3MKQCCv1qiYBd6wBg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="58321427"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="58321427"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2025 16:34:13 -0700
-X-CSE-ConnectionGUID: NCL5O3N7ToavV6fTIcGBhQ==
-X-CSE-MsgGUID: /IWkKDaTTIe/tD0cjwJ2Ig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="168502721"
-Received: from tassilo.jf.intel.com (HELO tassilo) ([10.54.38.190])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2025 16:34:12 -0700
-Date: Sat, 23 Aug 2025 16:34:11 -0700
-From: Andi Kleen <ak@linux.intel.com>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Aditya Gupta <adityag@linux.ibm.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Changbin Du <changbin.du@huawei.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Li Huafei <lihuafei1@huawei.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Chaitanya S Prakash <chaitanyas.prakash@arm.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	llvm@lists.linux.dev, Song Liu <song@kernel.org>,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v5 00/19] Support dynamic opening of capstone/llvm remove
- BUILD_NONDISTRO
-Message-ID: <aKpP8yn7hoyQJe9h@tassilo>
-References: <20250823003216.733941-1-irogers@google.com>
+	s=arc-20240116; t=1755993359; c=relaxed/simple;
+	bh=aX2aDYu4AdsDK5JbbvK4eNjyFRAzNO0/4FuENrsKVSs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S5vb8Zy5eI3KOGoJUO5RWaoD5S+jaZnGHZdXsp7IpsJb9h+nrPeb+A4mluUGt9XodjxSPjAcsnfQ6K2eIThUp0XiF4yghkA2/OruIMsounkavuAIIk19gQus5hCWbGCWj0wGyoPbibpgYnFQTj2m7NZIZFxIOsn7/I4xtQN4800=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lmlIRdGB; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3c79f0a606fso416797f8f.0;
+        Sat, 23 Aug 2025 16:55:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755993356; x=1756598156; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z/i0r8CSjkvOyfYzF5swg0iOz418PMdocvZNGpsIEKQ=;
+        b=lmlIRdGBSBmOFq4MwGcssOoISdteu0Sz3PK+CgPFxtGpSTXc+jiT6IY12XmLIzizBQ
+         /r5egO4sK1sdtuppGLlviB42wQMH+3xA+RJhoInHvxYVVaILNCzsRClTqBjN2cdyqkLU
+         At4KXUZNdGY3ntF/Q3sm4U4IoRxdnej4CIk6ZO9AaAfqxFoSrG9sBytOqr4UyPvNNLdr
+         PGoAYNkNF3jUyuxJ+Aa/zEzsLFQH1TYiGKYj5j58mx9By3oeDLhCGV46afaEe6kmOTne
+         rhx2u3IgK82hfzQtvwMZq10yxySjJFhgdh1MC3+eMj+FxkfDtF860af+EFtC54tXN8Mz
+         JigA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755993356; x=1756598156;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z/i0r8CSjkvOyfYzF5swg0iOz418PMdocvZNGpsIEKQ=;
+        b=Gjq5O8m4I4+ziLuoTVUmsylyV01e764lSVSS/5SNPB+DW3sHvi7omZoCb0rns6kM+n
+         tsxhVvRusixi4bdlQt+6fIcy0Y1vmLb1E7A5bageh5i5Fh8Fe84CBG1Im8wRzuNAvY0K
+         3mXfSNTVFpX2BzbbmvDNw08FoHsWjrX3xhW8YRX1eXMgvJpOryYyWP5//DGMbqV6B/nL
+         8IFuttivZKTzDH/exD87ZfSoFIo2i2L6iIhWgPtGlYWb+Wfvjhdz9/BYLs6I9aUpJ0Ii
+         cOgaU/KiJrRpItZJ0mKbtqMN5QrAgU2hxcz0fxyCPlIyMXKtFCCsTdtfU9HqgBt+FEK0
+         BuJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHHdRHlP5UMAlmyg16LOKcVIp/5cFJRICzAobdpkbpg5SRM+ftD+ivz3Fbz54Sj0OK+s1B52XOJNaTk50=@vger.kernel.org, AJvYcCVVbPQi7Fbtx2Y0G5G8yG6asekUxZmoWl2vgfuiQnjOFNMAYFIDKkcmf7mNfQ9eAf2QQawqK8VX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1GT9zGLtx+0yJSMO5AgJ2fB9llr/eAadbyc/2hvimEICVWpUd
+	EvQt55y38CKRDuB77/CHg08ckTqJ//JToRTPUGqsIRaavqDNXd4LLHDziyc76IW38XlgeA+KaO1
+	ExkgRUAfxOSrCR4JTpvZR5HXF32CFxOE=
+X-Gm-Gg: ASbGncvQgkZr3Qj+cb2o1Jnvs4PK8zDk5XaycC9iAGKeNoQuS8wnvRFBXH4eQdgc2Hx
+	tpmSy8/cEY0JAstCYX8TkaLMw9rTlI+MT7+b0CFPZckjvVs7BgCicHvNpCceTbrYw3me2tWdQY5
+	jYxVRus2AF3ZPJvUcE8J/4N7nkBiRW6+V4fNlJOmQeQK6wTk30BAknxLWhYlf9dWo78AQH8+1mV
+	c2lYZVaL3Co7H3hCy2UmYyTAKVK1MYci4/YrBAUOE42hlF0p2Yg3ZhTgbD5eSxkcPfB9AUHaI9w
+	NbzFh70=
+X-Google-Smtp-Source: AGHT+IHK1fFEfBRswoC+cOAU3MdBdRobccnz9keTzt26DXyo+x/aCKmIwF4hKmckMQOQbQ9SoFcLpAUeNsNYEcrqdFQ=
+X-Received: by 2002:a05:600c:3596:b0:458:bd31:2c35 with SMTP id
+ 5b1f17b1804b1-45b517cca56mr65377045e9.25.1755993355886; Sat, 23 Aug 2025
+ 16:55:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250823003216.733941-1-irogers@google.com>
+References: <20250822041526.467434-1-CFSworks@gmail.com> <CAMj1kXH38gOUpDDdarCXPAY3BHBbuFzdD=Dq7Knsg-qHJoNqzQ@mail.gmail.com>
+In-Reply-To: <CAMj1kXH38gOUpDDdarCXPAY3BHBbuFzdD=Dq7Knsg-qHJoNqzQ@mail.gmail.com>
+From: Sam Edwards <cfsworks@gmail.com>
+Date: Sat, 23 Aug 2025 16:55:44 -0700
+X-Gm-Features: Ac12FXzGG0H-pxXhscueUgsXpOWwmZNae3mF28D68WdANbXrFVlmWCQ-8wPwR4Q
+Message-ID: <CAH5Ym4gTTLcyucnXjxFtNutVR1HQ0G2k_YBSNO-7G3-4YXUtag@mail.gmail.com>
+Subject: Re: [PATCH] arm64/boot: Zero-initialize idmap PGDs before use
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Marc Zyngier <maz@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Baruch Siach <baruch@tkos.co.il>, Kevin Brodsky <kevin.brodsky@arm.com>, 
+	Joey Gouly <joey.gouly@arm.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> BUILD_NONDISTRO is used to build perf against the license incompatible
-> libbfd and libiberty libraries. As this has been opt-in for nearly 2
-> years, commit dd317df07207 ("perf build: Make binutil libraries opt
-> in"), remove the code to simplify the code base.
+On Sat, Aug 23, 2025 at 3:25=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
+ote:
+>
+> Hi Sam,
+>
+> On Fri, 22 Aug 2025 at 14:15, Sam Edwards <cfsworks@gmail.com> wrote:
+> >
+> > In early boot, Linux creates identity virtual->physical address mapping=
+s
+> > so that it can enable the MMU before full memory management is ready.
+> > To ensure some available physical memory to back these structures,
+> > vmlinux.lds reserves some space (and defines marker symbols) in the
+> > middle of the kernel image. However, because they are defined outside o=
+f
+> > PROGBITS sections, they aren't pre-initialized -- at least as far as EL=
+F
+> > is concerned.
+> >
+> > In the typical case, this isn't actually a problem: the boot image is
+> > prepared with objcopy, which zero-fills the gaps, so these structures
+> > are incidentally zero-initialized (an all-zeroes entry is considered
+> > absent, so zero-initialization is appropriate).
+> >
+> > However, that is just a happy accident: the `vmlinux` ELF output
+> > authoritatively represents the state of memory at entry. If the ELF
+> > says a region of memory isn't initialized, we must treat it as
+> > uninitialized. Indeed, certain bootloaders (e.g. Broadcom CFE) ingest
+> > the ELF directly -- sidestepping the objcopy-produced image entirely --
+> > and therefore do not initialize the gaps. This results in the early boo=
+t
+> > code crashing when it attempts to create identity mappings.
+> >
+> > Therefore, add boot-time zero-initialization for the following:
+> > - __pi_init_idmap_pg_dir..__pi_init_idmap_pg_end
+> > - idmap_pg_dir
+> > - reserved_pg_dir
+>
+> I don't think this is the right approach.
+>
+> If the ELF representation is inaccurate, it should be fixed, and this
+> should be achievable without impacting the binary image at all.
 
-The last time I tried the LLVM stuff was totally broken, couldn't
-resolve many things. The only workaround was to go back to the actually
-working libbfd. Please don't remove the only working option.
+Hi Ard,
 
-Thanks,
+I don't believe I can declare the ELF output "inaccurate" per se,
+since it's the linker's final determination about the state of memory
+at kernel entry -- including which regions are not the loader's
+responsibility to initialize (and should therefore be initialized at
+runtime, e.g. .bss). But, I think I understand your meaning: you would
+prefer consistent load-time zero-initialization over run-time. I'm
+open to that approach if that's the consensus here, but it will make
+`vmlinux` dozens of KBs larger (even though it keeps `Image` the same
+size).
 
--Andi
+>
+> > - tramp_pg_dir # Already done, but this patch corrects the size
+> >
+>
+> What is wrong with the size?
 
+On higher-VABIT targets, that memset is overflowing by writing
+PGD_SIZE bytes despite tramp_pg_dir being only PAGE_SIZE bytes in
+size. My understanding is that only userspace (TTBR0) PGDs are
+PGD_SIZE and kernelspace (TTBR1) PGDs like the trampoline mapping are
+always PAGE_SIZE. Please correct me if I'm wrong; I might be misled by
+how vmlinux.lds.S is making space for those PGDs. :)
+
+(If you'd like, I can break that one-line change out as a separate
+patch to apply immediately? It seems like a more critical concern than
+everything else here.)
+
+Best,
+Sam
+
+>
+> > Note, swapper_pg_dir is already initialized (by copy from idmap_pg_dir)
+> > before use, so this patch does not need to address it.
+> >
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+> > ---
+> >  arch/arm64/kernel/head.S | 12 ++++++++++++
+> >  arch/arm64/mm/mmu.c      |  3 ++-
+> >  2 files changed, 14 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+> > index ca04b338cb0d..0c3be11d0006 100644
+> > --- a/arch/arm64/kernel/head.S
+> > +++ b/arch/arm64/kernel/head.S
+> > @@ -86,6 +86,18 @@ SYM_CODE_START(primary_entry)
+> >         bl      record_mmu_state
+> >         bl      preserve_boot_args
+> >
+> > +       adrp    x0, reserved_pg_dir
+> > +       add     x1, x0, #PAGE_SIZE
+> > +0:     str     xzr, [x0], 8
+> > +       cmp     x0, x1
+> > +       b.lo    0b
+> > +
+> > +       adrp    x0, __pi_init_idmap_pg_dir
+> > +       adrp    x1, __pi_init_idmap_pg_end
+> > +1:     str     xzr, [x0], 8
+> > +       cmp     x0, x1
+> > +       b.lo    1b
+> > +
+> >         adrp    x1, early_init_stack
+> >         mov     sp, x1
+> >         mov     x29, xzr
+> > diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> > index 34e5d78af076..aaf823565a65 100644
+> > --- a/arch/arm64/mm/mmu.c
+> > +++ b/arch/arm64/mm/mmu.c
+> > @@ -761,7 +761,7 @@ static int __init map_entry_trampoline(void)
+> >         pgprot_val(prot) &=3D ~PTE_NG;
+> >
+> >         /* Map only the text into the trampoline page table */
+> > -       memset(tramp_pg_dir, 0, PGD_SIZE);
+> > +       memset(tramp_pg_dir, 0, PAGE_SIZE);
+> >         __create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS,
+> >                              entry_tramp_text_size(), prot,
+> >                              pgd_pgtable_alloc_init_mm, NO_BLOCK_MAPPIN=
+GS);
+> > @@ -806,6 +806,7 @@ static void __init create_idmap(void)
+> >         u64 end   =3D __pa_symbol(__idmap_text_end);
+> >         u64 ptep  =3D __pa_symbol(idmap_ptes);
+> >
+> > +       memset(idmap_pg_dir, 0, PAGE_SIZE);
+> >         __pi_map_range(&ptep, start, end, start, PAGE_KERNEL_ROX,
+> >                        IDMAP_ROOT_LEVEL, (pte_t *)idmap_pg_dir, false,
+> >                        __phys_to_virt(ptep) - ptep);
+> > --
+> > 2.49.1
+> >
 
