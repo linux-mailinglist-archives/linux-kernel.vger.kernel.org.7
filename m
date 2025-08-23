@@ -1,133 +1,122 @@
-Return-Path: <linux-kernel+bounces-783072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68EF8B32910
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:20:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 799E5B32911
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0FF17A9940
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:18:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D7FD7B285B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C536C1E0E14;
-	Sat, 23 Aug 2025 14:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0756236454;
+	Sat, 23 Aug 2025 14:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TqaA0ZO/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b6xyp3MZ"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2999F8635C;
-	Sat, 23 Aug 2025 14:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B70C3BB48;
+	Sat, 23 Aug 2025 14:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755958824; cv=none; b=aUd3eI4Wm8Kt7zFnYt4LKxRsus2WtNcdWn5kprBKnfKuRc4y83JEdRnn7oyn9C9Qaid/iEkCfbSkkSXxR3J1eKcBNcqfn237wL+N2lDAMUNOacFc5U5/hSje/fOj7muuOz/Lp31gyQhK/wL7kZGqXHfeddCqiUxVtt2SLcpjZP0=
+	t=1755958865; cv=none; b=uCD9x4zSvK/GHjjzygmm28HA6HjA1WW6hBj6a2JQDFxJKcBWCfwxHVmt/LfyDhfxB45T1viL8q0/uWR45zSczfn7Axuw6GSF1QMguuGZfbll/ra65Nk35E1h0LuSxbCuBnI/sVcNwXF3miUcWBofiTLRdL0DTK3TzTvKGqmfPFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755958824; c=relaxed/simple;
-	bh=doIkryewG++KcZ/8n01iugYF07GnEYqj+GObh4QeXms=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=Sw0bjO0NwHWVFd9xRHmF4txpE4SjzJ+924sXecbRqo0JXdR2jH5/iKJSDsBOrKmeVovwrvP+PXlVddn2cDhGh1ClyeYkxI5ca2Fk9KWGyJb13m7vUZnwekjA41iLL4g0+Pl2CXSQP032ss9qL5zMIt82XUS1TjlCE9ccZENAjrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TqaA0ZO/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3865C4CEE7;
-	Sat, 23 Aug 2025 14:20:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755958824;
-	bh=doIkryewG++KcZ/8n01iugYF07GnEYqj+GObh4QeXms=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=TqaA0ZO/eycjrUduGzXqXhlcQMI2tNhBA82pg6jzXIv0cVnMYR3dGSapvvdq6He+3
-	 HdHisuFFuoENK5GNWTZW9TiRrWT10wQq8a/OJ7MPxcmwVd/tCLj09DmanBBnU1GfEp
-	 xEB4jUCXYio7ASBVRoeGLCyNemfhvE6YeYd7bWLwzzUa2kMv+9vy5IsZRiEqwImlzN
-	 7yKxQDDZ/CMpcBPMQ+8ovEZAL01HwPrk/PTFVt3YU1DUcEDInXLFdQXhMJjJ7LTpmY
-	 zf5jFUEHBvzV65XuepjzGrWwRpHg8/bPAPjXDZu2G2LCu0Ma9EJNTECCONF8yFpTtG
-	 d0FhwLGDD8YGg==
+	s=arc-20240116; t=1755958865; c=relaxed/simple;
+	bh=FKS13Ls82GgTKoYQ+noL3pXMTArz0NPS6LMA322WeXw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cP50unmPZten8KFHunGC4r9Knq11NPo6qo03ZFNQdsqBRE2qPwwdk3eG5STo5f3hnBgJSwXRsgDcKHCkpzITtYDpujvNKDkJMSjFfzzQzSOw9HTbx7f6WYTGC7MQDBy/YI5PV9kcmk236uqn+XlNRMDa/fu6tCU8MR3ZAmUHmBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b6xyp3MZ; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2467e454c46so237525ad.2;
+        Sat, 23 Aug 2025 07:21:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755958862; x=1756563662; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FKS13Ls82GgTKoYQ+noL3pXMTArz0NPS6LMA322WeXw=;
+        b=b6xyp3MZroKJQKnUoTyn6vanxh/h3dOl76IjO93PJDuxCA6cSjIYJ5AsowCF+4QX+3
+         BJ+sXCkP/sJYLPzH4TYcXEVudrp0g42n5lC2naK7MryX2I7+zby7sIFh6hOLB9z4KETL
+         qoLxgga+YohtXwNAhA4kJxjMxYuLvAJnv4NKqBGMonrTc4zIAb2l0byRyUlvIWu10U2b
+         6wnUhncILheTAvJsTBvYLHxMBqSgiFsyTGUBCcy2Ov/hcoe3/SNzqW99H+XDgxaTkUkv
+         pK78WgsjCbEoYBqjTe1+QSBaSZBHp664ExNtgr5YcEKeCxhRe7XsLOQOUyVw+aOGFfwM
+         eNCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755958862; x=1756563662;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FKS13Ls82GgTKoYQ+noL3pXMTArz0NPS6LMA322WeXw=;
+        b=JSbLs/FyvJkH5cN4FaR8FIt+MgtGeLdzq8jWFA9hwE6d/GDMkE5FnFWtmpKwI+IM4C
+         c8R50S1Q4H3/MF04Vtf7UYYRY+MI6I27YokT7X3GBxUju7VMesS+AT8RXls5TlGo0Laj
+         LxBKsoo/Yjxkw6nCOIkBoZRde0BMZKDAVvOy33KT9W8WfFyfLabNVatPWOygnHgOORxG
+         BAztflV6sgsPOTyXn2GFBrGtMc7qLyiaVpjoFGSBoQZ+yl+mIoLgj+BCaS+k6TU9VE60
+         q3cYFvlid8ZD6MKd5MFf297ZJklRokQoWppEx/sLtHWASL+k8128gHB+IZjSV/osx8KO
+         TOww==
+X-Forwarded-Encrypted: i=1; AJvYcCUORXHeuV6sc8q9RULPerBhfdyZnFLg94cDZRTbmacWP6qPnPncVblKW6wKqAih26haSXQCKXK5+grjSInv@vger.kernel.org, AJvYcCW2rNQHkemQoHLIv20j+nrXoauIxrpXJtAKoMrr9TyBhtaCKzQXYyoKsvDfGsCLvCh4m5EUIoj6x0Ek@vger.kernel.org, AJvYcCWmwxtykAHLmxYO2A5/IjBf5VNWlPyrUiP+BbDpCx41DkAmTdNfhHJnAWtK4Nr1tA40UFoMWGKAaGipqa/uuWc=@vger.kernel.org, AJvYcCWxvFZOpCVJIsZ8PyjDvKcutm7CPgHjCj/JwoSng22slVnVNfaUf7i9lsq1WuUHwvJhTNx6B1/JXA/K@vger.kernel.org
+X-Gm-Message-State: AOJu0YxILpsImYWZOejiC5qfFx9PKBm8Kg7RYejy3RaV+/bXbK6wja0v
+	E9bSIb5CAVpaGyQl8RWSIjhvfnEAv7UxiuerqZ9g742x9NpCCZyOVPLlRLJz28MjYk2otmpkr3U
+	zsg1byeVz4cF3hTUNKz7PmZwLING/fSM=
+X-Gm-Gg: ASbGncszc2t5xQt+oLHXbc+1Yg0tU63U+YK61KVcxmOfy8IKr05uRkPGAQ3bcDnSEtR
+	N3sCBFx2LIsjjEnnyQZnBZ0ziER/Le4Y1DT0yhYUW3x8xM5ktxwa+fFqM/D6HHboO2tmE+VNtMI
+	0g78PxDU1wEePg64veGN6bb9mK2yUqlrxliQNySsFjFaVzvwCfCZwVHUXwG7GCKD7l9wuys8nam
+	+smt6MIlwcW5PKyFkThCFRLEmbYaAQegGoJO1O86S/HlHQ0ueVXf5x7cQmD/FzCW70vDLFes3IJ
+	QCbFLSPoqNzt8OKNvOLQlyy4gw==
+X-Google-Smtp-Source: AGHT+IGVLaR8SAQwEUxUiy2CqfQseM2OkihMRfGlZd9/MU0z/dJwNrzQwurGCFk0ttB0GCjmTXBnJ39be3FpGZZbACA=
+X-Received: by 2002:a17:902:e5d1:b0:246:9df4:d10 with SMTP id
+ d9443c01a7336-2469df4127fmr3166135ad.8.1755958862532; Sat, 23 Aug 2025
+ 07:21:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250820-rust-next-pwm-working-fan-for-sending-v14-0-df2191621429@samsung.com>
+ <CGME20250820083548eucas1p2a40775d53dfd9f8608671cc20003fd7d@eucas1p2.samsung.com>
+ <20250820-rust-next-pwm-working-fan-for-sending-v14-7-df2191621429@samsung.com>
+ <aKjXzyyYd9QneIKf@x1> <3aa6f79e-2ebf-4aff-a23c-7e79929a85f9@samsung.com>
+In-Reply-To: <3aa6f79e-2ebf-4aff-a23c-7e79929a85f9@samsung.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 23 Aug 2025 16:20:51 +0200
+X-Gm-Features: Ac12FXxJkYUU9nh5gGCQzR8dqN6e3fVSP-8HKfD18-Z-F1n5Giy4FK7WbmAKogU
+Message-ID: <CANiq72kAVmfSyAs71pmmVCq8f-rA1BECZ9iCTcTxiLfsO9-V6g@mail.gmail.com>
+Subject: Re: [PATCH v14 7/7] riscv: dts: thead: Add PWM fan and thermal control
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Drew Fustini <fustini@kernel.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>, 
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 23 Aug 2025 16:20:19 +0200
-Message-Id: <DC9VG96PR778.4L9WNCE521AV@kernel.org>
-Subject: Re: [PATCH v2 3/5] rust: scatterlist: Add type-state abstraction
- for sg_table
-Cc: <akpm@linux-foundation.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>, <abdiel.janulgue@gmail.com>,
- <jgg@ziepe.ca>, <lyude@redhat.com>, <robin.murphy@arm.com>,
- <daniel.almeida@collabora.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Alexandre Courbot" <acourbot@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250820165431.170195-1-dakr@kernel.org>
- <20250820165431.170195-4-dakr@kernel.org>
- <DC9UR87GP16E.2K9E9SSTHEBRB@nvidia.com>
- <DC9UYN56HBRZ.XRDXQHO2QQQ1@kernel.org>
- <DC9VD4LXAK9R.1RIJYWF1MFCMS@nvidia.com>
-In-Reply-To: <DC9VD4LXAK9R.1RIJYWF1MFCMS@nvidia.com>
 
-On Sat Aug 23, 2025 at 4:16 PM CEST, Alexandre Courbot wrote:
-> On Sat Aug 23, 2025 at 10:57 PM JST, Danilo Krummrich wrote:
->> On Sat Aug 23, 2025 at 3:47 PM CEST, Alexandre Courbot wrote:
->>> Oops, forgot to mention a couple more things:
->>>
->>> On Thu Aug 21, 2025 at 1:52 AM JST, Danilo Krummrich wrote:
->>>> Add a safe Rust abstraction for the kernel's scatter-gather list
->>>> facilities (`struct scatterlist` and `struct sg_table`).
->>>>
->>>> This commit introduces `SGTable<T>`, a wrapper that uses a type-state
->>>> pattern to provide compile-time guarantees about ownership and lifetim=
-e.
->>>
->>> Is this actually a typestate? From my understanding, the typestate
->>> pattern implies transitions from one state to the other (such as
->>> Unmapped -> Mapped), but in this version there are no such transitions
->>> (the previous ones had, though). We are just using a generic parameter,
->>> so mentioning typestate sounds a bit misleading to me.
->>
->> I'd argue that it's still kind of a typestate. You can derive &SGTable (=
-i.e.
->> &SGTable<Borrowed>) from SGTabe<Owned>. So, technically there is an
->> uni-directional transition I guess.
+On Sat, Aug 23, 2025 at 12:14=E2=80=AFPM Michal Wilczynski
+<m.wilczynski@samsung.com> wrote:
 >
-> That's technically correct, but is also not the intent of the design, at
-> least compared to something like Unmapped <-> Mapped. Not a big problem
-> if you prefer to keep the current naming though.
+> However as pointed in the discussion currently Rust
+> requires LLVM, so people compiling with gcc will not be able to compile
+> the driver for some time until the gcc support becomes better.
 
-I don't mind to name / call it differently, any suggestion?
+In case it helps/clarifies: the C side can be built with GCC (i.e.
+building without `LLVM=3D1`, with Rust using its LLVM backend), but it
+is a best-effort hack and the goal is to eventually use
+`rustc_codegen_gcc` and/or GCC Rust. Some users/distributions use it
+nevertheless.
 
->>
->>> Another random thought, in the owned case, do we want to provide an
->>> accessor to the provider of the backing pages? Or do we expect the
->>> caller to take dispositions to keep such a reference if they need to
->>> access the backing buffer post-mapping?
->>
->> That's not going to work that easily. Once the backing pages are DMA map=
-ped, the
->> backing buffer can be accessed safely an more.
->>
->> See also the safety requirements of dma::CoherentAllocation::as_slice() =
-and
->> dma::CoherentAllocation::as_slice_mut().
->
-> Yup. So couldn't similar accessors (marked unsafe of course) be
-> convenient?
-
-Absolutely! But I think we want them represented by a common trait that can=
- be
-used by SGTable and dma::CoherentAllocation.
-
->>
->> If we want to support that, we have to provide a new type for this and m=
-aybe
->> want to define a common trait for DMA mapped memory accessors, etc.
->>
->> Not the scope for this series, I believe. :)
->
-> I've had a few thoughts in that direction as well, but completely agree
-> we should debate about this *after* this series is merged. :)
-
-Yeah, let's add this feature subsequently.
+Cheers,
+Miguel
 
