@@ -1,116 +1,117 @@
-Return-Path: <linux-kernel+bounces-782955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D2E8B327A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 10:29:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEBC1B327A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 10:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3F4BAC520E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:29:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2D84A07E92
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1436238149;
-	Sat, 23 Aug 2025 08:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6DfwwQE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E0B23A9A8;
+	Sat, 23 Aug 2025 08:32:59 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562AB2045B6;
-	Sat, 23 Aug 2025 08:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5EF135A53;
+	Sat, 23 Aug 2025 08:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755937771; cv=none; b=OzDakydqN8gSm2sf21m0Jutr9aZ9he19TFMLW01mZV8sDUKLu0eoFiknZ3cGJx1VapZwXngwKbyWU5S3qIaInLFNPRglhRdzDHETDFMT3PmhB2wj434o3/Uweq5zq6N7HsHVXADxEit3oimGsBBlITim87ePsj8158hj7ZmlZco=
+	t=1755937978; cv=none; b=cLzgPUw1huvC0w479XfZuy/tPmkcCNmUcEmJIleCvAX/3WQKn7QWn2zogpLafF0lyk31jznA2Re7gtKI9UBEErdmURD8Nvnd7z9U9tvaR9++3j7nsGuW0Z1WIVcBPQFFbiWknqkiieWJyF6Zywe7AmUwVXxQiaBNx09vttyk+lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755937771; c=relaxed/simple;
-	bh=3V+aClYI3aaQ5gU13ezDYqzZA3Gf8IZDs3ACDxjVH54=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F/PoDN12037VtEjmtE5Go6SeX5LsVISTg5L8hZ6lUN3B0ATnUpM3ZoriOG9PHCrdEYoeJO0ICIbyv78a+kt+nAo/dEbwGV5FAOGxwB1KGJsXIthYPI8mbvNmtHGB219sy6890zpjrxqHWXsnavPHPkSHVI4d3SBtcp7gbgRrd1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r6DfwwQE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33B16C4CEE7;
-	Sat, 23 Aug 2025 08:29:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755937770;
-	bh=3V+aClYI3aaQ5gU13ezDYqzZA3Gf8IZDs3ACDxjVH54=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r6DfwwQEuXHptokfcHZgzpy1FPB8Lw5RAhifx7kjkok4nGqqWegfLoZfun7QAebkA
-	 GAaRqU42NU7euJbXTV4l9IMSukcUTIGtxFng0dMnQep22C4rqbUwrDbBL2JnyBX7XH
-	 bLjkVLqrtfWVjC2+00I0t9Crgs05tRTWr8/ZGo0NaeqEHLwxKqU0owqkHt5PcnzvA5
-	 1agzOoiefZdz6m1ZTEqpBNXJCtC90Zz+47il2570TKzlrkn6XR5LKnl6yHuZQROuA/
-	 fi/9X0XXUnGJC4JzRVvWRQPtrtMUYQP7fZ3dBdgharG7Z8ITCInR3yiVk3I2Z41+dg
-	 FLPQM/0JXtKuQ==
-Date: Sat, 23 Aug 2025 10:29:26 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Cc: Ray Liu <ray.liu@airoha.com>, Mark Brown <broonie@kernel.org>,
-	Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>,
-	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 04/13] spi: airoha: remove unnecessary switch to
- non-dma mode
-Message-ID: <aKl75s_6ueJ3Wulc@lore-rh-laptop>
-References: <aKgSY7bOrC8-qZE3@lore-rh-laptop>
- <20250823001626.3641935-1-mikhail.kshevetskiy@iopsys.eu>
- <20250823001626.3641935-5-mikhail.kshevetskiy@iopsys.eu>
+	s=arc-20240116; t=1755937978; c=relaxed/simple;
+	bh=Ugjn4Lpvu+JzfFVcCIU50/tdQt6nLBDXn6e0GybTKIQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RD+z784/JJm/76qC2FDSvy17RqWAmmpdeWQQI4tc5upfdhwOEGiPCbCZf1oihjsmlAI6+FjZoV1e/ta6bpLSgyEBiZDfI18F6s9UvXvCAmFQyQ6M/UrkGEGXayhzGlqt5G9OAXNk2X3dL9B25MB0U5IiijueeZUPvkRT7RkD0TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: bc3d72da7ffb11f0b29709d653e92f7d-20250823
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:25c9ebe4-10e1-4441-b7eb-d4278b7d564a,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6493067,CLOUDID:ebf846b9e86e1aa2c93147aeafaab428,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: bc3d72da7ffb11f0b29709d653e92f7d-20250823
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangheng@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1940115896; Sat, 23 Aug 2025 16:32:42 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id BC67CE008FA3;
+	Sat, 23 Aug 2025 16:32:41 +0800 (CST)
+X-ns-mid: postfix-68A97CA9-48109459
+Received: from kylin-pc.. (unknown [172.25.130.133])
+	by mail.kylinos.cn (NSMail) with ESMTPA id D38F3E008FA2;
+	Sat, 23 Aug 2025 16:32:39 +0800 (CST)
+From: Zhang Heng <zhangheng@kylinos.cn>
+To: axboe@kernel.dk,
+	phasta@kernel.org,
+	andriy.shevchenko@linux.intel.com,
+	broonie@kernel.org,
+	lizetao1@huawei.com,
+	viro@zeniv.linux.org.uk,
+	fourier.thomas@gmail.com,
+	anuj20.g@samsung.com
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zhang Heng <zhangheng@kylinos.cn>
+Subject: [PATCH v2] block: mtip32xx: Prioritize state cleanup over memory freeing in the mtip_pci_probe error path.
+Date: Sat, 23 Aug 2025 16:32:22 +0800
+Message-ID: <20250823083222.3137817-1-zhangheng@kylinos.cn>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="AhtF45ahqs6p77op"
-Content-Disposition: inline
-In-Reply-To: <20250823001626.3641935-5-mikhail.kshevetskiy@iopsys.eu>
-
-
---AhtF45ahqs6p77op
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-> The code switches to dma at the start of dirmap operation and returns
-> to non-dma at the end of dirmap operation, so an additional switch to
-> non-dma at the start of dirmap write is not required.
+The original sequence kfree(dd); pci_set_drvdata(pdev, NULL); creates a
+theoretical race condition window. Between these two calls, the pci_dev
+structure retains a dangling pointer to the already-freed device private
+data (dd). Any concurrent access to the drvdata (e.g., from an interrupt
+handler or an unexpected call to remove) would lead to a use-after-free
+kernel oops.
 
-Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
+Changes made:
+1. `pci_set_drvdata(pdev, NULL);` - First, atomically sever the link
+from the pci_dev.
+2. `kfree(dd);` - Then, safely free the private memory.
 
->=20
-> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-> ---
->  drivers/spi/spi-airoha-snfi.c | 3 ---
->  1 file changed, 3 deletions(-)
->=20
-> diff --git a/drivers/spi/spi-airoha-snfi.c b/drivers/spi/spi-airoha-snfi.c
-> index d64a687c07de..1ebf7def7ba7 100644
-> --- a/drivers/spi/spi-airoha-snfi.c
-> +++ b/drivers/spi/spi-airoha-snfi.c
-> @@ -812,9 +812,6 @@ static ssize_t airoha_snand_dirmap_write(struct spi_m=
-em_dirmap_desc *desc,
->  	int err;
-> =20
->  	as_ctrl =3D spi_controller_get_devdata(spi->controller);
-> -	err =3D airoha_snand_set_mode(as_ctrl, SPI_MODE_MANUAL);
-> -	if (err < 0)
-> -		return err;
-> =20
->  	memcpy(txrx_buf + offs, buf, len);
->  	dma_addr =3D dma_map_single(as_ctrl->dev, txrx_buf, SPI_NAND_CACHE_SIZE,
-> --=20
-> 2.50.1
->=20
+This ensures the kernel state is always consistent before resources
+are released, adhering to defensive programming principles.
 
---AhtF45ahqs6p77op
-Content-Type: application/pgp-signature; name=signature.asc
+Signed-off-by: Zhang Heng <zhangheng@kylinos.cn>
+---
+ drivers/block/mtip32xx/mtip32xx.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/m=
+tip32xx.c
+index 8fc7761397bd..f228363e6b1c 100644
+--- a/drivers/block/mtip32xx/mtip32xx.c
++++ b/drivers/block/mtip32xx/mtip32xx.c
+@@ -3839,9 +3839,8 @@ static int mtip_pci_probe(struct pci_dev *pdev,
+ 	}
+=20
+ iomap_err:
+-	kfree(dd);
+ 	pci_set_drvdata(pdev, NULL);
+-	return rv;
++	kfree(dd);
+ done:
+ 	return rv;
+ }
+--=20
+2.47.1
 
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaKl75AAKCRA6cBh0uS2t
-rAr3AP9T2QJKhkVGX6NfCc6oaN5Oe1P5X3lrZiNltQ+HB+JXXAEA5nwNp4mEd3JS
-TXd4xaqIwU7iCVKk9KDIHkZzPeKrJwc=
-=Q08H
------END PGP SIGNATURE-----
-
---AhtF45ahqs6p77op--
 
