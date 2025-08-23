@@ -1,130 +1,154 @@
-Return-Path: <linux-kernel+bounces-783084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0034EB3292B
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:33:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 119A3B3292F
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 293DA17DA06
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:32:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED1BA4E1742
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D9325A63D;
-	Sat, 23 Aug 2025 14:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F41325C81C;
+	Sat, 23 Aug 2025 14:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="n1ot0HBE"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jL4KLjHk"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F8B1624C0
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 14:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326D41448D5;
+	Sat, 23 Aug 2025 14:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755959536; cv=none; b=X1Z/lJxlLQA9Dq/BhWmLxeHBpPto0X4LzHKA0ApsMUf46OyFqHnT+B7iQpkMFAT/WQ+dcODtr1/BcWxj4uA5kNLTqCK23ud0rouGAjw//1P4eZhW2nc8EJ0c9FC/gimvVMqvoNOrMlVdL2VwUkuelzU/9agCniGMDmgZne8YLpY=
+	t=1755959620; cv=none; b=B8qAnzrsKvcJQ2aj+vhGZxS86yXMTUlZ+oUel9lgTRv27z84oHtht5YCOuJFFzWW6gSls48TBGAXj4A4Pgos3wDh7Sn8QN92irwXP6d0GVYIFFmDC/8JTQAEoUbPfrK6UKHUzwIOeHtL16gHLimEuIaP5yscxLkjJRRpPajzekQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755959536; c=relaxed/simple;
-	bh=5CH9lXjTQZVNX3mX682b5U7dYvOQ+fFVPT7IU4f0eHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oT1DFYkpYrlxk7lD7u8Ki1JRsR3kmkBtsnbFgwIlRSRYtbWoIwYfVqV03MLG/q1UwtX9E5glvAP6pw+9IIkiDashl49sqa7z58VcDutIvL66FA0WoWhrXbYoJPwAue+RWn/MFtowoGPnfTxwHwxG6Rohl0mOG8uw96wySbhuOOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=n1ot0HBE; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7e86f90d162so331382885a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 07:32:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1755959533; x=1756564333; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5CH9lXjTQZVNX3mX682b5U7dYvOQ+fFVPT7IU4f0eHA=;
-        b=n1ot0HBExF15JRPvCOtJItukkxwHwTURFfVrYEyDp6YbNBYH33RSxqb9nMHWSNDvV9
-         qoD56gqqGQJBgt2Gr2OdA+zk/PgID+MivDysrdJ0f2XcewbACO+RMZlGtbfRYdAsMp48
-         ECmJ6aqaMu8iFOsch2ljpgv/4svnZ3/JPn+wiBBXOd1VIMokMHAsul19wa0Z4ssfSl4g
-         6p7pMeHM5S3N3sdxyCry1KJ8LZhBmEOJTkYX+Z6gPPEN5uyrmIpbH0ZUQaD+5UlJYczZ
-         6ktinjt/6BF46vgx/kTatcyLEIr8voC/Vv1vUwOM0r/EDscpm6s3rEOAwTUEBpPQiRTF
-         DtSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755959533; x=1756564333;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5CH9lXjTQZVNX3mX682b5U7dYvOQ+fFVPT7IU4f0eHA=;
-        b=IINB5rbZVcIBcUALbdRki2PXqZHsYMk5iWb359pNPO09K8wu3ZPBFplOu3R2c4maYg
-         YAM89XMSaRpnIpYYQuZFyx1d9VoCo1q4YbyyvMKnrgBBv5cZPiTTE/iF5Cn2do7r8QL4
-         OqP8dK9kIvLnGtWUFYJgeyGSUtTUYjApljLJqn8P7jIDippVDNWcJzNKBHGZ6Qx+H3J2
-         6O0NgQVwllpw35sDvyZYorB9U8xowTkvIhVC6cOyuEa4zHsdnEKDBL8ypkOGuzV+NNy8
-         WG/lyhltkaGJTS31f0xDQjnG6gx7TcSL2myXPQKw/SNBUiyOmULZ5RmxpqFe0SX1svkM
-         RCrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcP8IFouhKCuUrCF/vbnRggGS9ln/1z6v5ox4eEWTIKODzuLiYcMBmYIqaPrObk6kr7KSr1aRyd8MRUVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxRclZW/s91GrEQdbnKEXZU/G+Q8uTRdV256gCYK7XPqPREKMn
-	ZuCPLrbGHm+00XJxxgO/Xt5gPRUpyhEK2ukIMGqAASw9JZEq0RQtktrgirBYploRIFY=
-X-Gm-Gg: ASbGnctgQxx9y77d967OrmGEN/0OcERxX1EDhimyaEXoakIdPYFQlZpwjlMNUpgb5KG
-	5qzXkKNArzY5CyY4dTyYRbtnfg5zIiGNSH9dkUZRufTbwdYCGTPMhM7hCwzdi0V7vln7dUPI14Z
-	TD8SwokFilGSJhixShNkv2l/LQwlVQhuX/Qv87WEf55lIGIwtstPyr2jexfVFEF2WNEUQn8JTL0
-	85cI/GyWKtTvDEoyz2usJ794tghbyYvYtehdQLvxdDqeCGLL5ClDAh0aldMEJsnbtnenZBghZKP
-	5FscVLhRcJlma8NE4aUsLbHHhIWSS91P6OJ/XIxbOYKLRvDILcga7tBrL87ZiAjcc8PKJjSd
-X-Google-Smtp-Source: AGHT+IE/djxgc7wwTAcnCMpTeoyA5tWavDQqRByv2Dt0CCe5t45gjXLX0PKZfrUUEK/TsOhKJSkN9A==
-X-Received: by 2002:a05:620a:459e:b0:7e7:fd49:b0c7 with SMTP id af79cd13be357-7ea091a22fdmr990347785a.7.1755959533345;
-        Sat, 23 Aug 2025 07:32:13 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ebf4361caesm155711885a.70.2025.08.23.07.32.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Aug 2025 07:32:12 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uppHv-00000006Co3-3cJo;
-	Sat, 23 Aug 2025 11:32:11 -0300
-Date: Sat, 23 Aug 2025 11:32:11 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, akpm@linux-foundation.org,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	abdiel.janulgue@gmail.com, lyude@redhat.com, robin.murphy@arm.com,
-	daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] rust: scatterlist: Add type-state abstraction for
- sg_table
-Message-ID: <20250823143211.GB1121521@ziepe.ca>
-References: <20250820165431.170195-1-dakr@kernel.org>
- <20250820165431.170195-4-dakr@kernel.org>
- <DC9U87GQ7ONZ.1489DEN1PPUAC@nvidia.com>
+	s=arc-20240116; t=1755959620; c=relaxed/simple;
+	bh=A25igD8CYNOAIY8Fto25Ma8g61zwPgXrBl4KaNHq2Ys=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=I/HNN2gnZq5YLfh+0Wy+atiMES/jS1KGUWPjv/kUFvFjcJ+rm1OEYpyr4nMl7ayCEMV25tbm2NODsF9BxVYh0RZqhmFcRfG7LwUapj0RBnUejkeDKexs40BJgTecDhMJ7V+rv5w5/pQlsTV0aLj74lwtDxQggM0baYL169Emxys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jL4KLjHk; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1755959615; x=1756564415; i=markus.elfring@web.de;
+	bh=vfabdPp9PDIk1yDnOaoAJ7IqG9PbPz0zGe/U2C6HK44=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=jL4KLjHkPkBmIDFb6zJpGFC9Q4M3iv1NYkhyyAitkFCl2Nxm4El7QrNctr86SAFU
+	 +QB1fQMsaLsBJBqcOexRw616ctghMj+j0fj0+c7Lr6uBiCNrOmLAjroUDILP5eiNq
+	 O/SCznDkt2yjhKAUglRDLraSkYjJxMwOc2N5+kTvKivIi35281GnUcDn6hvHJLEcG
+	 dsm2t8SHf1mRTUWjUQKwG87ii3agPg23L7CpTQzthOrh2BiThvbyhrCGi7hQEK1Oy
+	 zSM7TfejZ6SVED4a2oxrPy4cnIfDKim+vp9RACBj68jKqjjN3yTe9HBhFb4khELKd
+	 FMCVJ/Yteli+7mJF/g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.194]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N3ouw-1uPG072IqG-00zGgh; Sat, 23
+ Aug 2025 16:33:35 +0200
+Message-ID: <45dfc1f3-7fe9-42b8-ad51-95cb5feaac87@web.de>
+Date: Sat, 23 Aug 2025 16:33:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DC9U87GQ7ONZ.1489DEN1PPUAC@nvidia.com>
+User-Agent: Mozilla Thunderbird
+To: Jeongjun Park <aha310510@gmail.com>, linux-media@vger.kernel.org,
+ syzbot+1d9c0edea5907af239e0@syzkaller.appspotmail.com,
+ "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20250823115659.1176464-1-aha310510@gmail.com>
+Subject: Re: [PATCH v2] media: vidtv: initialize local pointers upon transfer
+ of memory ownership
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250823115659.1176464-1-aha310510@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ZYdvZ19BnYUGNHGznSQ0y0Rk/F8wZpUh7GBEwDX80TdZU9IYnD4
+ LBnXYx/n6Hgf3F4g17qccezjzR14piSZKCIAYEYkZ0tLKa8IchYAVOZnqjldf6W3qnEngoY
+ +7tOoxAxiJ3SGiE4uA8MFopfNzipZ+8lNOl7oBMnplpU140OJ8WanozGIRw5citGYFzlcbA
+ 2W9TbspjVCga/bh7iOW6Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:j5rnIQufyR4=;9HvA11klspoiqG2uFHV2NGBERUE
+ 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
 
-On Sat, Aug 23, 2025 at 10:22:47PM +0900, Alexandre Courbot wrote:
+=E2=80=A6
+> Therefore, to prevent use-after-free and double-free vuln, local pointer=
+s
+> must be initialized to NULL when transferring memory ownership.
 
-> For reasons I am not completely clear about, the number of mapped
-> segments on the device side can be smaller than the number of
-> scatterlists provided by the sg_table. This is highlighted by the
-> documentation for `dma_map_sg_attrs` [1] ("Returns the number of mapped
-> entries (which can be less than nents) on success") and `sg_dma_address`
-> [2] ("You should only work with the number of sg entries dma_map_sg
-> returns, or alternatively stop on the first sg_dma_len(sg) which is 0.")
+          reset?
 
-> So only calling `sg_next` until we reach the end of the list carries the
-> risk that we iterate on more items than we should, with the extra ones
-> having their length at 0
-
-Correct, this is misusing the API, and I don't know if the lengths are
-even guarenteed to be zero. To iterate the DMA list you must use the
-length of the DMA list returned by dma_map_sg() and nothing else as
-the stop condition.
-
-To repeat again, the scatterlist data structure is "optimized" and
-contains two completely different lists - the CPU list and the DMA
-list. The DMA list is always <= the size of the CPU list.
-
-For all purposes they are completely seperate things and we have a
-unique set of iterators and accessors for the CPU vs DMA data.
-
-Jason
+Regards,
+Markus
 
