@@ -1,239 +1,200 @@
-Return-Path: <linux-kernel+bounces-782988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8154DB32801
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 11:51:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1A1B3280D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 12:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B1977BCE1F
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 09:49:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1937E566F8F
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 10:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A538B24DFE6;
-	Sat, 23 Aug 2025 09:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22772441A0;
+	Sat, 23 Aug 2025 10:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="uRzPndwZ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="J79o/LNy"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="QxazX3GV"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazolkn19011030.outbound.protection.outlook.com [52.103.33.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBA3248F58;
-	Sat, 23 Aug 2025 09:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755942604; cv=none; b=MVlZLhmn90hByo47RB4a5PGiEqZkAp55Mp+N9/wHv0aOapoMGKebLVulIZ8ZyT7Et/ihMK1pT7Iqyc0RX7VuEXmw/K1Irvpn8iOHKeTXOhNFeEart7SCmKMxKsmUc7bqN7mDVKipkIwfVxwZ3lDjksL0Yt6or2PUbDGn+4cpOKg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755942604; c=relaxed/simple;
-	bh=xEVrh3+WA2vAWDrkpWrh52y7/8LmQkfrJtSTPdvSQfY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MELvEqAxm+/68nv1xsL9G1zlLjVgeFB/nEDwDoPyKjhAmeVSNhqcceYRG0QUxt0RfR1ZX5x1gg7sh5a2YhwDr/PgsEGHWosDs6aFcDqTYvglr1eAHtfuUj9q14fI2GWn+PxWWGCLezNvdsyJux/6x9IPDascaJR29meZFolparo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=uRzPndwZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=J79o/LNy; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id 242951D00094;
-	Sat, 23 Aug 2025 05:50:02 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Sat, 23 Aug 2025 05:50:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1755942601;
-	 x=1756029001; bh=FdaWPI1cu75bm+vy4q+AG8ToHjhIBdBDvqctNSZ0c9E=; b=
-	uRzPndwZrsEJTyO7qkfN+2MV4g9idftti+42350iNiAVXL4iq9eGLCW1sbithB57
-	GCGnrMzxj2uoWHYYNn+T+jgfX/qgQBk4WRJTo8n70dxHY1HiDAGxb9ba4dD+MBvi
-	uhu2AI79jjEpjc7wRPI8vo5KVJrGxjn4LC5G/Y6XwaAW6fnnPxkE+6dqLpuaBg8a
-	nf6/egFp3vGUGxCrDPjInX0NLXiSpuR0iizCG+qusFKXvBHp1O+nnze2hNwMHu8I
-	1riQIqL+l4TCF5IWxuPOMuM39wBZRuBhmynCfRcojutE5MbVcBVdrx3ssPMcw33Z
-	vMZl3RBMI2TdXLE9mtPAnw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755942601; x=
-	1756029001; bh=FdaWPI1cu75bm+vy4q+AG8ToHjhIBdBDvqctNSZ0c9E=; b=J
-	79o/LNyUfLaAFYXCsEoBUuSRU4Zgozl8uNHzC/0Jc+jZYuTaSsvdr+NBPZRUCJXP
-	Igvl34vLb0A9ym417+2pe0mys1WB1qOfGwCINEJRIr86G9NIyGziGR0YlGLUPTGZ
-	qH5u4dYRIMZLyqkVpJiPz69/IzWKZRH1P3OJt5oGzl/xU07tho4Z7ttBx8tqp8e3
-	WYP/Q4S92vLu3bTT8e18Ro9tGabdA8jiUKewjs1LyJcyN4wyYcLXWxfnjbJTKXBD
-	XT3FB59nOo3LmfPIvXr9c9iHUFvl69rsmwf4m6OK/b2b+MUT4/SjrJaw7LKaMwJv
-	Z5BCsusZZdQONgic4xAdw==
-X-ME-Sender: <xms:yY6paP47CIyZD0EGbuzHabdg2YmKye3rQZ6LDXgSeQlvf0mlf-AKhQ>
-    <xme:yY6paMIMB19py-WOgfzN2RQR5m-vX2CXEwateuhumiw1EKqvnpoaKFkAYFP0qRaz0
-    ZHSBuNiMaeRku7rheQ>
-X-ME-Received: <xmr:yY6paBUCz_pMEuyOrxPTh_b_-dSDnNbqc7TGEUQxb4p7o5-oPZznz-CLoENkumRBA2TO5LcgcEdinXlnpe0JrQs88140Zy0TqUND2g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieeifedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeflrghnnhgv
-    ucfirhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhepfe
-    ehheeileduffehteeihfdvtdelffdutdeludduiedutedvfeffheekhefgtedtnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjhgrnhhnrg
-    hurdhnvghtpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepkhgvthhtvghnihhssehophgvnhgsshgurdhorhhgpdhrtghpthhtoheprhhosghh
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheprghsrghhiheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuh
-    igqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprh
-    gtphhtthhopehmrghrtggrnhesmhgrrhgtrghnrdhsth
-X-ME-Proxy: <xmx:yY6paAFJyQZs0DlnYEsPAYHP_WnNgLs6CCIM3WM6roUJoczq-UUYbg>
-    <xmx:yY6paI46VYSp5EKTMXbSxTouKPuKlL9sfA8K0u6l5ZCBUdl9akrGqQ>
-    <xmx:yY6paOcVSewDnj6k0hblfMsEG6WKYvEoSxIJDE4qq8dv05Es68pFug>
-    <xmx:yY6paEldoAjEa0aPKj22HkF8cop-xRMQnLnEptXyZtyTiOe11kCODQ>
-    <xmx:yY6paLlrUHPVmX2PdOsRV6nhYRfUkEJywn9LO12VLjBLbMw7GAPel5so>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 23 Aug 2025 05:50:01 -0400 (EDT)
-From: Janne Grunau <j@jannau.net>
-Date: Sat, 23 Aug 2025 11:49:48 +0200
-Subject: [PATCH v2 5/5] arm64: dts: apple: Add devicetreee for t8112-j415
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB825C96;
+	Sat, 23 Aug 2025 10:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.33.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755943230; cv=fail; b=ptm92UHY9Tc97d0JFYPhsV5hkWXJXvBJQ2cjuC9EloLrsY8scFpDge5CTEaQwZUK36jcWjHcndmSFS5htdoqDPUStvXy6Eix+jSuFOxwAxQ6i5zBoA30LBEQJTn012Kd6OkQB/Lqk/xMNto3lZtOx9auH+LdZtmf4mpEFA0OdMc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755943230; c=relaxed/simple;
+	bh=S7tNLqNocVGF0U2zQtY/S6y27OMgekEP5NseV3pUfvI=;
+	h=Message-ID:Date:To:Cc:References:Subject:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=QnRgStpBbD8x8sx7031/q7wFHiYjclG9CatzzRUvHQl88p7h8OSqwpSqKMeYURh6oiemiukdFyphGxi8Elz1Z8PVMfLLwyvVUwT8w6D0K5MLBCbu1Wihe5gr/qWiF2VOzIjIAJD2MueNlt1atoQki4NCC259XLhyp8jK58bskbw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=QxazX3GV; arc=fail smtp.client-ip=52.103.33.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DR4ftLPCeOY08GNptZxNrWt9gAyrgktAUMsnwzwycIuzc4fqsrTYkdvFgGaJ8vvC0Oqf1kC26tyuM7hZi86qZk6ikoabU71HqREVGqbIY20o2AifgFIev9R/h8oYMUmnDWvCGU6qcCe/t6wkngu+nGMYMtW6qO7gT1mMXZuXrGx+OGAj21IDaDl0oRe6Hdx2XaxK3sRGqMwcPF7otHCqBeTSft9MvTv8RTJ/gKhgIb9KIJHyat6D8p7szLshzgiFSFvEEdfjgJtQuX/0SKSR6XNFinCyZ0rU3HIjg3kpOozDExAbuuwkopZQiCwpFaXYhdubsJZ9hIKMjYhGZGjE1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rHXh54qUZ6bGyP/9bwmBCNiDT3N1FlVFtBupBvKz2J8=;
+ b=V0NnahtejLPG4BF2Bfg6lK93RIoeP+1vS7k/SPUL8ar2PJ4B6J2/4f2ZjHf55oET/iIhUBvPwN9Chbm1WsYKfAsOM6Nmz8Iw0GQ40NXPqIS94hPHhWqe50aPLUkbOTILxRKUWsBQPwHwfCSh5IK19ONI8QjHQ71a5BfRCMnpcdzN2g6IJEFdSMOViAjbfLInf+53DA/biL1lvyduQNK2sVxNpLPmiYSRuD+b8k5vH9DW4Skshu/GgGOA0Yr9hJe665Nj81i74Pr9FecRB2cKnKIuAEJDtY5xrDLGhFnve0Jk4GAkMsC9c0jaQBdz2jD6ie5VUyTMM3ckHQnXnr5TCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rHXh54qUZ6bGyP/9bwmBCNiDT3N1FlVFtBupBvKz2J8=;
+ b=QxazX3GVvVAiJd++z1Q4zeJ+foA/nXSXj1rfiaCimHdvar2lNmzxEsg6IX+PaMoekm8NlyaiKcmav9k1zKRnOMa/BZthaWH4bV+lE37eNqbHk/USzB5BGKsHknrfjeX0POUprFYZBE0FTMtKR3WMADQWewf/Oq0UDQTFWdY3+r8xR8ihnSLJYfS9y+yWRwLlp/m5SQHAQXDKaSxbTFfkDdMQCbKOAL19jjS4r0Q91xt1jUCFCpGgj4wLJ4fcrHYw1/HcTUTKEi97yurMC7NYiRp2zzwx/e8ujJbar6y6YjuUVoVrqmqT3Frkwu9BMrd3+azkx67BqY74etAIt5EMdQ==
+Received: from AM7P189MB1009.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:175::17)
+ by GV2P189MB2959.EURP189.PROD.OUTLOOK.COM (2603:10a6:150:265::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Sat, 23 Aug
+ 2025 10:00:26 +0000
+Received: from AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
+ ([fe80::5756:694d:1641:3b13]) by AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
+ ([fe80::5756:694d:1641:3b13%4]) with mapi id 15.20.9052.014; Sat, 23 Aug 2025
+ 10:00:26 +0000
+Message-ID:
+ <AM7P189MB1009A6BCD143F9BE5C3341FAE33CA@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
+Date: Sat, 23 Aug 2025 12:00:24 +0200
+User-Agent: Mozilla Thunderbird
+To: opi5plus@bcc.bai.ne.jp
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de,
+ krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-sound@vger.kernel.org, robh@kernel.org
+References: <20250821041555.4781-2-opi5plus@bcc.bai.ne.jp>
+Subject: Re: [PATCH] rm64: dts: rockchip: Enables sound output from the audio
+ jack on OrangePI5 Plus
+Content-Language: en-US
+From: Maud Spierings <maud_spierings@hotmail.com>
+In-Reply-To: <20250821041555.4781-2-opi5plus@bcc.bai.ne.jp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AS4P189CA0008.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d7::9) To AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:20b:175::17)
+X-Microsoft-Original-Message-ID:
+ <4f77f183-6487-4797-8f65-d6406cb1f8db@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250823-apple-dt-sync-6-17-v2-5-6dc0daeb4786@jannau.net>
-References: <20250823-apple-dt-sync-6-17-v2-0-6dc0daeb4786@jannau.net>
-In-Reply-To: <20250823-apple-dt-sync-6-17-v2-0-6dc0daeb4786@jannau.net>
-To: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Mark Kettenis <kettenis@openbsd.org>, 
- Hector Martin <marcan@marcan.st>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Janne Grunau <j@jannau.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3317; i=j@jannau.net;
- s=yk2024; h=from:subject:message-id;
- bh=xEVrh3+WA2vAWDrkpWrh52y7/8LmQkfrJtSTPdvSQfY=;
- b=owGbwMvMwCW2UNrmdq9+ahrjabUkhoyVfTv1j3vGXq/dolp/KZBv9qXNx28fPJ23o1jno1rhF
- QZF/l1yHaUsDGJcDLJiiixJ2i87GFbXKMbUPgiDmcPKBDKEgYtTACbyIZyR4VrqSxXXqOAJIYrS
- e8pNt6jVLZCM2G1QvKKtNqRXp0F8GsNfEae98//M477DklzJ8eFui/jRo3mBx36qVXGZa/o0/GH
- hBgA=
-X-Developer-Key: i=j@jannau.net; a=openpgp;
- fpr=8B336A6BE4E5695E89B8532B81E806F586338419
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7P189MB1009:EE_|GV2P189MB2959:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0d1dabce-3b74-4de2-1699-08dde22be1ab
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|15080799012|8060799015|19110799012|23021999003|461199028|6090799003|5072599009|1602099012|3412199025|51005399003|4302099013|40105399003|440099028|10035399007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NkFYVUZIOUd4cGZxUG01YjdVOThGd3crNnU3THQ4WXNXdlVPTXcvYTdaSW1J?=
+ =?utf-8?B?WkFOeE9BSkdPQ3ZKSnFuMTNuRDJLbnZSVWx4dkhjQTRjY0UzU1BkWlpaTEQ2?=
+ =?utf-8?B?dCtwN00wc2xzdjhsSW1LZFJRbDJ4MzJTT3JBWUxPbVJpM3g5NWRTOE5Xb1JN?=
+ =?utf-8?B?V0lPbGRYTUVRamN3ekZxM1RVNkdVNG9aUFJsR1hQMlhMMXM2S3dteG1UN0ti?=
+ =?utf-8?B?akQ5dUNjT3BBMGZWQ2hCdEozY0RLdFRGdnRxb2lBUThueHBjeFdDTFN4Mksx?=
+ =?utf-8?B?UHY3ZzgveGNYbElZQnNJSFcvK1d4SjJReERMZjVhd25ORVExbmNxY01uSVJ6?=
+ =?utf-8?B?eUdDN05CZjFrZDRXWHNjcUhvcUxSZTBzOE80WGFFLzExSkFENXdibzhOWGw1?=
+ =?utf-8?B?VDlzMU5ic3c3SEhKblFWYW9ObElwRGJZNVc1TG90M2VRa2VYKzEzQ25LUVcz?=
+ =?utf-8?B?Y0d0dUhxVkhqTXhUWFZ2MHduUGJmRUQ5TDJlWlYvMzZsVkRSbDJYWnpVQ2xL?=
+ =?utf-8?B?Qnk2VExvd2JSaU45N3ZwR0YxWEJEN25CWk56ZW5pZWhNbnFDMlNpWTlrQm1N?=
+ =?utf-8?B?ejB2MDZBaXVCWEY0UVdzY2JYbFlUOUlVL0dDQTAyLzUyemRHMlAwMUxpWEMx?=
+ =?utf-8?B?MTluM0ozZDZ0ZTRialJUQk1xeFI1ejZTdXYzeTV5NEtGVzBBOWQyMFVJa3dh?=
+ =?utf-8?B?MURIb0xGWWp6NlJzY3JuOFc4djdQb3pjUTluNmVQbTM0MkM4R3lxNWhPb3ph?=
+ =?utf-8?B?Q2Q4ZFQvSE10VHUxOW1lN1NSTmVrT0l3ZHk0alFlSEtNV2xGL3lyeVI3R0k5?=
+ =?utf-8?B?dis2bFRrNTlNZFVmbENYYTNmeFEyMmE4T1QxQXZxUHU4Y09tWHBNTGVDdFRI?=
+ =?utf-8?B?ZCttdGpzV2ZQMmM5K1JyazliRVRWSU9tY1UvazVEVTlTekFRNnNiZ2hid2VT?=
+ =?utf-8?B?UTFmNXNxZ3B5d2hyaFZSSHNQdXpCR1F4RzlPQU52TjlQMW5XZFZSeHRoOVFV?=
+ =?utf-8?B?TENnaFJSdEd0RG1xTjU1TUFjWkUvTW9acFJGUHBkUmovRXh4bmI4TTVtdGFt?=
+ =?utf-8?B?cEgxaDRpa1kyMlB0TVRWNTVTMWZ2cTJlN3ptS3NVamo5aCs1UklJMTJZSkJh?=
+ =?utf-8?B?NDl2ZmJxVkp6OTBtVGNGNk05UTY3OVhEYkllU2hqQVFyUFA5cGNJWVlSR2VS?=
+ =?utf-8?B?bHBMMTc1YVViK3ZZQnpOaFhMdk42TFRZaHpnOW8wK2hhcm8yNmNBTmdRU0VL?=
+ =?utf-8?B?YnA0dGNuYzFSODJEalNwUGRGRVFiMGVubVRxTDEwQXl6dFlWSVZlaG9GakxI?=
+ =?utf-8?B?OW8vbnhjYkRtZFJ5UzlRMTNyMjRyNG5kbm1JQUplc2N1MDRrRE5mZ0wyWVpD?=
+ =?utf-8?B?bGt5REJLSjRZZmNzbUV6Q2NiQW9Fc21lNmw1Z0lwK1JIZmhaSXNzR1NDRk9T?=
+ =?utf-8?B?TUp6TCtkcFZ1TVZ3Q0NkK2NhdFVocXYrU0FoUWpHelkyY1EzaUw3dE1pa21O?=
+ =?utf-8?B?dURQT1dWcEJCREowak9CNEpYUjc2bjZGVitaVHRaZkdKZERpWFJQLzBIUTZv?=
+ =?utf-8?B?NXdHUjFJWXNKZTJHL01VazdQTkR6WHVGUlFBaTNEc1pXS1A3RS9DcXdPNjg0?=
+ =?utf-8?B?MGtSQm9jVkwxV2lOYW1OSHZmU2JvbHA0TU1KRW4wSjc0Q1owakpZdjlGLzRs?=
+ =?utf-8?B?Q2UrOW50ang5aDQzaW0zblZzcW43VGxMTkUwcWpndnFjUVB4dGQ0amxtUzJ0?=
+ =?utf-8?B?Z0R6dEhBcS9RWkNKRGJaY2UzKzJFYmdjRncxaFM2QmRRVVNpUDJQcjV6NEVX?=
+ =?utf-8?B?UnZGV29CUzR1WXJFL1VEZz09?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VTcrZlgxN1hwelZZZ1ZKQ2dUVHNjemZ4b3JmV2I1VEp1ZFl1Vk9WbldmSjJZ?=
+ =?utf-8?B?eFI1c3VlUDVFUlVpdXpCQ05GZlBUS28rWnUydVh3Q0xYRGo3N0RaTjgrUEgv?=
+ =?utf-8?B?WGQyZml0Q3N5MHRjeEpqV1M3ZDdURURwMEM1dU0wWm1PQW1WZ2Z1N0NUZ2Y5?=
+ =?utf-8?B?VXZTRlpGSDhsRTZIWUJTV1BNNXloOGdJM0ZzRVRESEU3b0hLZEhsNUJvNDl0?=
+ =?utf-8?B?WU8yQmJjUVNjL0tEVi81c3RucGN6aWh6Y2QrOUxDbm43eC9xYTdWcGZ0OU9I?=
+ =?utf-8?B?T2FzaHRQTktYdGwrSElucytRaXEvaS8zenI1ZDMvWitTdFNIMUhhV1ZMNHdm?=
+ =?utf-8?B?UTltNHZORlZYdVV4eEJxbzJhOS95UXpOT3l4d2lRRm9zZ3ZWT05JVEJZVHB5?=
+ =?utf-8?B?RDkyRmM1RTMzWEhkajNsSVI4SklUc3c1YmdjcXRieWMzR2tLZVNOcTZOMjRq?=
+ =?utf-8?B?bjYybDREaE5IbGJsTHo3RXlaQjFKaVNBeXNWV3ZBOGRCOGYzcTFlaDNkNFk3?=
+ =?utf-8?B?NnlLR3ZpWHM2OUVjNG5CSStrUnI0VVl1V1poc0Q1K2VUR2plTVdyQTZiR3ox?=
+ =?utf-8?B?cjQ3SjBhN1paK01uLzllMStjQmxWM0JNbkdPQTZYWkpwQ1RlQUU4S2NPNkJF?=
+ =?utf-8?B?TDdCcURWZ3hOWU8rSGo3cU9VWTBnaFh1WmE4VTlwdVZJYW41SFd6Z1FvQlpZ?=
+ =?utf-8?B?WTNuZ2U1bWxRYk9MY1FUVDBiZlpSck5tQW41OTMzajdtQk5GNjZIUWI5dzJt?=
+ =?utf-8?B?ZHpyOVgvMEVUblVicGNNTDU3bGFuNDlnMXlGdThVNmlub1hrelVBanlrNCs4?=
+ =?utf-8?B?QUIzQ2J1T0tZWGZicXNsTzNyMngwcmVkS3Fsb2JUV1FjbCsxempDZzZIK0hK?=
+ =?utf-8?B?SzN3aU9tUWpSTGFucTRyemoweTlmd1BTV3hmT0FpNEh0QktCa25neFRPb3lW?=
+ =?utf-8?B?QkdlNjFhdGFwRDdjLzBOSFB4dzhlOE5PSEkwSkNGYXYwV2tybEc2eVRHc3hF?=
+ =?utf-8?B?OWQySXQrTEVPVEpMYXhvZW9CNmtEakkxS3hVMDdzNHlGeW1NUHZ4TnJCaU8v?=
+ =?utf-8?B?U0krdkQ0N2dyWU5nL0p0ZXhwOG01dXpWQUU4TDRXZ1c5ekNzWkh5RHhybTZp?=
+ =?utf-8?B?ZEFXcHpxVHdxVFdnUHA0UnFWNm9DUTdXQ3gxYWVUVzQ5RVBRMXFtSlE2WGF2?=
+ =?utf-8?B?NVVkejc0LzhJalVKOGFudlMzL1d3aUcza2tSNHVjc3JOeXYyZThORjFaRjdr?=
+ =?utf-8?B?emYvclhOZzRFRHdmc3pla1RMbzVHS1llMlgycFdMZXcrekpNVzFvWUtCWm52?=
+ =?utf-8?B?amI4R3Q3aUV0Q0FBcUpaSW40V0lpTGlXU2E4V3F6SzJFNU9EV2FYTHJYTG5z?=
+ =?utf-8?B?bWFraVFRUjU3NmxDUlJmYXUyZXlDZEF5MDdraWI5N1ZvUWhsbkNseVMrNytW?=
+ =?utf-8?B?ZGp2V24yclpqYkx2SGt2Sk5FVUlPTjNudmo3VXkzdmZRblZMZnBZRUJ6Ni8r?=
+ =?utf-8?B?Um5ScFhHbWVHbnFFVkNMYnVRMmhzZXAwSmIzSDNCS0M0SlhvRm4xSEhLV0Vv?=
+ =?utf-8?B?aDRDSS80TTk4OGlCM2lBMERtSFgrZnVzc3J1SnZjQjMybFJ2S2xwQmVhc2ly?=
+ =?utf-8?B?cUhwQ29MQWRrNEJjYjVYRWFLakM3aFNrSk5GTGlCSFRzZTAyeTB0NzVyaDBo?=
+ =?utf-8?Q?nuXlHhQFbzvyw2lvueAB?=
+X-OriginatorOrg: sct-15-20-8534-20-msonline-outlook-2ef4d.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d1dabce-3b74-4de2-1699-08dde22be1ab
+X-MS-Exchange-CrossTenant-AuthSource: AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2025 10:00:26.2230
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2P189MB2959
 
-The 15-inch M2 MacBook Air was released a year after the 13-inch one
-thus missed in initial submission of devicetrees for M2 based devices.
-It is currently a copy of t8112-j413 with edited identifiers but will
-eventually differ in a meaningful way. It has for example a different
-speaker configuration than the 13-inch model.
+Hello Hide,
 
-Reviewed-by: Neal Gompa <neal@gompa.dev>
-Reviewed-by: Sven Peter <sven@kernel.org>
-Signed-off-by: Janne Grunau <j@jannau.net>
----
- arch/arm64/boot/dts/apple/Makefile       |  1 +
- arch/arm64/boot/dts/apple/t8112-j415.dts | 80 ++++++++++++++++++++++++++++++++
- 2 files changed, 81 insertions(+)
+> Currently, analog sound is not output from the audio jack.
+> This patch allows you to select analog headphones in alsamixer.
+> Works with kernel 6.16.1, but not 6.17.
+>
+> Signed-off-by: Hide Hako <opi5plus@bcc.bai.ne.jp>
+> ---
+>   arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi <https://lore.kernel.org/all/20250821041555.4781-2-opi5plus@bcc.bai.ne.jp/#Z2e.:20250821041555.4781-2-opi5plus::40bcc.bai.ne.jp:1arch:arm64:boot:dts:rockchip:rk3588-orangepi-5.dtsi> | 1 +
+>   1 filechanged <https://lore.kernel.org/all/20250821041555.4781-2-opi5plus@bcc.bai.ne.jp/#related>, 1 insertion(+)
+>
+> diff 
+> <https://lore.kernel.org/all/20250821041555.4781-2-opi5plus@bcc.bai.ne.jp/#iZ2e.:20250821041555.4781-2-opi5plus::40bcc.bai.ne.jp:1arch:arm64:boot:dts:rockchip:rk3588-orangepi-5.dtsi> 
+> --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi 
+> b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi index 
+> 91d56c34a..656aac2df 100644 --- 
+> a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi +++ 
+> b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi @@ -113,6 +113,7 
+> @@ analog_sound: sound {  		simple-audio-card,mclk-fs = <256>;
+>   		simple-audio-card,bitclock-master = <&daicpu>;
+>   		simple-audio-card,frame-master = <&daicpu>;
+> + simple-audio-card,pin-switches = "Headphones";  		/*TODO: SARADC_IN3 is used as MIC detection / key input */
+>   
+>   		daicpu: simple-audio-card,cpu {
+> -- 
+> 2.48.1
+I tried this patch, but I am not able to get any audio out on my 
+headphones. using kernel 6.16.1
 
-diff --git a/arch/arm64/boot/dts/apple/Makefile b/arch/arm64/boot/dts/apple/Makefile
-index 4f337bff36cdf51837ac7d50122692895026ce14..df4ba8ef6213c9f7e4ef02a50d7250008977cc71 100644
---- a/arch/arm64/boot/dts/apple/Makefile
-+++ b/arch/arm64/boot/dts/apple/Makefile
-@@ -80,5 +80,6 @@ dtb-$(CONFIG_ARCH_APPLE) += t6001-j316c.dtb
- dtb-$(CONFIG_ARCH_APPLE) += t6001-j375c.dtb
- dtb-$(CONFIG_ARCH_APPLE) += t6002-j375d.dtb
- dtb-$(CONFIG_ARCH_APPLE) += t8112-j413.dtb
-+dtb-$(CONFIG_ARCH_APPLE) += t8112-j415.dtb
- dtb-$(CONFIG_ARCH_APPLE) += t8112-j473.dtb
- dtb-$(CONFIG_ARCH_APPLE) += t8112-j493.dtb
-diff --git a/arch/arm64/boot/dts/apple/t8112-j415.dts b/arch/arm64/boot/dts/apple/t8112-j415.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..b54e218e5384ca89155e4350d6680a28a531f408
---- /dev/null
-+++ b/arch/arm64/boot/dts/apple/t8112-j415.dts
-@@ -0,0 +1,80 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Apple MacBook Air (15-inch, M2, 2023)
-+ *
-+ * target-type: J415
-+ *
-+ * Copyright The Asahi Linux Contributors
-+ */
-+
-+/dts-v1/;
-+
-+#include "t8112.dtsi"
-+#include "t8112-jxxx.dtsi"
-+#include <dt-bindings/leds/common.h>
-+
-+/ {
-+	compatible = "apple,j415", "apple,t8112", "apple,arm-platform";
-+	model = "Apple MacBook Air (15-inch, M2, 2023)";
-+
-+	aliases {
-+		bluetooth0 = &bluetooth0;
-+		wifi0 = &wifi0;
-+	};
-+
-+	led-controller {
-+		compatible = "pwm-leds";
-+		led-0 {
-+			pwms = <&fpwm1 0 40000>;
-+			label = "kbd_backlight";
-+			function = LED_FUNCTION_KBD_BACKLIGHT;
-+			color = <LED_COLOR_ID_WHITE>;
-+			max-brightness = <255>;
-+			default-state = "keep";
-+		};
-+	};
-+};
-+
-+/*
-+ * Force the bus number assignments so that we can declare some of the
-+ * on-board devices and properties that are populated by the bootloader
-+ * (such as MAC addresses).
-+ */
-+&port00 {
-+	bus-range = <1 1>;
-+	wifi0: wifi@0,0 {
-+		compatible = "pci14e4,4433";
-+		reg = <0x10000 0x0 0x0 0x0 0x0>;
-+		/* To be filled by the loader */
-+		local-mac-address = [00 10 18 00 00 10];
-+		apple,antenna-sku = "XX";
-+		brcm,board-type = "apple,snake";
-+	};
-+
-+	bluetooth0: bluetooth@0,1 {
-+		compatible = "pci14e4,5f71";
-+		reg = <0x10100 0x0 0x0 0x0 0x0>;
-+		/* To be filled by the loader */
-+		local-bd-address = [00 00 00 00 00 00];
-+		brcm,board-type = "apple,snake";
-+	};
-+};
-+
-+&i2c0 {
-+	/* MagSafe port */
-+	hpm5: usb-pd@3a {
-+		compatible = "apple,cd321x";
-+		reg = <0x3a>;
-+		interrupt-parent = <&pinctrl_ap>;
-+		interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-names = "irq";
-+	};
-+};
-+
-+&i2c4 {
-+	status = "okay";
-+};
-+
-+&fpwm1 {
-+	status = "okay";
-+};
+I did see headphones in alsamixer, but cannot get it to actually output 
+any audio. Any hints?
 
--- 
-2.50.1
+Kind regards,
+Maud
 
 
