@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-783033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3371FB32897
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:45:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F12C7B32896
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:45:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7F903AD020
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 12:45:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1A497B77BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 12:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A9026E71B;
-	Sat, 23 Aug 2025 12:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6547D2727F3;
+	Sat, 23 Aug 2025 12:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DzGPwrt1"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dM9P3J75"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF7226563F
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 12:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8A6266EF1
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 12:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755953027; cv=none; b=ZEe6CVx5tMbjtoR2RIL0PfP+qZnYc+tY52Yv3UY602hzboYhHFtqGBqNn1smi96vsIvj7Cej/W/UMm8AG0CErbAfdQZssIV7vk30M4hXaz85TNzkb7b4f0Rnjq3H1GUV/TpiGaRTGBXcRCqW1I2hn1pn3BdQESk+QVF8uiB2cuw=
+	t=1755953028; cv=none; b=i97XOLsRy+B78nDog/o6bbRttQz9CxoZatOrxemkfKWV1EjyjiSJeDaPiRuSQiV6s0LfLq3osKw2TsWSjuHxxBLpcLWN1PWZ0BdPN4GcOikaGVNA5mamyAGrdRoExmC3832Isvd3Wk4X+hZGlOALIGAFZWuCawYxpcTUcR5YNLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755953027; c=relaxed/simple;
-	bh=h6WCjiBW+6Abga5OJ3bJ1nYtqaNiePuXBUvjxd/SJ2w=;
+	s=arc-20240116; t=1755953028; c=relaxed/simple;
+	bh=EHd+pho2CKEgo1TnShr+E4CGerzPl5OLtXmFsDyNtVA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uK8w/N2g4A8p61pgf1Omu74IkcJLCwV3XePxO151zuA1chn27G2cZpLXmVtsX4G/ijoDZr1EyBVqh1w8CokzsJ6VAinB8MKAZZrfSICup/wYhWCBu+RwoIz8M72nH1+P+D2Qv8KGPwIEwDLEZom0/aq+1ZYd/Jqa1VJHrozAqgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DzGPwrt1; arc=none smtp.client-ip=209.85.218.46
+	 MIME-Version; b=rZ/6XtOTdnPq4vE/CWYMt/heywpceIKX85zm61HEpkDHFz9s4RZv45GbpmHPd77R5zequ8PubHUNqhCZarmPU8UqdCVTqTtNbmENl3G53bIDG0KbjrpXfp0JyFljrVv/21Ht5oYm3MIdcHtSJrbugytN1BhnoQgJ/rvZtxclVEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dM9P3J75; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb7322da8so445824066b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 05:43:44 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afcb7acfde3so449098966b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 05:43:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755953023; x=1756557823; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755953024; x=1756557824; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wlbqi7N+RKHadOcJXN6QLsUwNa0JB43/lNVhOpXVRbM=;
-        b=DzGPwrt1uCNnb5eRBHR3S/IqNorWPffqx2GINDYY7FAKIJ5EEYwAH7lVTiAAeoFp9j
-         kz6QEw8s2vA2UVgIXMEsRzLVVKfMFA7+c42iFUyq2DU3FPCLf/TPDZbcSzGTy42hOmdu
-         ElIeU01lM9aSUczcrFhJ9V4e3Y7MGJUoiPKhwn9u/rZ5UAM0Em+RMM+3MuQtceCcTlYp
-         AyivYHt0Je/GHA6w/Zi9KNSZniR9ZUAk5VpILyRW3ZIZ3LdNfStS2gDh1xYaKE8j/lIB
-         55maXRT2NhyAPSea76yW9uauTplN1X/fkXhGjAyHzqlXVA8u7xqEyaqp51wV9r1GBkYk
-         bKtw==
+        bh=xBzxzKnHxbIaunAwDeVnqD0gBKox3dXJJ/Rscg6vwsQ=;
+        b=dM9P3J75uZOo6fm3sJI0PZW1bANL1fNHDDmJcc3a3pnuwd86avzmLbr0s9r6RIXqdu
+         WCXmUnSDcC2i9m0Py1BD1HM39h/sVoFNkyKf+p41qpzSA5+nl/LtOQHUKmOINeQCGrQ/
+         A4ihrKFY2segW2fOwNCt6V+RkC1SMgsjPmPG/GEC7dtybTZiqTWqwpAPCjnB8lQm6KZc
+         ZyLwRyCRXwecVdUF6m8P1qR1I6OPji+1nx1+/hiw1d7G3fiVWCLBNdy/gR15Jayn3EZ/
+         4SyNnxri+3tASx9rcBD8Q13d3Pt0Q2qU0oVjEVqYtHPSGIUfFRc8GWAewsB8QsxEn/BS
+         DT+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755953023; x=1756557823;
+        d=1e100.net; s=20230601; t=1755953024; x=1756557824;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wlbqi7N+RKHadOcJXN6QLsUwNa0JB43/lNVhOpXVRbM=;
-        b=CUN5oemZCTFivN4S808xzXI93J6FdZfugwmejGC1Z5nYGdnlYoL8W/mXZ1Oi/gVMbJ
-         z9SOHGqZXz5oms1TnLGUsl9btQelh8XlMBzF088K6bAGSjx8mONNL+8UufEX6w7fmp0h
-         g5p2VLPEkuzvtYk1d8lwxFRLosLGXEmrvSuTvPBz23HzW9e4QZdNTitWEDplr9iICssW
-         58VdTUtbVdrETqHylj/i4ExJzEiykUpu+/nKrabvOWSNtlAIYR3/+WO+q0aZ5BI5aVqx
-         YUfhSn0MZofmwDNFoaUQeZ8gGe7rNSEcp4zg8w1g9py9LsHnL0yHDOd5oywLawDmIUqU
-         plyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTWOZb2IcOZQDeHxSvjrPBs+HlsVIws9MsWx8DBP5HfjHAGFjcrBXW+yojm5uqhnOKQP3zEa5E6H7gIrs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSf+kl+S0kXF7+IcworeNi1kFqKfIin/kFq2fXmoytFX5nsKxr
-	C1aBMjP129v0g9oHWn83/4qAhCVI556t/IO2OJrVnnxHqPPqMSC44R97OEq+xA==
-X-Gm-Gg: ASbGncu7Q//p9ju+xHRr7cq7m5lrEfGhzQn5D9q7iiZjvXSi2NWEYdHcizcQ4F7Z0VC
-	qT8JKtQ7C6GYLWTniiD0LA8UmY6/8faRRkzp370Ft4w1KtpXm3efjZhQR4elZT6bgEF8VMJVsnQ
-	hpEIZX3O39kTQ+/ba+4x94dCHlgvk2qm+ovS2s7gbtscurdxEClvPZkb/sKjux0EI/az7M+uIe8
-	+WgAh0Wcfq0IAAFnuJo2zmm+PDbjm5N55EvU8hzAom8J7QUr5nSTE0Zh4+u3aU5uJa2DMKeAjZY
-	8HpFnfG6yG/QrTPxBX3hkCNjKfIdr6ZG5JZmzc9iY6ILEj+vsdSgdaNv+7x/xovd9t2gN02OsRe
-	EX9mABrkC8iBiSLLfrhF5DACiFQ==
-X-Google-Smtp-Source: AGHT+IFEWdtvLaf9Gdw4oi4jZxvxE286Zlt9Kn5xDdd7umB2HylCgAGuay9Q64yUjphtsNAfkce+7A==
-X-Received: by 2002:a17:907:94cf:b0:af9:c1f7:802 with SMTP id a640c23a62f3a-afe295d2502mr640932766b.31.1755953023059;
+        bh=xBzxzKnHxbIaunAwDeVnqD0gBKox3dXJJ/Rscg6vwsQ=;
+        b=RgxPXWBwP9JgTG19iZB1NxSInU21+99tSKsIp6Yl1K+RUAlUDFhcyo2+fa4//7sz+b
+         icTfTEIT8i8b/0oOKuM6MRHVfS6ogKDGiKlFdYsqo4MZxRBt1L3p2eYgjv8Gv4fMfGqo
+         eKIEHfnhoeJcbUpRo3zMxuF/1NdbUw7ZMU4GirPS34QQuPXwZAzpv8FYYEVm+YjC6OZR
+         cyVqcIT/7YYkrzEWh9lKXgIM6a/HAmiNjYzkqldX+ZFPTKvilGEn05ZGHDkkucOAhECv
+         tXI4C0aJHgBenkvQvil/O5+vcYBDkNCNnu54uDQo/wBU5CfCTGdXIaAB7gT58sxRPvl9
+         nn5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXaeH3kkAM7fgESEAzTTX8ACt/uHbIWecAFzrpwnovuqutKlptSiA+8aKfRY8tTqkeIAMTgKx2Li5t6eQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf0if9i1rJO2f5Ha689jbflpnq/bcHUZEZzTlP/q3Xo2lN1fyy
+	Ytttxeaa+JDPaX2gK/AwYpdwefnnsG910NqVGeZeoxExIwUkuXt2Wufv
+X-Gm-Gg: ASbGncuD9vqFregxF84EhXGLXUNIYCJGwp1U8DZUbPpjCRRIYPtNYuhQPA4Ykzl9N7E
+	krc1XRm2iNNPQdmUEpocF9megarm+gKidUdTqj/RSbJKajHrYRqRelYO9/s4l2ae6kO+WN6dyRG
+	bwdhzXJdIkfwU/0M+M5H+VrBhUPnGr15hMrrLn1dNiEokQv+XRI0Cznx5p8Lp1lbdxfWb5tUWks
+	TzYvja1GSzxCAA2kTds2wItVlcvDcWzQHCypjg8TJQUl7cmAP1E4D0VvF71h8L0T5flfMZGtrzF
+	/Ls0NRqUgdbCitsAauE/eXc3ZoW0CtRa9SyWNveyipizyL+oFFQvd/OowpoIOJBjnS/oM8iGkpN
+	lNU4h5BBH1ZjiBbJ5VAe56juUNw==
+X-Google-Smtp-Source: AGHT+IGOPYK8nbUxDZ882SzO7ZNhbK6L59vKLT7JZZ2ydjpaNIC9KyWvkjge3qksvdjnHlfHLmfpqg==
+X-Received: by 2002:a17:907:ea8:b0:afd:e687:d280 with SMTP id a640c23a62f3a-afe295d7033mr515436866b.44.1755953023654;
         Sat, 23 Aug 2025 05:43:43 -0700 (PDT)
 Received: from tumbleweed ([95.90.184.246])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe49a1f5a6sm165076466b.111.2025.08.23.05.43.42
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe49a1f5a6sm165076466b.111.2025.08.23.05.43.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Aug 2025 05:43:42 -0700 (PDT)
+        Sat, 23 Aug 2025 05:43:43 -0700 (PDT)
 From: Michael Straube <straube.linux@gmail.com>
 To: gregkh@linuxfoundation.org
 Cc: hdegoede@redhat.com,
@@ -79,9 +79,9 @@ Cc: hdegoede@redhat.com,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 10/14] staging: rtl8723bs: remove Hal_EfuseGetCurrentSize
-Date: Sat, 23 Aug 2025 14:43:17 +0200
-Message-ID: <20250823124321.485910-11-straube.linux@gmail.com>
+Subject: [PATCH 11/14] staging: rtl8723bs: remove bPseudoTest from hal_EfuseSwitchToBank
+Date: Sat, 23 Aug 2025 14:43:18 +0200
+Message-ID: <20250823124321.485910-12-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250823124321.485910-1-straube.linux@gmail.com>
 References: <20250823124321.485910-1-straube.linux@gmail.com>
@@ -93,223 +93,115 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The function Hal_EfuseGetCurrentSize is not used in the driver code,
-remove it to get rid of dead code. As Hal_EfuseGetCurrentSize is the only
-caller of hal_EfuseGetCurrentSize_WiFi and hal_EfuseGetCurrentSize_BT we
-can remove these two functions as well.
+The function hal_EfuseSwitchToBank is always called with bPseudoTest set to
+false. Remove the pPseudoTest parameter and reomve resulting dead code to
+reduce code complexity.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- .../staging/rtl8723bs/hal/rtl8723b_hal_init.c | 184 ------------------
- drivers/staging/rtl8723bs/include/hal_intf.h  |   1 -
- 2 files changed, 185 deletions(-)
+ .../staging/rtl8723bs/hal/rtl8723b_hal_init.c | 62 +++++++------------
+ 1 file changed, 24 insertions(+), 38 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-index af61730cff14..0679f77e3498 100644
+index 0679f77e3498..014d94894de9 100644
 --- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
 +++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-@@ -867,190 +867,6 @@ void Hal_ReadEFuse(
- 		hal_ReadEFuse_BT(padapter, _offset, _size_byte, pbuf);
- }
- 
--static u16 hal_EfuseGetCurrentSize_WiFi(
--	struct adapter *padapter, bool bPseudoTest
--)
--{
--#ifdef HAL_EFUSE_MEMORY
--	struct hal_com_data *pHalData = GET_HAL_DATA(padapter);
--	struct efuse_hal *pEfuseHal = &pHalData->EfuseHal;
--#endif
--	u16 efuse_addr = 0;
--	u16 start_addr = 0; /*  for debug */
--	u8 hworden = 0;
--	u8 efuse_data, word_cnts = 0;
--	u32 count = 0; /*  for debug */
--
--
--	if (bPseudoTest) {
--#ifdef HAL_EFUSE_MEMORY
--		efuse_addr = (u16)pEfuseHal->fakeEfuseUsedBytes;
--#else
--		efuse_addr = (u16)fakeEfuseUsedBytes;
--#endif
--	} else
--		rtw_hal_get_hwreg(padapter, HW_VAR_EFUSE_BYTES, (u8 *)&efuse_addr);
--
--	start_addr = efuse_addr;
--
--	/*  switch bank back to bank 0 for later BT and wifi use. */
--	hal_EfuseSwitchToBank(padapter, 0, bPseudoTest);
--
--	count = 0;
--	while (AVAILABLE_EFUSE_ADDR(efuse_addr)) {
--		if (efuse_OneByteRead(padapter, efuse_addr, &efuse_data, bPseudoTest) == false)
--			goto error;
--
--		if (efuse_data == 0xFF)
--			break;
--
--		if ((start_addr != 0) && (efuse_addr == start_addr)) {
--			count++;
--
--			efuse_data = 0xFF;
--			if (count < 4) {
--				/*  try again! */
--
--				if (count > 2) {
--					/*  try again form address 0 */
--					efuse_addr = 0;
--					start_addr = 0;
--				}
--
--				continue;
--			}
--
--			goto error;
--		}
--
--		if (EXT_HEADER(efuse_data)) {
--			efuse_addr++;
--			efuse_OneByteRead(padapter, efuse_addr, &efuse_data, bPseudoTest);
--			if (ALL_WORDS_DISABLED(efuse_data))
--				continue;
--
--			hworden = efuse_data & 0x0F;
--		} else {
--			hworden = efuse_data & 0x0F;
--		}
--
--		word_cnts = Efuse_CalculateWordCnts(hworden);
--		efuse_addr += (word_cnts*2)+1;
--	}
--
--	if (bPseudoTest) {
--#ifdef HAL_EFUSE_MEMORY
--		pEfuseHal->fakeEfuseUsedBytes = efuse_addr;
--#else
--		fakeEfuseUsedBytes = efuse_addr;
--#endif
--	} else
--		rtw_hal_set_hwreg(padapter, HW_VAR_EFUSE_BYTES, (u8 *)&efuse_addr);
--
--	goto exit;
--
--error:
--	/*  report max size to prevent write efuse */
--	Hal_GetEfuseDefinition(padapter, EFUSE_WIFI, TYPE_AVAILABLE_EFUSE_BYTES_TOTAL, &efuse_addr);
--
--exit:
--
--	return efuse_addr;
--}
--
--static u16 hal_EfuseGetCurrentSize_BT(struct adapter *padapter, u8 bPseudoTest)
--{
--#ifdef HAL_EFUSE_MEMORY
--	struct hal_com_data *pHalData = GET_HAL_DATA(padapter);
--	struct efuse_hal *pEfuseHal = &pHalData->EfuseHal;
--#endif
--	u16 btusedbytes;
--	u16 efuse_addr;
--	u8 bank, startBank;
--	u8 hworden = 0;
--	u8 efuse_data, word_cnts = 0;
--	u16 retU2 = 0;
--
--	if (bPseudoTest) {
--#ifdef HAL_EFUSE_MEMORY
--		btusedbytes = pEfuseHal->fakeBTEfuseUsedBytes;
--#else
--		btusedbytes = fakeBTEfuseUsedBytes;
--#endif
--	} else
--		rtw_hal_get_hwreg(padapter, HW_VAR_EFUSE_BT_BYTES, (u8 *)&btusedbytes);
--
--	efuse_addr = (u16)((btusedbytes%EFUSE_BT_REAL_BANK_CONTENT_LEN));
--	startBank = (u8)(1+(btusedbytes/EFUSE_BT_REAL_BANK_CONTENT_LEN));
--
--	Hal_GetEfuseDefinition(padapter, EFUSE_BT, TYPE_AVAILABLE_EFUSE_BYTES_BANK, &retU2);
--
--	for (bank = startBank; bank < 3; bank++) {
--		if (hal_EfuseSwitchToBank(padapter, bank, bPseudoTest) == false)
--			/* bank = EFUSE_MAX_BANK; */
--			break;
--
--		/*  only when bank is switched we have to reset the efuse_addr. */
--		if (bank != startBank)
--			efuse_addr = 0;
--
--		while (AVAILABLE_EFUSE_ADDR(efuse_addr)) {
--			if (efuse_OneByteRead(padapter, efuse_addr,
--					      &efuse_data, bPseudoTest) == false)
--				/* bank = EFUSE_MAX_BANK; */
--				break;
--
--			if (efuse_data == 0xFF)
--				break;
--
--			if (EXT_HEADER(efuse_data)) {
--				efuse_addr++;
--				efuse_OneByteRead(padapter, efuse_addr, &efuse_data, bPseudoTest);
--
--				if (ALL_WORDS_DISABLED(efuse_data)) {
--					efuse_addr++;
--					continue;
--				}
--
--				hworden = efuse_data & 0x0F;
--			} else {
--				hworden =  efuse_data & 0x0F;
--			}
--
--			word_cnts = Efuse_CalculateWordCnts(hworden);
--			/* read next header */
--			efuse_addr += (word_cnts*2)+1;
--		}
--
--		/*  Check if we need to check next bank efuse */
--		if (efuse_addr < retU2)
--			break; /*  don't need to check next bank. */
--	}
--
--	retU2 = ((bank-1)*EFUSE_BT_REAL_BANK_CONTENT_LEN)+efuse_addr;
--	if (bPseudoTest) {
--		pEfuseHal->fakeBTEfuseUsedBytes = retU2;
--	} else {
--		pEfuseHal->BTEfuseUsedBytes = retU2;
--	}
--
--	return retU2;
--}
--
--u16 Hal_EfuseGetCurrentSize(
--	struct adapter *padapter, u8 efuseType, bool bPseudoTest
--)
--{
--	u16 ret = 0;
--
--	if (efuseType == EFUSE_WIFI)
--		ret = hal_EfuseGetCurrentSize_WiFi(padapter, bPseudoTest);
--	else
--		ret = hal_EfuseGetCurrentSize_BT(padapter, bPseudoTest);
--
--	return ret;
--}
--
- static struct hal_version ReadChipVersion8723B(struct adapter *padapter)
+@@ -445,47 +445,33 @@ void rtl8723b_InitializeFirmwareVars(struct adapter *padapter)
+ /* 				Efuse related code */
+ /*  */
+ static u8 hal_EfuseSwitchToBank(
+-	struct adapter *padapter, u8 bank, bool bPseudoTest
++	struct adapter *padapter, u8 bank
+ )
  {
- 	u32 value32;
-diff --git a/drivers/staging/rtl8723bs/include/hal_intf.h b/drivers/staging/rtl8723bs/include/hal_intf.h
-index fbf0b01780ea..4fe48cccb889 100644
---- a/drivers/staging/rtl8723bs/include/hal_intf.h
-+++ b/drivers/staging/rtl8723bs/include/hal_intf.h
-@@ -270,6 +270,5 @@ void Hal_ReadEFuse(struct adapter *padapter, u8 efuseType, u16 _offset,
- 		   u16 _size_byte, u8 *pbuf);
- void Hal_GetEfuseDefinition(struct adapter *padapter, u8 efuseType, u8 type,
- 			    void *pOut);
--u16 Hal_EfuseGetCurrentSize(struct adapter *padapter, u8 efuseType, bool bPseudoTest);
- void hal_notch_filter_8723b(struct adapter *adapter, bool enable);
- #endif /* __HAL_INTF_H__ */
+ 	u8 bRet = false;
+ 	u32 value32 = 0;
+-#ifdef HAL_EFUSE_MEMORY
+-	struct hal_com_data *pHalData = GET_HAL_DATA(padapter);
+-	struct efuse_hal *pEfuseHal = &pHalData->EfuseHal;
+-#endif
+ 
+-
+-	if (bPseudoTest) {
+-#ifdef HAL_EFUSE_MEMORY
+-		pEfuseHal->fakeEfuseBank = bank;
+-#else
+-		fakeEfuseBank = bank;
+-#endif
+-		bRet = true;
+-	} else {
+-		value32 = rtw_read32(padapter, EFUSE_TEST);
+-		bRet = true;
+-		switch (bank) {
+-		case 0:
+-			value32 = (value32 & ~EFUSE_SEL_MASK) | EFUSE_SEL(EFUSE_WIFI_SEL_0);
+-			break;
+-		case 1:
+-			value32 = (value32 & ~EFUSE_SEL_MASK) | EFUSE_SEL(EFUSE_BT_SEL_0);
+-			break;
+-		case 2:
+-			value32 = (value32 & ~EFUSE_SEL_MASK) | EFUSE_SEL(EFUSE_BT_SEL_1);
+-			break;
+-		case 3:
+-			value32 = (value32 & ~EFUSE_SEL_MASK) | EFUSE_SEL(EFUSE_BT_SEL_2);
+-			break;
+-		default:
+-			value32 = (value32 & ~EFUSE_SEL_MASK) | EFUSE_SEL(EFUSE_WIFI_SEL_0);
+-			bRet = false;
+-			break;
+-		}
+-		rtw_write32(padapter, EFUSE_TEST, value32);
++	value32 = rtw_read32(padapter, EFUSE_TEST);
++	bRet = true;
++	switch (bank) {
++	case 0:
++		value32 = (value32 & ~EFUSE_SEL_MASK) | EFUSE_SEL(EFUSE_WIFI_SEL_0);
++		break;
++	case 1:
++		value32 = (value32 & ~EFUSE_SEL_MASK) | EFUSE_SEL(EFUSE_BT_SEL_0);
++		break;
++	case 2:
++		value32 = (value32 & ~EFUSE_SEL_MASK) | EFUSE_SEL(EFUSE_BT_SEL_1);
++		break;
++	case 3:
++		value32 = (value32 & ~EFUSE_SEL_MASK) | EFUSE_SEL(EFUSE_BT_SEL_2);
++		break;
++	default:
++		value32 = (value32 & ~EFUSE_SEL_MASK) | EFUSE_SEL(EFUSE_WIFI_SEL_0);
++		bRet = false;
++		break;
+ 	}
++	rtw_write32(padapter, EFUSE_TEST, value32);
+ 
+ 	return bRet;
+ }
+@@ -692,7 +678,7 @@ static void hal_ReadEFuse_WiFi(
+ 	memset(efuseTbl, 0xFF, EFUSE_MAX_MAP_LEN);
+ 
+ 	/*  switch bank back to bank 0 for later BT and wifi use. */
+-	hal_EfuseSwitchToBank(padapter, 0, false);
++	hal_EfuseSwitchToBank(padapter, 0);
+ 
+ 	while (AVAILABLE_EFUSE_ADDR(eFuse_Addr)) {
+ 		efuse_OneByteRead(padapter, eFuse_Addr++, &efuseHeader, false);
+@@ -782,7 +768,7 @@ static void hal_ReadEFuse_BT(
+ 	Hal_GetEfuseDefinition(padapter, EFUSE_BT, TYPE_AVAILABLE_EFUSE_BYTES_BANK, &total);
+ 
+ 	for (bank = 1; bank < 3; bank++) { /*  8723b Max bake 0~2 */
+-		if (hal_EfuseSwitchToBank(padapter, bank, false) == false)
++		if (hal_EfuseSwitchToBank(padapter, bank) == false)
+ 			goto exit;
+ 
+ 		eFuse_Addr = 0;
+@@ -833,7 +819,7 @@ static void hal_ReadEFuse_BT(
+ 	}
+ 
+ 	/*  switch bank back to bank 0 for later BT and wifi use. */
+-	hal_EfuseSwitchToBank(padapter, 0, false);
++	hal_EfuseSwitchToBank(padapter, 0);
+ 
+ 	/*  Copy from Efuse map to output pointer memory!!! */
+ 	for (i = 0; i < _size_byte; i++)
 -- 
 2.51.0
 
