@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-783237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB450B32AEB
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:40:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCA2FB32AEC
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E047587C99
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:40:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1ABE587D39
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16C32EBB8A;
-	Sat, 23 Aug 2025 16:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239852EBDD7;
+	Sat, 23 Aug 2025 16:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IgOHRXST";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DRolVXy0"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OoklO4gi";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v6784Fn6"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096BA2EB5CD
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 16:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1BC2EB87F
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 16:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755967167; cv=none; b=aBchbdnXiV+5KYpPkODweAKV18zKZt1n2crrqX23538ofC0GkpUWPClMiJj9c4M1/zWfQJ/iVKYqyLm24mdFXib9X1IwUJSgL5RG2S+mJunUjDV2WLzNKnonWjMm185lsBa+mQeNOPPFICf51oLpiqqwsuonMTExoGYRjUJIPdA=
+	t=1755967169; cv=none; b=u7dVvMvnWANQcTXmqYsgVhv1BVUeLmYJODqLS0a+xJux5TJLVNlfo6Y4PAYmIQznZZM8U5Dj0NmKwkj+G0VaGi3db9rkZwISYL2RqGX9r6PTMlY6iEOF8KG4vPTHcNM1lV9ldkKZHvgOilNPSqW3s04tlt1jgblOxw0xeaJJy+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755967167; c=relaxed/simple;
-	bh=+xCDiLYk4IxXRI6LCA3i7U2Kcs1SMWnuGNUR4uoW0lY=;
+	s=arc-20240116; t=1755967169; c=relaxed/simple;
+	bh=eqL9erE46B7rKu7FwxA/5IdztKBktszWQdhwIbuz0zI=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=mkDlL3G0czO9RF7zVglYZk7vaXJtwIVHQM4jwip5zn5scVh48pkEL0R4K9L/fvMvjsONOtkr0FEvynB3n2oenc6Q3e3iaCQOMuJ6ne5zAnwg0jD1Fi4hj4wdHtj/ZHZxi+xDz3iITjDjaX5Z9fsRn1mesm3ai3ZGti5qq8bBkWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IgOHRXST; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DRolVXy0; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=sazhKkwiUtnZFwK6ZU+Of68MKVSactNddATYzH+iq0CW5q5BdreKuIfse0lYzp9fy5I2YujvW052Y+Izzkm50t0u8SIYbLwxYiWNH7dgbQ68PpmErozCRSX4/Q7FgXHpFNv9XtoZySWlugpN8V9RXPWyzKNS69xGNbh0gRMl+VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OoklO4gi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v6784Fn6; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250823161653.711118277@linutronix.de>
+Message-ID: <20250823161653.778777669@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755967163;
+	s=2020; t=1755967165;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=yWoqwOu/nLPKroY/DD7nEq70Vh5jZEteJAU8HtQMJiM=;
-	b=IgOHRXSTmELTQA2P4tojm0ga59VGVB/Eq8XMbGeKVZJgRHnsGlCkWB8b2dJDzCL11RvsGz
-	EL802XTLpoOARU4Tx1fvyTNssdwAELFaMuAPenscpJjNrX122apw4Sl5HuBibBkueq1CrO
-	CPlY4ynw8yKhp6Br9gplU/B0B4PytIIw7GV5/zg9W8CbO590SeVU4HKahdb5ayc+NOjFp0
-	No1/EiWUuWZNy5GThN8a7CaGD6Q/LrV8XrYBBE6YE83wCjCd7CJqUuNT5rGd6XSG04x5FY
-	pznWcLVfoHjEUOgaNkSKDbSRSYal4aS0andIv5WkfFSHBQ613QU8hjA+atEHrQ==
+	 references:references; bh=N+F2iDx5RS83cKT+1sZ4mIe77F1JAxH+QfG7ReD6apc=;
+	b=OoklO4giNu/f7NYcYPjXYi+2D8f/3KXfUkUUj7l2LB3rlniuSAog9QSmGqwnTOIFuX6kaz
+	QdexqpMUK09RhmhvHJ3ptQr+N6JYygqnVFDVS0iguhZamDLEEuE82r7EZj2Lf2QuW2BpeW
+	QKEnzcZfTiAdsKvNuqLuwMkqXxdiOssPNnbPNcQK0PkkzwT4u1/G8rEBPZQQo7pJDcDB4c
+	NQAnIrS87zAp9ZYSGU1O1ULlonETfDq4lu0I4jRv+4cp603JWaGRCIDl2MttUhR0aLrAg8
+	52ggBGHZhmFRxt4Dtty4hwmoqwtHWPaEByeuwk/6sYNtH1f4qoQILTbxnAZgLw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755967163;
+	s=2020e; t=1755967165;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=yWoqwOu/nLPKroY/DD7nEq70Vh5jZEteJAU8HtQMJiM=;
-	b=DRolVXy0MQMPcqDRxeQ+mDyCvcxB5ftnnFajcvAOWOF3035ZJlPhdVskz8tisIYtssmRsf
-	2c5SZyhfksWmATBg==
+	 references:references; bh=N+F2iDx5RS83cKT+1sZ4mIe77F1JAxH+QfG7ReD6apc=;
+	b=v6784Fn6hopGGkL9uW4wt3pU3tIToAV8Ygv99jM6nOVEIkvE3UrWIi5yibIYQOZUDFpey+
+	urrMga+IdYWkdDAg==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Jens Axboe <axboe@kernel.dk>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Sean Christopherson <seanjc@google.com>,
- Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Peter Zijlstra <peterz@infradead.org>,
  "Paul E. McKenney" <paulmck@kernel.org>,
  Boqun Feng <boqun.feng@gmail.com>,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>,
+ Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>,
  x86@kernel.org,
  Arnd Bergmann <arnd@arndb.de>,
  Heiko Carstens <hca@linux.ibm.com>,
@@ -68,7 +68,7 @@ Cc: Jens Axboe <axboe@kernel.dk>,
  Huacai Chen <chenhuacai@kernel.org>,
  Paul Walmsley <paul.walmsley@sifive.com>,
  Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [patch V2 07/37] rseq, virt: Retrigger RSEQ after vcpu_run()
+Subject: [patch V2 08/37] rseq: Avoid CPU/MM CID updates when no event pending
 References: <20250823161326.635281786@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -77,196 +77,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Sat, 23 Aug 2025 18:39:22 +0200 (CEST)
+Date: Sat, 23 Aug 2025 18:39:24 +0200 (CEST)
 
-Hypervisors invoke resume_user_mode_work() before entering the guest, which
-clears TIF_NOTIFY_RESUME. The @regs argument is NULL as there is no user
-space context available to them, so the rseq notify handler skips
-inspecting the critical section, but updates the CPU/MM CID values
-unconditionally so that the eventual pending rseq event is not lost on the
-way to user space.
-
-This is a pointless exercise as the task might be rescheduled before
-actually returning to user space and it creates unnecessary work in the
-vcpu_run() loops.
-
-It's way more efficient to ignore that invocation based on @regs == NULL
-and let the hypervisors re-raise TIF_NOTIFY_RESUME after returning from the
-vcpu_run() loop before returning from the ioctl().
-
-This ensures that a pending RSEQ update is not lost and the IDs are updated
-before returning to user space.
-
-Once the RSEQ handling is decoupled from TIF_NOTIFY_RESUME, this turns into
-a NOOP.
+There is no need to update these values unconditionally if there is no
+event pending.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Wei Liu <wei.liu@kernel.org>
-Cc: Dexuan Cui <decui@microsoft.com>
 ---
- drivers/hv/mshv_root_main.c |    2 +
- include/linux/rseq.h        |   17 +++++++++
- kernel/rseq.c               |   76 +++++++++++++++++++++++---------------------
- virt/kvm/kvm_main.c         |    3 +
- 4 files changed, 62 insertions(+), 36 deletions(-)
+ kernel/rseq.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/hv/mshv_root_main.c
-+++ b/drivers/hv/mshv_root_main.c
-@@ -585,6 +585,8 @@ static long mshv_run_vp_with_root_schedu
- 		}
- 	} while (!vp->run.flags.intercept_suspend);
- 
-+	rseq_virt_userspace_exit();
-+
- 	return ret;
- }
- 
---- a/include/linux/rseq.h
-+++ b/include/linux/rseq.h
-@@ -38,6 +38,22 @@ static __always_inline void rseq_exit_to
- }
- 
- /*
-+ * KVM/HYPERV invoke resume_user_mode_work() before entering guest mode,
-+ * which clears TIF_NOTIFY_RESUME. To avoid updating user space RSEQ in
-+ * that case just to do it eventually again before returning to user space,
-+ * the entry resume_user_mode_work() invocation is ignored as the register
-+ * argument is NULL.
-+ *
-+ * After returning from guest mode, they have to invoke this function to
-+ * re-raise TIF_NOTIFY_RESUME if necessary.
-+ */
-+static inline void rseq_virt_userspace_exit(void)
-+{
-+	if (current->rseq_event_pending)
-+		set_tsk_thread_flag(current, TIF_NOTIFY_RESUME);
-+}
-+
-+/*
-  * If parent process has a registered restartable sequences area, the
-  * child inherits. Unregister rseq for a clone with CLONE_VM set.
-  */
-@@ -68,6 +84,7 @@ static inline void rseq_execve(struct ta
- static inline void rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs) { }
- static inline void rseq_signal_deliver(struct ksignal *ksig, struct pt_regs *regs) { }
- static inline void rseq_sched_switch_event(struct task_struct *t) { }
-+static inline void rseq_virt_userspace_exit(void) { }
- static inline void rseq_fork(struct task_struct *t, unsigned long clone_flags) { }
- static inline void rseq_execve(struct task_struct *t) { }
- static inline void rseq_exit_to_user_mode(void) { }
 --- a/kernel/rseq.c
 +++ b/kernel/rseq.c
-@@ -422,50 +422,54 @@ void __rseq_handle_notify_resume(struct
- {
- 	struct task_struct *t = current;
- 	int ret, sig;
-+	bool event;
-+
-+	/*
-+	 * If invoked from hypervisors before entering the guest via
-+	 * resume_user_mode_work(), then @regs is a NULL pointer.
-+	 *
-+	 * resume_user_mode_work() clears TIF_NOTIFY_RESUME and re-raises
-+	 * it before returning from the ioctl() to user space when
-+	 * rseq_event.sched_switch is set.
-+	 *
-+	 * So it's safe to ignore here instead of pointlessly updating it
-+	 * in the vcpu_run() loop.
-+	 */
-+	if (!regs)
-+		return;
- 
- 	if (unlikely(t->flags & PF_EXITING))
- 		return;
- 
- 	/*
--	 * If invoked from hypervisors or IO-URING, then @regs is a NULL
--	 * pointer, so fixup cannot be done. If the syscall which led to
--	 * this invocation was invoked inside a critical section, then it
--	 * will either end up in this code again or a possible violation of
--	 * a syscall inside a critical region can only be detected by the
--	 * debug code in rseq_syscall() in a debug enabled kernel.
-+	 * Read and clear the event pending bit first. If the task
-+	 * was not preempted or migrated or a signal is on the way,
-+	 * there is no point in doing any of the heavy lifting here
-+	 * on production kernels. In that case TIF_NOTIFY_RESUME
-+	 * was raised by some other functionality.
-+	 *
-+	 * This is correct because the read/clear operation is
-+	 * guarded against scheduler preemption, which makes it CPU
-+	 * local atomic. If the task is preempted right after
-+	 * re-enabling preemption then TIF_NOTIFY_RESUME is set
-+	 * again and this function is invoked another time _before_
-+	 * the task is able to return to user mode.
-+	 *
-+	 * On a debug kernel, invoke the fixup code unconditionally
-+	 * with the result handed in to allow the detection of
-+	 * inconsistencies.
- 	 */
--	if (regs) {
--		/*
--		 * Read and clear the event pending bit first. If the task
--		 * was not preempted or migrated or a signal is on the way,
--		 * there is no point in doing any of the heavy lifting here
--		 * on production kernels. In that case TIF_NOTIFY_RESUME
--		 * was raised by some other functionality.
--		 *
--		 * This is correct because the read/clear operation is
--		 * guarded against scheduler preemption, which makes it CPU
--		 * local atomic. If the task is preempted right after
--		 * re-enabling preemption then TIF_NOTIFY_RESUME is set
--		 * again and this function is invoked another time _before_
--		 * the task is able to return to user mode.
--		 *
--		 * On a debug kernel, invoke the fixup code unconditionally
--		 * with the result handed in to allow the detection of
--		 * inconsistencies.
--		 */
--		bool event;
--
--		scoped_guard(RSEQ_EVENT_GUARD) {
--			event = t->rseq_event_pending;
--			t->rseq_event_pending = false;
--		}
-+	scoped_guard(RSEQ_EVENT_GUARD) {
-+		event = t->rseq_event_pending;
-+		t->rseq_event_pending = false;
-+	}
- 
--		if (IS_ENABLED(CONFIG_DEBUG_RSEQ) || event) {
--			ret = rseq_ip_fixup(regs, event);
--			if (unlikely(ret < 0))
--				goto error;
--		}
-+	if (IS_ENABLED(CONFIG_DEBUG_RSEQ) || event) {
-+		ret = rseq_ip_fixup(regs, event);
-+		if (unlikely(ret < 0))
-+			goto error;
+@@ -464,11 +464,12 @@ void __rseq_handle_notify_resume(struct
+ 		t->rseq_event_pending = false;
  	}
+ 
+-	if (IS_ENABLED(CONFIG_DEBUG_RSEQ) || event) {
+-		ret = rseq_ip_fixup(regs, event);
+-		if (unlikely(ret < 0))
+-			goto error;
+-	}
++	if (!IS_ENABLED(CONFIG_DEBUG_RSEQ) && !event)
++		return;
 +
++	ret = rseq_ip_fixup(regs, event);
++	if (unlikely(ret < 0))
++		goto error;
+ 
  	if (unlikely(rseq_update_cpu_node_id(t)))
  		goto error;
- 	return;
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -49,6 +49,7 @@
- #include <linux/lockdep.h>
- #include <linux/kthread.h>
- #include <linux/suspend.h>
-+#include <linux/rseq.h>
- 
- #include <asm/processor.h>
- #include <asm/ioctl.h>
-@@ -4466,6 +4467,8 @@ static long kvm_vcpu_ioctl(struct file *
- 		r = kvm_arch_vcpu_ioctl_run(vcpu);
- 		vcpu->wants_to_run = false;
- 
-+		rseq_virt_userspace_exit();
-+
- 		trace_kvm_userspace_exit(vcpu->run->exit_reason, r);
- 		break;
- 	}
 
 
