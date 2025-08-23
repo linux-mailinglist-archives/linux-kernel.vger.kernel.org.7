@@ -1,144 +1,261 @@
-Return-Path: <linux-kernel+bounces-783285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 734C8B32B52
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:35:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0B4BB32B64
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CDBB7B7969
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:34:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0822D7A36C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6342E283A;
-	Sat, 23 Aug 2025 17:35:29 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E842E5B14;
+	Sat, 23 Aug 2025 17:50:58 +0000 (UTC)
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2125.outbound.protection.partner.outlook.cn [139.219.17.125])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58D92CCC5
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 17:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755970529; cv=none; b=NCg4jhlsyYY2KVe6rSJHP3QSgSaJfOAjEEXn6/U6o+24cn4Z2RnlWuiLZvfcFqd5DdvonrN36A/LOlYrGxhIsdWtboob9Vy65GtuQN/V09t3eTaXbD7lLHO9yJ1Xf0dXEYzA1NqVJ93N1enHVAQIDVdNBoh425Un8M3nLjkXOZQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755970529; c=relaxed/simple;
-	bh=z4XDfxPwGdpmWWAQPeZGINlm7pxbA2dIEUnQ6LjogNQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=l0XLv0ahgIdgaKu6IbogRvM5vtxSxWJm/+gQzquAYbvvTLyv/xh+fU36X6Qk+nOfL6n+e0l40ci9u7GelfPiO7FxzSW3MkzSwgUkn7r3N0UpvcnnHQ1/UpLKToCB/ZIv0zmtAc6jcwwNadtbNGpVh6VpBks7UZGM/awzlva3cms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-886b489984cso735261639f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 10:35:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755970527; x=1756575327;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CIK+Z64BawigwUNtIIcncS8nuJuKSIHFqAyEqu8pJP0=;
-        b=btuiKqUtdGCUr3jkBtWXgGk7hQUk+OrQ/JSFMR7BArRTd5Pgk8Tf+tcxJnuzm1fQZm
-         au48R4j1pf6pQ2DGIXfdsC8xn+UQlYmyRT5UrueDJHzoZJODYqGx56pt0Z80+rHvyNay
-         SkDTb2S4+6Qi1zK5FZQ0qOTWoQPuNo4DKB8iCnwc/nCyKbUKZFkfGjRKo9/1oIHK/sh8
-         s6l3IiKhbIg+ED00DUbjsuYExlWSSp+qhxPHKk9atJfOwcNUzWXOV1AIoFiSbnAKzFaf
-         +EkEZtVK0pfKtBfTlIS7Cr0vosLEBgbINi74zzAcC9YozY5DgfOOIKqtvf6IG88EwG39
-         BGJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgpH+T2wUovAStQpjJQ08hrcD2g9vud3KfX4YzHx89oC7xSL6Ay6ND1tMyoXn3iS+oqobVUPYY0pgLHWk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5O79ma6IzyWIk0jnJ0uzcObtBeqWBxxZkqPhN8du4WK9f/T0M
-	p+D9eebxLuvNDZdNti1c4ZcRvWzrXERQFtDd+E+rBpxT0PQLjZZU54ZineUgTTboVZHH2Ha2luj
-	aBiQJZ4krW19FPE8pP1oQjEMcWCrIuXctIZ7GwBwuyIq126mZl2DkT0sRScY=
-X-Google-Smtp-Source: AGHT+IFN4sYUS+3wAl1sVL8cHYrc7JAzF9MqsftD3EXoo0iiSvEpqOhgRpfvi2nx2QwAa4mn8DCk9OBwnTm2Q77cA9lnkxuLzR3W
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF2920B801;
+	Sat, 23 Aug 2025 17:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.125
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755971458; cv=fail; b=WwO/V7sWOV33S3lK6wPwFhqXXJSf0Fs0bvOTSl6sI2TL571ALfWEg2M/Lx7wjpySSN41O8DFIGDaHNM4HJFhdKSPdvHn5eMmSEesC6Eee/omD9Vc6VrrcJZolO/dDQPWJer+aUSdDFjISc8e+jZSP++pawiEcZYJODbVAAzYRZI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755971458; c=relaxed/simple;
+	bh=AyCeLWiMku7v9iWkYnGqi80ibZL8ViH6Is6RPCBUNb8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=erxcqGIYBsIQ3UPbGRMDaX9x1xyD2sKBiTXOMEd6nZn//31F3Dyzw04064FnTCurhO9CQ88e/t2x8/Tdw3wy4X6Omz/BPkMNK+8dur+dPzozDZDYBYE5YCwGpVp/YOKEgNZuEtuM1vyoLxDdquNRjvhpM+6qAVjSFXFcNANVyxo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Xowu1I4Y1wZxR6sa7+ZCinan3WbLIIB887kFNW+PhOt5Y0VKxF0ROZTZ9Yn2+Y+SRdSxQhg3jwMShamh0Uw1CcH5hXB0329BsfLLzYbCRw2JtMRFBkIXJsdPk3RHYV6WP39FjXUlZ9WGGVhSutfHuOJRj69boUXWdvxiWr5/hHnxk009d4v/p9mDD1N2kZh9ACIvKfrd3YpyxYf/2xvcbEhotSbz2tMnudpYSoGifJIA648mVUl8RxAsVm56g3rSa+dZ3THgUR+7oJBF2R48ZrfPhh/QYjhbIyyt9qeoJBbptuAtdBoMnpRvYxCEHe4IlG39zSzTpHnxln9ncV+Jfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rQb/s63SWWkJpTT9zSj3PvHphjVEAQauNL+M/cmO8nU=;
+ b=fDvjlAIESJ5/1TwY7KRRHdsg8/Z6HAmMblWP3rXbFUCZbImoQv5tcbWBepCZb1KcJitmxtU3i5FXwtENcURyyKVEtZBtg5OK3C9vtZYIy6DcI6PQynB742wjQdC+v60m6yC8XLC3FfehXe/uzCLMe925RKjz6Erj/XXz8XXGne0yygLQPGg1XTwd6FXvHwde1hR2nbgvBJUCTsEYfZhzSMyyclhhCVrVxyHZUQAXp7kfQFel/9pYs5MlWpmkRzEdGLuBnZI0kgUUYysZxAKXWH+4Kuo+f5MEXu2Zzt9+OqN1SgYBgBL8LviDKM0L8Mwwc7IqvppFpQgHpIYgcvEBIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:7::14) by ZQ2PR01MB1257.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:11::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.30; Sat, 23 Aug
+ 2025 17:36:09 +0000
+Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ ([fe80::2595:ef4d:fae:37d7]) by ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ ([fe80::2595:ef4d:fae:37d7%6]) with mapi id 15.20.9031.026; Sat, 23 Aug 2025
+ 17:36:09 +0000
+From: Hal Feng <hal.feng@starfivetech.com>
+To: E Shattow <e@freeshell.de>, Emil Renner Berthing <kernel@esmil.dk>, Conor
+ Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
+ Ghiti <alex@ghiti.fr>
+CC: "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 3/3] riscv: dts: starfive: jh7110: bootph-pre-ram
+ hinting needed by boot loader
+Thread-Topic: [PATCH v3 3/3] riscv: dts: starfive: jh7110: bootph-pre-ram
+ hinting needed by boot loader
+Thread-Index: AQHcFBUwxbTSpgwK80uhPwpdWrt8a7RwgDYQ
+Date: Sat, 23 Aug 2025 17:36:09 +0000
+Message-ID:
+ <ZQ2PR01MB1307F15B7A9D4E8EF6319837E63C2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+References: <20250823100159.203925-1-e@freeshell.de>
+ <20250823100159.203925-4-e@freeshell.de>
+In-Reply-To: <20250823100159.203925-4-e@freeshell.de>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: ZQ2PR01MB1307:EE_|ZQ2PR01MB1257:EE_
+x-ms-office365-filtering-correlation-id: 1e646d9a-56ea-403a-e2e0-08dde26b8c0d
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|41320700013|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ uM6iIpqFNuUhfPRjZ8tNIVvdTWoSIvxP6/Ix63CiGAaX+e/E1ISdHThYqtfTjEAbdEZlHBKC/u/aDajMJp/qLqpDXgahNasuprsD7tsRyLuU7XZ6wTvtrhHnQk23q1z/yikd89ZWIjeLIPT8cUdkJX/LsEEP0Q2gUyoMHEVr8Xr1vmMk2JQImEk6w4FSDoONov385NmF+LvrFo+LDgJ3SfoOAuhZ4twXvWS05yWjduWtWK2MbVlC30CMNEMjNLF4aLUGYIU4JhXn9vtYic9jYcuemR1vWKLuEVG7aN8MaDVoLXQ4YoYnnp1+n1cfTfwoQSj2JFcEeRF6xxhcjRbRAwAPmcL+TBm6MJrOX7Th5rnKaeX6vBOYfcr/ElLd8AdTxgxkhrTF6TCVhNDjxSJVValJWoISIPBzF4P8k1XIXXyesdDGNHD5e+QMZjX0pB7IHnDk3unb5upTd5E5wpmXUgxiv1ruLP02Y2hv8t0PX6pgJuijgnyTE9+jBKUx3jZ6VHTdeSjmiURW7iteIe2027A5DJJGyc7CsEU/244HnUsFkuwlWdb5jjE0nsSvJGMOaa90v5jYWlcfFAOYKJdD/XoK4jUcQTamM3gZLweLyjc=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(7416014)(41320700013)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?3sXUqG9CIZ0LXiOx257aVc3OMrgDlIHi0ZCyYArFqkq4jrReRX5pD4zS+woY?=
+ =?us-ascii?Q?/dK6hOUMXZ+lsxhh41yRXJJoLuCDGz6GlM7xrJq62FolqbjfHdalZSd0dYEu?=
+ =?us-ascii?Q?6lxlF0/AX6S1phB8xIXdQpzox8UrkSXnQDeoSE/TI4V5yjQsmE0+AU3jMns6?=
+ =?us-ascii?Q?IenBvYgYH7q4s4R5go4dbmy6ox6Nj8Ke4wvM2FWBMuL9EIvy21LoBL3MUPOs?=
+ =?us-ascii?Q?BAcjRGstbBdvYzDEyDvDAtIKvnOjGoJak1TDTUjVeKlp1ZH6wDuvI9nWvuiw?=
+ =?us-ascii?Q?tibmfTJft+nIP4lVjYD6MpoAaCk5XOWZezw411n98aRlgXXGfdKa/LHaU3hL?=
+ =?us-ascii?Q?X83HPhxG3SGRij+Vw2tMWnqELfmz7Oq6OJez1oCP5S53PY7crSkSiPFFuaCc?=
+ =?us-ascii?Q?jKeUFCRGsoE43PO5BC3L15E5XD8Kd+pY/qsOJR4gU9pMzOi/cUOFJ11OuI0I?=
+ =?us-ascii?Q?5HU9GAVPvzaqK9Se6XHsElIj/Cy61aAcL+g7VrTULprwxcNyb9uZkhpT5iY5?=
+ =?us-ascii?Q?WboXDjbUtzbpkLM3kJ4CTS40iOwzIJZu4TNyOGHWfnGtv6CKrGU1rDUoARLW?=
+ =?us-ascii?Q?hv72egH3s60m6vdJoypvXl7o5QbpBxBPKUT15EFt7gvVpBDy4Zeg/+1uRYIQ?=
+ =?us-ascii?Q?h0a/aeAkhcVmt4ds2AHAP1z40QAQgH2PBYzpzcaDv1lGuKfaioNw9dY/5bC0?=
+ =?us-ascii?Q?lcpWXLVgNwiKGtyhJnwsgqI3ZBbkYwJM1LKBORUbd1y4ixWTo64czQjKUO6A?=
+ =?us-ascii?Q?I+q2S/Mc7+H5SaCjW7HjQWkOtDSCUzxm3/+8WGoAExb/0IiwjZG4QP/5Qv7z?=
+ =?us-ascii?Q?VaawZiKRvnToyfreFqCqCqjaXmZ5YYecK6TMzRo/QcDuaN8JKk19RrNMYU1E?=
+ =?us-ascii?Q?ABmInZAkwEXUnEDEfLMcV1kRUmXVtZiZld5kPTbC4GTFyRqrSAuhDFV4WR74?=
+ =?us-ascii?Q?V426PbzxThaZpEQq58lOJEsM+BMbzatLQcER9W+j4cUnU5ylzC1cTo5yxe1U?=
+ =?us-ascii?Q?6uRwGcSD8qR4tpC9TitTdr5DvXlujscyYYYR58mJeMJob6xwv7UZNSzem32y?=
+ =?us-ascii?Q?+gnu03Pu4bMNJT5zAGR3MAUqNNNJ06EjtiKqV94ikXdEYjdCW++gnXEczQsa?=
+ =?us-ascii?Q?tS5JTobN5h195nqTZV2J+8U8QL92YBijBVEhLwJXWKAOm0vXTBXJVXsBzPQe?=
+ =?us-ascii?Q?CO2540X7X1e0vcKMD3r1aDwrA40ZOz/KzTKfaVbc3ayvpmw7CS1MFVBfAZYR?=
+ =?us-ascii?Q?G5R0SQ7NZMumoLVlVZlZDyhAw1BP+nIjMlXki/yqUbMrRJfPSBeBWwSVaVcW?=
+ =?us-ascii?Q?JSuW9zQbYbQFQGY16quNZ/ky1ciJglLcM01EzC6DuO3ZTU74TJpkIPD2Z6m9?=
+ =?us-ascii?Q?t/Odma5xOckczU7PyvP32u6+Lnn8LVSL0hSGjkqP+eA9/Wz+Ow+FQRWbPCVS?=
+ =?us-ascii?Q?XL/C06HvPyNAwthV5dMjLyxPYcrhRPIsiyVClHejAotJOp0U5O9zyxjIOXQu?=
+ =?us-ascii?Q?JCDOfjXxV9r7z5G2NnP3AC8aGFUnLVaH3EY2pnHhqnqMAHuDNjQsoVwz6osz?=
+ =?us-ascii?Q?P0tX/1J0vf6AY41u0XRQkCIbGb7nLusLNRSmHULL?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cd88:0:b0:3e5:7c6d:ec8a with SMTP id
- e9e14a558f8ab-3e921f3c3d3mr103125815ab.16.1755970526888; Sat, 23 Aug 2025
- 10:35:26 -0700 (PDT)
-Date: Sat, 23 Aug 2025 10:35:26 -0700
-In-Reply-To: <68721d9e.a00a0220.26a83e.0074.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a9fbde.050a0220.37038e.0067.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in __bch2_trans_commit (3)
-From: syzbot <syzbot+b6ef9edaba01d5b4e43f@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e646d9a-56ea-403a-e2e0-08dde26b8c0d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2025 17:36:09.5105
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 2RwqBzaHnpzPMzCAqTygb7k/tQv+0uE+WeVEF/OcGGXC29/1B3apLg0d7ou+A8uoWn7Phx6hpxb9DPfgjRee9Exbb3p/wZ79VW/9HkhyA6Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ2PR01MB1257
 
-syzbot has found a reproducer for the following issue on:
+> On 23.08.25 18:02, E Shattow wrote:
+> Add bootph-pre-ram hinting to jh7110.dtsi:
+>   - CPU interrupt controller(s)
+>   - gmac1_rgmii_rxin fixed-clock (dependency of syscrg)
+>   - gmac1_rmii_refin fixed-clock (dependency of syscrg)
+>   - oscillator
+>   - core local interrupt timer
+>   - syscrg clock-controller
+>   - pllclk clock-controller (dependency of syscrg)
+>   - DDR memory controller
+>=20
+> Signed-off-by: E Shattow <e@freeshell.de>
 
-HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1157bfa2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
-dashboard link: https://syzkaller.appspot.com/bug?extid=b6ef9edaba01d5b4e43f
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1424cc42580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1120a7bc580000
+Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/disk-8f5ae30d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmlinux-8f5ae30d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff/Image-8f5ae30d.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/42de714fb1cc/mount_0.gz
+Best regards,
+Hal
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b6ef9edaba01d5b4e43f@syzkaller.appspotmail.com
+> ---
+>  arch/riscv/boot/dts/starfive/jh7110.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>=20
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> index f3876660c07f..6e56e9d20bb0 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> @@ -35,6 +35,7 @@ S7_0: cpu@0 {
+>=20
+>  			cpu0_intc: interrupt-controller {
+>  				compatible =3D "riscv,cpu-intc";
+> +				bootph-pre-ram;
+>  				interrupt-controller;
+>  				#interrupt-cells =3D <1>;
+>  			};
+> @@ -68,6 +69,7 @@ U74_1: cpu@1 {
+>=20
+>  			cpu1_intc: interrupt-controller {
+>  				compatible =3D "riscv,cpu-intc";
+> +				bootph-pre-ram;
+>  				interrupt-controller;
+>  				#interrupt-cells =3D <1>;
+>  			};
+> @@ -101,6 +103,7 @@ U74_2: cpu@2 {
+>=20
+>  			cpu2_intc: interrupt-controller {
+>  				compatible =3D "riscv,cpu-intc";
+> +				bootph-pre-ram;
+>  				interrupt-controller;
+>  				#interrupt-cells =3D <1>;
+>  			};
+> @@ -134,6 +137,7 @@ U74_3: cpu@3 {
+>=20
+>  			cpu3_intc: interrupt-controller {
+>  				compatible =3D "riscv,cpu-intc";
+> +				bootph-pre-ram;
+>  				interrupt-controller;
+>  				#interrupt-cells =3D <1>;
+>  			};
+> @@ -167,6 +171,7 @@ U74_4: cpu@4 {
+>=20
+>  			cpu4_intc: interrupt-controller {
+>  				compatible =3D "riscv,cpu-intc";
+> +				bootph-pre-ram;
+>  				interrupt-controller;
+>  				#interrupt-cells =3D <1>;
+>  			};
+> @@ -273,12 +278,14 @@ gmac0_rmii_refin: gmac0-rmii-refin-clock {
+>=20
+>  	gmac1_rgmii_rxin: gmac1-rgmii-rxin-clock {
+>  		compatible =3D "fixed-clock";
+> +		bootph-pre-ram;
+>  		clock-output-names =3D "gmac1_rgmii_rxin";
+>  		#clock-cells =3D <0>;
+>  	};
+>=20
+>  	gmac1_rmii_refin: gmac1-rmii-refin-clock {
+>  		compatible =3D "fixed-clock";
+> +		bootph-pre-ram;
+>  		clock-output-names =3D "gmac1_rmii_refin";
+>  		#clock-cells =3D <0>;
+>  	};
+> @@ -321,6 +328,7 @@ mclk_ext: mclk-ext-clock {
+>=20
+>  	osc: oscillator {
+>  		compatible =3D "fixed-clock";
+> +		bootph-pre-ram;
+>  		clock-output-names =3D "osc";
+>  		#clock-cells =3D <0>;
+>  	};
+> @@ -354,6 +362,7 @@ soc {
+>  		clint: timer@2000000 {
+>  			compatible =3D "starfive,jh7110-clint", "sifive,clint0";
+>  			reg =3D <0x0 0x2000000 0x0 0x10000>;
+> +			bootph-pre-ram;
+>  			interrupts-extended =3D <&cpu0_intc 3>, <&cpu0_intc
+> 7>,
+>  					      <&cpu1_intc 3>, <&cpu1_intc 7>,
+>  					      <&cpu2_intc 3>, <&cpu2_intc 7>,
+> @@ -880,6 +889,7 @@ qspi: spi@13010000 {
+>  		syscrg: clock-controller@13020000 {
+>  			compatible =3D "starfive,jh7110-syscrg";
+>  			reg =3D <0x0 0x13020000 0x0 0x10000>;
+> +			bootph-pre-ram;
+>  			clocks =3D <&osc>, <&gmac1_rmii_refin>,
+>  				 <&gmac1_rgmii_rxin>,
+>  				 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>, @@ -
+> 904,6 +914,7 @@ sys_syscon: syscon@13030000 {
+>=20
+>  			pllclk: clock-controller {
+>  				compatible =3D "starfive,jh7110-pll";
+> +				bootph-pre-ram;
+>  				clocks =3D <&osc>;
+>  				#clock-cells =3D <1>;
+>  			};
+> @@ -935,6 +946,7 @@ memory-controller@15700000 {
+>  			compatible =3D "starfive,jh7110-dmc";
+>  			reg =3D <0x0 0x15700000 0x0 0x10000>,
+>  			      <0x0 0x13000000 0x0 0x10000>;
+> +			bootph-pre-ram;
+>  			clocks =3D <&syscrg JH7110_PLLCLK_PLL1_OUT>;
+>  			clock-names =3D "pll";
+>  			resets =3D <&syscrg JH7110_SYSRST_DDR_AXI>,
+> --
+> 2.50.0
 
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/btree_trans_commit.c:348!
-Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
-Modules linked in:
-CPU: 1 UID: 0 PID: 15 Comm: kworker/u8:1 Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-Workqueue: writeback wb_workfn (flush-bcachefs-1)
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : btree_insert_entry_checks fs/bcachefs/btree_trans_commit.c:343 [inline]
-pc : bch2_trans_commit_write_locked fs/bcachefs/btree_trans_commit.c:725 [inline]
-pc : do_bch2_trans_commit fs/bcachefs/btree_trans_commit.c:854 [inline]
-pc : __bch2_trans_commit+0x6054/0x625c fs/bcachefs/btree_trans_commit.c:1085
-lr : btree_insert_entry_checks fs/bcachefs/btree_trans_commit.c:343 [inline]
-lr : bch2_trans_commit_write_locked fs/bcachefs/btree_trans_commit.c:725 [inline]
-lr : do_bch2_trans_commit fs/bcachefs/btree_trans_commit.c:854 [inline]
-lr : __bch2_trans_commit+0x6054/0x625c fs/bcachefs/btree_trans_commit.c:1085
-sp : ffff800097c46c40
-x29: ffff800097c46f60 x28: 00000000ffffffff x27: ffff0000cbb7e4d8
-x26: ffff800092df2000 x25: 0000000000000000 x24: dfff800000000000
-x23: ffff800092df2000 x22: ffff0000cbb7c020 x21: ffff0000cbb7c042
-x20: 0000000000000001 x19: 0000000000000001 x18: 00000000ffffffff
-x17: ffff800093507000 x16: ffff80008b007340 x15: 0000000000000002
-x14: 1ffff00012f88cb0 x13: 0000000000000000 x12: 0000000000000000
-x11: 00000000eacee03a x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000c1a03d00 x7 : ffff8000828f3158 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000002
-x2 : 0000000000000008 x1 : 0000000000000080 x0 : ffff0000c1a03d00
-Call trace:
- btree_insert_entry_checks fs/bcachefs/btree_trans_commit.c:343 [inline] (P)
- bch2_trans_commit_write_locked fs/bcachefs/btree_trans_commit.c:725 [inline] (P)
- do_bch2_trans_commit fs/bcachefs/btree_trans_commit.c:854 [inline] (P)
- __bch2_trans_commit+0x6054/0x625c fs/bcachefs/btree_trans_commit.c:1085 (P)
- bch2_trans_commit fs/bcachefs/btree_update.h:241 [inline]
- bch2_write_inode+0x52c/0x92c fs/bcachefs/fs.c:136
- bch2_vfs_write_inode+0x84/0xcc fs/bcachefs/fs.c:2148
- write_inode fs/fs-writeback.c:1525 [inline]
- __writeback_single_inode+0x5ac/0x13e8 fs/fs-writeback.c:1745
- writeback_sb_inodes+0x55c/0xe40 fs/fs-writeback.c:1976
- wb_writeback+0x3cc/0xd70 fs/fs-writeback.c:2156
- wb_do_writeback fs/fs-writeback.c:2303 [inline]
- wb_workfn+0x338/0xdc0 fs/fs-writeback.c:2343
- process_one_work+0x7e8/0x155c kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x958/0xed8 kernel/workqueue.c:3400
- kthread+0x5fc/0x75c kernel/kthread.c:463
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
-Code: f940abe0 978e09e2 17ffffe0 97790f85 (d4210000) 
----[ end trace 0000000000000000 ]---
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
