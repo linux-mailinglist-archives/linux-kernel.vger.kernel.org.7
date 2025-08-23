@@ -1,86 +1,55 @@
-Return-Path: <linux-kernel+bounces-782936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA60B3272B
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 09:12:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D577EB3272E
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 09:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2327565E5E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 07:12:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94D75AA8438
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 07:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1B62253B0;
-	Sat, 23 Aug 2025 07:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VEiFoNYN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBFF2253B0;
+	Sat, 23 Aug 2025 07:14:17 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6886221736;
-	Sat, 23 Aug 2025 07:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4F51E260C;
+	Sat, 23 Aug 2025 07:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755933111; cv=none; b=dB6oX9p5FUv40TnTlnAcmq9ESMd7Nqh7hrhzk8miLC0j/zI2Ok2at2giVWdzHwiRdoJmufmdtLVlhXH9SJlYerGGXt3xn4iR2aO30P/lqU/wvRNtb0PZvW5Ifg9EoPSI6kHpkeuqVykZKI9lJQahfn4k8sm7mEiA6cF8JS1vKWk=
+	t=1755933257; cv=none; b=uof/18dFHM/E40gd1jW3VrgWj8V3LCfmQPWtBY6lr83i/il98tDPp358lSXEeJ+RmF2Hxx1tq6ow4MUyX1mIbV79tvoWQ8fZIGuRpvoJqnIdSB5rJN6/fSYAGRssYw+Bc43bk4KwejDNT7uu+5KAHhGLFfR2TMb7xo9VK1VFX78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755933111; c=relaxed/simple;
-	bh=jGVpPERW5NP1rnaGTAcvIEIQaG44vKcBtYOfI1JBcS8=;
+	s=arc-20240116; t=1755933257; c=relaxed/simple;
+	bh=DZ3hYx1rkMQxEOBSciXm3TiSc5s1BU9Ol0clHp0RWfk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l8kQ8EXOItOg/q+OT70rTCNS3S69AF6MSfBmnVkGQq3se9PzZHbEySwfcqv9KV4kJVThiNrzHsMkich3R9jQ3zATDAUm02aDzu2uLtKvFAiGwWr/PUVb+f4g60HGvJRK2ZnakTBN0OuSspSWbPkL2oCdNBZ6k5o/zvN5lfZ15XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VEiFoNYN; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755933110; x=1787469110;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jGVpPERW5NP1rnaGTAcvIEIQaG44vKcBtYOfI1JBcS8=;
-  b=VEiFoNYNsms6JZxGbPqwpjZEaR3NYg5qGfKg7V7C79qSkWswXcvNSiuK
-   GF9ySESv2CVirFB9NfMGfn5Dv40qH8S2iwlDAQgC+ToTrLygLq86Jyg2X
-   uaZnAAYE9wQcMWSqYUjS9TbyupVSZonZvtqbhQTge/SY9JZLMyUc4bJKq
-   pc6TlatOJ1FvtQ0CUK2Zw25uHAFEhDPGHDdzY6O49IiVBTMKWuk29TKCc
-   0sO65Ol5H2ysPLMdZX4EKOurhuD3B9YXagth9l8e/I5ovcPhDiHxSc6Ed
-   oE7ksWMisg6D9pVogtwKS9I9/MwB3pZN/M6us/VJZvH/uuH+1eb2zlZwU
-   A==;
-X-CSE-ConnectionGUID: 1jqiIYlhTbKt9J2uYQBOuA==
-X-CSE-MsgGUID: 1XVEGI6ESRmHLzDBVX7MCw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="60858173"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="60858173"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2025 00:11:49 -0700
-X-CSE-ConnectionGUID: Jubo2rtVTOGHdEnsPCW6Yg==
-X-CSE-MsgGUID: BWV5dKzARCmUx6HMiM7IWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="199755162"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 23 Aug 2025 00:11:45 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1upiPe-000M9n-32;
-	Sat, 23 Aug 2025 07:11:42 +0000
-Date: Sat, 23 Aug 2025 15:10:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jie Gan <jie.gan@oss.qualcomm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
-	Mao Jinlong <jinlmao.mao@oss.qualcomm.com>,
-	Tao Zhang <quic_taozha@quicinc.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] coresight: tpdm: add static tpdm support
-Message-ID: <202508231400.bELUAEeq-lkp@intel.com>
-References: <20250822103008.1029-3-jie.gan@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RiO3krQKw9CDKQ8qnxE3G5sOX2kh9luFrXJKPS8RvOcBakTnhHrbaR4bbQ9BE46y7HEneXs6jAH0ftqc3+T/IOTGBxtFWUgg1vsFjpta7IRTMzNFCCpvFWrp6gC42EdDHBcTSgxh96sW4D6TE+HxsbfOiho4Hvk7s927P/ITTgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 913522C06841;
+	Sat, 23 Aug 2025 09:14:06 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 7FC2C54C67; Sat, 23 Aug 2025 09:14:06 +0200 (CEST)
+Date: Sat, 23 Aug 2025 09:14:06 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: liziyao@uniontech.com
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+	niecheng1@uniontech.com, zhanjun@uniontech.com,
+	guanwentao@uniontech.com, Kexy Biscuit <kexybiscuit@aosc.io>,
+	Lain Fearyncess Yang <fsf@live.com>, Mingcong Bai <jeffbai@aosc.io>,
+	Ayden Meng <aydenmeng@yeah.net>
+Subject: Re: [PATCH RESEND] PCI: Override PCIe bridge supported speeds for
+ older Loongson 3C6000 series steppings
+Message-ID: <aKlqPoa6jeoNJEPc@wunner.de>
+References: <20250822-loongson-pci1-v1-1-39aabbd11fbd@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,84 +58,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250822103008.1029-3-jie.gan@oss.qualcomm.com>
+In-Reply-To: <20250822-loongson-pci1-v1-1-39aabbd11fbd@uniontech.com>
 
-Hi Jie,
+On Fri, Aug 22, 2025 at 05:15:58PM +0800, Ziyao via B4 Relay wrote:
+> Older steppings of the Loongson 3C6000 series incorrectly report the
+> supported link speeds on their PCIe bridges (device IDs 3c19, 3c29) as
+> only 2.5 GT/s, despite the upstream bus supporting speeds from 2.5 GT/s
+> up to 16 GT/s.
 
-kernel test robot noticed the following build errors:
+I assume these bridges (Root Ports?) are only found on LS3C6000 CPUs?
 
-[auto build test ERROR on next-20250822]
-[also build test ERROR on v6.17-rc2]
-[cannot apply to robh/for-next linus/master v6.17-rc2 v6.17-rc1 v6.16]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+If so, please put the quirk in arch/loongarch/pci/pci.c or
+drivers/pci/controller/pci-loongson.c alongside the existing fixups there.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jie-Gan/dt-bindings-arm-document-the-static-TPDM-compatible/20250822-183421
-base:   next-20250822
-patch link:    https://lore.kernel.org/r/20250822103008.1029-3-jie.gan%40oss.qualcomm.com
-patch subject: [PATCH v1 2/3] coresight: tpdm: add static tpdm support
-config: arm-randconfig-002-20250823 (https://download.01.org/0day-ci/archive/20250823/202508231400.bELUAEeq-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250823/202508231400.bELUAEeq-lkp@intel.com/reproduce)
+drivers/pci/quirks.c is compiled on all arches and if these bridges
+only exist on certain Loongson CPUs, the quirk isn't needed on other
+arches and wastes memory.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508231400.bELUAEeq-lkp@intel.com/
+Also, please consider adding entries for 3c19, 3c29 to the PCI IDs
+database:
 
-All errors (new ones prefixed by >>):
+https://admin.pci-ids.ucw.cz/read/PC/0014
 
-   drivers/hwtracing/coresight/coresight-tpda.c: In function 'tpdm_read_element_size':
->> drivers/hwtracing/coresight/coresight-tpda.c:77:17: error: label 'out' used but not defined
-      77 |                 goto out;
-         |                 ^~~~
+Thanks,
 
-
-vim +/out +77 drivers/hwtracing/coresight/coresight-tpda.c
-
-    57	
-    58	/*
-    59	 * Read the element size from the TPDM device. One TPDM must have at least one of the
-    60	 * element size property.
-    61	 * Returns
-    62	 *    0 - The element size property is read
-    63	 *    Others - Cannot read the property of the element size
-    64	 */
-    65	static int tpdm_read_element_size(struct tpda_drvdata *drvdata,
-    66					  struct coresight_device *csdev)
-    67	{
-    68		int rc = -EINVAL;
-    69		struct tpdm_drvdata *tpdm_data = dev_get_drvdata(csdev->dev.parent);
-    70	
-    71		if (coresight_is_static_tpdm(csdev)) {
-    72			rc = fwnode_property_read_u32(dev_fwnode(csdev->dev.parent),
-    73						      "qcom,dsb-element-bits", &drvdata->dsb_esize);
-    74			rc &= fwnode_property_read_u32(dev_fwnode(csdev->dev.parent),
-    75						       "qcom,cmb-element-bits", &drvdata->cmb_esize);
-    76	
-  > 77			goto out;
-    78		}
-    79	
-    80		if (tpdm_data->dsb) {
-    81			rc = fwnode_property_read_u32(dev_fwnode(csdev->dev.parent),
-    82					"qcom,dsb-element-bits", &drvdata->dsb_esize);
-    83		}
-    84	
-    85		if (tpdm_data->cmb) {
-    86			rc = fwnode_property_read_u32(dev_fwnode(csdev->dev.parent),
-    87					"qcom,cmb-element-bits", &drvdata->cmb_esize);
-    88		}
-    89	
-    90		if (rc)
-    91			dev_warn_once(&csdev->dev,
-    92				"Failed to read TPDM Element size: %d\n", rc);
-    93	
-    94		return rc;
-    95	}
-    96	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Lukas
 
