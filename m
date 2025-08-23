@@ -1,252 +1,172 @@
-Return-Path: <linux-kernel+bounces-782943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A540B3276E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 09:39:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE138B32770
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 09:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C5361BA4C42
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 07:39:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABCF51B65DCF
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 07:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCBD220F4F;
-	Sat, 23 Aug 2025 07:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gUlrzN0L"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D98226533;
+	Sat, 23 Aug 2025 07:43:15 +0000 (UTC)
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1993126F0A
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 07:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACED429B0;
+	Sat, 23 Aug 2025 07:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755934772; cv=none; b=g6q5lHQeurKjxx2DuxvT/e5fRdAOignupV7ZLC8zUZ1ToScfDPk9Irft3H0iWvfxpZhZEM4LIhl970iGbWJ+mgJIRQjXpFiboDnO7Ey7Nu28LLBfunf1O0qoYd4Yr3F1hn7aNTM7izkGWGx1gw3vD9B0nrDXXBC4v6n7cSkHSRo=
+	t=1755934994; cv=none; b=j6gaFk5cDxSYqoUjgoYjwR7uTsyjAHuH1B1Wxiyj/KfRQ3V+KNOl7OODgChH03Wqn+guKbehVcYJLS6B4eaXJM74mIkcqkOTexJnCGr7Bnp87Cx1MGiZAwekWjiJEIgCNalkBTxBgfowl38Zs8h/AeZZiUSp1CWHiCWwyhpako4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755934772; c=relaxed/simple;
-	bh=LfrW0wyjOrh5jSfX2Rac4ThYlTDPZeVgsziiVXxemYk=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=q7FWg2/8Oa23pcGFvh0Iocja9oOWQI/PW+xhwJpZlAKR/4Sobum/vPOy5NIXMZ/4VdE/2ERoufFDzo4EKDM9HyRkE64eZwN/W5Fzh2jOjhoPUSr3KpdyEKG0iHzOLfLLs8SRxb4AsSYyU8qX2Mkt9MedkuntCaVKSPLnQ66OaUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gUlrzN0L; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755934770; x=1787470770;
-  h=date:from:to:cc:subject:message-id;
-  bh=LfrW0wyjOrh5jSfX2Rac4ThYlTDPZeVgsziiVXxemYk=;
-  b=gUlrzN0LVzx056qXtsiww35Dx01a0ncIJW07UTGK5SwFpje0ixT18IcI
-   xxWtAlEHAN9kBNJhMF1tFWtrjFoo+ienrCn3SkIq7fM6kZxZV47h7RBAT
-   h5FEpunr6QHTw4IXEKfobO22hfUux7FeqBNPnwmLIliDHKISq3m5O/9a+
-   lH36JL57JQ8IYbUYh4Yjm4+6JfuQQjbvh/lYrO5WMhOgTXrwRWfEaJwBk
-   IFiDtw9iMZNexmBsJ+L7U7MRR2Vdb7/xUUHgDlfahroBMb9VTPmX31Pux
-   dINvyH1mpKkLBffcn1jC1CE0sZjX0iDZCQAxWQ5tTaG2e5BZVsXy1QGzQ
-   g==;
-X-CSE-ConnectionGUID: wXtHHOhDR9uoIDIGKO/G3A==
-X-CSE-MsgGUID: DhrYWzCKTTGOMVAlTtE3jw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58378306"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="58378306"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2025 00:39:30 -0700
-X-CSE-ConnectionGUID: 7BelRhUTTKCMSq06snNrBA==
-X-CSE-MsgGUID: 2BYooy6MTG+SUwAhGAA9tA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="168383280"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 23 Aug 2025 00:39:28 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1upiqU-000MB9-20;
-	Sat, 23 Aug 2025 07:39:26 +0000
-Date: Sat, 23 Aug 2025 15:38:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/bugs] BUILD SUCCESS
- 6bca6b9d414c8127350341f193caa11944ce6fa9
-Message-ID: <202508231534.G14NHcDC-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1755934994; c=relaxed/simple;
+	bh=6UIZ7ESj9tVzgEhrGqLwMkKj8QEBxY3cjbR4+80KyA8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pr8GWaUDu1Y+2riNME4gasmmSeYZOD0xuvxCcOcMr7+P5bv80AhtHLhJDXUe1dAU3BF/D8W7Ona0en50ZHI9qZnksvu367qD1vHqkDpMC7w3jgF9ZV+ZPat+mkzdgRH6izwweD5eZDQhIgVsQ3FIylobRJJmD/oBBGVv897DFf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b482fd89b0eso2077884a12.2;
+        Sat, 23 Aug 2025 00:43:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755934992; x=1756539792;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qZPX8X0B5I+s5hVLSY+6qsXOHCGUOeVZARWEgGlLC+I=;
+        b=YGRYpC1Hck04VLgqXkXMXw9eKN0LzOGybUf39FSwCg+88KyPiHusdH0dEecBovqBDI
+         OcCc2x5XzfAb7YrVqCCUsKMuXgwUHSzwA/ymPD/T7yOHJqDX1FZkzzl0zN7Ssdnggdgx
+         qWlCuEL+qTSQNrYEt2YZ9CQV7JCag2HigmqtquWMb+6Ns+LjQ7YqXaxHui15roivF1cQ
+         sqiEFLTh5+NlL4N4tsXzbIYbPl65bpEsrZvCuMFbpNWtJy1mvesyJMVY6AQshcy37kF/
+         uGPCGcshAD26W8Q70Eq+fEx9WRB+ByEtNyxtfXyhl5jK+kpqPaXY+882YNbzks1sQ/AI
+         nqpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZkfyq7ynwOiTxWXM28Xfg6h1Gy2dBiqb9dhaukVi8IQppgk8XdhXEjnk/8ZWIQKoGTK10eTKG0HN7LbE=@vger.kernel.org, AJvYcCX9Mk4q+qLqxKtJePC53sKxqi7fdltOLW7MnpiA1jlGSikrCIKU6S1zvejoeGZGd63Oqk2A+tyn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg2PU0uX14wDo57hdD2jA2PKgJR2uvZ4VWaXSIZfsGS6PpCirq
+	9RmOvlkYOQ6VYNZa7V+Ra0TM/0yGgymRRknhevOwOD/6HuHC3zLp8kkR
+X-Gm-Gg: ASbGncsBzabHiBzz5sFFF/Ghwf1tyShZyLGw2U0Jggh1j8SQ+yzL/smVIqZR0GV1Qa0
+	xbcMP4hWCJesAYnEpzM8Kr7h3r681WSl5i6f0B8Rp6sXfDQJuUwlRz1w7dtnwqmc4dOtpEYQc/3
+	CMZB8wsbamUdg3ISEm5HluZhTItYpV0gNsRgeEqrsfhoedePNjWnG17+2HsdNMvtunp2KXQZLD5
+	FKBu0GgEP3v9ny6a+zh2UY+9ULzSh/nf1YnqysVHj1PAUqDvKMThEceHYRFiXWJiZ8rBOug9IiG
+	QQ0GVjD6MnpiG3ZIXyNps6ENEVgdZD7RZqnP4+xNbRd45KVXR8GMlbcMn+VTe/aofMS0f1V/o3e
+	U9/HX4mkb2ndQJWTKLg==
+X-Google-Smtp-Source: AGHT+IF0f2BQBSqWg3im1sdbkd//7GHSpBtH/wvKmeKJ5tjPncO4wHGFIpJvnnP3TVkq8/iiJDhfaA==
+X-Received: by 2002:a17:903:32c4:b0:246:5a41:e6ee with SMTP id d9443c01a7336-2465a41e7fbmr42588545ad.15.1755934991900;
+        Sat, 23 Aug 2025 00:43:11 -0700 (PDT)
+Received: from localhost.localdomain ([2403:2c80:17::10:4030])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687af234sm15592435ad.48.2025.08.23.00.43.01
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sat, 23 Aug 2025 00:43:11 -0700 (PDT)
+From: Lance Yang <lance.yang@linux.dev>
+To: akpm@linux-foundation.org,
+	fthain@linux-m68k.org,
+	geert@linux-m68k.org,
+	mhiramat@kernel.org,
+	senozhatsky@chromium.org
+Cc: lance.yang@linux.dev,
+	amaindex@outlook.com,
+	anna.schumaker@oracle.com,
+	boqun.feng@gmail.com,
+	ioworker0@gmail.com,
+	joel.granados@kernel.org,
+	jstultz@google.com,
+	kent.overstreet@linux.dev,
+	leonylgao@tencent.com,
+	linux-kernel@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org,
+	longman@redhat.com,
+	mingo@redhat.com,
+	mingzhe.yang@ly.com,
+	oak@helsinkinet.fi,
+	peterz@infradead.org,
+	rostedt@goodmis.org,
+	tfiga@chromium.org,
+	will@kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH 1/1] hung_task: fix warnings by enforcing alignment on lock structures
+Date: Sat, 23 Aug 2025 15:40:48 +0800
+Message-ID: <20250823074048.92498-1-lance.yang@linux.dev>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <f79735e1-1625-4746-98ce-a3c40123c5af@linux.dev>
+References: <f79735e1-1625-4746-98ce-a3c40123c5af@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/bugs
-branch HEAD: 6bca6b9d414c8127350341f193caa11944ce6fa9  x86/its: Move ITS indirect branch thunks to .text..__x86.indirect_thunk
+From: Lance Yang <lance.yang@linux.dev>
 
-elapsed time: 1031m
+The blocker tracking mechanism assumes that lock pointers are at least
+4-byte aligned to use their lower bits for type encoding.
 
-configs tested: 160
-configs skipped: 119
+However, as reported by Geert Uytterhoeven, some architectures like m68k
+only guarantee 2-byte alignment of 32-bit values. This breaks the
+assumption and causes two related WARN_ON_ONCE checks to trigger.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+To fix this, enforce a minimum of 4-byte alignment on the core lock
+structures supported by the blocker tracking mechanism. This ensures the
+algorithm's alignment assumption now holds true on all architectures.
 
-tested configs:
-alpha                             allnoconfig    clang-22
-alpha                            allyesconfig    clang-19
-alpha                               defconfig    clang-19
-arc                              allmodconfig    clang-19
-arc                               allnoconfig    clang-22
-arc                              allyesconfig    clang-19
-arc                                 defconfig    clang-19
-arc                   randconfig-001-20250823    clang-22
-arc                   randconfig-002-20250823    clang-22
-arm                              allmodconfig    clang-19
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    clang-19
-arm                                 defconfig    clang-19
-arm                          exynos_defconfig    clang-22
-arm                      jornada720_defconfig    clang-22
-arm                   randconfig-001-20250823    clang-22
-arm                   randconfig-002-20250823    clang-22
-arm                   randconfig-003-20250823    clang-22
-arm                   randconfig-004-20250823    clang-22
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    clang-22
-arm64                               defconfig    clang-19
-arm64                 randconfig-001-20250823    clang-22
-arm64                 randconfig-002-20250823    clang-22
-arm64                 randconfig-003-20250823    clang-22
-arm64                 randconfig-004-20250823    clang-22
-csky                              allnoconfig    clang-22
-csky                                defconfig    clang-19
-csky                  randconfig-001-20250823    clang-22
-csky                  randconfig-002-20250823    clang-22
-hexagon                          allmodconfig    clang-19
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-19
-hexagon                             defconfig    clang-19
-hexagon               randconfig-001-20250823    clang-22
-hexagon               randconfig-002-20250823    clang-22
-i386                             allmodconfig    clang-20
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    clang-20
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    clang-20
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250822    gcc-12
-i386        buildonly-randconfig-001-20250823    clang-20
-i386        buildonly-randconfig-002-20250822    clang-20
-i386        buildonly-randconfig-002-20250823    clang-20
-i386        buildonly-randconfig-003-20250822    gcc-12
-i386        buildonly-randconfig-003-20250823    clang-20
-i386        buildonly-randconfig-004-20250822    gcc-12
-i386        buildonly-randconfig-004-20250823    clang-20
-i386        buildonly-randconfig-005-20250822    gcc-12
-i386        buildonly-randconfig-005-20250823    clang-20
-i386        buildonly-randconfig-006-20250822    gcc-12
-i386        buildonly-randconfig-006-20250823    clang-20
-i386                                defconfig    clang-20
-i386                  randconfig-001-20250823    clang-20
-i386                  randconfig-002-20250823    clang-20
-i386                  randconfig-003-20250823    clang-20
-i386                  randconfig-004-20250823    clang-20
-i386                  randconfig-005-20250823    clang-20
-i386                  randconfig-006-20250823    clang-20
-i386                  randconfig-007-20250823    clang-20
-i386                  randconfig-011-20250823    gcc-12
-i386                  randconfig-012-20250823    gcc-12
-i386                  randconfig-013-20250823    gcc-12
-i386                  randconfig-014-20250823    gcc-12
-i386                  randconfig-015-20250823    gcc-12
-i386                  randconfig-016-20250823    gcc-12
-i386                  randconfig-017-20250823    gcc-12
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch                           defconfig    clang-19
-loongarch             randconfig-001-20250823    clang-22
-loongarch             randconfig-002-20250823    clang-22
-m68k                             allmodconfig    clang-19
-m68k                             allyesconfig    clang-19
-m68k                                defconfig    clang-19
-microblaze                       allmodconfig    clang-19
-microblaze                       allyesconfig    clang-19
-mips                        bcm47xx_defconfig    clang-22
-nios2                 randconfig-001-20250823    clang-22
-nios2                 randconfig-002-20250823    clang-22
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-12
-parisc                           allmodconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                randconfig-001-20250823    clang-22
-parisc                randconfig-002-20250823    clang-22
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                          allyesconfig    gcc-15.1.0
-powerpc                    ge_imp3a_defconfig    clang-22
-powerpc                 mpc832x_rdb_defconfig    clang-22
-powerpc               randconfig-001-20250823    clang-22
-powerpc               randconfig-002-20250823    clang-22
-powerpc               randconfig-003-20250823    clang-22
-powerpc64             randconfig-001-20250823    clang-22
-powerpc64             randconfig-002-20250823    clang-22
-powerpc64             randconfig-003-20250823    clang-22
-riscv                            allmodconfig    gcc-15.1.0
-riscv                            allyesconfig    gcc-15.1.0
-riscv                               defconfig    gcc-12
-riscv                 randconfig-001-20250823    clang-22
-riscv                 randconfig-002-20250823    clang-22
-s390                             allmodconfig    gcc-15.1.0
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    gcc-12
-s390                  randconfig-001-20250823    clang-22
-s390                  randconfig-002-20250823    clang-22
-sh                               alldefconfig    clang-22
-sh                               allmodconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-12
-sh                    randconfig-001-20250823    clang-22
-sh                    randconfig-002-20250823    clang-22
-sh                        sh7757lcr_defconfig    clang-22
-sparc                            allmodconfig    gcc-15.1.0
-sparc                 randconfig-001-20250823    clang-22
-sparc                 randconfig-002-20250823    clang-22
-sparc64                             defconfig    gcc-12
-sparc64               randconfig-001-20250823    clang-22
-sparc64               randconfig-002-20250823    clang-22
-um                               allmodconfig    clang-19
-um                               allyesconfig    clang-19
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20250823    clang-22
-um                    randconfig-002-20250823    clang-22
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250822    clang-20
-x86_64      buildonly-randconfig-001-20250823    gcc-12
-x86_64      buildonly-randconfig-002-20250822    gcc-12
-x86_64      buildonly-randconfig-002-20250823    gcc-12
-x86_64      buildonly-randconfig-003-20250822    clang-20
-x86_64      buildonly-randconfig-003-20250823    gcc-12
-x86_64      buildonly-randconfig-004-20250822    clang-20
-x86_64      buildonly-randconfig-004-20250823    gcc-12
-x86_64      buildonly-randconfig-005-20250822    clang-20
-x86_64      buildonly-randconfig-005-20250823    gcc-12
-x86_64      buildonly-randconfig-006-20250822    gcc-12
-x86_64      buildonly-randconfig-006-20250823    gcc-12
-x86_64                              defconfig    clang-20
-x86_64                              defconfig    gcc-11
-x86_64                                  kexec    clang-20
-x86_64                randconfig-001-20250823    gcc-12
-x86_64                randconfig-002-20250823    gcc-12
-x86_64                randconfig-003-20250823    gcc-12
-x86_64                randconfig-004-20250823    gcc-12
-x86_64                randconfig-005-20250823    gcc-12
-x86_64                randconfig-006-20250823    gcc-12
-x86_64                randconfig-007-20250823    gcc-12
-x86_64                randconfig-008-20250823    gcc-12
-x86_64                               rhel-9.4    clang-20
-x86_64                          rhel-9.4-func    clang-20
-x86_64                    rhel-9.4-kselftests    clang-20
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                randconfig-001-20250823    clang-22
-xtensa                randconfig-002-20250823    clang-22
-xtensa                    xip_kc705_defconfig    clang-22
+This patch adds __aligned(4) to the definitions of "struct mutex",
+"struct semaphore", and "struct rw_semaphore", resolving the warnings.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks to Geert for bisecting!
+
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Closes: https://lore.kernel.org/lkml/CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com
+Fixes: e711faaafbe5 ("hung_task: replace blocker_mutex with encoded blocker")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Lance Yang <lance.yang@linux.dev>
+---
+ include/linux/mutex_types.h | 2 +-
+ include/linux/rwsem.h       | 2 +-
+ include/linux/semaphore.h   | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/mutex_types.h b/include/linux/mutex_types.h
+index fdf7f515fde8..de798bfbc4c7 100644
+--- a/include/linux/mutex_types.h
++++ b/include/linux/mutex_types.h
+@@ -51,7 +51,7 @@ struct mutex {
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ 	struct lockdep_map	dep_map;
+ #endif
+-};
++} __aligned(4); /* For hung_task blocker tracking, which encodes type in LSBs */
+ 
+ #else /* !CONFIG_PREEMPT_RT */
+ /*
+diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
+index f1aaf676a874..f6ecf4a4710d 100644
+--- a/include/linux/rwsem.h
++++ b/include/linux/rwsem.h
+@@ -64,7 +64,7 @@ struct rw_semaphore {
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ 	struct lockdep_map	dep_map;
+ #endif
+-};
++} __aligned(4); /* For hung_task blocker tracking, which encodes type in LSBs */
+ 
+ #define RWSEM_UNLOCKED_VALUE		0UL
+ #define RWSEM_WRITER_LOCKED		(1UL << 0)
+diff --git a/include/linux/semaphore.h b/include/linux/semaphore.h
+index 89706157e622..ac9b9c87bfb7 100644
+--- a/include/linux/semaphore.h
++++ b/include/linux/semaphore.h
+@@ -20,7 +20,7 @@ struct semaphore {
+ #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+ 	unsigned long		last_holder;
+ #endif
+-};
++} __aligned(4); /* For hung_task blocker tracking, which encodes type in LSBs */
+ 
+ #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+ #define __LAST_HOLDER_SEMAPHORE_INITIALIZER				\
+-- 
+2.49.0
+
 
