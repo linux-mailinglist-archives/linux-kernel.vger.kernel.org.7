@@ -1,151 +1,127 @@
-Return-Path: <linux-kernel+bounces-782893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C3EB32687
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 04:59:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06ABBB3268D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 05:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2848C7BBC8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:57:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C996F7B6D1B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2AC21C9E3;
-	Sat, 23 Aug 2025 02:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C9E220F55;
+	Sat, 23 Aug 2025 03:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="h9/dBUq6"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BBF1EFF9A;
-	Sat, 23 Aug 2025 02:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="BikHCDGk";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bZXeJADr"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885836F305
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 03:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755917950; cv=none; b=Zdj1j6XbK0/xslTpbd/LLz64lRtHkKpp9griNysYeccReanvrfQH086wFaPnxLK00vvkL4bykotZ4Gn4DmfzjydKRMVUn0Lq0E+g+m2s/bAMA8a0+s+7Sc88pE0hO6rs01Wk9gBQbEL+N+J989TZZY1JXDfB2uy9/LmeoZ0D9qE=
+	t=1755918603; cv=none; b=DfmrjBznWswMDdASh6Ig70pXBLb9njtkNj3I9swQo0+ES3VCvp2+Fs6CgWOyvo5GuSysn6Gklnc94Ry3ED62a3+22r/IbLhhW3Cdgg3uElbTLZDLofIyKS6Zg9US6vmLI0prBrVH0Kz4e+UR2FFJ5kV7APlF9MHqBhE7xJmT3g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755917950; c=relaxed/simple;
-	bh=Xv/+PXZ3hTcvXLBhLIihBLItunKkhfvFzPo6IIK5LsI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=Px9cvidOSnX4K7f1yXp80kVHIgNqSAB1AiNUJj97vivi18HZgSGHjTku0xeGFl+UfVg34ZbFgepvqXdcIP7YAqKF1CT1ptvD7pLvR8jztCJknSSw8k3XH2Swj2ftmONbVU5s8BMF4kyoyBc4l3B7s/VJoje5ebVIC9cg39AjWtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=h9/dBUq6 reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=uhiE6TM+gcn9XNGc5J8udtO8Knd3mFbDC7DrFjExc2o=; b=h
-	9/dBUq6r4dFUQxMinRW65W//n6hxwQfFNOerupGbFuqtnD8qjWCX/j3q2nRFIleV
-	SnVEiGM1uWxLIxpqt+F2+Mcdzm8bCF45o4XAKoBuVwT1cvM6JmaJYoz6HoPMiEuT
-	noX7tzQH4ZJJhoXlFGYOJUp9x+4itluAEwOEbAWjvA=
-Received: from phoenix500526$163.com ( [120.230.124.83] ) by
- ajax-webmail-wmsvr-40-102 (Coremail) ; Sat, 23 Aug 2025 10:58:38 +0800
- (CST)
-Date: Sat, 23 Aug 2025 10:58:38 +0800 (CST)
-From: =?UTF-8?B?6LW15L2z54Kc?= <phoenix500526@163.com>
-To: "Andrii Nakryiko" <andrii.nakryiko@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	yonghong.song@linux.dev, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH bpf-next v13 2/2] selftests/bpf: Enrich
- subtest_basic_usdt case in selftests to cover SIB handling logic
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <CAEf4Bzbs3hV_Q47+d93tTX13WkrpkpOb4=U04mZCjHyZg4aVdw@mail.gmail.com>
-References: <20250822151611.1084244-1-phoenix500526@163.com>
- <20250822151611.1084244-3-phoenix500526@163.com>
- <CAEf4Bzbs3hV_Q47+d93tTX13WkrpkpOb4=U04mZCjHyZg4aVdw@mail.gmail.com>
-X-NTES-SC: AL_Qu2eB/WauEEq7iGabekfmUsVh+o9X8K1vfsk3oZfPJp+jCzp0SwFYFhTLVD49dCDIgW9tQiHaDhx9f1hb5l+dKgnwpK7z/fQZV2KRND+QwlO5A==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1755918603; c=relaxed/simple;
+	bh=LkY9Tl48JIOQ1XBTplwrw0zi/VRZaRoa897q3XhKp6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sExby/8FNU+FiBChKlHT1uqRhF/7MZE03F1U+gePSxyuNSIctnPEE2YozfaUi+8nuXVd9M0ilY3DJJtYh8xceowUtJzHkUznhe+pcKiKINQXAXpaypicALjqi/LqiHTj7yIxu5oEvtmX5TfbBFqKxrD/W5zYUdphSMa6vfjnsJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=BikHCDGk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bZXeJADr; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id 806C7EC00FC;
+	Fri, 22 Aug 2025 23:09:59 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Fri, 22 Aug 2025 23:09:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm3; t=1755918599; x=1756004999; bh=6WQuWpLN64
+	nSKRPafbdR0IvhPYjUj8JZCAZ/hao9bl4=; b=BikHCDGk/ulZnGRmvVpPzRKVX2
+	Tt0sxMdJ2BqlAREpprSZsiarP+j7k2J1eBKtz9HvKa9jAuyMjnVdbCyIU8pwVkfN
+	+lPFyEUFeCuyWtcRQpYSRJ59t36xT8/SbBthAZAPrmNv1nt8vOB6AHHqsXnzgFqG
+	FURvuCPF+XzVS/REs6LhoukLNAoJHkiLUvPrRnOC/i1+QjgJ5MPncpPVUy0FQS4t
+	+ETRAPwT8qgl2D70+6++qPRgWCAzc5iFKPRRkU4o/D9hYXLuqCG0Zv8+MYVvKdsx
+	JRpOtaVk/U89+2FGmj9T6sQjBYw30zeAT6FBiH4+moxakElaLWLtcI56SgCQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1755918599; x=1756004999; bh=6WQuWpLN64nSKRPafbdR0IvhPYjUj8JZCAZ
+	/hao9bl4=; b=bZXeJADrDDhHZu3jS4Tw20MfYbRo9R2UMrgknbqAkYUYQ+RrRMh
+	nxbwW6eLVCg8BucNn9AUdbeifOroDjSJyfKFYT3ZP2X/850JdO3/mxM4DVnknnG0
+	rUMotR3CG5qWoGoJT1ZrlSew7HRp+s4xFAsR2HjSntuSOPw8gAz6owwLiQz6iHsX
+	tAKTAhwbBoZNy5nHNhNsqcWjpWFWJqCyVs49WAKq7x2aZ755YcOqTi/GOdjd2Qro
+	77l7HLoKKEjzQPq/IpxY8wjAyADTzhLlH4F+5Od8QzP2nsj2rfD+Kaix+edSDiY4
+	3rlyS9griWp8dFPWEpdJGw54pXD2cvRrVpQ==
+X-ME-Sender: <xms:BzGpaCxFh-Z3lKjUTDOYxmj6uyUC1vHuHRE3QTHdEiLikr8H9Ih05Q>
+    <xme:BzGpaHN5FIZfr6F09F7KzkzuEHqYqfeB2a3UZIR0MNpRq80XpugpVtXPYhMjhf3fc
+    C4GJJEBl_bX0188dKw>
+X-ME-Received: <xmr:BzGpaGTzcMlC4spb_tPew0w2-T_LYcVtglmSR1zfOEvo7mRvMZAGB-tQXwHrXyrCblLJd5xc7I7PRHsCDo4fmSPySklQQTl-HI4olFG6oFMOiQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieehheduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
+    dtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhi
+    sehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeffvdeuleffveekud
+    fhteejudffgefhtedtgfeutdfgvdfgueefudehveehveekkeenucevlhhushhtvghrufhi
+    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrg
+    hmohgttghhihdrjhhppdhnsggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopehlihhnuhigudefleegqdguvghvvghlsehlihhsthhsrdhsohhurhgtvg
+    hfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
+    khgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:BzGpaFYsiDPNv1SbO7MKO8xl_cBJJVgwWAwK5TyhNJ1Ud-e0svIJUA>
+    <xmx:BzGpaD0c6m0pFBbBdI_mXTzNJUGXMCEnaKpTKe2noWybdEoOrGCvAA>
+    <xmx:BzGpaFXcxkT6j40pf-LzVLC0cLioytXgEAmPng8yUdbRyjN0Wauygw>
+    <xmx:BzGpaNWxxq-W8wn5LF4L93Hl1GUxvzRB2Rj4pWPxwyCPe27SrTOOaw>
+    <xmx:BzGpaL2KpaqrKOcdPoUvGVOied_8-OAz7NR5aQNuT-AuwtPXLdclHiLq>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 22 Aug 2025 23:09:58 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] firewire: ohci: switch to threaded IRQ handler for SelfIDComplete event
+Date: Sat, 23 Aug 2025 12:09:51 +0900
+Message-ID: <20250823030954.268412-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <530fff84.d87.198d4dd1fb8.Coremail.phoenix500526@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:ZigvCgB3dJ9fLqlonhkgAA--.9217W
-X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/1tbiFB+yiGipD2wvNAADsL
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
 
-CgoKCgoKPmRvZXMgY2xhbmcgZGVmaW5lIF9fR05VQ19fIGFzIHdlbGw/IG90aGVyd2lzZSB3aHkg
-IWRlZmluZShfX2NsYW5nX18pID8KClllcywgY2xhbmcgZG9lcyBkZWZpbmQgX19HTlVDX18gLgoK
-Cgo+eW91IHVzZSBhc3NlbWJseSBkaXJlY3RseSwgc28gb3B0aW1pemUoKSBzaG91bGQgYmUgaXJy
-ZWxldmFudCwgbm8/Cj4KPlNvIHdlIGNhbiBtYWtlIHRoaXMgbm9uLUdDQyBzcGVjaWZpYywgcmln
-aHQ/CgpZZXMsIEknbGwgbWFrZSBpdCBpbiB0aGUgbmV4dCB2ZXJzaW9uLgoKCj5pcyBpdCBndWFy
-YW50ZWVkIHRoYXQgbnVtcyBhZGRyZXNzIHdpbGwgZW5kIHVwIGluIHJkeCBhbmQgYSBpbiByYXg/
-Li4uCj4KPkknZCBmZWVsIG1vcmUgY29tZm9ydGFibGUgaWYgeW91IGV4cGxpY2l0bHkgc2V0IHVw
-IHJkeCBhbmQgcmF4IGluCj5hc3NlbWJseSwgdGhlbiBhZGQgVVNEVCB3aXRoIFNUQVBfUFJPQkVf
-QVNNLiBUaGF0IHNob3VsZCBiZSBwb3NzaWJsZQo+d2l0aCBlbWJlZGRlZCBhc3NlbWJseSwgbm8/
-CgpJIHRoaW5rIGl0IHdpbGwgaW4gdGhhdCB0aGUgaW5wdXQgb3BlcmFuZCBjb25zdHJhaW4gYCJk
-IihudW1zKSwgImEiKDApYCBpbXBsaWVzCnRoZSBudW1zIGFkZHJlc3Mgd2lsbCBlbmQgdXAgaW4g
-cmR4IHdoaWxlIHRoZSBpbmRleCAwIHdpbGwgYmUgaW4gcmF4LiAKClNvIEkgdGhpbmsgd2UgZG9u
-J3QgbmVlZCB0byBleHBsaWNpdGx5IHNldCB1cCByZHggYW5kIHJheCBhZ2Fpbi4gCgoKPndoeSB0
-aGVzZSB1bm5lY2Vzc2FyeSBjb21tZW50cyBlbWJlZGRlZCBpbiB0aGUgYXNzZW1ibHk/Li4uCgpC
-ZWNhdXNlIHRoZXJlIGlzICJiZWZvcmUiIGFuZCAiYWZ0ZXIiIGluIHRoZSBgU1RBUF9QUk9CRV9B
-U01gIGV4YW1wbGUuCkl0J3MgT0sgdG8gcmVtb3ZlIGl0LiAKCgpBdCAyMDI1LTA4LTIzIDA2OjU5
-OjQ5LCAiQW5kcmlpIE5ha3J5aWtvIiA8YW5kcmlpLm5ha3J5aWtvQGdtYWlsLmNvbT4gd3JvdGU6
-Cj5PbiBGcmksIEF1ZyAyMiwgMjAyNSBhdCA4OjE24oCvQU0gSmlhd2VpIFpoYW8gPHBob2VuaXg1
-MDA1MjZAMTYzLmNvbT4gd3JvdGU6Cj4+Cj4+IFdoZW4gdXNpbmcgR0NDIG9uIHg4Ni02NCB0byBj
-b21waWxlIGFuIHVzZHQgcHJvZyB3aXRoIC1PMSBvciBoaWdoZXIKPj4gb3B0aW1pemF0aW9uLCB0
-aGUgY29tcGlsZXIgd2lsbCBnZW5lcmF0ZSBTSUIgYWRkcmVzc2luZyBtb2RlIGZvciBnbG9iYWwK
-Pj4gYXJyYXkgYW5kIFBDLXJlbGF0aXZlIGFkZHJlc3NpbmcgbW9kZSBmb3IgZ2xvYmFsIHZhcmlh
-YmxlLAo+PiBlLmcuICIxQC05NiglcmJwLCVyYXgsOCkiIGFuZCAiLTFANCt0MSglcmlwKSIuCj4+
-Cj4+IEluIHRoaXMgcGF0Y2g6Cj4+IC0gZW5yaWNoIHN1YnRlc3RfYmFzaWNfdXNkdCB0ZXN0IGNh
-c2UgdG8gY292ZXIgU0lCIGFkZHJlc3NpbmcgdXNkdCBhcmd1bWVudCBzcGVjCj4+ICAgaGFuZGxp
-bmcgbG9naWMKPj4KPj4gU2lnbmVkLW9mZi1ieTogSmlhd2VpIFpoYW8gPHBob2VuaXg1MDA1MjZA
-MTYzLmNvbT4KPj4gLS0tCj4+ICB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvcHJvZ190ZXN0
-cy91c2R0LmMgfCA0NCArKysrKysrKysrKysrKysrKystCj4+ICB0b29scy90ZXN0aW5nL3NlbGZ0
-ZXN0cy9icGYvcHJvZ3MvdGVzdF91c2R0LmMgfCAzMCArKysrKysrKysrKysrCj4+ICAyIGZpbGVz
-IGNoYW5nZWQsIDcyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1n
-aXQgYS90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvcHJvZ190ZXN0cy91c2R0LmMgYi90b29s
-cy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvcHJvZ190ZXN0cy91c2R0LmMKPj4gaW5kZXggOTA1N2U5
-ODNjYzU0Li5jMDRiNDE2YWE0YTggMTAwNjQ0Cj4+IC0tLSBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRl
-c3RzL2JwZi9wcm9nX3Rlc3RzL3VzZHQuYwo+PiArKysgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0
-cy9icGYvcHJvZ190ZXN0cy91c2R0LmMKPj4gQEAgLTI1LDYgKzI1LDEwIEBAIHVuc2lnbmVkIHNo
-b3J0IHRlc3RfdXNkdDBfc2VtYXBob3JlIFNFQygiLnByb2JlcyIpOwo+PiAgdW5zaWduZWQgc2hv
-cnQgdGVzdF91c2R0M19zZW1hcGhvcmUgU0VDKCIucHJvYmVzIik7Cj4+ICB1bnNpZ25lZCBzaG9y
-dCB0ZXN0X3VzZHQxMl9zZW1hcGhvcmUgU0VDKCIucHJvYmVzIik7Cj4+Cj4+ICsjaWYgKChkZWZp
-bmVkKF9feDg2XzY0X18pIHx8IGRlZmluZWQoX19pMzg2X18pKSAmJiBkZWZpbmVkKF9fR05VQ19f
-KSAmJiAhZGVmaW5lZChfX2NsYW5nX18pKQo+Cj5kb2VzIGNsYW5nIGRlZmluZSBfX0dOVUNfXyBh
-cyB3ZWxsPyBvdGhlcndpc2Ugd2h5ICFkZWZpbmUoX19jbGFuZ19fKSA/Cj4KPj4gK3Vuc2lnbmVk
-IHNob3J0IHRlc3RfdXNkdF9zaWJfc2VtYXBob3JlIFNFQygiLnByb2JlcyIpOwo+PiArI2VuZGlm
-Cj4+ICsKPj4gIHN0YXRpYyB2b2lkIF9fYWx3YXlzX2lubGluZSB0cmlnZ2VyX2Z1bmMoaW50IHgp
-IHsKPj4gICAgICAgICBsb25nIHkgPSA0MjsKPj4KPj4gQEAgLTQwLDEyICs0NCwyOSBAQCBzdGF0
-aWMgdm9pZCBfX2Fsd2F5c19pbmxpbmUgdHJpZ2dlcl9mdW5jKGludCB4KSB7Cj4+ICAgICAgICAg
-fQo+PiAgfQo+Pgo+PiArI2lmICgoZGVmaW5lZChfX3g4Nl82NF9fKSB8fCBkZWZpbmVkKF9faTM4
-Nl9fKSkgJiYgZGVmaW5lZChfX0dOVUNfXykgJiYgIWRlZmluZWQoX19jbGFuZ19fKSkKPj4gK3N0
-YXRpYyBfX2F0dHJpYnV0ZV9fKChvcHRpbWl6ZSgiTzEiKSkpIHZvaWQgdHJpZ2dlcl9zaWJfc3Bl
-Yyh2b2lkKQo+Cj55b3UgdXNlIGFzc2VtYmx5IGRpcmVjdGx5LCBzbyBvcHRpbWl6ZSgpIHNob3Vs
-ZCBiZSBpcnJlbGV2YW50LCBubz8KPgo+U28gd2UgY2FuIG1ha2UgdGhpcyBub24tR0NDIHNwZWNp
-ZmljLCByaWdodD8KPgo+PiArewo+PiArICAgICAgIC8qIEJhc2UgYWRkcmVzcyArIG9mZnNldCAr
-IChpbmRleCAqIHNjYWxlKSAqLwo+PiArICAgICAgIC8qIEZvcmNlIFNJQiBhZGRyZXNzaW5nIHdp
-dGggaW5saW5lIGFzc2VtYmx5ICovCj4+ICsgICAgICAgYXNtIHZvbGF0aWxlKAo+PiArICAgICAg
-ICAgICAgICAgIiMgcHJvYmUgcG9pbnQgd2l0aCBtZW1vcnkgYWNjZXNzXG4iCj4+ICsgICAgICAg
-ICAgICAgICBTVEFQX1BST0JFX0FTTSh0ZXN0LCB1c2R0X3NpYiwgLTJAKCUlcmR4LCUlcmF4LDIp
-KQo+Cj5pcyBpdCBndWFyYW50ZWVkIHRoYXQgbnVtcyBhZGRyZXNzIHdpbGwgZW5kIHVwIGluIHJk
-eCBhbmQgYSBpbiByYXg/Li4uCj4KPkknZCBmZWVsIG1vcmUgY29tZm9ydGFibGUgaWYgeW91IGV4
-cGxpY2l0bHkgc2V0IHVwIHJkeCBhbmQgcmF4IGluCj5hc3NlbWJseSwgdGhlbiBhZGQgVVNEVCB3
-aXRoIFNUQVBfUFJPQkVfQVNNLiBUaGF0IHNob3VsZCBiZSBwb3NzaWJsZQo+d2l0aCBlbWJlZGRl
-ZCBhc3NlbWJseSwgbm8/Cj4KPj4gKyAgICAgICAgICAgICAgICIjIGVuZCBwcm9iZSBwb2ludCIK
-Pgo+d2h5IHRoZXNlIHVubmVjZXNzYXJ5IGNvbW1lbnRzIGVtYmVkZGVkIGluIHRoZSBhc3NlbWJs
-eT8uLi4KPgo+PiArICAgICAgICAgICAgICAgOgo+PiArICAgICAgICAgICAgICAgOiAiZCIobnVt
-cyksICJhIigwKQo+PiArICAgICAgICAgICAgICAgOiAibWVtb3J5Igo+PiArICAgICAgICk7Cj4+
-ICt9Cj4KPlsuLi5dCj4KPj4gKwo+PiAraW50IHVzZHRfc2liX2NhbGxlZDsKPj4gK3U2NCB1c2R0
-X3NpYl9jb29raWU7Cj4+ICtpbnQgdXNkdF9zaWJfYXJnX2NudDsKPj4gK2ludCB1c2R0X3NpYl9h
-cmdfcmV0Owo+PiArdTY0IHVzZHRfc2liX2FyZzsKPj4gK2ludCB1c2R0X3NpYl9hcmdfc2l6ZTsK
-Pj4gKwo+PiArLy8gTm90ZTogdXNkdF9zaWIgaXMgb25seSB0ZXN0ZWQgb24geDg2LXJlbGF0ZWQg
-YXJjaGl0ZWN0dXJlcywgc28gaXQgcmVxdWlyZXMKPj4gKy8vIG1hbnVhbCBhdHRhY2ggc2luY2Ug
-YXV0by1hdHRhY2ggd2lsbCBwYW5pYyB0ZXN0cyB1bmRlciBvdGhlciBhcmNoaXRlY3R1cmVzCj4K
-PmRvbid0IHVzZSBjKysgc3R5bGUgY29tbWVudHMKPgo+PiArU0VDKCJ1c2R0IikKPj4gK2ludCB1
-c2R0X3NpYihzdHJ1Y3QgcHRfcmVncyAqY3R4KQo+PiArewo+PiArICAgICAgIGxvbmcgdG1wOwo+
-PiArCj4+ICsgICAgICAgaWYgKG15X3BpZCAhPSAoYnBmX2dldF9jdXJyZW50X3BpZF90Z2lkKCkg
-Pj4gMzIpKQo+PiArICAgICAgICAgICAgICAgcmV0dXJuIDA7Cj4+ICsKPj4gKyAgICAgICBfX3N5
-bmNfZmV0Y2hfYW5kX2FkZCgmdXNkdF9zaWJfY2FsbGVkLCAxKTsKPj4gKwo+PiArICAgICAgIHVz
-ZHRfc2liX2Nvb2tpZSA9IGJwZl91c2R0X2Nvb2tpZShjdHgpOwo+PiArICAgICAgIHVzZHRfc2li
-X2FyZ19jbnQgPSBicGZfdXNkdF9hcmdfY250KGN0eCk7Cj4+ICsKPj4gKyAgICAgICB1c2R0X3Np
-Yl9hcmdfcmV0ID0gYnBmX3VzZHRfYXJnKGN0eCwgMCwgJnRtcCk7Cj4+ICsgICAgICAgdXNkdF9z
-aWJfYXJnID0gKHNob3J0KXRtcDsKPj4gKyAgICAgICB1c2R0X3NpYl9hcmdfc2l6ZSA9IGJwZl91
-c2R0X2FyZ19zaXplKGN0eCwgMCk7Cj4+ICsKPj4gKyAgICAgICByZXR1cm4gMDsKPj4gK30KPj4g
-Kwo+PiAgY2hhciBfbGljZW5zZVtdIFNFQygibGljZW5zZSIpID0gIkdQTCI7Cj4+IC0tCj4+IDIu
-NDMuMAo+Pgo=
+Hi,
+
+This patchset replaces the module-local workqueue with a threaded IRQ
+handler for handling the SelfIDComplete event in the 1394 OHCI PCI driver.
+
+The SelfIDComplete event is the first step in maintaining bus topology.
+It occurs after a bus reset or when the topology changes, and must be
+processed outside the hard IRQ context due to the latency involved in
+enumerating the SelfID sequence. Historically, this was handled by a
+module-local workqueue with the WQ_MEM_RECLAIM flag. A threaded IRQ
+handler offers a cleaner and more reliable solution, leveraging the
+kernel's common infrastructure and eliminating the need for maintaining
+a custom workqueue.
+
+Takashi Sakamoto (3):
+  firewire: ohci: move self_id_complete tracepoint after validating
+    register
+  firewire: ohci: use threaded IRQ handler to handle SelfIDComplete
+    event
+  firewire: ohci: remove module-local workqueue
+
+ drivers/firewire/ohci.c | 61 +++++++++++++++++------------------------
+ 1 file changed, 25 insertions(+), 36 deletions(-)
+
+
+base-commit: 8748368c3d92f7bdef67c90d3f62ab92083b3677
+-- 
+2.48.1
+
 
