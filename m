@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-782964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9991EB327B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 10:47:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C3C9B327B9
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 10:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D0C97BFEB3
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:45:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E649B3BA791
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCE223909F;
-	Sat, 23 Aug 2025 08:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BE5239567;
+	Sat, 23 Aug 2025 08:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HyudJt84"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eX5SghDk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E62C227586
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 08:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA98D1662E7
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 08:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755938836; cv=none; b=VKpask4MG+H+K/8lqgIv+mweSuiDvLjDjDbtcA4Q/VB/g0YNWeDPwj90rJO8aZB7e2lqM7gRR8+Y5xNetuUbLo68gr52ahkJYX96BaHCjqHQWRaqrKZNaVmkyH9OP6jO8H+0ucjTCuin2+5g5okHPHrp1cLeygMUi7Xop3ig1W0=
+	t=1755939039; cv=none; b=Am0jns4rBaS+ITzGk3eu8od/OiPmuCCpQyzyeMHW9OH7NCqjpx/F0dTUTsXjUP5mHdXj/re271uiYd4Nz32jnf9HmwfFxwZmmP/RKkb4ms9+4QbrpSfrQTOuvO6vZY91GYY0OsbNDm4xTYisr+10TAgtTd7QreLu/aDWN3bMnjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755938836; c=relaxed/simple;
-	bh=psW7PnbWYtOYOHOIG8rSs5vCB83txsjAyHIx7fbljxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=TLYtYd9UPIyG+jmnGYnQJW4i9rJM8nvRkNRxf1Jkygmc7bjri+e8v75BDytdxUK7Ho5BewJNyT5cz7/0kCqSLaKqeY5BtXkB7aDNCp79M7bM7d1ZyWSV3v5ptEM8ZXNy/y5mNhHeE0iZ30LGuxTnlpFdXRyP+N6QkvZ2qXOZe3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HyudJt84; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afcb7a5cff3so41620666b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 01:47:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755938831; x=1756543631; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=63rf6UW69I7dzJvUbjS/g+o800Qui00mrJJtWDKwN9I=;
-        b=HyudJt84KvoUNGhW48ffr2cdS2o/IOR4FERU8ERrN/AiyvJRfZoz3p3mU2D2Ko6CtH
-         fY9jD+IzVwt4Xc8E66gBKy8T5xpab6nIwK+0UoAJMs2S2aAP2/I3Vf/HGnbLKCbCDIcT
-         5cSyoAo6CTXo242xkeU6g2Mbb5oHe+A6HmMSVZmqoiO/W3BQI2oiiocc7VM3giP5Hsst
-         CnQ04vVWbjLAt8t1pjd48cyiGC6blq32AHnOUwnlOv+/2/3kpO/LA/cV+EusKW+gmWvR
-         pQCW+xxUD7LMFW0zRIGghDjzMsSlPVNNqkP5d/YNEIZXyL3JQahnk5YV7U3tv4fAWJFc
-         4fGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755938831; x=1756543631;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=63rf6UW69I7dzJvUbjS/g+o800Qui00mrJJtWDKwN9I=;
-        b=oEMUt18+A4NOEkVlbXXbpdbKxgGttlHLViRxxtnocbyZeam3WrfEKL5g/2fdMzJOgW
-         rdJIbKW1G/W3wU+WYgY9eU8iIS28X8MBb6jQx6wEt15QOVxtuif+CxGZuakdsYKJBF4N
-         PrCNdTxgIzgb9JprweomIWJjlUbU/p0IOFthhbzulAFgEbe7nTtlCONsmMQgHiSwr60o
-         emtJwFDXqZ5m5ZFfRSv+4dc9DUU05d55xqsEuxUzehXLUmhtEpVkDKPtk+7IcqqfmK0T
-         2V4GITbSKEA4ZTEsDu7IAygVauYbnMpOxKEsxpV07yLXTJhEnFOh+Q1CqyG+uEA3Vji6
-         jQNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXK6bpXTZK2QdlCT7DYD1Ohl9I286X1MuYCmKdOmH9JgFmtwk3rtFfLOhxgq+WrHNbcBzklvPQ/8XuWscY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwX+AYj6vtLZ0MMXKVGdZObpt8Gk9xq9+GtLGEDf4f3h/UfrTq
-	kkTf51OH6ueX/vtJkc2i/NfuY/EsiLKFY9InqopltKipzQEWk3G0r9KAryDZcqU2cAE=
-X-Gm-Gg: ASbGncshdZjGzEa/HUQ+fPFKIlOFs7AKc96B0T7Jn30Sde4fJT1rKD/wd6SWpJ3kaGq
-	+uNHTUY9tI4aV8j2ZXg8aRIsNXfYaQ8UeMSSjPlr9ehD6sJDA+3zCW0gVC36ZpzWhkMzzjnQiXq
-	qJ07pvf8904Dk4KDzx5cNmkk2OiwBRAn+zeEowqPizX9YzEYTs3+RrtD2q5Mr9ujqOIJM0CprH7
-	/A23gxcAAPMnMElSZzSCrZus+ZJ74JuuG85/1hikr0eugQGN2oVn1zABh9K2yS4S8jLUT2CBApv
-	gcAA9cMQ4C6eOjfT+NH8lxd+84GMN3HjmwKkjUI0jH1zuA644VF35qk09GhVeXeVnlH8N52lPmc
-	X3pkrh6Sqeh352IWKFpUo3Mdw0oT1TZ8hieFVYX+Ki1s=
-X-Google-Smtp-Source: AGHT+IGTEJ8SbKPY7zKGNwC0BrMP8HgDH2XNiA3vCklY0PS5TihvmIa43Qo9BCTwLKgAiIe+jA7kiA==
-X-Received: by 2002:a17:906:4fd2:b0:ae0:da2d:44bb with SMTP id a640c23a62f3a-afe28f07324mr255351566b.1.1755938831294;
-        Sat, 23 Aug 2025 01:47:11 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe4900a18asm133130666b.49.2025.08.23.01.47.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Aug 2025 01:47:10 -0700 (PDT)
-Message-ID: <ee241506-96a1-431e-a7a7-2e5848fce0e0@linaro.org>
-Date: Sat, 23 Aug 2025 10:47:09 +0200
+	s=arc-20240116; t=1755939039; c=relaxed/simple;
+	bh=u0omZHj9X80L95uIS83HG5xs7WImxlta/h0LWfKfbsg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SrnrdXyW4BuD8G+jiaCnYDKTUAFkWjVMRU9giU7B4sUTq2YIWqeA3tcu80heZXsREGKmEIVBrTg8Kt6Mw4CMB6ueD2nhafiefb5WC9uqAXDDi19KBEDDbUY7u6WnFs6juHw1eA+g5NPpTk58Nn8SmvJxNoOG/oitmgg/ho9DxDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eX5SghDk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28604C4CEE7;
+	Sat, 23 Aug 2025 08:50:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755939039;
+	bh=u0omZHj9X80L95uIS83HG5xs7WImxlta/h0LWfKfbsg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eX5SghDk8RQMhfI2X33OMYYidyp570tN4z3BTkN9sd4V+KOvVBgw3dfLG7c8izwX7
+	 urmcuQKTrFgcEVvBR0RMb9/ghlIw5sHqETrTHCHUqQX0+rep+FeLXzZBWSo+T1WCfm
+	 R3ca6IX3baIHvzmSYGGhXyxX8h3HVZy0U9AtAvI4fa9oNJILFeY55+d9B0mVY6uyKB
+	 x/yLOnVzI55tQ4w0nfMLX7seApWCPUnSVG1yVevPnt5fyPignwzFxDjJq/aUvKcTDV
+	 1ZrHb2YPI8oybJpCl9XJhboYE6yvHKm9mZWDsVYvugRDxROYC3faDVYUW7rqRVA2vY
+	 2zqnlqf1D3nIA==
+Message-ID: <127919d3-6b6f-4845-9356-72b9558ca991@kernel.org>
+Date: Sat, 23 Aug 2025 10:50:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,19 +49,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: marvell: armada-cp11x: Add default ICU
- address cells
-To: Andrew Lunn <andrew@lunn.ch>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250822133329.312326-3-krzysztof.kozlowski@linaro.org>
- <20250822133329.312326-4-krzysztof.kozlowski@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 2/2] drm: bridge: Add TI tmds181 and sn65dp159 driver
+To: Mike Looijmans <mike.looijmans@topic.nl>
+Cc: dri-devel@lists.freedesktop.org, Andrzej Hajda <andrzej.hajda@intel.com>,
+ David Airlie <airlied@gmail.com>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jonas Karlman <jonas@kwiboo.se>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
+ linux-kernel@vger.kernel.org
+References: <20250820144128.17603-1-mike.looijmans@topic.nl>
+ <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.51b271ba-97e3-4830-97f9-7b6b4e0d202f@emailsignatures365.codetwo.com>
+ <20250820144128.17603-3-mike.looijmans@topic.nl>
+ <20250821-ivory-pegasus-of-aurora-c5c400@kuoka>
+ <92127515-13fa-433b-b3a5-053326090e69@topic.nl>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
  JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
@@ -103,77 +77,74 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  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
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <20250822133329.312326-4-krzysztof.kozlowski@linaro.org>
+ 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 a/A=
+In-Reply-To: <92127515-13fa-433b-b3a5-053326090e69@topic.nl>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/08/2025 15:33, Krzysztof Kozlowski wrote:
-> Add missing address-cells 0 to the ICU interrupt node to silence W=1
-> warning:
+On 22/08/2025 17:16, Mike Looijmans wrote:
+>>> +
+>>> +static struct i2c_driver tmds181_driver = {
+>>> +	.driver = {
+>>> +		.owner = THIS_MODULE,
+>> Nice coincidence - this stars in one of my talks on OSSE
+>> (https://sched.co/25VoV) as my litmus test for crazy old, vendor code.
+>> Please come to the session if you are around or just check the slides
+>> afterwards.
 > 
->   armada-cp11x.dtsi:547.3-47: Warning (interrupt_map): /cp0-bus/pcie@f2600000:interrupt-map:
->     Missing property '#address-cells' in node /cp0-bus/bus@f2000000/interrupt-controller@1e0000/interrupt-controller@10, using 0 as fallback
+> Oh, Amsterdam this year. Hadn't spotted that in time, or I would have 
+> been there!
 > 
-> Value '0' is correct because:
-> 1. GIC interrupt controller does not have children,
-> 2. interrupt-map property (in PCI node) consists of five components and
->    the fourth component "parent unit address", which size is defined by
->    '#address-cells' of the node pointed to by the interrupt-parent
->    component, is not used (=0)
+> I added coccinelle to my toolkit (would make a good addition to patman). 
+> Indeed would have prevented the old-skool I2C stuff that I've been 
+> lugging along in drivers for a decade...
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  arch/arm64/boot/dts/marvell/armada-cp11x.dtsi | 1 +
->  1 file changed, 1 insertion(+)
+> I'll fix those in v4.
 > 
-> diff --git a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
-> index a057e119492f..d9d409eac259 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
-> @@ -202,6 +202,7 @@ CP11X_LABEL(icu): interrupt-controller@1e0000 {
->  			CP11X_LABEL(icu_nsr): interrupt-controller@10 {
->  				compatible = "marvell,cp110-icu-nsr";
->  				reg = <0x10 0x20>;
-> +				#address-cells = <0>;
-This is not GIC, so it might need bindings adjustment. LKP reported:
+> And yeah, the real issue is that I didn't submit this driver seven years 
+> ago. In my defense, the other guys also didn't.
+> 
+> For your talk, maybe add a tip on how to avoid the verbose output.
+> make C=1 CHECK=scripts/coccicheck drivers/gpu/drm/bridge/ti-tmds181.o
+> I get a gazillion lines of "/usr/bin/spatch -D report ..." and it's 
+> difficult to spot the warnings. Tried adding "V=0" but that didn't make 
+> a difference, piping through "grep :" helped a bundle.
 
-interrupt-controller@1e0000 (marvell,cp110-icu):
-interrupt-controller@10: '#address-cells' does not match any of the
-regexes: '^pinctrl-[0-9]+$'
+make coccicheck M=drivers/gpu/drm/bridge/ DEBUG_FILE=cocci.err
+
+
 
 Best regards,
 Krzysztof
