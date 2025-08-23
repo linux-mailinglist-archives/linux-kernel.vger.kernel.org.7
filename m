@@ -1,119 +1,118 @@
-Return-Path: <linux-kernel+bounces-782885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06303B32665
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 04:07:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 400E5B32667
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 04:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B310E1B66A0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:06:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2797F60547A
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1AEF1F5851;
-	Sat, 23 Aug 2025 02:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="c1Sv7Cnj"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548031FAC42;
+	Sat, 23 Aug 2025 02:09:07 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9221F2C34
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 02:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1FA11CA0;
+	Sat, 23 Aug 2025 02:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755914734; cv=none; b=fMUZ3q0q3KnYoZXg/BTrDJhg0aPpvyHgBsXqpQbWZzAgVMb25m2jDwlXQu4yaHEE9Xpo0gzwquCmTksAlDvFtSSBpVU8sK+/C5qgmcY6OgoTgfgugQHT4vjUQyGTLUJdz4uo1Li/6iMIoKlWswxqDHRjzOSDOklZYqSNoGRemrE=
+	t=1755914947; cv=none; b=jEBIxsE1PzuCdE7zS/CGoy2ZXTTK7/es0UBiM5XkSwuocIRwrr4m+sVFZIzdLTQ9AqAmhnbxkHP6sWLBn/F2b5mNquqQf+QoDpWYPRYcEY0gGP16R7pZzdeSVQyigiQFYRg73GttHC6/iRFKQYr5xdsvj1zf26QfADgHctdQFIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755914734; c=relaxed/simple;
-	bh=2RyIzjXm7b9+cnzeMC18DAd1kJ8HkUkKDXL9CCakxGY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=PgINuSXcZnJ5FvvBj9Jgm9Ebbe5ZFDbEt4T2lqEEj49GR5hHQN5h49tBmI+xqwzaoMth/0hcYSXEHZnUsZFwzoBdkQz0nHcpu+4pMwjEG9iS8LExfLMLRhA6E75gcOD7y7nPO3kMi+uXo+cnaX19sotjsIT/p8Rc6Ba8DNZHpQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=c1Sv7Cnj; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250823020530epoutp03e54666579a0d29d4eb6571f600f07786~eQyTc1ipb2583625836epoutp03h
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 02:05:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250823020530epoutp03e54666579a0d29d4eb6571f600f07786~eQyTc1ipb2583625836epoutp03h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755914730;
-	bh=qbnO/+sq+8ONZt0KTeFBgfHeWWE3a0C0n2e4rSAYFr8=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=c1Sv7CnjQKX7XbuXu5Cv9J8czEpU4yZeeYXHw40EN0Eu5XvdvZSojdD3I4dYt3+Zu
-	 cSlUyM76qwQrRTwr4iwftmmQ+bb+Lk/DmUxhy5yqgFGLAQR4h5ZA9GzF48v7smFb86
-	 qOu6NeKL3Tb0MYeg1v+vlLUwJQYDjzTCjCwczAP0=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250823020529epcas5p46c5400dbc26564b90f4d6ffdf82d1e66~eQySihPyI0145101451epcas5p4H;
-	Sat, 23 Aug 2025 02:05:29 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4c80kw2NSbz6B9m7; Sat, 23 Aug
-	2025 02:05:28 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250823020527epcas5p42973efe25536c7b5da0beb16e98e2cd8~eQyQxE8K70145101451epcas5p4E;
-	Sat, 23 Aug 2025 02:05:27 +0000 (GMT)
-Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250823020523epsmtip1c66b58ee1eac02d62d96b211baa19c19~eQyNFvkoL1748917489epsmtip1s;
-	Sat, 23 Aug 2025 02:05:23 +0000 (GMT)
-From: "Inbaraj E" <inbaraj.e@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <s.hauer@pengutronix.de>,
-	<shawnguo@kernel.org>, <cw00.choi@samsung.com>, <rmfrfs@gmail.com>,
-	<laurent.pinchart@ideasonboard.com>, <martink@posteo.de>,
-	<mchehab@kernel.org>, <linux-fsd@tesla.com>, <will@kernel.org>,
-	<catalin.marinas@arm.com>, <pankaj.dubey@samsung.com>,
-	<shradha.t@samsung.com>, <ravi.patel@samsung.com>
-Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
-	<linux-samsung-soc@vger.kernel.org>, <kernel@puri.sm>,
-	<kernel@pengutronix.de>, <festevam@gmail.com>,
-	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <1b37bc94-8f2b-4da3-be2e-4d0076672169@kernel.org>
-Subject: RE: [PATCH v2 11/12] arm64: defconfig: Enable FSD CSIS DMA driver
-Date: Sat, 23 Aug 2025 07:35:22 +0530
-Message-ID: <00d401dc13d2$65033080$2f099180$@samsung.com>
+	s=arc-20240116; t=1755914947; c=relaxed/simple;
+	bh=cqkDWPR8RC8oj4EZLTDgS6ebNF9YbeDoHZokRo9CFOM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZdeGtOcAB3/ozX6YLoYc+MmNRG/CpdrerH33L7l0nwmKustZqR+qvPTX4yyxnTdaA+GxXyp3sJNXUwDuhN+l71YsMLBAESbahmQVkTy4jVBXlldKNlgb1fldgVRzYjswUDJ7cV6iY+mTnx954dsdDACK0H9bWPWZtbJ+6T1Tzvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c80q146KhzKHMwB;
+	Sat, 23 Aug 2025 10:09:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 183371A0AEB;
+	Sat, 23 Aug 2025 10:09:01 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP1 (Coremail) with SMTP id cCh0CgDnoq67IqloteMZEg--.14315S2;
+	Sat, 23 Aug 2025 10:09:00 +0800 (CST)
+Message-ID: <cb11ed18-b50e-4c2c-ae59-ae7dd8b51921@huaweicloud.com>
+Date: Sat, 23 Aug 2025 10:08:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next v4 0/3] some optimization for cpuset
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20250818064141.1334859-1-chenridong@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <20250818064141.1334859-1-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQHrKQRZAj9O8PIBXjI9/7KIHEcQ
-Content-Language: en-in
-X-CMS-MailID: 20250823020527epcas5p42973efe25536c7b5da0beb16e98e2cd8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250814141057epcas5p21ca33641e42164886dc1bf404237876d
-References: <20250814140943.22531-1-inbaraj.e@samsung.com>
-	<CGME20250814141057epcas5p21ca33641e42164886dc1bf404237876d@epcas5p2.samsung.com>
-	<20250814140943.22531-12-inbaraj.e@samsung.com>
-	<1b37bc94-8f2b-4da3-be2e-4d0076672169@kernel.org>
+X-CM-TRANSID:cCh0CgDnoq67IqloteMZEg--.14315S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtw1kuw43Ary8uryUXF1rXrb_yoWDtrb_CF
+	y8ZFy0kry3JF4xta1Skrn3ArWvgF4UCrykAFykXr42yFn3Arn7Zr1Ut3yrXr17Xw1fJr15
+	ZasFyFn5JwsrXjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbz8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-Hi Krzysztof,
 
-Thanks for the review.
 
+On 2025/8/18 14:41, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
 > 
-> Tesla FSD
+> This patch series contains several cpuset improvements:
 > 
-> You are changing defconfig for all platforms, it's not your personal or
-> company defconfig.
-
-I noticed that Exynos and NXP driver configs are added in the defconfig.
-Could you please clarify why I shouldn't add my driver config in defconfig?
-
+> 1. Decouple cpuset and tmpmasks allocation/freeing.
+> 2. Add cpuset_full_[un]lock helpers.
 > 
+> ---
+> v4:
+>  - update the commit message for patch 3.
+> 
+> v3:
+>  - fix typos and comment errors.
+>  - rename cpus_read_cpuset_[un]lock to cpuset_full_[un]lock
+> 
+> v2:
+>  - dropped guard helper approach, nusing new helper instead.
+>  - added patches for decoupling cpuset/tmpmasks allocation
+> 
+> Chen Ridong (3):
+>   cpuset: decouple tmpmasks and cpumasks freeing in cgroup
+>   cpuset: separate tmpmasks and cpuset allocation logic
+>   cpuset: add helpers for cpus read and cpuset_mutex locks
+> 
+>  kernel/cgroup/cpuset-internal.h |   2 +
+>  kernel/cgroup/cpuset-v1.c       |  12 +-
+>  kernel/cgroup/cpuset.c          | 220 +++++++++++++++++---------------
+>  3 files changed, 122 insertions(+), 112 deletions(-)
 > 
 
-Regards,
-Inbaraj E
+Hi Longman,
+
+Looking forward to your review of this series again. Would greatly appreciate it.
+
+-- 
+Best regards,
+Ridong
 
 
