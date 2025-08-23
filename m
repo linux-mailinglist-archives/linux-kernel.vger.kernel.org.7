@@ -1,187 +1,156 @@
-Return-Path: <linux-kernel+bounces-783116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29BA7B3298B
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:28:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FC13B32979
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA99F1B66181
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 15:28:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4895A3B2E95
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 15:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBFC2E719D;
-	Sat, 23 Aug 2025 15:28:08 +0000 (UTC)
-Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7362E7184;
+	Sat, 23 Aug 2025 15:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gghw7yJs"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC707239E92
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 15:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014E02D6402
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 15:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755962888; cv=none; b=dA65WhXPIsLoTUiQDVWz7vPc95H08vQxlTmBkmrqf9XPw+f0s5ymZIogx6PqQBnPV6j+Bh9PGM/9oD1HeVnrcPgOF/xm3ehMRBy+CuKUNM/Dr4OahPnj7M9ECpkIBhmyQVPY2pAZJuFb3e/lIEJcdSlCNlaxSUWjgaySbKhRpwc=
+	t=1755961636; cv=none; b=ugfGJe+L17Br0Ma2T6M1z6gXkgyvESDiwelIfo3UkAF9NYyYn7SEmLIscP/RacISCvOfPd5Wi+PMM4C/PZxWdc2jsHHFT5MHszyICOSAmUvbPSUOdFBgu83zWLgb71XWF0LjbzHVgEIaqIVZmnEuTdcPVNjkiSwE0uTSwZ28j3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755962888; c=relaxed/simple;
-	bh=NFX5CFV0f0Gx0I8D+HyciVNvwQuMJmocS6ycHlIREjY=;
-	h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version; b=T16xLs82YPn6faHAEg0gSuf68R98wgsazPHHkYrk/lGCwCLNpi4ozbddZYc4xwKrok6qPe4OkmwbN0aXU7jWqAYzoI2WVJ2jABP547d0qAhju78xq3MBHcGJKxzXBCicQdBScFz3XklZRw9PEyvF+1L7BZw4mPAzliqaUVbVxro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=60594 helo=[192.168.1.177])
-	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <olivier@trillion01.com>)
-	id 1uppnr-000000007T8-1Ei8
-	for linux-kernel@vger.kernel.org;
-	Sat, 23 Aug 2025 11:05:11 -0400
-Message-ID: <bd0914ce41785654abb7821f764c820815aea362.camel@trillion01.com>
-Subject: [QUESTION] Core dumps inhibited for ASan binary with setcap
- capabilities despite fs.suid_dumpable=2
-From: Olivier Langlois <olivier@trillion01.com>
-To: linux-kernel@vger.kernel.org
-Date: Sat, 23 Aug 2025 11:05:09 -0400
-Autocrypt: addr=olivier@trillion01.com; prefer-encrypt=mutual;
- keydata=mQINBFYd0ycBEAC53xedP1NExPwtBnDkVuMZgRiLmWoQQ8U7vEwt6HVGSsMRHx9smD76i
- 5rO/iCT6tDIpZoyJsTOh1h2NTn6ZkoFSn9lNOJksE77/n7HNaNxiBfvZHsuNuI53CkYFix9JhzP3t
- g5nV/401re30kRfA8OPivpnj6mZhU/9RTwjbVPPb8dPlm2gFLXwGPeDITgSRs+KJ0mM37fW8EatJs
- 0a8J1Nk8wBvT7ce+S2lOrxDItra9pW3ukze7LMirwvdMRC5bdlw2Lz03b5NrOUq+Wxv7szn5Xr9f/
- HdaCH7baWNAO6H/O5LbJ3zndewokEmKk+oCIcXjaH0U6QK5gJoO+3Yt5dcTo92Vm3VMxzK2NPFXgp
- La7lR9Ei0hzQ0zptyFFyftt9uV71kMHldaQaSfUTsu9dJbnS2kI/j+F2S1q6dgKi3DEm0ZRGvjsSG
- rkgPJ5T16GI1cS2iQntawdr0A1vfXiB9xZ1SMGxL/l6js9BVlIx/CBGOJ4L190QmxJlcAZ2VnQzrl
- ramRUv01xb00IPJ5TBft5IJ+SY0FnY9pIERIl6w9khwLt/oGuKNmUHmzJGYoJHYfh72Mm8RQ1R/JS
- o6v85ULBGdEC3pQq1j//OPyH3egiXIwFq6BtULH5CvsxQkSqgj1MpjwfgVJ8VbjNwqwBXHjooEORj
- vFQqWQki6By3QARAQABtDJPbGl2aWVyIExhbmdsb2lzIChNeSBrZXkpIDxvbGl2aWVyQHRyaWxsaW
- 9uMDEuY29tPokCNwQTAQgAIQUCVh3TJwIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgAAKCRBlaka
- GGsWHEI1AD/9sbj+vnFU29WemVqB4iW+9RrHIcbXI4Jg8WaffTQ8KvVeCJ4otzgVT2nHC2A82t4PF
- 0tp21Ez17CKDNilMvOt8zq6ZHx36CPjoqUVjAdozOiBDpC4qB6ZKYn+gqSENO4hqmmaOW57wT9vII
- v6mtHmnFvgpOEJl6wbs8ArHDt0BLSjc8QQfvBhoKoWs+ijQTyvFGlQl0oWxEbUkR1J3gdft9Oj9xQ
- G4OFo73WaSEK/L9IalU2ulCBC+ucSP9McoDxy1i1u8HUDrV5wBY1zafc9zVBcMNH6+ZjxwQmZXqtz
- ATzB3RbSFHAdmvxl8q6MeS2yx7Atk0CXgW9z5k2KeuZhz5rVV5A+D19SSGzW11uYXsibZx/Wjr9xB
- KHB6U7qh5sRHaQS191NPonKcsXXAziR+vxwQTP7ZKfy+g5N/e6uivoUnQrl9uvUDDPXEpwVNSoVws
- Vn4tNyrGEdN11pHDbH5fSGzdpbY8+yczUoxMmsEQe/fpVwRBZUqafRn2TVUhV0qqzsUuQcTNw1zIZ
- JgvkqrHgd4ivd2b1bXBczmu/wMGpEnF6cWzSQDiwC1NF3i+gHCuD8IX1ujThWtzXsn0VtrMkrRCbn
- ponVQ6HcbRYYXPuK0HRRjCSuAKo5porVONepiOSmu0FBrpGqBkpBtLrzKXoi1yt/7a/wGdMcVhYGg
- vA==
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1755961636; c=relaxed/simple;
+	bh=UpGNm1lJm++utdU9nsBZVWFBhfrHqvQSBBk+JG82FzA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ibf91pB3p/B0TLYbmpK97xhDVzl9V4LmAqmCTmz8VGdjGG+sek0m27KbzauM3A3Mjpv5p2AXmLZQf9/zZT/Di5OHroeIwxV+Kh8sm9wUgXfwZpdE1ZbCPZY9jlPXly6hncvTv9yKF5pAp4oZ8863codKe/HI+AAvt96M8M71tAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gghw7yJs; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-323266d6f57so3221015a91.0
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 08:07:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755961633; x=1756566433; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=I7pLQJXLP+/wh5RGo7QUOMgrfB1lGW/zUnYaj6G/Tnk=;
+        b=Gghw7yJscryrzrsoGsAxe5mIODgiIVrL4/EDh3EQ9nyl9d0tOperWjNJ7hVXNAR092
+         Y4Tb7rZwge2Q1HeBVLNNTqFgRxaYOCVqm4b3N4L2PTk0Q2fkOZL3pliwL6jVClpxCILD
+         FNMBv/+DT0+S99FQlopHOg8xjmBkIuzDXlTmi85v7mlkgrFwA0IYQXbn9ut0ieSsi53O
+         CZh0O2lICtI83hSFa9mcSVC+jp18zrTSFHvZYWJ+ZdhS/XW1UVyOrC2ZEMLFkxa5324E
+         VnRb1gZw0NK7VQukHG7cwsPxsm24GSV625QnwJCFWXtOcrqczL3X46krN2j+0fvkW7AT
+         B6Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755961633; x=1756566433;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I7pLQJXLP+/wh5RGo7QUOMgrfB1lGW/zUnYaj6G/Tnk=;
+        b=A0lygQwn7Bs0mCTPQXX3vr7w0+Das0BgitYTZzUPCoZgVu9+/XFh/K1C/UIT+WNA89
+         RREh0pemmlHteojTDKXbTXBmgTDkpFfPnl22QdLBAkV/tsXTqCT3l7+A/wOo2Z+ycROz
+         T5INEbWECWBYOUPS2XwqFQDXLwB+NL5PEjTw2VnHbB4QI++w5UkRu86i5KHm65kJgTuI
+         as+DBZhkf2L0apKexLstq/47/Vfh+o2+g9deJl3yHMDMGSKyIie86iiD+lxkNfgXrxYl
+         fblsZEKAmZBuWbsX1bHjVF4w6788EBx518RdpfozLzGJGgfcTcY1DOEWkQuOpsKW1rmb
+         pM0g==
+X-Forwarded-Encrypted: i=1; AJvYcCVy/xq6a08ZeJcj/GEihZ+Fj1307VWIQ0uCfW0l/1r+EbO3R4FpDAXkM7XUfNcbpNRdGLKB6YVicOe9Btg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxWm9A/DNY8ZS68NnJNIeeqfIU1eu/fpGyP207udZpIBOw3ppd
+	Ti29SbU3clLh6+eLioZevy/uBvct832WX0w2VlHPiFer/Bfbo12ShBdW08LGWgb++Q0QFmdN0sv
+	XR6Ej3wcYNdQ2nrUn8L9GQXUBT3/m8UU=
+X-Gm-Gg: ASbGncs6b87lQ9kjpN6zbl3wTovg0Io7Y7ZVQeTmKumnQsDOAdVbVn82LyOCDhk8KKn
+	OuQBt8NDxhFNWpCXJNBrkY9gUQ5YyrWscdyImVRC73/yyfPzZWnK7TMj95EtqYIYsKFm9B8Hhtj
+	qNDP3UhqIlSsxjSFL7bqhKFVrQuDhguCakGGcUD6AQdfh2aEqDnAr1qTAjx4okeKrCvDQoXLRCc
+	CCFWlbaGA==
+X-Google-Smtp-Source: AGHT+IEr9vKR7FtQhlrnd808SbbiUl6CKFWHZDUAlAzh/z9Y1MpYHYnvQ/j96L1se05nXwg7jYHjT7CC9iMKdtLAKvo=
+X-Received: by 2002:a17:90b:2ccd:b0:312:e731:5a66 with SMTP id
+ 98e67ed59e1d1-32515ee159bmr8372285a91.3.1755961633212; Sat, 23 Aug 2025
+ 08:07:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20250822055857.1142454-1-aha310510@gmail.com> <20250822180708.86e79941d7e47e3bb759b193@linux-foundation.org>
+In-Reply-To: <20250822180708.86e79941d7e47e3bb759b193@linux-foundation.org>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Sun, 24 Aug 2025 00:07:02 +0900
+X-Gm-Features: Ac12FXzg9ES-N0zhJUF3GMAtH8ORLxjO5-PYPz_EOpxp6i0X4nmTNebz-VH131k
+Message-ID: <CAO9qdTGKPQ=L2fMJ=oNz-7OG-9p+4VQz3+8-g7TRXJsqBC-6OA@mail.gmail.com>
+Subject: Re: [PATCH] mm/hugetlb: add missing hugetlb_lock in __unmap_hugepage_range()
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: muchun.song@linux.dev, osalvador@suse.de, david@redhat.com, 
+	leitao@debian.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	syzbot+417aeb05fd190f3a6da9@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello LKML,
+Hello Andrew,
 
-I'm encountering an issue where core dumps are not generated for an ASan-co=
-mpiled binary with setcap capabilities (e.g.,
-cap_net_admin,cap_net_raw,cap_sys_nice=3Dep), even with fs.suid_dumpable se=
-t to 2 and
-ASAN_OPTIONS=3Ddisable_coredump=3D0:unmap_shadow_on_exit=3D1:abort_on_error=
-=3D1.
+Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Fri, 22 Aug 2025 14:58:57 +0900 Jeongjun Park <aha310510@gmail.com> wrote:
+>
+> > When restoring a reservation for an anonymous page, we need to check to
+> > freeing a surplus. However, __unmap_hugepage_range() causes data race
+> > because it reads h->surplus_huge_pages without the protection of
+> > hugetlb_lock.
+> >
+> > Therefore, we need to add missing hugetlb_lock.
+> >
+> > ...
+> >
+> > --- a/mm/hugetlb.c
+> > +++ b/mm/hugetlb.c
+> > @@ -5951,6 +5951,8 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
+> >                * If there we are freeing a surplus, do not set the restore
+> >                * reservation bit.
+> >                */
+> > +             spin_lock_irq(&hugetlb_lock);
+> > +
+> >               if (!h->surplus_huge_pages && __vma_private_lock(vma) &&
+> >                   folio_test_anon(folio)) {
+> >                       folio_set_hugetlb_restore_reserve(folio);
+> > @@ -5958,6 +5960,7 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
+> >                       adjust_reservation = true;
+> >               }
+> >
+> > +             spin_unlock_irq(&hugetlb_lock);
+> >               spin_unlock(ptl);
+> >
+>
+> Does hugetlb_lock nest inside page_table_lock?
+>
+> It's a bit sad to be taking a global lock just to defend against some
+> alleged data race which probably never happens.  Doing it once per
+> hugepage probably won't matter but still, is there something more
+> proportionate that we can do here?
 
-Actually playing with fs.suid_dumpable settings has no incidence on the out=
-come. Whether it is 0 or 2.
-I have tested playing with this setting as suggested by Grok...
-(This email has mostly been generated by Grok. It cannot act as an agent ye=
-t...)
+I think it would be better to move the page_table_lock unlock call after
+the hugetlb_remove_rmap() call.
 
-System details:
-- Kernel: Linux aws-dublin 6.11.3-1-ec2 #1 SMP Sun, 13 Oct 2024 15:39:09 +0=
-000 x86_64 GNU/Linux
-- GCC: 15.1.1
+```
+        pte = huge_ptep_get_and_clear(mm, address, ptep, sz);
+        tlb_remove_huge_tlb_entry(h, tlb, ptep, address);
+        if (huge_pte_dirty(pte))
+            folio_mark_dirty(folio);
+        /* Leave a uffd-wp pte marker if needed */
+        if (huge_pte_uffd_wp(pte) &&
+            !(zap_flags & ZAP_FLAG_DROP_MARKER))
+            set_huge_pte_at(mm, address, ptep,
+                    make_pte_marker(PTE_MARKER_UFFD_WP),
+                    sz);
+        hugetlb_count_sub(pages_per_huge_page(h), mm);
+        hugetlb_remove_rmap(folio);
+```
 
-Reproduction:
+In __unmap_hugepage_range(), after all of the above code has been
+executed, the PTE/TLB/rmap are all properly cleaned up. Therefore,
+there's no need to continue protecting
+folio_set_hugetlb_restore_reserve(), which only sets bits of
+folio->private, with a page_table_lock.
 
-lano1106@aws-dublin ~/dev/kraken $ cat test_asan.cpp=20
-#include <cstdlib>
-
-int main() {
-    *(int*)0 =3D 0;  // Force SEGV like your crash
-    return 0;
-}
-
-lano1106@aws-dublin ~/dev/kraken $ g++ -fsanitize=3Daddress -g test_asan.cp=
-p -o test_asan
-lano1106@aws-dublin ~/dev/kraken $ ASAN_OPTIONS=3Ddisable_coredump=3D0:unma=
-p_shadow_on_exit=3D1:abort_on_error=3D1 ./test_asan
-AddressSanitizer:DEADLYSIGNAL
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=3D=3D3310744=3D=3DERROR: AddressSanitizer: SEGV on unknown address 0x00000=
-0000000 (pc 0x56015f60f199 bp 0x7ffdd9466b50 sp 0x7ffdd9466b50 T0)
-=3D=3D3310744=3D=3DThe signal is caused by a WRITE memory access.
-=3D=3D3310744=3D=3DHint: address points to the zero page.
-    #0 0x56015f60f199 in main /home/lano1106/dev/kraken/test_asan.cpp:4
-    #1 0x7f2fc3a376b4  (/usr/lib/libc.so.6+0x276b4) (BuildId: 468e3585c7944=
-91a48ea75fceb9e4d6b1464fc35)
-    #2 0x7f2fc3a37768 in __libc_start_main (/usr/lib/libc.so.6+0x27768) (Bu=
-ildId: 468e3585c794491a48ea75fceb9e4d6b1464fc35)
-    #3 0x56015f60f084 in _start (/home/lano1106/dev/kraken/test_asan+0x1084=
-) (BuildId: 35f24e6e649e793dac986336cd20c25b0cc70e85)
-
-=3D=3D3310744=3D=3DRegister values:
-rax =3D 0x0000000000000000  rbx =3D 0x0000000000000000  rcx =3D 0x000000000=
-0000000  rdx =3D 0x0000000000000000 =20
-rdi =3D 0x0000000000000000  rsi =3D 0x0000000000000003  rbp =3D 0x00007ffdd=
-9466b50  rsp =3D 0x00007ffdd9466b50 =20
- r8 =3D 0x00007f2fc3bf6680   r9 =3D 0x00007f2fc3bf8000  r10 =3D 0x000000000=
-0000000  r11 =3D 0x00007f2fc4130530 =20
-r12 =3D 0x00007ffdd9466c78  r13 =3D 0x0000000000000001  r14 =3D 0x00007f2fc=
-489f000  r15 =3D 0x000056015f611d78 =20
-AddressSanitizer can not provide additional info.
-SUMMARY: AddressSanitizer: SEGV /home/lano1106/dev/kraken/test_asan.cpp:4 i=
-n main
-=3D=3D3310744=3D=3DABORTING
-Aborted (core dumped)
-lano1106@aws-dublin ~/dev/kraken :( $ sudo setcap cap_net_raw,cap_net_admin=
-,cap_sys_nice=3D+ep test_asan
-[sudo] password for lano1106:=20
-lano1106@aws-dublin ~/dev/kraken $ ASAN_OPTIONS=3Ddisable_coredump=3D0:unma=
-p_shadow_on_exit=3D1:abort_on_error=3D1 ./test_asan
-AddressSanitizer:DEADLYSIGNAL
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=3D=3D3310762=3D=3DERROR: AddressSanitizer: SEGV on unknown address 0x00000=
-0000000 (pc 0x556b9b127199 bp 0x7ffc9d3d1490 sp 0x7ffc9d3d1490 T0)
-=3D=3D3310762=3D=3DThe signal is caused by a WRITE memory access.
-=3D=3D3310762=3D=3DHint: address points to the zero page.
-    #0 0x556b9b127199 in main /home/lano1106/dev/kraken/test_asan.cpp:4
-    #1 0x7fa98f8376b4  (/usr/lib/libc.so.6+0x276b4) (BuildId: 468e3585c7944=
-91a48ea75fceb9e4d6b1464fc35)
-    #2 0x7fa98f837768 in __libc_start_main (/usr/lib/libc.so.6+0x27768) (Bu=
-ildId: 468e3585c794491a48ea75fceb9e4d6b1464fc35)
-    #3 0x556b9b127084 in _start (/home/lano1106/dev/kraken/test_asan+0x1084=
-) (BuildId: 35f24e6e649e793dac986336cd20c25b0cc70e85)
-
-=3D=3D3310762=3D=3DRegister values:
-rax =3D 0x0000000000000000  rbx =3D 0x0000000000000000  rcx =3D 0x000000000=
-0000000  rdx =3D 0x0000000000000000 =20
-rdi =3D 0x0000000000000000  rsi =3D 0x0000000000000003  rbp =3D 0x00007ffc9=
-d3d1490  rsp =3D 0x00007ffc9d3d1490 =20
- r8 =3D 0x00007fa98f9f6680   r9 =3D 0x00007fa98f9f8000  r10 =3D 0x000000000=
-0000000  r11 =3D 0x00007fa98ff30530 =20
-r12 =3D 0x00007ffc9d3d15b8  r13 =3D 0x0000000000000001  r14 =3D 0x00007fa99=
-05db000  r15 =3D 0x0000556b9b129d78 =20
-AddressSanitizer can not provide additional info.
-SUMMARY: AddressSanitizer: SEGV /home/lano1106/dev/kraken/test_asan.cpp:4 i=
-n main
-=3D=3D3310762=3D=3DABORTING
-lano1106@aws-dublin ~/dev/kraken :( $ uname -a
-Linux aws-dublin 6.11.3-1-ec2 #1 SMP Sun, 13 Oct 2024 15:39:09 +0000 x86_64=
- GNU/Linux
+Regards,
+Jeongjun Park
 
