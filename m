@@ -1,154 +1,181 @@
-Return-Path: <linux-kernel+bounces-783353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A87C5B32C17
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 23:27:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF0FB32C1A
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 23:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63990A02E51
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 21:27:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24A9D7B51C6
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 21:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9192E9EA1;
-	Sat, 23 Aug 2025 21:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B58224AF7;
+	Sat, 23 Aug 2025 21:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2G5oCS3"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="okdJjChS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC881F4E4F;
-	Sat, 23 Aug 2025 21:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCCBAD4B;
+	Sat, 23 Aug 2025 21:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755984464; cv=none; b=VCaDwjdFokYu37cx2wrHKLCLk0CUWag24mVkcpA8xgUyrNNK91MpdaLYW6x38QbYyG7vjLvCDyiJoJKiY77qOWP37jlrGuN+Mg86yuhinJOMPL/pQcWr77dCsR9yque6vcMTWhh8bKcv/VqhIT5il7eFoI5jH60raLol8/urd0o=
+	t=1755985683; cv=none; b=NemPwrIIJfvgHo6X+abIOU+R/cdtSkartJI2zcSxcV3xihs7T0NLTVwkzBiqkfA7+lkVgTXdxwf0nKjFpg5jzuj00tIymsZAkdW1kWig3qlwBFXdYM51QSbiYecIdtil/9BF9Eo92e4cRToX2mOqtJuWcGNd04YyT59l0FqG3eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755984464; c=relaxed/simple;
-	bh=9lB/x0q6k7LUImz55plsN/l5+3YVz5Z9NsUTm1bXZB8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RsRHXhcC768Depmq2ony8Qy4RK6RRFzu3+SIUSoGyhV4ff4TZZ4+4YkWzhzdWJGo6XVBFZzheOC6ibxvLeRjTBVxxf0mu4Ux7XRr0eAvKHlJoiFxCDP13x7d/wMy5qHusp5OKwfT+HGiOnpQLLAxtIb174GqL0S2zTN5Hk+6m1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R2G5oCS3; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24457f581aeso23699545ad.0;
-        Sat, 23 Aug 2025 14:27:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755984462; x=1756589262; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3f0+4Vh1MwZCJAgeds3L4wK1Y2nN5MFSu2EhurxFoGY=;
-        b=R2G5oCS3va4xQDjqZoYz/8/Bk93ZqtaHjgw2MRDJdfUwP/fD3v+J8FtGGh6EU1bKgk
-         6AkaYCwtloRnF5gqx4GSA/NxDJEwVCzwhDYkDO0T3JKFON/SQTfqmNG1Eo5E4UFqF5gh
-         5epal5zGhknqvK3cHMwwap/GbyZeicqr+kq8if3miGu5TbWy5i+r20rfcK2qe21Aln4B
-         cNGoKe+XzLhMuTjyhWnnyuzqtBTIFAGjSunnEfzpLeBIpWn5AVB7hqziHJ28CG9KGsUf
-         Kjt+AiRXMyXBGiOns+ceHU5q+/JvROEFucL+4ZKwctCGnpZ0cuD0rfeglTchnllESfFW
-         fQmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755984462; x=1756589262;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3f0+4Vh1MwZCJAgeds3L4wK1Y2nN5MFSu2EhurxFoGY=;
-        b=Jk92n2LeDfwSFW+HMYnHWWGLgAbCsG5/AyTmQrK/7uuldtFTAL9w2eWI1T4u+bHN8i
-         K2OEhsaIaSqZXE3ti0dWnc9/GF7eK9XoCTh7AeHgkxNqvr8FH9rugVkvMxRAW3/w10Rv
-         bUui+eSFnW/7IkOcrVwu/rIGuhzOWys8iDb5P5xcsU49dv4sw4+8i0H0beI/XZa+b3HI
-         ZtZ3e6OaGqKr4rwY0eGusQoONTXDVo+C6xoK6UU8C9aVaViA+cmca55ZQuZGIF0q39cE
-         pdA+202y/aqqy4vrA96ZYVj7hwF+O6ENGANHPmyt+1XAhUnz/vcsRBEHKnc2cMm8fyxu
-         sm3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUMsJ8QI0OzydpShqMadW/jr91z+lfOeznz65FTDebKkQo4ll4G9phDpovKezPHRHmXJ59iwq6Cx41cLCt/@vger.kernel.org, AJvYcCVlERXkwvidladuvYZ8s66/zitWCxFmmCXvtpeaOvLwsQddaxYVB4SLhiQ/jzMWqqncQ9D6whxxibFp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2Qkf6IOjbdJF1/7A2lhYVGKxTsVMY/TaDNASKSRJvRtpXCkxz
-	4rZlWmMkwAgLnHduHlufix1z4U94nh7E48gibOnl97hqOzGR/IwbHOf2
-X-Gm-Gg: ASbGncuZg7GVX+fbgSkeZTqe56cuo1Masz/9I6vT0rHDEVGGfhTbAxX3yDiDD8nrzpl
-	uP+25dzz/v+6+l6woiXL47s9HS1bIW3X0EBVkYD3/G7WTZco2SQ1qAA5qkZnWb+4p24Jx+qSjK8
-	X18CuGOUw0aLA2RtTKVAcxcVnxwMKR0GrarKdE7vLAi6vbqS4r5YYIRxFiomclUND87nQ/0UnkU
-	q2/IbST2kLcuuCMdUkpi+suCGRdXsvcxGOiMhcqi6ZlDQPBB5RzdYuMFiqldLqIv8K2GeoFJ1Jm
-	bo4gbYyv08DcQ0JS9iLKJzOH7K6u1YF4wcRweyzRICFWLKU1R6lWBJQWQpoPWS0X3wu5Nt4k3gy
-	sIp3oGkENHPtEOlLZKRLYNXEaBpURe6xqwrMB7kt0V3IOFzhueM/w
-X-Google-Smtp-Source: AGHT+IG+vW5JGkKEGGGdp4Hd6sF1BS7DCoubVeclZE2QYEcmrjSVeoAj24TqBkympTdtodtDi+cCqg==
-X-Received: by 2002:a17:903:17c3:b0:242:cfc7:1fd6 with SMTP id d9443c01a7336-2462ef446cdmr79305085ad.32.1755984462256;
-        Sat, 23 Aug 2025 14:27:42 -0700 (PDT)
-Received: from fedora ([172.59.162.44])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466889de85sm28982615ad.153.2025.08.23.14.27.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Aug 2025 14:27:41 -0700 (PDT)
-From: Alex Tran <alex.t.tran@gmail.com>
-To: linus.walleij@linaro.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alex Tran <alex.t.tran@gmail.com>
-Subject: [PATCH] arch/arm/boot/dts/st/ste-ux500-samsung: dts bluetooth wakeup interrupt
-Date: Sat, 23 Aug 2025 14:27:32 -0700
-Message-ID: <20250823212732.356620-1-alex.t.tran@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1755985683; c=relaxed/simple;
+	bh=f+2e1mjfdrM4u6c20rSZEJrXZ7DiDa0vXieudZxMy4s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ya5bxJBTEZZB0Re3d0XC2pGEnZYkdvdfyrAcKB6so2EVY3hPJ1eYCSBqKwwPlABL41+LphgyKKepQAx8tUflhke/65chH4b5TtnC+CdgLNWztTeDh3VgpPtQc7uLs2Llx4IR6ncLc8r6E4ulNdLIQXFE0HSwy2qL4swRYaAJ4O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=okdJjChS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD629C116D0;
+	Sat, 23 Aug 2025 21:48:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755985682;
+	bh=f+2e1mjfdrM4u6c20rSZEJrXZ7DiDa0vXieudZxMy4s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=okdJjChS8xDJKozutDClByY1QI8HxqsxfRLN6XIOhW4F/CD2Vmv8revUE77i4D9b7
+	 YLiPtKcKWgfl455V3ZjOLSEw02BJCLdhrnl5bIKjFB+nyPwFDemhrqxOFfdFBFy6r1
+	 SW0aUch9FILfVp+0p24u5UAwhERO/pGUQViOJlqLu58EG72cNvs5Aiz1ifThpzFCQC
+	 0wYPPkHothpsuuu0sPoBd/RDnfS1segsfiwrGEw7i9TeP1bnsvJp433DhH5bAz5axK
+	 /xzW7BQTM6AA+njIvacRoJWNR4OQkq8PK/u3O877KELm4+FphSMcl9XeXSf4fgF95d
+	 1IJ+hgeBIqE8A==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55ce5097638so3416770e87.0;
+        Sat, 23 Aug 2025 14:48:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWK8sirszlngt/VpuH6XHJkAECZXksO9I1K5k2+GT9nGsxUaCn1LKxP9arMwm8mlpqcX9GEYfd0LnC+BcvJ@vger.kernel.org, AJvYcCWd7mYb0+oCwzEen/3j8hQ2NcX9Rmf9pX+6e/ixq61Lhgm6MvrAaKPg43i7oGBGPM+9TqAWs4pAkOw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXZ3mseVIKBDylgxhLUDuc3spm7KbZWs1HhvirenG8F3T+clje
+	7dG9eDVilyeCfHUHEpVInsugUN2kTXHGHYSBRVHoPn8ptitEE7mjtxuVdFwcyG4Va2KiqY/YxEE
+	086IP2bwFkCNbJDIQCP3c2x7bH4zpMds=
+X-Google-Smtp-Source: AGHT+IHpU7xCroubPXDWGgYJBrip4rxJYyc1NgWuY2GTM1r2YZ/KwreaPY1ko02JrW08q1BaBbIhh9myTEwFob0bbAM=
+X-Received: by 2002:a05:6512:61d0:20b0:55f:34e8:b1b0 with SMTP id
+ 2adb3069b0e04-55f34e8ca18mr774083e87.15.1755985681198; Sat, 23 Aug 2025
+ 14:48:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1755721529.git.epetron@amazon.de> <b34da9fd50c89644cd4204136cfa6f5533445c56.1755721529.git.epetron@amazon.de>
+In-Reply-To: <b34da9fd50c89644cd4204136cfa6f5533445c56.1755721529.git.epetron@amazon.de>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sun, 24 Aug 2025 07:47:49 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXFQwOHyQg2LtabMA3qxiBn_AVV_JNfki2WPSg8u_XbBcg@mail.gmail.com>
+X-Gm-Features: Ac12FXzn0qCCniv9JuLvANrQaphyB7rl0h7KLf3cn0PE7oJ7DT-dRyUUwZAdnF8
+Message-ID: <CAMj1kXFQwOHyQg2LtabMA3qxiBn_AVV_JNfki2WPSg8u_XbBcg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] efi: Support booting with kexec handover (KHO)
+To: Evangelos Petrongonas <epetron@amazon.de>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Rapoport <rppt@kernel.org>, Alexander Graf <graf@amazon.com>, 
+	Changyuan Lyu <changyuanl@google.com>, Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org, 
+	linux-mm@kvack.org, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nh-open-source@amazon.com
+Content-Type: text/plain; charset="UTF-8"
 
-Interrupt support on host wakeup gpio for ste-ux500-samsung bluetooth.
+(cc Ilias)
 
-Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
----
- arch/arm/boot/dts/st/ste-ux500-samsung-codina-tmo.dts | 5 +++--
- arch/arm/boot/dts/st/ste-ux500-samsung-codina.dts     | 5 +++--
- arch/arm/boot/dts/st/ste-ux500-samsung-janice.dts     | 5 +++--
- 3 files changed, 9 insertions(+), 6 deletions(-)
+Note to akpm: please drop this series for now.
 
-diff --git a/arch/arm/boot/dts/st/ste-ux500-samsung-codina-tmo.dts b/arch/arm/boot/dts/st/ste-ux500-samsung-codina-tmo.dts
-index c623cc35c5ea..03c679164c11 100644
---- a/arch/arm/boot/dts/st/ste-ux500-samsung-codina-tmo.dts
-+++ b/arch/arm/boot/dts/st/ste-ux500-samsung-codina-tmo.dts
-@@ -383,8 +383,9 @@ bluetooth {
- 				/* BT_WAKE on GPIO199 */
- 				device-wakeup-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
- 				/* BT_HOST_WAKE on GPIO97 */
--				/* FIXME: convert to interrupt */
--				host-wakeup-gpios = <&gpio3 1 GPIO_ACTIVE_HIGH>;
-+				interrupt-parent = <&gpio3>;
-+				interrupts = <1 IRQ_TYPE_EDGE_RISING>;
-+				interrupt-names = "host-wakeup";
- 				/* BT_RST_N on GPIO209 */
- 				reset-gpios = <&gpio6 17 GPIO_ACTIVE_LOW>;
- 				pinctrl-names = "default";
-diff --git a/arch/arm/boot/dts/st/ste-ux500-samsung-codina.dts b/arch/arm/boot/dts/st/ste-ux500-samsung-codina.dts
-index 2355ca6e9ad6..bedffd969ec9 100644
---- a/arch/arm/boot/dts/st/ste-ux500-samsung-codina.dts
-+++ b/arch/arm/boot/dts/st/ste-ux500-samsung-codina.dts
-@@ -475,8 +475,9 @@ bluetooth {
- 				/* BT_WAKE on GPIO199 */
- 				device-wakeup-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
- 				/* BT_HOST_WAKE on GPIO97 */
--				/* FIXME: convert to interrupt */
--				host-wakeup-gpios = <&gpio3 1 GPIO_ACTIVE_HIGH>;
-+				interrupt-parent = <&gpio3>;
-+				interrupts = <1 IRQ_TYPE_EDGE_RISING>;
-+				interrupt-names = "host-wakeup";
- 				/* BT_RST_N on GPIO209 */
- 				reset-gpios = <&gpio6 17 GPIO_ACTIVE_LOW>;
- 				pinctrl-names = "default";
-diff --git a/arch/arm/boot/dts/st/ste-ux500-samsung-janice.dts b/arch/arm/boot/dts/st/ste-ux500-samsung-janice.dts
-index 229f7c32103c..64562a3a262c 100644
---- a/arch/arm/boot/dts/st/ste-ux500-samsung-janice.dts
-+++ b/arch/arm/boot/dts/st/ste-ux500-samsung-janice.dts
-@@ -481,8 +481,9 @@ bluetooth {
- 				/* BT_WAKE on GPIO199 */
- 				device-wakeup-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
- 				/* BT_HOST_WAKE on GPIO97 */
--				/* FIXME: convert to interrupt */
--				host-wakeup-gpios = <&gpio3 1 GPIO_ACTIVE_HIGH>;
-+				interrupt-parent = <&gpio3>;
-+				interrupts = <1 IRQ_TYPE_EDGE_RISING>;
-+				interrupt-names = "host-wakeup";
- 				/* BT_RST_N on GPIO209 */
- 				reset-gpios = <&gpio6 17 GPIO_ACTIVE_LOW>;
- 				pinctrl-names = "default";
--- 
-2.51.0
+On Fri, 22 Aug 2025 at 04:00, Evangelos Petrongonas <epetron@amazon.de> wrote:
+>
+> When KHO (Kexec HandOver) is enabled, it sets up scratch memory regions
+> early during device tree scanning. After kexec, the new kernel
+> exclusively uses this region for memory allocations during boot up to
+> the initialization of the page allocator
+>
+> However, when booting with EFI, EFI's reserve_regions() uses
+> memblock_remove(0, PHYS_ADDR_MAX) to clear all memory regions before
+> rebuilding them from EFI data. This destroys KHO scratch regions and
+> their flags, thus causing a kernel panic, as there are no scratch
+> memory regions.
+>
+> Instead of wholesale removal, iterate through memory regions and only
+> remove non-KHO ones. This preserves KHO scratch regions, which are
+> good known memory, while still allowing EFI to rebuild its memory map.
+>
+> Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Signed-off-by: Evangelos Petrongonas <epetron@amazon.de>
+> ---
+> Changes in v3:
+>         - Improve the code comments, by stating that the scratch regions are
+>         good known memory
+>
+> Changes in v2:
+>         - Replace the for loop with for_each_mem_region
+>         - Fix comment indentation
+>         - Amend commit message to specify that scratch regions
+>         are known good regions
+>
+>  drivers/firmware/efi/efi-init.c | 29 +++++++++++++++++++++++++----
+>  1 file changed, 25 insertions(+), 4 deletions(-)
+>
 
+I'd rather drop the memblock_remove() entirely if possible. Could we
+get some insight into whether memblocks are generally already
+populated at this point during the boot?
+
+
+> diff --git a/drivers/firmware/efi/efi-init.c b/drivers/firmware/efi/efi-init.c
+> index a00e07b853f2..a65c2d5b9e7b 100644
+> --- a/drivers/firmware/efi/efi-init.c
+> +++ b/drivers/firmware/efi/efi-init.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/efi.h>
+>  #include <linux/fwnode.h>
+>  #include <linux/init.h>
+> +#include <linux/kexec_handover.h>
+>  #include <linux/memblock.h>
+>  #include <linux/mm_types.h>
+>  #include <linux/of.h>
+> @@ -164,12 +165,32 @@ static __init void reserve_regions(void)
+>                 pr_info("Processing EFI memory map:\n");
+>
+>         /*
+> -        * Discard memblocks discovered so far: if there are any at this
+> -        * point, they originate from memory nodes in the DT, and UEFI
+> -        * uses its own memory map instead.
+> +        * Discard memblocks discovered so far except for KHO scratch
+> +        * regions. Most memblocks at this point originate from memory nodes
+> +        * in the DT and UEFI uses its own memory map instead. However, if
+> +        * KHO is enabled, scratch regions, which are good known memory
+> +        * must be preserved.
+>          */
+>         memblock_dump_all();
+> -       memblock_remove(0, PHYS_ADDR_MAX);
+> +
+> +       if (is_kho_boot()) {
+> +               struct memblock_region *r;
+> +
+> +               /* Remove all non-KHO regions */
+> +               for_each_mem_region(r) {
+> +                       if (!memblock_is_kho_scratch(r)) {
+> +                               memblock_remove(r->base, r->size);
+> +                               r--;
+> +                       }
+> +               }
+> +       } else {
+> +               /*
+> +                * KHO is disabled. Discard memblocks discovered so far:
+> +                * if there are any at this point, they originate from memory
+> +                * nodes in the DT, and UEFI uses its own memory map instead.
+> +                */
+> +               memblock_remove(0, PHYS_ADDR_MAX);
+> +       }
+>
+>         for_each_efi_memory_desc(md) {
+>                 paddr = md->phys_addr;
+> --
+> 2.47.3
+>
+>
+>
+>
+> Amazon Web Services Development Center Germany GmbH
+> Tamara-Danz-Str. 13
+> 10243 Berlin
+> Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
+> Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+> Sitz: Berlin
+> Ust-ID: DE 365 538 597
+>
 
