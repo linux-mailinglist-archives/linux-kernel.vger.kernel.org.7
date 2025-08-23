@@ -1,173 +1,145 @@
-Return-Path: <linux-kernel+bounces-783357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4918B32C4E
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 00:26:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC23DB32C56
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 00:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9ADB9E75E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 22:25:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7291F5A4DB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 22:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EAB2BEFFF;
-	Sat, 23 Aug 2025 22:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EW5gCCJT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2764A24677B;
+	Sat, 23 Aug 2025 22:36:39 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4E214A62B;
-	Sat, 23 Aug 2025 22:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBE71E2307
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 22:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755987952; cv=none; b=fH+NuSulinSmr1WH9bPRmB+dmXCIXTagCh6TQI5WFceFbt+uBtldWYuwi39zSbvmuzBRvsAwttNU5jVPHqe6IdHnhOvTLyGrrRelpq4bmnxz/Kg+cMSh5Fsgl7nhFi/6ifQLkbub5R6xHNhuTXT0Ru6P+VJhYvkIqzx2+BqYe5s=
+	t=1755988598; cv=none; b=MZIq88eVgf001DQ/BPHswjpQZac51XKCOuEm3u8k7F76pf46JrrBsYjTRlPz0pZo2HdyCeHZ5upxzTzWVfdMDSnpL9lY5uwiBbTT4jgLauiw1HFUwlYksXRHYwezkLZwDCVP+Qp53cRJcVFTmGi/fJboL0gy4dL+3CiL7NBsACo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755987952; c=relaxed/simple;
-	bh=o4tfWUnrvWW45XkZjNc1uODnZaubDv7GA3aKCYWJF4U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QH2Fu0XPv3arwqon2aEW42sBXn3KbDrt9Q9IVkRqwy7zDW7iLqTdOQGiAxh4GUoQaHFn1TA8ECBY/Ei89rx5p6F1jSivg01Rqzn9tRJ8z9QmZP3kJeg1tlNc1I/53QSLnvM75fCuMdj/x0xVErzwS4QLpL+BlHv58tdPouxVqN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EW5gCCJT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 006EEC4CEE7;
-	Sat, 23 Aug 2025 22:25:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755987952;
-	bh=o4tfWUnrvWW45XkZjNc1uODnZaubDv7GA3aKCYWJF4U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=EW5gCCJTK7w2G0x+G3zywZXedzHj9/qQI1rjhYF+wvNvopXKT7P6FrAkAuFi8cKmj
-	 I8lTL32lfQ1nqgO2elnEwFep+tvlWkgW9UKFfD4dS9yXpxgdG1G8jVF0JZI3girzc2
-	 MeIT2aesP36eC+S/Z1eSvm1YW7ebomNsH4l71ZUldiy+VOABv4pjqsr/A5zJYwI5HS
-	 XJlIgElipnkM9PuxuJlRJNNKwJl34n6/PwfEDiorLfkAUbxNJvt7UJawH3gCyEDzr9
-	 TAQA6OlARepjOpflztscbknBTiySWrM7ZSlzOxgyzp5GwK5xLmJz3RB9eyNW1sUBbC
-	 fa0AsZsHGo/Aw==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55ce5243f6dso3627339e87.2;
-        Sat, 23 Aug 2025 15:25:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVOT7VFp2kLNx7uQbkTXHkWdmBra6DKqp4Mm+20063vkJJSGbtWhBTbSKpY9hXWiK3WJg3x1/6qUQuH5Q0=@vger.kernel.org, AJvYcCWRpISuHyeuAG5KT0Wc6gZYFmQCUXH1hPGmf7YcjWCv09reNkiu77R8UEnK8v4SCNVTIGvM5MhD@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI+OYKilHuOflZE5jVZdjSBDi1PXJvewo8zdgjVAUwkQdL4QvZ
-	/eYAuVjNp5+XRx7J8SuqPho23bElij/laUSSV5qYp5VmCnEibDu+Lg9PiJnNL4bnD59BT1bd3yZ
-	NpEcAEultC8lIJHy2KI4jUh1+ZEWhwBU=
-X-Google-Smtp-Source: AGHT+IEAJZ5I9jytEZddwlocNfvIS6Y8INNTtScihMjxLZcdUP+pDu2NWjNEprTyR8UYHe48zmc40UAAKEbPmo50WKc=
-X-Received: by 2002:a05:6512:6284:b0:55a:5122:91ea with SMTP id
- 2adb3069b0e04-55f0ccce7e5mr2161677e87.34.1755987950359; Sat, 23 Aug 2025
- 15:25:50 -0700 (PDT)
+	s=arc-20240116; t=1755988598; c=relaxed/simple;
+	bh=4vZvK+dCmANA/RFO7QkzaPe0zgL9xeR5G3FAgTORd9Y=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sI0b7oS6WHDn4i7qYSkPfiT7ybkQNeLtuw0AbykEev1SaWDU+VnNOmu59+RyOxlBeL3SaTWwIRH8S5EJWx0LKsm3MVFQc+7uP/W0lbHLExrjutwPaySUpXa3BqkqxMtP2mD5ZYeQugCHhCgQP3ieJ9av/4s5lfy+MgMdrXE4bm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3e6649d783bso75891975ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 15:36:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755988596; x=1756593396;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NGwLocbnTDAXfm5VG1sZW4oHyeZ0bJWUIcJzJBTSFY0=;
+        b=UY9YXoXhRJqLZHJWdFnRuRHvsDY3tIC89lOCTAHERMrzZgnD86RsxjFpQUYXn7XY2e
+         gOUOQinP/Qbk75hNXXAZxemcvoFoyezmB8whpD/d0kugKjcRIZVJdBerXdYrFPIPgmj3
+         phbOpDjhqfdMqlbrfALNDTRnEVAh6Obv1TkbKo130bci/P5Hh6eQpZW6UD9NWEaOE4+o
+         r3tHU1mgCD1eeVm1ATPFucDZrotXfvZjxO1rY4HduMgUT3gFMyns+BQcc+NHqdgxj1Sk
+         0pnAXgXTaZSlKxbE9ci9QF2n0tvhnjXDyio9Qjhtf4Enml0KLZzlFCAIFGdyjNH/EW8r
+         Lo5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUoRTZNdfN0WICg4+DqkwYYRdfe1VMqli+nYnAkHYHOCQlnSEtFVil+TE2pUJ5x0uxm4lqrAocbxlqr07Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2mBpmVy/75er/pgFVaDR3GhfaLvl7vZ+2cXG/+v2HnANwKNaP
+	RueVG1Nbx4qLPLJeY8j+NB/B4KjXi4RdjzMJ2A72U74QWpEMxD5LHTWgWkAE/LhWw7l5dT6JRHu
+	UeMaXqrr2JaHpPjSxlLPrcaoLFRLyMo2enabzUJdL/9pbLqWiOY1NOhX3KGw=
+X-Google-Smtp-Source: AGHT+IEVSRCkgjphjsoFwRrDqgtFP+NSFEK2+JqlkQKo0P6FrozDfloNFRLvI373a8BRXjG+K1ac5jTraz7SrTE/f0nHs1+eIcKK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822041526.467434-1-CFSworks@gmail.com>
-In-Reply-To: <20250822041526.467434-1-CFSworks@gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 24 Aug 2025 08:25:39 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXH38gOUpDDdarCXPAY3BHBbuFzdD=Dq7Knsg-qHJoNqzQ@mail.gmail.com>
-X-Gm-Features: Ac12FXx4h-esqmUyLXFQpc9yLkNC9WcNoc6ief3rZx4PjW95nKGNarPk-LBLvw8
-Message-ID: <CAMj1kXH38gOUpDDdarCXPAY3BHBbuFzdD=Dq7Knsg-qHJoNqzQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64/boot: Zero-initialize idmap PGDs before use
-To: Sam Edwards <cfsworks@gmail.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Marc Zyngier <maz@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Baruch Siach <baruch@tkos.co.il>, Kevin Brodsky <kevin.brodsky@arm.com>, 
-	Joey Gouly <joey.gouly@arm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+X-Received: by 2002:a05:6e02:3087:b0:3e9:8a9f:ba7a with SMTP id
+ e9e14a558f8ab-3e98a9fbb99mr83546825ab.21.1755988596443; Sat, 23 Aug 2025
+ 15:36:36 -0700 (PDT)
+Date: Sat, 23 Aug 2025 15:36:36 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68aa4274.a00a0220.33401d.03a0.GAE@google.com>
+Subject: [syzbot] [wireless?] WARNING in ieee80211_do_stop (3)
+From: syzbot <syzbot+e9989956db9dfeabc44c@syzkaller.appspotmail.com>
+To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Sam,
+Hello,
 
-On Fri, 22 Aug 2025 at 14:15, Sam Edwards <cfsworks@gmail.com> wrote:
->
-> In early boot, Linux creates identity virtual->physical address mappings
-> so that it can enable the MMU before full memory management is ready.
-> To ensure some available physical memory to back these structures,
-> vmlinux.lds reserves some space (and defines marker symbols) in the
-> middle of the kernel image. However, because they are defined outside of
-> PROGBITS sections, they aren't pre-initialized -- at least as far as ELF
-> is concerned.
->
-> In the typical case, this isn't actually a problem: the boot image is
-> prepared with objcopy, which zero-fills the gaps, so these structures
-> are incidentally zero-initialized (an all-zeroes entry is considered
-> absent, so zero-initialization is appropriate).
->
-> However, that is just a happy accident: the `vmlinux` ELF output
-> authoritatively represents the state of memory at entry. If the ELF
-> says a region of memory isn't initialized, we must treat it as
-> uninitialized. Indeed, certain bootloaders (e.g. Broadcom CFE) ingest
-> the ELF directly -- sidestepping the objcopy-produced image entirely --
-> and therefore do not initialize the gaps. This results in the early boot
-> code crashing when it attempts to create identity mappings.
->
-> Therefore, add boot-time zero-initialization for the following:
-> - __pi_init_idmap_pg_dir..__pi_init_idmap_pg_end
-> - idmap_pg_dir
-> - reserved_pg_dir
+syzbot found the following issue on:
 
-I don't think this is the right approach.
+HEAD commit:    da114122b831 net: ethernet: stmmac: dwmac-rk: Make the clk..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=106aa6f0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5b2fdcd062d798f6
+dashboard link: https://syzkaller.appspot.com/bug?extid=e9989956db9dfeabc44c
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-If the ELF representation is inaccurate, it should be fixed, and this
-should be achievable without impacting the binary image at all.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> - tramp_pg_dir # Already done, but this patch corrects the size
->
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/944cb9a1ee86/disk-da114122.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c92fb70ac1fc/vmlinux-da114122.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1e6dc0d53003/bzImage-da114122.xz
 
-What is wrong with the size?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e9989956db9dfeabc44c@syzkaller.appspotmail.com
 
-> Note, swapper_pg_dir is already initialized (by copy from idmap_pg_dir)
-> before use, so this patch does not need to address it.
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Sam Edwards <CFSworks@gmail.com>
-> ---
->  arch/arm64/kernel/head.S | 12 ++++++++++++
->  arch/arm64/mm/mmu.c      |  3 ++-
->  2 files changed, 14 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-> index ca04b338cb0d..0c3be11d0006 100644
-> --- a/arch/arm64/kernel/head.S
-> +++ b/arch/arm64/kernel/head.S
-> @@ -86,6 +86,18 @@ SYM_CODE_START(primary_entry)
->         bl      record_mmu_state
->         bl      preserve_boot_args
->
-> +       adrp    x0, reserved_pg_dir
-> +       add     x1, x0, #PAGE_SIZE
-> +0:     str     xzr, [x0], 8
-> +       cmp     x0, x1
-> +       b.lo    0b
-> +
-> +       adrp    x0, __pi_init_idmap_pg_dir
-> +       adrp    x1, __pi_init_idmap_pg_end
-> +1:     str     xzr, [x0], 8
-> +       cmp     x0, x1
-> +       b.lo    1b
-> +
->         adrp    x1, early_init_stack
->         mov     sp, x1
->         mov     x29, xzr
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 34e5d78af076..aaf823565a65 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -761,7 +761,7 @@ static int __init map_entry_trampoline(void)
->         pgprot_val(prot) &= ~PTE_NG;
->
->         /* Map only the text into the trampoline page table */
-> -       memset(tramp_pg_dir, 0, PGD_SIZE);
-> +       memset(tramp_pg_dir, 0, PAGE_SIZE);
->         __create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS,
->                              entry_tramp_text_size(), prot,
->                              pgd_pgtable_alloc_init_mm, NO_BLOCK_MAPPINGS);
-> @@ -806,6 +806,7 @@ static void __init create_idmap(void)
->         u64 end   = __pa_symbol(__idmap_text_end);
->         u64 ptep  = __pa_symbol(idmap_ptes);
->
-> +       memset(idmap_pg_dir, 0, PAGE_SIZE);
->         __pi_map_range(&ptep, start, end, start, PAGE_KERNEL_ROX,
->                        IDMAP_ROOT_LEVEL, (pte_t *)idmap_pg_dir, false,
->                        __phys_to_virt(ptep) - ptep);
-> --
-> 2.49.1
->
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 9 at net/mac80211/iface.c:510 ieee80211_do_stop+0x1a36/0x1fb0 net/mac80211/iface.c:510
+Modules linked in:
+CPU: 0 UID: 0 PID: 9 Comm: kworker/0:0 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: events cfg80211_rfkill_block_work
+RIP: 0010:ieee80211_do_stop+0x1a36/0x1fb0 net/mac80211/iface.c:510
+Code: 48 c1 e8 03 42 0f b6 04 28 84 c0 0f 85 27 05 00 00 41 ff 0c 24 e9 49 f5 ff ff e8 55 a1 d0 f6 e9 3f f5 ff ff e8 4b a1 d0 f6 90 <0f> 0b 90 e9 a3 e9 ff ff e8 3d a1 d0 f6 90 43 0f b6 04 2f 84 c0 0f
+RSP: 0018:ffffc900000e7520 EFLAGS: 00010293
+RAX: ffffffff8aef0ae5 RBX: 0000000000000001 RCX: ffff88801ce90000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc900000e7730 R08: 0000000000000000 R09: ffffffff8ae88b42
+R10: 0000096c00000000 R11: ffff88807acfb338 R12: ffffc900000e7690
+R13: dffffc0000000000 R14: 0000000000000001 R15: ffff888053b6a9d0
+FS:  0000000000000000(0000) GS:ffff888125c1c000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f4e87977e9c CR3: 0000000075150000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ ieee80211_stop+0x1b1/0x240 net/mac80211/iface.c:814
+ __dev_close_many+0x364/0x6f0 net/core/dev.c:1755
+ netif_close_many+0x225/0x410 net/core/dev.c:1780
+ netif_close+0x158/0x210 net/core/dev.c:1797
+ dev_close+0x10a/0x220 net/core/dev_api.c:220
+ cfg80211_shutdown_all_interfaces+0xd4/0x220 net/wireless/core.c:277
+ cfg80211_rfkill_set_block net/wireless/core.c:307 [inline]
+ cfg80211_rfkill_block_work+0x21/0x30 net/wireless/core.c:319
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
