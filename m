@@ -1,156 +1,131 @@
-Return-Path: <linux-kernel+bounces-782863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B99BB32625
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:14:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A04B32620
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CBB1A0471C
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:14:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D704DA04835
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2817B19E7E2;
-	Sat, 23 Aug 2025 01:13:51 +0000 (UTC)
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378E6188596;
+	Sat, 23 Aug 2025 01:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QcRogaia"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85224199FBA;
-	Sat, 23 Aug 2025 01:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AF41C68F
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 01:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755911630; cv=none; b=g0a1p8603mi5/eYXUoXEyr3MpNuMajrlI5QWN7fciNqJAtfW2L1wYTz2kPojzPUo7l8H2XRdhl/BGk9wYB7rD/szFR97Oqj+exEeVhsaqY7AOVhzyrLn2BEPpVX7LVmPBi69xh8zuz19HHYqvdtiK3e1HN/7/ix3Cy41OtuO3po=
+	t=1755911601; cv=none; b=pKhwc8y6JRv7WbzlVolHQ7hsjB+Imm+9O3kfEF2/hiHwnHsEuso0+RBd1qD5TJpYT77y943164J/8L9KClPRAO04o5u9mJM4lSl381MjMmQYnPPKJxRTkipDTk0+PVy4aNS7Q31FxWinoq2/TaZVe1nwjEIUBPNFmLm6F5pBEQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755911630; c=relaxed/simple;
-	bh=yA6j+LdZIh8VSNBUAvoV0zZeJUNVdCboDwO3ttQ8Akc=;
+	s=arc-20240116; t=1755911601; c=relaxed/simple;
+	bh=ciPiSBTwsteXUC8doN1n+P6C5tmIpwhAebQrT3ejA4E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AqCDD2TMDolfwUM/JcmxfBEtzQrKhWMr67Ym0xl+K2PFjzMEd46AlE0q9Ln2CJzBjTMdL0tLhlwSqOUQmB/EQqiE1yzQq+9NCR+5ByYA+FD1I5C3bcSjfqBmqAlHHMOZPjtRQoExgjR2G9/rYLkGvS4zIbS3nfXfKvV/uCPK5gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpgz7t1755911541t30cf4573
-X-QQ-Originating-IP: CYYpVmL7PQRqYgMsqlkdc43DVUyX20KFhx33Uzp3ols=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 23 Aug 2025 09:12:18 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 15638722221360569384
-Date: Sat, 23 Aug 2025 09:12:18 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <EA6C27BA99B43454+20250823011218.GA1995939@nic-Precision-5820-Tower>
-References: <20250818112856.1446278-1-dong100@mucse.com>
- <20250818112856.1446278-5-dong100@mucse.com>
- <39262c11-b14f-462f-b9c0-4e7bd1f32f0d@lunn.ch>
- <458C8E59A94CE79B+20250821024916.GF1742451@nic-Precision-5820-Tower>
- <47aa140e-552b-4650-9031-8931475f0719@lunn.ch>
- <7FCBCC1F18AFE0F3+20250821033253.GA1754449@nic-Precision-5820-Tower>
- <d7a38afc-58c1-468a-be47-442cec6db728@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aX/aSzAXKH0Am7hgM5maiKKr/27KWZdIxdoUc9MYChctE1D8/ZIZVgFSf9MBoYjNDd3VhUBAe5sU5cqzOnWcL4AXL17soFQapfFA71eIFLeQFmY0j+WvdIAZrC41hL/hPn9nkZhawm7z5b9+wyHg2mqmJwDEAwPGkSWz3qAdlB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QcRogaia; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-323267bc2eeso2122515a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:13:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755911599; x=1756516399; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gQrWupHIhZiBrC7vPvIXiCCLepxxuc4JOY57pG7WfoA=;
+        b=QcRogaiaKW75IQTjskyILsQrtc9RK70kWDuSClxw0pwGJDdztj2cXgKwJDspNrd5w/
+         v1dbrR+cfEr0dbxXSnf6Xn9bMGnvYkguBoexIDDnjqTmjmWeC7CqTuOpYJgI4pqui6gs
+         6QOCTVrf5pqqnvJbQEdDdjzncRykKoggQxYfAAkDDepSum/cpao/TQ4mGtASalsoRTDO
+         +ByOaLzvREpRnsxxtur3m6kFecH8IkDUDCxD901K46VwdY7jUJOm1V9GbqMMJv2GK3be
+         W5fN+eBd32W8xBQpUfKH4ab9Kpy8PkHPCcuqrjPmKQ0lKIp2WpBl1wdsylK4Nzx2BCsZ
+         aA4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755911599; x=1756516399;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gQrWupHIhZiBrC7vPvIXiCCLepxxuc4JOY57pG7WfoA=;
+        b=Vxjl43Cxh60ghPvcS2DVlQIvjR6QBcWix6dd8FrbY7WutEqXwA9CpM3z8tGm03B0K5
+         5DqRVTz0+O9+tO2jOWHwaDqSE64fQ0o8fVX5k2O/J4M2JaPhtdkGevgk8rCyE9ZQKl3W
+         8zvUgRvZKH2dKnM6ufDw+dI7jMxUQxOAp1dgP2RzN/oW/eI/xrfMPSWX1SVoMC48LqM5
+         JJQywEYsu0PrV+P4FgB/0VsvRUoqPePfGM11BcO3OT7oVNTelxkJ4jBmZdHbENHx+lh/
+         V/xPg/tnN51/LUCP6J8rz3WApR2sAytO6WAzWrg7RPe2ms+LZu/rNfw1vhyBUctPgBOJ
+         RLvg==
+X-Forwarded-Encrypted: i=1; AJvYcCX8oHnAW5F1tDhwHi3IYCL0XQXZ3LLLVPkTBVd038soRE47UakxxZUlrXy0y0fNkxBF9TrOOX0Z91TR6as=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF2wOkYPcgR+48eheotQZcREIZMfkgYUjQ3VmX5ERJ5IW+FFJ+
+	Z1ate1JS0J1MGoIVHFEGElk8PhWzdK0P0FOAYEprSya3N26kOd7jYmGO
+X-Gm-Gg: ASbGncuZMSNUo2d+lOqEE5TbLh6/2CSmZzOUhRhZXOQaP/WM0Yr5Ps09MrtZI7o3njV
+	4iWqh+P/5n2KaNVtstAS05RfQEWFYe30AnWT/P+wo9nHmyrbwzzx3LMOJSN6dGeFNmKLy3U6mvU
+	3RKZlSXmx3aMjevclxAn3wbcgc6Qr9csSs2pKH1fvJdkDE4n707S0DLSD8pQJuW72MKM/jxxWM0
+	/M/zk0I6dLTuqmW3QkBXwaVZ1HA+tWRnmiMmTC7vwQp3cEeo3z/0RFQlCmzpvH4VRHwj8Ar2D1E
+	LA/Xjwhc2yhytEiP4pEQpGRx/wNvmn9StgJdUdFl9in6wdVMzShHaRh4azt3nsIXsWT4jTONuX4
+	KR9DaNwdFhBJ6QiTrvOiKjIN7B+LYSQQAI8s=
+X-Google-Smtp-Source: AGHT+IEbUyJYViHgEeQBQ0SdF3qeOozb/if/f4vOqfR0cciYjQ0K0dkP+huwbU4l5wSAj1hLqWitNw==
+X-Received: by 2002:a17:90b:3b8d:b0:31f:30a6:56ff with SMTP id 98e67ed59e1d1-3251744d025mr7135837a91.19.1755911598976;
+        Fri, 22 Aug 2025 18:13:18 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3254aa63db2sm995862a91.23.2025.08.22.18.13.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 18:13:18 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 22 Aug 2025 18:13:17 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, David Gow <davidgow@google.com>,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	kunit-dev@googlegroups.com
+Subject: Re: [PATCH v2 1/6] genirq/test: Select IRQ_DOMAIN
+Message-ID: <706bfd19-b9b6-4f9f-8c25-21110cee69b9@roeck-us.net>
+References: <20250822190140.2154646-1-briannorris@chromium.org>
+ <20250822190140.2154646-2-briannorris@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d7a38afc-58c1-468a-be47-442cec6db728@lunn.ch>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: N2puXaFwQSOsJPVNGyvI0mrg9Yf6OM/n5ObKSm9ci71sdlEjeC7FJ/YT
-	vL1b5iHBB/VQKpmRG0gxtZJYt0gyNlneYPynM++QJdfR4DyiHNy0D2bmakjGgK34FGk33LK
-	nkpxWwv/pjhKFsdiGdEgzRVzL7aBgrPNwlbp5WaRQOmpw6HWga5aNczPjrNstk5n1p6lAjS
-	522qqniIoWoBeWeFeCqv2aWYriTW4EDXJ4Rhg5bKAdAxNcq6fLW1So5WrWkz5PXRZFGY9QI
-	TOOCeky+Td7ffOYkBrez3XdmvmcsTCz+eO/JrYVFVsNDF4C/reYaFZu7L6w8VBFKzFr0ai0
-	Eocd3QpuCbemjXxGRo2/LxbKa3owh8njV1v9ewmphDwG2qhmrH9+M88cDz4+bLX5Y5WQM4j
-	ByQZYKHxdUxj4zWNunyg8WVaN90g9O4wPyw6SRxPPXcQ56AazruZDsZkhIx8PMHqveQViFA
-	zJpGcgsGIlDc7YHeI538jdpwnfTC/GvWBUh7jMufb7v0K3P6BRdZg4DWS0ZnXNlnQyYxKMn
-	szxIJf3s9mt2g6MPPiKxbk6dbWWVAypWGTfxTgJsytkJBoibJL5tVTXPSFPDF6/isWexlNq
-	gh9g4YJaCEg2yEMZc53mNDlotAOGK+8wl5atxRK18uBi+MHdal15jLIoaZB9n+FN6U8WOPL
-	JOJJW10x2WaTF3d5acuhtDVs584zSrF/gVMytW6o00/Kpi6QncegNHKzqoyv7gIBTfnNWSI
-	mbb6nsV9GkZDBip/HoQyVxPzT4aHPoyE739TcbNTPjwhxY9BMLaqJKXrk4beubBMGKtPmrN
-	iZE5FakGQBVSR+XfXgN2KT+i5Mr0j8amhlBf/YVIr7gsbAreGicCcpAbm+gXbI5EGHZFk9x
-	su4uMxnAf6NTlhsy6PuMZp8lzQ7TU9NqrKRxTxkmwQtuGY4biaD9u1VBCzhJmOU6w/N3aQ3
-	APy90NoGNfBn0M+jLMMnaJoIX/9Rvy2+vSlGYc0DocV6StpP/QS7WohIlpR3lAuxEmmu1JI
-	1yJXiC1w==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <20250822190140.2154646-2-briannorris@chromium.org>
 
-On Fri, Aug 22, 2025 at 09:52:25PM +0200, Andrew Lunn wrote:
-> > 'Update firmware operation' will take long time, maybe more than
-> > 10s. If user use 'ethtool -f' to update firmware, and ^C before done?
-> > If ^C before mucse_write_mbx, return as soon as possible. If after mucse_write_mbx,
-> > wait until fw true response.
+On Fri, Aug 22, 2025 at 11:59:02AM -0700, Brian Norris wrote:
+> These tests use irq_domain_alloc_descs() and so require
+> CONFIG_IRQ_DOMAIN.
 > 
-> And what happens if the firmware writing is interrupted? Could you end
-> up with a brick? This is actually one of the operations i would not
-> expect to be able to ^C.
-> 
-> You might also want consider devlink flash.
-> 
-> https://www.kernel.org/doc/html/latest/networking/devlink/devlink-flash.html
-> 
->  It replaces the older ethtool-flash mechanism, and doesn’t require
->  taking any networking locks in the kernel to perform the flash
->  update.
-> 
-> I assume this is meaning ethtool take RTNL, and while that is held, no
-> other network configuration can be performed on any interface. devlink
-> has its own lock so avoids this.
-> 
->        Andrew
-> 
+> Fixes: 66067c3c8a1e ("genirq: Add kunit tests for depth counts")
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Closes: https://lore.kernel.org/lkml/ded44edf-eeb7-420c-b8a8-d6543b955e6e@roeck-us.net/
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> Reviewed-by: David Gow <davidgow@google.com>
 
-ethtool or devlink both call mbx(mucse_mbx_fw_post_req)
-to do the true update to firmware. FW not end up with a brick, it has
-fault tolerance itself.
-But that's not the point. The original question is
-about 'wait_event_timeout', I add some comment link this in v6:
-Wait fw response without interruptible.
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
-static int mucse_mbx_fw_post_req(struct mucse_hw *hw,
-                                struct mbx_fw_cmd_req *req,
-                                struct mbx_req_cookie *cookie)
-{
-       int len = le16_to_cpu(req->datalen);
-       int err;
-
-       cookie->errcode = 0;
-       cookie->done = 0;
-       init_waitqueue_head(&cookie->wait);
-       err = mutex_lock_interruptible(&hw->mbx.lock);
-       if (err)
-               return err;
-       err = mucse_write_mbx_pf(hw, (u32 *)req, len);
-       if (err)
-               goto out;
-       /* if write succeeds, we must wait for firmware response or
-        * timeout to avoid using the already freed cookie->wait
-        */
-       err = wait_event_timeout(cookie->wait,
-                                cookie->done == 1,
-                                cookie->timeout_jiffies);
-
-       if (!err)
-               err = -ETIMEDOUT;
-       else
-               err = 0;
-       if (!err && cookie->errcode)
-               err = cookie->errcode;
-out:
-       mutex_unlock(&hw->mbx.lock);
-       return err;
-}
+> ---
+> 
+> (no changes since v1)
+> 
+>  kernel/irq/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/irq/Kconfig b/kernel/irq/Kconfig
+> index 1da5e9d9da71..08088b8e95ae 100644
+> --- a/kernel/irq/Kconfig
+> +++ b/kernel/irq/Kconfig
+> @@ -148,6 +148,7 @@ config IRQ_KUNIT_TEST
+>  	bool "KUnit tests for IRQ management APIs" if !KUNIT_ALL_TESTS
+>  	depends on KUNIT=y
+>  	default KUNIT_ALL_TESTS
+> +	select IRQ_DOMAIN
+>  	imply SMP
+>  	help
+>  	  This option enables KUnit tests for the IRQ subsystem API. These are
+> -- 
+> 2.51.0.rc2.233.g662b1ed5c5-goog
+> 
 
