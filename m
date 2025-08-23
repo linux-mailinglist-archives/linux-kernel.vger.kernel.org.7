@@ -1,135 +1,79 @@
-Return-Path: <linux-kernel+bounces-783052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B028B328CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 15:29:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6155B328CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 15:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B58731890B7E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 13:29:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1CC47BBB4A
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 13:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4119C25B1FF;
-	Sat, 23 Aug 2025 13:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BD821A43D;
+	Sat, 23 Aug 2025 13:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Zqa+aqgr"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXzqQ0Zl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8A51E520B
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 13:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BAD62628C
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 13:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755955756; cv=none; b=CqaSaZbiFCQyXw0GboXXzxrtdRsOixjt7NBQTMrFb77MiVf0hfKNCwi5BnNhBx66jQ1VEgEgmOoV571nA/0No4dy2/qXbOtYntddK0s9JeUGtfq9jy5K7r0EOgs+4X0mI9ksAm7gjE8LfhC81HsR3QiVjWsOv4CuGNMoBgAxnm4=
+	t=1755955801; cv=none; b=sGILAwEYM8Asm4ah0l260cQ0gBm2NJjL0rz03wRQiKT0/vr7AjN2bNhtrE78wS4AVzOeU9eDz4C0p7Tmzw3CJueSwKwV7aW1skh3CKpB+Vi50giLF5ZnAEii5B6flo2a2uB7iD5l4szQ/yIzmmWNb3cuaMAQyiT/dMkk6foNsdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755955756; c=relaxed/simple;
-	bh=u9ena2NoTo+QRILuA8K2q9d32H1jKJNa+yMQOMkNRmI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=MFKZPzQk2BLVgj9JFcBK6qckB9vjYK7T6cPsozTPTxfCxa4om9yulCWeCIk0Zs9xlw2uyE2os/DEZxCM5asib8nJO5P+3ffs2K0ZnQeW+iJzRcZFefGnZX0qC9dN7zFygPZazH7ZizwMeiyHJLfk7EJMoof5cVCy2WxOmbkBfFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Zqa+aqgr; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250823132913epoutp01788f32ebfe3ae9beba3c12bc2a35a318~eaHQ8Om5-2781927819epoutp01Z
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 13:29:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250823132913epoutp01788f32ebfe3ae9beba3c12bc2a35a318~eaHQ8Om5-2781927819epoutp01Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755955753;
-	bh=K4VL47xU6rx+wQ2n08ewDHtYA71u+fcU72PN1XkjcTs=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=Zqa+aqgr+imSZZBsT0bru0TYwGa3siMcTSBKFYiQRw1tY0/xf/ttoe/blfrq3zWlS
-	 rFNoK07Bixo0dElM8YQBmB1iH4NGBcVOUfGO+eOEqRHKK6HTRMt1KXT5ET0okw+YfN
-	 JhbQoLO3BE0Jrl66CtRrSkrusVcz6d+NyuU9b1HY=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250823132912epcas5p19b424584ce8c9b39ceccc4844559ed31~eaHP6t6MI2896228962epcas5p1Y;
-	Sat, 23 Aug 2025 13:29:12 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.88]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4c8Hvq0wd1z3hhT3; Sat, 23 Aug
-	2025 13:29:11 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250823132909epcas5p2b2f12a18b157c75d531c218373385b91~eaHN0izn-1748017480epcas5p2l;
-	Sat, 23 Aug 2025 13:29:09 +0000 (GMT)
-Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250823132905epsmtip1ffcc6e00eb7cee72387b6cd5521b3ed0~eaHKHyQoL2663526635epsmtip1z;
-	Sat, 23 Aug 2025 13:29:05 +0000 (GMT)
-From: "Inbaraj E" <inbaraj.e@samsung.com>
-To: "'Laurent Pinchart'" <laurent.pinchart@ideasonboard.com>
-Cc: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <krzk@kernel.org>,
-	<s.nawrocki@samsung.com>, <s.hauer@pengutronix.de>, <shawnguo@kernel.org>,
-	<cw00.choi@samsung.com>, <rmfrfs@gmail.com>, <martink@posteo.de>,
-	<mchehab@kernel.org>, <linux-fsd@tesla.com>, <will@kernel.org>,
-	<catalin.marinas@arm.com>, <pankaj.dubey@samsung.com>,
-	<shradha.t@samsung.com>, <ravi.patel@samsung.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
-	<linux-samsung-soc@vger.kernel.org>, <kernel@puri.sm>,
-	<kernel@pengutronix.de>, <festevam@gmail.com>,
-	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <20250818093349.GC5862@pendragon.ideasonboard.com>
-Subject: RE: [PATCH v2 07/12] media: imx-mipi-csis: Add support to configure
- specific vc
-Date: Sat, 23 Aug 2025 18:59:04 +0530
-Message-ID: <00e701dc1431$e839d710$b8ad8530$@samsung.com>
+	s=arc-20240116; t=1755955801; c=relaxed/simple;
+	bh=3rm1uZV87ZZygOv8r8tHX9GgiIUWECYlM8iO525TFn4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=HyH6Vgqo2EoCEHJzXzfGH3gHlq3Clu1D42bDXvXTDW+XMwQaqJeieYy9En3z/awu0jCpeoD2Gi6T0VTHfQ8ysH1RBwJA1Wt/fMXPCcJyaqZSqU7+FaqGG5nlvhrmm38SRIUXtvFrG+YKOqmzdGsnZTrjuxAXTGft98MyPK+YEds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXzqQ0Zl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB567C4CEE7;
+	Sat, 23 Aug 2025 13:30:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755955800;
+	bh=3rm1uZV87ZZygOv8r8tHX9GgiIUWECYlM8iO525TFn4=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=hXzqQ0ZlUfespEzIEITw9Oa8phi+r7QhfsgFwNVBDDXWnPx/7WK5+XPOIdonOS+yv
+	 NM2rKbotMC40krmQh5mjMLvL6zCNkr2lJ0fAs1O+aWG/rM38/tAeHqB9DisritCkjB
+	 kSjg5GIxRJg9/wed5J18C1IbjiFhM7uP3VpovsOnndNufbqP18EOpDNbQ61L4e/7EJ
+	 FRMYg29onNUGNkrzsBaa05xJRO0fQaD543zYdNpH0cTikJw4dsJdjubuqr3UI+NtcU
+	 L8sXC849op4fRbtbbFDzHFKAskoOMpSntgW5ejjC/FGL2kseiSL62SIz1UvjbmYbwQ
+	 ZjMhUMTWF7Lng==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33F18383BF69;
+	Sat, 23 Aug 2025 13:30:10 +0000 (UTC)
+Subject: Re: [GIT PULL] Driver core fixes for 6.17-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <DC9RN9QVWOSM.1RH74QYO0EI73@kernel.org>
+References: <DC9RN9QVWOSM.1RH74QYO0EI73@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <DC9RN9QVWOSM.1RH74QYO0EI73@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git tags/driver-core-6.17-rc3
+X-PR-Tracked-Commit-Id: 3a68841d1d9b6eb32b2652bbb83acd17d5eb9135
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 52025b8fc992972168128be40bffee7eafa532b5
+Message-Id: <175595580885.2173883.510005520183259782.pr-tracker-bot@kernel.org>
+Date: Sat, 23 Aug 2025 13:30:08 +0000
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Saravana Kannan <saravanak@google.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQFnLuCBAPSEv1UBKchLdbKY9dyw
-Content-Language: en-in
-X-CMS-MailID: 20250823132909epcas5p2b2f12a18b157c75d531c218373385b91
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250814141036epcas5p1fc02cea3f97534303673eb8453b6a18f
-References: <20250814140943.22531-1-inbaraj.e@samsung.com>
-	<CGME20250814141036epcas5p1fc02cea3f97534303673eb8453b6a18f@epcas5p1.samsung.com>
-	<20250814140943.22531-8-inbaraj.e@samsung.com>
-	<20250818093349.GC5862@pendragon.ideasonboard.com>
 
+The pull request you sent on Sat, 23 Aug 2025 13:21:24 +0200:
 
-Hi Laurent,
+> git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git tags/driver-core-6.17-rc3
 
-Thanks for the review.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/52025b8fc992972168128be40bffee7eafa532b5
 
->=20
-> Hi Inbaraj,
->=20
-> On Thu, Aug 14, 2025 at 07:39:38PM +0530, Inbaraj E wrote:
-> > MIPI_CSIS_V3_3 and MIPI_CSIS_V3_6_3 support streaming only on VC0.
->=20
-> That doesn't appear to be true, at least for MIPI_CSIS_V3_6_3. I have a p=
-atch
-> series that adds VC support for v3.6.3 in the i.MX8MP, and it has been
-> susccessfully tested.
->=20
+Thank you!
 
-Thanks for the patches. I'll add Tesla FSD CSIS support on top of
-Your patch.
-
-> >
-> > +	csis->vc =3D 0;
-> > +
->=20
-> Dynamic VC selection belongs to this patch, not patch 09/12. 09/12 does t=
-oo
-> many different things, it has to be split into one patch per feature.
->=20
-
-I'll break down the patches by feature.=20
-
-Regards,
-Inbaraj E
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
