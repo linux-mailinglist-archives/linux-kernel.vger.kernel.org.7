@@ -1,89 +1,346 @@
-Return-Path: <linux-kernel+bounces-782854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63FE6B3260D
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:55:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C13CB32613
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BA933AB9D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:55:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E62B9B644B6
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B001487F4;
-	Sat, 23 Aug 2025 00:55:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611501487F4;
+	Sat, 23 Aug 2025 00:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocS9cOpw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B762CCC5
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 00:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A95417BA9
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 00:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755910506; cv=none; b=Ue7VbkqYW4tjdnUiu8UMyi6ESi3rKyTCKh+ilu5oinPU3llm0kzxDeIyMn9EAZzKGBZs1FAz1xF9a18b6f0dPfEFrxAIZhPi1HNtekMLaIgAPXpKrd9ZFXDxWqDo5wtxcfPpp6Y6TIzm4yOJxF+0xpy2av8asEt4EJAoapGAn/A=
+	t=1755910729; cv=none; b=rq4W0AVN/mtpA0M7IC7m4n1IvyCtqszZUzzDZAxRkOjjEa04uSDlOd9SntmQDY7V5V/OO+1/YYoV56TkIlAP7r9Kio15fHXtk0AzH79os/n0Qn/uvrcNOcKHpIeD1IgPF1U7zFX+VEWmThTPMKrMTC5XnDapEgTVPzKEQInuFjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755910506; c=relaxed/simple;
-	bh=dwQqBhkiv3gdPqNBg1N//OwTQuhOxMwSaRIXEgWrBK8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Shcfak+h+UULfhXuLq/nl3B8xdalQvtyqGKv+oudBfzeQBzBwr/v8aDX1OD17ozxNVuhyvlLNjrqzPIvknN2kI+7nXwoR2v6Tv4BBgYbn1Hm57Cf56QsH8YqoWHwCKXI0tzz1jpEG/HTqdjgpo0rIeAVB76PJhffpENiS5enMp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3e570044f0eso66076245ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:55:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755910504; x=1756515304;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JaiZLTdnzU20S2gEWsZVd/beFN16MGW5MuUPgJmjQ14=;
-        b=Kz050M2eumRRM7EIwoAblHFsohg5Uae52j52f+F9pASDT8wP36P/AiPGX2gAMEm7Nz
-         ukl76bERFHf8mvCGefA1/GdJRGsFbewm/RisXbQh2Z/b1ADyDcdhOGwV5aElMMuh+Lfl
-         srbif8J1FrdS+Y7sd/IQAQ0G2mjQOJwBDRL2K6yZDEc+d6ZOZyJsTDky8Yf3l9ztOrwz
-         hKxMx8pA3iY4Jj69JcLH8c3B7BEBHHSTvakUBZFGkW9zGJhKMMtMntFhwTascIaA+3uc
-         ulyQmPcjm69QDZcNJ/WcsB2dTJfXXmp22cwS8kB98c09dJVOUeXTEzOwo+auZY3Pb74J
-         VEDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXumsX6+j4X2AOq8BfJRfB00dOGLLTQespat1DzaBASk3VEbwCiitDAA4p2x5wePSc/qfAjzv27MeGFq5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4Hm9GRv3k9JA6UhRxQe62BLDNjytuoES9+GHocrUj44uuvqBw
-	3k3JSQRXy1Kbx4YiKcPpTu2kLBtJHeCAQI0+YOhlp2aD2BKwLr13iLGT5k5flUh3V0he1vDFREP
-	dnTRbgRkTSZyC3Qa4eIz1zvy/LnAYysJj3tlF0c54gAY2suhd9Ps6SgL1LWM=
-X-Google-Smtp-Source: AGHT+IEulvgYYxLUbIAT2ZGCEo6uzPF5ZYh9bP6wBfxwiNL273lg5Mb1AdYubrIf9hK30VZ4neqQ7PTu1ZAat4XQR+oIsw6NpEF4
+	s=arc-20240116; t=1755910729; c=relaxed/simple;
+	bh=GEbuBVht10V2yhK8hk78rrvTcrn/qybKkKOMP5a7JEk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=o/2TmSuoprpbbpDlrrsZ6lPL+FlbUfe9DT13ftOCIht5Y95faX5QwhBVm7t62mupZqn+xQSYmdEKMAZvZ4ZjsNHwQ1rQmsDg+IL93/zQuLcoMNeljCv7AgYJB4IrB7HcDm4aQAoQzAnl/VoppWRcDLtkeB3tgvYcm/SI6MhpDlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocS9cOpw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2B934C4CEED;
+	Sat, 23 Aug 2025 00:58:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755910729;
+	bh=GEbuBVht10V2yhK8hk78rrvTcrn/qybKkKOMP5a7JEk=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=ocS9cOpwGrlNoVsVh1kn5SgywV6Nm+aVbM6HUTgq+rtGsral9/bpWeEfO8/AdhC8T
+	 IzKZdwZ+f/f9dfncJhoChKjoKLhf3HQhALuLbD73QGrB/hoZujhKABMNgiiFV/30Uh
+	 uVVWqgBaFxcRfCagzP7RhYYxqhLKIecPEMowfhCsmmjXJPWVae3NFPiOUcI0GoOGXH
+	 3HR3oTqOncLGq1svPhSy+pejKmJOzUyFQPH+SBoplH3VMk6J2Ybgr8JxSQBklCGLFZ
+	 BppBYvHv8xwBd2dl0MaUBspO5gQXf21+zn2edFsCVPwcjfd1n9F51Thlq/gYZCkJ1a
+	 I58Ggu+bH9QAA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B106CA0EFC;
+	Sat, 23 Aug 2025 00:58:49 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Fri, 22 Aug 2025 19:58:00 -0500
+Subject: [PATCH] drm/nouveau: Support reclocking on gp10b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:144f:b0:3e3:ef79:5a8c with SMTP id
- e9e14a558f8ab-3e921a5c9b6mr78062675ab.14.1755910504422; Fri, 22 Aug 2025
- 17:55:04 -0700 (PDT)
-Date: Fri, 22 Aug 2025 17:55:04 -0700
-In-Reply-To: <CAJnrk1bSD+HfwLqbFv8gsRsPt0kRsr8JZcEXdqBWuKh2Qnz_yA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a91168.a00a0220.33401d.02f0.GAE@google.com>
-Subject: Re: [syzbot] [fuse?] KASAN: slab-out-of-bounds Write in fuse_dev_do_write
-From: syzbot <syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com>
-To: joannelkoong@gmail.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, miklos@szeredi.hu, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250822-gp10b-reclock-v1-1-5b03eaf3735a@gmail.com>
+X-B4-Tracking: v=1; b=H4sIABcSqWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDCyMj3fQCQ4Mk3aLU5Jz85Gxdc/OkNGMzAwPTRAszJaCegqLUtMwKsHn
+ RsbW1AEdlYG1fAAAA
+X-Change-ID: 20250822-gp10b-reclock-77bf36005a86
+To: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ nouveau@lists.freedesktop.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755910728; l=7670;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=JGrVd9hnkLIjkMAR216GfQSoYVUlj9ur9vGETeozqoQ=;
+ b=7CLqWpd25o1U/chnOF7hSNAUHHqJhjh2MKKOAUhlY533V11yuPngwZlPRsUEE6xYxNrqzgqea
+ 0m6f5kQeY4QC7XrVEv3OlR4sKXLOX6kdPOXkrWbfVOJQZgjRbWoBpr+
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-Hello,
+From: Aaron Kling <webgeek1234@gmail.com>
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Starting with Tegra186, gpu clock handling is done by the bpmp and there
+is little to be done by the kernel. The only thing necessary for
+reclocking is to set the gpcclk to the desired rate and the bpmp handles
+the rest. The pstate list is based on the downstream driver generates.
 
-failed to apply patch:
-checking file fs/fuse/dev.c
-patch: **** unexpected end of file in patch
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h |   1 +
+ drivers/gpu/drm/nouveau/nvkm/engine/device/base.c |   1 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild    |   1 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c   | 180 ++++++++++++++++++++++
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h   |  16 ++
+ 5 files changed, 199 insertions(+)
 
+diff --git a/drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h b/drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h
+index d5d8877064a71581d8e9e92f30a3e28551dabf17..6a09d397c651aa94718aff3d1937162df39cc2ae 100644
+--- a/drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h
++++ b/drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h
+@@ -134,4 +134,5 @@ int gf100_clk_new(struct nvkm_device *, enum nvkm_subdev_type, int inst, struct
+ int gk104_clk_new(struct nvkm_device *, enum nvkm_subdev_type, int inst, struct nvkm_clk **);
+ int gk20a_clk_new(struct nvkm_device *, enum nvkm_subdev_type, int inst, struct nvkm_clk **);
+ int gm20b_clk_new(struct nvkm_device *, enum nvkm_subdev_type, int inst, struct nvkm_clk **);
++int gp10b_clk_new(struct nvkm_device *, enum nvkm_subdev_type, int inst, struct nvkm_clk **);
+ #endif
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
+index 3375a59ebf1a4af73daf4c029605a10a7721c725..2517b65d8faad9947244707f540eb281ad7652e4 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
+@@ -2280,6 +2280,7 @@ nv13b_chipset = {
+ 	.acr      = { 0x00000001, gp10b_acr_new },
+ 	.bar      = { 0x00000001, gm20b_bar_new },
+ 	.bus      = { 0x00000001, gf100_bus_new },
++	.clk      = { 0x00000001, gp10b_clk_new },
+ 	.fault    = { 0x00000001, gp10b_fault_new },
+ 	.fb       = { 0x00000001, gp10b_fb_new },
+ 	.fuse     = { 0x00000001, gm107_fuse_new },
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild
+index dcecd499d8dffae3b81276ed67bb8649dfa3efd1..9fe394740f568909de71a8c420cc8b6d8dc2235f 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild
+@@ -10,6 +10,7 @@ nvkm-y += nvkm/subdev/clk/gf100.o
+ nvkm-y += nvkm/subdev/clk/gk104.o
+ nvkm-y += nvkm/subdev/clk/gk20a.o
+ nvkm-y += nvkm/subdev/clk/gm20b.o
++nvkm-y += nvkm/subdev/clk/gp10b.o
+ 
+ nvkm-y += nvkm/subdev/clk/pllnv04.o
+ nvkm-y += nvkm/subdev/clk/pllgt215.o
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..eeee0b1f819a54b082dd33f6597e7dd1889abf99
+--- /dev/null
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c
+@@ -0,0 +1,180 @@
++// SPDX-License-Identifier: MIT
++#include <subdev/clk.h>
++#include <subdev/timer.h>
++#include <core/device.h>
++#include <core/tegra.h>
++
++#include "priv.h"
++#include "gk20a.h"
++#include "gp10b.h"
++
++static int
++gp10b_clk_init(struct nvkm_clk *base)
++{
++	struct gp10b_clk *clk = gp10b_clk(base);
++	struct nvkm_subdev *subdev = &clk->base.subdev;
++	int ret;
++
++	/* Start with the highest frequency, matching the BPMP default */
++	base->func->calc(base, &base->func->pstates[base->func->nr_pstates - 1].base);
++	ret = base->func->prog(base);
++	if (ret) {
++		nvkm_error(subdev, "cannot initialize clock\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++int
++gp10b_clk_read(struct nvkm_clk *base, enum nv_clk_src src)
++{
++	struct gp10b_clk *clk = gp10b_clk(base);
++	struct nvkm_subdev *subdev = &clk->base.subdev;
++
++	switch (src) {
++	case nv_clk_src_gpc:
++		return clk_get_rate(clk->clk) / GK20A_CLK_GPC_MDIV;
++	default:
++		nvkm_error(subdev, "invalid clock source %d\n", src);
++		return -EINVAL;
++	}
++}
++
++static int
++gp10b_clk_calc(struct nvkm_clk *base, struct nvkm_cstate *cstate)
++{
++	struct gp10b_clk *clk = gp10b_clk(base);
++	u32 target_rate = cstate->domain[nv_clk_src_gpc] * GK20A_CLK_GPC_MDIV;
++
++	clk->new_rate = clk_round_rate(clk->clk, target_rate) / GK20A_CLK_GPC_MDIV;
++
++	return 0;
++}
++
++static int
++gp10b_clk_prog(struct nvkm_clk *base)
++{
++	struct gp10b_clk *clk = gp10b_clk(base);
++	int ret;
++
++	ret = clk_set_rate(clk->clk, clk->new_rate * GK20A_CLK_GPC_MDIV);
++	if (ret < 0)
++		return ret;
++
++	clk->rate = clk_get_rate(clk->clk) / GK20A_CLK_GPC_MDIV;
++
++	return 0;
++}
++
++static struct nvkm_pstate
++gp10b_pstates[] = {
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 114750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 216750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 318750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 420750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 522750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 624750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 726750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 828750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 930750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 1032750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 1134750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 1236750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 1300500,
++		},
++	},
++};
++
++static const struct nvkm_clk_func
++gp10b_clk = {
++	.init = gp10b_clk_init,
++	.read = gp10b_clk_read,
++	.calc = gp10b_clk_calc,
++	.prog = gp10b_clk_prog,
++	.tidy = gk20a_clk_tidy,
++	.pstates = gp10b_pstates,
++	.nr_pstates = ARRAY_SIZE(gp10b_pstates),
++	.domains = {
++		{ nv_clk_src_gpc, 0xff, 0, "core", GK20A_CLK_GPC_MDIV },
++		{ nv_clk_src_max }
++	}
++};
++
++int
++gp10b_clk_new(struct nvkm_device *device, enum nvkm_subdev_type type, int inst,
++	      struct nvkm_clk **pclk)
++{
++	struct nvkm_device_tegra *tdev = device->func->tegra(device);
++	const struct nvkm_clk_func *func = &gp10b_clk;
++	struct gp10b_clk *clk;
++	int ret, i;
++
++	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
++	if (!clk)
++		return -ENOMEM;
++	*pclk = &clk->base;
++	clk->clk = tdev->clk;
++
++	/* Finish initializing the pstates */
++	for (i = 0; i < func->nr_pstates; i++) {
++		INIT_LIST_HEAD(&func->pstates[i].list);
++		func->pstates[i].pstate = i + 1;
++	}
++
++	ret = nvkm_clk_ctor(func, device, type, inst, true, &clk->base);
++	if (ret)
++		return ret;
++
++	return 0;
++}
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..2f65a921a426e3f6339a31e964397f6eefa50250
+--- /dev/null
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: MIT */
++#ifndef __NVKM_CLK_GP10B_H__
++#define __NVKM_CLK_GP10B_H__
++
++struct gp10b_clk {
++	/* currently applied parameters */
++	struct nvkm_clk base;
++	struct clk *clk;
++	u32 rate;
++
++	/* new parameters to apply */
++	u32 new_rate;
++};
++#define gp10b_clk(p) container_of((p), struct gp10b_clk, base)
++
++#endif
 
+---
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+change-id: 20250822-gp10b-reclock-77bf36005a86
 
-Tested on:
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
 
-commit:         cf6fc5ee Merge tag 's390-6.17-3' of git://git.kernel.o..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b7511150b112b9c3
-dashboard link: https://syzkaller.appspot.com/bug?extid=2d215d165f9354b9c4ea
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=116eaa34580000
 
 
