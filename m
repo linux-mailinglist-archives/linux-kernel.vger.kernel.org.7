@@ -1,98 +1,350 @@
-Return-Path: <linux-kernel+bounces-783279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C2F7B32B3E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:22:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 464CBB32B48
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AE1A1BC3247
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:23:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 335697B3E15
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169082E9ED0;
-	Sat, 23 Aug 2025 17:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B22226CF4;
+	Sat, 23 Aug 2025 17:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="ZxagSBcl"
-Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TTC5pZJD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11ED2E763D
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 17:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FF51A288
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 17:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755969748; cv=none; b=bdAzy0n6IliiaJQnaswbcqNikQDlwH/ZE7TdVJTiXtKOjjd7VFjiojpiV6T2rBWDaiibd/dTuE5c5Qv4h+MbI1QZzfwJDw0P/F8H1JGBDA/3L6yjJK5U9nuUO6Ak9AbQS7CEw/RAMCx6cYfeKO/hecXiBdly9WpZ4g9ftOerukw=
+	t=1755969967; cv=none; b=azwg47gxuZ5pJWKvmb5/k00+FADz7TfitrtzwBnpsVJVts4IJoF1wD3ITNGi66qHOxGFBKKWCYpA4e0ouBsjwgbJ3Z/HQpmwll3TBI4wZ4eQq8/ACSkwgsbDA5qjMDN380PonHJYNzIjzt36DOGUj7UyJ8HtpDrbtvXiYmpT9ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755969748; c=relaxed/simple;
-	bh=afEhyXcerRxJ2pUFrVuQ80HLCcLlpdreIpO7q+Efovc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Yp6H3lpt2rD/CaujDfqALUxid5/475b4G9Uldf0fHyd92/hg3FFo7hSxqtA7/TzbZa316T56Sslj7f2HLFI0H15XtIuuG1X6p8qU1gON9X5sS/QPRimqR+09ImpGHykU8+CEEl1NgMztGe4Tl4mR5Klk7CntNGgUlGopa58QBV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=ZxagSBcl; arc=none smtp.client-ip=185.136.64.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20250823172217f04991a4fae9961175
-        for <linux-kernel@vger.kernel.org>;
-        Sat, 23 Aug 2025 19:22:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=jan.kiszka@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=9B4yx0Y9gMLMy4+y7N4u4X2Mzh1VO2RHXLHiQLJZ9As=;
- b=ZxagSBclbuvGNfJzD3qK4Az0lXmSg4Oao+t6Jo/HpLOCDcPGF75a/DTYS7pKicTCR5K3kl
- rJkXRrWh0gUG9eSmEsVW5K8QwVfXG/Y1ZWoviGHd/F9Hb2bZx18wP4iWXgkGAxqyd7K20PuV
- KZ8t8Pks6Xo2NvEMaJrsTFk5B0YechsLDi693mjtvFO27UBXZJtUDBDPIx5RRMx90jZdTbfy
- 3Tdcp5zOK1dkfs3TPAEcXj8UXLhGtaQk9zDqeTrmxu4kDIbeDQtlKAPe6JZtvttUA7mLSIKg
- oQDBe8AVnCb5km+bGatx15bkmxk+PDmMwn+GmNz73YJsXVRJ6CY55Tqg==;
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: Ard Biesheuvel <ardb@kernel.org>,
-	Masahisa Kojima <kojima.masahisa@socionext.com>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc: linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sumit Garg <sumit.garg@kernel.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Hua Qian Li <huaqian.li@siemens.com>
-Subject: [PATCH v2 4/4] efi: stmm: Drop unneeded null pointer check
-Date: Sat, 23 Aug 2025 19:22:14 +0200
-Message-ID: <19d1806d6f8b16b77dbdbb0e3ebf5ccae8389fac.1755969734.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1755969734.git.jan.kiszka@siemens.com>
-References: <cover.1755969734.git.jan.kiszka@siemens.com>
+	s=arc-20240116; t=1755969967; c=relaxed/simple;
+	bh=e1kmgWmlUGhFZL70rqdb+2JREf9OJYL5d+iZpZNb2vM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TSIn5ek9UIHdOrbKCXAj+sdZgTio7Cx7MzFXK7auCXh1mgOYf2tt0vZpXGAONbNl7xX6iuvIHfJ34XoOY/Zy/Jge2tFh/aHdoLsKxRdWWSd1v+UmAkmXumA85+l57gtACR6itBCEKIln8U1qVJ+C8pf2rZaD54lOTI0ugi0TcOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TTC5pZJD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 18379C4CEE7;
+	Sat, 23 Aug 2025 17:26:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755969967;
+	bh=e1kmgWmlUGhFZL70rqdb+2JREf9OJYL5d+iZpZNb2vM=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=TTC5pZJDI26xgoHqxvRFFbFXr07KuV9XbPSJOEjVwjNSW30us2VRp9O5SrEWZHMoi
+	 s0rFQRZOpOtkqP9FG5aktzfttBIUgG9pUYWX21CQcpU2H8Fw5MSOOOvAAUiLlMKujv
+	 AAw7U2ywyFcDuiPPpemwooPTjV57NIFe1odfkhEwrByJUEjpHbQnp8OlrNiRjk6mO4
+	 /diXdENdBLJO74+WDlNEfVIh1xe+TZ9jGkXMzvCI0gM4OxVMo0cxBmMqhpUz4+HCFi
+	 fNkpGAx42uBODdAfQ2PqagdEQzoaigSzwJZGZWr+Y2QR7j1GrXSXrgnLPOcyAKRCq2
+	 Fh86NMGaz9cfg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03EBCCA0FE1;
+	Sat, 23 Aug 2025 17:26:07 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Sat, 23 Aug 2025 12:26:05 -0500
+Subject: [PATCH v2] drm/nouveau: Support reclocking on gp10b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-294854:519-21489:flowmailer
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250823-gp10b-reclock-v2-1-90a1974a54e3@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAKz5qWgC/3XMSw6DIBSF4a2YOy4NjyCmo+7DOEB6wZuqGGhMG
+ 8PeS513+J/kfAdkTIQZbs0BCXfKFNca8tKAm+wakNGjNkguNe+kZGETfGQJ3RzdkxkzetVyrm3
+ XQv1sCT29T68fak+UXzF9Tn4Xv/WftAsmmB65QuuVUdrew2Jpvrq4wFBK+QKjMOw3qgAAAA==
+X-Change-ID: 20250822-gp10b-reclock-77bf36005a86
+To: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ nouveau@lists.freedesktop.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755969966; l=7837;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=ORTgFAySW5YP39GAofc6irg3iux8MdjoBE9G2yJqggw=;
+ b=p1rdWeJJgvZVq/cL66hpKKp/8N8spJmWxoJfDY06sn3iyJ/s5z8109b7Et7gJSudb5u8AuuFX
+ pD+rjAfUN6DAhH8J+sTPV1mJudOyNbcHwttPfaJxPHKH9Z1YRAT1tP3
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+From: Aaron Kling <webgeek1234@gmail.com>
 
-The API documenation of setup_mm_hdr does not mention that dptr can be
-NULL, this is a local function, and no caller passes NULL. So drop the
-unneeded check.
+Starting with Tegra186, gpu clock handling is done by the bpmp and there
+is little to be done by the kernel. The only thing necessary for
+reclocking is to set the gpcclk to the desired rate and the bpmp handles
+the rest. The pstate list is based on the downstream driver generates.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Reviewed-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- drivers/firmware/efi/stmm/tee_stmm_efi.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Changes in v2:
+- Fix missing static as reported by kernel ci
+- Link to v1: https://lore.kernel.org/r/20250822-gp10b-reclock-v1-1-5b03eaf3735a@gmail.com
+---
+ drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h |   1 +
+ drivers/gpu/drm/nouveau/nvkm/engine/device/base.c |   1 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild    |   1 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c   | 180 ++++++++++++++++++++++
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h   |  16 ++
+ 5 files changed, 199 insertions(+)
 
-diff --git a/drivers/firmware/efi/stmm/tee_stmm_efi.c b/drivers/firmware/efi/stmm/tee_stmm_efi.c
-index c2bc8467b099..65c0fe1ba275 100644
---- a/drivers/firmware/efi/stmm/tee_stmm_efi.c
-+++ b/drivers/firmware/efi/stmm/tee_stmm_efi.c
-@@ -185,8 +185,7 @@ static void *setup_mm_hdr(u8 **dptr, size_t payload_size, size_t func)
+diff --git a/drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h b/drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h
+index d5d8877064a71581d8e9e92f30a3e28551dabf17..6a09d397c651aa94718aff3d1937162df39cc2ae 100644
+--- a/drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h
++++ b/drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h
+@@ -134,4 +134,5 @@ int gf100_clk_new(struct nvkm_device *, enum nvkm_subdev_type, int inst, struct
+ int gk104_clk_new(struct nvkm_device *, enum nvkm_subdev_type, int inst, struct nvkm_clk **);
+ int gk20a_clk_new(struct nvkm_device *, enum nvkm_subdev_type, int inst, struct nvkm_clk **);
+ int gm20b_clk_new(struct nvkm_device *, enum nvkm_subdev_type, int inst, struct nvkm_clk **);
++int gp10b_clk_new(struct nvkm_device *, enum nvkm_subdev_type, int inst, struct nvkm_clk **);
+ #endif
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
+index 3375a59ebf1a4af73daf4c029605a10a7721c725..2517b65d8faad9947244707f540eb281ad7652e4 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
+@@ -2280,6 +2280,7 @@ nv13b_chipset = {
+ 	.acr      = { 0x00000001, gp10b_acr_new },
+ 	.bar      = { 0x00000001, gm20b_bar_new },
+ 	.bus      = { 0x00000001, gf100_bus_new },
++	.clk      = { 0x00000001, gp10b_clk_new },
+ 	.fault    = { 0x00000001, gp10b_fault_new },
+ 	.fb       = { 0x00000001, gp10b_fb_new },
+ 	.fuse     = { 0x00000001, gm107_fuse_new },
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild
+index dcecd499d8dffae3b81276ed67bb8649dfa3efd1..9fe394740f568909de71a8c420cc8b6d8dc2235f 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild
+@@ -10,6 +10,7 @@ nvkm-y += nvkm/subdev/clk/gf100.o
+ nvkm-y += nvkm/subdev/clk/gk104.o
+ nvkm-y += nvkm/subdev/clk/gk20a.o
+ nvkm-y += nvkm/subdev/clk/gm20b.o
++nvkm-y += nvkm/subdev/clk/gp10b.o
  
- 	var_hdr = (struct smm_variable_communicate_header *)mm_hdr->data;
- 	var_hdr->function = func;
--	if (dptr)
--		*dptr = comm_buf;
-+	*dptr = comm_buf;
- 
- 	return var_hdr->data;
- }
+ nvkm-y += nvkm/subdev/clk/pllnv04.o
+ nvkm-y += nvkm/subdev/clk/pllgt215.o
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..a0be53ffeb4479e4c229bd6bde86bb6bdb082b56
+--- /dev/null
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c
+@@ -0,0 +1,180 @@
++// SPDX-License-Identifier: MIT
++#include <subdev/clk.h>
++#include <subdev/timer.h>
++#include <core/device.h>
++#include <core/tegra.h>
++
++#include "priv.h"
++#include "gk20a.h"
++#include "gp10b.h"
++
++static int
++gp10b_clk_init(struct nvkm_clk *base)
++{
++	struct gp10b_clk *clk = gp10b_clk(base);
++	struct nvkm_subdev *subdev = &clk->base.subdev;
++	int ret;
++
++	/* Start with the highest frequency, matching the BPMP default */
++	base->func->calc(base, &base->func->pstates[base->func->nr_pstates - 1].base);
++	ret = base->func->prog(base);
++	if (ret) {
++		nvkm_error(subdev, "cannot initialize clock\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++static int
++gp10b_clk_read(struct nvkm_clk *base, enum nv_clk_src src)
++{
++	struct gp10b_clk *clk = gp10b_clk(base);
++	struct nvkm_subdev *subdev = &clk->base.subdev;
++
++	switch (src) {
++	case nv_clk_src_gpc:
++		return clk_get_rate(clk->clk) / GK20A_CLK_GPC_MDIV;
++	default:
++		nvkm_error(subdev, "invalid clock source %d\n", src);
++		return -EINVAL;
++	}
++}
++
++static int
++gp10b_clk_calc(struct nvkm_clk *base, struct nvkm_cstate *cstate)
++{
++	struct gp10b_clk *clk = gp10b_clk(base);
++	u32 target_rate = cstate->domain[nv_clk_src_gpc] * GK20A_CLK_GPC_MDIV;
++
++	clk->new_rate = clk_round_rate(clk->clk, target_rate) / GK20A_CLK_GPC_MDIV;
++
++	return 0;
++}
++
++static int
++gp10b_clk_prog(struct nvkm_clk *base)
++{
++	struct gp10b_clk *clk = gp10b_clk(base);
++	int ret;
++
++	ret = clk_set_rate(clk->clk, clk->new_rate * GK20A_CLK_GPC_MDIV);
++	if (ret < 0)
++		return ret;
++
++	clk->rate = clk_get_rate(clk->clk) / GK20A_CLK_GPC_MDIV;
++
++	return 0;
++}
++
++static struct nvkm_pstate
++gp10b_pstates[] = {
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 114750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 216750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 318750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 420750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 522750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 624750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 726750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 828750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 930750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 1032750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 1134750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 1236750,
++		},
++	},
++	{
++		.base = {
++			.domain[nv_clk_src_gpc] = 1300500,
++		},
++	},
++};
++
++static const struct nvkm_clk_func
++gp10b_clk = {
++	.init = gp10b_clk_init,
++	.read = gp10b_clk_read,
++	.calc = gp10b_clk_calc,
++	.prog = gp10b_clk_prog,
++	.tidy = gk20a_clk_tidy,
++	.pstates = gp10b_pstates,
++	.nr_pstates = ARRAY_SIZE(gp10b_pstates),
++	.domains = {
++		{ nv_clk_src_gpc, 0xff, 0, "core", GK20A_CLK_GPC_MDIV },
++		{ nv_clk_src_max }
++	}
++};
++
++int
++gp10b_clk_new(struct nvkm_device *device, enum nvkm_subdev_type type, int inst,
++	      struct nvkm_clk **pclk)
++{
++	struct nvkm_device_tegra *tdev = device->func->tegra(device);
++	const struct nvkm_clk_func *func = &gp10b_clk;
++	struct gp10b_clk *clk;
++	int ret, i;
++
++	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
++	if (!clk)
++		return -ENOMEM;
++	*pclk = &clk->base;
++	clk->clk = tdev->clk;
++
++	/* Finish initializing the pstates */
++	for (i = 0; i < func->nr_pstates; i++) {
++		INIT_LIST_HEAD(&func->pstates[i].list);
++		func->pstates[i].pstate = i + 1;
++	}
++
++	ret = nvkm_clk_ctor(func, device, type, inst, true, &clk->base);
++	if (ret)
++		return ret;
++
++	return 0;
++}
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..2f65a921a426e3f6339a31e964397f6eefa50250
+--- /dev/null
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: MIT */
++#ifndef __NVKM_CLK_GP10B_H__
++#define __NVKM_CLK_GP10B_H__
++
++struct gp10b_clk {
++	/* currently applied parameters */
++	struct nvkm_clk base;
++	struct clk *clk;
++	u32 rate;
++
++	/* new parameters to apply */
++	u32 new_rate;
++};
++#define gp10b_clk(p) container_of((p), struct gp10b_clk, base)
++
++#endif
+
+---
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+change-id: 20250822-gp10b-reclock-77bf36005a86
+
+Best regards,
 -- 
-2.43.0
+Aaron Kling <webgeek1234@gmail.com>
+
 
 
