@@ -1,149 +1,154 @@
-Return-Path: <linux-kernel+bounces-783122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33BEB3299C
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:34:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB48B329A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6450F9E4D58
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 15:34:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 822615C35F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 15:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66092E763D;
-	Sat, 23 Aug 2025 15:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5A62E88AC;
+	Sat, 23 Aug 2025 15:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fFWJB8rU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hRlwP/QW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D413AD4B
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 15:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58EA155C97;
+	Sat, 23 Aug 2025 15:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755963252; cv=none; b=IZkZppa6eQScHnmlT+mBOk9hnNM3nw7yQXfsn390BiDG5RREZFyO7tCEP1inc7Udp7iY4QQvM2mPWgAqf2WMsZZFvA+dxjH1KrZQU2ZLLeinlnQtr+Y8UNK93MJZ0qUVds7YhquNeXC3dZzsjH4Py49eDEWzQjkNYTauVLPk6k8=
+	t=1755963477; cv=none; b=BfiX8zGSwXqxDMOWmvQVLDjP4sycE9OmrDf3qSlDth/gACggS4OvTDSlRjJW1eloo+GDYgOIzx/Ztxfq1zo+mZBVzYRgacRFrLnCK4fyJk4XY0tpORMNvMVahh6oIcNTRCoG9xZdKvt0J9WnW/a17zqLVutOMmKNYZL7UVrc2uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755963252; c=relaxed/simple;
-	bh=kTALLSkXGcreCjIk5ouErmIww5GXzdh4sJZ7jSXzRQo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AvCiZUHE7SItY2QS1jBM3vs5DVguOmQefvnziztcVZ72KHohlM7z0p3xGMkgtd4bTx7Ib2jvsp/wmHypiemtuHn+3R3tafBZvn1nfpW6yosljGJMIQ258PSyEmMCw59iRJbaPEXTcSPozFRv7WtDjc5c/q4GEo5grdJRmr2W7FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fFWJB8rU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 895AAC19421
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 15:34:10 +0000 (UTC)
+	s=arc-20240116; t=1755963477; c=relaxed/simple;
+	bh=66jtfWo50Yf+QiuM7SUi4SewiNY27XCmgKtBWfLSqlU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HxMUii7ucA9aQ1UgCPi0VwqGrTRQWwrC/Gka1goz+VT6SFPWTUARGzOZd/Fz49qctCtXROY2PPYQm6Fzwj6O10fWRBCy3B/uSpID0dHcyBF7Ppn1xKcp1aBbNqQ0NTTCiDcgvCMSidwK5uO42Cks9CHT2DsQN2/eU8g6RAxULmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hRlwP/QW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C55C4CEE7;
+	Sat, 23 Aug 2025 15:37:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755963250;
-	bh=kTALLSkXGcreCjIk5ouErmIww5GXzdh4sJZ7jSXzRQo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fFWJB8rUZTR7k1mJNnrOp0U9u6ycN8+Jk8coMcewCtLpogIycNkCI8WXsKET7qRB3
-	 pltxGuwxlWfyUyFzOT0Y6UANrSTTY7h+e7Tt0uYdoSK+vN5376+mmga3ro7rt8AcKd
-	 xQeJ4b0D11X7cokEVT6D+Z06sQ8efpan8xGj9KS3eAJDbUK1HzkS7xhEKduqugylqf
-	 1arOlaqD4Uxogfzbl2IJUvMpwbuKakn+ZvTkXngEoExybeS67OA8uzF4u11pZkOjbu
-	 gabqZmJULI6gjywr73jsXKqhTv55m20yYbXP/ZS7VRp5XfoQGy+1vh8OUMFiyHFlSG
-	 plEWMicPJ/Srg==
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e2eb6d07bso2615830b3a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 08:34:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW052QCagwEL7Zl7iY8noi1cn3jWuXKGHknbTiU4ZaSqDLFaBscE4yM+OphKkBf4dyKiDTL4+FrEi3UYWM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNC3wD+aiBQtZb896kybdfO+I43ETTgY1jx7oyFNojPI9483sG
-	Lutpvl3ZWZsiT9LxwfdRyioY7i0PkeKGexr0q8RqWzHWhkAf2fLPfiFNtfp3EQMe3bst5lwt52/
-	mtajmkEAyQ+kqx7u2W+FQH/BnR2fpmg==
-X-Google-Smtp-Source: AGHT+IH4plAM5KbETmxDDjvC+xXEie7PQ9eZg3ukysPt7y/ninQ9lLmP959MYy/IC7jqNGnL7Y1cqkNrWOy3mIJtmoY=
-X-Received: by 2002:a17:903:2012:b0:240:2145:e51d with SMTP id
- d9443c01a7336-2462ef440e3mr63417535ad.31.1755963250030; Sat, 23 Aug 2025
- 08:34:10 -0700 (PDT)
+	s=k20201202; t=1755963476;
+	bh=66jtfWo50Yf+QiuM7SUi4SewiNY27XCmgKtBWfLSqlU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hRlwP/QWXWGTarL8Fdrt7rY9UBbedIC7J8iQ2Q2bGA7nBsTTErQRqwe8/tZuGlAn7
+	 yOL+QmL6yTQqHGdUarC7dB+qnU6QvKkoWeYE/vjrKb51vAp9Su7CWgHf2j2yV38YQ1
+	 GTQrOLgw+iO3trQIKepeWI71wqAID2ZOq1QHVs+ewKnElqSSAF6W6j9//nuSX9Es2G
+	 o5odXJoTWp9bb5Q0NtOvxI9wYkxD1Eau5zFYcBs0JoZgEBrP3trrvpyPrCFzGyqIYp
+	 t40B2PHaURU1XhEk9rRF5JvBQ8M4yXUZC7oceP8D3KyQQ/3dEoh82xq3lczPFLu1s1
+	 32gVDR4L+NMTg==
+Message-ID: <926e9bb2-cdde-4048-9ae2-159d088aa935@kernel.org>
+Date: Sat, 23 Aug 2025 17:37:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818-mt8173-fix-hdmi-issue-v1-1-55aff9b0295d@collabora.com>
-In-Reply-To: <20250818-mt8173-fix-hdmi-issue-v1-1-55aff9b0295d@collabora.com>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Sat, 23 Aug 2025 23:35:19 +0800
-X-Gmail-Original-Message-ID: <CAAOTY_9mS+VRu9T45xawO-jdT0Zk+JR3XMbj7So3LuiUfO8_0w@mail.gmail.com>
-X-Gm-Features: Ac12FXw07uZw-AZ_HWLRa8XVVMEzzj7o_IkjPil9tjxcN8KsqqRfui-EkO3JR-w
-Message-ID: <CAAOTY_9mS+VRu9T45xawO-jdT0Zk+JR3XMbj7So3LuiUfO8_0w@mail.gmail.com>
-Subject: Re: [PATCH] drm/mediatek: mtk_hdmi: fix inverted parameters in some
- regmap_update_bits calls
-To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, CK Hu <ck.hu@mediatek.com>, 
-	Guillaume Ranquet <granquet@baylibre.com>, kernel@collabora.com, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/12] dt-bindings: media: nxp: Add support for FSD SoC
+To: Inbaraj E <inbaraj.e@samsung.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
+ cw00.choi@samsung.com, rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com,
+ martink@posteo.de, mchehab@kernel.org, linux-fsd@tesla.com, will@kernel.org,
+ catalin.marinas@arm.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
+ ravi.patel@samsung.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
+ linux-samsung-soc@vger.kernel.org, kernel@puri.sm, kernel@pengutronix.de,
+ festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+References: <20250814140943.22531-1-inbaraj.e@samsung.com>
+ <CGME20250814141014epcas5p410d41ede7e8ae4f3cf8db6d041d03946@epcas5p4.samsung.com>
+ <20250814140943.22531-4-inbaraj.e@samsung.com>
+ <ac9769af-9ab6-4b48-9890-ec3bcda3b180@kernel.org>
+ <00d001dc136a$36ad7230$a4085690$@samsung.com>
+ <7b7f6958-3178-4c6f-8be3-f52ef77464f7@kernel.org>
+ <00d201dc136d$1fdd6bc0$5f984340$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <00d201dc136d$1fdd6bc0$5f984340$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi, Louis:
+On 22/08/2025 16:00, Inbaraj E wrote:
+>> On 22/08/2025 15:39, Inbaraj E wrote:
+>>>>>
+>>>>>    power-domains:
+>>>>>      maxItems: 1
+>>>>>
+>>>>> +  samsung,syscon-csis:
+>>>>
+>>>> samsung, so not nxp. Even more confusing.
+>>>>
+>>>
+>>> I used samsung,syscon-csis because the system controller on Tesla FSD
+>>> follows Samsung's sysreg design.
+>>
+>> OK, this is property for Tesla though, so please use tesla prefix.
+> 
+> Using tesla,syscon-csis results in a "prefix not found" issue when running dtbs_check
+Because you develop on ancient, 10 year old downstream kernel?
 
-Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com> =E6=96=BC 2025=E5=B9=
-=B48=E6=9C=8818=E6=97=A5 =E9=80=B1=E4=B8=80
-=E4=B8=8B=E5=8D=8810:18=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> In mtk_hdmi driver, a recent change replaced custom register access
-> function calls by regmap ones, but two replacements by regmap_update_bits
-> were done incorrectly, because original offset and mask parameters were
-> inverted, so fix them.
+You really do not try enough and this is just wasting our time.
 
-Applied to mediatek-drm-fixes [1], thanks.
+Please think and really carefully check your replies. What prefix do you
+have in compatible? This command:
+git grep tesla, | wc -l
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
-log/?h=3Dmediatek-drm-fixes
+gives '99' results including obviously vendor prefix.
 
-Regards,
-Chun-Kuang.
+So your warning is basically impossible or your code is just broken.
+Don't just ask maintainers on every little trouble you have. You must
+debug it. Not we.
 
->
-> Fixes: d6e25b3590a0 ("drm/mediatek: hdmi: Use regmap instead of iomem for=
- main registers")
-> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_hdmi.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediat=
-ek/mtk_hdmi.c
-> index 845fd8aa43c3c91659808d9e6bb78758d1f9b857..b766dd5e6c8de6d16bff50972=
-b45c3c1a083b985 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-> @@ -182,8 +182,8 @@ static inline struct mtk_hdmi *hdmi_ctx_from_bridge(s=
-truct drm_bridge *b)
->
->  static void mtk_hdmi_hw_vid_black(struct mtk_hdmi *hdmi, bool black)
->  {
-> -       regmap_update_bits(hdmi->regs, VIDEO_SOURCE_SEL,
-> -                          VIDEO_CFG_4, black ? GEN_RGB : NORMAL_PATH);
-> +       regmap_update_bits(hdmi->regs, VIDEO_CFG_4,
-> +                          VIDEO_SOURCE_SEL, black ? GEN_RGB : NORMAL_PAT=
-H);
->  }
->
->  static void mtk_hdmi_hw_make_reg_writable(struct mtk_hdmi *hdmi, bool en=
-able)
-> @@ -310,8 +310,8 @@ static void mtk_hdmi_hw_send_info_frame(struct mtk_hd=
-mi *hdmi, u8 *buffer,
->
->  static void mtk_hdmi_hw_send_aud_packet(struct mtk_hdmi *hdmi, bool enab=
-le)
->  {
-> -       regmap_update_bits(hdmi->regs, AUDIO_PACKET_OFF,
-> -                          GRL_SHIFT_R2, enable ? 0 : AUDIO_PACKET_OFF);
-> +       regmap_update_bits(hdmi->regs, GRL_SHIFT_R2,
-> +                          AUDIO_PACKET_OFF, enable ? 0 : AUDIO_PACKET_OF=
-F);
->  }
->
->  static void mtk_hdmi_hw_config_sys(struct mtk_hdmi *hdmi)
->
-> ---
-> base-commit: afb39542bbf14acf910012eee2d4159add05d384
-> change-id: 20250818-mt8173-fix-hdmi-issue-287cf353b077
->
-> Best regards,
-> --
-> Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
->
+Best regards,
+Krzysztof
 
