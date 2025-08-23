@@ -1,76 +1,104 @@
-Return-Path: <linux-kernel+bounces-782850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B0BB32602
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:42:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F13A6B32604
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE1F2160F4A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:41:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E97077B05B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A8612C544;
-	Sat, 23 Aug 2025 00:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55601339B1;
+	Sat, 23 Aug 2025 00:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFlC4Rma"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="S8hZWVU6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E207917555;
-	Sat, 23 Aug 2025 00:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA30C2F85B;
+	Sat, 23 Aug 2025 00:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755909663; cv=none; b=a8hxeYHnVnC82cyiQSeP5b2BvfJWWNDHnaw+yYPwj7ZpCtC06g7EotluS9/82PxiaN2MXpq3+vw/E0Sb8+NvUapZDAb9RAfrS1XUa94KoRFNXAElUVfPuJeamVyAGWaCwEvVkLlaCak0We6CDD+CvZixyqqcSB3d9HA70Wk0zS4=
+	t=1755909782; cv=none; b=pQvGfZtmPilm+tpo4Doeg+aldqCn6FbvfvKeSZE5apOGa5xjAd/z1Uuk/6DLVnBYGiiFPrpHqs/T8RS/erKSFEFG2tlxPBDNFIBYBAswkWuPc69JajnGG6PvAJTaxdCLUeyCs8hGxMlG0670bZ78CYwUB6xBYB3zBXsQJtYeeG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755909663; c=relaxed/simple;
-	bh=2mzoyM2JBNjfl77GWifwuEf7PZ+aIHVWVYOq0Ryj65U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZTd7CJzY9I+jJWu4sxxfC2r+qB6/aPlWQMYQrVICZeFQ90OmoKb+VnOcIiHQYTS53HfkZGzR25DUy3vW70Nhl5rvXJnYsITyS/WKWMIsrOD1amgJPZhwj8q+owxqDeNBTecP5wtZJgEF04n0PNvvTYjhm2QIxfHKsHijcDnIl4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFlC4Rma; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 349C1C4CEED;
-	Sat, 23 Aug 2025 00:41:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755909662;
-	bh=2mzoyM2JBNjfl77GWifwuEf7PZ+aIHVWVYOq0Ryj65U=;
+	s=arc-20240116; t=1755909782; c=relaxed/simple;
+	bh=EKwFARSCxE6DW/3EQ5i9Wr8vmKaZVfVfckT18HUdQE8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=uvRV/NkW/AaenXS5jzyHp/HB3Hn5TPCxDLaR4y4eOozKPwo025hBSlW6iOER6I6k8eGQYinGbXaTZifyFTQIoqADlus3gwVI5GHtukvgcbTycEYQF5M8My9HJmOiOGLs6IXwc5VtqCnpTSL//CsWYydV+ivySRwq7oCDqGw8ob8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=S8hZWVU6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C7C6C4CEED;
+	Sat, 23 Aug 2025 00:43:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1755909781;
+	bh=EKwFARSCxE6DW/3EQ5i9Wr8vmKaZVfVfckT18HUdQE8=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WFlC4RmaHgt+2X9BoqJj/TxLhNzSxypS0dcn/BI+JBGJxrK/SCMkk/IuuuqJIzb+t
-	 NSZOOfDA6PP9aIOiZ0lgAIcNlors0huZmjTdI/FZKTFHlQxrwriEQpch9kn37eJTML
-	 SIqD0kpdC8vQHRGj4eVLNrKHSTd7Rp0xGFuLQCQn41D2urjf+WsH+Vr2RQWC/G2Ge2
-	 jNRBSK6L3Un+pMKecgf1klt0/IqXTVYnuhye9ct3Ul1GRV3PC24cpMvZH8owdDNFUM
-	 9Y54P7LmS8RBxP2M6uSAjENEMLSCDCA0MEOBZ20fGx/mf4Jnlbw3QwEN4RmoHr0Uv4
-	 0SFW59qPb+KZA==
-Date: Fri, 22 Aug 2025 17:40:59 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- andrew+netdev@lunn.ch, horms@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, michael.chan@broadcom.com,
- pavan.chebbi@broadcom.com, vsrama-krishna.nemani@broadcom.com, Vikas Gupta
- <vikas.gupta@broadcom.com>, Rajashekar Hudumula
- <rajashekar.hudumula@broadcom.com>
-Subject: Re: [v3, net-next 1/9] bng_en: Add initial support for RX and TX
- rings
-Message-ID: <20250822174059.4db32c9d@kernel.org>
-In-Reply-To: <20250821211517.16578-2-bhargava.marreddy@broadcom.com>
-References: <20250821211517.16578-1-bhargava.marreddy@broadcom.com>
-	<20250821211517.16578-2-bhargava.marreddy@broadcom.com>
+	b=S8hZWVU6hakZ1AbQJY4qDd9ZvCnTU2Gw+bC1eFg4cq0BeGVUmBchZh/wksiAWI8pu
+	 +XFkJju44Ls9/D8MWUzK+x4U/k8MLbI6bDadFCqMj2rSDYTHoSNyxSMXs7k1OJ9ML/
+	 3HkdUAtQiBgCUKib2sOu+2fDGf1bDvrdTvP73/d4=
+Date: Fri, 22 Aug 2025 17:42:59 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Shuah Khan <shuah@kernel.org>, David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
+ <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
+ <mhocko@suse.com>, Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard
+ <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, Leon Romanovsky
+ <leon@kernel.org>, Zi Yan <ziy@nvidia.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>, Ryan
+ Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
+ <baohua@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
+ Ghiti <alex@ghiti.fr>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, kevin.brodsky@arm.com,
+ kernel@collabora.com
+Subject: Re: [PATCH v3 0/8] selftests/mm: Add compiler flags and fix found
+ warnings
+Message-Id: <20250822174259.bf4ed76a0da7d0d6f80ba2c1@linux-foundation.org>
+In-Reply-To: <20250822082145.4145617-1-usama.anjum@collabora.com>
+References: <20250822082145.4145617-1-usama.anjum@collabora.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 21 Aug 2025 21:15:09 +0000 Bhargava Marreddy wrote:
-> +		page_pool_destroy(rxr->page_pool);
-> +		if (bnge_separate_head_pool(rxr))
-> +			page_pool_destroy(rxr->head_pool);
-> +		rxr->page_pool = rxr->head_pool = NULL;
+On Fri, 22 Aug 2025 13:20:57 +0500 Muhammad Usama Anjum <usama.anjum@collabora.com> wrote:
 
-Please update with the recently-committed changes to the bnxt driver.
--- 
-pw-bot: cr
+> Recently, I reviewed a patch on the mm/kselftest mailing list about a
+> test which had obvious type mismatch fix in it. It was strange why that
+> wasn't caught during development and when patch was accepted. This led
+> me to discover that those extra compiler options to catch these warnings
+> aren't being used. When I added them, I found tens of warnings in just
+> mm suite.
+> 
+> In this series, I'm adding these flags and fixing those warnings. In the
+> last try several months ago [1], I'd patches for individual tests. I've
+> made patches better by grouping the same type of fixes together. Hence
+> there is no changelog for individual patches.
+
+I think it would be best to avoid adding warnings to selftests which
+aren't present in the main kernel code.  If only to avoid surprising
+people over what isn't permissible in selftests/.
+
+In particular, there's an expectation that we can do
+
+#else
+static inline int some_stub(type1 arg1, type2 arg2)
+{
+}
+#endif
+
+without warning.  We do this extensively.
+
+Also, please be aware that there's already a patch in mm-new which
+centralizes selftests' __maybe_unused definition.
+https://git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new.git/tree/patches/selftests-centralise-maybe-unused-definition-in-kselftesth.patch
 
