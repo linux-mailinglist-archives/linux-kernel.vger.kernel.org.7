@@ -1,224 +1,261 @@
-Return-Path: <linux-kernel+bounces-783222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759E9B32ACA
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:22:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BB23B32ACF
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5FB0680813
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:17:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E338118946DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62632EB847;
-	Sat, 23 Aug 2025 16:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C56A157A6B;
+	Sat, 23 Aug 2025 16:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eXzQD+JH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mwOT3Eah"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC9E78F2F;
-	Sat, 23 Aug 2025 16:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80392E92A0;
+	Sat, 23 Aug 2025 16:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755965599; cv=none; b=BUI31AVjafyrcqdaV8VlDm4U8oIuxCwQ1AGgPe3PCSf7W8OAtCZhkvTI8lL9B/mBVaWyBzKntW9nQnoRPX+E0YvVkD0BiC/zG+xa+d6SoBn/PrruS97gpdm4BGsXk6rSVQV7zSeM6P7aLE2RGGBiBxvwuwMRlg2mqeEevTZ4U+k=
+	t=1755965638; cv=none; b=qdvNF8ZFGKjnX0udMuBwvQmsP1oFIZaz+WNf0+7zaX12nNEdEDuNUMWNQbMaJejbI5Dwi9GpCtekp30g9C9q4de3n7oLVDDZpohzqP68GrzGzyDJ6rLMmjHgfFQTY4xjeOAYLbeZ23A+iUDxP7Vuklko1b8v1ELA1NA+Q4ia+hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755965599; c=relaxed/simple;
-	bh=ZeW3RXOU2C8HuaW/Q/Dz90rTuwyjzrVLADpjszYvC1Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DJmEasy8lmcdXMKWv7xgQ26D/EYG8t4eFIhSehGOrqQziIjWGjBgit+FIuEeDsyWzaMReEA11NmyQhoy6bWNyzyqm0i1ETE3VPqAlR+2pyYwuPSKEh0EYiDEdX+d8J8uFBLpy6ZbG3jWaUHqFlj0BCkfzh5g2bG/u0u07xCVtW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eXzQD+JH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 297E7C4CEE7;
-	Sat, 23 Aug 2025 16:13:15 +0000 (UTC)
+	s=arc-20240116; t=1755965638; c=relaxed/simple;
+	bh=XaPvEnRFO7P4KvitECQfWezTdZsWUoJ2K1hXS1ViaaQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ajsv4sSZ2sbDdnBc9lKwW/SAjIoIx9yljqraVGEAakvYQkeLVnxp0QKq0h4nElEKmXCnRThnWqQ3VFzzcvTY4AA5OMumpRaDDPTWE3MWXy+pF+1PbVSIFKgdCSm3pNk7nkgMJlgitDw9m+I2FJryFaROL3HoWdVLhgN6sYODvKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mwOT3Eah; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40A3CC4CEE7;
+	Sat, 23 Aug 2025 16:13:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755965598;
-	bh=ZeW3RXOU2C8HuaW/Q/Dz90rTuwyjzrVLADpjszYvC1Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eXzQD+JHWLMU00xgMRgN9cNl+cGT74Hsdz/NhBFkoFttFgacupR9Allwyt25mBwkU
-	 Hg2LkyOh3BnY54dUhU7j1UhoS8Fd8aaTl2cqV74oW8Yx/3aDfAzC3SPurcRNrs1dGr
-	 NedzZlufM63QkeCWBorIJzWtgapc2qovRPUn7zoHWfmhLB2yekE4OIQiq/W4zuQZgh
-	 58y12DKdhoxyZPEekmbweViVD4UOyIEKstGtgImVZDZi+0MZNkpTTieeJm/ZSrWW1b
-	 hHWyPTAnlGoiLjRL+sPM7Xpa7VYSJxEjat4Rdsi6WplNAD49PZ30z0Ns8sYuaCL2F4
-	 xKedwPvF5gHEg==
-Message-ID: <8995c33a-8ff2-4fec-8849-73f18d04a3ab@kernel.org>
-Date: Sat, 23 Aug 2025 18:13:14 +0200
+	s=k20201202; t=1755965637;
+	bh=XaPvEnRFO7P4KvitECQfWezTdZsWUoJ2K1hXS1ViaaQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mwOT3EahRhLnSDnBsMWD8EGciO+59kw6Z3vnNjDr3+IIUSCK15El8g7D9hs3utaA9
+	 BjWYog1TETd4M9qD/rxV7BmE29+QjuU5maMNZ5o2mHUxTO0ikFlurKseDdN7OOcxWf
+	 jO8vEoU3Tp9x0p0Fk8mVnSFKqom4IOaXGm0ZY/uZwXatlccylisBaxdmf6zirrKb96
+	 umBwHhk+uHlhWc51D/vihVb5l/OQ6qmAwH0tU51fsOoa/AHR7kQ8EI5sapf2A0aAOr
+	 pu4wgWutV6l5UTx2e8kvGf0SypMMhaWc002l71cJhQmWcXnfKtk92P/McZkqH+PQ0+
+	 HizWK4HyDyEEQ==
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-3111c59720dso1527092fac.1;
+        Sat, 23 Aug 2025 09:13:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV0Jq1PiotXiA0CdR7YNJ8qpy8PEF1SDZhbIEqLsjpfNI9OnrYAspthArmVWBQ7CDu3m1EEGdFA8Rm3gddR@vger.kernel.org, AJvYcCWrZmVWKZ7IHEXylGfSF71iVdnWK2cn0vojbU+Efsvrv3AmxY4adQUSGy8DvAqvZ0/Jzm/Esa+P7Y57@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTbZmxXvdhGLqJbUZokuMBGXavdlX+/XlV8myped2CjQ5+C5mo
+	kdo+uGIkbNM+5DSMxI4scc9xEkQZ/cOsD2iah+KTRQf8lgdFzf8q6C2ubmFOwt3TcB3jjzWgcia
+	Ktgh+wFQFjbsl30qunVX7t8hCn7RihOA=
+X-Google-Smtp-Source: AGHT+IHQEQMNRFxeAFDw7ZZNHI4KcgNqKGMxdGr0V6CWZ143cN26OeQMrUwAFF3q9rtDoJ5ONnscfNKcf0YyvCNPGr4=
+X-Received: by 2002:a05:6808:1925:b0:40b:999f:b2f0 with SMTP id
+ 5614622812f47-4378513f9bdmr2855384b6e.0.1755965636515; Sat, 23 Aug 2025
+ 09:13:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/14] dmaengine: dma350: Support ARM DMA-250
-To: Jisheng Zhang <jszhang@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250823154009.25992-1-jszhang@kernel.org>
- <20250823154009.25992-15-jszhang@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250823154009.25992-15-jszhang@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250728070612.1260859-1-lihuisong@huawei.com> <20250728070612.1260859-3-lihuisong@huawei.com>
+In-Reply-To: <20250728070612.1260859-3-lihuisong@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sat, 23 Aug 2025 18:13:44 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jckgZfuh=yAqoftG1Q-1z0ngLXQa4TX-iwuy54UmWMng@mail.gmail.com>
+X-Gm-Features: Ac12FXwRVEFVjYqhwBmbr-fMWP6hx7gXW6rHkFyiOf8ARTCUMeoFlL5z7tBeYq0
+Message-ID: <CAJZ5v0jckgZfuh=yAqoftG1Q-1z0ngLXQa4TX-iwuy54UmWMng@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] ACPI: processor: idle: Optimize acpi idle driver registration
+To: Huisong Li <lihuisong@huawei.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com, liuyonglong@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 23/08/2025 17:40, Jisheng Zhang wrote:
->  	struct device *dev = &pdev->dev;
-> @@ -893,8 +1262,9 @@ static int d350_probe(struct platform_device *pdev)
->  	r = FIELD_GET(IIDR_VARIANT, reg);
->  	p = FIELD_GET(IIDR_REVISION, reg);
->  	if (FIELD_GET(IIDR_IMPLEMENTER, reg) != IMPLEMENTER_ARM ||
-> -	    FIELD_GET(IIDR_PRODUCTID, reg) != PRODUCTID_DMA350)
-> -		return dev_err_probe(dev, -ENODEV, "Not a DMA-350!");
-> +	    ((FIELD_GET(IIDR_PRODUCTID, reg) != PRODUCTID_DMA350) &&
-> +	    FIELD_GET(IIDR_PRODUCTID, reg) != PRODUCTID_DMA250))
-> +		return dev_err_probe(dev, -ENODEV, "Not a DMA-350/DMA-250!");
->  
->  	reg = readl_relaxed(base + DMAINFO + DMA_BUILDCFG0);
->  	nchan = FIELD_GET(DMA_CFG_NUM_CHANNELS, reg) + 1;
-> @@ -917,13 +1287,38 @@ static int d350_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> +	if (device_is_compatible(dev, "arm,dma-250")) {
-
-No, don't sprinkle compatibles through driver code. driver match data is
-for that.
-
-> +		u32 cfg2;
-> +		int secext_present;
+On Mon, Jul 28, 2025 at 9:06=E2=80=AFAM Huisong Li <lihuisong@huawei.com> w=
+rote:
+>
+> Currently, the acpi idle driver is registered from within a CPU
+> hotplug callback. Although this didn't cause any functional issues,
+> this is questionable and confusing. And it is better to register
+> the cpuidle driver when all of the CPUs have been brought up.
+>
+> So add a new function to initialize acpi_idle_driver based on the
+> power management information of an available CPU and register cpuidle
+> driver in acpi_processor_driver_init().
+>
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>  drivers/acpi/processor_driver.c |  3 ++
+>  drivers/acpi/processor_idle.c   | 65 +++++++++++++++++++++------------
+>  include/acpi/processor.h        |  8 ++++
+>  3 files changed, 53 insertions(+), 23 deletions(-)
+>
+> diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor_dri=
+ver.c
+> index 65e779be64ff..bc9f58a02c1d 100644
+> --- a/drivers/acpi/processor_driver.c
+> +++ b/drivers/acpi/processor_driver.c
+> @@ -263,6 +263,8 @@ static int __init acpi_processor_driver_init(void)
+>         if (result < 0)
+>                 return result;
+>
+> +       acpi_processor_register_idle_driver();
 > +
-> +		dmac->is_d250 = true;
+>         result =3D cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+>                                    "acpi/cpu-drv:online",
+>                                    acpi_soft_cpu_online, NULL);
+> @@ -301,6 +303,7 @@ static void __exit acpi_processor_driver_exit(void)
+>
+>         cpuhp_remove_state_nocalls(hp_online);
+>         cpuhp_remove_state_nocalls(CPUHP_ACPI_CPUDRV_DEAD);
+> +       acpi_processor_unregister_idle_driver();
+>         driver_unregister(&acpi_processor_driver);
+>  }
+>
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
+c
+> index 031738390f2d..c71802d42e8a 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -1360,7 +1360,48 @@ int acpi_processor_power_state_has_changed(struct =
+acpi_processor *pr)
+>         return 0;
+>  }
+>
+> -static int acpi_processor_registered;
+> +void acpi_processor_register_idle_driver(void)
+> +{
+> +       struct acpi_processor *pr;
+> +       int ret =3D -ENODEV;
+> +       int cpu;
 > +
-> +		cfg2 = readl_relaxed(base + DMAINFO + DMA_BUILDCFG2);
-> +		secext_present = (cfg2 & DMA_CFG_HAS_TZ) ? 1 : 0;
-> +		dmac->cntx_mem_size = nchan * 64 * (1 + secext_present);
-> +		dmac->cntx_mem = dma_alloc_coherent(dev, dmac->cntx_mem_size,
-> +						    &dmac->cntx_mem_paddr,
-> +						    GFP_KERNEL);
-> +		if (!dmac->cntx_mem)
-> +			return dev_err_probe(dev, -ENOMEM, "Failed to alloc context memory\n");
+> +       /*
+> +        * Acpi idle driver is used by all possible CPUs.
+> +        * Install the idle handler by the processor power info of one in=
+ them.
+> +        * Note that we use previously set idle handler will be used on
+> +        * platforms that only support C1.
+> +        */
+> +       for_each_cpu(cpu, (struct cpumask *)cpu_possible_mask) {
+> +               pr =3D per_cpu(processors, cpu);
+> +               if (!pr)
+> +                       continue;
 > +
-> +		ret = devm_add_action_or_reset(dev, d250_cntx_mem_release, dmac);
-> +		if (ret) {
-> +			dma_free_coherent(dev, dmac->cntx_mem_size,
-> +					  dmac->cntx_mem, dmac->cntx_mem_paddr);
-> +			return ret;
-> +		}
-> +		writel_relaxed(dmac->cntx_mem_paddr, base + DMANSECCTRL + NSEC_CNTXBASE);
-> +	}
+> +               ret =3D acpi_processor_get_power_info(pr);
+> +               if (!ret) {
+> +                       pr->flags.power_setup_done =3D 1;
+> +                       acpi_processor_setup_cpuidle_states(pr);
+> +                       break;
+> +               }
+> +       }
 > +
->  	dma_set_mask_and_coherent(dev, DMA_BIT_MASK(aw));
->  	coherent = device_get_dma_attr(dev) == DEV_DMA_COHERENT;
->  
->  	reg = readl_relaxed(base + DMAINFO + DMA_BUILDCFG1);
->  	dmac->nreq = FIELD_GET(DMA_CFG_NUM_TRIGGER_IN, reg);
->  
-> -	dev_dbg(dev, "DMA-350 r%dp%d with %d channels, %d requests\n", r, p, dmac->nchan, dmac->nreq);
-> +	dev_info(dev, "%s r%dp%d with %d channels, %d requests\n",
-> +		 dmac->is_d250 ? "DMA-250" : "DMA-350", r, p, dmac->nchan, dmac->nreq);
+> +       if (ret) {
+> +               pr_debug("No ACPI power information from any CPUs.\n");
+> +               return;
+> +       }
+> +
+> +       ret =3D cpuidle_register_driver(&acpi_idle_driver);
+> +       if (ret) {
+> +               pr_debug("register %s failed.\n", acpi_idle_driver.name);
+> +               return;
+> +       }
+> +       pr_debug("%s registered with cpuidle.\n", acpi_idle_driver.name);
+> +}
+> +
+> +void acpi_processor_unregister_idle_driver(void)
+> +{
+> +       cpuidle_unregister_driver(&acpi_idle_driver);
+> +}
+>
+>  int acpi_processor_power_init(struct acpi_processor *pr)
+>  {
+> @@ -1375,22 +1416,7 @@ int acpi_processor_power_init(struct acpi_processo=
+r *pr)
+>         if (!acpi_processor_get_power_info(pr))
+>                 pr->flags.power_setup_done =3D 1;
+>
+> -       /*
+> -        * Install the idle handler if processor power management is supp=
+orted.
+> -        * Note that we use previously set idle handler will be used on
+> -        * platforms that only support C1.
+> -        */
+>         if (pr->flags.power) {
+> -               /* Register acpi_idle_driver if not already registered */
+> -               if (!acpi_processor_registered) {
+> -                       acpi_processor_setup_cpuidle_states(pr);
+> -                       retval =3D cpuidle_register_driver(&acpi_idle_dri=
+ver);
+> -                       if (retval)
+> -                               return retval;
+> -                       pr_debug("%s registered with cpuidle\n",
+> -                                acpi_idle_driver.name);
+> -               }
+> -
+>                 dev =3D kzalloc(sizeof(*dev), GFP_KERNEL);
+>                 if (!dev)
+>                         return -ENOMEM;
+> @@ -1403,13 +1429,10 @@ int acpi_processor_power_init(struct acpi_process=
+or *pr)
+>                  */
+>                 retval =3D cpuidle_register_device(dev);
+>                 if (retval) {
+> -                       if (acpi_processor_registered =3D=3D 0)
+> -                               cpuidle_unregister_driver(&acpi_idle_driv=
+er);
+>                         kfree(dev);
+>                         per_cpu(acpi_cpuidle_device, pr->id) =3D NULL;
+>                         return retval;
+>                 }
+> -               acpi_processor_registered++;
+>         }
+>         return 0;
+>  }
+> @@ -1423,10 +1446,6 @@ int acpi_processor_power_exit(struct acpi_processo=
+r *pr)
+>
+>         if (pr->flags.power) {
+>                 cpuidle_unregister_device(dev);
+> -               acpi_processor_registered--;
+> -               if (acpi_processor_registered =3D=3D 0)
+> -                       cpuidle_unregister_driver(&acpi_idle_driver);
+> -
+>                 kfree(dev);
+>         }
+>
+> diff --git a/include/acpi/processor.h b/include/acpi/processor.h
+> index d0eccbd920e5..1249f5e81d92 100644
+> --- a/include/acpi/processor.h
+> +++ b/include/acpi/processor.h
+> @@ -423,6 +423,8 @@ int acpi_processor_power_init(struct acpi_processor *=
+pr);
+>  int acpi_processor_power_exit(struct acpi_processor *pr);
+>  int acpi_processor_power_state_has_changed(struct acpi_processor *pr);
+>  int acpi_processor_hotplug(struct acpi_processor *pr);
+> +void acpi_processor_register_idle_driver(void);
+> +void acpi_processor_unregister_idle_driver(void);
+>  #else
+>  static inline int acpi_processor_power_init(struct acpi_processor *pr)
+>  {
+> @@ -443,6 +445,12 @@ static inline int acpi_processor_hotplug(struct acpi=
+_processor *pr)
+>  {
+>         return -ENODEV;
+>  }
+> +static void acpi_processor_register_idle_driver(void)
+> +{
+> +}
+> +static void acpi_processor_unregister_idle_driver(void)
+> +{
+> +}
+>  #endif /* CONFIG_ACPI_PROCESSOR_IDLE */
+>
+>  /* in processor_thermal.c */
+> --
 
-No, don't makek drivers more verbose. Please follow Linux driver
-design/coding style - this should be silent on success.
+Applied as 6.18 material, thanks!
 
->  
->  	for (int i = min(dw, 16); i > 0; i /= 2) {
->  		dmac->dma.src_addr_widths |= BIT(i);
-> @@ -935,7 +1330,10 @@ static int d350_probe(struct platform_device *pdev)
->  	dmac->dma.device_alloc_chan_resources = d350_alloc_chan_resources;
->  	dmac->dma.device_free_chan_resources = d350_free_chan_resources;
->  	dma_cap_set(DMA_MEMCPY, dmac->dma.cap_mask);
-> -	dmac->dma.device_prep_dma_memcpy = d350_prep_memcpy;
-> +	if (dmac->is_d250)
-> +		dmac->dma.device_prep_dma_memcpy = d250_prep_memcpy;
-> +	else
-> +		dmac->dma.device_prep_dma_memcpy = d350_prep_memcpy;
->  	dmac->dma.device_pause = d350_pause;
->  	dmac->dma.device_resume = d350_resume;
->  	dmac->dma.device_terminate_all = d350_terminate_all;
-> @@ -971,8 +1369,8 @@ static int d350_probe(struct platform_device *pdev)
->  			return dch->irq;
->  
->  		dch->has_wrap = FIELD_GET(CH_CFG_HAS_WRAP, reg);
-> -		dch->has_trig = FIELD_GET(CH_CFG_HAS_TRIGIN, reg) &
-> -				FIELD_GET(CH_CFG_HAS_TRIGSEL, reg);
-> +		dch->has_xsizehi = FIELD_GET(CH_CFG_HAS_XSIZEHI, reg);
-> +		dch->has_trig = FIELD_GET(CH_CFG_HAS_TRIGIN, reg);
->  
->  		/* Fill is a special case of Wrap */
->  		memset &= dch->has_wrap;
-> @@ -994,8 +1392,13 @@ static int d350_probe(struct platform_device *pdev)
->  		dma_cap_set(DMA_SLAVE, dmac->dma.cap_mask);
->  		dma_cap_set(DMA_CYCLIC, dmac->dma.cap_mask);
->  		dmac->dma.device_config = d350_slave_config;
-> -		dmac->dma.device_prep_slave_sg = d350_prep_slave_sg;
-> -		dmac->dma.device_prep_dma_cyclic = d350_prep_cyclic;
-> +		if (dmac->is_d250) {
-> +			dmac->dma.device_prep_slave_sg = d250_prep_slave_sg;
-> +			dmac->dma.device_prep_dma_cyclic = d250_prep_cyclic;
-> +		} else {
-> +			dmac->dma.device_prep_slave_sg = d350_prep_slave_sg;
-> +			dmac->dma.device_prep_dma_cyclic = d350_prep_cyclic;
-> +		}
->  	}
->  
->  	if (memset) {
-> @@ -1019,6 +1422,7 @@ static void d350_remove(struct platform_device *pdev)
->  
->  static const struct of_device_id d350_of_match[] __maybe_unused = {
->  	{ .compatible = "arm,dma-350" },
-> +	{ .compatible = "arm,dma-250" },
-
-And based on that devices would be compatible...
-
-BTW, incorrect order - 2 < 3.
-
-
-
-Best regards,
-Krzysztof
+While at it, in the future, please always spell ACPI in capitals in
+patch subjects, changelogs and code comments.
 
