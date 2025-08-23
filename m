@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-783102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64450B32962
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:46:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4C7B32965
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FED51885FDD
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:45:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E306E1893914
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F75229B77C;
-	Sat, 23 Aug 2025 14:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF0D21B8F5;
+	Sat, 23 Aug 2025 14:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GZ0U1lwO"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="truQuPMy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79A429CB56;
-	Sat, 23 Aug 2025 14:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821222135D1
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 14:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755960289; cv=none; b=EgvLz52ft1syfxsQ5shKaOyShAZ2HsBMEtJ5kB+SXSUxR117KhufVXTAJfEzCrHMfbfNRCWH9m3T5x3hz1urLGAjsJFMlRt2+LiBtjA9RiINA2wp0qDfmlkWtKxSfXzP4HLtZSDUDmQ02BTe31dq6lEt777h2UvYDPeXm8dNz5Q=
+	t=1755960313; cv=none; b=SdSfz6dedWv+nd6aai+J/JZjKZ4JbOndiSep4Yyr+dhGFEKko6Abx56XBKwLqb3wbtN2p5TpECZDp3sHlUWJqmcpTWC83u9jOwV0qtYKIL2jSpILjcGer8cu523CnbsxYUF5GWFK0zGaxArMPUAeNlDkVAmekCqu91qCLJVTZNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755960289; c=relaxed/simple;
-	bh=XLNrun7kIQT0mqwRRQMKsvdopi3C5S5qwDroaXv6eG0=;
+	s=arc-20240116; t=1755960313; c=relaxed/simple;
+	bh=i/F8Fwe6uYBrP8vNdDFheItSGQyFXOJkkIi52nL/IPE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PV1ZN6KMpXTIIiOtLYCFe6D5g9KArZdsWKh29Uj5LU1jZf6Gi4+DazNysRIgnptWbHqxATHDYZARCSvQdg6SPbR1tzGqv7DWOMWK6cvYfAqcKA0cuxz6RyHG/JuflnND3/aZKquAwdHxSwbqVpdDKmM7QF1YDpY92/pEPNVqglY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GZ0U1lwO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E44D5C4CEE7;
-	Sat, 23 Aug 2025 14:44:48 +0000 (UTC)
+	 Content-Disposition; b=k4/3du26sBzULqNStb0O7VDwDIJh2uTS9bi0Gw2BXZ84GyI3dWUMJt8N3i7psP/bLhNuSKA04pH0/1+wf8VNuEWQbVPq1h7InrwYDqaHAfNQ7VaNrT+47WKExAhU9pyEZ3UbRzEV7Sx2RbZdKV0S54x60FHTtx0+Qcn5U3x4fJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=truQuPMy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2DC9C4CEF4;
+	Sat, 23 Aug 2025 14:45:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755960289;
-	bh=XLNrun7kIQT0mqwRRQMKsvdopi3C5S5qwDroaXv6eG0=;
+	s=korg; t=1755960313;
+	bh=i/F8Fwe6uYBrP8vNdDFheItSGQyFXOJkkIi52nL/IPE=;
 	h=Date:From:To:Cc:Subject:From;
-	b=GZ0U1lwOKx2sLU1WmkoD6So2eMp9mWJ16iqwQxRUgZNwJMlUAgG3d5BseorFi9YPe
-	 sS8QZsjaWHnhjR6BLzrTBsleSjqZVkANwyAinIn7PQFm3y0u7ZgYrBuDkE/xF2ngXV
-	 1yOuoSe+zTavB/ewPWaeYGfxEZp4dIVkY7Zvty90=
-Date: Sat, 23 Aug 2025 16:44:46 +0200
+	b=truQuPMyBls82wZK36J5GbpvsC86kmXzTO4+hIVprdGz0EOSoXlrmyHumLQaViShO
+	 /YHiaKoUZS8Qs41UGyEM7T02AZFJZ+SUW8QKA7Auhnh9wv6SJs4h0WiDXw98PSiSFM
+	 wOBtw0G0L6TY6NRJdipNgUvZppDHnGP4Sc4+M56Q=
+Date: Sat, 23 Aug 2025 16:45:10 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB driver fixes for 6.17-rc3
-Message-ID: <aKnT3gmJbnYFoALE@kroah.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Char/Misc/IIO driver fixes for 6.17-rc3
+Message-ID: <aKnT9goiCOPLVeZe@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,104 +53,93 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.17-rc3
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-6.17-rc3
 
-for you to fetch changes up to ff9a09b3e09c7b794b56f2f5858f5ce42ba46cb3:
+for you to fetch changes up to fe85261d7d554f54693f205898260ef1d44cbd8b:
 
-  usb: xhci: fix host not responding after suspend and resume (2025-08-19 16:12:13 +0200)
+  Merge tag 'iio-fixes-for-6.17a' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/jic23/iio into char-misc-linus (2025-08-20 11:05:00 +0200)
 
 ----------------------------------------------------------------
-USB fixes for 6.17-rc3
+Char/Misc/IIO fixes for 6.17-rc3
 
-Here are some small USB driver fixes for 6.17-rc3 to resolve a bunch of
-reported issues.  Included in here are:
-  - typec driver fixes
-  - dwc3 new device id
-  - dwc3 driver fixes
-  - new usb-storage driver quirks
-  - xhci driver fixes
-  - other tiny USB driver fixes to resolve bugs
+Here are a small number of char/misc/iio and other driver fixes for
+6.17-rc3.  Included in here are:
+  - IIO driver bugfixes for reported issues
+  - bunch of comedi driver fixes
+  - most core bugfix
+  - fpga driver bugfix
+  - cdx driver bugfix
 
 All of these have been in linux-next this week with no reported issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Alan Stern (1):
-      USB: core: Update kerneldoc for usb_hcd_giveback_urb()
+Claudiu Beznea (2):
+      iio: adc: rzg2l: Cleanup suspend/resume path
+      iio: adc: rzg2l_adc: Set driver data before enabling runtime PM
 
-Amit Sunil Dhamne (2):
-      usb: typec: maxim_contaminant: disable low power mode when reading comparator values
-      usb: typec: maxim_contaminant: re-enable cc toggle if cc is open and port is clean
+David Lechner (6):
+      iio: accel: sca3300: fix uninitialized iio scan data
+      iio: proximity: isl29501: fix buffered read on big-endian systems
+      iio: adc: ad7173: prevent scan if too many setups requested
+      iio: temperature: maxim_thermocouple: use DMA-safe buffer for spi_read()
+      iio: adc: ad7124: fix channel lookup in syscalib functions
+      iio: adc: ad7380: fix missing max_conversion_rate_hz on adaq4381-4
 
-Heikki Krogerus (1):
-      usb: dwc3: pci: add support for the Intel Wildcat Lake
+Edward Adam Davis (1):
+      comedi: pcl726: Prevent invalid irq number
 
-Kuen-Han Tsai (1):
-      usb: dwc3: Ignore late xferNotReady event to prevent halt timeout
+Greg Kroah-Hartman (1):
+      Merge tag 'iio-fixes-for-6.17a' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/jic23/iio into char-misc-linus
 
-Mael GUERIN (1):
-      USB: storage: Add unusual-devs entry for Novatek NTK96550-based camera
+Ian Abbott (2):
+      comedi: Fix use of uninitialized memory in do_insn_ioctl() and do_insnlist_ioctl()
+      comedi: Make insn_rw_emulate_bits() do insn->n samples
 
-Marek Vasut (1):
-      usb: renesas-xhci: Fix External ROM access timeouts
+Jean-Baptiste Maneyrol (1):
+      iio: imu: inv_icm42600: change invalid data error to -EBUSY
 
-Miao Li (1):
-      usb: quirks: Add DELAY_INIT quick for another SanDisk 3.2Gen1 Flash Drive
+Jonathan Cameron (1):
+      iio: light: as73211: Ensure buffer holes are zeroed
 
-Niklas Neronin (1):
-      usb: xhci: fix host not responding after suspend and resume
+Matti Vaittinen (1):
+      iio: adc: bd79124: Add GPIOLIB dependency
 
-Russell King (Oracle) (1):
-      usb: gadget: tegra-xudc: fix PM use count underflow
+Miaoqian Lin (1):
+      most: core: Drop device reference after usage in get_channel()
 
-Sebastian Andrzej Siewior (1):
-      kcov, usb: Don't disable interrupts in kcov_remote_start_usb_softirq()
-
-Sebastian Reichel (1):
-      usb: typec: fusb302: Revert incorrect threaded irq fix
-
-Selvarasu Ganesan (1):
-      usb: dwc3: Remove WARN_ON for device endpoint command timeouts
+Salah Triki (1):
+      iio: pressure: bmp280: Use IS_ERR() in bmp280_common_probe()
 
 Thorsten Blum (1):
-      usb: storage: realtek_cr: Use correct byte order for bcs->Residue
+      cdx: Fix off-by-one error in cdx_rpmsg_probe()
 
-Weitao Wang (1):
-      usb: xhci: Fix slot_id resource race conflict
+Xu Yilun (1):
+      fpga: zynq_fpga: Fix the wrong usage of dma_map_sgtable()
 
-Xu Yang (2):
-      usb: core: hcd: fix accessing unmapped memory in SINGLE_STEP_SET_FEATURE test
-      usb: chipidea: imx: improve usbmisc_imx7d_pullup()
-
-Zenm Chen (1):
-      USB: storage: Ignore driver CD mode for Realtek multi-mode Wi-Fi dongles
-
- drivers/usb/chipidea/ci_hdrc_imx.c         |  3 +-
- drivers/usb/chipidea/usbmisc_imx.c         | 23 ++++++++----
- drivers/usb/core/hcd.c                     | 28 ++++++++-------
- drivers/usb/core/quirks.c                  |  1 +
- drivers/usb/dwc3/dwc3-pci.c                |  2 ++
- drivers/usb/dwc3/ep0.c                     | 20 ++++++++---
- drivers/usb/dwc3/gadget.c                  | 19 ++++++++--
- drivers/usb/gadget/udc/tegra-xudc.c        |  9 +++--
- drivers/usb/host/xhci-hub.c                |  3 +-
- drivers/usb/host/xhci-mem.c                | 22 ++++++------
- drivers/usb/host/xhci-pci-renesas.c        |  7 ++--
- drivers/usb/host/xhci-ring.c               |  9 +++--
- drivers/usb/host/xhci.c                    | 23 ++++++++----
- drivers/usb/host/xhci.h                    |  3 +-
- drivers/usb/storage/realtek_cr.c           |  2 +-
- drivers/usb/storage/unusual_devs.h         | 29 +++++++++++++++
- drivers/usb/typec/tcpm/fusb302.c           | 12 ++++---
- drivers/usb/typec/tcpm/maxim_contaminant.c | 58 ++++++++++++++++++++++++++++++
- drivers/usb/typec/tcpm/tcpci_maxim.h       |  1 +
- include/linux/kcov.h                       | 47 +++++-------------------
- 20 files changed, 224 insertions(+), 97 deletions(-)
+ drivers/cdx/controller/cdx_rpmsg.c               |  3 +-
+ drivers/comedi/comedi_fops.c                     |  5 ++
+ drivers/comedi/drivers.c                         | 27 ++++----
+ drivers/comedi/drivers/pcl726.c                  |  3 +-
+ drivers/fpga/zynq-fpga.c                         |  8 +--
+ drivers/iio/accel/sca3300.c                      |  2 +-
+ drivers/iio/adc/Kconfig                          |  2 +-
+ drivers/iio/adc/ad7124.c                         | 14 ++--
+ drivers/iio/adc/ad7173.c                         | 87 ++++++++++++++++++++----
+ drivers/iio/adc/ad7380.c                         |  1 +
+ drivers/iio/adc/rzg2l_adc.c                      | 33 +++------
+ drivers/iio/imu/inv_icm42600/inv_icm42600_temp.c |  6 +-
+ drivers/iio/light/as73211.c                      |  2 +-
+ drivers/iio/pressure/bmp280-core.c               |  9 +--
+ drivers/iio/proximity/isl29501.c                 | 14 ++--
+ drivers/iio/temperature/maxim_thermocouple.c     | 26 ++++---
+ drivers/most/core.c                              |  2 +-
+ 17 files changed, 159 insertions(+), 85 deletions(-)
 
