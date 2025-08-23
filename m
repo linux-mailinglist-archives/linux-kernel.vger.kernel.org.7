@@ -1,136 +1,108 @@
-Return-Path: <linux-kernel+bounces-783345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 485B0B32BFF
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 22:38:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04BC5B32C00
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 22:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 879C617D2B5
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 20:38:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 772D89E2A38
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 20:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28882EA463;
-	Sat, 23 Aug 2025 20:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="tW/QUY+t";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VLwgjZTy"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218752EAD05;
+	Sat, 23 Aug 2025 20:41:35 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7872EA166
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 20:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13427202F93
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 20:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755981508; cv=none; b=MsFHCT/mCVZo+KUkWCNw+VHKtg6gkLDZOwGpNCrBVSEC8KXO4XeCtohRKupFmQJ4j+yizR/SOHd28RZzKFtMYyBcxrfWS7fq5N+rgsq7ehBYzmhKByL+71oR4/E5aPoORCRcLv0gPTBhjU6DLlW3166egQMdUBFNd68w5fTTEzc=
+	t=1755981694; cv=none; b=mF6WCYUnI/rFjQP5Wq7nwXlErVVJLqfdGtE+XWsskQ1JXkzU6N0DgdTg1XAO7rrfnLnu+xKCC+XaS6/GlLL7HqDdq8zULTzxHlNSGvv6a54NDo9GGsKUN09XgqKgr+JgHTT1hciNIAFkfJ3zH1ROX2C4dBcKn/UKxLnY/HgYebg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755981508; c=relaxed/simple;
-	bh=5wsejkLHKFxRG8WE8YufagqnxC5MsGVE83BwNdNzxzE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=WXQzD8KdyjFvWQ1yO3YZrhcioM97yseQFWaOJIT9IpJuYTecnzmJFY6MxUP2iLWda/cSjqAVTvMu1Zjs6FC4fo6f8n8sgsf8RHx4k78ru5R91oGnKvH5zXSjYsb2m/9tQhra1haH3KzvkbD69BNm0EejjUnioK+EGG9pXB6bAEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=tW/QUY+t; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VLwgjZTy; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 12CCAEC00A3;
-	Sat, 23 Aug 2025 16:38:25 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Sat, 23 Aug 2025 16:38:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1755981505;
-	 x=1756067905; bh=5wsejkLHKFxRG8WE8YufagqnxC5MsGVE83BwNdNzxzE=; b=
-	tW/QUY+tlhyfCXJ4OMfhSCM3J23mVKvlmuDdWApskvIGRzQgQ5ptE6yvzmk0sO08
-	uRApHHgX529echVUXinnev5x/mZ8qA8IHgy1wqb6cmjiG5Fe7zHmb0qjgrLSh4ia
-	cfyzVBos1+9EzNf6hg80+CZhJgh4q6be9Fp8sW5Bwsr/kbnIQKzVYw3PPDDZPV0G
-	8TxbJw/Q0I7YgtAtbV0vw+D+a/41LLjokitzfoHXnGcLk0t77NvtVr0SbqVwf169
-	DVgaGvHg9dahQS+wS5r/r5Ob8KYUK+Wk1R/+0ZU7yXNVbUFyH9XdvkXV5esUooVo
-	oYIapa57RJOqQBYvevK73A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755981505; x=
-	1756067905; bh=5wsejkLHKFxRG8WE8YufagqnxC5MsGVE83BwNdNzxzE=; b=V
-	LwgjZTy8OAk0wSRskO/XXNrdRt7TNTuwC9qaM2GJ5G6p+0/rKyabjWyXOskQo662
-	tEQxUPuE3dqaQsm0aOo8KO/gjFcybPzHE5x39iU0+pvu+l4NLHVf2Nq3SfwNZgIO
-	iPtHhD3Gx3Un/dPs59RonGrGRuw2PvEZs5l1jflWRzVwNZoUhFijbdh/9ngxdrHn
-	YiJknhRHklWj5ZDpzECOKoEaoIq+m9lpIRoTMPy4Vf8ttQF5CffvF2UOJIfOzKh5
-	MZvntVHf7BMFzB84BcDX3a+6NyI2Gdatk7+CAl1ePT9/Wwn3iN+er1/ziC36McCE
-	0MDsRAgf7VNH5e/t3goDQ==
-X-ME-Sender: <xms:vyaqaMoaPuGPA4SsKZ40-SH6lQGHcveSOj3kkMBq10_LEzR3Zjxi2g>
-    <xme:vyaqaCoAsdms5nTE1ZKBcI2Gn4m277TFFwVu-dZXB4k-ZEFLND6kEAvstOnUpd6-J
-    8kfjpM6iy91EHI5WEY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieejieduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudekpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhope
-    hmrghthhhivghurdguvghsnhhohigvrhhssegvfhhfihgtihhoshdrtghomhdprhgtphht
-    thhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgtphhtthhopehsvggrnh
-    hjtgesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggv
-    rggurdhorhhgpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtphhtth
-    hopegthhgvnhhhuhgrtggriheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgruhhl
-    mhgtkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfigvihdrlhhiuheskhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:vyaqaBy1x8OrM8aQs09ZE8Q3rgnGuGFEadI7z8PsEgmlSOvOv8YP0g>
-    <xmx:vyaqaFMERqJ1GlXpFlil6DyDqQtGoM3cDl5lJwdiFF9PTeDH2o_ZPg>
-    <xmx:vyaqaP4fLfrc59P2Ry5r639DO2dBM_TGKkv_T7AGiLYS9qc__dN4qA>
-    <xmx:vyaqaLfcwucqU5uaFMuDwA1Q6adwHj5fDm2X7st4rnRXa0usReKk3A>
-    <xmx:wSaqaNYTH8r36XMJsNZg4kEB0Ji7xLD54IZbey5FPXyHWiMiNa_azccH>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id BA953700065; Sat, 23 Aug 2025 16:38:23 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1755981694; c=relaxed/simple;
+	bh=wG3vvjHzyBSEBv33+pmHnTNn8b7XOAGIOz/5ug5o+HI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Tv29L7yz/gEFeKjCOoVCe0Wg+P2R3BDlIeN2dE5PBzFPdPv1VTasiU9FhT/uLxox4dcUhvY+aeftTCxCPfjiImfC3kZyhog0CUl1SudIfuNexW/dDS9K4ssRBof7z9pI+G6auYoA0DTxourbwO/XVJOs1AmyYth2MKUs4gq8yog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [127.0.0.2] (unknown [114.241.87.235])
+	by APP-03 (Coremail) with SMTP id rQCowAAnt3hmJ6poUtm0Dg--.189S2;
+	Sun, 24 Aug 2025 04:41:11 +0800 (CST)
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+Date: Sun, 24 Aug 2025 04:40:41 +0800
+Subject: [PATCH] uio: uio_pdrv_genirq: Remove MODULE_DEVICE_TABLE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AdWbVQT9FCf7
-Date: Sat, 23 Aug 2025 22:37:02 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Thomas Gleixner" <tglx@linutronix.de>,
- LKML <linux-kernel@vger.kernel.org>
-Cc: "Jens Axboe" <axboe@kernel.dk>,
- "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Paolo Bonzini" <pbonzini@redhat.com>,
- "Sean Christopherson" <seanjc@google.com>, "Wei Liu" <wei.liu@kernel.org>,
- "Dexuan Cui" <decui@microsoft.com>, x86@kernel.org,
- "Heiko Carstens" <hca@linux.ibm.com>,
- "Christian Borntraeger" <borntraeger@linux.ibm.com>,
- "Sven Schnelle" <svens@linux.ibm.com>, "Huacai Chen" <chenhuacai@kernel.org>,
- "Paul Walmsley" <paul.walmsley@sifive.com>,
- "Palmer Dabbelt" <palmer@dabbelt.com>
-Message-Id: <1ab8b2fa-1959-46c5-ad98-e2f549a35969@app.fastmail.com>
-In-Reply-To: <20250823161655.256689417@linutronix.de>
-References: <20250823161326.635281786@linutronix.de>
- <20250823161655.256689417@linutronix.de>
-Subject: Re: [patch V2 31/37] asm-generic: Provide generic TIF infrastructure
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250824-uio-no-modalias-v1-1-aef6943d04ac@iscas.ac.cn>
+X-B4-Tracking: v=1; b=H4sIAEgnqmgC/yXMQQ7CIBCF4auQWTsGKCr2KqYLoKNOIqDQNiZN7
+ y6xy+8l71+hUmGq0IsVCi1cOacGdRAQni49CHlsBi31SVptcOaMKWPMo3uxq+iv3phOdtIGC+3
+ 1LnTn7794G3YX+swtPO0jeFcJQ46Rp14s56O6YAkKhm37AQMJIK6OAAAA
+X-Change-ID: 20250824-uio-no-modalias-b9b4430308c8
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Michal Simek <monstr@monstr.eu>, Wolfram Sang <wsa@kernel.org>, 
+ "Hans J. Koch" <hjk@hansjkoch.de>
+Cc: Vivian Wang <uwu@dram.page>, linux-kernel@vger.kernel.org, 
+ Greg Kroah-Hartman <gregkh@suse.de>, Vivian Wang <wangruikang@iscas.ac.cn>
+X-Mailer: b4 0.14.2
+X-CM-TRANSID:rQCowAAnt3hmJ6poUtm0Dg--.189S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cr4kXFW7tF1UJFyDZw4xJFb_yoW8GFyDpF
+	48GFWayr4jgayUW3Z7A34fXa409347KrWv9FW7Kw1a9393AryjqF47KFnrG3s8Xr1rXay5
+	AFWkXw18WFW0va7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+	7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbSfO7
+	UUUUU==
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On Sat, Aug 23, 2025, at 18:40, Thomas Gleixner wrote:
-> Common TIF bits do not have to be defined by every architecture. They can
-> be defined in a generic header.
->
-> That allows adding generic TIF bits without chasing a gazillion of
-> architecture headers, which is again a unjustified burden on anyone who
-> works on generic infrastructure as it always needs a boat load of work to
-> keep existing architecture code working when adding new stuff.
->
->
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Arnd Bergmann <arnd@arndb.de>
+The struct of_device_id list here is filled in at load time. It does not
+work with MODULE_DEVICE_TABLE, which generates an alias at build time.
+In this case, it generates the aliases "of:N*T*" and "of:N*T*C*", which
+matches *any* OF device node, which is obviously not intended. It
+confuses userspace into loading this module for any OF device, and
+confuses anyone trying to resolve an OF modalias.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 27760f868663 ("uio: uio_pdrv_genirq: Add OF support")
+Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
+---
+ drivers/uio/uio_pdrv_genirq.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/uio/uio_pdrv_genirq.c b/drivers/uio/uio_pdrv_genirq.c
+index 2ec7d25e826490999404382e6aa69e4af56f7fe8..633ab6b916719e783d0f82cb2f8decac35a37054 100644
+--- a/drivers/uio/uio_pdrv_genirq.c
++++ b/drivers/uio/uio_pdrv_genirq.c
+@@ -276,7 +276,6 @@ static struct of_device_id uio_of_genirq_match[] = {
+ 	{ /* This is filled with module_parm */ },
+ 	{ /* Sentinel */ },
+ };
+-MODULE_DEVICE_TABLE(of, uio_of_genirq_match);
+ module_param_string(of_id, uio_of_genirq_match[0].compatible, 128, 0);
+ MODULE_PARM_DESC(of_id, "Openfirmware id of the device to be handled by uio");
+ #endif
+
+---
+base-commit: 062b3e4a1f880f104a8d4b90b767788786aa7b78
+change-id: 20250824-uio-no-modalias-b9b4430308c8
+
+Best regards,
+-- 
+Vivian "dramforever" Wang
+
 
