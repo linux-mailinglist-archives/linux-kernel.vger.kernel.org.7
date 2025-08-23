@@ -1,164 +1,173 @@
-Return-Path: <linux-kernel+bounces-783356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC3BB32C49
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 00:04:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4918B32C4E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 00:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2A961B67BC6
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 22:04:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9ADB9E75E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 22:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F372ECE98;
-	Sat, 23 Aug 2025 22:04:16 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EAB2BEFFF;
+	Sat, 23 Aug 2025 22:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EW5gCCJT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94523213E90;
-	Sat, 23 Aug 2025 22:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4E214A62B;
+	Sat, 23 Aug 2025 22:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755986656; cv=none; b=XU3CF8g9/sx0iQVovZy85kQqblkyg2H0FgbMoyS7h1oX1kQYAa8kIi4A8l3MCgqaKeUq7fK67P+G/EHXajxUBbvkJMViOkLdyKQtUo40deNMiBwsl6s/aM4uOS5xQtEA1LklFZGzvBR7AnM5Yo9GFZmPWOhSyk+rJ17Ct8D1r0w=
+	t=1755987952; cv=none; b=fH+NuSulinSmr1WH9bPRmB+dmXCIXTagCh6TQI5WFceFbt+uBtldWYuwi39zSbvmuzBRvsAwttNU5jVPHqe6IdHnhOvTLyGrrRelpq4bmnxz/Kg+cMSh5Fsgl7nhFi/6ifQLkbub5R6xHNhuTXT0Ru6P+VJhYvkIqzx2+BqYe5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755986656; c=relaxed/simple;
-	bh=p8FPxRkpiveFIPvuznvmmdtULMo3VmRFVUcfwq1IO/c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HTBwcCSh9ErVzbLitwrcN/K2bOh4kE7uFBk7pkj+EysO5NgOSnhSjYJI4OcgBtxQbOoTg4bKSKv2ShjYc/xMCPH3ZLx+70uLDQrwIP1GXUpjHV4nMoeblCrqnnrom/9NTWcDB/QnV4rxqYldC63gu85Ytk/Wryir25WsuGLwfCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from mop.sam.mop (2.8.3.0.0.0.0.0.0.0.0.0.0.0.0.0.a.5.c.d.c.d.9.1.0.b.8.0.1.0.0.2.ip6.arpa [IPv6:2001:8b0:19dc:dc5a::382])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sam)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 1DA29340E2B;
-	Sat, 23 Aug 2025 22:04:08 +0000 (UTC)
-From: Sam James <sam@gentoo.org>
-To: Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>
-Cc: acme@kernel.org,  adityag@linux.ibm.com,  adrian.hunter@intel.com,
-  ak@linux.intel.com,  alexander.shishkin@linux.intel.com,
-  amadio@gentoo.org,  atrajeev@linux.vnet.ibm.com,  bpf@vger.kernel.org,
-  chaitanyas.prakash@arm.com,  changbin.du@huawei.com,
-  charlie@rivosinc.com,  dvyukov@google.com,  james.clark@linaro.org,
-  jolsa@kernel.org,  justinstitt@google.com,  kan.liang@linux.intel.com,
-  kjain@linux.ibm.com,  lihuafei1@huawei.com,
-  linux-kernel@vger.kernel.org,  linux-perf-users@vger.kernel.org,
-  llvm@lists.linux.dev,  mark.rutland@arm.com,  mhiramat@kernel.org,
-  mingo@redhat.com,  morbo@google.com,  namhyung@kernel.org,
-  nathan@kernel.org,  nick.desaulniers+lkml@gmail.com,
-  peterz@infradead.org,  sesse@google.com,  song@kernel.org
-Subject: Re: [PATCH v5 00/19] Support dynamic opening of capstone/llvm
- remove BUILD_NONDISTRO
-In-Reply-To: <CAP-5=fV+-VZ+SsGL1SJGYMEv-gwkv1AKk_6MZJ4tLBrCXFnMQA@mail.gmail.com>
-Organization: Gentoo
-References: <87ldnacz33.fsf@gentoo.org> <87cy8mcyy4.fsf@gentoo.org>
-	<CAP-5=fV+-VZ+SsGL1SJGYMEv-gwkv1AKk_6MZJ4tLBrCXFnMQA@mail.gmail.com>
-User-Agent: mu4e 1.12.12; emacs 31.0.50
-Date: Sat, 23 Aug 2025 23:04:06 +0100
-Message-ID: <87zfbpae5l.fsf@gentoo.org>
+	s=arc-20240116; t=1755987952; c=relaxed/simple;
+	bh=o4tfWUnrvWW45XkZjNc1uODnZaubDv7GA3aKCYWJF4U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QH2Fu0XPv3arwqon2aEW42sBXn3KbDrt9Q9IVkRqwy7zDW7iLqTdOQGiAxh4GUoQaHFn1TA8ECBY/Ei89rx5p6F1jSivg01Rqzn9tRJ8z9QmZP3kJeg1tlNc1I/53QSLnvM75fCuMdj/x0xVErzwS4QLpL+BlHv58tdPouxVqN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EW5gCCJT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 006EEC4CEE7;
+	Sat, 23 Aug 2025 22:25:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755987952;
+	bh=o4tfWUnrvWW45XkZjNc1uODnZaubDv7GA3aKCYWJF4U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EW5gCCJTK7w2G0x+G3zywZXedzHj9/qQI1rjhYF+wvNvopXKT7P6FrAkAuFi8cKmj
+	 I8lTL32lfQ1nqgO2elnEwFep+tvlWkgW9UKFfD4dS9yXpxgdG1G8jVF0JZI3girzc2
+	 MeIT2aesP36eC+S/Z1eSvm1YW7ebomNsH4l71ZUldiy+VOABv4pjqsr/A5zJYwI5HS
+	 XJlIgElipnkM9PuxuJlRJNNKwJl34n6/PwfEDiorLfkAUbxNJvt7UJawH3gCyEDzr9
+	 TAQA6OlARepjOpflztscbknBTiySWrM7ZSlzOxgyzp5GwK5xLmJz3RB9eyNW1sUBbC
+	 fa0AsZsHGo/Aw==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55ce5243f6dso3627339e87.2;
+        Sat, 23 Aug 2025 15:25:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVOT7VFp2kLNx7uQbkTXHkWdmBra6DKqp4Mm+20063vkJJSGbtWhBTbSKpY9hXWiK3WJg3x1/6qUQuH5Q0=@vger.kernel.org, AJvYcCWRpISuHyeuAG5KT0Wc6gZYFmQCUXH1hPGmf7YcjWCv09reNkiu77R8UEnK8v4SCNVTIGvM5MhD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI+OYKilHuOflZE5jVZdjSBDi1PXJvewo8zdgjVAUwkQdL4QvZ
+	/eYAuVjNp5+XRx7J8SuqPho23bElij/laUSSV5qYp5VmCnEibDu+Lg9PiJnNL4bnD59BT1bd3yZ
+	NpEcAEultC8lIJHy2KI4jUh1+ZEWhwBU=
+X-Google-Smtp-Source: AGHT+IEAJZ5I9jytEZddwlocNfvIS6Y8INNTtScihMjxLZcdUP+pDu2NWjNEprTyR8UYHe48zmc40UAAKEbPmo50WKc=
+X-Received: by 2002:a05:6512:6284:b0:55a:5122:91ea with SMTP id
+ 2adb3069b0e04-55f0ccce7e5mr2161677e87.34.1755987950359; Sat, 23 Aug 2025
+ 15:25:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20250822041526.467434-1-CFSworks@gmail.com>
+In-Reply-To: <20250822041526.467434-1-CFSworks@gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sun, 24 Aug 2025 08:25:39 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXH38gOUpDDdarCXPAY3BHBbuFzdD=Dq7Knsg-qHJoNqzQ@mail.gmail.com>
+X-Gm-Features: Ac12FXx4h-esqmUyLXFQpc9yLkNC9WcNoc6ief3rZx4PjW95nKGNarPk-LBLvw8
+Message-ID: <CAMj1kXH38gOUpDDdarCXPAY3BHBbuFzdD=Dq7Knsg-qHJoNqzQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64/boot: Zero-initialize idmap PGDs before use
+To: Sam Edwards <cfsworks@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Marc Zyngier <maz@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Baruch Siach <baruch@tkos.co.il>, Kevin Brodsky <kevin.brodsky@arm.com>, 
+	Joey Gouly <joey.gouly@arm.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Ian Rogers <irogers@google.com> writes:
+Hi Sam,
 
-> On Fri, Aug 22, 2025 at 11:52=E2=80=AFPM Sam James <sam@gentoo.org> wrote:
->>
->> > A few months ago, objdump was the only way to get
->> > source line support [0]. Is that still the case?
->>
->> ... or is this perhaps handled by "[PATCH v5 18/19] perf srcline:
->> Fallback between addr2line implementations", in which case, shouldn't
->> that really land first so people can try the LLVM impl and use the
->> binutils one if it fails?
+On Fri, 22 Aug 2025 at 14:15, Sam Edwards <cfsworks@gmail.com> wrote:
 >
-> So my opinion, BUILD_NON_DISTRO isn't supported and the code behind it
-> should go away. Please don't do anything to the contrary or enable it
-> for your distribution - this was supposed to be implied by the name.
-
-We're principally a source-based distribution, so it's not as much of an
-issue.
-
-> The forking and running addr2line gets around the license issue that
-> is GPLv3* but comes with a performance overhead. It also has a
-> maintenance overhead supporting llvm and binutil addr2line, when the
-> addr2line output changes things break, etc. (LLVM has been evolving
-> their output but I'm not aware of it breaking things yet). We should
-> (imo) delete the forking and running addr2line support, it fits the
-> billing of something we can do when capstone and libLLVM support
-> aren't there but the code is a hot mess and we don't do exhaustive
-> testing against the many addr2line flavors, the best case is buyer
-> beware. Capstone is derived from libLLVM, I'm not sure it makes sense
-> having 2 libraries for this stuff. There's libLLVM but what it
-> provides through a C API is a mess requiring the C++ shimming. Tbh, I
-> think most of what these libraries provide we should just get over
-> ourselves and provide in perf itself. For example, does it make sense
-> to be trying to add type annotations to objdump output, to just update
-> objdump or have a disassembler library where we can annotate things as
-> we see fit? Library bindings don't break when text output formats get
-> tweaked. Given we're doing so much dwarf processing, do we need a
-> library for that or should that just be in-house? We can side step
-> most of this mess by starting again in python as is being shown in the
-> textual changes that bring with it stuff like console flame graphs:
-> https://lore.kernel.org/lkml/CAP-5=3DfU=3Dz8kcY4zjezoxSwYf9vczYzHztiMSBvJ=
-xdwwBPVWv2Q@mail.gmail.com/
-> So I think long term we make the perf tool minimal with minimal
-> dependencies (ie no addr2line, libLLVM, etc.), we work on having nice
-> stuff in the python stuff where we can reuse or build new libraries
-> for addr2line, objdump-ing, etc. Use >1 thread, use asyncio, etc.
-
-Yeah, this absolutely sounds like the right direction indeed. I'm glad
-to hear it.
-
+> In early boot, Linux creates identity virtual->physical address mappings
+> so that it can enable the MMU before full memory management is ready.
+> To ensure some available physical memory to back these structures,
+> vmlinux.lds reserves some space (and defines marker symbols) in the
+> middle of the kernel image. However, because they are defined outside of
+> PROGBITS sections, they aren't pre-initialized -- at least as far as ELF
+> is concerned.
 >
-> For where we are now, ie no python stuff, BUILD_NON_DISTRO should go
-> away as nobody is maintaining it and hasn't for 2 years (what happens
-> when libbfd and libiberty change?)
-
-They don't change often, though. The fixes are usually trivial when they
-do arise.
-
-> We should focus on making the best
-> of what we have via libraries/tools that are supported - while not
-> forcing the libraries to be there or making the perf binary massive by
-> dragging in say libLLVM. The patch series pushes in that direction and
-> I commend it to the reader.
+> In the typical case, this isn't actually a problem: the boot image is
+> prepared with objcopy, which zero-fills the gaps, so these structures
+> are incidentally zero-initialized (an all-zeroes entry is considered
+> absent, so zero-initialization is appropriate).
 >
-> No, reordering the patches to compare performance of binutils doesn't
-> make sense, just build with and without the patch series if you want
-> to do this, but also don't do this as BUILD_NON_DISTRO should go away.
-
-I was asking purely because of the *functionality loss*, though, not
-performance. In the thread I linked from just a few months ago with Ingo
-Molnar, there was a real issue with llvm or capstone-based disassembly
-not showing source information. I'd hit the same problem. Is that fixed now?
-
-This is my principal concern rather than the LLVM dependency (even if
-I'd love to avoid that, I understand and appreciate the arguments you're
-making above and intent on future direction).
-
+> However, that is just a happy accident: the `vmlinux` ELF output
+> authoritatively represents the state of memory at entry. If the ELF
+> says a region of memory isn't initialized, we must treat it as
+> uninitialized. Indeed, certain bootloaders (e.g. Broadcom CFE) ingest
+> the ELF directly -- sidestepping the objcopy-produced image entirely --
+> and therefore do not initialize the gaps. This results in the early boot
+> code crashing when it attempts to create identity mappings.
 >
-> Thanks,
-> Ian
->
-> * (As I understand the issue IANAL) GPLv3 and GPLv2 can't be linked
-> together. Why not just use GPLv3? A major issue for me is that GPLv3
-> adds a requirement for =E2=80=9CInstallation Information=E2=80=9D to be p=
-rovided,
-> which means placing a binary in a cryptographically signed OS
-> partition you'd need to reveal the signing key which defeats the
-> purpose of signing the partition to ensure you aren't hacked. I like
-> open source and using the code, I don't want to be hacked by giving to
-> the hackers my signing keys.
+> Therefore, add boot-time zero-initialization for the following:
+> - __pi_init_idmap_pg_dir..__pi_init_idmap_pg_end
+> - idmap_pg_dir
+> - reserved_pg_dir
 
-I think the way people usually handle this is allowing a custom key to
-be added, but then it taints the device. That's how I think routers seem
-to handle it often anyway.
+I don't think this is the right approach.
+
+If the ELF representation is inaccurate, it should be fixed, and this
+should be achievable without impacting the binary image at all.
+
+> - tramp_pg_dir # Already done, but this patch corrects the size
+>
+
+What is wrong with the size?
+
+> Note, swapper_pg_dir is already initialized (by copy from idmap_pg_dir)
+> before use, so this patch does not need to address it.
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+> ---
+>  arch/arm64/kernel/head.S | 12 ++++++++++++
+>  arch/arm64/mm/mmu.c      |  3 ++-
+>  2 files changed, 14 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+> index ca04b338cb0d..0c3be11d0006 100644
+> --- a/arch/arm64/kernel/head.S
+> +++ b/arch/arm64/kernel/head.S
+> @@ -86,6 +86,18 @@ SYM_CODE_START(primary_entry)
+>         bl      record_mmu_state
+>         bl      preserve_boot_args
+>
+> +       adrp    x0, reserved_pg_dir
+> +       add     x1, x0, #PAGE_SIZE
+> +0:     str     xzr, [x0], 8
+> +       cmp     x0, x1
+> +       b.lo    0b
+> +
+> +       adrp    x0, __pi_init_idmap_pg_dir
+> +       adrp    x1, __pi_init_idmap_pg_end
+> +1:     str     xzr, [x0], 8
+> +       cmp     x0, x1
+> +       b.lo    1b
+> +
+>         adrp    x1, early_init_stack
+>         mov     sp, x1
+>         mov     x29, xzr
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index 34e5d78af076..aaf823565a65 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -761,7 +761,7 @@ static int __init map_entry_trampoline(void)
+>         pgprot_val(prot) &= ~PTE_NG;
+>
+>         /* Map only the text into the trampoline page table */
+> -       memset(tramp_pg_dir, 0, PGD_SIZE);
+> +       memset(tramp_pg_dir, 0, PAGE_SIZE);
+>         __create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS,
+>                              entry_tramp_text_size(), prot,
+>                              pgd_pgtable_alloc_init_mm, NO_BLOCK_MAPPINGS);
+> @@ -806,6 +806,7 @@ static void __init create_idmap(void)
+>         u64 end   = __pa_symbol(__idmap_text_end);
+>         u64 ptep  = __pa_symbol(idmap_ptes);
+>
+> +       memset(idmap_pg_dir, 0, PAGE_SIZE);
+>         __pi_map_range(&ptep, start, end, start, PAGE_KERNEL_ROX,
+>                        IDMAP_ROOT_LEVEL, (pte_t *)idmap_pg_dir, false,
+>                        __phys_to_virt(ptep) - ptep);
+> --
+> 2.49.1
+>
 
