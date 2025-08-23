@@ -1,180 +1,300 @@
-Return-Path: <linux-kernel+bounces-782919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83911B326E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 07:19:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9322EB327A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 10:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4296BAE75E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 05:19:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 523051BA1676
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD64201278;
-	Sat, 23 Aug 2025 05:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD81239E9A;
+	Sat, 23 Aug 2025 08:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UroTVF+M"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npLmb3i0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB29393DD4;
-	Sat, 23 Aug 2025 05:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FF021576E
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 08:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755926379; cv=none; b=Q7kr6AQvvrFogoahtr+/TCIvJmHmmFdCvmFFQrZg+Es+38GjYztWiD4r80Wxb8dHRxDQ2XVjM7zFKKcEpBMxavgRg7hcclqyAmcrsEhtOHCeMNZ0J1r5RPXLEJ3GI/B7AwDfEYxQ2ERB2TS/EljNVUeFVdqfzes1xIB8s0hFE+E=
+	t=1755938216; cv=none; b=jdmi4fCac04/kRYNvree9FrJudULfm02s8GEc0nM99rHAXjXFh9rJxinKoMLjlcS/35qutdHWiwyKxF4Fb4G+NU6JOWLavw+N4VDaihXfNeaW/SPGhHiNA6yxF71qCoFeVwfzINlLYHnYxnATk/MYdlTo9TqgLywrPFimWCYkW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755926379; c=relaxed/simple;
-	bh=9L9XJlvI8Kg1zPH6WONbcsKB4nlgTOt5Oso/+cZfgiM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lIkEp50oJVvetaJKjwc1JV4BIcqIuvdPb9ZNi7zgwL5DK0dRm9lgAP3lkrH9SO8Y1ClQ84NCqQ0LwcQD58mS3JgiijbXiiTOSxtUmZF1VFV9OlQ963SbYxLUv2mCExMU6kwdjz2Yc6qMrjo0gWjO6dLdpEJjKIpfh3i1Mkc2ddE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UroTVF+M; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-71d71bcac45so23699037b3.0;
-        Fri, 22 Aug 2025 22:19:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755926377; x=1756531177; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jkbhqTDpf6gzSCID1jPd9w2grt5fM6fD+3Q4DeorwC8=;
-        b=UroTVF+MhkdWMEpVgZpC+XR5Nl+mudXregmH4pPsmIyBLvNDOR0Eogkg88jlwuPUr+
-         z28MwakxqHNVquZkg9wKQsypC9qc5WfSmrOurYI5MaJvrNQwm6eVI8UM7tsl88EGyrwe
-         703ruLZaS+ZmM1TfTakYCakZnYAJEOzn+VSk/4xkxFXjJCObpPsmqLFpMWATZ+lBliJ/
-         sZuSX51vMJr3aVckQ6YlnHAQruHsskJCFCbaktesmU7W02WcHZOUSRQL8Jrb7UkB1fPS
-         +rSnHbByeMXNQXRMAhKboYN0t3ozDfNyg+6bqjJ5EbTWg0sKb7GF17PsilVBP3gKiLqZ
-         rCQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755926377; x=1756531177;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jkbhqTDpf6gzSCID1jPd9w2grt5fM6fD+3Q4DeorwC8=;
-        b=dQaKYpZrSu36Kvt9yc3RJ7AnDc9dli7QZo6j+FtmNJa+Stnkb9TDxvhVlu1a1o818r
-         tIFHVglmxRP+VzPzA90TZmwxhCqvHffBRy4KF/eSPbK0+JHl5pp8EblEuauEKLPVB1IB
-         k6M6yo4YVp3Y+mVWEOYcwFGQ8R6cjc1euC6BhtSuyB7hh4nIPbXeMEQzlsBTb2JCQpIV
-         4DRjC7Ohj7pMqWttoimj/SBoNs75LO+QXufHN2p8yfPcW128LKlMP37kEkYgsOAPgcHC
-         LnmPQiBc00J8WrCXuwMMrQWYRvg+Jxey3jesL7SZogTdhQs38HanKxlG8aNDi9yfY++L
-         fZzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCopGL0mXpH4RO2gjp4g0WC31LLBHToOj0u487UxnXIGUdHDe/7RAMvVXd3DxmiekZAo4BqSdSukAEJAk=@vger.kernel.org, AJvYcCWrAqJnv1OoQ9/4QmTI6L7wwxsB5GTOWS0inn0r41bwXZ+g0JtBe90U3kA/thRjKdlW7Pu/pFa/aRKxfPW4QRdLgQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxyd40VhebOi4XPzGs9f34EGNtelE/0bCdCPC5Tc7Y0zzh/dWuk
-	vrZo1BLBep9GZsjaE8YJ00/KzIj9JIA9E8suXghIrWkQQ7t1MpalHdiPp3kxQ6fLcSGV8HjpJ6O
-	Q2lh4jAv1jh1HiJyOqoqX9ziAL6gAGyM6/F6I+vM=
-X-Gm-Gg: ASbGncv3sIS2KhuPEZARBX0Cz1rTPeOBSuoS3k2/iCHcWCb4PRyZfHoyPTt/D6RDazG
-	W12iowaYjucdOcdsL9D6Xir66ifGZRg9ODAbUw/iHnXMYHCU7jV8VWW9HfS1WGm0CPN6MS+9wrD
-	NNWDffAbLvEPIoLfM6lQ8+/Iu49B8yzPnoxD0FsfcqI1AN6TqOqik4iibQ99tzdeRKOfQ9z5Mc3
-	BOwW0nh7YHaDOIl3i/efeV8bfPGoC1HhcH+XXI5
-X-Google-Smtp-Source: AGHT+IEx4zvdNIZtTls1pWePM1S/KeF0vNPh1f2D1OmJzRXp0O1GrTvyKsX/hBzRw/VhQo8Gy5IJ8y6yEJuZADrOgr4=
-X-Received: by 2002:a05:690c:b1e:b0:71c:8de:8846 with SMTP id
- 00721157ae682-71fdc2a890dmr46741907b3.6.1755926376866; Fri, 22 Aug 2025
- 22:19:36 -0700 (PDT)
+	s=arc-20240116; t=1755938216; c=relaxed/simple;
+	bh=pEXIJRsKWMgfwe7mP0cGm5NGO0n6J1mDZ42J7yTw1Ws=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QqSfm93n/xj74UxVNZOl/2sT4AQzsmGEg1RlN7Y2q0hC1O2SRVm9UGg2HKu7/kvsLE5IpkvmfebcNDwg4olAfzA7mbgQu5KXEvEoym4uAMGg/24KIMw6ZVQA7AZ1beF0ZWzOoh57j7bz6IeETic6IDiAJCK+94OpouXJaTuySzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npLmb3i0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B9BAC4CEE7;
+	Sat, 23 Aug 2025 08:36:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755938216;
+	bh=pEXIJRsKWMgfwe7mP0cGm5NGO0n6J1mDZ42J7yTw1Ws=;
+	h=From:To:Cc:Subject:Date:From;
+	b=npLmb3i0i0FmfVbQPF/fTAqDUSJLcEWU2RNp+rO3wBIQuZoNGehjPjlkqCXCS5NaV
+	 G+CXcAM0b98eriPXWSO+TZolMsJZLmt1W+1hDDAmGj8u5iPodoUI99voqLYspunXnl
+	 m6hBY0M1ajBVl5+3/a/FF6W5XFOku0xs8A7+kC8AD2P7u9lKn8K0LlL6HXNNrXUsA9
+	 yN7zsi6RhSz4NIS//tvj61uoJLXY8KKRg6pud3oZrKNfS9AHQ6j7f2tMVwA4bRclj0
+	 +ks0cW1U/3GbvtOf/DRV/DhL/XiO0lnqwqj+Y+ycCFhLWVXIUDkLzRjmKP9Am8h8WJ
+	 +SzY+tHMGyzOw==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	stable@kernel.org,
+	syzbot+b9c7ffd609c3f09416ab@syzkaller.appspotmail.com
+Subject: [PATCH] f2fs: fix to do sanity check on node footer for non inode dnode
+Date: Sat, 23 Aug 2025 13:45:34 +0800
+Message-Id: <20250823054534.41037-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821003220.1051711-1-namhyung@kernel.org>
-In-Reply-To: <20250821003220.1051711-1-namhyung@kernel.org>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Fri, 22 Aug 2025 22:19:26 -0700
-X-Gm-Features: Ac12FXy47lJ3NEdvQ4jygIlB0LiiUKA0gXBv00pIDnrihruGMoskXciUPSoKzUc
-Message-ID: <CAH0uvoj7s3V7qby7BxQ9Eby4G562MMsFtbonLJ2L3SF1N7CDng@mail.gmail.com>
-Subject: Re: [PATCH] perf trace: Add --max-summary option
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hello Namhyung,
+As syzbot reported below:
 
-On Wed, Aug 20, 2025 at 5:32=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> The --max-summary option is to limit the number of output lines for
-> syscall summary stats.  The max applies to each entries like thread and
-> cgroups.  For total summary, it will just print up to the given number.
->
-> For example,
->
->   $ sudo perf trace -as --max-summary 3 sleep 0.1
->
->    ThreadPoolServi (1011651), 114 events, 14.8%
->
->      syscall            calls  errors  total       min       avg       ma=
-x       stddev
->                                        (msec)    (msec)    (msec)    (mse=
-c)        (%)
->      --------------- --------  ------ -------- --------- --------- ------=
----     ------
->      epoll_wait            38      0    95.589     0.000     2.515    11.=
-153     28.98%
->      futex                  9      0     0.040     0.002     0.004     0.=
-014     28.63%
->      read                  10      0     0.037     0.003     0.004     0.=
-005      4.67%
->
->    sleep (1050529), 250 events, 32.4%
->
->      syscall            calls  errors  total       min       avg       ma=
-x       stddev
->                                        (msec)    (msec)    (msec)    (mse=
-c)        (%)
->      --------------- --------  ------ -------- --------- --------- ------=
----     ------
->      clock_nanosleep        1      0   100.156   100.156   100.156   100.=
-156      0.00%
->      execve                 4      3     1.020     0.005     0.255     0.=
-989     95.93%
->      openat                36     17     0.416     0.003     0.012     0.=
-029     10.58%
->
->    ...
->
-> And this is for per-cgroup summary using BPF.
->
->   $ sudo perf trace -as --max-summary 3 --summary-mode=3Dcgroup --bpf-sum=
-mary sleep 0.1
->
->    cgroup /user.slice/user-657345.slice/user@657345.service/session.slice=
-/org.gnome.Shell@x11.service, 12 events
->
->      syscall            calls  errors  total       min       avg       ma=
-x       stddev
->                                        (msec)    (msec)    (msec)    (mse=
-c)        (%)
->      --------------- --------  ------ -------- --------- --------- ------=
----     ------
->      recvmsg                8      7     0.016     0.001     0.002     0.=
-006     39.73%
->      ppoll                  1      0     0.014     0.014     0.014     0.=
-014      0.00%
->      write                  2      0     0.010     0.002     0.005     0.=
-008     61.02%
->
->    cgroup /user.slice/user-657345.slice/session-4.scope, 73 events
->
->      syscall            calls  errors  total       min       avg       ma=
-x       stddev
->                                        (msec)    (msec)    (msec)    (mse=
-c)        (%)
->      --------------- --------  ------ -------- --------- --------- ------=
----     ------
->      epoll_wait             8      0    13.461     0.010     1.683    12.=
-235     89.66%
->      ioctl                 20      0     0.204     0.001     0.010     0.=
-113     54.01%
->      writev                11      0     0.164     0.004     0.015     0.=
-042     20.34%
->
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/file.c:1243!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5354 Comm: syz.0.0 Not tainted 6.17.0-rc1-syzkaller-00211-g90d970cade8e #0 PREEMPT(full)
+RIP: 0010:f2fs_truncate_hole+0x69e/0x6c0 fs/f2fs/file.c:1243
+Call Trace:
+ <TASK>
+ f2fs_punch_hole+0x2db/0x330 fs/f2fs/file.c:1306
+ f2fs_fallocate+0x546/0x990 fs/f2fs/file.c:2018
+ vfs_fallocate+0x666/0x7e0 fs/open.c:342
+ ksys_fallocate fs/open.c:366 [inline]
+ __do_sys_fallocate fs/open.c:371 [inline]
+ __se_sys_fallocate fs/open.c:369 [inline]
+ __x64_sys_fallocate+0xc0/0x110 fs/open.c:369
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f1e65f8ebe9
 
-Reviewed-by: Howard Chu <howardchu95@gmail.com>
+w/ a fuzzed image, f2fs may encounter panic due to it detects inconsistent
+truncation range in direct node in f2fs_truncate_hole().
 
-Thanks,
-Haowei
+The root cause is: a non-inode dnode may has the same footer.ino and
+footer.nid, so the dnode will be parsed as an inode, then ADDRS_PER_PAGE()
+may return wrong blkaddr count which may be 923 typically, by chance,
+dn.ofs_in_node is equal to 923, then count can be calculated to 0 in below
+statement, later it will trigger panic w/ f2fs_bug_on(, count == 0 || ...).
+
+	count = min(end_offset - dn.ofs_in_node, pg_end - pg_start);
+
+This patch introduces a new node_type NODE_TYPE_NON_INODE, then allowing
+passing the new_type to sanity_check_node_footer in f2fs_get_node_folio()
+to detect corruption that a non-inode dnode has the same footer.ino and
+footer.nid.
+
+Scripts to reproduce:
+mkfs.f2fs -f /dev/vdb
+mount /dev/vdb /mnt/f2fs
+touch /mnt/f2fs/foo
+touch /mnt/f2fs/bar
+dd if=/dev/zero of=/mnt/f2fs/foo bs=1M count=8
+umount /mnt/f2fs
+inject.f2fs --node --mb i_nid --nid 4 --idx 0 --val 5 /dev/vdb
+mount /dev/vdb /mnt/f2fs
+xfs_io /mnt/f2fs/foo -c "fpunch 6984k 4k"
+
+Cc: stable@kernel.org
+Reported-by: syzbot+b9c7ffd609c3f09416ab@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/linux-f2fs-devel/68a68e27.050a0220.1a3988.0002.GAE@google.com
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/f2fs.h     |  4 +++-
+ fs/f2fs/gc.c       |  4 ++--
+ fs/f2fs/node.c     | 58 +++++++++++++++++++++++++++++++---------------
+ fs/f2fs/node.h     |  1 +
+ fs/f2fs/recovery.c |  2 +-
+ 5 files changed, 46 insertions(+), 23 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1e3d0f6d1d4c..bba9ff617ea6 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3817,6 +3817,7 @@ void f2fs_hash_filename(const struct inode *dir, struct f2fs_filename *fname);
+  * node.c
+  */
+ struct node_info;
++enum node_type;
+ 
+ int f2fs_check_nid_range(struct f2fs_sb_info *sbi, nid_t nid);
+ bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type);
+@@ -3839,7 +3840,8 @@ int f2fs_remove_inode_page(struct inode *inode);
+ struct folio *f2fs_new_inode_folio(struct inode *inode);
+ struct folio *f2fs_new_node_folio(struct dnode_of_data *dn, unsigned int ofs);
+ void f2fs_ra_node_page(struct f2fs_sb_info *sbi, nid_t nid);
+-struct folio *f2fs_get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid);
++struct folio *f2fs_get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid,
++						enum node_type node_type);
+ struct folio *f2fs_get_inode_folio(struct f2fs_sb_info *sbi, pgoff_t ino);
+ struct folio *f2fs_get_xnode_folio(struct f2fs_sb_info *sbi, pgoff_t xnid);
+ int f2fs_move_node_folio(struct folio *node_folio, int gc_type);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index b57b8fd64747..ed3acbfc83ca 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1071,7 +1071,7 @@ static int gc_node_segment(struct f2fs_sb_info *sbi,
+ 		}
+ 
+ 		/* phase == 2 */
+-		node_folio = f2fs_get_node_folio(sbi, nid);
++		node_folio = f2fs_get_node_folio(sbi, nid, NODE_TYPE_REGULAR);
+ 		if (IS_ERR(node_folio))
+ 			continue;
+ 
+@@ -1145,7 +1145,7 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 	nid = le32_to_cpu(sum->nid);
+ 	ofs_in_node = le16_to_cpu(sum->ofs_in_node);
+ 
+-	node_folio = f2fs_get_node_folio(sbi, nid);
++	node_folio = f2fs_get_node_folio(sbi, nid, NODE_TYPE_REGULAR);
+ 	if (IS_ERR(node_folio))
+ 		return false;
+ 
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 109bc8898bc6..68d210f7798a 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -876,7 +876,8 @@ int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
+ 		}
+ 
+ 		if (!done) {
+-			nfolio[i] = f2fs_get_node_folio(sbi, nids[i]);
++			nfolio[i] = f2fs_get_node_folio(sbi, nids[i],
++						NODE_TYPE_NON_INODE);
+ 			if (IS_ERR(nfolio[i])) {
+ 				err = PTR_ERR(nfolio[i]);
+ 				f2fs_folio_put(nfolio[0], false);
+@@ -994,7 +995,7 @@ static int truncate_dnode(struct dnode_of_data *dn)
+ 		return 1;
+ 
+ 	/* get direct node */
+-	folio = f2fs_get_node_folio(sbi, dn->nid);
++	folio = f2fs_get_node_folio(sbi, dn->nid, NODE_TYPE_NON_INODE);
+ 	if (PTR_ERR(folio) == -ENOENT)
+ 		return 1;
+ 	else if (IS_ERR(folio))
+@@ -1038,7 +1039,8 @@ static int truncate_nodes(struct dnode_of_data *dn, unsigned int nofs,
+ 
+ 	trace_f2fs_truncate_nodes_enter(dn->inode, dn->nid, dn->data_blkaddr);
+ 
+-	folio = f2fs_get_node_folio(F2FS_I_SB(dn->inode), dn->nid);
++	folio = f2fs_get_node_folio(F2FS_I_SB(dn->inode), dn->nid,
++						NODE_TYPE_NON_INODE);
+ 	if (IS_ERR(folio)) {
+ 		trace_f2fs_truncate_nodes_exit(dn->inode, PTR_ERR(folio));
+ 		return PTR_ERR(folio);
+@@ -1116,7 +1118,8 @@ static int truncate_partial_nodes(struct dnode_of_data *dn,
+ 	/* get indirect nodes in the path */
+ 	for (i = 0; i < idx + 1; i++) {
+ 		/* reference count'll be increased */
+-		folios[i] = f2fs_get_node_folio(F2FS_I_SB(dn->inode), nid[i]);
++		folios[i] = f2fs_get_node_folio(F2FS_I_SB(dn->inode), nid[i],
++							NODE_TYPE_NON_INODE);
+ 		if (IS_ERR(folios[i])) {
+ 			err = PTR_ERR(folios[i]);
+ 			idx = i - 1;
+@@ -1501,21 +1504,37 @@ static int sanity_check_node_footer(struct f2fs_sb_info *sbi,
+ 					struct folio *folio, pgoff_t nid,
+ 					enum node_type ntype)
+ {
+-	if (unlikely(nid != nid_of_node(folio) ||
+-		(ntype == NODE_TYPE_INODE && !IS_INODE(folio)) ||
+-		(ntype == NODE_TYPE_XATTR &&
+-		!f2fs_has_xattr_block(ofs_of_node(folio))) ||
+-		time_to_inject(sbi, FAULT_INCONSISTENT_FOOTER))) {
+-		f2fs_warn(sbi, "inconsistent node block, node_type:%d, nid:%lu, "
+-			  "node_footer[nid:%u,ino:%u,ofs:%u,cpver:%llu,blkaddr:%u]",
+-			  ntype, nid, nid_of_node(folio), ino_of_node(folio),
+-			  ofs_of_node(folio), cpver_of_node(folio),
+-			  next_blkaddr_of_node(folio));
+-		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-		f2fs_handle_error(sbi, ERROR_INCONSISTENT_FOOTER);
+-		return -EFSCORRUPTED;
++	if (unlikely(nid != nid_of_node(folio)))
++		goto out_err;
++
++	switch (ntype) {
++	case NODE_TYPE_INODE:
++		if (!IS_INODE(folio))
++			goto out_err;
++		break;
++	case NODE_TYPE_XATTR:
++		if (!f2fs_has_xattr_block(ofs_of_node(folio)))
++			goto out_err;
++		break;
++	case NODE_TYPE_NON_INODE:
++		if (IS_INODE(folio))
++			goto out_err;
++		break;
++	default:
++		break;
+ 	}
++	if (time_to_inject(sbi, FAULT_INCONSISTENT_FOOTER))
++		goto out_err;
+ 	return 0;
++out_err:
++	f2fs_warn(sbi, "inconsistent node block, node_type:%d, nid:%lu, "
++		  "node_footer[nid:%u,ino:%u,ofs:%u,cpver:%llu,blkaddr:%u]",
++		  ntype, nid, nid_of_node(folio), ino_of_node(folio),
++		  ofs_of_node(folio), cpver_of_node(folio),
++		  next_blkaddr_of_node(folio));
++	set_sbi_flag(sbi, SBI_NEED_FSCK);
++	f2fs_handle_error(sbi, ERROR_INCONSISTENT_FOOTER);
++	return -EFSCORRUPTED;
+ }
+ 
+ static struct folio *__get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid,
+@@ -1572,9 +1591,10 @@ static struct folio *__get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid,
+ 	return ERR_PTR(err);
+ }
+ 
+-struct folio *f2fs_get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid)
++struct folio *f2fs_get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid,
++						enum node_type node_type)
+ {
+-	return __get_node_folio(sbi, nid, NULL, 0, NODE_TYPE_REGULAR);
++	return __get_node_folio(sbi, nid, NULL, 0, node_type);
+ }
+ 
+ struct folio *f2fs_get_inode_folio(struct f2fs_sb_info *sbi, pgoff_t ino)
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index 030390543b54..9cb8dcf8d417 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -57,6 +57,7 @@ enum node_type {
+ 	NODE_TYPE_REGULAR,
+ 	NODE_TYPE_INODE,
+ 	NODE_TYPE_XATTR,
++	NODE_TYPE_NON_INODE,
+ };
+ 
+ /*
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 842b2daffa85..870b68c2c032 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -548,7 +548,7 @@ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+ 	}
+ 
+ 	/* Get the node page */
+-	node_folio = f2fs_get_node_folio(sbi, nid);
++	node_folio = f2fs_get_node_folio(sbi, nid, NODE_TYPE_REGULAR);
+ 	if (IS_ERR(node_folio))
+ 		return PTR_ERR(node_folio);
+ 
+-- 
+2.40.1
+
 
