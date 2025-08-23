@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-783183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7EBCB32A7E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:11:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9F13B32A82
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39DA0164000
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:09:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 987AA3ABF18
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1662C158F;
-	Sat, 23 Aug 2025 16:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717112E92DC;
+	Sat, 23 Aug 2025 16:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAY0zHL1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jGNB+A2F"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2999420297E;
-	Sat, 23 Aug 2025 16:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D93D481DD
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 16:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755965367; cv=none; b=GAhXIBn+SjnCxiMtB5A1GmmH1P3qs+FZ+xkECznNZKgTFNH+VmevC/VvA50CNlpNFhmsdIurdFG5D0FsSQT/dUtU2zzrm/QJaY64IbHdx1kmd5yUtqRbgImu3TaSG6zOved5drUUB1DOa+4+ecA4wC+1YVZTnat4tohMnNMObYw=
+	t=1755965367; cv=none; b=YcZDVQMEgKh834inPPYW8PwsBshnvGGsT5ciODaidKP28I4ankGrCsMZ6WdvSi/wX74PKBfh6LLR/RgkbhZ8TFR5/+YpJSwD4EEsZ6qROJ0CIc9hHbhXWI1t4hsurX59GDuC9JddkaRtyd0IEPrqJeBgMwAoi3xkZ415Gz72+xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755965367; c=relaxed/simple;
-	bh=1eUW7q7BaHOHNPvgnjVUfW2PF4P0F9xEnh7tv+Zc7J4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GUJ9ttYiYc6CjJmcIXCGQbhVEJNKrdhZYKFENV/q9Wa8JLKoMFA1oziv6guB31TjEw9vLzHEnb4vdzfDWJZPVErftVChl5uD4QyihamOLyPvYeF0gr4UDsjt6b1KfajACU1m+pX4DRfBBToFunPB65fHo7Kv47um80OGJqVPU2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAY0zHL1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90EB1C4CEE7;
-	Sat, 23 Aug 2025 16:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755965366;
-	bh=1eUW7q7BaHOHNPvgnjVUfW2PF4P0F9xEnh7tv+Zc7J4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UAY0zHL1gWx3863fVnJpmUWPwYi3R6UKRO3uOhZh1zQ/XDoNoKazKXPiqM2E7/jjy
-	 Onh+IrOTlBswjinarafKzuL9Mig4sSS+hTbeTLNw1IEmHP+a3NYvOAYVmpcFHrgzII
-	 +1lmTN9EZqBzl1g2vCCmPUafyTWXqixqjn1wRSdSxYLmw8yhzyBIBj/sA0ZvUTSb+m
-	 EEcM/tGLBXE+Y/9EAAifR4V3yVcGvSkShvB0J6s8A0jpabbwexSULBNCoZ6Im/JVoC
-	 U4j4FbSKlkgnzJ5xT1ROx4mO3tVCk4hdq87nnEPCI+n8iEObG5n2Cacr8o8k73Ad1t
-	 gHc+WrBBR+fiA==
-Message-ID: <eda79403-375b-4d49-9fec-12bc98bf9e47@kernel.org>
-Date: Sat, 23 Aug 2025 18:09:22 +0200
+	bh=FUwG/gxyGRQKB+JXXx4gl4iOhP78u/f5e7nmclaCeBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ddk7U7B2msdxTopdz027YfbgXBLQGa5j05zRr1z3Tna8sKiUQQYVmyAkj1SziuOCyBgobgviDBenFgeMsoaQhHV7Uc6i++l2idtCo9Myyiq6ERvFeEotGqZ7mA8i/WdnY2aVPS6KIhxE0wnvTiDVAwNexpXem1vs3zyyiRM5flY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jGNB+A2F; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-30cceaaecd8so1325626fac.2
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 09:09:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755965365; x=1756570165; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=I5ldSROTTtv9X2BePkbpO0dlILqeRBO/FfySSS6QlUo=;
+        b=jGNB+A2FuEYuDCudvAgrB3t2VSxPLsK17VqiRczwe2ZJMgRNW3ZO6OKRhlTHMUhXXe
+         gldsn8a5JNQGeD1FfC0QLm8lttxHBEcpvKPpXBzFEx2uS44/S5pCI8Pl7Iddv6uKANg8
+         eHZQECacCWqK9GoDDHGpw1oTCcZy83kkzrlvzjYKIQwDtbSWAqDsMrOXHhskafRE6lVx
+         ZKQGCDLJTF7f4Wfp6aM0CfXQQoQT4BXZW6XBSzh/EJdToavrYUzTsWl1QF4X0hE0uNM7
+         8bYxgSxgjKUpNIX5OSK/Ll1WPxp9d1a6tUJWF+tvRvjQuhNhKVAa4RzFzevZbzZFnd0R
+         tK/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755965365; x=1756570165;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I5ldSROTTtv9X2BePkbpO0dlILqeRBO/FfySSS6QlUo=;
+        b=GE6kKpWjjghhUM1/1xq7YqfkRqIfOp7AWc9o3SQR/+8KIRhfvF1M37zGByB0jEwNrU
+         yQrCAGwKHbWB12ALf6HIaICM8305LwOctOVT2QDqLZf1QGBatKtdat4I9o4HBFlXsffO
+         Q9tC7N6io9r5FDCVqOmYkTZrO4z0WwM+Xws23DrMSd0PkF2wElk3zzE9K7oVzkPl56B+
+         n7GtEN5vlHvr+QFL+c3yRltUr13G0pUDQLqxJg8N5R0Jv2hD+o5XuYFEe3gbYZ/cnSQW
+         3xAb4CqAjfM6R0rD8Szbl2kvqfgJ1rKOUqbezba04vDeg58cjYPhI9+PnCpP4lYZmlzZ
+         SHPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWulGvBrrNCcewQgBF7wwIYBoeXcIaNw2lgGtYdwPcWClohyMw68cs9ZhK05J/QYtYlYJQjjMRYPNceYVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGyEzyGtF+p4LrSBNOCtwfOnNZ6qaEazZC3Tj+J6HES+b4n/B9
+	95+n+Kb3G0BIf3eda8tjJYeK5D4VpxCs18OjAvBQU07gYZwVr6xrqAFOOHJbPgYufzz2iQ2oHKl
+	NfEwi
+X-Gm-Gg: ASbGncv1VRpAVFp3LLvok4Q/HeNz3OR6bwV8fr/AMH1OspB8vp2mOla3r4OKKWlNSJK
+	vTDo/Fa4ryBjRdvHADkWV9ZtowPOGdKOJyJlfxm01j9GjsQMJwvXIgs96hGklB8y9n9hBFFr/5P
+	fEzA0btzF2k7TVrSNzxLFTzV9NkBP25Av4grE3PUMKXw+I1a89fhG7WMygd7SJ0ad90pwS1rghy
+	0hhJlVWkl40CAKbZMM5uVKuBCtaAmWG4mK4Bmrqac5E3yoryRnzS3R9zveri1NaHg/fBNHpdY7a
+	EXRKdHZGwPGc2e7Tco8q3X4GdMrhQDGZ/wLddtG5TeKcJN0HcnRKG+PeCe4V77rOa5AgcB2HJa5
+	vhw4+a7l0SmheSdW1Aq7+WS7eaAAQTPzbtQPyrlNjecG5nD1qjwwUQF+6xksXI5feTstzQoJ+
+X-Google-Smtp-Source: AGHT+IE42Tt8rVMHMtIJU30KzWNte5aFQHwjUAqkCrWOHeQEzzuOgeRcfaGPnVLy2HOMvBY9suiAcQ==
+X-Received: by 2002:a05:6808:50a5:b0:437:761b:9621 with SMTP id 5614622812f47-4378537acd5mr3108210b6e.48.1755965365195;
+        Sat, 23 Aug 2025 09:09:25 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:4d25:af10:67ec:53d? ([2600:8803:e7e4:1d00:4d25:af10:67ec:53d])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-437967da01asm388629b6e.12.2025.08.23.09.09.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 23 Aug 2025 09:09:24 -0700 (PDT)
+Message-ID: <04436186-254c-4e02-8536-5c9fd9c005c4@baylibre.com>
+Date: Sat, 23 Aug 2025 11:09:23 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,108 +82,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/14] dt-bindings: dma: dma350: Document interrupt-names
-To: Jisheng Zhang <jszhang@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250823154009.25992-1-jszhang@kernel.org>
- <20250823154009.25992-9-jszhang@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v8 2/5] dt-bindings: iio: mcp9600: Add microchip,mcp9601
+ and add constraints
+From: David Lechner <dlechner@baylibre.com>
+To: Ben Collins <bcollins@watter.com>, Jonathan Cameron <jic23@kernel.org>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andrew Hepp <andrew.hepp@ahepp.dev>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250822-upstream-changes-v8-0-40bb1739e3e2@watter.com>
+ <20250822-upstream-changes-v8-2-40bb1739e3e2@watter.com>
+ <f7089447-f164-406b-8e59-3bd3e8f94d59@baylibre.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250823154009.25992-9-jszhang@kernel.org>
+In-Reply-To: <f7089447-f164-406b-8e59-3bd3e8f94d59@baylibre.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/08/2025 17:40, Jisheng Zhang wrote:
-> Currently, the dma350 driver assumes all channels are available to
-> linux, this may not be true on some platforms, so it's possible no
-> irq(s) for the unavailable channel(s). What's more, the available
-> channels may not be continuous. To handle this case, we'd better
-> get the irq of each channel by name.
+On 8/23/25 11:06 AM, David Lechner wrote:
+> On 8/22/25 8:23 AM, Ben Collins wrote:
 
-You did not solve the actual problem - binding still lists the
-interrupts in specific order.
+...
 
+>> +  - |
+>> +    #include <dt-bindings/iio/temperature/thermocouple.h>
 > 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> ---
->  Documentation/devicetree/bindings/dma/arm,dma-350.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
+> This header isn't used in this example.
 > 
-> diff --git a/Documentation/devicetree/bindings/dma/arm,dma-350.yaml b/Documentation/devicetree/bindings/dma/arm,dma-350.yaml
-> index 429f682f15d8..94752516e51a 100644
-> --- a/Documentation/devicetree/bindings/dma/arm,dma-350.yaml
-> +++ b/Documentation/devicetree/bindings/dma/arm,dma-350.yaml
-> @@ -32,6 +32,10 @@ properties:
->        - description: Channel 6 interrupt
->        - description: Channel 7 interrupt
->  
-> +  interrupt-names:
-> +    minItems: 1
-> +    maxItems: 8
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +    i2c {
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +
+>> +        temperature-sensor@62 {
+>> +            compatible = "microchip,mcp9601", "microchip,mcp9600";
+>> +            reg = <0x62>;
+>> +            interrupt-parent = <&gpio>;
+>> +            interrupts = <22 IRQ_TYPE_EDGE_RISING>, <23 IRQ_TYPE_EDGE_RISING>;
+>> +            interrupt-names = "open-circuit", "short-circuit";
+>> +            vdd-supply = <&vdd>;
+>> +            microchip,vsense;
+>> +        };
+>> +    };
+>>
+> 
+> With that fixed:
+> 
+> Reviewed-by: David Lechner <dlechner@baylibre.com>
+> 
 
-You need to list the items.
-
-
-> +
->    "#dma-cells":
->      const: 1
->      description: The cell is the trigger input number
-> @@ -40,5 +44,6 @@ required:
->    - compatible
->    - reg
->    - interrupts
-> +  - interrupt-names
-
-That's ABI break, so no.
-
-
-
-Best regards,
-Krzysztof
+BTW, sometimes Jonathan is nice and fixes a one-line change like this
+when applying patches, so don't rush off and send a v9 just quite yet
+unless there are other bigger changes that need to be done anyway.
 
