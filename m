@@ -1,174 +1,164 @@
-Return-Path: <linux-kernel+bounces-783270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7F4FB32B16
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:48:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B470B32B18
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D8653ACFA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:48:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5FC11888850
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615A724292E;
-	Sat, 23 Aug 2025 16:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492C71FDE14;
+	Sat, 23 Aug 2025 16:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOXXqNd5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pp0P7H8d"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3628635C;
-	Sat, 23 Aug 2025 16:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FC38635C
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 16:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755967720; cv=none; b=KfHix44yTJW9KycVxJABF0UfP400twopue5UnWvU9+xMpxjmqvt4VTb+a/i4litA5z8iGyINbfjmWsk4vRCC4cCOjws7BnBWG53KHw+xy/BxOEHN6aUzK6ZYvwKANcBKUpWI2ZUp6Vfq3/x6iNAxAuibeA5QOHwAybXTW45CLgw=
+	t=1755967764; cv=none; b=p7023r4rI9lTYFIcFDWZ2OtzFqBUplisyDpxkBRkEvhygJqu+NQxyu1Rs4wSms82G1m3GnWs1UPueUCNtKkT+LkABSK3iBREYkNDLdh6Oj0frGD6lfXI4fWQwfYkmhFhKejCzU4JXcW3S3Rh37rS3Xdsq3YUlLVZyWMPgl8nnFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755967720; c=relaxed/simple;
-	bh=PDfxYI4xJFYmIUFeVYOEcKsGHc9UOGEej4nxqYpMpgE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YJXd/0X+nxxH7UFkTaE5luG6MrJ40SI02k7Ht2TobRqdZNPBbFDc+UkJkX89FtOEIjPHqPG7YV8WQJzGi7MNn42hTxwckQ7eViVQUiJM6axAd7HCcBRC/CWeyflsrxcbPwao0uh6QjK0av/2fYbYUdNGAOo8cguu88VNHMpK9/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOXXqNd5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3333C4CEE7;
-	Sat, 23 Aug 2025 16:48:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755967718;
-	bh=PDfxYI4xJFYmIUFeVYOEcKsGHc9UOGEej4nxqYpMpgE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HOXXqNd5ZbNFfXhPJvOSJpuLPaIFgLCHSTOAh/B1wd0Q2+30Sz2yxhHeQ70I+6ira
-	 0Y5NvdqZewIGHh3fkbPEhG731f/9TGrKaqfi79StYlzLt0GkPuc4NLdiVOkkkxLTNj
-	 lCF/coYvgjNcuwJWCN2zhq4sqXhpK39/OUs5pH4vNM0y+kq4UP444vgPGrnlvtOBZ3
-	 vWypYT/Tu9R0zxIRm9lNFsGdK0gPihI1EbGXWDeLh+oYTOkC391/3865/PLGswrKR0
-	 ci3Jz3vltoNG+fME7+Z7D1Hi98pBVKINaG1l8/tKH5WKRXP5EgThnk9ap13vHnwjWY
-	 WyuxowF5X6EHQ==
-Message-ID: <64c311f7-1cc1-4d0d-9f9d-b586050b8fec@kernel.org>
-Date: Sat, 23 Aug 2025 18:48:19 +0200
+	s=arc-20240116; t=1755967764; c=relaxed/simple;
+	bh=8YpxJPRMsJBkynas/VbqXASvJV+LVskvWZ5lioILCQw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H91kckXE8/oTDgtczImZo2T72fDl56C48c3Nj+PWFDVVlqqNNE+I/rEh6/wix1LTq0s9asLcrtIcCORz/W6VkPH4Sr0x6xrW8k+pr6/LC9OQJQT5oS5jpIDR3JYVThVehLzOIWTD9LVylZNg6icuK7RMK3SjibeOw8BNgb1T/+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pp0P7H8d; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-246257e49c8so125485ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 09:49:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755967762; x=1756572562; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8YpxJPRMsJBkynas/VbqXASvJV+LVskvWZ5lioILCQw=;
+        b=pp0P7H8dG/khRsKBG3fY035Vq/ukNYIfFWKuBVC/kDd2lyjs/z4sIDMFfPOwdubAVx
+         yx4JVCdlp8ExSYDzyMeFLFBVBYxj8uyZBAlvryFxeQeVro+4l3so+DZo2HNJlK5zPHh3
+         qz1glcaq0X2ph+FuV8s5XUKFYDttu9cEBuYw8IzdGZhMbWu49yrlq6sdDPUy1Bt4hgIc
+         PGl6km7+A6WaC9VGX9PWEztmVlCwYzzbUj7iabyCl1wmJh4C8XJR5tHRIUN4SDd58CPL
+         7EZMPYR59jGltEHVgwY+rdiRHpqjfjTNFtAUAp4nW16AyI9vl9AIjBkw4lP2J4uRMhrm
+         sM3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755967762; x=1756572562;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8YpxJPRMsJBkynas/VbqXASvJV+LVskvWZ5lioILCQw=;
+        b=h4epQzNkeIZbzTnjaFlFFFSj9+JzCXqp+9TnmGcZZG05tqbPL/qrIMNDNcCg08kvfp
+         p18pzGbl2m8P8ZE6+QGl0VSea4FXb0wWnw25lDhuN1tjkSRYJ7a3VfCP65GAeSynxZqK
+         XpNkVKId4g+aG+niENde+MR9EkUSP7fFVwxVxob5wGCw9hJg6W3GroGOOoAN1U4hWGVl
+         3sk+TY7n3N6mb82wqb2t1/2wH9xaqahw+FuUyFTr3vZi6eSBmGI7L61lFcQ45QdXnu14
+         6z7WNkTx2r9gSy3QAuAgALpxLJgMQ6wg79L+JRIhEcmWAyl4IkrqEsn5j+enn9QpJ9nS
+         iiUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFSzmPSlAZB+/ocIY7G6yAUY1VXAK3/tKyKJRcyUuEKGtuvFiwJTTEVN5PfyxqSJrN6ZmgNdudH83IKXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzDfkTX9ID/6+olBZJTwlMyJMeZqOxpqY/Y+yD2aF/+m95H9jc
+	gML4DJsF/x9A4f8VvlMpS1UVxeA+D3OnGq6W4D7e9oRkziwunp5x6i8fw5VMeDYiVLw8mhu6bh9
+	Ax8mllYFNEz1oCXFmpCtpwt5ETPJk9H9xai9wpW0u
+X-Gm-Gg: ASbGnctJ3DiJcODdIB4uU3woxbw4fpprOBRRwSNfH01zm2vfNYUTDd/X8jl5XpBdMdQ
+	gWOevY7F6YfFpEb7fCtTMW3PCs6rtSPnvMrx4S1WF0/8bPZp8VdmxcViawRyb1dofUO629wUumC
+	Ou3A0r0m32s+tHtEqYJeDfXOkSTRehpsi+mDYmjvj9FGWSO27omJ1Z08jeywqR66sgE7Gud84Ow
+	d2zW/UXta4jzw==
+X-Google-Smtp-Source: AGHT+IGGKzyig0sJhIDWW/nSQxj4OQzvDA0OPRGfLHvzMGNVvjSyeTmmkEB5lOEbZ5yCPiIdJ8wlqYpa3Scf59bznr8=
+X-Received: by 2002:a17:903:2f82:b0:240:520b:3cbc with SMTP id
+ d9443c01a7336-2466fa251e2mr2803115ad.14.1755967761957; Sat, 23 Aug 2025
+ 09:49:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 000/114] clk: convert drivers from deprecated round_rate()
- to determine_rate()
-To: bmasney@redhat.com, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
- Cristian Marussi <cristian.marussi@arm.com>,
- Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Paul Cercueil <paul@crapouillou.net>, Keguang Zhang
- <keguang.zhang@gmail.com>, Taichi Sugaya <sugaya.taichi@socionext.com>,
- Takao Orito <orito.takao@socionext.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Jacky Huang <ychuang3@nuvoton.com>,
- Shan-Chun Hung <schung@nuvoton.com>, Vladimir Zapolskiy <vz@mleia.com>,
- Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Samuel Holland <samuel.holland@sifive.com>, Yixun Lan <dlan@gentoo.org>,
- Steen Hegelund <Steen.Hegelund@microchip.com>,
- Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com,
- Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Michal Simek <michal.simek@amd.com>, Maxime Ripard <mripard@kernel.org>,
- =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
- Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>,
- Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Neal Gompa <neal@gompa.dev>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Daniel Palmer <daniel@thingy.jp>, Romain Perier <romain.perier@gmail.com>,
- Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Heiko Stuebner <heiko@sntech.de>, Andrea della Porta
- <andrea.porta@suse.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Alex Helms <alexander.helms.jy@renesas.com>,
- Linus Walleij <linus.walleij@linaro.org>, Liviu Dudau <liviu.dudau@arm.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- sophgo@lists.linux.dev, linux-mips@vger.kernel.org, imx@lists.linux.dev,
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
- linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com,
- linux-actions@lists.infradead.org, asahi@lists.linux.dev,
- linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <87ldnacz33.fsf@gentoo.org> <87cy8mcyy4.fsf@gentoo.org>
+In-Reply-To: <87cy8mcyy4.fsf@gentoo.org>
+From: Ian Rogers <irogers@google.com>
+Date: Sat, 23 Aug 2025 09:49:10 -0700
+X-Gm-Features: Ac12FXx_I9TlyYoS8Acvvq3h2swrT6lD-bRfYeprBApJYtrL-ohu-WwZy8Q9SnA
+Message-ID: <CAP-5=fV+-VZ+SsGL1SJGYMEv-gwkv1AKk_6MZJ4tLBrCXFnMQA@mail.gmail.com>
+Subject: Re: [PATCH v5 00/19] Support dynamic opening of capstone/llvm remove BUILD_NONDISTRO
+To: Sam James <sam@gentoo.org>
+Cc: acme@kernel.org, adityag@linux.ibm.com, adrian.hunter@intel.com, 
+	ak@linux.intel.com, alexander.shishkin@linux.intel.com, amadio@gentoo.org, 
+	atrajeev@linux.vnet.ibm.com, bpf@vger.kernel.org, chaitanyas.prakash@arm.com, 
+	changbin.du@huawei.com, charlie@rivosinc.com, dvyukov@google.com, 
+	james.clark@linaro.org, jolsa@kernel.org, justinstitt@google.com, 
+	kan.liang@linux.intel.com, kjain@linux.ibm.com, lihuafei1@huawei.com, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	llvm@lists.linux.dev, mark.rutland@arm.com, mhiramat@kernel.org, 
+	mingo@redhat.com, morbo@google.com, namhyung@kernel.org, nathan@kernel.org, 
+	nick.desaulniers+lkml@gmail.com, peterz@infradead.org, sesse@google.com, 
+	song@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/08/2025 17:17, Brian Masney via B4 Relay wrote:
-> The round_rate() clk ops is deprecated in the clk framework in favor
-> of the determine_rate() clk ops, so let's go ahead and convert the
-> various clk drivers using the Coccinelle semantic patch posted below.
-> I did a few minor cosmetic cleanups of the code in a few cases.
-> 
-@Stephen,
+On Fri, Aug 22, 2025 at 11:52=E2=80=AFPM Sam James <sam@gentoo.org> wrote:
+>
+> > A few months ago, objdump was the only way to get
+> > source line support [0]. Is that still the case?
+>
+> ... or is this perhaps handled by "[PATCH v5 18/19] perf srcline:
+> Fallback between addr2line implementations", in which case, shouldn't
+> that really land first so people can try the LLVM impl and use the
+> binutils one if it fails?
 
-There will be dependencies/conflicts for Samsung, so I will take the two
-Samsung patches. Let me know if you disagree.
+So my opinion, BUILD_NON_DISTRO isn't supported and the code behind it
+should go away. Please don't do anything to the contrary or enable it
+for your distribution - this was supposed to be implied by the name.
+The forking and running addr2line gets around the license issue that
+is GPLv3* but comes with a performance overhead. It also has a
+maintenance overhead supporting llvm and binutil addr2line, when the
+addr2line output changes things break, etc. (LLVM has been evolving
+their output but I'm not aware of it breaking things yet). We should
+(imo) delete the forking and running addr2line support, it fits the
+billing of something we can do when capstone and libLLVM support
+aren't there but the code is a hot mess and we don't do exhaustive
+testing against the many addr2line flavors, the best case is buyer
+beware. Capstone is derived from libLLVM, I'm not sure it makes sense
+having 2 libraries for this stuff. There's libLLVM but what it
+provides through a C API is a mess requiring the C++ shimming. Tbh, I
+think most of what these libraries provide we should just get over
+ourselves and provide in perf itself. For example, does it make sense
+to be trying to add type annotations to objdump output, to just update
+objdump or have a disassembler library where we can annotate things as
+we see fit? Library bindings don't break when text output formats get
+tweaked. Given we're doing so much dwarf processing, do we need a
+library for that or should that just be in-house? We can side step
+most of this mess by starting again in python as is being shown in the
+textual changes that bring with it stuff like console flame graphs:
+https://lore.kernel.org/lkml/CAP-5=3DfU=3Dz8kcY4zjezoxSwYf9vczYzHztiMSBvJxd=
+wwBPVWv2Q@mail.gmail.com/
+So I think long term we make the perf tool minimal with minimal
+dependencies (ie no addr2line, libLLVM, etc.), we work on having nice
+stuff in the python stuff where we can reuse or build new libraries
+for addr2line, objdump-ing, etc. Use >1 thread, use asyncio, etc.
 
-Best regards,
-Krzysztof
+For where we are now, ie no python stuff, BUILD_NON_DISTRO should go
+away as nobody is maintaining it and hasn't for 2 years (what happens
+when libbfd and libiberty change?). We should focus on making the best
+of what we have via libraries/tools that are supported - while not
+forcing the libraries to be there or making the perf binary massive by
+dragging in say libLLVM. The patch series pushes in that direction and
+I commend it to the reader.
+
+No, reordering the patches to compare performance of binutils doesn't
+make sense, just build with and without the patch series if you want
+to do this, but also don't do this as BUILD_NON_DISTRO should go away.
+
+Thanks,
+Ian
+
+* (As I understand the issue IANAL) GPLv3 and GPLv2 can't be linked
+together. Why not just use GPLv3? A major issue for me is that GPLv3
+adds a requirement for =E2=80=9CInstallation Information=E2=80=9D to be pro=
+vided,
+which means placing a binary in a cryptographically signed OS
+partition you'd need to reveal the signing key which defeats the
+purpose of signing the partition to ensure you aren't hacked. I like
+open source and using the code, I don't want to be hacked by giving to
+the hackers my signing keys.
 
