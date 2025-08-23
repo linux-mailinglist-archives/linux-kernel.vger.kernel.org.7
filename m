@@ -1,269 +1,111 @@
-Return-Path: <linux-kernel+bounces-783101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C7CB32961
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:45:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C52AFB32954
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DF8C561911
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:43:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A17EB1B61571
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C61264A65;
-	Sat, 23 Aug 2025 14:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vBgy0cNd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A502641FB;
+	Sat, 23 Aug 2025 14:40:01 +0000 (UTC)
+Received: from vs81.iboxed.net (vs10.datenmanufaktur-hosting.net [213.160.73.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DD1264614;
-	Sat, 23 Aug 2025 14:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838A81E9B37;
+	Sat, 23 Aug 2025 14:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755960165; cv=none; b=RH9c418Th0FFNwG0YKXw3ku2/Dibxs/CLT8WQ6ftyT3025B2NW3aBKwML476Birsgm+N2NMTKa+zTO21cR9szBV17JaQc5CATMA39Zp2pXKi9eLBerX23CJzmnRbF1w6EJGqlX70/q60tqS6ssTGgV6aS99zp1Mj5ENhI/6trhg=
+	t=1755960001; cv=none; b=hJ/dAdsVvdriaYwS67cFyzwWUXM4fScA/+1wXqxuVJiaa7H+6+qmrDNAudnc3PGBApKbHQeR0pP0o7f78HKPSxSRyNg26Sroayq+/TFA5FQQNNR1JwddG6X5BE/JHTas+utEh8/qPQdKYPPEetQW4+27HZYBkigDt8Wo+2FS5tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755960165; c=relaxed/simple;
-	bh=z7ApHOWPs6UIakCI3RaTZXmAyFE6OH6UhPbV+KeOM7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X+CGwg9zPauj+Cb1ALqPVrp7LSe7tXIIsq411bNNqrEmbv4HdSFwHllwN9myLE8zxk22wSdMoxCOn31MwV/FEtXLcJD4YPlXYc99e98EdqRGuxhiSN0uyBLz+cUB335ktoi+jp14u5TxbHEQcXO1ciMTqcYehwUx9dkJG3K7rDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vBgy0cNd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32572C4CEE7;
-	Sat, 23 Aug 2025 14:42:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755960164;
-	bh=z7ApHOWPs6UIakCI3RaTZXmAyFE6OH6UhPbV+KeOM7g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vBgy0cNdc34iJlNsbMepjFb5z58s7yJRiVrdERfLsDg5SRsxGjpRxetzD3JUDWlI3
-	 aOQWD7/QoV7cxhMkg3p+nUkr2zsgsSMcrr6qZfXbStNryjYShPRo6UlnGdWLVvzd4q
-	 BBIIabMm1xprDDpTCvAuo9KRh4VhifV1/iV95cjn/hXmCLyevz4pgzb8gUmNYLwvVB
-	 bmgT2S/UdShVGOXePXv6Gqs1g2qr1EFL5dIWiYX/FJlbdVLGgKSAyHNCBoSTJKg3S8
-	 6GI75t8+3EDMNqzHPWb4TlrjASSmJNsdyY4r6RrhdngTw8NKndxdk8wDXAoREetjnW
-	 DwtK8rYfEtshQ==
-Date: Sat, 23 Aug 2025 16:42:40 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Cc: Ray Liu <ray.liu@airoha.com>, Mark Brown <broonie@kernel.org>,
-	Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>,
-	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 03/13] spi: airoha: add support of dual/quad wires spi
- modes
-Message-ID: <aKnTYNsaBIkh6OBS@lore-rh-laptop>
-References: <aKgSY7bOrC8-qZE3@lore-rh-laptop>
- <20250823001626.3641935-1-mikhail.kshevetskiy@iopsys.eu>
- <20250823001626.3641935-4-mikhail.kshevetskiy@iopsys.eu>
- <aKl43hTJJVqRE3Rt@lore-rh-laptop>
- <68130d82-edbe-4e23-9538-733f9c52123c@iopsys.eu>
+	s=arc-20240116; t=1755960001; c=relaxed/simple;
+	bh=n4sdfey+tTi2oj/zLd0U8WbAxCvs6PmVfQkn7X3MUD0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iC8EXxNG+etXGUsz790Gm4xM3S/kX9LZ0fvmz0Zes+iM2to1Ag2PQGfwzsMcbkt7pLfGd6uBnDYXX4dxspp9IM2jEYol050QxBn3QRt7hdMWT6XH/IRlxMX5VpgjjS0Bj+9dBpcykfy9fN0OJWdeWHXBPfHFBeKNRzVQARKpEcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de; spf=pass smtp.mailfrom=blala.de; arc=none smtp.client-ip=213.160.73.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blala.de
+Received: from blala.de (localhost [127.0.0.1])
+	by vs81.iboxed.net (8.15.2/8.15.2/Debian-14~deb10u1) with ESMTP id 57NEito4012699;
+	Sat, 23 Aug 2025 14:44:55 GMT
+Received: (from akurz@localhost)
+	by blala.de (8.15.2/8.15.2/Submit) id 57NEishN012698;
+	Sat, 23 Aug 2025 14:44:54 GMT
+From: Alexander Kurz <akurz@blala.de>
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Dzmitry Sankouski <dsankouski@gmail.com>,
+        "Dr. David Alan Gilbert" <linux@treblig.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Alexander Kurz <akurz@blala.de>
+Subject: [PATCH v2 0/9] Fix, extend and support OF to mc13xxx pwrbutton
+Date: Sat, 23 Aug 2025 14:44:32 +0000
+Message-Id: <20250823144441.12654-1-akurz@blala.de>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gHh2E/ssa1RMJrZx"
-Content-Disposition: inline
-In-Reply-To: <68130d82-edbe-4e23-9538-733f9c52123c@iopsys.eu>
+Content-Transfer-Encoding: 8bit
 
+Goal of this patch series is to make the mc13892 PWRON1 button usable,
+found e.g. on amazon kindle D01100/D01200 readers.
+A ten-year-old IRQ issue needed a fix, mc13783-pwrbutton had to be
+extended to the other to mc13xxx PMIC as well (keeping the mc13892
+PWRON3 key unsupported for simplicity) and adding OF support.
+The implementation has been tested on amazon kindle D01100 and D01200
+readers using PWRON1 of a mc13892.
 
---gHh2E/ssa1RMJrZx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+V2:
+- Convert dt-bindings from txt to fsl,mc13xxx.yaml and add vendor prefix
+  to led-control property, causing changes in dts and driver.
+- Change node name from pwrbuttons to buttons
+- Change property debounce-delay-value to debounce-delay-ms
+- Fixed a section mismatch error
+- Fixed https://lore.kernel.org/r/202508210551.VzAtE5re-lkp@intel.com/
+  (wrong index used when converting to array access)
+- Usage of generic device properties API in mc13783-pwrbutton.c
+- Provide chip-specific max button id via platform_device_id, therefore
+  swap patches 3 and 4.
 
->=20
-> On 23.08.2025 11:16, Lorenzo Bianconi wrote:
-> > [...]
-> >> -static int airoha_snand_write_data(struct airoha_snand_ctrl *as_ctrl,=
- u8 cmd,
-> >> -				   const u8 *data, int len)
-> >> +static int airoha_snand_write_data(struct airoha_snand_ctrl *as_ctrl,
-> >> +				   const u8 *data, int len, int buswidth)
-> >>  {
-> >>  	int i, data_len;
-> >> +	u8 cmd;
-> >> +
-> >> +	switch (buswidth) {
-> >> +	case 0:
-> >> +	case 1:
-> >> +		cmd =3D SNAND_FIFO_TX_BUSWIDTH_SINGLE;
-> >> +		break;
-> >> +	case 2:
-> >> +		cmd =3D SNAND_FIFO_TX_BUSWIDTH_DUAL;
-> >> +		break;
-> >> +	case 4:
-> >> +		cmd =3D SNAND_FIFO_TX_BUSWIDTH_QUAD;
-> >> +		break;
-> >> +	default:
-> >> +		return -EINVAL;
-> >> +	}
-> > Since this is used in airoha_snand_write_data() and in airoha_snand_rea=
-d_data()
-> > I guess you can define a routine for it.
->=20
-> It's not the same. It looks similar, but different constants are used
-> for rx and tx cases.
+Thanks in advance for the review effords,
+Cheers, Alexnder
 
-ops, I missed TX vs RX.
+Alexander Kurz (9):
+  Input: mc13783-pwrbutton: fix irq mixup
+  Input: mc13783-pwrbutton: use managed resources
+  Input: mc13783-pwrbutton: convert pdata members to array
+  Input: mc13783-pwrbutton: enable other mc13xxx PMIC
+  dt-bindings: mfd: fsl,mc13xxx: convert txt to DT schema
+  dt-bindings: mfd: fsl,mc13xxx: add buttons node
+  ARM: dts: imx: Use fsl,led-control as mc13xxx node name
+  leds: mc13783: use fsl,led-control as node name
+  Input: mc13783-pwrbutton: add OF support
 
-Regards,
-Lorenzo
+ .../devicetree/bindings/mfd/fsl,mc13xxx.yaml  | 272 ++++++++++++++++++
+ .../devicetree/bindings/mfd/mc13xxx.txt       | 156 ----------
+ .../dts/nxp/imx/imx27-phytec-phycore-som.dtsi |   2 +-
+ arch/arm/boot/dts/nxp/imx/imx51-zii-rdu1.dts  |   2 +-
+ .../boot/dts/nxp/imx/imx51-zii-scu2-mezz.dts  |   2 +-
+ .../boot/dts/nxp/imx/imx51-zii-scu3-esb.dts   |   2 +-
+ drivers/input/misc/Kconfig                    |   4 +-
+ drivers/input/misc/mc13783-pwrbutton.c        | 235 +++++++++++----
+ drivers/leds/leds-mc13783.c                   |   2 +-
+ include/linux/mfd/mc13783.h                   |   4 +-
+ include/linux/mfd/mc13xxx.h                   |  10 +-
+ 11 files changed, 461 insertions(+), 230 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/fsl,mc13xxx.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mfd/mc13xxx.txt
 
->=20
-> >
-> >> =20
-> >>  	for (i =3D 0; i < len; i +=3D data_len) {
-> >>  		int err;
-> >> @@ -409,16 +433,32 @@ static int airoha_snand_write_data(struct airoha=
-_snand_ctrl *as_ctrl, u8 cmd,
-> >>  	return 0;
-> >>  }
-> >> =20
-> >> -static int airoha_snand_read_data(struct airoha_snand_ctrl *as_ctrl, =
-u8 *data,
-> >> -				  int len)
-> >> +static int airoha_snand_read_data(struct airoha_snand_ctrl *as_ctrl,
-> >> +				  u8 *data, int len, int buswidth)
-> >>  {
-> >>  	int i, data_len;
-> >> +	u8 cmd;
-> >> +
-> >> +	switch (buswidth) {
-> >> +	case 0:
-> >> +	case 1:
-> >> +		cmd =3D SNAND_FIFO_RX_BUSWIDTH_SINGLE;
-> >> +		break;
-> >> +	case 2:
-> >> +		cmd =3D SNAND_FIFO_RX_BUSWIDTH_DUAL;
-> >> +		break;
-> >> +	case 4:
-> >> +		cmd =3D SNAND_FIFO_RX_BUSWIDTH_QUAD;
-> >> +		break;
-> >> +	default:
-> >> +		return -EINVAL;
-> >> +	}
-> >> =20
-> >>  	for (i =3D 0; i < len; i +=3D data_len) {
-> >>  		int err;
-> >> =20
-> >>  		data_len =3D min(len - i, SPI_MAX_TRANSFER_SIZE);
-> >> -		err =3D airoha_snand_set_fifo_op(as_ctrl, 0xc, data_len);
-> >> +		err =3D airoha_snand_set_fifo_op(as_ctrl, cmd, data_len);
-> >>  		if (err)
-> >>  			return err;
-> >> =20
-> >> @@ -895,12 +935,27 @@ static ssize_t airoha_snand_dirmap_write(struct =
-spi_mem_dirmap_desc *desc,
-> >>  static int airoha_snand_exec_op(struct spi_mem *mem,
-> >>  				const struct spi_mem_op *op)
-> >>  {
-> >> -	u8 data[8], cmd, opcode =3D op->cmd.opcode;
-> >>  	struct airoha_snand_ctrl *as_ctrl;
-> >> -	int i, err;
-> >> +	char buf[20], *data;
-> >> +	int i, err, op_len, addr_len, dummy_len;
-> > nit: can you please respect the 'reverse christmas tree' here?
-> will fix
-> >
-> >> =20
-> >>  	as_ctrl =3D spi_controller_get_devdata(mem->spi->controller);
-> >> =20
-> >> +	op_len =3D op->cmd.nbytes;
-> >> +	addr_len =3D op->addr.nbytes;
-> >> +	dummy_len =3D op->dummy.nbytes;
-> >> +
-> >> +	if (op_len + dummy_len + addr_len > sizeof(buf))
-> >> +		return -EIO;
-> >> +
-> >> +	data =3D buf;
-> >> +	for (i =3D 0; i < op_len; i++)
-> >> +		*data++ =3D op->cmd.opcode >> (8 * (op_len - i - 1));
-> >> +	for (i =3D 0; i < addr_len; i++)
-> >> +		*data++ =3D op->addr.val >> (8 * (addr_len - i - 1));
-> >> +	for (i =3D 0; i < dummy_len; i++)
-> >> +		*data++ =3D 0xff;
-> >> +
-> >>  	/* switch to manual mode */
-> >>  	err =3D airoha_snand_set_mode(as_ctrl, SPI_MODE_MANUAL);
-> >>  	if (err < 0)
-> >> @@ -911,40 +966,40 @@ static int airoha_snand_exec_op(struct spi_mem *=
-mem,
-> >>  		return err;
-> >> =20
-> >>  	/* opcode */
-> >> -	err =3D airoha_snand_write_data(as_ctrl, 0x8, &opcode, sizeof(opcode=
-));
-> >> +	data =3D buf;
-> >> +	err =3D airoha_snand_write_data(as_ctrl, data, op_len,
-> >> +				      op->cmd.buswidth);
-> >>  	if (err)
-> >>  		return err;
-> >> =20
-> >>  	/* addr part */
-> >> -	cmd =3D opcode =3D=3D SPI_NAND_OP_GET_FEATURE ? 0x11 : 0x8;
-> >> -	put_unaligned_be64(op->addr.val, data);
-> >> -
-> >> -	for (i =3D ARRAY_SIZE(data) - op->addr.nbytes;
-> >> -	     i < ARRAY_SIZE(data); i++) {
-> >> -		err =3D airoha_snand_write_data(as_ctrl, cmd, &data[i],
-> >> -					      sizeof(data[0]));
-> >> +	data +=3D op_len;
-> >> +	if (addr_len) {
-> >> +		err =3D airoha_snand_write_data(as_ctrl, data, addr_len,
-> >> +					      op->addr.buswidth);
-> >>  		if (err)
-> >>  			return err;
-> >>  	}
-> >> =20
-> >>  	/* dummy */
-> >> -	data[0] =3D 0xff;
-> >> -	for (i =3D 0; i < op->dummy.nbytes; i++) {
-> >> -		err =3D airoha_snand_write_data(as_ctrl, 0x8, &data[0],
-> >> -					      sizeof(data[0]));
-> >> +	data +=3D addr_len;
-> >> +	if (dummy_len) {
-> >> +		err =3D airoha_snand_write_data(as_ctrl, data, dummy_len,
-> >> +					      op->dummy.buswidth);
-> >>  		if (err)
-> >>  			return err;
-> >>  	}
-> >> =20
-> >>  	/* data */
-> >> -	if (op->data.dir =3D=3D SPI_MEM_DATA_IN) {
-> >> -		err =3D airoha_snand_read_data(as_ctrl, op->data.buf.in,
-> >> -					     op->data.nbytes);
-> >> -		if (err)
-> >> -			return err;
-> >> -	} else {
-> >> -		err =3D airoha_snand_write_data(as_ctrl, 0x8, op->data.buf.out,
-> >> -					      op->data.nbytes);
-> >> +	if (op->data.nbytes) {
-> >> +		if (op->data.dir =3D=3D SPI_MEM_DATA_IN)
-> >> +			err =3D airoha_snand_read_data(as_ctrl, op->data.buf.in,
-> >> +						     op->data.nbytes,
-> >> +						     op->data.buswidth);
-> >> +		else
-> >> +			err =3D airoha_snand_write_data(as_ctrl, op->data.buf.out,
-> >> +						      op->data.nbytes,
-> >> +						      op->data.buswidth);
-> >>  		if (err)
-> >>  			return err;
-> >>  	}
-> >> --=20
-> >> 2.50.1
-> >>
+-- 
+2.39.5
 
---gHh2E/ssa1RMJrZx
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaKnTXgAKCRA6cBh0uS2t
-rD5rAP9q+OLLjrD024OMc/m4rI8znbC98tVfeHNtJZR8xHLcpwEA0u4O/FmcPXPG
-MLZwtSE4dYcqa9hdaW66/QnKUaqtjAA=
-=2Ox2
------END PGP SIGNATURE-----
-
---gHh2E/ssa1RMJrZx--
 
