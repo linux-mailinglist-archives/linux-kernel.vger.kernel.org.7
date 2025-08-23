@@ -1,145 +1,109 @@
-Return-Path: <linux-kernel+bounces-782907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C52AB326B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 05:36:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B59B326B5
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 05:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3971C1B66A12
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:37:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02F491B6868E
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F971EE032;
-	Sat, 23 Aug 2025 03:36:45 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D0B1CBEB9;
+	Sat, 23 Aug 2025 03:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z54Yyu2C"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE08A393DE5
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 03:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A63446B5
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 03:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755920205; cv=none; b=N23Qdyddl6ZnmYGaNhzotl87gxfNMvCmuFUh0c5bba/US3PgCMzJg2B5jhKxqNto/vgeRjhix/Evca6e6oz5vSW29qBOTdp/EjjA8wqhE6jwosux8wjkryoWQbvP/bBBDbTiyBSlDNbXOszYJIbkrEfcrD0spABBP1zefToN3Qw=
+	t=1755920844; cv=none; b=iTRPo6v4XWX5r1nfEJ6uDaZXeTTS1cmAjPY5zAbcbNgZebUwmKWqLMf/slZ96FlTdZ05g5YcXjgslgtp0JVUtpQe9f7DDiHyGsE4LKcNRLqpdtqJVLchtcC+QjC7GPZT+HefJAf/gKPV6vF5nJvNTSSKE1z9yDAUXNvthlK8irs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755920205; c=relaxed/simple;
-	bh=E4jqlEuCiPxnBCo97TCOXAqOcCy4jzk/ai2BChH7sPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IiNyDEkt1mI3spxjH3NINgqgfUQCpD9yAsdLMCnxRmN22EJ55+gV7xfnrji/hUq6yTVd6Z4p1zj1AZWKAxPFn+DPu3g14+ejYTanrbXlclqIsTCi9nC+xuGeR0Ce/58ZsbdWGF1yYWx91M8nI7QYxCd4ixYDb7NGASaPoFFQcvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 71DB31DD656;
-	Sat, 23 Aug 2025 03:36:36 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id CC1F820024;
-	Sat, 23 Aug 2025 03:36:34 +0000 (UTC)
-Date: Fri, 22 Aug 2025 23:36:42 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Tengda Wu <wutengda@huaweicloud.com>,
- Nathan Chancellor <nathan@kernel.org>
-Subject: [for-linus][PATCH] ftrace: Also allocate and copy hash for reading
- of filter files
-Message-ID: <20250822233642.69d25aa9@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755920844; c=relaxed/simple;
+	bh=0nyhD8ODgHUuuwUd8vt/pjP54jo3/9XkG4PLtD+l3Dw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SIJc18L59mJyJ5CnO9c7Rjk2QHaFrVGBepn0kNx+ZRTgm3ni+uQh/QN3zEdmDc3ZEydL0feAIbtaiDBnsIthXgTSwZCIfb6df4OFxbHBe8StHCMDhvwiBWEjkXp2x275FdnSYdPtwKW5rgIK44CNrK35hmVWlq8y0ceRqz6pAkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z54Yyu2C; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755920842; x=1787456842;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=0nyhD8ODgHUuuwUd8vt/pjP54jo3/9XkG4PLtD+l3Dw=;
+  b=Z54Yyu2CAJNLZ2PIU3KXfGhz6vHcZ8j3a7RMvyN/4wV18TrBIpFT6nOL
+   82VLUuU678QdWXdH1Aa51XW+g4D2zdtSGYz0MX4Z9Bi5jYCIbEFE+7VJq
+   7nmX5akC29V3SPiNbYXHU5IV5koUswqDecoiUim3/3YeWeLqtOeN4S8QW
+   zDCZCiu1Nzvz8bCPNaCdtRSFMfPP5TGsE+q7WLHAWNBycwB/yidFhC/jI
+   6u0z173CG/7SOFRhdsTxoDrwnIhhzbPaWI5nhroYVMDpSiYIj/wZOAVI+
+   evNlHfuxWXLt1sKqRVMOgOfUyaXVb6/bk0dThrxww/Q3GtUJciFDNMxWQ
+   g==;
+X-CSE-ConnectionGUID: z1Lm4wevToS+TeoMdiGB0g==
+X-CSE-MsgGUID: mssIbnLVRjqXsSXM6b94BA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="62057511"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62057511"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 20:47:22 -0700
+X-CSE-ConnectionGUID: iSesEWHbSKGS4dMOd7EYww==
+X-CSE-MsgGUID: 509+ki/1QTWfXQdPung9wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="169208577"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 22 Aug 2025 20:47:20 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1upfDN-000M3y-1O;
+	Sat, 23 Aug 2025 03:47:01 +0000
+Date: Sat, 23 Aug 2025 11:45:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>
+Subject: kismet: WARNING: unmet direct dependencies detected for
+ SND_SOC_WM9712 when selected by SND_MPC52xx_SOC_PCM030
+Message-ID: <202508231140.J9SEP853-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: zo4a3ooq8z7myw8bu8fquya1ssw3agj8
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: CC1F820024
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/XlXArSvis0vVuWOqmNqtpW3koGZNhTo4=
-X-HE-Tag: 1755920194-495430
-X-HE-Meta: U2FsdGVkX18IEwsUTfmDNbSvpKpaM+7KM/gyZuQaZAmZV+ZPE0G30LWrTeIL1gi7aPLoPtW8NRwVfdYL6yxSsp5+NUNE5CgZl0Q6l5OfcONd6CqOWvwkXAElMM1i2D8vmuTs8jw16579T5wXqsU38gJZ1KerBlf5kPEbjeHbMtJEygq4CezXJtjlArF/ra9w2EYkFaRohNsMcpY5jg/KjTDP0Fmy3iwZrt7Yq69Yb/IoCoNdjlxBhe2nvhUeqEn09eJoB5NkWqD74IAvyBImqN6GeWHhH4JMacMcBwYKzGnnwMbsGlEbZpGSncmBWox1mANgjNn2wmRg0lpehSwTF0atuxrUdtB6mzO0Da+7zPxhTVKYHugRnlnRwYlb8N23R+EIEWfwPB8TrqmG/IGf/8sAmrjxThP9pkeSP7E2W/3ii12IlfA/ICGD4M0h8ZvH1rhz6+x6TiqRM+DyjT9ttBi3iBdtiZPmD25JHGJLEuMBe9y+wnv7wmzd1lhgNHuZ0DpBBsRTqzuuuPlV9wpbe5iSQTqbWIMmR2I9rNPGrgA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   6debb69041724bae8a8a4d0ac60502754c1cd945
+commit: 5a309875787db47d69610e45f00a727ef9e62aa0 ASoC: Fix SND_SOC_ALL_CODECS imply ac97 fallout
+date:   6 years ago
+config: powerpc-kismet-CONFIG_SND_SOC_WM9712-CONFIG_SND_MPC52xx_SOC_PCM030-0-0 (https://download.01.org/0day-ci/archive/20250823/202508231140.J9SEP853-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20250823/202508231140.J9SEP853-lkp@intel.com/reproduce)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace/fixes
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508231140.J9SEP853-lkp@intel.com/
 
-Head SHA1: bfb336cf97df7b37b2b2edec0f69773e06d11955
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for SND_SOC_WM9712 when selected by SND_MPC52xx_SOC_PCM030
+   WARNING: unmet direct dependencies detected for SND_SOC_MPC5200_AC97
+     Depends on [n]: SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_POWERPC_SOC [=y] && PPC_MPC52xx [=y] && PPC_BESTCOMM [=n]
+     Selected by [y]:
+     - SND_MPC52xx_SOC_PCM030 [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_POWERPC_SOC [=y] && PPC_MPC5200_SIMPLE [=y]
+   
+   WARNING: unmet direct dependencies detected for SND_SOC_WM9712
+     Depends on [n]: SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_SOC_AC97_BUS [=n]
+     Selected by [y]:
+     - SND_MPC52xx_SOC_PCM030 [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_POWERPC_SOC [=y] && PPC_MPC5200_SIMPLE [=y]
 
-
-Steven Rostedt (1):
-      ftrace: Also allocate and copy hash for reading of filter files
-
-----
- kernel/trace/ftrace.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
----------------------------
-commit bfb336cf97df7b37b2b2edec0f69773e06d11955
-Author: Steven Rostedt <rostedt@goodmis.org>
-Date:   Fri Aug 22 18:36:06 2025 -0400
-
-    ftrace: Also allocate and copy hash for reading of filter files
-    
-    Currently the reader of set_ftrace_filter and set_ftrace_notrace just adds
-    the pointer to the global tracer hash to its iterator. Unlike the writer
-    that allocates a copy of the hash, the reader keeps the pointer to the
-    filter hashes. This is problematic because this pointer is static across
-    function calls that release the locks that can update the global tracer
-    hashes. This can cause UAF and similar bugs.
-    
-    Allocate and copy the hash for reading the filter files like it is done
-    for the writers. This not only fixes UAF bugs, but also makes the code a
-    bit simpler as it doesn't have to differentiate when to free the
-    iterator's hash between writers and readers.
-    
-    Cc: stable@vger.kernel.org
-    Cc: Masami Hiramatsu <mhiramat@kernel.org>
-    Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-    Cc: Nathan Chancellor <nathan@kernel.org>
-    Cc: Linus Torvalds <torvalds@linux-foundation.org>
-    Link: https://lore.kernel.org/20250822183606.12962cc3@batman.local.home
-    Fixes: c20489dad156 ("ftrace: Assign iter->hash to filter or notrace hashes on seq read")
-    Closes: https://lore.kernel.org/all/20250813023044.2121943-1-wutengda@huaweicloud.com/
-    Closes: https://lore.kernel.org/all/20250822192437.GA458494@ax162/
-    Reported-by: Tengda Wu <wutengda@huaweicloud.com>
-    Tested-by: Tengda Wu <wutengda@huaweicloud.com>
-    Tested-by: Nathan Chancellor <nathan@kernel.org>
-    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 00b76d450a89..a69067367c29 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -4661,13 +4661,17 @@ ftrace_regex_open(struct ftrace_ops *ops, int flag,
- 	        } else {
- 			iter->hash = alloc_and_copy_ftrace_hash(size_bits, hash);
- 		}
-+	} else {
-+		if (hash)
-+			iter->hash = alloc_and_copy_ftrace_hash(hash->size_bits, hash);
-+		else
-+			iter->hash = EMPTY_HASH;
-+	}
- 
--		if (!iter->hash) {
--			trace_parser_put(&iter->parser);
--			goto out_unlock;
--		}
--	} else
--		iter->hash = hash;
-+	if (!iter->hash) {
-+		trace_parser_put(&iter->parser);
-+		goto out_unlock;
-+	}
- 
- 	ret = 0;
- 
-@@ -6543,9 +6547,6 @@ int ftrace_regex_release(struct inode *inode, struct file *file)
- 		ftrace_hash_move_and_update_ops(iter->ops, orig_hash,
- 						      iter->hash, filter_hash);
- 		mutex_unlock(&ftrace_lock);
--	} else {
--		/* For read only, the hash is the ops hash */
--		iter->hash = NULL;
- 	}
- 
- 	mutex_unlock(&iter->ops->func_hash->regex_lock);
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
