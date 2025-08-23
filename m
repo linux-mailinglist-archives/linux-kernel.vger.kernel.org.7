@@ -1,150 +1,84 @@
-Return-Path: <linux-kernel+bounces-783107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBFBCB3296E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:54:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8651B32971
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44154189FF2A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:54:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD7695A6097
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA8C2E62A7;
-	Sat, 23 Aug 2025 14:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88522E62BA;
+	Sat, 23 Aug 2025 14:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="BmCLD8y7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FVRPp+dz"
-Received: from flow-a4-smtp.messagingengine.com (flow-a4-smtp.messagingengine.com [103.168.172.139])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pcE5YBrR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96721E412A;
-	Sat, 23 Aug 2025 14:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C96C155C97;
+	Sat, 23 Aug 2025 14:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755960854; cv=none; b=Amr2s1un6TG03bvCMUc2bUhCSfWyb1m3wsk4riMFqyJUbLaU3A1XmjP9NCgKqNxTpN8/RtGMDXkWb4QsdrZ7IU+Jr0o9Ww5Ya2zX4qQvmwNkVmLJOdg2yp2e7IpSzWwdTaNOQJLi5MYEyBjme6Qc2OAgZ0Tq7Yu+T/Q7n0/hlWs=
+	t=1755961053; cv=none; b=Q6Mt2sLnVD8sgD6uZhN4Of5WerZcn3X/V56k20VtnKArwP+9LLGdg4ZGcR+GVILOTHS95owMnb8Arqx7LCY1tCaTGICQbygm86/KtltAkkBPOot8xhW5hel25yZVrDh6t5BPGKzERDw04ZsdX5c0Oo5bR3ohLG0/cnLZ0r8tolA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755960854; c=relaxed/simple;
-	bh=Kxa1NZwbKhCZohnVX1PISuwQjBY6U8j916V5dM0MJP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oPR4Swxt84ez9YMf8LEirxt4QVhw9Rp1St2Ht13dmwxNxg0w8jfQuLdJ4zrmdNngqMhfr1bwKAKXeSaru+6Vb0vD00AJEKP1jiISUZ5I/ypr3jmml256vn6EBnmSXnsew6zz5vMN6FLqc8Zg4M9F1drO6C0NnZh7ArbY8NQUCws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=BmCLD8y7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FVRPp+dz; arc=none smtp.client-ip=103.168.172.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailflow.phl.internal (Postfix) with ESMTP id AB79913802D6;
-	Sat, 23 Aug 2025 10:54:09 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Sat, 23 Aug 2025 10:54:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1755960849;
-	 x=1755968049; bh=3yi6INSvOqzxqw231irPJUhbCwMHIzIAaoGR+X1dKNs=; b=
-	BmCLD8y71j+UbqoWW4hcXtBuU5pFpA0qMDRcQGhtZOi46M0GDAgZe+rrVaYvt7qQ
-	cVTJK64aqT3mOR83rtQ3PHpwveXK0md+NIpLK4ckItGirBrFBAjv9oZhETFj57k7
-	iN3xtO6qEBupdjFLXKhxWDkY1YJSI4iFqTG7b8KNy6Lr2M9nZhnHfdf/bAJEPiAl
-	al/IyvyeHkHx0AaWkeLkQm7lvKSaw6yJU91S/wfUAvaJeep5az1ofNwj2N5NUCP2
-	1WFgro/HdJbsrvDRUm7ZIL8Qze5puXpHrdDFsgPWVYdokvUqIxh+CH/otkViOEpa
-	JbODgj2vbOp5lFt+4aNaag==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755960849; x=
-	1755968049; bh=3yi6INSvOqzxqw231irPJUhbCwMHIzIAaoGR+X1dKNs=; b=F
-	VRPp+dzXSDdGJ1LGM4ewziwMIDAkYKV83RsGrIbyMyQcjb4hWMfnH9KBhIVjRNsj
-	WHTosnL7H7Yc9JeG2cSkrbkEuN5tFfC4ctjd8u/VUG10EpF2HJtUZ2/WzJoEADxo
-	8Lx9FWR/h46hOdd4PUhhxz7R0OTvBG1tEqxlMzNGDUAk6pEC1sGpYbUaI6k/bDuJ
-	TJvoJ6HQ7q0G5VuNXLhQrxI/FLbSDa93CsaRy3gYMPTCK5v/kjObB6tQ+wHOjd89
-	afUd/eDB90oVUC5t1kfiwxPup6zD77IwNyoseGT3BOn1QvqmRTLJ5k1+tnKyUZVd
-	/2eFpxvVEH0UO/F4KRbhw==
-X-ME-Sender: <xms:ENapaDWIwvlh4PhNvVu74MgJlpkh7ejfKB-kQupiBcDVyFJ1I1gyYw>
-    <xme:ENapaPGB0Qt09T3jrrTkuqEXXY4gUHBYPEV1PB04_ayFhexqtBvUyDSZEsg8UVwSH
-    wmOjDZ4J_fHSg>
-X-ME-Received: <xmr:ENapaH6AMNG-1Ldv5gFn0FjFiDKQLYa8psADYuXuPhB1Kt4RaEtdCOk778vCF6kyUrPGX0l4_G7KqR41r91d4NF5aMBvLOpr_nPcYw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieeileefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeelkeehje
-    ejieehjedvteehjeevkedugeeuiefgfedufefgfffhfeetueeikedufeenucffohhmrghi
-    nhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopedv
-    vddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrrhhkuhhsrdgvlhhfrhhinh
-    hgseifvggsrdguvgdprhgtphhtthhopehhnhhssehgohhluggvlhhitghordgtohhmpdhr
-    tghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepkhgvrhhnvghlsehphihrrgdqhhgrnhguhhgvlhgurdgtohhmpdhrtghpthhtohep
-    lhgvthhugidqkhgvrhhnvghlsehophgvnhhphhhovghnuhigrdhorhhgpdhrtghpthhtoh
-    epjhgvrhhrhidrlhhvsegrgihishdrtghomhdprhgtphhtthhopehsrhgvsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
-    gh
-X-ME-Proxy: <xmx:ENapaBKGOit7tLgucsETsXhdepe-u6bOQfQkqxRtP9dhmu-fu6kkXw>
-    <xmx:ENapaCA1SDNPDp_-ketPuuiscFBrypT3UU_g-uGTPHiDFCLOB6PLFg>
-    <xmx:ENapaHRvJcfbUA2MuSTn6m13RfjBjlmJPhIWSNZCAsIhJCDV07Ac3A>
-    <xmx:ENapaEd8pdA2eTOLh9JE029MCQI9U5T-IWZXT_mMWLxbP3p-DsnXng>
-    <xmx:EdapaJ0A2F_L_oZy0ai7mjIu4DpQZpzEhJ2xW30_XEB400s7wt-yta1o>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 23 Aug 2025 10:54:08 -0400 (EDT)
-Date: Sat, 23 Aug 2025 16:54:05 +0200
-From: Greg KH <greg@kroah.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: "H. Nikolaus Schaller" <hns@goldelico.com>, linux-pm@vger.kernel.org,
-	kernel@pyra-handheld.com, letux-kernel@openphoenux.org,
-	Jerry Lv <Jerry.Lv@axis.com>, Sebastian Reichel <sre@kernel.org>,
-	stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
-Subject: Re: [PATCH v2 1/2] power: supply: bq27xxx: fix error return in case
- of no bq27000 hdq battery
-Message-ID: <2025082300-resurrect-pennant-ab25@gregkh>
-References: <692f79eb6fd541adb397038ea6e750d4de2deddf.1755945297.git.hns@goldelico.com>
- <cac66cc0-c5f1-4bfe-ac43-5ece4a47cf15@web.de>
+	s=arc-20240116; t=1755961053; c=relaxed/simple;
+	bh=HJ8X7i1qzTJWC6Tli88d5d588o1VeDqhwG52uj/Cx8M=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=LV2GQW6amUV1X+oQqot/Iz+R34QO0REdsYthomHf5AepJNTrP5KBl4osi2rJqolC5UzQSz8kPlKWdf0HZ65EzUihUpwgDwsoJCZioKbS+uSxhuby4GB/UQr4cEBdkTHbIWjBZzTHHAswzFatRPS/TDnBEtgNO+WqgEMbHgySE/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pcE5YBrR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F5C8C4CEE7;
+	Sat, 23 Aug 2025 14:57:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755961051;
+	bh=HJ8X7i1qzTJWC6Tli88d5d588o1VeDqhwG52uj/Cx8M=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=pcE5YBrRvba+U6qYlsvx+lAxqVazuJjhdrAxn/kW76YRfrtQzDVj8Qfw8m3NvuigF
+	 7+CaSISGK1yGLXlGH17cxqFpNQ/Jvyp95NF2jxSAq7GZksyTqiomyDEGnDm/MB31qL
+	 ZVI0oq0UMnsYFL3evDQnpwg8PMz9ibhTgpEQfFpmtY0FImHZ00RVR3ZA1C2+o2jtjf
+	 sxQVLv83qov2sGDGFNec3pMJlCias4zS9eDqZeQCWNdWyHLWHPXf7HPpr3sJbwhJFn
+	 wXlbfwlnCWBi+/cHim5hlOV/QrS9RRzs+DkRakD9uRih/a5S6HNkBfHajINCljcj/8
+	 apYErnoWZMiBg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cac66cc0-c5f1-4bfe-ac43-5ece4a47cf15@web.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 23 Aug 2025 16:57:26 +0200
+Message-Id: <DC9W8OMI5UT6.3RPWM2I4K10BS@kernel.org>
+Subject: Re: [PATCH v2 3/5] rust: scatterlist: Add type-state abstraction
+ for sg_table
+Cc: "Alexandre Courbot" <acourbot@nvidia.com>, <akpm@linux-foundation.org>,
+ <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
+ <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <lossin@kernel.org>,
+ <a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
+ <abdiel.janulgue@gmail.com>, <lyude@redhat.com>, <robin.murphy@arm.com>,
+ <daniel.almeida@collabora.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Jason Gunthorpe" <jgg@ziepe.ca>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250820165431.170195-1-dakr@kernel.org>
+ <20250820165431.170195-4-dakr@kernel.org>
+ <DC9U87GQ7ONZ.1489DEN1PPUAC@nvidia.com> <20250823143211.GB1121521@ziepe.ca>
+In-Reply-To: <20250823143211.GB1121521@ziepe.ca>
 
-On Sat, Aug 23, 2025 at 04:46:46PM +0200, Markus Elfring wrote:
-> …
-> > So we change the detection of missing bq27000 battery to simply set
-> …
-> 
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc2#n94
-> 
-> Regards,
-> Markus
-> 
+On Sat Aug 23, 2025 at 4:32 PM CEST, Jason Gunthorpe wrote:
+> Correct, this is misusing the API, and I don't know if the lengths are
+> even guarenteed to be zero.
 
+Hopefully it is. Otherwise, it's not only the documentation if sg_dma_addre=
+ss()
+being wrong, but also a few drivers and maybe iommu_dma_unmap_sg(). However=
+,
+since it's a specific implementation of the API, it might be correct relyin=
+g on
+the sg_dma_len() =3D=3D 0 check.
 
-Hi,
-
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
-
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
-
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
+In any case, I think we can just use the nents field of struct sg_table, ju=
+st
+like for_each_sgtable_dma_sg() does.
 
