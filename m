@@ -1,117 +1,248 @@
-Return-Path: <linux-kernel+bounces-782956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEBC1B327A2
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 10:33:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 072B2B327A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 10:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2D84A07E92
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:33:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FFBE1C812A1
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E0B23A9A8;
-	Sat, 23 Aug 2025 08:32:59 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D4A23C4F2;
+	Sat, 23 Aug 2025 08:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OFSzcjtf"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5EF135A53;
-	Sat, 23 Aug 2025 08:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B6D23BCF7
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 08:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755937978; cv=none; b=cLzgPUw1huvC0w479XfZuy/tPmkcCNmUcEmJIleCvAX/3WQKn7QWn2zogpLafF0lyk31jznA2Re7gtKI9UBEErdmURD8Nvnd7z9U9tvaR9++3j7nsGuW0Z1WIVcBPQFFbiWknqkiieWJyF6Zywe7AmUwVXxQiaBNx09vttyk+lk=
+	t=1755937982; cv=none; b=MCyAqvoFSQKzSqfbxVP1wdjqt3Omj1OoYPaefuEK2p1Wdqeiv+pdaso2MBp+3a7qC0yy6TotaLWBsuYp8bbx+eqry4QXpHYnVuaGQ5sS0zcnirCRNkKva73ZRyohTK4W38HbQKW++zRovf0VyBuDI/VpqgWVUVj0ZZfiMyQEpLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755937978; c=relaxed/simple;
-	bh=Ugjn4Lpvu+JzfFVcCIU50/tdQt6nLBDXn6e0GybTKIQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RD+z784/JJm/76qC2FDSvy17RqWAmmpdeWQQI4tc5upfdhwOEGiPCbCZf1oihjsmlAI6+FjZoV1e/ta6bpLSgyEBiZDfI18F6s9UvXvCAmFQyQ6M/UrkGEGXayhzGlqt5G9OAXNk2X3dL9B25MB0U5IiijueeZUPvkRT7RkD0TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: bc3d72da7ffb11f0b29709d653e92f7d-20250823
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:25c9ebe4-10e1-4441-b7eb-d4278b7d564a,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:6493067,CLOUDID:ebf846b9e86e1aa2c93147aeafaab428,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
-	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
-	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: bc3d72da7ffb11f0b29709d653e92f7d-20250823
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangheng@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1940115896; Sat, 23 Aug 2025 16:32:42 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id BC67CE008FA3;
-	Sat, 23 Aug 2025 16:32:41 +0800 (CST)
-X-ns-mid: postfix-68A97CA9-48109459
-Received: from kylin-pc.. (unknown [172.25.130.133])
-	by mail.kylinos.cn (NSMail) with ESMTPA id D38F3E008FA2;
-	Sat, 23 Aug 2025 16:32:39 +0800 (CST)
-From: Zhang Heng <zhangheng@kylinos.cn>
-To: axboe@kernel.dk,
-	phasta@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	broonie@kernel.org,
-	lizetao1@huawei.com,
-	viro@zeniv.linux.org.uk,
-	fourier.thomas@gmail.com,
-	anuj20.g@samsung.com
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhang Heng <zhangheng@kylinos.cn>
-Subject: [PATCH v2] block: mtip32xx: Prioritize state cleanup over memory freeing in the mtip_pci_probe error path.
-Date: Sat, 23 Aug 2025 16:32:22 +0800
-Message-ID: <20250823083222.3137817-1-zhangheng@kylinos.cn>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1755937982; c=relaxed/simple;
+	bh=cC2R7dIC+jmKJ5KWCAUHe4UcJxwQJaOLa1CkUnwlYEg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u3Yi/rtY8fvGNIiUJ1GNCjPrxiZoAbER2c68leM5uuByL5wKaiIMWYhOTZ7N/y89ZZPUgZaqNEJgA5u0/stofHNoRvzYwV5teDNKGfxQHbvkjLjBavmnaA8dA5v+6tS0AwAH+1LTgCiTMU1tEZmLzi0eazztG000dVX11Thh5t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OFSzcjtf; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-24457f581aeso21512425ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 01:33:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755937980; x=1756542780; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=upHWeEzdtTZrqoNSv+NWSJs+RM6eMBq+4oXrZP7WELw=;
+        b=OFSzcjtfPvEHPF7nu3sGzvOVIicJu4UJR1dw0A/B33umW7Wfpi8623h2t5Xo3N9P5z
+         wyPkU5wlGkjHlLEiSHu6JuuWJm6juYCc6k9tA7yZbgvN24NawL2zS8cUVAo2tEMNdhMn
+         eJL+rcTDOBqSgC2wogitjf3M0oCyvURlrf+NvyVtIiXpzB+Mt4CJM3gsJ4oNfGb1Zv0T
+         7JIZ8wSYvKVLBUZHAnVZtXqD5S74Tz6ZxpbVolHeQYs2E/SL+zKgTIrTxJJQexK2zhk7
+         Ld6h8I2hPP6PPAN/LZ4PuvNJDLpzBYGvAuMgoQ9Gb8/ajHBWuXI8YshFuo6D4MBN99HW
+         12zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755937980; x=1756542780;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=upHWeEzdtTZrqoNSv+NWSJs+RM6eMBq+4oXrZP7WELw=;
+        b=QoQvjuOU9RSnNlUJZljaLmukBDDAHAvm9PiST7q6pTEvTCKqOKHmVVOuu1wZwfKePq
+         l4Xuiif2NDCYJGXpGpv6K72Ua8Ymy/+CUd13PT473KlKq4wCw6UXywmAsiOsDbPgtI+b
+         DeC9rlxrOtQu8fl82/offfgJPq0xLIwelDGXSLxBgmDO+MvKov7MNbXWcosLxRbp5KmB
+         JiXUsWVYqTaT2XKahrwHF6LflsuS1xuU9+Vwc3n2HFibMXnoNKrudR9hBhpb7xNSPdQA
+         lZshqRS4cJCMnZ0G+41CDy5/ds5aCGNErU5So0pxtXDh/nqVsfl0WDZpX8pI983dqOhc
+         GlKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwS86pNw1AidwWVgNjofKVJMg0KkbBMEzNhLweinx4htRQPIKvuIDU/LNzl5K0TqZOOTLKnw+W2tM7mos=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMC/qFwQadzBpjOIIWeg9wuLDGaj0CvR9HNQgHsnhtGuSVp94t
+	fs2uz55SFxOO3pPWqmOkIfSOwWjbdjfw3j5uFCmE45VBlKEZ1/Dkxl1stFcusZNbs2OpuCE5LnF
+	8kljbHEsGPgv+T4HOmJQkIIvoWPCI9xt8bDlVhDxldw==
+X-Gm-Gg: ASbGncueyc6TEpyX1vlVVAsyxo/xXWuDt3iv1x07YGHcYIzvkZTL0pEuhGAgG7UKmfS
+	xGZ5zDyZNS5qna2BNQyp53adi5eMYeLu3d4TDzwPL/x9WUolSd3MYeb+EOB4c04IMemPytgvama
+	tbn3E3Pj8f6qG6k9z9p2C2DceCADOesu5H/LF2qnzhfAlQTzjKCa5wRtz0UpxlOWJO0q7kMY2DT
+	tOavvH02xDysjM6hE4RmtFAaKxIHuB7P3eoVXA9
+X-Google-Smtp-Source: AGHT+IEQN4YSKtPymn606DVFVKKtzEvavaQRMuxmngqfsot0SA3jrZ9khNjbXYGtoFrClXENcn7IoJUJduyhb8F4KS8=
+X-Received: by 2002:a17:903:2a8b:b0:240:7753:3bec with SMTP id
+ d9443c01a7336-2462ef98a97mr61538175ad.51.1755937980301; Sat, 23 Aug 2025
+ 01:33:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250822123516.780248736@linuxfoundation.org>
+In-Reply-To: <20250822123516.780248736@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Sat, 23 Aug 2025 14:02:48 +0530
+X-Gm-Features: Ac12FXydinZ-k0JFp2vC7EjM9psfTWKA5t0I3ZApJXylszGwy9_XUiFZWgGwYX8
+Message-ID: <CA+G9fYsNyR2RSUFEn=1v157mtJ3vrL=__vWidYfWrbaYHe6JoA@mail.gmail.com>
+Subject: Re: [PATCH 6.16 0/9] 6.16.3-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The original sequence kfree(dd); pci_set_drvdata(pdev, NULL); creates a
-theoretical race condition window. Between these two calls, the pci_dev
-structure retains a dangling pointer to the already-freed device private
-data (dd). Any concurrent access to the drvdata (e.g., from an interrupt
-handler or an unexpected call to remove) would lead to a use-after-free
-kernel oops.
+On Fri, 22 Aug 2025 at 18:07, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.16.3 release.
+> There are 9 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun, 24 Aug 2025 12:35:08 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.16.3-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Changes made:
-1. `pci_set_drvdata(pdev, NULL);` - First, atomically sever the link
-from the pci_dev.
-2. `kfree(dd);` - Then, safely free the private memory.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-This ensures the kernel state is always consistent before resources
-are released, adhering to defensive programming principles.
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Signed-off-by: Zhang Heng <zhangheng@kylinos.cn>
----
- drivers/block/mtip32xx/mtip32xx.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+NOTE:
+The reported warning has been resolved in this review cycle.
+WARNING: fs/jbd2/transaction.c:334 at start_this_handle
 
-diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/m=
-tip32xx.c
-index 8fc7761397bd..f228363e6b1c 100644
---- a/drivers/block/mtip32xx/mtip32xx.c
-+++ b/drivers/block/mtip32xx/mtip32xx.c
-@@ -3839,9 +3839,8 @@ static int mtip_pci_probe(struct pci_dev *pdev,
- 	}
-=20
- iomap_err:
--	kfree(dd);
- 	pci_set_drvdata(pdev, NULL);
--	return rv;
-+	kfree(dd);
- done:
- 	return rv;
- }
---=20
-2.47.1
+## Build
+* kernel: 6.16.3-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 3fb8628191b4a7d912baf880840804056f3f44ad
+* git describe: v6.16.2-10-g3fb8628191b4
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.16.y/build/v6.16=
+.2-10-g3fb8628191b4
 
+## Test Regressions (compared to v6.16-1186-gb81166f7d590)
+
+## Metric Regressions (compared to v6.16-1186-gb81166f7d590)
+
+## Test Fixes (compared to v6.16-1186-gb81166f7d590)
+
+## Metric Fixes (compared to v6.16-1186-gb81166f7d590)
+
+## Test result summary
+total: 348595, pass: 321612, fail: 6867, skip: 20116, xfail: 0
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 139 total, 138 passed, 1 failed
+* arm64: 57 total, 56 passed, 1 failed
+* i386: 18 total, 18 passed, 0 failed
+* mips: 34 total, 27 passed, 7 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 40 total, 39 passed, 1 failed
+* riscv: 25 total, 24 passed, 1 failed
+* s390: 22 total, 22 passed, 0 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 49 total, 48 passed, 1 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-rust
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* modules
+* perf
+* rcutorture
+* rt-tests-cyclicdeadline
+* rt-tests-pi-stress
+* rt-tests-pmqtest
+* rt-tests-rt-migrate-test
+* rt-tests-signaltest
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
