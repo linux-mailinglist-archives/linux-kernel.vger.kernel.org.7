@@ -1,422 +1,206 @@
-Return-Path: <linux-kernel+bounces-782802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C9AB3258A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:08:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A45B32592
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96C98AC51AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:07:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CEA5AC5468
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B642566;
-	Sat, 23 Aug 2025 00:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986FA4C8F;
+	Sat, 23 Aug 2025 00:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ekO5Bucf"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XvkAguRV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7683E366;
-	Sat, 23 Aug 2025 00:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322E41367
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 00:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755907660; cv=none; b=ZhXTacLwqBKPJiYdoIOe/iA8BWcW8PqA+bln6EseSY/Jtl3GOseYPP7aJe9y/6QM9r8ahR8U/gDVpaxrO/jz744B3ZJ4upZEjQ7zHWZ69U8wpqttmfQUbIQeZJLVgmWqpKyELHJclWoonHBLqMBDSZWIP+2TqwtM2O1D4GKtppE=
+	t=1755907928; cv=none; b=R4/Xz0ewELRtLtSUDb8oPXxlpno0lepKPF8gsMjoqV1d+KS7vSfH05d54W6qABftm9VjwNBeORaKdFFVVc+sAvDhdPzXLwyI2rd95MGcRFOBf5PTtzucy8X9o9KkzxDckQfYVOQ4/UB9kOObZbrxm9WfShLCjjSbpSZ+IAgfWrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755907660; c=relaxed/simple;
-	bh=Ov9xVPV8OXYrGrugmIw2QjsowoqngLLrPqeF9yt/Vcc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HIzA17ffIMWFk41lOAjQvhVlypUXfaEeilTugfSToK/6zZ4q+y6aik6cspM1k+UK+wWCb6kLTExdzOulIeb6miNdjDhDAtl2RvmqTKXx589f2XnZMik0g0N0GFKdwACFYMYeCKM2pejVtjOtmDZKdd+IHf0DO/w7yjOKWzmp+us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ekO5Bucf; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-70d9d415a2dso13049486d6.1;
-        Fri, 22 Aug 2025 17:07:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755907656; x=1756512456; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+OxCx2tRXiZPQFg72Kk+L1u7ilKV7tPyGXHW6DWHOdE=;
-        b=ekO5BucfPu6AN+JAgxlAgr2IrOpvwbTm95J8NFV9cru7z5oG+z20P86u9bOun894Td
-         jN5n5Ya+JaKjF81zls1B4SLtXg5R7TW3IxHbrBboglLEQOF0xcXf7RcgnsqchSqqMsHV
-         o0ES7se4Gry9059Z442UIJCdcytXngRMyBWZOx8c6etRmq14y1EM/Z9ahRxZZtarCuUp
-         2Q/R63WvobxbCPKT7ubVQIAoSMj8tTEEsFZJ1gRHKlZPNgwPb7m3GfI5euwS4GjA3wsY
-         yqh62cTlhJAmzdMoHIVeyf7qKzT/T9iSe57i29Sos1InaZeLAqThXwKKEtpeqazW5TWx
-         BZEQ==
+	s=arc-20240116; t=1755907928; c=relaxed/simple;
+	bh=izTeRDcb3LUu2+xcZ1pXgxZuqtAbJOSjKbwv77VWnSo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QA95D892ks/TDOezrppYdnJMD4CrkpZXEuV+cHbBKusEQtnNisyJQ9RSz817h8tU9+CL04xbTBSgceBWqRgMd1wTn9uR5yi4t7VrvqRXOnpZCsw4O/koyXQibZjbXdC2y/VsPv36oBNJhFPKnRfDutYiI27tAB5EYbgUAolpaGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XvkAguRV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57MHV3g4019350
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 00:12:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=LKH3UmwyCqZl4E/zd7SLx5
+	cyJ5JW0DFn9aa/Um4dYq4=; b=XvkAguRVqkCgLToup5Ft4AYtG1pSR2nQsaPp9J
+	24p6CUG2X8tVecbxiNnnba3XmgJLI5/nhj39UriZIo6f728hmSywHqcKnFPc+u2+
+	rY674Ta6yoewXff4d2UhYXwc2kT1lxeT+1YZ5ttAnzqQ/GnBVAk4ST858c11S/G0
+	UURk0q2sNTsL+bDWs+sIVPXQiucINHqEIBRa+tE5DHWfwtEffkyGg/lGItysAy4g
+	y+dn7zjuHFUB4kPQFKU0FprwgiBgY7ei1kqzqc0+8fZAtuhLF9/QWrX3kmFdJmCv
+	K6yjm8gAazAz/P78AIPYfBiSViUxF3bQosvUs5ZD0swvZ7Ww==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48pw10ru78-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 00:12:06 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b109ab2cbaso60629611cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:12:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755907656; x=1756512456;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+OxCx2tRXiZPQFg72Kk+L1u7ilKV7tPyGXHW6DWHOdE=;
-        b=sm1vN+dXDM8XOCJ+LSRFehgiRru733FhvWmM/bVXC78rhKQHBTUYvMqf6veKWdOXct
-         6/6wjqWIGuylulXyWfqWQpgV8c/1xriqJ9l0BOANGza8SYKJ0SbSWE75snbXYvtt9HBg
-         gp4gPnm7s1YBDMX8uotOmgEMetdBeNE3ZpGPbkwhhB6Ij54zDCwUpmFu3VBFBX8CBZ9b
-         Gj5Jnao+1xXS1mHQ2mv8KlgH796Ou0SPDaTTH1Gy9mm+y0XMGdBRiX5eaDa12lamMhaT
-         3qPnGfosAbhkZHcmrLBu9r6syZfyASl2PEK2ikpficJEVsqcfnW1vT+a2Su4httSF+d6
-         Bxmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVC64kcZ5iS5qcBgP+iNTAobkdXBQoR81XNybS2L8kOnugNP7CzlcAVKOozEAiIOtJ7xD0/egSnC5mk8J7M@vger.kernel.org, AJvYcCXSFECTsjV7s7TL9+6b++A/f5dz3ET8rxmUejrmn1Mq51CM+P4P0vHifvVd3GK/ihTmUootkSCXAv83Vw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz31/0zlHWD82VAPIlormyXZUSHDSDkgUHOW8lqHVKmlJhhSD1B
-	QYOPTDnRje9PI/DJ64ZxUP3PFKmtWUhqkO09wwjzUfEWwU2mGgyqsvyO3c3w4NEstBQIIQi9mA5
-	EbA9r/7G2QxiFMnNWFu1AVS1j4MeU8Jg=
-X-Gm-Gg: ASbGnct2xMnpl78eUQXKZP/m+VVyKLUbXv2Z9m1CrSld1G4uFmD8jKgNUN0pgRIijqm
-	QK9NXyEadc3UpES+ZYy+AguWT8xCSfuGy2e7dZWRPa8rlBm+mdHqthNTVD/1tbbSBsJzplVBMqI
-	bsNA+e9n2LfDVlSgSHgdeWPIkenF1Q8l4p8qbk/SKuvXHlOc9YHW9OBLqJvdYJtyyBvuAfUi++2
-	JWvfbvl
-X-Google-Smtp-Source: AGHT+IFHQtMXrlE6PM71P8MlI3Plvd0ypXUryL4vH54bxDUAGcxqTrrmn3Yoo0hLpdrBUgATShzTbsRoRI0wLga2RwA=
-X-Received: by 2002:a05:6214:518b:b0:707:533d:eaa6 with SMTP id
- 6a1803df08f44-70d9837ff58mr42639426d6.16.1755907655945; Fri, 22 Aug 2025
- 17:07:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755907925; x=1756512725;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LKH3UmwyCqZl4E/zd7SLx5cyJ5JW0DFn9aa/Um4dYq4=;
+        b=uUxF2O2rqYZc3R1JP+KlKfywKJOlgh9nT7fYtor8RMobUJg7+tLoLvLz9al5gfHjbn
+         9x28UuQuuHAskrFZT4Gr+9Fujjf0JPQbWwNjcCgr+8egiHENDb4GeQYvV6ezHD3crrRX
+         6m7Warl9ZKWh8k0FflpjOxj2Euqbajn+Oq/YxpePvGpuMPwxFRptRZE1j9Us/cmaDG7B
+         vaJrnQ6+azaOWlgdRKkjVw/ItqEdLlmtPDgBPqFuxHuhxYfaU33geS0yE8DIB80mWWhe
+         MU//tNd18QWp7nqmm27iEHadOGTAwKPg+00kZYJaeLRANj8CjGgc1aLLsTj+rMrK+Gai
+         V4xg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSYXMaJvdfUz3X5jikgt15E7CmjNun/QPbe5YHdj5SlPVjV3uxg5R6yC8ZjbnPzRxl7gQXuofxyluo2sw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8bV3yt+wNgS1EGatwwLgcOewqtLGGN2wE2o+Zuxk4dTtlOL48
+	6YBHliqebUjYBXiLXyw491xuXJM1/SRxd4UcwpOZCDJfdRn+y8CkMHaKcalvmEqhkLnlXsxRtPQ
+	TslgeY7u0+1OrytB4pkmM3Eko2d66Rq9D1/hbaVqGbJZqTfdIGXaJN7SfBe6NGM3yTRw=
+X-Gm-Gg: ASbGncutfkHw5Mz42VAn0SbkHYT4trgKMVadhjj5FKKrBvi3c1VjS7+Ti7+oMg+vjBF
+	Mos5cBoj4iq6iXIwGpnywZZCVeyvsyRenKap5SP90adC3G3rKpoRw+wuXkZXNSwHNxJ7EjwjGqg
+	9RUaL5Ymk/AR9qpHX9gA7/POoXB9ubsqd6ga+VuOkGxvkOQZFDGlgq7lZ+sFdKdaWz8V5IfDejy
+	mD88EI25H6e5DlTLIk6HnQK9/RSk3TPbuCCpS6Z5KQNQuRMqBB8L/+98G2zJty8Wdf0HTlpWAVU
+	bTZ3Gpza7bf0DfR1JHLnPPL27tAAT8JOEmQ3bQUS6VR3yAdCWefT9S++NtB5/2h0kRQmk4+sqNS
+	YFDI2rIEtFDe3h8U5IyR1GvQsJrsflV8NS2XUSTH7UQuH60U30Row
+X-Received: by 2002:a05:622a:248c:b0:4b0:eb79:931d with SMTP id d75a77b69052e-4b2aaa561b3mr63251911cf.2.1755907924814;
+        Fri, 22 Aug 2025 17:12:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGjRcYFg4ZlcT2OcnbWB43OpYbpLPRq63IBEUW/yX7KrugkfRBNsErbT8C9Dy4q63T/Oz64nQ==
+X-Received: by 2002:a05:622a:248c:b0:4b0:eb79:931d with SMTP id d75a77b69052e-4b2aaa561b3mr63251531cf.2.1755907924269;
+        Fri, 22 Aug 2025 17:12:04 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35c8ba2dsm208929e87.77.2025.08.22.17.12.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 17:12:02 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Date: Sat, 23 Aug 2025 03:12:00 +0300
+Subject: [PATCH] drm/msm: fix msm_gem_vma_new() allocations for managed
+ GPUVMs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820160628.99678-1-lkml@antheas.dev> <20250820160628.99678-6-lkml@antheas.dev>
-In-Reply-To: <20250820160628.99678-6-lkml@antheas.dev>
-From: Derek John Clark <derekjohn.clark@gmail.com>
-Date: Fri, 22 Aug 2025 17:07:25 -0700
-X-Gm-Features: Ac12FXw7wV8Y4yLwTbKH0Bu5jdmY-MXvLFP8UIQPnqRgimyzWPF6F7kb1MmOqlM
-Message-ID: <CAFqHKTksD_J0M1fTJm3rYa3i=Or2xnz0n2P8b2TkcdvuDfExAA@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] platform/x86: ayaneo-ec: Move Ayaneo devices from
- oxpec to ayaneo-ec
-To: Antheas Kapenekakis <lkml@antheas.dev>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, Hans de Goede <hansg@kernel.org>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	=?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>, 
-	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250823-msm-fix-gpuvm-init-v1-1-e199cd5b1983@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAE8HqWgC/x2MQQqAIBAAvxJ7bsE2Kukr0aFysz1oohVB9Pek4
+ 8DMPJA4CifoiwciX5Jk9xmqsoBlm7xlFJMZSFGjNNXoksNVbrThvByKlwMbUkZ3PC8rtZDDEDk
+ b/3QY3/cDlPxl9GQAAAA=
+X-Change-ID: 20250823-msm-fix-gpuvm-init-520d87ebcf26
+To: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Matthew Brost <matthew.brost@intel.com>,
+        Himal Prasad Ghimiray <himal.prasad.ghimiray@intel.com>,
+        Danilo Krummrich <dakr@kernel.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Danct12 <danct12@disroot.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2074;
+ i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
+ bh=izTeRDcb3LUu2+xcZ1pXgxZuqtAbJOSjKbwv77VWnSo=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoqQdQnWFc2erhkmlZkodf2OTqrgXkxW7pdw437
+ 37G1d3E8l2JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaKkHUAAKCRCLPIo+Aiko
+ 1dAzB/4wwaKA7WZL9E0yYd1cJks/dBt54lwvKms5QB1urUJqn4s3R8HawZOj6/PHvvNfOSGQtWt
+ HS6BJvmXj38WrfrHOJOGq/ndCib3iVdLmzHccrKenBuszzTmd9bKBbpLU0OmfXpMODSTFRe+lZV
+ BdQoMbzHGZnMhNa+raq2b8L2GZQId0Ls6wIdV4eCzDD9FHhBJzEwubPWtbVcD5tVT1s0mSHgUVP
+ k88E6Zm1yzUXdgQYYg+9rVLLREEZCdJae68Ai6a97cWNcGbdRD+c1qclyxYICn8dKcq/WKPwUW1
+ To3j3KXRZe1APQYAm9z6u20OdAU/ovFhR9lWbeb422fc9KBp
+X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIyMDE2MCBTYWx0ZWRfX2ajMQjncXUlU
+ kY9xWJ8kQUIz09ThAWE1szAUnERAj8qStRawh9WNZMCmEOkTB9jXzvLiQkdd+XTNALCQ4zGcvNt
+ EY4uwEJ9UKullYWM4znKUWEOqyTZWeYUQN0A6voNbSOo2FJcGXe+/XVJSpoMJH8zKU9U87BJ1Eg
+ L+1gSRYQe/YoFe2FGAiZvKRx+a/liiWw6wt75sniWRwb6UyL5a+CgI6scM4VojYjzLZ9VhceBpu
+ nZ019z+7cRS6Yuw19RrCMIWbhA5/SsVDo3LHsUTa62bptmP1FR9TjYdotSkwW4tTDIWCu6ffPBV
+ N3KKQ3uMzsHYA+OiYXGK/8/RUDU9XMFsBvEDh4T9wzEGSFXlxXV0mHhGTl/hX2RG9lHc2+/Hiwn
+ Mcy2ry35
+X-Authority-Analysis: v=2.4 cv=eaA9f6EH c=1 sm=1 tr=0 ts=68a90756 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=2OwXVqhp2XgA:10 a=LpNgXrTXAAAA:8 a=EUspDBNiAAAA:8 a=O0ltPWiidyXzGDMWRkgA:9
+ a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22 a=LqOpv0_-CX5VL_7kjZO3:22
+X-Proofpoint-GUID: oe0r1Bs-QeD1-OAsVUHd7RPM1EvP8-Ey
+X-Proofpoint-ORIG-GUID: oe0r1Bs-QeD1-OAsVUHd7RPM1EvP8-Ey
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-22_05,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 adultscore=0 suspectscore=0 impostorscore=0 malwarescore=0
+ priorityscore=1501 phishscore=0 spamscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508220160
 
-On Wed, Aug 20, 2025 at 9:06=E2=80=AFAM Antheas Kapenekakis <lkml@antheas.d=
-ev> wrote:
->
-> Currently, the oxpec driver contains Ayaneo devices. Move them to the
-> new ayaneo-ec driver, which is dedicated to them.
->
-Hi Antheas,
+Since commit 3309323241fb ("drm/gpuvm: Kill drm_gpuva_init()") MSM
+driver fails to init, failing with "[drm:msm_gpu_init] *ERROR* could not
+allocate memptrs: -22" errors. The mentioned commit reworked the
+function, but didn't take into account that op_map is initialized at the
+top of the function, while ranges might change if GPUVM is managed by
+the kernel.
 
-Fan control is still functional under the ayaneo_ec driver in hwmon
-with this patch. Tested on my AYANEO 2S.
+Move op_mode initialization after finalizing all addresses and right
+before the drm_gpuva_init_from_op() call.
 
-> As this driver supports charge inhibition for Ayaneo, add support for it
-> for the AIR, AIR 1S, AB05-Medoncino, AIR Pro, and Kun, referenced from
-> the out-of-tree ayaneo-platform driver.
->
+Reported-by: Danct12 <danct12@disroot.org>
+Fixes: 3309323241fb ("drm/gpuvm: Kill drm_gpuva_init()")
+Suggested-by: Rob Clark <robin.clark@oss.qualcomm.com>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+---
+ drivers/gpu/drm/msm/msm_gem_vma.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-Works on my AYANEO AIR.
+diff --git a/drivers/gpu/drm/msm/msm_gem_vma.c b/drivers/gpu/drm/msm/msm_gem_vma.c
+index 3f440bc1f7106f3b0091f037611d0b433e5e2c18..6df6b7c0984da57fe64de41fa54f7dea0a324c74 100644
+--- a/drivers/gpu/drm/msm/msm_gem_vma.c
++++ b/drivers/gpu/drm/msm/msm_gem_vma.c
+@@ -368,12 +368,6 @@ struct drm_gpuva *
+ msm_gem_vma_new(struct drm_gpuvm *gpuvm, struct drm_gem_object *obj,
+ 		u64 offset, u64 range_start, u64 range_end)
+ {
+-	struct drm_gpuva_op_map op_map = {
+-		.va.addr = range_start,
+-		.va.range = range_end - range_start,
+-		.gem.obj = obj,
+-		.gem.offset = offset,
+-	};
+ 	struct msm_gem_vm *vm = to_msm_vm(gpuvm);
+ 	struct drm_gpuvm_bo *vm_bo;
+ 	struct msm_gem_vma *vma;
+@@ -402,6 +396,13 @@ msm_gem_vma_new(struct drm_gpuvm *gpuvm, struct drm_gem_object *obj,
+ 	if (obj)
+ 		GEM_WARN_ON((range_end - range_start) > obj->size);
+ 
++	struct drm_gpuva_op_map op_map = {
++		.va.addr = range_start,
++		.va.range = range_end - range_start,
++		.gem.obj = obj,
++		.gem.offset = offset,
++	};
++
+ 	drm_gpuva_init_from_op(&vma->base, &op_map);
+ 	vma->mapped = false;
+ 
 
-Tested-by: Derek J. Clark <derekjohn.clark@gmail.com>
+---
+base-commit: 0f4c93f7eb861acab537dbe94441817a270537bf
+change-id: 20250823-msm-fix-gpuvm-init-520d87ebcf26
 
-Cheers,
-Derek
+Best regards,
+-- 
+With best wishes
+Dmitry
 
-> In addition, update the readmes of oxpec to reflect this change.
->
-> Link: https://github.com/ShadowBlip/ayaneo-platform
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->  drivers/platform/x86/Kconfig     |   4 +-
->  drivers/platform/x86/ayaneo-ec.c |  66 ++++++++++++++++++
->  drivers/platform/x86/oxpec.c     | 115 +------------------------------
->  3 files changed, 68 insertions(+), 117 deletions(-)
->
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index c871a722e5ef..06b53b0a3818 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -1031,9 +1031,7 @@ config OXP_EC
->         help
->                 Enables support for the platform EC of OneXPlayer and AOK=
-ZOE
->                 handheld devices. This includes fan speed, fan controls, =
-and
-> -               disabling the default TDP behavior of the device. Due to =
-legacy
-> -               reasons, this driver also provides hwmon functionality to=
- Ayaneo
-> -               devices and the OrangePi Neo.
-> +               disabling the default TDP behavior of the device.
->
->  source "drivers/platform/x86/tuxedo/Kconfig"
->
-> diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/ayan=
-eo-ec.c
-> index eb7f9ae03b4f..d70fd0bd620e 100644
-> --- a/drivers/platform/x86/ayaneo-ec.c
-> +++ b/drivers/platform/x86/ayaneo-ec.c
-> @@ -83,6 +83,15 @@ struct ayaneo_fw_attr {
->         struct kobj_attribute current_value;
->  };
->
-> +static const struct ayaneo_ec_quirk quirk_fan =3D {
-> +       .has_fan_control =3D true,
-> +};
-> +
-> +static const struct ayaneo_ec_quirk quirk_charge_limit =3D {
-> +       .has_fan_control =3D true,
-> +       .has_charge_control =3D true,
-> +};
-> +
->  static const struct ayaneo_ec_quirk ayaneo3 =3D {
->         .has_fan_control =3D true,
->         .has_charge_control =3D true,
-> @@ -91,6 +100,63 @@ static const struct ayaneo_ec_quirk ayaneo3 =3D {
->  };
->
->  static const struct dmi_system_id dmi_table[] =3D {
-> +
-> +       {
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> +                       DMI_MATCH(DMI_BOARD_NAME, "AYANEO 2"),
-> +               },
-> +               .driver_data =3D (void *)&quirk_fan,
-> +       },
-> +       {
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> +                       DMI_MATCH(DMI_BOARD_NAME, "FLIP"),
-> +               },
-> +               .driver_data =3D (void *)&quirk_fan,
-> +       },
-> +       {
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> +                       DMI_MATCH(DMI_BOARD_NAME, "GEEK"),
-> +               },
-> +               .driver_data =3D (void *)&quirk_fan,
-> +       },
-> +       {
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> +                       DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR"),
-> +               },
-> +               .driver_data =3D (void *)&quirk_charge_limit,
-> +       },
-> +       {
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> +                       DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR 1S"),
-> +               },
-> +               .driver_data =3D (void *)&quirk_charge_limit,
-> +       },
-> +       {
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> +                       DMI_EXACT_MATCH(DMI_BOARD_NAME, "AB05-Mendocino")=
-,
-> +               },
-> +               .driver_data =3D (void *)&quirk_charge_limit,
-> +       },
-> +       {
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> +                       DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR Pro"),
-> +               },
-> +               .driver_data =3D (void *)&quirk_charge_limit,
-> +       },
-> +       {
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> +                       DMI_EXACT_MATCH(DMI_BOARD_NAME, "KUN"),
-> +               },
-> +               .driver_data =3D (void *)&quirk_charge_limit,
-> +       },
->         {
->                 .matches =3D {
->                         DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> diff --git a/drivers/platform/x86/oxpec.c b/drivers/platform/x86/oxpec.c
-> index eb076bb4099b..2074650f5ba0 100644
-> --- a/drivers/platform/x86/oxpec.c
-> +++ b/drivers/platform/x86/oxpec.c
-> @@ -1,8 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0+
->  /*
-> - * Platform driver for OneXPlayer and AOKZOE devices. For the time being=
-,
-> - * it also exposes fan controls for AYANEO, and OrangePi Handhelds via
-> - * hwmon sysfs.
-> + * Platform driver for OneXPlayer and AOKZOE devices.
->   *
->   * Fan control is provided via pwm interface in the range [0-255].
->   * Old AMD boards use [0-100] as range in the EC, the written value is
-> @@ -43,14 +41,6 @@ static bool unlock_global_acpi_lock(void)
->
->  enum oxp_board {
->         aok_zoe_a1 =3D 1,
-> -       aya_neo_2,
-> -       aya_neo_air,
-> -       aya_neo_air_1s,
-> -       aya_neo_air_plus_mendo,
-> -       aya_neo_air_pro,
-> -       aya_neo_flip,
-> -       aya_neo_geek,
-> -       aya_neo_kun,
->         orange_pi_neo,
->         oxp_2,
->         oxp_fly,
-> @@ -124,62 +114,6 @@ static const struct dmi_system_id dmi_table[] =3D {
->                 },
->                 .driver_data =3D (void *)aok_zoe_a1,
->         },
-> -       {
-> -               .matches =3D {
-> -                       DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> -                       DMI_MATCH(DMI_BOARD_NAME, "AYANEO 2"),
-> -               },
-> -               .driver_data =3D (void *)aya_neo_2,
-> -       },
-> -       {
-> -               .matches =3D {
-> -                       DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> -                       DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR"),
-> -               },
-> -               .driver_data =3D (void *)aya_neo_air,
-> -       },
-> -       {
-> -               .matches =3D {
-> -                       DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> -                       DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR 1S"),
-> -               },
-> -               .driver_data =3D (void *)aya_neo_air_1s,
-> -       },
-> -       {
-> -               .matches =3D {
-> -                       DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> -                       DMI_EXACT_MATCH(DMI_BOARD_NAME, "AB05-Mendocino")=
-,
-> -               },
-> -               .driver_data =3D (void *)aya_neo_air_plus_mendo,
-> -       },
-> -       {
-> -               .matches =3D {
-> -                       DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> -                       DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR Pro"),
-> -               },
-> -               .driver_data =3D (void *)aya_neo_air_pro,
-> -       },
-> -       {
-> -               .matches =3D {
-> -                       DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> -                       DMI_MATCH(DMI_BOARD_NAME, "FLIP"),
-> -               },
-> -               .driver_data =3D (void *)aya_neo_flip,
-> -       },
-> -       {
-> -               .matches =3D {
-> -                       DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> -                       DMI_MATCH(DMI_BOARD_NAME, "GEEK"),
-> -               },
-> -               .driver_data =3D (void *)aya_neo_geek,
-> -       },
-> -       {
-> -               .matches =3D {
-> -                       DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> -                       DMI_EXACT_MATCH(DMI_BOARD_NAME, "KUN"),
-> -               },
-> -               .driver_data =3D (void *)aya_neo_kun,
-> -       },
->         {
->                 .matches =3D {
->                         DMI_MATCH(DMI_BOARD_VENDOR, "OrangePi"),
-> @@ -658,13 +592,6 @@ static int oxp_pwm_enable(void)
->         case orange_pi_neo:
->                 return write_to_ec(ORANGEPI_SENSOR_PWM_ENABLE_REG, PWM_MO=
-DE_MANUAL);
->         case aok_zoe_a1:
-> -       case aya_neo_2:
-> -       case aya_neo_air:
-> -       case aya_neo_air_plus_mendo:
-> -       case aya_neo_air_pro:
-> -       case aya_neo_flip:
-> -       case aya_neo_geek:
-> -       case aya_neo_kun:
->         case oxp_2:
->         case oxp_fly:
->         case oxp_mini_amd:
-> @@ -685,14 +612,6 @@ static int oxp_pwm_disable(void)
->         case orange_pi_neo:
->                 return write_to_ec(ORANGEPI_SENSOR_PWM_ENABLE_REG, PWM_MO=
-DE_AUTO);
->         case aok_zoe_a1:
-> -       case aya_neo_2:
-> -       case aya_neo_air:
-> -       case aya_neo_air_1s:
-> -       case aya_neo_air_plus_mendo:
-> -       case aya_neo_air_pro:
-> -       case aya_neo_flip:
-> -       case aya_neo_geek:
-> -       case aya_neo_kun:
->         case oxp_2:
->         case oxp_fly:
->         case oxp_mini_amd:
-> @@ -713,14 +632,6 @@ static int oxp_pwm_read(long *val)
->         case orange_pi_neo:
->                 return read_from_ec(ORANGEPI_SENSOR_PWM_ENABLE_REG, 1, va=
-l);
->         case aok_zoe_a1:
-> -       case aya_neo_2:
-> -       case aya_neo_air:
-> -       case aya_neo_air_1s:
-> -       case aya_neo_air_plus_mendo:
-> -       case aya_neo_air_pro:
-> -       case aya_neo_flip:
-> -       case aya_neo_geek:
-> -       case aya_neo_kun:
->         case oxp_2:
->         case oxp_fly:
->         case oxp_mini_amd:
-> @@ -760,14 +671,6 @@ static int oxp_pwm_fan_speed(long *val)
->         case oxp_g1_i:
->                 return read_from_ec(OXP_2_SENSOR_FAN_REG, 2, val);
->         case aok_zoe_a1:
-> -       case aya_neo_2:
-> -       case aya_neo_air:
-> -       case aya_neo_air_1s:
-> -       case aya_neo_air_plus_mendo:
-> -       case aya_neo_air_pro:
-> -       case aya_neo_flip:
-> -       case aya_neo_geek:
-> -       case aya_neo_kun:
->         case oxp_fly:
->         case oxp_mini_amd:
->         case oxp_mini_amd_a07:
-> @@ -796,14 +699,6 @@ static int oxp_pwm_input_write(long val)
->                 /* scale to range [0-184] */
->                 val =3D (val * 184) / 255;
->                 return write_to_ec(OXP_SENSOR_PWM_REG, val);
-> -       case aya_neo_2:
-> -       case aya_neo_air:
-> -       case aya_neo_air_1s:
-> -       case aya_neo_air_plus_mendo:
-> -       case aya_neo_air_pro:
-> -       case aya_neo_flip:
-> -       case aya_neo_geek:
-> -       case aya_neo_kun:
->         case oxp_mini_amd:
->         case oxp_mini_amd_a07:
->                 /* scale to range [0-100] */
-> @@ -840,14 +735,6 @@ static int oxp_pwm_input_read(long *val)
->                 /* scale from range [0-184] */
->                 *val =3D (*val * 255) / 184;
->                 break;
-> -       case aya_neo_2:
-> -       case aya_neo_air:
-> -       case aya_neo_air_1s:
-> -       case aya_neo_air_plus_mendo:
-> -       case aya_neo_air_pro:
-> -       case aya_neo_flip:
-> -       case aya_neo_geek:
-> -       case aya_neo_kun:
->         case oxp_mini_amd:
->         case oxp_mini_amd_a07:
->                 ret =3D read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
-> --
-> 2.50.1
->
->
 
