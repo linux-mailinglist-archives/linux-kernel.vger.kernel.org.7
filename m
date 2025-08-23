@@ -1,112 +1,119 @@
-Return-Path: <linux-kernel+bounces-782884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169B0B3265F
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 04:03:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06303B32665
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 04:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 472E7B03ED0
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:03:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B310E1B66A0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492501F582B;
-	Sat, 23 Aug 2025 02:03:23 +0000 (UTC)
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1AEF1F5851;
+	Sat, 23 Aug 2025 02:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="c1Sv7Cnj"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FD32C190;
-	Sat, 23 Aug 2025 02:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9221F2C34
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 02:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755914602; cv=none; b=lghXfRUJ0LPfrrxTjPwrc/XdGrn3HQJo78GfPShKkohP1DE6ns7f8Si0nCT/Dk6guWvfdtPcsSezSttHOI5u0+DpK5q98dCqB2vhD60F8boWhRf7aYiBloYxDixyKKAxxse/O9qj4wiRrasj/VvXZQ7cSPvVhm1N3w1yXZs6/J4=
+	t=1755914734; cv=none; b=fMUZ3q0q3KnYoZXg/BTrDJhg0aPpvyHgBsXqpQbWZzAgVMb25m2jDwlXQu4yaHEE9Xpo0gzwquCmTksAlDvFtSSBpVU8sK+/C5qgmcY6OgoTgfgugQHT4vjUQyGTLUJdz4uo1Li/6iMIoKlWswxqDHRjzOSDOklZYqSNoGRemrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755914602; c=relaxed/simple;
-	bh=bBbzWA/lXi8mRYNfOXPInP3IDahU4cbSMWnmG/NhFP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kUE53bHuk/UWI1TKedbGwGjlki09UBz/zjVQvdJTHFn2bSCfVS1GeDo8Egx0zNWd2z6NgMhiEI0AfCLfFMKa6Ras+CB5tqoJFGnpguZpSVNxxqMmgJDC11DJoU4AeS7znfQH3lAXRpRXMVORYove6Io0FFNTcjNXMmMaPMsRRps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.204.34.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpsz6t1755914584taf0414ac
-X-QQ-Originating-IP: XQMkFPTld5aopUszAMtCZgJqYkOo5w3DSNONEnbYVFI=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 23 Aug 2025 10:03:02 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 18037205199112697214
-Date: Sat, 23 Aug 2025 10:03:02 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Parthiban.Veerasooran@microchip.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
-	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
-	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
-	lorenzo@kernel.org, geert+renesas@glider.be,
-	lukas.bulwahn@redhat.com, alexanderduyck@fb.com,
-	richardcochran@gmail.com, kees@kernel.org, gustavoars@kernel.org,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <1F30CBDD95FCBE06+20250823020302.GC1995939@nic-Precision-5820-Tower>
-References: <20250822023453.1910972-1-dong100@mucse.com>
- <20250822023453.1910972-5-dong100@mucse.com>
- <9fc58eb7-e3d8-4593-9d62-82ec40d4c7d2@microchip.com>
- <7D780BA46B65623F+20250822053740.GC1931582@nic-Precision-5820-Tower>
- <8fc334ac-cef8-447b-8a5b-9aa899e0d457@microchip.com>
- <A1F3F9E0764A4308+20250822065132.GA1942990@nic-Precision-5820-Tower>
- <b488b893-389f-4c20-b2c3-23071279272c@lunn.ch>
+	s=arc-20240116; t=1755914734; c=relaxed/simple;
+	bh=2RyIzjXm7b9+cnzeMC18DAd1kJ8HkUkKDXL9CCakxGY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=PgINuSXcZnJ5FvvBj9Jgm9Ebbe5ZFDbEt4T2lqEEj49GR5hHQN5h49tBmI+xqwzaoMth/0hcYSXEHZnUsZFwzoBdkQz0nHcpu+4pMwjEG9iS8LExfLMLRhA6E75gcOD7y7nPO3kMi+uXo+cnaX19sotjsIT/p8Rc6Ba8DNZHpQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=c1Sv7Cnj; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250823020530epoutp03e54666579a0d29d4eb6571f600f07786~eQyTc1ipb2583625836epoutp03h
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 02:05:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250823020530epoutp03e54666579a0d29d4eb6571f600f07786~eQyTc1ipb2583625836epoutp03h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755914730;
+	bh=qbnO/+sq+8ONZt0KTeFBgfHeWWE3a0C0n2e4rSAYFr8=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=c1Sv7CnjQKX7XbuXu5Cv9J8czEpU4yZeeYXHw40EN0Eu5XvdvZSojdD3I4dYt3+Zu
+	 cSlUyM76qwQrRTwr4iwftmmQ+bb+Lk/DmUxhy5yqgFGLAQR4h5ZA9GzF48v7smFb86
+	 qOu6NeKL3Tb0MYeg1v+vlLUwJQYDjzTCjCwczAP0=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250823020529epcas5p46c5400dbc26564b90f4d6ffdf82d1e66~eQySihPyI0145101451epcas5p4H;
+	Sat, 23 Aug 2025 02:05:29 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4c80kw2NSbz6B9m7; Sat, 23 Aug
+	2025 02:05:28 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250823020527epcas5p42973efe25536c7b5da0beb16e98e2cd8~eQyQxE8K70145101451epcas5p4E;
+	Sat, 23 Aug 2025 02:05:27 +0000 (GMT)
+Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250823020523epsmtip1c66b58ee1eac02d62d96b211baa19c19~eQyNFvkoL1748917489epsmtip1s;
+	Sat, 23 Aug 2025 02:05:23 +0000 (GMT)
+From: "Inbaraj E" <inbaraj.e@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <s.hauer@pengutronix.de>,
+	<shawnguo@kernel.org>, <cw00.choi@samsung.com>, <rmfrfs@gmail.com>,
+	<laurent.pinchart@ideasonboard.com>, <martink@posteo.de>,
+	<mchehab@kernel.org>, <linux-fsd@tesla.com>, <will@kernel.org>,
+	<catalin.marinas@arm.com>, <pankaj.dubey@samsung.com>,
+	<shradha.t@samsung.com>, <ravi.patel@samsung.com>
+Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
+	<linux-samsung-soc@vger.kernel.org>, <kernel@puri.sm>,
+	<kernel@pengutronix.de>, <festevam@gmail.com>,
+	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <1b37bc94-8f2b-4da3-be2e-4d0076672169@kernel.org>
+Subject: RE: [PATCH v2 11/12] arm64: defconfig: Enable FSD CSIS DMA driver
+Date: Sat, 23 Aug 2025 07:35:22 +0530
+Message-ID: <00d401dc13d2$65033080$2f099180$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b488b893-389f-4c20-b2c3-23071279272c@lunn.ch>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: M4B45z97fsbxfp6War9HhAiOAlD1ajijGbjCp4iYKrkcelqILvtBpOsv
-	F7+KA3a0ajs4JULHGlQSRrwbkOed5Txpe2KhwbiVeJF9YZvqtF21tf+KEc/ePfn7PVhciLY
-	qAaTaSB22ffC3i+B8DUm+OCKTGLMaMonnv6uXOHvGgtYjTvCpYRx/tUFonmqj1IQSU1lLfC
-	zZaF2BP7Ibu6zpOhXj67PZY++0LvHAHeRmDDq9FyFhSJphROhYpPw2PvVSSRWr4nYbEvLPX
-	Teok7gB/WzozPHHNJsH2xNviLG+xXn64INL5XPNfSkvyMBLGcKDqQ/5w4wkCq97AimDM3Yk
-	xpWC0tbx9cK02zdLVDbKnFWNpqCDtXbYHa2QWIwmCc+paITq011YOL64+PA9mphwPufr2dI
-	2g+Q68uXwI5CtnKoZBjDRW/sk+4pih8/+uhIHkjZszBaxqGFtp7i62FdmdN9Mznzp1QqrMS
-	6dw0Ofj3AuJwjQY314T3RBein8koroF7EcDkc7s/n92BylgE+YipMziqwrzoJCPMLZhPzjw
-	RspHcDWdm6dBBtJnz3PgbRTHl6mndUbBP5FGL2BiAubSWfsnsVw5gXZK/KPZ48eKTisOp/z
-	D1oMthpXhRCZ60SPdtoiP5LIQT3L+jDs6bfe0qPjoowZkH/MbG+pcAR+IQIjcGugcUjeGFn
-	GcX9aXTLY3h7950fW1EjyRJj89afHmNmvv/frEGCvh/EpdUJet8h2viQfKQGK4E9fdkLJsZ
-	Z8laryYTC761e6dCDuIDT8EwXOzUvDJw3TAcW8RSZZU5A09eojkCvcidmKzK/7t64oDDOf6
-	KJX2ysjgVKp7pJwfc4OPGJER+6VZ3EfgK6FeiY0PgmR1sucw3U/DaBYBroeinKqv2UmBHks
-	0tMccszajTVqQp4Eay7DJcBvj6xAnV6a+TdmnGnVaatb8CjLrJvwzOvhdLZKuj9LnRkmpV9
-	DyQfNBAqOY/ixQGJVP4uh0LBjyD1VjLbyyWybB8OP9OIlDn3uXcJeWyvypvXZDLdvWyBhJj
-	3z5lNhxTXQaZt6F7g6mOKqMTRrSuyNGGSkARR4gtWZQv8I/rcstMi6Z+/D0+P7EBofSktfQ
-	Sy8BS23LJdsBRBN9z7fRKo=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQHrKQRZAj9O8PIBXjI9/7KIHEcQ
+Content-Language: en-in
+X-CMS-MailID: 20250823020527epcas5p42973efe25536c7b5da0beb16e98e2cd8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250814141057epcas5p21ca33641e42164886dc1bf404237876d
+References: <20250814140943.22531-1-inbaraj.e@samsung.com>
+	<CGME20250814141057epcas5p21ca33641e42164886dc1bf404237876d@epcas5p2.samsung.com>
+	<20250814140943.22531-12-inbaraj.e@samsung.com>
+	<1b37bc94-8f2b-4da3-be2e-4d0076672169@kernel.org>
 
-On Fri, Aug 22, 2025 at 04:33:54PM +0200, Andrew Lunn wrote:
-> > /* Initialized as a defensive measure to handle edge cases
-> >  * where try_cnt might be modified
-> >  */
-> >  int err = -EIO;
+Hi Krzysztof,
+
+Thanks for the review.
+
 > 
-> We don't use defensive code in the kernel. Defensive code suggests you
-> don't actually know what your driver is doing and you are guessing
-> this might happen. You should convince yourself it is
-> possible/impossible and write the code as needed.
+> Tesla FSD
 > 
-> 	Andrew
+> You are changing defconfig for all platforms, it's not your personal or
+> company defconfig.
+
+I noticed that Exynos and NXP driver configs are added in the defconfig.
+Could you please clarify why I shouldn't add my driver config in defconfig?
+
+> 
 > 
 
-Ok, I will change 'while' to 'do...while" and remove '= -EIO'.
-That can guarantee 'mucse_fw_get_capability' run at least once to init
-err.
-
-Thanks for your feedback.
+Regards,
+Inbaraj E
 
 
