@@ -1,229 +1,145 @@
-Return-Path: <linux-kernel+bounces-782906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 932B9B326AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 05:33:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C52AB326B2
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 05:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48AD21B65852
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:34:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3971C1B66A12
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9181EA7E4;
-	Sat, 23 Aug 2025 03:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="X67+4EU8"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F971EE032;
+	Sat, 23 Aug 2025 03:36:45 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F0A2AD22;
-	Sat, 23 Aug 2025 03:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE08A393DE5
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 03:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755920021; cv=none; b=diZANRJyW0XuYMPdb07UR9u/1pek4pixvmqCrLG1xefcNUVjE2BMMDpYZZ0padSW8A7CHSIQEnzQmBQLQ3Kiw4/r9yw9ijnXrwgSY4K1nwlVc/zniFecX5lbz2NvdWrZiu0zMfWIG5gyVAPl0i98lytJP7ThPM3cdhteXs2P5GI=
+	t=1755920205; cv=none; b=N23Qdyddl6ZnmYGaNhzotl87gxfNMvCmuFUh0c5bba/US3PgCMzJg2B5jhKxqNto/vgeRjhix/Evca6e6oz5vSW29qBOTdp/EjjA8wqhE6jwosux8wjkryoWQbvP/bBBDbTiyBSlDNbXOszYJIbkrEfcrD0spABBP1zefToN3Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755920021; c=relaxed/simple;
-	bh=dBPGReUVf9VonxjZhenmepSNsjfZcEAnm/Doa/3qaCk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dndGE3CjQ7kAfUFwi7gWAWxNLDt3BKEf1HOVI8ExRGn8Ja13RhY4Sa/gDMFA9D7ROVs+J9pBmucRj1H+nXFVBmcpz7o5/yun3stnVl4htB/GMJqjMkUkfISF2bXzzdA9FuaAj10bhkbTfigj3NmTppHlTbO+OxQ10HcfU3NzK7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=X67+4EU8; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57N3XXWM382086;
-	Fri, 22 Aug 2025 22:33:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755920013;
-	bh=MAbR85jPoEBfcAfwGqydIjXGtEuyd1IOgfjERJQho/A=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=X67+4EU8QEZkCmTkJ6gzhO55lKFoacGOf14V5Up/bLnhIp3Fp70p28DuR2WXaPLhP
-	 v8yEaxYFD84pxlwuLoTsA7fRqX92Xvu6ZmKGqIlERQwZGBQ4FbifFjzBPYb8PX/O+V
-	 5Y/ZXN1TBwXrCkZXMefsFzPOlns4dB2nMr/U2qvI=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57N3XXLM4072191
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 22 Aug 2025 22:33:33 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 22
- Aug 2025 22:33:33 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 22 Aug 2025 22:33:33 -0500
-Received: from [172.24.233.249] (ula0502350.dhcp.ti.com [172.24.233.249])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57N3XSQ5585095;
-	Fri, 22 Aug 2025 22:33:29 -0500
-Message-ID: <f207b2e9-a910-40f3-a01e-1af33c7f4e6f@ti.com>
-Date: Sat, 23 Aug 2025 09:03:28 +0530
+	s=arc-20240116; t=1755920205; c=relaxed/simple;
+	bh=E4jqlEuCiPxnBCo97TCOXAqOcCy4jzk/ai2BChH7sPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IiNyDEkt1mI3spxjH3NINgqgfUQCpD9yAsdLMCnxRmN22EJ55+gV7xfnrji/hUq6yTVd6Z4p1zj1AZWKAxPFn+DPu3g14+ejYTanrbXlclqIsTCi9nC+xuGeR0Ce/58ZsbdWGF1yYWx91M8nI7QYxCd4ixYDb7NGASaPoFFQcvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 71DB31DD656;
+	Sat, 23 Aug 2025 03:36:36 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id CC1F820024;
+	Sat, 23 Aug 2025 03:36:34 +0000 (UTC)
+Date: Fri, 22 Aug 2025 23:36:42 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Tengda Wu <wutengda@huaweicloud.com>,
+ Nathan Chancellor <nathan@kernel.org>
+Subject: [for-linus][PATCH] ftrace: Also allocate and copy hash for reading
+ of filter files
+Message-ID: <20250822233642.69d25aa9@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: ti: k3-am62d2-evm: Add support for OSPI flash
-To: Nishanth Menon <nm@ti.com>
-CC: <vigneshr@ti.com>, <praneeth@ti.com>, <kristo@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <khasim@ti.com>, <v-singh1@ti.com>,
-        <afd@ti.com>, <bb@ti.com>, <s-k6@ti.com>
-References: <20250813090300.733295-1-p-bhagat@ti.com>
- <20250822183014.apyvqws4afiqiymb@specks>
-Content-Language: en-US
-From: Paresh Bhagat <p-bhagat@ti.com>
-In-Reply-To: <20250822183014.apyvqws4afiqiymb@specks>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-
-Hi Nishanth,
-
-
-On 23/08/25 00:00, Nishanth Menon wrote:
-> On 14:33-20250813, Paresh Bhagat wrote:
->> AM62D2 EVM has S28HS512T 64 MiB Octal SPI NOR flash connected to the
->> OSPI interface. Add support for the flash and describe the partition
->> information as per bootloader.
->>
->> Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
->> ---
->> Boot logs
->> https://gist.github.com/paresh-bhagat12/262d8c64e692d22c4e48363d246fb083
-> We already have issues with am62d that needs fixing:
-> cpu cpu0: _of_add_opp_table_v2: no supported OPPs
-> cpu cpu0: OPP table can't be empty
->
-> and
->
-> Please enable defconfig for this device
-> arch/arm64/boot/dts/ti/k3-am62d2-evm.dts:       typec_pd0: usb-power-controller@3f {
->
-> We can look at adding features for am62d after the above are done.
+X-Stat-Signature: zo4a3ooq8z7myw8bu8fquya1ssw3agj8
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: CC1F820024
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/XlXArSvis0vVuWOqmNqtpW3koGZNhTo4=
+X-HE-Tag: 1755920194-495430
+X-HE-Meta: U2FsdGVkX18IEwsUTfmDNbSvpKpaM+7KM/gyZuQaZAmZV+ZPE0G30LWrTeIL1gi7aPLoPtW8NRwVfdYL6yxSsp5+NUNE5CgZl0Q6l5OfcONd6CqOWvwkXAElMM1i2D8vmuTs8jw16579T5wXqsU38gJZ1KerBlf5kPEbjeHbMtJEygq4CezXJtjlArF/ra9w2EYkFaRohNsMcpY5jg/KjTDP0Fmy3iwZrt7Yq69Yb/IoCoNdjlxBhe2nvhUeqEn09eJoB5NkWqD74IAvyBImqN6GeWHhH4JMacMcBwYKzGnnwMbsGlEbZpGSncmBWox1mANgjNn2wmRg0lpehSwTF0atuxrUdtB6mzO0Da+7zPxhTVKYHugRnlnRwYlb8N23R+EIEWfwPB8TrqmG/IGf/8sAmrjxThP9pkeSP7E2W/3ii12IlfA/ICGD4M0h8ZvH1rhz6+x6TiqRM+DyjT9ttBi3iBdtiZPmD25JHGJLEuMBe9y+wnv7wmzd1lhgNHuZ0DpBBsRTqzuuuPlV9wpbe5iSQTqbWIMmR2I9rNPGrgA=
 
 
-The above fixes are now posted in upstream.
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace/fixes
 
-Thanks
->> Tech Ref Manual-https://www.ti.com/lit/pdf/sprujd4
->> Schematics Link-https://www.ti.com/lit/zip/sprcal5
->>
->>   arch/arm64/boot/dts/ti/k3-am62d2-evm.dts | 86 ++++++++++++++++++++++++
->>   1 file changed, 86 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts b/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
->> index daea18b0bc61..aa943ef52fb5 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
->> +++ b/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
->> @@ -25,6 +25,7 @@ aliases {
->>   		rtc0 = &wkup_rtc0;
->>   		ethernet0 = &cpsw_port1;
->>   		ethernet1 = &cpsw_port2;
->> +		spi0 = &ospi0;
->>   	};
->>   
->>   	chosen {
->> @@ -367,6 +368,26 @@ usr_led_pins_default: usr-led-default-pins {
->>   			AM62DX_IOPAD(0x0244, PIN_INPUT, 7) /* (D18) MMC1_SDWP.GPIO1_49 */
->>   		>;
->>   	};
->> +
->> +	ospi0_pins_default: ospi0-default-pins {
->> +		pinctrl-single,pins = <
->> +			AM62DX_IOPAD(0x0000, PIN_OUTPUT, 0) /* (L22) OSPI0_CLK */
->> +			AM62DX_IOPAD(0x002c, PIN_OUTPUT, 0) /* (H21) OSPI0_CSn0 */
->> +			AM62DX_IOPAD(0x0030, PIN_OUTPUT, 0) /* (G19) OSPI0_CSn1 */
->> +			AM62DX_IOPAD(0x0034, PIN_OUTPUT, 0) /* (K20) OSPI0_CSn2 */
->> +			AM62DX_IOPAD(0x0038, PIN_OUTPUT, 0) /* (G20) OSPI0_CSn3 */
->> +			AM62DX_IOPAD(0x000c, PIN_INPUT, 0) /* (J21) OSPI0_D0 */
->> +			AM62DX_IOPAD(0x0010, PIN_INPUT, 0) /* (J18) OSPI0_D1 */
->> +			AM62DX_IOPAD(0x0014, PIN_INPUT, 0) /* (J19) OSPI0_D2 */
->> +			AM62DX_IOPAD(0x0018, PIN_INPUT, 0) /* (H18) OSPI0_D3 */
->> +			AM62DX_IOPAD(0x001c, PIN_INPUT, 0) /* (K21) OSPI0_D4 */
->> +			AM62DX_IOPAD(0x0020, PIN_INPUT, 0) /* (H19) OSPI0_D5 */
->> +			AM62DX_IOPAD(0x0024, PIN_INPUT, 0) /* (J20) OSPI0_D6 */
->> +			AM62DX_IOPAD(0x0028, PIN_INPUT, 0) /* (J22) OSPI0_D7 */
->> +			AM62DX_IOPAD(0x0008, PIN_INPUT, 0) /* (L21) OSPI0_DQS */
->> +		>;
->> +		bootph-all;
->> +	};
->>   };
->>   
->>   &mcu_gpio0 {
->> @@ -613,3 +634,68 @@ &c7x_0 {
->>   &main_rti4 {
->>   	status = "reserved";
->>   };
->> +
->> +&fss {
->> +	status = "okay";
->> +};
->> +
->> +&ospi0 {
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&ospi0_pins_default>;
->> +	status = "okay";
->> +
->> +	flash@0{
->> +		compatible = "jedec,spi-nor";
->> +		reg = <0x0>;
->> +		spi-tx-bus-width = <8>;
->> +		spi-rx-bus-width = <8>;
->> +		spi-max-frequency = <25000000>;
->> +		cdns,tshsl-ns = <60>;
->> +		cdns,tsd2d-ns = <60>;
->> +		cdns,tchsh-ns = <60>;
->> +		cdns,tslch-ns = <60>;
->> +		cdns,read-delay = <4>;
->> +
->> +		partitions {
->> +			compatible = "fixed-partitions";
->> +			#address-cells = <1>;
->> +			#size-cells = <1>;
->> +
->> +			partition@0 {
->> +				label = "ospi.tiboot3";
->> +				reg = <0x0 0x80000>;
->> +			};
->> +
->> +			partition@80000 {
->> +				label = "ospi.tispl";
->> +				reg = <0x80000 0x200000>;
->> +			};
->> +
->> +			partition@280000 {
->> +				label = "ospi.u-boot";
->> +				reg = <0x280000 0x400000>;
->> +			};
->> +
->> +			partition@680000 {
->> +				label = "ospi.env";
->> +				reg = <0x680000 0x40000>;
->> +			};
->> +
->> +			partition@6c0000 {
->> +				label = "ospi.env.backup";
->> +				reg = <0x6c0000 0x40000>;
->> +			};
->> +
->> +			partition@800000 {
->> +				label = "ospi.rootfs";
->> +				reg = <0x800000 0x37c0000>;
->> +			};
->> +
->> +			partition@3fc0000 {
->> +				label = "ospi.phypattern";
->> +				reg = <0x3fc0000 0x40000>;
->> +				bootph-all;
->> +			};
->> +		};
->> +	};
->> +};
->> -- 
->> 2.34.1
->>
->>
+Head SHA1: bfb336cf97df7b37b2b2edec0f69773e06d11955
+
+
+Steven Rostedt (1):
+      ftrace: Also allocate and copy hash for reading of filter files
+
+----
+ kernel/trace/ftrace.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
+---------------------------
+commit bfb336cf97df7b37b2b2edec0f69773e06d11955
+Author: Steven Rostedt <rostedt@goodmis.org>
+Date:   Fri Aug 22 18:36:06 2025 -0400
+
+    ftrace: Also allocate and copy hash for reading of filter files
+    
+    Currently the reader of set_ftrace_filter and set_ftrace_notrace just adds
+    the pointer to the global tracer hash to its iterator. Unlike the writer
+    that allocates a copy of the hash, the reader keeps the pointer to the
+    filter hashes. This is problematic because this pointer is static across
+    function calls that release the locks that can update the global tracer
+    hashes. This can cause UAF and similar bugs.
+    
+    Allocate and copy the hash for reading the filter files like it is done
+    for the writers. This not only fixes UAF bugs, but also makes the code a
+    bit simpler as it doesn't have to differentiate when to free the
+    iterator's hash between writers and readers.
+    
+    Cc: stable@vger.kernel.org
+    Cc: Masami Hiramatsu <mhiramat@kernel.org>
+    Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+    Cc: Nathan Chancellor <nathan@kernel.org>
+    Cc: Linus Torvalds <torvalds@linux-foundation.org>
+    Link: https://lore.kernel.org/20250822183606.12962cc3@batman.local.home
+    Fixes: c20489dad156 ("ftrace: Assign iter->hash to filter or notrace hashes on seq read")
+    Closes: https://lore.kernel.org/all/20250813023044.2121943-1-wutengda@huaweicloud.com/
+    Closes: https://lore.kernel.org/all/20250822192437.GA458494@ax162/
+    Reported-by: Tengda Wu <wutengda@huaweicloud.com>
+    Tested-by: Tengda Wu <wutengda@huaweicloud.com>
+    Tested-by: Nathan Chancellor <nathan@kernel.org>
+    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 00b76d450a89..a69067367c29 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -4661,13 +4661,17 @@ ftrace_regex_open(struct ftrace_ops *ops, int flag,
+ 	        } else {
+ 			iter->hash = alloc_and_copy_ftrace_hash(size_bits, hash);
+ 		}
++	} else {
++		if (hash)
++			iter->hash = alloc_and_copy_ftrace_hash(hash->size_bits, hash);
++		else
++			iter->hash = EMPTY_HASH;
++	}
+ 
+-		if (!iter->hash) {
+-			trace_parser_put(&iter->parser);
+-			goto out_unlock;
+-		}
+-	} else
+-		iter->hash = hash;
++	if (!iter->hash) {
++		trace_parser_put(&iter->parser);
++		goto out_unlock;
++	}
+ 
+ 	ret = 0;
+ 
+@@ -6543,9 +6547,6 @@ int ftrace_regex_release(struct inode *inode, struct file *file)
+ 		ftrace_hash_move_and_update_ops(iter->ops, orig_hash,
+ 						      iter->hash, filter_hash);
+ 		mutex_unlock(&ftrace_lock);
+-	} else {
+-		/* For read only, the hash is the ops hash */
+-		iter->hash = NULL;
+ 	}
+ 
+ 	mutex_unlock(&iter->ops->func_hash->regex_lock);
 
