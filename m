@@ -1,73 +1,71 @@
-Return-Path: <linux-kernel+bounces-782870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F9DDB32630
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:17:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5136B32631
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 210455C839E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:17:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE5B27BCBFD
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1CC199E94;
-	Sat, 23 Aug 2025 01:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271D81A9F94;
+	Sat, 23 Aug 2025 01:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="cLSqCdSZ"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="mCd9eTxX"
 Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B0128F4;
-	Sat, 23 Aug 2025 01:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38C419E81F
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 01:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755911843; cv=none; b=k/X6nxunu03MU4S3TBzHwCWP/0IEcRt9yH8wU7zyGjOKFlQKTn1O/FE4/6FwCnRmCjplqrL0NU1ugEczT5VEajuhmW1TKPAJFKJR26IKFkVrbvgChvE+lAnH8Q5JeZOKZw0NtUodRwBzaMvGe/4c01gijEGdTZwJ6DUjn9uS5ZM=
+	t=1755912440; cv=none; b=OXOhDOxpsTQ/EjvWnPC7I4nlHzafqoPS5+bbLt28fiuqngHeLTLRt/emhUp28zfnuBJi3Qg47wFQeM9meyTVC05cVCMTy4bf3B1mTBA0Yk8zdoYaLBCAB1bCdgH1obVEk8DxtMdNFEXU2H1KI7l5IvuYhWIAvvPrp4SoaFcTU6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755911843; c=relaxed/simple;
-	bh=DkCtyXPX+y2jfq7vMKfHqEsjaUAWfzSIF6DlJCdQSD0=;
+	s=arc-20240116; t=1755912440; c=relaxed/simple;
+	bh=ePS1z9Cg0u7BU5CgKH5niME0oZBleFqkAkEUWXcX2vk=;
 	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=SG2WTiK4fkHnr4o/VT/Tr/aWU3A8bizSFtwBlBOY70syQOjYFSM/Ru5BP3uS92zq8tlBG/8uePOrV8fQ/h9tAA6muzB9I/J+LAOoE26MAM17v3jHFd2C+ovOosZQfP8a3zq/tqoF382dus2BWW1jjMUYGqT5xwz1PxU5ZDiAAqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=cLSqCdSZ; arc=none smtp.client-ip=203.205.221.239
+	 MIME-Version; b=ucrpaVOoWJSfJz2fO0YqNJg8T8llDRwf0a5YjEKDOCzQTg3wDmNQNE4akROXkIXBp2O3Hsp/LBDPBijEIZZL07b2awNxbobIEwr4uJ0jU7P90Y5KS4hvJrql6kspfY8gWO5vIsDiEfmNq/Oys9cr5r8LoTaktWFrWVtjfUOORKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=mCd9eTxX; arc=none smtp.client-ip=203.205.221.239
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1755911837; bh=2MpJbxTAdsXSbHIcD9m74B6dZkiCe6Zt1dqe5uXqKRA=;
+	t=1755912135; bh=0/bIU6yybnhqndaHKGo7JyITC+t9yDHuF/Grq7MssR8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=cLSqCdSZ8lMABvwaIBOvCxgz0tdlIfaLfoPLCORkbUbWoN3cG/C6uujaDp0rKHd2F
-	 yqjcK5nNfBoFVnYyLeL8WSpiGgLq9N33QCkyARq7ekZ0i6oExV+WfGobRKUNgOJr0u
-	 x3Vsg+USDbTzQVTuxQZr6imEXKO/0sPunoor33i4=
+	b=mCd9eTxXQWZpQq40yAyUR+6xgyGgZOqigvS5uWOH3wT4Jkwsgf4qsJk7UfpslRbKS
+	 DvKcJ4d7XKs836od43I3L186OKqbkJnH0SrU/EyamTOrznMk7rDEcpA6rix+l+58ds
+	 YmcTeM/k4srtsRCf8wH0qoQvfY1aJkMvU8QhkHvk=
 Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
-	id 44F37E8D; Sat, 23 Aug 2025 09:17:15 +0800
-X-QQ-mid: xmsmtpt1755911835t5z22u9gn
-Message-ID: <tencent_F0CF4B761BAA2549BAA0BB1E33D09E561B08@qq.com>
-X-QQ-XMAILINFO: MzNwb/pqyJTkR+tgqlDhJfQ6Y81DDgs+ktDGMBgkusIuKADNSKX/5nB4xM+Y9+
-	 8kslEkBeH7Z/EsTzYQHzuYctJTULo7cqVu40BapoWD+OEB1KwxdqqQs8FPAnCo+6SR0Sr3cddg05
-	 bneBec4ZUm8Mm6j7/2Llsmz6yBzI6MP/vuH7sqy6XSf0sTIXZthMgF86ibQ9xohqNqm+iWL3BK6T
-	 jIJfzCsWZfrnTRNVuaujHCyQyXmptXOwuJ0klrrclfzgJpDPV1jLVHt9KsQKCrXG7elj9KPwmTy2
-	 k13gxey1uoNsvP3EQF3/kXRz3y9G7KNyQ6jVWWUOduldZFEFob6HQUY6jSjNLjcSinGUbbI47VQf
-	 MBKeYRxb9EZWsAZdItbnFgpWXSMacmbAVnhr4G7OXPVWWe2JHcA9IXNuA1hjjo9a24/lZn6Eg+qn
-	 eXXwn36gzC67q0QCOtyaO5fFGSea67Ekqul7g13OQLxGhi/PGNc+VQI8Dmxv7yYMyk7f/bOvMjV4
-	 dsHS4oZI5MIG1jBqhqkVy8HTEBcgzqUmu73rySwiEt91yvqeGNc0pF8EMLCmSsjCCoL/9t4pPypa
-	 oTPjX940bVhbpbn1MJiBGuvPMGxCpLXU+072CUNtJP03/8XQaMSUt6Pcd/vDR3ImtCH1pWVt48Tq
-	 ifaP433x+0LrfB6vbUXS0go/SkUv0Y7hhKQJVICImgUvtpRmMG4oGGtnCMsjHYiu+NWyPBYY0B/u
-	 CtfSESzbcRxYbh031/bc0f94cBem7xqfZFFK4F+B1VuIdR29vaOvjwbkZWosdH2p8iAdxhdjRwwg
-	 3rU41t8vV8oCGFjr6EBsSTG3z2n0ChRkWnPRhOW58/ZcZv4I1EA/GXSuEIO2YurHwU5qNpEwU04w
-	 9DkQPEGBhwlrgHiZ464ePT412iYVWdBS/KdA7Hdz+zaJaQ9JB8Gzsj2FvTq/yh1HxlWeFXRluFao
-	 oJRqZv8vevW4zzN6ywmLzwNVSAJ9ccswcI+PKh5OoAKq+bJo23Xns4uAkw5U4xsbQxbXXg4yE=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+	by newxmesmtplogicsvrszc13-1.qq.com (NewEsmtp) with SMTP
+	id 58DA884F; Sat, 23 Aug 2025 09:22:13 +0800
+X-QQ-mid: xmsmtpt1755912133tepz2c10d
+Message-ID: <tencent_2FB36AA36D497403B5E44E9764F76BA6DC05@qq.com>
+X-QQ-XMAILINFO: OPa5+/AT2oWtB2v0iGAqiDJBw8+8EWvtGCufOvaGwlzRJuMwmsffGo+BoqIGWH
+	 b4J88GyoqEDFwSdnV/Xi1Qu7G1TpyUNDcbQQzaf+BZtYsSVQin0Zkk0CiTo+hYFwTDJ1IXL5ARDE
+	 dY1QHDKSxerN40nNJflXHS9EZxUPXK0pLlp+VgCZrgF+X+LrhNEdNDr2Wj4/sgATDhFPpWMbwMfk
+	 rCRhZSH+r4ltYzOLiNGKDIpTWSyG20mObwURpHH8qMPe9e2L5+sU2dN/5HxRogMEUD6s6C0SYOII
+	 PTKLMJBBZ/WzceBJ8BzAfjPJUf+/YrKEPzXamdWbuI8zCf2PbbO0cjl+vYybloQxdx0q8dcsVrrm
+	 Oezn9eJuSEKwMKfB3EaH5q9SHZggAhTQUPILHlCfaLPK0uClrmeVptiOnVnjUg01KxFfo1g1rHKF
+	 1UOlsQQxotMcy0hg37mOdLpwLpi3O4spHXBsJDP8u7+BEccDcuYIqj9MpBP4chmgn/ck7Mkm7fl4
+	 BkNszVQONZXR7JISkG0LLwwey/U5tKYPwbRg6+L/EgpZtrQw2PlXkA4SShQEO/pDNLfSaJCn4oL8
+	 zW0OsSXdFpAKQCQsY2bmRiMqdCDauTeWDH/oOHEZy7flAocLRIx5XV/djKzALjoRSaeduW9qasw8
+	 LBB2YpK5V4+bvzg543EQIqYDHmzhH+GP1ID7y5zBzwZHnaNOPlPuvfMbDguez77khBxz1ge8s7gf
+	 lyhbZ8bQkmGMDh9iaMatdUsZNrr+xXtoFECcVkczva1fxeZqhPeCfRE/fnapzHtXn6KYoAuudLoK
+	 zd5JvNkJWDM4sJtZbzNkSWTLkPWH9hHacsAMavoOLkiFDoi/qwwMyoabdIfC1yHJKEy9ipVbd/Sp
+	 7H1J9G3N9eq24SEE2/GizV6y0GU/RvAQ3ZZVL98gr//T+XR2xr7uNR83C+qBPKpaZNffLL8Vpj9w
+	 L1w65QPlm8Wpax7RFpwWEbWElfnFrJtuqFMg5Xi8DFnjqc+IKuCXUiHNQNdtpmU8adT55fRzs=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
 From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	miklos@szeredi.hu,
+To: syzbot+5a398eb460ddaa6f242f@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
 	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] fuse: Block access to folio overlimit
-Date: Sat, 23 Aug 2025 09:17:13 +0800
-X-OQ-MSGID: <20250823011712.2621959-2-eadavis@qq.com>
+Subject: Re: [syzbot] [erofs?] KASAN: global-out-of-bounds Read in z_erofs_decompress_queue
+Date: Sat, 23 Aug 2025 09:22:11 +0800
+X-OQ-MSGID: <20250823012211.2624793-2-eadavis@qq.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <68a8f5db.a00a0220.33401d.02e1.GAE@google.com>
-References: <68a8f5db.a00a0220.33401d.02e1.GAE@google.com>
+In-Reply-To: <68a8bd20.050a0220.37038e.005a.GAE@google.com>
+References: <68a8bd20.050a0220.37038e.005a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,37 +74,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-syz reported a slab-out-of-bounds Write in fuse_dev_do_write.
+#syz test
 
-Using the number of bytes alone as the termination condition in a loop
-can prematurely exhaust the allocated memory if the incremented byte count
-is less than PAGE_SIZE.
-
-Add a loop termination condition to prevent overruns.
-
-Fixes: 3568a9569326 ("fuse: support large folios for retrieves")
-Reported-by: syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=2d215d165f9354b9c4ea
-Tested-by: syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/fuse/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index e80cd8f2c049..5150aa25e64b 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1893,7 +1893,7 @@ static int fuse_retrieve(struct fuse_mount *fm, struct inode *inode,
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index 2d73297003d2..085fa0685a57 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -762,6 +762,10 @@ static int z_erofs_register_pcluster(struct z_erofs_frontend *fe)
+ 	pcl->from_meta = map->m_flags & EROFS_MAP_META;
+ 	fe->mode = Z_EROFS_PCLUSTER_FOLLOWED;
  
- 	index = outarg->offset >> PAGE_SHIFT;
++	if (pcl->algorithmformat >= Z_EROFS_COMPRESSION_MAX) {
++		err = -EINVAL;
++		goto out;
++	}
+ 	/*
+ 	 * lock all primary followed works before visible to others
+ 	 * and mutex_trylock *never* fails for a new pcluster.
+@@ -796,6 +800,7 @@ static int z_erofs_register_pcluster(struct z_erofs_frontend *fe)
  
--	while (num) {
-+	while (num && ap->num_folios < num_pages) {
- 		struct folio *folio;
- 		unsigned int folio_offset;
- 		unsigned int nr_bytes;
--- 
-2.43.0
+ err_out:
+ 	mutex_unlock(&pcl->lock);
++out:
+ 	z_erofs_free_pcluster(pcl);
+ 	return err;
+ }
 
 
