@@ -1,228 +1,309 @@
-Return-Path: <linux-kernel+bounces-783323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0BF7B32BA9
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 21:31:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 338BBB32BAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 21:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9381D56717D
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:31:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 012E1189624B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1651F12E9;
-	Sat, 23 Aug 2025 19:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XuSsfYFQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O25tj2w/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F53241667;
+	Sat, 23 Aug 2025 19:32:54 +0000 (UTC)
+Received: from freeshell.de (freeshell.de [116.202.128.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D803E2EACEE;
-	Sat, 23 Aug 2025 19:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224B22BD03;
+	Sat, 23 Aug 2025 19:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755977430; cv=none; b=F+5BU7v29MFpPBykT4RWKfqAV3GAp/r0CaZDFQl8aGA/QVGN+VlQJcxM7xOHzLsSsz6FOEhU+Tdr2PQLuVNbSs93AsLSzkXSEL/qRTf8ya10tX/YW7SY5QlzFM2sExgRgrHtLT/ta7xxZaWXFAu+zGBvdSLRhIdZIvkP69+VtYs=
+	t=1755977574; cv=none; b=FYHVfmCKBMfoL1qbs//vXjlonicbH9n+qa+KLukDxuHD5e0vGNG9Z3MQECBoKzl093DnoJAxVL+XAx96Q3PAnHRNDKZg4YPAhPvnTn21q4snRcWTeKWQnWorXKBVFPVovub4uJ8gwsqH7KhcAfqmKYoVQakmdeOr2F0O4jlWCZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755977430; c=relaxed/simple;
-	bh=cqhbZliEgCw06LWjb4Etn6caGoDfjS1O8wgS/RxBbQA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=M6WF1Rrrxky1EsbntJHRDjQXdMd4/8JB96UEt6ZAVfugY2moKh4Hw3cpb37BZ2fJ3H+/hgwchh0FBQcD2PgNYQbwCVPkyEu48lwHjgNURPuR55l9SAjjV76QGrppk0J84rniedZP/TfE0NGKqLnZz1gUCw24/Zq8duDAw4tXcfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XuSsfYFQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O25tj2w/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 23 Aug 2025 19:30:24 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755977425;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oO8oVBpDtIm03zfRBASenoVtH2C2/4GMbx6IwR5Dhdc=;
-	b=XuSsfYFQzEZJBcQFsdU4Cw5bU3rQrN8ZF0c7cnYmjqkR60wCKE6fqrsDxn2kBfnna81p1k
-	l4/XmCnk3zp99ZMT0dT0VyQbdrmee40IBmqa2K7OQGpROErBkEqeP0FBnvNWYGvCw2d6mv
-	+l0m4QRzkgDzlAH+pJWkaz56iNBsw3h7jS52pa4xCaElC3tJoCVsu+T9R76Ft18xbxV5EN
-	ZB6TmUcLN65vU53jNzK3Tw73wYwzrxkVRpnyUHN3/gXVV0krF3PH94H6JmIfARcFZ1qlsm
-	VUT/Cn2ivDmf+LTknpk7sURAplxxQrFvoQpZCPdBFK9nAMTb9t7RNOo7KZQkUQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755977425;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oO8oVBpDtIm03zfRBASenoVtH2C2/4GMbx6IwR5Dhdc=;
-	b=O25tj2w/p8BX45iILiWf66v00wjmUvy13wSMSsHYZHxU0hPrdicBdMavkRuVeeWV/It6/h
-	It50wqj1Ho3VF/Cg==
-From: "tip-bot2 for Inochi Amaoto" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/drivers] PCI/MSI: Add startup/shutdown for per device domains
-Cc: Thomas Gleixner <tglx@linutronix.de>, Inochi Amaoto <inochiama@gmail.com>,
- Chen Wang <unicorn_wang@outlook.com>, Bjorn Helgaas <bhelgaas@google.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250813232835.43458-3-inochiama@gmail.com>
-References: <20250813232835.43458-3-inochiama@gmail.com>
+	s=arc-20240116; t=1755977574; c=relaxed/simple;
+	bh=F9vAKy3Kj8tLGDHWWzJhc98x9ouHBdjXV9lPFIAqsTU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c+qLuqO/lWZ/T9JUxR2AhchebHqyOhJ3fSD+9Ksbdgh3qfVx8gs/42o2k1nuSdLvfHr0+bjAiwbM0dzij3NFAadD4VW2747Tmn58wS3rAk3iPXD2bHuJDxIViW7VA4gjk/OvZraGvJHbUbxqdJlQx++v4Yp/BP948Z/pr9WiGj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+Received: from [192.168.2.54] (unknown [98.97.26.216])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id 640EAB4E009F;
+	Sat, 23 Aug 2025 21:32:46 +0200 (CEST)
+Message-ID: <fba0b49a-6906-46b8-92e4-d79e57b40d28@freeshell.de>
+Date: Sat, 23 Aug 2025 12:32:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175597742445.1420.15698772971358170313.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 3/3] riscv: dts: starfive: Add VisionFive 2 Lite board
+ device tree
+To: Hal Feng <hal.feng@starfivetech.com>, Conor Dooley <conor+dt@kernel.org>,
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250821100930.71404-1-hal.feng@starfivetech.com>
+ <20250821100930.71404-4-hal.feng@starfivetech.com>
+Content-Language: en-US
+From: E Shattow <e@freeshell.de>
+In-Reply-To: <20250821100930.71404-4-hal.feng@starfivetech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the irq/drivers branch of tip:
+On 8/21/25 03:09, Hal Feng wrote:
+> VisionFive 2 Lite is a mini SBC based on the StarFive JH7110S SoC.
+> 
+> Board features:
+> - JH7110S SoC
+> - 2/4/8 GiB LPDDR4 DRAM
+> - AXP15060 PMIC
+> - 40 pin GPIO header
+> - 1x USB 3.0 host port
+> - 3x USB 2.0 host port
+> - 1x M.2 M-Key (size: 2242)
+> - 1x MicroSD slot (optional non-removable eMMC)
+> - 1x QSPI Flash
+> - 1x I2C EEPROM
+> - 1x 1Gbps Ethernet port
+> - SDIO-based Wi-Fi & UART-based Bluetooth
+> - 1x HDMI port
+> - 1x 2-lane DSI
+> - 1x 2-lane CSI
+> 
+> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> ---
+>  arch/riscv/boot/dts/starfive/Makefile         |   2 +
+>  .../jh7110s-starfive-visionfive-2-lite.dts    | 152 ++++++++++++++++++
+>  2 files changed, 154 insertions(+)
+>  create mode 100644 arch/riscv/boot/dts/starfive/jh7110s-starfive-visionfive-2-lite.dts
+> 
+> diff --git a/arch/riscv/boot/dts/starfive/Makefile b/arch/riscv/boot/dts/starfive/Makefile
+> index b3bb12f78e7d..7265c363e2a9 100644
+> --- a/arch/riscv/boot/dts/starfive/Makefile
+> +++ b/arch/riscv/boot/dts/starfive/Makefile
+> @@ -13,3 +13,5 @@ dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-mars.dtb
+>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-pine64-star64.dtb
+>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.2a.dtb
+>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.3b.dtb
+> +
+> +dtb-$(CONFIG_ARCH_STARFIVE) += jh7110s-starfive-visionfive-2-lite.dtb
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110s-starfive-visionfive-2-lite.dts b/arch/riscv/boot/dts/starfive/jh7110s-starfive-visionfive-2-lite.dts
+> new file mode 100644
+> index 000000000000..a0cb9912eb80
+> --- /dev/null
+> +++ b/arch/riscv/boot/dts/starfive/jh7110s-starfive-visionfive-2-lite.dts
+> @@ -0,0 +1,152 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> +/*
+> + * Copyright (C) 2025 StarFive Technology Co., Ltd.
+> + * Copyright (C) 2025 Hal Feng <hal.feng@starfivetech.com>
+> + */
+> +
+> +/dts-v1/;
+> +#include "jh7110-common.dtsi"
+> +
+> +/ {
+> +	model = "StarFive VisionFive 2 Lite";
+> +	compatible = "starfive,visionfive-2-lite", "starfive,jh7110s";
+> +};
+> +
+> +&cpu_opp {
+> +	opp-312500000 {
+> +		opp-hz = /bits/ 64 <312500000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-417000000 {
+> +		opp-hz = /bits/ 64 <417000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-625000000 {
+> +		opp-hz = /bits/ 64 <625000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-1250000000 {
+> +		opp-hz = /bits/ 64 <1250000000>;
+> +		opp-microvolt = <1000000>;
+> +	};
+> +};
+> +
+> +&gmac0 {
+> +	starfive,tx-use-rgmii-clk;
+> +	assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
+> +	assigned-clock-parents = <&aoncrg JH7110_AONCLK_GMAC0_RMII_RTX>;
+> +	status = "okay";
+> +};
+> +
+> +&i2c0 {
+> +	status = "okay";
+> +};
+> +
+> +&mmc0 {
+> +	bus-width = <4>;
+> +	no-sdio;
+> +	no-mmc;
+> +	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_HIGH>;
+> +	disable-wp;
+> +	cap-sd-highspeed;
+> +};
+> +
+> +&mmc1 {
+> +	max-frequency = <50000000>;
+> +	keep-power-in-suspend;
+> +	non-removable;
+> +};
+> +
+> +&pcie1 {
+> +	enable-gpios = <&sysgpio 27 GPIO_ACTIVE_HIGH>;
+> +	status = "okay";
+> +};
+> +
+> +&phy0 {
+> +	motorcomm,tx-clk-adj-enabled;
+> +	motorcomm,tx-clk-100-inverted;
+> +	motorcomm,tx-clk-1000-inverted;
+> +	motorcomm,rx-clk-drv-microamp = <3970>;
+> +	motorcomm,rx-data-drv-microamp = <2910>;
+> +	rx-internal-delay-ps = <1500>;
+> +	tx-internal-delay-ps = <1500>;
+> +};
+> +
+> +&pwm {
+> +	status = "okay";
+> +};
+> +
+> +&spi0 {
+> +	status = "okay";
+> +};
+> +
+> +&syscrg {
+> +	assigned-clock-rates = <0>, <0>, <0>, <0>, <500000000>, <1250000000>;
+> +};
 
-Commit-ID:     54f45a30c0d0153d2be091ba2d683ab6db6d1d5b
-Gitweb:        https://git.kernel.org/tip/54f45a30c0d0153d2be091ba2d683ab6db6=
-d1d5b
-Author:        Inochi Amaoto <inochiama@gmail.com>
-AuthorDate:    Thu, 14 Aug 2025 07:28:32 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 23 Aug 2025 21:21:13 +02:00
+Circling back to a topic where I don't understand CPU clocks in hardware
+design, but I have questions, I would want to see 8 divisions instead of
+4 divisions (for both JH7110S and for JH7110). Similar for JH7110S here as:
 
-PCI/MSI: Add startup/shutdown for per device domains
+&syscrg {
+	assigned-clock-rates = <0>, <0>, <0>, <0>, <500000000>, <2500000000>;
+};
 
-As the RISC-V PLIC cannot apply affinity settings without invoking
-irq_enable(), it will make the interrupt unavailble when used as an
-underlying interrupt chip for the MSI controller.
+and then in above &cpu_opp as:
 
-Implement the irq_startup() and irq_shutdown() callbacks for the PCI MSI
-and MSI-X templates.
+&cpu_opp {
+	opp-312500000 {
+		opp-hz = /bits/ 64 <312500000>;
+		opp-microvolt = <800000>;
+	};
+	opp-357000000 {
+		opp-hz = /bits/ 64 <357000000>;
+		opp-microvolt = <800000>;
+	};
+	opp-417000000 {
+		opp-hz = /bits/ 64 <417000000>;
+		opp-microvolt = <800000>;
+	};
+	opp-500000000 {
+		opp-hz = /bits/ 64 <500000000>;
+		opp-microvolt = <800000>;
+	};
+	opp-625000000 {
+		opp-hz = /bits/ 64 <625000000>;
+		opp-microvolt = <800000>;
+	};
+	opp-833000000 {
+		opp-hz = /bits/ 64 <833000000>;
+		opp-microvolt = <800000>;
+	};
+	opp-1250000000 {
+		opp-hz = /bits/ 64 <1250000000>;
+		opp-microvolt = <1000000>;
+	};
 
-For chips that specify MSI_FLAG_PCI_MSI_STARTUP_PARENT, the parent startup
-and shutdown functions are invoked. That allows the interrupt on the parent
-chip to be enabled if the interrupt has not been enabled during
-allocation. This is necessary for MSI controllers which use PLIC as
-underlying parent interrupt chip.
+	/* avoid division=1 2.5GHz omitted here, not supported by CPU */
+};
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Chen Wang <unicorn_wang@outlook.com> # Pioneerbox
-Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-Link: https://lore.kernel.org/all/20250813232835.43458-3-inochiama@gmail.com
+What prevents this functionality I am asking about?  Specifically on
+JH7110 the promotional block diagrams show 3.0GHz maximum (?  I think?
+not sure but what else could this be?) so if that is true why do we not
+divide down from that, avoiding divisions that are problematic?
 
----
- drivers/pci/msi/irqdomain.c | 52 ++++++++++++++++++++++++++++++++++++-
- include/linux/msi.h         |  2 +-
- 2 files changed, 54 insertions(+)
+-E
 
-diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
-index 0938ef7..e0a800f 100644
---- a/drivers/pci/msi/irqdomain.c
-+++ b/drivers/pci/msi/irqdomain.c
-@@ -148,6 +148,23 @@ static void pci_device_domain_set_desc(msi_alloc_info_t =
-*arg, struct msi_desc *d
- 	arg->hwirq =3D desc->msi_index;
- }
-=20
-+static void cond_shutdown_parent(struct irq_data *data)
-+{
-+	struct msi_domain_info *info =3D data->domain->host_data;
-+
-+	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
-+		irq_chip_shutdown_parent(data);
-+}
-+
-+static unsigned int cond_startup_parent(struct irq_data *data)
-+{
-+	struct msi_domain_info *info =3D data->domain->host_data;
-+
-+	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
-+		return irq_chip_startup_parent(data);
-+	return 0;
-+}
-+
- static __always_inline void cond_mask_parent(struct irq_data *data)
- {
- 	struct msi_domain_info *info =3D data->domain->host_data;
-@@ -164,6 +181,23 @@ static __always_inline void cond_unmask_parent(struct ir=
-q_data *data)
- 		irq_chip_unmask_parent(data);
- }
-=20
-+static void pci_irq_shutdown_msi(struct irq_data *data)
-+{
-+	struct msi_desc *desc =3D irq_data_get_msi_desc(data);
-+
-+	pci_msi_mask(desc, BIT(data->irq - desc->irq));
-+	cond_shutdown_parent(data);
-+}
-+
-+static unsigned int pci_irq_startup_msi(struct irq_data *data)
-+{
-+	struct msi_desc *desc =3D irq_data_get_msi_desc(data);
-+	unsigned int ret =3D cond_startup_parent(data);
-+
-+	pci_msi_unmask(desc, BIT(data->irq - desc->irq));
-+	return ret;
-+}
-+
- static void pci_irq_mask_msi(struct irq_data *data)
- {
- 	struct msi_desc *desc =3D irq_data_get_msi_desc(data);
-@@ -194,6 +228,8 @@ static void pci_irq_unmask_msi(struct irq_data *data)
- static const struct msi_domain_template pci_msi_template =3D {
- 	.chip =3D {
- 		.name			=3D "PCI-MSI",
-+		.irq_startup		=3D pci_irq_startup_msi,
-+		.irq_shutdown		=3D pci_irq_shutdown_msi,
- 		.irq_mask		=3D pci_irq_mask_msi,
- 		.irq_unmask		=3D pci_irq_unmask_msi,
- 		.irq_write_msi_msg	=3D pci_msi_domain_write_msg,
-@@ -210,6 +246,20 @@ static const struct msi_domain_template pci_msi_template=
- =3D {
- 	},
- };
-=20
-+static void pci_irq_shutdown_msix(struct irq_data *data)
-+{
-+	pci_msix_mask(irq_data_get_msi_desc(data));
-+	cond_shutdown_parent(data);
-+}
-+
-+static unsigned int pci_irq_startup_msix(struct irq_data *data)
-+{
-+	unsigned int ret =3D cond_startup_parent(data);
-+
-+	pci_msix_unmask(irq_data_get_msi_desc(data));
-+	return ret;
-+}
-+
- static void pci_irq_mask_msix(struct irq_data *data)
- {
- 	pci_msix_mask(irq_data_get_msi_desc(data));
-@@ -234,6 +284,8 @@ EXPORT_SYMBOL_GPL(pci_msix_prepare_desc);
- static const struct msi_domain_template pci_msix_template =3D {
- 	.chip =3D {
- 		.name			=3D "PCI-MSIX",
-+		.irq_startup		=3D pci_irq_startup_msix,
-+		.irq_shutdown		=3D pci_irq_shutdown_msix,
- 		.irq_mask		=3D pci_irq_mask_msix,
- 		.irq_unmask		=3D pci_irq_unmask_msix,
- 		.irq_write_msi_msg	=3D pci_msi_domain_write_msg,
-diff --git a/include/linux/msi.h b/include/linux/msi.h
-index e5e86a8..3111ba9 100644
---- a/include/linux/msi.h
-+++ b/include/linux/msi.h
-@@ -568,6 +568,8 @@ enum {
- 	MSI_FLAG_PARENT_PM_DEV		=3D (1 << 8),
- 	/* Support for parent mask/unmask */
- 	MSI_FLAG_PCI_MSI_MASK_PARENT	=3D (1 << 9),
-+	/* Support for parent startup/shutdown */
-+	MSI_FLAG_PCI_MSI_STARTUP_PARENT	=3D (1 << 10),
-=20
- 	/* Mask for the generic functionality */
- 	MSI_GENERIC_FLAGS_MASK		=3D GENMASK(15, 0),
+> +
+> +&sysgpio {
+> +	uart1_pins: uart1-0 {
+> +		tx-pins {
+> +			pinmux = <GPIOMUX(22, GPOUT_SYS_UART1_TX,
+> +					      GPOEN_ENABLE,
+> +					      GPI_NONE)>;
+> +			bias-disable;
+> +			drive-strength = <12>;
+> +			input-disable;
+> +			input-schmitt-disable;
+> +			slew-rate = <0>;
+> +		};
+> +
+> +		rx-pins {
+> +			pinmux = <GPIOMUX(23, GPOUT_LOW,
+> +					      GPOEN_DISABLE,
+> +					      GPI_SYS_UART1_RX)>;
+> +			bias-pull-up;
+> +			drive-strength = <2>;
+> +			input-enable;
+> +			input-schmitt-enable;
+> +			slew-rate = <0>;
+> +		};
+> +
+> +		cts-pins {
+> +			pinmux = <GPIOMUX(24, GPOUT_LOW,
+> +					      GPOEN_DISABLE,
+> +					      GPI_SYS_UART1_CTS)>;
+> +			input-enable;
+> +		};
+> +
+> +		rts-pins {
+> +			pinmux = <GPIOMUX(25, GPOUT_SYS_UART1_RTS,
+> +					      GPOEN_ENABLE,
+> +					      GPI_NONE)>;
+> +			input-enable;
+> +		};
+> +	};
+> +
+> +	usb0_pins: usb0-0 {
+> +		power-pins {
+> +			pinmux = <GPIOMUX(26, GPOUT_HIGH,
+> +					      GPOEN_ENABLE,
+> +					      GPI_NONE)>;
+> +			input-disable;
+> +		};
+> +	};
+> +};
+> +
+> +&uart1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&uart1_pins>;
+> +	status = "okay";
+> +};
+> +
+> +&usb0 {
+> +	dr_mode = "host";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&usb0_pins>;
+> +	status = "okay";
+> +};
+> +
+> +&usb_cdns3 {
+> +	phys = <&usbphy0>, <&pciephy0>;
+> +	phy-names = "cdns3,usb2-phy", "cdns3,usb3-phy";
+> +};
+
 
