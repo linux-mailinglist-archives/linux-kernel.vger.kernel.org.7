@@ -1,172 +1,112 @@
-Return-Path: <linux-kernel+bounces-782869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D26B3262D
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:17:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F9DDB32630
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 09E104E2AAC
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:17:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 210455C839E
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F3A191F9C;
-	Sat, 23 Aug 2025 01:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1CC199E94;
+	Sat, 23 Aug 2025 01:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OnCzMbG8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="cLSqCdSZ"
+Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F66428F4
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 01:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B0128F4;
+	Sat, 23 Aug 2025 01:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755911814; cv=none; b=feKIrg31RFt5w5izg1ph3NM7LQuyamuy6T8lLjVt2oFKsIlK4nUKgZO+jvauSUQ+vCfDjqmlTcOaZ5o3G303XrMZ8NgOeQSiOIh8a8b8riYHEP1h2k4ANB+RcujECVQFAeEfV5KLu9T3PZD0KrN3NqrOPNmJcv3yl/8PucrmSNo=
+	t=1755911843; cv=none; b=k/X6nxunu03MU4S3TBzHwCWP/0IEcRt9yH8wU7zyGjOKFlQKTn1O/FE4/6FwCnRmCjplqrL0NU1ugEczT5VEajuhmW1TKPAJFKJR26IKFkVrbvgChvE+lAnH8Q5JeZOKZw0NtUodRwBzaMvGe/4c01gijEGdTZwJ6DUjn9uS5ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755911814; c=relaxed/simple;
-	bh=rfoy8dUwVIazm6d2GUzv32yXVdoTMdUG6m95Bx7lLD4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=HcXgAmIVr9He/BUAVOCItKjSOlFjlouCTezeLq41GoHYpAsPiVMfVTDbE/jXImXwyrkdrvMqeOH8jKCy5mc49Ov3poUsu5MI3fHZp8crRajJCLHoQv2C7vUqa5p6hKxwCIjdeuhW5MlbM8hwFGI7FZ7ohaiu16ZUYNBZbWNrsTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OnCzMbG8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFFFCC4CEED;
-	Sat, 23 Aug 2025 01:16:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755911814;
-	bh=rfoy8dUwVIazm6d2GUzv32yXVdoTMdUG6m95Bx7lLD4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OnCzMbG8BtPUs5b7VgQBWOaxM9mYQLdnuvEtBt5p69Z+QYGc0QnWZHVbikSJ1455z
-	 reI6IDL2IFI5hbKcDqyxgzY+gmbD9A6ihJ8o6kMgi7ISKmVGt8Yi8ojcBK5PUvOvtw
-	 DHq+SPW8KSTwsJRAmk2MQKh1qOfmHQ9PLas+3Rlc=
-Date: Fri, 22 Aug 2025 18:16:53 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: syzbot <syzbot+49a796ed2c9709652f1e@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- pasha.tatashin@soleen.com, syzkaller-bugs@googlegroups.com, Andrew
- Donnellan <ajd@linux.ibm.com>
-Subject: Re: [syzbot] [mm?] kernel BUG in page_table_check_set
-Message-Id: <20250822181653.cd2024360870ef94cdb7db07@linux-foundation.org>
-In-Reply-To: <68a7ef20.050a0220.37038e.004d.GAE@google.com>
-References: <68a7ef20.050a0220.37038e.004d.GAE@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755911843; c=relaxed/simple;
+	bh=DkCtyXPX+y2jfq7vMKfHqEsjaUAWfzSIF6DlJCdQSD0=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=SG2WTiK4fkHnr4o/VT/Tr/aWU3A8bizSFtwBlBOY70syQOjYFSM/Ru5BP3uS92zq8tlBG/8uePOrV8fQ/h9tAA6muzB9I/J+LAOoE26MAM17v3jHFd2C+ovOosZQfP8a3zq/tqoF382dus2BWW1jjMUYGqT5xwz1PxU5ZDiAAqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=cLSqCdSZ; arc=none smtp.client-ip=203.205.221.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1755911837; bh=2MpJbxTAdsXSbHIcD9m74B6dZkiCe6Zt1dqe5uXqKRA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=cLSqCdSZ8lMABvwaIBOvCxgz0tdlIfaLfoPLCORkbUbWoN3cG/C6uujaDp0rKHd2F
+	 yqjcK5nNfBoFVnYyLeL8WSpiGgLq9N33QCkyARq7ekZ0i6oExV+WfGobRKUNgOJr0u
+	 x3Vsg+USDbTzQVTuxQZr6imEXKO/0sPunoor33i4=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
+	id 44F37E8D; Sat, 23 Aug 2025 09:17:15 +0800
+X-QQ-mid: xmsmtpt1755911835t5z22u9gn
+Message-ID: <tencent_F0CF4B761BAA2549BAA0BB1E33D09E561B08@qq.com>
+X-QQ-XMAILINFO: MzNwb/pqyJTkR+tgqlDhJfQ6Y81DDgs+ktDGMBgkusIuKADNSKX/5nB4xM+Y9+
+	 8kslEkBeH7Z/EsTzYQHzuYctJTULo7cqVu40BapoWD+OEB1KwxdqqQs8FPAnCo+6SR0Sr3cddg05
+	 bneBec4ZUm8Mm6j7/2Llsmz6yBzI6MP/vuH7sqy6XSf0sTIXZthMgF86ibQ9xohqNqm+iWL3BK6T
+	 jIJfzCsWZfrnTRNVuaujHCyQyXmptXOwuJ0klrrclfzgJpDPV1jLVHt9KsQKCrXG7elj9KPwmTy2
+	 k13gxey1uoNsvP3EQF3/kXRz3y9G7KNyQ6jVWWUOduldZFEFob6HQUY6jSjNLjcSinGUbbI47VQf
+	 MBKeYRxb9EZWsAZdItbnFgpWXSMacmbAVnhr4G7OXPVWWe2JHcA9IXNuA1hjjo9a24/lZn6Eg+qn
+	 eXXwn36gzC67q0QCOtyaO5fFGSea67Ekqul7g13OQLxGhi/PGNc+VQI8Dmxv7yYMyk7f/bOvMjV4
+	 dsHS4oZI5MIG1jBqhqkVy8HTEBcgzqUmu73rySwiEt91yvqeGNc0pF8EMLCmSsjCCoL/9t4pPypa
+	 oTPjX940bVhbpbn1MJiBGuvPMGxCpLXU+072CUNtJP03/8XQaMSUt6Pcd/vDR3ImtCH1pWVt48Tq
+	 ifaP433x+0LrfB6vbUXS0go/SkUv0Y7hhKQJVICImgUvtpRmMG4oGGtnCMsjHYiu+NWyPBYY0B/u
+	 CtfSESzbcRxYbh031/bc0f94cBem7xqfZFFK4F+B1VuIdR29vaOvjwbkZWosdH2p8iAdxhdjRwwg
+	 3rU41t8vV8oCGFjr6EBsSTG3z2n0ChRkWnPRhOW58/ZcZv4I1EA/GXSuEIO2YurHwU5qNpEwU04w
+	 9DkQPEGBhwlrgHiZ464ePT412iYVWdBS/KdA7Hdz+zaJaQ9JB8Gzsj2FvTq/yh1HxlWeFXRluFao
+	 oJRqZv8vevW4zzN6ywmLzwNVSAJ9ccswcI+PKh5OoAKq+bJo23Xns4uAkw5U4xsbQxbXXg4yE=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	miklos@szeredi.hu,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] fuse: Block access to folio overlimit
+Date: Sat, 23 Aug 2025 09:17:13 +0800
+X-OQ-MSGID: <20250823011712.2621959-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <68a8f5db.a00a0220.33401d.02e1.GAE@google.com>
+References: <68a8f5db.a00a0220.33401d.02e1.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 21 Aug 2025 21:16:32 -0700 syzbot <syzbot+49a796ed2c9709652f1e@syzkaller.appspotmail.com> wrote:
+syz reported a slab-out-of-bounds Write in fuse_dev_do_write.
 
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15f926f0580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
-> dashboard link: https://syzkaller.appspot.com/bug?extid=49a796ed2c9709652f1e
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15faa7a2580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=144143bc580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/disk-8f5ae30d.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmlinux-8f5ae30d.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff/Image-8f5ae30d.gz.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+49a796ed2c9709652f1e@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> kernel BUG at mm/page_table_check.c:118!
+Using the number of bytes alone as the termination condition in a loop
+can prematurely exhaust the allocated memory if the incremented byte count
+is less than PAGE_SIZE.
 
-Thanks.
+Add a loop termination condition to prevent overruns.
 
-Presumably due to the series "Support page table check on PowerPC". 
-Andrew, could you please take a look?
+Fixes: 3568a9569326 ("fuse: support large folios for retrieves")
+Reported-by: syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=2d215d165f9354b9c4ea
+Tested-by: syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/fuse/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The series has been in mm.git for a week so I guess the impact of this
-is small.  I won't drop it at this time, but prompt attention would be
-appreciated.
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index e80cd8f2c049..5150aa25e64b 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1893,7 +1893,7 @@ static int fuse_retrieve(struct fuse_mount *fm, struct inode *inode,
+ 
+ 	index = outarg->offset >> PAGE_SHIFT;
+ 
+-	while (num) {
++	while (num && ap->num_folios < num_pages) {
+ 		struct folio *folio;
+ 		unsigned int folio_offset;
+ 		unsigned int nr_bytes;
+-- 
+2.43.0
 
-> Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 6740 Comm: syz.0.17 Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0 PREEMPT 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-> pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-> pc : page_table_check_set+0x584/0x590 mm/page_table_check.c:118
-> lr : page_table_check_set+0x584/0x590 mm/page_table_check.c:118
-> sp : ffff80009c9674c0
-> x29: ffff80009c9674d0 x28: ffff80008fae0000 x27: 0000000000000002
-> x26: ffff0000c079ca80 x25: 0000000000000001 x24: 0000000000000001
-> x23: ffff0000c079ca80 x22: 000000000012b950 x21: 0000000000000001
-> x20: 0000000000000003 x19: 1ffff00012eb65b0 x18: 0000000000000000
-> x17: 0000000000000000 x16: ffff800080528a28 x15: 0000000000000001
-> x14: 1fffe000180f3950 x13: 0000000000000000 x12: 0000000000000000
-> x11: ffff6000180f3951 x10: 0000000000ff0100 x9 : 0000000000000000
-> x8 : ffff0000cdb05b80 x7 : ffff800080d16554 x6 : 0000000000000000
-> x5 : 0000000000000000 x4 : 0000000000000000 x3 : ffff800080d15b5c
-> x2 : 0000000000000001 x1 : 0000000000000002 x0 : 0000000000000001
-> Call trace:
->  page_table_check_set+0x584/0x590 mm/page_table_check.c:118 (P)
->  __page_table_check_ptes_set+0x2a8/0x2e0 mm/page_table_check.c:209
->  page_table_check_ptes_set include/linux/page_table_check.h:76 [inline]
->  __set_ptes_anysz arch/arm64/include/asm/pgtable.h:709 [inline]
->  __set_ptes+0x4a0/0x504 arch/arm64/include/asm/pgtable.h:741
->  contpte_set_ptes+0x120/0x188 arch/arm64/mm/contpte.c:464
->  set_ptes arch/arm64/include/asm/pgtable.h:1794 [inline]
->  modify_prot_commit_ptes+0x4e4/0x694 arch/arm64/mm/mmu.c:1556
->  prot_commit_flush_ptes mm/mprotect.c:197 [inline]
->  commit_anon_folio_batch mm/mprotect.c:246 [inline]
->  set_write_prot_commit_flush_ptes mm/mprotect.c:273 [inline]
->  change_pte_range mm/mprotect.c:354 [inline]
->  change_pmd_range mm/mprotect.c:570 [inline]
->  change_pud_range mm/mprotect.c:633 [inline]
->  change_p4d_range mm/mprotect.c:659 [inline]
->  change_protection_range mm/mprotect.c:687 [inline]
->  change_protection+0x1e84/0x3ff0 mm/mprotect.c:721
->  mprotect_fixup+0x504/0x744 mm/mprotect.c:837
->  do_mprotect_pkey+0x864/0xb30 mm/mprotect.c:993
->  __do_sys_mprotect mm/mprotect.c:1014 [inline]
->  __se_sys_mprotect mm/mprotect.c:1011 [inline]
->  __arm64_sys_mprotect+0x80/0x98 mm/mprotect.c:1011
->  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->  el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
->  el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
->  el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-> Code: d4210000 97e865fd d4210000 97e865fb (d4210000) 
-> ---[ end trace 0000000000000000 ]---
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
 
