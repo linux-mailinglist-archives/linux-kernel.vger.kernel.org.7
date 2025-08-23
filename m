@@ -1,597 +1,220 @@
-Return-Path: <linux-kernel+bounces-782902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296C2B326A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 05:27:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D18B8B326A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 05:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9519CAC3488
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:27:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD12A205CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A07321ABD4;
-	Sat, 23 Aug 2025 03:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789041D5CD7;
+	Sat, 23 Aug 2025 03:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CDOv36vf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C442200132;
-	Sat, 23 Aug 2025 03:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="ISXMpYqp"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749E11C695;
+	Sat, 23 Aug 2025 03:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755919617; cv=none; b=t4lDY829Jkf66DSiVwb30cUfznUn92uhwIDmc0c2pphPCIm7h7BgxaQpYW2VIm192qI+z4qR1hcSygXviL5Db+C4Otiug+btxarlGEqdZO/xc+V0Slba20BlEfCafGk/Riq0FzANbRneg5lcdiRn+rRxxFFvt1KyLSwA+Jo4ElI=
+	t=1755919821; cv=none; b=OF0mRwbO5bFf320JLYQuI000lwvSZhFEwJ/AiTIMyvbuCLyP2+OqxzvwErxjTsRu6nw8cHn+ZFfmH7owM1Zxgsfqii8z2N2jtli6K9bpyJO/36W8meUL+oqtvD21j0s1D58z1pFeZ+FDD4CX8jYHqlVfTQvLXoMEL9YeOBYAYnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755919617; c=relaxed/simple;
-	bh=mqnbMg0MWIDcmVD8c9mCyu/gfRSG6bU28qGSZAIcbaQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=lBJx4YioSmOreK4buxNsPszfyj7YlxxZF0Mvu9rUueGHEx8K4L0IoSWjl4BLzhx8rTJ7J2bMV5w7tcn9YTGnoRicwivPx1k/RdckNYGhzIuTkdCLn+DnJxE3AWOrtxpwTbeu15poFaYRrKXX03uAzywQk/yhWMr/8Eimnl1I3VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CDOv36vf; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755919616; x=1787455616;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mqnbMg0MWIDcmVD8c9mCyu/gfRSG6bU28qGSZAIcbaQ=;
-  b=CDOv36vfAWeniCx4KLAJjOPQouVGhBV3VrYXhGEpAlxbOo8S9Y+aGTUZ
-   n38usaua2Fz7SAZo3IzJNNxu24w06GK6DZ7gUBZYNSjwzUaqjq+47JokB
-   ZW3Gj6ker81vaDo/VpL6cEfZQGVTA2rzLNlE4KySMh57Tj91iylckkEfp
-   qWxdN8wfOC58AHK4dKODuNtIOY/vhfaJhBWSQiU6MwnNJZKqhHUtg1Xna
-   aVWFu4xqXKpXiT8db+YcJgRkh7mlPQxq/Px3s+sWDp56RO4MGUJYw2Sly
-   nTUvlYz2mff6wMswWAOq9hJuuPIz9IK4rZRmjfzKLjPFKxNePJ9z6BtcT
-   w==;
-X-CSE-ConnectionGUID: jQ2XRgKMSvysguBXQvGmDw==
-X-CSE-MsgGUID: 4c2tp3HYTvGu2fbNrCcwYA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="61868249"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="61868249"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 20:26:55 -0700
-X-CSE-ConnectionGUID: 4QTbX6BRQHOADo2sDsVERA==
-X-CSE-MsgGUID: NLOJDnkoR4Scj5FcDuyuOw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="168752473"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.239.20]) ([10.124.239.20])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 20:26:51 -0700
-Message-ID: <e321d374-38a7-4f60-b991-58458a2761b9@linux.intel.com>
-Date: Sat, 23 Aug 2025 11:26:47 +0800
+	s=arc-20240116; t=1755919821; c=relaxed/simple;
+	bh=Gs9hIWcV1xs8pbVDssQmZm/+m3xDIdaZ2h7DKzfvV+k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=h5uKPT6uSTr82kNdmVMAJxqCZsv9uVjpj0LdnmjPOXPnaqYfm7A3XL3ivlFT+sauaxrw/AqjH2J0HAKyi9niU2j6KUxo9GMgfuphjDiXcDvxTVIddRHb7+nDIi6TPc1KksqMVTLY9Y9JCZ1c4Rrcw29v4txrRjl7n4+/JqBgFKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=ISXMpYqp reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=XUVekDu/en1ASgyYKnT1l6Dj8lWz740w48tlh1lo9w4=; b=I
+	SXMpYqpbWsrLWQwe2zEfnC7a0/GFwKPceLATKxeMA914gnpiTR2x+3OOGvppisE3
+	Ke58tVm7yHZU0rfaD/vMxMa4RWQVAnh0rMIWvcf6n8LQwshvVHk2Dnlq1UbaxYMu
+	tUGfc79b74MiXGkSnj2rnQtPTXoyI/f7+cRcWhoGhU=
+Received: from phoenix500526$163.com ( [120.230.124.83] ) by
+ ajax-webmail-wmsvr-40-102 (Coremail) ; Sat, 23 Aug 2025 11:29:40 +0800
+ (CST)
+Date: Sat, 23 Aug 2025 11:29:40 +0800 (CST)
+From: =?UTF-8?B?6LW15L2z54Kc?= <phoenix500526@163.com>
+To: "Andrii Nakryiko" <andrii.nakryiko@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	yonghong.song@linux.dev, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH bpf-next v13 1/2] libbpf: fix USDT SIB argument
+ handling causing unrecognized register error
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <CAEf4BzZWd2zUC=U6uGJFF3EMZ7zWGLweQAG3CJWTeHy-5yFEPw@mail.gmail.com>
+References: <20250822151611.1084244-1-phoenix500526@163.com>
+ <20250822151611.1084244-2-phoenix500526@163.com>
+ <CAEf4BzZWd2zUC=U6uGJFF3EMZ7zWGLweQAG3CJWTeHy-5yFEPw@mail.gmail.com>
+X-NTES-SC: AL_Qu2eB/Watk8j5iCfZekfmUsVh+o9X8K1vfsk3oZfPJp+jCzp0SwFYFhTLVD49dCDIgW9tQiHaDhx9f1hb5l+dKgn25pDPzHVH4AtlTb34QuEFg==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, "Hansen, Dave" <dave.hansen@intel.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Jann Horn <jannh@google.com>,
- Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "security@kernel.org" <security@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-To: "Tian, Kevin" <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>
-References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
- <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
- <20250806155223.GV184255@nvidia.com>
- <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
- <20250806160904.GX184255@nvidia.com>
- <62d21545-9e75-41e3-89a3-f21dda15bf16@intel.com>
- <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
- <20250807195154.GO184255@nvidia.com>
- <BN9PR11MB52762A47B347C99F0C0E4C288C2FA@BN9PR11MB5276.namprd11.prod.outlook.com>
- <87bfc80e-258e-4193-a56c-3096608aec30@linux.intel.com>
- <BN9PR11MB52766165393F7DD8209DA45A8C32A@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BN9PR11MB52766165393F7DD8209DA45A8C32A@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <10295ceb.1016.198d4f988ef.Coremail.phoenix500526@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:ZigvCgAnV6elNaloEB0gAA--.9210W
+X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/xtbBawmyiGipMysgqAABsI
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On 8/21/2025 3:05 PM, Tian, Kevin wrote:
->> From: Baolu Lu<baolu.lu@linux.intel.com>
->> Sent: Monday, August 18, 2025 2:22 PM
->>
->> On 8/8/25 10:57, Tian, Kevin wrote:
->>>> From: Jason Gunthorpe<jgg@nvidia.com>
->>>> Sent: Friday, August 8, 2025 3:52 AM
->>>>
->>>> On Thu, Aug 07, 2025 at 10:40:39PM +0800, Baolu Lu wrote:
->>>>> +static void kernel_pte_work_func(struct work_struct *work)
->>>>> +{
->>>>> +	struct page *page, *next;
->>>>> +
->>>>> +	iommu_sva_invalidate_kva_range(0, TLB_FLUSH_ALL);
->>>>> +
->>>>> +	guard(spinlock)(&kernel_pte_work.lock);
->>>>> +	list_for_each_entry_safe(page, next, &kernel_pte_work.list, lru) {
->>>>> +		list_del_init(&page->lru);
->>>> Please don't add new usages of lru, we are trying to get rid of this. 🙁
->>>>
->>>> I think the memory should be struct ptdesc, use that..
->>>>
->>> btw with this change we should also defer free of the pmd page:
->>>
->>> pud_free_pmd_page()
->>> 	...
->>> 	for (i = 0; i < PTRS_PER_PMD; i++) {
->>> 		if (!pmd_none(pmd_sv[i])) {
->>> 			pte = (pte_t *)pmd_page_vaddr(pmd_sv[i]);
->>> 			pte_free_kernel(&init_mm, pte);
->>> 		}
->>> 	}
->>>
->>> 	free_page((unsigned long)pmd_sv);
->>>
->>> Otherwise the risk still exists if the pmd page is repurposed before the
->>> pte work is scheduled.
->>
->> My understanding is that you were talking about pmd_free(), correct? It
-> yes
-> 
->> appears that both pmd_free() and pte_free_kernel() call
->> pagetable_dtor_free(). If so, how about the following change?
->>
->> diff --git a/include/asm-generic/pgalloc.h b/include/asm-generic/pgalloc.h
->> index dbddacdca2ce..04f6b5bc212c 100644
->> --- a/include/asm-generic/pgalloc.h
->> +++ b/include/asm-generic/pgalloc.h
->> @@ -172,10 +172,8 @@ static inline pmd_t *pmd_alloc_one_noprof(struct
->> mm_struct *mm, unsigned long ad
->>    #ifndef __HAVE_ARCH_PMD_FREE
->>    static inline void pmd_free(struct mm_struct *mm, pmd_t *pmd)
->>    {
->> -       struct ptdesc *ptdesc = virt_to_ptdesc(pmd);
->> -
->>           BUG_ON((unsigned long)pmd & (PAGE_SIZE-1));
->> -       pagetable_dtor_free(ptdesc);
->> +       pte_free_kernel(mm, (pte_t *)pmd);
->>    }
-> better to rename pte_free_kernel_async() to pagetable_free_kernel_async()
-> and call it directly here like you did in pte_free_kernel(). otherwise it's
-> a bit weird to call a pte helper for pmd.
-> 
-> accordingly do we need a new helper pmd_free_kernel()? Now there is
-> no restriction that pmd_free() can only be called on kernel entries. e.g.
-> mop_up_one_pmd() (only in PAE and KPTI), destroy_args() if
-> CONFIG_DEBUG_VM_PGTABLE, etc.
-> 
->>> another observation - pte_free_kernel is not used in remove_pagetable ()
->>> and __change_page_attr(). Is it straightforward to put it in those paths
->>> or do we need duplicate some deferring logic there?
->>>
->> In both of these cases, pages in an array or list require deferred
->> freeing. I don't believe the previous approach, which calls
->> pagetable_dtor_free(), will still work here. Perhaps a separate list is
-> this is the part which I don't quite understand. Is there guarantee that
-> page tables removed in those path are not allocated with any
-> pagetable_ctor helpers? Otherwise some state might be broken w/o
-> proper pagetable_dtor().
-> 
-> Knowing little here, so likely I missed some basic context.
-> 
->> needed? What about something like the following?
->>
->> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
->> index 76e33bd7c556..2e887463c165 100644
->> --- a/arch/x86/mm/init_64.c
->> +++ b/arch/x86/mm/init_64.c
->> @@ -1013,7 +1013,10 @@ static void __meminit free_pagetable(struct page
->> *page, int order)
->>                   free_reserved_pages(page, nr_pages);
->>    #endif
->>           } else {
->> -               free_pages((unsigned long)page_address(page), order);
->> +               if (IS_ENABLED(CONFIG_ASYNC_PGTABLE_FREE))
->> +                       kernel_pgtable_free_pages_async(page, order);
->> +               else
->> +                       free_pages((unsigned long)page_address(page),
->> order);
->>           }
->>    }
->>
->> diff --git a/arch/x86/mm/pat/set_memory.c
->> b/arch/x86/mm/pat/set_memory.c
->> index 8834c76f91c9..7e567bdfddce 100644
->> --- a/arch/x86/mm/pat/set_memory.c
->> +++ b/arch/x86/mm/pat/set_memory.c
->> @@ -436,9 +436,13 @@ static void cpa_collapse_large_pages(struct
->> cpa_data *cpa)
->>
->>           flush_tlb_all();
->>
->> -       list_for_each_entry_safe(ptdesc, tmp, &pgtables, pt_list) {
->> -               list_del(&ptdesc->pt_list);
->> -               __free_page(ptdesc_page(ptdesc));
->> +       if (IS_ENABLED(CONFIG_ASYNC_PGTABLE_FREE)) {
->> +               kernel_pgtable_free_list_async(&pgtables);
->> +       } else {
->> +               list_for_each_entry_safe(ptdesc, tmp, &pgtables, pt_list) {
->> +                       list_del(&ptdesc->pt_list);
->> +                       __free_page(ptdesc_page(ptdesc));
->> +               }
->>           }
->>    }
->>
->> diff --git a/include/asm-generic/pgalloc.h b/include/asm-generic/pgalloc.h
->> index 4938eff5b482..13bbe1588872 100644
->> --- a/include/asm-generic/pgalloc.h
->> +++ b/include/asm-generic/pgalloc.h
->> @@ -48,8 +48,12 @@ static inline pte_t
->> *pte_alloc_one_kernel_noprof(struct mm_struct *mm)
->>
->>    #ifdef CONFIG_ASYNC_PGTABLE_FREE
->>    void pte_free_kernel_async(struct ptdesc *ptdesc);
->> +void kernel_pgtable_free_list_async(struct list_head *list);
->> +void kernel_pgtable_free_pages_async(struct page *pages, int order);
->>    #else
->>    static inline void pte_free_kernel_async(struct ptdesc *ptdesc) {}
->> +static inline void kernel_pgtable_free_list_async(struct list_head
->> *list) {}
->> +void kernel_pgtable_free_pages_async(struct page *pages, int order) {}
->>    #endif
->>
->>    /**
->> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
->> index b9a785dd6b8d..d1d19132bbe8 100644
->> --- a/mm/pgtable-generic.c
->> +++ b/mm/pgtable-generic.c
->> @@ -413,6 +413,7 @@ static void kernel_pte_work_func(struct work_struct
->> *work);
->>
->>    struct {
->>           struct list_head list;
->> +       struct list_head pages;
-> the real difference between the two lists is about whether to use
-> pagetable_dtor_free() or __free_page(). Then clearer to call them
-> 'pages_dtor' and 'pages'?
-> 
->>           spinlock_t lock;
->>           struct work_struct work;
->>    } kernel_pte_work = {
->> @@ -425,17 +426,24 @@ static void kernel_pte_work_func(struct
->> work_struct *work)
->>    {
->>           struct ptdesc *ptdesc, *next;
->>           LIST_HEAD(free_list);
->> +       LIST_HEAD(pages_list);
->>
->>           iommu_sva_invalidate_kva_range(0, TLB_FLUSH_ALL);
->>
->>           spin_lock(&kernel_pte_work.lock);
->>           list_move(&kernel_pte_work.list, &free_list);
->> +       list_move(&kernel_pte_work.pages, &pages_list);
->>           spin_unlock(&kernel_pte_work.lock);
->>
->>           list_for_each_entry_safe(ptdesc, next, &free_list, pt_list) {
->>                   list_del(&ptdesc->pt_list);
->>                   pagetable_dtor_free(ptdesc);
->>           }
->> +
->> +       list_for_each_entry_safe(ptdesc, next, &pages_list, pt_list) {
->> +               list_del(&ptdesc->pt_list);
->> +               __free_page(ptdesc_page(ptdesc));
->> +       }
->>    }
->>
->>    void pte_free_kernel_async(struct ptdesc *ptdesc)
->> @@ -444,4 +452,25 @@ void pte_free_kernel_async(struct ptdesc *ptdesc)
->>           list_add(&ptdesc->pt_list, &kernel_pte_work.list);
->>           schedule_work(&kernel_pte_work.work);
->>    }
->> +
->> +void kernel_pgtable_free_list_async(struct list_head *list)
->> +{
->> +       guard(spinlock)(&kernel_pte_work.lock);
->> +       list_splice_tail(list, &kernel_pte_work.pages);
->> +       schedule_work(&kernel_pte_work.work);
->> +}
->> +
->> +void kernel_pgtable_free_pages_async(struct page *pages, int order)
->> +{
->> +       unsigned long nr_pages = 1 << order;
->> +       struct ptdesc *ptdesc;
->> +       int i;
->> +
->> +       guard(spinlock)(&kernel_pte_work.lock);
->> +       for (i = 0; i < nr_pages; i++) {
->> +               ptdesc = page_ptdesc(&pages[i]);
->> +               list_add(&ptdesc->pt_list, &kernel_pte_work.pages);
->> +       }
-> there is a side-effect here. Now a contiguous range of pages (order=N)
-> are freed one-by-one, so they are first fed back to the order=0 free list
-> with possibility of getting split due to small order allocations before
-> having chance to lift back to the order=N list. then the number of
-> available huge pages is unnecessarily reduced.
-> 
-> but look at the code probably we don't need to handle the order>0 case?
-> 
-> now only free_hugepage_table() may free a huge page, called from
-> remove_pmd_table() when a pmd is a*leaf* entry pointing to a
-> vmemmap huge page. So it's not a real page table. I'm not sure why
-> it's piggybacked in a pagetable helper, but sounds like a case we
-> can ignore in this mitigation...
-
-I am not sure about this context either. My understanding is that
-"order > 0" is used for the batch deallocation of page table pages that
-were created to map large, contiguous blocks of memory.
-
-Thanks for your comments. I have created a new patch to introduce the
-asynchronous page table page free mechanism, taking the above comments
-into consideration. Let me post it below for further review.
-
-mm: Conditionally defer freeing of kernel page table pages
-
-On x86 and other architectures that map the kernel's virtual address space
-into the upper portion of every process's page table, the IOMMU's paging
-structure caches can become stale. This occurs when a page used for the
-kernel's page tables is freed and reused without the IOMMU being notified.
-
-While the IOMMU driver is notified of changes to user virtual address
-mappings, there is no similar notification mechanism for kernel page
-table changes. This can lead to data corruption or system instability
-when Shared Virtual Address (SVA) is enabled, as the IOMMU's internal
-caches may retain stale entries for kernel virtual addresses.
-
-This introduces a conditional asynchronous mechanism, enabled by
-CONFIG_ASYNC_PGTABLE_FREE. When enabled, this mechanism defers the freeing
-of pages that are used as page tables for kernel address mappings. These
-pages are now queued to a work struct instead of being freed immediately.
-
-This deferred freeing provides a safe context for a future patch to add
-an IOMMU-specific callback, which might be expensive on large-scale
-systems. This ensures the necessary IOMMU cache invalidation is performed
-before the page is finally returned to the page allocator outside of any
-critical, non-sleepable path.
-
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
-  arch/x86/mm/init_64.c         |   5 +-
-  arch/x86/mm/pat/set_memory.c  |  10 +++-
-  arch/x86/mm/pgtable.c         |   5 +-
-  include/asm-generic/pgalloc.h |  17 +++++-
-  mm/Kconfig                    |   3 +
-  mm/pgtable-generic.c          | 106 ++++++++++++++++++++++++++++++++++
-  6 files changed, 140 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 76e33bd7c556..bf06d815d214 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1013,7 +1013,10 @@ static void __meminit free_pagetable(struct page 
-*page, int order)
-  		free_reserved_pages(page, nr_pages);
-  #endif
-  	} else {
--		free_pages((unsigned long)page_address(page), order);
-+		if (IS_ENABLED(CONFIG_ASYNC_PGTABLE_FREE))
-+			kernel_pgtable_async_free_pages(page, order);
-+		else
-+			free_pages((unsigned long)page_address(page), order);
-  	}
-  }
-
-diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-index 8834c76f91c9..97d4f39cae7d 100644
---- a/arch/x86/mm/pat/set_memory.c
-+++ b/arch/x86/mm/pat/set_memory.c
-@@ -436,9 +436,13 @@ static void cpa_collapse_large_pages(struct 
-cpa_data *cpa)
-
-  	flush_tlb_all();
-
--	list_for_each_entry_safe(ptdesc, tmp, &pgtables, pt_list) {
--		list_del(&ptdesc->pt_list);
--		__free_page(ptdesc_page(ptdesc));
-+	if (IS_ENABLED(CONFIG_ASYNC_PGTABLE_FREE)) {
-+		kernel_pgtable_async_free_page_list(&pgtables);
-+	} else {
-+		list_for_each_entry_safe(ptdesc, tmp, &pgtables, pt_list) {
-+			list_del(&ptdesc->pt_list);
-+			__free_page(ptdesc_page(ptdesc));
-+		}
-  	}
-  }
-
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index ddf248c3ee7d..45268f009cb0 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -757,7 +757,10 @@ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
-
-  	free_page((unsigned long)pmd_sv);
-
--	pmd_free(&init_mm, pmd);
-+	if (IS_ENABLED(CONFIG_ASYNC_PGTABLE_FREE))
-+		kernel_pgtable_async_free_dtor(virt_to_ptdesc(pmd));
-+	else
-+		pmd_free(&init_mm, pmd);
-
-  	return 1;
-  }
-diff --git a/include/asm-generic/pgalloc.h b/include/asm-generic/pgalloc.h
-index 3c8ec3bfea44..baa9780cad71 100644
---- a/include/asm-generic/pgalloc.h
-+++ b/include/asm-generic/pgalloc.h
-@@ -46,6 +46,16 @@ static inline pte_t 
-*pte_alloc_one_kernel_noprof(struct mm_struct *mm)
-  #define pte_alloc_one_kernel(...) 
-alloc_hooks(pte_alloc_one_kernel_noprof(__VA_ARGS__))
-  #endif
-
-+#ifdef CONFIG_ASYNC_PGTABLE_FREE
-+void kernel_pgtable_async_free_dtor(struct ptdesc *ptdesc);
-+void kernel_pgtable_async_free_page_list(struct list_head *list);
-+void kernel_pgtable_async_free_pages(struct page *pages, int order);
-+#else
-+static inline void kernel_pgtable_async_free_dtor(struct ptdesc *ptdesc) {}
-+static inline void kernel_pgtable_async_free_page_list(struct list_head 
-*list) {}
-+static inline void kernel_pgtable_async_free_pages(struct page *pages, 
-int order) {}
-+#endif
-+
-  /**
-   * pte_free_kernel - free PTE-level kernel page table memory
-   * @mm: the mm_struct of the current context
-@@ -53,7 +63,12 @@ static inline pte_t 
-*pte_alloc_one_kernel_noprof(struct mm_struct *mm)
-   */
-  static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
-  {
--	pagetable_dtor_free(virt_to_ptdesc(pte));
-+	struct ptdesc *ptdesc = virt_to_ptdesc(pte);
-+
-+	if (IS_ENABLED(CONFIG_ASYNC_PGTABLE_FREE))
-+		kernel_pgtable_async_free_dtor(ptdesc);
-+	else
-+		pagetable_dtor_free(ptdesc);
-  }
-
-  /**
-diff --git a/mm/Kconfig b/mm/Kconfig
-index e443fe8cd6cf..369f3259e6da 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -1346,6 +1346,9 @@ config LOCK_MM_AND_FIND_VMA
-  config IOMMU_MM_DATA
-  	bool
-
-+config ASYNC_PGTABLE_FREE
-+	bool
-+
-  config EXECMEM
-  	bool
-
-diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
-index 567e2d084071..d2751da58c94 100644
---- a/mm/pgtable-generic.c
-+++ b/mm/pgtable-generic.c
-@@ -406,3 +406,109 @@ pte_t *__pte_offset_map_lock(struct mm_struct *mm, 
-pmd_t *pmd,
-  	pte_unmap_unlock(pte, ptl);
-  	goto again;
-  }
-+
-+#ifdef CONFIG_ASYNC_PGTABLE_FREE
-+static void kernel_pgtable_work_func(struct work_struct *work);
-+
-+static struct {
-+	/* list for pagetable_dtor_free() */
-+	struct list_head dtor;
-+	/* list for __free_page() */
-+	struct list_head page;
-+	/* list for free_pages() */
-+	struct list_head pages;
-+	/* protect all the ptdesc lists */
-+	spinlock_t lock;
-+	struct work_struct work;
-+} kernel_pgtable_work = {
-+	.dtor = LIST_HEAD_INIT(kernel_pgtable_work.dtor),
-+	.page = LIST_HEAD_INIT(kernel_pgtable_work.page),
-+	.pages = LIST_HEAD_INIT(kernel_pgtable_work.pages),
-+	.lock = __SPIN_LOCK_UNLOCKED(kernel_pgtable_work.lock),
-+	.work = __WORK_INITIALIZER(kernel_pgtable_work.work, 
-kernel_pgtable_work_func),
-+};
-+
-+struct async_free_data {
-+	struct list_head node;
-+	unsigned long addr;
-+	int order;
-+};
-+
-+static void kernel_pgtable_work_func(struct work_struct *work)
-+{
-+	struct async_free_data *data, *temp;
-+	struct ptdesc *ptdesc, *next;
-+	LIST_HEAD(pages_list);
-+	LIST_HEAD(dtor_list);
-+	LIST_HEAD(page_list);
-+
-+	spin_lock(&kernel_pgtable_work.lock);
-+	list_splice_tail_init(&kernel_pgtable_work.dtor, &dtor_list);
-+	list_splice_tail_init(&kernel_pgtable_work.page, &page_list);
-+	list_splice_tail_init(&kernel_pgtable_work.pages, &pages_list);
-+	spin_unlock(&kernel_pgtable_work.lock);
-+
-+	list_for_each_entry_safe(ptdesc, next, &dtor_list, pt_list) {
-+		list_del(&ptdesc->pt_list);
-+		pagetable_dtor_free(ptdesc);
-+	}
-+
-+	list_for_each_entry_safe(ptdesc, next, &page_list, pt_list) {
-+		list_del(&ptdesc->pt_list);
-+		__free_page(ptdesc_page(ptdesc));
-+	}
-+
-+	list_for_each_entry_safe(data, temp, &pages_list, node) {
-+		list_del(&data->node);
-+		free_pages(data->addr, data->order);
-+		kfree(data);
-+	}
-+}
-+
-+void kernel_pgtable_async_free_dtor(struct ptdesc *ptdesc)
-+{
-+	spin_lock(&kernel_pgtable_work.lock);
-+	list_add(&ptdesc->pt_list, &kernel_pgtable_work.dtor);
-+	spin_unlock(&kernel_pgtable_work.lock);
-+
-+	schedule_work(&kernel_pgtable_work.work);
-+}
-+
-+void kernel_pgtable_async_free_page_list(struct list_head *list)
-+{
-+	spin_lock(&kernel_pgtable_work.lock);
-+	list_splice_tail(list, &kernel_pgtable_work.page);
-+	spin_unlock(&kernel_pgtable_work.lock);
-+
-+	schedule_work(&kernel_pgtable_work.work);
-+}
-+
-+void kernel_pgtable_async_free_pages(struct page *pages, int order)
-+{
-+	struct async_free_data *data;
-+
-+	if (order == 0) {
-+		spin_lock(&kernel_pgtable_work.lock);
-+		list_add(&page_ptdesc(pages)->pt_list, &kernel_pgtable_work.page);
-+		spin_unlock(&kernel_pgtable_work.lock);
-+
-+		goto out;
-+	}
-+
-+	data = kzalloc(sizeof(*data), GFP_ATOMIC);
-+	if (!data) {
-+		free_pages((unsigned long)page_address(pages), order);
-+		goto out;
-+	}
-+
-+	data->addr = (unsigned long)page_address(pages);
-+	data->order = order;
-+
-+	spin_lock(&kernel_pgtable_work.lock);
-+	list_add(&data->node, &kernel_pgtable_work.pages);
-+	spin_unlock(&kernel_pgtable_work.lock);
-+
-+out:
-+	schedule_work(&kernel_pgtable_work.work);
-+}
-+#endif
--- 
-2.43.0
-
-Thanks,
-baolu
+CgoKCgoKCj5obS4uIEkgdGhvdWdodCB3ZSBkaXNjdXNzZWQgcmVjb3JkaW5nIHRoZSBudW1iZXIg
+b2YgYml0cyB0byBzaGlmdCBieSwKPm5vPyBJdCdzIG5vdCB0b28gYmlnIG9mIGEgZGVhbCwgd2Ug
+Y2FuIGFmZm9yZCA0IGJpdHMgKGluc3RlYWQgb2YgMgo+dGhhdCB3b3VsZCBiZSBlbm91Z2ggZm9y
+IGJpdCBzaGlmdCksIGJ1dCBhbnkgc3BlY2lmaWMgcmVhc29uIHlvdQo+cHJlZmVyIG11bHRpcGxp
+Y2F0aW9uIGhlcmU/CgpVc2luZyBtdWx0aXBsaWNhdGlvbiBpcyBtb3JlIHN0cmFpZ2h0Zm9yd2Fy
+ZCBzaW5jZSB0aGUgZm9ybWF0IG9mIGEgU0lCIGFkZHJlc3MKbG9va3MgbGlrZSBgOEAoJXJkeCwl
+cmF4LDgpYC4gV2UgY2FuIGRpcmVjdGx5IHN0b3JlIHRoZSA4IGFzIGEgc2NhbGUgaW5zdGVhZCAK
+b2YgdHJhbnNsYXRpbmcgaXQgdG8gdGhlIG51bWJlciBvZiBiaXRzIHRvIHNoaWZ0IGJ5LiAKCgoK
+Cj4iZGVmYXVsdGluZyB0byAxIiBpcyB2ZXJ5IGNvbmZ1c2luZywgd2h5PyAoYW5kIHBsZWFzZSB1
+c2Ugc3BhY2VzIGFmdGVyIGNvbW1hKQoKWWVzLCBpdCdzIG1pc2xlYWRpbmcgdG8gcHV0IGl0IGRv
+d24gaGVyZS4gVGhlIGRlZmF1bHQgdmFsdWUgb2Ygc2NhbGUgaXMgMSBzaW5jZSB0aGUKc2NhbGUg
+Y2FuIGJlIG9taXR0ZWQgd2hlbiB0aGUgc2NhbGUgaXMgMS4gSSByZW1vdmUgaXQgaW4gdGhlIG5l
+eHQgdmVyc2lvbi4gCgoKCgpBdCAyMDI1LTA4LTIzIDA2OjQzOjA2LCAiQW5kcmlpIE5ha3J5aWtv
+IiA8YW5kcmlpLm5ha3J5aWtvQGdtYWlsLmNvbT4gd3JvdGU6Cj5PbiBGcmksIEF1ZyAyMiwgMjAy
+NSBhdCA4OjE24oCvQU0gSmlhd2VpIFpoYW8gPHBob2VuaXg1MDA1MjZAMTYzLmNvbT4gd3JvdGU6
+Cj4+Cj4+IE9uIHg4Ni02NCwgVVNEVCBhcmd1bWVudHMgY2FuIGJlIHNwZWNpZmllZCB1c2luZyBT
+Y2FsZS1JbmRleC1CYXNlIChTSUIpCj4+IGFkZHJlc3NpbmcsIGUuZy4gIjFALTk2KCVyYnAsJXJh
+eCw4KSIuIFRoZSBjdXJyZW50IFVTRFQgaW1wbGVtZW50YXRpb24KPj4gaW4gbGliYnBmIGNhbm5v
+dCBwYXJzZSB0aGlzIGZvcm1hdCwgY2F1c2luZyBgYnBmX3Byb2dyYW1fX2F0dGFjaF91c2R0KClg
+Cj4+IHRvIGZhaWwgd2l0aCAtRU5PRU5UICh1bnJlY29nbml6ZWQgcmVnaXN0ZXIpLgo+Pgo+PiBU
+aGlzIHBhdGNoIGZpeGVzIHRoaXMgYnkgaW1wbGVtZW50aW5nIHRoZSBuZWNlc3NhcnkgY2hhbmdl
+czoKPj4gLSBhZGQgY29ycmVjdCBoYW5kbGluZyBmb3IgU0lCLWFkZHJlc3NlZCBhcmd1bWVudHMg
+aW4gYGJwZl91c2R0X2FyZ2AuCj4+IC0gYWRkIGFkYXB0aXZlIHN1cHBvcnQgdG8gYF9fYnBmX3Vz
+ZHRfYXJnX3R5cGVgIGFuZAo+PiAgIGBfX2JwZl91c2R0X2FyZ19zcGVjYCB0byByZXByZXNlbnQg
+U0lCIGFkZHJlc3NpbmcgcGFyYW1ldGVycy4KPj4KPj4gU2lnbmVkLW9mZi1ieTogSmlhd2VpIFpo
+YW8gPHBob2VuaXg1MDA1MjZAMTYzLmNvbT4KPj4gLS0tCj4+ICB0b29scy9saWIvYnBmL3VzZHQu
+YnBmLmggfCA0NyArKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLQo+PiAgdG9vbHMvbGli
+L2JwZi91c2R0LmMgICAgIHwgNTggKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+LS0tLQo+PiAgMiBmaWxlcyBjaGFuZ2VkLCA5OCBpbnNlcnRpb25zKCspLCA3IGRlbGV0aW9ucygt
+KQo+Pgo+PiBkaWZmIC0tZ2l0IGEvdG9vbHMvbGliL2JwZi91c2R0LmJwZi5oIGIvdG9vbHMvbGli
+L2JwZi91c2R0LmJwZi5oCj4+IGluZGV4IDJhNzg2NWM4ZTNmZS4uMjYzMTY4ZDU3Mjg2IDEwMDY0
+NAo+PiAtLS0gYS90b29scy9saWIvYnBmL3VzZHQuYnBmLmgKPj4gKysrIGIvdG9vbHMvbGliL2Jw
+Zi91c2R0LmJwZi5oCj4+IEBAIC00LDYgKzQsNyBAQAo+PiAgI2RlZmluZSBfX1VTRFRfQlBGX0hf
+Xwo+Pgo+PiAgI2luY2x1ZGUgPGxpbnV4L2Vycm5vLmg+Cj4+ICsjaW5jbHVkZSA8YXNtL2J5dGVv
+cmRlci5oPgo+PiAgI2luY2x1ZGUgImJwZl9oZWxwZXJzLmgiCj4+ICAjaW5jbHVkZSAiYnBmX3Ry
+YWNpbmcuaCIKPj4KPj4gQEAgLTM0LDEzICszNSwzNCBAQCBlbnVtIF9fYnBmX3VzZHRfYXJnX3R5
+cGUgewo+PiAgICAgICAgIEJQRl9VU0RUX0FSR19DT05TVCwKPj4gICAgICAgICBCUEZfVVNEVF9B
+UkdfUkVHLAo+PiAgICAgICAgIEJQRl9VU0RUX0FSR19SRUdfREVSRUYsCj4+ICsgICAgICAgQlBG
+X1VTRFRfQVJHX1NJQiwKPj4gIH07Cj4+Cj4+ICsvKgo+PiArICogVGhpcyBzdHJ1Y3QgbGF5b3V0
+IGlzIGRlc2lnbmVkIHNwZWNpZmljYWxseSB0byBiZSBiYWNrd2FyZHMvZm9yd2FyZAo+PiArICog
+Y29tcGF0aWJsZSBiZXR3ZWVuIGxpYmJwZiB2ZXJzaW9ucyBmb3IgQVJHX0NPTlNULCBBUkdfUkVH
+LCBhbmQKPj4gKyAqIEFSR19SRUdfREVSRUYgbW9kZXMuIEFSR19TSUIgcmVxdWlyZXMgbGliYnBm
+IHYxLjcrLgo+PiArICovCj4+ICBzdHJ1Y3QgX19icGZfdXNkdF9hcmdfc3BlYyB7Cj4+ICAgICAg
+ICAgLyogdTY0IHNjYWxhciBpbnRlcnByZXRlZCBkZXBlbmRpbmcgb24gYXJnX3R5cGUsIHNlZSBi
+ZWxvdyAqLwo+PiAgICAgICAgIF9fdTY0IHZhbF9vZmY7Cj4+ICAgICAgICAgLyogYXJnIGxvY2F0
+aW9uIGNhc2UsIHNlZSBicGZfdXNkdF9hcmcoKSBmb3IgZGV0YWlscyAqLwo+PiAtICAgICAgIGVu
+dW0gX19icGZfdXNkdF9hcmdfdHlwZSBhcmdfdHlwZTsKPj4gKyAgICAgICBlbnVtIF9fYnBmX3Vz
+ZHRfYXJnX3R5cGUgYXJnX3R5cGU6IDg7Cj4KPnRoaXMgbmVlZHMgdG8gYmUgaW5zaWRlIHRoZSAj
+aWYvI2VsaWYvI2Vsc2UsIEkgYmVsaWV2ZS4gV2hlbiBpdAo+cHJldmlvdXNseSB3YXMgYSA0IGJ5
+dGUgZmllbGQsIEJQRl9VU0RUX0FSR19SRUcgPSAxIHdvdWxkIGJlIGAweDAxLAo+MHgwMCwgMHgw
+MCwgMHgwMGAgaW4gbWVtb3J5IG9uIGxpdHRsZSBlbmRpYW4gYW5kIGAweDAwLCAweDAwLCAweDAw
+LAo+MHgwMWAgb24gYmlnIGVuZGlhbi4gU28geW91IG5lZWQgdG8gcmVvcmRlciBpdCBzdWNoIHRo
+YXQgb24gYmlnIGVuZGlhbgo+aXQncyB0aGUgbGFzdCBmaWVsZC4KPgo+cHctYm90OiBjcgo+Cj4K
+Pj4gKyNpZiBkZWZpbmVkKF9fTElUVExFX0VORElBTl9CSVRGSUVMRCkKPgo+SSdtIG5vdCBzdXJl
+IHdoZXRoZXIgY29tcGlsZXIgaXRzZWxmIGRlZmluZXMgX19MSVRUTEVfRU5ESUFOX0JJVEZJRUxE
+Lgo+VGhyb3VnaG91dCBsaWJicGYgd2UgdXNlICNpZiBfX0JZVEVfT1JERVJfXyA9PQo+X19PUkRF
+Ul9MSVRUTEVfRU5ESUFOX18sIGxldCdzIGRvIHRoYXQgaGVyZSBhcyB3ZWxsPwo+Cj4+ICsgICAg
+ICAgLyogaW5kZXggcmVnaXN0ZXIgb2Zmc2V0IHdpdGhpbiBzdHJ1Y3QgcHRfcmVncyAoaGlnaCAx
+MiBiaXRzKSAqLwo+PiArICAgICAgIF9fdTE2ICAgaWR4X3JlZ19vZmY6IDEyLAo+PiArICAgICAg
+IC8qIHNjYWxlIGZhY3RvciBmb3IgaW5kZXggcmVnaXN0ZXIgKDEsIDIsIDQsIG9yIDgpIChsb3cg
+NCBiaXRzKSAqLwo+PiArICAgICAgICAgICAgICAgc2NhbGU6IDQ7Cj4KPm5pdDogZG9uJ3QgZG8g
+Y29tbWEtc2VwYXJhdGVkIGJpdGZpZWxkcy4gY29tcGlsZXIgd2lsbCBjb21iaW5lIHRoZW0gYXMK
+Pm5lY2Vzc2FyeSwgZXZlbiBpZiB0aGV5IGFyZSBkZWNsYXJlZCBhcyBzZXBhcmF0ZSBmaWVsZHMu
+IHNvIGp1c3Q6Cj4KPiNpZiBfX0JZVEVfT1JERVJfXyA9PSBfX09SREVSX0xJVFRMRV9FTkRJQU5f
+Xwo+ZW51bSBfX2JwZl91c2R0X2FyZ190eXBlIGFyZ190eXBlOiA4Owo+X191MTYgaWR4X3JlZ19v
+ZmY6IDEyOwo+X191MTYgaWR4X3JlZ19zaGlmdDogNDsKPl9fdTggX19yZXNlcnZlZDogODsKPiNl
+bHNlCj5fX3U4IF9fcmVzZXJ2ZWQ6IDg7Cj5fX3UxNiBpZHhfcmVnX29mZjogMTI7Cj5fX3UxNiBp
+ZHhfcmVnX3NoaWZ0OiA0Owo+ZW51bSBfX2JwZl91c2R0X2FyZ190eXBlIGFyZ190eXBlOiA4Owo+
+I2VuZGlmCj4KPgo+Tm90ZSB0aGF0IHdlIGRvbid0IG5lZWQgdG8gY2hhbmdlIG9yZGVyIG9mIGlk
+eF9yZWdfb2ZmIGFuZAo+aWR4X3JlZ19zaGlmdCwgYXMgdGhleSBhcmUgbmV3IGFkZGl0aW9ucyAo
+YW5kIHRoZXkgZG9uJ3QgaGF2ZSB0byBiZQo+Y29uc2lzdGVudCBiZXR3ZWVuIGJpZyBhbmQgbGl0
+dGxlIGVuZGlhbikKPgo+PiArI2VsaWYgZGVmaW5lZChfX0JJR19FTkRJQU5fQklURklFTEQpCj4+
+ICsgICAgICAgLyogc2NhbGUgZmFjdG9yIGZvciBpbmRleCByZWdpc3RlciAoMSwgMiwgNCwgb3Ig
+OCkgKGhpZ2ggNCBiaXRzKSAqLwo+PiArICAgICAgIF9fdTE2ICAgc2NhbGU6IDQsCj4+ICsgICAg
+ICAgLyogaW5kZXggcmVnaXN0ZXIgb2Zmc2V0IHdpdGhpbiBzdHJ1Y3QgcHRfcmVncyAobG93IDEy
+IGJpdHMpICovCj4+ICsgICAgICAgICAgICAgICBpZHhfcmVnX29mZjogMTI7Cj4+ICsjZWxzZQo+
+PiArI2Vycm9yICJQbGVhc2UgZml4IDxhc20vYnl0ZW9yZGVyLmg+Igo+PiArI2VuZGlmCj4KPmxl
+dCdzIGRyb3AgdGhlIGZpeCBzdWdnZXN0aW9uLCBpc24ndCBhc20vYnl0ZW9yZGVyLmgga2VybmVs
+LXNwZWNpZmljCj5oZWFkZXI/Li4gSSdtIGZpbmUgYXNzdW1pbmcgb25seSBiaWcgb3IgbGl0dGxl
+IGVuZGlhbiBzeXN0ZW0KPgo+PiArICAgICAgIC8qIHJlc2VydmVkIGZvciBmdXR1cmUgdXNlLCBr
+ZWVwcyByZWdfb2ZmIG9mZnNldCBzdGFibGUgKi8KPj4gKyAgICAgICBfX3U4IHJlc2VydmVkOwo+
+PiAgICAgICAgIC8qIG9mZnNldCBvZiByZWZlcmVuY2VkIHJlZ2lzdGVyIHdpdGhpbiBzdHJ1Y3Qg
+cHRfcmVncyAqLwo+PiAgICAgICAgIHNob3J0IHJlZ19vZmY7Cj4+ICAgICAgICAgLyogd2hldGhl
+ciBhcmcgc2hvdWxkIGJlIGludGVycHJldGVkIGFzIHNpZ25lZCB2YWx1ZSAqLwo+PiBAQCAtMTQ5
+LDcgKzE3MSw3IEBAIGludCBicGZfdXNkdF9hcmcoc3RydWN0IHB0X3JlZ3MgKmN0eCwgX191NjQg
+YXJnX251bSwgbG9uZyAqcmVzKQo+PiAgewo+PiAgICAgICAgIHN0cnVjdCBfX2JwZl91c2R0X3Nw
+ZWMgKnNwZWM7Cj4+ICAgICAgICAgc3RydWN0IF9fYnBmX3VzZHRfYXJnX3NwZWMgKmFyZ19zcGVj
+Owo+PiAtICAgICAgIHVuc2lnbmVkIGxvbmcgdmFsOwo+PiArICAgICAgIHVuc2lnbmVkIGxvbmcg
+dmFsLCBpZHg7Cj4+ICAgICAgICAgaW50IGVyciwgc3BlY19pZDsKPj4KPj4gICAgICAgICAqcmVz
+ID0gMDsKPj4gQEAgLTIwMiw2ICsyMjQsMjcgQEAgaW50IGJwZl91c2R0X2FyZyhzdHJ1Y3QgcHRf
+cmVncyAqY3R4LCBfX3U2NCBhcmdfbnVtLCBsb25nICpyZXMpCj4+ICAgICAgICAgICAgICAgICAg
+ICAgICAgIHJldHVybiBlcnI7Cj4+ICAjaWYgX19CWVRFX09SREVSX18gPT0gX19PUkRFUl9CSUdf
+RU5ESUFOX18KPj4gICAgICAgICAgICAgICAgIHZhbCA+Pj0gYXJnX3NwZWMtPmFyZ19iaXRzaGlm
+dDsKPj4gKyNlbmRpZgo+PiArICAgICAgICAgICAgICAgYnJlYWs7Cj4+ICsgICAgICAgY2FzZSBC
+UEZfVVNEVF9BUkdfU0lCOgo+PiArICAgICAgICAgICAgICAgLyogQXJnIGlzIGluIG1lbW9yeSBh
+ZGRyZXNzZWQgYnkgU0lCIChTY2FsZS1JbmRleC1CYXNlKSBtb2RlCj4+ICsgICAgICAgICAgICAg
+ICAgKiAoZS5nLiwgIi0xQC05NiglcmJwLCVyYXgsOCkiIGluIFVTRFQgYXJnIHNwZWMpLiBXZSBm
+aXJzdAo+PiArICAgICAgICAgICAgICAgICogZmV0Y2ggdGhlIGJhc2UgcmVnaXN0ZXIgY29udGVu
+dHMgYW5kIHRoZSBpbmRleCByZWdpc3Rlcgo+PiArICAgICAgICAgICAgICAgICogY29udGVudHMg
+ZnJvbSBwdF9yZWdzLiBUaGVuIHdlIGNhbGN1bGF0ZSB0aGUgZmluYWwgYWRkcmVzcwo+PiArICAg
+ICAgICAgICAgICAgICogYXMgYmFzZSArIChpbmRleCAqIHNjYWxlKSArIG9mZnNldCwgYW5kIGRv
+IGEgdXNlci1zcGFjZQo+PiArICAgICAgICAgICAgICAgICogcHJvYmUgcmVhZCB0byBmZXRjaCB0
+aGUgYXJndW1lbnQgdmFsdWUuCj4+ICsgICAgICAgICAgICAgICAgKi8KPj4gKyAgICAgICAgICAg
+ICAgIGVyciA9IGJwZl9wcm9iZV9yZWFkX2tlcm5lbCgmdmFsLCBzaXplb2YodmFsKSwgKHZvaWQg
+KiljdHggKyBhcmdfc3BlYy0+cmVnX29mZik7Cj4+ICsgICAgICAgICAgICAgICBpZiAoZXJyKQo+
+PiArICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gZXJyOwo+PiArICAgICAgICAgICAgICAg
+ZXJyID0gYnBmX3Byb2JlX3JlYWRfa2VybmVsKCZpZHgsIHNpemVvZihpZHgpLCAodm9pZCAqKWN0
+eCArIGFyZ19zcGVjLT5pZHhfcmVnX29mZik7Cj4+ICsgICAgICAgICAgICAgICBpZiAoZXJyKQo+
+PiArICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gZXJyOwo+PiArICAgICAgICAgICAgICAg
+ZXJyID0gYnBmX3Byb2JlX3JlYWRfdXNlcigmdmFsLCBzaXplb2YodmFsKSwgKHZvaWQgKikodmFs
+ICsgKGlkeCAqIGFyZ19zcGVjLT5zY2FsZSkgKyBhcmdfc3BlYy0+dmFsX29mZikpOwo+Cj5obS4u
+IEkgdGhvdWdodCB3ZSBkaXNjdXNzZWQgcmVjb3JkaW5nIHRoZSBudW1iZXIgb2YgYml0cyB0byBz
+aGlmdCBieSwKPm5vPyBJdCdzIG5vdCB0b28gYmlnIG9mIGEgZGVhbCwgd2UgY2FuIGFmZm9yZCA0
+IGJpdHMgKGluc3RlYWQgb2YgMgo+dGhhdCB3b3VsZCBiZSBlbm91Z2ggZm9yIGJpdCBzaGlmdCks
+IGJ1dCBhbnkgc3BlY2lmaWMgcmVhc29uIHlvdQo+cHJlZmVyIG11bHRpcGxpY2F0aW9uIGhlcmU/
+Cj4KPj4gKyAgICAgICAgICAgICAgIGlmIChlcnIpCj4+ICsgICAgICAgICAgICAgICAgICAgICAg
+IHJldHVybiBlcnI7Cj4+ICsjaWYgX19CWVRFX09SREVSX18gPT0gX19PUkRFUl9CSUdfRU5ESUFO
+X18KPj4gKyAgICAgICAgICAgICAgIHZhbCA+Pj0gYXJnX3NwZWMtPmFyZ19iaXRzaGlmdDsKPj4g
+ICNlbmRpZgo+PiAgICAgICAgICAgICAgICAgYnJlYWs7Cj4+ICAgICAgICAgZGVmYXVsdDoKPgo+
+Wy4uLl0KPgo+PiAtICAgICAgIGlmIChzc2NhbmYoYXJnX3N0ciwgIiAlZCBAICVsZCAoICUlJTE1
+W14pXSApICVuIiwgYXJnX3N6LCAmb2ZmLCByZWdfbmFtZSwgJmxlbikgPT0gMykgewo+PiArICAg
+ICAgICAgICAgICAgcmVnX29mZiA9IGNhbGNfcHRfcmVnc19vZmYocmVnX25hbWUpOwo+PiArICAg
+ICAgICAgICAgICAgaWYgKHJlZ19vZmYgPCAwKQo+PiArICAgICAgICAgICAgICAgICAgICAgICBy
+ZXR1cm4gcmVnX29mZjsKPj4gKyAgICAgICAgICAgICAgIGFyZy0+cmVnX29mZiA9IHJlZ19vZmY7
+Cj4+ICsKPj4gKyAgICAgICAgICAgICAgIGlkeF9yZWdfb2ZmID0gY2FsY19wdF9yZWdzX29mZihp
+ZHhfcmVnX25hbWUpOwo+PiArICAgICAgICAgICAgICAgaWYgKGlkeF9yZWdfb2ZmIDwgMCkKPj4g
+KyAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIGlkeF9yZWdfb2ZmOwo+PiArICAgICAgICAg
+ICAgICAgLyogdmFsaWRhdGUgc2NhbGUgZmFjdG9yIGFuZCBzZXQgZmllbGRzIGRpcmVjdGx5ICov
+Cj4+ICsgICAgICAgICAgICAgICBpZiAoc2NhbGUgIT0gMSAmJiBzY2FsZSAhPSAyICYmIHNjYWxl
+ICE9IDQgJiYgc2NhbGUgIT0gOCkgewo+PiArICAgICAgICAgICAgICAgICAgICAgICBwcl93YXJu
+KCJ1c2R0OiBpbnZhbGlkIFNJQiBzY2FsZSAlZCwgZXhwZWN0ZWQgMSwyLDQsODsgZGVmYXVsdGlu
+ZyB0byAxXG4iLCBzY2FsZSk7Cj4KPiJkZWZhdWx0aW5nIHRvIDEiIGlzIHZlcnkgY29uZnVzaW5n
+LCB3aHk/IChhbmQgcGxlYXNlIHVzZSBzcGFjZXMgYWZ0ZXIgY29tbWEpCj4KPj4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7Cj4+ICsgICAgICAgICAgICAgICB9Cj4+ICsg
+ICAgICAgICAgICAgICBhcmctPmlkeF9yZWdfb2ZmID0gaWR4X3JlZ19vZmY7Cj4+ICsgICAgICAg
+ICAgICAgICBhcmctPnNjYWxlID0gc2NhbGU7Cj4+ICsgICAgICAgfSBlbHNlIGlmIChzc2NhbmYo
+YXJnX3N0ciwgIiAlZCBAICVsZCAoICUlJTE1W14pXSApICVuIiwKPj4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBhcmdfc3osICZvZmYsIHJlZ19uYW1lLCAmbGVuKSA9PSAzKSB7Cj4+
+ICAgICAgICAgICAgICAgICAvKiBNZW1vcnkgZGVyZWZlcmVuY2UgY2FzZSwgZS5nLiwgLTRALTIw
+KCVyYnApICovCj4+ICAgICAgICAgICAgICAgICBhcmctPmFyZ190eXBlID0gVVNEVF9BUkdfUkVH
+X0RFUkVGOwo+PiAgICAgICAgICAgICAgICAgYXJnLT52YWxfb2ZmID0gb2ZmOwo+PiBAQCAtMTMw
+Niw2ICsxMzUzLDcgQEAgc3RhdGljIGludCBwYXJzZV91c2R0X2FyZyhjb25zdCBjaGFyICphcmdf
+c3RyLCBpbnQgYXJnX251bSwgc3RydWN0IHVzZHRfYXJnX3NwZWMKPj4gICAgICAgICB9IGVsc2Ug
+aWYgKHNzY2FuZihhcmdfc3RyLCAiICVkIEAgJSUlMTVzICVuIiwgYXJnX3N6LCByZWdfbmFtZSwg
+JmxlbikgPT0gMikgewo+PiAgICAgICAgICAgICAgICAgLyogUmVnaXN0ZXIgcmVhZCBjYXNlLCBl
+LmcuLCAtNEAlZWF4ICovCj4+ICAgICAgICAgICAgICAgICBhcmctPmFyZ190eXBlID0gVVNEVF9B
+UkdfUkVHOwo+PiArICAgICAgICAgICAgICAgLyogcmVnaXN0ZXIgcmVhZCBoYXMgbm8gbWVtb3J5
+IG9mZnNldCAqLwo+PiAgICAgICAgICAgICAgICAgYXJnLT52YWxfb2ZmID0gMDsKPj4KPj4gICAg
+ICAgICAgICAgICAgIHJlZ19vZmYgPSBjYWxjX3B0X3JlZ3Nfb2ZmKHJlZ19uYW1lKTsKPj4gLS0K
+Pj4gMi40My4wCj4+Cg==
 
