@@ -1,261 +1,134 @@
-Return-Path: <linux-kernel+bounces-783223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB23B32ACF
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:22:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38852B32ADA
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E338118946DB
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:18:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA78E1BC6F5C
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C56A157A6B;
-	Sat, 23 Aug 2025 16:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E63218AB4;
+	Sat, 23 Aug 2025 16:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mwOT3Eah"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oiv07CJ7"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80392E92A0;
-	Sat, 23 Aug 2025 16:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D362F1F0E39;
+	Sat, 23 Aug 2025 16:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755965638; cv=none; b=qdvNF8ZFGKjnX0udMuBwvQmsP1oFIZaz+WNf0+7zaX12nNEdEDuNUMWNQbMaJejbI5Dwi9GpCtekp30g9C9q4de3n7oLVDDZpohzqP68GrzGzyDJ6rLMmjHgfFQTY4xjeOAYLbeZ23A+iUDxP7Vuklko1b8v1ELA1NA+Q4ia+hc=
+	t=1755966684; cv=none; b=EseSt8SAmDVlz3ckhKkpTFzoFFUc8DaFEAnqZmOi4N4JRY6HXdEXD/aj27oOYJGSrXQkE3jqzBjGENgB3tdB5UYpbmgvS17nx8rxfmfUpgb7onvAl1xdl/EFXYj73Dvg2qGcWS6g74RtAaXFunTohk/joG/+gZPiWszzEIAiRL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755965638; c=relaxed/simple;
-	bh=XaPvEnRFO7P4KvitECQfWezTdZsWUoJ2K1hXS1ViaaQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ajsv4sSZ2sbDdnBc9lKwW/SAjIoIx9yljqraVGEAakvYQkeLVnxp0QKq0h4nElEKmXCnRThnWqQ3VFzzcvTY4AA5OMumpRaDDPTWE3MWXy+pF+1PbVSIFKgdCSm3pNk7nkgMJlgitDw9m+I2FJryFaROL3HoWdVLhgN6sYODvKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mwOT3Eah; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40A3CC4CEE7;
-	Sat, 23 Aug 2025 16:13:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755965637;
-	bh=XaPvEnRFO7P4KvitECQfWezTdZsWUoJ2K1hXS1ViaaQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=mwOT3EahRhLnSDnBsMWD8EGciO+59kw6Z3vnNjDr3+IIUSCK15El8g7D9hs3utaA9
-	 BjWYog1TETd4M9qD/rxV7BmE29+QjuU5maMNZ5o2mHUxTO0ikFlurKseDdN7OOcxWf
-	 jO8vEoU3Tp9x0p0Fk8mVnSFKqom4IOaXGm0ZY/uZwXatlccylisBaxdmf6zirrKb96
-	 umBwHhk+uHlhWc51D/vihVb5l/OQ6qmAwH0tU51fsOoa/AHR7kQ8EI5sapf2A0aAOr
-	 pu4wgWutV6l5UTx2e8kvGf0SypMMhaWc002l71cJhQmWcXnfKtk92P/McZkqH+PQ0+
-	 HizWK4HyDyEEQ==
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-3111c59720dso1527092fac.1;
-        Sat, 23 Aug 2025 09:13:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV0Jq1PiotXiA0CdR7YNJ8qpy8PEF1SDZhbIEqLsjpfNI9OnrYAspthArmVWBQ7CDu3m1EEGdFA8Rm3gddR@vger.kernel.org, AJvYcCWrZmVWKZ7IHEXylGfSF71iVdnWK2cn0vojbU+Efsvrv3AmxY4adQUSGy8DvAqvZ0/Jzm/Esa+P7Y57@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTbZmxXvdhGLqJbUZokuMBGXavdlX+/XlV8myped2CjQ5+C5mo
-	kdo+uGIkbNM+5DSMxI4scc9xEkQZ/cOsD2iah+KTRQf8lgdFzf8q6C2ubmFOwt3TcB3jjzWgcia
-	Ktgh+wFQFjbsl30qunVX7t8hCn7RihOA=
-X-Google-Smtp-Source: AGHT+IHQEQMNRFxeAFDw7ZZNHI4KcgNqKGMxdGr0V6CWZ143cN26OeQMrUwAFF3q9rtDoJ5ONnscfNKcf0YyvCNPGr4=
-X-Received: by 2002:a05:6808:1925:b0:40b:999f:b2f0 with SMTP id
- 5614622812f47-4378513f9bdmr2855384b6e.0.1755965636515; Sat, 23 Aug 2025
- 09:13:56 -0700 (PDT)
+	s=arc-20240116; t=1755966684; c=relaxed/simple;
+	bh=lmyqhIrw+YcSr05/64OhZB7+iiD1HfpSSuVskGLxp8Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Yt0cc2TNDehHGLTJHzD2qx955aFuJ/JLyNIv99SI72Q3WxYQV3YW1s5Em6I+qDdP2+/vNrvE/TTDpWRYoECWMa1ESjD3opE+huvbps7UoKo6L1G4oXrZtvLjlS5kzXEGriOrMdoIL5MokKss5JGioz1w/olib0KviLnHtf2WHnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oiv07CJ7; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57NGVHU8467550;
+	Sat, 23 Aug 2025 11:31:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755966677;
+	bh=DcoXsYIjaBtcL7QL8FUHWo9FxoVRQus5TrRk0YzmKTk=;
+	h=From:To:CC:Subject:Date;
+	b=oiv07CJ7vGqx2aenMP28t8spnWA5guxVqEQ8tYFDsuCGWc9eyOGP0RJYm7cVGUNxd
+	 PNqLl1c01gb6jeOq0pCEU5fViD1zjjeIvTgg9g+uNNl5G/h4X/sbEPVRdpiCOQQUB7
+	 8VOVn7w6qlJq9qJ3jL7mnLvANZGN5gbSPqcYro9w=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57NGVG4k249151
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Sat, 23 Aug 2025 11:31:16 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sat, 23
+ Aug 2025 11:31:16 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Sat, 23 Aug 2025 11:31:16 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.234.212])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57NGVBxV1006218;
+	Sat, 23 Aug 2025 11:31:12 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <afd@ti.com>, <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
+        <b-padhi@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v2] arm64: dts: ti: k3-j742s2-mcu-wakeup: Override firmware-name for MCU R5F cores
+Date: Sat, 23 Aug 2025 22:01:11 +0530
+Message-ID: <20250823163111.2237199-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728070612.1260859-1-lihuisong@huawei.com> <20250728070612.1260859-3-lihuisong@huawei.com>
-In-Reply-To: <20250728070612.1260859-3-lihuisong@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sat, 23 Aug 2025 18:13:44 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jckgZfuh=yAqoftG1Q-1z0ngLXQa4TX-iwuy54UmWMng@mail.gmail.com>
-X-Gm-Features: Ac12FXwRVEFVjYqhwBmbr-fMWP6hx7gXW6rHkFyiOf8ARTCUMeoFlL5z7tBeYq0
-Message-ID: <CAJZ5v0jckgZfuh=yAqoftG1Q-1z0ngLXQa4TX-iwuy54UmWMng@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] ACPI: processor: idle: Optimize acpi idle driver registration
-To: Huisong Li <lihuisong@huawei.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
-	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
-	yubowen8@huawei.com, liuyonglong@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Jul 28, 2025 at 9:06=E2=80=AFAM Huisong Li <lihuisong@huawei.com> w=
-rote:
->
-> Currently, the acpi idle driver is registered from within a CPU
-> hotplug callback. Although this didn't cause any functional issues,
-> this is questionable and confusing. And it is better to register
-> the cpuidle driver when all of the CPUs have been brought up.
->
-> So add a new function to initialize acpi_idle_driver based on the
-> power management information of an available CPU and register cpuidle
-> driver in acpi_processor_driver_init().
->
-> Signed-off-by: Huisong Li <lihuisong@huawei.com>
-> ---
->  drivers/acpi/processor_driver.c |  3 ++
->  drivers/acpi/processor_idle.c   | 65 +++++++++++++++++++++------------
->  include/acpi/processor.h        |  8 ++++
->  3 files changed, 53 insertions(+), 23 deletions(-)
->
-> diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor_dri=
-ver.c
-> index 65e779be64ff..bc9f58a02c1d 100644
-> --- a/drivers/acpi/processor_driver.c
-> +++ b/drivers/acpi/processor_driver.c
-> @@ -263,6 +263,8 @@ static int __init acpi_processor_driver_init(void)
->         if (result < 0)
->                 return result;
->
-> +       acpi_processor_register_idle_driver();
-> +
->         result =3D cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
->                                    "acpi/cpu-drv:online",
->                                    acpi_soft_cpu_online, NULL);
-> @@ -301,6 +303,7 @@ static void __exit acpi_processor_driver_exit(void)
->
->         cpuhp_remove_state_nocalls(hp_online);
->         cpuhp_remove_state_nocalls(CPUHP_ACPI_CPUDRV_DEAD);
-> +       acpi_processor_unregister_idle_driver();
->         driver_unregister(&acpi_processor_driver);
->  }
->
-> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
-c
-> index 031738390f2d..c71802d42e8a 100644
-> --- a/drivers/acpi/processor_idle.c
-> +++ b/drivers/acpi/processor_idle.c
-> @@ -1360,7 +1360,48 @@ int acpi_processor_power_state_has_changed(struct =
-acpi_processor *pr)
->         return 0;
->  }
->
-> -static int acpi_processor_registered;
-> +void acpi_processor_register_idle_driver(void)
-> +{
-> +       struct acpi_processor *pr;
-> +       int ret =3D -ENODEV;
-> +       int cpu;
-> +
-> +       /*
-> +        * Acpi idle driver is used by all possible CPUs.
-> +        * Install the idle handler by the processor power info of one in=
- them.
-> +        * Note that we use previously set idle handler will be used on
-> +        * platforms that only support C1.
-> +        */
-> +       for_each_cpu(cpu, (struct cpumask *)cpu_possible_mask) {
-> +               pr =3D per_cpu(processors, cpu);
-> +               if (!pr)
-> +                       continue;
-> +
-> +               ret =3D acpi_processor_get_power_info(pr);
-> +               if (!ret) {
-> +                       pr->flags.power_setup_done =3D 1;
-> +                       acpi_processor_setup_cpuidle_states(pr);
-> +                       break;
-> +               }
-> +       }
-> +
-> +       if (ret) {
-> +               pr_debug("No ACPI power information from any CPUs.\n");
-> +               return;
-> +       }
-> +
-> +       ret =3D cpuidle_register_driver(&acpi_idle_driver);
-> +       if (ret) {
-> +               pr_debug("register %s failed.\n", acpi_idle_driver.name);
-> +               return;
-> +       }
-> +       pr_debug("%s registered with cpuidle.\n", acpi_idle_driver.name);
-> +}
-> +
-> +void acpi_processor_unregister_idle_driver(void)
-> +{
-> +       cpuidle_unregister_driver(&acpi_idle_driver);
-> +}
->
->  int acpi_processor_power_init(struct acpi_processor *pr)
->  {
-> @@ -1375,22 +1416,7 @@ int acpi_processor_power_init(struct acpi_processo=
-r *pr)
->         if (!acpi_processor_get_power_info(pr))
->                 pr->flags.power_setup_done =3D 1;
->
-> -       /*
-> -        * Install the idle handler if processor power management is supp=
-orted.
-> -        * Note that we use previously set idle handler will be used on
-> -        * platforms that only support C1.
-> -        */
->         if (pr->flags.power) {
-> -               /* Register acpi_idle_driver if not already registered */
-> -               if (!acpi_processor_registered) {
-> -                       acpi_processor_setup_cpuidle_states(pr);
-> -                       retval =3D cpuidle_register_driver(&acpi_idle_dri=
-ver);
-> -                       if (retval)
-> -                               return retval;
-> -                       pr_debug("%s registered with cpuidle\n",
-> -                                acpi_idle_driver.name);
-> -               }
-> -
->                 dev =3D kzalloc(sizeof(*dev), GFP_KERNEL);
->                 if (!dev)
->                         return -ENOMEM;
-> @@ -1403,13 +1429,10 @@ int acpi_processor_power_init(struct acpi_process=
-or *pr)
->                  */
->                 retval =3D cpuidle_register_device(dev);
->                 if (retval) {
-> -                       if (acpi_processor_registered =3D=3D 0)
-> -                               cpuidle_unregister_driver(&acpi_idle_driv=
-er);
->                         kfree(dev);
->                         per_cpu(acpi_cpuidle_device, pr->id) =3D NULL;
->                         return retval;
->                 }
-> -               acpi_processor_registered++;
->         }
->         return 0;
->  }
-> @@ -1423,10 +1446,6 @@ int acpi_processor_power_exit(struct acpi_processo=
-r *pr)
->
->         if (pr->flags.power) {
->                 cpuidle_unregister_device(dev);
-> -               acpi_processor_registered--;
-> -               if (acpi_processor_registered =3D=3D 0)
-> -                       cpuidle_unregister_driver(&acpi_idle_driver);
-> -
->                 kfree(dev);
->         }
->
-> diff --git a/include/acpi/processor.h b/include/acpi/processor.h
-> index d0eccbd920e5..1249f5e81d92 100644
-> --- a/include/acpi/processor.h
-> +++ b/include/acpi/processor.h
-> @@ -423,6 +423,8 @@ int acpi_processor_power_init(struct acpi_processor *=
-pr);
->  int acpi_processor_power_exit(struct acpi_processor *pr);
->  int acpi_processor_power_state_has_changed(struct acpi_processor *pr);
->  int acpi_processor_hotplug(struct acpi_processor *pr);
-> +void acpi_processor_register_idle_driver(void);
-> +void acpi_processor_unregister_idle_driver(void);
->  #else
->  static inline int acpi_processor_power_init(struct acpi_processor *pr)
->  {
-> @@ -443,6 +445,12 @@ static inline int acpi_processor_hotplug(struct acpi=
-_processor *pr)
->  {
->         return -ENODEV;
->  }
-> +static void acpi_processor_register_idle_driver(void)
-> +{
-> +}
-> +static void acpi_processor_unregister_idle_driver(void)
-> +{
-> +}
->  #endif /* CONFIG_ACPI_PROCESSOR_IDLE */
->
->  /* in processor_thermal.c */
-> --
+The J742S2 SoC reuses the common k3-j784s4-j742s2-mcu-wakeup-common.dtsi
+for its MCU domain, but it does not override the firmware-name property
+for its R5F cores. This causes the wrong firmware binaries to be
+referenced.
 
-Applied as 6.18 material, thanks!
+Introduce a new k3-j742s2-mcu-wakeup.dtsi file to override the
+firmware-name property with correct names for J742s2.
 
-While at it, in the future, please always spell ACPI in capitals in
-patch subjects, changelogs and code comments.
+Fixes: 38fd90a3e1ac ("arm64: dts: ti: Introduce J742S2 SoC family")
+Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+---
+v2: Changelog:
+1. Posted this patch as a fix as decided in v1, so added Fixes tag.
+
+Link to v1:
+https://lore.kernel.org/all/20250522073426.329344-2-b-padhi@ti.com/
+
+ .../arm64/boot/dts/ti/k3-j742s2-mcu-wakeup.dtsi | 17 +++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-j742s2.dtsi           |  1 +
+ 2 files changed, 18 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-j742s2-mcu-wakeup.dtsi
+
+diff --git a/arch/arm64/boot/dts/ti/k3-j742s2-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j742s2-mcu-wakeup.dtsi
+new file mode 100644
+index 000000000000..61db2348d6a4
+--- /dev/null
++++ b/arch/arm64/boot/dts/ti/k3-j742s2-mcu-wakeup.dtsi
+@@ -0,0 +1,17 @@
++// SPDX-License-Identifier: GPL-2.0-only OR MIT
++/*
++ * Device Tree Source for J742S2 SoC Family
++ *
++ * TRM: https://www.ti.com/lit/pdf/spruje3
++ *
++ * Copyright (C) 2025 Texas Instruments Incorporated - https://www.ti.com/
++ *
++ */
++
++&mcu_r5fss0_core0 {
++	firmware-name = "j742s2-mcu-r5f0_0-fw";
++};
++
++&mcu_r5fss0_core1 {
++	firmware-name = "j742s2-mcu-r5f0_1-fw";
++};
+diff --git a/arch/arm64/boot/dts/ti/k3-j742s2.dtsi b/arch/arm64/boot/dts/ti/k3-j742s2.dtsi
+index 7a72f82f56d6..d265df1abade 100644
+--- a/arch/arm64/boot/dts/ti/k3-j742s2.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j742s2.dtsi
+@@ -96,3 +96,4 @@ cpu3: cpu@3 {
+ };
+ 
+ #include "k3-j742s2-main.dtsi"
++#include "k3-j742s2-mcu-wakeup.dtsi"
+-- 
+2.34.1
+
 
