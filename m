@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-783258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F494B32B01
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:44:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 162E7B32B07
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74FDE1C20445
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:44:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FBDA5A81E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1652F39DC;
-	Sat, 23 Aug 2025 16:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEA02F3C14;
+	Sat, 23 Aug 2025 16:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oSr2Kk+b";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L+ncDQWq"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bRvX2S6G";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OCD8q566"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB712F39B1
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 16:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044C12F39D0
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 16:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755967221; cv=none; b=e2pGTL6d4OmTm+MKsh92NHTNrzeMrZW1nKlXNgl9aHXWPdJKjR5lZBafAPxF/HtzEhqYTOr6nLrxrVfUBYlAzFdbYQ8QLOZbx5W1zVZ/OkQpg4fykMSHaeza0V3x4bowOjS8viOf5PlOM0l2bzIfAmJD0rvdVqfQ6k+SX2QsPxI=
+	t=1755967223; cv=none; b=aUYbWI7ojryQLaWWeeRfb1PkHklaEFXSprKb4Rht0BxsRsil757Gzi/0b0golA5qiWE499UWAgZmCZj3Lt5wgrX573FD5v2FVE7B+TxKCk+YP4rQYLjSrGeW9cAoLCjOBywrwBZo9pPPaKbC3B7zqoUT7E66MKo7nDKHsDSPmSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755967221; c=relaxed/simple;
-	bh=TeIaKTx5oTOJNV8fm479T2XBhuJIhgU5GgVF2Z50ZTk=;
+	s=arc-20240116; t=1755967223; c=relaxed/simple;
+	bh=hSU6jbmXqZa1RejXYxiw64+TW9TMWEObgTKqEy4HGko=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=RjE0oD9RiInhy1Elhp0wWyS1+OCCNV12s5gX2O2bNgDHiLlLTfbDpxLOWUGPu7nT96n+ldeCPTL22TLbyXmOk9yD6wi3ji6Ayw9gWQV3mtpH4L/L4LTG56B7KmW7Qi5m6Am2RME6RNIbolSWQrCnGOCz+JoRUHsfkIlqVDBTI1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oSr2Kk+b; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L+ncDQWq; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=I3O1ZYWX7x0/HrHIKfXaIrLI4zY2zXpw/YmJHrEJu/pzGjsE5i21a43UrJURrLic2G3pTYFfDoaCL6FUhBUkELfQn071dHpEXy+x+vpuLRpKx/7Fi7dt4JPpAO48QQgcdtvybyXDCr28XAiBfEZINOWksNy3+Z+OtdTnyMWZY6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bRvX2S6G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OCD8q566; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250823161655.063205235@linutronix.de>
+Message-ID: <20250823161655.127882103@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755967218;
+	s=2020; t=1755967220;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=yUaz1viKqpbNy5DnrHuMctWFZT//o6TCXkAtrD4Vqhk=;
-	b=oSr2Kk+bKGtvAmYlasAqGhXp57h12L4vHek26GdjrOEOOzoD+1KSR8VWP7u/OR/Or9We7O
-	cGAFXPYxsXebvb/cJIPDXu5jsRXHOZsQ0L5XgEPKgJz/cL6cqnQV1AiSCFr0XQXqpf/8uc
-	GoJOxJoNBfoc2qFY5WaUklgWeXs9ohz/DMDnJkcD6i6YqpyD8ZbDDVx0cFv8GcKVvsPgO/
-	1A2M2dnIBY4cyx15d9YfAAAcUL1Q68XpDr+OaeHCw7JH7gALez8yGUveQk2QlFDcV2SuJm
-	w+DTd0SUIdqIWfnA7hcC1O1YL/2hxKJS5+Y6HqsyGZ1P3//BYNH1CnOB8aOC0w==
+	 references:references; bh=uzJ7JI8HEWKH1yX2ahMCaw99qymb5514bPc6ymNcw3s=;
+	b=bRvX2S6G+6APdrWsotD1tKtiYmi+yOvarvfwm/nlNk8fUk7KcAH+rPPcR4FMnA0svBhu+r
+	Tnv/Op9nwtmYxkjejlDuPcivs7T13HgHKRvzE9v4XW7/H70ujJEdbco5WsMU+LkJYIJu8g
+	evHjSaD3XfYOQg/lRGLMrTqmR6Z5d0GG+rRe8EftM+ZQxKI0Dqbapr6GC1w0hICy4b79co
+	5ixoQ3u2y6JgR99Ah70RKvd4Tw1w9ADOx3rqzqCA/grk8etJc+wve1+TJ1YtVGYCB8PPJS
+	Fml2NjR2mbsacKgJZ+dszXz46Z+FQcvL0mhnUkk/0zy0vhRk4B5I8fHfmWjdqQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755967218;
+	s=2020e; t=1755967220;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=yUaz1viKqpbNy5DnrHuMctWFZT//o6TCXkAtrD4Vqhk=;
-	b=L+ncDQWqGUl8DH904hesdQyARJ49N1m1hoHX8hm5k1oh0Meioal8TYFHZF7PMCyNPKpOVV
-	ZFZQ+HNtVl9ElRBg==
+	 references:references; bh=uzJ7JI8HEWKH1yX2ahMCaw99qymb5514bPc6ymNcw3s=;
+	b=OCD8q566eIfCooI4hrPfoL7IIPSmtqF+bbTApP2gLnCUAKCyStsdEpMWwEVa6bG5M2Ip4H
+	y3t0x9MwwQzE8sAg==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Jens Axboe <axboe@kernel.dk>,
@@ -68,7 +68,7 @@ Cc: Jens Axboe <axboe@kernel.dk>,
  Huacai Chen <chenhuacai@kernel.org>,
  Paul Walmsley <paul.walmsley@sifive.com>,
  Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [patch V2 28/37] rseq: Switch to fast path processing on exit to user
+Subject: [patch V2 29/37] entry: Split up exit_to_user_mode_prepare()
 References: <20250823161326.635281786@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -77,225 +77,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Sat, 23 Aug 2025 18:40:17 +0200 (CEST)
+Date: Sat, 23 Aug 2025 18:40:19 +0200 (CEST)
 
-Now that all bits and pieces are in place, hook the RSEQ handling fast path
-function into exit_to_user_mode_prepare() after the TIF work bits have been
-handled. If case of fast path failure, TIF_NOTIFY_RESUME has been raised
-and the caller needs to take another turn through the TIF handling slow
-path.
+exit_to_user_mode_prepare() is used for both interrupts and syscalls, but
+there is extra rseq work, which is only required for in the interrupt exit
+case.
 
-This only works for architectures, which use the generic entry code.
-Architectures, who still have their own incomplete hacks are not supported
-and won't be.
-
-This results in the following improvements:
-
-  Kernel build	       Before		  After		      Reduction
-		       
-  exit to user         80692981		  80514451      
-  signal checks:          32581		       121	       99%
-  slowpath runs:        1201408   1.49%	       198 0.00%      100%
-  fastpath runs:           	  	    675941 0.84%       N/A
-  id updates:           1233989   1.53%	     50541 0.06%       96%
-  cs checks:            1125366   1.39%	         0 0.00%      100%
-    cs cleared:         1125366      100%	 0            100%
-    cs fixup:                 0        0%	 0      
-
-  RSEQ selftests      Before		  After		      Reduction
-
-  exit to user:       386281778		  387373750       
-  signal checks:       35661203		          0           100%
-  slowpath runs:      140542396 36.38%	        100  0.00%    100%
-  fastpath runs:           	  	    9509789  2.51%     N/A
-  id updates:         176203599 45.62%	    9087994  2.35%     95%
-  cs checks:          175587856 45.46%	    4728394  1.22%     98%
-    cs cleared:       172359544   98.16%    1319307   27.90%   99% 
-    cs fixup:           3228312    1.84%    3409087   72.10%
-
-The 'cs cleared' and 'cs fixup' percentanges are not relative to the exit
-to user invocations, they are relative to the actual 'cs check'
-invocations.
-
-While some of this could have been avoided in the original code, like the
-obvious clearing of CS when it's already clear, the main problem of going
-through TIF_NOTIFY_RESUME cannot be solved. In some workloads the RSEQ
-notify handler is invoked more than once before going out to user
-space. Doing this once when everything has stabilized is the only solution
-to avoid this.
-
-The initial attempt to completely decouple it from the TIF work turned out
-to be suboptimal for workloads, which do a lot of quick and short system
-calls. Even if the fast path decision is only 4 instructions (including a
-conditional branch), this adds up quickly and becomes measurable when the
-rate for actually having to handle rseq is in the low single digit
-percentage range of user/kernel transitions.
+Split up the function and provide wrappers for syscalls and interrupts,
+which allows to seperate the rseq exit work in the next step.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- include/linux/irq-entry-common.h |    7 ++-----
- include/linux/resume_user_mode.h |    2 +-
- include/linux/rseq.h             |   24 ++++++++++++++++++------
- include/linux/rseq_entry.h       |    2 +-
- init/Kconfig                     |    2 +-
- kernel/entry/common.c            |   17 ++++++++++++++---
- kernel/rseq.c                    |    8 ++++++--
- 7 files changed, 43 insertions(+), 19 deletions(-)
+ include/linux/entry-common.h     |    2 -
+ include/linux/irq-entry-common.h |   42 ++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 38 insertions(+), 6 deletions(-)
 
---- a/include/linux/irq-entry-common.h
-+++ b/include/linux/irq-entry-common.h
-@@ -197,11 +197,8 @@ static __always_inline void arch_exit_to
-  */
- void arch_do_signal_or_restart(struct pt_regs *regs);
- 
--/**
-- * exit_to_user_mode_loop - do any pending work before leaving to user space
-- */
--unsigned long exit_to_user_mode_loop(struct pt_regs *regs,
--				     unsigned long ti_work);
-+/* Handle pending TIF work */
-+unsigned long exit_to_user_mode_loop(struct pt_regs *regs, unsigned long ti_work);
+--- a/include/linux/entry-common.h
++++ b/include/linux/entry-common.h
+@@ -156,7 +156,7 @@ static __always_inline void syscall_exit
+ 	if (unlikely(work & SYSCALL_WORK_EXIT))
+ 		syscall_exit_work(regs, work);
+ 	local_irq_disable_exit_to_user();
+-	exit_to_user_mode_prepare(regs);
++	syscall_exit_to_user_mode_prepare(regs);
+ }
  
  /**
-  * exit_to_user_mode_prepare - call exit_to_user_mode_loop() if required
---- a/include/linux/resume_user_mode.h
-+++ b/include/linux/resume_user_mode.h
-@@ -59,7 +59,7 @@ static inline void resume_user_mode_work
- 	mem_cgroup_handle_over_high(GFP_KERNEL);
- 	blkcg_maybe_throttle_current();
+--- a/include/linux/irq-entry-common.h
++++ b/include/linux/irq-entry-common.h
+@@ -201,7 +201,7 @@ void arch_do_signal_or_restart(struct pt
+ unsigned long exit_to_user_mode_loop(struct pt_regs *regs, unsigned long ti_work);
  
--	rseq_handle_notify_resume(regs);
-+	rseq_handle_slowpath(regs);
- }
- 
- #endif /* LINUX_RESUME_USER_MODE_H */
---- a/include/linux/rseq.h
-+++ b/include/linux/rseq.h
-@@ -5,13 +5,19 @@
- #ifdef CONFIG_RSEQ
- #include <linux/sched.h>
- 
--void __rseq_handle_notify_resume(struct pt_regs *regs);
-+void __rseq_handle_slowpath(struct pt_regs *regs);
- 
--static inline void rseq_handle_notify_resume(struct pt_regs *regs)
-+/* Invoked from resume_user_mode_work() */
-+static inline void rseq_handle_slowpath(struct pt_regs *regs)
- {
--	/* '&' is intentional to spare one conditional branch */
--	if (current->rseq_event.sched_switch & current->rseq_event.has_rseq)
--		__rseq_handle_notify_resume(regs);
-+	if (IS_ENABLED(CONFIG_GENERIC_ENTRY)) {
-+		if (current->rseq_event.slowpath)
-+			__rseq_handle_slowpath(regs);
-+	} else {
-+		/* '&' is intentional to spare one conditional branch */
-+		if (current->rseq_event.sched_switch & current->rseq_event.has_rseq)
-+			__rseq_handle_slowpath(regs);
-+	}
- }
- 
- void __rseq_signal_deliver(int sig, struct pt_regs *regs);
-@@ -138,6 +144,12 @@ static inline void rseq_fork(struct task
- 		t->rseq_sig = current->rseq_sig;
- 		t->rseq_ids.cpu_cid = ~0ULL;
- 		t->rseq_event = current->rseq_event;
-+		/*
-+		 * If it has rseq, force it into the slow path right away
-+		 * because it is guaranteed to fault.
-+		 */
-+		if (t->rseq_event.has_rseq)
-+			t->rseq_event.slowpath = true;
- 	}
- }
- 
-@@ -151,7 +163,7 @@ static inline void rseq_execve(struct ta
- }
- 
- #else /* CONFIG_RSEQ */
--static inline void rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs) { }
-+static inline void rseq_handle_slowpath(struct pt_regs *regs) { }
- static inline void rseq_signal_deliver(struct ksignal *ksig, struct pt_regs *regs) { }
- static inline void rseq_sched_switch_event(struct task_struct *t) { }
- static inline void rseq_sched_set_task_cpu(struct task_struct *t, unsigned int cpu) { }
---- a/include/linux/rseq_entry.h
-+++ b/include/linux/rseq_entry.h
-@@ -433,7 +433,7 @@ static rseq_inline bool rseq_update_usr(
-  * tells the caller to loop back into exit_to_user_mode_loop(). The rseq
-  * slow path there will handle the fail.
+ /**
+- * exit_to_user_mode_prepare - call exit_to_user_mode_loop() if required
++ * __exit_to_user_mode_prepare - call exit_to_user_mode_loop() if required
+  * @regs:	Pointer to pt_regs on entry stack
+  *
+  * 1) check that interrupts are disabled
+@@ -209,8 +209,10 @@ unsigned long exit_to_user_mode_loop(str
+  * 3) call exit_to_user_mode_loop() if any flags from
+  *    EXIT_TO_USER_MODE_WORK are set
+  * 4) check that interrupts are still disabled
++ *
++ * Don't invoke directly, use the syscall/irqentry_ prefixed variants below
   */
--static __always_inline bool rseq_exit_to_user_mode_restart(struct pt_regs *regs)
-+static __always_inline bool __rseq_exit_to_user_mode_restart(struct pt_regs *regs)
+-static __always_inline void exit_to_user_mode_prepare(struct pt_regs *regs)
++static __always_inline void __exit_to_user_mode_prepare(struct pt_regs *regs)
  {
- 	struct task_struct *t = current;
+ 	unsigned long ti_work;
  
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1911,7 +1911,7 @@ config RSEQ_DEBUG_DEFAULT_ENABLE
- config DEBUG_RSEQ
- 	default n
- 	bool "Enable debugging of rseq() system call" if EXPERT
--	depends on RSEQ && DEBUG_KERNEL
-+	depends on RSEQ && DEBUG_KERNEL && !GENERIC_ENTRY
- 	select RSEQ_DEBUG_DEFAULT_ENABLE
- 	help
- 	  Enable extra debugging checks for the rseq system call.
---- a/kernel/entry/common.c
-+++ b/kernel/entry/common.c
-@@ -23,8 +23,7 @@ void __weak arch_do_signal_or_restart(st
- 	 * Before returning to user space ensure that all pending work
- 	 * items have been completed.
- 	 */
--	while (ti_work & EXIT_TO_USER_MODE_WORK) {
+@@ -224,15 +226,45 @@ static __always_inline void exit_to_user
+ 		ti_work = exit_to_user_mode_loop(regs, ti_work);
+ 
+ 	arch_exit_to_user_mode_prepare(regs, ti_work);
++}
+ 
+-	rseq_exit_to_user_mode();
 -
-+	do {
- 		local_irq_enable_exit_to_user(ti_work);
- 
- 		if (ti_work & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY))
-@@ -56,7 +55,19 @@ void __weak arch_do_signal_or_restart(st
- 		tick_nohz_user_enter_prepare();
- 
- 		ti_work = read_thread_flags();
--	}
-+
-+		/*
-+		 * This returns the unmodified ti_work, when ti_work is not
-+		 * empty. In that case it waits for the next round to avoid
-+		 * multiple updates in case of rescheduling.
-+		 *
-+		 * When it handles rseq it returns either with empty work
-+		 * on success or with TIF_NOTIFY_RESUME set on failure to
-+		 * kick the handling into the slow path.
-+		 */
-+		ti_work = rseq_exit_to_user_mode_work(regs, ti_work, EXIT_TO_USER_MODE_WORK);
-+
-+	} while (ti_work & EXIT_TO_USER_MODE_WORK);
- 
- 	/* Return the latest work state for arch_exit_to_user_mode() */
- 	return ti_work;
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -234,7 +234,11 @@ static bool rseq_handle_cs(struct task_s
- 
- static void rseq_slowpath_update_usr(struct pt_regs *regs)
- {
--	/* Preserve rseq state and user_irq state for exit to user */
-+	/*
-+	 * Preserve rseq state and user_irq state. The generic entry code
-+	 * clears user_irq on the way out, the non-generic entry
-+	 * architectures are not having user_irq.
-+	 */
- 	const struct rseq_event evt_mask = { .has_rseq = true, .user_irq = true, };
- 	struct task_struct *t = current;
- 	struct rseq_ids ids;
-@@ -286,7 +290,7 @@ static void rseq_slowpath_update_usr(str
- 	}
++static __always_inline void __exit_to_user_mode_validate(void)
++{
+ 	/* Ensure that kernel state is sane for a return to userspace */
+ 	kmap_assert_nomap();
+ 	lockdep_assert_irqs_disabled();
+ 	lockdep_sys_exit();
  }
  
--void __rseq_handle_notify_resume(struct pt_regs *regs)
-+void __rseq_handle_slowpath(struct pt_regs *regs)
++
++/**
++ * syscall_exit_to_user_mode_prepare - call exit_to_user_mode_loop() if required
++ * @regs:	Pointer to pt_regs on entry stack
++ *
++ * Wrapper around __exit_to_user_mode_prepare() to seperate the exit work for
++ * syscalls and interrupts.
++ */
++static __always_inline void syscall_exit_to_user_mode_prepare(struct pt_regs *regs)
++{
++	__exit_to_user_mode_prepare(regs);
++	rseq_exit_to_user_mode();
++	__exit_to_user_mode_validate();
++}
++
++/**
++ * irqentry_exit_to_user_mode_prepare - call exit_to_user_mode_loop() if required
++ * @regs:	Pointer to pt_regs on entry stack
++ *
++ * Wrapper around __exit_to_user_mode_prepare() to seperate the exit work for
++ * syscalls and interrupts.
++ */
++static __always_inline void irqentry_exit_to_user_mode_prepare(struct pt_regs *regs)
++{
++	__exit_to_user_mode_prepare(regs);
++	rseq_exit_to_user_mode();
++	__exit_to_user_mode_validate();
++}
++
+ /**
+  * exit_to_user_mode - Fixup state when exiting to user mode
+  *
+@@ -297,7 +329,7 @@ static __always_inline void irqentry_ent
+ static __always_inline void irqentry_exit_to_user_mode(struct pt_regs *regs)
  {
- 	/*
- 	 * If invoked from hypervisors before entering the guest via
+ 	instrumentation_begin();
+-	exit_to_user_mode_prepare(regs);
++	irqentry_exit_to_user_mode_prepare(regs);
+ 	instrumentation_end();
+ 	exit_to_user_mode();
+ }
 
 
