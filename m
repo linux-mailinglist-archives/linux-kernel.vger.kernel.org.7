@@ -1,124 +1,240 @@
-Return-Path: <linux-kernel+bounces-782951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C788B3278A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 10:04:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A893B32791
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 10:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C885E5CD0
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:04:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA0B87BE9C2
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F87224898;
-	Sat, 23 Aug 2025 08:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t90gH+3h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3852264BE;
+	Sat, 23 Aug 2025 08:10:17 +0000 (UTC)
+Received: from freeshell.de (freeshell.de [116.202.128.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E451A5BB1;
-	Sat, 23 Aug 2025 08:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CDD21930A;
+	Sat, 23 Aug 2025 08:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755936263; cv=none; b=oVPWex2JuBVjm4KHdUFQZe6Nn6vEHmm4zzOcHAQ4WQpYTl8xT+gQ9JPt29NZQb0gRx2UGrcptsZ59g8TunkoyFeJbWjArcuz9RoC9qb8V6wQDHprYSj7ZMm9czNCcap6NwXDveQPqXNC8jBF76y4kwahJDfD+38qrab5M7txL3c=
+	t=1755936617; cv=none; b=LLLKAx+Ns4DUOnFmE2Ng6vXH2rAsR02BaZqO7dTh29xe+Nv+dMksXd5zS51ydN2WeM1CQn1rOKSsviD1hwd/4ngcPVC7ypoMYW6zSyagM7GSkrYGEkZNAf3+cpFlDe88Rud6p6tqBgoRAch11wxKnar01moWtr3YEj25k3udb+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755936263; c=relaxed/simple;
-	bh=G+/OUbMjRjtJ1O+gXrVBKFF97ndR0d3t/eZa2Y6qmhU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ILs+W3nqa5btdoxr5+T1IUyIgX8BGlRBgtepFx6d7snItaLaUFi61EhRTGERn05ZCo5C5kcq79tFmDdQQ5MeQ0dy56wI3zgLTwHQezsT0F75rQSZunIEtwMMgThNEekIe2oD2PRlSPlO3euBDbiv4LALuv8c+VzxvYF1gWvTQWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t90gH+3h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADAF4C4CEE7;
-	Sat, 23 Aug 2025 08:04:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755936263;
-	bh=G+/OUbMjRjtJ1O+gXrVBKFF97ndR0d3t/eZa2Y6qmhU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t90gH+3hoMY/CvsA6myg9IfjKSLYRDiavSi2Oad1Np+0HfzFG+PBoABOSZne/+OR7
-	 0Li6poNEV/s00yeRKXrL1o4edJmZShyhOCh3+my/hGh/uuJM2NvDmrdGNClRHaE5xt
-	 ZmOFKH0zdGmu5ZUJZQiUhHM0Hdqz8I1bywoXvmfGdR636JieasLNmyELUHwroqrOcn
-	 z9ZJh53rqEmBZbVcn8TdKAdQNqLiF+9N37ZlbU5vCxz15zgxpHFQvMXXAUjkPhBtuQ
-	 sfiFKEi8c5E57AfYmibJWTaria+qazsQFzwwKsH3b8Uc2BErZoX7e3IlWWLecW0s5i
-	 CQqqC3K2YcqKw==
-Date: Sat, 23 Aug 2025 10:04:19 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Cc: Ray Liu <ray.liu@airoha.com>, Mark Brown <broonie@kernel.org>,
-	Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>,
-	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Frieder Schrempf <frieder.schrempf@kontron.de>
-Subject: Re: [PATCH v4 01/13] spi: airoha: return an error for continuous
- mode dirmap creation cases
-Message-ID: <aKl2Awfe4CIV2O44@lore-rh-laptop>
-References: <aKgSY7bOrC8-qZE3@lore-rh-laptop>
- <20250823001626.3641935-1-mikhail.kshevetskiy@iopsys.eu>
- <20250823001626.3641935-2-mikhail.kshevetskiy@iopsys.eu>
+	s=arc-20240116; t=1755936617; c=relaxed/simple;
+	bh=IXYpi+l2BOIEmVSt1JlAsJ5MOncWtEB4+DOLzIso7+U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q3CuGPNYDmuvdQhkKF799Oanc1DnFb8TJT9va+PkZ7csq9awU6xLpQ0VnkI07mYyc3BUno7k6K4OviMV7z/1SwaZHpxR1LLVhMSVdOadSfo89SsL6s8IlkB6i9I7s/F/5pTvg643fUREHdb9+Y2L4lBcUeUmSRcGURFA2awGSpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+Received: from [192.168.2.54] (unknown [98.97.26.119])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id 2A41EB4E0012;
+	Sat, 23 Aug 2025 10:10:02 +0200 (CEST)
+Message-ID: <44cca647-fc1c-4d3c-854e-14943d6d9b06@freeshell.de>
+Date: Sat, 23 Aug 2025 01:10:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IsRgQG7emvDuB06q"
-Content-Disposition: inline
-In-Reply-To: <20250823001626.3641935-2-mikhail.kshevetskiy@iopsys.eu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] riscv: dts: starfive: jh7110: bootph-pre-ram
+ hinting needed by boot loader
+To: Hal Feng <hal.feng@starfivetech.com>, Conor Dooley <conor@kernel.org>,
+ Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+References: <20250815073739.79241-1-e@freeshell.de>
+ <20250815073739.79241-4-e@freeshell.de>
+ <ZQ2PR01MB1307CE398A5993B9E5B93357E6312@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+ <4b516172-bd75-432a-9c96-f02fbfb68c16@freeshell.de>
+ <ZQ2PR01MB1307FE7D4D538EEBB9A578C7E63D2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+Content-Language: en-US
+From: E Shattow <e@freeshell.de>
+In-Reply-To: <ZQ2PR01MB1307FE7D4D538EEBB9A578C7E63D2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 8/22/25 02:27, Hal Feng wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: E Shattow <e@freeshell.de>
+>> Sent: 2025年8月20日 11:49
+>> To: Hal Feng <hal.feng@starfivetech.com>; Conor Dooley <conor@kernel.org>;
+>> Emil Renner Berthing <kernel@esmil.dk>; Rob Herring <robh@kernel.org>;
+>> Krzysztof Kozlowski <krzk+dt@kernel.org>; Paul Walmsley
+>> <paul.walmsley@sifive.com>; Palmer Dabbelt <palmer@dabbelt.com>; Albert
+>> Ou <aou@eecs.berkeley.edu>; Alexandre Ghiti <alex@ghiti.fr>
+>> Cc: devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+>> riscv@lists.infradead.org
+>> Subject: Re: [PATCH v2 3/3] riscv: dts: starfive: jh7110: bootph-pre-ram
+>> hinting needed by boot loader
+>>
+>>
+>>
+>> On 8/17/25 23:05, Hal Feng wrote:
+>>>> On 15.08.25 15:37, E Shattow wrote:
+>>>> Add bootph-pre-ram hinting to jh7110.dtsi:
+>>>>   - CPU interrupt controller(s)
+>>>>   - core local interrupt timer
+>>>>   - DDR memory controller
+>>>>   - oscillator
+>>>>   - syscrg clock-controller
+>>>>
+>>>> Signed-off-by: E Shattow <e@freeshell.de>
+>>>> ---
+>>>>  arch/riscv/boot/dts/starfive/jh7110.dtsi | 9 +++++++++
+>>>>  1 file changed, 9 insertions(+)
+>>>>
+>>>> diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi
+>>>> b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+>>>> index 14df3d062a45..884a3526cb0f 100644
+>>>> --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
+>>>> +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+>>>> @@ -35,6 +35,7 @@ S7_0: cpu@0 {
+>>>>
+>>>>  			cpu0_intc: interrupt-controller {
+>>>>  				compatible = "riscv,cpu-intc";
+>>>> +				bootph-pre-ram;
+>>>>  				interrupt-controller;
+>>>>  				#interrupt-cells = <1>;
+>>>>  			};
+>>>> @@ -68,6 +69,7 @@ U74_1: cpu@1 {
+>>>>
+>>>>  			cpu1_intc: interrupt-controller {
+>>>>  				compatible = "riscv,cpu-intc";
+>>>> +				bootph-pre-ram;
+>>>>  				interrupt-controller;
+>>>>  				#interrupt-cells = <1>;
+>>>>  			};
+>>>> @@ -101,6 +103,7 @@ U74_2: cpu@2 {
+>>>>
+>>>>  			cpu2_intc: interrupt-controller {
+>>>>  				compatible = "riscv,cpu-intc";
+>>>> +				bootph-pre-ram;
+>>>>  				interrupt-controller;
+>>>>  				#interrupt-cells = <1>;
+>>>>  			};
+>>>> @@ -134,6 +137,7 @@ U74_3: cpu@3 {
+>>>>
+>>>>  			cpu3_intc: interrupt-controller {
+>>>>  				compatible = "riscv,cpu-intc";
+>>>> +				bootph-pre-ram;
+>>>>  				interrupt-controller;
+>>>>  				#interrupt-cells = <1>;
+>>>>  			};
+>>>> @@ -167,6 +171,7 @@ U74_4: cpu@4 {
+>>>>
+>>>>  			cpu4_intc: interrupt-controller {
+>>>>  				compatible = "riscv,cpu-intc";
+>>>> +				bootph-pre-ram;
+>>>>  				interrupt-controller;
+>>>>  				#interrupt-cells = <1>;
+>>>>  			};
+>>>> @@ -321,6 +326,7 @@ mclk_ext: mclk-ext-clock {
+>>>>
+>>>>  	osc: oscillator {
+>>>>  		compatible = "fixed-clock";
+>>>> +		bootph-pre-ram;
+>>>>  		clock-output-names = "osc";
+>>>>  		#clock-cells = <0>;
+>>>>  	};
+>>>> @@ -354,6 +360,7 @@ soc {
+>>>>  		clint: timer@2000000 {
+>>>>  			compatible = "starfive,jh7110-clint", "sifive,clint0";
+>>>>  			reg = <0x0 0x2000000 0x0 0x10000>;
+>>>> +			bootph-pre-ram;
+>>>>  			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc
+>>>> 7>,
+>>>>  					      <&cpu1_intc 3>, <&cpu1_intc 7>,
+>>>>  					      <&cpu2_intc 3>, <&cpu2_intc 7>,
+>> @@ -376,6 +383,7 @@
+>>>> memory-controller@15700000 {
+>>>>  			compatible = "starfive,jh7110-dmc";
+>>>>  			reg = <0x0 0x15700000 0x0 0x10000>,
+>>>>  			      <0x0 0x13000000 0x0 0x10000>;
+>>>> +			bootph-pre-ram;
+>>>>  			clocks = <&syscrg JH7110_PLLCLK_PLL1_OUT>;
+>>>>  			clock-names = "pll1_out";
+>>>>  			resets = <&syscrg JH7110_SYSRST_DDR_AXI>, @@ -
+>>>> 892,6 +900,7 @@ qspi: spi@13010000 {
+>>>>  		syscrg: clock-controller@13020000 {
+>>>>  			compatible = "starfive,jh7110-syscrg";
+>>>>  			reg = <0x0 0x13020000 0x0 0x10000>;
+>>>> +			bootph-pre-ram;
+>>>>  			clocks = <&osc>, <&gmac1_rmii_refin>,
+>>>>  				 <&gmac1_rgmii_rxin>,
+>>>>  				 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
+>>>
+>>> pllclk also needs to add bootph-pre-ram. Because it is the dependency of
+>> syscrg.
+>>>
+>>> 		pllclk: clock-controller {
+>>> 			compatible = "starfive,jh7110-pll";
+>>> +			bootph-pre-ram;
+>>> 			clocks = <&osc>;
+>>> 			#clock-cells = <1>;
+>>> 		};
+>>>
+>>> Best regards,
+>>> Hal
+>>
+>> What users are there for 'pllclk' at U-Boot SPL phase? There does not seem to
+>> be any difference in testing U-Boot and Linux with or without this hint for
+>> 'pllclk'.
+> 
+> I see commit 8b3f2eb7d8912204bda2d914b8a9a1ce1c31bb5c adding this line to
+> solve some problems.
+> 
+> https://lore.kernel.org/all/20250330162421.238483-1-heinrich.schuchardt@canonical.com/
 
---IsRgQG7emvDuB06q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, there was some mistake in how I am testing U-Boot SPL. Given that
+(U-Boot code base) jh7110-u-boot.dtsi override is replaced with contents:
 
-> This driver can accelerate single page operations only, thus
-> continuous reading mode should not be used.
->=20
-> Continuous reading will use sizes up to the size of one erase block.
-> This size is much larger than the size of single flash page. Use this
-> difference to identify continuous reading and return an error.
->=20
-> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-> Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+/ {
+        soc {
+                memory-controller@15700000 {
+                        clock-frequency = <2133>; /* starfive_ddr.c
+driver needs update to use common clocks */
+                };
+        };
+};
 
-I guess here we need to add the proper Fixes tag:
+&syscrg {
+        assigned-clock-rates = <0>; /* cpufreq not implemented, use
+defaults */
+};
 
-Fixes: a403997c12019 ("spi: airoha: add SPI-NAND Flash controller driver")
+I am now able to reproduce this boot failure in U-Boot SPL on Star64.
 
-> ---
->  drivers/spi/spi-airoha-snfi.c | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/drivers/spi/spi-airoha-snfi.c b/drivers/spi/spi-airoha-snfi.c
-> index dbe640986825..043a03cd90a1 100644
-> --- a/drivers/spi/spi-airoha-snfi.c
-> +++ b/drivers/spi/spi-airoha-snfi.c
-> @@ -618,6 +618,10 @@ static int airoha_snand_dirmap_create(struct spi_mem=
-_dirmap_desc *desc)
->  	if (desc->info.offset + desc->info.length > U32_MAX)
->  		return -EINVAL;
-> =20
-> +	/* continuous reading is not supported */
-> +	if (desc->info.length > SPI_NAND_CACHE_SIZE)
-> +		return -E2BIG;
-> +
->  	if (!airoha_snand_supports_op(desc->mem, &desc->info.op_tmpl))
->  		return -EOPNOTSUPP;
-> =20
-> --=20
-> 2.50.1
->=20
+Additionally, U-Boot SPL fails to boot if 'gmac1_rgmii_rxin' or
+'gmac1_rmii_refin' are missing bootph-pre-ram hint, as a dependency of
+syscrg. It is okay to omit hints for 'gmac0_rgmii_rxin' and
+'gmac0_rmii_refin' as the dependency of aoncrg not used at U-Boot SPL.
 
---IsRgQG7emvDuB06q
-Content-Type: application/pgp-signature; name=signature.asc
+In the next version of this series will be added bootph-pre-ram hints
+for syscrg dependencies: 'pllclk', 'gmac1_rgmii_rxin', and
+'gmac1_rmii_refin'
 
------BEGIN PGP SIGNATURE-----
+Thank you, Hal.
 
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaKl2AAAKCRA6cBh0uS2t
-rFmPAP4wEbp3RP2BlAiOqtIlSxliBwk5YgWRY2Lrl4Q+hJS/+QD/QK/uStPNob1E
-lJW0noeR0NSGRRFK7R5EqNwGP22jbgU=
-=FuF8
------END PGP SIGNATURE-----
+-E
 
---IsRgQG7emvDuB06q--
+> 
+> Best regards,
+> Hal
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
 
