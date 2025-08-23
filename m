@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-783086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9BE6B32934
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:36:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFE88B32937
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F1791BC0EB7
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:36:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B67D817E072
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB5725B2FA;
-	Sat, 23 Aug 2025 14:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794FA25BEF2;
+	Sat, 23 Aug 2025 14:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="q0plEv6F"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="yjODS2TT"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C5D1448D5;
-	Sat, 23 Aug 2025 14:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126391448D5;
+	Sat, 23 Aug 2025 14:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755959756; cv=none; b=FkLNAPR4lJ/TgiVvsH3pokLgmXGCWSImHE7SB6jGZoBOQ9tx7JWPR5BGsHXu7mAyuxkC4vhyG7Z599rvavcBbWJGVrOfMnph2xEFgTP9ixNkwNY0SPsPShlCMOuVbUaEj9ZkyMkD/as9BBLRX1NVmtYSdY06tWFlB8ILbUl2EDs=
+	t=1755959809; cv=none; b=ghTXX+mQIcQ9C90k/5CSQBMqOEWGyHxKPIswDM/oLeV/+hsc16Y6iaEvWCvSe1qvZfd7PDRvKUHxTaaT730NgIlAr9f29h1pA8gBa6Ua5ISw3f8+ZLUo0C8GEi4t4usNDlTkKlQTXNbUT3XfXOV2y2oO7ZS7f1k6P7tKV8EhhVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755959756; c=relaxed/simple;
-	bh=eemSHBIuQXik9DIj2NVohSrEFzDUO/GWoQP/V2f+qMc=;
+	s=arc-20240116; t=1755959809; c=relaxed/simple;
+	bh=b4szslA7ZyoDYxRL5lU3Ry83YPf61pXDu12N9fYlNnU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qfUlzERed3mR+KmOlFq/0i4tax7mniSSydoNsm0mFfLmGwvK6RuBdG7z6dv1Fl0Pre0sFo+pG3aFeBp9mQ21yI/Y+8lQqyH1U19O04a1xSXWT3YVyPsR+ta8wrxqabHyTW6IM4AzHnxFCab0tNMhhIFshtQZI0crKRTAsKtoetI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=q0plEv6F; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=fXPT1VqhHKnGW6l8b7W3g0Cs17zdau/J4l0KH3/MzK+IceayQ1fqFSdhpf7JFzUsNafFhjcVBhnQUqCnoMTluOvA85zUyYZ/w2ce2XQ9nkVzIHTLcoY9LFoPE63qNgR+mBPyfXFO/XfLJL25Wy7M8jMA6B9tfrT4yPueN5Rllog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=yjODS2TT; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=qgOhBWr0VH5vsqKN3OIl1v6yHrxWu6HVlafZRGepUuY=; b=q0plEv6FrjIOqQEFTKYMVTWCFU
-	pG9D2Y0KESLkIMyT8pGdkHgwR6I4cT+0uoSMIMpGqUzJOhvN+aVl9C04Ezv+hWciV4e5M2dhSn2nT
-	O2LVNiWGjWfAlp6n+RYaFGG469Az7nawP0Li6p0m42FGrCHntxNlw1Lyy7w6phzshxFM99LCbOLaZ
-	MPy+xaZZZcGOlfcDXbpw8Ffp0IRCbjARsSQs4y7fnmZz50ZF05hMEmKqmM2Q9sDiItBCacb8IDdcZ
-	Xr+F6G73ZjnMNp2MmWyB69u9A5xwDQSTEmkr/uIZxzmKDDqjEeWxmQ88FMaJFjijsyQyXkPstF4Q1
-	BcVPZOHA==;
+	bh=b4szslA7ZyoDYxRL5lU3Ry83YPf61pXDu12N9fYlNnU=; b=yjODS2TTZXqlklgLHaiMWcDNiQ
+	3h58mSclKn2EB8t/kPEwPboVfbiLiaNI1DsvIUWrQeJF8TIO935nUGCdEnaQXc80l6y43X1q7klkO
+	Hl1DVJ7H/bH6d7s0Mp9YI921h58yRV08oisb7YhIZER4JwC/dbjT8q+73mIGtUJUZkVmVHWjJoCiR
+	/rRszLMs/LBnxb6Loqq9EqqL7/QtBXWnEgVt9Y6n6zD/Pxg/FC8pcV5L2C4Jk19z92D/4l7Q79fvG
+	Sx9rVGFZ9g28SI9pnX77Fnx7edcRqwxO3W+jKsbziQ24WfQgHVQF2DKYoA3QwwX7p9N5/MOROvwnJ
+	V7MRdiCw==;
 Received: from i53875b90.versanet.de ([83.135.91.144] helo=diego.localnet)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1uppLC-0000VC-06; Sat, 23 Aug 2025 16:35:34 +0200
+	id 1uppMF-0000aK-Bv; Sat, 23 Aug 2025 16:36:39 +0200
 From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
 To: dmitry.baryshkov@oss.qualcomm.com, Andy Yan <andyshrk@163.com>
 Cc: hjc@rock-chips.com, mripard@kernel.org, naoki@radxa.com,
@@ -53,15 +53,15 @@ Cc: hjc@rock-chips.com, mripard@kernel.org, naoki@radxa.com,
  dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
  robh@kernel.org, sebastian.reichel@collabora.com,
- Andy Yan <andy.yan@rock-chips.com>
-Subject:
- Re: [PATCH v7 04/10] MAINTAINERS: Add entry for DW DPTX Controller bridge
-Date: Sat, 23 Aug 2025 16:35:32 +0200
-Message-ID: <6121390.uKWtJMOXK1@diego>
-In-Reply-To: <20250822063959.692098-5-andyshrk@163.com>
+ Andy Yan <andy.yan@rock-chips.com>, Dmitry Baryshkov <lumag@kernel.org>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: Re: [PATCH v7 03/10] drm/rockchip: Add RK3588 DPTX output support
+Date: Sat, 23 Aug 2025 16:36:38 +0200
+Message-ID: <3723317.0YcMNavOfZ@diego>
+In-Reply-To: <20250822063959.692098-4-andyshrk@163.com>
 References:
  <20250822063959.692098-1-andyshrk@163.com>
- <20250822063959.692098-5-andyshrk@163.com>
+ <20250822063959.692098-4-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,50 +71,18 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 
-Am Freitag, 22. August 2025, 08:39:48 Mitteleurop=C3=A4ische Sommerzeit sch=
+Am Freitag, 22. August 2025, 08:39:47 Mitteleurop=C3=A4ische Sommerzeit sch=
 rieb Andy Yan:
 > From: Andy Yan <andy.yan@rock-chips.com>
 >=20
-> Add an entry for the DW DPTX Controller bridge driver.
+> Add driver extension for Synopsys DesignWare DPTX IP used
+> on Rockchip RK3588 SoC.
 >=20
 > Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Acked-by: Dmitry Baryshkov <lumag@kernel.org>
+> Tested-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
 Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-
-> ---
->=20
-> (no changes since v5)
->=20
-> Changes in v5:
-> - First included in this version.
->=20
->  MAINTAINERS | 8 ++++++++
->  1 file changed, 8 insertions(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index cfa28b3470ab6..0ae7d13c2b3c5 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7999,6 +7999,14 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/display/panel/synaptics,r63353.yaml
->  F:	drivers/gpu/drm/panel/panel-synaptics-r63353.c
-> =20
-> +DRM DRIVER FOR SYNOPSYS DESIGNWARE DISPLAYPORT BRIDGE
-> +M:	Andy Yan <andy.yan@rock-chips.com>
-> +S:	Maintained
-> +T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
-> +F:	Documentation/devicetree/bindings/display/rockchip/rockchip,dw-dp.yaml
-> +F:	drivers/gpu/drm/bridge/synopsys/dw-dp.c
-> +F:	include/drm/bridge/dw_dp.h
-> +
->  DRM DRIVER FOR TI DLPC3433 MIPI DSI TO DMD BRIDGE
->  M:	Jagan Teki <jagan@amarulasolutions.com>
->  S:	Maintained
->=20
-
-
 
 
 
