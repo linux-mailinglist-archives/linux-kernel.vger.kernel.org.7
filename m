@@ -1,177 +1,161 @@
-Return-Path: <linux-kernel+bounces-782825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C047CB325C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:23:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 716C2B325C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3512B61FE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:22:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDB70B6013C
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA51B2868B;
-	Sat, 23 Aug 2025 00:23:45 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52859224F6;
+	Sat, 23 Aug 2025 00:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="A9FOgL3T"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F3B393DDC;
-	Sat, 23 Aug 2025 00:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494FE2BD11
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 00:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755908625; cv=none; b=shAVirzJm5rV3JNmNv/aPSyWoQcvMf8hev6gIWdtFM+T8bjfllIWldDGv8U9jRCkSgjj6YYT1eBCSIkKU8h8SDmT13L/nJLBIkXwYfOignjSOgD12FjC4XgKx5FRWaEBnALkHHNjHfX6YJ6aQ0m91+Pu+SfEJXc16BJt8j50exU=
+	t=1755908867; cv=none; b=KUP2/nDIPSojsekjdi5ZXwmFNiFoUysFIH72d6iMZftwN/Tg2QPHR9gcH/XgqdR1xWVuwLd19nHQ4640Mp3a0obom7yaK9HaWK+aQa/Ov8aH5rxCVvOPsmiXdlNi6biiHEDkDox3ycLKBnsX+3KTC0878+Ip0rq6TVDnXyHjO9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755908625; c=relaxed/simple;
-	bh=84dGkgR+bo2AbRNubUUia47JmMAYmHIIoylmE2TkvDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KrpyWYLw+Ahn0Qx9Aa7i2yG6q9xcezf+dYAlsS+36tvYBpwhrlqLKeHJG90xZjFfXJv0vmQ1D0UAW1ln8q+RUVwJtnOdnyXhbKavH78UJfTYjTWSsXODBjmT/Y/aOA4sk7q0AgIeH2pY/tmoRhVN6unM9ZYxNBLiGXM9AK3Ztf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c7yTM1PdrzKHLxZ;
-	Sat, 23 Aug 2025 08:23:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id B10CE1A0359;
-	Sat, 23 Aug 2025 08:23:34 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP3 (Coremail) with SMTP id _Ch0CgBHwNoGCqloNYgUEg--.7432S2;
-	Sat, 23 Aug 2025 08:23:34 +0800 (CST)
-Message-ID: <1cf4c031-fb21-4986-9356-92f69697d491@huaweicloud.com>
-Date: Sat, 23 Aug 2025 08:23:34 +0800
+	s=arc-20240116; t=1755908867; c=relaxed/simple;
+	bh=IJ2EgA4PMU8jKiLbI6D6sQEpVy/SdYV6CoTn8B7UEN4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=NMZhUks2kml88dtcYgrOaeeHYmOiItBjT8fIe89+naCYKdHaT1e8rPGy7haGnfCZIZ+ijn9Gxk4j8DMnq/V3yT132pcib8U6ZJZHIKVoILEYCwz8IJZ0bukStBg+TrBFzZi9PrOCNw+bX5t7XgyShIOoVciY0rfYOktNg6DWzE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=A9FOgL3T; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 0ED8014000C9;
+	Fri, 22 Aug 2025 20:27:44 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Fri, 22 Aug 2025 20:27:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1755908864; x=1755995264; bh=3EJfbfJCcNsDCVVmWo9KKi5NcVI7ubF/vZ1
+	wxrk7GFo=; b=A9FOgL3TB2Te/4b/RvoI2duMblc4j+JC/Vl9DYV1qfgVRU3BFJW
+	8XvsmXR4mYEtmx2R7VzK6JAn/OjtYFiJwn6KCkcrP2ngRKTdeD+6KE9eJSAzPTLT
+	RlwR1x6GlkTPWjpi9In2UL/Nkt5wre7mPG+uZpluh8QaNbFpTdzvGyqdnZWb4Sv+
+	BN6PZKEgfiSDYiRFTDTQDB/Rs6JNQycRIt6Avl2hVdIFzSPIif4gBMHukF50/NoO
+	IfEAnwaGn6KHNb/YC46ymgBhicUDelC9EHO0AhmraRUU3hUM21vD+TPj+6Ll3lIn
+	dRchtiaHZTP1No+6sR5KQ9ulTINscYcfxrw==
+X-ME-Sender: <xms:_QqpaAeW26jjmZ0KDQT1TAzQlZ0-jteAO8QnWYnvV-IO3JtnedX0yA>
+    <xme:_QqpaJ2jdIaAcxzPKCyaiuhYmCAqXvX-WKjSv-5nOa9W3x4XqCN9T-mLrSnz9_zwF
+    2IQ8jWDmKG89Jj9le4>
+X-ME-Received: <xmr:_QqpaBu_LRvYiBjDRZFN7Rp5xYQ5kc7wjH8zwwgwbIkstt4eBIOeKPFIG8RXIXKG5ScV5eg9e6mfKYvW5guYelkKQP8GBZmRZqA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieehvddtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
+    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
+    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
+    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
+    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopedvfedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtoheplhgrnhgtvgdrhigrnhhgsehlihhnuhigrd
+    guvghvpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghp
+    thhtohepmhhhihhrrghmrghtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrkhhpmh
+    eslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepfihilhhlsehk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdroh
+    hrghdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthhopehl
+    ohhnghhmrghnsehrvgguhhgrthdrtghomhdprhgtphhtthhopegrnhhnrgdrshgthhhumh
+    grkhgvrhesohhrrggtlhgvrdgtohhm
+X-ME-Proxy: <xmx:_QqpaN-F0qnA6n9LAA3KakdA6gMInLh4d-tvCSpjWKwFFdHH5_ZVNw>
+    <xmx:_QqpaNQAjwRkmGcBKD9ysNPqX1wKdPw-Z_VvKlZlCendTh4Vxwndkw>
+    <xmx:_QqpaLBuDNXQLDsa4jrRlC70DChRyfomhlcwrcJnw_Xcey5rxOe4Zw>
+    <xmx:_QqpaGY0To6pwBe2UDds7EJA3JO7oUrdVYyVwLeCzJsRwavDS4osRQ>
+    <xmx:AAupaPG0JBmZTRLoj2IL0dROUsIKlZfSVH-oxEZUkxm1Qo9gB8sUREB6>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 22 Aug 2025 20:27:39 -0400 (EDT)
+Date: Sat, 23 Aug 2025 10:27:27 +1000 (AEST)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Lance Yang <lance.yang@linux.dev>
+cc: Geert Uytterhoeven <geert@linux-m68k.org>, mhiramat@kernel.org, 
+    akpm@linux-foundation.org, will@kernel.org, peterz@infradead.org, 
+    mingo@redhat.com, longman@redhat.com, anna.schumaker@oracle.com, 
+    boqun.feng@gmail.com, joel.granados@kernel.org, kent.overstreet@linux.dev, 
+    leonylgao@tencent.com, linux-kernel@vger.kernel.org, rostedt@goodmis.org, 
+    tfiga@chromium.org, amaindex@outlook.com, jstultz@google.com, 
+    Mingzhe Yang <mingzhe.yang@ly.com>, Eero Tamminen <oak@helsinkinet.fi>, 
+    linux-m68k <linux-m68k@lists.linux-m68k.org>, 
+    Lance Yang <ioworker0@gmail.com>, senozhatsky@chromium.org
+Subject: Re: [PATCH v5 2/3] hung_task: show the blocker task if the task is
+ hung on semaphore
+In-Reply-To: <d0fe3163-32d9-4d81-81bb-d964f2f43f17@linux.dev>
+Message-ID: <6ec95c3f-365b-e352-301b-94ab3d8af73c@linux-m68k.org>
+References: <20250414145945.84916-1-ioworker0@gmail.com> <20250414145945.84916-3-ioworker0@gmail.com> <CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com> <da53a828-137a-4efc-a192-a2b49a06d050@linux.dev> <CAMuHMdVTBSq2D+-rzGTr+Fz52sDFeeApUcG=LdDYBO5sY+rQxQ@mail.gmail.com>
+ <d0fe3163-32d9-4d81-81bb-d964f2f43f17@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] kernfs: Fix UAF in polling when open file is
- released
-To: Tejun Heo <tj@kernel.org>
-Cc: gregkh@linuxfoundation.org, hannes@cmpxchg.org, mkoutny@suse.com,
- peterz@infradead.org, zhouchengming@bytedance.com,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, lujialin4@huawei.com,
- chenridong@huawei.com, libaokun1@huawei.com
-References: <20250822070715.1565236-1-chenridong@huaweicloud.com>
- <20250822070715.1565236-2-chenridong@huaweicloud.com>
- <aKitBb4VNmeaObi8@slm.duckdns.org>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <aKitBb4VNmeaObi8@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgBHwNoGCqloNYgUEg--.7432S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWr48tFy3CFy8tFW3tF1DZFb_yoW5WFWDpa
-	98CF15K3ykXryUAw4IqF1093W8tayxJFWxtFn7Kr9ava43Kryvy3WI9r15XFykArsxJr47
-	t3ZIk34jyw45AaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOB
-	MKDUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
 
 
+On Sat, 23 Aug 2025, Lance Yang wrote:
 
-On 2025/8/23 1:46, Tejun Heo wrote:
-> On Fri, Aug 22, 2025 at 07:07:14AM +0000, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
->>
->> A use-after-free (UAF) vulnerability was identified in the PSI (Pressure
->> Stall Information) monitoring mechanism:
->>
->> BUG: KASAN: slab-use-after-free in psi_trigger_poll+0x3c/0x140
->> Read of size 8 at addr ffff3de3d50bd308 by task systemd/1
->>
->> psi_trigger_poll+0x3c/0x140
->> cgroup_pressure_poll+0x70/0xa0
->> cgroup_file_poll+0x8c/0x100
->> kernfs_fop_poll+0x11c/0x1c0
->> ep_item_poll.isra.0+0x188/0x2c0
->>
->> Allocated by task 1:
->> cgroup_file_open+0x88/0x388
->> kernfs_fop_open+0x73c/0xaf0
->> do_dentry_open+0x5fc/0x1200
->> vfs_open+0xa0/0x3f0
->> do_open+0x7e8/0xd08
->> path_openat+0x2fc/0x6b0
->> do_filp_open+0x174/0x368
->>
->> Freed by task 8462:
->> cgroup_file_release+0x130/0x1f8
->> kernfs_drain_open_files+0x17c/0x440
->> kernfs_drain+0x2dc/0x360
->> kernfs_show+0x1b8/0x288
->> cgroup_file_show+0x150/0x268
->> cgroup_pressure_write+0x1dc/0x340
->> cgroup_file_write+0x274/0x548
->>
->> Reproduction Steps:
->> 1. Open test/cpu.pressure and establish epoll monitoring
->> 2. Disable monitoring: echo 0 > test/cgroup.pressure
->> 3. Re-enable monitoring: echo 1 > test/cgroup.pressure
->>
->> The race condition occurs because:
->> 1. When cgroup.pressure is disabled (echo 0 > cgroup.pressure), it:
->>    - Releases PSI triggers via cgroup_file_release()
->>    - Frees of->priv through kernfs_drain_open_files()
->> 2. While epoll still holds reference to the file and continues polling
->> 3. Re-enabling (echo 1 > cgroup.pressure) accesses freed of->priv
->>
->> epolling			disable/enable cgroup.pressure
->> fd=open(cpu.pressure)
->> while(1)
->> ...
->> epoll_wait
->> kernfs_fop_poll
->> kernfs_get_active = true	echo 0 > cgroup.pressure
->> ...				cgroup_file_show
->> 				kernfs_show
->> 				// inactive kn
->> 				kernfs_drain_open_files
->> 				cft->release(of);
->> 				kfree(ctx);
->> 				...
->> kernfs_get_active = false
->> 				echo 1 > cgroup.pressure
->> 				kernfs_show
->> 				kernfs_activate_one(kn);
->> kernfs_fop_poll
->> kernfs_get_active = true
->> cgroup_file_poll
->> psi_trigger_poll
->> // UAF
->> ...
->> end: close(fd)
->>
->> To address this issue, introduce kernfs_get_active_of() for kernfs open
->> files to obtain active references. This function will fail if the open file
->> has been released. Replace kernfs_get_active() with kernfs_get_active_of()
->> to prevent further operations on released file descriptors.
->>
->> Fixes: 34f26a15611a ("sched/psi: Per-cgroup PSI accounting disable/re-enable interface")
->> Reported-by: Zhang Zhaotian <zhangzhaotian@huawei.com>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> > 
+> > include/linux/hung_task.h-/*
+> > include/linux/hung_task.h- * @blocker: Combines lock address and blocking type.
+> > include/linux/hung_task.h- *
+> > include/linux/hung_task.h- * Since lock pointers are at least 4-byte aligned(32-bit) or 8-byte
+> > include/linux/hung_task.h- * aligned(64-bit). This leaves the 2 least bits (LSBs) of the pointer
+> > include/linux/hung_task.h- * always zero. So we can use these bits to encode the specific blocking
+> > include/linux/hung_task.h- * type.
+> > include/linux/hung_task.h- *
+
+That comment was introduced in commit e711faaafbe5 ("hung_task: replace 
+blocker_mutex with encoded blocker"). It's wrong and should be fixed.
+
+> > include/linux/hung_task.h- * Type encoding:
+> > include/linux/hung_task.h- * 00 - Blocked on mutex
+> >   (BLOCKER_TYPE_MUTEX)
+> > include/linux/hung_task.h- * 01 - Blocked on semaphore
+> >   (BLOCKER_TYPE_SEM)
+> > include/linux/hung_task.h- * 10 - Blocked on rw-semaphore as READER
+> >   (BLOCKER_TYPE_RWSEM_READER)
+> > include/linux/hung_task.h- * 11 - Blocked on rw-semaphore as WRITER
+> >   (BLOCKER_TYPE_RWSEM_WRITER)
+> > include/linux/hung_task.h- */
+> > include/linux/hung_task.h-#define BLOCKER_TYPE_MUTEX            0x00UL
+> > include/linux/hung_task.h-#define BLOCKER_TYPE_SEM              0x01UL
+> > include/linux/hung_task.h-#define BLOCKER_TYPE_RWSEM_READER     0x02UL
+> > include/linux/hung_task.h-#define BLOCKER_TYPE_RWSEM_WRITER     0x03UL
+> > include/linux/hung_task.h-
+> > include/linux/hung_task.h:#define BLOCKER_TYPE_MASK             0x03UL
+> > 
+> > On m68k, the minimum alignment of int and larger is 2 bytes.
 > 
-> Acked-by: Tejun Heo <tj@kernel.org>
+> Ah, thanks, that's good to know! It clearly explains why the
+> WARN_ON_ONCE() is triggering.
 > 
-> Thanks.
+> > If you want to use the lowest 2 bits of a pointer for your own use,
+> > you must make sure data is sufficiently aligned.
+> 
+> You're right. Apparently I missed that :(
+> 
+> I'm wondering if there's a way to check an architecture's minimum 
+> alignment at compile-time. If so, we could disable this feature on 
+> architectures that don't guarantee 4-byte alignment.
 > 
 
-Thanks
+As Geert says, the compiler can give you all the bits you need, so you 
+won't have to contort your algorithm to fit whatever free bits happen to 
+be available. Please see for example, commit 258a980d1ec2 ("net: dst: 
+Force 4-byte alignment of dst_metrics").
 
--- 
-Best regards,
-Ridong
+> If not, the fallback is to adjust the runtime checks.
+> 
 
+That would be a solution to a different problem.
 
