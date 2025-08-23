@@ -1,143 +1,134 @@
-Return-Path: <linux-kernel+bounces-783227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420CDB32ADE
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:33:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C8B6B32AE0
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:33:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C4F2AA029D
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:33:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C168D1BC72CC
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D021BCA0E;
-	Sat, 23 Aug 2025 16:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB43D242D90;
+	Sat, 23 Aug 2025 16:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gTmAaLwk"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bvzyjsvn"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7114155C97
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 16:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FEA155C97;
+	Sat, 23 Aug 2025 16:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755966786; cv=none; b=kH3qdGlkLDjlmrlkcdRGbAR32slZ7+bwlmOgnN/AgcLYGBWblSu20xIg4actMCGGioYAUi+up9hQIxwSghrDIsloWhy/dmxOD5+/Rtw6RpVSqlaEjYINFHp9N1lce+6Reku6o0Ey60JNfhUIn3hmgDgY/WP7+kD9OieT57iE2RI=
+	t=1755966798; cv=none; b=AtnqrXCeTY0OSUgtUvoAcvw+arP9uEhghFGfCy8J3ovZnPCnO4bVy534ATVfvcXkg6KEYset5gc2jposX0CqptU1yZnlOrLYiH6LaQvyeJDRdx1Oe9EWhnK3LdomBMu5uPJzV08uAmLPLyU/P5SzF+YGYOagbp1klMmTQk9TvHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755966786; c=relaxed/simple;
-	bh=yxuy3oDJ08FCrS2YoJDAqGlTn0pBViRwW5im30kIBpM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TxmSYoP8QIakgCBtLJredy4SaumLe77v5Ualbwl6BgqFSOCv8CzPoqqgs4dXpDCHNsnZbmOuER4NEiOtu6SLi68tQTw6b1EmOje28//EAk9R4HF8dfeqxUdz3Tc38Z08sHJt0a9YoCpqlYSB42H6BVNKFbJgFN8aenqKo+AHX20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gTmAaLwk; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61c20df01a9so191376a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 09:33:04 -0700 (PDT)
+	s=arc-20240116; t=1755966798; c=relaxed/simple;
+	bh=aUtp3Wo6XkXgDHPvdQGSe87XUavHdltM58gDO7cwVyI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=B6NiHNJFGb1YVBEOJPfEqDwMH9RmUITa/ncO2TBd8FF/tvh4UM7bUo/LUow+tsduiFlr1zaKYShMWQRIJ/l+hfpHWNOeWwA7oOCgZ53mDEf70Joiy/Meld9Qrg7R1L5PSfTwt0YHiFfmPmscbvpuTzJg4ArwsF+nsTvt9masfS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bvzyjsvn; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24639fbdd87so12264695ad.1;
+        Sat, 23 Aug 2025 09:33:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755966783; x=1756571583; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=STNSS1T+h+xo04Oxr4E7Wd3mL52PcoQ8ncvgJmGARK0=;
-        b=gTmAaLwkWChz+NX6/AOFlK0vuvp+a74V5sWhyHPqvM5tv4yH8tYvtG3mttcwjsu6s/
-         NfI61cVvYu6XqF/2RqVPvG9H2cip78FS5PlZranI0sIsrgEkZb5wQI4bbjtg8hKPmmc1
-         CwL4fPkmiVu5HQd0K66q7L+m91n04umS6SHHqm6Rag9I5izstfyYZrd2Hr+tJvwMoZBl
-         sI58yG5Ri05ptDEiyFRblaQ37pRY9KBbN85r8Cm3L/dHoePYeHwO2l+eeE0CMa0DSR61
-         aGBeh7MybHXgLd5pmaD0Df6Bxlj6NldvHLA9JpQuf0oMCwLJnL7knsr1ZYIKgXTBCWHN
-         IbQA==
+        d=gmail.com; s=20230601; t=1755966796; x=1756571596; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7S0GbUPk23Y1kLFifM6lqQhkNqk3chZVo7AtveVLfSg=;
+        b=BvzyjsvnJwLBXc/dcDddMk66C2K/dPlug4qdBE31PqAsuMPKtJdN3btoaMAE7O7n9B
+         yDzTNa6ED5vFYUSnJqzkUrSu5c2TBfGvlCoY8sneQvzwQfW4+0hrAqKZE52N5kHRF6wz
+         G05wS23mG7bLPVSQ06mPG1FznbMTIGejLLRKj6uaQMja1/wQRiwiSWdoRlnCi48c38WS
+         hUpMUitWfCBoGdjQFIQag5dl9BlADj/adofTka048qEVlKem/ur/gr1PEMlex619Ezp7
+         fEnPwIJMV4QrFgXmAUt91DciZwjZ+cLLCXDXujXHVvZ/K6f51EArCc5Bd3uGAO0qZeRi
+         x5tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755966783; x=1756571583;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=STNSS1T+h+xo04Oxr4E7Wd3mL52PcoQ8ncvgJmGARK0=;
-        b=huLIV5gpP1MPRszuSbemCZxYmYWms7lr64VdrAYLTZmFMX+ALW/5NDCbhX6Z6VteIn
-         5G7hPLEsuBGNY7PYwZUM63XNIibDplEn7v+HkCi/IVDyQiMMZoatMF6xJEWZGJ3b/96t
-         IsK7uPtEhrTwo9Sf/LzIScPz/mYhlZuKHnUgxMVLSYzTeTT0hQLXkU7dVK+pA+1LsiAN
-         EWyve/ykt9yhzCkLp55HOkVU3SNuyXUWMISOXE0/ewWjfC4tl/qwbaUyTBh+um3gUidV
-         mzrHV0fXHz99DgAzGYnPMKzs4HcgvuW+sx8LgIPtVB5kbeqjBfg3YVCxGc1KGElSQPMF
-         Q1wA==
-X-Forwarded-Encrypted: i=1; AJvYcCVPd4vBZ14OJRbgRoDKXc1N9cJBGxa5D2xBmb2pmrWtOtQVZiK2J4Ex8gtQkuG4R+6pkokHKkskZY7i/F0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHD/1adzOwUP7zie67DWiiS6+FmtrRljzIdqyD5ZvDtY6qOT7a
-	RUXX5X0PiYH7elKJo+PopG0zC9nvBZR5q6Jpo3NdVadq2S7aJ99oDXwZlnbJNcakuQKlLuW7vgZ
-	EME78
-X-Gm-Gg: ASbGncv8doFghvM0xJ1DeIUeL/Adv8iOXpmEq64oY4ySvV7/k+UGqNZRPRCi6MSnljh
-	nrDAKlAm0cCF5h0oY/ub8nef8e1/u2oaaeUJvE39ENcEueLytrxM79oVcaEAnHVqiNBcFA6Urof
-	CdaoOfpRQN/WNb91KmmC4dVkNpJo3YPUUZO8P2z9gjnVCEPaebN/5+XTgp1udxZPwfPpEEDSgqk
-	Atg4PNColOeLUkudhDRKl/kAdvXUF9RJLlJbqiw2T7MVy0snaus6u93o7pWByoj22fn5YaGdPm4
-	eKvopKL6ePjFcOOz/kSYqcR7I4kNv43JN37gAI1gaEI5abyvKieN6Z5rXsIqs0533A9WmZadHZt
-	4tme04trdIjt4eVLbdg0spw27KlUecJ6MOE44avXHOCzH
-X-Google-Smtp-Source: AGHT+IErPaYZ/R95hNRLUPhZsS2vquoXzXo7P0FirUWFb/QPx3CCkmkS9LQTJIIb4KUb+7m1ka+ieg==
-X-Received: by 2002:a17:906:c116:b0:af9:6580:c34f with SMTP id a640c23a62f3a-afe2943e3a9mr312096366b.9.1755966782918;
-        Sat, 23 Aug 2025 09:33:02 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe492d8713sm197936366b.67.2025.08.23.09.33.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Aug 2025 09:33:02 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: interrupt-controller: marvell,cp110-icu: Document address-cells
-Date: Sat, 23 Aug 2025 18:32:59 +0200
-Message-ID: <20250823163258.49648-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1755966796; x=1756571596;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7S0GbUPk23Y1kLFifM6lqQhkNqk3chZVo7AtveVLfSg=;
+        b=Bq/THXAt30MxAi09W9kk2MhQvJEg7fIvTSc7phbijNNGRFy7VBcX8VpQKNaKswbfPZ
+         eZC2M/3rK555zN5VSw2Q7b9H6bkxDNe62le3NdH+/pVuKwOXZ/Njn7uN/fICRfALMu0X
+         AsYN3ASlQ8xysHqq2On/b2jHa5Up1auFTfUKdt5/6V9Sq2p41TFLHxK19hCLjtojaxMQ
+         IX+7MgFfI2XcfGT6QLzA0EiJhihSNfStcOgsetUPCv/KZy8aeL4aMuxUliWhfw98HyPk
+         JVK15UIjcgtdf0m9Qsn7AdiTyZMBsZIafpae252PrjDdsUCdNaLKHUHn1OeAvbkth7/I
+         +3XA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5P5vefbJKPMxeI8c6QrBNbKIJPjW8D6pgSCm89Gi0fvOzWTI4K0QM+LFyCgPXWdUz+C0NxUUlOq/mZ+s=@vger.kernel.org, AJvYcCWiq0PwURhNCXROVeA46ss1u+7vkaVofF3+/QnLL78KvEW6vdzRzdLs2rnyEqr0H4oL0CcfBy5U@vger.kernel.org
+X-Gm-Message-State: AOJu0YySY3XT/slrMXPcUzR/Kas2Z5MP2WKRSLWLr9mCHzYTBCltmqYm
+	I1iN7IvG5gXKyTpD39dRymx907vFbh05ugQww1BEoxuOpxHdw/e/XYfM
+X-Gm-Gg: ASbGncu2EHVOz+51wavAezsJUD/9LGWhuYOex3LSNX/cfhIS3BGglQpS8IQhXDTANuX
+	RPEvu0LxEhqvgvk/wudmgGKJ0yoUFx5JOF0KlDxeozLHc2CmfZQi4bEu0vIifQ1nCVJoXMoKNlC
+	yk2g17INDp+v6W3CqyPCMjuyAraQljS5KRF3/JCHoIREk7FdzJJ5C1yT8L2LfGy6KNaAxpyKRtw
+	UQTbP/uR7TyHwJBR5jE9MfFKbJ+2hD5zBe62uEjdqJ08b8+h0B++Mb6IvY6Bf2Xg8ECIt8HWRxi
+	Zu/Lv2FkJKyGSdcRqg5VoqaguqL1yBiaz8EvRwic/ufprwD3YLGoR0cPT1qYSs+OQ95wDGAtJ34
+	h7utjkQfvhcCY5Uta8XdlhT1RcVBTel7SPehYg08qcNwKk1yqWB68
+X-Google-Smtp-Source: AGHT+IHKLTpZT+rKd5jLQcBincXbnZMEjla8KZ1W+bnVw97cR9eh+2P4bso08EEf6Vmvk6LDOAlMXg==
+X-Received: by 2002:a17:902:c40f:b0:240:86fa:a058 with SMTP id d9443c01a7336-246023aec06mr141899325ad.7.1755966795783;
+        Sat, 23 Aug 2025 09:33:15 -0700 (PDT)
+Received: from localhost ([121.159.229.173])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3254ae9a763sm2617461a91.12.2025.08.23.09.33.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 23 Aug 2025 09:33:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1096; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=yxuy3oDJ08FCrS2YoJDAqGlTn0pBViRwW5im30kIBpM=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoqe06CKqz7vUiMX/kbfeMtXcTP08L2/emP36Fu
- j85/zUeakuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKntOgAKCRDBN2bmhouD
- 14R+D/4pm/ejDJYyjI2JDvZXREerlPNO9m1qSmi0mMowWiIXkWWOWxKHtQDHCRn8bpYMQqvedoY
- 5qT3c2EIqLROQg/54kSFJDSGDgy5gEDK08FL2uF27HXMD1PyMWaDEmyhpC5daRfjpf6H0dN0pMR
- abKotXNpGXBr8Xvvh2NPOoxRK0dp9e3Fzo971IhRUREJo7YDI1XiUpn7oqnMe6VAXePKsGF1Igi
- vMOP9Q+DZamATcJ3DyWEy+QeLHjXkSXisKlnTzdRssoHl4JoKTwPbEGwHFMYOWp2YlID7Of1mIP
- EP5EGdY/kwIms4ZzZcMN0lv4p/FrOMAS/rjvG7cqb7i+rd/IjlzscYYK6wkVb2hVoPSC+vuCl9L
- /QWz1TDq/Wd6nbkjd8QujodZRZVEMGTr5AypicnOVAfAg5Sc6z90vzaZDvs3ZrVJ49XgK8tnG+d
- eW3XRb1mMLfFg7xV1LR1tUF5ez2aqaHkj0DX1y9bbj0oZVsB3QIKWJ8Z7OU/ImL4eHFjDJhubuU
- jSgaH2lJFT2wfE+mNxa3BXQbm2TLjGTctZuyv2Z32MQZzbLt56IvWTofi263L05psauT4lOyawV
- HF/b1MGUXfYwKi8195yFpTQKxyx+v6vTdN/fMIggDQg5wkjgwCcfLEJlqweIZ9VW8+OpY5Su8q2 f91fdG/0GpnTbeQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 24 Aug 2025 01:33:11 +0900
+Message-Id: <DC9Y9ZQA78BC.34TLXL2P7VT3T@gmail.com>
+To: "Andrew Lunn" <andrew@lunn.ch>
+Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net v2] net: dlink: fix multicast stats being counted
+ incorrectly
+From: "Yeounsu Moon" <yyyynoom@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250822120246.243898-2-yyyynoom@gmail.com>
+ <8f47407c-fb5b-4805-a95f-ca15d6eb7838@lunn.ch>
+In-Reply-To: <8f47407c-fb5b-4805-a95f-ca15d6eb7838@lunn.ch>
 
-The CP110 ICU children are interrupt controllers and can be referenced
-in interrupt-map properties (e.g. in
-arch/arm64/boot/dts/marvell/armada-cp11x.dtsi), thus the nodes should
-have address-cells property.
+On Sat Aug 23, 2025 at 12:15 AM KST, Andrew Lunn wrote:
+> The hash for fixes tends to be shorter than that.
+>
+> Fixes: 3401299a1b9e ("de6*/dl2k/sundance: Move the D-Link drivers")
+>
+> If you add this to your .git/config
+>
+> [pretty]
+>         fixes =3D Fixes: %h (\"%s\")
+>
+> You can do
+>
+> git log --pretty=3Dfixes 3401299a1b9e747cbf7de2cc0c8f6376c3cbe565
+> Fixes: 3401299a1b9e ("de6*/dl2k/sundance: Move the D-Link drivers")
+>
+Thanks for pointing that out.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
----
+> This problem actually goes back further:
+>
+> git blame 3401299a1b9e~1 drivers/net/dl2k.c
+>
+> shows it was broken in the first commit in git.
+>
+> So the correct Fixes: tag is:
+>
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+>
+Regarding the Fixes: tag, I have one question. You suggested
+1da177e4c3f4 ("Linux-2.6.12-rc2"), which is indeed the first commit in
+the current git history. However, the actual code change seems to go
+back further, and I found it in the history.git repository.
 
-See
-https://lore.kernel.org/linux-devicetree/175589786306.518460.17450425303264875357.robh@kernel.org/
-for reference.
----
- .../bindings/interrupt-controller/marvell,cp110-icu.yaml       | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/marvell,cp110-icu.yaml b/Documentation/devicetree/bindings/interrupt-controller/marvell,cp110-icu.yaml
-index 9d4f06f45372..ddfce217e119 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/marvell,cp110-icu.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/marvell,cp110-icu.yaml
-@@ -49,6 +49,9 @@ patternProperties:
-       reg:
-         maxItems: 1
- 
-+      '#address-cells':
-+        const: 0
-+
-       '#interrupt-cells':
-         const: 2
- 
--- 
-2.48.1
-
+In such cases, should the Fixes: tag refer to the first commit in the
+mailine git tree, or to the actual commit in history.git where the bug
+originated?
 
