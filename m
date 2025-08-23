@@ -1,203 +1,209 @@
-Return-Path: <linux-kernel+bounces-783267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEDF7B32B0A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:47:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B1BB32B0E
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D6F31C215FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:46:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A5491C21A34
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE342F618F;
-	Sat, 23 Aug 2025 16:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636312E9EBC;
+	Sat, 23 Aug 2025 16:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i9+AuXiR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AV0luctv"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itdiEScC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A29D2F60AD
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 16:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455622E7BDC;
+	Sat, 23 Aug 2025 16:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755967247; cv=none; b=G+D9Pi1NS0bqGq3mQoT1DU5I8dvVBeo3gLnEvLhFN/I3q83bQzLk+jfSTkoPxBcoEHDYzbq0ucjXnqfXLDgRUFB2zamcE4Is/rJ5z0+NWYO29fBD+BndlM3ZxAvZR5zKp4mnZNQlmAKswcpBjPo6tXs95eWW9VvIxUWWKD7ls5k=
+	t=1755967424; cv=none; b=FzbRjNVIcWa8uyus557iE4+5/h9QiMq1D9vDitIWxhTyZ99mvcIkEiGIId/1GcOd54uHdIwRl7T2NuWvAwayKRAmcHGuYyyWHX+hOeeGJ7rKKCwgWBvem3p+NzrlcqVpowKe+x3I6O+88npcijFOIAV87HssNL1LwGZ+7mkkjOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755967247; c=relaxed/simple;
-	bh=V9KAdQxHT1BykTPxYCmx0HT7MswbXi5MlP61JRMEveU=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=Y7SmcqrGfrHnpqRpJGsNbzvzeAM3S/CLARC9WTa/hV+eoBZiwv163JAbFuwegZaolpBle/4WUg4K6WvDB3IUpP2Zohtz1CH1zC+ru2/8UXAvrI1ypWBAVYhpjmuo246GELyZqzo6whPOsxKYlz+yzuKBXs7znKdDqDMNIYip0vM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i9+AuXiR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AV0luctv; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250823161655.651830871@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755967243;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=TNP4jLdbe48UgP+IYEPS+/ksUC1Ye9huNyWBu/lGkwc=;
-	b=i9+AuXiR26Ek8Ba10/mTVPu4qYN1BlJacJyCtExrzsb8IqbojZH9Z5i5MjbRy5B2lHv4h9
-	KqmZU5ngR3UXv7RsZd5RgjcmtVR005E0WxHa95Y4hgRO3pNgWNL79k6wPuAhZnReURnoDQ
-	5A+gqRG3EyK6R+hpVpSFadAV1CxCgTPjuTBzrd8H7IsFWvVvMFUpxc4153k+VYa/+ssZiE
-	yb/fwfdKUh3azJXkhtg+QMIUOg8J2OI0gfImIL8IqH+lL0amdHnXYnw2MEVlZcWNgdUqs/
-	tNrSsiPyNVcKgKYThJLSRYbesVDagTZ2x49gSApjZOMgBmT7tr8yurjABqyABA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755967243;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=TNP4jLdbe48UgP+IYEPS+/ksUC1Ye9huNyWBu/lGkwc=;
-	b=AV0luctvMe9fGc/1sDDegNo/5laCwk/ky+87CaSDYqWC3sFlj4HdR2ERsLK91DloCAbPlI
-	Pp+h/l6aOlysHdCA==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Sean Christopherson <seanjc@google.com>,
- Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>,
- x86@kernel.org,
- Arnd Bergmann <arnd@arndb.de>,
- Heiko Carstens <hca@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- Huacai Chen <chenhuacai@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [patch V2 37/37] entry/rseq: Optimize for TIF_RSEQ on exit
-References: <20250823161326.635281786@linutronix.de>
+	s=arc-20240116; t=1755967424; c=relaxed/simple;
+	bh=xFZkeJN2BuDgCkOi+KgCMmmiWf02TF4MkQxM0ILCb/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fjBISyCS4bJlAyjJbpHKfpblIcDwbstrw4DMkMz7EA2zA7jh4UcW2dmUmdHo75RHC8cMr2kSKdz/SZOG7P5WUi7ey6DlxY1B/EBC00nvXtGjKFikwkCxV4X85X2QmvZn/+EQaUvwNxyzutsfSedNMk8S8dvTBZe96SzFUIkAyxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itdiEScC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D084DC113CF;
+	Sat, 23 Aug 2025 16:43:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755967423;
+	bh=xFZkeJN2BuDgCkOi+KgCMmmiWf02TF4MkQxM0ILCb/c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=itdiEScC2Beeu6c63pmd/CTzPnWhE183hRyVzasZY+gmKVI5vd3nuihdYSmXUtzqM
+	 n5pXlMOZ4f4CfdZ3y+9TL4OAfKF1rUicpUcWpAKV25yexOoQiIUVRBOvzvVlnT7m1x
+	 Ow/syOgbGs/7sFzlP8M9T9k2hQaa02Q05lgaQ79U07gOCwpaS6+/LYxvOeLuY9D4Yg
+	 tFdZWFXEVSKg+nsuehNXz2gcumXyv2a/Cv5In16FOD/gqLYo3Ce8RoRceAlgwmH+KZ
+	 F0iWduD+DHlVLd9Xvqi99qFs+b/bjDIb80nCd1xXSh9G2AR1wHFNtLXyjiCEgmjyyG
+	 kbRIEhswFKxGg==
+Message-ID: <7c6cc42c-fc76-4300-b0d2-8dabf54cf337@kernel.org>
+Date: Sat, 23 Aug 2025 18:43:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 000/114] clk: convert drivers from deprecated round_rate()
+ to determine_rate()
+To: Brian Masney <bmasney@redhat.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+ Cristian Marussi <cristian.marussi@arm.com>,
+ Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Paul Cercueil <paul@crapouillou.net>, Keguang Zhang
+ <keguang.zhang@gmail.com>, Taichi Sugaya <sugaya.taichi@socionext.com>,
+ Takao Orito <orito.takao@socionext.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Jacky Huang <ychuang3@nuvoton.com>,
+ Shan-Chun Hung <schung@nuvoton.com>, Vladimir Zapolskiy <vz@mleia.com>,
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>, Yixun Lan <dlan@gentoo.org>,
+ Steen Hegelund <Steen.Hegelund@microchip.com>,
+ Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com,
+ Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Michal Simek <michal.simek@amd.com>, Maxime Ripard <mripard@kernel.org>,
+ =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+ Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>,
+ Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Neal Gompa <neal@gompa.dev>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Daniel Palmer <daniel@thingy.jp>, Romain Perier <romain.perier@gmail.com>,
+ Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Heiko Stuebner <heiko@sntech.de>, Andrea della Porta
+ <andrea.porta@suse.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Alex Helms <alexander.helms.jy@renesas.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Liviu Dudau <liviu.dudau@arm.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ sophgo@lists.linux.dev, linux-mips@vger.kernel.org, imx@lists.linux.dev,
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+ linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com,
+ linux-actions@lists.infradead.org, asahi@lists.linux.dev,
+ linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+ <1907e1c7-2b15-4729-8497-a7e6f0526366@kernel.org> <aKhVVJPEPxCoKKjI@x1>
+ <4d31df9e-62c9-4988-9301-2911ff7de229@kernel.org> <aKhr8NYhei59At0s@x1>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <aKhr8NYhei59At0s@x1>
 Content-Type: text/plain; charset=UTF-8
-Date: Sat, 23 Aug 2025 18:40:42 +0200 (CEST)
+Content-Transfer-Encoding: 7bit
 
-Further analysis of the exit path with the seperate TIF_RSEQ showed that
-depending on the workload a significant amount of invocations of
-resume_user_mode_work() ends up with no other bit set than TIF_RSEQ.
+On 22/08/2025 15:09, Brian Masney wrote:
+> On Fri, Aug 22, 2025 at 02:23:50PM +0200, Krzysztof Kozlowski wrote:
+>> On 22/08/2025 13:32, Brian Masney wrote:
+>>> 7 of the 114 patches in this series needs a v2 with a minor fix. I see
+>>> several paths forward to merging this. It's ultimately up to Stephen how
+>>> he wants to proceed.
+>>>
+>>> - I send Stephen a PULL request with all of these patches with the minor
+>>>   cleanups to the 7 patches. Depending on the timing, Stephen can merge
+>>>   the other work first, and I deal with cleaning up the merge conflicts.
+>>>   Or he can if he prefers to instead.
+>>>
+>>> - Stephen applies everyone else's work first to his tree, and then the
+>>>   good 107 patches in this series. He skips anything that doesn't apply
+>>>   due to other people's work and I follow up with a smaller series.
+>>
+>> Both cause cross tree merge conflicts. Anyway, please document clearly
+>> the dependencies between patches.
+> 
+> This series only touches drivers/clk, so it shouldn't cause any issues
+> with other subsystems, unless there's a topic branch somewhere, or I'm
+> missing something?
 
-On architectures with a separate TIF_RSEQ this can be distinguished and
-checked right at the beginning of the function before entering the loop.
+Individual maintainers handle subdirectories.
 
-The quick check is lightweight so it does not impose a massive penalty on
-non-RSEQ use cases. It just checks for the work being empty, except for
-TIF_RSEQ and jumps right into the handling fast path.
+> 
+> There are some drivers under drivers/clk/ where there is an entry in the
+> MAINTAINERS file that's not Stephen, although it wasn't clear to me if
+> all of those people will send PULL requests to Stephen. I described on
+> the cover how how the series was broken up.
+> 
+>   - Patches 4-70 are for drivers where there is no clk submaintainer
+>   - Patches 71-110 are for drivers where this is an entry in MAINTAINERS
+>     (for drivers/clk)
 
-This is truly the only TIF bit there which can be optimized that way
-because the handling runs only when all the other work has been done. The
-optimization spares a full round trip through the other conditionals and an
-interrupt enable/disable pair. The generated code looks reasonable enough
-to justify this and the resulting numbers do so as well.
+It's hidden between multiple other descriptions of patches, so I really
+would not think that this means that it is okay by individual maintainer
+to take the patch.
 
-The main beneficiaries are blocking syscall heavy work loads, where the
-tasks often end up being scheduled on a different CPU or get a different MM
-CID, but have no other work to handle on return.
+This really should be the one most important part of the cover letter
+for something like this.
+..
 
-A futex benchmark showed up to 90% shortcut utilization and a measurable
-improvement in perf of ~1%. Non-scheduling work loads do neither see an
-improvement nor degrade. A full kernel build shows about 15% shortcuts,
-but no measurable side effects in either direction.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- include/linux/rseq_entry.h |   14 ++++++++++++++
- kernel/entry/common.c      |   13 +++++++++++--
- kernel/rseq.c              |    2 ++
- 3 files changed, 27 insertions(+), 2 deletions(-)
-
---- a/include/linux/rseq_entry.h
-+++ b/include/linux/rseq_entry.h
-@@ -11,6 +11,7 @@ struct rseq_stats {
- 	unsigned long	signal;
- 	unsigned long	slowpath;
- 	unsigned long	fastpath;
-+	unsigned long	quicktif;
- 	unsigned long	ids;
- 	unsigned long	cs;
- 	unsigned long	clear;
-@@ -532,6 +533,14 @@ rseq_exit_to_user_mode_work(struct pt_re
- 	return ti_work | _TIF_NOTIFY_RESUME;
- }
- 
-+static __always_inline bool
-+rseq_exit_to_user_mode_early(unsigned long ti_work, const unsigned long mask)
-+{
-+	if (IS_ENABLED(CONFIG_HAVE_GENERIC_TIF_BITS))
-+		return (ti_work & mask) == CHECK_TIF_RSEQ;
-+	return false;
-+}
-+
- #endif /* !CONFIG_GENERIC_ENTRY */
- 
- static __always_inline void rseq_syscall_exit_to_user_mode(void)
-@@ -577,6 +586,11 @@ static inline unsigned long rseq_exit_to
- {
- 	return ti_work;
- }
-+
-+static inline bool rseq_exit_to_user_mode_early(unsigned long ti_work, const unsigned long mask)
-+{
-+	return false;
-+}
- static inline void rseq_note_user_irq_entry(void) { }
- static inline void rseq_syscall_exit_to_user_mode(void) { }
- static inline void rseq_irqentry_exit_to_user_mode(void) { }
---- a/kernel/entry/common.c
-+++ b/kernel/entry/common.c
-@@ -22,7 +22,14 @@ void __weak arch_do_signal_or_restart(st
- 	/*
- 	 * Before returning to user space ensure that all pending work
- 	 * items have been completed.
-+	 *
-+	 * Optimize for TIF_RSEQ being the only bit set.
- 	 */
-+	if (rseq_exit_to_user_mode_early(ti_work, EXIT_TO_USER_MODE_WORK)) {
-+		rseq_stat_inc(rseq_stats.quicktif);
-+		goto do_rseq;
-+	}
-+
- 	do {
- 		local_irq_enable_exit_to_user(ti_work);
- 
-@@ -56,10 +63,12 @@ void __weak arch_do_signal_or_restart(st
- 
- 		ti_work = read_thread_flags();
- 
-+	do_rseq:
- 		/*
- 		 * This returns the unmodified ti_work, when ti_work is not
--		 * empty. In that case it waits for the next round to avoid
--		 * multiple updates in case of rescheduling.
-+		 * empty (except for TIF_RSEQ). In that case it waits for
-+		 * the next round to avoid multiple updates in case of
-+		 * rescheduling.
- 		 *
- 		 * When it handles rseq it returns either with empty work
- 		 * on success or with TIF_NOTIFY_RESUME set on failure to
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -134,6 +134,7 @@ static int rseq_stats_show(struct seq_fi
- 		stats.signal	+= data_race(per_cpu(rseq_stats.signal, cpu));
- 		stats.slowpath	+= data_race(per_cpu(rseq_stats.slowpath, cpu));
- 		stats.fastpath	+= data_race(per_cpu(rseq_stats.fastpath, cpu));
-+		stats.quicktif	+= data_race(per_cpu(rseq_stats.quicktif, cpu));
- 		stats.ids	+= data_race(per_cpu(rseq_stats.ids, cpu));
- 		stats.cs	+= data_race(per_cpu(rseq_stats.cs, cpu));
- 		stats.clear	+= data_race(per_cpu(rseq_stats.clear, cpu));
-@@ -144,6 +145,7 @@ static int rseq_stats_show(struct seq_fi
- 	seq_printf(m, "signal: %16lu\n", stats.signal);
- 	seq_printf(m, "slowp:  %16lu\n", stats.slowpath);
- 	seq_printf(m, "fastp:  %16lu\n", stats.fastpath);
-+	seq_printf(m, "quickt: %16lu\n", stats.quicktif);
- 	seq_printf(m, "ids:    %16lu\n", stats.ids);
- 	seq_printf(m, "cs:     %16lu\n", stats.cs);
- 	seq_printf(m, "clear:  %16lu\n", stats.clear);
-
+Best regards,
+Krzysztof
 
