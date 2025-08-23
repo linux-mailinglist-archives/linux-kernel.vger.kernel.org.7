@@ -1,372 +1,358 @@
-Return-Path: <linux-kernel+bounces-783066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA4BB328FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:04:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A708B32901
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FF46A215B0
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:04:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FC425C07BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526B4255E23;
-	Sat, 23 Aug 2025 14:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A862586C7;
+	Sat, 23 Aug 2025 14:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="bLcvBQEd";
-	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="bLcvBQEd"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11021123.outbound.protection.outlook.com [52.101.70.123])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dA9IkALg"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2077.outbound.protection.outlook.com [40.107.93.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C965324500A;
-	Sat, 23 Aug 2025 14:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.123
-ARC-Seal:i=4; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755957868; cv=fail; b=r/15G5pbNAY67nWSyQ7DPitWkwe18eBWOpM+zSaxLzpaVKrv3W6u/gn3zzspDEccQNMyT3gNgTYXz5J3HtbFLKl3qChe7fnwiGufw/98qM3KcMVE6Fbpz8SHGJth9eSsvmoplk/fWRrRmG0DfrirKLj40qsMbW5yD0X4TKVr+Tg=
-ARC-Message-Signature:i=4; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755957868; c=relaxed/simple;
-	bh=own6X2o3CNPjIf7/ii7zOibV1WTDjbfKa8oAlENdtuQ=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=RIxQm6l0U8u8l2cf0ENCw7P9toDaLBecBFGlnXPgUMBknoT9tC+GbxV+6/C4GLd5zOUIImIjqz1w48MHAKohtbn+ZxorLifgTVUuIMtyBPHpCZDc5aGfEDRyqGll9nbwhOR5Rqf0MOlZnaZMymgrpsZxPE2zb5SlHiEqWYDVAao=
-ARC-Authentication-Results:i=4; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=bLcvBQEd; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=bLcvBQEd; arc=fail smtp.client-ip=52.101.70.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
-ARC-Seal: i=3; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=Ox96QA0fq8o7Zg+dFZ91Y/y/5aTansFuo8ahciWQ7Vh2wgtdVJwQayYeP9cfdxTGzEdgaKVY+d7AZGc+LpActpTLQS151iFJpGam/5sxa1BQI5Y6qPOGQpS30AOwwDWyK5smrnEoLmwPLbJfMKiemEUT80WY/qIqEcfchh1zpy7XM1BXoag54biFftg6yEMZxpFn0FlORtxMOcsFGzJ251+R/x8ULBmpPRAflSoNOe399kLRg4y7CFQqCYoVJta02FMev0rNgUgLylCZtgcIcBrs6KOy7CKX+99WQwISBB/3zO5+bXj5BVLe7WADiKrnZv/zjD8xAok0pYyQYkPybA==
-ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LQK1lBeCc/0ugb5+7/moJkDzuBtmAiVUN3sF0IKtNs4=;
- b=fao+y8uSEktctUZ3Q+SwHusQOWSf1qI/oWup4F2THc1RsV1NA/WCV4vqpmv8swI0OcXVwYsfzEn+xWmbU7QDdQRstbHgNaFNdJb/+rQGrpb3pf7cgdFtsJw8PD7+T82N6KWqkIU6Ty1KqIike3yjuZ60qSzaWFeCbr/oqaOiUiKCfqsW5XqkZyeECudYVnt0Hw7eJ9+giT6YbdfrpZQP4padk791xNFn5sChPEfuIs195Vr69UcuMMJ8ppXQmuXpMpV515npW55mAAvTLxH8WcVlnot2WVQIkex8xffbKmkBEmPJuwdTo1lz1scs27mTYjpafFKp8qOVkLP5irx+gA==
-ARC-Authentication-Results: i=3; mx.microsoft.com 1; spf=fail (sender ip is
- 52.17.62.50) smtp.rcpttodomain=armlinux.org.uk smtp.mailfrom=solid-run.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=solid-run.com;
- dkim=pass (signature was verified) header.d=solidrn.onmicrosoft.com; arc=pass
- (0 oda=1 ltdi=1 spf=[1,1,smtp.mailfrom=solid-run.com]
- dkim=[1,1,header.d=solid-run.com] dmarc=[1,1,header.from=solid-run.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LQK1lBeCc/0ugb5+7/moJkDzuBtmAiVUN3sF0IKtNs4=;
- b=bLcvBQEddGNeoLK6IxbnNOKYWhsN1f1sZSZFEG+f19t4GMEAYVyYYbURdvoRF01cMUrs8AUd8eiFxUb7ZBE+ZIi/7xLblQNdgKDn8X3USM6P9rE+sxEfe7FueaYBpopRWa5QC/wJL7mPWmLJvYk+pqQfs1Tpvh/lydD3i7VU08E=
-Received: from PR1P264CA0011.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:19e::16)
- by GV1PR04MB10127.eurprd04.prod.outlook.com (2603:10a6:150:1ad::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.12; Sat, 23 Aug
- 2025 14:04:20 +0000
-Received: from AMS1EPF0000004A.eurprd04.prod.outlook.com
- (2603:10a6:102:19e:cafe::e6) by PR1P264CA0011.outlook.office365.com
- (2603:10a6:102:19e::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.20 via Frontend Transport; Sat,
- 23 Aug 2025 14:04:20 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 52.17.62.50)
- smtp.mailfrom=solid-run.com; dkim=pass (signature was verified)
- header.d=solidrn.onmicrosoft.com;dmarc=fail action=none
- header.from=solid-run.com;
-Received-SPF: Fail (protection.outlook.com: domain of solid-run.com does not
- designate 52.17.62.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=52.17.62.50; helo=eu-dlp.cloud-sec-av.com;
-Received: from eu-dlp.cloud-sec-av.com (52.17.62.50) by
- AMS1EPF0000004A.mail.protection.outlook.com (10.167.16.134) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.8
- via Frontend Transport; Sat, 23 Aug 2025 14:04:19 +0000
-Received: from emails-2415305-12-mt-prod-cp-eu-2.checkpointcloudsec.com (ip-10-20-6-236.eu-west-1.compute.internal [10.20.6.236])
-	by mta-outgoing-dlp-467-mt-prod-cp-eu-2.checkpointcloudsec.com (Postfix) with ESMTPS id 426E77FEF8;
-	Sat, 23 Aug 2025 14:04:19 +0000 (UTC)
-ARC-Authentication-Results: i=2; mx.checkpointcloudsec.com; arc=pass;
-  dkim=none header.d=none
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed;
- d=checkpointcloudsec.com; s=arcselector01; t=1755957859; h=from : to :
- subject : date : message-id : content-type : mime-version;
- bh=LQK1lBeCc/0ugb5+7/moJkDzuBtmAiVUN3sF0IKtNs4=;
- b=WgW9dYd8gSOC6Eo7NvobsVwqJeBs52VggaKm1g+0z9/9z+bcxvvYmickvFFO1Wf4IP600
- Hv+HEoSOuFSIT0F9oNqzx05bdjOfhEgloz/Id81bTVz0CXxntQJk/21fYLnkLtsy2w5q+02
- +wB64OUCBYPgWfItsCcZGv3fy7GVl6Y=
-ARC-Seal: i=2; cv=pass; a=rsa-sha256; d=checkpointcloudsec.com;
- s=arcselector01; t=1755957859;
- b=e/FbL5e2oHmK9Y+Xg9aKOTTS55O4+I+V4QTitFfq7Ha7bXbXsC2O8MbmRHSfw/1FG4qxr
- VMhkEcmHLsRTxwQ9quCU6svnWbETCTCnNxYI4YLnsCYj2QoMrzkSWJ9tazDWfeYjVzlCk3z
- o3Ae2iR6Q2zlSW+LJF7RGdDx79BBJ18=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79E31F4174;
+	Sat, 23 Aug 2025 14:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755958371; cv=fail; b=cMGUL+XBFqKOZIVejlXFap5BtheW7VH+lN9VVHwCyvz6DHN/Cw8xLvsljGj75T3LJQaFDA/WB5/ugX5lrEXnJKiSU81/e+f+jdirZAlULPC9vTKAx6qUDC1F44ewjK8khRCAAUyJxu/9ZQzljCXCqVkaYnWZCv27AgsPzgDps74=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755958371; c=relaxed/simple;
+	bh=evvEqR3+eJ8/MwQqC5APVNlCklktZ8lT3PkjjutsDGM=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=AwH+v/gSorh3wWpTDQUqE8Mr9AICI+xy/uXpVxfYyN1ZdH63cGOmrDPe90VvatVjZ2m7bgfs+tkXmR/b9X1Bk6gQK/vCxVSSGYge5Xx9SHfJtM/ozW4TgC0rNURB09T1/xIT/zUiU/bCzZaiii3t5SntSdYFqrKcWaDqP4S7iC8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dA9IkALg; arc=fail smtp.client-ip=40.107.93.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kJ+x19qtZ6Ux6+T76kAT5ku6poYOAi+khbe3qC7JGK4pI2hcw6QjUp3jlJv1ktulzGL9lMlZLHR/acGBU3+G/WhfWCK+RBaRpnhgdYkDn7TcQ/ihiaXw9xswhiECslYxQGFApGuvDIeKKYQo0KonrQVa1nZL/cc6ZaSBWnFlCkf/zGJlD7HH6jZDgDL7wV0fuaRkiBOYohX6h6aj/7Epolh2vTNGz29Inciu6Eh0z+W/45CmfeAx/jOj6SmF8v7xuimsc33dXJzBxWCBrKxU630nw4HF0ARj/HB1OL70VD//c4u6ggY27hNcs2RcsahTEwllut3M39XvhlYcQiG9ew==
+ b=VIWQEJRS0hyTMhqI0mN3jVd+3R/lU+ljT77Uj2jEHc7ocj+wnWrnZkA7Izid7Xos3nfTIjRQDx3RPrikphbCP4Ri0SySjKB2+Zh6DhXe9clySfTyD1Zcvm/EMVDZi6DbptPYYkkFBq5Zr48moFT0IedilH61/LmJve/a1gV+9pqULIy0GT92wmdCON/Dno6bxQki1eRe3/Sk+TxMvMGe2kRFlah+O8qjOwjGMRsw1P8GY6X3aq78ES6fWuJjgGy/EKng4PbwaVHjn2gw9Ru+6ouuKvlHxwhN+ohQHTb+8/QYOnRLXjepwLqa/r+lPMWhbnz9R4wW1WqeJBVdtoSssg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LQK1lBeCc/0ugb5+7/moJkDzuBtmAiVUN3sF0IKtNs4=;
- b=FiX89GyV/iwf0t9S2upxgeNZrFlTQszkkZ6D/T14X0VQjndJdJTdu/yjmnxfGr2T88IpPmaBZ2p+WIWODpohoa4D49tdShdroZwlMMI9B4SHcRg/4BaYtU8nhSDsioX0BHGfzQbHeigNc4UZmsS/79ReTo7w2Ya+/VQVGgarW/Gh6EYrtU3nshkekdtNsPJwDweazwsAkg1UUA7DRe+iaiEdbnmLYeg0ergNlHeoJpvwH57TEy5kgJK13d/ht6cVXMjCy8ykpdDJr/lQu8YrFGQ0AiY+yzHvjD90wVdhgCZrjSbB3V7OP4rsWKMas8U5DEoxVE9VkkMUzWnQZRr2tw==
+ bh=ScLZAwRXzjgaDwEdDU+oH+olbPhfy8uj5I1By3h9vvc=;
+ b=DOB0bCX77QUP4qcY1J5B8ZRRYF7K33FuqAcUNWW1N2yPB0a//qLVAHPccCBzAnkJS7wSK1ucIRhLx1sWkoFsBkV75cjU/4dQq2hM6T1tV7Hp2Ecxg5SCV4gQDSesBoMR75E14nmm4ruY2G2vNnxHEcN2Q23nhuaOtVVHHooA0HBZB62wECBUtHWuo4ic1CktSX0Wf4bAhCeAe2THq91AZE4cRfXevLJq586dT4ydXhZHeFvYggqg5YOCp49dDLriyzdAE5yMpSIvFjIGKrx5hyosmoIhvDPlhxLTKNl1lxjg8q5U4xreUi5rOmJee19mr+NSyaih9hYNLG1/AAtdGw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=solid-run.com; dmarc=pass action=none
- header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LQK1lBeCc/0ugb5+7/moJkDzuBtmAiVUN3sF0IKtNs4=;
- b=bLcvBQEddGNeoLK6IxbnNOKYWhsN1f1sZSZFEG+f19t4GMEAYVyYYbURdvoRF01cMUrs8AUd8eiFxUb7ZBE+ZIi/7xLblQNdgKDn8X3USM6P9rE+sxEfe7FueaYBpopRWa5QC/wJL7mPWmLJvYk+pqQfs1Tpvh/lydD3i7VU08E=
-Received: from PAXPR04MB8749.eurprd04.prod.outlook.com (2603:10a6:102:21f::22)
- by DBAPR04MB7223.eurprd04.prod.outlook.com (2603:10a6:10:1a4::22) with
+ bh=ScLZAwRXzjgaDwEdDU+oH+olbPhfy8uj5I1By3h9vvc=;
+ b=dA9IkALgyVS3zLl06A2kvJ7gKnLd8mbmMEfNGam0EM4SKPwq88EJHVfk4gXbIqGjcJO3B67TSPaBoP+RRnkySg9KUL1E6wAvIuWJPTFUxYlgQ3ROER7isliMH1dL55aEKmZmxCY5DrkhFgbZxbMtCelZKzjFsm4GMW0r5saThe+p2tTLXD8KNRIaBWLQ0tv63ryqJonOLHUyw7uAEsfN2P8ljGLKRmmQHwhrtdljGcGIG/kycV5v2yFf6sG7y4CvhubqV1QQhLGWjgFB7NZrTxdQ7FxmTA11yAjTB14ZFIAHmDeLYb7BPEUPeIjfBq+PgX0Ha2R56qagbc0JGFPsBA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by BN3PR12MB9570.namprd12.prod.outlook.com (2603:10b6:408:2ca::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.10; Sat, 23 Aug
- 2025 14:04:09 +0000
-Received: from PAXPR04MB8749.eurprd04.prod.outlook.com
- ([fe80::aa83:81a0:a276:51f6]) by PAXPR04MB8749.eurprd04.prod.outlook.com
- ([fe80::aa83:81a0:a276:51f6%4]) with mapi id 15.20.9073.009; Sat, 23 Aug 2025
- 14:04:09 +0000
-From: Josua Mayer <josua@solid-run.com>
-Date: Sat, 23 Aug 2025 16:03:12 +0200
-Subject: [PATCH RFC net-next] net: phy: marvell: 88e1111: define gigabit
- features
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250823-cisco-1g-sfp-phy-features-v1-1-3b3806b89a22@solid-run.com>
-X-B4-Tracking: v=1; b=H4sIAB/KqWgC/x2MQQ6CMBAAv0L27CZLFQGvJj7Aq+FA2i3spTTda
- jCEv1s8ziQzGygnYYVbtUHij6gsoUB9qsDOY5gYxRUGQ6ahzpzRitoF6wnVR4zzFz2P+Z1Y0VJ
- /JddfGkctlD4m9rL+3y94Pu6HC5wx8Jph2PcfqaZe2XwAAAA=
-X-Change-ID: 20250823-cisco-1g-sfp-phy-features-c0960d945d07
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Russell King <rmk+kernel@armlinux.org.uk>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Josua Mayer <josua@solid-run.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: FR2P281CA0157.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:99::18) To PAXPR04MB8749.eurprd04.prod.outlook.com
- (2603:10a6:102:21f::22)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.19; Sat, 23 Aug
+ 2025 14:12:46 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9052.014; Sat, 23 Aug 2025
+ 14:12:46 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 23 Aug 2025 23:12:43 +0900
+Message-Id: <DC9VAFQUGJ77.3E5GETM4HPPUK@nvidia.com>
+Cc: <akpm@linux-foundation.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>, <abdiel.janulgue@gmail.com>,
+ <jgg@ziepe.ca>, <lyude@redhat.com>, <robin.murphy@arm.com>,
+ <daniel.almeida@collabora.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/5] rust: scatterlist: Add type-state abstraction
+ for sg_table
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Danilo Krummrich" <dakr@kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250820165431.170195-1-dakr@kernel.org>
+ <20250820165431.170195-4-dakr@kernel.org>
+ <DC9U87GQ7ONZ.1489DEN1PPUAC@nvidia.com>
+ <DC9URZWE8Z4B.2R7NDRMFKENGK@kernel.org>
+In-Reply-To: <DC9URZWE8Z4B.2R7NDRMFKENGK@kernel.org>
+X-ClientProxiedBy: TYCP301CA0080.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:7b::9) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	PAXPR04MB8749:EE_|DBAPR04MB7223:EE_|AMS1EPF0000004A:EE_|GV1PR04MB10127:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7b379798-4469-41d6-15cb-08dde24df45d
-X-CLOUD-SEC-AV-Info: solidrun,office365_emails,sent,inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|BN3PR12MB9570:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1a940f8e-f465-479b-5b5f-08dde24f2231
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?VEF2VE44YXN3TFhZM3VPN1h3bGxvMHhwUHYxNzJTRGhGUnlLMzdSaXMyT0Vq?=
- =?utf-8?B?Wkg0K3RGZldtTFoyZEg2K25UVkxwM0hxekhydThHU0trOHJXYmZEQmVkNlpM?=
- =?utf-8?B?bmdvUVg4V1hBK08yTWx2MmhYOXNTUy80SEE4UGtZVEUrY3lwVkNMemVPVGZU?=
- =?utf-8?B?c0V5Kyt6ejBscU5ESzBlc1ZUYjhUNXdVbisxZUJ0MW11eUdYOHhmalRZeDRX?=
- =?utf-8?B?YTd5aUNPYjVIczdwQXhDMWZiQ1FRdkpIRkFlSTQ1K2RuVjlrc3JCdEk3Y3lN?=
- =?utf-8?B?NmtrRXNCYlBYS09YbG5NcytPajVyYUYvMlhUZTFFQXIzaXFGSjV6blpBc1l5?=
- =?utf-8?B?cGczWGdVZWw2eHB6N0ttaFpDN1NtL09icWRIS0VYeWdmWFpPUGkrWHVEanZ1?=
- =?utf-8?B?aXZDUUZ4dHg0azNOaG4va3NwckVuUWdLUVluc3VwbjY2aCt3cEhRRE5PV3Bz?=
- =?utf-8?B?cnJqUXUyZTZpQlR2VWdGaVc3TXlkU3FBNkQ0V3RoTGVRYk1uMUNQbnVzZ3dD?=
- =?utf-8?B?clFDVGUzbTBEY1RTTUdsQVlDN0VhVDNDOUV6WUMrVi85YnpTTVRDUmhYVTcz?=
- =?utf-8?B?RytmeU5uWHd0WlMxc2x1dWpocExLVzMvUTc0WHpKNXlNWWVmME9EczMrMjNR?=
- =?utf-8?B?ZGs3SHZTTUhRbllMWXpDaGE4Qit3UlovNU9JMDl0ZmVUaVMyVnBnb3F3TFFo?=
- =?utf-8?B?YlJOcWZRaGpnbDlYblBRTjRCeVh5V3IzSFhYS2VhNXdScmNsSThzUk9qcE9P?=
- =?utf-8?B?VWp4K29MTmpFWEpESGhEaDRUdHY1RGswTVE4TWc2N3RoUHdrUHhkQzVza0JB?=
- =?utf-8?B?clFkYi9FVGpOcjFOREF1YU1SbWFYRXltS1dKZk4rS2dMaHZIWDVKRU1YVjZs?=
- =?utf-8?B?LzUrWGx2WFEvVTIyVnJWYmFKVEpEeGVhNXQybWxrR0ZNdWlpMmVPQzRxYzRG?=
- =?utf-8?B?aS94M0YrVWx3cjEyUkRCSTc0TkhwdytHZE9CS1VOZ1I4NTh6YVUzMmU1VkZh?=
- =?utf-8?B?VG4rNkd3a1Fxbkl6djBSNVRuclFaTDdWbzVQZmgzNXFybzB3ekY4MmxJMGUz?=
- =?utf-8?B?c1dRV2srd3pQSTJacVNGbHREVzBVL1JXbkM0WEhLemFwWTErNG8yRzBlZERY?=
- =?utf-8?B?aE9lVTRKTkxJT0F4cGtlUlFFZjBHVVJkYWZldU0vTVRwQzAvQmU5czNTVnlx?=
- =?utf-8?B?WitSaDRtb0tZTDJsa0xDd0cyb09DQ29OSWFTZzJoUFhJNkJHTFBNLzlKYWpm?=
- =?utf-8?B?dlVsUEdBRldyQWJZV0c1WStPekFqL2NpbGxEVG5Rc2ttTDQzcENlK0NDR01j?=
- =?utf-8?B?Q2xneUJLbWVzSDNoUTYycmozZ085cWxtMW5LT0VaTE9uTlNUMDF4WVk1aEU2?=
- =?utf-8?B?TUkzUXkrVmxJVDdETm9GNzQreGpmTmVUM0ZJYytIRWgwN2hwcWZqVVhzSXhz?=
- =?utf-8?B?WVdiWklTcFVMSVhQaFhjbzA0dTMrYnh1aFk4cnFXZVRmTkowM0tZTWlNVTFL?=
- =?utf-8?B?VTVwWG1KWGRjOHdYOEQrWFNOSzhSU0hCTVE3U0JmZnBUb2s2b3R3NG1teTM1?=
- =?utf-8?B?UkdnZU1RRTZBcFMwN1dxNXdWYlVnNVY3ZFJtN1llWnZsUG5WbkZlTlJ0MUt5?=
- =?utf-8?B?Zy95N2lTZjZ2SFhxM29oZ0lwdy9XdXRyU0FwNXVXYWJpN1F1WStXNW5pemxX?=
- =?utf-8?B?WWJDbUNYenY0OWwzNGI4SUNUclBoTGlRcEJER2FkVGZ2azFXSlM5eDBwZ3M3?=
- =?utf-8?B?czZ0Vi9rMWErRjVyYVBsU01jb28yYzBIaWpGRUZSWmRVeXExQjRYbmhzNWll?=
- =?utf-8?B?eWZaTGtJbEJMNU1Tdzk1MDM2Sk5FakJqUVVYNDFKenpDUTRmMUtyTmJ4dWRa?=
- =?utf-8?B?dWlDWXhsMmFmdU1taCtIYm1tbEFEVEwzbjZYYkFnaktneWJDbng1dERIKzJ0?=
- =?utf-8?B?MTFMdFExaVVDV3R0OW13N0EzSFFERGJscmhUZ2VDTllpbGVtaTNvM3VXWmpH?=
- =?utf-8?B?SXFCTTIyMzVBPT0=?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8749.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7223
-X-CLOUD-SEC-AV-INT-Relay: sent<mta-outgoing-dlp-mt-prod-cp-eu-2.checkpointcloudsec.com>
-X-CLOUD-SEC-AV-UUID: c5d8807fc23c4e798ed3fe715c4d6030:solidrun,office365_emails,sent,inline:3543046d6dcd52ebe74ff387f2f8ac99
-Authentication-Results-Original: mx.checkpointcloudsec.com; arc=pass;
- dkim=none header.d=none
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AMS1EPF0000004A.eurprd04.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	618ca881-9cb5-4220-da9e-08dde24dee2b
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|14060799003|376014|7416014|36860700013|35042699022;
+	BCL:0;ARA:13230040|7416014|376014|10070799003|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VzJmNXc3ZDN0OGNkQjl0RUI5SjV3cVFHUDZndlF4RkdZN0NtU0x0RjlqUC9V?=
- =?utf-8?B?TFViWURGc2N3NmpCOE5nc00vUVhCYlJUWG5xYVQwWk8vSW1PRFY4OEJVSi9T?=
- =?utf-8?B?SnF1UnZIUGVhQnpZMGs0YUFPMi9zK3U1NTh0V1pneW9lSXRjYmFObHVDdGF1?=
- =?utf-8?B?WTRKWFgvN2tENjNJSUtnQXFvbHVmRHRQVzYvT3lXQ0thS0NNV1VmQlduREVB?=
- =?utf-8?B?TVphWjBUdDk5ZHpXNXNzbndKQlhsMkNJbWdRdnNHSy9aU0FVQ2dxS1ZKKy9F?=
- =?utf-8?B?VUpRelEyUlFrTk04aURVOU9TU2QxS2l4bWh1R0tRRWhXekdYd3R5ZXNyMWN3?=
- =?utf-8?B?aW1TV1J5cnZnM3BoM0dxN3pid2g3eUozdXZhWGROUVR0MFBJb0k4V1kvMEpx?=
- =?utf-8?B?TnZ4QUcvUGpBMnBKUVhIRHd4T3dIakpNc2xrWUxuYjdWN3M2T1VHTERSY1k0?=
- =?utf-8?B?NlozYkFKU1pyWmJMNGxBUVJFMVUyL1RCc3JzWVd3UFZpL285WkxuVmRoNkpO?=
- =?utf-8?B?VWJSODJlZUY3cFRsbU9lN01seFRaQjFzdjVpOG1KNUdFT0JkNmhDVHpsSi9i?=
- =?utf-8?B?cTh1NFJNeXRZWmxkSG5jUWtCQXJ0NnVibktIVkF5ZDRiZmVvaE5JZHdKTE0r?=
- =?utf-8?B?VnVaclJnUlA1dFpHdERZdE1ZdWVhc0pKellldGF6WGJxUm11Z2xSNmp1U1Uy?=
- =?utf-8?B?bDBoaTNEMkZ3YzNSRGJzYm0wVmZSVWc1cWtHaGhETVpJc2lyRldPZ0twSzg0?=
- =?utf-8?B?NUtKcVVKbzZLc08yb1BCbWZia0N2NlFmSmJ5L3hmcy9MK0RRb3JOQ1BlMGpB?=
- =?utf-8?B?VG1LOW9FTFovN1JVMUFiY2FTMm1DdjcyYWJkaHQ2R3gvNW03T2gyMUwvWUFj?=
- =?utf-8?B?OGN2TFdCaUQ4VXdVeG5FR0FsdHZYZ2ZJTktrR0E3dVlGRlBuR1dzT0l4UnY4?=
- =?utf-8?B?WmlWV1FkUnowZDNKQmdxZm1HS0lCeVUwWTQzcElleVM0Z3cyMzNVSzBSeEtB?=
- =?utf-8?B?c3RFQkEzNWtFSGNHODZqWkovY1FOU1dCQ29ia3dDVGhGSVhCZEFGUFpJWGJ5?=
- =?utf-8?B?eUZFTzZpZHNkNTAyNXJ5ajZhY1MvajNRUnR0dksvN2JaY3VwSE5hNytZbWcv?=
- =?utf-8?B?bStBNEoxSUViQUgwak9TMnBXVHpCNDE5N1NJa2FJWkQxbGZ0OEJKL3prZDR1?=
- =?utf-8?B?QURFbXpOS25kNjdHTllKdFlKVFJKN1JiWlFacnNWTHhHSXBnQWpzR1dDTCs4?=
- =?utf-8?B?Y3hPVHNlbi9WYjBLTVQwQXlINnZHRS9IN0FTdEU1cDZJMmZoMzlJamhBQXBZ?=
- =?utf-8?B?WHI5d0UzT0Fhc2RCbyt1VUl4WmNvS3g3ejM2Nkhad2s1RjZ0Y2p0L3JRc1po?=
- =?utf-8?B?Tmhia3BZRjV3bW9IL3pWazhHWURpQ1JaNCtJTmJvTkNJTWhSeS9ha1NHUGtO?=
- =?utf-8?B?VkFtYk9LMkR2VVp1WVpwNThGV2YxNUJJVXp1ZUFOTUlGT2hlVlllN0Rrb0s2?=
- =?utf-8?B?OXVGSnBNK25HYXlDZkc4YVlQMUtKbGVydXhsVGswbDZzQVRwemh1RVdWajBM?=
- =?utf-8?B?QnduZ2xWVlVKRXNyVnAzekVib1JVcGdDWWZmOUZkdXZrVUpmQlppQXFENWxT?=
- =?utf-8?B?SmJnTTNKSk5ROEN3bjIvVVpNMlB2dlFEQmlyUkhJOEVQcWtOU21MUHFqdTQ0?=
- =?utf-8?B?ZmtUUUZFTUQzUjBvUDBYS2w5ajJiK2hlS2dLRldaSVZzdTZ0RG5lNDVFMjhU?=
- =?utf-8?B?QlhTVGd3MXFFUzZZRG5uRWd6dmppY01jdVlqY3JiSmNvdU1MZElBVjlWaGtE?=
- =?utf-8?B?czRQM0VWZFBQSi9udTArL2dGNDIwNDZMU0tJWTd0U3o2Nzl5QitjRmhFaGdS?=
- =?utf-8?B?ZlZMcE4rNnFKaVV2cDhYUVlha2h0aTloSGdMTVk4REMvNGNTeHEydVVEN3Rq?=
- =?utf-8?B?S2FBRWxIekkvUE50OEJmeHk5cDAzMm9pK0hLM2pHTFhzMGtoY0dORERCbkhK?=
- =?utf-8?B?NmJxN1VvdGhleVQ0Lzd1dzczSnV5Y1F4V0szNDR1Y1VxcFhSUVVIcmg2eVRv?=
- =?utf-8?Q?XoSRko?=
+	=?utf-8?B?Wk94OVpEZlZiT0labnNseWNJOTgxV0lsdm1JU3hlOExPb0JvbGRzMDBSeFR5?=
+ =?utf-8?B?T2R0Qkp6S0M2ejRvMUVKRUFORk9tcDliWkxUYlpBd1pxSDBaTDNoSmdzZU5Z?=
+ =?utf-8?B?bVJsV05hRnpCMG5CL1FqV2NFL0g4WDBKQjFjY3ZZQXkvVVZEQUxpdkxyWFdO?=
+ =?utf-8?B?MjBQdEp5UmpJNHUyditzSytGUTRpbmZFcGc1c1pmT3dROXVCVExWU0UwbnI5?=
+ =?utf-8?B?ei9pK0ZXSkRMQ0t6Q1VleGhLR3dxRDh1d0MyTlVnalBUZ2p6aDJQMHllQzBY?=
+ =?utf-8?B?d2tKcnlLTkFSVWVhSnN5T2d6dzZQUEJHYWh1VGVZNnZzWUpBZHMreEY4MlZW?=
+ =?utf-8?B?dUppS2daN1JRM2xnWFE4L25hV3BjN2tQWWc4Y0RCNkdKWjNPVVdaNzkrUjN3?=
+ =?utf-8?B?S0dKU0p1TzBxUmNtT1drQXp6ekYyM05Wc21mVy93Yk9SSm5JNkV5em8zWTBs?=
+ =?utf-8?B?Z0FITEFDNXVIY2g5TC9xTi9hREl3c0h3U2orTmFjS2FFdVh4VEVHYWlaYlNz?=
+ =?utf-8?B?MThSOUVXZ1dEd3h5VEVJc2R0UTFTMEI2NmZxVlZnbW9VZGQxb3RPN2tpY2xM?=
+ =?utf-8?B?b3ViK0FmOUZTNjlpVDJKVkxMS3E4VmdMUTg4YWtCaTBnaUZQVHRlK2NqRzNx?=
+ =?utf-8?B?emI0akxLOEpQWkVHSkJiWk1HdGYwZEZja1RUTVJpTCtMVXBiNWREeVEwK0xX?=
+ =?utf-8?B?STI4eW1aZ25mdkQ5M29RTGMxcmNDdjZ2dHRmaHVrN2x4R1pubzJ3dVdpTU5Y?=
+ =?utf-8?B?T0VPWGI0U3VSWG41TWx5NWthRnQzQjRnbjZHdy9LMW1UTG93TGFNeGUrVy9i?=
+ =?utf-8?B?S2N5Nk5lTTNqb1k5cWw0ZjlpejYwZHZBNWlYU29aSlR6VlhZWWJDUmdMczZm?=
+ =?utf-8?B?eGt4U0ZFTVpiSEY0UVZGOXR2YWZEanZXSGlPTStLMWJ1K0VuZEZRbWY2SWdB?=
+ =?utf-8?B?V2lvVmlleWI1RDFxWHc1T0tvOUZOUlo3eEpBeUJpT2VROXAydzUycUhUaFAr?=
+ =?utf-8?B?T1JkdG9nUnJqYU5RaFFYblNTbWJqSis1K01oby8rWEpQRDFYdWVjS0orUjA1?=
+ =?utf-8?B?d3NtZG90S2ZMenBnSnNVbVptRXBKbHpmdmM0Nmw0QmNXNFdYZWZnUFI2MlNt?=
+ =?utf-8?B?a05oR05DNFprbXBTZFYwV2s5VjJicHlMTE96OWV4aXFPVTgzNVc4UWcxaGY5?=
+ =?utf-8?B?akJlNEpEdXpUUjdZdFpEOXVWdFAwQVhtZ3FaZmU2WHBPN3VqZ2wrMHdMclhh?=
+ =?utf-8?B?emZjNk01b3BLOXYwMzE5MWxQMWVPaFVtTzVMTlZGS3FaVXMwaFc1TEVGbVNT?=
+ =?utf-8?B?aUxYLzUxN3czbUJEOFp4Z0YycGtUS3ZDMk13MjhaNWo4NVJJUXhsOXA1a3cr?=
+ =?utf-8?B?VjN3cE5ueHJXQ0VrYXFZRVgxRTlmcG9WQ0g1TXhLS0FXTnBNZk9TRmV3Q01x?=
+ =?utf-8?B?UUFLMExjSzA2QjczZ3U3S0tQZlFrS3dpRkxEZGVFOE4xK0xJS1MzbUJlNmw3?=
+ =?utf-8?B?MWhUdjhvRVJMZHNySHhJNnh4WVU2VS9CNEJFLzB6OThESC9VTktSc3lEeFhB?=
+ =?utf-8?B?Z1ZEdmhxemVIQURpN091bTZmWU1ER2tmN3BwN1RWbFhaclN5VThRd0FBaFR4?=
+ =?utf-8?B?aFlhN0NOMXhpWVpoOTA2SHo1TFZRdndyVFpNc1BVNmROTU9MQ08zR2dxaXli?=
+ =?utf-8?B?RGtUOGk4djAvZmFIY1dFcERhSmVQc0ZHT3JsWWVVVDRHb3h4b1RZV3FHemx6?=
+ =?utf-8?B?TGozQVpvM2hqOHAwMERQV00rby9jUUtmeUVrRjF2WUkvZGtWRWlwV1B2Y3V0?=
+ =?utf-8?B?MS9aQlB3eVlBS0VST0o5RGZSUmtmTjhYLzFPQUxxNGYyQU9aYlRoOGRLUGRr?=
+ =?utf-8?B?NmZUaGhFYTArUEpuWHdIa1pEK3N4QmoyUTlNZ1lnMWNhdmc9PQ==?=
 X-Forefront-Antispam-Report:
-	CIP:52.17.62.50;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:eu-dlp.cloud-sec-av.com;PTR:eu-dlp.cloud-sec-av.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(14060799003)(376014)(7416014)(36860700013)(35042699022);DIR:OUT;SFP:1102;
-X-OriginatorOrg: solid-run.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2025 14:04:19.5686
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(10070799003)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OEsxZ1ZCUThHOXJKMTc4S05kTkhNbWZUcEdOQzVydGJHZUtxSllaNW5oaHVk?=
+ =?utf-8?B?ZDRYNk14b25rT21RTEpGZlNVR2M4MkF2aUw3enFNYnlmNUJLaVJ4cXB6TjlD?=
+ =?utf-8?B?WXBnRVJrd2lGMFlOb1FtcndrUGpKbER4Wm9Lb3hCS0pJb1VqVHZkMDJyZ1Fo?=
+ =?utf-8?B?SHlvb2RSdTE0NjZnVXpmQkpPTTNQeUxUbWtYVkRFVFFMYjU3Vjh4MEJqYkFD?=
+ =?utf-8?B?dzNUNGlCOXJzeVBWRDVrTWNZSGJhdGJHUEQyU01ZV2JiQzUvSUhhd0NzRnpl?=
+ =?utf-8?B?WmIvTDh1UzQ5T1hVcURFOWhML0NVQ28xbG5TN2N2QnlSbkZScmtpMXNzQlMz?=
+ =?utf-8?B?UWdoWnh1MVluUkUzd3JrckczZ25oWWNvOGlEczhkT3l4cnpJZ01aK2FhODlo?=
+ =?utf-8?B?MStSMGkwRlZoQUgvLytWcm1lNi9nbnoyQzI5Uk5wbEdtZ08ybUVuU2htZGlK?=
+ =?utf-8?B?ZTRhdWUrZlBReXNvRXpuQXNUeTdKL0hLNzAxd3FDZHdkd1NKVm5Ob2tncXBI?=
+ =?utf-8?B?cEl6dWY4NnA0cHZ5eStQQ1B5d3NVQytZS0E1ZkZCSTFndVQvYkR5WmtzUVY0?=
+ =?utf-8?B?QzRZU3FYWTRuTEdWVHNRM0kvZ0tkSGlEL2xXT2g4V2Y1dno3YkhzWU1KdWlT?=
+ =?utf-8?B?NkVpY1hTMjV0cE85a2ZYNGw1WWtSL1p0blZPWnhKZzN0UjJ5QWs4enNKcWlh?=
+ =?utf-8?B?Yi9yQkNOYzZVcCtyZnovMktqL2JoVVdEUEN4aGg2SWN2WE1URWJ0N2tReThF?=
+ =?utf-8?B?T3hKbGE5MDRsR25nck5TN1YxQ1E4Zysxdlo3N0lWYnhBQ1RtYnVXOU5ORi9F?=
+ =?utf-8?B?NUpERzNTR0ZiTno5Q0pWZW54NzhTSTI1UndZOCtsOGk3S29ZNXpjOGYvaURp?=
+ =?utf-8?B?clBTZHNjbm90aUpaOEVzeGg4NzBOUlVlV0doc0tPalNYbTBOL1BHelZHQzFj?=
+ =?utf-8?B?OGdyazFOYXowOVFwTFc2bUFCOUhIaEljWXNabHVCSkRKL2hXbjI0aUlRVThh?=
+ =?utf-8?B?eDFQTHhwejRLb2VHbjNMZThwaXFVZUdpU2dkMHBncUF0VFExbmtGZmlJcmp1?=
+ =?utf-8?B?NUJoUzAxSWdINHFyd2hZcy9ueHBHcFdsQ0JNckxTTnFGSzZiS05kdHNSUFZh?=
+ =?utf-8?B?ZHJCcXBzNlQ0cysvWFA0RjFDS3lzdTNpRUpWa0tSOUc3dkRzcjNtbDdhUmtT?=
+ =?utf-8?B?VHJQK01Fd1VoK1VxcDIxQTJOMThZUjhQOW1qTzVmRlVDV2dJaHdMcmlFcCtU?=
+ =?utf-8?B?VnhPWFdhcVhGME1USHNMTnZvOVJTNk13Y01WckdvenJ6Tmwrc1RGc2ovYkkv?=
+ =?utf-8?B?cC9YeGdidCsvSVRQNU5hcURTRzRuWUNTOG9UY3UvSFI2OWFwRDRVL2M2ZW5u?=
+ =?utf-8?B?Rnp1VU9OWnpFQ0ZKTGVJL2pjMk9BNWlaclRqVmxPM3hwb1VQS3V0b2tLRVQr?=
+ =?utf-8?B?NkxDZjdpM2h2T1BDQnA2S0ZMbVBKV0NiRFU4andleTJ4dzMrWmNPczRaeW5p?=
+ =?utf-8?B?ZjlUaHh1Y1o0Wnl6UnFCYm5KUHp1bWg4c0FaUk40RGgrTVIwMGxUVEs4Q0VM?=
+ =?utf-8?B?bHV0Q2xGaUNtNlM1REpOVFp1YjJBckJpR2ZLbTZhVDZRWTVPOWJFeEFaS0VH?=
+ =?utf-8?B?MmV1TVpvbzFxL3FCT3BrRlVHc1JmMmVoSVNPSnRaZVNyNndPeFNpckxOYUJQ?=
+ =?utf-8?B?eVA4VUU5U3c2V2UrWExDemhSREpaTm5sempBNVVWSUVzT3hjYXFmSFQ0VnJ4?=
+ =?utf-8?B?MjBDaDFQNXpOT2N6ZkYzbFE2amE5VXUrVnVZRFlwUkVCQXFaOWZMNTlZQy9r?=
+ =?utf-8?B?NkJuVVpMZHZJM3YySGpVQXlZMGVxZm1uTEJRckZhZTI0VzJMWXYyQ3lFRHZF?=
+ =?utf-8?B?VDRrMkpWUEp0OFR0c2ZXYk0yN2N1R0ZqbGRuL0VLSUNNRVAvNFpHam01SFRQ?=
+ =?utf-8?B?eWtrcDd6RGZZWm5vV1ZwbVp4SzVWOS96ZXFiWnd1RU5odkxrNXJuN1ZjTWZ4?=
+ =?utf-8?B?UGErdlhWSGN0ZlQ0Rys4bFFqais2WVdTVmUwSnBjV0h3NjhDYlFnbktscC95?=
+ =?utf-8?B?RVZzRyt1dVgyTnVxeXoxVWdNL2NyUXE1Y0QyWENFLzRGc01JbStieVhRamFt?=
+ =?utf-8?B?bUpVdmsrYnE1M1lMUkl0L3ovMmp1YlBleE56SGRaazVhaVhzc1IvamF6MHg0?=
+ =?utf-8?Q?EMv/UuH33pG6Kt7rs4i6/G/K9F9xRQZK/ToUk+oOoZUK?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a940f8e-f465-479b-5b5f-08dde24f2231
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2025 14:12:46.2163
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b379798-4469-41d6-15cb-08dde24df45d
-X-MS-Exchange-CrossTenant-Id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a4a8aaf3-fd27-4e27-add2-604707ce5b82;Ip=[52.17.62.50];Helo=[eu-dlp.cloud-sec-av.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS1EPF0000004A.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10127
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UhTkqPe4U85QnJuGdAdMCsfaV25FXiWdfEpO0T5fWdP0VmSW9/cyJlDoamfMuzpqme409+H+TliImMsjqBUZEA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR12MB9570
 
-When connecting RJ45 SFP modules to Linux an ethernet phy is expected -
-and probed on the i2c bus when possible. Once the PHY probed, phylink
-populates the supported link modes for the netdev based on bmsr
-register bits set at the time (see phy_device.c: phy_probe).
+On Sat Aug 23, 2025 at 10:48 PM JST, Danilo Krummrich wrote:
+> On Sat Aug 23, 2025 at 3:22 PM CEST, Alexandre Courbot wrote:
+>> On Thu Aug 21, 2025 at 1:52 AM JST, Danilo Krummrich wrote:
+>>> +impl SGEntry {
+>>> +    /// Convert a raw `struct scatterlist *` to a `&'a SGEntry`.
+>>> +    ///
+>>> +    /// # Safety
+>>> +    ///
+>>> +    /// Callers must ensure that the `struct scatterlist` pointed to b=
+y `ptr` is valid for the
+>>> +    /// lifetime `'a`.
+>>> +    #[inline]
+>>> +    unsafe fn from_raw<'a>(ptr: *mut bindings::scatterlist) -> &'a Sel=
+f {
+>>> +        // SAFETY: The safety requirements of this function guarantee =
+that `ptr` is a valid pointer
+>>
+>> nit: "guarantees".
+>
+> "guarantee" seems correct to me; it's "requirements" not "requirement".
+>
+> (I think we commonly use the plural, i.e. "requirements" even if we end u=
+p
+> listing a single requirement only.)
 
-Marvell phy driver probe function only allocates memory, leaving actual
-configuration for config_init callback.
-This means the supported link modes of the netdev depend entirely on the
-power-on status of the phy bmsr register.
+Ah, you are correct! I missed the plural on "requirements".
 
-Certain Cisco SFP modules such as GLC-T and GLC-TE have invalid
-configuration at power-on: MII_M1111_HWCFG_MODE_COPPER_1000X_AN
-This means fiber with automatic negotiation to copper. As the module
-exhibits a physical RJ45 connector this configuration is wrong.
-As a consequence after power-on the bmsr does not set bits for 10/100
-modes.
+>
+>> <snip>
+>>> +impl SGTable {
+>>> +    /// Creates a borrowed `&'a SGTable` from a raw `struct sg_table` =
+pointer.
+>>> +    ///
+>>> +    /// This allows safe access to an `sg_table` that is managed elsew=
+here (for example, in C code).
+>>
+>> nit: "to a".
+>
+> I'm not a native speaker, but I think "an" is correct, since "sg_table" i=
+s
+> pronounced with a vowel sound, /=C9=9Bs/, at the beginning.
 
-During config_init marvell phy driver identifies the correct intended
-MII_M1111_HWCFG_MODE_SGMII_NO_CLK which means sgmii with automatic
-negotiation to copper, and configures the phy accordingly.
+TIL. :)
 
-At this point the bmsr register correctly indicates support for 10/100
-link modes - however the netedev supported modes bitmask is never
-updated.
+>
+>>> +    ///
+>>> +    /// # Safety
+>>> +    ///
+>>> +    /// Callers must ensure that:
+>>> +    ///
+>>> +    /// - the `struct sg_table` pointed to by `ptr` is valid for the e=
+ntire lifetime of `'a`,
+>>> +    /// - the data behind `ptr` is not modified concurrently for the d=
+uration of `'a`.
+>>> +    #[inline]
+>>> +    pub unsafe fn from_raw<'a>(ptr: *mut bindings::sg_table) -> &'a Se=
+lf {
+>>> +        // SAFETY: The safety requirements of this function guarantee =
+that `ptr` is a valid pointer
+>>> +        // to a `struct sg_table` for the duration of `'a`.
+>>> +        unsafe { &*ptr.cast() }
+>>> +    }
+>>> +
+>>> +    #[inline]
+>>> +    fn as_raw(&self) -> *mut bindings::sg_table {
+>>> +        self.inner.0.get()
+>>> +    }
+>>> +
+>>> +    fn as_iter(&self) -> SGTableIter<'_> {
+>>> +        // SAFETY: `self.as_raw()` is a valid pointer to a `struct sg_=
+table`.
+>>> +        let ptr =3D unsafe { (*self.as_raw()).sgl };
+>>> +
+>>> +        // SAFETY: `ptr` is guaranteed to be a valid pointer to a `str=
+uct scatterlist`.
+>>> +        let pos =3D Some(unsafe { SGEntry::from_raw(ptr) });
+>>> +
+>>> +        SGTableIter { pos }SGEntry
+>>> +    }
+>>> +}
+>>> +
+>>> +/// # Invariants
+>>> +///
+>>> +/// - `sgt` is a valid pointer to a `struct sg_table` for the entire l=
+ifetime of an [`DmaMapSgt`].
+>>
+>> nit: "of the".
+>
+> This one I don't know for sure, maybe a native speaker can help.
+>
+> I chose "for", since I think it indicates duration and "of" rather belong=
+ing,
+> but I honestly don't know. :)
 
-Hence the netdev fails to negotiate or link-up at 10/100
-speeds, limiting to 1000 links only.
+I didn't give enough context. I meant "of the [`DmaMapSgt`]" (as in, it
+cannot be any DmaMapSgt; it has to be this particular one).
 
-Explicitly define features for 88e1111 phy to ensure that all supported
-modes are available at runtime even when phy power-on configuration was
-invalid.
+>
+>>> +/// - `sgt` is always DMA mapped.
+>>> +struct DmaMapSgt {
+>>
+>> Minor point: I'd call this structure `DmaMappedSgt` to highlight the
+>> fact that it is actively mapped. Or alternatively document it and its
+>> members so that fact is clear.
+>>
+>> <snip>
+>>> +impl<'a> IntoIterator for &'a SGTable {
+>>> +    type Item =3D &'a SGEntry;
+>>> +    type IntoIter =3D SGTableIter<'a>;
+>>> +
+>>> +    #[inline]
+>>> +    fn into_iter(self) -> Self::IntoIter {
+>>> +        self.as_iter()
+>>> +    }
+>>> +}
+>>
+>> While using this for Nova, I found it a bit unnatural having to call
+>> `into_iter` on references intead of just having an `iter` method.
+>> `into_iter` sounds like the passed object is consumed, while it is
+>> actually its (copied) reference that is. Why not have a regular `iter`
+>> method on `SGTable`? Actually we do have one, but it is called `as_iter`
+>> and is private for some reason. :)
+>
+> I think it makes sense to rename to SGTable::iter() and make it public.
+>
+> I'm also fine removing the IntoIterator implementation, it seems pretty u=
+nlikely
+> that we'll have another type that provides an Iterator with SGEntry items=
+ we
+> need a generic interface for.
 
-[1] known functional 1Gbps RJ45 SFP module with 88E1111 PHY
-[   75.117858] sfp c2-at-sfp: module LINKTEL          LX1801CNR        rev 1.0  sn 1172623934       dc 170628
-[   75.127723] drivers/net/phy/sfp-bus.c:284: sfp_parse_support: 1000baseT_Half
-[   75.134779] drivers/net/phy/sfp-bus.c:285: sfp_parse_support: 1000baseT_Full
-[   75.141831] phylink_sfp_module_insert: sfp_may_have_phy - delaying phylink_sfp_config
-[   75.204100] drivers/net/phy/phy_device.c:2942: phy_probe
-[   75.212828] drivers/net/phy/phy_device.c:2961: phy_probe: phydev->drv->probe
-[   75.228017] drivers/net/phy/phy_device.c:2983: phy_probe: genphy_read_abilities
-[   75.246019] drivers/net/phy/phy_device.c:2502: genphy_read_abilities: MII_MARVELL_PHY_PAGE: 0x00
-[   75.263045] drivers/net/phy/phy_device.c:2507: genphy_read_abilities: MII_BMSR: 0x7949
-[   75.279282] sfp_add_phy
-[   75.287150] phylink_sfp_connect_phy: calling phylink_sfp_config with phy settings
-[   75.302778] drivers/net/phy/sfp-bus.c:445: sfp_select_interface: PHY_INTERFACE_MODE_SGMII
-[   75.302778]
-[   75.320600] m88e1111_config_init
-[   75.334333] drivers/net/phy/marvell.c:905: m88e1111_config_init: MII_M1111_PHY_EXT_SR: 0x8084
-[   75.348694] m88e1111_config_init: sgmii
-[   75.364329] drivers/net/phy/marvell.c:787: m88e1111_config_init_hwcfg_mode: MII_M1111_PHY_EXT_SR: 0x8084
-[   75.450737] fsl_dpaa2_eth dpni.0 eth0: PHY [i2c:c2-at-sfp:16] driver [Marvell 88E1111] (irq=POLL)
-[   75.461329] sfp_sm_probe_for_phy: tried to probe clause 22 phy: 0
-[   75.461333] phy detected after 0 retries
-Settings for eth0:
-        Supported ports: [ TP MII FIBRE ]
-        Supported link modes:   10baseT/Full
-                                100baseT/Full
-                                1000baseT/Full
-        Supports auto-negotiation: Yes
-        Advertised link modes:  10baseT/Full
-                                100baseT/Full
-                                1000baseT/Full
-        Advertised pause frame use: Symmetric Receive-only
-        Advertised auto-negotiation: Yes
-[   77.445537] sfp c2-at-sfp: module removed
+I assumed there was some Rust pattern to this `IntoIterator`
+implementation on a reference, but I cannot see its usefulness when an
+`iter` method also works on a reference anyway. So yeah if there is no
+reason against it I think this would be more intuitive.
 
-[2] problematic 1Gbps RJ45 SFP module with 88E1111 PHY before this patch
-[   84.463372] sfp c2-at-sfp: module CISCO-AVAGO      ABCU-5710RZ-CS2  rev      sn AGM1131246C      dc 070803
-[   84.473218] drivers/net/phy/sfp-bus.c:284: sfp_parse_support: 1000baseT_Half
-[   84.480267] drivers/net/phy/sfp-bus.c:285: sfp_parse_support: 1000baseT_Full
-[   84.487314] sfp c2-at-sfp: Unknown/unsupported extended compliance code: 0x01
-[   84.487316] phylink_sfp_module_insert: sfp_may_have_phy - delaying phylink_sfp_config
-[   84.548557] drivers/net/phy/phy_device.c:2942: phy_probe
-[   84.557011] drivers/net/phy/phy_device.c:2961: phy_probe: phydev->drv->probe
-[   84.572223] drivers/net/phy/phy_device.c:2983: phy_probe: genphy_read_abilities
-[   84.589831] drivers/net/phy/phy_device.c:2502: genphy_read_abilities: MII_MARVELL_PHY_PAGE: 0x00
-[   84.606107] drivers/net/phy/phy_device.c:2507: genphy_read_abilities: MII_BMSR: 0x149
-[   84.622177] sfp_add_phy
-[   84.631256] phylink_sfp_connect_phy: calling phylink_sfp_config with phy settings
-[   84.631261] drivers/net/phy/sfp-bus.c:445: sfp_select_interface: PHY_INTERFACE_MODE_SGMII
-[   84.631261]
-[   84.650011] m88e1111_config_init
-[   84.667424] drivers/net/phy/marvell.c:905: m88e1111_config_init: MII_M1111_PHY_EXT_SR: 0x9088
-[   84.676137] m88e1111_config_init: sgmii
-[   84.697088] drivers/net/phy/marvell.c:787: m88e1111_config_init_hwcfg_mode: MII_M1111_PHY_EXT_SR: 0x9084
-[   84.794983] fsl_dpaa2_eth dpni.0 eth0: PHY [i2c:c2-at-sfp:16] driver [Marvell 88E1111] (irq=POLL)
-[   84.805537] sfp_sm_probe_for_phy: tried to probe clause 22 phy: 0
-[   84.819781] phy detected after 0 retries
-Settings for eth4:
-       Supported ports: [ TP MII ]
-       Supported link modes:   1000baseT/Full
-                               1000baseX/Full
-       Supports auto-negotiation: Yes
-       Advertised link modes:  1000baseT/Full
-                               1000baseX/Full
-[   86.149536] sfp c2-at-sfp: module removed
+>
+>>> +
+>>> +/// An [`Iterator`] over the [`SGEntry`] items of an [`SGTable`].
+>>> +pub struct SGTableIter<'a> {
+>>> +    pos: Option<&'a SGEntry>,
+>>> +}
+>>> +
+>>> +impl<'a> Iterator for SGTableIter<'a> {
+>>> +    type Item =3D &'a SGEntry;
+>>> +
+>>> +    fn next(&mut self) -> Option<Self::Item> {
+>>> +        let entry =3D self.pos?;
+>>> +
+>>> +        // SAFETY: `entry.as_raw()` is a valid pointer to a `struct sc=
+atterlist`.
+>>> +        let next =3D unsafe { bindings::sg_next(entry.as_raw()) };
+>>> +
+>>> +        self.pos =3D (!next.is_null()).then(|| {
+>>> +            // SAFETY: If `next` is not NULL, `sg_next()` guarantees t=
+o return a valid pointer to
+>>> +            // the next `struct scatterlist`.
+>>> +            unsafe { SGEntry::from_raw(next) }
+>>> +        });
+>>
+>> This might be missing a stop condition.
+>
+> [...]
+>
+>> follow the advice given by the documentation of
+>> `sg_dma_address` and also stop if the DMA length of the next one is
+>> zero.
+>
+> Doh! I was even aware of this before sending the initial version and simp=
+ly
+> forgot to add this stop condition after having been interrupted.
+>
+> Thanks a lot for catching this!
 
-Signed-off-by: Josua Mayer <josua@solid-run.com>
----
- drivers/net/phy/marvell.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
-index 623292948fa706a2b0d8b98919ead8b609bbd949..2da4b845ef4c854a445be2888c3776e44f24fb33 100644
---- a/drivers/net/phy/marvell.c
-+++ b/drivers/net/phy/marvell.c
-@@ -3717,7 +3717,7 @@ static struct phy_driver marvell_drivers[] = {
- 		.phy_id = MARVELL_PHY_ID_88E1111,
- 		.phy_id_mask = MARVELL_PHY_ID_MASK,
- 		.name = "Marvell 88E1111",
--		/* PHY_GBIT_FEATURES */
-+		.features = PHY_GBIT_FIBRE_FEATURES,
- 		.flags = PHY_POLL_CABLE_TEST,
- 		.probe = marvell_probe,
- 		.inband_caps = m88e1111_inband_caps,
-
----
-base-commit: b1c92cdf5af3198e8fbc1345a80e2a1dff386c02
-change-id: 20250823-cisco-1g-sfp-phy-features-c0960d945d07
-
-Best regards,
--- 
-Josua Mayer <josua@solid-run.com>
-
+A detail whose knowledge is typically acquired through considerable
+suffering. :)
 
