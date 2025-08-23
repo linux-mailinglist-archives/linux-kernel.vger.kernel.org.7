@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-783261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C149B32B04
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:45:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9963AB32B05
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 18:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA0E11B65F2C
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:45:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 014B61C212BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857DE2F49FD;
-	Sat, 23 Aug 2025 16:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046342F5327;
+	Sat, 23 Aug 2025 16:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1uMZy+f2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iT0BE6wB"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tDNrDYlw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RrWHFayO"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5E42F3C28
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 16:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9543D2F4A01
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 16:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755967228; cv=none; b=XdurapShNByla1SIXuRqANLVB4KElKBlqzFWfPBCeprA9gtFs+M06DUNTuDj87m7iiHcEaMlBAhyN/Y6vYNcY5GGB3/6gwAc6F03dvhh14rgpq1tMrPt2v0f2HReS7rYUpUyutXar6Leg7NZezwoSPmSVYIXWK5ZHKpPG5Q/xu0=
+	t=1755967231; cv=none; b=la0ugZUd0sPD19YUIH/Z0x1o10z+5tIHXPCF+ydBXeNOgtF7EV65qL9KRNlZuYHY9zWi04rvQG7XOoi59FyFVObSWmhPsSFwPrhSMMecHrgFj5ilUdlIRluANckRkr87kuUi6cl7pKyavinOSX21kdAEgus2CxmtRXHeQPO9/zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755967228; c=relaxed/simple;
-	bh=X5G/VAp/ihTYmUGdr6ztAY72TaCHI5fMEG3WN39wmQY=;
+	s=arc-20240116; t=1755967231; c=relaxed/simple;
+	bh=c56W/JKLLIaR3mY5+jKBE911U+s2TFIysIGEHPQw0A0=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=SeRulFnloUiShH8lKiVYiEKBlQuBsfgUomn7+Vefb34G9/zfIVoHKmTPmjBM42jp9pfhy2fX1mHIzut6lW3EGe88AI+2s319sTLaMaRY2dEysDaxnLq0xbF8eUOf2aaAZQLHVnfZfostQvw3qS1kDUo80UBtDukP1JSd/wvZFRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1uMZy+f2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iT0BE6wB; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=dXeP7SkARHLWByJKKK/3ot4JMgobaq4LMdhn2MRJIlXTmPAGvgP8/KyExEySBdpgoNbnnhwx5w/85cPGGAxYRdloABw3bsMvlbdcl0uk8VKaWQZEK3rywTori2S+NYPoJjFcZ4kP1fFi7+LG9bo3PJAuQROxoAj4HaICZA3adz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tDNrDYlw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RrWHFayO; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250823161655.256689417@linutronix.de>
+Message-ID: <20250823161655.319791141@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755967225;
+	s=2020; t=1755967228;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=p5+FscC5uvMSsyR/bs1Il8uwho5B1Sslb1Xh+1sgu54=;
-	b=1uMZy+f2ii0nZWvgOF9erE+iCM09Xk6pbfd0eS69tmxRVlkyb63ZcpzuLJ8r96avR04hd+
-	jsIcfcMphUCXEJogoT3dsjChGJechCujTrKg9do7eZJW78yWlMgDHR7XTk/UiGrnSr0aiJ
-	5GP140xFTDU8yp5AkaWMQfdVkRzcqX3s1HrZU04cxJfMkDYJRUAZy9a+IBUQsB6KbGrCrc
-	8t0OQPFm7gRWNMIL6/FN8taUFPG48wL0tHsT/3PDXX78N8fravo+sq7G6wzqt5l2MYkfOG
-	qgeoN3kjk5MqF+IYkjdY1M5eH93X9YD+EL/vPe82X42chJlIwG/mMHvYwv7lpQ==
+	 references:references; bh=ZYxO0WEQJ2l0m708uWkDzuf67BMRsy+EgwA7fpHRcnE=;
+	b=tDNrDYlwJuJOZzOhNKvG51T+liFMGcChvpR/tVH21lLkpai7AfXGETB5ThSMQPOnfy1Pe/
+	I2gFEI6hHKxOq4zk83K0F4m5S5AK9w7ZuNFV0/lQoCGRthXES/tiHYgH6cwEz0+E7nYLTG
+	nZE4a/S+r1b+glggxP95RIv1Ll/WOd56XXY/8r4dBby6n9zMQm0CrEVUD7rBJuRrDYXFmL
+	Rw1db4YHan8OlV4HThRBpj8NojS+8eczUFM5Nnpr6wKEWa8/WBKeRaBKBMYZ4y9gBkc4Z7
+	9tXCPbvMIVNDmWDChmPZTxvj5mdNN5ZRgtqTmz/uGaIPkTMqCYMqJUHSvymaQA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755967225;
+	s=2020e; t=1755967228;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=p5+FscC5uvMSsyR/bs1Il8uwho5B1Sslb1Xh+1sgu54=;
-	b=iT0BE6wByyCg4m74sk4B21k7o4IHGSrmO87MQdg9TvgBHcH1OP7umVChuDY8/Ze5+sGeeS
-	2H6549ZrNXG0zeDQ==
+	 references:references; bh=ZYxO0WEQJ2l0m708uWkDzuf67BMRsy+EgwA7fpHRcnE=;
+	b=RrWHFayOPPv7ETg2Bw+4aGhojvHfo+n5tktE128fj2EiFcJ5eA+hJuDw9nfX51YGovk1Pv
+	gl2hWliht9q4YNBQ==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Jens Axboe <axboe@kernel.dk>,
- Arnd Bergmann <arnd@arndb.de>,
+ x86@kernel.org,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Peter Zijlstra <peterz@infradead.org>,
  "Paul E. McKenney" <paulmck@kernel.org>,
@@ -61,14 +61,14 @@ Cc: Jens Axboe <axboe@kernel.dk>,
  Sean Christopherson <seanjc@google.com>,
  Wei Liu <wei.liu@kernel.org>,
  Dexuan Cui <decui@microsoft.com>,
- x86@kernel.org,
+ Arnd Bergmann <arnd@arndb.de>,
  Heiko Carstens <hca@linux.ibm.com>,
  Christian Borntraeger <borntraeger@linux.ibm.com>,
  Sven Schnelle <svens@linux.ibm.com>,
  Huacai Chen <chenhuacai@kernel.org>,
  Paul Walmsley <paul.walmsley@sifive.com>,
  Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [patch V2 31/37] asm-generic: Provide generic TIF infrastructure
+Subject: [patch V2 32/37] x86: Use generic TIF bits
 References: <20250823161326.635281786@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -77,98 +77,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Sat, 23 Aug 2025 18:40:24 +0200 (CEST)
+Date: Sat, 23 Aug 2025 18:40:27 +0200 (CEST)
 
-Common TIF bits do not have to be defined by every architecture. They can
-be defined in a generic header.
-
-That allows adding generic TIF bits without chasing a gazillion of
-architecture headers, which is again a unjustified burden on anyone who
-works on generic infrastructure as it always needs a boat load of work to
-keep existing architecture code working when adding new stuff.
-
-While it is not as horrible as the ignorance of the generic entry
-infrastructure, it is a welcome mechanism to make architecture people
-rethink their approach of just leaching generic improvements into
-architecture code and thereby making it accumulatingly harder to maintain
-and improve generic code. It's about time that this changea.
-
-Provide the infrastructure and split the TIF space in half, 16 generic and
-16 architecture specific bits.
-
-This could probably be extended by TIF_SINGLESTEP and BLOCKSTEP, but those
-are only used in architecture specific code. So leave them alone for now.
+No point in defining generic items and the upcoming RSEQ optimizations are
+only available with this _and_ the generic entry infrastructure, which is
+already used by x86. So no further action required here.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: x86@kernel.org
 ---
- arch/Kconfig                          |    4 ++
- include/asm-generic/thread_info_tif.h |   48 ++++++++++++++++++++++++++++++++++
- 2 files changed, 52 insertions(+)
+ arch/x86/Kconfig                   |    1 
+ arch/x86/include/asm/thread_info.h |   74 +++++++++++++++----------------------
+ 2 files changed, 31 insertions(+), 44 deletions(-)
 
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -1730,6 +1730,10 @@ config ARCH_VMLINUX_NEEDS_RELOCS
- 	  relocations preserved. This is used by some architectures to
- 	  construct bespoke relocation tables for KASLR.
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -239,6 +239,7 @@ config X86
+ 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
+ 	select HAVE_EISA			if X86_32
+ 	select HAVE_EXIT_THREAD
++	select HAVE_GENERIC_TIF_BITS
+ 	select HAVE_GUP_FAST
+ 	select HAVE_FENTRY			if X86_64 || DYNAMIC_FTRACE
+ 	select HAVE_FTRACE_GRAPH_FUNC		if HAVE_FUNCTION_GRAPH_TRACER
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -80,56 +80,42 @@ struct thread_info {
+ #endif
  
-+# Select if architecture uses the common generic TIF bits
-+config HAVE_GENERIC_TIF_BITS
-+       bool
+ /*
+- * thread information flags
+- * - these are process state flags that various assembly files
+- *   may need to access
++ * Tell the generic TIF infrastructure which bits x86 supports
+  */
+-#define TIF_NOTIFY_RESUME	1	/* callback before returning to user */
+-#define TIF_SIGPENDING		2	/* signal pending */
+-#define TIF_NEED_RESCHED	3	/* rescheduling necessary */
+-#define TIF_NEED_RESCHED_LAZY	4	/* Lazy rescheduling needed */
+-#define TIF_SINGLESTEP		5	/* reenable singlestep on user return*/
+-#define TIF_SSBD		6	/* Speculative store bypass disable */
+-#define TIF_SPEC_IB		9	/* Indirect branch speculation mitigation */
+-#define TIF_SPEC_L1D_FLUSH	10	/* Flush L1D on mm switches (processes) */
+-#define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
+-#define TIF_UPROBE		12	/* breakpointed or singlestepping */
+-#define TIF_PATCH_PENDING	13	/* pending live patching update */
+-#define TIF_NEED_FPU_LOAD	14	/* load FPU on return to userspace */
+-#define TIF_NOCPUID		15	/* CPUID is not accessible in userland */
+-#define TIF_NOTSC		16	/* TSC is not accessible in userland */
+-#define TIF_NOTIFY_SIGNAL	17	/* signal notifications exist */
+-#define TIF_MEMDIE		20	/* is terminating due to OOM killer */
+-#define TIF_POLLING_NRFLAG	21	/* idle is polling for TIF_NEED_RESCHED */
++#define HAVE_TIF_NEED_RESCHED_LAZY
++#define HAVE_TIF_POLLING_NRFLAG
++#define HAVE_TIF_SINGLESTEP
 +
- source "kernel/gcov/Kconfig"
++#include <asm-generic/thread_info_tif.h>
++
++/* Architecture specific TIF space starts at 16 */
++#define TIF_SSBD		16	/* Speculative store bypass disable */
++#define TIF_SPEC_IB		17	/* Indirect branch speculation mitigation */
++#define TIF_SPEC_L1D_FLUSH	18	/* Flush L1D on mm switches (processes) */
++#define TIF_NEED_FPU_LOAD	19	/* load FPU on return to userspace */
++#define TIF_NOCPUID		20	/* CPUID is not accessible in userland */
++#define TIF_NOTSC		21	/* TSC is not accessible in userland */
+ #define TIF_IO_BITMAP		22	/* uses I/O bitmap */
+ #define TIF_SPEC_FORCE_UPDATE	23	/* Force speculation MSR update in context switch */
+ #define TIF_FORCED_TF		24	/* true if TF in eflags artificially */
+-#define TIF_BLOCKSTEP		25	/* set when we want DEBUGCTLMSR_BTF */
++#define TIF_SINGLESTEP		25	/* reenable singlestep on user return*/
++#define TIF_BLOCKSTEP		26	/* set when we want DEBUGCTLMSR_BTF */
+ #define TIF_LAZY_MMU_UPDATES	27	/* task is updating the mmu lazily */
+-#define TIF_ADDR32		29	/* 32-bit address space on 64 bits */
++#define TIF_ADDR32		28	/* 32-bit address space on 64 bits */
  
- source "scripts/gcc-plugins/Kconfig"
---- /dev/null
-+++ b/include/asm-generic/thread_info_tif.h
-@@ -0,0 +1,48 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_GENERIC_THREAD_INFO_TIF_H_
-+#define _ASM_GENERIC_THREAD_INFO_TIF_H_
-+
-+#include <vdso/bits.h>
-+
-+/* Bits 16-31 are reserved for architecture specific purposes */
-+
-+#define TIF_NOTIFY_RESUME	0	// callback before returning to user
-+#define _TIF_NOTIFY_RESUME	BIT(TIF_NOTIFY_RESUME)
-+
-+#define TIF_SIGPENDING		1	// signal pending
-+#define _TIF_SIGPENDING		BIT(TIF_SIGPENDING)
-+
-+#define TIF_NOTIFY_SIGNAL	2	// signal notifications exist
-+#define _TIF_NOTIFY_SIGNAL	BIT(TIF_NOTIFY_SIGNAL)
-+
-+#define TIF_MEMDIE		3	// is terminating due to OOM killer
-+#define _TIF_MEMDIE		BIT(TIF_MEMDIE)
-+
-+#define TIF_NEED_RESCHED	4	// rescheduling necessary
-+#define _TIF_NEED_RESCHED	BIT(TIF_NEED_RESCHED)
-+
-+#ifdef HAVE_TIF_NEED_RESCHED_LAZY
-+# define TIF_NEED_RESCHED_LAZY	5	// Lazy rescheduling needed
-+# define _TIF_NEED_RESCHED_LAZY	BIT(TIF_NEED_RESCHED_LAZY)
-+#endif
-+
-+#ifdef HAVE_TIF_POLLING_NRFLAG
-+# define TIF_POLLING_NRFLAG	6	// idle is polling for TIF_NEED_RESCHED
-+# define _TIF_POLLING_NRFLAG	BIT(TIF_POLLING_NRFLAG)
-+#endif
-+
-+#define TIF_USER_RETURN_NOTIFY	7	// notify kernel of userspace return
-+#define _TIF_USER_RETURN_NOTIFY	BIT(TIF_USER_RETURN_NOTIFY)
-+
-+#define TIF_UPROBE		8	// breakpointed or singlestepping
-+#define _TIF_UPROBE		BIT(TIF_UPROBE)
-+
-+#define TIF_PATCH_PENDING	9	// pending live patching update
-+#define _TIF_PATCH_PENDING	BIT(TIF_PATCH_PENDING)
-+
-+#ifdef HAVE_TIF_RESTORE_SIGMASK
-+# define TIF_RESTORE_SIGMASK	10	// Restore signal mask in do_signal() */
-+# define _TIF_RESTORE_SIGMASK	BIT(TIF_RESTORE_SIGMASK)
-+#endif
-+
-+#endif /* _ASM_GENERIC_THREAD_INFO_TIF_H_ */
+-#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+-#define _TIF_NEED_RESCHED_LAZY	(1 << TIF_NEED_RESCHED_LAZY)
+-#define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
+-#define _TIF_SSBD		(1 << TIF_SSBD)
+-#define _TIF_SPEC_IB		(1 << TIF_SPEC_IB)
+-#define _TIF_SPEC_L1D_FLUSH	(1 << TIF_SPEC_L1D_FLUSH)
+-#define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
+-#define _TIF_UPROBE		(1 << TIF_UPROBE)
+-#define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
+-#define _TIF_NEED_FPU_LOAD	(1 << TIF_NEED_FPU_LOAD)
+-#define _TIF_NOCPUID		(1 << TIF_NOCPUID)
+-#define _TIF_NOTSC		(1 << TIF_NOTSC)
+-#define _TIF_NOTIFY_SIGNAL	(1 << TIF_NOTIFY_SIGNAL)
+-#define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
+-#define _TIF_IO_BITMAP		(1 << TIF_IO_BITMAP)
+-#define _TIF_SPEC_FORCE_UPDATE	(1 << TIF_SPEC_FORCE_UPDATE)
+-#define _TIF_FORCED_TF		(1 << TIF_FORCED_TF)
+-#define _TIF_BLOCKSTEP		(1 << TIF_BLOCKSTEP)
+-#define _TIF_LAZY_MMU_UPDATES	(1 << TIF_LAZY_MMU_UPDATES)
+-#define _TIF_ADDR32		(1 << TIF_ADDR32)
++#define _TIF_SSBD		BIT(TIF_SSBD)
++#define _TIF_SPEC_IB		BIT(TIF_SPEC_IB)
++#define _TIF_SPEC_L1D_FLUSH	BIT(TIF_SPEC_L1D_FLUSH)
++#define _TIF_NEED_FPU_LOAD	BIT(TIF_NEED_FPU_LOAD)
++#define _TIF_NOCPUID		BIT(TIF_NOCPUID)
++#define _TIF_NOTSC		BIT(TIF_NOTSC)
++#define _TIF_IO_BITMAP		BIT(TIF_IO_BITMAP)
++#define _TIF_SPEC_FORCE_UPDATE	BIT(TIF_SPEC_FORCE_UPDATE)
++#define _TIF_FORCED_TF		BIT(TIF_FORCED_TF)
++#define _TIF_BLOCKSTEP		BIT(TIF_BLOCKSTEP)
++#define _TIF_SINGLESTEP		BIT(TIF_SINGLESTEP)
++#define _TIF_LAZY_MMU_UPDATES	BIT(TIF_LAZY_MMU_UPDATES)
++#define _TIF_ADDR32		BIT(TIF_ADDR32)
+ 
+ /* flags to check in __switch_to() */
+ #define _TIF_WORK_CTXSW_BASE					\
 
 
