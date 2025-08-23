@@ -1,202 +1,135 @@
-Return-Path: <linux-kernel+bounces-782924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 932F3B3270F
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:23:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7316CB32711
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5971F1CC3D50
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 06:23:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 386D15A3756
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 06:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9EC521507F;
-	Sat, 23 Aug 2025 06:23:15 +0000 (UTC)
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F451C8603;
-	Sat, 23 Aug 2025 06:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC9E212574;
+	Sat, 23 Aug 2025 06:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="I2vzf60X"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3507D3D3B3
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 06:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755930195; cv=none; b=WAWbzSdZHy+2NFs5kOaRLsEV1EcWVUFJvntKro5VpveUBMy4HhlsFe/W7BJvmPfKwpILoQ2kMFb0c1bGKwKnj6u8aFBsyrxKbbqSOsJeamQ3We3gtL9M9Sk2mUy0MIiUwdodAt+Mq/APJog2E+4Er4Fg5AznLUI2vRs0qPO+Um0=
+	t=1755930882; cv=none; b=dnh5M+tu1oTkdu2Pih/eSlP77CIXeIOSo49AZrbki6OPZ11Bk27ilS/Zw5S8R1pSLKmHoavUYmtwJnaEcv5nXtJYmuDwnZaGsRHcmJXGY/HVqx524PIwP+t6RZ6ESkr29cr9Ro86MPLhVBO40we1wuTCCUwSPNEWx8kNWK7cfHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755930195; c=relaxed/simple;
-	bh=pxtuM2KduD/5E9Yb8epMJNKjkVtMUdpzmbtrHtrzG3M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GRsOjYWvXdyEP4BXJ7zEv/UMgu2vhmueKy8psmSqnf5V4ZYeuwvgmO3qkLzCB+HillA2aydzuwjF4Q2Q26NMRLmh5knmJFoCNtLHIgWTEmY5SvA0OecyPqJnMCSeOmcRk3W4ymfgPKMBhw7tLD+1+kxrkgIqEFVGWa8CNk9StWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpsz9t1755930178tc48283da
-X-QQ-Originating-IP: x7xbIcyyCo1zpsoslknfihpVyI0pGLbFhwMzREaCDhM=
-Received: from [127.0.0.1] ( [183.15.207.239])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 23 Aug 2025 14:22:56 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7341857350164985269
-Message-ID: <8A7C126C22789C9B+f30def47-302a-45ee-8f76-64ef277f773f@radxa.com>
-Date: Sat, 23 Aug 2025 14:22:56 +0800
+	s=arc-20240116; t=1755930882; c=relaxed/simple;
+	bh=tBCcDaH3buD1JEH+rBJXt3RrWkInRrwKYPxpbY0wMUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hzkRUy687130+jTxrXPAUJUdcSSIARX+pY4FRbZVmEr+d56IM34m9HQ2MVjuGf9f74ACeCHgfzBgWm02EDxJ3dwN9LcV4FmoIPQApPPMYvlqtYAXJ6heruHg1vcEAHwtk+DU71wnWVNIUv6d2IoUhPTFWvXv+P/TqiU/Nhv3Gww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=I2vzf60X; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 2419114C2D3;
+	Sat, 23 Aug 2025 08:34:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1755930871;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HQLgEGsOJ9htfFE7QX5FnGvss/ba3u3E33LwS80L08M=;
+	b=I2vzf60Xa6iV/Cco/5XUWIZ1MosQpt/ZH++Gq8A7BawpF1Ofp/xWQO8VSjqty8maLIiJDs
+	NX8shLu3k/hNg2ZhpIYke1BYJYPXfjA3rPvL+qmTH0Lg1CX9yZn3NIyEfl14HpLfMSEfBo
+	dcAedo6QTw71OUvIbIxV/logCE5/r+tR3kxaBqZ/qI7w+IDTt4Tp2UyFX/kBsbIcNOyHII
+	zf9PChYZ6AqS47znNN7/+KA2sFpM3kpX4OnNZ74wWj/pUdqVoyGRSvPbnKKXhdevENBMR6
+	YqXL6R1RIUAYqloElmsv0okf2gA+ifuqDt/AR1TfiQWwUTgQhxKwEQrg7XV/eg==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 1bfb246e;
+	Sat, 23 Aug 2025 06:34:27 +0000 (UTC)
+Date: Sat, 23 Aug 2025 15:34:12 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Edward Adam Davis <eadavis@qq.com>, Eric Sandeen <sandeen@redhat.com>
+Cc: ericvh@kernel.org, linux-kernel@vger.kernel.org,
+	linux_oss@crudebyte.com, lucho@ionkov.net,
+	syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
+Subject: Re: [PATCH next V2] 9p: Correct the session info
+Message-ID: <aKlg5Ci4WC11GZGz@codewreck.org>
+References: <tencent_074BFE748F778366103D0B36E0971837E809@qq.com>
+ <tencent_85467F89852EDEEEF58C8F67D446F592F106@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/3] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp-phy:
- Document default phy mode
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250821-topic-x1e80100-hdmi-v1-0-f14ad9430e88@linaro.org>
- <20250821-topic-x1e80100-hdmi-v1-1-f14ad9430e88@linaro.org>
- <yc7ceoq3bn3lkxdwkrk64ecubej64vblpwlwzyj5cuep2wmjui@nln2t2yicu7o>
- <018751b8-8b9c-4966-94e2-f3ec8625f87d@linaro.org>
-From: Xilin Wu <sophon@radxa.com>
-Content-Language: en-US
-In-Reply-To: <018751b8-8b9c-4966-94e2-f3ec8625f87d@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NcJjCMiwxJCEmHIE+6tsCg7Er+yYnK/Ax17qDLGANx3xGkz1K5U7qomB
-	cLBC+o6p5yRIvtKObXHvYK8dF6sReKOywUMxJ05BJPVAL9Z8tesPXTR/+9tIKlYM94Kd6If
-	CFR+rsvbvnFNLQl8NwmZxxgtbRnAQCfzTL/SxmF6wtSI2I1MBO91+zVl75wFacknBypH4sE
-	54g/k65SfFKxBpUvRTfxriJulbiZCzac8PewxydKHK9m+8FvV8W9nydw5nW/YhoF231tlQV
-	IAQkvkIUana748YyxDPDAhBiLH6yU0iRd3EIkmmuuFxMSulaiy6hwpDJbaMTKGJMZzvX54r
-	JyuSn/P60R235926k4u6SpYQ13r6Q+uS1qmE9F7SrG7WZCQrqdK3QnTNEErVJSb0RCLvs/E
-	yERu0REI2+K2cikPzoHcK4+tQedjzZXJ8KaaP1D0Pp5hMkuoWMYv0YiQUechGeF8EqJ6Hpv
-	XUSUcJUJLUOb4xF2MLlImUCbrE0mltGgasT8vJXUpMy9KAWMf4t8RpmfIpzzBAOiWRxxig1
-	HRKKosBj7jl6lSPDCOQB4Una4mcgrkUWSXDg+VFMqS67NjcF2Qnu1crBqwP3yoGoz0Au+Jy
-	mEs+GuoS+fpw95ouxchwdAHbxXfW6YU5Xli8E4/mDfHo6yrLIGonLC2ZK6DXOYm8dPZV0IG
-	rOIWqibuLBsuAdkQmto3V19YzVe21YZwMWaFoznkSH/x0HeG/Y9jvoX0MFvfG3JLG2mt6zl
-	/MWrdRy+WWz2cY9hiQE83ctLH8dlsqv/3MOyFbm+KXgJOEOtfGo2wE/D476B67sKDP4bDS9
-	uMcP82futUSHBMA9BDALjBOyLhDe5cWzpeC11IPFpiJ0G0a4kZmPbQo+whRlSsc2yJVIarX
-	EhWoKAO2WRINvv5iw7bz5uh8PK+Vl4stZQIiQIeikJjrNgYTpReEIYKuBfKBJzcAd8QtA+J
-	GeKZYgxab3B1A1Qh9eWmPvpH4ir3JgIjA8r6EfIo+2rn0yiGV2u+3MF+vkfrbdfRSf+iZ7N
-	qaGTiUKQ==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <tencent_85467F89852EDEEEF58C8F67D446F592F106@qq.com>
 
-On 2025/8/22 19:02:21, Neil Armstrong wrote:
-> On 22/08/2025 12:57, Dmitry Baryshkov wrote:
->> On Thu, Aug 21, 2025 at 03:53:26PM +0200, Neil Armstrong wrote:
->>> The QMP USB3/DP Combo PHY hosts an USB3 phy and a DP PHY on top
->>> of a combo glue to route either lanes to the 4 shared physical lanes.
->>>
->>> The routing of the lanes can be:
->>> - 2 DP + 2 USB3
->>> - 4 DP
->>> - 2 USB3
->>>
->>> And the layout of the lanes can be swpped depending of an
->>> eventual USB-C connector orientation.
->>>
->>> Nevertheless those QMP Comby PHY can be statically used to
->>> drive a DisplayPort connector, DP->HDMI bridge, USB3 A Connector...
->>>
->>> But if a 4lanes DP->HDMI bridge is directly connected to the
->>> QMP Comby PHY lanes, in the default routing 2 or the 4 lanes would
->>> probbaly be USB3, making the DP->HDMI bridge non functional.
->>>
->>> Add a property to hint in which layout mode the QMP Comby PHY
->>> should be as startup.
->>>
->>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>> ---
->>>   .../bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml         | 13 ++ 
->>> +++++++++++
->>>   1 file changed, 13 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp- 
->>> usb43dp-phy.yaml b/Documentation/devicetree/bindings/phy/ 
->>> qcom,sc8280xp-qmp-usb43dp-phy.yaml
->>> index 
->>> c8bc512df08b5694c8599f475de78679a4438449..129475a1d9527733e43ded5a38aad766f9810fe7 100644
->>> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp- 
->>> usb43dp-phy.yaml
->>> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp- 
->>> usb43dp-phy.yaml
->>> @@ -76,6 +76,19 @@ properties:
->>>     mode-switch: true
->>>     orientation-switch: true
->>> +  qcom,combo-initial-mode:
->>> +    description:
->>> +      Describe the initial mode of the Combo PHY configuration.
->>> +      The Combo PHY is a wrapper on top of a DP PHY and an USB3 PHY,
->>> +      sharing the same SuperSpeed lanes with either DisplayPort over
->>> +      the 4 lanes (dp), USB3 on a pair of lanes (usb3) or both
->>> +      technologies in a 2+2 configuration (usb3+dp) as default.
->>
->> SPecifying this as an initial mode means that it can be switched later.
->> Should we generalize this and desribe it as bus-type (from
->> video-interfaces.yaml) and allow it to be present only if there is no
->> mode-switch property?
+Edward Adam Davis wrote on Sat, Aug 23, 2025 at 07:22:13AM +0800:
+> syz report a shift-out-of-bounds in v9fs_get_tree.
 > 
-> I was not sure about that, and yes we should do that instead but I'm not
-> sure about how.
+> This is because the maxdata value is 0, causing fls to return 32, meaning
+> the s_blocksize_bits value is 32, which causes an out of bounds error.
+> The root cause of this is incorrect session information obtained during
+> fill super. Since v9ses is stored in sb, it is used directly.
+
+Thanks for the patch.
+
+Eric, ignore the other part of the thread -- I guess the int max limit
+wasn't related...
+
+What I'm not following now is how the v9ses is created/handled around
+the new mount API:
+- in v9fs_get_tree a v9ses is allocated and passed along in
+fc->s_fs_info (that this patches now uses)
+- but in v9fs_init_fs_context then a `v9fs_context` is created that
+also embeds (not a pointer) a v9ses struct, which is accessed through
+fc->fs_private as the code before this patch.
+
+So at least for some time we have two v9ses which obviously don't hold
+the same fields, and I'm not confident I can review which is used where
+and when.
+
+Now I probably should read up about the "new" mount API, but I don't
+like that there are two v9ses around.
+I don't have a clue about the fs_context lifetime: is it kept around all
+the time the fs is mounted and can we rely on it to be present (and get
+rid of the v9ses allocated in v9fs_get_tree), or is the context only a
+temporary thing and we should avoid having a v9ses in there instead?
+(I'd be tempted to think the later?)
+
+
+Edward, thanks for investingating this; at this point I'm worried there
+are other inconsistencies so I'll just remove the new mount API patches
+from my -next branch instead of applying the patch, but this is really
+appreciated.
+
+> Fixes: 4d18c32a395d ("9p: convert to the new mount API")
+> Reported-by: syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=30c83da54e948f6e9436
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> ---
+> V1 -> V2: remove the unused ctx
 > 
-> bus-type sounds great, but the numbering doesn't match so I was thinking 
-> instead
-> something like phy-type with a string or use the numbers from include/ 
-> dt-bindings/phy/phy.h
+>  fs/9p/vfs_super.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> The thing is, do we want to keep the dual dp+usb3 as static ? I think 
-> it's very possible
-> a board would connect the combo phy to an USB3 A connector and a 2lanes 
-> DisplayPort connector.
-
-Yes, our board (Radxa Dragon Q6A) is using such design, but with usb3 
-and dp lanes swapped. [1] I think this patch series could be extended to 
-handle such configuration.
-
-Currently I just change the default orientation to reverse in 
-qmp_combo_probe. [2] It works flawlessly. But of course, it's not an 
-upstreamable solution :)
-
-FWIW, Rockchip usbdp phy binding [3] has a property called 
-`rockchip,dp-lane-mux` to support such configuration.
-
-[1] 
-https://dl.radxa.com/q6a/hw/RADXA%20Dragon%20Q6A%20V1.20%20Schematic%2020250621.pdf
-
-[2] 
-https://github.com/strongtz/linux-next/commit/928cd166ce81aca7f8e051c72eccbd84ad896d98
-
-[3] 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml#n53
-
-> 
-> Neil
-> 
->>
->>
->>> +    default: usb3+dp
->>> +    enum:
->>> +      - usb3+dp
->>> +      - usb3
->>> +      - dp
->>> +
->>>     ports:
->>>       $ref: /schemas/graph.yaml#/properties/ports
->>>       properties:
->>>
->>> -- 
->>> 2.34.1
->>>
->>
-> 
-
+> diff --git a/fs/9p/vfs_super.c b/fs/9p/vfs_super.c
+> index f6065b5e0e5d..bcb6ebdb8037 100644
+> --- a/fs/9p/vfs_super.c
+> +++ b/fs/9p/vfs_super.c
+> @@ -49,8 +49,7 @@ static int v9fs_set_super(struct super_block *s, struct fs_context *fc)
+>  static int v9fs_fill_super(struct super_block *sb, struct fs_context *fc)
+>  {
+>  	int ret;
+> -	struct v9fs_context	*ctx = fc->fs_private;
+> -	struct v9fs_session_info *v9ses = &ctx->v9ses;
+> +	struct v9fs_session_info *v9ses = sb->s_fs_info;
+>  
+>  	sb->s_maxbytes = MAX_LFS_FILESIZE;
+>  	sb->s_blocksize_bits = fls(v9ses->maxdata - 1);
 
 -- 
-Best regards,
-Xilin Wu <sophon@radxa.com>
+Dominique Martinet | Asmadeus
 
