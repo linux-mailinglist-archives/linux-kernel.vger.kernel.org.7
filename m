@@ -1,392 +1,93 @@
-Return-Path: <linux-kernel+bounces-782801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B473CB32585
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:02:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E910B3258B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 106821CC6711
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:01:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E2291CC6E7F
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D16A2222A0;
-	Sat, 23 Aug 2025 00:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FEC79FE;
+	Sat, 23 Aug 2025 00:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Is3HS8RH"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ACQ4xLxk"
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D75C13B7AE
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 00:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74650A55
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 00:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755907245; cv=none; b=DUCItULzsNrOfDXj+oTYtybj7WZgYAANagUPqDqncSpMtOYYJe0lZtI1biVq0Pb3mOUbp6FHY+feIXNWgsN2DR4Moow68dsEEuvZyaIz54ebmIDjo4cPdTlkeb/yRPpCgJpVNX96UIlbluZYd3dJGugU3FbcZrEnF8kllZu7g8U=
+	t=1755907710; cv=none; b=dZOvexREKHO87KBYTKCso/DVsuX/6+VcuoGX+7Hg7ROoYOVNU0o35O5MvwnJ9wvCjPdSuDWZ5vz9rVvm697gesPwFOUVJKe7m2GDKX+ZPiDe0GTU18sB34DdKAky6152KCgfaqpykl/wTyZL3bPtNlMHhzuTxP3Q6JVaSP78Kl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755907245; c=relaxed/simple;
-	bh=NM3DeuEEtAaAuRHK2RaSfe/aDNVsrnZNl/fWVpPhJkw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=uQcSabYZwVn34zYAheFwg56xwpujxrWWk0UfrmuX/gGzPd2bNdkPA9fG8JwKVLpUW7/afNXqjfAESnkzoNl8drnoy2nxXzsGdSDk/Pe1cpcszogDfLcHla2G7w0v5x3999Dv+o25OhKPZehZS/ueHVREOCH0ZjICfJid18HZSOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Is3HS8RH; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24458274406so60511165ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 17:00:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755907242; x=1756512042; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ouvN9Z/KSAqQFTzs2r7I/5ZrSF7aA646JZI4/Fn2ePU=;
-        b=Is3HS8RHwHzdcDRxsbuZpkOAdrKTiVUqrRLGv9Fh9pluxO+BHB7JWd/Ds5T7MHwDVB
-         5wpkjBVlsh26UyQOj9dK0OjWBZXD2e1ckRZj0Roq2Jw8lph9CLQvfsH5EhkpaRQlqB5l
-         g5+aXurOW8VyXq57IxpocS2XGwv+3raApRn1Ql9LS6QfkILPOLsEr1ak1zrO9HFYeQ/U
-         1dpmSNFshX/KikY/Tv1SqOnhJqCxw4n2PNmvevgQ59YYzglyrWI+cRiB4gWIy+Lpql18
-         Mt+j7ZNHoaq7ixOTD100kikTILOz62g9LDCMHvdkAlJVscaUo+P8f3MHRmiQwF/vukIG
-         Xxtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755907242; x=1756512042;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ouvN9Z/KSAqQFTzs2r7I/5ZrSF7aA646JZI4/Fn2ePU=;
-        b=tnHSrZ5tU6F+KzyuAoVANTpV7RSh6rdH/1UpqPCJDtHplakeVYb85Hfkp6MSRTbWKu
-         o6icuz5Mi9y6xYBjTi65RbjB51GUyyvtZZ+MpVIDxXIam0xocwEQtNlqaOZbVRC/Qmcd
-         7ZSN0WVr2Yz83KfwagpRurzpLXwcLuNx/JULG0fAntc8iM+1NUQbTmg18sSQX+HoZQXb
-         SDujsIWGQbgh2dg5LkWoG1FIESignFAuRIKUPKYt/Z4UQ/JXy3N05TUsb2Em0yQWb6ih
-         4Md17OdSpSbD/Fkn3Hl5RYpGE02RevN1OqzLtIr/HuoCykrXZ7djEyKCUDWS3ONktlh2
-         keYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUylaqlDh086b1frN/5mP6nUf9YNYH/lkTnXtGAiQqNjPOUpTYjE2+JwiKRYgCQ4EvJ3SoExjyXgeds/e4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjA845v7YvJNJIr5p2ox3FLM9Ufnz74EKrwAeFYH/Shkv0wVL3
-	G3tSbSvjR59OTCpGL2B7cwWRMSr5n3eZpSEM4ifouulyz6HnBFVqswJNebA8NmklHa8WIL9bwqq
-	XMuji0P/leg==
-X-Google-Smtp-Source: AGHT+IHBE+a/Nwo51dwHhNmlO51ZDKIzz+BjXguGQZ6jdUmxmLzkgl3rDdG548uoUhX4kHE8w87O0lFUxGRq
-X-Received: from plgv17.prod.google.com ([2002:a17:902:e8d1:b0:23f:f68b:fa0c])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2f44:b0:240:1850:cb18
- with SMTP id d9443c01a7336-2462efaee75mr68904135ad.53.1755907242498; Fri, 22
- Aug 2025 17:00:42 -0700 (PDT)
-Date: Fri, 22 Aug 2025 17:00:24 -0700
-In-Reply-To: <20250823000024.724394-1-irogers@google.com>
+	s=arc-20240116; t=1755907710; c=relaxed/simple;
+	bh=+1mzfIZRx9dLFi4vN8VxKVwYq9AcE76C1iIRMV59evI=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=XlMi6kpZAxtI3ZGw298UJjSHnSZKZieEUpDfeITu+TQpc+Vgx5m+WosqQesQY6o0TjWRnZGOenh0WlM/ky6lrOpY1T40E9DvaBnC4sMhzd4KsiAvlJRfGswytQWRyORCgEoMZaQku4YGamqAVSNZ1igZ4Pzw5gtuY+EEGGDEOAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ACQ4xLxk; arc=none smtp.client-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1755907697; bh=Yw+yNClRXQuOD9ZupgdvkzJGGV7YwzsVK0Qs6ZeVvac=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ACQ4xLxk7dfCUUgimHL3+4FE7zWWbgJdg9pAgtV7goG5vkkoiQFlFshushiT4Ycvx
+	 LobBF3sZJXvIbg2iWTtVj0rwDcJ+u+zYeU+cMfDQkxRRabHX7+OQh+olv7mYmQuL4Z
+	 rUxJ8IAHfmfG96i559hak93RTZSS/F0q8yQGbVDE=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 1C02506A; Sat, 23 Aug 2025 08:07:00 +0800
+X-QQ-mid: xmsmtpt1755907620tvl1eu3xw
+Message-ID: <tencent_3F826C402D156CCC96B0EA0AEED6CC7C7B0A@qq.com>
+X-QQ-XMAILINFO: NmYPxqSo4aXv9XtzDcSL/pJrkTASF/4zfNEO75WALQnJA+ShvahkXXqpQQiUCE
+	 DyCaynJiXLk9/Za69XDXi7n0XyMzFdiYBuApOjgkWYu6Q9PGY98I6TaTlPBLC+1ZkvaQSzP6KYX1
+	 EM9uVuMq0a+oIeAi6Gz1UB5yJ6egldFx4+D6gExY3VJcUqiTkvd7AhP5KCXKnNnc5fk8q6bNlgtC
+	 5E6UV1tYwRFrVm5ZZbLjUox9xy8IfAB7ZWg/RrTIEzbcK7gPWqBK6huoVVKHD4IwBmty5IImOStu
+	 pSXBxWHOfSadKGZraVqFBxasp/r2ZXet+fDUG33AfEoGmmmab9f1TRu9SSXNTEs++wE/IfDpqq10
+	 XszuBZJ29OP0Us2CmUgZLhYTXHC57N1H5MxUJo+UYf1c4U0e6M/I8KHaDA4ZYhoPujfuMSaEENrG
+	 j+dHpUoyIVEO1as9Zx5nDIHjHQfXLd1CThg5QsoaDe8dEmwpAEGS7whl+jnFxizt6o0yHSw6ly4Z
+	 kgGdIFZbnDQ/bIbzc2xpJY0SFs30MzvRhsjJA1WfoGiN5sEsgWPawX6JibDjstwExdzkS/Krhtgb
+	 8RlnMpHabtuqyoRdMJSaLdOCY5CcCcOOtmLpBuLakJ9QWQvXBm4i44aQJID92op1DY38Zs+sKL5s
+	 TKaeOSgS289Yx7c+wYIkSRKltl3A4GmQFwZnonbI1t355uunkrzLgbZrhTgB1FVOhkqEGJilwUu2
+	 3zE29mmJzDsErjwAM8bXEymXzB/digRHBdNgxQrkpYeTIot2b0uEjIVJdt4TLH/UHUni2l8FIqIR
+	 WwQ7XG4Y4+Kp0JKsc8g1P7f6UlDC0AFNlqLvXuFeXC9B0LsaZTrJFeiJDbPyWhlAi1v+xbPFMP9z
+	 NoNESNyibmkgzYPsapjU/xkxvNasLi5wOzXOFvyiiZnH+XZ2qeqKBKKzZm/EeuksMW2GLcMevchY
+	 cRK+z2naujw5cFFwxtddM6Rt+pVuA7dIXNfvOWko4XsHOAKIQQvkBXyPeUdl71
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [fuse?] KASAN: slab-out-of-bounds Write in fuse_dev_do_write
+Date: Sat, 23 Aug 2025 08:06:58 +0800
+X-OQ-MSGID: <20250823000657.2554798-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <68a8f5db.a00a0220.33401d.02e1.GAE@google.com>
+References: <68a8f5db.a00a0220.33401d.02e1.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250823000024.724394-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.0.rc2.233.g662b1ed5c5-goog
-Message-ID: <20250823000024.724394-3-irogers@google.com>
-Subject: [PATCH v1 2/2] perf symbol: Add blocking argument to filename__read_build_id
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Collin Funk <collin.funk1@gmail.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
-	Stephen Brennan <stephen.s.brennan@oracle.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Haibo Xu <haibo1.xu@intel.com>, Dmitry Vyukov <dvyukov@google.com>, Song Liu <song@kernel.org>, 
-	Thomas Falcon <thomas.falcon@intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-When synthesizing build-ids, for build ID mmap2 events, they will be
-added for data mmaps if -d/--data is specified. The files opened for
-their build IDs may block on the open causing perf to hang during
-synthesis. There is some robustness in existing calls to
-filename__read_build_id by checking the file path is to a regular
-file, which unfortunately fails for symlinks. Rather than adding more
-is_regular_file calls, switch filename__read_build_id to take a
-"block" argument and specify O_NONBLOCK when this is false. The
-existing is_regular_file checking callers and the event synthesis
-callers are made to pass false and thereby avoiding the hang.
+#syz test
 
-Fixes: 53b00ff358dc ("perf record: Make --buildid-mmap the default")
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/bench/inject-buildid.c  | 2 +-
- tools/perf/builtin-buildid-cache.c | 8 ++++----
- tools/perf/builtin-inject.c        | 4 ++--
- tools/perf/tests/sdt.c             | 2 +-
- tools/perf/util/build-id.c         | 4 ++--
- tools/perf/util/debuginfo.c        | 8 ++++++--
- tools/perf/util/dsos.c             | 4 ++--
- tools/perf/util/symbol-elf.c       | 9 +++++----
- tools/perf/util/symbol-minimal.c   | 6 +++---
- tools/perf/util/symbol.c           | 8 ++++----
- tools/perf/util/symbol.h           | 2 +-
- tools/perf/util/synthetic-events.c | 2 +-
- 12 files changed, 32 insertions(+), 27 deletions(-)
-
-diff --git a/tools/perf/bench/inject-buildid.c b/tools/perf/bench/inject-buildid.c
-index aad572a78d7f..12387ea88b9a 100644
---- a/tools/perf/bench/inject-buildid.c
-+++ b/tools/perf/bench/inject-buildid.c
-@@ -85,7 +85,7 @@ static int add_dso(const char *fpath, const struct stat *sb __maybe_unused,
- 	if (typeflag == FTW_D || typeflag == FTW_SL)
- 		return 0;
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index e80cd8f2c049..5150aa25e64b 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1893,7 +1893,7 @@ static int fuse_retrieve(struct fuse_mount *fm, struct inode *inode,
  
--	if (filename__read_build_id(fpath, &bid) < 0)
-+	if (filename__read_build_id(fpath, &bid, /*block=*/true) < 0)
- 		return 0;
+ 	index = outarg->offset >> PAGE_SHIFT;
  
- 	dso->name = realpath(fpath, NULL);
-diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
-index c98104481c8a..2e0f2004696a 100644
---- a/tools/perf/builtin-buildid-cache.c
-+++ b/tools/perf/builtin-buildid-cache.c
-@@ -180,7 +180,7 @@ static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
- 	struct nscookie nsc;
- 
- 	nsinfo__mountns_enter(nsi, &nsc);
--	err = filename__read_build_id(filename, &bid);
-+	err = filename__read_build_id(filename, &bid, /*block=*/true);
- 	nsinfo__mountns_exit(&nsc);
- 	if (err < 0) {
- 		pr_debug("Couldn't read a build-id in %s\n", filename);
-@@ -204,7 +204,7 @@ static int build_id_cache__remove_file(const char *filename, struct nsinfo *nsi)
- 	int err;
- 
- 	nsinfo__mountns_enter(nsi, &nsc);
--	err = filename__read_build_id(filename, &bid);
-+	err = filename__read_build_id(filename, &bid, /*block=*/true);
- 	nsinfo__mountns_exit(&nsc);
- 	if (err < 0) {
- 		pr_debug("Couldn't read a build-id in %s\n", filename);
-@@ -280,7 +280,7 @@ static bool dso__missing_buildid_cache(struct dso *dso, int parm __maybe_unused)
- 	if (!dso__build_id_filename(dso, filename, sizeof(filename), false))
- 		return true;
- 
--	if (filename__read_build_id(filename, &bid) == -1) {
-+	if (filename__read_build_id(filename, &bid, /*block=*/true) == -1) {
- 		if (errno == ENOENT)
- 			return false;
- 
-@@ -309,7 +309,7 @@ static int build_id_cache__update_file(const char *filename, struct nsinfo *nsi)
- 	int err;
- 
- 	nsinfo__mountns_enter(nsi, &nsc);
--	err = filename__read_build_id(filename, &bid);
-+	err = filename__read_build_id(filename, &bid, /*block=*/true);
- 	nsinfo__mountns_exit(&nsc);
- 	if (err < 0) {
- 		pr_debug("Couldn't read a build-id in %s\n", filename);
-diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
-index 40ba6a94f719..a114b3fa1bea 100644
---- a/tools/perf/builtin-inject.c
-+++ b/tools/perf/builtin-inject.c
-@@ -680,12 +680,12 @@ static int dso__read_build_id(struct dso *dso)
- 
- 	mutex_lock(dso__lock(dso));
- 	nsinfo__mountns_enter(dso__nsinfo(dso), &nsc);
--	if (filename__read_build_id(dso__long_name(dso), &bid) > 0)
-+	if (filename__read_build_id(dso__long_name(dso), &bid, /*block=*/true) > 0)
- 		dso__set_build_id(dso, &bid);
- 	else if (dso__nsinfo(dso)) {
- 		char *new_name = dso__filename_with_chroot(dso, dso__long_name(dso));
- 
--		if (new_name && filename__read_build_id(new_name, &bid) > 0)
-+		if (new_name && filename__read_build_id(new_name, &bid, /*block=*/true) > 0)
- 			dso__set_build_id(dso, &bid);
- 		free(new_name);
- 	}
-diff --git a/tools/perf/tests/sdt.c b/tools/perf/tests/sdt.c
-index 93baee2eae42..6132f1af3e22 100644
---- a/tools/perf/tests/sdt.c
-+++ b/tools/perf/tests/sdt.c
-@@ -31,7 +31,7 @@ static int build_id_cache__add_file(const char *filename)
- 	struct build_id bid = { .size = 0, };
- 	int err;
- 
--	err = filename__read_build_id(filename, &bid);
-+	err = filename__read_build_id(filename, &bid, /*block=*/true);
- 	if (err < 0) {
- 		pr_debug("Failed to read build id of %s\n", filename);
- 		return err;
-diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
-index a7018a3b0437..bf7f3268b9a2 100644
---- a/tools/perf/util/build-id.c
-+++ b/tools/perf/util/build-id.c
-@@ -115,7 +115,7 @@ int filename__snprintf_build_id(const char *pathname, char *sbuild_id, size_t sb
- 	struct build_id bid = { .size = 0, };
- 	int ret;
- 
--	ret = filename__read_build_id(pathname, &bid);
-+	ret = filename__read_build_id(pathname, &bid, /*block=*/true);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -841,7 +841,7 @@ static int filename__read_build_id_ns(const char *filename,
- 	int ret;
- 
- 	nsinfo__mountns_enter(nsi, &nsc);
--	ret = filename__read_build_id(filename, bid);
-+	ret = filename__read_build_id(filename, bid, /*block=*/true);
- 	nsinfo__mountns_exit(&nsc);
- 
- 	return ret;
-diff --git a/tools/perf/util/debuginfo.c b/tools/perf/util/debuginfo.c
-index a44c70f93156..bb9ebd84ec2d 100644
---- a/tools/perf/util/debuginfo.c
-+++ b/tools/perf/util/debuginfo.c
-@@ -110,8 +110,12 @@ struct debuginfo *debuginfo__new(const char *path)
- 	if (!dso)
- 		goto out;
- 
--	/* Set the build id for DSO_BINARY_TYPE__BUILDID_DEBUGINFO */
--	if (is_regular_file(path) && filename__read_build_id(path, &bid) > 0)
-+	/*
-+	 * Set the build id for DSO_BINARY_TYPE__BUILDID_DEBUGINFO. Don't block
-+	 * incase the path isn't for a regular file.
-+	 */
-+	assert(!dso__has_build_id(dso));
-+	if (filename__read_build_id(path, &bid, /*block=*/false) > 0)
- 		dso__set_build_id(dso, &bid);
- 
- 	for (type = distro_dwarf_types;
-diff --git a/tools/perf/util/dsos.c b/tools/perf/util/dsos.c
-index 0a7645c7fae7..64c1d65b0149 100644
---- a/tools/perf/util/dsos.c
-+++ b/tools/perf/util/dsos.c
-@@ -81,13 +81,13 @@ static int dsos__read_build_ids_cb(struct dso *dso, void *data)
- 		return 0;
- 	}
- 	nsinfo__mountns_enter(dso__nsinfo(dso), &nsc);
--	if (filename__read_build_id(dso__long_name(dso), &bid) > 0) {
-+	if (filename__read_build_id(dso__long_name(dso), &bid, /*block=*/true) > 0) {
- 		dso__set_build_id(dso, &bid);
- 		args->have_build_id = true;
- 	} else if (errno == ENOENT && dso__nsinfo(dso)) {
- 		char *new_name = dso__filename_with_chroot(dso, dso__long_name(dso));
- 
--		if (new_name && filename__read_build_id(new_name, &bid) > 0) {
-+		if (new_name && filename__read_build_id(new_name, &bid, /*block=*/true) > 0) {
- 			dso__set_build_id(dso, &bid);
- 			args->have_build_id = true;
- 		}
-diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index 6d2c280a1730..033c79231a54 100644
---- a/tools/perf/util/symbol-elf.c
-+++ b/tools/perf/util/symbol-elf.c
-@@ -902,7 +902,7 @@ static int read_build_id(const char *filename, struct build_id *bid)
- 
- #else // HAVE_LIBBFD_BUILDID_SUPPORT
- 
--static int read_build_id(const char *filename, struct build_id *bid)
-+static int read_build_id(const char *filename, struct build_id *bid, bool block)
- {
- 	size_t size = sizeof(bid->data);
- 	int fd, err = -1;
-@@ -911,7 +911,7 @@ static int read_build_id(const char *filename, struct build_id *bid)
- 	if (size < BUILD_ID_SIZE)
- 		goto out;
- 
--	fd = open(filename, O_RDONLY);
-+	fd = open(filename, block ? O_RDONLY : (O_RDONLY | O_NONBLOCK));
- 	if (fd < 0)
- 		goto out;
- 
-@@ -934,7 +934,7 @@ static int read_build_id(const char *filename, struct build_id *bid)
- 
- #endif // HAVE_LIBBFD_BUILDID_SUPPORT
- 
--int filename__read_build_id(const char *filename, struct build_id *bid)
-+int filename__read_build_id(const char *filename, struct build_id *bid, bool block)
- {
- 	struct kmod_path m = { .name = NULL, };
- 	char path[PATH_MAX];
-@@ -958,9 +958,10 @@ int filename__read_build_id(const char *filename, struct build_id *bid)
- 		}
- 		close(fd);
- 		filename = path;
-+		block = true;
- 	}
- 
--	err = read_build_id(filename, bid);
-+	err = read_build_id(filename, bid, block);
- 
- 	if (m.comp)
- 		unlink(filename);
-diff --git a/tools/perf/util/symbol-minimal.c b/tools/perf/util/symbol-minimal.c
-index 8d41bd7842df..41e4ebe5eac5 100644
---- a/tools/perf/util/symbol-minimal.c
-+++ b/tools/perf/util/symbol-minimal.c
-@@ -85,7 +85,7 @@ int filename__read_debuglink(const char *filename __maybe_unused,
- /*
-  * Just try PT_NOTE header otherwise fails
-  */
--int filename__read_build_id(const char *filename, struct build_id *bid)
-+int filename__read_build_id(const char *filename, struct build_id *bid, bool block)
- {
- 	int fd, ret = -1;
- 	bool need_swap = false, elf32;
-@@ -102,7 +102,7 @@ int filename__read_build_id(const char *filename, struct build_id *bid)
- 	void *phdr, *buf = NULL;
- 	ssize_t phdr_size, ehdr_size, buf_size = 0;
- 
--	fd = open(filename, O_RDONLY);
-+	fd = open(filename, block ? O_RDONLY : (O_RDONLY | O_NONBLOCK));
- 	if (fd < 0)
- 		return -1;
- 
-@@ -323,7 +323,7 @@ int dso__load_sym(struct dso *dso, struct map *map __maybe_unused,
- 	if (ret >= 0)
- 		RC_CHK_ACCESS(dso)->is_64_bit = ret;
- 
--	if (filename__read_build_id(ss->name, &bid) > 0)
-+	if (filename__read_build_id(ss->name, &bid, /*block=*/true) > 0)
- 		dso__set_build_id(dso, &bid);
- 	return 0;
- }
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index e816e4220d33..3fed54de5401 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -1869,14 +1869,14 @@ int dso__load(struct dso *dso, struct map *map)
- 
- 	/*
- 	 * Read the build id if possible. This is required for
--	 * DSO_BINARY_TYPE__BUILDID_DEBUGINFO to work
-+	 * DSO_BINARY_TYPE__BUILDID_DEBUGINFO to work. Don't block in case path
-+	 * isn't for a regular file.
- 	 */
--	if (!dso__has_build_id(dso) &&
--	    is_regular_file(dso__long_name(dso))) {
-+	if (!dso__has_build_id(dso)) {
- 		struct build_id bid = { .size = 0, };
- 
- 		__symbol__join_symfs(name, PATH_MAX, dso__long_name(dso));
--		if (filename__read_build_id(name, &bid) > 0)
-+		if (filename__read_build_id(name, &bid, /*block=*/false) > 0)
- 			dso__set_build_id(dso, &bid);
- 	}
- 
-diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
-index 3fb5d146d9b1..347106218799 100644
---- a/tools/perf/util/symbol.h
-+++ b/tools/perf/util/symbol.h
-@@ -140,7 +140,7 @@ struct symbol *dso__next_symbol(struct symbol *sym);
- 
- enum dso_type dso__type_fd(int fd);
- 
--int filename__read_build_id(const char *filename, struct build_id *id);
-+int filename__read_build_id(const char *filename, struct build_id *id, bool block);
- int sysfs__read_build_id(const char *filename, struct build_id *bid);
- int modules__parse(const char *filename, void *arg,
- 		   int (*process_module)(void *arg, const char *name,
-diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
-index cb2c1ace304a..fcd1fd13c30e 100644
---- a/tools/perf/util/synthetic-events.c
-+++ b/tools/perf/util/synthetic-events.c
-@@ -401,7 +401,7 @@ static void perf_record_mmap2__read_build_id(struct perf_record_mmap2 *event,
- 	nsi = nsinfo__new(event->pid);
- 	nsinfo__mountns_enter(nsi, &nc);
- 
--	rc = filename__read_build_id(event->filename, &bid) > 0 ? 0 : -1;
-+	rc = filename__read_build_id(event->filename, &bid, /*block=*/false) > 0 ? 0 : -1;
- 
- 	nsinfo__mountns_exit(&nc);
- 	nsinfo__put(nsi);
--- 
-2.51.0.rc2.233.g662b1ed5c5-goog
+-	while (num) {
++	while (num && ap->num_folios < num_pages) {
+ 		struct folio *folio;
+ 		unsigned int folio_offset;
+ 		unsigned int nr_bytes;
 
 
