@@ -1,84 +1,102 @@
-Return-Path: <linux-kernel+bounces-783312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6EC9B32B93
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 21:05:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84DEEB32B96
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 21:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DAC13B2BA5
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:05:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B1989E5949
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FFD245014;
-	Sat, 23 Aug 2025 19:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9956258CF1;
+	Sat, 23 Aug 2025 19:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="JVsMms9v"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vDTMI6sZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="g8B7GWGn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9163CC2E0;
-	Sat, 23 Aug 2025 19:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27DF2045B5;
+	Sat, 23 Aug 2025 19:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755975948; cv=none; b=YJGi1GZW50AgbNV1OHjjv2KHHQInutob8BmfPd+4WlaBqz6gsJEK36QX+Dc9iPSF9F2YC6XnY5yv1/ogQ4HSI9RB2bhO+LdII3cR0b4XEr93k1Nok1/URL8DBGFsv98gTjksy6i3No3vQvJfes+YBX5HFb3VST8tFcQyJQoiu84=
+	t=1755976103; cv=none; b=nF/lqMX+Vq/GXzK7GQ4/Y7JAZ25rsfimn60yDR4raH9JXflRPwIrmpeCrfcnqoYIKg0tlBVv78AfnUR3eqNLA8QhsbBEWO21+UR+RJzo0blzJTfBTPTP0tODMpl/zp6tyJWkXQwk7DwplEjE5ky4o2htZQlLI2i6/pZMm2M7avg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755975948; c=relaxed/simple;
-	bh=HADGWc/8c7Ue8Uu3E7Lyc54Gu7V9kKuSTwgz8aZ+ytw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SipaViIn/Fp2f538YsL+6qyjzKJIg//b+pA8zRwA/TO+3x1XH7uvAcTvjv+fNB/zEQqTsSld5FpMAVjsfESnhSsFxwenYv/afzDVxFP5QHFD0zNjK/1mXfdKKdy0TNiL2n+IQ+Vb2Ah1HlYnXHS+cdze5ZK/XLsT68tSxbrtDsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=JVsMms9v; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=1jwY+cXkjW78wASvzBMdo6/QjyjEvwPV1COyCXN2B4U=; b=JVsMms9vlTxqZbzMveaKok7A7x
-	xGR9PSM4ARRmpouPIwQh0vMfBbYMQKZrPLhwK3pzY3HRhGShdyvJbin/fJJ5GgTHkkthpZsvq75wq
-	L4barOGQ/qjgQGSHMspBUC/LJyYXlZbs41ZN62j1WqCXfePL3Bs64ldYsPME/dAGhMTs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uptYW-005mD9-DH; Sat, 23 Aug 2025 21:05:36 +0200
-Date: Sat, 23 Aug 2025 21:05:36 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Wei Fang <wei.fang@nxp.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	Stanislav Fomichev <sdf@fomichev.me>, imx@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-imx@nxp.com
-Subject: Re: [PATCH v3 net-next 2/5] net: fec: add pagepool_order to support
- variable page size
-Message-ID: <c7a79697-1dd1-4c01-a7a3-2223746dd964@lunn.ch>
-References: <20250823190110.1186960-1-shenwei.wang@nxp.com>
- <20250823190110.1186960-3-shenwei.wang@nxp.com>
+	s=arc-20240116; t=1755976103; c=relaxed/simple;
+	bh=/ih9xp8+GWSjBPsOke4yn35ChhE5INsEH83qk0Ueztc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jWqOcWfXHxR4JKtXXt62tjvS9yW3MK6qRiDy29i+Ua3uNBAFOxjVVJG3kbm4BH5JZQkwuSLutwddedNv8z8HPV95XUUEntuvWoV7ODhSL2qDUCWjcn7L8uY5KoVX8Fyrqxy67DeZGkJQfX69uKto1VnKx0SPTaf+S7lq3XgIBvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vDTMI6sZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=g8B7GWGn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755976095;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/ih9xp8+GWSjBPsOke4yn35ChhE5INsEH83qk0Ueztc=;
+	b=vDTMI6sZ9OFcad+BhuH5eYcPICixM70iZdo4oaG3t/EOoC2BGFq+gslleDPxYqJ0Nm/o/v
+	9B3WRqvPA7ceR+eMidLie33Y1gz3TfiWWXUsIqxdfR0ecQDBdjfs8DpvK+Ca5ELHp3fpk8
+	mH9HcfqCLo1E8SSARz9QFf/ZzS7FdT31Uvm/7CQUV3ZtDEIeL760tDjiw9AVR8RXS+oN/3
+	rYbl2quWERGu6uKYyKO1jC6rfoifNFD7bSvnjsYytqzNXCeAriqGGSQP0khcgC7lsHpLI3
+	jsBkaha1/CRdmH8RZlxkCY8FMbgWLr0yuRoFYsg5OOZcsC+KKRw6ye+dIawXJg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755976095;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/ih9xp8+GWSjBPsOke4yn35ChhE5INsEH83qk0Ueztc=;
+	b=g8B7GWGn6zMsdUw7UT/yq5m8NfSXMpXRn0BR1W+x4TlA+kL3npB92Ssj36N2UulnpvxZKw
+	VuchgO5DIM7HfdCQ==
+To: Bjorn Helgaas <helgaas@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Marc Zyngier <maz@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Shradha Gupta
+ <shradhagupta@linux.microsoft.com>, Haiyang Zhang
+ <haiyangz@microsoft.com>, Jonathan Cameron <Jonathan.Cameron@huwei.com>,
+ Juergen Gross <jgross@suse.com>, Nicolin Chen <nicolinc@nvidia.com>, Jason
+ Gunthorpe <jgg@ziepe.ca>, Chen Wang <unicorn_wang@outlook.com>,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, Yixun Lan
+ <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH v2 2/4] PCI/MSI: Add startup/shutdown for per device
+ domains
+In-Reply-To: <20250820205438.GA640534@bhelgaas>
+References: <20250820205438.GA640534@bhelgaas>
+Date: Sat, 23 Aug 2025 21:08:14 +0200
+Message-ID: <87cy8l500x.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250823190110.1186960-3-shenwei.wang@nxp.com>
+Content-Type: text/plain
 
-On Sat, Aug 23, 2025 at 02:01:07PM -0500, Shenwei Wang wrote:
-> Add a new pagepool_order member in the fec_enet_private struct
-> to allow dynamic configuration of page size for an instance. This
-> change clears the hardcoded page size assumptions.
-> 
-> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
+On Wed, Aug 20 2025 at 15:54, Bjorn Helgaas wrote:
+> On Thu, Aug 14, 2025 at 07:28:32AM +0800, Inochi Amaoto wrote:
+>> As the RISC-V PLIC can not apply affinity setting without calling
+>> irq_enable(), it will make the interrupt unavailble when using as
+>> an underlying IRQ chip for MSI controller.
+>
+> s/unavailble/unavailable/ (mentioned previously)
+>
+>> Implement .irq_startup() and .irq_shutdown() for the PCI MSI and
+>> MSI-X templates. For chips that specify MSI_FLAG_PCI_MSI_STARTUP_PARENT,
+>> these startup and shutdown the parent as well, which allows the
+>> irq on the parent chip to be enabled if the irq is not enabled
+>> when allocating. This is necessary for the MSI controllers which
+>> use PLIC as underlying IRQ chip.
+>
+> s/irq/IRQ/ a couple times above
+>
+>> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+>> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+>
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+>
+> Thomas, I assume you'll merge this series; let me know if not.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+I'll pick it up and fixup the wording as I go.
 
