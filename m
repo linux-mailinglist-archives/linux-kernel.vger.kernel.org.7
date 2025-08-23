@@ -1,135 +1,92 @@
-Return-Path: <linux-kernel+bounces-782925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7316CB32711
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:34:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84C53B32713
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 386D15A3756
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 06:34:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A94303AF5A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 06:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC9E212574;
-	Sat, 23 Aug 2025 06:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75854212576;
+	Sat, 23 Aug 2025 06:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="I2vzf60X"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3507D3D3B3
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 06:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Qji+1rXN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71981A0730;
+	Sat, 23 Aug 2025 06:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755930882; cv=none; b=dnh5M+tu1oTkdu2Pih/eSlP77CIXeIOSo49AZrbki6OPZ11Bk27ilS/Zw5S8R1pSLKmHoavUYmtwJnaEcv5nXtJYmuDwnZaGsRHcmJXGY/HVqx524PIwP+t6RZ6ESkr29cr9Ro86MPLhVBO40we1wuTCCUwSPNEWx8kNWK7cfHU=
+	t=1755930994; cv=none; b=IbK6ssfqL/mfEMTgH66fm0gCRh1vytWc28RB3qN592gVAHeCsJ8N+oTnFGluQlVjl43IbQlE2Yauwwqik2GUW/GfDXZv2DSazPSHEycfQMOJUnYpZIwtdB8uD2i4yITh9vZv2MajcVNbBTl3+87+gxF/Ph47CS4JILJRiL1gqm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755930882; c=relaxed/simple;
-	bh=tBCcDaH3buD1JEH+rBJXt3RrWkInRrwKYPxpbY0wMUs=;
+	s=arc-20240116; t=1755930994; c=relaxed/simple;
+	bh=JmNf+0AG97IGYu8B7L1j0V46DCFU5/ljdv2ZVFoAVRc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hzkRUy687130+jTxrXPAUJUdcSSIARX+pY4FRbZVmEr+d56IM34m9HQ2MVjuGf9f74ACeCHgfzBgWm02EDxJ3dwN9LcV4FmoIPQApPPMYvlqtYAXJ6heruHg1vcEAHwtk+DU71wnWVNIUv6d2IoUhPTFWvXv+P/TqiU/Nhv3Gww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=I2vzf60X; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 2419114C2D3;
-	Sat, 23 Aug 2025 08:34:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1755930871;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HQLgEGsOJ9htfFE7QX5FnGvss/ba3u3E33LwS80L08M=;
-	b=I2vzf60Xa6iV/Cco/5XUWIZ1MosQpt/ZH++Gq8A7BawpF1Ofp/xWQO8VSjqty8maLIiJDs
-	NX8shLu3k/hNg2ZhpIYke1BYJYPXfjA3rPvL+qmTH0Lg1CX9yZn3NIyEfl14HpLfMSEfBo
-	dcAedo6QTw71OUvIbIxV/logCE5/r+tR3kxaBqZ/qI7w+IDTt4Tp2UyFX/kBsbIcNOyHII
-	zf9PChYZ6AqS47znNN7/+KA2sFpM3kpX4OnNZ74wWj/pUdqVoyGRSvPbnKKXhdevENBMR6
-	YqXL6R1RIUAYqloElmsv0okf2gA+ifuqDt/AR1TfiQWwUTgQhxKwEQrg7XV/eg==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 1bfb246e;
-	Sat, 23 Aug 2025 06:34:27 +0000 (UTC)
-Date: Sat, 23 Aug 2025 15:34:12 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Edward Adam Davis <eadavis@qq.com>, Eric Sandeen <sandeen@redhat.com>
-Cc: ericvh@kernel.org, linux-kernel@vger.kernel.org,
-	linux_oss@crudebyte.com, lucho@ionkov.net,
-	syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
-Subject: Re: [PATCH next V2] 9p: Correct the session info
-Message-ID: <aKlg5Ci4WC11GZGz@codewreck.org>
-References: <tencent_074BFE748F778366103D0B36E0971837E809@qq.com>
- <tencent_85467F89852EDEEEF58C8F67D446F592F106@qq.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EoKpNggfV+4vV2igZ+3iXg3E7EzCA5XSNzJY5AtmnyBgLPUBXnPwUnHqVtLE86t75nUPa3E2mEvmYkhx4CmOJiff0hpx/anUmQWWXlJuDIUHP6xDML2kn59jTg312+eiitx1UehehmzoQmCubzEZAY7R3yGNs9Z7NOT6hvwaC70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Qji+1rXN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 944E8C113CF;
+	Sat, 23 Aug 2025 06:36:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755930994;
+	bh=JmNf+0AG97IGYu8B7L1j0V46DCFU5/ljdv2ZVFoAVRc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qji+1rXN9OIXfa1Z5HHnBCjZi9aYqDpsTOzT+G6SgOLe6hLfFrWSfXuyKJGwVUGWq
+	 KhzXOf0FFXFVDhOFdhoJ3qsfnvB8yYOnExcZ7tn28GY2Y4NLNZJ+15/ebQX1dnBR2l
+	 bZQ3+AUeijjqg4dVWImEEoQ3qxNhx3/+H2Wcw4UA=
+Date: Sat, 23 Aug 2025 08:36:30 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Harshit Shah <hshah@axiado.com>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Michal Simek <michal.simek@amd.com>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] serial: xilinx_uartps: read reg size from DTS
+Message-ID: <2025082322-speech-blaming-b075@gregkh>
+References: <20250822-xilinx-uartps-reg-size-v1-1-78a5c63cb6df@axiado.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <tencent_85467F89852EDEEEF58C8F67D446F592F106@qq.com>
+In-Reply-To: <20250822-xilinx-uartps-reg-size-v1-1-78a5c63cb6df@axiado.com>
 
-Edward Adam Davis wrote on Sat, Aug 23, 2025 at 07:22:13AM +0800:
-> syz report a shift-out-of-bounds in v9fs_get_tree.
+On Fri, Aug 22, 2025 at 11:58:14AM -0700, Harshit Shah wrote:
+> Current implementation uses `CDNS_UART_REGISTER_SPACE(0x1000)`
+> for request_mem_region() and ioremap() in cdns_uart_request_port() API.
 > 
-> This is because the maxdata value is 0, causing fls to return 32, meaning
-> the s_blocksize_bits value is 32, which causes an out of bounds error.
-> The root cause of this is incorrect session information obtained during
-> fill super. Since v9ses is stored in sb, it is used directly.
-
-Thanks for the patch.
-
-Eric, ignore the other part of the thread -- I guess the int max limit
-wasn't related...
-
-What I'm not following now is how the v9ses is created/handled around
-the new mount API:
-- in v9fs_get_tree a v9ses is allocated and passed along in
-fc->s_fs_info (that this patches now uses)
-- but in v9fs_init_fs_context then a `v9fs_context` is created that
-also embeds (not a pointer) a v9ses struct, which is accessed through
-fc->fs_private as the code before this patch.
-
-So at least for some time we have two v9ses which obviously don't hold
-the same fields, and I'm not confident I can review which is used where
-and when.
-
-Now I probably should read up about the "new" mount API, but I don't
-like that there are two v9ses around.
-I don't have a clue about the fs_context lifetime: is it kept around all
-the time the fs is mounted and can we rely on it to be present (and get
-rid of the v9ses allocated in v9fs_get_tree), or is the context only a
-temporary thing and we should avoid having a v9ses in there instead?
-(I'd be tempted to think the later?)
-
-
-Edward, thanks for investingating this; at this point I'm worried there
-are other inconsistencies so I'll just remove the new mount API patches
-from my -next branch instead of applying the patch, but this is really
-appreciated.
-
-> Fixes: 4d18c32a395d ("9p: convert to the new mount API")
-> Reported-by: syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=30c83da54e948f6e9436
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> The cadence/xilinx IP has register space defined from offset 0x0 to 0x48.
+> It also mentions that the register map is defined as [6:0]. So, the upper
+> region may/maynot be used based on the IP integration.
+> 
+> Fixes: 1f7055779001 ("arm64: dts: axiado: Add initial support for AX3000 SoC and eval board")
+> In Axiado AX3000 SoC two UART instances are defined
+> 0x100 apart. That is creating issue in some other instance due to overlap
+> with addresses.
+> 
+> Since, this address space is already being defined in the
+> devicetree, use the same when requesting the register space.
+> 
+> Acked-by: Michal Simek <michal.simek@amd.com>
+> Signed-off-by: Harshit Shah <hshah@axiado.com>
 > ---
-> V1 -> V2: remove the unused ctx
-> 
->  fs/9p/vfs_super.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/9p/vfs_super.c b/fs/9p/vfs_super.c
-> index f6065b5e0e5d..bcb6ebdb8037 100644
-> --- a/fs/9p/vfs_super.c
-> +++ b/fs/9p/vfs_super.c
-> @@ -49,8 +49,7 @@ static int v9fs_set_super(struct super_block *s, struct fs_context *fc)
->  static int v9fs_fill_super(struct super_block *sb, struct fs_context *fc)
->  {
->  	int ret;
-> -	struct v9fs_context	*ctx = fc->fs_private;
-> -	struct v9fs_session_info *v9ses = &ctx->v9ses;
-> +	struct v9fs_session_info *v9ses = sb->s_fs_info;
->  
->  	sb->s_maxbytes = MAX_LFS_FILESIZE;
->  	sb->s_blocksize_bits = fls(v9ses->maxdata - 1);
+> - Add fixes tag in commit msg
 
--- 
-Dominique Martinet | Asmadeus
+That fixes tag needs to go where the signed-off-by area is.  See the
+many examples on the lists and in the tree itself for specifics.
+
+> - Link to v1: https://lore.kernel.org/r/20250819-xilinx-uartps-reg-size-v1-1-0fb7341023fb@axiado.com
+
+Then why is this one not marked "v2"?
+
+Can you fix this all up and send a v3?
+
+thanks,
+
+greg k-h
 
