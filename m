@@ -1,201 +1,162 @@
-Return-Path: <linux-kernel+bounces-782916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4EE0B326E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 06:56:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1BCBB326E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 07:03:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6AC97BC141
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 04:54:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E24547BEBB1
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 05:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7CE1F9A89;
-	Sat, 23 Aug 2025 04:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SEOHZ3zr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5911DED7B;
+	Sat, 23 Aug 2025 05:02:56 +0000 (UTC)
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907831D9A54
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 04:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A320E393DC3;
+	Sat, 23 Aug 2025 05:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755924979; cv=none; b=F6448xQKLU/cUGMqVXH5mQe0ycxoKNVK81RE94aOT1bOD8hq0LAIGdKF3k3rakeuYt4tGVN5lgSHWiEM3XoqLWRDjvv00XWcey7837pjlGs2Xf03ywW3LFU396B/5E034sQXbecRKHo1IT0TyDRjVYnwRyZ9Ioqt7FeoaNT19gM=
+	t=1755925376; cv=none; b=id9p0C7TL9ncuhPnKKvYzyqUnCebAbXlmmOFNJ/qaSf8qM8whgxRevElY1brdn6DVtvjisR02UL0+hr31eUrzxpkWTYWHNWNU5k/AH0qOPd2/En2I1u8DUIlxBsefjz2WrnSjmr4JXzM9nseUbgj24uSTzpRHXksJY5oEbG0Eak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755924979; c=relaxed/simple;
-	bh=zMM2t6QVcmg2BKrAak2z57J5k2XkktmUXDFSRdw4wXw=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=I/8PoKsLX/adzp6stJCCfdNldAWL0JY8GfNXGrjmiHKWFWOmfJXW19deIQBPq7k02OD2PBRDarbIqQr4B1RwRKDRQI82YJciKWB54ULrphw1am6kDX0TzcUP/tW9ZN49AsIq2wqruQWoL0BPFhlqk2zUz8N3Z3oOWmFh06NriLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SEOHZ3zr; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755924978; x=1787460978;
-  h=date:from:to:cc:subject:message-id;
-  bh=zMM2t6QVcmg2BKrAak2z57J5k2XkktmUXDFSRdw4wXw=;
-  b=SEOHZ3zrRK+gL4Y2NHbf2qDMqnr4T2jomBxxmReB/ludjx0wAUQkoLwN
-   2M2lvbKwmuQ327qjHiqI4u06aLFCmcnk9QI9RdPS8CfzB+yhJlVVO1ruP
-   gX9sIPZlBiXxhpx3WzVV5tiX7xEbX0YE3ch2ZHclZnCBfcVTnPv3BuOY6
-   WXQDkkefxb0bzQCkcVJhB5JJKdltDqXj6FZ/0+tD/KfNq5Tpvimtd9WD0
-   g5m1lC+NJ1svRnhPNyvnE3L2tr2zEZmssWUtYW9nX7Mm7WO8AHUYmizgI
-   6/sFPZ+DbLRGWRdfdR68OK3rpBRSTatgNyV6APrga+M8FPkHenLgJAUMF
-   g==;
-X-CSE-ConnectionGUID: 8Eaf2BbLR1ulPoXUBQTr5Q==
-X-CSE-MsgGUID: tzevljmBQNSkAXp4GXGAfQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="68931640"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="68931640"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 21:56:17 -0700
-X-CSE-ConnectionGUID: qIjpK8X/RyqoK+5MUhXvAg==
-X-CSE-MsgGUID: cj6Q2Y0CTfuW5+8PbCmMBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="168457844"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 22 Aug 2025 21:56:16 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1upgIM-000M5h-2r;
-	Sat, 23 Aug 2025 04:56:04 +0000
-Date: Sat, 23 Aug 2025 12:54:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- 9d9ace93079af7fae60816c8d677dab962713904
-Message-ID: <202508231234.qF1jSgrC-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1755925376; c=relaxed/simple;
+	bh=PUw1CEY9BF2A4FCoMSDLPSzSajO6DMKtVoLXf9xDEPk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=S9NC6dlC5Vmdlz7re5AZD/ICtA0KyztURanG272Um7fPq4IWrQ/Oe+UIkZjQqCaqb9xX9NkMEfYmrgVRnln052UwlezrKBr8/eqHX7G+BV4c8e5EvyDn0dg+JPDneLuL7O9fBvMpKgG4xUTMX7onZF1Xht7hB6YKY9Uft7pwAs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b471756592cso1747119a12.3;
+        Fri, 22 Aug 2025 22:02:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755925374; x=1756530174;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/d62ZhyQDkr88P3RsdKpz2BL7mo3EK8sLLtOc02S/I0=;
+        b=bW4EyELJ602f2yN9+FnkaNJYZOdCR1ycYoW12YoP5XnJY+pDp/2UEWkDUvpDyUzVCM
+         vw/LrP9JDjWWylv9EShOjsm8DiPECzFoqjC/vreDncVvKvUUnL3eGTDAMWZGO6nkL9oq
+         8tOcSX1k+r7XuNMa9y5c6ZeGc3VmCU9BXmo0j4r8zBe9+hbvN8RUSJUBPp7J1VAHAu7r
+         POmR82bAeeVa6vhCHCxyJc/z2+AFHroziIcvhtsSuy+5bF1LptFyP5Qw/Pa7Mshom3qn
+         0N7hv6IYzMmoMatGEo5T6PdKYaINjiY3ff1/3/66ZE1kiWjqZ75nz+jfYArPMMGIa48E
+         IBxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpjAHnND8euAnBVb2HAooS+zaV1sDxDSbm8lXOF8mKxopKmGnak3Tk1//TXwTpx+DMP7fOShpSqEktATo=@vger.kernel.org, AJvYcCUzEyYaZirPyS51Mm0mBRmiZaAOadfTB8UgDH5EPAlJZedwF142ndeigmyfhLg44OF3cjB/TZ53@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU1yQG6nEH5NlNMAm5zx4T+rhC1sTufw3m2Nh9zaIczwqMetEc
+	vPkwTPgngRLjhE4mBPQBvY6gBXx0La9GXB0ropvV3YB8hXVyaNLd5RWt
+X-Gm-Gg: ASbGncsepavE3SA8aAqVAJxDYwVlzJHrMd5wyBTNz6bQF5AaKi4DlJr12SCds4wzxiZ
+	fohft463t2V3unQkpo2SsgTamAj3vBbvGyRaRCtM0PtgjVLWdZDYMaMjsgzpqzbeuc+RsfaVkb0
+	ofyboZOkvUh+KJ29iQPw6xK4jhHuAaU1rKOjPTe7F/JgTXH93SHgXTAcd/o4KhTHuRAr/+d2s0S
+	azCPSPnLS1TvKy2OILYPMU6gAO1QNdctAsfrE9YUCHueVTE67le7977h3iojdCCIjN6Zn7jFkKF
+	u0pRbZA5KRIpOqpejeSHrvpdbFK+JwJXDoDu6h2a1Gggn0pF2y5F07RWnIKZotEN7ojBWkOJSVn
+	EWxYrqXvDOgY7CE/DPbBU1om27T5E
+X-Google-Smtp-Source: AGHT+IE8770SMYUXmPTg9FqFtmb8WBT+htAHMIkfnPossk9y2D5JS3AQrYJBFyN+jCsWvbzmTaOlqA==
+X-Received: by 2002:a17:902:c946:b0:246:39d7:8e6a with SMTP id d9443c01a7336-24639d78f54mr74824125ad.43.1755925373870;
+        Fri, 22 Aug 2025 22:02:53 -0700 (PDT)
+Received: from localhost.localdomain ([2403:2c80:17::10:4030])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466877c732sm11997115ad.1.2025.08.22.22.02.43
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 22 Aug 2025 22:02:53 -0700 (PDT)
+From: Lance Yang <lance.yang@linux.dev>
+To: akpm@linux-foundation.org,
+	fthain@linux-m68k.org,
+	geert@linux-m68k.org,
+	mhiramat@kernel.org,
+	senozhatsky@chromium.org
+Cc: lance.yang@linux.dev,
+	amaindex@outlook.com,
+	anna.schumaker@oracle.com,
+	boqun.feng@gmail.com,
+	ioworker0@gmail.com,
+	joel.granados@kernel.org,
+	jstultz@google.com,
+	kent.overstreet@linux.dev,
+	leonylgao@tencent.com,
+	linux-kernel@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org,
+	longman@redhat.com,
+	mingo@redhat.com,
+	mingzhe.yang@ly.com,
+	oak@helsinkinet.fi,
+	peterz@infradead.org,
+	rostedt@goodmis.org,
+	tfiga@chromium.org,
+	will@kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH 1/1] hung_task: fix warnings caused by unaligned lock pointers
+Date: Sat, 23 Aug 2025 13:00:36 +0800
+Message-ID: <20250823050036.7748-1-lance.yang@linux.dev>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <f79735e1-1625-4746-98ce-a3c40123c5af@linux.dev>
+References: <f79735e1-1625-4746-98ce-a3c40123c5af@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: 9d9ace93079af7fae60816c8d677dab962713904  Merge branch into tip/master: 'x86/misc'
+From: Lance Yang <lance.yang@linux.dev>
 
-elapsed time: 1460m
+The blocker tracking mechanism assumes that lock pointers are at least
+4-byte aligned to use their lower bits for type encoding.
 
-configs tested: 109
-configs skipped: 6
+However, as reported by Geert Uytterhoeven, some architectures like m68k
+only guarantee 2-byte alignment of 32-bit values. This breaks the
+assumption and causes two related WARN_ON_ONCE checks to trigger.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+To fix this, the runtime checks are adjusted. The first WARN_ON_ONCE in
+hung_task_set_blocker() is changed to a simple 'if' that returns silently
+for unaligned pointers. The second, now-invalid WARN_ON_ONCE in
+hung_task_clear_blocker() is then removed.
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                   randconfig-001-20250822    gcc-8.5.0
-arc                   randconfig-002-20250822    gcc-8.5.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                   randconfig-001-20250822    clang-22
-arm                   randconfig-002-20250822    gcc-8.5.0
-arm                   randconfig-003-20250822    clang-22
-arm                   randconfig-004-20250822    gcc-8.5.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250822    clang-22
-arm64                 randconfig-002-20250822    clang-22
-arm64                 randconfig-003-20250822    clang-17
-arm64                 randconfig-004-20250822    gcc-8.5.0
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20250822    gcc-9.5.0
-csky                  randconfig-002-20250822    gcc-15.1.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20250822    clang-22
-hexagon               randconfig-002-20250822    clang-22
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250822    gcc-12
-i386        buildonly-randconfig-002-20250822    clang-20
-i386        buildonly-randconfig-003-20250822    gcc-12
-i386        buildonly-randconfig-004-20250822    gcc-12
-i386        buildonly-randconfig-005-20250822    gcc-12
-i386        buildonly-randconfig-006-20250822    gcc-12
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20250822    clang-22
-loongarch             randconfig-002-20250822    gcc-15.1.0
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20250822    gcc-11.5.0
-nios2                 randconfig-002-20250822    gcc-11.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250822    gcc-9.5.0
-parisc                randconfig-002-20250822    gcc-12.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc               randconfig-001-20250822    clang-22
-powerpc               randconfig-002-20250822    gcc-11.5.0
-powerpc               randconfig-003-20250822    clang-18
-powerpc64             randconfig-001-20250822    gcc-13.4.0
-powerpc64             randconfig-002-20250822    clang-22
-powerpc64             randconfig-003-20250822    gcc-8.5.0
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                 randconfig-001-20250823    clang-22
-riscv                 randconfig-002-20250823    gcc-8.5.0
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-001-20250823    gcc-9.5.0
-s390                  randconfig-002-20250823    clang-22
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                    randconfig-001-20250823    gcc-15.1.0
-sh                    randconfig-002-20250823    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250823    gcc-8.5.0
-sparc                 randconfig-002-20250823    gcc-8.5.0
-sparc64               randconfig-001-20250823    gcc-8.5.0
-sparc64               randconfig-002-20250823    clang-22
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250823    clang-22
-um                    randconfig-002-20250823    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250822    clang-20
-x86_64      buildonly-randconfig-002-20250822    gcc-12
-x86_64      buildonly-randconfig-003-20250822    clang-20
-x86_64      buildonly-randconfig-004-20250822    clang-20
-x86_64      buildonly-randconfig-005-20250822    clang-20
-x86_64      buildonly-randconfig-006-20250822    gcc-12
-x86_64                              defconfig    gcc-11
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250823    gcc-15.1.0
-xtensa                randconfig-002-20250823    gcc-13.4.0
+Thanks to Geert for bisecting!
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Closes: https://lore.kernel.org/lkml/CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com
+Fixes: e711faaafbe5 ("hung_task: replace blocker_mutex with encoded blocker")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Lance Yang <lance.yang@linux.dev>
+---
+ include/linux/hung_task.h | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/hung_task.h b/include/linux/hung_task.h
+index 34e615c76ca5..69640f266a69 100644
+--- a/include/linux/hung_task.h
++++ b/include/linux/hung_task.h
+@@ -20,6 +20,10 @@
+  * always zero. So we can use these bits to encode the specific blocking
+  * type.
+  *
++ * Note that on architectures like m68k with only 2-byte alignment, the
++ * blocker tracking mechanism gracefully does nothing for any lock that is
++ * not 4-byte aligned.
++ *
+  * Type encoding:
+  * 00 - Blocked on mutex			(BLOCKER_TYPE_MUTEX)
+  * 01 - Blocked on semaphore			(BLOCKER_TYPE_SEM)
+@@ -45,7 +49,7 @@ static inline void hung_task_set_blocker(void *lock, unsigned long type)
+ 	 * If the lock pointer matches the BLOCKER_TYPE_MASK, return
+ 	 * without writing anything.
+ 	 */
+-	if (WARN_ON_ONCE(lock_ptr & BLOCKER_TYPE_MASK))
++	if (lock_ptr & BLOCKER_TYPE_MASK)
+ 		return;
+ 
+ 	WRITE_ONCE(current->blocker, lock_ptr | type);
+@@ -53,8 +57,6 @@ static inline void hung_task_set_blocker(void *lock, unsigned long type)
+ 
+ static inline void hung_task_clear_blocker(void)
+ {
+-	WARN_ON_ONCE(!READ_ONCE(current->blocker));
+-
+ 	WRITE_ONCE(current->blocker, 0UL);
+ }
+ 
+-- 
+2.49.0
+
 
