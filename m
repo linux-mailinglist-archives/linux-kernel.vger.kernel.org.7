@@ -1,83 +1,53 @@
-Return-Path: <linux-kernel+bounces-783362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C4ADB32C89
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 01:17:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE50B32C8E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 01:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56CA39E5905
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 23:17:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30E441897670
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 23:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD962ECD0E;
-	Sat, 23 Aug 2025 23:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4CD25392B;
+	Sat, 23 Aug 2025 23:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mzrxf0lh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UN63WCN2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333981E260C;
-	Sat, 23 Aug 2025 23:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A372E192B7D;
+	Sat, 23 Aug 2025 23:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755991042; cv=none; b=nnkCE8rlMoFVYcvjfiKsBILskv5Byi4e6hxCv+t69kclG6yTzPqjjUhurxq5ipgrpmwdj3S6UngRN3GFEBd7XgevHIH/NJrTegWFXPWd9DYRKa5aJ4Qbs7nxnaQ8smlG+AvmgDrhZ0Hf2r89sUhtifnRWSAeFu95pOe/tSoRKGc=
+	t=1755991547; cv=none; b=d1SFPgMSJm/9/b9uX9CvgSmklyUawbdyXzq0HUXQgsAKjAvoeFeW3xfFIa4QpOl1nkWIohykcSRJ3vsXzYh3DiuK46Xk6ukN/FmI4hxcG3p+aqXZ53ZleslMYxykh6fvxiTvM0nWKlORSkq1eNwtpB2QKl7MpxyMcBAgcZDM1y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755991042; c=relaxed/simple;
-	bh=XtKM7eiCxZ0XFcJHdyLW+a+x0++34f9wWFWwximPqJI=;
+	s=arc-20240116; t=1755991547; c=relaxed/simple;
+	bh=MRBVB/uTH2GsT4FPSoaIe96ENDogXURL6V1MIokoRl0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CSz0y6FGKvIxRrLQ3HjdssjRJGMutqeIYrWkWLmvDxtaUGyIH+Af2PRjTUIruP+TC8PWfxCblaBr62nVIG+Ra/869CCmkskehyqAiL4maa1+7kOqvu+qSawW67vcpxv7bb4kYbcfPKZAyIO+77WP8vmeF4YwSVRfYt6m9wF4gek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mzrxf0lh; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755991041; x=1787527041;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XtKM7eiCxZ0XFcJHdyLW+a+x0++34f9wWFWwximPqJI=;
-  b=Mzrxf0lhRcdKUVg0KhbWEt5UE8ZiWQfbewkHIgWmqS9E9J8NdjQm9yaP
-   DCLpcGHK1T+XGnc38G0R7Tu6nB6xUHDCVEXjxptQQ5U2D9GqqFcUhB2Ih
-   tXE7LvTO3QmwN6nuMAuLMxOB7x61UC2D8KXztf6UHnXowyKRmvyPQR6rI
-   Xh/uT1/2kr9f+CzEcmJ/1a1scGhL6yOpp7A3xmzrcry/FiwCcVXsju/DW
-   6SdI4xy4qG50jUrlPbuBWKW+b2OZ/CwH/awt2eYuNP/zRWocdAIwOmTik
-   nse0ru1UbAS5Hxbm7TtBZyyOwN15Jl3CnQ76PMaqHKPS/b+h3Nd6EUYIl
-   Q==;
-X-CSE-ConnectionGUID: h24IHC7/TBG56uXd3Qz7Pg==
-X-CSE-MsgGUID: KOn82bjNTISRLL04a1CZIA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="58320860"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="58320860"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2025 16:17:21 -0700
-X-CSE-ConnectionGUID: IhBAIPK8QTOmrL+ANuUlfQ==
-X-CSE-MsgGUID: wyxIHYRASsy7bwvCYPlLrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="173258707"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 23 Aug 2025 16:17:18 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1upxU3-000MeD-2L;
-	Sat, 23 Aug 2025 23:17:15 +0000
-Date: Sun, 24 Aug 2025 07:16:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Dafna Hirschfeld <dafna@fastmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Keke Li <keke.li@amlogic.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Dan Scally <dan.scally@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Subject: Re: [PATCH v4 5/8] media: v4l2-core: Introduce v4l2-params.c
-Message-ID: <202508240704.AZwGXBaw-lkp@intel.com>
-References: <20250820-extensible-parameters-validation-v4-5-30fe5a99cb1f@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sn1YPS7/SQz4SVrA5YdTvpzFv9nS+Z80axquQdl0RLXbhLwmm54rm3G/JReeupGotej8Qes74ECp8h3O5QjsH8/Tg+jr0r1FnOsK4BsO9rvDlxgx/UpN/rY5finRBzS4f7znpSg88NlPT71wMiKCKqs2G0q+k0kth6i9lUV1Kgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UN63WCN2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD912C4CEE7;
+	Sat, 23 Aug 2025 23:25:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755991547;
+	bh=MRBVB/uTH2GsT4FPSoaIe96ENDogXURL6V1MIokoRl0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UN63WCN2kw27T7gGnuB4QHlLXCzf7Bij+e8qVn25XqmWNDEDOxGIS/L7ddGl/A2E4
+	 Bk6ZqQGT+tb7gsG6mM54198YKx9GCvgla7DDCGPdL2U3CCU882BIU0UjoUjGrJHmVM
+	 drdlsZuAhjiIwzql32nUkzLPX4OnqFwGjDfpbDy9AbcoTbXkheZubeEQuEOrtIrAad
+	 2LqHuxYGPEhGYPVWvwHhfjme2N1aubuaim++yQdlE53/wanoJ5f63b6h6JDRD+ztHr
+	 Y/6Spe3ZCDSdGe1NbllYlgWU1ZMB3tWzoZfTHmFQ2NS5ldhOZ01hs5iNnORGmNBj6u
+	 eTqE9W5yB3I7g==
+Date: Sun, 24 Aug 2025 02:25:44 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] lib: Fix a couple of potential signed oveflows
+Message-ID: <aKpN-NuTets9EExp@kernel.org>
+References: <20250822142215.2475014-1-dhowells@redhat.com>
+ <20250822142215.2475014-2-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,34 +56,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250820-extensible-parameters-validation-v4-5-30fe5a99cb1f@ideasonboard.com>
+In-Reply-To: <20250822142215.2475014-2-dhowells@redhat.com>
 
-Hi Jacopo,
+On Fri, Aug 22, 2025 at 03:22:08PM +0100, David Howells wrote:
+> Fix keyctl_read_alloc() to check for a potential unsigned overflow when we
+> allocate a buffer with an extra byte added on the end for a NUL.
+> 
+> Fix keyctl_dh_compute_alloc() for the same thing.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+>  keyutils.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/keyutils.c b/keyutils.c
+> index 37b6cc3..fd02cda 100644
+> --- a/keyutils.c
+> +++ b/keyutils.c
+> @@ -18,6 +18,7 @@
+>  #include <dlfcn.h>
+>  #include <sys/uio.h>
+>  #include <errno.h>
+> +#include <limits.h>
+>  #include <asm/unistd.h>
+>  #include "keyutils.h"
+>  
+> @@ -442,6 +443,8 @@ int keyctl_read_alloc(key_serial_t id, void **_buffer)
+>  		return -1;
+>  
+>  	for (;;) {
+> +		if (ret == LONG_MAX)
+> +			return -EFBIG; /* Don't let buflen+1 overflow. */
+>  		buflen = ret;
+>  		buf = malloc(buflen + 1);
+>  		if (!buf)
+> @@ -515,6 +518,8 @@ int keyctl_dh_compute_alloc(key_serial_t priv, key_serial_t prime,
+>  	if (ret < 0)
+>  		return -1;
+>  
+> +	if (ret == LONG_MAX)
+> +		return -EFBIG; /* Don't let buflen+1 overflow. */
+>  	buflen = ret;
+>  	buf = malloc(buflen + 1);
+>  	if (!buf)
+> 
 
-kernel test robot noticed the following build errors:
 
-[auto build test ERROR on a75b8d198c55e9eb5feb6f6e155496305caba2dc]
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jacopo-Mondi/media-uapi-Introduce-V4L2-extensible-params/20250820-210503
-base:   a75b8d198c55e9eb5feb6f6e155496305caba2dc
-patch link:    https://lore.kernel.org/r/20250820-extensible-parameters-validation-v4-5-30fe5a99cb1f%40ideasonboard.com
-patch subject: [PATCH v4 5/8] media: v4l2-core: Introduce v4l2-params.c
-config: nios2-randconfig-002-20250824 (https://download.01.org/0day-ci/archive/20250824/202508240704.AZwGXBaw-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 9.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250824/202508240704.AZwGXBaw-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508240704.AZwGXBaw-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   nios2-linux-ld: drivers/media/v4l2-core/v4l2-params.o: in function `v4l2_params_buffer_validate':
-   v4l2-params.c:(.text+0x124): undefined reference to `vb2_plane_vaddr'
->> v4l2-params.c:(.text+0x124): relocation truncated to fit: R_NIOS2_CALL26 against `vb2_plane_vaddr'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+BR, Jarkko
 
