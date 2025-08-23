@@ -1,151 +1,204 @@
-Return-Path: <linux-kernel+bounces-782874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC144B32641
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 889D4B32640
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BC0AB03B85
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:45:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25C49B039BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6B11C5F09;
-	Sat, 23 Aug 2025 01:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="bajDHJBu"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9E01E520D;
+	Sat, 23 Aug 2025 01:45:35 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D5F78F2E
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 01:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E168E18DB02;
+	Sat, 23 Aug 2025 01:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755913548; cv=none; b=crQVqYzh2pOmICZwzStqpZNu57t6ff+9C1NsA60CCQoHIkrD6sHNzloU2Z/ZgGy85ftHVlIF1s74lQwub6evB9FsHD+c75w23DM1/eUKGtQ4adXSUAyhWO0UrFQ17TmIHZ5O40KfoI+gutZ62nAF9TSr9gCF0ijCNKDGj5HIg3A=
+	t=1755913535; cv=none; b=IBebMxIJSnuf/wb0N2g8WZe5dQvZamLOOa+nqwK198nzGH/cshPUB4mRNYN86iAJaeTJGdy/Z6fKIcfrbuyJAYdyHrKLgpuXy0U80EYrzmT+QWbSzfB1sTUEc/7WnFAPO7ks7dXmHBjyslPEqAmktchfCX2CjXJgl7x1epwZb4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755913548; c=relaxed/simple;
-	bh=+Sh+7ONilryNDKBi+yc0lK3uqxqt4qfdsXN/kIupd5g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PiUTipWGoP4JzgdLoOXVP+Zu4GJEJ3H4AiIHXXxnN/goac03XBgcdEsgDoqLp4jld7djQv9YOXZlUtGHgmVBM3tSr5M2/Wd/Ccrs+49yRnf94lV6xcmHwC9y7qRzGCGF5SabN54ssMNFoTgcOqYQzARcc1FzULU9TBjiSgf/6mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=bajDHJBu; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b109919a09so33204191cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Aug 2025 18:45:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1755913544; x=1756518344; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VlKW5Pgv256mFzDnuzti/r6dmiOCKNtOIQXBnteKRRE=;
-        b=bajDHJBuiNzVlGwsSEo+Hn+WSwrLY6bJ9P2Pi/Jjsl56U6orDTyFBHBUH+x6b970+b
-         nciyuy79iND1T2hO3+X/j5rO+hJGCp/FjY3R37A+l5xQGYxnKL4MllTvl7ZN4IxM1UHj
-         w9wn5jkkwPr/4D6zRJF05Ou4s/JxJgjYvNfUntp0W/YvaBwU4g0+KARvwEa6cqfLKD1M
-         VrfaW6k2UMcSdUTc1esq6HNagMyYZqHyJV6VGXiXkst08rXTV+6RsGm710dJQSlY6gjK
-         c/47+RNTnmD6P6pw8W8yclYCrvWmKgD1cRbfpFH75JFa5SWxQSEOeRSJBhojKZE96/ZC
-         yKWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755913544; x=1756518344;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VlKW5Pgv256mFzDnuzti/r6dmiOCKNtOIQXBnteKRRE=;
-        b=pQXlO2gfZVmOjn7HxtnoQkXN40RepGFCOEZrhirNKZQNy5L33AhLF59//k/d4bF4Kf
-         uU9alihWS5OBdUrMkSRb/bAz+TCAPE/XiSLiMMrVg8p3Czd1E9vvb9sOdZsIUoQ7Rmrj
-         94jK1fMnXREgOIR0yJw0DdNgkxrTnCC37O6o9RkGgkCK6lPWtzqcw0oIO3JJZlQMTZYv
-         gWuJOxfdGudP5OQRLz63Wa4nzdZ+5awojeBFHQlbMNNlyckkuzjbL+tXlf3onKFOnAGT
-         S65KnA9ILbZ8Dxx3sGMFMLIM2XKGsbjGdieGQLlsnD1p75h9YiHQ8LUQDfD9MBxZ06Gv
-         gXKA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6UW4M5r3XqKByGIcsZ/nlMNLl+6GofjLURq+KQPi71WTE+sJIIHiFA1/h/I5999j6UC5b6IFXlh8HoHU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjZoUSy8esGEgH0PpY2NvQDldqEjTnBsxq2dquYHAxf3dhDwdR
-	EpBMqnNC2DUhBj22qXOZsxds4VfyNS3DIon3eDv0wteT51MZrp22sxL8lUC1ccdXFFExyl9Q9Wv
-	FXnQo/YracZg5xb8mel8iMlotRl5odEQ6P8v9gzykvQ==
-X-Gm-Gg: ASbGncsHm8Cm+hS5VFf8J9XVd00g15XaxOVJUp0NMb2k2F+IJLTFThuF9WiR00KQyk5
-	6vVzZkHQcM5nDOU9wETndxHwEosxvMT3dl1PXFTN2QXlgvOgcIB8OzGx7ywfqkFugxURz3cADwY
-	3JfNu5SAPfnQGFXHmfkbprwjcmlWJ8rAnnCot2E5+qGdmi+Akyez4GZSILZs3DWLKdLKuAz1Qcq
-	UUCbdF/P8nTZP/IVC+GVY4yZOXrgvvISHz6
-X-Google-Smtp-Source: AGHT+IFJ3PRRZe34Y4dSRHIRs+lJLBqamedt/1JiUCGODfabndaZOKA8Y9oOxhqNavyQwvJCLdmtJ4j87/jk0IKCppU=
-X-Received: by 2002:ac8:57c4:0:b0:4b0:f1f3:dd71 with SMTP id
- d75a77b69052e-4b2aab3af96mr62370361cf.52.1755913544346; Fri, 22 Aug 2025
- 18:45:44 -0700 (PDT)
+	s=arc-20240116; t=1755913535; c=relaxed/simple;
+	bh=/kz7kzrF2bxsIH48726DRXFxWy6o0FBrqLUdO+M67lM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ooZ5bbIiE4Y0iiVzNVJj54tzcexLu1b+8/GjkkCWNlzm5OkCHo8zIaIM3LL8Wek+VLfogZM6BcitZlH7R0lsJJwDrQYtAPOOCZlYVZlVuesXOp2YNBRCGDwwZ5wAwpE9z2vlNq13YuOjgZmYIQpCHB1yv5OYi23ZW74gf8PWCMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c80Hs1tL2zYQvGx;
+	Sat, 23 Aug 2025 09:45:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id C6EBE1A0C5E;
+	Sat, 23 Aug 2025 09:45:27 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP4 (Coremail) with SMTP id gCh0CgBHDg82HalogetwEg--.14802S2;
+	Sat, 23 Aug 2025 09:45:27 +0800 (CST)
+Message-ID: <1b6498f3-ca07-41d5-9637-f20a58184e60@huaweicloud.com>
+Date: Sat, 23 Aug 2025 09:45:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68a7ef20.050a0220.37038e.004d.GAE@google.com> <20250822181653.cd2024360870ef94cdb7db07@linux-foundation.org>
-In-Reply-To: <20250822181653.cd2024360870ef94cdb7db07@linux-foundation.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Sat, 23 Aug 2025 01:45:07 +0000
-X-Gm-Features: Ac12FXwM4kAP0laHI3d1brUQefKqoyrow-mZmbYi0Nok45Ky9c4wi2PUkolUc_s
-Message-ID: <CA+CK2bBrv_Cvhce5N_RoNjaSL5380he3ZRaDeTC79hhjYxSmRQ@mail.gmail.com>
-Subject: Re: [syzbot] [mm?] kernel BUG in page_table_check_set
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: syzbot <syzbot+49a796ed2c9709652f1e@syzkaller.appspotmail.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com, Andrew Donnellan <ajd@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] cgroup: cgroup.stat.local time accounting
+To: Tiffany Yang <ynaffit@google.com>
+Cc: linux-kernel@vger.kernel.org, John Stultz <jstultz@google.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Pavel Machek <pavel@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Chen Ridong <chenridong@huawei.com>, kernel-team@android.com,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+ cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20250822013749.3268080-6-ynaffit@google.com>
+ <20250822013749.3268080-7-ynaffit@google.com>
+ <552a7f82-2735-47a5-9abd-a9ae845f4961@huaweicloud.com>
+ <a309c2b5-5425-428c-a034-d5ebc68cb304@huaweicloud.com>
+ <dbx8ms7r885f.fsf@ynaffit-andsys.c.googlers.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <dbx8ms7r885f.fsf@ynaffit-andsys.c.googlers.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBHDg82HalogetwEg--.14802S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXw45CFy7XF45ArW5Gw17Wrg_yoWrCr45pa
+	9YyF4Yy395twnayrsFv3sFgFy0vrZ5J3Z8Gr95JFy8Ar43X3WSgr47urZ0gr1UZr4xJ34U
+	JF1Yvwn7uFnFqFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Sat, Aug 23, 2025 at 1:16=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Thu, 21 Aug 2025 21:16:32 -0700 syzbot <syzbot+49a796ed2c9709652f1e@sy=
-zkaller.appspotmail.com> wrote:
->
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
-> > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/lin=
-ux.git for-kernelci
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D15f926f0580=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D8c5ac3d8b8a=
-bfcb
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D49a796ed2c970=
-9652f1e
-> > compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6=
-049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> > userspace arch: arm64
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D15faa7a25=
-80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D144143bc580=
-000
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/d=
-isk-8f5ae30d.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmli=
-nux-8f5ae30d.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff=
-/Image-8f5ae30d.gz.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+49a796ed2c9709652f1e@syzkaller.appspotmail.com
-> >
-> > ------------[ cut here ]------------
-> > kernel BUG at mm/page_table_check.c:118!
->
-> Thanks.
->
-> Presumably due to the series "Support page table check on PowerPC".
-> Andrew, could you please take a look?
->
-> The series has been in mm.git for a week so I guess the impact of this
-> is small.  I won't drop it at this time, but prompt attention would be
-> appreciated.
 
-page_table_check_set()
-     BUG_ON(atomic_inc_return(&ptc->anon_map_count) > 1 && rw);
 
-This code triggers a BUG_ON if we attempt to set a new PTE in a user
-page table with RW permission for an anonymous page that is already
-mapped elsewhere. Anonymous pages can only be shared with RO
-permissions for COW; otherwise, it can't be shared.
+On 2025/8/23 3:32, Tiffany Yang wrote:
+> Hi Chen,
+> 
+> Thanks again for taking a look!
+> 
+> Chen Ridong <chenridong@huaweicloud.com> writes:
+> 
+>> On 2025/8/22 14:14, Chen Ridong wrote:
+> 
+> 
+>>> On 2025/8/22 9:37, Tiffany Yang wrote:
+>>>> There isn't yet a clear way to identify a set of "lost" time that
+>>>> everyone (or at least a wider group of users) cares about. However,
+>>>> users can perform some delay accounting by iterating over components of
+>>>> interest. This patch allows cgroup v2 freezing time to be one of those
+>>>> components.
+> 
+>>>> Track the cumulative time that each v2 cgroup spends freezing and expose
+>>>> it to userland via a new local stat file in cgroupfs. Thank you to
+>>>> Michal, who provided the ASCII art in the updated documentation.
+> 
+>>>> To access this value:
+>>>>    $ mkdir /sys/fs/cgroup/test
+>>>>    $ cat /sys/fs/cgroup/test/cgroup.stat.local
+>>>>    freeze_time_total 0
+> 
+>>>> Ensure consistent freeze time reads with freeze_seq, a per-cgroup
+>>>> sequence counter. Writes are serialized using the css_set_lock.
+> 
+> ...
+> 
+>>>>       spin_lock_irq(&css_set_lock);
+>>>> -    if (freeze)
+>>>> +    write_seqcount_begin(&cgrp->freezer.freeze_seq);
+>>>> +    if (freeze) {
+>>>>           set_bit(CGRP_FREEZE, &cgrp->flags);
+>>>> -    else
+>>>> +        cgrp->freezer.freeze_start_nsec = ts_nsec;
+>>>> +    } else {
+>>>>           clear_bit(CGRP_FREEZE, &cgrp->flags);
+>>>> +        cgrp->freezer.frozen_nsec += (ts_nsec -
+>>>> +            cgrp->freezer.freeze_start_nsec);
+>>>> +    }
+>>>> +    write_seqcount_end(&cgrp->freezer.freeze_seq);
+>>>>       spin_unlock_irq(&css_set_lock);
+> 
+> 
+>>> Hello Tiffany,
+> 
+>>> I wanted to check if there are any specific considerations regarding how we should input the ts_nsec
+>>> value.
+> 
+>>> Would it be possible to define this directly within the cgroup_do_freeze function rather than
+>>> passing it as a parameter? This approach might simplify the implementation and potentially improve
+>>> timing accuracy when it have lots of descendants.
+> 
+> 
+>> I revisited v3, and this was Michal's point.
+>>     p
+>>       /  |  \
+>>      1  ...  n
+>> When we freeze the parent group p, is it expected that all descendant cgroups (1 to n) should share
+>> the same frozen timestamp?
+> 
+> 
+> Yes, this is the expectation from the current change. I understand your
+> concern about the accuracy of this measurement (especially when there
+> are many descendants), but I agree with Michal's point that the time to
+> traverse the descendant cgroups is basically noise relative to the
+> quantity we're trying to measure here.
+> 
+>> If the cgroup tree structure is stable, the exact frozen time may not be really matter. However, if
+>> the tree is not stable, obtaining the same frozen time is acceptable?
+> 
+> I'm a little unclear as to what you mean about when the cgroup tree is
+> unstable. In the case where a new descendant of p is being created, I
+> believe the cgroup_mutex prevents that from happening at the same time
+> as we are freezing p's other descendants. If it won the race, was
+> created unfrozen under p, and then became frozen during cgroup_freeze,
+> it would have the same timestamp as the other descendants. If it lost
+> the race and was created as a frozen cgroup under p, it would get its
+> own timestamp in cgroup_create, so its freezing duration would be
+> slightly less than that of the others in the hierarchy. Both values
+> would be acceptable for our purposes, but if there was a different case
+> you had in mind, please let me know!
+> 
+> Thanks,
 
-Pasha
+What I mean by "stable" is that while cgroup 1 through n might be deleted or have more descendants
+created. For example:
+
+         n  n-1  n-2  ... 1
+frozen   a  a+1  a+2     a+n
+unfozen  b  b+1  b+2  ... b+n
+nsec     b-a ...
+
+In this case, all frozen_nsec values are b - a, which I believe is correct.
+However, consider a scenario where some cgroups are deleted:
+
+         n  n-1  n-2  ... 1
+frozen   a  a+1  a+2     a+n
+// 2 ... n-1 are deleted.
+unfozen  b               b+1
+
+Here, the frozen_nsec for cgroup n would be b - a, but for cgroup 1 it would be (b + 1) - (a + n).
+This could introduce some discrepancy / timing inaccuracies.
+
+-- 
+Best regards,
+Ridong
+
 
