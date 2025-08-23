@@ -1,346 +1,162 @@
-Return-Path: <linux-kernel+bounces-782855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C13CB32613
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 02:59:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E133B32616
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E62B9B644B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 00:57:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDD6B188F32F
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611501487F4;
-	Sat, 23 Aug 2025 00:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FED1552FD;
+	Sat, 23 Aug 2025 00:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocS9cOpw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M7X41HBl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A95417BA9
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 00:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AC117BA9;
+	Sat, 23 Aug 2025 00:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755910729; cv=none; b=rq4W0AVN/mtpA0M7IC7m4n1IvyCtqszZUzzDZAxRkOjjEa04uSDlOd9SntmQDY7V5V/OO+1/YYoV56TkIlAP7r9Kio15fHXtk0AzH79os/n0Qn/uvrcNOcKHpIeD1IgPF1U7zFX+VEWmThTPMKrMTC5XnDapEgTVPzKEQInuFjw=
+	t=1755910779; cv=none; b=ONLpxCIhXKvt++myZnRYzboqMTuesS3qC+SPENoHmGFsI0ShcPPCeGTcxwCc/w6kOmBaEfJdEdVyoLahdz1nylGgfx0ySUmVnlvZr+VvIE0FrbSzQT65tLhLjB4wgI7v1gTcxe0TyLpMTzjYqwT8EinvMYwfCrHW4wIoM+m7OG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755910729; c=relaxed/simple;
-	bh=GEbuBVht10V2yhK8hk78rrvTcrn/qybKkKOMP5a7JEk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=o/2TmSuoprpbbpDlrrsZ6lPL+FlbUfe9DT13ftOCIht5Y95faX5QwhBVm7t62mupZqn+xQSYmdEKMAZvZ4ZjsNHwQ1rQmsDg+IL93/zQuLcoMNeljCv7AgYJB4IrB7HcDm4aQAoQzAnl/VoppWRcDLtkeB3tgvYcm/SI6MhpDlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocS9cOpw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2B934C4CEED;
-	Sat, 23 Aug 2025 00:58:49 +0000 (UTC)
+	s=arc-20240116; t=1755910779; c=relaxed/simple;
+	bh=WhTHIrtJD6ig/V+Dqcu/MqbMu9QFWWCzIgEU0MSON8E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M8jZ89mSPZWoR8xFauiylgn2kG20Tlhs9iGxqUdHnSQVJRCvfddLK5/uJ1f9747dFPBMfpQfWF3AYadj3J1G6oFdIFX63asXt4MlUrC4QZEiOEp+NO6pY3mytDy4ttsgl/2+s8xF9g/MiIGMg6cUYc6vhuCbGm47aI29uJUGsiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M7X41HBl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5A2BC116D0;
+	Sat, 23 Aug 2025 00:59:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755910729;
-	bh=GEbuBVht10V2yhK8hk78rrvTcrn/qybKkKOMP5a7JEk=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=ocS9cOpwGrlNoVsVh1kn5SgywV6Nm+aVbM6HUTgq+rtGsral9/bpWeEfO8/AdhC8T
-	 IzKZdwZ+f/f9dfncJhoChKjoKLhf3HQhALuLbD73QGrB/hoZujhKABMNgiiFV/30Uh
-	 uVVWqgBaFxcRfCagzP7RhYYxqhLKIecPEMowfhCsmmjXJPWVae3NFPiOUcI0GoOGXH
-	 3HR3oTqOncLGq1svPhSy+pejKmJOzUyFQPH+SBoplH3VMk6J2Ybgr8JxSQBklCGLFZ
-	 BppBYvHv8xwBd2dl0MaUBspO5gQXf21+zn2edFsCVPwcjfd1n9F51Thlq/gYZCkJ1a
-	 I58Ggu+bH9QAA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B106CA0EFC;
-	Sat, 23 Aug 2025 00:58:49 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Fri, 22 Aug 2025 19:58:00 -0500
-Subject: [PATCH] drm/nouveau: Support reclocking on gp10b
+	s=k20201202; t=1755910776;
+	bh=WhTHIrtJD6ig/V+Dqcu/MqbMu9QFWWCzIgEU0MSON8E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=M7X41HBl3WWgt2eB1JELXgRefF24A9Ktl80i9LgP5kQvnG4QDRMBSnOYMoFrHHx6x
+	 cGoEmfybD/kGnNVUjg+nTNzDm5bTx33JgEyj8i2G6yD0vWuz2X1qJf1k6W1RI3G0Sb
+	 AtVobHclKMvQCziJswIhJ1DepqY/5K2vDbgUxIr/PWtxa6+uMaS1QtDopN+628UaK2
+	 dvZlCa0fWp+oDw7jSzxmFR2mXjFxkOerSdJlspXkxr3nb+/8o5xQTuAT7mEI7HH30J
+	 8lMmR+hpXYbdIUQjNv6VKt1pA3V2by/no3xyFT88i3TAzQMPhjzii/5xfNNzfTq4iU
+	 QO38QjwTLOpDQ==
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61c20e28380so1976034a12.1;
+        Fri, 22 Aug 2025 17:59:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVaBBmFK+eRnrCUyAinFV8l5Jm2YuDOF3V5U1BbLZpY/w5e4msRI585lxfjMfcIEnKhNgAV3N8AGgbuablUGQ==@vger.kernel.org, AJvYcCWGsqcZ4mWi5GlMMeLmRJYzs9SIW+F+NvWpaPu8PaE/5WyOcpPPc9ZuLtL5RxInt3ZmWB06j1b38avbfUDv@vger.kernel.org, AJvYcCWHYFH+9j5jmnnd0CxI7jm6dgbek+wE9eKFNDv85b7f62+Xee6gSqIorLkjo/bJEkBbYFg4lKZTPcpJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8mQ0NKO8ArfUQRz0X/zIhBVSm6qLjF4l9xUZBQ0SGWmV8nz7G
+	6xm4Jpk3ZCkVRaciZ2+wk2s9rz/W9n/o/pX5BQgqKn0WcZib0rMHcc498HoG7kVupVgAjlDi3/l
+	QPr3cRhDBaYuQUHzaAUbQwxwF0NkEnII=
+X-Google-Smtp-Source: AGHT+IETvS6EmVb9SsRL07lUStumjMiBXv7KMAz+tuWOOiILZMbQNkwScTlhem+G+PSHOQg5igqosUJ6tMJmB2j6478=
+X-Received: by 2002:a05:6402:52c8:b0:618:20c1:7e43 with SMTP id
+ 4fb4d7f45d1cf-61c1b70aba6mr3954060a12.29.1755910775362; Fri, 22 Aug 2025
+ 17:59:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250822-gp10b-reclock-v1-1-5b03eaf3735a@gmail.com>
-X-B4-Tracking: v=1; b=H4sIABcSqWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDCyMj3fQCQ4Mk3aLU5Jz85Gxdc/OkNGMzAwPTRAszJaCegqLUtMwKsHn
- RsbW1AEdlYG1fAAAA
-X-Change-ID: 20250822-gp10b-reclock-77bf36005a86
-To: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- nouveau@lists.freedesktop.org, Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755910728; l=7670;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=JGrVd9hnkLIjkMAR216GfQSoYVUlj9ur9vGETeozqoQ=;
- b=7CLqWpd25o1U/chnOF7hSNAUHHqJhjh2MKKOAUhlY533V11yuPngwZlPRsUEE6xYxNrqzgqea
- 0m6f5kQeY4QC7XrVEv3OlR4sKXLOX6kdPOXkrWbfVOJQZgjRbWoBpr+
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+References: <68a72860.050a0220.3d78fd.002a.GAE@google.com> <20250822162041.gXcLgwIW@linutronix.de>
+In-Reply-To: <20250822162041.gXcLgwIW@linutronix.de>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Sat, 23 Aug 2025 09:59:22 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_koTJzp4hJhojnB9d_=Pgu6jaATySZ61zN4s=vZqe_FA@mail.gmail.com>
+X-Gm-Features: Ac12FXx4RqArqi2TOPLn9BW2NusyL7iulzKG_VxY2KxsJFxOsowT10annWLE4cY
+Message-ID: <CAKYAXd_koTJzp4hJhojnB9d_=Pgu6jaATySZ61zN4s=vZqe_FA@mail.gmail.com>
+Subject: Re: [syzbot] [exfat?] [ext4?] WARNING in __rt_mutex_slowlock_locked
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: syzbot <syzbot+a725ab460fc1def9896f@syzkaller.appspotmail.com>, 
+	brauner@kernel.org, jack@suse.cz, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Aaron Kling <webgeek1234@gmail.com>
-
-Starting with Tegra186, gpu clock handling is done by the bpmp and there
-is little to be done by the kernel. The only thing necessary for
-reclocking is to set the gpcclk to the desired rate and the bpmp handles
-the rest. The pstate list is based on the downstream driver generates.
-
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h |   1 +
- drivers/gpu/drm/nouveau/nvkm/engine/device/base.c |   1 +
- drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild    |   1 +
- drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c   | 180 ++++++++++++++++++++++
- drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h   |  16 ++
- 5 files changed, 199 insertions(+)
-
-diff --git a/drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h b/drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h
-index d5d8877064a71581d8e9e92f30a3e28551dabf17..6a09d397c651aa94718aff3d1937162df39cc2ae 100644
---- a/drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h
-+++ b/drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h
-@@ -134,4 +134,5 @@ int gf100_clk_new(struct nvkm_device *, enum nvkm_subdev_type, int inst, struct
- int gk104_clk_new(struct nvkm_device *, enum nvkm_subdev_type, int inst, struct nvkm_clk **);
- int gk20a_clk_new(struct nvkm_device *, enum nvkm_subdev_type, int inst, struct nvkm_clk **);
- int gm20b_clk_new(struct nvkm_device *, enum nvkm_subdev_type, int inst, struct nvkm_clk **);
-+int gp10b_clk_new(struct nvkm_device *, enum nvkm_subdev_type, int inst, struct nvkm_clk **);
- #endif
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
-index 3375a59ebf1a4af73daf4c029605a10a7721c725..2517b65d8faad9947244707f540eb281ad7652e4 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
-@@ -2280,6 +2280,7 @@ nv13b_chipset = {
- 	.acr      = { 0x00000001, gp10b_acr_new },
- 	.bar      = { 0x00000001, gm20b_bar_new },
- 	.bus      = { 0x00000001, gf100_bus_new },
-+	.clk      = { 0x00000001, gp10b_clk_new },
- 	.fault    = { 0x00000001, gp10b_fault_new },
- 	.fb       = { 0x00000001, gp10b_fb_new },
- 	.fuse     = { 0x00000001, gm107_fuse_new },
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild
-index dcecd499d8dffae3b81276ed67bb8649dfa3efd1..9fe394740f568909de71a8c420cc8b6d8dc2235f 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild
-@@ -10,6 +10,7 @@ nvkm-y += nvkm/subdev/clk/gf100.o
- nvkm-y += nvkm/subdev/clk/gk104.o
- nvkm-y += nvkm/subdev/clk/gk20a.o
- nvkm-y += nvkm/subdev/clk/gm20b.o
-+nvkm-y += nvkm/subdev/clk/gp10b.o
- 
- nvkm-y += nvkm/subdev/clk/pllnv04.o
- nvkm-y += nvkm/subdev/clk/pllgt215.o
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..eeee0b1f819a54b082dd33f6597e7dd1889abf99
---- /dev/null
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c
-@@ -0,0 +1,180 @@
-+// SPDX-License-Identifier: MIT
-+#include <subdev/clk.h>
-+#include <subdev/timer.h>
-+#include <core/device.h>
-+#include <core/tegra.h>
-+
-+#include "priv.h"
-+#include "gk20a.h"
-+#include "gp10b.h"
-+
-+static int
-+gp10b_clk_init(struct nvkm_clk *base)
-+{
-+	struct gp10b_clk *clk = gp10b_clk(base);
-+	struct nvkm_subdev *subdev = &clk->base.subdev;
-+	int ret;
-+
-+	/* Start with the highest frequency, matching the BPMP default */
-+	base->func->calc(base, &base->func->pstates[base->func->nr_pstates - 1].base);
-+	ret = base->func->prog(base);
-+	if (ret) {
-+		nvkm_error(subdev, "cannot initialize clock\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+int
-+gp10b_clk_read(struct nvkm_clk *base, enum nv_clk_src src)
-+{
-+	struct gp10b_clk *clk = gp10b_clk(base);
-+	struct nvkm_subdev *subdev = &clk->base.subdev;
-+
-+	switch (src) {
-+	case nv_clk_src_gpc:
-+		return clk_get_rate(clk->clk) / GK20A_CLK_GPC_MDIV;
-+	default:
-+		nvkm_error(subdev, "invalid clock source %d\n", src);
-+		return -EINVAL;
-+	}
-+}
-+
-+static int
-+gp10b_clk_calc(struct nvkm_clk *base, struct nvkm_cstate *cstate)
-+{
-+	struct gp10b_clk *clk = gp10b_clk(base);
-+	u32 target_rate = cstate->domain[nv_clk_src_gpc] * GK20A_CLK_GPC_MDIV;
-+
-+	clk->new_rate = clk_round_rate(clk->clk, target_rate) / GK20A_CLK_GPC_MDIV;
-+
-+	return 0;
-+}
-+
-+static int
-+gp10b_clk_prog(struct nvkm_clk *base)
-+{
-+	struct gp10b_clk *clk = gp10b_clk(base);
-+	int ret;
-+
-+	ret = clk_set_rate(clk->clk, clk->new_rate * GK20A_CLK_GPC_MDIV);
-+	if (ret < 0)
-+		return ret;
-+
-+	clk->rate = clk_get_rate(clk->clk) / GK20A_CLK_GPC_MDIV;
-+
-+	return 0;
-+}
-+
-+static struct nvkm_pstate
-+gp10b_pstates[] = {
-+	{
-+		.base = {
-+			.domain[nv_clk_src_gpc] = 114750,
-+		},
-+	},
-+	{
-+		.base = {
-+			.domain[nv_clk_src_gpc] = 216750,
-+		},
-+	},
-+	{
-+		.base = {
-+			.domain[nv_clk_src_gpc] = 318750,
-+		},
-+	},
-+	{
-+		.base = {
-+			.domain[nv_clk_src_gpc] = 420750,
-+		},
-+	},
-+	{
-+		.base = {
-+			.domain[nv_clk_src_gpc] = 522750,
-+		},
-+	},
-+	{
-+		.base = {
-+			.domain[nv_clk_src_gpc] = 624750,
-+		},
-+	},
-+	{
-+		.base = {
-+			.domain[nv_clk_src_gpc] = 726750,
-+		},
-+	},
-+	{
-+		.base = {
-+			.domain[nv_clk_src_gpc] = 828750,
-+		},
-+	},
-+	{
-+		.base = {
-+			.domain[nv_clk_src_gpc] = 930750,
-+		},
-+	},
-+	{
-+		.base = {
-+			.domain[nv_clk_src_gpc] = 1032750,
-+		},
-+	},
-+	{
-+		.base = {
-+			.domain[nv_clk_src_gpc] = 1134750,
-+		},
-+	},
-+	{
-+		.base = {
-+			.domain[nv_clk_src_gpc] = 1236750,
-+		},
-+	},
-+	{
-+		.base = {
-+			.domain[nv_clk_src_gpc] = 1300500,
-+		},
-+	},
-+};
-+
-+static const struct nvkm_clk_func
-+gp10b_clk = {
-+	.init = gp10b_clk_init,
-+	.read = gp10b_clk_read,
-+	.calc = gp10b_clk_calc,
-+	.prog = gp10b_clk_prog,
-+	.tidy = gk20a_clk_tidy,
-+	.pstates = gp10b_pstates,
-+	.nr_pstates = ARRAY_SIZE(gp10b_pstates),
-+	.domains = {
-+		{ nv_clk_src_gpc, 0xff, 0, "core", GK20A_CLK_GPC_MDIV },
-+		{ nv_clk_src_max }
-+	}
-+};
-+
-+int
-+gp10b_clk_new(struct nvkm_device *device, enum nvkm_subdev_type type, int inst,
-+	      struct nvkm_clk **pclk)
-+{
-+	struct nvkm_device_tegra *tdev = device->func->tegra(device);
-+	const struct nvkm_clk_func *func = &gp10b_clk;
-+	struct gp10b_clk *clk;
-+	int ret, i;
-+
-+	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
-+	if (!clk)
-+		return -ENOMEM;
-+	*pclk = &clk->base;
-+	clk->clk = tdev->clk;
-+
-+	/* Finish initializing the pstates */
-+	for (i = 0; i < func->nr_pstates; i++) {
-+		INIT_LIST_HEAD(&func->pstates[i].list);
-+		func->pstates[i].pstate = i + 1;
-+	}
-+
-+	ret = nvkm_clk_ctor(func, device, type, inst, true, &clk->base);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..2f65a921a426e3f6339a31e964397f6eefa50250
---- /dev/null
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: MIT */
-+#ifndef __NVKM_CLK_GP10B_H__
-+#define __NVKM_CLK_GP10B_H__
-+
-+struct gp10b_clk {
-+	/* currently applied parameters */
-+	struct nvkm_clk base;
-+	struct clk *clk;
-+	u32 rate;
-+
-+	/* new parameters to apply */
-+	u32 new_rate;
-+};
-+#define gp10b_clk(p) container_of((p), struct gp10b_clk, base)
-+
-+#endif
-
----
-base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
-change-id: 20250822-gp10b-reclock-77bf36005a86
-
-Best regards,
--- 
-Aaron Kling <webgeek1234@gmail.com>
-
-
+On Sat, Aug 23, 2025 at 1:20=E2=80=AFAM Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+>
+> On 2025-08-21 07:08:32 [-0700], syzbot wrote:
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Da725ab460fc1d=
+ef9896f
+> =E2=80=A6
+> > The issue was bisected to:
+> >
+> > commit d2d6422f8bd17c6bb205133e290625a564194496
+> > Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > Date:   Fri Sep 6 10:59:04 2024 +0000
+> >
+> >     x86: Allow to enable PREEMPT_RT.
+> >
+> =E2=80=A6
+> > exFAT-fs (loop0): Medium has reported failures. Some data may be lost.
+> > exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum=
+ : 0xe5674ec2, utbl_chksum : 0xe619d30d)
+> > ------------[ cut here ]------------
+> > rtmutex deadlock detected
+> > WARNING: CPU: 0 PID: 6000 at kernel/locking/rtmutex.c:1674 rt_mutex_han=
+dle_deadlock kernel/locking/rtmutex.c:1674 [inline]
+> > WARNING: CPU: 0 PID: 6000 at kernel/locking/rtmutex.c:1674 __rt_mutex_s=
+lowlock kernel/locking/rtmutex.c:1734 [inline]
+> > WARNING: CPU: 0 PID: 6000 at kernel/locking/rtmutex.c:1674 __rt_mutex_s=
+lowlock_locked+0xed2/0x25e0 kernel/locking/rtmutex.c:1760
+>
+> RT detected a deadlock and complained. The same testcase on !RT results
+> in:
+>
+> | [   15.363878] loop0: detected capacity change from 0 to 256
+> | [   15.367981] exFAT-fs (loop0): Volume was not properly unmounted. Som=
+e data may be corrupt. Please run fsck.
+> | [   15.373808] exFAT-fs (loop0): Medium has reported failures. Some dat=
+a may be lost.
+> | [   15.380396] exFAT-fs (loop0): failed to load upcase table (idx : 0x0=
+0010000, chksum : 0xe5674ec2, utbl_chksum : 0xe619d30d)
+> | [   62.668182] INFO: task exfat-repro:2155 blocked for more than 30 sec=
+onds.
+> | [   62.669405]       Not tainted 6.17.0-rc2+ #10
+> | [   62.670181] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disab=
+les this message.
+> | [   62.671612] task:exfat-repro     state:D stack:0     pid:2155  tgid:=
+2155  ppid:1      task_flags:0x400140 flags:0x00004006
+> | [   62.673557] Call Trace:
+> | [   62.674008]  <TASK>
+> | [   62.674400]  __schedule+0x4ef/0xbb0
+> | [   62.675069]  schedule+0x22/0xd0
+> | [   62.675656]  schedule_preempt_disabled+0x10/0x20
+> | [   62.676495]  rwsem_down_write_slowpath+0x1e2/0x6c0
+> | [   62.679028]  down_write+0x66/0x70
+> | [   62.679645]  vfs_rename+0x5c6/0xc30
+> | [   62.681734]  do_renameat2+0x3c4/0x570
+> | [   62.682395]  __x64_sys_renameat2+0x7b/0xc0
+> | [   62.683187]  do_syscall_64+0x7f/0x290
+> | [   62.695576]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>
+> After ctrl+c that testcase terminates but one thread remains in D state.
+> This is from
+> |         lock_new_subdir =3D new_dir !=3D old_dir || !(flags & RENAME_EX=
+CHANGE);
+> |         if (is_dir) {
+> |                 if (lock_old_subdir)
+> |                         inode_lock_nested(source, I_MUTEX_CHILD);
+>                           ^^^
+> | 5 locks held by exfat-repro/2156:
+> |  #0: ffff888113b69400 (sb_writers#11){.+.+}-{0:0}, at: do_renameat2+0x1=
+c8/0x580
+> |  #1: ffff888113b69710 (&type->s_vfs_rename_key){+.+.}-{4:4}, at: do_ren=
+ameat2+0x24d/0x580
+> |  #2: ffff88810fb79b88 (&sb->s_type->i_mutex_key#16/1){+.+.}-{4:4}, at: =
+lock_two_directories+0x6c/0x110
+> |  #3: ffff88810fb7a1c0 (&sb->s_type->i_mutex_key#17/5){+.+.}-{4:4}, at: =
+lock_two_directories+0x82/0x110
+> |  #4: ffffffff82f618a0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_l=
+ocks+0x3d/0x184
+>
+> #2 and #3 are from the "(r =3D=3D p1)" case. The lock it appears to acqui=
+re
+> is #2.
+> Could an exfat take a look, please?
+I will take a look.
+Thanks!
+>
+> Sebastian
 
