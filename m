@@ -1,78 +1,133 @@
-Return-Path: <linux-kernel+bounces-783071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3306B3290F
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:20:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68EF8B32910
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 16:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 455683B2DE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:20:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0FF17A9940
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 14:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B541ADC7E;
-	Sat, 23 Aug 2025 14:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C536C1E0E14;
+	Sat, 23 Aug 2025 14:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s/vfda1r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TqaA0ZO/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D077D54652
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 14:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2999F8635C;
+	Sat, 23 Aug 2025 14:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755958795; cv=none; b=ZMgusS2QsGJGYjNH/cZnLWfLkeLEA789BYx2+f0Pi+38KdUFAYqwrboUyVc5uD3oDbTwTQoxhR/9t8E1+5VED8T7/0w4JI5e5DZrK/w1Xn2ud6HSp2ZFVtbwFoWlmQ5Oatznk71Q5Zn74MlB2p5+pyxeHdig4Gs/Ul3gBSUHEC0=
+	t=1755958824; cv=none; b=aUd3eI4Wm8Kt7zFnYt4LKxRsus2WtNcdWn5kprBKnfKuRc4y83JEdRnn7oyn9C9Qaid/iEkCfbSkkSXxR3J1eKcBNcqfn237wL+N2lDAMUNOacFc5U5/hSje/fOj7muuOz/Lp31gyQhK/wL7kZGqXHfeddCqiUxVtt2SLcpjZP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755958795; c=relaxed/simple;
-	bh=EAQF/n47irEN2pu2O5GAD5GyfMbrkdKsdWrTOxChBhg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Pifqls0T7kMx2C4UW1nhImMLWYBUCeArirJqeHfEH8QpEAg+Gy7UzoGFAV5NhUx9EC3oAT98na+TC9ZVqgjstzUv2WVnC0ZUP2thtNO+SgxdAVuKQ1rymBdfonM9pmNIBTjR5AOM/4ezY3wGq1Afd8yXC56OIOuQQPEebma4I7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s/vfda1r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 817D4C4CEE7;
-	Sat, 23 Aug 2025 14:19:55 +0000 (UTC)
+	s=arc-20240116; t=1755958824; c=relaxed/simple;
+	bh=doIkryewG++KcZ/8n01iugYF07GnEYqj+GObh4QeXms=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=Sw0bjO0NwHWVFd9xRHmF4txpE4SjzJ+924sXecbRqo0JXdR2jH5/iKJSDsBOrKmeVovwrvP+PXlVddn2cDhGh1ClyeYkxI5ca2Fk9KWGyJb13m7vUZnwekjA41iLL4g0+Pl2CXSQP032ss9qL5zMIt82XUS1TjlCE9ccZENAjrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TqaA0ZO/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3865C4CEE7;
+	Sat, 23 Aug 2025 14:20:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755958795;
-	bh=EAQF/n47irEN2pu2O5GAD5GyfMbrkdKsdWrTOxChBhg=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=s/vfda1reQ4A0ljaOwu6VkDLL+Bxm5JLC3kAZTDstjzhqeUL0enDauJUKoH3EJKRf
-	 +LtEcs3Hx5vuLNZkgL5HC/U+Ff9ZaeMcRSUTbKAnVJNnE5J5eIgq5uFcIOvT5ZGSOt
-	 dqNYKi6J7xCixcKZVAxvxLRmPq0DML/HZnY36WPWrnmhcORUhPZCKc0zoLOBQIUgnn
-	 6glj1g/cHKmYwg3sQ0vMs2mBHjOFT2+HTdsKuQspPn46t9MYieHqleq+m/P5cBWkMq
-	 fmu2NEW7aVxMwRD01l7ZOiXgjmtbzR6fRF32rkaJsXAx5bnG2uDvnUu5vkR0c2G6eE
-	 bNslmZnaNgxeg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 48AD7383BF69;
-	Sat, 23 Aug 2025 14:20:05 +0000 (UTC)
-Subject: Re: [GIT PULL v2] tracing: Fixes for v6.17
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250823092444.3c0c207c@batman.local.home>
-References: <20250823092444.3c0c207c@batman.local.home>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250823092444.3c0c207c@batman.local.home>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-v6.17-rc2-2
-X-PR-Tracked-Commit-Id: bfb336cf97df7b37b2b2edec0f69773e06d11955
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e1d8f9ccb24ecd969fb1062886b20200acc60009
-Message-Id: <175595880502.2183026.543933165699922932.pr-tracker-bot@kernel.org>
-Date: Sat, 23 Aug 2025 14:20:05 +0000
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>, Liao Yuanhong <liaoyuanhong@vivo.com>, Pu Lehui <pulehui@huawei.com>, Tao Chen <chen.dylane@linux.dev>, Tengda Wu <wutengda@huaweicloud.com>, Ye Weihua <yeweihua4@huawei.com>, Nathan Chancellor <nathan@kernel.org>
+	s=k20201202; t=1755958824;
+	bh=doIkryewG++KcZ/8n01iugYF07GnEYqj+GObh4QeXms=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=TqaA0ZO/eycjrUduGzXqXhlcQMI2tNhBA82pg6jzXIv0cVnMYR3dGSapvvdq6He+3
+	 HdHisuFFuoENK5GNWTZW9TiRrWT10wQq8a/OJ7MPxcmwVd/tCLj09DmanBBnU1GfEp
+	 xEB4jUCXYio7ASBVRoeGLCyNemfhvE6YeYd7bWLwzzUa2kMv+9vy5IsZRiEqwImlzN
+	 7yKxQDDZ/CMpcBPMQ+8ovEZAL01HwPrk/PTFVt3YU1DUcEDInXLFdQXhMJjJ7LTpmY
+	 zf5jFUEHBvzV65XuepjzGrWwRpHg8/bPAPjXDZu2G2LCu0Ma9EJNTECCONF8yFpTtG
+	 d0FhwLGDD8YGg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 23 Aug 2025 16:20:19 +0200
+Message-Id: <DC9VG96PR778.4L9WNCE521AV@kernel.org>
+Subject: Re: [PATCH v2 3/5] rust: scatterlist: Add type-state abstraction
+ for sg_table
+Cc: <akpm@linux-foundation.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>, <abdiel.janulgue@gmail.com>,
+ <jgg@ziepe.ca>, <lyude@redhat.com>, <robin.murphy@arm.com>,
+ <daniel.almeida@collabora.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Alexandre Courbot" <acourbot@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250820165431.170195-1-dakr@kernel.org>
+ <20250820165431.170195-4-dakr@kernel.org>
+ <DC9UR87GP16E.2K9E9SSTHEBRB@nvidia.com>
+ <DC9UYN56HBRZ.XRDXQHO2QQQ1@kernel.org>
+ <DC9VD4LXAK9R.1RIJYWF1MFCMS@nvidia.com>
+In-Reply-To: <DC9VD4LXAK9R.1RIJYWF1MFCMS@nvidia.com>
 
-The pull request you sent on Sat, 23 Aug 2025 09:24:44 -0400:
+On Sat Aug 23, 2025 at 4:16 PM CEST, Alexandre Courbot wrote:
+> On Sat Aug 23, 2025 at 10:57 PM JST, Danilo Krummrich wrote:
+>> On Sat Aug 23, 2025 at 3:47 PM CEST, Alexandre Courbot wrote:
+>>> Oops, forgot to mention a couple more things:
+>>>
+>>> On Thu Aug 21, 2025 at 1:52 AM JST, Danilo Krummrich wrote:
+>>>> Add a safe Rust abstraction for the kernel's scatter-gather list
+>>>> facilities (`struct scatterlist` and `struct sg_table`).
+>>>>
+>>>> This commit introduces `SGTable<T>`, a wrapper that uses a type-state
+>>>> pattern to provide compile-time guarantees about ownership and lifetim=
+e.
+>>>
+>>> Is this actually a typestate? From my understanding, the typestate
+>>> pattern implies transitions from one state to the other (such as
+>>> Unmapped -> Mapped), but in this version there are no such transitions
+>>> (the previous ones had, though). We are just using a generic parameter,
+>>> so mentioning typestate sounds a bit misleading to me.
+>>
+>> I'd argue that it's still kind of a typestate. You can derive &SGTable (=
+i.e.
+>> &SGTable<Borrowed>) from SGTabe<Owned>. So, technically there is an
+>> uni-directional transition I guess.
+>
+> That's technically correct, but is also not the intent of the design, at
+> least compared to something like Unmapped <-> Mapped. Not a big problem
+> if you prefer to keep the current naming though.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-v6.17-rc2-2
+I don't mind to name / call it differently, any suggestion?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e1d8f9ccb24ecd969fb1062886b20200acc60009
+>>
+>>> Another random thought, in the owned case, do we want to provide an
+>>> accessor to the provider of the backing pages? Or do we expect the
+>>> caller to take dispositions to keep such a reference if they need to
+>>> access the backing buffer post-mapping?
+>>
+>> That's not going to work that easily. Once the backing pages are DMA map=
+ped, the
+>> backing buffer can be accessed safely an more.
+>>
+>> See also the safety requirements of dma::CoherentAllocation::as_slice() =
+and
+>> dma::CoherentAllocation::as_slice_mut().
+>
+> Yup. So couldn't similar accessors (marked unsafe of course) be
+> convenient?
 
-Thank you!
+Absolutely! But I think we want them represented by a common trait that can=
+ be
+used by SGTable and dma::CoherentAllocation.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+>>
+>> If we want to support that, we have to provide a new type for this and m=
+aybe
+>> want to define a common trait for DMA mapped memory accessors, etc.
+>>
+>> Not the scope for this series, I believe. :)
+>
+> I've had a few thoughts in that direction as well, but completely agree
+> we should debate about this *after* this series is merged. :)
+
+Yeah, let's add this feature subsequently.
 
