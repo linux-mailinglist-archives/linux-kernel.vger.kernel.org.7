@@ -1,182 +1,166 @@
-Return-Path: <linux-kernel+bounces-782879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E749EB3264E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:54:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78D66B32650
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 03:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2221583943
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:54:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A15A9584BA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 01:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB8F1EBA19;
-	Sat, 23 Aug 2025 01:54:06 +0000 (UTC)
-Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C161EDA1E;
+	Sat, 23 Aug 2025 01:54:20 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6AC191F7E;
-	Sat, 23 Aug 2025 01:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A301E9B3A;
+	Sat, 23 Aug 2025 01:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755914046; cv=none; b=XUtYXgMtdBmkpvTsDQiPH/OlP34Mi0E7a+3Ut6xsvOfW5kzieXhNSPbHpOLT0ygCOsQo1ENcXfaXrdNXUnuvhkWgK3D52IqsaVi0iE2gHpM8NLJGWCXUTuiosW9Tfvy3WqqqWvzyAgM/1Ixvw+7/bcUfEViN3UyzYnbLxiWFYR8=
+	t=1755914059; cv=none; b=Yp6U4hlzKaXRovhDP2g3cYG91SnyliL5WwTGzmLHFlk2rOGhrxsEqJ871TikRoflMVT/mJvPJ7cIyvmgCsuG5ktx/ySTo017c6p/0CTK2NbRFGFRfH5cLzcKcHHmmN5nNWtG09HX//bXjDmjXZpmG28/gLGU45F3ea3c/UvebEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755914046; c=relaxed/simple;
-	bh=lb7ETmThEA98Kjs2wgXrXw1GpQW5I8d/r66x6z+1ol0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W2b0KIUTfcKcc1u9CJ+H57TvkjlapZf3TK+2kxWZk94RRyK3O4UTTfR8LS4jB/NolSFR4+ISvktTtYuW/FNjbI1zXKvthiHw3MdTckQ4VXmZI1Xkty6T8EJkzscoJLqx5uRw1eY8rJvaziQbEweoPR4taUXO9V0Zl34QFS3RxVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w012.hihonor.com (unknown [10.68.27.189])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4c80TD2sQXzYnXLf;
-	Sat, 23 Aug 2025 09:53:36 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w012.hihonor.com
- (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 23 Aug
- 2025 09:53:50 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 23 Aug
- 2025 09:53:50 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <sbrivio@redhat.com>
-CC: <adobriyan@gmail.com>, <akpm@linux-foundation.org>, <ast@kernel.org>,
-	<brauner@kernel.org>, <kirill.shutemov@linux.intel.com>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<passt-dev@passt.top>, <rick.p.edgecombe@intel.com>,
-	<viro@zeniv.linux.org.uk>, <wangzijie1@honor.com>, <jirislaby@kernel.org>
-Subject: Re: [PATCH] proc: Bring back lseek() operations for /proc/net entries
-Date: Sat, 23 Aug 2025 09:53:49 +0800
-Message-ID: <20250823015349.1650855-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250822172335.3187858-1-sbrivio@redhat.com>
-References: <20250822172335.3187858-1-sbrivio@redhat.com>
+	s=arc-20240116; t=1755914059; c=relaxed/simple;
+	bh=DgTo2BZfWzgSjCLXwCnWeSheHL00fFzbA5pcQ7qaLMo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BkoBFVwUWDXO5JEFj+iAhOmTSI9NqFXKNmWFMly+FJd+1KBknCexadxFRLthj3zCxQL51UKOIsfXg88/8U5xzuLE3q8gI4RmAHlTerYph4F2okORi/tLmW/NI1Ha/OC1NoxOWgvyhnHS/kWagHPePwXsC5FhfY58KODZt+Y+PyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c80Ty2Q0fzKHMXN;
+	Sat, 23 Aug 2025 09:54:14 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id D6A591A142F;
+	Sat, 23 Aug 2025 09:54:13 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgBn4hJDH6loiZ1xEg--.61271S3;
+	Sat, 23 Aug 2025 09:54:13 +0800 (CST)
+Message-ID: <725043ad-2d50-be78-7cc3-8c565ab364e0@huaweicloud.com>
+Date: Sat, 23 Aug 2025 09:54:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v2 1/3] md/raid1,raid10: don't broken array on failfast
+ metadata write fails
+To: Kenta Akagi <k@mgml.me>, Song Liu <song@kernel.org>,
+ Yu Kuai <yukuai3@huawei.com>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
+ Guoqing Jiang <jgq516@gmail.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250817172710.4892-1-k@mgml.me>
+ <20250817172710.4892-2-k@mgml.me>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <20250817172710.4892-2-k@mgml.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w001.hihonor.com (10.68.25.235) To a011.hihonor.com
- (10.68.31.243)
+X-CM-TRANSID:gCh0CgBn4hJDH6loiZ1xEg--.61271S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxGr1xuF4DJFykKF47Jr45GFg_yoW5Aw15pF
+	ZrAayDCrWqq34Dt3WUAFyxWa909r4FkrZxK34fC347urn8Wr1xKFs0ga4jqryqy34fuw1U
+	Xa98Z3y7AFyjgwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU90b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487
+	Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aV
+	AFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xF
+	o4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
+	VFxhVjvjDU0xZFpf9x07UMnQUUUUUU=
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-> Commit ff7ec8dc1b64 ("proc: use the same treatment to check proc_lseek
-> as ones for proc_read_iter et.al") breaks lseek() for all /proc/net
-> entries, as shown for instance by pasta(1), a user-mode network
-> implementation using those entries to scan for bound ports:
-> 
->   $ strace -e openat,lseek -e s=none pasta -- true
->   [...]
->   openat(AT_FDCWD, "/proc/net/tcp", O_RDONLY|O_CLOEXEC) = 12
->   openat(AT_FDCWD, "/proc/net/tcp6", O_RDONLY|O_CLOEXEC) = 13
->   lseek(12, 0, SEEK_SET)                  = -1 ESPIPE (Illegal seek)
->   lseek() failed on /proc/net file: Illegal seek
->   lseek(13, 0, SEEK_SET)                  = -1 ESPIPE (Illegal seek)
->   lseek() failed on /proc/net file: Illegal seek
->   openat(AT_FDCWD, "/proc/net/udp", O_RDONLY|O_CLOEXEC) = 14
->   openat(AT_FDCWD, "/proc/net/udp6", O_RDONLY|O_CLOEXEC) = 15
->   lseek(14, 0, SEEK_SET)                  = -1 ESPIPE (Illegal seek)
->   lseek() failed on /proc/net file: Illegal seek
->   lseek(15, 0, SEEK_SET)                  = -1 ESPIPE (Illegal seek)
->   lseek() failed on /proc/net file: Illegal seek
->   [...]
-> 
-> That's because PROC_ENTRY_proc_lseek isn't set for /proc/net entries,
-> and it's now mandatory for lseek(). In fact, flags aren't set at all
-> for those entries because pde_set_flags() isn't called for them.
-> 
-> As commit d919b33dafb3 ("proc: faster open/read/close with "permanent"
-> files") introduced flags for procfs directory entries, along with the
-> pde_set_flags() helper, they weren't relevant for /proc/net entries,
-> so the lack of pde_set_flags() calls in proc_create_net_*() functions
-> was harmless.
-> 
-> Now that the calls are strictly needed for lseek() functionality,
-> add them.
-> 
-> Fixes: ff7ec8dc1b64 ("proc: use the same treatment to check proc_lseek as ones for proc_read_iter et.al")
-> Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-> ---
->  fs/proc/generic.c  | 2 +-
->  fs/proc/internal.h | 1 +
->  fs/proc/proc_net.c | 4 ++++
->  3 files changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-> index 76e800e38c8f..57ec5e385d1b 100644
-> --- a/fs/proc/generic.c
-> +++ b/fs/proc/generic.c
-> @@ -561,7 +561,7 @@ struct proc_dir_entry *proc_create_reg(const char *name, umode_t mode,
->  	return p;
->  }
->  
-> -static void pde_set_flags(struct proc_dir_entry *pde)
-> +void pde_set_flags(struct proc_dir_entry *pde)
->  {
->  	if (pde->proc_ops->proc_flags & PROC_ENTRY_PERMANENT)
->  		pde->flags |= PROC_ENTRY_PERMANENT;
-> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-> index e737401d7383..a358974f14d2 100644
-> --- a/fs/proc/internal.h
-> +++ b/fs/proc/internal.h
-> @@ -284,6 +284,7 @@ extern struct dentry *proc_lookup(struct inode *, struct dentry *, unsigned int)
->  struct dentry *proc_lookup_de(struct inode *, struct dentry *, struct proc_dir_entry *);
->  extern int proc_readdir(struct file *, struct dir_context *);
->  int proc_readdir_de(struct file *, struct dir_context *, struct proc_dir_entry *);
-> +void pde_set_flags(struct proc_dir_entry *pde);
->  
->  static inline void pde_get(struct proc_dir_entry *pde)
->  {
-> diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
-> index 52f0b75cbce2..20bc7481b02c 100644
-> --- a/fs/proc/proc_net.c
-> +++ b/fs/proc/proc_net.c
-> @@ -124,6 +124,7 @@ struct proc_dir_entry *proc_create_net_data(const char *name, umode_t mode,
->  	p->proc_ops = &proc_net_seq_ops;
->  	p->seq_ops = ops;
->  	p->state_size = state_size;
-> +	pde_set_flags(p);
->  	return proc_register(parent, p);
->  }
->  EXPORT_SYMBOL_GPL(proc_create_net_data);
-> @@ -170,6 +171,7 @@ struct proc_dir_entry *proc_create_net_data_write(const char *name, umode_t mode
->  	p->seq_ops = ops;
->  	p->state_size = state_size;
->  	p->write = write;
-> +	pde_set_flags(p);
->  	return proc_register(parent, p);
->  }
->  EXPORT_SYMBOL_GPL(proc_create_net_data_write);
-> @@ -217,6 +219,7 @@ struct proc_dir_entry *proc_create_net_single(const char *name, umode_t mode,
->  	pde_force_lookup(p);
->  	p->proc_ops = &proc_net_single_ops;
->  	p->single_show = show;
-> +	pde_set_flags(p);
->  	return proc_register(parent, p);
->  }
->  EXPORT_SYMBOL_GPL(proc_create_net_single);
-> @@ -261,6 +264,7 @@ struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mo
->  	p->proc_ops = &proc_net_single_ops;
->  	p->single_show = show;
->  	p->write = write;
-> +	pde_set_flags(p);
->  	return proc_register(parent, p);
->  }
->  EXPORT_SYMBOL_GPL(proc_create_net_single_write);
-> -- 
-> 2.43.0
 
-Hi Stefano,
-Thanks for your patch, Lars reported this bug last week:
-https://lore.kernel.org/all/20250815195616.64497967@chagall.paradoxon.rec/
 
-Jiri suggested to make pde_set_flags() part of proc_register(). I think it can help
-to avoid lack of pde_set_flags() calls in the future and make code clean.
+在 2025/8/18 1:27, Kenta Akagi 写道:
+> A super_write IO failure with MD_FAILFAST must not cause the array
+> to fail.
+> 
+> Because a failfast bio may fail even when the rdev is not broken,
+> so IO must be retried rather than failing the array when a metadata
+> write with MD_FAILFAST fails on the last rdev.
+> 
+> A metadata write with MD_FAILFAST is retried after failure as
+> follows:
+> 
+> 1. In super_written, MD_SB_NEED_REWRITE is set in sb_flags.
+> 
+> 2. In md_super_wait, which is called by the function that
+> executed md_super_write and waits for completion,
+> -EAGAIN is returned because MD_SB_NEED_REWRITE is set.
+> 
+> 3. The caller of md_super_wait (such as md_update_sb)
+> receives a negative return value and then retries md_super_write.
+> 
+> 4. The md_super_write function, which is called to perform
+> the same metadata write, issues a write bio without MD_FAILFAST
+> this time.
+> 
+> When a write from super_written without MD_FAILFAST fails,
+> the array may broken, and MD_BROKEN should be set.
+> 
+> After commit 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10"),
+> calling md_error on the last rdev in RAID1/10 always sets
+> the MD_BROKEN flag on the array.
+> As a result, when failfast IO fails on the last rdev, the array
+> immediately becomes failed.
+> 
+> This commit prevents MD_BROKEN from being set when a super_write with
+> MD_FAILFAST fails on the last rdev, ensuring that the array does
+> not become failed due to failfast IO failures.
+> 
+> Failfast IO failures on any rdev except the last one are not retried
+> and are marked as Faulty immediately. This minimizes array IO latency
+> when an rdev fails.
+> 
+> Fixes: 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10")
+> Signed-off-by: Kenta Akagi <k@mgml.me>
 
-I have submitted a patch:
-https://lore.kernel.org/all/20250821105806.1453833-1-wangzijie1@honor.com
+
+[...]
+
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -1746,8 +1746,12 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
+>    *	- recovery is interrupted.
+>    *	- &mddev->degraded is bumped.
+>    *
+> - * @rdev is marked as &Faulty excluding case when array is failed and
+> - * &mddev->fail_last_dev is off.
+> + * If @rdev is marked with &FailfastIOFailure, it means that super_write
+> + * failed in failfast and will be retried, so the @mddev did not fail.
+> + *
+> + * @rdev is marked as &Faulty excluding any cases:
+> + *	- when @mddev is failed and &mddev->fail_last_dev is off
+> + *	- when @rdev is last device and &FailfastIOFailure flag is set
+>    */
+>   static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>   {
+> @@ -1758,6 +1762,10 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>   
+>   	if (test_bit(In_sync, &rdev->flags) &&
+>   	    (conf->raid_disks - mddev->degraded) == 1) {
+> +		if (test_bit(FailfastIOFailure, &rdev->flags)) {
+> +			spin_unlock_irqrestore(&conf->device_lock, flags);
+> +			return;
+> +		}
+>   		set_bit(MD_BROKEN, &mddev->flags);
+>   
+>   		if (!mddev->fail_last_dev) {
+
+At this point, users who try to fail this rdev will get a successful return
+without Faulty flag. Should we consider it?
+
+-- 
+Thanks,
+Nan
 
 
