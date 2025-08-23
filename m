@@ -1,132 +1,115 @@
-Return-Path: <linux-kernel+bounces-783274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F15EB32B31
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:02:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98739B32B32
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 19:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCEF2AC013A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:02:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BC031BC238C
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 17:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6C9225A39;
-	Sat, 23 Aug 2025 17:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5950B21638A;
+	Sat, 23 Aug 2025 17:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GXo8Ft7o"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LpYMMTV9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BEF3234;
-	Sat, 23 Aug 2025 17:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E6E393DEA
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 17:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755968538; cv=none; b=uCjDCcZtUH2FVWofNOjhpqgaz6MYfVzs8SN7re1ilHFs4SlMy346Pqs+N6xdTLUOXlOyoEj7ltSHzbMaJPEwy7pC7wjEJKyV4Y4Po9jmremWETArp/GVkLFzo11RxzpUn1HlnKyde1JTRApV49Pf6IF5eKafHllHj5m/1Ewn3LE=
+	t=1755968824; cv=none; b=Nc108h+24GhllLzSoim4kX7opNE2/DrCLBZZprN3eqXM95t9/fSj8dfklOzbxJ37eHdPSQdQW8Pb1ydJyxLe+g5qzeiLPc8qZXBv/j9nGg8X0NPf4DKT1RuTmzbV4TcHnrJmrkw2T7tahykD2skgYu+A5P92Otq8izFk+D58z14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755968538; c=relaxed/simple;
-	bh=rLmYaUXKiJXYAlYBGXGFMvCWXOPdKhCoO6aZASFlBk8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Fsf3cf+VLc6ehUzFuEsj/V5245IXY+q3wfQLfuU/vncIZ4nsdVEfwdyqx5ApYgFBj4TGMujOHnESjMOBb6E75Psjl9n5puR7RYxsffhgTM2vncxgebBJHMLjU1TNYrbpQ6O13ZTUqTjj1glZd4KfdtduSpGlOKpmPoLER+Z78TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GXo8Ft7o; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-24664469fd9so9149515ad.2;
-        Sat, 23 Aug 2025 10:02:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755968536; x=1756573336; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hk+p5ghEzTAvQDShLGqOKKNyxsexSgFKL80k6vJGfUg=;
-        b=GXo8Ft7oSetMYqAdBKlWW9vOSiR57Iwq93wdjvsmv9zi2vZlDuJIJBzU697HI5Mg+L
-         a0a4aSCtOEb/hjSrU+mp3qamW3gE5wlvoArfR23O6UHU2tYLHx2kMdTr4tqaszxv4r9a
-         khZsTGRHr0Qx9HLuISF8jvtfHOIujhkkrhIiHf79fpUBf6ghDBU1At6Us1TSKyu9Pc/r
-         4U1qHg52tS8cRmk7qp8EZcDLw9heGv3O3uaMZmDmlxjXVmUIyPvciAhHU0/tFYNylqmR
-         7+CTaUUN2DzfRN67r7pJhXRzHbqAhtXJU0AqRkCsrrPNQtsNJFqw7oPE/LPGMVmCjECz
-         K4aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755968536; x=1756573336;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Hk+p5ghEzTAvQDShLGqOKKNyxsexSgFKL80k6vJGfUg=;
-        b=dv07/CGio5gCaCwp/9La41EONV/LrNwlG8SUVKd1FpF9bI7Sq8kQNq82SSmDJz6O9E
-         kkGxi+jg3eF8G5yZS3i/ndtE4BIGiJ52pMOh97fUYCvW8q6hqUDcM9wtXxg+uNI6SnJ4
-         LWF61bD/nWB59ycr3aj4/aderGwMz8ZluGzfQpmpTLeqS4mkwmW6NgtRdZPyzG1cVATg
-         I5q9VdkHM6WLmNYPPe/Pm4pd9E08i5QWA5H/+d4MovDxzC3KZ+elsHq0YwkFoq1uE494
-         fhBSk/4t0srVn7xnwAbhlrAaOkKZb2D2R3Y9xynfiGsdKEEC+e4aMu91ViWXfVRK6h+L
-         0+Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCUnIq7WtsIAiUEBdOKnmjSmLnl2WAj7QDVVOoq2VCEw4ioXbJqEVQZYh3Rpk94CnIfkSEzpwz9v6CWGDJAWcXMG@vger.kernel.org, AJvYcCUue1CSw926uCTj+86dcge+AlYj2h6sFRZsotOH7fzyv6AKGs3dz5EvL80fqTJl/f2OyCu6rs4jWqfAzls=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyahHdSpJv76j5/8b53rKac81IbZ4SqFPeDnM0FIjpMFiBh0JEL
-	MBPeTnHNR+eBDqzUuEmotVj10KXBIfA5vhTX5Lg/+OgB8Z6jSdaDPJCl
-X-Gm-Gg: ASbGncuqPqb+FRyNNgQoQElAKFIa5QqNO31DpCTo4rrNnIiGBmJghz+r7YqXU70h+1j
-	5+x7mpPs2YwkyMI/g8SYMRp6B39Qxlqn5RcdIvv4s7EFsOtCR1u8hCcvNQUeLDqaKBRC9R4kP8X
-	8UM36vJrjqMWBgMA8apJwHF3eQVS1SDduuZ8BtfDZlig9sdcXITAXFAxPy138xQG/kexx5HWpAI
-	bTOGISrbeSQE5OhIpu8Ul8yeEZKEOEHBiUZ8GwvopioQidJGKFUd9rt7MtM02KzSsl6wb/o4nJG
-	KM2YINF1ixtjr3oPAC2uZ4juVEDZcUgtYnHPPSI2ldWYQnCMf2v5bOixHqWWGsXVVXA3otyXVYB
-	Mz/1zkRL3KoGgEp1tt3TGXre8ktJVEzPLer67xwOgOrItmWvAHzQhkvSUn+15
-X-Google-Smtp-Source: AGHT+IH2ShbvDYkTHBSBnl1YUhuZP8E16J7gyLk2VDXODCN3OD494KKcUR6j+r39w3Xzpc8VsjYNAA==
-X-Received: by 2002:a17:902:d486:b0:23f:cd6e:8d0f with SMTP id d9443c01a7336-2462ee1a473mr78779365ad.13.1755968535825;
-        Sat, 23 Aug 2025 10:02:15 -0700 (PDT)
-Received: from vicky-pop-os.. ([2401:4900:8fcf:2a2b:8899:f1d3:d5cd:752a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2467e3238fasm17808055ad.104.2025.08.23.10.02.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Aug 2025 10:02:14 -0700 (PDT)
-From: ally heev <allyheev@gmail.com>
-To: skhan@linuxfoundation.org,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	shuah@kernel.org
-Cc: ally heev <allyheev@gmail.com>,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] kselftest: mm: fix typos in test_vmalloc.sh
-Date: Sat, 23 Aug 2025 22:32:08 +0530
-Message-Id: <20250823170208.184149-1-allyheev@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755968824; c=relaxed/simple;
+	bh=zsnLpOJ+msRihUwNBF9a5KmdzajefwvuxfqUE283cp8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=EfVLY0I5at2e/FTcRfrar3ajJWQat2oPWuNEIUp8+5DSserrC+GWCiuxFeRSTv7dMZXazkWR8SSkNZVnCvr1dlOrx+ommQitFhpZ4Q1LZny6zgGkB7QOeNBwDqJDxmQiToa8uO1W+S/JQssdaG/x/AsQ02iSuyCavhbfWiwnQVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LpYMMTV9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5EFAC4CEE7;
+	Sat, 23 Aug 2025 17:07:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1755968824;
+	bh=zsnLpOJ+msRihUwNBF9a5KmdzajefwvuxfqUE283cp8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LpYMMTV9QibwTHYmaRpvNBq+xiR0jSQM86DOFG9fPeqgQH1S5TinNmns1FwCAxM2L
+	 lBqCmVK+wN156VaB0d9J4p2KYFnuEBpxaecgqzD9U7aTtp7KwuaZWGpREvoo6EKVMr
+	 umTzZzvQOqT3Q5+ysFuXtoi9Ukf3QqwOSjxY7Nvk=
+Date: Sat, 23 Aug 2025 10:07:03 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Cc: syzbot <syzbot+49a796ed2c9709652f1e@syzkaller.appspotmail.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ pasha.tatashin@soleen.com, syzkaller-bugs@googlegroups.com, Andrew
+ Donnellan <ajd@linux.ibm.com>
+Subject: Re: [syzbot] [mm?] kernel BUG in page_table_check_set
+Message-Id: <20250823100703.0a0239d204ca2487363d2adf@linux-foundation.org>
+In-Reply-To: <875xeeafgv.fsf@gmail.com>
+References: <68a7ef20.050a0220.37038e.004d.GAE@google.com>
+	<20250822181653.cd2024360870ef94cdb7db07@linux-foundation.org>
+	<875xeeafgv.fsf@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: ally heev <allyheev@gmail.com>
----
- tools/testing/selftests/mm/test_vmalloc.sh | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On Sat, 23 Aug 2025 08:53:28 +0530 Ritesh Harjani (IBM) <ritesh.list@gmail.com> wrote:
 
-diff --git a/tools/testing/selftests/mm/test_vmalloc.sh b/tools/testing/selftests/mm/test_vmalloc.sh
-index d73b846736f1..d39096723fca 100755
---- a/tools/testing/selftests/mm/test_vmalloc.sh
-+++ b/tools/testing/selftests/mm/test_vmalloc.sh
-@@ -47,14 +47,14 @@ check_test_requirements()
- 	fi
- }
- 
--run_perfformance_check()
-+run_performance_check()
- {
- 	echo "Run performance tests to evaluate how fast vmalloc allocation is."
- 	echo "It runs all test cases on one single CPU with sequential order."
- 
- 	modprobe $DRIVER $PERF_PARAM > /dev/null 2>&1
- 	echo "Done."
--	echo "Ccheck the kernel message buffer to see the summary."
-+	echo "Check the kernel message buffer to see the summary."
- }
- 
- run_stability_check()
-@@ -160,7 +160,7 @@ function run_test()
- 		usage
- 	else
- 		if [[ "$1" = "performance" ]]; then
--			run_perfformance_check
-+			run_performance_check
- 		elif [[ "$1" = "stress" ]]; then
- 			run_stability_check
- 		elif [[ "$1" = "smoke" ]]; then
--- 
-2.34.1
+> Andrew Morton <akpm@linux-foundation.org> writes:
+> 
+> > On Thu, 21 Aug 2025 21:16:32 -0700 syzbot <syzbot+49a796ed2c9709652f1e@syzkaller.appspotmail.com> wrote:
+> >
+> >> Hello,
+> >> 
+> >> syzbot found the following issue on:
+> >> 
+> >> HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
+> >> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=15f926f0580000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=49a796ed2c9709652f1e
+> >> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> >> userspace arch: arm64
+> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15faa7a2580000
+> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=144143bc580000
+> >> 
+> >> Downloadable assets:
+> >> disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/disk-8f5ae30d.raw.xz
+> >> vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmlinux-8f5ae30d.xz
+> >> kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff/Image-8f5ae30d.gz.xz
+> >> 
+> >> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> >> Reported-by: syzbot+49a796ed2c9709652f1e@syzkaller.appspotmail.com
+> >> 
+> >> ------------[ cut here ]------------
+> >> kernel BUG at mm/page_table_check.c:118!
+> >
+> > Thanks.
+> >
+> > Presumably due to the series "Support page table check on PowerPC". 
+> 
+> The syzbot triggered this on:
+>  HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
+>  git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> 
+> This tree does not have "Support page table check on PowerPC", correct?
 
+Yep, sorry.
+
+> Also, I guess Dev's change fixes this reported problem which could happen in
+> this path: commit_anon_folio_batch() -> change_pte_range() ... 
+> 
+> [1]: https://lore.kernel.org/all/20250812060124.C9344C4CEF0@smtp.kernel.org/
+> [2]: https://lore.kernel.org/all/68a80cc6.050a0220.3809a8.0002.GAE@google.com/
+
+Cool.  Dev's fix is in 6.17-rc2 as cf1b80dc31a1.
+
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git c17b750b3ad9
 
