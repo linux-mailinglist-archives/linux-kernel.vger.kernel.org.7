@@ -1,92 +1,160 @@
-Return-Path: <linux-kernel+bounces-782926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-782927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84C53B32713
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:37:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3EF0B32716
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 08:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A94303AF5A6
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 06:36:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E6106864F1
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Aug 2025 06:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75854212576;
-	Sat, 23 Aug 2025 06:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A0121D5B2;
+	Sat, 23 Aug 2025 06:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Qji+1rXN"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Tgjf3fhy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71981A0730;
-	Sat, 23 Aug 2025 06:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B1D1805E;
+	Sat, 23 Aug 2025 06:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755930994; cv=none; b=IbK6ssfqL/mfEMTgH66fm0gCRh1vytWc28RB3qN592gVAHeCsJ8N+oTnFGluQlVjl43IbQlE2Yauwwqik2GUW/GfDXZv2DSazPSHEycfQMOJUnYpZIwtdB8uD2i4yITh9vZv2MajcVNbBTl3+87+gxF/Ph47CS4JILJRiL1gqm4=
+	t=1755931298; cv=none; b=I9uWhH4ueZrG8BTSXwSXKPuhrqyQJwelc94l8r4FyevS9wvVNs7eydl/KC8nyNPdbzkNc6KoliFLs1Rr5RwBAL+0v55x2K1lMWNBtjbcFM9qq39gUknrZz/oF8+aMlmqZF+GI1tpW4yH6khpKz3ss1kak45fiBTnrKt64mZ40Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755930994; c=relaxed/simple;
-	bh=JmNf+0AG97IGYu8B7L1j0V46DCFU5/ljdv2ZVFoAVRc=;
+	s=arc-20240116; t=1755931298; c=relaxed/simple;
+	bh=W2xSsVTOfKvNUrTWf8mlEmNx+BmGW/cRdE/WDxMwuCQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EoKpNggfV+4vV2igZ+3iXg3E7EzCA5XSNzJY5AtmnyBgLPUBXnPwUnHqVtLE86t75nUPa3E2mEvmYkhx4CmOJiff0hpx/anUmQWWXlJuDIUHP6xDML2kn59jTg312+eiitx1UehehmzoQmCubzEZAY7R3yGNs9Z7NOT6hvwaC70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Qji+1rXN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 944E8C113CF;
-	Sat, 23 Aug 2025 06:36:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=esfQt+V7IBNNLZ4Ry6wjTHKcgnqQ1+gkMBFPI4JQJekWH9ssmCsbf+uxr1ZYBJqwRCZSn4oAC+xrbLpVMdZMFPHYP5dcyC5J5AVJhV2X1D2+BrVHEnMyrKWd8gWz+gy11Y6kFNXHLuxFLWrzs3fC3Zc/+JYiNYVug4LNn3cjQYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Tgjf3fhy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05EA8C4CEE7;
+	Sat, 23 Aug 2025 06:41:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755930994;
-	bh=JmNf+0AG97IGYu8B7L1j0V46DCFU5/ljdv2ZVFoAVRc=;
+	s=korg; t=1755931297;
+	bh=W2xSsVTOfKvNUrTWf8mlEmNx+BmGW/cRdE/WDxMwuCQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qji+1rXN9OIXfa1Z5HHnBCjZi9aYqDpsTOzT+G6SgOLe6hLfFrWSfXuyKJGwVUGWq
-	 KhzXOf0FFXFVDhOFdhoJ3qsfnvB8yYOnExcZ7tn28GY2Y4NLNZJ+15/ebQX1dnBR2l
-	 bZQ3+AUeijjqg4dVWImEEoQ3qxNhx3/+H2Wcw4UA=
-Date: Sat, 23 Aug 2025 08:36:30 +0200
+	b=Tgjf3fhy/95FjTkdKOoetheW/ejk9PsgRrIfYJ69pvVByfXzZF+BDHUjnaUQTFFI2
+	 3etnY578RIuxhkTxEA9FHO4kZx8DLjXtNyKuW91mwTNcvLc/XSosyAAO8NMKMPEebd
+	 cb/ucLkpzVx2e0jIOuR3lkwh0JJ22rHLQNsd98Ww=
+Date: Sat, 23 Aug 2025 08:41:34 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Harshit Shah <hshah@axiado.com>
-Cc: Jiri Slaby <jirislaby@kernel.org>, Michal Simek <michal.simek@amd.com>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] serial: xilinx_uartps: read reg size from DTS
-Message-ID: <2025082322-speech-blaming-b075@gregkh>
-References: <20250822-xilinx-uartps-reg-size-v1-1-78a5c63cb6df@axiado.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: James Morse <james.morse@arm.com>, linux-arm-kernel@lists.infradead.org,
+	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Amit Singh Tomar <amitsinght@marvell.com>,
+	Baisheng Gao <baisheng.gao@unisoc.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	bobo.shaobowang@huawei.com,
+	Carl Worth <carl@os.amperecomputing.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Dave Martin <Dave.Martin@arm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	D Scott Phillips <scott@os.amperecomputing.com>,
+	Fenghua Yu <fenghuay@nvidia.com>, Hanjun Guo <guohanjun@huawei.com>,
+	Jamie Iles <quic_jiles@quicinc.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Koba Ko <kobak@nvidia.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Len Brown <lenb@kernel.org>, Linu Cherian <lcherian@marvell.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Peter Newman <peternewman@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rex Nie <rex.nie@jaguarmicro.com>, Rob Herring <robh@kernel.org>,
+	Rohit Mathew <rohit.mathew@arm.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Shaopeng Tan <tan.shaopeng@fujitsu.com>,
+	Sudeep Holla <sudeep.holla@arm.com>, Will Deacon <will@kernel.org>,
+	Xin Hao <xhao@linux.alibaba.com>
+Subject: Re: [PATCH 10/33] arm_mpam: Add probe/remove for mpam msc driver and
+ kbuild boiler plate
+Message-ID: <2025082328-acorn-wound-5c3d@gregkh>
+References: <20250822153048.2287-11-james.morse@arm.com>
+ <00053767-352d-4185-8542-687da0fb5e57@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250822-xilinx-uartps-reg-size-v1-1-78a5c63cb6df@axiado.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <00053767-352d-4185-8542-687da0fb5e57@web.de>
 
-On Fri, Aug 22, 2025 at 11:58:14AM -0700, Harshit Shah wrote:
-> Current implementation uses `CDNS_UART_REGISTER_SPACE(0x1000)`
-> for request_mem_region() and ioremap() in cdns_uart_request_port() API.
+On Fri, Aug 22, 2025 at 09:55:33PM +0200, Markus Elfring wrote:
+> …
+> …
+> > +static int mpam_msc_drv_probe(struct platform_device *pdev)
+> > +{
+> …
+> > +	} while (0);
+> > +	mutex_unlock(&mpam_list_lock);
+> > +
+> > +	if (!err) {
+> > +		/* Create RIS entries described by firmware */
+> > +		if (!acpi_disabled)
+> > +			err = acpi_mpam_parse_resources(msc, plat_data);
+> > +		else
+> > +			err = mpam_dt_parse_resources(msc, plat_data);
+> > +	}
+> > +
+> > +	if (!err && fw_num_msc == mpam_num_msc)
+> > +		mpam_discovery_complete();
+> > +
+> > +	if (err && msc)
+> > +		mpam_msc_drv_remove(pdev);
+> > +
+> > +	return err;
+> > +}
+> …
 > 
-> The cadence/xilinx IP has register space defined from offset 0x0 to 0x48.
-> It also mentions that the register map is defined as [6:0]. So, the upper
-> region may/maynot be used based on the IP integration.
+> * Would you like to integrate anything from the following source code variant?
 > 
-> Fixes: 1f7055779001 ("arm64: dts: axiado: Add initial support for AX3000 SoC and eval board")
-> In Axiado AX3000 SoC two UART instances are defined
-> 0x100 apart. That is creating issue in some other instance due to overlap
-> with addresses.
+> 	if (!err)
+> 		/* Create RIS entries described by firmware */
+> 		err = acpi_disabled
+> 		      ? mpam_dt_parse_resources(msc, plat_data)
+> 		      : acpi_mpam_parse_resources(msc, plat_data);
 > 
-> Since, this address space is already being defined in the
-> devicetree, use the same when requesting the register space.
+> 	if (err) {
+> 		if (msc)
+> 			mpam_msc_drv_remove(pdev);
+> 	} else {
+> 		if (fw_num_msc == mpam_num_msc)
+> 			mpam_discovery_complete();
+> 	}
 > 
-> Acked-by: Michal Simek <michal.simek@amd.com>
-> Signed-off-by: Harshit Shah <hshah@axiado.com>
-> ---
-> - Add fixes tag in commit msg
+> * How do you think about to increase the application of scope-based resource management
+>   at further places?
+> 
+> 
+> Regards,
+> Markus
 
-That fixes tag needs to go where the signed-off-by area is.  See the
-many examples on the lists and in the tree itself for specifics.
+Hi,
 
-> - Link to v1: https://lore.kernel.org/r/20250819-xilinx-uartps-reg-size-v1-1-0fb7341023fb@axiado.com
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
 
-Then why is this one not marked "v2"?
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
 
-Can you fix this all up and send a v3?
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
 
 thanks,
 
-greg k-h
+greg k-h's patch email bot
 
