@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-783480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A570AB32E24
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:16:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09B20B32E28
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:18:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3EBB48379A
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:16:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3D461899565
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3F6257436;
-	Sun, 24 Aug 2025 08:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F734257ACA;
+	Sun, 24 Aug 2025 08:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U05VL8Ft"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrhkJror"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E6F1BC2A;
-	Sun, 24 Aug 2025 08:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E891A2356BC;
+	Sun, 24 Aug 2025 08:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756023399; cv=none; b=NVmFMusqE9yaVLBBvKmMZSpbB9M2EJeS6CKpl41BdJCPrkLX3HnqusGedWw52VuEOizapTpJFI5Pa+j8/I2nCCGkHJFgrtt9OUOctsOgLMT+VyR70V/7zrVJ6i1/p/dIOum38ehW5pZh9TCEJFHU5XsZFq2V2wjuu8AW0tdZEfo=
+	t=1756023503; cv=none; b=tkNBnz251iWSOP4/71jMreV6TyFbI8CDu6dJwOK6L60IvZkhv1gDK0hA8AaYVhzvINAfrh3bpR6eLm+z/OCLLA9uzSfU++HPkiYqvvl7LxNNJvowP4RHDgrI6C08iVBxI4pqUFIvdzCuE2KPk8n9HCWR+ro+n3fDWvy/i7hMD6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756023399; c=relaxed/simple;
-	bh=l32x1Te9bfGPB+4kp584f73PJmc+yVGlWYYCPw2loOM=;
+	s=arc-20240116; t=1756023503; c=relaxed/simple;
+	bh=oHY8OrdokFhF9Tm6xfVR/OccCYS48FlYN6uDPMMED8s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZHm9bBfsf5JdMZwDsJGsNmo3GcXu8/HLsLBXBAq2zdW6OnIrRW0WxbPNg+ZlW23tmPuBFHNCjFcueS1fCMdiZ7ZevKbXOLhGz8tRfLd4cPcIVR04JSeTwlQNwW5VlS+RYmlLk4qL5Gu2PPvqToimSLpcOlszEMue+axmq8pVruA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U05VL8Ft; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F220C4CEEB;
-	Sun, 24 Aug 2025 08:16:35 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Tiqp7k2RZC/Vu++zOfP5QdSUf9BH2s9QCctNS6ZWHSoTz2Zj+MhTL9Mdr2ZC+mD9ckTLGEHSAuU4ECglpSn3EhxUKx23ilMPLS7N71wxmfQ+BU/Gu5FBqw+Ng3JC2XlKpC9FmaN21WF3UJK8ni6Stc2ptj8RkFB0Ccg77+9oHZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrhkJror; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1811EC116B1;
+	Sun, 24 Aug 2025 08:18:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756023398;
-	bh=l32x1Te9bfGPB+4kp584f73PJmc+yVGlWYYCPw2loOM=;
+	s=k20201202; t=1756023502;
+	bh=oHY8OrdokFhF9Tm6xfVR/OccCYS48FlYN6uDPMMED8s=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U05VL8FtfGd9U7XQVld8V3O7lu0RdEa/rOG3OcJ41FNXbwBF0mtieHVDOmKYsLepX
-	 j+nPossdZtKREZch761bomNH0k2PDKm8N0r4J5T8uRA54DUUDVrCbHts+zyTogRgJ/
-	 DaSEIXKExNJ+wm4LKNcXkmPEFoIVMSn5t+zwZsfsSXxgYHQr654qK7HCjl59RTzGQz
-	 C1WmbsDEF7dsqFleAXApLBZ/LvPwg7R/7Tgkf1C5CPop3MjhVzsj+U9YUA+zd/sjNz
-	 TKCO3nDzQI5F5cFVr8PCaMKJnm6RFXsWF3S+pwagL5JmK69vAIO6fZKUpCSNPbRcQz
-	 200qMiH9I1OEg==
-Message-ID: <e0c5b9b4-889f-4571-b265-fb6b2885871a@kernel.org>
-Date: Sun, 24 Aug 2025 10:16:33 +0200
+	b=jrhkJror9galOzDN74KNPV22Ga9RO2olY3QdhX8Y/R4P0zRnLS1pYUpiRnk9cltlo
+	 NOH6ApLq/11DjkKROJ0H0Y+c0NAgLJ89ytaiW1g+LDOeMYWsT710uOwODTR/Jrlu24
+	 g4L4ReLk7c2rrk4U/IQwyHd4bLE3o870TkH9UYRB2KKCT31SHvabBJ8DxXCTc5Jxs6
+	 syWxwtcePCTNqi+++6k1UcU8Qf2A+yIxZsMBAvwb8hjge3fBLdkBC3i0Pmi797Lc44
+	 W2693szUpkzwJqC7Vwlu1rky+HezAXiK93/sDN1oLi7a1PUiY4ZSKGR14DF38oywWq
+	 GVxW1PeQQyBOQ==
+Message-ID: <df9a09a5-15eb-4760-b312-d54e4e57283c@kernel.org>
+Date: Sun, 24 Aug 2025 10:18:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: clock: exynos990: Reorder IDs clocks
- and extend
-To: Denzeel Oliva <wachiturroxd150@gmail.com>, Conor Dooley <conor@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250820-2-v2-0-bd45e196d4c4@gmail.com>
- <20250820-2-v2-2-bd45e196d4c4@gmail.com>
- <20250820-diffused-impaired-ba776d39692f@spud>
- <aKn6AYIAG9eUeSx2@codespaces-a28d22>
+Subject: Re: [PATCH v1 1/2] dt-bindings: phy: mtk-tphy: add property for
+ software role switch
+To: Arseniy Velikanov <me@adomerle.pw>
+Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20250814234825.810-1-me@adomerle.pw>
+ <20250815-important-warm-dove-03dde5@kuoka>
+ <ce4f990c-c336-4aa4-93b0-7b9f4d9663b4@adomerle.pw>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,33 +108,52 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <aKn6AYIAG9eUeSx2@codespaces-a28d22>
+In-Reply-To: <ce4f990c-c336-4aa4-93b0-7b9f4d9663b4@adomerle.pw>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 23/08/2025 19:27, Denzeel Oliva wrote:
->> This looks like a massive ABI break, where is the justification for
->> doing it?
+On 24/08/2025 08:25, Arseniy Velikanov wrote:
+> On 15.08.2025 10:28, Krzysztof Kozlowski wrote:
+>> On Fri, Aug 15, 2025 at 03:48:24AM +0400, Arseniy Velikanov wrote:
+>>> Add a boolean property to enable software control of the PHY mode
+>>> switching.
+>>>
+>>> Signed-off-by: Arseniy Velikanov <me@adomerle.pw>
+>>> ---
+>>>   Documentation/devicetree/bindings/phy/mediatek,tphy.yaml | 6 ++++++
+>>>   1 file changed, 6 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
+>>> index b2218c151939..a90890d4a86f 100644
+>>> --- a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
+>>> +++ b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
+>>> @@ -255,6 +255,12 @@ patternProperties:
+>>>             use the property "mediatek,syscon-type" for newer SoCs that support it.
+>>>           type: boolean
+>>>   
+>>> +      mediatek,software-role-switch:
 >>
->> Cheers,
->> Conor.
+>> No, bindings do not describe software.
+> Sorry, I didn't quite understand you.
 > 
-> Hi Conor,
+> With this property the driver changes phy mode manually using debug regs 
+
+
+Here is the problem:     ^^^^^^^^, driver.
+
+> instead of configuring hardware mode switching (because it's broken on 
+> some platforms). So every time the role in usb-role-switch changes, it 
+> has to switch phy mode. That's what I mean by "software".
 > 
-> I reordered because the current IDs don’t match CMU_TOP:
-> the PLL mux select is in PLL_CON0, not CON3, which gave wrong/low rates.
+> I can rename this property to `mediatek,force-mode-switch` if that's a 
+> issue.
 
 
-IDs are abstract, they cannot give wrong/low rates.
+Describe the hardware problem, characteristic, wiring or whatever else,
+but not the drivers and not software.
 
-> I also added DPU/CMUREF and a missing fixed-factor path to stop bad rates
-> and clk_summary hangs on hardware.
-
-
-Not really related to ABI.
-
-None of these justify changing the ABI or I don't understand the problem
-at all.
+force-media-switch is the same uninformative and same underlying
+instruction for the driver.
 
 Best regards,
 Krzysztof
