@@ -1,100 +1,94 @@
-Return-Path: <linux-kernel+bounces-783509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4761B32E7C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:51:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D3FB32E70
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 166C1203831
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:47:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41B653B371C
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B0A25F98A;
-	Sun, 24 Aug 2025 08:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CEF25B1D8;
+	Sun, 24 Aug 2025 08:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ab+QWU95"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Atp+nQ92"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590C03234;
-	Sun, 24 Aug 2025 08:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9221614F70;
+	Sun, 24 Aug 2025 08:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756025181; cv=none; b=uVWHTJsYENG/KJ4heCgEdyVJDhTnXcREG6ezjuWBLHGL5RmcYeodHMoGrm98dbdTYL++xVV0lmxidy8tgQ8A2I7fjIFaVyRAQgJdtno1E5BGfvIZy6ELHPL9VsyJ/4HrQCSdYkDlyWPP8qz3Tl+xzpocXrrKpvBNeBuh4z9kLak=
+	t=1756025176; cv=none; b=qLEUU8fiiljZOEp11vkKWdfKoIz1inJk4aWnV1PSPFCRQuQjnWj4pnxyE0jR2iTUWOAfNIGTANUOXgZzSYpUFXhyjslNeUgq8KGLaNPexZRJYVNWhLWL/+RlRHpfPKAUqH9WuDec+gdLHxI0yUH47T9afSjs6dTUE4030yp1zEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756025181; c=relaxed/simple;
-	bh=q3TxZz+hY4OgNmfzGpL/wjJtS1hO0cafNr4K1ixc+Mk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SMg50vq30gzrKfNXX/hk7H/85X/tlc6E/y0mgVBxjbxdyXX43iP1CqVL/77qAQhwArFLBRD+5PmKHR5i8rjomKVXxG04zlMfmOIuxe+5ea3UjpH06fW8wUMSmZrXK/vgU54hSLCWtTO9ooDukhUhQqZ+r2hHAf9FapgSaw0/uuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Ab+QWU95; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1756025167;
-	bh=91Nzi7Xyg33pZmoRVfLnc4gIdsyMm0HV7+DxdzihZxc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Ab+QWU95LMyHg2gcXzpoXF/jKO1617GG+TxZfdSdFHujLPgMzpzkkTGqaRa+7KUQS
-	 44X7i1/kDGr/DcGUST1QalVFF06UKIFBTs2ls0ZTD+Wf1Kj8iu/eZ5hZ+BVobA4Npm
-	 Ptj/7+mtSOq1fTWCeqXzIxDjEBFpQiNEL+ayQgSNslwJ8sm6Y9S4rTV4e/Hym97gnD
-	 53omRklWq3coiYc35qXKvKmW0J6X2IW5EXj2t+1wKmoEGBVNSYP7T30xdzes5VhBuB
-	 zTOjSzDTjToMHIrPCqwYjp/pbVKXzUPxgdZnYFdeUE6K9JCZFjb8jJQyBHBYgyvF6d
-	 fniPiYSszQ7cQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c8nZl0mgrz4w2D;
-	Sun, 24 Aug 2025 18:46:07 +1000 (AEST)
-Date: Sun, 24 Aug 2025 18:45:35 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commits in the mips-fixes
- tree
-Message-ID: <20250824184535.65e5b40e@canb.auug.org.au>
+	s=arc-20240116; t=1756025176; c=relaxed/simple;
+	bh=alXxqMcedaDj3l176SPehI3aJia5mng2LYO8cttSggQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TuV2pMkGRZOg6RK+ljotrzfsaXA3ry84qXklzM2Qlkhw7+UCPYXCCDXCfmjuwpyVp+pzrtOzL/zFStNm3/UikI35iK3jQ+fy14PFB5pnocL8kOBhh2fw0wNg5IVIc2OkQx534GrJ07n6W11xCGeGDdxdb87XuL/i4WpK2sn6b2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Atp+nQ92; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C00A7C4CEEB;
+	Sun, 24 Aug 2025 08:46:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756025176;
+	bh=alXxqMcedaDj3l176SPehI3aJia5mng2LYO8cttSggQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Atp+nQ92EhnFQoDX3pPs0POvqLEIX11b1fFTeD5HV/jF8hMgxbC93DMFnskXIShO6
+	 Z/TOyYQuneK0Dhy/yjEBW+Th/wzONrxUSVIxDN5boL2tUkJXM2F9Hgb5HwI8sV2bw5
+	 dhv2zNDrm9HTptytQ0eXwxhE6rLuBiP5CSvSMiDQWALXiYUAmAxDXboiaVP/L6EJGq
+	 Wb011LjuD3lwfnBlTHlYDAJgzlX0QGJP3pjvnEiDbSuH2e0H5gjJ2DSQhjsrUpt6PQ
+	 rF8pqVthgx3mdgEst0Hb31A7HoT2F3xpn9WfffDocT0LWPPKfscEVg4z3JMjzJoqfF
+	 PSPDBSccoocuw==
+Date: Sun, 24 Aug 2025 10:46:13 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com, 
+	andre.draszik@linaro.org, peter.griffin@linaro.org, kauschluss@disroot.org, 
+	ivo.ivanov.ivanov1@gmail.com, igor.belwon@mentallysanemainliners.org, johan@kernel.org, 
+	m.szyprowski@samsung.com, s.nawrocki@samsung.com, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com, 
+	dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com, 
+	selvarasu.g@samsung.com
+Subject: Re: [PATCH v7 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 HS phy compatible
+Message-ID: <20250824-mustang-of-glorious-sufficiency-b55bf4@kuoka>
+References: <20250822093845.1179395-1-pritam.sutar@samsung.com>
+ <CGME20250822093008epcas5p218f9f9a5381a716b5b8e0c4b23e4b3bf@epcas5p2.samsung.com>
+ <20250822093845.1179395-2-pritam.sutar@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/fL2iM+oGR/+h5ulJnh7nkbA";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250822093845.1179395-2-pritam.sutar@samsung.com>
 
---Sig_/fL2iM+oGR/+h5ulJnh7nkbA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Aug 22, 2025 at 03:08:40PM +0530, Pritam Manohar Sutar wrote:
+>          reg-names:
+>            maxItems: 1
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,exynosautov920-usbdrd-phy
+> +    then:
+> +      required:
+> +        - dvdd075-usb20-supply
+> +        - vdd18-usb20-supply
+> +        - vdd33-usb20-supply
 
-Hi all,
+These if:then:else soon will become unmanageable, but I guess we can
+worry and fix it later.
 
-Commits
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-  8c431ea8f3f7 ("mips: lantiq: xway: sysctrl: rename the etop node")
-  7b2823292178 ("mips: dts: lantiq: danube: add missing burst length proper=
-ty")
+Best regards,
+Krzysztof
 
-are missing a Signed-off-by from their committers.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/fL2iM+oGR/+h5ulJnh7nkbA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiq0S8ACgkQAVBC80lX
-0GzofAf/d35bMPj0pzWfCyZssf2G+VoQO1K0pNVDS24G2lp9HREkHrubPRasRHAr
-ctmSK+V8+Dzho9Q0Jd21QqQXkq9V5iw6YVwavFzsjqmxaP/MzetfoMCF9Xa6O86j
-8gF4S5efjAcj/JzIvdFB97H2mrBa/XgJL2lhXShbbdP9aa3+Whmk463G/39+vfYR
-Oi4QhJY4yMqrMz5YVHDrBSftlfRf1CgVF1ok1MIl6zui25Gs0hkyA8BZkHwPwRLT
-zobTPnGogk9TVPUXrw5QrY3fIZhppERM6mAJrZ0jI+eacHstGx3V6I5BI9DvUwb3
-H+xSWkHJzzbxC1I+IL5q+coLoqqLAg==
-=bqXh
------END PGP SIGNATURE-----
-
---Sig_/fL2iM+oGR/+h5ulJnh7nkbA--
 
