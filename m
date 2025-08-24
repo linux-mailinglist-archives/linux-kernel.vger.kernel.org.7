@@ -1,54 +1,55 @@
-Return-Path: <linux-kernel+bounces-783493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97EACB32E4C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:43:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC344B32E50
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D91EF1B288AD
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:42:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A838F1B64B95
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3238426B2AD;
-	Sun, 24 Aug 2025 08:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F84271448;
+	Sun, 24 Aug 2025 08:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="wW8HgERh"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="GKbwYKEp"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B9C25B692;
-	Sun, 24 Aug 2025 08:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DED126B760;
+	Sun, 24 Aug 2025 08:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756024847; cv=none; b=ExvO309Vt/gAk/qds772CyPh41Qs0exlEAZQ2uupuY40IeFIchfVVrXFLk4mv+bwSe0A3jtlY6y9vj7C2Ur3XbDK5CfTI2MbQRxOJJztlFwU3F5/9AFGDL5Yeix3oJ/wKaO0PRREU0Rc87Fm7xLGV1/F/1UKpn2gRNLfHyA1JBQ=
+	t=1756024852; cv=none; b=aKjt8tT7iqUvbh4iVXcn6IriiwKFy7t5xazkELlok8y+3vQ6waJkzhlwN9Fy8o4zoQS3z/KOuwd5KAuXpkCrF3OHtx1iGG1qKfEt+HoPzaeJ/JAPERZ3z2AEUaDgWMaf1C4kWu0CEaUCftTtt3XvgxstRY4JaImxMSmhfq3OPRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756024847; c=relaxed/simple;
-	bh=ZUrL1GUtAJCNKt2pUUAfCSXGuuvKhhmY6ZNaHjLFvb8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Z5N0QTy8uKE7NCdbxCyAIyjMON9cBS8BsGGtDCKVZwBT+sZznVlz/6JACVPEEr/OE8Ev2SuLj3rlEzv2ossiccDTIFKwsIITaECcuXEQgnAfTNDLucUMs4S+5+7gajF3N2akiZBAU4wx0faYf1iD2gip2DS9gBPw989iOoJgleo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=wW8HgERh; arc=none smtp.client-ip=54.206.34.216
+	s=arc-20240116; t=1756024852; c=relaxed/simple;
+	bh=v/t1aI3aNag38Iw54UrTz56l99+UEE1QCM7Cs9uZPv4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=aklbzH9ZilaNtX3uemHZ2uIp0Ez00jAn+Par16CoL6bMmbCg8ojhRCj+6TdOlxOzsXPGPAYBhqphlkSdlRv5H5ctNXmK9DnHGNcc6r+EkkaNFtC/eGDjVXCH13WNdgW0szKi2aFMrcYJ4GpFGljSd9X7JDsZJVtyQgFbEaIMhFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=GKbwYKEp; arc=none smtp.client-ip=54.92.39.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1756024825;
-	bh=O7QkqLL1Uz4POVfUWaVHKWCebfO78hHJLlMwMJBxzhk=;
-	h=From:Subject:Date:Message-Id:MIME-Version:To;
-	b=wW8HgERhgh9HtdqJPr+g240VO7nCNqy+PGwe60d4YG5AiXaSdn/L0I9kss+AajgDf
-	 dyZ1SsUpHns7sI1nCwsDVAygLfb9QA4fDhhi1y7+xUxTPamk8b3MVfpwC2dJE8Zpix
-	 c3MQ2XaOnKYryumMvZVXtiddClTody8VA7/cwmCQ=
-X-QQ-mid: zesmtpip2t1756024819t4c5e839e
-X-QQ-Originating-IP: upKO0L+yIpZXn8455s8h5c8yHNVZ/SB8e48qzQtjrRI=
+	s=mxsw2412; t=1756024831;
+	bh=uIeFRp7srlfzTl3qg/h25R18H1T9HniV32V3H37+zLo=;
+	h=From:Date:Subject:MIME-Version:Message-Id:To;
+	b=GKbwYKEpik6QLJbcHuSWJhkX1LzKHnBobBPBQFIfpjiwLqMjUfFbcqMR/454lbGj5
+	 j3SCkajM4TPrpi91c97NsquZxLSjorr2/MA3LljLTt9DfTQ+LS7Hk1eC5oqHUPmYIE
+	 q0iPc3HRl7Tdsnt/++RAIE+VWVvAtYNq02nr2fOI=
+X-QQ-mid: zesmtpip4t1756024829ta2e03abb
+X-QQ-Originating-IP: R+FEK3RJ0uU9/B5/5AD3L4JnXkWhDGlpkAywfX6XE6s=
 Received: from = ( [localhost])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 24 Aug 2025 16:40:15 +0800 (CST)
+	id ; Sun, 24 Aug 2025 16:40:25 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4970945692771033576
-EX-QQ-RecipientCnt: 16
+X-BIZMAIL-ID: 17996591963032369533
+EX-QQ-RecipientCnt: 15
 From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: [PATCH RESEND v5 0/2] clk: spacemit: fix sspax_clk
-Date: Sun, 24 Aug 2025 16:39:59 +0800
-Message-Id: <20250824-k1-clk-i2s-v5-0-217b6b7cea06@linux.spacemit.com>
+Date: Sun, 24 Aug 2025 16:40:00 +0800
+Subject: [PATCH RESEND v5 1/2] dt-bindings: clock: spacemit:
+ CLK_SSPA_I2S_BCLK for SSPA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,12 +58,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAN/PqmgC/3XPsa7CMAwF0F9BmQlKXNy0TAywMsCIGNrEAQtoU
- QMVCPXfifr0BAgYbeueK99FoIYpiMngLhpqOXBdxQGHA2F3RbUlyS7OAhSgMtrIvZb2sJcMQdI
- YDHjtc42liIFTQ56vPbYWy/lqvpiJTdzvOJzr5tZ3tNBf/ziAV64FqST4jJynxBXleHrg6nIdh
- VNh6cjnka2Pvdcmr0b2ZiTRQGfQ5F4BgPlmDP/fSfRHFnyK6FypbOp/9uOzP9PvBkaDysI5lZK
- mXH81uq57AAupCF95AQAA
-X-Change-ID: 20250717-k1-clk-i2s-e4272f1f915b
+Message-Id: <20250824-k1-clk-i2s-v5-1-217b6b7cea06@linux.spacemit.com>
+References: <20250824-k1-clk-i2s-v5-0-217b6b7cea06@linux.spacemit.com>
+In-Reply-To: <20250824-k1-clk-i2s-v5-0-217b6b7cea06@linux.spacemit.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
  Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
@@ -72,93 +70,62 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
  spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
  devicetree@vger.kernel.org, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
- Yao Zi <ziyao@disroot.org>
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756024814; l=2110;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756024814; l=987;
  i=troy.mitchell@linux.spacemit.com; s=20250712; h=from:subject:message-id;
- bh=ZUrL1GUtAJCNKt2pUUAfCSXGuuvKhhmY6ZNaHjLFvb8=;
- b=0UsnuH+nwaZtbx9QBe9ToLPKe7brpz7gls5WfkZlfGM3b1yjiv6asuooZN47hWHhRp0wERvOe
- IKXR/VWBmYGCO9gUUUT3UiqKkLP9fPQ+Y0N0WCghE+fLOdxN5ur3mPA
+ bh=v/t1aI3aNag38Iw54UrTz56l99+UEE1QCM7Cs9uZPv4=;
+ b=iONwEIHlXVoixiSORjJxTfn/gRA3ySjVcx44485CZagW2P+78goqG1fL/Z+oleVAPbN/wYGb2
+ RQryHUz9mJjBnXwhtDnWU94+xGj896RrrhljBPr/wCbDoUstkk/2IWX
 X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
  pk=zhRP1xE0bftrurqSWI+SzcSdJGIZ0BTTY9Id0ESzqlI=
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: NUAR720uS3BXN31/TXGTQ51lxQJ4YOQ57YCzFslEax+BnPsuonG+YqG9
-	rfisgnGGGkgO8oqzKAPwpocj4ksTktScZUDb7Unlw791URqqZNvOKFBQATcXa5ZpUJfBYY0
-	ffEW38zs7Q5PCLOl4Qml2ksLfPh0wZQnwaZO0gWgyJWatAlRNpuwaN99kCdcSZOiL10DjYe
-	f5Y3zwJmGaTtseSRkfUSDG3oAcig32+i5zPETfX1oU9HHwSbaEDXhaVLK5mmTUihGfbW3G+
-	wzxli2L4UpqYZwZz2pKUfJDGk/UcLWEoIDne0XlImM5R03D1uciXndMl8go22OUVHbnWldk
-	aifuj4GPYVwCy/XLdUgFBRB8irklzM2T/I/zFowzneomwDGFd8f5XRUWvlBR8jPJXyiCcWN
-	z52gCpq9Tj8g2deFb0eO6aiXAjhGgxC0uguKPOZaVo7w+Gt35sGT9sSaE9ky97VHJenZu4s
-	8/MZIIaXiZLTWbl+pbuJ01j8i7HQ1d0125/ConMms3bZAnZ9megkfWd8AinVe8Z5jCC32kh
-	GMtxiNj26TKipmwqhdjs1IvQdnF3XzvvMlddLZekuMxchiPAdhHfLF7LbLlvPNe9GsooCVb
-	3I6HR9Ok0OqujdkmYBWGHzuEMEV3VNoITEQhovoOy9Z2y1EPWxgeyZ8TLApGoWhTHSBU2VO
-	fXReYRR6Gr4YghpnAIFsAzRX2tgwmU8i1pe3sEvc6dHZroMGXwviBPwNrhcucCPJ7jCA+8T
-	n7gEMaxxex33fucUKlHfIkhj+9cYJtklbYSK4TCEzlk9dD1IuTPlfpVSJ8an70B60g5diZE
-	4r73isUOVonuAVLKrH6uofMhEUvagRxnXjhzPFLNQRTJ8JFsq/U3dcQa8xGSxuZmJLYq9h5
-	xTPrtqySIqh1GitA2DPm54tlYBxE+RxGqTaf4wO/EnIIJ9WF/6aXhyO78Sq56sKbcwYIoc2
-	DaEFsizl0/tyCzW0aoMSVPLBeviOTU7Z2glEChwGLlZ4zK8GLdWPfcfa2GXfE0rg2dH/KYw
-	E1isZag/jdfe450s5WiT+YYqloadjUh8eQhzg/2a5P91D3Vz8seBVxbTw20qiO0tW24jOLt
-	QXBcJ3udYKooaqMRqQbiG6PsqD7oMlw22How+H5QlYpufa7N4uNLPc=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-XMAILINFO: MWzGDmnScki3k3C5VIVHaDBd8z4Roju4+0neCTSnYOxzh9F3UIJVkRW7
+	vbNS57Rn+P6EcKYl1wMCksANQzKMZtZ7Ogsjr3wfaS2Wp/UH+9xJtc51Y7O/g5Kt5r7bNpf
+	kG04qQiJdNBRzvXTLTndAIXxALEb7mcO1/2eL0M79UCuQu0rDRUbbkLm8EA1Z1WzSKFSwlf
+	j9TDqZViB3pEerwDDIVNRUhgtKl6UpSe8X0cbI0c7Xb1oQgBeEql5XxJzVf8UXg0jkShZMO
+	Cq+bnC4BeCfwxux/FehkKkC9etkHyrt9Ay4QjhdYQ0JhriCK060bbzGb2E0GjOnFeo1fYFy
+	069xZ82vns/DfyroYIZv2wtVFIktA9lxvLXJgWbTODwJkfdv6SqqVOIAq0bPVY7M8Ej0btQ
+	mhLz7A7xVwfOH+ldGk7cxiIeuLs5ppefKzYT+IFbc4sl4kcUJnZ9NPa8zRLhgFmxAwQqObH
+	jgwTUy7b+2moPpLhM3RhAmyj/lUtt9YyHOwnIKE+tlOhp6Xh2uX83VfyNBtpvRE4VUU+WL0
+	W2rm/USXdStM32e5pu5poXVNmVfqIwfK2hdffPTaoJB8e/Q5fRw1xQmQIhLnbkyFt3JkDO8
+	qivqhVKgunAj5FG8I/FuzoSs9fUz8HTmVjlZM2IhNjv0w/rT7cIyM4U/njgeAP0DIk6iWce
+	IMr/5sz79vfm5AiHh2nZdRpeJklGRxULJyWwIBQC1t3iZzlmyt8JCLBAQDOISHsOtjsiB4D
+	3jdTvmA63mLbDDyHyZPhCpSzs7scFWCxEcBKPkv8EtJFc9VZtdhvyNwQeQ3offQCnEFdYAp
+	sivDEIHgmgYXc+qE0y5TBQXL4tR7tQhX+dNN97bFvVPVRgekpnxrW3UKA2ps4MQKonXg8YN
+	A2WfOm6k2XZUsH7F8lllU2QoI5C9uXkhV3uemraTVX8msZsYADSjSWT4uDunA6RDFMSCvnX
+	XHZxiwV5EfxAcTopjhp3eG3t82WSU+UVzQEChY6Y+LJ6RngOf29PINzhIm+dGdPSm1qYWYL
+	zLVmpD6qNzJmxPygSy+C2HREFiQ4nXTPP9tGI8MlJxmSIepxMetqJUcFIh3/wGuj594zYsW
+	o8DP69ICqdhPrg5TgIHPAU=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
 X-QQ-RECHKSPAM: 0
 
-In the SpacemiT public document, when the FNCLKSEL field of
-the APBC_SSPAX_CLK_RST register is 7 (3'b111),
-which is a reserved value. And BIT3 of the same register is
-a reserved bit.
+In order to use the virtual clock SSPAx_I2S_BCLK in the device tree and
+register it in the driver, this patch introduces the macro definition.
 
-But the documentation is incorrect. In reality, the value 7 (3'b111)
-of FNCLKSEL is not reserved. Instead, it indicates that i2s_bclk is
-selected as the parent clock. Similarly, bit 3 is not reserved either.
-When FNCLKSEL is set to 7, bit 3 determines whether i2s_bclk is actually
-enabled as the parent clock.
-
-In all other cases (i.e., when FNCLKSEL is not 7), bit 3 has no effect.
-
-Importantly, whenever FNCLKSEL is set to 7, bit 3 must also be set to 1,
-otherwise the selection of i2s_bclk becomes invalid.
-
+Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 ---
-btw, the public documentation for the k1 clock has been updated.
----
-Changes in v5:
-  - move fixes tag from cover-letter to patch1/2 and patch2/2
-  - modify commit messages
-  - Link to v3: https://lore.kernel.org/r/20250731-k1-clk-i2s-v3-0-2f655ddb0c6f@linux.spacemit.com
+ include/dt-bindings/clock/spacemit,k1-syscon.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Changes in v4:
-  - add comments
-  - add tags
-  - Link to v3: https://lore.kernel.org/r/20250731-k1-clk-i2s-v3-0-2f655ddb0c6f@linux.spacemit.com
+diff --git a/include/dt-bindings/clock/spacemit,k1-syscon.h b/include/dt-bindings/clock/spacemit,k1-syscon.h
+index 2714c3fe66cd5b49e12c8b20689f5b01da36b774..505205453d7f19ad478b3b741d83f4498fcb8c0d 100644
+--- a/include/dt-bindings/clock/spacemit,k1-syscon.h
++++ b/include/dt-bindings/clock/spacemit,k1-syscon.h
+@@ -182,6 +182,8 @@
+ #define CLK_SSPA1_BUS		97
+ #define CLK_TSEN_BUS		98
+ #define CLK_IPC_AP2AUD_BUS	99
++#define CLK_SSPA0_I2S_BCLK	100
++#define CLK_SSPA1_I2S_BCLK	101
+ 
+ /* APBC resets */
+ #define RESET_UART0		0
 
-Changes in v3:
-  - Fixing ABI-breaking behavior
-  - Modify commit msgs
-  - Link to v2: https://lore.kernel.org/r/20250722-k1-clk-i2s-v2-0-2f8edfe3dab4@linux.spacemit.com
-
-Changes in v2:
-  - Use virtual gate instead of new function for sspa
-  - Add Suggested-by tag: Yao Zi
-  - Add Fixes tag
-  - Link to v1: https://lore.kernel.org/all/20250718-k1-clk-i2s-v1-1-e92c10fd0f60@linux.spacemit.com/
-
----
-Troy Mitchell (2):
-      dt-bindings: clock: spacemit: CLK_SSPA_I2S_BCLK for SSPA
-      clk: spacemit: fix sspax_clk
-
- drivers/clk/spacemit/ccu-k1.c                  | 29 ++++++++++++++++++++++----
- include/dt-bindings/clock/spacemit,k1-syscon.h |  2 ++
- 2 files changed, 27 insertions(+), 4 deletions(-)
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250717-k1-clk-i2s-e4272f1f915b
-
-Best regards,
 -- 
-Troy Mitchell <troy.mitchell@linux.spacemit.com>
+2.50.1
 
 
