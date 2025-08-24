@@ -1,201 +1,100 @@
-Return-Path: <linux-kernel+bounces-783534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE5C8B32EB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:21:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4761B32E7C
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAA6D3B2003
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:21:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 166C1203831
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91794264A83;
-	Sun, 24 Aug 2025 09:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B0A25F98A;
+	Sun, 24 Aug 2025 08:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="ZOEDpcnP"
-Received: from mail-m1973190.qiye.163.com (mail-m1973190.qiye.163.com [220.197.31.90])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ab+QWU95"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387221A08AF
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 09:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590C03234;
+	Sun, 24 Aug 2025 08:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756027283; cv=none; b=VdQZZ6ZBK1hxXkCMUHAwFYhrgwbsI/R1DuO6k6IzP1RHVpqobzqB3lXlXTL7kL8Gj3rrOBEAjJy6RvnJdPXpbiTaBKFQje05LBxpzSmNlA0H7mnuDgDsWwSE57O3zQzzG3zEroxScGl7xGbR8k/JQFRYMu8U1OaenMboBZpdDpQ=
+	t=1756025181; cv=none; b=uVWHTJsYENG/KJ4heCgEdyVJDhTnXcREG6ezjuWBLHGL5RmcYeodHMoGrm98dbdTYL++xVV0lmxidy8tgQ8A2I7fjIFaVyRAQgJdtno1E5BGfvIZy6ELHPL9VsyJ/4HrQCSdYkDlyWPP8qz3Tl+xzpocXrrKpvBNeBuh4z9kLak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756027283; c=relaxed/simple;
-	bh=mfVRrHmv4sGE3Cny/Fa2tpBElryJ3vH3BK2M7R2/qE0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Cuhkcex8M5kfgwjiP+xzlfgOoA4PtgevAlRxpiD+gM3szKntHVOOmCMXM7mOLHILTd8NnEyI6U/fI3RcZBy2G3jy5d2rMI+NPJ7qkLjX64YVqDR4QjU1szzbOKRQhXRL15Vk65AJEW5zYR5V6z8r1A0vepy96lW6lAlMVFrmnRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=ZOEDpcnP; arc=none smtp.client-ip=220.197.31.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 20643f365;
-	Sun, 24 Aug 2025 16:45:48 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dmitry.baryshkov@oss.qualcomm.com,
-	dianders@chromium.org,
-	m.szyprowski@samsung.com,
-	andy.yan@rock-chips.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v1 4/4] drm/bridge: analogix_dp: Apply DP helper APIs to get adjusted voltages and pre-emphasises
-Date: Sun, 24 Aug 2025 16:45:29 +0800
-Message-Id: <20250824084529.3317985-5-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250824084529.3317985-1-damon.ding@rock-chips.com>
-References: <20250824084529.3317985-1-damon.ding@rock-chips.com>
+	s=arc-20240116; t=1756025181; c=relaxed/simple;
+	bh=q3TxZz+hY4OgNmfzGpL/wjJtS1hO0cafNr4K1ixc+Mk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SMg50vq30gzrKfNXX/hk7H/85X/tlc6E/y0mgVBxjbxdyXX43iP1CqVL/77qAQhwArFLBRD+5PmKHR5i8rjomKVXxG04zlMfmOIuxe+5ea3UjpH06fW8wUMSmZrXK/vgU54hSLCWtTO9ooDukhUhQqZ+r2hHAf9FapgSaw0/uuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Ab+QWU95; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1756025167;
+	bh=91Nzi7Xyg33pZmoRVfLnc4gIdsyMm0HV7+DxdzihZxc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Ab+QWU95LMyHg2gcXzpoXF/jKO1617GG+TxZfdSdFHujLPgMzpzkkTGqaRa+7KUQS
+	 44X7i1/kDGr/DcGUST1QalVFF06UKIFBTs2ls0ZTD+Wf1Kj8iu/eZ5hZ+BVobA4Npm
+	 Ptj/7+mtSOq1fTWCeqXzIxDjEBFpQiNEL+ayQgSNslwJ8sm6Y9S4rTV4e/Hym97gnD
+	 53omRklWq3coiYc35qXKvKmW0J6X2IW5EXj2t+1wKmoEGBVNSYP7T30xdzes5VhBuB
+	 zTOjSzDTjToMHIrPCqwYjp/pbVKXzUPxgdZnYFdeUE6K9JCZFjb8jJQyBHBYgyvF6d
+	 fniPiYSszQ7cQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c8nZl0mgrz4w2D;
+	Sun, 24 Aug 2025 18:46:07 +1000 (AEST)
+Date: Sun, 24 Aug 2025 18:45:35 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commits in the mips-fixes
+ tree
+Message-ID: <20250824184535.65e5b40e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a98db41548e03a3kunm71d2620e2ad6b6
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGhoZS1YfTE8eQxpDThgeH0tWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=ZOEDpcnPHqH823UJe5r3Lo3NYSXOB5iqcHX0Oea1xUfyUrlM06B/cbbOgwrCjLr7gMKuwUGi34iG1u/W08QWIpt4fgI4TP5vwtVgXvjCvwt8E4vaMAPzU0OlYNY2U4SlC1t0LxsZm9Ms3aCcXR4PRVjLC8vYicehFhPo0wRQ4aw=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=H9gnri70RQHNgzhmdocW9YCmiDbR/FZ20L7aXI26Dwg=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: multipart/signed; boundary="Sig_/fL2iM+oGR/+h5ulJnh7nkbA";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Replace analogix_dp_get_adjust_request_voltage() and
-analogix_dp_get_adjust_request_pre_emphasis() with existing DP helper
-APIs with the same function.
+--Sig_/fL2iM+oGR/+h5ulJnh7nkbA
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
----
- .../drm/bridge/analogix/analogix_dp_core.c    | 49 ++++---------------
- 1 file changed, 9 insertions(+), 40 deletions(-)
+Hi all,
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 1f1de45ca46f..a6d4935234c2 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -293,25 +293,6 @@ static int analogix_dp_link_start(struct analogix_dp_device *dp)
- 	return 0;
- }
- 
--static unsigned char
--analogix_dp_get_adjust_request_voltage(u8 adjust_request[2], int lane)
--{
--	int shift = (lane & 1) * 4;
--	u8 link_value = adjust_request[lane >> 1];
--
--	return (link_value >> shift) & 0x3;
--}
--
--static unsigned char analogix_dp_get_adjust_request_pre_emphasis(
--					u8 adjust_request[2],
--					int lane)
--{
--	int shift = (lane & 1) * 4;
--	u8 link_value = adjust_request[lane >> 1];
--
--	return ((link_value >> shift) & 0xc) >> 2;
--}
--
- static void analogix_dp_reduce_link_rate(struct analogix_dp_device *dp)
- {
- 	analogix_dp_training_pattern_dis(dp);
-@@ -321,17 +302,15 @@ static void analogix_dp_reduce_link_rate(struct analogix_dp_device *dp)
- }
- 
- static void analogix_dp_get_adjust_training_lane(struct analogix_dp_device *dp,
--						 u8 adjust_request[2])
-+						 u8 link_status[DP_LINK_STATUS_SIZE])
- {
- 	int lane, lane_count;
- 	u8 voltage_swing, pre_emphasis, training_lane;
- 
- 	lane_count = dp->link_train.lane_count;
- 	for (lane = 0; lane < lane_count; lane++) {
--		voltage_swing = analogix_dp_get_adjust_request_voltage(
--						adjust_request, lane);
--		pre_emphasis = analogix_dp_get_adjust_request_pre_emphasis(
--						adjust_request, lane);
-+		voltage_swing = drm_dp_get_adjust_request_voltage(link_status, lane);
-+		pre_emphasis = drm_dp_get_adjust_request_pre_emphasis(link_status, lane);
- 		training_lane = DPCD_VOLTAGE_SWING_SET(voltage_swing) |
- 				DPCD_PRE_EMPHASIS_SET(pre_emphasis);
- 
-@@ -348,7 +327,7 @@ static int analogix_dp_process_clock_recovery(struct analogix_dp_device *dp)
- {
- 	int lane, lane_count, retval;
- 	u8 voltage_swing, pre_emphasis, training_lane;
--	u8 link_status[DP_LINK_STATUS_SIZE], adjust_request[2];
-+	u8 link_status[DP_LINK_STATUS_SIZE];
- 
- 	usleep_range(100, 101);
- 
-@@ -374,15 +353,10 @@ static int analogix_dp_process_clock_recovery(struct analogix_dp_device *dp)
- 		return 0;
- 	}
- 
--	retval = drm_dp_dpcd_read(&dp->aux, DP_ADJUST_REQUEST_LANE0_1,
--				  adjust_request, 2);
--	if (retval < 0)
--		return retval;
--
- 	for (lane = 0; lane < lane_count; lane++) {
- 		training_lane = analogix_dp_get_lane_link_training(dp, lane);
--		voltage_swing = analogix_dp_get_adjust_request_voltage(adjust_request, lane);
--		pre_emphasis = analogix_dp_get_adjust_request_pre_emphasis(adjust_request, lane);
-+		voltage_swing = drm_dp_get_adjust_request_voltage(link_status, lane);
-+		pre_emphasis = drm_dp_get_adjust_request_pre_emphasis(link_status, lane);
- 
- 		if (DPCD_VOLTAGE_SWING_GET(training_lane) == voltage_swing &&
- 		    DPCD_PRE_EMPHASIS_GET(training_lane) == pre_emphasis)
-@@ -399,7 +373,7 @@ static int analogix_dp_process_clock_recovery(struct analogix_dp_device *dp)
- 		}
- 	}
- 
--	analogix_dp_get_adjust_training_lane(dp, adjust_request);
-+	analogix_dp_get_adjust_training_lane(dp, link_status);
- 	analogix_dp_set_lane_link_training(dp);
- 
- 	retval = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET,
-@@ -414,7 +388,7 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
- {
- 	int lane_count, retval;
- 	u32 reg;
--	u8 link_status[DP_LINK_STATUS_SIZE], adjust_request[2];
-+	u8 link_status[DP_LINK_STATUS_SIZE];
- 
- 	usleep_range(400, 401);
- 
-@@ -429,12 +403,7 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
- 		return -EIO;
- 	}
- 
--	retval = drm_dp_dpcd_read(&dp->aux, DP_ADJUST_REQUEST_LANE0_1,
--				  adjust_request, 2);
--	if (retval < 0)
--		return retval;
--
--	analogix_dp_get_adjust_training_lane(dp, adjust_request);
-+	analogix_dp_get_adjust_training_lane(dp, link_status);
- 
- 	if (drm_dp_channel_eq_ok(link_status, lane_count)) {
- 		/* traing pattern Set to Normal */
--- 
-2.34.1
+Commits
 
+  8c431ea8f3f7 ("mips: lantiq: xway: sysctrl: rename the etop node")
+  7b2823292178 ("mips: dts: lantiq: danube: add missing burst length proper=
+ty")
+
+are missing a Signed-off-by from their committers.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/fL2iM+oGR/+h5ulJnh7nkbA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiq0S8ACgkQAVBC80lX
+0GzofAf/d35bMPj0pzWfCyZssf2G+VoQO1K0pNVDS24G2lp9HREkHrubPRasRHAr
+ctmSK+V8+Dzho9Q0Jd21QqQXkq9V5iw6YVwavFzsjqmxaP/MzetfoMCF9Xa6O86j
+8gF4S5efjAcj/JzIvdFB97H2mrBa/XgJL2lhXShbbdP9aa3+Whmk463G/39+vfYR
+Oi4QhJY4yMqrMz5YVHDrBSftlfRf1CgVF1ok1MIl6zui25Gs0hkyA8BZkHwPwRLT
+zobTPnGogk9TVPUXrw5QrY3fIZhppERM6mAJrZ0jI+eacHstGx3V6I5BI9DvUwb3
+H+xSWkHJzzbxC1I+IL5q+coLoqqLAg==
+=bqXh
+-----END PGP SIGNATURE-----
+
+--Sig_/fL2iM+oGR/+h5ulJnh7nkbA--
 
