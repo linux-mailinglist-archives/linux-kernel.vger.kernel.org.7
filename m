@@ -1,111 +1,132 @@
-Return-Path: <linux-kernel+bounces-783688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8D3B3313F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 17:35:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C5CB33146
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 17:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF86188D731
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:35:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82F5C3AE01B
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0C32D6E68;
-	Sun, 24 Aug 2025 15:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12B2187332;
+	Sun, 24 Aug 2025 15:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="EheM/1lt"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FM4FZwWC"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786B014F125;
-	Sun, 24 Aug 2025 15:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19DB393DC5
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 15:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756049674; cv=none; b=k3OtmLhgZKa0Jq8/ifTeTTRQYGae15wE29m58MZxXjkEwbPFPozZJ10yCMG9xJIAC0UC/xp5F5KZ2TiSxG0KzXkCNGlO+sYPbAKwQfuhhY5/0AkBtCI68fQx765UOl4Cnl7OrGXjYe96Belw5/P8Funp2npicKIhoFT+BVjoXf0=
+	t=1756050395; cv=none; b=XvvAn13k7WmgsBgnZLZlUvdn2B9C2f8UakZu9Fl+zIfuhSQZ+cdSmqE3224cUDn1qEXV1NuJnrQoF+HztMWhQbE4pQHDsfJQaxVn5lYKD8dAK3fXToM2avtYpdOcVQfoSnzHiNiW12BZVum68O2wmMn3jR9ZQZXbSxQmVKTY9XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756049674; c=relaxed/simple;
-	bh=+a9m7QQZk/61tJ8oasLXUNRg2pvRs+/sNxMyl1nSfqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AUxb/akxXYWyiM3rFLcFmY77vatTJnGQMNtAuhJaHUWv+G6SB0xpmYqm6fAEKWFPwccBl9j/eP1V8VuD60Dfh8yerqvYeKAPJ4RnQB258a4tHEtdFFo1rVFF+VRGIJecVmzIviMkqhdmRO/G1ObuKatMd8+Qs6UlmoMDY6Ussb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=EheM/1lt; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=KrI2xk9zX8LNZ0JPxtdB/UHd7Wtwi0qjAQ2ViTZN6RU=; b=EheM/1ltn01lAlVJetP+wLvzIc
-	VcLoSgTT4+Lp5/vsA5QfFDOCoC2IanCunHcvPdaL3Mb9exW22IwLWfs1DOJhvIL74Mp+VhoOPQtQm
-	im3EBmFmVT/ABNtp3u08U0cpJd+mBZfUZ2tLDTEVoyGLUbLP1/3181soMfhf7UwwEZ1Y=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uqCjg-005qFP-2N; Sun, 24 Aug 2025 17:34:24 +0200
-Date: Sun, 24 Aug 2025 17:34:24 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: David Yang <mmyangfl@gmail.com>
-Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 3/3] net: dsa: yt921x: Add support for
- Motorcomm YT921x
-Message-ID: <6809357f-b826-445b-9aac-5dd951bd5d83@lunn.ch>
-References: <20250824005116.2434998-1-mmyangfl@gmail.com>
- <20250824005116.2434998-4-mmyangfl@gmail.com>
+	s=arc-20240116; t=1756050395; c=relaxed/simple;
+	bh=e1/p1t7s4A+oiPs4SJnuICv4dnmGNpDfmgZga16zUCg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BZgjzm7zOvZ8n3xnfRNfMp5w3RCrdo2X3uRmk7AfG9ToArYrYpVP1NCYieLEkPoaiPn1LYH/qMpmcpM2TT6fzJOqjlvRw79DV2k7flfsKzsEG7SDOt9U6wREx3kSivMzorrk8VTZ8Ni6L4wtBmN9mWqPD2jo7FTyWmuRZ3JztwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FM4FZwWC; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 5357A4E40C1D;
+	Sun, 24 Aug 2025 15:46:31 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 1702C605F1;
+	Sun, 24 Aug 2025 15:46:31 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 887CB1C22D3DD;
+	Sun, 24 Aug 2025 17:46:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756050389; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=w+MfyVmxQJvp2V9muLXwNpG8LH7o2E766a2xaru6xZY=;
+	b=FM4FZwWCIPKCigLET/chS3RubLIDbVL5zYyYeiw5wmuiMDMaplt86JyDbEAu8TewJPy7Sr
+	gYKI7TKjy0WZCccQz3QjwrngwzxvauAGLNwGcsC14VR2g3jMAw1jFhUorNkSnPvV7remSQ
+	0SEAG6zpCNifRUYXlfuA7CFH1A/uKfTeSM3xmRHlCPazOdD8IE7r68AZPfL+cxbevUbJEa
+	R3k7fG9eanpcpXs2kxnrTSekaHzp4E+wcwE2Vp/OktQ6oDnOt1np69Og1gAcCwEPXaz7vt
+	p7dxLhqi75SAWJs6AEd7nEJBVRfCJJ6NmKCmUmp/jsjCJjelb8IVv6jU2rBkew==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Tianling Shen <cnsztl@gmail.com>
+Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  Tudor Ambarus <tudor.ambarus@linaro.org>,  Mark Brown
+ <broonie@kernel.org>,  linux-kernel@vger.kernel.org,
+  linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] mtd: spinand: add support for FudanMicro FM25S01A
+In-Reply-To: <20250810133852.52389-1-cnsztl@gmail.com> (Tianling Shen's
+	message of "Sun, 10 Aug 2025 21:38:52 +0800")
+References: <20250810133852.52389-1-cnsztl@gmail.com>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Sun, 24 Aug 2025 17:46:18 +0200
+Message-ID: <87wm6sk9it.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250824005116.2434998-4-mmyangfl@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-> +static void yt921x_smi_acquire(struct yt921x_priv *priv)
-> +{
-> +	if (priv->smi_ops->acquire)
-> +		priv->smi_ops->acquire(priv->smi_ctx);
-> +}
-> +
-> +static void yt921x_smi_release(struct yt921x_priv *priv)
-> +{
-> +	if (priv->smi_ops->release)
-> +		priv->smi_ops->release(priv->smi_ctx);
-> +}
+Hello Tianling,
 
-What happens if priv->smi_ops->acquire and priv->smi_ops->release are
-not implemented? Very likely, it will mostly work, but have subtle bug
-which are going to be hard to observe and find.
+On 10/08/2025 at 21:38:52 +08, Tianling Shen <cnsztl@gmail.com> wrote:
 
-You want bugs to be obvious, so they are quick and easy to find. The
-best way to make the bug of missing locking obvious is to jump through
-a NULL pointer and get an Opps. The stack trace will make it obvious
-what has happened.
+> Add support for FudanMicro FM25S01A SPI NAND.
+> Datasheet: http://eng.fmsh.com/nvm/FM25S01A_ds_eng.pdf
+>
+> Signed-off-by: Tianling Shen <cnsztl@gmail.com>
+> ---
+>  drivers/mtd/nand/spi/Makefile |  2 +-
+>  drivers/mtd/nand/spi/core.c   |  1 +
+>  drivers/mtd/nand/spi/fmsh.c   | 74 +++++++++++++++++++++++++++++++++++
+>  include/linux/mtd/spinand.h   |  1 +
+>  4 files changed, 77 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/mtd/nand/spi/fmsh.c
+>
+> diff --git a/drivers/mtd/nand/spi/Makefile b/drivers/mtd/nand/spi/Makefile
+> index 258da42451a4..e288742ea8f0 100644
+> --- a/drivers/mtd/nand/spi/Makefile
+> +++ b/drivers/mtd/nand/spi/Makefile
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -spinand-objs :=3D core.o otp.o
+> +spinand-objs :=3D core.o fmsh.o otp.o
 
-> +
-> +static int yt921x_smi_read(struct yt921x_priv *priv, u32 reg, u32 *valp)
-> +{
-> +	return priv->smi_ops->read(priv->smi_ctx, reg, valp);
-> +}
-> +
-> +static int yt921x_smi_read_burst(struct yt921x_priv *priv, u32 reg, u32 *valp)
-> +{
-> +	int res;
-> +
-> +	yt921x_smi_acquire(priv);
-> +	res = yt921x_smi_read(priv, reg, valp);
-> +	yt921x_smi_release(priv);
+You're adding a manufacturer driver in the middle of the core files. For
+now we kind of inforce an alphabetical order, so please move it below.
 
-I don't understand the name _burst here? Why is it called
-that. Looking at other drivers, _u32 would be more common, especially
-if you have functions to read a _u16, _u8 etc.
+>  spinand-objs +=3D alliancememory.o ato.o esmt.o foresee.o gigadevice.o
+>  macronix.o
 
-   Andrew
+                                                ^
+Here
+
+>  spinand-objs +=3D micron.o paragon.o skyhigh.o toshiba.o winbond.o xtx.o
+>  obj-$(CONFIG_MTD_SPI_NAND) +=3D spinand.o
+> diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+> index b0898990b2a5..ea47028d021a 100644
+> --- a/drivers/mtd/nand/spi/core.c
+> +++ b/drivers/mtd/nand/spi/core.c
+> @@ -1184,6 +1184,7 @@ static const struct spinand_manufacturer *spinand_m=
+anufacturers[] =3D {
+>  	&alliancememory_spinand_manufacturer,
+>  	&ato_spinand_manufacturer,
+>  	&esmt_c8_spinand_manufacturer,
+> +	&fmsh_spinand_manufacturer,
+>  	&foresee_spinand_manufacturer,
+>  	&gigadevice_spinand_manufacturer,
+>  	&macronix_spinand_manufacturer,
+> diff --git a/drivers/mtd/nand/spi/fmsh.c b/drivers/mtd/nand/spi/fmsh.c
+> new file mode 100644
+> index 000000000000..8b2097bfc771
+> --- /dev/null
+> +++ b/drivers/mtd/nand/spi/fmsh.c
+
+Otherise the driver is simple enough, so v2 should make it :)
+
+Thanks,
+Miqu=C3=A8l
 
