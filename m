@@ -1,88 +1,88 @@
-Return-Path: <linux-kernel+bounces-783715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3052B33192
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 19:05:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10280B33194
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 19:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7EF8202C27
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 17:05:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D906A202D42
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 17:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD6629A309;
-	Sun, 24 Aug 2025 17:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D650A2D5C9E;
+	Sun, 24 Aug 2025 17:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SH+J9Dm4"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DTe4oXHB"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4841E2312
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 17:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FD71DF968
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 17:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756055130; cv=none; b=B8wiVHhABX+u04HcLzu/XXlw7JLru99qEvXdRQgHXWUguO80xYl9MVPO+v5gdxV9QrdypCq+0YBqqf1F184+zU9EoAVMZcHIaPzxuZA0MXm9aK9urdEG30CUs5T0XJl/MSmb5Kfum2Q0aYYas8Mijn6wq6y5vgShRJsu2A1utEY=
+	t=1756055228; cv=none; b=GHSwvXqbfTZEVddTNCwmWsuQtrb/ON8YjEhMibDOwAbomqVeqT9BPpuns6CTQSddaa2Y9pvge7OkM9LDvwRYQSXjVFGzc+HJq4QrlqcsAZKfhEeLNE6C0L/4oBPqvaycwJVbJ2AnWp6CeDP3NHLSrgfY1rrQl+gcuDRtfrRZCBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756055130; c=relaxed/simple;
-	bh=+gXyxD/FxzgurSb+TaoB7tPfHS2XOVjo4E24unteKDs=;
+	s=arc-20240116; t=1756055228; c=relaxed/simple;
+	bh=lDaltKtNEh/B3D1Afd8rwi6dnA/KnseN9WIhGSPgo7o=;
 	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gDXxgm4m+LSxy5YHZCKqyVjjOBlVfweSybRWWvEHRBYcWrGqo0lbI7GSOBoc+f2zTCBm2i5VDCWUYvpaZxxNtCJ9lk0mnu+A+GbaL49nCbyg4JGdSs5uyirQByLUlmTIfwNu8Z5r8XwtPVyX+LPdyTDeZJ+NBKGorjmpk3RZHOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SH+J9Dm4; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=LKws2ndnMocmqaGgupa89B1ejQdfDMQ58+nakvh12FniddAB9oMFoZQ6gCELMJNKWULa3fHRMuxrwnLi+3sa6xZXKpDAqFbjcJSiIIZeA4MmKn83yosk1iFGfz2F2mwhBs4BzUXcXNa9YYiADs7ayQpplQJO2m0eZTcqHMUwkmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DTe4oXHB; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756055126;
+	s=mimecast20190719; t=1756055225;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ebk50XJ5aBZpDlGgruPIO2wKskukMvv2mXJM5o43iUI=;
-	b=SH+J9Dm4cJYrLsuX7MSSfyI+zPoxskjpwxX/Pd5o2ERZkoXK0YyzwE7jIwwv5NqsvNngQt
-	xn9OM/hh06ERJg94EobdvuVyCtpWjKv2kybuKDTtm53e8yipkHMbaP8C/6PLVtkb4f08cu
-	8pga/CPlJFbbAaWM9VKEF9Zd2pvABaw=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=RNrAqXg/v+cm7+zI5j2sPacYW1E0XzgSJ3O3WFJ2ZYo=;
+	b=DTe4oXHBNMBiou7Nmk0kNhZcv7jeJ6s9BlEpEhnDnLDC3hgVitLvtRZpF62afwgwl7V7ux
+	2+C1Ne+vXNArJ7+FNKTfYeVQaEiFleD3pvfFRLhKaknnFEIf+5lYsw6gH7a0OUS7NycpaR
+	dhMwlAPWEHirco11CnXppBgcILvvuTg=
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
+ [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-351-OyhtrFfgMPiY_a0Bx8jydw-1; Sun, 24 Aug 2025 13:05:25 -0400
-X-MC-Unique: OyhtrFfgMPiY_a0Bx8jydw-1
-X-Mimecast-MFC-AGG-ID: OyhtrFfgMPiY_a0Bx8jydw_1756055124
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-71d4cc7fa4fso78770567b3.0
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 10:05:25 -0700 (PDT)
+ us-mta-599-DPkEtKHJPz-40l-GClFwIA-1; Sun, 24 Aug 2025 13:07:03 -0400
+X-MC-Unique: DPkEtKHJPz-40l-GClFwIA-1
+X-Mimecast-MFC-AGG-ID: DPkEtKHJPz-40l-GClFwIA_1756055222
+Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e9524f59df1so2513575276.3
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 10:07:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756055124; x=1756659924;
+        d=1e100.net; s=20230601; t=1756055222; x=1756660022;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:subject:user-agent:mime-version:date:message-id:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ebk50XJ5aBZpDlGgruPIO2wKskukMvv2mXJM5o43iUI=;
-        b=oNLVYEJO1IRJc+Kee0/PwA6q5r6y0CFFZ0mz3Pherf0VtsUM3x38cVcvj7hAxZwRKh
-         In2c+DsgZfBTmIyCyiqoP//ViWeoW7P57dm3CQ5INuX3g8UgGtrYseF93s5N6ktsZIEk
-         JlWCc0UoNjSGrgdCHs+BcyDN2v7W4ES9ciq0QDbpBjfihbI4F1WkwvL2FCw/MBCpaqaZ
-         eOJetNen9XhROxhobXW7K+gtZOCUJpDRjUtsUVUmF2maoxryPGVvlQrRA7fRaGTcxLcl
-         zNdP4fKM3esMDnYQ4bAkTODHAZYASRJJaulm0RTcbdXsrYMWCOhLxqR2bwCs3MnW9CV4
-         a/EA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTIBuSZ/dNNje7qPvKNiDeM3nFXIP+2qZ+Ac5Psv4n/9M3L6v5LLrBzgAIl0bZ3J9XFTGpLpboBImmkls=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkAZ732iiJFTOiSRTWVNbWANOBXXJ0GzI491FFOTSSor2zoLWU
-	fZox7OAoNHJ2Bk6RKZ9tDcJYvJYNzRgvGQaYeqMY4AZTkvsfzzCedt10FqbLqj5YLy/QZ1ATr+6
-	8TX8ysVEKSAo31zFIOnrNAODm8uRbqFN6OzciPGDE+hbkaF3SyA5MzsxNEU9XTVirGA==
-X-Gm-Gg: ASbGnctDgToirY+b2nX5XYzPnzh900Vr0x5RSbHd3IXjn+bIhcYH6q7+z/WMhY62Jz4
-	FO/vZOjAPn2w3KRvOeWta8xm6YMJbfHjgwBTgrydJOtmgRu9oD5YyUuk9gscWd4HEVQZg1FEKFs
-	oh8yRTHnk9Rjn4TjusUI5ejFxmXLuStRpP6/A2KCFflrvDgo+Ezm5UDEQCPgMw5YXPE2orMNQqI
-	cmIGlaS6D//i3Ya8QY/qcw3mGz1iOPKw32XrbcMAoZuM8sLjrcZSYeqbpxJhTnB5Wnav70bGm8c
-	mEIrP1z0S0qEEK8mf+nnu7EeBDT21bdjTIjqT15G38NzESm8grIPhvFWRzU4YTEX5lDC5mtD2Ju
-	R6NYC+ZBtWg==
-X-Received: by 2002:a05:690c:7286:b0:71e:6583:7d37 with SMTP id 00721157ae682-71fc9f1ecf0mr125649727b3.14.1756055124347;
-        Sun, 24 Aug 2025 10:05:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE/J+Luf7Qg54td3ILGcBBdVf0JpOfbrxB1sftPC23mthSTIISxqOToHijO+yObw95KPV/nMg==
-X-Received: by 2002:a05:690c:7286:b0:71e:6583:7d37 with SMTP id 00721157ae682-71fc9f1ecf0mr125649357b3.14.1756055123743;
-        Sun, 24 Aug 2025 10:05:23 -0700 (PDT)
+        bh=RNrAqXg/v+cm7+zI5j2sPacYW1E0XzgSJ3O3WFJ2ZYo=;
+        b=VSW5ssaClLG88rNKk5j5pALfLfJnug5yg2y00LxlrfJaa2Cj7zmSEiHbsV0ofulyqB
+         npu09IQ14t7mt5sbyrYk/eWhBekgJtc0kpSZfOf+zpXs56nHp3awNCpFUa00I00NGJKB
+         vjAL0DsH6lTPYIIzf1ri/RuMkiMwJFzUzjn77oPMKJq+PSZ3DQfKALMxVR7BAfwz+uhy
+         8VkGPfDe5jS3sVrdCht8miubJ8EukJqEqdb1jR8fjtUigz3gP7uRoRPfvGPjeXzAtvS4
+         nKF4goGBleiy6DNwf9KGCAiaEPB1upRm/oUpSUOkDSIToVmZVPv6nD46F+HBaspRzBwo
+         9HfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCbm/zFOPgjdt8RAAo+y81UmTC3UNhBLLG9iehI+BGxNtRfyCMaeKECyxNEAja7Nmbm7p1uk4hh7cJg7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLbFqaWW6c+phVJz5SNW8c+j5q0bGDkeKaiZBRqXVv8gUaYqVj
+	ncWo+gzHcimDcwYl5xrUOKCZqgZZ1o894PdC4YjUzkJTjtCcyF8OJ7lIQBGmc4PDKlIVt/nQj6L
+	WvOPreSo47MjQw2WTR26DC0M+5StX4Zf32xFTuXFKxXruiNH29Z7CPZgLrST3ylvGcA==
+X-Gm-Gg: ASbGncvqsYxhxeS4QbKDHheWNdkzNshrgFRZgN9dtcXB/EBFLN7yv8ge4tLNEVJFq/w
+	ewL6wZ+bbh1rHJGMGOUM64AFlB8NDUpVz0jDEaSzSI+Cl7MK1bWu7ybM7ok4NfHzVTDvLVB8UKx
+	Sn/FRzoTaSRj9MdO5hobzdfZqO5ci0fVpWuzCki5U68EM2jMocbmkt+SBpFT9vrL7PocMHhYA1L
+	G51qpFxEtwR1SU0LpJMLWpqK2auf5QJhW1jXzVAHo7u3/FlMyWd/rLYfXUDwUtDJBf+q/InMHi3
+	0GYrEO3Xot3TXhDjLnKmSR1QEarkuilXpcdND2C2kq63m+DqwQ3QeOeG4VA9KtkSASJ6LmXIM10
+	CkkRP7q/pcw==
+X-Received: by 2002:a05:6902:33c5:b0:e90:637a:cb36 with SMTP id 3f1490d57ef6-e951c2cf43dmr8789883276.6.1756055222344;
+        Sun, 24 Aug 2025 10:07:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHlAMw/iT5DD8US/YGBjHap8VpxFfxypzkaG2QlsBxLEjQEgd+0LTI7IL8yRIgM8JIKNlfDHQ==
+X-Received: by 2002:a05:6902:33c5:b0:e90:637a:cb36 with SMTP id 3f1490d57ef6-e951c2cf43dmr8789845276.6.1756055221861;
+        Sun, 24 Aug 2025 10:07:01 -0700 (PDT)
 Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71ff173633esm12308057b3.27.2025.08.24.10.05.22
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e952c358904sm1722045276.24.2025.08.24.10.07.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Aug 2025 10:05:23 -0700 (PDT)
+        Sun, 24 Aug 2025 10:07:01 -0700 (PDT)
 From: Waiman Long <llong@redhat.com>
 X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <0b918f11-d850-4cdb-b9af-ffa436b8fd1e@redhat.com>
-Date: Sun, 24 Aug 2025 13:05:21 -0400
+Message-ID: <54e1466c-8db7-4fd1-a60f-5590015afaf2@redhat.com>
+Date: Sun, 24 Aug 2025 13:07:00 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,263 +90,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v4 2/3] cpuset: separate tmpmasks and cpuset
- allocation logic
+Subject: Re: [PATCH -next v4 1/3] cpuset: decouple tmpmasks and cpumasks
+ freeing in cgroup
 To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
  hannes@cmpxchg.org, mkoutny@suse.com
 Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
  lujialin4@huawei.com, chenridong@huawei.com
 References: <20250818064141.1334859-1-chenridong@huaweicloud.com>
- <20250818064141.1334859-3-chenridong@huaweicloud.com>
+ <20250818064141.1334859-2-chenridong@huaweicloud.com>
 Content-Language: en-US
-In-Reply-To: <20250818064141.1334859-3-chenridong@huaweicloud.com>
+In-Reply-To: <20250818064141.1334859-2-chenridong@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
+Content-Transfer-Encoding: 7bit
 
 On 8/18/25 2:41 AM, Chen Ridong wrote:
 > From: Chen Ridong <chenridong@huawei.com>
 >
-> The original alloc_cpumasks() served dual purposes: allocating cpumasks
-> for both temporary masks (tmpmasks) and cpuset structures. This patch:
+> Currently, free_cpumasks() can free both tmpmasks and cpumasks of a cpuset
+> (cs). However, these two operations are not logically coupled. To improve
+> code clarity:
+> 1. Move cpumask freeing to free_cpuset()
+> 2. Rename free_cpumasks() to free_tmpmasks()
 >
-> 1. Decouples these allocation paths for better code clarity
-> 2. Introduces dedicated alloc_tmpmasks() and dup_or_alloc_cpuset()
->     functions
-> 3. Maintains symmetric pairing:
->     - alloc_tmpmasks() ↔ free_tmpmasks()
->     - dup_or_alloc_cpuset() ↔ free_cpuset()
+> This change enforces the single responsibility principle.
 >
 > Signed-off-by: Chen Ridong <chenridong@huawei.com>
 > ---
->   kernel/cgroup/cpuset.c | 128 ++++++++++++++++++++++-------------------
->   1 file changed, 69 insertions(+), 59 deletions(-)
+>   kernel/cgroup/cpuset.c | 32 +++++++++++++-------------------
+>   1 file changed, 13 insertions(+), 19 deletions(-)
 >
 > diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index aebda14cc67f..d5588a1fef60 100644
+> index 3466ebbf1016..aebda14cc67f 100644
 > --- a/kernel/cgroup/cpuset.c
 > +++ b/kernel/cgroup/cpuset.c
-> @@ -411,51 +411,46 @@ static void guarantee_online_mems(struct cpuset *cs, nodemask_t *pmask)
+> @@ -459,23 +459,14 @@ static inline int alloc_cpumasks(struct cpuset *cs, struct tmpmasks *tmp)
 >   }
 >   
 >   /**
-> - * alloc_cpumasks - allocate three cpumasks for cpuset
-> - * @cs:  the cpuset that have cpumasks to be allocated.
-> - * @tmp: the tmpmasks structure pointer
-> - * Return: 0 if successful, -ENOMEM otherwise.
-> + * alloc_cpumasks - Allocate an array of cpumask variables
-> + * @pmasks: Pointer to array of cpumask_var_t pointers
-> + * @size: Number of cpumasks to allocate
->    *
-> - * Only one of the two input arguments should be non-NULL.
-> + * Allocates @size cpumasks and initializes them to empty. Returns 0 on
-> + * success, -ENOMEM on allocation failure. On failure, any previously
-> + * allocated cpumasks are freed.
-
-The convention for the kernel-doc is to have a "Return:" tag if the 
-function has a returned value. That "Return:" tag is deleted by this 
-change. Your description does describe the returned value and no test 
-robot failure was reported. Other than that, the rest of the patch looks 
-good to me.
-
-Cheers,
-Longman
-
+> - * free_cpumasks - free cpumasks in a tmpmasks structure
+> - * @cs:  the cpuset that have cpumasks to be free.
+> + * free_tmpmasks - free cpumasks in a tmpmasks structure
+>    * @tmp: the tmpmasks structure pointer
 >    */
-> -static inline int alloc_cpumasks(struct cpuset *cs, struct tmpmasks *tmp)
-> +static inline int alloc_cpumasks(cpumask_var_t *pmasks[], u32 size)
+> -static inline void free_cpumasks(struct cpuset *cs, struct tmpmasks *tmp)
+> +static inline void free_tmpmasks(struct tmpmasks *tmp)
 >   {
-> -	cpumask_var_t *pmask1, *pmask2, *pmask3, *pmask4;
-> +	int i;
->   
 > -	if (cs) {
-> -		pmask1 = &cs->cpus_allowed;
-> -		pmask2 = &cs->effective_cpus;
-> -		pmask3 = &cs->effective_xcpus;
-> -		pmask4 = &cs->exclusive_cpus;
-> -	} else {
-> -		pmask1 = &tmp->new_cpus;
-> -		pmask2 = &tmp->addmask;
-> -		pmask3 = &tmp->delmask;
-> -		pmask4 = NULL;
-> +	for (i = 0; i < size; i++) {
-> +		if (!zalloc_cpumask_var(pmasks[i], GFP_KERNEL)) {
-> +			while (--i >= 0)
-> +				free_cpumask_var(*pmasks[i]);
-> +			return -ENOMEM;
-> +		}
->   	}
-> -
-> -	if (!zalloc_cpumask_var(pmask1, GFP_KERNEL))
-> -		return -ENOMEM;
-> -
-> -	if (!zalloc_cpumask_var(pmask2, GFP_KERNEL))
-> -		goto free_one;
-> -
-> -	if (!zalloc_cpumask_var(pmask3, GFP_KERNEL))
-> -		goto free_two;
-> -
-> -	if (pmask4 && !zalloc_cpumask_var(pmask4, GFP_KERNEL))
-> -		goto free_three;
-> -
-> -
->   	return 0;
-> +}
->   
-> -free_three:
-> -	free_cpumask_var(*pmask3);
-> -free_two:
-> -	free_cpumask_var(*pmask2);
-> -free_one:
-> -	free_cpumask_var(*pmask1);
-> -	return -ENOMEM;
-> +/**
-> + * alloc_tmpmasks - Allocate temporary cpumasks for cpuset operations.
-> + * @tmp: Pointer to tmpmasks structure to populate
-> + * Return: 0 on success, -ENOMEM on allocation failure
-> + */
-> +static inline int alloc_tmpmasks(struct tmpmasks *tmp)
-> +{
-> +	/*
-> +	 * Array of pointers to the three cpumask_var_t fields in tmpmasks.
-> +	 * Note: Array size must match actual number of masks (3)
-> +	 */
-> +	cpumask_var_t *pmask[3] = {
-> +		&tmp->new_cpus,
-> +		&tmp->addmask,
-> +		&tmp->delmask
-> +	};
-> +
-> +	return alloc_cpumasks(pmask, ARRAY_SIZE(pmask));
->   }
->   
->   /**
-> @@ -470,26 +465,46 @@ static inline void free_tmpmasks(struct tmpmasks *tmp)
->   }
->   
->   /**
-> - * alloc_trial_cpuset - allocate a trial cpuset
-> - * @cs: the cpuset that the trial cpuset duplicates
-> + * dup_or_alloc_cpuset - Duplicate or allocate a new cpuset
-> + * @cs: Source cpuset to duplicate (NULL for a fresh allocation)
-> + *
-> + * Creates a new cpuset by either:
-> + * 1. Duplicating an existing cpuset (if @cs is non-NULL), or
-> + * 2. Allocating a fresh cpuset with zero-initialized masks (if @cs is NULL)
-> + *
-> + * Return: Pointer to newly allocated cpuset on success, NULL on failure
->    */
-> -static struct cpuset *alloc_trial_cpuset(struct cpuset *cs)
-> +static struct cpuset *dup_or_alloc_cpuset(struct cpuset *cs)
->   {
->   	struct cpuset *trial;
->   
-> -	trial = kmemdup(cs, sizeof(*cs), GFP_KERNEL);
-> +	/* Allocate base structure */
-> +	trial = cs ? kmemdup(cs, sizeof(*cs), GFP_KERNEL) :
-> +		     kzalloc(sizeof(*cs), GFP_KERNEL);
->   	if (!trial)
->   		return NULL;
->   
-> -	if (alloc_cpumasks(trial, NULL)) {
-> +	/* Setup cpumask pointer array */
-> +	cpumask_var_t *pmask[4] = {
-> +		&trial->cpus_allowed,
-> +		&trial->effective_cpus,
-> +		&trial->effective_xcpus,
-> +		&trial->exclusive_cpus
-> +	};
-> +
-> +	if (alloc_cpumasks(pmask, ARRAY_SIZE(pmask))) {
->   		kfree(trial);
->   		return NULL;
->   	}
->   
-> -	cpumask_copy(trial->cpus_allowed, cs->cpus_allowed);
-> -	cpumask_copy(trial->effective_cpus, cs->effective_cpus);
-> -	cpumask_copy(trial->effective_xcpus, cs->effective_xcpus);
-> -	cpumask_copy(trial->exclusive_cpus, cs->exclusive_cpus);
-> +	/* Copy masks if duplicating */
-> +	if (cs) {
-> +		cpumask_copy(trial->cpus_allowed, cs->cpus_allowed);
-> +		cpumask_copy(trial->effective_cpus, cs->effective_cpus);
-> +		cpumask_copy(trial->effective_xcpus, cs->effective_xcpus);
-> +		cpumask_copy(trial->exclusive_cpus, cs->exclusive_cpus);
-> +	}
-> +
->   	return trial;
->   }
->   
-> @@ -2332,7 +2347,7 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
->   	if (cpumask_equal(cs->cpus_allowed, trialcs->cpus_allowed))
->   		return 0;
->   
-> -	if (alloc_cpumasks(NULL, &tmp))
-> +	if (alloc_tmpmasks(&tmp))
->   		return -ENOMEM;
->   
->   	if (old_prs) {
-> @@ -2476,7 +2491,7 @@ static int update_exclusive_cpumask(struct cpuset *cs, struct cpuset *trialcs,
->   	if (retval)
->   		return retval;
->   
-> -	if (alloc_cpumasks(NULL, &tmp))
-> +	if (alloc_tmpmasks(&tmp))
->   		return -ENOMEM;
->   
->   	if (old_prs) {
-> @@ -2820,7 +2835,7 @@ int cpuset_update_flag(cpuset_flagbits_t bit, struct cpuset *cs,
->   	int spread_flag_changed;
->   	int err;
->   
-> -	trialcs = alloc_trial_cpuset(cs);
-> +	trialcs = dup_or_alloc_cpuset(cs);
->   	if (!trialcs)
->   		return -ENOMEM;
->   
-> @@ -2881,7 +2896,7 @@ static int update_prstate(struct cpuset *cs, int new_prs)
->   	if (new_prs && is_prs_invalid(old_prs))
->   		old_prs = PRS_MEMBER;
->   
-> -	if (alloc_cpumasks(NULL, &tmpmask))
-> +	if (alloc_tmpmasks(&tmpmask))
->   		return -ENOMEM;
->   
->   	err = update_partition_exclusive_flag(cs, new_prs);
-> @@ -3223,7 +3238,7 @@ ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
->   	if (!is_cpuset_online(cs))
->   		goto out_unlock;
->   
-> -	trialcs = alloc_trial_cpuset(cs);
-> +	trialcs = dup_or_alloc_cpuset(cs);
->   	if (!trialcs) {
->   		retval = -ENOMEM;
->   		goto out_unlock;
-> @@ -3456,15 +3471,10 @@ cpuset_css_alloc(struct cgroup_subsys_state *parent_css)
->   	if (!parent_css)
->   		return &top_cpuset.css;
->   
-> -	cs = kzalloc(sizeof(*cs), GFP_KERNEL);
-> +	cs = dup_or_alloc_cpuset(NULL);
->   	if (!cs)
->   		return ERR_PTR(-ENOMEM);
->   
-> -	if (alloc_cpumasks(cs, NULL)) {
-> -		kfree(cs);
-> -		return ERR_PTR(-ENOMEM);
+> -		free_cpumask_var(cs->cpus_allowed);
+> -		free_cpumask_var(cs->effective_cpus);
+> -		free_cpumask_var(cs->effective_xcpus);
+> -		free_cpumask_var(cs->exclusive_cpus);
 > -	}
-> -
->   	__set_bit(CS_SCHED_LOAD_BALANCE, &cs->flags);
->   	fmeter_init(&cs->fmeter);
->   	cs->relax_domain_level = -1;
-> @@ -3920,7 +3930,7 @@ static void cpuset_handle_hotplug(void)
->   	bool on_dfl = is_in_v2_mode();
->   	struct tmpmasks tmp, *ptmp = NULL;
+> -	if (tmp) {
+> -		free_cpumask_var(tmp->new_cpus);
+> -		free_cpumask_var(tmp->addmask);
+> -		free_cpumask_var(tmp->delmask);
+> -	}
+> +	free_cpumask_var(tmp->new_cpus);
+> +	free_cpumask_var(tmp->addmask);
+> +	free_cpumask_var(tmp->delmask);
+>   }
 >   
-> -	if (on_dfl && !alloc_cpumasks(NULL, &tmp))
-> +	if (on_dfl && !alloc_tmpmasks(&tmp))
->   		ptmp = &tmp;
+>   /**
+> @@ -508,7 +499,10 @@ static struct cpuset *alloc_trial_cpuset(struct cpuset *cs)
+>    */
+>   static inline void free_cpuset(struct cpuset *cs)
+>   {
+> -	free_cpumasks(cs, NULL);
+> +	free_cpumask_var(cs->cpus_allowed);
+> +	free_cpumask_var(cs->effective_cpus);
+> +	free_cpumask_var(cs->effective_xcpus);
+> +	free_cpumask_var(cs->exclusive_cpus);
+>   	kfree(cs);
+>   }
 >   
->   	lockdep_assert_cpus_held();
+> @@ -2427,7 +2421,7 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
+>   	if (cs->partition_root_state)
+>   		update_partition_sd_lb(cs, old_prs);
+>   out_free:
+> -	free_cpumasks(NULL, &tmp);
+> +	free_tmpmasks(&tmp);
+>   	return retval;
+>   }
+>   
+> @@ -2530,7 +2524,7 @@ static int update_exclusive_cpumask(struct cpuset *cs, struct cpuset *trialcs,
+>   	if (cs->partition_root_state)
+>   		update_partition_sd_lb(cs, old_prs);
+>   
+> -	free_cpumasks(NULL, &tmp);
+> +	free_tmpmasks(&tmp);
+>   	return 0;
+>   }
+>   
+> @@ -2983,7 +2977,7 @@ static int update_prstate(struct cpuset *cs, int new_prs)
+>   	notify_partition_change(cs, old_prs);
+>   	if (force_sd_rebuild)
+>   		rebuild_sched_domains_locked();
+> -	free_cpumasks(NULL, &tmpmask);
+> +	free_tmpmasks(&tmpmask);
+>   	return 0;
+>   }
+>   
+> @@ -4006,7 +4000,7 @@ static void cpuset_handle_hotplug(void)
+>   	if (force_sd_rebuild)
+>   		rebuild_sched_domains_cpuslocked();
+>   
+> -	free_cpumasks(NULL, ptmp);
+> +	free_tmpmasks(ptmp);
+>   }
+>   
+>   void cpuset_update_active_cpus(void)
+Reviewed-by: Waiman Long <longman@redhat.com>
 
 
