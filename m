@@ -1,85 +1,98 @@
-Return-Path: <linux-kernel+bounces-783511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 935A7B32E72
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:48:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8BD8B32E82
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C73363B8387
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:47:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D11C01B661CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08EB92594AA;
-	Sun, 24 Aug 2025 08:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7F825A2D2;
+	Sun, 24 Aug 2025 08:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kW/LdunO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qrTD9QmB"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598F581720;
-	Sun, 24 Aug 2025 08:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2173242D68;
+	Sun, 24 Aug 2025 08:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756025264; cv=none; b=r88gbqBcOWkV7N3C7/vgwId14lnvefouO3mDao0A8SMBfEXw7RPKzWMy2p3UB50lNtezJl2vAEZVqYum2ErblQPCP2Mci7fnCw8BRp9SsEoqkz+9NXDhbX+05WsIF8/AVBEg/XC6boL+LjHrqpUxq/FT+BftWzi3KBCl0FEN2+U=
+	t=1756025330; cv=none; b=UdANo5gM1A77XKc4cKvjM5efq9+BsVwPRou+qWlGNW5wkhLENAsbVqicrT4TQmYhioMLb6oitMIYuuCValE9dkV70R/kY98XbEu88ppJLJJ/fj5JlRoMQac6N8SC5e5EuHkIFcgkcvZS9VPYJDSX3IWpvvyVPwQ66iNfp0w8ebs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756025264; c=relaxed/simple;
-	bh=4qnfj7B1/34ClaygFGmlMs5FPlCUiwOd4no144xlpQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kDa3VdBVRqh3UCsKt+Z+BYKaYXX3X1AWUYnTwdkbxCbL7q9i9rXCLqBe6fUyYqz4mKQhF68uX2nl4Z42m5A4eHTSknOmgwKuW7sXxTaUZka5jbrpDygKz2Yq4sSsQCXPCUJGxLCt/kh9bem1I9+c275JrSkSnZ1C2yybYZrV524=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kW/LdunO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 746F2C4CEEB;
-	Sun, 24 Aug 2025 08:47:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756025263;
-	bh=4qnfj7B1/34ClaygFGmlMs5FPlCUiwOd4no144xlpQQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kW/LdunObntnN1FJ89EJQFLf48CJElZ1pnPEordAvUk4pek15IKEmKREloZouTjgo
-	 +CGYAnS0JlCaF0HhlI3ALsvx9WddkmyZsNpuqlpuCGfz5aW/vd63zz+AiyoLRaGjDF
-	 5ob9us/0Kzdv7oZAux4zHGya+gmACEGqQwqADJEo=
-Date: Sun, 24 Aug 2025 10:47:41 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Chanho Min <chanho.min@lge.com>
-Cc: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
-	gunho.lee@lge.com, sashal@kernel.org
-Subject: Re: [PATCH 0/4] smb: Backport UAF fixes for v5.4.y
-Message-ID: <2025082410-finless-amused-5edc@gregkh>
-References: <20250811094639.37446-1-chanho.min@lge.com>
+	s=arc-20240116; t=1756025330; c=relaxed/simple;
+	bh=4orBvvcMINkAPW88iDXhCYwcEGpXYT0rWNX5WmaapBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SAAPR/WcrBpcypF9phTWJLmMYspnwDQScYMYU8dYa/mEjsB7DKQDIJfzVlwMy2zmnxcVFckkLRmcfI22sfpx+0zhhReeLmRLMbelVmhCxnJ+/E7U4+zfe/5vH0UzBuPSrfHXd71246NprxKx9Xb2kTui/y0W7oD88v/QL+cAMPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qrTD9QmB; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1756025325;
+	bh=HnT4Xz2xgrSq25Y+a7cW1JiQUHayHzaVB9Iegb9L/bQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=qrTD9QmBbgAfkBpa7+RYuBvi6PG6zFAe68EBRRpUkX4DT9uy8ov1wRzQgRmjiPK64
+	 7rUPAzwuWu4BeZPnU05xg5bDa3FFCe0Mf6GIKzPrKrJMsidyKqeMN8onYbLajng850
+	 5G5f0wMz54qDyjB74ucSiVatYUw/9rZFLEMAmUwLeSgrkwlwG7MWsEtWCBggRZcojR
+	 q5X6qyWPDFZigFMgWr27mNoZxeIF4XwvvOyaXCVnD31N9CN/0ntuJ4hfy27VwQA6+v
+	 deSBMiCEC3PGi7c56m0qKot/1a0eQIW/7LTORwksIY2O2Zf1FNfPRHGZk8mzfRiYbI
+	 m4NZBF1HHhZKg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c8ndn4NNKz4w2D;
+	Sun, 24 Aug 2025 18:48:45 +1000 (AEST)
+Date: Sun, 24 Aug 2025 18:48:44 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Drew Fustini <drew@pdp7.com>
+Cc: Drew Fustini <fustini@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the thead-dt tree
+Message-ID: <20250824184844.2994f896@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811094639.37446-1-chanho.min@lge.com>
+Content-Type: multipart/signed; boundary="Sig_/TfD8SOz/rQ6fhAqFgafI=WZ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Aug 11, 2025 at 06:46:35PM +0900, Chanho Min wrote:
-> This patch series backports four fixes from v5.10.y and later to the v5.4.y,
-> addressing potential UAF issues in the SMB client implementation.
-> The patches have been adapted to account for the directory rename from fs/smb/client/*
-> to fs/cifs/* in v5.4.y, ensuring compatibility with the target kernel.
-> 
-> Paulo Alcantara (4):
->   smb: client: fix potential UAF in cifs_debug_files_proc_show()
->   smb: client: fix potential UAF in is_valid_oplock_break()
->   smb: client: fix potential UAF in smb2_is_valid_lease_break()
->   smb: client: fix potential UAF in cifs_stats_proc_write()
-> 
->  fs/cifs/cifs_debug.c | 4 ++++
->  fs/cifs/cifsglob.h   | 8 ++++++++
->  fs/cifs/misc.c       | 2 ++
->  fs/cifs/smb2misc.c   | 3 ++-
->  4 files changed, 16 insertions(+), 1 deletion(-)
-> 
+--Sig_/TfD8SOz/rQ6fhAqFgafI=WZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-We need these in newer kernels as well, otherwise you will have a
-regression when moving to a new tree.  Please resend patches for all of
-the relevant trees and we will be glad to take them.
+Hi all,
 
-thanks,
+Commit
 
-greg k-h
+  0f78e44fb857 ("riscv: dts: thead: th1520: Add IMG BXM-4-64 GPU node")
+
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/TfD8SOz/rQ6fhAqFgafI=WZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiq0ewACgkQAVBC80lX
+0GzjxwgAnSVyDlNuJ9M/YbI/wkzXQiASAGwayR6cQ+w16HhDkhGy5bPopxqzEO4d
+46gEf2+KwwH+IQ7jIvHLymGbEyc2QY8g3kM2DzcpJssIyEPFtDLTUJdwH1GNIo2L
+xsdJ5S4CqJbjpkYDY05F45Ej7Xu1yZ2K71vPhH44Enhb+h435vG4NNNCFcd2bTKQ
+VJrF2m8FbifrT0ENnYglrC+6Csd0bd1QDImkm8Z9ye8j76Ny9V5+XC7gLUOYlvLC
+sTWW2kt7pKtLl32TUlMunJKiSvVhlOwrQap4R/JL6w+O+xTPqGN7UN+RhDCeQR2/
+nT+0KWyYnwmtfW77NNPCJE1cc3jdGA==
+=M7UK
+-----END PGP SIGNATURE-----
+
+--Sig_/TfD8SOz/rQ6fhAqFgafI=WZ--
 
