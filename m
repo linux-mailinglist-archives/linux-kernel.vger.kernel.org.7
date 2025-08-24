@@ -1,181 +1,725 @@
-Return-Path: <linux-kernel+bounces-783670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EBDAB330D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 16:49:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B238BB33104
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 16:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EBAF1889F63
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 14:50:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F75C20487A
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 14:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FAE2DE1FA;
-	Sun, 24 Aug 2025 14:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FD027381B;
+	Sun, 24 Aug 2025 14:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="F6DTGXvu"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2089.outbound.protection.outlook.com [40.107.212.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="CUF8Cukh"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A5F2DECD3;
-	Sun, 24 Aug 2025 14:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756046958; cv=fail; b=sV/ZotmgwembjbCIjtdRgi/SpsuSniWVO1i5fV2VS4CRyYZJ97bnV1N7qdfumCssWotzbXa7L3Zo2MnOBGblfAXghy1qFbPNS+0Jhr9jxnhrmw+VGuhGcOb5Co3MF6yk7U7HbJrEHfPrE67OyluAC67IpBMTtOVvipq+L+yn7yU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756046958; c=relaxed/simple;
-	bh=Fq/F2VQT9Qhhu3xRijKVRv8KPfRxWEZmKrPN9fu5t00=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kjOltcui1xl9+0tAKXs3ay0YJJ1IRZ8dIV7wMdfl2gAD+pm4JczCzX7PcxSOoZZiQpsIgT+L9QveCdLq5XUZToT+7RSCsNveLvEqoehVN4VwSIlNNInVPkaj3JXpDtkDmrxFAJCjDG0kfZBCE0Mvvzok7HsVFsD2U9Qn+xPUpAs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=F6DTGXvu; arc=fail smtp.client-ip=40.107.212.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YKHAUnKyCAnvIbXagG7hKB2PbaKqJLNQ3QFGt5NKShohHmZoLp9dbvthTSsbChLhks156CHC3LLD/N5Z/St0cVWVt4G0RzLhDayRA8B7kBwiXXH/D4jd8u+ggtcfmRWPc6n283n5uCJ6qwVCAzpzvHkLG430brVYtjDkTwEDQvgA40m05G+Xnex1GNJ3peXT7g/xoifx7auv4InokUALK0NTZeQZ3e70aNfLy6k0a56i7/GCE9srr7xaK9MaTk0c/L7RVNZLDk+9yl1WJvd0k4Uy97Y1zd0VMYlSwCdDVdDcorcQDFg5X+stbEEFuKCgOx2uwW13xmvPVAa/vK5K+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Sx/ZBxqp1qFK/7vHeYOxHEYU1zg6OnUssf1Ew4k+SHQ=;
- b=hsl12zvNQFwOIjrLfc5cMIbLl0XDPyChyHaBhO8xcyCe3XE8ehcFzB+e54acIAoXIbWhzQ57viiH4fPC31+lue660g6U157MNbF8quV/TxhT1lHsEHvzT+V6hNHAzPB1T6XSwSBDqD2+QPBqNSg0XoRN449kbRmsokD5wT0IfCQuHSnhJtw0W3uWQOLIDjYJ0Tlrfd8weOKddr5+4M/Jm4oNSAzhLGM+iaiHLNAf266HvwDw5GYZAiQ+gUiVLPgsNLp182+lkW0s8eJ+Xyed2VHQ6p4yOvIYsvy6L21sKVaK/4CrnEgLDdY74tXR5VAECmVOgMT9PQV60N1QDh2kjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=ziepe.ca smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Sx/ZBxqp1qFK/7vHeYOxHEYU1zg6OnUssf1Ew4k+SHQ=;
- b=F6DTGXvuaDicLRCW+7qpknYbgiXmfLyMIIRI+FQjR6jJaKhl9DY2nVsv2ZX0+ilYkqwsHxpKNpxJhg9h1yoA7+XUwFCP+L+1RDMJY3nSG8WyKvbHuMYD0WLrJ6fhNznGUjTlgTGNx4qkY+5tXScIxUoFwLo/oxzjypZ/bpS4Uk2IGm/v/Cnf71Ko5blATNj0A0BDYx4U2h/t7ihkCuDshi1eW/Vl+4F0PGUBJQ3vY+ubZn/1pCJq6yZZGYj/sy7Q5wP3Qrebu57Iz0frOW/5WbRm6kA3gd5V4hD96ZGShyz7pDRmQf48tzsmMnsdU459H77JniMzlSVFzz7Ybr3UqQ==
-Received: from SN7P222CA0022.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:124::7)
- by PH7PR12MB6739.namprd12.prod.outlook.com (2603:10b6:510:1aa::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.18; Sun, 24 Aug
- 2025 14:49:10 +0000
-Received: from SN1PEPF0002BA4D.namprd03.prod.outlook.com
- (2603:10b6:806:124:cafe::8b) by SN7P222CA0022.outlook.office365.com
- (2603:10b6:806:124::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.20 via Frontend Transport; Sun,
- 24 Aug 2025 14:49:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- SN1PEPF0002BA4D.mail.protection.outlook.com (10.167.242.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9073.11 via Frontend Transport; Sun, 24 Aug 2025 14:49:10 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sun, 24 Aug
- 2025 07:49:04 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Sun, 24 Aug 2025 07:49:04 -0700
-Received: from vdi.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Sun, 24 Aug 2025 07:49:02 -0700
-From: Edward Srouji <edwards@nvidia.com>
-To: <edwards@nvidia.com>, <jgg@ziepe.ca>, <leon@kernel.org>
-CC: <michaelgur@nvidia.com>, <linux-rdma@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/1] RDMA/mlx5: Fix page size bitmap calculation for KSM mode
-Date: Sun, 24 Aug 2025 17:48:39 +0300
-Message-ID: <20250824144839.154717-1-edwards@nvidia.com>
-X-Mailer: git-send-email 2.21.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135F91DDC1D
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 14:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756047176; cv=none; b=C9w9HHhtCaefl10u+8B5iCXKKpz5jqyKiUGjtrcZbULcKezRi9tcAIC4hiUqr3CWFcDJWc9TF8HiF4HXD1pAaooLuoN6TqyTXCaR3hE78N8JNiQ6Sq4fwPirFiAjXtHauFgJzDpk1UkcamfHh1zJMzVkcJJlfeou00wl7St1OUE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756047176; c=relaxed/simple;
+	bh=rP7iqqaTnXOvb/spjo5Ebmkavm0PyuDdwoBDFL1mzcU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fmDCkJIQsuANi0SUT+INXdhEoWryKrz+qKYoSMXSz47rjFe9O8muKQoaXJmZAP1cFptqRtL661RUlfhFwWlsQQRk8wy06ebTeO9QnJiGd5JUtklgpnOakkwrDofa44hAVF0oNCHpBUS9/dQ9Hq1LAw0ND1cdaOFZ5Zz79yT3EXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=CUF8Cukh; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3366307712dso9716921fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 07:52:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1756047172; x=1756651972; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/4yiekTKoDQWzy0n8EP+AHR0dj1abTnBc4Ihn4r+6Vw=;
+        b=CUF8CukhxJ/c4YryRQ0qi0Dz9CTRoEUHgQMMMnx2h81CMAUEhj3sCO1DglDaydMNED
+         0QERMl02DgKfp4KEjdlOL+SwvyMYXf/TK1pVLzQsnYPNEEYBsi6vvG7yyR3QMkmsxIiN
+         R66Iqn75Wj2zAc43LakU4smCTBCB75CSSAAgWEcW+eDiDCr9smVDfolzNxOnWm0r2c9j
+         Lkcluh+1rwz549oYyW9tZks3q8YH86awMf6qoK000vtdm5kEby/FPWhm35tdy6rHjhq6
+         m5OcIj4AJAep7rN9D+D8zfc3fxZT/jmFndW1TQdUJkC83MO4jJRfcc/ldWuwVc9L7q43
+         MA4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756047172; x=1756651972;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/4yiekTKoDQWzy0n8EP+AHR0dj1abTnBc4Ihn4r+6Vw=;
+        b=SVkBT/ueAn9Hgdd/uKl1zLNw7UarG810gYJh7mLaKnp0qAsCBZ6fy3IM1De+fPJD3w
+         Y5/YyBBj3VjJT8NRlns9qN/CFqZPMwCJtEJdQB//cVdLdGrOIHvoJ7uW+iU6Xj1Ks6Yv
+         ayBiA2Ux+tgu/pyR3o/ECzgKgKpeMJ72jxKYPDuff/bjPGN3Culo9wTRKb8BRj4cvTuM
+         CKwhL2NbE/sPle0yAhSFbWkvYbgTr4bvikdV3McL6uA5DKCjusF2097LPEPAb6QLGwl+
+         DFhg+FOQ5Th2UoM6p1yECUreDrHSkAqaeoltGVzcqjdiMgto+yqZUwD7wTdRu4DO1DNH
+         i2bw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGWFKG2aQmgIPfcrOTkPpftUbTWQZIKUV/XH1NWKFWvIvsl8VZrkd9FQB5ehe6gERm7wM7YmMlgQ32dSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr8rX4uhOPLxj0p3Ej1W1LpYKQziPh/mSoaUwytOa0lqew2Z8i
+	7s3x2hzmHsfmvgcjTDQ5dEIpASA9jsCUPQIt7kNryL4TyEYybF/VcrrLyKddtSstAvc8SZ3ftC2
+	WytTCi+QhcTAbJWV5fsKnTaJ4TX3wgsHCyVg4aRqCiA==
+X-Gm-Gg: ASbGnct8qr1YNqc1IzUut60uV5KU9azKCh2Hr2P3pUBCGPHth+gPhZcOGHE93D5kEJu
+	3rQy5hfCkhqDEN18MECLn0wAeFLpNAn2+fi7b/JvYuQTXnrenZmOCDNYBI3etM3g4FwPQ8KC9Dq
+	L9abrhrBHEIckwjvM/FGMJjdky61QeSd89L1yz/mb7XsdhJ9lsLm915oZcauyArGWAZXoQdqLS8
+	Ot9otuC
+X-Google-Smtp-Source: AGHT+IFlSfUi4X6ijV1KcvD3fMurgoahKrmOlnW8+1Y3fiDNHAUbP2L2C6YPP0B/jkjhjtlByXtWu2+fBdmkpiWV1lU=
+X-Received: by 2002:a05:651c:41d0:b0:336:1526:7fe7 with SMTP id
+ 38308e7fff4ca-33615268269mr22774361fa.3.1756047171837; Sun, 24 Aug 2025
+ 07:52:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA4D:EE_|PH7PR12MB6739:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8d9ee1a1-8be8-4f48-49f8-08dde31d62c8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GEUkj1s3S26QD06oJPQq8sMpWpNAAZYf3wmuw6Y+t/FeaYOooauHljHSinHF?=
- =?us-ascii?Q?zKfaq6uUrnWjjhr2+MQPh+oaz/Se+7nCnahml0muGdOdI3Hplwt4kUv6dNWW?=
- =?us-ascii?Q?kJCdGw0nsbazpqI/Mr0qSMW7cNFcYc+q52gvGxRd/jg7DGlLXSvFYjJX6Z7z?=
- =?us-ascii?Q?CtTHpWypNE684Bblkl861W9V/o0sSaruT9IOM/Q654zdojB/ZfpjL+T4j3s9?=
- =?us-ascii?Q?XAgYnUU88oh817wor4rIL3lgREcdfo6Nvfs/QfCpf69dTDwos7Y0B+3mFK5r?=
- =?us-ascii?Q?zr2RwLrdClyFgkRD+YagLMdJAPiCO5a02N5734++vwFEkWx3kVQlwLg9oi+J?=
- =?us-ascii?Q?90DDWeTM9XQqH4wGMbr/L6ATmtogd1n2XEWXC29In5SIYMeHzogZgIFX+6Et?=
- =?us-ascii?Q?QxKcGq4l2xnVA3229sHX6r4+/+8opTwHTW+Ix7ijLK+ZnChQJTDPHIXKizqj?=
- =?us-ascii?Q?sLNkJjxwvB81PsKllE3hFAuQXpmvv7qSK13+E/BPFIdONEhUfe66qzX4UAyP?=
- =?us-ascii?Q?Eimj4jI6e84ywWpTPF0PoCEtKDXnYoJDOH9Hkcgxdb7yDJ3EQobMdUJeifBc?=
- =?us-ascii?Q?rJxp8Iro9uWXYw5WNurg/1QVDCLV/u7zomUbTEfgQYYUZxJOrv0XpG0oyXVE?=
- =?us-ascii?Q?aWFFwkbvvDmgVeQxrcqAstkVd+xzetbqKJ9S6ByWI+ac4BXv32R7lJ9JHUxT?=
- =?us-ascii?Q?WThG2aDdnYNSuN5nQ2oZgTJtKnp0mu/Qa5Ptu57OAB3VZF0xgKOgUO8SMtEV?=
- =?us-ascii?Q?64phaC5LYrhIUU0GozoOlX3iIfwvVs+XINc48BKOifrIVAUg7NyXohw6nwZ9?=
- =?us-ascii?Q?yo8CEZDWHkqr381VklqwmeCej2wMFUOttB2j+ST2OzSpzcBreCHBl7IODjYJ?=
- =?us-ascii?Q?C4NHaI7cLvqszLXWoadPubYK8a/g5B7mbnw/VG78jT6Gb8PaQcADRFEaQHN4?=
- =?us-ascii?Q?Dm3BpHom8wGKuVUQtKJgPnqJBcPac783e/N+3nVBf1ygIf3sHB9Ixid9k1XA?=
- =?us-ascii?Q?FuZMgP+hib2psQApktYNvroPjW7UGwM948jSVQGt+7Ubia4/l2yApfuDrn0+?=
- =?us-ascii?Q?EL/6bf5VK6KC0+tDLyDa4iRQRS4ojgo5vp+Ao/4+Dh+dl0oYSl34PgGz9Cfo?=
- =?us-ascii?Q?pgpRhB0zSuP6/yzvnHFXr8puLcyRa7x/9nIWJ6f6RANOd8eegWAWbTlc63n/?=
- =?us-ascii?Q?TVWcNvo8KVK6ZfFWEpKe8c5iDhHEZI5zI3IdXD4gGLWeehkPk6pQeu/LdTUl?=
- =?us-ascii?Q?vJyb6h0R9NV89yB5sFSu1MoetBMwUs3jF0YSG7ePg5XwAIx4oFCcDEBzBfbz?=
- =?us-ascii?Q?KLLCaelBtgR3UnMWjQ3c74QAXVaKeZhb/VAkzZRYb0XvbiW7YU+LmK2n+DOf?=
- =?us-ascii?Q?XjjKJ2fynTexMAS078rq83A9pLgrELbSyTTwzI24CIhMYu1NkxqpCAr+FNf2?=
- =?us-ascii?Q?V4AO58KBu5Z2Nd1mbFnDTcVN7IMg4zS7X5nT+nZYtCYkKDvNrjqi8HgHAS2l?=
- =?us-ascii?Q?Q4ryU13MK14JuTNJr+BOubeAMIzfEHZewlDy?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2025 14:49:10.5947
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d9ee1a1-8be8-4f48-49f8-08dde31d62c8
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002BA4D.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6739
+References: <20250822174715.1269138-1-jesse@rivosinc.com> <20250822174715.1269138-2-jesse@rivosinc.com>
+In-Reply-To: <20250822174715.1269138-2-jesse@rivosinc.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Sun, 24 Aug 2025 20:22:39 +0530
+X-Gm-Features: Ac12FXzI74g5Ug6WVcpL48bMqkkwTTrbHCPnUoKm2gxXKtW2DUam5Q_iJxl4QsU
+Message-ID: <CAK9=C2VEiQsoy_G+kzVkZGVMcAJ-ioHcGQrRxpjuSh9aw66p0g@mail.gmail.com>
+Subject: Re: [PATCH 1/8] riscv: Add insn.c, consolidate instruction decoding
+To: Jesse Taube <jesse@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Oleg Nesterov <oleg@redhat.com>, Kees Cook <kees@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Liang Kan <kan.liang@linux.intel.com>, Shuah Khan <shuah@kernel.org>, 
+	Himanshu Chauhan <hchauhan@ventanamicro.com>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Conor Dooley <conor.dooley@microchip.com>, 
+	Deepak Gupta <debug@rivosinc.com>, Andrew Jones <ajones@ventanamicro.com>, 
+	Atish Patra <atishp@rivosinc.com>, Mayuresh Chitale <mchitale@ventanamicro.com>, 
+	Evan Green <evan@rivosinc.com>, WangYuli <wangyuli@uniontech.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>, Nam Cao <namcao@linutronix.de>, 
+	Yunhui Cui <cuiyunhui@bytedance.com>, Joel Granados <joel.granados@kernel.org>, 
+	=?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Celeste Liu <coelacanthushex@gmail.com>, 
+	Chunyan Zhang <zhangchunyan@iscas.ac.cn>, Nylon Chen <nylon.chen@sifive.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Joey Gouly <joey.gouly@arm.com>, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Joel Stanley <joel@jms.id.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When using KSM (Key Scatter-gather Memory) access mode, the HW requires
-the IOVA to be aligned to the selected page size.
-Without this alignment, the HW may not function correctly.
+On Fri, Aug 22, 2025 at 11:17=E2=80=AFPM Jesse Taube <jesse@rivosinc.com> w=
+rote:
+>
+> Various parts of the kernel decode and read instruction from memory.
+> Functions like get_insn, GET_INSN_LENGTH and riscv_insn_is_c are defined
+> in multiple places. Consolidate these functions into the insn.h and the
+> newly added insn.c.
+>
+> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+> ---
+> RFC -> V1:
+>  - No change
+> V2 -> V1:
+>  - No change
+> ---
+>  arch/riscv/include/asm/bug.h         |  12 ---
+>  arch/riscv/include/asm/insn.h        | 131 ++++++++++++++++++++++-
+>  arch/riscv/kernel/Makefile           |   1 +
+>  arch/riscv/kernel/insn.c             | 151 +++++++++++++++++++++++++++
+>  arch/riscv/kernel/kgdb.c             | 102 +-----------------
+>  arch/riscv/kernel/probes/kprobes.c   |   1 +
+>  arch/riscv/kernel/traps.c            |   5 +-
+>  arch/riscv/kernel/traps_misaligned.c |  93 ++++-------------
+>  8 files changed, 309 insertions(+), 187 deletions(-)
+>  create mode 100644 arch/riscv/kernel/insn.c
+>
+> diff --git a/arch/riscv/include/asm/bug.h b/arch/riscv/include/asm/bug.h
+> index 1aaea81fb141..a2777eb67ad1 100644
+> --- a/arch/riscv/include/asm/bug.h
+> +++ b/arch/riscv/include/asm/bug.h
+> @@ -12,21 +12,9 @@
+>
+>  #include <asm/asm.h>
+>
+> -#define __INSN_LENGTH_MASK  _UL(0x3)
+> -#define __INSN_LENGTH_32    _UL(0x3)
+> -#define __COMPRESSED_INSN_MASK _UL(0xffff)
+> -
+>  #define __BUG_INSN_32  _UL(0x00100073) /* ebreak */
+>  #define __BUG_INSN_16  _UL(0x9002) /* c.ebreak */
+>
+> -#define GET_INSN_LENGTH(insn)                                          \
+> -({                                                                     \
+> -       unsigned long __len;                                            \
+> -       __len =3D ((insn & __INSN_LENGTH_MASK) =3D=3D __INSN_LENGTH_32) ?=
+     \
+> -               4UL : 2UL;                                              \
+> -       __len;                                                          \
+> -})
+> -
+>  typedef u32 bug_insn_t;
+>
+>  #ifdef CONFIG_GENERIC_BUG_RELATIVE_POINTERS
+> diff --git a/arch/riscv/include/asm/insn.h b/arch/riscv/include/asm/insn.=
+h
+> index 09fde95a5e8f..ba74e5b8262c 100644
+> --- a/arch/riscv/include/asm/insn.h
+> +++ b/arch/riscv/include/asm/insn.h
+> @@ -64,6 +64,7 @@
+>  #define RVG_RS2_OPOFF          20
+>  #define RVG_RD_OPOFF           7
+>  #define RVG_RS1_MASK           GENMASK(4, 0)
+> +#define RVG_RS2_MASK           GENMASK(4, 0)
+>  #define RVG_RD_MASK            GENMASK(4, 0)
+>
+>  /* The bit field of immediate value in RVC J instruction */
+> @@ -121,17 +122,27 @@
+>  #define RVC_C0_RS1_OPOFF       7
+>  #define RVC_C0_RS2_OPOFF       2
+>  #define RVC_C0_RD_OPOFF                2
+> +#define RVC_C0_RS1_MASK                GENMASK(2, 0)
+> +#define RVC_C0_RS2_MASK                GENMASK(2, 0)
+> +#define RVC_C0_RD_MASK         GENMASK(2, 0)
+> +#define RVC_C0_REG_OFFSET      8
+>
+>  /* The register offset in RVC op=3DC1 instruction */
+>  #define RVC_C1_RS1_OPOFF       7
+>  #define RVC_C1_RS2_OPOFF       2
+>  #define RVC_C1_RD_OPOFF                7
+> +#define RVC_C1_RS1_MASK                GENMASK(2, 0)
+> +#define RVC_C1_RS2_MASK                GENMASK(2, 0)
+> +#define RVC_C1_RD_MASK         GENMASK(2, 0)
+> +#define RVC_C1_REG_OFFSET      8
+>
+>  /* The register offset in RVC op=3DC2 instruction */
+>  #define RVC_C2_RS1_OPOFF       7
+>  #define RVC_C2_RS2_OPOFF       2
+>  #define RVC_C2_RD_OPOFF                7
+>  #define RVC_C2_RS1_MASK                GENMASK(4, 0)
+> +#define RVC_C2_RS2_MASK                GENMASK(4, 0)
+> +#define RVC_C2_RD_MASK         GENMASK(4, 0)
+>
+>  /* parts of opcode for RVG*/
+>  #define RVG_OPCODE_FENCE       0x0f
+> @@ -226,12 +237,26 @@
+>  #define RVC_MASK_C_EBREAK      0xffff
+>  #define RVG_MASK_EBREAK                0xffffffff
+>  #define RVG_MASK_SRET          0xffffffff
+> +#define RVC_MASK_C             GENMASK(15, 0)
+>
+>  #define __INSN_LENGTH_MASK     _UL(0x3)
+>  #define __INSN_LENGTH_GE_32    _UL(0x3)
+>  #define __INSN_OPCODE_MASK     _UL(0x7F)
+>  #define __INSN_BRANCH_OPCODE   _UL(RVG_OPCODE_BRANCH)
+>
+> +#define GET_INSN_LENGTH(insn)                                          \
+> +({                                                                     \
+> +       unsigned long __len;                                            \
+> +       __len =3D ((insn & __INSN_LENGTH_MASK) =3D=3D __INSN_LENGTH_GE_32=
+) ?  \
+> +               4UL : 2UL;                                              \
+> +       __len;                                                          \
+> +})
+> +
+> +static __always_inline bool riscv_insn_is_c(u32 code)
+> +{
+> +       return (code & (__INSN_LENGTH_MASK)) !=3D (__INSN_LENGTH_GE_32);
+> +}
+> +
+>  #define __RISCV_INSN_FUNCS(name, mask, val)                            \
+>  static __always_inline bool riscv_insn_is_##name(u32 code)             \
+>  {                                                                      \
+> @@ -260,7 +285,7 @@ __RISCV_INSN_FUNCS(c_bnez, RVC_MASK_C_BNEZ, RVC_MATCH=
+_C_BNEZ)
+>  __RISCV_INSN_FUNCS(c_ebreak, RVC_MASK_C_EBREAK, RVC_MATCH_C_EBREAK)
+>  __RISCV_INSN_FUNCS(ebreak, RVG_MASK_EBREAK, RVG_MATCH_EBREAK)
+>  __RISCV_INSN_FUNCS(sret, RVG_MASK_SRET, RVG_MATCH_SRET)
+> -__RISCV_INSN_FUNCS(fence, RVG_MASK_FENCE, RVG_MATCH_FENCE);
+> +__RISCV_INSN_FUNCS(fence, RVG_MASK_FENCE, RVG_MATCH_FENCE)
+>
+>  /* special case to catch _any_ system instruction */
+>  static __always_inline bool riscv_insn_is_system(u32 code)
+> @@ -295,6 +320,10 @@ static __always_inline bool riscv_insn_is_c_jalr(u32=
+ code)
+>         ({typeof(x) x_ =3D (x); \
+>         (RV_X(x_, RVG_RS1_OPOFF, RVG_RS1_MASK)); })
+>
+> +#define RV_EXTRACT_RS2_REG(x) \
+> +       ({typeof(x) x_ =3D (x); \
+> +       (RV_X(x_, RVG_RS2_OPOFF, RVG_RS2_MASK)); })
+> +
+>  #define RV_EXTRACT_RD_REG(x) \
+>         ({typeof(x) x_ =3D (x); \
+>         (RV_X(x_, RVG_RD_OPOFF, RVG_RD_MASK)); })
+> @@ -322,9 +351,41 @@ static __always_inline bool riscv_insn_is_c_jalr(u32=
+ code)
+>         (RV_X(x_, RV_B_IMM_11_OPOFF, RV_B_IMM_11_MASK) << RV_B_IMM_11_OFF=
+) | \
+>         (RV_IMM_SIGN(x_) << RV_B_IMM_SIGN_OFF); })
+>
+> +#define RVC_EXTRACT_C0_RS1_REG(x) \
+> +       ({typeof(x) x_ =3D (x); \
+> +       (RVC_X(x_, RVC_C0_RS1_OPOFF, RVC_C0_RS1_MASK)); })
+> +
+> +#define RVC_EXTRACT_C0_RS2_REG(x) \
+> +       ({typeof(x) x_ =3D (x); \
+> +       (RVC_X(x_, RVC_C0_RS2_OPOFF, RVC_C0_RS2_MASK)); })
+> +
+> +#define RVC_EXTRACT_C0_RD_REG(x) \
+> +       ({typeof(x) x_ =3D (x); \
+> +       (RVC_X(x_, RVC_C0_RD_OPOFF, RVC_C0_RD_MASK)); })
+> +
+> +#define RVC_EXTRACT_C1_RS1_REG(x) \
+> +       ({typeof(x) x_ =3D (x); \
+> +       (RVC_X(x_, RVC_C1_RS1_OPOFF, RVC_C1_RS1_MASK)); })
+> +
+> +#define RVC_EXTRACT_C1_RS2_REG(x) \
+> +       ({typeof(x) x_ =3D (x); \
+> +       (RVC_X(x_, RVC_C1_RS2_OPOFF, RVC_C1_RS2_MASK)); })
+> +
+> +#define RVC_EXTRACT_C1_RD_REG(x) \
+> +       ({typeof(x) x_ =3D (x); \
+> +       (RVC_X(x_, RVC_C1_RD_OPOFF, RVC_C1_RD_MASK)); })
+> +
+>  #define RVC_EXTRACT_C2_RS1_REG(x) \
+>         ({typeof(x) x_ =3D (x); \
+> -       (RV_X(x_, RVC_C2_RS1_OPOFF, RVC_C2_RS1_MASK)); })
+> +       (RVC_X(x_, RVC_C2_RS1_OPOFF, RVC_C2_RS1_MASK)); })
+> +
+> +#define RVC_EXTRACT_C2_RS2_REG(x) \
+> +       ({typeof(x) x_ =3D (x); \
+> +       (RVC_X(x_, RVC_C2_RS2_OPOFF, RVC_C2_RS2_MASK)); })
+> +
+> +#define RVC_EXTRACT_C2_RD_REG(x) \
+> +       ({typeof(x) x_ =3D (x); \
+> +       (RVC_X(x_, RVC_C2_RD_OPOFF, RVC_C2_RD_MASK)); })
+>
+>  #define RVC_EXTRACT_JTYPE_IMM(x) \
+>         ({typeof(x) x_ =3D (x); \
+> @@ -354,6 +415,66 @@ static __always_inline bool riscv_insn_is_c_jalr(u32=
+ code)
+>
+>  #define RVV_EXRACT_VL_VS_WIDTH(x) RVFDQ_EXTRACT_FL_FS_WIDTH(x)
+>
+> +/*
+> + * Get the rs1 register number from RV or RVC instruction.
+> + *
+> + * @insn: instruction to process
+> + * Return: rs1 register
+> + */
+> +static inline unsigned int riscv_insn_extract_rs1_reg(u32 insn)
+> +{
+> +       switch (RVC_INSN_OPCODE_MASK & insn) {
+> +       case RVC_OPCODE_C0:
+> +               return RVC_EXTRACT_C0_RS1_REG(insn) + RVC_C0_REG_OFFSET;
+> +       case RVC_OPCODE_C1:
+> +               return RVC_EXTRACT_C1_RS1_REG(insn) + RVC_C1_REG_OFFSET;
+> +       case RVC_OPCODE_C2:
+> +               return RVC_EXTRACT_C2_RS1_REG(insn);
+> +       default:
+> +               return RV_EXTRACT_RS1_REG(insn);
+> +       }
+> +}
+> +
+> +/*
+> + * Get the rs2 register number from RV or RVC instruction.
+> + *
+> + * @insn: instruction to process
+> + * Return: rs2 register
+> + */
+> +static inline unsigned int riscv_insn_extract_rs2_reg(u32 insn)
+> +{
+> +       switch (RVC_INSN_OPCODE_MASK & insn) {
+> +       case RVC_OPCODE_C0:
+> +               return RVC_EXTRACT_C0_RS2_REG(insn) + RVC_C0_REG_OFFSET;
+> +       case RVC_OPCODE_C1:
+> +               return RVC_EXTRACT_C1_RS2_REG(insn) + RVC_C1_REG_OFFSET;
+> +       case RVC_OPCODE_C2:
+> +               return RVC_EXTRACT_C2_RS2_REG(insn);
+> +       default:
+> +               return RV_EXTRACT_RS2_REG(insn);
+> +       }
+> +}
+> +
+> +/*
+> + * Get the rd register number from RV or RVC instruction.
+> + *
+> + * @insn: instruction to process
+> + * Return: rd register
+> + */
+> +static inline unsigned int riscv_insn_extract_rd_reg(u32 insn)
+> +{
+> +       switch (RVC_INSN_OPCODE_MASK & insn) {
+> +       case RVC_OPCODE_C0:
+> +               return RVC_EXTRACT_C0_RD_REG(insn) + RVC_C0_REG_OFFSET;
+> +       case RVC_OPCODE_C1:
+> +               return RVC_EXTRACT_C1_RD_REG(insn) + RVC_C1_REG_OFFSET;
+> +       case RVC_OPCODE_C2:
+> +               return RVC_EXTRACT_C2_RD_REG(insn);
+> +       default:
+> +               return RV_EXTRACT_RD_REG(insn);
+> +       }
+> +}
+> +
+>  /*
+>   * Get the immediate from a J-type instruction.
+>   *
+> @@ -428,4 +549,10 @@ static inline void riscv_insn_insert_utype_itype_imm=
+(u32 *utype_insn, u32 *itype
+>         *utype_insn |=3D (imm & RV_U_IMM_31_12_MASK) + ((imm & BIT(11)) <=
+< 1);
+>         *itype_insn |=3D ((imm & RV_I_IMM_11_0_MASK) << RV_I_IMM_11_0_OPO=
+FF);
+>  }
+> +
+> +#include <asm/ptrace.h>
+> +
+> +int get_insn(struct pt_regs *regs, ulong epc, ulong *r_insn);
+> +unsigned long get_step_address(struct pt_regs *regs, u32 code);
+> +
+>  #endif /* _ASM_RISCV_INSN_H */
+> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+> index f7480c9c6f8d..4f719b09e5ad 100644
+> --- a/arch/riscv/kernel/Makefile
+> +++ b/arch/riscv/kernel/Makefile
+> @@ -51,6 +51,7 @@ obj-$(CONFIG_RISCV_ALTERNATIVE) +=3D alternative.o
+>  obj-y  +=3D cpu.o
+>  obj-y  +=3D cpufeature.o
+>  obj-y  +=3D entry.o
+> +obj-y  +=3D insn.o
+>  obj-y  +=3D irq.o
+>  obj-y  +=3D process.o
+>  obj-y  +=3D ptrace.o
+> diff --git a/arch/riscv/kernel/insn.c b/arch/riscv/kernel/insn.c
+> new file mode 100644
+> index 000000000000..dd2a6ef9fd25
+> --- /dev/null
+> +++ b/arch/riscv/kernel/insn.c
+> @@ -0,0 +1,151 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright 2025 Rivos, Inc
+> + */
+> +#include <asm/insn.h>
+> +#include <asm/ptrace.h>
+> +#include <asm/uaccess.h>
+> +
+> +#define __read_insn(regs, insn, insn_addr, type)       \
+> +({                                                     \
+> +       int __ret;                                      \
+> +                                                       \
+> +       if (user_mode(regs)) {                          \
+> +               __ret =3D get_user(insn, (type __user *) insn_addr); \
+> +       } else {                                        \
+> +               insn =3D *(type *)insn_addr;              \
+> +               __ret =3D 0;                              \
+> +       }                                               \
+> +                                                       \
+> +       __ret;                                          \
+> +})
+> +
+> +/*
+> + * Update a set of two instructions (U-type + I-type) with an immediate =
+value.
+> + *
+> + * Used for example in auipc+jalrs pairs the U-type instructions contain=
+s
+> + * a 20bit upper immediate representing bits[31:12], while the I-type
+> + * instruction contains a 12bit immediate representing bits[11:0].
+> + *
+> + * This also takes into account that both separate immediates are
+> + * considered as signed values, so if the I-type immediate becomes
+> + * negative (BIT(11) set) the U-type part gets adjusted.
+> + *
+> + * @regs: pointer to the utype instruction of the pair
+> + * @epc: pointer to the itype instruction of the pair
+> + * @r_insn: the immediate to insert into the two instructions
+> + * Return: combined immediate
+> + */
+> +int get_insn(struct pt_regs *regs, ulong epc, ulong *r_insn)
+> +{
+> +       ulong insn =3D 0;
+> +
+> +       if (epc & 0x2) {
+> +               ulong tmp =3D 0;
+> +
+> +               if (__read_insn(regs, insn, epc, u16))
+> +                       return -EFAULT;
+> +               /* __get_user() uses regular "lw" which sign extend the l=
+oaded
+> +                * value make sure to clear higher order bits in case we =
+"or" it
+> +                * below with the upper 16 bits half.
+> +                */
+> +               insn &=3D RVC_MASK_C;
+> +               if (riscv_insn_is_c(insn)) {
+> +                       *r_insn =3D insn;
+> +                       return 0;
+> +               }
+> +               epc +=3D sizeof(u16);
+> +               if (__read_insn(regs, tmp, epc, u16))
+> +                       return -EFAULT;
+> +               *r_insn =3D (tmp << 16) | insn;
+> +
+> +               return 0;
+> +       } else {
+> +               if (__read_insn(regs, insn, epc, u32))
+> +                       return -EFAULT;
+> +               if (!riscv_insn_is_c(insn)) {
+> +                       *r_insn =3D insn;
+> +                       return 0;
+> +               }
+> +               insn &=3D RVC_MASK_C;
+> +               *r_insn =3D insn;
+> +
+> +               return 0;
+> +       }
+> +}
+> +
+> +/* Calculate the new address for after a step */
+> +unsigned long get_step_address(struct pt_regs *regs, u32 code)
+> +{
+> +       unsigned long pc =3D regs->epc;
+> +       unsigned int rs1_num, rs2_num;
+> +
+> +       if ((code & __INSN_LENGTH_MASK) !=3D __INSN_LENGTH_GE_32) {
+> +               if (riscv_insn_is_c_jalr(code) ||
+> +                   riscv_insn_is_c_jr(code)) {
+> +                       rs1_num =3D riscv_insn_extract_rs1_reg(code);
+> +                       return regs_get_register(regs, rs1_num);
+> +               } else if (riscv_insn_is_c_j(code) ||
+> +                          riscv_insn_is_c_jal(code)) {
+> +                       return RVC_EXTRACT_JTYPE_IMM(code) + pc;
+> +               } else if (riscv_insn_is_c_beqz(code)) {
+> +                       rs1_num =3D riscv_insn_extract_rs1_reg(code);
+> +                       if (!rs1_num || regs_get_register(regs, rs1_num) =
+=3D=3D 0)
+> +                               return RVC_EXTRACT_BTYPE_IMM(code) + pc;
+> +                       else
+> +                               return pc + 2;
+> +               } else if (riscv_insn_is_c_bnez(code)) {
+> +                       rs1_num =3D riscv_insn_extract_rs1_reg(RVC_C1_RS1=
+_OPOFF);
+> +                       if (rs1_num && regs_get_register(regs, rs1_num) !=
+=3D 0)
+> +                               return RVC_EXTRACT_BTYPE_IMM(code) + pc;
+> +                       else
+> +                               return pc + 2;
+> +               } else {
+> +                       return pc + 2;
+> +               }
+> +       } else {
+> +               if ((code & __INSN_OPCODE_MASK) =3D=3D __INSN_BRANCH_OPCO=
+DE) {
+> +                       bool result =3D false;
+> +                       long imm =3D RV_EXTRACT_BTYPE_IMM(code);
+> +                       unsigned long rs1_val =3D 0, rs2_val =3D 0;
+> +
+> +                       rs1_num =3D riscv_insn_extract_rs1_reg(code);
+> +                       rs2_num =3D riscv_insn_extract_rs2_reg(code);
+> +                       if (rs1_num)
+> +                               rs1_val =3D regs_get_register(regs, rs1_n=
+um);
+> +                       if (rs2_num)
+> +                               rs2_val =3D regs_get_register(regs, rs2_n=
+um);
+> +
+> +                       if (riscv_insn_is_beq(code))
+> +                               result =3D (rs1_val =3D=3D rs2_val) ? tru=
+e : false;
+> +                       else if (riscv_insn_is_bne(code))
+> +                               result =3D (rs1_val !=3D rs2_val) ? true =
+: false;
+> +                       else if (riscv_insn_is_blt(code))
+> +                               result =3D
+> +                                   ((long)rs1_val <
+> +                                    (long)rs2_val) ? true : false;
+> +                       else if (riscv_insn_is_bge(code))
+> +                               result =3D
+> +                                   ((long)rs1_val >=3D
+> +                                    (long)rs2_val) ? true : false;
+> +                       else if (riscv_insn_is_bltu(code))
+> +                               result =3D (rs1_val < rs2_val) ? true : f=
+alse;
+> +                       else if (riscv_insn_is_bgeu(code))
+> +                               result =3D (rs1_val >=3D rs2_val) ? true =
+: false;
+> +                       if (result)
+> +                               return imm + pc;
+> +                       else
+> +                               return pc + 4;
+> +               } else if (riscv_insn_is_jal(code)) {
+> +                       return RV_EXTRACT_JTYPE_IMM(code) + pc;
+> +               } else if (riscv_insn_is_jalr(code)) {
+> +                       rs1_num =3D riscv_insn_extract_rs1_reg(code);
+> +                       return RV_EXTRACT_ITYPE_IMM(code) +
+> +                              (rs1_num ? regs_get_register(regs, rs1_num=
+) : 0);
+> +               } else if (riscv_insn_is_sret(code)) {
+> +                       return pc;
+> +               } else {
+> +                       return pc + 4;
+> +               }
+> +       }
+> +}
+> diff --git a/arch/riscv/kernel/kgdb.c b/arch/riscv/kernel/kgdb.c
+> index 9f3db3503dab..aafc1424fc81 100644
+> --- a/arch/riscv/kernel/kgdb.c
+> +++ b/arch/riscv/kernel/kgdb.c
+> @@ -23,111 +23,19 @@ enum {
+>  static unsigned long stepped_address;
+>  static unsigned int stepped_opcode;
+>
+> -static int decode_register_index(unsigned long opcode, int offset)
+> -{
+> -       return (opcode >> offset) & 0x1F;
+> -}
+> -
+> -static int decode_register_index_short(unsigned long opcode, int offset)
+> -{
+> -       return ((opcode >> offset) & 0x7) + 8;
+> -}
+> -
+> -/* Calculate the new address for after a step */
+> -static int get_step_address(struct pt_regs *regs, unsigned long *next_ad=
+dr)
+> -{
+> -       unsigned long pc =3D regs->epc;
+> -       unsigned long *regs_ptr =3D (unsigned long *)regs;
+> -       unsigned int rs1_num, rs2_num;
+> -       int op_code;
+> -
+> -       if (get_kernel_nofault(op_code, (void *)pc))
+> -               return -EINVAL;
+> -       if ((op_code & __INSN_LENGTH_MASK) !=3D __INSN_LENGTH_GE_32) {
+> -               if (riscv_insn_is_c_jalr(op_code) ||
+> -                   riscv_insn_is_c_jr(op_code)) {
+> -                       rs1_num =3D decode_register_index(op_code, RVC_C2=
+_RS1_OPOFF);
+> -                       *next_addr =3D regs_ptr[rs1_num];
+> -               } else if (riscv_insn_is_c_j(op_code) ||
+> -                          riscv_insn_is_c_jal(op_code)) {
+> -                       *next_addr =3D RVC_EXTRACT_JTYPE_IMM(op_code) + p=
+c;
+> -               } else if (riscv_insn_is_c_beqz(op_code)) {
+> -                       rs1_num =3D decode_register_index_short(op_code,
+> -                                                             RVC_C1_RS1_=
+OPOFF);
+> -                       if (!rs1_num || regs_ptr[rs1_num] =3D=3D 0)
+> -                               *next_addr =3D RVC_EXTRACT_BTYPE_IMM(op_c=
+ode) + pc;
+> -                       else
+> -                               *next_addr =3D pc + 2;
+> -               } else if (riscv_insn_is_c_bnez(op_code)) {
+> -                       rs1_num =3D
+> -                           decode_register_index_short(op_code, RVC_C1_R=
+S1_OPOFF);
+> -                       if (rs1_num && regs_ptr[rs1_num] !=3D 0)
+> -                               *next_addr =3D RVC_EXTRACT_BTYPE_IMM(op_c=
+ode) + pc;
+> -                       else
+> -                               *next_addr =3D pc + 2;
+> -               } else {
+> -                       *next_addr =3D pc + 2;
+> -               }
+> -       } else {
+> -               if ((op_code & __INSN_OPCODE_MASK) =3D=3D __INSN_BRANCH_O=
+PCODE) {
+> -                       bool result =3D false;
+> -                       long imm =3D RV_EXTRACT_BTYPE_IMM(op_code);
+> -                       unsigned long rs1_val =3D 0, rs2_val =3D 0;
+> -
+> -                       rs1_num =3D decode_register_index(op_code, RVG_RS=
+1_OPOFF);
+> -                       rs2_num =3D decode_register_index(op_code, RVG_RS=
+2_OPOFF);
+> -                       if (rs1_num)
+> -                               rs1_val =3D regs_ptr[rs1_num];
+> -                       if (rs2_num)
+> -                               rs2_val =3D regs_ptr[rs2_num];
+> -
+> -                       if (riscv_insn_is_beq(op_code))
+> -                               result =3D (rs1_val =3D=3D rs2_val) ? tru=
+e : false;
+> -                       else if (riscv_insn_is_bne(op_code))
+> -                               result =3D (rs1_val !=3D rs2_val) ? true =
+: false;
+> -                       else if (riscv_insn_is_blt(op_code))
+> -                               result =3D
+> -                                   ((long)rs1_val <
+> -                                    (long)rs2_val) ? true : false;
+> -                       else if (riscv_insn_is_bge(op_code))
+> -                               result =3D
+> -                                   ((long)rs1_val >=3D
+> -                                    (long)rs2_val) ? true : false;
+> -                       else if (riscv_insn_is_bltu(op_code))
+> -                               result =3D (rs1_val < rs2_val) ? true : f=
+alse;
+> -                       else if (riscv_insn_is_bgeu(op_code))
+> -                               result =3D (rs1_val >=3D rs2_val) ? true =
+: false;
+> -                       if (result)
+> -                               *next_addr =3D imm + pc;
+> -                       else
+> -                               *next_addr =3D pc + 4;
+> -               } else if (riscv_insn_is_jal(op_code)) {
+> -                       *next_addr =3D RV_EXTRACT_JTYPE_IMM(op_code) + pc=
+;
+> -               } else if (riscv_insn_is_jalr(op_code)) {
+> -                       rs1_num =3D decode_register_index(op_code, RVG_RS=
+1_OPOFF);
+> -                       if (rs1_num)
+> -                               *next_addr =3D ((unsigned long *)regs)[rs=
+1_num];
+> -                       *next_addr +=3D RV_EXTRACT_ITYPE_IMM(op_code);
+> -               } else if (riscv_insn_is_sret(op_code)) {
+> -                       *next_addr =3D pc;
+> -               } else {
+> -                       *next_addr =3D pc + 4;
+> -               }
+> -       }
+> -       return 0;
+> -}
+> -
+>  static int do_single_step(struct pt_regs *regs)
+>  {
+>         /* Determine where the target instruction will send us to */
+> -       unsigned long addr =3D 0;
+> -       int error =3D get_step_address(regs, &addr);
+> +       unsigned long addr, insn;
+> +       int error =3D get_insn(regs, regs->epc, &insn);
+>
+>         if (error)
+>                 return error;
+>
+> +       addr =3D get_step_address(regs, insn);
+> +
+>         /* Store the op code in the stepped address */
+> -       error =3D get_kernel_nofault(stepped_opcode, (void *)addr);
+> +       error =3D get_insn(regs, addr, stepped_opcode);
 
-Currently, mlx5_umem_mkc_find_best_pgsz() does not filter out page sizes
-that would result in misaligned IOVAs for KSM mode. This can lead to
-selecting page sizes that are incompatible with the given IOVA.
+This line gives following compile error:
 
-Fix this by filtering the page size bitmap when in KSM mode, keeping
-only page sizes to which the IOVA is aligned to.
+     arch/riscv/kernel/kgdb.c: In function 'do_single_step':
+     arch/riscv/kernel/kgdb.c:38:38: error: passing argument 3 of
+'get_insn' makes pointer from integer without a cast
+[-Wint-conversion]
+        38 |         error =3D get_insn(regs, addr, stepped_opcode);
+           |                                      ^~~~~~~~~~~~~~
+           |                                      |
+           |                                      unsigned int
+     In file included from arch/riscv/kernel/kgdb.c:14:
+     ./arch/riscv/include/asm/insn.h:555:54: note: expected 'ulong *'
+{aka 'long unsigned int *'} but argument is of type 'unsigned int'
+       555 | int get_insn(struct pt_regs *regs, ulong epc, ulong *r_insn);
+           |                                               ~~~~~~~^~~~~~
 
-Fixes: fcfb03597b7d ("RDMA/mlx5: Align mkc page size capability check to PRM")
-Signed-off-by: Edward Srouji <edwards@nvidia.com>
-Reviewed-by: Michael Guralnik <michaelgur@nvidia.com>
----
- drivers/infiniband/hw/mlx5/mlx5_ib.h | 4 ++++
- 1 file changed, 4 insertions(+)
+If you are touching some source then at least compile test it.
 
-diff --git a/drivers/infiniband/hw/mlx5/mlx5_ib.h b/drivers/infiniband/hw/mlx5/mlx5_ib.h
-index 4fc2c0ca2af3..fbb9803785ba 100644
---- a/drivers/infiniband/hw/mlx5/mlx5_ib.h
-+++ b/drivers/infiniband/hw/mlx5/mlx5_ib.h
-@@ -1805,6 +1805,10 @@ mlx5_umem_mkc_find_best_pgsz(struct mlx5_ib_dev *dev, struct ib_umem *umem,
- 
- 	bitmap = GENMASK_ULL(max_log_entity_size_cap, min_log_entity_size_cap);
- 
-+	/* In KSM mode HW requires IOVA and mkey's page size to be aligned */
-+	if (access_mode == MLX5_MKC_ACCESS_MODE_KSM && iova)
-+		bitmap &= GENMASK_ULL(__ffs64(iova), 0);
-+
- 	return ib_umem_find_best_pgsz(umem, bitmap, iova);
- }
- 
--- 
-2.21.3
-
+Regards,
+Anup
 
