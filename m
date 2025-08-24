@@ -1,126 +1,113 @@
-Return-Path: <linux-kernel+bounces-783744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8780EB331E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 20:12:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66037B3318F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 19:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDA873B16B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:10:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E95CF202A81
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 17:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1122E093B;
-	Sun, 24 Aug 2025 18:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F971F4C83;
+	Sun, 24 Aug 2025 17:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYORHDT1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="2QYZ761s"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11D92E0928;
-	Sun, 24 Aug 2025 18:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4E527472
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 17:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756058946; cv=none; b=AzED8HqXCOKsuAQXGlcCc0t1toC/ndNiJG5LJuODM/AmFwcj9WN3HxJzbC0Ck/i5u3lvV9R7brdb4ww0tu4jquqN1kBISWMzwzixAdtzTbamZWHxPT/7cOKhs9RZgqsggyJeES3hLnwRR5r50abl+aVpVs1rJr+IEN6B06DMTYA=
+	t=1756054998; cv=none; b=PxQQRy6FsAcNUyiVjVR6k4mTVU8+UeUFdjpGcJjuH6tjnyXXYScYzWlwH6krsGeOdJ+jKjwoFufdFgVcqdSwhCd6gWexer9A/gad5ZLhW9zDn3JWQJllYdQ01F/i2M5TsZCJOWnaeCd8+rCWl+PVWTX74Ae2F0tW0RnbR7sAVuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756058946; c=relaxed/simple;
-	bh=g0ilQfX+/tsXpJe+/dm6xg4GYotqHJ7yh3Hp5H7k3BU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sdEFp/xuUfvyN6DsHg1kiRGqQ6YxTCXJ0ILjoGma/l1wAzFbmSGsRIsMTlFuVGKx+ZivB+N5D+d4oQCXhxtw+boQdfd0RkqfXR52iZ3QsdLoWHpBjf1UhgnnvQZ3P1g1B39qqVjbcgGCheiNM/pMtDKoXb5zcoYLBqjenGSKE40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cYORHDT1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A928C116B1;
-	Sun, 24 Aug 2025 18:09:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756058946;
-	bh=g0ilQfX+/tsXpJe+/dm6xg4GYotqHJ7yh3Hp5H7k3BU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cYORHDT1EcCVhK+jIa47dA1py4lK3SaU7oZxMBVxZ5k6HS2X5nhIKSTPRyL/HZxlE
-	 v1C49Hjmg1HYxFbwkMzStqUD9scByM8CrMC/5CHHpEiI5Y6s52Lpj68+c7BYxAR1E8
-	 EgZ7mBt5CtXlGWvswvqgdt6oyIIsTAb7l65TDk6YaCmkIkxt0MWmq8/zan33Ux97BV
-	 UJwbhUzF6aACPpUgSXdc3uexK506UUpseFgNY/jJyF0pLPXRsAxU01tv6ax2KdlvvL
-	 FSAu5AlROFUy6M6hu3ZS6q4mqp2pnJdPhzC72Cl+jsrsrUBjtv7Zlv7y8j1lfRPWfE
-	 t8fDhUp+3uWRg==
-Message-ID: <ded0bf9a-29f1-40c5-9b55-a4c7dcb2b439@kernel.org>
-Date: Sun, 24 Aug 2025 19:02:14 +0200
+	s=arc-20240116; t=1756054998; c=relaxed/simple;
+	bh=xNPtHqPQ8EbTfGPaocAYn2ghUhDePyzcdAsyJIsfodQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eo9OCE6HacteR3GJWAMcjTAC0atj2vBEDPmW8RduHQS3KYfpeholeLUQimdl17MQajHK3E9BQZCfjCzO3wkpBoXM/j05SSfIRxVfTRUwZRf2x+3rUArIOvymFkWMEMXxXbdGv15gC9pFJRQ4N/ucUXrPx3+JGFB2LpZmQTzVaD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=2QYZ761s; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 8B2E01A0DA4;
+	Sun, 24 Aug 2025 17:03:13 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 558BB605F1;
+	Sun, 24 Aug 2025 17:03:13 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9145F1C228A5B;
+	Sun, 24 Aug 2025 19:02:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756054990; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=HzrQ8UsauV0uUlBYYQNKljD4+gLMnEGKsLGyhjx5bAE=;
+	b=2QYZ761sM6UEzTwDs7IDwJ1Mhr0mMkKFYPkGknyM6LPizE1YHI2TEhcVYBPBlHRTbwspo5
+	j0ypVgVv0Jv974DCPhBwnI337qtdAFX/8FvCZWCYRy+AKPVoMdAmrxxTwHSPTI7TfucYGi
+	oMx5z/qpOCYEXcWSNO5CLDufO36f6MCz5JZvgtTIkuoxhqNoZNOqFBZLhrd9XIEz6rC6oL
+	fFuNyF3jm7jitetwI+KSz4Xb3lYvjk4KtJz6J3ERyswHNkTpe2KhEULFRwcCxMCe5Fuhv3
+	HlMCJzMOG40NdhBM6H+RIxCxVrDrc5X3CagXUQXyEOQm3I8gaM+uU5bZJkqX6Q==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Santhosh Kumar K <s-k6@ti.com>,  richard@nod.at,  vigneshr@ti.com,
+  tudor.ambarus@linaro.org,  pratyush@kernel.org,  mwalle@kernel.org,
+  p-mantena@ti.com,  linux-spi@vger.kernel.org,
+  linux-mtd@lists.infradead.org,  linux-kernel@vger.kernel.org,
+  a-dutta@ti.com,  u-kumar1@ti.com,  praneeth@ti.com
+Subject: Re: [RFC PATCH 01/10] spi: spi-mem: Introduce support for tuning
+ controller
+In-Reply-To: <6c35baad-a332-4b0a-96ca-1cdb3840ad94@sirena.org.uk> (Mark
+	Brown's message of "Wed, 13 Aug 2025 21:26:06 +0100")
+References: <20250811193219.731851-1-s-k6@ti.com>
+	<20250811193219.731851-2-s-k6@ti.com>
+	<6c35baad-a332-4b0a-96ca-1cdb3840ad94@sirena.org.uk>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Sun, 24 Aug 2025 19:02:56 +0200
+Message-ID: <87cy8khcu7.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] arm64: dts: exynos: gs101: add
- google,gs101-acpm-dvfs-clocks
-To: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- willmcvicker@google.com, kernel-team@android.com
-References: <20250819-acpm-dvfs-dt-v1-0-4e38b95408c4@linaro.org>
- <20250819-acpm-dvfs-dt-v1-1-4e38b95408c4@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250819-acpm-dvfs-dt-v1-1-4e38b95408c4@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 19/08/2025 14:10, Tudor Ambarus wrote:
-> Define the clocks exposed by the ACPM interface.
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-This will need changes as discussed in the bindings.
+Hello,
 
-Best regards,
-Krzysztof
+On 13/08/2025 at 21:26:06 +01, Mark Brown <broonie@kernel.org> wrote:
+
+> On Tue, Aug 12, 2025 at 01:02:10AM +0530, Santhosh Kumar K wrote:
+>> From: Pratyush Yadav <pratyush@kernel.org>
+>>=20
+>> Some controllers like the Cadence OSPI controller need to perform a
+>> tuning sequence to operate at high data rates. Tuning is needs to happen
+>> once the device is switched to appropriate mode (say 8S-8S-8S or
+>> 8D-8D-8D). Add a hook that spi-mem client devices can call in order to t=
+une
+>> the controller to operate in a given mode and data rate.
+>>=20
+>> This is somewhat similar to eMMC/SD tuning for higher speed modes like
+>> HS200, but there isn't a standard specification around the same though.
+>
+> Should we have something that blocks these tuning required modes without
+> the appropriate tuning, and/or allows discovery of which modes require
+> this tuning?  This all feels very landmineish - client drivers just have
+> to know when tuning is required.
+
+The maximum bus frequency will tell whether tuning is relevant or not I
+guess.
+
+In the case of the Cadence controller, the bus speed is key to determine
+whether calibration should happen or not because when PHY calibration is
+enabled, the SPI bus frequency is equal to the controller clock rate
+(pre-scalers are bypassed).
+
+So the criteria for enabling calibration is:
+
+   max SPI bus freq >=3D  min controller clock rate
+
+Thanks,
+Miqu=C3=A8l
 
