@@ -1,160 +1,171 @@
-Return-Path: <linux-kernel+bounces-783429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FB78B32D81
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 06:18:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E66FB32D83
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 06:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08A532080CC
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 04:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78096480C1C
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 04:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D09F1A5B8D;
-	Sun, 24 Aug 2025 04:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974D61DE4FB;
+	Sun, 24 Aug 2025 04:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xNe3UfLx"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H8scj8/7"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B9C84E07
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 04:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A711A5B8D;
+	Sun, 24 Aug 2025 04:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756009107; cv=none; b=VSVEPlObVtUXsvERMPjeZ9MI5h1FI7qdgJY4a5uOX/DRD8ETVO5WFy2DdFsv0K8lnTQ6R4EEZQ3NrORdWx5hKZWLhxwfLAMXZTybKO9lHQ5Sh0W/yqyZsOQUjdFwR9k/VyhhdFr1gu4ohi9nzYR52TDnWu23VYAwisst/QYq+TU=
+	t=1756009136; cv=none; b=Tk0Rg/xPdK/VgvGcgwHN0vJm9fNQZiyVCgEdVKLM0mo4BSX1I1Yh+4Yao7jiEUi4inPa7ebjYliB0nAWOILjt5CACtet4n2NxQdyoldFK8wRObGyqqu1Ufyo3B3IJvfG9hhtZDmvi+erLtRegVqXRo62QKOJC7ljSRtEzxzNe2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756009107; c=relaxed/simple;
-	bh=wy3Tvp87h9AdcvZytbMvTJRVniWs335eIfh+J3xCN6I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pwBFT6JfPgbPLl56+IdtMvmg5y56IiZbjpjTLq1h1bVlMWmoFkdwBE4AD1jW4YUymox8nulyA2w1QT5ye/c7Osg1byoqG469eNY5Fvoq2rhtGZGQaH+dHk39bb3YAIDaWHItimbtHlNC2tMVFVH17cSHDG0YPdqBmbG7SEchzGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xNe3UfLx; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-618076f9545so4876a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Aug 2025 21:18:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756009104; x=1756613904; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZDkfim7mr7a4yUojop8vd0ATFOSgpSTb8reNVp1wDps=;
-        b=xNe3UfLxcZKk/hKr8/UuP3uqlXrsjaJamK2awMPJI7D2Coe7OOkCJ9AcY3ipxNDxuj
-         z7hyG+z+qrqLE+7YKlxchS2EAKKh6SLlhjdu2nc6TpCDxcktMhrlyKj1b0MZ38hR5QjS
-         5+ALK1D59GhWpr/WmGIelGNrOIt0EDu9aOXj/jRdNlEmvdXffjRLSHifrSzWjwK5vOOU
-         afYtgtf6t7tr7OR4tSwgLC7kzRKmkyxy0+A/GMpkDxOpzucoGzRDCKVajr+sVxJ9LRqg
-         vyjw6Ym6Juokhf0QWPyQFLweUsgIQnl8z8Nhv4dMdUy3xitPB5XIuwjgVUPlySQVKNZz
-         cW6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756009104; x=1756613904;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZDkfim7mr7a4yUojop8vd0ATFOSgpSTb8reNVp1wDps=;
-        b=ISYRD33QkfYsAc/khiSlYLdhDGae9yPyzR9kFLSmK6Qbxojc79fwVrapwI96tEIRXx
-         OlPhyvdcNgPIACeNh9D017Z32vlBGdiybHfLiZdvEFjQAlFlt94ndcbuo+u+12J+Nkqp
-         umwFo7/BUOFajZ6KGfxVIhAQ/nt9j7oh8RlZUEaY8v4xVI4S2RQhsjYPlqrpegDOXYGQ
-         VtPpShQzOp7wHJoN3dizP7MEpS4EuAlCrEz5eviKuOPNpNbYZgPh4EMjJkA3992Dbqgi
-         ek4LgjJs4RtxucDDy8VT3PTMXPqZ03zEYSNkabe048XRx/uPEEJb74fXu5+NCSb5bfnc
-         tr4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXF7iNmkgdtWPymTDkDOVxoPLSkEMGNJk/BDPUmmUDaDvB61jhqosgXLD8BBcQP1HXZgrh3ByKcg1V+fmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuRXR/w3OkgW4ExR41JHb3ETvKVBIlPPsEJC+a5VauAkQcxCD+
-	lUdsu/Uc6e8pXd6Xbk2BtkAXlhrOTQqIl85naYSIxZX001V3Djr8YmVOlsYJNJuYio5HNvfYvqa
-	xZ6ozA1HSMnJeXobfgRl8RazFgWYVZsbkfnCnLGFs
-X-Gm-Gg: ASbGnctkNA6PkSmWBlU7/4UIgdRNXwudZVt3IVeOA2UXoFlcZ51EK4/xPqu3VUfJ0bw
-	T4yZlic0BGiRcsgecrjO3jFyfzc+kZxGEGMpuwYh7kc7/IQr/ynRrRcaDO2Dc4/nBAsx42dF+Rr
-	+0VOylcCSAlGrRhuOPNwKiwvz01eHHrB4A7mY6vr9JJDJjvSmHNi6UF36+p7Ml8j3oI2oeYrWLw
-	O2Ogel9/9saI+QNsFUfbzULoDywN4fAzo7ujebTbfsd1vI=
-X-Google-Smtp-Source: AGHT+IHIKQ3cw094VGjPpaAth752X722oMGWvEZSKC7NcrOHJ/wxzYPnBBhd8NLKWJ383A4CKTort8ybeKLqsLz34bQ=
-X-Received: by 2002:a50:8d53:0:b0:618:8198:de66 with SMTP id
- 4fb4d7f45d1cf-61c352aac29mr69238a12.2.1756009104038; Sat, 23 Aug 2025
- 21:18:24 -0700 (PDT)
+	s=arc-20240116; t=1756009136; c=relaxed/simple;
+	bh=PgrvWjQLdnobuzqkl8Do45OnUnsVww0l+TYYOWTgVdk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=legaSVtU+OucZ8khFkEvz+8KZyljxv/jyKsTJ0Btr2oEfqzHXXKx74YVFAod9MAPHCBOfLQIpq/pcC56gmxAOAOpnNJrs0gqDmYKuL9BkXnOqklGzoOIz7OCHvHqKZrs0rtSOUn83mbA1TjKNYODcFq7IdrulYHeWKDu8QtubZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H8scj8/7; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 014137A00E2;
+	Sun, 24 Aug 2025 00:18:52 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Sun, 24 Aug 2025 00:18:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1756009132; x=1756095532; bh=UL4fY53RuCaHLxIJCFVkyxRiL0i1Tp062V0
+	6DMdlvbI=; b=H8scj8/74QNVhs4DbfNlzFP4jlrlh5ALAxYt7glQgipUfZlOMQV
+	MCDfPjYaiq+cgZFT57SDAaZT/lBTXPGI7EKo6dXELXvrNWVJ2dG0tA6Ee6dmS2F5
+	jIXn5s5IHwBR4TeXIJzhadNY7NT0WxnyadLUQBqsq/3+NDBgpG2C0bN7hSFM/Z6z
+	rV3ezuU4giMR42JcEjg0Il1IKuj8hoPyg+u29Q7yocbQwnqlh+3UiCsj0dx5LBSz
+	QM+zQea9BVEJ73CUr7O58EzbD3/ANxJlnWy3GgICieCzCM7pHTRTtPOyh5mNYE7K
+	XwIq1AuLQeGhgReTyNaMjD50UWRZbynWsgw==
+X-ME-Sender: <xms:qZKqaFO8LKndKcBt9qf0PdMrtINu1XvXj0ml0uvY_sNzCj24uNPbWg>
+    <xme:qZKqaKsNDfjRR4fY04YKifdN_rWVDOH7gAPkhHTwktSjNmbNIHVSYjMBAeaPILCKZ
+    ozSlKTrN1UVg0mEOY0>
+X-ME-Received: <xmr:qZKqaBIP187swfwj4IYLZy3rAaXDGciBVI1ygr3JYv3JR_IdxiDOzSWqo5-7Tx8EqWz8qrZaB_79DXL0N_iJsul39IwBKu7KFts>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieekheefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
+    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
+    gvrhhnpeefieehjedvtefgiedtudethfekieelhfevhefgvddtkeekvdekhefftdekvedv
+    ueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepfhhthhgrihhnsehlihhnuhigqdhmieekkhdr
+    ohhrghdpnhgspghrtghpthhtohepvdehpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopehlrghntggvrdihrghngheslhhinhhugidruggvvhdprhgtphhtthhopegrkhhpmhes
+    lhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepmhhhihhrrghmrg
+    htsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlkhhpsehinhhtvghlrdgtohhmpdhr
+    tghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepsh
+    gvnhhoiihhrghtshhkhiestghhrhhomhhiuhhmrdhorhhgpdhrtghpthhtohepohgvqdhk
+    sghuihhlugdqrghllheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopegrmh
+    grihhnuggvgiesohhuthhlohhokhdrtghomhdprhgtphhtthhopegrnhhnrgdrshgthhhu
+    mhgrkhgvrhesohhrrggtlhgvrdgtohhm
+X-ME-Proxy: <xmx:qpKqaJNHssbWWP-dsqJQ7cORuhnGhSZaPzIdfHh55mlFOqAVvRb5_w>
+    <xmx:qpKqaFCBKZWUtYia3Y_0RJiGsUnva6fhq40CMDmOQQQuh79jF5JEPg>
+    <xmx:qpKqaBVMBmesj0NSmobphqvPNHu3iMyVxRrXPTH0VlkOFDdWNvuQtw>
+    <xmx:qpKqaBfCRwDNEnyxB1UBl781vtiYemd9BK0pUMXTw26WtHdx-AUJfw>
+    <xmx:rJKqaIQuTqVUEE9FDyS9-ybqM9ozOiCX-pS7Za_ZAyY-bdOQWmSysZPH>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 24 Aug 2025 00:18:46 -0400 (EDT)
+Date: Sun, 24 Aug 2025 14:18:39 +1000 (AEST)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Lance Yang <lance.yang@linux.dev>
+cc: akpm@linux-foundation.org, mhiramat@kernel.org, 
+    kernel test robot <lkp@intel.com>, geert@linux-m68k.org, 
+    senozhatsky@chromium.org, oe-kbuild-all@lists.linux.dev, 
+    amaindex@outlook.com, anna.schumaker@oracle.com, boqun.feng@gmail.com, 
+    ioworker0@gmail.com, joel.granados@kernel.org, jstultz@google.com, 
+    kent.overstreet@linux.dev, leonylgao@tencent.com, 
+    linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
+    longman@redhat.com, mingo@redhat.com, mingzhe.yang@ly.com, 
+    oak@helsinkinet.fi, rostedt@goodmis.org, tfiga@chromium.org, 
+    will@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] hung_task: fix warnings by enforcing alignment on
+ lock structures
+In-Reply-To: <9efaadc9-7f96-435e-9711-7f2ce96a820a@linux.dev>
+Message-ID: <a70ad7be-390f-2a2c-c920-5064cabe2b36@linux-m68k.org>
+References: <20250823074048.92498-1-lance.yang@linux.dev> <202508240539.ARmC1Umu-lkp@intel.com> <29f4f58e-2f14-99c8-3899-3b0be79382c2@linux-m68k.org> <9efaadc9-7f96-435e-9711-7f2ce96a820a@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+EESO4Z6wtX7ZMdDHQRe5jAAS_bQ-POq5+4aDx5jh2DvY6UHg@mail.gmail.com>
-In-Reply-To: <CA+EESO4Z6wtX7ZMdDHQRe5jAAS_bQ-POq5+4aDx5jh2DvY6UHg@mail.gmail.com>
-From: Lokesh Gidra <lokeshgidra@google.com>
-Date: Sat, 23 Aug 2025 21:18:11 -0700
-X-Gm-Features: Ac12FXwhGKxi7sszb9FQfuKpWK6TDNlDZe7vik_4urMen1Es4eNpzZtoyOAFRuI
-Message-ID: <CA+EESO7j4dY3KjBWybTG6uQmXJ8kyhBrid3rTk5XAP7poZOhYQ@mail.gmail.com>
-Subject: Re: [DISCUSSION] Unconditionally lock folios when calling rmap_walk()
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	Barry Song <21cnbao@gmail.com>, "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, Peter Xu <peterx@redhat.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
-	android-mm <android-mm@google.com>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	Jann Horn <jannh@google.com>, Rik van Riel <riel@surriel.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, David Hildenbrand <david@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 
-On Fri, Aug 22, 2025 at 10:29=E2=80=AFAM Lokesh Gidra <lokeshgidra@google.c=
-om> wrote:
->
-> Hi all,
->
-> Currently, some callers of rmap_walk() conditionally avoid try-locking
-> non-ksm anon folios. This necessitates serialization through anon_vma
-> write-lock elsewhere when folio->mapping and/or folio->index (fields
-> involved in rmap_walk()) are to be updated. This hurts scalability due
-> to coarse granularity of the lock. For instance, when multiple threads
-> invoke userfaultfd=E2=80=99s MOVE ioctl simultaneously to move distinct p=
-ages
-> from the same src VMA, they all contend for the corresponding
-> anon_vma=E2=80=99s lock. Field traces for arm64 android devices reveal ov=
-er
-> 30ms of uninterruptible sleep in the main UI thread, leading to janky
-> user interactions.
->
-> Among all rmap_walk() callers that don=E2=80=99t lock anon folios,
-> folio_referenced() is the most critical (others are
-> page_idle_clear_pte_refs(), damon_folio_young(), and
-> damon_folio_mkold()). The relevant code in folio_referenced() is:
->
-> if (!is_locked && (!folio_test_anon(folio) || folio_test_ksm(folio))) {
->         we_locked =3D folio_trylock(folio);
->         if (!we_locked)
->                 return 1;
-> }
->
-> It=E2=80=99s unclear why locking anon_vma exclusively (when updating
-> folio->mapping, like in uffd MOVE) is beneficial over walking rmap
-> with folio locked. It=E2=80=99s in the reclaim path, so should not be a
-> critical path that necessitates some special treatment, unless I=E2=80=99=
-m
-> missing something.
->
-> Therefore, I propose simplifying the locking mechanism by ensuring the
-> folio is locked before calling rmap_walk(). This helps avoid locking
-> anon_vma when updating folio->mapping, which, for instance, will help
-> eliminate the uninterruptible sleep observed in the field traces
-> mentioned earlier. Furthermore, it enables us to simplify the code in
-> folio_lock_anon_vma_read() by removing the re-check to ensure that the
-> field hasn=E2=80=99t changed under us.
-Hi Harry,
 
-Your comment [1] in the other thread was quite useful and also needed
-to be responded to. So bringing it here for continuing discussion.
+On Sun, 24 Aug 2025, Lance Yang wrote:
 
-It seems from your comment that you misunderstood my proposal. I am
-not suggesting replacing anon_vma lock with folio lock during rmap
-walk. Clearly, it is essential for all the reasons that you
-enumerated. My proposal is to lock anon folios during rmap_walk(),
-like file and KSM folios.
+> On 2025/8/24 08:47, Finn Thain wrote:
+> > 
+> > On Sun, 24 Aug 2025, kernel test robot wrote:
+> > 
+> >> All warnings (new ones prefixed by >>):
+> >>
+> >>     In file included from sound/soc/codecs/mt6660.c:15:
+> >>>> sound/soc/codecs/mt6660.h:28:1: warning: alignment 1 of 'struct
+> >>>> mt6660_chip' is less than 8 [-Wpacked-not-aligned]
+> >>        28 | };
+> >>           | ^
+> >>>> sound/soc/codecs/mt6660.h:25:22: warning: 'io_lock' offset 49 in 'struct
+> >>>> mt6660_chip' isn't aligned to 8 [-Wpacked-not-aligned]
+> >>        25 |         struct mutex io_lock;
+> >>           |                      ^~~~~~~
+> >>
+> > 
+> > Misalignment warnings like this one won't work if you just pick an
+> > alignment arbitrarily i.e. to suit whatever bitfield you happen to need.
+> 
+> Yes.
+> 
+> The build warnings reported by the test robot are exactly the kind of
+> unintended side effect I was concerned about. It confirms that forcing
+> alignment on a core structure like struct mutex breaks other parts of
+> the kernel that rely on packed structures ;)
+> 
 
-This helps in improving scalability (and also simplifying code in
-folio_lock_anon_vma_read()) as then we can serialize on folio lock
-instead of anon_vma lock when moving the folio to a different root
-anon_vma in folio_move_anon_rmap() [2].
+Sure, your patch broke the build. So why not write a better patch? You 
+don't need to align the struct, you need to align the lock, like I said 
+already.
 
-[1] https://lore.kernel.org/all/aKhIL3OguViS9myH@hyeyoo/
-[2] https://lore.kernel.org/all/e5d41fbe-a91b-9491-7b93-733f67e75a54@redhat=
-.com/
->
-> Thanks,
-> Lokesh
+> > 
+> > Instead, I think I would naturally align the actual locks, that is, 
+> > arch_spinlock_t and arch_rwlock_t in include/linux/spinlock_types*.h.
+> 
+> That's an interesting point. The blocker tracking mechanism currently 
+> operates on higher-level structures like struct mutex. Moving the type 
+> encoding down to the lowest-level locks would be a more complex and 
+> invasive change, likely beyond the scope of fixing this particular 
+> issue.
+> 
+
+I don't see why changing kernel struct layouts on m68k is particularly 
+invasive. Perhaps I'm missing something (?)
+
+> Looking further ahead, a better long-term solution might be to stop 
+> repurposing pointer bits altogether. We could add an explicit 
+> blocker_type field to task_struct to be used alongside the blocker 
+> field. That would be a much cleaner design. TODO +1 for that idea :)
+> 
+> So, let's drop the patch[1] that enforces alignment and go back to my 
+> initial proposal[2], which adjusts the runtime checks to gracefully 
+> handle unaligned pointers. That one is self-contained, has minimal 
+> impact, and is clearly the safer solution for now.
+> 
+> [1] https://lore.kernel.org/lkml/20250823074048.92498-1-lance.yang@linux.dev
+> [2] https://lore.kernel.org/lkml/20250823050036.7748-1-lance.yang@linux.dev
+> 
+
+I am willing to send a patch if it serves correctness and portability. So 
+you may wish to refrain from crippling your blocker tracking algorithm for 
+now.
 
