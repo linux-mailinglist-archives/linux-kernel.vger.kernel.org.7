@@ -1,136 +1,93 @@
-Return-Path: <linux-kernel+bounces-783542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 389ACB32ECC
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:28:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE196B32ED4
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1001189C6E2
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:28:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20764179EC7
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3844726AAAB;
-	Sun, 24 Aug 2025 09:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEBE2265631;
+	Sun, 24 Aug 2025 09:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l46VhBOe"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0K/RGGk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A18266584;
-	Sun, 24 Aug 2025 09:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22783262FC1;
+	Sun, 24 Aug 2025 09:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756027663; cv=none; b=l1V1MWbrYTV8G2aLbFxRXRtYi3rkFBb3vjm33FUvMC3Y08JP4KiJ2b1xPy771IREYNItgNuPWlLzkCdRP+Uzun4I2BcZKFIGUVNFz2W9Hr/ULUFUvqMvI+lBXkrDB2MljJbCYNrq0rRm9/xFgAYkguf3+WKzPMUnUj8cVcGdebA=
+	t=1756027762; cv=none; b=VpJi0IuOWmGmgllscwWGhU0yviIWhpR9XrXe/6HWvM3I7lf79YWSqUYAV2CSUCFSG+ir5dNGleolpovO8cM+2YMmwEIXwUYLRUTc0TW9ECGkoUGXGTXk0+hDKNU/DmJl86b1bFzK9dPVKcXm+lJVWZWpE3AA2vLBi/lGSu14oHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756027663; c=relaxed/simple;
-	bh=CGhXW5tXeDv53QOS8bvvPoirWCGA2+4uVX2vcW7fVz0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OIR2vjl7zRFx8acQcI/deLLIwi5lFwFFhWHQFzmke3c1bdDzAFbbP3zOsmW34eEurOabseCqKPxGC07vo3vBRP7aWr75pDftCUNcTXWsnDGAMXw3mnIZ3yUjdzZBf0OGLVtWRiAFMqCREFCxst1Pj35vKMlzOy0w7xrn7gMc0/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l46VhBOe; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61c638ab6c9so15627a12.1;
-        Sun, 24 Aug 2025 02:27:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756027660; x=1756632460; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6QAnF6RQJWxSSGLUa+yOoR8YIWrn+p1dbQGhI+0L21k=;
-        b=l46VhBOe6Hce5M3iBb1ZmeOs8JE3TxCEnXNgpVbMoX+FJURdVFijoPBciDs5AwUlyp
-         OnJhNIKfKwIgcAaVmDRdS05XfgB/WGRoUvOHrKRtWrhEFF+B5119a+Mhbwv1DNbFdNhZ
-         5oi935PPIWc/n/RTy7ewViHnT7Y5A3QTsYaJ49YIPGZgvHm6+RrewMESS1fpsNghjUBJ
-         u1B1nHUIlrBxE9wsRd7mC1arjc7qvuX+1s/xx2jBxpvnw4bRRoGVUKZEgvr+wWnlSp+m
-         GeYSIoWXs/dKYKcgfsO7ySq41eBIZQxDhsYaZT7QvifZZ74IyPmjuNmXdqF4sKq3TmPd
-         oZOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756027660; x=1756632460;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6QAnF6RQJWxSSGLUa+yOoR8YIWrn+p1dbQGhI+0L21k=;
-        b=tlAK+Hwpa2gugE5G8pDyveKSz8KpgHEEnhJ7WzyggwzvvPH/hefZGL5NssLi0NQHNu
-         RfdHAWdCmWQMJbGV73RSOPDU/4fK0YxNtbP7Iopx4Tfaf+9wqzRcnJ8pNsDQGpzVIev0
-         K2WbH+ny9qXK0sL69izsXrIHKK/yrEigp7qUtx8KThbztOaFzA2HPZy/r3lS9s2Ra40I
-         Q/Erzt513C/NSjm6EpSvVxbS7JhUm93EsSlfLmkMYcdKWQLseRY6ApaR4KXL+JD1DNxz
-         QfmXTtG4mvpOW/QejVoNwT7xNhhPYQhxvqITUOF4DxNDyZts5ImgKf95WHXAKz97YWCT
-         cVYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXfxm9i1pD9No9EsTac6pDMsNmT1eyFdIKV96YLwcXq4IZ/2VSURBAJG9GsmiQwuGLHyogw2JV8N0xDuY8@vger.kernel.org, AJvYcCWp3P/fCLdcelwU+L9OXrujyp+q7gY/B68GY7Y340iTlLSVdNN8HV2B6j3ey4TjpyzhOmloTWKpSw/N@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZDWFHm9d7Uo7YSnwcsg/Fubr9ItLrg/NQe4kb/9oNknzmOMom
-	+E3zd3Rhdm6EYRwXizIBFhQslQkT3px0NfJPqJT7WRa/P9R23cr79ZsB
-X-Gm-Gg: ASbGnctpnlaVx4o1nzqttfaNbA1y9WLdZQ1YZojlBQ1/sc0L98Luou/TEVkNILWV1BX
-	lX1oofhKdCZb0Zt6UssV46kS+sS9DF7EGN7FVr1nzQVVmf/wDatV+QLK8T9QMpf5+YjuxfvKdvg
-	U4C2c5wySWBdTUSWcSoQ12TUb2Nf1lsQfYdOPI5JId/EU5nRlX1rLJTgbfUJzII16o5/dg+CDDY
-	8Qa/XoP+3Z3SBbWqbCPKKFLxCazaHVTo7ay6yoUWaowYyAzCTGgYPgBMBgIZrBILt/wbfFKXVlx
-	It2JA3h3P26VYZcsmoEWTfxN4BOXInEZQyK1y+/Hmoc0vjHBiuFAM/yycEgO69tDD2wIFJ3gvyU
-	VZn51XT4sDJN3QaXtD/H8hv8A
-X-Google-Smtp-Source: AGHT+IFRDj2zIEpy57OjDTZdxkDbqj2s6MYrtw/nnV23mOyecpb6Y/xhuaCvm5jFN32fJDOfIoGI+Q==
-X-Received: by 2002:a05:6402:27d1:b0:61c:5272:a739 with SMTP id 4fb4d7f45d1cf-61c5272a7e4mr1604664a12.2.1756027660198;
-        Sun, 24 Aug 2025 02:27:40 -0700 (PDT)
-Received: from xeon.. ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c316f503dsm3035391a12.31.2025.08.24.02.27.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Aug 2025 02:27:39 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Maxim Schwalm <maxim.schwalm@gmail.com>
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3 RESEND] drm/bridge: simple-bridge: Add support for MStar TSUMU88ADT3-LF-1
-Date: Sun, 24 Aug 2025 12:27:28 +0300
-Message-ID: <20250824092728.105643-4-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250824092728.105643-1-clamor95@gmail.com>
-References: <20250824092728.105643-1-clamor95@gmail.com>
+	s=arc-20240116; t=1756027762; c=relaxed/simple;
+	bh=cSkJEEyBPIJyXDtyo5nFOPAKxDPEKL1H9DoVn2/BkYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEhB9yKxhg5JJV6oGbsJ0QA72KU2VA0CQ25ruMMVt3pozrXf76AYP4CHU7RhE/Bj7pw8kxdy8ianVvopjUy8WYz9FgKoPpEyqAkj9O3FtuvduZqtsrWCpfbU0PFm4D9MnDNv0K1FIdDNMIHTdpJAo5ftLR2Xt/X9N8hPdfZ/iMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0K/RGGk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B8CEC4CEEB;
+	Sun, 24 Aug 2025 09:29:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756027760;
+	bh=cSkJEEyBPIJyXDtyo5nFOPAKxDPEKL1H9DoVn2/BkYM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I0K/RGGkV+/PTur/t2+0HGKOunPAX7DgRFsVTRHVbKvqtegKwGTKkRtJibQHt8n5e
+	 wSo3KW86pk2sxa5/+CkP2HF+QAN4eXctfbxo+/FgBeTpo2YtNBfP6rT4naaByO0LAW
+	 1UpfkhcS6nnUprSbcjgCbv+kgcRdC9WE/XzFkt/Ywbo25UPYrEDMHJtWCIectLp3rr
+	 9Cci2MBHRspPJ4pdCCpjEDfpv6xj8ZDtmih4EUiJmLW65yHyL15Cz4PyHZtUcEbrks
+	 5P+/iDt7MaFQCVPf3sn1HnPQZwVv0s0WSD5ifw3nmQmF3bKlc3f+88LdtIfQBwHzWS
+	 3I1yDp4gBDL1A==
+Date: Sun, 24 Aug 2025 11:29:18 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+Cc: mani@kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com, 
+	bvanassche@acm.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	andersson@kernel.org, konradybcio@kernel.org, agross@kernel.org, 
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, linux-arm-msm@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 1/4] ufs: dt-bindings: Document gear and rate limit
+ properties
+Message-ID: <20250824-elated-granite-leopard-5633c7@kuoka>
+References: <20250821101609.20235-1-quic_rdwivedi@quicinc.com>
+ <20250821101609.20235-2-quic_rdwivedi@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250821101609.20235-2-quic_rdwivedi@quicinc.com>
 
-From: Maxim Schwalm <maxim.schwalm@gmail.com>
+On Thu, Aug 21, 2025 at 03:46:06PM +0530, Ram Kumar Dwivedi wrote:
+> +  limit-hs-gear:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 1
+> +    maximum: 5
 
-A simple HDMI bridge used in ASUS Transformer AiO P1801-T.
+default:
 
-Signed-off-by: Maxim Schwalm <maxim.schwalm@gmail.com>
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Reviewed-by: Robert Foss <rfoss@kernel.org>
----
- drivers/gpu/drm/bridge/simple-bridge.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> +    description:
+> +      Restricts the maximum HS gear used in both TX and RX directions,
+> +      typically for hardware or power constraints in automotive use cases.
+> +
+> +  limit-rate:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [1, 2]
 
-diff --git a/drivers/gpu/drm/bridge/simple-bridge.c b/drivers/gpu/drm/bridge/simple-bridge.c
-index ab0b0e36e97a..948300378cb0 100644
---- a/drivers/gpu/drm/bridge/simple-bridge.c
-+++ b/drivers/gpu/drm/bridge/simple-bridge.c
-@@ -260,6 +260,11 @@ static const struct of_device_id simple_bridge_match[] = {
- 			.timings = &default_bridge_timings,
- 			.connector_type = DRM_MODE_CONNECTOR_VGA,
- 		},
-+	}, {
-+		.compatible = "mstar,tsumu88adt3-lf-1",
-+		.data = &(const struct simple_bridge_info) {
-+			.connector_type = DRM_MODE_CONNECTOR_HDMIA,
-+		},
- 	}, {
- 		.compatible = "ti,opa362",
- 		.data = &(const struct simple_bridge_info) {
--- 
-2.43.0
+default:
+
+> +    description:
+> +      Restricts the UFS controller to Rate A (1) or Rate B (2) for both
+
+Is 1 and 2 known in UFS spec? Feels like you wanted here string for 'a'
+and 'b'.
+
+Best regards,
+Krzysztof
 
 
