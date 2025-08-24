@@ -1,123 +1,214 @@
-Return-Path: <linux-kernel+bounces-783598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E487BB32F75
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:32:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C69B0B32F79
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:34:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86D7C3BB4C3
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:32:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D93B2A06CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1A82D59FA;
-	Sun, 24 Aug 2025 11:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B842D6E67;
+	Sun, 24 Aug 2025 11:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dj3zOQ6I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JPSBCgME"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5205238150
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 11:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10862030A;
+	Sun, 24 Aug 2025 11:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756035117; cv=none; b=GX2KyVfqMW8QgxzDIpzrTD5zijgZsgI9JVWHaCGMRK9lYWb2mIGvl2kGZdaxCQEH3gmLdOSH15RukVESS3WiLYL+w1YFJ/PPvXaI5iwdcFcgt7YwLSWQ/pQpeXND5tBqXb6JkIwxPbEC7LqisB8gnm40WPU0KHdGAh9PfXxJGGI=
+	t=1756035273; cv=none; b=WELmJjcAJXP4wqJXwWBF5NOxZ8AUP4C8EPNUXGgDH4b8aeJbhmPpEcSip947VqU26sAcb80tdq1uXvicihNzaaqMaGovY70M1gY9dOX3mNlBo/hVBRIDMBzxQlXxTvo5pCn1uBZ4HoyBK0FU5xp8U06He7GYhCC/JLAc1h32ZfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756035117; c=relaxed/simple;
-	bh=cpyFPlB8MnUUXTQVVcPPuBYODuS/NKNu8RdSa260DpU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZfC75q3smLH9GuHmdAMXSYfMofow+zkhNca+BoiPkCSBLP/XJ+vzbOCMkHehOqhTolj0eBWDMH+AGURWWUlQX7NgwcuIcNCVR9azEnvQTKhSDMRfsT3/FXmwtmbU5lnfFDZE7pfdKzuNZbAjuO1zdaODcL3+9TZ0QQlrRF3Da9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dj3zOQ6I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5402FC4CEEB;
-	Sun, 24 Aug 2025 11:31:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756035117;
-	bh=cpyFPlB8MnUUXTQVVcPPuBYODuS/NKNu8RdSa260DpU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Dj3zOQ6IxeNsZy334vBiSNJmHSxBKy1UbLwr4+y18jjpoMQ+WaNiEPlIjreaS2fdj
-	 TqnIXz8oWJMlXuY5oTiJnlahauO7Q0Jg7FemWGn+JzkKMTbhCODOCltz03OiwEMh5A
-	 7HkpOCG/iFBMrOHpXH+EMzyWNIG3rsC3BqxMaU2tfxzHKR7SHyrZImfOhQpBuFkNKw
-	 k8dEupg3/XTd2kiSgpzuP3DXMcjshU/HJQzUN4u43UdQrNdCKXCzHQ6lbfbcKpbF4j
-	 H6a6JE9SpapsvvysX4AuFXTKZ5TvqPGxq8d1tm3BdshIC2cIXYa0IDG+uBQyOJuqi/
-	 is6/b0vmNy47w==
-Message-ID: <9a0bbf17-2b20-48fb-88f0-279363639d24@kernel.org>
-Date: Sun, 24 Aug 2025 13:31:53 +0200
+	s=arc-20240116; t=1756035273; c=relaxed/simple;
+	bh=aAXW/pvfgzvQRrGw0vNyRlHaMorjDabcjNYrZbfRm6o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HZph6xjR5YBUPRELX/C3zVbW+52BmNKmyWmdMTR/s5U/+wAx/bXLDfi+I3aJfzAFXMCYBkDdX9UFXlFkQA3tmV6dST+k9B2/gKLQheprYBOKAaM9Ep2TUEy1UKutay5rwWYzC21ortDYtuBXefUJKtw+ujQUNmrgv/FddYeIyTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JPSBCgME; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45a1b04f8b5so21563285e9.1;
+        Sun, 24 Aug 2025 04:34:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756035270; x=1756640070; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tHzHrkeUJZB91+EOyFnNdhfvrRue2RscyP5h4hOzWNQ=;
+        b=JPSBCgMEtGH4+y0RSrwwWMb/qz1PVARifvp7YMeLn6CNDE2q5xnCdKszytmdxRJEK3
+         sqbRYeHtfpyEPzLhwdZxnAMSlat897pSalGRep0H6+niDSyrqYC9PYwsyu8B1fL3pyhM
+         7yOnQJ6j8p5WLe0ocRnELw5csKt7pfzzGblp+e4nOEWkEEJpkgpQVPtJEIpuO8Ie+ble
+         5jFTdALSvPIliHhUPF6HZjvW3WjvpbBMXSfoZzTw54BDzCH2SzFP4qngB5O6l9Od1Atq
+         rssCFeyaDMILWvQ+lSMa87fnSmDN4T9mB0nzNpaAewhGEGyb6aFiOpauX8JeR1IiP3Es
+         NzNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756035270; x=1756640070;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tHzHrkeUJZB91+EOyFnNdhfvrRue2RscyP5h4hOzWNQ=;
+        b=enqhzoYVlL8aDiQdp5maRJDEAWjWi76W9WczW3Njr1SjhLSY163i+kJxbjCnwLiQlw
+         y7IDhYO+Lzmtf9Zq68zRVeovi+MqpxMMAagtFPhdeFeJMNHFQnMnWLXhFg+M/cTR8PWk
+         nFSDzJDr/lKsf50pYuRpG3SquY95/jHdaqvbjt38cbjmeo5xHta2TupOqBgchmcoiy7W
+         oJQ8mxcmI2ROqhREehjN9gkGexpSnnqitAWLfY9NsIoQnGgZAjW0Z3+9Ed7PzXKoMplo
+         8+T8Or6pl9IOTRalgxb9zivNkEyWT2vw7zoIVGyMacstkatIXv1n5cCCMwRv9eR0P15D
+         IQnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwjGbhG2Ytm8Kt2VjeNuTc0VSWi+qkD229Cb660XETt36ycg0LZwi6+50KB0WY5LcCLMbnf25z2XG1@vger.kernel.org, AJvYcCVdkx2VBvxQgyvnT/wKV1R2YYoYHAwa6wOK/Fhj5T+yBd2mWfsYOc/oqMhAaOTrZcifYcmrTI/ZeDghGd6z@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnwa4+ogVyMzoSXsJHqLKdknrZOKuOOP7KRYiC/CCqE70GLWhs
+	6hvhLTfYyq+05mryHdWmuDfJSnyyWkdWH3vDQU4qZHfwhzF0AowLmu66
+X-Gm-Gg: ASbGncsVhES8HSyZ0q2Unr6I6JeeUTLadiBfftbuhWHufP9NPtfAxeO+fbvaitYN3Ug
+	acpNHhOHsP8dqKhJGdln674QrRGHRJcc0u5QgGEpch1+Q1WSCUFSgCdr4kUF4fywfKic38W71AM
+	EdWs0SCuiWvdWzAosSwE6c2zNApIUAiwAOuGJse5mgBfn46EKgjy+1x8SNSYu4wXChcIMJ3iD3R
+	hAwFhGLHKkpTlYjKHeCq/TdMFQFrZsdD9OKF0e6vrwY2fXUo6cC9Pk8Q02DokjbDpZgY7+z2p1P
+	Y+efYsV1hjjtdz9EUZussPMZm1hmkFIdk3E7oDtZX1Ki9NYhKJUfOQxTIDnwEnUiIww1/Y/OWbq
+	X4cGueFEWJciKMzESP9HYinzUBdVtB3KryuXdOqaEnU3/34xQ8oO/rmI=
+X-Google-Smtp-Source: AGHT+IGW8RWt1Fjll6gX0bUMzFoYWNNuwjmNyRN+lbxdMnJ9SG0BATaG/HcklxQmaadQOSxr0iMzcg==
+X-Received: by 2002:a05:600c:45d0:b0:442:e9eb:1b48 with SMTP id 5b1f17b1804b1-45b517ca4camr91812925e9.24.1756035269984;
+        Sun, 24 Aug 2025 04:34:29 -0700 (PDT)
+Received: from builder.. (197-10-142-46.pool.kielnet.net. [46.142.10.197])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b5757453fsm66470895e9.14.2025.08.24.04.34.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Aug 2025 04:34:29 -0700 (PDT)
+From: Jonas Jelonek <jelonek.jonas@gmail.com>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-i2c@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Markus Stockhausen <markus.stockhausen@gmx.de>,
+	Sven Eckelmann <sven@narfation.org>,
+	Harshal Gohel <hg@simonwunderlich.de>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Jonas Jelonek <jelonek.jonas@gmail.com>
+Subject: [PATCH v6 00/12] i2c: fix, rework and extend RTL9300 I2C driver
+Date: Sun, 24 Aug 2025 11:33:36 +0000
+Message-ID: <20250824113348.263475-1-jelonek.jonas@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: defconfig: Enable STMicroelectronics STM32 DMA3
- support
-To: Patrice Chotard <patrice.chotard@foss.st.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250821-upstream_defconfig_enable_stm32_dma3-v1-1-d9c1b71883d9@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250821-upstream_defconfig_enable_stm32_dma3-v1-1-d9c1b71883d9@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 21/08/2025 11:14, Patrice Chotard wrote:
-> Enable STMicroelectronics STM32 DMA3 support as module.
-> STM32 DMA3 is used among others by STM32 Octo SPI driver on
-> STM32MP257F-EV1 board.
-> 
-> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
-> ---
+This patch series for the RTL9300 I2C driver:
+    - fixes issues, one of them in some cases causing data corruption
+    - reworks significant parts of the current implementation
+    - add support for the (quite similar) RTL9310 series
 
-You did not Cc all your maintainers.
+Goal of this is to fix critical issues, improve overall code quality and
+simplify maintainance and further extension of the driver. Moreover, it
+should be brought on par feature-wise with OpenWrt's downstream driver
+to be able to drop the downstream version.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The first three patches address bugs in the current implementation, on
+of them being critical and causing data corruption under certain
+circumstances. Although the hardware doesn't support SMBus Quick Write,
+the driver claims to support it with a broken implementation. This
+causes to execute a 16-byte Write instead of a Quick Write, e.g. causing
+corruption on not-write-protected SFP EEPROMs and soft-bricking them.
+These three patches are also sent to 'stable' because they fix critical
+issues.
 
-Best regards,
-Krzysztof
+Subsequent patches introduce various smaller and bigger enhancements.
+These include:
+    - use regmap_field + its API instead of macros + GENMASK + shifts
+    - refactor xfer handling
+    - variable renaming to avoid confusion
+    - move some register operations, calling them somewhere else and
+      less frequently
+    - use guarded mutex instead of explicit mutex_lock/_unlock to
+      simplify control flow
+
+Finally, the last two patches add support for RTL9310 (mango) series to
+the driver and adjust the dt-bindings accordingly.
+
+Simple operations have been tested successfully on:
+    - Zyxel XGS1210-12 (RTL9302B)
+    - TP-Link TL-ST1008F v2.0 (RTL9303)
+    - Netgear MS510TXM (RTL9313)
+
+with Byte-Read, Word-Read and I2C-Block-Read. Other operations need
+testing from people with devices available.
+
+Compile-tested with Linux, run-tested as backport in OpenWrt on the
+aforementioned devices.
+
+--
+Changelog
+
+v6: - patch 'i2c: rtl9300: check if xfer length is valid'
+        - renamed to 'ensure data length is within supported range'
+        - added I2C quirk for zero length as suggested by Wolfram Sang
+    - reordered patches to have backport-worthy fixes first and
+      enhancements/others after
+        - patches 'fix channel number bound check', 'check if xfer
+          length is valid' and 'remove SMBus Quick operation support'
+          were moved before all others
+	- added CC: stable to first three patches
+    - fixed commit message of 'dt-bindings: i2c: realtek,rtl9301-i2c:
+      extend for RTL9310 support'
+    - added a patch to use guard(mutex) instead of explicit lock/unlock
+      as suggested by Markus Elfring
+    - added Reviewed-by: Rob Herring ... to dt-bindings patches
+    - added Tested-by: Sven Eckelmann ... to all patches (except the
+      new patch in this version)
+
+v5: - added more patches to fix further issues/do further cleanup
+        - remove SMBus Quick support (not supported by hardware)
+        - move setting SCL frequency to config_io
+        - only set read message format (RD_MODE) once on probing
+        - add check to avoid len = 0 being allowed as length
+    - adjusted cover letter
+
+v4: - fixed an incorrect check for number of channels which was already
+      present in original code
+
+v3: - narrowed vendor property per variant to be required only
+      for RTL9310
+    - narrowed usable child-node i2c addresses per variant
+    - no changes to driver patches
+
+v2: - Patch 1:
+        - adjusted commit message
+        - retained Tested-By and Reviewed-By from Chris Packham
+    - Patch 2:
+        - simplified check as suggested by Markus Stockhausen
+        - fixed commit message
+    - Patch 3 (all requested by Krzysztof):
+        - use vendor property instead of generic
+        - add front compatibles to make binding complete
+        - fix commit message
+    - reordered patches, dt-bindings patch now comes before its 'user'
+    - properly add device-tree list and relevant maintainers to To/Cc
+
+---
+Jonas Jelonek (12):
+  i2c: rtl9300: fix channel number bound check
+  i2c: rtl9300: ensure data length is within supported range
+  i2c: rtl9300: remove broken SMBus Quick operation support
+  i2c: rtl9300: use regmap fields and API for registers
+  dt-bindings: i2c: realtek,rtl9301-i2c: fix wording and typos
+  i2c: rtl9300: rename internal sda_pin to sda_num
+  i2c: rtl9300: move setting SCL frequency to config_io
+  i2c: rtl9300: do not set read mode on every transfer
+  i2c: rtl9300: separate xfer configuration and execution
+  i2c: rtl9300: use scoped guard instead of explicit lock/unlock
+  dt-bindings: i2c: realtek,rtl9301-i2c: extend for RTL9310 support
+  i2c: rtl9300: add support for RTL9310 I2C controller
+
+ .../bindings/i2c/realtek,rtl9301-i2c.yaml     |  45 +-
+ drivers/i2c/busses/i2c-rtl9300.c              | 488 ++++++++++--------
+ 2 files changed, 325 insertions(+), 208 deletions(-)
+
+
+base-commit: 57774430864b721082b9bafd17fc839f31251c7b
+-- 
+2.48.1
+
 
