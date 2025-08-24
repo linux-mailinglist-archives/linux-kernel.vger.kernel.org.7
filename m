@@ -1,116 +1,120 @@
-Return-Path: <linux-kernel+bounces-783753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6FFEB331F9
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 20:14:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F70BB331FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 20:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB747169E72
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:14:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F1962020BC
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBDC2DFA5B;
-	Sun, 24 Aug 2025 18:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98FF220680;
+	Sun, 24 Aug 2025 18:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="dgANrgpX"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OAoGvAHR"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66391FE45A;
-	Sun, 24 Aug 2025 18:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFCF14A8B;
+	Sun, 24 Aug 2025 18:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756059273; cv=none; b=aCk2iy69h2lkfRNrQOrk4Kh8MyDaU6o8NlSU4vh9g72IHLfnfm7kDRST+dJ6PTQ2B4fTwJuIT3/ZJAtoqxnyC8u/u/w7IkD79PLnmpLEC9+jzbFtPXUCguv8xEQIhAL0VZLGj83eXMqeQZgFnUlJyk2eI+HJAEe1CVVmb0Zwg/s=
+	t=1756059447; cv=none; b=B48uQnsCxpEl2kTRGMvxswCtgZgpTBJ+iM3h1KUXNFfYl1cIFMFb0tTbL32MLbV6nlpD565Kmzub3mwk+zIP1hOshpSw6xbjgNvEBuq1BN0MZ/0v9C5KtVyFfSPis/MXaSsOYTWkyy+KHU0hZ5yiQk//W5wI2TXMbBESRueaQpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756059273; c=relaxed/simple;
-	bh=TJNJUs7BdfKwvqPlqwt1ikUMYYrNieg0cHzh8INfazE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WvV2v4Zo6GolzU3mWnWLIEetFvvIfIaaZO1un7xomuIpXDA19b1sTGZXr6oYtaYYbeH/GcBWj6n/eWOXju/niT5FmoqeubiATECQY2xy2Qs89CRdtPwrhF5vRtfpZR3ZH/9u3qrXB156iQynbfLwQadFY4nPcRSDPDrnDMKJngI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=dgANrgpX; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=NWaOUvxnDMTU8wm7A+2zDGkNmWknEZ9aGJE9ozOoOQc=; b=dgANrgpXkYG0M5WRYaYXGn8w/3
-	1KdF1ZKUHDUv09zoDnXgOvIRyyV89H9RYQuhT8S4V5VbrzkwtYOzwwPabExfUQGgFd7ZfCHNV7Ic2
-	fOhWc6CYkOEozcpBA8HxquEnrX9aTjXL0ro5Aq9bMb2cPcyQtT/zKWQdJs23mifrYquAwPbTs2qpR
-	dGSyAUxFz45swssGl1QCmlJY297u7m416xNVoEwMUj097AoOTLh2M9jfIHb0PATydNrPrzjBJc+xZ
-	I0gbNfrX4QpKYAGRFBdHePCK/BlxiT2ZLnKgiMSdfoE3k7EplyYmeUYI9VvRyRzzTLyfynV/Ajekr
-	DW4KLfXA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:35892)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uqFET-000000005hC-1nJE;
-	Sun, 24 Aug 2025 19:14:21 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uqFEQ-000000007EV-2Xov;
-	Sun, 24 Aug 2025 19:14:18 +0100
-Date: Sun, 24 Aug 2025 19:14:18 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Yangfl <mmyangfl@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 3/3] net: dsa: yt921x: Add support for
- Motorcomm YT921x
-Message-ID: <aKtWej0nymW-baTC@shell.armlinux.org.uk>
-References: <20250824005116.2434998-1-mmyangfl@gmail.com>
- <20250824005116.2434998-4-mmyangfl@gmail.com>
- <ad61c240-eee3-4db4-b03e-de07f3efba12@lunn.ch>
- <CAAXyoMP-Z8aYTSZwqJpDYRVcYQ9fzEgmDuAbQd=UEGp+o5Fdjg@mail.gmail.com>
+	s=arc-20240116; t=1756059447; c=relaxed/simple;
+	bh=Ah+myLjw6RinHRYk5TWerMOeO9as7TkywbCfv0F77X0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E4mpAY4OWCJZ+4LyPjwXfmzooQ/VwSnupyxGNKyIxzIbOi+39YQatQytQZDrnwKp3f2iq0HfJjCdbkVQ4OCNeONbmqp1zKKb3QRJSx77wYDc4tzqJen5qtXvDPbARDlF1nhHYeQP+Y6RcUOgENv773rHR4a3+vhj2uyRIp8maik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OAoGvAHR; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57OHJIua015812;
+	Sun, 24 Aug 2025 18:17:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=rgtPlEuJvshUpOMZGc74jTOEGQwjB
+	5yqmoGMZPIu8sw=; b=OAoGvAHRH8H1wABF0qg2Mo/ifbPjQPiV5Q1huWJ4hp8aL
+	ye9PQ9gQ9hjBeHxci8A75lgCRmaou34iJuXQeDkWldgcqDHn0Mjhy24KLrXtUlEs
+	qtBYcX/70HXQ7dt6NEgobz8Pz6spgUxgKUS/x9UhyMAtUfD9T9vmcehFEs2YxXoD
+	VZH34oWHqto8NIIh1SQU5Jtn9hf0IyoONKFAqmdKdYG2lonXdtWhPJG9CDGKvn6h
+	4IHyNdqNvcYqEV8zKlRr9BJm2SwvWf/r0TkfQtpg30OeVNNha6XyMh3vxiVya+Rf
+	xOv7X4gGSlJN9ltslTqCayTC0Lf+qQkGWYOl/RhJw==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48q5pt15x0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 24 Aug 2025 18:17:13 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57OE1DK2027171;
+	Sun, 24 Aug 2025 18:17:12 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48q437cexr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 24 Aug 2025 18:17:12 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57OIHC3L038105;
+	Sun, 24 Aug 2025 18:17:12 GMT
+Received: from ca-dev110.us.oracle.com (ca-dev110.us.oracle.com [10.129.136.45])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 48q437cex9-1;
+	Sun, 24 Aug 2025 18:17:12 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: seanjc@google.com, pbonzini@redhat.com, shuah@kernel.org,
+        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: selftests: Fix typo in hyperv cpuid test message
+Date: Sun, 24 Aug 2025 11:16:40 -0700
+Message-ID: <20250824181642.629297-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAXyoMP-Z8aYTSZwqJpDYRVcYQ9fzEgmDuAbQd=UEGp+o5Fdjg@mail.gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-24_06,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 malwarescore=0
+ adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2508240173
+X-Proofpoint-ORIG-GUID: CgbUzOsWAuYbnk2x4nPdcDfeiH1slfiF
+X-Proofpoint-GUID: CgbUzOsWAuYbnk2x4nPdcDfeiH1slfiF
+X-Authority-Analysis: v=2.4 cv=EcXIQOmC c=1 sm=1 tr=0 ts=68ab5729 cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=2OwXVqhp2XgA:10 a=yPCof4ZbAAAA:8 a=7ZiSxbHINJ-xqPdSBcQA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMCBTYWx0ZWRfXyyfasm8CMFWH
+ 0qB4Z/4BXnp5kjV5jvzcbWYe34COA0Gw+t71t5wDXLMJjKnJD8C6KdcoVObuRz3heovNJCNWvvg
+ dn70O+vOlFp4KdQ4dy3N/E+i9dbJvR5NB2/LuzV6r+ywU7+FonOxRob3ImMbUlQ8R22VPsxZGXk
+ Ui2v4wsYCKKLvoS4MMHCOLmHUMs4GlfMgEKUzVZAT2VcvtNIuhJTKLBKUooRvvq0d/63f2uEy/p
+ mhRT0V1gXVEbH97Wg5H+TU4jsJK0XetsqndyeW8KZQiJj/dZeGX+znCWIWI9BXkqOi193HacWB7
+ ePyU+Tf3hR4UzKCO8EXzSfe/R2YSM1+zKTiThdGQe+zQR4zoicbV/tG/AdwdGwS5xTncBhRLqrC
+ 0CTyGir3
 
-On Mon, Aug 25, 2025 at 12:38:20AM +0800, Yangfl wrote:
-> They are used in phylink_get_caps(), since I don't want to declare a
-> port which we know it does not exist on some chips. But the info_* set
-> might be inlined and removed since it is not used elsewhere.
+Fix a typo in hyperv_cpuid.c test assertion log:
+replace "our of supported range" -> "out of supported range".
 
-The problem is... if you have a port in 0..N that DSA thinks should be
-used, but is neither internal or external, DSA's initialisation of it
-will fail, because without any caps declared for it, phylink_create()
-will return an error, causing dsa_port_phylink_create() to fail,
-dsa_shared_port_phylink_register() or dsa_user_phy_setup(),
-dsa_shared_port_link_register_of() or dsa_user_create()... etc. It
-eventually gets propagated up causing the entire switch probe to fail.
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+---
+ tools/testing/selftests/kvm/x86/hyperv_cpuid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Again... read the code!
-
-> > I don't understand the name _burst here? Why is it called
-> > that. Looking at other drivers, _u32 would be more common, especially
-> > if you have functions to read a _u16, _u8 etc.
-> 
-> They are locked wrappers for their unlocked counterparts. I'd like to
-> name the unlocked versions __yt921x_smi_read just like __mdiobus_read,
-> but that was turned down in the previous version, so I have to give
-> the locked versions a stranger marker since we use unlocked versions
-> more often.
-
-Who turned it down, and what reason did they give, given that it's an
-established pattern in the phylib, mdiobus and mdiodev APIs.
-
+diff --git a/tools/testing/selftests/kvm/x86/hyperv_cpuid.c b/tools/testing/selftests/kvm/x86/hyperv_cpuid.c
+index c863a689aa985..3c21af811d8f1 100644
+--- a/tools/testing/selftests/kvm/x86/hyperv_cpuid.c
++++ b/tools/testing/selftests/kvm/x86/hyperv_cpuid.c
+@@ -45,7 +45,7 @@ static void test_hv_cpuid(struct kvm_vcpu *vcpu, bool evmcs_expected)
+ 
+ 		TEST_ASSERT((entry->function >= 0x40000000) &&
+ 			    (entry->function <= 0x40000082),
+-			    "function %x is our of supported range",
++			    "function %x is out of supported range",
+ 			    entry->function);
+ 
+ 		TEST_ASSERT(entry->index == 0,
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.50.1
+
 
