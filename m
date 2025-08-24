@@ -1,122 +1,125 @@
-Return-Path: <linux-kernel+bounces-783469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5BA4B32E01
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:38:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 387A8B32E04
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 996D73BC0B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 07:38:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C749F3BDEF6
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 07:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C2524C664;
-	Sun, 24 Aug 2025 07:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC0324CEEA;
+	Sun, 24 Aug 2025 07:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bcc.bai.ne.jp header.i=@bcc.bai.ne.jp header.b="e2L96bCA"
-Received: from rmx-b.mailgw.jp (smx-b.mailgw.jp [210.171.6.216])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLBsysUp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C7524467B;
-	Sun, 24 Aug 2025 07:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.6.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F31417A31B;
+	Sun, 24 Aug 2025 07:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756021108; cv=none; b=MKlFuCtsc0cd/GxxQw2v+FS7SnZsfqEvYzz/1skEvanvy/rSq0Wq9CvPjoaVDDBlnzUoe9HN1ZhuID0roMhmmupYcCJlO2twalNUUb6UGfgl/YFiMnATeiqvxkPhEttL9Uxb1RV+fphpFORKtDF0nuQeI1FNQYwoP6V+/xWRBh0=
+	t=1756021375; cv=none; b=lPKwV2EhKB5ccyS6kt3PdGWLfcB/zHUVdxlAWnG7um2g/Lgb9wpqwhIDcJhWWBJLOY8bhmaUZeXNFMFZzlhrXzy4c0KbuciB9DgdUjpcWijHW43oQtPTqks6pY/l8uPJmY23OLQgT/R0D+hXPRYKwULkFCEH71LKkAPZbuYtBi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756021108; c=relaxed/simple;
-	bh=iDdCpFyWd7epqUGs66dyAmaZv0TFETT0aH5mRBkakJQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KwMtn8veZUpJcYGv2YnkQ7LycXJsc9ADmLWk6sexfqibcrzCggF2I7dUDoRcg4xJyewPx4+x9+uf6k+jQorf3tTpVbwqeeGZ57vJyfTXm5Du8ejIP+pmQMyOR5ElypIVNogS0ZmsmUndgRn04MaM3wCT4gKamU1aJ+LBgUMiBCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bcc.bai.ne.jp; spf=pass smtp.mailfrom=bcc.bai.ne.jp; dkim=pass (2048-bit key) header.d=bcc.bai.ne.jp header.i=@bcc.bai.ne.jp header.b=e2L96bCA; arc=none smtp.client-ip=210.171.6.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bcc.bai.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bcc.bai.ne.jp
-Received: from bccml.bai.ne.jp (bccml-a.bai.ne.jp [210.171.3.161])
-	by rmx-b.mailgw.jp  with ESMTP id 57O7bqps028395-57O7bqpt028395;
-	Sun, 24 Aug 2025 16:37:52 +0900
-Received: from [192.168.11.8] (bai859bcd79.bai.ne.jp [133.155.205.121])
-	by bccml.bai.ne.jp (Postfix) with ESMTPA id 9DF3781AA6;
-	Sun, 24 Aug 2025 16:37:51 +0900 (JST)
-Message-ID: <5c5e6fe7-866c-4b79-bf52-35a393fbeb3d@bcc.bai.ne.jp>
-Date: Sun, 24 Aug 2025 16:37:51 +0900
+	s=arc-20240116; t=1756021375; c=relaxed/simple;
+	bh=QHQcKCwQEjDTksAQ4PHYojdmYvMup5UJgKW3z2KPdNQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=G3d5pbaHZnQ5N5IFdREf+Q2VQLKv9Nqvy+QKrC87v3FQGp9y2YapEmtDkZdzUF++XZoF5h8AilhHdWJSFUjl4wfIjBbGqibxhSW/hGY0lsuMEm0raNvFMH7qhNcjshdWrQ3PmtwzzYwk/vW0dnzL3N8lMPfDM4cfXanDG3ayGGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLBsysUp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E3A7C4CEEB;
+	Sun, 24 Aug 2025 07:42:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756021375;
+	bh=QHQcKCwQEjDTksAQ4PHYojdmYvMup5UJgKW3z2KPdNQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bLBsysUp7pIvrQzQFnkBVz2soSqLY5115ovNpxDnKCvMPs2DC/B1TeZs/94MPqTnV
+	 KMCaM3mhYtliSc01guM+nIA59HCzZfruZYjmAHjqPaMArDD74rWjboPq0fddA/t99F
+	 yCTLkzMQ9So3cOvxJxe5A4bp6I9XOSSAKVw1qXp3S32oY0tpMu6lbdeLYuFF7mHmW8
+	 AaQJGA/2qBag3rIrfbqrEqNSqmZfPTu/cgcdAIiKhschKK3d42c9ydDKfekXQWmV12
+	 19elIJ4x02lqQBF4qyiX+nXJ73RnUlmISc4DX8WBzpLufyHDVRqatj0nm4KsKNKkd0
+	 qMpSi7o0j/PwA==
+From: William Breathitt Gray <wbg@kernel.org>
+To: Marcos Del Sol Vives <marcos@orca.pet>
+Cc: William Breathitt Gray <wbg@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Michael Walle <mwalle@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-gpio@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] gpio: vortex: add new GPIO device driver
+Date: Sun, 24 Aug 2025 16:42:39 +0900
+Message-ID: <20250824074243.416291-1-wbg@kernel.org>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250822135816.739582-3-marcos@orca.pet>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rm64: dts: rockchip: Enables sound output from the audio
- jack on OrangePI5 Plus
-To: Maud Spierings <maud_spierings@hotmail.com>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de,
- krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-sound@vger.kernel.org, robh@kernel.org
-References: <20250821041555.4781-2-opi5plus@bcc.bai.ne.jp>
- <AM7P189MB1009A6BCD143F9BE5C3341FAE33CA@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
-Content-Language: en-US
-From: Hide Hako <opi5plus@bcc.bai.ne.jp>
-In-Reply-To: <AM7P189MB1009A6BCD143F9BE5C3341FAE33CA@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2134; i=wbg@kernel.org; h=from:subject; bh=QHQcKCwQEjDTksAQ4PHYojdmYvMup5UJgKW3z2KPdNQ=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDBmrDmUZTP1ffiFCPb2c/X3XPnll3X/dLJ76y6c5P6/lW mi9ZKpyRykLgxgXg6yYIkuv+dm7Dy6pavx4MX8bzBxWJpAhDFycAjCRydsZGf59i11frhQTfG37 00AGyda9U4xKP8/qnbozrLTwqOUvmwRGhsWyPyJ0f3MyahQnHpY9cmPztrsP6hN/LldpMziTGdS zlhkA
+X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
 Content-Transfer-Encoding: 8bit
-X-FE-Last-Public-Client-IP: 210.171.3.161
-X-FE-Policy-ID: 3:1:2:SYSTEM
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=bcc.bai.ne.jp; s=20240516; c=relaxed/relaxed;
- h=message-id:date:mime-version:subject:to:cc:references:from:content-type;
- bh=b612zyZuwwWZsTfE+gJ72Y9isVumaiaCq1dyAr8cbwI=;
- b=e2L96bCAWEGTgj74lXbRoZnxCIbWVL3ppVqDGlL0ZnVtS7RoSJm2HWDELDPzNuqRkIYFGDW1EkJ5
-	rpHcIPzY025bY5XYdVQTqXqPXJIGgfV7VWbrEhojVRuwnePBlI83Sew7IpdlAL91zFnWDrnuAVy5
-	ieE4VEQrqIqoxC7Vu5j4A+rkFKucGIzVg0AwKXnK971z1rYMff+5hFbB9GCcTKNTaP03rJvyZEb6
-	d3rBs8470uc7P0ZW1bJ9bg9Ge0vfA9vu1rB8Ic32JvSApbE5QqIJj3wmoZklAY+CugAfxanWNy0w
-	/g7lLA3rXnPXxcislm2I01rkBglnTvpUA4F+HA==
 
-Hello Muad
+On Fri, Aug 22, 2025 at 03:58:12PM +0200, Marcos Del Sol Vives wrote:
+> Add a new simple GPIO device driver for most DM&P Vortex86 SoCs,
+> implemented according to their programming reference manuals [1][2][3].
+> 
+> Vortex86EX/EX2 use a radically different mechanism of GPIO control
+> and are not supported by this driver.
+> 
+> This is required for detecting the status of the poweroff button and
+> performing the poweroff sequence on ICOP eBox computers.
+> 
+> IRQs are not implemented, as they are only available for ports 0 and 1,
+> none which are accessible on my test machine (an EBOX-3352-GLW).
+> 
+> [1]: https://www.vortex86.com/downloadsStart?serial=Vortex86SX/DX/MXPLUS
+> [2]: https://www.vortex86.com/downloadsStart?serial=Vortex86DX2
+> [3]: https://www.vortex86.com/downloadsStart?serial=Vortex86DX3
+> 
+> Signed-off-by: Marcos Del Sol Vives <marcos@orca.pet>
 
-On 2025/08/23 19:00, Maud Spierings wrote:
-> Hello Hide,
->
->> Currently, analog sound is not output from the audio jack.
->> This patch allows you to select analog headphones in alsamixer.
->> Works with kernel 6.16.1, but not 6.17.
->>
->> Signed-off-by: Hide Hako <opi5plus@bcc.bai.ne.jp>
->> ---
->>   arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi 
->> <https://lore.kernel.org/all/20250821041555.4781-2-opi5plus@bcc.bai.ne.jp/#Z2e.:20250821041555.4781-2-opi5plus::40bcc.bai.ne.jp:1arch:arm64:boot:dts:rockchip:rk3588-orangepi-5.dtsi> 
->> | 1 +
->>   1 filechanged 
->> <https://lore.kernel.org/all/20250821041555.4781-2-opi5plus@bcc.bai.ne.jp/#related>, 
->> 1 insertion(+)
->>
->> diff 
->> <https://lore.kernel.org/all/20250821041555.4781-2-opi5plus@bcc.bai.ne.jp/#iZ2e.:20250821041555.4781-2-opi5plus::40bcc.bai.ne.jp:1arch:arm64:boot:dts:rockchip:rk3588-orangepi-5.dtsi> 
->> --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi 
->> b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi index 
->> 91d56c34a..656aac2df 100644 --- 
->> a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi +++ 
->> b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi @@ -113,6 
->> +113,7 @@ analog_sound: sound { simple-audio-card,mclk-fs = <256>;
->>           simple-audio-card,bitclock-master = <&daicpu>;
->>           simple-audio-card,frame-master = <&daicpu>;
->> + simple-audio-card,pin-switches = "Headphones"; /*TODO: SARADC_IN3 
->> is used as MIC detection / key input */
->>             daicpu: simple-audio-card,cpu {
->> -- 
->> 2.48.1
-> I tried this patch, but I am not able to get any audio out on my 
-> headphones. using kernel 6.16.1
->
-> I did see headphones in alsamixer, but cannot get it to actually 
-> output any audio. Any hints?
-I use ubuntu 25.04.
-Setting -> Sound -> Output Device.
-Two Analog Output-Built-in-Audio are displayed.
-Please select second Analog Output-Built-in-Audio.
+Hi Marcos,
 
-I'm currently working on another patch. As pointed out by Jimmy, I'm 
-creating a patch for rk3588-orangepi-5-plus.dts.
-Thank you Muad.
+Thank you for taking the time to develop and improve this driver. It can
+be intimidating to submit patches and interface changes for public
+review (especially without the help of the hardware company), so I
+commend your continual efforts.
 
-Hide
+Regarding this GPIO driver, you've incorporated much of what I had
+intended to comment on for your v2, so I'm comfortable leaving an Ack
+for this version here.
 
+Acked-by: William Breathitt Gray <wbg@kernel.org>
+
+However, I do have a couple minor suggestions below if you decide to
+submit a v5.
+
+> +VORTEX HARDWARE SUPPORT
+> +R:	Marcos Del Sol Vives <marcos@orca.pet>
+> +S:	Maintained
+> +F:	drivers/gpio/gpio-vortex.c
+
+This driver only covers GPIO support so a better title for this
+MAINTAINERS entry would be "VORTEX86 GPIO SUPPORT".
+
+> +	rmcfg.reg_bits = 8;
+> +	rmcfg.val_bits = 8;
+> +	rmcfg.io_port = true;
+> +	rmcfg.wr_table = &priv->access_table;
+> +	rmcfg.rd_table = &priv->access_table;
+
+The direction ports are expected to hold their previous state until they
+are changed, so perhaps it would be beneficial to enable caching with a
+rmcfg.cache_type = REGCACHE_FLAT and set a volatile_table which
+excludes the data port range.
+
+William Breathitt Gray
 
