@@ -1,147 +1,139 @@
-Return-Path: <linux-kernel+bounces-783374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05D3B32CB7
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 02:31:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11490B32CBC
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 02:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C592F1B26C10
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 00:32:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A33657A653E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 00:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554E22AC17;
-	Sun, 24 Aug 2025 00:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418CE1386B4;
+	Sun, 24 Aug 2025 00:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjV7Ulxj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m/kxiQue"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2A91FB3;
-	Sun, 24 Aug 2025 00:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C11DB640;
+	Sun, 24 Aug 2025 00:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755995508; cv=none; b=MuOeUWphrmUaHOq+eiBzn5VHgAT1mmzpu4+pahnnU2OEr0hyUrKAUgo0SmTD6C/mTmm0whutskxYPH8QCqC66jtN6tQpodUF2rHq3DAi3Al3PFwB/MqR8rleP4RXrmCnFl+YWg2FTTpyzzNNdDsfbTtixD3rlQmZkRcndXEsBqc=
+	t=1755995954; cv=none; b=XIE5t8RK8IxBeFWLYYfBPWdhKse9oOwNkucni57ASd+W2Dv01xIpjjONpJdlBZJbUQAk51DTFb3gjRUvmebT+rk0vC5uIjPmuQD4gahnVXwuDqplAA7NWU5kvgAhZYE+dNnsXkq+p/Jtrqk5FRKFlQm9e3qbRxh4JctO180NAso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755995508; c=relaxed/simple;
-	bh=odEFLxYSjofajBpnAwKdZQ8ZowyJqgbEtlSPVVz6DA8=;
+	s=arc-20240116; t=1755995954; c=relaxed/simple;
+	bh=s0McLWvdCDqPd8Y/u1GnS5m0WP0uNIXZ1VLr+nTsM2c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rs9KCa2249DMed6+CuZgFH45zEx+ovEdmgC7PCv09BdtWcxzSLS0e7kd5a3sLk1W2gWf4i3CUuE94wRxFJj6pCejS5R5rrk08kG0RMyJCgM+6C3rZ9BleEUUtsS/XPgLZYFkVYavkDdXoQb78xR1szifq9EweuRJiTJTGWGY7u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjV7Ulxj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49D3AC113D0;
-	Sun, 24 Aug 2025 00:31:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755995508;
-	bh=odEFLxYSjofajBpnAwKdZQ8ZowyJqgbEtlSPVVz6DA8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JjV7UlxjyEPU0iBkzfLbD0P5qfFF6bmqDaFTN6mWDKqL00/r1Tqyyvsu5DVnktUQo
-	 cs2IInlzuoU0JXi5rX+rvFysZONzHzK+3PP4tzkLUMmcfJXXhEZkNN7r7Artpwm14f
-	 u3gINapu0FyfIT/efnWLAZs6XqLKUtoZw377clrT3QOEiWgClOxdi/e6wCkCBV3LDb
-	 u0C5wOulO8urJAHujfTUsfSdJPR9T5DskHcgikih3qc3nRdsZ9i6WAUV/1053FZQI3
-	 O8wp2U19ZjxDbAsxBtSv0si5Q+CcjbUVe+zt6fNd83VRpbmQS7zqrH4kPTGERq12Y/
-	 gEqzMcXBlSr2w==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55ce5097493so2977463e87.0;
-        Sat, 23 Aug 2025 17:31:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWTZiZtfA+BwQaZZpvwjabYHBNJHq63DSwVt+OVR0Pmham8s887M1/WXf2CWYmhVFzQckyDafxgIJg=@vger.kernel.org, AJvYcCXUZZ//irY/UwLZb2ZyXwridOUwwihHbZVBbOl1DcIrYfte2yXxxZgZPuTEtYOa86vUukoXn9i5jYCkXZem@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTgkSug2JgO0jTF+L1y2QA1EaXoEYZV42FGOd8rF3OkqdzoYmk
-	GCSgOLdorQcUhvqvpJ1mW2pzMJQeydYgW/LBkWoAMiOqLtjI6xAULUoDPpDjmTkAqRy5FucoBdx
-	UbqM9RtQ8Tm5/EMuyEpxxBRMDK/sdDc4=
-X-Google-Smtp-Source: AGHT+IE+CGTNYQ8ipKOG7G5GQbFG46Vul5T3gKWQTTzUNEdBTzlD9Tc/YII3dXd0fy0LA8Amewyg2O5LP3WnH6Pl2Lk=
-X-Received: by 2002:a05:6512:234c:b0:55f:42b8:b11 with SMTP id
- 2adb3069b0e04-55f42b80c99mr39270e87.45.1755995506679; Sat, 23 Aug 2025
- 17:31:46 -0700 (PDT)
+	 To:Cc:Content-Type; b=Sbfi/fkH+j1y+0XknV/y4+LzuRlaxwTIt6eK5a110XxnoGtY0OcnS8e7YPrrOkYZS8OTH8Gjr2p1X90sEbcovNdC14XGNZ6SASjQM3ypAi3wWX+ihT0WjOQntIpftkkG8KrgTe5L2SfkbEcRLHWogNSeovjZqcztXNllxbVA9bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m/kxiQue; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-70d9eb2eb55so8997736d6.2;
+        Sat, 23 Aug 2025 17:39:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755995952; x=1756600752; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tNY0okVFoLgY416XV42hmNIfwC6IRW0OVeBGVW5QbSw=;
+        b=m/kxiQuebwZxFmBM49+i8xuq1lr3ZpPGs1qMnkE3zABf5B0x7gFfM0193+qNwKELLz
+         9cq2mB0S4aEATxjMPN0ClAl9bM8UJ0T2pTLbUC0BnQK0i+qqCEWTZ58UDfdPz/mJpaNY
+         Bruh5uOJI2G79N/ZyfkV4YdyJ6ZadLC+tqA6Bx/AlU3YPJo4Pv088UC7Kz+m+8CoOiWz
+         1k75taCWpz9+c2NjHJt4VUZDbKgURRp/FLtadRS0Ij35MICBJAUT/rp0f67NcXv3LJi5
+         jld9yfPHMGdZOoZ6+sleTdQ2ZLXpATWZNuuetXz3IjZrVeiklmM4E/etaQioZvbHrwZR
+         JyXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755995952; x=1756600752;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tNY0okVFoLgY416XV42hmNIfwC6IRW0OVeBGVW5QbSw=;
+        b=a9SBWTm2k8dImYnGtnt0uf6mm9eDnCog1+TTpSr0eBmHzCtyHcwq3HGwHFNMVgeQrr
+         pFjmGibIY97MbkKvp9iKGPNanK7O7CBufnx7MFWbo2tl6ThhoR8zu+HYSwgoJ16i/3ZN
+         T7jxI0qbbtyUET2uyjSPPl7G8X+mXAmGljLl2kiRva/I9xCsZY2HwDHNzPIJB1sqvBuy
+         6V+E5TBcgM8Ob5o32PLWdxyM8oPL0NDwjEdzSiUv2STaB/pHqLZuzJAakfNcjP7kV8Ss
+         R22bGRbGVMxL1rM5kwUPk8TAKB0dBoohDgUjHV0dYDEOxfr/RDbPx/lNVU2DVm+YN1Qc
+         QHcw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5HPRstxfIfRYsFmlZ2Zv+6BGOqMI2d7koQMftYT0zFLvVOtbq67AhoI11h8FjH1JkZs2FOY4O4/VF3eI=@vger.kernel.org, AJvYcCVzQnbL8ygoWMwdE1CsCrT1GH2Kt/y5/hKbXi1JDFyvSvonjAS2CrEUF4ln/437YWhPfWPFAtbnA++ku4oiooE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLh0yeuWGhoPCX8DGfZtzVjERZG4eIPJFhFfavN1oz1GWHFUPM
+	6dq4xUm/uO6u2gViq01KiH5O85j/eIbL5mp49Qnk8mIcfXVRyIj6bQlGfKXUE1lXZCmBtDJEcrA
+	7mS5cMpJPSw/7B2US90pi+uysmrCqMHl0fQ==
+X-Gm-Gg: ASbGncufL024z0B0PDIINgD29gVJqkbTCy2JtL8FPjT8pGvcBeAzPqLW304M7WMQSCf
+	J2hxcKdPciD27eX50HM6R/JNPrNVelJLUudW3ZMKq1uwNNuMxugkToMg0FDzw3pHZs572+6fdyt
+	zT9VQKHOI7cnvcMQZjhmJjbS5knGjnsWbtULmKNVe5Snzc21Fgw7qbDRQBOZRRxH0ACgdrmkkiR
+	owZkok=
+X-Google-Smtp-Source: AGHT+IGJvweRY3TWUs9ZYabzrqlFqNGB8yJrDgWrKt8gjCB06kXkz/Eg19enAOqUFnXtnYwJBFfXomyAC0EIwhNpPNs=
+X-Received: by 2002:a05:6214:d6a:b0:70d:b3de:ced3 with SMTP id
+ 6a1803df08f44-70db3dedb2amr18691696d6.25.1755995952022; Sat, 23 Aug 2025
+ 17:39:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708-efi-default-loglevel-v1-1-12b80db5af16@gmail.com>
- <CALHNRZ9T0dHzbXBUdBa4hE-Ao8ebeLLPRX+1ThkuLT+Rp8_Jeg@mail.gmail.com>
- <CAMj1kXEwyaHUkO5aO-sL3YAN=qRoSTuotHMRpBDLX9BhERnN=g@mail.gmail.com> <45692a2c-ba3d-45a2-9ab1-cf6982dbf788@siemens.com>
-In-Reply-To: <45692a2c-ba3d-45a2-9ab1-cf6982dbf788@siemens.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 24 Aug 2025 10:31:35 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXG=zG8j+cr0gNMpkKRvdekqMR-EiEkMHiFgRvbaWy9aKg@mail.gmail.com>
-X-Gm-Features: Ac12FXw_QXkkq4rLy1icWgf7Z2gtdX1LLyLPc5SKyeedN9znQl9aP222HrlZmC0
-Message-ID: <CAMj1kXG=zG8j+cr0gNMpkKRvdekqMR-EiEkMHiFgRvbaWy9aKg@mail.gmail.com>
-Subject: Re: [PATCH] efistub: Lower default log level
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Aaron Kling <webgeek1234@gmail.com>, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250818064219.448066-1-liaoyuanhong@vivo.com>
+In-Reply-To: <20250818064219.448066-1-liaoyuanhong@vivo.com>
+From: Julian Calaby <julian.calaby@gmail.com>
+Date: Sun, 24 Aug 2025 10:39:00 +1000
+X-Gm-Features: Ac12FXyu98_t-IJGPtHlzpUXh7AxDD1gzGG7IFvp3mKcGlBrc1qVK-4PS5y9upg
+Message-ID: <CAGRGNgVzKyyG=Ld_eK60Ry=AQ7KpGx_ZKw908CAXoA3a2CVX4g@mail.gmail.com>
+Subject: Re: [PATCH] wifi: rtw89: 8852bt: Simplify unnecessary if-else conditions
+To: Liao Yuanhong <liaoyuanhong@vivo.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>, 
+	"open list:REALTEK WIRELESS DRIVER (rtw89)" <linux-wireless@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, 16 Aug 2025 at 16:52, Jan Kiszka <jan.kiszka@siemens.com> wrote:
->
-> On 15.07.25 03:35, Ard Biesheuvel wrote:
-> > On Tue, 8 Jul 2025 at 17:31, Aaron Kling <webgeek1234@gmail.com> wrote:
-> >>
-> >> On Tue, Jul 8, 2025 at 2:30=E2=80=AFAM Aaron Kling via B4 Relay
-> >> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> >>>
-> >>> From: Aaron Kling <webgeek1234@gmail.com>
-> >>>
-> >>> Some uefi implementations will write the efistub logs to the display
-> >>> over a splash image. This is not desirable for debug and info logs, s=
-o
-> >>> lower the default efi log level to exclude them.
-> >>>
-> >>> Suggested-by: Ard Biesheuvel <ardb@kernel.org>
-> >>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> >>> ---
-> >>>  drivers/firmware/efi/libstub/printk.c | 4 ++--
-> >>>  1 file changed, 2 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/drivers/firmware/efi/libstub/printk.c b/drivers/firmware=
-/efi/libstub/printk.c
-> >>> index 3a67a2cea7bdf1aa215d48dbf9ece4ceec6e4c28..bc599212c05dd746a9c54=
-abbbe61a4bf70f1a8c4 100644
-> >>> --- a/drivers/firmware/efi/libstub/printk.c
-> >>> +++ b/drivers/firmware/efi/libstub/printk.c
-> >>> @@ -5,13 +5,13 @@
-> >>>  #include <linux/ctype.h>
-> >>>  #include <linux/efi.h>
-> >>>  #include <linux/kernel.h>
-> >>> -#include <linux/printk.h> /* For CONSOLE_LOGLEVEL_* */
-> >>> +#include <linux/kern_levels.h>
-> >>>  #include <asm/efi.h>
-> >>>  #include <asm/setup.h>
-> >>>
-> >>>  #include "efistub.h"
-> >>>
-> >>> -int efi_loglevel =3D CONSOLE_LOGLEVEL_DEFAULT;
-> >>> +int efi_loglevel =3D LOGLEVEL_NOTICE;
-> >>>
-> >>>  /**
-> >>>   * efi_char16_puts() - Write a UCS-2 encoded string to the console
-> >>>
-> >>> ---
-> >>> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-> >>> change-id: 20250708-efi-default-loglevel-4da5a36cac87
-> >>>
-> >>> Best regards,
-> >>> --
-> >>> Aaron Kling <webgeek1234@gmail.com>
-> >>
-> >> This patch was originally suggested a few months ago [0], but as far
-> >> as I can tell was never queued for merge. Since I'm also hitting a
-> >> case where this is relevant, I'm sending this in to bring attention
-> >> back to it.
-> >>
-> >
-> > I've queued this up now - thanks.
-> >
->
-> And how can I get back the loglevel info? It seems I can only choose
-> between notice, silent and debug now. And the latter two only by also
-> touching the kernel's loglevel.
->
-> I'm particularly missing [1] in my UART logs now which is helpful in
-> understanding this essential system state.
->
+Hi Liao,
 
-Hi Jan,
+On Mon, Aug 18, 2025 at 4:44=E2=80=AFPM Liao Yuanhong <liaoyuanhong@vivo.co=
+m> wrote:
+>
+> Some simple if-else logic can be simplified using the ! operator to impro=
+ve
+> code readability.
+>
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+> ---
+>  drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+>
+> diff --git a/drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c b/drivers=
+/net/wireless/realtek/rtw89/rtw8852bt_rfk.c
+> index d0e299803225..164ee0fde03b 100644
+> --- a/drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c
+> +++ b/drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c
+> @@ -1803,10 +1803,7 @@ static void _dpk_onoff(struct rtw89_dev *rtwdev, e=
+num rtw89_rf_path path, bool o
+>
+>         val =3D dpk->is_dpk_enable && !off && dpk->bp[path][kidx].path_ok=
+;
 
-Is efi=3Ddebug too noisy for you?
+Is this line ^^^
+
+>
+> -       if (off)
+> -               off_reverse =3D false;
+> -       else
+> -               off_reverse =3D true;
+> +       off_reverse =3D !off;
+>
+>         val =3D dpk->is_dpk_enable & off_reverse & dpk->bp[path][kidx].pa=
+th_ok;
+
+The same as this line ^^^
+
+and if so, can we just delete the second one? Also, can we also then
+delete the "off_reverse" variable?
+
+Thanks,
+
+--=20
+Julian Calaby
+
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
 
