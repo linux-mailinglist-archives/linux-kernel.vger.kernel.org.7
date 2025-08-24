@@ -1,168 +1,141 @@
-Return-Path: <linux-kernel+bounces-783628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54538B32FE5
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 14:05:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6401FB32FE7
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 14:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14482481E91
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:05:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A803481F07
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F96E2D59EF;
-	Sun, 24 Aug 2025 12:05:49 +0000 (UTC)
-Received: from lgeamrelo03.lge.com (lgeamrelo03.lge.com [156.147.51.102])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FC72D8783;
+	Sun, 24 Aug 2025 12:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TiZK+9Ad"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B3F242909
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 12:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7332D8390;
+	Sun, 24 Aug 2025 12:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756037148; cv=none; b=HIF8/DoU0tPMHioIoh32bVVKDA8WWaSZIIy/KMJ6Vl/i5kxZ/nwNzo5xCw2iIwiiQf0a+OrnQsOzutLdD+SxGyJpOuh0kCZAxijLDOc/lQvu9ZHh4LlVi7O3dpDRtr3fxXhzUxKGJOdAeeUoNDuHta2OpwhZoIOnMKtpSQEtqR0=
+	t=1756037177; cv=none; b=hkMvrO3J8ydgKtiPFs0PEZ14W/lSQoanYI6SQNoJ2zOB/yQUPclAeoZwmLZ4ROZ+YZe5RQhbZMB5zl8qjPDFwsvYhiu6lHA93qjaOVRb8swxGgyMBg0ybQULlEGBUgdYshQZ/BUm5f2ocJCCEKVSFvbdGK2CvzRZOohoI05G3kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756037148; c=relaxed/simple;
-	bh=unzH2Zg3QLYapxP0d9yYYXyfQ/FWfgufZj/vUZ29xlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UjCFtIG6nsQu1MndWvJdMRXd5WzHSEG36v4qSDVnBDSJ7xYcj7WUxNCUFeioBQXV7VS9s58PckQnIpTsdtFrct6FiA8mQ0zr4yeNOKOZG3xpmvmKuFCpo/wKDfSFAjaYJuHz+NxLATZemplHbZA3bWfPd66GFCvOgdIPVPDqrkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
-	by 156.147.51.102 with ESMTP; 24 Aug 2025 21:05:37 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-Date: Sun, 24 Aug 2025 21:05:37 +0900
-From: YoungJun Park <youngjun.park@lge.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, shikemeng@huaweicloud.com,
-	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
-	baohua@kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, gunho.lee@lge.com,
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
-	Matthew Wilcox <willy@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Kairui Song <ryncsn@gmail.com>
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-Message-ID: <aKsAES4cXWbDG1xn@yjaykim-PowerEdge-T330>
-References: <uyxkdmnmvjipxuf7gagu2okw7afvzlclomfmc6wb6tygc3mhv6@736m7xs6gn5q>
- <CAF8kJuMo3yNKOZL9n5UkHx_O5cTZts287HOnQOu=KqQcnbrMdg@mail.gmail.com>
- <aKC+EU3I/qm6TcjG@yjaykim-PowerEdge-T330>
- <CAF8kJuNuNuxxTbtkCb3Opsjfy-or7E+0AwPDi7L-EgqoraQ3Qg@mail.gmail.com>
- <aKROKZ9+z2oGUJ7K@yjaykim-PowerEdge-T330>
- <CAF8kJuPUouN4c6V-CaG7_WQUAvRxBg02WRxsMtL56_YTdTh1Jg@mail.gmail.com>
- <aKXeLCr9DgQ2YfCq@yjaykim-PowerEdge-T330>
- <CAF8kJuM4f2W6w29VcHY5mgXVMYmTF4yORKaFky6bCjS1xRek9Q@mail.gmail.com>
- <aKgD7nZy7U+rHt9X@yjaykim-PowerEdge-T330>
- <CAF8kJuMb5i6GuD_-XWtHPYnu-8dQ0W51_KqUk60DccqbKjNq6w@mail.gmail.com>
+	s=arc-20240116; t=1756037177; c=relaxed/simple;
+	bh=EcHW3M+l9wWP/+s19RojCchMa1zyI0TeeTdSpWzpdmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WQz91kqMXN9ENhfVb2YYP4k3205jzMi3qs/BPXymziPo5eXMjOGrUlL3htvBeJgCXehIoUhMmv76eFi8qqG/15zQn99vvkE922RbLvkrwATjqefx2ps5Dl6fEeME4AQkkc08ao7/SLG8cQtjwKPpv8AguPPek05TztnhdzH0cgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TiZK+9Ad; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b577eb4dbso9199905e9.2;
+        Sun, 24 Aug 2025 05:06:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756037172; x=1756641972; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H794ow8CiURLDevruDq3Q55f0TUZvs+3H/i8Gq6nUw4=;
+        b=TiZK+9AdNoAAwnHXQ2oukFLs3VYydnz2AAisakWeHRdsvGkeuW7RXhb5euBkgWhFmm
+         L8gw/8J51OdBp1K3gBEOJJH+QPJkbZGbsYFu+m13FwRllcE7Xm+cCXxUMDI+EAWApuLJ
+         7vOEo++Jo+QGBVD2Wk1cd2/2YlIISpHar4sTvoP+84jHMktI9ZFjo5/Bz4ZePMJV4+sB
+         YLLkSkAyTEzTRf+LOhbmOxcUbe3bB1KY434V+nvYSCZJ+tJCsmZlF3HAt8JymuEoIu9U
+         299QBPrzgzjrVZVG7nP7YEX9J8CUuvrOAzqxJSWk/WtAw9LLqnWrG1cGbqzhuNm3gFu2
+         YlAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756037172; x=1756641972;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H794ow8CiURLDevruDq3Q55f0TUZvs+3H/i8Gq6nUw4=;
+        b=dlFTR6B+a8uveFvYQf+XhXKB5jcUCRhei6knvRic9fJ1ihW4tITapxp/iqkdzD/dH/
+         46dfQB2uUv6gggbDilDFJW/T3RWhnks7UK6t8jewGFMZchWxBYL0J+poSK3uKS5mLgaD
+         EegKjERp2JCazqsmFIrsSkbwIGq4CFNveqW0Bn41D7AcR1qmzM9HkzZBlN+QRKFbpd52
+         TEOwdOESWrnnXvxKyZC1njzTv33m8zM/HICcfcm2tU67rAksli/NH33OKpyAGy3c02pG
+         OhXPDSc+YnxZzMY3XBnSmIyjbR7j3QHn7SvZtgUjFObcK74zN7RsJi50rBR2M2jBCd08
+         kVBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGSv/pJzb4qub9CWEAGaErUGktEKy8kZJ7tLbwnmnoroyIiS8NW/8XRsk2UKd1eWWJvzsZtk6ykh4=@vger.kernel.org, AJvYcCVlwDa/CMc4dRIRLZKTuTcdZ2t/oeQIJPgyalgwO/eI23DWYqy49M7fyhT54Vu1xYxf92cOYgK2pgLKJOD/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/EudeXJah0B0NxkfII0RFLpfOQA/QdVExk3zO2nE9a+kpAcJb
+	raREMk0MZ+QJXjDb45Ho3c24JpTglPKcYiA9ZxFrE+vhHOUD+hzwysg/
+X-Gm-Gg: ASbGncsbDdJGURfGsioATN26QXw/prlfGOrCFO89ZmSWNQ+9QWgcYFuKWDHuP6A5J/r
+	0QO0Os5pJ05JM1qzyzlhbV604eQHTazUxlyTdT0d757shL4GylkU34FAV7ILSjrpnAMs6uVa+ZS
+	v57CQvLoSd0kHBneSHrbqT/ZnH2iITc11gsZNOc0zzVJFU7gs/h3snYHs+9v5rbmUzPSN14HSHA
+	CQlMNllAQXpruEJ4pRKQcs+6D4bTmu9e/ISWsyA8bFHiyPql4dgaeqe71d6vq80e2rAF2cMJz4T
+	4FBxwE5UfuJnkVzb7aDJAFCqoHT7lnFWw0aPSlQmQkDzFxe0Ro1uNZXDuH2QCQuutpoKKr3URCF
+	7T7Pu2Ju/r95OM60s7l1GTpIV
+X-Google-Smtp-Source: AGHT+IG3OsG0N6RxtoIwpToIvF22LbUY1HZ574UdL4CI+iIN9zz0ZXYKkIAp2gwg7y5bu1eWt45YtQ==
+X-Received: by 2002:a05:6000:430b:b0:3c6:9e21:f61b with SMTP id ffacd0b85a97d-3c69e21f717mr5411389f8f.3.1756037172319;
+        Sun, 24 Aug 2025 05:06:12 -0700 (PDT)
+Received: from pc ([196.235.198.203])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70eb7eed5sm7096110f8f.18.2025.08.24.05.06.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Aug 2025 05:06:11 -0700 (PDT)
+Date: Sun, 24 Aug 2025 13:06:09 +0100
+From: Salah Triki <salah.triki@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: salah.triki@gmail.com
+Subject: [PATCH v5 3/3] iio: pressure: bmp280: Use gpiod_set_value_cansleep()
+Message-ID: <aKsAMRkmGX160gHl@pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF8kJuMb5i6GuD_-XWtHPYnu-8dQ0W51_KqUk60DccqbKjNq6w@mail.gmail.com>
 
-> How do you express the default tier who shall not name? There are
-> actually 3 states associated with default. It is not binary.
-> 1) default not specified: look up parent chain for default.
-> 2) default specified as on. Override parent default.
-> 3) default specified as off. Override parent default.
+Replace `gpiod_set_value()` with `gpiod_set_value_cansleep()`, which is
+required when the GPIO controller is connected via a slow bus such as
+I2C. This is also safe to use in sleepable contexts like the driver
+probe function.
 
-As I understand, your intention is to define inheritance semantics depending
-on the default value, and allow children to override this freely with `-` and
-`+` semantics. Is that correct?
+Signed-off-by: Salah Triki <salah.triki@gmail.com>
+Reviewed-by: David Lechner <dlechner@baylibre.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+Changes in v5:
+  - Clarify commit message in patch 3/3 to better explain why
+    gpiod_set_value_cansleep() is needed, as suggested by Andy
+    Shevchenko.
 
-When I originally proposed the swap cgroup priority mechanism, Michal Koutný
-commented that it is unnatural for cgroups if a parent attribute is not
-inherited by its child:
-(https://lore.kernel.org/linux-mm/rivwhhhkuqy7p4r6mmuhpheaj3c7vcw4w4kavp42avpz7es5vp@hbnvrmgzb5tr/)
+Changes in v4:
+  - Split patch 2/2 into two separate patches, as suggested by Markus
+    Elfring.
 
-Therefore, my current thinking is:
-* The global swap setting itself is tier 1 (if nothing is configured).
-* If a cgroup has no setting:
-  - Top-level cgroups follow the global swap.
-  - Child cgroups follow their parent’s setting.
-* If a cgroup has its own setting, that setting is applied.
-(child cgroups can only select tiers that the parent has allowed.)
+Changes in v3:
+  - Split into two separate patches, as suggested by Andy Shevchenko.
+  - Improve the error message to "failed to get reset GPIO", as
+    suggested by David Lechner.
+  - Add Fixes and Cc tags where appropriate, as suggested by Markus
+    Elfring.
 
-This seems natural because most cgroup resource distribution mechanisms follow
-a subset inheritance model.
+Changes in v2:
+  - Use IS_ERR() instead of IS_ERR_OR_NULL()
+  - Drop dev_info()
+  - Use gpiod_set_value_cansleep()
+  - Improve commit title and message
+ drivers/iio/pressure/bmp280-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thus, in my concept, there is no notion of a “default” value that controls
-inheritance.
+diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+index 1f0852fc3414..656f6189c84c 100644
+--- a/drivers/iio/pressure/bmp280-core.c
++++ b/drivers/iio/pressure/bmp280-core.c
+@@ -3217,7 +3217,7 @@ int bmp280_common_probe(struct device *dev,
+ 		return dev_err_probe(dev, PTR_ERR(gpiod), "failed to get reset GPIO\n");
+ 
+ 	/* Deassert the signal */
+-	gpiod_set_value(gpiod, 0);
++	gpiod_set_value_cansleep(gpiod, 0);
+ 
+ 	data->regmap = regmap;
+ 
+-- 
+2.43.0
 
-> How are you going to store the list of ranges? Just a bitmask integer
-> or a list?
-
-They can be represented as increasing integers, up to 32, and stored as a
-bitmask.
-
-> I feel the tier name is more readable. The number to which actual
-> device mapping is non trivial to track for humans.
-
-Using increasing integers makes it simpler for the kernel to accept a uniform
-interface format, it is identical to the existing cpuset interface, and it
-expresses the meaning of “tiers of swap by speed hierarchy” more clearly in my
-view.
-
-However, my feeling is still that this approach is clearer both in terms of
-implementation and conceptual expression. I would appreciate if you could
-reconsider it once more. If after reconsideration you still prefer your
-direction, I will follow your decision.
-
-> I want to add another usage case into consideration. The swap.tiers
-> does not have to be per cgroup. It can be per VMA. [...]
-
-I understand this as a potential extension use case for swap.tier.  
-I will keep this in mind when implementing. If I have further ideas here, I
-will share them for discussion.
-
-> Sounds fine. Maybe we can have "ssd:100 zswap:40 hdd" [...]
-
-Yes, this alignment looks good to me!
-
-> Can you elaborate on that. Just brainstorming, can we keep the
-> swap.tiers and assign NUMA autobind range to tier as well? [...]
-
-That is actually the same idea I had in mind for the NUMA use case.  
-However, I doubt if there is any real workload using this in practice, so I
-thought it may be better to leave it out for now. If NUMA autobind is truly
-needed later, it could be implemented then.
-
-This point can also be revisited during review or patch writing, so I will
-keep thinking about it.
-
-> I feel that that has the risk of  premature optimization. I suggest
-> just going with the simplest bitmask check first then optimize as
-> follow up when needed. [...]
-
-Yes, I agree with you. Starting with the bitmask implementation seems to be
-the right approach.
-
-By the way, while thinking about possible implementation, I would like to ask
-your opinion on the following situation:
-
-Suppose a tier has already been defined and cgroups are configured to use it.
-Should we allow the tier definition itself to be modified afterwards?
-
-There seem to be two possible choices:
-
-1. Once a cgroup references a tier, modifying that tier should be disallowed.
-2. Allow tier re-definition even if cgroups are already referencing it.
-
-Personally, I prefer option (1), since it avoids unexpected changes for
-cgroups that already rely on a particular tier definition.
-
-What is your opinion on this?
-
-Best Regards,
-Youngjun Park
 
