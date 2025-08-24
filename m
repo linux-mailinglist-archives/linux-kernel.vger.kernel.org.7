@@ -1,150 +1,146 @@
-Return-Path: <linux-kernel+bounces-783517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4716B32E86
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:55:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0118B32E8A
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FD8B7AE09B
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:54:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C9DA188E947
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1862D26056A;
-	Sun, 24 Aug 2025 08:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A16260582;
+	Sun, 24 Aug 2025 08:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c0fc+Imn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qjm4/0x1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7419B25E813;
-	Sun, 24 Aug 2025 08:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2535025FA24;
+	Sun, 24 Aug 2025 08:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756025741; cv=none; b=mGDcISB5LwmXpJCIwKTj5tN49NGfOyWIA5HTWvu3UNrelWBBkcdCdcZptqPbEnCx4Jf0quf7pLMSLNXDWmokuejQOE01n+gOYfYquFqwTtp5614yBiK1kry9xns2y3+htaUFC01O7fSCuD010cYUtCo1aUzH+p22BrAXFzmHDfQ=
+	t=1756025755; cv=none; b=rwvmPeGwB4M446uqeT3lSgUahzPGbbgLBbtFd6+0vY6Thi8Mbx1+7S8Gs2Ifk6FjVugv00EuvtrYTnm3ycTvS0QdypSuFXnNK4qGGd652HJHMOvgf9J9nIDVjK6yAyaNnKkM/VNEJydrrGhHaEorMgOe1jkH6YaG4vkr50KP2bA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756025741; c=relaxed/simple;
-	bh=3efWoqKGeWKkhZdCmvOAtelROBxMcZQovbTe+Bsz4Qo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y2s+mSGOfoebjavwRALUcFW3Jnd0Y7AIRMcERD6Lj28E4wXE7+HyXDXTL5MxUHoJ4kWAACSmFa/JdfQCcRgCNl+NsqbM/0ZrYKRXQVSdjhJzNEoyuQ+QZLxK8hLXbiazwHP8+KtTHiWtp9B611mBQCfPxXcHcdqkQfuHdCSr4Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c0fc+Imn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 344FCC116B1;
-	Sun, 24 Aug 2025 08:55:41 +0000 (UTC)
+	s=arc-20240116; t=1756025755; c=relaxed/simple;
+	bh=0t8NYsclUsLqSKfihTaUGdY6Q22Pg+5nw0i9SnPs+rg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z41dhwSyjCzXLKm8NthI1+KhmL8h/HG3J1vMijJswiwBuZzbApvSPe4jlHhzDhv0ldmBBZSrJFRLo5LAA6D2fkXVBQwJKv/FTaFIz3s+06N8HI35j+fEune6/Acc2KzUDxoEaXDLIiw80RHXJB/c1mAqjQmOJzcl9P0R4G0SJn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qjm4/0x1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F923C4CEEB;
+	Sun, 24 Aug 2025 08:55:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756025741;
-	bh=3efWoqKGeWKkhZdCmvOAtelROBxMcZQovbTe+Bsz4Qo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=c0fc+ImnS9/BDevSzy+t+aRAEDOYCniaBkwi+IW58oy+IcTfmR81WTqGPM9Cpat8E
-	 dZAfuYb7yESRUBrATeBON5H6c8cjU6Zi2LVycUupFtpbgdy4Zo0+dz79cnxU3lkNnh
-	 883c6cMkhi40MH2YimoXW8ymsup5QT4Vbl6lDMh+ss6yaFa7/CWGll5eWqIXIE6TNh
-	 aIpryI0WHxHwuIAZjNgo5u2oIIMFPa+vyYc/qkq1NGrF9Dl2wFgnWPlUdZa3Msteco
-	 kGgVI6VvU8gB78ERpXSZI7UcFQYCDbChtC1hFyAYo0atd10lGNPoHeFkwxoigQ0HqL
-	 me7zEt6/mQaiA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uq6Vm-00AWlW-E3;
-	Sun, 24 Aug 2025 09:55:38 +0100
-Date: Sun, 24 Aug 2025 09:55:34 +0100
-Message-ID: <874itx14l5.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sam Edwards <cfsworks@gmail.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Baruch Siach <baruch@tkos.co.il>,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] arm64/boot: Zero-initialize idmap PGDs before use
-In-Reply-To: <CAH5Ym4h+2w6aayzsVu__3qu3-6ETq1HK7u18yGzOrRqZ--2H9w@mail.gmail.com>
-References: <20250822041526.467434-1-CFSworks@gmail.com>
-	<CAMj1kXH38gOUpDDdarCXPAY3BHBbuFzdD=Dq7Knsg-qHJoNqzQ@mail.gmail.com>
-	<CAH5Ym4gTTLcyucnXjxFtNutVR1HQ0G2k_YBSNO-7G3-4YXUtag@mail.gmail.com>
-	<CAMj1kXF00Y0=67apXVbOC+rpbEEvyEovFYf4r_edr6mXjrj0+A@mail.gmail.com>
-	<CAH5Ym4h+2w6aayzsVu__3qu3-6ETq1HK7u18yGzOrRqZ--2H9w@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1756025754;
+	bh=0t8NYsclUsLqSKfihTaUGdY6Q22Pg+5nw0i9SnPs+rg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qjm4/0x15o2yx/NzpWGvaWSnCm5A5mLB+XgnjSNcNzRkvXQ7rHlUh4sLGBGirZSy5
+	 kehj4OxXvckzYWAQgfBSVWXMOtGXRc5dop0Fej8WH4THM9JhZJSDIKedteEKYibA5Y
+	 c6CzeeGIqywzIuNo4iXlsRDeLHIOBH320aB8q2x1AVtbC37rPFLQwgYgg6OcwMjprl
+	 z+DYoZhQGkMOUPJr8TAeNNGVIsFvqlc12H4puIe8YWWTSUYG//LtTA98GDv6+KzrFj
+	 g/oCCklsVlV4QMk0Jc86I2mgjLJ2VaTEXsBpvoTIsW6Xvv5xaoXpm9gyjk3Xwc1Id8
+	 hQzlJadGQohDQ==
+Date: Sun, 24 Aug 2025 10:55:52 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com, 
+	andre.draszik@linaro.org, peter.griffin@linaro.org, kauschluss@disroot.org, 
+	ivo.ivanov.ivanov1@gmail.com, igor.belwon@mentallysanemainliners.org, johan@kernel.org, 
+	m.szyprowski@samsung.com, s.nawrocki@samsung.com, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com, 
+	dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com, 
+	selvarasu.g@samsung.com
+Subject: Re: [PATCH v7 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 combo ssphy
+Message-ID: <20250824-rough-fresh-orangutan-eecb2f@kuoka>
+References: <20250822093845.1179395-1-pritam.sutar@samsung.com>
+ <CGME20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f@epcas5p4.samsung.com>
+ <20250822093845.1179395-6-pritam.sutar@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: cfsworks@gmail.com, ardb@kernel.org, catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org, anshuman.khandual@arm.com, ryan.roberts@arm.com, baruch@tkos.co.il, kevin.brodsky@arm.com, joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250822093845.1179395-6-pritam.sutar@samsung.com>
 
-Hi Sam,
+On Fri, Aug 22, 2025 at 03:08:44PM +0530, Pritam Manohar Sutar wrote:
+> This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
+> compatible to the USB3.0 SS(5Gbps). It requires two clocks, named
+> "phy" and "ref". The required supplies for USB3.1 are named as
+> vdd075_usb30(0.75v), vdd18_usb30(1.8v).
 
-On Sun, 24 Aug 2025 04:05:05 +0100,
-Sam Edwards <cfsworks@gmail.com> wrote:
->=20
-> On Sat, Aug 23, 2025 at 5:29=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> =
-wrote:
-> >
+Please do not describe the schema, but hardware. This sentence does not
+help me in my question further.
 
-[...]
+> 
+> Add schemas for combo ssphy found on this SoC.
+> 
+> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> ---
+>  .../bindings/phy/samsung,usb3-drd-phy.yaml    | 23 +++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> index f0cfca5736b8..96e5bbb2e42c 100644
+> --- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> @@ -34,6 +34,7 @@ properties:
+>        - samsung,exynos7870-usbdrd-phy
+>        - samsung,exynos850-usbdrd-phy
+>        - samsung,exynos990-usbdrd-phy
+> +      - samsung,exynosautov920-usb31drd-combo-ssphy
+>        - samsung,exynosautov920-usbdrd-combo-hsphy
+>        - samsung,exynosautov920-usbdrd-phy
+>  
+> @@ -118,6 +119,12 @@ properties:
+>    vdd18-usb20-supply:
+>      description: 1.8V power supply for the USB 2.0 phy.
+>  
+> +  dvdd075-usb30-supply:
+> +    description: 0.75V power supply for the USB 3.0 phy.
+> +
+> +  vdd18-usb30-supply:
+> +    description: 1.8V power supply for the USB 3.0 phy.
+> +
+>  required:
+>    - compatible
+>    - clocks
+> @@ -227,6 +234,7 @@ allOf:
+>                - samsung,exynos7870-usbdrd-phy
+>                - samsung,exynos850-usbdrd-phy
+>                - samsung,exynos990-usbdrd-phy
+> +              - samsung,exynosautov920-usb31drd-combo-ssphy
+>                - samsung,exynosautov920-usbdrd-combo-hsphy
+>                - samsung,exynosautov920-usbdrd-phy
+>      then:
+> @@ -262,6 +270,21 @@ allOf:
+>        properties:
+>          dvdd075-usb20-supply: false
+>          vdd18-usb20-supply: false
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,exynosautov920-usb31drd-combo-ssphy
+> +    then:
+> +      required:
+> +        - dvdd075-usb30-supply
+> +        - vdd18-usb30-supply
 
-> > Under which conditions would PGD_SIZE assume a value greater than PAGE_=
-SIZE?
->=20
-> I might be doing my math wrong, but wouldn't 52-bit VA with 4K
-> granules and 5 levels result in this?
+Why are you adding usb20 and usb30 suffixes to the supplies? These are
+separate devices, so they do not have both variants at the same time.
 
-No. 52bit VA at 4kB granule results in levels 0-3 each resolving 9
-bits, and level -1 resolving 4 bits. That's a total of 40 bits, plus
-the 12 bits coming directly from the VA making for the expected 52.
+From this device point of view, the supply is called dvdd075 or vdd18.
+If you open device datasheet (not SoC datasheet), that's how it will be
+called, most likely.
 
-> Each PTE represents 4K of virtual memory, so covers VA bits [11:0]
-> (this is level 3)
+Best regards,
+Krzysztof
 
-That's where you got it wrong. The architecture is pretty clear that
-each level resolves PAGE_SHIFT-3 bits, hence the computation
-above. The bottom PAGE_SHIFT bits are directly extracted from the VA,
-without any translation.
-
-> Each PMD has 512 PTEs, the index of which covers VA bits [20:12] (this
-> is level 2)
-> Each PUD references 512 PMDs, the index covering VA [29:21] (this is leve=
-l 1)
-> Each P4D references 512 PUDs, indexed by VA [38:30] (this is level 0)
-> The PGD, at level -1, therefore has to cover VA bits [51:39], which
-> means it has a 13-bit index: 8192 entries of 8 bytes each would make
-> it 16 pages in size.
->
-> > Note that at stage 1, arm64 does not support page table concatenation,
-> > and so the root page table is never larger than a page.
->=20
-> Doesn't PGD_SIZE refer to the size used for userspace PGDs after the
-> boot progresses beyond stage 1? (What do you mean by "never" here?
-> "Under no circumstances is it larger than a page at stage 1"? Or
-> "during the entire lifecycle of the system, there is no time at which
-> it's larger than a page"?)
-
-Never, ever, is a S1 table bigger than a page. This concept doesn't
-exist in the architecture. Only S2 tables can use concatenation at the
-top-most level, for up to 16 pages (in order to skip a level when
-possible).
-
-The top-level can be smaller than a page, with some alignment
-constraints, but that's about the only degree of freedom you have for
-S1 page tables.
-
-Thanks,
-
-	M.
-
---=20
-Jazz isn't dead. It just smells funny.
 
