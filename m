@@ -1,208 +1,145 @@
-Return-Path: <linux-kernel+bounces-783835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C87B33357
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 01:43:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C60B3335B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 01:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAB4B444F6F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 23:43:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D5E517EFDA
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 23:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA0526A0B3;
-	Sun, 24 Aug 2025 23:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C00270551;
+	Sun, 24 Aug 2025 23:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OGqBgFi5"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZGSTosll"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C64D1D5CC9;
-	Sun, 24 Aug 2025 23:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E52921FF2A;
+	Sun, 24 Aug 2025 23:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756079003; cv=none; b=PtvG2qvzOztdE0Lq2NK9gn5TVTyamaRmP2TfsH2EaqsL2T450OuLcH2gPq0dd3PgIxDvhhqgkv1NTeSZyNp3uxmVclHzoGI5LdkgxtuknwZZfJqRI0c7XCY6shK7F+qoJm50oTTD5BckO2Cs9snC9o0gztcUwM406yXzbCwAzsk=
+	t=1756079694; cv=none; b=iP1KnsL1I5yT4P/K4ATjCszq7GqE6sXuWDx6uCEi0+urzaUXyj0XJT8UKSlhmiWlqG1QheWpVOK/TbHQFohpQo062d1OutM7ZqeNUvBvXcq6mlF0Z9BmLd0mbOKaHcBIUvvoMKoDw5suKthwepCIOmxkRwRWQkYLEcKIQnfqABo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756079003; c=relaxed/simple;
-	bh=IBq9EZc6+dDD1HP0GSai2K0pWxBQyOkdsmXO30/lf2U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bZhiF7gtLlTv38OQl0+UZH8O6zvMdBGeM0ECb50+nqijyWYMH5VYWp1VhpB0aE7KCT/uk2sOK9h1M8ezKsDHXTWpf8wLoCkWNO0qgQmyZ5LlVvMLnu1WJVpSmIMtRTROjwZVH4tqQ2xIdI7EiEguwpFiVglhKoEsQDinQJLeEks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OGqBgFi5; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45a1b0d231eso20333515e9.3;
-        Sun, 24 Aug 2025 16:43:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756079000; x=1756683800; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+B9sOQcHZGWCingXfvCh9FZr+nr6lsPlBdBXw4dYQhw=;
-        b=OGqBgFi514ZTorOzRzZ0ZPbIVOTzyEyKGBl0nbT+gIq+8dvLQFWlOHDtncRG5yMBl3
-         9AR1jKyU1mjMDWo7urcV/xymfCBRztOxuHlAF2GWN3P9ipg2IwOF9xXgh4XXcI4vsxqV
-         dYrhv3ofENPbufAYcNLdKZlZl5sCEVY1mv1jV8ykVrRwna5xmaILr6pv1ygkjyBPrSZv
-         CZxHJdELDQjvcknrxWEF6Zzzab0lIADbp3B8dFZvwCM7Q+IjDm/NN+9pUovP2ULB15Nh
-         xnmqnruEw9mFNv151BDuMyMK2Dz0BfZwUCJkM9CSJbiquuKHO42yhav+/Ak/uLkgBHTC
-         d/Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756079000; x=1756683800;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+B9sOQcHZGWCingXfvCh9FZr+nr6lsPlBdBXw4dYQhw=;
-        b=F0dOo6N5dsr2lEU8wvMYpsqGBVq+Y8EkBmKh9VDMMW0e0e/yYxf5qoegzSzjcgI4RQ
-         x1no7AXRTZhjAQy2wKX6dKAeX9DfxLwleeVQ94EEad9uJgNxiOeBavVX3XXPkn/iv1EO
-         gPNmvFRbE2v3vyGwnU36Vfy9IP4wuNmyZ3CitkeOa41HXsiRoj/pSMX5mYZPVq0BnDTe
-         ylsTvrigZysgImt2yKKxTvpzaxH4ZkvP47cvmTKBq0hPgNOa/dxtk7fsVlUar4W+t7Vf
-         8lbiSAlEuiW3Ms/Yml4lQuTF42raS7ERc2V0x/BkvDBXpw4YG0gXlwh7PmbBcaSOYoro
-         iCFg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2XZzRS2WE7OzRljIoMWUoPFHQu2nItKtAsoJaXjdF+vS+bVN9g28J544eIqTUFZlRqTqkVRlX@vger.kernel.org, AJvYcCVsviI7CG2ZnYYfrQY6YRfs9MlUPmTK1qVGZgnzjay8jcvpupAqFBNKFRUAkQdnaxreXnX3tFESCbFoXGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcaeQNsTHDY3RYXXJpzIuhPdYE3pv7e9Mo07sHNR9y4HtZGvVN
-	NQMvh+To4m+ATb0/wLAlduoKlr0PFUduaOIdyigr61gDByMlhLvWFEktOc7XAjJxKW+Q5aZGUmS
-	CZ3dNzFuyXEF1z5e7l/B1BoaKRcD1nrWa9JVkX8+86g==
-X-Gm-Gg: ASbGncvTf0m2txO70LiTnYL6FtsdhhpgVCgh7EiHNDxOr/L/Gh5YAafaQ8Gguu5tj2Z
-	XsldaTrRK9C6s8B8VYHcuhM52iEVfhaewfmTqX86QyD79YvlW6fJiUTCXoQ3gePJdLBWS2rFynI
-	lhOdtiJuOvAe8GwKQd/OETz3hGoSjDPBBFTemChhFKD9eslSx4Erypszl0F217e/Qy3HmZROq9T
-	6egCEKHN4xskUuQ1mrTgN+1LuOo2pnwQBZdl8gpD9FRurow2k9vUKGUISEtp1nWS6/2XulnsaAj
-	nC/8ww==
-X-Google-Smtp-Source: AGHT+IHG8+LzmBHQPlkNbiAM+nxvka89tnoNbrD8fD99XUN2AtcXD7uaHnfS5btqkSxaYHYlEHcyAzLCF/UdZPXlBSE=
-X-Received: by 2002:a05:600c:1d28:b0:459:d709:e5c9 with SMTP id
- 5b1f17b1804b1-45b517955a9mr98779065e9.6.1756078999495; Sun, 24 Aug 2025
- 16:43:19 -0700 (PDT)
+	s=arc-20240116; t=1756079694; c=relaxed/simple;
+	bh=EPvpw/HB0JIK9on+shXgvx1Fgh9VbjJay+vox4FNxD0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nFaVT6zPvKxQD08xSkiuYse652lHCMezPiCeFw5eg5+KHimQIRyVOL0uxppv28QrSkVgY+Q1Nw2qwRcSgXzSx1Wil2F1rHdqbDMJOyN7fgO0KhYYRwY2pqfr4qknCp8nLKjU0t08lrQtnxKTF2SiZdhUUt0dJn8I0EIYKLDCcuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZGSTosll; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=IbALCsfsR+MAiQYJZNzeI91q7zOev/5ha7scZVR2jKc=; b=ZGSTosllZqZB0fkvFXI+A3NcTA
+	iw280Bnsv6VawvGDy2YjR53X90BvQh5KXR80VUbZWeOOcFuVM56kElkzFr04bK6EDHP/7oYqX7fwn
+	3/kRaUlyQcxM1Oof0LNVbv/fIkHjpcgV0gZjnz16W70QFX5GMRncdIoFovZsz++bUahmNQlgQZsoK
+	TQ85L8FrBvydryZWP3atiAdgfT6wMtomnUPXcfHTsC6Okg4d13n4SvU2qCzcnHKNrPzRhBsj5LMLt
+	m0s7AfRUUePLhGsmas0/Nj+UeMktfnOtlOaOmGlEYPIOHWNzDDL3lSgZiB5d/a53H3Gc6uAywT2AI
+	fkHw8LxA==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqKXy-00000006ds0-3UN7;
+	Sun, 24 Aug 2025 23:54:50 +0000
+Message-ID: <9b2c8fe2-cf17-445b-abd7-a1ed44812a73@infradead.org>
+Date: Sun, 24 Aug 2025 16:54:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822041526.467434-1-CFSworks@gmail.com> <CAMj1kXH38gOUpDDdarCXPAY3BHBbuFzdD=Dq7Knsg-qHJoNqzQ@mail.gmail.com>
- <CAH5Ym4gTTLcyucnXjxFtNutVR1HQ0G2k_YBSNO-7G3-4YXUtag@mail.gmail.com>
- <CAMj1kXF00Y0=67apXVbOC+rpbEEvyEovFYf4r_edr6mXjrj0+A@mail.gmail.com>
- <CAH5Ym4h+2w6aayzsVu__3qu3-6ETq1HK7u18yGzOrRqZ--2H9w@mail.gmail.com> <874itx14l5.wl-maz@kernel.org>
-In-Reply-To: <874itx14l5.wl-maz@kernel.org>
-From: Sam Edwards <cfsworks@gmail.com>
-Date: Sun, 24 Aug 2025 16:43:08 -0700
-X-Gm-Features: Ac12FXzpphFzjfC62UXFEc5AApowvpQZxz4HbijNMarXXS5OpHei395iBSb46eM
-Message-ID: <CAH5Ym4iqvQuO6JxO-jypTp05Ug_2vDokCDoBgGB+cOzgmTQpkQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64/boot: Zero-initialize idmap PGDs before use
-To: Marc Zyngier <maz@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Baruch Siach <baruch@tkos.co.il>, Kevin Brodsky <kevin.brodsky@arm.com>, 
-	Joey Gouly <joey.gouly@arm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] uapi/fcntl: conditionally define AT_RENAME* macros
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+ Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Alexander Aring <alex.aring@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
+ Aleksa Sarai <cyphar@cyphar.com>, Jan Kara <jack@suse.cz>,
+ Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org
+References: <20250824221055.86110-1-rdunlap@infradead.org>
+ <aKuedOXEIapocQ8l@casper.infradead.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <aKuedOXEIapocQ8l@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi, Marc! It's been a while; hope you're well.
 
-On Sun, Aug 24, 2025 at 1:55=E2=80=AFAM Marc Zyngier <maz@kernel.org> wrote=
-:
->
-> Hi Sam,
->
-> On Sun, 24 Aug 2025 04:05:05 +0100,
-> Sam Edwards <cfsworks@gmail.com> wrote:
-> >
-> > On Sat, Aug 23, 2025 at 5:29=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org=
-> wrote:
-> > >
->
-> [...]
->
-> > > Under which conditions would PGD_SIZE assume a value greater than PAG=
-E_SIZE?
-> >
-> > I might be doing my math wrong, but wouldn't 52-bit VA with 4K
-> > granules and 5 levels result in this?
->
-> No. 52bit VA at 4kB granule results in levels 0-3 each resolving 9
-> bits, and level -1 resolving 4 bits. That's a total of 40 bits, plus
-> the 12 bits coming directly from the VA making for the expected 52.
 
-Thank you, that makes it clear: I made an off-by-one mistake in my
-counting of the levels.
+On 8/24/25 4:21 PM, Matthew Wilcox wrote:
+> On Sun, Aug 24, 2025 at 03:10:55PM -0700, Randy Dunlap wrote:
+>> Don't define the AT_RENAME_* macros when __USE_GNU is defined since
+>> /usr/include/stdio.h defines them in that case (i.e. when _GNU_SOURCE
+>> is defined, which causes __USE_GNU to be defined).
+>>
+>> Having them defined in 2 places causes build warnings (duplicate
+>> definitions) in both samples/watch_queue/watch_test.c and
+>> samples/vfs/test-statx.c.
+> 
+> It does?  What flags?
+> 
 
-> > Each PTE represents 4K of virtual memory, so covers VA bits [11:0]
-> > (this is level 3)
->
-> That's where you got it wrong. The architecture is pretty clear that
-> each level resolves PAGE_SHIFT-3 bits, hence the computation
-> above. The bottom PAGE_SHIFT bits are directly extracted from the VA,
-> without any translation.
+for samples/vfs/test-statx.c:
 
-Bear with me a moment while I unpack which part of that I got wrong:
-A PTE is the terminal entry of the MMU walk, so I believe I'm correct
-(in this example, and assuming no hugepages) that each PTE represents
-4K of virtual memory: that means the final step of computing a PA
-takes a (valid) PTE and the low 12 bits of the VA, then just adds
-those bits to the physical frame address.
-It sounds like what you're saying is "That isn't a *level* though:
-that's just concatenation. A 'level' always takes a bitslice of the VA
-and uses it as an index into a table of word-sized entries. PTEs don't
-point to a further table: they have all of the final information
-encoded directly."
-That makes a lot more sense to me, but contradicts how I read this
-comment from pgtable-hwdef.h:
- * Level 3 descriptor (PTE).
-I took this as, "a PTE describes how to perform level 3 of the
-translation." But because in fact there are no "levels" after a PTE,
-it must actually be saying "Level 3 of the translation is a lookup
-into an array of PTEs."? The problem with that latter reading is that
-this comment...
- * Level -1 descriptor (PGD).
-...when read the same way, is saying "Level -1 of the translation is a
-lookup into an array of PGDs." An "array of PGDs" is nonsense, so I
-reverted back to my earlier readings: "PGD describes how to do level
--1." and "PTE describes how to do level 3."
+In file included from ../samples/vfs/test-statx.c:23:
+usr/include/linux/fcntl.h:159:9: warning: ‘AT_RENAME_NOREPLACE’ redefined
+  159 | #define AT_RENAME_NOREPLACE     0x0001
+In file included from ../samples/vfs/test-statx.c:13:
+/usr/include/stdio.h:171:10: note: this is the location of the previous definition
+  171 | # define AT_RENAME_NOREPLACE RENAME_NOREPLACE
+usr/include/linux/fcntl.h:160:9: warning: ‘AT_RENAME_EXCHANGE’ redefined
+  160 | #define AT_RENAME_EXCHANGE      0x0002
+/usr/include/stdio.h:173:10: note: this is the location of the previous definition
+  173 | # define AT_RENAME_EXCHANGE RENAME_EXCHANGE
+usr/include/linux/fcntl.h:161:9: warning: ‘AT_RENAME_WHITEOUT’ redefined
+  161 | #define AT_RENAME_WHITEOUT      0x0004
+/usr/include/stdio.h:175:10: note: this is the location of the previous definition
+  175 | # define AT_RENAME_WHITEOUT RENAME_WHITEOUT
 
-This smells like a classic "fencepost problem": The "PXX" Linuxisms
-refer to the *nodes* along the MMU walk, while the "levels" in ARM
-parlance are the actual steps of the walk taken by hardware -- edges,
-not nodes, getting us from fencepost to fencepost. A fence with five
-segments needs six posts, but we only have five currently.
+for samples/watch_queue/watch_test.c:
 
-So: where do the terms P4D, PUD, and PMD fit in here? And which one's
-our missing fencepost?
-PGD ----> ??? ----> ??? ----> ??? ----> ??? ----> PTE (|| low VA bits
-=3D final PA)
+In file included from usr/include/linux/watch_queue.h:6,
+                 from ../samples/watch_queue/watch_test.c:19:
+usr/include/linux/fcntl.h:159:9: warning: ‘AT_RENAME_NOREPLACE’ redefined
+  159 | #define AT_RENAME_NOREPLACE     0x0001
+In file included from ../samples/watch_queue/watch_test.c:11:
+/usr/include/stdio.h:171:10: note: this is the location of the previous definition
+  171 | # define AT_RENAME_NOREPLACE RENAME_NOREPLACE
+usr/include/linux/fcntl.h:160:9: warning: ‘AT_RENAME_EXCHANGE’ redefined
+  160 | #define AT_RENAME_EXCHANGE      0x0002
+/usr/include/stdio.h:173:10: note: this is the location of the previous definition
+  173 | # define AT_RENAME_EXCHANGE RENAME_EXCHANGE
+usr/include/linux/fcntl.h:161:9: warning: ‘AT_RENAME_WHITEOUT’ redefined
+  161 | #define AT_RENAME_WHITEOUT      0x0004
+/usr/include/stdio.h:175:10: note: this is the location of the previous definition
+  175 | # define AT_RENAME_WHITEOUT RENAME_WHITEOUT
 
-> > > Note that at stage 1, arm64 does not support page table concatenation=
-,
-> > > and so the root page table is never larger than a page.
-> >
-> > Doesn't PGD_SIZE refer to the size used for userspace PGDs after the
-> > boot progresses beyond stage 1? (What do you mean by "never" here?
-> > "Under no circumstances is it larger than a page at stage 1"? Or
-> > "during the entire lifecycle of the system, there is no time at which
-> > it's larger than a page"?)
->
-> Never, ever, is a S1 table bigger than a page. This concept doesn't
-> exist in the architecture. Only S2 tables can use concatenation at the
-> top-most level, for up to 16 pages (in order to skip a level when
-> possible).
->
-> The top-level can be smaller than a page, with some alignment
-> constraints, but that's about the only degree of freedom you have for
-> S1 page tables.
 
-Okay, that clicked for me: I was reading "stage" in the context of the
-boot process. These explanations make a lot more sense when reading
-"stage" in the context of the MMU.
+> #define AT_RENAME_NOREPLACE     0x0001
+> #define AT_RENAME_NOREPLACE     0x0001
+> 
+> int main(void)
+> {
+> 	return AT_RENAME_NOREPLACE;
+> }
+> 
+> gcc -W -Wall testA.c -o testA
+> 
+> (no warnings)
+> 
+> I'm pretty sure C says that duplicate definitions are fine as long
+> as they're identical.
+The vales are identical but the strings are not identical.
 
-So PGD_SIZE <=3D PAGE_SIZE, the PAGE_SIZE spacing in vmlinux.lds.S is
-for alignment, and I should be looking at cases where PGDs are assumed
-to be PAGE_SIZE to make those consistent instead. Thanks!
+We can't fix stdio.h, but we could just change uapi/linux/fcntl.h
+to match stdio.h. I suppose.
 
-Cheers,
-Sam
+-- 
+~Randy
 
->
-> Thanks,
->
->         M.
->
-> --
-> Jazz isn't dead. It just smells funny.
 
