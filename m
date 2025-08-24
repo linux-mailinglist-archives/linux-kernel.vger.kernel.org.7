@@ -1,144 +1,181 @@
-Return-Path: <linux-kernel+bounces-783580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CFF4B32F3C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:06:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B37B32F40
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1631F1B263C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:06:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6D81B25482
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632AD27E7DA;
-	Sun, 24 Aug 2025 11:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856E6288C21;
+	Sun, 24 Aug 2025 11:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pNktflFC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6hHNh1vL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="MUnsDqjt"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D920279331;
-	Sun, 24 Aug 2025 11:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4FA288530
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 11:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756033581; cv=none; b=VInBimStFMzIxwiAJSMmZ3Hf+oJfo1YxzTpNcMXIHZ6eGp2yK0aifwLhCzPRAkSH9B4lsS55ZaCU9uJrQ8N1AQ1hFy5kEPGcgbNyNaEoYV+pMtNnZ13F7gC+SOckWBu25Wvw6T6RnmDiuBMaP9MdmOuH0aOwSLF09o05/3gZw9w=
+	t=1756033918; cv=none; b=NZ9DG6roeDzEA89hWWjTPyA4Cy+krA28de1hegq/1LataJXT2hjkpR8avusy5w8nQBPYSpyEcl23ShQM/Oxt4gOuI0La8y73tlqzntdQv+m1Y6zlXTn/M3eho3hlUiRDVnRTWKg4GwPQStyFj7TpamPwnuwyGmZNivj1HB3dUzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756033581; c=relaxed/simple;
-	bh=9JR1Hr+Ma2nBJjPFNsblmYdO4k0k6gycLiGln8wLLoY=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=sjYQRvIbdnZhmagOYFPsh4BREMdj0j1Q7H5iD3V+hurfxyefO2/dW4eLO2BCio/mHr/MEkPPVIsTEpO+hB7ej+uZbjECFM/aG8Uh5XbPAbERzkRYwH98jcWnNx6EisvzLrGsIdgOvzzNfzFyY1sHXPiMjbOBaGTb3n2thCG2rpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pNktflFC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6hHNh1vL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 24 Aug 2025 11:06:17 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756033578;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1756033918; c=relaxed/simple;
+	bh=koAp5JxoEtwbFjyXQGNqMcA1REJ5KeavTnZw/hxKgvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uHL/nTkFED+fVjFLQ0gUYiJVM/UKeU0Jrq28BwIQwiQwHQhRnKeOIAYtFJonpVJjZNSgnSUZ8qKsgJOUYSNi1jwtGdgNFP1ERUnN/qvI3B+NtdCJsHk7BJgrcdGGeVv4waWj6LlWtKtX2/jMDsSawjuI9Ym38tIMuGaXNL+RyWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=MUnsDqjt; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+Date: Sun, 24 Aug 2025 13:11:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1756033903;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0pM0Aiz0clbbsX/VIm41WMruqsg8r+QmhdCgQcbN58Y=;
-	b=pNktflFC0PbRa/qGOdRCLp6+i3FvtEEIjXFUnqC3Q263ZTcvDBbIZiBa9dLFTDWIGSmQ0k
-	LC/B/hVRfvgDHVxp4ToQCdnDBmevumJ651izph8MlkV6KKrSPm5QaheDPYfKFOdsycBlJ4
-	pnMEJhrlIILy8wzeScod7XuFlpaMlgvoe+MWrj3WVa7cXOTBGapEXD32tYaReLkeH1w+LI
-	5OxYG8Pzjy3lpWpbq5Js29RrpR/EysnGwrQ3XNfeHv0YFKWjTjc1N3ePnVWjPv13oFp+tA
-	+L/0xDsFda6DFwKqZSBeEgnkwT+u3gjnNvhAD4VFm1BcVgO8zIMV1jTUHAIZ9Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756033578;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0pM0Aiz0clbbsX/VIm41WMruqsg8r+QmhdCgQcbN58Y=;
-	b=6hHNh1vLzL2OTv3c33gYcjvyygRqa96iY4j+WEKrqCk/BAgteUuYV9WlL1IaqYnZER6xBT
-	7LWvq0PxeEBOx3Bg==
-From: "tip-bot2 for Lorenzo Pieralisi" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] irqchip/gic-v5: Remove undue WARN_ON()s in the IRS
- affinity parsing
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20250814094138.1611017-1-lpieralisi@kernel.org>
-References: <20250814094138.1611017-1-lpieralisi@kernel.org>
+	bh=We6UGgdPxyJeNBFY5QqZm6AJ0xgPztY160ftcv9K1hg=;
+	b=MUnsDqjt0Xd7Q45ipZswGLTvK3HbeT6AnhjgST2U+aDvPG2SMNvARVQkWD+PpesG9R/Kh0
+	2GRhvkstz199dlS1nGgwiJUHvElKTZHmUrv3W+PxmHQSNSXG+fHQvmHp0RO+jV5Tbh4TfD
+	XJfw2Aol/nC6UQCurvxBg413PmiZehw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Henrik Grimler <henrik@grimler.se>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org,
+	linux-kernel@vger.kernel.org, m.szyprowski@samsung.com
+Subject: Re: [PATCH v2 3/3] drm/bridge: sii9234: use extcon cable detection
+ logic to detect MHL
+Message-ID: <20250824111129.GA37114@grimfrac.localdomain>
+References: <20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se>
+ <20250724-exynos4-sii9234-driver-v2-3-faee244f1d40@grimler.se>
+ <ldhyfuczwtwydwnvno4xn6ppjtt7mtcj35fp52xrqaajtfbtpb@2pgkytczb5k5>
+ <20250808095259.GA31443@grimfrac.localdomain>
+ <r2u2odrkzfezohq44nh4jw6oj23j46gohuzsh6k7jpwnzojxqk@vdus4jj5lv7x>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175603357760.1420.8506598326624626295.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <r2u2odrkzfezohq44nh4jw6oj23j46gohuzsh6k7jpwnzojxqk@vdus4jj5lv7x>
+X-Migadu-Flow: FLOW_OUT
 
-The following commit has been merged into the irq/urgent branch of tip:
+Hi Dmitry,
 
-Commit-ID:     35c23871be0072738ccc7ca00354c791711e5640
-Gitweb:        https://git.kernel.org/tip/35c23871be0072738ccc7ca00354c791711=
-e5640
-Author:        Lorenzo Pieralisi <lpieralisi@kernel.org>
-AuthorDate:    Thu, 14 Aug 2025 11:41:38 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sun, 24 Aug 2025 12:54:06 +02:00
+On Mon, Aug 18, 2025 at 03:42:07AM +0300, Dmitry Baryshkov wrote:
+> On Fri, Aug 08, 2025 at 11:52:59AM +0200, Henrik Grimler wrote:
+> > Hi Dmitry,
+> > 
+> > On Sun, Jul 27, 2025 at 08:07:37PM +0300, Dmitry Baryshkov wrote:
+> > > On Thu, Jul 24, 2025 at 08:50:53PM +0200, Henrik Grimler wrote:
+> > > > To use MHL we currently need the MHL chip to be permanently on, which
+> > > > consumes unnecessary power. Let's use extcon attached to MUIC to enable
+> > > > the MHL chip only if it detects an MHL cable.
+> > > 
+> > > Does HPD GPIO reflect the correct state of the cable?
+> > 
+> > Yes, the HPD gpio pin changes state from low to high when a mhl cable is
+> > connected:
+> > 
+> > $ sudo cat /sys/kernel/debug/gpio|grep gpio-755
+> >  gpio-755 (                    |hpd                 ) in  lo IRQ
+> > $ sudo cat /sys/kernel/debug/gpio|grep gpio-755
+> >  gpio-755 (                    |hpd                 ) in  hi IRQ
+> > 
+> > so that is described correctly.
+> > 
+> 
+> Ack.
+> 
+> > 
+> > and in captured trace I see that on cable connect we get an irq that
+> > is handled through:
+> > 1. max77693_muic_irq_handler
+> > 2. max77693_muic_irq_work
+> > 3. max77693_muic_adc_handler
+> > 4. sii9234_extcon_notifier
+> > 5. sii9234_extcon_work
+> > 6. sii9234_cable_in
+> > 7. hdmi_irq_thread
+> > 
+> > Raw captured trace dat file can be found here:
+> > https://grimler.se/files/sii9234-mhl-connect-trace.dat
+> > 
+> > Maybe you were asking for some other type of order of events log
+> > though, please let me know if I misunderstand.
+> > 
+> > > Should the sii9234 signal to Exynos HDMI that the link is established?
+> > 
+> > Maybe.. Sorry, I do not know enough about extcon and drm yet. I assume
+> > you mean through drm_helper_hpd_irq_event() and
+> > drm_bridge_hpd_notify(), I will experiment a bit and add it to the
+> > driver and see if this improves it.
+> 
+> If you are getting the HDMI IRQ event, then I'd suggest checking that
+> you are actually getting the 'plugged' event, etc. I was worried that
+> you are hijacking the DRM chain. But if you are getting hotplug events,
+> then it's fine (and most likely correct).
 
-irqchip/gic-v5: Remove undue WARN_ON()s in the IRS affinity parsing
+With some debugging in sii9234_extcon_notifier added:
 
-In gicv5_irs_of_init_affinity() a WARN_ON() is triggered if:
+--- a/drivers/gpu/drm/bridge/sii9234.c
++++ b/drivers/gpu/drm/bridge/sii9234.c
+@@ -892,6 +892,8 @@ static int sii9234_extcon_notifier(struct notifier_block *self,
+        struct sii9234 *ctx =
+                container_of(self, struct sii9234, extcon_nb);
+ 
++       dev_info(ctx->dev, "extcon event %lu\n", event);
++
+        schedule_work(&ctx->extcon_wq);
+ 
+        return NOTIFY_DONE;
 
- 1) a phandle in the "cpus" property does not correspond to a valid OF
-    node
- 2  a CPU logical id does not exist for a given OF cpu_node
+I see that sii9234 receives the hotplug event. On plug in:
 
-#1 is a firmware bug and should be reported as such but does not warrant a
-   WARN_ON() backtrace.
+[  532.132981] sii9234 15-0039: extcon event 0
+[  532.136601] max77693-muic max77693-muic: external connector is attached (adc:0x00, prev_adc:0x0)
+[  532.142777] sii9234 15-0039: RSEN_HIGH without RGND_1K
+[  532.149815] sii9234 15-0039: extcon event 1
+[  532.155662] max77693-charger max77693-charger: not charging. connector type: 13
+[  532.164801] sii9234 15-0039: extcon event 0
+[  532.168371] max77693-muic max77693-muic: external connector is detached(chg_type:0x0, prev_chg_type:0x0)
+[  532.178370] sii9234 15-0039: extcon event 0
+[  532.188250] max77693-charger max77693-charger: not charging. connector type: 13
+[  533.097415] i2c i2c-15: sendbytes: NAK bailout.
+[  533.100735] sii9234 15-0039: writebm:  TPI[0x3d] <- 0x3e
+[  533.115161] sii9234 15-0039: writeb:  TPI[0x3d] <- 0x00
 
-#2 is not necessarily an error condition (eg a kernel can be booted with
-   nr_cpus=3DX limiting the number of cores artificially) and therefore there
-   is no reason to clutter the kernel log with WARN_ON() output when the
-   condition is hit.
+and disconnect:
 
-Rework the IRS affinity parsing code to remove undue WARN_ON()s thus
-making it less noisy.
+[  547.195219] dwc2 12480000.usb: new device is full-speed
+[  547.204912] max77693-muic max77693-muic: external connector is attached (adc:0x00, prev_adc:0x0)
+[  547.212629] sii9234 15-0039: extcon event 1
+[  547.218304] max77693-charger max77693-charger: not charging. connector type: 13
+[  548.159257] i2c i2c-15: sendbytes: NAK bailout.
+[  548.162602] sii9234 15-0039: writebm:  TPI[0x3d] <- 0x3e
+[  548.167990] sii9234 15-0039: extcon event 0
+[  548.172788] max77693-muic max77693-muic: external connector is attached (adc:0x00, prev_adc:0x0)
+[  548.181336] sii9234 15-0039: extcon event 1
+[  548.186510] max77693-charger max77693-charger: not charging. connector type: 13
 
-Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250814094138.1611017-1-lpieralisi@kernel.=
-org
+It seems a bit weird to me that it receives multiple events, but maybe
+that is expected. Will send a v3 shortly, thank you!
 
----
- drivers/irqchip/irq-gic-v5-irs.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/irqchip/irq-gic-v5-irs.c b/drivers/irqchip/irq-gic-v5-ir=
-s.c
-index ffc9773..13c0357 100644
---- a/drivers/irqchip/irq-gic-v5-irs.c
-+++ b/drivers/irqchip/irq-gic-v5-irs.c
-@@ -626,12 +626,14 @@ static int __init gicv5_irs_of_init_affinity(struct dev=
-ice_node *node,
- 		int cpu;
-=20
- 		cpu_node =3D of_parse_phandle(node, "cpus", i);
--		if (WARN_ON(!cpu_node))
-+		if (!cpu_node) {
-+			pr_warn(FW_BUG "Erroneous CPU node phandle\n");
- 			continue;
-+		}
-=20
- 		cpu =3D of_cpu_node_to_id(cpu_node);
- 		of_node_put(cpu_node);
--		if (WARN_ON(cpu < 0))
-+		if (cpu < 0)
- 			continue;
-=20
- 		if (iaffids[i] & ~iaffid_mask) {
+Best regards,
+Henrik Grimler
 
