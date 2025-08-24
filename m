@@ -1,181 +1,90 @@
-Return-Path: <linux-kernel+bounces-783704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F7AB33172
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:30:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2AF6B33175
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F395B3B3609
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 16:29:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8D6F3BC44F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 16:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574E62DCF64;
-	Sun, 24 Aug 2025 16:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC852620D2;
+	Sun, 24 Aug 2025 16:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XNyAlLje"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="ORwhDOb+"
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D39502BE;
-	Sun, 24 Aug 2025 16:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816CF28F4;
+	Sun, 24 Aug 2025 16:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756052992; cv=none; b=SPn55XKZczBF9ULZL0YWGtENC4O63fRT1j2gHlgaGESvVWePtCvZTnTTP69qjQQ4KaAZjC824KAuoMOQyYpC1PeYKsJFBDOU4TdFzaYw6Ddlyn4h9fF45IORBPJ6VsimFpdQs122L9NbSKzfIY6/Lt4E65BTsqCPlGXPaRDXExo=
+	t=1756053126; cv=none; b=Kj6jRt1Z2+NruuUz3YCVginQvp5gjrH3BPOqBv5D/UeY7blRxwHRwDpCh1tFRUuavpB83Cv+e1M6Po+jdru162ynbQHl+X8ySnzpNePkS3bt6djnKVtvRFzj68LAON43Prq9CluUBgWEHbk2XT2rpiZvoBHUIxQvQXPJQd6O2ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756052992; c=relaxed/simple;
-	bh=GwblYkjIF3a3rwnEjGgJECFQlwi4NNCUtP3wZm0JZvc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lIlBDqxxnSZ6oGReVh0fUIQZ7u7YmvIu0q8ZVlAESdPh7GFZeo7MaRpdMJ5aJsblEAD1vgRAvTczeM/77QhGo5C+UoU8AN8xsAMEVDlrAAu+CeaEsmI6kg6RvfiE4/hN/KTUdD01kvVa3VGSS2A77R+no9XdnwPQ0Cm3bZ5NSrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XNyAlLje; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so3137198b3a.0;
-        Sun, 24 Aug 2025 09:29:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756052990; x=1756657790; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ll0rRDyIMVOuxXRn1R6gkhLsmIEuFCm0SjhVkwDDDpo=;
-        b=XNyAlLjeKfFZwjMtS+m+YFYstQphOdmd5SSqCJ4zTe/RWIW9V9XNca5b8e9Tz+q9NH
-         9tHT28kHYxEYD0RoEjbFiFrZRUzcVwdUlTvDL5BadFSibPqrPSDX2FgsqiEaTZs69tuX
-         tATYgcc1ksIHAtGaSwQgaFpWDrhKK34deSAVmM+xAKZrW2SdkkarduB6cVTdcZX5Kyvh
-         FuIVJVFppaLHk3SAOOP8JP/ljOsNSdugRW5zGeHRbXSsyroKr4IkeX6IkmEaJZPMdgTn
-         zPL40Vvr6gk7Mr1h35vwgyFe/mWrVRRAXTp40ktDvJjI30MHpKk+MF9rG1UrtN+fUJPs
-         dSag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756052990; x=1756657790;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ll0rRDyIMVOuxXRn1R6gkhLsmIEuFCm0SjhVkwDDDpo=;
-        b=ZNiyZH+fmesPfvXHLCjW2sFxGBDC9qoNyMDJPpDyt7OUG4j9u+YnRnUA18mUrfPH0l
-         ZVoA82Fsth+8dkP5Z9H2EYYXKiV8toaolKapZtdLB2kKLQzQ4tYCiCeo1jss57kRmjDB
-         5uXUjBsKw5gfkom51qwOUlUK0nC4djh8W6km2z7NkwD7lJXjdea8EKnPdQNRXiU/+rzk
-         LEw+oMoKnoBPdhNVx66ztGx4wgajdJZPkPNpDAJwGwYZqYBvYfT7QvXNWOmppEGdX8+k
-         CVJ3KNCsJJWZImN5pyvruX2Y3COOmTeiRnC7HOX943cS0GaBVLjQ1eOajoHBibmrGRbv
-         Y9oA==
-X-Forwarded-Encrypted: i=1; AJvYcCWu7M6yDKC79sMmJ8idwM6ZER5lR6t7d7slnoIjUM//3DERHeg3B2ORVskZMbscFiW3Sz1cas9y5Ow6FOo=@vger.kernel.org, AJvYcCXmYyfc8SqBI7lNRBt6zpjIXXlWBKvKKpEEreVpww7RIvLbI5wucLWBVqX3gCjawu3FckYlqRHvpHcB1Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz1NcIzT2qeKUfzpzpC6DbaiO2r/tn1gFJFBHoI28/49EgYPSy
-	1gNsKPvGPnCJ16wKu7oW/QA402BROZbYm9H5PJ90h1rebI8pQWWTBKMZIRsoYDA/foGQYAugSC3
-	dgsVDoK7+jWEyeqPJCGU40rvaO/L6ApE=
-X-Gm-Gg: ASbGncua4zVv5PkQtVEDVgBRVHPIbWLpc3ADxuLbNrvCXuCBXP2+eBYDm5OAOh6AxQk
-	YLE8SeifKL0WHGYU4jrCF6UM/w0sDjaeTDD/AvcP7B9dxyE4XpNyEmoPjIkIcqt1P4sb0cP6VM6
-	n+dNCMOKlqOgoFcB/wWAMDIIwzaRUJGq1L5CASSEYcCslgNQVgjrP+s8DUwd0M2FHY1PyQVYO7v
-	p+Jsg==
-X-Google-Smtp-Source: AGHT+IFCaHBfi74wGHsUbqTaQ15Y1C6Gqe+ShU36d9sHDWS7dqq84PZsTSbYpDE+OntprGaYm94PJSxSQjVx2SzONBM=
-X-Received: by 2002:a17:903:1b06:b0:240:a559:be6a with SMTP id
- d9443c01a7336-2462ef4446amr128269465ad.34.1756052990518; Sun, 24 Aug 2025
- 09:29:50 -0700 (PDT)
+	s=arc-20240116; t=1756053126; c=relaxed/simple;
+	bh=G2OHILXUuHJu2eH22mnptPrLtTmml/fktiLPE1KzmDo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jJwvkUNijSn0cwkyO93svrkDQUMjVqOXFIzBFvHKO1XDkguNZKgevIKP6BtGPHnaE4zPcvcxWYtaqCnBAc+0jzUB2Du7L4TpK1+6BtEZkCf18Fh/I+JOWR+IANCsERKsxQTHI7Y2C/TjkQhmiXolYGbxjtzs8UDSXLh4wKof7G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=ORwhDOb+; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+DKIM-Signature: a=rsa-sha256; bh=KBMwXOKWo3H5shr3lU27LMOukqdPgtvWMNq4qyPQjsk=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1756053033; v=1; x=1756485033;
+ b=ORwhDOb+RWlGUXOku+owQSOhL6+X82KxUA7Z8ZFg5fhCgmduoWGxsKTcBmv3lOTUn3v7b4cz
+ nbH3hcwLCQietNt4EG2Aj3ekxB1uaV+mBb4/A8ZlvM54c4cXvpwBYRz9+XbrdxwtSxu7sFDhyWI
+ eABzqalZo5qYsnrIAwDxIJzcXrK9a/v0GBCYHk2wkDqWU1kA4Dgrsqz64gM4BGV4lnWO+eZE3Dk
+ 9o9PpBa2l7u74pRLS4ENbH/z1gwWdmt35IKaNKtCks6/t52GoNykON5cINHmTFH18r+4fqVqvDK
+ qojvQVU7GVehloturu99MMSlwA+3/5UWl5Yuxrrt1VwUA==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id 3921b3f8; Sun, 24 Aug 2025 18:30:33 +0200
+From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
+To: Karel Balej <balejk@matfyz.cz>
+Cc: linux-mmc@vger.kernel.org, ulf.hansson@linaro.org,
+ Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
+Subject: Re: [PATCH mmc/next 1/3] arm64: dts: samsung,coreprimevelte: add PMIC
+Date: Sun, 24 Aug 2025 18:30:32 +0200
+Message-ID: <4701387.LvFx2qVVIh@radijator>
+In-Reply-To: <20250824110039.28258-2-balejk@matfyz.cz>
+References:
+ <20250824110039.28258-1-balejk@matfyz.cz>
+ <20250824110039.28258-2-balejk@matfyz.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820144511.15329-1-abinashsinghlalotra@gmail.com>
- <20250820144511.15329-2-abinashsinghlalotra@gmail.com> <660498d6-3526-4f1c-99d8-776fa9967747@acm.org>
-In-Reply-To: <660498d6-3526-4f1c-99d8-776fa9967747@acm.org>
-From: Abinash Singh <abinashsinghlalotra@gmail.com>
-Date: Sun, 24 Aug 2025 21:59:39 +0530
-X-Gm-Features: Ac12FXz-1u-6KMR5ZeaCRPIsJud4r8UdH1fXOWFw8Hgq0bWLVPeK61UYw0zsVr0
-Message-ID: <CAMV7Lq7DM-Kg_cK-w3PhBR8CoH=RkZ3D7s18ByMkMLMYPB0Lwg@mail.gmail.com>
-Subject: Re: [PATCH v8 1/2] scsi: sd: Fix build warning in sd_revalidate_disk()
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: martin.petersen@oracle.com, James.Bottomley@hansenpartnership.com, 
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, dlemoal@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Sat, Aug 23, 2025 at 1:17=E2=80=AFAM Bart Van Assche <bvanassche@acm.org=
-> wrote:
->
-> > > On 8/20/25 7:45 AM, Abinash Singh wrote:
-> > > +     lim =3D kmalloc(sizeof(*lim), GFP_KERNEL);
-> >>  +     if (!lim) {
-> > >+             sd_printk(KERN_WARNING, sdkp,
-> > >+                     "sd_revalidate_disk: Disk limit allocation failu=
-re.\n");
-> > >+             goto out;
-> > >+     }
->
->   > From Documentation/process/coding-style.rst:
->
-> > These generic allocation functions all emit a stack dump on failure whe=
-n
-> >used
-> >without __GFP_NOWARN so there is no use in emitting an additional failur=
-e
-> >message when NULL is returned.
->
-> > Has this example perhaps been followed? I think it is safe to remove
-> > this sd_printk() statement.
->
-check patch emits this warning .
-   WARNING: Possible unnecessary 'out of memory' message
-  #52: FILE: drivers/scsi/sd.c:3716:
-  + if (!lim) {
-  + sd_printk(KERN_WARNING, sdkp,
+On Sunday, 24 August 2025 12:53:43 Central European Summer Time Karel Balej 
+wrote:
+>  &twsi2 {
+>  	status = "okay";
+> +
+> +	pmic@30 {
+> +		compatible = "marvell,88pm886-a1";
+> +		reg = <0x30>;
+> +		interrupts = <0 4 IRQ_TYPE_LEVEL_HIGH>;
 
-So I think Bart is right about it . I will send v9 with these changes.
+Use GIC_SPI instead of 0 here.
 
->
-> > Otherwise this patch looks good to me.
+> +		interrupt-parent = <&gic>;
 
-In which patch should i remove this sd_printk statement . As it is
-there already.
->>       buffer =3D kmalloc(SD_BUF_SIZE, GFP_KERNEL);
-> >     if (!buffer) {
-> >              sd_printk(KERN_WARNING, sdkp, "sd_revalidate_disk: Memory =
-"
+Drop, root node already uses the GIC as the interrupt parent.
 
-If we have to go with a seperate patch for this then  v9  will have
-three patches:
-                                                             1)  Fix
-unnecessary 'out of memory' message in sd_revalidate_disk()
-                                                             2)  Fix
-build warning in sd_revalidate_disk()
-                                                             3)  Make
-sd_revalidat_disk() return void
->
-> < Thanks,
-> < Bart.
+Regards,
+--
+Duje
 
 
-Thanks
-
-
-On Sat, Aug 23, 2025 at 1:17=E2=80=AFAM Bart Van Assche <bvanassche@acm.org=
-> wrote:
->
-> On 8/20/25 7:45 AM, Abinash Singh wrote:
-> > +     lim =3D kmalloc(sizeof(*lim), GFP_KERNEL);
-> > +     if (!lim) {
-> > +             sd_printk(KERN_WARNING, sdkp,
-> > +                     "sd_revalidate_disk: Disk limit allocation failur=
-e.\n");
-> > +             goto out;
-> > +     }
->
->  From Documentation/process/coding-style.rst:
->
-> These generic allocation functions all emit a stack dump on failure when
-> used
-> without __GFP_NOWARN so there is no use in emitting an additional failure
-> message when NULL is returned.
->
-> >       buffer =3D kmalloc(SD_BUF_SIZE, GFP_KERNEL);
-> >       if (!buffer) {
-> >               sd_printk(KERN_WARNING, sdkp, "sd_revalidate_disk: Memory=
- "
->
-> Has this example perhaps been followed? I think it is safe to remove
-> this sd_printk() statement.
->
-> Otherwise this patch looks good to me.
->
-> Thanks,
->
-> Bart.
 
