@@ -1,120 +1,118 @@
-Return-Path: <linux-kernel+bounces-783552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D42FFB32EE9
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:06:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B7EFB32EDD
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4B894435C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:06:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A45A3B4B2E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A75265CB2;
-	Sun, 24 Aug 2025 10:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA8026A0B3;
+	Sun, 24 Aug 2025 09:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5KrAY3H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XXTW/N1V"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B931F17E8;
-	Sun, 24 Aug 2025 10:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E01F7262E
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 09:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756029979; cv=none; b=aRGAC2+wi7jJy7tD7fZisQ4DXNVa5hVtGUl7fh5uvYlLQhUZ8Ztzq5HKxjSZRnAUPlJpQgX+kHZDsKO81FWXD3UcPHZ7v15NrbjTukEbNaTwtZ6If63GxkDakhkEh9mNL6jmsJxxTkGxski8L/B+ymU9mjRS5E1u4BgVT6vBCug=
+	t=1756029520; cv=none; b=cRILsxjmpdQ/cv+WxD4BBxPF47R3fBoNIyNQbqob3m1s3uJ5hqblus/nBs77VqzdimnxiKn81qMq8UWcnGyt9TNyfQs36Blp7XulC9xp7KqFkUi3M0EnWUgehcX7jGfyabh9syI/6ma0vM/kwfrdjhPVq1UMGogjDJm3BTj8KUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756029979; c=relaxed/simple;
-	bh=4mLEnNFd4EpeNGIxEHBP3OJwfgbd05akBDpKZWI1BRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X5DHe26iSOtUKV6tm0HVEfw9Fh6xk2wpL+kTS2LNmBxBnjPNKwH/Q6BNbVBcVnJaSxw7KvraVGeOyqsISMFn1+Bm7cNQqfskxzkS32J/Cqk4NVPyzpgKAkH+CzR5yCgLFe7T8SHJvWLWOiDSa5NxxH2k7kF/lFsEunhuENW/4Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D5KrAY3H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DC38C4CEEB;
-	Sun, 24 Aug 2025 10:06:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756029979;
-	bh=4mLEnNFd4EpeNGIxEHBP3OJwfgbd05akBDpKZWI1BRQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D5KrAY3H3VYZfk4OirfR4BXFGb3RpS6zQHISuwoVfNVzo+5MKvN9xZE4zleXOz5zu
-	 RHX+Q8nULuVT/zJGW4fpEep4COFtxWreZaAQj1gPf2jf5wE4M/H5Lyru6zNDdLBITf
-	 XTamOG/eRZHQVGVZFg1KSYxVVMGq2khK+7IAHwZdWBntR9HDLHu9azBmnlQpbtnYf0
-	 FoMNBFdODr2s96MMlBlv+5w8qZq2n1QmMkaN+iuKGBzvPREQZVacClkvytsJ4jk54f
-	 lvODxSdgPmIpXkiiEYk5PnIyQ9/SlIdcv3pcIPAMpvgd/CZtKfuVl/8tDXuWL6Z1km
-	 5323e9P9lgh8w==
-Date: Sun, 24 Aug 2025 17:49:01 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/14] dt-bindings: dma: dma350: Document interrupt-names
-Message-ID: <aKrgDVaynJxnmR9r@xhacker>
-References: <20250823154009.25992-1-jszhang@kernel.org>
- <20250823154009.25992-9-jszhang@kernel.org>
- <eda79403-375b-4d49-9fec-12bc98bf9e47@kernel.org>
+	s=arc-20240116; t=1756029520; c=relaxed/simple;
+	bh=cgAKorw0Fde8Au04wZTQVG5bPNHjh/gcSXzESWxQi+s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QjUOiG92FS7y0lcMeBXxvq2XawafZ3C0tvvZzP2ZyYCt736LOc79JVBzIzsFskbV3LX+aSk5cZTPf4DcoBobTeDVFslcOEisC4aFoX+9F1So2YurBgXclRSxe+OeTz0aAK/+xrvzc+jDOtZoQXYn0h3DO7oHeLVCOWPD3yKdUiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XXTW/N1V; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb7a0442bso553653266b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 02:58:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756029517; x=1756634317; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lJyJ6n0uJyKoJ3QoYGdekyUCMuS5RT+LDiwNukUwI68=;
+        b=XXTW/N1VAJiQNyJmXjlaksZUXnsUi9W7fhdqYZT31JrAEZIuebb8rwv8uYK3AxRvTW
+         YeOz+jhNCXco2D2yR7XV2iq7R/i8v/89jxZQt/81LxyhwMSPTp17yhzDHa61IUoQkblT
+         aDKZVrpTl7XxxfQYtDGqAtl78BNlgPp9oL28MFkSwj0j4AUeuVLp3vnFSQHsWbcmv/Bg
+         sdEtqaNuquu4+0FXZXiM1Twmt9fijB8CyO+oO0x0HYn69Bi2h2kR/rfrAm9CeWfg36WU
+         CRVEHq+zuqFXeaSYtPc5LGQlG8cSf67w0LLvMZq38SmmMR4Pw3/UJfRRD5FX6vdbPJXx
+         WVqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756029517; x=1756634317;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lJyJ6n0uJyKoJ3QoYGdekyUCMuS5RT+LDiwNukUwI68=;
+        b=uvASeXLDjDqUq2WNxAt1oBRgft0V7DqJIFYshq5FBLy5da6wypg2R0wYy6/I440x5X
+         nwuXIFBpFpHbPuzgJwqJn18Q2MGDvkigGeNMMx3jtLTGvI1Pv8ejpbF9HEhChBROS5fH
+         tNSYjTwg2IuUoCe0OEMuEOOxDZKGNOFSI06ddmWFOSnw2CL3xMcqekH+PstcHJJMb/HT
+         HuVCeSTtNtK+Fjepjf/j14WJh9Zf1r3lvkVaHYqjX+ww6bvwMCUZSy4fAmOnKjFASmRV
+         jjIIKUv5E9uMVV7R5sXdOjF0vPf0iecTLw9E807Z40VJ5t7YXAXOZ/agzk/hkcFUULZs
+         XcVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWP7bkiQr9KPffqM+4BGnWqRgwrMamWsjvFUhMoLeiD5krk1rbeY5MqQUUZ72O/ENQwvPQ/LL8kAQhSMgQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxRkWD1ksUA7Hetzi9W903Dm+TqnJWl7t7ZwKjX2q2dT6eapmg
+	BLpdbsCN7QIXwGTrmDhCmgbdM4mG9p751PgPsaKlx/g4f62/qT4DODoeiCfXIA==
+X-Gm-Gg: ASbGncsxOOzGqUiqe85Q5U3nOx1NPDJMmoX5UJBKxU4bn2S6g8PYndAlFS3IpWawfHf
+	mUn8sok9daKWFAEfCE97Jcgl+4XlHWG88/ce/zb7ud/kfSRe82riyHQ7atp7A+eryaho3QYzDpA
+	0auZ8s6PDx4bP8SjZDLzGZvBuSd1ShvKOUNb/wpUpZSbHxbwJviF3CzMS/X8P4hMkbdxN13VA/X
+	VRGtei2eRslis+FRFpLHu40RTfwpVVXXpCGGKFDThfcesgMlNgtGYGs5lD6ERj1qFfQauVm15T2
+	Kj6qML5f3oPTnWlhPVGZr2N3Rn8BeqvI4Ta06hrBeSs33h2W4/J/ULaddmky4taGAjNANmcTfsq
+	ewkeyjkr3zMx3UD7DdHV1nVCpkTthwh0ckn3G
+X-Google-Smtp-Source: AGHT+IF3GTMJFxn33lICmYTNqS9u3TuML0h4Q12qPs6CV2JkSeinyxOO3rAAGORE8FzWm8zoSUhkHw==
+X-Received: by 2002:a17:907:96a7:b0:af2:5229:bd74 with SMTP id a640c23a62f3a-afe2904c55amr785478166b.26.1756029517186;
+        Sun, 24 Aug 2025 02:58:37 -0700 (PDT)
+Received: from tumbleweed ([95.90.184.246])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe79fba62dsm41314766b.100.2025.08.24.02.58.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Aug 2025 02:58:36 -0700 (PDT)
+From: Michael Straube <straube.linux@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: hdegoede@redhat.com,
+	Larry.Finger@lwfinger.net,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 0/4] staging: rtl8723bs: more efuse cleanups
+Date: Sun, 24 Aug 2025 11:58:26 +0200
+Message-ID: <20250824095830.79233-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <eda79403-375b-4d49-9fec-12bc98bf9e47@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 23, 2025 at 06:09:22PM +0200, Krzysztof Kozlowski wrote:
-> On 23/08/2025 17:40, Jisheng Zhang wrote:
-> > Currently, the dma350 driver assumes all channels are available to
-> > linux, this may not be true on some platforms, so it's possible no
-> > irq(s) for the unavailable channel(s). What's more, the available
-> > channels may not be continuous. To handle this case, we'd better
-> > get the irq of each channel by name.
-> 
-> You did not solve the actual problem - binding still lists the
-> interrupts in specific order.
-> 
-> > 
-> > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> > ---
-> >  Documentation/devicetree/bindings/dma/arm,dma-350.yaml | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/dma/arm,dma-350.yaml b/Documentation/devicetree/bindings/dma/arm,dma-350.yaml
-> > index 429f682f15d8..94752516e51a 100644
-> > --- a/Documentation/devicetree/bindings/dma/arm,dma-350.yaml
-> > +++ b/Documentation/devicetree/bindings/dma/arm,dma-350.yaml
-> > @@ -32,6 +32,10 @@ properties:
-> >        - description: Channel 6 interrupt
-> >        - description: Channel 7 interrupt
-> >  
-> > +  interrupt-names:
-> > +    minItems: 1
-> > +    maxItems: 8
-> 
-> You need to list the items.
+This series removes some more efuse related dead code on top of
+[PATCH 00/14] staging: rtl8723bs: clean up efuse related code
 
-I found in current dt-bindings, not all doc list the items. So is it
-changed now?
+Patch 4/4 removes an empty function I stumbled upon while working
+on the other patches.
 
-> 
-> 
-> > +
-> >    "#dma-cells":
-> >      const: 1
-> >      description: The cell is the trigger input number
-> > @@ -40,5 +44,6 @@ required:
-> >    - compatible
-> >    - reg
-> >    - interrupts
-> > +  - interrupt-names
-> 
-> That's ABI break, so no.
+All patches have been compile-tested only due to lack of hardware.
 
-If there's no users of arm-dma350 in upstream so far, is ABI break
-allowed? The reason is simple: to simplify the driver to parse
-the irq.
+Michael Straube (4):
+  staging: rtl8723bs: remove wrapper Efuse_PowerSwitch
+  staging: rtl8723bs: remove bWrite from Hal_EfusePowerSwitch
+  staging: rtl8723bs: remove REG_EFUSE_ACCESS_8723 and
+    EFUSE_ACCESS_ON_8723
+  staging: rtl8723bs: Hal_EfuseParseAntennaDiversity_8723B is empty
 
-Thanks
+ drivers/staging/rtl8723bs/core/rtw_efuse.c    | 31 +-------------
+ .../staging/rtl8723bs/hal/rtl8723b_hal_init.c | 42 ++-----------------
+ drivers/staging/rtl8723bs/hal/sdio_halinit.c  |  1 -
+ drivers/staging/rtl8723bs/include/hal_intf.h  |  2 +-
+ .../staging/rtl8723bs/include/rtl8723b_hal.h  |  2 -
+ drivers/staging/rtl8723bs/include/rtw_efuse.h |  2 -
+ 6 files changed, 7 insertions(+), 73 deletions(-)
+
+-- 
+2.51.0
+
 
