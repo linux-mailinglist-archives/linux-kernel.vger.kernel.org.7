@@ -1,146 +1,99 @@
-Return-Path: <linux-kernel+bounces-783564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE5A2B32F08
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:36:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F964B32F32
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 681FA3BE19D
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:36:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5317203C12
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66F72737E6;
-	Sun, 24 Aug 2025 10:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568F2276025;
+	Sun, 24 Aug 2025 11:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Km7D03JA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="cc2Z++b4"
+Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDB61D555;
-	Sun, 24 Aug 2025 10:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B513D21A420;
+	Sun, 24 Aug 2025 11:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756031807; cv=none; b=W9Mhw3zQlgDtIjeHYhmDJbsGg9SdhLon9OLsyQivcerHsA47j50Ym5BmEXMlZhg09iEmHz+CHzxsMfVmu9N0i6fsGZ93ppbXCnwQLzlTOY4Jor7VEb2CkNrqNYzTEshyCE73zbTm3rsvbstQc+cT1hjQPZCYuMi+5dGENv+0PL4=
+	t=1756033342; cv=none; b=N7cjcMpZAv59+ogPZefqoekDRS3aKlCC3nxRx3c3Ut+DpvsOr9juWJQg3Fazliph3KjywnXvd2JbW/Whftf6ILsBEVSgqCVdnMd46Ea81LMwi5U7vb8ETllB8TEA5nauaHkoXvq2Tui9voNF/7xaugP3oxN4LxL13q79eh72NbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756031807; c=relaxed/simple;
-	bh=q07eis8daTy3KXxvN35MWdYrk0ktQhtspvcKpN/0VFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jJCfjrpHXnByG5eJEBngS9jpFu80AM3x1ox8GadPPHAYJbZntJEudAa0iiS3kK+nzykmqJx+j4C3yyXAJ4p5SzlDnD2s4IFz4t2fF9KOOYyfhxBap4AfBxfBQ1QjYlclfoQqHkn1koIqgIhvawjtNhljzZjihS1lbuaN2bmUpOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Km7D03JA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E079EC4CEEB;
-	Sun, 24 Aug 2025 10:36:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756031806;
-	bh=q07eis8daTy3KXxvN35MWdYrk0ktQhtspvcKpN/0VFE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Km7D03JAwMYslBJuEo/lDNO2rMqFWRabQdYkY71GY2SCT88EIRQ8QrjzgifefoMxi
-	 rBGDOCeXI0jo2Zp5boFoGDHpvDsyid1qZpjU2lQrSWtaHoKzAvPGqbIHqzcO1luVnO
-	 xqUxo8m/VUaTzYXYur56hyH8KXmIZEnkQXij4s+AEGyq82ZMZzapKoSPQl9vJvarA1
-	 SVSN2Im0FnS3g5pO+8l1alw/aBYNMUdfrCQUgdpykxXEi+/nWTm5s+FUljExLyjWXK
-	 tzwBwlRZ0XyD3gfQy57iUSPyhPiJqArZgsGQ9q7qHUfQ4LwtYDCUJtvVBr0bzPLlsZ
-	 mEFgBvqSfC4xw==
-Date: Sun, 24 Aug 2025 12:36:42 +0200
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.17-rc3
-Message-ID: <aKrrOlgY5fXBEG9U@shikoro>
+	s=arc-20240116; t=1756033342; c=relaxed/simple;
+	bh=EixpysKAIvvREIFmvNs0d6fAR4lvmNdRaNvlYIy4tIA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HiOn4BzdbFIrx1M2ys2sOwLKWljevZvYW7r3uhvyMwgGkxRQGVxqoxfPd40HgVS6G+JPSCSzdsvn6Hgsj59uq/mUBaGLvsQFT1Tr+/IE70ZXu/XF56OTUptPmAGR2/GajG7WMxLXaF7qrxMZHz32e9Zr8X4r/acWHxNhkTRUvP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=cc2Z++b4; arc=none smtp.client-ip=195.113.20.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
+X-SubmittedBy: id balejk@matfyz.cz subject /postalCode=110+2000/O=Univerzita+20Karlova/street=Ovocn+5CxC3+5CxBD+20trh+20560/5/ST=Praha,+20Hlavn+5CxC3+5CxAD+20m+5CxC4+5Cx9Bsto/C=CZ/CN=Karel+20Balej/emailAddress=balejk@matfyz.cz
+	serial F5FD910E8FE2121B897F7E55B84E351D
+	issued by /C=NL/O=GEANT+20Vereniging/CN=GEANT+20Personal+20CA+204
+	auth type TLS.CUNI
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
+	s=submission; t=1756033280; x=1757333280;
+	bh=OGnQkPRlH98mt9wQWfSE8wUVZ07wp60aIMEzez2gDUI=; h=From;
+	b=cc2Z++b4tC2PdEcsyBBvzTrrvTVj6TFMbX1+hZSM+c6Zrd8lPpAKa2ye3AR8DRCfv
+	 ff4sqtFeT05XJ3i87t6DFmtLpwcRlx4XfLGASv0M1ur40CI+iPmKyg/rBS6olNLJdX
+	 iQn6O4er3Wql4Odf8UbjHEfrOSCckC8Snx5l0LaQ5a18mNo7rMByf4vsroip16yl5n
+	 LFXldcORgLRr67oLNiyYIbXw33Sv2JfjRKcBPzCRk/YFSnGb4BHHGhtlbmynGhYw0G
+	 NInib4mqILE1vLI2l/83jhpCAeDN3HZplxP+wBPCZiELNm99WklG+auV+4ykDJcDls
+	 hJg8uwy93Iyxw==
+Received: from localhost (internet5.mraknet.com [185.200.108.250])
+	(authenticated)
+	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 57OB1HZD083627
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
+	Sun, 24 Aug 2025 13:01:18 +0200 (CEST)
+	(envelope-from balejk@matfyz.cz)
+From: Karel Balej <balejk@matfyz.cz>
+To: linux-mmc@vger.kernel.org, ulf.hansson@linaro.org,
+        =?UTF-8?q?Duje=20Mihanovi=C4=87?= <duje@dujemihanovic.xyz>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Karel Balej <balejk@matfyz.cz>
+Subject: [PATCH mmc/next 0/3] samsung,coreprimevelte enhacements
+Date: Sun, 24 Aug 2025 12:53:42 +0200
+Message-ID: <20250824110039.28258-1-balejk@matfyz.cz>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="is7TnwDJyN2IjQWK"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+Hello,
 
---is7TnwDJyN2IjQWK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+here are a few patches adding some of the stuff that have accumulated
+since the support for the samsung,coreprimevelte smartphone was first
+introduced and before it made it into the mainline tree.
 
-The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
+The patches are based on mmc/next because it contains the new support
+for state_uhs in the sdhci-pxav3 driver.
 
-  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
+Thank you for having a look!
+K. B.
 
-are available in the Git repository at:
+Karel Balej (3):
+  arm64: dts: samsung,coreprimevelte: add PMIC
+  arm64: dts: samsung,coreprimevelte: add touchscreen
+  arm64: dts: samsung,coreprimevelte: add SDIO
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.17-rc3
+ .../mmp/pxa1908-samsung-coreprimevelte.dts    | 185 ++++++++++++++++++
+ 1 file changed, 185 insertions(+)
 
-for you to fetch changes up to 3dd22078026c7cad4d4a3f32c5dc5452c7180de8:
+-- 
+2.50.1
 
-  Merge tag 'i2c-host-fixes-6.17-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2025-08-23 07:57:28 +0200)
-
-----------------------------------------------------------------
-i2c-for-6.17-rc3
-
-- hisi: update maintainership
-- rtl9300: fix several issues in xfer
-  - check message length boundaries
-  - correct multi-byte value composition on write
-  - increase polling timeout
-  - fix block transfer protocol
-
-----------------------------------------------------------------
-Alex Guo (1):
-      i2c: rtl9300: Fix out-of-bounds bug in rtl9300_i2c_smbus_xfer
-
-Devyn Liu (1):
-      MAINTAINERS: i2c: Update i2c_hisi entry
-
-Harshal Gohel (1):
-      i2c: rtl9300: Fix multi-byte I2C write
-
-Sven Eckelmann (2):
-      i2c: rtl9300: Increase timeout for transfer polling
-      i2c: rtl9300: Add missing count byte for SMBus Block Ops
-
-Wolfram Sang (1):
-      Merge tag 'i2c-host-fixes-6.17-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
-
-
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Chris Packham (8):
-      (Rev.) i2c: rtl9300: Add missing count byte for SMBus Block Ops
-      (Test) i2c: rtl9300: Add missing count byte for SMBus Block Ops
-      (Rev.) i2c: rtl9300: Increase timeout for transfer polling
-      (Test) i2c: rtl9300: Increase timeout for transfer polling
-      (Rev.) i2c: rtl9300: Fix multi-byte I2C write
-      (Test) i2c: rtl9300: Fix multi-byte I2C write
-      (Rev.) i2c: rtl9300: Fix out-of-bounds bug in rtl9300_i2c_smbus_xfer
-      (Test) i2c: rtl9300: Fix out-of-bounds bug in rtl9300_i2c_smbus_xfer
-
-Wolfram Sang (1):
-      (Rev.) i2c: rtl9300: Fix out-of-bounds bug in rtl9300_i2c_smbus_xfer
-
- MAINTAINERS                      |  2 +-
- drivers/i2c/busses/i2c-rtl9300.c | 20 ++++++++++++--------
- 2 files changed, 13 insertions(+), 9 deletions(-)
-
---is7TnwDJyN2IjQWK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiq6zoACgkQFA3kzBSg
-KbaD5Q/8Dtr98kwEhLdQNRjn1yEczud1jrycreqw5ZZrvDbWi3dPD8NDQpbfjTvz
-zJ7sVN/tknVKmDaLRbVZm4sYsKXBKSNM5yrse/tsDPS3ovoIHq8VfN74RKdbfhWN
-VRXgp284ToblODYr1E1MsFKOihMHx+CdgkHNrZf5fCRShwWfhUiX/vNf5j1st7YR
-w8iIsHV/J4loi2jw1TotwVQrtYa9OUvWlxtB6FzS7iFqGSUktDlwYNWoJq1lL7MN
-zJuFV8zopfo9HBWSaPGxTCq43WtzICSD2KQ10m8A6V8nRK0PWso1Ob5xoKaFmFaH
-4dgl5mW099+FV869vaISxzCj604A1fA96DFMgexcT/2flzC2x4wkEezX0VRp1nh2
-bTOMNyAUnQe0mubCI04MRk+t5p8+CYo+DsRmzCQv5kK4DjiE9ok+IT+g/pYGGND/
-8Pl+3Ts4yz2BGAg+HC/j40taCs8MYsfBiisGF7hL0qM/PpiqpC3dfSatfY9FGST7
-3a0Q6LgyEdIF+TJy2GSCPEFcFD4/Dmeva6mgI/uWCm5DcPxp52JpxUdSHc4zPa9h
-qox1eXP8K08Xq+y2pvQvbQkyNPqZsbWUcdemUAdfSgMHlb5tvMRfJAvotZd9e1iW
-O9Jdt5CzN1snKmykn8oKpG8QCLkOubGyscZGB8sR/j51r5LbgBs=
-=R8bd
------END PGP SIGNATURE-----
-
---is7TnwDJyN2IjQWK--
 
