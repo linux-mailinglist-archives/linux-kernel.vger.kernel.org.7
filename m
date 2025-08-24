@@ -1,126 +1,95 @@
-Return-Path: <linux-kernel+bounces-783831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54315B33341
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 01:19:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5019FB33355
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 01:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 973897A6365
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 23:18:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35BFF189D5A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 23:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD2323D7FA;
-	Sun, 24 Aug 2025 23:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0302512C8;
+	Sun, 24 Aug 2025 23:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ePaYGx0c"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GHZmqsLW"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F359B1991D4;
-	Sun, 24 Aug 2025 23:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704BA163;
+	Sun, 24 Aug 2025 23:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756077590; cv=none; b=FZ6nVYa5rvGfpmWgFkpkfqR69J9ZHUZntZV8txy7mYxeYXKhuPzHHuwi1/yNTHtoXsCVSCKKpMmO40Q4XB4oaueILSU17XTtdStAWrSDrAL+KIZB8xWyJK0pw1bb3CY0QNcYpDUg62DnJ5EmURcjK9Mnxbl4ztc9UuHh8CoWmYg=
+	t=1756078831; cv=none; b=gsR4A20/PxiV/1DNxjJl8L5FbYHAp19MRgiZwNMZPMTexO8DZqdCB0F/uGe2tCsyTteXAPnJqLpJxIjNDJOsmN6saOae9IVwy75LmZREj0q1utCeYdrUd/4NYuFBx3/myw8UlO84qL85D2iDzciRaOeGr9ef+ZI5IJEsirytn2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756077590; c=relaxed/simple;
-	bh=xs5BMCegfIqJONLHKBflgvssLR5EU8lHoB1CnTpHgGw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cm3ttARyQtEDWskKhsNzlxiQMfS/kHZ1kAsl/scK95j9VbnCDSGQfcELiRd3JkscbUbJbhAL3sbPbEz37tQ3H8/AaFBKZCwPVpYA1iDjxSaWSbp7fJ/GBAx/1vfGwdNOM3dxSnisXKJ3g5eDWnfusp2w6Jpf4LKK59iz5gubNnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ePaYGx0c; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55ce5097493so3554768e87.0;
-        Sun, 24 Aug 2025 16:19:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756077587; x=1756682387; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UmM40kFHu7y6w1kDElLTxjdz9xSmHdOgb73sn9dXdkQ=;
-        b=ePaYGx0cs1z/6joQ1oKiYCCUNXV+MFFsUa4DO0C1gH22V2+kySE2GD74qf2yPSDZz2
-         O2iZB12tjZNTN2po+SDBDgMCAWVFl1XAkBdRHv21s2OhvSqJW9yTIuXVfwK/i5Rc7am8
-         7wewC6BG+Pf5LYqGS8f412mEx2DvFDR0Jki3FB5EIRHGtVCVQck4GqzKPCO+X1xTT05X
-         wjgD1kHoohVg5ZkoswSPwteVrruRwL9T0Dfz72GjyFzC3akfBFvIPqO/VE0pr4h19msD
-         k4KGYUe2bdxAUi1y2iUj2SypB6sUDVaaCNxQggASIQ+NfsoNxSj/FvlmIq24j0AvCf55
-         Et8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756077587; x=1756682387;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UmM40kFHu7y6w1kDElLTxjdz9xSmHdOgb73sn9dXdkQ=;
-        b=MJaoL0HzwP7UQ24BbZooiJtksQlY8Iw19CRMNNSRYwQmIGzZ65EURgsm/kn0dE8ncZ
-         YVwX2KtGzd5pif9jUn/zWUqt+F9iVuIZk5YRhRuNxmugpa/kHq0CX435cuQskIvnO/OQ
-         8VJhXoLhquLtkXoJLmNMwljZag4OU89aU+N6pmjGuq+mpXM4VT/lJFCcY3byf9Pp2FRa
-         7FxKWLSVGT4bioAkj1nYJ2GLvWJCVvgUqm/t69yQESz0iwoeaCJvH5h92tkcLIJrPgkg
-         pO+NZNOecbwU9dsEoHNoyINshrZtiN+eGHcSjYAmHswCn9zKe9nssNuhTdbq3hKp8aGj
-         h8Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCU2JTzv1YTN1NvAnoJXvDzEWjOTHwk7g9efzPf81Jo318q2nUbPAUo7p7K6GtoDGGNU1GIiF3yCnjwlvW4=@vger.kernel.org, AJvYcCU42G/145UUEukeBxsA1yURfEelpceA6gM+6VeDJmgul48Xv4z3CU3fkdr2yvd02uMa/nD/Ci0WZKxxzI39dSPu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5qBHGZUh0o0zHDOCtec3WIod0Kn+IR5KlwpF/GAhc455opP/S
-	pv3pF/QnpI4FP5W4KCGWlfRyW1e3CE4NEsttSpgmjCLOqmEliCVo7s1v
-X-Gm-Gg: ASbGncsRqnXzClF4/Pob7jKHyuuPJqysf0omf3AmImmYN/DpYq3eNm3KytBKGp7CW8p
-	NRAAmt9bGr+r6rifxVc7Q9X+OQErF3mce0BaFSJ1Acl6nDrS+6vloEaALSrTiJ6cFzhrNU/mDJx
-	Q9B8sQqfaN97eAqtDA5g0Cbh5MjdY7fYE19CFVnzbzYpSpXpLiSFwDa+LsuJdaJ1dekG3MCNoFE
-	ghYMOx82U6W4Qwo+NcRhXdL6rKsK/SgGevybxfsz5KOfecIIXbsYqYhJLujW3rDYLIN2iYOPEyS
-	fe7RddW0/jFizxLN3V8fMcQLDlmCYKh6Bc41ajD1Iw2pchLQ+TOmjV3lRHv4i46a5E7B4903JR3
-	NYxO9R+ZRRVhTOD6vzeN7WZRrcFa8tsqxktWRKzsNJn7nEKdyD3oXNyG+FjIpzKh+q3zM71MzUG
-	CIacl+OpxGCY1BJJK/+tTd9JbIbXHyRWnXucimRz91N8JnZ0TLbD4cFQ==
-X-Google-Smtp-Source: AGHT+IFH8Gguydnj/gZwYUIqVoUJZDcXxQXD16TPLJVRIthpGvYhR/+6vI99F1aFwVlA/sgsldzduw==
-X-Received: by 2002:a05:6512:234c:b0:55f:42b8:b11 with SMTP id 2adb3069b0e04-55f42b80c99mr817992e87.45.1756077586954;
-        Sun, 24 Aug 2025 16:19:46 -0700 (PDT)
-Received: from ip-172-31-45-110.eu-north-1.compute.internal (ec2-13-51-206-214.eu-north-1.compute.amazonaws.com. [13.51.206.214])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35c9a199sm1294898e87.110.2025.08.24.16.19.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Aug 2025 16:19:46 -0700 (PDT)
-From: Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
-To: nphamcs@gmail.com,
-	shuah@kernel.org,
-	hannes@cmpxchg.org
-Cc: linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
-Subject: [PATCH] selftests/cachestat: fix grammar and debug prints
-Date: Sun, 24 Aug 2025 23:19:42 +0000
-Message-ID: <20250824231942.3910-1-mallikarjunst09@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756078831; c=relaxed/simple;
+	bh=sEcGM/jZeRPtQpYYLqS5XmGgHrcWKcSNQEejr4wAGsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ll+Yj0dzd3oja50uU9xHjxceTvL37J9ksTAGx6zy4MOXZRIYAg0o8Em5Cv/OY53t0+HTPLaHt1gBc13xp/vt/1n0WdbCMLtncBIDjIyAQGxcjpLgmcZjodmzB9WNtZHJkqdkHjKbbaNBfNoig3+cvWUstrTFa5KlPLpqWhUp+x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GHZmqsLW; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oCLlzBPkpeVi0vqq3OHL7zA+MsRdFDKGKeZXZFCdHF4=; b=GHZmqsLWMDu/NSZsLxBgoh85Qh
+	MQ8J5WWTT41cXGnyGuaBDikDRgkn3Ix7P9pwdX5wwYaq7QN/tWISx3tnMARf2BjN0Kdx/tMl/BrmV
+	Xq+b2vw8lYe7eCPsewr6YoIcnpUhlCoMzA5E8BH65rBfMuAg2GcHmJPNqQqEymaFNG/VLLE8KfFcB
+	o3+pwypuCZbjl8JCRUqvAiuCUoCqjS3bOzDXQeaDa6NRaTEX2aKjaXTgjNQgtbfFCCCy54b8/G8Z4
+	0E7WnAZh/19AT59Hmh77l38bCLq4S8f1Cavu2Ug437KHM1L7dZ9ZlMohM354qimCkD21tmIUEP2M1
+	AzMw26Aw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqK1c-0000000FKmh-3uyC;
+	Sun, 24 Aug 2025 23:21:25 +0000
+Date: Mon, 25 Aug 2025 00:21:24 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Aleksa Sarai <cyphar@cyphar.com>, Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH] uapi/fcntl: conditionally define AT_RENAME* macros
+Message-ID: <aKuedOXEIapocQ8l@casper.infradead.org>
+References: <20250824221055.86110-1-rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250824221055.86110-1-rdunlap@infradead.org>
 
-Fix minor grammar in ksft_print_msg() output for better readability.
+On Sun, Aug 24, 2025 at 03:10:55PM -0700, Randy Dunlap wrote:
+> Don't define the AT_RENAME_* macros when __USE_GNU is defined since
+> /usr/include/stdio.h defines them in that case (i.e. when _GNU_SOURCE
+> is defined, which causes __USE_GNU to be defined).
+> 
+> Having them defined in 2 places causes build warnings (duplicate
+> definitions) in both samples/watch_queue/watch_test.c and
+> samples/vfs/test-statx.c.
 
-Signed-off-by: Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
----
- tools/testing/selftests/cachestat/test_cachestat.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It does?  What flags?
 
-diff --git a/tools/testing/selftests/cachestat/test_cachestat.c b/tools/testing/selftests/cachestat/test_cachestat.c
-index 632ab44737ec..1417d7fb7910 100644
---- a/tools/testing/selftests/cachestat/test_cachestat.c
-+++ b/tools/testing/selftests/cachestat/test_cachestat.c
-@@ -76,7 +76,7 @@ bool write_exactly(int fd, size_t filesize)
- 		ssize_t write_len = write(fd, cursor, remained);
- 
- 		if (write_len <= 0) {
--			ksft_print_msg("Unable write random data to file.\n");
-+			ksft_print_msg("Unable to write random data to file.\n");
- 			ret = false;
- 			goto out_free_data;
- 		}
-@@ -183,7 +183,7 @@ static int test_cachestat(const char *filename, bool write_random, bool create,
- 				if (cs.nr_dirty) {
- 					ret = KSFT_FAIL;
- 					ksft_print_msg(
--						"Number of dirty should be zero after fsync.\n");
-+						"Number of dirty pages should be zero after fsync.\n");
- 				}
- 			} else {
- 				ksft_print_msg("Cachestat (after fsync) returned non-zero.\n");
--- 
-2.43.0
+#define AT_RENAME_NOREPLACE     0x0001
+#define AT_RENAME_NOREPLACE     0x0001
 
+int main(void)
+{
+	return AT_RENAME_NOREPLACE;
+}
+
+gcc -W -Wall testA.c -o testA
+
+(no warnings)
+
+I'm pretty sure C says that duplicate definitions are fine as long
+as they're identical.
 
