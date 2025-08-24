@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-783558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07927B32EFB
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:25:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BA06B32EFF
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 393051B6123E
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:25:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F38C173F1E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9611C263F3C;
-	Sun, 24 Aug 2025 10:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E412641E3;
+	Sun, 24 Aug 2025 10:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TqRQ6bU0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TysKFbNG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6DC23ABAB;
-	Sun, 24 Aug 2025 10:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0A63FF1;
+	Sun, 24 Aug 2025 10:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756031117; cv=none; b=p26W5fLnGDlRy8GKzTi4y+uMMTlHbfQS3LBh//PMUzPW7E9kthg4kjYcHwhOuvcbV+q6PjQxH3dhsii59dcutvjh1QdVQ7hOpMerUMx6rahhHWKvwS/5BPt1dG95TRRHY7EKrS1FimfrIBbFVBUsXZnrjHOdiyrb+UbjoYw55ww=
+	t=1756031221; cv=none; b=nlDm9YrmVTfZcLZ4e61ZvlI/yCzOt8d34ke4LdUV+kJ9pWjw70jhjFgCDSadkGPN+Rtq9Ffjy7Vqoro83MQTriAmdCf3i+OkTd/x5pwDkJC3q4ZQ8qwxZyaRGUB2rcnnT4/hwkCdO3/tsddMi6mANHlLDlk/dT0gdX+tvKK4fbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756031117; c=relaxed/simple;
-	bh=QFKBLC8hv3oESZsf2kTb8bpZ3+ypUZIq2+WqHmKO6T4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q4WtAG++eL1WfxovL2Er0p7dJsgDiYR68l82Q7CTQe/3L6VzeNT8oOwsOmgGF9Oj4KLvKVOdNUn7t+EFGxtSW4zG/XPuIu7HYIKz/6EsV8FmObfi24rtdiOse4g5BLhXys1GZeF1zz1arZPp2vbFwQrZLt8SpS8dCrBjQvldTQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TqRQ6bU0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F31DEC4CEEB;
-	Sun, 24 Aug 2025 10:25:13 +0000 (UTC)
+	s=arc-20240116; t=1756031221; c=relaxed/simple;
+	bh=2fFxf047dZ/bxH4koaGiZYykN/ur/aYx1D1ION5XVOc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jx5UbCfE97dXL1qO/Nw8NvuRisqDX3NkYns+no/TAMtGwWDPl3UtDDzpORBW2bn5PwR2uFuzOOxdJ/isjIAc3m4G5w/jEhoqMBmai0XHSgt3gDmH/Ske0d7kaVIAMrOOdbLm9MzE6kkuElUgVycdEydTiK19GRYGT7XTu0DEkts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TysKFbNG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6141EC4CEEB;
+	Sun, 24 Aug 2025 10:26:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756031116;
-	bh=QFKBLC8hv3oESZsf2kTb8bpZ3+ypUZIq2+WqHmKO6T4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TqRQ6bU0b+S52MoDMNJZpeS9sWTKmJJaN4/b34nGTkBSXR/XTjCzQqf/vuNlRqXR9
-	 5wZzHdz4b2gY5R691UcOk2Hk9mr0wRaboljiDMCp1Ftfo4IgzZXmmBglFgvJMbn0Pl
-	 RdSrXmu3Tj66ag35pBV2iF2hsAvzrbyQG7vBMRk1vv4Rs8LD+5MaRB9tL8y/6T5WgV
-	 5mBy50+9d3h94W30onx/wWvp9vSshjiTC6Gf0zUonhBx2sTpil5678/VL2enwNqA8S
-	 jL9Oos5DFGDSsGeUNtpZzHaiJzx8p+Zw48Dz8gW6Yj6pylD7a+HRBMpA7//HRBeY61
-	 J8lU0WJ1i+d6w==
-Message-ID: <a8dcbaa1-3145-4d25-b8c5-a6e9c9bc05fd@kernel.org>
-Date: Sun, 24 Aug 2025 12:25:11 +0200
+	s=k20201202; t=1756031221;
+	bh=2fFxf047dZ/bxH4koaGiZYykN/ur/aYx1D1ION5XVOc=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=TysKFbNG5j5fN/aVTQlhPJ6ATcYT5e4wK+s+ZeK7bcz3tKBbw9HOzhwF1EWPCa++V
+	 GfnaR7363aaewlMy9OfNfMIMwP5rXjssBaVcgeNBdylNCdh4DpH2npt9ltIpRpK1LP
+	 jaRxfL1b/2ywPRAg8nLAFRkq1J8FEl2AhbV0tneaZ8F9N9QEWOLf1Hq7gkfPK13g2Y
+	 c1/+FJYV/4txaspZmsunP5nif/Lqin0m25nNFSzzzKdFJ/r4TNmpyBEOtBQwPxkTUf
+	 fbyz879zFzGaVHwTz5UZVRFW6XvWDIsTXvG2zdVGDbH9YEdMMxukKGVL1IFi1pbfJq
+	 7YJ8MWzSG9YAw==
+Message-ID: <5c7f78ae-01d8-40e3-a370-76953921ade9@kernel.org>
+Date: Sun, 24 Aug 2025 12:26:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] Support for Exynos7870's display stack (DECON,
- MIPIPHY, DSIM, etc.)
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
- <3f4f28cf-417b-4f12-8a3d-c1f70f6871c4@kernel.org>
- <45fc52d9988d1bf17eca392364c63193@disroot.org>
- <2bfa6c0b-1f23-4d57-b618-688ed8dc7fae@kernel.org>
- <afd9e6c8095df785fa7f39265111e357@disroot.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: lgm-dma: Added intel,dma-sw-desc
+ property.
+To: Yi xin Zhu <yzhu@maxlinear.com>, "vkoul@kernel.org" <vkoul@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "kees@kernel.org" <kees@kernel.org>,
+ "dave.jiang@intel.com" <dave.jiang@intel.com>,
+ "av2082000@gmail.com" <av2082000@gmail.com>,
+ "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250808032243.3796335-1-yzhu@maxlinear.com>
+ <32a2ec88-b9b8-4c4d-9836-838702e4e136@kernel.org>
+ <SA1PR19MB490961745C428F56D7E114F7C234A@SA1PR19MB4909.namprd19.prod.outlook.com>
+ <a0a1bc99-0322-4f63-a903-12983facddc9@kernel.org>
+ <SA1PR19MB4909BA87E8CE98B5A6389349C234A@SA1PR19MB4909.namprd19.prod.outlook.com>
+ <1826bd7a-621d-49d0-b6ff-7ff723ec9f2c@kernel.org>
+ <SA1PR19MB490914561C8ADF3012814D69C231A@SA1PR19MB4909.namprd19.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,63 +113,67 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <afd9e6c8095df785fa7f39265111e357@disroot.org>
+In-Reply-To: <SA1PR19MB490914561C8ADF3012814D69C231A@SA1PR19MB4909.namprd19.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/08/2025 19:08, Kaustabh Chakraborty wrote:
-> On 2025-08-18 06:32, Krzysztof Kozlowski wrote:
->> On 17/08/2025 16:49, Kaustabh Chakraborty wrote:
->>> On 2025-08-13 07:58, Krzysztof Kozlowski wrote:
->>>> On 26/06/2025 22:13, Kaustabh Chakraborty wrote:
->>>>> This series implements changes in the SoC subsystem, which includes
->>>>> devicetree additions. It depends on all sub-series listed below:
->>>>> (Legend: [R]eviewed, [A]ccepted)
->>>>>
->>>>> exynosdrm-decon            -
->>>>> https://lore.kernel.org/r/20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org
->>>>> exynos7870-mipi-phy        A
->>>>> https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org
->>>>> exynos7870-mipi-phy-fix    -
->>>>> https://lore.kernel.org/r/20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org
->>>>> exynos7870-dsim            -
->>>>> https://lore.kernel.org/r/20250627-exynos7870-dsim-v2-0-1433b67378d3@disroot.org
->>>>> panel-samsung-s6e8aa5x01   -
->>>>> https://lore.kernel.org/r/20250625-panel-samsung-s6e8aa5x01-v3-0-9a1494fe6c50@disroot.org
->>>>> panel-synaptics-tddi       -
->>>>> https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
->>>>>
->>>>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->>>>
->>>> What is the status of the bindings from dependencies? I think they 
->>>> were
->>>> not accepted.
->>>
->>> Except panel-synaptics-tddi, all have been accepted. A lot of them
->>> haven't hit next though. I'm waiting for that to send the next 
->>> revision.
+On 18/08/2025 10:41, Yi xin Zhu wrote:
+> Hi Krzysztof,
+> 
+> On 15/08/2025 18:40, Krzysztof wrote:
 >>
->> What does it mean - accepted but not hit next? If it is accepted, it
->> must be visible in next. Which maintainer's tree are not in the next?
+>>
+>> What is a "SoC level configuration"?
+>>
+>> From your explanation 1+2 it feels like consumer chooses it. Where is a full DTS
+>> showing all this?
+>>
+>>
+>>> of the DMA instances work in hardware descriptor mode while other DMA
+>>> instances work in software descriptor mode or all in HW/SW mode.
+>>>
+>>
+>> Best regards,
+>> Krzysztof
 > 
-> drm-exynos [1] branches haven't been rebased to v6.17-rc1. This should
-> include all some DECON and all DSIM patches.
+> In the LGM SoC,  The DMA instances are default connected to CBM(central buffer manager) to automate the DMA descriptors.  
+> It can also be detached from CBM to use it in different use cases individually.
 > 
-> Although [2] has been accepted, I don't see the commit in [3] anymore.
+> In the HW descriptor case,  the device tree would be like:
+> 
+> dma1tx: dma-controller@e7300000 {
+>       compatible = "intel,lgm-dma1tx";
+>       reg = <0xe7300000 0x1000>;
+>       ...
+>       #dma-cells = <3>;
+>       intel,dma-poll-cnt = <16>;
+> };
+> 
+> cbm: cbm@e1000000 {
+>    dmas = <&dma1tx 0 0 64>, <&dma1tx 1 0 64> ... <&dma1tx 15 0 64>;
+>    
+> };
+> 
+> DMA HW feature, desc_fod(descriptor fetch on demand) and desc_in_sram are turned on in the DMA controller in this case.
+> These HW features are defined in platform data in the existing DMA driver as default enabled.
+> static const struct ldma_inst_data dma1tx = {
+> 	...
+> 	.desc_fod = true;
+> 	.desc_in_sram = true;
+> };
+> 
+> In the SW descriptor management case,  the device tree would be like:
+> 
+> dma1tx: dma-controller@e7300000 {
+>       compatible = "intel,lgm-dma1tx";
+>       reg = <0xe7300000 0x1000>;
+>       ...
+>       #dma-cells = <3>;
+>       intel,dma-poll-cnt = <16>;
+>       intel,dma-sw-desc;
 
-I don't understand this. How can you find a commit via web interface?
-You should be having linux-next and there you can go through the history
-to check if commit is there or not.
-
-> But, there's [4] which mentions my panel patches, but then I don't see
-> them in next (there should be a panel-samsung-s6e8aa5x01-ams561ra01.c
-> in [5]).
-
-so that's the problem to solve.
-
-I'll drop the patchset from my queue. I think you got here some other
-comments as well, so I will be expecting v3 anyway.
-
+That's then implied by compatible, no? If you disagree, please post
+complete upstream DTS.
 
 Best regards,
 Krzysztof
