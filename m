@@ -1,168 +1,227 @@
-Return-Path: <linux-kernel+bounces-783663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C6CEB3305C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 16:19:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BAF1B33067
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 16:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A565017E85B
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 14:19:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55C22201CB7
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 14:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A2B2DCBFC;
-	Sun, 24 Aug 2025 14:19:40 +0000 (UTC)
-Received: from lgeamrelo07.lge.com (lgeamrelo07.lge.com [156.147.51.103])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4137C2DE1FA;
+	Sun, 24 Aug 2025 14:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=grenoble-inp.org header.i=@grenoble-inp.org header.b="vO2r5Jag"
+Received: from smtpout02-ext4.partage.renater.fr (smtpout02-ext4.partage.renater.fr [194.254.241.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4461A239D
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 14:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CEE14F70;
+	Sun, 24 Aug 2025 14:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.254.241.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756045179; cv=none; b=IvEdYfGBSlmiBTV3+ALxRuwqReTbcAIwpQmlck7rmxeAjC6wglxDhcfzzigBxMuR6XI/bcP40Wl6g2jjHDbt5nB70gslY11SCp4Kl5Eqo9PWkBIPnIxnFJ8elgcVTQzQZis9M3jBtya43qyGTDHdg0dadKp0anPh0CnCCNux2Ws=
+	t=1756045700; cv=none; b=BvZarRB3zR6WLX0VRkzmXMZ9ZRkAQUek4/wTn1Z5Xcnyf+PT6a6szObfU3GxbfGJOP+B7pzbFgf5WQLm5QZHpvcnisAm4Ee20VCwx+cyksaJNUQ6OhjYe5XUc2csiUaWtt28/aXfY477ALwS/0YIeE+QdM5HvMKieeNjxYprAN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756045179; c=relaxed/simple;
-	bh=unzH2Zg3QLYapxP0d9yYYXyfQ/FWfgufZj/vUZ29xlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DaPjqsTDBe9MZomeM/lUNmWf1S/VPG8bfm79RLy5hcKymswuXKBuqqSUGONJPSx9n1pfpKP4LQzbMgahlVEWdA8q3sui0yX29+DsqTDeGc1+3S8z7RqSv+INMcplWHZwVxWh2aa6g0tUrWD5hZDQAYUnDl5rT66wU4Ub7iUypKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
-	by 156.147.51.103 with ESMTP; 24 Aug 2025 23:19:28 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-Date: Sun, 24 Aug 2025 23:19:28 +0900
-From: YoungJun Park <youngjun.park@lge.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, shikemeng@huaweicloud.com,
-	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
-	baohua@kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, gunho.lee@lge.com,
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
-	Matthew Wilcox <willy@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Kairui Song <ryncsn@gmail.com>
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-Message-ID: <aKsfcGI+aK2eYISA@yjaykim-PowerEdge-T330>
-References: <uyxkdmnmvjipxuf7gagu2okw7afvzlclomfmc6wb6tygc3mhv6@736m7xs6gn5q>
- <CAF8kJuMo3yNKOZL9n5UkHx_O5cTZts287HOnQOu=KqQcnbrMdg@mail.gmail.com>
- <aKC+EU3I/qm6TcjG@yjaykim-PowerEdge-T330>
- <CAF8kJuNuNuxxTbtkCb3Opsjfy-or7E+0AwPDi7L-EgqoraQ3Qg@mail.gmail.com>
- <aKROKZ9+z2oGUJ7K@yjaykim-PowerEdge-T330>
- <CAF8kJuPUouN4c6V-CaG7_WQUAvRxBg02WRxsMtL56_YTdTh1Jg@mail.gmail.com>
- <aKXeLCr9DgQ2YfCq@yjaykim-PowerEdge-T330>
- <CAF8kJuM4f2W6w29VcHY5mgXVMYmTF4yORKaFky6bCjS1xRek9Q@mail.gmail.com>
- <aKgD7nZy7U+rHt9X@yjaykim-PowerEdge-T330>
- <CAF8kJuMb5i6GuD_-XWtHPYnu-8dQ0W51_KqUk60DccqbKjNq6w@mail.gmail.com>
+	s=arc-20240116; t=1756045700; c=relaxed/simple;
+	bh=vJDTBLt5vdPr1M74pbae//5I1NtfxD6Q2JwehZPGN+A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fxbxY+Pl3SLtQsqsJ8QDjcJvcXXF6ZYeqDty8yPT1srFJjoROGOgagUK+PGpWmlnsqWqKETITbzvjf2xvM/jdpAOoeawotR6S8UZwR7WANnV/InHnj7kM4DLAGuH5nWRxhq1IwIiTwuD+SInvp9LHhLVZA13RjZGmkZEvLxoMHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grenoble-inp.org; spf=none smtp.mailfrom=grenoble-inp.org; dkim=pass (2048-bit key) header.d=grenoble-inp.org header.i=@grenoble-inp.org header.b=vO2r5Jag; arc=none smtp.client-ip=194.254.241.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grenoble-inp.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=grenoble-inp.org
+Received: from zmtaauth02.partage.renater.fr (zmtaauth02.partage.renater.fr [194.254.241.25])
+	by smtpout20.partage.renater.fr (Postfix) with ESMTP id A2756BFB38;
+	Sun, 24 Aug 2025 16:21:37 +0200 (CEST)
+Received: from zmtaauth02.partage.renater.fr (localhost [127.0.0.1])
+	by zmtaauth02.partage.renater.fr (Postfix) with ESMTPS id 980C1A05E5;
+	Sun, 24 Aug 2025 16:21:37 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by zmtaauth02.partage.renater.fr (Postfix) with ESMTP id 861F7A0AFC;
+	Sun, 24 Aug 2025 16:21:37 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 zmtaauth02.partage.renater.fr 861F7A0AFC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grenoble-inp.org;
+	s=F42A61D9-9621-4693-8E8E-830FB5F1ED6E; t=1756045297;
+	bh=xbCDonW6R7cqSTW7wbWCW9zlxOi7k9J2nlQQ4grlsAk=;
+	h=From:To:Date:Message-ID:MIME-Version;
+	b=vO2r5JagMVzjuNUlUhXayKHO9hAjnG+b/OWkJ1o1LyUXdOneUK9Pj9tjlAHgts3db
+	 9U/CudN1h3QfY62Ecor5n2poBWY9dbDKXQTvxkbPFGsPKh6WkFb/t6MPUuNIb9FTS/
+	 qT9PFgoWBMSyElLmnbgJcvftd0ZVDTPmwbru7i3ZZD7fN3tIrQAOh8gdD+qhybbajg
+	 kPgxzCyGfGEkGTGIjasmgNR311DVkExhGuSZXR0b+OwvDw24n9J2OD5PDco6K8Ax1M
+	 3JRfTkHjJBdCg6BWp072OTGX23eIjeEM7jQpx5kBFzkQ+p6eu6iLAqBvh2OFoKRZqt
+	 jcq6hA/ZTtj2A==
+Received: from zmtaauth02.partage.renater.fr ([127.0.0.1])
+ by localhost (zmtaauth02.partage.renater.fr [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id xs9vMi_pJ7JY; Sun, 24 Aug 2025 16:21:37 +0200 (CEST)
+Received: from 91.166.147.41 (unknown [194.254.241.251])
+	by zmtaauth02.partage.renater.fr (Postfix) with ESMTPA id 3DC35A05E5;
+	Sun, 24 Aug 2025 16:21:37 +0200 (CEST)
+From: Calixte Pernot <calixte.pernot@grenoble-inp.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Calixte Pernot <calixte.pernot@grenoble-inp.org>
+Subject: [PATCH] vt: add support for smput/rmput escape codes
+Date: Sun, 24 Aug 2025 16:20:16 +0200
+Message-ID: <20250824142016.47219-1-calixte.pernot@grenoble-inp.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF8kJuMb5i6GuD_-XWtHPYnu-8dQ0W51_KqUk60DccqbKjNq6w@mail.gmail.com>
+X-Virus-Scanned: clamav-milter 0.103.12 at clamav02
+X-Virus-Status: Clean
+X-Renater-Ptge-SpamState: clean
+X-Renater-Ptge-SpamScore: -100
+X-Renater-Ptge-SpamCause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieeljeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecutffgpfetvffgtfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepvegrlhhigihtvgcurfgvrhhnohhtuceotggrlhhigihtvgdrphgvrhhnohhtsehgrhgvnhhosghlvgdqihhnphdrohhrgheqnecuggftrfgrthhtvghrnheptdevhedugfeufefgvdeivdeufffgudelveeigeejgfegheegheduhfetteekudegnecukfhppeduleegrddvheegrddvgedurddvhedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelgedrvdehgedrvdeguddrvdehuddphhgvlhhopeeluddrudeiiedrudegjedrgedupdhmrghilhhfrhhomheptggrlhhigihtvgdrphgvrhhnohhtsehgrhgvnhhosghlvgdqihhnphdrohhrghdpnhgspghrtghpthhtohephedprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvghrihgrlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+ thhopegtrghlihigthgvrdhpvghrnhhothesghhrvghnohgslhgvqdhinhhprdhorhhg
+Content-Transfer-Encoding: quoted-printable
 
-> How do you express the default tier who shall not name? There are
-> actually 3 states associated with default. It is not binary.
-> 1) default not specified: look up parent chain for default.
-> 2) default specified as on. Override parent default.
-> 3) default specified as off. Override parent default.
+Support "\e[?1049h" and "\e[?1049l" escape codes.
+This patch allows programs to enter and leave alternate screens.
+This feature is widely available in graphical terminal emulators and most=
+ly
+used by fullscreen terminal-based user interfaces such as text editors.
+Most editors such as vim and nano assume this escape code in not supporte=
+d
+and will not try to print the escape sequence if TERM=3Dlinux.
+To try out this patch, run `TERM=3Dxterm-256color vim` inside a VT.
 
-As I understand, your intention is to define inheritance semantics depending
-on the default value, and allow children to override this freely with `-` and
-`+` semantics. Is that correct?
+Signed-off-by: Calixte Pernot <calixte.pernot@grenoble-inp.org>
+---
+ drivers/tty/vt/vt.c            | 59 ++++++++++++++++++++++++++++++++++
+ include/linux/console_struct.h |  3 ++
+ 2 files changed, 62 insertions(+)
 
-When I originally proposed the swap cgroup priority mechanism, Michal Koutný
-commented that it is unnatural for cgroups if a parent attribute is not
-inherited by its child:
-(https://lore.kernel.org/linux-mm/rivwhhhkuqy7p4r6mmuhpheaj3c7vcw4w4kavp42avpz7es5vp@hbnvrmgzb5tr/)
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index 62049ceb3..0e3632aa1 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -141,6 +141,7 @@ static const struct consw *con_driver_map[MAX_NR_CONS=
+OLES];
+ static int con_open(struct tty_struct *, struct file *);
+ static void vc_init(struct vc_data *vc, int do_clear);
+ static void gotoxy(struct vc_data *vc, int new_x, int new_y);
++static void restore_cur(struct vc_data *vc);
+ static void save_cur(struct vc_data *vc);
+ static void reset_terminal(struct vc_data *vc, int do_clear);
+ static void con_flush_chars(struct tty_struct *tty);
+@@ -1344,6 +1345,10 @@ struct vc_data *vc_deallocate(unsigned int currcon=
+s)
+ 		kfree(vc->vc_screenbuf);
+ 		vc_cons[currcons].d =3D NULL;
+ 	}
++	if (vc->vc_saved_screen !=3D NULL) {
++		kfree(vc->vc_saved_screen);
++		vc->vc_saved_screen =3D NULL;
++	}
+ 	return vc;
+ }
+=20
+@@ -1878,6 +1883,46 @@ static int get_bracketed_paste(struct tty_struct *=
+tty)
+ 	return vc->vc_bracketed_paste;
+ }
+=20
++/* console_lock is held */
++static void enter_alt_screen(struct vc_data *vc)
++{
++	unsigned int size =3D vc->vc_rows * vc->vc_cols * 2;
++
++	if (vc->vc_saved_screen !=3D NULL)
++		return; /* Already inside an alt-screen */
++	vc->vc_saved_screen =3D kzalloc(size, GFP_NOWAIT);
++	if (vc->vc_saved_screen =3D=3D NULL)
++		return;
++	memcpy(vc->vc_saved_screen, (u16 *)vc->vc_origin, size);
++	vc->vc_saved_rows =3D vc->vc_rows;
++	vc->vc_saved_cols =3D vc->vc_cols;
++	save_cur(vc);
++	/* clear entire screen */
++	csi_J(vc, CSI_J_FULL);
++}
++
++/* console_lock is held */
++static void leave_alt_screen(struct vc_data *vc)
++{
++	unsigned int rows =3D min(vc->vc_saved_rows, vc->vc_rows);
++	unsigned int cols =3D min(vc->vc_saved_cols, vc->vc_cols);
++	unsigned short *src, *dest;
++
++	if (vc->vc_saved_screen =3D=3D NULL)
++		return; /* Not inside an alt-screen */
++	for (int r =3D 0; r < rows; r++) {
++		src =3D vc->vc_saved_screen + r * vc->vc_saved_cols;
++		dest =3D ((u16 *)vc->vc_origin) + r * vc->vc_cols;
++		memcpy(dest, src, 2 * cols);
++	}
++	restore_cur(vc);
++	/* Update the entire screen */
++	if (con_should_update(vc))
++		do_update_region(vc, vc->vc_origin, vc->vc_screenbuf_size / 2);
++	kfree(vc->vc_saved_screen);
++	vc->vc_saved_screen =3D NULL;
++}
++
+ enum {
+ 	CSI_DEC_hl_CURSOR_KEYS	=3D 1,	/* CKM: cursor keys send ^[Ox/^[[x */
+ 	CSI_DEC_hl_132_COLUMNS	=3D 3,	/* COLM: 80/132 mode switch */
+@@ -1888,6 +1933,7 @@ enum {
+ 	CSI_DEC_hl_MOUSE_X10	=3D 9,
+ 	CSI_DEC_hl_SHOW_CURSOR	=3D 25,	/* TCEM */
+ 	CSI_DEC_hl_MOUSE_VT200	=3D 1000,
++	CSI_DEC_hl_ALT_SCREEN	=3D 1049,
+ 	CSI_DEC_hl_BRACKETED_PASTE =3D 2004,
+ };
+=20
+@@ -1944,6 +1990,12 @@ static void csi_DEC_hl(struct vc_data *vc, bool on=
+_off)
+ 		case CSI_DEC_hl_BRACKETED_PASTE:
+ 			vc->vc_bracketed_paste =3D on_off;
+ 			break;
++		case CSI_DEC_hl_ALT_SCREEN:
++			if (on_off)
++				enter_alt_screen(vc);
++			else
++				leave_alt_screen(vc);
++			break;
+ 		}
+ }
+=20
+@@ -2182,6 +2234,13 @@ static void reset_terminal(struct vc_data *vc, int=
+ do_clear)
+ 	vc->vc_deccm		=3D global_cursor_default;
+ 	vc->vc_decim		=3D 0;
+=20
++	if (vc->vc_saved_screen !=3D NULL) {
++		kfree(vc->vc_saved_screen);
++		vc->vc_saved_screen =3D NULL;
++		vc->vc_saved_rows =3D 0;
++		vc->vc_saved_cols =3D 0;
++	}
++
+ 	vt_reset_keyboard(vc->vc_num);
+=20
+ 	vc->vc_cursor_type =3D cur_default;
+diff --git a/include/linux/console_struct.h b/include/linux/console_struc=
+t.h
+index 59b4fec5f..f9aabc3cf 100644
+--- a/include/linux/console_struct.h
++++ b/include/linux/console_struct.h
+@@ -159,6 +159,9 @@ struct vc_data {
+ 	struct uni_pagedict *uni_pagedict;
+ 	struct uni_pagedict **uni_pagedict_loc; /* [!] Location of uni_pagedict=
+ variable for this console */
+ 	u32 **vc_uni_lines;			/* unicode screen content */
++	unsigned short	*vc_saved_screen;
++	unsigned int	vc_saved_cols;
++	unsigned int	vc_saved_rows;
+ 	/* additional information is in vt_kern.h */
+ };
+=20
+--=20
+2.50.1
 
-Therefore, my current thinking is:
-* The global swap setting itself is tier 1 (if nothing is configured).
-* If a cgroup has no setting:
-  - Top-level cgroups follow the global swap.
-  - Child cgroups follow their parent’s setting.
-* If a cgroup has its own setting, that setting is applied.
-(child cgroups can only select tiers that the parent has allowed.)
-
-This seems natural because most cgroup resource distribution mechanisms follow
-a subset inheritance model.
-
-Thus, in my concept, there is no notion of a “default” value that controls
-inheritance.
-
-> How are you going to store the list of ranges? Just a bitmask integer
-> or a list?
-
-They can be represented as increasing integers, up to 32, and stored as a
-bitmask.
-
-> I feel the tier name is more readable. The number to which actual
-> device mapping is non trivial to track for humans.
-
-Using increasing integers makes it simpler for the kernel to accept a uniform
-interface format, it is identical to the existing cpuset interface, and it
-expresses the meaning of “tiers of swap by speed hierarchy” more clearly in my
-view.
-
-However, my feeling is still that this approach is clearer both in terms of
-implementation and conceptual expression. I would appreciate if you could
-reconsider it once more. If after reconsideration you still prefer your
-direction, I will follow your decision.
-
-> I want to add another usage case into consideration. The swap.tiers
-> does not have to be per cgroup. It can be per VMA. [...]
-
-I understand this as a potential extension use case for swap.tier.  
-I will keep this in mind when implementing. If I have further ideas here, I
-will share them for discussion.
-
-> Sounds fine. Maybe we can have "ssd:100 zswap:40 hdd" [...]
-
-Yes, this alignment looks good to me!
-
-> Can you elaborate on that. Just brainstorming, can we keep the
-> swap.tiers and assign NUMA autobind range to tier as well? [...]
-
-That is actually the same idea I had in mind for the NUMA use case.  
-However, I doubt if there is any real workload using this in practice, so I
-thought it may be better to leave it out for now. If NUMA autobind is truly
-needed later, it could be implemented then.
-
-This point can also be revisited during review or patch writing, so I will
-keep thinking about it.
-
-> I feel that that has the risk of  premature optimization. I suggest
-> just going with the simplest bitmask check first then optimize as
-> follow up when needed. [...]
-
-Yes, I agree with you. Starting with the bitmask implementation seems to be
-the right approach.
-
-By the way, while thinking about possible implementation, I would like to ask
-your opinion on the following situation:
-
-Suppose a tier has already been defined and cgroups are configured to use it.
-Should we allow the tier definition itself to be modified afterwards?
-
-There seem to be two possible choices:
-
-1. Once a cgroup references a tier, modifying that tier should be disallowed.
-2. Allow tier re-definition even if cgroups are already referencing it.
-
-Personally, I prefer option (1), since it avoids unexpected changes for
-cgroups that already rely on a particular tier definition.
-
-What is your opinion on this?
-
-Best Regards,
-Youngjun Park
 
