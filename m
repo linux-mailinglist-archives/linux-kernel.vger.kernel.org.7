@@ -1,161 +1,101 @@
-Return-Path: <linux-kernel+bounces-783530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3390FB32EB7
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:22:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34AC5B32EAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A199E1B61F01
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:20:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7DBF446A04
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE724265CC0;
-	Sun, 24 Aug 2025 09:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD782641E3;
+	Sun, 24 Aug 2025 09:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBNY0Gb+"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BK+OVF4g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4628253B67;
-	Sun, 24 Aug 2025 09:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC2625A2BB;
+	Sun, 24 Aug 2025 09:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756027196; cv=none; b=mQemJTcrXwjGDB9bo8VJg58yKLB/0vJPmOIMl81vrnawiU+ZDhjxFbfADapWC4tcTzfbEUBNPb40JhX5GPM5m1pqZZr09yPWylBZGoHeSaZ+wLRVLFeXe8c4ekB8fn1o1t5OjxddXn8aL+epVMGBMTjmRMr0Zpa66KoH/r8tWQ4=
+	t=1756027219; cv=none; b=d+a/2VuWJplY3PLerM6sAQjZpOnHxGmAgqwrBvVCItw6ciOQSLn8BPouZC3iYIROFSLbEUCbu40W7PVymsG9NaI2WMc4e1sVh4ZLI6vobQ/k/gBPERbw3c1WYrecsSS07lSeHFICeRvuzQUIJrQ7VGNu8uBLOrBaLSAMk+SOJyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756027196; c=relaxed/simple;
-	bh=edZR1btW6A4eDg3x1fEnZEnlele9TQiBEwxkzxjCbec=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HqRkrPmZW91RrHHlL/6ekzezSEfEHCRjofsxdQMF0j7njCggRotlf4jc2CA2Da+9BH+mtV/diTG6WY/dx64KSP9sRkPwY+d6c4yUb3oKxWyqr6G3bB2uIzBn6Ki90+G17zZg8E7qNsp+YsBngfgChulEO7sk7BbjvnaKuxbafGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QBNY0Gb+; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7ae31caso630322266b.3;
-        Sun, 24 Aug 2025 02:19:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756027193; x=1756631993; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=86M3pmzwJRLDCFOCVFnJvUsA5KO70ZclE0/xWDdlZuk=;
-        b=QBNY0Gb+DSuf8AtQLrR0vrvYtBWGGLU4HTDpLolywNrYzu784m+sHh9sNBomFgrkRO
-         L2mOLOMovXLW5PpGrl1Wb5svaZMvQDqbXDsgx2Bac1OEysqZ3AcDh9BLaXSSLb1cVznA
-         yNieXFuhRuFsTXaSR9N5twq1KAbayd15Jval/47x3FA8YF48poc5hrkQ5XR9dT8xdSlD
-         gFhHHK3HsSQR/sXURSEBvhHUdL6mMySdfLHfNvI76wrNDN88yQb6envZvSGH7ci8p+6z
-         mVAOZpiYQd6FwB1rMzG1IpDBBE4/dOSRQHnJ0lo0XZhsPDwvkqgjrJ50ThI/ZKrzb0v1
-         xETQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756027193; x=1756631993;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=86M3pmzwJRLDCFOCVFnJvUsA5KO70ZclE0/xWDdlZuk=;
-        b=TXmL/FZlGRbxLS69GnCLQlk4mut4nJYmWEowZvT3G8Tvqo2dlB0Dk+NAPSX/7ErJTo
-         1ObMfSNKcxBoNspsrn+GVLgJQju+CyZxYPOdkFDQkAIsveVmI9ZHYYXkSp4h2VBHNqPF
-         buHISZkYy219gK9tzqek5S2FNCRiA1VdLHO6/eJ2g8ir1rUDTgNYOtDIzjWc6fL1JnT1
-         /pAr57q8Ya1MYbFyBBnmArjGdFH+tzuhhX9kYUCnmkRlsaSQBwXpNYcuSbXW++OCnIKd
-         QYGz1z608TzuVWzCDmRf5QePcDGpnyqdFmKDEc8sFiSji5j6TXeW8JoPhFEKr3kIDYO3
-         if/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWDcNBqj3PtvoO6Rwaotb1pnGMniXJ9uRIh+UL+NXhntcDOv4qmRqkAyNaTM69DTgTnoy6qRbAuBwkGlyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV/yOuDHv4iM0/SrDV8wD6iFnHf9rYmKFD55Oq6bWcCTjohLPR
-	m/3z94/Jev3lh0ALAcdl3+q8zpoGSU47eav6cqDM99PWVFaXtt9ThgLr
-X-Gm-Gg: ASbGncsWX6gwtmJKmahQmhP7cYiUc+xDVJWLIPK9f9JuTQpgHKUgv4qn/S4m6wK3WBA
-	BG3Z9PAJIANYb2uzL5IcBgxjKPYxfKav85NXBaqyhq9LU0rZ3dqPRKuUtL0nnqkZCViaEDp4gOQ
-	SVhAnjQIp1mBi+QwjBdsrDa/k8mi1c3iIXDAbyAdHYUv47gWHvpx8MyRCkmwwz8azR2wiXRhyFs
-	QLblfqVyE2i/iiAPtKUbYrG+F4Mo/NJNdpf+GmpaPd5SFVsRJgYolYhImHoHy+/PoAxXhJQvCgC
-	r+ANT+FvUEoyBgXhMY44hTEPqCsbbMk2Xl6GymqkWRp1zLuP1CVpA+i19aXmTsEZoqOLxDcNihf
-	oiSfrbRCwrRhLXg==
-X-Google-Smtp-Source: AGHT+IFM3JHt0NvZu8yGNNoz0qrFo/IJsDqafbZdlO/h7MY8JvCvHdg7gqOvmuJKmYAq6y2NIpPpJw==
-X-Received: by 2002:a17:906:a1c2:b0:afe:5765:2011 with SMTP id a640c23a62f3a-afe57660199mr260109366b.53.1756027192825;
-        Sun, 24 Aug 2025 02:19:52 -0700 (PDT)
-Received: from xeon.. ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c30cf22d5sm2970156a12.0.2025.08.24.02.19.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Aug 2025 02:19:52 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Andreas Kemnade <andreas@kemnade.info>
-Cc: linux-input@vger.kernel.org,
+	s=arc-20240116; t=1756027219; c=relaxed/simple;
+	bh=WaSgZUq+epVHd+XOSY4cRjhXqIGdC2DF15B/HTqUaPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AdOi8+8oy1jsgHUisN0s23bTbWjGEkr8CJpYmdkwUTR9fDp094y8FsRsgkFBxIcO+to7BDIoqlgLXO9oe/Z+T8tkz42q8YwdtPNRo5ghK1tyhwvpeVKdE9Xc/CiFSsEMzjbJrU3MGOLZ623jDXw4vVgk1upFM4g/Dj7K8+dcJRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BK+OVF4g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DB27C4CEEB;
+	Sun, 24 Aug 2025 09:20:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756027218;
+	bh=WaSgZUq+epVHd+XOSY4cRjhXqIGdC2DF15B/HTqUaPY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BK+OVF4glgIDv3gXlluxs5Zyg7N2lpSXPy9nlIYNvx3vZy8L9GIaOVBOzFZZRvrGG
+	 C0hqtWILT8yjCQVGz4IluNEOPOmTc5cFUoa8uI3DfCHG8vWRsWvEpfbNoKdH4DXbSV
+	 EhRoT3nwMagWk3OcNfi/SXK2MtszMpJgvosrPK+kIrRemdv2FOFw8vkwj+LbaXWT+U
+	 +TULGREI8erBJsm1B4sTaenO/9TfKN/bW964+ZEaSJiiCY3qAiGUIb8bQwoEHKihRZ
+	 f4m9Z3rIYldX1CWFl0+azL3s+31Ql/cqsucRGoUCsjUJDZJeksM9GpbBQjdHy6ovkV
+	 f0Pegv8ehNbSQ==
+Date: Sun, 24 Aug 2025 11:20:15 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: David Yang <mmyangfl@gmail.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
+	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2 RESEND] input: touchcreen: tsc2007: make interrupt optional
-Date: Sun, 24 Aug 2025 12:19:27 +0300
-Message-ID: <20250824091927.105121-3-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250824091927.105121-1-clamor95@gmail.com>
-References: <20250824091927.105121-1-clamor95@gmail.com>
+Subject: Re: [PATCH net-next v6 1/3] dt-bindings: net: dsa: yt921x: Add
+ Motorcomm YT921x switch support
+Message-ID: <20250824-jolly-amaranth-panther-97a835@kuoka>
+References: <20250824005116.2434998-1-mmyangfl@gmail.com>
+ <20250824005116.2434998-2-mmyangfl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250824005116.2434998-2-mmyangfl@gmail.com>
 
-In case tsc2007 is used as an ADC sensor there will be no interrupt
-provided at all, so set up an interrupt only if one is present.
+On Sun, Aug 24, 2025 at 08:51:09AM +0800, David Yang wrote:
+> The Motorcomm YT921x series is a family of Ethernet switches with up to
+> 8 internal GbE PHYs and up to 2 GMACs.
+> 
+> Signed-off-by: David Yang <mmyangfl@gmail.com>
+> ---
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- drivers/input/touchscreen/tsc2007_core.c | 28 ++++++++++++++----------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+<form letter>
+This is a friendly reminder during the review process.
 
-diff --git a/drivers/input/touchscreen/tsc2007_core.c b/drivers/input/touchscreen/tsc2007_core.c
-index 17c82baf87df..4b169200e689 100644
---- a/drivers/input/touchscreen/tsc2007_core.c
-+++ b/drivers/input/touchscreen/tsc2007_core.c
-@@ -178,7 +178,8 @@ static void tsc2007_stop(struct tsc2007 *ts)
- 	mb();
- 	wake_up(&ts->wait);
- 
--	disable_irq(ts->irq);
-+	if (ts->irq)
-+		disable_irq(ts->irq);
- }
- 
- static int tsc2007_open(struct input_dev *input_dev)
-@@ -189,7 +190,8 @@ static int tsc2007_open(struct input_dev *input_dev)
- 	ts->stopped = false;
- 	mb();
- 
--	enable_irq(ts->irq);
-+	if (ts->irq)
-+		enable_irq(ts->irq);
- 
- 	/* Prepare for touch readings - power down ADC and enable PENIRQ */
- 	err = tsc2007_xfer(ts, PWRDOWN);
-@@ -362,17 +364,19 @@ static int tsc2007_probe(struct i2c_client *client)
- 			pdata->init_platform_hw();
- 	}
- 
--	err = devm_request_threaded_irq(&client->dev, ts->irq,
--					NULL, tsc2007_soft_irq,
--					IRQF_ONESHOT,
--					client->dev.driver->name, ts);
--	if (err) {
--		dev_err(&client->dev, "Failed to request irq %d: %d\n",
--			ts->irq, err);
--		return err;
--	}
-+	if (ts->irq) {
-+		err = devm_request_threaded_irq(&client->dev, ts->irq,
-+						NULL, tsc2007_soft_irq,
-+						IRQF_ONESHOT,
-+						client->dev.driver->name, ts);
-+		if (err) {
-+			dev_err(&client->dev, "Failed to request irq %d: %d\n",
-+				ts->irq, err);
-+			return err;
-+		}
- 
--	tsc2007_stop(ts);
-+		tsc2007_stop(ts);
-+	}
- 
- 	/* power down the chip (TSC2007_SETUP does not ACK on I2C) */
- 	err = tsc2007_xfer(ts, PWRDOWN);
--- 
-2.43.0
+It looks like you received a tag and forgot to add it.
+
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions of patchset, under or above your Signed-off-by tag, unless
+patch changed significantly (e.g. new properties added to the DT
+bindings). Tag is "received", when provided in a message replied to you
+on the mailing list. Tools like b4 can help here. However, there's no
+need to repost patches *only* to add the tags. The upstream maintainer
+will do that for tags received on the version they apply.
+
+Please read:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+*If a tag was not added on purpose, please state why* and what changed.
+</form letter>
+
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
 
