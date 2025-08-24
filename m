@@ -1,156 +1,119 @@
-Return-Path: <linux-kernel+bounces-783682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A484B33120
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 17:16:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306CDB3311C
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 17:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2732188EBCF
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:16:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE263B9590
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5CD261B6C;
-	Sun, 24 Aug 2025 15:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AD7208AD;
+	Sun, 24 Aug 2025 15:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZTYC2LLd"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PVvAs2oZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F2E111A8;
-	Sun, 24 Aug 2025 15:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35A278F51;
+	Sun, 24 Aug 2025 15:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756048579; cv=none; b=WYWEnZpWna/KuxyFnr55w6BJBtrxYcCM7QAYRsnmUtsFTXPNk64XK0aU0nogFAj+MEhePcsYy8WJwAoBTQUDPGjcjmilXUbkUeQDm0zPJlDKtkTR54YO6zBFv5yjXYRDfin8rdHqjuFsyZOZtyGj7TOo/pDqoM5V4jMl87fuLx0=
+	t=1756048538; cv=none; b=Y6wj4i67wLMPkO3RifWdgC6GXJKatchW8bhWQHavUsMmpn3WeHr+gdGPx7oCPxapyobM+n54SvWmozZZvN/QzXia4+j2iBeGqqJeikNzextnPMn9W6wz1hV4XyM/RYv06jz5knqtgDLK2Gjb/Lu/+4G1vUkefbjC131kC/SGQAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756048579; c=relaxed/simple;
-	bh=G2WnBlkD29xfFF7rlSWpoufymyzsHPV2Eism0iwubIw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OxCOjlvysKBrFKK5hWzIgetLWQlxTHY6LDxKCSVbSpk9kUl+tagI7Nz4tmrps1oVwyf2Tz/QNR2K5JnU0XdKiH3iXhvuDpOWebG7F6TD/l0VvUJuLK92Wf5HkTjuNtr6BZFm1yeeEfY3zxLOs5o2Cy2aUI7oIjCiS0pL+FmKttQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ZTYC2LLd; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Ebce3qTJJl9aY/XMrQEQpthtDw+h3aS8chg9ab8xgGs=; b=ZTYC2LLdWSUpmFSgefTT8AG14t
-	UhTANmgfLT+tHaWF84bTwdpsnGCnPJAVQjqUbMW6070hukqrovKqJXzCi3cFyGYtQF3LLpc7bt6It
-	hCJcuCFyG38AoVM1vxrkenvYxFOVqYLRaYySKpFi9JA8QWjLeBZP0EIf1n4itwswWNsM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uqCRJ-005q8B-Kg; Sun, 24 Aug 2025 17:15:25 +0200
-Date: Sun, 24 Aug 2025 17:15:25 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yibo Dong <dong100@mucse.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <809527f7-c838-4582-89cb-6cb9d24963dd@lunn.ch>
-References: <20250822023453.1910972-1-dong100@mucse.com>
- <20250822023453.1910972-5-dong100@mucse.com>
- <a066746c-2f12-4e70-b63a-7996392a9132@lunn.ch>
- <C2BF8A6A8A79FB29+20250823015824.GB1995939@nic-Precision-5820-Tower>
- <f375e4bf-9b0b-49ca-b83d-addeb49384b8@lunn.ch>
- <424D721323023327+20250824041052.GB2000422@nic-Precision-5820-Tower>
+	s=arc-20240116; t=1756048538; c=relaxed/simple;
+	bh=OLCGzXoiGLLMQWt3qmvivGONWZuyQYoOjAvFVxHjHxc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I0StizfjlGsbiLI9FmYCO55f2Z1PaIptXqeXuShemBvqzM4vlesXwV5XFSIXdLd/OZwY+OQAbQFZwkXDKqQ4VQZizJ7lBH1FO0wucWpteaEvJ1GxpagxQTwRhygnq5EfiwjwuhFABRjTbh91HdOfAHCdxCh0PRSbQKrVpumLoy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PVvAs2oZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71CD6C4CEEB;
+	Sun, 24 Aug 2025 15:15:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756048537;
+	bh=OLCGzXoiGLLMQWt3qmvivGONWZuyQYoOjAvFVxHjHxc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PVvAs2oZEYGCVtCR+Mhb1TKnAJQwzPBMatZ7vZIcRvFxkxsxR+ed3A/EWCI1jfBEM
+	 Wq0crzmGI30nMchKLPqtBqQR6jyKYwo07alchblW8Oqve9r+i5I6lv4BwLehXFKNuQ
+	 3pPHxbjmYctPZjWZYlYHwRhEjFzgGgGn6rtmIpp2ga8K3mxFza/mYhEP08BTyPSyuk
+	 AUzUIZRYbl3uSd7GS05gkCS7fwe/vH1lanwyI7R43Sv982XtLcPSDKS9xDfLnAZGdK
+	 6KDsPiJOAYCeau+FTEHLJpa2GGI8/nkIOltoExTRC94TJ3lIJzNJJp7mbLob0T7tha
+	 Ak2vjvUReWrkQ==
+Message-ID: <d092404c-56e0-49c5-91c3-5062ba9eaf2e@kernel.org>
+Date: Sun, 24 Aug 2025 17:15:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <424D721323023327+20250824041052.GB2000422@nic-Precision-5820-Tower>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] arm64: dts: axiado: Add missing UART aliases
+To: Harshit Shah <hshah@axiado.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250824-axiado-ax3000-missing-serial-alias-v3-1-5db4143bf189@axiado.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250824-axiado-ax3000-missing-serial-alias-v3-1-5db4143bf189@axiado.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 24, 2025 at 12:10:52PM +0800, Yibo Dong wrote:
-> On Sat, Aug 23, 2025 at 05:17:45PM +0200, Andrew Lunn wrote:
-> > On Sat, Aug 23, 2025 at 09:58:24AM +0800, Yibo Dong wrote:
-> > > On Fri, Aug 22, 2025 at 04:43:16PM +0200, Andrew Lunn wrote:
-> > > > > +/**
-> > > > > + * mucse_mbx_get_capability - Get hw abilities from fw
-> > > > > + * @hw: pointer to the HW structure
-> > > > > + *
-> > > > > + * mucse_mbx_get_capability tries to get capabities from
-> > > > > + * hw. Many retrys will do if it is failed.
-> > > > > + *
-> > > > > + * @return: 0 on success, negative on failure
-> > > > > + **/
-> > > > > +int mucse_mbx_get_capability(struct mucse_hw *hw)
-> > > > > +{
-> > > > > +	struct hw_abilities ability = {};
-> > > > > +	int try_cnt = 3;
-> > > > > +	int err = -EIO;
-> > > > > +
-> > > > > +	while (try_cnt--) {
-> > > > > +		err = mucse_fw_get_capability(hw, &ability);
-> > > > > +		if (err)
-> > > > > +			continue;
-> > > > > +		hw->pfvfnum = le16_to_cpu(ability.pfnum) & GENMASK_U16(7, 0);
-> > > > > +		return 0;
-> > > > > +	}
-> > > > > +	return err;
-> > > > > +}
-> > > > 
-> > > > Please could you add an explanation why it would fail? Is this to do
-> > > > with getting the driver and firmware in sync? Maybe you should make
-> > > > this explicit, add a function mucse_mbx_sync() with a comment that
-> > > > this is used once during probe to synchronise communication with the
-> > > > firmware. You can then remove this loop here.
-> > > 
-> > > It is just get some fw capability(or info such as fw version).
-> > > It is failed maybe:
-> > > 1. -EIO: return by mucse_obtain_mbx_lock_pf. The function tries to get
-> > > pf-fw lock(in chip register, not driver), failed when fw hold the lock.
-> > 
-> > If it cannot get the lock, isn't that fatal? You cannot do anything
-> > without the lock.
-> > 
-> > > 2. -ETIMEDOUT: return by mucse_poll_for_xx. Failed when timeout.
-> > > 3. -ETIMEDOUT: return by mucse_fw_send_cmd_wait. Failed when wait
-> > > response timeout.
-> > 
-> > If its dead, its dead. Why would it suddenly start responding?
-> > 
-> > > 4. -EIO: return by mucse_fw_send_cmd_wait. Failed when error_code in
-> > > response.
-> > 
-> > Which should be fatal. No retries necessary.
-> > 
-> > > 5. err return by mutex_lock_interruptible.
-> > 
-> > So you want the user to have to ^C three times?
-> > 
-> > And is mucse_mbx_get_capability() special, or will all interactions
-> > with the firmware have three retries?
+On 24/08/2025 16:56, Harshit Shah wrote:
+> Axiado AX3000 EVK has total of 4 UART ports. Add missing alias for uart0,
+> uart1, uart2.
 > 
+> This fixes the probe failures on the remaining UARTs.
+> 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> It is the first 'cmd with response' from fw when probe. If it failed,
-> return err and nothing else todo (no registe netdev ...). So, we design
-> to give retry for it.
-> fatal with no retry, maybe like this? 
- 
-Quoting myself:
-
-> > > > Is this to do
-> > > > with getting the driver and firmware in sync? Maybe you should make
-> > > > this explicit, add a function mucse_mbx_sync() with a comment that
-> > > > this is used once during probe to synchronise communication with the
-> > > > firmware. You can then remove this loop here.
-
-Does the firmware offer a NOP command? Or one to get the firmware
-version?  If you are trying to get the driver and firmware in sync, it
-make sense to use an operation which is low value and won't be used
-anywhere else.
-
-	Andrew
+Best regards,
+Krzysztof
 
