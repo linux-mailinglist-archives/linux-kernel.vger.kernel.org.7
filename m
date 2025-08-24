@@ -1,164 +1,128 @@
-Return-Path: <linux-kernel+bounces-783434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD4CCB32D94
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 07:03:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 900B7B32D98
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 07:19:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B9F14441F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 05:03:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DBD0445EEC
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 05:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070B31F1302;
-	Sun, 24 Aug 2025 05:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AF11F150A;
+	Sun, 24 Aug 2025 05:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cepYAXge"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L/0BUs6h"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7147372613
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 05:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C04E11712;
+	Sun, 24 Aug 2025 05:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756011780; cv=none; b=RiKyaHDYIHJ919ZRrPoxXHSHODj51KuUlR6MDT18DBazCecD5G7xvQLgElZOqtXVOXyEuX2Ef6QQpBCBh529XpVE5jtY4m58i0AidaAkH4rJCEY/5E1ByePkIEe7hIvLCLuknKveSWVuV3WB/C+2EEoK2MGfZt1LoRZa9V9IbYs=
+	t=1756012752; cv=none; b=sSAm32Yo7m2WCLxw++pmLU1NKlxkkzjNMbwTDzFSdnQo3pHIKb5v3ZsK3W/bFPhG4iCx68AGTgACSKeny00sHcGSFX9rtknmI8wu6dzGfk03kgar6OY3fuV/uuAgm974DpHH5P5kMqA1JFbXkgN4qNHX/HSwvZQYMwFNaHqxcJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756011780; c=relaxed/simple;
-	bh=tejoCZqNU5e1GU6VHE07uE14H+C8ZZh5dND8Sm7cosI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k82PGr1KwAfOYuXJZ/Uerp3rnbshUZAoqKpDTER1bBSnom5NuIOqg6se7y6ALdNe7gjBc2/q5noIA6VkOKkOG7GEDqM+ya6/VJ3WPg4i3KA7A7i649cBAYDdfRBcOgU1CN6U74GGDARKaCYzScUykD5oX/ax8KMq+8fMte1Et70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cepYAXge; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <e27b6484-8fb9-4c7f-9c8f-4d583cb64781@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756011766;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s+C9CJkSEuQgYGHw1lbFUqDE2Jeb1C0+Cs1jri69fPE=;
-	b=cepYAXgeUTdFov/Saqr7T9XgMErRDc+9/whTMHwDBmx0+kp6LvjmGjsaLf6+KdhtCqHJF7
-	QoMRntHK5ANXrtS8FnvmJRAUYi19BT/RCMK1pdOspqmEc3nQlVjDghhc0prIbu6woHHYH/
-	K35fp9I3fZz1jDKY3TDXdlYmtxCAF30=
-Date: Sun, 24 Aug 2025 13:02:32 +0800
+	s=arc-20240116; t=1756012752; c=relaxed/simple;
+	bh=sVALT4CkjPUI3WTqhTXXejCUzdLa7O8oPEU1rFuPm0A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tURNb4tXuaeHSlYeDutSceJ/gpSmVobWlAMpKI0BtgDKf3J+UslIMKmpDXAEHJJF89i2WlehEtcgtVYv55VadipUElRKU16AwWe8PMb3gglWwffQL5JApmutZ/NprMogen6sDwFdl2UrXi14+jn8RSbZ1xmHM7m6YD48R/64tuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L/0BUs6h; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-246151aefaaso21513485ad.1;
+        Sat, 23 Aug 2025 22:19:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756012750; x=1756617550; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GSw6mq0xsgToxzgFyzNv2RrBkOLcDN4o8dsW9/jtVV0=;
+        b=L/0BUs6hB5Exim9hTHQgvzrqRA8CcLmfSUzxu58hbHVY6AneaLpgqptKVR5rEPKwMp
+         A6ZgKp6BdJcGlWFm0kYJt/uTZE24G9QP+NVlgsihQ6s1Jh4mG6cCIQ31xERx6hHmP1/L
+         QdukRLuej2UbKwlsWFqMfJd8y09rYmyET47STBs/wWWHO22EGOU0w9UXZ6vx2JccJ1V0
+         Vz5db4O+40HkcwXy/fm/r72LjHMzyl505voar5D4Gx7OXNBnGoTBk3ZKdGyQnO2+dKPW
+         xjTU6l+ZKl/S86LEwuQ7scELZYR5S7wUxINc4Hq/JYnl4B9BZaUUVTVvkFr4LuivxYdQ
+         NxsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756012750; x=1756617550;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GSw6mq0xsgToxzgFyzNv2RrBkOLcDN4o8dsW9/jtVV0=;
+        b=aqukUXD2hebTEvWsNsvKpcJ30uSusm+fwHNJPdyuWOqIFHX/ZPBq30wCLiJDk3HYwO
+         xuXk7xwoEMtImtSil2jg7DU/3F6rwvUK2TB0yfEYpnLWUMv1qDgGbMds5r4dBqPj4zor
+         nS0cO7iG4O4Rl9A/+yeyumTZGjP47pEnJyvDxAghdy+NpvAyhNZ+Q4txi0jzoPcfK3Tx
+         ENd7JRueSTk2oPugVoC6Z+ciKHArYDkSvGQUeP8jFeufnjsf9S27lDPv9ibKt86cyxFT
+         rsaFpXzKi5J5LJHMA+8PApjiVtvXPCayDNsI3LqMRG+VYbAe8MlYvSlgNCaRlpKCVN9F
+         gOIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMvZallV76PTfH228aIkb05M1HvkwyEGjFFIRrzbna2Pss6GlHzlJgVTt/XoWcQQ/O40UIIxa2HUPj@vger.kernel.org, AJvYcCUW1V/wTQgGvUmEmPDg+bm1bY6BIxvHH9r6Guk0AsXnmux+Imgrpq4TguaS0cogkGw6rMD+qioxPOBSR1s2@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEZvJ/hsQ9B/XswKvOWBIGilmCDUCsIGdN9PJhY9llpaxb5RS3
+	YlaCRunRGC1A2F1gInaO3YygRuePn0tdCZ+QgPpsaP53fdNaqpsgMFSU7Q4+JryYQ2I=
+X-Gm-Gg: ASbGnct1o9xXNTVx+flg/8YYBQrGgF4ue/G9ekR7Jlht73eXGK5h/NkrG6GgKkHgHeS
+	VuyKx2Sng59Is4PlJKCBoldIuZFsicTt9kW5ChfraPQSLHd1vm2p9XLm/AkAilQVL9KO/dLJUMw
+	btFpc+NbfFIxy2bMJ1m0J1+OJSd6DKVajgT3360PEThiaHbD2WdMTM0vacVvOQqO4wPSY4Y1Q51
+	J0hNLMTFGuEDnavBtPSYgbAPFgwPy/vZhFRWwSrrwMSxcPwhQxaTIA3dNwdIFiWiL1MTIbXtfT8
+	jRnT/nSW9VelCYc/GIbHcxiyTNCKVkBj9OgYVq3v+aGwS2Xo+J2966xx+H/9akMrBzFfcEmil/r
+	8budZLH/40GgwKLv/rHhUJw==
+X-Google-Smtp-Source: AGHT+IGUPCfQ/Fqd/IAPaktsppTn3QieeiFv21UhQr76b2hrkfDpz3VauY/SLT3UEp2MtOfkVtNutA==
+X-Received: by 2002:a17:902:d486:b0:246:b5a3:134 with SMTP id d9443c01a7336-246b5a3046emr4274905ad.14.1756012750480;
+        Sat, 23 Aug 2025 22:19:10 -0700 (PDT)
+Received: from nuvole ([2408:8448:5e23:e352:c16:1ab4:27ca:d3f4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466886122dsm35354345ad.101.2025.08.23.22.19.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Aug 2025 22:19:10 -0700 (PDT)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pengyu Luo <mitltlatltl@gmail.com>
+Subject: [PATCH v4 0/1] arm64: dts: qcom: Add GPI DMA support for sc8280xp
+Date: Sun, 24 Aug 2025 13:17:56 +0800
+Message-ID: <20250824051756.9031-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/1] hung_task: fix warnings by enforcing alignment on
- lock structures
-Content-Language: en-US
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: akpm@linux-foundation.org, mhiramat@kernel.org,
- kernel test robot <lkp@intel.com>, geert@linux-m68k.org,
- senozhatsky@chromium.org, oe-kbuild-all@lists.linux.dev,
- amaindex@outlook.com, anna.schumaker@oracle.com, boqun.feng@gmail.com,
- ioworker0@gmail.com, joel.granados@kernel.org, jstultz@google.com,
- kent.overstreet@linux.dev, leonylgao@tencent.com,
- linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
- longman@redhat.com, mingo@redhat.com, mingzhe.yang@ly.com,
- oak@helsinkinet.fi, rostedt@goodmis.org, tfiga@chromium.org,
- will@kernel.org, stable@vger.kernel.org
-References: <20250823074048.92498-1-lance.yang@linux.dev>
- <202508240539.ARmC1Umu-lkp@intel.com>
- <29f4f58e-2f14-99c8-3899-3b0be79382c2@linux-m68k.org>
- <9efaadc9-7f96-435e-9711-7f2ce96a820a@linux.dev>
- <a70ad7be-390f-2a2c-c920-5064cabe2b36@linux-m68k.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <a70ad7be-390f-2a2c-c920-5064cabe2b36@linux-m68k.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
+This series adds GPI DMA support for the sc8280xp platform. This option is
+required only on devices where the touch panel is connected over SPI.
 
+Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
+---
+Changes in v4:
+- remove double space (Konrad)
+- remove the last interrupt of gpi_dma0 (Konrad)
+- enable the gpi_dma nodes by default (Konrad, Dmitry)
+- Link to v3: https://lore.kernel.org/linux-arm-msm/20250617090032.1487382-1-mitltlatltl@gmail.com
 
-On 2025/8/24 12:18, Finn Thain wrote:
-> 
-> On Sun, 24 Aug 2025, Lance Yang wrote:
-> 
->> On 2025/8/24 08:47, Finn Thain wrote:
->>>
->>> On Sun, 24 Aug 2025, kernel test robot wrote:
->>>
->>>> All warnings (new ones prefixed by >>):
->>>>
->>>>      In file included from sound/soc/codecs/mt6660.c:15:
->>>>>> sound/soc/codecs/mt6660.h:28:1: warning: alignment 1 of 'struct
->>>>>> mt6660_chip' is less than 8 [-Wpacked-not-aligned]
->>>>         28 | };
->>>>            | ^
->>>>>> sound/soc/codecs/mt6660.h:25:22: warning: 'io_lock' offset 49 in 'struct
->>>>>> mt6660_chip' isn't aligned to 8 [-Wpacked-not-aligned]
->>>>         25 |         struct mutex io_lock;
->>>>            |                      ^~~~~~~
->>>>
->>>
->>> Misalignment warnings like this one won't work if you just pick an
->>> alignment arbitrarily i.e. to suit whatever bitfield you happen to need.
->>
->> Yes.
->>
->> The build warnings reported by the test robot are exactly the kind of
->> unintended side effect I was concerned about. It confirms that forcing
->> alignment on a core structure like struct mutex breaks other parts of
->> the kernel that rely on packed structures ;)
->>
-> 
-> Sure, your patch broke the build. So why not write a better patch? You
-> don't need to align the struct, you need to align the lock, like I said
-> already.
+---
+Changes in v3:
+- fix shifted dma channels
+- do not enable this on devices without connected SPI slave devices.
+- Link to v2: https://lore.kernel.org/linux-arm-msm/20250612075724.707457-1-mitltlatltl@gmail.com
 
-I think there might be a misunderstanding about the level of abstraction
-at which the blocker tracking operates.
+Changes in v2:
+- document dt-bindings (Dmitry)
+- use describe in commit message (Eugen)
+- enable it for sc8280xp based devices
+- Link to v1: https://lore.kernel.org/linux-arm-msm/20250605054208.402581-1-mitltlatltl@gmail.com
 
-The blocker tracking mechanism operates on pointers to higher-level
-locks (like struct mutex), as that is what is stored in the
-task_struct->blocker field. It does not operate on the lower-level
-arch_spinlock_t inside it.
+Pengyu Luo (1):
+  arm64: dts: qcom: sc8280xp: Describe GPI DMA controller nodes
 
-While we could track the internal arch_spinlock_t, that would break
-encapsulation. The hung task detector should remain generic and not
-depend on lock-specific implementation details ;)
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 361 +++++++++++++++++++++++++
+ 1 file changed, 361 insertions(+)
 
-> 
->>>
->>> Instead, I think I would naturally align the actual locks, that is,
->>> arch_spinlock_t and arch_rwlock_t in include/linux/spinlock_types*.h.
->>
->> That's an interesting point. The blocker tracking mechanism currently
->> operates on higher-level structures like struct mutex. Moving the type
->> encoding down to the lowest-level locks would be a more complex and
->> invasive change, likely beyond the scope of fixing this particular
->> issue.
->>
-> 
-> I don't see why changing kernel struct layouts on m68k is particularly
-> invasive. Perhaps I'm missing something (?)
-> 
->> Looking further ahead, a better long-term solution might be to stop
->> repurposing pointer bits altogether. We could add an explicit
->> blocker_type field to task_struct to be used alongside the blocker
->> field. That would be a much cleaner design. TODO +1 for that idea :)
->>
->> So, let's drop the patch[1] that enforces alignment and go back to my
->> initial proposal[2], which adjusts the runtime checks to gracefully
->> handle unaligned pointers. That one is self-contained, has minimal
->> impact, and is clearly the safer solution for now.
->>
->> [1] https://lore.kernel.org/lkml/20250823074048.92498-1-lance.yang@linux.dev
->> [2] https://lore.kernel.org/lkml/20250823050036.7748-1-lance.yang@linux.dev
->>
-> 
-> I am willing to send a patch if it serves correctness and portability. So
-> you may wish to refrain from crippling your blocker tracking algorithm for
-> now.
+-- 
+2.50.1
 
-
-Completely agreed that correctness and portability are the goals.
-
-Please, feel free to send a patch.
 
