@@ -1,188 +1,148 @@
-Return-Path: <linux-kernel+bounces-783646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6233B33027
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:38:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E71EB3302A
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5099D442135
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:38:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B55E91B2645D
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D5B2DBF69;
-	Sun, 24 Aug 2025 13:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E2E2DA779;
+	Sun, 24 Aug 2025 13:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2kEy2cBn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kk4JeDNz"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EIKCOTSU"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14C023A9BE;
-	Sun, 24 Aug 2025 13:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6748C23A9BE;
+	Sun, 24 Aug 2025 13:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756042696; cv=none; b=IcffHQHKXVGOlp1l7/GFeTV9KjjrUO15faSY8ZHEg7AYerCWZpgfxxnm4tAj0wfZOei4miCrikcYetSIH6KYyDUldI2fSFeoeGGIkez3VRS3UmKH8vtht87Hw3fvBMyYet4ku6CMas6SPd0jE4xNT2qqmtal3zEEJBSmtFh+8Yc=
+	t=1756042707; cv=none; b=eRdbckxBSYzRTrudnTkeUc6yBl9yX5MrogLPsn162BBws4X8K+WmpI8JiFUt+sRNbQqezdEv4cQk05X6sA9LyAUA2Fqf8XNgdASnBab24OSa10RHXxDU6XOCuGj3Y/op2GQKpxpMgBBq8IZdZ3Y5Avjh80L51bom84oTrSjCboc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756042696; c=relaxed/simple;
-	bh=HN8vItz0GigpFkrZnRZytRlm3Um2RFY5Kv7NOzjU2Io=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=C8bhgamlglgOIWo2Q97iCsF0/+iTzUIRg/3qEq0TAEcIcggTI6DtYQVI6pFpXPCQc2/xm+lii5fxfrGF84eSR4k4HSS8Ph6wKamZWzFKkP1ZjgFnSnBNRSRJMtL+vCLHe7qiEypJe7I1P1ERzjh6vPgUNExGJxClThac+pZOqvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2kEy2cBn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kk4JeDNz; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756042686;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zR6KLU5duIFq19gpDRX9O5axG8cxVDQ8Pv15dsa5XIA=;
-	b=2kEy2cBnKlglNeO+h/it0wcuXrEMznyvIjnmXCGEi15tKTJcTgypRde6/o3Xz+a6ldgbYr
-	sfF3BNnyaJwZfoO8Eg9XBGFpfvIsVbMtrfLdp6k2t56XYmqDbIibkJs97FIlNox7xSUH7R
-	EPc0m6D4BB76zEYLcdKUi9Jfso2YbLvJgTq+h6FxIHCNpulH+UDvq87NDyoKiEBVhY0Le9
-	nWDAbUba1VssZpfECBDv1kRG4o0be0mQORnT6BRH0NAynIwyv1rnzflKTDXNtOKTdoLyDB
-	Z777AkS9hvJXJl2HvEXCobdVzo2KkxsfEGR7fviP+CTVVIZV9lwH059Ni8rYVw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756042686;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zR6KLU5duIFq19gpDRX9O5axG8cxVDQ8Pv15dsa5XIA=;
-	b=Kk4JeDNzCcK0wKv024ApAj1o+6NjiY5OsZagycH/aPvPYG9zLG0RKS9zdqwp04UND6TQa9
-	yQk69VR7DubkrnAA==
-To: K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org
-Cc: Naveen rao <naveen.rao@amd.com>, Sairaj Kodilkar <sarunkod@amd.com>, "H.
- Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)"
- <peterz@infradead.org>, "Xin Li (Intel)" <xin@zytor.com>, Pawan Gupta
- <pawan.kumar.gupta@linux.intel.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, Mario Limonciello <mario.limonciello@amd.com>,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Babu Moger
- <babu.moger@amd.com>, Suravee Suthikulpanit
- <suravee.suthikulpanit@amd.com>, K Prateek Nayak <kprateek.nayak@amd.com>
-Subject: Re: [PATCH v3 4/4] x86/cpu/topology: Check for
- X86_FEATURE_XTOPOLOGY instead of passing has_topoext
-In-Reply-To: <20250818060435.2452-5-kprateek.nayak@amd.com>
-References: <20250818060435.2452-1-kprateek.nayak@amd.com>
- <20250818060435.2452-5-kprateek.nayak@amd.com>
-Date: Sun, 24 Aug 2025 15:38:05 +0200
-Message-ID: <87ms7o3kn6.ffs@tglx>
+	s=arc-20240116; t=1756042707; c=relaxed/simple;
+	bh=s7X0pnbm3msXE4wLTcR0lElsT2tyRtlOMQhPbrtjDYA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IhQU0bVIfBH97LguOImZT99yXdtyiVV6H1+mt38Ey/Ryyrm/f7E6eFuMtvXNajjxn6k55Zfn/MRpy+wViFWYKmVvpT1MTKlmVaWGXD1k8NpZwOrfz52jH62+8WMD3UI6hKu/qXu0O49WyL1jqMucdf8f83P+FmprL6Ml5V0Vm5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EIKCOTSU; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-246648f833aso8877325ad.3;
+        Sun, 24 Aug 2025 06:38:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756042705; x=1756647505; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=90MLzQuonsDG64dbtL+/stK1T9HCDY9n2Npjr4Lf2lI=;
+        b=EIKCOTSUD586M7ApGG4X1qM1/oHf0aePwhPjUB1+b/tTHSC4YBqe2Po4ItnAb3NkpW
+         FRZhZlmAyRrYmee7WMaGLtgE14C0jVDv7tIL9PriON/tfdM2AD6sTDlOwWRyJYH6ZLG9
+         U7+e+4BUBGbJkIPIwnKQFsYI0hxxOwgcCqR00qvQXUqh5NKQsrnle8SFIvDOs7M+7WhS
+         Qi311VXwmUyYiZn7Azvy9KI/Uhr+oODETEHLP69YsDwi59ywgH48k2X7njnLnNdmY+hm
+         LM+Sr+gMFWUttW4Ktb5WV6DNmXnG9yDbRbFPQnO0pjhKcjhty28aBzs+9f8Vba0mhbbk
+         qnFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756042705; x=1756647505;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=90MLzQuonsDG64dbtL+/stK1T9HCDY9n2Npjr4Lf2lI=;
+        b=o/fr1WosF5hg+nm9x/OyWk/AfB+MnKoX8LeRq7rP/DnSQVuX/01/Zkndu3egD/Xfji
+         7/a1SSRC2SDR1osqk4KDsoX43UGe1c4jI5tnfF4hDM6LOtlSVmk4eOipjNVvUIdLfedx
+         +jU+bhsKi1p/OJkonZgrit7y8Wl16HDrZhrykDSG52SXxAcTNr16vMUd48zT+G+BU5LJ
+         2yytjLVZr/qRj181GZKYAmM7vzCFUFjrqOIbRijR1b468tV1uMrfv2i3IQ7KdXX7yqLH
+         bWn5Yk+uzO69k4ElfYS9xL/PjGRISWBY5gzrKULx718dN/PmFraWDqUFiiBteomWuGGS
+         4RZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBoL79Q3qqQVclHXJm3mwDaKnkbri/I/YZHf28pmn6UvPn9vpx2OiLoqzZwx2dYdnNEcSJwphUcGU=@vger.kernel.org, AJvYcCVQ/sSkwWdZyevrHJ6ZsVelwAUhvsj+0NGt1f8Um9i0PTKJ/6AMksxxu4CrMJHfbL5vtVf1OuFlJ+D1XXuJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7OGFvNFcGPw0e/6ngBwYIzXkASKJevA1CmJj/mwEf8xfp5e+W
+	DZcwhaCl/71rzmy68iPd8oIJyPp178oQnDjxHL0zUatE6Tteq6NrAq6F
+X-Gm-Gg: ASbGnctPq7lU+LFWhYPXc/6dAHQG1oTXtWBtND5PhTRDC6fpKMOZkrqrMRauBTXqJC8
+	OazawOtUpgRpQiFg5YRRPGUrtZ1svQHXu7CxJo203fu2QU9WsizWJ3DILVYNY0ulUipgF6Wb9hw
+	ePb3R5YWoynE0SdJ8YzNR/6E14boF5KeeOK42Fg7pCQFbB6Q7zkitoESET95qtwkSHO044vutPR
+	7Xkocen6ev4R08aFQafRCcXRBxkrNTK73HDQN3P2jx1145M4k3v0uCN+LuLl411mKTYcKkEeV53
+	qtXtjz9NMhOFdDmyCsDdSBeHcR27aLUxmA2ydkBaQqwwKuh7M+sDcZ/qz02oaLFIk5GDeh8KhYk
+	FStYhdYJ8H2eLonBZyiJM5OBk1t4=
+X-Google-Smtp-Source: AGHT+IF8IovTN96omGp3/ppnb3zr7HkMglLNXw7Fd633EEr6qn/prmg6jI8MICtzZ0GIepxE4BJk0A==
+X-Received: by 2002:a17:903:46ce:b0:246:a120:8da5 with SMTP id d9443c01a7336-246a120913bmr46300935ad.54.1756042705534;
+        Sun, 24 Aug 2025 06:38:25 -0700 (PDT)
+Received: from pc.. ([202.126.91.214])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687b0f9bsm43634545ad.37.2025.08.24.06.38.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Aug 2025 06:38:25 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] docs: scheduler: completion: Document
+ complete_on_current_cpu()
+Date: Sun, 24 Aug 2025 21:38:10 +0800
+Message-ID: <20250824-complete_on_current_cpu_doc-v2-1-fd13debcb020@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20250702-complete_on_current_cpu_doc-94dfc72a39f8
+X-Mailer: b4 0.15-dev-e44bb
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756039790; l=1650;
+ i=javier.carrasco.cruz@gmail.com; s=20250209; h=from:subject:message-id;
+ bh=syDoUTo2dJyexWznUEBNddmCWTILFt31Fdy9Xjp84rQ=;
+ b=bYi6PGEqVyK7U7QnKH8BM8SoUVTyguxad06l8UwFsHcL/YfAm6rNP+egn+aW+urJsqnzCN4L3
+ 6ULTI7EeZyfCRNSsCPEp0o84MTBajRoCulNmJPy8v+iv+Pfdz4oBLNr
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=/1fPZTF8kAIBZPO3D8IhqidB0sgYzPDkljBZXsXJZM8=
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 18 2025 at 06:04, K. Prateek Nayak wrote:
-
-> cpu_parse_topology_ext() sets X86_FEATURE_XTOPOLOGY before returning
-> true if any of the XTOPOLOGY leaf could be parsed successfully.
->
-> Instead of storing and passing around this return value using
-> "has_topoext" in parse_topology_amd(), check for X86_FEATURE_XTOPOLOGY
-> instead in parse_8000_001e() to simplify the flow.
->
-> No functional changes intended.
->
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> ---
-> Changelog v2..v3:
->
-> o Use cpu_feature_enabled() when checking for X86_FEATURE_XTOPOLOGY.
-> ---
->  arch/x86/kernel/cpu/topology_amd.c | 16 +++++++---------
->  1 file changed, 7 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/x86/kernel/cpu/topology_amd.c b/arch/x86/kernel/cpu/topology_amd.c
-> index 3d01675d94f5..138a09528083 100644
-> --- a/arch/x86/kernel/cpu/topology_amd.c
-> +++ b/arch/x86/kernel/cpu/topology_amd.c
-> @@ -59,7 +59,7 @@ static void store_node(struct topo_scan *tscan, u16 nr_nodes, u16 node_id)
->  	tscan->amd_node_id = node_id;
->  }
->  
-> -static bool parse_8000_001e(struct topo_scan *tscan, bool has_topoext)
-> +static bool parse_8000_001e(struct topo_scan *tscan)
->  {
->  	struct {
->  		// eax
-> @@ -81,7 +81,7 @@ static bool parse_8000_001e(struct topo_scan *tscan, bool has_topoext)
->  
->  	cpuid_leaf(0x8000001e, &leaf);
->  
-> -	if (!has_topoext) {
-> +	if (!cpu_feature_enabled(X86_FEATURE_XTOPOLOGY)) {
->  		/*
->  		 * Prefer initial_apicid parsed from XTOPOLOGY leaf
->  		 * 0x8000026 or 0xb if available. Otherwise prefer the
-
-That's patently wrong.
-
-The leaves might be "available", but are not guaranteed to be valid. So
-FEATURE_XTOPOLOGY gives you the wrong answer.
-
-The has_topoext logic is there for a reason.
-
-https://github.com/InstLatx64/InstLatx64.git has a gazillion of CPUID
-samples from various machines and there are systems which advertise 0xB,
-but it's empty and you won't have an APIC ID at all...
-
-So all what needs to be done is preventing 8..1e parsing to overwrite
-the APIC ID, when a valid 0xb/0x26 was detected.
-
-Something like the below.
-
-Btw, your fixes tag is only half correct. The problem existed already
-_before_ the topology rewrite and I remember debating exactly this
-problem with Boris and Tom back then when I sanitized this nightmare.
-
-Thanks,
-
-        tglx
----
- arch/x86/kernel/cpu/topology_amd.c |   23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
-
---- a/arch/x86/kernel/cpu/topology_amd.c
-+++ b/arch/x86/kernel/cpu/topology_amd.c
-@@ -81,20 +81,25 @@ static bool parse_8000_001e(struct topo_
- 
- 	cpuid_leaf(0x8000001e, &leaf);
- 
--	tscan->c->topo.initial_apicid = leaf.ext_apic_id;
--
- 	/*
--	 * If leaf 0xb is available, then the domain shifts are set
--	 * already and nothing to do here. Only valid for family >= 0x17.
-+	 * If leaf 0xb/0x26 is available, then the APIC ID and the domain
-+	 * shifts are set already.
- 	 */
--	if (!has_topoext && tscan->c->x86 >= 0x17) {
-+	 if (!has_topoext) {
-+		tscan->c->topo.initial_apicid = leaf.ext_apic_id;
-+
- 		/*
--		 * Leaf 0x80000008 set the CORE domain shift already.
--		 * Update the SMT domain, but do not propagate it.
-+		 * Leaf 0x8000008 sets the CORE domain shift but not the
-+		 * SMT domain shift. On CPUs with family >= 0x17, there
-+		 * might be hyperthreads.
- 		 */
--		unsigned int nthreads = leaf.core_nthreads + 1;
-+		if (tscan->c->x86 >= 0x17) {
-+			/* Update the SMT domain, but do not propagate it. */
-+			unsigned int nthreads = leaf.core_nthreads + 1;
- 
--		topology_update_dom(tscan, TOPO_SMT_DOMAIN, get_count_order(nthreads), nthreads);
-+			topology_update_dom(tscan, TOPO_SMT_DOMAIN,
-+					    get_count_order(nthreads), nthreads);
-+		}
- 	}
- 
- 	store_node(tscan, leaf.nnodes_per_socket + 1, leaf.node_id);
+Commit 6f63904c8f3e ("sched: add a few helpers to wake up tasks on the=0D
+current cpu") introduced this new function to the completion API that=0D
+has not been documented yet.=0D
+=0D
+Document complete_on_current_cpu() explaining what it does and when its=0D
+usage is justified.=0D
+=0D
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>=0D
+=0D
+---=0D
+Changes in v2:=0D
+- Rebase onto v6.17-rc1=0D
+- Fix patch formatting (drop --- before the Signed-off-by tag).=0D
+- Link to v1: https://lore.kernel.org/r/20250703-complete_on_current_cpu_do=
+c-v1-1-262dc859b38a@gmail.com=0D
+---=0D
+ Documentation/scheduler/completion.rst | 4 ++++=0D
+ 1 file changed, 4 insertions(+)=0D
+=0D
+diff --git a/Documentation/scheduler/completion.rst b/Documentation/schedul=
+er/completion.rst=0D
+index adf0c0a56d02..db9c131f0b62 100644=0D
+--- a/Documentation/scheduler/completion.rst=0D
++++ b/Documentation/scheduler/completion.rst=0D
+@@ -272,6 +272,10 @@ Signaling completion from IRQ context is fine as it wi=
+ll appropriately=0D
+ lock with spin_lock_irqsave()/spin_unlock_irqrestore() and it will never=0D
+ sleep.=0D
+ =0D
++Use complete_on_current_cpu() to wake up the task on the current CPU.=0D
++It makes use of the WF_CURRENT_CPU flag to move the task to be woken up=0D
++to the current CPU, achieving faster context switches. To use this variant=
+,=0D
++the context switch speed must be relevant and the optimization justified.=
+=0D
+ =0D
+ try_wait_for_completion()/completion_done():=0D
+ --------------------------------------------=0D
+=0D
+---=0D
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585=0D
+change-id: 20250702-complete_on_current_cpu_doc-94dfc72a39f8=0D
+=0D
+Best regards,=0D
+--  =0D
+Javier Carrasco <javier.carrasco.cruz@gmail.com>=0D
+=0D
 
