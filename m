@@ -1,62 +1,82 @@
-Return-Path: <linux-kernel+bounces-783834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5019FB33355
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 01:40:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3730B33348
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 01:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35BFF189D5A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 23:40:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84E9E7AEED3
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 23:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0302512C8;
-	Sun, 24 Aug 2025 23:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E2825A340;
+	Sun, 24 Aug 2025 23:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GHZmqsLW"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HA7cGAIU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704BA163;
-	Sun, 24 Aug 2025 23:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2458219319;
+	Sun, 24 Aug 2025 23:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756078831; cv=none; b=gsR4A20/PxiV/1DNxjJl8L5FbYHAp19MRgiZwNMZPMTexO8DZqdCB0F/uGe2tCsyTteXAPnJqLpJxIjNDJOsmN6saOae9IVwy75LmZREj0q1utCeYdrUd/4NYuFBx3/myw8UlO84qL85D2iDzciRaOeGr9ef+ZI5IJEsirytn2M=
+	t=1756078030; cv=none; b=GzaR1xOJTG+tqPDGiZyjXQspyWffdSQtmPQKZkWGf04K5EXD1/SfbY5R9rWM86bPJCyS8Zk7wvAGQH9JJSObsTHPkxpQwSy7hSeMV/e9YY89DoszcjBVxtDb+VJW0gq4Pj8t1jhKRvLffC2lAuTvJg7ARC+k9Z/HtiPB0zzlZ6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756078831; c=relaxed/simple;
-	bh=sEcGM/jZeRPtQpYYLqS5XmGgHrcWKcSNQEejr4wAGsg=;
+	s=arc-20240116; t=1756078030; c=relaxed/simple;
+	bh=uZycFtq4HWobblKsAM7DWXlaK0GqW7YFhmxQIB8PTr0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ll+Yj0dzd3oja50uU9xHjxceTvL37J9ksTAGx6zy4MOXZRIYAg0o8Em5Cv/OY53t0+HTPLaHt1gBc13xp/vt/1n0WdbCMLtncBIDjIyAQGxcjpLgmcZjodmzB9WNtZHJkqdkHjKbbaNBfNoig3+cvWUstrTFa5KlPLpqWhUp+x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GHZmqsLW; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=oCLlzBPkpeVi0vqq3OHL7zA+MsRdFDKGKeZXZFCdHF4=; b=GHZmqsLWMDu/NSZsLxBgoh85Qh
-	MQ8J5WWTT41cXGnyGuaBDikDRgkn3Ix7P9pwdX5wwYaq7QN/tWISx3tnMARf2BjN0Kdx/tMl/BrmV
-	Xq+b2vw8lYe7eCPsewr6YoIcnpUhlCoMzA5E8BH65rBfMuAg2GcHmJPNqQqEymaFNG/VLLE8KfFcB
-	o3+pwypuCZbjl8JCRUqvAiuCUoCqjS3bOzDXQeaDa6NRaTEX2aKjaXTgjNQgtbfFCCCy54b8/G8Z4
-	0E7WnAZh/19AT59Hmh77l38bCLq4S8f1Cavu2Ug437KHM1L7dZ9ZlMohM354qimCkD21tmIUEP2M1
-	AzMw26Aw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqK1c-0000000FKmh-3uyC;
-	Sun, 24 Aug 2025 23:21:25 +0000
-Date: Mon, 25 Aug 2025 00:21:24 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Aleksa Sarai <cyphar@cyphar.com>, Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH] uapi/fcntl: conditionally define AT_RENAME* macros
-Message-ID: <aKuedOXEIapocQ8l@casper.infradead.org>
-References: <20250824221055.86110-1-rdunlap@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E4isrCf5YlQj/neEl0GaZtjXN1LE4OlUWvJsXctdL300ZTxdF+kc5Ulq8Xmd3ad1dmd+Hudu1HwCRU620f6cxig+NCuvH5zdi7kQobktIVgfQMhE6qrWvq4n19n7YUaBI2Uy9Yuk2Kjggy3tN2wOr2O5bjJBOM+L79ChKTbgLcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HA7cGAIU; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756078029; x=1787614029;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uZycFtq4HWobblKsAM7DWXlaK0GqW7YFhmxQIB8PTr0=;
+  b=HA7cGAIUGDbhfO2WwAzVH4zK6tSO7D2HQI6sW/vTNTlZNR+skAf5f1jf
+   vBVCIFG7NraeZFKvyGM2CbTiA5x2KAjNao4zKftCd7CMIRueSQYC7H3OT
+   Pz+NR9xETzq6HPINSApwxYgpeVMmpEr7+qYTwgkqc1HcugNrLdakAkLgZ
+   5Z6tBk9R1KoFBWeyYf0xylSDjLjIrOa5HmEbQwKx0+qHrmf0YIAHHvnFP
+   kf2PPvzKdGsUTP+HKDqYGkhaG6PmE/ah46Oi9b/cgNDLL26QtDartjtNu
+   sAc7nj3nN0xHVSlU3R4N3Pqnfp/igvJJTqSTJ+0rDjk+TzCs4UegEspZD
+   g==;
+X-CSE-ConnectionGUID: MgUyVngUS02vEHPfxIw3jg==
+X-CSE-MsgGUID: Zt5tB7MOQz6F84eaiXNdpA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="80881771"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="80881771"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2025 16:27:08 -0700
+X-CSE-ConnectionGUID: WgxCIVdaS7KSshHTn4/VUw==
+X-CSE-MsgGUID: eAkxHeOyTPeiOqumhjXJ8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="169334994"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 24 Aug 2025 16:27:05 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uqK68-000NFz-2K;
+	Sun, 24 Aug 2025 23:26:26 +0000
+Date: Mon, 25 Aug 2025 07:24:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nickolay Goppen <setotau@yandex.ru>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+	Nickolay Goppen <setotau@yandex.ru>
+Subject: Re: [PATCH 1/3] pinctrl: qcom: lpass-lpi: Introduce pin_offset
+ callback
+Message-ID: <202508250651.QMqSAkyR-lkp@intel.com>
+References: <20250824-sdm660-lpass-lpi-v1-1-003d5cc28234@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,31 +85,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250824221055.86110-1-rdunlap@infradead.org>
+In-Reply-To: <20250824-sdm660-lpass-lpi-v1-1-003d5cc28234@yandex.ru>
 
-On Sun, Aug 24, 2025 at 03:10:55PM -0700, Randy Dunlap wrote:
-> Don't define the AT_RENAME_* macros when __USE_GNU is defined since
-> /usr/include/stdio.h defines them in that case (i.e. when _GNU_SOURCE
-> is defined, which causes __USE_GNU to be defined).
-> 
-> Having them defined in 2 places causes build warnings (duplicate
-> definitions) in both samples/watch_queue/watch_test.c and
-> samples/vfs/test-statx.c.
+Hi Nickolay,
 
-It does?  What flags?
+kernel test robot noticed the following build errors:
 
-#define AT_RENAME_NOREPLACE     0x0001
-#define AT_RENAME_NOREPLACE     0x0001
+[auto build test ERROR on 038d61fd642278bab63ee8ef722c50d10ab01e8f]
 
-int main(void)
-{
-	return AT_RENAME_NOREPLACE;
-}
+url:    https://github.com/intel-lab-lkp/linux/commits/Nickolay-Goppen/pinctrl-qcom-lpass-lpi-Introduce-pin_offset-callback/20250825-045348
+base:   038d61fd642278bab63ee8ef722c50d10ab01e8f
+patch link:    https://lore.kernel.org/r/20250824-sdm660-lpass-lpi-v1-1-003d5cc28234%40yandex.ru
+patch subject: [PATCH 1/3] pinctrl: qcom: lpass-lpi: Introduce pin_offset callback
+config: sh-randconfig-002-20250825 (https://download.01.org/0day-ci/archive/20250825/202508250651.QMqSAkyR-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 13.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250825/202508250651.QMqSAkyR-lkp@intel.com/reproduce)
 
-gcc -W -Wall testA.c -o testA
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508250651.QMqSAkyR-lkp@intel.com/
 
-(no warnings)
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-I'm pretty sure C says that duplicate definitions are fine as long
-as they're identical.
+>> ERROR: modpost: "pin_offset_default" [drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.ko] undefined!
+>> ERROR: modpost: "pin_offset_default" [drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.ko] undefined!
+>> ERROR: modpost: "pin_offset_default" [drivers/pinctrl/qcom/pinctrl-sm8350-lpass-lpi.ko] undefined!
+>> ERROR: modpost: "pin_offset_default" [drivers/pinctrl/qcom/pinctrl-sm8550-lpass-lpi.ko] undefined!
+>> ERROR: modpost: "pin_offset_default" [drivers/pinctrl/qcom/pinctrl-sm8650-lpass-lpi.ko] undefined!
+>> ERROR: modpost: "pin_offset_default" [drivers/pinctrl/qcom/pinctrl-sc8280xp-lpass-lpi.ko] undefined!
+ERROR: modpost: "devm_clk_hw_register" [drivers/media/i2c/tc358746.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
