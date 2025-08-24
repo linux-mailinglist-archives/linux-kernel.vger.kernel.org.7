@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-783593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD240B32F6A
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:26:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC291B32F6C
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D000207ABB
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:26:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50C24207B54
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2E02D6625;
-	Sun, 24 Aug 2025 11:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EF42D6E43;
+	Sun, 24 Aug 2025 11:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVI9+3i3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ESFbhtxp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B4D238C1B;
-	Sun, 24 Aug 2025 11:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FF6238C1B;
+	Sun, 24 Aug 2025 11:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756034808; cv=none; b=n3CZVNceQUTgn7njLXX+8M3MKln34zlfVTRpO5ygG7WbbVtFfwDO6QDpb4ErKpYhVT4jfvrbGCCjPke17vl4mXDpVVexOTfryBKh0E0SnZUEmDQnknsy3Ot4sWnLNUkzkijyf3kjWgNb43qzUrDdYyb2Cbb4AU8tp/PnE5fm6ts=
+	t=1756034874; cv=none; b=UsvQ8Kwlu/nIyCI6EqyewOyTdyIyc37TBKtGlyL+aWMA1UXIvEbXgG13BVIG4fWzNtC0C1v2qGpT59bPabVmUwIWgWsyw6FdOe0jESdOws4+VildFCIMMpxm0zzLVV/TB5tqep7l6nzPYM2uGuutIrQ4XcaAOWATX0doVdkGpHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756034808; c=relaxed/simple;
-	bh=G0X5KAiGbQXwXme/9DQ45ryvRr7jmbQA+SV3yZrBKK0=;
+	s=arc-20240116; t=1756034874; c=relaxed/simple;
+	bh=mNR+dy5ZUFLhj+Ehn7WKvPiI2nRpHfXPZVi3JgGCj0I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XtoSfKHBWrWHdCJQeElKia8iOy85NZceLEDjha5/orNufWoypRkkihBNw6GAqVHhHlrKr2ncIaof0X7FaX++CgZh/kRI9WwCu8vHO2/DoFzVXlbCiETDTTZUZ0iIh7pMDMgo75ZejLfMHY4q8dwvSgtXCjJC8gMj1rlpjKFLzZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVI9+3i3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A3D1C4CEEB;
-	Sun, 24 Aug 2025 11:26:45 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Xquc7UL329hIZd67FFf86ytQDmQEiryMwOC5qmPLcc97rejje/Y7Zp1wPvpZvOY+SJTwFoo1YeGGb2GUwkfjP4IfbdjKliePhZwaRlyyEIgfhUoQBU2sB2WzkXWb0Fpjg92250T0rQftizh+qOuexrkj6OLozzC41PpoXYKK+CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ESFbhtxp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78C1BC4CEEB;
+	Sun, 24 Aug 2025 11:27:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756034807;
-	bh=G0X5KAiGbQXwXme/9DQ45ryvRr7jmbQA+SV3yZrBKK0=;
+	s=k20201202; t=1756034873;
+	bh=mNR+dy5ZUFLhj+Ehn7WKvPiI2nRpHfXPZVi3JgGCj0I=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cVI9+3i3NnWt9Z8FJIFiV5HkjkWE5GfAUH64rSEcWYwYUmev5Y7pIP1SyBnx+JWMu
-	 M7PTJdclOq/9dHP+MQVr2uGPuiniSwPqkS3SDL0QZtcrshoAX/9EdDgnHRmSzPdk/H
-	 ekLd+CtD6SdEDKosKtfa8hkBMKHm3DrJxLK3Gqszo7heiGhrkCOUFGMUXFABwoqszJ
-	 TRAWzP18G3Iu1Ds+JzagcXR6tj97FmG3JJeKFhWrMv1dHxU5ETWJFwxhDDj22R2CBQ
-	 NHBkRp+UgjG5mq6SNL4wjr0m1ifg5ZLljnC9eKRTvuRfi4/NFB/2SQaVMWxqyudKYP
-	 kZrDM4ZRQfzKw==
-Message-ID: <dc6af2fc-5e7f-4ec8-a7aa-6bde6518a83b@kernel.org>
-Date: Sun, 24 Aug 2025 13:26:43 +0200
+	b=ESFbhtxpKuok84wjPsZSJe8cIJgQ4AQhpBhWTVsmlr77wXkcX4lJSQLM5H57CC1aU
+	 jzw+tkcjbN5iIbWql8+qmFoUaDvrWjqMi0IFGvXJtezEDrn2OgWESQHsFSIDY9tiTz
+	 twWNsISDkXPqGcYORZTB4yH8jcoHm8Jg2/XV4715Ba5iC5852M8SYhtiCi6rLzzX7p
+	 lSKa/GJixOa1Hda7frnYRhjgz62DzZ3BNMt8fnXlkjkWtEfclSlnIkS+wC6KGuQK03
+	 WikArDf/o3a9iKkX60T+uSYc5GURMl9UUB2IJc882432LiPV7w73Zz5zFuPe+8vxQ2
+	 UQhbDdr1jh0MQ==
+Message-ID: <255d3a30-9e44-41d8-8b38-ced6c245d025@kernel.org>
+Date: Sun, 24 Aug 2025 13:27:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] arm64: defconfig: Enable Marvell WiFi-Ex USB
- driver
-To: Alexander Stein <alexander.stein@ew.tq-group.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, Pengutronix Kernel Team <kernel@pengutronix.de>
-References: <20250822135715.3335023-1-alexander.stein@ew.tq-group.com>
+Subject: Re: [PATCH 1/4] arm64: defconfig: enable i.MX AIPSTZ driver
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250821105634.1893-1-laurentiumihalcea111@gmail.com>
+ <20250821105634.1893-2-laurentiumihalcea111@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,17 +105,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250822135715.3335023-1-alexander.stein@ew.tq-group.com>
+In-Reply-To: <20250821105634.1893-2-laurentiumihalcea111@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/08/2025 15:57, Alexander Stein wrote:
-> MBa91xxCA (imx93-tqma9352-mba91xxca.dts) features a USB attached WiFi
-> module. lsusb says:
->  ID 1286:204e Marvell Semiconductor, Inc. Bluetooth and Wireless LAN Composite Device
-> Enable the corresponding driver.
+On 21/08/2025 12:56, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> 
+> Enable the config (CONFIG_IMX_AIPSTZ) for the i.MX AIPSTZ driver, which
+> is required for platforms using the AIPSTZ bridge (e.g. i.MX8MP).
 
-This does not answer my questions. You can plug there something else...
+Qualcomm i.MX8MP? You are changing wide defconfig.
+
+Which boards use it?
+
 
 Best regards,
 Krzysztof
