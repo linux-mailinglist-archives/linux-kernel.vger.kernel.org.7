@@ -1,124 +1,145 @@
-Return-Path: <linux-kernel+bounces-783777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA46B33251
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 21:18:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375F7B33256
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 21:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71A3E1B21A0A
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 19:18:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A592C3AD357
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 19:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82416219319;
-	Sun, 24 Aug 2025 19:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3EA21ABDB;
+	Sun, 24 Aug 2025 19:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Pz+w2RBM"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hf3OMcO/"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2D314A4F9;
-	Sun, 24 Aug 2025 19:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD14614A4F9;
+	Sun, 24 Aug 2025 19:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756063079; cv=none; b=a0gqUq+hn1UolH7DPiVFX7tZWcySUyLgCkt0alr5xu0WMyCxgjFE3axOxlaqKMmEIbPVQtI7W3IOxFki2kVOZZznU9E6SJymbngbu+Dnylyx250tXxJ0qRPafB9BGaGzrwPCDf7ljDo+0W9+os9bCRkkWBMM8MGQeLVfPUEEq3M=
+	t=1756063158; cv=none; b=im9LDOZrfLHQy7yTPZJy7DyYJ8WMRRZ9lF9DW93YmIAaWOD72RsEbEqUa8pEcRhaSZ1edRTNZ7ANcC66VDE/y6boa1TDpRhgOIUOKA8JJxwoCJnnGCdzklPpyby38LAPytIiKwmXesFJwQzxUe3sgXEi+sQKQsH9jgyC1/jiW6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756063079; c=relaxed/simple;
-	bh=oYu3AEDa0TRtvcj+z6xaQAuj/MVapve83cGXiYV4UTY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AYn06/BAZ/qr1OCR3M72m69I8MSTptlQjHneoMltUUXJuNyEf8592DacrqNRhmMBvInT4kkK7d+GEU/hGPsrFptbU0t8C0jF3IQY1cguhc0x3s0lqu72BBdOPas052FSYZZkWynmqXk1uWMvgCQPVJml2onQPLU4N0K+HPpGyjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Pz+w2RBM; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57OIVKH8017233;
-	Sun, 24 Aug 2025 19:17:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=9lmN5Yioo1QqsiV40k9ebaXaEmTYE
-	i9mxlYj+PVkIxw=; b=Pz+w2RBMDehNsI+1Hf1IIT0baB+ZqPLniNqttmx1g1mzf
-	4Oij99hWsNDhbDae0xsrxOUowL+8GJYq86gV4PAFLNeTR67MLyfSi28qf1ixvNMs
-	VobBbJbimkD1CHLObTh5pHopiPmeenAF3THzR/B0teAVpnOaJnDUWeW/2iwRAF6E
-	QCimNzY/pOams71bc8U7BmAMqg551czDL7zueXwj5yE3q/ceWMRS7ht57J7pR5Lq
-	zHn4zobhJ+XbCoAwpfCpo7UOjLYZYOTWhxrPkCigwo3mM/By3jARGhpeFKUyOspv
-	RsUsC+kdGCaXgK1J1oIVGma3A4SErOQFDN0cbuHHQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48q5pt16v8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 24 Aug 2025 19:17:52 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57OIxw0o026772;
-	Sun, 24 Aug 2025 19:17:51 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48q437d9w0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 24 Aug 2025 19:17:51 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57OJHpYP006658;
-	Sun, 24 Aug 2025 19:17:51 GMT
-Received: from ca-dev110.us.oracle.com (ca-dev110.us.oracle.com [10.129.136.45])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 48q437d9vv-1;
-	Sun, 24 Aug 2025 19:17:51 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: shuah@kernel.org, dev.jain@arm.com, broonie@kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests: fix typo in ss_flags check message for sas.c
-Date: Sun, 24 Aug 2025 12:17:16 -0700
-Message-ID: <20250824191721.631980-1-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1756063158; c=relaxed/simple;
+	bh=FF2wwvnb7LeI/rXhcslh/3INph1e8ZefN7u6tDjJ7mI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t1u2ao+ioMp41WVLAh/JkZ3pDsGOT5ShiNP3OtG75euH5da4RaHYk2CueUmXl/a5qzKP47JerFBSIzjwLfal16r/wCzozdxlq3Pugs8Av9IXrRy13UJ4qINit7ZxpWsPS2DAE42N4YaDTlOoyLQFS92RW5H4B5KAPf/i7n+YF4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hf3OMcO/; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb7347e09so630257866b.0;
+        Sun, 24 Aug 2025 12:19:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756063154; x=1756667954; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P31MEFWfiBDcFLjasshG2Q33dnrA+kN2tAwhwtnYyuo=;
+        b=Hf3OMcO/5cSu8VqIos0dvc6DtwFlLTw09/ocHt03of7d79y5xIaa60mEQmDg3UoCbo
+         0DLNflh37FCAXcs8NvEdP5J3sgk7MO1F0GfSxSz0xE926WdV9aIq+HZT+u2JU07KJYaX
+         4p7UyxkhxsC4Lm+K1/MdAiMCr/1G2Rubky6jfwHTPy1EzK1CSF6nMl408e4nIxf0MWTr
+         9H3CbR7Lb9JdeGovoSsUNt+svNE2A4zCvbDFksmXV4yUHVa1kHy4U0yviV2zYzrr8PGo
+         tzVwzMO4DqhhqD4epUAr20S1NQIIX7Me4bp6EE3+iozQ88dXeL0USi1ZwO/zwFz6IVKr
+         WQXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756063154; x=1756667954;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P31MEFWfiBDcFLjasshG2Q33dnrA+kN2tAwhwtnYyuo=;
+        b=G9A+RC4EKybfgJ9qCjXiPSFqkOlFlCq2fSPVxcKIxlPCxLE64TvP+xlRmrPpps9Ibn
+         aENmTh+bi1a7xZ5s//g3Dya5R88mU2s7bvdwirlbj2v9KxLqc+IMUJVl/2NnwWPt8RB/
+         eqCncPzI4bEM1SzkCZoGnbcEdzoyyHSqddvPEqnTP3YJyv1e6fbvPahJ8IFmKt577qKQ
+         Ycn96sGw3n2Bm0EWRyOAdsYt3ddSheTWmm4TBv8gNjqTg+vST2SnPnHuo9S3KHNIeVBD
+         Ka4DfhcsXBj57BeYqRvs54PXBGqbOIszG8Ivt4yl362y5QRvIlV1Nfgw6coeKpSGRrA1
+         5eUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUz3PEx224f4HuJmmVTP/j3z8If+70H/GWf/8alwlsfuOpUxhKYs2eoV4mHJmilaPqeq/BCGOViTco=@vger.kernel.org, AJvYcCXmpGAug2tSO6/QhUogKfZtH32Wfu4/LRYu4N6+jEZ5dGtlWlVYq87vNoMA2JL5hpDDUz5wJC16kSnaeole@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfkjOsfZpudvzn+x2/ZF9V+IWYFGgpuJx0dem0ft6huIVmYPB6
+	tiFG6k9jP4rtMNEOp6IDOHuy1lc0ZuEn3xXHrClsRU4gP/c5+WLwFr59QXrWMYYIY6Gv56xRhZF
+	MbLNkdBKMuaIXeB+At+IObXwpPDLujsBzmvnqJt8zQg==
+X-Gm-Gg: ASbGncsB8hujECu6Tgx/FCsiKBj3rLbHn7k2fHMINHVuVtiYmYcXPh3HDzQuvR2WNdd
+	M6tej7Vs0RAr7X2J3OnXs2/V9pPvOK/SPsWOD/Vz7nCAtoeXNHWSAoyLT5JP+ZRMN6xMlBkoNfO
+	qgVW3Ips641d8/i++T2x6UVFppotsnYE1JYFIiWMyotHNnWFXwJA62KG/1fsKGKGuLqLpLBQzXc
+	mN9T70=
+X-Google-Smtp-Source: AGHT+IHCT2zDSXD/L3GSuxA+gxdGUgwEs8H2u4IqtSR8nJxD8VlOUizuwPWSwQJDYYyjlCqGJcnZmVMIzg9Qb2BouMc=
+X-Received: by 2002:a17:906:7953:b0:ae0:b847:435 with SMTP id
+ a640c23a62f3a-afe295c1e9bmr841553566b.49.1756063153670; Sun, 24 Aug 2025
+ 12:19:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-24_07,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 malwarescore=0
- adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2508240183
-X-Proofpoint-ORIG-GUID: 8Umo7c7tYRFHyJH68gg6IpN7EG6kzA9U
-X-Proofpoint-GUID: 8Umo7c7tYRFHyJH68gg6IpN7EG6kzA9U
-X-Authority-Analysis: v=2.4 cv=EcXIQOmC c=1 sm=1 tr=0 ts=68ab6560 cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=2OwXVqhp2XgA:10 a=yPCof4ZbAAAA:8 a=OQvTAjIdMcoE0BJuZ4YA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMCBTYWx0ZWRfX4ENL9DT8fAE8
- 2tHOTDmtsdrUvnJ6/UiYOWud0GdBHN4nhLgoeJ/ssALd9fceKmoPgbWYSxrw6LjsokEAO3amGI1
- zyz1v0/B0VJVp8Uk4EnKleLu9W5Q4uhQIUHJY/ac8fknSkReLR3ko0CfbyRsPiNQB6/Yv8AyNRf
- kGdxCF6dE5dTuqWToECa1cZcMltYEqmqDRgy/sgGmLHn9wlhtLsls9pOG2dDSbIGk4qgr9yTKei
- ViF6Dnb9X1gBYM1LWTqoSJQxtWoy7s3XYrVcVhn5nJRB3LODpUSsR95JbE9X/34Jfwt1a7KAo//
- lCipB/A0VRDG/A/24zLbOv90fXtm9jggoy3dovn1Gc4ghdlVGOFQOSUPb7OdT04sWZjPwUXThuE
- XowsTmYn
+References: <20250822180335.362979-1-akshayaj.lkd@gmail.com>
+ <CAHp75Veqf6tKiFh=dNkgNkc2qE17VM7u-Yt8CZaXOsnEFUwd_w@mail.gmail.com> <CAE3SzaSW7j0yNaD9yQzc5KcJ-LH00TGebLQYDkuqwjky3ZBohA@mail.gmail.com>
+In-Reply-To: <CAE3SzaSW7j0yNaD9yQzc5KcJ-LH00TGebLQYDkuqwjky3ZBohA@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sun, 24 Aug 2025 22:18:37 +0300
+X-Gm-Features: Ac12FXxhmGNy1qak8a9MGAxjdIWYXkbNbXmrNAurlxqWTWJFphO6xqyA0T4FCHM
+Message-ID: <CAHp75Vd4V5o90q7-burt-S3_YnZ3bfaKXdFuTRcy05x0cvz8DA@mail.gmail.com>
+Subject: Re: [PATCH] iio: light: ltr390: Add runtime PM support
+To: Akshay Jindal <akshayaj.lkd@gmail.com>
+Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix a typo in the signal alternate stack test where the error
-message incorrectly used tss_flags instead of the correct field
-name ss_flags.
+On Sat, Aug 23, 2025 at 12:10=E2=80=AFPM Akshay Jindal <akshayaj.lkd@gmail.=
+com> wrote:
+> On Sat, Aug 23, 2025 at 1:41=E2=80=AFAM Andy Shevchenko <andy.shevchenko@=
+gmail.com> wrote:
+> > On Fri, Aug 22, 2025 at 9:03=E2=80=AFPM Akshay Jindal <akshayaj.lkd@gma=
+il.com> wrote:
 
-This change ensures the test output accurately reflects the
-structure member being checked.
+...
 
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
----
- tools/testing/selftests/signal/sas.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > >Ensure that interrupts continue to be delivered during
+> > >runtime suspend by disabling the sensor only when no
+> > >interrupts are enabled. This prevents loss of events
+> > >while still allowing power savings when IRQs are unused.
+> > >
+> > Have you tried to enable it as a wake source and disable it?
+>
+> Yes, before coming onto this approach, I had given it a thought and hence=
+ did some R&D for this.
+> Official documentation here & here talks about power.wakeup being an attr=
+ibute for system wakeup
+> NOT runtime. This checks out because in the complete IIO subsystem, there=
+ is not a single driver
+> which implements both runtime PM and wakeup functionality.
+> As of now there are 4 drivers in the whole of IIO, which enable this wake=
+up capability
+> and that too are only using it in system_suspend callbacks. Hence I had t=
+o come up with this approach.
 
-diff --git a/tools/testing/selftests/signal/sas.c b/tools/testing/selftests/signal/sas.c
-index 07227fab1cc98..476ffa807a61e 100644
---- a/tools/testing/selftests/signal/sas.c
-+++ b/tools/testing/selftests/signal/sas.c
-@@ -64,7 +64,7 @@ void my_usr1(int sig, siginfo_t *si, void *u)
- 		exit(EXIT_FAILURE);
- 	}
- 	if (stk.ss_flags != SS_DISABLE)
--		ksft_test_result_fail("tss_flags=%x, should be SS_DISABLE\n",
-+		ksft_test_result_fail("ss_flags=%x, should be SS_DISABLE\n",
- 				stk.ss_flags);
- 	else
- 		ksft_test_result_pass(
--- 
-2.50.1
+Please, make sure in the next version the summary of the above is
+present in the commit message or comment block.
 
+...
+
+> > > +               pm_runtime_mark_last_busy(dev);
+> > > +               pm_runtime_put_autosuspend(dev);
+> >
+> > mark_last_busy is redundant.
+> >
+> Pardon me here, but I am not able to see the redundancy.
+> I think this should be very much there before we call _put_autosuspend wh=
+ich further calls
+> autosuspend_expiration() which reads this last_busy field.
+> Did you mean dev->power.last_busy is being updated elsewhere too? or some=
+thing else?
+> Can you please clarify?
+
+https://elixir.bootlin.com/linux/v6.17-rc2/source/include/linux/pm_runtime.=
+h#L603
+
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
