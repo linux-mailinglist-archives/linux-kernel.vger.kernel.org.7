@@ -1,85 +1,135 @@
-Return-Path: <linux-kernel+bounces-783409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8521B32D3E
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 05:01:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E65B32D4F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 05:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A29E163D2C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 03:01:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E51F91BA00AD
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 03:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE041F30AD;
-	Sun, 24 Aug 2025 02:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563931E833D;
+	Sun, 24 Aug 2025 02:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I8tyQGB8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfTouxY7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AE525A32C;
-	Sun, 24 Aug 2025 02:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62271C8616;
+	Sun, 24 Aug 2025 02:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756004183; cv=none; b=fV/HS0an55R2PtelP1Eb7pLAk8QAf1Bvx2X54eqm5sei3pk57znbcVPG4qPPFu3uNUnnVi7nYos6wFW9ym/cFB5Cg30jTKqleuw6OaQI5aQPCTeaqR6E/YuuZSH/4A8SMAhtyzpyzSCEVVt89Pr5k9B6UWICggK4cvoMd+MbT7Y=
+	t=1756004350; cv=none; b=FYS/FJvxDu33B+oIJavLwAh+l/5ivtCCEodiKwKr9O16Dn+0ZvREfjAeKvX/33sFUfp4cGtkEaJ3ZNBnGVVtKqCdnSfqmyKzHyeU5e+TSKpPrfPX55DQMuA0y1Wvw6loyZQx0EArNxVvtXl3iePB7de0jPLne5dbJ8743kSEgNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756004183; c=relaxed/simple;
-	bh=gCW//UORKQP3ZPeAsauS1/B5+ELT/634MkYaQ5QHQMk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=egSn9DTA4YwvkKSrqbuDReYL666aC9Sx3KUnKuBgAh5M6d6eomBDyAFaQP+Wmq3JSbBDqramFb8/8ikxhiofwkgJoimGUJqrbwXHa7AgGPjJtrOe3KfMFaBCa77JeOKjkSYEhaW4tas+2Jfd8xHBhS1BGvukiW34Ei9ST4BQthI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I8tyQGB8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59311C116B1;
-	Sun, 24 Aug 2025 02:56:22 +0000 (UTC)
+	s=arc-20240116; t=1756004350; c=relaxed/simple;
+	bh=pZqQim94cizYcaJkKu9fvHKrK9ha05eO8lmqnnFk0ZQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZZIJpIJSoP1DA+3zEsdJ0HhAYTicRN8sc8PQKTJbfuqLXPOPa771Q1ohRAqcGaMGGQoFqhtoV5uJ3oP7Aeu8KiT7UF9MZYbghxiFuvCKOzZY+24YZX2qVrzrf+2D05gCbLD7ttQzDnULEzzc9Ty0qomv6e1FzAIr6+Qe8vxL/4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfTouxY7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99BFAC4CEE7;
+	Sun, 24 Aug 2025 02:59:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756004183;
-	bh=gCW//UORKQP3ZPeAsauS1/B5+ELT/634MkYaQ5QHQMk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=I8tyQGB84CnAUXWLuTRiAue8W94DEzhjdER3H6OKz1eUscl5r/DH6ETcHqI36zRso
-	 Ysu9tWhrDKn3ypIhDpf0wgBAZUPga43EMhzqU5vFcozJRtqWs2vCSCSGXEAhg0cNM/
-	 wUY9EiIeu8SQAT07FOhZKy3pf37+dcQANTWANecxaBAKd5KJWHgyJR19DR1hsdnNcQ
-	 mTBORJ8CHzoTMzQnhyZMVl198m69a5SD1vu+YgHHDkKgoCEhqliXUdgu3emZFXTe/w
-	 jaNb4VeLNgSz7b/opnC7+NwVeCmoyOSP0pA40jsq/7tSbi3l8VPejm3GIniH/zuoCO
-	 NVWYUUSuAMk5Q==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Prahlad Valluru <venkata.valluru@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shashank Maurya <quic_ssmaurya@quicinc.com>
-Subject: Re: [PATCH v3] arm64: dts: qcom: lemans-evk: Enable Display Port
-Date: Sat, 23 Aug 2025 21:55:56 -0500
-Message-ID: <175600415285.952266.17913122886887019402.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250821-enable-iq9-dp-v3-1-8c3a719e3b9a@oss.qualcomm.com>
-References: <20250821-enable-iq9-dp-v3-1-8c3a719e3b9a@oss.qualcomm.com>
+	s=k20201202; t=1756004350;
+	bh=pZqQim94cizYcaJkKu9fvHKrK9ha05eO8lmqnnFk0ZQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZfTouxY7PXLhex9eJZTsF04yG7O4MGgb7juM6w1YIR2jv3cVLqTXiIYNy4S0NfmKt
+	 js8n7Tk8Aqa3iPPf1TXq8wj3gkRIcFCKTMsconIIzB6RALIKnB5vNAdpBkHdnT7MFQ
+	 DLzOp/EVB7sZTm/Bx3qKmr3ihNhgFL0V5N2bSIALJkn8Z8mXsNkdu36Fk3XBNBBRtU
+	 Km1kiDe6HbnADOD0y7gET5LZEPa9lfiJ6FXgZdPatqh36BaI+KcqxI6x9fzYh/g9iK
+	 hmzfTpTxO9Xa16lJxJFhP75rP96+AbKyH9X2ZdYq6G2i6uSLYZFlRrPb75UkcFYx/f
+	 hOBfB6vYPReHQ==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Zhihang Shao <zhihang.shao.iscas@gmail.com>,
+	Andy Polyakov <appro@cryptogams.org>,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH v2 0/3] Consolidate Poly1305 code and add RISC-V optimization
+Date: Sat, 23 Aug 2025 22:57:33 -0400
+Message-ID: <20250824025736.148576-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+This series is targeting libcrypto-next.  It can also be retrieved from:
 
-On Thu, 21 Aug 2025 23:24:28 +0530, Prahlad Valluru wrote:
-> Lemans EVK board has two mini-DP connectors, connected to EDP0
-> and EDP1 phys. Other EDP phys are available on expansion
-> connectors for the mezzanine boards.
-> Enable EDP0 and EDP1 along with their corresponding PHYs.
-> 
-> 
+    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git poly1305-v2
 
-Applied, thanks!
+This series simplifies and optimizes the organization of the Poly1305
+code by consolidating it into a single module.  This follows the example
+of SHA-1, SHA-256, SHA-512, CRC32, etc.
 
-[1/1] arm64: dts: qcom: lemans-evk: Enable Display Port
-      commit: 69f0611c8937e343d4ef9b8349d9dd39aceb1636
+Since the RISC-V Poly1305 patch has had a moving target, I also rebased
+it on top of this series and included it as patch 3.
 
-Best regards,
+Changed in v2:
+- Added missing 'FORCE' to the make rules for mips/poly1305-core.S
+  and riscv/poly1305-core.S
+
+Eric Biggers (2):
+  lib/crypto: poly1305: Remove unused function
+    poly1305_is_arch_optimized()
+  lib/crypto: poly1305: Consolidate into single module
+
+Zhihang Shao (1):
+  lib/crypto: riscv/poly1305: Import OpenSSL/CRYPTOGAMS implementation
+
+ crypto/Kconfig                                |   2 +
+ include/crypto/internal/poly1305.h            |  16 +-
+ include/crypto/poly1305.h                     |   9 -
+ lib/crypto/Kconfig                            |  53 +-
+ lib/crypto/Makefile                           |  71 +-
+ lib/crypto/arm/Kconfig                        |   5 -
+ lib/crypto/arm/Makefile                       |  18 -
+ lib/crypto/arm/poly1305-armv4.pl              |   3 +-
+ lib/crypto/arm/poly1305-glue.c                |  76 --
+ lib/crypto/arm/poly1305.h                     |  53 ++
+ lib/crypto/arm64/Kconfig                      |   6 -
+ lib/crypto/arm64/Makefile                     |  13 -
+ lib/crypto/arm64/poly1305-armv8.pl            |   3 +
+ lib/crypto/arm64/poly1305-glue.c              |  74 --
+ lib/crypto/arm64/poly1305.h                   |  50 ++
+ lib/crypto/mips/Kconfig                       |   5 -
+ lib/crypto/mips/Makefile                      |  14 -
+ lib/crypto/mips/poly1305-glue.c               |  33 -
+ lib/crypto/mips/poly1305-mips.pl              |   8 +-
+ lib/crypto/mips/poly1305.h                    |  14 +
+ lib/crypto/poly1305-generic.c                 |  25 -
+ lib/crypto/poly1305.c                         |  81 +-
+ lib/crypto/powerpc/Kconfig                    |   8 -
+ lib/crypto/powerpc/Makefile                   |   3 -
+ .../{poly1305-p10-glue.c => poly1305.h}       |  40 +-
+ lib/crypto/riscv/poly1305-riscv.pl            | 847 ++++++++++++++++++
+ lib/crypto/riscv/poly1305.h                   |  14 +
+ lib/crypto/x86/Kconfig                        |   6 -
+ lib/crypto/x86/Makefile                       |  10 -
+ lib/crypto/x86/poly1305-x86_64-cryptogams.pl  |  33 +-
+ .../x86/{poly1305_glue.c => poly1305.h}       |  47 +-
+ 31 files changed, 1174 insertions(+), 466 deletions(-)
+ delete mode 100644 lib/crypto/arm/poly1305-glue.c
+ create mode 100644 lib/crypto/arm/poly1305.h
+ delete mode 100644 lib/crypto/arm64/poly1305-glue.c
+ create mode 100644 lib/crypto/arm64/poly1305.h
+ delete mode 100644 lib/crypto/mips/poly1305-glue.c
+ create mode 100644 lib/crypto/mips/poly1305.h
+ delete mode 100644 lib/crypto/poly1305-generic.c
+ rename lib/crypto/powerpc/{poly1305-p10-glue.c => poly1305.h} (63%)
+ create mode 100644 lib/crypto/riscv/poly1305-riscv.pl
+ create mode 100644 lib/crypto/riscv/poly1305.h
+ rename lib/crypto/x86/{poly1305_glue.c => poly1305.h} (83%)
+
+
+base-commit: 07e1551bc8eb2e54ac1086492f1b475a6277c6b3
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.50.1
+
 
