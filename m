@@ -1,60 +1,63 @@
-Return-Path: <linux-kernel+bounces-783531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34AC5B32EAF
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:20:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2904FB32EB8
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7DBF446A04
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 052B01B62F2B
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD782641E3;
-	Sun, 24 Aug 2025 09:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6201E22D795;
+	Sun, 24 Aug 2025 09:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BK+OVF4g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="stF7yeXZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC2625A2BB;
-	Sun, 24 Aug 2025 09:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC881EB5D6;
+	Sun, 24 Aug 2025 09:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756027219; cv=none; b=d+a/2VuWJplY3PLerM6sAQjZpOnHxGmAgqwrBvVCItw6ciOQSLn8BPouZC3iYIROFSLbEUCbu40W7PVymsG9NaI2WMc4e1sVh4ZLI6vobQ/k/gBPERbw3c1WYrecsSS07lSeHFICeRvuzQUIJrQ7VGNu8uBLOrBaLSAMk+SOJyM=
+	t=1756027273; cv=none; b=Wc8hBO9PigmEuOwy+E0WuWZRv3CZjo1u4GeWj6wF6P2M7Mq6UzLOHZ3tB1mgkmQPzwdzNOmIOwykPsYeCqPfEw2kRDn7rSvPIRDrqFkwzoalWL6oErTrc/uykxNaJiMRLDjzLiN9toyJ5pNLp6jLrs9I2TmWTU0DMCbL1djkhN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756027219; c=relaxed/simple;
-	bh=WaSgZUq+epVHd+XOSY4cRjhXqIGdC2DF15B/HTqUaPY=;
+	s=arc-20240116; t=1756027273; c=relaxed/simple;
+	bh=TePubqI9AcNR0qwMPahOp4rbJX0w3i3fs/cTg7AxDBw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AdOi8+8oy1jsgHUisN0s23bTbWjGEkr8CJpYmdkwUTR9fDp094y8FsRsgkFBxIcO+to7BDIoqlgLXO9oe/Z+T8tkz42q8YwdtPNRo5ghK1tyhwvpeVKdE9Xc/CiFSsEMzjbJrU3MGOLZ623jDXw4vVgk1upFM4g/Dj7K8+dcJRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BK+OVF4g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DB27C4CEEB;
-	Sun, 24 Aug 2025 09:20:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pw43qh0nuvZrrzOj+1oxoHoBmW/GeDdWoFCMk1iR1AAmqhfr21HEjZ6w5/3ePMbESUQVctCzrmMF/ZW4EiCZg7WIFdm1fT5254VF7xe1t8llAUYgpcbaE0KrjLc7G2C6tIDBf7p7jJcoPkxylWMQpCf7QkUlYc05Rq77ewAp/6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=stF7yeXZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAA99C4CEEB;
+	Sun, 24 Aug 2025 09:21:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756027218;
-	bh=WaSgZUq+epVHd+XOSY4cRjhXqIGdC2DF15B/HTqUaPY=;
+	s=k20201202; t=1756027273;
+	bh=TePubqI9AcNR0qwMPahOp4rbJX0w3i3fs/cTg7AxDBw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BK+OVF4glgIDv3gXlluxs5Zyg7N2lpSXPy9nlIYNvx3vZy8L9GIaOVBOzFZZRvrGG
-	 C0hqtWILT8yjCQVGz4IluNEOPOmTc5cFUoa8uI3DfCHG8vWRsWvEpfbNoKdH4DXbSV
-	 EhRoT3nwMagWk3OcNfi/SXK2MtszMpJgvosrPK+kIrRemdv2FOFw8vkwj+LbaXWT+U
-	 +TULGREI8erBJsm1B4sTaenO/9TfKN/bW964+ZEaSJiiCY3qAiGUIb8bQwoEHKihRZ
-	 f4m9Z3rIYldX1CWFl0+azL3s+31Ql/cqsucRGoUCsjUJDZJeksM9GpbBQjdHy6ovkV
-	 f0Pegv8ehNbSQ==
-Date: Sun, 24 Aug 2025 11:20:15 +0200
+	b=stF7yeXZ5mOGTtkj4CiErJFbaGQkPc6jD4ShIx/+320L7sJ+H9Z3hJUFPA8Sc/TGN
+	 bIsal3EESgk6YXHGWDGTU8Jy+zONb2NYcE8exzsll9WFvkJuYB+IKGkly+k08dlIZs
+	 7AFKxJ2spcI6mgUuo+TllH6K/847OR/WkpXvv5Rnb3KIZgPZ/HFLiPqiKdlREArlzM
+	 NcwjGukxzx8o7mC1hffG+cF9sHwu+97j8lKO+Yum/MqOvjcBeLjgpSY2vJjYEZGDGf
+	 5PJrptVmXakzz+3HboG8ntIaKWvWHM0BqrbzleAvHW/iZ9Jnh1A85s+iw+6j7xk9st
+	 lRo+aDUnlN/3Q==
+Date: Sun, 24 Aug 2025 11:21:10 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: David Yang <mmyangfl@gmail.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
-	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+Cc: Yannick Fertre <yannick.fertre@foss.st.com>, 
+	Philippe Cornu <philippe.cornu@foss.st.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Christophe Roullier <christophe.roullier@foss.st.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 1/3] dt-bindings: net: dsa: yt921x: Add
- Motorcomm YT921x switch support
-Message-ID: <20250824-jolly-amaranth-panther-97a835@kuoka>
-References: <20250824005116.2434998-1-mmyangfl@gmail.com>
- <20250824005116.2434998-2-mmyangfl@gmail.com>
+Subject: Re: [PATCH v5 01/13] dt-bindings: display: st: add two new
+ compatibles to LTDC device
+Message-ID: <20250824-stimulating-herring-of-romance-df21ea@kuoka>
+References: <20250822-drm-misc-next-v5-0-9c825e28f733@foss.st.com>
+ <20250822-drm-misc-next-v5-1-9c825e28f733@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,35 +66,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250824005116.2434998-2-mmyangfl@gmail.com>
+In-Reply-To: <20250822-drm-misc-next-v5-1-9c825e28f733@foss.st.com>
 
-On Sun, Aug 24, 2025 at 08:51:09AM +0800, David Yang wrote:
-> The Motorcomm YT921x series is a family of Ethernet switches with up to
-> 8 internal GbE PHYs and up to 2 GMACs.
+On Fri, Aug 22, 2025 at 04:34:10PM +0200, Raphael Gallais-Pou wrote:
+> The new STMicroelectronics SoC features a display controller similar to
+> the one used in previous SoCs.  Because there is additional registers,
+> and different mandatory clocks it is incompatible with existing IPs.  On
+> STM32MP251, the device only needs two clocks while on STM32MP255 it
+> needs four.
 > 
-> Signed-off-by: David Yang <mmyangfl@gmail.com>
+> Add the new names to the list of compatible string and handle each
+> quirks accordingly.
+> 
+> Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
 > ---
-
-<form letter>
-This is a friendly reminder during the review process.
-
-It looks like you received a tag and forgot to add it.
-
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions of patchset, under or above your Signed-off-by tag, unless
-patch changed significantly (e.g. new properties added to the DT
-bindings). Tag is "received", when provided in a message replied to you
-on the mailing list. Tools like b4 can help here. However, there's no
-need to repost patches *only* to add the tags. The upstream maintainer
-will do that for tags received on the version they apply.
-
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-*If a tag was not added on purpose, please state why* and what changed.
-</form letter>
-
+>  .../devicetree/bindings/display/st,stm32-ltdc.yaml | 52 +++++++++++++++++++++-
+>  1 file changed, 50 insertions(+), 2 deletions(-)
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
