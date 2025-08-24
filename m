@@ -1,162 +1,188 @@
-Return-Path: <linux-kernel+bounces-783645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C4BB33026
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:37:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6233B33027
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59EA51B262DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:37:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5099D442135
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A522DA77B;
-	Sun, 24 Aug 2025 13:37:19 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D5B2DBF69;
+	Sun, 24 Aug 2025 13:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2kEy2cBn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kk4JeDNz"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575ED20A5F3;
-	Sun, 24 Aug 2025 13:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14C023A9BE;
+	Sun, 24 Aug 2025 13:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756042639; cv=none; b=r5eGEeKCLB4tgdFmNE4AykGfTRXrehIgBFVeyel+gif5LeX9/XoaLARo/UOq2jiCnvL9cNmfx98sXa7gmkaP7szuiEOAQ5EIOu0JjKplmuM0ABtKxnTB+V890EbIvAq2NIbK+8oNcRXQHCv+dL0g91thGsla84vdtMp5WaNuZRs=
+	t=1756042696; cv=none; b=IcffHQHKXVGOlp1l7/GFeTV9KjjrUO15faSY8ZHEg7AYerCWZpgfxxnm4tAj0wfZOei4miCrikcYetSIH6KYyDUldI2fSFeoeGGIkez3VRS3UmKH8vtht87Hw3fvBMyYet4ku6CMas6SPd0jE4xNT2qqmtal3zEEJBSmtFh+8Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756042639; c=relaxed/simple;
-	bh=jJpnNVnVSjvXNRhL+EF1mdScXF3xgLUy9PyyWPapu+I=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mU6UCmvncOLMzM3yrt2PgMnvaAhstn1ZvbIAGUjLM+Kh0B0aeTgwmpJnarcbS7uoEFZ1tJDq6tvwO2xQVw8ekmP1FSfIuuHJew5UYrcTKCYCa5Ufp6FxjMxIxctRgJq8l6Pn0ki6huU0fo3Zhqq0gUpHmtdJlPKzh3H5OSr5/Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 57ODatCm013651;
-	Sun, 24 Aug 2025 22:36:55 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 57ODasg3013648
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 24 Aug 2025 22:36:55 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <c1e50f41-da30-4cea-859c-05db0ab8040b@I-love.SAKURA.ne.jp>
-Date: Sun, 24 Aug 2025 22:36:51 +0900
+	s=arc-20240116; t=1756042696; c=relaxed/simple;
+	bh=HN8vItz0GigpFkrZnRZytRlm3Um2RFY5Kv7NOzjU2Io=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=C8bhgamlglgOIWo2Q97iCsF0/+iTzUIRg/3qEq0TAEcIcggTI6DtYQVI6pFpXPCQc2/xm+lii5fxfrGF84eSR4k4HSS8Ph6wKamZWzFKkP1ZjgFnSnBNRSRJMtL+vCLHe7qiEypJe7I1P1ERzjh6vPgUNExGJxClThac+pZOqvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2kEy2cBn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kk4JeDNz; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756042686;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zR6KLU5duIFq19gpDRX9O5axG8cxVDQ8Pv15dsa5XIA=;
+	b=2kEy2cBnKlglNeO+h/it0wcuXrEMznyvIjnmXCGEi15tKTJcTgypRde6/o3Xz+a6ldgbYr
+	sfF3BNnyaJwZfoO8Eg9XBGFpfvIsVbMtrfLdp6k2t56XYmqDbIibkJs97FIlNox7xSUH7R
+	EPc0m6D4BB76zEYLcdKUi9Jfso2YbLvJgTq+h6FxIHCNpulH+UDvq87NDyoKiEBVhY0Le9
+	nWDAbUba1VssZpfECBDv1kRG4o0be0mQORnT6BRH0NAynIwyv1rnzflKTDXNtOKTdoLyDB
+	Z777AkS9hvJXJl2HvEXCobdVzo2KkxsfEGR7fviP+CTVVIZV9lwH059Ni8rYVw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756042686;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zR6KLU5duIFq19gpDRX9O5axG8cxVDQ8Pv15dsa5XIA=;
+	b=Kk4JeDNzCcK0wKv024ApAj1o+6NjiY5OsZagycH/aPvPYG9zLG0RKS9zdqwp04UND6TQa9
+	yQk69VR7DubkrnAA==
+To: K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org
+Cc: Naveen rao <naveen.rao@amd.com>, Sairaj Kodilkar <sarunkod@amd.com>, "H.
+ Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)"
+ <peterz@infradead.org>, "Xin Li (Intel)" <xin@zytor.com>, Pawan Gupta
+ <pawan.kumar.gupta@linux.intel.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, Mario Limonciello <mario.limonciello@amd.com>,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Babu Moger
+ <babu.moger@amd.com>, Suravee Suthikulpanit
+ <suravee.suthikulpanit@amd.com>, K Prateek Nayak <kprateek.nayak@amd.com>
+Subject: Re: [PATCH v3 4/4] x86/cpu/topology: Check for
+ X86_FEATURE_XTOPOLOGY instead of passing has_topoext
+In-Reply-To: <20250818060435.2452-5-kprateek.nayak@amd.com>
+References: <20250818060435.2452-1-kprateek.nayak@amd.com>
+ <20250818060435.2452-5-kprateek.nayak@amd.com>
+Date: Sun, 24 Aug 2025 15:38:05 +0200
+Message-ID: <87ms7o3kn6.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: can/j1939: hung inside rtnl_dellink()
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Robin van der Gracht <robin@protonic.nl>, kernel@pengutronix.de,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>
-References: <50055a40-6fd9-468f-8e59-26d1b5b3c23d@I-love.SAKURA.ne.jp>
- <aKg9mTaSxzBVpTVI@pengutronix.de>
- <bb595640-0597-4d18-a9e1-f6eb8e6bb50e@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <bb595640-0597-4d18-a9e1-f6eb8e6bb50e@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav203.rs.sakura.ne.jp
+Content-Type: text/plain
 
-On 2025/08/22 19:23, Tetsuo Handa wrote:
-> I think we need to somehow make it possible to logically close j1939
-> sockets without actually closing. Maybe something like 
-> "struct in_device"->dead flag which is set by inetdev_destroy() upon
-> NETDEV_UNREGISTER event is needed by j1939 sockets...
+On Mon, Aug 18 2025 at 06:04, K. Prateek Nayak wrote:
 
-This change seems to fix the hung problem syzbot is reporting.
-Does this change look correct?
+> cpu_parse_topology_ext() sets X86_FEATURE_XTOPOLOGY before returning
+> true if any of the XTOPOLOGY leaf could be parsed successfully.
+>
+> Instead of storing and passing around this return value using
+> "has_topoext" in parse_topology_amd(), check for X86_FEATURE_XTOPOLOGY
+> instead in parse_8000_001e() to simplify the flow.
+>
+> No functional changes intended.
+>
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> ---
+> Changelog v2..v3:
+>
+> o Use cpu_feature_enabled() when checking for X86_FEATURE_XTOPOLOGY.
+> ---
+>  arch/x86/kernel/cpu/topology_amd.c | 16 +++++++---------
+>  1 file changed, 7 insertions(+), 9 deletions(-)
+>
+> diff --git a/arch/x86/kernel/cpu/topology_amd.c b/arch/x86/kernel/cpu/topology_amd.c
+> index 3d01675d94f5..138a09528083 100644
+> --- a/arch/x86/kernel/cpu/topology_amd.c
+> +++ b/arch/x86/kernel/cpu/topology_amd.c
+> @@ -59,7 +59,7 @@ static void store_node(struct topo_scan *tscan, u16 nr_nodes, u16 node_id)
+>  	tscan->amd_node_id = node_id;
+>  }
+>  
+> -static bool parse_8000_001e(struct topo_scan *tscan, bool has_topoext)
+> +static bool parse_8000_001e(struct topo_scan *tscan)
+>  {
+>  	struct {
+>  		// eax
+> @@ -81,7 +81,7 @@ static bool parse_8000_001e(struct topo_scan *tscan, bool has_topoext)
+>  
+>  	cpuid_leaf(0x8000001e, &leaf);
+>  
+> -	if (!has_topoext) {
+> +	if (!cpu_feature_enabled(X86_FEATURE_XTOPOLOGY)) {
+>  		/*
+>  		 * Prefer initial_apicid parsed from XTOPOLOGY leaf
+>  		 * 0x8000026 or 0xb if available. Otherwise prefer the
+
+That's patently wrong.
+
+The leaves might be "available", but are not guaranteed to be valid. So
+FEATURE_XTOPOLOGY gives you the wrong answer.
+
+The has_topoext logic is there for a reason.
+
+https://github.com/InstLatx64/InstLatx64.git has a gazillion of CPUID
+samples from various machines and there are systems which advertise 0xB,
+but it's empty and you won't have an APIC ID at all...
+
+So all what needs to be done is preventing 8..1e parsing to overwrite
+the APIC ID, when a valid 0xb/0x26 was detected.
+
+Something like the below.
+
+Btw, your fixes tag is only half correct. The problem existed already
+_before_ the topology rewrite and I remember debating exactly this
+problem with Boris and Tom back then when I sanitized this nightmare.
+
+Thanks,
+
+        tglx
 ---
- net/can/j1939/j1939-priv.h |  1 +
- net/can/j1939/main.c       |  3 +++
- net/can/j1939/socket.c     | 40 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 44 insertions(+)
+ arch/x86/kernel/cpu/topology_amd.c |   23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
-diff --git a/net/can/j1939/j1939-priv.h b/net/can/j1939/j1939-priv.h
-index 31a93cae5111..81f58924b4ac 100644
---- a/net/can/j1939/j1939-priv.h
-+++ b/net/can/j1939/j1939-priv.h
-@@ -212,6 +212,7 @@ void j1939_priv_get(struct j1939_priv *priv);
+--- a/arch/x86/kernel/cpu/topology_amd.c
++++ b/arch/x86/kernel/cpu/topology_amd.c
+@@ -81,20 +81,25 @@ static bool parse_8000_001e(struct topo_
  
- /* notify/alert all j1939 sockets bound to ifindex */
- void j1939_sk_netdev_event_netdown(struct j1939_priv *priv);
-+void j1939_sk_netdev_event_unregister(struct j1939_priv *priv);
- int j1939_cancel_active_session(struct j1939_priv *priv, struct sock *sk);
- void j1939_tp_init(struct j1939_priv *priv);
+ 	cpuid_leaf(0x8000001e, &leaf);
  
-diff --git a/net/can/j1939/main.c b/net/can/j1939/main.c
-index 7e8a20f2fc42..3706a872ecaf 100644
---- a/net/can/j1939/main.c
-+++ b/net/can/j1939/main.c
-@@ -377,6 +377,9 @@ static int j1939_netdev_notify(struct notifier_block *nb,
- 		j1939_sk_netdev_event_netdown(priv);
- 		j1939_ecu_unmap_all(priv);
- 		break;
-+	case NETDEV_UNREGISTER:
-+		j1939_sk_netdev_event_unregister(priv);
-+		break;
+-	tscan->c->topo.initial_apicid = leaf.ext_apic_id;
+-
+ 	/*
+-	 * If leaf 0xb is available, then the domain shifts are set
+-	 * already and nothing to do here. Only valid for family >= 0x17.
++	 * If leaf 0xb/0x26 is available, then the APIC ID and the domain
++	 * shifts are set already.
+ 	 */
+-	if (!has_topoext && tscan->c->x86 >= 0x17) {
++	 if (!has_topoext) {
++		tscan->c->topo.initial_apicid = leaf.ext_apic_id;
++
+ 		/*
+-		 * Leaf 0x80000008 set the CORE domain shift already.
+-		 * Update the SMT domain, but do not propagate it.
++		 * Leaf 0x8000008 sets the CORE domain shift but not the
++		 * SMT domain shift. On CPUs with family >= 0x17, there
++		 * might be hyperthreads.
+ 		 */
+-		unsigned int nthreads = leaf.core_nthreads + 1;
++		if (tscan->c->x86 >= 0x17) {
++			/* Update the SMT domain, but do not propagate it. */
++			unsigned int nthreads = leaf.core_nthreads + 1;
+ 
+-		topology_update_dom(tscan, TOPO_SMT_DOMAIN, get_count_order(nthreads), nthreads);
++			topology_update_dom(tscan, TOPO_SMT_DOMAIN,
++					    get_count_order(nthreads), nthreads);
++		}
  	}
  
- 	j1939_priv_put(priv);
-diff --git a/net/can/j1939/socket.c b/net/can/j1939/socket.c
-index 493f49bfaf5d..0fbfdffdfc24 100644
---- a/net/can/j1939/socket.c
-+++ b/net/can/j1939/socket.c
-@@ -1303,6 +1303,46 @@ void j1939_sk_netdev_event_netdown(struct j1939_priv *priv)
- 	read_unlock_bh(&priv->j1939_socks_lock);
- }
- 
-+void j1939_sk_netdev_event_unregister(struct j1939_priv *priv)
-+{
-+	struct sock *sk;
-+	struct j1939_sock *jsk;
-+
-+ rescan: /* The caller is holding a ref on this "priv" via j1939_priv_get_by_ndev(). */
-+	read_lock_bh(&priv->j1939_socks_lock);
-+	list_for_each_entry(jsk, &priv->j1939_socks, list) {
-+		/* Skip if j1939_jsk_add() is not called on this socket. */
-+		if (!(jsk->state & J1939_SOCK_BOUND))
-+			continue;
-+		sk = &jsk->sk;
-+		sock_hold(sk);
-+		read_unlock_bh(&priv->j1939_socks_lock);
-+		/* Check if j1939_jsk_del() is not yet called on this socket after holding
-+		 * socket's lock, for both j1939_sk_bind() and j1939_sk_release() call
-+		 * j1939_jsk_del() with socket's lock held.
-+		 */
-+		lock_sock(sk);
-+		if (jsk->state & J1939_SOCK_BOUND) {
-+			/* Neither j1939_sk_bind() nor j1939_sk_release() called j1939_jsk_del().
-+			 * Make this socket no longer bound, by pretending as if j1939_sk_bind()
-+			 * dropped old references but did not get new references.
-+			 */
-+			j1939_jsk_del(priv, jsk);
-+			j1939_local_ecu_put(priv, jsk->addr.src_name, jsk->addr.sa);
-+			j1939_netdev_stop(priv);
-+			/* Call j1939_priv_put() now and prevent j1939_sk_sock_destruct() from
-+			 * calling the corresponding j1939_priv_put().
-+			 */
-+			j1939_priv_put(priv);
-+			jsk->priv = NULL;
-+		}
-+		release_sock(sk);
-+		sock_put(sk);
-+		goto rescan;
-+	}
-+	read_unlock_bh(&priv->j1939_socks_lock);
-+}
-+
- static int j1939_sk_no_ioctlcmd(struct socket *sock, unsigned int cmd,
- 				unsigned long arg)
- {
--- 
-2.51.0
-
+ 	store_node(tscan, leaf.nnodes_per_socket + 1, leaf.node_id);
 
