@@ -1,148 +1,226 @@
-Return-Path: <linux-kernel+bounces-783752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62689B331DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 20:12:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAEE9B331A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 19:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4996E4E221B
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:12:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ED9E165B97
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 17:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0CC2E1EE8;
-	Sun, 24 Aug 2025 18:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2ED2275AED;
+	Sun, 24 Aug 2025 17:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxkUux/d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rOiBxVzx"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46AC12E172D;
-	Sun, 24 Aug 2025 18:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3096C1D79BE
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 17:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756058985; cv=none; b=rhIJEmv+DFp6h5YXESNEsxxoP11cp9Ykv3roUZRM00Ty+Phbu/Tj4garE5p+YYBkvRjsoEdhAlP2LRrvG6tPdzrGJaJ/z0/qKjDRGk4Ve/ipQUxe1GmQ0qInznJ8AEdDCWuhitbikjKTalVH7C3NyArAg+WK1sunLTgMWWcJpHY=
+	t=1756056751; cv=none; b=idtHZRmwAjHWp6n0AZbMSF/0Gl0eEWSjnqMkbfjkLW9EG/XZA4lEqEgHeC4g32wrSh/6go9f600IFjmyqYi5Wj3ZcCQT8BASO1McNvhsW6sFJBnSzj9DqsFlS87uRB+7g74F4Nj5+hTg5tzCgZXBNemAYaMhX3kvsr00fwWosoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756058985; c=relaxed/simple;
-	bh=2jFcS7RMzBU3cP0FxT/WG01cmzVqgCgNvZZKtC23fog=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cWSvxYwrpLqm/cIB5plaUiVQ9Wmh0LwLcbWwteFEsBleOZuycT4O26wq7PXLjElAJLu01b42p/GRbjTjgQyoSqcL9u01r7G11HrTUypJrHf1bmH/IY3gN2nFCBn2gyrMUWZUnWRBWm05oey8YR6S8PnG9uqueAcKe6EivvmUTdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PxkUux/d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1A2EC4CEF4;
-	Sun, 24 Aug 2025 18:09:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756058985;
-	bh=2jFcS7RMzBU3cP0FxT/WG01cmzVqgCgNvZZKtC23fog=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PxkUux/dfAZ5WdFrXk1fI8RkhNPTfdhbdVU4+dfXg7oWG67LIFao2MaHOrxLOF0QE
-	 O8e2rla0zuY5bMKRvB5xbIA2312MgxI4S3m9I4SHfWwOmrQTBsSBXKupQTec38kxat
-	 kr7ehTBIt9ELHz9aTtglbQG0B4LsPY1xzfy/Q+RILYJo9OTs32wJj7/RXqCHijXZML
-	 +J0/VMiL4Kn1Toqb8MJ7lyA88QFAzngNq56HN8GA5kBQy/GeqimGgXScoasHfBKg1S
-	 EEZWRNfzEixN6LOvUb/BF/Nw3ElkQ1GrhAIZ1iMR+2vRzP/wFuPsuRCHC5lJomzGUf
-	 PqmSoW4h8X2tw==
-Message-ID: <172e9dd6-3b25-4fdf-943e-2bd559117519@kernel.org>
-Date: Sun, 24 Aug 2025 19:25:20 +0200
+	s=arc-20240116; t=1756056751; c=relaxed/simple;
+	bh=nYIU4QN9D4tQYp5QjHljhvFLe8j2hcTGgrzyKqfm1m8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cw5p7lebrHRY9fNq3xKKWAdLEhvUZh3BbjzkdXZ2lRRPwtn78NJKFnwzk9HacZBzaSq26J6Oi7w9c8YrxSV1hkDwpanp6z7Cvyb78SKYuUoOdh5+nkpiv8/EbrwFSTEin9QvYNNWWhzjOE3s6ULVu+x2+j/RHAUFliCN8Gb6mrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rOiBxVzx; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24611734e18so181085ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 10:32:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756056748; x=1756661548; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nYIU4QN9D4tQYp5QjHljhvFLe8j2hcTGgrzyKqfm1m8=;
+        b=rOiBxVzx8q/3AwMPMcYeVUCULDL2zsxYw/gUQW9WWgWoqrTrkvxvQvA1+wug02Mf0P
+         Or4Sf8PQehCiL0yGwH7ZWQ0VU0dIX7iCI3Lst/+LpqqjCnrav9DCcz/kADLqiCurTpi0
+         hk4TE/FBG88Ax8EaTYvcGolgtfVS8nQLw6ZPEc4+YtYBFyT9VmmvfIQXKQ3KwnZrYLJo
+         UGoIPNCGaT3BaKdyQ9YyojDV+93Z5yhROLpRRQKxGKyL1tW8AFoJUhNyVqjxQo3UkM4Y
+         A3EDUAJEIWRoo0bHH861nkxYkOKGTKnPdsIYYCa176ClVAblVpgUkMSEXcBV+2lYWiSh
+         0oXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756056748; x=1756661548;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nYIU4QN9D4tQYp5QjHljhvFLe8j2hcTGgrzyKqfm1m8=;
+        b=DYsrmPVtUgCwLci/bk/QrHpxHt/nmMKgZ9YhP4Bd904pSVLniG7O72NN3UOaiEfuMp
+         v9KpJZnswC4CJjxyWoWTbr4wCH/ls83y5iB5XZ3JRxVKJYOwpIVdH7Z91TmKb4H231u/
+         q4rwnOr7Lw9uoRcG9T+Vo4/xeTwJPnAmM2wm9ogyq3ecB5EJOPGW/tvuS7pyFKhDtVzM
+         sezQsbydVLcXC1PCJ2jjQVdTeZXY1+JIIzRA89cuKtxibr5J8jinv+CnfMt+gfl8Yibu
+         G3pG+Xvh9XB8VUL5xuaNrImKHhQ3JitcXREU8IBHM/iPZy3JZe473IG9twQEGU+8C0NH
+         jtcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVmAeSGiKHhUVlZBWar5264pOJMuDP3dAE/F5z0ULNomPHv/wUpSEGplt02kpfX8arDQloJ3cY71ClJIz8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhWT5ov8fYYDh2CSNhxKPQznda/+EeYosG2BHVapb4rX/Ruupf
+	Jr0hMZQsHeyYZnCbZ8U9hBNhphHFhWOso1oXkyO/mvXFgSGRe6Kcd9etn4Zin/yskCxJs07iXHs
+	ES8IPNOQvSmlShG2fOWXbn6c3Pmsqc3da90T/o92V
+X-Gm-Gg: ASbGncvS6+fff6ys0nnelQN5u69nJzHKQzNN5DnkvBIk4qzJLCX+zqcwmZgvb4kCggn
+	Q+/Hcko7svo8bAEv6TuKyqEVmRPKylXLN/E8+Cc4KaX1N8VMRKKimmLTqSP+EO7usSkjpygxiGw
+	pJUdIwLNJmkHX1slDeZTCyVQ/2QYvgsWb3V1PvEsVJH8qSqBpZQb2YXblHpSUlGgNtceC9jgPhP
+	rUvktOnWYVRn1o=
+X-Google-Smtp-Source: AGHT+IHLEkVxcc5/zzS+IhkSvZ/rK+FL/uVYfrBJH8gIcmuU88UlUdcvI77Q8n5pUVPRR23ZZrEirohrVVtXBJ20PbE=
+X-Received: by 2002:a17:902:f543:b0:240:640a:c564 with SMTP id
+ d9443c01a7336-2467a32609emr2727045ad.3.1756056747994; Sun, 24 Aug 2025
+ 10:32:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/33] drivers: base: cacheinfo: Add helper to find the
- cache size from cpu+level
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-3-james.morse@arm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250822153048.2287-3-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <87ldnacz33.fsf@gentoo.org> <87cy8mcyy4.fsf@gentoo.org>
+ <CAP-5=fV+-VZ+SsGL1SJGYMEv-gwkv1AKk_6MZJ4tLBrCXFnMQA@mail.gmail.com> <87zfbpae5l.fsf@gentoo.org>
+In-Reply-To: <87zfbpae5l.fsf@gentoo.org>
+From: Ian Rogers <irogers@google.com>
+Date: Sun, 24 Aug 2025 10:32:16 -0700
+X-Gm-Features: Ac12FXwADLm_Yk0rL6SmYI9wtXHwDEj8_chc6rm2r933nrXU_L0WtqSd8GDyxXM
+Message-ID: <CAP-5=fWrxRvKRxSrYPyiBMZDCfBbb6142ww+er2_mmtkAaGW9A@mail.gmail.com>
+Subject: Re: [PATCH v5 00/19] Support dynamic opening of capstone/llvm remove BUILD_NONDISTRO
+To: Sam James <sam@gentoo.org>
+Cc: Ingo Molnar <mingo@redhat.com>, acme@kernel.org, adityag@linux.ibm.com, 
+	adrian.hunter@intel.com, ak@linux.intel.com, 
+	alexander.shishkin@linux.intel.com, amadio@gentoo.org, 
+	atrajeev@linux.vnet.ibm.com, bpf@vger.kernel.org, chaitanyas.prakash@arm.com, 
+	changbin.du@huawei.com, charlie@rivosinc.com, dvyukov@google.com, 
+	james.clark@linaro.org, jolsa@kernel.org, justinstitt@google.com, 
+	kan.liang@linux.intel.com, kjain@linux.ibm.com, lihuafei1@huawei.com, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	llvm@lists.linux.dev, mark.rutland@arm.com, mhiramat@kernel.org, 
+	morbo@google.com, namhyung@kernel.org, nathan@kernel.org, 
+	nick.desaulniers+lkml@gmail.com, peterz@infradead.org, sesse@google.com, 
+	song@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/08/2025 17:29, James Morse wrote:
-> MPAM needs to know the size of a cache associated with a particular CPU.
-> The DT/ACPI agnostic way of doing this is to ask cacheinfo.
-> 
-> Add a helper to do this.
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> 
-> ---
-> Changes since v1:
+On Sat, Aug 23, 2025 at 3:04=E2=80=AFPM Sam James <sam@gentoo.org> wrote:
+>
+> Ian Rogers <irogers@google.com> writes:
+>
+> > On Fri, Aug 22, 2025 at 11:52=E2=80=AFPM Sam James <sam@gentoo.org> wro=
+te:
+> >>
+> >> > A few months ago, objdump was the only way to get
+> >> > source line support [0]. Is that still the case?
+> >>
+> >> ... or is this perhaps handled by "[PATCH v5 18/19] perf srcline:
+> >> Fallback between addr2line implementations", in which case, shouldn't
+> >> that really land first so people can try the LLVM impl and use the
+> >> binutils one if it fails?
+> >
+> > So my opinion, BUILD_NON_DISTRO isn't supported and the code behind it
+> > should go away. Please don't do anything to the contrary or enable it
+> > for your distribution - this was supposed to be implied by the name.
+>
+> We're principally a source-based distribution, so it's not as much of an
+> issue.
 
-You marked this as v1.
+Agreed, but I don't think the perf tool should be made to be a source
+only distribution :-)
 
->  * Converted to kdoc.
->  * Simplified helper to use get_cpu_cacheinfo_level().
-Please use consistent subject prefixes. Look at previous patch subject
-prefix.
+> > The forking and running addr2line gets around the license issue that
+> > is GPLv3* but comes with a performance overhead. It also has a
+> > maintenance overhead supporting llvm and binutil addr2line, when the
+> > addr2line output changes things break, etc. (LLVM has been evolving
+> > their output but I'm not aware of it breaking things yet). We should
+> > (imo) delete the forking and running addr2line support, it fits the
+> > billing of something we can do when capstone and libLLVM support
+> > aren't there but the code is a hot mess and we don't do exhaustive
+> > testing against the many addr2line flavors, the best case is buyer
+> > beware. Capstone is derived from libLLVM, I'm not sure it makes sense
+> > having 2 libraries for this stuff. There's libLLVM but what it
+> > provides through a C API is a mess requiring the C++ shimming. Tbh, I
+> > think most of what these libraries provide we should just get over
+> > ourselves and provide in perf itself. For example, does it make sense
+> > to be trying to add type annotations to objdump output, to just update
+> > objdump or have a disassembler library where we can annotate things as
+> > we see fit? Library bindings don't break when text output formats get
+> > tweaked. Given we're doing so much dwarf processing, do we need a
+> > library for that or should that just be in-house? We can side step
+> > most of this mess by starting again in python as is being shown in the
+> > textual changes that bring with it stuff like console flame graphs:
+> > https://lore.kernel.org/lkml/CAP-5=3DfU=3Dz8kcY4zjezoxSwYf9vczYzHztiMSB=
+vJxdwwBPVWv2Q@mail.gmail.com/
+> > So I think long term we make the perf tool minimal with minimal
+> > dependencies (ie no addr2line, libLLVM, etc.), we work on having nice
+> > stuff in the python stuff where we can reuse or build new libraries
+> > for addr2line, objdump-ing, etc. Use >1 thread, use asyncio, etc.
+>
+> Yeah, this absolutely sounds like the right direction indeed. I'm glad
+> to hear it.
 
-Best regards,
-Krzysztof
+Well it takes effort and what drags against that is supporting things
+that can't be distributed.
+
+> >
+> > For where we are now, ie no python stuff, BUILD_NON_DISTRO should go
+> > away as nobody is maintaining it and hasn't for 2 years (what happens
+> > when libbfd and libiberty change?)
+>
+> They don't change often, though. The fixes are usually trivial when they
+> do arise.
+
+So just taking the feature tests as an example of the burden, we have:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/build/feature/test-disassembler-four-args.c?h=3Dperf-tools-nex=
+t
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/build/feature/test-disassembler-init-styled.c?h=3Dperf-tools-n=
+ext
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/build/feature/test-libbfd-buildid.c?h=3Dperf-tools-next
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/build/feature/test-libbfd.c?h=3Dperf-tools-next
+so it isn't just supporting a small libbfd wrapper, it is maintaining
+addr2line, objdump, etc. functionality for all these configurations.
+As it doesn't get tested, or tested with these features both true and
+false, it is liable to bitrot. However, the biggest issue/drag is in
+improving/refactoring the tool and having to make sure these new
+things work for a situation that in most distributions really, really
+doesn't matter.
+
+> > We should focus on making the best
+> > of what we have via libraries/tools that are supported - while not
+> > forcing the libraries to be there or making the perf binary massive by
+> > dragging in say libLLVM. The patch series pushes in that direction and
+> > I commend it to the reader.
+> >
+> > No, reordering the patches to compare performance of binutils doesn't
+> > make sense, just build with and without the patch series if you want
+> > to do this, but also don't do this as BUILD_NON_DISTRO should go away.
+>
+> I was asking purely because of the *functionality loss*, though, not
+> performance. In the thread I linked from just a few months ago with Ingo
+> Molnar, there was a real issue with llvm or capstone-based disassembly
+> not showing source information. I'd hit the same problem. Is that fixed n=
+ow?
+
+Can you link to the issue? Capstone and LLVM don't replace objdump, in
+perf there is a list of disassemblers and in your ~/.perfconfig and
+you can always set LLVM and capstone to be your least preferred if
+they lack a feature you need:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/perf/Documentation/perf-config.txt?h=3Dperf-tools-next#n250
+
+> This is my principal concern rather than the LLVM dependency (even if
+> I'd love to avoid that, I understand and appreciate the arguments you're
+> making above and intent on future direction).
+
+I think adding a missing feature to the LLVM disassembler is forward
+progress, like fixing the BPF disassembly for LLVM done in this
+series. I need to know more about the issue but it sounds less of a
+libbfd thing and more an objdump -S thing.
+
+This patch series was reposted as I carry it in:
+https://github.com/googleprodkernel/linux-perf
+to avoid the cost of linking in libLLVM/libcapstone in contexts (data
+centers) where that functionality isn't used.
+
+Thanks,
+Ian
 
