@@ -1,248 +1,387 @@
-Return-Path: <linux-kernel+bounces-783783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8279CB33265
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 21:39:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAD4DB33268
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 21:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AB1C1B23326
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 19:39:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 257FE480B08
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 19:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5982264CD;
-	Sun, 24 Aug 2025 19:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234F1227586;
+	Sun, 24 Aug 2025 19:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ldv31Tmn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EvrbHFgn"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6831372613;
-	Sun, 24 Aug 2025 19:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EA37260B;
+	Sun, 24 Aug 2025 19:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756064343; cv=none; b=c3FR98moUNXJA8C9jQL1WOskY/xyWwUidZtP7gPAnSdU91N4+j4hYvnlIjtXrEH/N5xd/YMFoeAeF1DE8dAVGqZBmI4Vp/D3+IR6uVCJJC/wA7aPGCKzbkmthqd1IpKBshpe09HoDZyWZoDwRyrJkKRTUcAa4TkD4diUWmdPUdA=
+	t=1756064644; cv=none; b=ceODhFBt7ZZBiEYDI69M6G/Dh02Tah0wLuwcH9GvFaruVtcYoJs4PyX27o3IdLnMau+732ft/zNCYW31151AiYNGwW5ubHM3re5OCfK5fBPQnTQ+q2Rdepf/6HWYdMUq43+Tqo2brcWKiz0lKR5N8UQ7iW+OPUgdi6BXgCVCBGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756064343; c=relaxed/simple;
-	bh=8DlnE/rWJ6b3Mfl7JEc3Sc72YTacrmk6cJufKubDOs4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CpiTZjxz2SIproBGO6IQtma6Istf8q+P7q7PPx2lKT06N7dJHCitVBb1Vilc0oICGIRxnYqfAHWck8BYYZYiTqXmVHuUf86n3t48QHooSNwagE7Rjs/wpxffk7Bqz5dvJkmZ5lRBo6Qet6TWP/aPQ7aOKyxQa/a07xIwaNpuPuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ldv31Tmn; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756064341; x=1787600341;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8DlnE/rWJ6b3Mfl7JEc3Sc72YTacrmk6cJufKubDOs4=;
-  b=Ldv31TmnDZcQGYdCOuS0SZcbvRA+IGb1ej0d3Tj+jZmjyHxE9GSpea+Z
-   OIWuLJUgsuM/TrjumN4mCfZdHLRhT2jPUwogg5EskvCqSgemRb8GKUK9F
-   iSSQ7s8zidIH1fLFYcU3O301d3atzD0zXdpMvN0nvCZIcVXrTA2vZ9RxM
-   YHrFafhyyyrA6jsd0gh8Zq/0a/Xn8P57buDdju58XXdWYx4goxzqbo/BF
-   DOcv5eKjgE9hOc69nhyeDPj33pRsVyfSxiQeWT9/qn0FlI5EWz9JlvcVc
-   bEaxAMFd4xuGtn4GoULSOIjm9pGOqb1JRw6kpcM2cBCIDn5J3OodMi917
-   A==;
-X-CSE-ConnectionGUID: bOtJvWX1QWaM0iTRh1J5qw==
-X-CSE-MsgGUID: 6a31BhUtQo+EtyoQ17HR7w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11532"; a="69386969"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="69386969"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2025 12:39:00 -0700
-X-CSE-ConnectionGUID: MSw73TzIQPKqeRD6Q/wQQw==
-X-CSE-MsgGUID: E77TZh/xTvu73DwINgJcmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="192793643"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 24 Aug 2025 12:38:58 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uqGYJ-000NBP-1Q;
-	Sun, 24 Aug 2025 19:38:55 +0000
-Date: Mon, 25 Aug 2025 03:38:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jisheng Zhang <jszhang@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 14/14] dmaengine: dma350: Support ARM DMA-250
-Message-ID: <202508250351.vxyvTsJa-lkp@intel.com>
-References: <20250823154009.25992-15-jszhang@kernel.org>
+	s=arc-20240116; t=1756064644; c=relaxed/simple;
+	bh=jJHPPRz5a60q2K5eQDE/xgULCF4RuoBZirsLcvAWthg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xg6lGkRhv2UShP8RxFPEACua7HemYxlGI3Q3Z647vQUITE/xYu72ObEOkbOkvzkJItEaFKROqWm4RmJdSZD45G7ln+v+6/O/8ffBef7LjVG9DQl5+0g7zRYa+oVkfNcn7706qHpQKXnvDkz/EltVgMztxQL0ZNHJKi98IGq+cqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EvrbHFgn; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb7ae31caso682007666b.3;
+        Sun, 24 Aug 2025 12:44:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756064641; x=1756669441; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=utlwL9wBX+M4YY4c+rj3p87w/ofsjyRVljcQTwjO7vU=;
+        b=EvrbHFgnsMkkwvLq8VYmwzaKy3wRMdeNB8BNGjyMenrCQu3ME/Vjp67WBpAMQFtRxq
+         U7e+6YY63M/HD7Ce24VCkej3t+DGnPz6uiWRVDRZGzrVIKk1MnmD3v140FYZwFsdq9+T
+         vpfF5/rcnhN3EzxW2wHcKh9tExMS4hoeAZEzkVJTU9DwNpXCLRlAjJvesTK9OJz+r8bE
+         /C0wQbF35tA34X3mJCRt7YoKlXuGfYxIr7Z57rsLlmTrrQ7fn0AZ55DdeFugDNyDkzSG
+         oCL3BYLEHeSUwLqhufxAr5HU28gg8HqXJJR9jKCeTPEWEgU2m/kn4n8sFbi2Lap2gxsM
+         Vchg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756064641; x=1756669441;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=utlwL9wBX+M4YY4c+rj3p87w/ofsjyRVljcQTwjO7vU=;
+        b=Hp0MXH9RRhoxBhLEnNsNm2PhY8cEFzcw+9up9981z1PvIAqZ3x+AQtEVP/U4iREPh3
+         eYcVOmoYO57KnEJBO8DATUvUuf2avE217Rz8tkMkddvxZM0GUDfhd097QDK6srK3ZkqX
+         1luc2bfWPI226499L+5uoJF58unsm3jP67tPjpFOUS3qz6574Rq467EdJzaLGGccKGjg
+         MTC+0KIQJ83pYjwVH1p5CMKAHkSjJ/6uTvLoAA8W2DD0UWrZXwt8ELEp3iYshHuGgyKA
+         3Tyahjssfjyfc2YmDpB7J1ah4kGqz8To5ez42tgAUBTxL/7Z3BRwi11SMr7+gBWRUxFW
+         /zgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1bORjbnzJc39kncjl9Y7oAlP5SUPWFk6AWaSXtDaqkL8kZsvZ8X5oMAy0aGjED8cMJAkb+4LDGVEc@vger.kernel.org, AJvYcCWh4x1Bpx7PUospoAc1I7rxeuy6AN6O1CQiym+66LU+diVWfFxhOTHS2XbTPFXnnn0yL8tbTOIlcWIs@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1RS/LN/E9h6M2sqopp1OaXgPPxw8lsm6WkTppwEg7gUHFzu3z
+	Ypc6nfulWT58fECilIi7PAfLb7FfB193x0cPjbxH5vApan93nGr5BurzJrsNHeODHq3lEdeLrVM
+	cE0sUhSp6blY68QYyz/0LeYAs9gh4MWyeaxxRa9C5Aw==
+X-Gm-Gg: ASbGncvviSFJo78P7LMoq8gEauTTGwciS0wo2qwOEMyBOmDSwZoi5nIoDay1MS2BUlh
+	eS4EWfEVNbMs8Br4TvU82ihEjyPVOklsOIyT1fkIYTSg15yqYvS+D5l7AlXSVIcT8kGdIMV1Bu9
+	z+3Nf46hDuu0JHnAKsigHidsVJAQRJom5ziJDN9/hUBu1K46WolYCOfwvO1X1XayISH/6nMwDsW
+	7a1dhs=
+X-Google-Smtp-Source: AGHT+IFA5U90+sDFqnJKW8Dw2Nb1thTFsKnynUWvaLndK+kTjALrT665YOEhge2tenBTAf0CApq5efpQCRz+7mGOS4M=
+X-Received: by 2002:a17:906:478f:b0:af9:3589:68cb with SMTP id
+ a640c23a62f3a-afe2974a001mr926933066b.48.1756064640455; Sun, 24 Aug 2025
+ 12:44:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250823154009.25992-15-jszhang@kernel.org>
+References: <20250824041013.9872-1-Jonathan.Santos@analog.com>
+In-Reply-To: <20250824041013.9872-1-Jonathan.Santos@analog.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sun, 24 Aug 2025 22:43:23 +0300
+X-Gm-Features: Ac12FXyibD45P5EcA1edWZixxjO8COvoJLTTXgEkZO0qwsN2Ul5CObhKNgLqzAs
+Message-ID: <CAHp75VcGG_h+wpo7hHL=ERYqbrvvAaufwPAYBsEbRn3dB8-dfA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] iio: adc: ad7768-1: add support for ADAQ776x-1 ADC Family
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, Michael.Hennerich@analog.com, lars@metafoo.de, 
+	jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	marcelo.schmitt1@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jisheng,
+On Sun, Aug 24, 2025 at 7:10=E2=80=AFAM Jonathan Santos
+<Jonathan.Santos@analog.com> wrote:
+>
+> Add support for ADAQ7767/68/69-1 series, which includes PGIA and
+> Anti-aliasing filter (AAF) gains. Unlike the AD7768-1, they do not
+> provide a VCM regulator interface.
+>
+> The PGA gain is configured in run-time through the scale attribute,
+> if supported by the device. PGA is enabled and controlled by the GPIO
+> controller (GPIOs 0, 1 and 2) provided by the device with the SPI
+> interface.
+>
+> The AAF gain is defined by hardware connections and should be specified
+> in device tree.
 
-kernel test robot noticed the following build warnings:
+the device
 
-[auto build test WARNING on vkoul-dmaengine/next]
-[also build test WARNING on robh/for-next krzk-dt/for-next linus/master v6.17-rc2 next-20250822]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+...
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jisheng-Zhang/dmaengine-dma350-Fix-CH_CTRL_USESRCTRIGIN-definition/20250824-000425
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git next
-patch link:    https://lore.kernel.org/r/20250823154009.25992-15-jszhang%40kernel.org
-patch subject: [PATCH 14/14] dmaengine: dma350: Support ARM DMA-250
-config: x86_64-buildonly-randconfig-002-20250824 (https://download.01.org/0day-ci/archive/20250825/202508250351.vxyvTsJa-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250825/202508250351.vxyvTsJa-lkp@intel.com/reproduce)
+> +enum {
+> +       AD7768_PGA_GAIN_0,
+> +       AD7768_PGA_GAIN_1,
+> +       AD7768_PGA_GAIN_2,
+> +       AD7768_PGA_GAIN_3,
+> +       AD7768_PGA_GAIN_4,
+> +       AD7768_PGA_GAIN_5,
+> +       AD7768_PGA_GAIN_6,
+> +       AD7768_PGA_GAIN_7,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508250351.vxyvTsJa-lkp@intel.com/
+> +       AD7768_MAX_PGA_GAIN,
 
-All warnings (new ones prefixed by >>):
+No trailing comma for the terminator line and I haven't noticed if
+it's even being used in the code...
 
->> drivers/dma/arm-dma350.c:849:34: warning: variable 'sg' is uninitialized when used here [-Wuninitialized]
-     849 |         sglen = DIV_ROUND_UP(sg_dma_len(sg), step_max) * periods;
-         |                                         ^~
-   include/linux/scatterlist.h:34:27: note: expanded from macro 'sg_dma_len'
-      34 | #define sg_dma_len(sg)          ((sg)->dma_length)
-         |                                   ^~
-   include/uapi/linux/const.h:51:40: note: expanded from macro '__KERNEL_DIV_ROUND_UP'
-      51 | #define __KERNEL_DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
-         |                                        ^
-   drivers/dma/arm-dma350.c:835:24: note: initialize the variable 'sg' to silence this warning
-     835 |         struct scatterlist *sg;
-         |                               ^
-         |                                = NULL
-   1 warning generated.
+> +};
+
+...
+
+> +/* PGA and AAF gains in V/V */
+> +static const int adaq7768_gains[7] =3D {
+
+The 7 is redundant. Leave it for the compiler.
+
+> +       [AD7768_PGA_GAIN_0] =3D 325,      /* 0.325 */
+> +       [AD7768_PGA_GAIN_1] =3D 650,      /* 0.650 */
+> +       [AD7768_PGA_GAIN_2] =3D 1300,     /* 1.300 */
+> +       [AD7768_PGA_GAIN_3] =3D 2600,     /* 2.600 */
+> +       [AD7768_PGA_GAIN_4] =3D 5200,     /* 5.200 */
+> +       [AD7768_PGA_GAIN_5] =3D 10400,    /* 10.400 */
+> +       [AD7768_PGA_GAIN_6] =3D 20800     /* 20.800 */
+
+Please, leave a trailing comma.
+
+> +};
+> +
+> +static const int adaq7769_gains[8] =3D {
+
+8 is redundant.
+
+> +       [AD7768_PGA_GAIN_0] =3D 1000,     /* 1.000 */
+> +       [AD7768_PGA_GAIN_1] =3D 2000,     /* 2.000 */
+> +       [AD7768_PGA_GAIN_2] =3D 4000,     /* 4.000 */
+> +       [AD7768_PGA_GAIN_3] =3D 8000,     /* 8.000 */
+> +       [AD7768_PGA_GAIN_4] =3D 16000,    /* 16.000 */
+> +       [AD7768_PGA_GAIN_5] =3D 32000,    /* 32.000 */
+> +       [AD7768_PGA_GAIN_6] =3D 64000,    /* 64.000 */
+> +       [AD7768_PGA_GAIN_7] =3D 128000    /* 128.000 */
+
+Please, leave a trailing comma.
+
+> +};
+
+> +static const int ad7768_aaf_gains[3] =3D {
+
+3 is redundant,
+
+> +       [AD7768_AAF_IN1] =3D 1000,        /* 1.000 */
+> +       [AD7768_AAF_IN2] =3D 364,         /* 0.364 */
+> +       [AD7768_AAF_IN3] =3D 143          /* 0.143 */
+
+Please, leave a trailing comma.
+
+> +};
+
+...
+
+>  static const int ad7768_filter_3db_odr_multiplier[] =3D {
+>         [AD7768_FILTER_SINC5] =3D 204,            /* 0.204 */
+
+>         const unsigned long *available_masks;
+>         const struct iio_chan_spec *channel_spec;
+>         int num_channels;
+> +       const int *pga_gains;
+> +       int num_pga_modes;
+> +       int default_pga_mode;
+> +       int pgia_mode2pin_offset;
+> +       bool has_pga;
+> +       bool has_variable_aaf;
+> +       bool has_vcm_regulator;
+>  };
+
+Same comments as per below.
+
+...
+
+>  struct ad7768_state {
+
+>         unsigned int samp_freq;
+>         unsigned int samp_freq_avail[ARRAY_SIZE(ad7768_mclk_div_rates)];
+>         unsigned int samp_freq_avail_len;
+> +       int pga_gain_mode;
+> +       int aaf_gain;
+> +       int scale_tbl[ADAQ776X_MAX_GAIN_MODES][2];
+
+Why all signed?
+
+>         struct completion completion;
+>         struct iio_trigger *trig;
+>         struct gpio_desc *gpio_sync_in;
+
+>         struct gpio_chip gpiochip;
+>         const struct ad7768_chip_info *chip;
+>         bool en_spi_sync;
+> +       struct mutex pga_lock; /* protect PGA value access */
+
+>  }
+
+Have you run `pahole`? Does it suggest a better layout?
+
+...
+
+> +static void ad7768_fill_scale_tbl(struct iio_dev *dev)
+> +{
+> +       struct ad7768_state *st =3D iio_priv(dev);
+> +       const struct iio_scan_type *scan_type;
+> +       int val, val2, tmp0, tmp1, i;
+
+> +       unsigned long denominator, numerator;
+
+struct u32_fract fract;
+
+> +       u64 tmp2;
+> +
+> +       scan_type =3D iio_get_current_scan_type(dev, &dev->channels[0]);
+> +       if (scan_type->sign =3D=3D 's')
+> +               val2 =3D scan_type->realbits - 1;
+> +       else
+> +               val2 =3D scan_type->realbits;
+> +
+> +       for (i =3D 0; i < st->chip->num_pga_modes; i++) {
+> +               /* Convert gain to a fraction format */
+> +               numerator =3D st->chip->pga_gains[i];
+> +               denominator =3D MILLI;
+> +               if (st->chip->has_variable_aaf) {
+> +                       numerator *=3D ad7768_aaf_gains[st->aaf_gain];
+> +                       denominator *=3D MILLI;
+> +               }
+> +
+> +               rational_best_approximation(numerator, denominator, INT_M=
+AX, INT_MAX,
+> +                                           &numerator, &denominator);
+> +
+> +               val =3D mult_frac(st->vref_uv, denominator, numerator);
+> +               /* Would multiply by NANO here, but value is already in m=
+illi */
+> +               tmp2 =3D shift_right((u64)val * MICRO, val2);
+
+> +               tmp0 =3D (int)div_u64_rem(tmp2, NANO, &tmp1);
+
+Why casting here?
+
+> +               st->scale_tbl[i][0] =3D tmp0; /* Integer part */
+> +               st->scale_tbl[i][1] =3D abs(tmp1); /* Fractional part */
+> +       }
+> +}
+
+...
+
+> +static int ad7768_set_pga_gain(struct ad7768_state *st,
+> +                              int gain_mode)
+> +{
+> +       int pgia_pins_value =3D abs(gain_mode - st->chip->pgia_mode2pin_o=
+ffset);
+> +       int check_val;
+> +       int ret;
+> +
+> +       guard(mutex)(&st->pga_lock);
+
++ Blank line.
+
+> +       /* Check GPIO control register */
+> +       ret =3D regmap_read(st->regmap, AD7768_REG_GPIO_CONTROL, &check_v=
+al);
+> +       if (ret < 0)
+
+Here and elsewhere when it makes sense, drop redundant ' < 0' pieces.
+It's even inconsistent in the same patch with how you check other
+regmap returned calls.
+
+> +               return ret;
 
 
-vim +/sg +849 drivers/dma/arm-dma350.c
+> +       return 0;
+> +}
 
-   824	
-   825	static struct dma_async_tx_descriptor *
-   826	d250_prep_cyclic(struct dma_chan *chan, dma_addr_t buf_addr,
-   827			 size_t buf_len, size_t period_len, enum dma_transfer_direction dir,
-   828			 unsigned long flags)
-   829	{
-   830		struct d350_chan *dch = to_d350_chan(chan);
-   831		u32 len, periods, trig, *cmd, tsz;
-   832		dma_addr_t src, dst, phys, mem_addr;
-   833		size_t xfer_len, step_max;
-   834		struct d350_desc *desc;
-   835		struct scatterlist *sg;
-   836		struct d350_sg *dsg;
-   837		int sglen, i;
-   838	
-   839		if (unlikely(!is_slave_direction(dir) || !buf_len || !period_len))
-   840			return NULL;
-   841	
-   842		if (dir == DMA_MEM_TO_DEV)
-   843			tsz = __ffs(dch->config.dst_addr_width | (1 << dch->tsz));
-   844		else
-   845			tsz = __ffs(dch->config.src_addr_width | (1 << dch->tsz));
-   846		step_max = ((1UL << 16) - 1) << tsz;
-   847	
-   848		periods = buf_len / period_len;
- > 849		sglen = DIV_ROUND_UP(sg_dma_len(sg), step_max) * periods;
-   850	
-   851		desc = kzalloc(struct_size(desc, sg, sglen), GFP_NOWAIT);
-   852		if (!desc)
-   853			return NULL;
-   854	
-   855		dch->cyclic = true;
-   856		dch->periods = periods;
-   857		desc->sglen = sglen;
-   858	
-   859		sglen = 0;
-   860		for (i = 0; i < periods; i++) {
-   861			len = period_len;
-   862			mem_addr = buf_addr + i * period_len;
-   863			do {
-   864				desc->sg[sglen].command = dma_pool_zalloc(dch->cmd_pool, GFP_NOWAIT, &phys);
-   865				if (unlikely(!desc->sg[sglen].command))
-   866					goto err_cmd_alloc;
-   867	
-   868				xfer_len = (len > step_max) ? step_max : len;
-   869				desc->sg[sglen].phys = phys;
-   870				dsg = &desc->sg[sglen];
-   871	
-   872				if (dir == DMA_MEM_TO_DEV) {
-   873					src = mem_addr;
-   874					dst = dch->config.dst_addr;
-   875					trig = CH_CTRL_USEDESTRIGIN;
-   876				} else {
-   877					src = dch->config.src_addr;
-   878					dst = mem_addr;
-   879					trig = CH_CTRL_USESRCTRIGIN;
-   880				}
-   881				dsg->tsz = tsz;
-   882				dsg->xsize = lower_16_bits(xfer_len >> dsg->tsz);
-   883	
-   884				cmd = dsg->command;
-   885				cmd[0] = LINK_CTRL | LINK_SRCADDR | LINK_DESADDR |
-   886					 LINK_XSIZE | LINK_SRCTRANSCFG |
-   887					 LINK_DESTRANSCFG | LINK_XADDRINC | LINK_LINKADDR;
-   888	
-   889				cmd[1] = FIELD_PREP(CH_CTRL_TRANSIZE, dsg->tsz) |
-   890					 FIELD_PREP(CH_CTRL_XTYPE, CH_CTRL_XTYPE_CONTINUE) |
-   891					 FIELD_PREP(CH_CTRL_DONETYPE, CH_CTRL_DONETYPE_CMD) | trig;
-   892	
-   893				cmd[2] = lower_32_bits(src);
-   894				cmd[3] = lower_32_bits(dst);
-   895				cmd[4] = FIELD_PREP(CH_XY_SRC, dsg->xsize) |
-   896					 FIELD_PREP(CH_XY_DES, dsg->xsize);
-   897				if (dir == DMA_MEM_TO_DEV) {
-   898					cmd[0] |= LINK_DESTRIGINCFG;
-   899					cmd[5] = dch->coherent ? TRANSCFG_WB : TRANSCFG_NC;
-   900					cmd[6] = TRANSCFG_DEVICE;
-   901					cmd[7] = FIELD_PREP(CH_XY_SRC, 1);
-   902					cmd[8] = FIELD_PREP(CH_DESTRIGINMODE, CH_DESTRIG_DMA_FC) |
-   903						  FIELD_PREP(CH_DESTRIGINTYPE, CH_DESTRIG_HW_REQ);
-   904				} else {
-   905					cmd[0] |= LINK_SRCTRIGINCFG;
-   906					cmd[5] = TRANSCFG_DEVICE;
-   907					cmd[6] = dch->coherent ? TRANSCFG_WB : TRANSCFG_NC;
-   908					cmd[7] = FIELD_PREP(CH_XY_DES, 1);
-   909					cmd[8] = FIELD_PREP(CH_SRCTRIGINMODE, CH_SRCTRIG_DMA_FC) |
-   910						  FIELD_PREP(CH_SRCTRIGINTYPE, CH_SRCTRIG_HW_REQ);
-   911				}
-   912	
-   913				if (sglen)
-   914					desc->sg[sglen - 1].command[9] = phys | CH_LINKADDR_EN;
-   915	
-   916				len -= xfer_len;
-   917				mem_addr += xfer_len;
-   918				sglen++;
-   919			} while (len);
-   920			desc->sg[sglen - 1].command[1] |= FIELD_PREP(CH_CTRL_DONETYPE,
-   921								     CH_CTRL_DONETYPE_CMD);
-   922		}
-   923	
-   924		/* cyclic list */
-   925		desc->sg[sglen - 1].command[9] = desc->sg[0].phys | CH_LINKADDR_EN;
-   926	
-   927		mb();
-   928	
-   929		return vchan_tx_prep(&dch->vc, &desc->vd, flags);
-   930	
-   931	err_cmd_alloc:
-   932		for (i = 0; i < sglen; i++)
-   933			dma_pool_free(dch->cmd_pool, desc->sg[i].command, desc->sg[i].phys);
-   934		kfree(desc);
-   935		return NULL;
-   936	}
-   937	
+...
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>         case IIO_CHAN_INFO_SCALE:
+> +               if (st->chip->has_pga) {
+> +                       guard(mutex)(&st->pga_lock);
+> +
+> +                       *val =3D st->scale_tbl[st->pga_gain_mode][0];
+> +                       *val2 =3D st->scale_tbl[st->pga_gain_mode][1];
+> +                       return IIO_VAL_INT_PLUS_NANO;
+> +               }
+> +
+>                 *val =3D (st->vref_uv * 2) / 1000;
+> +               if (st->chip->has_variable_aaf)
+> +                       *val =3D (*val * MILLI) / ad7768_aaf_gains[st->aa=
+f_gain];
+
+This is unreadable. Just use a temporary variable for all calculations
+and when it's done, assign *val to it.
+
+>                 *val2 =3D scan_type->realbits;
+>
+>                 return IIO_VAL_FRACTIONAL_LOG2;
+
+...
+
+> +static int ad7768_write_raw_get_fmt(struct iio_dev *indio_dev,
+> +                                   struct iio_chan_spec const *chan, lon=
+g mask)
+> +{
+> +       switch (mask) {
+> +       case IIO_CHAN_INFO_SCALE:
+> +               return IIO_VAL_INT_PLUS_NANO;
+> +       default:
+> +               return IIO_VAL_INT_PLUS_MICRO;
+> +       }
+
+> +
+> +       return -EINVAL;
+
+What's the point in this return, please?
+
+> +}
+
+...
+
+>  static const struct ad7768_chip_info ad7768_chip_info =3D {
+
+>         .channel_spec =3D ad7768_channels,
+>         .num_channels =3D ARRAY_SIZE(ad7768_channels),
+>         .available_masks =3D ad7768_channel_masks,
+> +       .has_vcm_regulator =3D true
+
+Missing trailing comma. Also same in the below. I believe I have
+pointed that out in v1.
+
+> +};
+> +
+> +static const struct ad7768_chip_info adaq7767_chip_info =3D {
+> +       .name =3D "adaq7767-1",
+> +       .channel_spec =3D ad7768_channels,
+> +       .num_channels =3D ARRAY_SIZE(ad7768_channels),
+> +       .available_masks =3D ad7768_channel_masks,
+> +       .has_variable_aaf =3D true
+> +};
+
+> +static const struct ad7768_chip_info adaq7769_chip_info =3D {
+> +       .name =3D "adaq7769-1",
+> +       .channel_spec =3D adaq776x_channels,
+> +       .num_channels =3D ARRAY_SIZE(adaq776x_channels),
+> +       .available_masks =3D ad7768_channel_masks,
+> +       .pga_gains =3D adaq7769_gains,
+> +       .default_pga_mode =3D AD7768_PGA_GAIN_0,
+> +       .num_pga_modes =3D ARRAY_SIZE(adaq7769_gains),
+> +       .pgia_mode2pin_offset =3D 0,
+> +       .has_pga =3D true,
+> +       .has_variable_aaf =3D true
+>  };
+
+...
+
+
+>         init_completion(&st->completion);
+> +       mutex_init(&st->pga_lock);
+
+Perhaps devm_mutex_init()?
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
