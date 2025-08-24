@@ -1,143 +1,140 @@
-Return-Path: <linux-kernel+bounces-783466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F83B32DF2
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:18:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97EA5B32DFD
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC2EF7AE582
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 07:16:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2D3A7AC8B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 07:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2FB246326;
-	Sun, 24 Aug 2025 07:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD22207A22;
+	Sun, 24 Aug 2025 07:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GpY7tpEm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mUTc6lW4"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A83188000;
-	Sun, 24 Aug 2025 07:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420C920322;
+	Sun, 24 Aug 2025 07:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756019892; cv=none; b=jDXVE2kS5wTlPi3VvTroW3Epg5GLzOYWucAoWdRl9licv6y5qFNFr5k6hd9+mDs8Muj/Lq4+Vbb+40ixytZQh1Vwzd5mIDfuaMD3mpdA+Xyg02Eq0ej6B+O/6AkXwQHqYR1kVcKoKC1KJhRHPmAK/TYKhEm5izyN+VRWLrkoo/w=
+	t=1756020695; cv=none; b=HHsrSiR9Dro4hLF1P/4CGlBTO8msfeX/uuBccd1uSpYBv0fFJZysYjrBkOkxGHmS9sn/Ju/lGVNAZVxOF4PcF1l0LKu1+ZHVzKy7EoKw0wbU4BEgvxn+99FbyyUWgYtS+7+pEW+bR7lOlCNvSc0WDrMt9q1VpLplY0xvMdjKfKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756019892; c=relaxed/simple;
-	bh=0fh0gGpu0t//MXZ11+UqTS4MNTzyq/dz/PwrJz2CL/g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e4XC2CPC/QE0zL/JRh4YYam25385W6hye0ecxGehHXDgrbOjLDJvPFN12U8Vzep8cXy9+Uu0uVB/5GgalBeMTWUPH3ixMZHPgeWJVBw0Et05Ok0ZJC4KTq+m9eaz80bXlmVBxRPYnY9kJWPdkadai+0VTtWsEzMhd5WSNkxHkF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GpY7tpEm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54615C4CEEB;
-	Sun, 24 Aug 2025 07:18:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756019890;
-	bh=0fh0gGpu0t//MXZ11+UqTS4MNTzyq/dz/PwrJz2CL/g=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=GpY7tpEmUzWQ22Ku/8Aky16LAV3UD5t3Z971mEpzjCUmAoio4DZ7IA4GlDl4szkk3
-	 h8v2g+R4zUzOcepxb89+3pSTHdO67PEjvXym3zcGjr4bThbWkFDowPpE6ukY3xpEYz
-	 bA4WsCdIKq8HR9j8nQAJgbKyzc3+fxwwY38X9cTQ0fI+cC9quWaEVeW7+xUxSr54Is
-	 I4bD38wF7zSwtS02Ndp+9HkZMT3D3PrsYl33GxopTuesUKzRLcm47hCCZF9VO27i9e
-	 /lILvLBNVZS4IavTMLQ9nMg8uvnAxKhuLTYFUh3ayol2R7wm6T6rcHpyZ/A3Hp/GV4
-	 xO5ZjLFsli/qg==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3366766118aso4799231fa.0;
-        Sun, 24 Aug 2025 00:18:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWRRhfH6Epn66agrhKIa+j98jS5dX8Js4yfgxcYwdRsgDxlCM2LL++Iugxp5qdJPeeNVxgEbDU/P5uN@vger.kernel.org, AJvYcCWYBSqdG1IL84gZtcqtjjrwJ99ZJCCdmUKAmRzwSp8y8raLukSoGwWRBOLbuyrWHbSEI9mAF0A0@vger.kernel.org, AJvYcCXjm8dnWc4b0mmT8O/WMUwUpW0Zx0jOQNYfv4dBsvtwik8/k75CF2y1ICENLnh5Rs8MiSmW7oM18q6vEKQI@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEQFzAxo6ncJByFhQqIfZvyW20quOrYELrVlaXvzOHubiYEYh+
-	IAOZSPKDt0R8lbA3Uu4MBYBRn3DLOj8geaR6s4Jcxg8uU8bruadrzbB74V2SXFyAx/WGnU2OYg2
-	rKnUquiFr4trnCGnVUhaJToq6cK7yTgM=
-X-Google-Smtp-Source: AGHT+IEJYKJm9oxMtoKhPUUIqoRJqzRy7kx4QCxWtWwOw/B6CTvUqPHyV5enNtb9irkZ5kRX/OIWTP9CV/YtH0uF8lM=
-X-Received: by 2002:a05:651c:31ca:20b0:30b:edfc:5d8a with SMTP id
- 38308e7fff4ca-33650b8a25fmr13646791fa.0.1756019888725; Sun, 24 Aug 2025
- 00:18:08 -0700 (PDT)
+	s=arc-20240116; t=1756020695; c=relaxed/simple;
+	bh=0FUPSO0qR44avpaz4C6AVxCRIskHwHX/YehWeEq2yCg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=RHB3oFwWbTu+HbHtglAhI/SvvA2vJSB3uZpGth/tsDyxhFIIEC6k4NmK2Mt+//Qe0ivcTVJN9jb+zlKcjZGY+WRHePc6/NsndkxtTTv0iB5s9MuG9MDz0+q8sZVTHzj+lMNK26KPxo83BIrigXsTTvcsNzq1UjCTXDBROn6uZMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mUTc6lW4; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b471737b347so2209719a12.1;
+        Sun, 24 Aug 2025 00:31:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756020693; x=1756625493; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0tdSDrOuU0meqKe0q/eLK4pqoW3RHPCcxHyv0i5CmVw=;
+        b=mUTc6lW4ze7G4z2MFkN8WVc3/rh9shxMjjcvd3GEazNA3hqRPwEk140SIt+TyQUYm+
+         zF/xjOci8nljOX937Y4nPZASDVoVioSSe/KGpmodlfthje6HKAfr34hX5c5kLfYwd1nK
+         U+gTmVCuTYT8sXQYxd3d3IM3XcDwv/8aHr9RK84Xo5v6xJ3umVHaI3ZFFgsrMesGpIR9
+         PRqzvx5iVLQx8Wqzn301sG75F6UnVYOmgwHQ0Dc4zExfRkjuzIrLDfKIaZJ0OpnKTzVQ
+         n7GVjtfibosBODzzYGeQYVLwL+uBMnViQr/ln69YGd02Oopczem68ZTTp0UhqM9u5Uw5
+         Z/uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756020693; x=1756625493;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0tdSDrOuU0meqKe0q/eLK4pqoW3RHPCcxHyv0i5CmVw=;
+        b=ookS8V50XD70lTGo6Vy+P/oHDhI7zezDWcobOFAnzirKJkvv3da4eVMZSI/5FUkhdd
+         2CCWip4auPVRF+Sov96ZSg68QebLR9+j6Y6L4lpqtk8A71rtPABZ1T7vWS/on2dum+NP
+         O4gxVa2bAhsyagQyG1vEjAm7EHcSkBD9oHtcxQd5lz5SFr1vy6TqIRqDOdz+ZF0qP6JY
+         Q4Qb1Ugyg2H38h4e6tUYbtod3v/EJy+XgapPpdND/K+/vjda/gOUHMgbHuz4VrIvnHbM
+         WiDqiFP3K8cWZorH0MThKipPBTtExqpX3McLruKhxzxZJX0coREzVwKN7llEao7zWbEp
+         Mcdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUn4wAeS7GD0tmmr0Cu8zRXVhKbrqthM4Jx9k8PVyZEtvlYFkizMLuSGL2jael2/UIxcbMWHlZB2BN8zIU=@vger.kernel.org, AJvYcCXr7uuv0PCvS2MWuHGCqNVj1WEunDwNk9TwuIKw2SyGQxJJ0V97Ttj1zeUwBmPn42sJpLNGbcGMbyYl3Wl1sk0K@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB10uWuczQNbFHcw+xuOSLiIFbQBgPxpxDsojvPMGYqXu/DEtG
+	CalKAo2qmEx4nRl0Oj1UL2cgjkxaZ2SSC/lLHczSGqJ5OuJIeRK2vmu4
+X-Gm-Gg: ASbGncttYBEvl3kqI66+A5zG3KVnhkh9dTWY8BZIkRh3VyDK0pdr/anc/h8iZ4YtdIK
+	+VVyt1ivPjMbFomWwW60n7Frz2lUxaQqawBOY7rmag3HwVSC/gQ+16KobE1O7zXiYMyCa2j5vFv
+	Z4RcNfukvc3xw0sIAzLDPuDmhJYZuqHjjIVzJezx9XEVooyMgvdjPc3M/LLLQdBRaRfh6VRtvlc
+	Cid8lNHHvb8JaFGwv0MhFppcScZZApdfGZ9J/cqgagjrchF4g2+ubxiDZMsCgl4mg4WJP3tXeW/
+	598XPKXS4/TE/Ie4LtRHi0dvcht4B8UaC0UGdy/eJS1VK7IbbBps45+/OEuvZcsXt0WnseA7+aN
+	ukFi4JhV9sKl978lxr7R8PZe7F4aDL8hyOKCyhFVoN/dYqYHl4gilwTHJ
+X-Google-Smtp-Source: AGHT+IEgj6wETq3v5OCQpeOF7zm/iygPZGg9CfdvpRPZ0RTu/9vsDClKOZva1F3JsIev0p+CupJ/Kg==
+X-Received: by 2002:a17:903:2bcb:b0:242:9bc5:31a0 with SMTP id d9443c01a7336-2462efcd016mr121069395ad.56.1756020693472;
+        Sun, 24 Aug 2025 00:31:33 -0700 (PDT)
+Received: from chandna-HP-Laptop-15s-fq2xxx.. ([2401:4900:1c27:426:4f67:4c5d:adb5:a45d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466885ed72sm37307095ad.92.2025.08.24.00.31.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Aug 2025 00:31:32 -0700 (PDT)
+From: Sahil Chandna <chandna.sahil@gmail.com>
+To: shuah@kernel.org,
+	brauner@kernel.org,
+	namcao@linutronix.de,
+	alexander@mihalicyn.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Sahil Chandna <chandna.sahil@gmail.com>
+Subject: [PATCH] selftests: coredump: Fix compilation issue
+Date: Sun, 24 Aug 2025 12:54:48 +0530
+Message-Id: <20250824072448.7387-1-chandna.sahil@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813145540.2577789-1-wens@kernel.org> <20250813145540.2577789-7-wens@kernel.org>
- <aJyraGJ3JbvfGfEw@shell.armlinux.org.uk> <CAGb2v67cKrQygew2CVaq5GCGvzcpkSdU_12Gjq9KR7tFFBow0Q@mail.gmail.com>
- <aJy_qUbmqoOG-GBC@shell.armlinux.org.uk>
-In-Reply-To: <aJy_qUbmqoOG-GBC@shell.armlinux.org.uk>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Sun, 24 Aug 2025 09:17:56 +0200
-X-Gmail-Original-Message-ID: <CAGb2v6532sc3tk99OYWu5A92NYgPF3J51vsDGnMM=TtrS4TQCw@mail.gmail.com>
-X-Gm-Features: Ac12FXxzg5NyZyTyJnQtY_4IH-x_XLg3gCT00louWNGK9on2RVQmjCu1YaIrTDY
-Message-ID: <CAGb2v6532sc3tk99OYWu5A92NYgPF3J51vsDGnMM=TtrS4TQCw@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 06/10] arm64: dts: allwinner: a527: cubie-a5e:
- Add ethernet PHY reset setting
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Andre Przywara <andre.przywara@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 13, 2025 at 6:39=E2=80=AFPM Russell King (Oracle)
-<linux@armlinux.org.uk> wrote:
->
-> On Wed, Aug 13, 2025 at 11:51:18PM +0800, Chen-Yu Tsai wrote:
-> > On Wed, Aug 13, 2025 at 11:12=E2=80=AFPM Russell King (Oracle)
-> > <linux@armlinux.org.uk> wrote:
-> > >
-> > > On Wed, Aug 13, 2025 at 10:55:36PM +0800, Chen-Yu Tsai wrote:
-> > > > diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dt=
-s b/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
-> > > > index 70d439bc845c..d4cee2222104 100644
-> > > > --- a/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
-> > > > +++ b/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
-> > > > @@ -94,6 +94,9 @@ &mdio0 {
-> > > >       ext_rgmii_phy: ethernet-phy@1 {
-> > > >               compatible =3D "ethernet-phy-ieee802.3-c22";
-> > > >               reg =3D <1>;
-> > > > +             reset-gpios =3D <&pio 7 8 GPIO_ACTIVE_LOW>; /* PH8 */
-> > > > +             reset-assert-us =3D <10000>;
-> > > > +             reset-deassert-us =3D <150000>;
-> > >
-> > > Please verify that kexec works with this, as if the calling kernel
-> > > places the PHY in reset and then kexec's, and the reset remains
-> > > asserted, the PHY will not be detected.
-> >
-> > I found this to be a bit confusing to be honest.
-> >
-> > If I put the reset description in the PHY (where I think it belongs),
-> > then it wouldn't work if the reset isn't by default deasserted (through
-> > some pull-up). This would be similar to the kexec scenario.
->
-> The reason for this is quite simple. While it's logical to put it in
-> there, the problem is that the PHY doesn't respond on the MDIO bus
-> while it's reset pin is asserted.
->
-> Consequently, when we probe the MDIO bus to detect PHYs and discover
-> the PHY IDs, we get no response, and thus we believe there isn't a
-> device at the address. That means we don't create a device, and thus
-> there's no mdio device for the address.
+Building coredump selftests fails on x86 due to following issues:
 
-It feels like a limitation of the implementation though. With the split
-of mdio_device and phy_device, maybe it's possible to add some API that
-registers mdio_device first based on information from the DT, have its
-reset deasserted, read back the PHY ID, then create the PHY device?
+1./usr/include/x86_64-linux-gnu/sys/mount.h:35:3: error: expected identifier before numeric constant
+   35 |   MS_RDONLY = 1,                /* Mount read-only.  */
+      |
 
-This limitation also applies to handling regulator supplies for the PHY,
-which we currently resort to sticking under the MAC, which is even worse?
+<linux/fs.h> pulls in kernel-internal headers that conflict with
+   glibc's <sys/mount.h>, causing this error.
 
-> There is a work-around, which is to encode the PHY ID in the DT
-> compatible (check the ethernet-phy binding). However, note that we
-> will then not read the actual PHY ID (maybe we should?) which means
-> if the driver wants to know e.g. the revision, or during production
-> the PHY changes, it will require DT to change.
+2.stackdump_test.c:25:1: note: ‘offsetof’ is defined in header ‘<stddef.h>’; did you forget to ‘#include <stddef.h>’?
 
-Judging from previous board iterations, I think this is quite likely
-to happen. If the additional SoC internal delay values stay the same,
-I would prefer we not run into this.
+Missing <stddef.h> causes unresolved use of offsetof().
 
+Fix this by:
+  - dropping <linux/fs.h> and including <sys/mount.h>
+  - including <stddef.h> for offsetof()
 
-Thanks
-ChenYu
+Signed-off-by: Sahil Chandna <chandna.sahil@gmail.com>
+---
+ tools/testing/selftests/coredump/stackdump_test.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/coredump/stackdump_test.c b/tools/testing/selftests/coredump/stackdump_test.c
+index a4ac80bb1003..881565d28fa9 100644
+--- a/tools/testing/selftests/coredump/stackdump_test.c
++++ b/tools/testing/selftests/coredump/stackdump_test.c
+@@ -6,7 +6,7 @@
+ #include <libgen.h>
+ #include <limits.h>
+ #include <linux/coredump.h>
+-#include <linux/fs.h>
++#include <sys/mount.h>
+ #include <linux/limits.h>
+ #include <pthread.h>
+ #include <string.h>
+@@ -18,6 +18,7 @@
+ #include <sys/socket.h>
+ #include <sys/un.h>
+ #include <unistd.h>
++#include <stddef.h>
+ 
+ #include "../kselftest_harness.h"
+ #include "../filesystems/wrappers.h"
+-- 
+2.34.1
+
 
