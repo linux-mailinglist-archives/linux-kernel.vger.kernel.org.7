@@ -1,205 +1,176 @@
-Return-Path: <linux-kernel+bounces-783544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 449F1B32ED7
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:32:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E95CB32EDA
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B059A17454B
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:31:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 102761B228C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6788261B91;
-	Sun, 24 Aug 2025 09:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CDF267B90;
+	Sun, 24 Aug 2025 09:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hTTp5uLr"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tPJSFdkm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BziSSvRT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE29A3FF1;
-	Sun, 24 Aug 2025 09:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE62E42048
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 09:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756027902; cv=none; b=cOrDIrvjAJSPa3K9g+kGcUasXhCTGPiI8JL68zXdLV85GOmYoEDL3xaRbD4lE34Ien0wukhB/6S/9E9uygRQMpAwTk646I3Xqw8Zw56Df9emCJOCaVPg8WSAHhusbaqzZW7t8Bs/LQTMikYgFWEYpNMeKIRfUdaZmAoPXXHzg7Q=
+	t=1756028668; cv=none; b=iRwprPTrzI5ZarUzHObfDS1jXLQlUpuT/f+q5DjW5OsvCGVkTKQLFBHuFB/JJp2NLgMBrIpgP+zJl7hveSVVVWoUfGlT3J5ycnox5BXkuZInNqzzJ+fNwMBIFJ2L3A3XV5iRwigA1aT9NkBqXSAZu5n2dyWzSDYxm0mEM/wtLOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756027902; c=relaxed/simple;
-	bh=X4ZcmTDUCg7RjdxxMXGrdoDtPc9lCu+Uomc5G/N/pKw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IfA1S+a9ZBTJsH93wD0r/DMMm6DW5OEYS6KCbC6KqDR3mpDtzl0veGPOwGqc+ZLWEeRWJ8IVSlPqLKQ/U3HAFtUwEsKxPQ80QvuOR1JSnj9kPehkfNGya1PYu/hI6YlgKbcbDNe1qT94qKcgnOOu71puQLtSxotPSqY9+JtxThw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hTTp5uLr; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-770305d333aso1817073b3a.0;
-        Sun, 24 Aug 2025 02:31:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756027900; x=1756632700; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4kA1TfqpwSR+m9eSYiMPcP23Gb8KIWfP3WpYtJwN0gQ=;
-        b=hTTp5uLrqiw8TvM3ZAUFbvobluF0CrbUmUNuoe37oJ83KhUrSNDkPiCyYQWVUndoG8
-         MWwLN7VNcIi7KEh1oQNQUB0SVesqGdV1TMUHN1A5F1n4rSFh94KPf/V2QjsJh21qIlSw
-         0PS+bVm7CwW7GjfGwtTfivMCSfoQfE5gYKCx7JkHxHmlTr4/w3frwxGdMVYAgaV3EZ2K
-         VE+/9c7nqV+KWz1v9/YeRroKOllvT/MATXT6BBuBhFi2zrO6j2w5C2vmm1ILNShCzyFA
-         WKN7IG2nPh38DfnHz30Jz0h5/G6/1svjHVSRMTul2B8/1rZVJ3hCMRqIqxkLVJzled7U
-         uosw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756027900; x=1756632700;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4kA1TfqpwSR+m9eSYiMPcP23Gb8KIWfP3WpYtJwN0gQ=;
-        b=Joe+CC0TMldyvjy78tMBHN0UeOkwAvTH/Pd1hVw1Ns3P2otL3I2fWSwCIuPiMZcd5u
-         BZsaGJqOpTXQXwfrilCx1HFU59LTFZBlEk8Es1OXh/3dwq6TMDIz4sC2/p92EIrwVUGR
-         3y/zKwPrKIXrfQ/BidejMcjt5PcXQrTQAqt/S3w5ZaT4w9j92evHFGHP1L/lmTiqntxo
-         +lthegm5oH/NgrVRj5sC/hpjPeoMwZwjmD6zy+stMUm93NglR7BI5tjBsFWY42cBCre7
-         F3sJf/dbveOz6j+TutBo4zMp6bdEe3+yT2tfXzbh4W8SVsFTjlmn6jpznpG3Dp6t+uW+
-         XUiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVq5FFAU3S707T7go+xkk5yTKJIsPy0PBJtXvc6yZmHXN9frB2c+crFO153VaBzQkaifp6wI8a8v8whOSb6@vger.kernel.org, AJvYcCWu5+FqT9yZGPFIfAa9mjy/hKXQsSlQTFm+oHPn9bFhPCOPKsNLj+JeoKqIOH7zZhYJt7ygupX8wnHX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNlmQA4fnlf81Jy/RAnBVSfxfwwd/4+WAlIw0iqytpA/r/AvuI
-	6tUwehZEt/2Pktb3bBVRvH3fCrkqpyE3Pg//0fyGD+tkHdZyJV5LBqG2owQFA/uEeJ2ZzESBKYQ
-	iC2AHZ7ZK5HPSnnz2CCdc5uuhDvTV/+s=
-X-Gm-Gg: ASbGncsXu33ZEZWnl2tHE1uKOjd5mmN78iAkCpJegksmSe70glUGXHOMbifD6pudOOk
-	4jvppnj1Gewi3Xj3KTNeOZ6BMoPL/jHsKTOPb/V+K2g5mVvnBsA530DG653Py3KVkunOPLXUNNw
-	KixCa7uOb4mZMNGL2UP9Fb2nhDLEKAfm0eV8LN9Lrr60bR22QhpL52/qt+PSntK7aM6MWpMEPgz
-	Mi0FB1lGkzd9RX1hHQYmTUiJEQreISSCgNyw1kD
-X-Google-Smtp-Source: AGHT+IHILFYzimF4xBWhmpSR3dhAW0xrvUKyIJtdbB7nyyBRonmYCJ1GObd9BRnhpMoP4mghd0mMC7gmiOYT35UF5dw=
-X-Received: by 2002:a05:6a20:3c90:b0:240:af8:176d with SMTP id
- adf61e73a8af0-24340b5e28cmr13859289637.24.1756027899868; Sun, 24 Aug 2025
- 02:31:39 -0700 (PDT)
+	s=arc-20240116; t=1756028668; c=relaxed/simple;
+	bh=bwAx0gOdSDBJhsmSk3Dv0Kwls2ChYV/kU/XODa1T/gU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=naqcnMNkR177r0zzaDptxbzXJGDxfV7vEaoUE/6qvTpS4g63MU6kNBr6O41OGOS7hj9Ak9GIgtOIpAYhBmQeJyRkXwiIFxzJ+N9FZbbGvb/yDDCfBtv6iAwl5TUolRTF6byeGs+RzDwzVhN/XtmnCao18uIAK4SVDMxTsCn1xsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tPJSFdkm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BziSSvRT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756028665;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UQMMtO22bXIJtnCOx9/j4weHP8eTSMSU56KhTBQGbRE=;
+	b=tPJSFdkmTt7fZTElhQcbd6Z2l+wWFbFbtUwc46K7xRGCpv2wuOsnUNSNHLSuXt4ZeGzvhW
+	2NoMvZavR3yCSTvSqyB2SjRLTQf4ux08QsWA4brhUf/UKceunuuz0mIdzb93lGFY7x1/7d
+	YUQShqfaiGTPMOjf9ksdRHH7+xJN11Hi3zHBuigUM81OhbGsj/2IXtKBPMjVNzJVrAeLPC
+	VS/rY2pb7i3HmFfgMF6tXDg3vXHjbbqiRvgfP0wGFxDbx3N5+AJokyaLlfWCa2qAt4AMXQ
+	coTOJ37LrH1pb2EFQjqEkd0CHEuBjguYpZVWQwDFMdbKiBWRRwnTTBpsaPjV2g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756028665;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UQMMtO22bXIJtnCOx9/j4weHP8eTSMSU56KhTBQGbRE=;
+	b=BziSSvRTTHT3KfW67LAEFFnxRs5oVooOiiqb2MYo0U4X7qMSTFffjMp67brxiAt2TcdOgA
+	9OROyQRk6e6nQkCA==
+To: Jirka Hladky <jhladky@redhat.com>, linux-kernel
+ <linux-kernel@vger.kernel.org>, john.stultz@linaro.org,
+ anna-maria@linutronix.de
+Cc: Philip Auld <pauld@redhat.com>, Prarit Bhargava <prarit@redhat.com>,
+ Luis Goncalves <lgoncalv@redhat.com>, Miroslav Lichvar
+ <mlichvar@redhat.com>, Luke Yang <luyang@redhat.com>, Jan Jurca
+ <jjurca@redhat.com>, Joe Mario <jmario@redhat.com>
+Subject: Re: [REGRESSION] 76% performance loss in timer workloads caused by
+ 513793bc6ab3 "posix-timers: Make signal delivery consistent"
+In-Reply-To: <CAE4VaGBZzpkfkBXbiuED8Pv-UnjQ5xSk+t=dAdwSjv=u7-b8pw@mail.gmail.com>
+References: <CAE4VaGBZzpkfkBXbiuED8Pv-UnjQ5xSk+t=dAdwSjv=u7-b8pw@mail.gmail.com>
+Date: Sun, 24 Aug 2025 11:44:23 +0200
+Message-ID: <87sehh2gw8.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250824005116.2434998-1-mmyangfl@gmail.com> <20250824005116.2434998-4-mmyangfl@gmail.com>
- <aKrQhggoGYKzOlkQ@shell.armlinux.org.uk>
-In-Reply-To: <aKrQhggoGYKzOlkQ@shell.armlinux.org.uk>
-From: Yangfl <mmyangfl@gmail.com>
-Date: Sun, 24 Aug 2025 17:31:03 +0800
-X-Gm-Features: Ac12FXwbajFdjh92j56yGyODVOvCKBgh6CVUE3D0AYGguMk_Mw7UXPKoILweS7E
-Message-ID: <CAAXyoMN1f-z4sMgugnXy=6ComkfX6vGhGSzwbC0kMSJNG6aQ3Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 3/3] net: dsa: yt921x: Add support for
- Motorcomm YT921x
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
-	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Simon Horman <horms@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Sun, Aug 24, 2025 at 4:42=E2=80=AFPM Russell King (Oracle)
-<linux@armlinux.org.uk> wrote:
->
-> Hi,
->
-> Thanks for fixing the major phylink implementation errors. There are
-> further issues that need addressing.
->
-> On Sun, Aug 24, 2025 at 08:51:11AM +0800, David Yang wrote:
-> > +/******** hardware definitions ********/
->
-> ...
->
-> > +#define YT921X_REG_END                       0x400000  /* as long as r=
-eg space is below this */
->
-> Please consider moving the above register definitions to, e.g.
-> drivers/net/dsa/yt921x-hw.h Also consider whether some of the below
-> should also be moved there.
->
-> > +#define YT921X_TAG_LEN                       8
-> > +
-> > +#define YT921X_EDATA_EXTMODE         0xfb
-> > +#define YT921X_EDATA_LEN             0x100
-> > +
-> > +#define YT921X_FDB_NUM               4096
-> >
-> > +enum yt921x_fdb_entry_status {
-> > +     YT921X_FDB_ENTRY_STATUS_INVALID =3D 0,
-> > +     YT921X_FDB_ENTRY_STATUS_MIN_TIME =3D 1,
-> > +     YT921X_FDB_ENTRY_STATUS_MOVE_AGING_MAX_TIME =3D 3,
-> > +     YT921X_FDB_ENTRY_STATUS_MAX_TIME =3D 5,
-> > +     YT921X_FDB_ENTRY_STATUS_PENDING =3D 6,
-> > +     YT921X_FDB_ENTRY_STATUS_STATIC =3D 7,
-> > +};
-> > +
-> > +#define YT921X_PVID_DEFAULT          1
-> > +
-> > +#define YT921X_FRAME_SIZE_MAX                0x2400  /* 9216 */
-> > +
-> > +#define YT921X_RST_DELAY_US          10000
-> > +
-> > +struct yt921x_mib_desc {
-> > +     unsigned int size;
-> > +     unsigned int offset;
-> > +     const char *name;
-> > +};
->
-> Maybe consider moving the struct definitions (of which there are
-> several) to drivers/net/dsa/yt921x.h ?
+On Sat, Aug 16 2025 at 18:38, Jirka Hladky wrote:
+> I'm reporting a performance regression in kernel 6.13 that causes a
+> 76% performance loss in timer-heavy workloads.
 
-I checked other drivers under dsa and most of them use a single header
-for both register and struct definitions, so it might be a more common
-practice?
+Are you talking about real world workloads or about the stress-ng bogosity?
 
+> Through kernel bisection, we have identified the root cause as commit
+> 513793bc6ab331b947111e8efaf8fcef33fb83e5.
 >
-> > +/******** eee ********/
-> > +
-> > +static int
-> > +yt921x_set_eee(struct yt921x_priv *priv, int port, struct ethtool_keee=
- *e)
-> > +{
-> > +     struct device *dev =3D to_device(priv);
-> > +     bool enable =3D e->eee_enabled;
-> > +     u16 new_mask;
-> > +     int res;
-> > +
-> > +     dev_dbg(dev, "%s: port %d, enable %d\n", __func__, port, enable);
-> > +
-> > +     /* Enable / disable global EEE */
-> > +     new_mask =3D priv->eee_ports_mask;
-> > +     new_mask &=3D ~BIT(port);
-> > +     new_mask |=3D !enable ? 0 : BIT(port);
-> > +
-> > +     if (!!new_mask !=3D !!priv->eee_ports_mask) {
-> > +             dev_dbg(dev, "%s: toggle %d\n", __func__, !!new_mask);
-> > +
-> > +             res =3D yt921x_smi_toggle_bits(priv, YT921X_PON_STRAP_FUN=
-C,
-> > +                                          YT921X_PON_STRAP_EEE, !!new_=
-mask);
-> > +             if (res)
-> > +                     return res;
-> > +             res =3D yt921x_smi_toggle_bits(priv, YT921X_PON_STRAP_VAL=
-,
-> > +                                          YT921X_PON_STRAP_EEE, !!new_=
-mask);
-> > +             if (res)
-> > +                     return res;
+> Summary
 >
-> Here, if EEE is completely disabled, you clear the YT921X_PON_STRAP_EEE
-> bit...
->
-> > +static bool yt921x_dsa_support_eee(struct dsa_switch *ds, int port)
-> > +{
-> > +     struct yt921x_priv *priv =3D to_yt921x_priv(ds);
-> > +
-> > +     return (priv->pon_strap_cap & YT921X_PON_STRAP_EEE) !=3D 0;
->
-> ... and if this bit is clear, you report that EEE is unsupported by the
-> device - which means the device has no hardware for EEE support, and
-> the ethtool EEE operations will be blocked and return -EOPNOTSUPP. This
-> means that once all ports have EEE disabled, EEE can not be re-enabled
-> except through hardware reset.
->
-> Please see the code in net/dsa/user.c::dsa_user_set_eee().
+> Regression: 76% performance drop in applications using nanosleep()/POSIX timers
+>  * 4.3x increase in timer overruns and voluntary context switches
+>   * Dramatic drop in timer completion rate (76% -> 20%)
+>   * Over 99% of timers fail to expire when timer migration is disabled in 6.13
+> Root Cause: commit 513793bc6ab3 "posix-timers: Make signal delivery consistent"
+> Impact: Timer signal delivery mechanism broken
+> Reproducer: stress-ng --timer workload on any system.
 
-priv->pon_strap_cap is read from a different readonly register, and
-cached globally at startup (yt921x_detect) to reduce SMI ops. It
-should not affect reported EEE status.
+That does:
+
+arm_timer()
+{
+     timer.it_value.tv_sec = ...;
+     timer.it_value.tv_nsec = ...;
+
+     timer.it_interval.tv_sec = timer.it_value.tv_sec;
+     timer.it_interval.tv_nsec = timer.it_value.tv_nsec;
+
+     timer_settime(....&timer);
+}
+
+and in the signal handler it does:
+
+     ...
+     timer_getoverrun();
+     arm_timer();
+
+So from the kernel POV this means:
+
+user space starts timer
+arm_timer()
+    ....    
+        hrtimer_start()
+    ...
+        hrtimer_expire()
+          raise_signal()
+
+   signal_delivery()
+        if (interval > 0)
+#1          hrtimer_start()
+
+user space signal_handler()
+     
+arm_timer()
+
+        hrtimer_cancel();
+
+#2      clear pending and overrun
+
+        hrtimer_start();
+
+So it's exactly doing what user space asks for.
+
+Older kernels accounted for overruns and pending signals which might
+have accumulated between #1 and #2, which is undefined behaviour as user
+space cannot longer differentiate to which arming the expiry or the
+overruns belong.
+
+So clearing it when rearmed is the obvious correct thing to do because
+it makes it consistent, no?
+
+The same applies for the disarm scenario:
+
+arm_timer()
+     ...
+     expires()
+       raise_signal()
+
+disarm_timer()
+     ...
+     discard signal
+
+Older kernels did not discard it, but that makes zero sense because
+after disarming the timer both the signal and the overrun becomes
+immediately meaningless, no?
+
+And this has nothing to do with timer migration or whatever, that's just
+a matter of correctness.
+
+If you can point me to a real world workload, which uses timers
+correctly and does not just do random stuff with them, I'm happy to look
+into it.
+
+But this stress-ng thing is just made up nonsense which created bogus
+statistics forever. So comparing bogus numbers is not an indicator for
+a real regression.
+
+Thanks,
+
+        tglx
 
