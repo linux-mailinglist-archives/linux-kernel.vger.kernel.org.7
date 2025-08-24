@@ -1,177 +1,137 @@
-Return-Path: <linux-kernel+bounces-783562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB19B32F03
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:30:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73082B32F07
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59633446091
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:30:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 280E5445F49
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FA627056E;
-	Sun, 24 Aug 2025 10:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FB726E712;
+	Sun, 24 Aug 2025 10:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LwSLN3OL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F63WCZKy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vhp0ZKlV"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A660D4317D;
-	Sun, 24 Aug 2025 10:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0447C21ABAE;
+	Sun, 24 Aug 2025 10:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756031445; cv=none; b=DTK6AeeTDx/E/2tpQ+Xsl/A/QamVTKgpIcILTHybW6hrgMg8TEiTawxmlAwqryE8kBkEW8z2KJsowfNYLb/FWapQaDGt/zwGwH7cMyx/S5lVm1XgViD+pqE+AWV7zH1hZL8yNWrxMCuvgyL0d5eAzsy1a4qVDFC5dj2LPnUFR/0=
+	t=1756031624; cv=none; b=t7S8TU3XRKq7bM8MIc0POKelhr1LMMJqGAMixX925VbKZfZZ1iMhY46K3sRdeNZej6T2DpPHt2GG952Xi3ggQDgGvVXZtsgfVuBg7eEtaYZkb3TsH5UM8pVntbhaQBZkPGg+mRrTl/lMO/BQyo1xexILg+4O+vLeFQApq8nR2w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756031445; c=relaxed/simple;
-	bh=9oE5tb2390AHhqVifgcMfJ4rl+xy0eQcN8W0J8YXps8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F2BPKauOTzInXGyKeHuYSnpZj44KuiXSulsXn3DkTGHmwg7in5ztZImAk50dA2nokFTrfpu3CzlNYTtKWKMvSYCRlxurHtv1xZAHBvIJakqRVgIGE8s9X+uhgARHPRH471IM/FZ8ItY0e4B5WQ+K9XYyudVjwiWORC7KBp6rVeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LwSLN3OL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC9C8C4CEEB;
-	Sun, 24 Aug 2025 10:30:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756031445;
-	bh=9oE5tb2390AHhqVifgcMfJ4rl+xy0eQcN8W0J8YXps8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LwSLN3OLapslV151YMZZEFd20qU2jxZX9ywbmWrIibU8XGlbD+JThPNBekNQDXLHw
-	 hSVwVS1HeLtVNXI50c5TI4SusZC8rT0samdJH1/cJQMpwRBVoX8ozNxBIhEcO8gtnE
-	 XTBgjeTf91QIwhgvsIJNWPEeLQ5poLtXxwhSEYYgQP4dUOZVzn5yZJd/5eEFFdotE3
-	 uDx/Om6bS1ia+F26NDOKNzqs9pm1J6FtV0lPqQtH/+v4h8HXaZ7ukdHUXhji+qRLRc
-	 13vQeUvuQDZhDI+rIH1/8J9v40dLvZRrwBLpA08UTwzKCfo4dC5fW0NKEa0p0O72Az
-	 +pToygNe2MYgg==
-Message-ID: <f28fd898-83f2-46af-9f5d-b98be4518520@kernel.org>
-Date: Sun, 24 Aug 2025 12:30:40 +0200
+	s=arc-20240116; t=1756031624; c=relaxed/simple;
+	bh=GzKB6pgteqUBRrLK1lb+NTiPkkGaS3hpFo2gZCZHGtk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=F1fxNdPyIyuaCwmDEc6ACwmzA21DH8ZP4dSPFHWFg4e2noXY02FOAaJD5nYFXqASzn9DjwPvXc1NpWsDG1Tw1LaabhxrmbzPp9S/rmADYQg4R/hAxRLcJagWQCYWUstP+7NQRaC7SfvhXdCqoBHx6TqXkPBHU2DeZEtaUZRyb68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F63WCZKy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vhp0ZKlV; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 24 Aug 2025 10:33:39 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756031621;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J7AUeVbL8GigkFEdVWdjNPYVQn49zJLQABHK2a32law=;
+	b=F63WCZKys8JBFtobM8nEZLs+HCQZ4zEhYD5rJN6KmebmXgqBvTpeGCK1u39wxcQBYBNATi
+	caZ5y8mzCaVYs+oKAOOI+Ckv4TsaQ/m4JHSdytfYTHhaUP0fPH/WUWneSMznq5JAqdPYII
+	fT0JY9YlYRXc3WJKCXHOBRc/8V5RG0+LIvBqEStPqburwwzFDRtO7MBlEccn5Y+I4NQ0M3
+	NC3jEMWtSAbcAjV9yElnVh2FERxiFuO+sMgeE1TrlmfMSBcyqre6bBk6Vhsb4ZztAgIycH
+	UmAzkBazs0fazdU8OnfSYqD2/SCFaL0JNixrkxmza0aLDKcAHi97aSRz9uaQlw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756031621;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J7AUeVbL8GigkFEdVWdjNPYVQn49zJLQABHK2a32law=;
+	b=vhp0ZKlVE03yf329G+oO6DU9VqbugPZDmbIjidm51k+adN+ETPrw6My5An0nwvXeQiP4zr
+	hbL8R4ltEl02cgCg==
+From: "tip-bot2 for Inochi Amaoto" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/drivers] irqchip/sifive-plic: Respect mask state when
+ setting affinity
+Cc: Thomas Gleixner <tglx@linutronix.de>, Inochi Amaoto <inochiama@gmail.com>,
+ Nam Cao <namcao@linutronix.de>, Chen Wang <unicorn_wang@outlook.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250811002633.55275-1-inochiama@gmail.com>
+References: <20250811002633.55275-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/14] dt-bindings: dma: dma350: Document interrupt-names
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250823154009.25992-1-jszhang@kernel.org>
- <20250823154009.25992-9-jszhang@kernel.org>
- <eda79403-375b-4d49-9fec-12bc98bf9e47@kernel.org> <aKrgDVaynJxnmR9r@xhacker>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aKrgDVaynJxnmR9r@xhacker>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <175603161961.1420.8026332855142123938.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24/08/2025 11:49, Jisheng Zhang wrote:
-> On Sat, Aug 23, 2025 at 06:09:22PM +0200, Krzysztof Kozlowski wrote:
->> On 23/08/2025 17:40, Jisheng Zhang wrote:
->>> Currently, the dma350 driver assumes all channels are available to
->>> linux, this may not be true on some platforms, so it's possible no
->>> irq(s) for the unavailable channel(s). What's more, the available
->>> channels may not be continuous. To handle this case, we'd better
->>> get the irq of each channel by name.
->>
->> You did not solve the actual problem - binding still lists the
->> interrupts in specific order.
->>
->>>
->>> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
->>> ---
->>>  Documentation/devicetree/bindings/dma/arm,dma-350.yaml | 5 +++++
->>>  1 file changed, 5 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/dma/arm,dma-350.yaml b/Documentation/devicetree/bindings/dma/arm,dma-350.yaml
->>> index 429f682f15d8..94752516e51a 100644
->>> --- a/Documentation/devicetree/bindings/dma/arm,dma-350.yaml
->>> +++ b/Documentation/devicetree/bindings/dma/arm,dma-350.yaml
->>> @@ -32,6 +32,10 @@ properties:
->>>        - description: Channel 6 interrupt
->>>        - description: Channel 7 interrupt
->>>  
->>> +  interrupt-names:
->>> +    minItems: 1
->>> +    maxItems: 8
->>
->> You need to list the items.
-> 
-> I found in current dt-bindings, not all doc list the items. So is it
-> changed now?
+The following commit has been merged into the irq/drivers branch of tip:
 
-Close to impossible... :) But even if you found 1% of bindings with
-mistake, please kindly take 99% of bindings as the example. Not 1%.
+Commit-ID:     adecf78df945f4c7a1d29111b0002827f487df51
+Gitweb:        https://git.kernel.org/tip/adecf78df945f4c7a1d29111b0002827f48=
+7df51
+Author:        Inochi Amaoto <inochiama@gmail.com>
+AuthorDate:    Mon, 11 Aug 2025 08:26:32 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sun, 24 Aug 2025 12:20:18 +02:00
 
-Which bindings were these with undefined names?
+irqchip/sifive-plic: Respect mask state when setting affinity
 
-> 
->>
->>
->>> +
->>>    "#dma-cells":
->>>      const: 1
->>>      description: The cell is the trigger input number
->>> @@ -40,5 +44,6 @@ required:
->>>    - compatible
->>>    - reg
->>>    - interrupts
->>> +  - interrupt-names
->>
->> That's ABI break, so no.
-> 
-> If there's no users of arm-dma350 in upstream so far, is ABI break
-> allowed? The reason is simple: to simplify the driver to parse
-> the irq.
+plic_set_affinity() always calls plic_irq_enable(), which clears up the
+priority setting even the interrupt is only masked. This unmasks the
+interrupt unexpectly.
 
-You can try to make your case - see writing bindings. But what about all
-out of tree users? All other open source projects? All other kernels? I
-really do not ask about anything new here - that's a policy since long time.
+Replace the plic_irq_enable/disable() with plic_irq_toggle() to avoid
+changing the priority setting.
 
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Nam Cao <namcao@linutronix.de> # VisionFive 2
+Tested-by: Chen Wang <unicorn_wang@outlook.com> # Pioneerbox
+Reviewed-by: Nam Cao <namcao@linutronix.de>
+Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
+Link: https://lore.kernel.org/all/20250811002633.55275-1-inochiama@gmail.com
+Link: https://lore.kernel.org/lkml/20250722224513.22125-1-inochiama@gmail.com/
+---
+ drivers/irqchip/irq-sifive-plic.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-p=
+lic.c
+index 3de5460..559fda8 100644
+--- a/drivers/irqchip/irq-sifive-plic.c
++++ b/drivers/irqchip/irq-sifive-plic.c
+@@ -179,12 +179,14 @@ static int plic_set_affinity(struct irq_data *d,
+ 	if (cpu >=3D nr_cpu_ids)
+ 		return -EINVAL;
+=20
+-	plic_irq_disable(d);
++	/* Invalidate the original routing entry */
++	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 0);
+=20
+ 	irq_data_update_effective_affinity(d, cpumask_of(cpu));
+=20
++	/* Setting the new routing entry if irq is enabled */
+ 	if (!irqd_irq_disabled(d))
+-		plic_irq_enable(d);
++		plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 1);
+=20
+ 	return IRQ_SET_MASK_OK_DONE;
+ }
 
