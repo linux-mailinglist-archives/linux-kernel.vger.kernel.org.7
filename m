@@ -1,137 +1,90 @@
-Return-Path: <linux-kernel+bounces-783698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8270DB33162
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:13:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B96D1B33164
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50D241B26FA6
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 16:13:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E648E4436C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 16:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5D12DE703;
-	Sun, 24 Aug 2025 16:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3AE2DE70B;
+	Sun, 24 Aug 2025 16:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="fV+t7S/9"
-Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="aLJS7e6g"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6E72DC32B;
-	Sun, 24 Aug 2025 16:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2E22D542B;
+	Sun, 24 Aug 2025 16:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756051980; cv=none; b=VknLXEmnKwlLBS7oZSjOsZGLOdA/gL7HjLJY2P1j1A1mvyV8PhNeOm1F15kdF4vL4T44wDpYQeNl7fe1Emu/LsU5sOdoAIQLkWCHP4xSuRocwHiUEx3hdatrNY+fz6FaoDpSKvVDTxAShq9NUmt0ASbieJOETyqPmETtT+J1NYw=
+	t=1756052005; cv=none; b=VqXrB00MNx+7w4hSf4zccJHzQdFXN1lOMJ9g6jAGQfYrEXCn3//daWIQHKeCRa4EzQfcrsLh3oVtjGSorgegGvXDWfsYj2xC0fpIJmcda36MtnhU4WFww5+zDkWBMU23z64//rPSAjIuPOD+neovRCR2JGUutUijeClBuwCeY9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756051980; c=relaxed/simple;
-	bh=fSYuDyKb8xNMZude0THX4ysx4fxikhPLoCzcuoLlgVs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iHY2ckQXbvEmORFxThdJVmMclvKm8Q7SWYtGQHi5epDKcTjU/WUC49gQJQ450YFiJQTvTPf3BSWLAhYIr9Bn69Hw3RImGvDAj4BVmiz8m278+xO5e+hLdcQn/LcHVltMRHPx8fag6CBKz3JgmVMFRz00l0yYblzq8HRPpaLnd60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=fV+t7S/9; arc=none smtp.client-ip=37.205.8.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
-DKIM-Signature: a=rsa-sha256; bh=L5sbl4zYf+tk8qonwR4TafqKQvKTexvrqntakCO4Zk4=;
- c=relaxed/relaxed; d=dujemihanovic.xyz;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:Message-Id:Message-Id:References:Autocrypt:Openpgp;
- i=@dujemihanovic.xyz; s=default; t=1756051953; v=1; x=1756483953;
- b=fV+t7S/96Ju7zO694dL2bS5VZMdK5G4FnHcwGmUAadaGEpQsMLjbifRSB1tLIYya7kfP+vmN
- 9rmEtZ6JtUOe/+WVlUSR0DeuRcKkvbylpMXUg3xLeTNKCCK4WMUewAG73yxBkdm9IAvJaqgnYKi
- fGDVJ2UrKuYMlOC5swQhrrUMEaR6IvljEdRviz5/YNjXRTnyOSBEkGDbGTcnzSm19TQtMed/gUw
- WTCgHkx0kD/BXmeNrwiwcv83ZjTLRPZuqiODsiC/Seo0yBgd+g4QkuRyN6wuUa/11MDfNCeGrKv
- SXyzkyi/zaUDXclQTM9JcQAVsTc/LtsVC/xg2rx90ey6w==
-Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
- ESMTPS id e0debe80; Sun, 24 Aug 2025 18:12:33 +0200
-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Date: Sun, 24 Aug 2025 18:12:05 +0200
-Subject: [PATCH] dt-bindings: input: touchscreen: imagis: add missing
- minItems
+	s=arc-20240116; t=1756052005; c=relaxed/simple;
+	bh=p5qKT2vPMKAC/6fg2dW3jbJT0fyJ6j956HAFp2rmzXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YasBu/RjcHmRzhdzWdwXLXJyHZV5tvMnKjA9nJRDrcUPEqEe8RsRQ7JzLlsMUh/pmYhPYii05+I+hTDePiHhu7OQpS8V4lmLSbKneVMQ9gXYUx9/mudsOft6jTpDcY0or203ByNLcBubawx9KqamLkX93xLJeCKOgvrcqy3NDGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=aLJS7e6g; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=tbcujWjLVSPoIfoPR7/pBE11nNuK/PjdZ78HbRdzlgs=; b=aLJS7e6gxU25xcxKBtH303q+Dp
+	bd4ZzXVDfItQ3bPMBNiBWMclK3C7iyXoCpkIBTM3oj+rm/2ZEEtD5pLg8RslW6JTLj+/vx395m38/
+	MTyIBW+fat7WvvY/GnLiQ1Ramaiii2ytZnhIu7GqweYbz6XcERBp+ffs4V6/7icmdEZ8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uqDLF-005qQi-GM; Sun, 24 Aug 2025 18:13:13 +0200
+Date: Sun, 24 Aug 2025 18:13:13 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Shenwei Wang <shenwei.wang@nxp.com>
+Cc: Wei Fang <wei.fang@nxp.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v3 net-next 3/5] net: fec: add rx_frame_size to support
+ configurable RX length
+Message-ID: <a360fadc-0cfc-4d4a-9028-f63e2105634d@lunn.ch>
+References: <20250823190110.1186960-1-shenwei.wang@nxp.com>
+ <20250823190110.1186960-4-shenwei.wang@nxp.com>
+ <0abb2c91-3786-4926-b0e3-30b9e222424d@lunn.ch>
+ <PAXPR04MB918577F27FD6521B23601219893CA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <6b1f5bcd-e4d7-4309-becc-de4a12bdf363@lunn.ch>
+ <PAXPR04MB91851EC6E79D76E8220C5251893CA@PAXPR04MB9185.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250824-imagis-minitems-v1-1-cea9db55e87f@dujemihanovic.xyz>
-X-B4-Tracking: v=1; b=H4sIANQ5q2gC/x3MOwqAMBBF0a3I1AZM/OJWxCLqqK9IlIyIENy7w
- fIU90YSDmChPosU+Ibg8Ak6z2jerd9YYUkmU5i66Eyl4OwGUQ4eFztRlW112bUzN3qiVJ2BVzz
- /cRjf9wMHHAecYQAAAA==
-X-Change-ID: 20250824-imagis-minitems-4a71387ce61b
-To: Markuss Broks <markuss.broks@gmail.com>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, 
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1908;
- i=duje@dujemihanovic.xyz; s=20240706; h=from:subject:message-id;
- bh=fSYuDyKb8xNMZude0THX4ysx4fxikhPLoCzcuoLlgVs=;
- b=owGbwMvMwCW21nBykGv/WmbG02pJDBmrLT/8WGQs4ii5s9Rol+VLeSm+1M+m4g38hvnv3TdEL
- WwvbpLqKGVhEONikBVTZMn973iN97PI1u3Zywxg5rAygQxh4OIUgIns38XIsLSlsc87039BKpvh
- rZmMc/7PKTjyaLn425w174yLI3xsShj+Wc89UO8itrM7xvTHql8pKZOO+xQc3tP8wEH1PrdYYr4
- YJwA=
-X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
- fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB91851EC6E79D76E8220C5251893CA@PAXPR04MB9185.eurprd04.prod.outlook.com>
 
-The binding currently expects exactly 5 keycodes, which matches the
-chip's theoretical maximum but probably not the number of touch keys on
-any phone using the IST3032C. Add a minItems value of 2 to prevent
-dt-validate complaints.
+> After further consideration, I think we can simply keep MAX_FL set to max_buf_size and 
+> only update TRUNC_FL as needed. This approach is also sufficient, so the logic introduced 
+> in patch v2 has been removed. Let me know if you want to add back the above logic.
 
-Also add another example to make sure the linux,keycodes property is
-checked.
+For me, higher priority is you review all the commit messages and
+comments. A lot of the discussion here has been because the comments
+don't fit the code, and the commit messages don't give enough details
+to explain the changes. They are just as important as the code.
 
-Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
----
- .../bindings/input/touchscreen/imagis,ist3038c.yaml    | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/imagis,ist3038c.yaml b/Documentation/devicetree/bindings/input/touchscreen/imagis,ist3038c.yaml
-index bd8ede3a4ad8939cef97e9b177548a8fc8386df7..0ef79343bf9a223501aff8b6a525b873e777ea20 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/imagis,ist3038c.yaml
-+++ b/Documentation/devicetree/bindings/input/touchscreen/imagis,ist3038c.yaml
-@@ -35,6 +35,7 @@ properties:
- 
-   linux,keycodes:
-     description: Keycodes for the touch keys
-+    minItems: 2
-     maxItems: 5
- 
-   touchscreen-size-x: true
-@@ -87,5 +88,22 @@ examples:
-         touchscreen-inverted-y;
-       };
-     };
-+  - |
-+    #include <dt-bindings/input/linux-event-codes.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+      touchscreen@50 {
-+        compatible = "imagis,ist3032c";
-+        reg = <0x50>;
-+        interrupt-parent = <&gpio>;
-+        interrupts = <72 IRQ_TYPE_EDGE_FALLING>;
-+        vdd-supply = <&ldo2>;
-+        touchscreen-size-x = <480>;
-+        touchscreen-size-y = <800>;
-+        linux,keycodes = <KEY_APPSELECT>, <KEY_BACK>;
-+      };
-+    };
- 
- ...
-
----
-base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
-change-id: 20250824-imagis-minitems-4a71387ce61b
-
-Best regards,
--- 
-Duje Mihanović <duje@dujemihanovic.xyz>
-
+	Andrew
 
