@@ -1,319 +1,125 @@
-Return-Path: <linux-kernel+bounces-783708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AAF6B3317C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:39:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C94B33180
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C11787A4067
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 16:37:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96A5D3AEF1C
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 16:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59238275865;
-	Sun, 24 Aug 2025 16:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542422D543E;
+	Sun, 24 Aug 2025 16:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OGFpJs2K"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LV5rKo/p"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1AEC27461;
-	Sun, 24 Aug 2025 16:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E24928F4
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 16:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756053538; cv=none; b=eYL9Oj6uC2WKxV6KYcYAFjBBjQOBHM0XHnZPd6Ji41oLLX5un+qi/X2tshbmWSYwHsfdxd89l6lpBnbsm6RBetzirSmXe2jTI/72jADBK/ZulENmwa3gcKEwshdMN17GWYm950banxmKUpuuQQ3yfuuVOw6ia8r6jHKyQ/RY2+k=
+	t=1756053587; cv=none; b=myBMpq3QvbUpi2JoK5XGgZnW5xe2b6HKylp4ElA4ZArncuvL98yMiGdFtVDeDuLU1qury/Td1dYrISCP3iHqIfVm0jkt7TgJAeT0WJfsyMdGfTW3trCEXXFJVcC4ElQeBIqPHkatFxW9PP2MI0rM3uzKK0GtsEuDC/J0tvGuEZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756053538; c=relaxed/simple;
-	bh=EO4cIM5fOf7b8Tyn0w9VlgLcTyW0OMRf5TRpWusyjP4=;
+	s=arc-20240116; t=1756053587; c=relaxed/simple;
+	bh=rzbrFRokTuoA/BGlN6chg/kU+YDV0lrR5n5SZHBY0yw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hhdsUHYpgn2XYkpcKKaR8L1MFnKG6SzjsxjVrZBOxCYKko35M4N6LBwtrMJFlXxxlUB84k9WQAPwruPnH7x2qID7jpWJ78yY0EluTHhTT5/hpPctL5PhsWLQaMi6/oebNjDhQVe4DuOBQhsd7gK9Fm6ReHrwi9Jwky3g/5rQI+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OGFpJs2K; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2469e32f7c1so4051265ad.2;
-        Sun, 24 Aug 2025 09:38:56 -0700 (PDT)
+	 To:Cc:Content-Type; b=KHtih9hrSzCmmTFvRKY3RdrgsrgOJQ90mZLhFM16HGbCNuGlCKO3DrE7hqOVH3JD9BWoH3+YYlvx8m75opG+djdkbQPj1CZujfFkmak4xmgHaNYWzbUUVqnialL5kFqM7jEheoWg8Y594iHxd1KfaE4SjgdB7GccuUEJ6bkOmMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LV5rKo/p; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24611734e50so186415ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 09:39:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756053536; x=1756658336; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756053585; x=1756658385; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xJhM3bu0eBt37kz5ZGDxdptQw7y4fPyKcwduYqAo3ds=;
-        b=OGFpJs2Krsu7Ybzv7g8LVuG0t4PsntnTlxvrFMmo53NMc1NdXV76RlvI7Nl5tKOrQa
-         ex6oWQirxwiB+LpavZkPkwA89skw/6/2jP7muKddCKx0H6FLR/SMEa/s1J7Qh3Tfo6H5
-         BCOoHmu6AjYky+wZqUztOjYl0GWk5mSQ2ooikV0L61K1uY1WVKbrjAAzfOjfVmnEF0Rp
-         q7O0Kw5GiTyWL6ONmhOkBAf6v94teFJ88JdzXb1sXCxe0/XdYGeJVrL6G8Bj3HpcmsgH
-         eTiWLgOzlRN65yuAI0e/m9/cUTIYzzaz05V6TJFL595AVRAmPF+5yxt+EyPfOeLXAK/j
-         +CfA==
+        bh=rzbrFRokTuoA/BGlN6chg/kU+YDV0lrR5n5SZHBY0yw=;
+        b=LV5rKo/pDnlDxCadrKn7gQiyWBGex4q/wQMItY9ZxUtZAYveLgp5L2u1a+1Do6ywTy
+         i8aHWGzh0raJG9uFhCnxaBTTel4GdgS+ek34mh0DjAzgWCvyi6Ry/F63T6Yi5Ldk3oLc
+         SB4hY9ncfA0apnNAoc9hRuzp8BoQslOwhFE6bfGFpwlN7u4fqPQ8SQTCs2707mOBaAGH
+         Wle3EIqByDxbHidD15jMGvQnquEAbE7drC1Nknq8E73gC9Wvs5e9K+AGWTXgd2sYAXCM
+         lZhpP3+LXYYOFVqiXmky4YM1H2YMKFeh3uvj6GT0URMkRx23li0Ln3KLW3ladIpBnZcM
+         UcMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756053536; x=1756658336;
+        d=1e100.net; s=20230601; t=1756053586; x=1756658386;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xJhM3bu0eBt37kz5ZGDxdptQw7y4fPyKcwduYqAo3ds=;
-        b=ulhuciSxL5NiyzkkWIxcTNqwY8KUPbTGsOSExzgY6y5fRP7nCbVPldj1FeN/6LxioH
-         SnFP2dHS5fJqJqZYlg3UIGue7nU0p3ioqbrnNsFEF+eCE4JxbgBtfwGw3etM3jnVHSNz
-         heAsZiXF7+wG6FkCQPBkfcVlMD+7u8zaJdVBIBHBLRhysTJU6LG11SSmSV94xqHN88c+
-         tW3OAjmE17VSnseDxJcLAKW4uixdk8XLGKxVS+PmCXtwUfhT/v1dw8uGn5h9PR3BXnic
-         h5j2Px/mxwvtNfUsQBlcOYsB9PXyXFbISxvpoKvI+3T8suBZpKMprz/sVrAhfeuhMNWG
-         CXqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVlhiyaf5e55GfBs9SJVks8VPKSpsTC8twtZiiyxxmZTMWLtj6DGMVpJCdka6uMq4sqKFI72YfUagYS@vger.kernel.org, AJvYcCW4cDRJp1OGhgTF3EALEvoEK86DEIkFFhKZWDJeajuTharJusiup7EOglQ+LTtXt+3K8p+vPaYR6rOmvBle@vger.kernel.org
-X-Gm-Message-State: AOJu0YytKu5eq0stctyfFW0MDg1KdmekQCb4b6b+i4wxtrbTNzgtpshJ
-	y2ni7EuXcoLkgC4nzRbTND3OTiesABYLcYF6AdDNtYx5J999g+TRFyNfg0jTeFnoko5+O00c5wr
-	XIMXrRNzf9loMbqDkqbGznl5getmazJI=
-X-Gm-Gg: ASbGncsI3iAO2Ea+xWnlJ7MTxrkmVEmqj7KxaRgyblI4gDMQUavNFQDaawSSUsE6HAb
-	bXUxc99TyngdPRmQ6RHFrFUYxJe10cJZDylPEk/ktbFbkDWmiDWzorYYCkITXEfzW3qy32cQgm8
-	CjzEG0fmBSpQ8g92dGY6YnUpECZEfLgmyMuPIYZSlHjAEAJPJl95e+ady6JnArjsg4y/0rSleJO
-	S0yNkOI6RecOhVyAT57LoLu2Z9P7YTtQz2VHv2d
-X-Google-Smtp-Source: AGHT+IGn6/anJHwxmhLz866fQilYAB3u/10YWWDgctrORT3fo2nX8LNPfowT7Gh4YcUWHvPBBGaJHV6E9FSjTdH0XM4=
-X-Received: by 2002:a17:903:46c5:b0:240:96a:b812 with SMTP id
- d9443c01a7336-2462ee5073amr139632385ad.24.1756053536159; Sun, 24 Aug 2025
- 09:38:56 -0700 (PDT)
+        bh=rzbrFRokTuoA/BGlN6chg/kU+YDV0lrR5n5SZHBY0yw=;
+        b=PCvMIQq4gZG1Vbr84P577xTzxso2sVbGBSCzNmLF+H/yFg1m+zLn5rd5CWgkDoEPRh
+         9WxarU2JrcZgGHl5S+OPjqHtPYttReKEDCKKSLpGOMEAPp6X5pjaJTzicCdJONk9y1VN
+         A3U+t0AJu1G3gTBqOeHwqwqtKjKns1ROJmUMxUs5hfuXEnbEpTE2wGP94u6mJj3NA4sB
+         jJta8Q+n1ivc6rBrdUTEA4RHbLjRRmURO0BOfB3QPgdtGRKy3sp6pXrEVtGvEEaTIrsN
+         BpGFG5QxZfYBgCRYIjPWLeNfaCnXtEdYk8ZtErGSgMkc+PoNEhVI5t5+UpS/VGVMp3Ye
+         kjFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdR6wssF8OGH8DRjzGzWf1B3XWp4i3o0aadR3AhkrUAnhx12hGq06B2BSNcr1lNNcYz3h303txIG8G89A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ+7gDTZS1uiTy290hW6lF7W8tc7tvtMZZGhfFPY4RRQQa+9pF
+	WVoYgkzKPIy5XM+pvpfMknG56fMI54/wpnDrOgdEIIdVr2vwCSpc5VUkJVW0Zgn0AvvkXXnp+Sw
+	Pze5JOW7xd+mupIPGF/pKSRQuBXWi+xT5t/Qv5PbY
+X-Gm-Gg: ASbGnctyVkQHKl+tNKU+OPrTbYipW9rylix9xRZW0c053pNbGvsEOotdJqGQAIXZ80m
+	FUwWorfBujkahynptzYudvbM+bwjVtx0p3fRNm4gzKStAeIoWFAvoHCJUgcmj0rixH0CbCmQwoE
+	OZ7/iAUx94NdR//qMoYzC3nMwCDODCiWQRhXyBfxtQpGELlqG0cGSP13QQJLtDwDyPZdfFkJUpa
+	CBukH69WTUlI5qb+N3/bziSyA==
+X-Google-Smtp-Source: AGHT+IF8ztkEHXB7jHNLH5b0qoR949xdKvlTltrfHLNI9mn4T2PAdsWoPgL0Nz5jySsDqNoznj8VNBGkS1VgvZI1Uk4=
+X-Received: by 2002:a17:902:cecc:b0:236:7079:fb10 with SMTP id
+ d9443c01a7336-2467a21e4c1mr3101485ad.3.1756053585241; Sun, 24 Aug 2025
+ 09:39:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250824005116.2434998-1-mmyangfl@gmail.com> <20250824005116.2434998-4-mmyangfl@gmail.com>
- <ad61c240-eee3-4db4-b03e-de07f3efba12@lunn.ch>
-In-Reply-To: <ad61c240-eee3-4db4-b03e-de07f3efba12@lunn.ch>
-From: Yangfl <mmyangfl@gmail.com>
-Date: Mon, 25 Aug 2025 00:38:20 +0800
-X-Gm-Features: Ac12FXwVLXCZKaK4opKKuH6D9QUFw5IZcBvrQNk5pjrhm8FryHuMhM4-arXVp98
-Message-ID: <CAAXyoMP-Z8aYTSZwqJpDYRVcYQ9fzEgmDuAbQd=UEGp+o5Fdjg@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 3/3] net: dsa: yt921x: Add support for
- Motorcomm YT921x
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250823003216.733941-1-irogers@google.com> <aKpP8yn7hoyQJe9h@tassilo>
+In-Reply-To: <aKpP8yn7hoyQJe9h@tassilo>
+From: Ian Rogers <irogers@google.com>
+Date: Sun, 24 Aug 2025 09:39:33 -0700
+X-Gm-Features: Ac12FXzo4nNl7CWXzsGv5Kuj8o4HmwvIozQ_8cCU8zkwDdeVOkH53u0lihj7JbY
+Message-ID: <CAP-5=fUa6xcn7j6_SGrmK7pTPTcUADodXo6o3UTLbFWBAeUUAg@mail.gmail.com>
+Subject: Re: [PATCH v5 00/19] Support dynamic opening of capstone/llvm remove BUILD_NONDISTRO
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Aditya Gupta <adityag@linux.ibm.com>, "Steinar H. Gunderson" <sesse@google.com>, 
+	Charlie Jenkins <charlie@rivosinc.com>, Changbin Du <changbin.du@huawei.com>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, James Clark <james.clark@linaro.org>, 
+	Kajol Jain <kjain@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Li Huafei <lihuafei1@huawei.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Chaitanya S Prakash <chaitanyas.prakash@arm.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, llvm@lists.linux.dev, 
+	Song Liu <song@kernel.org>, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 24, 2025 at 11:26=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote=
-:
+On Sat, Aug 23, 2025 at 4:34=E2=80=AFPM Andi Kleen <ak@linux.intel.com> wro=
+te:
 >
-> > +#define yt921x_port_is_internal(port) ((port) < 8)
-> > +#define yt921x_port_is_external(port) (8 <=3D (port) && (port) < 9)
+> > BUILD_NONDISTRO is used to build perf against the license incompatible
+> > libbfd and libiberty libraries. As this has been opt-in for nearly 2
+> > years, commit dd317df07207 ("perf build: Make binutil libraries opt
+> > in"), remove the code to simplify the code base.
 >
-> > +#define yt921x_info_port_is_internal(info, port) \
-> > +     ((info)->internal_mask & BIT(port))
-> > +#define yt921x_info_port_is_external(info, port) \
-> > +     ((info)->external_mask & BIT(port))
->
-> Do we really need two sets of macros?
->
-> And is there a third state? Can a port be not internal and not
-> external?
->
-> Maybe the code can just use !yt921x_info_port_is_internal(info, port)
->
->         Andrew
+> The last time I tried the LLVM stuff was totally broken, couldn't
+> resolve many things. The only workaround was to go back to the actually
+> working libbfd. Please don't remove the only working option.
 
-They are used in phylink_get_caps(), since I don't want to declare a
-port which we know it does not exist on some chips. But the info_* set
-might be inlined and removed since it is not used elsewhere.
+Andi, did you report a bug? Does the non-libbfd stuff work? Yes, as
+every distribution has shipped it since binutils went to GPLv3 (in
+2007?). While I don't want LLVM stuff not to work, bugs happen, libbfd
+is license incompatible with GPLv2 and maintaining it in the source
+tree is a burden. When something doesn't work, create a test to repeat
+the issue and then we can make it work and ensure it doesn't break
+again. In general I've not had issues with the LLVM code.
 
-Port 10 is dedicated to the internal MCU. Although I could not use it,
-anyone familiar with the chips would know it's Port 10 that is neither
-internal nor external.
-
-On Sun, Aug 24, 2025 at 11:34=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote=
-:
->
-> > +static void yt921x_smi_acquire(struct yt921x_priv *priv)
-> > +{
-> > +     if (priv->smi_ops->acquire)
-> > +             priv->smi_ops->acquire(priv->smi_ctx);
-> > +}
-> > +
-> > +static void yt921x_smi_release(struct yt921x_priv *priv)
-> > +{
-> > +     if (priv->smi_ops->release)
-> > +             priv->smi_ops->release(priv->smi_ctx);
-> > +}
->
-> What happens if priv->smi_ops->acquire and priv->smi_ops->release are
-> not implemented? Very likely, it will mostly work, but have subtle bug
-> which are going to be hard to observe and find.
->
-> You want bugs to be obvious, so they are quick and easy to find. The
-> best way to make the bug of missing locking obvious is to jump through
-> a NULL pointer and get an Opps. The stack trace will make it obvious
-> what has happened.
->
-> > +
-> > +static int yt921x_smi_read(struct yt921x_priv *priv, u32 reg, u32 *val=
-p)
-> > +{
-> > +     return priv->smi_ops->read(priv->smi_ctx, reg, valp);
-> > +}
-> > +
-> > +static int yt921x_smi_read_burst(struct yt921x_priv *priv, u32 reg, u3=
-2 *valp)
-> > +{
-> > +     int res;
-> > +
-> > +     yt921x_smi_acquire(priv);
-> > +     res =3D yt921x_smi_read(priv, reg, valp);
-> > +     yt921x_smi_release(priv);
->
-> I don't understand the name _burst here? Why is it called
-> that. Looking at other drivers, _u32 would be more common, especially
-> if you have functions to read a _u16, _u8 etc.
->
->    Andrew
-
-They are locked wrappers for their unlocked counterparts. I'd like to
-name the unlocked versions __yt921x_smi_read just like __mdiobus_read,
-but that was turned down in the previous version, so I have to give
-the locked versions a stranger marker since we use unlocked versions
-more often.
-
-On Sun, Aug 24, 2025 at 11:51=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote=
-:
->
-> > +static int
-> > +yt921x_intif_read(struct yt921x_priv *priv, int port, int reg, u16 *va=
-lp)
-> > +{
-> > +     struct device *dev =3D to_device(priv);
-> > +     u32 mask;
-> > +     u32 ctrl;
-> > +     u32 val;
-> > +     int res;
-> > +
-> > +     res =3D yt921x_intif_wait(priv);
-> > +     if (res)
-> > +             return res;
-> > +
-> > +     mask =3D YT921X_MBUS_CTRL_PORT_M | YT921X_MBUS_CTRL_REG_M |
-> > +            YT921X_MBUS_CTRL_OP_M;
-> > +     ctrl =3D YT921X_MBUS_CTRL_PORT(port) | YT921X_MBUS_CTRL_REG(reg) =
-|
-> > +            YT921X_MBUS_CTRL_READ;
-> > +     res =3D yt921x_smi_update_bits(priv, YT921X_INT_MBUS_CTRL, mask, =
-ctrl);
-> > +     if (res)
-> > +             return res;
-> > +     res =3D yt921x_smi_write(priv, YT921X_INT_MBUS_OP, YT921X_MBUS_OP=
-_START);
-> > +     if (res)
-> > +             return res;
-> > +
-> > +     res =3D yt921x_intif_wait(priv);
-> > +     if (res)
-> > +             return res;
-> > +     res =3D yt921x_smi_read(priv, YT921X_INT_MBUS_DIN, &val);
-> > +     if (res)
-> > +             return res;
-> > +
-> > +     if ((u16)val !=3D val)
-> > +             dev_err(dev,
-> > +                     "%s: port %d, reg 0x%x: Expected u16, got 0x%08x\=
-n",
-> > +                     __func__, port, reg, val);
-> > +     *valp =3D (u16)val;
-> > +     return 0;
-> > +}
->
-> ...
->
-> > +static int yt921x_mbus_int_read(struct mii_bus *mbus, int port, int re=
-g)
-> > +{
-> > +     struct yt921x_priv *priv =3D mbus->priv;
-> > +     u16 val;
-> > +     int res;
-> > +
-> > +     if (port >=3D YT921X_PORT_NUM)
-> > +             return 0xffff;
-> > +
-> > +     yt921x_smi_acquire(priv);
-> > +     res =3D yt921x_intif_read(priv, port, reg, &val);
-> > +     yt921x_smi_release(priv);
-> > +
-> > +     if (res)
-> > +             return res;
-> > +     return val;
-> > +}
-> > +
-> > +static int
-> > +yt921x_mbus_int_write(struct mii_bus *mbus, int port, int reg, u16 dat=
-a)
-> > +{
-> > +     struct yt921x_priv *priv =3D mbus->priv;
-> > +     int res;
-> > +
-> > +     if (port >=3D YT921X_PORT_NUM)
-> > +             return 0;
-> > +
-> > +     yt921x_smi_acquire(priv);
-> > +     res =3D yt921x_intif_write(priv, port, reg, data);
-> > +     yt921x_smi_release(priv);
-> > +
-> > +     return res;
-> > +}
->
-> Going back to comment from Russell in an older version:
->
-> > > I'm also concerned about the SMI locking, which looks to me like you
-> > > haven't realised that the MDIO bus layer has locking which guarantees
-> > > that all invocations of the MDIO bus read* and write* methods are
-> > > serialised.
-> >
-> > The device takes two sequential u16 MDIO r/w into one op on its
-> > internal 32b regs, so we need to serialise SMI ops to avoid race
-> > conditions. Strictly speaking only locking the target phyaddr is
-> > needed, but I think it won't hurt to lock the MDIO bus as long as I
-> > don't perform busy wait while holding the bus lock.
->
-> You comment is partially correct, but also wrong. As you can see here,
-> you hold the lock for a number of read/writes, not just one u32 write
-> split into two MDIO bus transactions.
->
-> They way you currently do locking is error prone.
->
-> 1) Are you sure you actually hold the lock on all paths?
->
-> 2) Are you sure you hold the lock long enough for all code which
->    requires multiple reads/writes?
->
-> The mv88e6xxx driver does things differently:
->
-> Every function assigned to struct dsa_switch_ops first takes the lock,
-> does what needs doing, and then releases the lock just before the
-> return.
->
-> The lowest level read/write function does a mutex_is_locked() to test
-> that the lock is held. If it is not, it prints an error message.
->
-> The first part makes it easy to see the lock is held, and it makes it
-> clear all operations the driver is doing is covered by the lock, there
-> is no need worry about two threads racing.
->
-> The second part makes bugs about missing locks obvious, an error
-> message is printed.
->
-> Please reconsider your locking. Also, please think about, do you need
-> a different lock for MDIO, I2C and SPI? Do you need the current
-> acquire/release abstract?
->
->         Andrew
-
-That's exactly what I've done: every exposed virtual function
-yt921x_dsa_* and yt921x_mbus_* is guarded by an acquire/release pair
-(except for few exceptions). But I might add a check for locking
-status in mdio_read and mdio_write.
-
-The driver itself does not need an explicit lock (so long as dsa
-framework does not call two conflicting methods on the same port), and
-holding two locks, driver lock and bus lock makes things even worse,
-thus I left the acquire/release method to SMI implementations. If the
-I2C / SPI / GPIO bitbang / etc interface supports native atomic
-transactions, it can choose not to implement acquire/release and
-leaves them NULL.
+Thanks,
+Ian
 
