@@ -1,127 +1,148 @@
-Return-Path: <linux-kernel+bounces-783728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9E6CB331AD
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 19:51:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 859A5B331B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 20:02:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A59FE3BBAE6
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 17:50:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED34D7AF116
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8732DCF46;
-	Sun, 24 Aug 2025 17:50:16 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9902D542B;
+	Sun, 24 Aug 2025 18:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U7yoPlrD"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE84A12C544;
-	Sun, 24 Aug 2025 17:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BD91BD9D0;
+	Sun, 24 Aug 2025 18:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756057816; cv=none; b=ZetXUVrW0hLZdpnpymOPSAISKKwVgoPqu4dF9cTEN0tw5uVHwWxxUPVuiAh/S6a3EavflwOdhK5Crmx1PwzaZtAmuEd+E7ovNfcSX+OVccPoUidnSvUumLaKoCAIYp2eJ3SuLqN6W+/Nj3NARRDgzjbsf0Zx2ytMTO7RCYnY5qU=
+	t=1756058551; cv=none; b=WYHIE2YXQGjLGrJ8SjEcltE7orCWA1xcgogWafT22MvXsAFEuIpe1H7T5E+3vK9MkwsoZxe4Jo4xRBXnvg0yJC+dc2/vDpjKku+Ia8DPs9DnHUhfrdTDOSZmkrGu6Z7dxj9OHv6Z0zaCy5FFfPdd2HMTZO+LKjiC3zH8Qx7WLY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756057816; c=relaxed/simple;
-	bh=biDVE5/qno9s6nbF5VWCCOnmRGqqbXzsItUeBwohWvE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DXhiz9u/q4Qi1097LovSOWL52c++kBAM0JH77D609ojzXhQV2fmnZo2SdMZoj9cI8jDmk1dlPbQI36vOzagbsVPx2Nofqt5QBpMiRzYIM1ZcDghW73iTtlTWIER7Mf0ObbgIRlPao7FCePb3cdLc7gdQnZSXl9b29/FP1E4Aiuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id D9C7F1DB206;
-	Sun, 24 Aug 2025 17:50:07 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf15.hostedemail.com (Postfix) with ESMTPA id 020C817;
-	Sun, 24 Aug 2025 17:50:05 +0000 (UTC)
-Message-ID: <433518d6bc8ef4e5b4fc04e3343c13eddfc32e24.camel@perches.com>
-Subject: Re: [PATCH] cpuidle: sysfs: fix coding style issue
-From: Joe Perches <joe@perches.com>
-To: vivekyadav1207731111@gmail.com, daniel.lezcano@linaro.org, 
-	rafael@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Date: Sun, 24 Aug 2025 10:50:04 -0700
-In-Reply-To: <20250824171543.17662-1-vivekyadav1207731111@gmail.com>
-References: <20250824171543.17662-1-vivekyadav1207731111@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1756058551; c=relaxed/simple;
+	bh=F+36ngP1WIZMDEO9EQRqoCyc0LiKRmcA3DuOZTgNVoA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G6Xlgs/Jgj578l7QJrnllhN10cWJrR4cZTvUvV9oNUUm7+pI9QW0lIe4pPYdJnHu9wPhQgjTVdkb/X2sbeDvPz8lWOJMOTHxQn9JDA6ZerfrXXon7fqOofD9NiE+fEOX8ntuR3Zq7XSrwS9+CzxTykM/B3PT3Sd7RX9r4zJIK3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U7yoPlrD; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2445805aa2eso31421445ad.1;
+        Sun, 24 Aug 2025 11:02:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756058550; x=1756663350; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=68YuaVdTnkCdfg2HxpkiX/Px00x/Pau0goQ+Qn6rHJc=;
+        b=U7yoPlrDn+J7ocyxR0UWUiXd1+x7yNOLJOkhHZyI/wuOA1kkHOhLEwbFp0ZVugrKK4
+         Ps+31EGXjTqE2UAogqe2IMPVq18NbJYA65xmnD6Knn+azwxNNWLJphG+dXKWIzy49JrR
+         Fx+v0DsaAJ9E2/+yTYv7Sjz8awjoKsHCM08EqmvKNldpg2LyBWihDuZbsXXTFnuUJptM
+         I938lyuV+Jcu36ZMRXImnHFYdaNQ3hBihGcI08zUeiWUNSBLYKBmIsfw6gPWY/nm3oZm
+         fwBkXlkSI1KoEkAForwEIethtegAn8E1PzvRv3n+kTz03ZQ3AgA+uVG/m4kIk3cN0W8u
+         kWCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756058550; x=1756663350;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=68YuaVdTnkCdfg2HxpkiX/Px00x/Pau0goQ+Qn6rHJc=;
+        b=EBbP7cTVGCGWpfpRJSP046vKMPVJGbLHLUFhvDRQHVv0d89cYjgm/Wq3vlT8zuyWOM
+         UiTyF5UWiNQieNOREvzP7WuJ1FP1MFOrmk/onFZEiayzA+3qskrb+kn37hDRovXdQ+0t
+         VboKOeJ6ohskCjuX/R+41ilBDos8QyYrP854hHgB9xr4lxpcVwcEJrwBsKshFxfQ5zSo
+         w6Y1VNjGA0YLww0q2v2wrfi6CYijL/kwRFaMlGHelS+My2smSlbfRkXSOcKn5x/ZJWDT
+         SOrTLYzp+C3e0g9tOPFxHSEiRctN95zuEwRfJCLs8t61Xh+OVQY110xPIIO2KYkA+rmP
+         975A==
+X-Forwarded-Encrypted: i=1; AJvYcCUR8Injo5iuyRZgcIlS2nM9H3pdf/A5DRgQ1Pgap8plaIPpMV6T9uQRAnTBFO7wxU6WwwhVO1lhMXNz/dU=@vger.kernel.org, AJvYcCUvcnBec3a1wsDnkn1nNLsfg5aCDcvJ6aoIc5tQ29pMHwwkcLy27tHB4WqhIJhoMl0mWEstsic+O5T/Kg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9RHL6yahNgK7wMK368ur8AJiCROCScKX59VN9fAa88We4/qFK
+	yBSNj9l3uXN+hqg2V1su6wP7+RLs2XNfPcwWOjHpmhtOJoYDBebkWB0s
+X-Gm-Gg: ASbGnctLG8r7HzMogR1NZXMCbfxN1K/W0lbN6P2fEYcPQkn+/Lb0m3fSuL0bJQKmvP8
+	PhYZZaI5XFyMUgnPVtr23/kc1OK2VWV1aILbwBkYR8mCOEMM+t6mjqumo0i4/ch6u58VUvnisxk
+	BszABkKC5T2z0ao/jNhLcm8bGdv7OGeB/QQ/BhZ5h9uMtkIjZ5rfEG3k3SY1T7EXvprhj+uRPDL
+	++RpTnHiiKckf4y+gmO+o0DbGt8jBk+4t+S6z20h8aFwS3pnuwoTP/MPqtzxlQTR/v4JPgRCs/1
+	mDslww7R6+r8mG2e7jaAe/61KidAwf6eJc0KStr4aXNi+K0IsoQTpGu0Ydr6lwN6+sNrsMzHGFi
+	ViBe4OWKqekAlhF8TFcuqdo9oDifIUwI3rrehw0av0v3+tg==
+X-Google-Smtp-Source: AGHT+IEWRHtqYE4rm4yiJUzSIIgXrYoIOJuPRPUwyvvWxrM0mrDUnDgM0ad7mLY4UtPVoNcFqYfqMQ==
+X-Received: by 2002:a17:903:ac5:b0:246:9e32:e83a with SMTP id d9443c01a7336-2469e32f8a3mr47347285ad.47.1756058549549;
+        Sun, 24 Aug 2025 11:02:29 -0700 (PDT)
+Received: from localhost.localdomain ([202.83.40.77])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cbb7b6fbsm4743532a12.30.2025.08.24.11.02.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Aug 2025 11:02:29 -0700 (PDT)
+From: Abinash Singh <abinashsinghlalotra@gmail.com>
+To: bvanassche@acm.org
+Cc: James.Bottomley@HansenPartnership.com,
+	abinashsinghlalotra@gmail.com,
+	dlemoal@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	martin.petersen@oracle.com
+Subject: [PATCH v9 0/3] scsi: sd: Cleanups and warning fixes in sd_revalidate_disk()
+Date: Sun, 24 Aug 2025 23:32:15 +0530
+Message-ID: <20250824180218.39498-1-abinashsinghlalotra@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: 020C817
-X-Stat-Signature: 466a9c36ehho4ouiazhab43rzzwcmfdz
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1+IAh9eO3KOkhpflMqq+I8VUv1T5wBf9yo=
-X-HE-Tag: 1756057805-633099
-X-HE-Meta: U2FsdGVkX19maFNFBCq1pwB/ZfFet2/QE6o3GjZA18R0TmOWsiElfTFrV+h2u3GiRbBsULLf289vhW8POZcU/eJI0bVGe+tZ+SmGgvIyywRfUoFecRU/bZWhkS0vgB/2VSM5qgJ6YgoDKQwD52MwQwT+peJX6KZzHOCK4/DcHmHd5FxeJWDk11gohJ+sPou6gAkevGQTtWLlqs6dP17epvGJWN2FAxSXsHD55rJbnAx90w3JJknPUow5W8o7WDf7UgOA/NXzFJKs3AfuqB6E9qnA6iJpwh37rtr+crWWQgtJPNFga88/BfYdCpWsJu7VWJh6yzLz7+fI9dxWRkAvx30aP5CE7AXx
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, 2025-08-24 at 10:15 -0700, vivekyadav1207731111@gmail.com wrote:
-> From: Vivek Yadav <vivekyadav1207731111@gmail.com>
->=20
-> Fix a checkpatch.pl error by adding space around '+=3D'
-> operator.
->=20
-> No functional changes intended.
->=20
-> [checkpatch.pl output]
-> 	ERROR: spaces required around that '+=3D'
+Hi all,
 
-Perhaps better to convert all sprintf style uses
-to sysfs_emit and sysfs_emit_at
+Sorry for making mess in previous replies. My gmail app caused that.
 
-> diff --git a/drivers/cpuidle/sysfs.c b/drivers/cpuidle/sysfs.c
-[]
-> @@ -34,7 +34,7 @@ static ssize_t show_available_governors(struct device *=
-dev,
->  	}
->=20
->  out:
-> -	i+=3D sprintf(&buf[i], "\n");
-> +	i +=3D sprintf(&buf[i], "\n");
->  	mutex_unlock(&cpuidle_lock);
->  	return i;
->  }
 
-Something akin to:
----
-diff --git a/drivers/cpuidle/sysfs.c b/drivers/cpuidle/sysfs.c
-index d6f5da61cb7d8..3adb98c9986fd 100644
---- a/drivers/cpuidle/sysfs.c
-+++ b/drivers/cpuidle/sysfs.c
-@@ -22,21 +22,19 @@ static ssize_t show_available_governors(struct device *=
-dev,
- 					struct device_attribute *attr,
- 					char *buf)
- {
--	ssize_t i =3D 0;
-+	ssize_t len =3D 0;
- 	struct cpuidle_governor *tmp;
-=20
- 	mutex_lock(&cpuidle_lock);
--	list_for_each_entry(tmp, &cpuidle_governors, governor_list) {
--		if (i >=3D (ssize_t) (PAGE_SIZE - (CPUIDLE_NAME_LEN + 2)))
--			goto out;
-=20
--		i +=3D scnprintf(&buf[i], CPUIDLE_NAME_LEN + 1, "%s ", tmp->name);
--	}
-+	list_for_each_entry(tmp, &cpuidle_governors, governor_list)
-+		len +=3D sysfs_emit_at(buf, len, "%s%s",
-+				     len > 0 ? " " : "", tmp->name);
-+	len +=3D sysfs_emit_at(buf, len, "\n");
-=20
--out:
--	i+=3D sprintf(&buf[i], "\n");
- 	mutex_unlock(&cpuidle_lock);
--	return i;
-+
-+	return len;
- }
-=20
- static ssize_t show_current_driver(struct device *dev,
----
-etc...
+This v9 series contains small cleanups and fixes in sd_revalidate_disk().
+
+On Sat, Aug 23, 2025 at 1:17 AM Bart Van Assche wrote:
+> From Documentation/process/coding-style.rst:
+> These generic allocation functions all emit a stack dump on failure when
+> used without __GFP_NOWARN so there is no use in emitting an additional
+> failure message when NULL is returned.
+>
+> Has this example perhaps been followed? I think it is safe to remove
+> this sd_printk() statement.
+
+checkpatch.pl also emits the following warning for this code:
+  WARNING: Possible unnecessary 'out of memory' message
+  #52: FILE: drivers/scsi/sd.c:3716:
+  + if (!lim) {
+  +     sd_printk(KERN_WARNING, sdkp,
+
+So I agree with Bart — this printk is redundant and should be removed.
+In v9, I have split this into a separate patch for clarity.
+
+Summary of changes in this series:
+  Removed  the redundant 'out of memory' printk after kmalloc() failure in already existing code.
+>     buffer = kmalloc(SD_BUF_SIZE, GFP_KERNEL);
+>     if (!buffer) {
+>              sd_printk(KERN_WARNING, sdkp, "sd_revalidate_disk: Memory "
+
+  Added Bart Van Assche’s Reviewed-by tag in: [3/3] scsi: sd: make sd_revalidate_disk() return void
+
+Changes since v8:
+  - Split removal of the redundant printk into its own patch (1/3),
+    instead of keeping it inside the warning fix.
+  - Kept the build warning fix and return type change as separate patches.
+  - Updated changelogs accordingly.
+
+Thanks
+
+Abinash
+
+Abinash Singh (3):
+  scsi: sd: Remove redundant printk after kmalloc failure
+  scsi: sd: Fix build warning in sd_revalidate_disk()
+  scsi: sd: make sd_revalidate_disk() return void
+
+ drivers/scsi/sd.c | 58 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 30 insertions(+), 28 deletions(-)
+
+-- 
+2.43.0
+
 
