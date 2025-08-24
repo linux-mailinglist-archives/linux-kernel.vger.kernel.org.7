@@ -1,44 +1,47 @@
-Return-Path: <linux-kernel+bounces-783561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1C3AB32F01
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:30:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB19B32F03
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40964445EFC
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:30:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59633446091
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0730A27146B;
-	Sun, 24 Aug 2025 10:30:28 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FA627056E;
+	Sun, 24 Aug 2025 10:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LwSLN3OL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B80F26A0EB;
-	Sun, 24 Aug 2025 10:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A660D4317D;
+	Sun, 24 Aug 2025 10:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756031427; cv=none; b=j37yJzf53v/3uUCY65zUbBwsWK3zERNc+ikjHc4JVgmOa1zbjgQRj1+ikShJi7i+UXgyGKdWOvWmn6AveHY93N1jHB67sUd0ewN7SxGLcFiblP5EGn7RgpAkjcYfIUvB6boiEEtwhEOWu4J9wdEK2I6Gu3ftfDQpZxcAh6g/Bck=
+	t=1756031445; cv=none; b=DTK6AeeTDx/E/2tpQ+Xsl/A/QamVTKgpIcILTHybW6hrgMg8TEiTawxmlAwqryE8kBkEW8z2KJsowfNYLb/FWapQaDGt/zwGwH7cMyx/S5lVm1XgViD+pqE+AWV7zH1hZL8yNWrxMCuvgyL0d5eAzsy1a4qVDFC5dj2LPnUFR/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756031427; c=relaxed/simple;
-	bh=RPGLOX14M7J3ohT6Th8+aDR7CR3/MFsU+QZNJFomAm4=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=BNEDix8KbDAYKTquelzh5pZ1T8AmUNF4Dg/Y9V329yrPmsQ3O4DQ6ZmSH41Pahks7kiVYMDuDug42ZuepMan7WXiLhtpkKO7UdF7h3MwjulnBy9lpnMGx51Yz/1xwFUVBnjLgGYuIAl3BQAj13pxvdn/WV5kBX52tngd/2bQyOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 57OAUBOG051735;
-	Sun, 24 Aug 2025 19:30:11 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 57OAUBnQ051730
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 24 Aug 2025 19:30:11 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <4f49a1bc-a528-42ad-86c0-187268ab6535@I-love.SAKURA.ne.jp>
-Date: Sun, 24 Aug 2025 19:30:09 +0900
+	s=arc-20240116; t=1756031445; c=relaxed/simple;
+	bh=9oE5tb2390AHhqVifgcMfJ4rl+xy0eQcN8W0J8YXps8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F2BPKauOTzInXGyKeHuYSnpZj44KuiXSulsXn3DkTGHmwg7in5ztZImAk50dA2nokFTrfpu3CzlNYTtKWKMvSYCRlxurHtv1xZAHBvIJakqRVgIGE8s9X+uhgARHPRH471IM/FZ8ItY0e4B5WQ+K9XYyudVjwiWORC7KBp6rVeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LwSLN3OL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC9C8C4CEEB;
+	Sun, 24 Aug 2025 10:30:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756031445;
+	bh=9oE5tb2390AHhqVifgcMfJ4rl+xy0eQcN8W0J8YXps8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LwSLN3OLapslV151YMZZEFd20qU2jxZX9ywbmWrIibU8XGlbD+JThPNBekNQDXLHw
+	 hSVwVS1HeLtVNXI50c5TI4SusZC8rT0samdJH1/cJQMpwRBVoX8ozNxBIhEcO8gtnE
+	 XTBgjeTf91QIwhgvsIJNWPEeLQ5poLtXxwhSEYYgQP4dUOZVzn5yZJd/5eEFFdotE3
+	 uDx/Om6bS1ia+F26NDOKNzqs9pm1J6FtV0lPqQtH/+v4h8HXaZ7ukdHUXhji+qRLRc
+	 13vQeUvuQDZhDI+rIH1/8J9v40dLvZRrwBLpA08UTwzKCfo4dC5fW0NKEa0p0O72Az
+	 +pToygNe2MYgg==
+Message-ID: <f28fd898-83f2-46af-9f5d-b98be4518520@kernel.org>
+Date: Sun, 24 Aug 2025 12:30:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,55 +49,129 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/14] dt-bindings: dma: dma350: Document interrupt-names
+To: Jisheng Zhang <jszhang@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250823154009.25992-1-jszhang@kernel.org>
+ <20250823154009.25992-9-jszhang@kernel.org>
+ <eda79403-375b-4d49-9fec-12bc98bf9e47@kernel.org> <aKrgDVaynJxnmR9r@xhacker>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Robin van der Gracht <robin@protonic.nl>,
-        Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH] can: j1939: call j1939_priv_put() immediately when
- j1939_local_ecu_get() failed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <aKrgDVaynJxnmR9r@xhacker>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav405.rs.sakura.ne.jp
 
-Commit 25fe97cb7620 ("can: j1939: move j1939_priv_put() into sk_destruct
-callback") expects that a call to j1939_priv_put() can be unconditionally
-delayed until j1939_sk_sock_destruct() is called. But a refcount leak will
-happen when j1939_sk_bind() is called again after j1939_local_ecu_get()
- from previous j1939_sk_bind() call returned an error. We need to call
-j1939_priv_put() before j1939_sk_bind() returns an error.
+On 24/08/2025 11:49, Jisheng Zhang wrote:
+> On Sat, Aug 23, 2025 at 06:09:22PM +0200, Krzysztof Kozlowski wrote:
+>> On 23/08/2025 17:40, Jisheng Zhang wrote:
+>>> Currently, the dma350 driver assumes all channels are available to
+>>> linux, this may not be true on some platforms, so it's possible no
+>>> irq(s) for the unavailable channel(s). What's more, the available
+>>> channels may not be continuous. To handle this case, we'd better
+>>> get the irq of each channel by name.
+>>
+>> You did not solve the actual problem - binding still lists the
+>> interrupts in specific order.
+>>
+>>>
+>>> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+>>> ---
+>>>  Documentation/devicetree/bindings/dma/arm,dma-350.yaml | 5 +++++
+>>>  1 file changed, 5 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/dma/arm,dma-350.yaml b/Documentation/devicetree/bindings/dma/arm,dma-350.yaml
+>>> index 429f682f15d8..94752516e51a 100644
+>>> --- a/Documentation/devicetree/bindings/dma/arm,dma-350.yaml
+>>> +++ b/Documentation/devicetree/bindings/dma/arm,dma-350.yaml
+>>> @@ -32,6 +32,10 @@ properties:
+>>>        - description: Channel 6 interrupt
+>>>        - description: Channel 7 interrupt
+>>>  
+>>> +  interrupt-names:
+>>> +    minItems: 1
+>>> +    maxItems: 8
+>>
+>> You need to list the items.
+> 
+> I found in current dt-bindings, not all doc list the items. So is it
+> changed now?
 
-Fixes: 25fe97cb7620 ("can: j1939: move j1939_priv_put() into sk_destruct callback")
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
-The change made by commit 25fe97cb7620 might be relevant to my result
+Close to impossible... :) But even if you found 1% of bindings with
+mistake, please kindly take 99% of bindings as the example. Not 1%.
 
-  As far as I tested, the only way that can drop the refcount to 1 is to
-  call j1939_sk_release() (which involves sock_put()) on all j1939 sockets
+Which bindings were these with undefined names?
 
-in https://lkml.kernel.org/r/bb595640-0597-4d18-a9e1-f6eb8e6bb50e@I-love.SAKURA.ne.jp .
+> 
+>>
+>>
+>>> +
+>>>    "#dma-cells":
+>>>      const: 1
+>>>      description: The cell is the trigger input number
+>>> @@ -40,5 +44,6 @@ required:
+>>>    - compatible
+>>>    - reg
+>>>    - interrupts
+>>> +  - interrupt-names
+>>
+>> That's ABI break, so no.
+> 
+> If there's no users of arm-dma350 in upstream so far, is ABI break
+> allowed? The reason is simple: to simplify the driver to parse
+> the irq.
 
- net/can/j1939/socket.c | 3 +++
- 1 file changed, 3 insertions(+)
+You can try to make your case - see writing bindings. But what about all
+out of tree users? All other open source projects? All other kernels? I
+really do not ask about anything new here - that's a policy since long time.
 
-diff --git a/net/can/j1939/socket.c b/net/can/j1939/socket.c
-index 3d8b588822f9..493f49bfaf5d 100644
---- a/net/can/j1939/socket.c
-+++ b/net/can/j1939/socket.c
-@@ -521,6 +521,9 @@ static int j1939_sk_bind(struct socket *sock, struct sockaddr *uaddr, int len)
- 	ret = j1939_local_ecu_get(priv, jsk->addr.src_name, jsk->addr.sa);
- 	if (ret) {
- 		j1939_netdev_stop(priv);
-+		jsk->priv = NULL;
-+		synchronize_rcu();
-+		j1939_priv_put(priv);
- 		goto out_release_sock;
- 	}
- 
--- 
-2.51.0
 
+Best regards,
+Krzysztof
 
