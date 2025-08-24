@@ -1,222 +1,309 @@
-Return-Path: <linux-kernel+bounces-783797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E81AB33298
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 22:42:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 384EBB332A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 22:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84B33BDEF3
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 20:42:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 498BC204130
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 20:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424A323D7CB;
-	Sun, 24 Aug 2025 20:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD9B2222CC;
+	Sun, 24 Aug 2025 20:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VumOLMx+"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="bdlEdEpa"
+Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682DE1F541E
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 20:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388761F95C
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 20:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756068152; cv=none; b=UGyCLkj+ykiqURlfGDVusT06sXpmMnE6VtZK/BH+9VuPMdasZwA8YfWZ9kdeYU5KXW94dHOIeR4IPTnvnSBDJKbTBiNA8qbvMGnZjsKdZ9ejPf2UJXa5YbhtKSLUuAO6615ZLINwzxh9B0Gy6XUHnxQk0HOItHBO/zNewNU2PrA=
+	t=1756068425; cv=none; b=PNCiLjzeFQsK/sAY6riEyNTspBpCmMIGtXUBxnLPHQRjYOnb3sROO9LPCxs+OMzVLEeYgb6mO2Y2extz8+2HWnMTb1GOe6qdHxJ/D3PghCvQPESfQjMZLDzAEm73HCeQTq3PuI1ObgWEq2UaM8IPtpe6KngYgTbGl0kxXHraCN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756068152; c=relaxed/simple;
-	bh=C/8GUiJvnBqOTJg3TfWosmFteUexRkCdL+VzF3kRzQ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mV8cRFgsTGVOtqqb5o7aCA5djKhxTw7wSkt9fcTf6h7mmZ9whXAmHjk+pZPCvlpMSeH/4ZTQgwIDUCNBrg7YkNFrfVONidkygR1yKNbFBHMLIqbNZ3pkhllv/1coHkYYdTrKsUqeEpM5TXhutBo9PVtsaLHzu80cb4ymvoFBHX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VumOLMx+; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55f455e7fe7so28419e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 13:42:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756068148; x=1756672948; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C/8GUiJvnBqOTJg3TfWosmFteUexRkCdL+VzF3kRzQ8=;
-        b=VumOLMx+mTy0ELqhbikIZz8LVKuRcetGcrpVRP/F1oKmcT7f6d/OJFS9Iabrzdduk9
-         AdZxt0GbQbOELhXUbwYhZR2zINHd6BfLzff0utx2xPk89xUaQWP87PAvyXvRCqTldQXs
-         A9K4I3rlHgG7AbgSwGlN4k30yzkKiJXu9TuVuWumPjODYv6cnJ0sCbW4xawEoM6+OoBC
-         pIQKZlwxkTbubolebCl7QkQwKNGzVqv0RW5kysyy3lbN0RPXO22RiLmolP+KKJh/uzwI
-         YS3TkOSlBHtPi1S8VrQe3JoIs9nrcUrdg7z4d+hYBN/gQ1Y2I9BE/iNGD7D8yF4zP6KY
-         YBtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756068148; x=1756672948;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=C/8GUiJvnBqOTJg3TfWosmFteUexRkCdL+VzF3kRzQ8=;
-        b=Y96nVJ///Yg+lFVJ/8f72uz0HMg3j73rChCdUe8RcvHVENCl3W96fBwEeRF4sV5dSJ
-         jWk/tZiN+tsMJH2zZLFppq/xkGUsOJIybbpUp8ywW4xVtzT+0o2tm7Isk9NSvc/y4Fzk
-         tPG1/si5H+fNNJmUk0NGMpImtLPVIrI65fwEwKs+evyJLJUGEzbHTw0PvoTq/MmNrRkD
-         hxD85BTDOn+M0D857wI24SLC+tWTeAe4Xdu26uuUuE/YQDwsXVhxep6x1lhSvB5explZ
-         cavzZ+CCz3HOlycLn8LDTTCa/jAmGSLNJyPFU9XY1ISaVHOxJpvH6w+bYP530XjN2qAW
-         abzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWef99hA6TpKQEO66/Zm7Gso++qVVzJwtkkrbKnHW1qZV0/SXUI4XJKvEyGvZoCQYmBImMPkuQMUvcq2nQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyC9wcZFedo2FIaqnbNkw83N23Dw6fiNrYP9z0FaMJFD06U9wd
-	K/hXW9MK9Dl3Z+kSElgsxzW3UTdApSkjeK8z2FCBEGqpP96hQIWwpge+0mEAaLu0PK0=
-X-Gm-Gg: ASbGncv7L9B5iT9CVX7EJwVBfKcVGOcMonEZeM6xyC5FcK62qEoKPnyiYPdC4/4Jtva
-	2ioXObO9SVggUzJv0A2Q5nnPkiexczl6m57f/6RxOFI+wX9GoPnhYeON0XMM0bb9j2XJ4uL5D73
-	yIjBeDF+Ydndpr5yzaXDrQsNZdmTdXv5M2n4D857m3I1SMPFl3M2GkC82GYGJK1UJT11tPA+jRT
-	hR+d0TtZPl5b+4wcc4WA16XdCUy83Xrv9bLZmLCY78XqS2yycHSM8/QJZ0knZfEQypvH0vQvpmi
-	9MPN47lBLkrFZQdwmziyYcilGIP6KDh1esBELEP3GsmrlNwh/rDsQifL+5DW74w0yGtN0Q+z6q+
-	26RU+hK5YLEBrJdUzKGHQc8G8NRphNOHSFMzmZ3fG6t2M3fQlTnIeMtMnfy8pt1nrxJGO10Jy6D
-	i4ojiiXyaL2bU=
-X-Google-Smtp-Source: AGHT+IGWgsCt2VJ+xCYl+IyLUHn4O6zIeOE3pXBGBweoMCG8vV78TvvqZYiI5f6yHa+6cXVqILSgJQ==
-X-Received: by 2002:a05:6512:3e13:b0:55c:e752:e9b9 with SMTP id 2adb3069b0e04-55f0ccdd4c3mr1547336e87.2.1756068148375;
-        Sun, 24 Aug 2025 13:42:28 -0700 (PDT)
-Received: from [192.168.1.100] (88-112-128-43.elisa-laajakaista.fi. [88.112.128.43])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f3b939c3fsm992004e87.166.2025.08.24.13.42.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Aug 2025 13:42:26 -0700 (PDT)
-Message-ID: <6aa2b8bc-caa5-44ea-8fd9-18c138a942d3@linaro.org>
-Date: Sun, 24 Aug 2025 23:42:26 +0300
+	s=arc-20240116; t=1756068425; c=relaxed/simple;
+	bh=8dy6TLhdioCFdkipwKeP9u08T4L2xUygHW8KtSrQX4I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BhGp6ReXNXLwyb/82+NOOuQCfmcq8kbxL0pC5pem2skDjOm6FLHyKVIHPhMeuK5bnBJwovL2oGHOg7gr9mzaJKYLjdmS3unBOMbRW61DLh3WrgR8jxK6xX3/aGgFArj7Ea+UBL1m8b9aNn8ACJUehdnmXbpn8HqfwCqUlOQC+oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=bdlEdEpa; arc=none smtp.client-ip=78.46.171.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay11 (localhost.localdomain [127.0.0.1])
+	by relay11.grserver.gr (Proxmox) with ESMTP id 65A53C56A6
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 23:46:59 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay11.grserver.gr (Proxmox) with ESMTPS id 7157FC5696
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 23:46:58 +0300 (EEST)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id C91D2206826
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 23:46:57 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1756068418;
+	bh=bscbJOJkECDNTYehRBInDP2nwEapRVElaNUCYN3pI9k=;
+	h=Received:From:Subject:To;
+	b=bdlEdEpaSfTfJ7eDwvy+mINSPm+ufezGERk3a1+zHqNChsjJTXit8hNK+CG2Y+e4E
+	 TEGbAJoRu7jLMgo+lSIZaAI0BZyDkF+kG5ZdK+fbCsrrRsnbOhp/idCpbFxcpHB/ef
+	 k64dRp49FIfNZ23vSW0/xN5QI4SKyWNu24vbe6CpMWrhZKy0MuP+Fmy5IYrznVvJqW
+	 7zFBkvJUksVOyv/BR4i1PWY4mZmO3YoJZNmm7j3bbvUGMaQS1dn2Ivddchtnh605lO
+	 TD8fjJxZEnOY8gLlkqChNyGn0xe332laWIprm4QC7TNy/jOgabkuhThCZf2pcB5PAg
+	 NTeLJYtV8JbRQ==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.177) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f177.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f177.google.com with SMTP id
+ 38308e7fff4ca-333f91526bcso27038991fa.2
+        for <linux-kernel@vger.kernel.org>;
+ Sun, 24 Aug 2025 13:46:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWA1mDoKucgfbTUobMkCDuETn5NlW30uRXnEih+DaMDnvmayU0mdkRn82LrYSb74j81HvXPoRWVidEa1MU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywyr7H4Y66Erws1QOQwn5Ci8yEUYLOaX/1LjLZ7YYzXIGo5iuI5
+	zsr5MgMNax6g+MDddVFHQbCD4z800N4BZUTF5dCkc5ORGwpLI1e6HtsRzZG0k7QxPEFhMzYb7XR
+	/Pl6ybuMGV9tsr5VtSZ7pBIq0AiCkdMU=
+X-Google-Smtp-Source: 
+ AGHT+IGq+M/un/eA9G+NxrS5XoH3rm/WeiErkBRLPEMVsWi7W0+9qPNYzWgQlFg7ReN5HgILpm94RluPgx3m2FZIKr0=
+X-Received: by 2002:a2e:b8cf:0:b0:332:5fc0:24ae with SMTP id
+ 38308e7fff4ca-33650ea1a4bmr22003791fa.15.1756068417234; Sun, 24 Aug 2025
+ 13:46:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: camss NULL-deref on power on with 6.12-rc2
-To: Johan Hovold <johan@kernel.org>
-Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <Zwjw6XfVWcufMlqM@hovoldconsulting.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <Zwjw6XfVWcufMlqM@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+References: <20250824085351.454619-1-lkml@antheas.dev>
+ <f2402154-b0af-439f-80e0-3a323f34bcbc@kernel.org>
+In-Reply-To: <f2402154-b0af-439f-80e0-3a323f34bcbc@kernel.org>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Sun, 24 Aug 2025 22:46:46 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwHm1vC-qVo8h6gL_m8L3ufOY_nrau=Xqp6HK=6ff-ap3A@mail.gmail.com>
+X-Gm-Features: Ac12FXybHxfycIfFrHpU8NueZUrTyJ5g6lHyxY9Fijnu3DO4sJrwYjQh5GW80N0
+Message-ID: 
+ <CAGwozwHm1vC-qVo8h6gL_m8L3ufOY_nrau=Xqp6HK=6ff-ap3A@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] drm/amdgpu/vpe: increase VPE_IDLE_TIMEOUT to fix
+ hang on Strix Halo
+To: Mario Limonciello <superm1@kernel.org>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Harry Wentland <harry.wentland@amd.com>,
+ Rodrigo Siqueira <siqueira@igalia.com>,
+	Mario Limonciello <mario.limonciello@amd.com>, Peyton Lee <peytolee@amd.com>,
+ Lang Yu <lang.yu@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <175606841801.1039077.13960460666606825508@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-SGkgSm9oYW4uDQoNCk9uIDEwLzExLzI0IDEyOjMzLCBKb2hhbiBIb3ZvbGQgd3JvdGU6DQo+
-IEhpLA0KPiANCj4gVGhpcyBtb3JuaW5nIEkgaGl0IHRoZSBiZWxvdyBOVUxMLWRlcmVmIGlu
-IGNhbXNzIHdoZW4gYm9vdGluZyBhIDYuMTItcmMyDQo+IGtlcm5lbCBvbiB0aGUgTGVub3Zv
-IFRoaW5rUGFkIFgxM3MuDQo+IA0KPiBJIGJvb3RlZCB0aGUgc2FtZSBrZXJuZWwgYW5vdGhl
-ciA1MCB0aW1lcyB3aXRob3V0IGhpdHRpbmcgaXQgYWdhaW4gaXQgc28NCj4gaXQgbWF5IG5v
-dCBiZSBhIHJlZ3Jlc3Npb24sIGJ1dCBzaW1wbHkgYW4gb2xkZXIsIGhhcmQgdG8gaGl0IGJ1
-Zy4NCj4gDQo+IEhvcGVmdWxseSB5b3UgY2FuIGZpZ3VyZSBvdXQgd2hhdCB3ZW50IHdyb25n
-IGZyb20ganVzdCBzdGFyaW5nIGF0IHRoZQ0KPiBvb3BzIGFuZCBjb2RlLg0KPiANCj4gSm9o
-YW4NCj4gDQo+IA0KPiBbICAgIDUuNjU3ODYwXSBvdjU2NzUgMjQtMDAxMDogZmFpbGVkIHRv
-IGdldCBIVyBjb25maWd1cmF0aW9uOiAtNTE3DQo+IFsgICAgNS42NzYxODNdIHZyZWdfbDZx
-OiBCcmluZ2luZyAyODAwMDAwdVYgaW50byAxODAwMDAwLTE4MDAwMDB1Vg0KPiANCj4gWyAg
-ICA2LjUxNzY4OV0gcWNvbS1jYW1zcyBhYzVhMDAwLmNhbXNzOiBBZGRpbmcgdG8gaW9tbXUg
-Z3JvdXAgMjINCj4gDQo+IFsgICAgNi41ODkyMDFdIFVuYWJsZSB0byBoYW5kbGUga2VybmVs
-IE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBhdCB2aXJ0dWFsIGFkZHJlc3MgMDAwMDAwMDAw
-MDAwMDAzMA0KPiBbICAgIDYuNTg5NjI1XSBNZW0gYWJvcnQgaW5mbzoNCj4gWyAgICA2LjU4
-OTk2MF0gICBFU1IgPSAweDAwMDAwMDAwOTYwMDAwMDQNCj4gWyAgICA2LjU5MDI5M10gICBF
-QyA9IDB4MjU6IERBQlQgKGN1cnJlbnQgRUwpLCBJTCA9IDMyIGJpdHMNCj4gWyAgICA2LjU5
-MDYzMF0gICBTRVQgPSAwLCBGblYgPSAwDQo+IFsgICAgNi41OTE2MTldICAgRUEgPSAwLCBT
-MVBUVyA9IDANCj4gWyAgICA2LjU5MTk2OF0gICBGU0MgPSAweDA0OiBsZXZlbCAwIHRyYW5z
-bGF0aW9uIGZhdWx0DQo+IFsgICAgNi41OTIyOThdIERhdGEgYWJvcnQgaW5mbzoNCj4gWyAg
-ICA2LjU5MjYyMV0gICBJU1YgPSAwLCBJU1MgPSAweDAwMDAwMDA0LCBJU1MyID0gMHgwMDAw
-MDAwMA0KPiBbICAgIDYuNTkzMTEyXSAgIENNID0gMCwgV25SID0gMCwgVG5EID0gMCwgVGFn
-QWNjZXNzID0gMA0KPiBbICAgIDYuNTkzNDUwXSAgIEdDUyA9IDAsIE92ZXJsYXkgPSAwLCBE
-aXJ0eUJpdCA9IDAsIFhzID0gMA0KPiBbICAgIDYuNTkzNzgzXSB1c2VyIHBndGFibGU6IDRr
-IHBhZ2VzLCA0OC1iaXQgVkFzLCBwZ2RwPTAwMDAwMDAxMGRhZWYwMDANCj4gWyAgICA2LjU5
-NDEzOV0gWzAwMDAwMDAwMDAwMDAwMzBdIHBnZD0wMDAwMDAwMDAwMDAwMDAwLCBwNGQ9MDAw
-MDAwMDAwMDAwMDAwMA0KPiBbICAgIDYuNTk0MjE0XSBJbnRlcm5hbCBlcnJvcjogT29wczog
-MDAwMDAwMDA5NjAwMDAwNCBbIzFdIFBSRUVNUFQgU01QDQo+IFsgICAgNi41OTQ3NTNdIE1v
-ZHVsZXMgbGlua2VkIGluOiBxcnRyX21oaSBjYmMgZGVzX2dlbmVyaWMgbGliZGVzIGFsZ2lm
-X3NrY2lwaGVyIG1kNSBhbGdpZl9oYXNoIGFmX2FsZyBpcDZfdGFibGVzIHh0X0xPRyBuZl9s
-b2dfc3lzbG9nIHI4MTUyIGlwdF9SRUpFQ1QgbWlpIG5mX3JlamVjdF9pcHY0IGxpYnBoeSB4
-dF90Y3B1ZHAgeHRfY29ubnRyYWNrIG5mX2Nvbm50cmFjayBsaWJjcmMzMmMgbmZfZGVmcmFn
-X2lwdjYgbmZfZGVmcmFnX2lwdjQgaXB0YWJsZV9maWx0ZXIgcWNvbV9wbTgwMDhfcmVndWxh
-dG9yIG92NTY3NSBzbmRfcTZhcG0oKykgaGNpX3VhcnQgYnRxY2EgdmVudXNfZW5jIHZlbnVz
-X2RlYyBibHVldG9vdGggdmlkZW9idWYyX2RtYV9jb250aWcgcWNvbV9wbTgwMDggcG1pY19n
-bGlua19hbHRtb2RlIHFjb21fc3BtaV9hZGM1IGxlZHNfcWNvbV9scGcgcWNvbV9zcG1pX2Fk
-Y190bTUgbWZkX2NvcmUgc25kX3NvY19zYzgyODB4cCBxY29tX3NwbWlfdGVtcF9hbGFybSBx
-Y29tX3BvbiBycG1zZ19jdHJsIGVjZGhfZ2VuZXJpYyBmYXN0cnBjIGFwciBycG1zZ19jaGFy
-IHFydHJfc21kIHFjb21fcGRfbWFwcGVyIHJ0Y19wbTh4eHggcWNvbV9iYXR0bWdyIGVjYyBh
-dXhfaHBkX2JyaWRnZSByZWJvb3RfbW9kZSBxY29tX3ZhZGNfY29tbW9uIGluZHVzdHJpYWxp
-byBudm1lbV9xY29tX3NwbWlfc2RhbSBsZWRfY2xhc3NfbXVsdGljb2xvciByZWdtYXBfaTJj
-IGkyY19oaWRfb2ZfZWxhbiBzbmRfc29jX3Fjb21fY29tbW9uIHNuZF9zb2NfcWNvbV9zZHcg
-cHdyc2VxX3Fjb21fd2NuIGF0aDExa19wY2kgcWNvbV9jYW1zcyB2ZW51c19jb3JlIHZpZGVv
-YnVmMl9kbWFfc2cgdmlkZW9idWYyX21lbW9wcyB2NGwyX21lbTJtZW0gdjRsMl9md25vZGUg
-dmlkZW9idWYyX3Y0bDIgbXNtIHY0bDJfYXN5bmMgdmlkZW9idWYyX2NvbW1vbiBxY29tX3N0
-YXRzIGdwaW9fc2J1X211eCBhdGgxMWsgdmlkZW9kZXYgZHJtX2V4ZWMgZGlzcGNjX3NjODI4
-MHhwIHNuZF9zb2Nfd2NkOTM4eCBwaHlfcWNvbV9lZHAgZ3B1X3NjaGVkDQo+IFsgICAgNi41
-OTQ4MTRdICBzbmRfc29jX3djZF9jbGFzc2ggc25kX3NvY193Y2Q5Mzh4X3NkdyBtYWM4MDIx
-MSBkcm1fZGlzcGxheV9oZWxwZXIgbWMgc25kX3NvY19scGFzc19yeF9tYWNybyBzbmRfc29j
-X2xwYXNzX3dzYV9tYWNybyBkcm1fZHBfYXV4X2J1cyBzbmRfc29jX2xwYXNzX3R4X21hY3Jv
-IHNuZF9zb2NfbHBhc3NfdmFfbWFjcm8gY2FtY2Nfc2M4MjgweHAgcmVnbWFwX3NkdyB2aWRl
-b2NjX3NtODM1MCBpMmNfcWNvbV9jY2kgc291bmR3aXJlX3Fjb20gc25kX3NvY193Y2RfbWJo
-YyBsaWJhcmM0IHNuZF9zb2NfbHBhc3NfbWFjcm9fY29tbW9uIHBoeV9xY29tX3FtcF9jb21i
-byBjZmc4MDIxMSBxY29tX3E2djVfcGFzIGxsY2NfcWNvbSBhdXhfYnJpZGdlIHNuZF9zb2Nf
-Y29yZSBzbmRfY29tcHJlc3MgcWNvbV9waWxfaW5mbyByZmtpbGwgcWNvbV9jb21tb24gc25k
-X3BjbSBxY29tX2dsaW5rX3NtZW0gcGNpX3B3cmN0bF9wd3JzZXEgZHJtX2ttc19oZWxwZXIg
-cGNpX3B3cmN0bF9jb3JlIG1oaSB0eXBlYyBxY29tX2dsaW5rIHB3cnNlcV9jb3JlIGljY19i
-d21vbiBzbmRfdGltZXIgcGh5X3Fjb21fcW1wX3VzYiBxcnRyIHBoeV9xY29tX3NucHNfZmVt
-dG9fdjIgcWNvbV9xNnY1IGdwdWNjX3NjODI4MHhwIHBpbmN0cmxfc2M4MjgweHBfbHBhc3Nf
-bHBpIHNuZCBxY29tX3N5c21vbiBwaW5jdHJsX2xwYXNzX2xwaSBscGFzc2NjX3NjODI4MHhw
-IHBtaWNfZ2xpbmsgc291bmRjb3JlIG1kdF9sb2FkZXIgcGRyX2ludGVyZmFjZSBzb3VuZHdp
-cmVfYnVzIHFjb21fcm5nIHJwbXNnX2NvcmUgbGVkc19ncGlvIGlucHV0X2xlZHMgcWNvbV9w
-ZHJfbXNnIHNvY2luZm8gcW1pX2hlbHBlcnMgcm5nX2NvcmUgcWNvbV93ZHQgcHdtX2JsIGlj
-Y19vc21fbDMgbGVkX2NsYXNzIGZ1c2UgZG1fbW9kIGlwX3RhYmxlcyB4X3RhYmxlcyBpcHY2
-IGF1dG9mczQgcGNpZV9xY29tIGNyYzggcGh5X3Fjb21fcW1wX3BjaWUgbnZtZSBudm1lX2Nv
-cmUgaGlkX211bHRpdG91Y2ggaTJjX3Fjb21fZ2VuaSBpMmNfaGlkX29mIGkyY19oaWQgZHJt
-DQo+IFsgICAgNi41OTQ4NjZdICBpMmNfY29yZQ0KPiBbICAgIDYuNTk0ODY4XSBDUFU6IDAg
-VUlEOiAwIFBJRDogNTU3IENvbW06IHY0bF9pZCBOb3QgdGFpbnRlZCA2LjEyLjAtcmMyICMx
-NjUNCj4gWyAgICA2LjU5NDg3MV0gSGFyZHdhcmUgbmFtZTogTEVOT1ZPIDIxQllaOVNSVVMv
-MjFCWVo5U1JVUywgQklPUyBOM0hFVDg3VyAoMS41OSApIDEyLzA1LzIwMjMNCj4gWyAgICA2
-LjU5NDg3Ml0gcHN0YXRlOiA4MDQwMDAwNSAoTnpjdiBkYWlmICtQQU4gLVVBTyAtVENPIC1E
-SVQgLVNTQlMgQlRZUEU9LS0pDQo+IFsgICAgNi41OTQ4NzRdIHBjIDogY2Ftc3NfZmluZF9z
-ZW5zb3IrMHgyMC8weDc0IFtxY29tX2NhbXNzXQ0KPiBbICAgIDYuNTk0ODg1XSBsciA6IGNh
-bXNzX2dldF9waXhlbF9jbG9jaysweDE4LzB4NjAgW3Fjb21fY2Ftc3NdDQo+IFsgICAgNi41
-OTQ4ODldIHNwIDogZmZmZjgwMDA4MmQ1MzhmMA0KPiBbICAgIDYuNTk0ODkwXSB4Mjk6IGZm
-ZmY4MDAwODJkNTM4ZjAgeDI4OiBmZmZmODAwMDgyZDUzYzcwIHgyNzogZmZmZjY3MGNjMDQw
-NDYxOA0KPiBbICAgIDYuNTk0ODkzXSB4MjY6IDAwMDAwMDAwMDAwMDAwMDAgeDI1OiAwMDAw
-MDAwMDAwMDAwMDAwIHgyNDogZmZmZjY3MGNkMzMxNzNkMA0KPiBbICAgIDYuNTk0ODk1XSB4
-MjM6IGZmZmY4MDAwODJkNTM5YTggeDIyOiBmZmZmNjcwY2QzMzE5MmM4IHgyMTogZmZmZjgw
-MDA4MmQ1MzliOA0KPiBbICAgIDYuNTk0ODk4XSB4MjA6IDAwMDAwMDAwMDAwMDAwMDIgeDE5
-OiAwMDAwMDAwMDAwMDIwMDAxIHgxODogMDAwMDAwMDAwMDAwMDAwMA0KPiBbICAgIDYuNTk0
-OTAwXSB4MTc6IDAwMDAwMDAwMDAwMDAwMDAgeDE2OiBmZmZmYmYwYmZmYmVjZGQwIHgxNTog
-MDAwMDAwMDAwMDAwMDAwMQ0KPiBbICAgIDYuNTk0OTAyXSB4MTQ6IGZmZmY2NzBjYzVjOTUz
-MDAgeDEzOiBmZmZmNjcwY2MwYjM4OTgwIHgxMjogZmZmZjY3MGNjNWM5NWJhOA0KPiBbICAg
-IDYuNTk0OTA1XSB4MTE6IGZmZmZiZjBjMDBmNzMwMDAgeDEwOiAwMDAwMDAwMDAwMDAwMDAw
-IHg5IDogMDAwMDAwMDAwMDAwMDAwMA0KPiBbICAgIDYuNTk0OTA3XSB4OCA6IGZmZmZiZjBj
-MDA4NWQwMDAgeDcgOiAwMDAwMDAwMDAwMDAwMDAwIHg2IDogMDAwMDAwMDAwMDAwMDA3OA0K
-PiBbICAgIDYuNTk0OTEwXSB4NSA6IDAwMDAwMDAwMDAwMDAwMDAgeDQgOiBmZmZmNjcwY2Qz
-MzE4NTk4IHgzIDogZmZmZjY3MGNkMzMxODQ2OA0KPiBbICAgIDYuNTk0OTEyXSB4MiA6IGZm
-ZmY2NzBjZDMzMTc3MjggeDEgOiBmZmZmODAwMDgyZDUzOWI4IHgwIDogMDAwMDAwMDAwMDAw
-MDAwMA0KPiBbICAgIDYuNTk0OTE1XSBDYWxsIHRyYWNlOg0KPiBbICAgIDYuNTk0OTE1XSAg
-Y2Ftc3NfZmluZF9zZW5zb3IrMHgyMC8weDc0IFtxY29tX2NhbXNzXQ0KPiBbICAgIDYuNTk0
-OTIwXSAgY2Ftc3NfZ2V0X3BpeGVsX2Nsb2NrKzB4MTgvMHg2MCBbcWNvbV9jYW1zc10NCj4g
-WyAgICA2LjU5NDkyNF0gIHZmZV9nZXQrMHhiOC8weDUwNCBbcWNvbV9jYW1zc10NCj4gWyAg
-ICA2LjU5NDkzMV0gIHZmZV9zZXRfcG93ZXIrMHgzMC8weDU4IFtxY29tX2NhbXNzXQ0KPiBb
-ICAgIDYuNTk0OTM2XSAgcGlwZWxpbmVfcG1fcG93ZXJfb25lKzB4MTNjLzB4MTUwIFt2aWRl
-b2Rldl0NCj4gWyAgICA2LjU5NDk1MV0gIHBpcGVsaW5lX3BtX3Bvd2VyLnBhcnQuMCsweDU4
-LzB4ZjQgW3ZpZGVvZGV2XQ0KPiBbICAgIDYuNTk0OTYwXSAgdjRsMl9waXBlbGluZV9wbV91
-c2UrMHg1OC8weDk0IFt2aWRlb2Rldl0NCj4gWyAgICA2LjU5NDk2OV0gIHY0bDJfcGlwZWxp
-bmVfcG1fZ2V0KzB4MTQvMHgyMCBbdmlkZW9kZXZdDQo+IFsgICAgNi41OTQ5NzhdICB2aWRl
-b19vcGVuKzB4NzgvMHhmNCBbcWNvbV9jYW1zc10NCj4gWyAgICA2LjU5NDk4Ml0gIHY0bDJf
-b3BlbisweDgwLzB4MTIwIFt2aWRlb2Rldl0NCg0KQXMgeW91IHJlbWVtYmVyIHRoZSBwcm9i
-bGVtIGhhcyBiZWVuIGRpc2N1c3NlZCBpbiB0aGUgcGFzdCBbMV0sIGZvcg0KeW91ciBpbmZv
-cm1hdGlvbiB0aGUgaXNzdWUgaGFzIGJlZW4gaW5kaXJlY3RseSBmaXhlZCBpbiB2Ni4xNy1y
-YzEgYnkNCmdldHRpbmcgcmlkIG9mIHY0bDJfcGlwZWxpbmVfcG1fZ2V0KCkgZnJvbSAub3Bl
-biwgc2VlIGNvbW1pdA0KMTY0MjAyZjY4MjAzICgibWVkaWE6IHFjb206IGNhbXNzOiBQb3dl
-ciBwaXBlbGluZSBvbmx5IHdoZW4gc3RyZWFtaW5nIikuDQoNClN0aWxsIHRoZSBvbGQgcmFj
-ZSBpcyBsZWZ0IHVucmVzb2x2ZWQsIGFuZCBpdCBjb3VsZCBsZWFkIHRvIGEgTlVMTA0KcG9p
-bnRlciBkZXJlZmVyZW5jZSwgYnV0IHByYWN0aWNhbGx5IGl0IHdvdWxkIGJlIGNsb3NlIHRv
-IGltcG9zc2libGUgdG8NCnJlcHJvZHVjZSBpdCwgc2luY2Ugb25lIG1vcmUgc3RlcCBvZiBz
-dGFydGluZyBhIHZpZGVvIHN0cmVhbSBpcyBuZWVkZWQuDQoNCj4gWyAgICA2LjU5NDk5MV0g
-IGNocmRldl9vcGVuKzB4YjQvMHgyMDQNCj4gWyAgICA2LjU5NDk5Nl0gIGRvX2RlbnRyeV9v
-cGVuKzB4MTM4LzB4NGQwDQo+IFsgICAgNi41OTUwMDBdICB2ZnNfb3BlbisweDJjLzB4ZTQN
-Cj4gWyAgICA2LjU5NTAwM10gIHBhdGhfb3BlbmF0KzB4MmI0LzB4OWZjDQo+IFsgICAgNi41
-OTUwMDVdICBkb19maWxwX29wZW4rMHg4MC8weDEzMA0KPiBbICAgIDYuNTk1MDA3XSAgZG9f
-c3lzX29wZW5hdDIrMHhiNC8weGU4DQo+IFsgICAgNi41OTUwMTBdICBfX2FybTY0X3N5c19v
-cGVuYXQrMHg2NC8weGFjDQo+IFsgICAgNi41OTUwMTJdICBpbnZva2Vfc3lzY2FsbCsweDQ4
-LzB4MTEwDQo+IFsgICAgNi41OTUwMTZdICBlbDBfc3ZjX2NvbW1vbi5jb25zdHByb3AuMCsw
-eGMwLzB4ZTANCj4gWyAgICA2LjU5NTAxOF0gIGRvX2VsMF9zdmMrMHgxYy8weDI4DQo+IFsg
-ICAgNi41OTUwMjFdICBlbDBfc3ZjKzB4NDgvMHgxMTQNCj4gWyAgICA2LjU5NTAyM10gIGVs
-MHRfNjRfc3luY19oYW5kbGVyKzB4YzAvMHhjNA0KPiBbICAgIDYuNTk1MDI1XSAgZWwwdF82
-NF9zeW5jKzB4MTkwLzB4MTk0DQo+IFsgICAgNi41OTUwMjhdIENvZGU6IDUyODAwMDMzIDcy
-YTAwMDUzIGQ1MDMyMDFmIGY5NDAyNDAwIChmOTQwMTgwMSkNCj4gWyAgICA2LjU5NTAyOV0g
-LS0tWyBlbmQgdHJhY2UgMDAwMDAwMDAwMDAwMDAwMCBdLS0tDQoNClsxXSBodHRwczovL2xv
-cmUua2VybmVsLm9yZy9hbGwvYUVfaGxHSGtSWnFGRmFjUkBob3ZvbGRjb25zdWx0aW5nLmNv
-bS8NCg0KLS0gDQpCZXN0IHdpc2hlcywNClZsYWRpbWlyDQo=
+On Sun, 24 Aug 2025 at 22:16, Mario Limonciello <superm1@kernel.org> wrote:
+>
+>
+>
+> On 8/24/25 3:53 AM, Antheas Kapenekakis wrote:
+> > On the Asus Z13 2025, which uses a Strix Halo platform, around 8% of th=
+e
+> > suspend resumes result in a soft lock around 1 second after the screen
+> > turns on (it freezes). This happens due to power gating VPE when it is
+> > not used, which happens 1 second after inactivity.
+> >
+> > Specifically, the VPE gating after resume is as follows: an initial
+> > ungate, followed by a gate in the resume process. Then,
+> > amdgpu_device_delayed_init_work_handler with a delay of 2s is scheduled
+> > to run tests, one of which is testing VPE in vpe_ring_test_ib. This
+> > causes an ungate, After that test, vpe_idle_work_handler is scheduled
+> > with VPE_IDLE_TIMEOUT (1s).
+> >
+> > When vpe_idle_work_handler runs and tries to gate VPE, it causes the
+> > SMU to hang and partially freezes half of the GPU IPs, with the thread
+> > that called the command being stuck processing it.
+> >
+> > Specifically, after that SMU command tries to run, we get the following=
+:
+> >
+> > snd_hda_intel 0000:c4:00.1: Refused to change power state from D0 to D3=
+hot
+> > ...
+> > xhci_hcd 0000:c4:00.4: Refused to change power state from D0 to D3hot
+> > ...
+> > amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous comma=
+nd: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+> > amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VPE!
+> > [drm:vpe_set_powergating_state [amdgpu]] *ERROR* Dpm disable vpe failed=
+, ret =3D -62.
+> > amdgpu 0000:c4:00.0: [drm] *ERROR* [CRTC:93:crtc-0] flip_done timed out
+> > amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous comma=
+nd: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+> > amdgpu 0000:c4:00.0: amdgpu: Failed to power gate JPEG!
+> > [drm:jpeg_v4_0_5_set_powergating_state [amdgpu]] *ERROR* Dpm disable jp=
+eg failed, ret =3D -62.
+> > amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous comma=
+nd: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+> > amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VCN instance 0!
+> > [drm:vcn_v4_0_5_stop [amdgpu]] *ERROR* Dpm disable uvd failed, ret =3D =
+-62.
+> > thunderbolt 0000:c6:00.5: 0: timeout reading config space 1 from 0xd3
+> > thunderbolt 0000:c6:00.5: 0: timeout reading config space 2 from 0x5
+> > thunderbolt 0000:c6:00.5: Refused to change power state from D0 to D3ho=
+t
+> > amdgpu 0000:c4:00.0: [drm] *ERROR* [CRTC:97:crtc-1] flip_done timed out
+> > amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous comma=
+nd: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+> > amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VCN instance 1!
+> >
+> > In addition to e.g., kwin errors in journalctl. 0000:c4.00.0 is the GPU=
+.
+> > Interestingly, 0000:c4.00.6, which is another HDA block, 0000:c4.00.5,
+> > a PCI controller, and 0000:c4.00.2, resume normally. 0x00000032 is the
+> > PowerDownVpe(50) command which is the common failure point in all
+> > failed resumes.
+> >
+> > On a normal resume, we should get the following power gates:
+> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVpe(50) param: =
+0x00000000, resp: 0x00000001
+> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownJpeg0(33) param=
+: 0x00000000, resp: 0x00000001
+> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownJpeg1(38) param=
+: 0x00010000, resp: 0x00000001
+> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVcn1(4) param: =
+0x00010000, resp: 0x00000001
+> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVcn0(6) param: =
+0x00000000, resp: 0x00000001
+> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpVcn0(7) param: 0x=
+00000000, resp: 0x00000001
+> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpVcn1(5) param: 0x=
+00010000, resp: 0x00000001
+> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpJpeg0(34) param: =
+0x00000000, resp: 0x00000001
+> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpJpeg1(39) param: =
+0x00010000, resp: 0x00000001
+> >
+> > To fix this, increase VPE_IDLE_TIMEOUT to 2 seconds. This increases
+> > reliability from 4-25 suspends to 200+ (tested) suspends with a cycle
+> > time of 12s sleep, 8s resume.
+>
+> When you say you reproduced with 12s sleep and 8s resume, was that
+> 'amd-s2idle --duration 12 --wait 8'?
+
+I did not use amd-s2idle. I essentially used the script below with a
+12 on the wake alarm and 12 on the for loop. I also used pstore for
+this testing.
+
+for i in {1..200}; do
+  echo "Suspend attempt $i"
+  echo `date '+%s' -d '+ 60 seconds'` | sudo tee /sys/class/rtc/rtc0/wakeal=
+arm
+  sudo sh -c 'echo mem > /sys/power/state'
+
+  for j in {1..50}; do
+    # Use repeating sleep in case echo mem returns early
+    sleep 1
+  done
+done
+
+> > The suspected reason here is that 1s that
+> > when VPE is used, it needs a bit of time before it can be gated and
+> > there was a borderline delay before, which is not enough for Strix Halo=
+.
+> > When the VPE is not used, such as on resume, gating it instantly does
+> > not seem to cause issues.
+> >
+> > Fixes: 5f82a0c90cca ("drm/amdgpu/vpe: enable vpe dpm")
+> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > ---
+> >   drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c b/drivers/gpu/drm/=
+amd/amdgpu/amdgpu_vpe.c
+> > index 121ee17b522b..24f09e457352 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c
+> > @@ -34,8 +34,8 @@
+> >   /* VPE CSA resides in the 4th page of CSA */
+> >   #define AMDGPU_CSA_VPE_OFFSET       (4096 * 3)
+> >
+> > -/* 1 second timeout */
+> > -#define VPE_IDLE_TIMEOUT     msecs_to_jiffies(1000)
+> > +/* 2 second timeout */
+> > +#define VPE_IDLE_TIMEOUT     msecs_to_jiffies(2000)
+> >
+> >   #define VPE_MAX_DPM_LEVEL                   4
+> >   #define FIXED1_8_BITS_PER_FRACTIONAL_PART   8
+> >
+> > base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+>
+> 1s idle timeout has been used by other IPs for a long time.
+> For example JPEG, UVD, VCN all use 1s.
+>
+> Can you please confirm both your AGESA and your SMU firmware version?
+> In case you're not aware; you can get AGESA version from SMBIOS string
+> (DMI type 40).
+>
+> =E2=9D=AF sudo dmidecode | grep AGESA
+
+String: AGESA!V9 StrixHaloPI-FP11 1.0.0.0c
+
+> You can get SMU firmware version from this:
+>
+> =E2=9D=AF grep . /sys/bus/platform/drivers/amd_pmc/*/smu_*
+
+grep . /sys/bus/platform/drivers/amd_pmc/*/smu_*
+/sys/bus/platform/drivers/amd_pmc/AMDI000B:00/smu_fw_version:100.112.0
+/sys/bus/platform/drivers/amd_pmc/AMDI000B:00/smu_program:0
+
+> Are you on the most up to date firmware for your system from the
+> manufacturer?
+
+I updated my bios, pd firmware, and USB device firmware early August,
+when I was doing this testing.
+
+> We haven't seen anything like this reported on Strix Halo thus far and
+> we do internal stress testing on s0i3 on reference hardware.
+
+Cant find a reference for it on the bug tracker. I have four bug
+reports on the bazzite issue tracker, 2 about sleep wake crashes and 2
+for runtime crashes, where the culprit would be this. IE runtime gates
+VPE and causes a crash.
+
+> To me this seems likely to be a platform firmware bug; but I would like
+> to understand the timing of the gate vs ungate on good vs bad.
+
+Perhaps it is. It is either something like that or silicon quality.
+
+> IE is it possible the delayed work handler
+> amdgpu_device_delayed_init_work_handler() is causing a race with
+> vpe_ring_begin_use()?
+
+I don't think so. There is only a single ungate. Also, the crash
+happens on the gate. So what happens is the device wakes up, the
+screen turns on, kde clock works, then after a second it freezes,
+there is a softlock, and the device hangs.
+
+The failed command is always the VPE gate that is triggered after 1s in idl=
+e.
+
+> This should be possible to check without extra instrumentation by using
+> ftrace and looking at the timing of the 2 ring functions and the init
+> work handler and checking good vs bad cycles.
+
+I do not know how to use ftrace. I should also note that after the
+device freezes around 1/5 cycles will sync the fs, so it is also not a
+very easy thing to diagnose. The device just stops working. A lot of
+the logs I got were in pstore by forcing a kernel panic.
+
+If you say that all IP blocks use 1s, perhaps an alternative solution
+would be to desync the idle times so they do not happen
+simultaneously. So 1000, 1200, 1400, etc.
+
+Antheas
+
 
