@@ -1,114 +1,164 @@
-Return-Path: <linux-kernel+bounces-783478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 491AAB32E1E
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:09:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D82EB32E20
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BFB67AAB44
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:08:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C12AE169886
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A4A2566E7;
-	Sun, 24 Aug 2025 08:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="eg/x5u7K"
-Received: from r3-11.sinamail.sina.com.cn (r3-11.sinamail.sina.com.cn [202.108.3.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE362561C9;
+	Sun, 24 Aug 2025 08:11:44 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75115245021
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 08:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F35246779
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 08:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756022983; cv=none; b=u+Nt6Jm5FNJ624WxVCNzQTCrhjb+PbUrQGWNWiCv0Am+g+f/Z/tPttEcXSsieboxNacNVykyx2TxKWezc2JtWbsOL80Xw9A82j1+4dJd9H8axfwazdsrS5O3OPxdni1sdG4LWQUw6pm2z+LeWoLyQSbBAICeYruIM6RaJLnz2r0=
+	t=1756023104; cv=none; b=XBChLUhBgMDznvdmNYEDkaYykja3t52xrCTmrKk6mhMX8/a5Ojxni2NN8aGgMik897ETtWM/sCQCnKfQ+LvkXNfcX8LbIXz+W2+zv42ViDDG9TbXr3tAUpA5RN604zKhyEUVjwEU48deg7reKgrjA8aok+ZG0GykisH9UWaGjqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756022983; c=relaxed/simple;
-	bh=qOac4q+/F3Tv0D9k6q2U9aBtmfT33bqNHsrBBnc1GgA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dshY3OfuIVk8ucIA3EDKhee6k+cMFP8GzZwKk6/XOgYkOKQHHNKvHkGZ737o24nrOcQCoUxFWGIn3B2Ca9ZjWUrCt/nLzqSLRdCJN5jN8+hfWLjnxzAOF7Qz+9pDkyaAbel5ph5IAk/KMdeJjCVwfdDIVSGuCVzKvkERZm+qmkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=eg/x5u7K; arc=none smtp.client-ip=202.108.3.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756022977;
-	bh=tP53oDkScK96De1KBNJ3EFrOcqSfqEtQvJTTaqhv5eM=;
-	h=From:Subject:Date:Message-ID;
-	b=eg/x5u7K8nkvVTcmg8P0odfD1HZpXLd+G0DiiaUijKOcfyrEgrKZ9xKsn2KMnoLSx
-	 RcjlkAL/Kp6uNo8TL+rdpFXjIx9we3ZRepSA+aKHIJ7KyJAV0fBd3oxYUUhSCxwiIn
-	 UujUa+Fx/fGsE1fmfTrcbspl0cxQvsLyacd/yszQ=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.34) with ESMTP
-	id 68AAC8B500006E1C; Sun, 24 Aug 2025 16:09:27 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 2920256292106
-X-SMAIL-UIID: 5C7005CECBC04299B6E7991493C2D2BE-20250824-160927-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+a658d41cf8564471775e@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [media?] [usb?] KASAN: slab-use-after-free Read in v4l2_release (2)
-Date: Sun, 24 Aug 2025 16:09:16 +0800
-Message-ID: <20250824080918.5312-1-hdanton@sina.com>
-In-Reply-To: <68aaae76.050a0220.37038e.006e.GAE@google.com>
-References: 
+	s=arc-20240116; t=1756023104; c=relaxed/simple;
+	bh=ul0IsjUDFsISjShCNiRq6tbem1Qonz9NW/U6PGV3QOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NSeHpp7LeGCrWkt/ycQze9NhuhSjMDsyY6vlzS7Y9dbPKp5MJY2j2aB+Nawg48cNbpN+wCRAtyZOTIL7Q3M6Ljf6sKLAWa4Wtx7OGxxV7ncGwK61pB2R7FGS/27MvYPH2bqMZ8znxBoLttdFU/XZE0K2kViP8hokMWLuyNuWdBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uq5oT-0006qR-Nx; Sun, 24 Aug 2025 10:10:53 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uq5oJ-001sF8-2g;
+	Sun, 24 Aug 2025 10:10:43 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uq5oJ-00EEAb-2D;
+	Sun, 24 Aug 2025 10:10:43 +0200
+Date: Sun, 24 Aug 2025 10:10:43 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: ALOK TIWARI <alok.a.tiwari@oracle.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Lukasz Majewski <lukma@denx.de>, Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>, Divya.Koppera@microchip.com,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	Stanislav Fomichev <sdf@fomichev.me>
+Subject: Re: [PATCH net-next v3 2/3] net: ynl: add generated kdoc to UAPI
+ headers
+Message-ID: <aKrJAzMdgGcNiRUC@pengutronix.de>
+References: <20250820131023.855661-1-o.rempel@pengutronix.de>
+ <20250820131023.855661-3-o.rempel@pengutronix.de>
+ <7e948eb9-2704-433e-9b51-fd83716e37d1@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <7e948eb9-2704-433e-9b51-fd83716e37d1@oracle.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-> Date: Sat, 23 Aug 2025 23:17:26 -0700	[thread overview]
-> Hello,
+On Fri, Aug 22, 2025 at 07:41:39PM +0530, ALOK TIWARI wrote:
 > 
-> syzbot found the following issue on:
 > 
-> HEAD commit:    8d245acc1e88 Merge tag 'char-misc-6.17-rc3' of git://git.k..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15f37062580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=292f3bc9f654adeb
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a658d41cf8564471775e
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14c267bc580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a8c862580000
+> On 8/20/2025 6:40 PM, Oleksij Rempel wrote:
+> > Run the ynl regeneration script to apply the kdoc generation
+> > support added in the previous commit.
+> > 
+> > This updates the generated UAPI headers for dpll, ethtool, team,
+> > net_shaper, netdev, and ovpn with documentation parsed from their
+> > respective YAML specifications.
+> > 
+> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > ---
+> >   include/uapi/linux/dpll.h                     |  30 ++++
+> >   .../uapi/linux/ethtool_netlink_generated.h    |  29 +++
+> >   include/uapi/linux/if_team.h                  |  11 ++
+> >   include/uapi/linux/net_shaper.h               |  50 ++++++
+> >   include/uapi/linux/netdev.h                   | 165 ++++++++++++++++++
+> >   include/uapi/linux/ovpn.h                     |  62 +++++++
+> >   tools/include/uapi/linux/netdev.h             | 165 ++++++++++++++++++
+> >   7 files changed, 512 insertions(+)
+> > 
+> > diff --git a/include/uapi/linux/dpll.h b/include/uapi/linux/dpll.h
+> > index 37b438ce8efc..23a4e3598650 100644
+> > --- a/include/uapi/linux/dpll.h
+> > +++ b/include/uapi/linux/dpll.h
+> > @@ -203,6 +203,18 @@ enum dpll_feature_state {
+> >   	DPLL_FEATURE_STATE_ENABLE,
+> >   };
+> > +/**
+> > + * enum dpll_dpll
+> > + * @DPLL_A_CLOCK_QUALITY_LEVEL: Level of quality of a clock device. This mainly
+> > + *   applies when the dpll lock-status is DPLL_LOCK_STATUS_HOLDOVER. This could
+> > + *   be put to message multiple times to indicate possible parallel quality
+> > + *   levels (e.g. one specified by ITU option 1 and another one specified by
+> > + *   option 2).
+> > + * @DPLL_A_PHASE_OFFSET_MONITOR: Receive or request state of phase offset
+> > + *   monitor feature. If enabled, dpll device shall monitor and notify all
+> > + *   currently available inputs for changes of their phase offset against the
+> > + *   dpll device.
+> > + */
+> >   enum dpll_a {
+> >   	DPLL_A_ID = 1,
+> >   	DPLL_A_MODULE_NAME,
+> > @@ -221,6 +233,24 @@ enum dpll_a {
+> >   	DPLL_A_MAX = (__DPLL_A_MAX - 1)
+> >   };
+> > +/**
+> > + * enum dpll_pin
+> > + * @DPLL_A_PIN_FRACTIONAL_FREQUENCY_OFFSET: The FFO (Fractional Frequency
+> > + *   Offset) between the RX and TX symbol rate on the media associated with the
+> > + *   pin: (rx_frequency-tx_frequency)/rx_frequency Value is in PPM (parts per
+> 
+> spacing for clarity (rx_frequency - tx_frequency) / rx_frequency
 
-#syz test
+Thank you for the review. The comments you refer to are autogenerated
+from the YAML specs. Extending my patch to adjust or clean up those
+generated comments would mean adding side-quests outside the scope of
+the actual change. I’d rather keep this series focused, otherwise I risk
+not being able to complete it.
 
---- x/drivers/media/usb/hackrf/hackrf.c
-+++ y/drivers/media/usb/hackrf/hackrf.c
-@@ -1345,7 +1345,7 @@ static int hackrf_probe(struct usb_inter
- 		const struct usb_device_id *id)
- {
- 	struct hackrf_dev *dev;
--	int ret;
-+	int ret, registered = 0;
- 	u8 u8tmp, buf[BUF_SIZE];
- 
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-@@ -1487,6 +1487,7 @@ static int hackrf_probe(struct usb_inter
- 			"Failed to register as video device (%d)\n", ret);
- 		goto err_v4l2_device_unregister;
- 	}
-+	registered++;
- 	dev_info(dev->dev, "Registered as %s\n",
- 		 video_device_node_name(&dev->rx_vdev));
- 
-@@ -1520,7 +1521,8 @@ err_v4l2_ctrl_handler_free_tx:
- err_v4l2_ctrl_handler_free_rx:
- 	v4l2_ctrl_handler_free(&dev->rx_ctrl_handler);
- err_kfree:
--	kfree(dev);
-+	if (!registered)
-+		kfree(dev);
- err:
- 	dev_dbg(&intf->dev, "failed=%d\n", ret);
- 	return ret;
---
+Best Regards,
+Oleksij
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
