@@ -1,132 +1,249 @@
-Return-Path: <linux-kernel+bounces-783781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F95B3325D
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 21:29:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20827B33261
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 21:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E204201DD7
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 19:29:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D11683BE5D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 19:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A352264CD;
-	Sun, 24 Aug 2025 19:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E87143C61;
+	Sun, 24 Aug 2025 19:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="ZBsgJnEB"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="drC13NaB"
+Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4361B5EB5
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 19:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180EA11185
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 19:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756063779; cv=none; b=kIXwsDJj+CUu7TVHr0sM2/PQAS6rD10Nib9hKHUqOiZQedSsDfdwJSscyvHoX8GYLpzq28QFGJrPZf5+8cqvAUWJIGQObEShRMdc5qHIcSYE5/x7W54fmq8kbbEUdG+bhbAxVG89dXAeAabUPTlCLOms6AqK+SNLBHKDmWjK/ZQ=
+	t=1756064054; cv=none; b=l7IxDmzvcWIt2cAUy8Ljw4Y31gaefdHaUZSzpeo2Ek+dXetBEFyH0ak0h9fmbKqqrnDNOezpNY1lhqcG1sYXhJsBNDWS05aaQH8cmCuGFz+700Akvd+cLo3NjIVGDE7TCFB5kxT3IOe8UU+Li9Djo1tYNTBFegjzmApV3UqulQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756063779; c=relaxed/simple;
-	bh=ncHuOkYQgqh5qIVnSFX5iKQXl+5ZmyCqgswzpum3n+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t7oPEooI9Xk3DBgMYxjwoVDVmHUMbMBm18FRgiYxmTbSYc9qeibw4O+Vjs0d8ichJ+jLGIPr4bN9+Rd3y2Ju3/aG4dXrK56k7V2jHSB2jXHS0+vph3Lxxm9c/tpIQEnaNwadRjvpKW6vGo8ERdWUKmXFfBku4QGSfamvXMPd6jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=ZBsgJnEB; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-76e2eb6d07bso3021486b3a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 12:29:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1756063777; x=1756668577; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qCoTp0qUfVekYTFrAgjFa6oA2C+d7ZolErRxvyYQLQM=;
-        b=ZBsgJnEB18Z5TSTskpMZPaf8q0Lr/myv7TCtLaj3A44KeqJuIb4BfrbKvmQe547O9Q
-         DTQY5f24CgcfwiQrzgPggNwJ3Xuf1J3X6YkFCG2PSHuTh9p2+bpRhbZpobO+4XkqqOV8
-         Wqm+b2LWt+B3k6KEiNjrGI/87X5Wl3KzD8zKTWcJVlOe+9gcHvfU8UjFvRhNQ0kqdX3w
-         42WFsveSpeQGzsoMYxFUccPGwCEhXFp1VYTBhmbJSc3u2yd3eGmNwGisiC3JcKBHGLBD
-         FPfMMR4JkRXEg3Sy56k2rh1Qrif+tMzTILP3/4BTPRj/B3VPw7KBXRzI35JsFXcTE4qC
-         BucA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756063777; x=1756668577;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qCoTp0qUfVekYTFrAgjFa6oA2C+d7ZolErRxvyYQLQM=;
-        b=fAgES0IDzy5+ee75C1RDdC4pOtdhGVQoWGHL6sn0uV3pKAUAN9mRGDCK7JEyohY2KT
-         dUM9lTcLdybee8tCtgbwiv4z7CXPdPxPnb5ekFJwXMK0oZlirO+RznCmBN7ghOc8HVKp
-         xYeqL1bl5rdBrQSTvUrcvn9b6/VrhITrXHngFXZKL25zT9XDx+msWZ6FqbHSgq4Jwo6X
-         b+lHLnnXMSyTfaTAsCE1tmB2rypwwOusgnZww1D4Q9bX8oRfUA/+D59Y+pIoOQjMVOGS
-         UCFKSif7mw1dgzkb5pDdXcTySWt/L6DFVifxI7Hk6cIobTNiz2vgFOPTG5CabsYXj3RS
-         DukA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+IXo9f6CVbf2eDn+e7W5Kc0txJeuHpc8U+X1pa69uk+6qCVx0Ylqf3jdCFo2l/nSwEmGIVchCTeP0S9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdFIOmZ48hwhwRuvIEiJWh0uW7kg4FEz5J/QEqXy2wwUkpD2C4
-	q7Zja3apEVIS7MhqCVesCzDQcifxjVPLGlVosMHFE2fNUkhUEQx4R3VyrVUueg+upp8=
-X-Gm-Gg: ASbGncvXWefG1GeKkOAS9ZVgeaxTguRKr3+jJELc1cTFGb1c2mRBMEqXRxjP2hsP7qe
-	0nQnpaO73EbB3WdpJl3xzX1fMjHsg0jLVRkbW8KcEqhqzIt1ac/22oO/3S15LCfWvsxvr2OilNn
-	B8bCSBFoQQH2TzrL5kIby+rgsuCsCywB+58rsBz89WgfWYt6CwIl8ou9LVLbsfCY8j0aOELhwRD
-	LSkGTXsPLh+lQe/DkCLwEfm1DIZYuh+w+OjzJ4WMeMtMy6DdKGmOSwyINZ6PsbSHdbALDMEetrk
-	btgGJpmudfaUOK9kM8E9Ho5i4grrEuBVhM5P4AwVD3/O1s+lV2xe85FK6J/Cz8ypiTh8qR4GK8k
-	k3hPl8/h8czs9NPhiMIBGTUTJUADmo67kBu0=
-X-Google-Smtp-Source: AGHT+IGDB0Czf3c/4OIzq7XUwidB/SuwMudab0b/O3A3Wm/7OS0XDSXzGZSg2GBsm/D4X4R+ek3YHA==
-X-Received: by 2002:a05:6a00:1ad0:b0:76b:cadf:5dbe with SMTP id d2e1a72fcca58-7702f7181bcmr12599797b3a.0.1756063776739;
-        Sun, 24 Aug 2025 12:29:36 -0700 (PDT)
-Received: from mozart.vkv.me ([192.184.167.117])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77040215169sm5404802b3a.89.2025.08.24.12.29.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Aug 2025 12:29:36 -0700 (PDT)
-Date: Sun, 24 Aug 2025 12:29:33 -0700
-From: Calvin Owens <calvin@wbinvd.org>
-To: Willy Tarreau <w@1wt.eu>
-Cc: Kyle Sanderson <kyle.leet@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	torvalds@linux-foundation.org, stable@vger.kernel.org, lwn@lwn.net,
-	jslaby@suse.cz
-Subject: Re: [REGRESSION] - BROKEN NETWORKING Re: Linux 6.16.3
-Message-ID: <aKtoHev5AogCje9R@mozart.vkv.me>
-References: <2025082354-halogen-retaliate-a8ba@gregkh>
- <cfd4d3bd-cd0e-45dc-af9b-b478a56f8942@gmail.com>
- <20250824185526.GA958@1wt.eu>
+	s=arc-20240116; t=1756064054; c=relaxed/simple;
+	bh=jJoG0dg1ihIGGquOUzHmiKYOySJtoTj/Cd6dWp152K4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V6G8dx6lwhNDOipu4TKiwOCCziecuf2S08VuS50SivAFLhRzIm0FP91orcEzVnX17QhPPLFk5Sh83EcR++OUtkBIAK/pEMeDSYABcJyAL+47XcFb/BUii4HSB6ewAney/xiNNx2Cqb3wWtaRc4vyPGimgOl7nj7eEaQ0JUMt030=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=drC13NaB; arc=none smtp.client-ip=88.99.38.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay12 (localhost [127.0.0.1])
+	by relay12.grserver.gr (Proxmox) with ESMTP id D467ABDCEF
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 22:34:01 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay12.grserver.gr (Proxmox) with ESMTPS id 2B4A0BDD1A
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 22:34:01 +0300 (EEST)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id EE5C52066F5
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 22:33:59 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1756064040;
+	bh=FO7P5D7yox0EP4cdvKTLPi2yl1V7XKqyY3X/+jd53jY=;
+	h=Received:From:Subject:To;
+	b=drC13NaB0L89yYnYxIbMQ1hodHDJeJPRoSUHF1mwTMDfnTV9A6+NYCKpSWRHEBVfl
+	 b++Qd0GMRCOA0g0BOxVEQIIQbhdX8dyTbzfOXTsB+kSzzEgyTd29Ltq+1z6ZnZwSwg
+	 e0/iMsMcmeKP4rBY4nH4nF/GM6c5TLpgVzQt+EfXg//kptOHUTpgHjfgNJy0M/EEZi
+	 SsiA/L8kmqLOBcapPU+8bMlg7Om9IlZ+A7cdqJV/7SYDP3dPBFIe5mST80WnyFfbEm
+	 WCUSeK8/hMfqwRmHkkZqJTyklJC4qeuE0wvh+i7MH7C6beGMd+yUtTKgD7GgvY8ToP
+	 30msZIE7s/iww==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.177) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f177.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f177.google.com with SMTP id
+ 38308e7fff4ca-3367483097eso2903721fa.0
+        for <linux-kernel@vger.kernel.org>;
+ Sun, 24 Aug 2025 12:33:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXfl/26N5ci5nqjA9qHbPFhyNQtma5GuJkQIIYusrAAP2WAzoNUhREBjn2kwUW/kCA9ElGqC3c2OqIwSQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzsodvKTZLhN8gT3CXRMJPmGsCDe4BE1CNP20Jj45BIzrODSNN
+	+E+XS7a7fv9+bEK6kfE13htuM7qtR5VxzG53bpP1Wo5sZxRT40S7qj2sQAWjeoUsAlZKRTAiI3v
+	Gu8oauvUkH7vQpnHMLrx5UgzaR9x5sFM=
+X-Google-Smtp-Source: 
+ AGHT+IGY0rDs0kClJQVQH2fIcccJT8iGCa1xORUIDDflp5Zi0bohdpW5Q4OqIN4bwO60cUCeMSFXqbEbJ4VujP9Gz2s=
+X-Received: by 2002:a05:651c:110d:b0:32f:1df5:aca1 with SMTP id
+ 38308e7fff4ca-33650f99907mr22871231fa.22.1756064039329; Sun, 24 Aug 2025
+ 12:33:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250824185526.GA958@1wt.eu>
+References: <20250824085351.454619-1-lkml@antheas.dev>
+ <20250824085351.454619-2-lkml@antheas.dev>
+In-Reply-To: <20250824085351.454619-2-lkml@antheas.dev>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Sun, 24 Aug 2025 21:33:47 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwH7m5CgGiK5Xu_q0JbJvRQbcHkgQd9nFXJNq3DQhWO7QQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyKjPTDZSp_1B8GyHbueZzBn-qOItLYTnPwoc8HrcP795BSb-kYcepP-yE
+Message-ID: 
+ <CAGwozwH7m5CgGiK5Xu_q0JbJvRQbcHkgQd9nFXJNq3DQhWO7QQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] drm/amd/display: Adjust AUX brightness to be a
+ granularity of 100
+To: amd-gfx@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Harry Wentland <harry.wentland@amd.com>,
+ Rodrigo Siqueira <siqueira@igalia.com>,
+	Mario Limonciello <mario.limonciello@amd.com>, Peyton Lee <peytolee@amd.com>,
+ Lang Yu <lang.yu@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <175606404021.795293.2720256050099719928@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-On Sunday 08/24 at 20:55 +0200, Willy Tarreau wrote:
-> Hello,
-> 
-> On Sun, Aug 24, 2025 at 11:31:01AM -0700, Kyle Sanderson wrote:
-> > Thanks for maintaining these as always. For the first time in a long time, I
-> > booted the latest stable (6.15.x -> 6.16.3) and somehow lost my networking.
-> > It looks like there is a patch from Intel (reported by AMD) that did not
-> > make it into stable 6.16.
-> > 
-> > e67a0bc3ed4fd8ee1697cb6d937e2b294ec13b5e - ixgbe
-> > https://lore.kernel.org/all/94d7d5c0bb4fc171154ccff36e85261a9f186923.1755661118.git.calvin@wbinvd.org/
-> > - i40e
-> 
-> Your description is very confusing. First you indicate in the subject
-> that there is a regression in 6.16.3 (implying from 6.16.2 then), and
-> you describe a 6.15.x to 6.16.x upgrade, which then has nothing to do
-> with 6.16.x alone but much more likely with 6.15 to 6.16. Or did a
-> previous 6.16 work fine ? Also the patch you pointed above is neither
-> in 6.15 nor in 6.16, so it's not just "missing from 6.16".
-> 
-> Based on your links and descriptions above I suspect that instead it's a
-> 6.15 to 6.16 regression that was brought by a0285236ab93 and that commit
-> e67a0bc3ed4fd above fixed it in 6.17-rc2, is that it ? If so, can you
-> apply that patch to confirm that it works and is desired in 6.16.x ?
+On Sun, 24 Aug 2025 at 10:54, Antheas Kapenekakis <lkml@antheas.dev> wrote:
+>
+> Certain OLED devices malfunction on specific brightness levels.
+> Specifically, when DP_SOURCE_BACKLIGHT_LEVEL is written to with
+> the minor byte being 0x00 and sometimes 0x01, the panel forcibly
+> turns off until the device sleeps again. This is an issue on
+> multiple handhelds, including OneXPlayer F1 Pro and Ayaneo 3
+> (the panel is suspected to be the same-1080p 7in OLED).
+>
+> Below are some examples. This was found by iterating over brighness
+> ranges while printing DP_SOURCE_BACKLIGHT_LEVEL. It was found that
+> the screen would malfunction on specific values, and some of them
+> were collected.
+>
+> Broken:
+>  86016:  10101000000000000
+>  86272:  10101000100000000
+>  87808:  10101011100000000
+> 251648: 111101011100000000
+> 251649: 111101011100000001
+>
+> Working:
+>  86144:  10101000010000000
+>  87809:  10101011100000001
+> 251650: 111101011100000010
+>
+> The reason for this is that the range manipulation is too granular.
+> AUX is currently written to with a granularity of 1. Forcing 100,
+> which on the Ayaneo 3 OLED yields 400*10=4000 values, is plenty of
+> granularity and fixes this issue. Iterating over the values through
+> Python shows that the final byte is never 0x00, and testing over the
+> entire range with a cadence of 0.2s/it and 73 increments (to saturate
+> the range) shows no issues. Windows likewise shows no issues.
 
-Yeah. 6.16-stable needs c5ec7f49b480 and e67a0bc3ed4f, I was going to
-bring this up next but Kyle beat me to it :)
+Well Phil managed to fall into the value 332800, which has a 0 minor
+bit. Unfortunate. In hindsight, every 256 hundreds there would be a
+zero anyway.
 
-Kyle, do you want to send them to stable@, or should I do it?
+Before I made this patch I made a partial refactor of panel-quirks
+where a quirk like this could go to. But I would really prefer not to
+do quirks. Ill send that too.
 
-Thanks,
-Calvin
+Antheas
 
-> Regards,
-> Willy
+> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3803
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 28 +++++++++++--------
+>  1 file changed, 17 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> index cd0e2976e268..bb16adcafb88 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> @@ -4739,7 +4739,8 @@ static void amdgpu_dm_update_backlight_caps(struct amdgpu_display_manager *dm,
+>  }
+>
+>  static int get_brightness_range(const struct amdgpu_dm_backlight_caps *caps,
+> -                               unsigned int *min, unsigned int *max)
+> +                               unsigned int *min, unsigned int *max,
+> +                               unsigned int *multiple)
+>  {
+>         if (!caps)
+>                 return 0;
+> @@ -4748,10 +4749,12 @@ static int get_brightness_range(const struct amdgpu_dm_backlight_caps *caps,
+>                 // Firmware limits are in nits, DC API wants millinits.
+>                 *max = 1000 * caps->aux_max_input_signal;
+>                 *min = 1000 * caps->aux_min_input_signal;
+> +               *multiple = 100;
+>         } else {
+>                 // Firmware limits are 8-bit, PWM control is 16-bit.
+>                 *max = 0x101 * caps->max_input_signal;
+>                 *min = 0x101 * caps->min_input_signal;
+> +               *multiple = 1;
+>         }
+>         return 1;
+>  }
+> @@ -4813,23 +4816,25 @@ static void convert_custom_brightness(const struct amdgpu_dm_backlight_caps *cap
+>  static u32 convert_brightness_from_user(const struct amdgpu_dm_backlight_caps *caps,
+>                                         uint32_t brightness)
+>  {
+> -       unsigned int min, max;
+> +       unsigned int min, max, multiple;
+>
+> -       if (!get_brightness_range(caps, &min, &max))
+> +       if (!get_brightness_range(caps, &min, &max, &multiple))
+>                 return brightness;
+>
+>         convert_custom_brightness(caps, min, max, &brightness);
+>
+> -       // Rescale 0..max to min..max
+> -       return min + DIV_ROUND_CLOSEST_ULL((u64)(max - min) * brightness, max);
+> +       // Rescale 0..max to min..max rounding to nearest multiple
+> +       return rounddown(
+> +               min + DIV_ROUND_CLOSEST_ULL((u64)(max - min) * brightness, max),
+> +               multiple);
+>  }
+>
+>  static u32 convert_brightness_to_user(const struct amdgpu_dm_backlight_caps *caps,
+>                                       uint32_t brightness)
+>  {
+> -       unsigned int min, max;
+> +       unsigned int min, max, multiple;
+>
+> -       if (!get_brightness_range(caps, &min, &max))
+> +       if (!get_brightness_range(caps, &min, &max, &multiple))
+>                 return brightness;
+>
+>         if (brightness < min)
+> @@ -4970,7 +4975,7 @@ amdgpu_dm_register_backlight_device(struct amdgpu_dm_connector *aconnector)
+>         struct backlight_properties props = { 0 };
+>         struct amdgpu_dm_backlight_caps *caps;
+>         char bl_name[16];
+> -       int min, max;
+> +       int min, max, multiple;
+>
+>         if (aconnector->bl_idx == -1)
+>                 return;
+> @@ -4983,15 +4988,16 @@ amdgpu_dm_register_backlight_device(struct amdgpu_dm_connector *aconnector)
+>         }
+>
+>         caps = &dm->backlight_caps[aconnector->bl_idx];
+> -       if (get_brightness_range(caps, &min, &max)) {
+> +       if (get_brightness_range(caps, &min, &max, &multiple)) {
+>                 if (power_supply_is_system_supplied() > 0)
+>                         props.brightness = DIV_ROUND_CLOSEST((max - min) * caps->ac_level, 100);
+>                 else
+>                         props.brightness = DIV_ROUND_CLOSEST((max - min) * caps->dc_level, 100);
+>                 /* min is zero, so max needs to be adjusted */
+>                 props.max_brightness = max - min;
+> -               drm_dbg(drm, "Backlight caps: min: %d, max: %d, ac %d, dc %d\n", min, max,
+> -                       caps->ac_level, caps->dc_level);
+> +               drm_dbg(drm,
+> +                       "Backlight caps: min: %d, max: %d, ac %d, dc %d, multiple: %d\n",
+> +                       min, max, caps->ac_level, caps->dc_level, multiple);
+>         } else
+>                 props.brightness = props.max_brightness = MAX_BACKLIGHT_LEVEL;
+>
+> --
+> 2.50.1
+>
+>
+
 
