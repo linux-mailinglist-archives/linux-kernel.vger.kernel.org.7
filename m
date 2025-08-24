@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-783541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7290BB32ED0
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:29:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 389ACB32ECC
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 531F017E4C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:28:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1001189C6E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE393269811;
-	Sun, 24 Aug 2025 09:27:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3844726AAAB;
+	Sun, 24 Aug 2025 09:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cEfZVdCM"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l46VhBOe"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1033264614;
-	Sun, 24 Aug 2025 09:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A18266584;
+	Sun, 24 Aug 2025 09:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756027662; cv=none; b=pH3NRk3cqF/WDB5CMALq13Gt7lBEgLWxEquo7o0fAauNVN07Li5MMXMiu3lPbdypzoqzYgX5krqN0xh+wtZ2oTJY2OFbNWADj57/iBn79dqyMNsHN/vl336kM79b7dg8QNgxYaeKzQIOwj3fPu4AUZ/VBsBVhjU9rR5oHzOQS2M=
+	t=1756027663; cv=none; b=l1V1MWbrYTV8G2aLbFxRXRtYi3rkFBb3vjm33FUvMC3Y08JP4KiJ2b1xPy771IREYNItgNuPWlLzkCdRP+Uzun4I2BcZKFIGUVNFz2W9Hr/ULUFUvqMvI+lBXkrDB2MljJbCYNrq0rRm9/xFgAYkguf3+WKzPMUnUj8cVcGdebA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756027662; c=relaxed/simple;
-	bh=rZikCDv8fD+Rzkk4RfVp7aDtd/aBZpILIsTNbD23F+c=;
+	s=arc-20240116; t=1756027663; c=relaxed/simple;
+	bh=CGhXW5tXeDv53QOS8bvvPoirWCGA2+4uVX2vcW7fVz0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oe9/AnZeoaca8uAwO8/lBfibhW5DZ27o0d8Nb6enE5oP/dc0j891BU0stIWYY5xkoZuo8S1+Dk/eJMV3K9tjF3zwyksAt93hqWwkJxorU9VWCDXW57vWBoNqGrVCPnoA5mBIc70H7Qj88LRb58YgyhOQrYktUYpxHInqNvQ6ACA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cEfZVdCM; arc=none smtp.client-ip=209.85.208.48
+	 MIME-Version; b=OIR2vjl7zRFx8acQcI/deLLIwi5lFwFFhWHQFzmke3c1bdDzAFbbP3zOsmW34eEurOabseCqKPxGC07vo3vBRP7aWr75pDftCUNcTXWsnDGAMXw3mnIZ3yUjdzZBf0OGLVtWRiAFMqCREFCxst1Pj35vKMlzOy0w7xrn7gMc0/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l46VhBOe; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6188b7550c0so4748437a12.2;
-        Sun, 24 Aug 2025 02:27:40 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61c638ab6c9so15627a12.1;
+        Sun, 24 Aug 2025 02:27:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756027659; x=1756632459; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756027660; x=1756632460; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Q34w3RqR0dtKEGKyYXofcB2jlNCM2LrnhrF1NCKpgfo=;
-        b=cEfZVdCM+xunRXklfkOjIKzT9I0ztbLqN5rANX14oOqjWyykS5N46urbSJ4Ob4i9cy
-         LtKgTtUEab7ghNplKgPPQKRHh60tj0pjnqDF8hDu9RsCEmqy1pQ+cYgbkcyIwQjSzxS7
-         pDWxcGdme8bvruhU68x8RlYPklnoKESj6fQEerkpjWlwf2bHFk6nkQNva28inLEEuZ6W
-         e/OPdPf11IouZxJ53gHDBMQc88ND9DlPAUJcKbReFwiQ8OcvJ3KzZnhjNT9ynq8p4oq1
-         r7HBNNXF/i1dNQpLwMMvvKT9AC0vj+Hrz96rsNA2iqdz99u5mCL2c2FIenYTevDbZb3a
-         MA6g==
+        bh=6QAnF6RQJWxSSGLUa+yOoR8YIWrn+p1dbQGhI+0L21k=;
+        b=l46VhBOe6Hce5M3iBb1ZmeOs8JE3TxCEnXNgpVbMoX+FJURdVFijoPBciDs5AwUlyp
+         OnJhNIKfKwIgcAaVmDRdS05XfgB/WGRoUvOHrKRtWrhEFF+B5119a+Mhbwv1DNbFdNhZ
+         5oi935PPIWc/n/RTy7ewViHnT7Y5A3QTsYaJ49YIPGZgvHm6+RrewMESS1fpsNghjUBJ
+         u1B1nHUIlrBxE9wsRd7mC1arjc7qvuX+1s/xx2jBxpvnw4bRRoGVUKZEgvr+wWnlSp+m
+         GeYSIoWXs/dKYKcgfsO7ySq41eBIZQxDhsYaZT7QvifZZ74IyPmjuNmXdqF4sKq3TmPd
+         oZOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756027659; x=1756632459;
+        d=1e100.net; s=20230601; t=1756027660; x=1756632460;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q34w3RqR0dtKEGKyYXofcB2jlNCM2LrnhrF1NCKpgfo=;
-        b=oVKCCN1Bxjewkq6u822nKw4vQzXtOQOr2bxOeHjrcwzFw94icxRuhoHXvMCvnx8YYV
-         fknfS1qbTP/bzme2HDeBWwLerzyio7KQRotwmZvgBRjQ6WeAaHzRjTlueG/67ek7debI
-         01wgYElzhmXZsatJfEl9+ibw0bANCkIVSDG3BV7UOn9Kd6mvM0zN87xkyks1AAbKlGmW
-         ojH+VxLTmpTYCPm+MyXj9534LYvNGOryNWBncWcdK3C9xOlUCm2wR6UHWBSbK/SNAP2X
-         RFVCCj6dJZiasqJoutlZ1cOom0Xo9rPUDRCQIkQc9JZ9ZStVtYewUkphVWzFwKo1CRVC
-         5gTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUD1awB1u+cl5UAfr6qvnO3QZnOcZNI2OXq1K3h9/Ul+luGDkGil/FIOWSo/LNqxpF2gu74NjPg+i5/LGFo@vger.kernel.org, AJvYcCVpqENc/9mthyydOhrirXTrQC/MaZ1NNARYUSmwu9fYoA0VjwUXx22JhNsTCk6r084wWpIfeWzC23yj@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzccjxDy9WWPlNi9H1/a7EzH5vUuR5pnqPzlEhPfcIBNYqYeje
-	LoWLPDPwnwibSKmjkLQP1o2uFXgsujEPcSB5BXY0WzxJGK3OUDYmRpF8
-X-Gm-Gg: ASbGncuiaZBS937JSf3ZPLpgJyud1zPxdJMofFL/HzKwf4jlD4LVcFNkfJC9xdN9EjT
-	WgqcfFQrBQQhr0Oxoz3e2f7Thk+55FkfRct8+IP15OhgPC0EsFKdxB7XaDbPMPTUmXSmunY9B4X
-	eO4gUQIjb7uYLo9LsD3wPOsoGnPGNY2g4b4rBlZ0js/Rd2l1Pyc2sQj22mwJrOpFYL8fsDnEGL4
-	wNsNrRpqbJ3dxw2q3mRxP1WaDMk9Qcb9KXPdtPh54C24fQpZORhoxbPFpR68ifvNYku64jQLMIu
-	yPZh+x7tNIiemJMwCCG6GuMrFDMbiSS2u6llNTei2OXI7GJ42s4JrzsrSOYHUFUWDU66guPFA1/
-	W33+4mDXAAjiNYA==
-X-Google-Smtp-Source: AGHT+IEtU39wyFdDkeRjcyNyLkECG54sATB6vqhBS2RcZn463KIIzRxKiLbn+3GO5grAttRSfyZoLw==
-X-Received: by 2002:a05:6402:13d5:b0:617:b2aa:576a with SMTP id 4fb4d7f45d1cf-61c1b3b66ecmr7576651a12.3.1756027658807;
-        Sun, 24 Aug 2025 02:27:38 -0700 (PDT)
+        bh=6QAnF6RQJWxSSGLUa+yOoR8YIWrn+p1dbQGhI+0L21k=;
+        b=tlAK+Hwpa2gugE5G8pDyveKSz8KpgHEEnhJ7WzyggwzvvPH/hefZGL5NssLi0NQHNu
+         RfdHAWdCmWQMJbGV73RSOPDU/4fK0YxNtbP7Iopx4Tfaf+9wqzRcnJ8pNsDQGpzVIev0
+         K2WbH+ny9qXK0sL69izsXrIHKK/yrEigp7qUtx8KThbztOaFzA2HPZy/r3lS9s2Ra40I
+         Q/Erzt513C/NSjm6EpSvVxbS7JhUm93EsSlfLmkMYcdKWQLseRY6ApaR4KXL+JD1DNxz
+         QfmXTtG4mvpOW/QejVoNwT7xNhhPYQhxvqITUOF4DxNDyZts5ImgKf95WHXAKz97YWCT
+         cVYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXfxm9i1pD9No9EsTac6pDMsNmT1eyFdIKV96YLwcXq4IZ/2VSURBAJG9GsmiQwuGLHyogw2JV8N0xDuY8@vger.kernel.org, AJvYcCWp3P/fCLdcelwU+L9OXrujyp+q7gY/B68GY7Y340iTlLSVdNN8HV2B6j3ey4TjpyzhOmloTWKpSw/N@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZDWFHm9d7Uo7YSnwcsg/Fubr9ItLrg/NQe4kb/9oNknzmOMom
+	+E3zd3Rhdm6EYRwXizIBFhQslQkT3px0NfJPqJT7WRa/P9R23cr79ZsB
+X-Gm-Gg: ASbGnctpnlaVx4o1nzqttfaNbA1y9WLdZQ1YZojlBQ1/sc0L98Luou/TEVkNILWV1BX
+	lX1oofhKdCZb0Zt6UssV46kS+sS9DF7EGN7FVr1nzQVVmf/wDatV+QLK8T9QMpf5+YjuxfvKdvg
+	U4C2c5wySWBdTUSWcSoQ12TUb2Nf1lsQfYdOPI5JId/EU5nRlX1rLJTgbfUJzII16o5/dg+CDDY
+	8Qa/XoP+3Z3SBbWqbCPKKFLxCazaHVTo7ay6yoUWaowYyAzCTGgYPgBMBgIZrBILt/wbfFKXVlx
+	It2JA3h3P26VYZcsmoEWTfxN4BOXInEZQyK1y+/Hmoc0vjHBiuFAM/yycEgO69tDD2wIFJ3gvyU
+	VZn51XT4sDJN3QaXtD/H8hv8A
+X-Google-Smtp-Source: AGHT+IFRDj2zIEpy57OjDTZdxkDbqj2s6MYrtw/nnV23mOyecpb6Y/xhuaCvm5jFN32fJDOfIoGI+Q==
+X-Received: by 2002:a05:6402:27d1:b0:61c:5272:a739 with SMTP id 4fb4d7f45d1cf-61c5272a7e4mr1604664a12.2.1756027660198;
+        Sun, 24 Aug 2025 02:27:40 -0700 (PDT)
 Received: from xeon.. ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c316f503dsm3035391a12.31.2025.08.24.02.27.37
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c316f503dsm3035391a12.31.2025.08.24.02.27.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Aug 2025 02:27:38 -0700 (PDT)
+        Sun, 24 Aug 2025 02:27:39 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -89,9 +89,9 @@ To: Andrzej Hajda <andrzej.hajda@intel.com>,
 Cc: dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/3 RESEND] dt-bindings: display: extend the simple bridge with MStar TSUMU88ADT3-LF-1
-Date: Sun, 24 Aug 2025 12:27:27 +0300
-Message-ID: <20250824092728.105643-3-clamor95@gmail.com>
+Subject: [PATCH v3 3/3 RESEND] drm/bridge: simple-bridge: Add support for MStar TSUMU88ADT3-LF-1
+Date: Sun, 24 Aug 2025 12:27:28 +0300
+Message-ID: <20250824092728.105643-4-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250824092728.105643-1-clamor95@gmail.com>
 References: <20250824092728.105643-1-clamor95@gmail.com>
@@ -103,26 +103,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A simple bridge used in ASUS Transformer AiO P1801-T.
+From: Maxim Schwalm <maxim.schwalm@gmail.com>
 
+A simple HDMI bridge used in ASUS Transformer AiO P1801-T.
+
+Signed-off-by: Maxim Schwalm <maxim.schwalm@gmail.com>
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 Reviewed-by: Robert Foss <rfoss@kernel.org>
 ---
- .../devicetree/bindings/display/bridge/simple-bridge.yaml        | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/bridge/simple-bridge.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml b/Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml
-index 43cf4df9811a..441e5e5b27c8 100644
---- a/Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml
-@@ -28,6 +28,7 @@ properties:
-       - enum:
-           - adi,adv7123
-           - dumb-vga-dac
-+          - mstar,tsumu88adt3-lf-1
-           - ti,opa362
-           - ti,ths8134
-           - ti,ths8135
+diff --git a/drivers/gpu/drm/bridge/simple-bridge.c b/drivers/gpu/drm/bridge/simple-bridge.c
+index ab0b0e36e97a..948300378cb0 100644
+--- a/drivers/gpu/drm/bridge/simple-bridge.c
++++ b/drivers/gpu/drm/bridge/simple-bridge.c
+@@ -260,6 +260,11 @@ static const struct of_device_id simple_bridge_match[] = {
+ 			.timings = &default_bridge_timings,
+ 			.connector_type = DRM_MODE_CONNECTOR_VGA,
+ 		},
++	}, {
++		.compatible = "mstar,tsumu88adt3-lf-1",
++		.data = &(const struct simple_bridge_info) {
++			.connector_type = DRM_MODE_CONNECTOR_HDMIA,
++		},
+ 	}, {
+ 		.compatible = "ti,opa362",
+ 		.data = &(const struct simple_bridge_info) {
 -- 
 2.43.0
 
