@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-783535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07929B32EBC
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:23:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50D26B32EC0
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:25:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D78B1B61F5D
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:22:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E44CE3B188F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E088263F22;
-	Sun, 24 Aug 2025 09:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66371261B70;
+	Sun, 24 Aug 2025 09:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIt6vTRo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8YSmOeR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834551A08AF;
-	Sun, 24 Aug 2025 09:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1408214807;
+	Sun, 24 Aug 2025 09:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756027332; cv=none; b=XImc7zHl7HM4k0ijOcvo19ltiAIZsuUnbea06zmgmz7QaAF8ez/L77f0NeT71uwsJTPNEJ9Ai+NqXA6uVQdMhW21mdE61G1LCT8vPKKLpjyPAt9Lfe3TQV0wvEzioH3OrKd5Bz86/hTg2sarrwWl8yNVgaHC9Vm8pq8AhHG1h5U=
+	t=1756027511; cv=none; b=A3BdGw7FwiHeNB9A1+yK7v0Clhyi+4QKYeV7LGvjRepQHoT/0mN18VJRMw3lt63Pa5O9NEBt3Rsciq+kqb/KfCzgiIhlJHugqlOCsVRzzv8PLEPzeQLWn+Q6bfzZojNn1fkE5TqSP9u+WfhnqFpVT3s7A+L8p63hC+Gx8aKtJaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756027332; c=relaxed/simple;
-	bh=BSrIks9doE993hqtU3AnSQoyxwzAEzKk9Xf9CVL3Avg=;
+	s=arc-20240116; t=1756027511; c=relaxed/simple;
+	bh=S2Hs0y3UyUhNqz6ZmS2Je0osjxQ8a6YMieoxMFUDa7I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZWGBTIStDV2GUz5sxTSC5Il9MzWevOBihMnXriApV5IXfFzSIkWQqQAaYWJFpQqkh5hS72t1ugBBg1cJfj4eGDB+mbgNXDBlmeSTNQ07Hc3JPcyA1u11IfxMLZZon4sGl6DiaTP1mV+CN5axWy6+h0Oyp0EgaNi9utBOvEsIJGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIt6vTRo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51C55C4CEEB;
-	Sun, 24 Aug 2025 09:22:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=clFjA3ppFCp3YCNxcDIwxvXj3zYcvFCNBlZ5LlOhAuKCknUgR+bo8LL6YGk8gr+6DdRi8gDeZzdAq5/oomXUcj24rsiWQDqcpxN5OuLp3xCxPxSgtb/SdiSLq9lJfsK7EAsJTKrjsD1aKaqyn99/BbSiDFTwjvLqc3tsjgDRbBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8YSmOeR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8392C4CEEB;
+	Sun, 24 Aug 2025 09:25:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756027331;
-	bh=BSrIks9doE993hqtU3AnSQoyxwzAEzKk9Xf9CVL3Avg=;
+	s=k20201202; t=1756027511;
+	bh=S2Hs0y3UyUhNqz6ZmS2Je0osjxQ8a6YMieoxMFUDa7I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KIt6vTRo2nnpWoMByp5YURa1mviX9l0lBJZg+Yxxsw0icptsQZ96+fhTJUYa5ofx1
-	 7n3IlI11pFfXIGhWUJAD3+nPXq6VeucyryxRQJ9+8aAvAoCoqFyEDLMuxrxdDWVSfJ
-	 RpaQ4mzeofinK6t2uyftzICIQ+S0vzM44KeugJJdtCSBJTG148qZABWw5cX21cW2eH
-	 gZfnRWej63eLwA9DCQPAIqnZyZw1WX2ZK8Z3jH2eCZwn8xmZ/R5Zm/n99k3YuhYuEc
-	 9K+T9uN8gCaQPugcjeBKhm65hNRRjjwgew3n3X492THofu7LsQcSFbvCV818NQSB41
-	 dh2cYw4ZWL1wA==
-Date: Sun, 24 Aug 2025 11:22:09 +0200
+	b=L8YSmOeRjWNHNjjzRccSnLr2QjzZ3HqdwNcOJKD9CiTF8n/dkgsEAoTeqz4tjuLTJ
+	 HCHO0VT8E8Tu0MGvmExgPQS+/8bFEO4XZgv0xotG6t+BFoeaRkC80YrffzE/1NhbSe
+	 U80t1vQfew0fBdZ3wub3fEDp6Bi0zZqZRD3NryOQf4Tp+iObVLIKf/svVth9o6IILz
+	 byWpJPN/SytHioQBEm8ktBICLo3t8eupBUN2CYBiuwfxpNF1/DIshnjVdHxOlXfcf9
+	 8B4RmQMUZif6q0bFU7Fa9R0Dnk6ko/ccuzqk0wIrtqcqjvf3jM1urE1nmFT5iMQqWv
+	 ns4Bov0LoIqjA==
+Date: Sun, 24 Aug 2025 11:25:08 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Aliaksandr Smirnou <support@pinefeat.co.uk>
-Cc: jacopo.mondi@ideasonboard.com, hverkuil@xs4all.nl, mchehab@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
-Subject: Re: [PATCH v4 1/2] dt-bindings: Pinefeat cef168 lens control board
-Message-ID: <20250824-cuddly-cryptic-porpoise-b66b4a@kuoka>
-References: <20250822171041.7340-1-support@pinefeat.co.uk>
- <20250822171041.7340-2-support@pinefeat.co.uk>
+To: E Shattow <e@freeshell.de>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Hal Feng <hal.feng@starfivetech.com>, Minda Chen <minda.chen@starfivetech.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: memory-controllers: add StarFive
+ JH7110 SoC DMC
+Message-ID: <20250824-new-messy-raccoon-1c26b7@kuoka>
+References: <20250823100159.203925-1-e@freeshell.de>
+ <20250823100159.203925-2-e@freeshell.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,21 +59,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250822171041.7340-2-support@pinefeat.co.uk>
+In-Reply-To: <20250823100159.203925-2-e@freeshell.de>
 
-On Fri, Aug 22, 2025 at 06:10:40PM +0100, Aliaksandr Smirnou wrote:
-> Add the Device Tree schema and examples for the Pinefeat cef168 lens
-> control board. This board interfaces Canon EF & EF-S lenses with
-> non-Canon camera bodies, enabling electronic control of focus and
-> aperture via V4L2.
+On Sat, Aug 23, 2025 at 03:01:41AM -0700, E Shattow wrote:
+> Describe JH7110 SoC DDR external memory interface.
 > 
-> Power supply is derived from fixed supplies via connector or GPIO
-> header. Therefore, the driver does not manage any regulator, so
-> representing any supply in the binding is redundant.
-> 
-> Signed-off-by: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
+> Signed-off-by: E Shattow <e@freeshell.de>
+> ---
+>  .../starfive,jh7110-dmc.yaml                  | 74 +++++++++++++++++++
+>  1 file changed, 74 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/starfive,jh7110-dmc.yaml
 
-From/SoB mismatch.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+There is no memory controllers driver change, so I am fine if this goes
+via SoC/DTS tree.  If you want me to pick it up, please ping on IRC.
 
 Best regards,
 Krzysztof
