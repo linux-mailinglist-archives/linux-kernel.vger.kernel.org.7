@@ -1,148 +1,155 @@
-Return-Path: <linux-kernel+bounces-783647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E71EB3302A
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:38:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0558B33034
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B55E91B2645D
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:38:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C75CE4427BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E2E2DA779;
-	Sun, 24 Aug 2025 13:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5032DAFBE;
+	Sun, 24 Aug 2025 13:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EIKCOTSU"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jxEzXeTB"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6748C23A9BE;
-	Sun, 24 Aug 2025 13:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E51393DE2;
+	Sun, 24 Aug 2025 13:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756042707; cv=none; b=eRdbckxBSYzRTrudnTkeUc6yBl9yX5MrogLPsn162BBws4X8K+WmpI8JiFUt+sRNbQqezdEv4cQk05X6sA9LyAUA2Fqf8XNgdASnBab24OSa10RHXxDU6XOCuGj3Y/op2GQKpxpMgBBq8IZdZ3Y5Avjh80L51bom84oTrSjCboc=
+	t=1756042877; cv=none; b=j4/WTfH8QivA9FImB8zVjp3lOK8+0Hd79dT7zP/ywA7XJDhUbuvAWMI9vtvDk1mDLVGpjOzFEM4S238Aaq3HGr4ljAExU0f20sLD8uKeLX6ELaOe0+4X3QSkZVGv/woFToGXf90XEM9mkkubPxEnsUCDhDAlznKeFTBBIPVaSN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756042707; c=relaxed/simple;
-	bh=s7X0pnbm3msXE4wLTcR0lElsT2tyRtlOMQhPbrtjDYA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IhQU0bVIfBH97LguOImZT99yXdtyiVV6H1+mt38Ey/Ryyrm/f7E6eFuMtvXNajjxn6k55Zfn/MRpy+wViFWYKmVvpT1MTKlmVaWGXD1k8NpZwOrfz52jH62+8WMD3UI6hKu/qXu0O49WyL1jqMucdf8f83P+FmprL6Ml5V0Vm5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EIKCOTSU; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-246648f833aso8877325ad.3;
-        Sun, 24 Aug 2025 06:38:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756042705; x=1756647505; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=90MLzQuonsDG64dbtL+/stK1T9HCDY9n2Npjr4Lf2lI=;
-        b=EIKCOTSUD586M7ApGG4X1qM1/oHf0aePwhPjUB1+b/tTHSC4YBqe2Po4ItnAb3NkpW
-         FRZhZlmAyRrYmee7WMaGLtgE14C0jVDv7tIL9PriON/tfdM2AD6sTDlOwWRyJYH6ZLG9
-         U7+e+4BUBGbJkIPIwnKQFsYI0hxxOwgcCqR00qvQXUqh5NKQsrnle8SFIvDOs7M+7WhS
-         Qi311VXwmUyYiZn7Azvy9KI/Uhr+oODETEHLP69YsDwi59ywgH48k2X7njnLnNdmY+hm
-         LM+Sr+gMFWUttW4Ktb5WV6DNmXnG9yDbRbFPQnO0pjhKcjhty28aBzs+9f8Vba0mhbbk
-         qnFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756042705; x=1756647505;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=90MLzQuonsDG64dbtL+/stK1T9HCDY9n2Npjr4Lf2lI=;
-        b=o/fr1WosF5hg+nm9x/OyWk/AfB+MnKoX8LeRq7rP/DnSQVuX/01/Zkndu3egD/Xfji
-         7/a1SSRC2SDR1osqk4KDsoX43UGe1c4jI5tnfF4hDM6LOtlSVmk4eOipjNVvUIdLfedx
-         +jU+bhsKi1p/OJkonZgrit7y8Wl16HDrZhrykDSG52SXxAcTNr16vMUd48zT+G+BU5LJ
-         2yytjLVZr/qRj181GZKYAmM7vzCFUFjrqOIbRijR1b468tV1uMrfv2i3IQ7KdXX7yqLH
-         bWn5Yk+uzO69k4ElfYS9xL/PjGRISWBY5gzrKULx718dN/PmFraWDqUFiiBteomWuGGS
-         4RZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBoL79Q3qqQVclHXJm3mwDaKnkbri/I/YZHf28pmn6UvPn9vpx2OiLoqzZwx2dYdnNEcSJwphUcGU=@vger.kernel.org, AJvYcCVQ/sSkwWdZyevrHJ6ZsVelwAUhvsj+0NGt1f8Um9i0PTKJ/6AMksxxu4CrMJHfbL5vtVf1OuFlJ+D1XXuJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7OGFvNFcGPw0e/6ngBwYIzXkASKJevA1CmJj/mwEf8xfp5e+W
-	DZcwhaCl/71rzmy68iPd8oIJyPp178oQnDjxHL0zUatE6Tteq6NrAq6F
-X-Gm-Gg: ASbGnctPq7lU+LFWhYPXc/6dAHQG1oTXtWBtND5PhTRDC6fpKMOZkrqrMRauBTXqJC8
-	OazawOtUpgRpQiFg5YRRPGUrtZ1svQHXu7CxJo203fu2QU9WsizWJ3DILVYNY0ulUipgF6Wb9hw
-	ePb3R5YWoynE0SdJ8YzNR/6E14boF5KeeOK42Fg7pCQFbB6Q7zkitoESET95qtwkSHO044vutPR
-	7Xkocen6ev4R08aFQafRCcXRBxkrNTK73HDQN3P2jx1145M4k3v0uCN+LuLl411mKTYcKkEeV53
-	qtXtjz9NMhOFdDmyCsDdSBeHcR27aLUxmA2ydkBaQqwwKuh7M+sDcZ/qz02oaLFIk5GDeh8KhYk
-	FStYhdYJ8H2eLonBZyiJM5OBk1t4=
-X-Google-Smtp-Source: AGHT+IF8IovTN96omGp3/ppnb3zr7HkMglLNXw7Fd633EEr6qn/prmg6jI8MICtzZ0GIepxE4BJk0A==
-X-Received: by 2002:a17:903:46ce:b0:246:a120:8da5 with SMTP id d9443c01a7336-246a120913bmr46300935ad.54.1756042705534;
-        Sun, 24 Aug 2025 06:38:25 -0700 (PDT)
-Received: from pc.. ([202.126.91.214])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687b0f9bsm43634545ad.37.2025.08.24.06.38.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Aug 2025 06:38:25 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] docs: scheduler: completion: Document
- complete_on_current_cpu()
-Date: Sun, 24 Aug 2025 21:38:10 +0800
-Message-ID: <20250824-complete_on_current_cpu_doc-v2-1-fd13debcb020@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756042877; c=relaxed/simple;
+	bh=ThhBRcX6/p7YU2+RvkWgHEHY2TRLm9lTL6Ph40Aa+5I=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=R7Tv9qKjUm8KsPaSwI5ylBWRIt902nmFyj/CMzpTYLDtQQRq9DgppiMzqtizWnOsYYIlWolPgVY70RDcYPLtdKH2c9GBL5H22SMsMjIVoJGEGMrzPJvR4SiahyFfF9fUn8mW0DJLm4BRd/XrtGsclEFmT23fnl51IWJbR8FZTew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jxEzXeTB; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1756042847; x=1756647647; i=markus.elfring@web.de;
+	bh=ThhBRcX6/p7YU2+RvkWgHEHY2TRLm9lTL6Ph40Aa+5I=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=jxEzXeTBP+68tE5wfTClMvw1oyIuZbM+QlQeQfZ3kDvDfClrLBKO/L/RazfnwPGD
+	 Kf/bxdHL5IqOdQx88GjoDxqtukLZmc11JqI/+jgN3hVnTyuDc7q+LZyJYAunVlqPR
+	 plI5My6+GwSOAoMnrDDJZp4gTbQQwSPlE1hjaBnGRjKA2qAFjWv054GN9BNB1EvQd
+	 Ay9ZEn03J1yooJ3F9iGSPiWQOLXDx8KBmP0ehwB/jcfJjMlI7OUsJ/U54P6CUJeLU
+	 QzIPN7IMQ+VQFbyPqSZPYAvbnO59GL55sogglRZHjQrR5JaItxTsaVpqMtfJn+RV9
+	 xsUhYyfgXbWQ+gYXOQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.216]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MbCI8-1uEvOo3WwK-00bL4D; Sun, 24
+ Aug 2025 15:40:46 +0200
+Message-ID: <ed07c6f9-e389-4387-8585-6f1206da1a07@web.de>
+Date: Sun, 24 Aug 2025 15:40:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Change-ID: 20250702-complete_on_current_cpu_doc-94dfc72a39f8
-X-Mailer: b4 0.15-dev-e44bb
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756039790; l=1650;
- i=javier.carrasco.cruz@gmail.com; s=20250209; h=from:subject:message-id;
- bh=syDoUTo2dJyexWznUEBNddmCWTILFt31Fdy9Xjp84rQ=;
- b=bYi6PGEqVyK7U7QnKH8BM8SoUVTyguxad06l8UwFsHcL/YfAm6rNP+egn+aW+urJsqnzCN4L3
- 6ULTI7EeZyfCRNSsCPEp0o84MTBajRoCulNmJPy8v+iv+Pfdz4oBLNr
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=/1fPZTF8kAIBZPO3D8IhqidB0sgYzPDkljBZXsXJZM8=
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+To: "Nikola Z. Ivanov" <zlatistiv@gmail.com>,
+ linux-kselftest@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Eric Biggers
+ <ebiggers@google.com>, Mark Brown <broonie@kernel.org>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Shuah Khan <shuah@kernel.org>,
+ Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+ Will Deacon <will@kernel.org>
+References: <20250824131647.490439-1-zlatistiv@gmail.com>
+Subject: Re: [PATCH] selftests/arm64: Fix typos in malloc return value check
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250824131647.490439-1-zlatistiv@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:/T3t3ZAVHga2cRT8inLG1YjTPE//C9T8JhWWXadlIlzIjk0iPib
+ KyUV02mmjAwRjh45d9Dz39ay9YRQjEqwZHmZpgUY7FTvSDEeaO2KVIyaGhwDoaxnXq03/L5
+ y5p6w+NIb5pNNCsQrz8cp9f4BDgn4mfDujlfMR2kbkrp3qn61yeGpW1X5zXODY26onAxstz
+ RtrdtFrXWHSuc/EwhIy2A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:60wxeolHwes=;X/f3rpYEiMysYa5Wtf0smBdZYMD
+ 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
+ z57ebfHmrfvHi8qSWfENkT9vRryS
 
-Commit 6f63904c8f3e ("sched: add a few helpers to wake up tasks on the=0D
-current cpu") introduced this new function to the completion API that=0D
-has not been documented yet.=0D
-=0D
-Document complete_on_current_cpu() explaining what it does and when its=0D
-usage is justified.=0D
-=0D
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>=0D
-=0D
----=0D
-Changes in v2:=0D
-- Rebase onto v6.17-rc1=0D
-- Fix patch formatting (drop --- before the Signed-off-by tag).=0D
-- Link to v1: https://lore.kernel.org/r/20250703-complete_on_current_cpu_do=
-c-v1-1-262dc859b38a@gmail.com=0D
----=0D
- Documentation/scheduler/completion.rst | 4 ++++=0D
- 1 file changed, 4 insertions(+)=0D
-=0D
-diff --git a/Documentation/scheduler/completion.rst b/Documentation/schedul=
-er/completion.rst=0D
-index adf0c0a56d02..db9c131f0b62 100644=0D
---- a/Documentation/scheduler/completion.rst=0D
-+++ b/Documentation/scheduler/completion.rst=0D
-@@ -272,6 +272,10 @@ Signaling completion from IRQ context is fine as it wi=
-ll appropriately=0D
- lock with spin_lock_irqsave()/spin_unlock_irqrestore() and it will never=0D
- sleep.=0D
- =0D
-+Use complete_on_current_cpu() to wake up the task on the current CPU.=0D
-+It makes use of the WF_CURRENT_CPU flag to move the task to be woken up=0D
-+to the current CPU, achieving faster context switches. To use this variant=
-,=0D
-+the context switch speed must be relevant and the optimization justified.=
-=0D
- =0D
- try_wait_for_completion()/completion_done():=0D
- --------------------------------------------=0D
-=0D
----=0D
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585=0D
-change-id: 20250702-complete_on_current_cpu_doc-94dfc72a39f8=0D
-=0D
-Best regards,=0D
---  =0D
-Javier Carrasco <javier.carrasco.cruz@gmail.com>=0D
-=0D
+> Fix double "-ed" in malloc return value check
+
+Refine wordings in error message string literals?
+
+Regards,
+Markus
 
