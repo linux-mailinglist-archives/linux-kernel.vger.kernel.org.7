@@ -1,146 +1,106 @@
-Return-Path: <linux-kernel+bounces-783518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0118B32E8A
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:56:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 927C9B32E8B
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C9DA188E947
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:56:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D71B77B3850
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A16260582;
-	Sun, 24 Aug 2025 08:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C948260586;
+	Sun, 24 Aug 2025 08:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qjm4/0x1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4n536GwY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vLI+jrIS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2535025FA24;
-	Sun, 24 Aug 2025 08:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1832625CC6C;
+	Sun, 24 Aug 2025 08:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756025755; cv=none; b=rwvmPeGwB4M446uqeT3lSgUahzPGbbgLBbtFd6+0vY6Thi8Mbx1+7S8Gs2Ifk6FjVugv00EuvtrYTnm3ycTvS0QdypSuFXnNK4qGGd652HJHMOvgf9J9nIDVjK6yAyaNnKkM/VNEJydrrGhHaEorMgOe1jkH6YaG4vkr50KP2bA=
+	t=1756025790; cv=none; b=c5bjQXs23UryHSg9KEQMS5FymOQ2S9NsFb+ggO2kS81SijGNFVT68FfMHzLodS76eZ2cPM3IdfaNp7auhG0RgMPf6VNWswLCc+rrZcLmbcf+SzESHtormE6YYxCnEYX0T5FZBFXxpsdeS5qjDiCH4Mk8AW0xLZcedY1ZLu/fBL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756025755; c=relaxed/simple;
-	bh=0t8NYsclUsLqSKfihTaUGdY6Q22Pg+5nw0i9SnPs+rg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z41dhwSyjCzXLKm8NthI1+KhmL8h/HG3J1vMijJswiwBuZzbApvSPe4jlHhzDhv0ldmBBZSrJFRLo5LAA6D2fkXVBQwJKv/FTaFIz3s+06N8HI35j+fEune6/Acc2KzUDxoEaXDLIiw80RHXJB/c1mAqjQmOJzcl9P0R4G0SJn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qjm4/0x1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F923C4CEEB;
-	Sun, 24 Aug 2025 08:55:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756025754;
-	bh=0t8NYsclUsLqSKfihTaUGdY6Q22Pg+5nw0i9SnPs+rg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qjm4/0x15o2yx/NzpWGvaWSnCm5A5mLB+XgnjSNcNzRkvXQ7rHlUh4sLGBGirZSy5
-	 kehj4OxXvckzYWAQgfBSVWXMOtGXRc5dop0Fej8WH4THM9JhZJSDIKedteEKYibA5Y
-	 c6CzeeGIqywzIuNo4iXlsRDeLHIOBH320aB8q2x1AVtbC37rPFLQwgYgg6OcwMjprl
-	 z+DYoZhQGkMOUPJr8TAeNNGVIsFvqlc12H4puIe8YWWTSUYG//LtTA98GDv6+KzrFj
-	 g/oCCklsVlV4QMk0Jc86I2mgjLJ2VaTEXsBpvoTIsW6Xvv5xaoXpm9gyjk3Xwc1Id8
-	 hQzlJadGQohDQ==
-Date: Sun, 24 Aug 2025 10:55:52 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com, 
-	andre.draszik@linaro.org, peter.griffin@linaro.org, kauschluss@disroot.org, 
-	ivo.ivanov.ivanov1@gmail.com, igor.belwon@mentallysanemainliners.org, johan@kernel.org, 
-	m.szyprowski@samsung.com, s.nawrocki@samsung.com, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com, 
-	dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com, 
-	selvarasu.g@samsung.com
-Subject: Re: [PATCH v7 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 combo ssphy
-Message-ID: <20250824-rough-fresh-orangutan-eecb2f@kuoka>
-References: <20250822093845.1179395-1-pritam.sutar@samsung.com>
- <CGME20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f@epcas5p4.samsung.com>
- <20250822093845.1179395-6-pritam.sutar@samsung.com>
+	s=arc-20240116; t=1756025790; c=relaxed/simple;
+	bh=wW2Nsi8g54U7aMB8h3ti3jH7CynIouD64O2dk82/8rE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=U0x6lWsunbdztyAvl4qybCOb97FmAaZnaiKlxAdoLQ+UaB+3DkFjPfY0IS9qeVHzZlWBLbsXUV5Yj+TeP6et8LvDtVnTwT18CG7pF0wlXnAZx4eiXaIY5XPnhv2Tqh1iiGzgmMqBPJgWOel6AmJiByL5Ts28burnnoqR6gndps8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4n536GwY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vLI+jrIS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756025786;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bBpIwJuz3DbYEaP26/bWChJ0cjV2K/N4eN4y5+1NDLI=;
+	b=4n536GwYkvbLwvdv+vqmVfBOP3uNQLiZzq2FL8QoNPAjnX3Tj/7xJYdHQ5dS8YUvfaX7ik
+	OGsWXfFDek/awOEe+38Migkl1Nw1HRsVjivYm8xTx34tuzz2l1yAyKJgxhp2mtzdUVqVVT
+	GrlFQbKPp9LaxBSjxaWNZsyfy/mz+wMJn61LZ7jH0VyDGrdbXASaS5Oyl7xVmWrC4JwEOX
+	dQXCzvS+2CMAek3g8uU5g1D76w3idohRZ4gp6wCbwIz/wvPJ7Nz7YRta+N0h4+tz4z3Fcw
+	raMvAnwOQv2H6cWUrSwTyicQfn8elTtZb8USiAgAkhffomfzC/mwnYgSVSerXw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756025786;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bBpIwJuz3DbYEaP26/bWChJ0cjV2K/N4eN4y5+1NDLI=;
+	b=vLI+jrISeoNNmvB9tfK3kDd0BuynX0VGAXpbiVVR1tOIffXrnc8z4kL8J7NE07PAzztN9r
+	JHf1yQTDn5L33HCQ==
+To: Rob Herring <robh@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH] of/irq: Convert of_msi_map_id() callers to of_msi_xlate()
+In-Reply-To: <20250813185244.GA553867-robh@kernel.org>
+References: <20250805133443.936955-1-lpieralisi@kernel.org>
+ <20250813185244.GA553867-robh@kernel.org>
+Date: Sun, 24 Aug 2025 10:56:24 +0200
+Message-ID: <87v7md2j47.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250822093845.1179395-6-pritam.sutar@samsung.com>
+Content-Type: text/plain
 
-On Fri, Aug 22, 2025 at 03:08:44PM +0530, Pritam Manohar Sutar wrote:
-> This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
-> compatible to the USB3.0 SS(5Gbps). It requires two clocks, named
-> "phy" and "ref". The required supplies for USB3.1 are named as
-> vdd075_usb30(0.75v), vdd18_usb30(1.8v).
+On Wed, Aug 13 2025 at 13:52, Rob Herring wrote:
+> On Tue, Aug 05, 2025 at 03:34:43PM +0200, Lorenzo Pieralisi wrote:
+>> With the introduction of the of_msi_xlate() function, the OF layer
+>> provides an API to map a device ID and retrieve the MSI controller
+>> node the ID is mapped to with a single call.
+>> 
+>> of_msi_map_id() is currently used to map a deviceID to a specific
+>> MSI controller node; of_msi_xlate() can be used for that purpose
+>> too, there is no need to keep the two functions.
+>> 
+>> Convert of_msi_map_id() to of_msi_xlate() calls and update the
+>> of_msi_xlate() documentation to describe how the struct device_node
+>> pointer passed in should be set-up to either provide the MSI controller
+>> node target or receive its pointer upon mapping completion.
+>> 
+>> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Rob Herring <robh@kernel.org>
+>> Cc: Marc Zyngier <maz@kernel.org>
+>> ---
+>> As suggested by RobH:
+>> 
+>> https://lore.kernel.org/lkml/20250627213241.GA168190-robh@kernel.org/
+>> 
+>>  drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c |  2 +-
+>>  drivers/of/irq.c                            | 25 +++++----------------
+>>  drivers/pci/msi/irqdomain.c                 |  2 +-
+>>  include/linux/of_irq.h                      |  6 -----
+>>  4 files changed, 7 insertions(+), 28 deletions(-)
+>
+> Looks good to me. I'm happy to take it with some acks.
+>
 
-Please do not describe the schema, but hardware. This sentence does not
-help me in my question further.
-
-> 
-> Add schemas for combo ssphy found on this SoC.
-> 
-> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-> ---
->  .../bindings/phy/samsung,usb3-drd-phy.yaml    | 23 +++++++++++++++++++
->  1 file changed, 23 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-> index f0cfca5736b8..96e5bbb2e42c 100644
-> --- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-> @@ -34,6 +34,7 @@ properties:
->        - samsung,exynos7870-usbdrd-phy
->        - samsung,exynos850-usbdrd-phy
->        - samsung,exynos990-usbdrd-phy
-> +      - samsung,exynosautov920-usb31drd-combo-ssphy
->        - samsung,exynosautov920-usbdrd-combo-hsphy
->        - samsung,exynosautov920-usbdrd-phy
->  
-> @@ -118,6 +119,12 @@ properties:
->    vdd18-usb20-supply:
->      description: 1.8V power supply for the USB 2.0 phy.
->  
-> +  dvdd075-usb30-supply:
-> +    description: 0.75V power supply for the USB 3.0 phy.
-> +
-> +  vdd18-usb30-supply:
-> +    description: 1.8V power supply for the USB 3.0 phy.
-> +
->  required:
->    - compatible
->    - clocks
-> @@ -227,6 +234,7 @@ allOf:
->                - samsung,exynos7870-usbdrd-phy
->                - samsung,exynos850-usbdrd-phy
->                - samsung,exynos990-usbdrd-phy
-> +              - samsung,exynosautov920-usb31drd-combo-ssphy
->                - samsung,exynosautov920-usbdrd-combo-hsphy
->                - samsung,exynosautov920-usbdrd-phy
->      then:
-> @@ -262,6 +270,21 @@ allOf:
->        properties:
->          dvdd075-usb20-supply: false
->          vdd18-usb20-supply: false
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - samsung,exynosautov920-usb31drd-combo-ssphy
-> +    then:
-> +      required:
-> +        - dvdd075-usb30-supply
-> +        - vdd18-usb30-supply
-
-Why are you adding usb20 and usb30 suffixes to the supplies? These are
-separate devices, so they do not have both variants at the same time.
-
-From this device point of view, the supply is called dvdd075 or vdd18.
-If you open device datasheet (not SoC datasheet), that's how it will be
-called, most likely.
-
-Best regards,
-Krzysztof
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
 
 
