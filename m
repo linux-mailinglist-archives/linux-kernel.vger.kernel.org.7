@@ -1,88 +1,116 @@
-Return-Path: <linux-kernel+bounces-783483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D370DB32E2C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:37:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ADF3B32E32
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 895945E27CC
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:37:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F439204FF1
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B5C259C83;
-	Sun, 24 Aug 2025 08:37:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C29725A2BB;
+	Sun, 24 Aug 2025 08:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="y7wR3Bqm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0520311712
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 08:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D4E14F70;
+	Sun, 24 Aug 2025 08:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756024624; cv=none; b=Lq9u+afgBta9BBuBGASISloeqH1hEE08HntIhMpAplkH/sydweS0Hbl/aB7snMSZonzzEZ19apHuaOTiiWffDxqnn740ygKdVLQXvA9+dlyIGrPYHCqLbPmsgF8RfZs9mY5QhrbYdYM1RMEU6eID/p9QW6tza4C3ksBicXFqSKY=
+	t=1756024674; cv=none; b=pxxVv8lTGGCPCcB4vMVr/aZ/ubF4mhnmCORWawI2jrCK9CUEGds1RaSa8gFKCsLN+Wf3KIwMwCG4PTTFNRYP48KBWAR9uDNe+5lUttb7+vhrxORA8PYCplDPoQohrNLHYwxI+KS+MqokwXbj2klgjGjWQeM5uhrEuPeVF/pgZZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756024624; c=relaxed/simple;
-	bh=0CJGSDgTdmS0OIbPOSL5uBYIt8BDW4c7QlhHEtjVTRI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Qip8RyvR1djvSFACoFhZLO7NAaZ9dUBMUTxVx+Hj3i3pCp/c7EnlYO1qai09SArBs/+avlIvNc+T6ID9OazochOEda2TtVTl1izLUrkOAMPJ/LTsRghlwigWNrFUmJHJWegKWz/xVpEtd3heONcUEk5JoEhnZ7pEFeYEDnThM6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3e67e4b4ff0so37948545ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 01:37:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756024622; x=1756629422;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7X3C81YbhsW1jEhXUBJW46YggWn/sMObCuouFbR2kyU=;
-        b=h++FDkY4edRWvDDnN04o2Dq/gNgUQyjcZGxaRKpk0iyLyXk/co4u04MrJED/hJxxX3
-         9d5EXc04HSc0dCRErOfStP0ei2q9uCIH0+19lkeDMMoDq9IfGmsfrlqM6CuxiRBsFPn4
-         2M6v3bp8Z/1K50lk44Juu0vO4Jdd3OswOTOr+AxVvAUp1dEpn+Kwyzjgdq6pf7Envd5L
-         uuJSUtBRKY3m0yfY1RG1kTa/w3fU0elu6TWJBvzKRsx+OBI/J8owXC29PZstBpY9QGvS
-         GoUB4xTJT3u7SxyTwlZ5JoUbPK5CWWoCDv3CLGAWNvyQPedMBdbvyG0TJoPYtmQdGviJ
-         opNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXMO0CotEPcmVZy4tMigQlctMR8t6zFdzXk5uMh2HRFiNk6pxiGdRTyGFgc40ylJFcoptDMNFelWXnG80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcSWXAFyDSW8u14wjFIrov+CUNBTSL/eF52H1x16oOOj2oUR5y
-	bs9nkvjO8EoW9+1xhVm41SMdb5Jx9T3YfdNWb+G4kRuMj+Ubq5pNRjXJbuyC5vN+gCX8Gb7r1x6
-	mIppGf9vhB+qLY473diWIKJc4cXo6H4D+cZNUx9GUjjyHT3a6BhDULhb/TwM=
-X-Google-Smtp-Source: AGHT+IH6r8nISFoGXxzf1E2oXbyZ/CTA/ScVJxsB15ZGn7JJqAW+zEUUF0bh0XZqxJWbHkMRFxruoSHv6sOC3gXS8ntkgAyEvs8H
+	s=arc-20240116; t=1756024674; c=relaxed/simple;
+	bh=7C/furl0DcUT9W6mupFGCewd5k/8L8ZDOG7DtOWIJ9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H8+8p7h3p5byCIPcFXveRUsUbNc2vVuw5NUdW0+GF3OMLG+XPatAfB75uvvYrpwyOo/0ouKz8xwQzXT3G0z/FrhRjkk7H1jPuHHNYMp4mjbNj8l69BLZkuQaE+/gqRY88Pz8gbbwqAfonz+3X3Ib2YpXzwn61puaGFTcIwldFbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=y7wR3Bqm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B958FC4CEEB;
+	Sun, 24 Aug 2025 08:37:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1756024674;
+	bh=7C/furl0DcUT9W6mupFGCewd5k/8L8ZDOG7DtOWIJ9Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=y7wR3BqmSL5U+OcWqv8LejKLo41VvAQpbSsAHwcgdkZibIC3k3xyr5lC5QhV8Kct2
+	 oXv9Or7+o8G0oDnZyiO0eky0mKqsHIPnVt7ClC9yHIYccShDV56pWavi7+ua/wuvXv
+	 /3480p5NFKXqtYqBTyQ/GSa3KN3b4z0VvLftF2sU=
+Date: Sun, 24 Aug 2025 10:37:51 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com, prarit@redhat.com,
+	x86@kernel.org, stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5.10 RESEND 0/2] x86/irq: Plug vector setup race
+Message-ID: <2025082435-attribute-mounted-f09e@gregkh>
+References: <20250822033304.1096496-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18c5:b0:3e5:52a3:dafd with SMTP id
- e9e14a558f8ab-3e91fc28027mr116387315ab.7.1756024622142; Sun, 24 Aug 2025
- 01:37:02 -0700 (PDT)
-Date: Sun, 24 Aug 2025 01:37:02 -0700
-In-Reply-To: <20250824080918.5312-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68aacf2e.050a0220.37038e.0070.GAE@google.com>
-Subject: Re: [syzbot] [media?] [usb?] KASAN: slab-use-after-free Read in
- v4l2_release (2)
-From: syzbot <syzbot+a658d41cf8564471775e@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822033304.1096496-1-ruanjinjie@huawei.com>
 
-Hello,
+On Fri, Aug 22, 2025 at 03:33:02AM +0000, Jinjie Ruan wrote:
+> There is a vector setup race, which overwrites the interrupt
+> descriptor in the per CPU vector array resulting in a disfunctional device.
+> 
+> CPU0				CPU1
+> 				interrupt is raised in APIC IRR
+> 				but not handled
+>   free_irq()
+>     per_cpu(vector_irq, CPU1)[vector] = VECTOR_SHUTDOWN;
+> 
+>   request_irq()			common_interrupt()
+>   				  d = this_cpu_read(vector_irq[vector]);
+> 
+>     per_cpu(vector_irq, CPU1)[vector] = desc;
+> 
+>     				  if (d == VECTOR_SHUTDOWN)
+> 				    this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
+> 
+> free_irq() cannot observe the pending vector in the CPU1 APIC as there is
+> no way to query the remote CPUs APIC IRR.
+> 
+> This requires that request_irq() uses the same vector/CPU as the one which
+> was freed, but this also can be triggered by a spurious interrupt.
+> 
+> Interestingly enough this problem managed to be hidden for more than a
+> decade.
+> 
+> Prevent this by reevaluating vector_irq under the vector lock, which is
+> held by the interrupt activation code when vector_irq is updated.
+> 
+> The first patch provides context for subsequent real bugfix patch.
+> 
+> Fixes: 9345005f4eed ("x86/irq: Fix do_IRQ() interrupt warning for cpu hotplug retriggered irqs")
+> Cc: stable@vger.kernel.org#5.10.x
+> Cc: gregkh@linuxfoundation.org
+> 
+> v1 -> RESEND
+> - Add upstream commit ID.
+> 
+> Jacob Pan (1):
+>   x86/irq: Factor out handler invocation from common_interrupt()
+> 
+> Thomas Gleixner (1):
+>   x86/irq: Plug vector setup race
+> 
+>  arch/x86/kernel/irq.c | 70 ++++++++++++++++++++++++++++++++++---------
+>  1 file changed, 56 insertions(+), 14 deletions(-)
+> 
+> -- 
+> 2.34.1
+> 
+> 
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Dropping as I didn't take the patches for later kernels either.
 
-Reported-by: syzbot+a658d41cf8564471775e@syzkaller.appspotmail.com
-Tested-by: syzbot+a658d41cf8564471775e@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         8d245acc Merge tag 'char-misc-6.17-rc3' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c0ba34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=292f3bc9f654adeb
-dashboard link: https://syzkaller.appspot.com/bug?extid=a658d41cf8564471775e
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12ef4ef0580000
-
-Note: testing is done by a robot and is best-effort only.
+greg k-h
 
