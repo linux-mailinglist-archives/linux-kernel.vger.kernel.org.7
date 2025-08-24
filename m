@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-783481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B20B32E28
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:18:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BF40B32E2B
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3D461899565
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:18:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A5BE7AAE3E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F734257ACA;
-	Sun, 24 Aug 2025 08:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFA6259CB6;
+	Sun, 24 Aug 2025 08:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrhkJror"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VpuZHKG8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E891A2356BC;
-	Sun, 24 Aug 2025 08:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19463FF1;
+	Sun, 24 Aug 2025 08:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756023503; cv=none; b=tkNBnz251iWSOP4/71jMreV6TyFbI8CDu6dJwOK6L60IvZkhv1gDK0hA8AaYVhzvINAfrh3bpR6eLm+z/OCLLA9uzSfU++HPkiYqvvl7LxNNJvowP4RHDgrI6C08iVBxI4pqUFIvdzCuE2KPk8n9HCWR+ro+n3fDWvy/i7hMD6U=
+	t=1756024326; cv=none; b=qswG2PzHzDobMeBLAZaYhlPW7HIF6QG9agHkbXwMn0I43E7z03x0EK1/iBNcY5xiPGA7/6GUbxW93GBbcv8Omz54KjSRPHNZI+EZfwEDf+GddiA9LWXhXHJkmRcPLc5LOBXZS/wO7lea5H1C4NRvbIzgUErA59Z0rqPkjhGtTdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756023503; c=relaxed/simple;
-	bh=oHY8OrdokFhF9Tm6xfVR/OccCYS48FlYN6uDPMMED8s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tiqp7k2RZC/Vu++zOfP5QdSUf9BH2s9QCctNS6ZWHSoTz2Zj+MhTL9Mdr2ZC+mD9ckTLGEHSAuU4ECglpSn3EhxUKx23ilMPLS7N71wxmfQ+BU/Gu5FBqw+Ng3JC2XlKpC9FmaN21WF3UJK8ni6Stc2ptj8RkFB0Ccg77+9oHZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrhkJror; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1811EC116B1;
-	Sun, 24 Aug 2025 08:18:17 +0000 (UTC)
+	s=arc-20240116; t=1756024326; c=relaxed/simple;
+	bh=riG39t2xdTtd/RF9lzly1W+o4O54tVxjLbjpDCJIcCM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mVMohBCbSCjIJir6CVyArLsHIhTRiN7gCdzkzT43khZ80BpVEwsB75Gywj30t3m4TIGsf3hu7QX//pWfSWhhDRdoY7Mc9MaptG22Cq7hJcbzXDsA1QIQeBa15iRNbeZiNzGtKUNQ4CsIt3U1A4wT/WpR2kvJIQ55yydr0ubWOto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VpuZHKG8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1667C4CEEB;
+	Sun, 24 Aug 2025 08:32:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756023502;
-	bh=oHY8OrdokFhF9Tm6xfVR/OccCYS48FlYN6uDPMMED8s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jrhkJror9galOzDN74KNPV22Ga9RO2olY3QdhX8Y/R4P0zRnLS1pYUpiRnk9cltlo
-	 NOH6ApLq/11DjkKROJ0H0Y+c0NAgLJ89ytaiW1g+LDOeMYWsT710uOwODTR/Jrlu24
-	 g4L4ReLk7c2rrk4U/IQwyHd4bLE3o870TkH9UYRB2KKCT31SHvabBJ8DxXCTc5Jxs6
-	 syWxwtcePCTNqi+++6k1UcU8Qf2A+yIxZsMBAvwb8hjge3fBLdkBC3i0Pmi797Lc44
-	 W2693szUpkzwJqC7Vwlu1rky+HezAXiK93/sDN1oLi7a1PUiY4ZSKGR14DF38oywWq
-	 GVxW1PeQQyBOQ==
-Message-ID: <df9a09a5-15eb-4760-b312-d54e4e57283c@kernel.org>
-Date: Sun, 24 Aug 2025 10:18:16 +0200
+	s=k20201202; t=1756024326;
+	bh=riG39t2xdTtd/RF9lzly1W+o4O54tVxjLbjpDCJIcCM=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=VpuZHKG8B2zTAFdsRQok94hncp2cF1ytkHq/tEOICeEb0ZJQJAt+4ifwbX95eoHMX
+	 gEsJe9i/CAj8bqIz2tlxG2hiyur2drmdWn48x14H/hdRDXShShrrNRjBPI07b22dEA
+	 e0jWpZmfAGtuTp5ZpAB90So30YNhx4V0mBublUvm71jMMjb2aJAQQjoxSSmeLfElR+
+	 VKmVpILxXPt8V/8nmru6qZEkzQO11sZdSFw63kEwtbl2b4vTV8x5hzEkm7BTEB4DbI
+	 r/kY80PDdGhp51S6TgVmYXi/SmXM1gVapr+tUNHnUu3LfRmaebDjO2yRYKZu45OeFF
+	 aMLRdyyB/jBVg==
+Message-ID: <e4c730d2-6ee1-46d7-850b-8ebbe0a1bfcd@kernel.org>
+Date: Sun, 24 Aug 2025 10:31:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: phy: mtk-tphy: add property for
- software role switch
-To: Arseniy Velikanov <me@adomerle.pw>
-Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20250814234825.810-1-me@adomerle.pw>
- <20250815-important-warm-dove-03dde5@kuoka>
- <ce4f990c-c336-4aa4-93b0-7b9f4d9663b4@adomerle.pw>
+Subject: Re: [PATCH RFC 01/22] dt-bindings: usb: snps,dwc3: Allow multiple
+ iommus
 From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sven Peter <sven@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
+ Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-phy@lists.infradead.org
+References: <20250821-atcphy-6-17-v1-0-172beda182b8@kernel.org>
+ <20250821-atcphy-6-17-v1-1-172beda182b8@kernel.org>
+ <20250822-skinny-clay-harrier-64dc58@kuoka>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -108,52 +112,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <ce4f990c-c336-4aa4-93b0-7b9f4d9663b4@adomerle.pw>
+In-Reply-To: <20250822-skinny-clay-harrier-64dc58@kuoka>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/08/2025 08:25, Arseniy Velikanov wrote:
-> On 15.08.2025 10:28, Krzysztof Kozlowski wrote:
->> On Fri, Aug 15, 2025 at 03:48:24AM +0400, Arseniy Velikanov wrote:
->>> Add a boolean property to enable software control of the PHY mode
->>> switching.
->>>
->>> Signed-off-by: Arseniy Velikanov <me@adomerle.pw>
->>> ---
->>>   Documentation/devicetree/bindings/phy/mediatek,tphy.yaml | 6 ++++++
->>>   1 file changed, 6 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
->>> index b2218c151939..a90890d4a86f 100644
->>> --- a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
->>> +++ b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
->>> @@ -255,6 +255,12 @@ patternProperties:
->>>             use the property "mediatek,syscon-type" for newer SoCs that support it.
->>>           type: boolean
->>>   
->>> +      mediatek,software-role-switch:
+On 22/08/2025 09:22, Krzysztof Kozlowski wrote:
+> On Thu, Aug 21, 2025 at 03:38:53PM +0000, Sven Peter wrote:
+>> Apple's dwc3 variant requires two iommus.
 >>
->> No, bindings do not describe software.
-> Sorry, I didn't quite understand you.
+>> Signed-off-by: Sven Peter <sven@kernel.org>
+>> ---
+>>  Documentation/devicetree/bindings/usb/snps,dwc3.yaml | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
+>> index 4380bb6fa2f08a475b557e80467abc2861f622e2..6d35dcc605c01977f4fc6fdb6f12976f1cef2b9e 100644
+>> --- a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
+>> +++ b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
+>> @@ -60,7 +60,7 @@ properties:
+>>    dma-coherent: true
+>>  
+>>    iommus:
+>> -    maxItems: 1
+>> +    maxItems: 2
 > 
-> With this property the driver changes phy mode manually using debug regs 
-
-
-Here is the problem:     ^^^^^^^^, driver.
-
-> instead of configuring hardware mode switching (because it's broken on 
-> some platforms). So every time the role in usb-role-switch changes, it 
-> has to switch phy mode. That's what I mean by "software".
-> 
-> I can rename this property to `mediatek,force-mode-switch` if that's a 
-> issue.
-
-
-Describe the hardware problem, characteristic, wiring or whatever else,
-but not the drivers and not software.
-
-force-media-switch is the same uninformative and same underlying
-instruction for the driver.
+> Never tested. You anyway need specific constraints.
+I realized that's pretty vague, so clarifying: you changed all bindings
+to have two iommus and that's unexpected. All other devices have only
+one IOMMU mapping here, so they need to stay like that. If these IOMMUs
+differ, you should also list them, but probably that's not the case here.
 
 Best regards,
 Krzysztof
