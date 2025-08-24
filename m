@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-783417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AD38B32D58
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 05:10:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20A92B32D5C
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 05:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0B0189A7A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 03:11:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 939014835B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 03:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C76F1A2545;
-	Sun, 24 Aug 2025 03:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F881A8F6D;
+	Sun, 24 Aug 2025 03:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="G9gi+f6i"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYuZG3Ih"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C1B1422DD;
-	Sun, 24 Aug 2025 03:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BEA946C;
+	Sun, 24 Aug 2025 03:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756005032; cv=none; b=uhTxdlGg3+rOBcZFgEG0uqVai0Hy6NWk/eeEY+8gCopZkMDu4DDXnmECG74laR5MR4Q87Ene53rHSNg2d/UU0X6iOo667cPQWzk0k/5UNtihh0XJLG8kx5NRQmlnirz6y/ppuoGg9izc5qdNDn4B0yD7Lzn/IDLs5GrXdVfNZ3k=
+	t=1756005360; cv=none; b=Ax1McMKdgGEggrb8MM4JaUvTvOvW9UnX24fzvbmhZYCbJj+OdQqlkW4aATMZt7mwUBVAi6AnQWL0B5IBbPqhv2795crw1zr+QTLTtdhVrNeHOEj9YXYw0YPnXFtp7vZLIcjh2ZZQ5XNIqogEHcw9hMZEKocOd3sS8CczkVxSeYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756005032; c=relaxed/simple;
-	bh=hxsdiDtjD36myHxhgd0MtXQGM1Rb5Q1flqONrAEnLpo=;
+	s=arc-20240116; t=1756005360; c=relaxed/simple;
+	bh=News6Sh290TSfF9NDn3++bnHHyva2RckbaFDqIvmwno=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hjcdFSe4tRTyl9/BcbHhuE83szoHlE8Q7mFDw8yfhLbcuqURy9fuaiXtsUToGDQ922DyGoDQGKwRONsPJj0+UgOMBbE/B9oXXslMPEbRrs1NIQRlOlDXRu4lJzWtwVlZ9bkWWuwQVOUN8cDVQf6zQ9w1MpcUmsPKssA0tkNYN7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=G9gi+f6i; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YuCtKEU6NLMfrz/RnjShMJwQy6/uOjNzT+qWonnx3W0=; b=G9gi+f6igEr0wwPGCWwR1JIB/h
-	CfPVJ7p3Ki+Cj5Oxfu43Mx0z73Lr9QVfRr5kmFXw5Aleb2mL3YyZS1RkxHK2TtOarOeReepPqhl3w
-	VGLZnZQ8YH0r58JGGxIelSlCUXQXfNMp3wmNOPe9QjCKiql+vWMUc9AZeYTIdSuv7M1JNrT2/4MhY
-	slv7vYGbjrUb1tfQYApLRFqrZsmEByZV7LeT6XqlP6n0pl9mbktCjyq0L6W47QXwUJPOJiztibbSn
-	FtWTaj/SejVufotIAgjH4G5DDDUCoRG6uHn5MQDocTUiGvEAYrPUH+QxvONqoZ+/bcdjY7BbpzyFu
-	ySqukRcA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uq17i-00000004dFj-42Fo;
-	Sun, 24 Aug 2025 03:10:27 +0000
-Date: Sun, 24 Aug 2025 04:10:26 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Prithvi Tambewagh <activprithvi@gmail.com>, skhan@linuxfoundation.org,
-	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: Document 'name' parameter in name_contains_dotdot()
-Message-ID: <20250824031026.GF39973@ZenIV>
-References: <20250823142208.10614-1-activprithvi@gmail.com>
- <20250824010623.GE39973@ZenIV>
- <20250824015224.GA12644@quark>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ktjJS8t6R9V6wvnc/vk+a7TIrrphoUlck30BxYVlZMfAGrg8oOXNBpYe7eT5AC9MXs4to7a2lAtIYm9lYDF9ByAEiHgoiXGQv2pqO2exeW5Zm5Fsc/Cjce5oTEJxU0lST3rRLn8YuyHKgl3Jnx3savWubeI6i5lF8hzhq9oZjsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYuZG3Ih; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C570EC113D0;
+	Sun, 24 Aug 2025 03:15:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756005359;
+	bh=News6Sh290TSfF9NDn3++bnHHyva2RckbaFDqIvmwno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PYuZG3Ihp/U5bZJ3SlwlU7b9rBv957aaP94M9tQ7KQOQZ6De/cpZrKmqQABVZFRhP
+	 +twYuVC4rJd/5f4gFhT4smBNYJMWtPxsww57qV9QpX0fc/RoCux3ohErBf7iNFh2BD
+	 WCW/M/ePSZaBbYBafNA/fwJY9CHOqTwCRzuumUozy4NRYzk1gVWGkpt0guV/3folCt
+	 r3k0pEIWzyQq9J3X14CO5TNGOcxtBPnVj9Up11+WmlWPrKpH/bd6CaeFP04K9IpFny
+	 JBW4eHmAHiC1772W/O7MAecxC/bbkYPQiOdCnt5sq5flIWQ8s6cdZiGgv4wCqOq1jq
+	 LIsQgdTUAStaQ==
+Date: Sat, 23 Aug 2025 22:15:56 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Fange Zhang <fange.zhang@oss.qualcomm.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Li Liu <quic_lliu6@quicinc.com>, dmitry.baryshkov@oss.qualcomm.com, 
+	tingwei.zhang@oss.qualcomm.com, xiangxu.yin@oss.qualcomm.com
+Subject: Re: [PATCH v6 2/2] arm64: dts: qcom: Add display support for QCS615
+ RIDE board
+Message-ID: <hlajupt4mwb27j4kbygdk5rifthnbnyv4ypcrqd2jk4vvdytoy@fef26rluqkxi>
+References: <20250818-add-display-support-for-qcs615-platform-v6-0-62aad5138a78@oss.qualcomm.com>
+ <20250818-add-display-support-for-qcs615-platform-v6-2-62aad5138a78@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,52 +61,183 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250824015224.GA12644@quark>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250818-add-display-support-for-qcs615-platform-v6-2-62aad5138a78@oss.qualcomm.com>
 
-On Sat, Aug 23, 2025 at 09:52:24PM -0400, Eric Biggers wrote:
-> On Sun, Aug 24, 2025 at 02:06:23AM +0100, Al Viro wrote:
-> > On Sat, Aug 23, 2025 at 07:52:08PM +0530, Prithvi Tambewagh wrote:
-> > > Add documentation for the 'name' parameter in name_contains_dotdot()
-> > > 
-> > > Signed-off-by: Prithvi Tambewagh <activprithvi@gmail.com>
-> > 
-> > Out of curiosity, could you describe the process that has lead to
-> > that patch?
-> > 
-> > The reason why I'm asking is that there had been a truly ridiculous
-> > amount of identical patches, all dealing with exact same function.
-> > 
-> > Odds of random coincedence are very low - there's quite lot of
-> > similar places, and AFAICS you are the 8th poster choosing the
-> > same one.
-> > 
-> > I would expect that kind of response to a "kernel throws scary
-> > warnings on boot for reasonably common setups", but for a comment
-> > about a function being slightly wrong this kind of focus is
-> > strange.
-> > 
-> > If that's some AI (s)tool responding to prompts along the lines of
-> > "I want to fix some kernel problem, find some low-hanging fruit
-> > and gimme a patch", we might be seeing a small-scale preview of
-> > a future DDoS with the same underlying mechanism...
+On Mon, Aug 18, 2025 at 12:39:21PM +0800, Fange Zhang wrote:
+> From: Li Liu <quic_lliu6@quicinc.com>
 > 
-> You do know that kernel-doc warns about this, right?
+> Add display MDSS and DSI configuration for QCS615 RIDE board.
+> QCS615 has a DP port, and DP support will be added in a later patch.
 > 
->     $ ./scripts/kernel-doc -v -none include/linux/fs.h
->     [...]
->     Warning: include/linux/fs.h:3287 function parameter 'name' not described in 'name_contains_dotdot'
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
+> Signed-off-by: Fange Zhang <fange.zhang@oss.qualcomm.com>
+
+Running dtb checker after applying your patch gives me the following:
+> $ make qcom/qcs615-ride.dtb CHECK_DTBS=1
+>   UPD     include/config/kernel.release
+>   HOSTCC  scripts/basic/fixdep
+>   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+> Documentation/devicetree/bindings/net/snps,dwmac.yaml: mac-mode: missing type definition
+> Documentation/devicetree/bindings/net/nfc/ti,trf7970a.yaml: ti,rx-gain-reduction-db: missing type definition
+> Documentation/devicetree/bindings/phy/fsl,imx8mq-usb-phy.yaml: fsl,phy-pcs-tx-deemph-3p5db-attenuation-db: missing type definition
+>   DTC [C] arch/arm64/boot/dts/qcom/qcs615-ride.dtb
+> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: clock-controller@100000: 'clock-names' is a required property
+>         from schema $id: http://devicetree.org/schemas/clock/qcom,qcs615-gcc.yaml#
+
+Taniya is looking at this one.
+
+> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: gpio@3e: $nodename:0: 'gpio@3e' does not match '^(pinctrl|pinmux)(@[0-9a-f]+)?$'
+>         from schema $id: http://devicetree.org/schemas/pinctrl/semtech,sx1501q.yaml#
+
+This is from your patch.
+
+> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: bridge@58: 'vdd10-supply' is a required property
+>         from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+
+This is from your patch.
+
+> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: bridge@58: 'vdd18-supply' is a required property
+>         from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+
+This is from your patch.
+
+> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: bridge@58: 'vdd33-supply' is a required property
+>         from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+
+This is from your patch.
+
+> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: bridge@58: 'wakeup-source' does not match any of the regexes: 'pinctrl-[0-9]+'
+>         from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+
+This is from your patch.
+
+> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: phy@ae94400: Unevaluated properties are not allowed ('vdds-supply' was unexpected)
+>         from schema $id: http://devicetree.org/schemas/display/msm/dsi-phy-14nm.yaml#
+
+This is from your patch.
+
+
+Am I missing something? Is there any reason why these 6 new errors
+should be added?
+
+Regards,
+Bjorn
+
+> ---
+>  arch/arm64/boot/dts/qcom/qcs615-ride.dts | 90 ++++++++++++++++++++++++++++++++
+>  1 file changed, 90 insertions(+)
 > 
-> It's the only warning in include/linux/fs.h.
-
-; ./scripts/kernel-doc -v -none include/linux/*.h 2>&1|grep -c Warning.*function\ parameter
- 145
-
-I rest my point.  If one of those has managed to generate 8 duplicate patches
-(and the earliest one has landed in linux-next within a day) and people are
-still sending that stuff...  I'd say we have a problem.
-
-Whatever underlying mechanism is in action, it seems to have the makings of
-a large DDoS.  I'm not blaming the people sending that and I would really
-like to understand the mechanism behind this, er, synchronicity.
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> index 59582d3dc4c49828ef4a0d22a1cbaba715c7ce8c..39c757b66f47579d9bc7cc5c4d703f7af4434df4 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> @@ -39,6 +39,18 @@ xo_board_clk: xo-board-clk {
+>  		};
+>  	};
+>  
+> +	dp-dsi0-connector {
+> +		compatible = "dp-connector";
+> +		label = "DSI0";
+> +		type = "mini";
+> +
+> +		port {
+> +			dp_dsi0_connector_in: endpoint {
+> +				remote-endpoint = <&dsi2dp_bridge_out>;
+> +			};
+> +		};
+> +	};
+> +
+>  	vreg_conn_1p8: regulator-conn-1p8 {
+>  		compatible = "regulator-fixed";
+>  		regulator-name = "vreg_conn_1p8";
+> @@ -294,6 +306,84 @@ &gcc {
+>  		 <&sleep_clk>;
+>  };
+>  
+> +&i2c2 {
+> +	clock-frequency = <400000>;
+> +	status = "okay";
+> +
+> +	io_expander: gpio@3e {
+> +		compatible = "semtech,sx1509q";
+> +		reg = <0x3e>;
+> +		interrupts-extended = <&tlmm 58 IRQ_TYPE_EDGE_FALLING>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		semtech,probe-reset;
+> +	};
+> +
+> +	i2c-mux@77 {
+> +		compatible = "nxp,pca9542";
+> +		reg = <0x77>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		i2c@0 {
+> +			reg = <0>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			bridge@58 {
+> +				compatible = "analogix,anx7625";
+> +				reg = <0x58>;
+> +				interrupts-extended = <&io_expander 0 IRQ_TYPE_EDGE_FALLING>;
+> +				enable-gpios = <&tlmm 4 GPIO_ACTIVE_HIGH>;
+> +				reset-gpios = <&tlmm 5 GPIO_ACTIVE_HIGH>;
+> +				wakeup-source;
+> +
+> +				ports {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					port@0 {
+> +						reg = <0>;
+> +
+> +						dsi2dp_bridge_in: endpoint {
+> +							remote-endpoint = <&mdss_dsi0_out>;
+> +						};
+> +					};
+> +
+> +					port@1 {
+> +						reg = <1>;
+> +
+> +						dsi2dp_bridge_out: endpoint {
+> +							remote-endpoint = <&dp_dsi0_connector_in>;
+> +						};
+> +					};
+> +				};
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&mdss {
+> +	status = "okay";
+> +};
+> +
+> +&mdss_dsi0 {
+> +	vdda-supply = <&vreg_l11a>;
+> +	status = "okay";
+> +};
+> +
+> +&mdss_dsi0_out {
+> +	remote-endpoint = <&dsi2dp_bridge_in>;
+> +	data-lanes = <0 1 2 3>;
+> +};
+> +
+> +&mdss_dsi0_phy {
+> +	vdds-supply = <&vreg_l5a>;
+> +	status = "okay";
+> +};
+> +
+>  &pcie {
+>  	perst-gpios = <&tlmm 101 GPIO_ACTIVE_LOW>;
+>  	wake-gpios = <&tlmm 100 GPIO_ACTIVE_HIGH>;
+> 
+> -- 
+> 2.34.1
+> 
 
