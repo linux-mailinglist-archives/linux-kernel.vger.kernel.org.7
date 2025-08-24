@@ -1,144 +1,95 @@
-Return-Path: <linux-kernel+bounces-783636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B21B32FF9
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:01:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8BC0B33002
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A295E189213F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:01:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB822189E2C7
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA401264F85;
-	Sun, 24 Aug 2025 13:01:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5633A2DA767;
+	Sun, 24 Aug 2025 13:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQ257VOE"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="JtbhmZls"
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE53C63CF;
-	Sun, 24 Aug 2025 13:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756040488; cv=none; b=XhEKX4vZZSUlRrXC0sq2mVtJDd3n0kKSQfGWfEjjF9YPOBmdsPor7SDkv+PQbgl7smInUet9TVY/9b189z+Fv8EuVlHzpK/e18fc0T3u6XI76VjnJsh7F5slNAAf4kEHDIOlxbVQoO8cZlJgG8Mqr7wTwFPK9TbBaIouFMXjhfo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756040488; c=relaxed/simple;
-	bh=LvLWkRWsIeOf6NGUdt0kQlLoAKQB76D0gaPoo01bo10=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n0eDYCHYwTzL0eq25E4shTlGFbYWnP+s14Y7oSxDcai3gD8IZ6su9uwt1a4PWnpWUdBkGNWpt2mt5rDGz5PqyriWtqQMxVWntgaz5PWeicRPW8oqw/0CbKwWG8aqoU7doOOpB9EZPGGyDWaS3sSwtA/9H62ykrn60DxpyEUWiBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQ257VOE; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b49e0686139so238155a12.2;
-        Sun, 24 Aug 2025 06:01:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756040486; x=1756645286; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WdtmoFnhUndDWFNjWRi0T4BWTY/SZFRvyi9P38L7+6U=;
-        b=GQ257VOEh0lLkU0oGXQMY8WhJNdJ6zqVGmXWMCtrWvyzgvajKP+aYwoLRbmlaMiRRa
-         0dwoVP0URA/BU75anEE80Zxyu0xQZiVQfddndB8vKFujL+Sufsp5NpAvZqv1MppE8c0R
-         I0qaHYcIaBw8zDPX5jNB4S8o65dukNei4w9tN4B/7Y8mZxMZ/PRwIjWBVvJNbr6eEFAd
-         GH7WU0ksddupWbHvZ5/AZ4bytpkEss0ICpI7YYOADAeqrAP7zZJvgxP8OaZesX2eStoN
-         nB2CSn6YXAap5vevVxwg1Hwo9Q1sUYObMAj/ALD5Ymml4sCL8R4/oFxOV6wlxn2ZchMl
-         NcYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756040486; x=1756645286;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WdtmoFnhUndDWFNjWRi0T4BWTY/SZFRvyi9P38L7+6U=;
-        b=nTfhVEcviK3wporYtB/XUqUhAC3wEFgvBlyHT+34Lz2iPJIRhqspLFfoaXQ8hoHrkl
-         P9vkQ6WXmsGxIPoBmwCcMsdLqGY8EU+E+AYinJScc8zCzd6WZo5Myd3k7vcKO3RXaJTY
-         Qz6nODnhqvPFzKkezq5yfpZnOEWrHmQOtpRyUJeFL0im7z0u+Pz2jei4sKxj9/WkvKJz
-         eqNPFTaH4mTepLp+mOA1+N1D4QMsnDTldxYYfBdWB5QXRS+7Hfm9oIMZn5tQJYZSfPFg
-         KChYroWSk16+vYXssyOCsj5Tva19SW1BQheJZlc00gx7tflIMr4E2GFOj60J0S9Dn+mj
-         olig==
-X-Forwarded-Encrypted: i=1; AJvYcCXLGaCKBaKlRlkYWH6zSGGguIctMBN3QeWIErvORwqaXpqp9MYWoGK/FAxAhC2gw4rKq/InMY7qJl/afEQ=@vger.kernel.org, AJvYcCXSVcdQi+T62bWvTk9k2EXNfzJ36xa8+Xzc/eU6XWGVHY50Miez6w0eYtfdwXD+Mtv6UJSVpZ1rlQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfPoazLupZuTcl+BEuXp/As0qUJ6QWoqsc6zOMuPwvSoh57SD4
-	pUGSVV0KH6J42kdgAF5XiRiUBfXqMrKzcU49ZzHuoxo7Vh3yVwVb9gH1
-X-Gm-Gg: ASbGncugXsdtNqvdrUnuEYZwCY0dlVwiY0duSyytFjmPJS/9/BuIdi2Im7oaFA7z9pp
-	fKj0hFf/3fTaOzh1KiNv956VS84zh/rm67RDruM3CNVRbdxV4hX3AdHRj9T4I89/xEOEZSF6JOl
-	PJuX9ho6jYtihwCzM8lKEjr+waoH78St8DfscgP1Zki7X7ZuSbDmkF9b6ZMypgbz6ceFMZnvA/J
-	BA4kjCBqD6Ait3bUoPDUrWEWG0U4JdI7G3NyB19hlYwOXWLwIOBqKeQ+vtL8d1A8GUTdAmpsWQD
-	sLO7+I7pIvXYYvPVarBKdpnh4sUMZHEOFy7niECz05ykZgO5+YKkAmJeoaq9UMQqpfrvIsqnUy5
-	LqTFB7GTA7NHO3lQCEpiJVipkEW/VwMrblYJF/a4uqAcZQu/HYvM=
-X-Google-Smtp-Source: AGHT+IGfumTqQjdkvrkufL4RuFklj+Ouv1djCdjnelVh71reF++vy2VU0OtgK4LA/aGbQ691FSpOyg==
-X-Received: by 2002:a05:6a20:21d8:b0:243:4b5d:5ea6 with SMTP id adf61e73a8af0-2434b5d5f37mr7596962637.26.1756040486060;
-        Sun, 24 Aug 2025 06:01:26 -0700 (PDT)
-Received: from yugansh-Inspiron-14-5410.. ([2401:4900:1c5c:9483:43fb:2a6d:1506:f2f1])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cb891a00sm4317861a12.2.2025.08.24.06.01.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Aug 2025 06:01:25 -0700 (PDT)
-From: Yugansh Mittal <mittalyugansh1@gmail.com>
-To: paul@paul-moore.com,
-	stephen.smalley.work@gmail.com
-Cc: omosnace@redhat.com,
-	selinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mittalyugansh1@gmail.com
-Subject: [PATCH 2/2] selinux: make __inode_security_revalidate non-sleeping
-Date: Sun, 24 Aug 2025 18:31:06 +0530
-Message-ID: <20250824130106.35366-1-mittalyugansh1@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EFC226173;
+	Sun, 24 Aug 2025 13:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756040861; cv=pass; b=IvoTSR/GOwzRmBkUYzeoM6NuVvtEkjex3mVP4zETm9vwYNEeeg40RVlelffX6l7F3Lvl0AROwjy42cMG2VEHagSEtZpbQGJi6BgQRRB1LYXCFLv/SXK8JY2tWobAV0NWixr0A/5ae+1PZWwElxwVfJD7/yMD20XVe0hyzKcg0kI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756040861; c=relaxed/simple;
+	bh=H9hClQ8Nar7tBu2U4P6ItIAC5BBpDs4PmF0j0LlVJQo=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=fziW3bBcEOA5JI5vKsjWb9EQPB2qGfMHOjClmEJr9J3SFQev05uuJkw1DJxseng7oj8ynw3KzGCxCujeZPVF9arLUty2l1GzrtfhZcGFayG/qzDTvfCpGR6Bi9+AOEyvahU+lIY1018bt34jaK2o/aMLfk7aYj1hxsLMNj3DfFc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=JtbhmZls; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756040824; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=AfD4IANLtgS3jtkxpPyo288UNvEALXDHcdnNxbufCzK7kBGpBzGHPiBiKhgLSIklpRGtczrahQnnh7sneaLEw9mUwdAwgOPw/7UQ9oKFjV8dxbEBGPdZlM3PcK0ioVRfLp6eBpKmalUq6eAdS5MbGYHXPM7chFdpaI9TX+sfAGw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756040824; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=jPyLTfpk8y5n/JPo0lVTSrid0kvP418FWRR/ZUXvspg=; 
+	b=mLbn5sfgh/irxjYAdplSQATm/A0yznU14K4AbjmXiuOhhBdFKrI3TvibgwmFA8Mgk3rvF+upVboBEsnbwTc3wcWchq1daYsTuaISa4U9TRTn/UaoJhe//Ki+/81w+LgRzVxvEbmTdn+yRbaItJOuQLxT11GAYzkqShr9CDI2RO8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756040824;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=jPyLTfpk8y5n/JPo0lVTSrid0kvP418FWRR/ZUXvspg=;
+	b=JtbhmZlsbEJ3SxN55fROun8g7agiNQ0rQQPUeDRi69xaezo7ZLaNN7u82ndQl21B
+	+OxXj36h8h5v9aK/xuMorJW8oJ46OWcUsD8ikEPW0M+H5jRyjqsBzf7jqqfV+hfVis+
+	V5b4+wJGMwu8mQW0cejIxLm+5Z3Jg86mcO79SH+w=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1756040822584266.10291600463563; Sun, 24 Aug 2025 06:07:02 -0700 (PDT)
+Received: from  [212.73.77.104] by mail.zoho.com
+	with HTTP;Sun, 24 Aug 2025 06:07:02 -0700 (PDT)
+Date: Sun, 24 Aug 2025 17:07:02 +0400
+From: Askar Safin <safinaskar@zohomail.com>
+To: "Aleksa Sarai" <cyphar@cyphar.com>
+Cc: "Alejandro Colomar" <alx@kernel.org>,
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
+	"Alexander Viro" <viro@zeniv.linux.org.uk>,
+	"Jan Kara" <jack@suse.cz>,
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
+	"linux-man" <linux-man@vger.kernel.org>,
+	"linux-api" <linux-api@vger.kernel.org>,
+	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"David Howells" <dhowells@redhat.com>,
+	"Christian Brauner" <brauner@kernel.org>
+Message-ID: <198dc307f2a.cf48ca5e17032.4424087610632367131@zohomail.com>
+In-Reply-To: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
+References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
+Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
+Feedback-ID: rr08011227c87104b8d3650149d3e24884000002f5dd6d0709eedc24788bd4853a2c2e4f40e78b79f1d3ed2d:zu08011227dacd83ef1b3a3c1e07597d020000e2c3b86dbb82a5aa13d206c0d71d8979f3e22bddb481016be7:rf0801122ccf55173632d8227c7ddef9650000933801dc10498a2fc46bf3c9cc2805a7abb6a34a51d56330a91944eb4c44:ZohoMail
 
-Replace the blocking revalidation logic in __inode_security_revalidate()
-with a fast, RCU-safe check of the inode security struct.
+ ---- On Sat, 09 Aug 2025 00:39:44 +0400  Aleksa Sarai <cyphar@cyphar.com> wrote --- 
+ > Back in 2019, the new mount API was merged[1]. David Howells then set
 
-Previously, the function could invoke inode_doinit_with_dentry() when
-may_sleep was true, which might block. With this change we always avoid
-sleeping and return -ECHILD if the inode label is invalid, forcing the
-caller to retry in a sleepable context.
+I finished my experiments!
 
-This ensures that __inode_security_revalidate() can safely run in
-non-sleepable contexts while preserving correct retry semantics.
-
-Signed-off-by: Yugansh Mittal <mittalyugansh1@gmail.com>
----
- security/selinux/hooks.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
-
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index c95a5874b..2bb94794e 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -282,19 +282,15 @@ static int __inode_security_revalidate(struct inode *inode,
- 	if (!selinux_initialized())
- 		return 0;
- 
--	if (may_sleep)
--		might_sleep();
--	else
--		return -ECHILD;
--
--	/*
--	 * Check to ensure that an inode's SELinux state is valid and try
--	 * reloading the inode security label if necessary.  This will fail if
--	 * @dentry is NULL and no dentry for this inode can be found; in that
--	 * case, continue using the old label.
--	 */
--	inode_doinit_with_dentry(inode, dentry);
--	return 0;
-+	rcu_read_lock();
-+        isec = selinux_inode(inode);
-+        if (unlikely(!isec || is_label_invalid(isec))) {
-+                rcu_read_unlock();
-+                return -ECHILD;  /* force caller to handle reload elsewhere */
-+        }
-+        rcu_read_unlock();
-+
-+	return 0; /* valid and no sleeping done */
- }
- 
- static struct inode_security_struct *inode_security_novalidate(struct inode *inode)
--- 
-2.43.0
+--
+Askar Safin
+https://types.pl/@safinaskar
 
 
