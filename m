@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-783526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27AE5B32EA5
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:17:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A0A0B32EAA
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF1601B61B62
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:18:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 731D124329F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AA325A2BB;
-	Sun, 24 Aug 2025 09:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F081260583;
+	Sun, 24 Aug 2025 09:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PZkTQofv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdDECLdL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC733632;
-	Sun, 24 Aug 2025 09:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918D022D795;
+	Sun, 24 Aug 2025 09:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756027070; cv=none; b=dlfzFD7IVn0gx0pCZUStx90EhYjmVIKgfMxX8mqiDppndR8WKHnzaEI38uU1zfP8ta/3Cx20KUvaqJuwwSgpCalKLUK8HRG7/+w2Rl0kf6HZM+XLtCzl64kOng2pXVFp1bIsw7QaVSCeimhrb7sL2DUTX+IFgB+7fv5dPKbBIvo=
+	t=1756027114; cv=none; b=h4ZoMWZ3OsJ1jUxl4UCPzbffZniJaV7a9sm8qMuv80QtV1LksODUmrDRZuGiKdq1LjGZo4uUlkY203A2PjLJkbzOw9aUg90RWuSRlmcfCV3tPI/xqVlbyLgDAff/luH7cpUABLwFcLwuNcchxloGd+/NWlGAHFzFmNLgb5hRrJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756027070; c=relaxed/simple;
-	bh=jinKs9M9SsWSapSFLwNM1upSb/lbJZAvi3hz/+0HfSw=;
+	s=arc-20240116; t=1756027114; c=relaxed/simple;
+	bh=VPsCCUiQs1o14TPS3fqpP+XKEkTMO7z0UnbmUopc03M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XG2V8GUvydryAILPTH7Qkx3O4kxHk8qMArK2QKdjPRMUD/Wm4OSTtPkvqrFLLPHNkEPW4sp4OvyLWiotV0azECVM9LgJSdKaOZvC64/wnFFEPnxQA77mMaZgbwbZLKUprFzaGnuJgwOTZhF5A7OJ6HMSno4Z4QgYXSSNuIM+6tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PZkTQofv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C486C4CEEB;
-	Sun, 24 Aug 2025 09:17:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZRnDIpJB2gt9chM7lrEi752YFvuoP9BI2wjs0pVW49rTfQ2Fb/4qWGT8JUxhtM/MBUx1XIry6MJya7s35SLAg2JCTUwSRwc0S7hkMCOKi0CO4B4/8Jvsa7IOsu3gEbJ2XftS0PTBGq5RrzNNaHXVwq+jhNua8q4hhyXtV1E2rKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdDECLdL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65588C4CEEB;
+	Sun, 24 Aug 2025 09:18:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756027070;
-	bh=jinKs9M9SsWSapSFLwNM1upSb/lbJZAvi3hz/+0HfSw=;
+	s=k20201202; t=1756027114;
+	bh=VPsCCUiQs1o14TPS3fqpP+XKEkTMO7z0UnbmUopc03M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PZkTQofv3Xm/b0rEz32aFoM9RmQKdLmYxSjGP/2nVfyF2lR/OI9VEKeW5oECKykDY
-	 eOHuKczmfeMm6dmbAibez9Ury++n5XYn5et8w31pGzvPPGmeqTQnLMd0aXG3KcCxgt
-	 N8nYAktjsJiUkaEDjbikikulrjFAxSuMqjs+fyWG1tlFV750wDjQVNvEuR5F5NwM6P
-	 KuJjLXSc6qQVOgZrhStXvfdHk+kU22a4dCq1DpOQfTx9anm3SHmwe1X6inM6J50X1c
-	 14X1Ia04UTggKLxug393Tz/W3f/V71r9oPB36UU2TT0OfQOfYReKEFm+IxTzO6rO8L
-	 NV5WufU9AnnNw==
-Date: Sun, 24 Aug 2025 11:17:47 +0200
+	b=pdDECLdLKNWb5QGcc080B8DxENTo+q4OqlzyJeYfMRT8BU+mpviia2JuWz4dPPW7K
+	 P3i1R5nGqClren1DPuJNpnFvzFuXLxcDZyqKKFlxKUyZkBC/abkH7xxAqKNGFE9VC/
+	 TgN6msSkTDJ3ixALl/HNQhZ47tzsyHkCvfZ5BpnyABc+G056DpONrgyKry8Wq6Btan
+	 t+2UK4Ove/HAZ2x2qBjbmj4JA3JcdXiDw+vRnne3JJNIS8nn5Lo9jrfMrgiT7aICxj
+	 nS0rEXrkSmfVUovI8zJjmFcCF15bAg67PFETe3DBPcKiGEhpbGkyoqA0UGk6xgBtVT
+	 PKLTXOD3rERSw==
+Date: Sun, 24 Aug 2025 11:18:31 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
 Cc: robh@kernel.org, gregkh@linuxfoundation.org, krzk+dt@kernel.org, 
 	conor+dt@kernel.org, peter.ujfalusi@gmail.com, devicetree@vger.kernel.org, 
 	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, shuah@kernel.org
-Subject: Re: [PATCH v6 1/2] usb: dt-bindings: ti,twl4030-usb: convert to DT
+Subject: Re: [PATCH v6 2/2] usb: dt-bindings: ti,twl6030-usb: convert to DT
  schema
-Message-ID: <20250824-enthusiastic-primitive-bird-a5a605@kuoka>
+Message-ID: <20250824-invaluable-sparrow-of-fury-da67b6@kuoka>
 References: <20250822201727.71593-1-jihed.chaibi.dev@gmail.com>
- <20250822201727.71593-2-jihed.chaibi.dev@gmail.com>
+ <20250822201727.71593-3-jihed.chaibi.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,45 +59,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250822201727.71593-2-jihed.chaibi.dev@gmail.com>
+In-Reply-To: <20250822201727.71593-3-jihed.chaibi.dev@gmail.com>
 
-On Fri, Aug 22, 2025 at 10:17:26PM +0200, Jihed Chaibi wrote:
-> Convert the legacy TXT binding for the TWL4030 USB module
-> to the modern YAML DT schema format. This adds formal validation
-> and improves documentation using a conditional schema.
-> 
-> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-> 
-> ---
-> Changes in v6:
->  - Reworked 'interrupts' property to use a list of items with
->    descriptions instead of a single free-form text block.
-> 
-> Changes in v5:
->  - Split combined twlxxxx-usb binding into a dedicated file for
->    twl4030-usb per maintainer feedback.
->  - Used more accurate header for interrupt macros.
->  - Improved formatting in the examples.
-> 
-> Changes in v4:
->  - This patch is split from larger series per maintainer feedback.
->  - v3 link:
->     https://lore.kernel.org/all/20250816021523.167049-1-jihed.chaibi.dev@gmail.com/
->  - Removed i2c node as it wasn't required by the old binding file.
->  - Updated node names to 'usb' and 'usb-phy' in the examples to follow
->    generic naming conventions per the Device Tree specification.
->  - Replaced raw interrupt values with standard defines for clarity.
->  - Improved formatting in the examples for clarity and consistency.
-> 
-> Changes in v3:
->  - No changes.
-> 
-> Changes in v2:
->  - Added '#phy-cells' property to support PHY framework integration.
-> ---
->  .../bindings/usb/ti,twl4030-usb.yaml          | 74 +++++++++++++++++++
+On Fri, Aug 22, 2025 at 10:17:27PM +0200, Jihed Chaibi wrote:
+> -TWL4030 USB PHY AND COMPARATOR
+> - - compatible : Should be "ti,twl4030-usb"
 
-I asked to drop here parts of converted binding.
+All this should be in previous commit.
+
+> - - interrupts : The interrupt numbers to the cpu should be specified. First
+> -   interrupt number is the otg interrupt number that raises ID interrupts
+> -   and VBUS interrupts. The second interrupt number is optional.
+> - - <supply-name>-supply : phandle to the regulator device tree node.
+> -   <supply-name> should be vusb1v5, vusb1v8 and vusb3v1
+> - - usb_mode : The mode used by the phy to connect to the controller. "1"
+> -   specifies "ULPI" mode and "2" specifies "CEA2011_3PIN" mode.
+> -
+> -If a sibling node is compatible "ti,twl4030-bci", then it will find
+> -this device and query it for USB power status.
 
 Best regards,
 Krzysztof
