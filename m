@@ -1,104 +1,55 @@
-Return-Path: <linux-kernel+bounces-783384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F67B32CE8
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 03:37:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1C2EB32CF1
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 03:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BBC4445C37
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 01:37:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2FAC1B614CA
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 01:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4992719CCF5;
-	Sun, 24 Aug 2025 01:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23851A9F8F;
+	Sun, 24 Aug 2025 01:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Re0Opgd9"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hSEug5dI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2A01FB3;
-	Sun, 24 Aug 2025 01:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18027CA5A;
+	Sun, 24 Aug 2025 01:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755999472; cv=none; b=MIjOKI+axLNr/vrOIdK/kueQVIUvpB/Q613wOr5rePWVipZvsaRUQ7bF5pbzrf6OJ9qJjqyQfPFHA/8HtK2WQEw4DZAApJ3fwOh/eJ0mERVe1C3GoIHU8dMUBcYzBNyZ+SyhY3zX70lh2RemKBKYutfn8WnZmrosFGJW8IHIih0=
+	t=1756000347; cv=none; b=Nfpv01GWREAgCPD6JqgnB2JfO4boRqsix57ACoAiL48zoZZ5NKhKr2+S19nVLhFDQ4X4iMGLpENsiEwtunQ1Yc5/33HlroZ3sS9QbpzlpKuC3gJztIPjgtEae7Lv0bglCTeTpRmIK7GC3ZdgWkKN9KVAZC2L/XYiC3asJO5qI2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755999472; c=relaxed/simple;
-	bh=+nC/GVo0QfwdaQuyT0nNE/Npbuly6IsAQTazyH5tsZM=;
+	s=arc-20240116; t=1756000347; c=relaxed/simple;
+	bh=utIESIcgFRVKaWUGs8sAx4c6YLTt8HuTo7W+Fj5oaTQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mYF35lORFVrqtv/6+BKCb2e311/+n7pxt89TjxJ+XmRr+w8e1XSSOWtRnTHNeWP4BkJpjeDrGer7ZBEQZ/AKgXZR09sSrDEkPd5a4pmh0oVmbzpQnqjsDg5daY9HjDf+xW8VsgAHE2xtU5GFUOi676p0TP5E/0q/PR6PqcXqGKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Re0Opgd9; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61c20e28380so3010435a12.1;
-        Sat, 23 Aug 2025 18:37:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755999469; x=1756604269; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6UBZPF5YbhnRufm437C0PF5qAjXN/Uh/I6Zgp8tz2Ts=;
-        b=Re0Opgd9jYlnwFpT6h+aVDFIjfXeYEmHQzqRsWqYSexyLkE1Whe9Va2mcV6aawmtp3
-         VteU1OPu0TVHsxcKajkixt7WqdUQGJguM8kSpKyw/J2G0TACUKbA9NqkKOjNC9+5NLaf
-         lzIHssA4/EGrlExK9Hv2PHwYySRY+SMmMkfo5sPzFrAuplk04WgVI8J02JIqZ9rDx/5V
-         OYm8haE0mb7B7Wi1Ly69ZMGMxe6XXljeg8oXRjLzLeySkOzO8sw8Pd5meWeicifmxZl/
-         FE8HyWlrKHEOPbmgkSGrEUSGfX8MZh+/NK8xeS/2gMEApu9qzMzxCpCs8728hRUmWkdf
-         ItcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755999469; x=1756604269;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=6UBZPF5YbhnRufm437C0PF5qAjXN/Uh/I6Zgp8tz2Ts=;
-        b=iYRL0CyEZvD5Ji1VDT+ILBrZMS9g7laFM2mI3WA1UVFxJxQcufs2MDsOwWAiETB6Gp
-         GGt1WOOHebQx3Zwuawv9WkGNZjLEKNKSXu3bR469XpcCh9y7Vq1ChLqT27DzWHSOvqg8
-         4+WJP73MzlfevA02U2tvqUUqL9ldcGM/sN4gMEWvyHWDIgXcqba4rJMe6CCOtEivSe1p
-         kKb4RFvsKH5r9v2LLNJa7oehVOnhmCSC/impfJUYFMYCHvovylmldTG3DGtyqP8Mm/+2
-         1SfKNGkFz1tAlENWqtuynRyBOX+AvaV/Fk3SkzXfiMM/uGuiLSCDUDTxcsQ0nwAdc4IW
-         WBXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUH1YD1exwXwYjp3A5DnXI2CfHP21tQRooBKPIJkwM0kqk3qTxG6vPsRXhOz5GRkdT42J9J525sQYbwz3P1@vger.kernel.org, AJvYcCVGJjaE0Mx7lridWrkIjSFb3vU/N8KuA9RVi/mOobcw5r8gJd3B4TPKDGG549zRoO0+a6w61VQS6jc=@vger.kernel.org, AJvYcCWPPgI/lDdblIydXojlUkFh4U/ryZhgbh1uZ+u0xkEsxnQrsX7lp/xN0O4MPE05AMJ1aDdOnJE2rpWaLGuMlOxtqZRV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaaK61PZ1ayCouga1c1iySzYlj1HDyJ+C52wEt/FeJt2aNJeKZ
-	1JVoOQGxBLX1vpceIYMZmG9we8SGiGSMqvABTRUQiIbq+G+w8E1Hw13N
-X-Gm-Gg: ASbGncuRKnAPefp+65bCSeScioek1bbonfZ8QVyudVORliHbuaQernQjA5ggWk8frU4
-	i5nhYQquNuTak3oer60jecgaTYNEFD0Vm1I90/ga2ogYkOVPG3DUi7kIlM4AThEgxGsWAgRQE9W
-	olU+NFGloe6oSjWXnwG58C/eNwWnlqski26xNeqIXee0OPNKWzGmhHLPSzYBnMwirJETs7AiZmm
-	1SoKYZnzGpr7H4EBXYMmSydUJIntnYwHHYPo2YB2KVgvswrlCTIZYLv13F3JJ1sekLQvp2t32Oj
-	sMV1DlbawKs1qKYBBxuTBOlkvkxg4Sn9i0ULXaq+q8OMrHZLvEFQDthWPpiOocpltanX0/NlfYu
-	AqtbX7GEJb6ZEiq4quaJc2sKFPw==
-X-Google-Smtp-Source: AGHT+IHxdAZXliDg4Pz7o7ZUiSoOONIAXZLqOCQdY0hkLH1p+jqAseH5s/K0XVWooeUz0LaIMhIjAQ==
-X-Received: by 2002:a05:6402:5057:b0:61a:8c7c:a1f4 with SMTP id 4fb4d7f45d1cf-61c1b48f5e9mr5913145a12.11.1755999468866;
-        Sat, 23 Aug 2025 18:37:48 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c3174f4d4sm2476072a12.54.2025.08.23.18.37.46
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 23 Aug 2025 18:37:47 -0700 (PDT)
-Date: Sun, 24 Aug 2025 01:37:46 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Nico Pache <npache@redhat.com>
-Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
-	ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net,
-	rostedt@goodmis.org, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
-	baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
-	wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
-	sunnanyong@huawei.com, vishal.moola@gmail.com,
-	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
-	kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-	raquini@redhat.com, anshuman.khandual@arm.com,
-	catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
-	dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
-	jglisse@google.com, surenb@google.com, zokeefe@google.com,
-	hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
-	rdunlap@infradead.org, hughd@google.com
-Subject: Re: [PATCH v10 03/13] khugepaged: generalize hugepage_vma_revalidate
- for mTHP support
-Message-ID: <20250824013746.bvsz3vajjj2kphrl@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250819134205.622806-1-npache@redhat.com>
- <20250819134205.622806-4-npache@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lkDnFSnOrj7vTaqly0hQ9rt02q5FxgH2Ul0QGHQouGQr8Sy8Z/mxRCQLH2zt8G7YmwWO9lkh/QJicHUiKFOQkMzPvEitGhLOhP83pN9FLz2WZawE3x3HsTjIsctwYLKcLqZV0JYwlEdSZ2ZXZZEAQ7CtUpBfd6P6eI+eF9j9HZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hSEug5dI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D982C4CEE7;
+	Sun, 24 Aug 2025 01:52:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756000346;
+	bh=utIESIcgFRVKaWUGs8sAx4c6YLTt8HuTo7W+Fj5oaTQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hSEug5dIRh+grc1hy8Kj1MauAFS4jFtxIWYJF2f9CayMb1WQHhyD6faSxmUHZBQXv
+	 KtmyRoODeZJxNcfPQpYGucW5RKvtWiLP0s27XaqWtix1UQ0weXVvdwoYqCE1Wcjmuu
+	 HoCVho4/AmA+Zne5hICzJKrqJcmGUtr2BqpPiDJpYzKx73d/pUDdE0JRUkC1Kmgsqa
+	 t6cMA9mk+6xMOm2YbgyojY/OrY52/zCZmH0yrwZY+4nbDYd2QKIEVMbEE7qNcnmyrO
+	 mX7YiBxV891MZVzq+1A41fah4Drm85mlEs790eT9VM6AiwBwC4IYa70NfaPiYdT5Ed
+	 3ub4nCjlkfEEg==
+Date: Sat, 23 Aug 2025 21:52:24 -0400
+From: Eric Biggers <ebiggers@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Prithvi Tambewagh <activprithvi@gmail.com>, skhan@linuxfoundation.org,
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: Document 'name' parameter in name_contains_dotdot()
+Message-ID: <20250824015224.GA12644@quark>
+References: <20250823142208.10614-1-activprithvi@gmail.com>
+ <20250824010623.GE39973@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,103 +58,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250819134205.622806-4-npache@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20250824010623.GE39973@ZenIV>
 
-Hi, Nico
-
-Some nit below.
-
-On Tue, Aug 19, 2025 at 07:41:55AM -0600, Nico Pache wrote:
->For khugepaged to support different mTHP orders, we must generalize this
->to check if the PMD is not shared by another VMA and the order is enabled.
->
->To ensure madvise_collapse can support working on mTHP orders without the
->PMD order enabled, we need to convert hugepage_vma_revalidate to take a
->bitmap of orders.
->
->No functional change in this patch.
->
->Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->Acked-by: David Hildenbrand <david@redhat.com>
->Co-developed-by: Dev Jain <dev.jain@arm.com>
->Signed-off-by: Dev Jain <dev.jain@arm.com>
->Signed-off-by: Nico Pache <npache@redhat.com>
->---
-> mm/khugepaged.c | 13 ++++++++-----
-> 1 file changed, 8 insertions(+), 5 deletions(-)
->
->diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->index b7b98aebb670..2d192ec961d2 100644
->--- a/mm/khugepaged.c
->+++ b/mm/khugepaged.c
-
-There is a comment above this function, which says "revalidate vma before
-taking mmap_lock".
-
-I am afraid it is "after taking mmap_lock"? or "after taking mmap_lock again"?
-
->@@ -917,7 +917,7 @@ static int collapse_find_target_node(struct collapse_control *cc)
-> static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
-> 				   bool expect_anon,
-> 				   struct vm_area_struct **vmap,
->-				   struct collapse_control *cc)
->+				   struct collapse_control *cc, unsigned long orders)
-> {
-> 	struct vm_area_struct *vma;
-> 	enum tva_type type = cc->is_khugepaged ? TVA_KHUGEPAGED :
->@@ -930,9 +930,10 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
-> 	if (!vma)
-> 		return SCAN_VMA_NULL;
+On Sun, Aug 24, 2025 at 02:06:23AM +0100, Al Viro wrote:
+> On Sat, Aug 23, 2025 at 07:52:08PM +0530, Prithvi Tambewagh wrote:
+> > Add documentation for the 'name' parameter in name_contains_dotdot()
+> > 
+> > Signed-off-by: Prithvi Tambewagh <activprithvi@gmail.com>
 > 
->+	/* Always check the PMD order to insure its not shared by another VMA */
-> 	if (!thp_vma_suitable_order(vma, address, PMD_ORDER))
-> 		return SCAN_ADDRESS_RANGE;
->-	if (!thp_vma_allowable_order(vma, vma->vm_flags, type, PMD_ORDER))
->+	if (!thp_vma_allowable_orders(vma, vma->vm_flags, type, orders))
-> 		return SCAN_VMA_CHECK;
-> 	/*
-> 	 * Anon VMA expected, the address may be unmapped then
-
-Below is a comment, "thp_vma_allowable_order may return".
-
-Since you use thp_vma_allowable_orders, maybe we need to change the comment
-too.
-
->@@ -1134,7 +1135,8 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
-> 		goto out_nolock;
+> Out of curiosity, could you describe the process that has lead to
+> that patch?
 > 
-> 	mmap_read_lock(mm);
->-	result = hugepage_vma_revalidate(mm, address, true, &vma, cc);
->+	result = hugepage_vma_revalidate(mm, address, true, &vma, cc,
->+					 BIT(HPAGE_PMD_ORDER));
-> 	if (result != SCAN_SUCCEED) {
-> 		mmap_read_unlock(mm);
-> 		goto out_nolock;
->@@ -1168,7 +1170,8 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
-> 	 * mmap_lock.
-> 	 */
-> 	mmap_write_lock(mm);
->-	result = hugepage_vma_revalidate(mm, address, true, &vma, cc);
->+	result = hugepage_vma_revalidate(mm, address, true, &vma, cc,
->+					 BIT(HPAGE_PMD_ORDER));
-> 	if (result != SCAN_SUCCEED)
-> 		goto out_up_write;
-> 	/* check if the pmd is still valid */
->@@ -2807,7 +2810,7 @@ int madvise_collapse(struct vm_area_struct *vma, unsigned long start,
-> 			mmap_read_lock(mm);
-> 			mmap_locked = true;
-> 			result = hugepage_vma_revalidate(mm, addr, false, &vma,
->-							 cc);
->+							 cc, BIT(HPAGE_PMD_ORDER));
-> 			if (result  != SCAN_SUCCEED) {
-> 				last_fail = result;
-> 				goto out_nolock;
->-- 
->2.50.1
->
+> The reason why I'm asking is that there had been a truly ridiculous
+> amount of identical patches, all dealing with exact same function.
+> 
+> Odds of random coincedence are very low - there's quite lot of
+> similar places, and AFAICS you are the 8th poster choosing the
+> same one.
+> 
+> I would expect that kind of response to a "kernel throws scary
+> warnings on boot for reasonably common setups", but for a comment
+> about a function being slightly wrong this kind of focus is
+> strange.
+> 
+> If that's some AI (s)tool responding to prompts along the lines of
+> "I want to fix some kernel problem, find some low-hanging fruit
+> and gimme a patch", we might be seeing a small-scale preview of
+> a future DDoS with the same underlying mechanism...
 
--- 
-Wei Yang
-Help you, Help me
+You do know that kernel-doc warns about this, right?
+
+    $ ./scripts/kernel-doc -v -none include/linux/fs.h
+    [...]
+    Warning: include/linux/fs.h:3287 function parameter 'name' not described in 'name_contains_dotdot'
+
+It's the only warning in include/linux/fs.h.
+
+- Eric
 
