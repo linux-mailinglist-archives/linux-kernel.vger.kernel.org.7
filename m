@@ -1,109 +1,152 @@
-Return-Path: <linux-kernel+bounces-783455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A3E1B32DD0
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:49:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F724B32DD2
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39EBB482A82
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 06:49:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F20834831F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 06:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD4923D2A3;
-	Sun, 24 Aug 2025 06:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415AE2253E9;
+	Sun, 24 Aug 2025 06:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rq7MKQTA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VM0+Xttm"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB81D26AF3;
-	Sun, 24 Aug 2025 06:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E573419CCEC;
+	Sun, 24 Aug 2025 06:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756018177; cv=none; b=AKW+CqQV5SJDmaPmTgyxVTLRX2RE7h/x9VAYahYDxszOQCcxupF7xjTUNENsag6CSKC7qoN+ZMFq7Ss9129tVnaNXCcLxWwyCvYTvuED0ODHHZyoaPve/R3JhRXWDVeuqdCAakEoDIPRFr7Q/D5DBcsNDEERnUG/MxA+VRweluU=
+	t=1756018412; cv=none; b=Ilps86Pc1hSpQBAt4OhaEuJNg1ud+akowkILJFuAjA9Vm/CmvXMpcaZTfUGW9nrSfwB94bxPcay1Wc/Q9F5MlrSrSvxmRVdlL8Be6iGF2En3yxZNknwplebNynUoisoR6ZcXSkgfjgjH/5Q7i3p7NuO0JwBq9PdzUbLZkKjFWtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756018177; c=relaxed/simple;
-	bh=vjhwqZdkiH6mHK7aTu8E7/2yCxOYf+cGyqB1mL4hPSg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VVNBgSMWrSM8StfbZcMtlPTMe+wV4N3kRlrIRZo/zwOy0U38pbq6gutpwypGoIBZoS7diD+T5B5L2PjDcJBKeLmKpTh+k02kZcdc/i0jkcoNHOk6IBD6WwmrQ1DDobQQliuaRGF0hzy8uhZh82F6toFU6kwtRm+d9/ZS0oDxAR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rq7MKQTA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F413C4CEEB;
-	Sun, 24 Aug 2025 06:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756018177;
-	bh=vjhwqZdkiH6mHK7aTu8E7/2yCxOYf+cGyqB1mL4hPSg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rq7MKQTAJ2g+4kiqJVyU1nfS9ZVcrpT5GaFP5JcyitmnN5wea2pFMVTulGINHJlEs
-	 LOKBzpzo9oHv4gckk3oyfhMGLXtzjzu1TtlDnYzL5JXxGs8noeABq6G92qs4bSnD/C
-	 Q6bp2NG2TU0b6ZSyyMjLgc9wb2e1wqOCRWOMAB7AQdDzwTsAMfcpaPSPxrHBdQCZYK
-	 qUVMNjxmBDuNFitxSJjrZnDFXPJIZ6TqTKVIZlH9mpXvKRolrDuG6n+D5RSaOHVp9+
-	 2BaGk7u5Bvq1Hm41CQnj5kAbC/i8AwgSuYadB4ZZ4bVVZZ739df27o/YqdEzppMtJo
-	 ttzKnKqZBD9tg==
-From: Daniel Gomez <da.gomez@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Kees Cook <kees@kernel.org>,
-	linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Modules fixes for v6.17-rc3
-Date: Sun, 24 Aug 2025 08:49:17 +0200
-Message-ID: <20250824064922.41894-1-da.gomez@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1756018412; c=relaxed/simple;
+	bh=opYPibA2Sr9YIXZopgqov/R7HF/4sfaIh3TYnZ6b6/M=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WsrgT87jXo33ni+c5DkyCOcDwqk9X+EfgMaYPIr4/R1WThpIGc7JcYYUwKtSRfZkOU8eo6Gk/+e+HX6Xb1U3jyV28p0IYg7bJ/zFlWMtWKS1BiGwtfIl7pbusW7M1W7auwX7xrcwZIfmeI762sRd41GtV6rj640dIqh7CeEgthw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VM0+Xttm; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55f3ec52a42so639503e87.1;
+        Sat, 23 Aug 2025 23:53:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756018409; x=1756623209; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/bXdnPZsdYDL296YXs8gclNDn06nl0Bznj+TQgOZaAc=;
+        b=VM0+Xttm/Ux/gq6jtrgL86Gx4XtYGNborDePF3lia13G1qJAXELS3fXhqoYhN17s0a
+         9zQ1oZjJjz9tla0MjHoMPkKWIdmFnODrH2lL1dMxoRP5fGv7eweG0v7vVZnMXGJYlfRr
+         NSqqc+cce/dJodzqCMXG8MwFE7EvCkcfX9nYLDhXf+DsQcwMM1fCF2yBqBdxQY0drP1x
+         emDpa2Fr/VaX27N+z7H+VJOd6j8jTT7Esv8Or/v/mQtPR4i+HggqKWw6MGz8puykbIf7
+         KvmPIFKQJ3qH6aSmQRyQjAZdkuu2EutFCIGy1H76eStCRxN+heOrbyvTQz/GKXx365+e
+         vC1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756018409; x=1756623209;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/bXdnPZsdYDL296YXs8gclNDn06nl0Bznj+TQgOZaAc=;
+        b=g2PYNwLMdtC6gndEUBb20oqiu/ho4Z8nhXjrkCjqB5rfLVYqlSLyC5AY7C30DuxgQi
+         LprBA2CY3ahoBPILtITUNe0XPo6sSFUi9ghVU7fpqibI/CPWPEgGVF8yL2zaUZMdfKAn
+         VFaQ5wct2LCxEogSfkXHkDFOjeLg2OzCvOYdwQBUEYfQG8nYxesH2pzPn/6xp1QPov09
+         T48HF8lfkFolmW5szwMgwCj8EDZfJgGBiLQl2qL7jfjq5Dbk4aiciRS3HwbanXFvCBx7
+         wwhWEwCsCawjPi20BO2fjBdUyRTfQaK8Ywq22XwO4Mm2NHmDosQoHTUqovLbJ0/e9W6l
+         n5cA==
+X-Forwarded-Encrypted: i=1; AJvYcCWowF17Htr5glN5yRkehoUsQ9+WIZMdrvsUHoWyUQNBIGmXBlf0tG7Aoin7D4U6woGt6M/ReQkNkBOeXoEB/FI5@vger.kernel.org, AJvYcCXQmhtSC9f6d2eFcx3t1bOdywz6QyWf4HRVH82KeakUyumqywTCMGdJ5ARICL8EMHUQeQmpBivNaEg5hTg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWsp3dKUVqGkOwQBUNonbWfZq0puKhjAsJ9KRXRdcNhfC65hZS
+	tSRZiCZpDDm3GACvuI314T7A5p8NyOXyMG3xgwchPX9RwOSs0eye0RTVbP6Nnw==
+X-Gm-Gg: ASbGncuNnLtiwCBmHAMdw/NoZ0e56VVRH/PC/cIJr8V63gIzZrsQ8hZa1HO3EbMnI4X
+	LG7N1rq2weDxkdMwHJEx1g3g0pafRKMhKMnZdAw1JPUy/GuRJA5RN1CZWlDZLhEbpkdY4FSgpw8
+	yDactxN5yrW52SHm+OrcVX8YgUGe6GI5g5ZvXTaD/1GOZz7vyNJWhIJwD/NEx8vA2Wr6EmAgJWd
+	Mq73WFFnYK5CkeNCqYJ+j/RQ6j9yUhp1cTq6gH83F73LGbFy/uBViOxh1G7Sw2kg3KizcI+EUe1
+	EB+EgSoaF2GvD2mgZsxNQWNxBPDJJf/vXE3QHZCD3TTAjiumdkJyXkxFBzqkY2BI
+X-Google-Smtp-Source: AGHT+IH/HPvnrblsXaSYujeCUTXfUVCuyyVcsNVaDSTH8D8zOs9u2C0kscdWCGCLeYgjhPWllLFAgA==
+X-Received: by 2002:a05:6512:150b:20b0:55b:8aa7:4c1e with SMTP id 2adb3069b0e04-55f0ccfdfcamr1678570e87.53.1756018408643;
+        Sat, 23 Aug 2025 23:53:28 -0700 (PDT)
+Received: from pc636 ([2001:9b1:d5a0:a500::800])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35c8bb59sm902838e87.91.2025.08.23.23.53.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Aug 2025 23:53:28 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Sun, 24 Aug 2025 08:53:26 +0200
+To: ally heev <allyheev@gmail.com>
+Cc: skhan@linuxfoundation.org, akpm@linux-foundation.org, david@redhat.com,
+	shuah@kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kselftest: mm: fix typos in test_vmalloc.sh
+Message-ID: <aKq25rlqbyYDaWVo@pc636>
+References: <20250823170208.184149-1-allyheev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250823170208.184149-1-allyheev@gmail.com>
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+On Sat, Aug 23, 2025 at 10:32:08PM +0530, ally heev wrote:
+> Signed-off-by: ally heev <allyheev@gmail.com>
+> ---
+>  tools/testing/selftests/mm/test_vmalloc.sh | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/mm/test_vmalloc.sh b/tools/testing/selftests/mm/test_vmalloc.sh
+> index d73b846736f1..d39096723fca 100755
+> --- a/tools/testing/selftests/mm/test_vmalloc.sh
+> +++ b/tools/testing/selftests/mm/test_vmalloc.sh
+> @@ -47,14 +47,14 @@ check_test_requirements()
+>  	fi
+>  }
+>  
+> -run_perfformance_check()
+> +run_performance_check()
+>  {
+>  	echo "Run performance tests to evaluate how fast vmalloc allocation is."
+>  	echo "It runs all test cases on one single CPU with sequential order."
+>  
+>  	modprobe $DRIVER $PERF_PARAM > /dev/null 2>&1
+>  	echo "Done."
+> -	echo "Ccheck the kernel message buffer to see the summary."
+> +	echo "Check the kernel message buffer to see the summary."
+>  }
+>  
+>  run_stability_check()
+> @@ -160,7 +160,7 @@ function run_test()
+>  		usage
+>  	else
+>  		if [[ "$1" = "performance" ]]; then
+> -			run_perfformance_check
+> +			run_performance_check
+>  		elif [[ "$1" = "stress" ]]; then
+>  			run_stability_check
+>  		elif [[ "$1" = "smoke" ]]; then
+> -- 
+> 2.34.1
+> 
+> 
+./scripts/checkpatch.pl ./0001-kselftest-mm-fix-typos-in-test_vmalloc.sh.patch
+WARNING: Missing commit description - Add an appropriate one
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+total: 0 errors, 1 warnings, 24 lines checked
 
-are available in the Git repository at:
+NOTE: For some of the reported defects, checkpatch may be able to
+      mechanically convert to the typical style using --fix or --fix-inplace.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git tags/modules-6.17-rc3.fixes
+./0001-kselftest-mm-fix-typos-in-test_vmalloc.sh.patch has style problems, please review.
 
-for you to fetch changes up to 5eb4b9a4cdbb70d70377fe8fb2920b75910e5024:
+NOTE: If any of the errors are false positives, please report
+      them to the maintainer, see CHECKPATCH in MAINTAINERS.
 
-  params: Replace deprecated strcpy() with strscpy() and memcpy() (2025-08-16 21:47:25 +0200)
+Can you add a commit message?
 
-----------------------------------------------------------------
-Modules fixes for 6.17-rc3
+Thank you!
 
-This includes a fix as part of the KSPP (Kernel Self Protection Project) to
-replace the deprecated and unsafe strcpy() calls in the kernel parameter string
-handler and sysfs parameters for built-in modules. Single commit, no functional
-changes.
-
-Note that param_ops_charp still contains the last remaining strcpy() call in
-the kernel/params.c file.
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE73Ua4R8Pc+G5xjxTQJ6jxB8ZUfsFAmiqshwACgkQQJ6jxB8Z
-UfuF8Q//UVMLtvEREUM8m18u1SVDhnO9/+Dpl/bkTof+w03KviIbAN/VXm6qn3C7
-ZYtK5lDWU4twg+bOpC6EC/LdNVNyJx6cCpqkZFri21i9Yhf5ak0Sp833lWTZdqH/
-DDNCCAOuFH1EaihlJwQ/T4ox1CUOBTC49HyCBnVvdWiCCevUaPbxc8Cgsuzp/gsf
-vqXoOJCYKZD2ZdeRKgW7EgETWUljIpvjfXnb3DtMHztj92wzHPaCR50d0iBJbpZi
-3JEmrZ6FQ+sb+Qgp4VrW7ZEIa8UFGusqKVZBzJfZR61OU+iVz97gg2WptczsTZCa
-GoV0sM5MbNwaBtaMEoM40OiQWCAtYyfsIFmOH142Djcmzgs2hGFTGMKgZReDRs8B
-XiPPTq0IW5czYLoNyzJKvtoRX1qBC7wV0rxN9MY8AQieCPmhV3fQsjUgnPKwUOlV
-4U5EvzI2Qy4LL5oEUp3rEcymio/rP1wrd0dFxx/D+bMMj//PRF+9rr51deZ/tqtz
-Y0Q8rI7CYYlhg0I6XH8t2sAe2TypbU8gNGhOi23Z9vBZwtOv1e3fGTQXymopvVT4
-m50c541senApTKFHDbbck2KXwNyasdtIWCQrtChaP99Y0Lk2KRxkgYtVuCJEPNsv
-rFjyK3KnfkhhqNJEl4I8EUJwfQ1z9tUHJyfx1p0q74cShV7fRg8=
-=8/92
------END PGP SIGNATURE-----
-
-----------------------------------------------------------------
-Thorsten Blum (1):
-      params: Replace deprecated strcpy() with strscpy() and memcpy()
-
- kernel/params.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+--
+Uladzislau Rezki
 
