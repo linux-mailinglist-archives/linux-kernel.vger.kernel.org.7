@@ -1,99 +1,179 @@
-Return-Path: <linux-kernel+bounces-783513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D01B32E7A
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:51:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09742B32E85
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A7713A98A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:50:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE0BD7A578F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0331D25BF1C;
-	Sun, 24 Aug 2025 08:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EF825E813;
+	Sun, 24 Aug 2025 08:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Cm1THmRD"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="eliqVCGi"
+Received: from relay10.grserver.gr (relay10.grserver.gr [37.27.248.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1A725A62E;
-	Sun, 24 Aug 2025 08:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EAA258CF6
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 08:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.27.248.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756025450; cv=none; b=tImldpCIrmbJANCeM34whltHFqwBIFBMqQqAoQrPOVKstlzmYl4z6EBo5lGSCAOk3rO9sRjuI1ud7w7QSv6OxMZe9xtz6OIiefgq1jGP7vLfO4ISLyDMj0eu13pNE5PXNY2pQ5lg6C8Mrl/HpDnweKRQ52INd0B1V8aWQqXozAg=
+	t=1756025657; cv=none; b=KhoywoI7wZ1KP/9xfOug96gv6y3nyt/rOf9si+237ZN35CG6D49YqfBiVjwIEDE7bI6CD5iiQnD4j1bd/gxfJSpF0bEcilsL2SIYvH6zg3OPjL1brE7yB4uVtHkmfRkETpe+DuNLfZbKgTOPLr/Xm3gKT0QTvJVcsGDhaE3UNls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756025450; c=relaxed/simple;
-	bh=CkpYjhYzT2/KWwF0TVr2HosUh23kpgls4zjQskCPgbo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=TjH4Dy4WX6IVc/5Jqau6YmAISc7djB1qzbnBW/iZhCRQQl6tLJHXe4cuAzfTvU46aanddkFf2YjBfsU14AFqrzf+vOTAkTXbM0xcgU+oB3Yg6pxHUXH4HJj07qOAtAlKwMQaQDa2I7FLv+7WnXPyVtvvSaeI+iRMKNp9haLW0kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Cm1THmRD; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1756025446;
-	bh=ILGgzuvMnXWxsBogs87qNd4kdFS07ZSKw09BdW0woKQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Cm1THmRDlTl2lu+6ZqFyjrFLBeTjVUCgV5NACfBGXDQwZEhJmPsi0KTXQPNcYGoXZ
-	 vAekHXu3p5tRp86sJB6Chz8ziQ9nhHwV+KKKlDrV1TcPG/RH7w7TIECPyAQq2neQsd
-	 u2JA0iJAgeysTM3yydJb597AFWr0JDPdrVTWxn6poOtruiDhYbDGvhmCU7UNMr6BHa
-	 RBSTMIkO9u54tHUw2PLyHlDc4f+Hr8n50icSD8oFa3JEdZOIuBHPDSEd/wbXM0Zqe4
-	 liCxRG7Hbm9t1m79fU49rRDP0n/xzJghu11wSWe4wwOs9FcqIojHare1LBtw1t84h7
-	 GcW7F/20FlMSw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1756025657; c=relaxed/simple;
+	bh=lH+ldmaw73jel0wV7bENA/4AbIXPOi5XBQDzIRojaEk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dZ05+WrdgAbOSgck3q3WjAxPsjfNb2WtWuPIKCRnPbKsasSANDs+BRtM4EE2DXw8r1x9FK7Hz4fB6uA5OW8ZCzVK/LnH2gdUEgr33iygtNnB19XwNI2tgsGV87Qbyy63pht1X4RhqBgUejRVUGP0vxTnQyPBKbyFJEcX6g2V6vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=eliqVCGi; arc=none smtp.client-ip=37.27.248.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay10 (localhost.localdomain [127.0.0.1])
+	by relay10.grserver.gr (Proxmox) with ESMTP id 867434254D;
+	Sun, 24 Aug 2025 11:54:04 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c8nh62PZVz4w23;
-	Sun, 24 Aug 2025 18:50:46 +1000 (AEST)
-Date: Sun, 24 Aug 2025 18:50:45 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Paul E. McKenney" <paulmck@kernel.org>, Frederic Weisbecker
- <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Boqun
- Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the rcu tree
-Message-ID: <20250824185045.43623e9f@canb.auug.org.au>
+	(No client certificate requested)
+	by relay10.grserver.gr (Proxmox) with ESMTPS id 5275C424F3;
+	Sun, 24 Aug 2025 11:54:03 +0300 (EEST)
+Received: from antheas-z13 (unknown [IPv6:2a05:f6c2:511b:0:7200:c86a:8976:4786])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id F04821FF50F;
+	Sun, 24 Aug 2025 11:54:01 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1756025642;
+	bh=7p73rwQlDcZas67pmnu3CsWtoMOK0KKSOlcghz53mwc=; h=From:To:Subject;
+	b=eliqVCGiNIje1rJRdp4rFMm5Y1UxQymRdRYCYvRMP1Tip8bWkOMXERJtewWD5qYpo
+	 Qa+fqwc0SOLSiw+zyuQYd8B8KHJ73zIFlO01/qFcMvG3D9x2jQAAbsR3IuAEymlBU/
+	 oGs4sXPGI0CpJzTar9wIazkB6xQBPe9j0vQ2aBCd0BSibAujHrodXsweSkSiWXqqN5
+	 3MJUTSBlKo6FvLKMSkXRezu5VefFTUgMvTkk+cEuzmUlbbq0ChGh/wesk+iNmpz0+N
+	 YoWM1aqrptiVVpkjekIBej3h2QcKTvOPdzLRyfhzU7UOETN20IDY5LriHSf5n3W89j
+	 2cSc7Mf8FBiMg==
+Authentication-Results: linux3247.grserver.gr;
+	spf=pass (sender IP is 2a05:f6c2:511b:0:7200:c86a:8976:4786) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+From: Antheas Kapenekakis <lkml@antheas.dev>
+To: amd-gfx@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Harry Wentland <harry.wentland@amd.com>,
+	Rodrigo Siqueira <siqueira@igalia.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Peyton Lee <peytolee@amd.com>,
+	Lang Yu <lang.yu@amd.com>,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: [PATCH v1 1/2] drm/amdgpu/vpe: increase VPE_IDLE_TIMEOUT to fix hang
+ on Strix Halo
+Date: Sun, 24 Aug 2025 10:53:50 +0200
+Message-ID: <20250824085351.454619-1-lkml@antheas.dev>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/2lUXkKkl_qd3S0hKCdzSU+s";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: 
+ <175602564264.2903339.9036441210732909972@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
---Sig_/2lUXkKkl_qd3S0hKCdzSU+s
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On the Asus Z13 2025, which uses a Strix Halo platform, around 8% of the
+suspend resumes result in a soft lock around 1 second after the screen
+turns on (it freezes). This happens due to power gating VPE when it is
+not used, which happens 1 second after inactivity.
 
-Hi all,
+Specifically, the VPE gating after resume is as follows: an initial
+ungate, followed by a gate in the resume process. Then,
+amdgpu_device_delayed_init_work_handler with a delay of 2s is scheduled
+to run tests, one of which is testing VPE in vpe_ring_test_ib. This
+causes an ungate, After that test, vpe_idle_work_handler is scheduled
+with VPE_IDLE_TIMEOUT (1s).
 
-Commit
+When vpe_idle_work_handler runs and tries to gate VPE, it causes the
+SMU to hang and partially freezes half of the GPU IPs, with the thread
+that called the command being stuck processing it.
 
-  e5ae44cfd65e ("rculist: move list_for_each_rcu() to where it belongs")
+Specifically, after that SMU command tries to run, we get the following:
 
-is missing a Signed-off-by from its committer.
+snd_hda_intel 0000:c4:00.1: Refused to change power state from D0 to D3hot
+...
+xhci_hcd 0000:c4:00.4: Refused to change power state from D0 to D3hot
+...
+amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous command: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VPE!
+[drm:vpe_set_powergating_state [amdgpu]] *ERROR* Dpm disable vpe failed, ret = -62.
+amdgpu 0000:c4:00.0: [drm] *ERROR* [CRTC:93:crtc-0] flip_done timed out
+amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous command: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+amdgpu 0000:c4:00.0: amdgpu: Failed to power gate JPEG!
+[drm:jpeg_v4_0_5_set_powergating_state [amdgpu]] *ERROR* Dpm disable jpeg failed, ret = -62.
+amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous command: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VCN instance 0!
+[drm:vcn_v4_0_5_stop [amdgpu]] *ERROR* Dpm disable uvd failed, ret = -62.
+thunderbolt 0000:c6:00.5: 0: timeout reading config space 1 from 0xd3
+thunderbolt 0000:c6:00.5: 0: timeout reading config space 2 from 0x5
+thunderbolt 0000:c6:00.5: Refused to change power state from D0 to D3hot
+amdgpu 0000:c4:00.0: [drm] *ERROR* [CRTC:97:crtc-1] flip_done timed out
+amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous command: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VCN instance 1!
 
---=20
-Cheers,
-Stephen Rothwell
+In addition to e.g., kwin errors in journalctl. 0000:c4.00.0 is the GPU.
+Interestingly, 0000:c4.00.6, which is another HDA block, 0000:c4.00.5,
+a PCI controller, and 0000:c4.00.2, resume normally. 0x00000032 is the
+PowerDownVpe(50) command which is the common failure point in all
+failed resumes.
 
---Sig_/2lUXkKkl_qd3S0hKCdzSU+s
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+On a normal resume, we should get the following power gates:
+amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVpe(50) param: 0x00000000, resp: 0x00000001
+amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownJpeg0(33) param: 0x00000000, resp: 0x00000001
+amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownJpeg1(38) param: 0x00010000, resp: 0x00000001
+amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVcn1(4) param: 0x00010000, resp: 0x00000001
+amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVcn0(6) param: 0x00000000, resp: 0x00000001
+amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpVcn0(7) param: 0x00000000, resp: 0x00000001
+amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpVcn1(5) param: 0x00010000, resp: 0x00000001
+amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpJpeg0(34) param: 0x00000000, resp: 0x00000001
+amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpJpeg1(39) param: 0x00010000, resp: 0x00000001
 
------BEGIN PGP SIGNATURE-----
+To fix this, increase VPE_IDLE_TIMEOUT to 2 seconds. This increases
+reliability from 4-25 suspends to 200+ (tested) suspends with a cycle
+time of 12s sleep, 8s resume. The suspected reason here is that 1s that
+when VPE is used, it needs a bit of time before it can be gated and
+there was a borderline delay before, which is not enough for Strix Halo.
+When the VPE is not used, such as on resume, gating it instantly does
+not seem to cause issues.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiq0mUACgkQAVBC80lX
-0Gx5aAf/WvaC30d89PP/Q2qgwid3cMrcWmJymm6u08UdY5EBnsEqeWnoj2ajquUK
-Ne2EFZJFo0nEcQBdSNs61Zsqv05Ikf/tAa9cQOqTojarEHfQZ6I7Ntm2NVnJkyLc
-VBHqX9flf0OAViyOy0vyGf0hlyaFHAdAxZgqaolhAzfP0Rr6Q6NGhpX4OeBH+3TR
-6tVQ0sF53UEZxkUKlr9g9GCVDNkDXi+oN4ddjnNBlcg4DG6kA96jtH3zPvFRU2zy
-65LfYfuhwnbTgXqO3O9bSMRGQ81RJ6Omo9hNCL/d0s3yBUpq735KZFs13zmyTs4N
-X47xlQb5rRXcQND7+GBdxI9LZBbCDQ==
-=8BUZ
------END PGP SIGNATURE-----
+Fixes: 5f82a0c90cca ("drm/amdgpu/vpe: enable vpe dpm")
+Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---Sig_/2lUXkKkl_qd3S0hKCdzSU+s--
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c
+index 121ee17b522b..24f09e457352 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c
+@@ -34,8 +34,8 @@
+ /* VPE CSA resides in the 4th page of CSA */
+ #define AMDGPU_CSA_VPE_OFFSET 	(4096 * 3)
+ 
+-/* 1 second timeout */
+-#define VPE_IDLE_TIMEOUT	msecs_to_jiffies(1000)
++/* 2 second timeout */
++#define VPE_IDLE_TIMEOUT	msecs_to_jiffies(2000)
+ 
+ #define VPE_MAX_DPM_LEVEL			4
+ #define FIXED1_8_BITS_PER_FRACTIONAL_PART	8
+
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+-- 
+2.50.1
+
+
 
