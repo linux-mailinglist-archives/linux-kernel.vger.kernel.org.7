@@ -1,152 +1,113 @@
-Return-Path: <linux-kernel+bounces-783550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52EC7B32EE1
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:59:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A59B32EE7
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C1462041BA
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:59:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E93751B637CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C858926CE32;
-	Sun, 24 Aug 2025 09:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DF42367DF;
+	Sun, 24 Aug 2025 10:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FxXFUOSu"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UEoozia2"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A140269806
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 09:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B35D38DD8
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 10:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756029523; cv=none; b=Zby6Scu4gw9vFQ1//DRmoh6LykOTY/VCJQbHdHQB0BlTSNatq/SPNgBL/92IZQiDUJittW70VS3X4lJzmK6NVIj25Ea0lNoDGl6sR9wY+z+FhRqw7+OWti9bgJ3meaPy7mEs2vF0bmm3t+lCQpUDbp0ak+Ig/Ibac8UNlbA1CG8=
+	t=1756029753; cv=none; b=itJbLTc7qq9yTNUQ8v0j28V6zQ8xZ1r/rNU4tche9Lvu6pgSdLvT6OumZ0EbCAcMcmzWH7Kpv4Y6cwTR4WNyXzCus8gczL4h/tWMaRWYk3ruWmwC/HDnSsmJ9lQHjXS5g76HljsbVMpEmq2ZbuwJXT/rwX6fjoRhX3io5F3BSHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756029523; c=relaxed/simple;
-	bh=qCuohedTig+dBflD+bJqbTY8MVe0rkaexM5kYM0D4ww=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VGk2U7kIbiMcXoLfXMYlgV8Oj3oP0cvIpmvNMojYXqG6EdUXFg/yk7otU+UlFfO90FrntFPQ0qDWsJRfmLCoOzSZwLS0ABED4/OC0cIPTUBw25aGWI9cd8sp42LY2g6/AvyoHhACrgIl50bQm9+qzGJ0mLchebLReHD9wTMH9hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FxXFUOSu; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7a0442bso553655566b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 02:58:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756029519; x=1756634319; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DvYsuGKgwDJ3CdZTywUVsaFMO2gJDf2toz0PGf3ll9M=;
-        b=FxXFUOSu640QA8VBpmhks0HmKGXVtBtaQ7rWaecww9ni7pk6Pyu0fe+BWKux5YG8b7
-         pXuMoliOeYjIVxoCiVWDV/imsu+1UOP67hrfGYEj/wM+8P2y8VdJVTksfvmwRTPf7iZD
-         6N3PJw5xryfQlpz0wFxw25VzV8T5+TqqcbOtM337OjgiHCyqlrdGArhEgVYBbe4hMEm4
-         qEg3YUkS+2QziWRBljvzlVb9joKinsE6ZOYh9wanQTzvHFCPgxdQgpkHsPnM+rLg40Gl
-         EjPa4ztQFJiXi6rGqaZDpPpyImct7Z4ecJesMnqelMgXowjQMM2/WLHH3O9OE0Qm4IK7
-         Ct3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756029519; x=1756634319;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DvYsuGKgwDJ3CdZTywUVsaFMO2gJDf2toz0PGf3ll9M=;
-        b=WAj5Is5/mryB9JJ8I/CTO3YqL5wUMJDBPz/kmST9wMc7kAap30dtn+ns34F+nEwTAg
-         NIFydM8eLsE5m26xeddq+oulWKZ7tZ9jurQS4aJlISNc+eEz01CcyU3b4IUvxFMritq2
-         BETSf74gVWIZe8zEJlHtApWHvr7XKximrz394dEq/PAwb6JroQPjY77yBzvurWnmaXg2
-         CxSdreEn/BFU7aQknUSUTQVjb1MG9tmevulWvaqaRdn+DJ/vcsVGw5DkRCHTI4DyV010
-         X3RQaZdCNH50T6arzNHD/W+dqhAVtQLwp7aXf+zmj14WPn7HHSYKzlMh9PNPaNYAydeM
-         bfgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrHeeEFVZzD2i5LFMtcxuqpKU9q6MI50csul8wDTx84DcI2bRimyiGRPmRZD4RoXfuSI2s6cH+AopNVU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+dpWm+T4TKGhCzfdo2dyxyQKm/tNG3rFYTDKBJMNicHp2aEwm
-	lQiAv/E+dU4vO1wQFUB5yzfNO+MQBUjlh9Oos/fRbwuILPisdzqCOBR6jFb1eg==
-X-Gm-Gg: ASbGncuCzx/+pQtfYYmkj/DhZRQ7u6WOYRYMfv/NB2H26LwEgLyQW/j50UjivqN1Oq2
-	oy8EEqGPRPjL7FZ9nYL6t+aHH8A7UhLUv+vwFH8pArPIqpeYx4rmldp3nanEE1WPt7CVnW7ofrv
-	/Q2jhCiEdGh1/Av5Bc3bLYK8k9Mwr85jPaUIMdaJT3SAtnz/EWTMnM1zlQO2hfn4lWyBq/DSIcR
-	n/nhWo1P/5C3P9NXvgGIeK4AZPf77jzWkex8GKL2hkmTIcaIlBRlBb+RCO7Ghco6Lx2lCBwFcmT
-	bjuNBQgrZxyKR8S3U36HnDQArFYCEy/x4HytxWng183sWLR9wmMiWkFNrtVwon7+RjRLVZtuIoP
-	MHHYSMFuySRZDXDFQpXY9JnL+tw==
-X-Google-Smtp-Source: AGHT+IHUgjHdJG8CmX711Go0qGjiVzBIzdUGCqALRPhnVIpluUA/K+SKc88aZMbU60nTK1rgX0/ztg==
-X-Received: by 2002:a17:907:3f08:b0:ae6:f163:5d75 with SMTP id a640c23a62f3a-afe28ffbfcemr819307966b.11.1756029519535;
-        Sun, 24 Aug 2025 02:58:39 -0700 (PDT)
-Received: from tumbleweed ([95.90.184.246])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe79fba62dsm41314766b.100.2025.08.24.02.58.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Aug 2025 02:58:39 -0700 (PDT)
-From: Michael Straube <straube.linux@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: hdegoede@redhat.com,
-	Larry.Finger@lwfinger.net,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 4/4] staging: rtl8723bs: Hal_EfuseParseAntennaDiversity_8723B is empty
-Date: Sun, 24 Aug 2025 11:58:30 +0200
-Message-ID: <20250824095830.79233-5-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250824095830.79233-1-straube.linux@gmail.com>
-References: <20250824095830.79233-1-straube.linux@gmail.com>
+	s=arc-20240116; t=1756029753; c=relaxed/simple;
+	bh=2dcmlvELu4rw4MZISnvIq+cRxY5IGO6Gvsi7jo5G9Bs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=B3OdA0VJPgMFbPbfAxpzWmoRYAdXeZOLGnx98ff+QO8Cc1v3Qrbs04Guee68c0F1aIXARAAwo+eMV/zN7Rm+jRzzTGjffQ0frIJs/ihwMrrKqX/rlqqcOFe5tZBeHlQKUYpCrt70x7RcKMITaicBbJFj1mcXJgjH7aeJ+OJIm1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UEoozia2; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 820F240E01A1;
+	Sun, 24 Aug 2025 10:02:19 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id S9g2mNWSsoGa; Sun, 24 Aug 2025 10:02:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756029729; bh=OfE84+rboBPcQ/xSTYsXBDBTV/3kO+8pH+45f19+eAs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=UEoozia2WjvpqwGRVJtWnsgTyr3MHOBz+nc9iCdDkFGTFzioQpS4EQcbehDxwf9qC
+	 jIXWUetx7tObGe+YoO6BDqDsM0mcm5vla+4ImMmd44mB+g2ihVczCq79axPdSuROsp
+	 eQxYixnRsuMn7Vg8lzzaNuxSBB1JBZROMxvmGbj0ILbJ55tc2yzv8fXqva5ydMo2T2
+	 pZi3UeAbk6X5s3SIqsf8GLtVbzHbZmWJZ5wh7XfuA4bd4irPQG9HtlT4LgNBbl8cyr
+	 T/7RthtpoS66uZFxxgzwt61ez5pi7a9z37oDdPnclPwRafcC2bL7rstztaX9UF6LxU
+	 M4vrqh/cxZDmVhXgJekESf3OTg1HkeFpT3AIKKbO5NIKf+M3bPnF0HcsC6zCBIFowo
+	 9ZpM/h/ZwNJdtiaN7y8QMn7NHhWX56l8mZ1+5XBKWmgQkbZP1A/TZjwvfpuLeZ01Sb
+	 ehERy0LMsYHJxrYUQClrkBTbXbRM/IZtdoYjZc5f60b039Fq1yo7hfQ2ZaFHxBaQW9
+	 57Zexew7fTAyz8oeVxkx5ATLvQIzd4MY8qAAZtNCbmicYfDB9CTyKr6nzyOOz7s3uz
+	 EwgtTi4eFBsEPMpWquQJ3ePHIUX5Bva3SJEIwVUkNO+/Qysor6SDdp+tVWESM5DmjK
+	 4kaDcF6bMUzZgHk8S9Fsjywk=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 84BBE40E019D;
+	Sun, 24 Aug 2025 10:02:06 +0000 (UTC)
+Date: Sun, 24 Aug 2025 12:01:58 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] perf/urgent for v6.17-rc3
+Message-ID: <20250824100158.GAaKrjFoDe38nh-ZWl@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-The function Hal_EfuseParseAntennaDiversity_8723B is empty, remove it.
+Hi Linus,
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
+please pull a perf/urgent fix for v6.17-rc3.
+
+Thx.
+
 ---
- drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 8 --------
- drivers/staging/rtl8723bs/hal/sdio_halinit.c      | 1 -
- drivers/staging/rtl8723bs/include/rtl8723b_hal.h  | 2 --
- 3 files changed, 11 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-index 45cd2291f83d..18244adad9e0 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-@@ -1511,14 +1511,6 @@ void Hal_EfuseParseCustomerID_8723B(
- 		pHalData->EEPROMCustomerID = 0;
- }
- 
--void Hal_EfuseParseAntennaDiversity_8723B(
--	struct adapter *padapter,
--	u8 *hwinfo,
--	bool AutoLoadFail
--)
--{
--}
--
- void Hal_EfuseParseXtal_8723B(
- 	struct adapter *padapter, u8 *hwinfo, bool AutoLoadFail
- )
-diff --git a/drivers/staging/rtl8723bs/hal/sdio_halinit.c b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-index 73561a63401e..7fcb874d0eb3 100644
---- a/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-+++ b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-@@ -1071,7 +1071,6 @@ static void _ReadEfuseInfo8723BS(struct adapter *padapter)
- 	Hal_EfuseParseChnlPlan_8723B(padapter, hwinfo, pEEPROM->bautoload_fail_flag);
- 	Hal_EfuseParseXtal_8723B(padapter, hwinfo, pEEPROM->bautoload_fail_flag);
- 	Hal_EfuseParseThermalMeter_8723B(padapter, hwinfo, pEEPROM->bautoload_fail_flag);
--	Hal_EfuseParseAntennaDiversity_8723B(padapter, hwinfo, pEEPROM->bautoload_fail_flag);
- 	Hal_EfuseParseCustomerID_8723B(padapter, hwinfo, pEEPROM->bautoload_fail_flag);
- 
- 	Hal_EfuseParseVoltage_8723B(padapter, hwinfo, pEEPROM->bautoload_fail_flag);
-diff --git a/drivers/staging/rtl8723bs/include/rtl8723b_hal.h b/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
-index 40ff96d3cf74..2ed1fc8549ec 100644
---- a/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
-+++ b/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
-@@ -210,8 +210,6 @@ void Hal_EfuseParseChnlPlan_8723B(struct adapter *padapter, u8 *hwinfo,
- 				  bool AutoLoadFail);
- void Hal_EfuseParseCustomerID_8723B(struct adapter *padapter, u8 *hwinfo,
- 				    bool AutoLoadFail);
--void Hal_EfuseParseAntennaDiversity_8723B(struct adapter *padapter, u8 *hwinfo,
--					  bool AutoLoadFail);
- void Hal_EfuseParseXtal_8723B(struct adapter *padapter, u8 *hwinfo,
- 			      bool AutoLoadFail);
- void Hal_EfuseParseThermalMeter_8723B(struct adapter *padapter, u8 *hwinfo,
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/perf_urgent_for_v6.17_rc3
+
+for you to fetch changes up to b64fdd422a85025b5e91ead794db9d3ef970e369:
+
+  perf: Avoid undefined behavior from stopping/starting inactive events (2025-08-15 13:12:56 +0200)
+
+----------------------------------------------------------------
+- Fix a case where the events throttling logic operates on inactive events
+
+----------------------------------------------------------------
+Yunseong Kim (1):
+      perf: Avoid undefined behavior from stopping/starting inactive events
+
+ kernel/events/core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+
 -- 
-2.51.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
