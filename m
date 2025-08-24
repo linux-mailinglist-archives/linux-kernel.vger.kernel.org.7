@@ -1,60 +1,94 @@
-Return-Path: <linux-kernel+bounces-783537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DEEDB32EC1
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:25:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1275B32D66
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 05:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52FE07AFA82
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:24:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEF6E17E31A
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 03:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3DB5261B70;
-	Sun, 24 Aug 2025 09:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2143FF1;
+	Sun, 24 Aug 2025 03:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="HfBMHENu"
-Received: from mail-m15595.qiye.163.com (mail-m15595.qiye.163.com [101.71.155.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H1GyrSCy"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDCB1C7017
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 09:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0160119CCEC;
+	Sun, 24 Aug 2025 03:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756027541; cv=none; b=Gwe64/Jh1sO81ekcEs4XkAw5Yh1c72BuyV9qv5rxy9qjwwCswj3+ViIpKb9YGOfBFuz15ZmPOGywPksaDwhFX9YYDTxKolYrVeFBifrCWJdVwT9Tcht6oNOUOiWgJKA1fxvxHOrXwJVa/kYA2W6yi6OO9ELXf2aKo7mjPYDfuCM=
+	t=1756007120; cv=none; b=Zu8y4/cGb12xGhsdjSDL/IWMUjMtLE+1jVrvdDMEcplyo9j9qrVgOwAH7asIP4vBMNWuVdhx6b4ohiF9kjyDTXG3/cddGl9HauqmOclGFvik+fT6hG1vsuNWtSimZwHIK++hoRW7sTKX2xj3uv9pCGXicj7b6+9GlyMejTJSphM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756027541; c=relaxed/simple;
-	bh=ej+R/Oq3T7y6fNL0qyF8mHT/g0H5M6S7pqVpNiyohsw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ah/UTDHqBz+EO37F6RLXNEljkUHtFcaq3YdIgiSnES3zE3RXGl/AHkV4ZRYq0qJlpdEhem/IY8Gvmz/+DYJmOaPhR/Z+NUgfetKDqqyQbX8XsAbN5Q4Vei1D2GEP65JktLQf2AILAReXPSY+db1M6aDP+5A/FhgphwMQuWU+mTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=HfBMHENu; arc=none smtp.client-ip=101.71.155.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2061d68a8;
-	Sun, 24 Aug 2025 11:42:47 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dmitry.baryshkov@oss.qualcomm.com,
-	dianders@chromium.org,
-	m.szyprowski@samsung.com,
-	andy.yan@rock-chips.com,
-	dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1756007120; c=relaxed/simple;
+	bh=Fobfznerq163i338BAGNATR36BkRUL2Fo6o5aL4g2TQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cssb3/GKZ7Md7jqvkYJpiXf2q1y12MzVC7EhN3mlrqB/76a6CX3z/Zs21TPKdVQfmmeDod1ZMB6NfPojHCzufFsVDH+JlUEGOQzoX5hUPjJShNircJYlqauRWo2oLjr4OHHsQPtnLjKlvqWnxiZrqkzSF+9UIpQcWxSy5+EZRHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H1GyrSCy; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b476c67c5easo2081223a12.0;
+        Sat, 23 Aug 2025 20:45:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756007118; x=1756611918; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7KqycpELhCWaVApA3dTlAE5icBtVyPG6RcdSJ5TYwHo=;
+        b=H1GyrSCyxiydizqLNpnrKEpvzbOmHsWh/VMxV29KQYfx3o9mmhKrPfpxcHNlPgEuaK
+         2xtxuV6UvqjUwT4dQSyDPRWi/+r7cOWHPwDb4CcWs+c6THcxPF4Ztiw+J+vjLZebYuLw
+         EW25so1y6dfBfb8c4wxSw9xjRB7WoY4Vxe7mC25XGOcRQ82/bchEd7BNDSUJBb+wpG17
+         VtLwDMKy+sW7k9vCVVBlepO+Sf71f1TCryoVUbV8AAG4P/DanXwFyg8ZgHAP5alQJrEq
+         gP55t0cNxiEMIi9BAs1dN1iG7kIgwWp9GKWe3/qU18Az1hYfZEhgLmFR/0aeQrExfovW
+         w2xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756007118; x=1756611918;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7KqycpELhCWaVApA3dTlAE5icBtVyPG6RcdSJ5TYwHo=;
+        b=p4EPvY7oMe5+0NAU2L64H9O3dWY9ekvdAL17yBK3ZgO5E8yO3jOZHFFDq8si5jyJnF
+         XEiNzrqKPzjc8RhL7d14BM5FTMkEafPB7lH96+BCmLj03n63S7WySKJgbc0heomIcz/H
+         vxdmHQ3ZnRwJ+ESXRi85DeFUVs3uSO0XlWJr7VhB5uYwwrzo2f4gIepG2UWGobkCuOvC
+         G9xsXG+zN8lzh3eIx9oiF/MVV+/n3DGao5bWeOS8EvcJ771SVfKVtoWwG1DyY3OYkcd3
+         o/7TgA2qEjCH8fKt/DZZL9WVNyjcXM4qEDAaSu9bYG7w/p4AvPB1V/DG43MhXfi83Dra
+         IKhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUegiYD3Thm5nYRbxNWtVxpJFY1JWbe1fp08jcoizSZwoZLU8xaE+m6LnKcE2wd++6fdDR9oixGoLY=@vger.kernel.org, AJvYcCUk6UFpXICTkpSVfR6JJZqPGBAnOdaxGqBZfIJtI9vr2wM6ENUVdXfw/+8OVacDnksQlaS+Z1o+6QK0YQWb@vger.kernel.org, AJvYcCVUo3n52Z1DYq5JaoNKXJonmQxiom1Vd941l8X4HkJrIWiM7xuGIj6WGofvBJC+wZk/OFGdP54UPYY68Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNeNy2a2EF2oV6/vp11f50jw2+AjOjcuxcuisZjs+s+5uTunw3
+	TOAYDgpMX1nbs+8O9nASFfiDxNyZfu5sBGp1Qm0mgjhn2RXQUzKxN7w2I/IwgQvp
+X-Gm-Gg: ASbGncvQDAj2SEDakOYsny2hp2Bi7RKHrQymDgV1JiRLXMiCuVNaT7ludMNb7rnJ+Yl
+	jQAkqKo6kBZM6SGYjsPBnvNwaqlmZL8gNhe0WGrd2NUkpihTtIYfKusFWDQ2PD/5m+x8K5dQT2J
+	8aC6ySRFYOrEC6NN30FOGTrg4kiPmYVLUpo/TpUrDAcTIZj4KIBbOBKXiJzugrzlMvohx4OiO+z
+	zQ/IH8cMqrjaXOltp0uLQvWz6pGfl0o7g/5UMbi+qoS63BURcB3AVks+ogauGS5mYpbjmNg92uN
+	Hfovf2cxHm3sttvGrCwlXCDeJfdForevkIBtQoyUarBynjYGxbHL2PcrpVx7PhbHTPxV2G0++U0
+	4d0OukeCwXCYSZIR9Lu5f9rAaKxvcpZCiqsrdkd/Dbj/rrWYiPDsH8g==
+X-Google-Smtp-Source: AGHT+IHhhmvTD0z6paM5o8siIs3IUwj8S/aQcL+EZ/xGaDk7HxEkYscU/Ezyh2RqpPyvpIhDvynD9g==
+X-Received: by 2002:a17:902:f711:b0:246:a8c3:99fe with SMTP id d9443c01a7336-246a8c3b8e1mr15090055ad.9.1756007117716;
+        Sat, 23 Aug 2025 20:45:17 -0700 (PDT)
+Received: from 100ask.localdomain ([116.234.74.152])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24668896cb9sm33474565ad.133.2025.08.23.20.45.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Aug 2025 20:45:17 -0700 (PDT)
+From: Nino Zhang <ninozhang001@gmail.com>
+To: devicetree@vger.kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	vkoul@kernel.org,
+	rahulbedarkar89@gmail.com,
+	linux-mips@vger.kernel.org,
+	dmaengine@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v1] drm/bridge: analogix_dp: Reuse &link_train.training_lane[] to set DPCD DP_TRAINING_LANEx_SET
-Date: Sun, 24 Aug 2025 11:41:38 +0800
-Message-Id: <20250824034138.3207855-1-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
+	Nino Zhang <ninozhang001@gmail.com>
+Subject: [PATCH v2] dt-bindings: dma: img-mdc-dma: convert to DT schema
+Date: Sun, 24 Aug 2025 11:45:09 +0800
+Message-ID: <20250824034509.445743-1-ninozhang001@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250821150255.236884-1-ninozhang001@gmail.com>
+References: <20250821150255.236884-1-ninozhang001@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,50 +96,192 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a98da2be6d203a3kunme50173fe286e82
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkhOTlZCTB9DSx1KHx5MQ05WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=HfBMHENuq1cOiPb6Rcqorn47hRqYt1a5mik2233TjXGi3lq2rCbIw+mrvigLBzFaSwOUEc2htBvTLIBb/QwomabZND9vvREe7u6fNwrz3t9woYfHUbOoIKST21gd5aKDFqYQgknstbuQTRRO3Bt1l4tA8zLbvf4oAcYGus3awjk=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=NUUE6zxynpgWq/cJHFAolsgWAo9l5vDKKEudpxIVWow=;
-	h=date:mime-version:subject:message-id:from;
 
-In analogix_dp_link_start(), &link_train.training_lane[] is used to
-set phy PE/VS configurations, and buf[] is initialized with the same
-values to set DPCD DP_TRAINING_LANEx_SET.
+Convert the img-mdc-dma binding from txt to YAML schema.
+No functional changes except dropping the consumer node
+(spi@18100f00) from the example, which belongs to the
+consumer binding instead.
 
-It makes sense to reuse &link_train.training_lane[] to set DPCD
-DP_TRAINING_LANEx_SET, which can remove the redundant assignments
-and make codes more consice.
-
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+Signed-off-by: Nino Zhang <ninozhang001@gmail.com>
 ---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Changes since v1:
+- All review comments addressed.
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index ed35e567d117..ec8443d66075 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -281,12 +281,8 @@ static int analogix_dp_link_start(struct analogix_dp_device *dp)
- 	if (retval < 0)
- 		return retval;
- 
--	for (lane = 0; lane < lane_count; lane++)
--		buf[lane] = DP_TRAIN_PRE_EMPH_LEVEL_0 |
--			    DP_TRAIN_VOLTAGE_SWING_LEVEL_0;
+Open:
+- Maintainers: set to Rahul Bedarkar + linux-mips per MAINTAINERS entry
+  for Pistachio/CI40 device tree. This seems the closest match to the
+  hardware. Happy to adjust if platform maintainers suggest otherwise.
+- img,max-burst-multiplier: defined as uint32. A minimum of 1 is used to
+  exclude the invalid case of 0, but the actual supported range has not
+  been confirmed in available documentation. Example uses 16. A maximum
+  will be added once confirmed by platform maintainers or hardware docs.
+
+ .../bindings/dma/img,pistachio-mdc-dma.yaml   | 90 +++++++++++++++++++
+ .../devicetree/bindings/dma/img-mdc-dma.txt   | 57 ------------
+ 2 files changed, 90 insertions(+), 57 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml
+ delete mode 100644 Documentation/devicetree/bindings/dma/img-mdc-dma.txt
+
+diff --git a/Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml b/Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml
+new file mode 100644
+index 000000000000..4dde54a17f52
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml
+@@ -0,0 +1,90 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/dma/img,pistachio-mdc-dma.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: IMG Multi-threaded DMA Controller (MDC)
++
++maintainers:
++  - Rahul Bedarkar <rahulbedarkar89@gmail.com>
++  - linux-mips@vger.kernel.org
++
++allOf:
++  - $ref: /schemas/dma/dma-controller.yaml#
++
++properties:
++  compatible:
++    const: img,pistachio-mdc-dma
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    minItems: 1
++    maxItems: 32
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: sys
++
++  img,cr-periph:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: >
++      Phandle to peripheral control syscon node with DMA request to channel
++      mapping registers.
++
++  img,max-burst-multiplier:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 1
++    description: >
++      Maximum supported burst size multiplier. The maximum burst size is this
++      value multiplied by the hardware-reported bus width.
++
++  "#dma-cells":
++    const: 3
++    description: |
++      DMA specifier cells:
++        1: peripheral's DMA request line
++        2: channel bitmap: bit N set indicates channel N is usable
++        3: thread ID to be used by the channel
++
++  dma-channels:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 1
++    maximum: 32
++    description: Number of supported DMA channels (defaults to HW-reported value)
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - img,cr-periph
++  - img,max-burst-multiplier
++  - "#dma-cells"
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/mips-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    dma-controller@18143000 {
++      compatible = "img,pistachio-mdc-dma";
++      reg = <0x18143000 0x1000>;
++      interrupts = <GIC_SHARED 27 IRQ_TYPE_LEVEL_HIGH>,
++                   <GIC_SHARED 28 IRQ_TYPE_LEVEL_HIGH>;
++      clocks = <&system_clk>;
++      clock-names = "sys";
++
++      img,max-burst-multiplier = <16>;
++      img,cr-periph = <&cr_periph>;
++
++      #dma-cells = <3>;
++    };
+diff --git a/Documentation/devicetree/bindings/dma/img-mdc-dma.txt b/Documentation/devicetree/bindings/dma/img-mdc-dma.txt
+deleted file mode 100644
+index 28c1341db346..000000000000
+--- a/Documentation/devicetree/bindings/dma/img-mdc-dma.txt
++++ /dev/null
+@@ -1,57 +0,0 @@
+-* IMG Multi-threaded DMA Controller (MDC)
 -
--	retval = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET, buf,
--				   lane_count);
-+	retval = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET,
-+				   dp->link_train.training_lane, lane_count);
- 	if (retval < 0)
- 		return retval;
- 
+-Required properties:
+-- compatible: Must be "img,pistachio-mdc-dma".
+-- reg: Must contain the base address and length of the MDC registers.
+-- interrupts: Must contain all the per-channel DMA interrupts.
+-- clocks: Must contain an entry for each entry in clock-names.
+-  See ../clock/clock-bindings.txt for details.
+-- clock-names: Must include the following entries:
+-  - sys: MDC system interface clock.
+-- img,cr-periph: Must contain a phandle to the peripheral control syscon
+-  node which contains the DMA request to channel mapping registers.
+-- img,max-burst-multiplier: Must be the maximum supported burst size multiplier.
+-  The maximum burst size is this value multiplied by the hardware-reported bus
+-  width.
+-- #dma-cells: Must be 3:
+-  - The first cell is the peripheral's DMA request line.
+-  - The second cell is a bitmap specifying to which channels the DMA request
+-    line may be mapped (i.e. bit N set indicates channel N is usable).
+-  - The third cell is the thread ID to be used by the channel.
+-
+-Optional properties:
+-- dma-channels: Number of supported DMA channels, up to 32.  If not specified
+-  the number reported by the hardware is used.
+-
+-Example:
+-
+-mdc: dma-controller@18143000 {
+-	compatible = "img,pistachio-mdc-dma";
+-	reg = <0x18143000 0x1000>;
+-	interrupts = <GIC_SHARED 27 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 28 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 29 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 30 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 31 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 32 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 33 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 34 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 35 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 36 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 37 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 38 IRQ_TYPE_LEVEL_HIGH>;
+-	clocks = <&system_clk>;
+-	clock-names = "sys";
+-
+-	img,max-burst-multiplier = <16>;
+-	img,cr-periph = <&cr_periph>;
+-
+-	#dma-cells = <3>;
+-};
+-
+-spi@18100f00 {
+-	...
+-	dmas = <&mdc 9 0xffffffff 0>, <&mdc 10 0xffffffff 0>;
+-	dma-names = "tx", "rx";
+-	...
+-};
 -- 
-2.34.1
+2.43.0
 
 
