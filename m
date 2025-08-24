@@ -1,84 +1,90 @@
-Return-Path: <linux-kernel+bounces-783675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4655B3310D
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 17:00:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2312B33110
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 17:08:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B7551889602
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:00:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCBFA20467E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1962D949B;
-	Sun, 24 Aug 2025 14:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BF52DC32B;
+	Sun, 24 Aug 2025 15:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jfN+BdqE"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AFhLlgS5"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9486915B971
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 14:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E14119CCF5;
+	Sun, 24 Aug 2025 15:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756047575; cv=none; b=u/ukXvMSG4q5VILItPcfQ/87UzQhKXLuINMWNJnbJD0kWvniZvQQMNvfN4YhIYBNSMwzrb+2HOYpW8ANSjzJPQ8W4Xh9HlGo7REq6Nse6w77CIZxlBVQKKupk55EpJkUB7d9sc1fjPegaTSr+Vgvlvk+yu5iicGPQtkzsWgeIpM=
+	t=1756048031; cv=none; b=jl5QdOkw/M7SNjsNcLuyatK9usfaHqw3R0oprIMKGIbj+2Qy7AKdFOpV7DNKJ4UizFk5HwsQUeY5qDAi/12GsFnkn58U9dwKQt/a4AxBYxG62xTw685sdZpd/wGG0l44FBKr6Smv7JRW9rNlUEIUGKaiWxQqAz0I/0/ZuO+FJIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756047575; c=relaxed/simple;
-	bh=tCrEZFQIDYPlYFnnFk50Mlhqs/Xchi0kp6QtgT2cu/M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a46CDIHOEJ0/NmRtlZBRGOnO06R2rtFXHu69T6p3mn1no0oXI5eMNYC/pTqMC4dtkPTJS4WiUyA+S0lV4vgKLhdHv2m5jjsHcNlp/1dwh320krPrTyeQLwyeUHEfNMbH2VkCnaCL+6bSEL6/y64oXfwqAL2UG9nsvpZnYdLvPN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jfN+BdqE; arc=none smtp.client-ip=209.85.219.44
+	s=arc-20240116; t=1756048031; c=relaxed/simple;
+	bh=ybKM1b1GksEQ1Nqp+0ReyMbJ+xmf5Je3Bch2k5f5kMU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aMeFNDwBGqc4Ue7eggDGNNdgPIg2tNOub2QaF9iuGfhFDe+UEsrqyBkwsTvNwR/RWOBmwqbr7DxSvA6LXsjKjOnZjsVOW1YcLyzq7yznGfEXo3ARIv6vfkQfmf18Ej+uhHKrvLtBI0cEuh1/IXUj3H0IBQ+C2ixYZUmvjX3sM6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AFhLlgS5; arc=none smtp.client-ip=209.85.160.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-70d9a65c356so19945816d6.3
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 07:59:33 -0700 (PDT)
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b28184a8b3so42673811cf.1;
+        Sun, 24 Aug 2025 08:07:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756047572; x=1756652372; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756048028; x=1756652828; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rnSjySc6sr/GcMl6WZdws9iNHYbtGeaN6kDGRl7xn5k=;
-        b=jfN+BdqEqzcm1+BW3PTaDcYIYOKtX/uc4Dr8MuukP/KJVOwNlnUdMqy6qIWvg1uHVi
-         6Af//Xh8/FEqr6yLpjH2d5zA6W/z2pNP5KHSbJwGSvLx/hV5MndblsGI/puVeFdMwFDQ
-         j10aGPrGKr4jTTEz38lowT3txuJ+MP/+vClkdaQjc2/iP3LbYbEmeMnbPz90ZmpchPGx
-         QSkpU/ksjxTGJC2zKZLvo6SHRFWGT2VOTBJ6MQU/7nvaNLliy8QeKaZV6xPFBrkxuwWI
-         1DH4piGQfm3JObRyqDxtajB9cM6UU61tLjvLBllaIREe6jXIEGNipo3KrNWYuDR+Hc2M
-         eicQ==
+        bh=Kv4bA7nfEdl5uNe/QY08m+D7Nl0DRN4jThoEaTy25SE=;
+        b=AFhLlgS5EAW3Rh1/XzQXTpG+hUI1eRJQe+gPVOXcTmfGyPWg75K1mFoaa15KweljIK
+         EgDmrDKiz4zBaHh5emuxzWXVpG1EQ94nSJZN/+T3oALsrOFZOGmfKoVXkj/AJ76s8YdH
+         rBCCVHG0XPBnUdRO2VBq9xFcHPd61S8APzIWJv1uGvjdmn4sK7QYqpfoFMdWYAfpvvsB
+         AjGOoOWqyt4RJc1hyrDlU5HpHcKoYdgq2N21OVyMN5VEx4jpON0pGYATy90HVkAE6LHP
+         zxZ1svc5PaxqefmeWfJjxkk9FMU9pyhannuIgTh26TBOurSMG9x2MggoMMSw95rjDPTh
+         vCjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756047572; x=1756652372;
+        d=1e100.net; s=20230601; t=1756048028; x=1756652828;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rnSjySc6sr/GcMl6WZdws9iNHYbtGeaN6kDGRl7xn5k=;
-        b=V8HftmxKTdtu0R0s30VWP2kkeIGAygWLKGpLXAAUCzUifMDYPhfHg3uZg7x9ldIwlY
-         RUTXhU58KpuOZUNpZNLT+FN9U/BuFtngT33nw2pBOYJBUZskjFufqSF8piHJt5nCR3nN
-         1PwS0+VJUHFCO7u6TIx9kT54fHWmMRqfG+CwkVdO2VFV6u32eUuH0FJSbuIQ78WgS+Yk
-         OUe8xjLJHJ5gNXwqbI/raStsJC/iUfJv7dqKXEv9KeZ+c1w+PvJFY52UnMLlHqkPViig
-         yzLQeDnjCC9Y9WthD5UM5roE4OrD2WWefjatRAe8RtamzALY0Z2I60fEMs7L0Afzt/dT
-         nd2A==
-X-Forwarded-Encrypted: i=1; AJvYcCW4IQPrqc4pqRh4KZ7G/1Oh+F1Uxznonu5w2ULHg0/uoQK41NgL03CT2uiHVhGFuJiONKIkWcJjE9/rYd0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwn0//ASM3JtyFDMcS1Kk/TaylLpzRMIr6LqFXt1h+CLJyibpI
-	LCvxkvP91Kq7hgeq2RyRg08QQ4CgewAYml6alAJ0qpcynjtcv2Q1wtJK
-X-Gm-Gg: ASbGncuE9l2oqj+82Berqhrcz8DmHpsssVcMbc/k6lo3w66Wauk3oH6f2V8ab9VRNJy
-	nTwc9oiujyivHBVW6ZB467xZ+tzSdRG99QskfTYM0bhObbkp/QaCr3hV5zYc77G4cVJ4uYnKPA8
-	N/9Ecl5z6uSTlcxg75fYhzz7AthOGXGRY1gelN+pVnJLWzi5zrba2CDD45RckJZ/Vmm/jHyZu/t
-	19L+JaJ84/gCUKofb2hUgEY14Bj9AA8neeIVWnheN5vkaTlz+d7hUoJJA2C1iDWo9513T/n9Ib1
-	3y3IUyQ9R9W+1MJS2mGHQnbmbPm2kzdcNtS8z4h0fCYFbcAFaVVpGVUFudYpggndIWX/k8Hsjqs
-	wCAnHns23BUQdlHyhGP25rilBRhNHWvrafaTomy+0/l5+XAuk31hDy5Mt/Q==
-X-Google-Smtp-Source: AGHT+IHWS0giv/9NAXCJiSUax4+HqnfYikUftbaRG3vmR36f0UjrIE81WEpy8zXfpOKsVdxIivhzAA==
-X-Received: by 2002:a05:6214:a54:b0:707:56dc:178d with SMTP id 6a1803df08f44-70d971e9166mr73587496d6.37.1756047572303;
-        Sun, 24 Aug 2025 07:59:32 -0700 (PDT)
+        bh=Kv4bA7nfEdl5uNe/QY08m+D7Nl0DRN4jThoEaTy25SE=;
+        b=uHvvTvSCuJNTc2v6yCaFlb/sl4Sog3+1VvlQ1dZd7i7zDaDFw1KJx7MtycHDj8nKPo
+         Sp0sPHLwb+SGO39bNNCO4+eUJ4XKCALj3zhtv0GmiNbzSpASmsK0KylAG9G/3CMVyqFx
+         1O9V3ECDCO1n0pVSsMn7IkZz8ohCwwf2IoZqWt++/+7J91qFaPR0GQ56BgeJrsN3Hrkw
+         6RlDCWf/tMGiGliGzgFseR6ccjKaqftPimECR66aRjJDQFegYm4lv7hIl42XJx5b1GsU
+         Nw1bvW5JwSE0NxC/5wQ5fbrBcg2onrPGHQo3QXuivgfmcZDMzERH1ooSAv6YDaEzUePG
+         rd+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXVeMEwM2328XzevOp5YM+cPJ85fF45ezz3lvRnYZhKc5M1J2vHf6VOTG224AHHd4xmamoNjUpNEZQJ9vQ=@vger.kernel.org, AJvYcCXu0i3zK+Avjl8OioE1Q9Bz1ZbrQb6yd9zJjLQLsFneUgSNyHYG7nYxMp3w/OwrCzbi0GUJR9ydo88nPss=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv3B72ZTxzRzqMOeAPl7dx6u1PICH5fyN8KIIzFpa9wkIOTRbi
+	wmRgXj8tQNm2NZjVm9JVpRPL+daAQu0fDpY1QKkNYEBnal9ZnQRrQsrl
+X-Gm-Gg: ASbGncs9CRCnZFuWm1FM9ha2qaNei1bY+hPJA0XoOEuGLSB/cQmU/SFlGUTpitB+I58
+	aS6VIYxLO+5lvpE4Rwki2kVEr21lGunHSpjHeM8EmmSTo3A+2HuXgI8HzPcjoMiWQhSAQFijeXU
+	Nr2SiXai1jNamhDM/6iCZxX9iK2APizXWng4QdY8csBlLXmS1QBQU3jSMoNIMN/ht1hErA1QhP7
+	n8HEHE2tkM6TD9ADNqjarI5Y1Rg9M0tm6iF/9KJ6ih0kI9zrJvUKyaiwqjYjbHsqGToURe+T+Qa
+	17Aj7okHBN2B5qerGnCY/FAjEg1eUl3xy5BtieFPTT/QOLgKH0iz+o6j9igWSm1Xb5KMm1HhNNH
+	Ta6H1W+3EeLpA1D69+iuY/fD4J6cmzLKclQLYtU6balOv0p4qPEeyGeNoXA==
+X-Google-Smtp-Source: AGHT+IFcCmMohJ/EOl+J927133MQPMXagTlB82+HpFWILDSJjTYmPCKCgNy9m2blTGnMXX1QlhxGwQ==
+X-Received: by 2002:ac8:57c1:0:b0:4b0:8633:f961 with SMTP id d75a77b69052e-4b2aa8cf134mr111743161cf.0.1756048028116;
+        Sun, 24 Aug 2025 08:07:08 -0700 (PDT)
 Received: from cr-x-redhat96-nsd-2.fyre.ibm.com ([129.41.87.0])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70da7145ec7sm29210466d6.15.2025.08.24.07.59.31
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ebf2b4f5e7sm310659085a.45.2025.08.24.08.07.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Aug 2025 07:59:31 -0700 (PDT)
+        Sun, 24 Aug 2025 08:07:07 -0700 (PDT)
 From: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
-To: ogabbay@kernel.org,
-	yaron.avizrat@intel.com
-Cc: dri-devel@lists.freedesktop.org,
+To: andy@kernel.org,
+	hansg@kernel.org,
+	mchehab@kernel.org
+Cc: sakari.ailus@linux.intel.com,
+	gregkh@linuxfoundation.org,
 	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	tian.shu.qiu@intel.com,
+	bingbu.cao@intel.com,
 	Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
-Subject: [PATCH] accel: habanalabs: Use string choices helpers
-Date: Sun, 24 Aug 2025 07:59:13 -0700
-Message-ID: <20250824145913.2386190-1-chelsyratnawat2001@gmail.com>
+Subject: [PATCH] staging: media: Use string choices helpers
+Date: Sun, 24 Aug 2025 08:06:56 -0700
+Message-ID: <20250824150656.2387516-1-chelsyratnawat2001@gmail.com>
 X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -92,231 +98,189 @@ Use string_choices.h helpers instead of hard-coded strings.
 
 Signed-off-by: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
 ---
- drivers/accel/habanalabs/common/firmware_if.c      | 14 +++++++-------
- drivers/accel/habanalabs/gaudi/gaudi_coresight.c   |  9 +++++----
- drivers/accel/habanalabs/gaudi2/gaudi2_coresight.c |  9 +++++----
- drivers/accel/habanalabs/goya/goya.c               |  3 ++-
- drivers/accel/habanalabs/goya/goya_coresight.c     |  9 +++++----
- 5 files changed, 24 insertions(+), 20 deletions(-)
+ drivers/staging/media/atomisp/pci/atomisp_compat_css20.c     | 3 ++-
+ drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c    | 5 +++--
+ drivers/staging/media/atomisp/pci/atomisp_v4l2.c             | 5 +++--
+ .../staging/media/atomisp/pci/runtime/binary/src/binary.c    | 3 ++-
+ drivers/staging/media/atomisp/pci/sh_css.c                   | 3 ++-
+ drivers/staging/media/ipu3/ipu3-css.c                        | 3 ++-
+ drivers/staging/media/ipu3/ipu3-v4l2.c                       | 5 +++--
+ 7 files changed, 17 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/accel/habanalabs/common/firmware_if.c b/drivers/accel/habanalabs/common/firmware_if.c
-index eeb6b2a80fc7..cef53a3fd839 100644
---- a/drivers/accel/habanalabs/common/firmware_if.c
-+++ b/drivers/accel/habanalabs/common/firmware_if.c
-@@ -14,6 +14,7 @@
+diff --git a/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c b/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
+index be5f37f4a6fd..e5d80611d009 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
++++ b/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
+@@ -27,6 +27,7 @@
+ 
+ #include <linux/io.h>
+ #include <linux/pm_runtime.h>
++#include <linux/string_choices.h>
+ 
+ /* Assume max number of ACC stages */
+ #define MAX_ACC_STAGES	20
+@@ -841,7 +842,7 @@ int atomisp_css_irq_enable(struct atomisp_device *isp,
+ {
+ 	dev_dbg(isp->dev, "%s: css irq info 0x%08x: %s (%d).\n",
+ 		__func__, info,
+-		enable ? "enable" : "disable", enable);
++		str_enable_disable(enable), enable);
+ 	if (ia_css_irq_enable(info, enable)) {
+ 		dev_warn(isp->dev, "%s:Invalid irq info: 0x%08x when %s.\n",
+ 			 __func__, info,
+diff --git a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
+index 964cc3bcc0ac..fef500178117 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
++++ b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
+@@ -15,6 +15,7 @@
+ #include <linux/platform_device.h>
+ #include "../../include/linux/atomisp_platform.h"
+ #include "../../include/linux/atomisp_gmin_platform.h"
++#include <linux/string_choices.h>
+ 
+ #define MAX_SUBDEVS 8
+ 
+@@ -917,7 +918,7 @@ static int gmin_acpi_pm_ctrl(struct v4l2_subdev *subdev, int on)
+ 		return 0;
+ 
+ 	dev_dbg(subdev->dev, "Setting power state to %s\n",
+-		on ? "on" : "off");
++		str_on_off(on));
+ 
+ 	if (on)
+ 		ret = acpi_device_set_power(adev,
+@@ -930,7 +931,7 @@ static int gmin_acpi_pm_ctrl(struct v4l2_subdev *subdev, int on)
+ 		gs->clock_on = on;
+ 	else
+ 		dev_err(subdev->dev, "Couldn't set power state to %s\n",
+-			on ? "on" : "off");
++			str_on_off(on));
+ 
+ 	return ret;
+ }
+diff --git a/drivers/staging/media/atomisp/pci/atomisp_v4l2.c b/drivers/staging/media/atomisp/pci/atomisp_v4l2.c
+index 900a67552d6a..08b64a2e56cb 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp_v4l2.c
++++ b/drivers/staging/media/atomisp/pci/atomisp_v4l2.c
+@@ -17,6 +17,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/bits.h>
+ #include <media/v4l2-fwnode.h>
++#include <linux/string_choices.h>
+ 
+ #include <asm/iosf_mbi.h>
+ 
+@@ -527,7 +528,7 @@ static int atomisp_mrfld_power(struct atomisp_device *isp, bool enable)
+ 	u32 val = enable ? MRFLD_ISPSSPM0_IUNIT_POWER_ON :
+ 			   MRFLD_ISPSSPM0_IUNIT_POWER_OFF;
+ 
+-	dev_dbg(isp->dev, "IUNIT power-%s.\n", enable ? "on" : "off");
++	dev_dbg(isp->dev, "IUNIT power-%s.\n", str_on_off(enable));
+ 
+ 	/* WA for P-Unit, if DVFS enabled, ISP timeout observed */
+ 	if (IS_CHT && enable && !isp->pm_only) {
+@@ -569,7 +570,7 @@ static int atomisp_mrfld_power(struct atomisp_device *isp, bool enable)
+ 		usleep_range(100, 150);
+ 	} while (1);
+ 
+-	dev_err(isp->dev, "IUNIT power-%s timeout.\n", enable ? "on" : "off");
++	dev_err(isp->dev, "IUNIT power-%s timeout.\n", str_on_off(enable));
+ 	return -EBUSY;
+ }
+ 
+diff --git a/drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c b/drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c
+index af93ca96747c..2a4db605c126 100644
+--- a/drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c
++++ b/drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include <linux/math.h>
++#include <linux/string_choices.h>
+ 
+ #include <math_support.h>
+ #include <gdc_device.h>	/* HR_GDC_N */
+@@ -1241,7 +1242,7 @@ int ia_css_binary_find(struct ia_css_binary_descr *descr, struct ia_css_binary *
+ 		dev_dbg(atomisp_dev, "Using binary %s (id %d), type %d, mode %d, continuous %s\n",
+ 			xcandidate->blob->name, xcandidate->sp.id, xcandidate->type,
+ 			xcandidate->sp.pipeline.mode,
+-			xcandidate->sp.enable.continuous ? "true" : "false");
++			str_true_false(xcandidate->sp.enable.continuous));
+ 
+ 	if (err)
+ 		dev_err(atomisp_dev, "Failed to find a firmware binary matching the pipeline parameters\n");
+diff --git a/drivers/staging/media/atomisp/pci/sh_css.c b/drivers/staging/media/atomisp/pci/sh_css.c
+index 73bd87f43a8c..1de2749f7852 100644
+--- a/drivers/staging/media/atomisp/pci/sh_css.c
++++ b/drivers/staging/media/atomisp/pci/sh_css.c
+@@ -8,6 +8,7 @@
+ #include <linux/mm.h>
  #include <linux/slab.h>
- #include <linux/ctype.h>
  #include <linux/vmalloc.h>
 +#include <linux/string_choices.h>
  
- #include <trace/events/habanalabs.h>
+ #include "hmm.h"
  
-@@ -1705,13 +1706,13 @@ static void hl_fw_preboot_update_state(struct hl_device *hdev)
- 							cpu_boot_dev_sts1);
+@@ -1478,7 +1479,7 @@ map_sp_threads(struct ia_css_stream *stream, bool map)
+ 	enum ia_css_pipe_id pipe_id;
  
- 	dev_dbg(hdev->dev, "Firmware preboot hard-reset is %s\n",
--			prop->hard_reset_done_by_fw ? "enabled" : "disabled");
-+			str_enabled_disabled(prop->hard_reset_done_by_fw));
+ 	IA_CSS_ENTER_PRIVATE("stream = %p, map = %s",
+-			     stream, map ? "true" : "false");
++			     stream, str_true_false(map));
  
- 	dev_dbg(hdev->dev, "firmware-level security is %s\n",
--			prop->fw_security_enabled ? "enabled" : "disabled");
-+			str_enabled_disabled(prop->fw_security_enabled));
+ 	if (!stream) {
+ 		IA_CSS_LEAVE_ERR_PRIVATE(-EINVAL);
+diff --git a/drivers/staging/media/ipu3/ipu3-css.c b/drivers/staging/media/ipu3/ipu3-css.c
+index 1b0a59b78949..777cac1c27bf 100644
+--- a/drivers/staging/media/ipu3/ipu3-css.c
++++ b/drivers/staging/media/ipu3/ipu3-css.c
+@@ -4,6 +4,7 @@
+ #include <linux/device.h>
+ #include <linux/iopoll.h>
+ #include <linux/slab.h>
++#include <linux/string_choices.h>
  
- 	dev_dbg(hdev->dev, "GIC controller is %s\n",
--			prop->gic_interrupts_enable ? "enabled" : "disabled");
-+			str_enabled_disabled(prop->gic_interrupts_enable));
+ #include "ipu3.h"
+ #include "ipu3-css.h"
+@@ -226,7 +227,7 @@ int imgu_css_set_powerup(struct device *dev, void __iomem *base,
+ 	state = readl(base + IMGU_REG_STATE);
+ 
+ 	dev_dbg(dev, "CSS pm_ctrl 0x%x state 0x%x (power %s)\n",
+-		pm_ctrl, state, state & IMGU_STATE_POWER_DOWN ? "down" : "up");
++		pm_ctrl, state, str_down_up(state & IMGU_STATE_POWER_DOWN));
+ 
+ 	/* Power up CSS using wrapper */
+ 	if (state & IMGU_STATE_POWER_DOWN) {
+diff --git a/drivers/staging/media/ipu3/ipu3-v4l2.c b/drivers/staging/media/ipu3/ipu3-v4l2.c
+index ad6095bf717d..2f6041d342f4 100644
+--- a/drivers/staging/media/ipu3/ipu3-v4l2.c
++++ b/drivers/staging/media/ipu3/ipu3-v4l2.c
+@@ -3,6 +3,7 @@
+ 
+ #include <linux/module.h>
+ #include <linux/pm_runtime.h>
++#include <linux/string_choices.h>
+ 
+ #include <media/v4l2-event.h>
+ #include <media/v4l2-ioctl.h>
+@@ -287,7 +288,7 @@ static int imgu_link_setup(struct media_entity *entity,
+ 	WARN_ON(pad >= IMGU_NODE_NUM);
+ 
+ 	dev_dbg(&imgu->pci_dev->dev, "pipe %u pad %u is %s", pipe, pad,
+-		 flags & MEDIA_LNK_FL_ENABLED ? "enabled" : "disabled");
++		 str_enabled_disabled(flags & MEDIA_LNK_FL_ENABLED));
+ 
+ 	imgu_pipe = &imgu->imgu_pipe[pipe];
+ 	imgu_pipe->nodes[pad].enabled = flags & MEDIA_LNK_FL_ENABLED;
+@@ -302,7 +303,7 @@ static int imgu_link_setup(struct media_entity *entity,
+ 		__clear_bit(pipe, imgu->css.enabled_pipes);
+ 
+ 	dev_dbg(&imgu->pci_dev->dev, "pipe %u is %s", pipe,
+-		 flags & MEDIA_LNK_FL_ENABLED ? "enabled" : "disabled");
++		 str_enabled_disabled(flags & MEDIA_LNK_FL_ENABLED));
+ 
+ 	return 0;
  }
- 
- static int hl_fw_static_read_preboot_status(struct hl_device *hdev)
-@@ -2455,7 +2456,7 @@ static void hl_fw_boot_fit_update_state(struct hl_device *hdev,
- 	}
- 
- 	dev_dbg(hdev->dev, "Firmware boot CPU hard-reset is %s\n",
--			prop->hard_reset_done_by_fw ? "enabled" : "disabled");
-+			str_enabled_disabled(prop->hard_reset_done_by_fw));
- }
- 
- static void hl_fw_dynamic_update_linux_interrupt_if(struct hl_device *hdev)
-@@ -2647,8 +2648,7 @@ static void hl_fw_linux_update_state(struct hl_device *hdev,
- 			prop->fw_app_cpu_boot_dev_sts0);
- 
- 		dev_dbg(hdev->dev, "GIC controller is %s\n",
--				prop->gic_interrupts_enable ?
--						"enabled" : "disabled");
-+				str_enabled_disabled(prop->gic_interrupts_enable));
- 	}
- 
- 	if (prop->fw_cpu_boot_dev_sts1_valid) {
-@@ -2660,7 +2660,7 @@ static void hl_fw_linux_update_state(struct hl_device *hdev,
- 	}
- 
- 	dev_dbg(hdev->dev, "Firmware application CPU hard-reset is %s\n",
--			prop->hard_reset_done_by_fw ? "enabled" : "disabled");
-+			str_enabled_disabled(prop->hard_reset_done_by_fw));
- 
- 	dev_info(hdev->dev, "Successfully loaded firmware to device\n");
- }
-diff --git a/drivers/accel/habanalabs/gaudi/gaudi_coresight.c b/drivers/accel/habanalabs/gaudi/gaudi_coresight.c
-index 1168fefa33f4..3900a7727f4c 100644
---- a/drivers/accel/habanalabs/gaudi/gaudi_coresight.c
-+++ b/drivers/accel/habanalabs/gaudi/gaudi_coresight.c
-@@ -12,6 +12,7 @@
- #include "../include/gaudi/gaudi_reg_map.h"
- 
- #include <uapi/drm/habanalabs_accel.h>
-+#include <linux/string_choices.h>
- 
- #define SPMU_SECTION_SIZE		MME0_ACC_SPMU_MAX_OFFSET
- #define SPMU_EVENT_TYPES_OFFSET		0x400
-@@ -497,7 +498,7 @@ static int gaudi_config_etf(struct hl_device *hdev,
- 	if (rc) {
- 		dev_err(hdev->dev,
- 			"Failed to %s ETF on timeout, error %d\n",
--				params->enable ? "enable" : "disable", rc);
-+				str_enable_disable(params->enable), rc);
- 		return rc;
- 	}
- 
-@@ -505,7 +506,7 @@ static int gaudi_config_etf(struct hl_device *hdev,
- 	if (rc) {
- 		dev_err(hdev->dev,
- 			"Failed to %s ETF on timeout, error %d\n",
--				params->enable ? "enable" : "disable", rc);
-+				str_enable_disable(params->enable), rc);
- 		return rc;
- 	}
- 
-@@ -601,14 +602,14 @@ static int gaudi_config_etr(struct hl_device *hdev,
- 	rc = gaudi_coresight_timeout(hdev, mmPSOC_ETR_FFCR, 6, false);
- 	if (rc) {
- 		dev_err(hdev->dev, "Failed to %s ETR on timeout, error %d\n",
--				params->enable ? "enable" : "disable", rc);
-+				str_enable_disable(params->enable), rc);
- 		return rc;
- 	}
- 
- 	rc = gaudi_coresight_timeout(hdev, mmPSOC_ETR_STS, 2, true);
- 	if (rc) {
- 		dev_err(hdev->dev, "Failed to %s ETR on timeout, error %d\n",
--				params->enable ? "enable" : "disable", rc);
-+				str_enable_disable(params->enable), rc);
- 		return rc;
- 	}
- 
-diff --git a/drivers/accel/habanalabs/gaudi2/gaudi2_coresight.c b/drivers/accel/habanalabs/gaudi2/gaudi2_coresight.c
-index 2423620ff358..f35a024ad532 100644
---- a/drivers/accel/habanalabs/gaudi2/gaudi2_coresight.c
-+++ b/drivers/accel/habanalabs/gaudi2/gaudi2_coresight.c
-@@ -6,6 +6,7 @@
-  */
- #include "gaudi2_coresight_regs.h"
- #include <uapi/drm/habanalabs_accel.h>
-+#include <linux/string_choices.h>
- 
- #define GAUDI2_PLDM_CORESIGHT_TIMEOUT_USEC	(CORESIGHT_TIMEOUT_USEC * 2000)
- #define SPMU_MAX_COUNTERS			6
-@@ -2106,14 +2107,14 @@ static int gaudi2_config_etf(struct hl_device *hdev, struct hl_debug_params *par
- 	rc = gaudi2_coresight_timeout(hdev, base_reg + mmETF_FFCR_OFFSET, 6, false);
- 	if (rc) {
- 		dev_err(hdev->dev, "Failed to %s ETF on timeout, error %d\n",
--			params->enable ? "enable" : "disable", rc);
-+			str_enable_disable(params->enable), rc);
- 		return rc;
- 	}
- 
- 	rc = gaudi2_coresight_timeout(hdev, base_reg + mmETF_STS_OFFSET, 2, true);
- 	if (rc) {
- 		dev_err(hdev->dev, "Failed to %s ETF on timeout, error %d\n",
--			params->enable ? "enable" : "disable", rc);
-+			str_enable_disable(params->enable), rc);
- 		return rc;
- 	}
- 
-@@ -2215,14 +2216,14 @@ static int gaudi2_config_etr(struct hl_device *hdev, struct hl_ctx *ctx,
- 	rc = gaudi2_coresight_timeout(hdev, mmPSOC_ETR_FFCR, 6, false);
- 	if (rc) {
- 		dev_err(hdev->dev, "Failed to %s ETR on timeout, error %d\n",
--				params->enable ? "enable" : "disable", rc);
-+				str_enable_disable(params->enable), rc);
- 		return rc;
- 	}
- 
- 	rc = gaudi2_coresight_timeout(hdev, mmPSOC_ETR_STS, 2, true);
- 	if (rc) {
- 		dev_err(hdev->dev, "Failed to %s ETR on timeout, error %d\n",
--				params->enable ? "enable" : "disable", rc);
-+				str_enable_disable(params->enable), rc);
- 		return rc;
- 	}
- 
-diff --git a/drivers/accel/habanalabs/goya/goya.c b/drivers/accel/habanalabs/goya/goya.c
-index 84768e306269..cca904a21392 100644
---- a/drivers/accel/habanalabs/goya/goya.c
-+++ b/drivers/accel/habanalabs/goya/goya.c
-@@ -15,6 +15,7 @@
- #include <linux/hwmon.h>
- #include <linux/iommu.h>
- #include <linux/seq_file.h>
-+#include <linux/string_choices.h>
- 
- /*
-  * GOYA security scheme:
-@@ -820,7 +821,7 @@ int goya_set_frequency(struct hl_device *hdev, enum hl_pll_frequency freq)
- 		return 0;
- 
- 	dev_dbg(hdev->dev, "Changing device frequency to %s\n",
--		freq == PLL_HIGH ? "high" : "low");
-+		str_high_low(freq == PLL_HIGH));
- 
- 	goya_set_pll_profile(hdev, freq);
- 
-diff --git a/drivers/accel/habanalabs/goya/goya_coresight.c b/drivers/accel/habanalabs/goya/goya_coresight.c
-index 3827ea4c02f7..f65c9a802444 100644
---- a/drivers/accel/habanalabs/goya/goya_coresight.c
-+++ b/drivers/accel/habanalabs/goya/goya_coresight.c
-@@ -11,6 +11,7 @@
- #include "../include/goya/asic_reg/goya_masks.h"
- 
- #include <uapi/drm/habanalabs_accel.h>
-+#include <linux/string_choices.h>
- 
- #define GOYA_PLDM_CORESIGHT_TIMEOUT_USEC	(CORESIGHT_TIMEOUT_USEC * 100)
- 
-@@ -330,7 +331,7 @@ static int goya_config_etf(struct hl_device *hdev,
- 	if (rc) {
- 		dev_err(hdev->dev,
- 			"Failed to %s ETF on timeout, error %d\n",
--				params->enable ? "enable" : "disable", rc);
-+				str_enable_disable(params->enable), rc);
- 		return rc;
- 	}
- 
-@@ -338,7 +339,7 @@ static int goya_config_etf(struct hl_device *hdev,
- 	if (rc) {
- 		dev_err(hdev->dev,
- 			"Failed to %s ETF on timeout, error %d\n",
--				params->enable ? "enable" : "disable", rc);
-+				str_enable_disable(params->enable), rc);
- 		return rc;
- 	}
- 
-@@ -405,14 +406,14 @@ static int goya_config_etr(struct hl_device *hdev,
- 	rc = goya_coresight_timeout(hdev, mmPSOC_ETR_FFCR, 6, false);
- 	if (rc) {
- 		dev_err(hdev->dev, "Failed to %s ETR on timeout, error %d\n",
--				params->enable ? "enable" : "disable", rc);
-+				str_enable_disable(params->enable), rc);
- 		return rc;
- 	}
- 
- 	rc = goya_coresight_timeout(hdev, mmPSOC_ETR_STS, 2, true);
- 	if (rc) {
- 		dev_err(hdev->dev, "Failed to %s ETR on timeout, error %d\n",
--				params->enable ? "enable" : "disable", rc);
-+				str_enable_disable(params->enable), rc);
- 		return rc;
- 	}
- 
 -- 
 2.47.3
 
