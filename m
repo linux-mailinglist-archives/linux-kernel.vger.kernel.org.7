@@ -1,116 +1,111 @@
-Return-Path: <linux-kernel+bounces-783687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37944B3313C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 17:33:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D8D3B3313F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 17:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C89677A2A30
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:32:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF86188D731
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A76A2D6E43;
-	Sun, 24 Aug 2025 15:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0C32D6E68;
+	Sun, 24 Aug 2025 15:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSnUMQ4t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="EheM/1lt"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1B9749C;
-	Sun, 24 Aug 2025 15:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786B014F125;
+	Sun, 24 Aug 2025 15:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756049628; cv=none; b=fQ88aEA1iY7v3uuxQpRnMCDiQ/VEVHFbSLZp5yisywlmkdStITkPcQgSm+h4PiRza7Dc0b0MbT/sahpU5/NDKcuDarYK7Z0p6fivTEqDG0cwzfqZXBjIwtT8RJtiQ1oTGmFEb2tLFvlJGGf5ETP0/+H03BZjlhiLGYsqNaCB1hY=
+	t=1756049674; cv=none; b=k3OtmLhgZKa0Jq8/ifTeTTRQYGae15wE29m58MZxXjkEwbPFPozZJ10yCMG9xJIAC0UC/xp5F5KZ2TiSxG0KzXkCNGlO+sYPbAKwQfuhhY5/0AkBtCI68fQx765UOl4Cnl7OrGXjYe96Belw5/P8Funp2npicKIhoFT+BVjoXf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756049628; c=relaxed/simple;
-	bh=oQzQEC/j+B5UVSDuvC80FiJ+MKY+IFlYoW/dIszqcuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ewva8S1sj20RxwPyTgrjh5Do1aJwK5dLnGioTQkIr3TzV+tjYQ+w5dXPanzfHadRq/Q9/h5uDnDP4jiblZ7ZXD7N7HDy42/50RTtN+uVbRgl4e/NO6T4S/dfk5mC506Ts0V3cSCVdmMe8KIpADU3KDQqJbVshRRumlL3VYu9fxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HSnUMQ4t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAC7BC4CEEB;
-	Sun, 24 Aug 2025 15:33:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756049627;
-	bh=oQzQEC/j+B5UVSDuvC80FiJ+MKY+IFlYoW/dIszqcuU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HSnUMQ4tlsLUIC9Waj7DTcg0C+4Q5PkV2X/ONEbyFx2fbKxd/S3t4gW3/5YBlJ6M2
-	 UaiOBj+2tBwtGm2siDG6q0+wzYRi3f3ljnCA6Ug/37/MUj3lx04md6wZrKTgskj8JN
-	 2O3YacNREIgXwcqlJKRKDMipgyBFG/eMHKD7C52ICZxZ8rnP5elIAr9uFNxDWfHHlD
-	 oGLqLFzninpwNUMcMkW16ZlHBmO2mOCihjqPZUbNShr1voctFsQ8WbBjhAc/s9+eUO
-	 qfcKyYqC5XAq1miXvOvqzDlxverCrf9L0Qc1AOU1RdfVhqbfQd6mlU1MvgKTY/80CN
-	 HhLAeT1kmlVsw==
-Message-ID: <96409a43-b3f7-4b9e-a1e8-fd0ac6503cd9@kernel.org>
-Date: Sun, 24 Aug 2025 17:33:42 +0200
+	s=arc-20240116; t=1756049674; c=relaxed/simple;
+	bh=+a9m7QQZk/61tJ8oasLXUNRg2pvRs+/sNxMyl1nSfqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AUxb/akxXYWyiM3rFLcFmY77vatTJnGQMNtAuhJaHUWv+G6SB0xpmYqm6fAEKWFPwccBl9j/eP1V8VuD60Dfh8yerqvYeKAPJ4RnQB258a4tHEtdFFo1rVFF+VRGIJecVmzIviMkqhdmRO/G1ObuKatMd8+Qs6UlmoMDY6Ussb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=EheM/1lt; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=KrI2xk9zX8LNZ0JPxtdB/UHd7Wtwi0qjAQ2ViTZN6RU=; b=EheM/1ltn01lAlVJetP+wLvzIc
+	VcLoSgTT4+Lp5/vsA5QfFDOCoC2IanCunHcvPdaL3Mb9exW22IwLWfs1DOJhvIL74Mp+VhoOPQtQm
+	im3EBmFmVT/ABNtp3u08U0cpJd+mBZfUZ2tLDTEVoyGLUbLP1/3181soMfhf7UwwEZ1Y=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uqCjg-005qFP-2N; Sun, 24 Aug 2025 17:34:24 +0200
+Date: Sun, 24 Aug 2025 17:34:24 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: David Yang <mmyangfl@gmail.com>
+Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v6 3/3] net: dsa: yt921x: Add support for
+ Motorcomm YT921x
+Message-ID: <6809357f-b826-445b-9aac-5dd951bd5d83@lunn.ch>
+References: <20250824005116.2434998-1-mmyangfl@gmail.com>
+ <20250824005116.2434998-4-mmyangfl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 03/22] dt-bindings: phy: Add Apple Type-C PHY
-To: Rob Herring <robh@kernel.org>, Janne Grunau <j@jannau.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-phy@lists.infradead.org
-References: <20250821-atcphy-6-17-v1-0-172beda182b8@kernel.org>
- <20250821-atcphy-6-17-v1-3-172beda182b8@kernel.org>
- <20250821163320.GE1270980@robin.jannau.net>
- <CAL_JsqL=y2OT4YrzT8z0O0T2hpM5X1k2pFEb8XjBRPoNMdO5kw@mail.gmail.com>
-Content-Language: en-US
-From: Sven Peter <sven@kernel.org>
-In-Reply-To: <CAL_JsqL=y2OT4YrzT8z0O0T2hpM5X1k2pFEb8XjBRPoNMdO5kw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250824005116.2434998-4-mmyangfl@gmail.com>
 
-On 22.08.25 01:00, Rob Herring wrote:
-> On Thu, Aug 21, 2025 at 11:33 AM Janne Grunau <j@jannau.net> wrote:
->>
->> On Thu, Aug 21, 2025 at 03:38:55PM +0000, Sven Peter wrote:
+> +static void yt921x_smi_acquire(struct yt921x_priv *priv)
+> +{
+> +	if (priv->smi_ops->acquire)
+> +		priv->smi_ops->acquire(priv->smi_ctx);
+> +}
+> +
+> +static void yt921x_smi_release(struct yt921x_priv *priv)
+> +{
+> +	if (priv->smi_ops->release)
+> +		priv->smi_ops->release(priv->smi_ctx);
+> +}
 
-[...]
+What happens if priv->smi_ops->acquire and priv->smi_ops->release are
+not implemented? Very likely, it will mostly work, but have subtle bug
+which are going to be hard to observe and find.
 
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - apple,t6000-atcphy
->>> +      - apple,t6000-atcphy-dp-only # PHY hardwired to DP-to-HDMI converter on M2 Pro MacBook
->>
->> The comment is misleading, "t6000-atcphy-dp-only" would be for M1
->> Pro/Max Macbooks. M2 Pro/Max Macbooks use the same design so the
->> corresponding "apple,t6020-atcphy-dp-only" compatible is missing.
->> I'm not sure this is the correct design though as the HW block is
->> identical to "apple,t6000-atcphy".
->> I think it might be better to have either the DRM KMS driver or a
->> custom DP->HDMI drm_bridge switch the mode to DP-only.
->> Or atcphy could initialize itself to DP-only based on the available
->> ports.
-> 
-> Doesn't sound like this should be a different compatible. There's a
-> 'phy-mode' property or you can define the mode in the 'phys' cells for
-> the DP controller.
+You want bugs to be obvious, so they are quick and easy to find. The
+best way to make the bug of missing locking obvious is to jump through
+a NULL pointer and get an Opps. The stack trace will make it obvious
+what has happened.
 
-Okay, makes sense. I'll drop the compatible.
+> +
+> +static int yt921x_smi_read(struct yt921x_priv *priv, u32 reg, u32 *valp)
+> +{
+> +	return priv->smi_ops->read(priv->smi_ctx, reg, valp);
+> +}
+> +
+> +static int yt921x_smi_read_burst(struct yt921x_priv *priv, u32 reg, u32 *valp)
+> +{
+> +	int res;
+> +
+> +	yt921x_smi_acquire(priv);
+> +	res = yt921x_smi_read(priv, reg, valp);
+> +	yt921x_smi_release(priv);
 
-I've only found "intel,phy-mode" inside bindings/phy but we can figure 
-this out later once we actually get to upstreaming what's required for 
-DisplayPort and mostly focus on USB3 for this series.
+I don't understand the name _burst here? Why is it called
+that. Looking at other drivers, _u32 would be more common, especially
+if you have functions to read a _u16, _u8 etc.
 
-
-Thanks
-
-
-Sven
-
-
+   Andrew
 
