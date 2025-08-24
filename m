@@ -1,137 +1,146 @@
-Return-Path: <linux-kernel+bounces-783563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73082B32F07
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:33:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5A2B32F08
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 280E5445F49
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:33:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 681FA3BE19D
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FB726E712;
-	Sun, 24 Aug 2025 10:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66F72737E6;
+	Sun, 24 Aug 2025 10:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F63WCZKy";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vhp0ZKlV"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Km7D03JA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0447C21ABAE;
-	Sun, 24 Aug 2025 10:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDB61D555;
+	Sun, 24 Aug 2025 10:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756031624; cv=none; b=t7S8TU3XRKq7bM8MIc0POKelhr1LMMJqGAMixX925VbKZfZZ1iMhY46K3sRdeNZej6T2DpPHt2GG952Xi3ggQDgGvVXZtsgfVuBg7eEtaYZkb3TsH5UM8pVntbhaQBZkPGg+mRrTl/lMO/BQyo1xexILg+4O+vLeFQApq8nR2w4=
+	t=1756031807; cv=none; b=W9Mhw3zQlgDtIjeHYhmDJbsGg9SdhLon9OLsyQivcerHsA47j50Ym5BmEXMlZhg09iEmHz+CHzxsMfVmu9N0i6fsGZ93ppbXCnwQLzlTOY4Jor7VEb2CkNrqNYzTEshyCE73zbTm3rsvbstQc+cT1hjQPZCYuMi+5dGENv+0PL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756031624; c=relaxed/simple;
-	bh=GzKB6pgteqUBRrLK1lb+NTiPkkGaS3hpFo2gZCZHGtk=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=F1fxNdPyIyuaCwmDEc6ACwmzA21DH8ZP4dSPFHWFg4e2noXY02FOAaJD5nYFXqASzn9DjwPvXc1NpWsDG1Tw1LaabhxrmbzPp9S/rmADYQg4R/hAxRLcJagWQCYWUstP+7NQRaC7SfvhXdCqoBHx6TqXkPBHU2DeZEtaUZRyb68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F63WCZKy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vhp0ZKlV; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 24 Aug 2025 10:33:39 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756031621;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J7AUeVbL8GigkFEdVWdjNPYVQn49zJLQABHK2a32law=;
-	b=F63WCZKys8JBFtobM8nEZLs+HCQZ4zEhYD5rJN6KmebmXgqBvTpeGCK1u39wxcQBYBNATi
-	caZ5y8mzCaVYs+oKAOOI+Ckv4TsaQ/m4JHSdytfYTHhaUP0fPH/WUWneSMznq5JAqdPYII
-	fT0JY9YlYRXc3WJKCXHOBRc/8V5RG0+LIvBqEStPqburwwzFDRtO7MBlEccn5Y+I4NQ0M3
-	NC3jEMWtSAbcAjV9yElnVh2FERxiFuO+sMgeE1TrlmfMSBcyqre6bBk6Vhsb4ZztAgIycH
-	UmAzkBazs0fazdU8OnfSYqD2/SCFaL0JNixrkxmza0aLDKcAHi97aSRz9uaQlw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756031621;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J7AUeVbL8GigkFEdVWdjNPYVQn49zJLQABHK2a32law=;
-	b=vhp0ZKlVE03yf329G+oO6DU9VqbugPZDmbIjidm51k+adN+ETPrw6My5An0nwvXeQiP4zr
-	hbL8R4ltEl02cgCg==
-From: "tip-bot2 for Inochi Amaoto" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/drivers] irqchip/sifive-plic: Respect mask state when
- setting affinity
-Cc: Thomas Gleixner <tglx@linutronix.de>, Inochi Amaoto <inochiama@gmail.com>,
- Nam Cao <namcao@linutronix.de>, Chen Wang <unicorn_wang@outlook.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250811002633.55275-1-inochiama@gmail.com>
-References: <20250811002633.55275-1-inochiama@gmail.com>
+	s=arc-20240116; t=1756031807; c=relaxed/simple;
+	bh=q07eis8daTy3KXxvN35MWdYrk0ktQhtspvcKpN/0VFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jJCfjrpHXnByG5eJEBngS9jpFu80AM3x1ox8GadPPHAYJbZntJEudAa0iiS3kK+nzykmqJx+j4C3yyXAJ4p5SzlDnD2s4IFz4t2fF9KOOYyfhxBap4AfBxfBQ1QjYlclfoQqHkn1koIqgIhvawjtNhljzZjihS1lbuaN2bmUpOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Km7D03JA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E079EC4CEEB;
+	Sun, 24 Aug 2025 10:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756031806;
+	bh=q07eis8daTy3KXxvN35MWdYrk0ktQhtspvcKpN/0VFE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Km7D03JAwMYslBJuEo/lDNO2rMqFWRabQdYkY71GY2SCT88EIRQ8QrjzgifefoMxi
+	 rBGDOCeXI0jo2Zp5boFoGDHpvDsyid1qZpjU2lQrSWtaHoKzAvPGqbIHqzcO1luVnO
+	 xqUxo8m/VUaTzYXYur56hyH8KXmIZEnkQXij4s+AEGyq82ZMZzapKoSPQl9vJvarA1
+	 SVSN2Im0FnS3g5pO+8l1alw/aBYNMUdfrCQUgdpykxXEi+/nWTm5s+FUljExLyjWXK
+	 tzwBwlRZ0XyD3gfQy57iUSPyhPiJqArZgsGQ9q7qHUfQ4LwtYDCUJtvVBr0bzPLlsZ
+	 mEFgBvqSfC4xw==
+Date: Sun, 24 Aug 2025 12:36:42 +0200
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.17-rc3
+Message-ID: <aKrrOlgY5fXBEG9U@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175603161961.1420.8026332855142123938.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="is7TnwDJyN2IjQWK"
+Content-Disposition: inline
 
-The following commit has been merged into the irq/drivers branch of tip:
 
-Commit-ID:     adecf78df945f4c7a1d29111b0002827f487df51
-Gitweb:        https://git.kernel.org/tip/adecf78df945f4c7a1d29111b0002827f48=
-7df51
-Author:        Inochi Amaoto <inochiama@gmail.com>
-AuthorDate:    Mon, 11 Aug 2025 08:26:32 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sun, 24 Aug 2025 12:20:18 +02:00
+--is7TnwDJyN2IjQWK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-irqchip/sifive-plic: Respect mask state when setting affinity
+The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
 
-plic_set_affinity() always calls plic_irq_enable(), which clears up the
-priority setting even the interrupt is only masked. This unmasks the
-interrupt unexpectly.
+  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
 
-Replace the plic_irq_enable/disable() with plic_irq_toggle() to avoid
-changing the priority setting.
+are available in the Git repository at:
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Nam Cao <namcao@linutronix.de> # VisionFive 2
-Tested-by: Chen Wang <unicorn_wang@outlook.com> # Pioneerbox
-Reviewed-by: Nam Cao <namcao@linutronix.de>
-Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
-Link: https://lore.kernel.org/all/20250811002633.55275-1-inochiama@gmail.com
-Link: https://lore.kernel.org/lkml/20250722224513.22125-1-inochiama@gmail.com/
----
- drivers/irqchip/irq-sifive-plic.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.17-rc3
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-p=
-lic.c
-index 3de5460..559fda8 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -179,12 +179,14 @@ static int plic_set_affinity(struct irq_data *d,
- 	if (cpu >=3D nr_cpu_ids)
- 		return -EINVAL;
-=20
--	plic_irq_disable(d);
-+	/* Invalidate the original routing entry */
-+	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 0);
-=20
- 	irq_data_update_effective_affinity(d, cpumask_of(cpu));
-=20
-+	/* Setting the new routing entry if irq is enabled */
- 	if (!irqd_irq_disabled(d))
--		plic_irq_enable(d);
-+		plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 1);
-=20
- 	return IRQ_SET_MASK_OK_DONE;
- }
+for you to fetch changes up to 3dd22078026c7cad4d4a3f32c5dc5452c7180de8:
+
+  Merge tag 'i2c-host-fixes-6.17-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2025-08-23 07:57:28 +0200)
+
+----------------------------------------------------------------
+i2c-for-6.17-rc3
+
+- hisi: update maintainership
+- rtl9300: fix several issues in xfer
+  - check message length boundaries
+  - correct multi-byte value composition on write
+  - increase polling timeout
+  - fix block transfer protocol
+
+----------------------------------------------------------------
+Alex Guo (1):
+      i2c: rtl9300: Fix out-of-bounds bug in rtl9300_i2c_smbus_xfer
+
+Devyn Liu (1):
+      MAINTAINERS: i2c: Update i2c_hisi entry
+
+Harshal Gohel (1):
+      i2c: rtl9300: Fix multi-byte I2C write
+
+Sven Eckelmann (2):
+      i2c: rtl9300: Increase timeout for transfer polling
+      i2c: rtl9300: Add missing count byte for SMBus Block Ops
+
+Wolfram Sang (1):
+      Merge tag 'i2c-host-fixes-6.17-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
+
+
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Chris Packham (8):
+      (Rev.) i2c: rtl9300: Add missing count byte for SMBus Block Ops
+      (Test) i2c: rtl9300: Add missing count byte for SMBus Block Ops
+      (Rev.) i2c: rtl9300: Increase timeout for transfer polling
+      (Test) i2c: rtl9300: Increase timeout for transfer polling
+      (Rev.) i2c: rtl9300: Fix multi-byte I2C write
+      (Test) i2c: rtl9300: Fix multi-byte I2C write
+      (Rev.) i2c: rtl9300: Fix out-of-bounds bug in rtl9300_i2c_smbus_xfer
+      (Test) i2c: rtl9300: Fix out-of-bounds bug in rtl9300_i2c_smbus_xfer
+
+Wolfram Sang (1):
+      (Rev.) i2c: rtl9300: Fix out-of-bounds bug in rtl9300_i2c_smbus_xfer
+
+ MAINTAINERS                      |  2 +-
+ drivers/i2c/busses/i2c-rtl9300.c | 20 ++++++++++++--------
+ 2 files changed, 13 insertions(+), 9 deletions(-)
+
+--is7TnwDJyN2IjQWK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiq6zoACgkQFA3kzBSg
+KbaD5Q/8Dtr98kwEhLdQNRjn1yEczud1jrycreqw5ZZrvDbWi3dPD8NDQpbfjTvz
+zJ7sVN/tknVKmDaLRbVZm4sYsKXBKSNM5yrse/tsDPS3ovoIHq8VfN74RKdbfhWN
+VRXgp284ToblODYr1E1MsFKOihMHx+CdgkHNrZf5fCRShwWfhUiX/vNf5j1st7YR
+w8iIsHV/J4loi2jw1TotwVQrtYa9OUvWlxtB6FzS7iFqGSUktDlwYNWoJq1lL7MN
+zJuFV8zopfo9HBWSaPGxTCq43WtzICSD2KQ10m8A6V8nRK0PWso1Ob5xoKaFmFaH
+4dgl5mW099+FV869vaISxzCj604A1fA96DFMgexcT/2flzC2x4wkEezX0VRp1nh2
+bTOMNyAUnQe0mubCI04MRk+t5p8+CYo+DsRmzCQv5kK4DjiE9ok+IT+g/pYGGND/
+8Pl+3Ts4yz2BGAg+HC/j40taCs8MYsfBiisGF7hL0qM/PpiqpC3dfSatfY9FGST7
+3a0Q6LgyEdIF+TJy2GSCPEFcFD4/Dmeva6mgI/uWCm5DcPxp52JpxUdSHc4zPa9h
+qox1eXP8K08Xq+y2pvQvbQkyNPqZsbWUcdemUAdfSgMHlb5tvMRfJAvotZd9e1iW
+O9Jdt5CzN1snKmykn8oKpG8QCLkOubGyscZGB8sR/j51r5LbgBs=
+=R8bd
+-----END PGP SIGNATURE-----
+
+--is7TnwDJyN2IjQWK--
 
