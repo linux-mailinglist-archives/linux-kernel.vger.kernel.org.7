@@ -1,162 +1,147 @@
-Return-Path: <linux-kernel+bounces-783373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E35B32CB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 02:29:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E05D3B32CB7
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 02:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E3CA446736
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 00:29:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C592F1B26C10
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 00:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A788C131E49;
-	Sun, 24 Aug 2025 00:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554E22AC17;
+	Sun, 24 Aug 2025 00:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="neLs/0m5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjV7Ulxj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3895211F;
-	Sun, 24 Aug 2025 00:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2A91FB3;
+	Sun, 24 Aug 2025 00:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755995367; cv=none; b=YwY9pFlD7qqtwcCGWOhJe6WXWlQInbHD0I1UfMB8sA06ZO4ODrcY3uuMcSUhNpKSB2ovt7jqHEFryzorCtglQkpZHhz0EKIzys9Rf5nMkIbPcna0w+l0LjWRfMViC+PBLN60AyqQZzExgVlUL2qNHYjhKVPTwi1SUuU6i+SezGc=
+	t=1755995508; cv=none; b=MuOeUWphrmUaHOq+eiBzn5VHgAT1mmzpu4+pahnnU2OEr0hyUrKAUgo0SmTD6C/mTmm0whutskxYPH8QCqC66jtN6tQpodUF2rHq3DAi3Al3PFwB/MqR8rleP4RXrmCnFl+YWg2FTTpyzzNNdDsfbTtixD3rlQmZkRcndXEsBqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755995367; c=relaxed/simple;
-	bh=ZS1Pmn3yqYykXEYlhI/MX9i0W3Yj98iOBAiItOhZVaQ=;
+	s=arc-20240116; t=1755995508; c=relaxed/simple;
+	bh=odEFLxYSjofajBpnAwKdZQ8ZowyJqgbEtlSPVVz6DA8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p6/QuEecKydrH2tstOPbfMWzJmMKtI95mtwlvyiJNRI6Roz2yB4tHeMnTFgVRmvQeYZRRn72aHx0AVwLBDu+x2fFpISwBaZEI8LT76gGabXmpBFYVAMpA9NXSzU08IspDBqzCSi80W3vYEjQroa1OaxCLqJ4WUR2C8epEIRWL28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=neLs/0m5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D4A6C113D0;
-	Sun, 24 Aug 2025 00:29:26 +0000 (UTC)
+	 To:Cc:Content-Type; b=Rs9KCa2249DMed6+CuZgFH45zEx+ovEdmgC7PCv09BdtWcxzSLS0e7kd5a3sLk1W2gWf4i3CUuE94wRxFJj6pCejS5R5rrk08kG0RMyJCgM+6C3rZ9BleEUUtsS/XPgLZYFkVYavkDdXoQb78xR1szifq9EweuRJiTJTGWGY7u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjV7Ulxj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49D3AC113D0;
+	Sun, 24 Aug 2025 00:31:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755995366;
-	bh=ZS1Pmn3yqYykXEYlhI/MX9i0W3Yj98iOBAiItOhZVaQ=;
+	s=k20201202; t=1755995508;
+	bh=odEFLxYSjofajBpnAwKdZQ8ZowyJqgbEtlSPVVz6DA8=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=neLs/0m5O+k7OmfrAg0NTpe0LOifYqrvnXhx8YpdoTZ8h7842r7dIxuwIsofkhbOE
-	 jXbIdFDWqDPGblF0SoggrZssVfmuml0OKO+Td1E4hPYLuWIWz7IywWb06vFYk55Cft
-	 zKLF5qkdxrAHn9YyrDFFgEWleuvLbUYH2lxFk3YQn6qhalZdYNhUQ5sMk9s+8PUTh2
-	 iSUbDzIwo4YLvXP8GJMltw7RR8HuMiYpIB39r2vbNcQBcGNqy1YUuBjq/mBGxowT1T
-	 ycuCK+IG+r8Zx9U03WlgvHkaXJ+Rtu/I270qWe+GWENkpJSDneahTd1PhANgbkRxqm
-	 bvcjtMrgZw3gQ==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55f3dcb2b9fso485422e87.1;
-        Sat, 23 Aug 2025 17:29:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVmlk4sndDQVlSm9cydpF5EqpI7QQdpO00vIPplxpZ0egMc1vFDRSBTkZYginoGFLV/KtGVxfn4Zfm5O9Y=@vger.kernel.org, AJvYcCWvBRW4GNRbHkmGk0gtBjrv5jfxO9WxVD7DN8p2kVL9MQmRB5eOKbwQmIRwpLvkiybbS80AQqUo@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOmjownrDe16z+fvRdh4sVYReLzWBJz1/rWzm3raHc2hgDsqOx
-	LbZwXIbtSS686kg5v7sNuoLUktJfdUQMs92H+LM2jKoSYW4fPvy/VAUS29Fl/cCswxQr+2N2jxq
-	00zd2kLVTlbmEdOKkm3GE+/MxzN1h4z4=
-X-Google-Smtp-Source: AGHT+IHetBc+qV1sYoQ7G48l8PH/wSQryi0VIQHlCMRsICo02GB2FdJo2ZJ2wt8u1VtB7ilkizOV7y0lBxLVnRC8qP4=
-X-Received: by 2002:a05:6512:63d6:20b0:55f:eb7:e1be with SMTP id
- 2adb3069b0e04-55f0eb7e248mr1508559e87.6.1755995364734; Sat, 23 Aug 2025
- 17:29:24 -0700 (PDT)
+	b=JjV7UlxjyEPU0iBkzfLbD0P5qfFF6bmqDaFTN6mWDKqL00/r1Tqyyvsu5DVnktUQo
+	 cs2IInlzuoU0JXi5rX+rvFysZONzHzK+3PP4tzkLUMmcfJXXhEZkNN7r7Artpwm14f
+	 u3gINapu0FyfIT/efnWLAZs6XqLKUtoZw377clrT3QOEiWgClOxdi/e6wCkCBV3LDb
+	 u0C5wOulO8urJAHujfTUsfSdJPR9T5DskHcgikih3qc3nRdsZ9i6WAUV/1053FZQI3
+	 O8wp2U19ZjxDbAsxBtSv0si5Q+CcjbUVe+zt6fNd83VRpbmQS7zqrH4kPTGERq12Y/
+	 gEqzMcXBlSr2w==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55ce5097493so2977463e87.0;
+        Sat, 23 Aug 2025 17:31:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWTZiZtfA+BwQaZZpvwjabYHBNJHq63DSwVt+OVR0Pmham8s887M1/WXf2CWYmhVFzQckyDafxgIJg=@vger.kernel.org, AJvYcCXUZZ//irY/UwLZb2ZyXwridOUwwihHbZVBbOl1DcIrYfte2yXxxZgZPuTEtYOa86vUukoXn9i5jYCkXZem@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTgkSug2JgO0jTF+L1y2QA1EaXoEYZV42FGOd8rF3OkqdzoYmk
+	GCSgOLdorQcUhvqvpJ1mW2pzMJQeydYgW/LBkWoAMiOqLtjI6xAULUoDPpDjmTkAqRy5FucoBdx
+	UbqM9RtQ8Tm5/EMuyEpxxBRMDK/sdDc4=
+X-Google-Smtp-Source: AGHT+IE+CGTNYQ8ipKOG7G5GQbFG46Vul5T3gKWQTTzUNEdBTzlD9Tc/YII3dXd0fy0LA8Amewyg2O5LP3WnH6Pl2Lk=
+X-Received: by 2002:a05:6512:234c:b0:55f:42b8:b11 with SMTP id
+ 2adb3069b0e04-55f42b80c99mr39270e87.45.1755995506679; Sat, 23 Aug 2025
+ 17:31:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822041526.467434-1-CFSworks@gmail.com> <CAMj1kXH38gOUpDDdarCXPAY3BHBbuFzdD=Dq7Knsg-qHJoNqzQ@mail.gmail.com>
- <CAH5Ym4gTTLcyucnXjxFtNutVR1HQ0G2k_YBSNO-7G3-4YXUtag@mail.gmail.com>
-In-Reply-To: <CAH5Ym4gTTLcyucnXjxFtNutVR1HQ0G2k_YBSNO-7G3-4YXUtag@mail.gmail.com>
+References: <20250708-efi-default-loglevel-v1-1-12b80db5af16@gmail.com>
+ <CALHNRZ9T0dHzbXBUdBa4hE-Ao8ebeLLPRX+1ThkuLT+Rp8_Jeg@mail.gmail.com>
+ <CAMj1kXEwyaHUkO5aO-sL3YAN=qRoSTuotHMRpBDLX9BhERnN=g@mail.gmail.com> <45692a2c-ba3d-45a2-9ab1-cf6982dbf788@siemens.com>
+In-Reply-To: <45692a2c-ba3d-45a2-9ab1-cf6982dbf788@siemens.com>
 From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 24 Aug 2025 10:29:12 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXF00Y0=67apXVbOC+rpbEEvyEovFYf4r_edr6mXjrj0+A@mail.gmail.com>
-X-Gm-Features: Ac12FXxcUNd_f0UkC6N6FYHMSqWFXrcHvK9WPOz9rtw9Q7N35R1BhKCa6AeFuX0
-Message-ID: <CAMj1kXF00Y0=67apXVbOC+rpbEEvyEovFYf4r_edr6mXjrj0+A@mail.gmail.com>
-Subject: Re: [PATCH] arm64/boot: Zero-initialize idmap PGDs before use
-To: Sam Edwards <cfsworks@gmail.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Marc Zyngier <maz@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Baruch Siach <baruch@tkos.co.il>, Kevin Brodsky <kevin.brodsky@arm.com>, 
-	Joey Gouly <joey.gouly@arm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date: Sun, 24 Aug 2025 10:31:35 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXG=zG8j+cr0gNMpkKRvdekqMR-EiEkMHiFgRvbaWy9aKg@mail.gmail.com>
+X-Gm-Features: Ac12FXw_QXkkq4rLy1icWgf7Z2gtdX1LLyLPc5SKyeedN9znQl9aP222HrlZmC0
+Message-ID: <CAMj1kXG=zG8j+cr0gNMpkKRvdekqMR-EiEkMHiFgRvbaWy9aKg@mail.gmail.com>
+Subject: Re: [PATCH] efistub: Lower default log level
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Aaron Kling <webgeek1234@gmail.com>, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, 24 Aug 2025 at 09:56, Sam Edwards <cfsworks@gmail.com> wrote:
+On Sat, 16 Aug 2025 at 16:52, Jan Kiszka <jan.kiszka@siemens.com> wrote:
 >
-> On Sat, Aug 23, 2025 at 3:25=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> =
-wrote:
+> On 15.07.25 03:35, Ard Biesheuvel wrote:
+> > On Tue, 8 Jul 2025 at 17:31, Aaron Kling <webgeek1234@gmail.com> wrote:
+> >>
+> >> On Tue, Jul 8, 2025 at 2:30=E2=80=AFAM Aaron Kling via B4 Relay
+> >> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> >>>
+> >>> From: Aaron Kling <webgeek1234@gmail.com>
+> >>>
+> >>> Some uefi implementations will write the efistub logs to the display
+> >>> over a splash image. This is not desirable for debug and info logs, s=
+o
+> >>> lower the default efi log level to exclude them.
+> >>>
+> >>> Suggested-by: Ard Biesheuvel <ardb@kernel.org>
+> >>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> >>> ---
+> >>>  drivers/firmware/efi/libstub/printk.c | 4 ++--
+> >>>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/drivers/firmware/efi/libstub/printk.c b/drivers/firmware=
+/efi/libstub/printk.c
+> >>> index 3a67a2cea7bdf1aa215d48dbf9ece4ceec6e4c28..bc599212c05dd746a9c54=
+abbbe61a4bf70f1a8c4 100644
+> >>> --- a/drivers/firmware/efi/libstub/printk.c
+> >>> +++ b/drivers/firmware/efi/libstub/printk.c
+> >>> @@ -5,13 +5,13 @@
+> >>>  #include <linux/ctype.h>
+> >>>  #include <linux/efi.h>
+> >>>  #include <linux/kernel.h>
+> >>> -#include <linux/printk.h> /* For CONSOLE_LOGLEVEL_* */
+> >>> +#include <linux/kern_levels.h>
+> >>>  #include <asm/efi.h>
+> >>>  #include <asm/setup.h>
+> >>>
+> >>>  #include "efistub.h"
+> >>>
+> >>> -int efi_loglevel =3D CONSOLE_LOGLEVEL_DEFAULT;
+> >>> +int efi_loglevel =3D LOGLEVEL_NOTICE;
+> >>>
+> >>>  /**
+> >>>   * efi_char16_puts() - Write a UCS-2 encoded string to the console
+> >>>
+> >>> ---
+> >>> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+> >>> change-id: 20250708-efi-default-loglevel-4da5a36cac87
+> >>>
+> >>> Best regards,
+> >>> --
+> >>> Aaron Kling <webgeek1234@gmail.com>
+> >>
+> >> This patch was originally suggested a few months ago [0], but as far
+> >> as I can tell was never queued for merge. Since I'm also hitting a
+> >> case where this is relevant, I'm sending this in to bring attention
+> >> back to it.
+> >>
 > >
-> > Hi Sam,
+> > I've queued this up now - thanks.
 > >
-> > On Fri, 22 Aug 2025 at 14:15, Sam Edwards <cfsworks@gmail.com> wrote:
-> > >
-> > > In early boot, Linux creates identity virtual->physical address mappi=
-ngs
-> > > so that it can enable the MMU before full memory management is ready.
-> > > To ensure some available physical memory to back these structures,
-> > > vmlinux.lds reserves some space (and defines marker symbols) in the
-> > > middle of the kernel image. However, because they are defined outside=
- of
-> > > PROGBITS sections, they aren't pre-initialized -- at least as far as =
-ELF
-> > > is concerned.
-> > >
-> > > In the typical case, this isn't actually a problem: the boot image is
-> > > prepared with objcopy, which zero-fills the gaps, so these structures
-> > > are incidentally zero-initialized (an all-zeroes entry is considered
-> > > absent, so zero-initialization is appropriate).
-> > >
-> > > However, that is just a happy accident: the `vmlinux` ELF output
-> > > authoritatively represents the state of memory at entry. If the ELF
-> > > says a region of memory isn't initialized, we must treat it as
-> > > uninitialized. Indeed, certain bootloaders (e.g. Broadcom CFE) ingest
-> > > the ELF directly -- sidestepping the objcopy-produced image entirely =
---
-> > > and therefore do not initialize the gaps. This results in the early b=
-oot
-> > > code crashing when it attempts to create identity mappings.
-> > >
-> > > Therefore, add boot-time zero-initialization for the following:
-> > > - __pi_init_idmap_pg_dir..__pi_init_idmap_pg_end
-> > > - idmap_pg_dir
-> > > - reserved_pg_dir
-> >
-> > I don't think this is the right approach.
-> >
-> > If the ELF representation is inaccurate, it should be fixed, and this
-> > should be achievable without impacting the binary image at all.
 >
-> Hi Ard,
+> And how can I get back the loglevel info? It seems I can only choose
+> between notice, silent and debug now. And the latter two only by also
+> touching the kernel's loglevel.
 >
-> I don't believe I can declare the ELF output "inaccurate" per se,
-> since it's the linker's final determination about the state of memory
-> at kernel entry -- including which regions are not the loader's
-> responsibility to initialize (and should therefore be initialized at
-> runtime, e.g. .bss). But, I think I understand your meaning: you would
-> prefer consistent load-time zero-initialization over run-time. I'm
-> open to that approach if that's the consensus here, but it will make
-> `vmlinux` dozens of KBs larger (even though it keeps `Image` the same
-> size).
+> I'm particularly missing [1] in my UART logs now which is helpful in
+> understanding this essential system state.
 >
 
-Indeed, I'd like the ELF representation to be such that only the tail
-end of the image needs explicit clearing. A bit of bloat of vmlinux is
-tolerable IMO.
+Hi Jan,
 
-Note that your fix is not complete: stores to memory done with the MMU
-and caches disabled need to be invalidated from the D-caches too, or
-they could carry stale clean lines. This is precisely the reason why
-manipulation of memory should be limited to the bare minimum until the
-ID map is enabled in the MMU.
-
-
-> >
-> > > - tramp_pg_dir # Already done, but this patch corrects the size
-> > >
-> >
-> > What is wrong with the size?
->
-> On higher-VABIT targets, that memset is overflowing by writing
-> PGD_SIZE bytes despite tramp_pg_dir being only PAGE_SIZE bytes in
-> size.
-
-Under which conditions would PGD_SIZE assume a value greater than PAGE_SIZE=
-?
-
-Note that at stage 1, arm64 does not support page table concatenation,
-and so the root page table is never larger than a page.
+Is efi=3Ddebug too noisy for you?
 
