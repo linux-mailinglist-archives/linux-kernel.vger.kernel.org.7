@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-783548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2BEFB32EDF
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:58:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52EC7B32EE1
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82D4A1B26AEF
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:59:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C1462041BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0723826B2D2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C858926CE32;
 	Sun, 24 Aug 2025 09:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k9oGXbKk"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FxXFUOSu"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF5A264614
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 09:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A140269806
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 09:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756029522; cv=none; b=EOglExehMQq4GykJJbOmxWXb9yDDXGOg8AD26hYt3wOJOBmcbN86Z+lG1SUPYvSCwRPREogrDHmiDE0G+LGg3eY9fT8H44T3JWEmHdnFYoPvPo5xJ0I9FYsQVRvRcfp52Bk/UcX7gg9btjY0ppErpbw4vqzun0+I3tWrk3AByy0=
+	t=1756029523; cv=none; b=Zby6Scu4gw9vFQ1//DRmoh6LykOTY/VCJQbHdHQB0BlTSNatq/SPNgBL/92IZQiDUJittW70VS3X4lJzmK6NVIj25Ea0lNoDGl6sR9wY+z+FhRqw7+OWti9bgJ3meaPy7mEs2vF0bmm3t+lCQpUDbp0ak+Ig/Ibac8UNlbA1CG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756029522; c=relaxed/simple;
-	bh=CXpEwzcOgts0UYKdQU3OZhreVhHUKwGYoANggirmlPM=;
+	s=arc-20240116; t=1756029523; c=relaxed/simple;
+	bh=qCuohedTig+dBflD+bJqbTY8MVe0rkaexM5kYM0D4ww=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jh3vkRsM92xS8pt6Hu5faLIDceGKgMp7jdDXZKAJ2VqpVjdXRfVLghEhi0WgEZTve7WNszFYvTWRbzT603nKyeqHEVbh/n2dj+wNIoGDlse0ipB+F0wqRxOnFnzuzWpnEtKsDppo32T4319fUGvJ+WpuZp++DXfknWJtnA2BCHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k9oGXbKk; arc=none smtp.client-ip=209.85.218.47
+	 MIME-Version; b=VGk2U7kIbiMcXoLfXMYlgV8Oj3oP0cvIpmvNMojYXqG6EdUXFg/yk7otU+UlFfO90FrntFPQ0qDWsJRfmLCoOzSZwLS0ABED4/OC0cIPTUBw25aGWI9cd8sp42LY2g6/AvyoHhACrgIl50bQm9+qzGJ0mLchebLReHD9wTMH9hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FxXFUOSu; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-afcb78f5df4so586927366b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 02:58:40 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7a0442bso553655566b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 02:58:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1756029519; x=1756634319; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CB3jyeOTf+YX3hjwKO9p+5RPKcTVpxOior2qXXRyptY=;
-        b=k9oGXbKkDjUCeUzLvIhhTKMzerehq4X0Wzxj4npP81NaL3NVznUvnuY5Pz3GHL5CIB
-         pIciww46TaPGFFUCJY12HzBSa4FvUVUJMzcY6ZTiBwsczdNMNu5B16XD+1+sIAuApvi5
-         nkQU1Ej/0CvBJnQT29S5wA5RV+o5ODkJnwhOFKOOTBL/+TTtau7srYcPPCzMInY7dxO5
-         EVEEoa0cahvla4Owry7b99j1ASZYL/rfEQ9+6cfb+UhbxhR14jIggY1YpzjtTzfCPUg1
-         XQwr/4UyX4DhmaU0awHOoftGDdKLlZSDEVBDZsAYikSayEoD2u0cnm0bUg9Enc5DDnP4
-         DluA==
+        bh=DvYsuGKgwDJ3CdZTywUVsaFMO2gJDf2toz0PGf3ll9M=;
+        b=FxXFUOSu640QA8VBpmhks0HmKGXVtBtaQ7rWaecww9ni7pk6Pyu0fe+BWKux5YG8b7
+         pXuMoliOeYjIVxoCiVWDV/imsu+1UOP67hrfGYEj/wM+8P2y8VdJVTksfvmwRTPf7iZD
+         6N3PJw5xryfQlpz0wFxw25VzV8T5+TqqcbOtM337OjgiHCyqlrdGArhEgVYBbe4hMEm4
+         qEg3YUkS+2QziWRBljvzlVb9joKinsE6ZOYh9wanQTzvHFCPgxdQgpkHsPnM+rLg40Gl
+         EjPa4ztQFJiXi6rGqaZDpPpyImct7Z4ecJesMnqelMgXowjQMM2/WLHH3O9OE0Qm4IK7
+         Ct3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1756029519; x=1756634319;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CB3jyeOTf+YX3hjwKO9p+5RPKcTVpxOior2qXXRyptY=;
-        b=xLIVjGkdOUer1Dik1yjHj5fzMWiuiYLMZQpzZOPD6hMYjtqbl6lxckBFXBZZzqlT2i
-         TWfCr5p+QWQxLqUmBDqdPZG2qnpZendY3GG+SYH0ddBzDlr+0KjtwdZLtQTWXFXb4+V0
-         R+d7i0iy3xJ/P8coAMXQZ+2g/n7QRCGI3AsL+y7sSqj9pbqbezPnL30OaHCZnPQ6IMz/
-         w1J9yrFAXh9/VulKI68RB2YhgKVj4g4SbDVukiEE9h3bFtWyDKSg11q9p/344W8Mi7/7
-         81vnE192JLmZXwQ9FtAnBbb9GnRd/c0haa9tOk0EIsBfobN2FtGRFcfk8tH/bbaGx7a0
-         i6tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRzQ6NG9oN7/d0vSNsMKq6VIyMS/XyCgjK7MK170u8xWyqg2pJOoEZJVXhsRX8/8BXEArzIJVQrSKyj/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWcyWDb1Zedh6GSa5fOoBFsEa739DTMeaM3zVzi/bUN12f6TX3
-	8so3W4cQyiTvCMjG99cJ0QJ9ofMSZGNNY4BRZYzKpWjXqoBTcFS8hZDJ
-X-Gm-Gg: ASbGnctNWLNaomF+NJublQzfJ8wBPL8YM1bouKMdpa3/f/tptknJ7aWyGejrtWlR8v9
-	Ipv0NVDWCxcxDJy6MDa8sQ+LRSy9Eu2kS629QZd8fYfwRcYYMqukOVFkMFAP2sFiXMwqad9c41B
-	v51vlVtpMgNtTmDau7sNbwGbPxNBZPFfsZj6vJV9VL3V3Km0VwygWHImn/0JGXOenUYG2F23e2H
-	rfAiBb1nJ23KOHEAXLCIK4ep9TSyCUXwGQVPH+p4mipGXNypbxhW+/lKxLrvBL4bOWRLKC8qpP8
-	Zo8FcK+sK1XV7ahpgIxCM8L/1zagjj+yI3HvQgffrY2plUm/a0mDDjXxq+3+kbG09SmHqd9M9+B
-	vI0rro8vddsG85fTE2ud/KzgRJg==
-X-Google-Smtp-Source: AGHT+IGQeXBOoeK68ALXLYtOAYAecYc2sLvZHTeB0Ue7szRlW3hJU4FCo/iL21WNNcmTopTbWW8RtA==
-X-Received: by 2002:a17:906:6a1f:b0:ae6:f087:953 with SMTP id a640c23a62f3a-afe28f8581cmr819070766b.12.1756029518977;
-        Sun, 24 Aug 2025 02:58:38 -0700 (PDT)
+        bh=DvYsuGKgwDJ3CdZTywUVsaFMO2gJDf2toz0PGf3ll9M=;
+        b=WAj5Is5/mryB9JJ8I/CTO3YqL5wUMJDBPz/kmST9wMc7kAap30dtn+ns34F+nEwTAg
+         NIFydM8eLsE5m26xeddq+oulWKZ7tZ9jurQS4aJlISNc+eEz01CcyU3b4IUvxFMritq2
+         BETSf74gVWIZe8zEJlHtApWHvr7XKximrz394dEq/PAwb6JroQPjY77yBzvurWnmaXg2
+         CxSdreEn/BFU7aQknUSUTQVjb1MG9tmevulWvaqaRdn+DJ/vcsVGw5DkRCHTI4DyV010
+         X3RQaZdCNH50T6arzNHD/W+dqhAVtQLwp7aXf+zmj14WPn7HHSYKzlMh9PNPaNYAydeM
+         bfgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrHeeEFVZzD2i5LFMtcxuqpKU9q6MI50csul8wDTx84DcI2bRimyiGRPmRZD4RoXfuSI2s6cH+AopNVU4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+dpWm+T4TKGhCzfdo2dyxyQKm/tNG3rFYTDKBJMNicHp2aEwm
+	lQiAv/E+dU4vO1wQFUB5yzfNO+MQBUjlh9Oos/fRbwuILPisdzqCOBR6jFb1eg==
+X-Gm-Gg: ASbGncuCzx/+pQtfYYmkj/DhZRQ7u6WOYRYMfv/NB2H26LwEgLyQW/j50UjivqN1Oq2
+	oy8EEqGPRPjL7FZ9nYL6t+aHH8A7UhLUv+vwFH8pArPIqpeYx4rmldp3nanEE1WPt7CVnW7ofrv
+	/Q2jhCiEdGh1/Av5Bc3bLYK8k9Mwr85jPaUIMdaJT3SAtnz/EWTMnM1zlQO2hfn4lWyBq/DSIcR
+	n/nhWo1P/5C3P9NXvgGIeK4AZPf77jzWkex8GKL2hkmTIcaIlBRlBb+RCO7Ghco6Lx2lCBwFcmT
+	bjuNBQgrZxyKR8S3U36HnDQArFYCEy/x4HytxWng183sWLR9wmMiWkFNrtVwon7+RjRLVZtuIoP
+	MHHYSMFuySRZDXDFQpXY9JnL+tw==
+X-Google-Smtp-Source: AGHT+IHUgjHdJG8CmX711Go0qGjiVzBIzdUGCqALRPhnVIpluUA/K+SKc88aZMbU60nTK1rgX0/ztg==
+X-Received: by 2002:a17:907:3f08:b0:ae6:f163:5d75 with SMTP id a640c23a62f3a-afe28ffbfcemr819307966b.11.1756029519535;
+        Sun, 24 Aug 2025 02:58:39 -0700 (PDT)
 Received: from tumbleweed ([95.90.184.246])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe79fba62dsm41314766b.100.2025.08.24.02.58.38
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe79fba62dsm41314766b.100.2025.08.24.02.58.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Aug 2025 02:58:38 -0700 (PDT)
+        Sun, 24 Aug 2025 02:58:39 -0700 (PDT)
 From: Michael Straube <straube.linux@gmail.com>
 To: gregkh@linuxfoundation.org
 Cc: hdegoede@redhat.com,
@@ -79,9 +79,9 @@ Cc: hdegoede@redhat.com,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 3/4] staging: rtl8723bs: remove REG_EFUSE_ACCESS_8723 and EFUSE_ACCESS_ON_8723
-Date: Sun, 24 Aug 2025 11:58:29 +0200
-Message-ID: <20250824095830.79233-4-straube.linux@gmail.com>
+Subject: [PATCH 4/4] staging: rtl8723bs: Hal_EfuseParseAntennaDiversity_8723B is empty
+Date: Sun, 24 Aug 2025 11:58:30 +0200
+Message-ID: <20250824095830.79233-5-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250824095830.79233-1-straube.linux@gmail.com>
 References: <20250824095830.79233-1-straube.linux@gmail.com>
@@ -93,48 +93,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The macros REG_EFUSE_ACCESS_8723 and EFUSE_ACCESS_ON_8723 are redundant,
-both are already defined in header files without the _8723 suffix. Remove
-them and use the marcos from the header files.
-
-rtl8723b_hal.h:138:
- #define EFUSE_ACCESS_ON  0x69 /* For RTL8723 only. */
-
-hal_com_reg.h:35:
- #define REG_EFUSE_ACCESS 0x00CF /*  Efuse access protection for RTL8723 */
+The function Hal_EfuseParseAntennaDiversity_8723B is empty, remove it.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 8 --------
+ drivers/staging/rtl8723bs/hal/sdio_halinit.c      | 1 -
+ drivers/staging/rtl8723bs/include/rtl8723b_hal.h  | 2 --
+ 3 files changed, 11 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-index 36680ecb5897..45cd2291f83d 100644
+index 45cd2291f83d..18244adad9e0 100644
 --- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
 +++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-@@ -568,13 +568,6 @@ void Hal_GetEfuseDefinition(
- 	}
+@@ -1511,14 +1511,6 @@ void Hal_EfuseParseCustomerID_8723B(
+ 		pHalData->EEPROMCustomerID = 0;
  }
  
--/*  */
--/* 	The following is for compile ok */
--/* 	That should be merged with the original in the future */
--/*  */
--#define EFUSE_ACCESS_ON_8723			0x69	/*  For RTL8723 only. */
--#define REG_EFUSE_ACCESS_8723			0x00CF	/*  Efuse access protection for RTL8723 */
+-void Hal_EfuseParseAntennaDiversity_8723B(
+-	struct adapter *padapter,
+-	u8 *hwinfo,
+-	bool AutoLoadFail
+-)
+-{
+-}
 -
- void Hal_EfusePowerSwitch(
- 	struct adapter *padapter, u8 PwrState
+ void Hal_EfuseParseXtal_8723B(
+ 	struct adapter *padapter, u8 *hwinfo, bool AutoLoadFail
  )
-@@ -609,7 +602,7 @@ void Hal_EfusePowerSwitch(
- 			} while (1);
- 		}
+diff --git a/drivers/staging/rtl8723bs/hal/sdio_halinit.c b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
+index 73561a63401e..7fcb874d0eb3 100644
+--- a/drivers/staging/rtl8723bs/hal/sdio_halinit.c
++++ b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
+@@ -1071,7 +1071,6 @@ static void _ReadEfuseInfo8723BS(struct adapter *padapter)
+ 	Hal_EfuseParseChnlPlan_8723B(padapter, hwinfo, pEEPROM->bautoload_fail_flag);
+ 	Hal_EfuseParseXtal_8723B(padapter, hwinfo, pEEPROM->bautoload_fail_flag);
+ 	Hal_EfuseParseThermalMeter_8723B(padapter, hwinfo, pEEPROM->bautoload_fail_flag);
+-	Hal_EfuseParseAntennaDiversity_8723B(padapter, hwinfo, pEEPROM->bautoload_fail_flag);
+ 	Hal_EfuseParseCustomerID_8723B(padapter, hwinfo, pEEPROM->bautoload_fail_flag);
  
--		rtw_write8(padapter, REG_EFUSE_ACCESS_8723, EFUSE_ACCESS_ON_8723);
-+		rtw_write8(padapter, REG_EFUSE_ACCESS, EFUSE_ACCESS_ON);
- 
- 		/*  Reset: 0x0000h[28], default valid */
- 		tmpV16 =  rtw_read16(padapter, REG_SYS_FUNC_EN);
+ 	Hal_EfuseParseVoltage_8723B(padapter, hwinfo, pEEPROM->bautoload_fail_flag);
+diff --git a/drivers/staging/rtl8723bs/include/rtl8723b_hal.h b/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
+index 40ff96d3cf74..2ed1fc8549ec 100644
+--- a/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
++++ b/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
+@@ -210,8 +210,6 @@ void Hal_EfuseParseChnlPlan_8723B(struct adapter *padapter, u8 *hwinfo,
+ 				  bool AutoLoadFail);
+ void Hal_EfuseParseCustomerID_8723B(struct adapter *padapter, u8 *hwinfo,
+ 				    bool AutoLoadFail);
+-void Hal_EfuseParseAntennaDiversity_8723B(struct adapter *padapter, u8 *hwinfo,
+-					  bool AutoLoadFail);
+ void Hal_EfuseParseXtal_8723B(struct adapter *padapter, u8 *hwinfo,
+ 			      bool AutoLoadFail);
+ void Hal_EfuseParseThermalMeter_8723B(struct adapter *padapter, u8 *hwinfo,
 -- 
 2.51.0
 
