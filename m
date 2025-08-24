@@ -1,125 +1,89 @@
-Return-Path: <linux-kernel+bounces-783470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387A8B32E04
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:43:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09B9FB32E08
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C749F3BDEF6
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 07:43:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D68B4206D45
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 07:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC0324CEEA;
-	Sun, 24 Aug 2025 07:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLBsysUp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF5C24886F;
+	Sun, 24 Aug 2025 07:50:58 +0000 (UTC)
+Received: from bregans-0.gladserv.net (bregans-0.gladserv.net [185.128.210.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F31417A31B;
-	Sun, 24 Aug 2025 07:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8401F3FDC;
+	Sun, 24 Aug 2025 07:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.128.210.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756021375; cv=none; b=lPKwV2EhKB5ccyS6kt3PdGWLfcB/zHUVdxlAWnG7um2g/Lgb9wpqwhIDcJhWWBJLOY8bhmaUZeXNFMFZzlhrXzy4c0KbuciB9DgdUjpcWijHW43oQtPTqks6pY/l8uPJmY23OLQgT/R0D+hXPRYKwULkFCEH71LKkAPZbuYtBi4=
+	t=1756021858; cv=none; b=c9V6p57vDuju6OcpiXQYUXesm9opIoGEp+wmIOviI4oFG7CZm7yikyBcNI4+TJF9BnD629Es1ui29ajY/89ygpadmITZ2622fVwP57mAXRBvDOI5RwRozGcx4n3nCQIsEQQxLPb4ftp13R2WPhpC96zgygUc6y+v1YtXTSNrxJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756021375; c=relaxed/simple;
-	bh=QHQcKCwQEjDTksAQ4PHYojdmYvMup5UJgKW3z2KPdNQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G3d5pbaHZnQ5N5IFdREf+Q2VQLKv9Nqvy+QKrC87v3FQGp9y2YapEmtDkZdzUF++XZoF5h8AilhHdWJSFUjl4wfIjBbGqibxhSW/hGY0lsuMEm0raNvFMH7qhNcjshdWrQ3PmtwzzYwk/vW0dnzL3N8lMPfDM4cfXanDG3ayGGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLBsysUp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E3A7C4CEEB;
-	Sun, 24 Aug 2025 07:42:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756021375;
-	bh=QHQcKCwQEjDTksAQ4PHYojdmYvMup5UJgKW3z2KPdNQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bLBsysUp7pIvrQzQFnkBVz2soSqLY5115ovNpxDnKCvMPs2DC/B1TeZs/94MPqTnV
-	 KMCaM3mhYtliSc01guM+nIA59HCzZfruZYjmAHjqPaMArDD74rWjboPq0fddA/t99F
-	 yCTLkzMQ9So3cOvxJxe5A4bp6I9XOSSAKVw1qXp3S32oY0tpMu6lbdeLYuFF7mHmW8
-	 AaQJGA/2qBag3rIrfbqrEqNSqmZfPTu/cgcdAIiKhschKK3d42c9ydDKfekXQWmV12
-	 19elIJ4x02lqQBF4qyiX+nXJ73RnUlmISc4DX8WBzpLufyHDVRqatj0nm4KsKNKkd0
-	 qMpSi7o0j/PwA==
-From: William Breathitt Gray <wbg@kernel.org>
-To: Marcos Del Sol Vives <marcos@orca.pet>
-Cc: William Breathitt Gray <wbg@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Michael Walle <mwalle@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-gpio@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] gpio: vortex: add new GPIO device driver
-Date: Sun, 24 Aug 2025 16:42:39 +0900
-Message-ID: <20250824074243.416291-1-wbg@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250822135816.739582-3-marcos@orca.pet>
-References: 
+	s=arc-20240116; t=1756021858; c=relaxed/simple;
+	bh=E05aj0Eyocvn7/Y8L5l8zR61dpymRDyKM4sP5P2AyiE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QslQpNKe0x6Fm3kbvwy6VCU4dWzeHQJvZSrPEkN2U/v2tTU4ZakQFHRJj5GNEEiKCgYunbNL2PYuY/OTbwP5k8kQh2pP1+MC8Z/Y6Mdn5hkXjsg1oDfvj8G5j3hLhzNDPQuuje2yF/Z5WMb5Q25gxtHgKAXAsM/PDSWTWi4wRF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net; spf=pass smtp.mailfrom=librecast.net; arc=none smtp.client-ip=185.128.210.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=librecast.net
+From: Brett A C Sheffield <bacs@librecast.net>
+To: Shuah Khan <shuah@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-kselftest@vger.kernel.org,
+	workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Brett A C Sheffield <bacs@librecast.net>
+Subject: [PATCH 0/1] docs: kselftest: remove link to obsolete wiki
+Date: Sun, 24 Aug 2025 07:48:44 +0000
+Message-ID: <20250824075007.13901-2-bacs@librecast.net>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2134; i=wbg@kernel.org; h=from:subject; bh=QHQcKCwQEjDTksAQ4PHYojdmYvMup5UJgKW3z2KPdNQ=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDBmrDmUZTP1ffiFCPb2c/X3XPnll3X/dLJ76y6c5P6/lW mi9ZKpyRykLgxgXg6yYIkuv+dm7Dy6pavx4MX8bzBxWJpAhDFycAjCRydsZGf59i11frhQTfG37 00AGyda9U4xKP8/qnbozrLTwqOUvmwRGhsWyPyJ0f3MyahQnHpY9cmPztrsP6hN/LldpMziTGdS zlhkA
-X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
 Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 22, 2025 at 03:58:12PM +0200, Marcos Del Sol Vives wrote:
-> Add a new simple GPIO device driver for most DM&P Vortex86 SoCs,
-> implemented according to their programming reference manuals [1][2][3].
-> 
-> Vortex86EX/EX2 use a radically different mechanism of GPIO control
-> and are not supported by this driver.
-> 
-> This is required for detecting the status of the poweroff button and
-> performing the poweroff sequence on ICOP eBox computers.
-> 
-> IRQs are not implemented, as they are only available for ports 0 and 1,
-> none which are accessible on my test machine (an EBOX-3352-GLW).
-> 
-> [1]: https://www.vortex86.com/downloadsStart?serial=Vortex86SX/DX/MXPLUS
-> [2]: https://www.vortex86.com/downloadsStart?serial=Vortex86DX2
-> [3]: https://www.vortex86.com/downloadsStart?serial=Vortex86DX3
-> 
-> Signed-off-by: Marcos Del Sol Vives <marcos@orca.pet>
+Greetings,
 
-Hi Marcos,
+I've recently been getting my head around the kselftest system from a standing
+start. As I do so, it makes sense that I submit any patches to fix or clarify
+the accompanying documentation while I still have a newbie's perspective, as
+presumably that is who such documentation is aimed at.
 
-Thank you for taking the time to develop and improve this driver. It can
-be intimidating to submit patches and interface changes for public
-review (especially without the help of the hardware company), so I
-commend your continual efforts.
+Paragraph three of the "Linux Kernel Selftests" documentation immediately sends
+me off elsewhere to a wiki which greets me with the ominous warning:
 
-Regarding this GPIO driver, you've incorporated much of what I had
-intended to comment on for your v2, so I'm comfortable leaving an Ack
-for this version here.
+"OBSOLETE CONTENT This wiki has been archived and the content is no longer
+updated."
 
-Acked-by: William Breathitt Gray <wbg@kernel.org>
+The wiki hasn't been updated since 2019, still refers to Freenode as an IRC
+network where one might find help, and mentions kernel versions that are
+probably older than some budding kernel developers.
 
-However, I do have a couple minor suggestions below if you decide to
-submit a v5.
+There are a few links to Google docs with slides from presentations given over a
+decade ago, but I don't think there's much in here that isn't covered more
+accessibly in the kernel Documentation/
 
-> +VORTEX HARDWARE SUPPORT
-> +R:	Marcos Del Sol Vives <marcos@orca.pet>
-> +S:	Maintained
-> +F:	drivers/gpio/gpio-vortex.c
+If there's anything in the archived wiki that should be retained, lets move it
+into the main documentation.
 
-This driver only covers GPIO support so a better title for this
-MAINTAINERS entry would be "VORTEX86 GPIO SUPPORT".
+Cheers,
 
-> +	rmcfg.reg_bits = 8;
-> +	rmcfg.val_bits = 8;
-> +	rmcfg.io_port = true;
-> +	rmcfg.wr_table = &priv->access_table;
-> +	rmcfg.rd_table = &priv->access_table;
 
-The direction ports are expected to hold their previous state until they
-are changed, so perhaps it would be beneficial to enable caching with a
-rmcfg.cache_type = REGCACHE_FLAT and set a volatile_table which
-excludes the data port range.
+Brett
+--
 
-William Breathitt Gray
+Brett A C Sheffield (1):
+  docs: kselftest: remove link to obsolete wiki
+
+ Documentation/dev-tools/kselftest.rst | 5 -----
+ 1 file changed, 5 deletions(-)
+
+-- 
+2.49.1
+
 
