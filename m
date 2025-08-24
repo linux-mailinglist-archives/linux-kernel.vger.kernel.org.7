@@ -1,130 +1,122 @@
-Return-Path: <linux-kernel+bounces-783764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C592FB3321B
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 20:53:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E00B3321F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 20:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60A65443B7D
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:53:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 245D118985AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93552225A35;
-	Sun, 24 Aug 2025 18:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7CB22577C;
+	Sun, 24 Aug 2025 18:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K0qwQM/7"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="KAnteFgP"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E02219319;
-	Sun, 24 Aug 2025 18:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79E71EE7DC
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 18:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756061599; cv=none; b=DjNwDVlPm6XMeCarWRYEP3WyzAfiYCNOvYRlt41M8lpomcYdL3z7D7w55UkRkGr7pC3CgSi8HxsFG1MqB1CJ4rnrKw/o8M9/Six9JNLXuHkmV0tbe46S8U/owLahYhysc+9Gpg96NdBvutGxMozxSsUCdDb8RXlRSQPxRqyw8G4=
+	t=1756061686; cv=none; b=qUHoXQAovzUqFRc59h72ZHC1tlCSKXlpbg7vQxeTZNmzkQEnltsZpa2l7Z0C4cN/tQLNOLa2ExD36nCCvdcoE4nJKZ7b2AlT+xbHRQTbiKwsgbP1z2RXBUQuPhS0I5M89AY3/f1lWgT9zWD9t2LUNISNE2fCXCnBQIE8ueigs8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756061599; c=relaxed/simple;
-	bh=4EJq4wNWPMLYuFBqxFssXNNnlLgyF/sxKCWpm0zI2fM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lcq+JACCfv1f1ilN6On5/dim1P9ePxFzbFK3HTo2QO4/LT8Y6BDWycvcsECW2HvJ1K8ZO5AoFq7VZBt0sKhbo2ZLB1VqIzMk/g+uPvyB02D8fydTV30Cd0jR2ZC5c42N5Ds8EPDnhtvW7x8ZaQSBZHabT8M8lMlOH0pdXgdq34I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K0qwQM/7; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-770305d333aso1997403b3a.0;
-        Sun, 24 Aug 2025 11:53:17 -0700 (PDT)
+	s=arc-20240116; t=1756061686; c=relaxed/simple;
+	bh=Su9fVUmbbEoXA8/x3VGnp+xHkiw3aMwd14wBtFK2re4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Q4P9RZ4G/qShKb1JILUh0D6mOv3z2p4usyokeVrb/xsKpOFH4z0Z+QH7BpDxLWjPz46nNM+DyunNMzU+z3Qs3YysEyZDK9r5jWaAH1ddtWjqUlYmG0EAVAb2VnJ7UP/pw8KfhpslOf3kOnWXJ+FkcJE2UWaEuhCzEy/fNSHX3g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=KAnteFgP; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-770522b34d1so591215b3a.1
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 11:54:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756061596; x=1756666396; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GE24zAUqbweTViuU5OdT4m2X5cUCSUg+r8C+5GVDKWs=;
-        b=K0qwQM/7G6Hc8A2KAzMoXJAHohwMSS7lRNli2RbWF59+sGy1G8t0cvBoKC66FVlVf+
-         xqwZ0BZItIbxPIG/YXaxIvuP8qt08xpiNxGuQkPiWh+Ux7BreAqJ/dL3esq+fqPF8x3T
-         XQTgS5xQVoxrCHCY0cwUzPftvKmmzkPNbp9zGX8JcW926HIEHOmW3RUrDQYixMT04Mc/
-         rO9KpYDWowWmWbNUO8U/UHDncfv/49+26zQ7A/AdB++UjvBpqG3tvysYPwbDjvvaxS6N
-         VAt4t5DOpOH//8gyb20wgTQ4BKNpiLL7kYaT8r/Y4pmducjy7jSF4Zpa4c5Xnj6i6/em
-         AHnQ==
+        d=brighamcampbell.com; s=google; t=1756061684; x=1756666484; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R4RBQN7ZcwLGgu6eJi1GMF63RINzrO56jY30XvA+HQE=;
+        b=KAnteFgPDSGTz26iIkVQw/jDko6d+xAfJu7Mz+i+00lfj7teIILln3TyuPzphcj74y
+         JIkTWogK4q7HkXdVZImvjIWHmE9AF1inJ412jgvbaG96Amp7dFl841ZxQeVE3A2gzz9u
+         jGSlmB3WoLSQ5RLVrWZ9X3XrfOlyfGBK6hoBuveoLuyPhhxbQUe8ooVfmT80fQoTyNjP
+         caNDC5oCt8Ms0podkMrCZa6BPS9oWV0SsNmuXLGoHoWODVMM8KbqABNqj9gmqmQSr47a
+         NlP8+bQH5jtMGaNAyBZhf3Xv+XUdobo/SfaPZgAIstVrygprHOIzD6XVM0Ab1Lun7k09
+         98gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756061596; x=1756666396;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GE24zAUqbweTViuU5OdT4m2X5cUCSUg+r8C+5GVDKWs=;
-        b=pOwXnTb3CML5BkIG2O/3G6rVMbrJuIk79bxXYKYydHL7faXBLhviGsgI/d+dw21m82
-         YgHo/VXF7on0JyNjyOUvsneVFKZ4zAf0E7N2wAJWzEw/yjNs834jIq16AzWWc4R//WcM
-         iW9MWA2EgZD7XdnItTw1oLlX6GE4vNjk+zLNu2Z6sUqsY3uRFrfkMngzvttkD46sR1hv
-         cqAxyZ9XDQo1xfYfs4/zY5zzh+voHFjE/fiUl/vL5w/QyFdPLQLMgJkZmpTf8T4PZmVq
-         g7iWnq1WSPQXqfmJTr38qsFxFgqJuWj7ZW9W0oxAyOdo08oyxCZH8IwWOC2KdAjKR04x
-         q2tg==
-X-Gm-Message-State: AOJu0Yzps60o09ypt1FFlGuuuKleSgKKxij3mMXj8rrmLc19va/1p8j+
-	zm/tHNQwL8ldrriL1rsg7aTGQha891RsqBXkv/TZNuHsC/ezebOfzPAzfo1ixmFy
-X-Gm-Gg: ASbGncslzzktEDGFUAAuNkDp2ibVVGfHFi8fE3C0ifb9GGgEk8LW5UlsUqvpH+ZK/xq
-	xTq5e+r3lsNyFIZrXfFd9ZscNBmDGJv7/KPX+/m6qIexmnaBuiPnXXaCDSxrMHSvkvqliPT/UFY
-	xxs7eC1K22+Mp6Uukx67Y0DdIBMhW88z978GXofkB3JAXSI+DLUggQHRiDG9snikS05IcCOVz+r
-	5obeoQ5xPEj2bKJgTt8RniACoi5oA+KV5ostBv4mWqidQ+hQN3N4tP24VmeC+KhAWsrz4lz1eau
-	0yAfGHly3EP/sdrtf5z1W4Um08pyd2xJLiLcYzLNL0liaLChSKoaxX/4dNgWD/MY1DO7sUjH407
-	D5kvCKXF1rd/YI07Qh7ErzK7erpIENtUuxx4S3FXDLe69bTEPp5wXLrvOXfka5W/Gq6cdMPpa4h
-	4=
-X-Google-Smtp-Source: AGHT+IFdxNjzzdR/+kzNWRlC87/GvjfTcFPfTOZA3kV3TZ7DiIUOZKdHwTRVsN18Ex3i5JQ0MhWnCQ==
-X-Received: by 2002:a05:6a00:2e96:b0:770:58c6:d055 with SMTP id d2e1a72fcca58-77058c6dac2mr2136535b3a.5.1756061596471;
-        Sun, 24 Aug 2025 11:53:16 -0700 (PDT)
-Received: from ranegod-HP-ENVY-x360-Convertible-13-bd0xxx.. ([2409:40c0:1050:9e36:b286:7f1c:1cdb:ecf7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-770529149bdsm2927622b3a.98.2025.08.24.11.53.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Aug 2025 11:53:16 -0700 (PDT)
-From: ssranevjti@gmail.com
-X-Google-Original-From: ssrane_b23@ee.vjti.ac.in
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	syzbot+0cee785b798102696a4b@syzkaller.appspotmail.com,
-	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
-Subject: [PATCH] fs/namei: fix WARNING in do_mknodat due to invalid inode unlock
-Date: Mon, 25 Aug 2025 00:23:03 +0530
-Message-Id: <20250824185303.18519-1-ssrane_b23@ee.vjti.ac.in>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1756061684; x=1756666484;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=R4RBQN7ZcwLGgu6eJi1GMF63RINzrO56jY30XvA+HQE=;
+        b=l8kOyhb+DIFJ3bG6rfT4ZZ97iG4Q2d17aopGzh8uXdflWFjr1rWKJjXCMixCCuli5n
+         c3R2Nba5MCn38huJPl7pJucGrh4YrNuND8UT/RPNGWB1wi01MzS6D7cx5HO0PgY4Hvvi
+         G4RTZEe8XIJjO0xlnuhonU+xRAagsodnP+ZfhRdJsDyI05xV5DGzOu65PDwnbmLUGOQ2
+         UZxzfVhpjFDcJKShgQeaUikrVqofUyEXOHsow9y3kPQ7mNtccDkDrgy4Sq3rbp+S3e0d
+         XxTcKrvnqUvJRIJmWibStfdfI3DUb9eSK8l8ffKKmWm20K8iU744FtNLW48C1yudS7P7
+         kiyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXE6brEXXaoAAT5iPza6nbdgUnMYa4KuR4tiNK/qETH2PYoxt5Rzcrdo5GWpELvCcBjQtQA/wZkG5XQMTk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykrV9l89e9vWN5KiAI2o9txo1NgCyUftuCgDqW0MSdrjEe07I5
+	0mj5/R4MWQazYrHyY7LETOlkA0sqzF9JLMArqf+45ySp0iuRC60gE+pjVx/H4/38tqw=
+X-Gm-Gg: ASbGncvC5B3fXcoM0aR+CdWMEKs3gd0aEVRUYYak+EOCbrFUAvn4q/oUmLD38GjzUyE
+	DcK2OlYodBizfiPMhAm4ZltF9zeyc32Fbo91iAo43DlMMbLuC6BfIl5tSiVn1xHRQZGq4//UbkJ
+	OQXhx04wqgKNeAgzN007QZu0dmL3p6t0w20U3QTGwT8Fs1axst45skRLDJoym6pQmWala1d0FD4
+	4Cpk5CJ55rj3JmVNhrqksbK59RigwQapQ4ix92lIBTyBpKrV899QJh1icqOwbXY1g2iYZg4pUwK
+	6sUC9S2UKh12aCq153H+eFTtvqeDRSxyipNph6mKz6legz+q9eeFIS8dhL8molG+fTrS5RlDHZV
+	Um7cMUKNsKHmULc/ttMI=
+X-Google-Smtp-Source: AGHT+IEDk7at3Bpgbpj+v0Eh4vjn2DF3yviRYYO1YRDu0NiWwlKlGxDy4FGz5GLe85FB4ML7qbBaOA==
+X-Received: by 2002:a05:6a20:430f:b0:220:898b:2ca1 with SMTP id adf61e73a8af0-24340ddec04mr12861606637.21.1756061683987;
+        Sun, 24 Aug 2025 11:54:43 -0700 (PDT)
+Received: from localhost ([64.71.154.6])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-770401afde8sm5257723b3a.61.2025.08.24.11.54.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 24 Aug 2025 11:54:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 24 Aug 2025 12:54:41 -0600
+Message-Id: <DCAVWVJ990VS.255346CDNF1GK@brighamcampbell.com>
+Cc: "Neil Armstrong" <neil.armstrong@linaro.org>, "Jessica Zhang"
+ <jessica.zhang@oss.qualcomm.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Douglas Anderson"
+ <dianders@chromium.org>, "Diogo Ivo" <diogo.ivo@tecnico.ulisboa.pt>,
+ <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+ <kernel-janitors@vger.kernel.org>, "dri-devel"
+ <dri-devel-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH next] drm/panel: jdi-lpm102a188a: Fix error code in
+ jdi_panel_prepare()
+From: "Brigham Campbell" <me@brighamcampbell.com>
+To: "Dan Carpenter" <dan.carpenter@linaro.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <aKcRfq8xBrFmhqmO@stanley.mountain>
+In-Reply-To: <aKcRfq8xBrFmhqmO@stanley.mountain>
 
-From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+On Thu Aug 21, 2025 at 6:30 AM MDT, Dan Carpenter wrote:
+> If the mipi_dsi_dual() macro fails, the error code is stored in
+> dsi_ctx.accum_err.  Propagate that error back to the caller instead
+> of returning success as the current code does.
+>
+> Fixes: a6adf47d30cc ("drm/panel: jdi-lpm102a188a: Fix bug and clean up dr=
+iver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-The done_path_create() function unconditionally calls inode_unlock() on
-path->dentry->d_inode without verifying that the path and inode are valid.
-Under certain error conditions or race scenarios, this can lead to attempting
-to unlock an inode that was never locked or has been corrupted, resulting in
-a WARNING from the rwsem debugging code.
+Good catch, Dan! Thank you for the patch. I'll try to be mindful of this
+kind of logic error in the future. Please let me know if you have other
+suggestions.
 
-Add defensive checks to ensure both path->dentry and path->dentry->d_inode
-are valid before attempting to unlock. This prevents the rwsem warning while
-maintaining existing behavior for normal cases.
+Reviewed-by: Brigham Campbell <me@brighamcampbell.com>
 
-Reported-by: syzbot+0cee785b798102696a4b@syzkaller.appspotmail.com
-
-Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
----
- fs/namei.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index cd43ff89fbaa..75ef579c38b7 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -4174,7 +4174,8 @@ void done_path_create(struct path *path, struct dentry *dentry)
- {
- 	if (!IS_ERR(dentry))
- 		dput(dentry);
--	inode_unlock(path->dentry->d_inode);
-+	if (path->dentry && path->dentry->d_inode)
-+		inode_unlock(path->dentry->d_inode);
- 	mnt_drop_write(path->mnt);
- 	path_put(path);
- }
--- 
-2.34.1
-
+Regards,
+Brigham
 
