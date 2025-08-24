@@ -1,226 +1,142 @@
-Return-Path: <linux-kernel+bounces-783422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04C1BB32D69
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 05:47:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0291B32D6F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 06:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD30A1B21E82
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 03:47:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E78206F61
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 04:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4AD1E5705;
-	Sun, 24 Aug 2025 03:46:56 +0000 (UTC)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C163D1E8322;
+	Sun, 24 Aug 2025 04:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="AXAUr971"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3993FF1;
-	Sun, 24 Aug 2025 03:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E72DDA9;
+	Sun, 24 Aug 2025 04:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756007216; cv=none; b=tdzBcsamlTcZKQ0tXwA1IhxWZyhyDTHPPRWD1UB3PolJLFvHg9bxjcLZzr9JOT8JegNWacfyOjSpgv8m9zGqzKvwrnMHV8mkn6evH3Zk9pAyyBWt6pSjFllTru51wNxpyB1367gDGZv07wo4004k6c/BPQPGy+G/1G+PC/NoJ3U=
+	t=1756008620; cv=none; b=dKF3C4Zl4PH/4xJo9+0elUbuXXm4iqj0bwAC/SHMda/PbmgOImaJtc9Bv3hEil7vS1dqz3p0aq+EW7OPRWztxubNqEpf+shcAGmGSmSFxW/HdF7AGEpYHPc8BagK8zARyw7/EmV3SRuk0jXQ4WM6lhF3Gsdc3aYYPWxRHA78ELM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756007216; c=relaxed/simple;
-	bh=7NsPVMCHW3b1Vx15r4yqFlAmzigDPRtxfr7zQWHon4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rt2fDL9bZsaVnhGOxUe+6kMFwINdY1wIAONG2SYbDNL+b9LZyL1ljXmQZJqSoO46b2Znl980vvKDilLvVJ9MT0Fp6yzE2//7V7NSuFuk/pZntqe9XfaHVc41QFdyozWluWFJFAwgvMJ3ugaCwgUSr+8mWBj7XJtqs4aGI19MIUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpsz1t1756007191t87afa447
-X-QQ-Originating-IP: /b8F4qOljSL63w5YWiSnO2EBsVqZrdgslmlJy0HvWsc=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 24 Aug 2025 11:46:29 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7436797028166713783
-Date: Sun, 24 Aug 2025 11:46:29 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <54BB0DB525AEF5A4+20250824034629.GA2000422@nic-Precision-5820-Tower>
-References: <20250822023453.1910972-1-dong100@mucse.com>
- <20250822023453.1910972-5-dong100@mucse.com>
- <29475ad1-125a-4b20-bff3-0a61b347985e@linux.dev>
+	s=arc-20240116; t=1756008620; c=relaxed/simple;
+	bh=jq3F1zDJ2yZcCXOErAn7hE/PCpZ6bt+ZlM2OukJrQQM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rVk8Y9I09mHb0Pgy8GT+sFDGpJKbg7dJ2SqSlFGXaAx6FveBDuG+LFsiyk6zilDwuBuMKf5TnKCxGWCeAujpeE12kcxUYkbd6GuzByehjGayl3Opqe03slIIHp+ngw0hS6bfxQzSGM+Y8ZlQgoE2+XMLzbmJ5iH8XbSgCqf8Sq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=AXAUr971; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57O1Y6aZ016602;
+	Sun, 24 Aug 2025 00:09:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=cCWLrFENcMrCC98jYhox49b/WLG
+	aapMV8dVSyXpwcOk=; b=AXAUr97176CA9ML9FGKczKxDIQL7+a1F8LGbf2TrSyC
+	tD12nexeVohkaEUMscDj/N/RIA3FtvStyWO02ta99v4RMWZ7AvDEAP1oXhoHTx7V
+	OGxCtzlgm2PGMnyRB97Zw5/5WgfnZVvDjtNjInK9aOgSMBPCoICXA2ceKnpGgbu5
+	tMTIVaptAjtP+7Sirep660qPZ0xqIZBI4hn/BRifrZYxFwfde6lnrMNOJg8PFDLL
+	P0JY8E3ccgw96jycSNYpCvAKL28k3OwPQc7DQK/qBIWyhgM/5H3lkD1cvrfYiXks
+	CEV5juA3FR1kfJ2sB87oNVeF658sFeqP1fmEqcGgErg==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 48q5uhktj7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 24 Aug 2025 00:09:49 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 57O49mv7051698
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 24 Aug 2025 00:09:48 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Sun, 24 Aug 2025 00:09:48 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Sun, 24 Aug 2025 00:09:47 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Sun, 24 Aug 2025 00:09:47 -0400
+Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 57O49YM9006311;
+	Sun, 24 Aug 2025 00:09:36 -0400
+From: Jonathan Santos <Jonathan.Santos@analog.com>
+To: <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: Jonathan Santos <Jonathan.Santos@analog.com>,
+        <Michael.Hennerich@analog.com>, <lars@metafoo.de>, <jic23@kernel.org>,
+        <dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <marcelo.schmitt1@gmail.com>
+Subject: [PATCH v2 0/4] Add support for ADAQ776x-1 ADC Family
+Date: Sun, 24 Aug 2025 01:09:33 -0300
+Message-ID: <20250824040933.9134-1-Jonathan.Santos@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <29475ad1-125a-4b20-bff3-0a61b347985e@linux.dev>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: Of2cEohDBRJBH64LpPw2uMtTV8uIswhxUwG9uC4k2NVVJrtA76Vw9ASO
-	7XWSuVP169u/9LAZ6m93zcSo4oBb/o/IOJ1OXIpPV7JlRwwyIixkv/zw5Acfj1qtnjiK4iC
-	foHJGn55c/YEwllWmM5OOXWXTyvX155EAZfDUdfyFb98LmphFtTCLit4xVytryjTAIg0wdl
-	Uuhb2VH/1EEQ03vszhLS0LuTcakyN8ARTUIpUbdgR0Im9Gi2VjeaXswmJLcJ6J37i7xjdL8
-	woU2dQgUZ0wtvHTB4Hh808ciEv417kVJjLubBNklibO0hWrCSOxUE3bvCyJs9lGo7AB0Qdh
-	RBfwQJHY2mhSW9UksEJHsP6evwAc6A2Azt3S2cNsBLZLNvYehC7ydVcAWeTQoFibgoHaMAB
-	nVQ5lDY/vBvfdNhVK2BIQSthBpDwgwA9tPAOdY0sMoVPPu9EqVrGpNWrMD7hOjW5pjK7XI8
-	6vineOtZS6omOkNsyUmlmt2LZeUW/Ay5FDTbfvU+4bfsgSGlX3l2ozPOyBp82LBuQWFv4w7
-	SsfXp7/uwipWCFlWQLKq+tt+I8YEdE0liEq1jlyvBxx3KzCmP442fYx+BuBbJPmuPMCRYYE
-	3Dv2FQD1EPVAf/FsaxZMynaJYr5uufukXF4j0LXTT5ycYLOsfMoMjm6hYIBgLsbh4TQrcxi
-	+ULm+Y5z/kHcjIye0DY51D3HyvYwbC0Jko6Dmna9/9dy3JDVVvGDkdqOT5t9+KijHLEiJin
-	12v4StUuA39Q0YKjdilUwlY1Ky1lLWDCnLOTKoV07Sf5Gp8/wZD3VEBLK4zx8qKpUtVXAN4
-	f19C7PGXy6KdTFPcuh3gIwKqgaI6Oh1EmLC5xt4w+kWQTdWDUWRkEyn1c5cWlJFjDK8wBe2
-	Vgxwu4nk2BPirZCDnuGjgGsv88xwxjOGILdt3s1iORgrYRdzFFG+vIBmt9k/Og/Z+ps3vGY
-	lQ9CGqkHUM22kMZqeMlF1yljIyhHS/jKxj/IKzGKY724UOqCPW6qM7DKpmr+TpwRkmLIpIU
-	VJFcA+DnLFLa4YQSJDWVg2vJUKh0nPKjl3k9ZeQw==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMiBTYWx0ZWRfXyN4on4XJvT5f
+ gxjEGuQhN/gdsKX8+RsszZxU2JZCbLGd/M8vB7DkRZpa/Qmq1j9oUyCg7Tn9A+39aUqullYhmKi
+ HtgzUtCZyJnoI9BDcQFkv5vJ3smiQfjH4Sv6rBxMt/fMWuVBjQkLtB0qHr0gwzLtONcCGHJ60FB
+ hVp14vGccNsSZWqIZSL7sI18BDFAr6MX6SJ/YFLltTDRkk3Xi/VOnGivqnC8CPllzbMmIOaF1Df
+ Dr/jopsdK63/3ddRPIrs+rzwbu5LdpiwJ6EVuJTyeBT2LYiGAcohBv4mB54sInY6+BuO+lxFlZb
+ ZhHRPy7A7R0B6JdwKwfCgB9+/9X0ZwzG8AbHtm9jqBq7muBpkDk6lEo1dDtBCYwcnYzekTbR+EQ
+ mJ5ZlfYw
+X-Proofpoint-ORIG-GUID: oau-2dlmdTg02khvktFce47swSoYHgka
+X-Proofpoint-GUID: oau-2dlmdTg02khvktFce47swSoYHgka
+X-Authority-Analysis: v=2.4 cv=S8XZwJsP c=1 sm=1 tr=0 ts=68aa908d cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8
+ a=uFM56Sq5py_6AZWyf6cA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-23_05,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 spamscore=0 clxscore=1011 phishscore=0
+ suspectscore=0 malwarescore=0 adultscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508230032
 
-On Sat, Aug 23, 2025 at 04:02:29PM +0100, Vadim Fedorenko wrote:
-> On 22/08/2025 03:34, Dong Yibo wrote:
-> > Initialize basic mbx_fw ops, such as get_capability, reset phy
-> > and so on.
-> > 
-> > Signed-off-by: Dong Yibo <dong100@mucse.com>
-> 
-> [...]
-> 
-> > +/**
-> > + * mucse_mbx_fw_post_req - Posts a mbx req to firmware and wait reply
-> > + * @hw: pointer to the HW structure
-> > + * @req: pointer to the cmd req structure
-> > + * @cookie: pointer to the req cookie
-> > + *
-> > + * mucse_mbx_fw_post_req posts a mbx req to firmware and wait for the
-> > + * reply. cookie->wait will be set in irq handler.
-> > + *
-> > + * @return: 0 on success, negative on failure
-> > + **/
-> > +static int mucse_mbx_fw_post_req(struct mucse_hw *hw,
-> > +				 struct mbx_fw_cmd_req *req,
-> > +				 struct mbx_req_cookie *cookie)
-> > +{
-> > +	int len = le16_to_cpu(req->datalen);
-> > +	int err;
-> > +
-> > +	cookie->errcode = 0;
-> > +	cookie->done = 0;
-> > +	init_waitqueue_head(&cookie->wait);
-> > +	err = mutex_lock_interruptible(&hw->mbx.lock);
-> > +	if (err)
-> > +		return err;
-> > +	err = mucse_write_mbx_pf(hw, (u32 *)req, len);
-> > +	if (err)
-> > +		goto out;
-> > +	/* if write succeeds, we must wait for firmware response or
-> > +	 * timeout to avoid using the already freed cookie->wait
-> > +	 */
-> > +	err = wait_event_timeout(cookie->wait,
-> > +				 cookie->done == 1,
-> > +				 cookie->timeout_jiffies);
-> > +
-> > +	if (!err)
-> > +		err = -ETIMEDOUT;
-> > +	else
-> > +		err = 0;
-> > +	if (!err && cookie->errcode)
-> > +		err = cookie->errcode;
-> 
-> can cookie->errcode be non 0 if FW times out?
-> 
+This adds support for the ADAQ7767-1, ADAQ7768-1 and ADAQ7769-1 devices. 
 
-cookie is alloced by kzalloc, if fw timeout, nochange for it.
-So cookie->errcode is 0 if FW times out.
+The ADAQ7768-1 and ADAQ7769-1 integrate a programmable gain amplifier (PGA)
+with 7 and 8 gain options, respectively. The ADAQ7767-1 and ADAQ7769-1 
+also feature a 3-pin selectable Anti-aliasing filter (AAF) gain.
 
-> 
-> looks like this can be simplified to
-> 
-> if(!wait_event_timeout())
->   err = -ETIMEDOUT
-> else
->   err = cookie->errcode
-> 
+---
+Changes in v2:
+* adi,aaf-gain property renamed to adi,gain-milli. Default value added.
+* fixed some commit messages. 
+* Added 'select RATIONAL' to Kconfig.
+* Added lock to protect PGA value access.
+* rewrote AAF gain check and replaced error returns with warnings.
+* Addressed other review comments, see individual patches.
+* Link to v1: https://lore.kernel.org/linux-iio/cover.1754617360.git.Jonathan.Santos@analog.com/T/#t
+---
 
-Got it, I will update it.
+Jonathan Santos (4):
+  dt-bindings: iio: adc: ad7768-1: add new supported parts
+  iio: adc: ad7768-1: introduce chip info for future multidevice support
+  iio: adc: ad7768-1: use devm_regulator_get_enable_read_voltage()
+  iio: adc: ad7768-1: add support for ADAQ776x-1 ADC Family
 
-> > +out:
-> > +	mutex_unlock(&hw->mbx.lock);
-> > +	return err;
-> > +}
-> > +
-> > +/**
-> > + * build_ifinsmod - build req with insmod opcode
-> > + * @req: pointer to the cmd req structure
-> > + * @status: true for insmod, false for rmmod
-> 
-> naming is misleading here, I believe.. no strong feeling, but
-> is_insmod might be better
-> 
+ .../bindings/iio/adc/adi,ad7768-1.yaml        |  43 +-
+ drivers/iio/adc/Kconfig                       |   1 +
+ drivers/iio/adc/ad7768-1.c                    | 396 +++++++++++++++---
+ 3 files changed, 384 insertions(+), 56 deletions(-)
 
-I see, I will fix it.
 
-> > + **/
-> > +static void build_ifinsmod(struct mbx_fw_cmd_req *req,
-> > +			   int status)
-> > +{
-> > +	req->flags = 0;
-> > +	req->opcode = cpu_to_le16(DRIVER_INSMOD);
-> > +	req->datalen = cpu_to_le16(sizeof(req->ifinsmod) +
-> > +				   MBX_REQ_HDR_LEN);
-> > +	req->cookie = NULL;
-> > +	req->reply_lo = 0;
-> > +	req->reply_hi = 0;
-> > +#define FIXED_VERSION 0xFFFFFFFF
-> > +	req->ifinsmod.version = cpu_to_le32(FIXED_VERSION);
-> > +	req->ifinsmod.status = cpu_to_le32(status);
-> > +}
-> > +
-> > +/**
-> > + * mucse_mbx_ifinsmod - Echo driver insmod status to hw
-> > + * @hw: pointer to the HW structure
-> > + * @status: true for insmod, false for rmmod
-> 
-> here as well
-> 
-
-Got it.
-
-> > + *
-> > + * @return: 0 on success, negative on failure
-> > + **/
-> > +int mucse_mbx_ifinsmod(struct mucse_hw *hw, int status)
-> > +{
-> > +	struct mbx_fw_cmd_req req = {};
-> > +	int len;
-> > +	int err;
-> > +
-> > +	build_ifinsmod(&req, status);
-> > +	len = le16_to_cpu(req.datalen);
-> > +	err = mutex_lock_interruptible(&hw->mbx.lock);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	if (status) {
-> > +		err = mucse_write_posted_mbx(hw, (u32 *)&req,
-> > +					     len);
-> > +	} else {
-> > +		err = mucse_write_mbx_pf(hw, (u32 *)&req,
-> > +					 len);
-> > +	}
-> > +
-> > +	mutex_unlock(&hw->mbx.lock);
-> > +	return err;
-> > +}
-> 
-
-Thanks for your feedback.
+base-commit: 0a686b9c4f847dc21346df8e56d5b119918fefef
+-- 
+2.34.1
 
 
