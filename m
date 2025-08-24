@@ -1,122 +1,130 @@
-Return-Path: <linux-kernel+bounces-783553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B970B32EEB
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:11:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633B4B32EF0
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CA951B2500F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:11:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21CAB444D5B
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F122641E3;
-	Sun, 24 Aug 2025 10:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AA421885D;
+	Sun, 24 Aug 2025 10:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NlBigJ2g";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RMby5D7k"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SuCWFfED"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E72C2E0;
-	Sun, 24 Aug 2025 10:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76A21D555
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 10:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756030274; cv=none; b=RF6ZCm7MvOx7/LjChWkB3d/hY35bY7IZzObB72Vtyn6UqVbyU66yCf4KvsMQ4ufIrBmmm3hyxkBRwJcjpDf539/z70/REQ0zZGSRhDcLmS1FrBDJP2sgM/n3l4clcf9fufIF0fsp11rEhwt0jyMqoU4qNilbHT9wCMN8aW6jlPQ=
+	t=1756030782; cv=none; b=DtdEFH+URLK48ATpG+SAEHrBflpGyQlPfn+ukx5w649QqXUx0FA0lzxa9ikkaHY1kVoxRaxOI/GnTnsy5yElCtew8/ai7JD385q9dxwwWXD85GNSwalKCCYHyNNCOyylk4k2vn389lkHz0jU9McAhDEOu+9oRvDw5ztveYIiy9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756030274; c=relaxed/simple;
-	bh=9zZDyOJsfuRjmC0JH6+YxVCjEnEP/oP+axJcMI0Wj10=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=NycDXWzl9xy7K0Dqve4+zaPsxpfpHzirY4gFv4r3C7QnUoaPkwHxwkCLVNMa2/G5ihq75cH55uIDvKDYJbYa/QdwbxkDQuWioHwlzah3olP1HtV8PSMVbQfLR0SyhFqHL+9JHYq55l0eQjuEwNyoTVm5Rcr//QBCsQKNpNlymbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NlBigJ2g; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RMby5D7k; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 24 Aug 2025 10:11:08 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756030270;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u/JAXQBVGofOlgE7ad5x/b2Vn0nnuj4FpEIHnnEeStE=;
-	b=NlBigJ2gReLiKPjRQWtd20ZkE7YMHvDYNpzWrfZFxmSKldia5xOr03aopdwGKzqwgOWyuw
-	NsBvwkowoZf1maO2NDUQXCn3cRY5XJV2SXUn/UdU6EogBhhztSyXCioNs/Mdb+XsClNzh2
-	Lgf94Z0DQo+iyvv3yIO28UX+ZXWp10YjIXPIw43MHx3lBn27t8IwBE36PMjsQyuBLJUHwS
-	B4i5pp9b3CFT+zRkvjQ1gEmvBblarmLgASdRCMT/OOE2XywoJt9cIkS9niPY+iKKq/7mAI
-	Lh6B30tKP384L+ILNMkgntRMVl2Nr8Z++50xgl2dnVdXrh1AEEd1Kgb4K89rCg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756030270;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u/JAXQBVGofOlgE7ad5x/b2Vn0nnuj4FpEIHnnEeStE=;
-	b=RMby5D7kiwK6lnQy59QgIFQI7YQHgvSTrnGWhHSSQPvMmihJ9xRvLCNp9LDSCsFITEoo+8
-	WkXzb426jTkvZuAg==
-From: "tip-bot2 for Dan Carpenter" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] irqchip/mvebu-gicp: Fix an IS_ERR() vs NULL check
- in probe()
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <aKRGcgMeaXm2TMIC@stanley.mountain>
-References: <aKRGcgMeaXm2TMIC@stanley.mountain>
+	s=arc-20240116; t=1756030782; c=relaxed/simple;
+	bh=lMoHdEFeo4fHF672LOmVGZEsHVdVgj7UzDG6HcXQFpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SUx+iGoOvykvHrgGUa34z8A32vJTD5ftNNHwa2zm0mU9MHIB57wUB1iJM94eBCnLKnZ4oB0r8VINk6rWojLp5uvntGW2PNlOSfzQGZUqBWUiP7YtpIHcGTziGMzqGU1ohK9L/+BH28/yY4MmVc561W6lx9IQJ01GS1vJ5weG9fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SuCWFfED; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A775040E01A1;
+	Sun, 24 Aug 2025 10:19:38 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id SDkrQ2EtEOLx; Sun, 24 Aug 2025 10:19:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756030775; bh=p5M0aw0zkbqybNB6kRZvfXXr212cpihKrTLk6HqTA5I=;
+	h=Date:From:To:Cc:Subject:From;
+	b=SuCWFfEDUC4dTIIrXgrQGYjTTKh+tuFuUTOt1BwwtOS8DGi4tGOvUwTBJfuPdKdWP
+	 GKxbo99nTIWGlzzfKkx4sJrLwflikpCtHK18YD+yZBcSDzq8EiVS027u6VdJlTeb13
+	 /wTeC+NkBdv7710URoRk8Oqf5EJtDC58xrwsOIPhdtkse15QeYIkTKGo3UAx6UG7Kv
+	 iBvJxlgpOenEG1Yt3lc/BqPmbgW2U9TxxVjTeOK8G0KxM+y4bO7qSztrm8THdW4nrO
+	 Te6Dm6LV03iWLPKLOdIIuI2LBiJEUQwcD3de7uemq02CP7eM6k2srnskpIqRxAQy8i
+	 Ne+gQEoMIaS5am/PLR79FiX5b0lha1HWbJ17rdvOPaLIwjSlF++Ae8Nuvpf+pFl5aN
+	 Zz3/nUQJG0g6uBght6J+uK6acxhDtApXaasgA1AChQooZawEQNocchDtgMsSvtK5iV
+	 dFoCi2MPEITYBGB1HEucWvH7lBxsjWi4Smh7N7FlNBfhU26BnD7iLDj/C0wfDOAKMj
+	 MSxaxtYPgHDE9xSxDyz3nGMAiFzKTIh1ir2jLSjq1goRm/2v/+JjZ7ZLBNsbq98g6C
+	 8OtyHQaCJhRYJ95Nub3C1NdwtY74MSl9GcKoit4tUgOAfo+MrDqaZHL6xza+AHCJGU
+	 hiGJXmF8pG7HVfm8J6HyiXz0=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 58EDE40E0176;
+	Sun, 24 Aug 2025 10:19:32 +0000 (UTC)
+Date: Sun, 24 Aug 2025 12:19:26 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/urgent for v6.17-rc3
+Message-ID: <20250824101926.GAaKrnLixrYKcVosGm@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175603026892.1420.17844045957403698368.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-The following commit has been merged into the irq/urgent branch of tip:
+Hi Linus,
 
-Commit-ID:     c8bb0f00a4886b24d933ffaabcdc09bf9a370dca
-Gitweb:        https://git.kernel.org/tip/c8bb0f00a4886b24d933ffaabcdc09bf9a3=
-70dca
-Author:        Dan Carpenter <dan.carpenter@linaro.org>
-AuthorDate:    Tue, 19 Aug 2025 12:40:02 +03:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sun, 24 Aug 2025 12:00:47 +02:00
+please pull the x86/urgent lineup for v6.17-rc3.
 
-irqchip/mvebu-gicp: Fix an IS_ERR() vs NULL check in probe()
-
-ioremap() never returns error pointers, it returns NULL on error.  Fix the
-check to match.
-
-Fixes: 3c3d7dbab2c7 ("irqchip/mvebu-gicp: Clear pending interrupts on init")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/aKRGcgMeaXm2TMIC@stanley.mountain
+Thx.
 
 ---
- drivers/irqchip/irq-mvebu-gicp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-mvebu-gicp.c b/drivers/irqchip/irq-mvebu-gic=
-p.c
-index 5483371..667bde3 100644
---- a/drivers/irqchip/irq-mvebu-gicp.c
-+++ b/drivers/irqchip/irq-mvebu-gicp.c
-@@ -238,7 +238,7 @@ static int mvebu_gicp_probe(struct platform_device *pdev)
- 	}
-=20
- 	base =3D ioremap(gicp->res->start, resource_size(gicp->res));
--	if (IS_ERR(base)) {
-+	if (!base) {
- 		dev_err(&pdev->dev, "ioremap() failed. Unable to clear pending interrupts.=
-\n");
- 	} else {
- 		for (i =3D 0; i < 64; i++)
+The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
+
+  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_urgent_for_v6.17_rc3
+
+for you to fetch changes up to d4932a1b148bb6121121e56bad312c4339042d70:
+
+  x86/bugs: Fix GDS mitigation selecting when mitigation is off (2025-08-19 10:38:04 +0200)
+
+----------------------------------------------------------------
+- Fix the GDS mitigation detection on some machines after the recent attack
+  vectors conversion
+
+- Filter out the invalid machine reset reason value -1 when running as a guest
+  as in such cases the reason why the machine was rebooted does not make
+  a whole lot of sense
+
+- Init the resource control machinery on Hygon hw, also in order to avoid
+  a division by 0 in addition to actually enabling the feature on hw which
+  supports it
+
+----------------------------------------------------------------
+Li RongQing (1):
+      x86/bugs: Fix GDS mitigation selecting when mitigation is off
+
+Tianxiang Peng (1):
+      x86/cpu/hygon: Add missing resctrl_cpu_detect() in bsp_init helper
+
+Yazen Ghannam (1):
+      x86/CPU/AMD: Ignore invalid reset reason value
+
+ arch/x86/kernel/cpu/amd.c   | 8 ++++++--
+ arch/x86/kernel/cpu/bugs.c  | 4 +---
+ arch/x86/kernel/cpu/hygon.c | 3 +++
+ 3 files changed, 10 insertions(+), 5 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
