@@ -1,75 +1,82 @@
-Return-Path: <linux-kernel+bounces-783475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA1C0B32E17
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:03:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6913FB32E1B
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 192587A45D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:02:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4236916BE52
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C3C23CEF8;
-	Sun, 24 Aug 2025 08:03:38 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812221805E;
-	Sun, 24 Aug 2025 08:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C30424A05B;
+	Sun, 24 Aug 2025 08:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LRwkLqfJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934B2393DF4;
+	Sun, 24 Aug 2025 08:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756022618; cv=none; b=GnIrizVcQ4cOXLenDUQKUQiRJeN2xnVSxj+PhGqKKwLuCejKlhyrmkVacLxGLMplE7dqOYb0F/QgQ1P9k5ljY3DxPPSGsoFiN1fp2zEKQE7vFN4vZXaf1ULqShIL7MdrZOY48JvqeiRG2j+4fWvpyZAGfm2oNWCfsgyLPY4P4M0=
+	t=1756022774; cv=none; b=YENEp4T2i7i0PKQIjuipAwOAtvj+q/d9zAOVrsyxofakY3ijLx7+tSeG2/CqJH2NZQlpLwFxLtG2cWlATa+EiCkxse7JhPGWUEz6FdKN8hWjCE9CF9Ha8Vtx3hvnq0Cs03SPcdrg46pewr6DsE5OkGUvZ7FsTIA9PEu67SL5bow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756022618; c=relaxed/simple;
-	bh=0ub0vC7mGI16Y1TUyO63PS94J6Ae0xvlHsww1DA4EoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kkW+ipEfeBwTLOFvP+6F1RZnqYiFDeJQvHJxBrCwYMF0BGfvaRfiXKxogIT7/5wqwo25uWdWfL3GnK81aivNorUmvPszhKdoLluXZlGf3q6eHz8jlDug4GJnyx7deVvoXmcNTt4/DD5zsiZNHHWRcdd4bn40sqtYCWcRMd5q2Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1uq5hG-0005L6-00; Sun, 24 Aug 2025 10:03:26 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id B234FC04FD; Sun, 24 Aug 2025 10:03:12 +0200 (CEST)
-Date: Sun, 24 Aug 2025 10:03:12 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: torvalds@linux-foundation.org
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] MIPS fixes for v6.17
-Message-ID: <aKrHQC7qQxQV3TKW@alpha.franken.de>
+	s=arc-20240116; t=1756022774; c=relaxed/simple;
+	bh=8S+GPRDjk7EnBA+RTw3CmuYot4R9hUC+LoTBeX6HmIM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KAKawlwfeErOXWNvdr2Zp4E8uuqkt/VL6vNltCrxh8oWRRRf+eZ6uJjEyJqY3y9n9Dj+DD2rWJSObsIMhTxT+gE9GuM6/6x4mDXst9Lo2TKUtfRwW1z9fbg28xNx3nWdWVxXHmesgksptEEzpkGX6O74CcyUnvcgdAwzxqLj3cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LRwkLqfJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8329EC4CEEB;
+	Sun, 24 Aug 2025 08:06:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756022774;
+	bh=8S+GPRDjk7EnBA+RTw3CmuYot4R9hUC+LoTBeX6HmIM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LRwkLqfJagdqNY7h7FC0JsA0vv5Rtlch72Gtx2wJxp+msV2qyp5L4TB1TvCz2hJAA
+	 rHlkxj8E6sxjvX79bgAZrVJMrosMylmW9T/mkEJadB9SyL9wL0DKf+R4DrYgatGLYC
+	 WM+V1YbKKPCxkU2d3T4iDZxZZar+Fan4uPcbbjqkvmbZoVbvWBRwOnqCVH9Ysf+lGU
+	 hu6NplavJiIvL1/Kq0yIQQtZzgBIOOni1TbRmpzEiiqq1OuFBEt8X87bmzW8jELKfE
+	 7JfIAfWyCT1IkRJyb3LM/oH7XfwrPY8imj6VqzUfmZZSmRBNgTpEa/w/Z+CG9RiPB/
+	 Ip2QxSLImcXCA==
+From: William Breathitt Gray <wbg@kernel.org>
+To: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	William Breathitt Gray <wbg@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH] counter: Alphabetize component_id sysfs attributes Documentation list
+Date: Sun, 24 Aug 2025 17:06:06 +0900
+Message-ID: <175602272524.419332.11019880243782691194.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250615-alphabetize-component_id-doc-v1-1-4c5943b41198@kernel.org>
+References: <20250615-alphabetize-component_id-doc-v1-1-4c5943b41198@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=537; i=wbg@kernel.org; h=from:subject:message-id; bh=fjZggBxLpxlbfcLqwmB0ZuoYeOky8VtFt/hNWCK5/FE=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDBmrjl+ez5Dnf9+vlZ3beR5HXp3P6ucbZWYZsM/8zmY1t 5XRYrZxRykLgxgXg6yYIkuv+dm7Dy6pavx4MX8bzBxWJpAhDFycAjCRzckMf3jrZJ9Oy/bUsVK2 WeWQt7/o+7N3WezrH7Zsc3p3bKls7VJGhkvOpiLhOslszuFBQozSE/K7dff/TRc+v4n93maZh+v kmAE=
+X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
 
-  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
+On Sun, 15 Jun 2025 23:27:47 +0900, William Breathitt Gray wrote:
+> Prefer alphabetical order for the component_id sysfs attributes list in
+> the Counter ABI Documentation file. This should make it easier for users
+> to locate a component_id attribute in the list and its respective
+> Documentation entry.
+> 
+> 
 
-are available in the Git repository at:
+Applied, thanks!
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips-fixes_6.17_1
+[1/1] counter: Alphabetize component_id sysfs attributes Documentation list
+      commit: 36ee9770a8b24c71805760cb160c25ef91192823
 
-for you to fetch changes up to 8c431ea8f3f795c4b9cfa57a85bc4166b9cce0ac:
-
-  mips: lantiq: xway: sysctrl: rename the etop node (2025-08-22 22:03:21 +0200)
-
-----------------------------------------------------------------
-Fix ethernet on Lantiq boards
-
-----------------------------------------------------------------
-Aleksander Jan Bajkowski (2):
-      mips: dts: lantiq: danube: add missing burst length property
-      mips: lantiq: xway: sysctrl: rename the etop node
-
- arch/mips/boot/dts/lantiq/danube_easy50712.dts |  5 ++++-
- arch/mips/lantiq/xway/sysctrl.c                | 10 +++++-----
- 2 files changed, 9 insertions(+), 6 deletions(-)
-
+Best regards,
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+William Breathitt Gray <wbg@kernel.org>
 
