@@ -1,190 +1,152 @@
-Return-Path: <linux-kernel+bounces-783588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C925B32F58
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:20:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C2F4B32F62
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 08C714E154E
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:20:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F9B74E04FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942B52D5436;
-	Sun, 24 Aug 2025 11:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDD92D5C6A;
+	Sun, 24 Aug 2025 11:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Loerx6e1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d9zLHRPT"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8E22C327D;
-	Sun, 24 Aug 2025 11:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F1C2D59E3;
+	Sun, 24 Aug 2025 11:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756034426; cv=none; b=Sp3huwp1hGBx/UM1spkm9+VlY1JqT2edoGJcY75gGJubctbiRsPvL3AdFF1ZcP65wnfhlSTQl6417teVJoeIh/Trd8LMvHK82eM1vHBOgANI2gQHX0F97lZ5N2hte4QWIJgiJDxZ6VL192wSusoNBJrL9HDhUE4UTtB9Z3qZgP4=
+	t=1756034681; cv=none; b=GcyxrW/tbnewSRoSe6Vt16Ah58KF5nIUHjsNCAJjTsVoLtXV7v4VDWZy92yMsmDCJtXDsJtwPn0gRJgBRaY9hh0zO/WAX2GdDg5aVDOpkNPMb7PdFt2GfvBFia7A4B04uPzD5OnV3QrgINMvXj9L+nia+TwY/DCBsKgoeKTy7zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756034426; c=relaxed/simple;
-	bh=+OkOBQx3yRrZpTiq/fQPXgpZZZmpP5pqcfVE/IglG0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FGHH+aKvcL3kSrwtil60OblZu/D9/WzIUy0yjj1KVBOSZVuUL4rp4yKFzv/u47UFG/Ay/0YY80lENiXvbIGZvYwCt5VqioARx1PeO6C5+cXdFdzqaP8g9B/9QY4LLrYqplzKxfpoAeGbG3wiuDKhgURY7qIh6axC4GrgPXSiQtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Loerx6e1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48748C4CEEB;
-	Sun, 24 Aug 2025 11:20:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756034426;
-	bh=+OkOBQx3yRrZpTiq/fQPXgpZZZmpP5pqcfVE/IglG0g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Loerx6e1x2VjRNcM3MW45r4qwsF0WnebjbFtGiqfIagnabuMUrPsqGjz/8pdXARkw
-	 pDcnCxi84CPtleCDboazXwXvUSBdvtnBj6PkheZq+ulDz55VkY8MH8RI90GNG8yesn
-	 71NL7ijnhCN0VO3XcIQh5OnC6br9qCwbApjL+qo/Ms5KG+Kbti/S03Yi9OvQxm5F+3
-	 JUAxtYBZGnf0WIOQ3MRZeU6DVtDJRx2z5e6hJOlucBxNfcrNKlq8DGN7H9ckKOu5pW
-	 RGxFM59tXzm/yIgwyvh1fkMLeuAEnA54Zem231jrT3scTFk0YXJeXXWfgCWTHQvv93
-	 GJ5HTTBbOvgjw==
-Message-ID: <510f6efb-ada3-4848-ac8e-16fa5d1b5284@kernel.org>
-Date: Sun, 24 Aug 2025 13:20:21 +0200
+	s=arc-20240116; t=1756034681; c=relaxed/simple;
+	bh=61FmKLEJ744CNLBIVPgj5tgRLtQAwx1a9iIsXvpw1wY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P/3W75QQQcP1vWxYgNveVXIhXO2dxLULmn0j7rgwA0+Yd9pn6lRVX7TOKm5Xmfau6fh+4duuirsBygJtQZcyTaurZWwRgDt+w/i9QZU1TeRk/TMl2OpKrva2I1Ca8cRQG5DERzzdwX4azGWXMzomuMl3SFe+YocVz3tGgkkDb6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d9zLHRPT; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45a1b0c82eeso29230205e9.3;
+        Sun, 24 Aug 2025 04:24:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756034677; x=1756639477; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gd9xjSw8m24oRJrzZMLLpErv0wod9zJH9fguDoTibXA=;
+        b=d9zLHRPTRikIxvC2cbdDkOj0GfuhstHYdBQn7qq0XLaWPJJCCvclcd0kWctUltbAUS
+         SQ5oMyyUQ1UVmCgrU/2UgUEMbk8rYCUyNXJpmr9xlfemZN2TMyBA5oS9XWn5i/anlzhO
+         gvPnXKwi8pbVYiv9r42W7rG3X8ybDbfZHBtTW8dOgkiBN12UY+7NMu32jR4qCInPIUG4
+         uKxCHybvopuweGzrnBODg2e7ckc6ALeNGWw6ZbMLPyYeKEzl9UF9Yq8cXOM3P4dZnfcJ
+         ACvewXC5XmNh0w6dTSiroS0G3P0fNvEbP3PLSZp0pUL5t2d9Q1xJigNOj3XWbf/CUeAg
+         506g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756034677; x=1756639477;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gd9xjSw8m24oRJrzZMLLpErv0wod9zJH9fguDoTibXA=;
+        b=jS9jYHx+TfZBi70tMIQnj7G1v4wuY1/oLd3nPo7MADHOuCdpJ++RzoT4a5ycU4UoFD
+         xwJFJuV9eLbhNA3q1Uj/1B/ERD4MkO4bEGWCam8heBOG+jcFsoUlw2jmtFZta5Rqmp9g
+         zPZ3GYGkQsTG9/USBM/itZId+2wvyIBtYXEUhXCDEGwFYOV0ePwYBORecHGk/YlcdxZY
+         Jifz0PHfoqppis8lIjiCFPyRRtO4MjBCj5Gh6BUFkpGVl+1E9mWR+t2k3ZxuIoygNSOo
+         FvkVtVUxUKCzhyqNcDcAtOaw97gYYl5vz5I9odEcIMyte+Af1/V5XblVPzChgbC/2Ple
+         fFEA==
+X-Forwarded-Encrypted: i=1; AJvYcCULLbxrx2DpMdskYt5HSF1IwvkB9dsbwFp1oR5yKcs7iDZXESmxQRPHxGvBRGscevHNMhZl7rIpCQl9d4jD@vger.kernel.org, AJvYcCVdBKGrmWDsUsRDLcoOGvGVbQR2809/4Nym0RQHuyiY1QG752a7k22PLWPjSEA3sp3Fe2xJNUQgU524@vger.kernel.org, AJvYcCVlKeBGMjEujE+LsCO0Bm3j7+UnjCbybQcEb13w/R1Mxr3+h+9+F7ZlUCMdH0xpx7fGngUNgMvYZIzJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoYFkvOCKDSNaqnDmAD//BeoG9RX5rRjxup0KAFchLznVcbjYv
+	1OhikR3kVRX0sVJLpmv/DdWYVXgEEKWxDaU1QDzOBIal1yTM7Ld+8oU=
+X-Gm-Gg: ASbGnctxGG2zBtj147wWCYgs9Cong7Gz8SCKstQbOwaNgA6zEgjFesepdcekxTlP3Yq
+	d8TRT0/mIMUxtERajM4j72IMKElIK9LulRKFrHzjKzg8YDiDqS9KqylIbRiD4LOpgBkoD4WkBbA
+	kcfjOICUqhxd7pfZUsqZcBSM4feQoD5ivFeOJLl2yjCZudHE/XpTsJ9+4qMUO34BHGTRonvHS4R
+	vSGFiF7SeIAMyMhkTj1em5HAslgLGfUC7J5NzgtXh2b4SlNm0JIlDwrKpvVJyC0/fS7sJSopDvy
+	g67Wc8fE6+xtuTdqQVp4dEPTTO6iBRgla3P+6RHuM4/gGlhAArjnSAb0BhG+r2WSkF5mwSriGaM
+	79CUuR22BIAYxC81GT09u41HLlFeO8moV77vCfOglVA==
+X-Google-Smtp-Source: AGHT+IHsMOg2HCXj3aWnbqJR00tBbUuYcZEdUU4BfJjzYTjGE4YTHRtim8avT7VLSax+Apo05XHw8Q==
+X-Received: by 2002:a05:600c:19cb:b0:458:6733:fb5c with SMTP id 5b1f17b1804b1-45b517d2751mr71259025e9.28.1756034677087;
+        Sun, 24 Aug 2025 04:24:37 -0700 (PDT)
+Received: from localhost.localdomain ([37.169.16.203])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b57487c55sm67879755e9.16.2025.08.24.04.24.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Aug 2025 04:24:36 -0700 (PDT)
+From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+To: krzk+dt@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	peter.ujfalusi@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shuah@kernel.org,
+	jihed.chaibi.dev@gmail.com
+Subject: [PATCH v7 0/2] usb: dt-bindings: ti,twlxxxx-usb: convert to DT schema
+Date: Sun, 24 Aug 2025 13:23:36 +0200
+Message-ID: <20250824112338.64953-1-jihed.chaibi.dev@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: iio: adc: ad7768-1: add new supported
- parts
-To: Jonathan Santos <Jonathan.Santos@analog.com>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: Michael.Hennerich@analog.com, lars@metafoo.de, jic23@kernel.org,
- dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com
-References: <20250824040943.9385-1-Jonathan.Santos@analog.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250824040943.9385-1-Jonathan.Santos@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 24/08/2025 06:09, Jonathan Santos wrote:
-> Add compatibles for supported parts in the ad7768-1 family:
-> 	ADAQ7767-1, ADAQ7768-1 and ADAQ7769-1
-> 
-> Add property and checks for AAF gain, supported by ADAQ7767-1
-> and ADAQ7769-1 parts:
-> 	adi,gain-milli
-> 
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+Hello,
 
-git send-email v2*
+This series converts the legacy TXT bindings for the TI TWL4030
+and TWL6030 USB modules to the modern YAML DT schema format.
 
-Not patch by patch. You made it very difficult for us to review and to
-apply.
+Thank you,
+Jihed
 
-> ---
-> v2 Changes:
-> * adi,aaf-gain property renamed to adi,gain-milli. Description was 
->   simplified.
-> * default value add to adi,gain-milli.
-> ---
->  .../bindings/iio/adc/adi,ad7768-1.yaml        | 43 +++++++++++++++++--
->  1 file changed, 39 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-> index c06d0fc791d3..0c39491f6179 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-> @@ -4,18 +4,26 @@
->  $id: http://devicetree.org/schemas/iio/adc/adi,ad7768-1.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
-> -title: Analog Devices AD7768-1 ADC device driver
-> +title: Analog Devices AD7768-1 ADC family
->  
->  maintainers:
->    - Michael Hennerich <michael.hennerich@analog.com>
->  
->  description: |
-> -  Datasheet at:
-> -    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7768-1.pdf
-> +  Analog Devices AD7768-1 24-Bit Single Channel Low Power sigma-delta ADC family
-> +
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7768-1.pdf
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7767-1.pdf
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7768-1.pdf
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7769-1.pdf
->  
->  properties:
->    compatible:
-> -    const: adi,ad7768-1
-> +    enum:
-> +      - adi,ad7768-1
-> +      - adi,adaq7767-1
-> +      - adi,adaq7768-1
-> +      - adi,adaq7769-1
->  
->    reg:
->      maxItems: 1
-> @@ -58,6 +66,18 @@ properties:
->      description:
->        ADC reference voltage supply
->  
-> +  adi,gain-milli:
-> +    description: |
-> +       Specifies the gain applied by the Analog Anti-Aliasing Filter (AAF) to the
-> +       ADC input (in milli units). The hardware gain is determined by which input
+---
+Changes in v7:
+ - Patch (1/2) removed the corresponding twl4030 section from the
+   old .txt binding file. Patch (2/2) which deletes the remaining
+   twl6030 section; removes the file.
 
+Changes in v6:
+ - Reworked 'interrupts' property in both patches to use a list of
+   items with descriptions, per reviewer feedback.
 
-I don't think there is no such thing as "milli units". milli is SI
-prefix, not unit. So "units" is the unit? Or how exactly?
+Changes in v5:
+ - Split combined twlxxxx-usb binding into two dedicated files
+   for TWL4030 and TWL6030 per maintainer feedback.
+ - Used more accurate header file for interrupt macros.
+ - Improved formatting in the examples.
+ - Patch 2/2 removes the old .txt file.
 
-Basis points were before since 2022 so I don't get why these other
-bindings introduced in 2024 could not use it?
+Changes in v4:
+ - This patch is split from larger series per maintainer feedback.
+ - v3 link:
+    https://lore.kernel.org/all/20250816021523.167049-1-jihed.chaibi.dev@gmail.com/
+ - Removed i2c node as it wasn't required by the old binding file.
+ - Updated node names to 'usb' and 'usb-phy' in the examples to follow
+   generic naming conventions per the Device Tree specification.
+ - Replaced raw interrupt values with standard defines for clarity.
+ - Improved formatting in the examples for clarity and consistency.
 
-Anyway, if you ever do not apply reviewers comment, then your commit msg
-should explain this. Otherwise you get the same discussion here.
+Changes in v3:
+ - No changes.
 
-Best regards,
-Krzysztof
+Changes in v2:
+ - Added '#phy-cells' property to support PHY framework integration.
+
+Jihed Chaibi (2):
+  usb: dt-bindings: ti,twl4030-usb: convert to DT schema
+  usb: dt-bindings: ti,twl6030-usb: convert to DT schema
+
+ .../bindings/usb/ti,twl4030-usb.yaml          | 74 +++++++++++++++++++
+ .../bindings/usb/ti,twl6030-usb.yaml          | 48 ++++++++++++
+ .../devicetree/bindings/usb/twlxxxx-usb.txt   | 43 -----------
+ 3 files changed, 122 insertions(+), 43 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/ti,twl4030-usb.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/ti,twl6030-usb.yaml
+ delete mode 100644 Documentation/devicetree/bindings/usb/twlxxxx-usb.txt
+
+-- 
+2.47.2
+
 
