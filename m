@@ -1,257 +1,116 @@
-Return-Path: <linux-kernel+bounces-783457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E08F2B32DD6
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:54:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B71B32DDB
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 09:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B98CC2432BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 06:54:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBC651B20961
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 07:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0949D24467E;
-	Sun, 24 Aug 2025 06:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66ECD2472AB;
+	Sun, 24 Aug 2025 07:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="eB85a7AW"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="aWZurvWE"
+Received: from mail-m1973189.qiye.163.com (mail-m1973189.qiye.163.com [220.197.31.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4D123CEF8;
-	Sun, 24 Aug 2025 06:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756018440; cv=pass; b=dpFks6tMPvK097GgY0NkgdG3GUW0wpD99IRj6nVzTVDdZQgkAD4HzNGCYpd1L9mJ3vdCZiS+Q+vi2UGN4MWp7f0rHKFAC1tpVv/KP+VWtXl/1x5LFCoRJ9S8M6uEJfzyKftrQABml5kk2WCwflMeF/NbgDpUljGgD6GhQHj9eOg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756018440; c=relaxed/simple;
-	bh=+4XoOBwthGbTDE9PU0DUIm1xaKeE3/th2pNghjeB5i0=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=u1ANQO3KswEnXr14HkCT12GhgyqT7fU/M+bpAj3CqajiyhVAuNO4WtMnBJQu+vZ8Uhyy3wUlu+4zSPSycv2H+15KhVdLma6KLLQxZxQnClw0jiExb0OUpkhdATwZ0kZaA9+0bHO4l3Wu5QMkorZLolw5QU2y6roylHiWB/k8LIE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=eB85a7AW; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756018408; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dzardkVqzZnifGLcaYi4bmitkepMEb8oakoncb+VQvmlgoJfO/2Z3CE0duAd9m/sD0KHP+UYktpk4Nx3l0teQFDTm9Lj6NoxjKmwa9l3ZUAVqrQI088EUxhymZHRGLb1FusbtO1nIdWkXCYkhXfqBzqSCcIygWJvA04ZCTLsrvo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756018408; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=LCIkqG/tRneiiilxl8xXwZbENVetREmCB1vmx+zhNnI=; 
-	b=VY/+AvvKTokwVXO/ZcpKuXiugtwCAHyMI1WVwtHHObNyN3SQnWlFVLHuhL7VDv/CD/xw5Gz+8BJq3jugRt28TMoMLbtu42a+uPbXF6jM4pdmcw9IjCxFzR3x8/6YvKc6ro+BZYIUGEUqiaPtOiOSjuftUrTV9W/XEwGtwyHexVg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756018408;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=LCIkqG/tRneiiilxl8xXwZbENVetREmCB1vmx+zhNnI=;
-	b=eB85a7AW85vifSc34CnyqoAz8kqea+9A+0jZXQAYSI1nN8aiENwle2CtHGAR17Cf
-	8IfokoV0wly+Q9YhikNVuWFyue2dr7reF85LsC2p3XG3RBiu0zJP0jNus/COAg5Mof6
-	I/uA75CAtE05fntirSmgypnsLB5zUGTws7gzSku0=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1756018407325384.3192467565557; Sat, 23 Aug 2025 23:53:27 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Sat, 23 Aug 2025 23:53:27 -0700 (PDT)
-Date: Sun, 24 Aug 2025 10:53:27 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Aleksa Sarai" <cyphar@cyphar.com>
-Cc: "Alejandro Colomar" <alx@kernel.org>,
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
-	"Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Jan Kara" <jack@suse.cz>,
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
-	"linux-man" <linux-man@vger.kernel.org>,
-	"linux-api" <linux-api@vger.kernel.org>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"David Howells" <dhowells@redhat.com>,
-	"Christian Brauner" <brauner@kernel.org>
-Message-ID: <198dada778e.ed8ccab115437.3102752488507757202@zohomail.com>
-In-Reply-To: <20250809-new-mount-api-v3-9-f61405c80f34@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com> <20250809-new-mount-api-v3-9-f61405c80f34@cyphar.com>
-Subject: Re: [PATCH v3 09/12] man/man2/open_tree.2: document "new" mount API
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299B8245023
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 07:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.89
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756018813; cv=none; b=kOV2/SGSmqExc++vlR8lS+GDY21ug+cMd6jDxXaUZLxka0+FH40qOuBbiP40ZhmASyo2JwevnPVrObupTxArxOixfMCraHnpVpwMt7f9kQwnnXJr033yDNeCRjNKc2KXVYYniZQ2aA8OyfeTUA/VH5EoLVawLGwZftRYu+yb/og=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756018813; c=relaxed/simple;
+	bh=TS+iKMQ8m3lp3MMoqbseCMqbxU5PyNfjGtVdljnAgcM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u6jsyEnt2d3YcEiRzKbNK8N31SifnmSPe0cRQwfsJbVeul1DA6QZ7Z/51xfJtbXbUllU8nN3o1ypwwPzb11ncX9glChTWqysG2j4AJqM/tBt3zDIj3R5TYg5cn+dK5w3VCR7iWTTkwkUN7W1L+ut0xKuiq/jp9EyYMRDOIWmwj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=aWZurvWE; arc=none smtp.client-ip=220.197.31.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 20635ce14;
+	Sun, 24 Aug 2025 14:54:53 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: heiko@sntech.de,
+	andy.yan@rock-chips.com,
+	hjc@rock-chips.com
+Cc: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dmitry.baryshkov@oss.qualcomm.com,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v2] drm/rockchip: analogix_dp: Apply devm_clk_get_optional() for &rockchip_dp_device.grfclk
+Date: Sun, 24 Aug 2025 14:54:41 +0800
+Message-Id: <20250824065441.3220852-1-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr080112273b3413fe257506eb17a55fda0000ca0e09a7f2e4ac1c359e0adddad2b9d03fa24eb0015b84ffd8:zu08011227d8ea003d4d0ccd2d2540c7290000c4b397b06582726fdb91176843d6ae36498ee0c66abb641979:rf0801122c9742ec2d7fd45827a620cf2e0000a813831b7b5a12ce00a6b3d543b3e024b67e1b21a185726a366956ede2c4:ZohoMail
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a98dadbc60903a3kunm3ac07d9129ef6a
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGktLTlZNSU0ZSUodQxoZSBpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=aWZurvWEga4kNz/cNldCLoewF0HF8QPtT2dh5tGraPGsD/zd+2KstAZNu2IrmmTqtJH+k0p2weANjaAZzr/yenypcxh//+DOOWqsKCuE+/qNZm9c2Cqdu2zHk9zwIJB+P1YuPVVGpf4xv985YrpZYB2ftVI5JBQlWc3c9U62uWU=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=OpejVT+/A4NMaugqkBklXTUATQceFhLY7R1EMZdVWEA=;
+	h=date:mime-version:subject:message-id:from;
 
- ---- On Sat, 09 Aug 2025 00:39:53 +0400  Aleksa Sarai <cyphar@cyphar.com> wrote --- 
- > +If
- > +.I flags
- > +does not contain
- > +.BR \%OPEN_TREE_CLONE ,
- > +.BR open_tree ()
- > +returns a file descriptor
- > +that is exactly equivalent to
- > +one produced by
- > +.BR openat (2)
+The "grf" clock is optional for Rockchip eDP controller(RK3399 needs
+while RK3288 and RK3588 do not).
 
-This is not true. They differ in handling of automounts.
-open_tree follows them in final component (by default),
-and openat - not.
+It can make the code more consice to use devm_clk_get_optional()
+instead of devm_clk_get() with extra checks.
 
-See reproducer in the end of this letter.
+In addtion, DRM_DEV_ERROR() is replaced by dev_err_probe().
 
-I suggest merely adding this:
-> that is exactly equivalent to one produced by openat(2) (modulo automounts)
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 
---
-Askar Safin
-https://types.pl/@safinaskar
+------
 
+Changes in v2:
+- Replace DRM_DEV_ERROR() with dev_err_probe().
+---
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-// Root in initial user namespace
-
-#define _GNU_SOURCE
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sched.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/mount.h>
-#include <sys/syscall.h>
-#include <linux/openat2.h>
-
-#define MY_ASSERT(cond) do { \
-    if (!(cond)) { \
-        fprintf (stderr, "%s: assertion failed\n", #cond); \
-        exit (1); \
-    } \
-} while (0)
-
-bool
-tracing_mounted (void)
-{
-    struct statx tracing;
-    if (statx (AT_FDCWD, "/tmp/debugfs/tracing", AT_NO_AUTOMOUNT, 0, &tracing) != 0)
-        {
-            perror ("statx tracing");
-            exit (1);
-        }
-    if (!(tracing.stx_attributes_mask & STATX_ATTR_MOUNT_ROOT))
-        {
-            fprintf (stderr, "???\n");
-            exit (1);
-        }
-    return tracing.stx_attributes & STATX_ATTR_MOUNT_ROOT;
-}
-
-void
-mount_debugfs (void)
-{
-    if (mount (NULL, "/tmp/debugfs", "debugfs", 0, NULL) != 0)
-        {
-            perror ("mount debugfs");
-            exit (1);
-        }
-    MY_ASSERT (!tracing_mounted ());
-}
-
-void
-umount_debugfs (void)
-{
-    umount ("/tmp/debugfs/tracing"); // Ignore errors
-    if (umount ("/tmp/debugfs") != 0)
-        {
-            perror ("umount debugfs");
-            exit (1);
-        }
-}
-
-int
-main (void)
-{
-    // Init
-    {
-        if (chdir ("/") != 0)
-            {
-                perror ("chdir /");
-                exit (1);
-            }
-        if (unshare (CLONE_NEWNS) != 0)
-            {
-                perror ("unshare");
-                exit (1);
-            }
-        if (mount (NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL) != 0)
-            {
-                perror ("mount(NULL, /, NULL, MS_REC | MS_PRIVATE, NULL)");
-                exit (1);
-            }
-        if (mount (NULL, "/tmp", "tmpfs", 0, NULL) != 0)
-            {
-                perror ("mount tmpfs");
-                exit (1);
-            }
-    }
-    if (mkdir ("/tmp/debugfs", 0777) != 0)
-        {
-            perror ("mkdir(/tmp/debugfs)");
-            exit (1);
-        }
-
-    // open(O_PATH) doesn't follow automounts
-    {
-        mount_debugfs ();
-        {
-            int fd = open ("/tmp/debugfs/tracing", O_PATH);
-            MY_ASSERT (fd >= 0);
-            MY_ASSERT (close (fd) == 0);
-        }
-        MY_ASSERT (!tracing_mounted ());
-        umount_debugfs ();
-    }
-
-    // open_tree does follow automounts (by default)
-    {
-        mount_debugfs ();
-        {
-            int fd = open_tree (AT_FDCWD, "/tmp/debugfs/tracing", 0);
-            MY_ASSERT (fd >= 0);
-            MY_ASSERT (close (fd) == 0);
-        }
-        MY_ASSERT (tracing_mounted ());
-        umount_debugfs ();
-    }
-
-    // open (O_PATH | O_DIRECTORY)
-    {
-        mount_debugfs ();
-        {
-            int fd = open ("/tmp/debugfs/tracing", O_PATH | O_DIRECTORY);
-            MY_ASSERT (fd >= 0);
-            MY_ASSERT (close (fd) == 0);
-        }
-        MY_ASSERT (tracing_mounted ());
-        umount_debugfs ();
-    }
-
-    // AT_NO_AUTOMOUNT
-    {
-        mount_debugfs ();
-        {
-            int fd = open_tree (AT_FDCWD, "/tmp/debugfs/tracing", AT_NO_AUTOMOUNT);
-            MY_ASSERT (fd >= 0);
-            MY_ASSERT (close (fd) == 0);
-        }
-        MY_ASSERT (!tracing_mounted ());
-        umount_debugfs ();
-    }
-
-    printf ("All tests passed\n");
-    exit (0);
-}
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index d30f0983a53a..937f83cf42fc 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -335,15 +335,9 @@ static int rockchip_dp_of_probe(struct rockchip_dp_device *dp)
+ 		return PTR_ERR(dp->grf);
+ 	}
+ 
+-	dp->grfclk = devm_clk_get(dev, "grf");
+-	if (PTR_ERR(dp->grfclk) == -ENOENT) {
+-		dp->grfclk = NULL;
+-	} else if (PTR_ERR(dp->grfclk) == -EPROBE_DEFER) {
+-		return -EPROBE_DEFER;
+-	} else if (IS_ERR(dp->grfclk)) {
+-		DRM_DEV_ERROR(dev, "failed to get grf clock\n");
+-		return PTR_ERR(dp->grfclk);
+-	}
++	dp->grfclk = devm_clk_get_optional(dev, "grf");
++	if (IS_ERR(dp->grfclk))
++		return dev_err_probe(dev, PTR_ERR(dp->grfclk), "failed to get grf clock\n");
+ 
+ 	dp->pclk = devm_clk_get(dev, "pclk");
+ 	if (IS_ERR(dp->pclk)) {
+-- 
+2.34.1
 
 
