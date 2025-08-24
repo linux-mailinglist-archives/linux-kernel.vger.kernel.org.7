@@ -1,256 +1,190 @@
-Return-Path: <linux-kernel+bounces-783586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC16FB32F52
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:18:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C925B32F58
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 883AD1B24767
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:18:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 08C714E154E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A85C2D5432;
-	Sun, 24 Aug 2025 11:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942B52D5436;
+	Sun, 24 Aug 2025 11:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="PffkWfbx"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Loerx6e1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E302D5C64
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 11:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8E22C327D;
+	Sun, 24 Aug 2025 11:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756034265; cv=none; b=qSvg6edBRSauDaGepi6fszyoOPE8yjfKthuo2OvMwrTEfSFhWnllzdNZJ7Yepq3J/K8oHxIjlThQADB4eFVzhnsnmM2ocs1ZPFTZgsV/2Al5qmMLirzRsM7XD5G6FCot+DxsPsc5TZ9YXrAhdz6sqoLUqQ4kYrsAu+rYN3K1Tr4=
+	t=1756034426; cv=none; b=Sp3huwp1hGBx/UM1spkm9+VlY1JqT2edoGJcY75gGJubctbiRsPvL3AdFF1ZcP65wnfhlSTQl6417teVJoeIh/Trd8LMvHK82eM1vHBOgANI2gQHX0F97lZ5N2hte4QWIJgiJDxZ6VL192wSusoNBJrL9HDhUE4UTtB9Z3qZgP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756034265; c=relaxed/simple;
-	bh=tXujzRgrrBGUn2v030aF3lID+YnDxsftptuhhBvWKg4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GgmD9k8KNQ2/kED3PMxJ6CZ5nZiTFZ+1GRIV8G4mDhlnPGrMvC6WbeFK9TGrKJpoMj5zrpfiqIZVn+5Rw2z52/5/EVhoiq2xM3L/Xz6VZZeykykKVcUg1Tv3UvBa4c6eYtf1KLPqmzj4XoMuX7Qsix2+9cYs0B19pYitYDN25RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=PffkWfbx; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1756034260;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=37+dl7EpiJ+GXGLYXXe1onZHgckG1U2hI48/KV0d1I0=;
-	b=PffkWfbxzXBAdOh6czW5cQrlRuQsFnWWrDGzH11GAZCfvecRlDqtv3lMN8b5oKcrvDOYiH
-	0xnwivO8jQPgNxPk8NFeEIiPOA/VHcNw6QOhlz/O1IogfqlOMvzWVRBJzwWxqgP54+ekKk
-	UmmasPAmFjDmxV6i+1qZZKjujXvz+K8=
-From: Henrik Grimler <henrik@grimler.se>
-Date: Sun, 24 Aug 2025 13:16:56 +0200
-Subject: [PATCH v3 3/3] drm/bridge: sii9234: use extcon cable detection
- logic to detect MHL
+	s=arc-20240116; t=1756034426; c=relaxed/simple;
+	bh=+OkOBQx3yRrZpTiq/fQPXgpZZZmpP5pqcfVE/IglG0g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FGHH+aKvcL3kSrwtil60OblZu/D9/WzIUy0yjj1KVBOSZVuUL4rp4yKFzv/u47UFG/Ay/0YY80lENiXvbIGZvYwCt5VqioARx1PeO6C5+cXdFdzqaP8g9B/9QY4LLrYqplzKxfpoAeGbG3wiuDKhgURY7qIh6axC4GrgPXSiQtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Loerx6e1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48748C4CEEB;
+	Sun, 24 Aug 2025 11:20:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756034426;
+	bh=+OkOBQx3yRrZpTiq/fQPXgpZZZmpP5pqcfVE/IglG0g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Loerx6e1x2VjRNcM3MW45r4qwsF0WnebjbFtGiqfIagnabuMUrPsqGjz/8pdXARkw
+	 pDcnCxi84CPtleCDboazXwXvUSBdvtnBj6PkheZq+ulDz55VkY8MH8RI90GNG8yesn
+	 71NL7ijnhCN0VO3XcIQh5OnC6br9qCwbApjL+qo/Ms5KG+Kbti/S03Yi9OvQxm5F+3
+	 JUAxtYBZGnf0WIOQ3MRZeU6DVtDJRx2z5e6hJOlucBxNfcrNKlq8DGN7H9ckKOu5pW
+	 RGxFM59tXzm/yIgwyvh1fkMLeuAEnA54Zem231jrT3scTFk0YXJeXXWfgCWTHQvv93
+	 GJ5HTTBbOvgjw==
+Message-ID: <510f6efb-ada3-4848-ac8e-16fa5d1b5284@kernel.org>
+Date: Sun, 24 Aug 2025 13:20:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: iio: adc: ad7768-1: add new supported
+ parts
+To: Jonathan Santos <Jonathan.Santos@analog.com>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: Michael.Hennerich@analog.com, lars@metafoo.de, jic23@kernel.org,
+ dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com
+References: <20250824040943.9385-1-Jonathan.Santos@analog.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250824040943.9385-1-Jonathan.Santos@analog.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250824-exynos4-sii9234-driver-v3-3-80849e716a37@grimler.se>
-References: <20250824-exynos4-sii9234-driver-v3-0-80849e716a37@grimler.se>
-In-Reply-To: <20250824-exynos4-sii9234-driver-v3-0-80849e716a37@grimler.se>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org, 
- linux-kernel@vger.kernel.org, Henrik Grimler <henrik@grimler.se>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4972; i=henrik@grimler.se;
- h=from:subject:message-id; bh=tXujzRgrrBGUn2v030aF3lID+YnDxsftptuhhBvWKg4=;
- b=kA0DAAoBsAduSQtxYWsByyZiAGiq9MGgu7d0a5IvpXE27Z/Vihx4bBp4EscBPD4qgCydQJkHr
- 4kBMwQAAQoAHRYhBCx/Ka6XiR9kGanizbAHbkkLcWFrBQJoqvTBAAoJELAHbkkLcWFrLCcIAIm1
- nM3abFAj8mHjSAHke+KtItJOiyo8GtEdvaJzrlL/t0bAMxUDDWG7tW71BiFBCtbeW4pjD0RE6Vo
- lidu4/+xACv/LTWQ6038x4LHfOoczXxyIVxIZqJvYIBR0jQu2f69QVGUfDR9/o1GCMLLBObYyqP
- 9gzyCSYiB1t2LfbSQnpaM5q1zF30Z6fJ9O1aslK6TV3Ot86RpSnwyMkLf3jziqOCkV2+QoEJPIU
- UAESmv8MKGrzOYJFwGpTrknV314YnoSG+ODiP1wypPakj/VBTbiAjJJf8VeVmV0CDkBOqL+ZTP/
- qV0EOSlEwhGj0lvLkAVIWaaEy8qm0zgkDnfIGWA=
-X-Developer-Key: i=henrik@grimler.se; a=openpgp;
- fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
-X-Migadu-Flow: FLOW_OUT
 
-To use MHL we currently need the MHL chip to be permanently on, which
-consumes unnecessary power. Let's use extcon attached to MUIC to enable
-the MHL chip only if it detects an MHL cable.
+On 24/08/2025 06:09, Jonathan Santos wrote:
+> Add compatibles for supported parts in the ad7768-1 family:
+> 	ADAQ7767-1, ADAQ7768-1 and ADAQ7769-1
+> 
+> Add property and checks for AAF gain, supported by ADAQ7767-1
+> and ADAQ7769-1 parts:
+> 	adi,gain-milli
+> 
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
 
-Signed-off-by: Henrik Grimler <henrik@grimler.se>
----
-v3: add missing return in error path, spotted by Marek
-    Use depends on EXTCON || !EXTCON instead of select
-v2: add dependency on extcon. Issue reported by kernel test robot
-    <lkp@intel.com>
----
- drivers/gpu/drm/bridge/Kconfig   |  1 +
- drivers/gpu/drm/bridge/sii9234.c | 89 ++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 87 insertions(+), 3 deletions(-)
+git send-email v2*
 
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 6945029b35929a8e30054ac1a699bd88ab0487f2..bf73f8d900ebd8da9fa3444c0b2d9bfc901ea773 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -304,6 +304,7 @@ config DRM_SII902X
- config DRM_SII9234
- 	tristate "Silicon Image SII9234 HDMI/MHL bridge"
- 	depends on OF
-+	depends on EXTCON || !EXTCON
- 	help
- 	  Say Y here if you want support for the MHL interface.
- 	  It is an I2C driver, that detects connection of MHL bridge
-diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
-index e43248e515b3dcdde043997288d61f738417b8f0..72c6aeed6e12e43df3b052dadc0990f1609253f0 100644
---- a/drivers/gpu/drm/bridge/sii9234.c
-+++ b/drivers/gpu/drm/bridge/sii9234.c
-@@ -19,6 +19,7 @@
- 
- #include <linux/delay.h>
- #include <linux/err.h>
-+#include <linux/extcon.h>
- #include <linux/gpio/consumer.h>
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
-@@ -26,6 +27,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/of_graph.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- 
-@@ -170,8 +172,12 @@ struct sii9234 {
- 	struct drm_bridge bridge;
- 	struct device *dev;
- 	struct gpio_desc *gpio_reset;
--	int i2c_error;
- 	struct regulator_bulk_data supplies[4];
-+	struct extcon_dev *extcon;
-+	struct notifier_block extcon_nb;
-+	struct work_struct extcon_wq;
-+	int cable_state;
-+	int i2c_error;
- 
- 	struct mutex lock; /* Protects fields below and device registers */
- 	enum sii9234_state state;
-@@ -863,6 +869,70 @@ static int sii9234_init_resources(struct sii9234 *ctx,
- 	return 0;
- }
- 
-+static void sii9234_extcon_work(struct work_struct *work)
-+{
-+	struct sii9234 *ctx =
-+		container_of(work, struct sii9234, extcon_wq);
-+	int state = extcon_get_state(ctx->extcon, EXTCON_DISP_MHL);
-+
-+	if (state == ctx->cable_state)
-+		return;
-+
-+	ctx->cable_state = state;
-+
-+	if (state > 0)
-+		sii9234_cable_in(ctx);
-+	else
-+		sii9234_cable_out(ctx);
-+}
-+
-+static int sii9234_extcon_notifier(struct notifier_block *self,
-+			unsigned long event, void *ptr)
-+{
-+	struct sii9234 *ctx =
-+		container_of(self, struct sii9234, extcon_nb);
-+
-+	schedule_work(&ctx->extcon_wq);
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static int sii9234_extcon_init(struct sii9234 *ctx)
-+{
-+	struct extcon_dev *edev;
-+	struct device_node *musb, *muic;
-+	int ret;
-+
-+	/* Get micro-USB connector node */
-+	musb = of_graph_get_remote_node(ctx->dev->of_node, 1, -1);
-+	/* Then get micro-USB Interface Controller node */
-+	muic = of_get_next_parent(musb);
-+
-+	if (!muic) {
-+		dev_info(ctx->dev,
-+			 "no extcon found, switching to 'always on' mode\n");
-+		return 0;
-+	}
-+
-+	edev = extcon_find_edev_by_node(muic);
-+	of_node_put(muic);
-+	if (IS_ERR(edev)) {
-+		return dev_err_probe(ctx->dev, PTR_ERR(edev),
-+			      "invalid or missing extcon\n");
-+	}
-+
-+	ctx->extcon = edev;
-+	ctx->extcon_nb.notifier_call = sii9234_extcon_notifier;
-+	INIT_WORK(&ctx->extcon_wq, sii9234_extcon_work);
-+	ret = extcon_register_notifier(edev, EXTCON_DISP_MHL, &ctx->extcon_nb);
-+	if (ret) {
-+		dev_err(ctx->dev, "failed to register notifier for MHL\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static enum drm_mode_status sii9234_mode_valid(struct drm_bridge *bridge,
- 					 const struct drm_display_info *info,
- 					 const struct drm_display_mode *mode)
-@@ -915,12 +985,17 @@ static int sii9234_probe(struct i2c_client *client)
- 	if (ret < 0)
- 		return ret;
- 
-+	ret = sii9234_extcon_init(ctx);
-+	if (ret < 0)
-+		return ret;
-+
- 	i2c_set_clientdata(client, ctx);
- 
- 	ctx->bridge.of_node = dev->of_node;
- 	drm_bridge_add(&ctx->bridge);
- 
--	sii9234_cable_in(ctx);
-+	if (!ctx->extcon)
-+		sii9234_cable_in(ctx);
- 
- 	return 0;
- }
-@@ -929,7 +1004,15 @@ static void sii9234_remove(struct i2c_client *client)
- {
- 	struct sii9234 *ctx = i2c_get_clientdata(client);
- 
--	sii9234_cable_out(ctx);
-+	if (ctx->extcon) {
-+		extcon_unregister_notifier(ctx->extcon, EXTCON_DISP_MHL,
-+					   &ctx->extcon_nb);
-+		flush_work(&ctx->extcon_wq);
-+		if (ctx->cable_state > 0)
-+			sii9234_cable_out(ctx);
-+	} else {
-+		sii9234_cable_out(ctx);
-+	}
- 	drm_bridge_remove(&ctx->bridge);
- }
- 
+Not patch by patch. You made it very difficult for us to review and to
+apply.
 
--- 
-2.50.1
+> ---
+> v2 Changes:
+> * adi,aaf-gain property renamed to adi,gain-milli. Description was 
+>   simplified.
+> * default value add to adi,gain-milli.
+> ---
+>  .../bindings/iio/adc/adi,ad7768-1.yaml        | 43 +++++++++++++++++--
+>  1 file changed, 39 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+> index c06d0fc791d3..0c39491f6179 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+> @@ -4,18 +4,26 @@
+>  $id: http://devicetree.org/schemas/iio/adc/adi,ad7768-1.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+> -title: Analog Devices AD7768-1 ADC device driver
+> +title: Analog Devices AD7768-1 ADC family
+>  
+>  maintainers:
+>    - Michael Hennerich <michael.hennerich@analog.com>
+>  
+>  description: |
+> -  Datasheet at:
+> -    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7768-1.pdf
+> +  Analog Devices AD7768-1 24-Bit Single Channel Low Power sigma-delta ADC family
+> +
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7768-1.pdf
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7767-1.pdf
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7768-1.pdf
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7769-1.pdf
+>  
+>  properties:
+>    compatible:
+> -    const: adi,ad7768-1
+> +    enum:
+> +      - adi,ad7768-1
+> +      - adi,adaq7767-1
+> +      - adi,adaq7768-1
+> +      - adi,adaq7769-1
+>  
+>    reg:
+>      maxItems: 1
+> @@ -58,6 +66,18 @@ properties:
+>      description:
+>        ADC reference voltage supply
+>  
+> +  adi,gain-milli:
+> +    description: |
+> +       Specifies the gain applied by the Analog Anti-Aliasing Filter (AAF) to the
+> +       ADC input (in milli units). The hardware gain is determined by which input
 
+
+I don't think there is no such thing as "milli units". milli is SI
+prefix, not unit. So "units" is the unit? Or how exactly?
+
+Basis points were before since 2022 so I don't get why these other
+bindings introduced in 2024 could not use it?
+
+Anyway, if you ever do not apply reviewers comment, then your commit msg
+should explain this. Otherwise you get the same discussion here.
+
+Best regards,
+Krzysztof
 
