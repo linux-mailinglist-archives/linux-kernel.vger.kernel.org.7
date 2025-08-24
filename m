@@ -1,399 +1,207 @@
-Return-Path: <linux-kernel+bounces-783815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2502EB33300
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 00:08:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D1A0B3330F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 00:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9DFC1B265CB
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 22:08:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B2BD206113
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 22:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DC32571DE;
-	Sun, 24 Aug 2025 22:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD67242910;
+	Sun, 24 Aug 2025 22:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="E7Ljjykf"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="o8nl4lxg";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="kdIUNEek"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEAA12B93;
-	Sun, 24 Aug 2025 22:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E7C23B612;
+	Sun, 24 Aug 2025 22:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756073286; cv=none; b=E0keAxxwkTTl310fAZmTda2+EBtZIDzTj0wMp8KWJKbZRZpqmkxtYGvrCZJAMOHy0tua9+ghXtCTUloL5N5z+fEyICDva49mXCxskChfa402hD36AcStrptIoA7UL8g0jBFO/SxqzYC5Jbl0CEVpWynPrrYicETHONQ0rQr1dlg=
+	t=1756073296; cv=none; b=jM4ffv7qT0zd/KBap0t/VqHfBisdqK+7+xK1obAfJy+DOayRNNFLGHKNxtfpyIu7dXK3m4rhRKXCX59ETnq5dWGrofrOdaMNVo6RtjdAoxSPs7QhYbsgTSBbt54fm51zmfU8k1aqMb5DXYisEDIrlRadJSdjhaaaAwXQ/dyZv9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756073286; c=relaxed/simple;
-	bh=IjCfZDgBT49pokPk728KamIWhQEnX2ES5NjdbqpPKxM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kolaxda4WRqnk3UDfFceTN/K++qPt5YTryp+etoS7/jcbew1jMLqs8A5eG+2itj9tjT998nbLvScg7Y5g0EGsQMJFlvCuc9W1/IsYaTg8V4F7DUxcigRJUUopP0Jzg+uLS75NueqMvkJc1AhmYwKtei01oRH7785Qqn0ha8h990=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=E7Ljjykf; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Cc:In-Reply-To:References:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=w017jvPUy/HjQXZT+jTEkkN0IBHkOVQKlXTzTvOdp3s=; b=E7LjjykfIisqPUp0mvAyxJX8KJ
-	VhMFtT0B0IkRoJQ33mVy/H44CajZzrf8c2F2jJYAJuULX+52rxqDMQBiLf5uh5NFN1soQVc+XxSqx
-	AkVaeinPqiUP3XNMZfMGrNcfHrLTocoAppJpNptBzqaYcqlSIEGOO0CKHmVojLFTU+ZdSraYWxvcF
-	N6gtuyao/V5Xi3f9/cq0EhqYx9ScikSNY9GifTYfAbrcnBkZRyhA5xlQwBqhm32etEcPn/jfwHVYV
-	Wy4mFqRNQc/NJpo08MGb5CLOxv8XUXZQfT91DJ+SLIfM6ppbCRWTMxwPtRqxw4D/wfzs3G8+d9oPE
-	s3jguBBw==;
-From: Andreas Kemnade <andreas@kemnade.info>
+	s=arc-20240116; t=1756073296; c=relaxed/simple;
+	bh=lHTR5+yABEr38duqTzK4BTkDE46kvwmMNIop8UhLoA4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Bjb2z3PbkBTmXyGB1lOG496CnSD70tickGYWyTyXE3/UfUkRUvq7IGwTq3sfDPUZjwGwvnuBFBUHY0VWpD9rQUtuj1bfg7XGqUUdEQYZo2moHv2u0tDpoW7KvMEeXboy7cN7igFOjFdfvsAKFkq9uXaTtoF/FiFbmM7fc/FGfMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=o8nl4lxg; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=kdIUNEek; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4c97N72r4Mz9tG1;
+	Mon, 25 Aug 2025 00:08:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1756073287;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=E3sqVzhFLKV5i/Tdp5YnbTV2avm7Uyp/iu5eoMFxSoE=;
+	b=o8nl4lxgtjK1tdMjZREjbQX2t4nQ0nKoLEvxImNzcDERCndeFzWn/1tQx/ej3gdqiKodHA
+	bDVo+MaD3NnJdAsH4UiFWk7dbp6onsszcKkrjkqxOj0jBdGxlDQYaAwY766KO7uNsrf01U
+	98k226WQ3pV9ZZCmVS12zPHfnQTAa85rx+PP9MaIVE8+kVVwQAgNNNvJV3yVX5QCWuB9v6
+	RmDx0P1wf9UlzPZBG6CtQ2sW8V9j1gKlGRcvz+uEDmo9j7nuQxMZKo+4J2M88mxVknjjR4
+	0cxPpPdPjO4vee/ammEVoZB3bfkBSFvIrYcvzAFSczlA877hNLKVc+f7HN+O+Q==
+From: Lukasz Majewski <lukasz.majewski@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1756073285;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=E3sqVzhFLKV5i/Tdp5YnbTV2avm7Uyp/iu5eoMFxSoE=;
+	b=kdIUNEekjnMaZDbJSQjSICIdvjosJvLBmrJ2dGOHM8PnSs8xeKqSuxapgUVRRZVxCJsl2J
+	eZ3quJyUE6WpOTuoRtsEJ9/taMizyhANXDG9TG4qg96IQQcfVAD1BLA+Dm0QMJWwRBdeI5
+	F+Wj15Uejr8X8M1A9rrKnt+e961Cv9+CFX8ZftaMZRgPcDXIyHRGR1TYBX6U9adZ7JGiax
+	JDx+JeAmj+U8HU7ijUomg0/obeAgzURlN/GRV6ciDqV/XwxdDaHLSZnWZbpP57AjCR5cqv
+	v4sNij6OUsqWRRwnrqxPHIBkqvQXi3kj5bRBp7NVoPdc+Z0ELmy7/O3QJtSJDQ==
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Simon Horman <horms@kernel.org>,
+	Lukasz Majewski <lukasz.majewski@mailbox.org>
+Subject: [net-next v19 0/7] net: mtip: Add support for MTIP imx287 L2 switch driver
 Date: Mon, 25 Aug 2025 00:07:29 +0200
-Subject: [PATCH RFC 2/3] Input: Add driver for Elan eKTP1059 Touchpad
+Message-Id: <20250824220736.1760482-1-lukasz.majewski@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250825-ektp-submit-v1-2-1dd476c1277b@kemnade.info>
-References: <20250825-ektp-submit-v1-0-1dd476c1277b@kemnade.info>
-In-Reply-To: <20250825-ektp-submit-v1-0-1dd476c1277b@kemnade.info>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>, 
- Tony Lindgren <tony@atomide.com>, hns@goldelico.com
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
- Andreas Kemnade <andreas@kemnade.info>
-X-Mailer: b4 0.15-dev-50721
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9434; i=andreas@kemnade.info;
- h=from:subject:message-id; bh=IjCfZDgBT49pokPk728KamIWhQEnX2ES5NjdbqpPKxM=;
- b=owGbwMvMwCEm/rzkS6lq2x3G02pJDBmrey22SH8/tdhzm9QsweiZWRPezgmI+Dkr1Tqz9dFbF
- +3MS4aPOkpZGMQ4GGTFFFl+WSu4fVJ5lhs8NcIeZg4rE8gQBi5OAZhI4WZGhqcGr3/dyNzOlrBY
- YL980J1FZx9N+72AbYL2tmpxb1HdlYaMDN8LT+RYHn5QbG54U+z4LafeZW+XNs8zKAvYuezHJO7
- TzQwA
-X-Developer-Key: i=andreas@kemnade.info; a=openpgp;
- fpr=EEC0DB858E66C0DA70620AC07DBD6AC74DE29324
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 34da346fd6b5e7d2bbd
+X-MBO-RS-META: gjb43brihfcxo4dw1be5tiq4fs7bf6r1
 
-Add driver for Elan eKTP1059 Touchpad connected via SPI.
-No information found whether it could be alternatively connected via I2C.
-No details about protocol are known, the only information is found in the
-vendor kernel of the Epson Moverio BT-200, drivers/input/elan
-http://epsonservice.goepson.com/downloads/VI-APS/BT200_kernel.tgz
+This patch series adds support for More Than IP's L2 switch driver embedded
+in some NXP's SoCs. This one has been tested on imx287, but is also available
+in the vf610.
 
-Known issues: After some time (minutes) touching it, interrupts
-stop arriving. Chances are that source of this problem is outside
-of the driver.
+In the past there has been performed some attempts to upstream this driver:
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- drivers/input/mouse/Kconfig         |  10 ++
- drivers/input/mouse/Makefile        |   1 +
- drivers/input/mouse/elan_ektp1059.c | 267 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 278 insertions(+)
+1. The 4.19-cip based one [1]
+2. DSA based one for 5.12 [2] - i.e. the switch itself was treat as a DSA switch
+   with NO tag appended.
+3. The extension for FEC driver for 5.12 [3] - the trick here was to fully reuse
+   FEC when the in-HW switching is disabled. When bridge offloading is enabled,
+   the driver uses already configured MAC and PHY to also configure PHY.
 
-diff --git a/drivers/input/mouse/Kconfig b/drivers/input/mouse/Kconfig
-index 833b643f0616..5b197bd8863b 100644
---- a/drivers/input/mouse/Kconfig
-+++ b/drivers/input/mouse/Kconfig
-@@ -300,6 +300,16 @@ config MOUSE_ELAN_I2C_SMBUS
- 
- 	   If unsure, say Y.
- 
-+config MOUSE_ELAN_EKTP1059
-+	tristate "Elan EKTP1059 Touchpad"
-+	depends on SPI
-+	help
-+	  Say Y here if you have an Elan ETKP1059 touchpad connected
-+	  via SPI.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called elan_ektp1059.
-+
- config MOUSE_INPORT
- 	tristate "InPort/MS/ATIXL busmouse"
- 	depends on ISA
-diff --git a/drivers/input/mouse/Makefile b/drivers/input/mouse/Makefile
-index a1336d5bee6f..f6160a4c97c7 100644
---- a/drivers/input/mouse/Makefile
-+++ b/drivers/input/mouse/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_MOUSE_ATARI)		+= atarimouse.o
- obj-$(CONFIG_MOUSE_BCM5974)		+= bcm5974.o
- obj-$(CONFIG_MOUSE_CYAPA)		+= cyapatp.o
- obj-$(CONFIG_MOUSE_ELAN_I2C)		+= elan_i2c.o
-+obj-$(CONFIG_MOUSE_ELAN_EKTP1059)	+= elan_ektp1059.o
- obj-$(CONFIG_MOUSE_GPIO)		+= gpio_mouse.o
- obj-$(CONFIG_MOUSE_INPORT)		+= inport.o
- obj-$(CONFIG_MOUSE_LOGIBM)		+= logibm.o
-diff --git a/drivers/input/mouse/elan_ektp1059.c b/drivers/input/mouse/elan_ektp1059.c
-new file mode 100644
-index 000000000000..a8ed7ba20e64
---- /dev/null
-+++ b/drivers/input/mouse/elan_ektp1059.c
-@@ -0,0 +1,267 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Elantech eKTP1059 SPI Touchpad
-+ * Copyright (C) 2025 Andreas Kemnade <andreas@kemnade.info>
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/interrupt.h>
-+#include <linux/errno.h>
-+#include <linux/sched.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/err.h>
-+#include <linux/spi/spi.h>
-+#include <linux/input.h>
-+#include <linux/input/mt.h>
-+#include <linux/kthread.h>
-+
-+#define TOUCHPAD_WIDTH		4000
-+#define TOUCHPAD_HEIGHT		2426
-+#define TOUCH_AREA		20
-+#define PRESSURE_MAX 256
-+
-+struct elan_tp_spi {
-+	struct input_dev *input_touch;
-+	struct spi_device *spi;
-+};
-+
-+static int elan_spi_write(struct elan_tp_spi *elanspi, const void *buf, size_t len)
-+{
-+	/*
-+	 * running this as single transfer with word_delay set
-+	 * results in an irq storm. Epson vendor kernel uses a single spi_sync
-+	 * multiple 1 byte transfers.
-+	 */
-+	size_t i;
-+	int err;
-+
-+	for (i = 0 ; i < len; i++) {
-+		err = spi_write(elanspi->spi, buf, 1);
-+		if (err)
-+			return err;
-+
-+		udelay(100);
-+	}
-+	return 0;
-+}
-+
-+static int elan_spi_read(struct elan_tp_spi *elanspi, void *buf, size_t len)
-+{
-+	/* reads 0x51 on sync */
-+	struct spi_transfer t = { 0 };
-+	int err;
-+	size_t i;
-+
-+	for (i = 0; i < len; i++) {
-+		u8 dummy = 0xff;
-+
-+		t.len = 1;
-+		t.tx_buf = &dummy;
-+		t.rx_buf = buf + i;
-+		err = spi_sync_transfer(elanspi->spi, &t, 1);
-+		if (err)
-+			return err;
-+
-+		udelay(80);
-+	}
-+	return 0;
-+}
-+
-+static irqreturn_t elan_tp_irq_handler(int irq, void *dev_id)
-+{
-+	struct elan_tp_spi *elanspi = dev_id;
-+	u8 buf[14];
-+	int fingercnt = 0;
-+	int x, y, pres, width;
-+
-+	if (elan_spi_read(elanspi, buf, 14))
-+		return IRQ_HANDLED;
-+
-+	if (buf[13] != 0x1)
-+		return IRQ_HANDLED;
-+
-+	fingercnt = (buf[1] & 0xC0) >> 6;
-+	input_report_key(elanspi->input_touch, BTN_TOUCH, fingercnt != 0);
-+	input_report_key(elanspi->input_touch, BTN_TOOL_FINGER, fingercnt == 1);
-+	input_report_key(elanspi->input_touch, BTN_TOOL_DOUBLETAP, fingercnt == 2);
-+	input_report_key(elanspi->input_touch, BTN_TOOL_TRIPLETAP, fingercnt == 3);
-+
-+	x = buf[2] & 0xf;
-+	x = x << 8;
-+	x |= buf[3];
-+	y = buf[5] & 0xf;
-+	y = y << 8;
-+	y |= buf[6];
-+
-+	pres = (buf[2] & 0xf0) | ((buf[5] & 0xf0) >> 4);
-+	width = ((buf[1] & 0x30) >> 2) | ((buf[4] & 0x30) >> 4);
-+
-+	input_report_abs(elanspi->input_touch, ABS_PRESSURE, pres);
-+	input_report_abs(elanspi->input_touch, ABS_TOOL_WIDTH, width);
-+
-+	if (fingercnt != 0) {
-+		input_report_abs(elanspi->input_touch, ABS_X, x);
-+		input_report_abs(elanspi->input_touch, ABS_Y, y);
-+	}
-+
-+	input_mt_slot(elanspi->input_touch, 0);
-+	input_mt_report_slot_state(elanspi->input_touch, MT_TOOL_FINGER, fingercnt == 1);
-+
-+	if (fingercnt != 0) {
-+		input_report_abs(elanspi->input_touch, ABS_MT_POSITION_X, x);
-+		input_report_abs(elanspi->input_touch, ABS_MT_POSITION_Y, y);
-+	}
-+	dev_dbg(&elanspi->spi->dev, "1: X: %d Y: %d pres: %d width: %d\n",
-+		x, y, pres, width);
-+
-+	if (fingercnt >= 2) {
-+		x = buf[8] & 0xf;
-+		x = x << 8;
-+		x |= buf[9];
-+		y = buf[11] & 0xf;
-+		y = y << 8;
-+		y |= buf[12];
-+		input_mt_slot(elanspi->input_touch, 1);
-+		input_mt_report_slot_state(elanspi->input_touch, MT_TOOL_FINGER, 1);
-+		input_report_abs(elanspi->input_touch, ABS_MT_POSITION_X, x);
-+		input_report_abs(elanspi->input_touch, ABS_MT_POSITION_Y, y);
-+		dev_dbg(&elanspi->spi->dev, "2: X: %d Y: %d\n", x, y);
-+	} else {
-+		input_mt_slot(elanspi->input_touch, 1);
-+		input_mt_report_slot_state(elanspi->input_touch, MT_TOOL_FINGER, 0);
-+	}
-+
-+	input_sync(elanspi->input_touch);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int handle_hello_package(struct elan_tp_spi *elanspi)
-+{
-+	u8 buf_recv[4];
-+	int rc;
-+
-+	rc = elan_spi_read(elanspi, buf_recv, 4);
-+	if (rc != 0)
-+		return rc;
-+
-+	/* 0xa0, 0x7, 0x0, 0x0 after boot */
-+	dev_dbg(&elanspi->spi->dev,
-+		"dump hello packet: %x, %x, %x, %x\n",
-+		buf_recv[0], buf_recv[1], buf_recv[2], buf_recv[3]);
-+
-+	return 0;
-+}
-+
-+static int init_touchpad(struct elan_tp_spi *elanspi)
-+{
-+	u8 buf_cmd[4] = {0x5B, 0x10, 0xC, 0x1};
-+	u8 buf[14];
-+	int ret;
-+
-+	ret = elan_spi_write(elanspi, buf_cmd, 4);
-+
-+	if (ret != 0)
-+		return ret;
-+
-+	msleep(20);
-+	elan_spi_read(elanspi, buf, 14);
-+
-+	return 0;
-+}
-+
-+static int elan_ektp1059_probe(struct spi_device *spi)
-+{
-+	int status = 0;
-+	struct elan_tp_spi *elanspi;
-+	struct input_dev *input_touch;
-+
-+	spi->bits_per_word = 8;
-+	status = spi_setup(spi);
-+
-+	elanspi = devm_kzalloc(&spi->dev,
-+			       sizeof(struct elan_tp_spi), GFP_KERNEL);
-+	if (!elanspi)
-+		return -ENOMEM;
-+
-+	input_touch = devm_input_allocate_device(&spi->dev);
-+	if (!input_touch)
-+		return dev_err_probe(&spi->dev, PTR_ERR(input_touch),
-+				     "create input touch device failed\n");
-+
-+	elanspi->input_touch = input_touch;
-+
-+	elanspi->spi = spi;
-+	spi_set_drvdata(spi, elanspi);
-+
-+	input_touch->name = "elan-touchpad";
-+	input_set_abs_params(input_touch, ABS_MT_POSITION_X, 0, TOUCHPAD_WIDTH, 0, 0);
-+	input_set_abs_params(input_touch, ABS_MT_POSITION_Y, 0, TOUCHPAD_HEIGHT, 0, 0);
-+	input_set_abs_params(input_touch, ABS_MT_PRESSURE, 0, PRESSURE_MAX, 0, 0);
-+	input_set_abs_params(input_touch, ABS_TOOL_WIDTH, 0, TOUCH_AREA, 0, 0);
-+	input_mt_init_slots(input_touch, 3, INPUT_MT_POINTER | INPUT_MT_SEMI_MT);
-+	input_set_drvdata(input_touch, elanspi);
-+
-+	status = input_register_device(input_touch);
-+	if (status < 0)
-+		return dev_err_probe(&elanspi->spi->dev, status, "input_register_device failed\n");
-+
-+	status = handle_hello_package(elanspi);
-+	if (status < 0)
-+		return dev_err_probe(&elanspi->spi->dev, status, "handle hello package failed\n");
-+
-+	status = init_touchpad(elanspi);
-+	if (status < 0)
-+		return dev_err_probe(&spi->dev, status, "init touchpad failed!\n");
-+
-+	status = devm_request_threaded_irq(&spi->dev, spi->irq, NULL,
-+					   elan_tp_irq_handler, IRQF_ONESHOT,
-+					   spi->dev.driver->name, elanspi);
-+	if (status < 0)
-+		return dev_err_probe(&spi->dev, status, "request_irq failed\n");
-+
-+	return 0;
-+}
-+
-+static int elan_ektp1059_suspend(struct device *dev)
-+{
-+	disable_irq(to_spi_device(dev)->irq);
-+	return 0;
-+}
-+
-+static int elan_ektp1059_resume(struct device *dev)
-+{
-+	enable_irq(to_spi_device(dev)->irq);
-+	return 0;
-+}
-+
-+static const struct spi_device_id elan_ektp1059_id[] = {
-+	{ "ektp1059", 0 },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(spi, elan_ektp1059_id);
-+
-+static const struct of_device_id elan_ektp1059_of_spi_match[] = {
-+	{ .compatible = "elan,ektp1059" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, elan_ektp1059_of_spi_match);
-+
-+static SIMPLE_DEV_PM_OPS(elan_ektp1059_pm, elan_ektp1059_suspend, elan_ektp1059_resume);
-+
-+static struct spi_driver elan_ektp1059_driver = {
-+	.driver	= {
-+		.name	 = "elan_ektp1059",
-+		.of_match_table = elan_ektp1059_of_spi_match,
-+		.pm = pm_ptr(&elan_ektp1059_pm),
-+	},
-+	.id_table = elan_ektp1059_id,
-+	.probe	= elan_ektp1059_probe,
-+};
-+
-+module_spi_driver(elan_ektp1059_driver);
-+
-+MODULE_DESCRIPTION("Elan eKTP1059 SPI touch pad");
-+MODULE_LICENSE("GPL");
+All three approaches were not accepted as eligible for upstreaming.
+
+The driver from this series has floowing features:
+
+1. It is fully separated from fec_main - i.e. can be used interchangeable
+   with it. To be more specific - one can build them as modules and
+   if required switch between them when e.g. bridge offloading is required.
+
+   To be more specific:
+        - Use FEC_MAIN: When one needs support for two ETH ports with separate
+          uDMAs used for both and bridging can be realized in SW.
+
+        - Use MTIPL2SW: When it is enough to support two ports with only uDMA0
+          attached to switch and bridging shall be offloaded to HW. 
+
+2. This driver uses MTIP's L2 switch internal VLAN feature to provide port
+   separation at boot time. Port separation is disabled when bridging is
+   required.
+
+3. Example usage:
+        Configuration:
+        ip link set lan0 up; sleep 1;
+        ip link set lan1 up; sleep 1;
+        ip link add name br0 type bridge;
+        ip link set br0 up; sleep 1;
+        ip link set lan0 master br0;
+        ip link set lan1 master br0;
+        bridge link;
+        ip addr add 192.168.2.17/24 dev br0;
+        ping -c 5 192.168.2.222
+
+        Removal:
+        ip link set br0 down;
+        ip link delete br0 type bridge;
+        ip link set dev lan1 down
+        ip link set dev lan0 down
+
+4. Limitations:
+        - Driver enables and disables switch operation with learning and ageing.
+        - Missing is the advanced configuration (e.g. adding entries to FBD). This is
+          on purpose, as up till now we didn't had consensus about how the driver
+          shall be added to Linux.
+
+5. Clang build:
+	make LLVM_SUFFIX=-19 LLVM=1 mrproper
+	cp ./arch/arm/configs/mxs_defconfig .config
+	make ARCH=arm LLVM_SUFFIX=-19 LLVM=1 W=1 menuconfig
+	make ARCH=arm LLVM_SUFFIX=-19 LLVM=1 W=1 -j8 LOADADDR=0x40008000 uImage dtbs
+
+        make LLVM_SUFFIX=-19 LLVM=1 mrproper
+        make LLVM_SUFFIX=-19 LLVM=1 allmodconfig
+        make LLVM_SUFFIX=-19 LLVM=1 W=1 drivers/net/ethernet/freescale/mtipsw/ | tee llvm_build.log
+        make LLVM_SUFFIX=-19 LLVM=1 W=1 -j8 | tee llvm_build.log
+
+6. Kernel compliance checks:
+	make coccicheck MODE=report J=4 M=drivers/net/ethernet/freescale/mtipsw/
+	~/work/src/smatch/smatch_scripts/kchecker drivers/net/ethernet/freescale/mtipsw/
+
+7. GCC
+        make mrproper
+        make allmodconfig
+        make W=1 drivers/net/ethernet/freescale/mtipsw/
+
+Links:
+[1] - https://github.com/lmajewski/linux-imx28-l2switch/commits/master
+[2] - https://github.com/lmajewski/linux-imx28-l2switch/tree/imx28-v5.12-L2-upstream-RFC_v1
+[3] - https://source.denx.de/linux/linux-imx28-l2switch/-/tree/imx28-v5.12-L2-upstream-switchdev-RFC_v1?ref_type=heads
+
+Lukasz Majewski (7):
+  dt-bindings: net: Add MTIP L2 switch description
+  net: mtip: The L2 switch driver for imx287
+  net: mtip: Add buffers management functions to the L2 switch driver
+  net: mtip: Add net_device_ops functions to the L2 switch driver
+  net: mtip: Add mtip_switch_{rx|tx} functions to the L2 switch driver
+  net: mtip: Extend the L2 switch driver with management operations
+  net: mtip: Extend the L2 switch driver for imx287 with bridge
+    operations
+
+ .../bindings/net/nxp,imx28-mtip-switch.yaml   |  150 ++
+ MAINTAINERS                                   |    7 +
+ drivers/net/ethernet/freescale/Kconfig        |    1 +
+ drivers/net/ethernet/freescale/Makefile       |    1 +
+ drivers/net/ethernet/freescale/mtipsw/Kconfig |   13 +
+ .../net/ethernet/freescale/mtipsw/Makefile    |    4 +
+ .../net/ethernet/freescale/mtipsw/mtipl2sw.c  | 1984 +++++++++++++++++
+ .../net/ethernet/freescale/mtipsw/mtipl2sw.h  |  651 ++++++
+ .../ethernet/freescale/mtipsw/mtipl2sw_br.c   |  132 ++
+ .../ethernet/freescale/mtipsw/mtipl2sw_mgnt.c |  443 ++++
+ 10 files changed, 3386 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/nxp,imx28-mtip-switch.yaml
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/Kconfig
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/Makefile
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw.h
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw_br.c
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw_mgnt.c
 
 -- 
 2.39.5
