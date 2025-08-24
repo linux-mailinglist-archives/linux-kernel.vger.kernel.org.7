@@ -1,278 +1,100 @@
-Return-Path: <linux-kernel+bounces-783692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2882B3314F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 17:58:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F7A5B33152
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACFBD203333
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 15:58:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBABF44251F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 16:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B418C2DC35F;
-	Sun, 24 Aug 2025 15:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF3D2571AA;
+	Sun, 24 Aug 2025 16:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="TSkV6imA"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QpkvHlZY"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161D925782F
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 15:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B90615ECCC;
+	Sun, 24 Aug 2025 16:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756051102; cv=none; b=CV8j4rswit7qfiXS7h9yZXpjA3Lsovc1C5jdcjK7qE2RJBSYC+WMzd9MBPUJoq7k84DcPpI5OP0wsEKFhxkagAJzsWkUCGZ3Yz+RTqbFlWqzvazagqbpgkrXi8alsXrLtcRH+hBKCQemKeZwYqZqyieTFc1l54SPZoNUeycw/vM=
+	t=1756051245; cv=none; b=APDBTQbTGV7cAveVrUqeSj2d4gZ/S6CHUWeKoRhg6AG3A8VYpJQJ81N/RsZBe3NubCLb8GlXBnHXtU0aLdO0TgoSPaG3Ap8mJjoBTUB21wAJP8zUlR82CNGXzgIvro54ypQ6OFvAiby7QdE6/xdCGXbYUpaJTYoM7eKJjXbrWFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756051102; c=relaxed/simple;
-	bh=4JtHlmEpGFJ65CEhyO8NUgg5+13+Xtd98lF+0G0TTu0=;
+	s=arc-20240116; t=1756051245; c=relaxed/simple;
+	bh=Z/vtMR0xsC+QVkf1xSonkMeqy+qppofWJlBvWrQpYDk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WmUgoW2HRN2noPtc5MCgJb4TWXHmp4EreoZ/nv/S8CNdMTDlVdEwjkAxgZ/OaNerJDDNWthK8oWJ2mYO1KSwnIKr812lK0m9l2YrWvUkLvP72aJcToTzESebfeYiqnkD1I/XZIcWcbSr7zMdcFkaCOXivzmxgCeIwXEdZpI3R5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=TSkV6imA; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-77057266cb8so287291b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 08:58:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1756051099; x=1756655899; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hAR4o0uUzKHA3BSOkPRonY0nbO9TmFEmpicgSL89uE8=;
-        b=TSkV6imAZNFcy43ooNBV5igH/jgkxyABjP/QG8KwDxJxdoC5I4XS60XcGgdNgmYBq6
-         lokzArmkyEBxJlvBNgysrBh1eGB6jpkXGFeL4TN49y+2U8egqEc69MMXiaHGCSq4JiyD
-         liCrwL25uFouyx8Dp51RUBPbymQTu8x0gKqXrhFquXiRDSxN+kcbFvmFhfIN8G9a0S8g
-         6hwBn/jbFlOdyP4ZnExgqaWHp8DofaonEAuK9++xKit9RbQz40RTtOIQBSUY2wmRBrwq
-         Y3yNC5M3DhK4bF26D+r3Ajqz3jHbNbHSmZeuz1cpLkZcQ2FmirMErmWxv16bnJE6RQ7C
-         JbYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756051099; x=1756655899;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hAR4o0uUzKHA3BSOkPRonY0nbO9TmFEmpicgSL89uE8=;
-        b=WFeA0C3khOOtGpm1P/B+ax+IQRlQKI5IHoCD+b5ZlXj6k6j2akqH0fuYMlHHIcvcKu
-         fjD4UEjjZyn32qtEFZIVm6Mzm56yQiYU8unmDpNKgx6qtlmu9v0f0fa7VCv69W47zSjd
-         HCT+3KDBWuXZLuJ3GGtC0TxoS/YXw3DQOXpH7v+aEcPOamSIvJWu9bJ9ZpaprXCh/dE4
-         YKzPXsUMUG1GI8A1oZKuDGp2PxwhjH8rpP3lWB4HBuhUZS/Ck9IQxONfLPcHWAN60Q4z
-         HeqYYTw56+DG/PiI6fyZ6IBhpnmS6FiP8tHRFq1lNFsnnNyYFUskrGRdlJcw3qUyrcuq
-         iJig==
-X-Forwarded-Encrypted: i=1; AJvYcCVoCfVFPgES856s/0SWnHn9QGfzIDLTlfsTJmL00Kn85bOOaAOhMVOp1jldVYod97fDJoymqra04fyT0Rs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOwi4LOPT3yoq3GKyzUameOGH1OF4q2VZPLWlahL4j0XExsc/5
-	Fx2ESi9wGq5D0g0/982kY61M9n5/zO9TLbhgCcvlW/m6KiVOL7Y32xv9ML/c/nTBk1c=
-X-Gm-Gg: ASbGncvyxY9/sSbK9smlXwdzqUF6r8Pqwtu4CxRyD8rUmhhYIYO6c6Ciq7vFB84Ymvh
-	j2p5DmNd4qNdhxUTNu1k6xerYHgRT98aGrJsgZ0DwiXjPUzPbhLqUwAbOU8M7xaB/vxaMpfXOaF
-	oHVA4by6qoq3MoSfznfBMnVpExCWmrU587GTc/a0UNVkbsBgud43kWpdCPHdQg5FDN0gSDA3nws
-	pBD03KS6FN+WqjqcuUfUh2bwN6ZoIIvRobNZ85X3MgK0AkONJFeARu1mpKgaDyefCeuUaDXjFqM
-	V6g4SCFkcYQK1qBLvq28UgTtBN6m1TLbLio7P01hyS2QJ+SMcTCelj9uLAc5Nft6BFqLAPAQIBk
-	eSOMmXf7uDIDlrLAVOOe9vfV0IgrPZqv93s0=
-X-Google-Smtp-Source: AGHT+IG+ZE9QqCE997b5BHkkhjWF9L8cd7mq6CfWpCdGRf/q+uMBgZYZ9UsAt9D+fb3fyBQlXBDnqw==
-X-Received: by 2002:a05:6a20:430b:b0:23d:54bd:92e6 with SMTP id adf61e73a8af0-24340d02428mr13378311637.29.1756051099176;
-        Sun, 24 Aug 2025 08:58:19 -0700 (PDT)
-Received: from mozart.vkv.me ([192.184.167.117])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4c1b6dedd2sm373163a12.23.2025.08.24.08.58.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Aug 2025 08:58:18 -0700 (PDT)
-Date: Sun, 24 Aug 2025 08:58:16 -0700
-From: Calvin Owens <calvin@wbinvd.org>
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: Sun YangKai <sunk67188@gmail.com>, clm@fb.com, dsterba@suse.com,
-	josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, neelx@suse.com
-Subject: Re: [PATCH] btrfs: Accept and ignore compression level for lzo
-Message-ID: <aKs2mCRjtv3Ki06Z@mozart.vkv.me>
-References: <2022221.PYKUYFuaPT@saltykitkat>
- <810d2b19-47ed-4902-bd8d-eb69bacbf0c6@gmx.com>
- <aKiSpTytAOXgHan5@mozart.vkv.me>
- <e9a4f485-3907-4f1e-8a74-2ffde87f3044@gmx.com>
- <aKj8K8IWkXr_SOk_@mozart.vkv.me>
- <9cacdafc-98ec-4ad2-99a8-dfb077e4a5fb@gmx.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=q26KaRxCSCRpEabJkvF5mqI0ra5S2sXO8sWFmvN5CUWODKIyUhn3Bvw9dSIxjuM/0vD30YZiMJjzz3qA8eHJQt5FWW0rXKkvnIebbriJUw2PGhB2ZYI6FiUAQmMZVojcDXOSZyiho8Iy1rv3a7mq/vcaP4rCxrCPBToxCNF5cI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QpkvHlZY; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=FQ6T82BEHxFz8LS8Q8CWlMJqyUnGzIAbBmgUxuElB+c=; b=QpkvHlZYs1CdjLFckxFFny94SX
+	quAJB+/oYzbc9F33CPNjs5uplcXJOot/ihfMDiWC1mFlTgpoIwT5+vXR0zetUq7qaD9GqlWFTQvtN
+	zacqKbcVl2jBaOowtqIGW6Ft2BPoae21RnEmF4B3xo3pWaoIcQZDIrG32dfGaWdn9IoU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uqD8n-005qM7-72; Sun, 24 Aug 2025 18:00:21 +0200
+Date: Sun, 24 Aug 2025 18:00:21 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: Re: [PATCH net-next v4 7/7] net: dsa: lantiq_gswip: store switch API
+ version in priv
+Message-ID: <6c05a103-5e7c-4ad7-a648-4b7d573ca09b@lunn.ch>
+References: <cover.1755878232.git.daniel@makrotopia.org>
+ <eddb51ae8d0b2046ca91906e93daad7be5af56d7.1755878232.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9cacdafc-98ec-4ad2-99a8-dfb077e4a5fb@gmx.com>
+In-Reply-To: <eddb51ae8d0b2046ca91906e93daad7be5af56d7.1755878232.git.daniel@makrotopia.org>
 
-On Saturday 08/23 at 09:09 +0930, Qu Wenruo wrote:
-> 在 2025/8/23 08:54, Calvin Owens 写道:
-> > On Saturday 08/23 at 07:14 +0930, Qu Wenruo wrote:
-> > > 在 2025/8/23 01:24, Calvin Owens 写道:
-> > > > On Friday 08/22 at 19:53 +0930, Qu Wenruo wrote:
-> > > > > 在 2025/8/22 19:50, Sun YangKai 写道:
-> > > > > > > The compression level is meaningless for lzo, but before commit
-> > > > > > > 3f093ccb95f30 ("btrfs: harden parsing of compression mount options"),
-> > > > > > > it was silently ignored if passed.
-> > > > > > > 
-> > > > > > > After that commit, passing a level with lzo fails to mount:
-> > > > > > >        BTRFS error: unrecognized compression value lzo:1
-> > > > > > > 
-> > > > > > > Restore the old behavior, in case any users were relying on it.
-> > > > > > > 
-> > > > > > > Fixes: 3f093ccb95f30 ("btrfs: harden parsing of compression mount options")
-> > > > > > > Signed-off-by: Calvin Owens <calvin@wbinvd.org>
-> > > > > > > ---
-> > > > > > > 
-> > > > > > >     fs/btrfs/super.c | 2 +-
-> > > > > > >     1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > > > 
-> > > > > > > diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-> > > > > > > index a262b494a89f..7ee35038c7fb 100644
-> > > > > > > --- a/fs/btrfs/super.c
-> > > > > > > +++ b/fs/btrfs/super.c
-> > > > > > > @@ -299,7 +299,7 @@ static int btrfs_parse_compress(struct btrfs_fs_context
-> > > > > > > *ctx,>
-> > > > > > >     		btrfs_set_opt(ctx->mount_opt, COMPRESS);
-> > > > > > >     		btrfs_clear_opt(ctx->mount_opt, NODATACOW);
-> > > > > > >     		btrfs_clear_opt(ctx->mount_opt, NODATASUM);
-> > > > > > > 
-> > > > > > > -	} else if (btrfs_match_compress_type(string, "lzo", false)) {
-> > > > > > > +	} else if (btrfs_match_compress_type(string, "lzo", true)) {
-> > > > > > > 
-> > > > > > >     		ctx->compress_type = BTRFS_COMPRESS_LZO;
-> > > > > > >     		ctx->compress_level = 0;
-> > > > > > >     		btrfs_set_opt(ctx->mount_opt, COMPRESS);
-> > > > > > > 
-> > > > > > > --
-> > > > > > > 2.47.2
-> > > > > > 
-> > > > > > A possible improvement would be to emit a warning in
-> > > > > > btrfs_match_compress_type() when @may_have_level is false but a
-> > > > > > level is still provided. And the warning message can be something like
-> > > > > > "Providing a compression level for {compression_type} is not supported, the
-> > > > > > level is ignored."
-> > > > > > 
-> > > > > > This way:
-> > > > > > 1. users receive a clearer hint about what happened,
-> > > > > 
-> > > > > I'm fine with the extra warning, but I do not believe those kind of users
-> > > > > who provides incorrect mount option will really read the dmesg.
-> > > > > 
-> > > > > > 2. existing setups relying on this behavior continue to work,
-> > > > > 
-> > > > > Or let them fix the damn incorrect mount option.
-> > > > 
-> > > > You're acting like I'm asking for "compress=lzo:iamafancyboy" to keep
-> > > > working here. I think what I proposed is a lot more reasonable than
-> > > > that, I'm *really* surprised you feel so strongly about this.
-> > > 
-> > > Because there are too many things in btrfs that are being abused when it was
-> > > never supposed to work.
-> > > 
-> > > You are not aware about how damaging those damn legacies are.
-> > > 
-> > > Thus I strongly opposite anything that is only to keep things working when
-> > > it is not supposed to be in the first place.
-> > > 
-> > > I'm already so tired of fixing things we should have not implemented a
-> > > decade ago, and those things are still popping here and there.
-> > > 
-> > > If you feel offended, then I'm sorry but I just don't want bad examples
-> > > anymore, even it means regression.
-> > 
-> > I'm not offended Qu. I empathize with your point of view, I apologize if
-> > I came across as dismissive earlier.
-> > 
-> > I think trivial regression fixes like this can actually save you pain in
-> > the long term, when they're caught as quickly as this one was. I think
-> > this will prevent a steady trickle of user complaints over the next five
-> > years from happening.
-> > 
-> > I can't speak for anybody else, but I'm *always* willing to do extra
-> > work to deal with breaking changes if the end result is that things are
-> > better or simpler. This just seems to me like a case where nothing
-> > tangible is gained by breaking compatibility, and nothing is lost by
-> > keeping it.
-> > 
-> > I'm absolutely not arguing that the mount options should be backwards
-> > compatible with any possible abuse, this is a specific exception. Would
-> > clarifying that in the commit message help? I understand if you're
-> > concerned about the "precedent".
-> 
-> Then I'm fine with a such patch, but still prefer a warning (not WARN(),
-> just much simpler btrfs_warn()) line to be shown when a level is provided
-> for lzo.
-> 
-> Furthermore, since we already have something like btrfs_lzo_compress
-> indicating the supported level, setting to the proper default value would be
-> better. (Already done by btrfs_compress_set_level() call in your v2 patch).
+On Fri, Aug 22, 2025 at 05:12:21PM +0100, Daniel Golle wrote:
+> Store the switch API version in struct gswip_priv. As the hardware has
+> the 'major/minor' version bytes in the wrong order preventing numerical
+> comparisons the version to be stored in gswip_priv is constructed in
+> such a way that the REV field is the most significant byte and the MOD
+> field the least significant byte. Also provide a conveniance macro to
+> allow comparing the stored version of the hardware against the already
+> defined GSWIP_VERSION_* macros.
+>
+> This is done in order to prepare supporting newer features such as 4096
+> VLANs and per-port configurable learning which are only available
+> starting from specific hardware versions.
 
-Thanks Qu. v3 below.
+Thanks for the updated commit message and comments. This is much
+clearer and the code avoids all the issues around endianness.
 
-There was an off-by-one in my v2, len("lzo") is three, doh.
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
-> BTW, since you mentioned something like "compress=lzo:asdf",
-> btrfs_compress_set_level() just ignores any kstrtoint() error, allowing
-> things like "compress=zstd:invalid" to pass the option parsing.
-> 
-> I can definitely send out something to enhance that check, but just want to
-> be sure, would you opposite such extra sanity checks?
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-I have no objection to that at all, IMHO that's a good thing to do.
-
-Is it worth adding a testcase somewhere for the compression options? I'm
-happy to do that too, but I'm not sure what the right place for it is.
-
-Thanks,
-Calvin
-
------8<-----
-From: Calvin Owens <calvin@wbinvd.org>
-Subject: [PATCH v3] btrfs: Accept and ignore compression level for lzo
-
-The compression level is meaningless for lzo, but before commit
-3f093ccb95f30 ("btrfs: harden parsing of compression mount options"),
-it was silently ignored if passed.
-
-After that commit, passing a level with lzo fails to mount:
-
-    BTRFS error: unrecognized compression value lzo:1
-
-It seems reasonable for users to expect that lzo would permit a numeric
-level option, as all the other algos do, even though the kernel's
-implementation of LZO currently only supports a single level. Because it
-has always worked to pass a level, it seems likely to me that users in
-the real world are relying on doing so.
-
-This patch restores the old behavior, giving "lzo:N" the same semantics
-as all of the other compression algos.
-
-To be clear, silly variants like "lzo:one", "lzo:the_first_option", or
-"lzo:armageddon" also used to work. This isn't meant to suggest that
-any possible mis-interpretation of mount options that once worked must
-continue to work forever. This is an exceptional case where it makes
-sense to preserve compatibility, both because the mis-interpretation is
-reasonable, and because nothing tangible is sacrificed.
-
-Fixes: 3f093ccb95f30 ("btrfs: harden parsing of compression mount options")
-Signed-off-by: Calvin Owens <calvin@wbinvd.org>
----
- fs/btrfs/super.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index a262b494a89f..18eb00b3639b 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -299,9 +299,12 @@ static int btrfs_parse_compress(struct btrfs_fs_context *ctx,
- 		btrfs_set_opt(ctx->mount_opt, COMPRESS);
- 		btrfs_clear_opt(ctx->mount_opt, NODATACOW);
- 		btrfs_clear_opt(ctx->mount_opt, NODATASUM);
--	} else if (btrfs_match_compress_type(string, "lzo", false)) {
-+	} else if (btrfs_match_compress_type(string, "lzo", true)) {
- 		ctx->compress_type = BTRFS_COMPRESS_LZO;
--		ctx->compress_level = 0;
-+		ctx->compress_level = btrfs_compress_str2level(BTRFS_COMPRESS_LZO,
-+							       string + 3);
-+		if (string[3] == ':' && string[4])
-+			btrfs_warn(NULL, "Compression level ignored for LZO");
- 		btrfs_set_opt(ctx->mount_opt, COMPRESS);
- 		btrfs_clear_opt(ctx->mount_opt, NODATACOW);
- 		btrfs_clear_opt(ctx->mount_opt, NODATASUM);
--- 
-2.49.1
-
+    Andrew
 
