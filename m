@@ -1,130 +1,284 @@
-Return-Path: <linux-kernel+bounces-783578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2398B32F38
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:03:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41EF4B32F3D
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4A101B23B6C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:03:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2A43203BEE
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA6C275B09;
-	Sun, 24 Aug 2025 11:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954DC27EFF1;
+	Sun, 24 Aug 2025 11:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="1WXDHzqg"
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mCXKFmUM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uMdUT4VD"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7DB12CD88
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 11:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4AE257836;
+	Sun, 24 Aug 2025 11:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756033408; cv=none; b=W0ezp/jb8TdSeEHrpYTJvFlLA8PBHoRLbYkQVF3ft1GE5xgLUQOUwkQ8OxmKxVhAE7bV8xBP2QIob7DrXYDN0G4YE7gV5Qme1+sV0s507iTfclH6sgg+Xn8/HhesIe059Om1r2IoL0o6fJGU0sWxXxuoq/BdPcnW+ysbewS70DE=
+	t=1756033581; cv=none; b=Sbv4X06mhayBG0rSmKyO4SSYGYlVkX4X3gKyY+qnDisJ3oQwP27J5/h3NJ34cBEO1RrYtmhM/J2ZeaBeoDSlsFI5ozwRlmNnjeQRlO5GzPospfgOvNkEwUpjxILP38C3nUmtJGelK4429Ly7htNWVqsK0mfKDP8dBBrZWJlKXnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756033408; c=relaxed/simple;
-	bh=zhuxzzhCeIpMw+ZyZuGmrlzOFR/5Ur5sddoaNjY8BH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Woa4cQCL90B+dL1Fqw1rismCOFWAMxOLxVl+sUmzsu8fPJqjFz8hdG8n64A0XU++3FTRttOpJtCYAodW1pPaHdYKQcUlwObF2P1ewHQXXIk/yjM7Ns9pnYlf2h5pijb9zEV9+rrtkUB4s5jjaJUi3+0m3/dXcaPsFxI47y1ak/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=1WXDHzqg; arc=none smtp.client-ip=45.157.188.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4c8rd05FnbzRc5;
-	Sun, 24 Aug 2025 13:03:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1756033396;
-	bh=npswCwX0a24vJxWw7gY+qI0TbgVywqqUB4cDV+3jp+w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1WXDHzqg/P9JB/nnDxxpueGJBM3RmJ6uqsbQWCIbvmI2W8btShCyr99j6/RnOTwsd
-	 zvp2JBaO4ueW7lSCf6nU1zM8s2cg1npfkPPbhf5gTLdumHsaPBFkmqP8jj9SHE39CQ
-	 MxIho8S6SakTYtQbqpej882GLb/vs7g55Ho0kuzI=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4c8rcw4v18zt0L;
-	Sun, 24 Aug 2025 13:03:12 +0200 (CEST)
-Date: Sun, 24 Aug 2025 13:03:09 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jann Horn <jannh@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>, 
-	Jeff Xu <jeffxu@chromium.org>
-Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
-Message-ID: <20250824.Ujoh8unahy5a@digikod.net>
-References: <20250822170800.2116980-1-mic@digikod.net>
- <20250822170800.2116980-2-mic@digikod.net>
- <CAG48ez1XjUdcFztc_pF2qcoLi7xvfpJ224Ypc=FoGi-Px-qyZw@mail.gmail.com>
+	s=arc-20240116; t=1756033581; c=relaxed/simple;
+	bh=84KNwSgXjJkOaHAuv0Q93GPY0XaATXyaEz1gETvBZho=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Nl7cZqKBUz7DEENAfpv2rcyPzybMgPoaUS1lyNeQZUM/q3vjF9WlwII0bLH2g+ngeUtIJPx7T9I9As9mN7r0AtFnQnPuONuRykyoIepntMDtgh2qM+IIAQgtM/kYShYT5zFgqhh16STa9OM4UAaCYs/RjnC2vSHCMD3aRVD2LlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mCXKFmUM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uMdUT4VD; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 24 Aug 2025 11:06:15 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756033577;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MXWvizYW2qL44uYnYLB+P86tlHlv+1VAjG3QXoA2Abc=;
+	b=mCXKFmUMonnPnEytWeHahoNl/i0w6bPyTu3I8zOy/DOugiM7jko/xtJfg2mEZKYY7qQciU
+	XHD0jwayQz9jVkNW+QxG3QMnvgTH3RenNf/ZwduNzIz1437xQ/El57atFrvMzOlLJl+u1N
+	2f2u3kARB8lUaR2M2XZa90PnXv0WwTI2Bnfx4Z7uzJ3afKEWD/okY6nSq6rQZ0zMbOvwfV
+	36HEVJE7VCl4Dr+k3TysG6/23i0hoOVT/G7a4lJYocBVvPlfZ/ddbpDkap0IRYtiDhbdOt
+	gTYOO++DrfJfSa79UbNKjXBLfgB9BuN6OMcHdCPdKdbObCY7o/PNZWKUkyCbig==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756033577;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MXWvizYW2qL44uYnYLB+P86tlHlv+1VAjG3QXoA2Abc=;
+	b=uMdUT4VDuu5pr6EkzpHLk46BzDcXhtgQ64IDsuZ4LgpG/gvDcqtTRfLcsPlAB4nmb8jAmW
+	Fhm+w/fDcq/47ODA==
+From: "tip-bot2 for Pan Chuang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: irq/core] genirq/devres: Add error handling in devm_request_*_irq()
+Cc: Yangtao Li <frank.li@vivo.com>, Pan Chuang <panchuang@vivo.com>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20250805092922.135500-2-panchuang@vivo.com>
+References: <20250805092922.135500-2-panchuang@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez1XjUdcFztc_pF2qcoLi7xvfpJ224Ypc=FoGi-Px-qyZw@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+Message-ID: <175603357604.1420.7104360767892405362.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 22, 2025 at 09:45:32PM +0200, Jann Horn wrote:
-> On Fri, Aug 22, 2025 at 7:08 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > Add a new O_DENY_WRITE flag usable at open time and on opened file (e.g.
-> > passed file descriptors).  This changes the state of the opened file by
-> > making it read-only until it is closed.  The main use case is for script
-> > interpreters to get the guarantee that script' content cannot be altered
-> > while being read and interpreted.  This is useful for generic distros
-> > that may not have a write-xor-execute policy.  See commit a5874fde3c08
-> > ("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
-> >
-> > Both execve(2) and the IOCTL to enable fsverity can already set this
-> > property on files with deny_write_access().  This new O_DENY_WRITE make
-> 
-> The kernel actually tried to get rid of this behavior on execve() in
-> commit 2a010c41285345da60cece35575b4e0af7e7bf44.; but sadly that had
-> to be reverted in commit 3b832035387ff508fdcf0fba66701afc78f79e3d
-> because it broke userspace assumptions.
+The following commit has been merged into the irq/core branch of tip:
 
-Oh, good to know.
+Commit-ID:     55b48e23f5c4b6f5ca9b7ab09599b17dcf501c10
+Gitweb:        https://git.kernel.org/tip/55b48e23f5c4b6f5ca9b7ab09599b17dcf5=
+01c10
+Author:        Pan Chuang <panchuang@vivo.com>
+AuthorDate:    Tue, 05 Aug 2025 17:29:22 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sun, 24 Aug 2025 13:00:45 +02:00
 
-> 
-> > it widely available.  This is similar to what other OSs may provide
-> > e.g., opening a file with only FILE_SHARE_READ on Windows.
-> 
-> We used to have the analogous mmap() flag MAP_DENYWRITE, and that was
-> removed for security reasons; as
-> https://man7.org/linux/man-pages/man2/mmap.2.html says:
-> 
-> |        MAP_DENYWRITE
-> |               This flag is ignored.  (Long ago—Linux 2.0 and earlier—it
-> |               signaled that attempts to write to the underlying file
-> |               should fail with ETXTBSY.  But this was a source of denial-
-> |               of-service attacks.)"
-> 
-> It seems to me that the same issue applies to your patch - it would
-> allow unprivileged processes to essentially lock files such that other
-> processes can't write to them anymore. This might allow unprivileged
-> users to prevent root from updating config files or stuff like that if
-> they're updated in-place.
+genirq/devres: Add error handling in devm_request_*_irq()
 
-Yes, I agree, but since it is the case for executed files I though it
-was worth starting a discussion on this topic.  This new flag could be
-restricted to executable files, but we should avoid system-wide locks
-like this.  I'm not sure how Windows handle these issues though.
+devm_request_threaded_irq() and devm_request_any_context_irq() currently
+don't print any error message when interrupt registration fails.
 
-Anyway, we should rely on the access control policy to control write and
-execute access in a consistent way (e.g. write-xor-execute).  Thanks for
-the references and the background!
+This forces each driver to implement redundant error logging - over 2,000
+lines of error messages exist across drivers. Additionally, when
+upper-layer functions propagate these errors without logging, critical
+debugging information is lost.
+
+Add devm_request_result() helper to unify error reporting via dev_err_probe(),
+
+Use it in devm_request_threaded_irq() and devm_request_any_context_irq()
+printing device name, IRQ number, handler functions, and error code on failure
+automatically.
+
+Co-developed-by: Yangtao Li <frank.li@vivo.com>
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+Signed-off-by: Pan Chuang <panchuang@vivo.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250805092922.135500-2-panchuang@vivo.com
+
+---
+ kernel/irq/devres.c | 127 +++++++++++++++++++++++++++++--------------
+ 1 file changed, 87 insertions(+), 40 deletions(-)
+
+diff --git a/kernel/irq/devres.c b/kernel/irq/devres.c
+index eb16a58..b411886 100644
+--- a/kernel/irq/devres.c
++++ b/kernel/irq/devres.c
+@@ -30,29 +30,22 @@ static int devm_irq_match(struct device *dev, void *res, =
+void *data)
+ 	return this->irq =3D=3D match->irq && this->dev_id =3D=3D match->dev_id;
+ }
+=20
+-/**
+- *	devm_request_threaded_irq - allocate an interrupt line for a managed devi=
+ce
+- *	@dev: device to request interrupt for
+- *	@irq: Interrupt line to allocate
+- *	@handler: Function to be called when the IRQ occurs
+- *	@thread_fn: function to be called in a threaded interrupt context. NULL
+- *		    for devices which handle everything in @handler
+- *	@irqflags: Interrupt type flags
+- *	@devname: An ascii name for the claiming device, dev_name(dev) if NULL
+- *	@dev_id: A cookie passed back to the handler function
+- *
+- *	Except for the extra @dev argument, this function takes the
+- *	same arguments and performs the same function as
+- *	request_threaded_irq().  IRQs requested with this function will be
+- *	automatically freed on driver detach.
+- *
+- *	If an IRQ allocated with this function needs to be freed
+- *	separately, devm_free_irq() must be used.
+- */
+-int devm_request_threaded_irq(struct device *dev, unsigned int irq,
+-			      irq_handler_t handler, irq_handler_t thread_fn,
+-			      unsigned long irqflags, const char *devname,
+-			      void *dev_id)
++static int devm_request_result(struct device *dev, int rc, unsigned int irq,
++			       irq_handler_t handler, irq_handler_t thread_fn,
++			       const char *devname)
++{
++	if (rc >=3D 0)
++		return rc;
++
++	return dev_err_probe(dev, rc, "request_irq(%u) %ps %ps %s\n",
++			     irq, handler, thread_fn, devname ? : "");
++}
++
++static int __devm_request_threaded_irq(struct device *dev, unsigned int irq,
++				       irq_handler_t handler,
++				       irq_handler_t thread_fn,
++				       unsigned long irqflags,
++				       const char *devname, void *dev_id)
+ {
+ 	struct irq_devres *dr;
+ 	int rc;
+@@ -78,28 +71,48 @@ int devm_request_threaded_irq(struct device *dev, unsigne=
+d int irq,
+=20
+ 	return 0;
+ }
+-EXPORT_SYMBOL(devm_request_threaded_irq);
+=20
+ /**
+- *	devm_request_any_context_irq - allocate an interrupt line for a managed d=
+evice
+- *	@dev: device to request interrupt for
+- *	@irq: Interrupt line to allocate
+- *	@handler: Function to be called when the IRQ occurs
+- *	@irqflags: Interrupt type flags
+- *	@devname: An ascii name for the claiming device, dev_name(dev) if NULL
+- *	@dev_id: A cookie passed back to the handler function
++ * devm_request_threaded_irq - allocate an interrupt line for a managed devi=
+ce with error logging
++ * @dev:	Device to request interrupt for
++ * @irq:	Interrupt line to allocate
++ * @handler:	Function to be called when the interrupt occurs
++ * @thread_fn:	Function to be called in a threaded interrupt context. NULL
++ *		for devices which handle everything in @handler
++ * @irqflags:	Interrupt type flags
++ * @devname:	An ascii name for the claiming device, dev_name(dev) if NULL
++ * @dev_id:	A cookie passed back to the handler function
+  *
+- *	Except for the extra @dev argument, this function takes the
+- *	same arguments and performs the same function as
+- *	request_any_context_irq().  IRQs requested with this function will be
+- *	automatically freed on driver detach.
++ * Except for the extra @dev argument, this function takes the same
++ * arguments and performs the same function as request_threaded_irq().
++ * Interrupts requested with this function will be automatically freed on
++ * driver detach.
++ *
++ * If an interrupt allocated with this function needs to be freed
++ * separately, devm_free_irq() must be used.
++ *
++ * When the request fails, an error message is printed with contextual
++ * information (device name, interrupt number, handler functions and
++ * error code). Don't add extra error messages at the call sites.
+  *
+- *	If an IRQ allocated with this function needs to be freed
+- *	separately, devm_free_irq() must be used.
++ * Return: 0 on success or a negative error number.
+  */
+-int devm_request_any_context_irq(struct device *dev, unsigned int irq,
+-			      irq_handler_t handler, unsigned long irqflags,
+-			      const char *devname, void *dev_id)
++int devm_request_threaded_irq(struct device *dev, unsigned int irq,
++			      irq_handler_t handler, irq_handler_t thread_fn,
++			      unsigned long irqflags, const char *devname,
++			      void *dev_id)
++{
++	int rc =3D __devm_request_threaded_irq(dev, irq, handler, thread_fn,
++					     irqflags, devname, dev_id);
++
++	return devm_request_result(dev, rc, irq, handler, thread_fn, devname);
++}
++EXPORT_SYMBOL(devm_request_threaded_irq);
++
++static int __devm_request_any_context_irq(struct device *dev, unsigned int i=
+rq,
++					  irq_handler_t handler,
++					  unsigned long irqflags,
++					  const char *devname, void *dev_id)
+ {
+ 	struct irq_devres *dr;
+ 	int rc;
+@@ -124,6 +137,40 @@ int devm_request_any_context_irq(struct device *dev, uns=
+igned int irq,
+=20
+ 	return rc;
+ }
++
++/**
++ * devm_request_any_context_irq - allocate an interrupt line for a managed d=
+evice with error logging
++ * @dev:	Device to request interrupt for
++ * @irq:	Interrupt line to allocate
++ * @handler:	Function to be called when the interrupt occurs
++ * @irqflags:	Interrupt type flags
++ * @devname:	An ascii name for the claiming device, dev_name(dev) if NULL
++ * @dev_id:	A cookie passed back to the handler function
++ *
++ * Except for the extra @dev argument, this function takes the same
++ * arguments and performs the same function as request_any_context_irq().
++ * Interrupts requested with this function will be automatically freed on
++ * driver detach.
++ *
++ * If an interrupt allocated with this function needs to be freed
++ * separately, devm_free_irq() must be used.
++ *
++ * When the request fails, an error message is printed with contextual
++ * information (device name, interrupt number, handler functions and
++ * error code). Don't add extra error messages at the call sites.
++ *
++ * Return: IRQC_IS_HARDIRQ or IRQC_IS_NESTED on success, or a negative error
++ * number.
++ */
++int devm_request_any_context_irq(struct device *dev, unsigned int irq,
++				 irq_handler_t handler, unsigned long irqflags,
++				 const char *devname, void *dev_id)
++{
++	int rc =3D __devm_request_any_context_irq(dev, irq, handler, irqflags,
++						devname, dev_id);
++
++	return devm_request_result(dev, rc, irq, handler, NULL, devname);
++}
+ EXPORT_SYMBOL(devm_request_any_context_irq);
+=20
+ /**
 
