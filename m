@@ -1,243 +1,105 @@
-Return-Path: <linux-kernel+bounces-783418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A92B32D5C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 05:16:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 128A0B32D88
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 06:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 939014835B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 03:16:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DCDD1895F93
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 04:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F881A8F6D;
-	Sun, 24 Aug 2025 03:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACFA1C3027;
+	Sun, 24 Aug 2025 04:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYuZG3Ih"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Lx3OufbY"
+Received: from mail-m83233.xmail.ntesmail.com (mail-m83233.xmail.ntesmail.com [156.224.83.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BEA946C;
-	Sun, 24 Aug 2025 03:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E949F393DD8
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 04:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.224.83.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756005360; cv=none; b=Ax1McMKdgGEggrb8MM4JaUvTvOvW9UnX24fzvbmhZYCbJj+OdQqlkW4aATMZt7mwUBVAi6AnQWL0B5IBbPqhv2795crw1zr+QTLTtdhVrNeHOEj9YXYw0YPnXFtp7vZLIcjh2ZZQ5XNIqogEHcw9hMZEKocOd3sS8CczkVxSeYs=
+	t=1756010163; cv=none; b=OHBeIk6GvZj9CONHdJhITwOrsXJckTnJFOuZCTJ3MQK1XOoE5Ut5OF0xp8RI0DJ1//lJ87Fh69S7pgzWs0qVjwYmLwZ7IHz+0k6p+h0ZOnivhwAl96nZFfLMEzdFYUQWwY0jH/iSDpsbyqfzCJHeQ5/7/ijUVSj0jtx27TtocSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756005360; c=relaxed/simple;
-	bh=News6Sh290TSfF9NDn3++bnHHyva2RckbaFDqIvmwno=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ktjJS8t6R9V6wvnc/vk+a7TIrrphoUlck30BxYVlZMfAGrg8oOXNBpYe7eT5AC9MXs4to7a2lAtIYm9lYDF9ByAEiHgoiXGQv2pqO2exeW5Zm5Fsc/Cjce5oTEJxU0lST3rRLn8YuyHKgl3Jnx3savWubeI6i5lF8hzhq9oZjsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYuZG3Ih; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C570EC113D0;
-	Sun, 24 Aug 2025 03:15:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756005359;
-	bh=News6Sh290TSfF9NDn3++bnHHyva2RckbaFDqIvmwno=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PYuZG3Ihp/U5bZJ3SlwlU7b9rBv957aaP94M9tQ7KQOQZ6De/cpZrKmqQABVZFRhP
-	 +twYuVC4rJd/5f4gFhT4smBNYJMWtPxsww57qV9QpX0fc/RoCux3ohErBf7iNFh2BD
-	 WCW/M/ePSZaBbYBafNA/fwJY9CHOqTwCRzuumUozy4NRYzk1gVWGkpt0guV/3folCt
-	 r3k0pEIWzyQq9J3X14CO5TNGOcxtBPnVj9Up11+WmlWPrKpH/bd6CaeFP04K9IpFny
-	 JBW4eHmAHiC1772W/O7MAecxC/bbkYPQiOdCnt5sq5flIWQ8s6cdZiGgv4wCqOq1jq
-	 LIsQgdTUAStaQ==
-Date: Sat, 23 Aug 2025 22:15:56 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Fange Zhang <fange.zhang@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Li Liu <quic_lliu6@quicinc.com>, dmitry.baryshkov@oss.qualcomm.com, 
-	tingwei.zhang@oss.qualcomm.com, xiangxu.yin@oss.qualcomm.com
-Subject: Re: [PATCH v6 2/2] arm64: dts: qcom: Add display support for QCS615
- RIDE board
-Message-ID: <hlajupt4mwb27j4kbygdk5rifthnbnyv4ypcrqd2jk4vvdytoy@fef26rluqkxi>
-References: <20250818-add-display-support-for-qcs615-platform-v6-0-62aad5138a78@oss.qualcomm.com>
- <20250818-add-display-support-for-qcs615-platform-v6-2-62aad5138a78@oss.qualcomm.com>
+	s=arc-20240116; t=1756010163; c=relaxed/simple;
+	bh=h8R0pwzX6jVl/Zeo1RplmvRoc0EOqmNZ8U7PJ2NO06I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ulO7nBYdKGuBnXlyai29DJBAzNq6g4YqqFESv/gPCeeyVrgFFC9GHd5XT0uj3a2guK3Vw/0zbY+9E8+hR1U71FqA7zkrBnjPHIQtoEShU4YKx1+aNJAIcN7T4hhdyWe86mihz00ZySyMxrmcsbjA0aK2RVxKynHOaTgJGhqLdHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Lx3OufbY; arc=none smtp.client-ip=156.224.83.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2061a0ed0;
+	Sun, 24 Aug 2025 11:20:20 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: heiko@sntech.de,
+	andy.yan@rock-chips.com,
+	hjc@rock-chips.com
+Cc: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dmitry.baryshkov@oss.qualcomm.com,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v1] drm/rockchip: analogix_dp: Apply devm_clk_get_optional() for &rockchip_dp_device.grfclk
+Date: Sun, 24 Aug 2025 11:19:32 +0800
+Message-Id: <20250824031932.3204920-1-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818-add-display-support-for-qcs615-platform-v6-2-62aad5138a78@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a98da175af603a3kunmd9d8bd7f283bbc
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGR4aSlYaQ0hDGU4eGEIfGR9WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=Lx3OufbYegL70szaqn0wNQFhAMi9nw0CxufPmzZR6NNkQ09LpQry93DJzGXEF7ptgCqtYPbu2rT950PixuQ0WWO/GMvz18xww0H+DGQEjT9gaehtu2XOqGvfmYx2IdeSbWLo4qKxY30hICmSYXiHiHh7vumK9J7XyAOSqEEBokU=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=tIZnIOy9j57D5cV3OPQ/tYhpxNdNBEy5VY9qhEUGWMI=;
+	h=date:mime-version:subject:message-id:from;
 
-On Mon, Aug 18, 2025 at 12:39:21PM +0800, Fange Zhang wrote:
-> From: Li Liu <quic_lliu6@quicinc.com>
-> 
-> Add display MDSS and DSI configuration for QCS615 RIDE board.
-> QCS615 has a DP port, and DP support will be added in a later patch.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
-> Signed-off-by: Fange Zhang <fange.zhang@oss.qualcomm.com>
+The "grf" clock is optional for Rockchip eDP controller(RK3399 needs
+while RK3288 and RK3588 do not).
 
-Running dtb checker after applying your patch gives me the following:
-> $ make qcom/qcs615-ride.dtb CHECK_DTBS=1
->   UPD     include/config/kernel.release
->   HOSTCC  scripts/basic/fixdep
->   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
-> Documentation/devicetree/bindings/net/snps,dwmac.yaml: mac-mode: missing type definition
-> Documentation/devicetree/bindings/net/nfc/ti,trf7970a.yaml: ti,rx-gain-reduction-db: missing type definition
-> Documentation/devicetree/bindings/phy/fsl,imx8mq-usb-phy.yaml: fsl,phy-pcs-tx-deemph-3p5db-attenuation-db: missing type definition
->   DTC [C] arch/arm64/boot/dts/qcom/qcs615-ride.dtb
-> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: clock-controller@100000: 'clock-names' is a required property
->         from schema $id: http://devicetree.org/schemas/clock/qcom,qcs615-gcc.yaml#
+It can make the code more consice to use devm_clk_get_optional()
+instead of devm_clk_get() with extra checks.
 
-Taniya is looking at this one.
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+---
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: gpio@3e: $nodename:0: 'gpio@3e' does not match '^(pinctrl|pinmux)(@[0-9a-f]+)?$'
->         from schema $id: http://devicetree.org/schemas/pinctrl/semtech,sx1501q.yaml#
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index d30f0983a53a..d0f78ab9faa6 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -335,12 +335,8 @@ static int rockchip_dp_of_probe(struct rockchip_dp_device *dp)
+ 		return PTR_ERR(dp->grf);
+ 	}
+ 
+-	dp->grfclk = devm_clk_get(dev, "grf");
+-	if (PTR_ERR(dp->grfclk) == -ENOENT) {
+-		dp->grfclk = NULL;
+-	} else if (PTR_ERR(dp->grfclk) == -EPROBE_DEFER) {
+-		return -EPROBE_DEFER;
+-	} else if (IS_ERR(dp->grfclk)) {
++	dp->grfclk = devm_clk_get_optional(dev, "grf");
++	if (IS_ERR(dp->grfclk)) {
+ 		DRM_DEV_ERROR(dev, "failed to get grf clock\n");
+ 		return PTR_ERR(dp->grfclk);
+ 	}
+-- 
+2.34.1
 
-This is from your patch.
-
-> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: bridge@58: 'vdd10-supply' is a required property
->         from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
-
-This is from your patch.
-
-> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: bridge@58: 'vdd18-supply' is a required property
->         from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
-
-This is from your patch.
-
-> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: bridge@58: 'vdd33-supply' is a required property
->         from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
-
-This is from your patch.
-
-> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: bridge@58: 'wakeup-source' does not match any of the regexes: 'pinctrl-[0-9]+'
->         from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
-
-This is from your patch.
-
-> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: phy@ae94400: Unevaluated properties are not allowed ('vdds-supply' was unexpected)
->         from schema $id: http://devicetree.org/schemas/display/msm/dsi-phy-14nm.yaml#
-
-This is from your patch.
-
-
-Am I missing something? Is there any reason why these 6 new errors
-should be added?
-
-Regards,
-Bjorn
-
-> ---
->  arch/arm64/boot/dts/qcom/qcs615-ride.dts | 90 ++++++++++++++++++++++++++++++++
->  1 file changed, 90 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> index 59582d3dc4c49828ef4a0d22a1cbaba715c7ce8c..39c757b66f47579d9bc7cc5c4d703f7af4434df4 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> @@ -39,6 +39,18 @@ xo_board_clk: xo-board-clk {
->  		};
->  	};
->  
-> +	dp-dsi0-connector {
-> +		compatible = "dp-connector";
-> +		label = "DSI0";
-> +		type = "mini";
-> +
-> +		port {
-> +			dp_dsi0_connector_in: endpoint {
-> +				remote-endpoint = <&dsi2dp_bridge_out>;
-> +			};
-> +		};
-> +	};
-> +
->  	vreg_conn_1p8: regulator-conn-1p8 {
->  		compatible = "regulator-fixed";
->  		regulator-name = "vreg_conn_1p8";
-> @@ -294,6 +306,84 @@ &gcc {
->  		 <&sleep_clk>;
->  };
->  
-> +&i2c2 {
-> +	clock-frequency = <400000>;
-> +	status = "okay";
-> +
-> +	io_expander: gpio@3e {
-> +		compatible = "semtech,sx1509q";
-> +		reg = <0x3e>;
-> +		interrupts-extended = <&tlmm 58 IRQ_TYPE_EDGE_FALLING>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +		semtech,probe-reset;
-> +	};
-> +
-> +	i2c-mux@77 {
-> +		compatible = "nxp,pca9542";
-> +		reg = <0x77>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		i2c@0 {
-> +			reg = <0>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			bridge@58 {
-> +				compatible = "analogix,anx7625";
-> +				reg = <0x58>;
-> +				interrupts-extended = <&io_expander 0 IRQ_TYPE_EDGE_FALLING>;
-> +				enable-gpios = <&tlmm 4 GPIO_ACTIVE_HIGH>;
-> +				reset-gpios = <&tlmm 5 GPIO_ACTIVE_HIGH>;
-> +				wakeup-source;
-> +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					port@0 {
-> +						reg = <0>;
-> +
-> +						dsi2dp_bridge_in: endpoint {
-> +							remote-endpoint = <&mdss_dsi0_out>;
-> +						};
-> +					};
-> +
-> +					port@1 {
-> +						reg = <1>;
-> +
-> +						dsi2dp_bridge_out: endpoint {
-> +							remote-endpoint = <&dp_dsi0_connector_in>;
-> +						};
-> +					};
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&mdss {
-> +	status = "okay";
-> +};
-> +
-> +&mdss_dsi0 {
-> +	vdda-supply = <&vreg_l11a>;
-> +	status = "okay";
-> +};
-> +
-> +&mdss_dsi0_out {
-> +	remote-endpoint = <&dsi2dp_bridge_in>;
-> +	data-lanes = <0 1 2 3>;
-> +};
-> +
-> +&mdss_dsi0_phy {
-> +	vdds-supply = <&vreg_l5a>;
-> +	status = "okay";
-> +};
-> +
->  &pcie {
->  	perst-gpios = <&tlmm 101 GPIO_ACTIVE_LOW>;
->  	wake-gpios = <&tlmm 100 GPIO_ACTIVE_HIGH>;
-> 
-> -- 
-> 2.34.1
-> 
 
