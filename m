@@ -1,66 +1,65 @@
-Return-Path: <linux-kernel+bounces-783566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6869EB32F17
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:55:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107A9B32F1F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A6071B22F5B
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:55:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DFFF1B234EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF52E275846;
-	Sun, 24 Aug 2025 10:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71501279791;
+	Sun, 24 Aug 2025 10:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="ofw47oKN"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="vQOOiaOO"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7C712CD88;
-	Sun, 24 Aug 2025 10:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6932927935A;
+	Sun, 24 Aug 2025 10:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756032895; cv=none; b=BAHK7AA59P7zJ8owOh+t/lfBXZriQY4BHnBUsKLmisO04tQtI/5AUim70qTqRTVsRBynXPquUJvKGzlxzMeHvWpgNdoRiXKYV1X2kE9LIrZhqgkWGiksTBUQqO15H/Oy9CEv58p4RwGESAYnr9Vm2kYH40q1q6ukcgQUuNlmd3g=
+	t=1756032900; cv=none; b=P0cTHfC9FFgbfQmrG4z6EO5E2Q7u3UFwh8UuTJNoKNt2IrJW8sI2GWKEtzkpSvpQwGRGEUPg6cSvmgDlzb0A7lFu1DfOsQiIAsyZlT1CqOC1+5zAlFfu8ji9xeEhIRXf5SK97lgTB0742rtAPBIiZMyhaH+QCOWact0gtWdL0/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756032895; c=relaxed/simple;
-	bh=g3Y2valtKVkcwvvqF3bMxQPiKmIwiRlgM8RAXiDGY1M=;
+	s=arc-20240116; t=1756032900; c=relaxed/simple;
+	bh=EahMqwm7aWWG0jpuYgybMPEOTK3iYg2ADpXAo375HTg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Jo+6yNqUPMKJFE2grqkmzYhFLNuHjMnSHMfUoy8IATT18JTWpIqhXWpn3v6BYSUpdlBtoDijGtiIhEouAuu713322cjR+XkJ3komcrzV3xMGksKMtfpgzOeIIeqg/6E7az51oVc5ohr1f/TIH4ADNk4MUse+7vKZTw5r71y+zYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=ofw47oKN; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=D8PW+/9bdKUa+D0qNYKDvVU2AxdBM5xqJIc8Tt76MRkU2VFwu/l/d6+959lm55MM4NjRk4mB4Y9YqV21vFHBIvUO+OXnZ0r0OJbCfK54YTITmm6FNe13Kg3X4amuslSVOtefDYaxuBp1uihvX3XxPR0slfSn/uOEF5CxOqgVc5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=vQOOiaOO; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=EwTgys468jql8rVpPk9a/paDP+nmzSD0YQvFFWl46ow=; b=ofw47oKNMMAVQYH3GBtMoOvqJk
-	GokgYOKqYabSnX/9F65crfkeNIdU558Yfi4SUxG19HW6uCh12I/pFOyNlv7tPEbXmWSE/c9hsZR2K
-	yFDAQozCUytnXBB9ZNTD6P4YCKBJo3jTgXvV5l2jQsJF/OjkLhrNzetQdSpOfFW9Tornpj0Sqesc/
-	MXSjv3j03tF/B/CSliwuYN9GJMmmjJg3Bv84kd/jhgo5sNSVRxwXWR+5Yc+Kish7k6OgkINoRqMM+
-	1iQY2VXS/fGtvH6FCan/NKwjDor+3sH016JEbSrtSpkhY0gNhJ477LoFgsARDwfhUltIT2Hdx7dwP
-	hE02SP9Q==;
+	bh=XOem+vEqJqafrAcs6wtW5hQ5ZvnSbrk7rrVOvmTnaJI=; b=vQOOiaOOwb83O/FrOxf9jbGkcH
+	hyXvtIz0JqlFrz6zasOL3PlJqtBdjLo0pzpJdDNpTOfx2OynNMbR8s0jmtdhC0MuH/Sc8pv57P0ED
+	8gIK2RYYvo4s/zuU89ZtgCol7AJQyETm9cTbczc7r0Qe3MyeDq4P88pdeu6rbDIHT3rpVvRJD1a+P
+	SM5kuK327VabKqVCEA/CpHOc++3BGbgNMh9/ADeVZSLCEJZ/jkfuyM5QO8fTP0esaNNGN6obP7saa
+	ieqbcPzW94cc4pb85cytUE4/ZZXM8W06uAD7PZA1wlvaze6x1OLoJCyYpUpWzI9WWqyeZ+yjSCmUh
+	z7Mh+wDQ==;
 Received: from [62.245.128.201] (helo=phil.wifi.munich-airport.de)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1uq8N5-0005H4-W0; Sun, 24 Aug 2025 12:54:48 +0200
+	id 1uq8N6-0005H4-73; Sun, 24 Aug 2025 12:54:48 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexey Charkov <alchark@gmail.com>
+To: Chukun Pan <amadeus@jmu.edu.cn>
 Cc: Heiko Stuebner <heiko@sntech.de>,
-	devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Pavel Zhovner <pavel@flipperdevices.com>
-Subject: Re: [PATCH 0/3] arm64: dts: rockchip: Enable RTC, WiFi and Bluetooth on RK3576 EVB1
-Date: Sun, 24 Aug 2025 12:54:39 +0200
-Message-ID: <175603280232.3445205.16083508502929513202.b4-ty@sntech.de>
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/4] arm64: dts: rockchip: Add HINLINK H66K/H68K
+Date: Sun, 24 Aug 2025 12:54:40 +0200
+Message-ID: <175603280227.3445205.12980590537074643035.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250813-evb1-rtcwifibt-v1-0-d13c83422971@gmail.com>
-References: <20250813-evb1-rtcwifibt-v1-0-d13c83422971@gmail.com>
+In-Reply-To: <20250818100009.170202-1-amadeus@jmu.edu.cn>
+References: <20250818100009.170202-1-amadeus@jmu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,24 +70,28 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 13 Aug 2025 00:30:22 +0400, Alexey Charkov wrote:
-> Rockchip RK3576 EVB1 boards follow the usual Rockchip design pattern
-> with the I2C connected RTC chip feeding a 32 kHz LPO clock to the
-> onboard Ampak AP6275P combo WiFi/BT module. In this case the WiFi
-> part is connected by a PCIe link and BT over UART.
+On Mon, 18 Aug 2025 18:00:05 +0800, Chukun Pan wrote:
+> The HINLINK H66K and H68K are development boards with the Rockchip
+> RK3568 SoC. These boards are all SoM plus expansion board structures.
 > 
-> Add required DT nodes to enable them.
+> Both boards can be booted from eMMC or SD-card using the
+> U-Boot 2025.07 generic-rk3568 target.
+> 
+> The SoM board has CPU, RAM, eMMC and RK809 PMIC.
+> There is no schematic for this part.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/3] arm64: dts: rockchip: Add RTC on rk3576-evb1-v10
-      commit: 0adaae77862932a19cc14c086d7fd15ec0ef7703
-[2/3] arm64: dts: rockchip: Add WiFi on rk3576-evb1-v10
-      commit: ebf8183ad08afc4fcabe1379a5098354829d950d
-[3/3] arm64: dts: rockchip: Add Bluetooth on rk3576-evb1-v10
-      commit: 34f7620912bb0f881a23dfea529e69fd2e8fdcf2
+[1/4] dt-bindings: vendor-prefixes: Add HINLINK
+      commit: 7d11b8c260ea68ce8f420ad467b04b21ea34b011
+[2/4] dt-bindings: arm: rockchip: Add HINLINK H66K / H68K
+      commit: 4bef07b79ab1ef7d963eaa2c37948030e418d538
+[3/4] arm64: dts: rockchip: Add HINLINK H68K
+      commit: 86a504b82f8d0e34f99ab9607712e7942c919fa3
+[4/4] arm64: dts: rockchip: Add HINLINK H66K
+      commit: bb9ef44f05c9558d58e3c9da141e93af1aa11c1f
 
 Best regards,
 -- 
