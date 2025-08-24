@@ -1,89 +1,85 @@
-Return-Path: <linux-kernel+bounces-783510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C384B32E7F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:52:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 935A7B32E72
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC2261B25BEF
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:47:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C73363B8387
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E46254AF0;
-	Sun, 24 Aug 2025 08:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08EB92594AA;
+	Sun, 24 Aug 2025 08:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XVbVRWmY"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kW/LdunO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3032215530C;
-	Sun, 24 Aug 2025 08:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598F581720;
+	Sun, 24 Aug 2025 08:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756025238; cv=none; b=oTJQOK/dDPhBhZ+v9f0QdltyDxK6akPOsTsbd8ZFM1/mM2mt6GoHhFeJuEql8VvD71EXfXMxxvfCEfbStfRvLCeA3xhcEfrVqu1tfu3mUaDI9o9ekRSduanoP2KZHROImE9zKpdAHVjZUcdM626rNg/OfrNV1bxUaUlu5bJ+lOI=
+	t=1756025264; cv=none; b=r88gbqBcOWkV7N3C7/vgwId14lnvefouO3mDao0A8SMBfEXw7RPKzWMy2p3UB50lNtezJl2vAEZVqYum2ErblQPCP2Mci7fnCw8BRp9SsEoqkz+9NXDhbX+05WsIF8/AVBEg/XC6boL+LjHrqpUxq/FT+BftWzi3KBCl0FEN2+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756025238; c=relaxed/simple;
-	bh=8SpFJtgIL6w/2FAMyvt1dybDDF3Ptssrpv3lA6j0/pM=;
+	s=arc-20240116; t=1756025264; c=relaxed/simple;
+	bh=4qnfj7B1/34ClaygFGmlMs5FPlCUiwOd4no144xlpQQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q+TvTgvM3sUIfbcblovRHetQhlOBGOefaE0va/2RcokM1bsOch2Ogw1c28S6Jka8ChWTCZovb7szTVdYDQasaQzGbWGN7DdK0wXfbAkAh58A5azeeQWe1p9yVUahVxEBnqbM6UQXIyUH1ZuPDIdg3NvhRUqNRnoO5J3xYIhUEwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XVbVRWmY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32A63C4CEEB;
-	Sun, 24 Aug 2025 08:47:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756025236;
-	bh=8SpFJtgIL6w/2FAMyvt1dybDDF3Ptssrpv3lA6j0/pM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=kDa3VdBVRqh3UCsKt+Z+BYKaYXX3X1AWUYnTwdkbxCbL7q9i9rXCLqBe6fUyYqz4mKQhF68uX2nl4Z42m5A4eHTSknOmgwKuW7sXxTaUZka5jbrpDygKz2Yq4sSsQCXPCUJGxLCt/kh9bem1I9+c275JrSkSnZ1C2yybYZrV524=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kW/LdunO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 746F2C4CEEB;
+	Sun, 24 Aug 2025 08:47:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1756025263;
+	bh=4qnfj7B1/34ClaygFGmlMs5FPlCUiwOd4no144xlpQQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XVbVRWmYjffMzkM2Tn8yjdKVNjoYQwoT+ItD9JzikzGjlTmRrxVICMOi+/qhD5Cba
-	 TLVo/ma3qleuaH5wdQ/xdjD8b5CEW5hf7+kwXlSjPVMiIB/4sGHuCZMaD45FZ+sCYZ
-	 GSC8cJXlPPd5b9ExYZskzJ4Ws6QylCvAM+3XA5LY5BLSiNFbW2FEpxzPzqTDrqba/8
-	 UldSRRq7Ow0RQtAEDIFlVfhw/G+dERmSRbP/Fqm+ov1PhVFnpHbu4Kbc7z6Bq6Nszi
-	 yXW71S/OPbi1xjmLcKUw3DrU1JacEbKCWs7SFChjcNh01qVNaT10Y14Tx3mNsasiR8
-	 PMxvu3Yk5PCpg==
-Date: Sun, 24 Aug 2025 10:47:14 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com, 
-	andre.draszik@linaro.org, peter.griffin@linaro.org, kauschluss@disroot.org, 
-	ivo.ivanov.ivanov1@gmail.com, igor.belwon@mentallysanemainliners.org, johan@kernel.org, 
-	m.szyprowski@samsung.com, s.nawrocki@samsung.com, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com, 
-	dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com, 
-	selvarasu.g@samsung.com
-Subject: Re: [PATCH v7 3/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 combo hsphy
-Message-ID: <20250824-hopping-asp-of-painting-fbbfc2@kuoka>
-References: <20250822093845.1179395-1-pritam.sutar@samsung.com>
- <CGME20250822093015epcas5p1f479af38c65a6decc900c37fe37537e5@epcas5p1.samsung.com>
- <20250822093845.1179395-4-pritam.sutar@samsung.com>
+	b=kW/LdunObntnN1FJ89EJQFLf48CJElZ1pnPEordAvUk4pek15IKEmKREloZouTjgo
+	 +CGYAnS0JlCaF0HhlI3ALsvx9WddkmyZsNpuqlpuCGfz5aW/vd63zz+AiyoLRaGjDF
+	 5ob9us/0Kzdv7oZAux4zHGya+gmACEGqQwqADJEo=
+Date: Sun, 24 Aug 2025 10:47:41 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Chanho Min <chanho.min@lge.com>
+Cc: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+	gunho.lee@lge.com, sashal@kernel.org
+Subject: Re: [PATCH 0/4] smb: Backport UAF fixes for v5.4.y
+Message-ID: <2025082410-finless-amused-5edc@gregkh>
+References: <20250811094639.37446-1-chanho.min@lge.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250822093845.1179395-4-pritam.sutar@samsung.com>
+In-Reply-To: <20250811094639.37446-1-chanho.min@lge.com>
 
-On Fri, Aug 22, 2025 at 03:08:42PM +0530, Pritam Manohar Sutar wrote:
-> This phy only supports USB2.0 HS(480Mbps), FS(12Mbps) and
-> LS(1.5Mbps) data rates. It requires two clocks, named as "phy" and "ref".
-> The required supplies for this phy, named as vdd075_usb20(0.75v),
-> vdd18_usb20(1.8v), vdd33_usb20(3.3v).
+On Mon, Aug 11, 2025 at 06:46:35PM +0900, Chanho Min wrote:
+> This patch series backports four fixes from v5.10.y and later to the v5.4.y,
+> addressing potential UAF issues in the SMB client implementation.
+> The patches have been adapted to account for the directory rename from fs/smb/client/*
+> to fs/cifs/* in v5.4.y, ensuring compatibility with the target kernel.
 > 
-> Add schema for combo hsphy found on this SoC.
+> Paulo Alcantara (4):
+>   smb: client: fix potential UAF in cifs_debug_files_proc_show()
+>   smb: client: fix potential UAF in is_valid_oplock_break()
+>   smb: client: fix potential UAF in smb2_is_valid_lease_break()
+>   smb: client: fix potential UAF in cifs_stats_proc_write()
 > 
-> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-> ---
->  .../devicetree/bindings/phy/samsung,usb3-drd-phy.yaml          | 3 +++
->  1 file changed, 3 insertions(+)
+>  fs/cifs/cifs_debug.c | 4 ++++
+>  fs/cifs/cifsglob.h   | 8 ++++++++
+>  fs/cifs/misc.c       | 2 ++
+>  fs/cifs/smb2misc.c   | 3 ++-
+>  4 files changed, 16 insertions(+), 1 deletion(-)
+> 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+We need these in newer kernels as well, otherwise you will have a
+regression when moving to a new tree.  Please resend patches for all of
+the relevant trees and we will be glad to take them.
 
-Best regards,
-Krzysztof
+thanks,
 
+greg k-h
 
