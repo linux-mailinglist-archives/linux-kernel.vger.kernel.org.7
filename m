@@ -1,189 +1,290 @@
-Return-Path: <linux-kernel+bounces-783812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF893B332DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 23:40:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B70DB332DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 23:33:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBCAD4E05D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 21:40:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFCB520010E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 21:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA11239573;
-	Sun, 24 Aug 2025 21:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2439227EB9;
+	Sun, 24 Aug 2025 21:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="nbC2ua+Y"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OW/ZRQ56"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254D423A995
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 21:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFA77260B;
+	Sun, 24 Aug 2025 21:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756071639; cv=none; b=dPnNjD3afb6HfX2agJi5xsclsPfSil5TrKvLXm0t5LeMnAyLfxIDC25T4p03/BMmt/9L1dJO7cphvAR5sXsOmZirKUnK8a/xzek+gSYmB5WLq9ueSq/gnINVhjZZjfGC6+JymzJsghJpLqKpF/pZM9uczETLcaEUjrlb082DYn8=
+	t=1756071103; cv=none; b=RFs02IWYHfg/ppv0bzH2pU5F9r1g7uGVg0x5g34aIskzGii6BdmWZ6+3c8s27F/t2ilwA7fc3sY1LJ/tT6u8y0pIk6JHxRCFcmWkQfVrvJ9F0U6TWSh7erQXP7LekxfHWcYq/WJxjnKKzhatc7SHQSVNtkpXMfHlUjFOd0aGi0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756071639; c=relaxed/simple;
-	bh=VYokqYLe67430zP26uzMPr06zuvJCU9bx4xVCBvOAus=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nKxD8dceyacJ7OvSK9r3EK6mI1r1ZTwEt3qruWinA5iCpzi/jtfmdvQ6kbpOnJD0A+A8HQkF37/18WrZIkGl9hXwZNw6BevcgTkTP7Bo7mZjZ7OuCbLWlHq3lVblWUnP8bCibR1Miz3U2YMTHcHoQ2qRaSQ/dpkzo8Lgy8NTQIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=nbC2ua+Y; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 25CA82C02D0;
-	Mon, 25 Aug 2025 09:31:20 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1756071080;
-	bh=VYokqYLe67430zP26uzMPr06zuvJCU9bx4xVCBvOAus=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=nbC2ua+YkeqznO1rTTxxsJSWRvCmIV/Qi9fTHScYMhM4P8KnMhgIPjHg4cyB2jIVw
-	 ovkOW73ArkiWjSTvg2vpVGO/j9ziCR7o4D/E7J5eLNshTOk2h1pRYbXx2mgQ9QWW1/
-	 q2WVWmw/RyZv0PxzKN1QQh7ABRiEKW4JzocglDadSmtHen/Tix4pTHVsCnG/da5oOE
-	 0r72o5nAvNP5iaJCcWAJ4VrbrzPGpj6t3ZBzWRYH8Wvwjm26Si9kn2YesKoxFhse1N
-	 2M/uDYToVS1hi0l5UGocg5/4kJjRQVsn2nBTGk5ymjf9H1Io9gklxea3Z/F1qUqVZ5
-	 5WylRZJDu8UYA==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B68ab84a80001>; Mon, 25 Aug 2025 09:31:20 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 25 Aug 2025 09:31:19 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.014; Mon, 25 Aug 2025 09:31:19 +1200
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Jonas Jelonek <jelonek.jonas@gmail.com>, Andi Shyti
-	<andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>
-CC: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Markus Stockhausen
-	<markus.stockhausen@gmx.de>, Sven Eckelmann <sven@narfation.org>, "Harshal
- Gohel" <hg@simonwunderlich.de>, Wolfram Sang
-	<wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v6 00/12] i2c: fix, rework and extend RTL9300 I2C driver
-Thread-Topic: [PATCH v6 00/12] i2c: fix, rework and extend RTL9300 I2C driver
-Thread-Index: AQHcFOsSz4qV8sz8VkayQ85c3bJjJLRxiduA
-Date: Sun, 24 Aug 2025 21:31:19 +0000
-Message-ID: <b61a8521-c5d2-4b44-800a-c93833ff8f1a@alliedtelesis.co.nz>
-References: <20250824113348.263475-1-jelonek.jonas@gmail.com>
-In-Reply-To: <20250824113348.263475-1-jelonek.jonas@gmail.com>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DAAD7065DEC1B04E833473C7190E6A51@alliedtelesis.co.nz>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1756071103; c=relaxed/simple;
+	bh=F9yFl3/yyh9Zm/zqTQgfBmpg4rLUQ2M2weCf5bkKHgE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=GbVp8PEhl7k2nxiuw1PhKlzXswxNNKRkSHLD35k5pnZcWs1nbKSkP+7PDlTxWoA/+TYTHzFv4M84Hjhub2vUxLUQhEKcbTFUJgrkKmweq2H6roOIrix7nBqSd1zdSfdhzZ/G0DPCyVyXCl6w9HUhuxcX8zIFkTocBKvKuVVXAc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OW/ZRQ56; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2445813f6d1so4523165ad.2;
+        Sun, 24 Aug 2025 14:31:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756071100; x=1756675900; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0DwaHwUdPr8TDfZjAVd0Bexa5dawkDBS2ttG8T/Unbw=;
+        b=OW/ZRQ56DeIIQDl1F28Sv3L8VvziTCH9R/XFYoVtbycoy19qlOUD2UWjKU4KedvVTB
+         S8DfPYv/pbo97yzcgq/mtHbQzGOevVY6vcNm83hCOOQY4L/MFi9IpqeB9X9Ce0w8HkVT
+         2b2LYVaWa0YFzVw6GE3rjCWJpcR6ZxgfmppI6dYXf3WeTU6JFhJOe4xi3YhNL8R4kfCS
+         G5nLuWAbs1UMcpZlmdY73TZRqxh3CSnCXhoCeS297vaQsmIfM1wffAMq3M1pBB5Maus6
+         SlVBG3yfPqGlth8EXssN+TAei1r6mtrfVLtJIAhL1g48bNDifl0HmYBNTbIi0Ii8mxS2
+         lh9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756071100; x=1756675900;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0DwaHwUdPr8TDfZjAVd0Bexa5dawkDBS2ttG8T/Unbw=;
+        b=Ugr/5Yc6D53oh11USIT/FcXMKkHypIzmHfxgukEzh89bEb8Wx/aSl0DF0+NRb1/gct
+         +PLkMHnus8Z+L5Wft4q0Yrsf7Zuhn0csywJJPCneI9/XxwruB8RQej7q2pC9tmv42IKr
+         TLEdcs/aRGvbIffeZSrQv9Yfvt/1J2WY3u3TSmZTwaSXZ/msZ1GsnPZNIt35JG0NLzN8
+         bOB0mIkRnoaaAbRghBCDjd30kGsY9O44Tb+MvGRD8ybE0oTokvKB2GVHJm/H1aZ1pTmW
+         pyyKOPTJpk22Yp17/TnNxMKytW9E/3bLqnHkUy+dfxae3jRCizfCTbf5FD2vtSvYKWhc
+         V5GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVU7TH4pjJSlwLPLuK4JumM2ULg3Nf4KwDBHjzGiCt7jBARbjUU4ly/SMFlL1jFH58M/vHhZlPTBpt1Va0=@vger.kernel.org, AJvYcCWAYmbOUleZoP42+934NLLsk3/SfmNHDG+cU9Js8baK5xbcXpuQ+x/Vlefw9LEuUfsYB6C30VLK/5cfWvmd+Ow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwsCqDA5M4Z5zNSAdrtWakxSyKVQLGQfgbFq3cUcLOjg1xvvuP
+	yHhEy2Q+NdqCbZRgfjaMDcfEU1q42ZjThTwhKqL8Vrt+UqgijtueN6zGw+FhGA==
+X-Gm-Gg: ASbGncueazBPs5W626lHLl0aUxrv6dkNttN98ePcNIqKl8X6VcSRKsY0Qw8dq3bboe0
+	Q9O/TjTo8fpPW0xOUWI6Pz0mQK0H0Me6vgYpBfwZnhcWTTOZd+WzjUZDKevL4uKlHd3SyAQocx2
+	6Mg4U7VsWuTFOWB0SMxYNbXEhPQ3ezo0Ffs29vRXcKojWUkuypx2bunMhNxkB669kL1NE3bgV4a
+	1hs0QmhmJ1TAwkVLuzy7gPnQ8WMYG66NxXtRK6u/9bek77SNNb44l/Fpp6X9ShukabSPhqMx09P
+	Zmcyxfk0zznk1XI4stfVwR8mOsXPiY4ZQg0E4IO7zOFzSPouo2E4VnbMbtrxvqz/47ZCbkDD3hJ
+	JidaxFMd2UEZg4FqSPGJgX3Iz1axFs9s=
+X-Google-Smtp-Source: AGHT+IH7tCu9yFZmbMyyJ8xAiGghDt1M8iA4Q10uIbKeX068ctixxz94pqL+04tE41TjN+5Vh2nRhQ==
+X-Received: by 2002:a17:903:124c:b0:245:f85c:8c6f with SMTP id d9443c01a7336-2462ee8b1eemr67253035ad.3.1756071100300;
+        Sun, 24 Aug 2025 14:31:40 -0700 (PDT)
+Received: from debian ([138.94.103.170])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466887fc80sm50430825ad.124.2025.08.24.14.31.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Aug 2025 14:31:39 -0700 (PDT)
+From: "Christian S. Lima" <christiansantoslima21@gmail.com>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	~lkcamp/patches@lists.sr.ht,
+	richard120310@gmail.com
+Subject: [PATCH v10] rust: transmute: Add methods for FromBytes trait
+Date: Sun, 24 Aug 2025 18:31:33 -0300
+Message-ID: <20250824213134.27079-1-christiansantoslima21@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Yo+sRJYX c=1 sm=1 tr=0 ts=68ab84a8 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=DSnrLwHJ4Z4XNXYrIEwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+Content-Transfer-Encoding: 8bit
 
-SGkgSm9uYXMsDQoNCk9uIDI0LzA4LzIwMjUgMjM6MzMsIEpvbmFzIEplbG9uZWsgd3JvdGU6DQo+
-IFRoaXMgcGF0Y2ggc2VyaWVzIGZvciB0aGUgUlRMOTMwMCBJMkMgZHJpdmVyOg0KPiAgICAgIC0g
-Zml4ZXMgaXNzdWVzLCBvbmUgb2YgdGhlbSBpbiBzb21lIGNhc2VzIGNhdXNpbmcgZGF0YSBjb3Jy
-dXB0aW9uDQo+ICAgICAgLSByZXdvcmtzIHNpZ25pZmljYW50IHBhcnRzIG9mIHRoZSBjdXJyZW50
-IGltcGxlbWVudGF0aW9uDQo+ICAgICAgLSBhZGQgc3VwcG9ydCBmb3IgdGhlIChxdWl0ZSBzaW1p
-bGFyKSBSVEw5MzEwIHNlcmllcw0KPg0KPiBHb2FsIG9mIHRoaXMgaXMgdG8gZml4IGNyaXRpY2Fs
-IGlzc3VlcywgaW1wcm92ZSBvdmVyYWxsIGNvZGUgcXVhbGl0eSBhbmQNCj4gc2ltcGxpZnkgbWFp
-bnRhaW5hbmNlIGFuZCBmdXJ0aGVyIGV4dGVuc2lvbiBvZiB0aGUgZHJpdmVyLiBNb3Jlb3Zlciwg
-aXQNCj4gc2hvdWxkIGJlIGJyb3VnaHQgb24gcGFyIGZlYXR1cmUtd2lzZSB3aXRoIE9wZW5XcnQn
-cyBkb3duc3RyZWFtIGRyaXZlcg0KPiB0byBiZSBhYmxlIHRvIGRyb3AgdGhlIGRvd25zdHJlYW0g
-dmVyc2lvbi4NCj4NCj4gVGhlIGZpcnN0IHRocmVlIHBhdGNoZXMgYWRkcmVzcyBidWdzIGluIHRo
-ZSBjdXJyZW50IGltcGxlbWVudGF0aW9uLCBvbg0KPiBvZiB0aGVtIGJlaW5nIGNyaXRpY2FsIGFu
-ZCBjYXVzaW5nIGRhdGEgY29ycnVwdGlvbiB1bmRlciBjZXJ0YWluDQo+IGNpcmN1bXN0YW5jZXMu
-IEFsdGhvdWdoIHRoZSBoYXJkd2FyZSBkb2Vzbid0IHN1cHBvcnQgU01CdXMgUXVpY2sgV3JpdGUs
-DQo+IHRoZSBkcml2ZXIgY2xhaW1zIHRvIHN1cHBvcnQgaXQgd2l0aCBhIGJyb2tlbiBpbXBsZW1l
-bnRhdGlvbi4gVGhpcw0KPiBjYXVzZXMgdG8gZXhlY3V0ZSBhIDE2LWJ5dGUgV3JpdGUgaW5zdGVh
-ZCBvZiBhIFF1aWNrIFdyaXRlLCBlLmcuIGNhdXNpbmcNCj4gY29ycnVwdGlvbiBvbiBub3Qtd3Jp
-dGUtcHJvdGVjdGVkIFNGUCBFRVBST01zIGFuZCBzb2Z0LWJyaWNraW5nIHRoZW0uDQo+IFRoZXNl
-IHRocmVlIHBhdGNoZXMgYXJlIGFsc28gc2VudCB0byAnc3RhYmxlJyBiZWNhdXNlIHRoZXkgZml4
-IGNyaXRpY2FsDQo+IGlzc3Vlcy4NCj4NCj4gU3Vic2VxdWVudCBwYXRjaGVzIGludHJvZHVjZSB2
-YXJpb3VzIHNtYWxsZXIgYW5kIGJpZ2dlciBlbmhhbmNlbWVudHMuDQo+IFRoZXNlIGluY2x1ZGU6
-DQo+ICAgICAgLSB1c2UgcmVnbWFwX2ZpZWxkICsgaXRzIEFQSSBpbnN0ZWFkIG9mIG1hY3JvcyAr
-IEdFTk1BU0sgKyBzaGlmdHMNCj4gICAgICAtIHJlZmFjdG9yIHhmZXIgaGFuZGxpbmcNCj4gICAg
-ICAtIHZhcmlhYmxlIHJlbmFtaW5nIHRvIGF2b2lkIGNvbmZ1c2lvbg0KPiAgICAgIC0gbW92ZSBz
-b21lIHJlZ2lzdGVyIG9wZXJhdGlvbnMsIGNhbGxpbmcgdGhlbSBzb21ld2hlcmUgZWxzZSBhbmQN
-Cj4gICAgICAgIGxlc3MgZnJlcXVlbnRseQ0KPiAgICAgIC0gdXNlIGd1YXJkZWQgbXV0ZXggaW5z
-dGVhZCBvZiBleHBsaWNpdCBtdXRleF9sb2NrL191bmxvY2sgdG8NCj4gICAgICAgIHNpbXBsaWZ5
-IGNvbnRyb2wgZmxvdw0KPg0KPiBGaW5hbGx5LCB0aGUgbGFzdCB0d28gcGF0Y2hlcyBhZGQgc3Vw
-cG9ydCBmb3IgUlRMOTMxMCAobWFuZ28pIHNlcmllcyB0bw0KPiB0aGUgZHJpdmVyIGFuZCBhZGp1
-c3QgdGhlIGR0LWJpbmRpbmdzIGFjY29yZGluZ2x5Lg0KPg0KPiBTaW1wbGUgb3BlcmF0aW9ucyBo
-YXZlIGJlZW4gdGVzdGVkIHN1Y2Nlc3NmdWxseSBvbjoNCj4gICAgICAtIFp5eGVsIFhHUzEyMTAt
-MTIgKFJUTDkzMDJCKQ0KPiAgICAgIC0gVFAtTGluayBUTC1TVDEwMDhGIHYyLjAgKFJUTDkzMDMp
-DQo+ICAgICAgLSBOZXRnZWFyIE1TNTEwVFhNIChSVEw5MzEzKQ0KPg0KPiB3aXRoIEJ5dGUtUmVh
-ZCwgV29yZC1SZWFkIGFuZCBJMkMtQmxvY2stUmVhZC4gT3RoZXIgb3BlcmF0aW9ucyBuZWVkDQo+
-IHRlc3RpbmcgZnJvbSBwZW9wbGUgd2l0aCBkZXZpY2VzIGF2YWlsYWJsZS4NCj4NCj4gQ29tcGls
-ZS10ZXN0ZWQgd2l0aCBMaW51eCwgcnVuLXRlc3RlZCBhcyBiYWNrcG9ydCBpbiBPcGVuV3J0IG9u
-IHRoZQ0KPiBhZm9yZW1lbnRpb25lZCBkZXZpY2VzLg0KDQpGb3IgdGhlIHNlcmllcw0KDQpSZXZp
-ZXdlZC1ieTogQ2hyaXMgUGFja2hhbSA8Y2hyaXMucGFja2hhbUBhbGxpZWR0ZWxlc2lzLmNvLm56
-Pg0KVGVzdGVkLWJ5OiBDaHJpcyBQYWNraGFtIDxjaHJpcy5wYWNraGFtQGFsbGllZHRlbGVzaXMu
-Y28ubno+ICMgT24gDQpSVEw5MzAyQyBiYXNlZCBib2FyZA0KDQo+IC0tDQo+IENoYW5nZWxvZw0K
-Pg0KPiB2NjogLSBwYXRjaCAnaTJjOiBydGw5MzAwOiBjaGVjayBpZiB4ZmVyIGxlbmd0aCBpcyB2
-YWxpZCcNCj4gICAgICAgICAgLSByZW5hbWVkIHRvICdlbnN1cmUgZGF0YSBsZW5ndGggaXMgd2l0
-aGluIHN1cHBvcnRlZCByYW5nZScNCj4gICAgICAgICAgLSBhZGRlZCBJMkMgcXVpcmsgZm9yIHpl
-cm8gbGVuZ3RoIGFzIHN1Z2dlc3RlZCBieSBXb2xmcmFtIFNhbmcNCj4gICAgICAtIHJlb3JkZXJl
-ZCBwYXRjaGVzIHRvIGhhdmUgYmFja3BvcnQtd29ydGh5IGZpeGVzIGZpcnN0IGFuZA0KPiAgICAg
-ICAgZW5oYW5jZW1lbnRzL290aGVycyBhZnRlcg0KPiAgICAgICAgICAtIHBhdGNoZXMgJ2ZpeCBj
-aGFubmVsIG51bWJlciBib3VuZCBjaGVjaycsICdjaGVjayBpZiB4ZmVyDQo+ICAgICAgICAgICAg
-bGVuZ3RoIGlzIHZhbGlkJyBhbmQgJ3JlbW92ZSBTTUJ1cyBRdWljayBvcGVyYXRpb24gc3VwcG9y
-dCcNCj4gICAgICAgICAgICB3ZXJlIG1vdmVkIGJlZm9yZSBhbGwgb3RoZXJzDQo+IAktIGFkZGVk
-IENDOiBzdGFibGUgdG8gZmlyc3QgdGhyZWUgcGF0Y2hlcw0KPiAgICAgIC0gZml4ZWQgY29tbWl0
-IG1lc3NhZ2Ugb2YgJ2R0LWJpbmRpbmdzOiBpMmM6IHJlYWx0ZWsscnRsOTMwMS1pMmM6DQo+ICAg
-ICAgICBleHRlbmQgZm9yIFJUTDkzMTAgc3VwcG9ydCcNCj4gICAgICAtIGFkZGVkIGEgcGF0Y2gg
-dG8gdXNlIGd1YXJkKG11dGV4KSBpbnN0ZWFkIG9mIGV4cGxpY2l0IGxvY2svdW5sb2NrDQo+ICAg
-ICAgICBhcyBzdWdnZXN0ZWQgYnkgTWFya3VzIEVsZnJpbmcNCj4gICAgICAtIGFkZGVkIFJldmll
-d2VkLWJ5OiBSb2IgSGVycmluZyAuLi4gdG8gZHQtYmluZGluZ3MgcGF0Y2hlcw0KPiAgICAgIC0g
-YWRkZWQgVGVzdGVkLWJ5OiBTdmVuIEVja2VsbWFubiAuLi4gdG8gYWxsIHBhdGNoZXMgKGV4Y2Vw
-dCB0aGUNCj4gICAgICAgIG5ldyBwYXRjaCBpbiB0aGlzIHZlcnNpb24pDQo+DQo+IHY1OiAtIGFk
-ZGVkIG1vcmUgcGF0Y2hlcyB0byBmaXggZnVydGhlciBpc3N1ZXMvZG8gZnVydGhlciBjbGVhbnVw
-DQo+ICAgICAgICAgIC0gcmVtb3ZlIFNNQnVzIFF1aWNrIHN1cHBvcnQgKG5vdCBzdXBwb3J0ZWQg
-YnkgaGFyZHdhcmUpDQo+ICAgICAgICAgIC0gbW92ZSBzZXR0aW5nIFNDTCBmcmVxdWVuY3kgdG8g
-Y29uZmlnX2lvDQo+ICAgICAgICAgIC0gb25seSBzZXQgcmVhZCBtZXNzYWdlIGZvcm1hdCAoUkRf
-TU9ERSkgb25jZSBvbiBwcm9iaW5nDQo+ICAgICAgICAgIC0gYWRkIGNoZWNrIHRvIGF2b2lkIGxl
-biA9IDAgYmVpbmcgYWxsb3dlZCBhcyBsZW5ndGgNCj4gICAgICAtIGFkanVzdGVkIGNvdmVyIGxl
-dHRlcg0KPg0KPiB2NDogLSBmaXhlZCBhbiBpbmNvcnJlY3QgY2hlY2sgZm9yIG51bWJlciBvZiBj
-aGFubmVscyB3aGljaCB3YXMgYWxyZWFkeQ0KPiAgICAgICAgcHJlc2VudCBpbiBvcmlnaW5hbCBj
-b2RlDQo+DQo+IHYzOiAtIG5hcnJvd2VkIHZlbmRvciBwcm9wZXJ0eSBwZXIgdmFyaWFudCB0byBi
-ZSByZXF1aXJlZCBvbmx5DQo+ICAgICAgICBmb3IgUlRMOTMxMA0KPiAgICAgIC0gbmFycm93ZWQg
-dXNhYmxlIGNoaWxkLW5vZGUgaTJjIGFkZHJlc3NlcyBwZXIgdmFyaWFudA0KPiAgICAgIC0gbm8g
-Y2hhbmdlcyB0byBkcml2ZXIgcGF0Y2hlcw0KPg0KPiB2MjogLSBQYXRjaCAxOg0KPiAgICAgICAg
-ICAtIGFkanVzdGVkIGNvbW1pdCBtZXNzYWdlDQo+ICAgICAgICAgIC0gcmV0YWluZWQgVGVzdGVk
-LUJ5IGFuZCBSZXZpZXdlZC1CeSBmcm9tIENocmlzIFBhY2toYW0NCj4gICAgICAtIFBhdGNoIDI6
-DQo+ICAgICAgICAgIC0gc2ltcGxpZmllZCBjaGVjayBhcyBzdWdnZXN0ZWQgYnkgTWFya3VzIFN0
-b2NraGF1c2VuDQo+ICAgICAgICAgIC0gZml4ZWQgY29tbWl0IG1lc3NhZ2UNCj4gICAgICAtIFBh
-dGNoIDMgKGFsbCByZXF1ZXN0ZWQgYnkgS3J6eXN6dG9mKToNCj4gICAgICAgICAgLSB1c2UgdmVu
-ZG9yIHByb3BlcnR5IGluc3RlYWQgb2YgZ2VuZXJpYw0KPiAgICAgICAgICAtIGFkZCBmcm9udCBj
-b21wYXRpYmxlcyB0byBtYWtlIGJpbmRpbmcgY29tcGxldGUNCj4gICAgICAgICAgLSBmaXggY29t
-bWl0IG1lc3NhZ2UNCj4gICAgICAtIHJlb3JkZXJlZCBwYXRjaGVzLCBkdC1iaW5kaW5ncyBwYXRj
-aCBub3cgY29tZXMgYmVmb3JlIGl0cyAndXNlcicNCj4gICAgICAtIHByb3Blcmx5IGFkZCBkZXZp
-Y2UtdHJlZSBsaXN0IGFuZCByZWxldmFudCBtYWludGFpbmVycyB0byBUby9DYw0KPg0KPiAtLS0N
-Cj4gSm9uYXMgSmVsb25layAoMTIpOg0KPiAgICBpMmM6IHJ0bDkzMDA6IGZpeCBjaGFubmVsIG51
-bWJlciBib3VuZCBjaGVjaw0KPiAgICBpMmM6IHJ0bDkzMDA6IGVuc3VyZSBkYXRhIGxlbmd0aCBp
-cyB3aXRoaW4gc3VwcG9ydGVkIHJhbmdlDQo+ICAgIGkyYzogcnRsOTMwMDogcmVtb3ZlIGJyb2tl
-biBTTUJ1cyBRdWljayBvcGVyYXRpb24gc3VwcG9ydA0KPiAgICBpMmM6IHJ0bDkzMDA6IHVzZSBy
-ZWdtYXAgZmllbGRzIGFuZCBBUEkgZm9yIHJlZ2lzdGVycw0KPiAgICBkdC1iaW5kaW5nczogaTJj
-OiByZWFsdGVrLHJ0bDkzMDEtaTJjOiBmaXggd29yZGluZyBhbmQgdHlwb3MNCj4gICAgaTJjOiBy
-dGw5MzAwOiByZW5hbWUgaW50ZXJuYWwgc2RhX3BpbiB0byBzZGFfbnVtDQo+ICAgIGkyYzogcnRs
-OTMwMDogbW92ZSBzZXR0aW5nIFNDTCBmcmVxdWVuY3kgdG8gY29uZmlnX2lvDQo+ICAgIGkyYzog
-cnRsOTMwMDogZG8gbm90IHNldCByZWFkIG1vZGUgb24gZXZlcnkgdHJhbnNmZXINCj4gICAgaTJj
-OiBydGw5MzAwOiBzZXBhcmF0ZSB4ZmVyIGNvbmZpZ3VyYXRpb24gYW5kIGV4ZWN1dGlvbg0KPiAg
-ICBpMmM6IHJ0bDkzMDA6IHVzZSBzY29wZWQgZ3VhcmQgaW5zdGVhZCBvZiBleHBsaWNpdCBsb2Nr
-L3VubG9jaw0KPiAgICBkdC1iaW5kaW5nczogaTJjOiByZWFsdGVrLHJ0bDkzMDEtaTJjOiBleHRl
-bmQgZm9yIFJUTDkzMTAgc3VwcG9ydA0KPiAgICBpMmM6IHJ0bDkzMDA6IGFkZCBzdXBwb3J0IGZv
-ciBSVEw5MzEwIEkyQyBjb250cm9sbGVyDQo+DQo+ICAgLi4uL2JpbmRpbmdzL2kyYy9yZWFsdGVr
-LHJ0bDkzMDEtaTJjLnlhbWwgICAgIHwgIDQ1ICstDQo+ICAgZHJpdmVycy9pMmMvYnVzc2VzL2ky
-Yy1ydGw5MzAwLmMgICAgICAgICAgICAgIHwgNDg4ICsrKysrKysrKystLS0tLS0tLQ0KPiAgIDIg
-ZmlsZXMgY2hhbmdlZCwgMzI1IGluc2VydGlvbnMoKyksIDIwOCBkZWxldGlvbnMoLSkNCj4NCj4N
-Cj4gYmFzZS1jb21taXQ6IDU3Nzc0NDMwODY0YjcyMTA4MmI5YmFmZDE3ZmM4MzlmMzEyNTFjN2I=
+The two methods added take a slice of bytes and return those bytes in
+a specific type. These methods are useful when we need to transform
+the stream of bytes into specific type.
+
+Since the `is_aligned` method for pointer types has been stabilized in
+`1.79` version and is being used in this patch. I'm enabling the
+feature. In this case, using this method is useful to check the
+alignment and avoid a giant boilerplate, such as `(foo.as_ptr() as
+usize) % core::mem::align_of::<T>() == 0`.
+
+Even enabling in `rust/kernel/lib.rs` when compiling with `make LLVM=1
+CLIPPY=1` a warning is issued, so in order to compile, it was used
+locally the `#[allow(clippy::incompatible_msrv)]`.
+
+Link: https://github.com/Rust-for-Linux/linux/issues/1119
+Suggested-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Christian S. Lima <christiansantoslima21@gmail.com>
+---
+Changes in v2:
+- Rollback the implementation for the macro in the repository and implement
+  methods in trait
+- Link to v2: https://lore.kernel.org/rust-for-linux/20241012070121.110481-1-christiansantoslima21@gmail.com/
+
+Changes in v3:
+- Fix grammar errors
+- Remove repeated tests
+- Fix alignment errors
+- Fix tests not building
+- Link to v3: https://lore.kernel.org/rust-for-linux/20241109055442.85190-1-christiansantoslima21@gmail.com/
+
+Changes in v4:
+- Removed core::simd::ToBytes
+- Changed trait and methods to safe Add
+- Result<&Self, Error> in order to make safe methods
+- Link to v4: https://lore.kernel.org/rust-for-linux/20250314034910.134463-1-christiansantoslima21@gmail.com/
+
+Changes in v5:
+- Changed from Result to Option
+- Removed commentaries
+- Returned trait impl to unsafe
+- Link to v5: https://lore.kernel.org/rust-for-linux/20250320014041.101470-1-christiansantoslima21@gmail.com/
+
+Changes in v6:
+- Add endianess check to doc test and use match to check
+success case
+- Reformulated safety comments
+- Link to v6: https://lore.kernel.org/rust-for-linux/20250330234039.29814-1-christiansantoslima21@gmail.com/
+
+Changes in v7:
+- Add alignment check
+- Link to v7: https://lore.kernel.org/rust-for-linux/20250615072042.133290-1-christiansantoslima21@gmail.com/
+
+Changes in v8:
+- Add the new FromBytesSized trait
+- Change the implementation of FromBytes trait methods
+- Move the cast to pointer earlier and use `is_aligned()` instead manual
+alignment check
+- Link to v8: https://lore.kernel.org/rust-for-linux/20250624042802.105623-1-christiansantoslima21@gmail.com/
+
+Changes in v9:
+- Improve code comments and remove confusing parts.
+- Add a build_assert in the conversion of type `[T]` to check for elements
+inside the slice.
+- Count the elements in the `[T]` conversion instead of using byte
+count.
+- Link to v9: https://lore.kernel.org/rust-for-linux/20250811213851.65644-1-christiansantoslima21@gmail.com/#t
+
+Changes in v10:
+- Remove `FromBytesSized` trait
+- Remove implementation for slice types
+- Fix doctest not compiling because `?` operator outside a function
+that return `Option<()>`
+- Make `FromBytes` trait depend on `Sized`
+- Add `is_aligned` as feature
+---
+ rust/kernel/lib.rs       |  1 +
+ rust/kernel/transmute.rs | 69 ++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 68 insertions(+), 2 deletions(-)
+
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index ed53169e795c..c859a8984bae 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -18,6 +18,7 @@
+ //
+ // Stable since Rust 1.79.0.
+ #![feature(inline_const)]
++#![feature(pointer_is_aligned)]
+ //
+ // Stable since Rust 1.81.0.
+ #![feature(lint_reasons)]
+diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
+index 1c7d43771a37..7493b84b5474 100644
+--- a/rust/kernel/transmute.rs
++++ b/rust/kernel/transmute.rs
+@@ -2,6 +2,8 @@
+ 
+ //! Traits for transmuting types.
+ 
++use core::mem::size_of;
++
+ /// Types for which any bit pattern is valid.
+ ///
+ /// Not all types are valid for all values. For example, a `bool` must be either zero or one, so
+@@ -9,10 +11,74 @@
+ ///
+ /// It's okay for the type to have padding, as initializing those bytes has no effect.
+ ///
++/// # Examples
++///
++/// ```
++/// use kernel::transmute::FromBytes;
++///
++/// fn test() -> Option<()> {
++///    let raw = [1, 2, 3, 4];
++///
++///    let result = u32::from_bytes(&raw)?;
++///
++///    #[cfg(target_endian = "little")]
++///    assert_eq!(*result, 0x4030201);
++///
++///    #[cfg(target_endian = "big")]
++///    assert_eq!(*result, 0x1020304);
++///
++///    Some(())
++/// }
++/// ```
++///
+ /// # Safety
+ ///
+ /// All bit-patterns must be valid for this type. This type must not have interior mutability.
+-pub unsafe trait FromBytes {}
++pub unsafe trait FromBytes {
++    /// Converts a slice of bytes to a reference to `Self`.
++    ///
++    /// When the reference is properly aligned and the size of slice is equal to that of `T`
++    /// and is different from zero.
++    ///
++    /// In another case, it will return `None`.
++    #[allow(clippy::incompatible_msrv)]
++    fn from_bytes(bytes: &[u8]) -> Option<&Self>
++    where
++        Self: Sized,
++    {
++        let slice_ptr = bytes.as_ptr().cast::<Self>();
++        let size = size_of::<Self>();
++        if bytes.len() == size && slice_ptr.is_aligned() {
++            // SAFETY: Checking for size and alignment ensure
++            // that the conversion to a type is valid
++            unsafe { Some(&*slice_ptr) }
++        } else {
++            None
++        }
++    }
++
++    /// Converts a mutable slice of bytes to a reference to `Self`
++    ///
++    /// When the reference is properly aligned and the size of slice
++    /// is equal to that of `T`and is different from zero.
++    ///
++    /// In another case, it will return `None`.
++    #[allow(clippy::incompatible_msrv)]
++    fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut Self>
++    where
++        Self: AsBytes + Sized,
++    {
++        let slice_ptr = bytes.as_mut_ptr().cast::<Self>();
++        let size = size_of::<Self>();
++        if bytes.len() == size && slice_ptr.is_aligned() {
++            // SAFETY: Checking for size and alignment ensure
++            // that the conversion to a type is valid
++            unsafe { Some(&mut *slice_ptr) }
++        } else {
++            None
++        }
++    }
++}
+ 
+ macro_rules! impl_frombytes {
+     ($($({$($generics:tt)*})? $t:ty, )*) => {
+@@ -28,7 +94,6 @@ macro_rules! impl_frombytes {
+ 
+     // SAFETY: If all bit patterns are acceptable for individual values in an array, then all bit
+     // patterns are also acceptable for arrays of that type.
+-    {<T: FromBytes>} [T],
+     {<T: FromBytes, const N: usize>} [T; N],
+ }
+ 
+-- 
+2.50.1
+
 
