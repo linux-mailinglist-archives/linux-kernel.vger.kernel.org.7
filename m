@@ -1,164 +1,141 @@
-Return-Path: <linux-kernel+bounces-783479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D82EB32E20
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:13:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A570AB32E24
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C12AE169886
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:11:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3EBB48379A
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE362561C9;
-	Sun, 24 Aug 2025 08:11:44 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3F6257436;
+	Sun, 24 Aug 2025 08:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U05VL8Ft"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F35246779
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 08:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E6F1BC2A;
+	Sun, 24 Aug 2025 08:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756023104; cv=none; b=XBChLUhBgMDznvdmNYEDkaYykja3t52xrCTmrKk6mhMX8/a5Ojxni2NN8aGgMik897ETtWM/sCQCnKfQ+LvkXNfcX8LbIXz+W2+zv42ViDDG9TbXr3tAUpA5RN604zKhyEUVjwEU48deg7reKgrjA8aok+ZG0GykisH9UWaGjqE=
+	t=1756023399; cv=none; b=NVmFMusqE9yaVLBBvKmMZSpbB9M2EJeS6CKpl41BdJCPrkLX3HnqusGedWw52VuEOizapTpJFI5Pa+j8/I2nCCGkHJFgrtt9OUOctsOgLMT+VyR70V/7zrVJ6i1/p/dIOum38ehW5pZh9TCEJFHU5XsZFq2V2wjuu8AW0tdZEfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756023104; c=relaxed/simple;
-	bh=ul0IsjUDFsISjShCNiRq6tbem1Qonz9NW/U6PGV3QOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NSeHpp7LeGCrWkt/ycQze9NhuhSjMDsyY6vlzS7Y9dbPKp5MJY2j2aB+Nawg48cNbpN+wCRAtyZOTIL7Q3M6Ljf6sKLAWa4Wtx7OGxxV7ncGwK61pB2R7FGS/27MvYPH2bqMZ8znxBoLttdFU/XZE0K2kViP8hokMWLuyNuWdBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uq5oT-0006qR-Nx; Sun, 24 Aug 2025 10:10:53 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uq5oJ-001sF8-2g;
-	Sun, 24 Aug 2025 10:10:43 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uq5oJ-00EEAb-2D;
-	Sun, 24 Aug 2025 10:10:43 +0200
-Date: Sun, 24 Aug 2025 10:10:43 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: ALOK TIWARI <alok.a.tiwari@oracle.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Lukasz Majewski <lukma@denx.de>, Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>, Divya.Koppera@microchip.com,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	Stanislav Fomichev <sdf@fomichev.me>
-Subject: Re: [PATCH net-next v3 2/3] net: ynl: add generated kdoc to UAPI
- headers
-Message-ID: <aKrJAzMdgGcNiRUC@pengutronix.de>
-References: <20250820131023.855661-1-o.rempel@pengutronix.de>
- <20250820131023.855661-3-o.rempel@pengutronix.de>
- <7e948eb9-2704-433e-9b51-fd83716e37d1@oracle.com>
+	s=arc-20240116; t=1756023399; c=relaxed/simple;
+	bh=l32x1Te9bfGPB+4kp584f73PJmc+yVGlWYYCPw2loOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZHm9bBfsf5JdMZwDsJGsNmo3GcXu8/HLsLBXBAq2zdW6OnIrRW0WxbPNg+ZlW23tmPuBFHNCjFcueS1fCMdiZ7ZevKbXOLhGz8tRfLd4cPcIVR04JSeTwlQNwW5VlS+RYmlLk4qL5Gu2PPvqToimSLpcOlszEMue+axmq8pVruA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U05VL8Ft; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F220C4CEEB;
+	Sun, 24 Aug 2025 08:16:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756023398;
+	bh=l32x1Te9bfGPB+4kp584f73PJmc+yVGlWYYCPw2loOM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=U05VL8FtfGd9U7XQVld8V3O7lu0RdEa/rOG3OcJ41FNXbwBF0mtieHVDOmKYsLepX
+	 j+nPossdZtKREZch761bomNH0k2PDKm8N0r4J5T8uRA54DUUDVrCbHts+zyTogRgJ/
+	 DaSEIXKExNJ+wm4LKNcXkmPEFoIVMSn5t+zwZsfsSXxgYHQr654qK7HCjl59RTzGQz
+	 C1WmbsDEF7dsqFleAXApLBZ/LvPwg7R/7Tgkf1C5CPop3MjhVzsj+U9YUA+zd/sjNz
+	 TKCO3nDzQI5F5cFVr8PCaMKJnm6RFXsWF3S+pwagL5JmK69vAIO6fZKUpCSNPbRcQz
+	 200qMiH9I1OEg==
+Message-ID: <e0c5b9b4-889f-4571-b265-fb6b2885871a@kernel.org>
+Date: Sun, 24 Aug 2025 10:16:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] dt-bindings: clock: exynos990: Reorder IDs clocks
+ and extend
+To: Denzeel Oliva <wachiturroxd150@gmail.com>, Conor Dooley <conor@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250820-2-v2-0-bd45e196d4c4@gmail.com>
+ <20250820-2-v2-2-bd45e196d4c4@gmail.com>
+ <20250820-diffused-impaired-ba776d39692f@spud>
+ <aKn6AYIAG9eUeSx2@codespaces-a28d22>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <aKn6AYIAG9eUeSx2@codespaces-a28d22>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7e948eb9-2704-433e-9b51-fd83716e37d1@oracle.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, Aug 22, 2025 at 07:41:39PM +0530, ALOK TIWARI wrote:
+On 23/08/2025 19:27, Denzeel Oliva wrote:
+>> This looks like a massive ABI break, where is the justification for
+>> doing it?
+>>
+>> Cheers,
+>> Conor.
 > 
+> Hi Conor,
 > 
-> On 8/20/2025 6:40 PM, Oleksij Rempel wrote:
-> > Run the ynl regeneration script to apply the kdoc generation
-> > support added in the previous commit.
-> > 
-> > This updates the generated UAPI headers for dpll, ethtool, team,
-> > net_shaper, netdev, and ovpn with documentation parsed from their
-> > respective YAML specifications.
-> > 
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > ---
-> >   include/uapi/linux/dpll.h                     |  30 ++++
-> >   .../uapi/linux/ethtool_netlink_generated.h    |  29 +++
-> >   include/uapi/linux/if_team.h                  |  11 ++
-> >   include/uapi/linux/net_shaper.h               |  50 ++++++
-> >   include/uapi/linux/netdev.h                   | 165 ++++++++++++++++++
-> >   include/uapi/linux/ovpn.h                     |  62 +++++++
-> >   tools/include/uapi/linux/netdev.h             | 165 ++++++++++++++++++
-> >   7 files changed, 512 insertions(+)
-> > 
-> > diff --git a/include/uapi/linux/dpll.h b/include/uapi/linux/dpll.h
-> > index 37b438ce8efc..23a4e3598650 100644
-> > --- a/include/uapi/linux/dpll.h
-> > +++ b/include/uapi/linux/dpll.h
-> > @@ -203,6 +203,18 @@ enum dpll_feature_state {
-> >   	DPLL_FEATURE_STATE_ENABLE,
-> >   };
-> > +/**
-> > + * enum dpll_dpll
-> > + * @DPLL_A_CLOCK_QUALITY_LEVEL: Level of quality of a clock device. This mainly
-> > + *   applies when the dpll lock-status is DPLL_LOCK_STATUS_HOLDOVER. This could
-> > + *   be put to message multiple times to indicate possible parallel quality
-> > + *   levels (e.g. one specified by ITU option 1 and another one specified by
-> > + *   option 2).
-> > + * @DPLL_A_PHASE_OFFSET_MONITOR: Receive or request state of phase offset
-> > + *   monitor feature. If enabled, dpll device shall monitor and notify all
-> > + *   currently available inputs for changes of their phase offset against the
-> > + *   dpll device.
-> > + */
-> >   enum dpll_a {
-> >   	DPLL_A_ID = 1,
-> >   	DPLL_A_MODULE_NAME,
-> > @@ -221,6 +233,24 @@ enum dpll_a {
-> >   	DPLL_A_MAX = (__DPLL_A_MAX - 1)
-> >   };
-> > +/**
-> > + * enum dpll_pin
-> > + * @DPLL_A_PIN_FRACTIONAL_FREQUENCY_OFFSET: The FFO (Fractional Frequency
-> > + *   Offset) between the RX and TX symbol rate on the media associated with the
-> > + *   pin: (rx_frequency-tx_frequency)/rx_frequency Value is in PPM (parts per
-> 
-> spacing for clarity (rx_frequency - tx_frequency) / rx_frequency
+> I reordered because the current IDs don’t match CMU_TOP:
+> the PLL mux select is in PLL_CON0, not CON3, which gave wrong/low rates.
 
-Thank you for the review. The comments you refer to are autogenerated
-from the YAML specs. Extending my patch to adjust or clean up those
-generated comments would mean adding side-quests outside the scope of
-the actual change. I’d rather keep this series focused, otherwise I risk
-not being able to complete it.
 
-Best Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+IDs are abstract, they cannot give wrong/low rates.
+
+> I also added DPU/CMUREF and a missing fixed-factor path to stop bad rates
+> and clk_summary hangs on hardware.
+
+
+Not really related to ABI.
+
+None of these justify changing the ABI or I don't understand the problem
+at all.
+
+Best regards,
+Krzysztof
 
