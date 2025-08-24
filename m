@@ -1,90 +1,78 @@
-Return-Path: <linux-kernel+bounces-783658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5250AB33053
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 16:16:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC49B33056
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 16:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E542E446CE9
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 14:16:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4B5117DCE6
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 14:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362461C4A0A;
-	Sun, 24 Aug 2025 14:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40C22737E6;
+	Sun, 24 Aug 2025 14:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Uhpwy7hv"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EvwUbrlA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3310C3207;
-	Sun, 24 Aug 2025 14:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5892320A5DD;
+	Sun, 24 Aug 2025 14:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756044997; cv=none; b=e7NPK/4EROrlb8B9OUc53ilYobKzcwWqC5qItgvyuNxic+Q1H24ArcA5b0bl79g+im0GU0I0IrjENjz3xrPkYjrx/LYIDTKV8zjX6Rtcs7LF5LiEayCJuwcDs10A+l4YFlCFbsnennhvTm5zgwJxGSpATQRaS/jXWXW7FmTSgQo=
+	t=1756045147; cv=none; b=pTl9+r58L/4S9990+4euZosqr1DY/Tm0LBkNPuA4THEh7+oIi6CsYAL45WvETCTRuf82eRoE6IElA9v4I1wQmognym1p26lCzSP87WXe1GXL6BDqjVQskmIwVADlqrRzKxjEmnlPN2qwnIGOitQ3//0KXFDOxDwS2POGa1DmCOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756044997; c=relaxed/simple;
-	bh=hDA1+sAAQznZuSvbhAqbA9uok3v3wVBCGUFLA2/9YtI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lTc5tnIlLFnq/rghpz6j2fY3VJNLjuK7S3PzJVzABItGYd5p7/1c0/pE3A9B5HjHrUSsfd5DKYWbAcwKDzmW2X5N6uwYBNCJbuQDBD8hqfq+wWxB7/RkRrrE/n5mG6jE4dkeVl0HJgbrZW75Op+HJ5uDuSxxrpJED+SZNHyhQVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Uhpwy7hv; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 5CE754E40C49;
-	Sun, 24 Aug 2025 14:16:32 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 2D7D3605F1;
-	Sun, 24 Aug 2025 14:16:32 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AC2091C22CC97;
-	Sun, 24 Aug 2025 16:16:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756044991; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=hDA1+sAAQznZuSvbhAqbA9uok3v3wVBCGUFLA2/9YtI=;
-	b=Uhpwy7hv6gf2ew5zGwaCumzcPZ88Y+0YZnvCAQuKOGEnisEZ08ywOK5hfJgGwMtc8TGxt+
-	1e9dEMHWC5h4KPjBceRUSuHEOmoQBNCTsLgDlIvuGe1l7fkHZ4ABjfbe+HCfLhOIrLV+ro
-	g1dmG07Fe7KAvnpqXUp9cjhYW8Ge1AkZ5FDxeCheO7ZrvMONs2X9faYIjECm80EFWl172B
-	BGtvgiyi/XbqCCh5NfX0/xD0P6PIcD7qKEBp/Z1papRcu9vYckbzMnX4QycvHYvuJlC5hi
-	bqqVw8x9GtooYqCzWzJZgwawiuwmtZ+4XyG7cR90ZrPhjstT87VEyGptBM8L1w==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,  Rob Herring <robh@kernel.org>,
-  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
- <conor+dt@kernel.org>,  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-  linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: interrupt-controller: marvell,cp110-icu:
- Document address-cells
-In-Reply-To: <20250823163258.49648-2-krzysztof.kozlowski@linaro.org>
-	(Krzysztof Kozlowski's message of "Sat, 23 Aug 2025 18:32:59 +0200")
-References: <20250823163258.49648-2-krzysztof.kozlowski@linaro.org>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Sun, 24 Aug 2025 16:14:42 +0200
-Message-ID: <87qzx0n6wd.fsf@bootlin.com>
+	s=arc-20240116; t=1756045147; c=relaxed/simple;
+	bh=PkBAKTxO/GbQ4pPwudHevH0p3Wyb2ak0OFTq6XZCBYg=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Tp89sgD+wRZVuGEJaxcMdt1GsBCSi2lngyYBiNF5ZGvBILtUiXmDpBFw0N5IvcgrLh98LC2p/xLf4XEAbjBun46TNmxH7mZwS3yXdai7nVaRmG4ArSDZTWVGI7s2/N+1fKHkpqtQZfj4mFQaHAyoXWSTJIpnDT2cb/Md/6gq/MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EvwUbrlA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD7A9C4CEEB;
+	Sun, 24 Aug 2025 14:19:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756045146;
+	bh=PkBAKTxO/GbQ4pPwudHevH0p3Wyb2ak0OFTq6XZCBYg=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=EvwUbrlAN09bNrhrC1QV+cCKgmVFVt6TDzWSyGfHcO6c3Ld+U7YVRcEixSIa7P0tC
+	 9A1N1UVPGx2Fgq5fGrlcndxQL0I2l7Q8KdHCbUPSwa6BxgRnAYs+muX1JsCA3Pi8XQ
+	 UKrWrQkk/ZCLJgkLGhL2EGjcPT/TVKF3/7mrN75gONp4hgEKb++yoLYMuFpjRNaNWY
+	 wupIqc2ybGpXjpEjMA+Dg6WA/0SJntIEuVdympRttr1xJqXmtivEJo3dyW88jqmjgq
+	 KO3LTPAqDwmuHTHwQE4vJ9Dqh3qZG28VgOm5TEGgAXyjKSkfIG4wokcIe2za15wNl+
+	 wsaPBPnWNNT5A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EAB383BF69;
+	Sun, 24 Aug 2025 14:19:16 +0000 (UTC)
+Subject: Re: [GIT PULL] Modules fixes for v6.17-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250824064922.41894-1-da.gomez@kernel.org>
+References: <20250824064922.41894-1-da.gomez@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250824064922.41894-1-da.gomez@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git tags/modules-6.17-rc3.fixes
+X-PR-Tracked-Commit-Id: 5eb4b9a4cdbb70d70377fe8fb2920b75910e5024
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 14f84cd318bed3fc64c6e4ee6b251f9b6a8e2a05
+Message-Id: <175604515495.2399738.7893584771825606023.pr-tracker-bot@kernel.org>
+Date: Sun, 24 Aug 2025 14:19:14 +0000
+To: Daniel Gomez <da.gomez@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, Thorsten Blum <thorsten.blum@linux.dev>, Kees Cook <kees@kernel.org>, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi,
+The pull request you sent on Sun, 24 Aug 2025 08:49:17 +0200:
 
-On 23/08/2025 at 18:32:59 +02, Krzysztof Kozlowski <krzysztof.kozlowski@lin=
-aro.org> wrote:
+> git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git tags/modules-6.17-rc3.fixes
 
-> The CP110 ICU children are interrupt controllers and can be referenced
-> in interrupt-map properties (e.g. in
-> arch/arm64/boot/dts/marvell/armada-cp11x.dtsi), thus the nodes should
-> have address-cells property.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/14f84cd318bed3fc64c6e4ee6b251f9b6a8e2a05
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Thank you!
 
-Thanks,
-Miqu=C3=A8l
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
