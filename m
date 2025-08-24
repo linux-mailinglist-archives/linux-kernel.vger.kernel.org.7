@@ -1,185 +1,161 @@
-Return-Path: <linux-kernel+bounces-783630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7463B32FEB
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 14:37:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B11AB32FEE
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 14:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7B8720683D
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:37:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3AC1444A56
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 12:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639C72D7390;
-	Sun, 24 Aug 2025 12:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555962D97BD;
+	Sun, 24 Aug 2025 12:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U8E+MzeP"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="IFoGjT10"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385B92B2D7;
-	Sun, 24 Aug 2025 12:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2944255F39;
+	Sun, 24 Aug 2025 12:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756039027; cv=none; b=tiHHTOOma8dTf/15d+CO2GpaeqhOTCmdKTwpd+oSQJA55O+NCsZLhFr55IbVo2E4ihXaOB9oJ4bh3gwMOVJ/mlpKdG9u29hLjcr+bl2XE4mUPOrKJzGJqeWwTtWaTLylCbDIiFiFHSPv+Y5UCvgjf88sx9PqNy1oE78iMpXlQWQ=
+	t=1756039275; cv=none; b=nb/M4BLw0J/zKoX002017cSDTRPCaA7/b2ei6LoZcouLTncCtmej8Vlu8IP/S8tLXRHm/V0eVdG2tQAwUKwM1Mk4oNIPr2TCDxsJNeW/341VGxL4WTMX7vjIYAajS8gV/5jS2GjalpAq422Y0oo2ImMMbnBmIk91P+RHrKGwpe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756039027; c=relaxed/simple;
-	bh=UKWtuPYTxNHdFvtfzHlR5rgBM6cG3Z9Sqr1MtSciDdg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=B1rrIu+IBm+KF4WEo1X2nqoKn4fpqyxWCxEjkE2p4yLLt2C5TzsO4ANVgGAMG3sfyYYJr8nUkp65cLAEl40Wkj9PeF0VlYTfrA5bUiq9MNB68obflVdFzbx2ZLe2RKpLP5BEfW0w6wH3FRintTqMImyXu7zE+q9Zfr8Agq1X5bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U8E+MzeP; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e93498d435cso3409729276.1;
-        Sun, 24 Aug 2025 05:37:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756039025; x=1756643825; darn=vger.kernel.org;
-        h=in-reply-to:references:to:cc:subject:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vVrYLaOumo8kIkzX/KWXeeqenR1JWl7YJ864174T5ZQ=;
-        b=U8E+MzePlZyt6kR7PKyRf9EKGA5TJ/6LydP9h5uKRr28/R4teHTpPRdPGG7yRW1S96
-         7E0qrXUgKgR/WVeXO4ndEW156FNCvPuAm8fVVLrBFFq7Qm9Bi9MOANSXSHquUqpLqii5
-         tP71pGlNSAPzQcz1+simIz0oc0RPnqbjAg7xqAy7eV36w8fVKOiCEaCLESt2CdB0ZZEF
-         2wg4iltzK7rIph/XOZE+ktT71wRUXWZt29HmTTCo1o6CjDhhF3UvDkjr8HtkB6WEWOnR
-         jZDHzayood8n+HuLGZI6QKfbfctjNiwuarXmolcv7V4MDvuzhwSLNYQDjEt/86IocEBs
-         CTcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756039025; x=1756643825;
-        h=in-reply-to:references:to:cc:subject:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vVrYLaOumo8kIkzX/KWXeeqenR1JWl7YJ864174T5ZQ=;
-        b=JHW5COTeoCfnIdbOBjBGrVjlXnPTfb31NA/JM0sbTJe50zUrpalX1KfOoDWQ5n35SD
-         u8Ggm5xEMCPIfDFXO/TnnFq8CJXgZAMt7JX6MK2Kleb7VCRiXaJUG0qSF5eLduHzaw7j
-         aiQET4vyfsTuniI+Cn74zNB9+8vwKGZ07dS8TwtMx6GBvapApOw1RcshbE+USDctdHXN
-         lh6lcsvsSOUHmMg4zuWjAk6FfUCt2zvMYpcqkr3ZpdmVCdGLe2mMoeARIv3KlrSqgRo1
-         pky/54mFuKwPhvHUVqv9sbW8JTZC4IMWMNtYV2ezWInT2VwCxrQ/q9KSNDx6RyYqfXxR
-         4lPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/i3qHHUxv97zbqBrhbSe/XLs0/v8FWrseb6kZDMhBFlLBUKyMy6/x0flmSN514EV0QDLKcHXErcA=@vger.kernel.org, AJvYcCXgPx7uyDrk77+rWgORrGloHjXk6t0F3Ia7XGHvMEVltgTT5sXiXQq7eGU7dEZXjr4AlT1jvMZjWuWumOoc@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN3sEQ9zJ0fWvvXNBQfko6VkNVVBqZqOLkPMk6peZijiEBJv3v
-	QviR1bpffedFUSGPvmrhrxlhHeBztDf1pjsjHu2CHzmidUQAwWZ10I4H
-X-Gm-Gg: ASbGnctMlTubIlnubxNWF6FznANfVBEwLECLbFSw/jEnVKb3XAUZ5nyDINsL62iwUk4
-	lejDpf17Jp78otpdO5EF2488E/gKWUkPT7mRV6UPHZIpO9IVWzhKrJpcuZ7G5E+DqJTCGq2o3YX
-	4OS7MgeR/NSZ/VHpVO+oiqEKq8LiFRFJFeWMWW5umSdAaasgTtFAZLmU/HDsHySZxelRKohdyqd
-	kG8BPAtC7JQrnHydw1hUUrhKLNwNpKTYAa0zT+gQ2Cs/0FaO5q+uiZmgq1z9BcHsvVNfkSSyLI3
-	zhS6eViOqaFTYCFhVufZbVg0fgfTFu40dPcAMCYbnfvCt7HDpYHTGsrUUO2FeGNsy/vWOrVfg7j
-	AleonBBTuXNaj3701A2oPdEj0bg50
-X-Google-Smtp-Source: AGHT+IHHWjC8qOT4Oi2eYAHCKIBiFYj6dF5DkKOLHX8nPNZYjrjycduDD7FWBxGdo3pOjWUbgIex5g==
-X-Received: by 2002:a05:690c:a08c:20b0:71f:f359:6ca2 with SMTP id 00721157ae682-71ff3596fe7mr37428677b3.52.1756039025026;
-        Sun, 24 Aug 2025 05:37:05 -0700 (PDT)
-Received: from localhost ([14.1.81.27])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71ff18e31acsm10981137b3.67.2025.08.24.05.37.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Aug 2025 05:37:04 -0700 (PDT)
+	s=arc-20240116; t=1756039275; c=relaxed/simple;
+	bh=9xVHOw87bJa7ylZnZeZzWCvNeCzePjEsFVtSqjXXCNs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=A+1dNd3B4YdNmK9020J2kaKPwmwQcBjZOha+8u+K/GNd18lVLIzEPbdFtNTRc2VGie4bsSS+rlAFaN7XPxQlbA9G0or2VnHqv2ZxqMpNicFjo5HLAbr347t9Ue0casXHT7yHADrr/757lOqchVvQ8GdTzPQiQBx/nUw54/qz9k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=IFoGjT10; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1756039264; x=1756644064; i=markus.elfring@web.de;
+	bh=Tqa50LUKbPjx5CllJ9Yt080fvO8tlmlu1B/nkJ0AjBY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=IFoGjT10L7jZ+juLGHbeW1ElBZNl7XDpHr5qxyF3T4iXW08WVlyZyg2wHco8QsPc
+	 cXtjGg+BxW6NBK8expGK2yquE34b3Gjia11NK4rHSTRVd8uNwv0kpowxWh2lZ2CtN
+	 s80kaumvSogL5pgQHnr9hIC/MV5UZ4OJDJuhpaR9UOFg9LWKgnDtVnRz+2I3tCg2P
+	 Gldar9b2RT9Y6owzuI0U3WanAEILYYkm0g4A0uFmLLHjX1mHgZUD0mgSAgkeyB/L0
+	 AgzvIDaQAluLRTUjnRcJB6TteWXAPm2TbVYGhAj5crxodBnatzdUlUxf+Ob9ZS4wH
+	 ji62CkLusdrxfURVRg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.216]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1My6lX-1ubG9P3GmN-00vMZR; Sun, 24
+ Aug 2025 14:41:04 +0200
+Message-ID: <574a6fa0-00a0-43c2-8e66-cc6443f5cfd4@web.de>
+Date: Sun, 24 Aug 2025 14:40:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: cocci@inria.fr
+Content-Language: en-GB, de-DE
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: =?UTF-8?B?W1JGQ10gQ2hvb3Npbmcg4oCcc2VtYW50aWNz4oCdIGJldHRlciBmb3Ig?=
+ =?UTF-8?Q?SmPL_script_parts=3F?=
 Content-Type: text/plain; charset=UTF-8
-Date: Sun, 24 Aug 2025 20:36:58 +0800
-Message-Id: <DCANVO3ZBHUN.A8E9WABNLHG4@gmail.com>
-From: "Javier Carrasco" <javier.carrasco.cruz@gmail.com>
-Subject: Re: [PATCH 2/2] iio: humditiy: hdc3020: fix units for thresholds
- and hysteresis
-Cc: "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Chris Lesiak"
- <chris.lesiak@licorbio.com>
-To: <dimitri.fedrau@liebherr.com>, "Li peiyu" <579lpy@gmail.com>, "Jonathan
- Cameron" <jic23@kernel.org>, "David Lechner" <dlechner@baylibre.com>,
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, "Andy Shevchenko"
- <andy@kernel.org>, "Dimitri Fedrau" <dima.fedrau@gmail.com>
-X-Mailer: aerc 0.20.1-4-g02324e9d9cab
-References: <20250821-hdc3020-units-fix-v1-0-6ab0bc353c5e@liebherr.com>
- <20250821-hdc3020-units-fix-v1-2-6ab0bc353c5e@liebherr.com>
-In-Reply-To: <20250821-hdc3020-units-fix-v1-2-6ab0bc353c5e@liebherr.com>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:k1RvGBeE108ZCUP1seDcatK/mCtKGC1li0OfncC2/yvciZBuKRt
+ nVzf4cuLAC2xcGxyBpmaKd1t7dav+a41oQzMczwfvXjwC0WihzW44VWfFOxi490EIn3dtHR
+ PRpRAlij62zWOq/P4L3QbEMVnhB20vwX51usQ+089rQKmB1JzTaneSGwKE7C7G+Ahw/bCUh
+ +8JDIqRqXkQGvNOXOMQKw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:+l5MbhXVxTY=;CnCmaCD5KqCYjyFSfAWFfvfSZ0g
+ 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
+ kKxjMIo=
 
-Hello Dimitri, thank you for your patch. A few comments inline:
+Hello,
 
-> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
->
-> According to the ABI the units after application of scale and offset are
-> milli degree celsius for temperature thresholds and milli percent for
-> relative humidity thresholds. Change scale factor to fix this issue.
+A bit of information is provided about special =E2=80=9Csemantics=E2=80=9D=
+ (also in the manual
+for the semantic patch language).
+https://gitlab.inria.fr/coccinelle/coccinelle/-/blob/face14907c0791b93397d=
+5788d2a94c7c6a4b886/docs/manual/cocci_syntax.tex#L1007-1014
 
-I miss some explanation of what is going on (i.e. wrong) at the moment,
-the scale factor that is being used and what results are being obtained.
+Usage possibilities are indicated for the key words =E2=80=9Cexists=E2=80=
+=9D and =E2=80=9Cforall=E2=80=9D.
 
-> @@ -379,12 +379,12 @@ static int hdc3020_thresh_get_temp(u16 thresh)
->  	 * Get the temperature threshold from 9 LSBs, shift them to get
->  	 * the truncated temperature threshold representation and
->  	 * calculate the threshold according to the formula in the
+* Would any more software users like to discuss and clarify safer applicat=
+ions
+  of these system configuration parameters?
 
-Having used 65535 back then without explaining why, or at least without usi=
-ng
-a #define was not the best idea. It's difficult to understand why it is use=
-d
-without getting into details.
+* Would you be looking for better =E2=80=9Cconnections=E2=80=9D according =
+to computation tree
+  logic (or linear temporal logic) variations?
 
-13107 is even less obvious. I believe you divided 65535 by 5 everywhere in =
-the
-code, but it's not clear why.
 
-I'd suggest a clear definition at the beginning of the code because it
-is used in different parts of the code, after having explained why it
-is necessary in the commit message as I mentioned before.
-
-> -	 * datasheet. Result is degree celsius scaled by 65535.
-> +	 * datasheet. Result is degree celsius scaled by 13107.
->  	 */
->  	temp =3D FIELD_GET(HDC3020_THRESH_TEMP_MASK, thresh) <<
->  	       HDC3020_THRESH_TEMP_TRUNC_SHIFT;
-> =20
-
-Again, it's difficult to understand why everything is divided by 5.
-
-> -	return -2949075 + (175 * temp);
-> +	return -589815 + (35 * temp);
->  }
-> =20
->  static int hdc3020_thresh_get_hum(u16 thresh)
-> @@ -395,12 +395,12 @@ static int hdc3020_thresh_get_hum(u16 thresh)
->  	 * Get the humidity threshold from 7 MSBs, shift them to get the
->  	 * truncated humidity threshold representation and calculate the
->  	 * threshold according to the formula in the datasheet. Result is
-> -	 * percent scaled by 65535.
-> +	 * percent scaled by 13107.
->  	 */
->  	hum =3D FIELD_GET(HDC3020_THRESH_HUM_MASK, thresh) <<
->  	      HDC3020_THRESH_HUM_TRUNC_SHIFT;
-> =20
-
-Similarly, multiplying by 20 (100/5) looks weird for a percentage.
-
-> -	return hum * 100;
-> +	return hum * 20;
->  }
-
-...
-
-> @@ -630,7 +630,7 @@ static int hdc3020_read_thresh(struct iio_dev *indio_=
-dev,
->  		thresh =3D hdc3020_thresh_get_temp(ret);
->  		switch (info) {
->  		case IIO_EV_INFO_VALUE:
-
-MILLI, as suggested for [1/2]? The same would apply to the following
-diffs.
-
-> -			*val =3D thresh;
-> +			*val =3D thresh * 1000;
->  			break;
->  		case IIO_EV_INFO_HYSTERESIS:
->  			ret =3D hdc3020_read_be16(data, reg_clr);
-> @@ -638,18 +638,18 @@ static int hdc3020_read_thresh(struct iio_dev *indi=
-o_dev,
->  				return ret;
-> =20
->  			clr =3D hdc3020_thresh_get_temp(ret);
-
-Thanks and best regards,
-Javier Carrasco
+Regards,
+Markus
 
