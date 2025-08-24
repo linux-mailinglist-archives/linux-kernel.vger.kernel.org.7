@@ -1,94 +1,114 @@
-Return-Path: <linux-kernel+bounces-783477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98313B32E1D
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:08:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 491AAB32E1E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 10:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C1B7177941
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:06:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BFB67AAB44
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 08:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8D624C664;
-	Sun, 24 Aug 2025 08:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A4A2566E7;
+	Sun, 24 Aug 2025 08:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UyfkA1IK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="eg/x5u7K"
+Received: from r3-11.sinamail.sina.com.cn (r3-11.sinamail.sina.com.cn [202.108.3.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7E1393DF4;
-	Sun, 24 Aug 2025 08:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75115245021
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 08:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756022791; cv=none; b=C7uUn8bRUk1qrkdlF3re6numJAj6ZkR/EHEMMirLMxPeuQVHa+EiY/ccBQYLunrkGzoOIevJnhDtWsk9UtPtAE6ThmblehagVrzv/TyuzgobWJx9Br1BQSn8TYLCf0KKZNQJT3TOMKJZRskNM5SMsthseUYS7PicsNJ/11Sd4sI=
+	t=1756022983; cv=none; b=u+Nt6Jm5FNJ624WxVCNzQTCrhjb+PbUrQGWNWiCv0Am+g+f/Z/tPttEcXSsieboxNacNVykyx2TxKWezc2JtWbsOL80Xw9A82j1+4dJd9H8axfwazdsrS5O3OPxdni1sdG4LWQUw6pm2z+LeWoLyQSbBAICeYruIM6RaJLnz2r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756022791; c=relaxed/simple;
-	bh=w4ru9Ckeny+k2OjrihK96QUfV39aJCsiSbwXD6qXk2U=;
+	s=arc-20240116; t=1756022983; c=relaxed/simple;
+	bh=qOac4q+/F3Tv0D9k6q2U9aBtmfT33bqNHsrBBnc1GgA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=reVVe281bdpCDOmMc1TjT+2AY9Zy5kjYniGCl1owiB8RfCxA8ytS26ZwY7XcMlopc3BlLj7BbmLx/pIPG3tQQT7vg9aLE7J2nG6uFW9Jzl4/V/+kN0i3nNUVWLbqJYl0WPWCBIW+7YsamJt4jy1lof5LIikjwhekkbyk0yMI318=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UyfkA1IK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DA5EC4CEEB;
-	Sun, 24 Aug 2025 08:06:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756022790;
-	bh=w4ru9Ckeny+k2OjrihK96QUfV39aJCsiSbwXD6qXk2U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UyfkA1IKeCe9nFAgJASvzDeTSQFFLMdxvtPdE8lQ1fz3KMF+esfxzvs8S3EwwpZxb
-	 WvjPWhOqVKeIqHIQg5zQOH14aZEtGuPir9JdDmcroHYz0p+/2/1EubhwTxXI0eG/vC
-	 3H8oY5C8XRqM6EXic9ENiY8jRJOjU97vKNGuS/mtBfwZieFQURoxnU/pds5S5bDmtx
-	 6Hwq72VKOy/JuQjWA4mXoAiXGVK71DMYFkXziIfrgyZJzreuo0WO6pLrZeN+TCP9XO
-	 06WSlnAswM2HRZdGVJxuzUJvbj7X2tckTZVomTGKMTdJJBFPGliuEbgEbByEeOqQqx
-	 hfTnaEfuTNfPQ==
-From: William Breathitt Gray <wbg@kernel.org>
-To: Vignesh Raghavendra <vigneshr@ti.com>,
-	Julien Panis <jpanis@baylibre.com>,
-	Andrew Davis <afd@ti.com>,
-	Waqar Hameed <waqar.hameed@axis.com>
-Cc: William Breathitt Gray <wbg@kernel.org>,
-	kernel@axis.com,
-	linux-iio@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] counter: ti-ecap-capture: Use devm_pm_runtime_enable()
-Date: Sun, 24 Aug 2025 17:06:24 +0900
-Message-ID: <175602272525.419332.11059830322724662200.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <pnda54bjmij.a.out@axis.com>
-References: <pnda54bjmij.a.out@axis.com>
+	 MIME-Version; b=dshY3OfuIVk8ucIA3EDKhee6k+cMFP8GzZwKk6/XOgYkOKQHHNKvHkGZ737o24nrOcQCoUxFWGIn3B2Ca9ZjWUrCt/nLzqSLRdCJN5jN8+hfWLjnxzAOF7Qz+9pDkyaAbel5ph5IAk/KMdeJjCVwfdDIVSGuCVzKvkERZm+qmkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=eg/x5u7K; arc=none smtp.client-ip=202.108.3.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756022977;
+	bh=tP53oDkScK96De1KBNJ3EFrOcqSfqEtQvJTTaqhv5eM=;
+	h=From:Subject:Date:Message-ID;
+	b=eg/x5u7K8nkvVTcmg8P0odfD1HZpXLd+G0DiiaUijKOcfyrEgrKZ9xKsn2KMnoLSx
+	 RcjlkAL/Kp6uNo8TL+rdpFXjIx9we3ZRepSA+aKHIJ7KyJAV0fBd3oxYUUhSCxwiIn
+	 UujUa+Fx/fGsE1fmfTrcbspl0cxQvsLyacd/yszQ=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 68AAC8B500006E1C; Sun, 24 Aug 2025 16:09:27 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 2920256292106
+X-SMAIL-UIID: 5C7005CECBC04299B6E7991493C2D2BE-20250824-160927-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+a658d41cf8564471775e@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [media?] [usb?] KASAN: slab-use-after-free Read in v4l2_release (2)
+Date: Sun, 24 Aug 2025 16:09:16 +0800
+Message-ID: <20250824080918.5312-1-hdanton@sina.com>
+In-Reply-To: <68aaae76.050a0220.37038e.006e.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=946; i=wbg@kernel.org; h=from:subject:message-id; bh=Oqx4fBtYiwXvpqHbSIke+fECeLWTZ3+Nr3xoytI/CSE=; b=kA0DAAoWtUhWyr4SIysByyZiAGiqx9mhyE/1dwH1I9QweXj8488yUDTwsGBGpFOJaECpOkrLZ Yh1BAAWCgAdFiEEjTfN3eDSJSj46J+2tUhWyr4SIysFAmiqx9kACgkQtUhWyr4SIyvPBQEA9CzZ o0AVGOpr+VaN7a9hvQ4A1cv8H6OIidC4hho9lJwA/iBy4A7sW/siQEDyGMQ5q/OTo03I9DQ+hUG zkxseHSAO
-X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
 Content-Transfer-Encoding: 8bit
 
-
-On Thu, 07 Aug 2025 15:21:08 +0200, Waqar Hameed wrote:
-> There is no need to register a manual `devm` action for
-> `pm_runtime_disable()` when `devm_pm_runtime_enable()` exists. It does
-> the same thing (but also calls `pm_runtime_dont_use_autosuspend()`,
-> which should be fine here).
+> Date: Sat, 23 Aug 2025 23:17:26 -0700	[thread overview]
+> Hello,
 > 
-> Moreover, when `devm_add_action_or_reset()` fails, it is due to a failed
-> memory allocation and will thus return `-ENOMEM`. `dev_err_probe()`
-> doesn't do anything when error is `-ENOMEM`. Therefore, the call to
-> `dev_err_probe()` is useless. Note that `devm_pm_runtime_enable()` has a
-> tail call to `devm_add_action_or_reset()` and thus returns that value.
-> Therefore, replace `dev_err_probe()` with the returning value.
+> syzbot found the following issue on:
 > 
-> [...]
+> HEAD commit:    8d245acc1e88 Merge tag 'char-misc-6.17-rc3' of git://git.k..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15f37062580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=292f3bc9f654adeb
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a658d41cf8564471775e
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14c267bc580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a8c862580000
 
-Applied, thanks!
+#syz test
 
-[1/1] counter: ti-ecap-capture: Use devm_pm_runtime_enable()
-      commit: 51548c36b37d0e84bd43a5f20bcbc36f70e61c5a
-
-Best regards,
--- 
-William Breathitt Gray <wbg@kernel.org>
+--- x/drivers/media/usb/hackrf/hackrf.c
++++ y/drivers/media/usb/hackrf/hackrf.c
+@@ -1345,7 +1345,7 @@ static int hackrf_probe(struct usb_inter
+ 		const struct usb_device_id *id)
+ {
+ 	struct hackrf_dev *dev;
+-	int ret;
++	int ret, registered = 0;
+ 	u8 u8tmp, buf[BUF_SIZE];
+ 
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+@@ -1487,6 +1487,7 @@ static int hackrf_probe(struct usb_inter
+ 			"Failed to register as video device (%d)\n", ret);
+ 		goto err_v4l2_device_unregister;
+ 	}
++	registered++;
+ 	dev_info(dev->dev, "Registered as %s\n",
+ 		 video_device_node_name(&dev->rx_vdev));
+ 
+@@ -1520,7 +1521,8 @@ err_v4l2_ctrl_handler_free_tx:
+ err_v4l2_ctrl_handler_free_rx:
+ 	v4l2_ctrl_handler_free(&dev->rx_ctrl_handler);
+ err_kfree:
+-	kfree(dev);
++	if (!registered)
++		kfree(dev);
+ err:
+ 	dev_dbg(&intf->dev, "failed=%d\n", ret);
+ 	return ret;
+--
 
