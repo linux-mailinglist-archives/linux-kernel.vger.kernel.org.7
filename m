@@ -1,228 +1,143 @@
-Return-Path: <linux-kernel+bounces-783712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D4C1B3318D
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 19:00:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AFD0B331D0
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 20:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8AAA3BAF52
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 17:00:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F3F3201657
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3511F3FE2;
-	Sun, 24 Aug 2025 17:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E552D77FA;
+	Sun, 24 Aug 2025 18:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X8ChUHnW"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFTb7IIC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B1417A305
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 17:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4952E0B5C;
+	Sun, 24 Aug 2025 18:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756054829; cv=none; b=dXvssJUkK/6XizUV/r5WBxq/kHCJAL3WsgHVYONaKFAWHHljbptJwVOAKmMDxphPpnkuR0lTSmI1UQX73LwilG49Fw+0WyXHaQz7ITwivittpC4uarTJWMkzuKW0Xa8czxq2Xrq3wCNc1vKtsTSkYVtWCo9TPaj2ZQ/vgkFBCjM=
+	t=1756058935; cv=none; b=W7R4ZX8YmAVcRWuoNFNiQSyyQ/b27eRDB2i20FWIjjPbMNW8JgHps5atEDxJtLzaDnvl9WdR9tQCIpky5SKoQKNJUiBCSaA9lgwX0yD4RhOqRvVPx4MCq/RUjlxGsESEEBdm4VGv3zJpBDOEjFpoW6GG1cx0owVW+r8dmroXIv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756054829; c=relaxed/simple;
-	bh=GKVaIdjj6FdamcQ7fMJg8GPhgKUuGxqbSrrQbxtnKVA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GR0MAY8xV3Sdzb4vy+Q10LjDF37RDWAc6jn4e1s1sxxlMmezey1mpXo76yItuk51HsR/ls9/g5tNKYZ/kv/tOuqCSMYZVO374UQ8LACwqUgDMy5LEkWkkQ1sFVdesFDigbUslO5Jw87cHeq9uzAM89fum3CjDeuOJrHj2WX3U7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X8ChUHnW; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-77031d4638bso1648234b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 10:00:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756054827; x=1756659627; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jmGleacCOfQU4OHkTtfI/0sWYR+WQk6W35qBemTqwCw=;
-        b=X8ChUHnWgsAkCBnDcbqsMAXFgqkmhOlC0krh/QoTpuJkcv/7rUWB4UMEn09Jc8i0L0
-         TXVgFI5kEHpPlErX1rhVB/Lox43/o6bHV9wPaixj2iLKY03JniEDGO66KiuhoR7FKjMb
-         8PuUsK3DFLxbojOgbwSjf2z0DRNkjp+t6m44XGEWE1U/aeo+RZre/Vf5/QkrQklN4efY
-         8jQ7AftR8J300v5i/FehN89xBSJq3J48s2UBcwSyOhgA3ltS++szpaSFinDw0+3lXMwZ
-         +GvULg7a8a9hEwMoHUBme4lskEt2cSAYeYYbeojCPVRkvVMvOPdjGEE5ir9rbGYE9me1
-         3F+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756054827; x=1756659627;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jmGleacCOfQU4OHkTtfI/0sWYR+WQk6W35qBemTqwCw=;
-        b=i7SEPwUoGsFIq9CZmVBd+q5KyR6APnDyvyFSW0a83Lk581mR+ZGuCtyW008mOy1PQh
-         vzUTmlY2Smjzp95Jt6596Mi4YFjJTjzKJJWhaVWmtX0rsq/1cbYgkgTLzCDBqFGbhRp7
-         tNoMKPDjXxjmubLwHD6sUvvET+R+LQzwswWB7DRDGVQPkY6DtAqeeZ4bvUp/LDiFm+IE
-         vAETSaAZ91Cz1tJyNxLTiSk8wf9nEVQ2xMXhQYi2/WTDjcVlaz04YfRVpfw8H6CcZ6fE
-         Wcehp956kvWbPL56tNzsdZ5GgEpQRd8T8fVZosd39BBXoAYoi89wF0RTTp3F7J5s2NjV
-         Wj5g==
-X-Gm-Message-State: AOJu0YwXxsx+YXFCMjMeMW5itEL19VRQyEERLgcjWbq45MUCouJ7bLWW
-	No164XLgFM8Pa0fVnK+ORCV5mZUgnEkml/S75Hc8Ehl/0tOWslWylQXO
-X-Gm-Gg: ASbGncu6RqEBqOkWPe07aexM7kEhZfO6nXHEksyzq/E8GiNg1wjdfYLRH16nLm9x3FT
-	NOD68iWyjpuCYVDMxqcpK6t3+Drbe36N/HQ033YKsDI6FAPKdxh206jY3HrN2ua/IDq5JkV1h6M
-	7u5KpalaAv2QaGnaJpjooBJtOjQrFcio1otpsigun9w3yvjdO1S48LfQSPrYaM96/kEbt2PHGW5
-	50OLvTCPUcI/tChQpFK76C6Ib4+Lsx++fUU0uvmX95+UzPe83DyHp30NYg/mgh/WL/WdDLjlA+x
-	gQ1745MVI08+TFvLPTpHwqPOO2GjsPhJtvUmUBox7BpS4+wLonCORxkiPcusNV2Jo6THz4c/rey
-	GjgvQli6cvdRwtHnJij5oi+a2VQ==
-X-Google-Smtp-Source: AGHT+IElqKVPYilmmzfYji1Bu0+XXz6AiqIHE4MkEAgx0v7b5N4DRbNroLA1jElG36TSbsTlvMf1Ow==
-X-Received: by 2002:a05:6a00:6209:b0:748:31ed:ba8a with SMTP id d2e1a72fcca58-7702faaef8fmr9063892b3a.15.1756054826274;
-        Sun, 24 Aug 2025 10:00:26 -0700 (PDT)
-Received: from CNSZTL-DEB.lan ([2408:8362:245d:6225:bc4b:53ff:fead:2725])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7703ffb47b9sm5163161b3a.3.2025.08.24.10.00.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Aug 2025 10:00:25 -0700 (PDT)
-From: Tianling Shen <cnsztl@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Mark Brown <broonie@kernel.org>,
-	Tianling Shen <cnsztl@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Subject: [PATCH v2] mtd: spinand: add support for FudanMicro FM25S01A
-Date: Mon, 25 Aug 2025 01:00:13 +0800
-Message-ID: <20250824170013.3328777-1-cnsztl@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756058935; c=relaxed/simple;
+	bh=Dz7Bfvd9yeGmrDyimftkClMOiIZZVoc2BNo3QLV9xDQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KFV8tQEtvDWnDMGlUe2/tfw7AJtE7qjH6R0F0jMVoXgkAA/0pAxUS/EZwXIF4puwG5EQeP20HxC3Bl/tpBoL5Sz3gFBezBJpwlgaKDRU4IKmONmLx57Fy+rdRh134QTEGxPlQahi1anOOgzN8+LHR8lY4tMEVXlsuM6oRLg8otw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFTb7IIC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBDFBC4CEF4;
+	Sun, 24 Aug 2025 18:08:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756058935;
+	bh=Dz7Bfvd9yeGmrDyimftkClMOiIZZVoc2BNo3QLV9xDQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PFTb7IICSB6VIZsIJZDJjVob3tQ8CZmPW74JzIJbagvutRUdosnP1xIZYMfHcp+uO
+	 CwIpNl+GLqcBnJJWA2kUpvAA+Dr4o8A6PuXGfGpQd1Ghh7aZuUc4Fx1kNGdMbh38Vx
+	 DgIog86BnKa/u+gIkPikmIPtDj6WB/8mugwhTwH0MzJN1RFfSB1c7NOqno3pbTI8oY
+	 J9QqmVUjFEbZ8BgvxUrR2VRMtwUP0RuSsfdolrAC83m3Or57a504tnCRBNIszNhNTk
+	 LjXhbZSswZvxq7QFi7qk01rpRLEpz18I+lWe163Ol0kgEoyRQHBK1IhGlL3FWvy9P+
+	 pZg0MdYWeZ2gw==
+Message-ID: <b7bfe424-2cfd-4897-ab0d-69c8e92acf24@kernel.org>
+Date: Sun, 24 Aug 2025 19:00:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: firmware: google,gs101-acpm-ipc: add
+ clocks node
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Peter Griffin
+ <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ willmcvicker@google.com, kernel-team@android.com
+References: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
+ <20250819-acpm-clk-v1-1-6bbd97474671@linaro.org>
+ <20250822135521.GA3487754-robh@kernel.org>
+ <ebea336e-c43f-4519-b2c6-4f8812e29448@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <ebea336e-c43f-4519-b2c6-4f8812e29448@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add support for FudanMicro FM25S01A SPI NAND.
-Datasheet: http://eng.fmsh.com/nvm/FM25S01A_ds_eng.pdf
+On 22/08/2025 17:03, Tudor Ambarus wrote:
+> Hi, Rob,
+> 
+> On 8/22/25 2:55 PM, Rob Herring wrote:
+>> On Tue, Aug 19, 2025 at 11:45:36AM +0000, Tudor Ambarus wrote:
+>>> The firmware exposes clocks that can be controlled via the ACPM
+>>> interface. Describe the clocks exposed by the APM firmware.
+>>
+>> ACPM? APM is Advanced Power Management aka the predecessor to ACPI?
+> 
+> ACPM (Alive Clock and Power Manager) is a firmware that operates on the     
 
-Signed-off-by: Tianling Shen <cnsztl@gmail.com>
----
+Please unwrap the acronym in one place of bindings commit msgs.
 
-Changes in v2:
-- sort spinand-objs.
+> APM (Active Power Management) module that handles overall power management                              
+> activities. APM is built around a GREBE processor.
+> 
+> In linux we have an ACPM protocol driver that communicates with the firmware
+> via mailbox channels. It's similar to arm,scmi if you want.
 
----
- drivers/mtd/nand/spi/Makefile |  2 +-
- drivers/mtd/nand/spi/core.c   |  1 +
- drivers/mtd/nand/spi/fmsh.c   | 74 +++++++++++++++++++++++++++++++++++
- include/linux/mtd/spinand.h   |  1 +
- 4 files changed, 77 insertions(+), 1 deletion(-)
- create mode 100644 drivers/mtd/nand/spi/fmsh.c
+Rest of Rob's comment seems valid, so this also invalidates the DTS.
 
-diff --git a/drivers/mtd/nand/spi/Makefile b/drivers/mtd/nand/spi/Makefile
-index 258da42451a4..6d3d203df048 100644
---- a/drivers/mtd/nand/spi/Makefile
-+++ b/drivers/mtd/nand/spi/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
- spinand-objs := core.o otp.o
--spinand-objs += alliancememory.o ato.o esmt.o foresee.o gigadevice.o macronix.o
-+spinand-objs += alliancememory.o ato.o esmt.o fmsh.o foresee.o gigadevice.o macronix.o
- spinand-objs += micron.o paragon.o skyhigh.o toshiba.o winbond.o xtx.o
- obj-$(CONFIG_MTD_SPI_NAND) += spinand.o
-diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-index b0898990b2a5..ea47028d021a 100644
---- a/drivers/mtd/nand/spi/core.c
-+++ b/drivers/mtd/nand/spi/core.c
-@@ -1184,6 +1184,7 @@ static const struct spinand_manufacturer *spinand_manufacturers[] = {
- 	&alliancememory_spinand_manufacturer,
- 	&ato_spinand_manufacturer,
- 	&esmt_c8_spinand_manufacturer,
-+	&fmsh_spinand_manufacturer,
- 	&foresee_spinand_manufacturer,
- 	&gigadevice_spinand_manufacturer,
- 	&macronix_spinand_manufacturer,
-diff --git a/drivers/mtd/nand/spi/fmsh.c b/drivers/mtd/nand/spi/fmsh.c
-new file mode 100644
-index 000000000000..8b2097bfc771
---- /dev/null
-+++ b/drivers/mtd/nand/spi/fmsh.c
-@@ -0,0 +1,74 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2020-2021 Rockchip Electronics Co., Ltd.
-+ *
-+ * Author: Dingqiang Lin <jon.lin@rock-chips.com>
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/kernel.h>
-+#include <linux/mtd/spinand.h>
-+
-+#define SPINAND_MFR_FMSH		0xA1
-+
-+static SPINAND_OP_VARIANTS(read_cache_variants,
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_4S_4S_OP(0, 2, NULL, 0, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_4S_OP(0, 1, NULL, 0, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_2S_2S_OP(0, 1, NULL, 0, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_2S_OP(0, 1, NULL, 0, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_FAST_1S_1S_1S_OP(0, 1, NULL, 0, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_1S_OP(0, 1, NULL, 0, 0));
-+
-+static SPINAND_OP_VARIANTS(write_cache_variants,
-+		SPINAND_PROG_LOAD_1S_1S_4S_OP(true, 0, NULL, 0),
-+		SPINAND_PROG_LOAD_1S_1S_1S_OP(true, 0, NULL, 0));
-+
-+static SPINAND_OP_VARIANTS(update_cache_variants,
-+		SPINAND_PROG_LOAD_1S_1S_4S_OP(false, 0, NULL, 0),
-+		SPINAND_PROG_LOAD_1S_1S_1S_OP(false, 0, NULL, 0));
-+
-+static int fm25s01a_ooblayout_ecc(struct mtd_info *mtd, int section,
-+				  struct mtd_oob_region *region)
-+{
-+	return -ERANGE;
-+}
-+
-+static int fm25s01a_ooblayout_free(struct mtd_info *mtd, int section,
-+				   struct mtd_oob_region *region)
-+{
-+	if (section)
-+		return -ERANGE;
-+
-+	region->offset = 2;
-+	region->length = 62;
-+
-+	return 0;
-+}
-+
-+static const struct mtd_ooblayout_ops fm25s01a_ooblayout = {
-+	.ecc = fm25s01a_ooblayout_ecc,
-+	.free = fm25s01a_ooblayout_free,
-+};
-+
-+static const struct spinand_info fmsh_spinand_table[] = {
-+	SPINAND_INFO("FM25S01A",
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xE4),
-+		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
-+		     NAND_ECCREQ(1, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_QE_BIT,
-+		     SPINAND_ECCINFO(&fm25s01a_ooblayout, NULL)),
-+};
-+
-+static const struct spinand_manufacturer_ops fmsh_spinand_manuf_ops = {
-+};
-+
-+const struct spinand_manufacturer fmsh_spinand_manufacturer = {
-+	.id = SPINAND_MFR_FMSH,
-+	.name = "Fudan Micro",
-+	.chips = fmsh_spinand_table,
-+	.nchips = ARRAY_SIZE(fmsh_spinand_table),
-+	.ops = &fmsh_spinand_manuf_ops,
-+};
-diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
-index 27a45bdab7ec..927c10d78769 100644
---- a/include/linux/mtd/spinand.h
-+++ b/include/linux/mtd/spinand.h
-@@ -355,6 +355,7 @@ struct spinand_manufacturer {
- extern const struct spinand_manufacturer alliancememory_spinand_manufacturer;
- extern const struct spinand_manufacturer ato_spinand_manufacturer;
- extern const struct spinand_manufacturer esmt_c8_spinand_manufacturer;
-+extern const struct spinand_manufacturer fmsh_spinand_manufacturer;
- extern const struct spinand_manufacturer foresee_spinand_manufacturer;
- extern const struct spinand_manufacturer gigadevice_spinand_manufacturer;
- extern const struct spinand_manufacturer macronix_spinand_manufacturer;
--- 
-2.51.0
 
+Best regards,
+Krzysztof
 
