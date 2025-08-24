@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-783750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 577DEB331F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 20:14:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86043B331DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 20:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48BF1480BCB
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:11:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A0AC4E2172
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 18:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867FD2E5D3C;
-	Sun, 24 Aug 2025 18:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6311E2E1C6F;
+	Sun, 24 Aug 2025 18:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDWCSPoB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="re7nT/rl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF6F2E5B2B;
-	Sun, 24 Aug 2025 18:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938072E1753;
+	Sun, 24 Aug 2025 18:09:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756058968; cv=none; b=rtfiplrLjVmF+fQQBvYd5f/nh79/TBq4RNpI72siHkCSvfQuDIgVplKp6k1qrt12V/DkblPmefLsk4CSRea49fyrMi0Ao1NyNCc7BXfbbIXvKD0UCBZlARFKpt38d96Sx76QRuxU7+UA1p/DAEwgaqarkJ2gZ0QQcj4szEQvXoA=
+	t=1756058977; cv=none; b=GCA/xBXrN4UVnT6SVQNhc3jy7xwelqLxD5+Enk1Yk+FaCJTBr6QnfSUMXoTUyjTniSkDIfUEM5qtn89GAtqOEZKibuwqU/V8MUOBLnaal+wbjuF9SCcx4yWVLGGW5VZpSyHkoRT2l5dj9Y1KvR0nsrioNuOJ/XYiISL9fOYLdm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756058968; c=relaxed/simple;
-	bh=3jhT/EEyzXANyIz1YGE9FVNl0vOKgiphcREZ9lWL90g=;
+	s=arc-20240116; t=1756058977; c=relaxed/simple;
+	bh=y0/reVtRZ0GYrGQ7Fxsls5cjah4RtDLIcll/K48+B3c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ixjZZ2u2YMLIS3eeEAKz2G+3CYZAeWqsxOraCGYmCAxqMWwFYTftVe9zeoseF52o+Kxnwglf7haqqOIvd9ZyFdnyQHXl/b/bN4pHlrj0dsC9EHxplxBidf2Id1w2tyZn8SbENej4vbs3IjGaP9cBKfeBig57NU7+Eia2yGm0OMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SDWCSPoB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 492EEC4CEEB;
-	Sun, 24 Aug 2025 18:09:25 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=lKwlQz13aCdMePFy5TBRFh2+a8PquXyC2j5hFEPtN7kBsjsbpn4VITCYAyyXi2ZBqON456cUJ9zMXWV2nNxBOBAyvDtCRn4pE8wTpZG1YlCQv3/qTJeNUFrui8NHBPglGfkNE/zVedVvYsZ7WVXcck1swY8pOOShh9mFYJpwzgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=re7nT/rl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24DB1C4CEEB;
+	Sun, 24 Aug 2025 18:09:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756058968;
-	bh=3jhT/EEyzXANyIz1YGE9FVNl0vOKgiphcREZ9lWL90g=;
+	s=k20201202; t=1756058977;
+	bh=y0/reVtRZ0GYrGQ7Fxsls5cjah4RtDLIcll/K48+B3c=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SDWCSPoBRgdCgPsYVUlXzW7x7CIMccXAS8j4MHVX9x+3JKLheKpgfFDM41V1CsoKx
-	 xweHNOguHSEN3nIZMAEvuYVnTG8U2YER6x150jLSvSVk+DFWdZYP/qpI7hNFTYBR+s
-	 KtFHMjH0By2bz22KKHj6Wix6AhoDJO2nnvEsYTLR0C6MRThsZGpiiAoAzXEhhvDfCK
-	 s6OJ3ZRgQE9u1DTG53SqHFYtkOKlRh0bootTRDCx5lEJ2Softk9ou9y39tjiGxs2Zo
-	 B1dyXgmK7dP5nuNtAbA818hipqF0LHgD8faj1vbA6T0al7fOZcqzVCFBfL/NWvJ139
-	 KiPiBwPAVXn3g==
-Message-ID: <0cb62840-845b-4a9f-94c6-e40d0b72ce95@kernel.org>
-Date: Sun, 24 Aug 2025 19:16:07 +0200
+	b=re7nT/rlt1N2SM2Ixwux4yCMVMMg7L8eLYaEh9d8R09AZqqZQai/1VmjfUFZOGYlB
+	 19DZQVpxImsdA8GqqgtuI+BMfGLsCV+74nX9kNTg69i6MouSiUy4ctmny5TwHfQeyQ
+	 JfHgAQHh6dGSgy/fgfTobfhwTBWluGlL2i7lAcFJQc9bLVHxIrzK7mq3f1mp04noFI
+	 35ZzrUu7bTTKGARV0vQSzNXc+DvDd53nhWwATdE+kLk+fYRJzIHvXfGRbQZnfE6Abw
+	 ZS7qlF/Cev2n1YOuLyB7BEd79pQe2aJIDwbFfKYsW4h2RPbXTf00T3kJNflcuPLRSw
+	 LkPmbEuF+nAKw==
+Message-ID: <6fdc9ddc-7411-462e-ae71-82c81f7f8f1e@kernel.org>
+Date: Sun, 24 Aug 2025 19:24:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v6 1/3] dt-bindings: net: dsa: yt921x: Add
- Motorcomm YT921x switch support
-To: Yangfl <mmyangfl@gmail.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
- Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250824005116.2434998-1-mmyangfl@gmail.com>
- <20250824005116.2434998-2-mmyangfl@gmail.com>
- <20250824-jolly-amaranth-panther-97a835@kuoka>
- <CAAXyoMOfhSWhRCiFudju-DNtvD+8kHGhLzT2NGBF2cK_Ctviyw@mail.gmail.com>
+Subject: Re: [PATCH 00/33] arm_mpam: Add basic mpam driver
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+ baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250822153048.2287-1-james.morse@arm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,56 +119,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CAAXyoMOfhSWhRCiFudju-DNtvD+8kHGhLzT2NGBF2cK_Ctviyw@mail.gmail.com>
+In-Reply-To: <20250822153048.2287-1-james.morse@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 24/08/2025 11:25, Yangfl wrote:
-> On Sun, Aug 24, 2025 at 5:20 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On Sun, Aug 24, 2025 at 08:51:09AM +0800, David Yang wrote:
->>> The Motorcomm YT921x series is a family of Ethernet switches with up to
->>> 8 internal GbE PHYs and up to 2 GMACs.
->>>
->>> Signed-off-by: David Yang <mmyangfl@gmail.com>
->>> ---
->>
->> <form letter>
->> This is a friendly reminder during the review process.
->>
->> It looks like you received a tag and forgot to add it.
->>
->> If you do not know the process, here is a short explanation:
->> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
->> versions of patchset, under or above your Signed-off-by tag, unless
->> patch changed significantly (e.g. new properties added to the DT
->> bindings). Tag is "received", when provided in a message replied to you
->> on the mailing list. Tools like b4 can help here. However, there's no
->> need to repost patches *only* to add the tags. The upstream maintainer
->> will do that for tags received on the version they apply.
->>
->> Please read:
->> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
->>
->> *If a tag was not added on purpose, please state why* and what changed.
->> </form letter>
->>
->>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> Best regards,
->> Krzysztof
->>
+On 22/08/2025 17:29, James Morse wrote:
+> Hello,
 > 
-> Thanks.
+> This is just enough MPAM driver for the ACPI and DT pre-requisites.
+> It doesn't contain any of the resctrl code, meaning you can't actually drive it
+> from user-space yet. Becuase of that, its hidden behind CONFIG_EXPERT.
+> This will change once the user interface is connected up.
 > 
->>  - use enum for reg in dt binding
+> This is the initial group of patches that allows the resctrl code to be built
+> on top. Including that will increase the number of trees that may need to
+> coordinate, so breaking it up make sense.
 > 
-> I made a change in dt binding. If you are fine with that change, I'll
-> add the tag in the following versions (if any).
+
+There was v1 of this, so that's a v2. Start using b4 to get it right,
+because you just make it difficult for us to review.
+
+Try yourself:
+
+b4 diff <this-patchset>
+
+Works? No.
+
+Also, for some reason you sent it twice, so again: use b4.
 
 
-Cover letter must state the reason.
 
 
 Best regards,
