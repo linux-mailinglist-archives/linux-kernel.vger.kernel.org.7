@@ -1,212 +1,192 @@
-Return-Path: <linux-kernel+bounces-783419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A885B32D5E
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 05:22:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32838B32D60
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 05:24:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 350E61B634DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 03:22:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1D51244102
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 03:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2C61B041A;
-	Sun, 24 Aug 2025 03:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC35F1D63F3;
+	Sun, 24 Aug 2025 03:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BrVA2Kd9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QTsL18P+"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7850E393DD5
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 03:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09041EEE6;
+	Sun, 24 Aug 2025 03:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756005723; cv=none; b=B7aLRuBGi+dznW6zIo2QLwSC1N4/JN2LcDXgwaaHKZGqXBrIj3hvUVRqKPj5e4pilu54TLHSxCKf7mEef493r/j3Og+iXDNUAgvSZ2PHkIpS+ro41KU/xcduY/AGwIo1rehz5iZREYPzdVT4y2ZljmDwhNE11fdPMgrY431CvRw=
+	t=1756005834; cv=none; b=hUjzAykIwySbkLguW5GXhCqdssRrvGAHuNruOFBIWImWCYHHpEF18tgO0pfx/Zv7BnVVe9rBS0xl9WqDQ9CnCwF+/Hgr+0XEXEDY48AfC5E/U7Lzgd9gAYPz1sJ+bcZh91nowt2/gkF8XDbzRb2OH0qAxIlmopz3kV3R3YVBRuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756005723; c=relaxed/simple;
-	bh=GufsAB6rJLvJrQKcLXOOpcVAuTVIzzORPDHQZ0nToRw=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=t4ak5cA1o0cO1/8J4CCaXmF1dFCjAqe+da/CwBkv+kLhd2iShJTvjR+V6cct527Dy/vsf4c+K3bY35E6TkL2WaBXykek4jpxBP2x+hTOD2BxGS2LBPvzupsBsOhJNdj1zNWOb+oLyWOHR8kwAjqyfoaDnwXV6Nom479rqg1BGTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BrVA2Kd9; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756005721; x=1787541721;
-  h=date:from:to:cc:subject:message-id;
-  bh=GufsAB6rJLvJrQKcLXOOpcVAuTVIzzORPDHQZ0nToRw=;
-  b=BrVA2Kd9HjPG+FqV68YajDDfreGCiepKLuJkKr/zRlURjyLCn8kHsBW8
-   1rcQ6hP1rPP6roS47GQs//liIfDWtOcUsy2gc1eQE0Fmgd1ToD/hTEwT9
-   qqW3V7m4BWev2Nv7iA7RFHl6avZSEHKYcpJyuRzcF+OCsLRtOT3+i8twk
-   5sKxjaKvXp4j6yVCJKRu90YB0JVknbYQK4f6HesqHRPjSS8/4bYaQpgut
-   xjDJ4RV2U+81bWsfJWRG7sgm4IbT+p4zkOETldbVdTU8yl8ujzn8jICjl
-   czKfbdtIzeG4k3h/yTc8pJl8HR5Emkok1uFUsFUtNP5iqYnTcoiZvnOzD
-   A==;
-X-CSE-ConnectionGUID: 3VAjyafsRP+FxQyF8DLoBw==
-X-CSE-MsgGUID: QnPg7SpqTAmUfUBMEsJVgA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="58186315"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="58186315"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2025 20:22:01 -0700
-X-CSE-ConnectionGUID: QaHU19/yTr6lnlhMh7qddg==
-X-CSE-MsgGUID: cjwuXTrOQI2ubW2o93rp4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="168528837"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 23 Aug 2025 20:22:00 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uq1Ir-000MjT-2e;
-	Sun, 24 Aug 2025 03:21:57 +0000
-Date: Sun, 24 Aug 2025 11:21:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- 7182bf4176f93be42225d2ef983894febfa4a1b1
-Message-ID: <202508241101.nWtMCIXu-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1756005834; c=relaxed/simple;
+	bh=pg/dlUkuztYMXWaPFPqoc72X3qOIYAxeaje7mI10Y0A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=unfhtKUZGAEaLjkmJaKdF/JaxkjRGLQxQxaJE01KngxUq9cVVQ5l5AfhBH/kH+gxezjcfQgj11DsX7W+nbXN0IyrygskpYgtKN3gCSjUdS5xkC4TWeV4ZaGTHUiqQ9RTN8NDhcqTpoSURuzsGZ9G/5ZoMuM540Vg7U8eUwqpJYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QTsL18P+; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-32326e8005bso3526318a91.3;
+        Sat, 23 Aug 2025 20:23:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756005832; x=1756610632; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iW6U4cBUPheNzlaaIZxWL/gjHUJeJ0gapkBMT8T3g/w=;
+        b=QTsL18P+/g5fTTaqK8oAjPdErkOaRwCYHbeTwG0HzmOQvVu+rP7IVyChD7hC8PMRv7
+         kPNYyLVkikrokIH3DCdpcTcHYc+LtZN+lcAVFYpkK4SqQzIBA0rDoSnfZ6uNxUA8OrwE
+         4T+jQYx/QOUcV7kiP9CTE9AlR8Tx7bZodpx+dFl4ryq/zRf9LjYfFzaRyO/Gl5NOY55Y
+         BXwDhGX4J6vMNe3e8AIxybVcBWFVaVF71RWFGB8MY3hg9vuXRvM56cDRgudSLKfRUCk/
+         StR/m4CtVM/dDaMkwXDLIIAoMXBOCZnGS5I7DGLQzfZOQYZZ+N3jWrnW0su/brUcC84E
+         6PjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756005832; x=1756610632;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iW6U4cBUPheNzlaaIZxWL/gjHUJeJ0gapkBMT8T3g/w=;
+        b=GcPz9fNRMxW7Iba+TCUHhH2Y65eOXpyVkp70nqP+FMNgfs74xIQfABMmqjZj2talwG
+         UmN23aJS7itNWcM1gZZR6iE/vbFVTqKBIHueUMzYbr6S2UnEDs2yovgAh1S7fndk+XB3
+         X2mtEl+kDqycSgW7vfsJbaqcStog0SsQ6Hlv8naQpnN2dv+4M97cGX43uwKbRy3pNrS5
+         ic598H4EklXQnTLYd+5jdvO3pK3icUMrDQRBzqWhvYcGUtJVr2IVMmpwvNFud45RrhAb
+         +zKkP0yKmihUoUszbWRLiq9w/LWjq3Bu5iFN+suXRqX9vcbSDa0NzTaZ21/9Hj8GoIqE
+         5Xfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwyPcfMdKDOupVf1oZT2HoY3yMaBQ/pBEACyPerALGZJDBj823jjq5Jbnpm8QGU6gANBs2pbwGDUw9lbw=@vger.kernel.org, AJvYcCVhbChtspLtg5vgnPcInlhAcuVkDdILpe2QlVFkVbWspoyWnnSjVxeySv4HdSfoXxytyTxwypFQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm0F9SNFhLgtC9Lg4BVjuERkVnO4HsP4sS19hmvvzA3E/jnsJS
+	XN9qdNXX/CceAdyXsFcYrUavjt3Z95ejQ0+STI485bjoGk9wOonD48/cKMnF9It2wXoe/pfmx7H
+	9pXnXLGC6Xv07bpcfd0sI5bEysYheZfI=
+X-Gm-Gg: ASbGncurG02etLeBjEl1j5/bcA9UZ+r27Dds9U4g0i851UTFf/dC1zgFhWdv9S2Y50Z
+	p7Y/8QeP2syiPgL8JsaMQeXJJP1egpp1gQH0d0bzVmjhZGxleF0PKuonBLNsE9SFGauZt5CAzK2
+	CqdHF58I4w08XY6/a9fzxsRD9ryTxOcHln6VbI0GSnoAlJUUaQpGAWyYkfzVdXcpXshnHFB3512
+	kgY5Zw7g9M40TnWt28EYSiTDhbAqGC6IrLgqhg=
+X-Google-Smtp-Source: AGHT+IHRLV0RP1aq8S5aiZBbBrOetAWgneSR9mnAFwe+pANIfARu2Bgi9xflrZAwPui9idjgashSlwcHLyC4ShfKLfU=
+X-Received: by 2002:a17:90b:1d8a:b0:321:ca4b:f6cf with SMTP id
+ 98e67ed59e1d1-32515ef1564mr9688413a91.35.1756005831909; Sat, 23 Aug 2025
+ 20:23:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250728062649.469882-1-aha310510@gmail.com>
+In-Reply-To: <20250728062649.469882-1-aha310510@gmail.com>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Sun, 24 Aug 2025 12:23:40 +0900
+X-Gm-Features: Ac12FXzgLDu2LqkROQf_pTUZGbSVWSlaFao2L9SkwHpBIHYauUERIDITwV08hAI
+Message-ID: <CAO9qdTGswktFP=VLx4sqF6C25Shmory3TauSHYufuir+4N71nw@mail.gmail.com>
+Subject: Re: [PATCH net v4] ptp: prevent possible ABBA deadlock in ptp_clock_freerun()
+To: richardcochran@gmail.com, andrew+netdev@lunn.ch
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, yangbo.lu@nxp.com, vladimir.oltean@nxp.com, 
+	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+7cfb66a237c4a5fb22ad@syzkaller.appspotmail.com, 
+	syzbot+28ddd7a3988eea351eb3@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: 7182bf4176f93be42225d2ef983894febfa4a1b1  Merge branch into tip/master: 'x86/tdx'
+Jeongjun Park <aha310510@gmail.com> wrote:
+>
+> syzbot reported the following ABBA deadlock:
+>
+>        CPU0                           CPU1
+>        ----                           ----
+>   n_vclocks_store()
+>     lock(&ptp->n_vclocks_mux) [1]
+>         (physical clock)
+>                                      pc_clock_adjtime()
+>                                        lock(&clk->rwsem) [2]
+>                                         (physical clock)
+>                                        ...
+>                                        ptp_clock_freerun()
+>                                          ptp_vclock_in_use()
+>                                            lock(&ptp->n_vclocks_mux) [3]
+>                                               (physical clock)
+>     ptp_clock_unregister()
+>       posix_clock_unregister()
+>         lock(&clk->rwsem) [4]
+>           (virtual clock)
+>
+> Since ptp virtual clock is registered only under ptp physical clock, both
+> ptp_clock and posix_clock must be physical clocks for ptp_vclock_in_use()
+> to lock &ptp->n_vclocks_mux and check ptp->n_vclocks.
+>
+> However, when unregistering vclocks in n_vclocks_store(), the locking
+> ptp->n_vclocks_mux is a physical clock lock, but clk->rwsem of
+> ptp_clock_unregister() called through device_for_each_child_reverse()
+> is a virtual clock lock.
+>
+> Therefore, clk->rwsem used in CPU0 and clk->rwsem used in CPU1 are
+> different locks, but in lockdep, a false positive occurs because the
+> possibility of deadlock is determined through lock-class.
+>
+> To solve this, lock subclass annotation must be added to the posix_clock
+> rwsem of the vclock.
+>
+> Reported-by: syzbot+7cfb66a237c4a5fb22ad@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=7cfb66a237c4a5fb22ad
 
-elapsed time: 1194m
+Reported-by: syzbot+28ddd7a3988eea351eb3@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=28ddd7a3988eea351eb3
 
-configs tested: 120
-configs skipped: 3
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                   randconfig-001-20250823    gcc-9.5.0
-arc                   randconfig-002-20250823    gcc-12.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                   randconfig-001-20250823    clang-17
-arm                   randconfig-002-20250823    gcc-15.1.0
-arm                   randconfig-003-20250823    clang-20
-arm                   randconfig-004-20250823    clang-22
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250823    gcc-11.5.0
-arm64                 randconfig-002-20250823    clang-22
-arm64                 randconfig-003-20250823    clang-22
-arm64                 randconfig-004-20250823    gcc-15.1.0
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20250823    gcc-15.1.0
-csky                  randconfig-002-20250823    gcc-14.3.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20250823    clang-22
-hexagon               randconfig-002-20250823    clang-22
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250823    clang-20
-i386        buildonly-randconfig-002-20250823    clang-20
-i386        buildonly-randconfig-003-20250823    clang-20
-i386        buildonly-randconfig-004-20250823    clang-20
-i386        buildonly-randconfig-005-20250823    clang-20
-i386        buildonly-randconfig-006-20250823    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20250823    clang-22
-loongarch             randconfig-002-20250823    clang-22
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-m68k                           sun3_defconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-microblaze                      mmu_defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                           ip27_defconfig    gcc-15.1.0
-mips                           jazz_defconfig    clang-17
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20250823    gcc-11.5.0
-nios2                 randconfig-002-20250823    gcc-8.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250823    gcc-8.5.0
-parisc                randconfig-002-20250823    gcc-15.1.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc                      ep88xc_defconfig    gcc-15.1.0
-powerpc                     mpc5200_defconfig    clang-22
-powerpc                     mpc83xx_defconfig    clang-22
-powerpc               randconfig-001-20250823    clang-22
-powerpc               randconfig-002-20250823    clang-22
-powerpc               randconfig-003-20250823    clang-22
-powerpc64             randconfig-001-20250823    gcc-11.5.0
-powerpc64             randconfig-002-20250823    clang-22
-powerpc64             randconfig-003-20250823    gcc-10.5.0
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                 randconfig-001-20250823    clang-22
-riscv                 randconfig-002-20250823    gcc-8.5.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-001-20250823    gcc-9.5.0
-s390                  randconfig-002-20250823    clang-22
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                    randconfig-001-20250823    gcc-15.1.0
-sh                    randconfig-002-20250823    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250823    gcc-8.5.0
-sparc                 randconfig-002-20250823    gcc-8.5.0
-sparc64               randconfig-001-20250823    gcc-8.5.0
-sparc64               randconfig-002-20250823    clang-22
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250823    clang-22
-um                    randconfig-002-20250823    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250823    gcc-12
-x86_64      buildonly-randconfig-002-20250823    gcc-12
-x86_64      buildonly-randconfig-003-20250823    clang-20
-x86_64      buildonly-randconfig-004-20250823    clang-20
-x86_64      buildonly-randconfig-005-20250823    gcc-12
-x86_64      buildonly-randconfig-006-20250823    gcc-12
-x86_64                              defconfig    gcc-11
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                          iss_defconfig    gcc-15.1.0
-xtensa                randconfig-001-20250823    gcc-15.1.0
-xtensa                randconfig-002-20250823    gcc-13.4.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Fixes: 73f37068d540 ("ptp: support ptp physical/virtual clocks conversion")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> ---
+> v4: Remove unnecessary lock class annotation and CC "POSIX CLOCKS and TIMERS" maintainer
+> - Link to v3: https://lore.kernel.org/all/20250719124022.1536524-1-aha310510@gmail.com/
+> v3: Annotate lock subclass to prevent false positives of lockdep
+> - Link to v2: https://lore.kernel.org/all/20250718114958.1473199-1-aha310510@gmail.com/
+> v2: Add CC Vladimir
+> - Link to v1: https://lore.kernel.org/all/20250705145031.140571-1-aha310510@gmail.com/
+> ---
+>  drivers/ptp/ptp_private.h | 5 +++++
+>  drivers/ptp/ptp_vclock.c  | 7 +++++++
+>  2 files changed, 12 insertions(+)
+>
+> diff --git a/drivers/ptp/ptp_private.h b/drivers/ptp/ptp_private.h
+> index a6aad743c282..b352df4cd3f9 100644
+> --- a/drivers/ptp/ptp_private.h
+> +++ b/drivers/ptp/ptp_private.h
+> @@ -24,6 +24,11 @@
+>  #define PTP_DEFAULT_MAX_VCLOCKS 20
+>  #define PTP_MAX_CHANNELS 2048
+>
+> +enum {
+> +       PTP_LOCK_PHYSICAL = 0,
+> +       PTP_LOCK_VIRTUAL,
+> +};
+> +
+>  struct timestamp_event_queue {
+>         struct ptp_extts_event buf[PTP_MAX_TIMESTAMPS];
+>         int head;
+> diff --git a/drivers/ptp/ptp_vclock.c b/drivers/ptp/ptp_vclock.c
+> index 7febfdcbde8b..8ed4b8598924 100644
+> --- a/drivers/ptp/ptp_vclock.c
+> +++ b/drivers/ptp/ptp_vclock.c
+> @@ -154,6 +154,11 @@ static long ptp_vclock_refresh(struct ptp_clock_info *ptp)
+>         return PTP_VCLOCK_REFRESH_INTERVAL;
+>  }
+>
+> +static void ptp_vclock_set_subclass(struct ptp_clock *ptp)
+> +{
+> +       lockdep_set_subclass(&ptp->clock.rwsem, PTP_LOCK_VIRTUAL);
+> +}
+> +
+>  static const struct ptp_clock_info ptp_vclock_info = {
+>         .owner          = THIS_MODULE,
+>         .name           = "ptp virtual clock",
+> @@ -213,6 +218,8 @@ struct ptp_vclock *ptp_vclock_register(struct ptp_clock *pclock)
+>                 return NULL;
+>         }
+>
+> +       ptp_vclock_set_subclass(vclock->clock);
+> +
+>         timecounter_init(&vclock->tc, &vclock->cc, 0);
+>         ptp_schedule_worker(vclock->clock, PTP_VCLOCK_REFRESH_INTERVAL);
+>
+> --
 
