@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-783589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AFE7B32F5E
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:24:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD240B32F6A
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 13:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39C852065F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:24:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D000207ABB
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Aug 2025 11:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E08F2D5A16;
-	Sun, 24 Aug 2025 11:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2E02D6625;
+	Sun, 24 Aug 2025 11:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kbFQk76l"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVI9+3i3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D238629D0E;
-	Sun, 24 Aug 2025 11:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B4D238C1B;
+	Sun, 24 Aug 2025 11:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756034648; cv=none; b=BL4MwpMjSmOGL5PQX8pi1Luh1smCvv/XXCpnFaW4yvW4L/vTYqg7nOmHqQlz69ccCy2oFwBKVAirLwxNqHOD8/HEmr0ocZRvXJJ5WVwM/Ck6HvGeIB5TFUcXVu9ltBIOz5ZvQwhAG5Y+kzn8sDfcl2oKH3mVRscTQ5psSkMNsSY=
+	t=1756034808; cv=none; b=n3CZVNceQUTgn7njLXX+8M3MKln34zlfVTRpO5ygG7WbbVtFfwDO6QDpb4ErKpYhVT4jfvrbGCCjPke17vl4mXDpVVexOTfryBKh0E0SnZUEmDQnknsy3Ot4sWnLNUkzkijyf3kjWgNb43qzUrDdYyb2Cbb4AU8tp/PnE5fm6ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756034648; c=relaxed/simple;
-	bh=t9BcqUjMupBLwjDS1XcQiUoTtCSx25XWIEN3xv6mkfk=;
+	s=arc-20240116; t=1756034808; c=relaxed/simple;
+	bh=G0X5KAiGbQXwXme/9DQ45ryvRr7jmbQA+SV3yZrBKK0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p/LTLG/Arypxzb4O8QqYk60+uvLXoezA8WNmKT2b3aJognt8q3o2xIWFMsGMzS0vzzdgmd6jGRSOAITqquIXoxTzuI65XdJOi5frBtwpuPAve6YicCF5gX7gsZYFouiZmdxLqgsSgqnpp8uXB92qtAZXLJp4LGrbz6agskQyPgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kbFQk76l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4464C4CEED;
-	Sun, 24 Aug 2025 11:24:04 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=XtoSfKHBWrWHdCJQeElKia8iOy85NZceLEDjha5/orNufWoypRkkihBNw6GAqVHhHlrKr2ncIaof0X7FaX++CgZh/kRI9WwCu8vHO2/DoFzVXlbCiETDTTZUZ0iIh7pMDMgo75ZejLfMHY4q8dwvSgtXCjJC8gMj1rlpjKFLzZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVI9+3i3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A3D1C4CEEB;
+	Sun, 24 Aug 2025 11:26:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756034647;
-	bh=t9BcqUjMupBLwjDS1XcQiUoTtCSx25XWIEN3xv6mkfk=;
+	s=k20201202; t=1756034807;
+	bh=G0X5KAiGbQXwXme/9DQ45ryvRr7jmbQA+SV3yZrBKK0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kbFQk76lP7NWpdFedpxd+xoNZ45UtQKHEC/Ka3QcPK/ySM+zo7/FqRscmPc5hmCRj
-	 ZZCUizyvYeUpZUS0LioRhIWM5K/7w1dacMegUZI6W0UvEdLN39m5SheeeTPzDWxq/D
-	 wp+U73Q+ffHP4PATNBp5D25yODM+shxs8kbnhxfF3Zr0W9OuBQvzTh9pXvxlx21d+n
-	 9CxmNqNLu41FwPYruFrYZW0bCU9b9+sjsnaH6uoxUeYzcYFzHWsHrPKiQ4rRou1Ykp
-	 GgMwLdhgQ46BxMRKwSWtYKCJHHszTQwQNoH2L5jOcn7SiyEhaKW/o8EsW+2Ea6K/K5
-	 Ct+w+QwRNHO4w==
-Message-ID: <b748f86f-68ee-47fd-8394-f6352f99f3f0@kernel.org>
-Date: Sun, 24 Aug 2025 13:24:02 +0200
+	b=cVI9+3i3NnWt9Z8FJIFiV5HkjkWE5GfAUH64rSEcWYwYUmev5Y7pIP1SyBnx+JWMu
+	 M7PTJdclOq/9dHP+MQVr2uGPuiniSwPqkS3SDL0QZtcrshoAX/9EdDgnHRmSzPdk/H
+	 ekLd+CtD6SdEDKosKtfa8hkBMKHm3DrJxLK3Gqszo7heiGhrkCOUFGMUXFABwoqszJ
+	 TRAWzP18G3Iu1Ds+JzagcXR6tj97FmG3JJeKFhWrMv1dHxU5ETWJFwxhDDj22R2CBQ
+	 NHBkRp+UgjG5mq6SNL4wjr0m1ifg5ZLljnC9eKRTvuRfi4/NFB/2SQaVMWxqyudKYP
+	 kZrDM4ZRQfzKw==
+Message-ID: <dc6af2fc-5e7f-4ec8-a7aa-6bde6518a83b@kernel.org>
+Date: Sun, 24 Aug 2025 13:26:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: dma: img-mdc-dma: convert to DT schema
-To: Nino Zhang <ninozhang001@gmail.com>, devicetree@vger.kernel.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- vkoul@kernel.org, rahulbedarkar89@gmail.com, linux-mips@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250821150255.236884-1-ninozhang001@gmail.com>
- <20250824034509.445743-1-ninozhang001@gmail.com>
+Subject: Re: [PATCH v3 1/1] arm64: defconfig: Enable Marvell WiFi-Ex USB
+ driver
+To: Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20250822135715.3335023-1-alexander.stein@ew.tq-group.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,120 +103,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250824034509.445743-1-ninozhang001@gmail.com>
+In-Reply-To: <20250822135715.3335023-1-alexander.stein@ew.tq-group.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/08/2025 05:45, Nino Zhang wrote:
-> Convert the img-mdc-dma binding from txt to YAML schema.
-> No functional changes except dropping the consumer node
-> (spi@18100f00) from the example, which belongs to the
-> consumer binding instead.
-> 
-> Signed-off-by: Nino Zhang <ninozhang001@gmail.com>
-> ---
-> Changes since v1:
-> - All review comments addressed.
+On 22/08/2025 15:57, Alexander Stein wrote:
+> MBa91xxCA (imx93-tqma9352-mba91xxca.dts) features a USB attached WiFi
+> module. lsusb says:
+>  ID 1286:204e Marvell Semiconductor, Inc. Bluetooth and Wireless LAN Composite Device
+> Enable the corresponding driver.
 
-Do not attach (thread) your patchsets to some other threads (unrelated
-or older versions). This buries them deep in the mailbox and might
-interfere with applying entire sets.
-
-> 
-> Open:
-> - Maintainers: set to Rahul Bedarkar + linux-mips per MAINTAINERS entry
->   for Pistachio/CI40 device tree. This seems the closest match to the
->   hardware. Happy to adjust if platform maintainers suggest otherwise.
-> - img,max-burst-multiplier: defined as uint32. A minimum of 1 is used to
->   exclude the invalid case of 0, but the actual supported range has not
->   been confirmed in available documentation. Example uses 16. A maximum
->   will be added once confirmed by platform maintainers or hardware docs.
-> 
->  .../bindings/dma/img,pistachio-mdc-dma.yaml   | 90 +++++++++++++++++++
->  .../devicetree/bindings/dma/img-mdc-dma.txt   | 57 ------------
->  2 files changed, 90 insertions(+), 57 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml
->  delete mode 100644 Documentation/devicetree/bindings/dma/img-mdc-dma.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml b/Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml
-> new file mode 100644
-> index 000000000000..4dde54a17f52
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml
-> @@ -0,0 +1,90 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/dma/img,pistachio-mdc-dma.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: IMG Multi-threaded DMA Controller (MDC)
-> +
-> +maintainers:
-> +  - Rahul Bedarkar <rahulbedarkar89@gmail.com>
-> +  - linux-mips@vger.kernel.org
-> +
-> +allOf:
-> +  - $ref: /schemas/dma/dma-controller.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: img,pistachio-mdc-dma
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    minItems: 1
-> +    maxItems: 32
-
-Why is this flexible?
-
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: sys
-> +
-> +  img,cr-periph:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: >
-
-Drop >
-
-You already got exactly the same comment.
-
-
-> +      Phandle to peripheral control syscon node with DMA request to channel
-> +      mapping registers.
-> +
-> +  img,max-burst-multiplier:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 1
-
-Does not feel like enough of constraints.
-
-> +    description: >
-> +      Maximum supported burst size multiplier. The maximum burst size is this
-> +      value multiplied by the hardware-reported bus width.
-> +
-> +  "#dma-cells":
-> +    const: 3
-> +    description: |
-> +      DMA specifier cells:
-> +        1: peripheral's DMA request line
-> +        2: channel bitmap: bit N set indicates channel N is usable
-> +        3: thread ID to be used by the channel
-> +
-> +  dma-channels:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-
-More ignored comments.
-
-Please go back to previous posting and respond to each comment. Then
-implement each one or keep discussing.
+This does not answer my questions. You can plug there something else...
 
 Best regards,
 Krzysztof
