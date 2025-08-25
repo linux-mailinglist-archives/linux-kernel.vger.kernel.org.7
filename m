@@ -1,172 +1,152 @@
-Return-Path: <linux-kernel+bounces-785215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86105B347A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:37:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18493B34768
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 117B1172AB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:37:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71C3816EAFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A1F301008;
-	Mon, 25 Aug 2025 16:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505E93019A2;
+	Mon, 25 Aug 2025 16:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OuQ4VVFn"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1yQLSey"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EC32FE58F
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF4A2FE06F;
+	Mon, 25 Aug 2025 16:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756139850; cv=none; b=he4q2+oi6JxdtinPiuhGWa2cU+q9wlXO8LEb8uaZ9v8k1o1r+Cz4eq0zmYRjs12MeCj6OgxBsp4nguOj4unCws7zsgM+w0t3bvYudT9rBq9BztXcNOf4lw4GUUwJrtekXiCmA0CoOLo9MFRzXdJS8RZPIDn+iJk1GsbiYFkK/jk=
+	t=1756139449; cv=none; b=oVMQ5naWEA1JNmosYQJpZJcBwEdKFnOPcATtpkmvBkQpNmzMPs5Fhc+D6RcvXzOsUalxo7WrPW67orN9VkMR1xebfGR5FEAGYWu++50yiVd8iAbSw3jkPKJdRCPVFtYLOGSDKdzU6so+/ypwX38LujMorL3ypPQcazWYihF7S7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756139850; c=relaxed/simple;
-	bh=QF1rwFGXOpv3/yj99dApQHR7xecK134zyjOuhi0if3c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B5dsWu5UgwhoO98iiEPemikWqAiD6B3BDYGs/D63qWPy4Mihwqew88ysWw1vXcbSTLheKBqEGxoPXlYOtIrhao+C7Z9HQ0d6DqNCHC4tCPFckwHsU3dbOO5X2rek2uvJKlBIKQJ5GORsjEef13Z+heKmUa9KYQCGYO3jXWCdhNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OuQ4VVFn; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7e8704e9687so472672485a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:37:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1756139847; x=1756744647; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1jtHSRITSR2AwU52EE8r+JEB4b68kRsZxs/LuenG8cw=;
-        b=OuQ4VVFnaRMhOGUckLeRoe0rFS3XKMkHff3VBCF5Edd7IL72GTp8kJ8DICMGO5dIq0
-         +0nT71VmElpGla95iGBCg6P0IQay1stdP/NGnJBwZWS4ii4QR8shKMF9UkTBd2hLaG8o
-         I+Ai4WCkyrDq3WFGh3uQd//DmrpZvReU75gIE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756139847; x=1756744647;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1jtHSRITSR2AwU52EE8r+JEB4b68kRsZxs/LuenG8cw=;
-        b=GiOAFymdD+Nw1TdU61BV750c1CETyLiH7rLnHKWi4ftMoFEzN3NNY2CTvKPk6bosLd
-         pVyvUgLFfbdQW0fgp0+PNwqifNe0cFuLi9gxXsybjPh6X9V+NOJ55+8Z4aL1ozc6fZ8r
-         F97M7VbJ49m5/63nZghk6IaVaiZ99PLwb1blucJrpDQ6wd9wFaUroBzN4WsSTGwYa1Nt
-         eaoz5G2GBE6SKDvxXMxYoUp1as969OeOLJy7NVmQnaBQj8JtHq3FAGrkjmV9ue1cnYsg
-         BbY7ZSWepa4IKrrthPL+8lqAbqVp9vTpxzDEdIT6L5n7aS71WUfqpzF/Jpew4jc1Gaxh
-         xedg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXRjLrQXXQvjl60GCwT5/qb4NzEH9JWXINU8izF3qvi0sZns6Sp/aReEBtrKrYj4wrJIWQ9ZrJqqbcBVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDs05J7pLSGZyybqoraTH9IGVU1qvYgMMCK+ZDKP0cpFsofpFy
-	W04l8DC94IColu7B3/0E96vnaHJU0iXNtc5FDMl5lajbD05S/xsKAxUDSSWI4Ggaan4UJBJ8Z6m
-	1iiM=
-X-Gm-Gg: ASbGnct95iACFBFw5wqQGDjAE6hIhGJZrGJW7NaY7GWuOOJv/vUPbBhDVtQOsllOmE2
-	L8DnKXLUPTgpBDABmoz048cYIOM2tnm0euemInWIFF6g45SySeNLtpWjtI2vX3VuyPDcbPzJ3ro
-	ZZve/XOvH+DiYfaWhHnBTlhNuHCHp5vZQiWAku7w0w2ir76iuzPUTH/V0vQUvOysq15f6FmLYU9
-	6Cf61dgrKpmTz+ZeD+K+y/H2QcobDgn1nsk+cUCdbjpmp5LH9b11mBplsdA5Kf7LU+MUYj3t0rc
-	exdil6mtnq3GPht62JaIW5FIiWVpELfdltp62E3SLiZXRtI41RSE39okuJnCgB0iW4T016jtlD/
-	UUIb7WB+K9POMTZ8DbqlxEdVkwUSyH8GFp9ojbbBcMlZCu6W39SeiaursNI1m7cYepA==
-X-Google-Smtp-Source: AGHT+IF2+YPFWbs+ScXawTo2xCwYA5Fw/L6Cad4dyFgcjWnr19spciqgWwmfBjrK9eSbDtISA+Nakw==
-X-Received: by 2002:a05:620a:7188:b0:7e6:9664:2270 with SMTP id af79cd13be357-7ea10fcf124mr1601036785a.23.1756139846889;
-        Mon, 25 Aug 2025 09:37:26 -0700 (PDT)
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com. [209.85.160.180])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ebf33111d3sm521476185a.49.2025.08.25.09.37.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Aug 2025 09:37:26 -0700 (PDT)
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b109c59dc9so62492401cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:37:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWY/fYeFNgztP6x3HoTjqOWzGrWxfnWYm7uMTrc9I9r05AUNp+xQ8Vo8zWcoZjBdY8nXZQPEtBBNAsUjy0=@vger.kernel.org
-X-Received: by 2002:a17:902:d486:b0:246:b46b:1b09 with SMTP id
- d9443c01a7336-246b46b2296mr70233575ad.30.1756139405901; Mon, 25 Aug 2025
- 09:30:05 -0700 (PDT)
+	s=arc-20240116; t=1756139449; c=relaxed/simple;
+	bh=vVMKlKNXIWqTUAgQ0OfDfdnw/Qqi34KoxBHr44+YOAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hIuMldPTm4PC/kEWUS+CunwJ+hLc7aVRFYN8cv294AYcG0xYJjAsw0XhC3eWewdpbmwMDzmSEFh3U7eAVFlbvXJXnuQDsu7ilqGmEegxpO22guNjG/p9nLGI6y2V9VzkUdYeIRWfk+BEPZwbQu/BU1uZf6JzA2mcLqk0SNLkKIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a1yQLSey; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25CF1C19423;
+	Mon, 25 Aug 2025 16:30:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756139449;
+	bh=vVMKlKNXIWqTUAgQ0OfDfdnw/Qqi34KoxBHr44+YOAg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=a1yQLSeyANUJuVo8YWqNlpBfRTt5qnxjqggmvRgb82T8792MEf77ABh9ZN8SiYPNP
+	 M8+pUVcLK/yA4NEdeiu5ScLrAp9GvbGRSJ6zgx9KbxFIlONn/G0EG9eLFOV9ApuczI
+	 +n3RHjbtGTFbIdiaLv9a6HkdH3U7hrYIRtxzs4M2Mc6aGaYpYUbG2NlbAu7S5VVwiw
+	 ezRCNTzR89dj6gsRJTPP/Zm/70e8lVTD1bBbQTk/dgK0fd9VF3dA4SWpF0WX/OtV9I
+	 W4naQnz2qNJZJv3vw3Me9pduqpg6PZFeCZq7LpFz4p1jWhgUF8ymeiPQSKd1S/w24H
+	 uGCaVsmzG/n1g==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1uqa5n-0000000HALF-0aIB;
+	Mon, 25 Aug 2025 18:30:47 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <mchehab+huawei@kernel.org>,
+	Benno Lossin <mchehab+huawei@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Danilo Krummrich <mchehab+huawei@kernel.org>,
+	Gary Guo <gary@garyguo.net>,
+	Miguel Ojeda <mchehab+huawei@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org
+Subject: [PATCH v2 00/13] Split sphinx call logic from docs Makefile
+Date: Mon, 25 Aug 2025 18:30:27 +0200
+Message-ID: <cover.1756138805.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818115015.2909525-1-treapking@chromium.org>
- <20250818115015.2909525-2-treapking@chromium.org> <CAD=FV=WCfFWHAh=XxA_jZpMsS_L0U_k=_g_oj36Nd=4winZ24g@mail.gmail.com>
- <pr01os80-s752-1rqp-782q-65nr8222npq7@xreary.bet>
-In-Reply-To: <pr01os80-s752-1rqp-782q-65nr8222npq7@xreary.bet>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 25 Aug 2025 09:29:54 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Wi88Az-Uce9eS9iWE7byqXUhPWZUnNzPxb2G00J=xVXg@mail.gmail.com>
-X-Gm-Features: Ac12FXy0EZz9bvA-Qu-6WzcG016UETXUzwRyI68kZYgUXuuPbSw64uhWpNOBD3o
-Message-ID: <CAD=FV=Wi88Az-Uce9eS9iWE7byqXUhPWZUnNzPxb2G00J=xVXg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] HID: Make elan touch controllers power on after
- panel is enabled
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Pin-yen Lin <treapking@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-input@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Hi,
+Hi Jon,
 
-On Tue, Aug 19, 2025 at 1:55=E2=80=AFAM Jiri Kosina <jikos@kernel.org> wrot=
-e:
->
-> On Mon, 18 Aug 2025, Doug Anderson wrote:
->
-> > > Introduce a new HID quirk to indicate that this device has to be enab=
-led
-> > > after the panel's backlight is enabled, and update the driver data fo=
-r
-> > > the elan devices to enable this quirk. This cannot be a I2C HID quirk
-> > > because the kernel needs to acknowledge this before powering up the
-> > > device and read the VID/PID. When this quirk is enabled, register
-> > > .panel_enabled()/.panel_disabling() instead for the panel follower.
-> > >
-> > > Also rename the *panel_prepare* functions into *panel_follower* becau=
-se
-> > > they could be called in other situations now.
-> > >
-> > > Fixes: bd3cba00dcc63 ("HID: i2c-hid: elan: Add support for Elan eKTH6=
-915 i2c-hid touchscreens")
-> > > Fixes: d06651bebf99e ("HID: i2c-hid: elan: Add elan-ekth6a12nay timin=
-g")
-> > >
-> > > Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> > > Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+This series does a major cleanup at docs Makefile by moving the
+actual doc build logic to a helper script (scripts/sphinx-build-wrapper).
 
-Note: cuddled the "Fixes" tags and the "Reviewed-by" tag next to each
-other while applying.
+Such script was written in a way that it can be called either
+directly or via a makefile. When running via makefile, it will
+use GNU jobserver to ensure that, when sphinx-build is
+called, the number of jobs will match at most what it is
+specified by the "-j" parameter.
 
+The first 3 patches do a cleanup at scripts/jobserver-exec
+and moves the actual code to a library. Such library is used
+by both the jobserver-exec command line and by sphinx-build-wrappper.
 
-> > > ---
-> > >
-> > > Changes in v3:
-> > > - Collect review tag
-> > > - Add fixes tags
-> > >
-> > > Changes in v2:
-> > > - Rename *panel_prepare* functions to *panel_follower*
-> > > - Replace after_panel_enabled flag with enabled/disabling callbacks
-> > >
-> > >  drivers/hid/i2c-hid/i2c-hid-core.c    | 46 ++++++++++++++++---------=
---
-> > >  drivers/hid/i2c-hid/i2c-hid-of-elan.c | 11 ++++++-
-> > >  include/linux/hid.h                   |  2 ++
-> > >  3 files changed, 40 insertions(+), 19 deletions(-)
-> >
-> > Re-iterating my response from v2 [1] so it's still seen even if people
-> > only look at the latest version. :-) If HID folks don't mind us
-> > landing this through drm-misc, feel free to Ack this patch.
->
-> Acked-by: Jiri Kosina <jkosina@suse.com>
+The change also gets rid of parallel-wrapper.sh, whose
+functions are now part of the wrapper code.
 
-Pushed to drm-misc-next with Jiri's Ack:
+This series is now on top of:
+	https://lore.kernel.org/linux-doc/0ad4fefca2855603c66d513474a687058e780931@intel.com/
 
-[2/2] HID: i2c-hid: Make elan touch controllers power on after panel is ena=
-bled
-      commit: cbdd16b818eef876dd2de9d503fe7397a0666cbe
+As I'm expecting that the oner one (although it is bigger)
+won't cause too much noise, as it impacts only the media builds,
+and remove a hack that would otherwise require some code here.
 
-NOTE that I added "i2c-hid" into the subject prefix to make things
-more consistent.
+While version 2 has the same features and almost the same code,
+I did some changes to make easier to review:
 
--Doug
+- there's no generic exception handler anymore;
+- it moves sphinx-pre-install to tools/docs;
+- the logic which ensures a minimal Python version got moved
+  to a library, which is now used by both pre-install and wrapper;
+- The first wrapper (05/13) doesn't contain comments (except for
+  shebang and SPDX). The goal is to help showing the size increase
+  when moving from Makefile to Python. Some file increase is
+  unavoidable, as Makefile is more compact: no includes, multple
+  statements per line, no argparse, etc;
+- The second patch adds docstrings and comments. It has almost
+  the same size of the code itself;
+- I moved the venv logic to a third wrapper patch;
+- I fixed an issue at the paraller build logic;
+- There are no generic except blocks anymore.
+
+Mauro Carvalho Chehab (13):
+  scripts/jobserver-exec: move the code to a class
+  scripts/jobserver-exec: move its class to the lib directory
+  scripts/jobserver-exec: add a help message
+  scripts: sphinx-pre-install: move it to tools/docs
+  tools/docs: sphinx-pre-install: move Python version handling to lib
+  tools/docs: sphinx-build-wrapper: add a wrapper for sphinx-build
+  tools/docs: sphinx-build-wrapper: add comments and blank lines
+  tools/docs: sphinx-build-wrapper: add support to run inside venv
+  docs: parallel-wrapper.sh: remove script
+  docs: Makefile: document latex/PDF PAPER= parameter
+  tools/docs: sphinx-build-wrapper: add an argument for LaTeX
+    interactive mode
+  tools/docs,scripts: sphinx-*: prevent sphinx-build crashes
+  tools/docs: sphinx-build-wrapper: allow building PDF files in parallel
+
+ Documentation/Makefile                     | 133 +----
+ Documentation/sphinx/parallel-wrapper.sh   |  33 --
+ scripts/jobserver-exec                     |  88 +--
+ scripts/lib/jobserver.py                   | 149 +++++
+ tools/docs/lib/python_version.py           | 133 +++++
+ tools/docs/sphinx-build-wrapper            | 660 +++++++++++++++++++++
+ {scripts => tools/docs}/sphinx-pre-install | 134 +----
+ 7 files changed, 1022 insertions(+), 308 deletions(-)
+ delete mode 100644 Documentation/sphinx/parallel-wrapper.sh
+ create mode 100755 scripts/lib/jobserver.py
+ create mode 100644 tools/docs/lib/python_version.py
+ create mode 100755 tools/docs/sphinx-build-wrapper
+ rename {scripts => tools/docs}/sphinx-pre-install (93%)
+
+-- 
+2.51.0
+
 
