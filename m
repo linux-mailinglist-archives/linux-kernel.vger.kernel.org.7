@@ -1,217 +1,185 @@
-Return-Path: <linux-kernel+bounces-783857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B54D8B33389
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:29:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51999B3338E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B325201BD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 01:29:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B052C17718F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 01:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CCC215077;
-	Mon, 25 Aug 2025 01:29:02 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD96721CA1C;
+	Mon, 25 Aug 2025 01:31:20 +0000 (UTC)
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123851E5B82;
-	Mon, 25 Aug 2025 01:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68B1CA6F;
+	Mon, 25 Aug 2025 01:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756085341; cv=none; b=u3sFo9W/KLC1wC79OfHF7jMYC4QPh4X5S7Q5Picb+1+3Qbwl3aM8kS3RNligClwFzmicNFoAMqJobYpn7p+6fLCJglxnZ1v8CrvQHuor3Gwb1eqt/urKVpEZlo1X13RbE86jR2VViEZq+pAI25MV4T0hKtdb0+mvPVvgwd9i2Ww=
+	t=1756085480; cv=none; b=rxbOaSq5fojt4LbityX7pmO2W6KNUw8brXcl7J8wcmFB40XkE6ruqRyTpsPHuuM/OOmwHs8vf/AvuimVXldoUMFX/oKgFxHpCkJP5kjrOPeoRT+vzZfJfdXT2q0h+gv37kfsTK9++c4iCqtSALewqLRPl0aqbAqBQRV7FrWsIEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756085341; c=relaxed/simple;
-	bh=tsO1sIGSmfsrGB7/OBNuUQpfskKfQnKpwqhj2n6lfMM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:CC:
-	 In-Reply-To:Content-Type; b=GchUvb8rReSLBeapSE7ifZq7Wkqpkpe5/ujT2FgEHLQONvwrDTcBTIIHgJC+wdJYv1MSRnvx4Ai6xwwtDsEEUSi1srqIGR1s0YXxB4CqgDFaUKAwlzbjoW+fyFxd1SFXFFvyajht5E1SVAN7SGgQCE4GO0apCrGOMAOc1vIOXXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4c9Ckc0MphzdcW8;
-	Mon, 25 Aug 2025 09:24:24 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2484E1400E3;
-	Mon, 25 Aug 2025 09:28:49 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.71) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 25 Aug
- 2025 09:28:48 +0800
-Message-ID: <ea16b402-245e-4a74-a1d4-05edb2d0c40c@huawei.com>
-Date: Mon, 25 Aug 2025 09:28:47 +0800
+	s=arc-20240116; t=1756085480; c=relaxed/simple;
+	bh=ip4FvYYw88ouWT6itUmL/S531RHQ7rP5ltgGr1KS+qk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rQB2Z0IjnjURDHzPRCYnN92Xu4mowIUNAXRMXfe1Ga3hjFu6CTwV2myyKZ6sqvnfn/9nlJ9SD3SLfb7mShZ0XNmlK/c4uBxPmuUkYbIObDPR/huz7+0lpEtXd+LYBerDCcWaJ8GV8nPmtfnz/R7eLrtz2FikOckojId6mFj5mWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpsz10t1756085455t51d7e1a8
+X-QQ-Originating-IP: nHucB3JtzMCn34hcRKZD02jofGkp3qyqMaeH0wrqwoo=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 25 Aug 2025 09:30:53 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 11934234295190835703
+Date: Mon, 25 Aug 2025 09:30:53 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
+	gustavoars@kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <8989E7A85A9468B0+20250825013053.GA2006401@nic-Precision-5820-Tower>
+References: <20250822023453.1910972-1-dong100@mucse.com>
+ <20250822023453.1910972-5-dong100@mucse.com>
+ <a066746c-2f12-4e70-b63a-7996392a9132@lunn.ch>
+ <C2BF8A6A8A79FB29+20250823015824.GB1995939@nic-Precision-5820-Tower>
+ <f375e4bf-9b0b-49ca-b83d-addeb49384b8@lunn.ch>
+ <424D721323023327+20250824041052.GB2000422@nic-Precision-5820-Tower>
+ <809527f7-c838-4582-89cb-6cb9d24963dd@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [ext4?] general protection fault in xa_destroy
-To: syzbot <syzbot+1713b1aa266195b916c2@syzkaller.appspotmail.com>
-References: <68ab9f9f.050a0220.37038e.0080.GAE@google.com>
-Content-Language: en-GB
-From: Baokun Li <libaokun1@huawei.com>
-CC: <adilger.kernel@dilger.ca>, <linux-ext4@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>,
-	<tytso@mit.edu>, Baokun Li <libaokun1@huawei.com>, Yang Erkun
-	<yangerkun@huawei.com>
-In-Reply-To: <68ab9f9f.050a0220.37038e.0080.GAE@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <809527f7-c838-4582-89cb-6cb9d24963dd@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OBUGnm9pFasAiZ6W90wYeKsby/+S0wZ8wiyoTqCKQr2mZNPk/xuvOhnt
+	vPAIHQk5tb87rpyR8tBfYmrgCdVLT1kKCtCB/hsps9/XhR/yK1wlC5kFfqXStXS8d5hUHq3
+	UgjO1xgNlYbfNTrE/0Irj6zsTut6gGvcxeGp5aNYK5Ml2zdsOhcjYY0uhO4ATMPM5i3mDPP
+	RRCc/OcH2vtkfWRsx/T0iOJKTRlfhA+RH5N1JlWDVRRvbkYS+glx7cuFXJM1QOtKFyM+9v/
+	NW9axunD9HSRfmndx5E5zmtCyzvxHI7xZCjCOnDENvn//Oku01vlL7Fi62GhHMdtbjTQlUE
+	K3YtJLJ47FjbgoEx8fhvAyfyNeIylB7kQcCIuV7WYpy5gCHmAPZVH2QV9Hl5c0jJKA5S5oe
+	OzRCHoOpc+f4e+hP3oQ+lE4hOARCrKg4fjxxmQtmouAHfkd1Cb1bmoiTEGKvsyMXuiBMiHq
+	do8nkr/O90mZZ7CyKosJlQdmqoKFPpdI++Sqq2X5dLs15tyEXImnO+dnqch0ZP3yn6h+uWT
+	enHZ78B0ofJSDCz+D+iz0VJ5GoILj1eilNbEH20kIDamSP2ilJknDst9MkC6eESn19uNweV
+	mKaHwYg6OBrtj9uboNgX0S9mr6BLyHM+ZHabZsLBuBmBOsMssCLFAf2owXg7RVO0InrZImK
+	8Cu6zKQiKbdf2hVBHjnL0rXWLSpVj8nRryIbVNDgcYh//OGWYAgFkWfRCv6boljH1KMCki5
+	tji2SaOwLj/6dX2F0XzgPwUayCVKyHz/+uc+LAbe/qMg87N5Vjlu0auRyajVYY1Dmqd9PNt
+	vTu8WyXSZUh/+5ziPT2ACSzMgWhlgDR2tXpf5X6Q4NWzwKV+WyzckmjjUAYBqipM8S9AGI/
+	avvy1EZ8fZEXArLXQnz7EPGe4gOd8EuXPxcl30gWDa5wQ5YvMT2Sl7l/ptzwPZscs4Omdjg
+	7I25sBT/Ol0dkmkbhppZ5QUgD4O6yvtl3Ys1yROMg+KQQWSnsmJHvL1s7
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-On 2025-08-25 07:26, syzbot wrote:
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    c330cb607721 Merge tag 'i2c-for-6.17-rc3' of git://git.ker..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=115a7a34580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=292f3bc9f654adeb
-> dashboard link: https://syzkaller.appspot.com/bug?extid=1713b1aa266195b916c2
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/bb57ae49985b/disk-c330cb60.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/bac705cd2981/vmlinux-c330cb60.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/9817d12458c5/bzImage-c330cb60.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+1713b1aa266195b916c2@syzkaller.appspotmail.com
->
-> EXT4-fs: no memory for groupinfo slab cache
-> Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] SMP KASAN NOPTI
-> KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-Thank you for reporting this issue!
+On Sun, Aug 24, 2025 at 05:15:25PM +0200, Andrew Lunn wrote:
+> On Sun, Aug 24, 2025 at 12:10:52PM +0800, Yibo Dong wrote:
+> > On Sat, Aug 23, 2025 at 05:17:45PM +0200, Andrew Lunn wrote:
+> > > On Sat, Aug 23, 2025 at 09:58:24AM +0800, Yibo Dong wrote:
+> > > > On Fri, Aug 22, 2025 at 04:43:16PM +0200, Andrew Lunn wrote:
+> > > > > > +/**
+> > > > > > + * mucse_mbx_get_capability - Get hw abilities from fw
+> > > > > > + * @hw: pointer to the HW structure
+> > > > > > + *
+> > > > > > + * mucse_mbx_get_capability tries to get capabities from
+> > > > > > + * hw. Many retrys will do if it is failed.
+> > > > > > + *
+> > > > > > + * @return: 0 on success, negative on failure
+> > > > > > + **/
+> > > > > > +int mucse_mbx_get_capability(struct mucse_hw *hw)
+> > > > > > +{
+> > > > > > +	struct hw_abilities ability = {};
+> > > > > > +	int try_cnt = 3;
+> > > > > > +	int err = -EIO;
+> > > > > > +
+> > > > > > +	while (try_cnt--) {
+> > > > > > +		err = mucse_fw_get_capability(hw, &ability);
+> > > > > > +		if (err)
+> > > > > > +			continue;
+> > > > > > +		hw->pfvfnum = le16_to_cpu(ability.pfnum) & GENMASK_U16(7, 0);
+> > > > > > +		return 0;
+> > > > > > +	}
+> > > > > > +	return err;
+> > > > > > +}
+> > > > > 
+> > > > > Please could you add an explanation why it would fail? Is this to do
+> > > > > with getting the driver and firmware in sync? Maybe you should make
+> > > > > this explicit, add a function mucse_mbx_sync() with a comment that
+> > > > > this is used once during probe to synchronise communication with the
+> > > > > firmware. You can then remove this loop here.
+> > > > 
+> > > > It is just get some fw capability(or info such as fw version).
+> > > > It is failed maybe:
+> > > > 1. -EIO: return by mucse_obtain_mbx_lock_pf. The function tries to get
+> > > > pf-fw lock(in chip register, not driver), failed when fw hold the lock.
+> > > 
+> > > If it cannot get the lock, isn't that fatal? You cannot do anything
+> > > without the lock.
+> > > 
+> > > > 2. -ETIMEDOUT: return by mucse_poll_for_xx. Failed when timeout.
+> > > > 3. -ETIMEDOUT: return by mucse_fw_send_cmd_wait. Failed when wait
+> > > > response timeout.
+> > > 
+> > > If its dead, its dead. Why would it suddenly start responding?
+> > > 
+> > > > 4. -EIO: return by mucse_fw_send_cmd_wait. Failed when error_code in
+> > > > response.
+> > > 
+> > > Which should be fatal. No retries necessary.
+> > > 
+> > > > 5. err return by mutex_lock_interruptible.
+> > > 
+> > > So you want the user to have to ^C three times?
+> > > 
+> > > And is mucse_mbx_get_capability() special, or will all interactions
+> > > with the firmware have three retries?
+> > 
+> 
+> > It is the first 'cmd with response' from fw when probe. If it failed,
+> > return err and nothing else todo (no registe netdev ...). So, we design
+> > to give retry for it.
+> > fatal with no retry, maybe like this? 
+>  
+> Quoting myself:
+> 
+> > > > > Is this to do
+> > > > > with getting the driver and firmware in sync? Maybe you should make
+> > > > > this explicit, add a function mucse_mbx_sync() with a comment that
+> > > > > this is used once during probe to synchronise communication with the
+> > > > > firmware. You can then remove this loop here.
 
-This issue was caused by the lack of null-checking logic in
-ext4_mb_avg_fragment_size_destroy(), which led to problems in
-error path handling. My apologies for this oversight - I will
-immediately send out the fix patch.
+'mucse_mbx_get_capability' is used once during probe in fact, and won't be
+used anywhere.
 
+> 
+> Does the firmware offer a NOP command? Or one to get the firmware
+> version?  If you are trying to get the driver and firmware in sync, it
+> make sense to use an operation which is low value and won't be used
+> anywhere else.
+> 
+> 	Andrew
+> 
 
-Thanks,
-Baokun
+No NOP command.. 'mucse_mbx_get_capability' can get the firmware version
+and in fact only used in probe, maybe I should rename it to 'mucse_mbx_sync',
+and add comment 'only be used once during probe'?
+Or keep the name with that comment?
 
-> CPU: 0 UID: 0 PID: 6121 Comm: syz.1.19 Not tainted syzkaller #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> RIP: 0010:kasan_byte_accessible+0x12/0x30 mm/kasan/generic.c:199
-> Code: 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 48 c1 ef 03 48 b8 00 00 00 00 00 fc ff df <0f> b6 04 07 3c 08 0f 92 c0 e9 fb 3c ed fe cc 66 66 66 66 66 66 2e
-> RSP: 0018:ffffc9000ad37700 EFLAGS: 00010016
-> RAX: dffffc0000000000 RBX: ffffffff8b7c3b57 RCX: 29738ff3f3108600
-> RDX: 0000000000000000 RSI: ffffffff8b7c3b57 RDI: 0000000000000003
-> RBP: ffffffff8b786d59 R08: 0000000000000001 R09: 0000000000000000
-> R10: dffffc0000000000 R11: fffffbfff1f47127 R12: 0000000000000000
-> R13: 0000000000000018 R14: 0000000000000018 R15: 0000000000000001
-> FS:  00007f0bf6da46c0(0000) GS:ffff888125c1b000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f4414b3ff98 CR3: 0000000078296000 CR4: 0000000000350ef0
-> Call Trace:
->  <TASK>
->  __kasan_check_byte+0x12/0x40 mm/kasan/common.c:567
->  kasan_check_byte include/linux/kasan.h:399 [inline]
->  lock_acquire+0x8d/0x360 kernel/locking/lockdep.c:5842
->  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->  _raw_spin_lock_irqsave+0xa7/0xf0 kernel/locking/spinlock.c:162
->  xa_destroy+0x59/0x2e0 lib/xarray.c:2390
->  ext4_mb_avg_fragment_size_destroy fs/ext4/mballoc.c:3659 [inline]
->  ext4_mb_init+0x136a/0x2860 fs/ext4/mballoc.c:3817
->  __ext4_fill_super fs/ext4/super.c:5558 [inline]
->  ext4_fill_super+0x5253/0x6090 fs/ext4/super.c:5728
->  get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1692
->  vfs_get_tree+0x92/0x2b0 fs/super.c:1815
->  do_new_mount+0x2a2/0x9e0 fs/namespace.c:3808
->  do_mount fs/namespace.c:4136 [inline]
->  __do_sys_mount fs/namespace.c:4347 [inline]
->  __se_sys_mount+0x317/0x410 fs/namespace.c:4324
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f0bf5f9038a
-> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f0bf6da3e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007f0bf6da3ef0 RCX: 00007f0bf5f9038a
-> RDX: 0000200000000240 RSI: 0000200000000280 RDI: 00007f0bf6da3eb0
-> RBP: 0000200000000240 R08: 00007f0bf6da3ef0 R09: 0000000000000004
-> R10: 0000000000000004 R11: 0000000000000246 R12: 0000200000000280
-> R13: 00007f0bf6da3eb0 R14: 0000000000000236 R15: 0000200000000000
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:kasan_byte_accessible+0x12/0x30 mm/kasan/generic.c:199
-> Code: 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 48 c1 ef 03 48 b8 00 00 00 00 00 fc ff df <0f> b6 04 07 3c 08 0f 92 c0 e9 fb 3c ed fe cc 66 66 66 66 66 66 2e
-> RSP: 0018:ffffc9000ad37700 EFLAGS: 00010016
-> RAX: dffffc0000000000 RBX: ffffffff8b7c3b57 RCX: 29738ff3f3108600
-> RDX: 0000000000000000 RSI: ffffffff8b7c3b57 RDI: 0000000000000003
-> RBP: ffffffff8b786d59 R08: 0000000000000001 R09: 0000000000000000
-> R10: dffffc0000000000 R11: fffffbfff1f47127 R12: 0000000000000000
-> R13: 0000000000000018 R14: 0000000000000018 R15: 0000000000000001
-> FS:  00007f0bf6da46c0(0000) GS:ffff888125c1b000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f4414b3ff98 CR3: 0000000078296000 CR4: 0000000000350ef0
-> ----------------
-> Code disassembly (best guess):
->    0:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
->    7:	00
->    8:	90                   	nop
->    9:	90                   	nop
->    a:	90                   	nop
->    b:	90                   	nop
->    c:	90                   	nop
->    d:	90                   	nop
->    e:	90                   	nop
->    f:	90                   	nop
->   10:	90                   	nop
->   11:	90                   	nop
->   12:	90                   	nop
->   13:	90                   	nop
->   14:	90                   	nop
->   15:	90                   	nop
->   16:	90                   	nop
->   17:	90                   	nop
->   18:	66 0f 1f 00          	nopw   (%rax)
->   1c:	48 c1 ef 03          	shr    $0x3,%rdi
->   20:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
->   27:	fc ff df
-> * 2a:	0f b6 04 07          	movzbl (%rdi,%rax,1),%eax <-- trapping instruction
->   2e:	3c 08                	cmp    $0x8,%al
->   30:	0f 92 c0             	setb   %al
->   33:	e9 fb 3c ed fe       	jmp    0xfeed3d33
->   38:	cc                   	int3
->   39:	66                   	data16
->   3a:	66                   	data16
->   3b:	66                   	data16
->   3c:	66                   	data16
->   3d:	66                   	data16
->   3e:	66                   	data16
->   3f:	2e                   	cs
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
+Thanks for your feedback.
 
 
