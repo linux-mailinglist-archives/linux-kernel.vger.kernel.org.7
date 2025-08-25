@@ -1,218 +1,465 @@
-Return-Path: <linux-kernel+bounces-785473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB8CFB34B3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:56:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D57B34B40
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:57:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D79F87B54F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:54:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADDCD7B5AF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFE22882BE;
-	Mon, 25 Aug 2025 19:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F18286422;
+	Mon, 25 Aug 2025 19:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NFHy6sRt";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="IYMDSg/B"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1BhIE5Uw"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827991B87C0;
-	Mon, 25 Aug 2025 19:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756151692; cv=fail; b=OxrR+vab4wFxdQgnuHIom38rNVUEe+RYVvEYU0YdazTiVoXLIhSl/SiFMHxxRHtHy8Cu/M5uQGJOyiXz9FeIuAOZ4eo8psvtlbggyEvr+lEu3uMPlfulQY3MIuOv5S1Kz6fyDebaUaaOyysY0vnWeIafrenPzqkhnd56iDhmB6w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756151692; c=relaxed/simple;
-	bh=/LFE941AkFsG75sNV1OV7pEkUcKbj9BznVoifU3rjz8=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=cBkvJA9EKaoU/Hqu/GCRctqYFy+M0BWJ2TyNWdiwmcSfDyZW4A0YygnC0Uf7TPLcxInUce1HQKAst+ODcrIId8mrnsUTn3AcJoiJQnl+laiyufBCAkM2y2HKzGHYDC91YDlmpcbj701gghvt94WbGVrfaMwKMDtHlBiwbXL1jjk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NFHy6sRt; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=IYMDSg/B; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PJDWLL024981;
-	Mon, 25 Aug 2025 19:54:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=B6L9mBXrz/KGuf9xBX
-	cChV05DVEkH17z2SIXrlALDpg=; b=NFHy6sRtMUHPhpJeGjAICr4pFvFcw3YOPk
-	cLv3jBkWOppvGxhnIDybtkFIcKrFjCo7F+vFEgrbz1l5Wt/DBK5rTrS+92+hzOmf
-	RLfzNSXN0mNDyMQ51852FslCtVKIOWC+s68MByzvzErmrtBEQpkQPV9IIDG6lQoo
-	9vXwlSlnwW99JtUS2iXmON/8E5884vkLFFIqBeg41B+++vSRpa3R6hd0bbVMzM8L
-	gszRJuI+vNw4Zee2NQXqbSx1Bblf7p1Jii3HBSJBP1X4GpX4aAPcOfInkuFloMnZ
-	LrUwcEZsCs3bX+Feyg0cC6z0LpwvT/GY+MtUz4c6M45XaF5ZloiA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48r8tw9u50-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 25 Aug 2025 19:54:28 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57PJ9KlN004952;
-	Mon, 25 Aug 2025 19:54:28 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11on2085.outbound.protection.outlook.com [40.107.236.85])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48q438uerf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 25 Aug 2025 19:54:28 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G8DyfgWYgbl4dRS3rdLfckU3G73MpnyYovzPi+88M+FvUfQbqLh1UayhPM+GyIX9nuu0ALSJKHb0U6qj3R+wPOEgnSKpa3R9KamtFVjv+3ZxReuMADVKvYa64fT8VCAAqOsSIEGRapWzuEfr3G0n4XmR7SJpX6HV1EONd33AZ9McYcK5bwZded+Lx+Jsbu3QHCoE730+aITFDOqT5YtUwRF2p/i9EpT0WPHe8+27HYTmdm+ej4UEnqnUlQYYHcIgjr7sBca1OVAM8HTkUxmchshg7zQiPNAa/SMjv44vFZnDtjV5frEOkwbDur8ur7qSxIQzshD9iJ9BL/xB+imGcw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B6L9mBXrz/KGuf9xBXcChV05DVEkH17z2SIXrlALDpg=;
- b=Dw2rOCP1EdcDqDechKZtkuzyUpDcpi4qCYd4uCgn7nBiWlrSQQyiL9sUzetAFgLO26Zx1XqwMNk61u/Bqh6/E0QlMn3wYG/NOFce9ZpCVf4V+G++4r+nynj20c+YSy27wzJ5OX6+hxjEzQO4+eNK9dQMfWq2tzWYoBWBz7LcY5VinFqBZK/ZRXIpiGf+w/s6CjK0+HH+QeOL2Sod1tCzkn0QS5mNBcsoByixZkFFIxaXi4gF/gh1+8vFr2OljuADbTu7skp+y1KFr3l5CngQr3c6C8bytistzemLS0vQStMVebLGvMzoC8B2XhqIWufZ+43D1iXO1k7TuQg+eoii2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0251A41
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 19:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756151864; cv=none; b=aNNj2ekXuWxzKK1WlirKPjQZjxHinE7r30to7t+z3XGarzIp91byeJosq8HNWYITPPZfd86svcW4PUc4dz6579362kkupMMgFfZSSVKUgFh9DNA1qfrpSbGiF53GDiikGhJA8qgMiaVXKWP7Z1nHA8PMpe27CD+xjDCfQNnjn2o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756151864; c=relaxed/simple;
+	bh=19seW6aur83nA1mYEybwSfkvSC18FQelg/mUMuy77Ic=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=eSUB/Hc5viAX5cCvMRO3DseM26A16NqZH7qAryFI5XGSTnWodu4UZShgbY4pYGvEkpKY4+g5CTfOYHWQJU95CUb+39/6G1EPbcF9A7W8Cjs9a6e1b2pllOmPMzjlDXmUSe5WyvbgAJW59cD/jZTisHSpKC+GX2mx/xxRVr4W7Uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1BhIE5Uw; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-72009b20933so22139057b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:57:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B6L9mBXrz/KGuf9xBXcChV05DVEkH17z2SIXrlALDpg=;
- b=IYMDSg/BOHkY3SVlfKr9VQBgp1IaF/EgNoPnH0vHIVOEI6o7QeS+8r/Clj/PBcn6yQx0gnGvWmDZCj2/zcc2zUBfzpF5MywfXFHp0CU1i00z0HXXKyt11Ei46z56ptwy44vJQl618q8H1RhdR2jYmql8o7k4FaZjw03B+miedCc=
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
- by CH3PR10MB7258.namprd10.prod.outlook.com (2603:10b6:610:124::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
- 2025 19:54:25 +0000
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf%6]) with mapi id 15.20.9031.014; Mon, 25 Aug 2025
- 19:54:25 +0000
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: <linux-block@vger.kernel.org>, <linux-raid@vger.kernel.org>,
-        <drbd-dev@lists.linbit.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <john.g.garry@oracle.com>,
-        <hch@lst.de>, <martin.petersen@oracle.com>, <axboe@kernel.dk>,
-        <yi.zhang@huawei.com>, <yukuai3@huawei.com>, <yangerkun@huawei.com>
-Subject: Re: [PATCH 0/2] Fix the initialization of
- max_hw_wzeroes_unmap_sectors for stacking drivers
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20250825083320.797165-1-yi.zhang@huaweicloud.com> (Zhang Yi's
-	message of "Mon, 25 Aug 2025 16:33:18 +0800")
-Organization: Oracle Corporation
-Message-ID: <yq1zfbnp480.fsf@ca-mkp.ca.oracle.com>
-References: <20250825083320.797165-1-yi.zhang@huaweicloud.com>
-Date: Mon, 25 Aug 2025 15:54:22 -0400
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR13CA0060.namprd13.prod.outlook.com
- (2603:10b6:a03:2c2::35) To CH0PR10MB5338.namprd10.prod.outlook.com
- (2603:10b6:610:cb::8)
+        d=google.com; s=20230601; t=1756151861; x=1756756661; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lOa7FkG+isLBw/+KGBMQqC0Dor21gY5tAbdno+nBPXo=;
+        b=1BhIE5Uw9MvJzmU6qSBCak+p3EOmNKddj138TD3Hht7Zq7u4oZ4uQ2W4OeqAXDLuUp
+         6eGnflo+bUQMHk/zjxCDYTzqZCBiCZ+evRN+XmxIaTqBErUGwe//5+jVheGbu3/ePKhf
+         e7BXw491QNavf1zoA3Aj7gcBJOrvDu+rHR15bk4MlfkeL2tKLLxAdIeQ8nelbU5SIDgF
+         0aQR6+MWT3bCZ8GVvitjjenjaX3PYDHgFR9lApPt/Yac6W7QORztQbtoiMlo0QYLyt2e
+         fW0xlZ7a/6i/scZ8+rJK8UzKUf1cADVVWCN/D/HD82R/ef1auuwa6Fn2SAONmEZGkSJb
+         5kIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756151861; x=1756756661;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lOa7FkG+isLBw/+KGBMQqC0Dor21gY5tAbdno+nBPXo=;
+        b=i45Q082VDuYecEvvFdAfPXEo2xhjqCXdjCbtVloZ21Kf1ybdRmm2QsIDLg6/0dxJcP
+         riVxc4M4etLxZ8hU0USX0INs0muEOG4j9v9yKxeh07C7mSRaNs9nDu36mQkTXY8J3ol5
+         pPjtrdgo2lm1XXVr/+REOy+jRm/+1v20bbkaYsPp+ieCuQFwqfr9WWtYMNY8VT6Xfxja
+         KernJtvHUe3S+5pc7x+C85zgJei5uYewuHQ085EStL1IepIW6EiigUAYSB/2CHswa8Lx
+         Cw6DzMrqBNH/CsgcCH/790KfFrU0EOvruBlyDVF/PZr5NFh5C8SKoCPCbOzFZ4CbvlL1
+         J5yg==
+X-Forwarded-Encrypted: i=1; AJvYcCWEgCtI1H6nVkXtAgwTO9omsGd0ezB11BScH5R+Fu5bgKzKdH0sY1HIZBugxVuM4iSipSTKEyG+KS+l9Zs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOW1GpdCTXHffNoAiYLzuuFB2JoprWv3HgxdZ9AtGfjuG5Uqhx
+	4Qhn6ekbvawgnrjCNynQQ1kl84qvCfrEIX9B7jiOr05CV9Zbl9YTrxojY7FGXa4FXc+uepnFKBu
+	1oF3PaS4y9Q==
+X-Google-Smtp-Source: AGHT+IFxRyfs3Q+jFblBel8Nx7ZRiULBovkOYxz7tfoMZJfcGsuxk6+4WjeMiuYkI5f3aXZOq7vC7U4mW/T3
+X-Received: from ywbbg10.prod.google.com ([2002:a05:690c:30a:b0:720:4612:d75b])
+ (user=zecheng job=prod-delivery.src-stubby-dispatcher) by 2002:a05:690c:6711:b0:71b:9c07:cfa7
+ with SMTP id 00721157ae682-71fdc4196a1mr147080207b3.40.1756151861642; Mon, 25
+ Aug 2025 12:57:41 -0700 (PDT)
+Date: Mon, 25 Aug 2025 19:57:37 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|CH3PR10MB7258:EE_
-X-MS-Office365-Filtering-Correlation-Id: a0bfee12-0a34-4cd0-f8a9-08dde411315b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lyXPQ4uTIC1exS4kvnBggKuyb6O/4AEwFZ0PkixTmdZ5XwF4oAlBuMQpH7t+?=
- =?us-ascii?Q?nA8vJZ0pv25AkrgyVpHqDHq89EgK9hR2i9E0BkOuP3ZCZHCnlrEs7cVAVAdE?=
- =?us-ascii?Q?dsIumqwJ4nkismZ9I8yquxzsBjdtHu4ugm26FpNLMd5N1zggm5l27ziB+bdu?=
- =?us-ascii?Q?UykI+THfhB9cspZzwBZeVkRWrJDDgJtygko1qF1IlVz8bulPmyO2jzVL86sV?=
- =?us-ascii?Q?632gqzOfl70XZppjQKI1cmQ0c730IIyroCoGu4nck6xvhLLK9AbC9pCtZY5F?=
- =?us-ascii?Q?jv3yBOylENMXVlBoL0utUeYSSL/gCVH0+aOUu/Tx1I5S1TbjTSehUpbcPVRs?=
- =?us-ascii?Q?O+DfWBba2WlF8R0phXs6t7/dzP8RgDqzpAepOWZR2XvgaOJpEH1wurFXRgP6?=
- =?us-ascii?Q?8lkqIxX9OYVQQ+UfYq241yYJneR3rbrXxZFzaoWeWg6A+Zmp74QhxfM4SuNu?=
- =?us-ascii?Q?jIcZWuuPFgwbT2vHKhbzkBz3ugEGR3KGkraRoSppiHXWeAEFivzH30ukkxfv?=
- =?us-ascii?Q?FSRXZwDp7LhW+f9gMl5LryyE61DMl/1GkFcVDrQmUnpdB7YudqiIGSAmNAyc?=
- =?us-ascii?Q?mrmpU27XTrEsRdm/Q4v717ykUSAoeuz3OKsevl39++hN4SJAalVrKErwXTaq?=
- =?us-ascii?Q?qSyqwNB0QSL5bxSru0o24x6hJ34C4QKla3zvDAESL2IWCPDZOeTMakGnQ5no?=
- =?us-ascii?Q?AUhhhYr50dlIACeBtrGwpYpxYJEWzdfeL9dmqD6WL8OGJ6o0nn4W96DkEv79?=
- =?us-ascii?Q?o/106xWIl/vl1vR1jyGxprf1gKEKrUA+xZwimDM2b7B4+KM82ebmpecVR1fY?=
- =?us-ascii?Q?jjULc2nZMgmFEekKx45GTQLTac/agpsDDn5j64h7fDvLO++GnQxRvLjBwbJv?=
- =?us-ascii?Q?TRDhzL4wIdLLcQWaUAhIgDt6Ky9OshCHvGf8sc5Zs7TyaiB72sdU8uZzKZpi?=
- =?us-ascii?Q?yptnYKYrl6a7smrj6YguUNcJ+SySht5/InyqaY0nBW00YlWQjp0Moh1hjv6c?=
- =?us-ascii?Q?bm0Ev2NiYYFEy4gta+T7q7WtxX46n8USsOiW9lGZXfUoju1sGiIwQ4DlObdX?=
- =?us-ascii?Q?pzR5GfaKc6tsgyke2KZiAZD+JZXYXxAfTrw0VpKH+N0FLH1618rqkrs5PrH5?=
- =?us-ascii?Q?LoVczcHuaQ5FhQVLQoBxJ797KLW6BkwrDYOCVKpG+6MU6IJ4STtDYGZfJyDO?=
- =?us-ascii?Q?HW6rlFedp6sw04+ibh1k+maXBErTpbbvPX1GO3/kG29MKDUqy0EaY4ob6G/R?=
- =?us-ascii?Q?NUG1YEFw34XBTkeKCsxcq+VF/Z/WNYRU7ZWcfnzpIw/lnBjtauYOPQDAJI4C?=
- =?us-ascii?Q?fX3IktsCw2Up5Q22rdOUT+Yq/rs/G9TeXo6WGGocm7xy+iYSbFFeSvtVTAfQ?=
- =?us-ascii?Q?nWP+c/Q8ZLervbsN1VWZu1LLzP5B+/i5+oC+lajYRxf7sn7Ndw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?P5yySbzcDTH+88ocEf2NNQqbnZL29Po43vG/WT4K1WLLAdMDTTCD25hy5QAh?=
- =?us-ascii?Q?UZhg9QCpNuWmG3gbi57hV0YX06AOleYBO/KPoBG1oBoJ0wEpQSu1/hpl0TCs?=
- =?us-ascii?Q?VmHa+W3inCBWijS7+l0ZGXM7dCqMHp+lXtIsI4zTXUgin4oH5DNrdUtVNc+u?=
- =?us-ascii?Q?ytdDQvWKESZnjuCuVZb+9+o5k9KWtS7FQdOpga5eyDapFF4lx2V6PcX2zwgv?=
- =?us-ascii?Q?+kjylEdZsQJrYfw+gzgnulnwDSx3tFabfq03tqfMQDt1gGwf0zFF/j/WHiTT?=
- =?us-ascii?Q?/hPEKE1sHyMMOOsBK/OxX2hqXSZG44HN63mPUiDuxnthCUiQZF/hZAz4yQll?=
- =?us-ascii?Q?qzxQtEm7ABWVlpqE124z2aMOaTAyJDXP4esfsWRFBRD9NTS3Kjdhs6DVBShu?=
- =?us-ascii?Q?bHNp/0ed3HFTFhl0bv5RDBOmzOvj8RXAfbK7IJX6lKPZDEoGTFKOPmJtM0xZ?=
- =?us-ascii?Q?c+VoPVgeCdoEC86aSNThcGaXgPkaakWkmeNw5xJvby3yjDOeQfKCo1jf+6Rk?=
- =?us-ascii?Q?LeZEvYs50dbEJs6JnS37+JYXpvBxlFYGYCwjwXtx66U8YDsLJRC1ZRnJgpgT?=
- =?us-ascii?Q?GSGMT9ZQI/4npZTYZyZwNFxw2hrMEBcMIZ7x1SndUB6aCwsb3JSgNTps1+Kq?=
- =?us-ascii?Q?hpNrORVkfGo9SB6HEi6PKbEQmAGym3DEZI3fNJ1y5b3nfgVlMYrBVe35H94B?=
- =?us-ascii?Q?XtFdI2q9qpSFVWIM2SYmu4sUkn9UJSnOTmAJbZXc/UIaCzq44eJr/5mLmvbB?=
- =?us-ascii?Q?KhokmVFOaDpt97C7dWYpmfKV0D9uIxsbiCu7eBSt7Gy/X57K2Lzp80rQCnTd?=
- =?us-ascii?Q?6sw5SIbd7XcE4E4JdGpxvisF4Ozmyb8vLSLc799jcBWvBleKKbg7JDp3JQP9?=
- =?us-ascii?Q?XJ0eCwVqYhSCCQBUxsy8Fj0w4ZtItgiRe5JgCBbYyZFm5kV0lvO/Z17538Yv?=
- =?us-ascii?Q?Y9IW7sIGbN7DntcJme5MjLsiOqq2gHP+ZwIncKE6yPQg/yaJc+uCnm5/6J7n?=
- =?us-ascii?Q?dUf+zh0CMvFmXui7Evlsa838GUNguZSVAI1/CILmWBE/vGSI9AbFTAUteCZa?=
- =?us-ascii?Q?ovHAi8n84dPFNRofeO9ikDYMCWaVE14frl2iPYLOtUXRdfEdXjfxkcsGv1zw?=
- =?us-ascii?Q?J0x627+Lzg3twzo0eajNgpEL8nSbFxpPQOPTgXurq15op5hK5ALMbGHeqErg?=
- =?us-ascii?Q?k8IE69e149egeXoConajmvgAuBbCKw8U1UtYW09WDTYn2HFDSXev0dx1cZyN?=
- =?us-ascii?Q?YGtxHfXhlqeUPWqGwmfJNPsDnQHUi5lNGqOOy8Dd8r1oxMKCHv2L4LV1ghiB?=
- =?us-ascii?Q?SnmZ1NZ2uqwtIP9vF/zYaZE4QHa0klo09k0cr6GZay+DDpKF8xJRuabIPCyx?=
- =?us-ascii?Q?aGBqT4dR8W8CTGoFq1ZvXSz8THhbZHDOy1wyNmjrz/kH16dnJqnX8QUqW6AE?=
- =?us-ascii?Q?4dzumQF87sVHFf0qSbBa6iS7UKjbXqlHbpY/Qj1mjK2fdWbPUA9T5iiEyRN5?=
- =?us-ascii?Q?3BFqBcsr17H0c4NQbomYVVgK3sWhLd/+wSH9xlHMFNX8tCrw7gpT9l7EdUb5?=
- =?us-ascii?Q?ChvtNQOhxbg9ULesKvkxSNWgPHLgBEVzhfWQgDwLl8xHKXQ9WJuIiaRVQYWx?=
- =?us-ascii?Q?bg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	IJTDuzMnGNYL4/2RgLeXTI+HZRkBIguGUVvrKnvdrFFzZYVHZniGw079UpbIteIKowmhjUaLoAaOWduu5irThgAZOnLXau7MykLIc+KEdV8fVA3OfAap5eQNMKFTPcytBNuUcOC9995R5CT2vWFHtK5kREPqJGMRpPV5P8aMg1M0WdPOffVnSZ/kvM3x9h3Ua4ebMDZ7ScMOHzGfusGUGVmB59YLuztHRXbeLAiSXCD3qIgLNusQbGu6WZfJeeqc/xdK2foMi4F4OpkUhM6efrvmpcu3M+SPVxQPRkProC2/8/JNqA2t6D+dJwX8ayDD5uf28X1C9hvQHI8UV/A/cvBB0o6dJlukDk/nP/JdgHlkiq4V/qLPr6EpLoeN8ztqAeilZ5dNGpUCikvPEdnQukb4WYVN3rs2hfU7YclogSuM5idJVnlNv5xmFBzlLvhUPIkDiTMGL+AJfUTO0cgSAVvN8qGXO4AVTXNieh472dyEn4RazA77g8QlUorw00oG1oLPMZk9v2M07NcUOr9B+mHFdQQfnLfYZtdst8A7dZHILypkIydLTOGOqBaiCjpjBt86eiwWDkBWAYuo1pTrNUshyXMte37ga0VIc/B1PSA=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a0bfee12-0a34-4cd0-f8a9-08dde411315b
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 19:54:25.1482
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: m0QwzpgCuTEOKuypG4F0eBwfPK3INCDTE+I1JvalIG11cIGIhkbQ/vJipR5Fi7gEeTFq6jWCoPintSuV5TbBsALXrXmiymVvuhKffsi24ck=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7258
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_09,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0
- mlxlogscore=999 spamscore=0 suspectscore=0 malwarescore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2508110000 definitions=main-2508250180
-X-Proofpoint-ORIG-GUID: QmLqiM-iqEbodTTT6ufEYRj4zIuJkFmU
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI0MDE4NCBTYWx0ZWRfXwdQ5tnBK+EpO
- GEFlFqlwrCD/CyOGNiOkg3xqPs4T/0akv79GiBG85Ts9tghjRtk2/T9YjD3FKRUX0sgZWVhJSGm
- 0bA2z686A9fci8JjA0AZX5I+LrpUg3xDjcx1Epl2V/3oaLd26ulo4oDfUhJ6ienN3qWmefSkKPr
- 1WkZfl/3yKz2/p1HUL0tKlofESeNHMr2fuRlLiAXGw5jtyAsSAbCtlyYoEpnY+0jgwcvnZdFD1O
- NlHmyxiYZJX9vWjjebNhfqnvGJE4gei/K0byh2Ks5vbT0QMyp7QT481T/JRQZnq8oWRdVUoTy5J
- OxTTiLyE66HgWI94HC/VzGJXHPh+pQdremanQRtcugWXh7W4ce1YQUaZCGRQKN/itnvBd5B8sMG
- TwIGfeN7
-X-Proofpoint-GUID: QmLqiM-iqEbodTTT6ufEYRj4zIuJkFmU
-X-Authority-Analysis: v=2.4 cv=IciHWXqa c=1 sm=1 tr=0 ts=68acbf74 b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10
- a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=NWDrhqrOra_wOMGATk4A:9
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
+Message-ID: <20250825195737.225824-1-zecheng@google.com>
+Subject: [PATCH v2 06/10] perf annotate: Track arithmetic instructions on pointers
+From: Zecheng Li <zecheng@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	"Liang, Kan" <kan.liang@linux.intel.com>, Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Zecheng Li <zecheng@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Track the arithmetic operations on registers with pointer types. We
+handle only add, sub and lea instructions. The original pointer
+information needs to be preserved for getting outermost struct types.
+For example, reg0 points to a struct cfs_rq, when we add 0x10 to reg0,
+it should preserve the information of struct cfs_rq + 0x10 in the
+register instead of a pointer type to the child field at 0x10.
 
-Zhang,
+Details:
 
-> This series fixes the initialization of max_hw_wzeroes_unmap_sectors
-> in queue_limits for all md raid and drbd drivers, preventing
-> blk_validate_limits() failures on underlying devices that support the
-> unmap write zeroes command.
+1.  struct type_state_reg now includes an offset, indicating if the
+    register points to the start or an internal part of its associated
+    type. This offset is used in mem to reg and reg to stack mem
+    transfers, and also applied to the final type offset.
 
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+2.  lea offset(%sp/%fp), reg is now treated as taking the address of a
+    stack variable. It worked fine in most cases, but an issue with this
+    approach is the pointer type may not exist.
 
+3.  lea offset(%base), reg is handled by moving the type from %base and
+    adding an offset, similar to an add operation followed by a mov reg
+    to reg.
+
+4.  Non-stack variables from DWARF with non-zero offsets in their
+    location expressions are now accepted with register offset tracking.
+
+Limitation: Offset tracking for register moved to the stack is not yet
+implemented. Currently, moving an register with offset to the stack
+resolves to the member type, which worked in some of the cases. Strictly
+it should be a pointer to the immediate child member. Multi-register
+addressing modes in LEA are not supported.
+
+Signed-off-by: Zecheng Li <zecheng@google.com>
+---
+ tools/perf/arch/x86/annotate/instructions.c | 138 +++++++++++++++++++-
+ tools/perf/util/annotate-data.c             |  14 +-
+ tools/perf/util/annotate-data.h             |   6 +
+ 3 files changed, 149 insertions(+), 9 deletions(-)
+
+diff --git a/tools/perf/arch/x86/annotate/instructions.c b/tools/perf/arch/x86/annotate/instructions.c
+index c6d403eae744..540b4d0a01af 100644
+--- a/tools/perf/arch/x86/annotate/instructions.c
++++ b/tools/perf/arch/x86/annotate/instructions.c
+@@ -248,6 +248,7 @@ static void update_insn_state_x86(struct type_state *state,
+ 			tsr = &state->regs[state->ret_reg];
+ 			tsr->type = type_die;
+ 			tsr->kind = TSR_KIND_TYPE;
++			tsr->offset = 0;
+ 			tsr->ok = true;
+ 
+ 			pr_debug_dtp("call [%x] return -> reg%d",
+@@ -284,6 +285,7 @@ static void update_insn_state_x86(struct type_state *state,
+ 			    !strcmp(var_name, "this_cpu_off") &&
+ 			    tsr->kind == TSR_KIND_CONST) {
+ 				tsr->kind = TSR_KIND_PERCPU_BASE;
++				tsr->offset = 0;
+ 				tsr->ok = true;
+ 				imm_value = tsr->imm_value;
+ 			}
+@@ -291,6 +293,15 @@ static void update_insn_state_x86(struct type_state *state,
+ 		else
+ 			return;
+ 
++		/* Ignore add to non-pointer types like int */
++		if (dwarf_tag(&tsr->type) == DW_TAG_pointer_type &&
++		    src->reg1 != DWARF_REG_PC && tsr->kind == TSR_KIND_TYPE && !dst->mem_ref) {
++			tsr->offset += imm_value;
++			pr_debug_dtp("add [%x] offset %#"PRIx64" to reg%d",
++				     insn_offset, imm_value, dst->reg1);
++			pr_debug_type_name(&tsr->type, tsr->kind);
++		}
++
+ 		if (tsr->kind != TSR_KIND_PERCPU_BASE)
+ 			return;
+ 
+@@ -302,6 +313,7 @@ static void update_insn_state_x86(struct type_state *state,
+ 			 */
+ 			tsr->type = type_die;
+ 			tsr->kind = TSR_KIND_POINTER;
++			tsr->offset = 0;
+ 			tsr->ok = true;
+ 
+ 			pr_debug_dtp("add [%x] percpu %#"PRIx64" -> reg%d",
+@@ -311,6 +323,96 @@ static void update_insn_state_x86(struct type_state *state,
+ 		return;
+ 	}
+ 
++	if (!strncmp(dl->ins.name, "sub", 3)) {
++		u64 imm_value = -1ULL;
++
++		if (!has_reg_type(state, dst->reg1))
++			return;
++
++		tsr = &state->regs[dst->reg1];
++		tsr->copied_from = -1;
++
++		if (src->imm)
++			imm_value = src->offset;
++		else if (has_reg_type(state, src->reg1) &&
++			 state->regs[src->reg1].kind == TSR_KIND_CONST)
++			imm_value = state->regs[src->reg1].imm_value;
++
++		if (dwarf_tag(&tsr->type) == DW_TAG_pointer_type &&
++		    src->reg1 != DWARF_REG_PC && tsr->kind == TSR_KIND_TYPE && !dst->mem_ref) {
++			tsr->offset -= imm_value;
++			pr_debug_dtp("sub [%x] offset %#"PRIx64" to reg%d",
++				     insn_offset, imm_value, dst->reg1);
++			pr_debug_type_name(&tsr->type, tsr->kind);
++		}
++	}
++
++	if (!strncmp(dl->ins.name, "lea", 3)) {
++		int sreg = src->reg1;
++		struct type_state_reg src_tsr;
++
++		if (!has_reg_type(state, sreg) ||
++		    !has_reg_type(state, dst->reg1) ||
++		    !src->mem_ref)
++			return;
++
++		src_tsr = state->regs[sreg];
++		tsr = &state->regs[dst->reg1];
++
++		tsr->copied_from = -1;
++		tsr->ok = false;
++
++		/* Case 1: Based on stack pointer or frame pointer */
++		if (sreg == fbreg || sreg == state->stack_reg) {
++			struct type_state_stack *stack;
++			int offset = src->offset - fboff;
++
++			stack = find_stack_state(state, offset);
++			if (!stack)
++				return;
++
++			/* Now the register becomes a pointer to the stack variable */
++			if (!die_find_pointer_to_type(cu_die, &stack->type, &type_die))
++				return;
++
++			tsr->type = type_die;
++			tsr->kind = TSR_KIND_TYPE;
++			tsr->offset = 0;
++			tsr->ok = true;
++
++			if (sreg == fbreg) {
++				pr_debug_dtp("lea [%x] address of -%#x(stack) -> reg%d",
++					     insn_offset, -src->offset, dst->reg1);
++			} else {
++				pr_debug_dtp("lea [%x] address of %#x(reg%d) -> reg%d",
++					     insn_offset, src->offset, sreg, dst->reg1);
++			}
++
++			pr_debug_type_name(&tsr->type, tsr->kind);
++		}
++		/* Case 2: Based on a register holding a typed pointer */
++		else if (src_tsr.ok && src_tsr.kind == TSR_KIND_TYPE) {
++
++			/* Check if the target type has a member at the new offset */
++			if (__die_get_real_type(&state->regs[sreg].type, &type_die) == NULL ||
++			    die_get_member_type(&type_die,
++					src->offset + src_tsr.offset, &type_die) == NULL)
++				return;
++
++			tsr->type = src_tsr.type;
++			tsr->kind = TSR_KIND_TYPE;
++			tsr->offset = src->offset + src_tsr.offset;
++			tsr->ok = true;
++
++			pr_debug_dtp("lea [%x] address of %s%#x(reg%d) -> reg%d",
++						insn_offset, src->offset < 0 ? "-" : "",
++						abs(src->offset), sreg, dst->reg1);
++
++			pr_debug_type_name(&tsr->type, tsr->kind);
++		}
++		return;
++	}
++
+ 	if (strncmp(dl->ins.name, "mov", 3))
+ 		return;
+ 
+@@ -345,6 +447,7 @@ static void update_insn_state_x86(struct type_state *state,
+ 
+ 			if (var_addr == 40) {
+ 				tsr->kind = TSR_KIND_CANARY;
++				tsr->offset = 0;
+ 				tsr->ok = true;
+ 
+ 				pr_debug_dtp("mov [%x] stack canary -> reg%d\n",
+@@ -361,6 +464,7 @@ static void update_insn_state_x86(struct type_state *state,
+ 
+ 			tsr->type = type_die;
+ 			tsr->kind = TSR_KIND_TYPE;
++			tsr->offset = 0;
+ 			tsr->ok = true;
+ 
+ 			pr_debug_dtp("mov [%x] this-cpu addr=%#"PRIx64" -> reg%d",
+@@ -372,6 +476,7 @@ static void update_insn_state_x86(struct type_state *state,
+ 		if (src->imm) {
+ 			tsr->kind = TSR_KIND_CONST;
+ 			tsr->imm_value = src->offset;
++			tsr->offset = 0;
+ 			tsr->ok = true;
+ 
+ 			pr_debug_dtp("mov [%x] imm=%#x -> reg%d\n",
+@@ -388,6 +493,7 @@ static void update_insn_state_x86(struct type_state *state,
+ 		tsr->type = state->regs[src->reg1].type;
+ 		tsr->kind = state->regs[src->reg1].kind;
+ 		tsr->imm_value = state->regs[src->reg1].imm_value;
++		tsr->offset = 0;
+ 		tsr->ok = true;
+ 
+ 		/* To copy back the variable type later (hopefully) */
+@@ -421,12 +527,14 @@ static void update_insn_state_x86(struct type_state *state,
+ 			} else if (!stack->compound) {
+ 				tsr->type = stack->type;
+ 				tsr->kind = stack->kind;
++				tsr->offset = 0;
+ 				tsr->ok = true;
+ 			} else if (die_get_member_type(&stack->type,
+ 						       offset - stack->offset,
+ 						       &type_die)) {
+ 				tsr->type = type_die;
+ 				tsr->kind = TSR_KIND_TYPE;
++				tsr->offset = 0;
+ 				tsr->ok = true;
+ 			} else {
+ 				tsr->ok = false;
+@@ -446,9 +554,10 @@ static void update_insn_state_x86(struct type_state *state,
+ 		else if (has_reg_type(state, sreg) && state->regs[sreg].ok &&
+ 			 state->regs[sreg].kind == TSR_KIND_TYPE &&
+ 			 die_deref_ptr_type(&state->regs[sreg].type,
+-					    src->offset, &type_die)) {
++					    src->offset + state->regs[sreg].offset, &type_die)) {
+ 			tsr->type = type_die;
+ 			tsr->kind = TSR_KIND_TYPE;
++			tsr->offset = 0;
+ 			tsr->ok = true;
+ 
+ 			pr_debug_dtp("mov [%x] %#x(reg%d) -> reg%d",
+@@ -473,6 +582,7 @@ static void update_insn_state_x86(struct type_state *state,
+ 
+ 			tsr->type = type_die;
+ 			tsr->kind = TSR_KIND_TYPE;
++			tsr->offset = 0;
+ 			tsr->ok = true;
+ 
+ 			pr_debug_dtp("mov [%x] global addr=%"PRIx64" -> reg%d",
+@@ -504,6 +614,7 @@ static void update_insn_state_x86(struct type_state *state,
+ 			    die_get_member_type(&type_die, offset, &type_die)) {
+ 				tsr->type = type_die;
+ 				tsr->kind = TSR_KIND_TYPE;
++				tsr->offset = 0;
+ 				tsr->ok = true;
+ 
+ 				if (src->multi_regs) {
+@@ -526,6 +637,7 @@ static void update_insn_state_x86(struct type_state *state,
+ 					     src->offset, &type_die)) {
+ 			tsr->type = type_die;
+ 			tsr->kind = TSR_KIND_TYPE;
++			tsr->offset = 0;
+ 			tsr->ok = true;
+ 
+ 			pr_debug_dtp("mov [%x] pointer %#x(reg%d) -> reg%d",
+@@ -548,6 +660,7 @@ static void update_insn_state_x86(struct type_state *state,
+ 							&var_name, &offset) &&
+ 				    !strcmp(var_name, "__per_cpu_offset")) {
+ 					tsr->kind = TSR_KIND_PERCPU_BASE;
++					tsr->offset = 0;
+ 					tsr->ok = true;
+ 
+ 					pr_debug_dtp("mov [%x] percpu base reg%d\n",
+@@ -571,6 +684,19 @@ static void update_insn_state_x86(struct type_state *state,
+ 			int offset = dst->offset - fboff;
+ 
+ 			tsr = &state->regs[src->reg1];
++			type_die = tsr->type;
++
++			/* The register is derived from a pointer to the type */
++			if (tsr->offset != 0) {
++				/*
++				 * deref gets the innermost field, but we actually want direct
++				 * child field and take a pointer to it.
++				 * However array type like unsigned long[] is already a pointer
++				 * and is the most common case for this kind of stack variable.
++				 */
++				if (die_deref_ptr_type(&tsr->type, tsr->offset, &type_die) == NULL)
++					return;
++			}
+ 
+ 			stack = find_stack_state(state, offset);
+ 			if (stack) {
+@@ -583,10 +709,10 @@ static void update_insn_state_x86(struct type_state *state,
+ 				 */
+ 				if (!stack->compound)
+ 					set_stack_state(stack, offset, tsr->kind,
+-							&tsr->type);
++							&type_die);
+ 			} else {
+ 				findnew_stack_state(state, offset, tsr->kind,
+-						    &tsr->type);
++						    &type_die);
+ 			}
+ 
+ 			if (dst->reg1 == fbreg) {
+@@ -596,7 +722,11 @@ static void update_insn_state_x86(struct type_state *state,
+ 				pr_debug_dtp("mov [%x] reg%d -> %#x(reg%d)",
+ 					     insn_offset, src->reg1, offset, dst->reg1);
+ 			}
+-			pr_debug_type_name(&tsr->type, tsr->kind);
++			if (tsr->offset != 0)
++				pr_debug_dtp(" reg%d offset %#x ->",
++					src->reg1, tsr->offset);
++
++			pr_debug_type_name(&type_die, tsr->kind);
+ 		}
+ 		/*
+ 		 * Ignore other transfers since it'd set a value in a struct
+diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
+index 258157cc43c2..e067e91f2037 100644
+--- a/tools/perf/util/annotate-data.c
++++ b/tools/perf/util/annotate-data.c
+@@ -892,7 +892,7 @@ static void update_var_state(struct type_state *state, struct data_loc_info *dlo
+ 					     insn_offset, -offset);
+ 			}
+ 			pr_debug_type_name(&mem_die, TSR_KIND_TYPE);
+-		} else if (has_reg_type(state, var->reg) && var->offset == 0) {
++		} else if (has_reg_type(state, var->reg)) {
+ 			struct type_state_reg *reg;
+ 			Dwarf_Die orig_type;
+ 
+@@ -907,13 +907,17 @@ static void update_var_state(struct type_state *state, struct data_loc_info *dlo
+ 				continue;
+ 
+ 			orig_type = reg->type;
+-
++			/*
++			 * var->offset + reg value is the beginning of the struct
++			 * reg->offset is the offset the reg points
++			 */
++			reg->offset = -var->offset;
+ 			reg->type = mem_die;
+ 			reg->kind = TSR_KIND_TYPE;
+ 			reg->ok = true;
+ 
+-			pr_debug_dtp("var [%"PRIx64"] reg%d",
+-				     insn_offset, var->reg);
++			pr_debug_dtp("var [%"PRIx64"] reg%d offset %x",
++				     insn_offset, var->reg, var->offset);
+ 			pr_debug_type_name(&mem_die, TSR_KIND_TYPE);
+ 
+ 			/*
+@@ -1101,7 +1105,7 @@ static enum type_match_result check_matching_type(struct type_state *state,
+ 		if (__die_get_real_type(&state->regs[reg].type, type_die) == NULL)
+ 			return PERF_TMR_NO_POINTER;
+ 
+-		dloc->type_offset = dloc->op->offset;
++		dloc->type_offset = dloc->op->offset + state->regs[reg].offset;
+ 
+ 		if (dwarf_tag(type_die) == DW_TAG_typedef)
+ 			die_get_real_type(type_die, &sized_type);
+diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-data.h
+index 541fee1a5f0a..47a4c752b917 100644
+--- a/tools/perf/util/annotate-data.h
++++ b/tools/perf/util/annotate-data.h
+@@ -173,6 +173,12 @@ extern struct annotated_data_stat ann_data_stat;
+ struct type_state_reg {
+ 	Dwarf_Die type;
+ 	u32 imm_value;
++	/*
++	 * The offset within the struct that the register points to.
++	 * A value of 0 means the register points to the beginning.
++	 * type_offset = op->offset + reg->offset
++	 */
++	s32 offset;
+ 	bool ok;
+ 	bool caller_saved;
+ 	u8 kind;
 -- 
-Martin K. Petersen
+2.51.0.261.g7ce5a0a67e-goog
+
 
