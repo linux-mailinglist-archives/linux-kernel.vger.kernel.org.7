@@ -1,178 +1,196 @@
-Return-Path: <linux-kernel+bounces-783895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4269AB333F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:29:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56FB0B333F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC7A23B811C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 02:29:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B77281885D82
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 02:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF531230BF6;
-	Mon, 25 Aug 2025 02:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6619123AB87;
+	Mon, 25 Aug 2025 02:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="jVeud3PM"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012001.outbound.protection.outlook.com [40.107.75.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xz+Gsm8N"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D59393DCC;
-	Mon, 25 Aug 2025 02:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756088968; cv=fail; b=HOH2n6ARgj12El/zfSOCuUwQD4VsjOD3YxNuVgA/2okY/rkmRqNU8ce19epUKjWCgjFvdpQOaqhPRJj48YObo0Xp/5aArKPnPD8wezUFEvLGiqGMhEC/lG1X5949WY+Y3gXL9D3r2nBwFQtGtU+Mf1eQa0sA9MkMhw2V5Q/GRjA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756088968; c=relaxed/simple;
-	bh=Y4lyMrt0LkD1bt7RDLWQ1RISFd/AkPABBKpww9pMSlw=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Yo9VgEfwFRDZog0OetBfgKxgINxznqUowP+iE6QyvGzInsXZZe0nyCIF9dUZgZfs4OFyec65gb1BR2sSxxhEYQdx4h1aIYPh6mhdF1vBNGDcKUjTRou25KRkXCwnguBLwfhtFaKf2H6T3eZu7R9efub3qDTC3AGL/bJqROc2MPw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=jVeud3PM; arc=fail smtp.client-ip=40.107.75.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OmgM1KxFf0r0+luYdtEwdsBrqub2sjEshkw+j44QPEAUZvuq7K21XWZB1gwrrB2ueUxassLcTFjeP+5AQZwNgLI7taQEn9/22bjMlXwLGXxW+0jrl6oW5vH8YFmbxg5SKsTQLoJ0xw/b1Undku0PqqdCwLjcWpY1R2iVs2Pzrqwuz30XVUodL0VctksAwHOm6moe7uMs5qk7itOW6dKRgobj/OuoMgPWs0Q92tR0cRdhCU15Z42KrEc3pPnphiup6+fr3vnkg+kBXE8s58PjWeg/cXXDF8U+mLNCZltPQugnNg1RJMEWQoo+thml53N2Js/UehekKF3U2VDFG0xGGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SL8SLGnDGPDg1pC6sZ8TgW1DiCvoi4xP900gkvy+nEo=;
- b=LhE5AsRdCEpIY6F+gD4PH0VYJ0Xve5a5t4fEuNHWU+2HLkJnMY7xdo0kFTgQUZBrchw3JjaPEDkXuZtNgHV9YD/IjTzEMFTEM7PbaJwhUAbADrL4TnOglKF7KZmr55zHkQNQlaD1HORCvjtriYv4SqPV9lAP9x/0BonGnvq9e/CHld57ztXdedf0R+0QgqWdvPF/5cup20uJWKDtRLda97ED8FIHW3cQSzmtF98IKepTH5r9CUGhFhTF5ShbU3lrlWGROy/q4rg18iYZL6k9fLe1aRJ7Ke5PZ6Z96FioVYpdqT2nUTXnfCyjXef6AD8F1B0FJ0ZEolotkmL/Q/5tgQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SL8SLGnDGPDg1pC6sZ8TgW1DiCvoi4xP900gkvy+nEo=;
- b=jVeud3PMwt1j8pbGubSQQLYdQ3226aRGjV/+KLAKWSKqTvFlL3wJb5dUJJT832/I7mxdj1Gh1uWaX5beJNYHm7ZdCm3JR538Tcg4h1ZAS6yHDczfQvUHHN6bss/MooEe0vHtBSpdzgeWqw86LikLznyT/Xb/ZoqwOS08YKwJDH7r+5v1EmFqCHbiZpGES/oWcTs562na5PBoGqJC19fNAF5lIE2UDo3c6BBw+3rOBibPmuSUVGkpDmWBalCv6th/V+tiMhelbFkHFWGbfN7u+zW9cfHt74K/+mgrnT3/ol4ynOiZpVzBsw9zYOCOGHWOBd66sAo1OQmPRdWIFc29qA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by SE1PPF50B2D80A0.apcprd06.prod.outlook.com (2603:1096:108:1::415) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.16; Mon, 25 Aug
- 2025 02:29:22 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%7]) with mapi id 15.20.9052.019; Mon, 25 Aug 2025
- 02:29:21 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Johannes Berg <johannes@sipsolutions.net>,
-	linux-wireless@vger.kernel.org (open list:MAC80211),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH] wifi: mac80211: fix incorrect type for ret
-Date: Mon, 25 Aug 2025 10:29:11 +0800
-Message-Id: <20250825022911.139377-1-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY4PR01CA0083.jpnprd01.prod.outlook.com
- (2603:1096:405:36c::13) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE1322A1E1;
+	Mon, 25 Aug 2025 02:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756089022; cv=none; b=phOk8TC5kOuLgOfmzJ6EzTPXDJXboC1PZ2gugdV0L1jKOtFSFivj9Xy8P3p8/APj+07y9wANADnYtf+5x0zJA+u8+IkypVPO3VbVeyz/+biRI2QvWwf/MTTbN2T8386BXx04rLs1vuGdGuhHAGIAq7jZGdYEuLm1LHm+j6trWDY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756089022; c=relaxed/simple;
+	bh=RsMWfaOhha6pvgiCZ8f22x4IYWbxbPYgWGKz1vmy5vw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lK4T08ROlZ5SQwY2zC1xXH23aTzMReCLevVs3NJ+7gCXSNtJE93ZkDt790PH+ePkAAEcJ7aSvkyqRWrGzOvQo2Zclwn75kArQVFNahkNFJgFL9zdwQRozxbzQU4xS4YoIC8TpPa9G4MFrYVIrhROJgwT4Eh8Liv7vnAEtfVGeQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xz+Gsm8N; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-325195d1b1bso1777242a91.2;
+        Sun, 24 Aug 2025 19:30:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756089020; x=1756693820; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nYO/YmS5jL3ZM2fX1JrJ0oWdxchh893vzLzAxL1PuNk=;
+        b=Xz+Gsm8NHjPgLKRqUir8juluZX0Qad8EDZfY+bTue95fySvFDefcy0KWKJ/V50Vryi
+         nE7dAjXI4NqNrCONMQOFMSolWfaOshr7M5kr17uXj0G20hTnYCpXANTRlVjeTJWR9iks
+         p6h/uI2dwu8O7CAmYIY8EPXLlFo4tqycFTd0mNqYltnGYJ1kXR0/kZRjHZCx8270oJgf
+         pxuVZhCNYm+ZY3F6ZcwLLgCfW4uaPOAeVJudAFuGhF3Q89oHgGCPiid4I6dO4YpvHFCY
+         LOXUJ6T3e00tqj2YtqFKPkKcNDMXbNSW87eNm3XAAgb7D9jAZg7Zdis1WRoGiM3awEcO
+         EPrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756089020; x=1756693820;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nYO/YmS5jL3ZM2fX1JrJ0oWdxchh893vzLzAxL1PuNk=;
+        b=sC+tb9mTcbIU4qrBjOY2Rw93YbHkHizPDvq9IKTTQZ9ogRZXxz1s3u1S2TMmd1lNLI
+         sOws0JMd/x/s3ojRWw58GV7hy2tJuEngFfhUWkbzWwMI0KtbURty7bwh4NqIZjzw1wco
+         tfjLX75P4wNJBQArbr7dCQdgH+wGXP/TLLlG6e8rWc3drgDPnenBSzMU3gjbs2rzSArk
+         4oeu7+KhUWwyOh+zwDuJlRzv9C7Dv2TNOXWTOa5tEo+Zg80kAx/74NvJ6IPhYJIzqBIf
+         i+Nxj+tyxPlo9462uuS87weEZ6H1oVlEwHtuAfcWDB7tf+SImToePcIFYieCFlsPvUyc
+         xV6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUidRDR2sdEfdsAD8lNFvo1NAFuZmaT6IJaGs1eyNlt35ZlhZRll3n9MqPQHW252ag+17CuVTipMwKOQB3tYpxv@vger.kernel.org, AJvYcCUkyyaWiS1fQ6piNKLNp/nRbIl2cAEnLQXXt1MJG1q7lfoQD9/JEYXFlc5IXilmjXaaS8liv7um6tbfHg==@vger.kernel.org, AJvYcCW7guMgxi1cnBh2/jXN9BR3U8lM0XZDEt0HMBshYYK1OjYVGl4WgzjUiBSF3LYds0h5n9VLVqOH/RLOHN6n@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxY/SD0Vhy/er8tQnGD2SnBmZ0RpHeHzp/ENUHUsUij21wi7Jy
+	ep5lGjIKNDsFksatAHdkNcS5g9/FqlNAt2GIXdI+E7RmDnjFoqX7DEjg
+X-Gm-Gg: ASbGncsFXaEkRWQx7ADzYKOgfxeBtXhjoAcX5zym9qP7k9iKSAtwjQtmGKWezqYGTAK
+	3ArznD5qBupm6psYkOaING1ZSUIAQGqAKOPRBsEo6b/7PTKzHrSDokx9JpBewO0J9GEuoID9SSU
+	NYJ0JAKH5LGeqJPd3UCJaA4iaTmkon6xsH/AM2VjZMkpP4XLxHwbkUCTMyvxHdoKNH7TEFiNPkV
+	AMaRUdmJ1tvmIdh/zBNWM3Xa3ZO4u4yzJArD73bIpRm7QzD0aPth1xarAgSit3c+xnyXO1EoNL8
+	g/zPpGz5FZWP7nzTBrVkYma9aaaSFQyKTdwyHRH9PDnMR6/eDIi+1VPUd26hmQN5ZXCBN/v8zv2
+	w24XWBnrmx0Ji8yOUmQwrgWoiC7hyiUbm7Kw5p2h3N16ICXKyjeR52gkKRcgsboAmTvMHAa3Chj
+	4=
+X-Google-Smtp-Source: AGHT+IGcXL928gw4jZtFeS2GjzwHFx9joFXeGHPpEdrU46U9OgXBCfZHOfrutnNUpiMm/H6uh+w8Yw==
+X-Received: by 2002:a17:902:cec2:b0:236:9726:7264 with SMTP id d9443c01a7336-2462edc37a2mr159709745ad.5.1756089020026;
+        Sun, 24 Aug 2025 19:30:20 -0700 (PDT)
+Received: from localhost.localdomain ([114.242.33.243])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687af234sm53905175ad.48.2025.08.24.19.30.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Aug 2025 19:30:19 -0700 (PDT)
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	Qianqiang Liu <qianqiang.liu@163.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Helge Deller <deller@gmx.de>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Vivek Goyal <vgoyal@redhat.com>,
+	Dave Young <dyoung@redhat.com>,
+	Kees Cook <kees@kernel.org>,
+	Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	Shixiong Ou <oushixiong@kylinos.cn>,
+	Jinchao Wang <wangjinchao600@gmail.com>,
+	Zsolt Kajtar <soci@c64.rulez.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Nam Cao <namcao@linutronix.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Feng Tang <feng.tang@linux.alibaba.com>,
+	Sravan Kumar Gundu <sravankumarlpu@gmail.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Anna Schumaker <anna.schumaker@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Max Kellermann <max.kellermann@ionos.com>,
+	Yunhui Cui <cuiyunhui@bytedance.com>,
+	Tejun Heo <tj@kernel.org>,
+	Luo Gengkun <luogengkun@huaweicloud.com>,
+	Li Huafei <lihuafei1@huawei.com>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	kexec@lists.infradead.org,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/9] panic: introduce panic status function family
+Date: Mon, 25 Aug 2025 10:29:28 +0800
+Message-ID: <20250825022947.1596226-1-wangjinchao600@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|SE1PPF50B2D80A0:EE_
-X-MS-Office365-Filtering-Correlation-Id: c9e63a5e-b8a2-4541-834f-08dde37f3328
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JCogM54VgioTpTqvdKkC/Bk6OcQeRGB4OgmeAvbWAwDxUSj4NrkOVsBNuvYQ?=
- =?us-ascii?Q?9duWZ411KpZ9g3CsIp+LSQQhcQCT8T8lXMQ8TDfeiOiCJhZTLT1JdX+ht6iI?=
- =?us-ascii?Q?2xJ1O/j32w7tLa+CIAHXY5u0bVd4OmxnwCJZkha3QI2++9u5jkPKBCh3k9a2?=
- =?us-ascii?Q?SQgfyR0xtGcEQJeoVBAvj4HtxIeidIhwXXA0yH/TS0usP2Iy7r3ZLAw5mae9?=
- =?us-ascii?Q?aw+u8kiInT6ZEAOWuG3V7RcYvlNmQLSuI9FwRR8/uXTQBucegeugwMNmJ8wE?=
- =?us-ascii?Q?V8D5OKBx7Eo61vm4UzoLgPAS8klEoTlltiDTS8rueqpfZpMVvZ69cR/vDIpr?=
- =?us-ascii?Q?OZKfTppQCsu3UK/5PZ5M1zAzYIr4R/loW3iJVfpFI7cqD6neWkBYQOhcf/Nf?=
- =?us-ascii?Q?+Wb2rsj/Jk4/4sXzl14d0UzTzT0YcKhG69Tt4dKDIGSfw3llf2jZOUk3fjPE?=
- =?us-ascii?Q?8VVhD8xsgnnirqVA1fd+zczjRiWvKYXA15t8fEY+W3/ct5RTkRR9ATQ93q0N?=
- =?us-ascii?Q?KBPuEaDRoGUlS/B3dbpJL6NcoIx4eBVfGKDVArkCU6GIkutZbDlPjZb+mdlR?=
- =?us-ascii?Q?MqVivjncKuCfCzcvx5tIkP9eAu7m2pAS6cXbBCBOY243XXNKyPMi6LHgBI7o?=
- =?us-ascii?Q?2HgFGm4F+xsbCBjGXYdshBd5oIiDHPp7Gpp+yZjiLIeazlMyCcm2UH71E5sJ?=
- =?us-ascii?Q?Yib1U0NV7X5Z9ZM2HHFpDYtYfGsD1B5YLXHsQKsWY8ZbmbyjMGNeQrMA7NKJ?=
- =?us-ascii?Q?rNNFJr8ujn8KzaJ7Clk5g/Flxs1zwt5PLegzitXvdp+lIgFNShvE2xyP8xY3?=
- =?us-ascii?Q?N5S55bj+8DtCFRy/qXJhzKVC6ZhTQQ9EKJyAUAZxZomEAWFZVQEsaje4426c?=
- =?us-ascii?Q?yaItqp7hV9XXtRNlxHkxMkV8Kq6qqwfUKLjOK4em2p6b8sRmypWwo3Od2sma?=
- =?us-ascii?Q?t9RLCzHnesFvwEpepDICuWwomzovld5SqAeDzZSOJ4lVivIFNxBTcd9fSXP8?=
- =?us-ascii?Q?1MUkLGdrJzKsfMCLcrq3KGeIiikxd3QXczuS5XKW5i5IimquPDG7/qkEsOOK?=
- =?us-ascii?Q?xtAjUNqKW3MUj9iVpXuJPAycT2gO0uFp0oW6VS8DJaff2EHJdKTQUBJBa+vA?=
- =?us-ascii?Q?7I8id55eoIaNa1hX9p5V+A/gRz9qd2YjubxuKLde1g2krRr+/H4lPT0z4rew?=
- =?us-ascii?Q?L7tLtrvt9gJJHLXRj88+rHQgIbMvaH6HM0AJByu/FAZxwn6SDnk7r78AB4Qp?=
- =?us-ascii?Q?nt9/rQxXqnaJwypay7YNO2f1Bx3zG3wfW7s3YAnj8m1UzE6fTUa2hXz/MoQa?=
- =?us-ascii?Q?FuBkN3Je5zQinKLqw+v9pXBAlTLGE3+2WlKQTnwzfTk+oqw4zE8ImD10gkKe?=
- =?us-ascii?Q?Szap4q0MgQVdUrcDtKv1uHVug36rJOcOcGv2VuMUh/dToIqU0+M7HXNjUULe?=
- =?us-ascii?Q?xCubGmw0AkcSSCTixnfhwMMuw7jexFp38/CdNhb83dJZ41LxQn2L5g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qSeHM2rx0bojb5Yi0jeJa3C+RFjiHlMTSLADoy79jW1p/R1k+S/ywYw2phnU?=
- =?us-ascii?Q?mEorge5yyRMU6doxddazDXC5sC/1R8CkvNz6ey6LRNl2sPRmEActwgET55Zm?=
- =?us-ascii?Q?+w5rGFxBUYQ9CHVe6YIVG1lKfckhJBZgEC6zHzIKGabI+AT+vGfC5r8f+8qk?=
- =?us-ascii?Q?GXAvT4Vx0B/B10FewZPlCjjwvmUmX9z6ZVxnV5Hh2K3dBaxi9ZMmvRC84Z2D?=
- =?us-ascii?Q?u9lD7BewXGFzCyNPWaK2IMCpKRCbTSSzbIXuKhFCHjfAhHz0VrTxKI3wHdxf?=
- =?us-ascii?Q?wD0MEzU1Ble5s+prsxgBz19T/GLifiwkri1aX1i+xjcUUNxPAT0wLCbxcOyt?=
- =?us-ascii?Q?ul0+r9WdZ12Sde8k1NVSSs0qNMVnZM10z+sxCwok9ZfKgKIA8jnxqEY9BwUh?=
- =?us-ascii?Q?Jel/1yXZaSMko9yOdByJLWSllJNwInNtnJZOJTU5sodfBEn1CnnAeLIKROfX?=
- =?us-ascii?Q?HsE20U6fgoS6rn6kdFhMd6yFR7XHwnhqL3Ce4v6jAmRjEezksvWsaik8AWPl?=
- =?us-ascii?Q?vPgezRKCa5X/qNwb0LG/Ymqngql/Lo+WQk/zoRZmHrpi/3oXN7xupccbiH3D?=
- =?us-ascii?Q?TkwaVVaN07WSN2lDyRUj64ai0KEcaS41fYJCz+ziAm0EeMWnkdEu+XF5JNSf?=
- =?us-ascii?Q?kefzk2qfrYgB5ZEHvR9jkhjQAQJIJbxWaA+RTBSGwkc16KyrJJWiVuN+4Lby?=
- =?us-ascii?Q?z5TXOT9R89eFFOmhXKNRs/bJFRSevbX1xe7WW+09pEGrBeNHRDyBWBvGJEMN?=
- =?us-ascii?Q?iq3p+6V0A0xTmVU+0iqtPpugq+JHQfpEM7YDKUrIedWbB2dplOCkRLf/ygx7?=
- =?us-ascii?Q?qhkQj4SuSPayUkUPsRvBWSZmu8WV3JnnPeHcS2wFf+q/1E88eKoZj8xE5Af9?=
- =?us-ascii?Q?FYnvmQDzcovJQTg5sPEYnlNn0A+cdgZ5nqu9EwabhCf2q//d/GnIEEB7+RMi?=
- =?us-ascii?Q?mGIV7YdgkI3vxHaTEPimkiiBqZUI3drnNe8ogn0igAAqhktRMo6b96dJAqGI?=
- =?us-ascii?Q?IRMeGqqIsaBaqFZ+Iv2FIDSrJG8akfzzSHSYhE7+VdHVqC4Eg2xnW0swNv2g?=
- =?us-ascii?Q?w1yrOFIM0J8G1LuR6G9nFMBbuvpSdQf7daAL7ZIcZaZ9iqhynaL57np7trnU?=
- =?us-ascii?Q?RwsV2SIUDS+6ss4tbBC9HdoU/Nuj7oKA0NW7NhoyakJM9ATl87DkS7szE9As?=
- =?us-ascii?Q?9ZjTI4mjHTRsPJd+qTMcu6beIBDhauCYNlpfe3MAJFTn5taaHOAHc+OZTd+J?=
- =?us-ascii?Q?eSUqgjSN5RSudFgPXSA5UWmSKBYTFAzWnH1RrLBNuQukoM4Ic84I8OvesxwJ?=
- =?us-ascii?Q?DgeJur6yLOXsepcsNxgYhUwZqBihfa9yPQCjsTjOm8zFlNLdJ/MGtNF/toMm?=
- =?us-ascii?Q?b7LzV8/7mJLnHVXlqKRpPQ3gCnDk2ktluOoydR55js5HmPhHl3yaQ+iru/mn?=
- =?us-ascii?Q?AhLKvg3HFom0TbZXxSGS3qj0e8gQCQ/XfFf4LNdqswODUCUGqEMrPugSetBQ?=
- =?us-ascii?Q?X3P0+06lu1yoIxyhOEE9xpP/pLPwQTeyuAJyh2weyeFsP6oZqpaRffDxTCxt?=
- =?us-ascii?Q?qiQttEBjx9/NmhagUaU8MqMBdOjjxifGm8Ff+OUC?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9e63a5e-b8a2-4541-834f-08dde37f3328
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 02:29:21.7379
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lFmq/lATcqF6KVRucknbl/J9rD+pX4TcwTIe+zJQF96mqsJT0PL96CQ2a7zdxlZCW51ui0RCaIXURw+TkLhUeA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE1PPF50B2D80A0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The variable ret is declared as a u32 type, but it is assigned a value
-of -EOPNOTSUPP. Since unsigned types cannot correctly represent negative
-values, the type of ret should be changed to int.
+This series introduces a family of helper functions to manage panic state and
+updates existing code to use them.
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
----
- net/mac80211/driver-ops.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Before this series, panic state helpers were scattered and inconsistent. For
+example, panic_in_progress() was defined in printk/printk.c, not in panic.c or
+panic.h. As a result, developers had to look in unexpected places to understand
+or re-use panic state logic. Other checks were open- coded, duplicating logic
+across panic, crash, and watchdog paths.
 
-diff --git a/net/mac80211/driver-ops.h b/net/mac80211/driver-ops.h
-index 181bcb34b795..55105d238d6b 100644
---- a/net/mac80211/driver-ops.h
-+++ b/net/mac80211/driver-ops.h
-@@ -1416,7 +1416,7 @@ drv_get_ftm_responder_stats(struct ieee80211_local *local,
- 			    struct ieee80211_sub_if_data *sdata,
- 			    struct cfg80211_ftm_responder_stats *ftm_stats)
- {
--	u32 ret = -EOPNOTSUPP;
-+	int ret = -EOPNOTSUPP;
- 
- 	might_sleep();
- 	lockdep_assert_wiphy(local->hw.wiphy);
+The new helpers centralize the functionality in panic.c/panic.h:
+  - panic_try_start()
+  - panic_reset()
+  - panic_in_progress()
+  - panic_on_this_cpu()
+  - panic_on_other_cpu()
+
+Patches 1–8 add the helpers and convert panic/crash and printk/nbcon code to
+use them.
+
+Patch 9 fixes a bug in the watchdog subsystem by skipping checks when a panic
+is in progress, avoiding interference with the panic CPU.
+
+Together, this makes panic state handling simpler, more discoverable, and more
+robust.
+
 -- 
-2.34.1
+
+Changes from v1:
+
+  - The commit messages have been re-formatted based on Baoquan He's suggestions.
+  - The panic_in_progress() check has been moved to be the first check in
+    watchdog_overflow_callback(), as suggested by Yury Norov.
+
+Link to v1:
+https://lore.kernel.org/all/20250820091702.512524-1-wangjinchao600@gmail.com/
+
+Jinchao Wang (9):
+  panic: Introduce helper functions for panic state
+  fbdev: Use panic_in_progress() helper
+  crash_core: use panic_try_start() in crash_kexec()
+  panic: use panic_try_start() in nmi_panic()
+  panic: use panic_try_start() in vpanic()
+  printk/nbcon: use panic_on_this_cpu() helper
+  panic/printk: replace this_cpu_in_panic() with panic_on_this_cpu()
+  panic/printk: replace other_cpu_in_panic() with panic_on_other_cpu()
+  watchdog: skip checks when panic is in progress
+
+ drivers/video/fbdev/core/fbcon.c  |  9 +---
+ include/linux/panic.h             |  6 +++
+ include/linux/printk.h            |  2 -
+ kernel/crash_core.c               | 15 ++-----
+ kernel/panic.c                    | 71 +++++++++++++++++++++++++------
+ kernel/printk/internal.h          |  1 -
+ kernel/printk/nbcon.c             | 14 +++---
+ kernel/printk/printk.c            | 37 +++-------------
+ kernel/printk/printk_ringbuffer.c |  2 +-
+ kernel/watchdog.c                 |  6 +++
+ kernel/watchdog_perf.c            |  4 ++
+ lib/dump_stack.c                  |  2 +-
+ 12 files changed, 91 insertions(+), 78 deletions(-)
+
+-- 
+2.43.0
 
 
