@@ -1,171 +1,181 @@
-Return-Path: <linux-kernel+bounces-785077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B14B3458C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:20:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2EFB34583
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3BD92A0E9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:20:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EB817AECA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E843002A1;
-	Mon, 25 Aug 2025 15:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449292F99BC;
+	Mon, 25 Aug 2025 15:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="LVBNi+Im";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="IrRd//3z"
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U2e0Mzee"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856542FF164;
-	Mon, 25 Aug 2025 15:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38576278771;
+	Mon, 25 Aug 2025 15:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756135158; cv=none; b=nCShYWCiu37k/2TMwSY+wYSyucx1IXCjcRXmqCR+kdhJfeeITqhsfc7InjBnJMfn6cz0YIDaJQPHf4lTlW2n/8/+CDHF8XgHfe3TTXTaeTSFztxlKq0TObd6y8w2nPFUFhqjjUIsfqOZVKcykfy96i4KVmbFz8lX4NkC+Yb2P5Q=
+	t=1756135114; cv=none; b=UdzGaScjEuHMmUc5jOXMorkRc2nwgEdnP2eYygMXFSIDuWNlvdNMUQQ7FFO5eRYnSdaD136koLS0n/Rl7p+a3xd7Ljvk02vTXZcmDr42rAfD+a68pK5PpztC8deTUZI4HFhsZiOGO+LWej0nEYyYJXcgIb0zfRfQhCE+HPEbX/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756135158; c=relaxed/simple;
-	bh=sMV/r13xaDCOGwclCYrCYPx8JsEJQfAVbK0WWd0PfCk=;
+	s=arc-20240116; t=1756135114; c=relaxed/simple;
+	bh=h9WJLP84xwt5wVBtEVeIRNiB8HSbXmFZo3QATGEh0lA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aSrP1pLffttyePFt9/j7htou0dacIfkjpFtYGvo3/8EEX/M4hyMzFX/zvh3FGZ1z/XIulK4ArzW8vS/wjXAdFxejmI8qnpPkUW8I235BLAosr9nUR28MEZXrwFeWthFMEDha+iDvEElMavH+M2azZNemfnizauyAMy2QuJwAdZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=LVBNi+Im; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=IrRd//3z; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from localhost (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 0609712FB9EB;
-	Mon, 25 Aug 2025 08:19:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1756135155; bh=sMV/r13xaDCOGwclCYrCYPx8JsEJQfAVbK0WWd0PfCk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LVBNi+Im+aE9A0i5lAqxDVbL8nde7dQ0kJ1y4RfcnGxgXlSKWf5ABjkDhp66hQl4E
-	 L/Ihmrybt8QmU3CGGxWCaYDVeSHEOXcjwruSHd0yVxhsRSK1pxH2DDx5xY1T3yL+P8
-	 KaZ9N+IIVMAR8E2Cry7XdVzoLg1tCN/l1nYOB5MI9nCGcFhHmgYBaHQmPo/93JZoDV
-	 1qTluZsjJdXrXS+2FheIvSlos9kKnFD7uEAUD6nwGo98yhV1IYFJ82xS50RbstuKWI
-	 N3HuH3hJt010tYYMf/yeJRsg9CenroFQ5av1pu/eXHgvpLL79MvnRdysDZix0+7tzo
-	 WBtEFY4C7ccLg==
-X-Virus-Scanned: amavis at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by localhost (bayard.4d2.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id Yrx7ihXHFQrb; Mon, 25 Aug 2025 08:19:13 -0700 (PDT)
-Received: from ketchup (unknown [117.171.64.92])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 10EB112FB435;
-	Mon, 25 Aug 2025 08:18:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1756135108; bh=sMV/r13xaDCOGwclCYrCYPx8JsEJQfAVbK0WWd0PfCk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IrRd//3zvi/Xe7ZKmGPCo0Qo7oL9twAQW4yP6V/ajKSU8jvufzcK3JPGF+z+hZcKm
-	 ++Q94D6SultYJ8lvWKyvCXegESPdKdtWJCcSNJVGKuwpMn/Y3z1PKJpukDw/lbK7Xh
-	 LyNsb7Y4uYafp9bd+7+uP7BGV0kjsTtGI2o10xvfd96VVsD/6yBjBpZiFtcbmG/aQS
-	 zX51QF6IrHFZs4FrUQ43w42nbzhmzMZvH/XhjtqG6Ul26kuNYr7VuowAkaH81wardA
-	 R8K/dmy27Idr7nhcOCjaf80CTfywcJywGfHO700ptNzCL20BRirZ1y0kyWmO/5qYz5
-	 8f+DJCtT1p1lw==
-Date: Mon, 25 Aug 2025 15:18:04 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: bmasney@redhat.com, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Keguang Zhang <keguang.zhang@gmail.com>,
-	Taichi Sugaya <sugaya.taichi@socionext.com>,
-	Takao Orito <orito.takao@socionext.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Yixun Lan <dlan@gentoo.org>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	UNGLinuxDriver@microchip.com, Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Daniel Palmer <daniel@thingy.jp>,
-	Romain Perier <romain.perier@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Alex Helms <alexander.helms.jy@renesas.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	sophgo@lists.linux.dev, linux-mips@vger.kernel.org,
-	imx@lists.linux.dev, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
-	patches@opensource.cirrus.com, linux-actions@lists.infradead.org,
-	asahi@lists.linux.dev, linux-mediatek@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
-Subject: Re: [PATCH 050/114] clk: spacemit: ccu_mix: convert from
- round_rate() to determine_rate()
-Message-ID: <aKx-rDkmp5V-RVjZ@ketchup>
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
- <20250811-clk-for-stephen-round-rate-v1-50-b3bf97b038dc@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RZKfY3hJvXxgsfN9fPn30uWSoMuhjpOMM55yDmX8F8cw8m32zomLODzwydUP44dFLBZsbzKoa5RdcIURYIXcsERQq/+bou4es81oAA1Tzf0JG/T9edqaorQLt1uE6RGhke38Egm1eNYYdqi1MiHvWA0UtuPqKyMlbIDvI+Gs/OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U2e0Mzee; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756135114; x=1787671114;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=h9WJLP84xwt5wVBtEVeIRNiB8HSbXmFZo3QATGEh0lA=;
+  b=U2e0MzeeLf5ay6OJ4C70+Yg2CyfVnkX3K2+yPCXaZP9UM0X6QC2GOA6B
+   ekGSv/XQA03Wq4ff2JJCl/0gYE+LWprxaJtLerJxOLJs2yOYYo51Hi1U5
+   MiCJgG2wRbTr72aHKQg2AIq3sZIaGsDts+rdV89qFPJ73OM/8g6xzkUVF
+   nKM4V0yHoUUfGEGYyeXNd6bOK6EwqYY//xsu0u7782ggAggSZFjPDSUa/
+   W6BYzwb7zuXrP+U7+eTecuWZUsbhD4+tqYgDjt2QUqrt5KmYpYTDoLrut
+   dNvVPu5thZlRDyQ+GYPoUNRHnIKyUlhG+YNLRq9cgWlam5Bq66dgZ2yvq
+   A==;
+X-CSE-ConnectionGUID: ecXd5AxdTjqjbL9jN+VoIA==
+X-CSE-MsgGUID: ocnny2NPS/GlhSqSprjvdQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="61994078"
+X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
+   d="scan'208";a="61994078"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 08:18:33 -0700
+X-CSE-ConnectionGUID: nsjVeU+uShaSsnlrLf1iaQ==
+X-CSE-MsgGUID: sdw8uvA5QqmnpiRy9AsieQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
+   d="scan'208";a="169258184"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 08:18:30 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uqYxo-00000008XmU-0EcN;
+	Mon, 25 Aug 2025 18:18:28 +0300
+Date: Mon, 25 Aug 2025 18:18:27 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>
+Cc: Andy Shevchenko <andy@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 5/6] auxdisplay: TM16xx: Add support for I2C-based
+ controllers
+Message-ID: <aKx-w0QOOQPyy9pW@smile.fi.intel.com>
+References: <20250825033237.60143-1-jefflessard3@gmail.com>
+ <20250825033237.60143-6-jefflessard3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-50-b3bf97b038dc@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250825033237.60143-6-jefflessard3@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Aug 11, 2025 at 11:18:42AM -0400, Brian Masney via B4 Relay wrote:
-> From: Brian Masney <bmasney@redhat.com>
+On Sun, Aug 24, 2025 at 11:32:31PM -0400, Jean-François Lessard wrote:
+> Add support for TM16xx-compatible auxiliary display controllers connected
+> via the I2C bus.
 > 
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
+> The implementation includes:
+> - I2C driver registration and initialization
+> - Probe/remove logic for I2C devices
+> - Controller-specific handling and communication sequences
+> - Integration with the TM16xx core driver for common functionality
 > 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
->  drivers/clk/spacemit/ccu_mix.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
+> This allows platforms using TM16xx or compatible controllers over I2C to be
+> managed by the TM16xx driver infrastructure.
 
-Reviewed-by: Haylen Chu <heylenay@4d2.org>
+...
+
+> +#include <linux/i2c.h>
+> +#include <linux/mod_devicetable.h>
+
+IWYU everywhere, too little header inclusions, you use much more.
+
+> +static int tm16xx_i2c_write(struct tm16xx_display *display, u8 *data, size_t len)
+> +{
+
+> +	dev_dbg(display->dev, "i2c_write %*ph", (char)len, data);
+
+Noise.
+
+> +	/* expected sequence: S Command [A] Data [A] P */
+> +	struct i2c_msg msg = {
+> +		.addr = data[0] >> 1,
+> +		.flags = 0,
+> +		.len = len - 1,
+> +		.buf = &data[1],
+> +	};
+> +	int ret;
+> +
+> +	ret = i2c_transfer(display->client.i2c->adapter, &msg, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return (ret == 1) ? 0 : -EIO;
+
+Can we use regmap for all parts of the driver? Why not?
+
+> +}
+
+...
+
+> +static const struct tm16xx_controller fd6551_controller = {
+> +	.max_grids = 5,
+> +	.max_segments = 7,
+> +	.max_brightness = 8,
+> +	.max_key_rows = 0,
+> +	.max_key_cols = 0,
+> +	.init = fd6551_init,
+> +	.data = fd655_data,
+
+> +	.keys = NULL,
+
+Redundant initialiser.
+
+> +};
+
+...
+
+> +#if IS_ENABLED(CONFIG_OF)
+
+No, please remove all these ugly ifdefferies.
+
+> +static const struct of_device_id tm16xx_i2c_of_match[] = {
+> +	{ .compatible = "titanmec,tm1650", .data = &tm1650_controller },
+> +	{ .compatible = "fdhisi,fd6551",   .data = &fd6551_controller },
+> +	{ .compatible = "fdhisi,fd655",    .data = &fd655_controller  },
+> +	{ .compatible = "winrise,hbs658",  .data = &hbs658_controller },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, tm16xx_i2c_of_match);
+> +#endif
+
+...
+
+> +		.of_match_table = of_match_ptr(tm16xx_i2c_of_match),
+
+Definitely no to of_match_ptr(). Must be not used in a new code.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
