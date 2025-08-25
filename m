@@ -1,186 +1,124 @@
-Return-Path: <linux-kernel+bounces-785701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F86B34FC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:42:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C29A0B34FCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D2443AB378
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:42:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E3F07A2095
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED842C0F6F;
-	Mon, 25 Aug 2025 23:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369E82BEFFF;
+	Mon, 25 Aug 2025 23:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IcnZBpQs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=sarinay.com header.i=@sarinay.com header.b="LgYfYa0q"
+Received: from natrix.sarinay.com (natrix.sarinay.com [159.100.251.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E841F4CA4;
-	Mon, 25 Aug 2025 23:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87DD1A314E;
+	Mon, 25 Aug 2025 23:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.251.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756165329; cv=none; b=jtMWGT3GWY6onjfXopMwoRDCiQG4X9WIwy+15aw3zPbEzkJx9HHFf6v3QCG/4Dp6qkyQbcIiIQL6rDPjdO2IxgJI/k3dkqx3Vv5UvrS1BRAr76U8zcCL5Iu0i9cA72q0xp6SBrHPLTLaNvMCiXW24TwFeOlPjLo5ccK89fEmcrc=
+	t=1756165721; cv=none; b=unVZyodUJT+M2R8ojZXYoW3EAOIRnEgrqW3Gi0n6MFt1H8kjvG/UhpDCtuPN/CEhervdnCoFvUFGquqZYuMZfqCScAHN3ptJyWZmZSZwdcjkqLYM1xSQPuSW+bg7r67vMmP0lMH4jn4AK/EIwstU4U+HE6ZkRFWA0JCT7vZjPhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756165329; c=relaxed/simple;
-	bh=J367x8GJDZMLTwx8qc/sItzW7eQs4mCr/b+cuY5NxP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QXEVRYstGsNSPwXsHACIIU26xvSguihpAfpqTueOevembMoaqlmDkzbTQy6qBWry87MBSLd+9d33VUkAA99SMmx5yxAsI9B8ELw5+W87l0mGn1rAzMHbotjA6bVlAy6/0HtlQr+VC1JKD4I+wF5VTJqAuhxsXouWyUEwqT0iL64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IcnZBpQs; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756165328; x=1787701328;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=J367x8GJDZMLTwx8qc/sItzW7eQs4mCr/b+cuY5NxP8=;
-  b=IcnZBpQsX6O14Z3wbJNKy7JHnZRYRRxjDFANfG/USgbEXbiMDDxWqV9c
-   Yb2MMKA0HQ8aNJgO3zqlHPAX33x9LwTAdeKPv7du05Ci0BSNR6ipmZjIv
-   qRXqsG6cwYv7WJ/fHvfCzMrGKqGGqxyKA/G9rO+V3sNtnmzHZ99COMRah
-   DMxqzxa/Us0Qe1Pc+g2mLWaUzYSL/XAnC1KHlHVyufE0eoe2xjkN3ZAAL
-   Uw9+UP4SypRjU/7PMaMIe+u055zg1RUDe32oOz71r3nPwVGts3UMTbAcR
-   Zbf045B4G/EqA9SA+v/3q1rBa9MGeniTQ+mGmf+vLQ56eLVqSTdq3KYUP
-   w==;
-X-CSE-ConnectionGUID: Xig1s7u3Q52ebqwaUiTFDQ==
-X-CSE-MsgGUID: alBgCzlvRt+DzeEZOYN1lQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="80981788"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="80981788"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 16:42:07 -0700
-X-CSE-ConnectionGUID: ZQLJOKNrSkypbFLo7ru5Gg==
-X-CSE-MsgGUID: jg/agINJQwqHtf0ttoLzjg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="169020979"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 25 Aug 2025 16:41:54 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uqgoV-000O4R-2c;
-	Mon, 25 Aug 2025 23:41:27 +0000
-Date: Tue, 26 Aug 2025 07:41:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
-	viresh.kumar@linaro.org, lenb@kernel.org, robert.moore@intel.com,
-	corbet@lwn.net, pierre.gondois@arm.com, zhenglifeng1@huawei.com,
-	ray.huang@amd.com, gautham.shenoy@amd.com,
-	mario.limonciello@amd.com, perry.yuan@amd.com,
-	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-doc@vger.kernel.org, acpica-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-tegra@vger.kernel.org, treding@nvidia.com,
-	jonathanh@nvidia.com, vsethi@nvidia.com, ksitaraman@nvidia.com,
-	sanjayc@nvidia.com, bbasu@nvidia.com, sumitg@nvidia.com
-Subject: Re: [PATCH v2 1/7] ACPI: CPPC: add perf control read API and clarify
- naming
-Message-ID: <202508260711.I7imWLTG-lkp@intel.com>
-References: <20250823200121.1320197-2-sumitg@nvidia.com>
+	s=arc-20240116; t=1756165721; c=relaxed/simple;
+	bh=cqmQ5Fj/MEGS7SskcrLs3VuOJjoCYvmvMNy3btPhxU8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QQOsAZiJRt0mL05caoS1tWPIYwr5vV0hnZaxhPPd5DkXj8tZHIJGVB/eg4HL8U3V3Fv5QuPA8k/TGg1SeQp4Ikol+CNTN3Pjf3CbJs+Nfe/y87/yr1aWUf3EaB4Zltio9QfP9lv+glN4t3uWtXxxNB1hOfsMJQmr2dgYk2gZqts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sarinay.com; spf=pass smtp.mailfrom=sarinay.com; dkim=pass (2048-bit key) header.d=sarinay.com header.i=@sarinay.com header.b=LgYfYa0q; arc=none smtp.client-ip=159.100.251.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sarinay.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sarinay.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=sarinay.com; s=2023;
+	t=1756165717; bh=cqmQ5Fj/MEGS7SskcrLs3VuOJjoCYvmvMNy3btPhxU8=;
+	h=From:To:Cc:Subject:Date;
+	b=LgYfYa0qRMw5G7cjT8ny0kFVwfjXcmznlLC0rziELgYck9gtJSsG3VqT8aQ5/CU8t
+	 tee6REAEB+9Nv0ZG/Epn8014eoo0HpIGSDANKFO5z1WV/UxoWHhUGPcxOUR2+eS4jU
+	 PftiUQn0+yKUPH+WSx2lVZK0h/sbrz9cpkh0OtuaG5HkTu2+oOWKDFh4N+RP62/rYI
+	 y4Hq7lNN2xbsJBHIFK+WjjL6pbGr1VENNY1yar3TtXovI86TdtXD2xCdrGTLZeG7kj
+	 abCHXPiQ/epaSoBxCuD4Q9ume/CbpfL0D45SAtkMf7j5Z5ECZufocjKF/qHnoP6HjR
+	 dUrK5LiY116rg==
+From: =?UTF-8?q?Juraj=20=C5=A0arinay?= <juraj@sarinay.com>
+To: netdev@vger.kernel.org
+Cc: =?UTF-8?q?Juraj=20=C5=A0arinay?= <juraj@sarinay.com>,
+	krzk@kernel.org,
+	linux-kernel@vger.kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	mingo@kernel.org,
+	horms@kernel.org,
+	tglx@linutronix.de
+Subject: [PATCH net-next v2] net: nfc: nci: Turn data timeout into a module parameter and increase the default
+Date: Tue, 26 Aug 2025 01:43:49 +0200
+Message-ID: <20250825234354.855755-1-juraj@sarinay.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250823200121.1320197-2-sumitg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Sumit,
+An exchange with a NFC target must complete within NCI_DATA_TIMEOUT.
+A delay of 700 ms is not sufficient for cryptographic operations on smart
+cards. CardOS 6.0 may need up to 1.3 seconds to perform 256-bit ECDH
+or 3072-bit RSA. To prevent brute-force attacks, passports and similar
+documents introduce even longer delays into access control protocols
+(BAC/PACE).
 
-kernel test robot noticed the following build errors:
+The timeout should be higher, but not too much. The expiration allows
+us to detect that a NFC target has disappeared.
 
-[auto build test ERROR on rafael-pm/linux-next]
-[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.17-rc3 next-20250825]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Expose data_timeout as a parameter of nci.ko. Keep the value in uint
+nci_data_timeout, set the default to 3 seconds. Point NCI_DATA_TIMEOUT
+to the new variable.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sumit-Gupta/ACPI-CPPC-add-perf-control-read-API-and-clarify-naming/20250824-040531
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20250823200121.1320197-2-sumitg%40nvidia.com
-patch subject: [PATCH v2 1/7] ACPI: CPPC: add perf control read API and clarify naming
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20250826/202508260711.I7imWLTG-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250826/202508260711.I7imWLTG-lkp@intel.com/reproduce)
+Signed-off-by: Juraj Šarinay <juraj@sarinay.com>
+---
+v2:
+  - export nci_data_timeout to survive make allmodconfig
+v1: https://lore.kernel.org/netdev/20250825134644.135448-1-juraj@sarinay.com/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508260711.I7imWLTG-lkp@intel.com/
+ include/net/nfc/nci_core.h | 4 +++-
+ net/nfc/nci/core.c         | 5 +++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-All errors (new ones prefixed by >>):
-
->> drivers/cpufreq/amd-pstate.c:524:8: error: call to undeclared function 'cppc_set_perf'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     524 |         ret = cppc_set_perf(cpudata->cpu, &perf_ctrls);
-         |               ^
-   drivers/cpufreq/amd-pstate.c:524:8: note: did you mean 'cppc_set_epp'?
-   include/acpi/cppc_acpi.h:170:12: note: 'cppc_set_epp' declared here
-     170 | extern int cppc_set_epp(int cpu, u64 epp_val);
-         |            ^
-   1 error generated.
-
-
-vim +/cppc_set_perf +524 drivers/cpufreq/amd-pstate.c
-
-e059c184da47e9 Huang Rui         2021-12-24  480  
-77fbea69b0ffad Mario Limonciello 2024-12-09  481  static int shmem_update_perf(struct cpufreq_policy *policy, u8 min_perf,
-555bbe67a622b2 Dhananjay Ugwekar 2025-02-05  482  			     u8 des_perf, u8 max_perf, u8 epp, bool fast_switch)
-e059c184da47e9 Huang Rui         2021-12-24  483  {
-77fbea69b0ffad Mario Limonciello 2024-12-09  484  	struct amd_cpudata *cpudata = policy->driver_data;
-e059c184da47e9 Huang Rui         2021-12-24  485  	struct cppc_perf_ctrls perf_ctrls;
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  486  	u64 value, prev;
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  487  	int ret;
-e059c184da47e9 Huang Rui         2021-12-24  488  
-fff395796917ac Mario Limonciello 2024-12-09  489  	if (cppc_state == AMD_PSTATE_ACTIVE) {
-77fbea69b0ffad Mario Limonciello 2024-12-09  490  		int ret = shmem_set_epp(policy, epp);
-fff395796917ac Mario Limonciello 2024-12-09  491  
-fff395796917ac Mario Limonciello 2024-12-09  492  		if (ret)
-fff395796917ac Mario Limonciello 2024-12-09  493  			return ret;
-fff395796917ac Mario Limonciello 2024-12-09  494  	}
-fff395796917ac Mario Limonciello 2024-12-09  495  
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  496  	value = prev = READ_ONCE(cpudata->cppc_req_cached);
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  497  
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  498  	value &= ~(AMD_CPPC_MAX_PERF_MASK | AMD_CPPC_MIN_PERF_MASK |
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  499  		   AMD_CPPC_DES_PERF_MASK | AMD_CPPC_EPP_PERF_MASK);
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  500  	value |= FIELD_PREP(AMD_CPPC_MAX_PERF_MASK, max_perf);
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  501  	value |= FIELD_PREP(AMD_CPPC_DES_PERF_MASK, des_perf);
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  502  	value |= FIELD_PREP(AMD_CPPC_MIN_PERF_MASK, min_perf);
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  503  	value |= FIELD_PREP(AMD_CPPC_EPP_PERF_MASK, epp);
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  504  
-77fbea69b0ffad Mario Limonciello 2024-12-09  505  	if (trace_amd_pstate_epp_perf_enabled()) {
-77fbea69b0ffad Mario Limonciello 2024-12-09  506  		union perf_cached perf = READ_ONCE(cpudata->perf);
-77fbea69b0ffad Mario Limonciello 2024-12-09  507  
-77fbea69b0ffad Mario Limonciello 2024-12-09  508  		trace_amd_pstate_epp_perf(cpudata->cpu,
-77fbea69b0ffad Mario Limonciello 2024-12-09  509  					  perf.highest_perf,
-77fbea69b0ffad Mario Limonciello 2024-12-09  510  					  epp,
-77fbea69b0ffad Mario Limonciello 2024-12-09  511  					  min_perf,
-77fbea69b0ffad Mario Limonciello 2024-12-09  512  					  max_perf,
-77fbea69b0ffad Mario Limonciello 2024-12-09  513  					  policy->boost_enabled,
-77fbea69b0ffad Mario Limonciello 2024-12-09  514  					  value != prev);
-77fbea69b0ffad Mario Limonciello 2024-12-09  515  	}
-77fbea69b0ffad Mario Limonciello 2024-12-09  516  
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  517  	if (value == prev)
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  518  		return 0;
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  519  
-e059c184da47e9 Huang Rui         2021-12-24  520  	perf_ctrls.max_perf = max_perf;
-e059c184da47e9 Huang Rui         2021-12-24  521  	perf_ctrls.min_perf = min_perf;
-e059c184da47e9 Huang Rui         2021-12-24  522  	perf_ctrls.desired_perf = des_perf;
-e059c184da47e9 Huang Rui         2021-12-24  523  
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09 @524  	ret = cppc_set_perf(cpudata->cpu, &perf_ctrls);
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  525  	if (ret)
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  526  		return ret;
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  527  
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  528  	WRITE_ONCE(cpudata->cppc_req_cached, value);
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  529  
-9f5daa2f2f6ddd Mario Limonciello 2024-12-09  530  	return 0;
-e059c184da47e9 Huang Rui         2021-12-24  531  }
-e059c184da47e9 Huang Rui         2021-12-24  532  
-
+diff --git a/include/net/nfc/nci_core.h b/include/net/nfc/nci_core.h
+index e180bdf2f82b..da62f0da1fb2 100644
+--- a/include/net/nfc/nci_core.h
++++ b/include/net/nfc/nci_core.h
+@@ -52,7 +52,9 @@ enum nci_state {
+ #define NCI_RF_DISC_SELECT_TIMEOUT		5000
+ #define NCI_RF_DEACTIVATE_TIMEOUT		30000
+ #define NCI_CMD_TIMEOUT				5000
+-#define NCI_DATA_TIMEOUT			700
++
++extern unsigned int nci_data_timeout;
++#define NCI_DATA_TIMEOUT			nci_data_timeout
+ 
+ struct nci_dev;
+ 
+diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
+index fc921cd2cdff..29fac0dd6c77 100644
+--- a/net/nfc/nci/core.c
++++ b/net/nfc/nci/core.c
+@@ -31,6 +31,11 @@
+ #include <net/nfc/nci_core.h>
+ #include <linux/nfc.h>
+ 
++unsigned int nci_data_timeout = 3000;
++module_param_named(data_timeout, nci_data_timeout, uint, 0644);
++MODULE_PARM_DESC(data_timeout, "Round-trip communication timeout in milliseconds");
++EXPORT_SYMBOL_GPL(nci_data_timeout);
++
+ struct core_conn_create_data {
+ 	int length;
+ 	struct nci_core_conn_create_cmd *cmd;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.2
+
 
