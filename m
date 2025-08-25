@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-784748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4E4B340A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:25:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 857A8B340A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E1952080C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:25:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 280A920836D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD50C271A9D;
-	Mon, 25 Aug 2025 13:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11877274FDE;
+	Mon, 25 Aug 2025 13:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eRS8/5RB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNcw3K+z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C76DEEBD;
-	Mon, 25 Aug 2025 13:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E36D207DE2;
+	Mon, 25 Aug 2025 13:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756128351; cv=none; b=NzH4z5/V/Wf5iox5o9S4czKmDVONel8PgZBgM+FhAwRuPRKtFGsg0qQJKmR71AjdwkSWF1XI6kucNvI37Af6oOAetjahu5PKbKEcbqJZfqhOkb7LlXUHu5egUv2wwsuIarLc+E/ht7f58hrjSOq1vgd+5OdYn1M/bmB2NiIpM3Y=
+	t=1756128355; cv=none; b=gSVc7W1rVEDcfDxpWOa7YtNn3rLu4tcUmgbuwZCOJ4QplhDLr8BTa0YFt6LXCNBWpdLFDl3btT8gUbWE/L+pOGE21BGkI2pmXwnNBSAWiM1DTwlSyrEyxmF2O5iXl9nR8iFYRpVIXEXaPR1o5e1Cm2o6kin2BcdcFrthZ33pcA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756128351; c=relaxed/simple;
-	bh=kTLOg8ZWto7m4mLxe3AMRggh4mVgO3Q/TaPM5uD+Fa4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ACKIvHdPssDR4TKnWXQUiWWZPEcFjgAw9KW1lbtWcp+7K6HSkgf5ds3rIx+O+Wb6Dv2ePSB9SZyZZaxlvg6fxOCBiF8EAob1x2vdo2IaKkv73G4cX7H8ZoWBdjK20+lMm25LQLci8HgC2Z/eBlly/P0YNG/V+06fNAzHpCXw7MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eRS8/5RB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3730DC4CEED;
-	Mon, 25 Aug 2025 13:25:47 +0000 (UTC)
+	s=arc-20240116; t=1756128355; c=relaxed/simple;
+	bh=6rhTOCn2Ximh5yl+dNj5WvB36g/GrWekZfjHfLEufqQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pdQqQCVMy4XAyB/WJEaAI3Dom7a7zVpWLeG0Ua7T0Kbkg3gzcWrEhdca6aE46YEcyBNYT1eJyDnDGgnmcqNu2japgGzJj8n9yvmy7fBinlw8l0btlNqNQirxycXV7ak5gBvdyNr2RtWfeF6YVtnR5+YqsE7n1iyF9IocdJsR02Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNcw3K+z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06B35C116C6;
+	Mon, 25 Aug 2025 13:25:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756128350;
-	bh=kTLOg8ZWto7m4mLxe3AMRggh4mVgO3Q/TaPM5uD+Fa4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=eRS8/5RBrkmW1JVlyTssz8GFTmNDzM5Cfat2ufG9o4tAdw8dHVJ2YeBtwmNb/j8Ab
-	 GawlVhwR4vXYIY3QrF+b8wuwqoq/cdNDMIbnHi97Ya/FItCXFqppqWH5ybHlsQs/KV
-	 VHACZPA9epVDycTbA6G2GiuHY71vQEekp+59zUE6kwgPGBCGxO9qf4vMfYLAUJrZct
-	 6s33uiHJ5AsErD49EjQAtChFTbm6ACI71R5ICsgtrmW0iEV8G2KlTugQDV1XRr595w
-	 nlTi1iRSggXkZMUS4WMxFWQdow1jsF0qyPvVyyG+NMsL7JhJU1A/1SbwM/uAhOs2Ev
-	 e+MjmDn9c3PHA==
+	s=k20201202; t=1756128354;
+	bh=6rhTOCn2Ximh5yl+dNj5WvB36g/GrWekZfjHfLEufqQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XNcw3K+zljCQQC6wKGh2XQPjwbsylElvtshPXrO4hdMqH4T+a6qwzzIyK4RqRVKJ7
+	 Xx/m0fi9h867aQBMOykZJ8rMt+oTl4EuY0OxJnKAjVqPnq50diOPUEfpsnA7v7RtEx
+	 Ly6Jq/DToriTjC+fWS02cW/YmF98CA0oLJ9CAB2uzpbeN85zckRqk/RuTk7jZHcVtT
+	 QeLHiX8ZBNUq/fhmhMnzRNmWIBhz13iyC4CyMuXqiuK3SJgWRXUnsXtu1EV3wFpeFS
+	 c5mvBas1QnAb13618sUCCu2+I2IIn/tA/cPAdkyIvlHovp0G7aQj9OSnnD5C9PL74Q
+	 0iirsgnq6CsWg==
 From: Danilo Krummrich <dakr@kernel.org>
 To: akpm@linux-foundation.org,
 	ojeda@kernel.org,
@@ -59,10 +60,12 @@ To: akpm@linux-foundation.org,
 Cc: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v3 0/5] Rust infrastructure for sg_table and scatterlist
-Date: Mon, 25 Aug 2025 15:24:39 +0200
-Message-ID: <20250825132539.122412-1-dakr@kernel.org>
+Subject: [PATCH v3 1/5] rust: dma: implement DataDirection
+Date: Mon, 25 Aug 2025 15:24:40 +0200
+Message-ID: <20250825132539.122412-2-dakr@kernel.org>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250825132539.122412-1-dakr@kernel.org>
+References: <20250825132539.122412-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,100 +74,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series provides abstractions for struct sg_table and struct
-scatterlist.
+Add the `DataDirection` struct, a newtype wrapper around the C
+`enum dma_data_direction`.
 
-Abdiel and me agreed for me to take over his previous iterations on this topic.
-I decided to send my patches as a new series rather than as a subsequent version
-of Abdiel's previous iterations, since the changes I made turned out to be much
-closer to a full rewrite.
+This provides a type-safe Rust interface for specifying the direction of
+DMA transfers.
 
-The most notable differences in design are:
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+---
+ rust/bindings/bindings_helper.h |  1 +
+ rust/kernel/dma.rs              | 68 +++++++++++++++++++++++++++++++++
+ 2 files changed, 69 insertions(+)
 
-  - SGTable utilizes BorrowedPage, AsPageIter and VmallocPageIter from my patch
-    series in [1].
-
-  -  SGTable is a transparent wrapper over either struct Owned<P> (where P is
-     the provider of the backing pages) or struct Borrowed, which by itself is a
-     transparent wrapper over Opaque<bindings::sg_table>, i.e. either
-     SGTable<Owned<P>> or just SGTable (which is equivalent to
-     SGTable<Borrowed>.
-
-     - `SGTable<Owned<P>>`: Represents a table whose resources are fully managed
-       by Rust. It takes ownership of a page provider `P`, allocates the
-       underlying `struct sg_table`, maps it for DMA, and handles all cleanup
-       automatically upon drop. The DMA mapping's lifetime is tied to the
-       associated device using `Devres`, ensuring it is correctly unmapped
-       before the device is unbound.
-
-     - `SGTable<Borrowed>` (or just `SGTable`): A zero-cost representation of an
-       externally managed `struct sg_table`. It is created from a raw pointer
-       using `SGTable::from_raw()` and provides a lifetime-bound reference
-       (`&'a SGTable`) for operations like iteration.
-
-     - As a consequence, a borrowed SG table can be created with
-       SGTable::from_raw(), which returns a &'a SGTable, just like similar
-       existing abstractions.
-
-       An owned SGTable is created with SGTable::new(), which returns an
-       impl PinInit<SGTable<Owned<P>>, Error>, such that it can be initialized
-       directly within existing private data memory allocations while providing
-       the required pin guarantees.
-
-  - SGTable<Owned<P>> uses an inner type Devres<DmaMapSgt> to ensure that the
-    DMA mapping can't out-live device unbind.
-
-  - SGTable<Owned<P>> uses pin-init for initialization.
-
-This patch series depends on [1] (branch containing the patches in [2]). A
-branch containing this series (including dependencies) can be found in [3];
-Abdiel's latest series can be found in [4].
-
-[1] https://lore.kernel.org/rust-for-linux/20250820145434.94745-1-dakr@kernel.org/
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=page-iter
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=scatterlist
-[4] https://lore.kernel.org/lkml/20250718103359.1026240-1-abdiel.janulgue@gmail.com/
-
-Changes in v3:
-  - Beautify max_segment assignment code.
-  - Rename DmaMapSg to DmaMappedSg and improve documentation.
-  - Rename SGTable::as_iter() into SGTable::iter() and remove IntoIterator impl.
-  - Consider struct sg_table::nents in SGTable::iter() and SGTableIter<'_>.
-
-Changes in v2:
-  - Switch to an enum impl for DmaDirection utilizing compile time boundary
-    checks.
-  - Add missing Send/ Sync impls.
-  - Rename as_ref() to from_raw().
-  - Add a bunch of inline annotations.
-  - Add a patch to introduce a typedef for dma_addr_t.
-  - Let dma_len() return ResourceSize.
-  - Add addional invariant to DmaMapSgt.
-  - In RawSGTable::new(), pass pages as mutable slice reference.
-  - Avoid casts when deriving max_segment in Owned::new().
-
-Danilo Krummrich (5):
-  rust: dma: implement DataDirection
-  rust: dma: add type alias for bindings::dma_addr_t
-  rust: scatterlist: Add abstraction for sg_table
-  samples: rust: dma: add sample code for SGTable
-  MAINTAINERS: rust: dma: add scatterlist files
-
- MAINTAINERS                     |   4 +-
- drivers/gpu/nova-core/falcon.rs |   4 +-
- rust/bindings/bindings_helper.h |   1 +
- rust/helpers/helpers.c          |   1 +
- rust/helpers/scatterlist.c      |  24 ++
- rust/kernel/dma.rs              |  86 +++++-
- rust/kernel/lib.rs              |   1 +
- rust/kernel/scatterlist.rs      | 483 ++++++++++++++++++++++++++++++++
- samples/rust/rust_dma.rs        |  35 ++-
- 9 files changed, 623 insertions(+), 16 deletions(-)
- create mode 100644 rust/helpers/scatterlist.c
- create mode 100644 rust/kernel/scatterlist.rs
-
-
-base-commit: 27941214d368f3c17ed26a72662fc453bcc81b9d
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index 0e140e07758b..c2cc52ee9945 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -47,6 +47,7 @@
+ #include <linux/cpumask.h>
+ #include <linux/cred.h>
+ #include <linux/device/faux.h>
++#include <linux/dma-direction.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/errname.h>
+ #include <linux/ethtool.h>
+diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
+index 2bc8ab51ec28..27b25f041f32 100644
+--- a/rust/kernel/dma.rs
++++ b/rust/kernel/dma.rs
+@@ -244,6 +244,74 @@ pub mod attrs {
+     pub const DMA_ATTR_PRIVILEGED: Attrs = Attrs(bindings::DMA_ATTR_PRIVILEGED);
+ }
+ 
++/// DMA data direction.
++///
++/// Corresponds to the C [`enum dma_data_direction`].
++///
++/// [`enum dma_data_direction`]: srctree/include/linux/dma-direction.h
++#[derive(Copy, Clone, PartialEq, Eq, Debug)]
++#[repr(u32)]
++pub enum DataDirection {
++    /// The DMA mapping is for bidirectional data transfer.
++    ///
++    /// This is used when the buffer can be both read from and written to by the device.
++    /// The cache for the corresponding memory region is both flushed and invalidated.
++    Bidirectional = Self::const_cast(bindings::dma_data_direction_DMA_BIDIRECTIONAL),
++
++    /// The DMA mapping is for data transfer from memory to the device (write).
++    ///
++    /// The CPU has prepared data in the buffer, and the device will read it.
++    /// The cache for the corresponding memory region is flushed before device access.
++    ToDevice = Self::const_cast(bindings::dma_data_direction_DMA_TO_DEVICE),
++
++    /// The DMA mapping is for data transfer from the device to memory (read).
++    ///
++    /// The device will write data into the buffer for the CPU to read.
++    /// The cache for the corresponding memory region is invalidated before CPU access.
++    FromDevice = Self::const_cast(bindings::dma_data_direction_DMA_FROM_DEVICE),
++
++    /// The DMA mapping is not for data transfer.
++    ///
++    /// This is primarily for debugging purposes. With this direction, the DMA mapping API
++    /// will not perform any cache coherency operations.
++    None = Self::const_cast(bindings::dma_data_direction_DMA_NONE),
++}
++
++impl DataDirection {
++    /// Casts the bindgen-generated enum type to a `u32` at compile time.
++    ///
++    /// This function will cause a compile-time error if the underlying value of the
++    /// C enum is out of bounds for `u32`.
++    const fn const_cast(val: bindings::dma_data_direction) -> u32 {
++        // CAST: The C standard allows compilers to choose different integer types for enums.
++        // To safely check the value, we cast it to a wide signed integer type (`i128`)
++        // which can hold any standard C integer enum type without truncation.
++        let wide_val = val as i128;
++
++        // Check if the value is outside the valid range for the target type `u32`.
++        // CAST: `u32::MAX` is cast to `i128` to match the type of `wide_val` for the comparison.
++        if wide_val < 0 || wide_val > u32::MAX as i128 {
++            // Trigger a compile-time error in a const context.
++            build_error!("C enum value is out of bounds for the target type `u32`.");
++        }
++
++        // CAST: This cast is valid because the check above guarantees that `wide_val`
++        // is within the representable range of `u32`.
++        wide_val as u32
++    }
++}
++
++impl From<DataDirection> for bindings::dma_data_direction {
++    /// Returns the raw representation of [`enum dma_data_direction`].
++    fn from(direction: DataDirection) -> Self {
++        // CAST: `direction as u32` gets the underlying representation of our `#[repr(u32)]` enum.
++        // The subsequent cast to `Self` (the bindgen type) assumes the C enum is compatible
++        // with the enum variants of `DataDirection`, which is a valid assumption given our
++        // compile-time checks.
++        direction as u32 as Self
++    }
++}
++
+ /// An abstraction of the `dma_alloc_coherent` API.
+ ///
+ /// This is an abstraction around the `dma_alloc_coherent` API which is used to allocate and map
 -- 
 2.51.0
 
