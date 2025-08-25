@@ -1,527 +1,129 @@
-Return-Path: <linux-kernel+bounces-784394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6509EB33B07
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:27:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F590B33AD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 384C67A12A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:26:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50509203863
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364342D6E40;
-	Mon, 25 Aug 2025 09:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472B62D0C76;
+	Mon, 25 Aug 2025 09:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EPKzr0QQ"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="POwQCc5P"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF9E2D5C83;
-	Mon, 25 Aug 2025 09:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A892D0278;
+	Mon, 25 Aug 2025 09:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756113889; cv=none; b=mFcj4f1SuWwUU7lbjIu552lWobcUwrwBrTyh2M0Bmvsv9yngdXgUbm/Z541HFvu44sulC4KL2ssJQ0j92TlMMdMxjjljuoLsDNBxw8hVnSt6hZ5+6jMcRKxU+msQ6QNFmBxqVNLlWMuIQvbtsEk9XyIALuDu4iyJAltdLVyLjYU=
+	t=1756113870; cv=none; b=FY/zq9+XYaM4EADT7EEI1RsMar4el2O38vn4ehkewFAJW+qzmnXocc4b5Im5aXTaZWeSwEC85uqYGGdEOF2SyiapJ39GsMRY4v9VVsrlvM7ec4925aupQulfjGNuEOMr6IFVW3Qm0f6+ER4eLOlqoVhxbHb0k+nJzQCX3ON/X40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756113889; c=relaxed/simple;
-	bh=HBv1KgP0Vd0KcWEoh0UfygcjP7f3T2S9yGCvHObrHa4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HnriUF1Ix/03wUX/BfnegHjsz7pVJPU+cLyN+ZuP04G3Lv0+PHVDaZJLODTMt2v6WkeWYM6cd+ZWWybOWdhNnKE0Qn5kK3MlA/DHFXsJgVxozETz755/C5XJeupe73LDJnRci41Vf5B1tajUhkTASx7bqnPQAiH8BRbdo1Yd3ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EPKzr0QQ; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-32519b32b6cso2034621a91.0;
-        Mon, 25 Aug 2025 02:24:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756113886; x=1756718686; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b+DpNvLfZgXJbSyo/1KPV0nPQcd/neSkyFRkxB2AOkE=;
-        b=EPKzr0QQMUTVKl0KPnVBuaHeIQnsBkhrCpF6Mn0OzE1kFbGd7MVoXwX1iv2zfmUjnD
-         78SDkFHdmSgDASnYB2XC7gmOgbxpVKCzqzg+SN2JqveTRe3iSnmRLWPJqn9lnNKIqtQU
-         y8CoC5JruZiK+FVRuR4/Iw5oSFIFIJBu6hlRhV7EzWuXUrxoGLktTN1qUB+OZgnKlMkd
-         33JWRrqWNgJT2xDS9PdLIZVBinlyI/p7jBG6uRAsw2eH2rEfXl2oxt/5mX32DKNj+OwK
-         UZSsjRs90hyGZ1xbouDi2R30p2qorZ9hkN/G1bMgrjsZM5BF/Qqb1XgU2r+UERBQxF6L
-         rkZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756113886; x=1756718686;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b+DpNvLfZgXJbSyo/1KPV0nPQcd/neSkyFRkxB2AOkE=;
-        b=izE3WU5RSfdWZAwibQo9OHOfOn3I6DdrmxbkZZvt1chBFONJms8ux3BYRytTyMoqWI
-         pUuDa+Q6bTOi4KvkHC8RtrDX6SenM/8JJzk9hwVwvCxR2DFow8ztKr3lYsxlg/WbAeET
-         MfoOPx4bozcoJGdC9CP5+aAZWArUlz/P0w/GN1gkHGYs4NG6AASGBlQ30og2XjjetW6K
-         OisAhas8Ib1pCvBOse55lBH4LO/tOMQ7VGVF4rHNOWYdZtnG3DFU6TAV30d+ERofGPsX
-         SzOd8a7NxLms+ayA5Ngtk6LfEt+T1ZxZgMuTWzaGxsmS7d8PyGoKn3sE6BmlvY/XD151
-         pm0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUsuV2Zgg8TzJKtNRISItNoYh3kXesb2CJ6Lvyb02UpXsYTi70MsnHYciZ/8IIUND1aMC/6aIMJ@vger.kernel.org, AJvYcCUxzNrwK/jnhnIwbXodWuyKy2IIlsUuSdqxD3AnUSxg5kX1ONlD5rUGqmDn+dOqu1vBE2qxxy67VV4oBQ==@vger.kernel.org, AJvYcCVFsms9SbDsFc4lF4gFWKzMHTUr2wpxtnG2YU+MftVbzzFg8oEqVKJLBahskRcFZrw2Rqqg86LhseFSEYkgV8k=@vger.kernel.org, AJvYcCVuPaN8oSGbfyyh+kczFrZjz2OqK65YwL6TgsrBBbTF9Sum3hojqgZBDo0Zbs7KFQq1oJJ3WDrX7Xo=@vger.kernel.org, AJvYcCWYyTvvOkLjQZLpaU3QPBj5B1g+bsPaU9uzQE47iEz+wWcvVCQlfz11arg+3qAyLyJ4ArfZ9qLQDeWAbGs=@vger.kernel.org, AJvYcCX+rPolIFii2leV5OB1PGsUMG6q1uk3Sx6KQnQikzrRhuJR4Guaw9m31dpSWH+eeqShXtXT0wKGhR2E@vger.kernel.org, AJvYcCX/fAz3ij0B2Hb2ADDif+YJ+ek5OVtWwXm7bxcmvxQFTaaNhSy1xIe7V1VEpIBfEMxRbpfH66cij3P7@vger.kernel.org, AJvYcCXN9PcBqOuo7DXSL7W2fXKjzRb4HQcEOAntUWZ81sXRVwY6MUVgd6JFRZf6445u0/7/W16VIfKMVW9/@vger.kernel.org
-X-Gm-Message-State: AOJu0YygtnZZsxN1r1th0wEW5TZg5sDElHNKse1tislYYsOBoqamLBI2
-	cGuuBlImD38p7fmF3GGmCC17f8e89hzIbZqwwoayDsCPWxMKgCL7nbIJ
-X-Gm-Gg: ASbGncsGDlCu6vrBAomlROci8/Hj0u3ipl7u5Cw598jtBnVOLA+faRE3dSozYrcqWZb
-	gNCrCohQ1j2bnGAd5u13EpTOlL+Uvv1CC98sxNcUGx1KSXWxNx9PTtQ7QWVsr4v0nZotDIT/2kL
-	8wesnOQaoN7lnSDSZ1KCBi/EPSm3wx4y+o/+9BpFqBivMogISqaYuPTR4/b99eMaJfp/mPsVroe
-	02VQMAftuY/4Q6We562QlzKbmeuyGyHsG5f6W0mAyF00rYihw6AxP46vo+yy4XUg2jvwCKqwSgZ
-	Z9JoRj06v9NmttS+c8hBcQpIbmjxqJWCnXU1OS2UnYEQ/ZSV5pRmXzXCgLd5OD8oNzhD09CPY8h
-	M/IdcwZMLsEPOvhHreLC95eDUgyzxjtYSrpedgUMJ/zKdGYA6hVX/86nK35aDpOkm5NJLp5y9Qq
-	WX
-X-Google-Smtp-Source: AGHT+IHk1120RSlwVhFb9lSmXk3YFfH5Uc6wjDFFQ5B7eX3Ftp7khdUZ0NZYE01xgxpR+ybZFXSLkw==
-X-Received: by 2002:a17:90b:1b11:b0:325:42f8:d73f with SMTP id 98e67ed59e1d1-32542f8d954mr12219298a91.17.1756113885959;
-        Mon, 25 Aug 2025 02:24:45 -0700 (PDT)
-Received: from hcdev-d520mt2.. (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3254ae8a2d9sm6552747a91.8.2025.08.25.02.24.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 02:24:45 -0700 (PDT)
-From: a0282524688@gmail.com
-To: tmyu0@nuvoton.com,
-	lee@kernel.org,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	andi.shyti@kernel.org,
-	mkl@pengutronix.de,
-	mailhol.vincent@wanadoo.fr,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	wim@linux-watchdog.org,
-	linux@roeck-us.net,
-	jdelvare@suse.com,
-	alexandre.belloni@bootlin.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Ming Yu <a0282524688@gmail.com>
-Subject: [PATCH RESEND v14 7/7] rtc: Add Nuvoton NCT6694 RTC support
-Date: Mon, 25 Aug 2025 17:24:03 +0800
-Message-Id: <20250825092403.3301266-8-a0282524688@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250825092403.3301266-1-a0282524688@gmail.com>
-References: <20250825092403.3301266-1-a0282524688@gmail.com>
+	s=arc-20240116; t=1756113870; c=relaxed/simple;
+	bh=XHBoXoD67Yx74hzKym+Sk2iHmWZ1Sa4F0v5fKW3S0hw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ns6HA4nblgZmrolWg435mIkcuC3qen89jIjTtVjfxzMoSSu+KTOhJC0Sj1J5tCdLcTYatZ9FcQs7PbL/JrxD4qFPIMITnM7MGSqc4nR4KhxlzZBAn0rC6cy7QNIdQAo3zzH2TsqhWLMwoQj+nsOBHjCRuptdktohbfEDlr79UYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=POwQCc5P; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 52D3943373;
+	Mon, 25 Aug 2025 09:24:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
+	t=1756113858;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W+BDbrF2ImSWufoscsZvanJuCMuSyyB4F+Zy1wd7ISY=;
+	b=POwQCc5Px3GaGw3yylTzSQ9xEDDUIa+41J5/HlP0XRmV0mD1RKGZV5xt7RqX5Wnai07Qpb
+	3zptf8eveY2HNDibMzuJ8+P9xFcNWy5lUPT8OWdgeOprtFlhQq+NL3Sk/3R4i5soA1SlMc
+	8nYoAbY6IMgdnUNoNDcXDJZN6MUtqLPPsOkhFec29u97e5IWDmCUXnr3g0Pae+p9iWV6tr
+	+q892cHAef7zLPc4bb1gA9LqLfVnbg2u5uri3QHrcLWjyyoKoQHYGKQtVUOhApkTraOEYS
+	T3qIGI1sGTdPIlG1PY94QkzH7s3B9WqOkHOhNqjZN0/Flq7CTUEq1lR2CpCkGg==
+From: Gabriel Krisman Bertazi <gabriel@krisman.be>
+To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,  Amir Goldstein
+ <amir73il@gmail.com>,  Theodore Tso <tytso@mit.edu>,
+  linux-unionfs@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
+  kernel-dev@igalia.com
+Subject: Re: [PATCH v6 2/9] fs: Create sb_same_encoding() helper
+In-Reply-To: <20250822-tonyk-overlayfs-v6-2-8b6e9e604fa2@igalia.com>
+ (=?utf-8?Q?=22Andr=C3=A9?=
+	Almeida"'s message of "Fri, 22 Aug 2025 11:17:05 -0300")
+References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
+	<20250822-tonyk-overlayfs-v6-2-8b6e9e604fa2@igalia.com>
+Date: Mon, 25 Aug 2025 05:24:15 -0400
+Message-ID: <87ecsz69fk.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujedvtddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhffkfgfgggtgfesthhqredttderjeenucfhrhhomhepifgrsghrihgvlhcumfhrihhsmhgrnhcuuegvrhhtrgiiihcuoehgrggsrhhivghlsehkrhhishhmrghnrdgsvgeqnecuggftrfgrthhtvghrnhepfedtvdehffevtddujeffffejudeuuefgvdeujeduhedtgfehkeefheegjefgueeknecukfhppeejtddrkedvrddukedvrdeikeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeejtddrkedvrddukedvrdeikedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepghgrsghrihgvlheskhhrihhsmhgrnhdrsggvpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopegrnhgurhgvrghlmhgvihgusehighgrlhhirgdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphhtthhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvr
+ hhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhk
+X-GND-Sasl: gabriel@krisman.be
 
-From: Ming Yu <a0282524688@gmail.com>
+Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
 
-This driver supports RTC functionality for NCT6694 MFD device
-based on USB interface.
+> For cases where a file lookup can look in different filesystems (like in
+> overlayfs), both super blocks must have the same encoding and the same
+> flags. To help with that, create a sb_same_encoding() function.
+>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
 
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Ming Yu <a0282524688@gmail.com>
----
-Changes since version 13:
 
-Changes since version 12:
-- Use same email address in the signature
+Reviewed-by: Gabriel Krisman Bertazi <gabriel@krisman.be>
 
-Changes since version 11:
 
-Changes since version 10:
+> ---
+>  include/linux/fs.h | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index a4d353a871b094b562a87ddcffe8336a26c5a3e2..7de9e1e4839a2726f4355ddf2=
+0b9babb74cc9681 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3747,6 +3747,24 @@ static inline bool sb_has_encoding(const struct su=
+per_block *sb)
+>  	return !!sb_encoding(sb);
+>  }
+>=20=20
+> +/*
+> + * Compare if two super blocks have the same encoding and flags
+> + */
+> +static inline bool sb_same_encoding(const struct super_block *sb1,
+> +				    const struct super_block *sb2)
+> +{
+> +#if IS_ENABLED(CONFIG_UNICODE)
+> +	if (sb1->s_encoding =3D=3D sb2->s_encoding)
+> +		return true;
+> +
+> +	return (sb1->s_encoding && sb2->s_encoding &&
+> +	       (sb1->s_encoding->version =3D=3D sb2->s_encoding->version) &&
+> +	       (sb1->s_encoding_flags =3D=3D sb2->s_encoding_flags));
+> +#else
+> +	return true;
+> +#endif
+> +}
+> +
+>  int may_setattr(struct mnt_idmap *idmap, struct inode *inode,
+>  		unsigned int ia_valid);
+>  int setattr_prepare(struct mnt_idmap *, struct dentry *, struct iattr *);
 
-Changes since version 9:
-- Add devm_add_action_or_reset() to dispose irq mapping
-
-Changes since version 8:
-- Modify the signed-off-by with my work address
-- Add irq_dispose_mapping() in the error handling path and in the remove
-  function
-
-Changes since version 7:
-
-Changes since version 6:
-
-Changes since version 5:
-- Modify the module name and the driver name consistently
-
-Changes since version 4:
-- Modify arguments in read/write function to a pointer to cmd_header
-- Modify all callers that call the read/write function
-
-Changes since version 3:
-- Modify array buffer to structure
-- Fix defines and comments
-- Drop private mutex and use rtc core lock
-- Modify device_set_wakeup_capable() to device_init_wakeup()
-
-Changes since version 2:
-- Add MODULE_ALIAS()
-
-Changes since version 1:
-- Add each driver's command structure
-- Fix platform driver registration
-- Drop unnecessary logs
-- Fix overwrite error return values
-- Modify to use dev_err_probe API
-
- MAINTAINERS               |   1 +
- drivers/rtc/Kconfig       |  10 ++
- drivers/rtc/Makefile      |   1 +
- drivers/rtc/rtc-nct6694.c | 297 ++++++++++++++++++++++++++++++++++++++
- 4 files changed, 309 insertions(+)
- create mode 100644 drivers/rtc/rtc-nct6694.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1bb97ee6a11b..e5edd911a28e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17823,6 +17823,7 @@ F:	drivers/hwmon/nct6694-hwmon.c
- F:	drivers/i2c/busses/i2c-nct6694.c
- F:	drivers/mfd/nct6694.c
- F:	drivers/net/can/usb/nct6694_canfd.c
-+F:	drivers/rtc/rtc-nct6694.c
- F:	drivers/watchdog/nct6694_wdt.c
- F:	include/linux/mfd/nct6694.h
- 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 9aec922613ce..7fd2439436c1 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -416,6 +416,16 @@ config RTC_DRV_NCT3018Y
- 	   This driver can also be built as a module, if so, the module will be
- 	   called "rtc-nct3018y".
- 
-+config RTC_DRV_NCT6694
-+	tristate "Nuvoton NCT6694 RTC support"
-+	depends on MFD_NCT6694
-+	help
-+	  If you say yes to this option, support will be included for Nuvoton
-+	  NCT6694, a USB device to RTC.
-+
-+	  This driver can also be built as a module. If so, the module will
-+	  be called rtc-nct6694.
-+
- config RTC_DRV_RK808
- 	tristate "Rockchip RK805/RK808/RK809/RK817/RK818 RTC"
- 	depends on MFD_RK8XX
-diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-index 4619aa2ac469..f564f9a9fa5e 100644
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@ -119,6 +119,7 @@ obj-$(CONFIG_RTC_DRV_MXC)	+= rtc-mxc.o
- obj-$(CONFIG_RTC_DRV_MXC_V2)	+= rtc-mxc_v2.o
- obj-$(CONFIG_RTC_DRV_GAMECUBE)	+= rtc-gamecube.o
- obj-$(CONFIG_RTC_DRV_NCT3018Y)	+= rtc-nct3018y.o
-+obj-$(CONFIG_RTC_DRV_NCT6694)	+= rtc-nct6694.o
- obj-$(CONFIG_RTC_DRV_NTXEC)	+= rtc-ntxec.o
- obj-$(CONFIG_RTC_DRV_OMAP)	+= rtc-omap.o
- obj-$(CONFIG_RTC_DRV_OPAL)	+= rtc-opal.o
-diff --git a/drivers/rtc/rtc-nct6694.c b/drivers/rtc/rtc-nct6694.c
-new file mode 100644
-index 000000000000..35401a0d9cf5
---- /dev/null
-+++ b/drivers/rtc/rtc-nct6694.c
-@@ -0,0 +1,297 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Nuvoton NCT6694 RTC driver based on USB interface.
-+ *
-+ * Copyright (C) 2025 Nuvoton Technology Corp.
-+ */
-+
-+#include <linux/bcd.h>
-+#include <linux/irqdomain.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/nct6694.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/rtc.h>
-+#include <linux/slab.h>
-+
-+/*
-+ * USB command module type for NCT6694 RTC controller.
-+ * This defines the module type used for communication with the NCT6694
-+ * RTC controller over the USB interface.
-+ */
-+#define NCT6694_RTC_MOD		0x08
-+
-+/* Command 00h - RTC Time */
-+#define NCT6694_RTC_TIME	0x0000
-+#define NCT6694_RTC_TIME_SEL	0x00
-+
-+/* Command 01h - RTC Alarm */
-+#define NCT6694_RTC_ALARM	0x01
-+#define NCT6694_RTC_ALARM_SEL	0x00
-+
-+/* Command 02h - RTC Status */
-+#define NCT6694_RTC_STATUS	0x02
-+#define NCT6694_RTC_STATUS_SEL	0x00
-+
-+#define NCT6694_RTC_IRQ_INT_EN	BIT(0)	/* Transmit a USB INT-in when RTC alarm */
-+#define NCT6694_RTC_IRQ_GPO_EN	BIT(5)	/* Trigger a GPO Low Pulse when RTC alarm */
-+
-+#define NCT6694_RTC_IRQ_EN	(NCT6694_RTC_IRQ_INT_EN | NCT6694_RTC_IRQ_GPO_EN)
-+#define NCT6694_RTC_IRQ_STS	BIT(0)	/* Write 1 clear IRQ status */
-+
-+struct __packed nct6694_rtc_time {
-+	u8 sec;
-+	u8 min;
-+	u8 hour;
-+	u8 week;
-+	u8 day;
-+	u8 month;
-+	u8 year;
-+};
-+
-+struct __packed nct6694_rtc_alarm {
-+	u8 sec;
-+	u8 min;
-+	u8 hour;
-+	u8 alarm_en;
-+	u8 alarm_pend;
-+};
-+
-+struct __packed nct6694_rtc_status {
-+	u8 irq_en;
-+	u8 irq_pend;
-+};
-+
-+union __packed nct6694_rtc_msg {
-+	struct nct6694_rtc_time time;
-+	struct nct6694_rtc_alarm alarm;
-+	struct nct6694_rtc_status sts;
-+};
-+
-+struct nct6694_rtc_data {
-+	struct nct6694 *nct6694;
-+	struct rtc_device *rtc;
-+	union nct6694_rtc_msg *msg;
-+	int irq;
-+};
-+
-+static int nct6694_rtc_read_time(struct device *dev, struct rtc_time *tm)
-+{
-+	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
-+	struct nct6694_rtc_time *time = &data->msg->time;
-+	static const struct nct6694_cmd_header cmd_hd = {
-+		.mod = NCT6694_RTC_MOD,
-+		.cmd = NCT6694_RTC_TIME,
-+		.sel = NCT6694_RTC_TIME_SEL,
-+		.len = cpu_to_le16(sizeof(*time))
-+	};
-+	int ret;
-+
-+	ret = nct6694_read_msg(data->nct6694, &cmd_hd, time);
-+	if (ret)
-+		return ret;
-+
-+	tm->tm_sec = bcd2bin(time->sec);		/* tm_sec expect 0 ~ 59 */
-+	tm->tm_min = bcd2bin(time->min);		/* tm_min expect 0 ~ 59 */
-+	tm->tm_hour = bcd2bin(time->hour);		/* tm_hour expect 0 ~ 23 */
-+	tm->tm_wday = bcd2bin(time->week) - 1;		/* tm_wday expect 0 ~ 6 */
-+	tm->tm_mday = bcd2bin(time->day);		/* tm_mday expect 1 ~ 31 */
-+	tm->tm_mon = bcd2bin(time->month) - 1;		/* tm_month expect 0 ~ 11 */
-+	tm->tm_year = bcd2bin(time->year) + 100;	/* tm_year expect since 1900 */
-+
-+	return ret;
-+}
-+
-+static int nct6694_rtc_set_time(struct device *dev, struct rtc_time *tm)
-+{
-+	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
-+	struct nct6694_rtc_time *time = &data->msg->time;
-+	static const struct nct6694_cmd_header cmd_hd = {
-+		.mod = NCT6694_RTC_MOD,
-+		.cmd = NCT6694_RTC_TIME,
-+		.sel = NCT6694_RTC_TIME_SEL,
-+		.len = cpu_to_le16(sizeof(*time))
-+	};
-+
-+	time->sec = bin2bcd(tm->tm_sec);
-+	time->min = bin2bcd(tm->tm_min);
-+	time->hour = bin2bcd(tm->tm_hour);
-+	time->week = bin2bcd(tm->tm_wday + 1);
-+	time->day = bin2bcd(tm->tm_mday);
-+	time->month = bin2bcd(tm->tm_mon + 1);
-+	time->year = bin2bcd(tm->tm_year - 100);
-+
-+	return nct6694_write_msg(data->nct6694, &cmd_hd, time);
-+}
-+
-+static int nct6694_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
-+	struct nct6694_rtc_alarm *alarm = &data->msg->alarm;
-+	static const struct nct6694_cmd_header cmd_hd = {
-+		.mod = NCT6694_RTC_MOD,
-+		.cmd = NCT6694_RTC_ALARM,
-+		.sel = NCT6694_RTC_ALARM_SEL,
-+		.len = cpu_to_le16(sizeof(*alarm))
-+	};
-+	int ret;
-+
-+	ret = nct6694_read_msg(data->nct6694, &cmd_hd, alarm);
-+	if (ret)
-+		return ret;
-+
-+	alrm->time.tm_sec = bcd2bin(alarm->sec);
-+	alrm->time.tm_min = bcd2bin(alarm->min);
-+	alrm->time.tm_hour = bcd2bin(alarm->hour);
-+	alrm->enabled = alarm->alarm_en;
-+	alrm->pending = alarm->alarm_pend;
-+
-+	return ret;
-+}
-+
-+static int nct6694_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
-+	struct nct6694_rtc_alarm *alarm = &data->msg->alarm;
-+	static const struct nct6694_cmd_header cmd_hd = {
-+		.mod = NCT6694_RTC_MOD,
-+		.cmd = NCT6694_RTC_ALARM,
-+		.sel = NCT6694_RTC_ALARM_SEL,
-+		.len = cpu_to_le16(sizeof(*alarm))
-+	};
-+
-+	alarm->sec = bin2bcd(alrm->time.tm_sec);
-+	alarm->min = bin2bcd(alrm->time.tm_min);
-+	alarm->hour = bin2bcd(alrm->time.tm_hour);
-+	alarm->alarm_en = alrm->enabled ? NCT6694_RTC_IRQ_EN : 0;
-+	alarm->alarm_pend = 0;
-+
-+	return nct6694_write_msg(data->nct6694, &cmd_hd, alarm);
-+}
-+
-+static int nct6694_rtc_alarm_irq_enable(struct device *dev, unsigned int enabled)
-+{
-+	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
-+	struct nct6694_rtc_status *sts = &data->msg->sts;
-+	static const struct nct6694_cmd_header cmd_hd = {
-+		.mod = NCT6694_RTC_MOD,
-+		.cmd = NCT6694_RTC_STATUS,
-+		.sel = NCT6694_RTC_STATUS_SEL,
-+		.len = cpu_to_le16(sizeof(*sts))
-+	};
-+
-+	if (enabled)
-+		sts->irq_en |= NCT6694_RTC_IRQ_EN;
-+	else
-+		sts->irq_en &= ~NCT6694_RTC_IRQ_EN;
-+
-+	sts->irq_pend = 0;
-+
-+	return nct6694_write_msg(data->nct6694, &cmd_hd, sts);
-+}
-+
-+static const struct rtc_class_ops nct6694_rtc_ops = {
-+	.read_time = nct6694_rtc_read_time,
-+	.set_time = nct6694_rtc_set_time,
-+	.read_alarm = nct6694_rtc_read_alarm,
-+	.set_alarm = nct6694_rtc_set_alarm,
-+	.alarm_irq_enable = nct6694_rtc_alarm_irq_enable,
-+};
-+
-+static irqreturn_t nct6694_irq(int irq, void *dev_id)
-+{
-+	struct nct6694_rtc_data *data = dev_id;
-+	struct nct6694_rtc_status *sts = &data->msg->sts;
-+	static const struct nct6694_cmd_header cmd_hd = {
-+		.mod = NCT6694_RTC_MOD,
-+		.cmd = NCT6694_RTC_STATUS,
-+		.sel = NCT6694_RTC_STATUS_SEL,
-+		.len = cpu_to_le16(sizeof(*sts))
-+	};
-+	int ret;
-+
-+	rtc_lock(data->rtc);
-+
-+	sts->irq_en = NCT6694_RTC_IRQ_EN;
-+	sts->irq_pend = NCT6694_RTC_IRQ_STS;
-+	ret = nct6694_write_msg(data->nct6694, &cmd_hd, sts);
-+	if (ret) {
-+		rtc_unlock(data->rtc);
-+		return IRQ_NONE;
-+	}
-+
-+	rtc_update_irq(data->rtc, 1, RTC_IRQF | RTC_AF);
-+
-+	rtc_unlock(data->rtc);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void nct6694_irq_dispose_mapping(void *d)
-+{
-+	struct nct6694_rtc_data *data = d;
-+
-+	irq_dispose_mapping(data->irq);
-+}
-+
-+static int nct6694_rtc_probe(struct platform_device *pdev)
-+{
-+	struct nct6694_rtc_data *data;
-+	struct nct6694 *nct6694 = dev_get_drvdata(pdev->dev.parent);
-+	int ret;
-+
-+	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->msg = devm_kzalloc(&pdev->dev, sizeof(union nct6694_rtc_msg),
-+				 GFP_KERNEL);
-+	if (!data->msg)
-+		return -ENOMEM;
-+
-+	data->irq = irq_create_mapping(nct6694->domain, NCT6694_IRQ_RTC);
-+	if (!data->irq)
-+		return -EINVAL;
-+
-+	ret = devm_add_action_or_reset(&pdev->dev, nct6694_irq_dispose_mapping,
-+				       data);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_device_init_wakeup(&pdev->dev);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "Failed to init wakeup\n");
-+
-+	data->rtc = devm_rtc_allocate_device(&pdev->dev);
-+	if (IS_ERR(data->rtc))
-+		return PTR_ERR(data->rtc);
-+
-+	data->nct6694 = nct6694;
-+	data->rtc->ops = &nct6694_rtc_ops;
-+	data->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
-+	data->rtc->range_max = RTC_TIMESTAMP_END_2099;
-+
-+	platform_set_drvdata(pdev, data);
-+
-+	ret = devm_request_threaded_irq(&pdev->dev, data->irq, NULL,
-+					nct6694_irq, IRQF_ONESHOT,
-+					"rtc-nct6694", data);
-+	if (ret < 0)
-+		return dev_err_probe(&pdev->dev, ret, "Failed to request irq\n");
-+
-+	return devm_rtc_register_device(data->rtc);
-+}
-+
-+static struct platform_driver nct6694_rtc_driver = {
-+	.driver = {
-+		.name	= "nct6694-rtc",
-+	},
-+	.probe		= nct6694_rtc_probe,
-+};
-+
-+module_platform_driver(nct6694_rtc_driver);
-+
-+MODULE_DESCRIPTION("USB-RTC driver for NCT6694");
-+MODULE_AUTHOR("Ming Yu <tmyu0@nuvoton.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:nct6694-rtc");
--- 
-2.34.1
-
+--=20
+Gabriel Krisman Bertazi
 
