@@ -1,159 +1,122 @@
-Return-Path: <linux-kernel+bounces-785175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D3E3B34707
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:20:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C919B3470B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3354B3B5170
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:20:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 369651A87F49
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D1A2FF655;
-	Mon, 25 Aug 2025 16:20:08 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85D52FF644;
+	Mon, 25 Aug 2025 16:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="HH8sikZo"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6305C271A9D;
-	Mon, 25 Aug 2025 16:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919172FAC10;
+	Mon, 25 Aug 2025 16:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756138807; cv=none; b=RjHMAMJJIUr0CXJyPGWpTI4DhMjQm44EFxAZ/gHTlvlGSmq7/LePUrA5NbUcg03VSFjMd93spW9Nu5L/yk4u/6O+cgRNG0GrTTL7Gc8niEhTS/uFIWKYo5Lm0PfS4yH+ZClUzZliE+z/+dzQuBUIrFhN8kaFJz1jSDBikQsGwZE=
+	t=1756138848; cv=none; b=CxjZIpZIaffSPKCyby+oPKCq9aqhPswy3/aG09TJkfh6v5Ye+B+5jAIYmW3sf53FZwLicM2kzHa3oosskH4eOVlIsHr/sGx+1zbK414zMjj9sQ8KPfM9E5oLbYOJddCdFbwKhdsyGsp0HBCriiOa4R+Q3knmKSP0HicY9NIb8Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756138807; c=relaxed/simple;
-	bh=jvP/MoODPqxFznKN/LTG9V/r7b3ws9cfp65aCZZR0fg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Xi2kCqe20bFDWEvbLOm525B5gdUxnyljWgr0V67EWtEyN5ARYx24YE5u52nSvYU8aLU5ECeS5aF0jZWG43SWhEvHgrtdjO+cpJI206rlGrYHaEN14PNDRFL+aVAGwSu4evD6zvputSeQ5Pmpte04jtLJbCZl8N15UPQlDyr1OQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
-Received: from [192.168.110.25] (unknown [118.251.178.216])
-	by APP-05 (Coremail) with SMTP id zQCowADXaVocjaxos6UhDw--.6581S2;
-	Tue, 26 Aug 2025 00:19:42 +0800 (CST)
-Message-ID: <b812bb46-6a26-456a-8210-d02138fb31a6@isrc.iscas.ac.cn>
-Date: Tue, 26 Aug 2025 00:19:40 +0800
+	s=arc-20240116; t=1756138848; c=relaxed/simple;
+	bh=7RPyJ/WS8sIDW2l0x9iCbOzBEdLIsTVZEzDioi73MfE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k7cw/z99Z/02Olur2feJZikruDwTD9K9GI/6x9AUmGmJCUVd88GRuFPo/Tqs1bqBnyJstsBFSwF0OEyoc1bbbOPkB7RZ72KPRMhxyKGeEJxlzqnxUPOokzDmqWgU8/G14pFBZkCHlETxhLR+V7l5mEjvea4q04OvADaU6J/IuL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=HH8sikZo; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1756138846; x=1787674846;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=7RPyJ/WS8sIDW2l0x9iCbOzBEdLIsTVZEzDioi73MfE=;
+  b=HH8sikZo7ndgJSeS8W1FC+tPqqw6fxa0+2nOvM5L1M8uQTPsu9lkSQ2u
+   nqGT2fTSYobBHDaFthBFzteDIKfP3zOAlFYt2I+ObJnUMeOL1le5hchbS
+   +2rfth9PZ44Yo6KgVX0HWuWc386JW/jLpj1mx7Ba1PPUAjWMtIwol0dRP
+   JDKvJ9x9rBQdq+62fKZTUCaJoyDYWLbs+WSJ3ekxvYYj9d5wfYCq25eTt
+   ged2pE+7SlBu9mfx4h3o3m+qnXsKD5yjvf6hGN+h7/UhpGIqFE9J0O9ts
+   gD1wAdGEhw4edahNHWmx3LdcQ0AU8wv8CXIKveypjNyr+UjGMP0l3BNUR
+   w==;
+X-CSE-ConnectionGUID: yR/Y38h+TmqSdYuuwCmvnw==
+X-CSE-MsgGUID: IJ4yU4nmSpugJRaaEWeb/w==
+X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
+   d="scan'208";a="45617280"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Aug 2025 09:20:45 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Mon, 25 Aug 2025 09:20:42 -0700
+Received: from valentina.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Mon, 25 Aug 2025 09:20:40 -0700
+From: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+To: <conor.dooley@microchip.com>, <daire.mcnamara@microchip.com>,
+	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <aou@eecs.berkeley.edu>, <alex@ghiti.fr>,
+	<valentina.fernandezalanis@microchip.com>
+CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: [PATCH v1 0/5] Icicle Kit with prod device and Discovery Kit support
+Date: Mon, 25 Aug 2025 17:19:47 +0100
+Message-ID: <20250825161952.3902672-1-valentina.fernandezalanis@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: inochiama@gmail.com
-Cc: ajones@ventanamicro.com, alex@ghiti.fr, anup@brainfault.org,
- aou@eecs.berkeley.edu, charlie@rivosinc.com, cleger@rivosinc.com,
- conor+dt@kernel.org, cuiyunhui@bytedance.com, cyan.yang@sifive.com,
- devicetree@vger.kernel.org, jesse@rivosinc.com, krzk+dt@kernel.org,
- kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org,
- mikisabate@gmail.com, namcao@linutronix.de, palmer@dabbelt.com,
- parri.andrea@gmail.com, paul.walmsley@sifive.com, pbonzini@redhat.com,
- pincheng.plct@isrc.iscas.ac.cn, robh@kernel.org, samuel.holland@sifive.com,
- shuah@kernel.org, thomas.weissschuh@linutronix.de, yikming2222@gmail.com,
- yongxuan.wang@sifive.com
-References: <znik7dcyeipf57xerlm5gwjszcaaeujoukr7g4a7wt7lsfu366@skany6k7agt4>
-Subject: Re: [PATCH v1 RESEND 1/5] dt-bidings: riscv: add Zilsd and Zclsd
- extension descriptions
-From: Pincheng Wang <pincheng.plct@isrc.iscas.ac.cn>
-In-Reply-To: <znik7dcyeipf57xerlm5gwjszcaaeujoukr7g4a7wt7lsfu366@skany6k7agt4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:zQCowADXaVocjaxos6UhDw--.6581S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CF4fKrWkurWxZr18AryUtrb_yoW8Kw4Upa
-	93CF18KFZ8Xw13u3s7tw18Xw45Jr4kKr15AF47t34xKay5Ar10qFWakw1YvF18GF4xCF4I
-	va1Ygw1fZ3ZrAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
-	evJa73UjIFyTuYvjTRM6wCDUUUU
-X-CM-SenderInfo: pslquxhhqjh1xofwqxxvufhxpvfd2hldfou0/
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 2025/8/23 6:34, Inochi Amaoto wrote:
- > On Thu, Aug 21, 2025 at 10:01:27PM +0800, Pincheng Wang wrote:
- >> Add descriptions for the Zilsd (Load/Store pair instructions) and
- >> Zclsd (Compressed Load/Store pair instructions) ISA extensions
- >> which were ratified in commit f88abf1 ("Integrating load/store
- >> pair for RV32 with the main manual") of the riscv-isa-manual.
- >>
- >> Signed-off-by: Pincheng Wang <pincheng.plct@isrc.iscas.ac.cn>
- >> ---
- >>   .../devicetree/bindings/riscv/extensions.yaml | 39 +++++++++++++++++++
- >>   1 file changed, 39 insertions(+)
- >>
- >> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml 
-b/Documentation/devicetree/bindings/riscv/extensions.yaml
- >> index ede6a58ccf53..d72ffe8f6fa7 100644
- >> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
- >> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
- >> @@ -366,6 +366,20 @@ properties:
- >>               guarantee on LR/SC sequences, as ratified in commit 
-b1d806605f87
- >>               ("Updated to ratified state.") of the riscv profiles 
-specification.
- >>
- >> +        - const: zilsd
- >> +          description:
- >> +            The standard Zilsd extension which provides support for 
-aligned
- >> +            register-pair load and store operations in 32-bit 
-instruction
- >> +            encodings, as ratified in commit f88abf1 ("Integrating
- >> +            load/store pair for RV32 with the main manual") of 
-riscv-isa-manual.
- >> +
- >> +        - const: zclsd
- >> +          description:
- >> +            The Zclsd extension implements the compressed (16-bit) 
-version of the
- >> +            Load/Store Pair for RV32. As with Zilsd, this extension 
-was ratified
- >> +            in commit f88abf1 ("Integrating load/store pair for 
-RV32 with the
- >> +            main manual") of riscv-isa-manual.
- >> +
- >>           - const: zk
- >>             description:
- >>               The standard Zk Standard Scalar cryptography extension 
-as ratified
- >> @@ -847,6 +861,16 @@ properties:
- >>               anyOf:
- >>                 - const: v
- >>                 - const: zve32x
- >
- >> +      # Zclsd depends on Zilsd and Zca
- >> +      - if:
- >> +          contains:
- >> +            anyOf:
- >> +              - const: zclsd
- >> +        then:
- >> +          contains:
- >> +            anyOf:
- >> +              - const: zilsd
- >> +              - const: zca
- >>
- >
- > Should be allOf? I see the comment says "Zclsd" requires both "Zilsd"
- > and "Zca".
- >
- > Regards,
- > Inochi
+Hi all,
 
-You're absolutely right, thank you for catching this. Since Zclsd 
-depends on both Zilsd and Zca, the condition should use allOf to 
-correctly enforce the conjunction. I'll fix this in next revision.
+With the introduction of the Icicle Kit with the production device
+(MPFS250T) to the market, it's necessary to distinguish it from the
+engineering sample (-es) variant. This is because engineering samples
+cannot write to flash from the MSS, as noted in the PolarFire SoC
+FPGA ES errata.
 
-Best regards,
-Pincheng Wang
+This series adds a common board DTSI for the Icicle Kit, containing
+hardware shared by both the engineering sample and production
+versions, as well as a DTS for each Icicle Kit variant.
+
+The last two patches add support for the PolarFire SoC Discovery Kit
+board.
+
+Thanks,
+Valentina
+
+Valentina Fernandez (5):
+  riscv: dts: microchip: add common board dtsi for icicle kit variants
+  dt-bindings: riscv: microchip: document icicle kit with production
+    device
+  riscv: dts: microchip: add icicle kit with production device
+  dt-bindings: riscv: microchip: document Discovery Kit
+  riscv: dts: microchip: add a device tree for Discovery Kit
+
+ .../devicetree/bindings/riscv/microchip.yaml  |  13 +
+ arch/riscv/boot/dts/microchip/Makefile        |   2 +
+ .../dts/microchip/mpfs-disco-kit-fabric.dtsi  |  58 ++++
+ .../boot/dts/microchip/mpfs-disco-kit.dts     | 191 +++++++++++++
+ .../dts/microchip/mpfs-icicle-kit-common.dtsi | 251 ++++++++++++++++++
+ .../dts/microchip/mpfs-icicle-kit-fabric.dtsi |  23 +-
+ .../dts/microchip/mpfs-icicle-kit-prod.dts    |  23 ++
+ .../boot/dts/microchip/mpfs-icicle-kit.dts    | 244 +----------------
+ 8 files changed, 561 insertions(+), 244 deletions(-)
+ create mode 100644 arch/riscv/boot/dts/microchip/mpfs-disco-kit-fabric.dtsi
+ create mode 100644 arch/riscv/boot/dts/microchip/mpfs-disco-kit.dts
+ create mode 100644 arch/riscv/boot/dts/microchip/mpfs-icicle-kit-common.dtsi
+ create mode 100644 arch/riscv/boot/dts/microchip/mpfs-icicle-kit-prod.dts
+
+-- 
+2.34.1
 
 
