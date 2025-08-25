@@ -1,107 +1,131 @@
-Return-Path: <linux-kernel+bounces-784333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6FA1B33A08
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:58:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8DD6B33A0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13E2F3BC0E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:58:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F036485156
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2942C0290;
-	Mon, 25 Aug 2025 08:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D732BDC2C;
+	Mon, 25 Aug 2025 08:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="AEGBn9W5"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="guswhk+h"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239F42BE051
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 08:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1416D2BDC0A
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 08:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756112236; cv=none; b=ZHisOoy+s0BZVWExwCBC87XqC0OYIRFcg6IyD6ItLvaSYVH979wXJjlvE8pXjCnp08wnKncWrTzWupjzVYj7ixpNjpKqCiV3JKYrepLVKNbEzOV9TW1yegq7PlZ0YwrJ3j51pxwjUIm7XNqax5QL9zvt2OOFIlxSbV/vkEAnTQs=
+	t=1756112247; cv=none; b=NED1X8Xo7nKGed+QwrYi+rrfoho8d3EkTDvvqwtC3NSOjuqb+NCekGFVbfrz7FETzXvX+zTb1wSbESQlfwxkQR8FX7WRvBBXLIHibS/CZyHFY/N9xCMV0o4P5pVBPXwKfqko/V9oizKhSx+NWq5jMWmKgepsABd+ngDTe2UTQcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756112236; c=relaxed/simple;
-	bh=oAA+CT+px2mYa4L1i6V3uoLfahqbm3emYiVzADVvBxA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=V0chMr1gaejNmXw5/x7ONAkxq30hpSkko54lCfJwmvdt4zdbuctDTxfCZh+xP3WgYmmBCkmEgIlQLbzZ/8kBmkSCZ8gbNBHUcpmNXMnMFZ5fhdALV6sPmgfftkbyQ3IT7cILZF/1eGiqtBz0GYdhtu0eMlfmvU/5kTekdNdDV7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=AEGBn9W5; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756112233;
-	bh=oAA+CT+px2mYa4L1i6V3uoLfahqbm3emYiVzADVvBxA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=AEGBn9W5w/Fk012fJNDdhwflF05mz03s9E2oTVMNXywCVseIvtjxmrxf2jqDSpAlR
-	 uCa7anbistRiH1HlvsIXBI5REPHMZa2uQP7QUjSN8tDpSAveY6nMoM7PRur2naEnPH
-	 xAidZOD2mdTt1y1c7iXJF7hf6TbY6YoTREUa/u9GP9c4llMLgq1WjfDqmHt6EvxL5V
-	 4mC+a7L9LIqs/aIt8lt33Uw/icibgYKAFbUfBTkw8fVXYFiWTTGMZGNs9upePV5Znv
-	 VOd8SKJya6/T+L1kBzIQVvKZU3K8WVRKTc8PP/7WnBpBNxDC+xF2mfZIv8l4Ip6rU1
-	 YVs8CxZrWvVAQ==
-Received: from localhost (unknown [82.79.138.60])
+	s=arc-20240116; t=1756112247; c=relaxed/simple;
+	bh=XmteRMqIfyW1t1SAfI9KMzAV/m4EX4m9sJvSbiUJqpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JuUSgPdwWR4oU9tkSUnB3FyX25Cw8TxXH/iXKylS7EmQvqwx8yxMyzMd+VTAW8YWcduX84s2WFaCc3V320dG4GG4TBH6CkYXlCwhDt88GiljrElgsiFBakGzMNMH211EFRlXygroDgTb76k7VqTM2oIBwfrz598Ap9cYHu+GQKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=guswhk+h; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756112244;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MvFCkdmFWuDahsv4SQZaZ/mWWh50fu2t+oCLVs7oQN4=;
+	b=guswhk+hoO37G3z/HfUORmRzCuKp2ZmASGxy/pGZWsXciuNkJlcm2QQJsYwI5ztU10YQnm
+	kMUEkUAjjZUp1TAdJM+vDFEe3ypUvWV+SWetc30sl5Rx4oYogMyswhEcBbOrX4DCMKveYr
+	c0e+OocBUFldxO+0i5qcN8nyCxhlTqU=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-369-t9-ib7rfML6Js5v3Kg-R6g-1; Mon,
+ 25 Aug 2025 04:57:18 -0400
+X-MC-Unique: t9-ib7rfML6Js5v3Kg-R6g-1
+X-Mimecast-MFC-AGG-ID: t9-ib7rfML6Js5v3Kg-R6g_1756112236
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 4780517E0478;
-	Mon, 25 Aug 2025 10:57:13 +0200 (CEST)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Mon, 25 Aug 2025 11:56:46 +0300
-Subject: [PATCH v3 6/6] arm64: defconfig: Enable DW HDMI QP CEC support
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C90261800352;
+	Mon, 25 Aug 2025 08:57:14 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.84])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DAAEC1955F24;
+	Mon, 25 Aug 2025 08:57:05 +0000 (UTC)
+Date: Mon, 25 Aug 2025 16:56:55 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, rajeevm@hpe.com, yukuai3@huawei.com,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] loop: fix zero sized loop for block special file
+Message-ID: <aKwlVypJuBtPH_EL@fedora>
+References: <20250825062300.2485281-1-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250825-rk3588-hdmi-cec-v3-6-95324fb22592@collabora.com>
-References: <20250825-rk3588-hdmi-cec-v3-0-95324fb22592@collabora.com>
-In-Reply-To: <20250825-rk3588-hdmi-cec-v3-0-95324fb22592@collabora.com>
-To: Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825062300.2485281-1-yukuai1@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Enable support for the CEC interface of the Synopsys DesignWare HDMI QP
-IP block.
+On Mon, Aug 25, 2025 at 02:23:00PM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> By default, /dev/sda is block specail file from devtmpfs, getattr will
+> return file size as zero, causing loop failed for raw block device.
+> 
+> We can add bdev_statx() to return device size, however this may introduce
+> changes that are not acknowledged by user. Fix this problem by reverting
+> changes for block special file, file mapping host is set to bdev inode
+> while opening, and use i_size_read() directly to get device size.
+> 
+> Fixes: 47b71abd5846 ("loop: use vfs_getattr_nosec for accurate file size")
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202508200409.b2459c02-lkp@intel.com
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  drivers/block/loop.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index 57263c273f0f..cde235bd883c 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -153,6 +153,9 @@ static loff_t lo_calculate_size(struct loop_device *lo, struct file *file)
+>  		return 0;
+>  
+>  	loopsize = stat.size;
+> +	if (!loopsize && S_ISBLK(stat.mode))
+> +		loopsize = i_size_read(file->f_mapping->host);
 
-This is used by all boards based on RK3588 & RK3576 SoCs.
+`stat $BDEV_PATH` never works for getting bdev size, so it looks wrong
+to call vfs_getattr_nosec() with bdev path for retrieving bdev's size.
 
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+So just wondering why not take the following more readable way?
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index acb6807d3461384929e84f4c939fcd00c4b509ae..346ef79c1ddd0a317f0b9a8056c680c29a4e0baf 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -966,6 +966,7 @@ CONFIG_DRM_CDNS_MHDP8546=m
- CONFIG_DRM_IMX8MP_DW_HDMI_BRIDGE=m
- CONFIG_DRM_DW_HDMI_AHB_AUDIO=m
- CONFIG_DRM_DW_HDMI_CEC=m
-+CONFIG_DRM_DW_HDMI_QP_CEC=y
- CONFIG_DRM_IMX_DCSS=m
- CONFIG_DRM_V3D=m
- CONFIG_DRM_VC4=m
+	/* vfs_getattr() never works for retrieving bdev size */
+	if (S_ISBLK(stat.mode)) {
+		loopsize = i_size_read(file->f_mapping->host);
+	} else {
+          ret = vfs_getattr_nosec(&file->f_path, &stat, STATX_SIZE, 0);
+          if (ret)
+                  return 0;
+          loopsize = stat.size;
+	}
 
--- 
-2.50.1
+Also the above looks like how application reads file size in case of bdev
+involved.
+
+
+Thanks,
+Ming
 
 
