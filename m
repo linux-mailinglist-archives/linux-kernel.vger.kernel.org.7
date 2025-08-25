@@ -1,156 +1,128 @@
-Return-Path: <linux-kernel+bounces-784406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19259B33B42
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:39:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8CE0B33B47
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CF7B1B23F6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:39:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80451177260
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704672C3254;
-	Mon, 25 Aug 2025 09:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C402C3756;
+	Mon, 25 Aug 2025 09:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgP5Wkuf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NtXjGPo7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C319726C3BF;
-	Mon, 25 Aug 2025 09:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5632C3244
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756114737; cv=none; b=bl4jFodYlBhaOB8xYCNlfE4YpRIILXk9lUa357oVkx5itQ/Wm4QgvN+U/jGeT2625vsyXWj9OBsvH21ETG6k2xweEUbmqL+2HQhRq4kfJKk5ANi80/LOKGfbEIbS5H6gJyx00bHlGWCMyh3X6Ys4lvZNsuT0DU8syowgRSTTzyU=
+	t=1756114780; cv=none; b=ZDzfJtarv7LWT61pNgihAewT7gVs52EfdIeW1/w835s3iIQu6jW6wvIRm9R+ltat3VmTbLP7RWX1Rhi8vy4j2Ww89dp/BgISmeMZLebmIpiIhLmKi3p0RPanqQYZZfmRw6ebFWwyKGE/S3zdMAtyDm+Prt362yXkJdIHJo9A1ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756114737; c=relaxed/simple;
-	bh=uJgF2RC+DbSwy0YAE6IxGmBI3CvombRV+sHa3B7iq5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eOJRFL0YguYLGc9i2nkinChSdCotOrAWu751j2VRdFhxy6RG1AHXOd9fxaSx1aeFnqkFvjLjHN4YrCtouMYjYBZhCFWnwLnGn/7bFdXxiXJQZb4koa/kCcbbnB7Ow81FfwoJbWLbNpM0vJHzMrHNyOI0MyA/gU9Hmm4hRUBtXIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JgP5Wkuf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2DFDC4CEED;
-	Mon, 25 Aug 2025 09:38:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756114737;
-	bh=uJgF2RC+DbSwy0YAE6IxGmBI3CvombRV+sHa3B7iq5o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JgP5WkufRu9ChnOV4wsjx7La8k09On9YKV0y/E1OBzoFAzqcIreS1uJW13AXp50pj
-	 KOmWdR/Ss+qqINCwaV9w7Anh6g1w/S3uTTQsC8gXaEX3InPKxALFOUEXwKYbYH0dY6
-	 GQcE4kQzGqFMCHLuEHr2Naq/Q6vKwqQEXN7jrh3Xn0aujgLKWp3sPt+vTrHOeYumo1
-	 oMYrc3BvWtILETvI0rD1+fWrsz2eYXcOn6Qj04M1EDVkJR3hkZBZVnzSg2Rbcf2KMz
-	 0aPVCxeHeJyH55MLZl/Y58GtwOs5LHU/CdpxSfTTVRTMZEGgdq3mhXElQ/JxytYY3Z
-	 kgWVCZ6pmoPbw==
-Date: Mon, 25 Aug 2025 10:38:47 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ben Collins <bcollins@watter.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andrew Hepp <andrew.hepp@ahepp.dev>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski
- <krzysztof.kozlowski@linaro.org>, Andy Shevchenko <andy@kernel.org>
-Subject: Re: [PATCH v8 0/5] iio: mcp9600: Features and improvements
-Message-ID: <20250825103740.31ed77c8@jic23-huawei>
-In-Reply-To: <20250822-upstream-changes-v8-0-40bb1739e3e2@watter.com>
-References: <20250822-upstream-changes-v8-0-40bb1739e3e2@watter.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756114780; c=relaxed/simple;
+	bh=YGZk/doqSOcdaAjiIfjwSjHMKZj2laCWPqcCdAbOjKw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hE32a38I7RmcizXSWA3R5/JzjQbqR6IGTuLmLoQh33Vk+coa33R+/vHCL3c6Mok7osnG3bjylGkj6DOWLpRcCPbmby/dqIWrtIj04fVeFTVDSStUewqbJU6bnqY7WxGXdTnRJpuDHw/krosNocBvHjhEyOk7GPG2d5fAbFtGwMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NtXjGPo7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756114778;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SEwlDpD+C/EtRZv27QcaLtBUwUyBdktuJKWqODYJttI=;
+	b=NtXjGPo7appZnmZeKBvWnqu7X277SkOqo7fu+SD26Rvcp2HVSoLiOnpWDo8M/dedlhf+d2
+	+qzpL/99GaSmWl64sc8rwqyqcdYrTIkGDq0b9BUYEDrd+3RT4jMIpe68mLtkD+zmRrSkga
+	kUQKiuT9SEWnKhugoRKk426lRypf6xc=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-33-mnd5_XyLMPSzPB5s5xNMDA-1; Mon,
+ 25 Aug 2025 05:39:31 -0400
+X-MC-Unique: mnd5_XyLMPSzPB5s5xNMDA-1
+X-Mimecast-MFC-AGG-ID: mnd5_XyLMPSzPB5s5xNMDA_1756114767
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4B2091800342;
+	Mon, 25 Aug 2025 09:39:26 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.32.136])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D31AF1955F24;
+	Mon, 25 Aug 2025 09:39:14 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: Andy Lutomirski <luto@amacapital.net>,  Jann Horn <jannh@google.com>,
+  Al Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
+ <brauner@kernel.org>,  Kees Cook <keescook@chromium.org>,  Paul Moore
+ <paul@paul-moore.com>,  Serge Hallyn <serge@hallyn.com>,  Andy Lutomirski
+ <luto@kernel.org>,  Arnd Bergmann <arnd@arndb.de>,  Christian Heimes
+ <christian@python.org>,  Dmitry Vyukov <dvyukov@google.com>,  Elliott
+ Hughes <enh@google.com>,  Fan Wu <wufan@linux.microsoft.com>,  Jeff Xu
+ <jeffxu@google.com>,  Jonathan Corbet <corbet@lwn.net>,  Jordan R Abrahams
+ <ajordanr@google.com>,  Lakshmi Ramasubramanian
+ <nramas@linux.microsoft.com>,  Luca Boccassi <bluca@debian.org>,  Matt
+ Bobrowski <mattbobrowski@google.com>,  Miklos Szeredi
+ <mszeredi@redhat.com>,  Mimi Zohar <zohar@linux.ibm.com>,  Nicolas
+ Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,  Robert Waite
+ <rowait@microsoft.com>,  Roberto Sassu <roberto.sassu@huawei.com>,  Scott
+ Shell <scottsh@microsoft.com>,  Steve Dower <steve.dower@python.org>,
+  Steve Grubb <sgrubb@redhat.com>,  kernel-hardening@lists.openwall.com,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-security-module@vger.kernel.org,  Jeff Xu <jeffxu@chromium.org>
+Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
+In-Reply-To: <20250825.mahNeel0dohz@digikod.net> (=?utf-8?Q?=22Micka=C3=AB?=
+ =?utf-8?Q?l_Sala=C3=BCn=22's?= message
+	of "Mon, 25 Aug 2025 11:31:42 +0200")
+References: <20250822170800.2116980-1-mic@digikod.net>
+	<20250822170800.2116980-2-mic@digikod.net>
+	<CAG48ez1XjUdcFztc_pF2qcoLi7xvfpJ224Ypc=FoGi-Px-qyZw@mail.gmail.com>
+	<20250824.Ujoh8unahy5a@digikod.net>
+	<CALCETrWwd90qQ3U2nZg9Fhye6CMQ6ZF20oQ4ME6BoyrFd0t88Q@mail.gmail.com>
+	<20250825.mahNeel0dohz@digikod.net>
+Date: Mon, 25 Aug 2025 11:39:11 +0200
+Message-ID: <lhuikibbv0g.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Fri, 22 Aug 2025 09:23:49 -0400
-Ben Collins <bcollins@watter.com> wrote:
+* Micka=C3=ABl Sala=C3=BCn:
 
-Series applied with that unnecessary include that David pointed out dropped.
+> The order of checks would be:
+> 1. open script with O_DENY_WRITE
+> 2. check executability with AT_EXECVE_CHECK
+> 3. read the content and interpret it
+>
+> The deny-write feature was to guarantee that there is no race condition
+> between step 2 and 3.  All these checks are supposed to be done by a
+> trusted interpreter (which is allowed to be executed).  The
+> AT_EXECVE_CHECK call enables the caller to know if the kernel (and
+> associated security policies) allowed the *current* content of the file
+> to be executed.  Whatever happen before or after that (wrt.
+> O_DENY_WRITE) should be covered by the security policy.
 
-Applied to the togreg branch of iio.git but initially pushed out as testing
-to give 0-day a few days to poke at it.
+Why isn't it an improper system configuration if the script file is
+writable?
+
+In the past, the argument was that making a file (writable and)
+executable was an auditable even, and that provided enough coverage for
+those people who are interested in this.
 
 Thanks,
-
-Jonathan
-
-
-> ChangeLog:
-> v7 -> v8:
->   - Style changes in dt-bindings example
->   - Simplify some return value checks
->   - Move assignment to where it's checked
->   - Speeling
-> 
-> v6 -> v7:
->   - Separate out the mcp9600 IIR series into its own series as there is
->     a lot of conversation around implementation (removed related
->     comments from this changelog).
-> 
-> v5 -> v6:
->   - Fix accidental typo added in dt-bindings: IRQ_TYPE_EDGE_RISIN
->   - Correct some constraints in dt-bindings
->   - Reverse if/then for mcp9601 vs mcp9600 constraints in dt-bindings
->   - Updates to changelog for patch 2/6 (dt-bindings mcp9600)
->   - Cleanup tabs that were converted to spaces
->   - Split thermocouple-type default to separate patch
-> 
-> v4 -> v5:
->   - None
-> 
-> v3 -> v4:
->   - Based on feedback from David Lechner <dlechner@baylibre.com>
->     * Allow fallback compatible in dt-bindings for mcp9601.
->   - Based on feedback from Jonathan Cameron <jic23@kernel.org>
->     * Be explicit in patch description for fixed width changes.
->     * Check chip_info for NULL to quiet warnings from kernel-test-robot
->     * Remove "and similar" for long description of MCP9600.
->   - Set default 3 for thermocouple in dt-binding
->   - Rework open/short circuit in dt-bindings
-> 
-> v2 -> v3:
->   - Improve changelogs in each patch
->   - Based on feedback from Andy Shevchenko <andy.shevchenko@gmail.com>
->     * Set register offsets to fixed width
->     * Fix typos
->     * Future-proof Kconfig changes
->     * Convert to using chip_info paradigm
->     * Verbiage: dt -> firmware description
->     * Use proper specifiers and drop castings
->     * Fix register offset to be fixed-width
->     * u8 for cfg var
->     * Fix % type for u32 to be %u
->     * Make blank lines consistent between case statements
-> 
-> v1 -> v2:
->   - Break into individual patches
-> 
-> v1:
->   - Initial patch to enable IIR and thermocouple-type
->   - Recognize mcp9601
-> 
-> Signed-off-by: Ben Collins <bcollins@watter.com>
-> ---
-> - Link to v7: https://lore.kernel.org/r/20250819-upstream-changes-v7-0-88a33aa78f6a@watter.com
-> 
-> ---
-> Ben Collins (5):
->       dt-bindings: iio: mcp9600: Set default 3 for thermocouple-type
->       dt-bindings: iio: mcp9600: Add microchip,mcp9601 and add constraints
->       iio: mcp9600: White space and fixed width cleanup
->       iio: mcp9600: Recognize chip id for mcp9601
->       iio: mcp9600: Add support for thermocouple-type
-> 
->  .../iio/temperature/microchip,mcp9600.yaml         |  57 +++++++-
->  drivers/iio/temperature/Kconfig                    |   8 +-
->  drivers/iio/temperature/mcp9600.c                  | 151 +++++++++++++++++----
->  3 files changed, 187 insertions(+), 29 deletions(-)
-> ---
-> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
-> change-id: 20250819-upstream-changes-c89af86743fa
-> 
-> Best regards,
+Florian
 
 
