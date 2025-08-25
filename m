@@ -1,155 +1,131 @@
-Return-Path: <linux-kernel+bounces-784360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38605B33A76
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:17:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84C8B33A75
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12667481264
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:16:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C0B37A20FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63AF2D060B;
-	Mon, 25 Aug 2025 09:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24ACE2BDC35;
+	Mon, 25 Aug 2025 09:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WWlYhSR6"
-Received: from mail-pg1-f196.google.com (mail-pg1-f196.google.com [209.85.215.196])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hlfzGdvA"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A090C2C326A
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3C72C0F7B;
+	Mon, 25 Aug 2025 09:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756113324; cv=none; b=Q+0b9MUilKquZ0GzxvcWAmotd86DopyCuOZlq4PuzLzxnN9Y7M1tm5e8Qd4KRtSeK70qLj+zjHVa2SfgZE346gzRvFAmV8uM93JW7eokcH7ry2SxvWfb3FIcwRPjNwk7Fi0ZM/F92kqY+1Qd50BLxq7+0VUH5Y4K9fCMLnKj9Jo=
+	t=1756113355; cv=none; b=QRlvGQT+rHGH3IM2oLMQ0vu7TxRsvfihngmBcdlcXSytn9LH5GCCqkwSYF6GAdHR418zP17Lh4xDUtlDBanTunooQS2U2f9BkIRIstcgu2i0qSY0JN1GAL0UUoj4zfaYPra1VGOLl+NlGsEBGIiAKd5rkW+nhEz8nC+46mYIX7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756113324; c=relaxed/simple;
-	bh=frWilHKtOC7ibOioFIhO93e3vGAB4SI1rbdEQyYyVJ4=;
-	h=From:Date:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rpDVz5jFrzWBxbuRIUJAAtkJrRqcgPTt8kgecptWpTSLCC6JFwyZF33SML1592eZjwViW1iL2yYXMZWmFE6Upa6cD02/gH7mL1JYGzmozk0Og5A0+WrTkcxrWsqmvIjwoOf7ZA59sbFwP/O0qfWzvz1Z8y49jsUr86WkCUr5cDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WWlYhSR6; arc=none smtp.client-ip=209.85.215.196
+	s=arc-20240116; t=1756113355; c=relaxed/simple;
+	bh=3ZXsqREqoufGsZLipmttAUsjylpFAnJVVdaq4IIhGzQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DrU1EMOwGmE24/jv2GNEkdP0PW+0y+S9khuWdbg38R92QpmcL8j4V7zwhKZhA/dLxj49p4+IbYWQ7GR69+9CdC+m2+wlNNPVhFq3zJnrEYVnXdDrVeORGRmS/NT7HtVJGPUyLzHixR4UU6jnTVoUoa0ALGaEBbFIfy2ZyedbSxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hlfzGdvA; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f196.google.com with SMTP id 41be03b00d2f7-b474d0f1d5eso2753773a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 02:15:22 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24687a76debso11457665ad.0;
+        Mon, 25 Aug 2025 02:15:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756113322; x=1756718122; darn=vger.kernel.org;
-        h=content-disposition:mime-version:mail-followup-to:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1EfPpvJ6+WhTEmPpSG5PEfw+gk8iXNJsS1zHeL+VA0I=;
-        b=WWlYhSR6qngtgAgckhq286Rxjv2HuMTS6AnZsgMz1GaVazROg/KqFhk6Dqd+NoA3Du
-         Jg/0LBSVO5F5K4dkOVC6r6V0maQ6AyWelNaWaxyJT/3IphW5cSjb32292uD7h9wVmwJr
-         awG7urhTK+xnxjmFntLc/BL+Rc4ezY3YG67zV3ey5NRbklR1NaqtOnIDJSb8usljwZ+6
-         ZEQN0Xed2zirnZYZYy9qlKBSoty4OAitCkY2uOIWxexbe+4BHLjtXfufQxpvwx047qip
-         Db+TNDJE6PEMlaA1HofSCiHTwn91GNM+E9+LHHgWuWYw8TKFYGXcw+mjv6BAb9AbNo8W
-         nmzg==
+        d=gmail.com; s=20230601; t=1756113353; x=1756718153; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0rUDlMA9JVkHsxYy01KICb2t+8xKrpjBn6FOITPjmos=;
+        b=hlfzGdvAqETm82fAMYB9Ov9Kjepe7TOk6uVHF5KMJOLmRzHeTxdsqNbWXE7HOhuzsU
+         pPlMx5coqg+j1uFXAZlFeteIyxTiJLhB7Ljl0ViiVnilsRlBvThgLqNGj7MQ7+PDDxlP
+         jMF+64lE2loR4tRnaDRsEVSHPPkFqeZLaOHzqsGud7RBYDNjJCeMxYiwpOoUZ1Q+5DzF
+         HRc2ebCV8XDQHJdjQctC6uPkWYxePSs7C4xLCywYlJYapeVpMGmZXHra0zm0lAT7uVwb
+         UNJCRwuXJQlCCmWf4ylHgvtSjCljFPvvBOcW5YZ/Ye8D2ZFelejcjdHTN40ihwflnxib
+         5KVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756113322; x=1756718122;
-        h=content-disposition:mime-version:mail-followup-to:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1EfPpvJ6+WhTEmPpSG5PEfw+gk8iXNJsS1zHeL+VA0I=;
-        b=w2zBKF7UxU7e8m0u0UZWF8uUFNeIBMt3Rkp+Bp+Z4ZugTTSs1B0gcxH1AwnBurCpCe
-         9J/XUNpzL54FliWsGsVUDWSu7yFH5XZfjsiZZhbuTS8RKJNagfZubD0pVFyj3jiqXdpg
-         ZWLYrBGvjxADRhvsoXQkjcaJ8PMLjxR73yQAzXAA+2iXC9CVSUky49E+n6eDGJB3QviU
-         9qnchza6Q2W/EM835UfAg+ztPqbMyCrZ6bNYooJ5ZMzSF4DIK16mo0bK5YoPNrwjnm70
-         1pFvBbehX0IvoujKuGllYbt8ikv2QDRUjCcZe8mHBlK7Q/uMbgJU5+QRyW2gZLGiMBJ3
-         F5mA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLQRgz/rKGDOvCp7T/kSGYiB740q+Q/AWkCrOELooeQfb2ARjcskROULxJb9gA/Ssc0BRj0GOP1VQKsOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZtiRJRmmrZTYX0+l73MSrV7JX+WEvuJdJt2TYomhginyUuJj1
-	xYuO85YQbpH763/45LztnvYICZ6KVESmO+1dKjzDPTX5Sb6Kc0+ntsfH9KBtciHmSBCF
-X-Gm-Gg: ASbGnctb/meTjoiXJ14P5oVJdAtkH2h1fJxmDiFd1FGeBCF+wm+g5C+ye8ymzee80BF
-	C/pnQuO+dtobKSQIZMzgniq81ts90ieSk4WWXn1/JNb1nRz8m2Q9LOJD+CW0h+H8ESmSyYoq4U+
-	9B+f04uiKuLteqWeZc5d1Bs9I00unWJ1FtWMaVQLjK8Bd7BgG7qoTu9RxMucHVgooqftJpn2nAO
-	+u0zfPRDlUsK8FBuuGTVJPZksocZbYOuZAPb6ehzTWa/gXVyQQ7JCigyVAqkA1Z2xLWVMelyQ3K
-	Zxz3eyD6ae8KPBjDHEuMbERqDLad+FY/hcu0ItOvfCRznLJRgwnUxT5zAfjWSvxZrf38aBZqleV
-	DsKA4qTMCrFEBTrYSjuv8MjmAViqRI+K6buEpf3QYa+mDpGDzIE5QTrJLGSc=
-X-Google-Smtp-Source: AGHT+IGM+hvjIncidO6+06hwgjNzVfwutWvQvN1StGNPqmAytpX8YR1SEbFsIYGuWTIGKBQS+eJdCA==
-X-Received: by 2002:a17:902:d486:b0:246:b46b:1b09 with SMTP id d9443c01a7336-246b46b2296mr52545635ad.30.1756113321877;
-        Mon, 25 Aug 2025 02:15:21 -0700 (PDT)
-Received: from didi-ThinkCentre-M930t-N000 ([46.232.49.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466877a04dsm63318855ad.21.2025.08.25.02.15.14
+        d=1e100.net; s=20230601; t=1756113353; x=1756718153;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0rUDlMA9JVkHsxYy01KICb2t+8xKrpjBn6FOITPjmos=;
+        b=QyotUEa4UXUxdMMayTh24uIc0/Sw7KCuNF44JGunGv5/pxQSFjyFRoJS5fMHrpmvys
+         CBun2ita2txw1LazRGrk1pa7E1oegopsYYvyqH3RV6u5tF5Rwefs4Oq4X8YUz0zEu/AY
+         q4JOC/m2M7t1zwT5Xz8ENGAdhS56qcl/3BMqKVHvYuLQzQGEu6fOiy+Yw+kgmeAoQVnQ
+         KHCipvDBfg6CXVxyiLO0dzGKXrfWQjqPclooDa+T4pURPu0EcnpTkbZOfkadqk7BO/8f
+         198DHydbVflfJSZNXa4NGvEqb2MIr/Y5upsDVzCUaO37zGC0xjNKsbNfBL93WnS/xWP1
+         rFPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXc53Z+G78cjGTN41EIorm9zfsd4tBeNcTCKJMYpalnvPaNxguGQMGe516/dbbCKxZdW1LRwEMycYEREo=@vger.kernel.org, AJvYcCV2PIicUvNFB/zsqqJoNWGeGmdQkUiNPVTtvfJTOV4nmZng1THsU7w75h4dCWEDbVGGD79RSvcpxS7W/u1kxg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpYGpEzDYVChyAAigRhABkmMhh56y8uzVLufsuSHVYSuPxnZju
+	37V/TAiRkQ8Y0po07UgTyCGcmvrf1vCQN5rh9W5w1l0ozHEGzBrg7Ibq
+X-Gm-Gg: ASbGncsTq9lXl20JaTeeT0/kGYr4MrIKX7Dg5CaZmDGqcga1E/y5CqmB4JLgrEK9QD6
+	QGh3G7PtCow+6jbIHyGDv9qJEM5WfLyMuGccLbQ4Ouax3hP8MChyYqjLOFp4OWKiynt15+xibwr
+	fV2ZbyFB0kbP7T6VYVyNoTuzSNsmEcJMd6VAlyyahq1JqkdEbGi70DzsH1jJ+BD/NlXhZIsgvZ8
+	vVc0JhEsyFnB97OD6obTKfGyT9cNkjfsIsyggUgSFKLwq2dDwypItfo9wM+t+2VwLVB6Bh71RLo
+	qRoJS3GxZ+Jjl/0P29HWj7gmOR2RRhNLMu5UwmHiSxpBes6nUTkP+dNXRewhqPpGWjlSZPzSxvP
+	w8fp4pTi/V47bn4F9sco5mFCpMm4ze6+nKE3D+N/cwHg87K7L2PsFVOsxnzHfgES+WP7Ztz+i5E
+	k=
+X-Google-Smtp-Source: AGHT+IHzFoiB4RFKJZa0IBEVCArIVCjpShZCto+Fh8aFRBe7LqWUlmLL8yTCkYLt6SYMzTi2PYFFTA==
+X-Received: by 2002:a17:903:234c:b0:231:d0da:5e1f with SMTP id d9443c01a7336-246337acf29mr114424065ad.21.1756113353215;
+        Mon, 25 Aug 2025 02:15:53 -0700 (PDT)
+Received: from localhost.localdomain ([114.242.33.243])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687b1525sm62792245ad.54.2025.08.25.02.15.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 02:15:20 -0700 (PDT)
-From: fuyuanli <fuyuanli0722@gmail.com>
-X-Google-Original-From: fuyuanli <fuyuanli@didiglobal.com>
-Date: Mon, 25 Aug 2025 17:15:08 +0800
-To: jdmason@kudzu.us, dave.jiang@intel.com, allenbh@gmail.com
-Cc: ntb@lists.linux.dev, linux-kernel@vger.kernel.org,
-	fuyuanli0722@gmail.com
-Subject: [PATCH v2] ntb: Add mutex to make link_event_callback executed
- linearly.
-Message-ID: <aKwpnFtdtBlDv69O@didi-ThinkCentre-M930t-N000>
-Mail-Followup-To: jdmason@kudzu.us, dave.jiang@intel.com, allenbh@gmail.com,
-	ntb@lists.linux.dev, linux-kernel@vger.kernel.org,
-	fuyuanli0722@gmail.com
+        Mon, 25 Aug 2025 02:15:52 -0700 (PDT)
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jinchao Wang <wangjinchao600@gmail.com>
+Subject: [PATCH v2 0/4] module: logging and code improvements
+Date: Mon, 25 Aug 2025 17:15:31 +0800
+Message-ID: <20250825091545.18607-1-wangjinchao600@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Since the CPU selected by schedule_work is uncertain, multiple link_event
-callbacks may be executed at same time. For example, after peer's link is
-up, it is down quickly before local link_work completed. If link_cleanup
-is added to the workqueue of another CPU, then link_work and link_cleanup
-may be executed at the same time. So add a mutex to prevent them from being
-executed concurrently.
+This series of patches cleans up and refactors the kernel's module loading
+code. The goal is to make the subsystem's logging clearer and its internal
+logic more straightforward for developers to understand.
 
-Signed-off-by: fuyuanli <fuyuanli@didiglobal.com>
----
-v2:
-1) use guard() instead of lock & unlock functions.
+The patches in this series: 
 
-v1:
-Link: https://lore.kernel.org/all/aKiBi4ZDlbgzed%2Fz@didi-ThinkCentre-M930t-N000/
----
- drivers/ntb/ntb_transport.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+- module: signing: Use pr_err for signature rejection
+  Makes module signature rejection messages more visible.
+- module: show why force load fails 
+  Adds a reason to the error message when force loading is disabled.
+- module: centralize no-versions force load check
+  Refactors the code to centralize the "no versions" force load check.
+- module: separate vermagic and livepatch checks
+  Improves code organization by separating vermagic and livepatch checks.
 
-diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
-index 4f775c3e218f..eb875e3db2e3 100644
---- a/drivers/ntb/ntb_transport.c
-+++ b/drivers/ntb/ntb_transport.c
-@@ -59,6 +59,7 @@
- #include <linux/slab.h>
- #include <linux/types.h>
- #include <linux/uaccess.h>
-+#include <linux/mutex.h>
- #include "linux/ntb.h"
- #include "linux/ntb_transport.h"
- 
-@@ -241,6 +242,9 @@ struct ntb_transport_ctx {
- 	struct work_struct link_cleanup;
- 
- 	struct dentry *debugfs_node_dir;
-+
-+	/* Make sure workq of link event be executed serially */
-+	struct mutex link_event_lock;
- };
- 
- enum {
-@@ -1024,6 +1028,7 @@ static void ntb_transport_link_cleanup_work(struct work_struct *work)
- 	struct ntb_transport_ctx *nt =
- 		container_of(work, struct ntb_transport_ctx, link_cleanup);
- 
-+	guard(mutex)(&nt->link_event_lock);
- 	ntb_transport_link_cleanup(nt);
- }
- 
-@@ -1047,6 +1052,8 @@ static void ntb_transport_link_work(struct work_struct *work)
- 	u32 val;
- 	int rc = 0, i, spad;
- 
-+	guard(mutex)(&nt->link_event_lock);
-+
- 	/* send the local info, in the opposite order of the way we read it */
- 
- 	if (nt->use_msi) {
+Changes from v1:
+A patch was dropped because it was based on a misunderstanding
+of the ignore versioning flag's original intent.
+
+v1 link:
+https://lore.kernel.org/all/20250822125454.1287066-1-wangjinchao600@gmail.com/T/#mf748b6e97934f7a463dfdafbb426965f3e0ad646
+
+
+Jinchao Wang (4):
+  module: signing: Use pr_err for signature rejection
+  module: show why force load fails
+  module: centralize no-versions force load check
+  module: separate vermagic and livepatch checks
+
+ kernel/module/main.c    | 13 +++++++------
+ kernel/module/signing.c |  2 +-
+ kernel/module/version.c |  9 +++++----
+ 3 files changed, 13 insertions(+), 11 deletions(-)
+
 -- 
-2.34.1
+2.43.0
 
 
