@@ -1,124 +1,118 @@
-Return-Path: <linux-kernel+bounces-784717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D4DDB3403C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:01:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3399EB34041
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FF533A72BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:00:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5345C7AB2EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786131E9B1C;
-	Mon, 25 Aug 2025 13:00:45 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03AA1E0E08;
+	Mon, 25 Aug 2025 13:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="mDLyigWd"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E7DEADC;
-	Mon, 25 Aug 2025 13:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0573B1E0DE3
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756126845; cv=none; b=GSpx6C27nPV7Bk1SrfOVW1dWpXxy27e+zCdEg5XIphSRJXUkcaEJubCoLNXu6lF6bEgpM+jWSU5MK9fvaXFzY99ERKzZOlv+a2qRifcl6lVUB2Ufodgy5IPW5RAKfRp0TC+3LrQ7c/AzcPDHzqkTsuOo8p7wAnLtqp3l8AvtQeA=
+	t=1756126885; cv=none; b=YfnQ/H8Hj3m95rLLIGsJIZLoEkiCq75jNuC9ktbJRV/kkKYp4GGpiaaCJDp4fVPcVlkvvNM2YxHU7gGKJ7Jpyn284/DLg6I+M+vWzg/KKVgtwRYJW2wbCzk+2f8iim94c2mON+/Q5SSey/4BwFQ2BhRr7bgBDWklyvumZx4PI08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756126845; c=relaxed/simple;
-	bh=vNkPSPx3RA6hxnDYg4m8Z9esxy3oSQUoS3T7RUTk3/c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Tgpr7qghXS5s1NoPvISbyBKsMB3kykM114Za/RU5a0sE4+ShjUrCAXU40w2i3xy473DloLiEa4QpdGtsiBzuXxZHxuGL87qWYbqjUkeFGbw2ddw5J5QRc7Q7Oriaysp2vzSWKZKWiMvoUB/m6AzGgve+0linSt0MKvBmtRkYvtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4c9WCD68wQz27jNZ;
-	Mon, 25 Aug 2025 21:01:44 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 935881A0190;
-	Mon, 25 Aug 2025 21:00:38 +0800 (CST)
-Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 25 Aug 2025 21:00:38 +0800
-Received: from [10.67.120.171] (10.67.120.171) by
- kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 25 Aug 2025 21:00:37 +0800
-Message-ID: <8896482c-c447-45f1-a59c-998a13119ece@huawei.com>
-Date: Mon, 25 Aug 2025 21:00:37 +0800
+	s=arc-20240116; t=1756126885; c=relaxed/simple;
+	bh=dQlK3wXG7sop1i8Jgraua6l3U7jzqZIBJa/jEdUPy4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QRZgdxzf/SmOlIHVZi51RPo6M6BTWe1Ae+l9TCTuwYPGwmroCrdRPohZKmHVUHrnivV6mDoMpWC0rgV5sC5PYnR4EYgPSOJXQVb0Uvh/kWyVZup3isCv4/rvP3Zdwdq3dZBE2WrQYyl2fzWz6h5jsg50Q0+R8MSL56lkUPs8beQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=mDLyigWd; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55ce526627dso4371440e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 06:01:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756126880; x=1756731680; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dQlK3wXG7sop1i8Jgraua6l3U7jzqZIBJa/jEdUPy4M=;
+        b=mDLyigWdXswkeZt7lRAFvB3o8gZ8PtldTvaQo7OnXliJ+zpKptVJnADL2NscXTplbj
+         AwpAwxFKwGRbARZLC5jQbBZpVVL49mpfGuz+QLF12U2RupYkiki0q9/OuVRecJuUcgHS
+         OLIRnOq9i1lsDRgIwdzPwjHIRDyciJODikp8ycPDNoGeZJUNqEzrGjgla6a8IXxwOthB
+         5Dod/RPvnBAnm1zCIiVYSGM/aLWg3smayGEh4BNDIEKkAD9sy5aqf5/oZNqL1rGb75iX
+         NtdlXHOgku9IsOaLH1si+rlh7+9TRd8icLWOZBUaRdETWVsKnGIwf3yZ3z5ze51fzm0n
+         j+ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756126880; x=1756731680;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dQlK3wXG7sop1i8Jgraua6l3U7jzqZIBJa/jEdUPy4M=;
+        b=ghABvKQ2HODEchlJtfwD8RlwJ9rjNaUczm/To9aPLyjKIHUR0Ks2cPAO9fAe5MaKXc
+         MB9Qr/wmpXasYdLqhiEHDgg2gBJv1+5xRBbyubI40rBtYAd3vDC0Bdzpl46SoP9HbyOm
+         KjgAsA5KlbTlf25+8wfYA/SN06iVWwwcdkKyXgVo7T9w9/Xr08NvFnorNRS9iCths9T1
+         vcUFHvLjUjFZEe75VafVRkMt6nXjDv8Dk0xcKWDMR/hDOaKsZTomW5Ab/PsBfv9z9DsS
+         i/BoiaWxF+c4wiVIMC6VD28jZif1O7Ts775w1lWaUxzgAuV8le8wTo+gl+QFfx1Szwtm
+         x71g==
+X-Forwarded-Encrypted: i=1; AJvYcCVYFC2BjtAZMUI2puhx1K3vI6SvcQsq4c8U02PVc55D7bVBFeHpUy/LDtlzj1YB6x/St3Hht/OExySPC6Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOHREy5MBU4sU0cxBNNZMzbHzSBlQI2P4IWnEZam7bOjcDP094
+	7thNkZV1M3FyZQm221d+YVT/BF0RT8OuA5/BubAmiQdSef5wzCjLK/x0bvD1YMmKG8A3s1xBpHm
+	F/UFVdjdl4/dBe4TiX83ugdaqUFH+QcAPt7OnrP19g99TBtgQSKyqQAA=
+X-Gm-Gg: ASbGncubvTH4YXC9lgcFJJs6uC7lZFIXezAvw0gtf1176zqERKqVh6IuHPge/SS1a/O
+	MCA60UU2UBZ81Z2NJybeT3zfE5al/+QsaiZMFpLaYYDSEaunOy11gT7V/Z5XOxDzAWL2fAKbmbw
+	6evL75S6oCQc3tiTSdkFxagzvLwRW9XCsAym1pQ8g19zhyuOVtSWnrBvfhzkHaazoDad9+Iy+o9
+	DWZ9UTyJnoKCDWgXU38MzHCicOO1ebK3zn6wLCtLNLlZYq1sTRZ4IoUDXII
+X-Google-Smtp-Source: AGHT+IH5N5gh1e2Wid0aMR0FMRyM9pyDqp/u65+mskc935zM8TPlDDSTI+H4ckU5CTPXH5byLfWl83YU1oyPWy+p/Uw=
+X-Received: by 2002:a05:6512:135a:b0:55e:11ca:1549 with SMTP id
+ 2adb3069b0e04-55f0c6b5589mr4032238e87.19.1756126880025; Mon, 25 Aug 2025
+ 06:01:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] crypto: hisilicon - add fallback function for
- hisilicon accelerater driver
-To: Herbert Xu <herbert@gondor.apana.org.au>
-CC: <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
-	<linux-crypto@vger.kernel.org>, <qianweili@huawei.com>,
-	<linwenkai6@hisilicon.com>, <wangzhou1@hisilicon.com>, <taoqi10@huawei.com>
-References: <20250818065714.1916898-1-huangchenghai2@huawei.com>
- <aKvoPwhKyoVz8Yta@gondor.apana.org.au>
-From: huangchenghai <huangchenghai2@huawei.com>
-In-Reply-To: <aKvoPwhKyoVz8Yta@gondor.apana.org.au>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemq200001.china.huawei.com (7.202.195.16)
+References: <cover.1756104334.git.christophe.leroy@csgroup.eu>
+ <e05a0959d794016bde79e48e25ff71253cf51aae.1756104334.git.christophe.leroy@csgroup.eu>
+ <CAMRc=MfPTtdFtE63UKfbuK3h1mLEk2aUGazBsbRS-OLZzm7e9g@mail.gmail.com>
+In-Reply-To: <CAMRc=MfPTtdFtE63UKfbuK3h1mLEk2aUGazBsbRS-OLZzm7e9g@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 25 Aug 2025 15:01:09 +0200
+X-Gm-Features: Ac12FXwiA1VNOuENMZgX8e0TVhBXubdvgS_jWd_PUQ_1hAXM92SKRJ_pWmQYzEg
+Message-ID: <CAMRc=Mcsvkt1OJfVmB2peQJPpEKqFJ=6=86m=fd+VOEoMGf8Yw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] soc: fsl: qe: Change GPIO driver to a proper
+ platform driver
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Qiang Zhao <qiang.zhao@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-在 2025/8/25 12:36, Herbert Xu 写道:
-> On Mon, Aug 18, 2025 at 02:57:11PM +0800, Chenghai Huang wrote:
->> Support fallback for zip/sec2/hpre when device is busy.
->>
->> V1: https://lore.kernel.org/all/20250809070829.47204-1-huangchenghai2@huawei.com/
->> Updates:
->> - Remove unnecessary callback completions.
->> - Add CRYPTO_ALG_NEED_FALLBACK to hisi_zip's cra_flags.
->>
->> Chenghai Huang (1):
->>    crypto: hisilicon/zip - support fallback for zip
->>
->> Qi Tao (1):
->>    crypto: hisilicon/sec2 - support skcipher/aead fallback for hardware
->>      queue unavailable
->>
->> Weili Qian (1):
->>    crypto: hisilicon/hpre - support the hpre algorithm fallback
->>
->>   drivers/crypto/hisilicon/Kconfig            |   1 +
->>   drivers/crypto/hisilicon/hpre/hpre_crypto.c | 314 +++++++++++++++++---
->>   drivers/crypto/hisilicon/qm.c               |   4 +-
->>   drivers/crypto/hisilicon/sec2/sec_crypto.c  |  62 +++-
->>   drivers/crypto/hisilicon/zip/zip_crypto.c   |  52 +++-
->>   5 files changed, 360 insertions(+), 73 deletions(-)
-> Are you mapping one hardware queue to a single tfm object?
-Yes, in our current implementation, each hardware queue is mapped
-to a dedicated tfm object.
+On Mon, Aug 25, 2025 at 2:56=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 >
-> Hardware queues should be shared between tfm objects.
+> On Mon, Aug 25, 2025 at 8:53=E2=80=AFAM Christophe Leroy
+> <christophe.leroy@csgroup.eu> wrote:
+> >
+> > In order to be able to add interrupts to the GPIOs, first change the
+> > QE GPIO driver to the proper platform driver in order to allow
+> > initialisation to be done in the right order, otherwise the GPIOs
+> > get added before the interrupts are registered.
+> >
+> > Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> > Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 >
-> Cheers,
-Thank you for your suggestion.
+> Hi! I retracted my review tag under v1 because...
+>
 
-We currently do not support sharing hardware queues between tfm
-objects. Our rationale is as follows:
-a) Queue multiplexing (allowing multiple tfms to share a queue)
-theoretically improves resource utilization. However, hardware
-resources are shared among all queues, and performance is also
-shared. Once the hardware reaches its physical limits, all new
-services can only queue up in the queue. Therefore, reuse will only
-make the queue longer, not increase processing speed, and instead
-increase business waiting latency. In cases of insufficient queues,
-it is better to directly fallback to software processing.
+Ah, sorry for the noise, you did that in a separate patch, please keep my R=
+-b.
 
-In benchmark tests, only 16 queues or tfms are needed to achieve
-full hardware bandwidth performance.
-
-b) After a queue is initialized by a tfm, if a new tfm has a
-different algorithm from the original queue, it cannot share the
-queue. Queue reuse is limited by the type of tfm algorithm.
-
-Thanks
-Chenghai
+Bartosz
 
