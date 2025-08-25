@@ -1,149 +1,246 @@
-Return-Path: <linux-kernel+bounces-785419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23221B34A5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:31:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6461B34A6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB04A17BCB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:31:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3C107B3663
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F329304BB5;
-	Mon, 25 Aug 2025 18:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA273019A0;
+	Mon, 25 Aug 2025 18:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="XUF30Yjb"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RhYXThG3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5849307ACF
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 18:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5350E3002CC
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 18:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756146686; cv=none; b=calHnF1cv8dsdLboyKgHesFtfrwl7+Pkrg5d/V/UEwUFRzm/onOt5G0qV+wuAnwBNQ4ApD1LHxq4pR1ubSMO3yY0qKnzRsrIB45jKYjiDBlJcxUel5x+c5nGjfIYQvSd70aMLgO2KkD5nM7qh1WjhPl3BheThJ4w1s74Izaytic=
+	t=1756146758; cv=none; b=O29Gnvf36Ld4yOej9o+1cz36ihtgv/M+6unxf1kc9fwtCz2ab2te2SZREQmEhBSyD97MK164Ih7YF8eY/WSSN5KbHTC52eW4YCENLSAar48Dw/6fmrWcgK5SaEG/LQ7cEqQ2XUOHkCERwhBSqDFYC5DSRjdjPnr3w3X4fGIQdPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756146686; c=relaxed/simple;
-	bh=NqoYACXOw8wDP1WvzCpUxeuUy2wpqRUkEhJcPRJdMis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BCiB24HTWy9Fl6tRxtvMlPCt0z/rhzXH8Mb41+BmP9xR60FfnvMc0uzXAisuGRi2ML3EVqhvzFNfrlnoX3dNQh9WDjiLwtyiYKDzc6oOK8cM8wB+txS9zNgcGw24UP6fsV2c6QcvxIc1NZYF/8AoGGNo1puFCYFTKhapdel/1iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=XUF30Yjb; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7f04816589bso121923485a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:31:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1756146684; x=1756751484; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zWiX+6VTPBW9oMyyTDAuGR0ExNJ3ZNdezl4Ijz6qJzY=;
-        b=XUF30Yjbs/HTyJ5gzDd7LujSLObHx00FMxX5NX4tGUOhF8jWYy7BFy/eoGlqBY+IkI
-         RXJS1Rb0HoNxv0lvhEFlnB+/rhG0WyEUHAEWHDVmtvtfpX8nxNEtZVI5fcRUe3sW83Zi
-         hGZvTAboUs72FJfDsW1J/WIoRoJ3qrAY9u18H70zV2dhfif0oP4dblQPZPVd+hQChTQt
-         r7GBSiKtmSz16g8PPf3B+A0QlCLa66xoc3Ry5Dc/MEoAwB3OmT4Cz/SNWiHth4pmHf+S
-         eBVVAriL2vl0smgtEuibc/VELAoBf8HNB3/noex3u6GBdLEPqHqe2kHv+ZDMn4HIS3sB
-         svbQ==
+	s=arc-20240116; t=1756146758; c=relaxed/simple;
+	bh=5gSbG4LawMNJ/PWjEAWfSVGPawomJWAQkNEyrTBhXtk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GVpEB4do+ab2TQLZyk7xO3nm4ouJxgTMptGWAX8KV047hMstxuyoPP85jiTRXFFLi3TOa0EyF5rqEAgT+TBdMiy2XbaqL0FMTAAcdoaeqzcsajbaDixOoHXbiCgcJ2HaffhCQKO0n5iOPpRUghEeYlvFEX91SFO4pJ0sSY+MP0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RhYXThG3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756146755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=bluti57k39MttADONVHVsAxBvXyqb5R7ZWo2ok70EgM=;
+	b=RhYXThG3+tIFnfqzLIr9RPKxUxwraFl7lO2IPNcEbTyPNdKbVpERSCLZuCs+WhDSSPQMox
+	8AF8QwnYsxJ1QrHDYmS40C5kdt7ZdyEuAeCyVZfTk/DGGnAgMs5zVwdFTws8tKK4Jgeq82
+	8aePnOuj3pRFAfo75YAYdTeDDGMLxcE=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-460-hyvg4y1kNQydBti-FKrf9A-1; Mon, 25 Aug 2025 14:32:33 -0400
+X-MC-Unique: hyvg4y1kNQydBti-FKrf9A-1
+X-Mimecast-MFC-AGG-ID: hyvg4y1kNQydBti-FKrf9A_1756146752
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45b6490ea91so2323225e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:32:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756146684; x=1756751484;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zWiX+6VTPBW9oMyyTDAuGR0ExNJ3ZNdezl4Ijz6qJzY=;
-        b=U1aKC3wIcwFUvVmKnHgBHUd/nURy/X0RmYjvjKxcdtHWwUT4GV+Vk3ZcTUQPIddJid
-         Ldvo2TKDLCKyoP0Mu7416L6ZTPYS8C+QcnciL3dpdYHjzygimZ42Ufw3b7ogChJGsxCx
-         hJGpVld/znIR9ZxTur86jWnhj6rODQp3HaCDK2Z9SV1cdhJwo7RTDnsUfcpoSIuZJxZe
-         YjxGYOf9zyLUfKeTbygXICxZOqREGMsG4YTixyD4QtQp7T0+ThdPEigki6MBMgiaGulr
-         W+eN/hU08WPD2ER3sFfLGsgi4C9Tp8gJTQ1eOyMwAPPe+0Bb8qXQGuF9paJ2vYkgrpSJ
-         XVIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDEyfZyQR8Z8jiiQq8RK8NsJZ5BFxuWgtiwMDSwjv0e49JK91j/6nW0UgJNULOiWZ3xeXiGIX1rAI1qI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznSRfLmag5604Eimji9okCL42d+E7tiwqtUUBhqOdXgjUGglr3
-	7jJuVABdUkB5/4n6Fh+y8p4xSGPd+gOJiix/53czCW4vPBtr4HSi9R+41yJGBEue/6Q=
-X-Gm-Gg: ASbGncvSCwn/nRv/bAoObsuXZYO1fKLNNS1vYnr6A7M15zyYmX5znoPNOaqOTEp11LF
-	PthR7q3BKl8vy80G4wrWoMFfoyhEqUSEm2JvEDABM+lVsLmrAGEDWwpgPuQLs3Umha8Vf2lBp9c
-	XU5idV1eKes34Rvb76nP/yW1pM2nbMyf/qRxzuFTIgOqJ+GUU59RLUUfgbAAeqKvJIJBKYBKp7i
-	y4m9yM8nEBJAQRBsER5UnPChoJFvpyZlDmvpsZrQZyJO/bGADJ2JFnbCphNluA8YQKeYuttQPDG
-	Oqa/lvoVuOOfjou8xCReb/iTi4szx643Ma3pGFTDC7jq2hQeITWoNGi0SXGGAPL1IPx7w8Gyhoy
-	HqGiZodOtot2jsbZ9jBbiICuKTU39CZKxTWxEGmyRyzxKzgR5c/PtERKa8GzGHcwx4s6A
-X-Google-Smtp-Source: AGHT+IGrrqtb5FLiQ6yBv5bSbXionDmSOOeGsus0fmtyrIvrknH2Q5meU+RUaqrB7rQ0ZREIDsRXNA==
-X-Received: by 2002:a05:620a:1726:b0:7e9:f820:2b95 with SMTP id af79cd13be357-7ea110baa0emr1337281385a.86.1756146683666;
-        Mon, 25 Aug 2025 11:31:23 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b2b8c631b8sm57949871cf.3.2025.08.25.11.31.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 11:31:23 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uqbyU-00000008lWr-2NRj;
-	Mon, 25 Aug 2025 15:31:22 -0300
-Date: Mon, 25 Aug 2025 15:31:22 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Cc: Benjamin Gaignard <benjamin.gaignard@collabora.com>, joro@8bytes.org,
-	will@kernel.org, robin.murphy@arm.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
-	p.zabel@pengutronix.de, mchehab@kernel.org, iommu@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, kernel@collabora.com,
-	linux-media@vger.kernel.org
-Subject: Re: [PATCH v7 4/6] media: verisilicon: AV1: Restore IOMMU context
- before decoding a frame
-Message-ID: <20250825183122.GB1899851@ziepe.ca>
-References: <20250825153450.150071-1-benjamin.gaignard@collabora.com>
- <20250825153450.150071-5-benjamin.gaignard@collabora.com>
- <20250825170531.GA1899851@ziepe.ca>
- <01c327e8353bb5b986ef6fb1e7311437659aea4a.camel@collabora.com>
+        d=1e100.net; s=20230601; t=1756146752; x=1756751552;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bluti57k39MttADONVHVsAxBvXyqb5R7ZWo2ok70EgM=;
+        b=MknZCBWNzfXVTeuYE46Bzj/YXtD33tbFevgRS2lN9uKOOYK6ED7uGkI+/T2dJYIt0q
+         gQn/8cMvDdJgde37e0WRblTzZp0g6lKFwCpBDlfoodCwHfhH3StTWIg3uzZSlIi2CBef
+         q/9t8ZWrK0MO4wPyj0LSTbM2OvmZ5vTFmuGQ92cPHgWJdAfQTXvj+dboED6HxBiTX8Z9
+         AsZ847XBHLeNxu9X4gQET8J5tN4/XRvPAkkQFGkBxHXXdIF+R3cJxPUlwChLzZLmLIxs
+         wkPLTnm+hGhP30CCT7zZdGlQ8oTUB+mrtAuYoDGNgJLNzanr5HPuMMXcb4qMaHfsWZ3F
+         QPAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWx4N6MdFLJZMNjGhQDF1R28oHO0JfaCfmOfx4JLi2Wf9uQsU9tWfdeAu1hDNiM25s0qC6vk6XP6jhlL2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZsffuNA/3Qabc6pS3EqGfroR2gyBcTWCN/HLEAU8dFjvN+fio
+	w1nSmcs3OtkK4MsrS1cWhb4GL7GlhO06sSFkmjVA07swORljPKzBbXHJ3iYKMWk+CJQmdomtOUC
+	jvS1ub0WIYGqar/JZKwCgJHt53ihzKOn8uH3+bmkhIs9QDQnG8WaxpaFRR+EqZvoHuA==
+X-Gm-Gg: ASbGncuBsE4NVAJ7yDCg3wf6FDlyPWs4CkfZQWWiTbcB97NKZvyKev7uFEv5Ng8YWEn
+	/X7CTLONgv5sB3Tgjy24JSidFppvWc2cTGjKYdbsKa2ffCyJMMzyI2oDWrszL1ifsoMya0cw+TC
+	XRDv78rJDJli8GkEwQ8VDdD5yNocqjB/SmeIWH2KbyJ1tBoJgC8lLQCAtfs1x5ibUYAddYYW21D
+	Jgd7mhYGvUArOvC/cMYkHj/hpx4lxByAh537XR09ouNT/x4cMqeoU4mKGn+d8A+CuFwmQAYyYVs
+	sALxotG+gT8FlJlWYMhpOsU8+ZlgBrVxAYA5E8Wm62WkUeWUCBzz5MVDvcrWdqYp5wZ8pcBIszW
+	d3Wm2fT+nDgb+ZhF1j0OxvdkNMZ3tXDgkkf2yEas8mF3rK22vs85tyhtA5NWBakPOUrw=
+X-Received: by 2002:a05:600c:4e90:b0:458:a559:a693 with SMTP id 5b1f17b1804b1-45b517b957emr126710795e9.18.1756146752239;
+        Mon, 25 Aug 2025 11:32:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFxuQzAylX90vNEmmjxyPSaWFpv8tCbOTWCm8WazHqaDOnMAPM4HK8CKvM3oYkR/BEIZaOMIA==
+X-Received: by 2002:a05:600c:4e90:b0:458:a559:a693 with SMTP id 5b1f17b1804b1-45b517b957emr126710235e9.18.1756146751795;
+        Mon, 25 Aug 2025 11:32:31 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4f:1300:42f1:98e5:ddf8:3a76? (p200300d82f4f130042f198e5ddf83a76.dip0.t-ipconnect.de. [2003:d8:2f4f:1300:42f1:98e5:ddf8:3a76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c7119c4200sm12481975f8f.53.2025.08.25.11.32.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Aug 2025 11:32:31 -0700 (PDT)
+Message-ID: <7ffd0abd-27a1-40a8-b538-9a01e21abb29@redhat.com>
+Date: Mon, 25 Aug 2025 20:32:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01c327e8353bb5b986ef6fb1e7311437659aea4a.camel@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: update kernel-doc for MEMBLOCK_RSRV_NOINIT
+To: Mike Rapoport <rppt@kernel.org>
+Cc: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+ netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+ Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+ virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+ wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
+References: <9156d191-9ec4-4422-bae9-2e8ce66f9d5e@redhat.com>
+ <7077e09f-6ce9-43ba-8f87-47a290680141@redhat.com>
+ <aKmDBobyvEX7ZUWL@kernel.org>
+ <a90cf9a3-d662-4239-ad54-7ea917c802a5@redhat.com>
+ <aKxz9HLQTflFNYEu@kernel.org>
+ <a72080b4-5156-4add-ac7c-1160b44e0dfe@redhat.com>
+ <aKx6SlYrj_hiPXBB@kernel.org>
+ <f8140a17-c4ec-489b-b314-d45abe48bf36@redhat.com>
+ <aKyMfvWe8JetkbRL@kernel.org>
+ <dbd2ec55-0e7f-407a-a8bd-e1ac83ac2a0a@redhat.com>
+ <aKyWIriZ1bmnIrBW@kernel.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <aKyWIriZ1bmnIrBW@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 25, 2025 at 01:50:16PM -0400, Nicolas Dufresne wrote:
+On 25.08.25 18:58, Mike Rapoport wrote:
+> On Mon, Aug 25, 2025 at 06:23:48PM +0200, David Hildenbrand wrote:
+>>
+>> I don't quite understand the interaction with PG_Reserved and why anybody
+>> using this function should care.
+>>
+>> So maybe you can rephrase in a way that is easier to digest, and rather
+>> focuses on what callers of this function are supposed to do vs. have the
+>> liberty of not doing?
+> 
+> How about
+>   
+> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> index b96746376e17..fcda8481de9a 100644
+> --- a/include/linux/memblock.h
+> +++ b/include/linux/memblock.h
+> @@ -40,8 +40,9 @@ extern unsigned long long max_possible_pfn;
+>    * via a driver, and never indicated in the firmware-provided memory map as
+>    * system RAM. This corresponds to IORESOURCE_SYSRAM_DRIVER_MANAGED in the
+>    * kernel resource tree.
+> - * @MEMBLOCK_RSRV_NOINIT: memory region for which struct pages are
+> - * not initialized (only for reserved regions).
+> + * @MEMBLOCK_RSRV_NOINIT: reserved memory region for which struct pages are not
+> + * fully initialized. Users of this flag are responsible to properly initialize
+> + * struct pages of this region
+>    * @MEMBLOCK_RSRV_KERN: memory region that is reserved for kernel use,
+>    * either explictitly with memblock_reserve_kern() or via memblock
+>    * allocation APIs. All memblock allocations set this flag.
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index 154f1d73b61f..46b411fb3630 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -1091,13 +1091,20 @@ int __init_memblock memblock_clear_nomap(phys_addr_t base, phys_addr_t size)
+>   
+>   /**
+>    * memblock_reserved_mark_noinit - Mark a reserved memory region with flag
+> - * MEMBLOCK_RSRV_NOINIT which results in the struct pages not being initialized
+> - * for this region.
+> + * MEMBLOCK_RSRV_NOINIT
+> + *
+>    * @base: the base phys addr of the region
+>    * @size: the size of the region
+>    *
+> - * struct pages will not be initialized for reserved memory regions marked with
+> - * %MEMBLOCK_RSRV_NOINIT.
+> + * The struct pages for the reserved regions marked %MEMBLOCK_RSRV_NOINIT will
+> + * not be fully initialized to allow the caller optimize their initialization.
+> + *
+> + * When %CONFIG_DEFERRED_STRUCT_PAGE_INIT is enabled, setting this flag
+> + * completely bypasses the initialization of struct pages for such region.
+> + *
+> + * When %CONFIG_DEFERRED_STRUCT_PAGE_INIT is disabled, struct pages in this
+> + * region will be initialized with default values but won't be marked as
+> + * reserved.
 
-> Jason, the point is that the iommu and the VPU are not separate devices, which
-> comes with side effects. On RKVDec side, the iommu configuration get resets
-> whenever a decoding error leads to a VPU "self reset". I can't remember who from
-> the iommu subsystem suggested that, but the empty domain method was agreed to be
+Sounds good.
 
-IDK, that seems really goofy too me an defiantly needs to be
-extensively documented this is restoring the default with some lore
-link of the original suggestion.
+I am surprised regarding "reserved", but I guess that's because we don't 
+end up calling "reserve_bootmem_region()" on these regions in 
+memmap_init_reserved_pages().
 
-> the least invasive way to workaround that issue. I believe Detlev tried multiple
-> time to add APIs for that before the discussion lead to this path.
 
-You mean this:
+-- 
+Cheers
 
-https://lore.kernel.org/linux-iommu/20250318152049.14781-1-detlev.casanova@collabora.com/
+David / dhildenb
 
-Which came back with the same remark I would give:
-
- Please have some kind of proper reset notifier mechanism - in fact
- with runtime PM could you not already invoke a suspend/resume cycle
- via the device links?
-
-Or another reasonable option:
-
-  Or at worst just export a public interface for the other driver to
-  invoke rk_iommu_resume() directly.
-
-Sigh.
-
-> Benjamin, please improve the naming, comment and description, I agree with Jason
-> its not completely clear. I'm also surprised that you do that every frame, seems
-> excessive.
-
-Indeed if it is just error recovery.
-
-> [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ff8c5622f9f7c644e995d013af320b59e4d61b93
-
-This is already merged? And now you want two copies of this? I think
-this is a very poor direction..
-
-Jason
 
