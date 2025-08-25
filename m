@@ -1,134 +1,191 @@
-Return-Path: <linux-kernel+bounces-783932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3B8BB33475
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:17:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BF3AB33478
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AC3B481CC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:17:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B5B5189D69F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3A722E004;
-	Mon, 25 Aug 2025 03:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFEF91C84DE;
+	Mon, 25 Aug 2025 03:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZxtnT2vA"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KOlZUR7M"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A56013AA2D;
-	Mon, 25 Aug 2025 03:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989FD22A1C5
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 03:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756091833; cv=none; b=poRy6heyW3YmS+Ql5MLurxzjwr8CfrtozCepEks6BhTY79WseQXCHgmEADC9EYxcwUPXGIByr/DVjV6FlJr/wm0ezA/WFl3IS2lUSmRy/R8fC0xrEqpVLFaE9FEbu89V3OI1/XMxUevPM8+l3NCazV1tqKgiB5jD+e+apSr2R3Q=
+	t=1756091949; cv=none; b=cfqrYhqpJPRN06Tc5eO2KTSi1IZNoWsfooCpULGb+s9QKDyJf2zFe8NLVNF0wnW+yth/yKtJIceE0n1NnzkSiuzYIRNgD2MYwnLPulO9cTD+zPiKXuQ1WsFmvynDnk/vLDAx3y/l+AoGCahH297lYv+AZrwcR4SxJ6Z+jnZf9/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756091833; c=relaxed/simple;
-	bh=PVisAZkkSA5Or3IhgaY6RiXA+8oHXNisgrd4QZoZmZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OdmlqZmqSn9r1kazdz/KM3A6YQ41Is8AEIA+7vZ2YBKco7wTHo6My/vTLEu7QGh9PTktf/RQc6j8yQ5DuVwmG2YRRpVqHEa/TlRT6wLNnFkUiapUjmWFNS6J/YBJK3ixYzCHWoMDCWhMauz5GbUtzpEMb6yYIuBobsL+VYR2dkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZxtnT2vA; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-323267bc2eeso2979033a91.1;
-        Sun, 24 Aug 2025 20:17:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756091831; x=1756696631; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yMCemvyGOAP6XlHCyWPI1sNO65So4Z3QCHN0HhZWV+Y=;
-        b=ZxtnT2vAvvVb6v+nDvMHnoa67dEcD0TUb/L6TinfL1q5c/wJyAFEoBRCFd9MbtlbjY
-         XMpoaW2vPlTdisy7dDiE3+Vmzd//m/LR1rYb4SCKMHpvb2GzAW8G88ex4D8h2BUgeAfO
-         gdxV2vMTAqpOYN0zTQmpMyFvK9ZTxP3+2/k44f3cwwNio7T6guvSIFoTFEERUIzbr4Ic
-         w4ALM8Z1kh8reb5Ao63c67i8To2KYSu8ksCcehfYsqo3Rd2MeNAw5ylajdPyGMNnVRr5
-         EZLT220jNl1C2IGTzEec8Go9BD0KILCeiAt9Gsew5hpUmP6izjSTFHMaPthhCszLD37f
-         me/g==
+	s=arc-20240116; t=1756091949; c=relaxed/simple;
+	bh=PuUbuNvyeLiLOXqEFw4faj6HQcjwdCPqnfZaWCW/qkc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aVJpYSattXcSdkX3HNcqgbkFpHBOoSzbbFO0wst+BpAnhR37+Eb5V7vLs8E4yDqNzC3mluasuPYQ+VBBp5masia8uxJVJM/8jjXLmkdVmYh22+lMnbhWNTnaLx3GV09s8wmBKaqbJDoaSck/7UPaHpfW0lUfuP5xL06NJsHtKyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KOlZUR7M; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756091944;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mkkr6dnBIuydFfXmGU4SfGiQP5HauMl51h1/p3ffeuI=;
+	b=KOlZUR7Mzn7snHYO+J94jyyhDDSy6wvuaUtCVm0l/oHcnua2Rm3ZioUGO7U0/VM/FjlpxU
+	gv5JndLtJgJI4Sf8LlgoXEkfu+tnxFVNq0iQaE6FWkN9YFIBrZPK5RBIeylRvrnubmbqUH
+	ZdcP1/UfzunlvOEwv/ibtQO6QRQMFZM=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-62-QoeG8OU4PYKDeyDJ_J-Png-1; Sun, 24 Aug 2025 23:19:02 -0400
+X-MC-Unique: QoeG8OU4PYKDeyDJ_J-Png-1
+X-Mimecast-MFC-AGG-ID: QoeG8OU4PYKDeyDJ_J-Png_1756091942
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-618b3c750baso2849795a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 20:19:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756091831; x=1756696631;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yMCemvyGOAP6XlHCyWPI1sNO65So4Z3QCHN0HhZWV+Y=;
-        b=wlVfouoo4AlH7hGRGVAIpfv7747YCL7SRraD31fdOHHw/8KtZAqpZT18D9ZRxyGEwd
-         GR7KcTUjqXqjjIOFyasSkgmthWAifMvKFoRnX0bcMYj7AqIGgB9khD0qFmM2vMxQSXzj
-         IxoO4myGSoCg8jDTIkh8K+//7QsKTloSXStfaHxiRlm5xkLicugjDVTYEYRVSXShPsrV
-         5qqaZ4uW/u9OoYf6UZujNfawrdgBs+v+xaRiZfGTr5lmrMMj4hgvvMnPHc5qcWER47HU
-         JJ52b+gu7Zw0pCGIJCGN0mha+CBBIHVRb3eiDHDi/D0YMGHrGosBET+gF4SW3uGcIeNf
-         S46Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUK5OLfP384frv3thSoyzpRaE/SgCpG2Kk0ytQPkGsl6gIFI/z/ufLg4CA9rWdHu/BGkhPastI1IeDqiB/erw==@vger.kernel.org, AJvYcCUZZr17XGkJO/DY6i6Ato8RoboKI+GLR8TGZN+KMpK09d11wIgIBm3eUDjW/EID7RH1mCoHdZZurdeFRZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNUgWmmJKosAgiAq0JDJEuxqepdt8vmKMCmVYl8buiXL2iFII/
-	G1Ow+y+aAglJWrYy/4ZONeuq8G3ADTRY6F4C6LMnYjl0cziT0omh0d5i
-X-Gm-Gg: ASbGnctkwkWhY99WgQfY0MFQmyF5A+FU46IR48jRe96ZG13zKGsuhevdciwK8NtAa41
-	DiU6zrRAXWR+5sdA1wGsGsVn7kmqnICsLsSzW5gZNJVSkI2byrZk1yc2sR1XjzMEwMgaI7Q2iNh
-	Nz2oUy4Cl6Ij/eXLBiQcnf05pyWN+oKG9h8H3z9MYHhy3Lo5skzRIaRVCDcDBiWOJh9pUTsMAlU
-	wIVnJdg0zvB1BZbWH+rSCjEzKy5m9FgYRqMqHgwCObHL+koopkQ0Lt+wR25WnwR5LNU9IsC2wD/
-	HJeuLz6087hUQpb0OPJCKCggf/Eao+12fIYSB7ZFw4wosnSN9EHN4H4RGRk8L+wo0wZFQjlL860
-	MuRkkX+3DjPfccFEp2ZCQBMM21gN2VW3OErSZ
-X-Google-Smtp-Source: AGHT+IGwprUTeHEm122Tc4JwAuCPzFREadtOCOVdhjDErx/15BYwgFrKWMFiGHEkMHWZZlOeFcW9Jg==
-X-Received: by 2002:a17:90b:2f87:b0:31f:8723:d128 with SMTP id 98e67ed59e1d1-32517b2db8fmr14263065a91.34.1756091831293;
-        Sun, 24 Aug 2025 20:17:11 -0700 (PDT)
-Received: from [127.0.0.1] ([45.8.220.62])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3254aa650b2sm5746696a91.24.2025.08.24.20.17.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Aug 2025 20:17:10 -0700 (PDT)
-Message-ID: <6cd0f597-d56e-4a20-bf6b-42cebacdd4c8@gmail.com>
-Date: Mon, 25 Aug 2025 11:17:05 +0800
+        d=1e100.net; s=20230601; t=1756091941; x=1756696741;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mkkr6dnBIuydFfXmGU4SfGiQP5HauMl51h1/p3ffeuI=;
+        b=fXS+nzaoXnXxv80D3tllWOARY/iOTbfyMlJFnzXip7aWHdR2EMxz5OoAxB14Tib6SD
+         xZ4d2qcnhNt62b1OhX68fRO4SqB4h13TM5CRz8qzWRdK6p9JFWbPhxlCWQm7wCo9QInZ
+         R9lgL1WJKUoZ9p484ZzL4sBerCMoSGkUTgYE5FW3p7dMCoBlJToAj3ijLwZ1VoifOi4o
+         9E6BOG7VCY6m6ROzLV1pC+4T2WgUK+bcbKF5QtykGAjFD2Dqgs0vaiHsfUWtLk39mT8h
+         EIjPsu2K9IrH74XhW33/8Txx8XHaiFcu1PMNo1PfSmA7yn3W1U5Stm1R0GONl4Aa8Mc5
+         DKVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMozi2xYLG19wTaz0ACpVlQHVzH3bS7RQkzMdhvjEbbE3Rb4rhsCa88EmvJJb1+Wnu6U8cpfi3R56DF9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEhEA6o8OqLhkCWmI5wg1e5VcBDctEsT2ucRrLBdCG3XUt3z4r
+	tXFvv52oUomAw/am68LR4DgbMyquKhKbiODtTZ1VKJbUbxeSfyPKn5C6Oegu3cUPkypExKUs/ez
+	vKZGZhVQAmPSgPkbrhETU/iWkqgUw1mZlj4phIC83HrSsnHQhVMOvNUqteaATHr+MtZaO+Cchfm
+	9ByKhbS3f4INTwMezU01sA0xx24qTSyVkXW47LVmdv
+X-Gm-Gg: ASbGncsWulPxvDl4q/PJNgqgopFq+vnZNXAUkBDxup6+NJJAEzsg+TBcUF1ZNouKKGn
+	L999NSlYhy6yMNbOPsE7/dpG0TBwP0TCqrRl4VmNL/kGfT4MzZNOe8s1I8Ra8/p85p9MdpLqcUn
+	fxaHhFwZxBuZtVDrxhLfPP+Q==
+X-Received: by 2002:a05:6402:40d3:b0:61c:37f3:81df with SMTP id 4fb4d7f45d1cf-61c37f38ecdmr5584822a12.24.1756091941526;
+        Sun, 24 Aug 2025 20:19:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHUHpr+UmaF/UPIc0miOCPZ8Y2NNYsZioaKb50s3hxgE7GvvhOQDF1VyOiPbo78gZwh2DAf5XVxFTEfTBQQ2z4=
+X-Received: by 2002:a05:6402:40d3:b0:61c:37f3:81df with SMTP id
+ 4fb4d7f45d1cf-61c37f38ecdmr5584811a12.24.1756091941117; Sun, 24 Aug 2025
+ 20:19:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] module: Fix module_sig_check() for modules with
- ignored modversions/vermagic
-Content-Language: en-US
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Daniel Gomez <da.gomez@kernel.org>, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250822125454.1287066-1-wangjinchao600@gmail.com>
- <20250822125454.1287066-2-wangjinchao600@gmail.com>
- <CABCJKucGtbZw_DCpnbUr7cQeU+_DF97YTeDVgPX7tTyPwNabog@mail.gmail.com>
-From: Jinchao Wang <wangjinchao600@gmail.com>
-In-Reply-To: <CABCJKucGtbZw_DCpnbUr7cQeU+_DF97YTeDVgPX7tTyPwNabog@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250821064641.5025-1-jasowang@redhat.com>
+In-Reply-To: <20250821064641.5025-1-jasowang@redhat.com>
+From: Lei Yang <leiyang@redhat.com>
+Date: Mon, 25 Aug 2025 11:18:24 +0800
+X-Gm-Features: Ac12FXwv6JFOS3OGRBYgKSn1mV44XXfCE_i9G8olouMUz6d6LV5uIEzVWRAeWF0
+Message-ID: <CAPpAL=yicLJsn1d+_QbLDAekEQappfkvO9oUedFCG9U9hPT5iQ@mail.gmail.com>
+Subject: Re: [PATCH V6 0/9] Refine virtio mapping API
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	hch@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/23/25 03:36, Sami Tolvanen wrote:
-> On Fri, Aug 22, 2025 at 5:55 AM Jinchao Wang <wangjinchao600@gmail.com> wrote:
->>
->> The current signature check logic incorrectly fails modules that have
->> valid signatures when the caller specifies MODULE_INIT_IGNORE_MODVERSIONS
->> or MODULE_INIT_IGNORE_VERMAGIC flags. This happens because the code
->> treats these flags as indicating a "mangled module" and skips signature
->> verification entirely.
->>
->> The key insight is that the intent of the caller (to ignore modversions
->> or vermagic) should not affect signature verification. A module with
->> a valid signature should be verified regardless of whether the caller
->> wants to ignore versioning information.
-> 
-> Why would you need to ignore versions when loading signed modules?
-> Here's the original series that added this check and I feel it's very
-> much relevant still:
-> 
-> https://lore.kernel.org/lkml/20160423184421.GL3348@decadent.org.uk/
-> 
-> Sami
+Tested pass with virtio-net regression tests,everything works fine.
 
-Hi Sami,
+Tested-by: Lei Yang <leiyang@redhat.com>
 
-Thanks for explaining the historical context. I think there are two 
-possible understandings of "ignore."
+On Thu, Aug 21, 2025 at 2:50=E2=80=AFPM Jason Wang <jasowang@redhat.com> wr=
+ote:
+>
+> Hi all:
+>
+> Virtio used to be coupled with DMA API. This works fine for the device
+> that do real DMA but not the others. For example, VDUSE nees to craft
+> with DMA API in order to let the virtio-vdpa driver to work.
+>
+> This series tries to solve this issue by introducing the mapping API
+> in the virtio core. So transport like vDPA can implement their own
+> mapping logic without the need to hack with DMA API. The mapping API
+> are abstracted with a new map operations in order to be re-used by
+> transprot or device. So device like VDUSE can implement its own
+> mapping loigc.
+>
+> For device that uses DMA (for example PCI device), the virtio core
+> will still call DMA API directly without the need of implementing map
+> ops per device/transport.
+>
+> Please review.
+>
+> Changes since V5:
+>
+> - Rename mapping_token to virtio_map
+> - Do not use opaque void * pointer, just use a forward decalration of
+>   vduse_iova_domain
+> - Remove unused variable and typo fixes
+>
+> Changes since V4:
+>
+> - Rename map_token to mapping_token
+> - Introduce a union container for opaque token as well as the DMA
+>   device so we won't lose the type safety
+> - Do not try to set DMA mask for VDUSE device
+> - Introduce a new mapper_error op for API completeness
+>
+> Changes since V3:
+>
+> - Fix build error of PDS vDPA driver
+>
+> Changes since V2:
+>
+> - Drop VDUSE dependenct for HAS_DMA and ARCH_HAS_DMA_OPS
+>
+> Changes since V1:
+>
+> - Fix build error of mlx5_vdpa driver
+>
+>
+> Jason Wang (9):
+>   virtio_ring: constify virtqueue pointer for DMA helpers
+>   virtio_ring: switch to use dma_{map|unmap}_page()
+>   virtio: rename dma helpers
+>   virtio: introduce virtio_map container union
+>   virtio_ring: rename dma_handle to map_handle
+>   virtio: introduce map ops in virtio core
+>   vdpa: support virtio_map
+>   vdpa: introduce map ops
+>   vduse: switch to use virtio map API instead of DMA API
+>
+>  drivers/net/virtio_net.c                 |  28 +-
+>  drivers/vdpa/Kconfig                     |   8 +-
+>  drivers/vdpa/alibaba/eni_vdpa.c          |   5 +-
+>  drivers/vdpa/ifcvf/ifcvf_main.c          |   5 +-
+>  drivers/vdpa/mlx5/core/mr.c              |   4 +-
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c        |  15 +-
+>  drivers/vdpa/octeon_ep/octep_vdpa_main.c |   6 +-
+>  drivers/vdpa/pds/vdpa_dev.c              |   5 +-
+>  drivers/vdpa/solidrun/snet_main.c        |   8 +-
+>  drivers/vdpa/vdpa.c                      |   5 +-
+>  drivers/vdpa/vdpa_sim/vdpa_sim.c         |   4 +-
+>  drivers/vdpa/vdpa_user/iova_domain.c     |   2 +-
+>  drivers/vdpa/vdpa_user/iova_domain.h     |   2 +-
+>  drivers/vdpa/vdpa_user/vduse_dev.c       |  79 ++--
+>  drivers/vdpa/virtio_pci/vp_vdpa.c        |   5 +-
+>  drivers/vhost/vdpa.c                     |   6 +-
+>  drivers/virtio/virtio_ring.c             | 459 ++++++++++++++---------
+>  drivers/virtio/virtio_vdpa.c             |  20 +-
+>  include/linux/vdpa.h                     |  25 +-
+>  include/linux/virtio.h                   |  46 ++-
+>  include/linux/virtio_config.h            |  72 ++++
+>  include/linux/virtio_ring.h              |   7 +-
+>  22 files changed, 531 insertions(+), 285 deletions(-)
+>
+> --
+> 2.31.1
+>
+>
 
-The original seems to be "do not check, but still taint the module." My 
-patch was based on the understanding that "ignore" means to allow the 
-module, even if it is not signed or is signed with a different key.
-
-Given your feedback, I've decided to drop the patch for now.
--- 
-Best regards,
-Jinchao
 
