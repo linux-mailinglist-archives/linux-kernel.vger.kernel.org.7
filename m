@@ -1,128 +1,147 @@
-Return-Path: <linux-kernel+bounces-784883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7ABEB342DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:14:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 447B3B342E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B4E9178728
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:13:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C748167DFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8559F2F361F;
-	Mon, 25 Aug 2025 14:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715E12F39B1;
+	Mon, 25 Aug 2025 14:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aKdn9mxO"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4fvRADW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6911A2F28EA;
-	Mon, 25 Aug 2025 14:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D5C2F0C67;
+	Mon, 25 Aug 2025 14:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756131212; cv=none; b=kzFvIwwxQ/mY77JuqEginqPtdMeHc85wvEVZP2QeaUupUVjz+lV0liwNehy9AkZdrLRAgUOlqlVSbBYuQpNKrYFwBYcoNcBSYDaPT0uttQRSMg4NxMQ02XRfjCib9+38ZggvjmF6INpU4dRtrRUN2aWRgjFhiEzGofsUABd7UCo=
+	t=1756131220; cv=none; b=ZJHZNU55OmRkiypag930Biy1oYcKfytF8IGYyDO4LYU212KKoYuCIGQg27Lv2xpBR3fM81AERGvm6eD6EjX9vBfad76VF3aY1pEhxJ7GjUtCKIGrA+QY1tXNNVfzv+1tppCQCqINLU/GEfFpbVrwBC7L5LmPdrlzRYdszV7PKXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756131212; c=relaxed/simple;
-	bh=6wDwSZQTdkZ0K6r7ARP+lPOkd/GdIG5zCPz9SFVrFE0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=reWYwFQLM8iBrH5GZQbpuJPdiyA2LDHgI5upGtSKin0O7PA4jAeQ3BkTtXws0hMXOfq73lxKnXZMlomTbJMjcTD1yqAwcHaFZy//2b89tEcroJoL27A57mhdNJpI2nrwYhUAafo58fP1BMZ5q4G83dUp6sCNizN8yc8haqZUv+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aKdn9mxO; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2445827be70so42783555ad.3;
-        Mon, 25 Aug 2025 07:13:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756131210; x=1756736010; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jDPNTwpJax4vDS4+xWgLAHPOpHhyQT4nEZr7m0wZXMw=;
-        b=aKdn9mxOhgwh400eFpkHIM5sW/wPcmDMGxm3mAGQPid3aRbqPsk2a/KihTUd6JYS32
-         sLJIV6A9gWcOZZp3AX2dqjlReA1cWOsEddz2EZxtpVGTnHTJLPFqgEOogxykimxALkO7
-         WQHguZGNBxG8nNM5iOZiG9PlbtexD9eTdLCTTgYBoj9ZXxEoPc7zTZhvop1fBVU10jVo
-         GjDVpaw829LtGPfQrXzQF1jgB1O3npsNU5s1yfuHzQaOZahWQMJ7AimptGPFUS6jyk7i
-         1VaxlkY4uFv6+QOZpSqqjTgI8mmpfU70IM0KNGJerK9yGPv0X9MkH3w8U65WdmlyfYdg
-         /myQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756131210; x=1756736010;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jDPNTwpJax4vDS4+xWgLAHPOpHhyQT4nEZr7m0wZXMw=;
-        b=uw2nj271ecbqzIfUda81GpeZxIesoxrsYGT7oV+A46J+ytNillr+9Zz9es5T3n0kKp
-         a0JuDdV9rcfnQ3A5CTpCj/lhLMOjZgnARJ8pr720bq5qEGj5RAM3O5m2NErXMC5dvnU0
-         GmLUPj1r8V7lSIIDQklDxmgimZXAO77Elq+rLH9zGEP4odhe/+nbCLFBJZjL2ZZD+PCY
-         biw011Fy0undBuH7o6CcyoGmAV0V8pui7eZayyuqdKh9PwJKWJA11YdUKFpDzDRR3T2M
-         go8Y9mXp+GkBWQbzm0kSbJPI3+NzDGzoBNqZTTQW0UD9Pkudrp/mx9puBraKBzqeE562
-         Ee+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWuRtjRmBodNvaAjKWG6fUz2Tfg9zZaXP/+bW3fO6jNagLr9yEjuUX7eVNBt28wNUA5KmnlMybgLENm@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZl5pNhYX7IFvulfnhw0zMTS0Tb0jpO36XGvu+2N+flVOSbxEv
-	BpPl4KIwDZQaQr9nRJsNCvWjrYKxD8+dkwBEYTSkEWxqdMhiV6oMeicd
-X-Gm-Gg: ASbGncvmfpAQsbwXx1bnL0Uu5lBeWBhaM3nu4we/yC/QPnBmhmh/PDUxxp5/uDeFy5O
-	dxZcH+Akz84CEVmPdVwRmQS22s/YiqkZWb/qxIs47S1+6cwABZUMtQVbb0NVNzhYAKXkVoEIB7b
-	vtDzfRLH+LRKvRskTL1S7P8kxnI05ZRHAicbzmeg6MZ7OkOAL6YHIZvZ0sh7o3lFWjAcJkxquIG
-	LaMzKnQpzDt62YZsH3bw66RGzRE8aRTo5FzvC/PHWxMbjcC+o+DJ957jtmJuR/D+Sqwi4DUjABT
-	P2lT8PKWYV5YYepEbD5vx8ax/a9lv2KF5TTsnzGd4HFVMczV2ph5G5PJ9htTT0IqInIWq4KNgzc
-	H2mzKvKBPfZcfI/lL21HFk4TguACcnm8=
-X-Google-Smtp-Source: AGHT+IGFPyKbr3RZ97yi89w7tRiaDA5JIHQrygXMQTece8/mtQ/CS7aBqTxuUTYyJ4Wf/gP1jX7cLw==
-X-Received: by 2002:a17:903:41cc:b0:246:b58b:8b86 with SMTP id d9443c01a7336-246b58b8f44mr50517505ad.32.1756131210316;
-        Mon, 25 Aug 2025 07:13:30 -0700 (PDT)
-Received: from archlinux ([205.254.163.102])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24668779f85sm70329465ad.33.2025.08.25.07.13.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 07:13:30 -0700 (PDT)
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org,
-	Suchit Karunakaran <suchitkarunakaran@gmail.com>,
-	"Darrick J. Wong" <djwong@kernel.org>
-Subject: [PATCH RESEND] fs/ext4: remove unused variable 'de' in ext4_init_new_dir()
-Date: Mon, 25 Aug 2025 19:43:21 +0530
-Message-ID: <20250825141321.8049-1-suchitkarunakaran@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1756131220; c=relaxed/simple;
+	bh=3RLeKCKpDIk2eBgGx5sPwZfoBKyVmeEo49RWhYh8Kh8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dTsyf0mcbEDs6eEmvARn0HrN2tLlZjh9PzZDzXTaqRBjnI0InWwCJJXgJPBXA2P3r/OlxyoIPM1bI0cYp8wbsIqyvxNJpjKq9tw4HjP8FQq3NsdxKXw5iXLZd0PbCyuSLCR3adVZ1+IskrIuMfGwwDgdLPfJuTP7bg6zr70SguU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4fvRADW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0460DC19425;
+	Mon, 25 Aug 2025 14:13:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756131220;
+	bh=3RLeKCKpDIk2eBgGx5sPwZfoBKyVmeEo49RWhYh8Kh8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=e4fvRADWc2SiGyvairwMKdDw1zm1wGOXThGQeER0f4MYqsGYBRhD4UrfH+q2kimaE
+	 978Vxb2gnRrcxwK29zKxBr5sDuyaM7DyuM68nemBfDcJoWAJvdefCrMf4ky3tm3mTR
+	 ZEf5XaC0Deu8RHdTatQRuIX1UHKAPHYmvItTm0G3jHrBoDa0LYl7qMs/ZPY2JpgApc
+	 lQtDHIn1yKhsLsiU+tvHyxR+ZutYlrHGoRZcd4IzOHtkeInzrDGgR65atrSWLdNsYt
+	 TaeLwZDvBl70cfWDcKc3Px3Inhk2GTRE0IlvBDIzWF32uT29HeibPtjI2oz6UM54HE
+	 cW6lqbzTmXm7Q==
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-74381fbd6f3so973401a34.2;
+        Mon, 25 Aug 2025 07:13:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU+ZKTcs2H+vLrKgIvFTXZBL0dsN6xLsr3ZC9I78D2Wu2hIH+8jkMSP41/cYIq51kdSw6CDRP2SZCw=@vger.kernel.org, AJvYcCU31NAMHGLiJSL7vGtItCLJY5s0jUAdR3sMwyRfm+qSikp7Liz6sk6nvOeef71BgF2oQIt9P6brS/8mrIw=@vger.kernel.org, AJvYcCUCIsGROdz8+qKvGy/zMPWBArUZIwHjHyOukJZdmFLSv86OWtmW3hFzobmb6viQiH0ilrE=@vger.kernel.org, AJvYcCUpaEvqIJcfrfK/wGmf+4jCmiLaEteujEieTnq78FTPn1snhOrfTBWVsHAv6ePGCQEuWAMpTJvzytkTyvkk@vger.kernel.org, AJvYcCUzdfnb7kLofKFxb1y3Q8fvI/X+T///5bVgsI6rwx9y8iWqk6NoPms12ttCNos9Xf7fqKEzLlNyfHhrxA==@vger.kernel.org, AJvYcCWemMcSx2OIbdB0hnJpGaiFoi/MxP4jomzuwUQvthWat4O+8GcCqlc1YdHzSj0oF7WTTGj6DdZm2XMPyRWKbydObT8=@vger.kernel.org, AJvYcCXp15T8q27ZRMIj8oIT/97J40RVT4aNPUenkJy+iThwifFJDUB5CFSBBCaBLD6cA1+r3iF1rDUaIZd5mw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxizDsgkRU4NZXkaOR4avUd7h7nVnM7GAnn9L7xwup6WzHwBdcv
+	Rjx5F+sL5x8blwTQWJ1bqnHyBpClUw0UjVYI0AfuyuKPqEnAiay1xGidaI/Oc3xy417ymzb6MGM
+	95pXfpIwqw40MPnlC79galVaEPEDKB0k=
+X-Google-Smtp-Source: AGHT+IGEnV+1YshDCmjAscdFjkSNQru4o/XG/DWYuObgbMiwP57k9JdqOZlPe3YdSW0fnLXsvsMiCF3QToEZVDUm+Q8=
+X-Received: by 2002:a05:6830:d18:b0:742:fd7f:e105 with SMTP id
+ 46e09a7af769-74500aafdb9mr6734918a34.19.1756131219164; Mon, 25 Aug 2025
+ 07:13:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250825092833.42441-1-zhangzihuan@kylinos.cn>
+In-Reply-To: <20250825092833.42441-1-zhangzihuan@kylinos.cn>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 25 Aug 2025 16:13:27 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g7rJn=z5p4DuJJoPpZrR5ismYftpDWp5X=z74DqaGYBQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwCyvYKc8Ipwt4NeaLRZNsWY9t1kMBiUFhDRbkfLg-XPnoGM5Pxq1PIQzg
+Message-ID: <CAJZ5v0g7rJn=z5p4DuJJoPpZrR5ismYftpDWp5X=z74DqaGYBQ@mail.gmail.com>
+Subject: Re: [PATCH v1] cpufreq: use __free() for all cpufreq_cpu_get() references
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Markus Mayer <mmayer@broadcom.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Len Brown <lenb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
+	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
+	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, x86@kernel.org, 
+	kvm@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	imx@lists.linux.dev, linux-omap@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The variable 'de' was declared but never used in the ext4_init_new_dir()
-function, causing a compiler warning:
-variable 'de' set but not used [-Werror=unused-but-set-variable]
-Remove the unused declaration to clean up the code and fix the warning.
+On Mon, Aug 25, 2025 at 11:29=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylinos.=
+cn> wrote:
+>
+> This patch replaces all remaining uses of cpufreq_cpu_get() with
+> the __free(cpufreq_cpu_put) annotation.
+>
+> Motivation:
+> - Ensures automatic cleanup of policy references when they go out of scop=
+e,
+>   reducing the risk of forgetting to call cpufreq_cpu_put() on early retu=
+rn
+>   or error paths.
+> - Brings the code in line with the latest kernel coding style and best
+>   practices for managing reference-counted objects.
+> - No functional changes are introduced; behavior remains the same,
+>   but reference counting is now safer and easier to maintain.
+>
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> ---
+>  arch/arm64/kernel/topology.c                  |  9 +++----
+>  arch/x86/kvm/x86.c                            | 10 ++++----
+>  drivers/acpi/processor_thermal.c              | 13 ++++------
+>  drivers/cpufreq/brcmstb-avs-cpufreq.c         |  4 +---
+>  drivers/cpufreq/cppc_cpufreq.c                |  4 +---
+>  drivers/cpufreq/intel_pstate.c                |  3 +--
+>  drivers/cpufreq/longhaul.c                    |  3 +--
+>  drivers/cpufreq/mediatek-cpufreq.c            |  6 ++---
+>  drivers/cpufreq/powernv-cpufreq.c             |  6 ++---
+>  drivers/cpufreq/s5pv210-cpufreq.c             |  3 +--
+>  drivers/cpufreq/tegra186-cpufreq.c            |  3 +--
+>  drivers/devfreq/governor_passive.c            | 19 ++++-----------
+>  drivers/gpu/drm/i915/gt/intel_llc.c           |  3 +--
+>  drivers/macintosh/windfarm_cpufreq_clamp.c    |  4 +---
+>  drivers/powercap/dtpm_cpu.c                   | 24 ++++++-------------
+>  drivers/thermal/imx_thermal.c                 |  7 ++----
+>  .../ti-soc-thermal/ti-thermal-common.c        |  5 +---
+>  kernel/power/energy_model.c                   |  7 ++----
+>  18 files changed, 40 insertions(+), 93 deletions(-)
 
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
----
- fs/ext4/namei.c | 2 --
- 1 file changed, 2 deletions(-)
+This changes different pieces of code maintained by different people
+and the changes are not interdependent AFAICS, so better send it as a
+series of separate patches.
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index d83f91b62317..bb2370829928 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -2965,7 +2965,6 @@ int ext4_init_new_dir(handle_t *handle, struct inode *dir,
- 			     struct inode *inode)
- {
- 	struct buffer_head *dir_block = NULL;
--	struct ext4_dir_entry_2 *de;
- 	ext4_lblk_t block = 0;
- 	int err;
- 
-@@ -2982,7 +2981,6 @@ int ext4_init_new_dir(handle_t *handle, struct inode *dir,
- 	dir_block = ext4_append(handle, inode, &block);
- 	if (IS_ERR(dir_block))
- 		return PTR_ERR(dir_block);
--	de = (struct ext4_dir_entry_2 *)dir_block->b_data;
- 	err = ext4_init_dirblock(handle, inode, dir_block, dir->i_ino, NULL, 0);
- 	if (err)
- 		goto out;
--- 
-2.50.1
-
+Thanks!
 
