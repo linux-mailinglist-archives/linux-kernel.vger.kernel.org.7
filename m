@@ -1,159 +1,263 @@
-Return-Path: <linux-kernel+bounces-784837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C08B34244
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:56:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32365B34259
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352B9163F63
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:56:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD3113AA9C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034292F2911;
-	Mon, 25 Aug 2025 13:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252DE2F3617;
+	Mon, 25 Aug 2025 13:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FtUejWJS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xI18C57R"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8952F28EC;
-	Mon, 25 Aug 2025 13:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285602F2916
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756129742; cv=none; b=seyREd536ESFM86ibTz63T6vY2/xg9GUwN088yHqzfPXg844pbtT/rKxbBl7UE/TTWkYwTW2v7DyTYA29T6INasVys+EQY1XKjj8tG++p6q6eKrZPeR4l0M//HHN1Ba3bLL7zkD4x0UAkN1M+3IZip2isDsmt+mW1B9MkE/wLCs=
+	t=1756129748; cv=none; b=Ub1xzW44zFY4WDuogyRxWjgkoCz70K4imxj05rEDNCl+2TOGH0KQ7wUnRKlf8WR0dBQn6Sl0dKCkaAVVBDjgiDhhH6xZraLOLx/LyV9FqpuI1g8QhliKmhp66WD8m8ZkUMowJxrd+Ymxsg87S9cbm69CdK5jqcJ8PlQ0NTiPro8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756129742; c=relaxed/simple;
-	bh=2JIQtST7ZN+nR+CyfTh1cBuXQlpBVKdvovu1zUOkCh8=;
+	s=arc-20240116; t=1756129748; c=relaxed/simple;
+	bh=M+3aLG5O1Iyt0A5EfM0+G7YSFPkj1Z+V9I8upPF+K+8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R6GvZzmbhwAEA22Se7GMDN2dnqqjf7K3UmameAfwrZuUFeKzIrCs4ZwKMsKOat2siBjXyFu/Or+lWOjPw2Jo6Jn0thGIN2Oi+RFG1dxAr5DtQaA9i0R6grl3/HivP2fQWL63KwqIICNFHlKF0v1AGUKRScJHUkan4ydyLo3ynGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FtUejWJS; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756129740; x=1787665740;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2JIQtST7ZN+nR+CyfTh1cBuXQlpBVKdvovu1zUOkCh8=;
-  b=FtUejWJSfUCTYhxWRdJ03GcB4pgYSDqeNYMq5pVy55wR0cfHcO9R2gR9
-   oTKAuHuZH3GSh5qmX5QLQ/y5G6qw3hcuOA0XpJRmNICygqiygK8jBlMW+
-   xmglGijkK1iyfWp9AqVQf+ymG+suEDtRYqRHFw4IO5twQOBoqb40AdCDl
-   +MipC9milk9ZC4V28VvV7k0BdSg1p1Woln3SjBezNT+iJmfxZZ64CJ3si
-   cRpVV3WKH/XeV++dYjwDwsvkAqa4weHnSyu+U27VHt6siIqCS96rLFwW9
-   3DZI5w7jbVDmJR0w+puTdqHhS+50lyjMK95FAusUqvoIkpjhzURSoWU8y
-   A==;
-X-CSE-ConnectionGUID: +pWoOg0nSlSisAuEpd2zbg==
-X-CSE-MsgGUID: 3yVml97VRXm8hriVCVFXuA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="58283940"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="58283940"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 06:48:59 -0700
-X-CSE-ConnectionGUID: U1aWIXVHRQuBnYslC8Qzlw==
-X-CSE-MsgGUID: SG7wkakdRtyMEvapR2kKOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
-   d="scan'208";a="169693784"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 06:48:56 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uqXZ7-00000008WUS-1yJs;
-	Mon, 25 Aug 2025 16:48:53 +0300
-Date: Mon, 25 Aug 2025 16:48:53 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Ioana Risteiu <Ioana.Risteiu@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ramona Nechita <ramona.nechita@analog.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/4] iio: adc: update ad7779 to use IIO backend
-Message-ID: <aKxpxVJTRO90Tz-W@smile.fi.intel.com>
-References: <20250825105121.19848-1-Ioana.Risteiu@analog.com>
- <20250825105121.19848-5-Ioana.Risteiu@analog.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=vBtQEL1CNg96LQW9x9DROFPdMhJXHBayQbn9PKDJJVTYhfgqIP689cPQVpz4ybDnpxtq7Q0dzdpdXL1TAAWoF4FkRiAhCVjZkgd9UVeBPu+NuP56SKOnT4+TV6FH+TY5R5dT1yAM8/X7CTawPY4BJ+oAdh5eKdL2iVE6+VFQJVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xI18C57R; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24611734e18so312355ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 06:49:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756129745; x=1756734545; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=EPr98kGx2moAT0RVFoQtEyPZgoeJKLmMTUQO/3/PhCw=;
+        b=xI18C57RcBFTc4MuHQ1rdQJnQdUNbUGzYSPoxgNvg1SfeSaVfRvi5nLI/kSLfP4QZL
+         nYVXIeRVz/lPftPx5jGGSZCuYkJbfTTnDO1GDgb2ZLSZ03atI39YLI49SR4ZFI85ozq3
+         086oGoA4IaP+nznNrEcE/l1Mjl4zRJ3p3oiki0W2+2HCPSO/oDB/H8gUzOSEgmrz6GjL
+         3xtvipBIM/WL1/hN6AwO9EqZ7dIhkjzvnolvuJLlZDR3LR0fbicObWRCT/QYynhGJGLZ
+         sez80JZGB+POaxfdKK597AoYKR0HjQ9vatgTczfrutaF9Al1oBGK5vzLF6zwmKk/XRQg
+         m1Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756129745; x=1756734545;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EPr98kGx2moAT0RVFoQtEyPZgoeJKLmMTUQO/3/PhCw=;
+        b=Mch8z1uhM8eEhceZdRnUmNuMF6dPgHmAhWOqel/V+S4IFrCDjtfqesZ2hxzYfFCOH8
+         VO5jeoymsbUI/7LI7bBJk7qYbC3yhCuLN/Wm3RXU6h4yIMPuWrXVmh5YPIgivcBZ/eWT
+         5na882fJC5hehaEMyA1L2RuPue2xLQAkqcOXT5ll2YJZF/k2b/RiPOnpWIcXPGqFLjlW
+         5n4wtBQyt7BBL522RM4ELkaK8q6UI3nkQibXsBPDZxD30Xyb3fIpLqNYpZQp8FbhimAS
+         PIoC03mGHO7tNzij/4gB9Xgl8atgrm1x0GahcXxYt1vqk0rQ+WT3Z/9W0EKejptd42bU
+         gwWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBlszUyprZXQoZbIsEEcCJWQAC2oDSf0YQkAz9CxkgYtfRRYvIRc3eB840f+3d7nNpSQVMTGcBmeYg464=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPUaW6g8Jx5HIO7A4sRcoTbLNI15j8oSnQKNPBD1SCS3iAcW93
+	wwe/cnKz6WZ36evXTzUQ73NEf/PSg6jR+eyAa61uA4BcgIpkA3CZzOYWWO+1lPdqNg==
+X-Gm-Gg: ASbGnct/D5F42yzuG8FxHFLhLWT/LsDJzA9n9oM3akG9WRhFGTAkNZzAHmapmvq8tf9
+	xFjuY9ULrbagY+x64CdZcuw5qJEJDZlxWcDrwAUvPoqwY0NDHP0D/vgFmQkgYs51EgCN/E72PqU
+	qp1oUWtq5iNU5XzwPhCYxEryQowYl45x2sGp3X3qpOvHH+xex70+rmJ50cdJhYy+9MouhAgx/cP
+	7YqT8e1uFOkpAPJRGXT+mOAHDgjJerHONwY0eB4Tc/ESpLmkIPkIqfy3gCBGUnv1f5d/IjI9PJp
+	0I39rNWK3z3GhxCQayiKoNcR+TzmMLI1zlV3sr35wefD+dstdxjI4ssl1z4bQs94QyIqduoH/Kc
+	1laQJGaUIJh7wac6sBhw+5ZcWAAtp4X/fG6uxicEt6R5Ty7/tg9+zS+STzq5DO+CExm1JBRe37v
+	6P
+X-Google-Smtp-Source: AGHT+IFztbDXKXjAyRb5SxPdh+Iq/NxAzHcFUzomLyrk9sUfwujvvdLN8bMYYRRWXraeewthphphRw==
+X-Received: by 2002:a17:902:e5c4:b0:246:1f3e:4973 with SMTP id d9443c01a7336-2466f9ec151mr6423705ad.6.1756129744951;
+        Mon, 25 Aug 2025 06:49:04 -0700 (PDT)
+Received: from google.com (169.224.198.35.bc.googleusercontent.com. [35.198.224.169])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-771ecfd76f3sm1397728b3a.63.2025.08.25.06.49.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 06:49:04 -0700 (PDT)
+Date: Mon, 25 Aug 2025 13:48:59 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: Eric Auger <eric.auger@redhat.com>,
+	Alex Williamson <alex.williamson@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, clg@redhat.com
+Subject: Re: [PATCH 2/2] vfio/platform: Mark for removal
+Message-ID: <aKxpyyKvYcd84Ayi@google.com>
+References: <20250806170314.3768750-1-alex.williamson@redhat.com>
+ <20250806170314.3768750-3-alex.williamson@redhat.com>
+ <aJ9neYocl8sSjpOG@google.com>
+ <20250818105242.4e6b96ed.alex.williamson@redhat.com>
+ <aKNj4EUgHYCZ9Q4f@google.com>
+ <00001486-b43d-4c2b-a41c-35ab5e823f21@redhat.com>
+ <aKXnzqmz-_eR_bHF@google.com>
+ <43f198b5-60f8-40f5-a2cd-ff21b31a91d4@redhat.com>
+ <aKYvS3qgV_dW1woo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250825105121.19848-5-Ioana.Risteiu@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aKYvS3qgV_dW1woo@google.com>
 
-On Mon, Aug 25, 2025 at 01:51:19PM +0300, Ioana Risteiu wrote:
-> Add a new functionality to ad7779 driver that streams data through data
-> output interface using IIO backend interface.
+On Wed, Aug 20, 2025 at 08:25:47PM +0000, Mostafa Saleh wrote:
+> Hi Eric,
+> 
+> On Wed, Aug 20, 2025 at 06:29:27PM +0200, Eric Auger wrote:
+> > Hi Mostafa,
+> > 
+> > On 8/20/25 5:20 PM, Mostafa Saleh wrote:
+> > > Hi Eric,
+> > >
+> > > On Tue, Aug 19, 2025 at 11:58:32AM +0200, Eric Auger wrote:
+> > >> Hi Mostafa,
+> > >>
+> > >> On 8/18/25 7:33 PM, Mostafa Saleh wrote:
+> > >>> On Mon, Aug 18, 2025 at 10:52:42AM -0600, Alex Williamson wrote:
+> > >>>> On Fri, 15 Aug 2025 16:59:37 +0000
+> > >>>> Mostafa Saleh <smostafa@google.com> wrote:
+> > >>>>
+> > >>>>> Hi Alex,
+> > >>>>>
+> > >>>>> On Wed, Aug 06, 2025 at 11:03:12AM -0600, Alex Williamson wrote:
+> > >>>>>> vfio-platform hasn't had a meaningful contribution in years.  In-tree
+> > >>>>>> hardware support is predominantly only for devices which are long since
+> > >>>>>> e-waste.  QEMU support for platform devices is slated for removal in
+> > >>>>>> QEMU-10.2.  Eric Auger presented on the future of the vfio-platform
+> > >>>>>> driver and difficulties supporting new devices at KVM Forum 2024,
+> > >>>>>> gaining some support for removal, some disagreement, but garnering no
+> > >>>>>> new hardware support, leaving the driver in a state where it cannot
+> > >>>>>> be tested.
+> > >>>>>>
+> > >>>>>> Mark as obsolete and subject to removal.  
+> > >>>>> Recently(this year) in Android, we enabled VFIO-platform for protected KVM,
+> > >>>>> and it’s supported in our VMM (CrosVM) [1].
+> > >>>>> CrosVM support is different from Qemu, as it doesn't require any device
+> > >>>>> specific logic in the VMM, however, it relies on loading a device tree
+> > >>>>> template in runtime (with “compatiable” string...) and it will just
+> > >>>>> override regs, irqs.. So it doesn’t need device knowledge (at least for now)
+> > >>>>> Similarly, the kernel doesn’t need reset drivers as the hypervisor handles that.
+> > >>>> I think what we attempt to achieve in vfio is repeatability and data
+> > >>>> integrity independent of the hypervisor.  IOW, if we 'kill -9' the
+> > >>>> hypervisor process, the kernel can bring the device back to a default
+> > >>>> state where the device isn't wedged or leaking information through the
+> > >>>> device to the next use case.  If the hypervisor wants to support
+> > >>>> enhanced resets on top of that, that's great, but I think it becomes
+> > >>>> difficult to argue that vfio-platform itself holds up its end of the
+> > >>>> bargain if we're really trusting the hypervisor to handle these aspects.
+> > >>> Sorry I was not clear, we only use that in Android for ARM64 and pKVM,
+> > >>> where the hypervisor in this context means the code running in EL2 which
+> > >>> is more privileged than the kernel, so it should be trusted.
+> > >>> However, as I mentioned that code is not upstream yet, so it's a valid
+> > >>> concern that the kernel still needs a reset driver.
+> > >>>
+> > >>>>> Unfortunately, there is no upstream support at the moment, we are making
+> > >>>>> some -slow- progress on that [2][3]
+> > >>>>>
+> > >>>>> If it helps, I have access to HW that can run that and I can review/test
+> > >>>>> changes, until upstream support lands; if you are open to keeping VFIO-platform.
+> > >>>>> Or I can look into adding support for existing upstream HW(with platforms I am
+> > >>>>> familiar with as Pixel-6)
+> > >>>> Ultimately I'll lean on Eric to make the call.  I know he's concerned
+> > >>>> about testing, but he raised that and various other concerns whether
+> > >>>> platform device really have a future with vfio nearly a year ago and
+> > >>>> nothing has changed.  Currently it requires a module option opt-in to
+> > >>>> enable devices that the kernel doesn't know how to reset.  Is that
+> > >>>> sufficient or should use of such a device taint the kernel?  If any
+> > >>>> device beyond the few e-waste devices that we know how to reset taint
+> > >>>> the kernel, should this support really even be in the kernel?  Thanks,
+> > >>> I think with the way it’s supported at the moment we need the kernel
+> > >>> to ensure that reset happens.
+> > >> Effectively my main concern is I cannot test vfio-platform anymore. We
+> > >> had some CVEs also impacting the vfio platform code base and it is a
+> > >> major issue not being able to test. That's why I was obliged, last year,
+> > >> to resume the integration of a new device (the tegra234 mgbe), nobody
+> > >> seemed to be really interested in and this work could not be upstreamed
+> > >> due to lack of traction and its hacky nature.
+> > >>
+> > >> You did not really comment on which kind of devices were currently
+> > >> integrated. Are they within the original scope of vfio (with DMA
+> > >> capabilities and protected by an IOMMU)? Last discussion we had in
+> > >> https://lore.kernel.org/all/ZvvLpLUZnj-Z_tEs@google.com/ led to the
+> > >> conclusion that maybe VFIO was not the best suited framework.
+> > > At the moment, Android device assignement only supports DMA capable
+> > > devices which are behind an IOMMU, and we use VFIO-platform for that,
+> > > most of our use cases are accelerators.
+> > >
+> > > In that thread, I was looking into adding support for simpler devices
+> > > (such as sensors) but as discussed that won’t be done through
+> > > VFIO-platform.
+> > >
+> > > Ignoring Android, as I mentioned, I can work on adding support for
+> > > existing upstream platforms (preferably ARM64, that I can get access to)
+> > > such as Pixel-6, which should make it easier to test.
+> > >
+> > > Also, we have some interest on adding new features such as run-time
+> > > power management.
+> > 
+> > OK fair enough. If Alex agrees then we can wait for those efforts. Also
+> > I think it would make sense to formalize the way you reset the devices
+> > (I understand the hyp does that under the hood).
+> 
+> I think currently - with some help from the platform bus- we can rely on
+> the existing shutdown method, instead of specific hooks.
+> As the hypervisor logic will only be for ARM64 (at least for now), I can
+> look more into this.
+> 
+> But I think the top priority would be to establish a decent platform to
+> test with, I will start looking into Pixel-6 (although that would need
+> to land IOMMU support for it upstream first). I also have a morello
+> board with SMMUv3, but I think it's all PCI.
+> 
+> > >
+> > >> In case we keep the driver in, I think we need to get a garantee that
+> > >> you or someone else at Google commits to review and test potential
+> > >> changes with a perspective to take over its maintenance.
+> > > I can’t make guarantees on behalf of Google, but I can contribute in
+> > > reviewing/testing/maintenance of the driver as far as I am able to.
+> > > If you want, you can add me as reviewer to the driver.
+> > 
+> > I understand. I think the usual way then is for you to send a patch to
+> > update the Maintainers file.
+> 
+> I see, I will send one shortly.
+> 
 
-...
+I could contribute time to help with the maintenance effort here, if
+needed. Please let me know if you'd like that.
 
-> +static int ad7779_set_data_lines(struct iio_dev *indio_dev, u32 num_lanes)
-> +{
-> +	struct ad7779_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	if (num_lanes != AD7779_1LINE &&
-> +		num_lanes != AD7779_2LINES &&
-> +		num_lanes != AD7779_4LINES)
+> Thanks,
+> Mostafa
+> 
 
-Wrong indentation.
+Thanks,
+Praan
 
-> +		return -EINVAL;
-> +
-> +	ret = ad7779_set_sampling_frequency(st, num_lanes * AD7779_DEFAULT_SAMPLING_1LINE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = iio_backend_num_lanes_set(st->back, num_lanes);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return ad7779_spi_write_mask(st, AD7779_REG_DOUT_FORMAT,
-> +				     AD7779_DOUT_FORMAT_MSK,
-> +				     FIELD_PREP(AD7779_DOUT_FORMAT_MSK, 2 - ilog2(num_lanes)));
-> +}
-
-...
-
-> +static int ad7779_setup_channels(struct iio_dev *indio_dev, const struct ad7779_state *st)
-> +{
-> +	struct iio_chan_spec *channels;
-> +	struct device *dev = &st->spi->dev;
-> +
-> +	channels = devm_kmemdup_array(dev, st->chip_info->channels,
-> +				      ARRAY_SIZE(ad7779_channels),
-> +				      sizeof(*channels), GFP_KERNEL);
-> +	if (!channels)
-> +		return -ENOMEM;
-> +
-> +	for (unsigned int i = 0; i < ARRAY_SIZE(ad7779_channels); i++)
-> +		channels[i].scan_type.endianness = IIO_CPU;
-> +
-> +	indio_dev->channels = channels;
-
-So, here I expect to see num_channels assignment as well as near to any other
-channels assignment.
-
-> +
-> +	return 0;
-> +}
-
-Otherwise LGTM.
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> > 
+> > Thanks
+> > 
+> > Eric
+> > >
+> > > Thanks,
+> > > Mostafa
+> > >
+> > >
+> > >> Thanks
+> > >>
+> > >> Eric
+> > >>
+> > >>> But maybe instead of having that specific reset handler for VFIO, we
+> > >>> can rely on the “shutdown” method already existing in "platform_driver"?
+> > >>> I believe that should put the device in a state where it can be re-probed
+> > >>> safely. Although not all devices implement that but it seems more generic
+> > >>> and scalable.
+> > >>>
+> > >>> Thanks,
+> > >>> Mostafa
+> > >>>
+> > >>>> Alex
+> > >>>>
+> > 
+> 
 
