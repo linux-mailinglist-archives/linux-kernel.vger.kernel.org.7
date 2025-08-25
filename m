@@ -1,111 +1,121 @@
-Return-Path: <linux-kernel+bounces-785041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1CDEB34512
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:05:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 511AEB34518
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1456D1B225A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:03:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 299745E5CB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB7D2FC01F;
-	Mon, 25 Aug 2025 15:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A7B2FDC2F;
+	Mon, 25 Aug 2025 15:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="YMUV2YRj"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vG+Hyy3G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81C9111BF;
-	Mon, 25 Aug 2025 15:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8313C1F462C;
+	Mon, 25 Aug 2025 15:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756134090; cv=none; b=PT2IIOIQll87j9FXnpVqmV8Icwy1lZzBq+8MbC4U8YG/C9bWI7Wie9vDZEtN8CpXY/ZX3rv0O1KXOomX7/wWSTM3FTWUxJtwsTxOh6jl5QbPjNGmSaFst3JsW7eIXdG0TlW/lWZZEKfklv2Z9/Q3O3XLOINK2vzgJ3e5JG6aDiE=
+	t=1756134129; cv=none; b=MiEcZtCniVPsIZoQd3dhosuBEP1GyHUcXRWClDNTx3jwett9cm7U6GGG9zTE9SMUE9AfV3i92KzwAXxLxdbs4KyWYNHx4JZ2KOw03/qEOyQdJCzijxuUNqv5X0ITAOf243otfad00+QFSDKKVYTpV9shaEaFnyiDNbNvBtChRAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756134090; c=relaxed/simple;
-	bh=RMimBFG4FlqEvtp6v1dBdftJCWrHc+FKNd3AtGUu5vI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nC5ZBHvQAlFT0sXa4kS9juake5cRPY6vawpU4ifhSNYnaY68Xd2hqJSddhU5MdDpYMBAO3WeOK6Uwu54M4KCQFw2kWwGNnahHXA86YEk97plySeDORRTcKGLLFTTw2M6QWWVa2cc0ZS08oGwOU8z7deU3FGCu/rF2OIWAxAjLJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=YMUV2YRj; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 80AD9A0B9C;
-	Mon, 25 Aug 2025 17:01:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=+Atn993zu+xTI4sKFEPw
-	tu3dFIccwWGD6f2ILNMtxTc=; b=YMUV2YRjO1mx1K9PTBAd44Q6fB4QUlIljb03
-	E29U6JT5siWeza5ouQQ5b5YiI4aCy1U62YZImtkwTnxu/5x/s2UEnOTfLC1EN8Dc
-	47A4S5Y/4ZxwwDp7MnP0VA+WSlJEh6n2ktGEHtUGQo05UTPRimvc9kcDwfKXLzDu
-	BAAb9l0AhEFZzD7i+XeVtR8Txb1HfM4d45SsuqZzSOT30N486VUu7nJfZf/nHOxh
-	D6otYAGfwoP9RSEE4ZqQPpTdjhUbd3pxgcpA17DKZ6q/z9nEUieQDNj6lK4VNMZR
-	slzIihLC/x7ejB7ghCE6uHNAtGXLFInu7Sm0wCHuk6haZioTY0o1iBoZsyKXjmuY
-	NsSUBkcgKFaIxVfUF2enYWSw3TMoLshzxN/x5BEUtZLl2AJXfbVVXAIt2Z5P6RqX
-	0rIDyWn7MsXuCazrT4UflsvNkwN8CvJzbzXkFpQGGPrj5IzIS5EIAheJBdHeQrPy
-	svnB20WzIFmazIyTZxN0OViA+Hhhbds0M/aX8Sf8MLV89cYTKrrOx3kqCEd5a/pm
-	fKAMbpJ/I9JCWzcH+kp0pmELb54ZtIwSaaYO0h4Ca3BatSLKEQWpqRfiBqX8EQdt
-	+CIwq4PR0jBI9MCZsoqBX5/cafP/WtU9p7KQfJu0CapQiDS1Ib+V0PixSWYXEuqc
-	ghEHjRM=
-Message-ID: <4876fc17-6118-418c-9a7c-dd3feeb4fa88@prolan.hu>
-Date: Mon, 25 Aug 2025 17:01:19 +0200
+	s=arc-20240116; t=1756134129; c=relaxed/simple;
+	bh=QtYadYVpuU36FicG8Ot0RqZpf3MIvOtjuuOILupTtDs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N2JuUfQWb4xzs3JegUSiah8XfWNhsPKoBACKKRNZH018kN3GVXHmACk3vRzjGvoCwq7TTZBMNQEhklorSvU/VbbsThLbYWgnl1cKSpZmjD1gAoau7pM8ckJkPUdJdM4Ajs2If3ebt1UPIk9LCOsJCX+Dt/CKpBmXJfbRLCbAutQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vG+Hyy3G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F371AC4CEED;
+	Mon, 25 Aug 2025 15:01:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756134129;
+	bh=QtYadYVpuU36FicG8Ot0RqZpf3MIvOtjuuOILupTtDs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vG+Hyy3G8Z+mN29cJisoiz2BzFyRhBtWaCABZ0bjWEsACEwvaTOyiCj/nZ7Y2bri+
+	 t6juHxzc8grBN3lhHRXXeG0M4DUXYaciZYbdsDGO1KxMly7jJEDM6uX9tVS+CVVjOi
+	 DLJjnjWTjftKlVfC30CXvhTP2xXloqSHlFYq37XUUsOf5tSZxOUARrruDkYD/Eboi0
+	 3zCy9LEBbV92EuLw1hINbk5rxgrWEPlr552ulsCzZZwwadGTyTjdm8QEsH7VYeDFlY
+	 6k0z6Vb9EW2G1fJuaZIf9oGFtdmZY5sE5p2NvaEwldADlOEEZaipEKz34qkPQRb9cd
+	 dmuKNJSWRIfKA==
+Date: Mon, 25 Aug 2025 16:01:40 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Eugen Hristev <eugen.hristev@linaro.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Cai Huoqing <cai.huoqing@linux.dev>, Haibo Chen <haibo.chen@nxp.com>, Shawn
+ Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+ <festevam@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
+ <magnus.damm@gmail.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@csie.org>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
+ Francesco Dolcini <francesco@dolcini.it>, =?UTF-8?B?Sm/Do28=?= Paulo
+ =?UTF-8?B?R29uw6dhbHZlcw==?= <jpaulo.silvagoncalves@gmail.com>, Rui Miguel
+ Silva <rmfrfs@gmail.com>, Jean-Baptiste Maneyrol
+ <jean-baptiste.maneyrol@tdk.com>, Subhajit Ghosh
+ <subhajit.ghosh@tweaklogic.com>, Gerald Loacker
+ <gerald.loacker@wolfvision.net>, Andreas Klinger <ak@it-klinger.de>, Crt
+ Mori <cmo@melexis.com>, Waqar Hameed <waqar.hameed@axis.com>, Julien
+ Stephan <jstephan@baylibre.com>, Peter Zijlstra <peterz@infradead.org>,
+ Greg KH <gregkh@linuxfoundation.org>, Bo Liu <liubo03@inspur.com>, Al Viro
+ <viro@zeniv.linux.org.uk>, Sean Nyekjaer <sean@geanix.com>, Frank Li
+ <Frank.Li@nxp.com>, Han Xu <han.xu@nxp.com>, Rayyan Ansari
+ <rayyan@ansari.sh>, Gustavo Vaz <gustavo.vaz@usp.br>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Alexandru Ardelean <aardelean@baylibre.com>,
+ "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, "Rob Herring (Arm)"
+ <robh@kernel.org>, Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>, Olivier
+ Moysan <olivier.moysan@foss.st.com>, Christophe JAILLET
+ <christophe.jaillet@wanadoo.fr>, Marcelo Schmitt
+ <marcelo.schmitt1@gmail.com>, Vasileios Amoiridis <vassilisamir@gmail.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Hans de Goede
+ <hansg@kernel.org>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Abhash Jha <abhashkumarjha123@gmail.com>, chuguangqing
+ <chuguangqing@inspur.com>, Shreeya Patel <shreeya.patel@collabora.com>,
+ Per-Daniel Olsson <perdaniel.olsson@axis.com>, =?UTF-8?B?QmFybmFiw6FzIEN6?=
+ =?UTF-8?B?w6ltw6Fu?= <barnabas.czeman@mainlining.org>, Neil Armstrong
+ <neil.armstrong@linaro.org>, David Laight <david.laight@aculab.com>, Jakob
+ Hauser <jahau@rocketmail.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v3 01/12] iio: accel: Remove redundant
+ pm_runtime_mark_last_busy() calls
+Message-ID: <20250825160140.6818bd0c@jic23-huawei>
+In-Reply-To: <20250825135401.1765847-2-sakari.ailus@linux.intel.com>
+References: <20250825135401.1765847-1-sakari.ailus@linux.intel.com>
+	<20250825135401.1765847-2-sakari.ailus@linux.intel.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: mdiobus: Move all reset registration to
- `mdiobus_register_reset()`
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Philipp
- Zabel" <p.zabel@pengutronix.de>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250825-b4-phy-rst-mv-prep-v1-1-6298349df7ca@prolan.hu>
- <aKxwVNffu9w8Mepl@shell.armlinux.org.uk>
- <724f69f0-7eab-40aa-84f0-07055f051175@prolan.hu>
- <aKx5DX09QZcbrXA6@shell.armlinux.org.uk>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <aKx5DX09QZcbrXA6@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: sinope.intranet.prolan.hu (10.254.0.237) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A296767155E607067
 
-Hi,
+On Mon, 25 Aug 2025 16:53:50 +0300
+Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
 
-On 2025. 08. 25. 16:54, Russell King (Oracle) wrote:
-> Now, I could nitpick your "because the PHY was never reset" - that's
-> untrue. The common problem is the PHY is _held_ in reset mode making
-> the PHY unresponsive on the MDIO bus.
-
-In our case, the problem is that refclk is turned off during init, and 
-then before PHY probe, it is turned back on, but reset is not being 
-asserted.
-
-> If your goal is to fix this, then rather than submitting piecemeal
-> patches with no explanation, I suggest you work on the problem and
-> come up with a solution as a series of patches (with commit
-> descriptions that explain _what_ and _why_ changes are being made)
-> and submit it with a cover message explaining the overall issue
-> that is being addressed.
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> pm_runtime_mark_last_busy().
 > 
-> That means we can review the patch series as a whole rather than
-> being drip-fed individual patches, which is going to take a very
-> long time to make forward progress.
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Very simple and mechanical change so I won't wait for additional reviews.
 
-We are still working on the comprehensive solution. I thought that in 
-the meantime, these small and lower-risk pieces could be reviewed and 
-picked up.
+I'm doing these one by one as I have questions on at least one later patch.
 
-Bence
-
+Applied this one.
 
