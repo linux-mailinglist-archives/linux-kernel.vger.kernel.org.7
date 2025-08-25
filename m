@@ -1,129 +1,120 @@
-Return-Path: <linux-kernel+bounces-785447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2CCAB34AC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:09:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E84C4B34ACF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD9111B2362F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:09:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9A431894C13
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C013B285069;
-	Mon, 25 Aug 2025 19:09:04 +0000 (UTC)
-Received: from smtp.uniroma2.it (smtp.uniroma2.it [160.80.4.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B355828153D;
+	Mon, 25 Aug 2025 19:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=palvencia.se header.i=@palvencia.se header.b="bT/9axJC"
+Received: from m101-out-mua-6.websupport.se (m101-out-mua-6.websupport.se [109.235.175.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AC22836BE;
-	Mon, 25 Aug 2025 19:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.80.4.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F3623BCEF;
+	Mon, 25 Aug 2025 19:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.235.175.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756148944; cv=none; b=cYurWlLNTNtEWT2DsETFaIfpvOv7c6yWqHuZzvB/xrWiI3FnSqbOfxhh6lrmkuuxRXdfruzr7rR+AZV+hD5RZlpONf3siG+xWbE2Ng7iunFUDhXOFhROJlCpIZMB0/a9miFjlgEX+P7OiwkMyFeiGR6UafBoZ4sfuNCrOvi0ChY=
+	t=1756149266; cv=none; b=p59mZBKDsGdWFuiuoU3If6iuTGzrhLEsVYGc99Jr//FH0jxapHDoz+KFz9ca59rpZEVQYeEncI3TqHdAPlpxcfOUQsCyGuC1+UvWB4bepy+z2d1ZE5LA+7FLCzad4I7YW0IFB9DpCDKIFguLzOijyxGgv/Xs+CV6UeoOOWNYsCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756148944; c=relaxed/simple;
-	bh=9Nn5ZXTPqHydySEm+Aq/8KSWqV9NKz7RWl79tb4PImI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kIbgbAfwd9WoC1nZ4uAvLA94mz2llm6NK4e5ERzoonw0RZv3QAOf3OPaaUPf8N+hkfe2vDqr1KKcjWzeXJUN7O2JkfeSX85hehCE80uE/hxrlL7ghEdl7X1j8/FtBbLEvHS/ws/JwZO/8PlSZ/r6dyYEilPwF3yd1k5YVOkLXNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniroma2.it; spf=pass smtp.mailfrom=uniroma2.it; arc=none smtp.client-ip=160.80.4.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniroma2.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniroma2.it
-Received: from localhost.localdomain ([160.80.103.126])
-	by smtp-2015.uniroma2.it (8.14.4/8.14.4/Debian-8) with ESMTP id 57PJ8NAK007054
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 25 Aug 2025 21:08:24 +0200
-From: Andrea Mayer <andrea.mayer@uniroma2.it>
-To: "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>,
-        Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc: Eric Biggers <ebiggers@kernel.org>, David Lebrun <dlebrun@google.com>,
-        Stefano Salsano <stefano.salsano@uniroma2.it>,
-        Paolo Lungaroni <paolo.lungaroni@uniroma2.it>,
-        Ahmed Abdelsalam <ahabdels.dev@gmail.com>,
-        Andrea Mayer <andrea.mayer@uniroma2.it>, stable@vger.kernel.org
-Subject: [PATCH net] ipv6: sr: fix destroy of seg6_hmac_info to prevent HMAC data leak
-Date: Mon, 25 Aug 2025 21:07:15 +0200
-Message-Id: <20250825190715.1690-1-andrea.mayer@uniroma2.it>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1756149266; c=relaxed/simple;
+	bh=k46bUg4VPtvIWCaMHCfix4FLIE4JV0woTpaHdDa3ARI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aD5RuKfzyxbo+h5vJ8POwhUNbFK+DVqd0svBFNVO3L2zOusch8U2VkDmS2R68KKig51OnpBzXYOgcag3i2YjXxhfrHI+7T8owOru0Dqz642R9CDwThDxSk9COCleHUdiBSQgLcBduDDJ9ZyUe9Oo1G5hkgw32nTXblXUOlSqX2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=palvencia.se; spf=pass smtp.mailfrom=palvencia.se; dkim=pass (2048-bit key) header.d=palvencia.se header.i=@palvencia.se header.b=bT/9axJC; arc=none smtp.client-ip=109.235.175.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=palvencia.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=palvencia.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=palvencia.se;
+	s=mail; t=1756148930;
+	bh=ukDsuI8s1UxUlNDIszPLCcP3lTY/1qlseTcq02pRApM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bT/9axJCPjJTbKMVTb11wCvMv1l78VnOc0K5h5YC/GH/wKbJeUOYc7iI4kiLfkZ1w
+	 Pc/jEzVqdqhShptvbmJ9GIRgWNUJ2o0cxL18cNvG/IeBiW+SqOhAaHlul+yNEpOUmb
+	 retkJo78ztHLYyAJfV+BZDuKBIbPbsVpiP4GK8065BQsZwp9fP5ZNQXDky69gmPXtC
+	 uOsE4txiazVgTXZUBgeRqnNeN9bIQ5M3xIIPwlNTsCJdxLtjLEVrT67ECRhqzI+OCT
+	 0RxQDZF6mz0zGcbe2khxi2eUNxr820/GL5K+Yd6PYXOuPFKOXbRCpf5QFA87H2ZjcY
+	 M0HbqMZ3LbCyQ==
+Received: from m101-u5-ing.websupport.se (unknown [10.30.5.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by m101-out-mua-6.websupport.se (Postfix) with ESMTPS id 4c9gLp3JKYz1wn0;
+	Mon, 25 Aug 2025 21:08:50 +0200 (CEST)
+X-Authenticated-Sender: per@palvencia.se
+Authentication-Results: m101-u5-ing.websupport.se;
+	auth=pass smtp.auth=per@palvencia.se smtp.mailfrom=per@palvencia.se
+Received: from rpi (unknown [193.180.91.108])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: per@palvencia.se)
+	by m101-u5-ing.websupport.se (Postfix) with ESMTPSA id 4c9gLn434Gztmd;
+	Mon, 25 Aug 2025 21:08:49 +0200 (CEST)
+Date: Mon, 25 Aug 2025 21:08:36 +0200
+From: Per Larsson <per@palvencia.se>
+To: =?UTF-8?B?SmVhbi1GcmFuw6dvaXM=?= Lessard <jefflessard3@gmail.com>
+Cc: Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 2/6] dt-bindings: auxdisplay: add Titan Micro
+ Electronics TM16xx
+Message-ID: <20250825210836.71fb0d0d@rpi>
+In-Reply-To: <20250825033237.60143-3-jefflessard3@gmail.com>
+References: <20250825033237.60143-1-jefflessard3@gmail.com>
+	<20250825033237.60143-3-jefflessard3@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.100.0 at smtp-2015
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Action: no action
+X-Out-Rspamd-Queue-Id: 4c9gLn434Gztmd
+X-Out-Spamd-Result: default: False [1.90 / 1000.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_COUNT_ZERO(0.00)[0];
+	TAGGED_RCPT(0.00)[dt];
+	ASN(0.00)[asn:35790, ipnet:193.180.91.0/24, country:SE];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	HAS_X_AS(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+]
+X-Out-Rspamd-Server: m101-rspamd-out-4
+X-purgate-type: clean
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
+X-purgate-size: 353
+X-purgate-ID: 155908::1756148930-06102069-1237CFD0/0/0
 
-The seg6_hmac_info structure stores information related to SRv6 HMAC
-configurations, including the secret key, HMAC ID, and hashing algorithm
-used to authenticate and secure SRv6 packets.
+On Sun, 24 Aug 2025 23:32:28 -0400
+Jean-Fran=C3=A7ois Lessard <jefflessard3@gmail.com> wrote:
 
-When a seg6_hmac_info object is no longer needed, it is destroyed via
-seg6_hmac_info_del(), which eventually calls seg6_hinfo_release(). This
-function uses kfree_rcu() to safely deallocate memory after an RCU grace
-period has elapsed.
-The kfree_rcu() releases memory without sanitization (e.g., zeroing out
-the memory). Consequently, sensitive information such as the HMAC secret
-and its length may remain in freed memory, potentially leading to data
-leaks.
+> +  - Digits use 1-cell addressing with explicit segment mapping
 
-To address this risk, we replaced kfree_rcu() with a custom RCU
-callback, seg6_hinfo_free_callback_rcu(). Within this callback, we
-explicitly sanitize the seg6_hmac_info object before deallocating it
-safely using kfree_sensitive(). This approach ensures the memory is
-securely freed and prevents potential HMAC info leaks.
-Additionally, in the control path, we ensure proper cleanup of
-seg6_hmac_info objects when seg6_hmac_info_add() fails: such objects are
-freed using kfree_sensitive() instead of kfree().
+This new digits layout introduced in v3 implies that a
+different segment mapping can be used per digit by a
+single display/controller. Is that really a thing?
 
-Fixes: 4f4853dc1c9c ("ipv6: sr: implement API to control SR HMAC structure")
-Fixes: bf355b8d2c30 ("ipv6: sr: add core files for SR HMAC support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Andrea Mayer <andrea.mayer@uniroma2.it>
----
- net/ipv6/seg6.c      |  2 +-
- net/ipv6/seg6_hmac.c | 10 +++++++++-
- 2 files changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/net/ipv6/seg6.c b/net/ipv6/seg6.c
-index 180da19c148c..88782bdab843 100644
---- a/net/ipv6/seg6.c
-+++ b/net/ipv6/seg6.c
-@@ -215,7 +215,7 @@ static int seg6_genl_sethmac(struct sk_buff *skb, struct genl_info *info)
- 
- 	err = seg6_hmac_info_add(net, hmackeyid, hinfo);
- 	if (err)
--		kfree(hinfo);
-+		kfree_sensitive(hinfo);
- 
- out_unlock:
- 	mutex_unlock(&sdata->lock);
-diff --git a/net/ipv6/seg6_hmac.c b/net/ipv6/seg6_hmac.c
-index fd58426f222b..19cdf3791ebf 100644
---- a/net/ipv6/seg6_hmac.c
-+++ b/net/ipv6/seg6_hmac.c
-@@ -57,9 +57,17 @@ static int seg6_hmac_cmpfn(struct rhashtable_compare_arg *arg, const void *obj)
- 	return (hinfo->hmackeyid != *(__u32 *)arg->key);
- }
- 
-+static void seg6_hinfo_free_callback_rcu(struct rcu_head *head)
-+{
-+	struct seg6_hmac_info *hinfo;
-+
-+	hinfo = container_of(head, struct seg6_hmac_info, rcu);
-+	kfree_sensitive(hinfo);
-+}
-+
- static inline void seg6_hinfo_release(struct seg6_hmac_info *hinfo)
- {
--	kfree_rcu(hinfo, rcu);
-+	call_rcu(&hinfo->rcu, seg6_hinfo_free_callback_rcu);
- }
- 
- static void seg6_free_hi(void *ptr, void *arg)
--- 
-2.20.1
-
+Regards
+Per Larsson
 
