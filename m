@@ -1,106 +1,161 @@
-Return-Path: <linux-kernel+bounces-784027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90B82B335B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:03:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E64B335B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A1E317FF01
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:03:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0C53200CED
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879A323D7FB;
-	Mon, 25 Aug 2025 05:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507D826CE35;
+	Mon, 25 Aug 2025 05:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FLfauTyV"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB4921ADA7;
-	Mon, 25 Aug 2025 05:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Zvhm+YTR"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EB272627;
+	Mon, 25 Aug 2025 05:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756098216; cv=none; b=VSw3sws3gUtoGU0aXXOfpn8eq88zZKcVvw4JenM5WCumIuz8Hgxh3ZD7pd34qB6JZ9IZqA44YX/ixi4ckvdQPAsq7iIoGrakkF7rjqFCp3KtwNWB3i9+g7e6NQ913vsAu1+l4naivbfA9ddZhQHqMvLBfKYE+vcoU7nq14a64/U=
+	t=1756098426; cv=none; b=iBY5XGU99JX0iBuKD/RXlEmCDdJxW7u0NMhZO5XSbQWxq9Hv/7McqVRaRiLcen4+7WIeUGzMuyT/kfFfr1KvaqmwVs6FDBcfsg2X0AeuyimHU2rivkaC3Gha9lUA6ZyKyDMVL+TRKjJDRhifwJlxZgxNPATte0LcuSOO7hNX9c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756098216; c=relaxed/simple;
-	bh=/wxRuPUnqwDUi3mX7f4z/dSu8GpTt8CnmlQ5Y4NdvE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Eo7zyrhCDftHgAxdFsTFoQbhQT8puDf0dMgD45QT3tzqjx5d9wqmdYa/EtmGlfs2gfO+QWxyRbHrg1pFOKWhmNydMLHLXh2DJeFuMb1WADB1u2sv16jAUGv/J4ZCKaD3EtZiPl2l65oTiqPAaz4P7Z1CWaWUR1ebN+iN6+Wwrqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=FLfauTyV; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1756098208;
-	bh=uWmuAPB/MHIfGgs+o7z2EHbmhKfnHJ/S+dG8/xZW2os=;
-	h=Date:From:To:Cc:Subject:From;
-	b=FLfauTyVG7PI6obiWY3u/SMGmzRZ/6tcbKbOotSCvMbD+NcUfzqMRob8oM7d2VQX/
-	 PS8jc3W5iIvBLzPTTy2l/9xM3G7yO9OJM4Y2m4cqhZW9QJSTRs0RSIEPzLd62s5UVX
-	 VSe0Yz6sFpiYAXekcU2++xV9NLdI2ZAk66ovvekhIO4qkv83Zk9o3FOcmfNHCykK6U
-	 1w3DKK87W7cK+9n8rI+X3boOahp5M8h56y/2LwarisLbJwJJKrb62/0+j+uRHyII0e
-	 ql152XtQV3ugQMdKYym88anr00TR/F8DMiefl7bUl3wgU5FSjayNX61mxHWptTKk/O
-	 l69zxn/jEV72w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c9JbM6SD5z4x3M;
-	Mon, 25 Aug 2025 15:03:27 +1000 (AEST)
-Date: Mon, 25 Aug 2025 15:03:26 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Tejun Heo <tj@kernel.org>
-Cc: Tiffany Yang <ynaffit@google.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the cgroup tree
-Message-ID: <20250825150326.696d7496@canb.auug.org.au>
+	s=arc-20240116; t=1756098426; c=relaxed/simple;
+	bh=CKnI+uQNf+KVjexwVCKM5ZrCgqpglIoTmizpooUa76M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kpJT68mUN1BqPKZU89kJeDFAgrbbrPqp0JoIdKKK8znXrk7CB2rVUQ96VvNl1zkArs9e58FCkl5AoZ6KsxdRoBDWDkhI57Y8NMMeNDoR63BM60kawcxovKwxSVRYpZQtPoxA7WPXTIQs+sBvr6Mm1VBjVtzYhXNuA2WNxQEUh6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Zvhm+YTR; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=zp
+	cWxOtKXy5d6EuCfY1TPJPyTbuk1GdgU+bYTYEPKBk=; b=Zvhm+YTRatEfBpgQ7J
+	gPTHVmRgTy5lMMs47GwIFj7R8gE7m6jDaDDgJOoANXZgsUN8nP9v/QsWzv2Qe2tH
+	U2RtQcY3TNRwvRRGl0XP56sD4hHTu+nLmH9Lt/GrOSomufnHzIERbB+cHIoJvRyv
+	5p4X3ts03rg/5lxT+xugfYW3M=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wBXHkJU76toR3+ODw--.7007S2;
+	Mon, 25 Aug 2025 13:06:28 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: willemdebruijn.kernel@gmail.com,
+	edumazet@google.com,
+	ferenc@fejes.dev
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v6] net: af_packet: Use hrtimer to do the retire operation
+Date: Mon, 25 Aug 2025 13:06:28 +0800
+Message-Id: <20250825050628.124977-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/flJ5qIWza9tOFkNivEEMyh5";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBXHkJU76toR3+ODw--.7007S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAryUuw13Kr43tw48Zr17Awb_yoWrGF1kpa
+	y2qry7Ar1kZr42va1xZF4kJFy5JwsxAr47Jr1fGr1jkFnrGF1UtFWjqFySqFW7Gr4rt3Z2
+	yr48Xr13ArnYk3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UHbyZUUUUU=
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiowCzCmirRh303wABso
 
---Sig_/flJ5qIWza9tOFkNivEEMyh5
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2025-08-25 at 2:08 +0800, Willem wrote:
 
-Hi all,
+> This is getting more complex than needed.
+> 
+> Essentially the lifecycle is that packet_set_ring calls hrtimer_setup
+> and hrtimer_del_sync.
+> 
+> Inbetween, while the ring is configured, the timer is either
+> 
+> - scheduled from tpacket_rcv and !is_scheduled
+>     -> call hrtimer_start
+> - scheduled from tpacket_rcv and is_scheduled
+>     -> call hrtimer_set_expires
 
-After merging the cgroup tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+We cannot use hrtimer_set_expires/hrtimer_forward_now when a hrtimer is
+already enqueued.  
+The WARN_ON(timer->state & HRTIMER_STATE_ENQUEUED) in hrtimer_forward
+already clearly indicates this point. The reason for not adding this
+WARN_ON in hrtimer_set_expires is that hrtimer_set_expires is an inline
+function, wory about increase code size.
+The implementation of perf_mux_hrtimer_restart actually checks whether
+the hrtimer is active when restarting the hrtimer.
 
-arm-linux-gnueabi-ld: kernel/cgroup/cgroup.o: in function `cgroup_core_loca=
-l_stat_show':
-kernel/cgroup/cgroup.c:3804:(.text+0x1374): undefined reference to `__aeabi=
-_uldivmod'
+static int perf_mux_hrtimer_restart(struct perf_cpu_pmu_context *cpc)
+{
+	struct hrtimer *timer = &cpc->hrtimer;
+	unsigned long flags;
 
-Caused by commit
+	raw_spin_lock_irqsave(&cpc->hrtimer_lock, flags);
+	if (!cpc->hrtimer_active) {
+		cpc->hrtimer_active = 1;
+		hrtimer_forward_now(timer, cpc->hrtimer_interval);
+		hrtimer_start_expires(timer, HRTIMER_MODE_ABS_PINNED_HARD);
+	}
+	raw_spin_unlock_irqrestore(&cpc->hrtimer_lock, flags);
 
-  afa3701c0e45 ("cgroup: cgroup.stat.local time accounting")
+	return 0;
+}
 
-I have used the cgroup tree from next-20250822 for today.
+Therefore, according to the overall design of the hrtimer, once the
+hrtimer is active, it is not allowed to set the timeout outside of the
+hrtimer callback nor is it allowed to restart the hrtimer.
 
---=20
-Cheers,
-Stephen Rothwell
+So two ways to update the hrtimer timeout:
+1. update expire time in the callback
+2. Call the hrtimer_cancel and then call hrtimer_start
+According to your suggestion, we don't call hrtimer_start inside the
+callback, would you accept calling hrtimer_cancel first and then calling
+hrtimer_start in the callback? However, this approach also requires
+attention, as hrtimer_cancel will block until the callback is running,
+so it is essential to ensure that it is not called within the hrtimer
+callback; otherwise, it could lead to a deadlock.
 
---Sig_/flJ5qIWza9tOFkNivEEMyh5
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+> - rescheduled from the timer callback
+>     -> call hrtimer_set_expires and return HRTIMER_RESTART
+> 
+> The only complication is that the is_scheduled check can race with the
+> HRTIMER_RESTART restart, as that happens outside the sk_receive_queue
+> critical section.
+> 
+> One option that I suggested before is to convert pkc->delete_blk_timer
+> to pkc->blk_timer_scheduled to record whether the timer is scheduled
+> without relying on hrtimer_is_queued. Set it on first open_block and
+> clear it from the callback when returning HR_NORESTART.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmir7p4ACgkQAVBC80lX
-0Gw2Owf/S6OOf54Z1fRDeHERrSxBHF4cLf3wDYenCSZrj+Y4WMU7M7B5IdmDjG6+
-m7hThLGCObTfs8J6hVDyutXd1HclRnn/RyrcAg+JrvOoTqZGTrrlqYfi9Tlx4pzz
-H754iCNTbitEzR5NffX3TPzX3laVkw+miGWn1j7h2OhsooAEviw+rJTfS8aCs0Tg
-ZQZjrURjc2kM/LyBOVoNtOyTjgAWP7kGWX1Jy9lSdg2s84Z+RbdELbJzsLhTU1Yi
-ZtHaZIwiNkcoIXcfFvUfq0b4lxEIUph3pawmt2mBMmh3KqkMFocbgj7TynrK6zkX
-ZY35kRk6IDZLrWSYzuFYfHhwCgAmTg==
-=GX4F
------END PGP SIGNATURE-----
+Do you agree with adding a callback variable to distinguish between
+scheduled from tpacket_rcv and scheduled from the callback? I really
+couldn't think of a better solution.
 
---Sig_/flJ5qIWza9tOFkNivEEMyh5--
+
+So, a possible solution may be?
+1. Continue to keep the callback parameter to strictly ensure whether it
+is within the callback.
+2. Use hrtimer_set_expires within the callback to update the timeout (the
+hrtimer module will enqueue the hrtimer when callback return)
+3. If it is not in callback, call hrtimer_cancel + hrtimer_start to restart
+the timer.
+4. To avoid the potential issue of the enqueue in step 2 and the
+hrtimer_start in step 3 happening simultaneously, which could lead to
+hrtimer_start being triggered twice in a very short period, the logic should
+be:
+if (hrtimer_cancel(...))
+    hrtimer_start(...);
+Additionally, the hrtimer_cancel check will also avoid hrtimer callback
+triggered once more when just called prb_del_retire_blk_timer by packet_set_ring.
+The hrtimer should be in an active state beginning from when
+prb_setup_retire_blk_timer is called to the time when prb_del_retire_blk_timer
+is called.
+
+
+Thanks
+Xin Zhao
+
 
