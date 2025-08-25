@@ -1,128 +1,179 @@
-Return-Path: <linux-kernel+bounces-785544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ABE8B34D21
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:59:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA431B34D2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 617CD204092
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:59:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 365E01B24D98
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DF229AAFD;
-	Mon, 25 Aug 2025 20:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PRvpxB6a"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15A61E89C;
-	Mon, 25 Aug 2025 20:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D35F28153A;
+	Mon, 25 Aug 2025 20:59:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A142E29AAFA;
+	Mon, 25 Aug 2025 20:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756155568; cv=none; b=cHkYXBSKBBTrRIRd5mp3cV/VjwZsR2EQMkYNGzDM+QCbLYy1WBsEzZ8rfvuHOZuHJReiZmUg8sILGqCDx9z9jU4v0+3yDhAO/hyf5FDj+Mm2YXnCmhT+mU49KuWx9jdLZ5nAaYLQpY6g96BiOEfPtFWE1qdq5JH9nJlok0n9oIw=
+	t=1756155598; cv=none; b=lWrSv7KStktQhsJiXgQ84uWOlVHkoyFZj5y+4HYivF7j84Wr4Sw6j/SE7tuVYbld+W80659rnujL1vsx8/rRQdVjNoggSQFREiERMzuCPyPJz/0n9+UwG6oXKa6HPm3gf1811G63QvBwhVz9dwMPf26+hoeifn8KERhVzvxuQ1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756155568; c=relaxed/simple;
-	bh=P+f9GWoudFIxOthJoiv89uXLOQljtr15VfO53YgP3og=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ug3GvYgmpNesbZgr6hk1Jyptt+YWU/8xSo0UX5C8PfXzucRnN45pXyiIw1vnzTWDtoSoLkqOo3n8sz5ngMqVTOfmqqnGXyTjgaiInfR08jNy+xTaLlKQwxlik9HBO0zBOHTW2beKOQMak/RAOUpKIO50KylxtWhUaAcRij7zrWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PRvpxB6a; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55f499c7f0cso988419e87.0;
-        Mon, 25 Aug 2025 13:59:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756155565; x=1756760365; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NEDyZPVAqJd7dy++5AJb59bf7HNDp+oeDl1YcGWBAgw=;
-        b=PRvpxB6a0AOkVmZl8nWYRcAXmiBwxB+TtWm98sVGpC5ZykDZp3xzXX8MzSNu6EwhjL
-         UIE3hohcYhGKUo9cpQmnlpRQSLP7CZ7HgpORafsHnCZgaEajGbj1E0QOlXxZr0AIy530
-         glQ2L3Ir9uGxVuc+xfYWrn5jIb6Tvium4Q4uYHeqSv625y0q0s3UpYEYa8gZ1q1vXzEN
-         MEEhsg7BIkJZdHZsElaTp5MmZoapJMCFFm86tSiINMhl+jxbEVdJv9l4EAXAUOiYLDOr
-         xrvxpPhgqiTespRDwBNtYGv/v478zseBGhE/24A+NZ3vv9mMtV//uC9/fe9ut1e+JPGZ
-         6GTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756155565; x=1756760365;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NEDyZPVAqJd7dy++5AJb59bf7HNDp+oeDl1YcGWBAgw=;
-        b=tdmFGEnXbg1Xg7+R5ZJvNfhppH5zA14LHHbRyDzRO4tsqTwCJhHAEG0XCCJ7NiAFiD
-         yQnNREHOfTUykDM72JZ4zTQnc3dgOcrWsjhKNeX32jskLlhoZWrgLB+khTavMwWFHil1
-         +Jxe/P2CyW8pBLA5USCC5aLbaf7+3FEuBkG4j6Djb7afM0wZ7Bn8A7MluugaZ1xZuawM
-         m+Y+X4l4YuMIBFwAZzn30OrPFgEju5l9AcSfzdTlFX7IfomRMbklh6Mlw3034XcOUiEZ
-         SDUQyCYrJciFEa4AH8zwq3P1IplTOhZG1engyyTt5md4o9BOEBAoaRdDAzjYdyeVvouS
-         /Bag==
-X-Forwarded-Encrypted: i=1; AJvYcCWtJwwoog2Gb43pnpKODkJbDWthdHesW01qJNLuOlXhHhMbB1+pjTV8NEdFFT/S8t20XgcTtat6yS8=@vger.kernel.org, AJvYcCXHEezEpd8yIVaZzWinoORLs0vmiBp3XkDZeVvNWaKD+4bO6mQhL57Ke5PnD4OA6CWJOk+JElF2Vh73qu2H@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUxEef00Ye7zdZ1CshqHFfhDj9ZPRTn3t2lSqBYy21kGxHIZvQ
-	+Wx9WR7H158TDKv6WU3Mvg0XONeMLA6e+7maxd03A1rvDxY2TUXaqcb9YuBDmHYt6EX9/2WyERp
-	s8kMcfWBsrXNIgb4NhZKIUTw6XEOKvhs=
-X-Gm-Gg: ASbGnct5KdxSvEtX6cA4yNpazspoL/ezIBPPeTsTFlZ0OdxCq334lEtpoc7m3AtA84p
-	rRd5UcE4tTBGMkOUUcO3/NR9dM4kvuunESbCaJtiaftaViBU54dkHMM/MDSqOISTboCkkpoRwwA
-	cT/jmSYHY23DK45z+SP8auJwbQ8U/+N6X1lnO2WQnTRsPZp/YFIGd7vSksfG9y2ZmHizd2Ntu/A
-	hsqmU8bAErYaTdhV1DkwOxFc6IqGPtrjRqOdc74Jg==
-X-Google-Smtp-Source: AGHT+IGqCPX51Ss3DOPVVuYpEQYg8NqfIXNFIutjVci2omtiLZJsnfXe8YEYi2uoT4Y/9ZKYK072kPWj6B7xClz5wN0=
-X-Received: by 2002:a05:6512:1581:b0:55c:c937:1106 with SMTP id
- 2adb3069b0e04-55f0d3715b2mr3714312e87.28.1756155564703; Mon, 25 Aug 2025
- 13:59:24 -0700 (PDT)
+	s=arc-20240116; t=1756155598; c=relaxed/simple;
+	bh=8rnIOqfs8LS68mVn1JICAyY+ZlmXShsrkgyAAXOYJ/c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uOytchcm/W9MMnKZm42cxlinX6cp133TqidJGehmtV7g5jduNlWF6p61RN31bcgadV9KNpQBKrnaejq1CkjH3+pJbVLm5sN37L2yM5p2C43JdWohUg/yKOB9dbZrAmSKCr0g4KUt9wLRCFjRF8heSwssh4kRbCHqd1uhUmFWN0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48B081E32;
+	Mon, 25 Aug 2025 13:59:45 -0700 (PDT)
+Received: from beelzebub.ast.arm.com (unknown [10.118.29.240])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 544F13F63F;
+	Mon, 25 Aug 2025 13:59:53 -0700 (PDT)
+From: Stuart Yoder <stuart.yoder@arm.com>
+To: linux-integrity@vger.kernel.org,
+	jarkko@kernel.org,
+	peterhuewe@gmx.de,
+	jgg@ziepe.ca,
+	sudeep.holla@arm.com
+Cc: Prachotan.Bathi@arm.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] tpm_crb: Add idle support for the Arm FF-A start method
+Date: Mon, 25 Aug 2025 15:59:43 -0500
+Message-Id: <20250825205943.1225599-1-stuart.yoder@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822180335.362979-1-akshayaj.lkd@gmail.com> <20250825152608.6468c27b@jic23-huawei>
-In-Reply-To: <20250825152608.6468c27b@jic23-huawei>
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-Date: Tue, 26 Aug 2025 02:29:12 +0530
-X-Gm-Features: Ac12FXyCinT6t4daEAj_YSmGc2pAsrD-_LPnxBN2FPcqHRneEAD2IAxJm6uvRjY
-Message-ID: <CAE3SzaR14zWWM_g-H4C76+6fBDotuAux7n2V1g94R2xLFQZOYQ@mail.gmail.com>
-Subject: Re: [PATCH] iio: light: ltr390: Add runtime PM support
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: anshulusr@gmail.com, dlechner@baylibre.com, nuno.sa@analog.com, 
-	andy@kernel.org, shuah@kernel.org, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Jonathan,
-Thanks for your review. Please see my followup inline.
+According to the CRB over FF-A specification [1], a TPM that implements
+the ABI must comply with the TCG PTP specification. This requires support
+for the Idle and Ready states.
 
-On Mon, Aug 25, 2025 at 7:56=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
- wrote:
->
-> On Fri, 22 Aug 2025 23:33:26 +0530
-> Akshay Jindal <akshayaj.lkd@gmail.com> wrote:
-> > +
-> > +     if (!state) {
-> > +             ret =3D regmap_clear_bits(data->regmap, LTR390_INT_CFG, L=
-TR390_LS_INT_EN);
-> > +             data->irq_enabled =3D false;
->
-> Just take an extra reference to runtime pm on enable of event and put it =
-disable.
-> Then no need for special handling with a local flag etc.
+This patch implements CRB control area requests for goIdle and
+cmdReady on FF-A based TPMs.
 
-Consider a scenario, where the user only disables the event instead of
-enabling it,
-(i.e. user wrote 0 on the sysfs attribute before it was 1). In this case,
-If enable means inc ref count and disable means dec ref count, then
-this would lead to refcount underflow and the suspend callback will
-not be called.
+The FF-A message used to notify the TPM of CRB updates includes a
+locality parameter, which provides a hint to the TPM about which
+locality modified the CRB.  This patch adds a locality parameter
+to __crb_go_idle() and __crb_cmd_ready() to support this.
 
-To handle this case, we would need to check whether irq/event was
-enabled or not.
-For that either we can use the local flag as I did, or I would need to
-do a read and test
-for the interrupt bit being set. I feel using the local flag would be
-cleaner and would
-require less code.
-If you are fine with local flag usage, then shall I not stick to only
-local flag usage?
+[1] https://developer.arm.com/documentation/den0138/latest/
 
-Thanks,
-Akshay
+Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
+---
+ drivers/char/tpm/tpm_crb.c | 29 ++++++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 876edf2705abb..a18bae0a53717 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -133,8 +133,7 @@ static inline bool tpm_crb_has_idle(u32 start_method)
+ {
+ 	return !(start_method == ACPI_TPM2_START_METHOD ||
+ 	       start_method == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD ||
+-	       start_method == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC ||
+-	       start_method == ACPI_TPM2_CRB_WITH_ARM_FFA);
++	       start_method == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC);
+ }
+ 
+ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+@@ -191,7 +190,7 @@ static int crb_try_pluton_doorbell(struct crb_priv *priv, bool wait_for_complete
+  *
+  * Return: 0 always
+  */
+-static int __crb_go_idle(struct device *dev, struct crb_priv *priv)
++static int __crb_go_idle(struct device *dev, struct crb_priv *priv, int loc)
+ {
+ 	int rc;
+ 
+@@ -200,6 +199,12 @@ static int __crb_go_idle(struct device *dev, struct crb_priv *priv)
+ 
+ 	iowrite32(CRB_CTRL_REQ_GO_IDLE, &priv->regs_t->ctrl_req);
+ 
++	if (priv->sm == ACPI_TPM2_CRB_WITH_ARM_FFA) {
++		rc = tpm_crb_ffa_start(CRB_FFA_START_TYPE_COMMAND, loc);
++		if (rc)
++			return rc;
++	}
++
+ 	rc = crb_try_pluton_doorbell(priv, true);
+ 	if (rc)
+ 		return rc;
+@@ -220,7 +225,7 @@ static int crb_go_idle(struct tpm_chip *chip)
+ 	struct device *dev = &chip->dev;
+ 	struct crb_priv *priv = dev_get_drvdata(dev);
+ 
+-	return __crb_go_idle(dev, priv);
++	return __crb_go_idle(dev, priv, chip->locality);
+ }
+ 
+ /**
+@@ -238,7 +243,7 @@ static int crb_go_idle(struct tpm_chip *chip)
+  *
+  * Return: 0 on success -ETIME on timeout;
+  */
+-static int __crb_cmd_ready(struct device *dev, struct crb_priv *priv)
++static int __crb_cmd_ready(struct device *dev, struct crb_priv *priv, int loc)
+ {
+ 	int rc;
+ 
+@@ -247,6 +252,12 @@ static int __crb_cmd_ready(struct device *dev, struct crb_priv *priv)
+ 
+ 	iowrite32(CRB_CTRL_REQ_CMD_READY, &priv->regs_t->ctrl_req);
+ 
++	if (priv->sm == ACPI_TPM2_CRB_WITH_ARM_FFA) {
++		rc = tpm_crb_ffa_start(CRB_FFA_START_TYPE_COMMAND, loc);
++		if (rc)
++			return rc;
++	}
++
+ 	rc = crb_try_pluton_doorbell(priv, true);
+ 	if (rc)
+ 		return rc;
+@@ -267,7 +278,7 @@ static int crb_cmd_ready(struct tpm_chip *chip)
+ 	struct device *dev = &chip->dev;
+ 	struct crb_priv *priv = dev_get_drvdata(dev);
+ 
+-	return __crb_cmd_ready(dev, priv);
++	return __crb_cmd_ready(dev, priv, chip->locality);
+ }
+ 
+ static int __crb_request_locality(struct device *dev,
+@@ -444,7 +455,7 @@ static int crb_send(struct tpm_chip *chip, u8 *buf, size_t len)
+ 
+ 	/* Seems to be necessary for every command */
+ 	if (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_PLUTON)
+-		__crb_cmd_ready(&chip->dev, priv);
++		__crb_cmd_ready(&chip->dev, priv, chip->locality);
+ 
+ 	memcpy_toio(priv->cmd, buf, len);
+ 
+@@ -672,7 +683,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 	 * PTT HW bug w/a: wake up the device to access
+ 	 * possibly not retained registers.
+ 	 */
+-	ret = __crb_cmd_ready(dev, priv);
++	ret = __crb_cmd_ready(dev, priv, 0);
+ 	if (ret)
+ 		goto out_relinquish_locality;
+ 
+@@ -744,7 +755,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 	if (!ret)
+ 		priv->cmd_size = cmd_size;
+ 
+-	__crb_go_idle(dev, priv);
++	__crb_go_idle(dev, priv, 0);
+ 
+ out_relinquish_locality:
+ 
+-- 
+2.34.1
+
 
