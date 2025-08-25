@@ -1,91 +1,96 @@
-Return-Path: <linux-kernel+bounces-784644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC889B33EFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:11:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E093B33F03
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAF407A7F8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:09:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98393167BF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF5C2EF646;
-	Mon, 25 Aug 2025 12:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9321E2EF64A;
+	Mon, 25 Aug 2025 12:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="oEHtE/we"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UourJz26"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E06F2EE601;
-	Mon, 25 Aug 2025 12:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E819126D4EE;
+	Mon, 25 Aug 2025 12:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756123723; cv=none; b=XzHekOGFhDkwJt6tezlYDawRqtz0NCWkvvB45dN1j9RKoAylyz2XwB+ihvurYkiqwbkqvmjLFgfLqlUZam+GdJxJLuYTkCAxlF2CF3yxHPX4o3HGDJCEbEaT7bVXoL8T44nPcwx6Q2wGP42Bb/u+amMSBxJk3D4BGcxFQQrMXXw=
+	t=1756123756; cv=none; b=rs8vjaLtfg2FwVVACgtdNsRz9MkBzUdJYpCI/7uK2vqldlKWl4nv0eGYLpvtgaViC8TWi42VOX0s6O8QgfFwGg+dTAhbYGJyb8GsRZiDDTufihkhme9slSmh3jUUitpJrIuHG+drOUDx3RBNLuHx2xp2joJox7F95g5FVlJhABs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756123723; c=relaxed/simple;
-	bh=40pHvwMK7BcfxlID6AIO9kRTEyjTwNwdnjJttXS4c6w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JfNaQ0ORtwwpm/QkvNvnFNkyFO6um0hVX7fiJLAzbk+ab5UXZcQllY+OB5COI39SvtLpMChhKab1cobSZIOE+690eah5g3ZRUBXp/yp0MlNJ0OQHOreKChRCprkVqBoP2ROUUVs5iTGhPyZBXOjUohYn5zS4baZEqvA9jRLCqms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=oEHtE/we; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=YLkxYcm5PfbpwrBaYz99xb/BPKFw6g9w/mJk0x8ccdI=; b=oEHtE/we30b00BMf4C6OdWy1ea
-	d7aKAlkca/QFEFRqieM96p6tk7QJv0nqU6CAyIRaC6UmBp4FX13aoZDa55OQtDgFUMxkZLEHJ2Wky
-	Vn4xOw0NvOH3Ybb+fXIEUyfxOcRiqqfRjElvduUP61Uh0Nj3ejeToxbim6BuaVHEKakg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uqVzz-005wBj-7j; Mon, 25 Aug 2025 14:08:31 +0200
-Date: Mon, 25 Aug 2025 14:08:31 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Alex Tran <alex.t.tran@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v1] Fixes: xircom auto-negoation timer
-Message-ID: <6214363b-0242-481d-9b93-2db9e1ba5913@lunn.ch>
-References: <20250825012821.492355-1-alex.t.tran@gmail.com>
- <c6c354ec-e4fe-4b80-b2e5-9f6c8350b504@gmail.com>
+	s=arc-20240116; t=1756123756; c=relaxed/simple;
+	bh=ukf0T702yUd0YZiGL6Fl439f6DIXC++Ou3GI58MKZik=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P0xg9PbACCtOCplo5Y2SURC75Jv4pJYk1uIW4oQZ+xkaqths6pQ2+8D/MHE2iBi58MnLtkgjTKe80b4Wt5Sego18Jj9eGpx6bgDTCJedQ5sel6Wa/bwpF2zKJCdN1XMX/O5TxocgUhBRGdgs4DXlJLz+Fh2+EfjpxdZ8HVzAwYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UourJz26; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 107F2C4CEED;
+	Mon, 25 Aug 2025 12:09:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756123755;
+	bh=ukf0T702yUd0YZiGL6Fl439f6DIXC++Ou3GI58MKZik=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=UourJz265cDHrFkqvb2caRIDnyZn8Sv3WCSLYEUpBItvDpU7xvhunZfLfxaplTols
+	 ENDm11TDJ0D9arez/Ov4TWjGaznpNlh57IrhyXQIvYgI2BHsxmfwuLaUYx9OPrj25n
+	 KzccqcwKxL9W46GTToqj+oHfoVXOrOeBsYdtQdaTPIwvJg8mfbUssN9zIq1qkI7w1Z
+	 Dc6UKvzbU0MMwVmI+5YpIgTavNzRksxJ0QpcXhQd339a2ZOwJLjMeTdE47E4aqvxtk
+	 onnV+wQGzCtm69yACFDcE0D6rtLKrZbCfaLlB3j1H0BpI+WlrkeW+cELcFg011jUJM
+	 ZnliBr00NeUVw==
+From: Christian Brauner <brauner@kernel.org>
+To: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Uros Bizjak <ubizjak@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs: Use try_cmpxchg() in start_dir_add()
+Date: Mon, 25 Aug 2025 14:09:10 +0200
+Message-ID: <20250825-lammfell-nagetiere-0a136b1acbe2@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250811125308.616717-1-ubizjak@gmail.com>
+References: <20250811125308.616717-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6c354ec-e4fe-4b80-b2e5-9f6c8350b504@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1216; i=brauner@kernel.org; h=from:subject:message-id; bh=ukf0T702yUd0YZiGL6Fl439f6DIXC++Ou3GI58MKZik=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSsCUo/7e/wjXXHcQah/3kFVRe1qmMcVrvpLrYsbjA9v s/X+9q+jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlsWMbIcGjvgfbJs9peSuwX ymsX9eY/ef3D240TfCQj2/0XsP5ZosPIMMltOUfE0yeVnNv25p3ZLDvxjtXlhcnTgg06Lm/52v2 pjxMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 25, 2025 at 08:44:18AM +0200, Heiner Kallweit wrote:
-> On 8/25/2025 3:28 AM, Alex Tran wrote:
-> > Auto negoation for DP83840A takes ~3.5 seconds.
-> > Removed sleeping in loop and replaced with timer based completion.
-> > 
-> You state this is a fix. Which problem does it fix?
+On Mon, 11 Aug 2025 14:52:38 +0200, Uros Bizjak wrote:
+> Use try_cmpxchg() instead of cmpxchg(*ptr, old, new) == old.
 > 
-> IMO touching such legacy code makes only sense if you:
-> - fix an actual bug
-> - reduce complexity
-> - avoid using deprecated API's
+> The x86 CMPXCHG instruction returns success in the ZF flag,
+> so this change saves a compare after CMPXCHG (and related
+> move instruction in front of CMPXCHG).
 > 
-> Do you have this hardware for testing your patches?
+> Note that the value from *ptr should be read using READ_ONCE() to
+> prevent the compiler from merging, refetching or reordering the read.
 > 
-> You might consider migrating this driver to use phylib.
-> Provided this contributes to reducing complexity.
+> [...]
 
-There is plenty to reduce. There is a full bit-banging MDIO
-implementation which could be replaced with the core implementation.
+Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.misc branch should appear in linux-next soon.
 
-The harder part for converting to phylib will be the ML6692 and
-DP83840A. There are no Linux driver for these, but given the age,
-there is a good chance genphy will work.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-	Andrew
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.misc
+
+[1/1] fs: Use try_cmpxchg() in start_dir_add()
+      https://git.kernel.org/vfs/vfs/c/14498ca7e0f1
 
