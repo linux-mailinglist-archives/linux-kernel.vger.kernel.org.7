@@ -1,120 +1,166 @@
-Return-Path: <linux-kernel+bounces-815237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C56B56193
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 16:27:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFBA6B3449F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2222560489
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:27:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBE3F171713
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23642F0680;
-	Sat, 13 Sep 2025 14:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="flIqDofb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47ADD2765D9;
-	Sat, 13 Sep 2025 14:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E0D2EE619;
+	Mon, 25 Aug 2025 14:52:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69A2278771;
+	Mon, 25 Aug 2025 14:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757773650; cv=none; b=ncV9r8VHWFD5goAklonGrEdY9YfzG2EF7LLI2PewEhU8DzoLOAeiclwHKB6n8VRx2RPvJretBk6xlp7mniY5AQEgT8Gw55PpUcH5UR6PPmoaFxQtBVOJELzJnnf9zy0gthn7e16f2tG4NduoWq4TiXGIIu3YA9LCnoOylxJxmAs=
+	t=1756133553; cv=none; b=nKCMdMvwpGTvOnVo4Zw50mJKSK1iQhHVGFuOCk66xHGQASyT8iXvowLZfAXeo/VdkglBdEZam4U0Lf5JEeO4BDolxO9A38xd8Nu6gIZFOBDetsgjvkTxczjOToiHFNew5bng2UxGa+taQ/OXKQmunYQtD/Mw4OAuxOxTqs41zrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757773650; c=relaxed/simple;
-	bh=JB8ChRJxerzz0aN6yPFlNI/MgDihUqost679njvHcTc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DOhWSBmXBncuhi/PP020CZIswoxQmUjB4qBl4P374TZ6HGVGk4blyAxBjCQgDl+987mIfX2w+8AG5uc0pN40cSAj8zRHoxJu3KWeZ+J4LcfvaHrRfbt6Np3MBnij3qNE8BkgTBfcoqwkUhsFSA5wazzsGL2EkeWlFymgpatimTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=flIqDofb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B140C4CEEB;
-	Sat, 13 Sep 2025 14:27:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757773649;
-	bh=JB8ChRJxerzz0aN6yPFlNI/MgDihUqost679njvHcTc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=flIqDofbblx0JYbzrD1gdRc2Cbgs5TJtfhU4jNyHKDUbNIB5JuLY4XENLeG9SwUmy
-	 c9rLeHH4iC06u0wbckU3e5AURbOp18kfOb8nfYhi74pAKoyAQPJWNSeDKQjV1c1gEy
-	 HAtxOfwR+yoP4VV7KuZxqNpdEGcBXjdZiOGfnC37kz6xpVOt6WQvrXz169uA9pehnc
-	 eiB7bb/Q88X2fIFPw3VdWjH/VgsSCYBakIWSsla24H3+wpYV1K6ljNqYDAL+WuJT8x
-	 mm6eLezBKYGvV2BiwlhivaCdiLzaVmUgETpOXicXLsrIwyd1vL8uvjF1ohgnULnfI3
-	 D34JDKxNbhzvw==
-Date: Mon, 25 Aug 2025 15:52:08 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Salah Triki <salah.triki@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] iio: pressure: bmp280: Use
- gpiod_set_value_cansleep()
-Message-ID: <20250825155208.2b3c483b@jic23-huawei>
-In-Reply-To: <aKsAMRkmGX160gHl@pc>
-References: <aKsAMRkmGX160gHl@pc>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756133553; c=relaxed/simple;
+	bh=mNLgI/a5ER3TqRse0kNmQGnN1+1xSF0Avg0IMRPAAEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sM6bVSCwGCnqh7U6YlHs+Mosobv8naFUsmil+ChhiVn6VH5rMQVGgLnPaOymh1IR3xoRPbgFfjCSPw/49fX9zVjXAoX1dr+9nstlUWbhEg9MNChhb839cMTWX64jff/MdX29sp4sZ9eMY6fUjBxSekoHJIOQMbhLQcHOK8jwM58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F06D1D70;
+	Mon, 25 Aug 2025 07:52:21 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A4AD43F694;
+	Mon, 25 Aug 2025 07:52:27 -0700 (PDT)
+Date: Mon, 25 Aug 2025 16:52:13 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Prashant Malani <pmalani@google.com>
+Cc: Yang Shi <yang@os.amperecomputing.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Ionela Voinescu <Ionela.Voinescu@arm.com>
+Subject: Re: [PATCH] cpufreq: CPPC: Increase delay between perf counter reads
+Message-ID: <aKx4nZWsRPTXK942@arm.com>
+References: <20250730220812.53098-1-pmalani@google.com>
+ <8252b1e6-5d13-4f26-8aa3-30e841639e10@os.amperecomputing.com>
+ <CAFivqmKZcipdc1P1b7jkNTBAV-WE4bSeW8z=eHHmtHBxuErZiQ@mail.gmail.com>
+ <aKRDxhirzwEPxaqd@arm.com>
+ <CAFivqm+vzkbDEadJEF2So9ZWcRyVT_-Yc+8VWWwsgGW+KD4sNw@mail.gmail.com>
+ <aKY0xuegI1S4X2uW@arm.com>
+ <CAFivqm+Xi9FYtzPmT0QkAUxC2Kx_AkrH2NuQE_sVnJVuo48ypA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFivqm+Xi9FYtzPmT0QkAUxC2Kx_AkrH2NuQE_sVnJVuo48ypA@mail.gmail.com>
 
-On Sun, 24 Aug 2025 13:06:09 +0100
-Salah Triki <salah.triki@gmail.com> wrote:
+On Wed, Aug 20, 2025 at 02:25:16PM -0700, Prashant Malani wrote:
+> Hi Beata,
+> 
+> On Wed, 20 Aug 2025 at 13:49, Beata Michalska <beata.michalska@arm.com> wrote:
+> >
+> > Kinda working on that one.
+> 
+> OK. I'm eager to see what the solution is!
+> 
+> > >
+> > > Outside of that, I can't think of another mitigation beyond adding delay to make
+> > > the time deltas not matter so much.
+> > I'm not entirely sure what 'so much' means in this context.
+> > How one would quantify whether the added delay is actually mitigating the issue?
+> >
+> 
+> I alluded to it in the commit description, but here is the my basic
+> numerical analysis:
+> The effective timestamps for the 4 readings right now are:
+> Timestamp t0: del0
+> Timestamp t0 + m: ref0
+> (Time delay X us)
+> Timestamp t1: del1
+> Timestamp t1 + n: ref1
+> 
+> Timestamp t1 = t0 + m + X
+> 
+> The perf calculation is:
+> Per = del1 - del0 / ref1 - ref0
+>       = Del_counter_diff_over_time(t1 - t0) /
+> ref_counter_diff_over_time(t1 + n - (t0 + m))
+>       = Del_counter_diff_over time(t0 + m + X - t0) /
+> ref_counter_diff_over_time((t0 + m + X + n - t0 - m)
+>       = Del_counter_diff_over_time(m + X) / ref_counter_diff_over_time(n + X)
+> 
+> If X >> (m,n) this becomes:
+>       = Del_counter_diff_over_time(X) / ref_counter_diff_over_time(X)
+> which is what the actual calculation is supposed to be.
+> 
+> if X ~ (m, N) (which is what the case is right now), the calculation
+> becomes erratic.
+This is still bound by 'm' and 'n' values, as the difference between those will
+determine the error factor (with given, fixed X). If m != n, one counter delta
+is stretched more than the other, so the perf ratio no longer represents the
+same time interval. And that will vary between platforms/workloads leading to
+over/under-reporting.
 
-> Replace `gpiod_set_value()` with `gpiod_set_value_cansleep()`, which is
-> required when the GPIO controller is connected via a slow bus such as
-> I2C. This is also safe to use in sleepable contexts like the driver
-> probe function.
 > 
-> Signed-off-by: Salah Triki <salah.triki@gmail.com>
-> Reviewed-by: David Lechner <dlechner@baylibre.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-Don't worry about keeping the number of patches consistent if some
-are already applied.  However, I'm not sure where the previous patch 2
-has gone...
+> > >
+> > > Perhaps ARM should introduce a "snapshot" feature which takes the snapshot
+> > > of the AMU counters on a register write; IAC that's outside the scope
+> > What do you mean by register write ?
+> 
+> I mean that we should have a snapshot register:
+> SYS_AMEVCNTR0_SNAPSHOT_EL0
+> 
+> writing to this will save the current values of SYS_AMEVCNTR0_CORE_EL0 and
+> SYS_AMEVCNTR0_CONST_EL0 into two shadow registers (say
+> SYS_AMEVCNTR0_CORE_SNAPSHOT_EL0
+> and SYS_AMEVCNTR0_CONST_SNAPSHOT_EL0)
+> 
+> That way the OS specifics in how the registers are read don't matter.
+> 
+> Of course, I'm not a H/W architect so this proposal is very rough, but hopefully
+> helps illustrate my idea.
+> 
+Ah, so you meant architectural changes - thanks for clarification.
+> > > of this discussion.
+> > >
+> > > Could you kindly explain why adding the udelay here is discouraged?
+> >
+> > Would you mind clarifying how the specific value of 200 µs was determined?
+> > Was it carefully derived from measurements across multiple platforms and
+> > workloads, or simply observed to “work” on one relatively stable setup?
+> >
+> > Understanding the basis for choosing that delay will help put the discussion
+> > into the right context.
+> 
+> TBH, I just experimented with values on our system and observed the readings of
+> cores running stress-ng. I tried 100us and that still gave variability
+> (values greater than
+> the theoretical max frequency). It's possible that the "optimal value"
+> is somewhere
+> between these two.
+> 
+> There have been other observations on this topic [1], that suggest
+> that even 100us
+> improves the error rate significantly from what it is with 2us.
+> 
+> BR,
+Which is exactly why I've mentioned this approach is not really recommended,
+being bound to rather specific setup. There have been similar proposals in the
+past, all with different values of the delay which should illustrate how fragile
+solution (if any) that is.
 
-Jonathan
-
-> Changes in v5:
->   - Clarify commit message in patch 3/3 to better explain why
->     gpiod_set_value_cansleep() is needed, as suggested by Andy
->     Shevchenko.
+---
+BR
+Beata
+> -Prashant
 > 
-> Changes in v4:
->   - Split patch 2/2 into two separate patches, as suggested by Markus
->     Elfring.
-> 
-> Changes in v3:
->   - Split into two separate patches, as suggested by Andy Shevchenko.
->   - Improve the error message to "failed to get reset GPIO", as
->     suggested by David Lechner.
->   - Add Fixes and Cc tags where appropriate, as suggested by Markus
->     Elfring.
-> 
-> Changes in v2:
->   - Use IS_ERR() instead of IS_ERR_OR_NULL()
->   - Drop dev_info()
->   - Use gpiod_set_value_cansleep()
->   - Improve commit title and message
->  drivers/iio/pressure/bmp280-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-> index 1f0852fc3414..656f6189c84c 100644
-> --- a/drivers/iio/pressure/bmp280-core.c
-> +++ b/drivers/iio/pressure/bmp280-core.c
-> @@ -3217,7 +3217,7 @@ int bmp280_common_probe(struct device *dev,
->  		return dev_err_probe(dev, PTR_ERR(gpiod), "failed to get reset GPIO\n");
->  
->  	/* Deassert the signal */
-> -	gpiod_set_value(gpiod, 0);
-> +	gpiod_set_value_cansleep(gpiod, 0);
->  
->  	data->regmap = regmap;
->  
-
+> [1] https://lore.kernel.org/all/20230328193846.8757-1-yang@os.amperecomputing.com/
 
