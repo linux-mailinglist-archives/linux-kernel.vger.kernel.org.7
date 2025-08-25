@@ -1,240 +1,191 @@
-Return-Path: <linux-kernel+bounces-784230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3558B33868
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:02:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B86D7B3384E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A5E43A8877
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:02:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 912CB18960D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E72529992A;
-	Mon, 25 Aug 2025 08:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED47298CD5;
+	Mon, 25 Aug 2025 07:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="rNu+vRKN"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dOJZKwj4"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFBD1FB3;
-	Mon, 25 Aug 2025 08:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F562882CC
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756108928; cv=none; b=D+wDiZkHszruHoVCvQ3PZ8CUuI8KWfJzvIPDNU4hGlnr4AvXuDr7BLGtwiFTVasTxDr76mgI12FBL0MMCuTie5VTIh6aNOpkOZZ205lXUA2s25VliAMZfWlqmjRccVd5KTcHmkr84VjNp+sewWgOd/AL/SYvwo5A+EAeWvMRDwY=
+	t=1756108621; cv=none; b=pNagsJEJ3En33Uy0Lr4mpVVfH9g7q60A03r7tInTAcKtmk0/scDKaMe7cJSRt8MRfoHPBRRA2onXZWp/4XcIk3IYUxtdtKZkWHtjy6EYkSFQsVCtdynJtpt1cYOLus2OpNeA3RNdK252uwKN4vuIEX0h9Lbfqguh/BHLC5d9isw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756108928; c=relaxed/simple;
-	bh=LByR8OtkujGJ9OYhVLpYhW2Vetxj0MFIbNqghCz+cLU=;
+	s=arc-20240116; t=1756108621; c=relaxed/simple;
+	bh=zrR7XMABDhMTJECD45nVsjYnWUp0Y6PS7dMmGjtm0uI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kB4ywajdH2PRejBOIK4uNKWfeMrbQaYMRAqSAb5rLytE7W++vACK/TI5mHNQUnsljwEyjof7mIycwxWF1ojhGZy6Kz3JKJW7/XMN3RIbtcTHAQ2vMfo8uUQ1jz3lyaWnwJE8euz9YzZnit58YnAruhtf+a2/resxTK/Af0gFJtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=rNu+vRKN; arc=none smtp.client-ip=212.227.126.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1756108918; x=1756713718; i=christian@heusel.eu;
-	bh=bvMw/hN/dMbt6aDczhjkbAxPwz4eyKouvingsBA2vYk=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=rNu+vRKNpKAE88/V7Rk9uOIXW3H3CIn3AM6GkfBXfNA8pnaAamm/Qipd3YfCaa1E
-	 PNipPWZJxKXMRXpS3BwHodoKyggpjl5jX1b1Oa0UwnSwb9J1otdEzH6CVSfLveuRG
-	 fmHcOb1FxWzbQaNT+cWWjUcNyDHcWZ1J7K9qrcUakHx0is8y8gykIFjOh0rLsGlLE
-	 cMXx/AzMTNaynai52nVuEejZhmkUc2EksJDOD4DhEgb8nN7Sqt9/8S6y/Hw4nbHww
-	 Kg57yuZK+L/aOOIMJxSR8tMJ47eiy+kHqnkjdae8RBMnnhmoksRYjiCiIsq0sTh5d
-	 CMr5ZpefDu2uUF7axw==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([94.31.75.247]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MRC7g-1vBOj02xlM-00Xzmo; Mon, 25 Aug 2025 09:55:55 +0200
-Date: Mon, 25 Aug 2025 09:55:52 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Luca Boccassi <bluca@debian.org>, Zhang Yi <yi.zhang@huawei.com>, 
-	Sasha Levin <sashal@kernel.org>, Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev, stable@vger.kernel.org, 
-	heftig@archlinux.org
-Subject: Re: [REGRESSION][STABLE] ext4: too many credits wanted / file system
- issue in v6.16.1
-Message-ID: <36950a03-7d6a-455b-bceb-225f9cd28950@heusel.eu>
-References: <3d7f77d2-b1f8-4d49-b36a-927a943efc2f@heusel.eu>
- <CAMw=ZnRtmhi8aaO+xsT=kgXYhB8u3sgBdtevrxDWctTLteWYoA@mail.gmail.com>
- <2025082214-oink-kindling-11cf@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=L5vQOICBQXph69BW1rH0wrzSdb3ixZ9WAMclRGu0mS792G6jRubx6iGYB5HyFeE9CzKUPjQnB3KV4XCNWjfQCkA69E/coQk+ufHyjjHt3Tkrty6gf4tBHMWv0rls2MoBzpEoGIEfePq1iVt6/9xGPdILtSMkNFivjHYES3LlDf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dOJZKwj4; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Ougs+rHCkaIhdPeCZhoUIh51Oe7lb1hKIxpeB732pMs=; b=dOJZKwj46s4J/aP7YGV4XRtUOU
+	3M2VV0S72VkYk4ykDAlZXTDOcbBor9m6mb2fWfia8v2/gl04AJA9sAfbbesPC3uToYoo5BNf+2i/Q
+	kGcUseYn6cIOncmE11VGEYIjv8jiN7CWqIPGiL+bdW0EBurGX5Lro0HDG8R17QGeOm/Y8BaSQDldO
+	N26YUYyZKBRIdU8fsHCWyKhMLnlKMN3dN57vznlqh07SFE8ubXk7IjXIkF9mEpFSOZnh/gPO10utW
+	WAx+X4uQzpmtuP30WESyQ07yMUZhWXtGyHmdLEkPMDwW03Y2TlwlA2n+CugPH6PLpheVdzfAJcg8j
+	Y2KLi49g==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqS4I-000000082Ft-1tKI;
+	Mon, 25 Aug 2025 07:56:43 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 349CC3002ED; Mon, 25 Aug 2025 09:56:42 +0200 (CEST)
+Date: Mon, 25 Aug 2025 09:56:42 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Chen, Yu C" <yu.c.chen@intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Tim Chen <tim.c.chen@intel.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Libo Chen <libo.chen@oracle.com>,
+	Abel Wu <wuyun.abel@bytedance.com>, Len Brown <len.brown@intel.com>,
+	linux-kernel@vger.kernel.org,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Zhao Liu <zhao1.liu@intel.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	Chen Yu <yu.chen.surf@foxmail.com>
+Subject: Re: [PATCH 2/2] sched: Fix sched domain build error for GNR-X, CWF-X
+ in SNC-3 mode
+Message-ID: <20250825075642.GQ3245006@noisy.programming.kicks-ass.net>
+References: <cover.1755893468.git.tim.c.chen@linux.intel.com>
+ <86ddfe75510497829a84e696b29bfdd7a4940009.1755893468.git.tim.c.chen@linux.intel.com>
+ <c03c0137-931f-4dc9-b2c6-d01d4eb60010@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="suzg447ltmbicq3n"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025082214-oink-kindling-11cf@gregkh>
-X-Provags-ID: V03:K1:YaulqtulJauBgdHn8lwwfoPijOs88eQhsj20fFMsFs+2ABxLlw8
- Ch6TDCa8AiWjM5bildqNlnwwZXVC/OSQS2OkrftBvteZR15BkuqdbAXbfcJ8k/0tV2Ye/fu
- IxbKKu/daO0qa8sDJFWai5fHkKqVCrq4eSGz5aGqiGqkiy6jQ3PEqlBSR8axQKpXtsb9gGx
- s/bLeupm/FGY7ypAAk+Ug==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:xC21lo1F9RU=;uApFh/op5KJ6b6RXzy+GfVYoU0O
- IQ4FMpnbgz3urWZ9OZEpd9X+ZNJa6No8XiO9oNOI2inHEcxJY5fj1HF4agtD7MXVS4UUELOsP
- m33wUWEkkCunWXcGFlUwrK1CtYE3HIE9hbG2gHFY18yl8B/Qjp40jPMxej8G074R2XlAzMMN6
- y9pOtCbpAGf3GGL6IRdV7Si6vwQjk2cqJWALuEET0GW5DilY3zYdeipFL7/JmVnGzgJZhPmKs
- rkDHfA/llYCwVnKLBa6bsuvzGXz+g+SmRpql4PBhGu8bAdq8KfRAQ178jmZ0oddbiGG0zcCmR
- cFvfO5EQrvXWjTae4RmnvlYKKv27t/Qzh3DePny3woGx+duQ1OnxvYglNcHkz9BzL7H+IgHKO
- JaJ0GAIU+hbDGSw/OwXcvQS+pdphMrZ3i41T5DdgcoeoS+pxVqj1hF/40tO6U7bLInZT+aaLU
- aYvYuyfzIvGvuNKW/tmwZ95/6QRJ3pDyTAhVjcPqyuqG3UEVHQc6iCeknoOcWrMq/nXVphtmE
- wRY1kzVkwdyq2Ec372+3qZQ+DqXfiP/O6b57mqOpi0btswMGlH/0KxcgSKgAF+rF1EkLRXdPI
- mIOwRax/l89cVsWVOMEj8t8w2C+KUb9HG0/LShIr16sdi1VtzBpTN5Fe29RqLRhly0Ld1ENJC
- zUh83JR8mFV5P7NLo2YKAxL9hkM1ldTRXtHyb5oMAsFU3p9Ft/AYb5222ZA7EoX9kEIrmYhWY
- 6Wno2XrJv0uUU2W9Qkv2H5i/HXoCOKux/yeF+sPRwEeV5W4S+gt3Puj77uo+DGecJ8UjXaGmv
- 3+G+wMn34F7V1NUWvb9OhwtEaJcFYP/XB5KSLovTytb7CgQsfpWCyqtIOTBDTAOS9M66vvVGw
- pcQoBDPaH2AZ2X4R1qGyP58wmlQLA46HQ5fesB0BWHImUKJ9r0dmuIZtbcl7Qfuqv/Dm5QN/O
- kM66q5Ot1r6Vo+vw29sz5WO2yAVDYkNwAX8WU0hxxl7lkQT4eDTXBAPsm0rlserfKxkDnOJm8
- gyzA0W1JyMEhP/Qi93/4rUSyA9RHq/P2f1lMK7h4t1HDitdlLVM5CB3LQGWeQuvFv/kFPtt9E
- mvDJ1BhFhNjVOFJNnyv99t1SZ+UvJyqMpu/4kkhMVT2TlW8zM2TgA72T5UeIVXMRUkW4USlfl
- +EO9RowqOTQxKjkbOFRBuvK8NAKLi2NZlF8L/yNw0omji4IwErAxna6uO770aKqq1JwT3EhgE
- J53fzOAvtvQB64gyrsYmFh4wuNRhFTXXoYbyByN+RSqekII18z5oDHN1syogWdUkAGjB86aut
- qTU3nJfLeoCc/vz0+LkTgQI8jCuF3iNGOF6A5DBLEp+kFqnjA0RWhTomghLDaShCZP2tILF39
- LxEXlqLV5DGotIDyOGhstPaI4V0nqAJ+fx55LYg+ql4vwBCpcSDZZD6nTUOPKf5sq7Emhccyi
- IIk5maNWTS8NCXKp3eNwtZMYixyj8jVFSYXADDKHZK5t2WtoJsTm69eLy6Q1iVn39/KgH82GU
- 3kMkSZJmhQO44RxuV5So5pK/4rz0OEvnbaOqXIUPZZ9Q1pNq3hvdD2PMdjPG6vQZ2pycRmh4U
- mzPupenb1GLs3hbTejBWZhcUpmueyA+hIF9vlLEGLClYdmU3s/LCNh6KnZUPfO68ZBAep5pGI
- J8nMBnCNjIVj61KA+VmhOi
+In-Reply-To: <c03c0137-931f-4dc9-b2c6-d01d4eb60010@intel.com>
+
+On Mon, Aug 25, 2025 at 01:08:39PM +0800, Chen, Yu C wrote:
+> On 8/23/2025 4:14 AM, Tim Chen wrote:
+> > It is possible for Granite Rapids X (GNR) and Clearwater Forest X
+> > (CWF) to have up to 3 dies per package. When sub-numa cluster (SNC-3)
+> > is enabled, each die will become a separate NUMA node in the package
+> > with different distances between dies within the same package.
+> > 
+> > For example, on GNR-X, we see the following numa distances for a 2 socket
+> > system with 3 dies per socket:
+> > 
+> >          package 1       package2
+> >              ----------------
+> >              |               |
+> >          ---------       ---------
+> >          |   0   |       |   3   |
+> >          ---------       ---------
+> >              |               |
+> >          ---------       ---------
+> >          |   1   |       |   4   |
+> >          ---------       ---------
+> >              |               |
+> >          ---------       ---------
+> >          |   2   |       |   5   |
+> >          ---------       ---------
+> >              |               |
+> >              ----------------
+> > 
+> > node distances:
+> > node     0    1    2    3    4    5
+> >     0:   10   15   17   21   28   26
+> >     1:   15   10   15   23   26   23
+> >     2:   17   15   10   26   23   21
+> >     3:   21   28   26   10   15   17
+> >     4:   23   26   23   15   10   15
+> >     5:   26   23   21   17   15   10
+> > 
+
+> > diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+> > index 33e166f6ab12..c425e84c88b5 100644
+> > --- a/arch/x86/kernel/smpboot.c
+> > +++ b/arch/x86/kernel/smpboot.c
+> > @@ -515,6 +515,34 @@ static void __init build_sched_topology(void)
+> >   	set_sched_topology(topology);
+> >   }
+> > +int sched_node_distance(int from, int to)
+> > +{
+> > +	int d = node_distance(from, to);
+> > +
+> > +	if (!x86_has_numa_in_package)
+> > +		return d;
+> > +
+> > +	switch (boot_cpu_data.x86_vfm) {
+> > +	case INTEL_GRANITERAPIDS_X:
+> > +	case INTEL_ATOM_DARKMONT_X:
+> > +		if (d < REMOTE_DISTANCE)
+> > +			return d;
+> > +
+> > +		/*
+> > +		 * Trim finer distance tuning for nodes in remote package
+> > +		 * for the purpose of building sched domains.
+> > +		 * Put NUMA nodes in each remote package in a single sched group.
+> > +		 * Simplify NUMA domains and avoid extra NUMA levels including different
+> > +		 * NUMA nodes in remote packages.
+> > +		 *
+> > +		 * GNR-x and CWF-X has GLUELESS-MESH topology with SNC
+> > +		 * turned on.
+> > +		 */
+> > +		d = (d / 10) * 10;
+> 
+> Does the '10' here mean that, the distance of the hierarchy socket
+> is 10 from SLIT table? For example, from a socket0 point of view,
+> the distance of socket1 to socket0 is within [20, 29), the distance
+> of socket2 to socket0 is [30,39), and so on. If this is the case,
+> maybe add a comment above for future reference.
+
+This is all because of the ACPI SLIT distance definitions I suppose, 10
+for local and 20 for remote (which IMO is actively wrong, since it
+mandates distances that are not relative performance).
+
+Additionally, the table above magically has all the remote distances in
+the range of [20,29] and so the strip 1s thing works.
+
+The problem of course is that the SLIT table is fully under control of
+the BIOS and random BIOS monkey could cause this to not be so making the
+above code not work as intended. Eg. if the remote distances ends up
+being in the range of [20,35] or whatever, then it all goes sideways.
+
+( There is a history of manupulating the SLIT table to influence
+scheduler behaviour of OS of choice :-/ )
+
+Similarly, when doing a 4 node system, it is possible a 2 hop distances
+doesn't align nicely with the 10s and we're up a creek again.
+
+This is all very fragile. A much better way would be to allocate a new
+SLIT table, identify the (local) clusters and replace all remote
+instances with an average.
+
+Eg. since (21+28+26+23+26+23+26+23+21)/9 ~ 24, you end up with:
+
+ node     0    1    2    3    4    5
+     0:   10   15   17   24   24   24
+     1:   15   10   15   24   24   24
+     2:   17   15   10   24   24   24
+     3:   24   24   24   10   15   17
+     4:   24   24   24   15   10   15
+     5:   24   24   24   17   15   10
 
 
---suzg447ltmbicq3n
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [REGRESSION][STABLE] ext4: too many credits wanted / file system
- issue in v6.16.1
-MIME-Version: 1.0
-
-On 25/08/22 02:41PM, Greg KH wrote:
-> On Tue, Aug 19, 2025 at 11:38:11PM +0100, Luca Boccassi wrote:
-> > On Tue, 19 Aug 2025 at 21:53, Christian Heusel <christian@heusel.eu> wr=
-ote:
-> > >
-> > > Hello everyone,
-> > >
-> > > the systemd CI has [recently noticed][0] an issue within the ext4 file
-> > > system after the Arch Linux kernel was upgraded to 6.16.1. The issue =
-is
-> > > exclusive to the stable tree and does not occur on 6.16 and not on
-> > > 6.17-rc2. I have also tested 6.16.2-rc1 and it still contains the bug.
-> > >
-> > > I was able to bisect the issue between 6.16 and 6.16.1 to the followi=
-ng
-> > > commit:
-> > >
-> > >     b9c561f3f29c2 ("ext4: fix insufficient credits calculation in ext=
-4_meta_trans_blocks()")
-> > >
-> > > The issue can be reproduced by running the tests from
-> > > [TEST-58-REPART.sh][1] by running the [systemd integration tests][2].
-> > > But if there are any suggestions I can also test myself as the initial
-> > > setup for the integration tests is a bit involved.
-> > >
-> > > It is not yet clear to me whether this has real-world impact besides =
-the
-> > > test, but the systemd devs said that it's not a particularily demandi=
-ng
-> > > workflow, so I guess it is expected to work and could cause issues on
-> > > other systems too.
-> > >
-> > > Also does anybody have an idea which backport could be missing?
-> > >
-> > > Cheers,
-> > > Chris
-> > >
-> > > [0]: https://github.com/systemd/systemd/actions/runs/17053272497/job/=
-48345703316#step:14:233
-> > > [1]: https://github.com/systemd/systemd/blob/main/test/units/TEST-58-=
-REPART.sh
-> > > [2]: https://github.com/systemd/systemd/blob/main/test/integration-te=
-sts/README.md
-> > >
-> > > ---
-> > >
-> > > #regzbot introduced: b9c561f3f29c2
-> > > #regzbot title: [STABLE] ext4: too many credits wanted / file system =
-issue in v6.16.1
-> > > #regzbot link: https://github.com/systemd/systemd/actions/runs/170532=
-72497/job/48345703316#step:14:233
-> > >
-> > > ---
-> > >
-> > > git bisect start
-> > > # status: waiting for both good and bad commits
-> > > # good: [038d61fd642278bab63ee8ef722c50d10ab01e8f] Linux 6.16
-> > > git bisect good 038d61fd642278bab63ee8ef722c50d10ab01e8f
-> > > # status: waiting for bad commit, 1 good commit known
-> > > # bad: [3e0969c9a8c57ff3c6139c084673ebedfc1cf14f] Linux 6.16.1
-> > > git bisect bad 3e0969c9a8c57ff3c6139c084673ebedfc1cf14f
-> > > # good: [288f1562e3f6af6d9b461eba49e75c84afa1b92c] media: v4l2-ctrls:=
- Fix H264 SEPARATE_COLOUR_PLANE check
-> > > git bisect good 288f1562e3f6af6d9b461eba49e75c84afa1b92c
-> > > # bad: [f427460a1586c2e0865f9326b71ed6e5a0f404f2] f2fs: turn off one_=
-time when forcibly set to foreground GC
-> > > git bisect bad f427460a1586c2e0865f9326b71ed6e5a0f404f2
-> > > # bad: [5f57327f41a5bbb85ea382bc389126dd7b8f2d7b] scsi: elx: efct: Fi=
-x dma_unmap_sg() nents value
-> > > git bisect bad 5f57327f41a5bbb85ea382bc389126dd7b8f2d7b
-> > > # good: [9143c604415328d5dcd4d37b8adab8417afcdd21] leds: pca955x: Avo=
-id potential overflow when filling default_label (take 2)
-> > > git bisect good 9143c604415328d5dcd4d37b8adab8417afcdd21
-> > > # good: [9c4f20b7ac700e4b4377f85e36165a4f6ca85995] RDMA/hns: Fix acce=
-ssing uninitialized resources
-> > > git bisect good 9c4f20b7ac700e4b4377f85e36165a4f6ca85995
-> > > # good: [0b21d1962bec2e660c22c4c4231430f97163dcf8] perf tests bp_acco=
-unt: Fix leaked file descriptor
-> > > git bisect good 0b21d1962bec2e660c22c4c4231430f97163dcf8
-> > > # good: [3dbe96d5481acd40d6090f174d2be8433d88716d] clk: thead: th1520=
--ap: Correctly refer the parent of osc_12m
-> > > git bisect good 3dbe96d5481acd40d6090f174d2be8433d88716d
-> > > # bad: [c6714f30ef88096a8da9fcafb6034dc4e9aa467d] clk: sunxi-ng: v3s:=
- Fix de clock definition
-> > > git bisect bad c6714f30ef88096a8da9fcafb6034dc4e9aa467d
-> > > # bad: [b9c561f3f29c2d6e1c1d3ffc202910bef250b7d8] ext4: fix insuffici=
-ent credits calculation in ext4_meta_trans_blocks()
-> > > git bisect bad b9c561f3f29c2d6e1c1d3ffc202910bef250b7d8
-> > > # first bad commit: [b9c561f3f29c2d6e1c1d3ffc202910bef250b7d8] ext4: =
-fix insufficient credits calculation in ext4_meta_trans_blocks()
-> >=20
-> > The full kernel warning (immediately after the ext4 fs stops working):
->=20
-> I've pushed out a 6.16.3-rc1 that should hopefully resolve this.
->=20
-> thanks,
->=20
-> greg k-h
-
-Hey Greg,
-
-6.16.3 does indeed resolve the issue, thanks for fixing :)
-
-Cheers,
-Chris
-
---suzg447ltmbicq3n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmisFwcACgkQwEfU8yi1
-JYX46A//a6hajRTv75g9ySWeqW+eZy767mmrv1saz+e1tw+RRu5VHYX8qUdOPpZH
-Oc6hLJOAvxDjevCKE4lRjP9CQQ7ub+uMDtCfZ2kFowEWEilB62RPZUsrMU14CN2x
-pQMhyR0MVR9QkddQSnHX1bhFxszhcANl2bNWoEs7WtJk5TJ3P2bPl6ast+Lp7hIg
-u3s8ppOgSNdbfzAIAum2t/dpGQvYJC1o7XXa8YtfP4/3aMqLbn6rPQSUFWxlPMyN
-TzzFACqoBrCeg98ab7kDCDMRHNnbrebPLEiT6jnT503zY62b6isOAf67EnZX4m7y
-+1Wqm/3x6JgTxBuDKpIZMppIIjEEIPUutBX+dA1ca2GD+2y1wS6UIw97Mm3zHko4
-p4+62tump8ymGHVlw3fx3WJmkWPjsKdti4RdAQ884hdmHCBTIx+LGiy+GaKZP6As
-f4AZkuEHkJFLcRBFISIZaeeOUdQdBKHqa0cyDwekRG1E6mYvp3XMFHiczsJhaYBd
-IOq/JAvhhW6c4X0+/SYunpvv6TiAOhf+zw75DoCnsq7c5FQpqvuMtpcEgUwqRCzE
-EM9zCG7bqHpi3rSE7eXwFZ3wTtRGeS371z+RcPLVJMM3CAZnRWV3oZiXUe2czk9B
-3HG1WPrHU7oQPSVy8IE6xSmSeM/vDGYiEJEkcKDOsufNT+ZiNWg=
-=x8w0
------END PGP SIGNATURE-----
-
---suzg447ltmbicq3n--
 
