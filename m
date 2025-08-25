@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-784383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6EDDB33AB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:23:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62625B33AB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 522E018868F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:23:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EC1A1679D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3852C08BF;
-	Mon, 25 Aug 2025 09:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397A02BE041;
+	Mon, 25 Aug 2025 09:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WuZY0fjg"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VgKchFXC"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6100F280CF1
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE6A29D283;
+	Mon, 25 Aug 2025 09:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756113805; cv=none; b=msTsnJo+okEWCizOj7vh03TqsJ/pxJoTOlqumxNw589TL5Dx3b8ZOZpCwtz4RoVdz5oqe9rxwov1CNb0zRMhjO1eq1MZQQClvISsb8BQXcEuouw/ReBjz6lAne4C2vGGL55jIsgYh/uBKkAZC4oKk60+wSOY6JdHdjeK/0m7258=
+	t=1756113798; cv=none; b=eXkcjbBIGc/Fg2vToNa8elGJl+sa8TNX5pq6pJ/CljSHMPcYSnywcNb9sNh5RIArsJh3cEym6KXIzB92zSzr+zWneUE3EJfWexi9UaQUbukjAbdx4dhljoVOWGH/qumKSpCPUG/L5Vn6OLy3h4EFAmDp32awBL8sseU14tiKK9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756113805; c=relaxed/simple;
-	bh=mbiywVb4Wrg7M/IiTpe1OcjcESnXshqvkDIvakmHVus=;
+	s=arc-20240116; t=1756113798; c=relaxed/simple;
+	bh=ggkzVJ1Jf9cMGZ70QjnFud9Tdiq3OD6CANIfuVvIaw4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h0uTrcmgcPQgTH7DlUTA8kE1t8vaE+qHGRVJFJafNJTOG8prQq8jcuV0gdHCsYVQ+R+QuRYO4QQ2g5crvCTtxeBCds+zUEu6p+7F1Vtr9ECWki1ZEKn4rBs1jLKpB8Tad1jxzn0wcLGeAOu2xGkOkRJXsll8RY9RGXLoNaJxP6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WuZY0fjg; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=W2+GYzreQMTjL0lb9MDap/7TywOKk/yexoC/suSEJj1XFuMBjj9XUQBQeW8YTSLCZHQKLj08BZuZ5swLg8XhAn6K898/1qsTHWWoBw3dJFfBy52bdTFQgxw4vqQOt8Xe3Z8CAjoK6/NDh4+vlFCUv7tgno6F7zgDWlstbFkhX38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VgKchFXC; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3rGRqOlzNkFuqNDj9PPNc1mEXzy/nDP4b5Hqzb6LomE=; b=WuZY0fjgjsRQSUb3Yp+u+r0GYL
-	UNyvaEdeHEoAvO887vh5/HNkMkxttH5QYK2cxG4j9M9583Pvr9bTRHs0HMriat+XxEmnMDd6rLmZ4
-	fudsVPkShH2T4QGxemYsi8csP6iwuvWvI/lVZMnwzQet2cuDFADJ/uuraZ3yp5oAOwgkFBJzlr5od
-	bkgtiRYVwGMS/AW2x5ngD2t+247XlDX8Qy9p4vFJV4yGb1U8OZDeSqW3yuJfjDGmhsv0UX6ISrTHd
-	FCdCiuC40dqBZvBXEm0BXY4DiPo9cPnYOoDigT/dX3OiCYTpIKvR5sGd1lcBrjyfwPT3DsfZCEsar
-	5dzr/2qA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqTPz-00000009usz-1IqE;
-	Mon, 25 Aug 2025 09:23:12 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7E1263002ED; Mon, 25 Aug 2025 11:23:11 +0200 (CEST)
-Date: Mon, 25 Aug 2025 11:23:11 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Tim Chen <tim.c.chen@intel.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Libo Chen <libo.chen@oracle.com>,
-	Abel Wu <wuyun.abel@bytedance.com>, Len Brown <len.brown@intel.com>,
-	linux-kernel@vger.kernel.org, Chen Yu <yu.c.chen@intel.com>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Zhao Liu <zhao1.liu@intel.com>
-Subject: Re: [PATCH 1/2] sched: topology: Fix topology validation error
-Message-ID: <20250825092311.GH4068168@noisy.programming.kicks-ass.net>
-References: <cover.1755893468.git.tim.c.chen@linux.intel.com>
- <a3de98387abad28592e6ab591f3ff6107fe01dc1.1755893468.git.tim.c.chen@linux.intel.com>
- <67c2b6bc-7a05-46a5-a409-a51f28f94c64@amd.com>
- <20250825075807.GR3245006@noisy.programming.kicks-ass.net>
+	bh=BoqmBaEZY9EobthDHh1G78kKAWwwvkNPWi4LK3I8yEA=; b=VgKchFXCYxUBmAifF50C4Lfqo2
+	iNkbDmojUzASmpf/ZRsBlAt4Fv7XAIfZbVP2UFyI88OXqj50bpKv12U1FU+sP6I6JOEi9BqDfFsOI
+	MQ35lzZjZT1/ECG+EBYcMX/6ftyb3Uf6A0owPxaVZzUIsTUb9FSlsKRSEgR2RSlgEeLqhb/GIUxeJ
+	fZBAm/C/RIq0ufbv6KQp/heKYls0twTQY5OxZ54TEfIHi8FLQnQr2MZxTAa9waRD1XOwSZKt1FJG9
+	Mcw/RIS9vk18AVHgJhJapM46T9dzWxwoNZOiVQ3HBRN9JaBRqV4sS+XE+Iwnh2ILvK8Ms49pdxLbt
+	ln6H0wCw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqTQ1-00000007ULk-0IeV;
+	Mon, 25 Aug 2025 09:23:13 +0000
+Date: Mon, 25 Aug 2025 02:23:13 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Naman Jain <namjain@linux.microsoft.com>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] x86/hyperv: Export hv_hypercall_pg unconditionally
+Message-ID: <aKwrgVCtv_FkiuVn@infradead.org>
+References: <20250825055208.238729-1-namjain@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,43 +65,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250825075807.GR3245006@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250825055208.238729-1-namjain@linux.microsoft.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Aug 25, 2025 at 09:58:07AM +0200, Peter Zijlstra wrote:
-> On Mon, Aug 25, 2025 at 08:48:29AM +0530, K Prateek Nayak wrote:
-> > Hello Tim, Vinicius,
-> > 
-> > On 8/23/2025 1:44 AM, Tim Chen wrote:
-> > > --- a/kernel/sched/topology.c
-> > > +++ b/kernel/sched/topology.c
-> > > @@ -2394,6 +2394,14 @@ static bool topology_span_sane(const struct cpumask *cpu_map)
-> > >  	for_each_sd_topology(tl) {
-> > >  		int tl_common_flags = 0;
-> > >  
-> > > +#ifdef CONFIG_NUMA
-> > > +		/*
-> > > +		 * sd_numa_mask() (one of the possible values of
-> > > +		 * tl->mask()) depends on the current level to work
-> > > +		 * correctly.
-> > > +		 */
-> > > +		sched_domains_curr_level = tl->numa_level;
-> > > +#endif
-> > 
-> > A similar solution was proposed in [1] and after a few iterations, we
-> > arrived at [2] as a potential solution to this issue. Now that the merge
-> > window is behind us, Peter would it be possible to pick one of these up?
-> > 
-> > P.S. Leon has confirmed this solved the splat of their deployments too
-> > on an earlier version [3].
-> > 
-> > [1] https://lore.kernel.org/lkml/20250624041235.1589-1-kprateek.nayak@amd.com/
-> > [2] https://lore.kernel.org/lkml/20250715040824.893-1-kprateek.nayak@amd.com/
-> > [3] https://lore.kernel.org/lkml/20250720104136.GI402218@unreal/
-> 
-> I'm sure that's stuck somewhere in my holiday backlog ... Let me go try
-> and find it.
+On Mon, Aug 25, 2025 at 11:22:08AM +0530, Naman Jain wrote:
+> With commit 0e20f1f4c2cb ("x86/hyperv: Clean up hv_do_hypercall()"),
+> config checks were added to conditionally restrict export
+> of hv_hypercall_pg symbol at the same time when a usage of that symbol
+> was added in mshv_vtl_main.c driver. This results in missing symbol
+> warning when mshv_vtl_main is compiled. Change the logic to
+> export it unconditionally.
 
-Replied there.
+Note that exporting variables like this always is a bad idea only
+used as a last resort.  It would be much better to just build a proper
+API for using it instead.
 
-  https://lkml.kernel.org/r/20250825091910.GT3245006@noisy.programming.kicks-ass.net
 
