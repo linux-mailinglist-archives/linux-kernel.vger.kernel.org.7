@@ -1,242 +1,243 @@
-Return-Path: <linux-kernel+bounces-783990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7065B33514
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:32:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82ADDB3350E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CCC9481BB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:32:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3852F481B4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F0E239E75;
-	Mon, 25 Aug 2025 04:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DD4242D66;
+	Mon, 25 Aug 2025 04:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HmDlUJqH"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XcG5VVrl"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2058.outbound.protection.outlook.com [40.107.236.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01194272E43;
-	Mon, 25 Aug 2025 04:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756096333; cv=none; b=l+5rRRLUtxKht4BZScg/Um3cq+NOTw1UA7QDxMciuuXaxvb31j2ETSHJeD3b5MggmaQonGZVXNY5O2GrMO0OyR9IFy7zRpV/rTylLEbzIG5kQJXYnFlqCE7kMwbvBIQXRxFwKJj4pFgTLjwJANwWCDe8SPPN7K8Z0bo/Iu204Lo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756096333; c=relaxed/simple;
-	bh=T2KNeitGqMrA4lQFUWPAPqsr3uw3BA9T+qVqNSGH6P4=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=tL8FouVNQpe44EcGymjBd/Kbv3gXKKDu9mnNN16MjVJxbrHpNJzEs+TqtL3RpMpdEEmgPEKuw6jqxE/yu2urXdUaRgbK/1TrefNPTdOhtSQBWmfqI1b4Xz/5meTjiolj1wB3SbY9W4Laep/JKTSCOzBoCrfKs9qbLEisLVN1cP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HmDlUJqH; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb7a0442bso631782666b.2;
-        Sun, 24 Aug 2025 21:32:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756096329; x=1756701129; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HehqKz7DcqQo+iRQ7tqcTNNvNXOyAsHSoNxFFxCivuM=;
-        b=HmDlUJqHHUQAycNsLFcPx3jib6RDkirNOAAd8uSp82jQC3yMASrQX15JjzMY9f0S7q
-         9tKqAdRknFTZs6HaEX0YwCTQH1pb+fl6ndkJFuqaqCEU2oJfuly0dRyd1oRZPFnukrrB
-         8fYWswZakDJVWS5q/GDfPf7Dhqx90YLpdwO5sQ58/ECjXfB14JO71ebVAa/VI7ryrLtp
-         +les6SAcoOGxKtUDwnsBYB2a3+gHa19z8Tdq7fiAPHIRisKBH8PwsenpOYNXizDmkqbU
-         4+zWv3ubRPXJraARvErdkDWqUEYduZROPK0XgS2XhBUBANkYurvpx/a5wBDQFT5L08a+
-         JtGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756096329; x=1756701129;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HehqKz7DcqQo+iRQ7tqcTNNvNXOyAsHSoNxFFxCivuM=;
-        b=QoXGtsFUl86FrwamWb8376+jMocsmhBZIiqmt4zluO9DxVCOkxx0DlqQNp5lCBIBdX
-         HptXnXnr7NLQTVhy0P3s6Cbm2JvbM28lvbPDGAgpkVEkabKZuVvBHBtyGSt+/GVij5BX
-         fKjRlQygF+9FKbeO6iHEunOBc7Hnv7VxYBhAgjO00iW2v9vu47k8MKZ29r0ya0HWEfEz
-         K9JRIZIu8ZF29C0RgZxCz1gjuXZD3phs3N1ciUZnou11AuXx+NYSc182VGTyGTP9JDNa
-         G/hkmCYtjzkBZC8EqCWQfbg7E5dPztQ2aZzeFjvqzJrCxzdNLXJamHelTgoETTHZ9KbS
-         ZrrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCkOz5cEqYOVfu+h2X1k9CSEyzn1No/KzcE3rrddadBwAtYdzAnGNsVuSqvXoyYZkh6A2PPImwbe8=@vger.kernel.org, AJvYcCVyNklVluw4Jh6z8zxCFrnsRm0OvXFf/8gcx5quxl0E+aUJQIX78beK0U891A/JfPLqW/xZJdKXPVA=@vger.kernel.org, AJvYcCWP3Ah7j7xxGmMPJYN9jpfsmrpeYw+QWjDqB7rybbzFvUn5iCfgh68sM8dI3ZhyQXujQIPjjO1RC7XcZ04C@vger.kernel.org, AJvYcCXK8jIyy97i1ce4VlWiLiMZ+7WRbG8k+EcVtoH7+x/11HDnlMxaGUUxRoqw/rZQsHo08+nmtenLxEtUXGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHEmZY6UgxmuBq+U1lllntnE9LnxMGLDj6NCQn/Eg9KBSf2q3/
-	LZAuIlEFYmgrBM/BiflCGXkqIFiRqGTgBrLvbunLPBdlabDTwmPjkyJP
-X-Gm-Gg: ASbGnctfHBqEr0wq8ygFkjLCBcBhnAKj5Hfa3i0h1zkXOMbJ31PUNBuZjHBW454tkUX
-	z/Gg9OtwVlPcc5cCdvJZZRniWhuT+JVVd3xTK9snkASmh3RIuhv6YfaWZnfGXwtcenfiNvhpEAR
-	/tKDc+1OCM2L0yOfEJBS0YYkaTBJZYIouztS//6C+tBW/SZmr1oR3QsoC3FK+TagJooQYZDDjhE
-	Eno8N/5LpaHOO+/R25SLhp4zKzsuZak67OGhKxpplVjnongmpUTr95wYYwGloJMEweS3RhCrwYH
-	8XgysThTONU50ff62XDBFAn4u9vf3JsqcxShTR3SJ6z6+9txTe+/o3vOJNMXCS6VyzG0jqfQFR7
-	xroSaxpelyqgISS8=
-X-Google-Smtp-Source: AGHT+IGgMZjvSi5hBqPeOAS6df/Om1vBrQYnwfMUsc/Px8r3PDByl/9RSYzZLSjPWc5sXUs2UF8mUg==
-X-Received: by 2002:a17:907:6d0a:b0:af9:566c:4cba with SMTP id a640c23a62f3a-afe28ffbe48mr889373266b.9.1756096329171;
-        Sun, 24 Aug 2025 21:32:09 -0700 (PDT)
-Received: from [127.0.0.1] ([5.248.9.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe492da3adsm486431266b.69.2025.08.24.21.32.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Aug 2025 21:32:09 -0700 (PDT)
-Date: Mon, 25 Aug 2025 07:26:55 +0300
-From: Svyatoslav <clamor95@gmail.com>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-CC: Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] ARM: tegra: Add DFLL clock support on Tegra 4
-User-Agent: K-9 Mail for Android
-In-Reply-To: <2480891.iZASKD2KPV@senjougahara>
-References: <20250321095556.91425-1-clamor95@gmail.com> <117069551.nniJfEyVGO@senjougahara> <CAPVz0n24N1-iAoQFpzw7r7sz2E4Xhd8fB-gaoPesdc7XaR2HcQ@mail.gmail.com> <2480891.iZASKD2KPV@senjougahara>
-Message-ID: <9139A302-ADF6-4E2C-917E-0E0E1D6CBA0A@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7719F1D5CF2;
+	Mon, 25 Aug 2025 04:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756096300; cv=fail; b=Njj2hFthi5RFhLSlDjRJ9kO7LyOpm+TDG16qgiKvahJ4Aj+7y/YHMXVU28CNljbvuPj1l/MMJBEVpicZreR99kaWbhCUur3SjOHj6/IaoWbNAOwzHMu8h3nEYnAZpEKDWuqj/E4VL6Gj4giv0ZfIMbMky5/bExYD933w7WJEQ+I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756096300; c=relaxed/simple;
+	bh=lGK5HaYSPCWT19tCdRgJzygK1iiJ8sXOiP6rMgU2uN8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XofeiLO/NaAXilYOy59dYeyvaH47HZ718QHCBS8psBDGoyqZ4f/9UonCNd1E9r6tBYn2BDvMW/Z1A/OHcEcADLRpFVCEJuXPCNLvzvCVNzolNo68OofikeqSVghB3U0xZnrsuH7BDpdoXNZDHZBIofLFQYm//+F5BSOnICbDJXw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XcG5VVrl; arc=fail smtp.client-ip=40.107.236.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=puf257Yr3fl0dTdevtTjngIfDTCt8HuYExw8fEWLAtQuKyTyEUpfYEVHwJcSMgoDLGj08Q9Yo1iML/zSwT4FgAti2hEWyUO71X4BTkFfiIuqLJ0aX+BiUUd2pWIIe7+UeKuX+VEoijeF6+0VTIbrd4+Vsd+aY3FAN+0X23CDLkwG+5UR0nHvzZTPG7r/Y1frR9DHaokm6joFLgh/1TDQE2R1BabLHxlUTMX3blLmdhpqq/Uz3xd5qnXW9iy2PF651kbGJ7CMe/CkaYONwtu7Q6imbVE9Fn7Yb0bCOF+itwrgViVfRV36yxx9ediVDgYoArtPvmOgt8YEaPtMHEohNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WpLBjgU6CR2jq1ZR0/me1toR8BwOxJNwEZfIy9KTeFs=;
+ b=gajA1Zg14G5fr5MLRoW1BNPE9o6JhbFsmst4f9UvHMMg3wHg2HOtCJg53nsro8Hc1jsaQ1K77QSeNhFGVlZf66dCeRRv6ORbUYaUs7aBtAxm2kx7SV/E0pwC2CnBZCRAHadrStQp4Oj3EiyO6M0kfbaP8r6aKIpQSLC62fxNIE8eiB6ZqMjD0liGNYCm8zHyarfXAUmpuJ6P3YstPgZRob/vaz/PfP1rhjTDRho+aNPobvlmUkINsEau+jMTDPJxmzI0UKRGz1X6XnapoP97V+sxbB4k06oAF8CFB2hLJrtifZr3eePzAfsJs45+nAsvygT+Z7w7bRdoJg9o5W7+SQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=arndb.de smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WpLBjgU6CR2jq1ZR0/me1toR8BwOxJNwEZfIy9KTeFs=;
+ b=XcG5VVrlNZITQYFoVVUfXh5ughW9UpGjkb9fK14BeQntT7djUFa5xRCnVQN20hbLKzgNQnjmNDZiDrUz7A9KZitdYGeg3FWmPjNP4kEhRAakpNwDd8lx/iUV+ng6DcV3MahZ+u7eDgxs3lHaabCZwCyII92pQEsV/nwILKbp7/M=
+Received: from BY5PR13CA0020.namprd13.prod.outlook.com (2603:10b6:a03:180::33)
+ by MW3PR12MB4457.namprd12.prod.outlook.com (2603:10b6:303:2e::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
+ 2025 04:31:33 +0000
+Received: from SN1PEPF0002BA4D.namprd03.prod.outlook.com
+ (2603:10b6:a03:180:cafe::b2) by BY5PR13CA0020.outlook.office365.com
+ (2603:10b6:a03:180::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.13 via Frontend Transport; Mon,
+ 25 Aug 2025 04:31:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF0002BA4D.mail.protection.outlook.com (10.167.242.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9073.11 via Frontend Transport; Mon, 25 Aug 2025 04:31:32 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 24 Aug
+ 2025 23:31:32 -0500
+Received: from xhdnipung41x.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Sun, 24 Aug 2025 23:31:27 -0500
+From: Nipun Gupta <nipun.gupta@amd.com>
+To: <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
+	<alex.williamson@redhat.com>, <nikhil.agarwal@amd.com>, <kvm@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>,
+	<oe-kbuild-all@lists.linux.dev>, <robin.murphy@arm.com>, <krzk@kernel.org>,
+	<tglx@linutronix.de>, <maz@kernel.org>, <linux@weissschuh.net>,
+	<chenqiuji666@gmail.com>, <peterz@infradead.org>, <robh@kernel.org>,
+	<abhijit.gangurde@amd.com>, <nathan@kernel.org>, Nipun Gupta
+	<nipun.gupta@amd.com>, Arnd Bergmann <arnd@kernel.org>
+Subject: [PATCH v3 1/2] cdx: don't select CONFIG_GENERIC_MSI_IRQ
+Date: Mon, 25 Aug 2025 10:01:21 +0530
+Message-ID: <20250825043122.2126859-1-nipun.gupta@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: nipun.gupta@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA4D:EE_|MW3PR12MB4457:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9f484808-44ad-4910-5ce8-08dde39044f5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?SoAiVI7M+ra53W2ixeBwSwv5Ckak0dV+zJqnx1PsujPeFWCg9YJEqecN78lx?=
+ =?us-ascii?Q?+613tbHenOjkA0Ckc+CRw9HCe7Cx61lFW2NzGFy8GA7Qc55iEqwv2Ntma4Es?=
+ =?us-ascii?Q?PdS8+CETR2IwHicf/tZIFN25kbGekXhAx6qsxfYKmCH/0PG4hT09IjvNi0RR?=
+ =?us-ascii?Q?vC1NoBgLQ5+kLe2tTbFwhG5R2V4pkkU7XrDoST2NgQXWx/PsgPL2h5GRNDfu?=
+ =?us-ascii?Q?Vj/l/estjQyOQpDGJkENSAjq3dbHPSXPSbEuksyw92dUAOu3Lf+vFD9ugc4B?=
+ =?us-ascii?Q?fa9Cqp88xlnKiNBz/4Q7OMPtP+5wZTm3FI5S6A9GJSbXsO/R1Mn13gn+H7Hv?=
+ =?us-ascii?Q?LI3bDmXQP1uomYAxk2/P6vKHLXrpNLA2ZLa1hX9YO5HTeakWtlIyh/xgdNeQ?=
+ =?us-ascii?Q?Wuq2px0jYS1YNq8GztHOoodDnTXEkx+tN1Z8swrRjebFYJpXiBzACmLNvsLi?=
+ =?us-ascii?Q?dTNKmek/A9kfWO3J6knMr1hzYWeyap2r1TPk4zdoW+yATk03kDTjcT75VA6e?=
+ =?us-ascii?Q?DDC8xZCJTN/onlsocR947bY/je+K3K6XADBbS/orXJQMzBu42Tf8eYMg09S9?=
+ =?us-ascii?Q?Uk+D99dvLuVR1NTISbgI0UeVW3piMXjB7NypEJiEhZ28sLvlQpzpW75DQRov?=
+ =?us-ascii?Q?Aejhpwv/I1jFCGiywjUGCFUkmTjViAMUizGmR/LsrzDV1Pio8o3dXADLt4G2?=
+ =?us-ascii?Q?c+HibdHhaxqOFo77zr6fk1vUuI3wb8vLTbyoXl0TBFbnjuKbGZtWHm6kgLaP?=
+ =?us-ascii?Q?7HwoGo73aplEOerHIxE6pK6mLOQlcWkvmrVwWmvIjCP3quLU73yjFwuhG0Lf?=
+ =?us-ascii?Q?q8TqnWgMV/BNmvZsNEOYK+Ahwx6XbihpkMXhWyJ03Ae4F7RRSmwGVfT53b7v?=
+ =?us-ascii?Q?Phgr5mO5gbCuRBu82wkKeUQEBMMyNo+w8OeVUUjdw4qH6heX1qy6KUivEilL?=
+ =?us-ascii?Q?Mo2EeFA6/emRdBzxR17B6SH5s016F+WODykk21ef3wmihOjcgMGwpbZNM2lZ?=
+ =?us-ascii?Q?yZa0GD11By+SsCEubcHrarqcLXXwPrJ1Z4PnkPBxc1TZx7Gzkd/nR519VZlF?=
+ =?us-ascii?Q?hoCCYLA5Wsaxi6tDs//snk3FrabmH60nyE6xbwUb3BVQMI8991z1+t50Hnnf?=
+ =?us-ascii?Q?py3Qeua8H89ILRf4vTfZeGITOomqgEuAs94gn/kta8bin9w7LUjfJMM/NhiD?=
+ =?us-ascii?Q?2U0oQUe8e/9ou2Un+1RIzoegJhhiQCZoAjjhLAFwxZ/0AKCglEZ9FkFx+BWW?=
+ =?us-ascii?Q?Ut8gLf5b4WA3Tyn4mQc45VAxs7A7nOUAzGIsaZr1hG/Feml9jFpolgeajtU4?=
+ =?us-ascii?Q?wPx4BbPvdSQ7fcrgPURe7y3/HweJppzCkiO1asoguvFT0JK/L5A6boWd5aNY?=
+ =?us-ascii?Q?tJOUmgzB2tvcap3GQp9ijcBggvWoON0pQiiu+GXNTJkjN2eBozYHvSGyNzA3?=
+ =?us-ascii?Q?5OWpo88AYe0gME9vtvOSrt/FiM4EQYVnty9F4kZ5Ec3qPbZ8TvtTjBd0liAc?=
+ =?us-ascii?Q?yFmnDin6AChXNzr7MIp60Kpc/rdgQAzdqnCk?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 04:31:32.7471
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9f484808-44ad-4910-5ce8-08dde39044f5
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002BA4D.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4457
 
+x86 does not use CONFIG_GENERIC_MSI_IRQ, and trying to enable it anyway
+results in a build failure:
 
+In file included from include/linux/ssb/ssb.h:10,
+                 from drivers/ssb/pcihost_wrapper.c:18:
+include/linux/gpio/driver.h:41:33: error: field 'msiinfo' has incomplete type
+   41 |         msi_alloc_info_t        msiinfo;
+      |                                 ^~~~~~~
+In file included from include/linux/kvm_host.h:19,
+                 from arch/x86/events/intel/core.c:17:
+include/linux/msi.h:528:33: error: field 'alloc_info' has incomplete type
+  528 |         msi_alloc_info_t        alloc_info;
 
-25 =D1=81=D0=B5=D1=80=D0=BF=D0=BD=D1=8F 2025=E2=80=AF=D1=80=2E 07:20:10 GM=
-T+03:00, Mikko Perttunen <mperttunen@nvidia=2Ecom> =D0=BF=D0=B8=D1=88=D0=B5=
-:
->On Friday, August 22, 2025 2:19=E2=80=AFPM Svyatoslav Ryhel wrote:
->> =D0=BF=D1=82, 22 =D1=81=D0=B5=D1=80=D0=BF=2E 2025=E2=80=AF=D1=80=2E =D0=
-=BE 06:05 Mikko Perttunen <mperttunen@nvidia=2Ecom> =D0=BF=D0=B8=D1=88=D0=
-=B5:
->> > On Friday, March 21, 2025 6:55=E2=80=AFPM Svyatoslav Ryhel wrote:
->> > > Add DFLL clock node to common Tegra114 device tree along with clock=
-s
->> > > property to cpu node=2E
->> > >=20
->> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail=2Ecom>
->> > > ---
->> > >=20
->> > >  arch/arm/boot/dts/nvidia/tegra114=2Edtsi | 34 ++++++++++++++++++++=
-++++++
->> > >  1 file changed, 34 insertions(+)
->> > >=20
->> > > diff --git a/arch/arm/boot/dts/nvidia/tegra114=2Edtsi
->> > > b/arch/arm/boot/dts/nvidia/tegra114=2Edtsi index
->> > > 341ec0962460=2E=2E25d063a47ca5
->> > > 100644
->> > > --- a/arch/arm/boot/dts/nvidia/tegra114=2Edtsi
->> > > +++ b/arch/arm/boot/dts/nvidia/tegra114=2Edtsi
->> > > @@ -4,6 +4,7 @@
->> > >=20
->> > >  #include <dt-bindings/memory/tegra114-mc=2Eh>
->> > >  #include <dt-bindings/pinctrl/pinctrl-tegra=2Eh>
->> > >  #include <dt-bindings/interrupt-controller/arm-gic=2Eh>
->> > >=20
->> > > +#include <dt-bindings/reset/tegra114-car=2Eh>
->> > >=20
->> > >  #include <dt-bindings/soc/tegra-pmc=2Eh>
->> > > =20
->> > >  #include "tegra114-peripherals-opp=2Edtsi"
->> > >=20
->> > > @@ -710,6 +711,30 @@ mipi: mipi@700e3000 {
->> > >=20
->> > >               #nvidia,mipi-calibrate-cells =3D <1>;
->> > >      =20
->> > >       };
->> > >=20
->> > > +     dfll: clock@70110000 {
->> > > +             compatible =3D "nvidia,tegra114-dfll";
->> > > +             reg =3D <0x70110000 0x100>, /* DFLL control */
->> > > +                   <0x70110000 0x100>, /* I2C output control */
->> > > +                   <0x70110100 0x100>, /* Integrated I2C controlle=
-r */
->> > > +                   <0x70110200 0x100>; /* Look-up table RAM */
->> > > +             interrupts =3D <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
->> > > +             clocks =3D <&tegra_car TEGRA114_CLK_DFLL_SOC>,
->> > > +                      <&tegra_car TEGRA114_CLK_DFLL_REF>,
->> > > +                      <&tegra_car TEGRA114_CLK_I2C5>;
->> > > +             clock-names =3D "soc", "ref", "i2c";
->> > > +             resets =3D <&tegra_car TEGRA114_RST_DFLL_DVCO>;
->> > > +             reset-names =3D "dvco";
->> > > +             #clock-cells =3D <0>;
->> > > +             clock-output-names =3D "dfllCPU_out";
->> > > +             nvidia,sample-rate =3D <11500>;
->> >=20
->> > Should this be 12500? That would match Tegra124 and a downstream kern=
-el
->> > for
->> > Tegra114 I have=2E
->>=20
->> I referred to tegratab and macallan boards in 3=2E4 kernel which give
->> 11500, maybe sample-rate was changed to 12500 later with tegra124
->> addition?
->
->That's interesting=2E I was looking at the public roth (Shield Portable) =
-kernel,=20
->which does not support Tegra124=2E I checked the L4T r17 release now, and=
- it=20
->seems it's a newer version, where the sample rate has been changed to 115=
-00 on=20
->some boards due to a voltage undershoot issue with vdd_cpu on macallan/
->tegratab [1]=2E
->
->So on macallan/tegratab, the vdd_cpu (smps123) ramp rate should be set to=
-=20
->2=2E5mV/us and sample-rate to 11500, while on other boards it can be 5mV/=
-us with=20
->12500 for faster ramping=2E
->
->[1] https://nv-tegra=2Envidia=2Ecom/r/plugins/gitiles/linux-2=2E6/+/
->b92cab2d4cb6379aeded80adc4c5d0708c3f038e%5E%21/#F0
->
->Cheers,
->Mikko
->
+Change the driver to actually build without this symbol and remove the
+incorrect 'select' statements.
 
-So should I stick with 11500 as a safer, acceptable for every t114 option?
+Fixes: e8b18c11731d ("cdx: Fix missing GENERIC_MSI_IRQ on compile test")
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Reviewed-by: Nikhil Agarwal <nikhil.agarwal@amd.com>
+Signed-off-by: Arnd Bergmann <arnd@kernel.org>
+Signed-off-by: Nipun Gupta <nipun.gupta@amd.com>
+---
 
->>=20
->> > > +             nvidia,droop-ctrl =3D <0x00000f00>;
->> > > +             nvidia,force-mode =3D <1>;
->> > > +             nvidia,cf =3D <10>;
->> > > +             nvidia,ci =3D <0>;
->> > > +             nvidia,cg =3D <2>;
->> > > +             status =3D "disabled";
->> > > +     };
->> > > +
->> > >=20
->> > >       mmc@78000000 {
->> > >      =20
->> > >               compatible =3D "nvidia,tegra114-sdhci";
->> > >               reg =3D <0x78000000 0x200>;
->> > >=20
->> > > @@ -841,6 +866,15 @@ cpu@0 {
->> > >=20
->> > >                       device_type =3D "cpu";
->> > >                       compatible =3D "arm,cortex-a15";
->> > >                       reg =3D <0>;
->> > >=20
->> > > +
->> > > +                     clocks =3D <&tegra_car TEGRA114_CLK_CCLK_G>,
->> > > +                              <&tegra_car TEGRA114_CLK_CCLK_LP>,
->> > > +                              <&tegra_car TEGRA114_CLK_PLL_X>,
->> > > +                              <&tegra_car TEGRA114_CLK_PLL_P>,
->> > > +                              <&dfll>;
->> > > +                     clock-names =3D "cpu_g", "cpu_lp", "pll_x", "=
-pll_p",
->> >=20
->> > "dfll";
->> >=20
->> > > +                     /* FIXME: what's the actual transition time? =
-*/
->> > > +                     clock-latency =3D <300000>;
->> > >=20
->> > >               };
->> > >              =20
->> > >               cpu@1 {
->
->
->
->
+Changes v1->v2:
+- No change
+Changes v2->v3:
+- add CONFIG_GENERIC_MSI_IRQ while assigning num_msi and setting msi domain
+
+ drivers/cdx/Kconfig                     | 1 -
+ drivers/cdx/cdx.c                       | 4 ++--
+ drivers/cdx/controller/Kconfig          | 1 -
+ drivers/cdx/controller/cdx_controller.c | 3 ++-
+ 4 files changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/cdx/Kconfig b/drivers/cdx/Kconfig
+index 3af41f51cf38..1f1e360507d7 100644
+--- a/drivers/cdx/Kconfig
++++ b/drivers/cdx/Kconfig
+@@ -8,7 +8,6 @@
+ config CDX_BUS
+ 	bool "CDX Bus driver"
+ 	depends on OF && ARM64 || COMPILE_TEST
+-	select GENERIC_MSI_IRQ
+ 	help
+ 	  Driver to enable Composable DMA Transfer(CDX) Bus. CDX bus
+ 	  exposes Fabric devices which uses composable DMA IP to the
+diff --git a/drivers/cdx/cdx.c b/drivers/cdx/cdx.c
+index 092306ca2541..3d50f8cd9c0b 100644
+--- a/drivers/cdx/cdx.c
++++ b/drivers/cdx/cdx.c
+@@ -310,7 +310,7 @@ static int cdx_probe(struct device *dev)
+ 	 * Setup MSI device data so that generic MSI alloc/free can
+ 	 * be used by the device driver.
+ 	 */
+-	if (cdx->msi_domain) {
++	if (IS_ENABLED(CONFIG_GENERIC_MSI_IRQ) && cdx->msi_domain) {
+ 		error = msi_setup_device_data(&cdx_dev->dev);
+ 		if (error)
+ 			return error;
+@@ -833,7 +833,7 @@ int cdx_device_add(struct cdx_dev_params *dev_params)
+ 		     ((cdx->id << CDX_CONTROLLER_ID_SHIFT) | (cdx_dev->bus_num & CDX_BUS_NUM_MASK)),
+ 		     cdx_dev->dev_num);
+ 
+-	if (cdx->msi_domain) {
++	if (IS_ENABLED(CONFIG_GENERIC_MSI_IRQ) && cdx->msi_domain) {
+ 		cdx_dev->num_msi = dev_params->num_msi;
+ 		dev_set_msi_domain(&cdx_dev->dev, cdx->msi_domain);
+ 	}
+diff --git a/drivers/cdx/controller/Kconfig b/drivers/cdx/controller/Kconfig
+index 0641a4c21e66..a480b62cbd1f 100644
+--- a/drivers/cdx/controller/Kconfig
++++ b/drivers/cdx/controller/Kconfig
+@@ -10,7 +10,6 @@ if CDX_BUS
+ config CDX_CONTROLLER
+ 	tristate "CDX bus controller"
+ 	depends on HAS_DMA
+-	select GENERIC_MSI_IRQ
+ 	select REMOTEPROC
+ 	select RPMSG
+ 	help
+diff --git a/drivers/cdx/controller/cdx_controller.c b/drivers/cdx/controller/cdx_controller.c
+index fca83141e3e6..5e3fd89b6b56 100644
+--- a/drivers/cdx/controller/cdx_controller.c
++++ b/drivers/cdx/controller/cdx_controller.c
+@@ -193,7 +193,8 @@ static int xlnx_cdx_probe(struct platform_device *pdev)
+ 	cdx->ops = &cdx_ops;
+ 
+ 	/* Create MSI domain */
+-	cdx->msi_domain = cdx_msi_domain_init(&pdev->dev);
++	if (IS_ENABLED(CONFIG_GENERIC_MSI_IRQ))
++		cdx->msi_domain = cdx_msi_domain_init(&pdev->dev);
+ 	if (!cdx->msi_domain) {
+ 		ret = dev_err_probe(&pdev->dev, -ENODEV, "cdx_msi_domain_init() failed");
+ 		goto cdx_msi_fail;
+-- 
+2.34.1
+
 
