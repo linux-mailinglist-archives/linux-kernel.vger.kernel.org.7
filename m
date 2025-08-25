@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-785622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D709B34EB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:00:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C74AFB34EB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91FE02A2598
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:00:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 937163BF791
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B17C3054F2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D55301000;
 	Mon, 25 Aug 2025 21:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abChkQEz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2+qNrEB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18ED2BE62C;
-	Mon, 25 Aug 2025 21:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CA02EA17D;
+	Mon, 25 Aug 2025 21:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756159152; cv=none; b=qmq9kxp46RWW79fLP1tsht9s0p9Vp7V6jf5YFbGF3h/gGPZsev1OBhP1gi0bxPtc+Ip3FnQa8NRG/nt4wJX/QzcLT/sXMbEDJQMCbqOw87ef/59sYUZ1ek1wnnCyqU1JpgE9fIrV9JlhcgPlqutnxtxqK+NqKB8dHOVU7LQfIU0=
+	t=1756159151; cv=none; b=UqQsen78pInCQWwu9i1I1vzhuLW/L9CHHayavkP/iHdXKfeaU1wlddSyWgM3BYWWq4q2iUS3qrg0hwehaI4MKW5EAQbkCqvl3m4Eit0VB/bQOwWevauqKo135Y6hdgzP4QbH63Ro0qNTjwlJP7WKfrj+o5CmxaWlEQzCjuCzPZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756159152; c=relaxed/simple;
-	bh=u8H/POAkJXnqexD0Vo2T0kBej6xh78KY+6A9Mc8aNYU=;
+	s=arc-20240116; t=1756159151; c=relaxed/simple;
+	bh=fuWodoezyKYbYfnkUdVqccH9E/vnBfXHjLS7NnAZvqI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RJs5LknS176VBTrQgeWSoxAfOFlpyPFiriMLQmGW935GOj3MaA1wTl/1k8LKoHWOhDe2Rp5KyPF2eAMop5iI3TgDG/w/s/wERr/ORs3Ce2RbpMSiD6cH7PbmZtx5XOCyx6fGVS+C0P/bAz1KbJqNn7riBwhrM7v6hKDTM/bm/0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abChkQEz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22EA6C113D0;
+	 MIME-Version; b=UJvHQ1IZsY12HbnL+b5QTmzFDlxuJn/5sX8sJFRaqiT6Pa+xw45v6NnOecVOKOX0RIkPPGaTtPDYQ3INJOBA7ZxT/9UmNJqXtbRqFjgKlsN3Zl69AOE4ocbElU/6boZeFFsS3WDTkh3ovuNoPuU1/aeNZJ1k9T3VbZE8xDZLAY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a2+qNrEB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A06F0C19424;
 	Mon, 25 Aug 2025 21:59:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756159150;
-	bh=u8H/POAkJXnqexD0Vo2T0kBej6xh78KY+6A9Mc8aNYU=;
+	s=k20201202; t=1756159151;
+	bh=fuWodoezyKYbYfnkUdVqccH9E/vnBfXHjLS7NnAZvqI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=abChkQEzU5PNu5yh5V5zz4XaRUE6mimBliaIxCekwJuh0MLwa/xPzXMchzTd8A4Ml
-	 Vwib2mNxW88e5ZXuA8SOFewTKrlNPBfmCTSMfByl9mcu5ZL1e6Ea8dC8rQEYrePu4B
-	 ajp0QuFs7cE9wRwT4gkQXR/zgKyBGJdVpKiLjMXw6L8JYgINQUxu3ZLPfSNQNq7TFs
-	 GuGyojSO/SnBdr8kRliTaSROa1FkKolRnOwukNLVmx/Jwf4frlPZifu3rW/PtDwUh3
-	 MN4bUOOvVkrSzYb7uJ17H9kScX0QTZ4u9unlmj5ja/kimatMDgFgI0vBiuzx3DfCqz
-	 4I+F7CG8/QW9g==
+	b=a2+qNrEBufRq1nhjs2Ht3LnH8jbC2q0f2dNRFWVuNjutvTttheS+xpLnrZxO32Iv5
+	 paMQAJdS7nmyWNsKiO1rH0jd7gdLxxm1vP+Nmbqbck0FQaoMSu83WIJrglSPI0idRL
+	 1XqyhxhexSGS1hQsKquyVKD2eEBw1Nu6MQio80m3ikLowpu1ytaZxCzS2dO41HAHVK
+	 Hoya3KSthExOTZgTY7rcN7Ht82oAJWRONoMokq5IANahzLN/FJaEicwc/yI479Zq4N
+	 +oWXBlop4jC40xqgaMJXVgN3oPRSfDdojkCayNSBT2C3sfm8rifGB5R1lOj0NPSNYX
+	 slYezDLv2Fejw==
 From: Namhyung Kim <namhyung@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: Ian Rogers <irogers@google.com>,
@@ -49,11 +49,11 @@ Cc: Ian Rogers <irogers@google.com>,
 	Ingo Molnar <mingo@kernel.org>,
 	LKML <linux-kernel@vger.kernel.org>,
 	linux-perf-users@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 06/11] tools headers: Sync powerpc headers with the kernel source
-Date: Mon, 25 Aug 2025 14:58:58 -0700
-Message-ID: <20250825215904.2594216-7-namhyung@kernel.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-api@vger.kernel.org
+Subject: [PATCH 07/11] tools headers: Sync syscall tables with the kernel source
+Date: Mon, 25 Aug 2025 14:58:59 -0700
+Message-ID: <20250825215904.2594216-8-namhyung@kernel.org>
 X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
 In-Reply-To: <20250825215904.2594216-1-namhyung@kernel.org>
 References: <20250825215904.2594216-1-namhyung@kernel.org>
@@ -67,45 +67,165 @@ Content-Transfer-Encoding: 8bit
 
 To pick up the changes in this cset:
 
-  69bf2053608423cb powerpc: Drop GPL boilerplate text with obsolete FSF address
+  be7efb2d20d67f33 fs: introduce file_getattr and file_setattr syscalls
 
 This addresses these perf build warnings:
 
   Warning: Kernel ABI header differences:
-    diff -u tools/arch/powerpc/include/uapi/asm/kvm.h arch/powerpc/include/uapi/asm/kvm.h
+    diff -u tools/include/uapi/asm-generic/unistd.h include/uapi/asm-generic/unistd.h
+    diff -u tools/scripts/syscall.tbl scripts/syscall.tbl
+    diff -u tools/perf/arch/x86/entry/syscalls/syscall_32.tbl arch/x86/entry/syscalls/syscall_32.tbl
+    diff -u tools/perf/arch/x86/entry/syscalls/syscall_64.tbl arch/x86/entry/syscalls/syscall_64.tbl
+    diff -u tools/perf/arch/powerpc/entry/syscalls/syscall.tbl arch/powerpc/kernel/syscalls/syscall.tbl
+    diff -u tools/perf/arch/s390/entry/syscalls/syscall.tbl arch/s390/kernel/syscalls/syscall.tbl
+    diff -u tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl arch/mips/kernel/syscalls/syscall_n64.tbl
+    diff -u tools/perf/arch/arm/entry/syscalls/syscall.tbl arch/arm/tools/syscall.tbl
+    diff -u tools/perf/arch/sh/entry/syscalls/syscall.tbl arch/sh/kernel/syscalls/syscall.tbl
+    diff -u tools/perf/arch/sparc/entry/syscalls/syscall.tbl arch/sparc/kernel/syscalls/syscall.tbl
+    diff -u tools/perf/arch/xtensa/entry/syscalls/syscall.tbl arch/xtensa/kernel/syscalls/syscall.tbl
 
 Please see tools/include/uapi/README for further details.
 
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: linuxppc-dev@lists.ozlabs.org
+Cc: Arnd Bergmann <arnd@arndb.de>
+CC: linux-api@vger.kernel.org
 Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 ---
- tools/arch/powerpc/include/uapi/asm/kvm.h | 13 -------------
- 1 file changed, 13 deletions(-)
+ tools/include/uapi/asm-generic/unistd.h             | 8 +++++++-
+ tools/perf/arch/arm/entry/syscalls/syscall.tbl      | 2 ++
+ tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl | 2 ++
+ tools/perf/arch/powerpc/entry/syscalls/syscall.tbl  | 2 ++
+ tools/perf/arch/s390/entry/syscalls/syscall.tbl     | 2 ++
+ tools/perf/arch/sh/entry/syscalls/syscall.tbl       | 2 ++
+ tools/perf/arch/sparc/entry/syscalls/syscall.tbl    | 2 ++
+ tools/perf/arch/x86/entry/syscalls/syscall_32.tbl   | 2 ++
+ tools/perf/arch/x86/entry/syscalls/syscall_64.tbl   | 2 ++
+ tools/perf/arch/xtensa/entry/syscalls/syscall.tbl   | 2 ++
+ tools/scripts/syscall.tbl                           | 2 ++
+ 11 files changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/tools/arch/powerpc/include/uapi/asm/kvm.h b/tools/arch/powerpc/include/uapi/asm/kvm.h
-index eaeda001784ebb6f..077c5437f5219b05 100644
---- a/tools/arch/powerpc/include/uapi/asm/kvm.h
-+++ b/tools/arch/powerpc/include/uapi/asm/kvm.h
-@@ -1,18 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
+index 2892a45023af6d3e..04e0077fb4c97a4d 100644
+--- a/tools/include/uapi/asm-generic/unistd.h
++++ b/tools/include/uapi/asm-generic/unistd.h
+@@ -852,8 +852,14 @@ __SYSCALL(__NR_removexattrat, sys_removexattrat)
+ #define __NR_open_tree_attr 467
+ __SYSCALL(__NR_open_tree_attr, sys_open_tree_attr)
+ 
++/* fs/inode.c */
++#define __NR_file_getattr 468
++__SYSCALL(__NR_file_getattr, sys_file_getattr)
++#define __NR_file_setattr 469
++__SYSCALL(__NR_file_setattr, sys_file_setattr)
++
+ #undef __NR_syscalls
+-#define __NR_syscalls 468
++#define __NR_syscalls 470
+ 
  /*
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License, version 2, as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-- *
-  * Copyright IBM Corp. 2007
-  *
-  * Authors: Hollis Blanchard <hollisb@us.ibm.com>
+  * 32 bit systems traditionally used different
+diff --git a/tools/perf/arch/arm/entry/syscalls/syscall.tbl b/tools/perf/arch/arm/entry/syscalls/syscall.tbl
+index 27c1d5ebcd91c8c2..b07e699aaa3c2840 100644
+--- a/tools/perf/arch/arm/entry/syscalls/syscall.tbl
++++ b/tools/perf/arch/arm/entry/syscalls/syscall.tbl
+@@ -482,3 +482,5 @@
+ 465	common	listxattrat			sys_listxattrat
+ 466	common	removexattrat			sys_removexattrat
+ 467	common	open_tree_attr			sys_open_tree_attr
++468	common	file_getattr			sys_file_getattr
++469	common	file_setattr			sys_file_setattr
+diff --git a/tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl b/tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl
+index 1e8c44c7b61492ea..7a7049c2c307885f 100644
+--- a/tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl
++++ b/tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl
+@@ -382,3 +382,5 @@
+ 465	n64	listxattrat			sys_listxattrat
+ 466	n64	removexattrat			sys_removexattrat
+ 467	n64	open_tree_attr			sys_open_tree_attr
++468	n64	file_getattr			sys_file_getattr
++469	n64	file_setattr			sys_file_setattr
+diff --git a/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl b/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
+index 9a084bdb892694bc..b453e80dfc003796 100644
+--- a/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
++++ b/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
+@@ -558,3 +558,5 @@
+ 465	common	listxattrat			sys_listxattrat
+ 466	common	removexattrat			sys_removexattrat
+ 467	common	open_tree_attr			sys_open_tree_attr
++468	common	file_getattr			sys_file_getattr
++469	common	file_setattr			sys_file_setattr
+diff --git a/tools/perf/arch/s390/entry/syscalls/syscall.tbl b/tools/perf/arch/s390/entry/syscalls/syscall.tbl
+index a4569b96ef06c54c..8a6744d658db3986 100644
+--- a/tools/perf/arch/s390/entry/syscalls/syscall.tbl
++++ b/tools/perf/arch/s390/entry/syscalls/syscall.tbl
+@@ -470,3 +470,5 @@
+ 465  common	listxattrat		sys_listxattrat			sys_listxattrat
+ 466  common	removexattrat		sys_removexattrat		sys_removexattrat
+ 467  common	open_tree_attr		sys_open_tree_attr		sys_open_tree_attr
++468  common	file_getattr		sys_file_getattr		sys_file_getattr
++469  common	file_setattr		sys_file_setattr		sys_file_setattr
+diff --git a/tools/perf/arch/sh/entry/syscalls/syscall.tbl b/tools/perf/arch/sh/entry/syscalls/syscall.tbl
+index 52a7652fcff6394b..5e9c9eff5539e241 100644
+--- a/tools/perf/arch/sh/entry/syscalls/syscall.tbl
++++ b/tools/perf/arch/sh/entry/syscalls/syscall.tbl
+@@ -471,3 +471,5 @@
+ 465	common	listxattrat			sys_listxattrat
+ 466	common	removexattrat			sys_removexattrat
+ 467	common	open_tree_attr			sys_open_tree_attr
++468	common	file_getattr			sys_file_getattr
++469	common	file_setattr			sys_file_setattr
+diff --git a/tools/perf/arch/sparc/entry/syscalls/syscall.tbl b/tools/perf/arch/sparc/entry/syscalls/syscall.tbl
+index 83e45eb6c095a36b..ebb7d06d1044fa9b 100644
+--- a/tools/perf/arch/sparc/entry/syscalls/syscall.tbl
++++ b/tools/perf/arch/sparc/entry/syscalls/syscall.tbl
+@@ -513,3 +513,5 @@
+ 465	common	listxattrat			sys_listxattrat
+ 466	common	removexattrat			sys_removexattrat
+ 467	common	open_tree_attr			sys_open_tree_attr
++468	common	file_getattr			sys_file_getattr
++469	common	file_setattr			sys_file_setattr
+diff --git a/tools/perf/arch/x86/entry/syscalls/syscall_32.tbl b/tools/perf/arch/x86/entry/syscalls/syscall_32.tbl
+index ac007ea00979dc28..4877e16da69a50f2 100644
+--- a/tools/perf/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/tools/perf/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -473,3 +473,5 @@
+ 465	i386	listxattrat		sys_listxattrat
+ 466	i386	removexattrat		sys_removexattrat
+ 467	i386	open_tree_attr		sys_open_tree_attr
++468	i386	file_getattr		sys_file_getattr
++469	i386	file_setattr		sys_file_setattr
+diff --git a/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl b/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
+index cfb5ca41e30de1a4..92cf0fe2291eb99b 100644
+--- a/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -391,6 +391,8 @@
+ 465	common	listxattrat		sys_listxattrat
+ 466	common	removexattrat		sys_removexattrat
+ 467	common	open_tree_attr		sys_open_tree_attr
++468	common	file_getattr		sys_file_getattr
++469	common	file_setattr		sys_file_setattr
+ 
+ #
+ # Due to a historical design error, certain syscalls are numbered differently
+diff --git a/tools/perf/arch/xtensa/entry/syscalls/syscall.tbl b/tools/perf/arch/xtensa/entry/syscalls/syscall.tbl
+index f657a77314f8667f..374e4cb788d8a6d4 100644
+--- a/tools/perf/arch/xtensa/entry/syscalls/syscall.tbl
++++ b/tools/perf/arch/xtensa/entry/syscalls/syscall.tbl
+@@ -438,3 +438,5 @@
+ 465	common	listxattrat			sys_listxattrat
+ 466	common	removexattrat			sys_removexattrat
+ 467	common	open_tree_attr			sys_open_tree_attr
++468	common	file_getattr			sys_file_getattr
++469	common	file_setattr			sys_file_setattr
+diff --git a/tools/scripts/syscall.tbl b/tools/scripts/syscall.tbl
+index 580b4e246aecd5f0..d1ae5e92c615b58e 100644
+--- a/tools/scripts/syscall.tbl
++++ b/tools/scripts/syscall.tbl
+@@ -408,3 +408,5 @@
+ 465	common	listxattrat			sys_listxattrat
+ 466	common	removexattrat			sys_removexattrat
+ 467	common	open_tree_attr			sys_open_tree_attr
++468	common	file_getattr			sys_file_getattr
++469	common	file_setattr			sys_file_setattr
 -- 
 2.51.0.261.g7ce5a0a67e-goog
 
