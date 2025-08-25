@@ -1,402 +1,205 @@
-Return-Path: <linux-kernel+bounces-784571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F70B33DB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:09:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2B3B33DBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 704C8488321
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:09:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15EDD205E68
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A202E1EF3;
-	Mon, 25 Aug 2025 11:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC382E1C79;
+	Mon, 25 Aug 2025 11:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="D5vErNKa"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (1024-bit key) header.d=transsion.com header.i=@transsion.com header.b="Vg5gZCW8"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022117.outbound.protection.outlook.com [52.101.126.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2192D5406;
-	Mon, 25 Aug 2025 11:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756120157; cv=none; b=dIvgzuMWMpg+zE8VuKWJSJQ9Cf39nWRc3fT9FwP3bpsBYp/03aQUSzZBU1S4nZ2eFcLgnz977aXBimDE5K0WF3atTvRbrtvNKwlMMTVasjbhc1DtJXMghX3VeOIUAXkTO/rrvphM3hkMiWvJ2Wi37n5nx67Iq+7QfxG2ujDDi7M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756120157; c=relaxed/simple;
-	bh=E/rJutjjHAOnQijuJDlErN8XamGuSWBFfQFN6zLLTDw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XtbA0cFdQJezL8i58Ch4Ei+qzRdmP1iKFG+Kzj5iUKoyce3rWMcGQ6K8UztFVIZrQf/WXLNqzYWDS1a6gfUALyyM21txFNZc9a/DhkMEteVhXAZNX8Uct88q6E77yEP172YArylQG19fv14yqEmkLEPWuXq/lqYd0raygdIDV24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=D5vErNKa; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 176614335A;
-	Mon, 25 Aug 2025 11:09:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1756120152;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7TZWh2miVjNMMNtsl3nXpBGayog/kcpFFnfG2ACtIow=;
-	b=D5vErNKafppXWWBOBlYIVIdTLzRbPMOrAxfaXtyov9Kf0dwdPu1or+5sypFCTYuxsIqhEx
-	b6O93tBullTXXbXaMPBkRrEvBIN1mFIhTONryC/X3996tiLOtp6o4CBRASPnDXjUeSZWq3
-	PhzbV9PUuskan5IgFPuRxv+UPe/DsDc3E3D5ULdt9o8NvuXIa8ETy15g31s2sJfa9bIiIT
-	xiXLMKLsjAqWSjD2rVk+aFLVOqZZvAbtEsItNPl32LYoeWNHvv7ZJGMaOll07jyz+qvFh/
-	m63P2K7vnDsMjvQLofg744IsSz0lRwZd4rCkXdQ37q0bvjsgOhRFj5St5FJ//w==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  Amir Goldstein
- <amir73il@gmail.com>,  Theodore Tso <tytso@mit.edu>,
-  linux-unionfs@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  kernel-dev@igalia.com
-Subject: Re: [PATCH v6 4/9] ovl: Create ovl_casefold() to support casefolded
- strncmp()
-In-Reply-To: <20250822-tonyk-overlayfs-v6-4-8b6e9e604fa2@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Fri, 22 Aug 2025 11:17:07 -0300")
-References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
-	<20250822-tonyk-overlayfs-v6-4-8b6e9e604fa2@igalia.com>
-Date: Mon, 25 Aug 2025 07:09:07 -0400
-Message-ID: <875xeb64ks.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3FC2D5406
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.117
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756120166; cv=fail; b=Hw/2NZPsVKwo5S+BJz6LnPXPM5X1geaqENz8f7LtDaxp37wM1nmmlc4zPP8UeUv2OP5kAbN4hvDFJuS09gt0bie4HFTiH31KXMBD/XphXoR2x3Jvo9K9XhNVReAV1SezjhenVFczjTlTLxNBGm6yYixNCWR0wbfldqcGbaUZJFc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756120166; c=relaxed/simple;
+	bh=SA7qsg9UNDKLka9ck44Dy3mcI0DIqVXpGoDdmz9vW5w=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=iuqYXWz8gmfkDTCJPlh255Zx/KGL1X9gbtMCdZQ0xBYxVaGQhhxLwGEqARGFuvxPFLIvYWp2cj0tGPyL15GYaBy7f8gbzI/rVaNtrKgkVZBTA8/yqBToOT2s7TwfOO30zKYWDCfmlWUQngJMCry4tACQSz9rsN1M/7sdKSLjUMM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=transsion.com; spf=pass smtp.mailfrom=transsion.com; dkim=pass (1024-bit key) header.d=transsion.com header.i=@transsion.com header.b=Vg5gZCW8; arc=fail smtp.client-ip=52.101.126.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=transsion.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=transsion.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wAq8ZD8mEx8Jxg1mXe05zbCHfUrn6BigubfkJ8i5M2AndMBh3GIH39bnhBVflxOxxYyFD5PNeYjg7rpipYj6jv+0FT+LT6zLt1nZfIb/tZ6w6083RyYJyUDdXva0SMPxVv2JIj2TXHDCpjD0XU0iRLoT/RbOtc9w9C0VSHkLiE9lf5zOXC8FKxb0Dr0tp4Fq5khw+hWXIOSsYcO427SbmELCZmGxbTdHUoZ5fm3SI8WTZfCPGEmchtyO7ViHshE/HobN6bqKLdxr090PzGtq337qZi41LMo3LorSsrItGBGVhg+LFC2N/nqtxaXtMWNgvRbREoL1xcCmEtL4+RCKtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SA7qsg9UNDKLka9ck44Dy3mcI0DIqVXpGoDdmz9vW5w=;
+ b=ezOUHTXtKyyrPKTjnKof017LItw0QhY83gnDD3pB1IkcgpxD41ccgMcWF857aKGyWTwe4DeLoyAr8LqCbyf6BUhMtj4N8kchH7CNnU6Dh+QbVjUljee2IsPUsg7OUXey1rgo0X/DaqxrXQgN46QNPvfK5S4gbBS/zNOjIdDmWb5v9Ude81Cn6uvF8DtDtyhBkrkElbKdlXjjQW2dGsSU+jfRPqeDjbnhYCUkKGNlRm7D7gXPhznWYLuN4g4Y4Pep9eeiNmjKSIGFU2ACXf814/6K5t9CWmbtpvv0/qym2vyzs8E3dCEtXEfrQxLPZFf1sGiqXMe9C6701opDRvRTMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=transsion.com; dmarc=pass action=none
+ header.from=transsion.com; dkim=pass header.d=transsion.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=transsion.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SA7qsg9UNDKLka9ck44Dy3mcI0DIqVXpGoDdmz9vW5w=;
+ b=Vg5gZCW8knDWSZ9YEIGJxDd92slfPBLC/t6tgZlc0Vl5pP5FUdhyf39v9IzqDCtT7P3+CURXebSnDgb7viWSFiMbEa+RaT9HNcKXqLlkMuGD7KBbsXD40O1Qfmq2eZB3veMsznXos+FiHh4091PvjiqM6IlsLxhieAgt/1WuehM=
+Received: from KUZPR04MB8965.apcprd04.prod.outlook.com (2603:1096:d10:4a::6)
+ by KUZPR04MB8927.apcprd04.prod.outlook.com (2603:1096:d10:44::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
+ 2025 11:09:21 +0000
+Received: from KUZPR04MB8965.apcprd04.prod.outlook.com
+ ([fe80::4992:f5a2:2328:6b52]) by KUZPR04MB8965.apcprd04.prod.outlook.com
+ ([fe80::4992:f5a2:2328:6b52%5]) with mapi id 15.20.9052.019; Mon, 25 Aug 2025
+ 11:09:21 +0000
+From: =?gb2312?B?bWluZ3podS53YW5nKM31w/fW6Sk=?= <mingzhu.wang@transsion.com>
+To: "kees@kernel.org" <kees@kernel.org>, "mingo@redhat.com"
+	<mingo@redhat.com>, "peterz@infradead.org" <peterz@infradead.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "david@redhat.com"
+	<david@redhat.com>
+CC: "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>, "mgorman@suse.de"
+	<mgorman@suse.de>, "vbabka@suse.cz" <vbabka@suse.cz>, "rppt@kernel.org"
+	<rppt@kernel.org>, "surenb@google.com" <surenb@google.com>, "mhocko@suse.com"
+	<mhocko@suse.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jiazi Li
+	<jqqlijiazi@gmail.com>
+Subject: [PATCH] kernel/fork: Update obsolete use_mm references to
+ kthread_use_mm
+Thread-Topic: [PATCH] kernel/fork: Update obsolete use_mm references to
+ kthread_use_mm
+Thread-Index: AdwVrn4fgOowLKw8Scatb5BbeQ28xw==
+Date: Mon, 25 Aug 2025 11:09:20 +0000
+Message-ID:
+ <KUZPR04MB8965486F5D00D5B7BCC0B4738F3EA@KUZPR04MB8965.apcprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=transsion.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: KUZPR04MB8965:EE_|KUZPR04MB8927:EE_
+x-ms-office365-filtering-correlation-id: 2eda7e8d-fbbb-49b5-20b5-08dde3c7d775
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?gb2312?B?byswSVZWNWNRLytqdDREQThXOUsrQnhuRTJuQS93ZVAvNko3dkx6aEVpYjhh?=
+ =?gb2312?B?SDMrMEpJMU9IWlJ4UVRLNUJDOU5SeUJuSm51OXBkNWpvVzc5MDN4QzdMUThx?=
+ =?gb2312?B?RXVmaHZxOURPZ0J4WVVnMEp1OEV2QXRYZ0VjZFUwWjQxYlcrZnI1QTVtS1FO?=
+ =?gb2312?B?STdqai90V1NwZXlJUkRwN0E5S3ExZDhsTUx5V3F1RGdCWDBYYUQwQklGT1M0?=
+ =?gb2312?B?NVdQZUV0OFFGditHVmtDTWVZY0FqZ29hYTVFNDB1VzRRNFd0RGlobDFySGQz?=
+ =?gb2312?B?Y0tQdVpsZVQ2WnpPeDM0Vy9jTncwdlg5eWR2dmtSRXVjVkNLZ1BJdTd3NUtG?=
+ =?gb2312?B?bzBKaWRqbGxNckRib0xQdDRvZmRocWV2YU9kMERyR3EwWWtFU3JrckdPWE8y?=
+ =?gb2312?B?eENIYUpMS3dEY2lpMHhQMklQTDNnRkp3eEYyWXg4dlNncThzcXJCMGlVbHhE?=
+ =?gb2312?B?WDJJQ1lCK0psOUNRdDRsbWZxVWNGTVBzeUZERzRLdUpDOFMwVlBFcXRoWjRs?=
+ =?gb2312?B?MUFtS0p4dHdZYmdMZWV2YUVRMXRKUEZobGhrNjF2WjI1ZFRpd3NWS0JLbW5m?=
+ =?gb2312?B?UzFaZEphQldNOGFzS1VZbi9uRFBkL2N1YWM5UlZTSkQzbE1mbkg5andkYmV3?=
+ =?gb2312?B?QW83c1dwUGlqYWdudDAyU0hnRmx5MmZPNVp1L1grWkgxTnZUVDZWVmdhcGZw?=
+ =?gb2312?B?Ykg2SUx3Qi9KRzViaHp3S0labkg0SzFaWUJ5N2FVTnF3R1ZDSDlUWFhxQVNr?=
+ =?gb2312?B?M2k0SjlJQ3F2MlFqU2E3UCtsWTRTY0ZTelNVZVpRV0g2UUNrcTN5NjgyZUZP?=
+ =?gb2312?B?NVYxOVB2RmF5NjJERXhVZDc5anI4dGgrZGoyNVNnUEh1TnBMd1FpbFRYamRT?=
+ =?gb2312?B?eloxeWlxZjVNWG9qb0IxUVhDSGU3MndZQUZON1BBZ2M0RWJsYmNwRm81R0w4?=
+ =?gb2312?B?T0tVTitRdEdpRzk1d281MmovamtKbGRsbzFBNmZXN1U5UUh0MHdEK2xJQXpT?=
+ =?gb2312?B?R1dwQnZlVlViNC9vcTZZdzNKMllSTG1JTlY3SUtQenBUK05BRlFNQ29Uc1hS?=
+ =?gb2312?B?SjZ0NDV0WS9zMUJ6bUlWVmJ6TWJjalQ4dzhjanNxeTJkRVpOdG9oa1NWbFJo?=
+ =?gb2312?B?Z05NdTNuRzNCZnk0ZU9JdWhBenhKZkJ0bE5LTmlRS29UMGg2eEVSNytFQkpk?=
+ =?gb2312?B?SzE2cE5sVXdybWI2aGFrSnU1OFZqV01QUjhNcG9hTlQzS0lnb1MyQk00a052?=
+ =?gb2312?B?UVBESDdsaEZVRnZ5K01kaFF3amllVy9VeC9ueTE2d01UOTE2bEVZL2FZTEox?=
+ =?gb2312?B?aGZOeWZRTTlrT0tzOS80NXU3N0NQbGQ2Z3pvSmQ0ODMxVEtHV2NMYmZZRStB?=
+ =?gb2312?B?NTZ2WFd6STB0MkxaMW1XejRiOEs4OWVzYkJaSU1MREFrUmVMSFZRVnBHMmpJ?=
+ =?gb2312?B?RW9SUGp2SkNjOFAzUzhheG5YTU5BY1FCZWVMdE85Smt4M05UZy9pUmUxU3hN?=
+ =?gb2312?B?RW92NE5QSUJUelhGSU1YSTNNNEFZbG44bWplVVhKeGRCcmVvR2hOMXpjaEFI?=
+ =?gb2312?B?WFFBcnNhUUlxb1d5U0ZkdlU0YnVJZ1c5TkM3OFpLdVNxUVIyZ3hicHp0Uks2?=
+ =?gb2312?B?emxUNm9jamVBMUxNWlAyQ1Rza3dlRUNaeGlqbGdDdXhleE42QnFUWS9ZbXpQ?=
+ =?gb2312?B?anZRSXMxUEJveUMzV1p3T1pvWElhUmJMY2ptbXFoSDhqNSt2bUk5OHByQmMr?=
+ =?gb2312?B?eHVMbEoxbTFCczZ4SkEyVm51RlZQQW9GaTM5akdOTDhxQTlaUmVPVStQSVNy?=
+ =?gb2312?B?aHNLVGlkY2VNdHVGcUpVREZ6alpwdCtUMkJEZVcxZFdjZnpFQzJxSEFYOTd0?=
+ =?gb2312?B?bjhCZXB3NGNhYjM5OTYvaGFBclErS0hoR3JkZ2tyTlYvbzBzMkdEbGVnZExC?=
+ =?gb2312?B?TU1iZ01sY01KK3oxUG5mWUlVQ3ViMTA0S2UzUFJRVDdrZ2p0WWxseGhBOFlu?=
+ =?gb2312?B?Qld3YW1XWXRBPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KUZPR04MB8965.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?gb2312?B?akpOSzdJbnJwbDJYblVWTXRXanVvbjRIWjNXY0xpS0tVelFzTWs3Z0liLytN?=
+ =?gb2312?B?enp3L0hVaXRNWkhBRzNXaUhPazMrTlZNOTFwc2U3Sk1KWmV1R25LS3liZ1Bx?=
+ =?gb2312?B?MEpMaHB6QlJud1M5MEVIVkNlYStIN21TdXR0M1ZzOHJXdkZKdU1Sd3ZxaE9C?=
+ =?gb2312?B?WkFsVzUvM2tCdXY5bmVMUGpScHFLQ3VGNVVYdVBZTWY5LzhuTXFpd1I0ZFVh?=
+ =?gb2312?B?RHdQaXB2Q0ZvSjE2Mlo3WUg3d3ljQjUwb1JrYVBkKytxM09WMG5QbHdSL3lp?=
+ =?gb2312?B?djlIbmNrZ0Q5WUdRYm12RndvWG9JSmhXYzk2MEtUb3QxRlZMMTdnR3V1VzVQ?=
+ =?gb2312?B?T1ZzMks2L1RzZ1NtTEhhU2NrcG43Mm1JYVhXWTVpNk9FVTVKT3dnOEsyOUdB?=
+ =?gb2312?B?ZVJDR0ZwWlhsSzNJdlFaakJxaDZhTUxyVHhtZXNIVy9jSUZVL0d4UXZJN3Rs?=
+ =?gb2312?B?d2pUcmN2d2hZbWtZOUtTeEx5YzhrSHF1VnF6SjVsdWFlaXZEUkJEOWRZVy9z?=
+ =?gb2312?B?SkNaNTIyZnZPL3E5cnJNc2hkcE02cXh6UUV3WGxGdWg1aHJwWEczNWF1Ykl5?=
+ =?gb2312?B?cGpaS3Z1dTROVmg5VWFZbmdhSm1yWkdiYWhEcHRpNk9MeWl4SHNlTm0xYlV4?=
+ =?gb2312?B?MXNibDk5UEVCbHhLa0RDREtiS2FQdkE3QjVYZDFqSm5HYWtmMWdCcnllM25s?=
+ =?gb2312?B?aWxsSHRzalJpVTUxajFyNWFrSlJSOVZYbk01V1NlelAyN3ltKzBRK1RGV3dW?=
+ =?gb2312?B?d1BpbnJHSzM1OGdIZS9RS2hVY1pITjNYaUlaT0VOb25QeU1PdUZ3Y0R5UUhK?=
+ =?gb2312?B?djBlVVJUazBQQ1h6UG9scU1vSld4a3FyTkVkZ1VQVlROb3l0Y1lDcXJiV2JZ?=
+ =?gb2312?B?a0VyVTF1S1FiK3dFUXROOHJWYmJid3poUndxTkNyYVNSZHZHN2VpQXJMeE13?=
+ =?gb2312?B?MXNIMzhva2gweUx4b3RoOURFVUpLd3BnOUMxVWxiK0E5L2hnRVJBYTBURVRD?=
+ =?gb2312?B?bjBtS2Q1WkwrL2JxTjJIZWdycWpRaVNFaHdVd0xwdlpDVWtxRXJoclVCaTZo?=
+ =?gb2312?B?UlcyZ0trK21YNm9ueU5oU1JTTWZ2Tkx2eFFMcE9CaCt3RUZNNlR5dXNENGxv?=
+ =?gb2312?B?clNLRUVVRzZMbWNtbEZOdzVDVUtHUGFkc0JiTm8zWmpNdGZpTWZOYTRNbExt?=
+ =?gb2312?B?alpvQXdmZktQVDRWY2hONEM3L1hNU2JPSWlrdEhhVTUxdSt5aVk5SWU3ZFgy?=
+ =?gb2312?B?M0xKUytaZTNIOGtWNmVlRHRlcHRVaU4xR2VYaE5JeitYM1VYaGJaQ0xwc0hi?=
+ =?gb2312?B?L1FVOVZDQ1YrZVhrRXVLSWFXSUhPWC94SkdxZ2tBRnNidmh5d0k1KzVvRGVQ?=
+ =?gb2312?B?T1d3SGtaZit5dnpFZy9aK0tOR0VjYjVWY1J4eHQvQW9Ka3l1azBNL0h1cDc4?=
+ =?gb2312?B?Rm5FT3R4clpkS1Ftc050NXBaQ0FLSHhlK2lMNzk3bHQ1NVk4cFprZWo5SElq?=
+ =?gb2312?B?SnF5Rkp3QXJnaGtUM2N4QW9TUStZSU1ERDBnaHZWMW1HbjdxU0U4UnM4U0t5?=
+ =?gb2312?B?UmpyU1QzQnJBUmdRb1VCUk8wODRQcDIxS3ZaTTlFVXRBL3ZKcW9MVDdBSmhm?=
+ =?gb2312?B?a0JQV2tLRThpZlc4bTMyZXFFTTFxTzdRbEpsa1hkQXBpMjZvNDhRVUtDMHBS?=
+ =?gb2312?B?OTArbnZITUtoWnBMenhqZWRjZjR0TFBEUFphTTZVYUtHUmRpWTJhWEptRHRE?=
+ =?gb2312?B?eS91UXo2cmhhbzF1ZWM5VktEbiswd0xYVTkycmNYWUFCQXpRRDBBaStXcitH?=
+ =?gb2312?B?YTNaR29XN2xXQng3M0hQaUJkWTB3T243RXE5TVJTbkRjc081UFkvbjNMRytZ?=
+ =?gb2312?B?dW1lUmlYTjBVVXRkaElFbDdjL3ZWQkhrOXZ3TjNoNE4yRU5xK1FXNlZiRitm?=
+ =?gb2312?B?MkVFM2JlNG91K2syQUV6Zis0TmdCT1pKODIyMjdqZWR0QzN5Tk8xM3RPSXhi?=
+ =?gb2312?B?L29SYThtdFgxbHRNOW53aHhiVXNXK0tqQ1FZYU5LYkRHeXVxYUFKb0VjSGJs?=
+ =?gb2312?B?RjZDTGFHeEVvSXl6WC8rNzBQZWFYMEZ0MHozOGErODc2aUdCclBmLytCSVpP?=
+ =?gb2312?B?cW5BMHg0NEgyM0VSWm04d1FwODJ0aE03SlV6Rmd4S2VQdnlmdTQ1eGxqSUls?=
+ =?gb2312?B?R0E9PQ==?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujedvvdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhffkfgfgggtgfesthhqredttderjeenucfhrhhomhepifgrsghrihgvlhcumfhrihhsmhgrnhcuuegvrhhtrgiiihcuoehgrggsrhhivghlsehkrhhishhmrghnrdgsvgeqnecuggftrfgrthhtvghrnhepfedtvdehffevtddujeffffejudeuuefgvdeujeduhedtgfehkeefheegjefgueeknecukfhppeejtddrkedvrddukedvrdeikeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeejtddrkedvrddukedvrdeikedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepghgrsghrihgvlheskhhrihhsmhgrnhdrsggvpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopegrnhgurhgvrghlmhgvihgusehighgrlhhirgdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphhtthhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvr
- hhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhk
-X-GND-Sasl: gabriel@krisman.be
+X-OriginatorOrg: transsion.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: KUZPR04MB8965.apcprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2eda7e8d-fbbb-49b5-20b5-08dde3c7d775
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Aug 2025 11:09:20.8831
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 2e8503a6-2d01-4333-8e36-6ab7c8cd7ae2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tSOhgR13U6cD42aMK/pPNaXbsJ2fkDsPCijkLGh9QjicU1VZs7/9LQ+WFVrlZGQGQ3db8kYui6QPyqeb0pcpzGt1rldd8fJwBtOJKW+L8rU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUZPR04MB8927
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
-
-> To add overlayfs support casefold layers, create a new function
-> ovl_casefold(), to be able to do case-insensitive strncmp().
->
-> ovl_casefold() allocates a new buffer and stores the casefolded version
-> of the string on it. If the allocation or the casefold operation fails,
-> fallback to use the original string.
->
-> The case-insentive name is then used in the rb-tree search/insertion
-> operation. If the name is found in the rb-tree, the name can be
-> discarded and the buffer is freed. If the name isn't found, it's then
-> stored at struct ovl_cache_entry to be used later.
->
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-> ---
-> Changes from v6:
->  - Last version was using `strncmp(... tmp->len)` which was causing
->    regressions. It should be `strncmp(... len)`.
->  - Rename cf_len to c_len
->  - Use c_len for tree operation: (cmp < 0 || len < tmp->c_len)
->  - Remove needless kfree(cf_name)
-> ---
->  fs/overlayfs/readdir.c | 113 ++++++++++++++++++++++++++++++++++++++++---=
-------
->  1 file changed, 94 insertions(+), 19 deletions(-)
->
-> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> index b65cdfce31ce27172d28d879559f1008b9c87320..dfc661b7bc3f87efbf14991e9=
-7cee169400d823b 100644
-> --- a/fs/overlayfs/readdir.c
-> +++ b/fs/overlayfs/readdir.c
-> @@ -27,6 +27,8 @@ struct ovl_cache_entry {
->  	bool is_upper;
->  	bool is_whiteout;
->  	bool check_xwhiteout;
-> +	const char *c_name;
-> +	int c_len;
->  	char name[];
->  };
->=20=20
-> @@ -45,6 +47,7 @@ struct ovl_readdir_data {
->  	struct list_head *list;
->  	struct list_head middle;
->  	struct ovl_cache_entry *first_maybe_whiteout;
-> +	struct unicode_map *map;
->  	int count;
->  	int err;
->  	bool is_upper;
-> @@ -66,6 +69,27 @@ static struct ovl_cache_entry *ovl_cache_entry_from_no=
-de(struct rb_node *n)
->  	return rb_entry(n, struct ovl_cache_entry, node);
->  }
->=20=20
-> +static int ovl_casefold(struct unicode_map *map, const char *str, int le=
-n, char **dst)
-> +{
-> +	const struct qstr qstr =3D { .name =3D str, .len =3D len };
-> +	int cf_len;
-> +
-> +	if (!IS_ENABLED(CONFIG_UNICODE) || !map || is_dot_dotdot(str, len))
-> +		return 0;
-> +
-> +	*dst =3D kmalloc(NAME_MAX, GFP_KERNEL);
-> +
-> +	if (dst) {
-> +		cf_len =3D utf8_casefold(map, &qstr, *dst, NAME_MAX);
-> +
-> +		if (cf_len > 0)
-> +			return cf_len;
-> +	}
-> +
-> +	kfree(*dst);
-> +	return 0;
-> +}
-
-Hi,
-
-I should just note this does not differentiates allocation errors from
-casefolding errors (invalid encoding).  It might be just a theoretical
-error because GFP_KERNEL shouldn't fail (wink, wink) and the rest of the
-operation is likely to fail too, but if you have an allocation failure, you
-can end up with an inconsistent cache, because a file is added under the
-!casefolded name and a later successful lookup will look for the
-casefolded version.
-
-> +
->  static bool ovl_cache_entry_find_link(const char *name, int len,
->  				      struct rb_node ***link,
->  				      struct rb_node **parent)
-> @@ -79,10 +103,10 @@ static bool ovl_cache_entry_find_link(const char *na=
-me, int len,
->=20=20
->  		*parent =3D *newp;
->  		tmp =3D ovl_cache_entry_from_node(*newp);
-> -		cmp =3D strncmp(name, tmp->name, len);
-> +		cmp =3D strncmp(name, tmp->c_name, len);
->  		if (cmp > 0)
->  			newp =3D &tmp->node.rb_right;
-> -		else if (cmp < 0 || len < tmp->len)
-> +		else if (cmp < 0 || len < tmp->c_len)
->  			newp =3D &tmp->node.rb_left;
->  		else
->  			found =3D true;
-> @@ -101,10 +125,10 @@ static struct ovl_cache_entry *ovl_cache_entry_find=
-(struct rb_root *root,
->  	while (node) {
->  		struct ovl_cache_entry *p =3D ovl_cache_entry_from_node(node);
->=20=20
-> -		cmp =3D strncmp(name, p->name, len);
-> +		cmp =3D strncmp(name, p->c_name, len);
->  		if (cmp > 0)
->  			node =3D p->node.rb_right;
-> -		else if (cmp < 0 || len < p->len)
-> +		else if (cmp < 0 || len < p->c_len)
->  			node =3D p->node.rb_left;
->  		else
->  			return p;
-> @@ -145,6 +169,7 @@ static bool ovl_calc_d_ino(struct ovl_readdir_data *r=
-dd,
->=20=20
->  static struct ovl_cache_entry *ovl_cache_entry_new(struct ovl_readdir_da=
-ta *rdd,
->  						   const char *name, int len,
-> +						   const char *c_name, int c_len,
->  						   u64 ino, unsigned int d_type)
->  {
->  	struct ovl_cache_entry *p;
-> @@ -167,6 +192,14 @@ static struct ovl_cache_entry *ovl_cache_entry_new(s=
-truct ovl_readdir_data *rdd,
->  	/* Defer check for overlay.whiteout to ovl_iterate() */
->  	p->check_xwhiteout =3D rdd->in_xwhiteouts_dir && d_type =3D=3D DT_REG;
->=20=20
-> +	if (c_name && c_name !=3D name) {
-> +		p->c_name =3D c_name;
-> +		p->c_len =3D c_len;
-> +	} else {
-> +		p->c_name =3D p->name;
-> +		p->c_len =3D len;
-> +	}
-> +
->  	if (d_type =3D=3D DT_CHR) {
->  		p->next_maybe_whiteout =3D rdd->first_maybe_whiteout;
->  		rdd->first_maybe_whiteout =3D p;
-> @@ -174,48 +207,55 @@ static struct ovl_cache_entry *ovl_cache_entry_new(=
-struct ovl_readdir_data *rdd,
->  	return p;
->  }
->=20=20
-> -static bool ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
-> -				  const char *name, int len, u64 ino,
-> +/* Return 0 for found, 1 for added, <0 for error */
-> +static int ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
-> +				  const char *name, int len,
-> +				  const char *c_name, int c_len,
-> +				  u64 ino,
->  				  unsigned int d_type)
->  {
->  	struct rb_node **newp =3D &rdd->root->rb_node;
->  	struct rb_node *parent =3D NULL;
->  	struct ovl_cache_entry *p;
->=20=20
-> -	if (ovl_cache_entry_find_link(name, len, &newp, &parent))
-> -		return true;
-> +	if (ovl_cache_entry_find_link(c_name, c_len, &newp, &parent))
-> +		return 0;
->=20=20
-> -	p =3D ovl_cache_entry_new(rdd, name, len, ino, d_type);
-> +	p =3D ovl_cache_entry_new(rdd, name, len, c_name, c_len, ino, d_type);
->  	if (p =3D=3D NULL) {
->  		rdd->err =3D -ENOMEM;
-> -		return false;
-> +		return -ENOMEM;
->  	}
->=20=20
->  	list_add_tail(&p->l_node, rdd->list);
->  	rb_link_node(&p->node, parent, newp);
->  	rb_insert_color(&p->node, rdd->root);
->=20=20
-> -	return true;
-> +	return 1;
->  }
->=20=20
-> -static bool ovl_fill_lowest(struct ovl_readdir_data *rdd,
-> +/* Return 0 for found, 1 for added, <0 for error */
-> +static int ovl_fill_lowest(struct ovl_readdir_data *rdd,
->  			   const char *name, int namelen,
-> +			   const char *c_name, int c_len,
->  			   loff_t offset, u64 ino, unsigned int d_type)
->  {
->  	struct ovl_cache_entry *p;
->=20=20
-> -	p =3D ovl_cache_entry_find(rdd->root, name, namelen);
-> +	p =3D ovl_cache_entry_find(rdd->root, c_name, c_len);
->  	if (p) {
->  		list_move_tail(&p->l_node, &rdd->middle);
-> +		return 0;
->  	} else {
-> -		p =3D ovl_cache_entry_new(rdd, name, namelen, ino, d_type);
-> +		p =3D ovl_cache_entry_new(rdd, name, namelen, c_name, c_len,
-> +					ino, d_type);
->  		if (p =3D=3D NULL)
->  			rdd->err =3D -ENOMEM;
->  		else
->  			list_add_tail(&p->l_node, &rdd->middle);
->  	}
->=20=20
-> -	return rdd->err =3D=3D 0;
-> +	return rdd->err ?: 1;
->  }
->=20=20
->  void ovl_cache_free(struct list_head *list)
-> @@ -223,8 +263,11 @@ void ovl_cache_free(struct list_head *list)
->  	struct ovl_cache_entry *p;
->  	struct ovl_cache_entry *n;
->=20=20
-> -	list_for_each_entry_safe(p, n, list, l_node)
-> +	list_for_each_entry_safe(p, n, list, l_node) {
-> +		if (p->c_name !=3D p->name)
-> +			kfree(p->c_name);
->  		kfree(p);
-> +	}
->=20=20
->  	INIT_LIST_HEAD(list);
->  }
-> @@ -260,12 +303,36 @@ static bool ovl_fill_merge(struct dir_context *ctx,=
- const char *name,
->  {
->  	struct ovl_readdir_data *rdd =3D
->  		container_of(ctx, struct ovl_readdir_data, ctx);
-> +	struct ovl_fs *ofs =3D OVL_FS(rdd->dentry->d_sb);
-> +	const char *c_name =3D NULL;
-> +	char *cf_name =3D NULL;
-> +	int c_len =3D 0, ret;
-> +
-> +	if (ofs->casefold)
-> +		c_len =3D ovl_casefold(rdd->map, name, namelen, &cf_name);
-> +
-> +	if (c_len <=3D 0) {
-> +		c_name =3D name;
-> +		c_len =3D namelen;
-> +	} else {
-> +		c_name =3D cf_name;
-> +	}
->=20=20
->  	rdd->count++;
->  	if (!rdd->is_lowest)
-> -		return ovl_cache_entry_add_rb(rdd, name, namelen, ino, d_type);
-> +		ret =3D ovl_cache_entry_add_rb(rdd, name, namelen, c_name, c_len, ino,=
- d_type);
->  	else
-> -		return ovl_fill_lowest(rdd, name, namelen, offset, ino, d_type);
-> +		ret =3D ovl_fill_lowest(rdd, name, namelen, c_name, c_len, offset, ino=
-, d_type);
-> +
-> +	/*
-> +	 * If ret =3D=3D 1, that means that c_name is being used as part of str=
-uct
-> +	 * ovl_cache_entry and will be freed at ovl_cache_free(). Otherwise,
-> +	 * c_name was found in the rb-tree so we can free it here.
-> +	 */
-> +	if (ret !=3D 1 && c_name !=3D name)
-> +		kfree(c_name);
-> +
-
-The semantics of this being conditionally freed is a bit annoying, as
-it is already replicated in 3 places. I suppose a helper would come in
-hand.
-
-In this specific case, it could just be:
-
-if (ret !=3D 1)
-        kfree(cf_name);
-
-
-> +	return ret >=3D 0;
->  }
->=20=20
->  static int ovl_check_whiteouts(const struct path *path, struct ovl_readd=
-ir_data *rdd)
-> @@ -357,12 +424,18 @@ static int ovl_dir_read_merged(struct dentry *dentr=
-y, struct list_head *list,
->  		.list =3D list,
->  		.root =3D root,
->  		.is_lowest =3D false,
-> +		.map =3D NULL,
->  	};
->  	int idx, next;
->  	const struct ovl_layer *layer;
-> +	struct ovl_fs *ofs =3D OVL_FS(dentry->d_sb);
->=20=20
->  	for (idx =3D 0; idx !=3D -1; idx =3D next) {
->  		next =3D ovl_path_next(idx, dentry, &realpath, &layer);
-> +
-> +		if (ofs->casefold)
-> +			rdd.map =3D sb_encoding(realpath.dentry->d_sb);
-> +
->  		rdd.is_upper =3D ovl_dentry_upper(dentry) =3D=3D realpath.dentry;
->  		rdd.in_xwhiteouts_dir =3D layer->has_xwhiteouts &&
->  					ovl_dentry_has_xwhiteouts(dentry);
-> @@ -555,7 +628,7 @@ static bool ovl_fill_plain(struct dir_context *ctx, c=
-onst char *name,
->  		container_of(ctx, struct ovl_readdir_data, ctx);
->=20=20
->  	rdd->count++;
-> -	p =3D ovl_cache_entry_new(rdd, name, namelen, ino, d_type);
-> +	p =3D ovl_cache_entry_new(rdd, name, namelen, NULL, 0, ino, d_type);
->  	if (p =3D=3D NULL) {
->  		rdd->err =3D -ENOMEM;
->  		return false;
-> @@ -1023,6 +1096,8 @@ int ovl_check_empty_dir(struct dentry *dentry, stru=
-ct list_head *list)
->=20=20
->  del_entry:
->  		list_del(&p->l_node);
-> +		if (p->c_name !=3D p->name)
-> +			kfree(p->c_name);
->  		kfree(p);
->  	}
-
---=20
-Gabriel Krisman Bertazi
+VGhlIGNvbW1lbnQgZm9yIGdldF90YXNrX21tKCkgaW4ga2VybmVsL2ZvcmsuYyBpbmNvcnJlY3Rs
+eSByZWZlcmVuY2VzIHRoZSBkZXByZWNhdGVkIGZ1bmN0aW9uIGB1c2VfbW0oKWAsIHdoaWNoIGhh
+cyBiZWVuIHJlbmFtZWQgdG8gYGt0aHJlYWRfdXNlX21tKClgIGluIGtlcm5lbC9rdGhyZWFkLmMu
+DQpUaGlzIHBhdGNoIHVwZGF0ZXMgdGhlIGRvY3VtZW50YXRpb24gdG8gcmVmbGVjdCB0aGUgY3Vy
+cmVudCBmdW5jdGlvbiBuYW1lcywgZW5zdXJpbmcgYWNjdXJhY3kgd2hlbiBkZXZlbG9wZXJzIHJl
+ZmVyIHRvIHRoZSBrZXJuZWwgdGhyZWFkIG1lbW9yeSBjb250ZXh0IEFQSS4NCk5vIGZ1bmN0aW9u
+YWwgY2hhbmdlcyB3ZXJlIGludHJvZHVjZWQuDQoNClNpZ25lZC1vZmYtYnk6IG1pbmd6aHUud2Fu
+ZyA8bWluZ3podS53YW5nQHRyYW5zc2lvbi5jb20+DQotLS0NCiBrZXJuZWwvZm9yay5jIHwgMiAr
+LQ0KIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KDQpkaWZm
+IC0tZ2l0IGEva2VybmVsL2ZvcmsuYyBiL2tlcm5lbC9mb3JrLmMgaW5kZXggYzRhZGEzMjU5OGJk
+Li42NGUyMjhjNTQxYmMgMTAwNjQ0DQotLS0gYS9rZXJuZWwvZm9yay5jDQorKysgYi9rZXJuZWwv
+Zm9yay5jDQpAQCAtMTMxMiw3ICsxMzEyLDcgQEAgc3RydWN0IGZpbGUgKmdldF90YXNrX2V4ZV9m
+aWxlKHN0cnVjdCB0YXNrX3N0cnVjdCAqdGFzaykNCiAgKiBAdGFzazogVGhlIHRhc2suDQogICoN
+CiAgKiBSZXR1cm5zICVOVUxMIGlmIHRoZSB0YXNrIGhhcyBubyBtbS4gIENoZWNrcyBQRl9LVEhS
+RUFEIChtZWFuaW5nDQotICogdGhpcyBrZXJuZWwgd29ya3RocmVhZCBoYXMgdHJhbnNpZW50bHkg
+YWRvcHRlZCBhIHVzZXIgbW0gd2l0aCB1c2VfbW0sDQorICogdGhpcyBrZXJuZWwgd29ya3RocmVh
+ZCBoYXMgdHJhbnNpZW50bHkgYWRvcHRlZCBhIHVzZXIgbW0gd2l0aCANCisga3RocmVhZF91c2Vf
+bW0sDQogICogdG8gZG8gaXRzIEFJTykgaXMgbm90IHNldCBhbmQgaWYgc28gcmV0dXJucyBhIHJl
+ZmVyZW5jZSB0byBpdCwgYWZ0ZXINCiAgKiBidW1waW5nIHVwIHRoZSB1c2UgY291bnQuICBVc2Vy
+IG11c3QgcmVsZWFzZSB0aGUgbW0gdmlhIG1tcHV0KCkNCiAgKiBhZnRlciB1c2UuICBUeXBpY2Fs
+bHkgdXNlZCBieSAvcHJvYyBhbmQgcHRyYWNlLg0KLS0NCjIuMzQuMQ0K
 
