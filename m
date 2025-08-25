@@ -1,574 +1,175 @@
-Return-Path: <linux-kernel+bounces-784764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA23B340C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:32:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AEEDB340C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A0A9188873A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:33:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7823D7AEACD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C86277C90;
-	Mon, 25 Aug 2025 13:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05002777E8;
+	Mon, 25 Aug 2025 13:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="eZxm3CD9"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="RjQZU9H2"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE191A83FB
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035C027510B;
+	Mon, 25 Aug 2025 13:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756128737; cv=none; b=cASVPrriLO+7W7ydEvp8y6ikgH9Ko87LKpRuHvozjy7JwauR1glBYN7yKFULhyryj881n1wuTwAcBJnu2VYdB38Oc99pno7MYaBMyMjQ+ntMLr665TUuejioZ4qwVL9yh34r2gWY9D3OiP0JV+26I11pYTCvVAdliFctt861mVw=
+	t=1756128702; cv=none; b=rAjg29egX9Hjne9diDyNaCc3R7h0Kv0MnJUsWuqUGIpRBWaDdEBFtdohJWYLtViDDm6hGnM+QqmiLzFJmBJJR2jOrc3csa3tpPqlSTCyowX6QFmvsPYqyhxvLWltonT1lhSe5XngZUz4NJGeGV92yCdpxopE1iYemu2ZJ1cajHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756128737; c=relaxed/simple;
-	bh=v0lEeQ6YG0uRyAKZvd1MALN0/E2Te0j+nbh2M/5wLPk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oloJdrZOs5wh27FO5O3O6O9ZhYZhI1oWIlzTbhpKClsSl+ytLYw51PIbYKTIBBy7J+k+zU7n4kr9rRVfGK8kir7435DKiFO3268m0i5xzncrBNoN3Y4CLyBoy8s6TODdkrhx+bqp3k6fUPfgUfNQdyVrukdFZ93lhhdrAb3ysPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=eZxm3CD9; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PDCIBW027573;
-	Mon, 25 Aug 2025 15:31:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=Eh5kA4z57YCWnp0H2BkHkl
-	l7osoEmhb74s1I8zaGHUs=; b=eZxm3CD9MNInOp4ICb87YDtOpCMYWexIn8VCMT
-	/ZygQI4qHnD3zrdegBsq1wANFc6nbRl5GQL3BBRm3PQTJj/hUMPfNLltj6438rLo
-	K1kI2589taImdq0G5zeaaqdkRzSJdAvHn5OxkI0dM6H5aqJZ/hxbfBuQsk4Gk0q8
-	L2IgcddKVkRR7bhZWEzlsch/J+gseA0zBq9nYXd6r4qqM54uEiP4fgPMU77Tnoh0
-	Hrctmn7eLeEH7LiSk4zhw6Sdvbfb1AjdngUiZLjjWyVu3f5lSMjNbAiYzGSZ5Q37
-	iijNCJB3dwnDMrXNqn1PdPftnEcQTNDzFEDOAt3qxNTTdoqg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48q5xbektb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 15:31:49 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9B65240044;
-	Mon, 25 Aug 2025 15:30:35 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7F1636C9827;
-	Mon, 25 Aug 2025 15:30:02 +0200 (CEST)
-Received: from localhost (10.130.74.180) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 25 Aug
- 2025 15:30:02 +0200
-From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-To: Yannick Fertre <yannick.fertre@foss.st.com>,
-        Philippe Cornu
-	<philippe.cornu@foss.st.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC: <dri-devel@lists.freedesktop.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] drm/stm: ltdc: unify log system
-Date: Mon, 25 Aug 2025 15:29:51 +0200
-Message-ID: <20250825132951.547899-1-raphael.gallais-pou@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1756128702; c=relaxed/simple;
+	bh=6O5W/y80iaKkDYIuTZU5ULjARvkCS0FnEOvGtJR9bwU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qyQ2vbuhx6RFR9/XfFfhXXGZzHGJhM3dLkq/5UWLaEsC+U5HtbrqcPtoqTh6RpBPl1Hf25bTp/Bah+ty1YwuFFvldrv4hf1MYqLSVQA3QI4+ErcVr+u2MrTRQWDPRpCY/0qNB0AZuuNfd1Exp4d5n8fRaKSkSY0NH6KU1Craics=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=RjQZU9H2; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=vXizZ6L0n8V782CYb3FHXRs1CctnBrwFXRGLWjyJOok=; b=RjQZU9H2eLaeNbY+/Xvon5f24G
+	H2wYLPrTIIfQck+LUpB1PV9QSoUakr7mivtpkJTyg7SICW6BSGSRX5B6tBKcF4sUktzAEMz9DaYEf
+	gYKPcwAi+Lwj8PQQnofEe5iyiK2io0K1SjSEJsMiHfecJlnfvqCEGHd9soWeWz0IwG/n8HFJ6Lg7w
+	ui2AvLdB5SY1wLOMPCGysM2ORPZYgQ7j5kjfJNeuMWANksMgBbevtqwWwYKCVrfk5aBYDjFL1QwSF
+	5aEmWRlkm8ZP3TnOoapdSVBZW3DRZYA4Md9IPAldpqH2Q5QvjBQG+0t81zNoJjGoKih1uMlnndsvS
+	ayEauFcw==;
+Received: from [187.57.78.222] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uqXI9-001Pu6-Ip; Mon, 25 Aug 2025 15:31:21 +0200
+Message-ID: <6235a4c0-2b28-4dd6-8f18-4c1f98015de6@igalia.com>
+Date: Mon, 25 Aug 2025 10:31:16 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_06,2025-08-20_03,2025-03-28_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 9/9] ovl: Support mounting case-insensitive enabled
+ layers
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>,
+ Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ kernel-dev@igalia.com
+References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
+ <20250822-tonyk-overlayfs-v6-9-8b6e9e604fa2@igalia.com>
+ <CAOQ4uxhWE=5_+DBx7OJ94NVCZXztxf1d4sxyMuakDGKUmbNyTg@mail.gmail.com>
+ <62e60933-1c43-40c2-a166-91dd27b0e581@igalia.com>
+ <CAOQ4uxjgp20vQuMO4GoMxva_8yR+kcW3EJxDuB=T-8KtvDr4kg@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <CAOQ4uxjgp20vQuMO4GoMxva_8yR+kcW3EJxDuB=T-8KtvDr4kg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-DRM_ERROR and similar are deprecated.  Use drm_dev based logging.
+Hi Amir,
 
-Link: https://lore.kernel.org/r/20250821130356.883553-1-raphael.gallais-pou@foss.st.com
-Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
----
-Changes in v2:
-- Fix kernel test robot's warnings
-https://lore.kernel.org/all/202508250637.nLxtkS26-lkp@intel.com/
-- Rebased onto latest drm-misc-next
-- Remove Yannick's acked-by since the patch changed
----
- drivers/gpu/drm/stm/ltdc.c | 139 +++++++++++++++++++------------------
- 1 file changed, 70 insertions(+), 69 deletions(-)
+Em 22/08/2025 16:17, Amir Goldstein escreveu:
 
-diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
-index ba315c66a04d..b9477fbec1c1 100644
---- a/drivers/gpu/drm/stm/ltdc.c
-+++ b/drivers/gpu/drm/stm/ltdc.c
-@@ -641,7 +641,7 @@ static inline void ltdc_set_ycbcr_config(struct drm_plane *plane, u32 drm_pix_fm
- 		break;
- 	default:
- 		/* RGB or not a YCbCr supported format */
--		DRM_ERROR("Unsupported pixel format: %u\n", drm_pix_fmt);
-+		drm_err(plane->dev, "Unsupported pixel format: %u\n", drm_pix_fmt);
- 		return;
- 	}
- 
-@@ -664,18 +664,19 @@ static inline void ltdc_set_ycbcr_coeffs(struct drm_plane *plane)
- 	u32 lofs = plane->index * LAY_OFS;
- 
- 	if (enc != DRM_COLOR_YCBCR_BT601 && enc != DRM_COLOR_YCBCR_BT709) {
--		DRM_ERROR("color encoding %d not supported, use bt601 by default\n", enc);
-+		drm_err(plane->dev, "color encoding %d not supported, use bt601 by default\n", enc);
- 		/* set by default color encoding to DRM_COLOR_YCBCR_BT601 */
- 		enc = DRM_COLOR_YCBCR_BT601;
- 	}
- 
- 	if (ran != DRM_COLOR_YCBCR_LIMITED_RANGE && ran != DRM_COLOR_YCBCR_FULL_RANGE) {
--		DRM_ERROR("color range %d not supported, use limited range by default\n", ran);
-+		drm_err(plane->dev,
-+			"color range %d not supported, use limited range by default\n", ran);
- 		/* set by default color range to DRM_COLOR_YCBCR_LIMITED_RANGE */
- 		ran = DRM_COLOR_YCBCR_LIMITED_RANGE;
- 	}
- 
--	DRM_DEBUG_DRIVER("Color encoding=%d, range=%d\n", enc, ran);
-+	drm_err(plane->dev, "Color encoding=%d, range=%d\n", enc, ran);
- 	regmap_write(ldev->regmap, LTDC_L1CYR0R + lofs,
- 		     ltdc_ycbcr2rgb_coeffs[enc][ran][0]);
- 	regmap_write(ldev->regmap, LTDC_L1CYR1R + lofs,
-@@ -774,7 +775,7 @@ static void ltdc_crtc_atomic_enable(struct drm_crtc *crtc,
- 	struct ltdc_device *ldev = crtc_to_ltdc(crtc);
- 	struct drm_device *ddev = crtc->dev;
- 
--	DRM_DEBUG_DRIVER("\n");
-+	drm_dbg_driver(crtc->dev, "\n");
- 
- 	pm_runtime_get_sync(ddev->dev);
- 
-@@ -798,7 +799,7 @@ static void ltdc_crtc_atomic_disable(struct drm_crtc *crtc,
- 	struct drm_device *ddev = crtc->dev;
- 	int layer_index = 0;
- 
--	DRM_DEBUG_DRIVER("\n");
-+	drm_dbg_driver(crtc->dev, "\n");
- 
- 	drm_crtc_vblank_off(crtc);
- 
-@@ -837,7 +838,7 @@ ltdc_crtc_mode_valid(struct drm_crtc *crtc,
- 
- 	result = clk_round_rate(ldev->pixel_clk, target);
- 
--	DRM_DEBUG_DRIVER("clk rate target %d, available %d\n", target, result);
-+	drm_dbg_driver(crtc->dev, "clk rate target %d, available %d\n", target, result);
- 
- 	/* Filter modes according to the max frequency supported by the pads */
- 	if (result > ldev->caps.pad_max_freq_hz)
-@@ -872,14 +873,14 @@ static bool ltdc_crtc_mode_fixup(struct drm_crtc *crtc,
- 	int rate = mode->clock * 1000;
- 
- 	if (clk_set_rate(ldev->pixel_clk, rate) < 0) {
--		DRM_ERROR("Cannot set rate (%dHz) for pixel clk\n", rate);
-+		drm_err(crtc->dev, "Cannot set rate (%dHz) for pixel clk\n", rate);
- 		return false;
- 	}
- 
- 	adjusted_mode->clock = clk_get_rate(ldev->pixel_clk) / 1000;
- 
--	DRM_DEBUG_DRIVER("requested clock %dkHz, adjusted clock %dkHz\n",
--			 mode->clock, adjusted_mode->clock);
-+	drm_dbg_driver(crtc->dev, "requested clock %dkHz, adjusted clock %dkHz\n",
-+		       mode->clock, adjusted_mode->clock);
- 
- 	return true;
- }
-@@ -934,20 +935,20 @@ static void ltdc_crtc_mode_set_nofb(struct drm_crtc *crtc)
- 	if (!pm_runtime_active(ddev->dev)) {
- 		ret = pm_runtime_get_sync(ddev->dev);
- 		if (ret) {
--			DRM_ERROR("Failed to set mode, cannot get sync\n");
-+			drm_err(crtc->dev, "Failed to set mode, cannot get sync\n");
- 			return;
- 		}
- 	}
- 
--	DRM_DEBUG_DRIVER("CRTC:%d mode:%s\n", crtc->base.id, mode->name);
--	DRM_DEBUG_DRIVER("Video mode: %dx%d", mode->hdisplay, mode->vdisplay);
--	DRM_DEBUG_DRIVER(" hfp %d hbp %d hsl %d vfp %d vbp %d vsl %d\n",
--			 mode->hsync_start - mode->hdisplay,
--			 mode->htotal - mode->hsync_end,
--			 mode->hsync_end - mode->hsync_start,
--			 mode->vsync_start - mode->vdisplay,
--			 mode->vtotal - mode->vsync_end,
--			 mode->vsync_end - mode->vsync_start);
-+	drm_dbg_driver(crtc->dev, "CRTC:%d mode:%s\n", crtc->base.id, mode->name);
-+	drm_dbg_driver(crtc->dev, "Video mode: %dx%d", mode->hdisplay, mode->vdisplay);
-+	drm_dbg_driver(crtc->dev, " hfp %d hbp %d hsl %d vfp %d vbp %d vsl %d\n",
-+		       mode->hsync_start - mode->hdisplay,
-+		       mode->htotal - mode->hsync_end,
-+		       mode->hsync_end - mode->hsync_start,
-+		       mode->vsync_start - mode->vdisplay,
-+		       mode->vtotal - mode->vsync_end,
-+		       mode->vsync_end - mode->vsync_start);
- 
- 	/* Convert video timings to ltdc timings */
- 	hsync = mode->hsync_end - mode->hsync_start - 1;
-@@ -1033,7 +1034,7 @@ static void ltdc_crtc_atomic_flush(struct drm_crtc *crtc,
- 	struct drm_device *ddev = crtc->dev;
- 	struct drm_pending_vblank_event *event = crtc->state->event;
- 
--	DRM_DEBUG_ATOMIC("\n");
-+	drm_dbg_atomic(crtc->dev, "\n");
- 
- 	ltdc_crtc_update_clut(crtc);
- 
-@@ -1121,7 +1122,7 @@ static int ltdc_crtc_enable_vblank(struct drm_crtc *crtc)
- 	struct ltdc_device *ldev = crtc_to_ltdc(crtc);
- 	struct drm_crtc_state *state = crtc->state;
- 
--	DRM_DEBUG_DRIVER("\n");
-+	drm_dbg_driver(crtc->dev, "\n");
- 
- 	if (state->enable)
- 		regmap_set_bits(ldev->regmap, LTDC_IER, IER_LIE);
-@@ -1135,7 +1136,7 @@ static void ltdc_crtc_disable_vblank(struct drm_crtc *crtc)
- {
- 	struct ltdc_device *ldev = crtc_to_ltdc(crtc);
- 
--	DRM_DEBUG_DRIVER("\n");
-+	drm_dbg_driver(crtc->dev, "\n");
- 	regmap_clear_bits(ldev->regmap, LTDC_IER, IER_LIE);
- }
- 
-@@ -1144,11 +1145,11 @@ static int ltdc_crtc_set_crc_source(struct drm_crtc *crtc, const char *source)
- 	struct ltdc_device *ldev;
- 	int ret;
- 
--	DRM_DEBUG_DRIVER("\n");
--
- 	if (!crtc)
- 		return -ENODEV;
- 
-+	drm_dbg_driver(crtc->dev, "\n");
-+
- 	ldev = crtc_to_ltdc(crtc);
- 
- 	if (source && strcmp(source, "auto") == 0) {
-@@ -1168,14 +1169,14 @@ static int ltdc_crtc_set_crc_source(struct drm_crtc *crtc, const char *source)
- static int ltdc_crtc_verify_crc_source(struct drm_crtc *crtc,
- 				       const char *source, size_t *values_cnt)
- {
--	DRM_DEBUG_DRIVER("\n");
--
- 	if (!crtc)
- 		return -ENODEV;
- 
-+	drm_dbg_driver(crtc->dev, "\n");
-+
- 	if (source && strcmp(source, "auto") != 0) {
--		DRM_DEBUG_DRIVER("Unknown CRC source %s for %s\n",
--				 source, crtc->name);
-+		drm_dbg_driver(crtc->dev, "Unknown CRC source %s for %s\n",
-+			       source, crtc->name);
- 		return -EINVAL;
- 	}
- 
-@@ -1233,7 +1234,7 @@ static int ltdc_plane_atomic_check(struct drm_plane *plane,
- 	struct drm_framebuffer *fb = new_plane_state->fb;
- 	u32 src_w, src_h;
- 
--	DRM_DEBUG_DRIVER("\n");
-+	drm_dbg_driver(plane->dev, "\n");
- 
- 	if (!fb)
- 		return 0;
-@@ -1244,7 +1245,7 @@ static int ltdc_plane_atomic_check(struct drm_plane *plane,
- 
- 	/* Reject scaling */
- 	if (src_w != new_plane_state->crtc_w || src_h != new_plane_state->crtc_h) {
--		DRM_DEBUG_DRIVER("Scaling is not supported");
-+		drm_dbg_driver(plane->dev, "Scaling is not supported");
- 
- 		return -EINVAL;
- 	}
-@@ -1270,7 +1271,7 @@ static void ltdc_plane_atomic_update(struct drm_plane *plane,
- 	enum ltdc_pix_fmt pf;
- 
- 	if (!newstate->crtc || !fb) {
--		DRM_DEBUG_DRIVER("fb or crtc NULL");
-+		drm_dbg_driver(plane->dev, "fb or crtc NULL");
- 		return;
- 	}
- 
-@@ -1280,11 +1281,11 @@ static void ltdc_plane_atomic_update(struct drm_plane *plane,
- 	src_w = newstate->src_w >> 16;
- 	src_h = newstate->src_h >> 16;
- 
--	DRM_DEBUG_DRIVER("plane:%d fb:%d (%dx%d)@(%d,%d) -> (%dx%d)@(%d,%d)\n",
--			 plane->base.id, fb->base.id,
--			 src_w, src_h, src_x, src_y,
--			 newstate->crtc_w, newstate->crtc_h,
--			 newstate->crtc_x, newstate->crtc_y);
-+	drm_dbg_driver(plane->dev, "plane:%d fb:%d (%dx%d)@(%d,%d) -> (%dx%d)@(%d,%d)\n",
-+		       plane->base.id, fb->base.id,
-+		       src_w, src_h, src_x, src_y,
-+		       newstate->crtc_w, newstate->crtc_h,
-+		       newstate->crtc_x, newstate->crtc_y);
- 
- 	regmap_read(ldev->regmap, LTDC_BPCR, &bpcr);
- 
-@@ -1312,8 +1313,8 @@ static void ltdc_plane_atomic_update(struct drm_plane *plane,
- 		val = ltdc_set_flexible_pixel_format(plane, pf);
- 
- 	if (val == NB_PF) {
--		DRM_ERROR("Pixel format %.4s not supported\n",
--			  (char *)&fb->format->format);
-+		drm_err(fb->dev, "Pixel format %.4s not supported\n",
-+			(char *)&fb->format->format);
- 		val = 0;	/* set by default ARGB 32 bits */
- 	}
- 	regmap_write_bits(ldev->regmap, LTDC_L1PFCR + lofs, LXPFCR_PF, val);
-@@ -1350,7 +1351,7 @@ static void ltdc_plane_atomic_update(struct drm_plane *plane,
- 	if (newstate->rotation & DRM_MODE_REFLECT_Y)
- 		paddr += (fb->pitches[0] * (y1 - y0));
- 
--	DRM_DEBUG_DRIVER("fb: phys 0x%08x", paddr);
-+	drm_dbg_driver(fb->dev, "fb: phys 0x%08x", paddr);
- 	regmap_write(ldev->regmap, LTDC_L1CFBAR + lofs, paddr);
- 
- 	/* Configures the color frame buffer pitch in bytes & line length */
-@@ -1517,8 +1518,8 @@ static void ltdc_plane_atomic_disable(struct drm_plane *plane,
- 		regmap_write_bits(ldev->regmap, LTDC_L1RCR + lofs,
- 				  LXRCR_IMR | LXRCR_VBR | LXRCR_GRMSK, LXRCR_VBR);
- 
--	DRM_DEBUG_DRIVER("CRTC:%d plane:%d\n",
--			 oldstate->crtc->base.id, plane->base.id);
-+	drm_dbg_driver(plane->dev, "CRTC:%d plane:%d\n",
-+		       oldstate->crtc->base.id, plane->base.id);
- }
- 
- static void ltdc_plane_atomic_print_state(struct drm_printer *p,
-@@ -1632,7 +1633,7 @@ static struct drm_plane *ltdc_plane_create(struct drm_device *ddev,
- 
- 	drm_plane_create_alpha_property(plane);
- 
--	DRM_DEBUG_DRIVER("plane:%d created\n", plane->base.id);
-+	drm_dbg_driver(plane->dev, "plane:%d created\n", plane->base.id);
- 
- 	return plane;
- }
-@@ -1647,7 +1648,7 @@ static int ltdc_crtc_init(struct drm_device *ddev, struct drm_crtc *crtc)
- 
- 	primary = ltdc_plane_create(ddev, DRM_PLANE_TYPE_PRIMARY, 0);
- 	if (!primary) {
--		DRM_ERROR("Can not create primary plane\n");
-+		drm_err(ddev, "Can not create primary plane\n");
- 		return -EINVAL;
- 	}
- 
-@@ -1668,7 +1669,7 @@ static int ltdc_crtc_init(struct drm_device *ddev, struct drm_crtc *crtc)
- 		ret = drmm_crtc_init_with_planes(ddev, crtc, primary, NULL,
- 						 &ltdc_crtc_funcs, NULL);
- 	if (ret) {
--		DRM_ERROR("Can not initialize CRTC\n");
-+		drm_err(ddev, "Can not initialize CRTC\n");
- 		return ret;
- 	}
- 
-@@ -1677,13 +1678,13 @@ static int ltdc_crtc_init(struct drm_device *ddev, struct drm_crtc *crtc)
- 	drm_mode_crtc_set_gamma_size(crtc, CLUT_SIZE);
- 	drm_crtc_enable_color_mgmt(crtc, 0, false, CLUT_SIZE);
- 
--	DRM_DEBUG_DRIVER("CRTC:%d created\n", crtc->base.id);
-+	drm_dbg_driver(ddev, "CRTC:%d created\n", crtc->base.id);
- 
- 	/* Add planes. Note : the first layer is used by primary plane */
- 	for (i = 1; i < ldev->caps.nb_layers; i++) {
- 		overlay = ltdc_plane_create(ddev, DRM_PLANE_TYPE_OVERLAY, i);
- 		if (!overlay) {
--			DRM_ERROR("Can not create overlay plane %d\n", i);
-+			drm_err(ddev, "Can not create overlay plane %d\n", i);
- 			return -ENOMEM;
- 		}
- 		if (ldev->caps.dynamic_zorder)
-@@ -1704,7 +1705,7 @@ static void ltdc_encoder_disable(struct drm_encoder *encoder)
- 	struct drm_device *ddev = encoder->dev;
- 	struct ltdc_device *ldev = ddev->dev_private;
- 
--	DRM_DEBUG_DRIVER("\n");
-+	drm_dbg_driver(encoder->dev, "\n");
- 
- 	/* Disable LTDC */
- 	regmap_clear_bits(ldev->regmap, LTDC_GCR, GCR_LTDCEN);
-@@ -1718,7 +1719,7 @@ static void ltdc_encoder_enable(struct drm_encoder *encoder)
- 	struct drm_device *ddev = encoder->dev;
- 	struct ltdc_device *ldev = ddev->dev_private;
- 
--	DRM_DEBUG_DRIVER("\n");
-+	drm_dbg_driver(encoder->dev, "\n");
- 
- 	/* set fifo underrun threshold register */
- 	if (ldev->caps.fifo_threshold)
-@@ -1734,7 +1735,7 @@ static void ltdc_encoder_mode_set(struct drm_encoder *encoder,
- {
- 	struct drm_device *ddev = encoder->dev;
- 
--	DRM_DEBUG_DRIVER("\n");
-+	drm_dbg_driver(encoder->dev, "\n");
- 
- 	/*
- 	 * Set to default state the pinctrl only with DPI type.
-@@ -1770,7 +1771,7 @@ static int ltdc_encoder_init(struct drm_device *ddev, struct drm_bridge *bridge)
- 	if (ret)
- 		return ret;
- 
--	DRM_DEBUG_DRIVER("Bridge encoder:%d created\n", encoder->base.id);
-+	drm_dbg_driver(encoder->dev, "Bridge encoder:%d created\n", encoder->base.id);
- 
- 	return 0;
- }
-@@ -1870,7 +1871,7 @@ void ltdc_suspend(struct drm_device *ddev)
- {
- 	struct ltdc_device *ldev = ddev->dev_private;
- 
--	DRM_DEBUG_DRIVER("\n");
-+	drm_dbg_driver(ddev, "\n");
- 	clk_disable_unprepare(ldev->pixel_clk);
- }
- 
-@@ -1879,11 +1880,11 @@ int ltdc_resume(struct drm_device *ddev)
- 	struct ltdc_device *ldev = ddev->dev_private;
- 	int ret;
- 
--	DRM_DEBUG_DRIVER("\n");
-+	drm_dbg_driver(ddev, "\n");
- 
- 	ret = clk_prepare_enable(ldev->pixel_clk);
- 	if (ret) {
--		DRM_ERROR("failed to enable pixel clock (%d)\n", ret);
-+		drm_err(ddev, "failed to enable pixel clock (%d)\n", ret);
- 		return ret;
- 	}
- 
-@@ -1903,7 +1904,7 @@ int ltdc_load(struct drm_device *ddev)
- 	int irq, i, nb_endpoints;
- 	int ret = -ENODEV;
- 
--	DRM_DEBUG_DRIVER("\n");
-+	drm_dbg_driver(ddev, "\n");
- 
- 	/* Get number of endpoints */
- 	nb_endpoints = of_graph_get_endpoint_count(np);
-@@ -1913,12 +1914,12 @@ int ltdc_load(struct drm_device *ddev)
- 	ldev->pixel_clk = devm_clk_get(dev, "lcd");
- 	if (IS_ERR(ldev->pixel_clk)) {
- 		if (PTR_ERR(ldev->pixel_clk) != -EPROBE_DEFER)
--			DRM_ERROR("Unable to get lcd clock\n");
-+			drm_err(ddev, "Unable to get lcd clock\n");
- 		return PTR_ERR(ldev->pixel_clk);
- 	}
- 
- 	if (clk_prepare_enable(ldev->pixel_clk)) {
--		DRM_ERROR("Unable to prepare pixel clock\n");
-+		drm_err(ddev, "Unable to prepare pixel clock\n");
- 		return -ENODEV;
- 	}
- 
-@@ -1939,7 +1940,7 @@ int ltdc_load(struct drm_device *ddev)
- 		if (panel) {
- 			bridge = drmm_panel_bridge_add(ddev, panel);
- 			if (IS_ERR(bridge)) {
--				DRM_ERROR("panel-bridge endpoint %d\n", i);
-+				drm_err(ddev, "panel-bridge endpoint %d\n", i);
- 				ret = PTR_ERR(bridge);
- 				goto err;
- 			}
-@@ -1949,7 +1950,7 @@ int ltdc_load(struct drm_device *ddev)
- 			ret = ltdc_encoder_init(ddev, bridge);
- 			if (ret) {
- 				if (ret != -EPROBE_DEFER)
--					DRM_ERROR("init encoder endpoint %d\n", i);
-+					drm_err(ddev, "init encoder endpoint %d\n", i);
- 				goto err;
- 			}
- 		}
-@@ -1967,29 +1968,29 @@ int ltdc_load(struct drm_device *ddev)
- 
- 	ldev->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(ldev->regs)) {
--		DRM_ERROR("Unable to get ltdc registers\n");
-+		drm_err(ddev, "Unable to get ltdc registers\n");
- 		ret = PTR_ERR(ldev->regs);
- 		goto err;
- 	}
- 
- 	ldev->regmap = devm_regmap_init_mmio(&pdev->dev, ldev->regs, &stm32_ltdc_regmap_cfg);
- 	if (IS_ERR(ldev->regmap)) {
--		DRM_ERROR("Unable to regmap ltdc registers\n");
-+		drm_err(ddev, "Unable to regmap ltdc registers\n");
- 		ret = PTR_ERR(ldev->regmap);
- 		goto err;
- 	}
- 
- 	ret = ltdc_get_caps(ddev);
- 	if (ret) {
--		DRM_ERROR("hardware identifier (0x%08x) not supported!\n",
--			  ldev->caps.hw_version);
-+		drm_err(ddev, "hardware identifier (0x%08x) not supported!\n",
-+			ldev->caps.hw_version);
- 		goto err;
- 	}
- 
- 	/* Disable all interrupts */
- 	regmap_clear_bits(ldev->regmap, LTDC_IER, IER_MASK);
- 
--	DRM_DEBUG_DRIVER("ltdc hw version 0x%08x\n", ldev->caps.hw_version);
-+	drm_dbg_driver(ddev, "ltdc hw version 0x%08x\n", ldev->caps.hw_version);
- 
- 	/* initialize default value for fifo underrun threshold & clear interrupt error counters */
- 	ldev->transfer_err = 0;
-@@ -2008,27 +2009,27 @@ int ltdc_load(struct drm_device *ddev)
- 						ltdc_irq_thread, IRQF_ONESHOT,
- 						dev_name(dev), ddev);
- 		if (ret) {
--			DRM_ERROR("Failed to register LTDC interrupt\n");
-+			drm_err(ddev, "Failed to register LTDC interrupt\n");
- 			goto err;
- 		}
- 	}
- 
- 	crtc = drmm_kzalloc(ddev, sizeof(*crtc), GFP_KERNEL);
- 	if (!crtc) {
--		DRM_ERROR("Failed to allocate crtc\n");
-+		drm_err(ddev, "Failed to allocate crtc\n");
- 		ret = -ENOMEM;
- 		goto err;
- 	}
- 
- 	ret = ltdc_crtc_init(ddev, crtc);
- 	if (ret) {
--		DRM_ERROR("Failed to init crtc\n");
-+		drm_err(ddev, "Failed to init crtc\n");
- 		goto err;
- 	}
- 
- 	ret = drm_vblank_init(ddev, NB_CRTC);
- 	if (ret) {
--		DRM_ERROR("Failed calling drm_vblank_init()\n");
-+		drm_err(ddev, "Failed calling drm_vblank_init()\n");
- 		goto err;
- 	}
- 
-@@ -2047,7 +2048,7 @@ int ltdc_load(struct drm_device *ddev)
- 
- void ltdc_unload(struct drm_device *ddev)
- {
--	DRM_DEBUG_DRIVER("\n");
-+	drm_dbg_driver(ddev, "\n");
- 
- 	pm_runtime_disable(ddev->dev);
- }
--- 
-2.25.1
+[...]
+
+   /*
+>>>> -        * Allow filesystems that are case-folding capable but deny composing
+>>>> -        * ovl stack from case-folded directories.
+>>>> +        * Exceptionally for layers with casefold, we accept that they have
+>>>> +        * their own hash and compare operations
+>>>>            */
+>>>> -       if (sb_has_encoding(dentry->d_sb))
+>>>> -               return IS_CASEFOLDED(d_inode(dentry));
+>>>> +       if (ofs->casefold)
+>>>> +               return false;
+>>>
+>>> I think this is better as:
+>>>           if (sb_has_encoding(dentry->d_sb))
+>>>                   return false;
+>>>
+> 
+> And this still fails the test "Casefold enabled" for me.
+> 
+> Maybe you are confused because this does not look like
+> a test failure. It looks like this:
+> 
+> generic/999 5s ...  [19:10:21][  150.667994] overlayfs: failed lookup
+> in lower (ovl-lower/casefold, name='subdir', err=-116): parent wrong
+> casefold
+> [  150.669741] overlayfs: failed lookup in lower (ovl-lower/casefold,
+> name='subdir', err=-116): parent wrong casefold
+> [  150.760644] overlayfs: failed lookup in lower (/ovl-lower,
+> name='casefold', err=-66): child wrong casefold
+>   [19:10:24] [not run]
+> generic/999 -- overlayfs does not support casefold enabled layers
+> Ran: generic/999
+> Not run: generic/999
+> Passed all 1 tests
+> 
+
+This is how the test output looks before my changes[1] to the test:
+
+$ ./run.sh
+FSTYP         -- ext4
+PLATFORM      -- Linux/x86_64 archlinux 6.17.0-rc1+ #1174 SMP 
+PREEMPT_DYNAMIC Mon Aug 25 10:18:09 -03 2025
+MKFS_OPTIONS  -- -F /dev/vdc
+MOUNT_OPTIONS -- -o acl,user_xattr /dev/vdc /tmp/dir2
+
+generic/999 1s ... [not run] overlayfs does not support casefold enabled 
+layers
+Ran: generic/999
+Not run: generic/999
+Passed all 1 tests
+
+
+And this is how it looks after my changes[1] to the test:
+
+$ ./run.sh
+FSTYP         -- ext4
+PLATFORM      -- Linux/x86_64 archlinux 6.17.0-rc1+ #1174 SMP 
+PREEMPT_DYNAMIC Mon Aug 25 10:18:09 -03 2025
+MKFS_OPTIONS  -- -F /dev/vdc
+MOUNT_OPTIONS -- -o acl,user_xattr /dev/vdc /tmp/dir2
+
+generic/999        1s
+Ran: generic/999
+Passed all 1 tests
+
+So, as far as I can tell, the casefold enabled is not being skipped 
+after the fix to the test.
+
+[1] 
+https://lore.kernel.org/lkml/5da6b0f4-2730-4783-9c57-c46c2d13e848@igalia.com/
+
+
+> I'm not sure I will keep the test this way. This is not very standard nor
+> good practice, to run half of the test and then skip it.
+> I would probably split it into two tests.
+> The first one as it is now will run to completion on kenrels >= v6.17
+> and the Casefold enable test will run on kernels >= v6.18.
+> 
+> In any case, please make sure that the test is not skipped when testing
+> Casefold enabled layers
+> 
+> And then continue with the missing test cases.
+> 
+> When you have a test that passes please send the test itself or
+> a fstest branch for me to test.
+
+Ok!
+
+> 
+> Thanks,
+> Amir.
 
 
