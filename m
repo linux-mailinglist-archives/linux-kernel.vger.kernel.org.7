@@ -1,215 +1,247 @@
-Return-Path: <linux-kernel+bounces-785597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A672B34E3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:43:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B6FB34E42
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E12B21B25C6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:44:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 202911A872A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18CDE2980A8;
-	Mon, 25 Aug 2025 21:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4287029D264;
+	Mon, 25 Aug 2025 21:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ngPJKxwy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="iiU/tSOJ"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2076.outbound.protection.outlook.com [40.107.92.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD810284693;
-	Mon, 25 Aug 2025 21:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756158226; cv=none; b=Dos06g8JUkbr2FXQRQrtvvOBELKLBemtI9iN6PHeusx5NL4HRvO7nwT0AYkrUWwjy1lrmJ6B/8lp2tERmPts/BiXATtw+nCU3Ask7IAk8FFlnBl26FfsqVLYRiJSAByKzyHb3SDaN1TwRXsWIMnswtgXNySXhnhoY4jNu9u/dNk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756158226; c=relaxed/simple;
-	bh=nACX/PKMfoQ1cm1Gc8DpXkrx8NjHKOOzNNb8874vwuo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JR6P+dZ/eeq9YqtnMZIYweA8UfnwIJU6GsYnc9/H3hHsTeLs1U+ov17NCvADo1fnKkmR7z4B9S963sA1e8IgURdiXI14ovoWYu2l/GgYoWLteNfxYgPYq0jwz3itDsPtrUOV8od17MbCyln3k/lm5CbgCjiOT5B9wUSEdJD/KEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ngPJKxwy; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756158225; x=1787694225;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=nACX/PKMfoQ1cm1Gc8DpXkrx8NjHKOOzNNb8874vwuo=;
-  b=ngPJKxwyCEmJEIQnvRsgp6hJZa5dlKFRtX+JJTpNQ9fVDRCIXNNF8Q4p
-   nWCc6MqaNY4CqDlYGa2laQuMe+0AOEo0yPnJmxne8A20W09OctLs1y6cn
-   Yiq8ayWeiHWkBsKLNafltFaxbFQAu4m6+Zgdv90K9YEym9tZsufjO/lJI
-   wTSJYdz3FRSCN1IhYD6pvXwSgRVpP5ILRaggO1WpOloJP6vtX+3g6wVfT
-   TwK21nuYp8UDGDY4fDLAVpQsU6KfIcC4Wl6KSmhjcI+SIy272vsLW364Y
-   U6btaGQt34v8lOmiS5w0f/J9CHmiPKP2OAQFYkmMDTIeCFPKB95ln8LUS
-   Q==;
-X-CSE-ConnectionGUID: csY0RYCBTDyyAgdKOYk1uw==
-X-CSE-MsgGUID: /XjWrzYWR3ClRntXJ36jVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62210342"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62210342"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 14:43:44 -0700
-X-CSE-ConnectionGUID: NKjOBtmlTOuLHvamFxwiwQ==
-X-CSE-MsgGUID: KtsP0jFTSmeNjtupUoYdow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="169794340"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.16])
-  by fmviesa009.fm.intel.com with ESMTP; 25 Aug 2025 14:43:44 -0700
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v2] platform/x86/intel-uncore-freq: Present unique domain ID per package
-Date: Mon, 25 Aug 2025 14:43:36 -0700
-Message-ID: <20250825214336.410962-1-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.49.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD5526290;
+	Mon, 25 Aug 2025 21:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756158365; cv=fail; b=mdiv4VveC17YzT9qGhN+RXQikk59MjNHT4D3HjB28ytqpvJMnfCQhmTX6tEIQ5fAkKYV0vUmQ24I/ITPm/yweo4B5kEV/f8c4rDxuoyr5xxmtCGJCqSV1HugotiFr64Nc1jNidgUB4OtiJBvlgGMhv4uzHOmPEpDDzpMjgVsK7k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756158365; c=relaxed/simple;
+	bh=XGu0MhTQ+Wwe1YePTz5kEeP43rKaDVB7nVT3mFvTZoY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lujEW1eDu6Cmcht6+ByA1gvohjdzuIAF7Zmu9qvNzDUxNpeDifVs4qWq3teImJqbQhOXwikrUT167ZB95ksFgyDtoYbNjJHhEeX3dDxrxlwVmBh2jiciZXlON5cnHcJOPQPGXvrLf94rZeU3GG4AopJIh9oApXGdhoyHbmgAmZg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=iiU/tSOJ; arc=fail smtp.client-ip=40.107.92.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JpBs3ziziqBQIGtIDQkvK1KRWwWib2+A5HSo6ODDZriFHFpd7WIpjK6roqmF/07JvLqC1y4k+RW447NWqVd1997+XTeSot3bcx3TaiwLNshSw/AW4RDfBry/2BsByuuM29XHsyRRH/V1bQvbuazExC3YKm9wbYJLSqJ+A29mskF9wb0DjBT1gX13cSGZFmnELrConRAjS4pg/4VgHQbzNsxuoFJUh60C/044LYOtCuxnl6BEIc4xJISDY6d1PAjcJhjMFQg7T8DXHx3uxxfF2rZz3pdA36/DyisKa0g6jvf/BIFYM2JCzFaMykzWHo/JiLzdLL9IXLjZsgfeHWPhbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BflZxWQPbfJqbZBR8mWDYrsXErnjGit1972mUlJhDWs=;
+ b=EXMFrfxCvRNCsWdLykGJlPfMG2t4MW/8LxYmGmeCrXbf8u1pnc8yMRLDKDj5yKw3A0SWgtD22eVmZ++s91ZBCg1J3S0oJiFd1JeURHyiMk+twg4m/jpmGtP2yi+4MDrOPXucwzIitLQkKIuv6CaIDd7suASP7UnMfHIXGYz9Rvpkp7t2Aj0QwRkGGkzozUEsN0QktPxK6EHmxG0Iw+OlZh/rm9k5pD88gcKNf4RYwkqAIIW5J8iIKQHj0jHDXpsae80sF3iY+qZkTnTYKKCeUHuVvsjdss7JR1lepheR5FjCkmVcAhVAdmgs+hg8+MiFuIxey5AvlalzGLzMssyGQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=8bytes.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BflZxWQPbfJqbZBR8mWDYrsXErnjGit1972mUlJhDWs=;
+ b=iiU/tSOJ7Bcwxi4aRyTC9IuyGSKDe8ANS/Dyv0YJIB/wgNZ2ZcBS7YkGqW7o/EgKoa30nrS6BT1GC/fUMU/yBbWE3kYJDtgRkobdP0U9gQZkN78A9wuM+Q+xSO3mrCnGpH0hG6liccqDseZjn+p1EIIq2b4YMDI38jx42m9NUlo=
+Received: from MN2PR05CA0047.namprd05.prod.outlook.com (2603:10b6:208:236::16)
+ by DS7PR12MB8231.namprd12.prod.outlook.com (2603:10b6:8:db::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
+ 2025 21:45:55 +0000
+Received: from BN3PEPF0000B370.namprd21.prod.outlook.com
+ (2603:10b6:208:236:cafe::42) by MN2PR05CA0047.outlook.office365.com
+ (2603:10b6:208:236::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.13 via Frontend Transport; Mon,
+ 25 Aug 2025 21:45:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN3PEPF0000B370.mail.protection.outlook.com (10.167.243.167) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9094.0 via Frontend Transport; Mon, 25 Aug 2025 21:45:55 +0000
+Received: from ethanolx7e2ehost.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 25 Aug
+ 2025 16:45:54 -0500
+From: Ashish Kalra <Ashish.Kalra@amd.com>
+To: <joro@8bytes.org>, <suravee.suthikulpanit@amd.com>,
+	<thomas.lendacky@amd.com>, <Sairaj.ArunKodilkar@amd.com>,
+	<Vasant.Hegde@amd.com>, <herbert@gondor.apana.org.au>
+CC: <seanjc@google.com>, <pbonzini@redhat.com>, <will@kernel.org>,
+	<robin.murphy@arm.com>, <john.allen@amd.com>, <davem@davemloft.net>,
+	<michael.roth@amd.com>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+	<kvm@vger.kernel.org>
+Subject: [PATCH v6 0/4] Add host kdump support for SNP
+Date: Mon, 25 Aug 2025 21:45:45 +0000
+Message-ID: <cover.1756157913.git.ashish.kalra@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B370:EE_|DS7PR12MB8231:EE_
+X-MS-Office365-Filtering-Correlation-Id: e93be029-53e9-4800-4267-08dde420c537
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VjZMcThqWlhEamc0ajY5NFN4cHo4dlB3cnVjSjh4NnJZMHVteGd3Y0lHaW9Q?=
+ =?utf-8?B?VlVvc3MvcHlvV0dRQ1RpU3F5ZWlnbXY1NnBjUnR3Z1ZpMC9uSmZoaTcrS3hD?=
+ =?utf-8?B?NGVueWRFMjhJU3RoMk0yVm9FRjc3QU9xL3F5M2VESDlzeTRDc0VEc2VSNjFG?=
+ =?utf-8?B?MC9qSTFua1piYzlOcTJyTDdCWnpnMExVWXZTcWxyRlFmNzdHT0NTRWl5RzVZ?=
+ =?utf-8?B?RGZ0Q3FHL0NGY1F3cEdjczB0ZENKZTdDbFNvdzFjSTl3aUlZV2Vhay9zQ3Ay?=
+ =?utf-8?B?cC8zMytCWDNDYzQ4WHN1OWYxYWlZYW45eTVCbXpWUnFTdXNrVGJPTHluWlRE?=
+ =?utf-8?B?VmlBemd4Z1pUZWo5WmdRbENaRnJhYlVkd3FDTFRiOEwwb2NOYmdMb2YvWVFq?=
+ =?utf-8?B?Tnp3MVZKVTlZZlV0WXBaTzZwU1dLa21tNUZ2dExNUnBUT24vZlI0aFNGREhJ?=
+ =?utf-8?B?c3pMRUp4amZBZldHWFhXaXFSN0o5cmdKUEJ4ZWpVWWp5UUlzZnBJWmZQQlVJ?=
+ =?utf-8?B?MEhuTXFrS0ZuZkFxYUVUSERHMW05b3Vkd0E0Tlc1RnllT1lzdExWT2NkRjVZ?=
+ =?utf-8?B?bkxkUitnOHQ3YWJyL1l0ejNwTnhMQjZYTzI0MFQwZUw5dUNCWnhGdUU2S0Np?=
+ =?utf-8?B?dkhTMXhNb3QxcEJKenlURmpzS2VsMW1KNzVlMmR1T0t2bWFialVNek5ndjMz?=
+ =?utf-8?B?enl2cmFQaWhNYllDMklnMEtxNEV2ZUtwVG03SUd0dWVHTHFvUnBiTEJjc3ZU?=
+ =?utf-8?B?OWd5VE5yNHJxL3BZcllic3R5YURkVTRjMUpncUw3dDRqemNaWjFCazk5WGkw?=
+ =?utf-8?B?NVlpTzBZcld4eWduUnk1WS9PRHpxUnRHMmE3MkF2ZVRWZExCU1kvcFdzWWJE?=
+ =?utf-8?B?cElTZDVMeUhtZjlKOUhXUWl0cUxuWHZnTW9NM2FTZTczMEErUlByeFd1MGNk?=
+ =?utf-8?B?WE5IMTh1VlI3bFNrclhCT1dlR3VGSjBlTlpwQmhUSlNtaDMva0dKUE9INEYy?=
+ =?utf-8?B?VTVidnFpRE1XMnhqeWxDcFJieWVoLzVVU0d3L1ArMHlNSnJCTmVXRGpJVXFZ?=
+ =?utf-8?B?Q3FxS2h3emFDaEx4bzhvNW1pZ3RIVGJxdklLV1J2dWpYdkhnQUhUQitOOTJw?=
+ =?utf-8?B?SkcxMUNLMEFPWDF3bHlwQURoNlpOQ0F6OERMMzlJTXV4VFk1ZVhFVEhBRW5a?=
+ =?utf-8?B?MEJwWmg5U0t6RTI4RmZBODdSTkpvMnZtcGg4TGk1L2hNM1JEdEtHbDJjcVFS?=
+ =?utf-8?B?Slc0VUEwYm5vdkhoSzFjcXVUWjRhUE9Gd0JUV1p3UFVtRjFzUDJ6YVhZWHNR?=
+ =?utf-8?B?UkRZY3VwS3hxdERNalJoUXUyNHo3YkJ0ZEZLZHJUYWtjWEtzNWFwY1ljMWw4?=
+ =?utf-8?B?R3I5bnltZFFxRXh3cGNsYmsrUmYyL2cwRkxuM0FJVXgzMWxxd3hhRVZXSHV3?=
+ =?utf-8?B?eEtIc1lUc1BmZFVHWDVFdEtNdzJ1QzA2L3pLVmkvS2N0Tm1DT3R1NkhMVGJ1?=
+ =?utf-8?B?OTBHY2cyMGpLRkNreWhyd0VINEpyVWUvZHc0VkJvd1Z1cXhsL3lhK3RtQjZ6?=
+ =?utf-8?B?TFNlaTVVKzA5YWpOZHh3RjdxQ1dzUWgyZjg2Q0NKQ3luSkFYMlVvQW1wVzQw?=
+ =?utf-8?B?TEEvK1J2a2JKb0QvY3pTSFkzczIxakZRV29iMFhWVk5FYmFiQTM3VFdZNks1?=
+ =?utf-8?B?VDNKL2VVZVVpbEV6MXAveWY0N3NNWkpoNWMwanptVzVqVDR1RVlpb2hUNUto?=
+ =?utf-8?B?T2tmc0swcTM3bFM3SmhFRzE1WE1MOHlBMzZVQm5aV29MUFJpNmpodVdnRTNT?=
+ =?utf-8?B?eWVZaGJYSG5oS0psQ0FhVHZyeHRBbnk5MnFjOWhwNGxLRk5WeUN4UUFtWEc5?=
+ =?utf-8?B?S2ZwR3A1WXJSTVNSTDJTNk5FN1JmSjl4cGZTQVFFSFBzZ3VkRzhBZ2Rxa0kw?=
+ =?utf-8?B?eTJxaHI2c05TUG1kdVJQOTZwNDRUUUtpVVF6SmpTWG1iOUVzbGtBcmQ3Szdk?=
+ =?utf-8?B?TU15ckdqc3g1L1orUE01aWQ0aDRnYmJ0NGtQYTNqK2xhd21CMHVySnFQOXVr?=
+ =?utf-8?B?U1prVWZ1YkFMUGNTZTc5K0dHN1ViZ1ZYRmpDZz09?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 21:45:55.4876
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e93be029-53e9-4800-4267-08dde420c537
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B370.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8231
 
-In partitioned systems, the domain ID is unique in the partition and a
-package can have multiple partitions.
+From: Ashish Kalra <ashish.kalra@amd.com>
 
-Some user-space tools, such as turbostat, assume the domain ID is unique
-per package. These tools map CPU power domains, which are unique to a
-package. However, this approach does not work in partitioned systems.
+When a crash is triggered the kernel attempts to shut down SEV-SNP
+using the SNP_SHUTDOWN_EX command. If active SNP VMs are present,
+SNP_SHUTDOWN_EX fails as firmware checks all encryption-capable ASIDs
+to ensure none are in use and that a DF_FLUSH is not required. 
 
-There is no architectural definition of "partition" to present to user
-space.
+This casues the kdump kernel to boot with IOMMU SNP enforcement still
+enabled and IOMMU completion wait buffers (CWBs), command buffers,
+device tables and event buffer registers remain locked and exclusive
+to the previous kernel. Attempts to allocate and use new buffers in
+the kdump kernel fail, as the hardware ignores writes to the locked
+MMIO registers (per AMD IOMMU spec Section 2.12.2.1).
 
-To support these tools, set the domain_id to be unique per package. For
-compute die IDs, uniqueness can be achieved using the platform info
-cdie_mask, mirroring the behavior observed in non-partitioned systems.
+As a result, the kdump kernel cannot initialize the IOMMU or enable IRQ
+remapping which is required for proper operation.
 
-For IO dies, which lack a direct CPU relationship, any unique logical
-ID can be assigned. Here domain IDs for IO dies are configured after all
-compute domain IDs. During the probe, keep the index of the next IO
-domain ID after the last IO domain ID of the current partition. Since
-CPU packages are symmetric, partition information is same for all
-packages.
+This results in repeated "Completion-Wait loop timed out" errors and a
+second kernel panic: "Kernel panic - not syncing: timer doesn't work
+through Interrupt-remapped IO-APIC"
 
-The Intel Speed Select driver has already implemented a similar change
-to make the domain ID unique, with compute dies listed first, followed
-by I/O dies.
+The list of MMIO registers locked and which ignore writes after failed
+SNP shutdown are mentioned in the AMD IOMMU specifications below:
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
-v2:
-- Add some comments
-- Change update_domain_id() to set_domian_id() to set domain_id instead of update
-- cluster_info->uncore_data.domain_id += * is changed to add multiple steps to
-get to this equation
-- Handle case when only when no compute dies in partition 
+Section 2.12.2.1.
+https://docs.amd.com/v/u/en-US/48882_3.10_PUB
 
- .../uncore-frequency/uncore-frequency-tpmi.c  | 76 ++++++++++++++++++-
- 1 file changed, 75 insertions(+), 1 deletion(-)
+Instead of allocating new buffers, re-use the previous kernel’s pages
+for completion wait buffers, command buffers, event buffers and device
+tables and operate with the already enabled SNP configuration and
+existing data structures.
 
-diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
-index cb4905bad89b..a30a99048db9 100644
---- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
-+++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
-@@ -369,6 +369,79 @@ static void uncore_set_agent_type(struct tpmi_uncore_cluster_info *cluster_info)
- 	cluster_info->uncore_data.agent_type_mask = FIELD_GET(UNCORE_AGENT_TYPES, status);
- }
- 
-+#define MAX_PARTITIONS	2
-+
-+/* IO domain ID start index for a partition */
-+static u8 io_die_start[MAX_PARTITIONS];
-+
-+/* Next IO domain ID index after the current partition IO die IDs */
-+static u8 io_die_index_next;
-+
-+/* Lock to protect io_die_start, io_die_index_next */
-+static DEFINE_MUTEX(domain_lock);
-+
-+static void set_domain_id(int id,  int num_resources,
-+			  struct oobmsm_plat_info *plat_info,
-+			  struct tpmi_uncore_cluster_info *cluster_info)
-+{
-+	u8 part_io_index = 0, cdie_range, pkg_io_index, max_dies;
-+
-+	if (plat_info->partition >= MAX_PARTITIONS) {
-+		cluster_info->uncore_data.domain_id = id;
-+		return;
-+	}
-+
-+	if (cluster_info->uncore_data.agent_type_mask & AGENT_TYPE_CORE) {
-+		cluster_info->uncore_data.domain_id = cluster_info->cdie_id;
-+		return;
-+	}
-+
-+	/* Unlikely but cdie_mask may have holes, so take range */
-+	cdie_range = fls(plat_info->cdie_mask) - ffs(plat_info->cdie_mask) + 1;
-+	max_dies = topology_max_dies_per_package();
-+
-+	/*
-+	 * If the CPU doesn't enumerate dies, then just current cdie range
-+	 * the max.
-+	 */
-+	if (cdie_range > max_dies)
-+		max_dies = cdie_range;
-+
-+	guard(mutex)(&domain_lock);
-+
-+	if (!io_die_index_next)
-+		io_die_index_next = max_dies;
-+
-+	if (!io_die_start[plat_info->partition]) {
-+		io_die_start[plat_info->partition] = io_die_index_next;
-+		/*
-+		 * number of IO dies = num_resources - cdie_range. Hence
-+		 * next partition io_die_index_next is set after IO dies
-+		 * in the current partition.
-+		 */
-+		io_die_index_next += (num_resources - cdie_range);
-+	}
-+
-+	/*
-+	 * Index from IO die start within the partition:
-+	 * This is the first valid domain after the cdies. If there are
-+	 * no cdies in a partition just start from 0.
-+	 * For example the current resource index 5 and cdies end at
-+	 * index 3 (cdie_cnt = 4). Then the io only index 5 - 4 = 1.
-+	 */
-+	if (cdie_range)
-+		part_io_index = id - cdie_range;
-+
-+	/*
-+	 * Add to the IO die start index for this partition in this package
-+	 * to make unique in the package.
-+	 */
-+	pkg_io_index = io_die_start[plat_info->partition] + part_io_index;
-+
-+	/* Assign this to domain ID */
-+	cluster_info->uncore_data.domain_id = pkg_io_index;
-+}
-+
- /* Callback for sysfs read for TPMI uncore values. Called under mutex locks. */
- static int uncore_read(struct uncore_data *data, unsigned int *value, enum uncore_index index)
- {
-@@ -605,11 +678,12 @@ static int uncore_probe(struct auxiliary_device *auxdev, const struct auxiliary_
- 			cluster_info->uncore_data.package_id = pkg;
- 			/* There are no dies like Cascade Lake */
- 			cluster_info->uncore_data.die_id = 0;
--			cluster_info->uncore_data.domain_id = i;
- 			cluster_info->uncore_data.cluster_id = j;
- 
- 			set_cdie_id(i, cluster_info, plat_info);
- 
-+			set_domain_id(i, num_resources, plat_info, cluster_info);
-+
- 			cluster_info->uncore_root = tpmi_uncore;
- 
- 			if (TPMI_MINOR_VERSION(pd_info->ufs_header_ver) >= UNCORE_ELC_SUPPORTED_VERSION)
+This approach is now used for kdump boot regardless of whether SNP is
+enabled during kdump.
+
+The patch-series enables successful crashkernel/kdump operation on SNP
+hosts even when SNP_SHUTDOWN_EX fails.
+
+v6:
+- Fix commit logs and inline comments.
+- Add Reviewed-by tags.
+
+v5:
+- Fix sparse build warnings, use (__force void *) for
+  fixing cast return of (void __iomem *) to (void *) from ioremap_encrypted()
+  in iommu_memremap().
+- Add Tested-by tags.
+
+v4:
+- Fix commit logs.
+- Explicitly call ioremap_encrypted() if SME is enabled and memremap()
+otherwise if SME is not enabled in iommu_memremap().
+- Rename remap_cwwb_sem() to remap_or_alloc_cwwb_sem().
+- Fix inline comments.
+- Skip both SEV and SNP INIT for kdump boot.
+- Add a BUG_ON() if reuse_device_table() fails in case of SNP enabled.
+- Drop "Fixes:" tag as this patch-series enables host kdump for SNP.
+
+v3:
+- Moving to AMD IOMMU driver fix so that there is no need to do SNP_DECOMMISSION
+during panic() and kdump kernel boot will be more agnostic to 
+whether or not SNP_SHUTDOWN is done properly (or even done at all),
+i.e., even with active SNP guests. Fixing crashkernel/kdump boot with IOMMU SNP/RMP
+enforcement still enabled prior to kdump boot by reusing the pages of the previous 
+kernel for IOMMU completion wait buffers, command buffer and device table and
+memremap them during kdump boot.
+- Rebased on linux-next.
+- Split the original patch into smaller patches and prepare separate
+patches for adding iommu_memremap() helper and remapping/unmapping of 
+IOMMU buffers for kdump, Reusing device table for kdump and skip the
+enabling of IOMMU buffers for kdump.
+- Add new functions for remapping/unmapping IOMMU buffers and call
+them from alloc_iommu_buffers/free_iommu_buffers in case of kdump boot
+else call the exisiting alloc/free variants of CWB, command and event buffers.
+- Skip SNP INIT in case of kdump boot.
+- The final patch skips enabling IOMMU command buffer and event buffer
+for kdump boot which fixes kdump on SNP host.
+- Add comment that completion wait buffers are only re-used when SNP is
+enabled.
+
+Ashish Kalra (4):
+  iommu/amd: Add support to remap/unmap IOMMU buffers for kdump
+  iommu/amd: Reuse device table for kdump
+  crypto: ccp: Skip SEV and SNP INIT for kdump boot
+  iommu/amd: Skip enabling command/event buffers for kdump
+
+ drivers/crypto/ccp/sev-dev.c        |  10 +
+ drivers/iommu/amd/amd_iommu_types.h |   5 +
+ drivers/iommu/amd/init.c            | 284 +++++++++++++++++++---------
+ drivers/iommu/amd/iommu.c           |   2 +-
+ 4 files changed, 209 insertions(+), 92 deletions(-)
+
 -- 
-2.49.0
+2.34.1
 
 
