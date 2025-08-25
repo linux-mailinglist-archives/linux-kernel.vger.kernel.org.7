@@ -1,193 +1,95 @@
-Return-Path: <linux-kernel+bounces-785694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80383B34FAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:27:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E9EBB34FB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E314B1B26CC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:27:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44C3F3AFD8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8963D29BDA9;
-	Mon, 25 Aug 2025 23:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05EE12C1596;
+	Mon, 25 Aug 2025 23:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="maQSuN8y"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="djyyT0EH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1868281720;
-	Mon, 25 Aug 2025 23:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB7729C325;
+	Mon, 25 Aug 2025 23:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756164406; cv=none; b=Urd9FysU+hoCCws5sV7s7+UOk03H0uMOayKY9rLYpsjeIHKg8VaWxkGs9++E9e0GJuvdSdUa47z6ayN2+j+18WR5BLEMxQLNqmeuVUPpHh50HBoFf/290slv58rECR9WacETaKZ7COA7OqYfCYv0b337fNlFMr+EhmQwN2RQ+s8=
+	t=1756164604; cv=none; b=ir1aleVmsSrT4/URlPDWyfhHKe2Y+8u3FbsfCJrfg56y5vrsa7A8aulq1m+kHy8GZj/B/IvWHRbB0AAr1TZsjCL3PhxWpJzNCmUTCPA51x2J5in6F+t4og8RoiDExN2SMabn1RlAP6E1I4eqzwoheTXzqkZxOQX5wFcCgLr7YKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756164406; c=relaxed/simple;
-	bh=JG18q78ZVkG4W76knSsJW1ICQmeXz/fQ1c5jpSC+ai8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TEAnByhEPbCanZfbdnAP6TAlVhAJVyDXolAxLaMvVI72xL7ZuVQH61RqQUTaVPl/EyLeX7PNGlPZtuecV3ZyU1mlT0Ia8An0C/TOTqP4uVnLhkykbkJLZ8u2I6bhzwKqd2p+H08OD+iSVsfaT5xmTM9/u95F19TF10AMriOp9es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=maQSuN8y; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3c7aa4ce823so1513678f8f.0;
-        Mon, 25 Aug 2025 16:26:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756164403; x=1756769203; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JG18q78ZVkG4W76knSsJW1ICQmeXz/fQ1c5jpSC+ai8=;
-        b=maQSuN8yROjE/KD00Y7bwf1xPaywL9F5vFGZG63KniYeOLAG1pToyQxkT+T1c99aiC
-         NgiaI9AgrvaZqdJpZLDyjeUaqcEzlRR7icjX8arhba2GkGaDiURH3VXkZO1o1TifBx6y
-         ieEQUgHW7DxNYQ6TpymO0I+46PpIbHzksB8E5X+MuNwiI90DMv2yAhLYQUrcIFbijlP6
-         qDdkdfpc873JupX0Znso8jB5gVzY5+WjUOcf+UkEtk5AvUEmTKaiazF0ISCle1vYTQLd
-         sWjUpVQ0srpi3icdU3qlXFy9Oe7OlQWUYDZLbt7NG+eBtczBglfXrOK83kr1XtvBMCFq
-         WbpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756164403; x=1756769203;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JG18q78ZVkG4W76knSsJW1ICQmeXz/fQ1c5jpSC+ai8=;
-        b=WvQzOpyoniBcOap/dFX/e6X0k4ZgxTg2iJdRYboG/Q2y17FFjK7B5Fla8DpqPJ6Wpc
-         l07CB6kUlhBwe2BbKygAQEbiuL6A4Pq2zaOTy32yrctAvHYIPDDxgx1stKI9CD9yeig7
-         cuOaYyJiEZkz6beIs0B8GMPG13I92bi+j/wvMBNwW8XjUSga8mU60Nb+Vnj8BAlsI5Ga
-         36aqLAIjsC9L7uxsnkRnerz6ODBzBcu7QO+NTjwF8Qceq1XdrF8u79SEWDrB1pOgqtnI
-         FN26vea7cAl61rrDy8DDrERM3/3as+5B7NSWqr3vUyDSjeKQIEZPXNcUbe0j2c3qf1sr
-         68bA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3hthbKgtMEX5W5cCdoHRt4kQdjM1GNAiHfgAnCWy0ppixvfmcGvWT10qkP+5XbZvuiA66JK9leaJ+0Fw=@vger.kernel.org, AJvYcCVpllZ6XJZypLCwlpLYzsZg0Smv8A8WwoDMMj8sI8OKipAMiXLzQ4jT3VHJIYuzssTPPKU8KOnk@vger.kernel.org
-X-Gm-Message-State: AOJu0YwckJDId39Ul9fNsunP4dsiKUFBQlCzrXxOhBizUz4axqHj+4Dn
-	iTIJ4FRkhFRSj5wD2dXDGxC7j0bMOwjYB7wTXsv5ByR4NTH3xG6uHqB1aC9F3aNrYKTu+iv0KST
-	G5aygvP33dfVztOIzd/pgPTxuqLmyc5o=
-X-Gm-Gg: ASbGncuoebKanZrK1QNuMuDRtrATFJkMzCLOkHwxhbY1bzh4/wM/PySLNiafG/txaei
-	RgIAdXssQ3mzVHNw3kK4SEZHNDl1Zem5/HGbcnv0aercwyK+1LUmesDaNUgKdi4SNJAGSkW+0h5
-	FwvQxc0fYBTE/zXK8d6rMQaKtYv7GiEeFZf6EMkqLg50lI1YQpSHUkNjrYfhyBmQUohtb30Kn9+
-	L/Wo5/5Vboxxmf2r3YMw92YwJUTAdepq051HHhbxNKJT58K41gia0OQ2uJM85poZKhN7NSjoled
-	QlINtB8=
-X-Google-Smtp-Source: AGHT+IH1DfEr+Lu3NtBpYyp3/OYkyFwA5ty+ZQKhZUgugEu1nKOFeJs8vUUL857y82BshZV21sS4nTMdByEDq1urCgs=
-X-Received: by 2002:a05:6000:4383:b0:3b7:882c:790 with SMTP id
- ffacd0b85a97d-3c5dc73625cmr10812283f8f.37.1756164403017; Mon, 25 Aug 2025
- 16:26:43 -0700 (PDT)
+	s=arc-20240116; t=1756164604; c=relaxed/simple;
+	bh=g8wqZ3Zr0tCC79qz2WvFkGehZ8RXNBdGla6jzbSI/RU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ElsZMz6h92+8d4SeFnsDfTxXOMSK7d2RoT5UBXv165+p/ap4aKb+e3pPWbkyD529SyCJrdERayRpeI1mxfPlx7eXdEKNLP2N/uEc+R9tB4dbs29PQ3YUUMZ50maEhCPCSWm5nG0kjxyICjrGot3gekftEeaUK6n8ZFu4mPVflgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=djyyT0EH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A59BC4CEED;
+	Mon, 25 Aug 2025 23:30:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756164604;
+	bh=g8wqZ3Zr0tCC79qz2WvFkGehZ8RXNBdGla6jzbSI/RU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=djyyT0EHRX1QAxK45smHwN6IuRXDZbaFKiSjPS0H9kp5cmyWvJiJagZa1SL73JT33
+	 /WqLiAtTBVnXYmux34tXeYh9ynLG9QstS2/FWn5EjcgOpJoHv6sfJU8SoEh+Vp3ibb
+	 eU06ZjRrhTthDot+aykd0OlyarwYVPF506jSAbyIZoxs6xJ6oTHSZwJ5oskS/+G67F
+	 iT2JdGBE2591uUIChR2HDK06+zKmwelF1lDnKmnDJ2g1iflKnSeqbbd6Lc9SDk2XUT
+	 nxu3pdcNyqhVnRwRZo4OtVRBRWqfzRiSBALxa0AP2IjvGrJLXlS0BxBhPz1i+hXGKY
+	 asKF2CSPdjTLQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33CB7383BF70;
+	Mon, 25 Aug 2025 23:30:13 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822041526.467434-1-CFSworks@gmail.com> <CAMj1kXH38gOUpDDdarCXPAY3BHBbuFzdD=Dq7Knsg-qHJoNqzQ@mail.gmail.com>
- <CAH5Ym4gTTLcyucnXjxFtNutVR1HQ0G2k_YBSNO-7G3-4YXUtag@mail.gmail.com>
- <CAMj1kXF00Y0=67apXVbOC+rpbEEvyEovFYf4r_edr6mXjrj0+A@mail.gmail.com>
- <CAH5Ym4h+2w6aayzsVu__3qu3-6ETq1HK7u18yGzOrRqZ--2H9w@mail.gmail.com>
- <874itx14l5.wl-maz@kernel.org> <CAH5Ym4iqvQuO6JxO-jypTp05Ug_2vDokCDoBgGB+cOzgmTQpkQ@mail.gmail.com>
- <871poz2299.wl-maz@kernel.org>
-In-Reply-To: <871poz2299.wl-maz@kernel.org>
-From: Sam Edwards <cfsworks@gmail.com>
-Date: Mon, 25 Aug 2025 16:26:31 -0700
-X-Gm-Features: Ac12FXymuHj_F3D9l2e_hmE46sF5hQJvepyvPpmnqbK0RbrKURVSn9TFQXq54tw
-Message-ID: <CAH5Ym4hgOCMggPTmdmmEObupzbHm+w6=J_7u+skOxRHE3Z9VnQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64/boot: Zero-initialize idmap PGDs before use
-To: Marc Zyngier <maz@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Baruch Siach <baruch@tkos.co.il>, Kevin Brodsky <kevin.brodsky@arm.com>, 
-	Joey Gouly <joey.gouly@arm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3 0/2] net: ipv4: allow directed broadcast
+ routes to
+ use dst hint
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175616461204.3594857.2458593024741281518.git-patchwork-notify@kernel.org>
+Date: Mon, 25 Aug 2025 23:30:12 +0000
+References: <20250819174642.5148-1-oscmaes92@gmail.com>
+In-Reply-To: <20250819174642.5148-1-oscmaes92@gmail.com>
+To: Oscar Maes <oscmaes92@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, dsahern@kernel.org,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ shuah@kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Aug 25, 2025 at 2:12=E2=80=AFAM Marc Zyngier <maz@kernel.org> wrote=
-:
-> > So: where do the terms P4D, PUD, and PMD fit in here? And which one's
-> > our missing fencepost?
-> > PGD ----> ??? ----> ??? ----> ??? ----> ??? ----> PTE (|| low VA bits
-> > =3D final PA)
->
-> I'm struggling to see what you consider a problem, really. For me, the
-> original mistake is that you seem to have started off the LSBs of the
-> VA, instead of the MSBs.
+Hello:
 
-Right; I did my example MMU walk in reverse to start with the levels
-that are never folded and work my way up to the PGD level, since I was
-trying to deduce PTRS_PER_PGD, essentially.
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-As for the ultimate source of my confusion, it's best explained in
-this paragraph from the paging documentation [0] (emphasis my own):
+On Tue, 19 Aug 2025 19:46:40 +0200 you wrote:
+> Currently, ip_extract_route_hint uses RTN_BROADCAST to decide
+> whether to use the route dst hint mechanism.
+> 
+> This check is too strict, as it prevents directed broadcast
+> routes from using the hint, resulting in poor performance
+> during bursts of directed broadcast traffic.
+> 
+> [...]
 
-The entry part of the name is a bit confusing because while in Linux 1.0
-this did refer to a single page table entry in the single top level page ta=
-ble,
-it was retrofitted to be an array of mapping elements when two-level page
-tables were first introduced, ***so the pte is the lowermost page table, no=
-t
-a page table entry.***
+Here is the summary with links:
+  - [net-next,v3,1/2] net: ipv4: allow directed broadcast routes to use dst hint
+    https://git.kernel.org/netdev/net-next/c/1b8c5fa0cb35
+  - [net-next,v3,2/2] selftests: net: add test for dst hint mechanism with directed broadcast addresses
+    https://git.kernel.org/netdev/net-next/c/bd0d9e751b9b
 
-As I see it, this creates a habit of using the names for the table
-entries and the tables themselves interchangeably. Kernel folk who
-don't work on the MM subsystem much (like myself) don't share this
-habit. So when I say something like "an 'array of PGDs' is nonsense,"
-I mean "an 'array of top-level page tables' is an oxymoron: if there's
-an array of them, they aren't top-level." But someone more seasoned
-like you thinks I'm saying "array of PGD entries" and asks "What's the
-problem? That's, tautologically, what the PGD is..."
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-It's absolutely on me for not thinking to RTFM earlier. Thank you for
-your patience. In my defense, I don't think there's any way I could
-have known that "PTE" was a misnomer. The RISC-V team added a few
-helpful comments in their pgtable*.h that probably helps people
-encountering these MM terms for the first time through those files.
-I'm considering sending a patch to clarify the comments on the ARM64
-#defines similarly.
 
-I've included a glossary of terms [1] in case this confusion comes up
-again with somebody else.
-
-> I find it much easier to reason about a start level (anywhere from -1
-> to 2, depending on the page size and the number of VA bits), and the
-> walk to always finish at level 3. The x86 naming is just compatibility
-> cruft that I tend to ignore.
-
-Indeed, I think this is probably what most seasoned ARM people do.
-People who are first mentally visualizing the tree -- and specifically
-Linux's intent with the tree -- will probably still be relying on the
-PxD terms to bootstrap their understanding, however.
-
-Thank you once again for your patience,
-Sam
-
-[0]: https://docs.kernel.org/mm/page_tables.html
-[1]:
-"PTE"
-A newcomer probably thinks: "Page Table Entry, the final descriptor at
-the end of an MMU walk."
-Actual meaning: Bottom-most translation table *OR* an entry of that
-table. It was once an initialism, but it's taken on a meaning of its
-own.
-
-"PGD"
-A newcomer probably thinks: "Page Global Directory, or the pointer
-thereto -- the thing you find in TTBRn_ELx"
-Actual meaning: Page Global Directory or the pointer thereto *OR* Page
-Global Descriptor: an entry of the Page Global Directory, which
-encodes a pointer to the P4DIR if 5-level translation is enabled, or a
-lower PxDIR if not.
-
-#define PTRS_PER_PTE
-A newcomer probably thinks: "Number of frames pointed from a single
-Page Table Entry (so... er... 1???)"
-Actual meaning: Number of entries in the "PTE," the final translation table=
-.
-
-#define PGDIR_SIZE
-A newcomer probably thinks: "Number of bytes of VM represented by one
-PGDIR." (or even "Number of bytes the top-level page table occupies in
-memory.")
-Actual meaning: Number of bytes of VM represented by *one entry* of
-the PGDIR. The 'DIR' is a misnomer here.
-
-#define PGD_SIZE
-Actual meaning: Number of bytes the top-level page table occupies in
-memory. Defined separately from PAGE_SIZE because it may be smaller
-(never larger).
 
