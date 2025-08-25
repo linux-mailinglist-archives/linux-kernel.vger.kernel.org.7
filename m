@@ -1,104 +1,108 @@
-Return-Path: <linux-kernel+bounces-784310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7402EB339D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:45:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D1F1B339C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4658E172CB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:45:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E367F16C85E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC4F29E10F;
-	Mon, 25 Aug 2025 08:44:40 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FB62BEC3D;
+	Mon, 25 Aug 2025 08:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="MDXCrUx4"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3962737FC
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 08:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F302BDC2B
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 08:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756111479; cv=none; b=qcsMFHF0f/C7a9761v0lOZ0fqRFwU0JsxMULts3vz1BZgf8ekcsJGNsDfhe1Gumn2YA1/oGJHfU4y5Rmd7+YpThaQL3fYt0n6qPTr0eWJnOL6YrdZWC22/N2aR3Dn1teIZVXVhWk0jt29+IMT1oO91YjL5aqdTTZHmi9ZZ3Slf8=
+	t=1756111295; cv=none; b=h+47PuV7glsglYZ1VblIcKVgUUrZfzh6tLtjVrapVIi/jeUYMBLfUsSRVLklhmEeuQNdQWRYB2GHVeDEY2bn7EypdQE+zYabiAWG0YSG9bIc/WndkQgn6y6G4arPZQos0D4z9DMDvw+Rzsno/2mNdypuASBO99Bh18E24cJmQns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756111479; c=relaxed/simple;
-	bh=qBcWJbcPPAOnnhlGWrqskW7Iw/IXM3owQvo8agRuMKE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=filr4x9QTxxf5AbAyFCX5SWh22zau28/vT+ZKakAtO4mS26wIUixVrU7Tm7O7x6LqsprNp9AZVRlUWyQXujIov7E5fApP6CcbEwzeAroildwygwXzMnZtqiaovXdNJNhhyCCX/jlqZSyxH35gtCEX6ueap6UkC7VxhTLeliZPyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3e67df0ed87so134252175ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 01:44:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756111477; x=1756716277;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jz82sMEh414hIzMlvz7mnUHU8bfMKBwhBUzlRscKbSE=;
-        b=tNmG4xRxOpTYzkyFe401MHPMYlkq5UIwS0uUNEvI6ZSTsTtRgb115yhPvqMaoapD9Q
-         12dUisfeMce2e9rmKyOudPrzfXG0F3h9tqtoMn3UHsGiaw5xG3FRAUsxrnto7YWmy3OC
-         S75WRokyRrgbyd3wPIGFa/8bMA4A6BetlEo0Zq9DS8nyN0gOa9eLI+pn1e0Ln3Z2RHNH
-         3cA+w8E2vFORTLIoLE/MdWO17T8CgvL+YN0MJJHB0dM5Wg7zQ0Nk9SsQg/djmtqyz34y
-         jUcaz/mWfF4rQXUYpYqFKB6CiQdbZZRLgOQ29C3uJUsYAdUj87o2V7OHetXSd+CfpHRn
-         MwAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWX2fgcj+s87hXtXtlVjTWWJWokWBLlHb/IXFCIwPccfG490DxyrK8j6PWKvUGtMXSQfOkkx8NOGVJhuh8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym3YvHRPe1gQMI4ckgO6PgZFysz8wBhJbUu6j3Kj4tM5p/Fvtn
-	o742BkOeupmEb6P3qm4r8K8UWkQrM62kx2al7ZHPF1VIhmmKJ1QH62+Tch/DGXelBLKlWEKsJ5e
-	fr8VCYcolznjEH/2CeHNnH46wpj0YmkkqmWo6WOCStJLz72aBcMI/LA5seMk=
-X-Google-Smtp-Source: AGHT+IEfOc0gvBkyt7z1ztJ78VZp/MVSrcmCO/joBCWsq0Zy6sZBG28ZBqtQVh7Ilu9xIKOVWPfmJ518Hkx2C3wgLvaAKGvcYh8H
+	s=arc-20240116; t=1756111295; c=relaxed/simple;
+	bh=Bzubn98W0uGmhmf6l1F3ZlqEzHmryNM+GOaqRgVWsm8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ouTrmKooLEtzlOZzsjB2GSsUjH7UJ9bJA4eBtwtKCRG9LVqpqPjgom9VhZO2tB3K4e0Phi0Cd00kwpS4ma/0Z0QyP/nIa3O7b2HwErQQNhnEox268oJ30BSE2Vijb7sFrLCCNzKUDMOJ2zPPbZmE+dkqGhZVCr/6fmiL2sf8H+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=MDXCrUx4; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 465028ca818f11f0b33aeb1e7f16c2b6-20250825
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=X4DPtLl5IrIynjpjGtlWEHRVfkwFu8gJ5N5pGgPIdqQ=;
+	b=MDXCrUx41MXHgzMvY4CbAR6cCE8c4wDxG9JzlpwBRAQOJAGd5bzdijbW8FvqXRRsf0iQ1lwAt/Vmalrn6AeV52X0iqtVLrbvleBvReVN1MEQjAT4wcZKWQjnmCH2ICygc6rmo/oToocWFMFXbbfpDWFFtQMQbu59QRb3Rnvmk28=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:5a903731-484a-4a04-b0db-df836df9dbd4,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:f1326cf,CLOUDID:3dfd946d-c2f4-47a6-876f-59a53e9ecc6e,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:-3,IP:
+	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
+	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 3,DMD|SSN|SDN
+X-CID-BAS: 3,DMD|SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 465028ca818f11f0b33aeb1e7f16c2b6-20250825
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
+	(envelope-from <xion.wang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1173303413; Mon, 25 Aug 2025 16:41:20 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Mon, 25 Aug 2025 16:41:19 +0800
+Received: from mbjsdccf07.gcn.mediatek.inc (10.15.20.246) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Mon, 25 Aug 2025 16:41:18 +0800
+From: <xion.wang@mediatek.com>
+To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+CC: <wsd_upstream@mediatek.com>, <huadian.liu@mediatek.com>, Xion Wang
+	<xion.wang@mediatek.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+Subject: [PATCH 0/1] misc: Prevent double registration and deregistration of miscdevice
+Date: Mon, 25 Aug 2025 16:45:46 +0800
+Message-ID: <20250825084556.10358-1-xion.wang@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2f:b0:3eb:e261:15cb with SMTP id
- e9e14a558f8ab-3ebe2611d2dmr58580555ab.25.1756111477408; Mon, 25 Aug 2025
- 01:44:37 -0700 (PDT)
-Date: Mon, 25 Aug 2025 01:44:37 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ac2275.a00a0220.33401d.0403.GAE@google.com>
-Subject: [syzbot] Monthly comedi report (Aug 2025)
-From: syzbot <syzbot+list02c26f0910ca5bf8710a@syzkaller.appspotmail.com>
-To: abbotti@mev.co.uk, hsweeten@visionengravers.com, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hello comedi maintainers/developers,
+From: Xion Wang <xion.wang@mediatek.com>
 
-This is a 31-day syzbot report for the comedi subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/comedi
+Dear maintainers,
 
-During the period, 1 new issues were detected and 2 were fixed.
-In total, 11 issues are still open and 8 have already been fixed.
+I am submitting a patch to improve the robustness of the misc device subsystem in the Linux kernel.
 
-Some of the still happening issues:
+In the current implementation, repeated calls to misc_register() or misc_deregister() on the same miscdevice instance may result in corruption of the misc_list or kernel crash due to multiple INIT_LIST_HEAD or list_del operations on the same list node.
 
-Ref Crashes Repro Title
-<1> 4212    Yes   general protection fault in pcl818_ai_cancel
-                  https://syzkaller.appspot.com/bug?extid=fce5d9d5bd067d6fbe9b
-<2> 514     Yes   BUG: unable to handle kernel paging request in subdev_8255_io
-                  https://syzkaller.appspot.com/bug?extid=f7ad508e3c76c097483f
-<3> 234     Yes   BUG: unable to handle kernel paging request in parport_attach
-                  https://syzkaller.appspot.com/bug?extid=c47f45cfb7fc1640ced7
-<4> 32      No    divide error in comedi_buf_write_free
-                  https://syzkaller.appspot.com/bug?extid=f6c3c066162d2c43a66c
-<5> 12      Yes   INFO: task hung in comedi_open
-                  https://syzkaller.appspot.com/bug?extid=7811bb68a317954a0347
-<6> 8       No    BUG: unable to handle kernel NULL pointer dereference in parse_insn
-                  https://syzkaller.appspot.com/bug?extid=ab8008c24e84adee93ff
+This patch introduces additional checks in both misc_register() and misc_deregister() to prevent double registration and double deregistration. By using misc->this_device as a status flag, the driver can safely determine whether the device has already been registered or deregistered, and avoid performing dangerous operations on the misc_list.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+With these changes, the misc device subsystem becomes more stable and reliable, reducing the risks of list corruption and improving overall system safety.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+Feedback and suggestions are welcome.
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+Thank you for your time and consideration.
 
-You may send multiple commands in a single email message.
+Best regards,
+Xion Wang
+
+Xion Wang (1):
+  misc: Prevent double registration and deregistration of miscdevice
+
+ drivers/char/misc.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+-- 
+2.45.2
+
 
