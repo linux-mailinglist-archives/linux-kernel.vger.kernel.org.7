@@ -1,124 +1,218 @@
-Return-Path: <linux-kernel+bounces-785054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA48B34540
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:10:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D877B34542
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6800B18826E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:10:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D9CD189370B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A97D2FC863;
-	Mon, 25 Aug 2025 15:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45C72FD7AD;
+	Mon, 25 Aug 2025 15:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SGHwEaCs"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hHU01I/z"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010061.outbound.protection.outlook.com [52.101.69.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE042D9499
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 15:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756134585; cv=none; b=rYGtET5GZ4VDeTVHP9ncUfPzLuu3cn3GvzqyDSZHhOub3ZzjbLOUiCmJHn/Ko+zPJBevSuFF/DAyzdmnxUbYhjwR7ARxtIns8n0V/W23rpYdKtX2Lvv50ydQTfjiwDrKfxs0eXBDceVQ06b7J6HfeHtmg4dhq6Vhjht6N0Z2TPQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756134585; c=relaxed/simple;
-	bh=JowWEV5lcIHxp4u92sNNMOfatfjQ7ZENC4xcufj7568=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fA6eefAnts2jBnSzCLvMyGyNkCtVMG4tKQnH3AfJUqs8Kml8cTyhwTSaOzrzbY9mcsE7SKGw0lW0PXXjjonMxct6HMJQq3nw5/2JDn+PBPTYoilDJy7jrtsdWfc8HLduhjJQkpGorMTbRgKXnDrGJNXiIyQ2O4L13Y4tr/5187M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SGHwEaCs; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-32519b32b6cso2295684a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 08:09:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1756134582; x=1756739382; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yb2SBUjk2cUBYlIMJ026/BKU22gh35Mp+MWKmgCVX6Y=;
-        b=SGHwEaCsTl/Ya7s9iAkJnQRXcAZFGvMvtq4IQCcTLwUtJ38d4a0Fa9wilNhDB1RLeo
-         4ikks68V7f0PVZiY3OaaBVrHMy8REu9Th1zi7GzRPvaY3d2zdqGo7kdbqguRbqZYyHjD
-         lU2zB43Ef8lfzbgfItJS5+P4+EiDN+S1B+mxY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756134582; x=1756739382;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yb2SBUjk2cUBYlIMJ026/BKU22gh35Mp+MWKmgCVX6Y=;
-        b=u6bwr5471Z8X6NOPEJ4kHZTZrqnmsfF0E9G3Jq2y7A7spVNnLeKFxxmW/2v68swqM3
-         szBoRPIi4eneBD6VHNPXY2L0B42cGwe4NJpo517PsUNuv/LOr70D0fsNrsij1qa9ZLot
-         i7xd8x+8SnsaoDU+roEJSY7VusCW0HdXoaJW4jE/eutCzvUUKzEcRx9fNEpex4MSGqBV
-         +7fUtp26q7ILfGgG+VxQr+wT2Jhd9stKIK1PrKWi+wYsfmhviy9cKQqVUDEE0tX2sYON
-         nyeMYT7e9kQezmkdSR0BwoT3W3uoXfUL8K3DZ2ofGLnWEE2bvdmJlXgGlGn/7AHBkuuJ
-         fynA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCwsCvTNDgKPmw3leeeTfWpa47lDTjkhThPpkibbech328HBAQH6ENWi+wJQVW+cmg5U4QtMEUbTmMxBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4hF9mw+RcWhPwQZJMRtSMSdbRhXq8GNo3cMYFo2JdtcsI4DxP
-	bEKSdu+j8yOiLc0NrjI7s1c8dPMgKGlL5SC2hBx1Hz5+VwY1ccJRLMIvgUev2YK7aw==
-X-Gm-Gg: ASbGncvkiu/L0xBUTg9DuKITYJLi4h2W0Rvswg4+RDHLd0lXt02IG/5Yq07Vv0jd6Tg
-	5vVGhkiQOBK2Q7il97ftbrKr64c7L6HQgBJoLnnWeK/68DBaLeiQpyTeO3PVC9fPvluRxmrC9KE
-	02+ZXs2cbX8XV23Bl5v35xn9DOeZiQsz6h6c+ofsoUI6NrXWKZVYq32RtOxR2Sqa9b/ToMkMkcb
-	ZHdOVQjR3tmeOAhPX2c1OtfED1Hm3xWLWp3FaD36qE9InPhj+3Nk/S1fVZI/kF0PvX8cHzdq+U9
-	uyPbq5vJQ4soktb39r48rrkq7/8Jo4S/wav8LHdqzdgiAboSEYBG968JXbyhbIwA/yAMbbdXibZ
-	3FtTsb80NgnOd7vn/b5Bg0e85H3YVhvTpSF73D3ex
-X-Google-Smtp-Source: AGHT+IHPJV4TXa61Ud+4jPZUdeIqShsQV2PbYlibNvBybfblxKwhUtY23QymfLSEF6L//QSRFz+xzQ==
-X-Received: by 2002:a17:90b:3e44:b0:313:f9fc:7213 with SMTP id 98e67ed59e1d1-3251744bd41mr15706597a91.21.1756134582435;
-        Mon, 25 Aug 2025 08:09:42 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:d5a9:711e:13f5:e60f])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3254a1e4067sm7481215a91.10.2025.08.25.08.09.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 08:09:42 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] clk: mediatek: clk-mux: Do not pass flags to clk_mux_determine_rate_flags()
-Date: Mon, 25 Aug 2025 23:09:31 +0800
-Message-ID: <20250825150932.3695931-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B111C2FB997;
+	Mon, 25 Aug 2025 15:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756134587; cv=fail; b=OPqq2VH6uMNyqMcSK1rH6iJsYDkPHPZOgU6eMNs9ncNaJg0jUeqvFnE1e6aIJAmMAO62UjpoCKn8KApts02JZcK9ry6ie1rtqw97wmJePlQ9abQE100Yyrp2qMomt4LpHHVPOTSvAX/NoIiMzohLfJIgcpCis6GfEG24bSkgfoU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756134587; c=relaxed/simple;
+	bh=pM6alg2R1Oa0GhgphNe9lq/xvK/ckye1b1BzGi/elfg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=M1i3bVGTI0kD/keAZIAdFnp4gyWhAM2txd9S8L/WDFNnq3MjUOx6vJy3ey/eoqrH7iiK17tcy4n7PDvX/QtVeSfxXSJ7MSIkH9bTXtjX4+3X3S1tqo8snSC4R806ruNym7McrbhD121NaLmetV1d+31oh8kFklOb3hjLsDnwOLg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hHU01I/z; arc=fail smtp.client-ip=52.101.69.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tSVbRHPpDQPGcoxqodd6j0BJmSe9wh86ykw8Z2KTNok6+FJ6tQPsCXwzNQbcJ666U4U1KzEjZxNQE/BjAlUJp3MtooJE9nOw/HFZvqdbP/kjW+Lu7/7NF9UO3N/kTXYg2D2TVh2ZIP191U/XLMIUNEZ1ufCNlR1N88G5UWZ3MPFBXa9pkJLK/4lqG2xYkNMA787GbMwbxOcSN9AES0ezXFPw3Scxml6oTcLBs213PHnp+g3vSqXAEhJ56HwTht4/GT5uHG4Ef1UxXjQfrki4sJFs+Fw81V94Xuvpj9GjvZjHT07auUbY4ZwIOFMytQVC8J351Gko/4vVHLZrB8+QOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M04R0y0IJISt3ICndXXU3gHvyQ4GkjGQsNzOfb4v/pI=;
+ b=WuCpj+tmKpFw231z6sMCkqqyANkEw3x++gL/cJqtgU114ItrABYogkO5g6FWEY72uCLl9+wO2c5pS42Y0dM+ZCGqUWjPkOjSqETK3YCzrLYHKzh8osOjWQ8TIGpjSQZfyX6Ri/2Xh5g2LDujFN9droexDkhkc6k1GDimAbwHhOS3azOJSkSVunmtxPlkgKIwLB7nnn01eiP240x+HbV0dv6g9mjuN7z7wACN9lT1Byo0MI5MFBZNi7BJQT0U7wEJCqZNrKq8njfyCCiMjcJyZBPGKk/ANBlIwY6ucffeas8c6T6j2yfrQ1XR16UqDkEA1t3882m/twovhDUQ2kIrQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M04R0y0IJISt3ICndXXU3gHvyQ4GkjGQsNzOfb4v/pI=;
+ b=hHU01I/zMT3sgy9yZwwb1+SXkqZ0vv0/ZmWBQDUSJiWSEsvKfAkHtIALRebixdPFu7CSwvulF/rwRfapAktiGVob8QPDt71GZ9zh0bj5x91pKlyNM6Rri72zjYqaflFaNVeobA7UdQ2hmNWuYnjA7jwbviVIXXIKQGOmSmMdqyuzXQ4gGuxOupKGCVI6IVC5T1XFhjH7RReHfOAIyBKeWvBCLOCbaiVWg5asz3culFkNeL1f+hZZfbBYE+ghLX2KGL/fq/NLeHQT+EJGEqiElbeQ2JvsxQK+PAMzuM4fQqoPlrX/BcmpVyEv9Kwk8nPO9zUYi2bWB530JsdwLecYqg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by VI0PR04MB11022.eurprd04.prod.outlook.com (2603:10a6:800:25e::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.10; Mon, 25 Aug
+ 2025 15:09:42 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d%5]) with mapi id 15.20.9073.009; Mon, 25 Aug 2025
+ 15:09:42 +0000
+Date: Mon, 25 Aug 2025 11:09:32 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	richardcochran@gmail.com, claudiu.manoil@nxp.com,
+	vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, vadim.fedorenko@linux.dev,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
+	fushi.peng@nxp.com, devicetree@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, kernel@pengutronix.de
+Subject: Re: [PATCH v5 net-next 05/15] ptp: netc: add PTP_CLK_REQ_PPS support
+Message-ID: <aKx8rPX0uvRaP0KB@lizhi-Precision-Tower-5810>
+References: <20250825041532.1067315-1-wei.fang@nxp.com>
+ <20250825041532.1067315-6-wei.fang@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825041532.1067315-6-wei.fang@nxp.com>
+X-ClientProxiedBy: BY3PR10CA0018.namprd10.prod.outlook.com
+ (2603:10b6:a03:255::23) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|VI0PR04MB11022:EE_
+X-MS-Office365-Filtering-Correlation-Id: f0579427-31a0-4798-8d1d-08dde3e96b6f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|19092799006|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?qHAb83VuDOc0rfc93Ts4LqiwDa39i6H7TwMqocNDY5rR1nTSNnwhU+G5yX66?=
+ =?us-ascii?Q?/P8y1m3TBtjGW/quIWx3QO7miLBArGvkYfGRedX0Gg19QVUxqmCa2hLbvDkz?=
+ =?us-ascii?Q?qvF75/6w7VoxCdhnWqMh7mJ6DqJBw9FvkyqVAx3A6ZOdiV3c3tYAqHSuJN7i?=
+ =?us-ascii?Q?hVzQb/0hm9tW2oigTzyZ4eT9JOLhGv9bNw96kBBTflpy9/KR9tCa4OF/aSEz?=
+ =?us-ascii?Q?v1EtzM529uumwK3u24li8xbVV32erbFvBSOqiAZGVfCxgUU7Me5mm/oVTopW?=
+ =?us-ascii?Q?EX1Q3gLVahlrm9CbGeKbgHNHDljj84vZlMMQaf1j2p2PBzFjttB7/d0b3uOu?=
+ =?us-ascii?Q?aSz6YHy2Vz8y7qf00ZE0aQpcwk+fKn3e32PQzETk7InNAbGQQM66KVivqONV?=
+ =?us-ascii?Q?FOurSsRRivzX85CnrDOD4iWjaHNYXJXk2wzhh4mF6VnMtO9vaCGrQ1oY+gzi?=
+ =?us-ascii?Q?hXM+8VGOcJr6EacFelBX6WIWA35MYq/PJN4F4F3TbvltYV27hpEaKn4EBF7p?=
+ =?us-ascii?Q?80eHRNh+dKeERkOmYqx0pGJxEkaRCjvVHYxTb9861+2F7GwLxpuLHvam7Vry?=
+ =?us-ascii?Q?kmTcxAug5Q5D1Ec3UpPXYddTYuCiFhvTKxzgmiK9GdQN69MRvxbh0QSL57aj?=
+ =?us-ascii?Q?uXpEDppeEqNREfD5sXCpXNYKasZNp7ayKU02b8PxHGz2J3JonipJ8VInC3pE?=
+ =?us-ascii?Q?YmsRSP3BL7DtZoj9dyC4hS+T/lOOukFjlSl87K/6VrTiyRreARVf0djzE2yH?=
+ =?us-ascii?Q?1eKF57wiiNXqDuF628rtZvGiPTmbcg3nIqtJxdm+sF5rOKulsHAEVzjIpCuv?=
+ =?us-ascii?Q?OPOdH1SooB8u8AqpMvZrd/u6BoPOmcsLT1HIm8P5hglJgGytSys8RCDmPd+v?=
+ =?us-ascii?Q?5a3qnX9cxSrgk76GmefJ0a+J/Uppta2Kj0SSisIyrE2x4KQ53gZRLrRWHIUG?=
+ =?us-ascii?Q?2L3nAghnWRYRm1OwAVl5GIOsj6/a3unQcoVc/ByjA8S7uE2bgPEYSn28evwA?=
+ =?us-ascii?Q?ygU9SlZmeZvQbccawoe2oCAnNFU5JbrwKbVHJEgFVbizRpRp47XRD6eCbtcg?=
+ =?us-ascii?Q?3yQu2MMga+S9zA3TwyNOYd6cNKM8nUFXZthfylug0eJTi8eIGI1amfWxK34T?=
+ =?us-ascii?Q?M+m+1YQ9cgFBhTZvO7I9DkpUITOZNuFtrs/cZbjtmakwk5KBTcyxy5Gkk0Fk?=
+ =?us-ascii?Q?XyFoPuifskL7xKj/vJsBmurwFKnckh2+UddIIiiEfa+yRp2a1UiixMXJWcT7?=
+ =?us-ascii?Q?OGpYybxDICdeM9yILbNUS2p4795GuvYQ6RGkFsLedmv6Qrdx2aEx7U1GA8vW?=
+ =?us-ascii?Q?0SBkSvLvne+3K6asAOozPVQFGDINFG+aYLNpent90HfJ1IVolBZiwxVVSFx/?=
+ =?us-ascii?Q?qesKjQoNnhD2PYmQUtn0h0n3RpMiWzdgyCP8kBBFMN6uOkErUgiBqCZMKEgk?=
+ =?us-ascii?Q?v6bFRVfI0FMxEnf9BButonmWrU2xiwmGVG1YBb3PbevibNvZlZZkmQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(19092799006)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?KZ2WQ17ZNmFkEI+hT2+5klsg+fDED5dVrQDdptIbm/uzZx+JZ3iIH3wns1qh?=
+ =?us-ascii?Q?n8IQmn+77gJFGaFJieQZSbhlxpby0q9XJzpFkUdW0Vm8f4AEnW2eWH+vArQX?=
+ =?us-ascii?Q?DgtoTNSsMnvKgVfbtP1eM07iN1VJRAIKE98WAty02yZof6RpIocz2Ix79Dog?=
+ =?us-ascii?Q?S0c+SN5xQJbYhAuQicaCyKN7L3QZ3BvR0pHr7DJ3iY2uaQWNMbuooOAd6aDU?=
+ =?us-ascii?Q?K9Pv+F4exmW2+V2AV68raENqFEIXu5T5DWBTTXXfjWBxA/Oz09yo3hQ7NdHR?=
+ =?us-ascii?Q?Z5ODqM4vTQWx5ipS/GhQSV++ihThaTndEngOTyCLqlodRnCTYIWbiC0rOu8Y?=
+ =?us-ascii?Q?sZx+8BXKXaDWP9srkuneMsyJTVOZtU6y4ggy8AcTZOH7EfLiif9jMYMN3hsf?=
+ =?us-ascii?Q?fZ1hWU6+E92ZakEhfPQxyXXnN1y4wAaSt9QY204dI96DwxR4WdnloRlc/hZu?=
+ =?us-ascii?Q?jujHstuyu/sxyyt/W2w7drEecFOaTsKLHw/jKsuYV1Qjt8j9RnJaRrWbrzT9?=
+ =?us-ascii?Q?WdgOVDCYJbPWssPccC9N1st7jRAJakZ4czXI9scLkYyxxHqAlRZeUTLGRtpo?=
+ =?us-ascii?Q?6cFCY4UAQNfblI9f9/7PKfz53C3nI0uTyGa/g6f0eOXUVgslV5yQe2wnbgup?=
+ =?us-ascii?Q?mhr2OuYQ8EtdBx5MjJtlZyoJadgR5sDHXgSOcEuvkU+4hO5UVB9TNpJxPt8V?=
+ =?us-ascii?Q?+iBwlbvJBXCn6CyWm/44HNiFYoRmIVMDzjfcX0YhPpDTrxqYYxAlBwTPjTFg?=
+ =?us-ascii?Q?OXH2AoIx1uC4L23mJJatdibbyRs4ib9aO98vHbjQOMvyBEV0u6ynuqa1plD5?=
+ =?us-ascii?Q?tlDvM9meJiC564EPuMIqRlDFg2BQXdtj7cABpaXVPsUIKslF7fPAQ8dLce2P?=
+ =?us-ascii?Q?ul/w3FOLCMEXo5Dnk0h+54ZOw1qdJgoxSaXBTca9YR6CnvELM9U+yizG//PA?=
+ =?us-ascii?Q?loW/BRN4s7uNXRWWx0b7QiP5JDiLVXt/B9lhUm2JtIh3pbE/ZU7s3AIumFA6?=
+ =?us-ascii?Q?EefFEkTqkaTF+mibSTB0jm8vbawpxPrQtfbmexVtRsRfNreLAGTphjA9FKbf?=
+ =?us-ascii?Q?o8sCEbZ6r0Yx+hJU5safcfX7szseWDt9Ybk8yC/PPPrOZmp3hqk8muO3EY4E?=
+ =?us-ascii?Q?Jw6LFnwjGUJ03VYAehWLq6MQYecZU+z3PbEJXGiO/QmtBsF67OCsRCg4oPH9?=
+ =?us-ascii?Q?+gblKK+1JaHn8r37usFj2Ir4BfRDugslv0tVxwLF+twyTzefyak1C0VQXVYp?=
+ =?us-ascii?Q?03C34MqAS3dxvFx42yTrYmzc+j0mDcZypbxpKSKniZSxNTIiljXv8qyXSzRS?=
+ =?us-ascii?Q?SOtxNtkREfmdX0iJRyqME9troQcl1VJUbDqgsIybA95pHawH7h+7KkZN+Qu/?=
+ =?us-ascii?Q?wg/fFDm+EvF6nQ7ZqgiAeRMdOaU8KUR/tU/aOV69JdmaCsciEECsbgnLr+go?=
+ =?us-ascii?Q?k0T20ObKFKgWLanwn4tG7Y+yPNp/3SaiK3UtD6SATForfuikzpNfx7gKuT/1?=
+ =?us-ascii?Q?7RfZBN5JXq/awXAJUCEdHP6hfsU3+7RXXQ5acZhpg8j3BJrCQaQcDvHfred+?=
+ =?us-ascii?Q?EezfabIERfnBmRMqPfk=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0579427-31a0-4798-8d1d-08dde3e96b6f
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 15:09:42.7356
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uT9cZnKICA1S/CHmbhvcd9ZhqdGJPWpTnmWah3E5GdOidb6zghrVEjiwuLCCmeLVlW8uSKZGQIqzZ8ryff1AlQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11022
 
-The `flags` in |struct mtk_mux| are core clk flags, not mux clk flags.
-Passing one to the other is wrong.
+On Mon, Aug 25, 2025 at 12:15:22PM +0800, Wei Fang wrote:
+> The NETC Timer is capable of generating a PPS interrupt to the host. To
+> support this feature, a 64-bit alarm time (which is a integral second
+> of PHC in the future) is set to TMR_ALARM, and the period is set to
+> TMR_FIPER. The alarm time is compared to the current time on each update,
+> then the alarm trigger is used as an indication to the TMR_FIPER starts
+> down counting. After the period has passed, the PPS event is generated.
+>
+> According to the NETC block guide, the Timer has three FIPERs, any of
+> which can be used to generate the PPS events, but in the current
+> implementation, we only need one of them to implement the PPS feature,
+> so FIPER 0 is used as the default PPS generator. Also, the Timer has
+> 2 ALARMs, currently, ALARM 0 is used as the default time comparator.
+>
+> However, if the time is adjusted or the integer of period is changed when
+> PPS is enabled, the PPS event will not be generated at an integral second
+> of PHC. The suggested steps from IP team if time drift happens:
+>
+> 1. Disable FIPER before adjusting the hardware time
+> 2. Rearm ALARM after the time adjustment to make the next PPS event be
+> generated at an integral second of PHC.
+> 3. Re-enable FIPER.
+>
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
 
-Since there aren't any actual users adding CLK_MUX_* flags, just drop it
-for now.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Fixes: b05ea3314390 ("clk: mediatek: clk-mux: Add .determine_rate() callback")
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
-Changes since v1:
-- Dropped unused variable
----
- drivers/clk/mediatek/clk-mux.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
-index 60990296450b..9a12e58230be 100644
---- a/drivers/clk/mediatek/clk-mux.c
-+++ b/drivers/clk/mediatek/clk-mux.c
-@@ -146,9 +146,7 @@ static int mtk_clk_mux_set_parent_setclr_lock(struct clk_hw *hw, u8 index)
- static int mtk_clk_mux_determine_rate(struct clk_hw *hw,
- 				      struct clk_rate_request *req)
- {
--	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
--
--	return clk_mux_determine_rate_flags(hw, req, mux->data->flags);
-+	return clk_mux_determine_rate_flags(hw, req, 0);
- }
- 
- const struct clk_ops mtk_mux_clr_set_upd_ops = {
--- 
-2.51.0.261.g7ce5a0a67e-goog
-
+>
+> ---
+> v5 changes:
+> 1. Fix irq name issue, since request_irq() does not copy the name from
+>    irq_name.
+> v4 changes:
+> 1. Improve the commit message, the PPS generation time will be inaccurate
+>    if the time is adjusted or the integer of period is changed.
+> v3 changes:
+> 1. Use "2 * NSEC_PER_SEC" to instead of "2000000000U"
+> 2. Improve the commit message
+> 3. Add alarm related logic and the irq handler
+> 4. Add tmr_emask to struct netc_timer to save the irq masks instead of
+>    reading TMR_EMASK register
+> 5. Remove pps_channel from struct netc_timer and remove
+>    NETC_TMR_DEFAULT_PPS_CHANNEL
+> v2 changes:
+> 1. Refine the subject and the commit message
+> 2. Add a comment to netc_timer_enable_pps()
+> 3. Remove the "nxp,pps-channel" logic from the driver
+> ---
+>  drivers/ptp/ptp_netc.c | 262 ++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 259 insertions(+), 3 deletions(-)
+>
+...
+>
+> --
+> 2.34.1
+>
 
