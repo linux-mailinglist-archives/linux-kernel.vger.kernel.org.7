@@ -1,110 +1,170 @@
-Return-Path: <linux-kernel+bounces-784550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE61FB33D40
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:54:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D422AB33D41
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 850061A80079
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:54:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 883D848456A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5082DF718;
-	Mon, 25 Aug 2025 10:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2337A2DFA38;
+	Mon, 25 Aug 2025 10:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0gqOi4ZW"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="O7Cv3ims"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE4F2DAFDA;
-	Mon, 25 Aug 2025 10:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC632DCF5C
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756119214; cv=none; b=Ool3I920kaRY8foN1oEL1zbVFlAz7B3MaBBe1/BYfWSFjN/cosGR2BXWa0rUtlcct4tPAciJ+jl1iH5w1rT/EWFhq1eoZlToyLX3iv3nX6GoHw4JdaZJB4A91F5HXsu3F/1LxySXBEaNooLA+OOGlODpgFc6vs+3YcxheHpyv7A=
+	t=1756119225; cv=none; b=aiXCnE7LwO4tRb550ZBBMibqq1Ze1crLec4STXzOQtsJFUqLWLTutRMcjA8rlRyH2AUiNuZoE+8Q1BLOaQaWpMEDPdaFSfkbMiwqUDYfVjUM7vILZcsbPjFI0E0pPNvZO5/j6qgZ3dalIZRZS0vdn5Pp0zEtm0lRlcMPbjdtcko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756119214; c=relaxed/simple;
-	bh=9i23GRRPAeysHMcSzhzEMBkwiF4+rOhXgj7ZsUmqrnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GB8qKGJLa9mcr744yqYRLWv4VnXeahuXlBIBjqLvZbBr5koBFn5/T7+CwysC9NOKK1OCuu5SBA0rsZb+mRFmzaAsD1wF9rGDH6l7ScOryQ1NtQonDg0I+L2zioM/+pu1eeoBG6sQNqtbkOx3Cny95nFxrOgYFgJ2AX+yZJG4/lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0gqOi4ZW; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=6XFPlhRGrLMbqZYr/NESjliKO8yOhmaJETTR2cZFYRc=; b=0gqOi4ZWPzv3qDc2urheKfPrP8
-	NgJHLMvH9YtxWytJQ7Yj2Qiujhk6E8e0TKVNUeQbe2zZFOIIEk4xRjMaiMCDDq1uWvcMlYxtmritE
-	pdh4sqylWH9juncEihbHIlDFxBrpezxPV4ZhcLYGqTqk4V0ARUPjgNWyvNACu3NQ3f6Y223zaALW3
-	vPo2MxIFtsyPkRBvl1l8viYFWyNVZ2DG6bAX0faPVEVsijxlfNl16S7ZRtrQuE5Pkat9fsIfmXuCe
-	OZdpSn0d9sYrh2qX/HNQfv+VBuT5N5Um0vjwR5eQhIwJ0hbaWytOYB3CImmZwBfWYd21c4k6lTpkx
-	suF8tXbg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqUpK-00000007gNK-1g1J;
-	Mon, 25 Aug 2025 10:53:26 +0000
-Date: Mon, 25 Aug 2025 03:53:26 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: hch@infradead.org, colyli@kernel.org, hare@suse.de, tieren@fnnas.com,
-	axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com,
-	song@kernel.org, yukuai3@huawei.com, akpm@linux-foundation.org,
-	neil@brown.name, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-raid@vger.kernel.org, yi.zhang@huawei.com,
-	yangerkun@huawei.com, johnny.chenyi@huawei.com
-Subject: Re: [PATCH RFC 1/7] block: export helper bio_submit_split()
-Message-ID: <aKxApo1u8j-ZNOaI@infradead.org>
-References: <20250825093700.3731633-1-yukuai1@huaweicloud.com>
- <20250825093700.3731633-2-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1756119225; c=relaxed/simple;
+	bh=QqJu6QjgWVorILPoRw/+xHaerh+Bd01I8TBlH3G1MSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=RJ1A39YwLOJ11Xnajt5DmJzjpaNW2kIXY11v3Tnf7ZoPIEtV4w30c3vKa4iz+SGZcB3PP2keu2IoNW/qzEtjG1Ojh9pnVLQrLLc8S3XifFUrEkqiquwIMfi/MTCbkS6Zh65Hmc0o9ijeiE/FJZibs2aa8J/BEui3ikUVYpbcXZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=O7Cv3ims; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250825105340euoutp0199e60c2c55a22f301335d100d7877d9a~e-SBgneW60148801488euoutp01U
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:53:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250825105340euoutp0199e60c2c55a22f301335d100d7877d9a~e-SBgneW60148801488euoutp01U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756119220;
+	bh=/fa4+ZI2ynYvAnmTSBhg899GLSJbeJtzYjuSjpeEGlo=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=O7Cv3imsFNC7IeAXaIsQOTVSs76RWqKfhuY1jXd2FZM3Ej/vljQpDs3xEZkUN5oVS
+	 yD3dDR5BV5Iy+WZgQeEsmHuWRu5jXr5enJzwDjpRONP0YLo+IUG8+2kMY+tteupH4e
+	 6arTUTVUhfF3zVlfow0G8gUAI3YCMMvTsmHj+HwI=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250825105339eucas1p13cf980f9b7f4ba4f465f5953b97f149c~e-SA9vcu40800108001eucas1p1m;
+	Mon, 25 Aug 2025 10:53:39 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250825105337eusmtip19068233323fe8c45892597caf271a2e6~e-R-X77KD1201812018eusmtip19;
+	Mon, 25 Aug 2025 10:53:37 +0000 (GMT)
+Message-ID: <809848c9-2ffa-4743-adda-b8b714b404de@samsung.com>
+Date: Mon, 25 Aug 2025 12:53:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825093700.3731633-2-yukuai1@huaweicloud.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH net-next v3] net: ethernet: stmmac: dwmac-rk: Make the
+ clk_phy could be used for external phy
+To: Chaoyi Chen <chaoyi.chen@rock-chips.com>, Chaoyi Chen
+	<kernel@airkyi.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>, "Russell King (Oracle)"
+	<rmk+kernel@armlinux.org.uk>, Jonas Karlman <jonas@kwiboo.se>, David Wu
+	<david.wu@rock-chips.com>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <d0fe6d16-181f-4b38-9457-1099fb6419d0@rock-chips.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250825105339eucas1p13cf980f9b7f4ba4f465f5953b97f149c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250825072312eucas1p2d4751199c0ea069c7938218be60e5e93
+X-EPHeader: CA
+X-CMS-RootMailID: 20250825072312eucas1p2d4751199c0ea069c7938218be60e5e93
+References: <20250815023515.114-1-kernel@airkyi.com>
+	<CGME20250825072312eucas1p2d4751199c0ea069c7938218be60e5e93@eucas1p2.samsung.com>
+	<a30a8c97-6b96-45ba-bad7-8a40401babc2@samsung.com>
+	<d0fe6d16-181f-4b38-9457-1099fb6419d0@rock-chips.com>
 
-On Mon, Aug 25, 2025 at 05:36:54PM +0800, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> No functional changes are intended, some drivers like mdraid will split
-> bio by internal processing, prepare to unify bio split codes.
+On 25.08.2025 11:57, Chaoyi Chen wrote:
+> On 8/25/2025 3:23 PM, Marek Szyprowski wrote:
+>> On 15.08.2025 04:35, Chaoyi Chen wrote:
+>>> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+>>>
+>>> For external phy, clk_phy should be optional, and some external phy
+>>> need the clock input from clk_phy. This patch adds support for setting
+>>> clk_phy for external phy.
+>>>
+>>> Signed-off-by: David Wu <david.wu@rock-chips.com>
+>>> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+>>> ---
+>>>
+>>> Changes in v3:
+>>> - Link to V2: 
+>>> https://lore.kernel.org/netdev/20250812012127.197-1-kernel@airkyi.com/
+>>> - Rebase to net-next/main
+>>>
+>>> Changes in v2:
+>>> - Link to V1: 
+>>> https://lore.kernel.org/netdev/20250806011405.115-1-kernel@airkyi.com/
+>>> - Remove get clock frequency from DT prop
+>>>
+>>>    drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 11 +++++++----
+>>>    1 file changed, 7 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c 
+>>> b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+>>> index ac8288301994..5d921e62c2f5 100644
+>>> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+>>> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+>>> @@ -1412,12 +1412,15 @@ static int rk_gmac_clk_init(struct 
+>>> plat_stmmacenet_data *plat)
+>>>            clk_set_rate(plat->stmmac_clk, 50000000);
+>>>        }
+>>>    -    if (plat->phy_node && bsp_priv->integrated_phy) {
+>>> +    if (plat->phy_node) {
+>>>            bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
+>>>            ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
+>>> -        if (ret)
+>>> -            return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
+>>> -        clk_set_rate(bsp_priv->clk_phy, 50000000);
+>>> +        /* If it is not integrated_phy, clk_phy is optional */
+>>> +        if (bsp_priv->integrated_phy) {
+>>> +            if (ret)
+>>> +                return dev_err_probe(dev, ret, "Cannot get PHY 
+>>> clock\n");
+>>> +            clk_set_rate(bsp_priv->clk_phy, 50000000);
+>>> +        }
+>
+> I think  we should set bsp_priv->clk_phy to NULL here if we failed to 
+> get the clock.
+>
+> Could you try this on your board? Thank you.
 
-Maybe name the exported helper bio_submit_split_bioset and keep
-bio_submit_split() as a wrapper that passes the default split
-bioset to keep the code a bit tidyer in blk-merge.c?
+Right, the following change also fixes this issue:
 
-> +struct bio *bio_submit_split(struct bio *bio, int split_sectors,
-> +			     struct bio_set *bs)
->  {
-> +	struct bio *split;
-> +
->  	if (unlikely(split_sectors < 0))
->  		goto error;
->  
-> -	if (split_sectors) {
-> -		struct bio *split;
-> +	if (!split_sectors)
-> +		return bio;
->  
-> -		split = bio_split(bio, split_sectors, GFP_NOIO,
-> -				&bio->bi_bdev->bd_disk->bio_split);
-> -		if (IS_ERR(split)) {
-> -			split_sectors = PTR_ERR(split);
-> -			goto error;
-> -		}
-> -		split->bi_opf |= REQ_NOMERGE;
-> -		blkcg_bio_issue_init(split);
-> -		bio_chain(split, bio);
-> -		trace_block_split(split, bio->bi_iter.bi_sector);
-> -		WARN_ON_ONCE(bio_zone_write_plugging(bio));
-> -		submit_bio_noacct(bio);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c 
+b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+index 9fc41207cc45..2d19d48be01f 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+@@ -1415,6 +1415,8 @@ static int rk_gmac_clk_init(struct 
+plat_stmmacenet_data *plat)
+         if (plat->phy_node) {
+                 bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
+                 ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
++               if (ret)
++                       bsp_priv->clk_phy = NULL;
+                 /* If it is not integrated_phy, clk_phy is optional */
+                 if (bsp_priv->integrated_phy) {
+                         if (ret)
 
-Maybe skip the reformatting which makes this much harder to read?
-If you think it is useful it can be done in a separate patch.
+
+ > ...
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
