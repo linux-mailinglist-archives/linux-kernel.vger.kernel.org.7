@@ -1,159 +1,200 @@
-Return-Path: <linux-kernel+bounces-784350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F0AB33A4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:13:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22C57B33A3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83D7C17B888
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:13:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02D3A189810A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097CC2C1594;
-	Mon, 25 Aug 2025 09:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA23A2C08DA;
+	Mon, 25 Aug 2025 09:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eZjpN/BL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ldus4Vwn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD99D2C0F60;
-	Mon, 25 Aug 2025 09:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03917282EB;
+	Mon, 25 Aug 2025 09:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756113189; cv=none; b=sx1r9qcCqYIgPlbjA65WVu+RUZeDoLAOWNlguLExhr8C8ENL7g0vLkojyqsIwns2NwEucb91W73rlBaiQ8VTAs6PEY1DHlWVeDOqK/kxve+BMmr8lZidxksu1DZRVh92NUMtl/9HKQE8P+wm3/oRsM3I97/aJ5hBizGdHtzr3Dw=
+	t=1756113175; cv=none; b=YR0+KCgn/fMNmWYVYaqkFmdB0QIcLuTfRU5BMf9Ah7S4d3V+kjkX43UbGa7s2sR9CbABcNapMe6+F/GgBnwP54v8kn13twb6AJimYBfNtXPlBOvqi5nqr20SGgSZ2VyFkRIhSRwaOgDrkmrHca7ct2bP7AYTRRlR2GIwpj9ASQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756113189; c=relaxed/simple;
-	bh=mVWUtEdz/NSNAg9iYBwu0F2436Dwq18jeTu37FpqBxk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NiE3EHLj1AdEyMmwwl849njWd4oEkCG2YqBCNewwphSt6Nk6NqjYBJkHn1/Ng9y0pBca+y2Rw390eexPKEwNeXNv/bXAQQIhccapge7rCmnV7K7pJG22XI+UpXT5FKSvTU4KYBVD8tGsoXNziB0YqgT0EeDutFcr7Mngqxzugg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eZjpN/BL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57P8hJGx027329;
-	Mon, 25 Aug 2025 09:12:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7UlZd2NA1oIFIP3xjkmXUAOxd+BQ3c+04gk0jxHffMk=; b=eZjpN/BLburw/U1a
-	k+10U22/I3h/yaSIB1FKpzCWM5ZxniEOjKFQNrkviRLKi95WkAv2Ida8Mv8mDyh4
-	nVEexcrIfIT4LcUv26o6zn5zhbesBGe25rGB5A4+qE505nYMkOvFYKYN1S1ywqNI
-	bxbpPOPXRmD5dUJ+sV2Tqw9NLZYPipD5zy5bQ22Gd1O5NMo+AGyyjmb2O6Z8xjbh
-	V3P3VfJ/R+XwHLe+qll2z4JFw2KLuaoXlkfPcMJMPKiz3mWcMn7rwHM26gp/YEzF
-	cc0apGPUAVyCrdVcULPRMLTM5v7yrsB99YOiN1jtzAK3nuMr1oPlMqd5XvJg4Rp+
-	i5kUiA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5unmg2a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 09:12:51 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57P9CopC031564
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 09:12:50 GMT
-Received: from [10.239.105.140] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 25 Aug
- 2025 02:12:47 -0700
-Message-ID: <42806aa8-8cf1-476e-b775-50859fe0e7f1@quicinc.com>
-Date: Mon, 25 Aug 2025 17:12:44 +0800
+	s=arc-20240116; t=1756113175; c=relaxed/simple;
+	bh=F13Y4FbWAU6xrLfR84xXT+EMfWvjmDKA3j1lzEZ9/Ys=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ix5/gJnLDaLxlBSpii6F6CtYcuhv/EyLbz+1Dqo3xsND/J6aaXNovVqFBRUVL36UYRUuHK4zPdngWxdgv5FgSiy4wLLKeqWq6cIvcb/TxdEH5n87PaKn8puj/QuhQamsy6s1feo2nlFuMFWGP/+4iBHkKmyBLTZqZQZbADwKL1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ldus4Vwn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8146FC4CEED;
+	Mon, 25 Aug 2025 09:12:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756113174;
+	bh=F13Y4FbWAU6xrLfR84xXT+EMfWvjmDKA3j1lzEZ9/Ys=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ldus4Vwn80Hyx52ZVG9s5XbnsBhRtoP72Az1zyDa7qEa6fharS/QAYTaHoZUkgVYe
+	 V75f4D1PccdTOlqvTvL4n2O2gcWfyAFygCcCLzB+Q2orFW2nXb/AwytJwVldjRzS58
+	 q0/dqeEFdXAwuYso4gIJWZSNMgwtkTBURl1GyQrWTIJJ7xY+CE97h7LL3OZ/T+eHIq
+	 BQQaqhFU1fNYWF0Tdd0W3Al2KIO3xsWcsSiWvOGmEYdF96PnTMUpF6w8Ub8EPqXv62
+	 DRUT7AsU5AmluAoAQuY9T0UWUF5EpXjSEIRDVjHREIcmD3tuVFDnbhXQeiRJ6vtDB+
+	 B8OZ8ovdJ4zsA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1uqTG0-00000000AfV-0BxV;
+	Mon, 25 Aug 2025 09:12:52 +0000
+Date: Mon, 25 Aug 2025 10:12:50 +0100
+Message-ID: <871poz2299.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Sam Edwards <cfsworks@gmail.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Baruch Siach <baruch@tkos.co.il>,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] arm64/boot: Zero-initialize idmap PGDs before use
+In-Reply-To: <CAH5Ym4iqvQuO6JxO-jypTp05Ug_2vDokCDoBgGB+cOzgmTQpkQ@mail.gmail.com>
+References: <20250822041526.467434-1-CFSworks@gmail.com>
+	<CAMj1kXH38gOUpDDdarCXPAY3BHBbuFzdD=Dq7Knsg-qHJoNqzQ@mail.gmail.com>
+	<CAH5Ym4gTTLcyucnXjxFtNutVR1HQ0G2k_YBSNO-7G3-4YXUtag@mail.gmail.com>
+	<CAMj1kXF00Y0=67apXVbOC+rpbEEvyEovFYf4r_edr6mXjrj0+A@mail.gmail.com>
+	<CAH5Ym4h+2w6aayzsVu__3qu3-6ETq1HK7u18yGzOrRqZ--2H9w@mail.gmail.com>
+	<874itx14l5.wl-maz@kernel.org>
+	<CAH5Ym4iqvQuO6JxO-jypTp05Ug_2vDokCDoBgGB+cOzgmTQpkQ@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] virtio-spi: Add virtio-spi.h
-To: "Michael S. Tsirkin" <mst@redhat.com>
-CC: <andriy.shevchenko@intel.com>, <harald.mommer@oss.qualcomm.com>,
-        <quic_msavaliy@quicinc.com>, <broonie@kernel.org>,
-        <virtio-dev@lists.linux.dev>, <viresh.kumar@linaro.org>,
-        <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <hdanton@sina.com>, <qiang4.zhang@linux.intel.com>,
-        <alex.bennee@linaro.org>, <quic_ztu@quicinc.com>
-References: <20250820084944.84505-1-quic_haixcui@quicinc.com>
- <20250820084944.84505-3-quic_haixcui@quicinc.com>
- <20250821044231-mutt-send-email-mst@kernel.org>
-Content-Language: en-US
-From: Haixu Cui <quic_haixcui@quicinc.com>
-In-Reply-To: <20250821044231-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tmB35FfMM6EwZS0epbHQGlYIaL3atDFj
-X-Proofpoint-ORIG-GUID: tmB35FfMM6EwZS0epbHQGlYIaL3atDFj
-X-Authority-Analysis: v=2.4 cv=JJo7s9Kb c=1 sm=1 tr=0 ts=68ac2913 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=Z4Rwk6OoAAAA:8 a=65UapY6Dq9Cd7O_TsGUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22 a=HkZW87K1Qel5hWWM3VKY:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMSBTYWx0ZWRfX/RCwqUGj+Twn
- gRrvNkKFXNaO/6q6wM4dghOnf6SvtLFToiUQb8HYPm3euolZFZ7qRj4bwWGipWlhuozq53we7Lj
- YvzME6Gh6UkGplhjSTTdwEHy7trW7y/TvQFF02NVK3QiReUyMKqsl9M82szi4GGfbE+vBO8w0hC
- 86ODO4PgcR4T1QY5HJ74KIPTBydxeF0KN/VwVHnev+NCXOiVZzUvnqKkMjGvdl8WXvQTySdLlXu
- 1MxuMusj/aaWeqh7Ei76s5jJnqbJiy5O8d/yc5X7/U0p36RN7x/zexKOvx7qrpAPp0ztQz5gKNk
- fxqjsOzQGtqf9S4UN2vuBxRwhMwNg8Pnw3bCrE85Imek4Q1PBlava6aWmL/Odp+wRD6szLQmFZS
- hW4UsRXr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_04,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 bulkscore=0 spamscore=0 impostorscore=0
- malwarescore=0 clxscore=1011 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230031
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: cfsworks@gmail.com, ardb@kernel.org, catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org, anshuman.khandual@arm.com, ryan.roberts@arm.com, baruch@tkos.co.il, kevin.brodsky@arm.com, joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Mon, 25 Aug 2025 00:43:08 +0100,
+Sam Edwards <cfsworks@gmail.com> wrote:
+>=20
+> Hi, Marc! It's been a while; hope you're well.
+>=20
+> On Sun, Aug 24, 2025 at 1:55=E2=80=AFAM Marc Zyngier <maz@kernel.org> wro=
+te:
+> >
+> > Hi Sam,
+> >
+> > On Sun, 24 Aug 2025 04:05:05 +0100,
+> > Sam Edwards <cfsworks@gmail.com> wrote:
+> > >
+> > > On Sat, Aug 23, 2025 at 5:29=E2=80=AFPM Ard Biesheuvel <ardb@kernel.o=
+rg> wrote:
+> > > >
+> >
+> > [...]
+> >
+> > > > Under which conditions would PGD_SIZE assume a value greater than P=
+AGE_SIZE?
+> > >
+> > > I might be doing my math wrong, but wouldn't 52-bit VA with 4K
+> > > granules and 5 levels result in this?
+> >
+> > No. 52bit VA at 4kB granule results in levels 0-3 each resolving 9
+> > bits, and level -1 resolving 4 bits. That's a total of 40 bits, plus
+> > the 12 bits coming directly from the VA making for the expected 52.
+>=20
+> Thank you, that makes it clear: I made an off-by-one mistake in my
+> counting of the levels.
+>=20
+> > > Each PTE represents 4K of virtual memory, so covers VA bits [11:0]
+> > > (this is level 3)
+> >
+> > That's where you got it wrong. The architecture is pretty clear that
+> > each level resolves PAGE_SHIFT-3 bits, hence the computation
+> > above. The bottom PAGE_SHIFT bits are directly extracted from the VA,
+> > without any translation.
+>=20
+> Bear with me a moment while I unpack which part of that I got wrong:
+> A PTE is the terminal entry of the MMU walk, so I believe I'm correct
+> (in this example, and assuming no hugepages) that each PTE represents
+> 4K of virtual memory: that means the final step of computing a PA
+> takes a (valid) PTE and the low 12 bits of the VA, then just adds
+> those bits to the physical frame address.
+> It sounds like what you're saying is "That isn't a *level* though:
+> that's just concatenation. A 'level' always takes a bitslice of the VA
+> and uses it as an index into a table of word-sized entries. PTEs don't
+> point to a further table: they have all of the final information
+> encoded directly."
 
-On 8/21/2025 4:42 PM, Michael S. Tsirkin wrote:
-> On Wed, Aug 20, 2025 at 04:49:43PM +0800, Haixu Cui wrote:
->> Add virtio-spi.h header for virtio SPI.
->>
->> Signed-off-by: Haixu Cui <quic_haixcui@quicinc.com>
->> ---
->>   MAINTAINERS                     |   5 +
->>   include/uapi/linux/virtio_spi.h | 185 ++++++++++++++++++++++++++++++++
->>   2 files changed, 190 insertions(+)
->>   create mode 100644 include/uapi/linux/virtio_spi.h
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index daf520a13bdf..3e289677ca18 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -26760,6 +26760,11 @@ S:	Maintained
->>   F:	include/uapi/linux/virtio_snd.h
->>   F:	sound/virtio/*
->>   
->> +VIRTIO SPI DRIVER
->> +M:	Haixu Cui <quic_haixcui@quicinc.com>
->> +S:	Maintained
->> +F:	include/uapi/linux/virtio_spi.h
->> +
-> 
-> I would add a mailing list:
-> 
-> virtualization@lists.linux-foundation.org
-> 
-> 
+That's mostly it, yes. Each valid descriptor has an output address,
+which either points to another table or to actual memory, further to
+be indexed by the remaining bits of the VA (for 4kB pages: 12 bits for
+a level-3, 21 bits for a level-2...). Level-3 (aka PTEs in x86
+parlance) are always final.
 
-Hi Michael,
+> That makes a lot more sense to me, but contradicts how I read this
+> comment from pgtable-hwdef.h:
+>  * Level 3 descriptor (PTE).
+> I took this as, "a PTE describes how to perform level 3 of the
+> translation." But because in fact there are no "levels" after a PTE,
+> it must actually be saying "Level 3 of the translation is a lookup
+> into an array of PTEs."? The problem with that latter reading is that
+> this comment...
+>  * Level -1 descriptor (PGD).
+> ...when read the same way, is saying "Level -1 of the translation is a
+> lookup into an array of PGDs." An "array of PGDs" is nonsense, so I
+> reverted back to my earlier readings: "PGD describes how to do level
+> -1." and "PTE describes how to do level 3."
 
-Thank you for the suggestion to add a mailing list to the MAINTAINERS entry.
+The initial level of lookup *is* an array: you take the base address
+from TTBR, index it with the correct slice of bits from the VA, read
+the value at that address, and you have the information needed for the
+next level. The only difference is that you obtain that initial
+address from a register instead of getting it from memory.
 
-I noticed that other VIRTIO drivers, such as VIRTIO BALLOON, are 
-currently using virtualization@lists.linux.dev rather than 
-virtualization@lists.linux-foundation.org.
+>=20
+> This smells like a classic "fencepost problem": The "PXX" Linuxisms
+> refer to the *nodes* along the MMU walk, while the "levels" in ARM
+> parlance are the actual steps of the walk taken by hardware -- edges,
+> not nodes, getting us from fencepost to fencepost. A fence with five
+> segments needs six posts, but we only have five currently.
+>=20
+> So: where do the terms P4D, PUD, and PMD fit in here? And which one's
+> our missing fencepost?
+> PGD ----> ??? ----> ??? ----> ??? ----> ??? ----> PTE (|| low VA bits
+> =3D final PA)
 
-Just to confirm—should I use virtualization@lists.linux.dev for 
-consistency, or is virtualization@lists.linux-foundation.org the updated 
-preferred list?
+I'm struggling to see what you consider a problem, really. For me, the
+original mistake is that you seem to have started off the LSBs of the
+VA, instead of the MSBs.
 
-Appreciate your guidance!
+As for the naming, the comments in pgtable-hwdef.h do apply. Except
+that they only match a full 5-level walk, while the kernel can be
+configured for as little as 2 levels. Hence the macro hell of folding
+levels to hide the fact that we don't have 5 levels in most cases.
 
-Best regards,
-Haixu Cui
+I find it much easier to reason about a start level (anywhere from -1
+to 2, depending on the page size and the number of VA bits), and the
+walk to always finish at level 3. The x86 naming is just compatibility
+cruft that I tend to ignore.
 
+Thanks,
+
+	M.
+
+--=20
+Jazz isn't dead. It just smells funny.
 
