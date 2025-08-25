@@ -1,135 +1,107 @@
-Return-Path: <linux-kernel+bounces-785540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F1EB34CB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:51:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01BF8B34CC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66F47162265
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:51:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ABC57A29AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE02298CDE;
-	Mon, 25 Aug 2025 20:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C851629992A;
+	Mon, 25 Aug 2025 20:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTvl8hQx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="KOTwHdFw"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F35F1632C8;
-	Mon, 25 Aug 2025 20:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5DF28688E;
+	Mon, 25 Aug 2025 20:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756155065; cv=none; b=BWenwtR8Wa6PHwU8OgjNz5P3VsK1jNkO1oHVYHdFxnZcCbANSi6srv37X4Vef+JIdH/AhiV7H+/BKN7PREpYJwclpVMMTeO+YX906m/J9QC/olr+kRo41tg7BM5jW4FVwgioH+BQLqvlqxEplVnj1CMkhZAqKqOi8OIum17A4pU=
+	t=1756155134; cv=none; b=OR2dvVpb1z4uiSly72RHS15Mh2Fi5/2kRdbmUkGazoSTUNCDAfsLbREll9KC/i3Hmm2l07ig9VPugyJWH3J+Pl4vdA0t+y/DPvaESLwlutOITVuiTB339JQhDQeSUZdPfBNH+52JEIQqxCmqd4QP4ieH1D2jKDTJCacYb21o3to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756155065; c=relaxed/simple;
-	bh=3v8ZwzMQp6vVVbwvD/f/q5xRWGh2QXldSzFtAYwk/QA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gnJYvHd44W4voiHBTNVW3ctJpEmihmvgAgUdmW3wVe4pPn9I/p+4q/M5aElvxQecE2gG0YMQnPM7PJ5yqx9eecdrCHKSinjYB/8Q8AK4nlP3ZxlvanC3KLmwrHTNh6iAT9D1FB0Zr7hefwGI2zg8E4bN8iCbhBZpy3QuW5xx7ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DTvl8hQx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C168C4CEED;
-	Mon, 25 Aug 2025 20:51:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756155065;
-	bh=3v8ZwzMQp6vVVbwvD/f/q5xRWGh2QXldSzFtAYwk/QA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DTvl8hQx/dzgJ0SeP4gMEgDeFDVLJSwWfDa3Wc/B1+vFtw4ARQZXlJB4DWUnnoc2s
-	 n2b9hl+FxHEoaZHjkTQF7y0az/5PoQy7wuD9d5RoBzWuujbjMtTo7pCKI0Gy4hCDoV
-	 WvB4f+Laip7+5YYbALMqrG3W1A9rMeJOSW2d7y8CsLv+ErU+ft7ijSBJaMIxJMAURj
-	 2uQIvhOS2V8qgrUh5huIgKkzxLaPl5pnTA7IAsR6IXO9MTycR0KHaNyLk3kuKKpkbM
-	 8zjXPBdCP79lSILbrO9r6aZNGaNuxcUiqVtdLz196fhnTmOj4UbyjR+jc0CuyHhQ5H
-	 1v+TpYyCEb4Aw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1uqe9e-00000000Od9-43HS;
-	Mon, 25 Aug 2025 20:51:03 +0000
-Date: Mon, 25 Aug 2025 21:51:02 +0100
-Message-ID: <87zfbnyvk9.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Sebastian Ott <sebott@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: selftests: fix irqfd_test on arm64
-In-Reply-To: <aKy-9eby1OS38uqM@google.com>
-References: <20250825155203.71989-1-sebott@redhat.com>
-	<aKy-9eby1OS38uqM@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1756155134; c=relaxed/simple;
+	bh=9DEL2Oo+Nr3m/HuNqtk5iDSfuOk2l+HqodByEWatvqY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NOcgyHtE5S1kKiT09m8X7409Il+2n7bmUhJHk0uxH1DT2/Qcg6U/KJEWrCuX0xkqISkRsEyeKTGxQcUz79UPi0I9MpUzQXAOZcp2BwnSTEFVqO+P9f7IX71mOS0C5tYERm2m0Sa3kJrbxOcpx9lCS1m+ji7A3nmnmQxclVe36hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=KOTwHdFw; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id C277FA0D0C;
+	Mon, 25 Aug 2025 22:52:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=Qx/nBrJgEy4ACj8BLrfZ
+	hPmHWNsIJJlIdSPVY29XGDo=; b=KOTwHdFwrlssuKhGmYQi1pNHWmLpcDzUjzuD
+	5aSkfx5fPlX5pUFG2CmstfASRrQ63+dQM5mTlVid5T6muXMYB1NQQUAAIcxcfrzy
+	wHUURmxj/lFJZAf9AZ1E5GPMpW8r0RLdLBSOwLv/moIdG/Q3qaT908u6u1oIgu9b
+	PskeO6wLgT32xzj9mL/h7ao0HKZxhnR/sjaTDQ2sG3vLM4aOncH4LGfBi7Jx7DV3
+	LKXZRwYxi9Q5XbgRNzrXFTTkRSG1Y5FAbUa1UB7b+nUTSwWc1gTqNOsr364oQfPL
+	bctg3oo0ldAphuHR+xxR6pWRCdWendzWdkuHtkXYvmZdnkyoZUElOPHQgszzQzeo
+	CrN51MHMVNPoIq5z/1oRqDhsoVFxFXAcYLVnYeE7H4GvXVtuMemZhTqD+BA/6NwT
+	SqTUsy33vVPmSFJjmn/tvfSVIgrlhtwm6JkSpb07cPbNQMeKU/GxTB2LFnXGrdr/
+	wAwHDZztY0tpsDvixH8M6s2lGM/0u1DDmCxHziFGkzW/J6/LevhVXjR4FN7XRU0w
+	IxboxRGK2GlTkinQ2lm+ZQT8pormbrRNl14AqXHt6qooU9worejDL6dKUzG5O3S3
+	+0g/e1RMg1vpECBPGfocTU2K7/5W0JRByN/Hk/LW6RsMP3DFBCW8B589f4RdeBzx
+	KjxnBXU=
+Message-ID: <8d951db9-80a5-4209-ada5-6bba854e994d@prolan.hu>
+Date: Mon, 25 Aug 2025 22:52:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: seanjc@google.com, sebott@redhat.com, pbonzini@redhat.com, shuah@kernel.org, oliver.upton@linux.dev, kvm@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ARM: dts: imx6-hummingboard: Replace license text
+ comment with SPDX identifier
+To: Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+	<festevam@gmail.com>
+CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Rabeeh Khoury <rabeeh@solid-run.com>
+References: <20250709-hb-dts-lic-v2-1-a168bd9d24bd@prolan.hu>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <20250709-hb-dts-lic-v2-1-a168bd9d24bd@prolan.hu>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: sinope.intranet.prolan.hu (10.254.0.237) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155E60706B
 
-On Mon, 25 Aug 2025 20:52:21 +0100,
-Sean Christopherson <seanjc@google.com> wrote:
+Hi,
+
+On 2025. 07. 09. 9:28, Bence Csókás wrote:
+> Replace verbatim license text with a `SPDX-License-Identifier`
 > 
-> On Mon, Aug 25, 2025, Sebastian Ott wrote:
-> > irqfd_test on arm triggers the following assertion:
-> > ==== Test Assertion Failure ====
-> >   include/kvm_util.h:527: !ret
-> >   pid=3643 tid=3643 errno=11 - Resource temporarily unavailable
-> >      1  0x00000000004026d7: kvm_irqfd at kvm_util.h:527
-> >      2  0x0000000000402083: main at irqfd_test.c:100
-> >      3  0x0000ffffa5aab587: ?? ??:0
-> >      4  0x0000ffffa5aab65f: ?? ??:0
-> >      5  0x000000000040236f: _start at ??:?
-> >   KVM_IRQFD failed, rc: -1 errno: 11 (Resource temporarily unavailable)
-> > 
-> > Fix this by setting up a vgic for the vm.
-> > 
-> > Signed-off-by: Sebastian Ott <sebott@redhat.com>
-> > ---
-> > @@ -86,14 +90,30 @@ static void juggle_eventfd_primary(struct kvm_vm *vm, int eventfd)
-> >  	kvm_irqfd(vm, GSI_BASE_PRIMARY + 1, eventfd, KVM_IRQFD_FLAG_DEASSIGN);
-> >  }
-> >  
-> > +static struct kvm_vm *test_vm_create(void)
-> > +{
-> > +#ifdef __aarch64__
-> > +	struct kvm_vm *vm;
-> > +	struct kvm_vcpu *vcpu;
-> > +	int gic_fd;
-> > +
-> > +	vm = vm_create_with_one_vcpu(&vcpu, NULL);
-> > +	gic_fd = vgic_v3_setup(vm, 1, 64);
-> > +	__TEST_REQUIRE(gic_fd >= 0, "Failed to create vgic-v3");
+> The comment header mis-attributes this license to be "X11", but the
+> license text does not include the last line "Except as contained in this
+> notice, the name of the X Consortium shall not be used in advertising or
+> otherwise to promote the sale, use or other dealings in this Software
+> without prior written authorization from the X Consortium.". Therefore,
+> this license is actually equivalent to the SPDX "MIT" license (confirmed
+> by text diffing).
 > 
-> I don't think this test requires v3+, any GIC will do.
+> On top, half of the files have the fragment "either version 2 of the
+> License" for some reason, and not follow up with "or any later version".
+> So the resulting SPDX license is still "GPL-2.0-only".
+> 
+> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
 
-There is no such thing as "any GIC". You need to know what is
-available, and ask for something that actually exists. So while the
-above is wrong on the ground that this doesn't work on v2 or v5, the
-selection has to be explicit.
+So, Rabeeh, Russell, what do you think? Is there something else I need 
+to change?
 
-> Is there a sane way to handle vGIC creation in kvm_arch_vm_post_create()?  E.g.
-> could we create a v3 GIC when possible, and fall back to v2?  And then provide a
-> way for tests to express a hard v3 GIC dependency?
+Bence
 
-You can ask KVM what's available. Like an actual VMM does. There is no
-shortage of examples in the current code base.
-
-And ideally, this should be made an integral part of creating a viable
-VM, which the current VM creation hack makes a point in not providing.
-
-	M.
-
--- 
-Jazz isn't dead. It just smells funny.
 
