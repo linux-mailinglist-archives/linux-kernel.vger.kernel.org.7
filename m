@@ -1,184 +1,127 @@
-Return-Path: <linux-kernel+bounces-784439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360C6B33BAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:52:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D863B33BAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:52:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A013B16D31C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:51:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BBC34879E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80232D7DED;
-	Mon, 25 Aug 2025 09:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="NreOSR1M"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF542D73A9;
+	Mon, 25 Aug 2025 09:49:08 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7736F2D6E67
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1102D5C9B;
+	Mon, 25 Aug 2025 09:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756115349; cv=none; b=hhYUbwysIa0F5YWTsjpSBOY1sR2ZT8b4UvAdbUk/P7NrkELSCngYD2mJsy5va78b7datWczribgGa872ZASjURd8gcfhmmQAiMJn0zcETuGqb665M7kpQF7Yuqno8Y+929JROaYtC9JhKhOQQ/vOL7mvT3zzvJpgfC96PpxEQnw=
+	t=1756115348; cv=none; b=Hu15D2FPnn460h+wbHVaf59BCiwtCPrVz9X3b3JeDbX1NjwT2zrGywdM8+TBIC1P1o4FCP/SN1zpvP/Sip7Lm97ovLvhsHaAMEfKMmKL/FjqMklYMXjDUYuVrNzClSIzCmaaP2zSPjQf7QJZ3B+IAsLiP50lwbRd4E6Nm8JZ9cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756115349; c=relaxed/simple;
-	bh=f3XDHr8xYS2BjL20qDCCzhyytv+tnz4ZBdR/dqLusIs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=W6n/I2JqeHtkGsGmpP27QdPb9c0xl6e5ihHmJ5pwAeajEfvcVjB58Cn8fzPknhlwdlmLmIYkd4w1vBxWOPStlT0Ua/tLH0mhXUd5Ka92UzLvNkSQn5i9DC9hAAZG5oHWaXOLBptpo7huNi+S97p4izIcoGt+aUiZVm3EgzvvC0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=NreOSR1M; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45a20c51c40so33228145e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 02:49:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756115346; x=1756720146; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cm9l30Z/3e08iuv7sMN2PFeVixoBoGdwhV2fpocwB1E=;
-        b=NreOSR1MvCumoI9seAAtLQhqncz7PaefjVpqshNgfajKjYNOEP2NM93dM+Q0TCTGD0
-         Rssac7sBxfrG3MNujdwSi7l82Lzx3vHU+AmhYbXv42VOTyONJPT3p9/wSI8rxHxFwTJa
-         e9UvM1J5HcC8/33qF6XycYBSJoBZLQyt3mDxpSQ4Cd9x+9f4xN06bqmYN2DP4h952hWz
-         9nUCu8//sVMiQtSxsq/e7Y1Qx/K2LPbQqQhldxgAD7fETf4gt9lB/ABl1G6U9GPzZ6IW
-         9Dme+0xN+aMLYgnvmnVaJzlGf5aq6BGGGkJHg2Hv/VGqrLlxZoYzVM9M9N5uMgXWxQyx
-         oZkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756115346; x=1756720146;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cm9l30Z/3e08iuv7sMN2PFeVixoBoGdwhV2fpocwB1E=;
-        b=qFw/SKxg3CPfp+PYCsJPJmXM5EP4xSIg4xcu6ioBA2qjyu4oOjdsFyIfjJcotgkg2D
-         DB4Vcz3ki4Zi8WvPDXJO1HFauQP2RqCmw5RwEyl6M1VALf1hygkx8CxtKzHi8Nr2NC0x
-         D4HkpRSZz/5yt9tKiYel60XS8ikGPutuUbB2BQuy8rGDDyi3h/VUl7XPkA9zkET5KtDB
-         vwS9JvLSX3iSem6xNc3PJbt1iFgvvZ82pv/PYgtYOFUrxfwLZ7rMpFd/aVtIUgjmbXhv
-         OLxYfaF3GoVYW5HEB9eDkZqo/6yYrIYdGYMTkG/D0CLdAXh5dsyjUcnTkIG2p5Q28DAM
-         sN5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWXefF6BphjOqapMFOXdy0FPERv2jqy/dqfen1OzkVSphU7Mdi4AS54GfU/YgRjyRncFRQM4MFwkD+W8HY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywyld08H55TWmARSNRi7MMFop9gul5+IbnWB0Fo7TyDfAHXaGEz
-	F2jgU+F0UBmy7nmZqhttdtPMUbWG8ONx0cBH4dw7+RNvxqxp9X6LfZJiBDxw32s0/yA=
-X-Gm-Gg: ASbGncta+E3h9AVj2wpRq9di4Up3MCeQHUEelhzmWEysgC8H6P6u1apZwH0kCAQBVGs
-	rmLiWG07zriZNNUNQSX2QWYjVdJm8VfIQkdbzsSEj+uW1fTyh72pjeh5eDTkTqwe/KV9ajIGZ0L
-	sT9KAQLhbJwbiJzelXqqsOfa1q86kJ10CK+tA30mx0Jd4JiPachvBMBCY7/TnQ3SYnHA2iX//B0
-	B/H3ushD3h543FiDJ9+BAxYGnFNFapMVC5Phir32mHSXo2U1Xlqwr4XuxDr0ucyTP9SxE1qyNiE
-	6QmDNUXGTxvdFj2pmxsUUg4Ecfue4yXrPGugAnrqvUu50derHw/mNyST/bzuwtZ0H9B/1Xx6trT
-	4wOneA4gZTvaoONzzEuW29ysC5Y46
-X-Google-Smtp-Source: AGHT+IFWEVlMhLNcEIGyB39ruCt7EDG55/hLvszV7xQZAZ9yaGfkwJ1sUtcqfCZfVdrByX/HCQU1Vw==
-X-Received: by 2002:a5d:5f86:0:b0:3c7:516c:f664 with SMTP id ffacd0b85a97d-3c7516cfafcmr4616609f8f.50.1756115345785;
-        Mon, 25 Aug 2025 02:49:05 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:ef52:fc8d:34ad:9bfe])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c711bb1e3asm10877449f8f.57.2025.08.25.02.49.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 02:49:05 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 25 Aug 2025 11:48:55 +0200
-Subject: [PATCH RESEND 14/14] gpio: ge: use new generic GPIO chip API
+	s=arc-20240116; t=1756115348; c=relaxed/simple;
+	bh=FCNe7R2tu9pEL+yxNl6HqlgLNxIQ1nzimAYmzB4Boeo=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=i2TActjlNKxExxAu9fPPeKDrTmMFx5C/ROUpB5gc4nmgE2RoIPV0MRWrvo7NzsplLYe5owB9hEFHUuSxzZtd9dg3F8D6SiOtpmbtpxbvHnWSWmvYV/Z+dv9v82VHdIeFImjdstctjuX8y6DFjkqhKy7cp4EC8CS3BgtRkrvwG64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c9Qwv4mvkzKHNKY;
+	Mon, 25 Aug 2025 17:49:03 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 409DC1A0839;
+	Mon, 25 Aug 2025 17:49:03 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgD3QY6NMaxoyuHxAA--.63474S3;
+	Mon, 25 Aug 2025 17:49:03 +0800 (CST)
+Subject: Re: [PATCH] block: fix disordered IO in the case recursive split
+To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, neil@brown.name, akpm@linux-foundation.org,
+ linux-block@vger.kernel.org, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, colyli@kernel.org, xni@redhat.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ tieren@fnnas.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250821074707.2604640-1-yukuai1@huaweicloud.com>
+ <aKbcM1XDEGeay6An@infradead.org>
+ <54fc027f-f4dc-0412-0d6d-b44a3e644c39@huaweicloud.com>
+ <aKbgqoF0UN4_FbXO@infradead.org>
+ <060396d7-797e-b876-9945-1dc9c8cbf2b4@huaweicloud.com>
+ <aKwqGHE_ImVwoH6B@infradead.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <dc98ae47-5abf-05dc-5441-547cbb4b9c80@huaweicloud.com>
+Date: Mon, 25 Aug 2025 17:49:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250825-gpio-mmio-gpio-conv-v1-14-356b4b1d5110@linaro.org>
-References: <20250825-gpio-mmio-gpio-conv-v1-0-356b4b1d5110@linaro.org>
-In-Reply-To: <20250825-gpio-mmio-gpio-conv-v1-0-356b4b1d5110@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Yinbo Zhu <zhuyinbo@loongson.cn>, 
- Hoan Tran <hoan@os.amperecomputing.com>, 
- Manivannan Sadhasivam <mani@kernel.org>, Yang Shen <shenyang39@huawei.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-unisoc@lists.infradead.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1981;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=TSWl5L0uf8C7UyiKKr/acYMJZJe4qvP633C/saVULBE=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBorDGAR+XtNETwaYSD9Bj1SsL1CyCwdMGTcUo+r
- Gl8ilVub9WJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaKwxgAAKCRARpy6gFHHX
- cg02D/4xg2B8QQcN1cwN9dgslHRAMpaEu+qCGhNJm82Ol63GnzHaQBFZae3SePQrdg8jYkQ0RLs
- MDJ8coRcYKBvHBalthxtliGkZdcytUG7G///Qf9/FkFmxVYAPrHT0dex0sN8KYBNUrNJvImTT6+
- aZsPlZ4SWR2ktM2OROyeHSy1VYQNrIOZ5LigVY/kvAjSp3zOrRA4suznme36ySfKC+l0jW6YwVl
- 9Y8vgF6/cmWh8BF13RQVCwMzcY12XCzrR5I6zwOjDYaqjmX8tnyskFCgc5UKAKTf9sLmogL+bT1
- 2d0XnMLobR3N3/opIY425A/jwYxVN+AbuWDboqJPupMNGnMtPStPxeriKVx4a7O9gvlcriI6p/w
- eFjwcVlHCWtDi56fGI5PcmsFkmvzMqzkLNiW3JUu8oYT/AytHWDCSZd+sv8ILlAfV7YaOTzZQi0
- EFwDXoKis3dUzMC2+xfgYUb8Fmac7qioq3C8nl75XFu2k4pnxGGMefuVLy75kIXbvekr50+hep9
- 0gdDWfVE11cRVtxUYjU/XQN77swSKuUE5PHvrnBkURRrEkmR5Qes+1EAV1hjRfLtOpxgCBV6n6b
- 2ZD3ftR9eBPrrGKMa3Yo+YLaFTwgfPM4zjAyZinTrc4pO9IKy3vWS5h5S3IuDJl/jdTbj5bqKmm
- JisKextEJ3Eix6A==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+In-Reply-To: <aKwqGHE_ImVwoH6B@infradead.org>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD3QY6NMaxoyuHxAA--.63474S3
+X-Coremail-Antispam: 1UD129KBjvJXoWruFyfuFWkJw47Xr1Dtr13Arb_yoW8Jry7pF
+	WfWa15Jw4qyF4a9as2qw4j93WFy393ZrW5ZFnYkr4DZr90gr92grnxJw4FkFyUGrWvga10
+	vayFvrZ5Gw4UArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBa14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUZYFZUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi,
 
-Convert the driver to using the new generic GPIO chip interfaces from
-linux/gpio/generic.h.
+ÔÚ 2025/08/25 17:17, Christoph Hellwig Ð´µÀ:
+> On Thu, Aug 21, 2025 at 05:37:15PM +0800, Yu Kuai wrote:
+>> Fix bio splitting by the crypto fallback code
+> 
+> Yes.
+> 
+>>
+>> I'll take look at all the callers of bio_chain(), in theory, we'll have
+>> different use cases like:
+>>
+>> 1) chain old -> new, or chain new -> old
+>> 2) put old or new to current->bio_list, currently always in the tail,
+>> we might want a new case to the head;
+>>
+>> Perhaps it'll make sense to add high level helpers to do the chain
+>> and resubmit and convert all callers to use new helpers, want do you
+>> think?
+> 
+> I don't think chaining really is problem here, but more how bios
+> are split when already in the block layer.  It's been a bit of a
+> source for problems, so I think we'll need to sort it out.  Especially
+> as the handling of splits for the same device vs devices below the
+> current one seems a bit problematic in general.
+> 
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-ge.c | 25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+I just send a new rfc verion to unify block layer and mdraid to use
+the same helper bio_submit_split(), and convert only that helper to
+insert split bio to the head of current->bio_list(). And probably
+blk-crypto-fallback can use this new helper as well.
 
-diff --git a/drivers/gpio/gpio-ge.c b/drivers/gpio/gpio-ge.c
-index 5dc49648d8e378e9741213f9c2de05b4c75b347f..a02dd322e0d4cecd4564a71a550204983df33568 100644
---- a/drivers/gpio/gpio-ge.c
-+++ b/drivers/gpio/gpio-ge.c
-@@ -16,6 +16,7 @@
-  */
- 
- #include <linux/gpio/driver.h>
-+#include <linux/gpio/generic.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/mod_devicetable.h>
-@@ -51,24 +52,36 @@ MODULE_DEVICE_TABLE(of, gef_gpio_ids);
- 
- static int __init gef_gpio_probe(struct platform_device *pdev)
- {
-+	struct gpio_generic_chip_config config;
- 	struct device *dev = &pdev->dev;
-+	struct gpio_generic_chip *chip;
- 	struct gpio_chip *gc;
- 	void __iomem *regs;
- 	int ret;
- 
--	gc = devm_kzalloc(dev, sizeof(*gc), GFP_KERNEL);
--	if (!gc)
-+	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
- 		return -ENOMEM;
- 
- 	regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
- 
--	ret = bgpio_init(gc, dev, 4, regs + GEF_GPIO_IN, regs + GEF_GPIO_OUT,
--			 NULL, NULL, regs + GEF_GPIO_DIRECT,
--			 BGPIOF_BIG_ENDIAN_BYTE_ORDER);
-+	config = (typeof(config)){
-+		.dev = dev,
-+		.sz = 4,
-+		.dat = regs + GEF_GPIO_IN,
-+		.set = regs + GEF_GPIO_OUT,
-+		.dirin = regs + GEF_GPIO_DIRECT,
-+		.flags = BGPIOF_BIG_ENDIAN_BYTE_ORDER,
-+	};
-+
-+	ret = gpio_generic_chip_init(chip, &config);
- 	if (ret)
--		return dev_err_probe(dev, ret, "bgpio_init failed\n");
-+		return dev_err_probe(dev, ret,
-+				     "failed to initialize the generic GPIO chip\n");
-+
-+	gc = &chip->gc;
- 
- 	/* Setup pointers to chip functions */
- 	gc->label = devm_kasprintf(dev, GFP_KERNEL, "%pfw", dev_fwnode(dev));
+Can you take a look? This is the proper solution that I can think of
+for now.
 
--- 
-2.48.1
+Thanks,
+Kuai
+
+> .
+> 
 
 
