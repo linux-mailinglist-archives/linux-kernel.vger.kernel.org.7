@@ -1,740 +1,501 @@
-Return-Path: <linux-kernel+bounces-785427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF2EAB34A81
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:40:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2781BB34A86
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBE7A7A2CA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:39:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 426AB5E213E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9C23093A1;
-	Mon, 25 Aug 2025 18:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8A13112D0;
+	Mon, 25 Aug 2025 18:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="bl9p1o2R"
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazolkn19011037.outbound.protection.outlook.com [52.103.66.37])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="42DLx2RP"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2077.outbound.protection.outlook.com [40.107.94.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB5830F545
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 18:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.66.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF5C31077A;
+	Mon, 25 Aug 2025 18:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.77
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756147227; cv=fail; b=dHiq3hSZXiKISHL+uzKiW6oincfwNh8EFAdx/1RdPQvvmrJUEaiXoJyCjV8Fyxf1tLwxztX7TgkellDVgMV55HhP8fIKz/mpZ9/5Ey/nI0MZJ1HjTsNWqntPAfVZmHTG5RwUgkR3a+G3aYfoZ6LC2hfdu1jLE9C2wJhhC2l4tNg=
+	t=1756147239; cv=fail; b=byW9wbXpNGK+cBFyrqJf05YthWxwFPWmYW+YLFAqfIbbdkMvcLeRkYRRncVDgpzrHkN7tRCXWk+8+je9GvO+iOOs2udAmBs0MgLIUE7aROp/IQ51g28tMkswk7BbVHzYXYMzMTSUqz0sr6CjZPvYP4AVUMnQk18gHVDf0EEBWEk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756147227; c=relaxed/simple;
-	bh=N/EnQrt1QEXkLd7oat7c6pYVK+lf+QUHJmwInIELx3c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CrASExIfR1JZbLrDo0XyMhsSvR05idyZGdMa2pGYACQasTuQDdZRP78GdM6DQWUycUC5w8dOMNwpxLU+fuXo6bS3JHmdD6DXPMQTEj5GcRM9yKClJXgXqxNCv8mylORv6Yp+ScsSiDT9OUTm3uanit5dIPSGmHXLB/B1ep0QUOU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=bl9p1o2R; arc=fail smtp.client-ip=52.103.66.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	s=arc-20240116; t=1756147239; c=relaxed/simple;
+	bh=S4t9G/UciPveRZnCSRIXp6emZhySCLoeSMhRrYkV/UU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=dxa9jYQgiaEJMN6FZnZgVKSKReuTianbfymgmHkPqe7+6NY9UkyZpU0kTky8vocUDptvkR8OiC72E1dbtu/pkHwhNHbyERSRKh3eFEzLcxJSybbviv6arZATNf6IF+c834B/nthgAAjvQA9NVGISuSjymFj4gF1pFUtpo3jdfGM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=42DLx2RP; arc=fail smtp.client-ip=40.107.94.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kiRA4xWvegrCozbr7KSpqJLsqroafoYIEBnVYFfjH5FOrdUS20WEydJsKOXyRX8ZRKtQoWO5J+oDmC4h9zjHXhf3gD+JkZP7W92TzunAIOnqWT+aahqUSZTzt+mRzGNrb7XOsXhmcO7/UFYSdCykMFQxpiVPKLUkQgLwYxYz0NpsSYZ1+3qQrlhBad7wyK+m6/JewA2wS6qpCoz52hOO999yC4hf7EiWpMQ2n3AeHrh7hZl0lEDKShnpTljx78M/oNpilBb/g8EzRlYZAsq7k67WwoaAP4IUfPOYPGzyQ9BAA4bfia0RZhLsAEejP/eT+rKrPcnqJRdxU/p2si5gKw==
+ b=sFbS6lr6L+rh8DkqJOcM6FgtFUvGOLGxSWZgO8D44g8iCMKH+pCQkKQFEHowGKrBSpl14O2L7mIyeNeSp4sBGDkzZCUMmMN0nRAcUuqSeSWJ8suwNd+VfC/A8CxG8rITsucXtHslE05Az+IDSUu7oRtKLEsRAaX9ksItWMzTjkkw2ok3D7PO7Q13L86SggoKc/RNUCADkP2VpmRMA4A5XrEy2/UEC2Nj5zYxwlsR0dHxPDu7BObPlheMMOu95RlB+fhSHO/07CiIhXhcH5LPO147I3KcSE+iouyGg/QyQU7DuPhKpvoFKKkU4oxMnjIgpwIGw99hAbeTMj72smcrSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hD1XJOl31y8OZd6SpV/B2Jfi8KwrMjXOwmrBCiEi9O8=;
- b=ORyPpmfFmnEryD4AmrcnN81MoHKZDm6Fq5rSR7mXrC2ioJWEgDU+sRH1xw23MkXfJbCPXaT+C/D2QYVa2MhsYG2/g52mRzoep4FPwHPuyDQOM3twp6zMtX92F+RKfSZ9d3X6EDTlB/HUql0abEzteaeb7/Sg0idlLOHjH+zFrlgrrnc3ig+Hfhg2NDInFXxZQFsHk2M1kN9sbznP443zNCjyJ16awQWdhaBkEfa3VcFZXD+are9FhfrzSRDKlJt6SIoa72iUo3kLylcKQACt/wdZuoK1ISui3ATpMX/iD/237BLWXP9Ak0ZO+ccsQpLEIdewL2ZTC07REkozr5WQog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
+ bh=4fKgrAqaSrAlz195fEd9gVL3dcvcfzpJT45QidSmZMM=;
+ b=nzetLO1qR0nvg0oaF7OO/3AhgewH1r5qzcMvzplEkO5tmHKz0WxYq+/SlimIMuKIFPjz6v9U8E10aJEBdPvnzKQzTx4d5Zp7l+mSuDcNDecjb+qG8uBMHySYMjA2Rj0TrQte5NAg3tVEuV/Q+WzjF9PcXtt3hhUHvBRBtDpEyE1fdmldd+Vd3XYS71Zf3UI0sD2ZIViHBytC9kJE6YE9vepDkj6OBRtjO+OdQYrsrwwaWTHsbKskVzxbtb67Jg6II8jRQI0sVr3VaJ+uqMJIb/NZcH8fhR9CIh+jRna/hSE6DBT8qbKf0yTM//wiIiL2pBzFKyRjyfAX7HM7LjJ95w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hD1XJOl31y8OZd6SpV/B2Jfi8KwrMjXOwmrBCiEi9O8=;
- b=bl9p1o2RWtoawp0dHWxTiCBAJjPF6ps8A91dioSR1z053106s2q5IX548E4d4KynpvB6FrD4lnxQyA1+vHFcfQv6YB3eit1Cc7ymybo2qFJpKP5AaPn3fBrv5Kji3HNjKJJWQ/JXPbGHPsxkT8FjkwiBBUVeflAWhPuaRYKCtinlhjIn2b/c+ntHOxARN/pQ2eg81taTMG9aiclC5zgIDw1dQ/WD9cQwNsguNDF9XX1orGZ+CHlKRd6jZrw7gunGzPRGOLXG7w+8qAk7TqePVnpPQEPTvuiv+h7yNSHFfW/XdSkFIFbkCPGqCL+KmO4ConhtMMrkXunyq3fv/+7lyw==
-Received: from TY4PR01MB14432.jpnprd01.prod.outlook.com
- (2603:1096:405:235::10) by TY4PR01MB15954.jpnprd01.prod.outlook.com
- (2603:1096:405:2c8::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
- 2025 18:40:16 +0000
-Received: from TY4PR01MB14432.jpnprd01.prod.outlook.com
- ([fe80::7679:e9eb:aeb2:f12f]) by TY4PR01MB14432.jpnprd01.prod.outlook.com
- ([fe80::7679:e9eb:aeb2:f12f%7]) with mapi id 15.20.9052.019; Mon, 25 Aug 2025
- 18:40:16 +0000
-From: Shengyu Qu <wiagn233@outlook.com>
-To: alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	harry.wentland@amd.com,
-	sunpeng.li@amd.com,
-	siqueira@igalia.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	contact@rafaelrc.com,
-	lijo.lazar@amd.com,
-	jesse.zhang@amd.com,
-	tim.huang@amd.com,
-	dark_sylinc@yahoo.com.ar,
-	mario.limonciello@amd.com,
-	alex.hung@amd.com,
-	aurabindo.pillai@amd.com,
-	sunil.khatri@amd.com,
-	chiahsuan.chung@amd.com,
-	mwen@igalia.com,
-	Roman.Li@amd.com,
-	Wayne.Lin@amd.com,
-	dominik.kaszewski@amd.com,
-	alvin.lee2@amd.com,
-	Aric.Cyr@amd.com,
-	Austin.Zheng@amd.com,
-	Sung.Lee@amd.com,
-	PeiChen.Huang@amd.com,
-	dillon.varone@amd.com,
-	Richard.Chiang@amd.com,
-	ryanseto@amd.com,
-	linux@treblig.org,
-	haoping.liu@amd.com,
-	Relja.Vojvodic@amd.com,
-	Yihan.Zhu@amd.com,
-	Samson.Tam@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	wayland-devel@lists.freedesktop.org
-Cc: Shengyu Qu <wiagn233@outlook.com>
-Subject: [PATCH v2 2/2] drm/amdgpu: Add "pixel_encoding" DRM connector property support for amdgpu
-Date: Tue, 26 Aug 2025 02:40:01 +0800
-Message-ID:
- <TY4PR01MB1443220EA19800A1CA021847A983EA@TY4PR01MB14432.jpnprd01.prod.outlook.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250825184001.6524-1-wiagn233@outlook.com>
-References: <20250825184001.6524-1-wiagn233@outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SGAP274CA0024.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::36)
- To TY4PR01MB14432.jpnprd01.prod.outlook.com (2603:1096:405:235::10)
-X-Microsoft-Original-Message-ID: <20250825184001.6524-3-wiagn233@outlook.com>
+ bh=4fKgrAqaSrAlz195fEd9gVL3dcvcfzpJT45QidSmZMM=;
+ b=42DLx2RPwYkHzPXGD4IQPDFaVTQq0/GxknZtBh31CLKpQ1f9PxMFWEVmRrabarO7YIkFJeWwG1ZT5WemGKJDQn5d3/4cZ6nYaHlDJdZ9BBbjsSMO3cMyb0lUIRJZPRibp5uveL3bhDBEHuV7DSSBqohLJamWQqTQmS6rxhMDzVY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by SA1PR12MB6869.namprd12.prod.outlook.com (2603:10b6:806:25d::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.23; Mon, 25 Aug
+ 2025 18:40:31 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9052.017; Mon, 25 Aug 2025
+ 18:40:31 +0000
+Message-ID: <507095d6-512a-4561-bc90-12a34a43302a@amd.com>
+Date: Mon, 25 Aug 2025 13:40:27 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/7] cpufreq: CPPC: add autonomous mode boot parameter
+ support
+To: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
+ viresh.kumar@linaro.org, lenb@kernel.org, robert.moore@intel.com,
+ corbet@lwn.net, pierre.gondois@arm.com, zhenglifeng1@huawei.com,
+ ray.huang@amd.com, gautham.shenoy@amd.com, perry.yuan@amd.com,
+ linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-doc@vger.kernel.org, acpica-devel@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
+ vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com,
+ bbasu@nvidia.com
+References: <20250823200121.1320197-1-sumitg@nvidia.com>
+ <20250823200121.1320197-8-sumitg@nvidia.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20250823200121.1320197-8-sumitg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1PR03CA0017.namprd03.prod.outlook.com
+ (2603:10b6:806:2d3::13) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY4PR01MB14432:EE_|TY4PR01MB15954:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22ccc116-d729-4f8e-a30f-08dde406d55b
-X-MS-Exchange-SLBlob-MailProps:
-	quCBMN2EvO+pPRgpcRKeMpPKDEKjvqeWS5kVaUuSeEE3th1VZbLX1nHMNzrpCYZvP6K8NTbx72K1CpmGZUKqJLf1G9qLC5HM8E4Jx6guc5klGHC+tie45Kr7btLIa6NRnI6fPKb7yHq47OE6Q7/86yWq6Iy0Zxwe4h1yEZXQZnQjJY2T+QlTQc1kvLKh3H2yFRsmXO+Nu58zZUDrnqe7CbXc6Ce6fHD3ZUjAycAGe4t1Wc53AOdt7PgEUhtO+1kmXvN4CcMC2xWQ3zJKX8gxjecjDfPgb/thke/ulwGQttZ8E47orifPKe+vPUD3TPMuwVPm0eX1GTClnPDl83BjYdnCu4j2lx/cSUtRXLGvJw9T7A5mg5OkscRS5pYvq/TXFWD/OHvfTEO3zQgYa/xtqsBG9m5WUXo4JN3FWfCr4MSypAWxqCa5mS/V0qM8mD//9uG5+mCUbKDjGAJtw43kmswPGUDZuFRlAwMql9iNT1LPh/2s/b1PwB8bbeRcddohNyl07wqTNdqL2KbKXEgy223NNUx/NVaODxDpz9E/c5G52SeJZr4pAsFMbPTQEDBJa5vB5nogialP7dQFSQfzHx1e0CsqD+jSieZT6UBohgZVhWA8Co3Xx+xMEfFw1t/cHUCpJ68Atyom/y9oC+BKbyBGYkqnFO4jKRbFwrKWOR/tVw3IZd7Pze8jeg2OVKP2Xl5b+Z+NuqTBTvTkryhl1w==
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SA1PR12MB6869:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0382707c-6087-47cb-1a55-08dde406deb4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799015|19110799012|5072599009|41001999006|15080799012|461199028|23021999003|3412199025|40105399003|440099028|26104999006|1710799026;
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZZ28kFv4w99stHpv8ymKTKw/SS3ncoHjQAzEikDFwrXQ2IG+JZR17T95AlzS?=
- =?us-ascii?Q?GD9h/QpyRDqkpVF+bi6cZWU+ekkOicRT6Tk6vFv+G2StoseNpfwcse8veOnp?=
- =?us-ascii?Q?f85fZZGH092M6vCbsHn2mhnJp+HjbqGzRBgEK+Xg+TSyry0aG5jsGo2xfYhn?=
- =?us-ascii?Q?FZ1tRPoulbO0wUhGQlnSVKvztxGFJJmjG5kOkRv2cwZysJSyCiHff/HxxDvo?=
- =?us-ascii?Q?IXSlcPFz4SZ6oPvB7V/jNczWZ3vsJuxGuBX3tpfqCcyuZ54rQ2CneztcZxC/?=
- =?us-ascii?Q?x1300YaCgZT4uCTeRr0xzJyptgrTJy5iDlLSwupDAB+NosgHNK6ybRP/I1rB?=
- =?us-ascii?Q?7k70v5ToLC8YQ+itDFklWktGBTZyzUtoj8CHqhot9tqzQUJjEOAMbSTI9ua1?=
- =?us-ascii?Q?6a2kpboAjg7T3YuQSOEG/pfiMLpaUHCqwKT0hIBfH21zoe35I+CB9FAss49Q?=
- =?us-ascii?Q?dL8ajmOCn7URmPPOo6YlXv+21HhAd9hZAN0wGfISvhVNllQoT1AVrxbaEbtB?=
- =?us-ascii?Q?OegAzQ6nauSXLQWG9qBic0TVs6A8Be/APZNCPucpe8r1h7770JGEW0Jk/FOi?=
- =?us-ascii?Q?nXcbVeUo9B0l3u8CIQ+JH3HAeTGE164Ccg4XaR8QcGsUPePgHGKPLofjn6Dr?=
- =?us-ascii?Q?pOi51yI50abXS7+0BO5Xmzp0C5deuDt/BiNs4tKWJqU6hxYbPWB4WnK/k3+U?=
- =?us-ascii?Q?ZNc7UChX+mXoOjgfFPSUE+vuN98er+wduO/NT8DxNPw0E5hvPGpkG+LoGt/I?=
- =?us-ascii?Q?cV3c1itKwPrEg2AhjUw59WtvIM1yEB2UiSbBYu1MyroPsGSG2hEBt6LNA17O?=
- =?us-ascii?Q?zt+nPUwwNwQ1dNvFNx4qqDvz+RQdeXaZP0JXgFMM2igj6D16XWcdvLVoPtZH?=
- =?us-ascii?Q?tFmA/1Gy2QRC4mTCMNMcFQWJN9C8hEPnDu+mbMUiYqySlKHtzWdhvCYoYrYm?=
- =?us-ascii?Q?3yH4F3c9B9DyI1oR3VqZpFx7PSUsMmuYJWf23B2WyEJ0M7aNTZ/09tEMGFxS?=
- =?us-ascii?Q?/ZUDzCIiy3sGIKA/zzq5VevMp6wXvOwsmxyYI29JGuk9Ve8cwQFPlOVPxjhn?=
- =?us-ascii?Q?BgCy8262mliC5Yo7PEc+fZ8FYghgoEDkDhnuvbd1B5KocZR3rXNdIaGrW+Dy?=
- =?us-ascii?Q?c8RKha0gX6i2+Kez1OeLdBD1lpw3Sp0VyU+p0A4DjDQYf9juAcEjyuDE1X9H?=
- =?us-ascii?Q?h9otzwSh3m63GcKb45ZDzTKjZQZKWVzR+mwKL51DjVSAV1CH25X2c4g8BqA?=
- =?us-ascii?Q?=3D?=
+	=?utf-8?B?dWZxYnJHZEJxb0dJSlovNUdEUStwUm9MSlVROEhMRlZjSlppTzh6SnprS2pW?=
+ =?utf-8?B?dWRtSldvb1pwUUp1T2xYMWxyQS82c0xTN015dGR1MXc2NHN0R3FXQ0tqZWFD?=
+ =?utf-8?B?RUNMeEdtY25TcldHUXBJL1JPWTVSWk4zZDJnY0RqNGFISlR2dXRJRWNJdUNK?=
+ =?utf-8?B?eFdTaCs2ckNITlFNRmFYZmgvZzQrWnlKUitBc3NLSGQ5ZU5YWnM5TGNrYnZC?=
+ =?utf-8?B?ZE5hNUg0eUc5aFZocy9oSno3R0RMM0h2c1IxenlRVW90Z09MZE9CS0hMSFVl?=
+ =?utf-8?B?Q0lhNzNwNGk1M3ZrQ3VDNkFlRUdDUE1ySm1TMGQ0QlpqTkZWaWZrRFN0NWNp?=
+ =?utf-8?B?TkdGQi9oRW9TSVMrSnh1SVhNNFZkdG8xK29rWTFPelNsMm9QaDFVaklLVm1n?=
+ =?utf-8?B?OVcvcEJuMCs4aURJclVmWmJjNEE4MmhQTFp6Y2xUSGJ3WTBDSWgwK3RZR3BD?=
+ =?utf-8?B?ZGhDN1VIcm1mTnNZemVkSDlFL1lXNjlDb0twcFVsY3h4dE53K0IyNW5FclFX?=
+ =?utf-8?B?N09YOVBrTFJRQktNSTBrbm9zRHI5NVJiSzB1OXBIMGN2UzJ0QmlUbnpFdDV4?=
+ =?utf-8?B?VGdUTEV1V3V4L0pUZkJ4SEJsRzVNcnYxNXZnWWhNanh2OWd4UzVVeGg5TXpP?=
+ =?utf-8?B?eXB5QW84MTRKRmpVZmtaU21xNTJ0eW8rSkdXVFA4WHVteVJGVDRFaml2eXNj?=
+ =?utf-8?B?L0FCZTF5YkVyWnVWWXBjQmZBZVpEU25Uemo5RTVRRTdTSG1yVTBkdmZiR1ho?=
+ =?utf-8?B?eWVHMDN1eGtadUZOYUs4d3htVkZEU1YyQkhTVGdWNnpWZjI2d0o1ZkE1b3Rh?=
+ =?utf-8?B?dEJiZXdiN29oMnd2ZnJPeERUaVlrcTNCNlMrbHc3UjJYNEtuQXl4UThtMzhE?=
+ =?utf-8?B?VW1lbE4ySDBBUFRtOEZIUGs4bXRrT3dwM05xN2pZN1ZUWFl6VG9BY1pPeTJT?=
+ =?utf-8?B?eUNFbHpiUGNkcUQyak9tUkN1YWVvNkJVSGVVcFpMSGNTV2FIbWJiK3VaYXhQ?=
+ =?utf-8?B?VFRZclZTU2JIY2QwOXFkdFY3U0tiWUhBVHpVK1cyb1htSjV0VWFNUkxXMVRn?=
+ =?utf-8?B?d2FKdU02QnVDL2M2RGhRMEZOclV6NktTSnJjbWZDbmtMRG1oUmx1OGxQcmpL?=
+ =?utf-8?B?SENjWXppTGNYWlZnazFaRWpwck9xYmNGaENmRVdiZldNcXRSVm5kWEVEeE12?=
+ =?utf-8?B?SGluQkhtV1JTRks3Z2lmckkyT3k0MTF0NDVQZTZkdjBrVU5LL00reHpxN1pF?=
+ =?utf-8?B?UU1iQjQ0MTA4clVWajVqdlNOcUIrMlhHM2JENDJsRkN1YjlxNmloTVN0L0RN?=
+ =?utf-8?B?VDZJU1h6M2h5MFdvbWZwQXcyS21kQVpUVlMrMGdvdzFuSnZuTWNTQXVRK3B3?=
+ =?utf-8?B?V29ubC9yQkljTS81SGdyT0dLSUNLN1NsUE1yVzYyVmxmQXZQdmVSR2dpd09T?=
+ =?utf-8?B?bERacWhNWmhOR21BamJDOEFuZ0I0KzVVQTdNWWo1RnZGbVhxeUJzVHBUbVZT?=
+ =?utf-8?B?SFJyN0R4czJrYVljQmlqd01lZUZ4MEZkemtQclRnV0FRcm95bVY0a3VEcHAz?=
+ =?utf-8?B?K2U0dUNoTTNIb0tqYUlGZFAraEREQUdRTlRtYXlMU0k3dDZ1Q2FkSHFSK0ps?=
+ =?utf-8?B?bWtOQjVsTzdXZHRVbk1KVUdCOTgzYTlUc21YNlNZMUY4RllmbllqZThCNFZn?=
+ =?utf-8?B?VXNwTVVtZExHTk1qZXVaTkQwbDdOMXgwSHF1SVBkWEpqMVdMS1Z4L0NDTHBC?=
+ =?utf-8?B?dC95QTVWNGZrbk5DZUxSSUdhSXc1NU9BYU4yUmNFcXU0OU1Oa2VjSlp0b2NF?=
+ =?utf-8?B?UU5WdlhkRVE4a1JjZ2NnbVZWQVRYMERYbS80YUVrd3ZOaGZoNHZRWUN1Zktj?=
+ =?utf-8?B?TzQrbWZRcTRqY1dsbk1ydzFFaDA1eDhuN3cvWXZsVmE5MjZ0bmJ3OXdOWVNL?=
+ =?utf-8?B?eXlYUTZSWTJtd21nZWtRbDh0ZHRhblUwZGlUaWR1aHpaeDZvcjZQYnY0V25Z?=
+ =?utf-8?B?WXM1NUQ5NmR3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?eunwigZqDj7dufOYZeMdkIoWVltfujXThUR2lq/eAsHu/LtMoTPqCa2X3Qb+?=
- =?us-ascii?Q?/kPeBUD0cljd2FsbeDEhTZVNkLscMsXyw/DHsa9gdHJzQWqpcVPViU9lCPFO?=
- =?us-ascii?Q?N7Bnd4PFdvQU+kaFuUFZjwXFzMsIyZdsVCd0CaljZstLcwLn225RHoPA1af+?=
- =?us-ascii?Q?cbVY9RtTZqO3nZW3KgieA6lW4eIzfro4OCAmWX4y78raZt/Z/u62Ql87JMrF?=
- =?us-ascii?Q?ugAm9RJjU1x6sbrqX8E5Bzlcf6nrCRhXf5v5AwWGiYzk2wgqlEkc6M7/B4zU?=
- =?us-ascii?Q?2ghpdAZwwTLhhYE3lPrjE5+ncAK7YKoyxKFmWGEOTbMK3dpW2cz9ER3UGJrv?=
- =?us-ascii?Q?SPFOQDv0dEosgNtGE4ZsFk3PvfRBEZ56pi+APRF/rRO54TIDDXvGbSonf7SU?=
- =?us-ascii?Q?b4lfdGoQt/xgerSZhzLa/67K0FUieUuVAzzD+a7rDeRwC/uuXBpXars93S9j?=
- =?us-ascii?Q?lQSmHHz2bkA/THvYAT/yzXeZP7Tyt/hrrFDpne7XmMmjm+HIjbKTIL1PcQ9r?=
- =?us-ascii?Q?B6JrZkBlomhcA+UHNtUr367t/VbwrfrMhCxMIJuMlAHihRTEbcmGdvpUHecb?=
- =?us-ascii?Q?qertoopFq0kIzLgghx/jtdg39ojCH7NxUN3vmlBS3cge6fVrvxZdB52SeCyO?=
- =?us-ascii?Q?lXSDJgdgePgMlMQIj3WjUlkc5mdGnUh8YYbPUBVvzz/DYPyMD28ag3T+jboV?=
- =?us-ascii?Q?anZicn7KIJdUomm6g+/BO/G9NEGcAGIBdVN8WnAWXj2HETodIHU3Mn3BDV4z?=
- =?us-ascii?Q?mzDxfz5QTWngw1uDcxGJobYTmpe7ZWjYJIWb3HtM5JlPbTreQvitMKnaWL63?=
- =?us-ascii?Q?UA88M2s5QTYIOlV4OPsc4TCWs42W3BlJtCRcC2HxrM8klJxM207K6PVh+Dec?=
- =?us-ascii?Q?ZrhV7PY2ZtuIqfF5kS7t+dg8lDW841FNMJ0X++K4d78CRPDLIHgyOaL9sqS1?=
- =?us-ascii?Q?BlJ0UDdY/L30YY9wnAPu4/Sxdm73D0lDycMk4iZWwSEF4hwHEmesqVD3Aruc?=
- =?us-ascii?Q?EBUzFn0Wa8VWEN9KyB1QI+T9wfYgBxhaWN3QFWpGkt1l5he6PZE2g9pbiSQJ?=
- =?us-ascii?Q?0imwTDr1f5CFuCoeKHjy1+QAgHtzMpLJ5VWqcBrg6zguyQ1c6HgcwoBi+6fO?=
- =?us-ascii?Q?kHMv58BvOg70Zf1XbGtrJEN07BiKq3Yg9qBFhGo5HaQXtlIfjOB6ClBnWu2d?=
- =?us-ascii?Q?5oOoIoxNPvtVOT+/LUo6t+tTMRb9Ny1Kv1POo3wtHxvKRqKpVperj00DdfBZ?=
- =?us-ascii?Q?/gMWwU4vX3kJWeFgh11pfgWTTVvA9VZ7+TbF+D3deNVQ/J2yokifvRz8Leu1?=
- =?us-ascii?Q?GaI=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22ccc116-d729-4f8e-a30f-08dde406d55b
-X-MS-Exchange-CrossTenant-AuthSource: TY4PR01MB14432.jpnprd01.prod.outlook.com
+	=?utf-8?B?WVBLQ0VkUGh3WldVMUE3d1NKUTg5Q01zMVBFQXdsWHdweUtKOVZJakFock9w?=
+ =?utf-8?B?YUZqTU5qdzM3Z3BTR1BxdGlteFFWbVJuWDFaaDE5RlFGNml6L0FFaFNSRGQ0?=
+ =?utf-8?B?WlZLak1RR2xYbVVBTkZXVThkWVFXMmtuNWRjKzNxeG85anEzcjlteDM1ZVNz?=
+ =?utf-8?B?Mmt0UUM2cmMvZlVNT2ZzTFlYaGFJMVNnOTVTMFhCNXZRbjlrc3l3UHNQdVVn?=
+ =?utf-8?B?ckEwdnRENzhVMUpsNlQxUU9rYTU1OVVMdjhuZ25qRE5BcHVPU0hGak4wVWJa?=
+ =?utf-8?B?WFFPaW4xYWYxUmRaN2hKVmJ2bmxuMVNaNFBJYjA5MWFETWx2dytHTjVKU0o4?=
+ =?utf-8?B?NzdScFdSSUsvRXE2UzFpQmlYdDJxQUpwY05SWWJwRlpFMkxGVnFEUyswN3dE?=
+ =?utf-8?B?Yk5RUk5TTlFxNVEzekJXSlJvODhJR0IzZ0NXQ0NKZHNpaEdtQ0dMaGhCWHFo?=
+ =?utf-8?B?REZ0WDNnZWJoNEhHSnB5N25SaWFORkwvbEhISnh3VVo4YjBXMDZUMnZpL1k2?=
+ =?utf-8?B?Q1BjRTBTZUsxTDVUY2dKdVhJcmFPOE1vcmhkRWZxSEdQUmdCempNNVloYXJM?=
+ =?utf-8?B?bGNpcTUzOThCL3AwNVFzRXQ3QUlaU1drQXdCVUpOU2ZhNHdvUFBkV3lPcFJp?=
+ =?utf-8?B?cVVoYmZxSGlKMWVGTjZnWm1XRE51QUd1VzNMdnVSUzlwNjdmLzVIckpSOWNt?=
+ =?utf-8?B?QlV5QzZ4NkZ0a3VnK1BmWUh1aU1acFJlYzUweDBNaitwcm5DK2NlYmtmTkh1?=
+ =?utf-8?B?SkQ1RE54a084aUVheXF0U3pqZGo2OXd1NEM0Z3FVVUVQcjBPVWs2TUl0YTdM?=
+ =?utf-8?B?d0tEa2dYS2IyaTdsZVdlOFdTa3lyY2VTV1Z5TVowRFZDcWdHRXdMVm9wMHZ3?=
+ =?utf-8?B?V2hDSXEzMjY3N1laU3dnMEtwL0tMaTU2QyszVFl2S3JYaEFIenYveWxRWlRY?=
+ =?utf-8?B?QnN2OEFmZ0FFRktKYW5mdmdKRG1FSWNlOUVDSHo1MkJqTjhSUjdsczFvZlNh?=
+ =?utf-8?B?NXJOMWFwNjB0djI4bUpyRURkQ0c2Q1RLS2U5SjA1UjNmUXhIaDExTU5ab0xJ?=
+ =?utf-8?B?MGFTOUZKazNEWWNzU0VFSm5uTXJDVjZ6NjRUYUxJdWwvWG5Lb3plTWZzcEhI?=
+ =?utf-8?B?Wkgzbmg0VENDNWtlL1QzWlVmR2NuUXFlYkI5VFluZENnQ2JnWTNtMmdaV3R1?=
+ =?utf-8?B?MHNNcDdlZERxbWZ1ZEN0VG94ckR0bUhBTjZPS1FrVWpyMDhRZ0puQ2g0c1Ji?=
+ =?utf-8?B?M05RVnVJbDhQb01jMGpNcHFFdXY4aElOQThsME1Wa3FKSmQ3UHJlTXRGRlgy?=
+ =?utf-8?B?MndRbWh1VlJWcXpDc2VSRm8wM3pCQ0NOS3lqWGhPWWNWNFhkallCUW1jazhH?=
+ =?utf-8?B?aStycjJSazJ6UG1ZWlgwRnZJK09JWEdWaHd5VkVIS2hSNS9vNTRaYmFXT1VR?=
+ =?utf-8?B?NGh3enBxeWJBZGJ6c1gvUjE1SG9qRHRTZk1yU3pCbWdZU0ZFNzR6MCtXMS84?=
+ =?utf-8?B?Yzd2dWtYQmJXMGE1MFZlVUVUR01LaGdNMFlGQlBTRXlTN0RBczNPVU8xSFlT?=
+ =?utf-8?B?VzhOZnM1NWluc2hUZUI4bEVyY0hTS0NiSFBQK2poVjdYbEdrMGFaT20vQUpF?=
+ =?utf-8?B?NHBxakVlK3p6VHliYTFHUXFMZjNVN2tmVlpHZ2x3MUZJQlpYYjhEbnl2QmVN?=
+ =?utf-8?B?cWxzSEJHVXBXeEdOTGtHTlRNaUhCNTRKMmxjMlp2ckJqRzMwRWVEdFdYN2dh?=
+ =?utf-8?B?ZzBJYnF2cTdDdUVwZ2Z1KzhMQVlicXJyRmc2WWs0TjA0WFlqYmp3TktRYktJ?=
+ =?utf-8?B?NlJvWTA3bENVQm1YRThIdFdUQithckFTMXdKQXBadlNFeWhCZjFCZkM4SU9t?=
+ =?utf-8?B?aENpU09zYWhDM3dRVEh5ZkJEaUJrTXMwNU8zczlnd2cyT0k1bHNOckR5VjRM?=
+ =?utf-8?B?aVlyelBIWnhET0IvcUo1WnRXY1ZzQ0IvZTJoZkVHUjZMRDNkWFA4bHVNM1Bn?=
+ =?utf-8?B?UUNWeW9VejJQNXZmb3M2Y2VWQk9vcDJCc3hnakg4NnpOK3dUVzBFUFg3Ty95?=
+ =?utf-8?B?SnkwMjNkWkZ0bHdMSkZEdXJ2MHIyNTZvdDFRRk1MWU1Gb25neGxSWlVmYUJF?=
+ =?utf-8?Q?HC24HxGKZ17SCahVpF6/pxstr?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0382707c-6087-47cb-1a55-08dde406deb4
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 18:40:16.2046
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 18:40:31.5442
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB15954
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xXngjsHXyS7heOp+qp3lWLTXfoaI2VOThsmEO+POyJQGlECM/P0Urn6jpgYxct0A3Gpl7go+ESy0Se3MlpQNAw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6869
 
-This patch adds support for "pixel_encoding" connector property to amdgpu,
-also adds a module parameter for the driver to force override initial
-output pixel format encoding.
+On 8/23/2025 3:01 PM, Sumit Gupta wrote:
+> Add kernel boot parameter 'cppc_cpufreq.auto_sel_mode' to enable CPPC
+> autonomous performance selection at system startup. When autonomous mode
+> is enabled, the hardware automatically adjusts CPU performance based on
+> workload demands using Energy Performance Preference (EPP) hints from
+> the OS.
+> 
+> This parameter allows to configure the autonomous mode on all CPUs
+> without requiring runtime sysfs manipulation if the 'auto_sel' register
+> is present.
+> 
+> When auto_sel_mode=1:
+> - All CPUs are configured for autonomous operation during driver init
+> - EPP is set to performance preference (0x0) by default
+> - Min/max performance bounds use defaults
+> - CPU frequency scaling is handled by hardware rather than OS
+> 
+> Also ensure that when autonomous mode is active, the set_target callback
+> returns early since hardware controls frequency scaling directly.
+> 
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>   .../admin-guide/kernel-parameters.txt         |  12 ++
+>   drivers/cpufreq/cppc_cpufreq.c                | 171 ++++++++++++++++--
+>   2 files changed, 168 insertions(+), 15 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 86f395f2933b..ea58deb88c36 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -911,6 +911,18 @@
+>   			Format:
+>   			<first_slot>,<last_slot>,<port>,<enum_bit>[,<debug>]
+>   
+> +	cppc_cpufreq.auto_sel_mode=
+> +			[CPU_FREQ] Autonomous Performance Level Selection.
+> +			When Autonomous selection is enabled, then the hardware is
+> +			allowed to autonomously select the CPU frequency.
+> +			In Autonomous mode, Energy Performance Preference(EPP)
+> +			provides input to the hardware to favour performance (0x0)
+> +			or energy efficiency (0xff).
+> +			Format: <bool>
+> +			Default: disabled.
+> +			0: force disabled
+> +			1: force enabled
 
-usage: amdgpu.pixel_encoding=<encoding> or
-amdgpu.pixel_encoding=<monitor>:<encoding>,<monitor>:<encoding>
+I don't think you can actually force enable.  If the hardware doesn't 
+support it, setting 1 won't do anything.
 
-Supported encodings are: "auto" (0) (Default and original behavior), "rgb"
-(1), "ycbcr444" (2), "ycbcr422" (4), and "ycbcr420" (8).
+IoW really setting 1 is "enable if supported".
 
-Signed-off-by: Matias N. Goldberg <dark_sylinc@yahoo.com.ar>
-Signed-off-by: Rafael Carvalho <contact@rafaelrc.com>
-Signed-off-by: Shengyu Qu <wiagn233@outlook.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_display.c   |  36 +++
- drivers/gpu/drm/amd/amdgpu/amdgpu_display.h   |   3 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h      |   2 +
- .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 273 +++++++++++++++++-
- .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |   1 +
- drivers/gpu/drm/amd/display/dc/core/dc.c      |   8 +
- drivers/gpu/drm/amd/display/dc/dc_stream.h    |   2 +
- 7 files changed, 314 insertions(+), 11 deletions(-)
+> +
+>   	cpuidle.off=1	[CPU_IDLE]
+>   			disable the cpuidle sub-system
+>   
+> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+> index 5e1bbb5f67b8..bbf654c56ff9 100644
+> --- a/drivers/cpufreq/cppc_cpufreq.c
+> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> @@ -27,6 +27,8 @@
+>   #include <acpi/cppc_acpi.h>
+>   
+>   static struct cpufreq_driver cppc_cpufreq_driver;
+> +/* Autonomous Selection */
+> +static bool auto_sel_mode;
+>   
+>   #ifdef CONFIG_ACPI_CPPC_CPUFREQ_FIE
+>   static enum {
+> @@ -272,6 +274,14 @@ static int cppc_cpufreq_set_target(struct cpufreq_policy *policy,
+>   	freqs.old = policy->cur;
+>   	freqs.new = target_freq;
+>   
+> +	/*
+> +	 * In autonomous mode, hardware handles frequency scaling directly
+> +	 * based on workload demands and EPP hints, so OS frequency requests
+> +	 * are not needed.
+> +	 */
+> +	if (cpu_data->perf_caps.auto_sel)
+> +		return ret;
+> +
+>   	cpufreq_freq_transition_begin(policy, &freqs);
+>   	ret = cppc_set_perf_ctrls(cpu, &cpu_data->perf_ctrls);
+>   	cpufreq_freq_transition_end(policy, &freqs, ret != 0);
+> @@ -555,6 +565,12 @@ static struct cppc_cpudata *cppc_cpufreq_get_cpu_data(unsigned int cpu)
+>   		goto free_mask;
+>   	}
+>   
+> +	ret = cppc_get_perf_ctrls(cpu, &cpu_data->perf_ctrls);
+> +	if (ret) {
+> +		pr_debug("Err reading CPU%d perf ctrls: ret:%d\n", cpu, ret);
+> +		goto free_mask;
+> +	}
+> +
+>   	return cpu_data;
+>   
+>   free_mask:
+> @@ -642,6 +658,79 @@ static int cppc_cpufreq_set_max_perf(struct cpufreq_policy *policy, u64 val,
+>   	return (ret == -EOPNOTSUPP) ? 0 : ret;
+>   }
+>   
+> +static int cppc_cpufreq_update_autosel_epp(struct cpufreq_policy *policy, int auto_sel, u32 epp)
+> +{
+> +	struct cppc_cpudata *cpu_data = policy->driver_data;
+> +	unsigned int cpu = policy->cpu;
+> +	int ret;
+> +
+> +	pr_debug("cpu%d: curr epp:%u, curr mode:%u, new epp:%u, new mode:%d\n", cpu,
+> +		 cpu_data->perf_ctrls.energy_perf, cpu_data->perf_caps.auto_sel, epp, auto_sel);
+> +
+> +	mutex_lock(&cppc_cpufreq_update_autosel_config_lock);
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-index 9e463d3ee927..89c173649615 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-@@ -1363,6 +1363,34 @@ static const struct drm_prop_enum_list amdgpu_dither_enum_list[] = {
- 	{ AMDGPU_FMT_DITHER_ENABLE, "on" },
- };
- 
-+static const struct drm_prop_enum_list amdgpu_user_pixenc_list[] = {
-+	{ 0, "auto" },
-+	{ DRM_COLOR_FORMAT_RGB444, "rgb" },
-+	{ DRM_COLOR_FORMAT_YCBCR444, "ycbcr444" },
-+	{ DRM_COLOR_FORMAT_YCBCR422, "ycbcr422" },
-+	{ DRM_COLOR_FORMAT_YCBCR420, "ycbcr420" },
-+};
-+
-+bool amdgpu_user_pixenc_from_name(
-+	unsigned int *user_pixenc,
-+	const char *pixenc_name)
-+{
-+	bool found = false;
-+
-+	if (pixenc_name && (*pixenc_name != '\0')) {
-+		const int sz = ARRAY_SIZE(amdgpu_user_pixenc_list);
-+		int i;
-+
-+		for (i = 0; !found && i < sz; ++i) {
-+			if (strcmp(pixenc_name, amdgpu_user_pixenc_list[i].name) == 0) {
-+				*user_pixenc = amdgpu_user_pixenc_list[i].type;
-+				found = true;
-+			}
-+		}
-+	}
-+	return found;
-+}
-+
- int amdgpu_display_modeset_create_props(struct amdgpu_device *adev)
- {
- 	int sz;
-@@ -1409,6 +1437,14 @@ int amdgpu_display_modeset_create_props(struct amdgpu_device *adev)
- 					 "dither",
- 					 amdgpu_dither_enum_list, sz);
- 
-+	sz = ARRAY_SIZE(amdgpu_user_pixenc_list);
-+	adev->mode_info.pixel_encoding_property =
-+		drm_property_create_enum(adev_to_drm(adev), 0,
-+			"pixel encoding",
-+			amdgpu_user_pixenc_list, sz);
-+	if (!adev->mode_info.pixel_encoding_property)
-+		return -ENOMEM;
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.h
-index dfa0d642ac16..4c4f607d1b68 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.h
-@@ -54,4 +54,7 @@ int amdgpu_display_resume_helper(struct amdgpu_device *adev);
- int amdgpu_display_get_scanout_buffer(struct drm_plane *plane,
- 				      struct drm_scanout_buffer *sb);
- 
-+bool amdgpu_user_pixenc_from_name(unsigned int *user_pixenc,
-+				  const char *pixenc_name);
-+
- #endif
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
-index 6da4f946cac0..e56a772376a1 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
-@@ -326,6 +326,8 @@ struct amdgpu_mode_info {
- 	struct drm_property *audio_property;
- 	/* FMT dithering */
- 	struct drm_property *dither_property;
-+	/* output pixel format encoding override */
-+	struct drm_property *pixel_encoding_property;
- 	/* hardcoded DFP edid from BIOS */
- 	const struct drm_edid *bios_hardcoded_edid;
- 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index b944abea306d..76525b8b7e1e 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -176,6 +176,14 @@ static void reset_freesync_config_for_crtc(struct dm_crtc_state *new_crtc_state)
- static struct amdgpu_i2c_adapter *
- create_i2c(struct ddc_service *ddc_service, bool oem);
- 
-+/**
-+ * DOC: pixel_encoding (string)
-+ * Specify the initial output pixel format encoding used by a connector.
-+ */
-+static char amdgpu_pixel_encoding[MAX_INPUT];
-+MODULE_PARM_DESC(pixel_encoding, "Override pixel encoding");
-+module_param_string(pixel_encoding, amdgpu_pixel_encoding, sizeof(amdgpu_pixel_encoding), 0444);
-+
- static enum drm_mode_subconnector get_subconnector_type(struct dc_link *link)
- {
- 	switch (link->dpcd_caps.dongle_type) {
-@@ -6368,6 +6376,119 @@ static bool adjust_colour_depth_from_display_info(
- 	return false;
- }
- 
-+/* convert an pixel encoding property value to a dc_pixel_encoding */
-+static bool drm_prop_to_dc_pixel_encoding(
-+	enum dc_pixel_encoding *dc_pixenc,
-+	unsigned int propval)
-+{
-+	bool ret = false;
-+
-+	switch (propval) {
-+	case 0:
-+		*dc_pixenc = PIXEL_ENCODING_UNDEFINED;
-+		ret = true;
-+		break;
-+	case DRM_COLOR_FORMAT_RGB444:
-+		*dc_pixenc = PIXEL_ENCODING_RGB;
-+		ret = true;
-+		break;
-+	case DRM_COLOR_FORMAT_YCBCR444:
-+		*dc_pixenc = PIXEL_ENCODING_YCBCR444;
-+		ret = true;
-+		break;
-+	case DRM_COLOR_FORMAT_YCBCR422:
-+		*dc_pixenc = PIXEL_ENCODING_YCBCR422;
-+		ret = true;
-+		break;
-+	case DRM_COLOR_FORMAT_YCBCR420:
-+		*dc_pixenc = PIXEL_ENCODING_YCBCR420;
-+		ret = true;
-+		break;
-+	default:
-+		break;
-+	}
-+	return ret;
-+}
-+
-+/* convert an dc_pixel_encoding to a pixel encoding property value */
-+static unsigned int dc_pixel_encoding_to_drm_prop(
-+	enum dc_pixel_encoding pixel_encoding)
-+{
-+	unsigned int propval = 0;
-+
-+	switch (pixel_encoding) {
-+	case PIXEL_ENCODING_RGB:
-+		propval = DRM_COLOR_FORMAT_RGB444;
-+		break;
-+	case PIXEL_ENCODING_YCBCR444:
-+		propval = DRM_COLOR_FORMAT_YCBCR444;
-+		break;
-+	case PIXEL_ENCODING_YCBCR420:
-+		propval = DRM_COLOR_FORMAT_YCBCR420;
-+		break;
-+	default:
-+		break;
-+	}
-+	return propval;
-+}
-+
-+/*
-+ * Tries to read 'pixel_encoding' from the pixel_encoding DRM property on
-+ * 'state'. Returns true if a supported, acceptable, non-undefined value is
-+ * found; false otherwise. Only modifies 'pixel_encoding' if returning true.
-+ */
-+bool get_connector_state_pixel_encoding(
-+	enum dc_pixel_encoding *pixel_encoding,
-+	const struct drm_connector_state *state,
-+	const struct drm_display_info *info,
-+	const struct drm_display_mode *mode_in)
-+{
-+	bool ret = false;
-+	struct dm_connector_state *dm_state;
-+
-+	dm_state = to_dm_connector_state(state);
-+	if (!dm_state)
-+		return false;
-+
-+	/* check encoding is supported */
-+	switch (dm_state->pixel_encoding) {
-+	case PIXEL_ENCODING_RGB:
-+		ret = (info->color_formats & DRM_COLOR_FORMAT_RGB444);
-+		break;
-+	case PIXEL_ENCODING_YCBCR444:
-+		ret = (info->color_formats & DRM_COLOR_FORMAT_YCBCR444);
-+		break;
-+	case PIXEL_ENCODING_YCBCR420:
-+		ret = drm_mode_is_420(info, mode_in);
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	if (ret)
-+		*pixel_encoding = dm_state->pixel_encoding;
-+
-+	return ret;
-+}
-+
-+/*
-+ * Writes 'pixel_encoding' to the pixel_encoding DRM property on 'state', if
-+ * the enum value is valid and supported; otherwise writes
-+ * PIXEL_ENCODING_UNDEFINED which corresponds to the "auto" property state.
-+ */
-+void set_connector_state_pixel_encoding(
-+	const struct drm_connector_state *state,
-+	enum dc_pixel_encoding pixel_encoding)
-+{
-+	struct dm_connector_state *dm_state;
-+
-+	dm_state = to_dm_connector_state(state);
-+	if (!dm_state)
-+		return;
-+
-+	dm_state->pixel_encoding = pixel_encoding;
-+}
-+
- static void fill_stream_properties_from_drm_display_mode(
- 	struct dc_stream_state *stream,
- 	const struct drm_display_mode *mode_in,
-@@ -6393,19 +6514,23 @@ static void fill_stream_properties_from_drm_display_mode(
- 	timing_out->h_border_right = 0;
- 	timing_out->v_border_top = 0;
- 	timing_out->v_border_bottom = 0;
--	/* TODO: un-hardcode */
--	if (drm_mode_is_420_only(info, mode_in)
-+
-+	if (!get_connector_state_pixel_encoding(&timing_out->pixel_encoding,
-+		connector_state, info, mode_in)) {
-+		/* auto-select a pixel encoding */
-+		if (drm_mode_is_420_only(info, mode_in)
- 			&& stream->signal == SIGNAL_TYPE_HDMI_TYPE_A)
--		timing_out->pixel_encoding = PIXEL_ENCODING_YCBCR420;
--	else if (drm_mode_is_420_also(info, mode_in)
-+			timing_out->pixel_encoding = PIXEL_ENCODING_YCBCR420;
-+		else if (drm_mode_is_420_also(info, mode_in)
- 			&& aconnector
- 			&& aconnector->force_yuv420_output)
--		timing_out->pixel_encoding = PIXEL_ENCODING_YCBCR420;
--	else if ((connector->display_info.color_formats & DRM_COLOR_FORMAT_YCBCR444)
--			&& stream->signal == SIGNAL_TYPE_HDMI_TYPE_A)
--		timing_out->pixel_encoding = PIXEL_ENCODING_YCBCR444;
--	else
--		timing_out->pixel_encoding = PIXEL_ENCODING_RGB;
-+			timing_out->pixel_encoding = PIXEL_ENCODING_YCBCR420;
-+		else if ((connector->display_info.color_formats & DRM_COLOR_FORMAT_YCBCR444)
-+				&& stream->signal == SIGNAL_TYPE_HDMI_TYPE_A)
-+			timing_out->pixel_encoding = PIXEL_ENCODING_YCBCR444;
-+		else
-+			timing_out->pixel_encoding = PIXEL_ENCODING_RGB;
-+	}
- 
- 	timing_out->timing_3d_format = TIMING_3D_FORMAT_NONE;
- 	timing_out->display_color_depth = convert_color_depth_from_display_info(
-@@ -6479,6 +6604,9 @@ static void fill_stream_properties_from_drm_display_mode(
- 		}
- 	}
- 
-+	/* write back final choice of pixel encoding */
-+	set_connector_state_pixel_encoding(connector_state, timing_out->pixel_encoding);
-+
- 	stream->output_color_space = get_output_color_space(timing_out, connector_state);
- 	stream->content_type = get_output_content_type(connector_state);
- }
-@@ -7181,6 +7309,9 @@ int amdgpu_dm_connector_atomic_set_property(struct drm_connector *connector,
- 	} else if (property == adev->mode_info.underscan_property) {
- 		dm_new_state->underscan_enable = val;
- 		ret = 0;
-+	} else if (property == adev->mode_info.pixel_encoding_property) {
-+		if (drm_prop_to_dc_pixel_encoding(&dm_new_state->pixel_encoding, val))
-+			ret = 0;
- 	}
- 
- 	return ret;
-@@ -7223,6 +7354,9 @@ int amdgpu_dm_connector_atomic_get_property(struct drm_connector *connector,
- 	} else if (property == adev->mode_info.underscan_property) {
- 		*val = dm_state->underscan_enable;
- 		ret = 0;
-+	} else if (property == adev->mode_info.pixel_encoding_property) {
-+		*val = dc_pixel_encoding_to_drm_prop(dm_state->pixel_encoding);
-+		ret = 0;
- 	}
- 
- 	return ret;
-@@ -7367,6 +7501,48 @@ static void amdgpu_dm_connector_destroy(struct drm_connector *connector)
- 	kfree(connector);
- }
- 
-+/*
-+ * Returns the default pixel encoding, depending on the pixel_encoding
-+ * module parameter if given.
-+ */
-+static enum dc_pixel_encoding pixel_encoding_reset(
-+	const struct drm_connector *connector)
-+{
-+	char *param_str = NULL;
-+	char *param_str_ptr = NULL;
-+	char *param_item = NULL;
-+	char *param_item_sep = NULL;
-+	char *pixenc_mode = NULL;
-+	unsigned int user_pixenc;
-+	enum dc_pixel_encoding pixel_encoding = PIXEL_ENCODING_UNDEFINED;
-+
-+	/* default in absence of module param */
-+	if (*amdgpu_pixel_encoding == '\0')
-+		return PIXEL_ENCODING_UNDEFINED;
-+
-+	/* decode param string */
-+	param_str = kstrdup(amdgpu_pixel_encoding, GFP_KERNEL);
-+	param_str_ptr = param_str;
-+	while ((param_item = strsep(&param_str_ptr, ","))) {
-+		param_item_sep = strchr(param_item, ':');
-+		if (param_item_sep) {
-+			if (!strncmp(connector->name, param_item,
-+				   param_item_sep - param_item)) {
-+				pixenc_mode = param_item_sep + 1;
-+				break;
-+			}
-+		} else
-+			pixenc_mode = param_item;
-+	}
-+
-+	/* compare mode string and set */
-+	if (amdgpu_user_pixenc_from_name(&user_pixenc, pixenc_mode))
-+		drm_prop_to_dc_pixel_encoding(&pixel_encoding, user_pixenc);
-+
-+	kfree(param_str);
-+	return pixel_encoding;
-+}
-+
- void amdgpu_dm_connector_funcs_reset(struct drm_connector *connector)
- {
- 	struct dm_connector_state *state =
-@@ -7395,6 +7571,24 @@ void amdgpu_dm_connector_funcs_reset(struct drm_connector *connector)
- 				state->abm_level = amdgpu_dm_abm_level;
- 		}
- 
-+		switch (connector->cmdline_mode.pixel_encoding) {
-+		case DRM_COLOR_FORMAT_RGB444:
-+			state->pixel_encoding = PIXEL_ENCODING_RGB;
-+			break;
-+		case DRM_COLOR_FORMAT_YCBCR444:
-+			state->pixel_encoding = PIXEL_ENCODING_YCBCR444;
-+			break;
-+		case DRM_COLOR_FORMAT_YCBCR422:
-+			state->pixel_encoding = PIXEL_ENCODING_YCBCR422;
-+			break;
-+		case DRM_COLOR_FORMAT_YCBCR420:
-+			state->pixel_encoding = PIXEL_ENCODING_YCBCR420;
-+			break;
-+		default:
-+			break;
-+		}
-+
-+		state->pixel_encoding = pixel_encoding_reset(connector);
- 		__drm_atomic_helper_connector_reset(connector, &state->base);
- 	}
- }
-@@ -7421,6 +7615,7 @@ amdgpu_dm_connector_atomic_duplicate_state(struct drm_connector *connector)
- 	new_state->underscan_vborder = state->underscan_vborder;
- 	new_state->vcpi_slots = state->vcpi_slots;
- 	new_state->pbn = state->pbn;
-+	new_state->pixel_encoding = state->pixel_encoding;
- 	return &new_state->base;
- }
- 
-@@ -8552,6 +8747,12 @@ void amdgpu_dm_connector_init_helper(struct amdgpu_display_manager *dm,
- 
- 		if (adev->dm.hdcp_workqueue)
- 			drm_connector_attach_content_protection_property(&aconnector->base, true);
-+
-+		if (adev->mode_info.pixel_encoding_property) {
-+			drm_object_attach_property(&aconnector->base.base,
-+				adev->mode_info.pixel_encoding_property, 0);
-+			DRM_DEBUG_DRIVER("amdgpu: attached pixel encoding drm property");
-+		}
- 	}
- 
- 	if (connector_type == DRM_MODE_CONNECTOR_eDP) {
-@@ -9833,6 +10034,38 @@ static void amdgpu_dm_commit_audio(struct drm_device *dev,
- 	}
- }
- 
-+static void update_stream_for_pixel_encoding(
-+	struct dc_stream_update *stream_update,
-+	struct drm_connector *connector,
-+	struct dm_crtc_state *dm_old_crtc_state,
-+	struct dm_crtc_state *dm_new_crtc_state,
-+	struct dm_connector_state *dm_new_con_state)
-+{
-+	struct amdgpu_dm_connector *aconnector =
-+		to_amdgpu_dm_connector(connector);
-+	struct dc_stream_state *new_stream = NULL;
-+
-+	if (aconnector)
-+		new_stream = create_validate_stream_for_sink(
-+			aconnector,
-+			&dm_new_crtc_state->base.mode,
-+			dm_new_con_state,
-+			dm_old_crtc_state->stream);
-+	if (new_stream) {
-+		dm_new_crtc_state->stream->timing =
-+			new_stream->timing;
-+		stream_update->timing_for_pixel_encoding =
-+			&dm_new_crtc_state->stream->timing;
-+
-+		dm_new_crtc_state->stream->output_color_space =
-+			new_stream->output_color_space;
-+		stream_update->output_color_space =
-+			&dm_new_crtc_state->stream->output_color_space;
-+
-+		dc_stream_release(new_stream);
-+	}
-+}
-+
- /*
-  * amdgpu_dm_crtc_copy_transient_flags - copy mirrored flags from DRM to DC
-  * @crtc_state: the DRM CRTC state
-@@ -10316,6 +10549,7 @@ static void amdgpu_dm_atomic_commit_tail(struct drm_atomic_state *state)
- 		struct dc_info_packet hdr_packet;
- 		struct dc_stream_status *status = NULL;
- 		bool abm_changed, hdr_changed, scaling_changed, output_color_space_changed = false;
-+		bool pixenc_changed;
- 
- 		memset(&stream_update, 0, sizeof(stream_update));
- 
-@@ -10345,7 +10579,11 @@ static void amdgpu_dm_atomic_commit_tail(struct drm_atomic_state *state)
- 		hdr_changed =
- 			!drm_connector_atomic_hdr_metadata_equal(old_con_state, new_con_state);
- 
--		if (!scaling_changed && !abm_changed && !hdr_changed && !output_color_space_changed)
-+		pixenc_changed = dm_new_con_state->pixel_encoding !=
-+			dm_old_con_state->pixel_encoding;
-+
-+		if (!scaling_changed && !abm_changed && !hdr_changed &&
-+			!output_color_space_changed && !pixenc_changed)
- 			continue;
- 
- 		stream_update.stream = dm_new_crtc_state->stream;
-@@ -10375,6 +10613,13 @@ static void amdgpu_dm_atomic_commit_tail(struct drm_atomic_state *state)
- 			stream_update.hdr_static_metadata = &hdr_packet;
- 		}
- 
-+		if (pixenc_changed) {
-+			update_stream_for_pixel_encoding(&stream_update,
-+				connector,
-+				dm_old_crtc_state, dm_new_crtc_state,
-+				dm_new_con_state);
-+		}
-+
- 		status = dc_stream_get_status(dm_new_crtc_state->stream);
- 
- 		if (WARN_ON(!status))
-@@ -11922,6 +12167,12 @@ static int amdgpu_dm_atomic_check(struct drm_device *dev,
- 		if (dm_old_con_state->abm_level != dm_new_con_state->abm_level ||
- 		    dm_old_con_state->scaling != dm_new_con_state->scaling)
- 			new_crtc_state->connectors_changed = true;
-+
-+		if (dm_old_con_state->pixel_encoding !=
-+		    dm_new_con_state->pixel_encoding) {
-+			new_crtc_state->connectors_changed = true;
-+			new_crtc_state->mode_changed = true;
-+		}
- 	}
- 
- 	if (dc_resource_is_dsc_encoding_supported(dc)) {
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-index cbd107493f8a..0ef6050182b2 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-@@ -987,6 +987,7 @@ struct dm_connector_state {
- 	uint8_t abm_level;
- 	int vcpi_slots;
- 	uint64_t pbn;
-+	enum dc_pixel_encoding pixel_encoding;
- };
- 
- #define to_dm_connector_state(x)\
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
-index c30d9ee51c83..6ed03dbc6c4d 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
-@@ -2993,6 +2993,11 @@ static enum surface_update_type check_update_surfaces_for_stream(
- 		if (stream_update->output_csc_transform)
- 			su_flags->bits.out_csc = 1;
- 
-+		if (stream_update->timing_for_pixel_encoding) {
-+			su_flags->bits.pixel_encoding = 1;
-+			elevate_update_type(&overall_type, UPDATE_TYPE_FULL);
-+		}
-+
- 		/* Output transfer function changes do not require bandwidth recalculation,
- 		 * so don't trigger a full update
- 		 */
-@@ -3347,6 +3352,8 @@ static void copy_stream_update_to_stream(struct dc *dc,
- 			update->dsc_config = NULL;
- 		}
- 	}
-+	if (update->timing_for_pixel_encoding)
-+		stream->timing = *update->timing_for_pixel_encoding;
- 	if (update->scaler_sharpener_update)
- 		stream->scaler_sharpener_update = *update->scaler_sharpener_update;
- 	if (update->sharpening_required)
-@@ -3600,6 +3607,7 @@ static void commit_planes_do_stream_update(struct dc *dc,
- 					stream_update->vsc_infopacket ||
- 					stream_update->vsp_infopacket ||
- 					stream_update->hfvsif_infopacket ||
-+					stream_update->timing_for_pixel_encoding ||
- 					stream_update->adaptive_sync_infopacket ||
- 					stream_update->vtem_infopacket) {
- 				resource_build_info_frame(pipe_ctx);
-diff --git a/drivers/gpu/drm/amd/display/dc/dc_stream.h b/drivers/gpu/drm/amd/display/dc/dc_stream.h
-index 5fc6fea211de..3e1a46291dfe 100644
---- a/drivers/gpu/drm/amd/display/dc/dc_stream.h
-+++ b/drivers/gpu/drm/amd/display/dc/dc_stream.h
-@@ -144,6 +144,7 @@ union stream_update_flags {
- 		uint32_t mst_bw : 1;
- 		uint32_t crtc_timing_adjust : 1;
- 		uint32_t fams_changed : 1;
-+		uint32_t pixel_encoding : 1;
- 		uint32_t scaler_sharpener : 1;
- 		uint32_t sharpening_required : 1;
- 	} bits;
-@@ -352,6 +353,7 @@ struct dc_stream_update {
- 	struct dc_mst_stream_bw_update *mst_bw_update;
- 	struct dc_transfer_func *func_shaper;
- 	struct dc_3dlut *lut3d_func;
-+	struct dc_crtc_timing *timing_for_pixel_encoding;
- 
- 	struct test_pattern *pending_test_pattern;
- 	struct dc_crtc_timing_adjust *crtc_timing_adjust;
--- 
-2.43.0
+As I noticed below a case you missed the mutex unlock, this feels like a 
+good candidate for
+
+guard(mutex)();
+
+> +
+> +	ret = cppc_set_epp(cpu, epp);
+> +	if (ret) {
+> +		pr_warn("failed to set energy_perf for cpu:%d (%d)\n", cpu, ret);
+> +		goto out;
+> +	}
+> +	cpu_data->perf_ctrls.energy_perf = epp;
+> +
+> +	ret = cppc_set_auto_sel(cpu, auto_sel);
+> +	if (ret) {
+> +		pr_warn("failed to set auto_sel for cpu:%d (%d)\n", cpu, ret);
+> +		return ret;
+
+Looks like a case that you didn't unlock the mutex.
+
+> +	}
+> +	cpu_data->perf_caps.auto_sel = auto_sel;
+> +
+> +out:
+> +	mutex_unlock(&cppc_cpufreq_update_autosel_config_lock);
+> +	return ret;
+> +}
+> +
+> +static int cppc_cpufreq_update_autosel_mperf_ctrls(struct cpufreq_policy *policy, u32 min_p,
+> +						   u32 max_p, bool update_reg, bool update_policy)
+> +{
+> +	struct cppc_cpudata *cpu_data = policy->driver_data;
+> +	unsigned int cpu = policy->cpu;
+> +	int ret;
+> +
+> +	pr_debug("cpu%d: curr max_perf:%u, curr min_perf:%u, new max_perf:%u, new min_perf:%u\n",
+> +		 cpu, cpu_data->perf_ctrls.max_perf, cpu_data->perf_ctrls.min_perf, max_p, min_p);
+> +
+> +	ret = cppc_cpufreq_set_min_perf(policy, min_p, update_reg, update_policy);
+> +	if (ret) {
+> +		pr_debug("failed to set min_perf for cpu:%d (%d)\n", cpu, ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = cppc_cpufreq_set_max_perf(policy, max_p, update_reg, update_policy);
+> +	if (ret) {
+> +		pr_debug("failed to set max_perf for cpu:%d (%d)\n", cpu, ret);
+> +		return ret;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int cppc_cpufreq_update_autosel_configs(struct cpufreq_policy *policy, int auto_sel,
+> +					       u32 epp, u32 min_perf, u32 max_perf,
+> +					       bool update_reg, bool update_policy)
+> +{
+> +	int ret;
+> +
+> +	ret = cppc_cpufreq_update_autosel_mperf_ctrls(policy, min_perf, max_perf,
+> +						      update_reg, update_policy);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = cppc_cpufreq_update_autosel_epp(policy, auto_sel, epp);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+>   static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>   {
+>   	unsigned int cpu = policy->cpu;
+> @@ -710,11 +799,28 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>   	policy->cur = cppc_perf_to_khz(caps, caps->highest_perf);
+>   	cpu_data->perf_ctrls.desired_perf =  caps->highest_perf;
+>   
+> -	ret = cppc_set_perf_ctrls(cpu, &cpu_data->perf_ctrls);
+> -	if (ret) {
+> -		pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
+> -			 caps->highest_perf, cpu, ret);
+> -		goto out;
+> +	if (cpu_data->perf_caps.auto_sel) {
+> +		ret = cppc_set_enable(cpu, true);
+> +		if (ret) {
+> +			pr_err("Failed to enable CPPC on cpu%d (%d)\n", cpu, ret);
+> +			goto out;
+> +		}
+> +
+> +		ret = cppc_cpufreq_update_autosel_configs(policy, true,
+> +							  CPPC_EPP_PERFORMANCE_PREF,
+> +							  caps->lowest_nonlinear_perf,
+> +							  caps->nominal_perf, true, false);
+> +		if (ret) {
+> +			pr_debug("Failed to update autosel configs on CPU%d(%d)\n", cpu, ret);
+> +			goto out;
+> +		}
+> +	} else {
+> +		ret = cppc_set_perf_ctrls(cpu, &cpu_data->perf_ctrls);
+> +		if (ret) {
+> +			pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
+> +				 caps->highest_perf, cpu, ret);
+> +			goto out;
+> +		}
+>   	}
+>   
+>   	cppc_cpufreq_cpu_fie_init(policy);
+> @@ -736,6 +842,13 @@ static void cppc_cpufreq_cpu_exit(struct cpufreq_policy *policy)
+>   
+>   	cpu_data->perf_ctrls.desired_perf = caps->lowest_perf;
+>   
+> +	if (cpu_data->perf_caps.auto_sel) {
+> +		ret = cppc_cpufreq_update_autosel_epp(policy, false,
+> +						      CPPC_EPP_ENERGY_EFFICIENCY_PREF);
+> +		if (ret)
+> +			return;
+> +	}
+> +
+>   	ret = cppc_set_perf_ctrls(cpu, &cpu_data->perf_ctrls);
+>   	if (ret)
+>   		pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
+> @@ -920,17 +1033,10 @@ static ssize_t store_auto_select(struct cpufreq_policy *policy,
+>   	 * On enabling auto_select: set min/max_perf register and update policy.
+>   	 * On disabling auto_select: update only policy.
+>   	 */
+> -	ret = cppc_cpufreq_set_min_perf(policy, min_perf, update_reg, true);
+> -	if (ret) {
+> -		pr_warn("failed to %s update min policy for cpu:%d (%d)\n",
+> -			val > 0 ? "set min_perf and" : "", cpu, ret);
+> -		return ret;
+> -	}
+> -
+> -	ret = cppc_cpufreq_set_max_perf(policy, max_perf, update_reg, true);
+> +	ret = cppc_cpufreq_update_autosel_mperf_ctrls(policy, min_perf, max_perf, update_reg, true);
+>   	if (ret) {
+> -		pr_warn("failed to %s update max policy for cpu:%d (%d)\n",
+> -			val > 0 ? "set max_perf and" : "", cpu, ret);
+> +		pr_warn("failed to %s update policy for cpu:%d (%d)\n",
+> +			val > 0 ? "set min/max_perf and" : "", cpu, ret);
+>   		return ret;
+>   	}
+>   
+> @@ -1139,13 +1245,44 @@ static struct cpufreq_driver cppc_cpufreq_driver = {
+>   	.name = "cppc_cpufreq",
+>   };
+>   
+> +static void cppc_cpufreq_set_epp_autosel_allcpus(bool auto_sel, u64 epp)
+> +{
+> +	int cpu, ret;
+> +
+> +	for_each_present_cpu(cpu) {
+> +		ret = cppc_set_epp(cpu, epp);
+> +		if (ret)
+> +			pr_debug("failed to set energy_perf for cpu:%d (%d)\n", cpu, ret);
+> +
+> +		ret = cppc_set_auto_sel(cpu, auto_sel);
+> +		if (ret)
+> +			pr_debug("failed to set auto_sel for cpu:%d (%d)\n", cpu, ret);
+> +	}
+> +}
+> +
+>   static int __init cppc_cpufreq_init(void)
+>   {
+> +	bool auto_sel;
+>   	int ret;
+>   
+>   	if (!acpi_cpc_valid())
+>   		return -ENODEV;
+>   
+> +	if (auto_sel_mode) {
+> +		/*
+> +		 * Check if autonomous selection is supported by testing CPU 0.
+> +		 * If supported, enable autonomous mode on all CPUs.
+> +		 */
+> +		ret = cppc_get_auto_sel(0, &auto_sel);
+> +		if (!ret) {
+> +			pr_info("Enabling autonomous mode on all CPUs\n");
+> +			cppc_cpufreq_set_epp_autosel_allcpus(true, CPPC_EPP_PERFORMANCE_PREF);
+> +		} else {
+> +			pr_warn("Autonomous selection not supported, disabling auto_sel_mode\n");
+> +			auto_sel_mode = false;
+> +		}
+> +	}
+> +
+>   	cppc_freq_invariance_init();
+>   	populate_efficiency_class();
+>   
+> @@ -1160,8 +1297,12 @@ static void __exit cppc_cpufreq_exit(void)
+>   {
+>   	cpufreq_unregister_driver(&cppc_cpufreq_driver);
+>   	cppc_freq_invariance_exit();
+> +	auto_sel_mode = 0;
+>   }
+>   
+> +module_param(auto_sel_mode, bool, 0000);
+> +MODULE_PARM_DESC(auto_sel_mode, "Enable Autonomous Performance Level Selection");
+
+Why default to disabled?  As a precaution?  We enable EPP by default in 
+the *-pstate drivers if the hardware supports it, I would think it makes 
+sense here too.
+
+> +
+>   module_exit(cppc_cpufreq_exit);
+>   MODULE_AUTHOR("Ashwin Chaugule");
+>   MODULE_DESCRIPTION("CPUFreq driver based on the ACPI CPPC v5.0+ spec");
 
 
