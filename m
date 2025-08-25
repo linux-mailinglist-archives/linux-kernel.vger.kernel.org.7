@@ -1,93 +1,135 @@
-Return-Path: <linux-kernel+bounces-785539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12768B34CA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:49:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03F1EB34CB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 502597A181D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:48:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66F47162265
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196BD28F935;
-	Mon, 25 Aug 2025 20:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE02298CDE;
+	Mon, 25 Aug 2025 20:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FUGMML64"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTvl8hQx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1BEDDAB;
-	Mon, 25 Aug 2025 20:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F35F1632C8;
+	Mon, 25 Aug 2025 20:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756154977; cv=none; b=eQc5o4BS070dsq16063SIPgdPBE5pob2snl7oVsRYyXfTZ/YCHNX1JOIoW5BcfysfRwWFYHBnWfNDHRgCvg3QtTx7i7mRh+0WM+XGUimZZpZqjsmx1wuOafJ+XvJXCKllCuwudQxuam/SGuCsPYLv/8lf09WaMMxbLtl5qmLND0=
+	t=1756155065; cv=none; b=BWenwtR8Wa6PHwU8OgjNz5P3VsK1jNkO1oHVYHdFxnZcCbANSi6srv37X4Vef+JIdH/AhiV7H+/BKN7PREpYJwclpVMMTeO+YX906m/J9QC/olr+kRo41tg7BM5jW4FVwgioH+BQLqvlqxEplVnj1CMkhZAqKqOi8OIum17A4pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756154977; c=relaxed/simple;
-	bh=lfQ3Sx0ChDYUCraVA7DOv+MmxiNhx8zbUKzH+AEUEYA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=So0VSZaieEiGYhUyAfdl9i9C26B79JH/KVVwlpgQOxnkvfOsD+cwdE3gRf4AI0292CYYgmmpId0NxIOqywcFgo4eYN8q0V73HdqRLqMCIUdpxVXbRQkZpLCYY39yd4hBBcRJE3wO1gyuq0JMnMwQ2IgnXrmPu3mv8cau7Gk7ldc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FUGMML64; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30860C4CEED;
-	Mon, 25 Aug 2025 20:49:32 +0000 (UTC)
+	s=arc-20240116; t=1756155065; c=relaxed/simple;
+	bh=3v8ZwzMQp6vVVbwvD/f/q5xRWGh2QXldSzFtAYwk/QA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gnJYvHd44W4voiHBTNVW3ctJpEmihmvgAgUdmW3wVe4pPn9I/p+4q/M5aElvxQecE2gG0YMQnPM7PJ5yqx9eecdrCHKSinjYB/8Q8AK4nlP3ZxlvanC3KLmwrHTNh6iAT9D1FB0Zr7hefwGI2zg8E4bN8iCbhBZpy3QuW5xx7ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DTvl8hQx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C168C4CEED;
+	Mon, 25 Aug 2025 20:51:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756154975;
-	bh=lfQ3Sx0ChDYUCraVA7DOv+MmxiNhx8zbUKzH+AEUEYA=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=FUGMML64tNEXag+bV1SOBjlKU7UPDgtS2WtS/70r75bdfkZI3P62/8iZLJJkVL5Gn
-	 sOXc7kAaNx3wKASAjcisGE3UHjZL2wsQKxH0x2b6fjHqE+y4bBL+ocVb6x8gt+O5+D
-	 i1UXN3OivVflrV/X0y+SL4wuzpW+AzHxmGvNygOWJv/hGYuL0XPONspc1a2go6BRKt
-	 ufKKOyRs4yGB0OWtoflT+E9ii7nc9YwC7djooPX/e4YZHZi6DMAgHU0MZd9yGqIspW
-	 eaOVQTV+yJJxw50LC1h7B3ECyxEFN7adbxfeSZGOyvoJDgfxuN83/f1rA510H4Gj0P
-	 YJT2XyK13+Pdw==
+	s=k20201202; t=1756155065;
+	bh=3v8ZwzMQp6vVVbwvD/f/q5xRWGh2QXldSzFtAYwk/QA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DTvl8hQx/dzgJ0SeP4gMEgDeFDVLJSwWfDa3Wc/B1+vFtw4ARQZXlJB4DWUnnoc2s
+	 n2b9hl+FxHEoaZHjkTQF7y0az/5PoQy7wuD9d5RoBzWuujbjMtTo7pCKI0Gy4hCDoV
+	 WvB4f+Laip7+5YYbALMqrG3W1A9rMeJOSW2d7y8CsLv+ErU+ft7ijSBJaMIxJMAURj
+	 2uQIvhOS2V8qgrUh5huIgKkzxLaPl5pnTA7IAsR6IXO9MTycR0KHaNyLk3kuKKpkbM
+	 8zjXPBdCP79lSILbrO9r6aZNGaNuxcUiqVtdLz196fhnTmOj4UbyjR+jc0CuyHhQ5H
+	 1v+TpYyCEb4Aw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1uqe9e-00000000Od9-43HS;
+	Mon, 25 Aug 2025 20:51:03 +0000
+Date: Mon, 25 Aug 2025 21:51:02 +0100
+Message-ID: <87zfbnyvk9.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Sebastian Ott <sebott@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: selftests: fix irqfd_test on arm64
+In-Reply-To: <aKy-9eby1OS38uqM@google.com>
+References: <20250825155203.71989-1-sebott@redhat.com>
+	<aKy-9eby1OS38uqM@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 25 Aug 2025 22:49:31 +0200
-Message-Id: <DCBSZC9IDT4L.SPHF4KVM5KEW@kernel.org>
-Subject: Re: [PATCH 1/2] rust: usb: add basic USB abstractions
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-usb@vger.kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
- <20250825-b4-usb-v1-1-7aa024de7ae8@collabora.com>
-In-Reply-To: <20250825-b4-usb-v1-1-7aa024de7ae8@collabora.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: seanjc@google.com, sebott@redhat.com, pbonzini@redhat.com, shuah@kernel.org, oliver.upton@linux.dev, kvm@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon Aug 25, 2025 at 8:18 PM CEST, Daniel Almeida wrote:
-> +impl DeviceId {
-> +    /// Equivalent to C's `USB_DEVICE` macro.
-> +    pub const fn from_id(vendor: u16, product: u16) -> Self {
-> +        Self(bindings::usb_device_id {
-> +            match_flags: bindings::USB_DEVICE_ID_MATCH_DEVICE as u16,
-> +            idVendor: vendor,
-> +            idProduct: product,
-> +            // SAFETY: It is safe to use all zeroes for the other fields=
- of `usb_device_id`.
-> +            ..unsafe { MaybeUninit::zeroed().assume_init() }
+On Mon, 25 Aug 2025 20:52:21 +0100,
+Sean Christopherson <seanjc@google.com> wrote:
+> 
+> On Mon, Aug 25, 2025, Sebastian Ott wrote:
+> > irqfd_test on arm triggers the following assertion:
+> > ==== Test Assertion Failure ====
+> >   include/kvm_util.h:527: !ret
+> >   pid=3643 tid=3643 errno=11 - Resource temporarily unavailable
+> >      1  0x00000000004026d7: kvm_irqfd at kvm_util.h:527
+> >      2  0x0000000000402083: main at irqfd_test.c:100
+> >      3  0x0000ffffa5aab587: ?? ??:0
+> >      4  0x0000ffffa5aab65f: ?? ??:0
+> >      5  0x000000000040236f: _start at ??:?
+> >   KVM_IRQFD failed, rc: -1 errno: 11 (Resource temporarily unavailable)
+> > 
+> > Fix this by setting up a vgic for the vm.
+> > 
+> > Signed-off-by: Sebastian Ott <sebott@redhat.com>
+> > ---
+> > @@ -86,14 +90,30 @@ static void juggle_eventfd_primary(struct kvm_vm *vm, int eventfd)
+> >  	kvm_irqfd(vm, GSI_BASE_PRIMARY + 1, eventfd, KVM_IRQFD_FLAG_DEASSIGN);
+> >  }
+> >  
+> > +static struct kvm_vm *test_vm_create(void)
+> > +{
+> > +#ifdef __aarch64__
+> > +	struct kvm_vm *vm;
+> > +	struct kvm_vcpu *vcpu;
+> > +	int gic_fd;
+> > +
+> > +	vm = vm_create_with_one_vcpu(&vcpu, NULL);
+> > +	gic_fd = vgic_v3_setup(vm, 1, 64);
+> > +	__TEST_REQUIRE(gic_fd >= 0, "Failed to create vgic-v3");
+> 
+> I don't think this test requires v3+, any GIC will do.
 
-You can avoid this usage of `unsafe` with this patch series:
+There is no such thing as "any GIC". You need to know what is
+available, and ask for something that actually exists. So while the
+above is wrong on the ground that this doesn't work on v2 or v5, the
+selection has to be explicit.
 
-    https://lore.kernel.org/all/20250814093046.2071971-1-lossin@kernel.org
+> Is there a sane way to handle vGIC creation in kvm_arch_vm_post_create()?  E.g.
+> could we create a v3 GIC when possible, and fall back to v2?  And then provide a
+> way for tests to express a hard v3 GIC dependency?
 
-I'd like to avoid introducing any new one of these.
+You can ask KVM what's available. Like an actual VMM does. There is no
+shortage of examples in the current code base.
 
----
-Cheers,
-Benno
+And ideally, this should be made an integral part of creating a viable
+VM, which the current VM creation hack makes a point in not providing.
 
-> +        })
-> +    }
+	M.
+
+-- 
+Jazz isn't dead. It just smells funny.
 
