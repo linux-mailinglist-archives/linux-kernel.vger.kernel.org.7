@@ -1,74 +1,108 @@
-Return-Path: <linux-kernel+bounces-784235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 935CEB33872
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:07:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9452B33881
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:11:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66AE017A06D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:07:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D822201663
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B14299A85;
-	Mon, 25 Aug 2025 08:07:18 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D4B29B8C6;
+	Mon, 25 Aug 2025 08:11:38 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E4D291C1F;
-	Mon, 25 Aug 2025 08:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB8D13959D;
+	Mon, 25 Aug 2025 08:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756109237; cv=none; b=ObsEFE5GSXeY8KcA+W0/Z89Pty6Vb1ugx40qdMrz695+u37tr9rX0pYqynGYoVc+YtZ29IscG8XGj8H3ZmQBAGC6ygQNgX/RgIR9V/Ifoyz9PODaMPv8K6liiEd7N2EuTkr1fM5ljFyPhtp7jaMf0gYT8jrjYZLi5FVM/vYL15M=
+	t=1756109498; cv=none; b=QdoIDBzrt5/IvxgLbMDIU/tdnKdWdqsogwYT8re0esM7DLRHn3YOpKhSWFyVH/lCX9RPsW4ODJ+pu6yOF4YZ4jcdEwOvCZ/Hj1t0uQFiyk9pAoPOHTrg6eaJc19etaRKMvNm0aEOxM5/zBVcq1jAZJswsPt4j7aVs+YN5CXCdkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756109237; c=relaxed/simple;
-	bh=IBIp2gvwdN7Gzu3Imd4BXP9l50KbPoLZlLKeiU+y9wQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bx37Zvm9FrJyx3zwQ7lp2rCCGAyV1eC70RF09WCC5p5Rr9x2WeTZQ0l5xzUiOL1ClYSo7Q6SURnYEr5DBFgmzYfKh/KuUHTdSVA6fAvGPSzzcyiXcbO/XyzHdYcSTrVTR3wYH+2qP0hv/i+A1NxuPvhF/HpUyHa4G1sDKluM0Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 9E63768AA6; Mon, 25 Aug 2025 10:07:10 +0200 (CEST)
-Date: Mon, 25 Aug 2025 10:07:10 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Jassi Brar <jassisinghbrar@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hector Martin <marcan@marcan.st>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	iommu@lists.linux.dev, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v3 7/9] nvme: apple: Add Apple A11 support
-Message-ID: <20250825080710.GA23193@lst.de>
-References: <20250821-t8015-nvme-v3-0-14a4178adf68@gmail.com> <20250821-t8015-nvme-v3-7-14a4178adf68@gmail.com>
+	s=arc-20240116; t=1756109498; c=relaxed/simple;
+	bh=SubSTqKpLjU7USCCg+5o81bnnBG1jhVBvw/6bln9bDQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SFEYi5wnD1geZH1qfSME/RR7VWhEEj6RhA0SNsTsjruObDS+NJiD8m4ozw5LyNk4efEs4d+kXV0r3kdEp+Yc6P7NmuS62Ku6ZAhYVlMC2SWQBZ81vDkqHtVkGyxECxnjuQpMi3oH4tuqUyTfMlyKiQAVwEsELeQmduKX+tb6GIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.5] (ip5f5af7f1.dynamic.kabel-deutschland.de [95.90.247.241])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id B336261E64852;
+	Mon, 25 Aug 2025 10:10:27 +0200 (CEST)
+Message-ID: <76d66b0b-afaa-4835-9d55-9e61be83ce01@molgen.mpg.de>
+Date: Mon, 25 Aug 2025 10:10:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821-t8015-nvme-v3-7-14a4178adf68@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] md: prevent adding disks with larger
+ logical_block_size to active arrays
+To: Li Nan <linan666@huaweicloud.com>
+Cc: song@kernel.org, yukuai3@huawei.com, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, martin.petersen@oracle.com,
+ bvanassche@acm.org, hch@infradead.org, filipe.c.maia@gmail.com,
+ yangerkun@huawei.com, yi.zhang@huawei.com
+References: <20250825075924.2696723-1-linan666@huaweicloud.com>
+ <20250825075924.2696723-2-linan666@huaweicloud.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250825075924.2696723-2-linan666@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 21, 2025 at 11:56:44PM +0800, Nick Chan wrote:
-> +		writel(anv->hw->max_queue_depth | (anv->hw->max_queue_depth << 16),
+Dear Li,
 
-One long line left here.
 
-Otherwise this looks fine to me.
+Thank you for your patch.
 
-Do you want to merge this through the apple SOC tree?  If so:
+Am 25.08.25 um 09:59 schrieb linan666@huaweicloud.com:
+> From: Li Nan <linan122@huawei.com>
+> 
+> When adding a disk to a md array, avoid updating the array's
+> logical_block_size to match the new disk. This prevents accidental
+> partition table loss that renders the array unusable.
 
-Acked-by: Christoph Hellwig <hch@lst.de>
+Do you have a reproducer to test this?
 
+> The later patch will introduce a way to configure the array's
+> logical_block_size.
+> 
+> Signed-off-by: Li Nan <linan122@huawei.com>
+> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+> ---
+>   drivers/md/md.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index cea8fc96abd3..206434591b97 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -6064,6 +6064,13 @@ int mddev_stack_new_rdev(struct mddev *mddev, struct md_rdev *rdev)
+>   	if (mddev_is_dm(mddev))
+>   		return 0;
+>   
+> +	if (queue_logical_block_size(rdev->bdev->bd_disk->queue) >
+> +	    queue_logical_block_size(mddev->gendisk->queue)) {
+> +		pr_err("%s: incompatible logical_block_size, can not add\n",
+> +		       mdname(mddev));
+> +		return -EINVAL;
+> +	}
+> +
+>   	lim = queue_limits_start_update(mddev->gendisk->queue);
+>   	queue_limits_stack_bdev(&lim, rdev->bdev, rdev->data_offset,
+>   				mddev->gendisk->disk_name);
+
+
+Kind regards,
+
+Paul
 
