@@ -1,106 +1,176 @@
-Return-Path: <linux-kernel+bounces-785160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71176B346C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:08:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F290B346C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA6532A442F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:08:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56D525E5E17
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA4630147D;
-	Mon, 25 Aug 2025 16:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02A83002DC;
+	Mon, 25 Aug 2025 16:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="Y1/YsxUI"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aAPKs58T"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4029D2FF16B
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4F02FFDDA
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756138046; cv=none; b=TgNubJNOG9OK5ZnEVu0KTrm6wWb/rEsRWmcS6uc+kRoxUUsT6Y88FFisHnXUFuAdgm5fH5bcnGTYUbFliWIPDJ+93HxyhZ/5W5O1YHHMaVtUa/DYn98nGKrBRGI3Fw9LDcHrETG6RxmYACIaFbijibsyRfdGWrLW+zZZzA/mSx0=
+	t=1756138095; cv=none; b=XtTaoQO9/z2qWWdHnUxiX0a73PRDP92vKP+9vRWaZG4fUsMBdhgtfRY7hZ5YhzcifqHz5soqMEyySDnzdpmG32+ovnANDRUy6wTGrPw1dl69GexiZYyUAMcVTT8MDd+oPSUaVczMZCceFWncegW7N3tWRaB5JThbDgMGX/eaAUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756138046; c=relaxed/simple;
-	bh=l88MbX/D+x5hdZ5ghNMKvll7+r5L2HuQ4LZvlsClm1c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=faVOEK31UhpcOuYBfAX+RdWq89pDqYE9j79vI0aoY7WsDs5QZF8zg8EFK2KbhE/XRoR8GIW7Rg/aZnHICwE226UWgTocf/WEwmO7G+wfGP7ioaSdsl1fhv8AopVDZDnwV9pSrEdH4453guf2iHMotfHdb7zpfV/xBtBZ8CrOgVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=Y1/YsxUI; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (p5de4594b.dip0.t-ipconnect.de [93.228.89.75])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 491512FC0047;
-	Mon, 25 Aug 2025 18:07:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1756138039;
+	s=arc-20240116; t=1756138095; c=relaxed/simple;
+	bh=lx8unmZZotH1lOPOwGBWaz+oEXYueOAZnio+N2QuHm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RiQhHaXdjTUHSCnx9HlOFGY4dD7Ji/VE4keRdIpac38VZYpVwr3WpbusblBBQ6kKLpcRWOnJo8jDtCdmnKb78IbeIz+bqo6QzQu7z9yppqQH4o8Dp1JJyb8sAcUMKv4Yqvp8ozh/jdIkpp+fs/E2V7lfh+A4a/DfaRVY0Z6iNWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aAPKs58T; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756138092;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ukKoVtirAExIh7Myr9qrHvYyBmqYsM+ZvCkxZsLrPEw=;
-	b=Y1/YsxUImZ/OEgAYb72dpxNT8GMyxFNjV5929hD47M+DJtLClhZDzjj9TIUw+dUA+NqfkC
-	GppMVmfr0O6zwgRMMK0Iy50CHNoFI+DaoM3+EQs6Zqho0LFUlY4Ny/JyBQFm09GLsYo00f
-	bdo3vJoNSPH3TqI12qg25I5rlA5X8Fw=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <bcd2fe8a-c80a-4556-9944-83fd2b493567@tuxedocomputers.com>
-Date: Mon, 25 Aug 2025 18:07:19 +0200
+	bh=S26mrjD5N2pdJld3xZ+GOHAoTX+ohujbOU33KruSQAI=;
+	b=aAPKs58TzQhtc0je8KghmU6FG7wRafWB4AGY8weOP8zAbxYb0TF3sExski+kWOl8W+xlov
+	fUvXQGTV7ozNqmD5bIYi8UsUNUmxDIa9WuMeZGp2N40+vIHlGywFpRPDgHxta1y0RitEX6
+	q1CeGy98OEfonk5mMOO+QjlAprNL8ZU=
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
+ [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-445-YEsh-kKCOvC5czJFTBNTiA-1; Mon, 25 Aug 2025 12:08:08 -0400
+X-MC-Unique: YEsh-kKCOvC5czJFTBNTiA-1
+X-Mimecast-MFC-AGG-ID: YEsh-kKCOvC5czJFTBNTiA_1756138087
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b47253319b8so3444719a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:08:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756138087; x=1756742887;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S26mrjD5N2pdJld3xZ+GOHAoTX+ohujbOU33KruSQAI=;
+        b=s7Nys+G0NNrDFwaIgHj08gQcteiox0aCKiwCht2gHeRwTxN5YbEVHZPJcDT8iaEwcR
+         0bCkXKvcQllducXlQKH0wUbmPC3zWGLCUyvJLd3WCXYbUmVhZCRVCvHSf7nzW1nAl0v4
+         TTvAuxd6lVehOQRk+WdhT5Qr17pZMAqPBA6NdImQCzj41CQnZnJYnptq3FO9Cr80KaYe
+         tyXfrpvWurmn9CUaHh2mfnSmTldDcAwsxlwQmVBEbJAUSmrNW2jzxPy+/XkQKBiR2rkU
+         Wo0d6FjWs3o1SRQsWhOM6ffDF1Qn4oE/RNrexdGch667I1phRstugnb6Yvfy8z2uSy56
+         a5Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXfMDVtRjznnGEFsSiwGiqivsa+yAXv0nlM+wLbe2BGPCQbedOpOCUoJqvNrhpFeR+KrT9/xglXowtoHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUYk4nlSrtTPRWxWuMCZ/LX3VC9IGJNXDlRL4O4eBGRWHbtSX5
+	GhfwqohpXXLr4TX0nmSNrf4GuFr/nzaoCmtIWFJ1KieYZewwURbZrRb44UdiWeCQ3n0N+HXDMu6
+	9JLS40DfpHZFy1Z/AOuDUWeGUlRSTpsXnsTUuwIMrF7CGs9h18TsPLxkGWZ/BMZTEzg==
+X-Gm-Gg: ASbGnctkBZbUas/8LQgSc0/0QH2zjpV4Ow6UQv7/Gucrzx4iqjbPGN86mDFP2cD+ppI
+	HRNE3JDFZ8/43XUIYp+0AdiwWHNOHykqc58qoPQo165QOe26ERSsjsJ/ujl9/hKNcnqDJOCAajs
+	jpb1W4mZGg+0H5DotzikDUuxaXcfL2HRuZ+6qEb3TvY0G1u0qbHvdNgV5Ixtj0P5NSZTtwLYI/w
+	/PvkqJLr8z7ekQc3SnXT9CYWDlwF3Rxif/7X5xv6zGRQ1ybXtfgZ1SMJ3kaq1hkE8itv9m9BPTu
+	+w92uAMsqjV+4FizpoO3uBd6q3vEekP6unRIU4iCDA6pMo/SpRPsAwoB6rMhzqNi2SkQKVUa/ks
+	Qy/oZ
+X-Received: by 2002:a05:6a20:7fa7:b0:220:631c:e090 with SMTP id adf61e73a8af0-24340884ecfmr17792505637.0.1756138087332;
+        Mon, 25 Aug 2025 09:08:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFuGQjcHakFAYSJasLNIwmwH5AbB+ig9C8K1dte2zhi+ECS9Vuy2ZlNckCYG18AokysGYZ0Zw==
+X-Received: by 2002:a05:6a20:7fa7:b0:220:631c:e090 with SMTP id adf61e73a8af0-24340884ecfmr17792475637.0.1756138086873;
+        Mon, 25 Aug 2025 09:08:06 -0700 (PDT)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cbb7c09fsm6956388a12.26.2025.08.25.09.08.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 09:08:06 -0700 (PDT)
+Date: Tue, 26 Aug 2025 00:08:01 +0800
+From: Zorro Lang <zlang@redhat.com>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+	djwong@kernel.org, john.g.garry@oracle.com, tytso@mit.edu,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v5 02/12] common/rc: Add _require_fio_version helper
+Message-ID: <20250825160801.ffktqauw2o6l5ql3@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <cover.1755849134.git.ojaswin@linux.ibm.com>
+ <955d47b2534d9236adbd2bbd13598bbd1da8fc04.1755849134.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme-pci: Add TUXEDO IBS Gen8 to Samsung sleep quirk
-To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
-Cc: Georg Gottleuber <ggo@tuxedocomputers.com>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250701205630.64031-1-wse@tuxedocomputers.com>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <20250701205630.64031-1-wse@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <955d47b2534d9236adbd2bbd13598bbd1da8fc04.1755849134.git.ojaswin@linux.ibm.com>
 
-Hi
+On Fri, Aug 22, 2025 at 01:32:01PM +0530, Ojaswin Mujoo wrote:
+> The main motivation of adding this function on top of _require_fio is
+> that there has been a case in fio where atomic= option was added but
+> later it was changed to noop since kernel didn't yet have support for
+> atomic writes. It was then again utilized to do atomic writes in a later
+> version, once kernel got the support. Due to this there is a point in
+> fio where _require_fio w/ atomic=1 will succeed even though it would
+> not be doing atomic writes.
+> 
+> Hence, add an explicit helper to ensure tests to require specific
+> versions of fio to work past such issues.
 
-Am 01.07.25 um 22:55 schrieb Werner Sembach:
-> From: Georg Gottleuber <ggo@tuxedocomputers.com>
->
-> On the TUXEDO InfinityBook S Gen8, a Samsung 990 Evo NVMe leads to
-> a high power consumption in s2idle sleep (3.5 watts).
->
-> This patch applies 'Force No Simple Suspend' quirk to achieve a sleep with
-> a lower power consumption, typically around 1 watts.
->
-> Signed-off-by: Georg Gottleuber <ggo@tuxedocomputers.com>
-> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-> Cc: stable@vger.kernel.org
-gentle bump for this not to be forgotten
+Actually I'm wondering if fstests really needs to care about this. This's
+just a temporary issue of fio, not kernel or any fs usespace program. Do
+we need to add a seperated helper only for a temporary fio issue? If fio
+doesn't break fstests running, let it run. Just the testers install proper
+fio (maybe latest) they need. What do you and others think?
+
+Thanks,
+Zorro
+
+> 
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 > ---
->   drivers/nvme/host/pci.c | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index 8ff12e415cb5d..d677080e67d33 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -3198,10 +3198,12 @@ static unsigned long check_vendor_combination_bug(struct pci_dev *pdev)
->   		 * Exclude Samsung 990 Evo from NVME_QUIRK_SIMPLE_SUSPEND
->   		 * because of high power consumption (> 2 Watt) in s2idle
->   		 * sleep. Only some boards with Intel CPU are affected.
-> +		 * (Note for testing: Samsung 990 Evo Plus has same PCI ID)
->   		 */
->   		if (dmi_match(DMI_BOARD_NAME, "DN50Z-140HC-YD") ||
->   		    dmi_match(DMI_BOARD_NAME, "GMxPXxx") ||
->   		    dmi_match(DMI_BOARD_NAME, "GXxMRXx") ||
-> +		    dmi_match(DMI_BOARD_NAME, "NS5X_NS7XAU") ||
->   		    dmi_match(DMI_BOARD_NAME, "PH4PG31") ||
->   		    dmi_match(DMI_BOARD_NAME, "PH4PRX1_PH6PRX1") ||
->   		    dmi_match(DMI_BOARD_NAME, "PH6PG01_PH6PG71"))
+>  common/rc | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/common/rc b/common/rc
+> index 35a1c835..f45b9a38 100644
+> --- a/common/rc
+> +++ b/common/rc
+> @@ -5997,6 +5997,38 @@ _max() {
+>  	echo $ret
+>  }
+>  
+> +# Check the required fio version. Examples:
+> +#   _require_fio_version 3.38 (matches 3.38 only)
+> +#   _require_fio_version 3.38+ (matches 3.38 and above)
+> +#   _require_fio_version 3.38- (matches 3.38 and below)
+> +_require_fio_version() {
+> +	local req_ver="$1"
+> +	local fio_ver
+> +
+> +	_require_fio
+> +	_require_math
+> +
+> +	fio_ver=$(fio -v | cut -d"-" -f2)
+> +
+> +	case "$req_ver" in
+> +	*+)
+> +		req_ver=${req_ver%+}
+> +		test $(_math "$fio_ver >= $req_ver") -eq 1 || \
+> +			_notrun "need fio >= $req_ver (found $fio_ver)"
+> +		;;
+> +	*-)
+> +		req_ver=${req_ver%-}
+> +		test $(_math "$fio_ver <= $req_ver") -eq 1 || \
+> +			_notrun "need fio <= $req_ver (found $fio_ver)"
+> +		;;
+> +	*)
+> +		req_ver=${req_ver%-}
+> +		test $(_math "$fio_ver == $req_ver") -eq 1 || \
+> +			_notrun "need fio = $req_ver (found $fio_ver)"
+> +		;;
+> +	esac
+> +}
+> +
+>  ################################################################################
+>  # make sure this script returns success
+>  /bin/true
+> -- 
+> 2.49.0
+> 
+
 
