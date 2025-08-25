@@ -1,137 +1,187 @@
-Return-Path: <linux-kernel+bounces-785341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2F9B34952
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:49:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B78CDB34955
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 769D92A45CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:49:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87F8E2A4A03
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175613054EB;
-	Mon, 25 Aug 2025 17:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77C1303CA1;
+	Mon, 25 Aug 2025 17:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HM5rIDWl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TGjglqHA"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F4E301028;
-	Mon, 25 Aug 2025 17:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0C73009F6;
+	Mon, 25 Aug 2025 17:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756144162; cv=none; b=Y9ISJAs2cPCnUJuvn/P+Ckz6HxkL+VAnqVJQOIK3gq6a9ALUw/Ca01+vnyQf0ycDbvU5Yw78m+ZR/IgETDYs0m2BMx6KpgHWM4/uPQqkEDHTx1h7AlCUppMT5huWskPNgh9qv0dxOWsXnywle4fQCP8Nu88s/ccjvRxrJkUfS/I=
+	t=1756144224; cv=none; b=lXbw+wSlXqNG2beROP8rfCmZtd0/hQ+FkPm45Vitrpkx74jBcP3Jbc2UeKAhwTsxF/mp4Em2IbfdGfWYVdCAUzO0pR8cJ3+QhIJfLT+ZcSsZchY3oBlyc+s0tYbMpC2XMDut14w34fc7OZTjtUXCpRVqvuBEJhN3ozwHohUdkLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756144162; c=relaxed/simple;
-	bh=cEUhbMRCFKmm+uFN3EMPbSNsPyu9bPCOJ8ppa/HAe8U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S9R17gf4ZmmAwDNbdhjTJidUWmpMoG2n3tDK16MVmoogJKJ8yVIvBAXV+LQV2AOIqvIoEnn84jilJlaFFJc+knRrZV4pdJSDzeBfdFuJ1E1sfvAAFBc/nG1Pl3TUbtXYz9MFanGpIs3eQ4VT4ifVgbkZeYK+eu0NQp3jOST04/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HM5rIDWl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D379BC4CEED;
-	Mon, 25 Aug 2025 17:49:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756144161;
-	bh=cEUhbMRCFKmm+uFN3EMPbSNsPyu9bPCOJ8ppa/HAe8U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HM5rIDWlZyfQqmKyGBXOUMQQCwl+fhHBcnU6hnjEkRsCfYu+MqouD0G0RV9moGRkW
-	 c3XJm3kI3hccXkNUzwWLS8Yk6bWzqyoqhEneCgcxndXcMlYEmcV4dD6roJwt8HbV9x
-	 QZv+vqOTomoaeBDV/CBD2eQxLpPYY1LIzMuNX45b+THINiF207f5U1lO1W0YcOhenA
-	 8cQqE4CPX4loLL4NzCFBROC/1o1LvGkb7OkXWKpeffDaS1lv7tgGFWv8DXiE8Us6rR
-	 cH3K/dhyMVfzQvl8xBtF2XsdvzytY7CdmukdqscWPkL+kg0Z6dR0o188u0AOZXfh4X
-	 XJA56DtmfFLYw==
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-30cce90227aso1556557fac.1;
-        Mon, 25 Aug 2025 10:49:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUt6IP4xix/NL/ogwEfx3g+DCWSRXjc4ZZC/4/5yHEfMvjFttnBE9dZBdDRw0mJrMgT5iOHljC25BNk@vger.kernel.org, AJvYcCVPN1tai6DFdZZYNqjh8N3vPYyh0yGielBLUPPVevAVl7aHkE7UUjGx94K3zbzFdUsTfK8nWn8Uc6dtRL/W@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4fBkG0D7M2Mh+LP5tL91ppJS+VlaEeKU46gALo6MEBxEQs2KX
-	BDc86oSrJFQN0XCd50OV7DPc8unW+WaV+9g6wIJ/6l3tr8Pt7LKwF5qwuRxzqMKGekR9pnII+5R
-	S/OVOsfTzSyuL3eFcrhpyJDBogPTz5RI=
-X-Google-Smtp-Source: AGHT+IE6mDpyqsUnzu3XQeVctx9ajbuKtjmqSz7jYzI2BuY4v0JQLpEDtCNXYDbNn1WhYg0gg8xnahdKa9SE7C4UOnk=
-X-Received: by 2002:a05:6871:e805:b0:314:b6a6:68a0 with SMTP id
- 586e51a60fabf-314dcdadd0dmr5498726fac.40.1756144161192; Mon, 25 Aug 2025
- 10:49:21 -0700 (PDT)
+	s=arc-20240116; t=1756144224; c=relaxed/simple;
+	bh=99QxpOa1hWDVJMREI3P/OOtPeeZsrilD0hyvIUZj/ko=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nJUxCJ3M8dUp332IC3unBpqE8jna5xKU4aJ+7RF+gqQlLGMWyLqYsGjErznBEPzuUFMXA4wVzONwjpjEua9ib3lg/mZbx3WGD7yiBIauR6CkeLlJk6gvGF01gffP55qancLzhn4xt+d2WdEeXdw+S9NJYfg8Y+qaQHkJEFa0+Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TGjglqHA; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756144220;
+	bh=99QxpOa1hWDVJMREI3P/OOtPeeZsrilD0hyvIUZj/ko=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=TGjglqHAVky/nLbV8g0zk5XTTg0334cJVMNNqKelf9STnzVr5RRzk0kzX72wVe1q+
+	 8NBE4L1+kXsrKFexwTkVMZo0sjlWZhDnvKQPPDJCQDdYb7E8T7HBLs3zhAI0QWWFvu
+	 ZekyZ3vZINoyjUmX9CkLvTfVDwDYPqlzHimodlaVH1P5BubJA+kAjuge3LeaYx7hMg
+	 tj2gikWglVHr3moG7ZWEFN7P17Wga0mAn1gZbFdnUfGF5FPvB1+LDjcVBNVjs7vD+m
+	 jN/I0dTZINYAIKgYtVFghuBcGvlgV/BriJcaw5xm/a2TGgx723Dljz6ZztjVWbRBQ6
+	 FsU90aE2NNQ6A==
+Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8942017E05F0;
+	Mon, 25 Aug 2025 19:50:18 +0200 (CEST)
+Message-ID: <01c327e8353bb5b986ef6fb1e7311437659aea4a.camel@collabora.com>
+Subject: Re: [PATCH v7 4/6] media: verisilicon: AV1: Restore IOMMU context
+ before decoding a frame
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>, Benjamin Gaignard
+	 <benjamin.gaignard@collabora.com>
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, robh@kernel.org,
+ 	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
+ p.zabel@pengutronix.de, 	mchehab@kernel.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, 	linux-rockchip@lists.infradead.org,
+ kernel@collabora.com, 	linux-media@vger.kernel.org
+Date: Mon, 25 Aug 2025 13:50:16 -0400
+In-Reply-To: <20250825170531.GA1899851@ziepe.ca>
+References: <20250825153450.150071-1-benjamin.gaignard@collabora.com>
+	 <20250825153450.150071-5-benjamin.gaignard@collabora.com>
+	 <20250825170531.GA1899851@ziepe.ca>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-wovO2wwoxNj2XCpfZEwH"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tencent_FEF72BEF631815ED2479A6D1E32C34797B05@qq.com>
-In-Reply-To: <tencent_FEF72BEF631815ED2479A6D1E32C34797B05@qq.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 25 Aug 2025 19:49:10 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gAz5J99ig7eu9AVhEHkusRpW_G=PXRy+E9vGc+MVE6rg@mail.gmail.com>
-X-Gm-Features: Ac12FXyBPCJ5ujevKH8qsi1mzK5PBNu_lyz37sIUPVBFyPzPNNwUWZBiumxRqS0
-Message-ID: <CAJZ5v0gAz5J99ig7eu9AVhEHkusRpW_G=PXRy+E9vGc+MVE6rg@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: PRM: Optimize the judgment logic for the PRM handler_address
-To: shangsong <shangsong2@foxmail.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, shangsong2@lenovo.com
+
+
+--=-wovO2wwoxNj2XCpfZEwH
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 19, 2025 at 4:28=E2=80=AFAM shangsong <shangsong2@foxmail.com> =
-wrote:
->
-> From: Shang song (Lenovo) <shangsong2@lenovo.com>
->
-> If the handler_address or mapped VA is NULL, the related buffer
-> address and VA can be ignored.
->
-> Signed-off-by: Shang song <shangsong2@lenovo.com>
-> ---
->  drivers/acpi/prmt.c | 19 ++++++++++++++++---
->  1 file changed, 16 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
-> index be033bbb126a..3a501fcd78df 100644
-> --- a/drivers/acpi/prmt.c
-> +++ b/drivers/acpi/prmt.c
-> @@ -150,15 +150,28 @@ acpi_parse_prmt(union acpi_subtable_headers *header=
-, const unsigned long end)
->                 th =3D &tm->handlers[cur_handler];
->
->                 guid_copy(&th->guid, (guid_t *)handler_info->handler_guid=
-);
-> +
-> +               /*
-> +                * Print a error message if handler_address is NULL, the =
-parse of VA also
-> +                * can be skipped.
-> +                */
-> +               if (unlikely(!handler_info->handler_address)) {
-> +                       pr_err("Skipping handler with NULL address for GU=
-ID: %pUL",
-> +                                       (guid_t *)handler_info->handler_g=
-uid);
+Hi Benjmain, Jason,
 
-pr_info(), please.
+Le lundi 25 ao=C3=BBt 2025 =C3=A0 14:05 -0300, Jason Gunthorpe a =C3=A9crit=
+=C2=A0:
+> On Mon, Aug 25, 2025 at 05:34:43PM +0200, Benjamin Gaignard wrote:
+> > diff --git a/drivers/media/platform/verisilicon/hantro.h b/drivers/medi=
+a/platform/verisilicon/hantro.h
+> > index 81328c63b796..a28a181013b9 100644
+> > --- a/drivers/media/platform/verisilicon/hantro.h
+> > +++ b/drivers/media/platform/verisilicon/hantro.h
+> > @@ -12,6 +12,9 @@
+> > =C2=A0#ifndef HANTRO_H_
+> > =C2=A0#define HANTRO_H_
+> > =C2=A0
+> > +#include <linux/dma-map-ops.h>
+> > +#include <linux/iommu.h>
+> > +#include <linux/iommu-dma.h>
+>=20
+> This is an internal header it should not be included in drivers.
+>=20
+> > +static void rockchip_vpu981_av1_restore_iommu(struct hantro_ctx *ctx)
+> > +{
+> > +	if (ctx->iommu_domain) {
+> > +		iommu_attach_device(ctx->iommu_domain, ctx->dev->v4l2_dev.dev);
+> > +		iommu_detach_device(ctx->iommu_domain, ctx->dev->v4l2_dev.dev);
+> > +	}
+> > +}
+>=20
+> What is this supposed to do? Put it back to the default domain? Who
+> changed it away from the default domain?
 
-> +                       continue;
-> +               }
-> +
->                 th->handler_addr =3D
->                         (void *)efi_pa_va_lookup(&th->guid, handler_info-=
->handler_address);
->                 /*
-> -                * Print a warning message if handler_addr is zero which =
-is not expected to
-> -                * ever happen.
-> +                * Print a warning message and skip the parse of VA if ha=
-ndler_addr is zero
-> +                * which is not expected to ever happen.
->                  */
-> -               if (unlikely(!th->handler_addr))
-> +               if (unlikely(!th->handler_addr)) {
->                         pr_warn("Failed to find VA of handler for GUID: %=
-pUL, PA: 0x%llx",
->                                 &th->guid, handler_info->handler_address)=
-;
-> +                       continue;
-> +               }
->
->                 th->static_data_buffer_addr =3D
->                         efi_pa_va_lookup(&th->guid, handler_info->static_=
-data_buffer_address);
-> --
+If you rename the iommu_domain into empty_domain it adds a bit of sense. Wh=
+en
+you attach another domain (this one is empty, but it does not matter) and d=
+etach
+it, the default domain get restored. That effectively forces the reprogramm=
+ing
+(in the VSI case flushing) of the iommu configuration.
+
+>=20
+> Did some other driver change the attached domain (if so that's wild
+> and wrong)? The commit message hints at that but it should be
+> explained alot more.
+>=20
+> This just seems wrong and goofy. Driver shouldn't be changing their
+> iommu domains if they are using the default domain at all. We now have
+> APIs to allow you to allocate wide chunks of IOVA space and manage
+> them directly. Maybe these 'multiple stream's should be doing that
+> instead of mucking with iommu domains?
+
+This is seeking inspiration of what we do in rkvdec [0], the iommu-dma.h sh=
+ould
+not be needed.
+
+Jason, the point is that the iommu and the VPU are not separate devices, wh=
+ich
+comes with side effects. On RKVDec side, the iommu configuration get resets
+whenever a decoding error leads to a VPU "self reset". I can't remember who=
+ from
+the iommu subsystem suggested that, but the empty domain method was agreed =
+to be
+the least invasive way to workaround that issue. I believe Detlev tried mul=
+tiple
+time to add APIs for that before the discussion lead to this path.
+
+Benjamin, please improve the naming, comment and description, I agree with =
+Jason
+its not completely clear. I'm also surprised that you do that every frame, =
+seems
+excessive.
+
+regards,
+Nicolas
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
+it/?id=3Dff8c5622f9f7c644e995d013af320b59e4d61b93
+
+--=-wovO2wwoxNj2XCpfZEwH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaKyiWAAKCRDZQZRRKWBy
+9JL7AP9R1VeW8rNgnuoZz8urKJxxEG6gWu6/kM7ge/SIZxuBcAD/SiNzSms3Po30
+iybuQvLYIS4MMJlWAyYz5eVQbcpO6AU=
+=XYWc
+-----END PGP SIGNATURE-----
+
+--=-wovO2wwoxNj2XCpfZEwH--
 
