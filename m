@@ -1,129 +1,123 @@
-Return-Path: <linux-kernel+bounces-784387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F590B33AD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:25:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A41B4B33AF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50509203863
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:25:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DB3F4865E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472B62D0C76;
-	Mon, 25 Aug 2025 09:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF6A2C0263;
+	Mon, 25 Aug 2025 09:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="POwQCc5P"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cM9N10BA"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A892D0278;
-	Mon, 25 Aug 2025 09:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4DB2D372C;
+	Mon, 25 Aug 2025 09:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756113870; cv=none; b=FY/zq9+XYaM4EADT7EEI1RsMar4el2O38vn4ehkewFAJW+qzmnXocc4b5Im5aXTaZWeSwEC85uqYGGdEOF2SyiapJ39GsMRY4v9VVsrlvM7ec4925aupQulfjGNuEOMr6IFVW3Qm0f6+ER4eLOlqoVhxbHb0k+nJzQCX3ON/X40=
+	t=1756113880; cv=none; b=jtmNoxPC+EblRV27yLU/NN+diVvATruvMA5SbSUXmAAecDSeqEGUBq1kXFyN74zvv6o7Fw9QL2xXUa1rU4g9LHamVtZOybIrGOHIQ0TbeLikWhtifqIbm0iwYbFGsS9Ito208iw+mYXXMFS72HwWGSOO7w2r1rgGP11lpvuMfUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756113870; c=relaxed/simple;
-	bh=XHBoXoD67Yx74hzKym+Sk2iHmWZ1Sa4F0v5fKW3S0hw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ns6HA4nblgZmrolWg435mIkcuC3qen89jIjTtVjfxzMoSSu+KTOhJC0Sj1J5tCdLcTYatZ9FcQs7PbL/JrxD4qFPIMITnM7MGSqc4nR4KhxlzZBAn0rC6cy7QNIdQAo3zzH2TsqhWLMwoQj+nsOBHjCRuptdktohbfEDlr79UYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=POwQCc5P; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 52D3943373;
-	Mon, 25 Aug 2025 09:24:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1756113858;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W+BDbrF2ImSWufoscsZvanJuCMuSyyB4F+Zy1wd7ISY=;
-	b=POwQCc5Px3GaGw3yylTzSQ9xEDDUIa+41J5/HlP0XRmV0mD1RKGZV5xt7RqX5Wnai07Qpb
-	3zptf8eveY2HNDibMzuJ8+P9xFcNWy5lUPT8OWdgeOprtFlhQq+NL3Sk/3R4i5soA1SlMc
-	8nYoAbY6IMgdnUNoNDcXDJZN6MUtqLPPsOkhFec29u97e5IWDmCUXnr3g0Pae+p9iWV6tr
-	+q892cHAef7zLPc4bb1gA9LqLfVnbg2u5uri3QHrcLWjyyoKoQHYGKQtVUOhApkTraOEYS
-	T3qIGI1sGTdPIlG1PY94QkzH7s3B9WqOkHOhNqjZN0/Flq7CTUEq1lR2CpCkGg==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  Amir Goldstein
- <amir73il@gmail.com>,  Theodore Tso <tytso@mit.edu>,
-  linux-unionfs@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  kernel-dev@igalia.com
-Subject: Re: [PATCH v6 2/9] fs: Create sb_same_encoding() helper
-In-Reply-To: <20250822-tonyk-overlayfs-v6-2-8b6e9e604fa2@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Fri, 22 Aug 2025 11:17:05 -0300")
-References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
-	<20250822-tonyk-overlayfs-v6-2-8b6e9e604fa2@igalia.com>
-Date: Mon, 25 Aug 2025 05:24:15 -0400
-Message-ID: <87ecsz69fk.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1756113880; c=relaxed/simple;
+	bh=J+EH/7RDxPq+xAlt0TRQnGUGW8nNs7BWa86kYwJc8xs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TJGMJr53xBtQWHJXZgZDIVS6uxK1R3AHJZ0Du8ZLxnNDKjqDPhN00KAogPMo1r128nVGH6xhb7730KaICmsKuTXloAL+qay35C1FLshaWPa7hDMs6f8BDukEANh72tm0YlNWqGQ+vRtNRR6jLv+THlBlXXL1Pxs/kc4iThWk7T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cM9N10BA; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7704f3c46ceso958646b3a.2;
+        Mon, 25 Aug 2025 02:24:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756113877; x=1756718677; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sM4hZ1puiRHKUqzwGkov59Rx7fxdUJpK7AlV9haEfhw=;
+        b=cM9N10BAXB4QgcGm3/TD1jTKtniEOTKflAnyp+ftaHlqRmM8/cFbtOvZCb0Eq/94ZM
+         P3Txqbj3fccAQGQmMrh9lIpqXEUSePFbX/PgQJFhXTY56a2f+NkNcQSj1OtWDLyEcl8y
+         hlmWMv4jyjpIRkiUgJj2z2agET6vxnErlxY3jIHnjakfDEQkGoDSsYJHPG8parpP7Nyt
+         BTfdrQtxbfGLnLWM84zkDIMKX4nandggml8+D7IBBC9SntY07ePdJ1zJoMuUTH0EEcWH
+         AbYZKuGgn/stU8UbjFoETMPcOMJ6VxyuF0KFvFFzEm2qHb8BeGT38Dt9xYTnjKwPaXdC
+         KLeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756113877; x=1756718677;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sM4hZ1puiRHKUqzwGkov59Rx7fxdUJpK7AlV9haEfhw=;
+        b=frnl4cOP0xkuvf54QbUqQ34zYtuaa6gYAmLblaDmY0yk4YStRbTjjC8DLxxmP18QOd
+         PspttMxWmxs3ye3u5+TUTzlvW4BLFN59CyxqBT4nRslKzcRi8KhK4cjkfPW089g1S2Dl
+         +FlhJTrx4fXx6XRvU8uEN1gLJe6D5b7Vi2R1FIzPBhB/apQYLtePfUOZdXgT0zg1wft4
+         DS4QVmnrMwbFE0eZIg1gG+a7Cb57f3yRGFjB5g4wDxlQhSlIK0LhCfS2cZ7I2hIe1Mrr
+         lRaIv3SBh+AeGY+HVHoDQwoexxMFZV1A/gUl5q3nNnuIxdh6TG/VhRP8chIk/tTVwK98
+         gF/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWLuFCXiUuDqnqW+rXgymJCH5NkrAffIzORBdbBYPBZo9R2EKzpSviCDCMwReWGLJvcPiRG/rT3z2X37bbC@vger.kernel.org, AJvYcCWV8Oz7nUBamCd2jOGUbFzKUxly/amTVpTNGolC+I3Dvel1FA01w1LD0zvm6ylWSOz/EcvJSCLqDhdD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw54Mz2/yU9bmUIxvX8/ySnWRjixGpMxGdhzwiLGtqgVm6P5zqy
+	DIRYY28I2IBpC/jmnP1raNVs7WCfBx8d16ofXVx/6ele5fxSB8t6D50+
+X-Gm-Gg: ASbGnct71IPb094+aZ9Fuj+cL9c+bWerhkqj1yW/0TIdWHKtzc8m5AmYA3pXkfgrhqx
+	i1f1j9D0E51fPRmDUEvXbwNGbUIAuZq0Ub7w1mPNUtd8LonOHeeFQmT5IOPrN3a07xpKWInJMBB
+	/Xr3fkUxlHx3HyNizO7k14MOIvs6vNSF2xdKrGQZ+Veg4bGWJM/EiTxVDZ8/w7BxWL4P2wQV9Ne
+	R2TUXLbkqqCAvXtzmvx2u0K7WD6smXJHpWNgPmrIlV8HoifSysmRuL4gXAg3BCzMHoy0dVZnpEL
+	3emRa/JvH0VYGIb1Me69WTxKA1Vtc3vTerZdPHduEf6H9ZyDHytLMkVGpQBcPwudTZV/yfqglqL
+	SJLs5GeF1QUoNTHMWOUiBl6yINnTdOOV0
+X-Google-Smtp-Source: AGHT+IF2Lj1I/oMHmRomgFUcdk/gVeJ+3cAJcySQ+eYOGXApg2tOeqaENjSgPcrhwsxhI+VbRT5g3A==
+X-Received: by 2002:a05:6a20:7286:b0:240:3ebe:ea34 with SMTP id adf61e73a8af0-24340d2bf18mr16359852637.33.1756113877525;
+        Mon, 25 Aug 2025 02:24:37 -0700 (PDT)
+Received: from [192.168.1.111] ([59.188.211.98])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cbb7b375sm6121879a12.29.2025.08.25.02.24.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Aug 2025 02:24:37 -0700 (PDT)
+Message-ID: <89826428-4a54-435b-b564-b0be49b8c7bc@gmail.com>
+Date: Mon, 25 Aug 2025 17:24:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujedvtddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhffkfgfgggtgfesthhqredttderjeenucfhrhhomhepifgrsghrihgvlhcumfhrihhsmhgrnhcuuegvrhhtrgiiihcuoehgrggsrhhivghlsehkrhhishhmrghnrdgsvgeqnecuggftrfgrthhtvghrnhepfedtvdehffevtddujeffffejudeuuefgvdeujeduhedtgfehkeefheegjefgueeknecukfhppeejtddrkedvrddukedvrdeikeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeejtddrkedvrddukedvrdeikedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepghgrsghrihgvlheskhhrihhsmhgrnhdrsggvpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopegrnhgurhgvrghlmhgvihgusehighgrlhhirgdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphhtthhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvr
- hhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhk
-X-GND-Sasl: gabriel@krisman.be
-
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
-
-> For cases where a file lookup can look in different filesystems (like in
-> overlayfs), both super blocks must have the same encoding and the same
-> flags. To help with that, create a sb_same_encoding() function.
->
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-
-
-Reviewed-by: Gabriel Krisman Bertazi <gabriel@krisman.be>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/4] Add support ANS2 NVMe on Apple A11
+To: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Keith Busch <kbusch@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org
+References: <20250825-t8015-nvme-v4-0-6ffc8f891b6e@gmail.com>
+Content-Language: en-MW
+From: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <20250825-t8015-nvme-v4-0-6ffc8f891b6e@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
+On 25/8/2025 17:15, Nick Chan wrote:
+
+
+[...]
+> Patch 6-7 adds support for the NVMe controller found in Apple A11 SoC> Patch 8-9 adds the required device tree nodes.
+
+A correction since patches are removed:
+
+Patch 1-2 adds support for the NVMe controller found in Apple A11 SoC
+Patch 3-4 adds the required device tree nodes.
+
+
+> 
+> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
 > ---
->  include/linux/fs.h | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
->
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index a4d353a871b094b562a87ddcffe8336a26c5a3e2..7de9e1e4839a2726f4355ddf2=
-0b9babb74cc9681 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3747,6 +3747,24 @@ static inline bool sb_has_encoding(const struct su=
-per_block *sb)
->  	return !!sb_encoding(sb);
->  }
->=20=20
-> +/*
-> + * Compare if two super blocks have the same encoding and flags
-> + */
-> +static inline bool sb_same_encoding(const struct super_block *sb1,
-> +				    const struct super_block *sb2)
-> +{
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +	if (sb1->s_encoding =3D=3D sb2->s_encoding)
-> +		return true;
-> +
-> +	return (sb1->s_encoding && sb2->s_encoding &&
-> +	       (sb1->s_encoding->version =3D=3D sb2->s_encoding->version) &&
-> +	       (sb1->s_encoding_flags =3D=3D sb2->s_encoding_flags));
-> +#else
-> +	return true;
-> +#endif
-> +}
-> +
->  int may_setattr(struct mnt_idmap *idmap, struct inode *inode,
->  		unsigned int ia_valid);
->  int setattr_prepare(struct mnt_idmap *, struct dentry *, struct iattr *);
-
---=20
-Gabriel Krisman Bertazi
+> Changes in v4:
+> - Remove the remaining added long line in drivers/nvme/host/apple.c
+> - Drop already applied SART and mailbox patches (based on top of
+>   apple-soc/drivers-6.18)
+> - Link to v3: https://lore.kernel.org/r/20250821-t8015-nvme-v3-0-14a4178adf68@gmail.com
+[...]
 
