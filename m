@@ -1,182 +1,124 @@
-Return-Path: <linux-kernel+bounces-785053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 205E2B3453F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:10:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA48B34540
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 359AC5E3BA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:08:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6800B18826E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790342FC86F;
-	Mon, 25 Aug 2025 15:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A97D2FC863;
+	Mon, 25 Aug 2025 15:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CDFlG2p4"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SGHwEaCs"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223292F2917
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 15:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE042D9499
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 15:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756134503; cv=none; b=Bl63VqUNBq/cXvDukB3pAbPiGQKDQr/nf37NsccoP2fmB7BfQeGP6jcsXKfbQfv40KmU5Zv8UZF0xHaLa7WCT8DfsXbilUTNqyN+u2MN/lD57HqyvbGMeu0Ql9WvB0t/4XTH495DzNnUCUhlGo1L5v1P6zAl5zZgiuoD9TbYteE=
+	t=1756134585; cv=none; b=rYGtET5GZ4VDeTVHP9ncUfPzLuu3cn3GvzqyDSZHhOub3ZzjbLOUiCmJHn/Ko+zPJBevSuFF/DAyzdmnxUbYhjwR7ARxtIns8n0V/W23rpYdKtX2Lvv50ydQTfjiwDrKfxs0eXBDceVQ06b7J6HfeHtmg4dhq6Vhjht6N0Z2TPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756134503; c=relaxed/simple;
-	bh=S/VG8tCfeSW/ZzspyTh3T9Ob4Izsu75n3KOb8iwoQWw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bGffk48Y8bNfQO1gKAhIbS9UPH0Criz03Pt+LuWOBjXv1lopzkTTQ6cni8FUBQndFv3uI5HTsDV4GCpdEybg1A41JAcyqKk8t6ToS4S6PfyPU8glW/ViYa3MU6SGVTR+osMeaCjx2KerKquNIWN7lVvSwRz5DbEXgCEzaSR42JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CDFlG2p4; arc=none smtp.client-ip=209.85.218.44
+	s=arc-20240116; t=1756134585; c=relaxed/simple;
+	bh=JowWEV5lcIHxp4u92sNNMOfatfjQ7ZENC4xcufj7568=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fA6eefAnts2jBnSzCLvMyGyNkCtVMG4tKQnH3AfJUqs8Kml8cTyhwTSaOzrzbY9mcsE7SKGw0lW0PXXjjonMxct6HMJQq3nw5/2JDn+PBPTYoilDJy7jrtsdWfc8HLduhjJQkpGorMTbRgKXnDrGJNXiIyQ2O4L13Y4tr/5187M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SGHwEaCs; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afe9358fe77so88988466b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 08:08:21 -0700 (PDT)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-32519b32b6cso2295684a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 08:09:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1756134500; x=1756739300; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Omikb0GsiRNAla8HKNcwJLY2uhW1I/CfC2GAsB/V6IY=;
-        b=CDFlG2p47UCVPVcrpfRVkLNoK2BEMHltQwkbIW7OpnlmqHD8Pnh62apNOD59i6eKPc
-         62+CGjxjnsy8b/XRg4E73YHKpzb6uSIR2I42GUpL4H2F648sSy9E5nPXrC5tr8GfgMvW
-         1B1YfWnsw+nl2fnoZJXSOXfAwrD3mi5dhYrfA=
+        d=chromium.org; s=google; t=1756134582; x=1756739382; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yb2SBUjk2cUBYlIMJ026/BKU22gh35Mp+MWKmgCVX6Y=;
+        b=SGHwEaCsTl/Ya7s9iAkJnQRXcAZFGvMvtq4IQCcTLwUtJ38d4a0Fa9wilNhDB1RLeo
+         4ikks68V7f0PVZiY3OaaBVrHMy8REu9Th1zi7GzRPvaY3d2zdqGo7kdbqguRbqZYyHjD
+         lU2zB43Ef8lfzbgfItJS5+P4+EiDN+S1B+mxY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756134500; x=1756739300;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Omikb0GsiRNAla8HKNcwJLY2uhW1I/CfC2GAsB/V6IY=;
-        b=ndX6GS9r50XILEom8tHVC1ezx4k22BiR1A3aWcLOk/MyM7iH2jsRNbfxWLsQiaDmBw
-         LLzZON/BdrZ84GTlZuR0c0c42XEa/6gDrubzWNVO2tOVt9Sb7P9F5THFSS9yZkFeR+pN
-         KwOM36E/3jQ1vklZqkO6+g2yh+Ha4oNgbyGvGDJl6uzytFZsfVByE19qpmAJ5S5FMJHd
-         FQrHXiL/pWsNFeGvuwN3tnNyY19Cb86GYdjDfMl4CaNhr9yOIGfeUQWDijZxskZGSVQo
-         UDId3aWzIoel72SD9BIbGXZA8u88ZhgWRlvOF/cLSTOwbemNV/AGHZ1rhflGLdqoBHe6
-         y1dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWB4GSgZX/3MRdWw/btba1NvZAs6YeiVB1o2sCZpRbc+o9RCIcpxh6dzxrOlUgUMn3zw1waMFpiVSwkzyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5DA9lLsML5OMuoRpk1d/Xz+93Yl0T+L2Gicej+F3Yrr8J1FIX
-	CI1/aK+cAIejMSPNEqu9O8nLPYktGmYWbMTN7hUddygUH0WUUwuErZAQpyzjhQtxPJixviW/rzb
-	BWM1M/Sn5PKmHJ6uCfdB8ue20Y7iVHpVcVzlpUaMj
-X-Gm-Gg: ASbGncv78xK/MPO9L0nZaMXKxYbhorRkZOIW8MzlT72JEnIYofGrzfbG43avyL67yE6
-	2xSuaE7RbP9J8sdqGgBKcAAZKQDscqZdNhQXBsFKY1fqvHV0Qk4sMLjk8jT/b4yQ2CZta6X29wE
-	AQogtlfquDszLOzhaGRafMERXsslm6QsUOLWxbD1E2GCAB2bBoqSIGsdosmmlfjNQ6FkkVruL+8
-	xUC648=
-X-Google-Smtp-Source: AGHT+IHXgFMATHSbaalQDjOX1vp31Ziz4UgnKYQ8pu/Ue5WZF+Wt1koG8AKkJEybrR3BHEyOZWG0cw3aGDEQZQNDyJo=
-X-Received: by 2002:a17:906:1c4a:b0:afe:9172:b8cb with SMTP id
- a640c23a62f3a-afe9172bc73mr155986766b.30.1756134500324; Mon, 25 Aug 2025
- 08:08:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756134582; x=1756739382;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yb2SBUjk2cUBYlIMJ026/BKU22gh35Mp+MWKmgCVX6Y=;
+        b=u6bwr5471Z8X6NOPEJ4kHZTZrqnmsfF0E9G3Jq2y7A7spVNnLeKFxxmW/2v68swqM3
+         szBoRPIi4eneBD6VHNPXY2L0B42cGwe4NJpo517PsUNuv/LOr70D0fsNrsij1qa9ZLot
+         i7xd8x+8SnsaoDU+roEJSY7VusCW0HdXoaJW4jE/eutCzvUUKzEcRx9fNEpex4MSGqBV
+         +7fUtp26q7ILfGgG+VxQr+wT2Jhd9stKIK1PrKWi+wYsfmhviy9cKQqVUDEE0tX2sYON
+         nyeMYT7e9kQezmkdSR0BwoT3W3uoXfUL8K3DZ2ofGLnWEE2bvdmJlXgGlGn/7AHBkuuJ
+         fynA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCwsCvTNDgKPmw3leeeTfWpa47lDTjkhThPpkibbech328HBAQH6ENWi+wJQVW+cmg5U4QtMEUbTmMxBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4hF9mw+RcWhPwQZJMRtSMSdbRhXq8GNo3cMYFo2JdtcsI4DxP
+	bEKSdu+j8yOiLc0NrjI7s1c8dPMgKGlL5SC2hBx1Hz5+VwY1ccJRLMIvgUev2YK7aw==
+X-Gm-Gg: ASbGncvkiu/L0xBUTg9DuKITYJLi4h2W0Rvswg4+RDHLd0lXt02IG/5Yq07Vv0jd6Tg
+	5vVGhkiQOBK2Q7il97ftbrKr64c7L6HQgBJoLnnWeK/68DBaLeiQpyTeO3PVC9fPvluRxmrC9KE
+	02+ZXs2cbX8XV23Bl5v35xn9DOeZiQsz6h6c+ofsoUI6NrXWKZVYq32RtOxR2Sqa9b/ToMkMkcb
+	ZHdOVQjR3tmeOAhPX2c1OtfED1Hm3xWLWp3FaD36qE9InPhj+3Nk/S1fVZI/kF0PvX8cHzdq+U9
+	uyPbq5vJQ4soktb39r48rrkq7/8Jo4S/wav8LHdqzdgiAboSEYBG968JXbyhbIwA/yAMbbdXibZ
+	3FtTsb80NgnOd7vn/b5Bg0e85H3YVhvTpSF73D3ex
+X-Google-Smtp-Source: AGHT+IHPJV4TXa61Ud+4jPZUdeIqShsQV2PbYlibNvBybfblxKwhUtY23QymfLSEF6L//QSRFz+xzQ==
+X-Received: by 2002:a17:90b:3e44:b0:313:f9fc:7213 with SMTP id 98e67ed59e1d1-3251744bd41mr15706597a91.21.1756134582435;
+        Mon, 25 Aug 2025 08:09:42 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:d5a9:711e:13f5:e60f])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3254a1e4067sm7481215a91.10.2025.08.25.08.09.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 08:09:42 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: mediatek: clk-mux: Do not pass flags to clk_mux_determine_rate_flags()
+Date: Mon, 25 Aug 2025 23:09:31 +0800
+Message-ID: <20250825150932.3695931-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722-mode_configure-v1-1-5ea35052a01f@chromium.org>
- <20250723154753.GH6719@pendragon.ideasonboard.com> <CAEs41JCctnTgwY-ePrB+kwY7nUvJuMAttZ894PzhL-b_SF7uNQ@mail.gmail.com>
- <20250723170237.GE14576@pendragon.ideasonboard.com> <aKwWzQGY_dsP8hg0@kekkonen.localdomain>
-In-Reply-To: <aKwWzQGY_dsP8hg0@kekkonen.localdomain>
-From: Allen Ballway <ballway@chromium.org>
-Date: Mon, 25 Aug 2025 08:08:09 -0700
-X-Gm-Features: Ac12FXwufVyw0HYB3wo5t_J9ACjERyV2c6pxw9Pml5QKrLEp57owt-1Xu42X_Zo
-Message-ID: <CAEs41JCZ0ab_HVZ=NiZbC_52pc+yhXcgOBECDN7sy8DsaBD6rA@mail.gmail.com>
-Subject: Re: [PATCH] media: ov8865: move mode_configure out of state_configure
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hansg@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Sakari,
+The `flags` in |struct mtk_mux| are core clk flags, not mux clk flags.
+Passing one to the other is wrong.
 
-I sent out a v2 some time ago
-(https://lore.kernel.org/all/20250723-mode_configure-v2-1-7fb0f6ba1194@chro=
-mium.org).
-It seems I used b4 incorrectly and it didn't add to this chain as I
-expected, apologies for the confusion.
+Since there aren't any actual users adding CLK_MUX_* flags, just drop it
+for now.
 
-Thanks,
-Allen
+Fixes: b05ea3314390 ("clk: mediatek: clk-mux: Add .determine_rate() callback")
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+Changes since v1:
+- Dropped unused variable
+---
+ drivers/clk/mediatek/clk-mux.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-On Mon, Aug 25, 2025 at 12:55=E2=80=AFAM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> Hi Allen, Laurent,
->
-> On Wed, Jul 23, 2025 at 08:02:37PM +0300, Laurent Pinchart wrote:
-> > On Wed, Jul 23, 2025 at 09:40:42AM -0700, Allen Ballway wrote:
-> > > On Wed, Jul 23, 2025 at 8:47=E2=80=AFAM Laurent Pinchart wrote:
-> > > > On Tue, Jul 22, 2025 at 01:35:43PM -0700, Allen Ballway wrote:
-> > > > > ov8865_mode_configure() only needs to be called on sensor init, b=
-ut it can
-> > > > > be called multiple times from ov8865_state_configure(). Move
-> > > > > ov8865_mode_configure() to ov8865_sensor_init().
-> > > > >
-> > > > > Signed-off-by: Allen Ballway <ballway@chromium.org>
-> > > > > ---
-> > > > >  drivers/media/i2c/ov8865.c | 15 +++++++--------
-> > > > >  1 file changed, 7 insertions(+), 8 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/media/i2c/ov8865.c b/drivers/media/i2c/ov886=
-5.c
-> > > > > index 95ffe7536aa6aba814f4e5c3d12e7279470b2f07..1d1a1f261bf4ab5c0=
-9848402dc057e2f572504e7 100644
-> > > > > --- a/drivers/media/i2c/ov8865.c
-> > > > > +++ b/drivers/media/i2c/ov8865.c
-> > > > > @@ -2304,14 +2304,6 @@ static int ov8865_state_configure(struct o=
-v8865_sensor *sensor,
-> > > > >       if (sensor->state.streaming)
-> > > > >               return -EBUSY;
-> > > > >
-> > > > > -     /* State will be configured at first power on otherwise. */
-> > > > > -     if (pm_runtime_enabled(sensor->dev) &&
-> > > > > -         !pm_runtime_suspended(sensor->dev)) {
-> > > > > -             ret =3D ov8865_mode_configure(sensor, mode, mbus_co=
-de);
-> > > > > -             if (ret)
-> > > > > -                     return ret;
-> > > > > -     }
-> > > > > -
-> > > > >       ret =3D ov8865_state_mipi_configure(sensor, mode, mbus_code=
-);
-> > > > >       if (ret)
-> > > > >               return ret;
-> > > > > @@ -2384,6 +2376,13 @@ static int ov8865_sensor_init(struct ov886=
-5_sensor *sensor)
-> > > > >       }
-> > > > >
-> > > > >       /* Configure current mode. */
-> > > > > +     ret =3D ov8865_mode_configure(sensor, sensor->state.mode,
-> > > > > +                                  sensor->state.mbus_code);
-> > > >
-> > > > How about the implication on ov8865_set_fmt() that will not update =
-the
-> > > > link freq and pixel rate controls anymore ?
-> > >
-> > > I believe those will be unaffected by this change, they are updated i=
-n
-> > > ov8865_state_mipi_configure() which is still called from
-> > > ov8865_set_fmt() via ov8865_state_configure().
-> >
-> > You're right, my bad.
-> >
-> > > > > +     if (ret) {
-> > > > > +             dev_err(sensor->dev, "failed to configure mode\n");
-> > > > > +             return ret;
-> > > > > +     }
-> > > > > +
-> > > > >       ret =3D ov8865_state_configure(sensor, sensor->state.mode,
-> > > > >                                    sensor->state.mbus_code);
-> >
-> > Can't we drop this now ? The remaining code in ov8865_state_configure()
-> > updates the link frequency and pixel rate controls, and sets
-> > sensor->state.mode and sensor->state.mbus_code. The latter is a no-op
-> > here as they're set to their current value, and the controls shouldn't
-> > need an update in this function as it's only called from
-> > ov8865_resume().
->
-> Any comments on this? Will there be v2?
->
-> --
-> Sakari Ailus
+diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
+index 60990296450b..9a12e58230be 100644
+--- a/drivers/clk/mediatek/clk-mux.c
++++ b/drivers/clk/mediatek/clk-mux.c
+@@ -146,9 +146,7 @@ static int mtk_clk_mux_set_parent_setclr_lock(struct clk_hw *hw, u8 index)
+ static int mtk_clk_mux_determine_rate(struct clk_hw *hw,
+ 				      struct clk_rate_request *req)
+ {
+-	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+-
+-	return clk_mux_determine_rate_flags(hw, req, mux->data->flags);
++	return clk_mux_determine_rate_flags(hw, req, 0);
+ }
+ 
+ const struct clk_ops mtk_mux_clr_set_upd_ops = {
+-- 
+2.51.0.261.g7ce5a0a67e-goog
+
 
