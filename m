@@ -1,158 +1,211 @@
-Return-Path: <linux-kernel+bounces-784701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DAB5B33FE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:47:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8595EB33FEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DFB9203AA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:47:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7CE61A8468F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62AB61E766E;
-	Mon, 25 Aug 2025 12:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A6E25B1DC;
+	Mon, 25 Aug 2025 12:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B04b0TZN"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HV1nSTp7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0496BFCE;
-	Mon, 25 Aug 2025 12:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5011E3DFE
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756126047; cv=none; b=YZar41SzlE3wsBPZITNOCDfITDXj0WHplRvwu+YqxnkvmrLWSOBdbi0iGVrn6f/ZUUf46g4QRVNoI1QxHiDNnVQwD6yzaPAb0y/SKYxAy1vJulqaYKcUvb+hYYZ5ZwSV9WbtZPko1TlOFLXieKuoG7RvhJNZ+CZPLbEoodo4jSo=
+	t=1756126147; cv=none; b=bu+G2VsmLhcQfVKydVDfXUBUMoDvVuWOR4CPHI9VeXJNtwmSKrNDjkTPrRc4EGlq5Le1QIy9Baup8nTY6gseSmyp//OKnH3fn+dJBxdqbkIcxFgem7yitb1o9+5eUBmdo/yTNgCEe9b1Dps89kUc1VmKZxCDKeWzpIfKoTga+tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756126047; c=relaxed/simple;
-	bh=0gdFNx6GXTjA5oLRilWZiyfEvwBHxFr5q6NQWUJX7lc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bDs0PdjvKjMXxZvF+oxvID0RRnw31PtY/VqqOPdBSWA59QGHzUmi32EKajSAg58It3kZcM+v/IQ3kTORSSo4MRFbP5Yh2qV9D6b3UexR1jBtm8ZUokdv+2XpxBmFx+gviEHRWZ3vZzOvb8cGebD2dYUf84qgapN9yAym/UyxmEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B04b0TZN; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so3794947b3a.0;
-        Mon, 25 Aug 2025 05:47:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756126045; x=1756730845; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6pB42h8KhdCu+rKcl6R+qSx9ydRtdSuvsQ7gp0cs6PM=;
-        b=B04b0TZNpIjXThagXzvp+82oBaAZqRHjInmz5A9+6A2oTE+KwaQlNidUq5TLS9Z6na
-         MzWllDgEshDdf7XBIIacNv/TUpeK5tfs4EZUtGfYoLpbRYL3eL5laRLRJL1d42ukLYBp
-         salXvo7Z6lQBRxfKasFx/ToBwP0N2YKsOu9179J2ERjEHZ/gY3rBGOWs9eP56D0HCeOe
-         8rKilT3ermcAsxAJRmY67gaI11HvxaehKZexOOkrG49ZRtv+3dhvzeLOXO/boQ2V0fKC
-         cxSzfA4fZJubo4p6knBHjll0GhwRC06hd0hEPMByqHkhantq4BC2Y8KpWOG8QdsAB0QF
-         yiGA==
+	s=arc-20240116; t=1756126147; c=relaxed/simple;
+	bh=b7RwYEqsXqhvAIjVimo18yn+qIgGQwvJw8/CODbmjC8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=czEnRoh7ul2GxdMVdqidpC1eWXPt2xmtyK1c708+p6BISypI73WN4n4rciQCyoxHYYtfEEftTcx6jBXcMeq1/rf7dcvUmGp/qGjiHZj1wc2R8FTLx0muYUf6lCvz1qSpRzWMLGVl3HNoQWuXob92W6QP2ZGQyWrQDz/LZ4+i8LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HV1nSTp7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756126144;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3vXE/JZQfiOFAY8LityNc5lKOCwFML9m2hfnchuxSjw=;
+	b=HV1nSTp7Q1GCYDLMq+4QqifxDxb7uYS4woQOiYC5rfSiucsVc4NcdRRzILeC5aQoVz5gJ1
+	VSYwyFt/6kpVm+Via2f8IpHsZqabREVOTk60SlKbsQICe0pSG1jDTpnt5HFTSNVgTipQaT
+	vz7KDhXANuJ5abMoEjjmje7XP3A+SOc=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-53-NEhYlBWlOw-QWX4Xoai9fQ-1; Mon, 25 Aug 2025 08:49:03 -0400
+X-MC-Unique: NEhYlBWlOw-QWX4Xoai9fQ-1
+X-Mimecast-MFC-AGG-ID: NEhYlBWlOw-QWX4Xoai9fQ_1756126142
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b51baec92so10317545e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 05:49:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756126045; x=1756730845;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6pB42h8KhdCu+rKcl6R+qSx9ydRtdSuvsQ7gp0cs6PM=;
-        b=PIUdaZ9PQAw4g877R/HCntryxteep4hl0fDq6pMJH61qtMnbNpXDonTnkbi6aprdoq
-         0koii7PXl7nf4fHRVISkf5JC/9D9DsATDjf/VBQTQ8GTYhiPBGAi+1eT5YmaSCRmPLL4
-         69j85J4d4vI3BHXvBMVstj5fAtkArWAMU0AotBzIeJpMA841uP6bVyWXCObaeqKc+PxH
-         JwI25Ld43QY3aTlsuCSdQMl+RmKwW8IHb6WXPBbDZZtwGumfAQLqr/ZPZgZcwpnLz+1S
-         nNj0s6ZW6e3fQsFUBtSuxfClMulgkn9cQuY0kCh1x7H1Czh6bWIFoonhBjp+yBakJaGR
-         KZcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUOxp1T9eHTSQPUEjVQu+whW2CZoNfEG9BrwKZ3Icp/xn8QSmO+2nVjApqa1rY9d0Ua/rbLKTJ40RMaTIQ=@vger.kernel.org, AJvYcCVc3ZFm535gXQhAGKESs67S+yyIkC32jZKqkoJzUY3wwvqNdapqNjumMMsK9/qjjVBSSPY4f58kTg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL4jdL9BNQLz99fjnlP2MHYv/gZ92FXp6DB8EYF4Hom5B30kGv
-	0E17eARGUoUCc517v7a7jWwKUGo9iGuapDgLJnmiHkEIvz8F3MvBiKz6TjpoPzwbDR5u6tkvVHS
-	hqDtwssXve0QEQHLrRZgo36ToYNEvuzI=
-X-Gm-Gg: ASbGnctjIeO9bX6HYiYrT0xAah/x4DOSlnaakLl1KNFxLtJs3MLAJcQ+ksGSon+7mUG
-	Y4xwKf0vlV/s3nHzwBi/pvPuuf218TttNu8hXVu13wHyl/IIykK0Xx1czPEHJidG+VyjP7FCiSs
-	3U8J/m97ZsY6tnqbtTAECF8tjdVEm/XmE/V26uFgFnAXsJAY3baCpYfHOh5a72wH9gYeysvfa/4
-	WNBRVE=
-X-Google-Smtp-Source: AGHT+IHK4G55vrT0z/Vc9/EMd1Xem4OzHkqt4YcrDG6lt8qqXtwp8frm3zJhvIQ3rDj7SzFcOYWWfEi0n/Kk8cuc56g=
-X-Received: by 2002:a05:6a20:6a26:b0:243:78a:8296 with SMTP id
- adf61e73a8af0-24340e06888mr16844987637.47.1756126045319; Mon, 25 Aug 2025
- 05:47:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756126142; x=1756730942;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3vXE/JZQfiOFAY8LityNc5lKOCwFML9m2hfnchuxSjw=;
+        b=FiV3SRjcOinYmIzw6NArvkd4ObadJ+BB3Ui320/i5ps/gqJPG7cjPVpSSDPuWkSDqq
+         erJGdr1YYeFrVJIYeInOoV/ekMhtKRc02B4qYc0AvTRVnfu/2sOTNheeSM/VCOgSMCfu
+         enjBZquPezFPjd3REeigeRAJppht6B7sPW9JpL+sASM6oQNJQ0mJ7ka8ItIOOMct/6lO
+         BAEgZzdleP3nXwaYlfgAuOOry2wMs74y2kjFD0K4wUe83o3YpzqEb++V1Ej1YDnWHQMq
+         mETRyEIopuvamXlkyMIwXEYm+tLTiRAKPhEYcbHczqb+lBJbSZNdPH2jL2z4+KFlqOs5
+         QWyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEFlht1Ej37rK3C2dAO6+sjuPjAPHmtxke9HSfu59i9g4XsntAA4QR2EzGA863qhIrYtqYyNzfwDdSj/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyodkxQ5FI3Sy3Qa7ArBJUmLppG+/uP2y8lXo6nbEa7LK6fD650
+	E34xhY4An+YWz/GI69cee9L+hbZEinKS0BUuwnGCKiHJRAXAuZ9Q8bYZujBbHBI5cBHUxQHITYL
+	TyyP6TwvYv/2HTjPK1u4kCzmY3BgbGhbcVPtixl51xlpTL25dwxRJcoxd9if84SKbUQ==
+X-Gm-Gg: ASbGncsf6ikVpCOlCVAATdML2XTKl+qKd8M0jjrw47qwlOfxOw0cL6V0f27Hgx30QRS
+	eLPKi/kOy+rXGHJXaULFZoLDqkthWMx9v1kyHm2aQRnwDfjqiSBrom/U6+mMj1j9c+Rk5WT5pHq
+	qiQ4bJS2LEJyzrbsvG+BTRsaORHYAPxLlam0YnLP48lHnqHedpA19W5hF7w7FsnqoEUYu1QOoU0
+	OF1plFSi6OrS7lEI9lHaXC2rt/3fkxDCqCTpP+AvGub3s6uEFOmfnCo0SBl85IhetKPgmb1EQXn
+	mFN6GUv6lWT/9K+i/dTS+9xUW9HWeOesDRF9fCaXaY2qrhogaOL7IHOsYfjDoxhe19ukXTnJ7iC
+	GNCnJunFm9TZwS7cpWRvexMfHFJfOTQEErfShd11LBMhaem5D5LYlm+6ZFCyzeB8UcIs=
+X-Received: by 2002:a05:600c:3b0f:b0:43c:fe5e:f03b with SMTP id 5b1f17b1804b1-45b517d4d50mr117582135e9.30.1756126141750;
+        Mon, 25 Aug 2025 05:49:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFXxc8CWovMYNQS1+MbZ/J1HLlRjFi84VTIxSAk5gdBYVSg2EOk3SSNbd5GU03jnCMkyvwvPg==
+X-Received: by 2002:a05:600c:3b0f:b0:43c:fe5e:f03b with SMTP id 5b1f17b1804b1-45b517d4d50mr117581475e9.30.1756126141263;
+        Mon, 25 Aug 2025 05:49:01 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4f:1300:42f1:98e5:ddf8:3a76? (p200300d82f4f130042f198e5ddf83a76.dip0.t-ipconnect.de. [2003:d8:2f4f:1300:42f1:98e5:ddf8:3a76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70ea81d38sm11742640f8f.17.2025.08.25.05.48.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Aug 2025 05:49:00 -0700 (PDT)
+Message-ID: <a90cf9a3-d662-4239-ad54-7ea917c802a5@redhat.com>
+Date: Mon, 25 Aug 2025 14:48:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250824130106.35366-1-mittalyugansh1@gmail.com>
-In-Reply-To: <20250824130106.35366-1-mittalyugansh1@gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Mon, 25 Aug 2025 08:47:12 -0400
-X-Gm-Features: Ac12FXyPz3TVvLbv55vx5OvxIWKPlrlzVuYOuRUEj4dKsNis_Ik6IjZqj7xVw4M
-Message-ID: <CAEjxPJ6xCZLotyjfF-SBKbxFUur4=0bFbUpSZgbOkF_BMaAd4g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] selinux: make __inode_security_revalidate non-sleeping
-To: Yugansh Mittal <mittalyugansh1@gmail.com>
-Cc: paul@paul-moore.com, omosnace@redhat.com, selinux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 10/35] mm/hugetlb: cleanup
+ hugetlb_folio_init_tail_vmemmap()
+To: Mike Rapoport <rppt@kernel.org>
+Cc: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+ netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+ Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+ virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+ wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
+References: <20250821200701.1329277-1-david@redhat.com>
+ <20250821200701.1329277-11-david@redhat.com>
+ <9156d191-9ec4-4422-bae9-2e8ce66f9d5e@redhat.com>
+ <7077e09f-6ce9-43ba-8f87-47a290680141@redhat.com>
+ <aKmDBobyvEX7ZUWL@kernel.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <aKmDBobyvEX7ZUWL@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 24, 2025 at 9:01=E2=80=AFAM Yugansh Mittal <mittalyugansh1@gmai=
-l.com> wrote:
->
-> Replace the blocking revalidation logic in __inode_security_revalidate()
-> with a fast, RCU-safe check of the inode security struct.
->
-> Previously, the function could invoke inode_doinit_with_dentry() when
-> may_sleep was true, which might block. With this change we always avoid
-> sleeping and return -ECHILD if the inode label is invalid, forcing the
-> caller to retry in a sleepable context.
+On 23.08.25 10:59, Mike Rapoport wrote:
+> On Fri, Aug 22, 2025 at 08:24:31AM +0200, David Hildenbrand wrote:
+>> On 22.08.25 06:09, Mika Penttilä wrote:
+>>>
+>>> On 8/21/25 23:06, David Hildenbrand wrote:
+>>>
+>>>> All pages were already initialized and set to PageReserved() with a
+>>>> refcount of 1 by MM init code.
+>>>
+>>> Just to be sure, how is this working with MEMBLOCK_RSRV_NOINIT, where MM is supposed not to
+>>> initialize struct pages?
+>>
+>> Excellent point, I did not know about that one.
+>>
+>> Spotting that we don't do the same for the head page made me assume that
+>> it's just a misuse of __init_single_page().
+>>
+>> But the nasty thing is that we use memblock_reserved_mark_noinit() to only
+>> mark the tail pages ...
+> 
+> And even nastier thing is that when CONFIG_DEFERRED_STRUCT_PAGE_INIT is
+> disabled struct pages are initialized regardless of
+> memblock_reserved_mark_noinit().
+> 
+> I think this patch should go in before your updates:
 
-If you look at the callers of __inode_security_revalidate(), you will
-see that not all are capable of propagating -ECHILD to their callers
-and forcing a retry; IIRC this is only truly possible during rcu path
-walk. Hence, this change will produce situations where the inode may
-be left with a stale or unlabeled context.
-Your patch was marked as 2/2 but I did not see a 1/2 patch.
+Shouldn't we fix this in memblock code?
 
->
-> This ensures that __inode_security_revalidate() can safely run in
-> non-sleepable contexts while preserving correct retry semantics.
->
-> Signed-off-by: Yugansh Mittal <mittalyugansh1@gmail.com>
-> ---
->  security/selinux/hooks.c | 22 +++++++++-------------
->  1 file changed, 9 insertions(+), 13 deletions(-)
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index c95a5874b..2bb94794e 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -282,19 +282,15 @@ static int __inode_security_revalidate(struct inode=
- *inode,
->         if (!selinux_initialized())
->                 return 0;
->
-> -       if (may_sleep)
-> -               might_sleep();
-> -       else
-> -               return -ECHILD;
-> -
-> -       /*
-> -        * Check to ensure that an inode's SELinux state is valid and try
-> -        * reloading the inode security label if necessary.  This will fa=
-il if
-> -        * @dentry is NULL and no dentry for this inode can be found; in =
-that
-> -        * case, continue using the old label.
-> -        */
-> -       inode_doinit_with_dentry(inode, dentry);
-> -       return 0;
-> +       rcu_read_lock();
-> +        isec =3D selinux_inode(inode);
-> +        if (unlikely(!isec || is_label_invalid(isec))) {
-> +                rcu_read_unlock();
-> +                return -ECHILD;  /* force caller to handle reload elsewh=
-ere */
-> +        }
-> +        rcu_read_unlock();
-> +
-> +       return 0; /* valid and no sleeping done */
->  }
->
->  static struct inode_security_struct *inode_security_novalidate(struct in=
-ode *inode)
-> --
-> 2.43.0
->
+Hacking around that in the memblock_reserved_mark_noinit() user sound 
+wrong -- and nothing in the doc of memblock_reserved_mark_noinit() 
+spells that behavior out.
+
+-- 
+Cheers
+
+David / dhildenb
+
 
