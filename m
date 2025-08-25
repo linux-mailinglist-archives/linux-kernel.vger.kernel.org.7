@@ -1,139 +1,131 @@
-Return-Path: <linux-kernel+bounces-785368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD101B349A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:03:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F97BB349A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B22E4680CEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:03:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39AF71B252CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AC7309DC4;
-	Mon, 25 Aug 2025 18:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0613090C6;
+	Mon, 25 Aug 2025 18:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lLCKHKI/"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8JwthZQ"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882D42737E0;
-	Mon, 25 Aug 2025 18:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1C518E02A;
+	Mon, 25 Aug 2025 18:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756144965; cv=none; b=mQHdTM69npDj+h1vtpFnNAdxMGuAVFnloT+IU9BzAqivYXcqNw51/yDnKZ54icy8tsBEXo8b5fumJCMP33CidasS/M69otfBFUhgTq7PvIOexqCRstq65P8kjdwn7y5RJi0X2dv9vEYAZe6nD6WSwR8AWWv3/ppO82QdoU/RQfU=
+	t=1756144986; cv=none; b=KyE+aykE6vEKsAmq8njBsE+DZDhkbGocI2Es6H/weJR5tnI462tmgP30NRKMupOYgA3mOi5ghBCZjoVsRy9vzR+/j1tZ+TyLGMLsq3OADpIPB5OcqiWFCGuqNu9uwd3tQ6EE8tyOd0UJqHeRVT3fRxzDQ2QiETgmX7q6kSz0n1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756144965; c=relaxed/simple;
-	bh=bO93YHMity3JW3zcPdTgWP5tYDLILE3JK7gg860M89Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iIfua47Ylj5n4I2q7WfBaUDNQokmgnp4KjZVE6n7cVbjD27IVzNAb3LQBQV9/+KyRtKX7put8PXXrkjKznZaX4yHP5fYsZE0qyVRpVSGx0l6gyzQTkX+MqNCjJBx7J8VsKmmW+bjunx4pL6zk4LCYf38DXU4g2+U2RjVxe1IMpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lLCKHKI/; arc=none smtp.client-ip=209.85.167.173
+	s=arc-20240116; t=1756144986; c=relaxed/simple;
+	bh=qfYtGjzypAjngAnSpMnyCs+DFZYgO7hARgc8EKcD9G0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P4F41kgWUnHCkClTCcp0+9GeviVN6NuuqsFo06ypc6Yf2fWWM+dbt7vHMxPrwtoTyLxkyhlyoV39p0PwUYfHKYw40frmKQfo7m29p7oP6/usMe0z2cZcELnVGvKj7aTkLZ5KCswPcVWS0AZaWfscAarlEAEx/CFrqLoZU8mQ48Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O8JwthZQ; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-435de6d0f5aso2890134b6e.1;
-        Mon, 25 Aug 2025 11:02:42 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3c980bd5f48so1136331f8f.0;
+        Mon, 25 Aug 2025 11:03:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756144961; x=1756749761; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rWjjdZkS3kOEmAznhZwCYlPUFm9r6kfvZ4m+Rr2yBMM=;
-        b=lLCKHKI/AOXU8psWRxXFmHJ39V+4U25m7hvawrkaiXp9n2ASdEzgxFUD2aLzKOJZaQ
-         4kUxWygYligbss146MVmfN3n+WDZvGBbuhXCeVa8cgqNLXSt+20Dbct7BY02agzYCIgk
-         4UNunQKNgp7Zjd0tLKOXfu/pVjktOMK95zMVaig9W6BmYB7yJLRJumhUT5pso3VB246c
-         OfONHY/4qaak3C3EXEd2wwqtq6Wt9ys0fmid3rYxgTce623cCDZgirPjgXmAQHOxurh3
-         x9go2nwX5mOXi7oVCDxQYEvy76fWsR0EAR93tJxsFPo/zgXsdLnKwrTRcuPt0E1sF3z7
-         5DXQ==
+        d=gmail.com; s=20230601; t=1756144983; x=1756749783; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WUIh9vX4PXmb9bPNCGC/HNq+20+lByNZfU3LVMFi/lE=;
+        b=O8JwthZQEP/oysScpc6Xm2KIWPtkkEI9QhSdk3ehzrS++IdVh7Jzzb97O+hJ3AIGmP
+         tOSeXfv2pWJ6wumort89mU6ZcgQ+op6DjijcLdfSaWMl4QK49Ppi+C7u2sCRm1IOPPeu
+         Hv5u2RTfa6gmjT/u+h7Z2likZi6xTqr0IhTCwuich6NwIbASjk1PtgBwp3n1JrolmQG2
+         3/WQci5EmonEw3llsWHGSI8IAkzIIh1IW9T25nHxtHLRgqPipf46y1AGx9zq5R3rJs3H
+         1ZBU+gCqnTDdEmHqgMmtFZuWCHNAYy0p8v7NR0hF/tCByvJMW+2DGpvrk7RMeasSYmj2
+         ZrAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756144961; x=1756749761;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rWjjdZkS3kOEmAznhZwCYlPUFm9r6kfvZ4m+Rr2yBMM=;
-        b=FgLZqQY9JeJixLqryEyfM1MVpYos6t6T8f8nm01QL8QMpKuBRfdWLyC0VJmqGDwxGS
-         I9UtOABa8gYUKSAsPXNz41apAygszQLmmmhfGRiuAqdE7w82rPvHkCYZJEcj4Tut0Vdo
-         dCVNcobA3YgB7sgU9OlTNpI+QbD63PAsSGVqaCH9JweVjrz7eaNckjaByM1pfqGiMVeI
-         tMY1/gYfYT17eOqCIgkEflWOLY5ltaqMeDmaOJOuoRvoPdi1Lv7NcE0UZRtRndcNX/qg
-         O7pasVEO5XlszqSY1PbnL+CdWILujrACH5hvvH3FrEmz4IKuzqQ7/1pce6n9fWMAkuci
-         aZwg==
-X-Forwarded-Encrypted: i=1; AJvYcCWuC7keWd5KvPQ/kn/HVWSPfaEePYvjVtDmpME2LdI5agLW5jsBiYoMSenAmWv9fKc6BjR4wqCCI2jYU/qi@vger.kernel.org, AJvYcCXYlirFxMQHsgKP3ZzwFSkKJlSjzsoUhjvNBt/sFNdivEFjXUXeE0VcNbPXs/lAzG39JUMP16k/8nqGrdIY@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZh9neDGU59Nq6rthbMZb0OQBBwTHVjTIBiJeqnfOzWPZ6AihU
-	zEz4ZZQgkWZSYVFFXv+phivKtTA36iRQiRA4qDGsdv/HaB8MVAl32XXs6+r5UgB011Rula5nz0V
-	dx9bLhF207usc0LecK3r3NMkZMHuuSGA=
-X-Gm-Gg: ASbGncvKjLBVD3BN48QfJ1OROQD6H0S16XDYwc3BLiKel02r+KeSq3SEieg8FI9ahNw
-	dl3g2yHoqpQwj0eYngHgJmeJ4HQifXflEsh5xUewyel2D3sgQOEpjKyFcQspPRa2XzJ5kO+jOqQ
-	+stQtgUNZ/bFjb+RPF6OCLnOPuRKHCJP72fiZ3VlnO0xuq5DTCfpLOAw3XmbaPKi+VhzTyY2xbQ
-	86IJcXT
-X-Google-Smtp-Source: AGHT+IGVn1Byb1vBc09TjUHsAgjAK4BIr8u6jv+GG5qVH9suUlIglnpoZsN4iU1nxKdVKGf0A5Jic4FV/NL2cUkUwtw=
-X-Received: by 2002:a05:6808:6d8d:b0:434:4b1:b650 with SMTP id
- 5614622812f47-4378526d7efmr6093274b6e.39.1756144961386; Mon, 25 Aug 2025
- 11:02:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756144983; x=1756749783;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WUIh9vX4PXmb9bPNCGC/HNq+20+lByNZfU3LVMFi/lE=;
+        b=lxNW8Uo6SnQEJ0SR7/aCR67gDc3xbartdiFMAisX6dnNgc2MdkDqnfeQHasKptj1c5
+         Z3REiQNTRwRXtRqhp4EnyG/DEVcjVlwOYYdMVZQJFErnzVczUid6/qhR5u9LgiybQQ9F
+         e1NoPjmLDpBhyl6SuMylgUH0U1xfg8A01ANwL+EyORvBOPLBjTMKvo6xpCVbEg8jrwam
+         UkP/xS6MlENdSgg2HotsGeoA3hzkr2tFK2WrbBnYru9M7NrHpKADzahYIYEI1EE1EUoQ
+         RHF+bqcsDsa3W98lk0j5Wb3Km5Jlb7PVogHe1zI6zXqZjoJo7xMYRXskAzaYb3pE4rRV
+         KV/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUo+C7SRLDsCSO0DZAoPcz0wrn2O/fl1Uz7HWy0dkTzXowNBSihw2lmvKL35uzWTyvspS9g7d4P0AmDA/k=@vger.kernel.org, AJvYcCUzCvW4Uf6Ps+z6GmqgFxTjGyIuIRKmOEXB5PKL8u3r34zvPRZS90KmhMHGDvHY1xOp1IoE8AbZqqG393ZS@vger.kernel.org, AJvYcCVqIIIkxTlDZZ5FNIlF0Y5RkiLRQ+ZICy3YyFzsmqlo1NPZDflcXXgUD9tp9ZjVcLv+r1t2m+Rw0u07@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRJKRM236vHqQUYTeTNcsSMKpS8RVel7c6toseslnKPx6FouM2
+	uG+exm1WtXMwNZkzel4E5tVPEW9auGh1TLdmRwr1ZzKB0tryXVb6jMf+
+X-Gm-Gg: ASbGncvXsqpp0B3Di5+oW3jrgzCP2Gw/vfCopc4VRyTBsaTLbUW8MWYObJ9FSKZ6dBb
+	b6pJDGLF1+EviZ5WJzkVt1jHB5LOiUoVCY5eRnOtbeUCPCOFlIt++p6DTokPFMkuRF2RTsZTTdJ
+	R/Ro4TpwhFWHijSlOKRksRbUi/DvcTpSszP3YySz7M1AxVFKz+FjsI3xzF511WiBQyMusxZwauj
+	wmB6f6c+TFR2WyAThEO8bWqlYOx11td1Zvrixgmjg9+PFptw0N4hkNuFHyozCSG/JN0z7/H0zxE
+	QlzuCwnPFNbvRM4eSRrCHVEZTh9l29HvLZuhP9MHvxKUyn7N+KhPUx/iiUP4LcgSlel3hmLNSSV
+	gzzVkX0BIP9+nvAgvw8Wwi3ayLlL+ahTHB/kcZA==
+X-Google-Smtp-Source: AGHT+IFs0cAjEPf0GuvJ9TiIXj9Q9DX5w5ClsJacd+q6fiz9K03tWf7Et628dMwIsxRZUa02eXXxlA==
+X-Received: by 2002:a05:6000:24c5:b0:3c4:edee:bcf9 with SMTP id ffacd0b85a97d-3c5da45a2f5mr9277232f8f.9.1756144983031;
+        Mon, 25 Aug 2025 11:03:03 -0700 (PDT)
+Received: from flaviu-Aspire-E5-572G.. ([5.15.80.80])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70e4ba046sm13434442f8f.1.2025.08.25.11.03.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 11:03:02 -0700 (PDT)
+From: Flaviu Nistor <flaviu.nistor@gmail.com>
+To: 
+Cc: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Flaviu Nistor <flaviu.nistor@gmail.com>
+Subject: [PATCH 1/2] dt-bindings: hwmon: tmp102: Add label property
+Date: Mon, 25 Aug 2025 21:02:43 +0300
+Message-ID: <20250825180248.1943607-1-flaviu.nistor@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68a8f5db.a00a0220.33401d.02e1.GAE@google.com> <tencent_F0CF4B761BAA2549BAA0BB1E33D09E561B08@qq.com>
-In-Reply-To: <tencent_F0CF4B761BAA2549BAA0BB1E33D09E561B08@qq.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 25 Aug 2025 11:02:30 -0700
-X-Gm-Features: Ac12FXy4s5Y-MPsvOYAErjvk6SGuELfAenDY9qGisgOsgzweZfLTHFf_eoIGTfA
-Message-ID: <CAJnrk1acbc80OLZe9Pf7a-8HPRmkJhz=bZVRPOnJQWB78neVVg@mail.gmail.com>
-Subject: Re: [PATCH] fuse: Block access to folio overlimit
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 22, 2025 at 6:17=E2=80=AFPM Edward Adam Davis <eadavis@qq.com> =
-wrote:
->
-> syz reported a slab-out-of-bounds Write in fuse_dev_do_write.
->
-> Using the number of bytes alone as the termination condition in a loop
-> can prematurely exhaust the allocated memory if the incremented byte coun=
-t
-> is less than PAGE_SIZE.
+Add support for an optional label property similar to other hwmon devices.
+This allows, in case of boards with multiple TMP102 sensors, to assign
+distinct names to each instance.
 
-I don't think the last part of this is quite right. It's fine if the
-incremented byte count is less than PAGE_SIZE (which will always be
-the case if there's an offset). We only run into this issue when the
-number of bytes to retrieve gets truncated by fc->max_pages as the
-upper bound and there's an offset.
+Signed-off-by: Flaviu Nistor <flaviu.nistor@gmail.com>
+---
+ Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
->
-> Add a loop termination condition to prevent overruns.
->
-> Fixes: 3568a9569326 ("fuse: support large folios for retrieves")
-> Reported-by: syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D2d215d165f9354b9c4ea
-> Tested-by: syzbot+2d215d165f9354b9c4ea@syzkaller.appspotmail.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
->  fs/fuse/dev.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index e80cd8f2c049..5150aa25e64b 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -1893,7 +1893,7 @@ static int fuse_retrieve(struct fuse_mount *fm, str=
-uct inode *inode,
->
->         index =3D outarg->offset >> PAGE_SHIFT;
->
-> -       while (num) {
-> +       while (num && ap->num_folios < num_pages) {
->                 struct folio *folio;
->                 unsigned int folio_offset;
->                 unsigned int nr_bytes;
-> --
-> 2.43.0
+diff --git a/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml b/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml
+index 4c89448eba0d..1d192100e8b5 100644
+--- a/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml
++++ b/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml
+@@ -20,6 +20,10 @@ properties:
+   reg:
+     maxItems: 1
+ 
++  label:
++    description: |
++      A descriptive name for this channel, like "ambient" or "psu".
++
+   "#thermal-sensor-cells":
+     const: 1
+ 
+@@ -45,6 +49,7 @@ examples:
+             reg = <0x48>;
+             interrupt-parent = <&gpio7>;
+             interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
++            label = "somelabel";
+             vcc-supply = <&supply>;
+             #thermal-sensor-cells = <1>;
+         };
+-- 
+2.43.0
 
-Thanks for the fix.
-
-Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
 
