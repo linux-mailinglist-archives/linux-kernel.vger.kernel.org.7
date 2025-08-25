@@ -1,219 +1,159 @@
-Return-Path: <linux-kernel+bounces-783906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F5EB33407
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:34:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FDF0B3340D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C79F83BA616
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 02:32:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E91C42015B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 02:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E922230D0F;
-	Mon, 25 Aug 2025 02:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E18239E75;
+	Mon, 25 Aug 2025 02:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N5cZ1oPZ"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="COf7q7vr"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDED51CEAB2;
-	Mon, 25 Aug 2025 02:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4104C92;
+	Mon, 25 Aug 2025 02:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756089126; cv=none; b=pR5W4AZ+bs+xcQomQsdwhayXB0/7QkFWJDrBHpodHDbNVf2BwGuPtuQzpA2k2FXlUQ2GtDiVQc81x+6YsXYJU19eY7L7yT1S9NukgXHE/zm1agyv9SSbzcpZdFOORJ1DdZAqPlMjyQ//dyJFeyR2ZC/Pg9XvyzpBEfhUunGO3QA=
+	t=1756089612; cv=none; b=nOjscYsPm6LSAr3ZIrmXef9fiGmYVxWXeAOjNHfUwFei+JExtvVr3Fc08DSxRMp6lm2kFiNImwzbCWr7+wlgHNzpLRk8neYM4EVtqHD/eql0k42zMed9HRpCGLfDzNqZHHDoVRfECzUeRORXgoF4S96JXlBjb9S9OS40jVfYMZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756089126; c=relaxed/simple;
-	bh=8w+Va6M4jsubK7hSQ4EV51F40ANmqzPbE3g+V8Rdxvc=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W9UnYAr5S/XB/tSqodzQwyiTob14zM977yf1js12ISBG4hFVHOXAoTO/FxCCZ9pJLoUtHvvIuKyO71YXbpf+UfeEdkPK8Jg0EA4viUTlgpKAI1eDyswtxq28xdODjMEt/B7AJPWaO4QIxNCZ5fZ145E14x+TY4hU0WMUodmzV+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N5cZ1oPZ; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1756089612; c=relaxed/simple;
+	bh=1lfLQsN0/U8quahSxrzudcQke/2i5X2JIJom+6NQIuY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D84+PhnbUli4pklVh2HUW1E5AXHOzEpQ6UdlKAQzze0DUV3PZEkoaTNXVPNaZPRRKlaCzOuRrzrz8WoGNyNck3Mxhxi4KFn1VDGfEuZJvGDdQyCvVwHcPci/XjpXGzwwA5vGd+4rbP5KBFeZXi77mPuPFpb6hinorqVMcZWns2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=COf7q7vr; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2445824dc27so36350635ad.3;
-        Sun, 24 Aug 2025 19:32:04 -0700 (PDT)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3252e4b0f51so1624858a91.0;
+        Sun, 24 Aug 2025 19:40:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756089124; x=1756693924; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O10Bl4oetUFVZeVcIyFTPuGNIUEAVGF7F9sLfkbwSS4=;
-        b=N5cZ1oPZdztFGINcAHDODig49X5faudKEq/6mYZ39STs/S51OUqWwNnwRSau+FWI1J
-         P8nHCOxbEgX6wOo3pHQOiLLfSOCL6xVRjCbiL00m1u/vhokYGkOxIRN0mQmoT+shhEC2
-         VgOZb7LwEff+owTsP9Ku8l+iu/XLysQByVSi0x6i6IBw7xtsrceUx/M6psG19KZS2g/C
-         o7A2le41vY88uEuZ0yf6ycer5aRfRINmy1OzztLkgAnHkwfXHn9H7Cu76CB6XgZ/urGh
-         INBv7Vr67Q1Exr88DMCUsa/pxBjTJPWb9ObLyhK4goPO9yzfm+yfzVpb4xs3A9bX4BT4
-         QQRQ==
+        d=gmail.com; s=20230601; t=1756089610; x=1756694410; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MkPUNaruSQ5LOMMRX/W2/pqcUcBVBgOS+e1vxMMUPqo=;
+        b=COf7q7vrSljyYyMh8vfsKav4s2+/1ZOEsA2FfOP2I1Oi+VBGsO+oSd/G/wDAVftpSp
+         55JURAdtMwtkfzsoM2u/OAOn+Rp7Lnv2KYbRjLn6hMT6xCCsbHcAg2a2z75wwW7Xh3OT
+         b4dv7WAPlC1JYvTLPx48uZKOqKywzilJEIaW2C5JWp9L24H042pDxAlKUdyvlBDnm1V8
+         6q6f+R4dlIBXpaANZoW+bwgOnwlK7oI4/nMv7CS9YkFZaxubKDRl3JJRhnUZJMT1UMb5
+         s8+leg5IE3CRfSj+zT9WE7P5MxkxocsR9FODsAW8U6mY8klZzTwItEJoHpTCfzf7NOq/
+         tU3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756089124; x=1756693924;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1756089610; x=1756694410;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=O10Bl4oetUFVZeVcIyFTPuGNIUEAVGF7F9sLfkbwSS4=;
-        b=t0emYk5H9kwG/Gv+kxbyTm1xiaveiB5YO33mrN1YaGu0stzRQDQY2AmCO9fZiH/fD/
-         sJ1au5fEeMUFol4bQuibRvJYxxAs4VQiOVYg1S2TQJWqTycmrNCDMZrGnLKEwn7TNpXp
-         6ZYQuwzHx2lSJ/gT8oN7RsAftPxkYewlNUhYrNNJjL+irHjDS4MPBpImP/N6dkjxSpGq
-         Ubq41UOFv70syaQia70SwgM0zqfbp3JNW7TEBnZI4/2Ijyjpxr1qx4HdykWiCllA8YnR
-         SiR5aEJMeH6bNsPU7LtJfx+JREnUsD4jkPn87IAnJJCOggDY18JBmHdpdgdaK9seE0Ow
-         BRtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2L+7vx6dDVyU9yhNON7T1ky1Fj1+pPBXd3FsBpa8cKsoJ9p7PqS+Ds5Qo044V5G5Rguywu8IDVJWArw==@vger.kernel.org, AJvYcCU8GbPoWSkkjsfyVVqnh0XDE4WbxEGtjXVld45cmSPT4wLfr9ipPH4PJqafH6Dg22CZ+TW2/GU40lYharzNEMBm@vger.kernel.org, AJvYcCXvi1Id32xzH+q6vtbSYysx1gkv18OvJXD7e/MGbsfatlyaQ/S/1bBnhICQZLDNXaLsHp+HcrrMU5wtQZ9j@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxlsdd69B5HnL9kwznURI/KDJIChd6ueLc9/UQazFeLQxQDM0Fz
-	hURbtM1qgIPJq3rsC7v8Pvk8ubmwjbhWMN2pOcyvxFlzoSgDq79ZRtWt
-X-Gm-Gg: ASbGncuAdhRz4NctxDiMh6z1yUDSKpXB3CODzvZuv4FGR1/KOVv0dinD7NljqYXvRdc
-	Phd/qL0st1G9Vyaf6osQBFBoUbhckMo4se8cGAJdovqFHTTb0s24nUgzBLPeP1OpVsdqQ//KCcD
-	cKs7oVEAAjKJofwV135zTnFMHDpRnX3qHYevVStPPNQmNuxqHc+wD/cbIfYQ6h783iwNN9TnPmG
-	ONS5DZ8rYA0knt+8s8PuCq4uVLqzRXmTcFz58GU51HPx+nX4qn+/KPhbUdHX5ojkNXSlrwv1jRT
-	DnbtMHJZpGLlnCOeS8sxEN86Jk5vaBaRhYH/PdsOgIA+n6GTsBhfy7OCAnBQWRjD+ZkcWYYfQB5
-	SuNLbkrW3Mr5pUF/nX/W+llQTLyCXtun0GX/noC3ORFUofAxpaBTI/l8YduotpvJbaHiMNNKwDA
-	Y=
-X-Google-Smtp-Source: AGHT+IHiK6ZNzGbxD1aVZDdpEIJSJdRVCIVYu6qhCycor6e6tzkhdDgkg9nCBYkly1FiN66XhTD6Bw==
-X-Received: by 2002:a17:903:38c4:b0:240:5bde:532d with SMTP id d9443c01a7336-2462ef4c8eemr131114705ad.38.1756089123935;
-        Sun, 24 Aug 2025 19:32:03 -0700 (PDT)
-Received: from localhost.localdomain ([114.242.33.243])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687af234sm53905175ad.48.2025.08.24.19.31.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Aug 2025 19:32:03 -0700 (PDT)
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Qianqiang Liu <qianqiang.liu@163.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Helge Deller <deller@gmx.de>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Vivek Goyal <vgoyal@redhat.com>,
-	Dave Young <dyoung@redhat.com>,
-	Kees Cook <kees@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	Shixiong Ou <oushixiong@kylinos.cn>,
-	Jinchao Wang <wangjinchao600@gmail.com>,
-	Zsolt Kajtar <soci@c64.rulez.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Nam Cao <namcao@linutronix.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Joel Granados <joel.granados@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	Feng Tang <feng.tang@linux.alibaba.com>,
-	Sravan Kumar Gundu <sravankumarlpu@gmail.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Anna Schumaker <anna.schumaker@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Max Kellermann <max.kellermann@ionos.com>,
-	Yunhui Cui <cuiyunhui@bytedance.com>,
-	Tejun Heo <tj@kernel.org>,
-	Luo Gengkun <luogengkun@huaweicloud.com>,
-	Li Huafei <lihuafei1@huawei.com>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	kexec@lists.infradead.org,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 9/9] watchdog: skip checks when panic is in progress
-Date: Mon, 25 Aug 2025 10:29:37 +0800
-Message-ID: <20250825022947.1596226-10-wangjinchao600@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250825022947.1596226-1-wangjinchao600@gmail.com>
-References: <20250825022947.1596226-1-wangjinchao600@gmail.com>
+        bh=MkPUNaruSQ5LOMMRX/W2/pqcUcBVBgOS+e1vxMMUPqo=;
+        b=v6N1uU2T6pcX6ee5puUzIIvpfpzYjsAb/lp+HzFGGMp8wiFmivUlRQzo9WBR0iHlKK
+         iCPGoi6ec7clxDCZPPT/WtrQ3WUU1CBNkN5Qp6gRSyz4tMCRDs7TbP+zdvtwFbN+wnBG
+         ysaEdGdHkco5dQ+/inFxmW8SwL1OxQwaL5Cg6/K0lPbyYbpdmybya/E65qvQIpp48Bn4
+         K9cYx5/pFW30jNO3k7EvLSNRZUIyyzanUM6MAUoj6gCOoi1tqabZzKV4beOdOu223Acu
+         hFuZnTcHP/M+MqFbYmEREsZ4XaRn/ciw6x0oCo72loAcAdh36kmSISjFt/6P3Y5IpKKC
+         9HlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUj1W3pbYAwKqbk2/P5i1rke7k1fEoW2mT2O5Io/eGDuLFdq30jUcTv1l+SV+txhsfO+Y5vzhKkVjkK@vger.kernel.org, AJvYcCVfllYMMlUUXqW/tWp09L9KTNdC2YZ+twtWcjjO8uPc40juGTYsUtqbm5WijZQcXPtqD+v7AJoRmnd3QJYw@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDxNPKMUC2XC2ON3Lv0t2NoUmJkcw9wCsMsxAu+QAZ1x++RP+X
+	mf2vGxkJw3NUTYreBWDWRX3a84QQ4DJVdxBBFGDD2chITgZUALYmP+/PVKRfUjESoEvJ1Iawklx
+	bAZV6ZEIVFQtYW9dCvNIn7mJDkuhnoQkBsxPn9j+nfg==
+X-Gm-Gg: ASbGncub8ykCITcI1ylOrPZCfG5LAbYT/jabo9+lowP8AOI2DA7Rk1K9MF4IiJn9pV9
+	CWecTsrgb+RmbMOzm7XX4ZZpaKO/SNjd63nCyqFkgiucXZDmB7XiiI/pZqoG54bywES7sZhhv58
+	h1GAapzj17Tz6KMjOq/8Q+0axGY01RiMYlp6NrT4hhvSFAMIj5ElxaOmjfAO4amQI26WwRKG5Yk
+	XkP8PDAsA==
+X-Google-Smtp-Source: AGHT+IElR6GRNREDHPCo5sfgDywLw3EE679VHhCQUj042BQylnRA/7J4lG/pFPOCAsc6U9whuXwTeShHa5Zy0P1/0Ak=
+X-Received: by 2002:a17:90b:1d06:b0:324:e03a:662e with SMTP id
+ 98e67ed59e1d1-32515eaeeecmr14743689a91.23.1756089609888; Sun, 24 Aug 2025
+ 19:40:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250824005116.2434998-1-mmyangfl@gmail.com> <20250824005116.2434998-2-mmyangfl@gmail.com>
+ <20250824-jolly-amaranth-panther-97a835@kuoka> <CAAXyoMOfhSWhRCiFudju-DNtvD+8kHGhLzT2NGBF2cK_Ctviyw@mail.gmail.com>
+ <0cb62840-845b-4a9f-94c6-e40d0b72ce95@kernel.org>
+In-Reply-To: <0cb62840-845b-4a9f-94c6-e40d0b72ce95@kernel.org>
+From: Yangfl <mmyangfl@gmail.com>
+Date: Mon, 25 Aug 2025 10:39:33 +0800
+X-Gm-Features: Ac12FXwWccvVXoRpOo_nSOSW6iaRis3gEis4wHn-eo1XOa6BEcrzKwpgvITLF3s
+Message-ID: <CAAXyoMMej5XJmofiY_9cpzscxm2GyZw_v9hcSYu7NvhcNFFV2Q@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 1/3] dt-bindings: net: dsa: yt921x: Add
+ Motorcomm YT921x switch support
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
+	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This issue was found when an EFI pstore was configured for kdump
-logging with the NMI hard lockup detector enabled. The efi-pstore
-write operation was slow, and with a large number of logs, the
-pstore dump callback within kmsg_dump() took a long time.
+On Mon, Aug 25, 2025 at 2:09=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 24/08/2025 11:25, Yangfl wrote:
+> > On Sun, Aug 24, 2025 at 5:20=E2=80=AFPM Krzysztof Kozlowski <krzk@kerne=
+l.org> wrote:
+> >>
+> >> On Sun, Aug 24, 2025 at 08:51:09AM +0800, David Yang wrote:
+> >>> The Motorcomm YT921x series is a family of Ethernet switches with up =
+to
+> >>> 8 internal GbE PHYs and up to 2 GMACs.
+> >>>
+> >>> Signed-off-by: David Yang <mmyangfl@gmail.com>
+> >>> ---
+> >>
+> >> <form letter>
+> >> This is a friendly reminder during the review process.
+> >>
+> >> It looks like you received a tag and forgot to add it.
+> >>
+> >> If you do not know the process, here is a short explanation:
+> >> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+> >> versions of patchset, under or above your Signed-off-by tag, unless
+> >> patch changed significantly (e.g. new properties added to the DT
+> >> bindings). Tag is "received", when provided in a message replied to yo=
+u
+> >> on the mailing list. Tools like b4 can help here. However, there's no
+> >> need to repost patches *only* to add the tags. The upstream maintainer
+> >> will do that for tags received on the version they apply.
+> >>
+> >> Please read:
+> >> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/proces=
+s/submitting-patches.rst#L577
+> >>
+> >> *If a tag was not added on purpose, please state why* and what changed=
+.
+> >> </form letter>
+> >>
+> >>
+> >> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >>
+> >> Best regards,
+> >> Krzysztof
+> >>
+> >
+> > Thanks.
+> >
+> >>  - use enum for reg in dt binding
+> >
+> > I made a change in dt binding. If you are fine with that change, I'll
+> > add the tag in the following versions (if any).
+>
+>
+> Cover letter must state the reason.
+>
+>
+> Best regards,
+> Krzysztof
 
-This delay triggered the NMI watchdog, leading to a nested panic.
-The call flow demonstrates how the secondary panic caused an
-emergency_restart() to be triggered before the initial pstore
-operation could finish, leading to a failure to dump the logs:
+as requested in the previous version
 
-  real panic() {
-	kmsg_dump() {
-		...
-		pstore_dump() {
-			start_dump();
-			... // long time operation triggers NMI watchdog
-			nmi panic() {
-				...
-				emergency_restart(); // pstore unfinished
-			}
-			...
-			finish_dump(); // never reached
-		}
-	}
-  }
-
-Both watchdog_buddy_check_hardlockup() and watchdog_overflow_callback() may
-trigger during a panic. This can lead to recursive panic handling.
-
-Add panic_in_progress() checks so watchdog activity is skipped once a panic
-has begun.
-
-This prevents recursive panic and keeps the panic path more reliable.
-
-Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
-Reviewed-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
----
- kernel/watchdog.c      | 6 ++++++
- kernel/watchdog_perf.c | 4 ++++
- 2 files changed, 10 insertions(+)
-
-diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index 80b56c002c7f..597c0d947c93 100644
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -740,6 +740,12 @@ static enum hrtimer_restart watchdog_timer_fn(struct hrtimer *hrtimer)
- 	if (!watchdog_enabled)
- 		return HRTIMER_NORESTART;
- 
-+	/*
-+	 * pass the buddy check if a panic is in process
-+	 */
-+	if (panic_in_progress())
-+		return HRTIMER_NORESTART;
-+
- 	watchdog_hardlockup_kick();
- 
- 	/* kick the softlockup detector */
-diff --git a/kernel/watchdog_perf.c b/kernel/watchdog_perf.c
-index 9c58f5b4381d..d3ca70e3c256 100644
---- a/kernel/watchdog_perf.c
-+++ b/kernel/watchdog_perf.c
-@@ -12,6 +12,7 @@
- 
- #define pr_fmt(fmt) "NMI watchdog: " fmt
- 
-+#include <linux/panic.h>
- #include <linux/nmi.h>
- #include <linux/atomic.h>
- #include <linux/module.h>
-@@ -108,6 +109,9 @@ static void watchdog_overflow_callback(struct perf_event *event,
- 	/* Ensure the watchdog never gets throttled */
- 	event->hw.interrupts = 0;
- 
-+	if (panic_in_progress())
-+		return;
-+
- 	if (!watchdog_check_timestamp())
- 		return;
- 
--- 
-2.43.0
-
+https://lore.kernel.org/r/f76df98e-f743-4dc2-9f10-93b97f69addb@lunn.ch
 
