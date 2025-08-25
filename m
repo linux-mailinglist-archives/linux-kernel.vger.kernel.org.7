@@ -1,823 +1,309 @@
-Return-Path: <linux-kernel+bounces-784399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB23AB33B20
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:29:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A48B33B2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3130B17A629
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:29:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4B4C1885925
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C347262FC1;
-	Mon, 25 Aug 2025 09:29:25 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1FE221299;
+	Mon, 25 Aug 2025 09:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="lfz1vs26"
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F05C29D28A;
-	Mon, 25 Aug 2025 09:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAED1393DC1;
+	Mon, 25 Aug 2025 09:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756114163; cv=none; b=hxXd3s+cflDqFLYfdpayZnNm0OkLnFS2xalEX17DXUHKCGbOPidraCMaN5NJkB0idfzbNmwSFeomrbeTmrojn5QulQ+SrEIJtVBSR8Kc8+n9XkrdrFWUIl9mAc88VNloqNmxGyvuQM6U6tBS1LodooQcF3i+YAxJ18UcNC3FFPY=
+	t=1756114317; cv=none; b=j5Tj7+YnrL61It42KmzkyscLPNr9aK35pgFa/A7h02ze2K2lx7yd/6mVeo7caLhYYOHOMJPGX5mVRynt90aXj1nJ3pw7KoB1XipPQ+R+wcUEKI5BzivPEjYd/Q999RQ6mbk7VbTM5RWtaWjVOU1soiWJllsGInQ4LOcf1Z4PPYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756114163; c=relaxed/simple;
-	bh=GAiQL1eDR/LO/mbqlb0sV5WYVf3txr8qO3U7giVdl6k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uuJJdaF+h9ee+8EyU1uOvFRf3tv2d3uy9X0/LI+74mmt9seHvsvluUQSGtbA3Y95sQ6wh2Ot2lZ7z2kSnzQbPCUPt7RfhYie2QCKoSvOdOCpNzOH1YN9XjjHFyjWFW7nNdukrhwjlPl/BKaVp+ohUakYwuSkXXsJL7YfTJOlbZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: f44ae068819511f0b29709d653e92f7d-20250825
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:29baf07b-9769-4c53-bc7c-606a1360490e,IP:0,U
-	RL:0,TC:0,Content:0,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:6493067,CLOUDID:79901089aaed69c5817db51d948dca4b,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:1,IP:nil
-	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: f44ae068819511f0b29709d653e92f7d-20250825
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 69510435; Mon, 25 Aug 2025 17:29:09 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 6FCEAE008FA2;
-	Mon, 25 Aug 2025 17:29:09 +0800 (CST)
-X-ns-mid: postfix-68AC2CE5-2011171159
-Received: from localhost.localdomain (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id EBA03E008FA4;
-	Mon, 25 Aug 2025 17:28:56 +0800 (CST)
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: "Rafael J . wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Markus Mayer <mmayer@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Keerthy <j-keerthy@ti.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: zhenglifeng <zhenglifeng1@huawei.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Len Brown <lenb@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Pavel Machek <pavel@kernel.org>,
-	Sumit Gupta <sumitg@nvidia.com>,
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-pm@vger.kernel.org,
-	x86@kernel.org,
-	kvm@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-omap@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Zihuan Zhang <zhangzihuan@kylinos.cn>
-Subject: [PATCH v1] cpufreq: use __free() for all cpufreq_cpu_get() references
-Date: Mon, 25 Aug 2025 17:28:33 +0800
-Message-Id: <20250825092833.42441-1-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1756114317; c=relaxed/simple;
+	bh=uxUyieml/K+cEmLmB94nhLa9rZ+8OnJOzJpO5gZRxjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m+REYZzixKdII8EVv0OYbHv/E9egB+KWuM/fmvdUvhbIlhu9n1b9Z3DwyuRS8s3geUnU+40KCEzWaRyXAMhgGZNB8awyypuqzGkmAhTmawmpAaF8Zt0B+tuopcnN4zX9Zs8lWBJAdzoRxHTNpMxEv6bXzAlWXFUp7r3d8NzPYAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=lfz1vs26; arc=none smtp.client-ip=185.125.25.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4c9QXx4LsSz11Zf;
+	Mon, 25 Aug 2025 11:31:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1756114305;
+	bh=6c3YchL3/fNwRCulq0i15lYi7C15uJVbj/gOpRwjky8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lfz1vs26y2WCKJQVnGmddHJD7X7EX16GQk3wc72nxeHl34P299PKqPNvyK390Ip4i
+	 5a7VLdMRTJStXNDtE0ro/Z7M7gLcsu/311EA+rHLzJccd17tSxHO+o/Q3K3C8ZhiIy
+	 o8iDyrPylRY6iM03oLhJhVVIM4Ux+hgJ4WNFNu20=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4c9QXv2dP9zRVl;
+	Mon, 25 Aug 2025 11:31:43 +0200 (CEST)
+Date: Mon, 25 Aug 2025 11:31:42 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: Jann Horn <jannh@google.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
+Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
+Message-ID: <20250825.mahNeel0dohz@digikod.net>
+References: <20250822170800.2116980-1-mic@digikod.net>
+ <20250822170800.2116980-2-mic@digikod.net>
+ <CAG48ez1XjUdcFztc_pF2qcoLi7xvfpJ224Ypc=FoGi-Px-qyZw@mail.gmail.com>
+ <20250824.Ujoh8unahy5a@digikod.net>
+ <CALCETrWwd90qQ3U2nZg9Fhye6CMQ6ZF20oQ4ME6BoyrFd0t88Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALCETrWwd90qQ3U2nZg9Fhye6CMQ6ZF20oQ4ME6BoyrFd0t88Q@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-This patch replaces all remaining uses of cpufreq_cpu_get() with
-the __free(cpufreq_cpu_put) annotation.
+On Sun, Aug 24, 2025 at 11:04:03AM -0700, Andy Lutomirski wrote:
+> On Sun, Aug 24, 2025 at 4:03 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > On Fri, Aug 22, 2025 at 09:45:32PM +0200, Jann Horn wrote:
+> > > On Fri, Aug 22, 2025 at 7:08 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > Add a new O_DENY_WRITE flag usable at open time and on opened file (e.g.
+> > > > passed file descriptors).  This changes the state of the opened file by
+> > > > making it read-only until it is closed.  The main use case is for script
+> > > > interpreters to get the guarantee that script' content cannot be altered
+> > > > while being read and interpreted.  This is useful for generic distros
+> > > > that may not have a write-xor-execute policy.  See commit a5874fde3c08
+> > > > ("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
+> > > >
+> > > > Both execve(2) and the IOCTL to enable fsverity can already set this
+> > > > property on files with deny_write_access().  This new O_DENY_WRITE make
+> > >
+> > > The kernel actually tried to get rid of this behavior on execve() in
+> > > commit 2a010c41285345da60cece35575b4e0af7e7bf44.; but sadly that had
+> > > to be reverted in commit 3b832035387ff508fdcf0fba66701afc78f79e3d
+> > > because it broke userspace assumptions.
+> >
+> > Oh, good to know.
+> >
+> > >
+> > > > it widely available.  This is similar to what other OSs may provide
+> > > > e.g., opening a file with only FILE_SHARE_READ on Windows.
+> > >
+> > > We used to have the analogous mmap() flag MAP_DENYWRITE, and that was
+> > > removed for security reasons; as
+> > > https://man7.org/linux/man-pages/man2/mmap.2.html says:
+> > >
+> > > |        MAP_DENYWRITE
+> > > |               This flag is ignored.  (Long ago—Linux 2.0 and earlier—it
+> > > |               signaled that attempts to write to the underlying file
+> > > |               should fail with ETXTBSY.  But this was a source of denial-
+> > > |               of-service attacks.)"
+> > >
+> > > It seems to me that the same issue applies to your patch - it would
+> > > allow unprivileged processes to essentially lock files such that other
+> > > processes can't write to them anymore. This might allow unprivileged
+> > > users to prevent root from updating config files or stuff like that if
+> > > they're updated in-place.
+> >
+> > Yes, I agree, but since it is the case for executed files I though it
+> > was worth starting a discussion on this topic.  This new flag could be
+> > restricted to executable files, but we should avoid system-wide locks
+> > like this.  I'm not sure how Windows handle these issues though.
+> >
+> > Anyway, we should rely on the access control policy to control write and
+> > execute access in a consistent way (e.g. write-xor-execute).  Thanks for
+> > the references and the background!
+> 
+> I'm confused.  I understand that there are many contexts in which one
+> would want to prevent execution of unapproved content, which might
+> include preventing a given process from modifying some code and then
+> executing it.
+> 
+> I don't understand what these deny-write features have to do with it.
+> These features merely prevent someone from modifying code *that is
+> currently in use*, which is not at all the same thing as preventing
+> modifying code that might get executed -- one can often modify
+> contents *before* executing those contents.
 
-Motivation:
-- Ensures automatic cleanup of policy references when they go out of scop=
-e,
-  reducing the risk of forgetting to call cpufreq_cpu_put() on early retu=
-rn
-  or error paths.
-- Brings the code in line with the latest kernel coding style and best
-  practices for managing reference-counted objects.
-- No functional changes are introduced; behavior remains the same,
-  but reference counting is now safer and easier to maintain.
+The order of checks would be:
+1. open script with O_DENY_WRITE
+2. check executability with AT_EXECVE_CHECK
+3. read the content and interpret it
 
-Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
----
- arch/arm64/kernel/topology.c                  |  9 +++----
- arch/x86/kvm/x86.c                            | 10 ++++----
- drivers/acpi/processor_thermal.c              | 13 ++++------
- drivers/cpufreq/brcmstb-avs-cpufreq.c         |  4 +---
- drivers/cpufreq/cppc_cpufreq.c                |  4 +---
- drivers/cpufreq/intel_pstate.c                |  3 +--
- drivers/cpufreq/longhaul.c                    |  3 +--
- drivers/cpufreq/mediatek-cpufreq.c            |  6 ++---
- drivers/cpufreq/powernv-cpufreq.c             |  6 ++---
- drivers/cpufreq/s5pv210-cpufreq.c             |  3 +--
- drivers/cpufreq/tegra186-cpufreq.c            |  3 +--
- drivers/devfreq/governor_passive.c            | 19 ++++-----------
- drivers/gpu/drm/i915/gt/intel_llc.c           |  3 +--
- drivers/macintosh/windfarm_cpufreq_clamp.c    |  4 +---
- drivers/powercap/dtpm_cpu.c                   | 24 ++++++-------------
- drivers/thermal/imx_thermal.c                 |  7 ++----
- .../ti-soc-thermal/ti-thermal-common.c        |  5 +---
- kernel/power/energy_model.c                   |  7 ++----
- 18 files changed, 40 insertions(+), 93 deletions(-)
+The deny-write feature was to guarantee that there is no race condition
+between step 2 and 3.  All these checks are supposed to be done by a
+trusted interpreter (which is allowed to be executed).  The
+AT_EXECVE_CHECK call enables the caller to know if the kernel (and
+associated security policies) allowed the *current* content of the file
+to be executed.  Whatever happen before or after that (wrt.
+O_DENY_WRITE) should be covered by the security policy.
 
-diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-index 5d07ee85bdae..e3cb6d54f35b 100644
---- a/arch/arm64/kernel/topology.c
-+++ b/arch/arm64/kernel/topology.c
-@@ -307,17 +307,16 @@ int arch_freq_get_on_cpu(int cpu)
- 		 */
- 		if (!housekeeping_cpu(cpu, HK_TYPE_TICK) ||
- 		    time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMPLE_E=
-XP_MS))) {
--			struct cpufreq_policy *policy =3D cpufreq_cpu_get(cpu);
-+			struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 			int ref_cpu;
-=20
-+			policy =3D cpufreq_cpu_get(cpu);
- 			if (!policy)
- 				return -EINVAL;
-=20
- 			if (!cpumask_intersects(policy->related_cpus,
--						housekeeping_cpumask(HK_TYPE_TICK))) {
--				cpufreq_cpu_put(policy);
-+						housekeeping_cpumask(HK_TYPE_TICK)))
- 				return -EOPNOTSUPP;
--			}
-=20
- 			for_each_cpu_wrap(ref_cpu, policy->cpus, cpu + 1) {
- 				if (ref_cpu =3D=3D start_cpu) {
-@@ -329,8 +328,6 @@ int arch_freq_get_on_cpu(int cpu)
- 					break;
- 			}
-=20
--			cpufreq_cpu_put(policy);
--
- 			if (ref_cpu >=3D nr_cpu_ids)
- 				/* No alternative to pull info from */
- 				return -EAGAIN;
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index a1c49bc681c4..2a825f4ec701 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -9492,16 +9492,14 @@ static void kvm_timer_init(void)
- 		max_tsc_khz =3D tsc_khz;
-=20
- 		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
--			struct cpufreq_policy *policy;
-+			struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 			int cpu;
-=20
- 			cpu =3D get_cpu();
- 			policy =3D cpufreq_cpu_get(cpu);
--			if (policy) {
--				if (policy->cpuinfo.max_freq)
--					max_tsc_khz =3D policy->cpuinfo.max_freq;
--				cpufreq_cpu_put(policy);
--			}
-+			if (policy && policy->cpuinfo.max_freq)
-+				max_tsc_khz =3D policy->cpuinfo.max_freq;
-+
- 			put_cpu();
- 		}
- 		cpufreq_register_notifier(&kvmclock_cpufreq_notifier_block,
-diff --git a/drivers/acpi/processor_thermal.c b/drivers/acpi/processor_th=
-ermal.c
-index 1219adb11ab9..8367a81c4842 100644
---- a/drivers/acpi/processor_thermal.c
-+++ b/drivers/acpi/processor_thermal.c
-@@ -64,17 +64,14 @@ static int phys_package_first_cpu(int cpu)
-=20
- static int cpu_has_cpufreq(unsigned int cpu)
- {
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
-=20
- 	if (!acpi_processor_cpufreq_init)
- 		return 0;
-=20
- 	policy =3D cpufreq_cpu_get(cpu);
--	if (policy) {
--		cpufreq_cpu_put(policy);
--		return 1;
--	}
--	return 0;
-+
-+	return !!policy;
- }
-=20
- static int cpufreq_get_max_state(unsigned int cpu)
-@@ -95,7 +92,7 @@ static int cpufreq_get_cur_state(unsigned int cpu)
-=20
- static int cpufreq_set_cur_state(unsigned int cpu, int state)
- {
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 	struct acpi_processor *pr;
- 	unsigned long max_freq;
- 	int i, ret;
-@@ -127,8 +124,6 @@ static int cpufreq_set_cur_state(unsigned int cpu, in=
-t state)
- 		max_freq =3D (policy->cpuinfo.max_freq *
- 			    (100 - reduction_step(i) * cpufreq_thermal_reduction_pctg)) / 100=
-;
-=20
--		cpufreq_cpu_put(policy);
--
- 		ret =3D freq_qos_update_request(&pr->thermal_req, max_freq);
- 		if (ret < 0) {
- 			pr_warn("Failed to update thermal freq constraint: CPU%d (%d)\n",
-diff --git a/drivers/cpufreq/brcmstb-avs-cpufreq.c b/drivers/cpufreq/brcm=
-stb-avs-cpufreq.c
-index 5940d262374f..71450cca8e9f 100644
---- a/drivers/cpufreq/brcmstb-avs-cpufreq.c
-+++ b/drivers/cpufreq/brcmstb-avs-cpufreq.c
-@@ -480,7 +480,7 @@ static bool brcm_avs_is_firmware_loaded(struct privat=
-e_data *priv)
-=20
- static unsigned int brcm_avs_cpufreq_get(unsigned int cpu)
- {
--	struct cpufreq_policy *policy =3D cpufreq_cpu_get(cpu);
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpufreq_cp=
-u_get(cpu);
- 	struct private_data *priv;
-=20
- 	if (!policy)
-@@ -488,8 +488,6 @@ static unsigned int brcm_avs_cpufreq_get(unsigned int=
- cpu)
-=20
- 	priv =3D policy->driver_data;
-=20
--	cpufreq_cpu_put(policy);
--
- 	return brcm_avs_get_frequency(priv->base);
- }
-=20
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufre=
-q.c
-index 4a17162a392d..7183754b1f31 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -726,7 +726,7 @@ static int cppc_get_perf_ctrs_sample(int cpu,
- static unsigned int cppc_cpufreq_get_rate(unsigned int cpu)
- {
- 	struct cppc_perf_fb_ctrs fb_ctrs_t0 =3D {0}, fb_ctrs_t1 =3D {0};
--	struct cpufreq_policy *policy =3D cpufreq_cpu_get(cpu);
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpufreq_cp=
-u_get(cpu);
- 	struct cppc_cpudata *cpu_data;
- 	u64 delivered_perf;
- 	int ret;
-@@ -736,8 +736,6 @@ static unsigned int cppc_cpufreq_get_rate(unsigned in=
-t cpu)
-=20
- 	cpu_data =3D policy->driver_data;
-=20
--	cpufreq_cpu_put(policy);
--
- 	ret =3D cppc_get_perf_ctrs_sample(cpu, &fb_ctrs_t0, &fb_ctrs_t1);
- 	if (ret) {
- 		if (ret =3D=3D -EFAULT)
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
-e.c
-index f366d35c5840..fb962140af56 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -1698,7 +1698,7 @@ static ssize_t store_no_turbo(struct kobject *a, st=
-ruct kobj_attribute *b,
- static void update_qos_request(enum freq_qos_req_type type)
- {
- 	struct freq_qos_request *req;
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 	int i;
-=20
- 	for_each_possible_cpu(i) {
-@@ -1710,7 +1710,6 @@ static void update_qos_request(enum freq_qos_req_ty=
-pe type)
- 			continue;
-=20
- 		req =3D policy->driver_data;
--		cpufreq_cpu_put(policy);
-=20
- 		if (!req)
- 			continue;
-diff --git a/drivers/cpufreq/longhaul.c b/drivers/cpufreq/longhaul.c
-index ba0e08c8486a..ae5596919671 100644
---- a/drivers/cpufreq/longhaul.c
-+++ b/drivers/cpufreq/longhaul.c
-@@ -950,7 +950,7 @@ static int __init longhaul_init(void)
-=20
- static void __exit longhaul_exit(void)
- {
--	struct cpufreq_policy *policy =3D cpufreq_cpu_get(0);
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpufreq_cp=
-u_get(0);
- 	int i;
-=20
- 	for (i =3D 0; i < numscales; i++) {
-@@ -968,7 +968,6 @@ static void __exit longhaul_exit(void)
- 		}
- 	}
-=20
--	cpufreq_cpu_put(policy);
- 	cpufreq_unregister_driver(&longhaul_driver);
- 	kfree(longhaul_table);
- }
-diff --git a/drivers/cpufreq/mediatek-cpufreq.c b/drivers/cpufreq/mediate=
-k-cpufreq.c
-index f3f02c4b6888..1fae060e16d9 100644
---- a/drivers/cpufreq/mediatek-cpufreq.c
-+++ b/drivers/cpufreq/mediatek-cpufreq.c
-@@ -320,7 +320,7 @@ static int mtk_cpufreq_opp_notifier(struct notifier_b=
-lock *nb,
- 	struct dev_pm_opp *new_opp;
- 	struct mtk_cpu_dvfs_info *info;
- 	unsigned long freq, volt;
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 	int ret =3D 0;
-=20
- 	info =3D container_of(nb, struct mtk_cpu_dvfs_info, opp_nb);
-@@ -354,11 +354,9 @@ static int mtk_cpufreq_opp_notifier(struct notifier_=
-block *nb,
-=20
- 			dev_pm_opp_put(new_opp);
- 			policy =3D cpufreq_cpu_get(info->opp_cpu);
--			if (policy) {
-+			if (policy)
- 				cpufreq_driver_target(policy, freq / 1000,
- 						      CPUFREQ_RELATION_L);
--				cpufreq_cpu_put(policy);
--			}
- 		}
- 	}
-=20
-diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-=
-cpufreq.c
-index 7d9a5f656de8..ea9d78bbeb38 100644
---- a/drivers/cpufreq/powernv-cpufreq.c
-+++ b/drivers/cpufreq/powernv-cpufreq.c
-@@ -892,7 +892,7 @@ static int powernv_cpufreq_reboot_notifier(struct not=
-ifier_block *nb,
- 				unsigned long action, void *unused)
- {
- 	int cpu;
--	struct cpufreq_policy *cpu_policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
-=20
- 	rebooting =3D true;
- 	for_each_online_cpu(cpu) {
-@@ -900,7 +900,6 @@ static int powernv_cpufreq_reboot_notifier(struct not=
-ifier_block *nb,
- 		if (!cpu_policy)
- 			continue;
- 		powernv_cpufreq_target_index(cpu_policy, get_nominal_index());
--		cpufreq_cpu_put(cpu_policy);
- 	}
-=20
- 	return NOTIFY_DONE;
-@@ -913,7 +912,7 @@ static struct notifier_block powernv_cpufreq_reboot_n=
-b =3D {
- static void powernv_cpufreq_work_fn(struct work_struct *work)
- {
- 	struct chip *chip =3D container_of(work, struct chip, throttle);
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 	unsigned int cpu;
- 	cpumask_t mask;
-=20
-@@ -935,7 +934,6 @@ static void powernv_cpufreq_work_fn(struct work_struc=
-t *work)
- 		index =3D cpufreq_table_find_index_c(policy, policy->cur, false);
- 		powernv_cpufreq_target_index(policy, index);
- 		cpumask_andnot(&mask, &mask, policy->cpus);
--		cpufreq_cpu_put(policy);
- 	}
- out:
- 	cpus_read_unlock();
-diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-=
-cpufreq.c
-index 76c888ed8d16..95f1568e9530 100644
---- a/drivers/cpufreq/s5pv210-cpufreq.c
-+++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -555,7 +555,7 @@ static int s5pv210_cpufreq_reboot_notifier_event(stru=
-ct notifier_block *this,
- 						 unsigned long event, void *ptr)
- {
- 	int ret;
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
-=20
- 	policy =3D cpufreq_cpu_get(0);
- 	if (!policy) {
-@@ -564,7 +564,6 @@ static int s5pv210_cpufreq_reboot_notifier_event(stru=
-ct notifier_block *this,
- 	}
-=20
- 	ret =3D cpufreq_driver_target(policy, SLEEP_FREQ, 0);
--	cpufreq_cpu_put(policy);
-=20
- 	if (ret < 0)
- 		return NOTIFY_BAD;
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra18=
-6-cpufreq.c
-index cbabb726c664..4d71e262a729 100644
---- a/drivers/cpufreq/tegra186-cpufreq.c
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -105,7 +105,7 @@ static unsigned int tegra186_cpufreq_get(unsigned int=
- cpu)
- {
- 	struct tegra186_cpufreq_data *data =3D cpufreq_get_driver_data();
- 	struct tegra186_cpufreq_cluster *cluster;
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 	unsigned int edvd_offset, cluster_id;
- 	u32 ndiv;
-=20
-@@ -117,7 +117,6 @@ static unsigned int tegra186_cpufreq_get(unsigned int=
- cpu)
- 	ndiv =3D readl(data->regs + edvd_offset) & EDVD_CORE_VOLT_FREQ_F_MASK;
- 	cluster_id =3D data->cpus[policy->cpu].bpmp_cluster_id;
- 	cluster =3D &data->clusters[cluster_id];
--	cpufreq_cpu_put(policy);
-=20
- 	return (cluster->ref_clk_khz * ndiv) / cluster->div;
- }
-diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governo=
-r_passive.c
-index 953cf9a1e9f7..cba58684ee06 100644
---- a/drivers/devfreq/governor_passive.c
-+++ b/drivers/devfreq/governor_passive.c
-@@ -80,7 +80,7 @@ static int get_target_freq_with_cpufreq(struct devfreq =
-*devfreq,
- 	struct devfreq_passive_data *p_data =3D
- 				(struct devfreq_passive_data *)devfreq->data;
- 	struct devfreq_cpu_data *parent_cpu_data;
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 	unsigned long cpu, cpu_cur, cpu_min, cpu_max, cpu_percent;
- 	unsigned long dev_min, dev_max;
- 	unsigned long freq =3D 0;
-@@ -94,10 +94,8 @@ static int get_target_freq_with_cpufreq(struct devfreq=
- *devfreq,
- 		}
-=20
- 		parent_cpu_data =3D get_parent_cpu_data(p_data, policy);
--		if (!parent_cpu_data) {
--			cpufreq_cpu_put(policy);
-+		if (!parent_cpu_data)
- 			continue;
--		}
-=20
- 		/* Get target freq via required opps */
- 		cpu_cur =3D parent_cpu_data->cur_freq * HZ_PER_KHZ;
-@@ -106,7 +104,6 @@ static int get_target_freq_with_cpufreq(struct devfre=
-q *devfreq,
- 					devfreq->opp_table, &cpu_cur);
- 		if (freq) {
- 			*target_freq =3D max(freq, *target_freq);
--			cpufreq_cpu_put(policy);
- 			continue;
- 		}
-=20
-@@ -121,7 +118,6 @@ static int get_target_freq_with_cpufreq(struct devfre=
-q *devfreq,
- 		freq =3D dev_min + mult_frac(dev_max - dev_min, cpu_percent, 100);
-=20
- 		*target_freq =3D max(freq, *target_freq);
--		cpufreq_cpu_put(policy);
- 	}
-=20
- 	return ret;
-@@ -256,7 +252,7 @@ static int cpufreq_passive_register_notifier(struct d=
-evfreq *devfreq)
- 	struct device *dev =3D devfreq->dev.parent;
- 	struct opp_table *opp_table =3D NULL;
- 	struct devfreq_cpu_data *parent_cpu_data;
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 	struct device *cpu_dev;
- 	unsigned int cpu;
- 	int ret;
-@@ -280,16 +276,14 @@ static int cpufreq_passive_register_notifier(struct=
- devfreq *devfreq)
- 		}
-=20
- 		parent_cpu_data =3D get_parent_cpu_data(p_data, policy);
--		if (parent_cpu_data) {
--			cpufreq_cpu_put(policy);
-+		if (parent_cpu_data)
- 			continue;
--		}
-=20
- 		parent_cpu_data =3D kzalloc(sizeof(*parent_cpu_data),
- 						GFP_KERNEL);
- 		if (!parent_cpu_data) {
- 			ret =3D -ENOMEM;
--			goto err_put_policy;
-+			goto err;
- 		}
-=20
- 		cpu_dev =3D get_cpu_device(cpu);
-@@ -314,7 +308,6 @@ static int cpufreq_passive_register_notifier(struct d=
-evfreq *devfreq)
- 		parent_cpu_data->max_freq =3D policy->cpuinfo.max_freq;
-=20
- 		list_add_tail(&parent_cpu_data->node, &p_data->cpu_data_list);
--		cpufreq_cpu_put(policy);
- 	}
-=20
- 	mutex_lock(&devfreq->lock);
-@@ -327,8 +320,6 @@ static int cpufreq_passive_register_notifier(struct d=
-evfreq *devfreq)
-=20
- err_free_cpu_data:
- 	kfree(parent_cpu_data);
--err_put_policy:
--	cpufreq_cpu_put(policy);
- err:
-=20
- 	return ret;
-diff --git a/drivers/gpu/drm/i915/gt/intel_llc.c b/drivers/gpu/drm/i915/g=
-t/intel_llc.c
-index 1d19c073ba2e..53cef2ab133d 100644
---- a/drivers/gpu/drm/i915/gt/intel_llc.c
-+++ b/drivers/gpu/drm/i915/gt/intel_llc.c
-@@ -29,13 +29,12 @@ static struct intel_gt *llc_to_gt(struct intel_llc *l=
-lc)
-=20
- static unsigned int cpu_max_MHz(void)
- {
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 	unsigned int max_khz;
-=20
- 	policy =3D cpufreq_cpu_get(0);
- 	if (policy) {
- 		max_khz =3D policy->cpuinfo.max_freq;
--		cpufreq_cpu_put(policy);
- 	} else {
- 		/*
- 		 * Default to measured freq if none found, PCU will ensure we
-diff --git a/drivers/macintosh/windfarm_cpufreq_clamp.c b/drivers/macinto=
-sh/windfarm_cpufreq_clamp.c
-index 28d18ef22bbb..f05e2167481f 100644
---- a/drivers/macintosh/windfarm_cpufreq_clamp.c
-+++ b/drivers/macintosh/windfarm_cpufreq_clamp.c
-@@ -62,7 +62,7 @@ static const struct wf_control_ops clamp_ops =3D {
-=20
- static int __init wf_cpufreq_clamp_init(void)
- {
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 	struct wf_control *clamp;
- 	struct device *dev;
- 	int ret;
-@@ -79,8 +79,6 @@ static int __init wf_cpufreq_clamp_init(void)
- 	ret =3D freq_qos_add_request(&policy->constraints, &qos_req, FREQ_QOS_M=
-AX,
- 				   max_freq);
-=20
--	cpufreq_cpu_put(policy);
--
- 	if (ret < 0) {
- 		pr_err("%s: Failed to add freq constraint (%d)\n", __func__,
- 		       ret);
-diff --git a/drivers/powercap/dtpm_cpu.c b/drivers/powercap/dtpm_cpu.c
-index 99390ec1481f..65117569d0f3 100644
---- a/drivers/powercap/dtpm_cpu.c
-+++ b/drivers/powercap/dtpm_cpu.c
-@@ -144,19 +144,16 @@ static int update_pd_power_uw(struct dtpm *dtpm)
- static void pd_release(struct dtpm *dtpm)
- {
- 	struct dtpm_cpu *dtpm_cpu =3D to_dtpm_cpu(dtpm);
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
-=20
- 	if (freq_qos_request_active(&dtpm_cpu->qos_req))
- 		freq_qos_remove_request(&dtpm_cpu->qos_req);
-=20
- 	policy =3D cpufreq_cpu_get(dtpm_cpu->cpu);
--	if (policy) {
-+	if (policy)
- 		for_each_cpu(dtpm_cpu->cpu, policy->related_cpus)
- 			per_cpu(dtpm_per_cpu, dtpm_cpu->cpu) =3D NULL;
-=20
--		cpufreq_cpu_put(policy);
--	}
--
- 	kfree(dtpm_cpu);
- }
-=20
-@@ -192,7 +189,7 @@ static int cpuhp_dtpm_cpu_online(unsigned int cpu)
- static int __dtpm_cpu_setup(int cpu, struct dtpm *parent)
- {
- 	struct dtpm_cpu *dtpm_cpu;
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 	struct em_perf_state *table;
- 	struct em_perf_domain *pd;
- 	char name[CPUFREQ_NAME_LEN];
-@@ -207,16 +204,12 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *p=
-arent)
- 		return 0;
-=20
- 	pd =3D em_cpu_get(cpu);
--	if (!pd || em_is_artificial(pd)) {
--		ret =3D -EINVAL;
--		goto release_policy;
--	}
-+	if (!pd || em_is_artificial(pd))
-+		return -EINVAL;
-=20
- 	dtpm_cpu =3D kzalloc(sizeof(*dtpm_cpu), GFP_KERNEL);
--	if (!dtpm_cpu) {
--		ret =3D -ENOMEM;
--		goto release_policy;
--	}
-+	if (!dtpm_cpu)
-+		return -ENOMEM;
-=20
- 	dtpm_init(&dtpm_cpu->dtpm, &dtpm_ops);
- 	dtpm_cpu->cpu =3D cpu;
-@@ -239,7 +232,6 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *par=
-ent)
- 	if (ret < 0)
- 		goto out_dtpm_unregister;
-=20
--	cpufreq_cpu_put(policy);
- 	return 0;
-=20
- out_dtpm_unregister:
-@@ -251,8 +243,6 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *par=
-ent)
- 		per_cpu(dtpm_per_cpu, cpu) =3D NULL;
- 	kfree(dtpm_cpu);
-=20
--release_policy:
--	cpufreq_cpu_put(policy);
- 	return ret;
- }
-=20
-diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.=
-c
-index 38c993d1bcb3..1478ccb99553 100644
---- a/drivers/thermal/imx_thermal.c
-+++ b/drivers/thermal/imx_thermal.c
-@@ -543,7 +543,7 @@ static int imx_thermal_register_legacy_cooling(struct=
- imx_thermal_data *data)
- 	struct device_node *np;
- 	int ret =3D 0;
-=20
--	data->policy =3D cpufreq_cpu_get(0);
-+	data->policy __free(put_cpufreq_policy) =3D cpufreq_cpu_get(0);
- 	if (!data->policy) {
- 		pr_debug("%s: CPUFreq policy not found\n", __func__);
- 		return -EPROBE_DEFER;
-@@ -553,10 +553,8 @@ static int imx_thermal_register_legacy_cooling(struc=
-t imx_thermal_data *data)
-=20
- 	if (!np || !of_property_present(np, "#cooling-cells")) {
- 		data->cdev =3D cpufreq_cooling_register(data->policy);
--		if (IS_ERR(data->cdev)) {
-+		if (IS_ERR(data->cdev))
- 			ret =3D PTR_ERR(data->cdev);
--			cpufreq_cpu_put(data->policy);
--		}
- 	}
-=20
- 	of_node_put(np);
-@@ -567,7 +565,6 @@ static int imx_thermal_register_legacy_cooling(struct=
- imx_thermal_data *data)
- static void imx_thermal_unregister_legacy_cooling(struct imx_thermal_dat=
-a *data)
- {
- 	cpufreq_cooling_unregister(data->cdev);
--	cpufreq_cpu_put(data->policy);
- }
-=20
- #else
-diff --git a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c b/drivers=
-/thermal/ti-soc-thermal/ti-thermal-common.c
-index 0cf0826b805a..7ce023bf01b5 100644
---- a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-+++ b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-@@ -234,7 +234,7 @@ int ti_thermal_register_cpu_cooling(struct ti_bandgap=
- *bgp, int id)
- 	if (!data)
- 		return -EINVAL;
-=20
--	data->policy =3D cpufreq_cpu_get(0);
-+	data->policy __free(put_cpufreq_policy) =3D cpufreq_cpu_get(0);
- 	if (!data->policy) {
- 		pr_debug("%s: CPUFreq policy not found\n", __func__);
- 		return -EPROBE_DEFER;
-@@ -246,7 +246,6 @@ int ti_thermal_register_cpu_cooling(struct ti_bandgap=
- *bgp, int id)
- 		int ret =3D PTR_ERR(data->cool_dev);
- 		dev_err(bgp->dev, "Failed to register cpu cooling device %d\n",
- 			ret);
--		cpufreq_cpu_put(data->policy);
-=20
- 		return ret;
- 	}
-@@ -263,8 +262,6 @@ int ti_thermal_unregister_cpu_cooling(struct ti_bandg=
-ap *bgp, int id)
-=20
- 	if (!IS_ERR_OR_NULL(data)) {
- 		cpufreq_cooling_unregister(data->cool_dev);
--		if (data->policy)
--			cpufreq_cpu_put(data->policy);
- 	}
-=20
- 	return 0;
-diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-index ea7995a25780..4f91112c10bd 100644
---- a/kernel/power/energy_model.c
-+++ b/kernel/power/energy_model.c
-@@ -451,7 +451,7 @@ static void
- em_cpufreq_update_efficiencies(struct device *dev, struct em_perf_state =
-*table)
- {
- 	struct em_perf_domain *pd =3D dev->em_pd;
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 	int found =3D 0;
- 	int i, cpu;
-=20
-@@ -479,8 +479,6 @@ em_cpufreq_update_efficiencies(struct device *dev, st=
-ruct em_perf_state *table)
- 			found++;
- 	}
-=20
--	cpufreq_cpu_put(policy);
--
- 	if (!found)
- 		return;
-=20
-@@ -787,7 +785,7 @@ static void em_check_capacity_update(void)
-=20
- 	/* Check if CPUs capacity has changed than update EM */
- 	for_each_possible_cpu(cpu) {
--		struct cpufreq_policy *policy;
-+		struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 		struct em_perf_domain *pd;
- 		struct device *dev;
-=20
-@@ -801,7 +799,6 @@ static void em_check_capacity_update(void)
- 					      msecs_to_jiffies(1000));
- 			break;
- 		}
--		cpufreq_cpu_put(policy);
-=20
- 		dev =3D get_cpu_device(cpu);
- 		pd =3D em_pd_get(dev);
---=20
-2.25.1
+> 
+> In any case, IMO it's rather sad that the elimination of ETXTBSY had
+> to be reverted -- it's really quite a nasty feature.  But it occurs to
+> me that Linux can more or less do what is IMO the actually desired
+> thing: snapshot the contents of a file and execute the snapshot.  The
+> hack at the end of the email works!  (Well, it works if the chosen
+> filesystem supports it.)
+> 
+> $ ./silly_tmp /tmp/test /tmp vim /proc/self/fd/3
+> 
+> emacs is apparently far, far too clever and can't save if you do:
+> 
+> $ ./silly_tmp /tmp/test /tmp emacs /proc/self/fd/3
+> 
+> 
+> I'm not seriously suggesting that anyone should execute binaries or
+> scripts on Linux exactly like this, for a whole bunch of reasons:
+> 
+> - It needs filesystem support (but maybe this isn't so bad)
+> 
+> - It needs write access to a directory on the correct filesystem (a
+> showstopper for serious use)
+> 
+> - It is wildly incompatible with write-xor-execute, so this would be a
+> case of one step forward, ten steps back.
+> 
+> - It would defeat a lot of tools that inspect /proc, which would be
+> quite annoying to say the least.
+> 
+> 
+> But maybe a less kludgy version could be used for real.  What if there
+> was a syscall that would take an fd and make a snapshot of the file?
 
+Yes, that would be a clean solution.  I don't think this is achievable
+in an efficient way without involving filesystem implementations though.
+
+> It would, at least by default, produce a *read-only* snapshot (fully
+> sealed a la F_SEAL_*), inherit any integrity data that came with the
+> source (e.g. LSMs could understand it), would not require a writable
+> directory on the filesystem, and would maybe even come with an extra
+> seal-like thing that prevents it from being linkat-ed.  (I'm not sure
+> that linkat would actually be a problem, but I'm also not immediately
+> sure that LSMs would be as comfortable with it if linkat were
+> allowed.)  And there could probably be an extremely efficient
+> implementation that might even reuse the existing deny-write mechanism
+> to optimize the common case where the file is never written.
+> 
+> For that matter, the actual common case would be to execute stuff in
+> /usr or similar, and those files really ought never to be modified.
+> So there could be a file attribute or something that means "this file
+> CANNOT be modified, but it can still be unlinked or replaced as
+> usual", and snapshotting such a file would be a no-op.  Distributions
+> and container tools could set that attribute.  Overlayfs could also
+> provide an efficient implementation if the file currently comes from
+> an immutable source.
+> 
+> Hmm, maybe it's not strictly necessary that it be immutable -- maybe
+> it's sometimes okay if reads start to fail if the contents change.
+> Let's call this a "weak snapshot" -- reads of a weak snapshot either
+> return the original contents or fail.  fsverity would give weak
+> snapshots for at no additional cost.
+> 
+> 
+> It's worth noting that the common case doesn't actually need an fd.
+> We have mmap(..., MAP_PRIVATE, ...).  What we would actually want for
+> mmap use cases is mmap(..., MAP_SNAPSHOT, ...), with the semantics
+> that the kernel promises that future writes to the source would either
+> not be reflected in the mapping or would cause SIGBUS.  One might
+> reasonably debate what forced-writes would do (I think forced-writes
+> should be allowed just like they currently are, since anyone who can
+> force-write to process memory is already assumed to be permitted to
+> bypass write-xor-execute).
+> 
+> 
+> ---
+> 
+> /* Written by Claude Sonnet 4 with a surprisingly small amount of help
+> from Andy */
+> 
+> #define _GNU_SOURCE
+> #include <sys/types.h>
+> #include <sys/stat.h>
+> #include <fcntl.h>
+> #include <unistd.h>
+> #include <sys/ioctl.h>
+> #include <linux/fs.h>
+> #include <stdio.h>
+> #include <stdlib.h>
+> #include <errno.h>
+> #include <string.h>
+> 
+> int main(int argc, char *argv[]) {
+>     if (argc < 4) {
+>         fprintf(stderr, "Usage: %s <source_file> <temp_dir>
+> [exec_args...]\n", argv[0]);
+>         exit(1);
+>     }
+> 
+>     const char *source_file = argv[1];
+>     const char *temp_dir = argv[2];
+> 
+>     // Open source file
+>     int source_fd = open(source_file, O_RDONLY);
+>     if (source_fd == -1) {
+>         perror("Failed to open source file");
+>         exit(1);
+>     }
+> 
+>     // Create temporary file
+>     int temp_fd = open(temp_dir, O_TMPFILE | O_RDWR, 0600);
+>     if (temp_fd == -1) {
+>         perror("Failed to create temporary file");
+>         close(source_fd);
+>         exit(1);
+>     }
+> 
+>     // Clone the file contents using FICLONE
+>     if (ioctl(temp_fd, FICLONE, source_fd) == -1) {
+>         perror("Failed to clone file");
+>         close(source_fd);
+>         close(temp_fd);
+>         exit(1);
+>     }
+> 
+>     // Close source file
+>     close(source_fd);
+> 
+>     // Make sure temp file is on fd 3
+>     if (temp_fd != 3) {
+>         if (dup2(temp_fd, 3) == -1) {
+>             perror("Failed to move temp file to fd 3");
+>             close(temp_fd);
+>             exit(1);
+>         }
+>         close(temp_fd);
+>     }
+> 
+>     // Execute the remaining arguments
+>     if (argc >= 3) {
+>         execvp(argv[3], &argv[3]);
+>         perror("Failed to execute command");
+>         exit(1);
+>     }
+> 
+>     return 0;
+> }
+
+As you said, this doesn't work if temp_dir is not allowed for execution,
+and it doesn't allow the kernel to check/track the content of the
+script, which is the purpose of AT_EXECVE_CHECK.
 
