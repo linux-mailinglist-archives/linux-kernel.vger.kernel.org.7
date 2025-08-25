@@ -1,114 +1,128 @@
-Return-Path: <linux-kernel+bounces-784442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCBC2B33BBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:53:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0039B33BCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EB013A398E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:52:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6F3E1B27CDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346C62D372D;
-	Mon, 25 Aug 2025 09:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBF32D3A9E;
+	Mon, 25 Aug 2025 09:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xqpn8E+1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="E1YSSVrl"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813E52D0C70;
-	Mon, 25 Aug 2025 09:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7952D0C9C
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756115442; cv=none; b=h16eq2qtfnqcQSoa2xQAkabOT6bD0t8Q+aD9FUV7bSprljT3LduumFFZ4wvVIJIalAAlt2C3jIosIOkX5bqfJEhLgW6tTOWtHtbdR4jxqbQkdRlNnvJjmw8L6JYRDIZYFslCIe84Iu3/Mvvnm6D1/5pueGHKiCl9r4fFW4nX3l0=
+	t=1756115476; cv=none; b=tBPz+O5nabBxFfd12dXopKMc3L6H/T9MT9MQkyCE/BT0DrkWz9gGlerc9J4OGfhiaqR3ltxxDjazK+tgTSfvHfFdluyDKEpUJjsN1MhRA7jcJnFOKgSzPkACPydEtB7shAsrRUlSASk+lN1GReyC/kz3HZdmgqQQMyEiF0ZCXtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756115442; c=relaxed/simple;
-	bh=oAksL10rM01RKP2Fo0u19qLEi3x+WBMWJDe8YJJTSnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nGzs2T/z+q7XouI4CS9jmsP+6qnkiWP10zdtPnLcrppRpXQ0oHRmSTYKZ3R8v/bS6BD7XhwtgDzfzSzC+7FwL1sXWyFbav44k9DkXoGxw00VUIghSiZoANg3b8syXTEiRA6WpuYEXX45Ge2RZ553NQ3YqExyOOg1JgTBAULiO98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xqpn8E+1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16740C116D0;
-	Mon, 25 Aug 2025 09:50:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756115442;
-	bh=oAksL10rM01RKP2Fo0u19qLEi3x+WBMWJDe8YJJTSnk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Xqpn8E+1S2afLNXlLn5zwHcK6KnD0fTTQUUhim6rkOBsLkhPoOdtY02VLlPzD6dhr
-	 G2MwbupF74Tw8/Jx8j/HW0qQ6mDPkWKoGJpIaOlYshYHo2pU+ZCeURNTAm5Nd3yskB
-	 EBfob3LYl2omOXUbKv1JACF9ZEZNiL8hYAPlFX1N2+bbXkKK7HkLNqdiLWJl7h+woW
-	 o8Lk5NZE0FEZ8mYN5kBdKbd0B6rNEwf2/+5A9dNjqjZF2NFbFnetHdm4R135lEK7gM
-	 Qsz7QHmHnX6momPklW9VBGlo0h7Por8QlUWjPgV0A1GnBh8S+Ndojq2iWlY4NFn9WV
-	 9UJ/6V1OhUrsw==
-Date: Mon, 25 Aug 2025 10:50:32 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v4 1/2] iio: magnetometer: add support for Infineon
- TLV493D 3D Magentic sensor
-Message-ID: <20250825105032.45f33b12@jic23-huawei>
-In-Reply-To: <CAFmh=S0gAB93Gqnrt9NdtLA=cjOcYwy6+ECnwH-j9sN_sZYjZw@mail.gmail.com>
-References: <20250814-tlv493d-sensor-v6_16-rc5-v4-0-81b82805aae0@gmail.com>
-	<20250814-tlv493d-sensor-v6_16-rc5-v4-1-81b82805aae0@gmail.com>
-	<aKXW5pGiN18DyIZ7@smile.fi.intel.com>
-	<aKaMPMnGRyvKqTny@dixit>
-	<CAHp75Vdw5X1Y057fpGjdvVGwKq0x0UBdm8py+m+55RbzXi1PJw@mail.gmail.com>
-	<aKfYlP-yWdQi34db@dixit>
-	<CAFmh=S0gAB93Gqnrt9NdtLA=cjOcYwy6+ECnwH-j9sN_sZYjZw@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756115476; c=relaxed/simple;
+	bh=B8eCYEono40PCIy16xmaC4Aox2ZtXZbrtkZF8FCENiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QKSYf2T7ByBySrI2HdNRbwBAQno6en22JC2Jx3GrmEL6J7fIZKyHNLG0cgo/g7Jt/YojUTHBrQIgpS2bnbOQf82oclDcTr/YIbsSZiVS7z5eBY+TKJYJnZEOTbvM7zruqmBuf83YilPw6+xgES5JzJli9vuKUqZp0Ib8LxXUOY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=E1YSSVrl; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-771e987b4e6so341106b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 02:51:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1756115472; x=1756720272; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=91s1cIGRQAxrumxrJ8ni6aEx18e/r1sz4gPLC81PIgY=;
+        b=E1YSSVrl8O1J/DGQWQkRBjERagRt0CuIMoYZFNRkgUW2Y9BQf3qFeYQRmUqFSaHT6O
+         bFkk/QetwGsQXg8DKAjBdYNpQycSlMQ2De0vvYOVRfRu7Gv9HyNMwtWlMXH66KFoyevZ
+         F9um6xbXyAkHdC9p3Mx1m10vpMTfmoz+3BohjFROf2HSDHY+3Daqr+kLdTE22bhx95V9
+         ExkFTB8d+eEmMphg+c5cjrbHv8aTtiC2dRztLHWxEnQcLWk/yX+zGK/MGq1BIlkkosYt
+         THlG0bmrm8+pEKSmXcfNTCapzIo3fsPZfN67EeBEs+qkUjj6aOV7wQmd8EOwyEFnVRpo
+         Edxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756115472; x=1756720272;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=91s1cIGRQAxrumxrJ8ni6aEx18e/r1sz4gPLC81PIgY=;
+        b=ZjdKivpARtWpnq6QhIGkXYx8SDN7EkqGYzSDOFOnNTNJTI7ropfdjIwIrxcomMJo75
+         agjKg9GIdDXwuscH6OWRKJ6m8RGMkgA6bKkk5T9P8FNcjCvBey6Jq1RfMzeL52BDAxSf
+         z92ED95+RlYU3VWNCBkjm7zXbQ6kEb4Ujv8IcL6zxBKx7cDxaNLtly1numTpD+1/JJgZ
+         40EipmuzAw5mSJI4FoX8mWCL5+mrVU5A8YWfdYftXA/S4LNhV8xUMxorzqBcmeS/dBAM
+         +A+6Fh4AwI7D4fu6nHKH1BbRcyivtvDsFupwKYGFZK8hjx6/PqMmbvSECp9SeV++B2hm
+         EsLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9Z0lVHL6K1PFq4PrqYbeyNrBk7i7pQnJW5q32BGCUSUj/wYWVr1nvWZBOiZ5ZY3I5y45VKikbqPLOCa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRVHFHZCwoDid6GwNOT9eXUFLEoOvays00gqHTPOpLCoQ6nHIq
+	5ma7BRTBPgPNdP6v377r44Csd9I4T38l5XwKXQTH2jAyvygdm2hf2G+RU0dQE4Oo/w==
+X-Gm-Gg: ASbGncvLUOR0nSMr5LwS1ePR2/CqnOUW6pPKRdZBqjgvLetbbgFgldCZ8fXc8VMjCzT
+	OFjd11bqdYDSwWZ9+MOceaDGzbAAToGEqTXyuZFYDtX+TKB4u9vFn/VsSPF7Ts8bgTC0h72klP6
+	65dK+uAiJ3mzGLV6jIuPj4QoYlZkU+CBY78C5jZyFFm29KaOh5dnJ1Zgq+X/UzXtmRj2Zkvy4Yk
+	Pxrer5Sb7c9u+xKbtqFmcAqLUOTK2RKy+n4QFo5WUO+xaKQpgErEFCTc0MnPomAVcCJM2TGLuG9
+	EZXGs1MVpV89gtUkWSHmZUrcI6Ih3WC8T6CgB+FDN+E4P0I1GDfH4h0AbZzLJSCPj30/yEsoSdI
+	i+6/Oam4KqVMRghG1kYN3conVeV/kFjMLIyO6zKKB2HiNSL0=
+X-Google-Smtp-Source: AGHT+IFKmShdsyMlmj4cT5JRWT7LwYbqWBv7GzkGKLvpKSJg5ombkdXo91DBer2NpWN+oCdJY5Gk/A==
+X-Received: by 2002:a05:6a00:2288:b0:770:3064:78fa with SMTP id d2e1a72fcca58-77030647984mr14107031b3a.2.1756115472294;
+        Mon, 25 Aug 2025 02:51:12 -0700 (PDT)
+Received: from bytedance ([61.213.176.56])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-770b5bed408sm3213674b3a.18.2025.08.25.02.51.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 02:51:11 -0700 (PDT)
+Date: Mon, 25 Aug 2025 17:50:56 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: xupengbo <xupengbo@oppo.com>
+Cc: bsegall@google.com, cgroups@vger.kernel.org, dietmar.eggemann@arm.com,
+	juri.lelli@redhat.com, linux-kernel@vger.kernel.org,
+	mgorman@suse.de, mingo@redhat.com, peterz@infradead.org,
+	rostedt@goodmis.org, vincent.guittot@linaro.org,
+	vschneid@redhat.com
+Subject: Re: [PATCH v2] sched/fair: Fix unfairness caused by stalled
+ tg_load_avg_contrib when the last task migrates out.
+Message-ID: <20250825095056.GA87@bytedance>
+References: <20250806071848.GA629@bytedance>
+ <20250806083810.27678-1-xupengbo@oppo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250806083810.27678-1-xupengbo@oppo.com>
 
-On Mon, 25 Aug 2025 08:33:07 +0530
-Dixit Parmar <dixitparmar19@gmail.com> wrote:
+Hi xupengbo,
 
-> On Fri, Aug 22, 2025 at 8:10=E2=80=AFAM Dixit Parmar <dixitparmar19@gmail=
-.com> wrote:
-> >
-> > On Thu, Aug 21, 2025 at 10:41:03AM +0300, Andy Shevchenko wrote: =20
-> > > On Thu, Aug 21, 2025 at 6:02=E2=80=AFAM Dixit Parmar <dixitparmar19@g=
-mail.com> wrote: =20
-> > > > On Wed, Aug 20, 2025 at 05:08:38PM +0300, Andy Shevchenko wrote: =20
-> > >
-> > > ...
-> > > =20
-> > > > > >  st_magn-$(CONFIG_IIO_BUFFER) +=3D st_magn_buffer.o
-> > > > > >  obj-$(CONFIG_IIO_ST_MAGN_I2C_3AXIS) +=3D st_magn_i2c.o
-> > > > > >  obj-$(CONFIG_IIO_ST_MAGN_SPI_3AXIS) +=3D st_magn_spi.o
-> > > > > >
-> > > > > > +obj-$(CONFIG_INFINEON_TLV493D)             +=3D tlv493d.o
-> > > > > > +
-> > > > > >  obj-$(CONFIG_SENSORS_HMC5843)              +=3D hmc5843_core.o
-> > > > > >  obj-$(CONFIG_SENSORS_HMC5843_I2C)  +=3D hmc5843_i2c.o
-> > > > > >  obj-$(CONFIG_SENSORS_HMC5843_SPI)  +=3D hmc5843_spi.o =20
-> > > > >
-> > > > > I haven't got the ordering rules here and in Kconfig. Can it be a=
-lphabetical? =20
-> > > > From what I can see, the order is alphabetical based on the CONFIG =
-option in the
-> > > > Makefile and Kconfig, and I kept CONFIG_INFINEO_TLV493D after CONFI=
-G_IIO_ST*.
-> > > > Isn't it in correct order? or my understanding is incorrect? =20
-> > >
-> > > I dunno, The file name there is with the vendor prefix, in many cases
-> > > the configuration option is with vendor prefix as well, but the file.=
- =20
-> > Hi Jonathan, Can you please suggest best possible way here? =20
-> Hi Jonathan, When you get a chance, please share your thoughts on this.
+On Wed, Aug 06, 2025 at 04:38:10PM +0800, xupengbo wrote:
+... ... 
+> 
+> It actually becomes:
+>     if (cfs_rq->tg_load_avg_contrib > 0)
+> if cfs_rq->tg_load_avg_contrib == 0 , it will be false. As it is an unsigned
+> long, this condition is equivalent to :
+>     if (cfs_rq->tg_load_avg_contrib)
 
-No hard rules on this.  We should probably make some but don't have
-them yet, so try to go with what seems most common in the particular file.
+I suppose we have reached a conclusion that the right fix is to add a
+check of cfs_rq->tg_load_avg_contrib in cfs_rq_is_decayed()? Something
+like below:
 
-Jonathan
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index af33d107d8034..3ebcb683063f0 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4056,6 +4056,9 @@ static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
+ 	if (child_cfs_rq_on_list(cfs_rq))
+ 		return false;
+ 
++	if (cfs_rq->tg_load_avg_contrib)
++		return false;
++
+ 	return true;
+ }
+ 
+If you also agree, can you send an updated patch to fix this problem?
+Thanks.
 
