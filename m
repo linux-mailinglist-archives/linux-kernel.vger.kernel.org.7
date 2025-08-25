@@ -1,125 +1,166 @@
-Return-Path: <linux-kernel+bounces-785009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85CB0B344B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:54:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83996B344B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7690318885C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:55:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89FFF1890137
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6CA2FD1BF;
-	Mon, 25 Aug 2025 14:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209C52F3627;
+	Mon, 25 Aug 2025 14:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Ii8xug9m"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f6ycLc+c";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4zN5pQ6+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D1E2F9C29;
-	Mon, 25 Aug 2025 14:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EB235965
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756133658; cv=none; b=j5fBcW3DuHRw2xYoGDUDwJSpfjD5ycQglnWhsOdq25vTOemz4Dkir/TOMDNltMu13p7gu+uC/Vt+qBw601N3X+fIxVKnejzX2aHgrAQ4X+ehUILusFqN4ahd1pgstePoYrkhvGbuiYnArmpygMO4HRnF0jvtudnZKyZ5UQ34+CA=
+	t=1756133773; cv=none; b=luvw0ma2XegcBTOttxl3Na11lDmsnZ8CDmgtO6JkxXKzwIlgujKqv7jHi3unCN2O1glZTyZUm/lM0KzrLkJ/43vzIrpSangh6KSm+MR7cPZJEMWkgY90iE8b2riXR1g2WSpzGwRe0GUDCmC9eGFC9iLxqW4MCWSU/GmbGsVrmyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756133658; c=relaxed/simple;
-	bh=kU5NffYo6z7siXKutRKlSBWEEkjrHDU5wEaZXOeH1qE=;
+	s=arc-20240116; t=1756133773; c=relaxed/simple;
+	bh=lzG5ztffWAmxTgcoF6EAknDcfDopOHWkXJTGfrHmOPM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q0xX2CjsC7NdbJga9TRZCNGB5bHOp811JVcXVmmyxXpNUvfqY1Elzv9sy60jIoHONzwa2Cy+N76TwP+JXy4TnAju4DKrUeGe9SWacv67Yguh15MBhtoN70iAjgtiHE/9GmKx9hHwXenzeIjvTEQV6JLsmBMzkt2syaYPWkZxMu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Ii8xug9m; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=/MDZLJVE8OPf4cqXc8XG53ybrbOv5YqoOYJd4mZDqNI=; b=Ii8xug9mYRGJW3B9t9qms0CB1T
-	D+wc3s4SyIcTmik+IEMZF5AhBGzWHP86AhexiFdDef3GZLftjCSRRMg4771nzvuhSR7qwkUDHm71p
-	Oy3cYkxudhaDFccZ2aPNhyXXvwkRW1hHXQfmMxFcYWWnSayGBpRUB7BzlTRu78zRxXhZgziA8bYK0
-	cbKsU+EN6YyKQ8crxjFFtiFhfbShYnhxVp3+GBWAO6tCSCjoOuMBWrJlCtxTKzC5kv3MspZ9GluIZ
-	8OhbWTQBNh/dGb0av4Z6ftFzA5HG3h6Ess4ECnFvjY1zrncb7QdaERK/FE/vE3mby+u1uPvt+PoI3
-	RSL2VaIQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:54734)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uqYaG-000000006dz-08AH;
-	Mon, 25 Aug 2025 15:54:08 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uqYaD-000000008GB-1DUp;
-	Mon, 25 Aug 2025 15:54:05 +0100
-Date: Mon, 25 Aug 2025 15:54:05 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: mdiobus: Move all reset registration to
- `mdiobus_register_reset()`
-Message-ID: <aKx5DX09QZcbrXA6@shell.armlinux.org.uk>
-References: <20250825-b4-phy-rst-mv-prep-v1-1-6298349df7ca@prolan.hu>
- <aKxwVNffu9w8Mepl@shell.armlinux.org.uk>
- <724f69f0-7eab-40aa-84f0-07055f051175@prolan.hu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LVEDI6JYs2FDq8V0J2djjP1Jw91zeb+DcOzVR9CzRtVlQNlUWj48TcEGASPoYpqck2x61+u0GvHUfatZO68Pt4hdE2C7+i8ZEIEdVwAo7p5PvycWpQigETTPTxEvwct3fwPJQhZ/O495wavcG5hFgW6zd1Mx3BlTC0i34N4meFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f6ycLc+c; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4zN5pQ6+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 25 Aug 2025 16:56:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756133770;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qwgA88EWTFhd52yR0KS4Tya5c3yeMbixjFO2en//4I0=;
+	b=f6ycLc+ccZewfUYXs381T6wG69W1URTNV0n0okdxE9eYaaN9LXhRT3oH1Q1P5DVBYlCgn2
+	ZdZneVP5/orfnlkIVwmHFCKTL9s750J3y9mNhAwXZTQr6ReGYWxdApTEQf+ZLIhgUK0V4k
+	VaEYup6V0CK4ThO8yaJVAJRm5f69CurSWsv2ZAcC+BGlS1GxVPYMDehyNehFYProCz6PbG
+	BsJ2ueHvI5jMqz0b0TZ6Czt7/G3bjryzqEN6ioi9QdoGgZZtlSjS9fhtOgMtvivXsajFnG
+	JkCpdfeCYOf4Cct5Atq9bumMP3Ejl+hturHOPcqBZL+MCv52R6CtuGprAgl5vA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756133770;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qwgA88EWTFhd52yR0KS4Tya5c3yeMbixjFO2en//4I0=;
+	b=4zN5pQ6+SCMy9m9z4yvmOJSd2mEtuAX5oxD9YrgIK3giIj4HdyNAUdKExvqNeowsq818zB
+	MUBkImWWu3z3WkDw==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 06/34] x86/cpuid: Introduce <asm/cpuid/leaf_types.h>
+Message-ID: <aKx5iFEXVGlzWETl@lx-t490>
+References: <20250815070227.19981-1-darwi@linutronix.de>
+ <20250815070227.19981-7-darwi@linutronix.de>
+ <20250825141803.GUaKxwm1lAAugFJHVQ@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <724f69f0-7eab-40aa-84f0-07055f051175@prolan.hu>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20250825141803.GUaKxwm1lAAugFJHVQ@fat_crate.local>
 
-On Mon, Aug 25, 2025 at 04:39:12PM +0200, Cs�k�s Bence wrote:
-> Hi,
-> 
-> On 2025. 08. 25. 16:16, Russell King (Oracle) wrote:
-> > On Mon, Aug 25, 2025 at 04:09:34PM +0200, Bence Cs�k�s wrote:
-> > > Make `mdiobus_register_reset()` function handle both gpiod and
-> > > reset-controller-based reset registration.
-> > 
-> > The commit description should include not only _what_ is being done but
-> > also _why_.
-> 
-> Well, my question was, when I saw this part of code: why have it separate?
-> Users shouldn't care whether a device uses gpiod or reset-controller when
-> they call `mdio_device_reset()`, so why should they have to care here and
-> call two separate register functions, one after another? In fact, the whole
-> thing should be moved to mdio_device.c honestly. Along with the setting of
-> mdiodev->reset_{,de}assert_delay.
-> 
-> The end goal is fixing this "Can't read PHY ID because the PHY was never
-> reset" bug that's been plaguing users for years.
+Hi Boris,
 
-I wasn't asking for an explanation in reply to my comment. I was
-telling you that you had to do something to modify your commit message
-to make your patch acceptable.
+On Mon, 25 Aug 2025, Borislav Petkov wrote:
+>
+> On Fri, Aug 15, 2025 at 09:01:59AM +0200, Ahmed S. Darwish wrote:
+> > +struct leaf_0x1_0 {
+> > +	// eax
+> > +	u32	stepping			:  4, // Stepping ID
+>
+> All those bit names in all those leafs: are they taken from the official
+> documentation?
+>
 
-Now, I could nitpick your "because the PHY was never reset" - that's
-untrue. The common problem is the PHY is _held_ in reset mode making
-the PHY unresponsive on the MDIO bus.
+Yes, I've built the 86-cpuid-db XML database from the official sources.
 
-If your goal is to fix this, then rather than submitting piecemeal
-patches with no explanation, I suggest you work on the problem and
-come up with a solution as a series of patches (with commit
-descriptions that explain _what_ and _why_ changes are being made)
-and submit it with a cover message explaining the overall issue
-that is being addressed.
+Intel:
 
-That means we can review the patch series as a whole rather than
-being drip-fed individual patches, which is going to take a very
-long time to make forward progress.
+    Intel® 64 and IA-32 Architectures Software Developer's Manual
+    Intel® Architecture Instruction Set Extensions and Future Features
+    Intel® CPUID Enumeration and Architectural MSRs
+    Intel® X86-S External Architectural Specification
+    Intel® Key Locker Specification
+    Intel® Architecture Memory Encryption Technologies Specification
+    Intel® Trust Domain CPU Architectural Extensions
+    Intel® Architecture Specification: Intel® Trust Domain Extensions (TDX)
+    Intel® Flexible Return and Event Delivery (FRED) Specification
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+AMD:
+
+    AMD64 Architecture Programmer’s Manual, Volumes 1–5
+    Preliminary Processor Programming Reference (PPR) for AMD Family 19h
+    Model 11h, Revision B1 Processors
+    Open-Source Register Reference For AMD Family 17h Processors Models 00h-2Fh
+
+Transmeta:
+
+    Processor Recognition, Transmeta Corporation (2002/05/07)
+
+This is also listed under the 'References' section of the project:
+
+    https://gitlab.com/x86-cpuid.org/x86-cpuid-db
+
+There are some bitfields contributed by Intel and AMD developers that are
+not yet in the official documentation.  In such cases, I trusted that
+such info is posted from developers within Intel and/or AMD.
+
+>
+> > +/*
+> > + * Leaf 0x5
+> > + * MONITOR/MWAIT instructions enumeration
+> 				 ^^^^^^^^^^^
+> Let's drop all those tautologies - it is absolutely clear that it is an
+> enumeration so no need for it. Just keep the minimum text that is needed to
+> describe the bit. People can always use that to find the official
+> documentation of they need more info.
+>
+
+will do.
+
+>
+> > +/*
+> > + * Leaf 0x18
+> > + * Intel determenestic address translation (TLB) parameters
+>
+> + * Intel determenestic address translation (TLB) parameters
+> Unknown word [determenestic] in comment.
+> Suggestions: ['deterministic',...
+>
+> spellchecker please.
+>
+
+will do.
+
+[ I have a spellcheck CI pipeline for the XML database, but somehow I
+  missed checking the leaf description field :( ]
+
+Thanks!
+
+--
+Ahmed S. Darwish
+Linutronix GmbH
 
