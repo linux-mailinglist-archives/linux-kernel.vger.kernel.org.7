@@ -1,114 +1,137 @@
-Return-Path: <linux-kernel+bounces-785340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2011EB34950
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:49:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2F9B34952
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25E4B1B2264A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:49:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 769D92A45CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F76302CDF;
-	Mon, 25 Aug 2025 17:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175613054EB;
+	Mon, 25 Aug 2025 17:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTiyQ5Q8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HM5rIDWl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207C64C83;
-	Mon, 25 Aug 2025 17:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F4E301028;
+	Mon, 25 Aug 2025 17:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756144144; cv=none; b=JRnpOoxsKGvR6Fhw8TQApFoy8F4tOfLCwegey5z66++07QA3ZbbzYVb5Wec0AGLaLtgbAbd5nOQ+QP7StIaEpfWBdeA2FAh2rj6EvEp/CpY8B9tCUQ4HoOCpYwjTPnSM0QY+wBJUZuI3Hl7Ut89eJbUMPEER/rWqH33Eqhm+ftc=
+	t=1756144162; cv=none; b=Y9ISJAs2cPCnUJuvn/P+Ckz6HxkL+VAnqVJQOIK3gq6a9ALUw/Ca01+vnyQf0ycDbvU5Yw78m+ZR/IgETDYs0m2BMx6KpgHWM4/uPQqkEDHTx1h7AlCUppMT5huWskPNgh9qv0dxOWsXnywle4fQCP8Nu88s/ccjvRxrJkUfS/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756144144; c=relaxed/simple;
-	bh=XzHy9DjHZm9PQIObMTotkItM6UM2hrpGtBbLyV4Q+ic=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=bNG5IzIDIbRf0ndQ1f+zLhsH3neHRmf6SondTRv8n2h4HV093Ue5vAUk67ZbUOjY6ItVOV7LRmEfVAo2PDoqMYpZ+CMxLK1kHXkfHC8bpTvXB9cDKp8grJ6D+4mNMBDxKFdAQBxzrLBMdMDjyrgCJlLv4zyg2/EJusEA3uhytKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTiyQ5Q8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CD9DC4CEED;
-	Mon, 25 Aug 2025 17:49:03 +0000 (UTC)
+	s=arc-20240116; t=1756144162; c=relaxed/simple;
+	bh=cEUhbMRCFKmm+uFN3EMPbSNsPyu9bPCOJ8ppa/HAe8U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S9R17gf4ZmmAwDNbdhjTJidUWmpMoG2n3tDK16MVmoogJKJ8yVIvBAXV+LQV2AOIqvIoEnn84jilJlaFFJc+knRrZV4pdJSDzeBfdFuJ1E1sfvAAFBc/nG1Pl3TUbtXYz9MFanGpIs3eQ4VT4ifVgbkZeYK+eu0NQp3jOST04/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HM5rIDWl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D379BC4CEED;
+	Mon, 25 Aug 2025 17:49:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756144143;
-	bh=XzHy9DjHZm9PQIObMTotkItM6UM2hrpGtBbLyV4Q+ic=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=HTiyQ5Q8FSr42P9/TgICM3lFboZo2dAHuFQPR5/apAtVpoV/kN+5rDnlfgtZa11BU
-	 20fNb+m/QtTXkUpT6v4nqBRcMP8laWGcq3UdZveORHjcFsLKhmmn/d75ingCXsWfN4
-	 DbmBWHCjm5c2LqXEYf5UzK/MpAcE65GN3N4b627+TX2EloPzZOt9hOpTTimf1xWY8F
-	 4wCy2yoygVRzcbr+QQwMGddiDO2Ukcip68MG7acBsc9fkQAPqSoRfn7Y056R7SggKQ
-	 AXeUOjn3TIh7mBr/rBUK+dxnvxj9wh1gVZhEIvRaL8w51ofQoCdaKqost/E7UeVEy7
-	 5cA0sXWvJPQbw==
-Date: Mon, 25 Aug 2025 12:49:02 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1756144161;
+	bh=cEUhbMRCFKmm+uFN3EMPbSNsPyu9bPCOJ8ppa/HAe8U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HM5rIDWlZyfQqmKyGBXOUMQQCwl+fhHBcnU6hnjEkRsCfYu+MqouD0G0RV9moGRkW
+	 c3XJm3kI3hccXkNUzwWLS8Yk6bWzqyoqhEneCgcxndXcMlYEmcV4dD6roJwt8HbV9x
+	 QZv+vqOTomoaeBDV/CBD2eQxLpPYY1LIzMuNX45b+THINiF207f5U1lO1W0YcOhenA
+	 8cQqE4CPX4loLL4NzCFBROC/1o1LvGkb7OkXWKpeffDaS1lv7tgGFWv8DXiE8Us6rR
+	 cH3K/dhyMVfzQvl8xBtF2XsdvzytY7CdmukdqscWPkL+kg0Z6dR0o188u0AOZXfh4X
+	 XJA56DtmfFLYw==
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-30cce90227aso1556557fac.1;
+        Mon, 25 Aug 2025 10:49:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUt6IP4xix/NL/ogwEfx3g+DCWSRXjc4ZZC/4/5yHEfMvjFttnBE9dZBdDRw0mJrMgT5iOHljC25BNk@vger.kernel.org, AJvYcCVPN1tai6DFdZZYNqjh8N3vPYyh0yGielBLUPPVevAVl7aHkE7UUjGx94K3zbzFdUsTfK8nWn8Uc6dtRL/W@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4fBkG0D7M2Mh+LP5tL91ppJS+VlaEeKU46gALo6MEBxEQs2KX
+	BDc86oSrJFQN0XCd50OV7DPc8unW+WaV+9g6wIJ/6l3tr8Pt7LKwF5qwuRxzqMKGekR9pnII+5R
+	S/OVOsfTzSyuL3eFcrhpyJDBogPTz5RI=
+X-Google-Smtp-Source: AGHT+IE6mDpyqsUnzu3XQeVctx9ajbuKtjmqSz7jYzI2BuY4v0JQLpEDtCNXYDbNn1WhYg0gg8xnahdKa9SE7C4UOnk=
+X-Received: by 2002:a05:6871:e805:b0:314:b6a6:68a0 with SMTP id
+ 586e51a60fabf-314dcdadd0dmr5498726fac.40.1756144161192; Mon, 25 Aug 2025
+ 10:49:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-mips@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, 
- =?utf-8?q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>, 
- linux-wireless@vger.kernel.org
-To: Rosen Penev <rosenp@gmail.com>
-In-Reply-To: <20250825044812.1575524-2-rosenp@gmail.com>
-References: <20250825044812.1575524-1-rosenp@gmail.com>
- <20250825044812.1575524-2-rosenp@gmail.com>
-Message-Id: <175614397908.4140594.10465132869450405336.robh@kernel.org>
-Subject: Re: [PATCHv3 1/3] dt-bindings: net: wireless: ath9k: add led
- bindings
+References: <tencent_FEF72BEF631815ED2479A6D1E32C34797B05@qq.com>
+In-Reply-To: <tencent_FEF72BEF631815ED2479A6D1E32C34797B05@qq.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 25 Aug 2025 19:49:10 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gAz5J99ig7eu9AVhEHkusRpW_G=PXRy+E9vGc+MVE6rg@mail.gmail.com>
+X-Gm-Features: Ac12FXyBPCJ5ujevKH8qsi1mzK5PBNu_lyz37sIUPVBFyPzPNNwUWZBiumxRqS0
+Message-ID: <CAJZ5v0gAz5J99ig7eu9AVhEHkusRpW_G=PXRy+E9vGc+MVE6rg@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: PRM: Optimize the judgment logic for the PRM handler_address
+To: shangsong <shangsong2@foxmail.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, shangsong2@lenovo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On Sun, 24 Aug 2025 21:48:10 -0700, Rosen Penev wrote:
-> The ath9k driver has various pin GPIO numbers for different chipsets
-> which are not always correct for every device.
-> 
-> Add bindings to specify the correct number and if it should be
-> active-low.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+On Tue, Aug 19, 2025 at 4:28=E2=80=AFAM shangsong <shangsong2@foxmail.com> =
+wrote:
+>
+> From: Shang song (Lenovo) <shangsong2@lenovo.com>
+>
+> If the handler_address or mapped VA is NULL, the related buffer
+> address and VA can be ignored.
+>
+> Signed-off-by: Shang song <shangsong2@lenovo.com>
 > ---
->  .../bindings/net/wireless/qca,ath9k.yaml         | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
+>  drivers/acpi/prmt.c | 19 ++++++++++++++++---
+>  1 file changed, 16 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
+> index be033bbb126a..3a501fcd78df 100644
+> --- a/drivers/acpi/prmt.c
+> +++ b/drivers/acpi/prmt.c
+> @@ -150,15 +150,28 @@ acpi_parse_prmt(union acpi_subtable_headers *header=
+, const unsigned long end)
+>                 th =3D &tm->handlers[cur_handler];
+>
+>                 guid_copy(&th->guid, (guid_t *)handler_info->handler_guid=
+);
+> +
+> +               /*
+> +                * Print a error message if handler_address is NULL, the =
+parse of VA also
+> +                * can be skipped.
+> +                */
+> +               if (unlikely(!handler_info->handler_address)) {
+> +                       pr_err("Skipping handler with NULL address for GU=
+ID: %pUL",
+> +                                       (guid_t *)handler_info->handler_g=
+uid);
 
-My bot found errors running 'make dt_binding_check' on your patch:
+pr_info(), please.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dts:92.15-25: Warning (reg_format): /example-2/ahb/wifi@180c0000/led:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dts:91.17-94.15: Warning (unit_address_vs_reg): /example-2/ahb/wifi@180c0000/led: node has a reg or ranges property, but no unit name
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (pci_device_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dts:91.17-94.15: Warning (avoid_default_addr_size): /example-2/ahb/wifi@180c0000/led: Relying on default #address-cells value
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dts:91.17-94.15: Warning (avoid_default_addr_size): /example-2/ahb/wifi@180c0000/led: Relying on default #size-cells value
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (unique_unit_address_if_enabled): Failed prerequisite 'avoid_default_addr_size'
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250825044812.1575524-2-rosenp@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+> +                       continue;
+> +               }
+> +
+>                 th->handler_addr =3D
+>                         (void *)efi_pa_va_lookup(&th->guid, handler_info-=
+>handler_address);
+>                 /*
+> -                * Print a warning message if handler_addr is zero which =
+is not expected to
+> -                * ever happen.
+> +                * Print a warning message and skip the parse of VA if ha=
+ndler_addr is zero
+> +                * which is not expected to ever happen.
+>                  */
+> -               if (unlikely(!th->handler_addr))
+> +               if (unlikely(!th->handler_addr)) {
+>                         pr_warn("Failed to find VA of handler for GUID: %=
+pUL, PA: 0x%llx",
+>                                 &th->guid, handler_info->handler_address)=
+;
+> +                       continue;
+> +               }
+>
+>                 th->static_data_buffer_addr =3D
+>                         efi_pa_va_lookup(&th->guid, handler_info->static_=
+data_buffer_address);
+> --
 
