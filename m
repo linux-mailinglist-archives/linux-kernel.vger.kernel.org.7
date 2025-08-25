@@ -1,146 +1,145 @@
-Return-Path: <linux-kernel+bounces-785434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96FFAB34A95
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:45:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB558B34A97
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:46:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F57D1A8837E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:46:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFBF21A87FF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A941CAA7B;
-	Mon, 25 Aug 2025 18:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6500B22128B;
+	Mon, 25 Aug 2025 18:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JE+9KjQW"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bqRKpXuD"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF91E21ABDB
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 18:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96F110E9
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 18:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756147542; cv=none; b=I2iwfpKk8Z3648ckSXaBeat+YTlNyB3ElLLgA9Wt0WhJsHmRRAWCDUCc4HQIvZKovdhwYNyyrSQ0UqkzhmTegzQ+GJ/gJGPmOF07UwAqCNU+uyHCvFinfuM5CrAudVuxZx/ZdUxCjLp8pf4AoV5g1V2g09viVj1BaH30vStqanI=
+	t=1756147573; cv=none; b=GtwUMStZ8XPqdYdoswlhiK5JNPUbMz4cybx6FKRy+CqPQfQuqdgsgHQYCjVhPOBG6zySmJj4e8DemOjoIFpfl/DTwH35Oyo0g9HHcYCmqIogfecH8z3tZjLdnQDbVLD1vjKxoeXanrvpbcZ59mpfYJe6YS8ow3anYSSKcODF6q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756147542; c=relaxed/simple;
-	bh=ISuuJyeIRfRMZgoFww4dIR2jZEbUMHvARIsYpsK/hm8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZadLrWQgItKkU2RnuQb55adnmbew5eT8Qur6VwiMwmk+Irjqhl1fAuR98ZxfZNpH/A4pOMXLFkB7BB/0uJcHPDotVxuRo/sePU+WasWieU6W1QC6P9wqcNQoPPc/KedPKISIGxdqrnZWyZgjG1t7zA0/eA+KbIzgSse/zVwCJjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JE+9KjQW; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61c51f57224so2277939a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:45:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756147539; x=1756752339; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q2zMojxEaqSXvN7rZ89UIzDP+AqmDlozbvrUX8uFGJo=;
-        b=JE+9KjQWBDxJ5YREB3KtgVI6ph3Aa2wzhhREv8lBEemnJsqImWuDQw5rhCWFll53hx
-         8jwfqorBfSybEM+gSPqYDB+VBzvZkcQxy0gw5LI+mrRhy7tbUXTR1emRbZDKn4r0CNQG
-         ONckS3k+oo+Wrlk5MBRM9KADpm9lhl+0ppQqODS7vdWBhJswx3VuyKy9u5/RzwPp9nIU
-         hVxb3/k6E4SeR3kSFJ7tbfHm/64z9a3rHe+NoTOzlh3SyPqRshpSi1D3y1Qe5kZKLf8a
-         h3xEnxPjtRNYbpiKUb3PWUnp5qOQvnMR775bNVD7b9+phBeAxAaH1gRtiOeyGlPM8/Eb
-         JR+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756147539; x=1756752339;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q2zMojxEaqSXvN7rZ89UIzDP+AqmDlozbvrUX8uFGJo=;
-        b=Vfxr0+Ox19oHuRHVjlPlIhtnphaoqsx/++tp/IZnag/OeGwSkZ/+IPpqnVi4NfvBP3
-         aQCgmQY/MgjfY3VA97rm9G7U7ciy9PyVChUabQ06i26q2qusH7nV6CiuJ4c5P2bhKuEd
-         nfWEm6PQLRa7zCMK9dHSzLlr3vpCZpdv+0P+IvKM6nTROpbgTGOl9OYtejCZBDodrlfD
-         Est4I5LPiLcbiVT+xcA7VAkJz7QjZ34I6Q4n1gxjlbBMqYr2mrMW7FmkdlKzwhQBKSUd
-         qCzOjl+rGUOYJm5WsqnNvEoP4ESTzqSgENie2/nrYG9jeIqa8aTCuk1ZYj5UmqA2rMbY
-         qDhw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxy0XQ2auOcdkVIMCup7x3x5v0vaYD8IS4Hz6Z47ArmyT8tRk2PjjmS1c5w3Hnd8m4yKIXJD1jr4t5KqQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMuDf5pJTbvjYttMLEdUW2kfCz6nuAuivLCQ6lRbbl7hQDf7B/
-	iq+tYETEU9M38xx8WUYfPsLsRpFz86Q8reUQgTACk/mwuJukyCn7yO0ksgthMaWDm2NsnzLQH7N
-	w6hRcokLmoTp6Q/CeMfWRQWwBhj0w4NM=
-X-Gm-Gg: ASbGncsiZ9NwYPg86JBouQD5tAPkxq998tbgiK8rHn4keWC7rW7GDzlE/sNSWYosq/Y
-	rLHuvTVE94x30gmE+sS57SIzfYOlm7YRS95YyAeeQ/2tY0KBRx2nBgO3SImxDS9CPeVTTo77FHH
-	Hbfvd5wpErjDYHIyGr0+FwK2LNwREscofJiUYXZjcJKhylW1wgRSYkWCDBMND+mk5vYsxCu0O9S
-	xKIoxw2TPeyCmTvUP2i1HLk9NOuWmCD9/I/RDkW
-X-Google-Smtp-Source: AGHT+IHSoLDTkq5deXOI5kOXvOEJGs7/045c3SFr+zmXA7JcB8nnmgDCdO7Qbzl8FAm2rty6nUd0qaQ2gfQlRQ8Uk8I=
-X-Received: by 2002:a17:907:d10:b0:af9:1be8:c2aa with SMTP id
- a640c23a62f3a-afe295e56d1mr1138094366b.45.1756147538797; Mon, 25 Aug 2025
- 11:45:38 -0700 (PDT)
+	s=arc-20240116; t=1756147573; c=relaxed/simple;
+	bh=3BS/96f0ebK3Hu1zLb3MqycBcFacfOpKXhYpxp+doJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pH/XtXwrQ5dhzTcRgmHlS//D3CSqKnzlzruzGPYHRqwHq1PhjIJXm2lxd1tn//l/7VWg8w5K2xSRl6FZHb5IRVz5+1LnJzbAEV6fWisvd75+K/ZDxPQPLCT4mq5ZrSJuoML9Fl6WyweaPpNWdzXOPqJMaa+ry61aCCcCC1MR3lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bqRKpXuD; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 25 Aug 2025 20:45:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756147558;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IBiD15fwW3bdnTDyQUQJ0/8GZmmM/bu4C9xfB0fLiJ4=;
+	b=bqRKpXuDYyoMapznLaA/Qzl3JZb9p7sJDq89o9eYztCe7YagaoPTDK79JPssWwDf2f3ieu
+	Hx6sQSOqe7hL/EOTb1a2E/pD65j2GyyXf5G7jYGp8k6ZCSMgh0ZtwxsesmD9EatdKdITMm
+	CcFKUUgU8mkUbchUzN/t22HFlyh2myY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v6 03/11] Documentation: uAPI: media: add
+ V4L2_CID_FLASH_DURATION
+Message-ID: <f5cqviccuubd2yh7biubvhcaab3pthlxlmopyjijjetrymglo3@yp4gd6khyhvn>
+References: <20250716-ov9282-flash-strobe-v6-0-934f12aeff33@linux.dev>
+ <20250716-ov9282-flash-strobe-v6-3-934f12aeff33@linux.dev>
+ <aKv3uUXf87im8ajX@kekkonen.localdomain>
+ <aKv5LyZHoO1F3pMp@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822-mtk-post-blend-color-pipeline-v1-0-a9446d4aca82@collabora.com>
- <20250822-mtk-post-blend-color-pipeline-v1-1-a9446d4aca82@collabora.com> <CAPj87rPAoD2D99zTdsvJ=9K8+G17mTS2jDYHMPYmXNtUyp2L_Q@mail.gmail.com>
-In-Reply-To: <CAPj87rPAoD2D99zTdsvJ=9K8+G17mTS2jDYHMPYmXNtUyp2L_Q@mail.gmail.com>
-From: Xaver Hugl <xaver.hugl@gmail.com>
-Date: Mon, 25 Aug 2025 20:45:27 +0200
-X-Gm-Features: Ac12FXwIBvZYaDx3nXuRC59YLfGWHPRaFpCScdKvQ4nArJPhSi57cSubMBYyjfo
-Message-ID: <CAFZQkGwotQ6cxVCSgp-BhUi5DaZ7MyVvbnrDJW11Z7ztzqy58g@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/5] drm: Support post-blend color pipeline API
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Alex Hung <alex.hung@amd.com>, 
-	wayland-devel@lists.freedesktop.org, harry.wentland@amd.com, leo.liu@amd.com, 
-	ville.syrjala@linux.intel.com, pekka.paalanen@collabora.com, 
-	contact@emersion.fr, mwen@igalia.com, jadahl@redhat.com, 
-	sebastian.wick@redhat.com, shashank.sharma@amd.com, agoins@nvidia.com, 
-	joshua@froggi.es, mdaenzer@redhat.com, aleixpol@kde.org, 
-	victoria@system76.com, uma.shankar@intel.com, quic_naseer@quicinc.com, 
-	quic_cbraga@quicinc.com, quic_abhinavk@quicinc.com, marcan@marcan.st, 
-	Liviu.Dudau@arm.com, sashamcintosh@google.com, 
-	chaitanya.kumar.borah@intel.com, louis.chauvet@bootlin.com, mcanal@igalia.com, 
-	kernel@collabora.com, daniels@collabora.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, Simona Vetter <simona.vetter@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aKv5LyZHoO1F3pMp@kekkonen.localdomain>
+X-Migadu-Flow: FLOW_OUT
 
-> > @@ -416,6 +417,24 @@ int drm_mode_object_get_properties(struct drm_mode_object *obj, bool atomic,
-> >                                 continue;
-> >                 }
-> >
-> > +               if (post_blend_color_pipeline && obj->type == DRM_MODE_OBJECT_CRTC) {
-> > +                       struct drm_crtc *crtc = obj_to_crtc(obj);
-> > +                       struct drm_mode_config mode_config = crtc->dev->mode_config;
-> > +
-> > +                       if (prop == mode_config.gamma_lut_property ||
-> > +                           prop == mode_config.degamma_lut_property ||
-> > +                           prop == mode_config.gamma_lut_size_property ||
-> > +                           prop == mode_config.ctm_property)
-> > +                               continue;
-> > +               }
-> > +
-> > +               if (!post_blend_color_pipeline && obj->type == DRM_MODE_OBJECT_CRTC) {
-> > +                       struct drm_crtc *crtc = obj_to_crtc(obj);
-> > +
-> > +                       if (prop == crtc->color_pipeline_property)
-> > +                               continue;
-> > +               }
->
-> Hmmm. One issue with this is that it makes things like drm_info
-> harder: if drm_info opted into the client cap, it would no longer be
-> able to see any GAMMA_LUT/etc programmed by the prior userspace. So I
-> think allowing at least read-only access would be reasonable here.
-FWIW the cap for per-plane pipelines also hides COLOR_RANGE and
-COLOR_ENCODING properties from the client.
+Hi Sakari,
 
-From a compositor POV, I slightly prefer hiding the properties
-entirely, but ignoring them on the compositor side when a color
-pipeline is available would also be trivial.
+On Mon, Aug 25, 2025 at 08:48:31AM +0300, Sakari Ailus wrote:
+> On Mon, Aug 25, 2025 at 08:42:19AM +0300, Sakari Ailus wrote:
+> > Hi Richard,
+> > 
+> > Thanks for the update (and for the ping!).
+> > 
+> > On Wed, Jul 16, 2025 at 11:06:53AM +0200, Richard Leitner wrote:
+> > > Add the new strobe_duration control to v4l uAPI documentation.
+> > > 
+> > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > > ---
+> > >  Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > > 
+> > > diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> > > index d22c5efb806a183a3ad67ec3e6550b002a51659a..03a58ef94be7c870f55d5a9bb09503995dbfb402 100644
+> > > --- a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> > > +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> > > @@ -186,3 +186,8 @@ Flash Control IDs
+> > >      charged before strobing. LED flashes often require a cooldown period
+> > >      after strobe during which another strobe will not be possible. This
+> > >      is a read-only control.
+> > > +
+> > > +``V4L2_CID_FLASH_DURATION (integer)``
+> > > +    Duration the flash should be on when the flash LED is in flash mode
+> > > +    (V4L2_FLASH_LED_MODE_FLASH). The unit should be microseconds (µs)
+> > > +    if possible.
+> > > 
+> > 
+> > I think we should add this is related to the hardware strobe.
+> > 
+> > How about:
+> > 
+> > ``V4L2_CID_FLASH_DURATION (integer)``
+> > 
+> >     Duration of the flash strobe from the strobe source, typically a camera
+> >     sensor. Controlling the flash LED strobe length this way requires that the
+> >     flash LED driver's :ref:`flash LED mode <v4l2-cid-flash-led-mode>` is set
+> >     to ``V4L2_FLASH_LED_MODE_FLASH`` and :ref:`strobe source
+> >     <v4l2-cid-strobe-source>` is set to ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``.
+> >     The unit should be microseconds (µs) if possible.
+> 
+> Also adding a reference to V4L2_CID_FLASH_HW_STROBE_SIGNAL:
+> 
+> ``V4L2_CID_FLASH_DURATION (integer)``
+>     Duration of the flash strobe from the strobe source, typically a camera
+>     sensor. Controlling the flash LED strobe length this way requires that the
+>     strobe source's :ref:`V4L2_CID_FLASH_HW_STROBE_SIGNAL
+>     <v4l2-cid-flash-hw-strobe>` is enabled and flash LED driver's :ref:`flash
+>     LED mode <v4l2-cid-flash-led-mode>` is set to ``V4L2_FLASH_LED_MODE_FLASH``
+>     and :ref:`strobe source <v4l2-cid-strobe-source>` is set to
+>     ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``. The unit should be microseconds (µs)
+>     if possible.
+> 
+> Similarly, the documentation for V4L2_CID_FLASH_HW_STROBE_SIGNAL should be
+> amended with a reference, but the label needs to exist first. I think you
+> could merge the two documentation patches to make this easier.
 
-> Having a client cap without a driver cap also puts userspace in a
-> difficult position. If the driver doesn't support post-blend colorops,
-> then enabling the client cap strictly removes support without a
-> replacement. And without a driver cap, the client doesn't have a way
-> to know which is better.
->
-> Cheers,
-> Daniel
+Thanks for the review. Extending the documentation as you suggested
+defintely makes sense. Thank you also for your suggestion. That makes things
+even easier.
+
+I will send a v7 end of this week. If anything else pops up or causes
+questions on this series please feel free to give feedback :)
+I have my fingers crossed for v7 to be the last ;-)
+
+Thanks again for your great feedback!
+
+regards;rl
+
+> 
+> -- 
+> Sakari Ailus
 
