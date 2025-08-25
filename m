@@ -1,208 +1,138 @@
-Return-Path: <linux-kernel+bounces-784728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE20DB34066
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:10:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A9E5B3406B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:11:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E89C17BCEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:10:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4344D7AC411
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078262144C7;
-	Mon, 25 Aug 2025 13:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5302690D9;
+	Mon, 25 Aug 2025 13:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E2yD6oq/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TxXTPYAv"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588621E6DC5;
-	Mon, 25 Aug 2025 13:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C71E267B12;
+	Mon, 25 Aug 2025 13:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756127414; cv=none; b=VdPCg05N4AcWdupXn3vGTuuCKQGL0kLxHbmDAtQLPFKPxtvnNvQGCxx5I76Duqba13r6G5wZuwCqisAX+Q9blyWSqt2VdmwR8oEtRd8kk3dTp+cPTBS13+7iHyLE03voS1WksHPV8XGyFN18haP1x8cbl/B9/Z5DUpcxXvRq8tg=
+	t=1756127495; cv=none; b=eotU2m92pp/cbF+k3zuR3pl2R8QOqxYIlkpekH8osobVx1giVu5qmTSi/ogB8PO9NXmuyCOc/bALfK0S0MRtj5Hqc1ru+RrT+ALPRZjwjvYjFvBWxhI1jfr+mfUFu1P0XDqvDGqWIg00NFlsfn3qz1wbL+NwBJ7WzK8Movsxxnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756127414; c=relaxed/simple;
-	bh=O7Z6kH1RQbEMeE3eiSyEx19EZcZ/ZKVgcYDzfKEp3mI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ap1eQk2UNyHI/8/WEuCVsOzMvwfCuTp4l6/L8QaukB7tviBNrTd+0rfJRspOhOCf77a/TWftlsjAIonCV2RV9w9Bt4WiVVtVNdc8ZAMPn1kn51LvLJghn/M7u0fBQqraAqWLuRPJxCp/DbGGDhyrRVmZtWxGKzSKUD4M01FJIvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E2yD6oq/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 546FAC4CEED;
-	Mon, 25 Aug 2025 13:10:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756127414;
-	bh=O7Z6kH1RQbEMeE3eiSyEx19EZcZ/ZKVgcYDzfKEp3mI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=E2yD6oq/fymrgyNovJcnhvOZsA1fty8NFngqr8Ou2b0H5qOWYA/QslY4Gq1gWXFIs
-	 rCYIwO17t0Zw7iXgFdnKlDvTozH8AlrgxWpFTbVVTvimz/5OPwiihE591bjy7SaB5/
-	 4kilDO0WFxN9rUp/rv6uTZit55WWgsE211htDe9s6N+9u/iPXr3u9PPMxx8zXTCFdL
-	 X9pbfuKiyoOt8AU9CBtmYIUUaKr0d2IcvbA3RoqD02bnK+Q9pHQvG9qhl1+IF0Zuds
-	 z/Ex+LSCghdBGhpFOzly1szoP2EouhkPfBtdMe080cHGp4zsqJYYRAQXnLxZ5eSi/a
-	 BEaRuyT+lL8Lw==
-Date: Mon, 25 Aug 2025 14:10:06 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v5 3/6] dt-bindings: iio: adc: add ade9000
-Message-ID: <20250825141006.4ae0f866@jic23-huawei>
-In-Reply-To: <20250822160157.5092-4-antoniu.miclaus@analog.com>
-References: <20250822160157.5092-1-antoniu.miclaus@analog.com>
-	<20250822160157.5092-4-antoniu.miclaus@analog.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756127495; c=relaxed/simple;
+	bh=WQL44nqUEkOVb7tO4wNaDm6LA85RjkoatKVjByBKDZQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lmkx+tg9RX/shzQ1BBqLyEtMYmg31qnlTH+vTD1URFxSl9PsOxlFO5McPxLYi+htlE0qZNq/xGxFFQiAYlLgB5pYKbd8VsbXTyrFnzN7QmB+/kaIvXTb8RGnAVM5dOxu6QffveQlaJvEuVRkBr6H8lZBZ6IccNGHUPQP8vxEuJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TxXTPYAv; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55f474af957so679866e87.1;
+        Mon, 25 Aug 2025 06:11:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756127492; x=1756732292; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z5fw3ZMJHDqMnjQnhOh6MuUcNCVkHnMj73CqPHZAXRk=;
+        b=TxXTPYAvNTt+3HLVVdHU5mJC7bBG5fzPzP0xxhduO0SwhniOATj99VcvrU/BwrdYE8
+         7u5q2TSSBVj5HoHY8cgo85+8L3Liz2VLt9flsDyZRMAYnlHuk9FnAoZNVtgQb0LYEbtg
+         0I+YyY96PVUYWzZA3oT43ovDrcFbxurmGJPnWHl4fY4t/9th9jeXiobOyTVpLhiM0wPK
+         9sQlY22+EjSK8W9NuhclKp6zjZno9xIF8IqWrzeKkp67oPjP5GNL4ckd5PpLLOYKQ2tD
+         koktVK3AI/ydjZLB5nchZne8Usb3dl/AtuTkTnkM/VEHSGDDU94kJI1479lg3VITNiIZ
+         Op3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756127492; x=1756732292;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z5fw3ZMJHDqMnjQnhOh6MuUcNCVkHnMj73CqPHZAXRk=;
+        b=BqiYyk6VFA4t3XM8a8C5VrHdIJKOROHeI+z7qYkOpgrcNH0YOXvAQJSUYljvC/eFPH
+         B5JvMKeqQ/9x6tErD8IBoCsVcTSfESbovWUep1AHGTUbM0jJw5PeF+yEyLN55KMm0/kz
+         /fUnSeXl7MekBCizrTpJYAbxHj0pkeF3kw/RjOTfz48A6URCoc9aJClmy4zmCLurzC+l
+         UO/YL5orXF/dBC8qKMRwSeeS8XYISQp7fg0AUjeL2p8lYKK2CpK2lwfBHxTu0xWClbnz
+         16hG7CUBKGlP/hpKIXDd/lDxPkr/D8QfVEE2kJHq1vAK3ugbfaheBtHGv1omd1WfyVbj
+         DniA==
+X-Forwarded-Encrypted: i=1; AJvYcCWr1UQkFl+iMUsF2iloyfJZAqfLL8YR+h24VDYvabHRpEpGqYWfIxRf4+jue1nxRT905GBPMx7tGQeDavM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ0WyQ/tJKig4woIWK310KzVpt2j/GHzQDcm3sWD/0A1hgTMpg
+	6Po2m0kLOkzZhzmWa2nEkPPJTJGisy+nSglmWJxjbRy+8qZZy1pNAmzMWBoIRF92
+X-Gm-Gg: ASbGncvFk6b3lPU4AoEQmXF1PUOwqEEKE993qG9ObOYYPnVFe+eVvCLQApjhOXGfjmX
+	aQz25op6A+JVUMfFm1SrLf4Q4oY4ZDGc9+EEzgeeCRrspX8ZSWRrVmiaSjIWO2Vkp+HWt8rLr68
+	dt1D0tuvIVRSxIX1hydnQ3WSFhAVRSf6VTELDUR1zhX5lb6i/15LbWP0aExFVR7M3YkaKcX00Uv
+	IDnQu5/i2MCDln7Lfkzj396mviSSGFSv9MVCYkLC2upnFdp456xhhN9Rcwz3oHr19JIz3JaAXMd
+	NmpJV46pYygPZzy0GrjrNPAFbIFNG4xWzft+rekHQMRmJk97rQ8Od2VLO6doTF1OoDBkzVZ7kr1
+	yerwtY7zwX4MGCO1jDy7h8XDwZwK+WAvifxHYVQ04SVr2CZBZQXm09oolJ4FU9lk=
+X-Google-Smtp-Source: AGHT+IEhu8aaFR/Z0VBtFPeItxhOzCa+vetNd7ZA5b9sNVOYebl/5UglxJm9QDnAHDOlHqGih4v2lA==
+X-Received: by 2002:ac2:4f09:0:b0:55f:4711:cf87 with SMTP id 2adb3069b0e04-55f4711d252mr809942e87.41.1756127491260;
+        Mon, 25 Aug 2025 06:11:31 -0700 (PDT)
+Received: from SC-WS-02452.corp.sbercloud.ru ([85.174.193.214])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35c12423sm1613685e87.51.2025.08.25.06.11.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 06:11:30 -0700 (PDT)
+From: Sergey Bashirov <sergeybashirov@gmail.com>
+To: Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sergey Bashirov <sergeybashirov@gmail.com>,
+	Konstantin Evtushenko <koevtushenko@yandex.com>
+Subject: [PATCH] NFSD: Disallow layoutget during grace period
+Date: Mon, 25 Aug 2025 16:11:02 +0300
+Message-ID: <20250825131122.98410-1-sergeybashirov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, 22 Aug 2025 16:01:52 +0000
-Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
+When the server is recovering from a reboot and is in a grace period,
+any operation that may result in deletion or reallocation of block
+extents should not be allowed. See RFC 8881, section 18.43.3.
 
-> Add devicetree bindings support for ade9000.
->=20
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-one minor thing inline.
+If multiple clients write data to the same file, rebooting the server
+during writing may result in file corruption. In the worst case, the
+exported XFS may also become corrupted. Observed this behavior while
+testing pNFS block volume setup.
 
-> ---
-> changes in v5:
->  - remove clock-output-names property (simplified clock output)
->  - make interrupts, reset-gpios, and interrupt-names optional (removed fr=
-om required list) =20
->  - improve interrupt-names description to allow any subset of irq0, irq1,=
- dready
->  - fix typo in description ("ADE9000 s a" -> "ADE9000 is a")
->  - fix spacing in description ("analog-to- digital" -> "analog-to-digital=
-")
->  - uncomment clock example in device tree example
->  .../bindings/iio/adc/adi,ade9000.yaml         | 97 +++++++++++++++++++
->  1 file changed, 97 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ade9000=
-.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml b=
-/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
-> new file mode 100644
-> index 000000000000..a1513ad41651
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
-> @@ -0,0 +1,97 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +# Copyright 2025 Analog Devices Inc.
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/adi,ade9000.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices ADE9000 High Performance, Polyphase Energy Meterin=
-g driver
-> +
-> +maintainers:
-> +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
-> +
-> +description: |
-> +  The ADE9000 is a highly accurate, fully integrated, multiphase energy =
-and power
-> +  quality monitoring device. Superior analog performance and a digital s=
-ignal
-> +  processing (DSP) core enable accurate energy monitoring over a wide dy=
-namic
-> +  range. An integrated high end reference ensures low drift over tempera=
-ture
-> +  with a combined drift of less than =C2=B125 ppm/=C2=B0C maximum for th=
-e entire channel
-> +  including a programmable gain amplifier (PGA) and an analog-to-digital
-> +  converter (ADC).
-> +
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/AD=
-E9000.pdf
-> +
-> +$ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,ade9000
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  spi-max-frequency:
-> +    maximum: 20000000
-> +
-> +  interrupts:
-> +    maxItems: 3
-> +
-> +  interrupt-names:
-> +    description: Optional interrupt names. Any subset of irq0, irq1, dre=
-ady.
+Co-developed-by: Konstantin Evtushenko <koevtushenko@yandex.com>
+Signed-off-by: Konstantin Evtushenko <koevtushenko@yandex.com>
+Signed-off-by: Sergey Bashirov <sergeybashirov@gmail.com>
+---
+ fs/nfsd/nfs4proc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-The binding should enforce that list of possible values. Lots of examples i=
-n tree.
-Basically an enum combined with maxItems / minItems to say 1 to 3 of them.
-I'm not sure if that is latest preferred way of doing this though.
-
-> +    maxItems: 3
-> +
-> +  reset-gpios:
-> +    description:
-> +      Must be the device tree identifier of the RESET pin. As the line is
-> +      active low, it should be marked GPIO_ACTIVE_LOW.
-> +    maxItems: 1
-> +
-> +  vdd-supply: true
-> +
-> +  vref-supply: true
-> +
-> +  clocks:
-> +    description: External clock source when not using crystal
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: clkin
-> +
-> +  "#clock-cells":
-> +    description:
-> +      ADE9000 can provide clock output via CLKOUT pin with external buff=
-er.
-> +    const: 0
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - vdd-supply
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    spi {
-> +      #address-cells =3D <1>;
-> +      #size-cells =3D <0>;
-> +
-> +      adc@0 {
-> +          compatible =3D "adi,ade9000";
-> +          reg =3D <0>;
-> +          spi-max-frequency =3D <7000000>;
-> +
-> +          #clock-cells =3D <0>;
-> +          reset-gpios =3D <&gpio 4 GPIO_ACTIVE_LOW>;
-> +          interrupts =3D <2 IRQ_TYPE_EDGE_FALLING>, <3 IRQ_TYPE_EDGE_FAL=
-LING>, <4 IRQ_TYPE_EDGE_FALLING>;
-> +          interrupt-names =3D "irq0", "irq1", "dready";
-> +          interrupt-parent =3D <&gpio>;
-> +          clocks =3D <&ext_clock_24576khz>;
-> +          clock-names =3D "clkin";
-> +          vdd-supply =3D <&vdd_reg>;
-> +      };
-> +    };
+diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+index bfebe6e25638a..3000b43be9221 100644
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -2435,6 +2435,7 @@ static __be32
+ nfsd4_layoutget(struct svc_rqst *rqstp,
+ 		struct nfsd4_compound_state *cstate, union nfsd4_op_u *u)
+ {
++	struct net *net = SVC_NET(rqstp);
+ 	struct nfsd4_layoutget *lgp = &u->layoutget;
+ 	struct svc_fh *current_fh = &cstate->current_fh;
+ 	const struct nfsd4_layout_ops *ops;
+@@ -2486,6 +2487,10 @@ nfsd4_layoutget(struct svc_rqst *rqstp,
+ 	if (lgp->lg_seg.length == 0)
+ 		goto out;
+ 
++	nfserr = nfserr_grace;
++	if (locks_in_grace(net))
++		goto out;
++
+ 	nfserr = nfsd4_preprocess_layout_stateid(rqstp, cstate, &lgp->lg_sid,
+ 						true, lgp->lg_layout_type, &ls);
+ 	if (nfserr) {
+-- 
+2.43.0
 
 
