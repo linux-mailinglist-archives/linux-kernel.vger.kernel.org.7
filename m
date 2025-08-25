@@ -1,273 +1,140 @@
-Return-Path: <linux-kernel+bounces-783843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB1BB3336C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 02:54:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4F9BB3336E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D37695E0B16
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 00:54:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73DB67ADFB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 01:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7F7202F70;
-	Mon, 25 Aug 2025 00:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467B918A6AD;
+	Mon, 25 Aug 2025 01:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G2JT388m"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="tiGwmXPo"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436B51F0E3E;
-	Mon, 25 Aug 2025 00:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB5C393DD1
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 01:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756083265; cv=none; b=GMw/vTz3zD4Z/9Tv+Cc8wsMY/+RVT/zcJBC3Z0rk9ardpWmgS86n7BWCvTiITshrhKRv7LRX85AJoLfvA3SrCeoK6HjpqRRFYQ2Mbl+X9XH9+bhxZCub4kYB7/MKOb3U+YRYL6cpl+bT7q5PHXa94Hs3eGS8joTs1CdNZZrzxTQ=
+	t=1756083713; cv=none; b=Eu26i+F7Q1wvDteZzQHIM19oxUI++abGykxpL8+3R68RniISI7WoRaxi1QSmeHx8rkgv4Ag/ebqA3I19uQ4QI42XQjjy4xXxJNzxWTdE9jZLWtrNu2p5oIHDLZsUruLNpZJC7zLNIE5iGqRdhZtHENjQ7iIQBJerpOk7qWwEl6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756083265; c=relaxed/simple;
-	bh=rBgdmYUqFckpELcLrAlCCv8k/vTr+gfXp1Bn30Bh+1k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ody6ckCTxHzD80716Ybeyqwf+p4aUnixRVaZhoeEh7iXtiJvJYpfP5YVQIXXQQiglN1nPkehu7y79cZM1T1MsfoTnuAAjGOVvqEu0aJfZFk615wEdYYvYqAlhMn40YkPvLPg0MN3DdZ8Ms4ovm+AoS5GsLmRBFwLSgnKnugK8FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G2JT388m; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756083263; x=1787619263;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=rBgdmYUqFckpELcLrAlCCv8k/vTr+gfXp1Bn30Bh+1k=;
-  b=G2JT388mQrGBNYaVzRIHmAr8zuBQ0nHRf18f+uwhE4MQsciht/gC15FW
-   qx+LaQ0WUv2N3+CVgbsPRRsXjaopcJpkyMSCJhSUiIVjXP/P0mxTjfCZZ
-   9jwcE2FEnzU0I7oVbss0bgdW3kSfpWJyxtT+o19W/Mkxqast+pvs1ZsGR
-   HQqHn3lGheARWCJAN/uq6QsUnhsuOMnWpw1ld7RGJr9wp6CSr5WH+DrTJ
-   JMBuzW4BtoIQRbTVjx8D8z1w3FQgYOsPyqD0KPstOHae45dNf/NHIGAgm
-   KtYQycr9FMs88yM+o+fOSDf90E2JVjdBSoxCS446Y6ULfG0gdRqk523eq
-   w==;
-X-CSE-ConnectionGUID: b2v9enp9QOCvWzDpunX3SA==
-X-CSE-MsgGUID: 2n3NnEsfTBWYbHFWvqD4XQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11532"; a="62106855"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62106855"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2025 17:54:22 -0700
-X-CSE-ConnectionGUID: GADeNY6gRAuWWgBdzBbpmQ==
-X-CSE-MsgGUID: 298aOxcJTB+FIF3oxAbi0w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="200103187"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.233.125]) ([10.124.233.125])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2025 17:54:19 -0700
-Message-ID: <03e30fdd-0624-4fa0-a187-cd870e5d3694@linux.intel.com>
-Date: Mon, 25 Aug 2025 08:54:16 +0800
+	s=arc-20240116; t=1756083713; c=relaxed/simple;
+	bh=qzvjptTdbu1HRrNm17uglIEKW/C3ojiHltnOpJd8zPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a5Chuna8+DyzPnE7rLM1QWrNJYlxZU2jYtpAaru/zliWAeWVqC4K/b6ifUqy1K7PyHRYC9AANYU+wFn9kq0jGu/QNagLs33cHiHdtLbsnFEhODnuO7kkfMmUvgMZ0LKkv+2r67CFzIFdaTzIvKQ5/OsRJkbRVGi244xE1GQMzrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=tiGwmXPo; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1756083703; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=hT7fyki4cRVVgwQPXO+m+tGFXjnan9mDi20ca9rK7Dw=;
+	b=tiGwmXPoXYeNquWUg+tYm5AfvUfsiaJzVZYUNwdf/hvBsxl53vHPvmdIGNNeyl/QzornbqzQw+LYqH/bf1QJ0XvGWoY/k4gcPbO/AAYR69LMIVvTNGY3Xqv+OpqDGxzs2RRaMcCd3a+jU9uFXrA5PEWTOJJsNeO9f72QEgFLfac=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WmPcp-O_1756083701 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 25 Aug 2025 09:01:42 +0800
+Date: Mon, 25 Aug 2025 09:01:41 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Lance Yang <lance.yang@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+	paulmck@kernel.org, john.ogness@linutronix.de,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v2] panic: Clean up message about deprecated
+ 'panic_print' parameter
+Message-ID: <aKu19RZ4tffb8eNC@U-2FWC9VHC-2323.local>
+References: <aKRJKZHgcxyNF3y7@pathway.suse.cz>
+ <202508200907.PsZ3geub-lkp@intel.com>
+ <ae9bb2ea-c6e5-4a4b-ae25-aea1d6fe084d@linux.dev>
+ <33a897b4-7d9a-4641-9c7a-07c19bb9cb6f@linux.dev>
+ <7a34da58-874d-4271-9dbb-7991468d58ff@linux.dev>
+ <aKWWcPOf9qPIoCe4@pathway.suse.cz>
+ <aKWYELPjbhC7R8NO@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf tools topdown: Fix incorrect topdown slots regroup
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>,
- Xudong Hao <xudong.hao@intel.com>
-References: <20250822082233.1850417-1-dapeng1.mi@linux.intel.com>
- <CAP-5=fW6N+eE0KTyV7F4wm=KBwk46QbXjwwG9POtZxEDhbRqRQ@mail.gmail.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <CAP-5=fW6N+eE0KTyV7F4wm=KBwk46QbXjwwG9POtZxEDhbRqRQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aKWYELPjbhC7R8NO@pathway.suse.cz>
 
+On Wed, Aug 20, 2025 at 11:40:32AM +0200, Petr Mladek wrote:
+> Remove duplication of the message about deprecated 'panic_print'
+> parameter.
+> 
+> Also make the wording more direct. Make it clear that the new
+> parameters already exist and should be used instead.
+> 
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
 
-On 8/23/2025 1:35 AM, Ian Rogers wrote:
-> On Fri, Aug 22, 2025 at 1:23 AM Dapeng Mi <dapeng1.mi@linux.intel.com> wrote:
->> When running the command "perf stat -e "slots,slots" -C0 sleep 1", we
->> see below error.
->>
->> perf stat -e "slots,slots" -C0 sleep 1
->> WARNING: events were regrouped to match PMUs
->>  Performance counter stats for 'CPU(s) 0':
->>      <not counted>      slots
->>    <not supported>      slots
->>
->>      1.002265769 seconds time elapsed
->>
->> The topdown slots events are not correctly counted. The root cause is
->> that perf tools incorrectly regroup these 2 slots events into a group.
->> If there are only topdown slots events but no topdown metrics events,
->> the regroup should not be done since topdown slots event can only be
->> programed on fixed counter 3 and multiple slots events can only be
->> multiplexed to run on fixed counter 3, but grouping them blocks
->> multiplexing.
->>
->> So avoid to regroup topdown slots events if there is no topdown metrics
->> events.
->>
->> With this change, above command can be run successfully.
->>
->> perf stat -e "slots,slots" -C0 sleep 1
->>  Performance counter stats for 'CPU(s) 0':
->>        103,973,791      slots
->>        106,488,170      slots
->>
->>        1.003517284 seconds time elapsed
->>
->> Besides, run perf stats/record test on SPR and PTL, both passed.
->>
->> Reported-by: Xudong Hao <xudong.hao@intel.com>
->> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> I don't think we should do this and if we were to do it we shouldn't
-> do it in the common code. The perf metrics requiring a slots event is
-> a massive mess that never seems to end. What should we do with:
-> ```
-> $ perf stat -e "topdown-fe-bound,topdown-fe-bound" true
->
-> Performance counter stats for 'true':
->
->     <not counted>      slots
->     <not counted>      topdown-fe-bound
->   <not supported>      topdown-fe-bound
->
->       0.000960472 seconds time elapsed
->
->       0.001060000 seconds user
->       0.000000000 seconds sys
->
->
-> Some events weren't counted. Try disabling the NMI watchdog:
->        echo 0 > /proc/sys/kernel/nmi_watchdog
->        perf stat ...
->        echo 1 > /proc/sys/kernel/nmi_watchdog
-> ```
->
-> We've injected the slots event but the repeated topdown-fe-bound
-> causes the group to fail in a similar way. Why is repeating slots a
-> case we care about more?
-> Were we to say, okay slots is more special than the other perf metric
-> events then I'd prefer arch_evsel__must_be_in_group to return false
-> for the slots event when there are no other perf metric events in the
-> evlist. But then what do you do if the slots event is in a different
-> group like:
-> ```
-> $ perf stat -e "slots,{slots,topdown-fe-bound}" true
-> ```
-> It is pretty easy to teach the code to deduplicate events, but then
-> again, what about the group behavior?
-> It is not clear to me we can ever clean up all the mess that the perf
-> metric events on p-cores create and I'm in favor of having the code be
-> no more complex than it needs to be, so I'm not sure we should be
-> solving this problem.
+Thanks for the cleanup!
 
-Ian, thanks for reviewing. Yeah, I agree what you said "topdown events are
-a massive mess", we could never solve all issues. But it's annoying for
-users that it reports "not counted" instead of an error. Is it possible
-that we take a step back and don't try to resolve this issue and just
-report an error (maybe plus a message) to warn users that multiple same
-topdown events are not allowed? Thanks. 
+Reviewed-by: Feng Tang <feng.tang@linux.alibaba.com>
 
-
->
-> Thanks,
-> Ian
->
->> ---
->>  tools/perf/arch/x86/util/topdown.h |  2 --
->>  tools/perf/util/evsel.c            | 10 ++++++++++
->>  tools/perf/util/evsel.h            |  2 ++
->>  tools/perf/util/parse-events.c     | 11 +++++++++++
->>  4 files changed, 23 insertions(+), 2 deletions(-)
->>
->> diff --git a/tools/perf/arch/x86/util/topdown.h b/tools/perf/arch/x86/util/topdown.h
->> index 69035565e649..6a917b2066f7 100644
->> --- a/tools/perf/arch/x86/util/topdown.h
->> +++ b/tools/perf/arch/x86/util/topdown.h
->> @@ -8,8 +8,6 @@ struct evsel;
->>  struct list_head;
->>
->>  bool topdown_sys_has_perf_metrics(void);
->> -bool arch_is_topdown_slots(const struct evsel *evsel);
->> -bool arch_is_topdown_metrics(const struct evsel *evsel);
->>  int topdown_insert_slots_event(struct list_head *list, int idx, struct evsel *metric_event);
->>
->>  #endif
->> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
->> index d264c143b592..6aaae1ac026e 100644
->> --- a/tools/perf/util/evsel.c
->> +++ b/tools/perf/util/evsel.c
->> @@ -3965,6 +3965,16 @@ int evsel__source_count(const struct evsel *evsel)
->>         return count;
->>  }
->>
->> +bool __weak arch_is_topdown_slots(const struct evsel *evsel __maybe_unused)
->> +{
->> +       return false;
->> +}
->> +
->> +bool __weak arch_is_topdown_metrics(const struct evsel *evsel __maybe_unused)
->> +{
->> +       return false;
->> +}
->> +
->>  bool __weak arch_evsel__must_be_in_group(const struct evsel *evsel __maybe_unused)
->>  {
->>         return false;
->> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
->> index 5797a02e5d6a..33f8aab675a9 100644
->> --- a/tools/perf/util/evsel.h
->> +++ b/tools/perf/util/evsel.h
->> @@ -556,6 +556,8 @@ void evsel__set_leader(struct evsel *evsel, struct evsel *leader);
->>  int evsel__source_count(const struct evsel *evsel);
->>  void evsel__remove_from_group(struct evsel *evsel, struct evsel *leader);
->>
->> +bool arch_is_topdown_slots(const struct evsel *evsel);
->> +bool arch_is_topdown_metrics(const struct evsel *evsel);
->>  bool arch_evsel__must_be_in_group(const struct evsel *evsel);
->>
->>  bool evsel__set_needs_uniquify(struct evsel *counter, const struct perf_stat_config *config);
->> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
->> index 8282ddf68b98..bd09fc47ea90 100644
->> --- a/tools/perf/util/parse-events.c
->> +++ b/tools/perf/util/parse-events.c
->> @@ -2127,6 +2127,8 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
->>         int ret;
->>         struct evsel *force_grouped_leader = NULL;
->>         bool last_event_was_forced_leader = false;
->> +       bool has_slots = false;
->> +       bool has_metrics = false;
->>
->>         /* On x86 topdown metrics events require a slots event. */
->>         ret = arch_evlist__add_required_events(list);
->> @@ -2147,6 +2149,11 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
->>                 if (pos == pos_leader)
->>                         orig_num_leaders++;
->>
->> +               if (!has_slots)
->> +                       has_slots = arch_is_topdown_slots(pos);
->> +               if (!has_metrics)
->> +                       has_metrics = arch_is_topdown_metrics(pos);
->> +
->>                 /*
->>                  * Ensure indexes are sequential, in particular for multiple
->>                  * event lists being merged. The indexes are used to detect when
->> @@ -2163,6 +2170,10 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
->>                         force_grouped_idx = pos_leader->core.idx;
->>         }
->>
->> +       /* Don't regroup if there are only topdown slots events. */
->> +       if (force_grouped_idx != -1 && has_slots && !has_metrics)
->> +               force_grouped_idx = -1;
->> +
->>         /* Sort events. */
->>         list_sort(&force_grouped_idx, list, evlist__cmp);
->>
->>
->> base-commit: 6235ce77749f45cac27f630337e2fdf04e8a6c73
->> --
->> 2.34.1
->>
+> ---
+> Changes since v1:
+> 
+>   - fixed compilation with CONFIG_SYSCTL disabled (kernel test
+>     robot <lkp@intel.com>)
+> 
+> Thanks Lance Yang <lance.yang@linux.dev> for debugging the compilation
+> error reported by the test robot.
+> 
+>  kernel/panic.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/panic.c b/kernel/panic.c
+> index 12a10e17ab4a..24bca263f896 100644
+> --- a/kernel/panic.c
+> +++ b/kernel/panic.c
+> @@ -77,6 +77,11 @@ ATOMIC_NOTIFIER_HEAD(panic_notifier_list);
+>  
+>  EXPORT_SYMBOL(panic_notifier_list);
+>  
+> +static void panic_print_deprecated(void)
+> +{
+> +	pr_info_once("Kernel: The 'panic_print' parameter is now deprecated. Please use 'panic_sys_info' and 'panic_console_replay' instead.\n");
+> +}
+> +
+>  #ifdef CONFIG_SYSCTL
+>  
+>  /*
+> @@ -125,7 +130,7 @@ static int proc_taint(const struct ctl_table *table, int write,
+>  static int sysctl_panic_print_handler(const struct ctl_table *table, int write,
+>  			   void *buffer, size_t *lenp, loff_t *ppos)
+>  {
+> -	pr_info_once("Kernel: 'panic_print' sysctl interface will be obsoleted by both 'panic_sys_info' and 'panic_console_replay'\n");
+> +	panic_print_deprecated();
+>  	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
+>  }
+>  
+> @@ -944,13 +949,13 @@ core_param(panic_console_replay, panic_console_replay, bool, 0644);
+>  
+>  static int panic_print_set(const char *val, const struct kernel_param *kp)
+>  {
+> -	pr_info_once("Kernel: 'panic_print' parameter will be obsoleted by both 'panic_sys_info' and 'panic_console_replay'\n");
+> +	panic_print_deprecated();
+>  	return  param_set_ulong(val, kp);
+>  }
+>  
+>  static int panic_print_get(char *val, const struct kernel_param *kp)
+>  {
+> -	pr_info_once("Kernel: 'panic_print' parameter will be obsoleted by both 'panic_sys_info' and 'panic_console_replay'\n");
+> +	panic_print_deprecated();
+>  	return  param_get_ulong(val, kp);
+>  }
+>  
+> -- 
+> 2.50.1
 
