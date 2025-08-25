@@ -1,126 +1,155 @@
-Return-Path: <linux-kernel+bounces-784316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6C0B339E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:50:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B423AB339EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0213B5B8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:50:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 008763B7F10
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8160029E11D;
-	Mon, 25 Aug 2025 08:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F932BEFF2;
+	Mon, 25 Aug 2025 08:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="eyK+Eur/"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MPzW38Xk"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71131E0DCB;
-	Mon, 25 Aug 2025 08:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570D52BCF5D
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 08:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756111829; cv=none; b=sFS8RgdnCD0b2smzy3JEscAb6tdVwQb0yLlfgxBgLuDu738vcc/81C773g0jDtoQ8Wfm98y144DdAC0PTv49Kdae0b+dlQwz5iCyg2tmTqKfYlbTWkZnMZ3wjG8zBBx0imn9qoa5p64V/5nEuT6fJ+a59FoBHHGOnYQE9JCyhIE=
+	t=1756111900; cv=none; b=B89q7LNOmeOgbambB+SZAx6zs1OVijWpy1kL79A/yF6FF6euYb8zS4SqidqYCzfjhWMENJrFzFTzhXPTTxSExKDayxV4qhIDwcjHdnSimKjqCtbnacaY4MFliuugTfYXGVRG7TwlI9HspxfeeIzCnEw+oUSSmdkX3E999gZ0kuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756111829; c=relaxed/simple;
-	bh=Xtml559ogB0uUdvg77mXp304iBjiaV7jOI+rnKG2hfo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PLFBiTVCkAtdcGkEv+KBCJB3q8YyPM6BewOl38eKF3GWYIRk0F4A2Utj3CDpBvtJ2VPaMdt0Tr0ioBT0KLLAuWF8WiGUSIDBGI0X0zhcnvX5qGR+SS39d66OdkeKgB19ENA3UJHyzu2/5j5Oh6nptEzsGzjLMzVbL1Ra7QQx418=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=eyK+Eur/; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1192140E023B;
-	Mon, 25 Aug 2025 08:50:22 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id uCezOB_PD1im; Mon, 25 Aug 2025 08:50:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756111818; bh=KKGCgNEPWkw/z2lK1j3DQROSoKZTCmEnBPN/FJrqRV0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eyK+Eur/QRXtQl0vI2ruLmzUkGQoV6r1mBJ2VGpUQbO5iG7otIKaVp9YZA1iGC89S
-	 3lXbjhUndjoHMIyIiXVrIW5Bus943up537Uj+5Dq/JsHXKdu7SF4KQ5BKb5YFQSv78
-	 pRA+9jYHE9tHtjwXf8L5jpRoY6Qhb5nN2WVk4R5VAiV2wcAXi8IeZoKjZ1yJ/4z8Dm
-	 Nnrl0vqH7DvrPtBUbVWFp4SjCNOjD3TfR3KCKdtruxO3xkwY9x1xc0KQieGOhvMPpo
-	 4piJ0ouE8CV8nGfmS1qynq3gN3GuNkCx0adMgAcIhgcYPBe0IEyyGhjmGNQdrpdndJ
-	 nj/fUPTRDnqkK66mHWB+OemV0KhZIWCLwDYLJt8c89a6QcKFG/itdAMXMwLInv8oP/
-	 JEzygpWyfayQ79/znLELLDE4bYUI7XAWpHIAb6kNWMXi4dSc6MhrMGQ6suwslEyXFI
-	 bC9v6rNyo3ZB6tgvseCtfl0ZMie4HFhwqVEzc5k8pmyGgXrBozVIduHRS+5Oa/FF6g
-	 pxozdDgmlWTsqt4mFBD9M2Yk7IpYxdbSRIiHRYr6AweQgcIwTCYKmLAhH88jH/9BvU
-	 wdWxV9Cp7Y79INZrwfxEq0cs8/SsozSiK5knsXgNzCGKiV3jtaMcb2kNCxCCS8G4G9
-	 ooF727/WlDsr4HKR5Prey0zI=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0B35440E0217;
-	Mon, 25 Aug 2025 08:49:57 +0000 (UTC)
-Date: Mon, 25 Aug 2025 10:49:50 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org,
-	Naveen rao <naveen.rao@amd.com>, Sairaj Kodilkar <sarunkod@amd.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	"Xin Li (Intel)" <xin@zytor.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Naveen N Rao <naveen@kernel.org>
-Subject: Re: [PATCH v4 0/4] x86/cpu/topology: Fix the preferred order of
- initial APIC ID parsing on AMD/Hygon
-Message-ID: <20250825084950.GAaKwjrvrmXZStqrji@fat_crate.local>
-References: <20250825075732.10694-1-kprateek.nayak@amd.com>
+	s=arc-20240116; t=1756111900; c=relaxed/simple;
+	bh=t+jULux6u4hj2Z7SOpYHZdTYFb+J97iaZK9F3ThDiK0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=azHa2Pdabv/TwWs9w6xl0sm/oOY65ckYbSkM/DEDxxeAh64M/u01j8Uta3X+pE0yJQZDKHqsjxuDHTY+zvuoWZeMKuQvXfp3OF9GICYWUdg8/mu/6FWg4MCS+HLpKKxWaXotb/W4RmL+BfqHD7oqQAdFjF7AZbpz1YboSsq/Tx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MPzW38Xk; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3c8fe6bd1a2so279894f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 01:51:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1756111897; x=1756716697; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+G6Bai4J1X5mL+f5JKed3Q7/QWSAcTpZk5fQFb7jN6Y=;
+        b=MPzW38XklhUViCz/Vl8YRcFf5K5L6nhEJXXkmWsHcRz7LzkzEdUZzvrrGramfI0VPy
+         l52dThnxf/02WKE6YjxknZncu8JklrNwz9gBB4eJA5MSEKICqub1woz4FaZWQuN6JLVL
+         N6Pim7jaz4cWHT6WbEylkZRtP4DtGS2B1ESQTUsOBSZtgNF5+FQwNl/ARe6+NDHqF4wM
+         NqozORAVphJyB64H5k+hViywYjnXqA3pJxRKsqtDFO136XIu0uIHKS4MTb/rkkYa3q5G
+         Le1DKNMMHeUZdM4owb7X6GpV7R2uGsVtWZMEuQEyOKXO2QmQ2tQu+o8uMdaTmanf+VIG
+         G/Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756111897; x=1756716697;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+G6Bai4J1X5mL+f5JKed3Q7/QWSAcTpZk5fQFb7jN6Y=;
+        b=lpMsmXO0pPFXG7MrhAOIX97nGyCZaa7EdVRz/0WKhZ1l3V/U3Ak9rqz6nZ/3kWBUWp
+         KJr1mL1b36WycFw3gYi4WOO3MaMB6/baMuMrM4Kl9q2tnaqS+VXclw8iYQCJbo6uhW4c
+         UGY1rTdOMJPqBv9sU9gmLdEYs+fEBHGhVZeKhiANsjzTP8ZGP4nNbAg0CI9Y5iyhrtYU
+         SQoxpgECPnpnlVw4C7d/X/1LMbMuv5BFjNyrqYnajoJxhxeDVrdd2ngX8HSgXHQesKgo
+         9p3cC22Ij7AfVJhfX8qmJZ+hJnUNKfe3JHOv/E+shwcakVS00NXQ3YFAm/jJaJjGBh1U
+         fmfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3dhSjw+jOJlzZMwUNYV4OLq7+ForavUux+Q1suiVMAnK2WMRDSjFBIxtn1KlSaPypG19Xs1e/yK30wjE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVEv0h3pzzxxHJJoofqoKPQ5iONnR4X5zvOM+7M5uyHV9WVgeq
+	H0ScnNyrjQcn9zn0zOxl5RxQDDQxQrlDI0amBcK8CByl3suwnPiPUiuwWYRzyyiqInb0yEvy/js
+	B7hK6PCv8KCywHM7Q3iv7uVsjgsBwBq/iBe/D6PSt8w==
+X-Gm-Gg: ASbGncuYOV4mbHsnqJA0Y4Yzu6USXYV/YZhsKEiRTpO9Jvs65EI1fVyMNrf2CfA2jUD
+	N4NHUetvM1fI+aOfrWfuJL8QuDeF2Ti2kh0Fsg10MeKG6hoe23v8+bpTDhV+8ir+GjyWc9bhuhD
+	h5whyhri7iFH1aoJ0mx3B5YbTIFD11UbG0bb09syQKY595NrAg4GQenSoVKst9fFqprnjDPxtUk
+	dmlYW02Xt8wnsVW
+X-Google-Smtp-Source: AGHT+IEv76Ci6n5Rf9M/zI7dh9QA5Vj3lwnHLFhciLQjLsOlPR6Z5DYybWZ2ykt/hx7FfUyKExCvIyUWyokatFLcZUw=
+X-Received: by 2002:a05:6000:1a86:b0:3c9:8600:9a6f with SMTP id
+ ffacd0b85a97d-3c98600a5a0mr1778339f8f.21.1756111896568; Mon, 25 Aug 2025
+ 01:51:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250825075732.10694-1-kprateek.nayak@amd.com>
+References: <2022221.PYKUYFuaPT@saltykitkat> <810d2b19-47ed-4902-bd8d-eb69bacbf0c6@gmx.com>
+ <aKiSpTytAOXgHan5@mozart.vkv.me> <e9a4f485-3907-4f1e-8a74-2ffde87f3044@gmx.com>
+ <aKj8K8IWkXr_SOk_@mozart.vkv.me> <9cacdafc-98ec-4ad2-99a8-dfb077e4a5fb@gmx.com>
+ <aKs2mCRjtv3Ki06Z@mozart.vkv.me>
+In-Reply-To: <aKs2mCRjtv3Ki06Z@mozart.vkv.me>
+From: Daniel Vacek <neelx@suse.com>
+Date: Mon, 25 Aug 2025 10:51:24 +0200
+X-Gm-Features: Ac12FXxyQFaQKPGGNp2JoO1pg1hOxueUNRXLrNHNHAxwd26o3wk1HeQRy-4SAME
+Message-ID: <CAPjX3FeOEg+QhkwKWe+qDH876bp6-t1GFO0sce7a6bmhM7umpw@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: Accept and ignore compression level for lzo
+To: Calvin Owens <calvin@wbinvd.org>
+Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>, Sun YangKai <sunk67188@gmail.com>, clm@fb.com, 
+	dsterba@suse.com, josef@toxicpanda.com, linux-btrfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 25, 2025 at 07:57:28AM +0000, K Prateek Nayak wrote:
-> This led us down a rabbit hole of XTOPOLOGY vs TOPOEXT support, preferred
+On Sun, 24 Aug 2025 at 17:58, Calvin Owens <calvin@wbinvd.org> wrote:
+> From: Calvin Owens <calvin@wbinvd.org>
+> Subject: [PATCH v3] btrfs: Accept and ignore compression level for lzo
+>
+> The compression level is meaningless for lzo, but before commit
+> 3f093ccb95f30 ("btrfs: harden parsing of compression mount options"),
+> it was silently ignored if passed.
+>
+> After that commit, passing a level with lzo fails to mount:
+>
+>     BTRFS error: unrecognized compression value lzo:1
+>
+> It seems reasonable for users to expect that lzo would permit a numeric
+> level option, as all the other algos do, even though the kernel's
+> implementation of LZO currently only supports a single level. Because it
+> has always worked to pass a level, it seems likely to me that users in
+> the real world are relying on doing so.
+>
+> This patch restores the old behavior, giving "lzo:N" the same semantics
+> as all of the other compression algos.
+>
+> To be clear, silly variants like "lzo:one", "lzo:the_first_option", or
+> "lzo:armageddon" also used to work. This isn't meant to suggest that
+> any possible mis-interpretation of mount options that once worked must
+> continue to work forever. This is an exceptional case where it makes
+> sense to preserve compatibility, both because the mis-interpretation is
+> reasonable, and because nothing tangible is sacrificed.
+>
+> Fixes: 3f093ccb95f30 ("btrfs: harden parsing of compression mount options")
+> Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+> ---
+>  fs/btrfs/super.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 
-So in order to save people the rabbit hole wandering each time they (or we)
-have to undertake, I think we should document what the whole logic and
-precedences are wrt CPUID leafs and topology. What should be done where and so
-on.
+v3 looks good to me. The original hardening was meant to gate complete
+nonsense like "compress=lzoutput", etc...
 
-And those commit messages have a lot of text which explains that and I think
-it would be worth the effort to start holding it down here
-Documentation/arch/x86/topology.rst
+Reviewed-by: Daniel Vacek <neelx@suse.com>
 
-No long texts, no big explanations - just the plain facts and what the current
-strategy is wrt to which CPUID leafs we parse for what in what order and so
-on.
+Thank you.
 
-You could start the AMD side, it doesn't have to be exhaustive - just the
-facts from this rabbit hole trip.
-
-And then we'll keep extending it and filling out the details so that it is
-right there written down in one place.
-
-Makes sense?
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> index a262b494a89f..18eb00b3639b 100644
+> --- a/fs/btrfs/super.c
+> +++ b/fs/btrfs/super.c
+> @@ -299,9 +299,12 @@ static int btrfs_parse_compress(struct btrfs_fs_context *ctx,
+>                 btrfs_set_opt(ctx->mount_opt, COMPRESS);
+>                 btrfs_clear_opt(ctx->mount_opt, NODATACOW);
+>                 btrfs_clear_opt(ctx->mount_opt, NODATASUM);
+> -       } else if (btrfs_match_compress_type(string, "lzo", false)) {
+> +       } else if (btrfs_match_compress_type(string, "lzo", true)) {
+>                 ctx->compress_type = BTRFS_COMPRESS_LZO;
+> -               ctx->compress_level = 0;
+> +               ctx->compress_level = btrfs_compress_str2level(BTRFS_COMPRESS_LZO,
+> +                                                              string + 3);
+> +               if (string[3] == ':' && string[4])
+> +                       btrfs_warn(NULL, "Compression level ignored for LZO");
+>                 btrfs_set_opt(ctx->mount_opt, COMPRESS);
+>                 btrfs_clear_opt(ctx->mount_opt, NODATACOW);
+>                 btrfs_clear_opt(ctx->mount_opt, NODATASUM);
+> --
+> 2.49.1
+>
 
