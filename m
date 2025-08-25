@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-785619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C36B34EAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:00:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D709B34EB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 406BD1A818C6
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91FE02A2598
 	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A663B2FF64C;
-	Mon, 25 Aug 2025 21:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B17C3054F2;
+	Mon, 25 Aug 2025 21:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MkTQh8iL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abChkQEz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB982BF3D7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18ED2BE62C;
 	Mon, 25 Aug 2025 21:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756159150; cv=none; b=li1CQovDaeB9mWtPdhkkRj8VAiwDqle/60cMnqpAeIg8Skmhy0plLOfmUvMXX+WUuvn8N8Kt/J07VXFUisj4sMipUo7ZfMkoOS59+qXDX+LxbEJsvp9s2IHixNnKF6PB9INaa4WcY0GJ4GSXc36aOFUaOB6X0Cdb6D/KKvr4Va0=
+	t=1756159152; cv=none; b=qmq9kxp46RWW79fLP1tsht9s0p9Vp7V6jf5YFbGF3h/gGPZsev1OBhP1gi0bxPtc+Ip3FnQa8NRG/nt4wJX/QzcLT/sXMbEDJQMCbqOw87ef/59sYUZ1ek1wnnCyqU1JpgE9fIrV9JlhcgPlqutnxtxqK+NqKB8dHOVU7LQfIU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756159150; c=relaxed/simple;
-	bh=WTYVyZ9oXXL3OkEIh8FU85gicYzUVhRGADikTVKoQWE=;
+	s=arc-20240116; t=1756159152; c=relaxed/simple;
+	bh=u8H/POAkJXnqexD0Vo2T0kBej6xh78KY+6A9Mc8aNYU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lC+0BejQ2SBfEMX3ScZ1gCFIhtNUzHHSA6ovDq46KuiAoVt17EQ/K/aX63DGNGvSmT7+qHnlWOQ7T/X6fxf4quW4vf9Lz+X074O2FduMNRIrJ+f/VDQ2u20YhJ3P7TgQUPtnbhXCqN6eA6NrLnjfxZsgSNS40fHIl8EIfwyt2rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MkTQh8iL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92693C19424;
-	Mon, 25 Aug 2025 21:59:09 +0000 (UTC)
+	 MIME-Version; b=RJs5LknS176VBTrQgeWSoxAfOFlpyPFiriMLQmGW935GOj3MaA1wTl/1k8LKoHWOhDe2Rp5KyPF2eAMop5iI3TgDG/w/s/wERr/ORs3Ce2RbpMSiD6cH7PbmZtx5XOCyx6fGVS+C0P/bAz1KbJqNn7riBwhrM7v6hKDTM/bm/0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abChkQEz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22EA6C113D0;
+	Mon, 25 Aug 2025 21:59:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1756159150;
-	bh=WTYVyZ9oXXL3OkEIh8FU85gicYzUVhRGADikTVKoQWE=;
+	bh=u8H/POAkJXnqexD0Vo2T0kBej6xh78KY+6A9Mc8aNYU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MkTQh8iLOcGMarD1IO2rFhG55bd4yw2kyQOB1wSuP6ANLvv4L25FWtkfdcjRhnChY
-	 hklmBQQhp54UPNIOaZz40/gK+Vgrn+Q98Xw5bJAcWr6Ypr6Lq/X8A+OV+5R5YC26C2
-	 YWT3tAQV6bpj5pGFNunHGccpu9AG0mh/EiTOLbdvIwSg99TndYRmeqlg8s1oigiHBc
-	 rigLdQMT2REnhjDMtaAejlBgaKosLJ3y4qDeZQtGqQv9NwH+vNsv8q5Cl3X6B2Gb67
-	 hOBfuNSsPigMAzUllzNPEAtSm2Ow/hPNPJbdmuB1hAWy0/BcJ1gy1Ex1pGPD/+YEFE
-	 E6VegRLmkEjew==
+	b=abChkQEzU5PNu5yh5V5zz4XaRUE6mimBliaIxCekwJuh0MLwa/xPzXMchzTd8A4Ml
+	 Vwib2mNxW88e5ZXuA8SOFewTKrlNPBfmCTSMfByl9mcu5ZL1e6Ea8dC8rQEYrePu4B
+	 ajp0QuFs7cE9wRwT4gkQXR/zgKyBGJdVpKiLjMXw6L8JYgINQUxu3ZLPfSNQNq7TFs
+	 GuGyojSO/SnBdr8kRliTaSROa1FkKolRnOwukNLVmx/Jwf4frlPZifu3rW/PtDwUh3
+	 MN4bUOOvVkrSzYb7uJ17H9kScX0QTZ4u9unlmj5ja/kimatMDgFgI0vBiuzx3DfCqz
+	 4I+F7CG8/QW9g==
 From: Namhyung Kim <namhyung@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: Ian Rogers <irogers@google.com>,
@@ -49,12 +49,11 @@ Cc: Ian Rogers <irogers@google.com>,
 	Ingo Molnar <mingo@kernel.org>,
 	LKML <linux-kernel@vger.kernel.org>,
 	linux-perf-users@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 05/11] tools headers: Sync arm64 headers with the kernel source
-Date: Mon, 25 Aug 2025 14:58:57 -0700
-Message-ID: <20250825215904.2594216-6-namhyung@kernel.org>
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 06/11] tools headers: Sync powerpc headers with the kernel source
+Date: Mon, 25 Aug 2025 14:58:58 -0700
+Message-ID: <20250825215904.2594216-7-namhyung@kernel.org>
 X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
 In-Reply-To: <20250825215904.2594216-1-namhyung@kernel.org>
 References: <20250825215904.2594216-1-namhyung@kernel.org>
@@ -64,139 +63,49 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 To pick up the changes in this cset:
 
-  efe676a1a7554219 arm64: proton-pack: Add new CPUs 'k' values for branch mitigation
-  e18c09b204e81702 arm64: Add support for HIP09 Spectre-BHB mitigation
-  a9b5bd81b294d30a arm64: cputype: Add MIDR_CORTEX_A76AE
-  53a52a0ec7680287 arm64: cputype: Add comments about Qualcomm Kryo 5XX and 6XX cores
-  401c3333bb2396aa arm64: cputype: Add QCOM_CPU_PART_KRYO_3XX_GOLD
-  86edf6bdcf0571c0 smccc/kvm_guest: Enable errata based on implementation CPUs
-  0bc9a9e85fcf4ffb KVM: arm64: Work around x1e's CNTVOFF_EL2 bogosity
+  69bf2053608423cb powerpc: Drop GPL boilerplate text with obsolete FSF address
 
 This addresses these perf build warnings:
 
   Warning: Kernel ABI header differences:
-    diff -u tools/arch/arm64/include/asm/cputype.h arch/arm64/include/asm/cputype.h
-
-But the following two changes cannot be applied since they introduced
-new build errors in util/arm-spe.c.  So it still has the warning after
-this change.
-
-  c8c2647e69bedf80 arm64: Make  _midr_in_range_list() an exported function
-  e3121298c7fcaf48 arm64: Modify _midr_range() functions to read MIDR/REVIDR internally
+    diff -u tools/arch/powerpc/include/uapi/asm/kvm.h arch/powerpc/include/uapi/asm/kvm.h
 
 Please see tools/include/uapi/README for further details.
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-
-perf build: [WIP] Fix arm-spe build errors
-
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org
 Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 ---
- tools/arch/arm64/include/asm/cputype.h | 28 ++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ tools/arch/powerpc/include/uapi/asm/kvm.h | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/tools/arch/arm64/include/asm/cputype.h b/tools/arch/arm64/include/asm/cputype.h
-index 9a5d85cfd1fba6ee..139d5e87dc959313 100644
---- a/tools/arch/arm64/include/asm/cputype.h
-+++ b/tools/arch/arm64/include/asm/cputype.h
-@@ -75,11 +75,13 @@
- #define ARM_CPU_PART_CORTEX_A76		0xD0B
- #define ARM_CPU_PART_NEOVERSE_N1	0xD0C
- #define ARM_CPU_PART_CORTEX_A77		0xD0D
-+#define ARM_CPU_PART_CORTEX_A76AE	0xD0E
- #define ARM_CPU_PART_NEOVERSE_V1	0xD40
- #define ARM_CPU_PART_CORTEX_A78		0xD41
- #define ARM_CPU_PART_CORTEX_A78AE	0xD42
- #define ARM_CPU_PART_CORTEX_X1		0xD44
- #define ARM_CPU_PART_CORTEX_A510	0xD46
-+#define ARM_CPU_PART_CORTEX_X1C		0xD4C
- #define ARM_CPU_PART_CORTEX_A520	0xD80
- #define ARM_CPU_PART_CORTEX_A710	0xD47
- #define ARM_CPU_PART_CORTEX_A715	0xD4D
-@@ -119,9 +121,11 @@
- #define QCOM_CPU_PART_KRYO		0x200
- #define QCOM_CPU_PART_KRYO_2XX_GOLD	0x800
- #define QCOM_CPU_PART_KRYO_2XX_SILVER	0x801
-+#define QCOM_CPU_PART_KRYO_3XX_GOLD	0x802
- #define QCOM_CPU_PART_KRYO_3XX_SILVER	0x803
- #define QCOM_CPU_PART_KRYO_4XX_GOLD	0x804
- #define QCOM_CPU_PART_KRYO_4XX_SILVER	0x805
-+#define QCOM_CPU_PART_ORYON_X1		0x001
- 
- #define NVIDIA_CPU_PART_DENVER		0x003
- #define NVIDIA_CPU_PART_CARMEL		0x004
-@@ -129,6 +133,7 @@
- #define FUJITSU_CPU_PART_A64FX		0x001
- 
- #define HISI_CPU_PART_TSV110		0xD01
-+#define HISI_CPU_PART_HIP09			0xD02
- #define HISI_CPU_PART_HIP12		0xD06
- 
- #define APPLE_CPU_PART_M1_ICESTORM	0x022
-@@ -159,11 +164,13 @@
- #define MIDR_CORTEX_A76	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A76)
- #define MIDR_NEOVERSE_N1 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_NEOVERSE_N1)
- #define MIDR_CORTEX_A77	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A77)
-+#define MIDR_CORTEX_A76AE	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A76AE)
- #define MIDR_NEOVERSE_V1	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_NEOVERSE_V1)
- #define MIDR_CORTEX_A78	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A78)
- #define MIDR_CORTEX_A78AE	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A78AE)
- #define MIDR_CORTEX_X1	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X1)
- #define MIDR_CORTEX_A510 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A510)
-+#define MIDR_CORTEX_X1C MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X1C)
- #define MIDR_CORTEX_A520 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A520)
- #define MIDR_CORTEX_A710 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A710)
- #define MIDR_CORTEX_A715 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A715)
-@@ -196,13 +203,26 @@
- #define MIDR_QCOM_KRYO MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO)
- #define MIDR_QCOM_KRYO_2XX_GOLD MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO_2XX_GOLD)
- #define MIDR_QCOM_KRYO_2XX_SILVER MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO_2XX_SILVER)
-+#define MIDR_QCOM_KRYO_3XX_GOLD MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO_3XX_GOLD)
- #define MIDR_QCOM_KRYO_3XX_SILVER MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO_3XX_SILVER)
- #define MIDR_QCOM_KRYO_4XX_GOLD MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO_4XX_GOLD)
- #define MIDR_QCOM_KRYO_4XX_SILVER MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO_4XX_SILVER)
-+#define MIDR_QCOM_ORYON_X1 MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_ORYON_X1)
-+
-+/*
-+ * NOTES:
-+ * - Qualcomm Kryo 5XX Prime / Gold ID themselves as MIDR_CORTEX_A77
-+ * - Qualcomm Kryo 5XX Silver IDs itself as MIDR_QCOM_KRYO_4XX_SILVER
-+ * - Qualcomm Kryo 6XX Prime IDs itself as MIDR_CORTEX_X1
-+ * - Qualcomm Kryo 6XX Gold IDs itself as ARM_CPU_PART_CORTEX_A78
-+ * - Qualcomm Kryo 6XX Silver IDs itself as MIDR_CORTEX_A55
-+ */
-+
- #define MIDR_NVIDIA_DENVER MIDR_CPU_MODEL(ARM_CPU_IMP_NVIDIA, NVIDIA_CPU_PART_DENVER)
- #define MIDR_NVIDIA_CARMEL MIDR_CPU_MODEL(ARM_CPU_IMP_NVIDIA, NVIDIA_CPU_PART_CARMEL)
- #define MIDR_FUJITSU_A64FX MIDR_CPU_MODEL(ARM_CPU_IMP_FUJITSU, FUJITSU_CPU_PART_A64FX)
- #define MIDR_HISI_TSV110 MIDR_CPU_MODEL(ARM_CPU_IMP_HISI, HISI_CPU_PART_TSV110)
-+#define MIDR_HISI_HIP09 MIDR_CPU_MODEL(ARM_CPU_IMP_HISI, HISI_CPU_PART_HIP09)
- #define MIDR_HISI_HIP12 MIDR_CPU_MODEL(ARM_CPU_IMP_HISI, HISI_CPU_PART_HIP12)
- #define MIDR_APPLE_M1_ICESTORM MIDR_CPU_MODEL(ARM_CPU_IMP_APPLE, APPLE_CPU_PART_M1_ICESTORM)
- #define MIDR_APPLE_M1_FIRESTORM MIDR_CPU_MODEL(ARM_CPU_IMP_APPLE, APPLE_CPU_PART_M1_FIRESTORM)
-@@ -291,6 +311,14 @@ static inline u32 __attribute_const__ read_cpuid_id(void)
- 	return read_cpuid(MIDR_EL1);
- }
- 
-+struct target_impl_cpu {
-+	u64 midr;
-+	u64 revidr;
-+	u64 aidr;
-+};
-+
-+bool cpu_errata_set_target_impl(u64 num, void *impl_cpus);
-+
- static inline u64 __attribute_const__ read_cpuid_mpidr(void)
- {
- 	return read_cpuid(MPIDR_EL1);
+diff --git a/tools/arch/powerpc/include/uapi/asm/kvm.h b/tools/arch/powerpc/include/uapi/asm/kvm.h
+index eaeda001784ebb6f..077c5437f5219b05 100644
+--- a/tools/arch/powerpc/include/uapi/asm/kvm.h
++++ b/tools/arch/powerpc/include/uapi/asm/kvm.h
+@@ -1,18 +1,5 @@
+ /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+ /*
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License, version 2, as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+- *
+  * Copyright IBM Corp. 2007
+  *
+  * Authors: Hollis Blanchard <hollisb@us.ibm.com>
 -- 
 2.51.0.261.g7ce5a0a67e-goog
 
