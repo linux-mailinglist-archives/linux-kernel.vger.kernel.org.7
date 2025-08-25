@@ -1,114 +1,129 @@
-Return-Path: <linux-kernel+bounces-784896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D5E9B34357
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:19:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E708CB34374
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3AE4827AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:18:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DCB01884B22
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB17B2FCBEF;
-	Mon, 25 Aug 2025 14:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889573002D2;
+	Mon, 25 Aug 2025 14:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nqjuvOQG"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KwL9n18l"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5402FABE4;
-	Mon, 25 Aug 2025 14:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6806D3002AB
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756131456; cv=none; b=g2mKEhvJjC3whozZ+va9bk2+qyGn8hSLRUK36vsUm5UAQbw8ZaFQbZhJ8gcoZoA4hbD5SLMxUBW7H48cP8hY26D5EsTcGKnpX0wP8YvXEKmfqeCWF0GzYPno1lNUQQe4sxI4sgDYeKRvWpQ9VYoNqUpqREa1juyMP9PvePN2sc4=
+	t=1756131511; cv=none; b=IbGnnhxXd3zswdxTAbh036fdl0zl7eHi+tXO5NmIRXBI/1zMxuG+NuP2BZWpwuAfv1EVIfJ7K7CyAT0YFv6YoxL/KINzdEuoM8XCXSlqpy9ghvw8kzcmL0/iZ/Em6wmeB3Zul5+JMHRYhDXGeI8Z8Sor4KFzRM7kmW4pW7b6sNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756131456; c=relaxed/simple;
-	bh=XfZ62tLuxByRPYy6WjHQSXBDg1A/cx9UlgBoxSwnUEY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V3HvVA+7/GJCVj5/bPochLz6kdpsRqcr7bDJF/Kq8liDrz2oZDjAD00XQcvorG4vqTdPJ2/HPbj07uD46uS2/sVtIdV5QF7dRYCkC4wut8P6gJ4yga0w1roADay8F/q6hddkjGpN+p/3mUzuhi/F3D07FXcxQXE7WtQpXzgFqcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nqjuvOQG; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-30ccea8f43cso2971609fac.1;
-        Mon, 25 Aug 2025 07:17:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756131453; x=1756736253; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XfZ62tLuxByRPYy6WjHQSXBDg1A/cx9UlgBoxSwnUEY=;
-        b=nqjuvOQGsZ8yGSkrbFuKBvZmZykg/wRhf61/OxgT0jspq21ctZk6zq2Mn0jR26aLkn
-         nwLxhJ/k+0XI1+uN1ARqaMXRT9c2JFFe2m4QhlWjqK+NMX6E+QgB2jMToMTpBxoI8vfG
-         J34+TFOKcnohTB9XVoehSSCGo7ANcX9ycSRGrjIIeh3lxrNddXcT3yTop3xAc66N9pNK
-         pnwLD0PDamg+RRBkdI/QIFE5RClQg4sq9xKK5pMBE4Eb5R5yh9hHsZ/CWZkiiU83pFo5
-         FNgbYuyVjbsFopukbnc1bvZxDhNmZqtUqkJ4Yvc08arr1dGBts9TmLINhO6kGqeIIYxv
-         LFGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756131453; x=1756736253;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XfZ62tLuxByRPYy6WjHQSXBDg1A/cx9UlgBoxSwnUEY=;
-        b=oLoFWPI5XmKhVehnFS1D3jLGCq5vktC05ovmYK2Wrg3L68FT7QxzoBFRKsOnLdybMz
-         9eo3k1wSNQ/rskh3HjVE4dN0DjFebOxeIl3G6dX+xDx9eLQbHu2l9b50pJJC5KSxnTGT
-         B0vLMWO8Ebt3r+D6rWpLVKFmomfEiFi/TWb60EX3Gy5NaL+BtqNL8Qm7Um6V11A5Cl+1
-         nk4iQQZmInhQNkolkG09CaQaOWlwrdQ+lGSMmhM36mz8BHltwm27MHfVT+W8LZlyfOvS
-         Ix82MFkNN10nwNJrKfTWsW9mHz4345RHAu3UYPWQgroxNj5zLawgcSoBed21kuAR0HNP
-         7KpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEtmjdpAO4d7l8nLkw2PLCUb3aQbcgXrteOHNSvz4cvZe0tD0RiQgqNSa3bWKi9Eiquv0Z8KQbFyNfJHjMDAmfLA==@vger.kernel.org, AJvYcCVxWMmpBp1Oj8R/XcxQkj0R3eETcc8oQ/URYBy573iMjz/kF5wiZ2dCODgMMuONqAgK98gRDVNqTCNhOn3Y@vger.kernel.org, AJvYcCX6W4JQLabjNidKgUgZFWwy0l0620kz+ke/92zz1uIBwR5yXIdJ6THq1Phh9mIFN+73vyRS+x2CTx1w@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS/1/gnS28moYFJXwWWLpsPx48IB/qqbQ3hO1hBcfsDIyL84Bn
-	gins/X5qqgw0aUqAhNURyYUQw0NcvBMaNxsY5JXoHqMCqApbfqYYQtjOV73GwKMhQThFhj2CYCI
-	Rm8NGGEO5AxdhbN+a3E6Q6a5wYAy8PgA=
-X-Gm-Gg: ASbGncsngZ+ah+vstbuw7T3i24QfyjG3lDMeH8jpNezz0DG2y7UabD3yLr0yE1VU4Nb
-	q5XcbHMfH23pwQWTnqSMB5nyBadqZnuE5zHA7Wb9aSnKlo1OaA+QhyHNyRthQlUFQNYW29rvlaA
-	tcB5eT4+a452FAhKLnrNRUtz24hkOCMahyvrEmvlScFdHHAGqxZTFC7aymvPsDtJtFtXXAHjLTb
-	3EBjJ5r/Q==
-X-Google-Smtp-Source: AGHT+IFSc8yJZYP5++oyX3zmrWa4FAQwXR273vNyQxNEoAE2cLriN8WjmSnBc4L7oE7eTe5khl35lhborZFipbzMxh0=
-X-Received: by 2002:a05:6870:9a86:b0:30b:9efd:caaf with SMTP id
- 586e51a60fabf-314dd684ff3mr6566294fac.19.1756131453427; Mon, 25 Aug 2025
- 07:17:33 -0700 (PDT)
+	s=arc-20240116; t=1756131511; c=relaxed/simple;
+	bh=ItsVxMcWxDYHVWBaWDDZhd2R5FcKHvQsQp7/GQCZDWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k2vpNdycwoJGXq81iOhyKUrLkKrJ1afjpO8JWIAL8PE/rX43myKt8mABB118cXmBznDTiwetktB/gkvdCFj2/SjfPy7NVX1mEvGBITuc+pbmpmF+jy3HeuQdGnP9/3rfpX4sISujE6WLAB+D722P4c2UwMk0GDLS0tFht7+lxxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KwL9n18l; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1673040E0217;
+	Mon, 25 Aug 2025 14:18:27 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id tKpbBpDqu4bX; Mon, 25 Aug 2025 14:18:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756131503; bh=bqdY0WhAtvp8cHP6dvUMlzIPIRxwctMFGQtIjBRr3tw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KwL9n18lowcfxL+hq0zpvEiRvyns+GLJ2fVosu7qUKagAwdDxr722tgM+wkwtV7WK
+	 2SFOwUaChmHZDGMP2xFlZFzXWBErO4V18BKW86xt6q8bHMvUmt9/egxS6Vk4MCU+Ro
+	 emQ/G3ZQvUoRNvFrtrB0Ypm3D3RmXSIZuLgnAw7ZBOtjVz4ltgXP9JIwPdsQ8b/a4T
+	 hMQbtiTpwN7XLSQoIQv0rcbztDwvBP8jv8PyEwaO8NE+2PX2hyw0O+jpLJd0ROT7BN
+	 W2CTpQmTvcJ47zb7oU1x3rFFTC0a4rNxYDxs1+8VRLYS136z9kIgnIi8AYQNqc1Yog
+	 +5DeAxmscx9e/9qN9UglMzWw3OpX1hQeRR8HEBR5dlhp3pnD1EwQq/kycYQBSkp++b
+	 CFPKmLqhkDthq0WA7MC1vWNkci9qHMpZx1dnJMMOHIfpoh7SM8JVgF6edi5nzgh+lf
+	 pOs7BVKbTLzc4C7u6g8T9rZeC+0R/1tHjRxDnsNxkEdsUuXlHsCdSAHcvMz/iV4tVz
+	 zjzh7AdmYdWEdv2flWY6Dk31yzjGkQ5KEnQkFj8cs4REK92PuZesTHZLsufd77l9z1
+	 9kGvl1vdr1YMsSipmwlx2u53qRVEQAkK0wcvVm6JC0D/32e5938aqImXe8DPKDAmHA
+	 5iB7/7e43xMKOQfoFSYyj4LM=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 903D140E0202;
+	Mon, 25 Aug 2025 14:18:09 +0000 (UTC)
+Date: Mon, 25 Aug 2025 16:18:03 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Ahmed S. Darwish" <darwi@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 06/34] x86/cpuid: Introduce <asm/cpuid/leaf_types.h>
+Message-ID: <20250825141803.GUaKxwm1lAAugFJHVQ@fat_crate.local>
+References: <20250815070227.19981-1-darwi@linutronix.de>
+ <20250815070227.19981-7-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815182742.45541-1-suchitkarunakaran@gmail.com>
- <aJ-ScOp3ZCG6PQmD@google.com> <CAO9wTFj7S7G2bqbiuKbR+o7Y0u1EkYY5GsHasJZLmAo5ZuCx9w@mail.gmail.com>
-In-Reply-To: <CAO9wTFj7S7G2bqbiuKbR+o7Y0u1EkYY5GsHasJZLmAo5ZuCx9w@mail.gmail.com>
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Date: Mon, 25 Aug 2025 19:47:22 +0530
-X-Gm-Features: Ac12FXx8FORsgG-UWpSZaL1OSNZ7sKM_Gyr2_7qwAfsu43fTiyQJX4R9qb9Mtrk
-Message-ID: <CAO9wTFiJmi7YzeukT0VtnpqcJcE3sSueO3owYUAd+H4wjcYZeQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND] perf/util: make TYPE_STATE_MAX_REGS architecture-dependent
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
-	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, guoren@kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-csky@vger.kernel.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250815070227.19981-7-darwi@linutronix.de>
 
-On Sat, 16 Aug 2025 at 12:16, Suchit Karunakaran
-<suchitkarunakaran@gmail.com> wrote:
->
-> Hi Namhyung,
-> Thanks for reviewing the patch. I'd like to ask if there's anything
-> else I should do regarding this patch, given that it's supported only
-> for x86 and powerpc?
->
-> Thanks,
-> Suchit
+On Fri, Aug 15, 2025 at 09:01:59AM +0200, Ahmed S. Darwish wrote:
+> +struct leaf_0x1_0 {
+> +	// eax
+> +	u32	stepping			:  4, // Stepping ID
 
+All those bit names in all those leafs: are they taken from the official
+documentation?
 
-Hi Namhyung,
-Following up on this patch. I would appreciate any guidance on further
-actions needed, considering its current support is only for x86 and
-PowerPC.
+They should be.
 
-Thanks,
-Suchit
+...
+
+> +/*
+> + * Leaf 0x5
+> + * MONITOR/MWAIT instructions enumeration
+				 ^^^^^^^^^^^
+
+Let's drop all those tautologies - it is absolutely clear that it is an
+enumeration so no need for it. Just keep the minimum text that is needed to
+describe the bit. People can always use that to find the official
+documentation of they need more info.
+
+...
+
+> +/*
+> + * Leaf 0x18
+> + * Intel determenestic address translation (TLB) parameters
+
++ * Intel determenestic address translation (TLB) parameters
+Unknown word [determenestic] in comment.
+Suggestions: ['deterministic',...
+
+spellchecker please.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
