@@ -1,89 +1,215 @@
-Return-Path: <linux-kernel+bounces-784602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E24A1B33E49
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:41:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEADDB33EB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E941C189D475
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:42:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACF3F189671D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD8C2EB5D1;
-	Mon, 25 Aug 2025 11:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F2526F46E;
+	Mon, 25 Aug 2025 12:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EuZGLakx"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tBSD4cAR"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA0814F125;
-	Mon, 25 Aug 2025 11:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4B826E6F3
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756122103; cv=none; b=Pb4OPniewvBHLJX7o8QpB3Id0+mMkrFIe6MVDZ+p58lyOhmk2tJdsVWTxL4bEoXdGoQZj/1sBguSYeDcoDlBVaiz1uEOerF2zalrlgn6cDhwJ+P4IOlGhTqdoWz0eEb44FfI0y7PJNiDEifU9g18O0vju0dzu+5Po0DjhQ9Sj28=
+	t=1756123620; cv=none; b=uPBWUwU5tVVQjGLxzZpuhDJnT3A3P89f10j3Jxho2+wZGkYPsN2J94eaS6YBbHPjevyT0zv1aIrgqJ9lCf2+PxsWVWNaXk9uB0Jw14B2oGBJ/CFNupNoVdSkkmlL5IVCCZl2WblDuiDBzeGhm1A1/mccagQ251fbHoIAJ54AS+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756122103; c=relaxed/simple;
-	bh=bBFviAzxusD/+ZPvjk0KTb3vBlia5EPA1Z2wkC6FT50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UTKRTbxiVxhN3+VrpYIBlR0Xe2YHXwr4DlYtOylsSEJw+P7qTCCg2Y94ARZ597/AV0Zo6xmJNiXWD9dqgaKvjdEtyZpgnIFD4w4z1sIR+MMmN0utDHy7ysb4WIQfW0gezeQZWMa7HhiF8La4ERaBUQFcz8HPDYbK/nGggsrvIX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EuZGLakx; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=szRULD1n0EhsnipFMeC6o6cR64ZzbwiUDN0/FCW1MhU=; b=EuZGLakxzaMgyif0TTSqwZQ6F1
-	hMpWjooj9GCM2r8WhhQ+IR5ik6j4FMcixr4UTdQg24IFCMfkcQEG6ax2IY/MJHVqFAbnQX1Y2yqcD
-	lgz1ik74GYK0NVN8f4qUk3NJ+ozSsXr5wcEHRT85YhG4P2JJyumuGg2GwTD0arMOlJCi0T+aHkp3V
-	vT4BWkjJ4MdRWLx6mzViYy3knPao90/NeE/ptmSQLr/31PXJRD4BEbQO+Kh6hcpf8qVhiw/8tJSbh
-	n8qPXfJlOs+/kdbBTSyRCvb2ut9Pu/z7zBR4BniyF62QrbPz7ivng/p2l9oUlOUC66/eBDnzV0JwI
-	zdyyzW1g==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqVZw-00000001oqM-2smU;
-	Mon, 25 Aug 2025 11:41:36 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 407F13002ED; Mon, 25 Aug 2025 13:41:36 +0200 (CEST)
-Date: Mon, 25 Aug 2025 13:41:36 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Eero Tamminen <oak@helsinkinet.fi>, Will Deacon <will@kernel.org>,
-	stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
-Message-ID: <20250825114136.GX3245006@noisy.programming.kicks-ass.net>
-References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org>
- <20250825071247.GO3245006@noisy.programming.kicks-ass.net>
- <58dac4d0-2811-182a-e2c1-4edfe4759759@linux-m68k.org>
+	s=arc-20240116; t=1756123620; c=relaxed/simple;
+	bh=gxyeGO+/hvZaE8IsdSLqLNeCfqsmq2A72v9T/xO5ux4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=q8guE//7IU28+5LfHN0700wG78GdiRc8EkyqxDZvfBilxgxRle8BjBgl3SabHH7OjkGthr5XZJVT/SIACY6h1KgB6cC30ofP9t+qcqQ91ebozcV5om9fY/F3cMOJqdlqBTxJPHxos6Ygknxe7UZLk7hpHBsdnOb9kcQDEOw1KS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tBSD4cAR; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250825120656epoutp041b80cdbbab6fe7274b5727d12deb97df~fASAMGGqt0983409834epoutp04e
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:06:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250825120656epoutp041b80cdbbab6fe7274b5727d12deb97df~fASAMGGqt0983409834epoutp04e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756123616;
+	bh=LnrUabi+motNP2W3fXtOlX7jntZTBw7sGO/bXvmj/9o=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=tBSD4cAReCuMQWrHGBWQHouuzbXvGOiPyrpcJdqWjoSx1bVYwlAVSSDRVdziHMtTs
+	 dVm70cpuavqM4bFyn3QUlNTVj4z1TfgDLQEoFhhGt3mFiGQVPMkVvRvr+sX2JyOdEx
+	 gmO/tcPy4CtTqoaHKZ9sjJAAiU7Q+efUg50Ym+QQ=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250825120655epcas5p3194550434026be4e68ec34c0032b0e14~fAR-MTwna3066630666epcas5p36;
+	Mon, 25 Aug 2025 12:06:55 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4c9Tzy61nlz3hhT7; Mon, 25 Aug
+	2025 12:06:54 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250825120654epcas5p17bdbd92679d2b4c0f0c9bbb348163c0b~fAR9ubDzA2738827388epcas5p1k;
+	Mon, 25 Aug 2025 12:06:54 +0000 (GMT)
+Received: from Jaguar.samsungds.net (unknown [107.109.115.6]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250825120649epsmtip28073d42ad5a52004046753102d30c975~fAR5LIFym0154801548epsmtip2E;
+	Mon, 25 Aug 2025 12:06:49 +0000 (GMT)
+From: Ravi Patel <ravi.patel@samsung.com>
+To: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org,
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com,
+	linus.walleij@linaro.org, tomasz.figa@gmail.com, catalin.marinas@arm.com,
+	will@kernel.org, arnd@arndb.de
+Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
+	gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
+	smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
+	ravi.patel@samsung.com, inbaraj.e@samsung.com, swathi.ks@samsung.com,
+	hrishikesh.d@samsung.com, dj76.yang@samsung.com, hypmean.kim@samsung.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, soc@lists.linux.dev
+Subject: [PATCH v3 00/10] Add support for the Axis ARTPEC-8 SoC
+Date: Mon, 25 Aug 2025 17:14:26 +0530
+Message-Id: <20250825114436.46882-1-ravi.patel@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-CMS-MailID: 20250825120654epcas5p17bdbd92679d2b4c0f0c9bbb348163c0b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250825120654epcas5p17bdbd92679d2b4c0f0c9bbb348163c0b
+References: <CGME20250825120654epcas5p17bdbd92679d2b4c0f0c9bbb348163c0b@epcas5p1.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <58dac4d0-2811-182a-e2c1-4edfe4759759@linux-m68k.org>
 
-On Mon, Aug 25, 2025 at 06:03:23PM +1000, Finn Thain wrote:
-> 
-> On Mon, 25 Aug 2025, Peter Zijlstra wrote:
-> 
-> > 
-> > And your architecture doesn't trap on unaligned atomic access ?!!?!
-> > 
-> 
-> Right. This port doesn't do SMP.
+Add basic support for the Axis ARTPEC-8 SoC which contains
+quad-core Cortex-A53 CPU and other several IPs. This SoC is an
+Axis-designed chipset used in surveillance camera products such as
+the AXIS Q1656-LE and AXIS Q3538-LVE.
 
-There is RMW_INSN which seems to imply a compare-and-swap instruction of
-sorts. That is happy to work on unaligned storage?
+This ARTPEC-8 SoC has a variety of Samsung-specific IP blocks and
+Axis-specific IP blocks and SoC is manufactured by Samsung Foundry.
 
-Anyway, it might make sense to add an alignment check to
-arch/m68k/include/asm/atomic.h somewhere, perhaps dependent on
-some DEBUG flag or other.
+List of Samsung-provided IPs:
+- UART
+- Ethernet (Vendor: Synopsys)
+- SDIO
+- SPI
+- HSI2C
+- I2S
+- CMU (Clock Management Unit)
+- Pinctrl (GPIO)
+- PCIe (Vendor: Synopsys)
+- USB (Vendor: Synopsys)
+
+List of Axis-provided IPs:
+- VIP (Image Sensor Processing IP)
+- VPP (Video Post Processing)
+- GPU
+- CDC (Video Encoder)
+
+This patch series includes below changes:
+- CMU (Clock Management Unit) driver and its bindings
+- GPIO pinctrl configuration and its bindings
+- Basic Device Tree for ARTPEC-8 SoC and boards
+
+The patch series has been tested on the ARTPEC-8 EVB with
+Linux v6.15-rc5 and intended to be merged via the `arm-soc` tree.
+
+---
+Changes in v3:
+- Rebased patchset on linux-samsung-soc "for-next" branch which includes round_rate() drop
+- Add CPU mask in dtsi patch #8
+
+Link to v2: https://lore.kernel.org/all/20250821123310.94089-1-ravi.patel@samsung.com/
+
+---
+Changes in v2:
+- Update SoB sections in all patches
+- Update the copyright year to 2025
+- Add CMU abbreviation description
+- Merge dt-bindings patch 01 and 02 into single patch
+- Modify yaml file to fit coding style in CMU
+- Modify clock-names
+- Reorder config macros to fit coding style
+- Remove the unused macro in clock driver code
+- Squash all clock driver patches (4 to 10) into single patch
+- Split yaml conversion patch translation and add ARTPEC-8 SoC
+- Remove "clock-frequency" property from cpu node in dtsi
+- Remove the "status" property in dts and dtsi
+- Reorder the DTS and pin nodes to follow the alphabetical and DTS coding style
+- Change items property in axis.yaml
+- Move dts files to exynos folder
+- Removed ARCH_ARTPEC8 from platform Kconfig
+- Add pattern in MAINTAINER file
+- Merge dtsi and pinctrl dtsi file
+- Split board dts file
+
+Link to v1: https://lore.kernel.org/all/20250710002047.1573841-1-ksk4725@coasia.com/
+NOTE: The first version has been sent by Coasia.
+      After that, it has been agreed between Coasia and Samsung that Samsung will take
+      ownership of upstreaming ARTPEC-8 and ARTPEC-9 platforms.
+---
+
+Hakyeong Kim (3):
+  dt-bindings: clock: Add ARTPEC-8 clock controller
+  clk: samsung: Add clock PLL support for ARTPEC-8 SoC
+  clk: samsung: artpec-8: Add initial clock support for ARTPEC-8 SoC
+
+Ravi Patel (1):
+  dt-bindings: arm: Convert Axis board/soc bindings to json-schema
+
+SeonGu Kang (3):
+  dt-bindings: pinctrl: samsung: Add compatible for ARTPEC-8 SoC
+  pinctrl: samsung: Add ARTPEC-8 SoC specific configuration
+  arm64: dts: axis: Add ARTPEC-8 Grizzly dts support
+
+SungMin Park (3):
+  dt-bindings: arm: axis: Add ARTPEC-8 grizzly board
+  arm64: dts: exynos: axis: Add initial ARTPEC-8 SoC support
+  arm64: defconfig: Enable Axis ARTPEC SoC
+
+ .../devicetree/bindings/arm/axis.txt          |   13 -
+ .../devicetree/bindings/arm/axis.yaml         |   36 +
+ .../bindings/clock/axis,artpec8-clock.yaml    |  213 ++++
+ .../bindings/pinctrl/samsung,pinctrl.yaml     |    1 +
+ MAINTAINERS                                   |   12 +
+ arch/arm64/Kconfig.platforms                  |    7 +
+ arch/arm64/boot/dts/exynos/Makefile           |    1 +
+ arch/arm64/boot/dts/exynos/axis/Makefile      |    4 +
+ .../boot/dts/exynos/axis/artpec-pinctrl.h     |   36 +
+ .../boot/dts/exynos/axis/artpec8-grizzly.dts  |   35 +
+ .../boot/dts/exynos/axis/artpec8-pinctrl.dtsi |  120 ++
+ arch/arm64/boot/dts/exynos/axis/artpec8.dtsi  |  244 ++++
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/samsung/Makefile                  |    1 +
+ drivers/clk/samsung/clk-artpec8.c             | 1044 +++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                 |  128 +-
+ drivers/clk/samsung/clk-pll.h                 |    2 +
+ .../pinctrl/samsung/pinctrl-exynos-arm64.c    |   50 +
+ drivers/pinctrl/samsung/pinctrl-exynos.h      |   10 +
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |    2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h     |    1 +
+ include/dt-bindings/clock/axis,artpec8-clk.h  |  169 +++
+ 22 files changed, 2116 insertions(+), 14 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/axis.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/axis.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/axis,artpec8-clock.yaml
+ create mode 100644 arch/arm64/boot/dts/exynos/axis/Makefile
+ create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec-pinctrl.h
+ create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec8-grizzly.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec8-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec8.dtsi
+ create mode 100644 drivers/clk/samsung/clk-artpec8.c
+ create mode 100644 include/dt-bindings/clock/axis,artpec8-clk.h
+
+--
+2.49.0
+
 
