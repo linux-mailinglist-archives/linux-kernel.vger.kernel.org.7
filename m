@@ -1,273 +1,178 @@
-Return-Path: <linux-kernel+bounces-784673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF554B33F72
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:31:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5446DB33F75
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:32:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1A33189774D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:31:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E07616D027
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A3A2AF00;
-	Mon, 25 Aug 2025 12:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33A6288D6;
+	Mon, 25 Aug 2025 12:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bnynJcsI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Fh9hiEWt"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012066.outbound.protection.outlook.com [40.107.75.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7B03FB31
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756125073; cv=none; b=J1inuowTet92DhQ4uyk3L4QeGSPI45N3SO3ANaogHtxEh61HIlQZvWLw43St1lwW4FT3BjVXqnz+Ulnt+j9U8kMG3T5MlwlyLwP+QBq4DSG6etOFNymYhLOvVhrPXBYCSpBGBPmBA3/rD9tzz7/M3zu5L+w5NJTigTiAoH/g3p4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756125073; c=relaxed/simple;
-	bh=OIyv02Fm+olT4ZMNRn432Jb7K+SH0i2UMj4mqEL0RdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qe6q7pE1mwuQ2/y7SIJXAExDaXrgXjgo5sih50Ju0VTehK3lU8Kn6cnpoKJO9GNyWA+ZZ8sEZtDMo/rw0HjWkKdMoPVHV7XwMvFukXDdQewgbDf3fSvyKk09T+jIZeuPhQVpwsbGzn5DjX+48pKzUrKPgLTct8uY2h/Dv/QzhIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bnynJcsI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756125066;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=48cMTSslcB0ziBS4SAU+081Ps38xL0HjCpNxL+9nzl0=;
-	b=bnynJcsIIlGvpV5g4BJqvnLuZVKNuU6i/DGv4o0HpTle+UI+1UnzSJtz2bSVzgTEEdmrgV
-	ekEK7ZxGtvGDgTg+dPBUjkdJ5TYMPPq/lcIwmQkjq2d78QHLNCtEGcRFwdUcT9Pu116vE9
-	JoNW2j3oEciIbqszydEYJYlSebIG/cA=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-259-MjO0yAPDPISJHh6E3qxyOA-1; Mon, 25 Aug 2025 08:31:05 -0400
-X-MC-Unique: MjO0yAPDPISJHh6E3qxyOA-1
-X-Mimecast-MFC-AGG-ID: MjO0yAPDPISJHh6E3qxyOA_1756125064
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3c79f0a6050so816528f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 05:31:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756125064; x=1756729864;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=48cMTSslcB0ziBS4SAU+081Ps38xL0HjCpNxL+9nzl0=;
-        b=teXjgQC6vndC4n4i0DCioPbYQEDP14BiUqbM2D5bcSNtYpCV4xGNu46oQs0799MCaS
-         /CxgYT8vPou/ydiAGDitr7DpGcQe9vH6uw6ClaibiNAK/GX1wDVVzKUxImxP1/my/LQV
-         rPN/SJL8g44kseZYvggK9p8W1Yzsx/7dYc5j0mLgWrtUajLv06vkyallL5znGzkiXsDQ
-         CweJehhBfRLs27VFYBA3Yg5xbWPVlDU3Cx9ieitjp365OVvOJyITAlhGa2vIgs8DXgDv
-         +S34LO+ES9sPLLFSZj3a3oEVibdfwuaesBX2k5bbYUnTWyMNKiNO4ff6nafM/KJ3J3+l
-         KPHw==
-X-Gm-Message-State: AOJu0YxtTUuAD9Jmqz5/J7iHUvu82Jnb2jv83oBY2GM97jWalaNsYSmI
-	QAs7AW3LeIe8qTggOfvk+Af/4T1p0l8D1rxPFfyIEUVQ60SApWKHCAYnprgslZHdl9J2omr448a
-	VbloW//Rhgm/dsI9eRgWmc6MLo3yyFgsGVDS2nt2Mh7qlvP7C21tB5lFlNRYSGN49CvYakj6ziD
-	2Y8fihHnvrDJ5R1DyIPJt+onT+QGrq7TNH5V142iyUJV75iA==
-X-Gm-Gg: ASbGncuRnP2xurJbY+ve805PaL2JSyX1H/Ie1PnFlrXCTwo3azQS/3zVLYhfJcr2dv7
-	+z4HHEMavXjjibDyOMXvbYahClggLsuLr2Cff6ARH5ovb1DsPX0amAxSarBr+TAe+6gHrckuDT0
-	fqp3iXWyrOBiOuPG8xS5UQiL0cYH+hLxxJYZooGJNVRBpqttLYv5TOICF/Ol8ml5Q/giQdOPxHg
-	j+OF9wOv1twgiGRuq5U+7dkGbo0vouHToCl1xob8t1nDXZ39R3FpZmf4MylMh1CrYaF6ILrM4iz
-	4QeyNFlQK2mQJ5HZV/Q3BHK94hlRQ8GPu+CrrZT2LrTdrK2et02iz9FpmVVpbmPqWkrkvIgI7Fm
-	Tpvf/3wYFqhTiI9Gh5qLCeAKnKOuwChh/PIDTEY2+BHcIhtOY45PCe4vjwmrt26jsrmA=
-X-Received: by 2002:a05:6000:40dc:b0:3c9:469d:c087 with SMTP id ffacd0b85a97d-3c9469dc445mr3271529f8f.25.1756125064033;
-        Mon, 25 Aug 2025 05:31:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEvPKmvGXwFDJWJm849Yt5wXoDEn2seO+ZEF1/8AbV43w5FimZ47X7SqR0IFDLk15EedM+8Mg==
-X-Received: by 2002:a05:6000:40dc:b0:3c9:469d:c087 with SMTP id ffacd0b85a97d-3c9469dc445mr3271446f8f.25.1756125063406;
-        Mon, 25 Aug 2025 05:31:03 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4f:1300:42f1:98e5:ddf8:3a76? (p200300d82f4f130042f198e5ddf83a76.dip0.t-ipconnect.de. [2003:d8:2f4f:1300:42f1:98e5:ddf8:3a76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b575929a0sm106632785e9.25.2025.08.25.05.31.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Aug 2025 05:31:02 -0700 (PDT)
-Message-ID: <923b279c-de33-44dd-a923-2959afad8626@redhat.com>
-Date: Mon, 25 Aug 2025 14:31:00 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BA812B93;
+	Mon, 25 Aug 2025 12:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756125135; cv=fail; b=Mx5iHrQT8YBOpMs+DKIPSqjk/UdD84pr8807JJlLZsrkbZm6w2+DPuuqdOL2gqjazp8TAOnV79NlbBTZ59eURrZY9rbnoMqw/qJFs+LAo3MN6s1Tvi+uRVKhctPpDjlIkq6PuE84rT4pdYMPX4TgQX9Iu3qhtX4VAswOcbudOdg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756125135; c=relaxed/simple;
+	bh=Qj8jg3LmQyY14rzDA7y/xlIK7FAA3/aJUYUxPsaNGcs=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=fX6SxzOlp+8k8N6BJvFriEN4+FJZ7Hx4KaD9Gc9LXBDXxnKM2tza8/7FbKDL7H6zryDl9Z43jNQhAVSr4HeW8FmIFUcm49Cxxg8KN3DVPvxv2jXqLE806YsBD3c+AmmT5xtBli8WE9nsI7oSsoJp/UrYThQDi7tSMeqroCtn+08=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Fh9hiEWt; arc=fail smtp.client-ip=40.107.75.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JdWU+oDwF/cYnXWP7/jBycyyl7omJQDrpvdr8CMaEtG7YXI6f6wjBw51/yvhqhOmYQxuRMGa3pk68hrRkWnplNb3X+FALK4J4I5CzSyHmk0skSBX658Je3eyK2YObwbmIIP51BXMR8/7iPrt6QQ1L4QrtDo0aHAPtCsfqAM/R/Yn6dnP1CEMcs7eM6YeBeqRVCa+AApCfnUOwcSxbKyy/7eoWOBh1brEkSn2AQokTiDc9ar8j0/TmIC++WGpjEKBARPV+g4XvBEI5G2TMiQLq47F6uCgpSq5FpKRlIpPdub0c6Xvd0xXmN7yH9BAYShwRaGPz4t4elDDrejvYiPzEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qiMYVOKEaPsgMR4JmI1Dsqxl5dWto3NkeEo/ge7Pqzg=;
+ b=rzRsGKLjK8Gz0kiTssY3L9wp1w+DTqtQCvwrQk9lZFo+SD65/DB8HUTSsUib4S7byN6zzy15P4MexABjWmQc70igd8chkO872GGzqKHLoAL3IuqQBcZZMAS95tfm3bA5BhD/w6yINwWvYsfH+eJGmzrJ3ml/4/BI/q3nKoyO+udmx3pKe7Fxvzzp5J/ocHSXACAHDvY+VBe0/PjAdt7wGsdclBWopEaCbR/f5NyooD8mALeFTjwWHaT8gpJxueOuwjUtpE9tu/nx1xE6TfFFQNM3r/b6ku6Uky8jCyTtH0E+wsc7mOIZnKgQIBVXXJvcOm9h+U7YL2dOQkFu0/ES6g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qiMYVOKEaPsgMR4JmI1Dsqxl5dWto3NkeEo/ge7Pqzg=;
+ b=Fh9hiEWtL6hvIhUyJ7oMz9974PHtQiDeSnNp5wVzWiKaOvMTIWgd/xDF/HztK9F80YKs2GERkN22diBQhCNGqCbZJE7+ICpaFLnac2juZGjCiqAUqYIPLrA+3Ylb1FWAOW2TC6S5dq3lqCX2K/42QJf0Q+SkE1EoijouaJ1RmerQzoKTH3UEJoekhxFC9wW8LO5t4BC1zpfLcXcuvCzOiKQagmWhHGhRYCBycxM6rMKlvV0hsHqxqVrovHAiwwNGkHHFnJ7+4jdgjjgulP51guRd/4LtycsbqNoLrq+XccimMhwVYkjFjSGZwdtT7kmq8dA050VxbHm6gIAzsLFHJg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by KL1PR06MB6623.apcprd06.prod.outlook.com (2603:1096:820:f9::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Mon, 25 Aug
+ 2025 12:32:11 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%7]) with mapi id 15.20.9052.019; Mon, 25 Aug 2025
+ 12:32:11 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org (open list:TRACING),
+	linux-trace-kernel@vger.kernel.org (open list:TRACING)
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH] tracing: Remove redundant 0 value initialization
+Date: Mon, 25 Aug 2025 20:31:59 +0800
+Message-Id: <20250825123200.306272-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0119.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:40::23) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/11] mm/memory: convert print_bad_pte() to
- print_bad_page_map()
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, xen-devel@lists.xenproject.org,
- linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
- linuxppc-dev@lists.ozlabs.org, Andrew Morton <akpm@linux-foundation.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
- <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
- Lance Yang <lance.yang@linux.dev>
-References: <20250811112631.759341-1-david@redhat.com>
- <20250811112631.759341-9-david@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250811112631.759341-9-david@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|KL1PR06MB6623:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9c97fa79-aece-4eca-319a-08dde3d369cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?PCOTIgy2pHIWyKw5qiU2yp9q0Lf5Yv6HmhxpUhzZxzE55ssfNo+nTZZ9c9IM?=
+ =?us-ascii?Q?74syMc3lP1BUlTblxkJQlFvQQBNzPm7qJrqJLguBTwSE9aO8gsd3M0hNS3NP?=
+ =?us-ascii?Q?5eK/GRZaN3o6YY769/cymJB9vxzpUctczfYNLY2S0sXSJEHH7A14f00uv4tr?=
+ =?us-ascii?Q?xvvU5lflZ7NSo93iehDP6Hjex5zvhplS+x+Iv69JO/MqGmu6CamNTRktzH5v?=
+ =?us-ascii?Q?nNE8HlW8V6EGCxJX9Tj/tSbWOwEb3vaNQPw/9Xxhk4IkJjmby3kZAVvSmmcf?=
+ =?us-ascii?Q?VMtmBA7/dlePzpS4GN8DSBKTRXP3eQb/kQFnjUUvdOD1NTxN9+lrbY/FS2br?=
+ =?us-ascii?Q?DFT7dJvO0rOk813EQZpDcwkWMFFrb8nohulO5579OEjAV8mzAXuSLeNuiFuJ?=
+ =?us-ascii?Q?dhAlJl5KeByA+9bRodJ5Ry7dXN1DuC/e4ZjpOpd8Jr5M7fY622SKqpY4Macy?=
+ =?us-ascii?Q?AYPWkGSphmtSonCs1sMIUjF9s3eVDRRBD7lcdF/60y6Fl4el5ly5X0lRdbxT?=
+ =?us-ascii?Q?MnRubt2Ngh6EDqpyDXac+MAj6QmTbSlv2RGM+fZK3BDV7SXNG3kWQYfW1LNO?=
+ =?us-ascii?Q?RiT32fURCoi67mCWNa/0G4d+xGjEkFunw43KYDF8B/C2Yg6ne+pBKcu30D9v?=
+ =?us-ascii?Q?bz8rCawhnpV7U/nWrckSKlaDJjT6lp0aKbHJB0FeX4OyaDGCclAZ1AIxu+pD?=
+ =?us-ascii?Q?jKzaWHLo6ByDFF4Q3LUx5mUUp084C3LuTpq6jKEfh8SWbOQZc2ckPUeLKD1j?=
+ =?us-ascii?Q?kvP6QUe3ekIB9veFBkTQhe2bDCc5nzzvQ8xtTVXx5eNpH3NaL0BKFe2cTLb5?=
+ =?us-ascii?Q?hIUtXdC14n/Ohp17f1XRNTP75h9eq0Ygqq1+DleYIAXWeVi6CaXE4vTUbb+X?=
+ =?us-ascii?Q?CFGsFQxujADr1YpFHb5XxX7m7eC0bL6gxseqm8ikNwpvzFSB+r2//64cjp5E?=
+ =?us-ascii?Q?G8Y4Iv8hTyWwMEKzCX+HFj7HuqA/bUNYHGTP/kGB5d8FANG3WJqJpoWG6Ymc?=
+ =?us-ascii?Q?oyk/+XDoc89lf2wkqowXKy9pCv73eWw3E/MgZA9uETOc5Ok1LVm4dfR58y7n?=
+ =?us-ascii?Q?GtSz0qWc5nH7wIYPNknfJaRqGZtPuAC304P+5Bb+C812AuIIMWHddO+rOlVc?=
+ =?us-ascii?Q?PY2IULhyKJCbC5BM/7dYTTqYmQ/b3jq7XnU7O78QY+Asy+6UKVEsy4mOcY7F?=
+ =?us-ascii?Q?fae/KLjOXm5+bsUj/HpATRAv5f1o4YUdLxne7ODkE35LDhP2DwVk+nQ1ASkX?=
+ =?us-ascii?Q?nqSymLgPA4CqXQrSNHQatJ28evFplfPpb9qNhJg0JSA6yQAxtiEHzrdIMIiP?=
+ =?us-ascii?Q?MzAdurap8Scs2wIke8MhYjnHjaqreirrPdJaHcE+tZzkXJa33qkE4xqSUKMq?=
+ =?us-ascii?Q?e7uxsyX4Apext0RMgRcIwIrQX8nzN0ksNKMetrMEAWmKHK08+Qu1koxap/Bp?=
+ =?us-ascii?Q?I8kxYEJDG3VVQ0ZqgyOvQQLBzRtiLm3AlkOUqKdUcH1tfE1+JTYFXA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?KTfSBgjckZ5Lnxzbc0lnRvpz4y9IWes8C4E1ebHETF8dkjtSg71F7rH3rtBC?=
+ =?us-ascii?Q?aLX0X2b/dM6ZDaAv5ExWnaVdeRzPuCQVfdGjx5UyNfUlxQuFByMzS1elNmQe?=
+ =?us-ascii?Q?mogd8xiGijxoZ32ZdbHSjIxwiFzBgc7k9dFq7xxHiDn1f93EK4HUk+HwqoF/?=
+ =?us-ascii?Q?PPSDjRr1f2Uepcylrz+wOPmlYWgYuyBd47Q94EyDNoga0PRxQ5N658QCnVea?=
+ =?us-ascii?Q?seL/B0aReg8MF+oRwx0Y4f7Sng3IpZ8+WxyHTSLe9SIVFOu1YSTuX7rBfy+H?=
+ =?us-ascii?Q?9oImGueSU3ZYRVBbXxhPbpGC3X0PbIlTKgG7cQl59hSIIMJj7iDh77p6eVVl?=
+ =?us-ascii?Q?bQG8LP2qBpJ3PY9doZnPd6MErlCk5Jtf+ohK8kh6GRaptdHVuwRPobRGZDRV?=
+ =?us-ascii?Q?65niviCaMBXgrnQU5qdrAWFDXsNIq/ypbG5pad29xhV9O0fU+NVzNv0eESdI?=
+ =?us-ascii?Q?4pSY/J5WuypUX8IiaUj1rw2ZqEJ8VdkwouAZ6C7Wjq6JzXz9tHq2TfDNZGwb?=
+ =?us-ascii?Q?JVCRKK7jDrVnyBNvsXnb6t0cUcI7b4ua+tfaeqlst7R/VDwPxkIhjJzCZq+o?=
+ =?us-ascii?Q?hBE6ypWclihBir3it/o8apbZ/Kv1bh09y0qT6XvXvKeEymiYyW2ncjWeYsQi?=
+ =?us-ascii?Q?ZMj9u933QkPLiId/+KAN6lvAG8RQSYN5EboMv/9yRXbd+lOt3Xq/xTPOIHgP?=
+ =?us-ascii?Q?gVLEGgOSbBZqxLOAvgc5IRLFasqT+w3MyLmFSmHqOSSNADMFiKlOWKFZQPrd?=
+ =?us-ascii?Q?mz5bo21mrx56rlx9rao2KXUxmyjmJLhl04hgRCYEmJOpo1oiRpaoRjsn2vsC?=
+ =?us-ascii?Q?3xdvcZXwzeFPkocfMqzfpa5dWQLLLBB8zc3bd417n9kG5M0JF+LC7Cbf1HLL?=
+ =?us-ascii?Q?zuKTHhXnX36ycz/MdlgpRKp62x1ObGV9Ei6EPJX40AmPhV9K7ahaTKVg540z?=
+ =?us-ascii?Q?zYwBxqjL6eCXu2yd1N3bzaqKHh54dn6xiq9ZcKgllKTw3JFb5twEu03QHhNQ?=
+ =?us-ascii?Q?+tpZEXmCF843Fk+HOprj7HyOnOw1I5TAGOyPVinFEqGUnH5bkmckBGjDV4BO?=
+ =?us-ascii?Q?CVzu01hQGlvq+sQ/GeW2nY4D0w8BIw5LIVbVoqcUDqa66caOSmiFCpwqnF+C?=
+ =?us-ascii?Q?xhjIBmrV5A95McUJG7m0AzwQyyANdfNRxEa6jHJL02TTIStIasRQllxkGxNg?=
+ =?us-ascii?Q?rsbZyeAVBPoiHeV9XmrIMXKsUKeyOKW4RrbED9iQODx2fJmzprcXuDur0tfj?=
+ =?us-ascii?Q?N+Ws2U4sUQF2msvO4ojSKcjeZv3jZzxw//Q2unYhXIyGy6qcGrtuPJKvL/lI?=
+ =?us-ascii?Q?J7zslTHPRdoeI4v6I7p1V+YBYU0VYKUqjW1wc3Nt+OTHojslYhJ4eX92aqco?=
+ =?us-ascii?Q?BVK7hV3CkjlULkr+Y9abdbPHanHEqXHe/0qv9YQQFZhWheuC5w0CugxAqobq?=
+ =?us-ascii?Q?hjOtOyiTWPSfEhzptOZy7RwXz0WSqqanvT6+QLLjpy1xfjiL0oyvgsucDs1I?=
+ =?us-ascii?Q?A8SXhGzgmHGn9+W6IDnvPyWvG4VlFvqkIaFwsorzdVUP8roDyzrSEcR1WL7b?=
+ =?us-ascii?Q?kiV7YB4baYPkkd5W5bQa/NITTBoMmTcee+SQceQY?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c97fa79-aece-4eca-319a-08dde3d369cd
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 12:32:11.1723
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xfitJa9kVZL24uS/SaFBuKNh5eu/0c+cn47qT/1JWBDtWeNrOAdwywYGy7wdUQAzzywR9AZMIKHQriJoZjwCJw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6623
 
-On 11.08.25 13:26, David Hildenbrand wrote:
-> print_bad_pte() looks like something that should actually be a WARN
-> or similar, but historically it apparently has proven to be useful to
-> detect corruption of page tables even on production systems -- report
-> the issue and keep the system running to make it easier to actually detect
-> what is going wrong (e.g., multiple such messages might shed a light).
-> 
-> As we want to unify vm_normal_page_*() handling for PTE/PMD/PUD, we'll have
-> to take care of print_bad_pte() as well.
-> 
-> Let's prepare for using print_bad_pte() also for non-PTEs by adjusting the
-> implementation and renaming the function to print_bad_page_map().
-> Provide print_bad_pte() as a simple wrapper.
-> 
-> Document the implicit locking requirements for the page table re-walk.
-> 
-> To make the function a bit more readable, factor out the ratelimit check
-> into is_bad_page_map_ratelimited() and place the printing of page
-> table content into __print_bad_page_map_pgtable(). We'll now dump
-> information from each level in a single line, and just stop the table
-> walk once we hit something that is not a present page table.
-> 
-> The report will now look something like (dumping pgd to pmd values):
-> 
-> [   77.943408] BUG: Bad page map in process XXX  pte:80000001233f5867
-> [   77.944077] addr:00007fd84bb1c000 vm_flags:08100071 anon_vma: ...
-> [   77.945186] pgd:10a89f067 p4d:10a89f067 pud:10e5a2067 pmd:105327067
-> 
-> Not using pgdp_get(), because that does not work properly on some arm
-> configs where pgd_t is an array. Note that we are dumping all levels
-> even when levels are folded for simplicity.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->   include/linux/pgtable.h |  19 ++++++++
->   mm/memory.c             | 104 ++++++++++++++++++++++++++++++++--------
->   2 files changed, 103 insertions(+), 20 deletions(-)
-> 
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index bff5c4241bf2e..33c84b38b7ec6 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -1966,6 +1966,25 @@ enum pgtable_level {
->   	PGTABLE_LEVEL_PGD,
->   };
->   
-> +static inline const char *pgtable_level_to_str(enum pgtable_level level)
-> +{
-> +	switch (level) {
-> +	case PGTABLE_LEVEL_PTE:
-> +		return "pte";
-> +	case PGTABLE_LEVEL_PMD:
-> +		return "pmd";
-> +	case PGTABLE_LEVEL_PUD:
-> +		return "pud";
-> +	case PGTABLE_LEVEL_P4D:
-> +		return "p4d";
-> +	case PGTABLE_LEVEL_PGD:
-> +		return "pgd";
-> +	default:
-> +		VM_WARN_ON_ONCE(1);
-> +		return "unknown";
-> +	}
-> +}
+The saved_cmdlines_buffer struct is already zeroed by memset(). It's
+redundant to initialize s->cmdline_idx to 0.
 
-One kernel config doesn't like the VM_WARN_ON_ONCE here, and I don't think we
-really need it. @Andrew can you squash:
-
- From 0b8f6cdfe2c9d96393e7da1772e82048e096a903 Mon Sep 17 00:00:00 2001
-From: David Hildenbrand <david@redhat.com>
-Date: Mon, 25 Aug 2025 14:25:59 +0200
-Subject: [PATCH] fixup: mm/memory: convert print_bad_pte() to
-  print_bad_page_map()
-
-Let's just drop the warning, it's highly unlikely that we ever run into
-this, and if so, there is serious stuff going wrong elsewhere.
-
-Signed-off-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 ---
-  include/linux/pgtable.h | 1 -
-  1 file changed, 1 deletion(-)
+ kernel/trace/trace_sched_switch.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index 9f0329d45b1e1..94249e671a7e8 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -1997,7 +1997,6 @@ static inline const char *pgtable_level_to_str(enum pgtable_level level)
-  	case PGTABLE_LEVEL_PGD:
-  		return "pgd";
-  	default:
--		VM_WARN_ON_ONCE(1);
-  		return "unknown";
-  	}
-  }
+diff --git a/kernel/trace/trace_sched_switch.c b/kernel/trace/trace_sched_switch.c
+index cb49f7279dc8..518dfc74347a 100644
+--- a/kernel/trace/trace_sched_switch.c
++++ b/kernel/trace/trace_sched_switch.c
+@@ -224,7 +224,6 @@ static struct saved_cmdlines_buffer *allocate_cmdlines_buffer(unsigned int val)
+ 	/* Place map_cmdline_to_pid array right after saved_cmdlines */
+ 	s->map_cmdline_to_pid = (unsigned *)&s->saved_cmdlines[val * TASK_COMM_LEN];
+ 
+-	s->cmdline_idx = 0;
+ 	memset(&s->map_pid_to_cmdline, NO_CMDLINE_MAP,
+ 	       sizeof(s->map_pid_to_cmdline));
+ 	memset(s->map_cmdline_to_pid, NO_CMDLINE_MAP,
 -- 
-2.50.1
-
-
--- 
-Cheers
-
-David / dhildenb
+2.34.1
 
 
