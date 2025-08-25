@@ -1,199 +1,237 @@
-Return-Path: <linux-kernel+bounces-785352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00ED0B3496F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:56:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A5E4B3497E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC6C7189A221
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:56:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F2D12A5FA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934F23002A2;
-	Mon, 25 Aug 2025 17:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF998308F36;
+	Mon, 25 Aug 2025 17:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZmFEeEtE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u7+dSJWm"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8CB3054EE
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4816308F11
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756144580; cv=none; b=C2LowfzER1YHb0vYpoOmS1Nr8GBGHGFNMDrBodebMo9Jyq/37WtKSXvDrv8Dm/lMjiuKY2Nx/BafthfLWUWz5e55+PcjNLchWhSV9uWeWshC326HoxI/5Q3b1OQgSjFtsW8SzS+59fJAo+90LyWEG+JURhXAiqU8Ha460WBcmYs=
+	t=1756144719; cv=none; b=M9oMwL2MBil1fiYYtLWLZAA0z93Da5LuoR9H17oK4xGuZvwMwDzOh23Or+sZdrVkL5MhcTmFutWYO25TLRYiMk9/b3frFLClOpGB8hjzs9r+51x++vHNG5sYdVMkeuL2t8J2EgjCYw/A0oA+Dn+G3V3foEDI5Vw55rYab7T+igw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756144580; c=relaxed/simple;
-	bh=USYs8DzwEd5CNXpqe1TdlO6VwgYBKIjtqfccCFD1qv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nk5JiDzSS5ykaC9tOlEAA1sLxZfb81RDez6n3bwB+MfbEVyezsmjJRHRktxs/YKpk1EooTDBUk36jB7HycSScvssw5xxzvmRaGiqPYU8UfN8oDrpcTctWhAnTmYE4FSOqRo9MCOiLc3eyXE7+wjPiQlY7H748gPMhFoCV6quMOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZmFEeEtE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PFmn3g018404
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:56:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=qZbc+LiP+W9ZiZBK8FOlQwQv
-	CJhWGeKmTwDpg9afkms=; b=ZmFEeEtEHL9QS8O5lYBbwW//3Z5kDSkVvUidjwnA
-	HwAmWqM8lPuO7Ay82PqQAFq15BFH8p/Pe8T14QetYMWeaLbe8DuuVGmXRajltWsL
-	JU917ZPjSDacM02Xkn3wDusb3Xfvj+RC+BvbsX7IKID0RW6TximIPBRm8zNamL1L
-	aagz01YHUsC19EXqbfSOK0dbiq4QUQEGM3lImG76Igt79hfAhve8NKtWih8Wch8d
-	fNFh1JTJVIlcbC/tLRg62UDkBLtATeuikNmAp2aHyLdqNKqxbYGt6SxsNBFjzcWJ
-	Hua46ytpuNScg/PpNmFK/Laj4jnB0w6UZqO5x0meY/xX8A==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5xpp4av-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:56:18 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b109765d3fso100112571cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:56:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756144577; x=1756749377;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1756144719; c=relaxed/simple;
+	bh=4GQMW7y4hB6OnpRIcEB2iZaqJ0oZoARp3ba61McckPM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ogSiSFD20kcZVS2qJCCHP6YjLm+jHq8tYzBxKd97IPaLX8ycNdJ+AY9JDC1UzZuUzy4uTt3xvX/GZy0XYrzSTTAM2rSFbBKI6wGxFHonGP9PU78yn8NmvnLjtOCyHd8zjQ024gqqV2AuEZczIv1aWTBz0oD9PTVmWd4YLbUdmp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u7+dSJWm; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-459fc779bc3so6425e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:58:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756144715; x=1756749515; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qZbc+LiP+W9ZiZBK8FOlQwQvCJhWGeKmTwDpg9afkms=;
-        b=s8PacdKPHVsyVcSGh9FpiX1FTlv0FkLfjemYdkXADWuBjQYXYpNbnj6cBr1P/D7TGt
-         cW+2UeeFOCvn6sf97ybSxMHwdU1fE+OSgPOjAINvD0oVsUboI8xdOIK9zzwZHRErfz9y
-         X9xOcBZRaURKaPBIQ+qTo/tMGnM7csgfrh5CUKfxrWPv6U0OrUYFW2DCF14XmE/jmL2a
-         Nzlwf7aofLr9/Vvu2UrBm+Ljf1FptOZusPwdqReMPoz+hX8bCkgqqtAQ6N6lks+aW49v
-         B5RyVh+BvyevKbH6L6qN7BYtaWlKTNd9zEPHx7kPRZMbsHJjQaieCC7Tsd7peaukpMDe
-         x7KA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdXYuwM2AA5udceWE5dEAx5fU4R/gxefWMdTwj1kg2G6bu/c6k0Ts5zBwnp57lJA9dTJXRFBWTMue1kWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMb/rxxFk1LxPZMgrUoPLr1tmswyjFFbPDjjUAU6lIBvFUKDAR
-	eHGNXow/LE43boMeJsYng7F8WQ647pMTkfzfPSLkPNxObY4IbY9soC6nSMNnzNAND0/1AFV5tMA
-	sCXhfkSKdxJh3sD+kMinOeaafI9NKkRMfB2SjX7HjlkmLYxVgZFBP+R0vhTZnMaFKwfo=
-X-Gm-Gg: ASbGncs58m485qG7/Kbmk/MbdGudsyjjC1lAOZjEGrZPi7bYNIgQIisBmw65q1katCh
-	xEQ2rrXfq8g2cvhlHVB3K7VrAxGk1zEvuqNWb0gNQPBNatkWzGa++w2wqCExp5RDQ/pYZSq9Nct
-	yAQw+gR5r9x5g10q9AHNttsavrSJdkAbq5XpzbVRYemmyZfNmg+Dvh0Xm9D7KP8/rQuXsxnh8CO
-	W9E0UDr3kiRcMibqnJ08RLRYGzJwsMRB+qnQc2eNz5iUgbMWzAc000HJ2oeZZK5RJ06LM8rlNky
-	8zzHhRmyTuYr2lmcpgJzWnqfZZPf1WyTdWju8g6qZqwOn/Jab5OPOPhrz4m1E6pUtea2el7j69Z
-	kjQRJdOVj3Yfs2GRuQYGIPQgyuM42mbqnYIBiiRyGRjgTSd47wYtX
-X-Received: by 2002:ac8:7c48:0:b0:4b2:9883:830d with SMTP id d75a77b69052e-4b2e0845a60mr7129791cf.0.1756144576964;
-        Mon, 25 Aug 2025 10:56:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFe/SOgbCIAs7eJLZOpHwdby9mGDyCQ7MxuYmguN5qUnjk/bn2DIS68PMx9r4sIAT4GiA9z/w==
-X-Received: by 2002:ac8:7c48:0:b0:4b2:9883:830d with SMTP id d75a77b69052e-4b2e0845a60mr7129441cf.0.1756144576374;
-        Mon, 25 Aug 2025 10:56:16 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f43351382sm971641e87.124.2025.08.25.10.56.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 10:56:15 -0700 (PDT)
-Date: Mon, 25 Aug 2025 20:56:14 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>
-Subject: Re: [PATCH v3 13/38] drm/msm/dp: introduce stream_id for each DP
- panel
-Message-ID: <wvctskhoyphicaymbm5b6kermvubhrn5u6uzui3pqf7p3a7ia2@zirqohupflvp>
-References: <20250825-msm-dp-mst-v3-0-01faacfcdedd@oss.qualcomm.com>
- <20250825-msm-dp-mst-v3-13-01faacfcdedd@oss.qualcomm.com>
+        bh=e5yo9Tha3EYZ7QDWhjTh1gNp5eXSF1E//nUjICwrq4k=;
+        b=u7+dSJWmVmjCDzkOc/+o9pNju1PVWZxyMDFdMqcF1qQUWCrO3gOBEufIdc6TDhYb8a
+         pqdW7m6yd2jcjO3p0y5g9rSPMktXUwJr1oEkSJcsjJoowgiF2SbxGpV5l21gyNJsvHJq
+         LTGulZYKbV9dmabNwXL4XxgOfhfXn7uefmZgJWI26f2DRr2Rb1Vb42MEiyVcMUZNjtzL
+         fWwIRd4gVCoRNLH5ZgMwLwkxon09bJ9kE0XCOyZ8KcxN/+LIZxxJfyzcJIywx7B7q3R4
+         zUklveOK6ovTkTEUIyVD4E2SVa81Mcp3/aLfyq+xhwwwb5FQUR8h7G8Ht7oB3PcPsEqV
+         LsQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756144715; x=1756749515;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e5yo9Tha3EYZ7QDWhjTh1gNp5eXSF1E//nUjICwrq4k=;
+        b=t/sz+oW5cmbK3j+Se+hkkcVvJ7kOSIFlm+bfwR4agJekv2McULXEWezXm/pUczKI2D
+         YN3WxtZJR0X/KSW0KwMx926zbRVbFnTeGouaBeqRrpIWQB3oawerQkgxBDIcvtFR4wYS
+         5W//sx4Xc1SkQiAFPC+2PNJw2KlofoQJqCMsN989FZ5Temh/kwNOJgSjUHVW508VBdTk
+         jlC7lw1OyitZNhgSrnY3uTmRi8vdaUqbVjRYvGYdv2tunqamYfXkamEQSG1jpExSu0Yf
+         b5BvcuzniSZ2gTaWe+/uBqXCQlt87SS2dfuU74C2Z+fqe3XnFNtYqyUZQaAF6DWrsLoH
+         WRaA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3XUmxUa0vWRdcaLBxbWo7jK80YbOllcdwH9kWUPjSFbD0kQUdZsiD2wFxVtf24Gngm8Bq1ABOfWmWIrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQIrzkuHgm1x/Vk61PShkJ/WjZJWo/nwq8iXeA58BlaymxMoTc
+	ZbZZl+Qo3SmC4tS/IGie/mKmhtrkSrcSgKte2M9dLCNirBG3W3lST3L8OtsXiSuXyQRsLsz6jRx
+	tn61AP2igK3N428TDpiu7EIQFG72OFrHWTessEaFQ
+X-Gm-Gg: ASbGncs8t5Mn6rzLGfpJUPbjGyHRxqnnU42bzVeJzK6v55XA/2Yg0pR+a/fh97bGsbt
+	Et0rjiQvNX5isuNXW2RpIflsyUCwSorJ3eoH5dQnAcMg/WVMHGyCpQPKpA/8OtSh3YsS1zTrz1q
+	SwW8AFBPOWtYMt7Upl+hc/hQUljYOWBCykv9/hG3vIHjSecSqAKVJL+2a8Fo2zS9IYIs7GwHjL6
+	+ZizRE9xjN60iSRSxoyuYLlslpIHLR2+pZT3dQMCZ6E
+X-Google-Smtp-Source: AGHT+IGoEbuuaQmf6ejPreW/3EnO6Pdxa5HefL1xaCUoTpRbYEOTACur/ikE7cpdM/TuCFok1aNUpgjgLfri4GxZboA=
+X-Received: by 2002:a05:600c:3b9f:b0:439:8f59:2c56 with SMTP id
+ 5b1f17b1804b1-45b65e97671mr61125e9.2.1756144714893; Mon, 25 Aug 2025 10:58:34
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825-msm-dp-mst-v3-13-01faacfcdedd@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=KOlaDEFo c=1 sm=1 tr=0 ts=68aca3c2 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=esdiVXI3waKZDF_2LzQA:9
- a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: rIzQyq2nRN6lWDNMj8TKwN8fYCDJFJTv
-X-Proofpoint-ORIG-GUID: rIzQyq2nRN6lWDNMj8TKwN8fYCDJFJTv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfXx77uVputuSpl
- DxCsAKIGm5d6YY+nE98PzwOLScF0EHlYSl0xU/epThw/x+X+t4mL8mwKt/N943GcJ+CF9SCSHL3
- VExPnaJXlkg5zaWp3QeyufSYz72cA6Bc4Q36C3NNIhh/eewlgxLXdwjwfrZPb0GlA1P8hUwB0Zs
- TyKLSiUChqW14IMPbcOMVolpCEgy1SGkj3P4RaP9vKtYf2cwJaPjlbBzhWGFKTg+RWs9BWqBh8w
- 2BF6+6AfyQ7gafYAZ6rftnqfRIKMBafKO3hid2kmZM8U2xW3tSzRcF0YT9zqP3cofR9hjTzfksw
- FrrU2rgkBy1zqKwhDomHlFU4qjrVrTW30ohdTlzMpN7dKmnv30XrGSI8Yi2+bl9SYoPaMG41B/e
- Q+10sCar
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_08,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 bulkscore=0 adultscore=0 phishscore=0
- impostorscore=0 spamscore=0 suspectscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
+References: <20250822170800.2116980-1-mic@digikod.net> <20250822170800.2116980-2-mic@digikod.net>
+ <CAG48ez1XjUdcFztc_pF2qcoLi7xvfpJ224Ypc=FoGi-Px-qyZw@mail.gmail.com>
+ <20250824.Ujoh8unahy5a@digikod.net> <CALCETrWwd90qQ3U2nZg9Fhye6CMQ6ZF20oQ4ME6BoyrFd0t88Q@mail.gmail.com>
+ <20250825.mahNeel0dohz@digikod.net>
+In-Reply-To: <20250825.mahNeel0dohz@digikod.net>
+From: Jeff Xu <jeffxu@google.com>
+Date: Mon, 25 Aug 2025 10:57:57 -0700
+X-Gm-Features: Ac12FXxz9pJE0h6HrBGgWJl3z0z4f3e-FfLHbDFV9MrECVyOF6U4dJWEVdkn5yM
+Message-ID: <CALmYWFv90uzq0J76+xtUFjZxDzR2rYvrFbrr5Jva5zdy_dvoHA@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Andy Lutomirski <luto@amacapital.net>, Jann Horn <jannh@google.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Jeff Xu <jeffxu@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 25, 2025 at 10:15:59PM +0800, Yongxing Mou wrote:
-> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> 
-> With MST, each DP controller can handle multiple streams.
-> There shall be one dp_panel for each stream but the dp_display
-> object shall be shared among them. To represent this abstraction,
-> create a stream_id for each DP panel which shall be set by the
-> MST stream. For SST, default this to stream 0.
-> 
-> Use the stream ID to control the pixel clock of that respective
-> stream by extending the clock handles and state tracking of the
-> DP pixel clock to an array of max supported streams. The maximum
-> streams currently is 4.
-> 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> ---
->  drivers/gpu/drm/msm/dp/dp_ctrl.c    | 58 ++++++++++++++++++++++---------------
->  drivers/gpu/drm/msm/dp/dp_ctrl.h    |  3 +-
->  drivers/gpu/drm/msm/dp/dp_display.c | 27 +++++++++++++++--
->  drivers/gpu/drm/msm/dp/dp_display.h |  2 ++
->  drivers/gpu/drm/msm/dp/dp_panel.h   | 11 +++++++
->  5 files changed, 73 insertions(+), 28 deletions(-)
+Hi Micka=C3=ABl
 
-> @@ -2677,10 +2675,11 @@ static const char *ctrl_clks[] = {
->  	"ctrl_link_iface",
->  };
->  
-> -static int msm_dp_ctrl_clk_init(struct msm_dp_ctrl *msm_dp_ctrl)
-> +static int msm_dp_ctrl_clk_init(struct msm_dp_ctrl *msm_dp_ctrl, int max_stream)
->  {
->  	struct msm_dp_ctrl_private *ctrl;
->  	struct device *dev;
-> +	char stream_id_str[15];
+On Mon, Aug 25, 2025 at 2:31=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+>
+> On Sun, Aug 24, 2025 at 11:04:03AM -0700, Andy Lutomirski wrote:
+> > On Sun, Aug 24, 2025 at 4:03=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
+igikod.net> wrote:
+> > >
+> > > On Fri, Aug 22, 2025 at 09:45:32PM +0200, Jann Horn wrote:
+> > > > On Fri, Aug 22, 2025 at 7:08=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <m=
+ic@digikod.net> wrote:
+> > > > > Add a new O_DENY_WRITE flag usable at open time and on opened fil=
+e (e.g.
+> > > > > passed file descriptors).  This changes the state of the opened f=
+ile by
+> > > > > making it read-only until it is closed.  The main use case is for=
+ script
+> > > > > interpreters to get the guarantee that script' content cannot be =
+altered
+> > > > > while being read and interpreted.  This is useful for generic dis=
+tros
+> > > > > that may not have a write-xor-execute policy.  See commit a5874fd=
+e3c08
+> > > > > ("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
+> > > > >
+> > > > > Both execve(2) and the IOCTL to enable fsverity can already set t=
+his
+> > > > > property on files with deny_write_access().  This new O_DENY_WRIT=
+E make
+> > > >
+> > > > The kernel actually tried to get rid of this behavior on execve() i=
+n
+> > > > commit 2a010c41285345da60cece35575b4e0af7e7bf44.; but sadly that ha=
+d
+> > > > to be reverted in commit 3b832035387ff508fdcf0fba66701afc78f79e3d
+> > > > because it broke userspace assumptions.
+> > >
+> > > Oh, good to know.
+> > >
+> > > >
+> > > > > it widely available.  This is similar to what other OSs may provi=
+de
+> > > > > e.g., opening a file with only FILE_SHARE_READ on Windows.
+> > > >
+> > > > We used to have the analogous mmap() flag MAP_DENYWRITE, and that w=
+as
+> > > > removed for security reasons; as
+> > > > https://man7.org/linux/man-pages/man2/mmap.2.html says:
+> > > >
+> > > > |        MAP_DENYWRITE
+> > > > |               This flag is ignored.  (Long ago=E2=80=94Linux 2.0 =
+and earlier=E2=80=94it
+> > > > |               signaled that attempts to write to the underlying f=
+ile
+> > > > |               should fail with ETXTBSY.  But this was a source of=
+ denial-
+> > > > |               of-service attacks.)"
+> > > >
+> > > > It seems to me that the same issue applies to your patch - it would
+> > > > allow unprivileged processes to essentially lock files such that ot=
+her
+> > > > processes can't write to them anymore. This might allow unprivilege=
+d
+> > > > users to prevent root from updating config files or stuff like that=
+ if
+> > > > they're updated in-place.
+> > >
+> > > Yes, I agree, but since it is the case for executed files I though it
+> > > was worth starting a discussion on this topic.  This new flag could b=
+e
+> > > restricted to executable files, but we should avoid system-wide locks
+> > > like this.  I'm not sure how Windows handle these issues though.
+> > >
+> > > Anyway, we should rely on the access control policy to control write =
+and
+> > > execute access in a consistent way (e.g. write-xor-execute).  Thanks =
+for
+> > > the references and the background!
+> >
+> > I'm confused.  I understand that there are many contexts in which one
+> > would want to prevent execution of unapproved content, which might
+> > include preventing a given process from modifying some code and then
+> > executing it.
+> >
+> > I don't understand what these deny-write features have to do with it.
+> > These features merely prevent someone from modifying code *that is
+> > currently in use*, which is not at all the same thing as preventing
+> > modifying code that might get executed -- one can often modify
+> > contents *before* executing those contents.
+>
+> The order of checks would be:
+> 1. open script with O_DENY_WRITE
+> 2. check executability with AT_EXECVE_CHECK
+> 3. read the content and interpret it
+>
+I'm not sure about the O_DENY_WRITE approach, but the problem is worth solv=
+ing.
 
-A comment would be nice. Or better replace this with the array lookup,
-it's much easier than snprintf.
+AT_EXECVE_CHECK is not just for scripting languages. It could also
+work with bytecodes like Java, for example. If we let the Java runtime
+call AT_EXECVE_CHECK before loading the bytecode, the LSM could
+develop a policy based on that.
 
->  	int i, rc;
->  
->  	ctrl = container_of(msm_dp_ctrl, struct msm_dp_ctrl_private, msm_dp_ctrl);
-> @@ -2710,9 +2709,19 @@ static int msm_dp_ctrl_clk_init(struct msm_dp_ctrl *msm_dp_ctrl)
->  	if (rc)
->  		return rc;
->  
-> -	ctrl->pixel_clk = devm_clk_get(dev, "stream_pixel");
-> -	if (IS_ERR(ctrl->pixel_clk))
-> -		return PTR_ERR(ctrl->pixel_clk);
-> +	ctrl->pixel_clk[DP_STREAM_0] = devm_clk_get(dev, "stream_pixel");
-> +	if (IS_ERR(ctrl->pixel_clk[DP_STREAM_0]))
-> +		return PTR_ERR(ctrl->pixel_clk[DP_STREAM_0]);
-> +
-> +	for (i = DP_STREAM_1; i < max_stream; i++) {
-> +		sprintf(stream_id_str, "stream_%d_pixel", i);
-> +		ctrl->pixel_clk[i] = devm_clk_get(dev, stream_id_str);
-> +
-> +		if (IS_ERR(ctrl->pixel_clk[i])) {
-> +			DRM_DEBUG_DP("failed to get stream %d pixel clock", i);
-> +			break;
-> +		}
-> +	}
->  
->  	return 0;
->  }
+> The deny-write feature was to guarantee that there is no race condition
+> between step 2 and 3.  All these checks are supposed to be done by a
+> trusted interpreter (which is allowed to be executed).  The
+> AT_EXECVE_CHECK call enables the caller to know if the kernel (and
+> associated security policies) allowed the *current* content of the file
+> to be executed.  Whatever happen before or after that (wrt.
+> O_DENY_WRITE) should be covered by the security policy.
+>
+Agree, the race problem needs to be solved in order for AT_EXECVE_CHECK.
 
--- 
-With best wishes
-Dmitry
+Enforcing non-write for the path that stores scripts or bytecodes can
+be challenging due to historical or backward compatibility reasons.
+Since AT_EXECVE_CHECK provides a mechanism to check the file right
+before it is used, we can assume it will detect any "problem" that
+happened before that, (e.g. the file was overwritten). However, that
+also imposes two additional requirements:
+1> the file doesn't change while AT_EXECVE_CHECK does the check.
+2>The file content kept by the process remains unchanged after passing
+the AT_EXECVE_CHECK.
+
+I imagine, the complete solution for AT_EXECVE_CHECK would include
+those two grantees.
+
+Thanks
+-Jeff
 
