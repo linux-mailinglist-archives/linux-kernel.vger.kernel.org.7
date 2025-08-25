@@ -1,65 +1,90 @@
-Return-Path: <linux-kernel+bounces-785658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A895BB34F2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:43:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB2D0B34F2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:44:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B1617A0FF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:41:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 485F57A4D45
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD4A2BEFF6;
-	Mon, 25 Aug 2025 22:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C4D2BE7CB;
+	Mon, 25 Aug 2025 22:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXk+meCU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eYTS1YEO"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25710211A35;
-	Mon, 25 Aug 2025 22:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3168B2DF68;
+	Mon, 25 Aug 2025 22:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756161797; cv=none; b=S9aRozkSgq5ZLW1mCSuHPdtxxpU4f7ufoltO9T/YYlKj357EURUhnW9QvujMztDLj82GtDfssittl/glmVNXn6nmg0TwRJpXHn9Q1cphW1rHBQMJM5VR9dw9EyJi4zjBKQ9IIURa2VHs7pNY0YXbwWpO5j7NfgPoMmoiHSR76Io=
+	t=1756161881; cv=none; b=FtpeNIpg+t6NXmB8FjbOoWJHEHCkEDmy/h2o1R1SYgDlJvxLIKCx8quH1OToUDVsCZlSnuG8syE8vxsXE0aqE2na61cQiHoi6x8TOXz+u2h0EgTKg2S6NBfrjh18Bz2ehqhApNdP2N0m+MfHBxa5oSgF3PiRbX3oAmGvcJ7CbK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756161797; c=relaxed/simple;
-	bh=AyUN5Vep4hSDJ+K7OG6FuYEpjAcyxu18POCapEOdlpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=er+yIb4msbyAHcymGdVqYTqa6JkfcTmwkkAsO9Dn6wDQxXd0UFm/X576Eb7tjPGnKqCMWu/l/joW7NzlquG74HislkSIaEqsT5p7f7rTpSiie1cz9ecWC7mHWrnHQo+rNOzNSzKaaWN0dU1aY1eJbj+GUNbqyIn+Gqyfw8Tqbpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OXk+meCU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D0CAC4CEED;
-	Mon, 25 Aug 2025 22:43:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756161796;
-	bh=AyUN5Vep4hSDJ+K7OG6FuYEpjAcyxu18POCapEOdlpA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OXk+meCUXk+f1tu1W8X6jg+IiC79kC1SEjDMvtGbLyy9JvTnSo2E3z2iWiBnF56Y8
-	 OBTxoxuixcRUfcL/x1lwT6uk8j7vOmt0ZVuzZXZqzoS3+HEHAWl2AA27p6TOQewaLL
-	 YUtFPY8dheCJNidF9h/V7tqEuRwNtNy+y56FgV0ZnS1j1PQFMZ/2kk+Ftgf5YdlU+N
-	 SWHDPuE4/Pgjz8jWmFn7DPqHtwyCMiZtYE15Gh7CVr4KECYR3BTosgglplTy5k8MhN
-	 ffGqQaOPkIkk3fE1E8zpAFjB+Hsy0O4Wj9pXznvF3IqhovD25RbHI8wGb28RnKTLwY
-	 h+X5RSN8jVnDg==
-Date: Mon, 25 Aug 2025 17:43:15 -0500
-From: Rob Herring <robh@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Saravana Kannan <saravanak@google.com>, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH 4/6] PCI: of: Add an API to get the BDF for the device
- node
-Message-ID: <20250825224315.GA771834-robh@kernel.org>
-References: <20250819-pci-pwrctrl-perst-v1-0-4b74978d2007@oss.qualcomm.com>
- <20250819-pci-pwrctrl-perst-v1-4-4b74978d2007@oss.qualcomm.com>
- <20250822135147.GA3480664-robh@kernel.org>
- <nphfnyl4ps7y76ra4bvlyhl2rwcaal42zyrspzlmeqqksqa5bi@zzpiolboiomp>
+	s=arc-20240116; t=1756161881; c=relaxed/simple;
+	bh=ZbyuQjE1x8p1HEl4FTan1gzw8GiQVFaH5z0LNfgsobE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pYQ7Pw2pcleRL3TuLNgKauJC0FI9qmxbvbjBNYJzRWXQyRen2L16DQbSThuqjp/BwAAgv3dI8/cd5OSWwWvBcNhkR/r4My6EgT605RSRPqfTmHHJWCKEDFpYKt18dPxPAeb6uk40xDseAElACahEs/08Lbob76POwteH5aCVOKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eYTS1YEO; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61c325a4d18so4267993a12.0;
+        Mon, 25 Aug 2025 15:44:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756161878; x=1756766678; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2T6zyJCpKNQMONQ/+6DCxz1kO1ActfYAVPqfvtlGBRc=;
+        b=eYTS1YEO+z3BusS8sTEgmeTl7p/C+z5CSNUov/CoMwr7X2WiXBu1dTKocw3rykSlv9
+         D+Yx3iZZzFHpfCLcmvM2uoz8Al61C/VY9GiKdjuiYa98ZgJx6EEzPVaVAeJVhZrkw/H2
+         s9NUZOpZWH4Ghz26tEsWoLOWHB85Usmmdpi+Hf9ivvsGqatirL7VwPQUrMgmy3dGycc4
+         9wChktMxvj6wmSZb71JCI5eUb3VCz9e8VHgzTCV/HY832GRk4aBMoRWeXyMklK1ZYCLK
+         OPJiJplkYsi1u8u2IEeVXj9CyS0gsvz50f3IGGzGSkAsOOJxWJlLLvNaSlKi2CzORKjK
+         Nphg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756161878; x=1756766678;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2T6zyJCpKNQMONQ/+6DCxz1kO1ActfYAVPqfvtlGBRc=;
+        b=HRKju8vqSqwiS2M0mVmCUlL/KaZfM/Zoh54WdYCK7iuPnl9iKRKd4XkpXJwHcLF54x
+         ySKHK7AuIcDYjHcHPi/gyeTPW7dqOUm4q1ILWw5yFxvABICzVgCsBwE78wjeGgWrMjj+
+         fhbfpSYi+eTNmF0CAeU9EQduj55ABZZGgvvhUGC4K2TQHEeCCO1bESwF3Aacax4Gpo6N
+         Od8DI/DnLUz8DJ5Swz5siAaIubWxPTzUI4LmJoXexnZCSdMeL72K1IWn1ZtkpRJTbe2h
+         Q5q4/PiyE+G6FvM9E6nsmrprSqO8t+HW9Cf8wnt6Bo61n+USJ5MHLTQrK+8NZ2P7QygH
+         d0Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCWfXqBYfYXt2of0hSUooDkemz5Ni8HIH8IUdhmom4vzjLWl3+0pnIND59661tgS2MqTLNM=@vger.kernel.org, AJvYcCWzHb+Yx7wSJS/QDOLEgQyiQFkb77UgoEA5IUjLVXzNqu6iya5+UA4i41BC9TcHANtjUZeAEQT0etedThfS@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqVPbsmeWvSGbAIKVQyDm5+riryX6PoXriwc3vLaNEjadLNBPp
+	S/v5BI8b59TG2HxrX+NiEBK2cP1Mr5EyX4PfXBVAmVfEwimeyiXHsaLl
+X-Gm-Gg: ASbGnctCAJktkl0/K+EMdXzTdOqbRSTPHVGP4Mz3iittr9fC6a48KkpRuaNMNa6zZbl
+	r+q4qEGyEBZfOBQOIeVfkegrHE+7BY0HDo7o5QQfXteyCCsw5KyxTPa6vad+fUFGj3s1VsDeWEd
+	dHG1cLQlQEPztG7nDjMrpr/tAlrP5xd7b4mcSULhHy4ZkVgp8NzzyLahvSrCyOdlqCEzkAq4HWh
+	lYg2NBmOCyyjXc1DVPNVlRc17bpXI18D2/Er94qOuhER/8ED/6j2Sa0jkDJs4jBEqGMStLYSWPY
+	HCY9ZVsY2PlwYz8X0PkXm6Sjm6epYKB++lwDJ1rTaP7GQaJDXTXNIZl91nlQnbLA/Zy/TQW3N7C
+	OTqd72sZ7Ow==
+X-Google-Smtp-Source: AGHT+IHK/2dAsL5304VI5d1gXmgZlUdSYDa6171aXTByy8NgglOb7SHKtyaXn1mszZxFicv11YLpUA==
+X-Received: by 2002:a05:6402:348c:b0:61c:7585:8c8 with SMTP id 4fb4d7f45d1cf-61c75852722mr2850061a12.38.1756161878245;
+        Mon, 25 Aug 2025 15:44:38 -0700 (PDT)
+Received: from krava ([176.74.159.170])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c90ffd677sm277712a12.46.2025.08.25.15.44.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 15:44:37 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 26 Aug 2025 00:44:36 +0200
+To: chenyuan_fl@163.com
+Cc: olsajiri@gmail.com, aef2617b-ce03-4830-96a7-39df0c93aaad@kernel.org,
+	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+	chenyuan@kylinos.cn, daniel@iogearbox.net,
+	linux-kernel@vger.kernel.org, qmo@kernel.org,
+	yonghong.song@linux.dev
+Subject: Re: [PATCH v7 0/2] bpftool: Refactor config parsing and add CET
+ symbol matching
+Message-ID: <aKznVD6BjdBCvm0e@krava>
+References: <aKL4rB3x8Cd4uUvb@krava>
+ <20250825022002.13760-1-chenyuan_fl@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,25 +93,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <nphfnyl4ps7y76ra4bvlyhl2rwcaal42zyrspzlmeqqksqa5bi@zzpiolboiomp>
+In-Reply-To: <20250825022002.13760-1-chenyuan_fl@163.com>
 
-On Fri, Aug 22, 2025 at 07:57:41PM +0530, Manivannan Sadhasivam wrote:
-> On Fri, Aug 22, 2025 at 08:51:47AM GMT, Rob Herring wrote:
-> > On Tue, Aug 19, 2025 at 12:44:53PM +0530, Manivannan Sadhasivam wrote:
-> > > Bus:Device:Function (BDF) numbers are used to uniquely identify a
-> > > device/function on a PCI bus. Hence, add an API to get the BDF from the
-> > > devicetree node of a device.
-> > 
-> > For FDT, the bus should always be 0. It doesn't make sense for FDT. The 
-> > bus number in DT reflects how firmware configured the PCI buses, but 
-> > there's no firmware configuration of PCI for FDT.
+On Mon, Aug 25, 2025 at 03:20:00AM +0100, chenyuan_fl@163.com wrote:
+> From: Yuan CHen <chenyuan@kylinos.cn>
 > 
-> This API is targeted for DT platforms only, where it is used to uniquely
-> identify a devfn. What should I do to make it DT specific and not FDT?
+> 1. **Refactor kernel config parsing**  
+>    - Moves duplicate config file handling from feature.c to common.c  
+>    - Keeps all existing functionality while enabling code reuse  
+> 
+> 2. **Add CET-aware symbol matching**  
+>    - Adjusts kprobe hook detection for x86_64 CET (endbr32/64 prefixes)  
+>    - Matches symbols at both original and CET-adjusted addresses  
+> 
+> Changed in PATCH v4:
+> * Refactor repeated code into a function.
+> * Add detection for the x86 architecture.
+> 
+> Changed int PATH v5:
+> * Remove detection for the x86 architecture.
+> 
+>  Changed in PATCH v6:
+> * Add new helper patch (1/2) to refactor kernel config reading
+> * Use the new read_kernel_config() in CET symbol matching (2/2) to check CONFIG_X86_KERNEL_IBT
+> 
+> Changed in PATCH v7:
+> * Display actual kprobe attachment addresses instead of symbol addresses
 
-I don't understand. There are FDT and OF (actual OpenFirmware) 
-platforms. I'm pretty sure you don't care about the latter.
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-Rob
+thanks,
+jirka
 
+
+> 
+> Yuan Chen (2):
+>   bpftool: Refactor kernel config reading into common helper
+>   bpftool: Add CET-aware symbol matching for x86_64 architectures
+> 
+>  tools/bpf/bpftool/common.c  | 93 +++++++++++++++++++++++++++++++++++++
+>  tools/bpf/bpftool/feature.c | 86 ++--------------------------------
+>  tools/bpf/bpftool/link.c    | 38 ++++++++++++++-
+>  tools/bpf/bpftool/main.h    |  9 ++++
+>  4 files changed, 142 insertions(+), 84 deletions(-)
+> 
+> -- 
+> 2.39.5
+> 
 
