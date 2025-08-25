@@ -1,108 +1,182 @@
-Return-Path: <linux-kernel+bounces-785052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8689B3453B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:09:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 205E2B3453F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14C58188720D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:08:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 359AC5E3BA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B102FB966;
-	Mon, 25 Aug 2025 15:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790342FC86F;
+	Mon, 25 Aug 2025 15:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Yh7YATvS"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CDFlG2p4"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEC7611E;
-	Mon, 25 Aug 2025 15:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223292F2917
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 15:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756134452; cv=none; b=p8xg0cci7eXOu6VnqnrR9Jfc4Mv5XTaiSK5v2Ujac//QmPT/+rZuP/+foxtic64lQL2GghIszE/zBHro9t0iE+FFULpw2DBiWDZ2KoZAZQUB1+7vmJ5KJsWwh0EV4RKAZWjAlzD7dJ/0N7vPHZJhuGZtsx6zGyRoHm/nRVkLu/E=
+	t=1756134503; cv=none; b=Bl63VqUNBq/cXvDukB3pAbPiGQKDQr/nf37NsccoP2fmB7BfQeGP6jcsXKfbQfv40KmU5Zv8UZF0xHaLa7WCT8DfsXbilUTNqyN+u2MN/lD57HqyvbGMeu0Ql9WvB0t/4XTH495DzNnUCUhlGo1L5v1P6zAl5zZgiuoD9TbYteE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756134452; c=relaxed/simple;
-	bh=vs614cjVbkXrHqmrqUy5gJOdGaDMPLKQD2BjzEuQqPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rle1/muDncBrsVsbmaFdFg3dPlNwxj4kJXMJu/+d0Y0Xpq3l+aCNxiaFY/Pnx0I3GuGVPP6ljkCU/YuTy8JJMIaF8kYlqC6Wu2Bz0coaum5ClnKvPf5wL1ctmxbC13C5SO/8xAIfg+TLHY3poP5s4xWcObExKU3frwxaF/gbnhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Yh7YATvS; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2F8D240E01A1;
-	Mon, 25 Aug 2025 15:07:28 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id BIYyjupB5BrM; Mon, 25 Aug 2025 15:07:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756134444; bh=eDbhlwZJw6ENl+QzRxKbsR7aRJTF/4MFwWPYuUGpZCs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yh7YATvSeG3B+h+I8JASERwcDhhHmx1RHLI2M5DqhR/0zzUtHRAV3h1A+IttnqLUD
-	 hxTg4dRIppiwdE71ZA1z4WoAPovQCyKH2E1jyWo3WbJKw7XSWt7oX//Ogv0Ea+7NNS
-	 XMFVyym/wPq1/4A2UIymVAY6c8SaGOGdluvOOTX/O+zsb76Ugx6zchGZMVx4mEOn3x
-	 Kr2soTcw8S095Uta+WCG8pXM+LPclPa7zkrvgKrHauB9u7n1B8vL+NWWh/r63dIxx4
-	 7yY6mvPMkeRp2IRbnoaczHHXx6ir2boR9xB8fxh60Xr/82TyFdUTXvZl+h8qvsz/K6
-	 MwP9GhNBymaVi3eoBr4dM7F28KFCJyapNHaZ+BQeh5oxguepXMD9o4foYYAATnBRcz
-	 ASdAFKB1q70NujnW5jbr1rKeMJlwY9RptjyrddUCkNcFWtJ6T+sTwT6mRyxNDi99ia
-	 2k6JumsglJvsdG3kel+Ob4hp/HnIWEU3tq81fu0pLOtlcXnWpDOrHhn0wNLwcdvRM6
-	 0v3z5wYJHyYXpTbbc6FVNXXxfyt0dSooJXUSsbJl/DytVsXUplXxBfbgcTjmGb/E4n
-	 v7Lxe0K6dm10LBPuaX45fQv/4cUY966hzvlcHPWvu3MTAmKjcn+9G6pApYJCy5TFgC
-	 xt+FgjbGTaWHFvZl1gpqWGM4=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 78A2740E0202;
-	Mon, 25 Aug 2025 15:07:02 +0000 (UTC)
-Date: Mon, 25 Aug 2025 17:06:56 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
-	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org,
-	kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
-	naveen.rao@amd.com, francescolavra.fl@gmail.com,
-	tiala@microsoft.com
-Subject: Re: [PATCH v9 10/18] x86/apic: Add support to send NMI IPI for
- Secure AVIC
-Message-ID: <20250825150656.GXaKx8ENWi4X5RN2RA@fat_crate.local>
-References: <20250811094444.203161-1-Neeraj.Upadhyay@amd.com>
- <20250811094444.203161-11-Neeraj.Upadhyay@amd.com>
+	s=arc-20240116; t=1756134503; c=relaxed/simple;
+	bh=S/VG8tCfeSW/ZzspyTh3T9Ob4Izsu75n3KOb8iwoQWw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bGffk48Y8bNfQO1gKAhIbS9UPH0Criz03Pt+LuWOBjXv1lopzkTTQ6cni8FUBQndFv3uI5HTsDV4GCpdEybg1A41JAcyqKk8t6ToS4S6PfyPU8glW/ViYa3MU6SGVTR+osMeaCjx2KerKquNIWN7lVvSwRz5DbEXgCEzaSR42JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CDFlG2p4; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afe9358fe77so88988466b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 08:08:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1756134500; x=1756739300; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Omikb0GsiRNAla8HKNcwJLY2uhW1I/CfC2GAsB/V6IY=;
+        b=CDFlG2p47UCVPVcrpfRVkLNoK2BEMHltQwkbIW7OpnlmqHD8Pnh62apNOD59i6eKPc
+         62+CGjxjnsy8b/XRg4E73YHKpzb6uSIR2I42GUpL4H2F648sSy9E5nPXrC5tr8GfgMvW
+         1B1YfWnsw+nl2fnoZJXSOXfAwrD3mi5dhYrfA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756134500; x=1756739300;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Omikb0GsiRNAla8HKNcwJLY2uhW1I/CfC2GAsB/V6IY=;
+        b=ndX6GS9r50XILEom8tHVC1ezx4k22BiR1A3aWcLOk/MyM7iH2jsRNbfxWLsQiaDmBw
+         LLzZON/BdrZ84GTlZuR0c0c42XEa/6gDrubzWNVO2tOVt9Sb7P9F5THFSS9yZkFeR+pN
+         KwOM36E/3jQ1vklZqkO6+g2yh+Ha4oNgbyGvGDJl6uzytFZsfVByE19qpmAJ5S5FMJHd
+         FQrHXiL/pWsNFeGvuwN3tnNyY19Cb86GYdjDfMl4CaNhr9yOIGfeUQWDijZxskZGSVQo
+         UDId3aWzIoel72SD9BIbGXZA8u88ZhgWRlvOF/cLSTOwbemNV/AGHZ1rhflGLdqoBHe6
+         y1dw==
+X-Forwarded-Encrypted: i=1; AJvYcCWB4GSgZX/3MRdWw/btba1NvZAs6YeiVB1o2sCZpRbc+o9RCIcpxh6dzxrOlUgUMn3zw1waMFpiVSwkzyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5DA9lLsML5OMuoRpk1d/Xz+93Yl0T+L2Gicej+F3Yrr8J1FIX
+	CI1/aK+cAIejMSPNEqu9O8nLPYktGmYWbMTN7hUddygUH0WUUwuErZAQpyzjhQtxPJixviW/rzb
+	BWM1M/Sn5PKmHJ6uCfdB8ue20Y7iVHpVcVzlpUaMj
+X-Gm-Gg: ASbGncv78xK/MPO9L0nZaMXKxYbhorRkZOIW8MzlT72JEnIYofGrzfbG43avyL67yE6
+	2xSuaE7RbP9J8sdqGgBKcAAZKQDscqZdNhQXBsFKY1fqvHV0Qk4sMLjk8jT/b4yQ2CZta6X29wE
+	AQogtlfquDszLOzhaGRafMERXsslm6QsUOLWxbD1E2GCAB2bBoqSIGsdosmmlfjNQ6FkkVruL+8
+	xUC648=
+X-Google-Smtp-Source: AGHT+IHXgFMATHSbaalQDjOX1vp31Ziz4UgnKYQ8pu/Ue5WZF+Wt1koG8AKkJEybrR3BHEyOZWG0cw3aGDEQZQNDyJo=
+X-Received: by 2002:a17:906:1c4a:b0:afe:9172:b8cb with SMTP id
+ a640c23a62f3a-afe9172bc73mr155986766b.30.1756134500324; Mon, 25 Aug 2025
+ 08:08:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250811094444.203161-11-Neeraj.Upadhyay@amd.com>
+References: <20250722-mode_configure-v1-1-5ea35052a01f@chromium.org>
+ <20250723154753.GH6719@pendragon.ideasonboard.com> <CAEs41JCctnTgwY-ePrB+kwY7nUvJuMAttZ894PzhL-b_SF7uNQ@mail.gmail.com>
+ <20250723170237.GE14576@pendragon.ideasonboard.com> <aKwWzQGY_dsP8hg0@kekkonen.localdomain>
+In-Reply-To: <aKwWzQGY_dsP8hg0@kekkonen.localdomain>
+From: Allen Ballway <ballway@chromium.org>
+Date: Mon, 25 Aug 2025 08:08:09 -0700
+X-Gm-Features: Ac12FXwufVyw0HYB3wo5t_J9ACjERyV2c6pxw9Pml5QKrLEp57owt-1Xu42X_Zo
+Message-ID: <CAEs41JCZ0ab_HVZ=NiZbC_52pc+yhXcgOBECDN7sy8DsaBD6rA@mail.gmail.com>
+Subject: Re: [PATCH] media: ov8865: move mode_configure out of state_configure
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hansg@kernel.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 11, 2025 at 03:14:36PM +0530, Neeraj Upadhyay wrote:
-> Secure AVIC has introduced a new field in the APIC backing page
-> "NmiReq" that has to be set by the guest to request a NMI IPI
-> through APIC_ICR write.
-> 
-> Add support to set NmiReq appropriately to send NMI IPI.
-> 
-> Sending NMI IPI also requires Virtual NMI feature to be enabled
-> in VINTRL_CTRL field in the VMSA. However, this would be added by
-> a later commit after adding support for injecting NMI from the
-> hypervisor.
+Hi Sakari,
 
-So drop this whole paragraph. No need to mention that here.
+I sent out a v2 some time ago
+(https://lore.kernel.org/all/20250723-mode_configure-v2-1-7fb0f6ba1194@chro=
+mium.org).
+It seems I used b4 incorrectly and it didn't add to this chain as I
+expected, apologies for the confusion.
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks,
+Allen
 
-https://people.kernel.org/tglx/notes-about-netiquette
+On Mon, Aug 25, 2025 at 12:55=E2=80=AFAM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
+>
+> Hi Allen, Laurent,
+>
+> On Wed, Jul 23, 2025 at 08:02:37PM +0300, Laurent Pinchart wrote:
+> > On Wed, Jul 23, 2025 at 09:40:42AM -0700, Allen Ballway wrote:
+> > > On Wed, Jul 23, 2025 at 8:47=E2=80=AFAM Laurent Pinchart wrote:
+> > > > On Tue, Jul 22, 2025 at 01:35:43PM -0700, Allen Ballway wrote:
+> > > > > ov8865_mode_configure() only needs to be called on sensor init, b=
+ut it can
+> > > > > be called multiple times from ov8865_state_configure(). Move
+> > > > > ov8865_mode_configure() to ov8865_sensor_init().
+> > > > >
+> > > > > Signed-off-by: Allen Ballway <ballway@chromium.org>
+> > > > > ---
+> > > > >  drivers/media/i2c/ov8865.c | 15 +++++++--------
+> > > > >  1 file changed, 7 insertions(+), 8 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/media/i2c/ov8865.c b/drivers/media/i2c/ov886=
+5.c
+> > > > > index 95ffe7536aa6aba814f4e5c3d12e7279470b2f07..1d1a1f261bf4ab5c0=
+9848402dc057e2f572504e7 100644
+> > > > > --- a/drivers/media/i2c/ov8865.c
+> > > > > +++ b/drivers/media/i2c/ov8865.c
+> > > > > @@ -2304,14 +2304,6 @@ static int ov8865_state_configure(struct o=
+v8865_sensor *sensor,
+> > > > >       if (sensor->state.streaming)
+> > > > >               return -EBUSY;
+> > > > >
+> > > > > -     /* State will be configured at first power on otherwise. */
+> > > > > -     if (pm_runtime_enabled(sensor->dev) &&
+> > > > > -         !pm_runtime_suspended(sensor->dev)) {
+> > > > > -             ret =3D ov8865_mode_configure(sensor, mode, mbus_co=
+de);
+> > > > > -             if (ret)
+> > > > > -                     return ret;
+> > > > > -     }
+> > > > > -
+> > > > >       ret =3D ov8865_state_mipi_configure(sensor, mode, mbus_code=
+);
+> > > > >       if (ret)
+> > > > >               return ret;
+> > > > > @@ -2384,6 +2376,13 @@ static int ov8865_sensor_init(struct ov886=
+5_sensor *sensor)
+> > > > >       }
+> > > > >
+> > > > >       /* Configure current mode. */
+> > > > > +     ret =3D ov8865_mode_configure(sensor, sensor->state.mode,
+> > > > > +                                  sensor->state.mbus_code);
+> > > >
+> > > > How about the implication on ov8865_set_fmt() that will not update =
+the
+> > > > link freq and pixel rate controls anymore ?
+> > >
+> > > I believe those will be unaffected by this change, they are updated i=
+n
+> > > ov8865_state_mipi_configure() which is still called from
+> > > ov8865_set_fmt() via ov8865_state_configure().
+> >
+> > You're right, my bad.
+> >
+> > > > > +     if (ret) {
+> > > > > +             dev_err(sensor->dev, "failed to configure mode\n");
+> > > > > +             return ret;
+> > > > > +     }
+> > > > > +
+> > > > >       ret =3D ov8865_state_configure(sensor, sensor->state.mode,
+> > > > >                                    sensor->state.mbus_code);
+> >
+> > Can't we drop this now ? The remaining code in ov8865_state_configure()
+> > updates the link frequency and pixel rate controls, and sets
+> > sensor->state.mode and sensor->state.mbus_code. The latter is a no-op
+> > here as they're set to their current value, and the controls shouldn't
+> > need an update in this function as it's only called from
+> > ov8865_resume().
+>
+> Any comments on this? Will there be v2?
+>
+> --
+> Sakari Ailus
 
