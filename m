@@ -1,137 +1,135 @@
-Return-Path: <linux-kernel+bounces-783884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91B1B333D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:05:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F006B333D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C22EE189D120
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 02:06:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9921C189E36A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 02:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C15A22577C;
-	Mon, 25 Aug 2025 02:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C5522576C;
+	Mon, 25 Aug 2025 02:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jkCBQaeW"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nWJvpIq9"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EF022576C;
-	Mon, 25 Aug 2025 02:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC59131E49
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 02:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756087534; cv=none; b=NbjEUqZ+r9rl8YRpggRCDF+4gNJAL9lNt99ziXqwEeQaD+qv9c6+g5NLuew6lU7ko3VXcdN8wdd4rqQ3kt73Iv2OVSLwur2mipm4cQDjEY1drtk/gc9GLDoIh/FdtK/miDeMqxive+8qftQ6BM+enwry7/oSSnq3X+yFiVkHm10=
+	t=1756087638; cv=none; b=OrAJ4NNS/0Z6+Ik2H8U5NDuEcZ4v7TQxoDEXEV5AXPT4+znoE0PJ3tNp7PDMS7ZQ1F+jM3bxmGRG24Qnm9wC+5zbCO/XrySPJ93YwViGKaqJdvbHWYN8QFKNdQOwEhKA+P205RYEICvq6yZ+srTUCIzyTc55o5LmjY4PJCdsEpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756087534; c=relaxed/simple;
-	bh=jRE0j/a3Blw5jBzPmdqmicKxGpOIJhBd9aEt46ekE8w=;
-	h=To:Cc:Message-ID:From:Subject:Date; b=blOYsH5NGKSYsytK/t0SWmCeBoeLtgTfZjUFA7TeGAJa5Ei8od1zQ9sgPgZIRN1Xi8v3o55Sp4i4DJt824NhhCelzIvSbylVG2W6/NkbVu6ja/ernC008pZVDoNE6ge4RkfQou+A8F+YcwTh9oXUc1+j1ERAN1aKb+7WGcdg9eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jkCBQaeW; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfout.stl.internal (Postfix) with ESMTP id E3AC51D00067;
-	Sun, 24 Aug 2025 22:05:29 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Sun, 24 Aug 2025 22:05:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1756087529; x=1756173929; bh=voARBgy3yx2HVaACbb8e7bteXCgR
-	0SdI2PllfVi1VYk=; b=jkCBQaeWkjCpG1BqyqE9iUJVlv5bsJJ2HDilUQ0ACr4m
-	1dVvtykKrU9iNo5k2yEoqkxhwMgxzSQR/3trTEvGaJ3ha3NSNNxQBJ6ZRlQPU1zL
-	EVItXdRyNAgneww5s1t1W8cygfvw6vsnURSRNQEoJ8bnW47TNCuaEpyYHaQUBMCv
-	f15EKPIsXkyRS6eFWnGJSroHMntk7hyF2Khy4MoD5SIrG0ifxt5G8u4ReI0A9EG+
-	ADxXfjtHBZGoF41tP67ZBO09ssku/l8tgZO0rDGUbmsjjYzjEB6pYE0mgcszsSmV
-	dRvqhX5IW3JTYJF8ByjojIw2/w42Woqqm5TTQR4n+A==
-X-ME-Sender: <xms:6MSraLFGnPpNIoSVFu_rv9SGHpbKf9aaX6vgTHaSDQgfQ23361Zmdw>
-    <xme:6MSraC9PuUbW8u10ErM0X3ixRliV8-ZXAewSLyjK1Gh5HJ7nVDfe--iteual1EulF
-    nJIgmuyzsLQ1hvWyAk>
-X-ME-Received: <xmr:6MSraDKnAG3iOInLTndKNAFwbOMi8rcbCxHM-T_QNxWTDs94y2eit3twqO9hTmVXwgwDLsE2Wq7HmMNdZbPOoAnRLVbKnFMRCaU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujeduudegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepvfevkffhufffsedttdertddttddtnecuhfhrohhmpefhihhnnhcuvfhhrghinhcu
-    oehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtthgvrhhnpe
-    ekffejgfehheehkeekffffveekteevvddvveelhffgffetteefgfeutdehleetheenucff
-    ohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepfhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrghdp
-    nhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghkph
-    hmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlrghntggv
-    rdihrghngheslhhinhhugidruggvvhdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqd
-    hmieekkhdrohhrghdprhgtphhtthhopehmhhhirhgrmhgrtheskhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtohepohgrkheshhgvlhhsihhnkhhinhgvthdrfhhipdhrtghpthhtohepph
-    gvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihilhhlsehkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrgh
-X-ME-Proxy: <xmx:6MSraIsYnUYfkrNA3bAy28j1s24RmytNegZACNFlHr4WWHgdmuUT4g>
-    <xmx:6MSraCA84Nb8T58XzY2F9v3-JoXtXa-fUf4709pReOhmmNE8jU7_Wg>
-    <xmx:6MSraIOSpJSyVl8AmGyceQgDK7Q7RmNXP01UrV-1u5LSw5ztm-AtgQ>
-    <xmx:6MSraCAV7QBrT5wXKirU9XjlmYUBCal_u2EJYfMJo9afGAh0ff5FPw>
-    <xmx:6cSraFvqtx2G3U_PnXk4vZ8fa9Ji3RYm3Sx7r53A1UIurqIfQQZhYoN1>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 24 Aug 2025 22:05:25 -0400 (EDT)
-To: "Andrew Morton" <akpm@linux-foundation.org>,
-    "Lance Yang" <lance.yang@linux.dev>
-Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>,
-    "Masami Hiramatsu" <mhiramat@kernel.org>,
-    "Eero Tamminen" <oak@helsinkinet.fi>,
-    "Peter Zijlstra" <peterz@infradead.org>,
-    "Will Deacon" <will@kernel.org>,
-    stable@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Message-ID: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org>
-From: Finn Thain <fthain@linux-m68k.org>
-Subject: [PATCH] atomic: Specify natural alignment for atomic_t
-Date: Mon, 25 Aug 2025 12:03:05 +1000
+	s=arc-20240116; t=1756087638; c=relaxed/simple;
+	bh=wle9r2gsnhO7JaaLb1bCPkD7qWWf9Zu+D8DM/DNZTjw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=Qkqo1f0IibM3Y7rartQsFFHleKZ54yw7OevYeaJWPF0aYFFIn5Mx3iQO4PXWakeTnsKDbSNUotYV5Tu0LzIqSmdr9oNEeQQ21AEE9KxnY2H6vv2B1PA3ikiLLH9rxAOLDtX+ar8o/90/KGeIG+aib0bXwefpzxyfUXHnEbf2AJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nWJvpIq9; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250825020707epoutp041cfb100363d350d15cf5ffe5bf65e258~e4GSqRprv0871708717epoutp04z
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 02:07:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250825020707epoutp041cfb100363d350d15cf5ffe5bf65e258~e4GSqRprv0871708717epoutp04z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756087627;
+	bh=eLnMXqyfqg1qktU4SrlD9F/Y1gqGVc8jfzRmVy/nmCI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=nWJvpIq9v4HQuO53y9CEaOIw+/g6Lt3XgWw7aKZtNkJbrCL+2G+U/pW42aZvZQvU2
+	 bzKOepmXBzXyx/ivLpbCmnkFQ5XGjoEgz/ZP0EHO05BCH8K1ZAM5CVTYFO6CJOL7Sj
+	 luBy3Vfpjh2Y7QBuMnKARLj+y8hMO3YBZ+nTfr1o=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250825020707epcas5p456f163e3bca934301a8cdcd40f8874f6~e4GSF1zka1083410834epcas5p46;
+	Mon, 25 Aug 2025 02:07:07 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.87]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4c9Dgs6xxCz3hhT8; Mon, 25 Aug
+	2025 02:07:05 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250825020428epcas5p16a3306486407502504ca75bbe549927e~e4D_J20hW2609326093epcas5p1A;
+	Mon, 25 Aug 2025 02:04:28 +0000 (GMT)
+Received: from asg29.. (unknown [109.105.129.29]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250825020426epsmtip2664683fd89c1dd09d5a8c452b6061d25~e4D89fvNJ2221922219epsmtip2a;
+	Mon, 25 Aug 2025 02:04:26 +0000 (GMT)
+From: Ying Gao <ying01.gao@samsung.com>
+To: ying01.gao@samsung.com
+Cc: eperezma@redhat.com, jasowang@redhat.com, junnan01.wu@samsung.com,
+	kraxel@redhat.com, lei19.wang@samsung.com, linux-kernel@vger.kernel.org,
+	liping.qi@samsung.com, mst@redhat.com, virtualization@lists.linux.dev,
+	xuanzhuo@linux.alibaba.com, ying123.xu@samsung.com
+Subject: [PATCH V2 RESEND] virtio_input: Improve freeze handling
+Date: Mon, 25 Aug 2025 10:04:24 +0800
+Message-Id: <20250825020424.1436159-1-ying01.gao@samsung.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250812095118.3622717-1-ying01.gao@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250825020428epcas5p16a3306486407502504ca75bbe549927e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-505,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250825020428epcas5p16a3306486407502504ca75bbe549927e
+References: <20250812095118.3622717-1-ying01.gao@samsung.com>
+	<CGME20250825020428epcas5p16a3306486407502504ca75bbe549927e@epcas5p1.samsung.com>
 
-Some recent commits incorrectly assumed the natural alignment of locks.
-That assumption fails on Linux/m68k (and, interestingly, would have failed
-on Linux/cris also). This leads to spurious warnings from the hang check
-code. Fix this bug by adding the necessary 'aligned' attribute.
+When executing suspend to ram, if lacking the operations
+to reset device and free unused buffers before deleting
+a vq, resource leaks and inconsistent device status will
+appear.
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Lance Yang <lance.yang@linux.dev>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Eero Tamminen <oak@helsinkinet.fi>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Will Deacon <will@kernel.org>
-Cc: stable@vger.kernel.org
-Reported-by: Eero Tamminen <oak@helsinkinet.fi>
-Closes: https://lore.kernel.org/lkml/CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com/
-Fixes: e711faaafbe5 ("hung_task: replace blocker_mutex with encoded blocker")
-Signed-off-by: Finn Thain <fthain@linux-m68k.org>
+According to chapter "3.3.1 Driver Requirements: Device Cleanup:"
+of virtio-specification:
+  Driver MUST ensure a virtqueue isn’t live
+  (by device reset) before removing exposed
+  buffers.
+
+Therefore, modify the virtinput_freeze function to reset the
+device and delete the unused buffers before deleting the
+virtqueue, just like virtinput_remove does.
+
+Co-developed-by: Ying Xu <ying123.xu@samsung.com>
+Signed-off-by: Ying Xu <ying123.xu@samsung.com>
+Co-developed-by: Junnan Wu <junnan01.wu@samsung.com>
+Signed-off-by: Junnan Wu <junnan01.wu@samsung.com>
+Signed-off-by: Ying Gao <ying01.gao@samsung.com>
 ---
-I tested this on m68k using GCC and it fixed the problem for me. AFAIK,
-the other architectures naturally align ints already so I'm expecting to
-see no effect there.
----
- include/linux/types.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/virtio/virtio_input.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/linux/types.h b/include/linux/types.h
-index 6dfdb8e8e4c3..cd5b2b0f4b02 100644
---- a/include/linux/types.h
-+++ b/include/linux/types.h
-@@ -179,7 +179,7 @@ typedef phys_addr_t resource_size_t;
- typedef unsigned long irq_hw_number_t;
+diff --git a/drivers/virtio/virtio_input.c b/drivers/virtio/virtio_input.c
+index a5d63269f20b..d0728285b6ce 100644
+--- a/drivers/virtio/virtio_input.c
++++ b/drivers/virtio/virtio_input.c
+@@ -360,11 +360,15 @@ static int virtinput_freeze(struct virtio_device *vdev)
+ {
+ 	struct virtio_input *vi = vdev->priv;
+ 	unsigned long flags;
++	void *buf;
  
- typedef struct {
--	int counter;
-+	int counter __aligned(sizeof(int));
- } atomic_t;
+ 	spin_lock_irqsave(&vi->lock, flags);
+ 	vi->ready = false;
+ 	spin_unlock_irqrestore(&vi->lock, flags);
  
- #define ATOMIC_INIT(i) { (i) }
++	virtio_reset_device(vdev);
++	while ((buf = virtqueue_detach_unused_buf(vi->sts)) != NULL)
++		kfree(buf);
+ 	vdev->config->del_vqs(vdev);
+ 	return 0;
+ }
 -- 
-2.49.1
+2.34.1
 
 
