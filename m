@@ -1,192 +1,143 @@
-Return-Path: <linux-kernel+bounces-785216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAFD7B347A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:38:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D0FAB347AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CCD9680A1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:38:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 835401B25130
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC525289802;
-	Mon, 25 Aug 2025 16:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48E3301463;
+	Mon, 25 Aug 2025 16:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AXjDp+G6"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mvnR5H60"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43ACE10E0;
-	Mon, 25 Aug 2025 16:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F4B2FF679;
+	Mon, 25 Aug 2025 16:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756139875; cv=none; b=tNX6Gr11j15Z6UDGfxDVbNduRQ1w47vd/8vqVGKx8Y8Len8QWQ/Ot/FztQvNrpm5F3dszxhwEUQT7RAragb2BanGkijNpSDqBq8kkpIgljWQKKQyq6QzQ4OaNhNVD8UAb8NN35tLa6TNnJXskJL7FkiR81M3sD3EaBuUqpHvwP0=
+	t=1756139891; cv=none; b=fWIZmkSN+rkkdLWTUc04US8vmLhaep0/UuO6v2slcccgcG4m0ttssWb+kEk5BRR+3NsbAcr9vNxLg2YUaSc/KhuA5BX7N7lcrCY1+sYVMhwT3oecSkqS96DizA3Ve61LBym+v8ENHUdVfL/AhabqoJGaDpHua/6iCFEVrVzdHe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756139875; c=relaxed/simple;
-	bh=49R1XUoVprLMJDRl704H1HRBpYFddqWu0RvHcoPBUlY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ImoMFq0DUxNhx+sOLvj6ApBzFYbm3tw2pdaedt9VvGO5o/DYZ8JhRLn2l9q4KhOEa7qKiH0cObPyHu5AdTHTlmQ0nsFMctlbyhRw2ps/jN8D9AtQ/nesIcvJYYF78k8urMRu+/H/XyP7bebfeBnAIuR/JVcN1eFnIMz11bqnEuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AXjDp+G6; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <316f57e3-5953-4db6-84aa-df9278461d30@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756139870;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=irO/0C7BR+axJtgXqBSOvuib9XTOGqEywKCWh0ZA8Ow=;
-	b=AXjDp+G6ZFTa4wnUJLVDBSLiLa/JC3S7lCg+Dc/OUA1Xw/gXWpRaT+ZsqO86MNvaeyIRf3
-	c3/7p59iH1LNGAPc8xfbTR7EyMzLYLYmrqkzG13zC6+QXd16PlYuMAABRIuIeELfBSResh
-	Csb5N9uB9tfqnQniqPTBBYcvtTT7jSE=
-Date: Mon, 25 Aug 2025 17:37:27 +0100
+	s=arc-20240116; t=1756139891; c=relaxed/simple;
+	bh=7mUfLSCBWD1MYuo9l2/63RIC4KDlYG3k8tkDoDPvm+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H0JToLVmoGMzBoXLDYfHaW2c9PbicjrVoLPaxqN8u6/4/hlIwat3kJmnYzn4mGpWk0LhV8RWx0klkfQnHsGbU6GmwyaJOYjWPER4p1wy5SOwXu3CedIsEYJV+U6MreQGux4iuZAdP8324G52WyD3cB4FSrz+W2gZYCvtjF1Lf6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mvnR5H60; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49FDDC4CEF4;
+	Mon, 25 Aug 2025 16:38:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756139889;
+	bh=7mUfLSCBWD1MYuo9l2/63RIC4KDlYG3k8tkDoDPvm+s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mvnR5H60h7Dcgutnxpo7XwBGj4oNctv73q49/qCnXDp++WJXzJDi1tXxGgOj2DTIy
+	 so4UN3/c1f1C6Ok3vNmb4Lf7kshciuw2DxYRt2lzFAD9eNH8wihf4xS8eQ50S9qtsV
+	 nG76piztgjNx0xktbtXUkXO1NkBxFzwsyA7PnPsG8MOtAQX/h3BaFIj3CuHlo6bOgp
+	 8D18OLVXit4dHV1i2d6yi5tlK5TAkLQnyQh6jnCDUlBMlSOnMPDsTG9QVY/fljU8JB
+	 yvqqNimn2dPzLx4mwQIDFs7xTnzxxwwWsG/IfABmQYm02QE/lneQC0xIbNTGVK3+CE
+	 d1l4qkJf/VRLA==
+Date: Mon, 25 Aug 2025 17:38:04 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-wireless@vger.kernel.org,
+	Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:MIPS" <linux-mips@vger.kernel.org>
+Subject: Re: [PATCHv3 1/3] dt-bindings: net: wireless: ath9k: add led bindings
+Message-ID: <20250825-clobber-disdain-9e50d85ab1df@spud>
+References: <20250825044812.1575524-1-rosenp@gmail.com>
+ <20250825044812.1575524-2-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
-To: Dong Yibo <dong100@mucse.com>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, gur.stavi@huawei.com,
- maddy@linux.ibm.com, mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
- gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
- Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
- alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
- gustavoars@kernel.org
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20250822023453.1910972-1-dong100@mucse.com>
- <20250822023453.1910972-5-dong100@mucse.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250822023453.1910972-5-dong100@mucse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="YPv8OWfa8zOWcG/s"
+Content-Disposition: inline
+In-Reply-To: <20250825044812.1575524-2-rosenp@gmail.com>
 
-On 22/08/2025 03:34, Dong Yibo wrote:
 
-[...]
-> +/**
-> + * mucse_mbx_fw_post_req - Posts a mbx req to firmware and wait reply
-> + * @hw: pointer to the HW structure
-> + * @req: pointer to the cmd req structure
-> + * @cookie: pointer to the req cookie
-> + *
-> + * mucse_mbx_fw_post_req posts a mbx req to firmware and wait for the
-> + * reply. cookie->wait will be set in irq handler.
-> + *
-> + * @return: 0 on success, negative on failure
-> + **/
-> +static int mucse_mbx_fw_post_req(struct mucse_hw *hw,
-> +				 struct mbx_fw_cmd_req *req,
-> +				 struct mbx_req_cookie *cookie)
-> +{
-> +	int len = le16_to_cpu(req->datalen);
-> +	int err;
+--YPv8OWfa8zOWcG/s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, Aug 24, 2025 at 09:48:10PM -0700, Rosen Penev wrote:
+> The ath9k driver has various pin GPIO numbers for different chipsets
+> which are not always correct for every device.
+>=20
+> Add bindings to specify the correct number and if it should be
+> active-low.
+>=20
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  .../bindings/net/wireless/qca,ath9k.yaml         | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yam=
+l b/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
+> index d16ca8e0a25d..bbac017d34d0 100644
+> --- a/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
+> +++ b/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
+> @@ -50,6 +50,18 @@ properties:
+> =20
+>    ieee80211-freq-limit: true
+> =20
+> +  led:
+> +    type: object
+> +    additionalProperties: false
+> +    properties:
+> +      reg:
+> +        maxItems: 1
 > +
-> +	cookie->errcode = 0;
-> +	cookie->done = 0;
-> +	init_waitqueue_head(&cookie->wait);
-> +	err = mutex_lock_interruptible(&hw->mbx.lock);
-> +	if (err)
-> +		return err;
-> +	err = mucse_write_mbx_pf(hw, (u32 *)req, len);
-> +	if (err)
-> +		goto out;
-> +	/* if write succeeds, we must wait for firmware response or
-> +	 * timeout to avoid using the already freed cookie->wait
-> +	 */
-> +	err = wait_event_timeout(cookie->wait,
-> +				 cookie->done == 1,
-> +				 cookie->timeout_jiffies);
+> +      led-active-low:
 
-it's unclear to me, what part of the code is managing values of cookie
-structure? I didn't get the reason why are you putting the address of
-cookie structure into request which is then directly passed to the FW.
-Is the FW supposed to change values in cookie?
+How come you are not including leds/common.yaml and making use of the
+active-low property defined there? Seems to be in use by mediatek,mt76.yaml
 
+> +        description:
+> +          LED is enabled with ground signal.
+> +        type: boolean
 > +
-> +	if (!err)
-> +		err = -ETIMEDOUT;
-> +	else
-> +		err = 0;
-> +	if (!err && cookie->errcode)
-> +		err = cookie->errcode;
-> +out:
-> +	mutex_unlock(&hw->mbx.lock);
-> +	return err;
-> +}
+>    qca,no-eeprom:
+>      $ref: /schemas/types.yaml#/definitions/flag
+>      description:
+> @@ -102,5 +114,9 @@ examples:
+>          compatible =3D "qca,ar9130-wifi";
+>          reg =3D <0x180c0000 0x230000>;
+>          interrupts =3D <2>;
+> +        led {
+> +          reg =3D <0>;
+> +          led-active-low;
+> +        };
+>        };
+>      };
+> --=20
+> 2.50.1
+>=20
 
-[...]
+--YPv8OWfa8zOWcG/s
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +struct mbx_fw_cmd_req {
-> +	__le16 flags;
-> +	__le16 opcode;
-> +	__le16 datalen;
-> +	__le16 ret_value;
-> +	union {
-> +		struct {
-> +			__le32 cookie_lo;
-> +			__le32 cookie_hi;
-> +		};
-> +
-> +		void *cookie;
-> +	};
-> +	__le32 reply_lo;
-> +	__le32 reply_hi;
+-----BEGIN PGP SIGNATURE-----
 
-what do these 2 fields mean? are you going to provide reply's buffer
-address directly to FW?
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKyRbAAKCRB4tDGHoIJi
+0h0OAQDBDEKhftnhXHMEgMiA2H6dYxbbIb9PD9NTgTYltTOXTQD7B7ABSRADWj+2
+Mp6Di5eAoBYNGf9BdPi+mxjQdkskXgk=
+=DUs8
+-----END PGP SIGNATURE-----
 
-> +	union {
-> +		u8 data[32];
-> +		struct {
-> +			__le32 version;
-> +			__le32 status;
-> +		} ifinsmod;
-> +		struct {
-> +			__le32 port_mask;
-> +			__le32 pfvf_num;
-> +		} get_mac_addr;
-> +	};
-> +} __packed;
-> +
-> +struct mbx_fw_cmd_reply {
-> +	__le16 flags;
-> +	__le16 opcode;
-> +	__le16 error_code;
-> +	__le16 datalen;
-> +	union {
-> +		struct {
-> +			__le32 cookie_lo;
-> +			__le32 cookie_hi;
-> +		};
-> +		void *cookie;
-> +	};
-
-This part looks like the request, apart from datalen and error_code are
-swapped in the header. And it actually means that the FW will put back
-the address of provided cookie into reply, right? If yes, then it
-doesn't look correct at all...
-
-> +	union {
-> +		u8 data[40];
-> +		struct mac_addr {
-> +			__le32 ports;
-> +			struct _addr {
-> +				/* for macaddr:01:02:03:04:05:06
-> +				 * mac-hi=0x01020304 mac-lo=0x05060000
-> +				 */
-> +				u8 mac[8];
-> +			} addrs[4];
-> +		} mac_addr;
-> +		struct hw_abilities hw_abilities;
-> +	};
-> +} __packed;
+--YPv8OWfa8zOWcG/s--
 
