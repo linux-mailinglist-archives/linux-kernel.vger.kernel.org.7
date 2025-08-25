@@ -1,118 +1,166 @@
-Return-Path: <linux-kernel+bounces-784038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC180B335D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:40:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 168C0B335D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 473873A87BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:40:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C260C3A84B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B472765CE;
-	Mon, 25 Aug 2025 05:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2E127605A;
+	Mon, 25 Aug 2025 05:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="alRG6h58"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WXdeTOYP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C20264614;
-	Mon, 25 Aug 2025 05:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4581DED64
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 05:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756100393; cv=none; b=aOobQkozQ5WEvQhPBttEEle8d2Ylfyj4eqiiMSCmqmud7SOhGpwQsnyBOZBRz/JZiXnrjRByXNEgnz7zIYRFKjD9f05AsVaeD3V2v5EoWbRb0sGG/ZDtjS0l+T2m3wDeDjwn3TDuAX5ln3Fan9/R089YdZ2/iSzsZFKDOzy8zEE=
+	t=1756100437; cv=none; b=qZFXULY2YL9xfse9bo94fY3V0bV5XumO7/W8fm8fqbOOM+iGdVIxlMeEnE5GBc+6HIJRWY1Oo/oWx83WU0aELl2+aC6kEdR4EjLBUZcG5aTDiIwJf2NaspEdSEB6QTRp1sDovZmhoJZ67hji8o9mjGsKM0cnqmkBM/6SZRnv5wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756100393; c=relaxed/simple;
-	bh=mxpK44SckMFXEKznJOFz2HiVGPh/8LC/M3h+S0GHDy4=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Xf/2PiCyHO/bZepebL+56bXhgLKYm3Q6Kng3hsRoZVAuoIeRqhL2ZL/SA/YOi6iQyqLlpsONomrx6hWYmXJgd+Vp3vKeKqEKD3nnBWW/3HnZu6kkdbxL7qMdL1TGuBl7Ise9qEj7A9hAGnncue44ij9ngJ78/OuTj5do7qYKYYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=alRG6h58; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb7347e09so678690366b.0;
-        Sun, 24 Aug 2025 22:39:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756100390; x=1756705190; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=mxpK44SckMFXEKznJOFz2HiVGPh/8LC/M3h+S0GHDy4=;
-        b=alRG6h5814rrRQnkHSNQwIWbHzkvYgg8S7+VrIgJb/sUDfLC/g6KR1uB3GqhglVw56
-         kxj3D6Rh9M/mekYTcc00wiYQrG/fjTZjLC+EfdxQAdasSNp/8QLbnrSfbaOVemLCu7qP
-         T8jOpJQxh/HHZTQsqTd96IjGgyDQmE1nfXIaRaZFYpp/gYUKVd6Q3CuvOaIidUERbSOC
-         GIu7ibA/vzRR4eRmnX1IMbVsK4STK2LHeMS5Ru8JzCnpUkqDp9f6MFp/661Bhx8e5XQB
-         KRVfh26LbpHZs4uiWuHp4nIa9z/9KnfOfkiiFysGmCNIXy8Az2V68ReSp3czAyPiBTUt
-         m8nw==
+	s=arc-20240116; t=1756100437; c=relaxed/simple;
+	bh=GWJkno7UH1EmP0ghaeExjRxfS6IMqGgi2ZFXNxROOgo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EvdI3j62gyyuWLedvRbYDqWGo8HMuLLcTYdBENLQZDX8Gsz01cLf0PskW0XpuLiXjlkwsNcTaKMRfgU0m2ToPlScoSLOrweF8k8E2Txf+TgRgkAOGxC7Mm2tZcbtWAl4sU5AwQWwuMdtdb2Ga9dRAFZg6TA0BMyXkeB4y9vK1c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WXdeTOYP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57OAUGBJ015139
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 05:40:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8a+TtvwZG10ZUAyJp5QPl4t7/OgCTRNElkzgAj0FVsA=; b=WXdeTOYPq2nMdvno
+	pdMQ/ShNbNshVifZRInAm5XNVFrRXvdc43NXspfjU5/MKx964zbcXs9zq4Ajx/wT
+	F0xUXNt5rRoEO1Q9Ip7NGJo9YWCWqf0mnUkOUXmsYf0NHVCFVfZK/06hkp8Agmp5
+	LUX8QUgGatpmyUxfijXwZkbP853pdP3u1v4qp0Y39u/aM3lUunum8uRctjHYg+Nr
+	CNhvgzQIXYT8B7t2q7zQMHZfMEddQpgFFffYxNHiF5TD+aF6lb3WLN8Wuz3rnOLI
+	GR3mojXR0V6hZqx8Ll7yC5+n9wUvT+CT5x6YDm7lHRYRq2dlK4L6/46DY1XOnbz6
+	wSuO/g==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5w2ky5g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 05:40:34 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-324fbd47789so3403527a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 22:40:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756100390; x=1756705190;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mxpK44SckMFXEKznJOFz2HiVGPh/8LC/M3h+S0GHDy4=;
-        b=lvmuezhB1QJ6mp8tZlI7JOeGq5kQtpWdp/r8RK4JUsj1MwkwdtnzjJtELujaFxbi4D
-         hmgeqxf9eXx2oSKI16M96SRILHbDkwUcyzrLxCn6IwM5OM1yi7TD7qrMkHVeVKRVn665
-         zYs/GmSZgIEghRYY1nfEZ9Cd7ZNZ1o+Z7hKHdh+Z3NYsJbsHDz54J7tEItxplEE8mKOt
-         TnzOwyaUtkJfq7+ta78PEJvcKnEb2zpU4lfT8lpjp2HhNhHWqiO9AI58KlXY1s/8hJFd
-         ot2py/P8Q33Q9L+H0fjSjjd3YM1CObZwActB7QvG2yLQo8lesbqSpW2CxzHbp4lE1Ac3
-         pAQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwvPYJUOOamacjEyRVNWP4Lmy0iL/2UfpkLKVI0yTLDZf3+iP5ozMVboYpVsG7+aLpSzvX/+/jtPI6pM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDNOK3yAxX+aDzcXWAJ8Si/e10KdBx8iIon2KBDTHoR1ByUdQc
-	z5oW/lQBYhgocm1Km7yQph628G0B7FYd9LPwHXcQzL27KOzLKuXqoIeTN7wNM1FFX8yCv6v8a/E
-	O670Bn1C6xOEtcowrwTvI6MtoCi92F4yqJbM9Vfo=
-X-Gm-Gg: ASbGnctIH1YkGdFPsaWjm+ZlVQX9v0MdVM+GElIWE6caJPkha8R3xMtYxfZLZ4v15QI
-	7HWQWdrFH7NIBPrJyYOwBKW1IhbW+/rktrqbVMPLe4Mk0wuDyruCuNOujI8e7gix7sUR4WZXIqx
-	/fhlV0tiYm5+rRU8AUlyI6ECGYtO5xxJcIApIiG31dPHpv/qXcq8HWlD5/wa3KTmr9Dm6zSBE9F
-	Ia8pNCv
-X-Google-Smtp-Source: AGHT+IEaQiaHsBBJtRrKxZMIeyC9U4+bkSPHRGLwijQt1ZLdhmO8gPOZQFtEAn7RtBhcHK9WXdQbrZmCEeZZUw8rJXY=
-X-Received: by 2002:a17:907:3da0:b0:ae9:b800:2283 with SMTP id
- a640c23a62f3a-afe28fcf9cbmr1062548766b.15.1756100389297; Sun, 24 Aug 2025
- 22:39:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756100434; x=1756705234;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8a+TtvwZG10ZUAyJp5QPl4t7/OgCTRNElkzgAj0FVsA=;
+        b=JjTJAAkZ5xP8R63AeX1ky4Gl6QKl/0XsdXuGQ/gRO3FvjV158ysVt/YnVMQScEo7Te
+         sKEAt4OB7teO5Q3nLgn0PXQiBZWWDJsANM71wg07vBBulfhpZHqbNyhZWNM9H0GDh37V
+         PtbdbL5oRxkPi2I2QJPCVRxvXF10O2uladTCcuffv73yjn5kNnFM7n/LPefcJt8m/gqG
+         LvHA/mW8Zn43LJxat5/3+izJ8KChHAzFroMJ9OQC77wc77M4g4AfFPhZqzetDw5YivBV
+         fAi/wC2glyZuG7K6W1IIXaxE431FlrXTOrzcdIYlto75reEviIvUX1tO9ANRH64T0lkB
+         eSGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXF1ajFoLXPQ3ZE8HQ9RE7Lo4iVKV6oUVn52YjOxjrfeeMKhq9BEddjol6D85ok/XKwsK3F0ZdW1fAmrjU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhMzsQjFQ0YfLpq4tTrw/UKKVIfZdweTxd9fNtxKjzZVTwk6S+
+	Z6aLBcJZLzHToenOWpWOsotGKpdWZ8/Y8irLeZDBRFEGTbHRVOAOkEZVXGQmKRv8dJeqG71zGbv
+	eKzx3W1ZtXF1HlkkXzvg0RgZTl8POmioAhLY3pzW7F5RXbmlP9RB7SJjXRZiy4rUK/7I=
+X-Gm-Gg: ASbGncvXxVgj9kgdXoMoqtFdlX6ubn0kG1gPTR8GZBjBEmBt7DO81S/ndDwtzjMVD3v
+	hZp5XjVf6eBdd+9elOG2ZBrV2/EopkZ19A7B+QSEyQAN2Por3v8AzsvKQT+vs+X7kyHVsZ8GNfp
+	1oZIkR1ZDwZTE36UyFrBBaEEuMAw3oZnSa5EGcMPbdr7lB41UAvHN612wHIxuBjnI9zbcyfRQxO
+	Abb+7eSc2ZTppagISsIUykeOTmocFfl5yoNxkElmQtoddiB7H/XjswymvVL4ys0YUjCywSWmPO6
+	+G5W4wHTUcVGUOBkgmAkM9wjwzi5eqQbf+UfzcGTOZaoyOcR+vVFyB06ScHKswtplzzs3z/j/w=
+	=
+X-Received: by 2002:a17:90b:1b4c:b0:324:e6d7:6daa with SMTP id 98e67ed59e1d1-32515e0ed9bmr14080783a91.0.1756100433693;
+        Sun, 24 Aug 2025 22:40:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhgaMin5seYJHkfrlytGzFCnZxybYHYMcFaVpDKc9LsysyD3YbO70n6HcNcaQfiZnvmdMbVw==
+X-Received: by 2002:a17:90b:1b4c:b0:324:e6d7:6daa with SMTP id 98e67ed59e1d1-32515e0ed9bmr14080743a91.0.1756100433067;
+        Sun, 24 Aug 2025 22:40:33 -0700 (PDT)
+Received: from [10.218.1.199] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3254aa6e27esm5847724a91.25.2025.08.24.22.40.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 24 Aug 2025 22:40:32 -0700 (PDT)
+Message-ID: <d121952e-4662-4651-9398-3a5446a2281c@oss.qualcomm.com>
+Date: Mon, 25 Aug 2025 11:10:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Jiaming Zhang <r772577952@gmail.com>
-Date: Mon, 25 Aug 2025 13:39:06 +0800
-X-Gm-Features: Ac12FXypkx-69iFqbRSt5JyexrJ5Txq-LkOZikAWLXnWlVCiiYBw2E9Fmo4FoY4
-Message-ID: <CANypQFbEySjKOFLqtFFf2vrEe=NBr7XJfbkjQhqXuZGg7Rpoxw@mail.gmail.com>
-Subject: [Discussion] Undocumented behavior of KVM_SET_PIT2 with count=0
-To: kvm@vger.kernel.org
-Cc: pbonzini@redhat.com, seanjc@google.com, linux-kernel@vger.kernel.org, 
-	syzkaller@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/3] usb: xhci: plat: Facilitate using autosuspend for
+ xhci plat devices
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Mathias Nyman <mathias.nyman@intel.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250812055542.1588528-1-krishna.kurapati@oss.qualcomm.com>
+ <20250812055542.1588528-4-krishna.kurapati@oss.qualcomm.com>
+Content-Language: en-US
+From: Krishna Kurapati PSSNV <krishna.kurapati@oss.qualcomm.com>
+In-Reply-To: <20250812055542.1588528-4-krishna.kurapati@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=Z/vsHGRA c=1 sm=1 tr=0 ts=68abf752 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=nnkCm9v0YjVGcTDIYNYA:9
+ a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfX1LLLRU3qhxCL
+ o4i1zH+avwe91KFK3DdywAHqLk+Ai6u+KNhu9a8/coQRRcdHhRMBolVVRsqxzMkvRi3AifIiVMn
+ Ty6fQHNvkpxHlJJvUJV8SgzXOkxW8LWteamdbmLsvlmIMIUVRn82FNj//zGpssCQT/VZ6t1Nan+
+ KLuio+XknQj8nBJ0sYHlmZ5LBzCV0KDIhg06L/vGCt6xnD62ScBGIS1yEJ3GznqMHLvJc4qjCdk
+ nLxjIbFzBgkinUMWsHjXAhhfbKROZNRGT3sPIkGf7ojrxJ3yLiNKN4z4R2ZXbAoYdNRUv9pZid/
+ MRyBLPAJ1f3IUTjM8x3V6L/d+7oFa1Ym0zA1Rq0S8cJw3ka6RhFjrX6x0/G8lXxxdXyCdz3hxqw
+ JblKS6E7
+X-Proofpoint-GUID: bVQM3kAy1viwxROy_UdBJRTnRDfmcw0F
+X-Proofpoint-ORIG-GUID: bVQM3kAy1viwxROy_UdBJRTnRDfmcw0F
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-25_02,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 malwarescore=0 phishscore=0 clxscore=1015
+ suspectscore=0 impostorscore=0 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
 
-Hello KVM maintainers and developers,
 
-I hope this email finds you well.
 
-While fuzzing the KVM subsystem with our modified version of syzkaller
-on Linux Kernel, I came across an interesting behavior with the
-KVM_SET_PIT2 and KVM_GET_PIT2 ioctls.
+On 8/12/2025 11:25 AM, Krishna Kurapati wrote:
+> Allow autosuspend to be used by xhci plat device. For Qualcomm SoCs,
+> when in host mode, it is intended that the controller goes to suspend
+> state to save power and wait for interrupts from connected peripheral
+> to wake it up. This is particularly used in cases where a HID or Audio
+> device is connected. In such scenarios, the usb controller can enter
+> auto suspend and resume action after getting interrupts from the
+> connected device.
+> 
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> ---
+>   drivers/usb/host/xhci-plat.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+> index 5eb51797de32..dd57ffedcaa2 100644
+> --- a/drivers/usb/host/xhci-plat.c
+> +++ b/drivers/usb/host/xhci-plat.c
+> @@ -171,6 +171,7 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
+>   		return ret;
+>   
+>   	pm_runtime_set_active(&pdev->dev);
+> +	pm_runtime_use_autosuspend(&pdev->dev);
+>   	pm_runtime_enable(&pdev->dev);
+>   	pm_runtime_get_noresume(&pdev->dev);
+>   
 
-Specifically, when setting kvm_pit_state2.channels[c].count to 0 via
-KVM_SET_PIT2 and then immediately reading the state back with
-KVM_GET_PIT2, the returned count is 65536 (0x10000). This behavior
-might be surprising for developers because, intuitively, the data
-output via GET should be consistent with the data input via SET. I
-could not find this special case mentioned in the KVM API
-documentation (Documentation/virt/kvm/api.rst).
+Hi Mathias,
 
-After looking into the kernel source (arch/x86/kvm/i8254.c), I
-understand this conversion is by design. It correctly emulates the
-physical i8254 PIT, which treats a programmed count of 0 as its
-maximum value (2^16). While the hardware emulation is perfectly
-correct, it may potentially be confusing for users.
+  Can you help provide your review on this patch.
 
-To prevent future confusion and improve the API's clarity, I believe
-it would be beneficial to add a note to the documentation explaining
-this special handling for count = 0.
-
-I'm bringing this to your attention to ask for your thoughts. If you
-agree, I would be happy to prepare and submit a documentation patch to
-clarify this.
-
-Thank you for your time and for your great work on KVM.
-
-Best Regards,
-Jiaming Zhang.
+Regards,
+Krishna,
 
