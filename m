@@ -1,104 +1,104 @@
-Return-Path: <linux-kernel+bounces-784529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C1FAB33D09
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:42:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3BBCB33D0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:43:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D4994833A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:42:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8447189CFAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3936A2DAFDA;
-	Mon, 25 Aug 2025 10:41:22 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784992DECB9;
+	Mon, 25 Aug 2025 10:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="Ogy7x/Gb"
+Received: from smtp153-162.sina.com.cn (smtp153-162.sina.com.cn [61.135.153.162])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4052D6E77;
-	Mon, 25 Aug 2025 10:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2078A2D7DC2
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.162
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756118481; cv=none; b=FHXfLxNrtN4DCT34QTYXo6RSXm8z+aCZeZqtzNy03TGTcdVUVUXE4aWaQgEwp3KHsROqS7+j65n4Bpwg/HInmeBxM0t4YhsGlEYskaCfoqIeHZOxtqCaXVkE8a8imK90SnUqRnYt4glPvjb0vTjvIK2Wa6G3U9V8kaW9ZqmeAUQ=
+	t=1756118543; cv=none; b=WK5F7cvwJKFmUvIV87XtlSaR0X696srXwtzeGeI6BEsdiiii+Gz2ZNkDNjcPOt6OWviU9208kmBE2LIhHmcWZQCXrG+SQeE7eTmt1u88yVmIJe/o+DCom6QLx+wgTB/9AEsLFrs9cY2PUDtMKgdmiRyu29+AU+AFm5FBdS5UW20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756118481; c=relaxed/simple;
-	bh=PdxxKeyeceakPlTQqFd2A9nbPnGW95fQ6PUCACBH9EE=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=SuEq1r+PwgPNZZcR812z08mkbkMj2idTA9iJKFYIO7zjdL/K1O6FD1gi2zBhpIB1PhYDGIpdXL+SFlfq5XW5OCbU96ijZlDJ3SH1TasBGIA9mxd3+AUtK9jz+b6D2HGp/ap/zuRF3HneDXoAviJRU/GVca0j1Ifg8oLffKN19lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4c9S4z3jJ9z5B0lT;
-	Mon, 25 Aug 2025 18:41:07 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 57PAf0LG024511;
-	Mon, 25 Aug 2025 18:41:00 +0800 (+08)
-	(envelope-from zhang.enpei@zte.com.cn)
-Received: from mapi (xaxapp05[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 25 Aug 2025 18:41:02 +0800 (CST)
-Date: Mon, 25 Aug 2025 18:41:02 +0800 (CST)
-X-Zmail-TransId: 2afc68ac3dbedcf-48490
-X-Mailer: Zmail v1.0
-Message-ID: <20250825184102534B6FAD5gv_p5nAHbiIyFqx@zte.com.cn>
+	s=arc-20240116; t=1756118543; c=relaxed/simple;
+	bh=gHmttsVtAfpvJQmj23sMSruEoqi1BFyRp2BrUmg0OBo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=uIzpWbfWr2ppUWVSdwfFEut9G1ikRD0sDgiasJox+2SUebY7mA6UFKmJHJV+MEWX8NJM788HVu9iyS5k/VZpYvEvY/PfIe1JoglhqbDLqBcC6E2n7s/vMEoUKGgdxuwBJ7p4seHQTbaoixkropQi4DXtbHvstBKUrZrnD4OI8qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=Ogy7x/Gb; arc=none smtp.client-ip=61.135.153.162
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756118535;
+	bh=JlegskvpdBwb9bQFfgX3kyWPDFOo5MFwM5Q6/13FiCs=;
+	h=From:Subject:Date:Message-ID;
+	b=Ogy7x/Gbq5ClGYqvnvrnmsnovIn5XUOLbcKwvzmYD2MEuUKagBH+JyBfgPBWR7cIY
+	 GsvVFrMj/r8+S12adjnMTW0AJSjUt4E74RkBVFgP7G/Z4gRNxzqFg8lHn8cVea8TvX
+	 7M8hOcjAgb8OuWHVxLxZylEa04H08cLUZM60M9fM=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.31) with ESMTP
+	id 68AC3DFD000063AC; Mon, 25 Aug 2025 18:42:06 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 9522596816215
+X-SMAIL-UIID: A589EE98F9B44F0DBD28E47B836A7A3F-20250825-184206-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+c5c9c223a721d7353490@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ext4?] possible deadlock in ext4_truncate (2)
+Date: Mon, 25 Aug 2025 18:41:52 +0800
+Message-ID: <20250825104155.5420-1-hdanton@sina.com>
+In-Reply-To: <68ac2412.050a0220.37038e.0089.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <zhang.enpei@zte.com.cn>
-To: <chessman@tux.org>
-Cc: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIIHYyXSBldGhlcm5ldDogdGxhbjogQ29udmVydCB0byB1c2UgamlmZmllcyBtYWNybw==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 57PAf0LG024511
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: zhang.enpei@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Mon, 25 Aug 2025 18:41:07 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68AC3DC3.000/4c9S4z3jJ9z5B0lT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: Zhang Enpei <zhang.enpei@zte.com.cn>
+> Date: Mon, 25 Aug 2025 01:51:30 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    8d245acc1e88 Merge tag 'char-misc-6.17-rc3' of git://git.k..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1654ac42580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=da02162f945f3311
+> dashboard link: https://syzkaller.appspot.com/bug?extid=c5c9c223a721d7353490
+> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d1cef0580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10f4e7bc580000
 
-Use time_after_eq macro instead of using jiffies directly to handle
-wraparound.
+#syz test
 
-Signed-off-by: Zhang Enpei <zhang.enpei@zte.com.cn>
----
- drivers/net/ethernet/ti/tlan.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/tlan.c b/drivers/net/ethernet/ti/tlan.c
-index a55b0f951181..7c5e51284942 100644
---- a/drivers/net/ethernet/ti/tlan.c
-+++ b/drivers/net/ethernet/ti/tlan.c
-@@ -1817,7 +1817,6 @@ static void tlan_timer(struct timer_list *t)
- {
-        struct tlan_priv        *priv = timer_container_of(priv, t, timer);
-        struct net_device       *dev = priv->dev;
--       u32             elapsed;
-        unsigned long   flags = 0;
-
-        priv->timer.function = NULL;
-@@ -1844,8 +1843,7 @@ static void tlan_timer(struct timer_list *t)
-        case TLAN_TIMER_ACTIVITY:
-                spin_lock_irqsave(&priv->lock, flags);
-                if (priv->timer.function == NULL) {
--                       elapsed = jiffies - priv->timer_set_at;
--                       if (elapsed >= TLAN_TIMER_ACT_DELAY) {
-+                       if (time_is_before_eq_jiffies(priv->timer_set_at + TLAN_TIMER_ACT_DELAY)) {
-                                tlan_dio_write8(dev->base_addr,
-                                                TLAN_LED_REG, TLAN_LED_LINK);
-                        } else  {
--- 
-2.25.1
+--- x/fs/ext4/inode.c
++++ y/fs/ext4/inode.c
+@@ -4573,6 +4573,7 @@ int ext4_truncate(struct inode *inode)
+ 	struct ext4_inode_info *ei = EXT4_I(inode);
+ 	unsigned int credits;
+ 	int err = 0, err2;
++	static int subclass = 0;
+ 	handle_t *handle;
+ 	struct address_space *mapping = inode->i_mapping;
+ 
+@@ -4636,7 +4637,7 @@ int ext4_truncate(struct inode *inode)
+ 	ext4_fc_track_inode(handle, inode);
+ 	ext4_check_map_extents_env(inode);
+ 
+-	down_write(&EXT4_I(inode)->i_data_sem);
++	down_write_nested(&EXT4_I(inode)->i_data_sem, subclass++);
+ 	ext4_discard_preallocations(inode);
+ 
+ 	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+--
 
