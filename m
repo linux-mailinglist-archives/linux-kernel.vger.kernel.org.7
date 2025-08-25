@@ -1,205 +1,216 @@
-Return-Path: <linux-kernel+bounces-784613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217BFB33E6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:53:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44F1EB33896
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14CF3B77A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:53:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4EDD3BDB05
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAC12D23B5;
-	Mon, 25 Aug 2025 11:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C3423185D;
+	Mon, 25 Aug 2025 08:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BLdfv054";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="O7drp4zQ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hxlNOytD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2reUtbC+"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TdZTAG2F"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FE32D0610
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CD01FB3
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 08:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756122783; cv=none; b=X4qJEQaiL9wvWA7y6lbKoV8dxkW3qZsAx4v/mFu9KVZlfRSJWk/xWc08d2cCqtGjtbdQdRfZSQEKTrmC837stmEoiLMVT9z+9o/wo4uEN/3vx+PMWx9r+LhQO1wOmSYQSJqA9lSC58ctlmJa44BUnxHrOwfWiyKSXa2/R4jIV8I=
+	t=1756109904; cv=none; b=QSDonGgBt/rt87OXD5YBiARouacnHB9yLDXRAX8Ksh9Jb5NT2jK3PRovP9I+7jqmS5UgaDJikn0Nm8rTRfUE5igK8l40g5T8ZYZjr8K09BLV05hOUmdoH5nyFEdq9EfXWXatTyOPvaDWfpe0jxuEevEEmSr6TkwDUBJW5WC8i8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756122783; c=relaxed/simple;
-	bh=mO9D8KO0GMii4ykgGLFrX0lUlEpO8p/2zockucV+A40=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lJttabz0llBPYmiXl4SHQ8UqRV8W/hiBMZhVbgopdhL5r65KdqpveOoyaqTs6gTUddcSxtmzsavlOM5TpcH+c7NoE8UOt/HoQyuCBoMPnV70xCiGC83j7Gn8T85FVUsgwNJ33m/IrrMrgIZpBzMlwYoSHFP9O/zQso9sd2qf8cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BLdfv054; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=O7drp4zQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hxlNOytD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2reUtbC+; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D67D91F79A;
-	Mon, 25 Aug 2025 11:52:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756122779; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2nTexNPNCcUbIAPjVulE+NnEcHNOirgIMW9iyl6DGTw=;
-	b=BLdfv054/p/malDxY9teiJzF9lSukSG4D6BpJmBipN0NdWdSW+xQ78Zp+mX96AOFCJ4or6
-	zbtqKq1WT7TjodcVLV0bt7J1MZOfzgwccf3JUIl6s8+kVZikdeS2skIvtGyG2OhlZoKg6Q
-	JUss4nIpYcq8CgiicsCS81+f175aL1I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756122779;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2nTexNPNCcUbIAPjVulE+NnEcHNOirgIMW9iyl6DGTw=;
-	b=O7drp4zQKKa11N3xPKWzBS/Q0YDI7TmPrZK8qGmy4XbGkcAVUk/3ZlwnODZ9si0dCo8+P7
-	5I/V+iy8CB2E8QBQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hxlNOytD;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=2reUtbC+
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756122778; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2nTexNPNCcUbIAPjVulE+NnEcHNOirgIMW9iyl6DGTw=;
-	b=hxlNOytD4XOs/AoLjAcVDIzjRMdvyScfjPWrBeLqnx0djwZ/JXkk86x1sLkDhnlw/4E/ni
-	uYxxucfiTI9vedgKCrWJcx7BY+QluNhfdm4l2MpQlzHhl1brp6XTlNTSvpowKMI6Sw5rkX
-	USEgKImf2GD1KiVkKNFJec81wPqbFec=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756122778;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2nTexNPNCcUbIAPjVulE+NnEcHNOirgIMW9iyl6DGTw=;
-	b=2reUtbC+KuaceUTmG97zLnb9fIt9VqqRYRCJqi9iT5L3d2xW2yZVplRnOVQlakwqC3C18m
-	1Nr4U8+V7VDSZaAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CAD161368F;
-	Mon, 25 Aug 2025 11:52:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Scl9MZpOrGivCQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 25 Aug 2025 11:52:58 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0FDFAA0A6B; Mon, 25 Aug 2025 10:16:40 +0200 (CEST)
-Date: Mon, 25 Aug 2025 10:16:40 +0200
-From: Jan Kara <jack@suse.cz>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] mm: readahead: improve mmap_miss heuristic for
- concurrent faults
-Message-ID: <nbhyazac6tig3u753upst4brgmlo6qlwdntxdgwtfslpmmvp6h@gakfswzn3p75>
-References: <20250815183224.62007-1-roman.gushchin@linux.dev>
+	s=arc-20240116; t=1756109904; c=relaxed/simple;
+	bh=OkAcdd8J8Fjd6pXdPPl+yjjUVnoXGCuIN9KC8b/vjS0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OWhusaDuthMDiFByXbJ2yHYDXwYyd8bXIFMyiJF2ikziq6HPMQVXm99qC2zlJpquIuCCHttN66eAEjLTgfgqaPDf6FI7UUzDUYCqUxVuJN4mK8kne+0oh3RqpE+4hvEw/vVGkN/56JnWpeWiINbm8+y9MqxFSmmA0wXYhQ/z96s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TdZTAG2F; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-71d603a269cso31666167b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 01:18:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756109901; x=1756714701; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+0Oybj0M0yoKkhWS1OYGK0UFnQZogX/+t9MX3nl4xcE=;
+        b=TdZTAG2FK64axxkK0STNH2C0k0IpU6KHpFhG2+dYFoi+C6MWCVpecgiQd85ZskuV4Y
+         6wVjEbfVSz4mwVF84bV8+GI8i9nRWNVawvKbUzkag5GlfQx9ZcDoenMVj/6oPig3kWSY
+         WKWEf8yNFH9rV3o26XQaGAS3FCBL+AM9fBayGHAub8nf9rBp3U7Y+LZMuvvl5R4XhkqC
+         aw+JgUSJkjiJ/N7fvqi2h1UirNtBjvLh5MCyIrUu4UjbbFMOi+D6FUljZDaRsx1aSM5b
+         7mowil8SOTsTeRroBf/PYdaymiBhMxzx8FhkVlijlg3Hlhrdefqv7f5/VfIAMjD8vo8r
+         0tsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756109901; x=1756714701;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+0Oybj0M0yoKkhWS1OYGK0UFnQZogX/+t9MX3nl4xcE=;
+        b=TFeYZLH6n0YLp5e4DR3Lx8WgATrJBd1eBNt1ylYRkHuPDL3SLTrhHiMv0taip75sll
+         JxWvLMtyxewW4Tt754hqCLzug7sCV1FKEfURRXDt2bjWVmYDvtQEC7jscHlY7PbewPuE
+         JNq1DL4nbqdT+DgE/R7gO8xBUpc+6B/29fRo0/KPVVN2sx7lclri0u4b1ulqu/O5IMsb
+         fcEwtgqCnXu/IK8pYkMOtLTXnzw6CdYlha5Qh38oLv3Fs4nmf4oXocp5nt9lObXZ3Apm
+         mHZKk1M4ThBMWWHwWik/ONH6nMvJWspdxgoKXDFxGIjNqMAO4VOB/YKoIrhrR6RHDsJn
+         lTcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUf3sRcnqrYp44Q1ox/Km1MD1G97K3xhabWuAtvBTdPRPbz6bZKr7SaD8UQeN9ASDe+b4xXl3Hv0Nf9MDI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtDvXj1HO7F1SbRcEBID6hC395XxjR/ZAHRf30ffb3/XzZuC6O
+	Zec+czQaJTl7xtkpQWXw32iIfMBjXCJmH7eIAmrRBeWxl5WziSro8sSiYx2itr9TebStxr8n5DK
+	TcqK8irupojEjkeYtXGtxGpGNmhglULD3NvAwey348A==
+X-Gm-Gg: ASbGncsGTM4oH4SavSzu10QBRu0ilMpdM264lIHGlEYf+mqMLNawKV5VKe3kHK8tF1C
+	AlrkTPCnG6bYNGZMBQD5lVHW0nzWDtEPMHWfr9IxZ/pzf+E9iYBywLxLLbIrmW21C5VvGb9udyh
+	l871hCxiBEFFNyj0vh1/hRxkk3ROMvGQ+8y17Iigo4RT0FCeGxxxC9Td1wYcRNKBfz0A7lbUlGG
+	ezz06U8E0l+64N1RbXlWymupxLHO2mfXvaCHNYqQvO3gIPi4CCcRHEwtK+g3uKfWjVT7wN0bxKV
+	xthhOEXXQMQFIBaFXlJCSuURSHFPoIiFvIsBPbXxyyDdolIoRel+I333N1SknTFJKLq5viuS0tt
+	MATzAdeUKz9jqDZNT/TM=
+X-Google-Smtp-Source: AGHT+IFlchCrXoWj4MOj8DWBnk7iM3uEWC5Al3yIogbIC43b2Wxo4c2bAsYc4GzxL9VpWzUBWRbHHvVjWH3UvaJFfQI=
+X-Received: by 2002:a05:690c:60c5:b0:71c:3fde:31b6 with SMTP id
+ 00721157ae682-71fdc3d153cmr110423217b3.34.1756109901271; Mon, 25 Aug 2025
+ 01:18:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815183224.62007-1-roman.gushchin@linux.dev>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: D67D91F79A
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+References: <cover.1755969734.git.jan.kiszka@siemens.com> <445bbda26e505e06b9b830cb9938ac57e847b28e.1755969734.git.jan.kiszka@siemens.com>
+In-Reply-To: <445bbda26e505e06b9b830cb9938ac57e847b28e.1755969734.git.jan.kiszka@siemens.com>
+From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Date: Mon, 25 Aug 2025 11:17:45 +0300
+X-Gm-Features: Ac12FXw0L_5HY92V1wJ2FCWLVP6n9-dDpc8AyHfbxYYZN-5rou3wGiH51oh3ulU
+Message-ID: <CAC_iWjK69CjJq_ia0RG7DD5-EaQtVkBE_66RxaW1PCDaa_skSw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] efi: stmm: Drop unused EFI error from setup_mm_hdr arguments
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Masahisa Kojima <kojima.masahisa@socionext.com>, 
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sumit Garg <sumit.garg@kernel.org>, Jens Wiklander <jens.wiklander@linaro.org>, 
+	Hua Qian Li <huaqian.li@siemens.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri 15-08-25 11:32:24, Roman Gushchin wrote:
-> If two or more threads of an application faulting on the same folio,
-> the mmap_miss counter can be decreased multiple times. It breaks the
-> mmap_miss heuristic and keeps the readahead enabled even under extreme
-> levels of memory pressure.
-> 
-> It happens often if file folios backing a multi-threaded application
-> are getting evicted and re-faulted.
-> 
-> Fix it by skipping decreasing mmap_miss if the folio is locked.
-> 
-> This change was evaluated on several hundred thousands hosts in Google's
-> production over a couple of weeks. The number of containers being
-> stuck in a vicious reclaim cycle for a long time was reduced several
-> fold (~10-20x), as well as the overall fleet-wide cpu time spent in
-> direct memory reclaim was meaningfully reduced. No regressions were
-> observed.
-> 
-> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: linux-mm@kvack.org
+Hi Jan
 
-Looks good! Feel free to add:
+On Sat, 23 Aug 2025 at 20:22, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+>
+> No caller evaluates it.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+We need a better description on this one, other than that I am fine
+with the patch.
+Callers were never evaluating the ret, they just used the return value
+in case of an error
 
-								Honza
-
+With that fixed
+Reviewed-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+>
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 > ---
->  mm/filemap.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index c21e98657e0b..983ba1019674 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3324,9 +3324,17 @@ static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
->  	if (vmf->vma->vm_flags & VM_RAND_READ || !ra->ra_pages)
->  		return fpin;
->  
-> -	mmap_miss = READ_ONCE(ra->mmap_miss);
-> -	if (mmap_miss)
-> -		WRITE_ONCE(ra->mmap_miss, --mmap_miss);
-> +	/*
-> +	 * If the folio is locked, we're likely racing against another fault.
-> +	 * Don't touch the mmap_miss counter to avoid decreasing it multiple
-> +	 * times for a single folio and break the balance with mmap_miss
-> +	 * increase in do_sync_mmap_readahead().
-> +	 */
-> +	if (likely(!folio_test_locked(folio))) {
-> +		mmap_miss = READ_ONCE(ra->mmap_miss);
-> +		if (mmap_miss)
-> +			WRITE_ONCE(ra->mmap_miss, --mmap_miss);
-> +	}
->  
->  	if (folio_test_readahead(folio)) {
->  		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-> -- 
-> 2.50.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>  drivers/firmware/efi/stmm/tee_stmm_efi.c | 25 ++++++++----------------
+>  1 file changed, 8 insertions(+), 17 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/stmm/tee_stmm_efi.c b/drivers/firmware/efi/stmm/tee_stmm_efi.c
+> index 8501056ade8a..c2bc8467b099 100644
+> --- a/drivers/firmware/efi/stmm/tee_stmm_efi.c
+> +++ b/drivers/firmware/efi/stmm/tee_stmm_efi.c
+> @@ -154,11 +154,9 @@ static efi_status_t mm_communicate(u8 *comm_buf, size_t payload_size)
+>   * @dptr:              pointer address to store allocated buffer
+>   * @payload_size:      payload size
+>   * @func:              standAloneMM function number
+> - * @ret:               EFI return code
+>   * Return:             pointer to corresponding StandAloneMM function buffer or NULL
+>   */
+> -static void *setup_mm_hdr(u8 **dptr, size_t payload_size, size_t func,
+> -                         efi_status_t *ret)
+> +static void *setup_mm_hdr(u8 **dptr, size_t payload_size, size_t func)
+>  {
+>         const efi_guid_t mm_var_guid = EFI_MM_VARIABLE_GUID;
+>         struct efi_mm_communicate_header *mm_hdr;
+> @@ -173,16 +171,13 @@ static void *setup_mm_hdr(u8 **dptr, size_t payload_size, size_t func,
+>         if (max_buffer_size &&
+>             max_buffer_size < (MM_COMMUNICATE_HEADER_SIZE +
+>                                MM_VARIABLE_COMMUNICATE_SIZE + payload_size)) {
+> -               *ret = EFI_INVALID_PARAMETER;
+>                 return NULL;
+>         }
+>
+>         comm_buf = alloc_pages_exact(COMM_BUF_SIZE(payload_size),
+>                                      GFP_KERNEL | __GFP_ZERO);
+> -       if (!comm_buf) {
+> -               *ret = EFI_OUT_OF_RESOURCES;
+> +       if (!comm_buf)
+>                 return NULL;
+> -       }
+>
+>         mm_hdr = (struct efi_mm_communicate_header *)comm_buf;
+>         memcpy(&mm_hdr->header_guid, &mm_var_guid, sizeof(mm_hdr->header_guid));
+> @@ -192,7 +187,6 @@ static void *setup_mm_hdr(u8 **dptr, size_t payload_size, size_t func,
+>         var_hdr->function = func;
+>         if (dptr)
+>                 *dptr = comm_buf;
+> -       *ret = EFI_SUCCESS;
+>
+>         return var_hdr->data;
+>  }
+> @@ -215,8 +209,7 @@ static efi_status_t get_max_payload(size_t *size)
+>
+>         payload_size = sizeof(*var_payload);
+>         var_payload = setup_mm_hdr(&comm_buf, payload_size,
+> -                                  SMM_VARIABLE_FUNCTION_GET_PAYLOAD_SIZE,
+> -                                  &ret);
+> +                                  SMM_VARIABLE_FUNCTION_GET_PAYLOAD_SIZE);
+>         if (!var_payload)
+>                 return EFI_DEVICE_ERROR;
+>
+> @@ -262,7 +255,7 @@ static efi_status_t get_property_int(u16 *name, size_t name_size,
+>
+>         smm_property = setup_mm_hdr(
+>                 &comm_buf, payload_size,
+> -               SMM_VARIABLE_FUNCTION_VAR_CHECK_VARIABLE_PROPERTY_GET, &ret);
+> +               SMM_VARIABLE_FUNCTION_VAR_CHECK_VARIABLE_PROPERTY_GET);
+>         if (!smm_property)
+>                 return EFI_DEVICE_ERROR;
+>
+> @@ -318,7 +311,7 @@ static efi_status_t tee_get_variable(u16 *name, efi_guid_t *vendor,
+>
+>         payload_size = MM_VARIABLE_ACCESS_HEADER_SIZE + name_size + tmp_dsize;
+>         var_acc = setup_mm_hdr(&comm_buf, payload_size,
+> -                              SMM_VARIABLE_FUNCTION_GET_VARIABLE, &ret);
+> +                              SMM_VARIABLE_FUNCTION_GET_VARIABLE);
+>         if (!var_acc)
+>                 return EFI_DEVICE_ERROR;
+>
+> @@ -383,8 +376,7 @@ static efi_status_t tee_get_next_variable(unsigned long *name_size,
+>
+>         payload_size = MM_VARIABLE_GET_NEXT_HEADER_SIZE + out_name_size;
+>         var_getnext = setup_mm_hdr(&comm_buf, payload_size,
+> -                                  SMM_VARIABLE_FUNCTION_GET_NEXT_VARIABLE_NAME,
+> -                                  &ret);
+> +                               SMM_VARIABLE_FUNCTION_GET_NEXT_VARIABLE_NAME);
+>         if (!var_getnext)
+>                 return EFI_DEVICE_ERROR;
+>
+> @@ -440,7 +432,7 @@ static efi_status_t tee_set_variable(efi_char16_t *name, efi_guid_t *vendor,
+>          * the properties, if the allocation fails
+>          */
+>         var_acc = setup_mm_hdr(&comm_buf, payload_size,
+> -                              SMM_VARIABLE_FUNCTION_SET_VARIABLE, &ret);
+> +                              SMM_VARIABLE_FUNCTION_SET_VARIABLE);
+>         if (!var_acc)
+>                 return EFI_DEVICE_ERROR;
+>
+> @@ -495,8 +487,7 @@ static efi_status_t tee_query_variable_info(u32 attributes,
+>
+>         payload_size = sizeof(*mm_query_info);
+>         mm_query_info = setup_mm_hdr(&comm_buf, payload_size,
+> -                               SMM_VARIABLE_FUNCTION_QUERY_VARIABLE_INFO,
+> -                               &ret);
+> +                               SMM_VARIABLE_FUNCTION_QUERY_VARIABLE_INFO);
+>         if (!mm_query_info)
+>                 return EFI_DEVICE_ERROR;
+>
+> --
+> 2.43.0
+>
 
