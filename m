@@ -1,211 +1,155 @@
-Return-Path: <linux-kernel+bounces-784581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6096EB33DE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:23:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3758B33DE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C7C61A82D6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:23:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BA72206911
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C462E7BC9;
-	Mon, 25 Aug 2025 11:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0CE52E7BDC;
+	Mon, 25 Aug 2025 11:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bs1rW+FW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="Mqq5WU5o"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E0B27B51A;
-	Mon, 25 Aug 2025 11:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8CC2E62C7;
+	Mon, 25 Aug 2025 11:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756121008; cv=none; b=l/OuTSXarPyJVETfk275sEDtINvdYPm76nSIlKQ6Zu7RZ9zunoVdVPkGmVuLC+/nFgtWyjcx4NXTOg6We09TYvsjDZXqOUp6CcfwT9ZaoLfmKKQkDfSgEYqeLvh25h7vTBkqUeHNFXzC/5komE1CmgXBuuV2e6J6yOj3ISkIrww=
+	t=1756121059; cv=none; b=FMtU/hATdAmSHf8hte64n5HX9aZztDuyrXQpVtQMtQ/VF+U0pCqyYHSKSJa/UFrrhv2KVuEu6BpVFgb/9JV6hRbiwRWNSLalSa9ih+3gj4FBwoec6uGuDb3IF52MVXW4WglZm9ukspZIhq0RzfDQCTXLyRQxKeOLAqlQo83P31c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756121008; c=relaxed/simple;
-	bh=YLuNmgSadAAEa3ZPFUF8jemmpIic3MiIIXQgw34LGCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fieRFNcByDrUqzboebrVxZ4hLoNtxxm/jmjh2UDEEo/oT5gOpUQczo0bcBFW0w0GG9h7FfFGIhX3ErCFES0r+krwIcJLrui5v/Iepjo0aiTkYBbM29l+++e4/fQFRWl85tWVWgzOvlNCZGvIYTu2qGIQGJ5DUh0AwusSgGTD4To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bs1rW+FW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65378C4CEED;
-	Mon, 25 Aug 2025 11:23:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756121008;
-	bh=YLuNmgSadAAEa3ZPFUF8jemmpIic3MiIIXQgw34LGCc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Bs1rW+FWDWAleftJfB7xKa9mjQQdPJNZ/Zzp4ntGcsViBYLF6U0gI0zKbK3YLazYz
-	 7alACQs4GSarDiHQQKACslPn1mvRer+tqybHgrb+eOK0lxvvNqafRXqIqIvrVQiVXH
-	 TLdY2St9l3iQZiF5yu1UcpLW91NOphcvJYwwQzdfQWiuFx7/nk8q4QlisJgssHyQTF
-	 njPc3JWQu+B23QGe4xzXLfp0wgwXSTTy+hFCcq0zorsQzW4Ebdr59TuP3xe9zJoxnd
-	 c/x2bdkb5sWqF5tetlYapWoUcHE4qNiNzLThxc41foH2pJ4HLMJsYBVctTonKpCOjh
-	 YUUlHexCWNQsw==
-Date: Mon, 25 Aug 2025 12:23:19 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "O'Griofa, Conall" <conall.ogriofa@amd.com>
-Cc: Sean Anderson <sean.anderson@linux.dev>, Anand Ashok Dumbre
- <anand.ashok.dumbre@xilinx.com>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "Simek, Michal"
- <michal.simek@amd.com>, Andy Shevchenko <andy@kernel.org>, Manish Narani
- <manish.narani@xilinx.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iio: xilinx-ams: Unmask interrupts after updating
- alarms
-Message-ID: <20250825122319.6faf8782@jic23-huawei>
-In-Reply-To: <MN2PR12MB42237EC0AA00D05DE52F8C988B33A@MN2PR12MB4223.namprd12.prod.outlook.com>
-References: <20250715002847.2035228-1-sean.anderson@linux.dev>
-	<MN2PR12MB42237EC0AA00D05DE52F8C988B33A@MN2PR12MB4223.namprd12.prod.outlook.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756121059; c=relaxed/simple;
+	bh=zPygxx/vRoMNtqmzghKwOct92xDJT5deX0kr36f1lmE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VAkvksNfPpB8F7CtiJTdFCJSg8lqLbMkfecJJ21aDlMKfDLcIGEohE3pOCkLBRE8hxWzrZFV4vS9ighPLkUUKX8ETlZOQaf5ushJhQitAVVljKa1D0hw61jM/SkbKQcJNzTqY5GooOqzKLUQt4VqRdpaT6fZSSWnmNoqT2Ey73Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=Mqq5WU5o; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8A5B243A68;
+	Mon, 25 Aug 2025 11:24:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
+	t=1756121048;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mt4SUYjj6vEAPWrFWoIAkYL+7ohn6J8jCx8g/+XReEU=;
+	b=Mqq5WU5oQJntazEicGPnLe5AXMktQ73Ns2GOziWyMEfEmIV4lSAbf/bp3c2j6KNkHhAVhX
+	pAnOOtMAyQoJzOYuGw1BlnO0oGWXAzP18OBZvQ5gb0HcPNZlWejXERcmZQDKibdhKYZ+M1
+	M2l7uhgUbd5AZQdp2WWjvnZZEzV3RH9NGBuwmAZg5MoVoa/uja2/e5DJ14WAP/mW+0Yxpf
+	wv/Q+JI9AjC16KFB/znSuvSILYmDVtKyCOc/TVf0cMS65Fbh6Iw9oXP5mMUuk9lhod4izZ
+	i4P1ZVy7Zc9F9KxarKRF9/EtG2V5j3NdYHaGrOG1DvI//UzBUdiTZc3sc+pJuw==
+From: Gabriel Krisman Bertazi <gabriel@krisman.be>
+To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,  Amir Goldstein
+ <amir73il@gmail.com>,  Theodore Tso <tytso@mit.edu>,
+  linux-unionfs@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
+  kernel-dev@igalia.com
+Subject: Re: [PATCH v6 6/9] ovl: Set case-insensitive dentry operations for
+ ovl sb
+In-Reply-To: <20250822-tonyk-overlayfs-v6-6-8b6e9e604fa2@igalia.com>
+ (=?utf-8?Q?=22Andr=C3=A9?=
+	Almeida"'s message of "Fri, 22 Aug 2025 11:17:09 -0300")
+References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
+	<20250822-tonyk-overlayfs-v6-6-8b6e9e604fa2@igalia.com>
+Date: Mon, 25 Aug 2025 07:24:04 -0400
+Message-ID: <87wm6r4pbf.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujedvvdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhffkfgfgggtgfesthhqredttderjeenucfhrhhomhepifgrsghrihgvlhcumfhrihhsmhgrnhcuuegvrhhtrgiiihcuoehgrggsrhhivghlsehkrhhishhmrghnrdgsvgeqnecuggftrfgrthhtvghrnhepfedtvdehffevtddujeffffejudeuuefgvdeujeduhedtgfehkeefheegjefgueeknecukfhppeejtddrkedvrddukedvrdeikeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeejtddrkedvrddukedvrdeikedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepghgrsghrihgvlheskhhrihhsmhgrnhdrsggvpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopegrnhgurhgvrghlmhgvihgusehighgrlhhirgdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphhtthhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvr
+ hhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhk
+X-GND-Sasl: gabriel@krisman.be
 
-On Wed, 20 Aug 2025 11:28:27 +0000
-"O'Griofa, Conall" <conall.ogriofa@amd.com> wrote:
+Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
 
-> Hi,
->=20
-> Looks good, thank you for taking the time to submit this patch.
-Applied to the fixes-togreg branch of iio.git and marked for stable.
+> For filesystems with encoding (i.e. with case-insensitive support), set
+> the dentry operations for the super block as ovl_dentry_ci_operations.
+>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> ---
+> Changes in v6:
+> - Fix kernel bot warning: unused variable 'ofs'
+> ---
+>  fs/overlayfs/super.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index b1dbd3c79961094d00c7f99cc622e515d544d22f..8db4e55d5027cb975fec9b922=
+51f62fe5924af4f 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -161,6 +161,16 @@ static const struct dentry_operations ovl_dentry_ope=
+rations =3D {
+>  	.d_weak_revalidate =3D ovl_dentry_weak_revalidate,
+>  };
+>=20=20
+> +#if IS_ENABLED(CONFIG_UNICODE)
+> +static const struct dentry_operations ovl_dentry_ci_operations =3D {
+> +	.d_real =3D ovl_d_real,
+> +	.d_revalidate =3D ovl_dentry_revalidate,
+> +	.d_weak_revalidate =3D ovl_dentry_weak_revalidate,
+> +	.d_hash =3D generic_ci_d_hash,
+> +	.d_compare =3D generic_ci_d_compare,
+> +};
+> +#endif
+> +
+>  static struct kmem_cache *ovl_inode_cachep;
+>=20=20
+>  static struct inode *ovl_alloc_inode(struct super_block *sb)
+> @@ -1332,6 +1342,19 @@ static struct dentry *ovl_get_root(struct super_bl=
+ock *sb,
+>  	return root;
+>  }
+>=20=20
+> +static void ovl_set_d_op(struct super_block *sb)
+> +{
+> +#if IS_ENABLED(CONFIG_UNICODE)
+> +	struct ovl_fs *ofs =3D sb->s_fs_info;
+> +
+> +	if (ofs->casefold) {
+> +		set_default_d_op(sb, &ovl_dentry_ci_operations);
+> +		return;
+> +	}
+> +#endif
+> +	set_default_d_op(sb, &ovl_dentry_operations);
+> +}
+> +
+>  int ovl_fill_super(struct super_block *sb, struct fs_context *fc)
+>  {
+>  	struct ovl_fs *ofs =3D sb->s_fs_info;
+> @@ -1443,6 +1466,8 @@ int ovl_fill_super(struct super_block *sb, struct f=
+s_context *fc)
+>  	if (IS_ERR(oe))
+>  		goto out_err;
+>=20=20
+> +	ovl_set_d_op(sb);
+> +
 
-Thanks,
+Absolutely minor, but fill_super is now calling
+set_default_d_op(sb, &ovl_dentry_operations) twice, once here and once
+at the beginning of the function.  You can remove the original call.
 
-Jonathan
+>  	/* If the upper fs is nonexistent, we mark overlayfs r/o too */
+>  	if (!ovl_upper_mnt(ofs))
+>  		sb->s_flags |=3D SB_RDONLY;
 
->=20
-> Cheers,
-> Conall.
->=20
-> > -----Original Message-----
-> > From: Sean Anderson <sean.anderson@linux.dev>
-> > Sent: 15 July 2025 01:29
-> > To: Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>; Jonathan Cameron
-> > <jic23@kernel.org>; linux-iio@vger.kernel.org
-> > Cc: David Lechner <dlechner@baylibre.com>; Nuno S=C3=A1 <nuno.sa@analog=
-.com>;
-> > linux-arm-kernel@lists.infradead.org; Simek, Michal <michal.simek@amd.c=
-om>;
-> > Andy Shevchenko <andy@kernel.org>; Manish Narani
-> > <manish.narani@xilinx.com>; linux-kernel@vger.kernel.org; Sean Anderson
-> > <sean.anderson@linux.dev>
-> > Subject: [PATCH] iio: xilinx-ams: Unmask interrupts after updating alar=
-ms
-> >=20
-> > To convert level-triggered alarms into edge-triggered IIO events, alarm=
-s are masked
-> > when they are triggered. To ensure we catch subsequent alarms, we then
-> > periodically poll to see if the alarm is still active.
-> > If it isn't, we unmask it. Active but masked alarms are stored in
-> > current_masked_alarm.
-> >=20
-> > If an active alarm is disabled, it will remain set in current_masked_al=
-arm until
-> > ams_unmask_worker clears it. If the alarm is re-enabled before
-> > ams_unmask_worker runs, then it will never be cleared from
-> > current_masked_alarm. This will prevent the alarm event from being push=
-ed even if
-> > the alarm is still active.
-> >=20
-> > Fix this by recalculating current_masked_alarm immediately when enablin=
-g or
-> > disabling alarms.
-> >=20
-> > Fixes: d5c70627a794 ("iio: adc: Add Xilinx AMS driver")
-> > Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> > ---
-> >=20
-> >  drivers/iio/adc/xilinx-ams.c | 45 ++++++++++++++++++++----------------
-> >  1 file changed, 25 insertions(+), 20 deletions(-)
-> >=20
-> > diff --git a/drivers/iio/adc/xilinx-ams.c b/drivers/iio/adc/xilinx-ams.=
-c index
-> > 76dd0343f5f7..180d4140993d 100644
-> > --- a/drivers/iio/adc/xilinx-ams.c
-> > +++ b/drivers/iio/adc/xilinx-ams.c
-> > @@ -389,6 +389,29 @@ static void ams_update_pl_alarm(struct ams *ams,
-> > unsigned long alarm_mask)
-> >  	ams_pl_update_reg(ams, AMS_REG_CONFIG3,
-> > AMS_REGCFG3_ALARM_MASK, cfg);  }
-> >=20
-> > +static void ams_unmask(struct ams *ams) {
-> > +	unsigned int status, unmask;
-> > +
-> > +	status =3D readl(ams->base + AMS_ISR_0);
-> > +
-> > +	/* Clear those bits which are not active anymore */
-> > +	unmask =3D (ams->current_masked_alarm ^ status) &
-> > +ams->current_masked_alarm;
-> > +
-> > +	/* Clear status of disabled alarm */
-> > +	unmask |=3D ams->intr_mask;
-> > +
-> > +	ams->current_masked_alarm &=3D status;
-> > +
-> > +	/* Also clear those which are masked out anyway */
-> > +	ams->current_masked_alarm &=3D ~ams->intr_mask;
-> > +
-> > +	/* Clear the interrupts before we unmask them */
-> > +	writel(unmask, ams->base + AMS_ISR_0);
-> > +
-> > +	ams_update_intrmask(ams, ~AMS_ALARM_MASK,
-> > ~AMS_ALARM_MASK); }
-> > +
-> >  static void ams_update_alarm(struct ams *ams, unsigned long alarm_mask=
-)  {
-> >  	unsigned long flags;
-> > @@ -401,6 +424,7 @@ static void ams_update_alarm(struct ams *ams, unsig=
-ned
-> > long alarm_mask)
-> >=20
-> >  	spin_lock_irqsave(&ams->intr_lock, flags);
-> >  	ams_update_intrmask(ams, AMS_ISR0_ALARM_MASK, ~alarm_mask);
-> > +	ams_unmask(ams);
-> >  	spin_unlock_irqrestore(&ams->intr_lock, flags);  }
-> >=20
-> > @@ -1035,28 +1059,9 @@ static void ams_handle_events(struct iio_dev
-> > *indio_dev, unsigned long events)  static void ams_unmask_worker(struct
-> > work_struct *work)  {
-> >  	struct ams *ams =3D container_of(work, struct ams, ams_unmask_work.wo=
-rk);
-> > -	unsigned int status, unmask;
-> >=20
-> >  	spin_lock_irq(&ams->intr_lock);
-> > -
-> > -	status =3D readl(ams->base + AMS_ISR_0);
-> > -
-> > -	/* Clear those bits which are not active anymore */
-> > -	unmask =3D (ams->current_masked_alarm ^ status) & ams- =20
-> > >current_masked_alarm; =20
-> > -
-> > -	/* Clear status of disabled alarm */
-> > -	unmask |=3D ams->intr_mask;
-> > -
-> > -	ams->current_masked_alarm &=3D status;
-> > -
-> > -	/* Also clear those which are masked out anyway */
-> > -	ams->current_masked_alarm &=3D ~ams->intr_mask;
-> > -
-> > -	/* Clear the interrupts before we unmask them */
-> > -	writel(unmask, ams->base + AMS_ISR_0);
-> > -
-> > -	ams_update_intrmask(ams, ~AMS_ALARM_MASK,
-> > ~AMS_ALARM_MASK);
-> > -
-> > +	ams_unmask(ams);
-> >  	spin_unlock_irq(&ams->intr_lock);
-> >=20
-> >  	/* If still pending some alarm re-trigger the timer */
-> > --
-> > 2.35.1.1320.gc452695387.dirty =20
->=20
-> Reviewed-by: O'Griofa, Conall <conall.ogriofa@amd.com>
-
+--=20
+Gabriel Krisman Bertazi
 
