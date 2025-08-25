@@ -1,122 +1,91 @@
-Return-Path: <linux-kernel+bounces-784634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 604FCB33ED2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:08:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC889B33EFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9261A841A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:09:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAF407A7F8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0801A2EE60B;
-	Mon, 25 Aug 2025 12:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF5C2EF646;
+	Mon, 25 Aug 2025 12:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ed5AOFjk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="oEHtE/we"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F982EF66E;
-	Mon, 25 Aug 2025 12:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E06F2EE601;
+	Mon, 25 Aug 2025 12:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756123645; cv=none; b=DJL7zGTZSsnhM6QyZcAFMj4MH+ouNBBRHVvxt4uAyM6jjmGFJsPcAfaTlwuQAzm7KsqGle1rO6rIm+L4yp05LFoLM54tYa/UT+kdOf2wA8LYiF3K7hUqJpAjO0szkvQi55WHoo0xDZ/eT9jR6ntqBIr1VPbyIhcNuTRL5XIuMd4=
+	t=1756123723; cv=none; b=XzHekOGFhDkwJt6tezlYDawRqtz0NCWkvvB45dN1j9RKoAylyz2XwB+ihvurYkiqwbkqvmjLFgfLqlUZam+GdJxJLuYTkCAxlF2CF3yxHPX4o3HGDJCEbEaT7bVXoL8T44nPcwx6Q2wGP42Bb/u+amMSBxJk3D4BGcxFQQrMXXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756123645; c=relaxed/simple;
-	bh=F/5K4bMoblHsxI330SNs3Rq5PcPR+MST4mCPPpaDFwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n+AWtJuWWIM6WWbFpB1BJ6kCkJgLZbBB81E4ht3rajZtvuFxkhFoXAf0W9DC9xxehcp2pE0mqj2ZyYQdPDSJicaVmfT/mVbXUO4uazW3Qks7hAtCgrrm6iBAD3kLqca1RdFplRLK895t8YYyREoM6bCorkjSLk8W0Jyo4iBYAEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ed5AOFjk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B8F9C19421;
-	Mon, 25 Aug 2025 12:07:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756123644;
-	bh=F/5K4bMoblHsxI330SNs3Rq5PcPR+MST4mCPPpaDFwE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ed5AOFjkRXXho4jcdJZSkmSXZQk50JS7AcOFODLlsY97LEHVAIe2ZjbMzBQiOCyKw
-	 y5WgH2TeOxOILBIgzS2aknkD4HmLnRvGVfsIPRASynvBtwjudT1f9XC6E+BQCQXW2B
-	 FFesU/aTkSRBP27qifk+COqGry8Nuy3R6AijAWn6wL+hGkaGP+vnR2KdY3hyKyaBjy
-	 RxbeWbxco65UF5SligN5fgggydDn0XAt+Y1eo0I2j3jeP9NifNHl6+Kmgzo1xOj39e
-	 9fN5s9N8tEkkbEOcLdSh7RVo5P2ofE/nU1L85iODhvZCCAPWc5WWtxzJik/ZC+CBxj
-	 3E8DdO0Y3yeSA==
-Date: Mon, 25 Aug 2025 14:07:19 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Akira Yokosawa <akiyks@gmail.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 07/14] docs: conf.py: extra cleanups and fixes
-Message-ID: <20250825140719.18ba8459@foz.lan>
-In-Reply-To: <87sehjdlz5.fsf@trenco.lwn.net>
-References: <08d16c2ad817910eb5606842f776d3f77d83282f.1755763127.git.mchehab+huawei@kernel.org>
-	<f5d4804c-9a51-443a-a73e-d9c043673cbc@gmail.com>
-	<fa7rreuvodpe673lwcwlj6kddkpnmkoxlz4y5mythgntkmveey@m5fqvtsuel6l>
-	<87sehjdlz5.fsf@trenco.lwn.net>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1756123723; c=relaxed/simple;
+	bh=40pHvwMK7BcfxlID6AIO9kRTEyjTwNwdnjJttXS4c6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JfNaQ0ORtwwpm/QkvNvnFNkyFO6um0hVX7fiJLAzbk+ab5UXZcQllY+OB5COI39SvtLpMChhKab1cobSZIOE+690eah5g3ZRUBXp/yp0MlNJ0OQHOreKChRCprkVqBoP2ROUUVs5iTGhPyZBXOjUohYn5zS4baZEqvA9jRLCqms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=oEHtE/we; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=YLkxYcm5PfbpwrBaYz99xb/BPKFw6g9w/mJk0x8ccdI=; b=oEHtE/we30b00BMf4C6OdWy1ea
+	d7aKAlkca/QFEFRqieM96p6tk7QJv0nqU6CAyIRaC6UmBp4FX13aoZDa55OQtDgFUMxkZLEHJ2Wky
+	Vn4xOw0NvOH3Ybb+fXIEUyfxOcRiqqfRjElvduUP61Uh0Nj3ejeToxbim6BuaVHEKakg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uqVzz-005wBj-7j; Mon, 25 Aug 2025 14:08:31 +0200
+Date: Mon, 25 Aug 2025 14:08:31 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Alex Tran <alex.t.tran@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v1] Fixes: xircom auto-negoation timer
+Message-ID: <6214363b-0242-481d-9b93-2db9e1ba5913@lunn.ch>
+References: <20250825012821.492355-1-alex.t.tran@gmail.com>
+ <c6c354ec-e4fe-4b80-b2e5-9f6c8350b504@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c6c354ec-e4fe-4b80-b2e5-9f6c8350b504@gmail.com>
 
-Em Fri, 22 Aug 2025 16:34:38 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
-
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
-> > On Fri, Aug 22, 2025 at 09:01:03PM +0900, Akira Yokosawa wrote:  
+On Mon, Aug 25, 2025 at 08:44:18AM +0200, Heiner Kallweit wrote:
+> On 8/25/2025 3:28 AM, Alex Tran wrote:
+> > Auto negoation for DP83840A takes ~3.5 seconds.
+> > Removed sleeping in loop and replaced with timer based completion.
+> > 
+> You state this is a fix. Which problem does it fix?
 > 
-> >> > 3) I got a corner case on one of the distros was using xindy to produce
-> >> >    indexes. This ended causing the build logic to incorretly try to use
-> >> >    T1 fontenc, which is not UTF-8 compatible.
-> >> > 
-> >> >    This patch adds:
-> >> > 
-> >> >         \PassOptionsToPackage{xindy}{language=english,codepage=utf8,noautomatic}
-> >> > 
-> >> >    to cover such case. It should be noticed that, as the config doesn't
-> >> >    have \usepackage{xindy}, this will be used only if latexmk ends
-> >> >    using xindy.  
-> >> 
-> >> But I can't see how this macro (executed by XeTeX engine) would have any
-> >> effect on xindy (command) invoked from latexmk.
-> >> 
-> >> Can you elaborate on your theory of how it works?
-> >> And which distro runs xindy?  
-> >
-> > I can't remember on what distro I saw the issue, but I got it during
-> > my builds, where, instead of running makeindex, it tried to run xindy,
-> > with failed because of utf-8 fonts.
-> >
-> > My theory is that, on one of the ditros, there is a /etc/latexmk
-> > or similar containing instructions to use xindy instead of makeindex.
-> >
-> > In any case, this rule is harmless on setups that use makeindex:
-> > it only affect setups where there is a latexmk or .latexmk file
-> > setting xindy as the default index builder: if this is used, 
-> > xindy will use utf-8 fonts instead of Type 1.  
+> IMO touching such legacy code makes only sense if you:
+> - fix an actual bug
+> - reduce complexity
+> - avoid using deprecated API's
 > 
-> Can we try to get a handle on that and, if it's truly needed, document
-> why?  I will confess that I'm confused by it:
+> Do you have this hardware for testing your patches?
 > 
-> > \PassOptionsToPackage{xindy}{language=english,codepage=utf8,noautomatic}  
-> 
-> As I understand it, the arguments are {options}{package}, right?  so I'm
-> not sure how this would work...?
+> You might consider migrating this driver to use phylib.
+> Provided this contributes to reducing complexity.
 
-Heh, you're right: the argument is reversed. Also, I repeated the
-tests here, and were unable to reproduce the issue I had with xindy.
+There is plenty to reduce. There is a full bit-banging MDIO
+implementation which could be replaced with the core implementation.
 
-So, let's just drop it. If we needed, we can re-add, reverting the
-parameter order there. Patch is at:
+The harder part for converting to phylib will be the ML6692 and
+DP83840A. There are no Linux driver for these, but given the age,
+there is a good chance genphy will work.
 
-	https://lore.kernel.org/linux-doc/83068bc31839e7095f1f408e49658362d467797e.1756123459.git.mchehab+huawei@kernel.org/T/#u
-
-> 
-> jon  (who will be traveling and slow to respond for a bit)
-
-Thanks,
-Mauro
+	Andrew
 
