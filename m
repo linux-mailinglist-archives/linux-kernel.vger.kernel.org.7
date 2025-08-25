@@ -1,162 +1,251 @@
-Return-Path: <linux-kernel+bounces-785467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF23B34B2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:54:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B341B34B2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AB99205017
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:54:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 167F25E0EE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76762882DE;
-	Mon, 25 Aug 2025 19:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3009D2868A9;
+	Mon, 25 Aug 2025 19:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QgB2lfcA"
-Received: from mail-qk1-f201.google.com (mail-qk1-f201.google.com [209.85.222.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OD+1Qgh5"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2089.outbound.protection.outlook.com [40.107.93.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5637283FD0
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 19:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756151664; cv=none; b=TA/I8DgOef5aebF/noz8z0dIL3PiQVUfwUA709hYN0Xk2+onhoIhddqxUwP3/kZO7Tw/fisIq1DMNMvcAhC4421vIYCK/u/gwOHhTw84ajvrfZA+Y2hYcgOKsglYwZQqvqwNImrotMdmduKU/aomNWcrRUtpnyBPbwuZsyh4tPg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756151664; c=relaxed/simple;
-	bh=HcmjyPq+HJ69UUE8MXp8+eJ0FnVp+I6KpsIJwz1NOGU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mNT3RBWyC6qzHYTQH9kt3RqRxrrnqXmBxjvBCIuEJqoCaUrRp6P6VcLzRx6adlXfEbHVb9M1kth/GueYdJ/Ez+bZTCo/bOSFUCe68b/qaqxRN8UyybgJdm7hve9sTAamc7nH50Ci8EF+7QFoLrjh1J+27fjADKmHJeXt+1sNF0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QgB2lfcA; arc=none smtp.client-ip=209.85.222.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com
-Received: by mail-qk1-f201.google.com with SMTP id af79cd13be357-7e8702fb9e1so1223574185a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:54:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756151661; x=1756756461; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FDZ7rBECUpjb0yUDRUfPXJKV4c4fG0Ag2lJMPqsfsyY=;
-        b=QgB2lfcAt7Ochqb0xQu+38tez+ONBRDTdrluaIGNvbjLSRTj4lg/0zWsi2R9HGp5iN
-         ksvgjUMxx85ptckWyZpsTqjmLs5ZTP53OpT5E5Et2UauPNwOvSOCpGAvI+skJmNDAFQE
-         sShA94jA4FQC/+DTA0C68JTTzEes0nQSun2NVda5rTnVi0nbuICl5cGz/F27BAiM7VH5
-         F2XCcUF7iDfIs6igJTyBtqvx079OwpHRjgDZUI97TF5TgQjK7DfT55SN/RZCuAe6lTMa
-         XqFdVECcVOsqZY5FKijFb8KeqBZosBMink+YpBsomBH8YGqNqyw/05nvZBPVOa1K0yPJ
-         cOjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756151661; x=1756756461;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FDZ7rBECUpjb0yUDRUfPXJKV4c4fG0Ag2lJMPqsfsyY=;
-        b=ISTkp9IQIcdzWwQiaxXOrbBy//cPxRGvcAeY+FeSiny3tNaJSjfagme2Egf2UcGEuD
-         B3KC+SoN7KOFex95KmIsJeqLFYQWcLM1JuY5mVPgPsa7FFQDESdLiko46Jx9A5DM0iJs
-         gkuPBj/t5wIojDq55Vg2rNKIptHmDQ21Jg5VWUkamJTc8sY13QVRTH0mS2uw0oCNfRM+
-         a/f6FYXe4Vd4YckxTWOHKdnK0sfB5kP9Ntfzo3JFBdPeHSslWZ8OyiY+uymqE435ohUJ
-         VQArOdLSi9GKH7tOIoCfI21rCHkrcF1swgHjmpdCEjJIn7rMycZiCb9z1lKOWD+NdV3c
-         L7gw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLTqM1m+PElFrXO2roGYdfyPahXc2q8W8IVMTnG9+/EO+RfWgvhQhylAobWoDErfwPTCbL6DDa4b/z4wE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznYcD2zbzwRIFmJrSUW373qdB74qjm4XF7klH3VQk2mKxt/plU
-	z/hIbh8seqDV1GoszIVfoQx4WAWvBNcE4ER9bH0sz6HTCt1ImpIKM/asQNZ+pY8KY2x2aWOkGjb
-	+O4PxcXqhRg==
-X-Google-Smtp-Source: AGHT+IFjfzhnSD4J6UI06bC9yT857vkVXOFiqMoQtCRwEtvPZj6aVMZXK+c3UV3wlvT3QXsIw6EeINIRV0cZ
-X-Received: from qknpb12.prod.google.com ([2002:a05:620a:838c:b0:7e6:5fba:1a9c])
- (user=zecheng job=prod-delivery.src-stubby-dispatcher) by 2002:a05:620a:45a8:b0:7f4:34c8:18e6
- with SMTP id af79cd13be357-7f434c81979mr93003685a.38.1756151660706; Mon, 25
- Aug 2025 12:54:20 -0700 (PDT)
-Date: Mon, 25 Aug 2025 19:54:02 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB59542AA6;
+	Mon, 25 Aug 2025 19:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756151657; cv=fail; b=eJvYt54lzlNYmUSLP1k20IPnfW4LyLNHpX7IOkgSfAsQN6/MIwhUAeUIurMxUbU7tKERkWRb4FErxRaRPrW1HkwC2aqhVovlo60h+1FZ8fg6cgV13zeb8CrZYIKYfg+XbOuFBmwlJGYUxh5HAJmPmMMtAhEjrPR0LLHiCQesSK8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756151657; c=relaxed/simple;
+	bh=APyDZt6Y7L2gxMiIr55aHEsxjZGKQxquPVSt9UP/YxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=EpkkhaZjVIqfp1qnuHrVSESDVkUeisg5FU5v9R7mGsF7cRELXuVJKK+2wtgq/sZwxx5egkbwssrDONzJ0pLjSM2n2ak/15sB718LlM+A1FFo9E2NAeXvoD/hh1Puodetu0MiwO3xypMnJVwGbA3EVuvMSqSZRvDqtHiCpPgBNkk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OD+1Qgh5; arc=fail smtp.client-ip=40.107.93.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ilrhIWLE+Do5yX6yvlk4wT7oU/9AsgmZbZByTO7yXGDTufr/RF6Ef2a8MmtfccF1qlVAU1DkTsLr0UQ2OL44zzZINLKGPlF3qeFxW2swUNw0GRltxf2HleE3Aw7DVH3cPpJLjpDO614jbyHNEZWaZ2guDdBzMCHqR4v/I52ABYSDKXYWzpJl2gvdC2DkoUckc/vfSDwrCgq4BLNmu2YYUgQKB3wLOs1/FNda3nZl32jwk8ainD7u7zQEU/ZT5BRCGR5LiDg3wFoo/OL/bPrUqieFdJpOcwReouKyj+R9Jh+0Ok7NBgeHPsGGACttTp6aXKew3snEXdV9wYx3R7zgFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EtIBo7TS5sCx+bt8Hr+uTOA8Bk0QpbM4e7Qv66EhjbQ=;
+ b=gPPtwrKCAAmURwKCM82QKiwCgqgylglLl5TLlYBPiefxGmsndq/hjS5KL55JvZvvs9Dv84mNQ+rP5urSkjeM7JKV0KlOw62mqCkjiKesSpXsrwaUk3Y+7lSND7jrNxZMx4Ox3W2tJ8PO4RGrrfHwavYO3jstK5xus4NV/RhSqiKfZLNxjunii/ayYciqsswCaofJ3cyaXCGwO9fuTPUi7EIeVYIb7QtfctE4OsHhUKcpK9aMQHDV2QJSKHPpdHcldZA1+hiYzGTot4jmzqkhLX6ufr9LmlZdVY6WMzJtNcfqovGQOd5EhP1F3JiAgyY8zMaIF33Tho7Ghqa8QZYMQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EtIBo7TS5sCx+bt8Hr+uTOA8Bk0QpbM4e7Qv66EhjbQ=;
+ b=OD+1Qgh5yOuPl0lgt2CZ4DDub/ISZ4sY33q2HT4eJT5C9YOwwkcK1l8iYjyXXQvihNpgL+HWAhfBIuwjMkOIM/t1Mz3NRZ7icsZTc3Ps9MPgIcqwPFAH4PfxVYzVCYLrK7SYAuno8A6iUYCqLiYEEQzxqU5GFHrhbmFJIkWCXP8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ SA1PR12MB7410.namprd12.prod.outlook.com (2603:10b6:806:2b4::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.17; Mon, 25 Aug
+ 2025 19:54:11 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%4]) with mapi id 15.20.9052.017; Mon, 25 Aug 2025
+ 19:54:11 +0000
+Date: Mon, 25 Aug 2025 15:54:03 -0400
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+	Smita.KoralahalliChannabasappa@amd.com,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v5 03/20] x86/mce/amd: Remove smca_banks_map
+Message-ID: <20250825195403.GA300213@yaz-khff2.amd.com>
+References: <20250825-wip-mca-updates-v5-0-865768a2eef8@amd.com>
+ <20250825-wip-mca-updates-v5-3-865768a2eef8@amd.com>
+ <20250825181938.GEaKypOt7t1p8G-YkI@fat_crate.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825181938.GEaKypOt7t1p8G-YkI@fat_crate.local>
+X-ClientProxiedBy: BL1PR13CA0115.namprd13.prod.outlook.com
+ (2603:10b6:208:2b9::30) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
-Message-ID: <20250825195412.223077-1-zecheng@google.com>
-Subject: [PATCH v2 00/10] perf tools: Some improvements on data type profiler
-From: Zecheng Li <zecheng@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Zecheng Li <zecheng@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|SA1PR12MB7410:EE_
+X-MS-Office365-Filtering-Correlation-Id: 14d2ce1f-3da3-4a8d-2576-08dde4112907
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?iNoLj9RsJ/YjUR4KOsyIYI5t414SGxWMPsLCJQbbbiNK6NP1kQpp2/BAm3gV?=
+ =?us-ascii?Q?1siJ5bQupNmoD80qZFjjUgwLHPZj8UiGcUTyNPL3PlkR8Z7z0kxxXCa3U3x2?=
+ =?us-ascii?Q?E+brzmATCzNKR0meYWNR6duOpxzLwXMafuqUNNgT7WKtwHHhpo0V0z7vW5gG?=
+ =?us-ascii?Q?6qW1BkcmLv+wrspdMECXWCPpnmgJcbl2AQjz4JAH5Wtcq+mfD+SGgjGbqzP2?=
+ =?us-ascii?Q?S1h4BT+e15ctoM553Q6MsaSEe2nG4nzt0tnkveDUwMzC3yrtJ91RuWQnTvV5?=
+ =?us-ascii?Q?OTPYxuqFA8QGjv1ksSqfmv4xdWtyIDV6icqKs9QLpKrbXFoHLzpWwoO4LvJU?=
+ =?us-ascii?Q?8G6L0YHlPsqc4Gm8CmnwT9+Dsz+EBsKRK7y1yNxPJcLI0LMXQByLRvi2GUCt?=
+ =?us-ascii?Q?5RwOMaXLksKuJ2i2XHMGwCj2NGOftg0JYYnQX6+TSFUpBOU0n0O0g0bGmXb3?=
+ =?us-ascii?Q?A/uIPNpW0RKP0HT9zSa6OgOkjHn6dpIEGK+BDFE3dFtU8ml7MRb7qt9+vytL?=
+ =?us-ascii?Q?+8V5jMAvXtIM5yrQAfKX00shrSKH7pTprVLqbfm5FWQHsY7piF8G4Zve6zkk?=
+ =?us-ascii?Q?KVf/+LO7JRL19nPxeMJRXPMnp0gj8giiXWvX6CuP/PSJ/JXCc8d9HWlZms3O?=
+ =?us-ascii?Q?noB+QgBXqlV6obAos+gPKa5XpshgrqNbe6KYbF3mpayWtkGJA1eUJW8nZ6Ct?=
+ =?us-ascii?Q?wB6x+oRJXGutiaMbGRqhALrRD4Nlp1zyKFVFlw640tmEfiqlI1nUOTxswu1r?=
+ =?us-ascii?Q?sTTIgeuo3AspcFL1rVZynyia3WIVt8d3s1B6OoxTrX8DZzlj+gFmmmzkY3FF?=
+ =?us-ascii?Q?CZK6gZqp1UpnPY+s6OEL+hWruNcOPdeSDLBgQB5I6lYng2aMSsqFcAiO7Uun?=
+ =?us-ascii?Q?J8IG2wTDGbzAgWPZJbIWkxaOYOHB+2kNUpMy9t9vK4njM/oMXURbgBhCgcDd?=
+ =?us-ascii?Q?1RSYthhUce34n/nMvwZPov4HR2VGd+HNsaqdWXUGUkzdcazvmEeJ12BQt9PH?=
+ =?us-ascii?Q?ybV/8BNbBEdbbN6ag9lO9ZvkIaoB5i6jKdNBjyR4jRsipxSF7f2mS4CXtHsP?=
+ =?us-ascii?Q?oM/YPPU1YQDrnaW4t8BoJADWBcalyGFeVq/hMiNelHdxcIOqBLr38ugo0GvK?=
+ =?us-ascii?Q?U5JWgBW8fAt9c50Lqm7LVqp33Q5Ej5JOcz3N3Zd/ZxC+lXHyU+iLPDkEXw5s?=
+ =?us-ascii?Q?YSA2IEY1Lg40aZHMeyqxSSWFZrmJnuOndl//XrB3gZ4XPsEJRY44BfzbhpuP?=
+ =?us-ascii?Q?82UupSIHSoXrQZWeWjZWlQ3VAQsc2/Ky9WhA88/3sHKLuaC44JmIKY5mVHfU?=
+ =?us-ascii?Q?dAp1aPoVjsIMSbKj7vTRPJLQfiJcQzxS7okAiCXdVQni7OkpRhPERJ+Ej95m?=
+ =?us-ascii?Q?0hmxgB1VX/YKgAdTeJcoFzpvioHFS8gIAgbDE/Jh+GTfYEbJY4dQVJN6p/W1?=
+ =?us-ascii?Q?y69F+ETUFbk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?kZlI7Ka7K/R0RbDnE11DgWUl5b8OXLu7UjmuBVWlXlKDE4ParYwZvuPyNCvq?=
+ =?us-ascii?Q?m1OBwCtuLHHnQi1OJfGbr0OhJd6KiUjtsoVHQUXHQAcDP21XzHq7RvhexJR4?=
+ =?us-ascii?Q?2049RfBxXkrtvKFSV26NNly6mSKibgXglnHQNvVyjylsB6vqRLgLwpk2PeoA?=
+ =?us-ascii?Q?wHimkoWI51GiXJkOHkJE6JHiUaAweb8+NDhlwqpLis4EQ6J6y39cWk/fsa1g?=
+ =?us-ascii?Q?wu3ej5kAOORDZow54JG+NLtwNS2dYcbttSRQHb0amkWx5Hbm3a2U4GJE7e9W?=
+ =?us-ascii?Q?eEUdpYgODqYTEaeumhWcRaLNXxqS5ez+JWPNvwlouW7Cn6oV105ktUOUCCVE?=
+ =?us-ascii?Q?+QLv2VFR+u5Nc5Q2r4xog8qMP3tRDXgae55USED+jc84GrmtpR6hs6iz1yh6?=
+ =?us-ascii?Q?Q99BYsf3w888M3FMN35eEksUjuzKx+Zs1zSpZjmbxk2FqFXhbcCXod3uWkql?=
+ =?us-ascii?Q?OcKMh5FIiCxHFOkXgBpjr/qMINOgk5nqhgRknCvPq08jVTHUZf1Pcd1WZMmP?=
+ =?us-ascii?Q?8ozGtJNtUxAcAM1X4kkvwSWLNbX2pu0a0eg5Emf8GgJCOP5+SwND9k/RovhP?=
+ =?us-ascii?Q?VtWzQiOZza39TmSbhKi0h5YlzF7oZOawHnOP/JN/vbTJoUbUL/vM1IOOtVzG?=
+ =?us-ascii?Q?2nmHomnFbsz6fQQhuBkevbCYs9ajdpKkpimgTA+1ErLKRBcX4aw9ODJbMFgq?=
+ =?us-ascii?Q?pk5zgQggggVagTkyV6ulcpLpShMfEo6sS6KgERoTieRdpRGbXO1qQImbXeaR?=
+ =?us-ascii?Q?n1MWHTtLAYgotk0bnDGADLUNyqvex8fnXVm7ARSPmhLQpnzvqSERWIB5Gwx9?=
+ =?us-ascii?Q?Na8RxdJ+Kzn/OGY4eDbsPiqfaYClVTGSFSOUccujI+/Rq/0E6MTRddZZ/1r1?=
+ =?us-ascii?Q?yJLbMN499ooRGmRjs1AE1smPvkfM6t26TE1KD6UVC8EbfbVUdcTguziH3PzI?=
+ =?us-ascii?Q?wQf078gP5uVNVqnsj2H33vI+xCnADUmucxAxbV/kqukHbzYEQ3YiCjszZuHZ?=
+ =?us-ascii?Q?0vfWa43JRfecD3VkwuWvff6C0B3DHOHhfuJ11INiJeNKWlH+20pVsvzUnXI5?=
+ =?us-ascii?Q?bUDF5J9W28oq1r6yjE/aAHQaLY8fv2PWbX3BFJswE+xP5VCblruLVqe5Fksb?=
+ =?us-ascii?Q?5J1c7wuKEuJIOneOHI7ABZ5//RKr7EqDQWEb50OFkNeDTjpKcPVsTaDR3fNv?=
+ =?us-ascii?Q?sXcs0XFNdFxrp+h9Iv+9Se5gJnDDOKPMkkpyVFd6HSXyyVQ02N+ubzxCtZee?=
+ =?us-ascii?Q?+YWsOVAWKEM2zmYiOIuDxTBFXxVXxIXT1efJCymQU8z73WKj8WlhO8yGb5II?=
+ =?us-ascii?Q?FGF1iem22rp0lgqD/IGR5Clt9LxG7Fnv4lp6heYIdbAX3lCvUYR4e+WlCX+d?=
+ =?us-ascii?Q?zAMhF2q8WFltC9DF2P7Zrt6JpRc4Y4hkdn+SbMvgfjRyz2woTVv6g/5ZDtJm?=
+ =?us-ascii?Q?DhsS0QSoRyTmNh7f8YU5YzaQf5CYblHMmyMdHHWq5EaUxhGCGIIO9CEv26dS?=
+ =?us-ascii?Q?e/QnzzRv2Tc+bviT02sd8hQ3wQWvn/VDRmw+rEKSjyAG6ozsfgIfOX8Nmi4L?=
+ =?us-ascii?Q?9+kl1p4Krc6OgwKhE1KFnaiTc7JETv8cbuHJ5nSe?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14d2ce1f-3da3-4a8d-2576-08dde4112907
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 19:54:11.2401
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qqApRbxyHfMZ2u9fG5Kpiu4/M9g8iFt1iX2lftRI90W2xZzhUDPXiEdPhlteo5yjw2T9f/7mJQUbZEzu3VCPKg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7410
 
-Hi all,
+On Mon, Aug 25, 2025 at 08:19:38PM +0200, Borislav Petkov wrote:
+> On Mon, Aug 25, 2025 at 05:33:00PM +0000, Yazen Ghannam wrote:
+> > The MCx_MISC0[BlkPtr] field was used on legacy systems to hold a
+> > register offset for the next MCx_MISC* register. In this way, an
+> > implementation-specific number of registers can be discovered at
+> > runtime.
+> > 
+> > The MCAX/SMCA register space simplifies this by always including
+> > the MCx_MISC[1-4] registers. The MCx_MISC0[BlkPtr] field is used to
+> > indicate (true/false) whether any MCx_MISC[1-4] registers are present.
+> > 
+> > Currently, MCx_MISC0[BlkPtr] is checked early and cached to be used
+> > during sysfs init later. This is unnecessary as the MCx_MISC0 register
+> > is read again later anyway.
+> > 
+> > Remove the smca_banks_map variable as it is effectively redundant, and
+> > use a direct register/bit check instead.
+> > 
+> > Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+> > Tested-by: Tony Luck <tony.luck@intel.com>
+> > Reviewed-by: Tony Luck <tony.luck@intel.com>
+> > Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> > ---
+> > 
+> > Notes:
+> >     Link:
+> >     https://lore.kernel.org/r/20250624-wip-mca-updates-v4-7-236dd74f645f@amd.com
+> >     
+> >     v4->v5:
+> >     * Keep MCx_MISC0[BlkPtr] check to be compliant with uarch.
+> 
+> I'm not sure I understand what that means...?
 
-I've identified several missing data type annotations within the perf
-tools when annotating the Linux kernel. This patch series improves the
-coverage and correctness of data type annotations.
+I completely removed the check below in previous revisions. But I put
+it back to make sure we follow the microarchitecture guidelines, i.e.
+the procedure(s) in documentation (APM, PPR, etc.).
 
-Here's a breakdown of the changes:
+	if (!(low & MASK_BLKPTR_LO))
+		return 0;
 
-Patches 1-3 fix type matching from DWARF. They address cases with
-negative offsets (e.g., from intrusive linked lists) and distinguish
-DWARF expressions for variable value or address.
+> 
+> Anyway, some more cleanup ontop:
+> 
+> ---
+> diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
+> index 580682af432d..7e36bc0d0e6c 100644
+> --- a/arch/x86/kernel/cpu/mce/amd.c
+> +++ b/arch/x86/kernel/cpu/mce/amd.c
+> @@ -498,17 +498,6 @@ static void deferred_error_interrupt_enable(struct cpuinfo_x86 *c)
+>  	wrmsr(MSR_CU_DEF_ERR, low, high);
+>  }
+>  
+> -static u32 smca_get_block_address(unsigned int bank, unsigned int block, u32 low)
+> -{
+> -	if (!block)
+> -		return MSR_AMD64_SMCA_MCx_MISC(bank);
+> -
+> -	if (!(low & MASK_BLKPTR_LO))
+> -		return 0;
+> -
+> -	return MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
+> -}
+> -
+>  static u32 get_block_address(u32 current_addr, u32 low, u32 high,
+>  			     unsigned int bank, unsigned int block,
+>  			     unsigned int cpu)
+> @@ -518,8 +507,15 @@ static u32 get_block_address(u32 current_addr, u32 low, u32 high,
+>  	if ((bank >= per_cpu(mce_num_banks, cpu)) || (block >= NR_BLOCKS))
+>  		return addr;
+>  
+> -	if (mce_flags.smca)
+> -		return smca_get_block_address(bank, block, low);
+> +	if (mce_flags.smca) {
+> +		if (!block)
+> +			return MSR_AMD64_SMCA_MCx_MISC(bank);
+> +
+> +		if (!(low & MASK_BLKPTR_LO))
+> +			return 0;
+> +
+> +		return MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
+> +	}
+>  
+>  	/* Fall back to method we used for older processors: */
+>  	switch (block) {
+> 
+> 
+> -- 
 
-Patch 4 skips annotations for LEA instructions in x86, as these do not
-involve memory access.
+Looks good to me.
 
-Patches 5-7 implement a basic approach for register offset tracking
-based on add, sub, and lea operations. The register is invalidated when
-an unsupported arithmetic instruction on that register is encountered.
-While this feature has known limitations and may regress in rare cases
-compared to the original, it generally improves offset tracking in most
-scenarios.
-
-Patch 8 skips check_variable when the type is found directly by
-register, since sufficient checking is already performed in
-match_var_offset. check_variable lacks some DWARF information to
-correctly determine if a variable is valid.
-
-Patch 9 fixes __die_find_scope_cb for namespaces. I found this issue
-when trying to annotate a Rust program. The Die for a namespace doesn't
-have a PC range, so it would be skipped. Therefore, we should check a
-namespace's siblings and children.
-
-Patch 10 implements support for DW_OP_piece. Currently, it is allowed in
-check_allowed_ops but is handled like other single location expressions.
-We should split any expression containing DW_OP_piece into multiple
-parts and handle them separately.
-
-I have tested each patch on a vmlinux and manually checked the results.
-After applying all patches, there are less missing or incorrect
-annotations. No obvious regressions were observed.
-
-v2:
-1. update the match_var_offset function signature to s64
-2. correct the comment for is_breg_access_indirect. Use simpler logic to
-match the expressions we support.
-3. add is_reg_var_addr to indicate whether a register holds an address
-of the variable. This defers the type dereference logic to
-update_var_state.
-4. invalidate register state for unsupported instructions.
-5. include two new patches related to improving data type profiler.
-
-v1: https://lore.kernel.org/linux-perf-users/20250725202809.1230085-1-zecheng@google.com/
-
-Zecheng Li (10):
-  perf dwarf-aux: Use signed variable types in match_var_offset
-  perf dwarf-aux: More accurate variable type match for breg
-  perf dwarf-aux: Better variable collection for insn tracking
-  perf annotate: Skip annotating data types to lea instructions
-  perf dwarf-aux: Find pointer type to a type
-  perf annotate: Track arithmetic instructions on pointers
-  perf annotate: Invalidate register states for unsupported instructions
-  perf dwarf-aux: Skip check_variable for die_find_variable_by_reg
-  perf dwarf-aux: fix __die_find_scope_cb for namespaces
-  perf dwarf-aux: support DW_OP_piece expressions
-
- tools/perf/arch/x86/annotate/instructions.c | 155 +++++++-
- tools/perf/util/annotate-data.c             |  35 +-
- tools/perf/util/annotate-data.h             |   6 +
- tools/perf/util/annotate.c                  |  18 +
- tools/perf/util/dwarf-aux.c                 | 372 ++++++++++++++++----
- tools/perf/util/dwarf-aux.h                 |   8 +-
- 6 files changed, 519 insertions(+), 75 deletions(-)
-
--- 
-2.51.0.261.g7ce5a0a67e-goog
-
+Thanks,
+Yazen
 
