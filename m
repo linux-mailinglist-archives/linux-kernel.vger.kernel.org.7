@@ -1,232 +1,210 @@
-Return-Path: <linux-kernel+bounces-784461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42255B33C32
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:09:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B17DB33C56
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9EFB481A3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:09:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39B2717302B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129872DECB1;
-	Mon, 25 Aug 2025 10:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C3A24DCE5;
+	Mon, 25 Aug 2025 10:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Pi/oMYGf"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="DWOxv7Qt";
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="R/SdyWwY"
+Received: from mailhub11-fb.kaspersky-labs.com (mailhub11-fb.kaspersky-labs.com [81.19.104.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8B62DAFB1
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E52B2D061B
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.104.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756116530; cv=none; b=m/dB9eHqmruNVitENK6gsn4JFlF1ji3Lu4T7b0kiLtsyKjgymbz0e0GC8rd0SohErt41ktbgcnKBRhQOqIkDWZibLQPHkpd1/RYL+7NPs6Pji/cStfrWcjvTPMEFT026OiZU4fEBBMrofiYmcJ3nFH/uKWNBHeC6Vi87st3balg=
+	t=1756116935; cv=none; b=jrCwa2FpUkwoCqYXn8i0KKkdhhOy4JUhh3pZgAVDPUW1LlCKHXVUYDnhmv7bqQJn33T2FXX4o86AJWXDPE90u4mFf7kfnzUqxX1Dvsq+vrxnlOF4eHubnjXufHSqt4MYx3QLqbg9FSA/deOuqIIPOArmkNNm9sYSGyoLpfVL6Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756116530; c=relaxed/simple;
-	bh=qoxTFsHFIVAgWULug32Ze5NgiLmjo1jREPwaJJjIE5I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=j6lEC1ygD9olB7RpY37TiIBNcZXg6Kzyqi7F0yDt53rXZIY4Bo8jtNfuSotFrMCQ0t1mzA7BGRmV3APsdDdosro+gKW8ywNCDaUu34iB0IW19drRgpZjgW/xWujcQjOSu5C0CzIbc5xO4FM5DUz5Hcd8yDPo/rTtfsOLAbeMg24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Pi/oMYGf; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756116526;
-	bh=qoxTFsHFIVAgWULug32Ze5NgiLmjo1jREPwaJJjIE5I=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Pi/oMYGfOTsn0Qm5Cz8h1nACTCYiwQNQV72Ua2K6W+Q774WFQhaimzIkTxY6y4Mj8
-	 uSsUQuyvEnv+AFrO3cyRr0MZWLca4rraGZmR5Dqwt4glZh8nKI1LnpbyppdACCosB7
-	 Xyvx3pHj67Z7wHKwkbBFqleyjMjlS2UUo0huU8NTLhSPEKiEKGFiQaZZC90rCJN1Tc
-	 djCNT5k0o82vlb1BU3lOBoheTlPOslkwPsZwdyYqo1I6TRecauuoMk5/nycqg4m91q
-	 ETA3rjwXIP3tcOm9seHv6tcn3BE1wNfr8fwxJI+T6pqENVzs8YI+oLVTlE6lBAdIYq
-	 IguWOFN6qAdQg==
-Received: from localhost (unknown [82.79.138.60])
+	s=arc-20240116; t=1756116935; c=relaxed/simple;
+	bh=wTT4f687RviT4XPRnYOHHt+WIsj2Z5vQhzteBZlx2bc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WHn9sUMsZvO0INfAmw7HIIxwQrkb260PyOHeJOFiHmXsG8bCABJYJcP48K9iMXlqjVN4lGXASmEf48xHxOMoUUVi8/NQBl22BfxY+vXktP9KIutjVSvs6KidSnlu/GzX5tQmDjD1iVy8e5cJXaMzxdrvyA6UKlYK6bSZAYjNxZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=DWOxv7Qt; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=R/SdyWwY; arc=none smtp.client-ip=81.19.104.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202505; t=1756116555;
+	bh=izDY/mIwIJVLtiSbOkgOxgE/5YF0HgMNMtobWE5+ra0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=DWOxv7QtCq0xSl0jRSYrctNrNXYTQVW5eNO3aXD8YKIzf9i5UctKzrLKRXI/rgUvw
+	 Wsya75dHUXXD4QXXYTbaC9VIDpC8s2lVsRc5Aal0ZcRJVzGnIMI9zyP+E6HtTKVBHD
+	 yLumWkFwdDdBlzSKui23x6mLikLuA65PaVMfoDIK72wyb0KLesn9bizH+YooE0D842
+	 FEyhxbeEwa9U8Uai5Bdi7tUsFVuqZfHHlwEnxR+UguY1UVS59F4EL0Se8L1LuRwY4d
+	 uVkZDxTANlVBaI5U8ppmRqNT6PzmNIqvgfs65U19r3w3FdqRJH5lWKXQPrRfti74EU
+	 qR1OvF8Sf/AHA==
+Received: from mailhub11-fb.kaspersky-labs.com (localhost [127.0.0.1])
+	by mailhub11-fb.kaspersky-labs.com (Postfix) with ESMTP id 22853E8C429
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:09:15 +0300 (MSK)
+Received: from mx12.kaspersky-labs.com (mx12.kaspersky-labs.com [91.103.66.155])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 98EB517E0963;
-	Mon, 25 Aug 2025 12:08:46 +0200 (CEST)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Mon, 25 Aug 2025 13:08:36 +0300
-Subject: [PATCH v2 5/5] drm/rockchip: dw_hdmi_qp: Add high color depth
- support
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "mx12.kaspersky-labs.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub11-fb.kaspersky-labs.com (Postfix) with ESMTPS id E3B0DE8C3F1
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:09:14 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202505; t=1756116547;
+	bh=izDY/mIwIJVLtiSbOkgOxgE/5YF0HgMNMtobWE5+ra0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=R/SdyWwYuMwSAAa0BKPJ18t7A7upzqVD7XhbkJywrLpCztdE9en6kDXRZyzx6eMss
+	 CryxOgEE0qEFffcR3nt1h61LhxL4G2IetkkfJcN0aeYR5v1ASOsQZmoNftGVnnTw2k
+	 zYHYXEnqz72n7FlCwiH4MReaiui+RSaIkVhqlWI2yO//C87HuuhPVIKTrUie2JVEYs
+	 vgUcwq8shDku8IuGByJNalEzJ4dzPf9329aGNOnwNws2lZGhnXCWOY/CLswSJHmSP4
+	 N2sKIIz4mRsTEbrwzHvROI1n3tXE9F/N9lclGcgOeartLAyLszW7lfvs+Hjzxv2Rj+
+	 D4FNz7D71M8kQ==
+Received: from relay12.kaspersky-labs.com (localhost [127.0.0.1])
+	by relay12.kaspersky-labs.com (Postfix) with ESMTP id 608A95A143C;
+	Mon, 25 Aug 2025 13:09:07 +0300 (MSK)
+Received: from mail-hq2.kaspersky.com (unknown [91.103.66.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub12.kaspersky-labs.com (Postfix) with ESMTPS id E740B5A1785;
+	Mon, 25 Aug 2025 13:09:06 +0300 (MSK)
+Received: from larshin.avp.ru (10.16.104.188) by HQMAILSRV4.avp.ru
+ (10.64.57.54) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.36; Mon, 25 Aug
+ 2025 13:09:06 +0300
+From: Vitaly Grigoryev <Vitaly.Grigoryev@kaspersky.com>
+To: <ntfs3@lists.linux.dev>
+CC: Vitaly Grigoryev <Vitaly.Grigoryev@kaspersky.com>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>,
+	<Maxim.L.Alexandrov@kaspersky.com>
+Subject: [PATCH] fs: ntfs3: Fix integer overflow in run_unpack()
+Date: Mon, 25 Aug 2025 13:08:55 +0300
+Message-ID: <20250825100855.1590067-1-Vitaly.Grigoryev@kaspersky.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250825-rk3588-10bpc-v2-5-955622d16985@collabora.com>
-References: <20250825-rk3588-10bpc-v2-0-955622d16985@collabora.com>
-In-Reply-To: <20250825-rk3588-10bpc-v2-0-955622d16985@collabora.com>
-To: Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: HQMAILSRV4.avp.ru (10.64.57.54) To HQMAILSRV4.avp.ru
+ (10.64.57.54)
+X-KSE-ServerInfo: HQMAILSRV4.avp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 08/25/2025 09:49:40
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 195738 [Aug 25 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: Vitaly.Grigoryev@kaspersky.com
+X-KSE-AntiSpam-Info: LuaCore: 64 0.3.64
+ 96c1edcdaeab4cf6c1fd6858be74d3893179d628
+X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
+X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: larshin.avp.ru:7.1.1,5.0.1;kaspersky.com:7.1.1,5.0.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
+X-KSE-AntiSpam-Info: {Tracking_white_helo}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Deterministic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 08/25/2025 09:51:00
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 8/25/2025 9:19:00 AM
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/08/25 09:32:00 #27692559
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 52
 
-Since both RK3576 and RK3588 SoCs are capable of handling 10 bpc color
-depth, introduce a pair of new helpers to program the necessary
-registers, as well as passing bpc at PHY configuration level.
+The MFT record relative to the file being opened contains its runlist,
+an array containing information about the file's location on the physical
+disk. Analysis of all Call Stack paths showed that the values of the
+runlist array, from which LCNs are calculated, are not validated before
+run_unpack function.
 
-Note max_bpc is unconditionally set to 10 before initializing the QP
-bridge library, as there is no need to adjust it dynamically, i.e. per
-SoC variant, for now.
+The run_unpack function decodes the compressed runlist data format
+from MFT attributes (for example, $DATA), converting them into a runs_tree
+structure, which describes the mapping of virtual clusters (VCN) to
+logical clusters (LCN). The NTFS3 subsystem also has a shortcut for
+deleting files from MFT records - in this case, the RUN_DEALLOCATE
+command is sent to the run_unpack input, and the function logic
+provides that all data transferred to the runlist about file or
+directory is deleted without creating a runs_tree structure.
 
-While setting up .enc_init() callbacks of rockchip_hdmi_qp_ctrl_ops,
-also replace the unnecessary whitespace chars before .irq_callback()
-assignments.
+Substituting the runlist in the $DATA attribute of the MFT record for an
+arbitrary file can lead either to access to arbitrary data on the disk
+bypassing access checks to them (since the inode access check
+occurs above) or to destruction of arbitrary data on the disk.
 
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Add overflow check for addition operation.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: 4342306f0f0d ("fs/ntfs3: Add file operations and implementation")
+Signed-off-by: Vitaly Grigoryev <Vitaly.Grigoryev@kaspersky.com>
 ---
- drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c | 59 ++++++++++++++++++++++++--
- 1 file changed, 56 insertions(+), 3 deletions(-)
+ fs/ntfs3/run.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-index 0f2b421134af9f935758266af45c5779407b4144..81f106ac7b561110b4be39d58e99a225af7786f2 100644
---- a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-@@ -7,6 +7,7 @@
-  * Author: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-  */
+diff --git a/fs/ntfs3/run.c b/fs/ntfs3/run.c
+index aaaa0d3d35a2..09e4c5d90a2d 100644
+--- a/fs/ntfs3/run.c
++++ b/fs/ntfs3/run.c
+@@ -9,6 +9,7 @@
+ #include <linux/blkdev.h>
+ #include <linux/fs.h>
+ #include <linux/log2.h>
++#include <linux/overflow.h>
  
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/gpio/consumer.h>
- #include <linux/mfd/syscon.h>
-@@ -68,6 +69,12 @@
- #define RK3588_HDMI1_LEVEL_INT		BIT(24)
- #define RK3588_GRF_VO1_CON3		0x000c
- #define RK3588_GRF_VO1_CON6		0x0018
-+#define RK3588_COLOR_DEPTH_MASK		GENMASK(7, 4)
-+#define RK3588_8BPC			0x0
-+#define RK3588_10BPC			0x6
-+#define RK3588_COLOR_FORMAT_MASK	GENMASK(3, 0)
-+#define RK3588_RGB			0x0
-+#define RK3588_YUV420			0x3
- #define RK3588_SCLIN_MASK		BIT(9)
- #define RK3588_SDAIN_MASK		BIT(10)
- #define RK3588_MODE_MASK		BIT(11)
-@@ -96,6 +103,7 @@ struct rockchip_hdmi_qp {
+ #include "debug.h"
+ #include "ntfs.h"
+@@ -979,12 +980,16 @@ int run_unpack(struct runs_tree *run, struct ntfs_sb_info *sbi, CLST ino,
  
- struct rockchip_hdmi_qp_ctrl_ops {
- 	void (*io_init)(struct rockchip_hdmi_qp *hdmi);
-+	void (*enc_init)(struct rockchip_hdmi_qp *hdmi, struct rockchip_crtc_state *state);
- 	irqreturn_t (*irq_callback)(int irq, void *dev_id);
- 	irqreturn_t (*hardirq_callback)(int irq, void *dev_id);
- };
-@@ -110,9 +118,16 @@ static struct rockchip_hdmi_qp *to_rockchip_hdmi_qp(struct drm_encoder *encoder)
- static void dw_hdmi_qp_rockchip_encoder_enable(struct drm_encoder *encoder)
- {
- 	struct rockchip_hdmi_qp *hdmi = to_rockchip_hdmi_qp(encoder);
-+	struct drm_crtc *crtc = encoder->crtc;
- 
- 	/* Unconditionally switch to TMDS as FRL is not yet supported */
- 	gpiod_set_value(hdmi->enable_gpio, 1);
+ 			if (!dlcn)
+ 				return -EINVAL;
+-			lcn = prev_lcn + dlcn;
 +
-+	if (!crtc || !crtc->state)
-+		return;
++			if (check_add_overflow(prev_lcn, dlcn, &lcn))
++				return -EINVAL;
+ 			prev_lcn = lcn;
+ 		} else
+ 			return -EINVAL;
+ 
+-		next_vcn = vcn64 + len;
++		if (check_add_overflow(vcn64, len, &next_vcn))
++			return -EINVAL;
 +
-+	if (hdmi->ctrl_ops->enc_init)
-+		hdmi->ctrl_ops->enc_init(hdmi, to_rockchip_crtc_state(crtc->state));
- }
+ 		/* Check boundary. */
+ 		if (next_vcn > evcn + 1)
+ 			return -EINVAL;
+@@ -1145,7 +1150,8 @@ int run_get_highest_vcn(CLST vcn, const u8 *run_buf, u64 *highest_vcn)
+ 			return -EINVAL;
  
- static int
-@@ -125,16 +140,19 @@ dw_hdmi_qp_rockchip_encoder_atomic_check(struct drm_encoder *encoder,
- 	union phy_configure_opts phy_cfg = {};
- 	int ret;
+ 		run_buf += size_size + offset_size;
+-		vcn64 += len;
++		if (check_add_overflow(vcn64, len, &vcn64))
++			return -EINVAL;
  
--	if (hdmi->tmds_char_rate == conn_state->hdmi.tmds_char_rate)
-+	if (hdmi->tmds_char_rate == conn_state->hdmi.tmds_char_rate &&
-+	    s->output_bpc == conn_state->hdmi.output_bpc)
- 		return 0;
- 
- 	phy_cfg.hdmi.tmds_char_rate = conn_state->hdmi.tmds_char_rate;
-+	phy_cfg.hdmi.bpc = conn_state->hdmi.output_bpc;
- 
- 	ret = phy_configure(hdmi->phy, &phy_cfg);
- 	if (!ret) {
- 		hdmi->tmds_char_rate = conn_state->hdmi.tmds_char_rate;
- 		s->output_mode = ROCKCHIP_OUT_MODE_AAAA;
- 		s->output_type = DRM_MODE_CONNECTOR_HDMIA;
-+		s->output_bpc = conn_state->hdmi.output_bpc;
- 	} else {
- 		dev_err(hdmi->dev, "Failed to configure phy: %d\n", ret);
- 	}
-@@ -373,15 +391,49 @@ static void dw_hdmi_qp_rk3588_io_init(struct rockchip_hdmi_qp *hdmi)
- 	regmap_write(hdmi->regmap, RK3588_GRF_SOC_CON2, val);
- }
- 
-+static void dw_hdmi_qp_rk3576_enc_init(struct rockchip_hdmi_qp *hdmi,
-+				       struct rockchip_crtc_state *state)
-+{
-+	u32 val;
-+
-+	if (state->output_bpc == 10)
-+		val = HIWORD_UPDATE(FIELD_PREP(RK3576_COLOR_DEPTH_MASK, RK3576_10BPC),
-+				    RK3576_COLOR_DEPTH_MASK);
-+	else
-+		val = HIWORD_UPDATE(FIELD_PREP(RK3576_COLOR_DEPTH_MASK, RK3576_8BPC),
-+				    RK3576_COLOR_DEPTH_MASK);
-+
-+	regmap_write(hdmi->vo_regmap, RK3576_VO0_GRF_SOC_CON8, val);
-+}
-+
-+static void dw_hdmi_qp_rk3588_enc_init(struct rockchip_hdmi_qp *hdmi,
-+				       struct rockchip_crtc_state *state)
-+{
-+	u32 val;
-+
-+	if (state->output_bpc == 10)
-+		val = HIWORD_UPDATE(FIELD_PREP(RK3588_COLOR_DEPTH_MASK, RK3588_10BPC),
-+				    RK3588_COLOR_DEPTH_MASK);
-+	else
-+		val = HIWORD_UPDATE(FIELD_PREP(RK3588_COLOR_DEPTH_MASK, RK3588_8BPC),
-+				    RK3588_COLOR_DEPTH_MASK);
-+
-+	regmap_write(hdmi->vo_regmap,
-+		     hdmi->port_id ? RK3588_GRF_VO1_CON6 : RK3588_GRF_VO1_CON3,
-+		     val);
-+}
-+
- static const struct rockchip_hdmi_qp_ctrl_ops rk3576_hdmi_ctrl_ops = {
- 	.io_init		= dw_hdmi_qp_rk3576_io_init,
--	.irq_callback	        = dw_hdmi_qp_rk3576_irq,
-+	.enc_init		= dw_hdmi_qp_rk3576_enc_init,
-+	.irq_callback		= dw_hdmi_qp_rk3576_irq,
- 	.hardirq_callback	= dw_hdmi_qp_rk3576_hardirq,
- };
- 
- static const struct rockchip_hdmi_qp_ctrl_ops rk3588_hdmi_ctrl_ops = {
- 	.io_init		= dw_hdmi_qp_rk3588_io_init,
--	.irq_callback	        = dw_hdmi_qp_rk3588_irq,
-+	.enc_init		= dw_hdmi_qp_rk3588_enc_init,
-+	.irq_callback		= dw_hdmi_qp_rk3588_irq,
- 	.hardirq_callback	= dw_hdmi_qp_rk3588_hardirq,
- };
- 
-@@ -474,6 +526,7 @@ static int dw_hdmi_qp_rockchip_bind(struct device *dev, struct device *master,
- 
- 	plat_data.phy_ops = cfg->phy_ops;
- 	plat_data.phy_data = hdmi;
-+	plat_data.max_bpc = 10;
- 
- 	encoder = &hdmi->encoder.encoder;
- 	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
-
+ #ifndef CONFIG_NTFS3_64BIT_CLUSTER
+ 		if (vcn64 > 0x100000000ull)
 -- 
-2.50.1
+2.39.5
 
 
