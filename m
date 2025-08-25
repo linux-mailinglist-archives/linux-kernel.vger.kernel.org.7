@@ -1,464 +1,194 @@
-Return-Path: <linux-kernel+bounces-785121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F60FB34638
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:46:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E63B34639
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:46:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E141162746
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:46:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 450F948061A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EAD2F5334;
-	Mon, 25 Aug 2025 15:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D5324677A;
+	Mon, 25 Aug 2025 15:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nnsXwwbA"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="I0CWg/Vn"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013052.outbound.protection.outlook.com [52.101.72.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5849278771;
-	Mon, 25 Aug 2025 15:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756136757; cv=none; b=cVV0y+tgYg9NJ5VHeRsgScSKLIzl1bf0yV40hBw2uX3MlJhmWa5/r1aYVCTkJILWBL9NEZOQ6Opqpa07F8/oxQ0yA3bxVNCkwCqk7IUqjgiubWvQoDD5h8x9dE80il1VfNfnn3ZQPjFxFe1OjPU01mbwLf7CyLz/Bh7HOaZgxmc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756136757; c=relaxed/simple;
-	bh=gpwk34UtNdwchwZ86ose4BoGJLBjkAAyl6IX6ZmWXP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n8VAZi8VCoYSkWvdnAL1jB5vcHajQJQ6ziJggzYiVvB8fBViJkf3n9sjSi2PVhoDjncPJacDL6HZObbq3UVHCR49KKUj7tcJ54nEaB1A7gYzvvGK0OB29DWu/ZHg5NSZUSsQ2cmF2xAD8IKVePTtSkqkhy1bedtTHNuNatQSn0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nnsXwwbA; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7acfde3so672685966b.3;
-        Mon, 25 Aug 2025 08:45:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756136753; x=1756741553; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=okN3TzR4B4zAGpHAfXKiCwVxyhlUlFs/QttoG5tVXWc=;
-        b=nnsXwwbAiT+wyOnbCkKC1hrA89KRAuosWXphx8V+9enjnYj/b4iU1J9aUkefNRz41i
-         z7Ma6GTlDzaOAfRO2mCqa04Stt6SfxFp+sj82dl2n1S0NBgAx5IZiHDdLSBfd3iKIYTC
-         45HyOHWVSuOHPdg48gmB7ZXTHVuLMBGGraaSX5T/CC0B3QIXU622O0GFQFPogFgAljtS
-         5XPVLE24RVvQ/3ku0z854Cj3dJsoVEaSapMCWSoDsuVX3Wvs673MHUSZjRbt0KF82A0a
-         C18jufHdZnaOBpsI+UGc6GISXNtS3CJYqNWupxmx6MfL1YdXLFECFo2KoJq+HU0eZXFf
-         2QtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756136753; x=1756741553;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=okN3TzR4B4zAGpHAfXKiCwVxyhlUlFs/QttoG5tVXWc=;
-        b=hzX6UG07W6f/H/vbARmhnDPjbXyq7OuSsfpC6K0TQtF9X/ZsLVwdSL/3fq4Uv1YYnC
-         QuTP0Mpu0t+R9VIUFZD7W8J97UrqxnJCDPYh4uMTfr+CGZMWHRmBEXxbBwt7pTeFz1zk
-         +KRj9BT6RW648924ENE1tXWTEc36MEgQLD8enyiL/8P+q7+rxdKw/sDZDaPZtS+VoVSl
-         xrBHfi4zPZdCvcTOJV7X7D7IFPy+AqzroKByTym+jfFI7p8FG75ZLrRvSb134TgH0Stt
-         ClvPH1MBJAVs+MD//8YwwRDRF6q5x6K9+ayoOqpAuklRoI6ZO/Mji2O+ewfG0aiVyCBS
-         5q1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVTgQOAt8KV0Hsqm9Y1YeOYYv8/gkcwyNRc4enI4mH1pL5MjM1XlU0TbVBKBtFCCVcNxYB46xbRZAP5j1si@vger.kernel.org, AJvYcCXagS7PEyg/emFGg4ZY0YcVIg68D8lDydjYf/CFm7nwAVGrFBPerYrIMDThHKqRDIBzWryZX42I2UO4Uxumvw==@vger.kernel.org, AJvYcCXpUkHwRcN0zXcTumHiGA8DST5J5XVsugu0i5taDV5FBSRpnS0bT2TFOg9X1qw6ckVbnvBYgVc8Lwe3PW/V@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLO6vRKT4XntiEZ1tXu/iCSgOtCqR7B9jFXXt4PVTpQlb1LOzK
-	KTn2USuUSM5q6GXb9do3ejY/iriFvMQJjlBzsTiAfSsFxQsuKjZZ89mKyjqV2XrCbRQMay8UuyM
-	NFDsUS/GKwcvYkWFa57NwZnQaoFnGdzo=
-X-Gm-Gg: ASbGncsyYo55QiuxbytgjbUtIdX6N89Kb/96KZwULM9GXtrNOTKBemSO0FL2OpQJqrJ
-	JFhqsz6F/CE1xfqVldwr/d+YAi9N7cwiis57DqQYXnjtEYoklCHzs14Gj7Sb5ug5nsitxoyu3gZ
-	2qX9v3mzfLgokcnPmYHM4ihvnehStxGRAVTJSk/tm+R/OduLEngYtWP8tSj3GyXyxO+apT9EwaE
-	bq2hQyuAaxeMj7XOQ==
-X-Google-Smtp-Source: AGHT+IGfmy4YKPmxcWMaGbKgQNJp77bsCl79ES9qeXok+cHbOQcOoMPF/IE9D1lC6vaCDok0greka6PqGS9D8gk6jf4=
-X-Received: by 2002:a05:6402:34d6:b0:61c:6ca1:1a8c with SMTP id
- 4fb4d7f45d1cf-61c6ca1237fmr2884059a12.20.1756136752540; Mon, 25 Aug 2025
- 08:45:52 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9AC23BD04
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 15:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756136790; cv=fail; b=rYOtrUm793geituXlvkh9zf0EHfjDGcw/V1F9TJ70zv3EAWPhv500exMpo7bsImBSFymvbyUD8Cwy+Dlk1JobJBMBuK1SHSgg9S1zDUZ5v7oq66SUTWh0wiPLh9UpKUCJVnBNPiJiKsunIsXBC/0IE5vah5k1eQGcDI/uolLPlY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756136790; c=relaxed/simple;
+	bh=zXBjmah7D+IwTv927GM96jqOyCHgw0PAF+KW93XMTyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=InD6ZNKGnhB2Ck49b4oVgUfUmLwh4ebPQltls5hqik7DORN1CgGmbcx4DfYHb8N9oXqFzcLnqhyyMdD1TXiIl6Jl426XWs5FyqVS5Ji0f2UYcglsR2PMShRaNecp3Fm5dVgd6clDv88zZc/IRWAjiPHzxf8e3bw1xdbb0itUfe8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=I0CWg/Vn; arc=fail smtp.client-ip=52.101.72.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=n0YgeNuDzbOcxL6TABx0FhdWFVthYW3V8xj3XLYoDmZHrY8CskipghtT2f9vZEFWQY8eLxZAMzvw4m+VMDCcYo1zMqrTcuZ4vlyXP03aNXLx6De8U48j9UCQVIMxM3pq0FKgsqiFJ470a045CzE0Ql/iXUwndOy9PVfX3UbBlM8cjSYLZveEbMGBldEI8tpBP2j0/+blljfOUboZlgAXsrHBAYQM4wAr08kpx1a++6dlHATiM2FWZVFVt5sB9ZyKcWhh/RkHoFJgF+wJt3blnDieB6M18UOCokuzCRjDGsrs8vKSo6K/z9uvQBr6yhykx8LX1vCXMh4k+QKtYB9TTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lX+zHQ4c6OEktZD0D2m33R8PS7VlN/N0n/ZRk34tuEs=;
+ b=vg7CkbZFNuxUL6ymFPOKF1te45Y+QjU0S1H7KBmimeApeE+khFiRj1ssk1OLfukiRVj+2qJatbmR1BJRmi3VZ4NfoW+th3zpGVa+V5OuqTx4YqJX3k6NznoxJjiKCyvQQiNPzPuuF3WWHYXVKXMfQBT/yPzjkJgLTpRTarAM4fycgRN/IOzbG+/FFnYKkS7Xt9N2DKkkq5ghuTmruWeyAYyQN7GN/xUrOR4c5eSvnfK3uNCOFIOLnm3YxejIPz0YWUWl7KT8MzgIFvMKxC7jbb4057RLUBP8axMQDnLtsKK0nravxDHVbC39WAbpscNEChgxkIpWL4Uo1hB9uBDjEg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lX+zHQ4c6OEktZD0D2m33R8PS7VlN/N0n/ZRk34tuEs=;
+ b=I0CWg/VnmmobAGXPktft9kwNuFtrvwjLaGG3DhhVaT+lk9fy9++cUNr6w+uucEEBeTaZa8UcYTtu/E4XB8+VHJYRatokwv9bL0eCRYX9HeP4q8VTz9AjhJUWChHx1CQhrC2ModvnngfqgueLM7uebCdagnpBXDp/r3G7rHlKxxlC1afGdKrUO7MMiW/OiEWPSh2saJuikBWwTNXLd7EHVckcpNMC4qz9p42hGhT7XlGiEz7IoPKmEN5ldAB4Fk+mChBgHLp8qu+oBaIsw//OmMiZktWTwFCU7x6puuS9k7wD4gPmnsTAxscFq9CK0RqxgSCUB2Y5G6udP3EnFZGqNQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
+ by PAXPR04MB8765.eurprd04.prod.outlook.com (2603:10a6:102:20c::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.12; Mon, 25 Aug
+ 2025 15:46:25 +0000
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b317:9c26:147f:c06e]) by AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b317:9c26:147f:c06e%7]) with mapi id 15.20.9073.010; Mon, 25 Aug 2025
+ 15:46:25 +0000
+Date: Mon, 25 Aug 2025 18:46:22 +0300
+From: Ioana Ciornei <ioana.ciornei@nxp.com>
+To: Salah Triki <salah.triki@gmail.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] bus: fsl-mc: Check return value of
+ platform_get_resource()
+Message-ID: <6o6t4cnfr2untfmm2yykhnh3h24vpk42hfzsejyf4krkcpbzow@ohrp56cwvvzv>
+References: <aKwuK6TRr5XNYQ8u@pc>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKwuK6TRr5XNYQ8u@pc>
+X-ClientProxiedBy: AS4P191CA0035.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:20b:657::11) To AS8PR04MB8868.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42f::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
- <20250822-tonyk-overlayfs-v6-4-8b6e9e604fa2@igalia.com> <875xeb64ks.fsf@mailhost.krisman.be>
- <CAOQ4uxiHQx=_d_22RBUvr9FSbtF-+DJMnoRi0QnODXRR=c47gA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiHQx=_d_22RBUvr9FSbtF-+DJMnoRi0QnODXRR=c47gA@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 25 Aug 2025 17:45:40 +0200
-X-Gm-Features: Ac12FXxIFbqcDt5vi70gupTgtojKH-1UE_eI82gWTnYNvDBc2CwoxRy1AGM23vU
-Message-ID: <CAOQ4uxgaefXzkjpHgjL0AZrOn_ZMP=b1TKp-KDh53q-4borUZw@mail.gmail.com>
-Subject: Re: [PATCH v6 4/9] ovl: Create ovl_casefold() to support casefolded strncmp()
-To: Gabriel Krisman Bertazi <gabriel@krisman.be>
-Cc: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	kernel-dev@igalia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|PAXPR04MB8765:EE_
+X-MS-Office365-Filtering-Correlation-Id: 58050df9-322d-4e03-8f9b-08dde3ee8c51
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|19092799006|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?J4UjAeUs0IY8ZTuhog/7He2qYlDwiAYXPPffDorqvGg9xUyq7oR7WW+5ypg2?=
+ =?us-ascii?Q?u238/K1IbDGdo52TCp5aby9vqIPXV/jPyaZ+3zUSVGuoaerNXXf2vk5dYPQS?=
+ =?us-ascii?Q?u3AxTmsLMRlu4wG4lJa8GudQRTBraTcn6mgLpBE8HRWBzSe+F+7jFsN5aRZr?=
+ =?us-ascii?Q?mUxDTZ+DHTeYpBHGUvSZDlInA0pvnN2ozB16L7pI0NtFofiTsnipYlhLVnoI?=
+ =?us-ascii?Q?h/aCUJruYCi0lowQHc6OtZjc/TGjBdCZCUrtk9rk4sxyfx02QriGrDRSAbMy?=
+ =?us-ascii?Q?+ArPX2/t0ItjlTXr+BUxg8Sa8vSnAWHdieR/W6dQx2jt0ZvdKIe4Juifx/PZ?=
+ =?us-ascii?Q?YlwxNU9YE5+xXpF3IZMbRGOXB1kmIpV78YfReJillGUaSQr5oLFb/NUe76MB?=
+ =?us-ascii?Q?9a4pY6rpgZgQM1u87A+VRHsdb5p9sVcJdDepisonFMfaFb570O8Vxg0R42HQ?=
+ =?us-ascii?Q?Tajohe1SZXVCvqOkyAAlKNc82tnRXM7uFnxQ/T3uUpcZtKtL+CkJPcEK/pfW?=
+ =?us-ascii?Q?Hbi+dhsfySWEtXYZJNwvhVRlI0EyPRR+6caeU2qf1nhyLNkxEhuMhza8+Zo4?=
+ =?us-ascii?Q?sIB8NQyIQOcqchFmNtukaTrT8v6ChVz6luxU/lCySALKKfaM2SL6lIw2HNU5?=
+ =?us-ascii?Q?RoV6Urf095cmr595uNQGUiL3pB9QaDUXoSHm0T8YdR75NbFm8PQHR3Y+ZtS1?=
+ =?us-ascii?Q?XiY3gTRJtcllZKVyzc50j50OsO/8th00dsCTKhtpXV9eUV0Nker4cdUod190?=
+ =?us-ascii?Q?ZzuzPlucDTlUcGO7zHCqdx2fbR2vVHT11naSdqjvRvC8LD9RlW61yP1+kSHm?=
+ =?us-ascii?Q?h1DfUIFUuwd7oJ1S5kI8NSyWlBXYNH4LANochhh7tqDuJ2SmzwzioGl+mhOQ?=
+ =?us-ascii?Q?hSlYO6fg8RNFMZWaMp8w6HImTaaObvTCGaIrV3LJIYVAzDaqGE4+/hdPnxx9?=
+ =?us-ascii?Q?UknjhAPHuKlO0eH2dCCpr8AHHPKRzyX/lbeOx3QnjbZV0TZXiS+HkLoSoW3E?=
+ =?us-ascii?Q?S9Ssd94vkhPunskDxPGd8os++4POul99qjKFwTN85qqbR+T/K8S2qhJw67gY?=
+ =?us-ascii?Q?2jVKbHv4aKz3Btl0MFdSYtb0NaJKksXIj+XAuanE6J09LvYZ/nxc4wN78tX+?=
+ =?us-ascii?Q?RJ+gwEQ80x+3K1k28BcMJrPT+0uIUxG30kGi/IlMdstyHQKvMcxL81sisM9V?=
+ =?us-ascii?Q?DcXQOhcKMK8Y+yQ/3X+IT+ZjYIYylzn8mcu+mzG9SHCr5OgVr69W1YQbworL?=
+ =?us-ascii?Q?xx21VqniUGXBgPnlhHtuGJ7NY33HCMt+/i5yucztLHxvFP1YFLKwgz3Wom1W?=
+ =?us-ascii?Q?WlT9E4irqq5mIJltQ4wDgr4GQ8vfiaMjXdbyVLkdIXQZirfOP/WdkLOQzLM4?=
+ =?us-ascii?Q?tYUCMFzhGIidbb8VeseUc2pbqlhWhS7jq4hRJPJaMTdpWh7f3+NiMusyNxhi?=
+ =?us-ascii?Q?fEM7712P9V4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(19092799006)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?o5DP2XXMHz8Gbgad2ofMGZYDCB02USL27cyAosARsjKyAzjmYvTrZ6mXxVkR?=
+ =?us-ascii?Q?wQnQkEdWflbzec9o2f66EEvolk2uazfpxFvMmK0UAW6RebNfrWcf1FtsBOqi?=
+ =?us-ascii?Q?l98WJrad3jkfRpP/0S4RqdVTh2TdHTmBcj27m4TbftWQxmiLyC3Ho3Z5S4L/?=
+ =?us-ascii?Q?FqEqXDeleDJinSo3s7YrWw7m/P9IsVf10zRxGZJru6kzjG1fB7XXb6n5X//f?=
+ =?us-ascii?Q?1bfW3A8RorsAmituJS9FG9kDMat80IFaC9zXn7oiz8sA4aClVnCLy5HmHxaH?=
+ =?us-ascii?Q?BIrxDAbbnfI2UIYifRokQxRPgNsXK8YStVmWDeZUgfUmJB8lVApkn2GzHk/N?=
+ =?us-ascii?Q?lYFEn17XOvbEU/G3CgRG9I+1XNKKHNYyaO6FMdva1ZO0idqppJnlpt5wNYFe?=
+ =?us-ascii?Q?Og1jzC6dSTHzH187cgyZG7c7aqg/JA6233kEQgg4x31Tsfw3Id8mMpGfXWw/?=
+ =?us-ascii?Q?nQOhWU48Z+Z73inUT1hd5v0yffg48SrWOvBGSd9K5WWc80dfeKawBu+JZILi?=
+ =?us-ascii?Q?K8UVXDdniWeNVzPuRkOVwGpk8YmPifouyxV3wgO4tQMV80vXE3iiyVWcuAdT?=
+ =?us-ascii?Q?iWuXpbYwRwF5DqHojTeBv7gLkNSsHAiG1KUmw3y5NH0m71wZ3pLFFhRKP7Xd?=
+ =?us-ascii?Q?fv1vRcylBWjdt+RM9YKsxdRdMguu+CmUvb7tzupg9dWMe8Dohkwb1P8hSKDb?=
+ =?us-ascii?Q?G6kefzmtGauTzLuY3Ta1FkEAxtMKBwkL+U2pVQj93hPPecpAdun50X0KCkIr?=
+ =?us-ascii?Q?PJqbgtsGJtpWJp1iZOUFtS7DV3DvOG7S2o6CdTgqydQM4+mCegiWjVXtw1JX?=
+ =?us-ascii?Q?EBkc5X3kIwzS2T06gNg6F6O+zxWkS1eLuqzcRDbup03Sv0gDE3BVKzXaPkz4?=
+ =?us-ascii?Q?CkS8h2h7u1mNu7LxXrlEm3Iw+um6biP9jtxS+/5XISo+3qzau0sWWahRj6YC?=
+ =?us-ascii?Q?4Sd62xONX0bhJaHm8jpGgKJsyDC6oTofJlyWG9LZ0+zUP1Z+ESuNPMLWzRF+?=
+ =?us-ascii?Q?HLaFZtEsvjxeKjLupMuoWt7w9nph9/zLhpDxpk5mFK4/iHgpaRZDh15zrfSr?=
+ =?us-ascii?Q?EwR+XSyF9wty3PMuPAYjc+lDUNMQ8bfqOjtZDsYHRwucKSYvmvTjYseRZtS+?=
+ =?us-ascii?Q?JMqnzu26o+b1yfgxUQ78b45X3dF1BbyO0Bf+sXc2ELpq+RlVno9MIO5l+DTn?=
+ =?us-ascii?Q?sa11E98zDNUtJxiMSF5nhvbvDGuOxhr0vQQRuIZPBgLsphMMF04yotRSesp/?=
+ =?us-ascii?Q?sT+2KbuSCHofUNk3GCvLDstAOn4di1dMj2bfJx9CFLWu7d9s25qx1r997A0s?=
+ =?us-ascii?Q?9VSttUxS5KbQJ3E1rH9nVFVQtd51J7HyObcNL44E6SRKtFqiNA4eVqQSsU68?=
+ =?us-ascii?Q?pZSoEWtFZCLsuWtbi39A4CBhC9gG5qxkh4v12IaKeIx+yjVkZO53VevNUKfa?=
+ =?us-ascii?Q?FMvbCfjmYkhnnOVXrp3eNLzxIt8gj7p7GXA0oqDv2bMgJ0qqmNI7qqiXZTdD?=
+ =?us-ascii?Q?Vgp1h15UWZrzSAOSytsnO1rv9VQ7/I8TgrHe950EQzilPKZIEJd7trjI2Bid?=
+ =?us-ascii?Q?HGVuXRNHwTYE0Igc4u+/S29t4TsCF6M7zjCkvhiB?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58050df9-322d-4e03-8f9b-08dde3ee8c51
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 15:46:25.3973
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fQtDwtVLBeqsMh7O6fUquqFgiOmkrPFeE0VnFiGxGhtI/UW/U+JUammsB/CKJnkjNvRmpdaQgM7q56gxtMnM6A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8765
 
-On Mon, Aug 25, 2025 at 5:27=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Mon, Aug 25, 2025 at 1:09=E2=80=AFPM Gabriel Krisman Bertazi
-> <gabriel@krisman.be> wrote:
-> >
-> > Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
-> >
-> > > To add overlayfs support casefold layers, create a new function
-> > > ovl_casefold(), to be able to do case-insensitive strncmp().
-> > >
-> > > ovl_casefold() allocates a new buffer and stores the casefolded versi=
-on
-> > > of the string on it. If the allocation or the casefold operation fail=
-s,
-> > > fallback to use the original string.
-> > >
-> > > The case-insentive name is then used in the rb-tree search/insertion
-> > > operation. If the name is found in the rb-tree, the name can be
-> > > discarded and the buffer is freed. If the name isn't found, it's then
-> > > stored at struct ovl_cache_entry to be used later.
-> > >
-> > > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> > > Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-> > > ---
-> > > Changes from v6:
-> > >  - Last version was using `strncmp(... tmp->len)` which was causing
-> > >    regressions. It should be `strncmp(... len)`.
-> > >  - Rename cf_len to c_len
-> > >  - Use c_len for tree operation: (cmp < 0 || len < tmp->c_len)
-> > >  - Remove needless kfree(cf_name)
-> > > ---
-> > >  fs/overlayfs/readdir.c | 113 +++++++++++++++++++++++++++++++++++++++=
-+---------
-> > >  1 file changed, 94 insertions(+), 19 deletions(-)
-> > >
-> > > diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> > > index b65cdfce31ce27172d28d879559f1008b9c87320..dfc661b7bc3f87efbf149=
-91e97cee169400d823b 100644
-> > > --- a/fs/overlayfs/readdir.c
-> > > +++ b/fs/overlayfs/readdir.c
-> > > @@ -27,6 +27,8 @@ struct ovl_cache_entry {
-> > >       bool is_upper;
-> > >       bool is_whiteout;
-> > >       bool check_xwhiteout;
-> > > +     const char *c_name;
-> > > +     int c_len;
-> > >       char name[];
-> > >  };
-> > >
-> > > @@ -45,6 +47,7 @@ struct ovl_readdir_data {
-> > >       struct list_head *list;
-> > >       struct list_head middle;
-> > >       struct ovl_cache_entry *first_maybe_whiteout;
-> > > +     struct unicode_map *map;
-> > >       int count;
-> > >       int err;
-> > >       bool is_upper;
-> > > @@ -66,6 +69,27 @@ static struct ovl_cache_entry *ovl_cache_entry_fro=
-m_node(struct rb_node *n)
-> > >       return rb_entry(n, struct ovl_cache_entry, node);
-> > >  }
-> > >
-> > > +static int ovl_casefold(struct unicode_map *map, const char *str, in=
-t len, char **dst)
-> > > +{
-> > > +     const struct qstr qstr =3D { .name =3D str, .len =3D len };
-> > > +     int cf_len;
-> > > +
-> > > +     if (!IS_ENABLED(CONFIG_UNICODE) || !map || is_dot_dotdot(str, l=
-en))
-> > > +             return 0;
-> > > +
-> > > +     *dst =3D kmalloc(NAME_MAX, GFP_KERNEL);
-> > > +
-> > > +     if (dst) {
-> > > +             cf_len =3D utf8_casefold(map, &qstr, *dst, NAME_MAX);
-> > > +
-> > > +             if (cf_len > 0)
-> > > +                     return cf_len;
-> > > +     }
-> > > +
-> > > +     kfree(*dst);
-> > > +     return 0;
-> > > +}
-> >
-> > Hi,
-> >
-> > I should just note this does not differentiates allocation errors from
-> > casefolding errors (invalid encoding).  It might be just a theoretical
-> > error because GFP_KERNEL shouldn't fail (wink, wink) and the rest of th=
-e
-> > operation is likely to fail too, but if you have an allocation failure,=
- you
-> > can end up with an inconsistent cache, because a file is added under th=
-e
-> > !casefolded name and a later successful lookup will look for the
-> > casefolded version.
->
-> Good point.
-> I will fix this in my tree.
+On Mon, Aug 25, 2025 at 10:34:35AM +0100, Salah Triki wrote:
+> platform_get_resource() returns NULL in case of failure, so check its
+> return value and propagate the error in order to prevent NULL pointer
+> dereference.
+> 
+> Fixes: 6305166c8771 ("bus: fsl-mc: Add ACPI support for fsl-mc")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Salah Triki <salah.triki@gmail.com>
 
-wait why should we not fail to fill the cache for both allocation
-and encoding errors?
+Acked-by: Ioana Ciornei <ioana.ciornei@nxp.com>
 
-Thanks,
-Amir.
-
+> ---
+> Changes in v2:
+>    - Add Fixes and Cc tags, as suggested by Markus Elfring and Christophe
+>      Leroy.
+>    - Remove blank line before the if statement, as suggested by Markus
+>      Elfring.
+>    - Replace ENODEV with EINVAL, as suggestd by Christophe Leroy.
+> 
+>  drivers/bus/fsl-mc/fsl-mc-bus.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
+> index 7671bd158545..cd83cd564736 100644
+> --- a/drivers/bus/fsl-mc/fsl-mc-bus.c
+> +++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
+> @@ -1105,6 +1105,9 @@ static int fsl_mc_bus_probe(struct platform_device *pdev)
+>  	 * Get physical address of MC portal for the root DPRC:
+>  	 */
+>  	plat_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!plat_res)
+> +		return -EINVAL;
+> +
+>  	mc_portal_phys_addr = plat_res->start;
+>  	mc_portal_size = resource_size(plat_res);
+>  	mc_portal_base_phys_addr = mc_portal_phys_addr & ~0x3ffffff;
+> -- 
+> 2.43.0
 >
-> >
-> > > +
-> > >  static bool ovl_cache_entry_find_link(const char *name, int len,
-> > >                                     struct rb_node ***link,
-> > >                                     struct rb_node **parent)
-> > > @@ -79,10 +103,10 @@ static bool ovl_cache_entry_find_link(const char=
- *name, int len,
-> > >
-> > >               *parent =3D *newp;
-> > >               tmp =3D ovl_cache_entry_from_node(*newp);
-> > > -             cmp =3D strncmp(name, tmp->name, len);
-> > > +             cmp =3D strncmp(name, tmp->c_name, len);
-> > >               if (cmp > 0)
-> > >                       newp =3D &tmp->node.rb_right;
-> > > -             else if (cmp < 0 || len < tmp->len)
-> > > +             else if (cmp < 0 || len < tmp->c_len)
-> > >                       newp =3D &tmp->node.rb_left;
-> > >               else
-> > >                       found =3D true;
-> > > @@ -101,10 +125,10 @@ static struct ovl_cache_entry *ovl_cache_entry_=
-find(struct rb_root *root,
-> > >       while (node) {
-> > >               struct ovl_cache_entry *p =3D ovl_cache_entry_from_node=
-(node);
-> > >
-> > > -             cmp =3D strncmp(name, p->name, len);
-> > > +             cmp =3D strncmp(name, p->c_name, len);
-> > >               if (cmp > 0)
-> > >                       node =3D p->node.rb_right;
-> > > -             else if (cmp < 0 || len < p->len)
-> > > +             else if (cmp < 0 || len < p->c_len)
-> > >                       node =3D p->node.rb_left;
-> > >               else
-> > >                       return p;
-> > > @@ -145,6 +169,7 @@ static bool ovl_calc_d_ino(struct ovl_readdir_dat=
-a *rdd,
-> > >
-> > >  static struct ovl_cache_entry *ovl_cache_entry_new(struct ovl_readdi=
-r_data *rdd,
-> > >                                                  const char *name, in=
-t len,
-> > > +                                                const char *c_name, =
-int c_len,
-> > >                                                  u64 ino, unsigned in=
-t d_type)
-> > >  {
-> > >       struct ovl_cache_entry *p;
-> > > @@ -167,6 +192,14 @@ static struct ovl_cache_entry *ovl_cache_entry_n=
-ew(struct ovl_readdir_data *rdd,
-> > >       /* Defer check for overlay.whiteout to ovl_iterate() */
-> > >       p->check_xwhiteout =3D rdd->in_xwhiteouts_dir && d_type =3D=3D =
-DT_REG;
-> > >
-> > > +     if (c_name && c_name !=3D name) {
-> > > +             p->c_name =3D c_name;
-> > > +             p->c_len =3D c_len;
-> > > +     } else {
-> > > +             p->c_name =3D p->name;
-> > > +             p->c_len =3D len;
-> > > +     }
-> > > +
-> > >       if (d_type =3D=3D DT_CHR) {
-> > >               p->next_maybe_whiteout =3D rdd->first_maybe_whiteout;
-> > >               rdd->first_maybe_whiteout =3D p;
-> > > @@ -174,48 +207,55 @@ static struct ovl_cache_entry *ovl_cache_entry_=
-new(struct ovl_readdir_data *rdd,
-> > >       return p;
-> > >  }
-> > >
-> > > -static bool ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
-> > > -                               const char *name, int len, u64 ino,
-> > > +/* Return 0 for found, 1 for added, <0 for error */
-> > > +static int ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
-> > > +                               const char *name, int len,
-> > > +                               const char *c_name, int c_len,
-> > > +                               u64 ino,
-> > >                                 unsigned int d_type)
-> > >  {
-> > >       struct rb_node **newp =3D &rdd->root->rb_node;
-> > >       struct rb_node *parent =3D NULL;
-> > >       struct ovl_cache_entry *p;
-> > >
-> > > -     if (ovl_cache_entry_find_link(name, len, &newp, &parent))
-> > > -             return true;
-> > > +     if (ovl_cache_entry_find_link(c_name, c_len, &newp, &parent))
-> > > +             return 0;
-> > >
-> > > -     p =3D ovl_cache_entry_new(rdd, name, len, ino, d_type);
-> > > +     p =3D ovl_cache_entry_new(rdd, name, len, c_name, c_len, ino, d=
-_type);
-> > >       if (p =3D=3D NULL) {
-> > >               rdd->err =3D -ENOMEM;
-> > > -             return false;
-> > > +             return -ENOMEM;
-> > >       }
-> > >
-> > >       list_add_tail(&p->l_node, rdd->list);
-> > >       rb_link_node(&p->node, parent, newp);
-> > >       rb_insert_color(&p->node, rdd->root);
-> > >
-> > > -     return true;
-> > > +     return 1;
-> > >  }
-> > >
-> > > -static bool ovl_fill_lowest(struct ovl_readdir_data *rdd,
-> > > +/* Return 0 for found, 1 for added, <0 for error */
-> > > +static int ovl_fill_lowest(struct ovl_readdir_data *rdd,
-> > >                          const char *name, int namelen,
-> > > +                        const char *c_name, int c_len,
-> > >                          loff_t offset, u64 ino, unsigned int d_type)
-> > >  {
-> > >       struct ovl_cache_entry *p;
-> > >
-> > > -     p =3D ovl_cache_entry_find(rdd->root, name, namelen);
-> > > +     p =3D ovl_cache_entry_find(rdd->root, c_name, c_len);
-> > >       if (p) {
-> > >               list_move_tail(&p->l_node, &rdd->middle);
-> > > +             return 0;
-> > >       } else {
-> > > -             p =3D ovl_cache_entry_new(rdd, name, namelen, ino, d_ty=
-pe);
-> > > +             p =3D ovl_cache_entry_new(rdd, name, namelen, c_name, c=
-_len,
-> > > +                                     ino, d_type);
-> > >               if (p =3D=3D NULL)
-> > >                       rdd->err =3D -ENOMEM;
-> > >               else
-> > >                       list_add_tail(&p->l_node, &rdd->middle);
-> > >       }
-> > >
-> > > -     return rdd->err =3D=3D 0;
-> > > +     return rdd->err ?: 1;
-> > >  }
-> > >
-> > >  void ovl_cache_free(struct list_head *list)
-> > > @@ -223,8 +263,11 @@ void ovl_cache_free(struct list_head *list)
-> > >       struct ovl_cache_entry *p;
-> > >       struct ovl_cache_entry *n;
-> > >
-> > > -     list_for_each_entry_safe(p, n, list, l_node)
-> > > +     list_for_each_entry_safe(p, n, list, l_node) {
-> > > +             if (p->c_name !=3D p->name)
-> > > +                     kfree(p->c_name);
-> > >               kfree(p);
-> > > +     }
-> > >
-> > >       INIT_LIST_HEAD(list);
-> > >  }
-> > > @@ -260,12 +303,36 @@ static bool ovl_fill_merge(struct dir_context *=
-ctx, const char *name,
-> > >  {
-> > >       struct ovl_readdir_data *rdd =3D
-> > >               container_of(ctx, struct ovl_readdir_data, ctx);
-> > > +     struct ovl_fs *ofs =3D OVL_FS(rdd->dentry->d_sb);
-> > > +     const char *c_name =3D NULL;
-> > > +     char *cf_name =3D NULL;
-> > > +     int c_len =3D 0, ret;
-> > > +
-> > > +     if (ofs->casefold)
-> > > +             c_len =3D ovl_casefold(rdd->map, name, namelen, &cf_nam=
-e);
-> > > +
-> > > +     if (c_len <=3D 0) {
-> > > +             c_name =3D name;
-> > > +             c_len =3D namelen;
-> > > +     } else {
-> > > +             c_name =3D cf_name;
-> > > +     }
-> > >
-> > >       rdd->count++;
-> > >       if (!rdd->is_lowest)
-> > > -             return ovl_cache_entry_add_rb(rdd, name, namelen, ino, =
-d_type);
-> > > +             ret =3D ovl_cache_entry_add_rb(rdd, name, namelen, c_na=
-me, c_len, ino, d_type);
-> > >       else
-> > > -             return ovl_fill_lowest(rdd, name, namelen, offset, ino,=
- d_type);
-> > > +             ret =3D ovl_fill_lowest(rdd, name, namelen, c_name, c_l=
-en, offset, ino, d_type);
-> > > +
-> > > +     /*
-> > > +      * If ret =3D=3D 1, that means that c_name is being used as par=
-t of struct
-> > > +      * ovl_cache_entry and will be freed at ovl_cache_free(). Other=
-wise,
-> > > +      * c_name was found in the rb-tree so we can free it here.
-> > > +      */
-> > > +     if (ret !=3D 1 && c_name !=3D name)
-> > > +             kfree(c_name);
-> > > +
-> >
-> > The semantics of this being conditionally freed is a bit annoying, as
-> > it is already replicated in 3 places. I suppose a helper would come in
-> > hand.
->
-> Yeh.
->
-> I have already used ovl_cache_entry_free() in my tree.
->
-> Thanks,
-> Amir.
->
-> >
-> > In this specific case, it could just be:
-> >
-> > if (ret !=3D 1)
-> >         kfree(cf_name);
-> >
-> >
-> > > +     return ret >=3D 0;
-> > >  }
-> > >
-> > >  static int ovl_check_whiteouts(const struct path *path, struct ovl_r=
-eaddir_data *rdd)
-> > > @@ -357,12 +424,18 @@ static int ovl_dir_read_merged(struct dentry *d=
-entry, struct list_head *list,
-> > >               .list =3D list,
-> > >               .root =3D root,
-> > >               .is_lowest =3D false,
-> > > +             .map =3D NULL,
-> > >       };
-> > >       int idx, next;
-> > >       const struct ovl_layer *layer;
-> > > +     struct ovl_fs *ofs =3D OVL_FS(dentry->d_sb);
-> > >
-> > >       for (idx =3D 0; idx !=3D -1; idx =3D next) {
-> > >               next =3D ovl_path_next(idx, dentry, &realpath, &layer);
-> > > +
-> > > +             if (ofs->casefold)
-> > > +                     rdd.map =3D sb_encoding(realpath.dentry->d_sb);
-> > > +
-> > >               rdd.is_upper =3D ovl_dentry_upper(dentry) =3D=3D realpa=
-th.dentry;
-> > >               rdd.in_xwhiteouts_dir =3D layer->has_xwhiteouts &&
-> > >                                       ovl_dentry_has_xwhiteouts(dentr=
-y);
-> > > @@ -555,7 +628,7 @@ static bool ovl_fill_plain(struct dir_context *ct=
-x, const char *name,
-> > >               container_of(ctx, struct ovl_readdir_data, ctx);
-> > >
-> > >       rdd->count++;
-> > > -     p =3D ovl_cache_entry_new(rdd, name, namelen, ino, d_type);
-> > > +     p =3D ovl_cache_entry_new(rdd, name, namelen, NULL, 0, ino, d_t=
-ype);
-> > >       if (p =3D=3D NULL) {
-> > >               rdd->err =3D -ENOMEM;
-> > >               return false;
-> > > @@ -1023,6 +1096,8 @@ int ovl_check_empty_dir(struct dentry *dentry, =
-struct list_head *list)
-> > >
-> > >  del_entry:
-> > >               list_del(&p->l_node);
-> > > +             if (p->c_name !=3D p->name)
-> > > +                     kfree(p->c_name);
-> > >               kfree(p);
-> > >       }
-> >
-> > --
-> > Gabriel Krisman Bertazi
 
