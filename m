@@ -1,122 +1,118 @@
-Return-Path: <linux-kernel+bounces-784037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2D09B335D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:39:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC180B335D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 335F43BEA1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:39:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 473873A87BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F6E26E70C;
-	Mon, 25 Aug 2025 05:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B472765CE;
+	Mon, 25 Aug 2025 05:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="fafnno6i"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="alRG6h58"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4877619309C;
-	Mon, 25 Aug 2025 05:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C20264614;
+	Mon, 25 Aug 2025 05:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756100369; cv=none; b=SBDC/dWpoFbd9BVcCKqXoztc45YvlPL7YCtoxLalmwNiBtuvQJyp5YkN1LgWGhyFFDK2guWPGQ+I+hnz8XljSybuCWqcH2omZN69+xQu8TnFqG6r38sxhxQXBkeonwFtBHrN1Cd0YNRQ+AwJJdXFmlFZQXpgl1XHV3+2DkZ+1MM=
+	t=1756100393; cv=none; b=aOobQkozQ5WEvQhPBttEEle8d2Ylfyj4eqiiMSCmqmud7SOhGpwQsnyBOZBRz/JZiXnrjRByXNEgnz7zIYRFKjD9f05AsVaeD3V2v5EoWbRb0sGG/ZDtjS0l+T2m3wDeDjwn3TDuAX5ln3Fan9/R089YdZ2/iSzsZFKDOzy8zEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756100369; c=relaxed/simple;
-	bh=WSJ4Gse9ryeEUTdsZ6WZfUn3IxNCRlYwK27R0occaRc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SxZ6tOO0F9V/Q/znJwyO3LMiwX5JJdl0Tp3UtLgrpH7B1R55PdILrXhytZ0pyMMolIlsKKM6qE50gtvLzLcgZB+5D/9P4ouD3RyApt2/1xuhV4d7huxX1axQq0x+bU/knmcV5ol36rrMkWgV6DRXdcKMNaauHC7hmZc+Eedf8W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=fafnno6i; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=LE7zGxWMAH8njov+JwT71yg831S+C58Rr2jhVSVOVZg=; b=fafnno6izLAUTtnGjIhzUHVapl
-	NMFmtyRJEWADdP5q2HvCBsDGi5VuS0pqxt11KxOCtG1S9nE9DeZAn9iihgZGvynS7VToAf2XJqild
-	HL4Tq64QcDzT8Fa3y56csOcpC4XttkiO87m404Mk6jKTxkEHBdqq1Dr78IS6JKJGM2aVZl4VgEfCW
-	NTJABJNNeusue/cCD4qEfnc9mfgluYbCvFGrY6ZoHiWPIy7HtEMH3Eihlt7yXrlRaO9krQEXOG3wR
-	3OEwb+xFdwIKzbFOs804ccj+CjpL/t4+NXOdlwEw4veKkUYMTLWLeYU7m2Qo9TpU2CdFmz3AAAMyi
-	cAQ0hYWQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uqPfZ-00H0c1-1Z;
-	Mon, 25 Aug 2025 13:38:58 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 25 Aug 2025 13:38:57 +0800
-Date: Mon, 25 Aug 2025 13:38:57 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: Nhat Pham <nphamcs@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-	"yosry.ahmed@linux.dev" <yosry.ahmed@linux.dev>,
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"21cnbao@gmail.com" <21cnbao@gmail.com>,
-	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"clabbe@baylibre.com" <clabbe@baylibre.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"ebiggers@google.com" <ebiggers@google.com>,
-	"surenb@google.com" <surenb@google.com>,
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
-	"Gomes, Vinicius" <vinicius.gomes@intel.com>,
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>
-Subject: Re: [PATCH v11 00/24] zswap compression batching with optimized
- iaa_crypto driver
-Message-ID: <aKv28XTvAITuq-p8@gondor.apana.org.au>
-References: <20250801043642.8103-1-kanchana.p.sridhar@intel.com>
- <CAKEwX=Pj30Zymib2fEoDW9UyD1vAwxRKO3p28RPtK9DZWAdv8w@mail.gmail.com>
- <aJ7FSUdvxtZyiHBq@gondor.apana.org.au>
- <PH7PR11MB812143269E98B00ED4E5BE4DC93DA@PH7PR11MB8121.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1756100393; c=relaxed/simple;
+	bh=mxpK44SckMFXEKznJOFz2HiVGPh/8LC/M3h+S0GHDy4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Xf/2PiCyHO/bZepebL+56bXhgLKYm3Q6Kng3hsRoZVAuoIeRqhL2ZL/SA/YOi6iQyqLlpsONomrx6hWYmXJgd+Vp3vKeKqEKD3nnBWW/3HnZu6kkdbxL7qMdL1TGuBl7Ise9qEj7A9hAGnncue44ij9ngJ78/OuTj5do7qYKYYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=alRG6h58; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb7347e09so678690366b.0;
+        Sun, 24 Aug 2025 22:39:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756100390; x=1756705190; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mxpK44SckMFXEKznJOFz2HiVGPh/8LC/M3h+S0GHDy4=;
+        b=alRG6h5814rrRQnkHSNQwIWbHzkvYgg8S7+VrIgJb/sUDfLC/g6KR1uB3GqhglVw56
+         kxj3D6Rh9M/mekYTcc00wiYQrG/fjTZjLC+EfdxQAdasSNp/8QLbnrSfbaOVemLCu7qP
+         T8jOpJQxh/HHZTQsqTd96IjGgyDQmE1nfXIaRaZFYpp/gYUKVd6Q3CuvOaIidUERbSOC
+         GIu7ibA/vzRR4eRmnX1IMbVsK4STK2LHeMS5Ru8JzCnpUkqDp9f6MFp/661Bhx8e5XQB
+         KRVfh26LbpHZs4uiWuHp4nIa9z/9KnfOfkiiFysGmCNIXy8Az2V68ReSp3czAyPiBTUt
+         m8nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756100390; x=1756705190;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mxpK44SckMFXEKznJOFz2HiVGPh/8LC/M3h+S0GHDy4=;
+        b=lvmuezhB1QJ6mp8tZlI7JOeGq5kQtpWdp/r8RK4JUsj1MwkwdtnzjJtELujaFxbi4D
+         hmgeqxf9eXx2oSKI16M96SRILHbDkwUcyzrLxCn6IwM5OM1yi7TD7qrMkHVeVKRVn665
+         zYs/GmSZgIEghRYY1nfEZ9Cd7ZNZ1o+Z7hKHdh+Z3NYsJbsHDz54J7tEItxplEE8mKOt
+         TnzOwyaUtkJfq7+ta78PEJvcKnEb2zpU4lfT8lpjp2HhNhHWqiO9AI58KlXY1s/8hJFd
+         ot2py/P8Q33Q9L+H0fjSjjd3YM1CObZwActB7QvG2yLQo8lesbqSpW2CxzHbp4lE1Ac3
+         pAQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwvPYJUOOamacjEyRVNWP4Lmy0iL/2UfpkLKVI0yTLDZf3+iP5ozMVboYpVsG7+aLpSzvX/+/jtPI6pM0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDNOK3yAxX+aDzcXWAJ8Si/e10KdBx8iIon2KBDTHoR1ByUdQc
+	z5oW/lQBYhgocm1Km7yQph628G0B7FYd9LPwHXcQzL27KOzLKuXqoIeTN7wNM1FFX8yCv6v8a/E
+	O670Bn1C6xOEtcowrwTvI6MtoCi92F4yqJbM9Vfo=
+X-Gm-Gg: ASbGnctIH1YkGdFPsaWjm+ZlVQX9v0MdVM+GElIWE6caJPkha8R3xMtYxfZLZ4v15QI
+	7HWQWdrFH7NIBPrJyYOwBKW1IhbW+/rktrqbVMPLe4Mk0wuDyruCuNOujI8e7gix7sUR4WZXIqx
+	/fhlV0tiYm5+rRU8AUlyI6ECGYtO5xxJcIApIiG31dPHpv/qXcq8HWlD5/wa3KTmr9Dm6zSBE9F
+	Ia8pNCv
+X-Google-Smtp-Source: AGHT+IEaQiaHsBBJtRrKxZMIeyC9U4+bkSPHRGLwijQt1ZLdhmO8gPOZQFtEAn7RtBhcHK9WXdQbrZmCEeZZUw8rJXY=
+X-Received: by 2002:a17:907:3da0:b0:ae9:b800:2283 with SMTP id
+ a640c23a62f3a-afe28fcf9cbmr1062548766b.15.1756100389297; Sun, 24 Aug 2025
+ 22:39:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH7PR11MB812143269E98B00ED4E5BE4DC93DA@PH7PR11MB8121.namprd11.prod.outlook.com>
+From: Jiaming Zhang <r772577952@gmail.com>
+Date: Mon, 25 Aug 2025 13:39:06 +0800
+X-Gm-Features: Ac12FXypkx-69iFqbRSt5JyexrJ5Txq-LkOZikAWLXnWlVCiiYBw2E9Fmo4FoY4
+Message-ID: <CANypQFbEySjKOFLqtFFf2vrEe=NBr7XJfbkjQhqXuZGg7Rpoxw@mail.gmail.com>
+Subject: [Discussion] Undocumented behavior of KVM_SET_PIT2 with count=0
+To: kvm@vger.kernel.org
+Cc: pbonzini@redhat.com, seanjc@google.com, linux-kernel@vger.kernel.org, 
+	syzkaller@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 22, 2025 at 07:26:34PM +0000, Sridhar, Kanchana P wrote:
->
-> 1) The zswap per-CPU acomp_ctx has two sg_tables added, one each for
->    inputs/outputs, with nents set to the pool->compr_batch_size (1 for software
->    compressors). This per-CPU data incurs additional memory overhead per-CPU,
->    however this is memory that will anyway be allocated on the stack in
->    zswap_compress(); and less memory overhead than the latter because we know
->    exactly how many sg_table scatterlists to allocate for the given pool
->    (assuming we don't kmalloc in zswap_compress()). I will make sure to quantify
->    the overhead in v12's commit logs.
+Hello KVM maintainers and developers,
 
-There is no need for any SG lists for the source.  The folio should
-be submitted as the source.
+I hope this email finds you well.
 
-So only the destination requires an SG list.
+While fuzzing the KVM subsystem with our modified version of syzkaller
+on Linux Kernel, I came across an interesting behavior with the
+KVM_SET_PIT2 and KVM_GET_PIT2 ioctls.
 
-> 6) "For the source, nothing needs to be done because the folio could be passed
->    in as is.". As far as I know, this cannot be accomplished without
->    modifications to the crypto API for software compressors, because compressed
->    buffers need to be stored in the zswap/zram zs_pools at PAGE_SIZE
->    granularity.
+Specifically, when setting kvm_pit_state2.channels[c].count to 0 via
+KVM_SET_PIT2 and then immediately reading the state back with
+KVM_GET_PIT2, the returned count is 65536 (0x10000). This behavior
+might be surprising for developers because, intuitively, the data
+output via GET should be consistent with the data input via SET. I
+could not find this special case mentioned in the KVM API
+documentation (Documentation/virt/kvm/api.rst).
 
-Sure.  But all it needs is one central fallback path in the acompress
-API.  I can do this for you.
+After looking into the kernel source (arch/x86/kvm/i8254.c), I
+understand this conversion is by design. It correctly emulates the
+physical i8254 PIT, which treats a programmed count of 0 as its
+maximum value (2^16). While the hardware emulation is perfectly
+correct, it may potentially be confusing for users.
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+To prevent future confusion and improve the API's clarity, I believe
+it would be beneficial to add a note to the documentation explaining
+this special handling for count = 0.
+
+I'm bringing this to your attention to ask for your thoughts. If you
+agree, I would be happy to prepare and submit a documentation patch to
+clarify this.
+
+Thank you for your time and for your great work on KVM.
+
+Best Regards,
+Jiaming Zhang.
 
