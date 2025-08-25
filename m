@@ -1,185 +1,127 @@
-Return-Path: <linux-kernel+bounces-785288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA682B34897
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:23:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C32FCB34899
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D285203B75
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:23:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89C807A563F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191F1301033;
-	Mon, 25 Aug 2025 17:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27BF302766;
+	Mon, 25 Aug 2025 17:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GLBV7B6n"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZqBMoMH3"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB44B2877FA
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98D21C84DE
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756142613; cv=none; b=vEdhlItODS4DRsAWK4vsH53E1oBk3XXGHOvT0hXfPNRCRltfkqzb+00i7UlawlTAhrdr9WOiqbti3U1YArDbXLf7ZFwu4n5BlylGoxlpN6DgFkNora+6ieOova8UtfIbW2bGQTPzHJIzizLtaFrOhx3gTx3IzZMKFe2ODxvyw8U=
+	t=1756142672; cv=none; b=kB7x64PRwYdRciVi0A+i2nfT6qFc7a+i4WXP4N0YOml3D7gDxFwXQgeqhHYbsnChLumHAFQaskHsm/SxyLzfHrt4MI5H+3LTCvneoslHiyJ47shxLgujs/niDEGYLCaPSVKKM2Jd4LE3RKiIvus5gOYso3R6kIn2+kDuAZif+IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756142613; c=relaxed/simple;
-	bh=v8495OjBvu99uPy4lp5KmeLejF8w5Q5J1n0rk+evY0Y=;
+	s=arc-20240116; t=1756142672; c=relaxed/simple;
+	bh=XhWDg/JIuuCQd4L0mouLCvJf2fOoYTh89nNKKlrcIks=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eoFmUK51TuFP3c7ZblPlAA2kFM8mz/B/4kRBerpOO69p0fPv3nuRgshak/ieYLY4eSdFBzD2MJjWJ7vs2/ImgsL0PZWNlaIHtGS9LP+mt8ZEanWAvft3o9buy7N5SYLFWubd1bpG4z3cuHLe9g7d/jdza8e6TVgpJjBE204Fco8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GLBV7B6n; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b4755336613so760864a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:23:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=LcHoFurxhAI92ot3/0+GUDy9GK6+42OYOPsV9x0p/WLjf2ABzaeSz4KYws4r/l7/1M0dl5BHdiE8F8Rx03Ik6ebgDi7vf4arstXHSif8k2IbjdZpSLLJIshfjjwN5BMZtI8D6AaWqQj+gyTzp0LFI+9dQ4jbNMonPJycsBPDNDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZqBMoMH3; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-246257e49c8so14535ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:24:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756142611; x=1756747411; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756142670; x=1756747470; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aqS4cexHLHnWD7Uo3Tw+31RDP79iEewYyIROYQwr5zY=;
-        b=GLBV7B6n4ikbrPBaE3hwhu4ct+O7fe4OZdIMWSIFEVYGixz375zT8RmlqNyaJGdQ0N
-         3uajc8oRC1Al5Ls0miVdNq5/z4JSiMAuEkaINifxfv1WL4ya4hXDrsaXlfs/CUGrFN22
-         j+V45bK2SKx6LJiip/1Qt6mLsBuNhoqFv3TGUjCrm7tREnQijKasfqqOcrXWex1f+Ys+
-         iWqBqCYyU0QlAmEKX81z5Q1ZsobXncDLbljmJ+iPagcrbwxPklHSnvqPRM7MDCvztok0
-         WRT5lHKf3sxLQ0x5FSPJjSE+SRf8mIBW7toQYETRQh9Wc7n1lIA9z8YmTIZ7PIkOyn7Q
-         S9Ag==
+        bh=+ORHuStfojgrwK2UdFk3EZ3mv0VOd3rvM8MRoO+GpXI=;
+        b=ZqBMoMH3S6ZPuEe9tUZqj9lkCppXU+moJ8aXG/BIvG60yjE13UlCQJZqmZye+0gWVH
+         7nfK66BmihQigXkDOnC6zHV4hO6mx6qP2wzRn0yidrywrVie9YRC7JyalSL8T0bTBZrN
+         xj79pgBrMz7rhK7J9YziWgsuKcz2FtJHZYvpnaFGYh+jfjlnR6vLaq1Ko+CQ3gnY59d8
+         uI/0RayazQ2adBsLnVZXVrmWpJlNSolShOGXJm3nyUXKCjWukim/q0IcKAPK9y6bKj50
+         JWieqEx+gv4V9aIZh0u71elGBIurRNPEhg7HROmL6/lK4SGrHqg1zIdf4x/xiLd90ODv
+         +6tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756142611; x=1756747411;
+        d=1e100.net; s=20230601; t=1756142670; x=1756747470;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aqS4cexHLHnWD7Uo3Tw+31RDP79iEewYyIROYQwr5zY=;
-        b=C+2IsOzZOJIrAl6Hr37PGOWvQ6qucQhu5GHcZ5N/1/5sLDY2absVBc1mqz/XtAintE
-         s6OJrmhQC/vyNUljj1IdZQs1lMgG9Se7M7SSFJrYmJ4YEbh1kqo+4SdmHJHMcIicqHGs
-         ge8rdlm+uumwCKwKdTSIoTmf8lb3T/O3CZT+yxWlcI6goR8/AQTnVpdr5XPyhlqj4rhD
-         75S8AHmBgAa55pAeTX4c23S+wStcKXtTRQQ/VxbcrIv0gOypuHwNOnwki1GXv36SuesQ
-         +xRNLoGKNyRJs2LRzpQJG3tqTkP70VD2nL/AIoT+IFJo5MmMki2c4S9w4nWuNgoYZaEJ
-         /bVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWc+yRm/LstVs4GOAdDGvx4rqAOBjc0FD9IGxrNn3y3kUd0jx5RRPlw9nIOzPnU/G2HxPKIJ6y5/q9Anhs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4+MjpnUmtv2FWtQDVRbXaIud8eiDPE+qaVPgUtB51qvIc2xho
-	C2m/etnaxTrY+czIG70ngz4UsheXZbbMt2Aj1cUtJhj/RBkJVT4owPdCgghNrLd0CqAcKoeNdSo
-	ktHy+7Y3xYj2lSym1TsIcXolLXKeBrK4=
-X-Gm-Gg: ASbGncvmPB1rn4/jfWDAcRzz94a/nOm0ra68n9Dfh/arqve266FLO4jZS7s81X/InvV
-	XyGZxil/GaKsppJhnIvu0rI+vKSncMJEOSJ3aDueVvbNAE87GHRARCRtd0HmPaK0LCEkOEwtLIb
-	pZxUYW5rVmNQz9eSwS6CN5YmbxdyU4tNNvmCMo0hn8qEE0r4jnIP4hioRalCVWxDZmjLnulKYyl
-	KIL+7dgs6eR0IIFGg==
-X-Google-Smtp-Source: AGHT+IE1UbyOG0uQaMwMqK+bQHsoYXV61D8Hg2qSkndUelszKfzs1G1pDPlfdTtbfqZSK6K7FyJUNQL6bEXJHKvrfFM=
-X-Received: by 2002:a17:902:d508:b0:246:cc19:17de with SMTP id
- d9443c01a7336-246cc19233cmr31752245ad.4.1756142611139; Mon, 25 Aug 2025
- 10:23:31 -0700 (PDT)
+        bh=+ORHuStfojgrwK2UdFk3EZ3mv0VOd3rvM8MRoO+GpXI=;
+        b=rBjGwhviDjyIHqXs5te+2rZgZ9Gvg9mghNRzrxL6MCVLYC0aLQXzV5VdnlWO2HjWGP
+         +lSEntOW4mylVx6/fIQBEibvwpnQag3J3ONejrIt3mU+/ctF+vloKZ73kScAlZo1QCl7
+         Fy/nC4qCCRytD9v9T92CJO/i/YVaLE5Wgw4+xkxkRyg+PAYz5OKp2h/sebyUFnTfMZQS
+         XQcqxpwnM37FprbY8IgjvXzwc8gWeWtIxj5+tGNfgk70lEBTIXLAxsd3nGWRmGOr6A9w
+         eJ7sYNzUpzUgIGf9m/aqZZ7Z4D8Rqk/92qDdXFaSAOv2S1qCyaI5RoY236m6CLFSiQuH
+         oSGw==
+X-Forwarded-Encrypted: i=1; AJvYcCULhI48tZrPQcbiuQq1u3xGIV8WsAafEEqa2hc6OGmRhDqPk6H2lPw3AvkuAd2F8+sDes5cLGEqyK6txUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTQKp7kMM2kRamRj+ie5DRSpnFCuxoZHlYBJ622liINt1DA2jy
+	Cp8TchBnCPCX3NX+i/NFYAJd3qbddknhhur+WaBeAQ7Ks64pIgKr1LyMM5+YZQOxTyAKZJE8/gf
+	eD01uhPrxeulMJMQMhy9YlffKAjxkTYqbw2+driqv
+X-Gm-Gg: ASbGncseQL/DIvoduFAJ7OAjnlDhx4HeuThARZTZUEWMK+gpWn6grtCcLEuUF/RZhmB
+	umw+nuRY/qJBUGGW91ExXclPprnYQNxw02O8/kqKtmY9lyCGE6IAaCo8bb2MHSleEt9ZRasqD7Q
+	WIcno1xOxj4F0DvXW6UO1Pkxu9WEK6jdu+MNJEDJFU6DfTeIyP3H5CIJvzntsY4sNoOdTYFVa9x
+	+lLQA7KDaSTfOaxeZ2sh5ghpEclAuO/osz2liMxlo4c
+X-Google-Smtp-Source: AGHT+IFDSFCq0edWCtHzT5OvxvY5tWpWD1aTjc3Lol46yrNUvieLKtXYNl0Pa+8dgZxjSHXFJ/lZHYpA827qlGdI904=
+X-Received: by 2002:a17:902:e548:b0:240:6076:20cd with SMTP id
+ d9443c01a7336-2467a3cf14fmr5726415ad.15.1756142669923; Mon, 25 Aug 2025
+ 10:24:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822215950.243504-1-alex.t.tran@gmail.com>
-In-Reply-To: <20250822215950.243504-1-alex.t.tran@gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 25 Aug 2025 13:23:19 -0400
-X-Gm-Features: Ac12FXzIvfANo75GNyfElwuZ2CjDPGmbgojBz3IdrFU8y7KVuLQulMTIo6uaxbc
-Message-ID: <CADnq5_NzpnnKPxV2RFX=TVAw9JbRByQbDbCZBaNHhXVjK4fWSw@mail.gmail.com>
-Subject: Re: [PATCH] gpu/drm/amd/amdkfd/kdf_queue.c: removal of kfd_queue_buffer_put
-To: Alex Tran <alex.t.tran@gmail.com>
-Cc: Felix.Kuehling@amd.com, alexander.deucher@amd.com, 
-	christian.koenig@amd.com, airlied@gmail.com, simona@ffwll.ch, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
+References: <20250815182742.45541-1-suchitkarunakaran@gmail.com>
+ <aJ-ScOp3ZCG6PQmD@google.com> <CAO9wTFj7S7G2bqbiuKbR+o7Y0u1EkYY5GsHasJZLmAo5ZuCx9w@mail.gmail.com>
+ <CAO9wTFiJmi7YzeukT0VtnpqcJcE3sSueO3owYUAd+H4wjcYZeQ@mail.gmail.com>
+In-Reply-To: <CAO9wTFiJmi7YzeukT0VtnpqcJcE3sSueO3owYUAd+H4wjcYZeQ@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 25 Aug 2025 10:24:18 -0700
+X-Gm-Features: Ac12FXxRIuAN942liX6eW3sy6FarCbSuSJ3avU2MB-V3vtAsi5N_-7cGnerDC44
+Message-ID: <CAP-5=fWCGa+R1O2sL1anJGznkprQyP2RrsUZfzmrPJ2y-WsEvA@mail.gmail.com>
+Subject: Re: [PATCH RESEND] perf/util: make TYPE_STATE_MAX_REGS architecture-dependent
+To: Suchit Karunakaran <suchitkarunakaran@gmail.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
+	adrian.hunter@intel.com, kan.liang@linux.intel.com, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, guoren@kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-csky@vger.kernel.org, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 23, 2025 at 6:11=E2=80=AFAM Alex Tran <alex.t.tran@gmail.com> w=
-rote:
+On Mon, Aug 25, 2025 at 7:17=E2=80=AFAM Suchit Karunakaran
+<suchitkarunakaran@gmail.com> wrote:
 >
-> Removed kfd_queue_buffer_put to call amdgpu_bo_unref directly.
+> On Sat, 16 Aug 2025 at 12:16, Suchit Karunakaran
+> <suchitkarunakaran@gmail.com> wrote:
+> >
+> > Hi Namhyung,
+> > Thanks for reviewing the patch. I'd like to ask if there's anything
+> > else I should do regarding this patch, given that it's supported only
+> > for x86 and powerpc?
+> >
+> > Thanks,
+> > Suchit
 >
-> Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
-> ---
->  drivers/gpu/drm/amd/amdkfd/kfd_priv.h            |  1 -
->  .../drm/amd/amdkfd/kfd_process_queue_manager.c   |  2 +-
->  drivers/gpu/drm/amd/amdkfd/kfd_queue.c           | 16 +++++-----------
->  3 files changed, 6 insertions(+), 13 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_priv.h b/drivers/gpu/drm/amd/=
-amdkfd/kfd_priv.h
-> index 67694bcd9464..2bc0365b2ce9 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
-> @@ -1312,7 +1312,6 @@ void print_queue_properties(struct queue_properties=
- *q);
->  void print_queue(struct queue *q);
->  int kfd_queue_buffer_get(struct amdgpu_vm *vm, void __user *addr, struct=
- amdgpu_bo **pbo,
->                          u64 expected_size);
-> -void kfd_queue_buffer_put(struct amdgpu_bo **bo);
->  int kfd_queue_acquire_buffers(struct kfd_process_device *pdd, struct que=
-ue_properties *properties);
->  int kfd_queue_release_buffers(struct kfd_process_device *pdd, struct que=
-ue_properties *properties);
->  void kfd_queue_unref_bo_va(struct amdgpu_vm *vm, struct amdgpu_bo **bo);
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c b/dri=
-vers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
-> index 7fbb5c274ccc..b13817e4a829 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
-> @@ -610,7 +610,7 @@ int pqm_update_queue_properties(struct process_queue_=
-manager *pqm,
->                 }
->
->                 kfd_queue_unref_bo_va(vm, &pqn->q->properties.ring_bo);
-> -               kfd_queue_buffer_put(&pqn->q->properties.ring_bo);
-> +               amdgpu_bo_unref(&pqn->q->properties.ring_bo);
->                 amdgpu_bo_unreserve(vm->root.bo);
->
->                 pqn->q->properties.ring_bo =3D p->ring_bo;
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_queue.c b/drivers/gpu/drm/amd=
-/amdkfd/kfd_queue.c
-> index a65c67cf56ff..dd529e37c0e6 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_queue.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_queue.c
-> @@ -224,12 +224,6 @@ int kfd_queue_buffer_get(struct amdgpu_vm *vm, void =
-__user *addr, struct amdgpu_
->         return -EINVAL;
->  }
->
-> -/* FIXME: remove this function, just call amdgpu_bo_unref directly */
+> Hi Namhyung,
+> Following up on this patch. I would appreciate any guidance on further
+> actions needed, considering its current support is only for x86 and
+> PowerPC.
 
-Despite what this comment says, I think it makes sense to keep this
-around so that we have a matching set of put and get functions so it's
-clear why we are putting the reference.  That said if Felix and Harish
-are ok with it, that's fine with me.
+Can we just make  TYPE_STATE_MAX_REGS 32? There's no reason to assume
+the architecture the perf binary is built on matches the perf.data
+file being processed by perf annotate. Given 32 is bigger than 16 then
+this can just be a maximum value (a comment to this effect in the code
+would be grand). In general, the use of the arch directory and things
+like "#ifdef __powerpc__" are code smells that are going to break with
+cross-architecture profiling.
 
-Alex
-
-> -void kfd_queue_buffer_put(struct amdgpu_bo **bo)
-> -{
-> -       amdgpu_bo_unref(bo);
-> -}
-> -
->  int kfd_queue_acquire_buffers(struct kfd_process_device *pdd, struct que=
-ue_properties *properties)
->  {
->         struct kfd_topology_device *topo_dev;
-> @@ -343,11 +337,11 @@ int kfd_queue_release_buffers(struct kfd_process_de=
-vice *pdd, struct queue_prope
->         struct kfd_topology_device *topo_dev;
->         u32 total_cwsr_size;
->
-> -       kfd_queue_buffer_put(&properties->wptr_bo);
-> -       kfd_queue_buffer_put(&properties->rptr_bo);
-> -       kfd_queue_buffer_put(&properties->ring_bo);
-> -       kfd_queue_buffer_put(&properties->eop_buf_bo);
-> -       kfd_queue_buffer_put(&properties->cwsr_bo);
-> +       amdgpu_bo_unref(&properties->wptr_bo);
-> +       amdgpu_bo_unref(&properties->rptr_bo);
-> +       amdgpu_bo_unref(&properties->ring_bo);
-> +       amdgpu_bo_unref(&properties->eop_buf_bo);
-> +       amdgpu_bo_unref(&properties->cwsr_bo);
->
->         topo_dev =3D kfd_topology_device_by_id(pdd->dev->id);
->         if (!topo_dev)
-> --
-> 2.50.1
->
+Thanks,
+Ian
 
