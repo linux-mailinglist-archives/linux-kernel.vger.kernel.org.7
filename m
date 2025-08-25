@@ -1,113 +1,104 @@
-Return-Path: <linux-kernel+bounces-784069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9120DB33646
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:16:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB8E8B3364C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA95F7A8CF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:14:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C4BE3BEE9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09104277C94;
-	Mon, 25 Aug 2025 06:15:58 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98AA27B50F;
+	Mon, 25 Aug 2025 06:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KRnecT8q"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877A220A5C4;
-	Mon, 25 Aug 2025 06:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3711A240604;
+	Mon, 25 Aug 2025 06:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756102557; cv=none; b=pBso1Zk9hY20EU2Cmi13A/AM2yUiK3UlVcY1hQ7hGTrXRvfaP5UCbyTd0Z3nYLRsRtbgtuKKalGvd1RWm5qvqNool6y/8tldI99Fi/Y5ciPVbBHGSKPVIVgn/y64ORORFwxpmt+rQFiNxwq4oP2xAEMwDApBgsC7cbNHrVwFH3E=
+	t=1756102665; cv=none; b=EYJDwuIn90OyPXTmyKK85P7BPDkp4Tki4O10JnIf15lKKBpO6T4PviAVCmR6gfHFjIHAuvWh+hodPNo4XwM/pWi95LrZjhbZT95bxnz9nAYrT68N0O5iyOEz4ey5yZnGbXILp0058mi1yHly0t66FNtHJpQwb0rv15e2N/u0fKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756102557; c=relaxed/simple;
-	bh=U97WVDPZFYoUgWdt+TuwlTAS+SfYDfaU00t+WmyHZtg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=WvZjHWXb01Kt3cceVsBtJPiAwgcu6stx26OKzSupy2B9m+/vzWW/xdBUalWjFlsO+AZeUZYwSQV5EpceDKrQKlsslaFKOJGpSDsarwYLTZ4VcvysPNJREgXLfWUaN3ozwGa0B9IPyHieQWdvamAbTht6jKVFI8HIkfzDPfodEek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c9LBw2TbmzKHLyH;
-	Mon, 25 Aug 2025 14:15:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id E48B61A129A;
-	Mon, 25 Aug 2025 14:15:51 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCX4o6V_6toKrDgAA--.58258S3;
-	Mon, 25 Aug 2025 14:15:51 +0800 (CST)
-Subject: Re: [PATCH] block: fix disordered IO in the case recursive split
-To: Yu Kuai <yukuai1@huaweicloud.com>, Christoph Hellwig <hch@infradead.org>
-Cc: axboe@kernel.dk, neil@brown.name, akpm@linux-foundation.org,
- linux-block@vger.kernel.org, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, colyli@kernel.org, xni@redhat.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
- tieren@fnnas.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250821074707.2604640-1-yukuai1@huaweicloud.com>
- <aKbcM1XDEGeay6An@infradead.org>
- <54fc027f-f4dc-0412-0d6d-b44a3e644c39@huaweicloud.com>
- <aKbgqoF0UN4_FbXO@infradead.org>
- <060396d7-797e-b876-9945-1dc9c8cbf2b4@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <510600c4-5ff3-a02e-de6d-020fad771425@huaweicloud.com>
-Date: Mon, 25 Aug 2025 14:15:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1756102665; c=relaxed/simple;
+	bh=oCBpslRqIpmahNFVF1UF3Za7uggzJOtaYbcAIB5p/iU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=YLC0Rkeyj025f2jjpYKX/5B9bJwOdGUSrTN3n/3DsHmwdUUabMo4EEhzhvAjWufeXaDvzVW7KHkeyQSfcqJ6WrT3+5bJ4F6x8HWU8XPR4QLT+Xg+KDM4a+ApQ5FZrcrFxU5GEEQuqLKjGroViev10TTn4MzVN9xHVY2t/8aCa/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KRnecT8q; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.stl.internal (Postfix) with ESMTP id B229B1D00096;
+	Mon, 25 Aug 2025 02:17:40 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Mon, 25 Aug 2025 02:17:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1756102660; x=1756189060; bh=tBF/bB5a4v4TgXX2+3hn0N/6OdTRc98xXU+
+	CKqXBDoA=; b=KRnecT8qaAgIBfMQv+olGB30nl9yM1xg0KeT4PLvv8foe9J7oox
+	JuiaN+X4kfXb0FMzo0KPb1JoAFH5VmtLGUfWQ6YQ+u/NL9nGVMqoWU6mJ20cD1+5
+	lC2aQcZO2W/REMpdt0mQYyP22EYf9qef14JyXhjxxkiksLGIGsNDOruxhLG6uLkJ
+	Cp+Y3uiDAcT2RCh5LlmgR8D7H6OoB/93Wnzh6pibQE47lTOSK+wXguPuWY7wdKof
+	UCxh5roVxRWXQG3c/7M43d6ltjEhMY9GmzONY1lNlNrpD45lt9eFz3/1xHmONN3n
+	8+bX4OJSxhvtDkQkzvwJv98GY61RpYdwuHw==
+X-ME-Sender: <xms:AwCsaA_rz14XUiU_scpabCNHnmUBlDv__o0aPoJqbh_19YCofi3pNw>
+    <xme:AwCsaGFnqDs4GfcPOqswJK3N21VU3N4_ewpebvPCIIaPbd72gptIS4UYJ5QOUQGti
+    WWDpuYYHSzG_JnxqTY>
+X-ME-Received: <xmr:AwCsaNWhA_id9cndJKQEX8z8kBulDSGXZxxjiBY3YycuPz7k1UyUkn_O6SEXjwcdceN6BJP_n4E1atP1uYYZVPC0Kcjeg5QCa4M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujeduieehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
+    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
+    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
+    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
+    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopedutddpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtoheplhgrnhgtvgdrhigrnhhgsehlihhnuhigrd
+    guvghvpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
+    ghdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtth
+    hopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehmhhhirhgrmhgrtheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohgrkheshh
+    gvlhhsihhnkhhinhgvthdrfhhipdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggv
+    rggurdhorhhgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:AwCsaK-uDVds0s_uA9h4fSO4D1M_xbbwenGp6kICFAllRKBhS9zZ3g>
+    <xmx:AwCsaC6riun0Qi0Bmpsr-lqAc0h64erCj7YfLu86gfoAl2IlY-pN3Q>
+    <xmx:AwCsaLn4uEGktFMdq_GcHWGkfdS0n_1kXXkuoaWb97YQoXixPUGkWw>
+    <xmx:AwCsaNGiPEZkDX1cbpwW7VaBwn6rf0n-L6Mc5cDgYNTAbfIEysdegQ>
+    <xmx:BACsaG3-hOKGThYjVNoa0wPIwonyvx-y9_EVi6mC_w6WA09JUdCXvY8p>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 25 Aug 2025 02:17:37 -0400 (EDT)
+Date: Mon, 25 Aug 2025 16:17:31 +1000 (AEST)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Lance Yang <lance.yang@linux.dev>
+cc: akpm@linux-foundation.org, geert@linux-m68k.org, 
+    linux-kernel@vger.kernel.org, mhiramat@kernel.org, oak@helsinkinet.fi, 
+    peterz@infradead.org, stable@vger.kernel.org, will@kernel.org, 
+    Lance Yang <ioworker0@gmail.com>
+Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
+In-Reply-To: <96ae7afc-c882-4c3d-9dea-3e2ae2789caf@linux.dev>
+Message-ID: <5a44c60b-650a-1f8a-d5cb-abf9f0716817@linux-m68k.org>
+References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org> <20250825032743.80641-1-ioworker0@gmail.com> <c8851682-25f1-f594-e30f-5b62e019d37b@linux-m68k.org> <96ae7afc-c882-4c3d-9dea-3e2ae2789caf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <060396d7-797e-b876-9945-1dc9c8cbf2b4@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCX4o6V_6toKrDgAA--.58258S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrtF4DtrWxAFW3Cr15CF1Utrb_yoW3GrcEva
-	9akw4DCw1UA3s29as8Krnxt3yvgw4rJr4xXF98GF4Y9r98JryDG3W5C39xZrWrurn5Xwn3
-	u3ykXry0qryYgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
 
-Hi,
 
-在 2025/08/21 17:37, Yu Kuai 写道:
-> 在 2025/08/21 17:02, Christoph Hellwig 写道:
->> On Thu, Aug 21, 2025 at 04:56:33PM +0800, Yu Kuai wrote:
->>> Can you give some examples as how to chain the right way?
->>
->> fs/xfs/xfs_bio_io.c: xfs_rw_bdev
-> 
-> Just take a look, this is
-> 
-> old bio->new bio
-> 
-> while bio split is:
-> 
-> new_bio->old bio
-> 
-> So xfs_rw_bdev won't flag old bio as BIO_CHAIN, while old bio will still
-> be resubmitted to current->bio_list, hence this patch won't break this
-> case, right?
+On Mon, 25 Aug 2025, Lance Yang wrote:
 
-And xfs_rw_bdev() is not under submit_bio() context, current->bio_list
-is still NULL, means xfs_rw_bdev() is submitting bio one by one in the
-right lba order, the bio recursive handling is not related in this case.
+> 
+> What if we squash the runtime check fix into your patch? 
 
-Thanks,
-Kuai
-
+Did my patch not solve the problem?
 
